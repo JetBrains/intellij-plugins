@@ -97,6 +97,7 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     UIComponentGlobals.designMode = true;
     UIComponentGlobals.catchCallLaterExceptions = true;
     SystemManagerGlobals.topLevelSystemManagers[0] = new TopLevelSystemManager(stage);
+    SystemManagerGlobals.bootstrapLoaderInfoURL = "app:/_Main.swf";
 
     Singleton.registerClass(LAYOUT_MANAGER_FQN, LayoutManager);
     var layoutManager:LayoutManager = LayoutManager(UIComponentGlobals.layoutManager);

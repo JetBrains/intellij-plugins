@@ -40,6 +40,7 @@ public class MxmlTest extends BaseTestCase {
       EmbedSwfAndImageFromCss();
       EmbedImageAsClass();
       Vector();
+      ToolTip();
     }
   }
   
@@ -211,6 +212,10 @@ public class MxmlTest extends BaseTestCase {
       {selectedIndices: allOf([1, 3], {fixed: false})},
       {selectedIndices: allOf([1, 2], {fixed: false /* false, because our vector copied in spark List*/})}
     ]);
+  }
+
+  public function ToolTip():void {
+   
   }
 }
 }

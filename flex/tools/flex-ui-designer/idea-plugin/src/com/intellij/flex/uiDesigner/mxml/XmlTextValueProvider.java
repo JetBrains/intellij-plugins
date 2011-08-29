@@ -24,8 +24,7 @@ class XmlTextValueProvider implements XmlElementValueProvider {
 
   @Override
   public XmlElement getInjectedHost() {
-    // only tag or attribute may be queried
-    throw new UnsupportedOperationException();
+    return xmlText;
   }
 
   @Override

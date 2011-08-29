@@ -1,8 +1,8 @@
 package com.intellij.flex.uiDesigner.mxml {
+import com.intellij.flex.uiDesigner.flex.BindingTarget;
 import com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromBytesBase;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
-import flash.errors.IllegalOperationError;
 import flash.utils.IDataInput;
 
 public class InjectedASReader {
@@ -42,14 +42,14 @@ public class InjectedASReader {
 
       switch (type) {
         case OBJECT:
-          o = readObjectReference(data, reader);
+          o = readObjectReference(data, reader, new PropertyBindingTarget(target, propertyName));
           break;
 
         case ARRAY:
           const length:int = data.readByte();
           var array:Array = new Array(length);
           for (var j:int = 0; j < length; j++) {
-            array[j] = readObjectReference(data, reader);
+            array[j] = readObjectReference(data, reader, null);
           }
 
           o = array;
@@ -59,26 +59,28 @@ public class InjectedASReader {
           throw new ArgumentError("unknown binding type");
       }
 
-      if (isStyle) {
-        target.setStyle(propertyName, o);
-      }
-      else {
-        target[propertyName] = o;
+      if (o != null /* binding */) {
+        if (isStyle) {
+          target.setStyle(propertyName, o);
+        }
+        else {
+          target[propertyName] = o;
+        }
       }
     }
     
     deferredReferenceClass = null;
   }
 
-  private function readObjectReference(data:IDataInput, reader:MxmlReader):Object {
+  private function readObjectReference(data:IDataInput, reader:MxmlReader, bindingTarget:BindingTarget):Object {
     var id:int = AmfUtil.readUInt29(data);
     var o:Object;
     // is object reference or StaticInstanceReferenceInDeferredParentInstance data
     if ((id & 1) == 0) {
       o = reader.objectTable[id >> 1];
-      // todo deferred instance from bytes
       if (o is DeferredInstanceFromBytesBase) {
-        throw new IllegalOperationError();
+        DeferredInstanceFromBytesBase(o).getInstanceIfCreatedOrRegisterBinding(bindingTarget);
+        return null;
       }
     }
     else {

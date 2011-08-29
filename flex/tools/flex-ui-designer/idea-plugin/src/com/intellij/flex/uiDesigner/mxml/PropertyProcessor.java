@@ -117,20 +117,9 @@ class PropertyProcessor implements ValueWriter {
       return null;
     }
 
-    ValueWriter valueWriter = injectedASWriter.processProperty(valueProvider, name, type, isStyle, context);
-    if (valueWriter == InjectedASWriter.IGNORE) {
-      return null;
-    }
-    else if (valueWriter != null) {
-      if (valueWriter instanceof ClassValueWriter && isSkinClass(descriptor)) {
-        SkinProjectClassValueWriter skinProjectClassValueWriter =
-          getSkinProjectClassValueWriter(getProjectComponentFactoryId(((ClassValueWriter)valueWriter).getJsClas()));
-        if (skinProjectClassValueWriter != null) {
-          return skinProjectClassValueWriter;
-        }
-      }
-
-      return valueWriter;
+    ValueWriter valueWriter = processInjected(valueProvider, descriptor, isStyle, context);
+    if (valueWriter != null) {
+      return valueWriter == InjectedASWriter.IGNORE ? null : valueWriter;
     }
     else if (descriptor.isAllowsPercentage()) {
       return processPercentable(valueProvider, descriptor);
@@ -143,6 +132,30 @@ class PropertyProcessor implements ValueWriter {
     }
 
     return this;
+  }
+
+  public ValueWriter processXmlTextAsDefaultPropertyWithComplexType(XmlElementValueProvider valueProvider, XmlTag parent, Context context)
+    throws InvalidPropertyException {
+    @SuppressWarnings("ConstantConditions")
+    final AnnotationBackedDescriptor defaultPropertyDescriptor = ((ClassBackedElementDescriptor)parent.getDescriptor())
+      .getDefaultPropertyDescriptor();
+    assert defaultPropertyDescriptor != null;
+
+    return processInjected(valueProvider, defaultPropertyDescriptor, defaultPropertyDescriptor.isStyle(), context);
+  }
+
+  public ValueWriter processInjected(XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor, boolean isStyle, Context context)
+    throws InvalidPropertyException {
+    ValueWriter valueWriter = injectedASWriter.processProperty(valueProvider, descriptor.getName(), descriptor.getType(), isStyle, context);
+    if (valueWriter instanceof ClassValueWriter && isSkinClass(descriptor)) {
+      SkinProjectClassValueWriter skinProjectClassValueWriter = getSkinProjectClassValueWriter(
+        getProjectComponentFactoryId(((ClassValueWriter)valueWriter).getJsClas()));
+      if (skinProjectClassValueWriter != null) {
+        return skinProjectClassValueWriter;
+      }
+    }
+
+    return valueWriter;
   }
 
   private boolean isSkinClass(AnnotationBackedDescriptor descriptor) {

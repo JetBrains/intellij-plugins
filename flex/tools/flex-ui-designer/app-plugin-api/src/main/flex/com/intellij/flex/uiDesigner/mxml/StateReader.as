@@ -25,7 +25,7 @@ internal final class StateReader {
 
     // may be explicitly specified (<local:DynamicParentWithDeepBackSibling currentState="A" currentState.A="B"/>)
     if (object.currentState == null) {
-      object.currentState = states[0].name; // as mxml compiler does
+      object.setCurrentState(states[0].name, false); // as mxml compiler does
     }
     object.states = states;
   }
