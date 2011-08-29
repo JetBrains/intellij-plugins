@@ -69,7 +69,6 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
   }
 
   void setBuildConfigurations(final FlexIdeBuildConfiguration[] configurations) {
-    assert configurations.length > 0;
     ApplicationManager.getApplication().assertWriteAccessAllowed();
     myConfigurations = getValidatedConfigurations(Arrays.asList(configurations));
   }
@@ -82,14 +81,9 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
   }
 
   public void loadState(final State state) {
-    if (state.myConfigurations.isEmpty()) {
-      myConfigurations = new FlexIdeBuildConfiguration[]{new FlexIdeBuildConfiguration()};
-    }
-    else {
-      myConfigurations = getValidatedConfigurations(state.myConfigurations);
-      for (FlexIdeBuildConfiguration configuration : myConfigurations) {
-        configuration.initialize(myModule.getProject());
-      }
+    myConfigurations = getValidatedConfigurations(state.myConfigurations);
+    for (FlexIdeBuildConfiguration configuration : myConfigurations) {
+      configuration.initialize(myModule.getProject());
     }
     myModuleLevelCompilerOptions = state.myModuleLevelCompilerOptions.clone();
   }
@@ -106,6 +100,10 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
       }
     }
 
+    if (configurations.isEmpty()) {
+      LOG.error("No configurations found");
+      return new FlexIdeBuildConfiguration[]{new FlexIdeBuildConfiguration()};
+    }
     return name2configuration.values().toArray(new FlexIdeBuildConfiguration[name2configuration.size()]);
   }
 
