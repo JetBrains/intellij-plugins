@@ -7,6 +7,7 @@ import com.intellij.facet.FacetManager;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
+import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
 import com.intellij.lang.javascript.flex.run.RunMainClassPrecompileTask;
@@ -179,7 +180,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
           }
           appendCssCompilationTasks(compilationTasks, module, builtIn);
 
-          if (PlatformUtils.isFlexIde()) {
+          if (PlatformUtils.isFlexIde() && FlexIdeUtils.isNewUI()) {
             // not enabled in IDEA yet
             appendFlexIdeBCCompilations(compilationTasks, module, builtIn);
           }
