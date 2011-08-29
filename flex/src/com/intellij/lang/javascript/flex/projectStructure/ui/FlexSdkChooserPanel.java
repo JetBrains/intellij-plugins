@@ -13,7 +13,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.MessageFormat;
 
 /**
  * @author ksafonov
@@ -128,6 +127,9 @@ public class FlexSdkChooserPanel {
       else {
         myInfoLabel.setText("SDK not found");
       }
+    }
+    else if (!FlexIdeUtils.getSdkType().isValidSdkHome(getSdkPath())) {
+      myInfoLabel.setText("SDK not found");
     }
     else {
       myInfoLabel.setText("");
