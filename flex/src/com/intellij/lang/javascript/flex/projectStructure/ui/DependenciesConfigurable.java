@@ -350,7 +350,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
           return;
         }
 
-        for (int row = 0; row < myTable.getRowCount(); ) {
+        for (int row = 0; row < myTable.getRowCount(); row++) {
           MyTableItem item = myTable.getItemAt(row);
           if (item instanceof BCItem && ((BCItem)item).configurable == configurable) {
             myTable.getRoot().remove(row);
