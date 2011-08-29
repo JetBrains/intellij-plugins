@@ -706,6 +706,12 @@ final class DeferredSetStyleProxy extends Proxy {
   }
 
   override flash_proxy function getProperty(name:*):* {
-    return inlineCssRuleset == null ? undefined : CssDeclaration(inlineCssRuleset.declarationMap[name]).value;
+    if (inlineCssRuleset == null) {
+      return undefined;
+    }
+    else {
+      var declaration:* = inlineCssRuleset.declarationMap[name];
+      return declaration === undefined ? undefined : CssDeclaration(declaration).value;
+    }
   }
 }

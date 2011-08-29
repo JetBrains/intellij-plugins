@@ -8,6 +8,8 @@ public class CssRuleset {
   public static const TEXT_OFFSET_UNDEFINED:int = -1;
   public static const GUESS_TEXT_OFFSET_BY_PARENT:int = -2;
 
+  public var declarations:Vector.<CssDeclaration>;
+
   public static function create(line:int, textOffset:int):CssRuleset {
      var ruleset:CssRuleset = new CssRuleset();
     ruleset._line = line;
@@ -32,8 +34,6 @@ public class CssRuleset {
     
     return _declarationMap;
   }
-
-  public var declarations:Vector.<CssDeclaration>;
 
   protected var _file:VirtualFile;
   public function get file():VirtualFile {

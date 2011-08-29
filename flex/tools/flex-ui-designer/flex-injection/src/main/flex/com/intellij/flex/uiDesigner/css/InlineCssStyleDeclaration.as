@@ -4,7 +4,7 @@ import mx.core.mx_internal;
 use namespace mx_internal;
 
 public class InlineCssStyleDeclaration extends AbstractCssStyleDeclaration {
-  private var _ruleset:CssRuleset;
+  protected var _ruleset:CssRuleset;
 
   public function InlineCssStyleDeclaration(ruleset:CssRuleset, styleValueResolver:StyleValueResolver) {
     _ruleset = ruleset;
@@ -17,7 +17,7 @@ public class InlineCssStyleDeclaration extends AbstractCssStyleDeclaration {
   }
 
   override public function getStyle(styleProp:String):* {
-    var v:CssDeclaration = _ruleset.declarationMap[styleProp];
+    var v:CssDeclaration = ruleset.declarationMap[styleProp];
     if (v != null && v.value !== undefined) {
       return styleValueResolver.resolve(v);
     }
@@ -26,12 +26,12 @@ public class InlineCssStyleDeclaration extends AbstractCssStyleDeclaration {
   }
 
   override public function setStyle(styleProp:String, newValue:*):void {
-    _ruleset.put(styleProp, newValue);
+    ruleset.put(styleProp, newValue);
     // todo cm.notifyStyleChangeInChildren(styleProp, true); is need?
   }
 
   override mx_internal function setLocalStyle(styleProp:String, newValue:*):void {
-    _ruleset.put(styleProp, newValue);
+    ruleset.put(styleProp, newValue);
   }
 }
 }

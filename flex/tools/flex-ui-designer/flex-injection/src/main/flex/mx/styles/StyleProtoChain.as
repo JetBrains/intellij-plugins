@@ -8,6 +8,7 @@ import com.intellij.flex.uiDesigner.css.AbstractCssStyleDeclaration;
 import com.intellij.flex.uiDesigner.css.InlineCssRuleset;
 import com.intellij.flex.uiDesigner.css.InlineCssStyleDeclaration;
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
+import com.intellij.flex.uiDesigner.util.ImmutableFakeObjectProxy;
 
 import flash.errors.IllegalOperationError;
 
@@ -23,6 +24,9 @@ import mx.utils.NameUtil;
 use namespace mx_internal;
 
 public class StyleProtoChain {
+  // debug only
+  FtyleProtoChain.STYLE_UNINITIALIZED.wtf = true;
+
   public static const STYLE_UNINITIALIZED:Object = FtyleProtoChain.STYLE_UNINITIALIZED;
 
   public static function getClassStyleDeclarations(object:IStyleClient):Array {
@@ -71,8 +75,7 @@ public class StyleProtoChain {
     }
   }
 
-  private static function matchStyleDeclarations(declarations:Array, object:IAdvancedStyleClient):Array // of CSSStyleDeclaration
-  {
+  private static function matchStyleDeclarations(declarations:Array, object:IAdvancedStyleClient):Array {
     var matchingDecls:Array = [];
 
     // Find the subset of declarations that match this component
@@ -85,8 +88,7 @@ public class StyleProtoChain {
     return matchingDecls;
   }
 
-  private static function sortOnSpecificity(decls:Array):Array // of CSSStyleDeclaration
-  {
+  private static function sortOnSpecificity(decls:Array):Array {
     var len:Number = decls.length;
     var tmp:CSSStyleDeclaration;
 
@@ -110,6 +112,7 @@ public class StyleProtoChain {
     return decls;
   }
 
+  //noinspection JSUnusedGlobalSymbols
   public static function initProtoChain(object:IStyleClient):void {
     if (object.styleDeclaration != null && !(object.styleDeclaration is AbstractCssStyleDeclaration)) {
       object.styleDeclaration = new InlineCssStyleDeclaration(InlineCssRuleset.createExternalInlineWithFactory(object.styleDeclaration.defaultFactory), StyleManagerEx(getStyleManager(object)).styleValueResolver);
@@ -117,9 +120,13 @@ public class StyleProtoChain {
 
     FtyleProtoChain.initProtoChain(object);
 
-    if (object.inheritingStyles == StyleProtoChain.STYLE_UNINITIALIZED) {
+    if (!isValidStyleHolder(object.inheritingStyles) || !isValidStyleHolder(object.nonInheritingStyles)) {
       throw new IllegalOperationError("Internal error while init proto chain");
     }
+  }
+
+  private static function isValidStyleHolder(o:Object):Boolean {
+    return o is ImmutableFakeObjectProxy;
   }
 
   public static function initProtoChainForUIComponentStyleName(obj:IStyleClient):void {
@@ -199,12 +206,17 @@ public class StyleProtoChain {
     }
 
     hierarchy = new TypeHierarchyCacheItem();
+
+
     if (isStopClass(className)) {
       hierarchy.chain = new Vector.<String>(0, true);
+      styleManager.typeHierarchyCache[normalizeClassName(className, qualified)] = hierarchy;
     }
     else {
       var bases:Array = describe(object, INCLUDE_BASES | HIDE_OBJECT | INCLUDE_TRAITS).traits.bases;
       className = normalizeClassName(className, qualified);
+      styleManager.typeHierarchyCache[className] = hierarchy;
+
       hierarchy[className] = true;
       if (bases.length == 1 /* last element always is Object */ || isStopClass(bases[0])) {
         hierarchy.chain = new <String>[className];
@@ -231,7 +243,6 @@ public class StyleProtoChain {
       }
     }
 
-    styleManager.typeHierarchyCache[className] = hierarchy;
     return hierarchy;
   }
 
@@ -250,5 +261,5 @@ public class StyleProtoChain {
 import flash.utils.Dictionary;
 
 final dynamic class TypeHierarchyCacheItem extends Dictionary {
-  private var chain:Vector.<String>;
+  public var chain:Vector.<String>;
 }

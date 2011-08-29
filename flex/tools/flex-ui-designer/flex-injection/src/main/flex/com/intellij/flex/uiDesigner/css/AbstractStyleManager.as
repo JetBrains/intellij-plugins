@@ -25,8 +25,8 @@ internal class AbstractStyleManager {
   private var pseudoCssStates:Dictionary;
   
   internal var rootStyleDeclarationProxy:StyleDeclarationProxy;
-  
-  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
+
+  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols,JSMethodCanBeStatic
   public function set inheritingStyles(value:Object):void {
     throw new IllegalOperationError("forbidden");
   }
@@ -36,7 +36,7 @@ internal class AbstractStyleManager {
     return rootStyleDeclarationProxy;
   }
 
-  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
+  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols,JSMethodCanBeStatic
   public function set stylesRoot(value:Object):void {
     throw new IllegalOperationError("unsupported");
   }
@@ -50,12 +50,12 @@ internal class AbstractStyleManager {
     return _typeSelectorCache;
   }
 
-  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
+  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols,JSMethodCanBeStatic
   public function set typeSelectorCache(value:Object):void {
     throw new IllegalOperationError("forbidden");
   }
 
-  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
+  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols,JSMethodCanBeStatic
   public function set typeHierarchyCache(value:Object):void {
     throw new IllegalOperationError("forbidden");
   }
@@ -72,16 +72,15 @@ internal class AbstractStyleManager {
     }
 
     if (subjects == null) {
-      subjects = _subjects[subject] as Array;
+      return _subjects[subject] as Array;
     }
     else {
       var subjectsArray:Array = _subjects[subject] as Array;
       if (subjectsArray != null) {
         subjects = subjects.concat(subjectsArray);
       }
+      return subjects;
     }
-
-    return subjects;
   }
 
   /**
@@ -115,13 +114,12 @@ internal class AbstractStyleManager {
     _hasAdvancedSelectors = true;
   }
   
-  private function registerSubject(subject:String, declaration:MergedCssStyleDeclaration):void {
+  private function registerSubject(subject:String, declaration:AbstractCssStyleDeclaration):void {
     declaration.selectorRefCount++;
     
     var declarations:Array = _subjects[subject] as Array;
     if (declarations == null) {
-      declarations = [declaration];
-      _subjects[subject] = declarations;
+      _subjects[subject] = [declaration];
     }
     else {
       declarations.push(declaration);
@@ -134,55 +132,28 @@ internal class AbstractStyleManager {
     if (FlexVersion.compatibilityVersion == 0x04000000 && selector == "mx.controls.ButtonBar" && !(styleDeclaration is AbstractCssStyleDeclaration)) {
       return;
     }
-    
-    _selectors[selector] = styleDeclaration;
 
-    // We also index by subject to help match advanced selectors
-    var subject:String = styleDeclaration.subject;
-
-    if (selector != null) {
-      if (styleDeclaration.subject == null) {
-        // If the styleDeclaration does not yet have a subject we update its selector to keep it in sync with the provided selector.
-        styleDeclaration.selectorString = selector;
-        subject = styleDeclaration.subject;
-      }
-      else if (selector != styleDeclaration.selectorString) {
-        // The styleDeclaration does not match the provided selector, so we ignore the subject on the styleDeclaration and try to determine the subject from the selector
-        var firstChar:String = selector.charAt(0);
-        if (firstChar == "." || firstChar == ":" || firstChar == "#") {
-          subject = "*";
-        }
-        else {
-          subject = selector;
-        }
-
-        // Finally, we update the styleDeclaration's selector to keep
-        // it in sync with the provided selector.
-        styleDeclaration.selectorString = selector;
-      }
+    if (selector == null) {
+      selector = styleDeclaration.selectorString;
     }
 
-    if (subject != null) {
-      registerSubject(subject, MergedCssStyleDeclaration(styleDeclaration));
+    var subject:String;
+    var conditions:Vector.<CssCondition>;
+    var firstChar:String = selector.charAt(0);
+    if (firstChar == "." || firstChar == ":" || firstChar == "#") {
+      subject = "*";
+      conditions = new <CssCondition>[new CssClassCondition(selector.substring(1))];
+    }
+    else if (firstChar == ":" || firstChar == "#") {
+      throw new IllegalOperationError("unsuported");
     }
     else {
-      styleDeclaration.selectorRefCount++;
+      subject = selector;
     }
 
-    // Also remember subjects that have pseudo-selectors to optimize styles during component state changes.
-    var pseudoCondition:String = styleDeclaration.getPseudoCondition();
-    if (pseudoCondition != null) {
-      if (pseudoCssStates == null) {
-        pseudoCssStates = new Dictionary();
-      }
-
-      pseudoCssStates[pseudoCondition] = true;
-    }
-
-    // Record whether this is an advanced selector so that style declaration look up can be optimized for when no advanced selectors have been declared
-    if (styleDeclaration.isAdvanced()) {
-      _hasAdvancedSelectors = true;
-    }
+    var declaration:RuntimeCssStyleDeclaration = new RuntimeCssStyleDeclaration(new CssSelector(subject, subject, null, conditions, null), styleDeclaration, StyleManagerEx(this).styleValueResolver);
+    _selectors[selector] = declaration;
+    registerSubject(subject, declaration);
 
     // flush cache and start over
     if (_typeSelectorCache != null) {
@@ -194,12 +165,12 @@ internal class AbstractStyleManager {
     }
   }
 
-  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
+  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols,JSMethodCanBeStatic
   public function clearStyleDeclaration(selector:String, update:Boolean):void {
     throw new IllegalOperationError();
   }
 
-  //noinspection JSUnusedGlobalSymbols
+  //noinspection JSUnusedGlobalSymbols,JSMethodCanBeStatic
   public function isInheritingTextFormatStyle(styleName:String):Boolean {
     return StyleManagerPredefinedData.inheritingTextFormatStyles[styleName] !== undefined;
   }
@@ -303,17 +274,17 @@ internal class AbstractStyleManager {
     }
   }
 
-  //noinspection JSUnusedGlobalSymbols
+  //noinspection JSUnusedGlobalSymbols,JSMethodCanBeStatic
   public function isValidStyleValue(value:*):Boolean {
     return value !== undefined;
   }
 
-  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
+  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols,JSMethodCanBeStatic
   public function loadStyleDeclarations(url:String, update:Boolean = true, trustContent:Boolean = false, applicationDomain:ApplicationDomain = null, securityDomain:SecurityDomain = null):IEventDispatcher {
     throw new IllegalOperationError("unsupported");
   }
 
-  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
+  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols,JSMethodCanBeStatic
   public function unloadStyleDeclarations(url:String, update:Boolean = true):void {
     throw new IllegalOperationError("unsupported");
   }
@@ -329,12 +300,12 @@ internal class AbstractStyleManager {
     return null;
   }
 
-  //noinspection JSUnusedGlobalSymbols
+  //noinspection JSUnusedGlobalSymbols,JSMethodCanBeStatic
   public function get qualifiedTypeSelectors():Boolean {
     return true;
   }
 
-  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
+  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols,JSMethodCanBeStatic
   public function set qualifiedTypeSelectors(value:Boolean):void {
     throw new IllegalOperationError("unsupported");
   }
@@ -366,12 +337,12 @@ internal class AbstractStyleManager {
     return _hasAdvancedSelectors;
   }
 
-  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
+  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols,JSMethodCanBeStatic
   public function loadStyleDeclarations2(url:String, update:Boolean = true, applicationDomain:ApplicationDomain = null, securityDomain:SecurityDomain = null):IEventDispatcher {
     throw new IllegalOperationError("unsupported");
   }
 
-  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
+  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols,JSMethodCanBeStatic
   flex::v4_5
   public function acceptMediaList(value:String):Boolean {
     return false;
