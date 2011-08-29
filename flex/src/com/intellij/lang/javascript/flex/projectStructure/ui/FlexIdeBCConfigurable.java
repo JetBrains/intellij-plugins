@@ -2,7 +2,6 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.options.LinkageType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -57,7 +56,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myModifiableRootModel = modifiableRootModel;
     myName = configuration.NAME;
 
-    myDependenciesConfigurable = new DependenciesConfigurable(configuration, module.getProject(), modifiableRootModel);
+    myDependenciesConfigurable =new DependenciesConfigurable(configuration, module.getProject());
     myCompilerOptionsConfigurable = new CompilerOptionsConfigurable(module, configuration.COMPILER_OPTIONS);
     myHtmlWrapperConfigurable = new HtmlWrapperConfigurable(module.getProject(), configuration.HTML_WRAPPER_OPTIONS);
     myAirDescriptorConfigurable = new AirDescriptorConfigurable(configuration.AIR_DESCRIPTOR_OPTIONS);
@@ -158,8 +157,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   }
 
   private String[] getAvailablePlayersFromSdk() {
-    String sdkPath = myDependenciesConfigurable.getSdkChooserPanel().getSdkPath();
-    String sdkVersion = myDependenciesConfigurable.getSdkChooserPanel().getSdkVersion();
+    //String sdkVersion = myDependenciesConfigurable.getSdkChooserPanel().getCurrentSdk();
     return new String[]{"10.1", "10.2"}; // TODO implement
   }
 
@@ -167,8 +165,13 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     return myModifiableRootModel;
   }
 
+  /**
+   * TODO remove this
+   * @Deprecated
+   */
+  @Deprecated
   public boolean isModuleConfiguratorModified() {
-    return myDependenciesConfigurable.getSdkChooserPanel().isModified();
+    return false;
   }
 
   public String getTreeNodeText() {

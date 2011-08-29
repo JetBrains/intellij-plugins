@@ -211,6 +211,12 @@ public class FlexIdeBCConfigurator {
     return result;
   }
 
+
+  /**
+   * TODO remove this
+   * @Deprecated
+   */
+  @Deprecated
   public boolean isModulesConfiguratorModified() {
     for (List<FlexIdeBCConfigurable> configurables : myModuleToConfigurablesMap.values()) {
       for (FlexIdeBCConfigurable configurable : configurables) {

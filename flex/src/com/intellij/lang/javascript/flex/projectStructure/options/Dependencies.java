@@ -9,7 +9,9 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Tag;
+import com.intellij.util.xmlb.annotations.Transient;
 import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +23,15 @@ public class Dependencies implements Cloneable {
   public FlexIdeBuildConfiguration.ComponentSet COMPONENT_SET = FlexIdeBuildConfiguration.ComponentSet.SparkAndMx;
   public LinkageType FRAMEWORK_LINKAGE = LinkageType.Default;
   private static final String DEPENDENCY_TYPE_ELEMENT_NAME = "type";
+  private static final String SDK_ELEMENT_NAME = "sdk";
 
   private static final EntryInfo[] EMPTY = new EntryInfo[0];
 
   private EntryInfo[] myEntriesInfos = EMPTY;
   private List<DependencyEntry> myEntries = new ArrayList<DependencyEntry>();
+
+  @Nullable
+  private SdkEntry mySdk;
 
   @Tag("entry")
   public static class EntryInfo {
@@ -48,30 +54,24 @@ public class Dependencies implements Cloneable {
     return ContainerUtil.mapNotNull(myEntries.toArray(new DependencyEntry[myEntries.size()]), new Function<DependencyEntry, EntryInfo>() {
       @Override
       public EntryInfo fun(DependencyEntry entry) {
-        EntryInfo entryInfo = new EntryInfo();
-        entryInfo.DEPENDENCY_TYPE_ELEMENT = new Element(DEPENDENCY_TYPE_ELEMENT_NAME);
-        entry.myDependencyType.writeExternal(entryInfo.DEPENDENCY_TYPE_ELEMENT);
-
-        if (entry instanceof BuildConfigurationEntry) {
-          BuildConfigurationEntry buildConfigurationEntry = (BuildConfigurationEntry)entry;
-          entryInfo.MODULE_NAME = buildConfigurationEntry.getModuleName();
-          entryInfo.BC_NAME = buildConfigurationEntry.getBcName();
-          return entryInfo;
-        }
-        else if (entry instanceof ModuleLibraryEntry) {
-          entryInfo.LIBRARY_ELEMENT = new Element("library");
-          try {
-            ((ModuleLibraryEntry)entry).writeExternal(entryInfo.LIBRARY_ELEMENT);
+        try {
+          EntryInfo entryInfo = new EntryInfo();
+          if (entry instanceof BuildConfigurationEntry) {
+            serializeBcEntry((BuildConfigurationEntry)entry, entryInfo);
+            return entryInfo;
           }
-          catch (WriteExternalException e) {
-            LOG.error(e);
-            return null;
+          else if (entry instanceof ModuleLibraryEntry) {
+            serializeModuleLibraryEntry((ModuleLibraryEntry)entry, entryInfo);
+            return entryInfo;
           }
-          return entryInfo;
+          else {
+            LOG.error("Unexpected entry type: " + entry);
+          }
         }
-        else {
-          throw new IllegalArgumentException("unknown type: " + entry.getClass());
+        catch (WriteExternalException e) {
+          LOG.error(e);
         }
+        return null;
       }
     }, new EntryInfo[0]);
   }
@@ -79,6 +79,47 @@ public class Dependencies implements Cloneable {
   @SuppressWarnings("UnusedDeclaration")
   public void setSerializedEntries(EntryInfo[] entries) {
     myEntriesInfos = entries;
+  }
+
+  @SuppressWarnings("UnusedDeclaration")
+  @Tag("sdk")
+  public Element getSerializedSdk() {
+    if (mySdk != null) {
+      try {
+        Element element = new Element(SDK_ELEMENT_NAME);
+        mySdk.writeExternal(element);
+        return element;
+      }
+      catch (WriteExternalException e) {
+        LOG.error(e);
+      }
+    }
+    return null;
+  }
+
+  @SuppressWarnings("UnusedDeclaration")
+  public void setSerializedSdk(Element element) {
+    if (element != null) {
+      try {
+        mySdk = new SdkEntry();
+        mySdk.readExternal(element);
+        return;
+      }
+      catch (InvalidDataException e) {
+        LOG.error(e);
+      }
+    }
+    mySdk = null;
+  }
+
+  @Transient
+  @Nullable
+  public SdkEntry getSdk() {
+    return mySdk;
+  }
+
+  public void setSdk(@Nullable SdkEntry sdk) {
+    mySdk = sdk;
   }
 
   public List<DependencyEntry> getEntries() {
@@ -92,17 +133,10 @@ public class Dependencies implements Cloneable {
     for (EntryInfo info : myEntriesInfos) {
       DependencyEntry entry = null;
       if (info.LIBRARY_ELEMENT != null) {
-        ModuleLibraryEntry libraryEntry = new ModuleLibraryEntry();
-        try {
-          libraryEntry.readExternal(info.LIBRARY_ELEMENT);
-          entry = libraryEntry;
-        }
-        catch (InvalidDataException e) {
-          LOG.error(e);
-        }
+        entry = deserializeModuleLibraryEntry(info);
       }
       else if (info.BC_NAME != null) {
-        entry = new BuildConfigurationEntry(pointerManager.create(info.MODULE_NAME), info.BC_NAME);
+        entry = deserializeBcEntry(pointerManager, info);
       }
       else {
         LOG.error("unknown entry");
@@ -110,16 +144,57 @@ public class Dependencies implements Cloneable {
 
       //noinspection ConstantConditions
       if (entry != null) {
-        if (info.DEPENDENCY_TYPE_ELEMENT != null) {
-          entry.myDependencyType.readExternal(info.DEPENDENCY_TYPE_ELEMENT);
-        }
-        else {
-          LOG.error("dependency type element is missing");
-        }
         myEntries.add(entry);
       }
     }
     myEntriesInfos = null;
+  }
+
+  private static void serializeDependencyType(DependencyEntry entry, EntryInfo entryInfo) {
+    entryInfo.DEPENDENCY_TYPE_ELEMENT = new Element(DEPENDENCY_TYPE_ELEMENT_NAME);
+    entry.myDependencyType.writeExternal(entryInfo.DEPENDENCY_TYPE_ELEMENT);
+  }
+
+  private static void deserializeDependencyType(EntryInfo info, DependencyEntry entry) {
+    if (info.DEPENDENCY_TYPE_ELEMENT != null) {
+      entry.myDependencyType.readExternal(info.DEPENDENCY_TYPE_ELEMENT);
+    }
+    else {
+      LOG.error("dependency type element is missing");
+    }
+  }
+
+  private static void serializeModuleLibraryEntry(ModuleLibraryEntry entry, EntryInfo entryInfo) throws WriteExternalException {
+    entryInfo.LIBRARY_ELEMENT = new Element("library");
+    entry.writeExternal(entryInfo.LIBRARY_ELEMENT);
+    serializeDependencyType(entry, entryInfo);
+  }
+
+  @Nullable
+  private static ModuleLibraryEntry deserializeModuleLibraryEntry(EntryInfo info) {
+    ModuleLibraryEntry libraryEntry = new ModuleLibraryEntry();
+    try {
+      libraryEntry.readExternal(info.LIBRARY_ELEMENT);
+      deserializeDependencyType(info, libraryEntry);
+      return libraryEntry;
+    }
+    catch (InvalidDataException e) {
+      LOG.error(e);
+      return null;
+    }
+  }
+
+
+  private static void serializeBcEntry(BuildConfigurationEntry entry, EntryInfo entryInfo) throws WriteExternalException {
+    entryInfo.MODULE_NAME = entry.getModuleName();
+    entryInfo.BC_NAME = entry.getBcName();
+    serializeDependencyType(entry, entryInfo);
+  }
+
+  private static BuildConfigurationEntry deserializeBcEntry(ModulePointerManager pointerManager, EntryInfo info) {
+    BuildConfigurationEntry result = new BuildConfigurationEntry(pointerManager.create(info.MODULE_NAME), info.BC_NAME);
+    deserializeDependencyType(info, result);
+    return result;
   }
 
   protected Dependencies clone() {

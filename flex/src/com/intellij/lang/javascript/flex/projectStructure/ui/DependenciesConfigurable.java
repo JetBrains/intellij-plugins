@@ -19,7 +19,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.ex.ProjectRoot;
-import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
@@ -77,7 +76,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
   private final Dependencies myDependencies;
   private final Project myProject;
-  private final ModifiableRootModel myRootModel;
   private AddItemPopupAction[] myPopupActions;
 
   private final Disposable myDisposable;
@@ -247,17 +245,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
   };
 
-  public DependenciesConfigurable(final FlexIdeBuildConfiguration bc, Project project, ModifiableRootModel rootModel) {
+  public DependenciesConfigurable(final FlexIdeBuildConfiguration bc, Project project) {
     myDependencies = bc.DEPENDENCIES;
     myProject = project;
-    myRootModel = rootModel;
 
-    myDisposable = new Disposable() {
-      @Override
-      public void dispose() {
-      }
-    };
-    Disposer.register(myDisposable, mySdkPanel);
+    myDisposable = Disposer.newDisposable();
     final boolean mobilePlatform = bc.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Mobile;
 
     myComponentSetLabel.setVisible(!mobilePlatform && !bc.PURE_ACTION_SCRIPT);
@@ -541,7 +533,14 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   public boolean isModified() {
-    if (mySdkPanel.isModified()) return true;
+    SdkEntry currentSdk = mySdkPanel.getCurrentSdk();
+    if (currentSdk != null) {
+      if (myDependencies.getSdk() == null || !currentSdk.isEqual(myDependencies.getSdk())) return true;
+    }
+    else {
+      if (myDependencies.getSdk() != null) return true;
+    }
+
     if (myDependencies.COMPONENT_SET != myComponentSetCombo.getSelectedItem()) return true;
     if (myDependencies.FRAMEWORK_LINKAGE != myFrameworkLinkageCombo.getSelectedItem()) return true;
 
@@ -583,7 +582,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
   public void apply() throws ConfigurationException {
     applyTo(myDependencies);
-    mySdkPanel.apply();
   }
 
   public void applyTo(final Dependencies dependencies) {
@@ -612,10 +610,14 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       item.dependencyType.applyTo(entry.getDependencyType());
       dependencies.getEntries().add(entry);
     }
+
+    SdkEntry currentSdk = mySdkPanel.getCurrentSdk();
+    dependencies.setSdk(currentSdk != null ? currentSdk.getCopy() : null);
   }
 
   public void reset() {
-    mySdkPanel.reset();
+    SdkEntry sdk = myDependencies.getSdk();
+    mySdkPanel.reset(sdk != null ? sdk.getCopy() : null);
     myComponentSetCombo.setSelectedItem(myDependencies.COMPONENT_SET);
     myFrameworkLinkageCombo.setSelectedItem(myDependencies.FRAMEWORK_LINKAGE);
 
@@ -658,7 +660,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   private void createUIComponents() {
-    mySdkPanel = new FlexSdkChooserPanel(myProject, myRootModel);
+    mySdkPanel = new FlexSdkChooserPanel(myProject);
   }
 
   public FlexSdkChooserPanel getSdkChooserPanel() {

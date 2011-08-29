@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
 import com.intellij.openapi.projectRoots.ex.ProjectRoot;
+import com.intellij.openapi.projectRoots.ex.ProjectRootContainer;
 import com.intellij.openapi.projectRoots.impl.ProjectRootContainerImpl;
 import com.intellij.openapi.projectRoots.impl.SimpleProjectRoot;
 import com.intellij.openapi.roots.OrderRootType;
@@ -128,26 +129,36 @@ public class ModuleLibraryEntry extends DependencyEntry implements JDOMExternali
 
   public void applyTo(ModuleLibraryEntry copy) {
     copy.myName = myName;
-    copy.myRootContainer.startChange();
-    copy.myRootContainer.removeAllRoots();
+    copyContainer(myRootContainer, copy.myRootContainer);
+    copy.myJarDirectories.copyFrom(myJarDirectories);
+  }
+
+  static void copyContainer(ProjectRootContainerImpl source, ProjectRootContainerImpl target) {
+    target.startChange();
+    target.removeAllRoots();
     for (OrderRootType rootType : OrderRootType.getAllTypes()) {
-      ProjectRoot[] roots = myRootContainer.getRoots(rootType);
+      ProjectRoot[] roots = source.getRoots(rootType);
       for (ProjectRoot root : roots) {
         for (VirtualFile file : root.getVirtualFiles()) {
-          copy.myRootContainer.addRoot(file, rootType);
+          target.addRoot(file, rootType);
         }
       }
     }
-    copy.myRootContainer.finishChange();
-    copy.myJarDirectories.copyFrom(myJarDirectories);
+    target.finishChange();
   }
 
   public boolean isEqual(ModuleLibraryEntry e) {
     if (!Comparing.equal(myName, e.myName)) return false;
 
+    if (!isEqual(myRootContainer, e.myRootContainer)) return false;
+    if (!myJarDirectories.equals(e.myJarDirectories)) return false;
+    return true;
+  }
+
+  static boolean isEqual(ProjectRootContainer c1, ProjectRootContainer c2) {
     for (OrderRootType rootType : OrderRootType.getAllTypes()) {
-      ProjectRoot[] myRoots = myRootContainer.getRoots(rootType);
-      ProjectRoot[] thatRoots = e.myRootContainer.getRoots(rootType);
+      ProjectRoot[] myRoots = c1.getRoots(rootType);
+      ProjectRoot[] thatRoots = c2.getRoots(rootType);
 
       if (myRoots.length != thatRoots.length) return false;
       for (int i = 0; i < myRoots.length; i++) {
@@ -156,8 +167,6 @@ public class ModuleLibraryEntry extends DependencyEntry implements JDOMExternali
         if (!Comparing.equal(myFiles, thatFiles)) return false;
       }
     }
-
-    if (!myJarDirectories.equals(e.myJarDirectories)) return false;
     return true;
   }
 

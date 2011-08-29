@@ -15,7 +15,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -66,21 +65,22 @@ public class FlexSdkUtils {
   }
 
   static void setupSdkPaths(final Sdk sdk) {
+    setupSdkPaths(sdk.getHomeDirectory(), sdk.getSdkType(), sdk.getSdkModificator());
+  }
+
+  public static void setupSdkPaths(VirtualFile sdkRoot, SdkType sdkType, SdkModificator sdkModificator) {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       return;
     }
 
-    final VirtualFile sdkRoot = sdk.getHomeDirectory();
     if (sdkRoot == null || !sdkRoot.isValid()) {
       return;
     }
     sdkRoot.refresh(false, true);
 
-    final SdkModificator sdkModificator = sdk.getSdkModificator();
 
     sdkModificator.setVersionString(readFlexSdkVersion(sdkRoot));
 
-    final SdkType sdkType = sdk.getSdkType();
     final String configFileRelativePath = getBaseConfigFileRelPath((IFlexSdkType)sdkType);
 
     final VirtualFile configFile = sdkRoot.findFileByRelativePath(configFileRelativePath);
