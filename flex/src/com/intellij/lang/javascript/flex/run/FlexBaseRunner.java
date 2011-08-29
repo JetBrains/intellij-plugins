@@ -29,6 +29,8 @@ import com.intellij.lang.javascript.flex.debug.FlexDebugRunner;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConsoleProperties;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
+import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
+import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.extensions.Extensions;
@@ -71,7 +73,11 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -89,15 +95,23 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   private static final int URL_CHECK_TIMEOUT = 3000;
 
+  @Nullable
   protected RunContentDescriptor doExecute(final Project project,
                                            final Executor executor,
                                            final RunProfileState state,
                                            final RunContentDescriptor contentToReuse,
-                                           final ExecutionEnvironment env) throws ExecutionException {
+                                           final ExecutionEnvironment environment) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
 
-    final RunProfile runProfile = env.getRunProfile();
-    final FlexRunnerParameters flexRunnerParameters = ((FlexRunConfiguration)runProfile).getRunnerParameters();
+    final RunProfile runProfile = environment.getRunProfile();
+
+    if (runProfile instanceof FlexIdeRunConfiguration) {
+      final FlexIdeRunnerParameters params = ((FlexIdeRunConfiguration)runProfile).getRunnerParameters();
+      final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig = checkModuleAndConfig(project, params);
+      return launchFlexIdeConfig(moduleAndConfig.first, moduleAndConfig.second, params, executor, contentToReuse, environment);
+    }
+
+    final FlexRunnerParameters flexRunnerParameters = (((FlexRunConfiguration)runProfile)).getRunnerParameters();
 
     final Module module = ModuleManager.getInstance(project).findModuleByName(flexRunnerParameters.getModuleName());
     final Sdk flexSdk = module == null ? null : FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
@@ -119,13 +133,53 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         checkIfCompilationEnabled(module, (FlexRunConfiguration)runProfile, isDebug);
       }
 
-      FlashPlayerTrustUtil.trustSwfIfNeeded(project, isDebug, flexRunnerParameters);
+      FlashPlayerTrustUtil.updateTrustedStatus(project, isDebug, flexRunnerParameters);
 
-      return doLaunch(project, executor, state, contentToReuse, env, flexSdk, flexRunnerParameters);
+      return doLaunch(project, executor, state, contentToReuse, environment, flexSdk, flexRunnerParameters);
     }
 
     return null;
   }
+
+  @Nullable
+  protected abstract RunContentDescriptor launchFlexIdeConfig(final Module module,
+                                                              final FlexIdeBuildConfiguration config,
+                                                              final FlexIdeRunnerParameters params, final Executor executor,
+                                                              final RunContentDescriptor contentToReuse,
+                                                              final ExecutionEnvironment environment);
+
+  private static Pair<Module, FlexIdeBuildConfiguration> checkModuleAndConfig(final Project project, final FlexIdeRunnerParameters params)
+    throws ExecutionException {
+    final String moduleName = params.getModuleName();
+    final String bcName = params.getBCName();
+
+    final Module module = ModuleManager.getInstance(project).findModuleByName(moduleName);
+    if (module == null) {
+      throw new CantRunException(
+        moduleName.isEmpty() ? "Module not set" : MessageFormat.format("No such module: ''{0}''", moduleName));
+    }
+
+    final FlexIdeBuildConfiguration config =
+      ModuleType.get(module) instanceof FlexModuleType
+      ? FlexIdeBuildConfigurationManager.getInstance(module).findConfigurationByName(bcName)
+      : null;
+
+    if (config == null) {
+      final String message = bcName.isEmpty()
+                             ? "Build configuration not set"
+                             : MessageFormat.format("Module ''{0}'' does not contain build configuration: ''{1}''", moduleName, bcName);
+      throw new CantRunException(message);
+    }
+
+    if (config.OUTPUT_TYPE != FlexIdeBuildConfiguration.OutputType.Application) {
+      throw new CantRunException(
+        MessageFormat.format("Build configuration ''{0}'' of module ''{1}'' does not have ''Application'' output type",
+                             bcName, moduleName));
+    }
+
+    return Pair.create(module, config);
+  }
+
 
   private static boolean needToCheckThatCompilationEnabled(final FlexRunnerParameters parameters) {
     return parameters instanceof FlexUnitRunnerParameters
@@ -524,8 +578,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
            : params instanceof AirRunnerParameters;
   }
 
-  public static void launchWithSelectedApplication(final String urlOrPath, final FlexRunnerParameters parameters) {
-    switch (parameters.getLauncherType()) {
+  public static void launchWithSelectedApplication(final String urlOrPath, final LauncherParameters launcherParams) {
+    switch (launcherParams.getLauncherType()) {
       case OSDefault:
         if (Desktop.isDesktopSupported()) {
           final Desktop desktop = Desktop.getDesktop();
@@ -557,9 +611,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       case Browser:
         final Runnable runnable1 = new Runnable() {
           public void run() {
-            BrowsersConfiguration
-              .launchBrowser(parameters.getBrowserFamily(),
-                             BrowserUtil.isAbsoluteURL(urlOrPath) ? urlOrPath : VfsUtil.pathToUrl(urlOrPath));
+            BrowsersConfiguration.launchBrowser(launcherParams.getBrowserFamily(),
+                                                BrowserUtil.isAbsoluteURL(urlOrPath) ? urlOrPath : VfsUtil.pathToUrl(urlOrPath));
           }
         };
 
@@ -573,7 +626,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         break;
 
       case Player:
-        final String playerPath = parameters.getPlayerPath();
+        final String playerPath = launcherParams.getPlayerPath();
         final String executablePath = SystemInfo.isMac && playerPath.endsWith(".app") ? FlexUtils.getMacExecutable(playerPath) : playerPath;
         try {
           if (executablePath == null) {

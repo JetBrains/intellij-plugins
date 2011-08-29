@@ -19,7 +19,9 @@ import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
+import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Disposer;
@@ -29,6 +31,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -37,6 +41,38 @@ import java.lang.reflect.InvocationTargetException;
  * Time: 8:16:33 PM
  */
 public class FlexRunner extends FlexBaseRunner {
+
+  protected RunContentDescriptor launchFlexIdeConfig(final Module module,
+                                                     final FlexIdeBuildConfiguration config,
+                                                     final FlexIdeRunnerParameters params,
+                                                     final Executor executor,
+                                                     final RunContentDescriptor contentToReuse,
+                                                     final ExecutionEnvironment environment) {
+    switch (config.TARGET_PLATFORM) {
+      case Web:
+        // todo handle html wrapper!
+        if (config.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Web && params.isLaunchUrl()) {
+          launchWithSelectedApplication(params.getUrl(), params.getLauncherParameters());
+        }
+        else {
+          final String outputPath = config.getOutputFilePath();
+          try {
+            final String canonicalPath = new File(config.getOutputFilePath()).getCanonicalPath();
+            FlashPlayerTrustUtil.updateTrustedStatus(module.getProject(), params.isRunTrusted(), false, canonicalPath);
+          }
+          catch (IOException e) {/**/}
+          launchWithSelectedApplication(outputPath, params.getLauncherParameters());
+        }
+        break;
+      case Desktop:
+        // todo implement
+        break;
+      case Mobile:
+        // todo implement
+        break;
+    }
+    return null;
+  }
 
   @Nullable
   protected RunContentDescriptor doLaunch(final Project project,
@@ -84,6 +120,9 @@ public class FlexRunner extends FlexBaseRunner {
                                           final ExecutionEnvironment env,
                                           final Sdk flexSdk,
                                           final FlexRunnerParameters flexRunnerParameters) throws ExecutionException {
+    final LauncherParameters launcherParams = new LauncherParameters(flexRunnerParameters.getLauncherType(),
+                                                                     flexRunnerParameters.getBrowserFamily(),
+                                                                     flexRunnerParameters.getPlayerPath());
     switch (flexRunnerParameters.getRunMode()) {
       case HtmlOrSwfFile:
         if (flexRunnerParameters instanceof FlexUnitRunnerParameters) {
@@ -112,7 +151,7 @@ public class FlexRunner extends FlexBaseRunner {
           final ExecutionConsole console = createFlexUnitRunnerConsole(project, env, processHandler, executor);
           flexUnitConnection.addListener(new FlexUnitListener(processHandler));
 
-          launchWithSelectedApplication(flexRunnerParameters.getHtmlOrSwfFilePath(), flexRunnerParameters);
+          launchWithSelectedApplication(flexRunnerParameters.getHtmlOrSwfFilePath(), launcherParams);
 
           final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor);
           contentBuilder.setExecutionResult(new DefaultExecutionResult(console, processHandler));
@@ -121,14 +160,14 @@ public class FlexRunner extends FlexBaseRunner {
           return contentBuilder.showRunContent(contentToReuse);
         }
 
-        launchWithSelectedApplication(flexRunnerParameters.getHtmlOrSwfFilePath(), flexRunnerParameters);
+        launchWithSelectedApplication(flexRunnerParameters.getHtmlOrSwfFilePath(), launcherParams);
         return null;
       case Url:
-        launchWithSelectedApplication(flexRunnerParameters.getUrlToLaunch(), flexRunnerParameters);
+        launchWithSelectedApplication(flexRunnerParameters.getUrlToLaunch(), launcherParams);
         return null;
       case MainClass:
         // A sort of hack. HtmlOrSwfFilePath field is disabled in UI for MainClass-based run configuration. But it is set correctly in RunMainClassPrecompileTask.execute()
-        launchWithSelectedApplication(flexRunnerParameters.getHtmlOrSwfFilePath(), flexRunnerParameters);
+        launchWithSelectedApplication(flexRunnerParameters.getHtmlOrSwfFilePath(), launcherParams);
         return null;
       case ConnectToRunningFlashPlayer:
         assert false;
@@ -187,8 +226,10 @@ public class FlexRunner extends FlexBaseRunner {
 
   public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {
     return DefaultRunExecutor.EXECUTOR_ID.equals(executorId) &&
-           profile instanceof FlexRunConfiguration &&
-           ((FlexRunConfiguration)profile).getRunnerParameters().getRunMode() != FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer;
+           (profile instanceof FlexIdeRunConfiguration ||
+            (profile instanceof FlexRunConfiguration &&
+             ((FlexRunConfiguration)profile).getRunnerParameters().getRunMode() !=
+             FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer));
   }
 
   @NotNull

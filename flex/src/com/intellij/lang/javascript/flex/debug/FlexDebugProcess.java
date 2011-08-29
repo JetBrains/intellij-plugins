@@ -1338,7 +1338,9 @@ public class FlexDebugProcess extends XDebugProcess {
     }
 
     void launchDebuggedApplication() {
-      FlexBaseRunner.launchWithSelectedApplication(myUrl, myFlexRunnerParameters);
+      FlexBaseRunner.launchWithSelectedApplication(myUrl, new LauncherParameters(myFlexRunnerParameters.getLauncherType(),
+                                                                                 myFlexRunnerParameters.getBrowserFamily(),
+                                                                                 myFlexRunnerParameters.getPlayerPath()));
     }
   }
 

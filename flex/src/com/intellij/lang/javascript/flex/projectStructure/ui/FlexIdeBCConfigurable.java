@@ -2,11 +2,13 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.Nls;
 
 import javax.swing.*;
@@ -73,6 +75,8 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     };
     myDependenciesConfigurable.addFlexSdkListener(myListener);
     initCombos();
+    myOutputFolderField
+      .addBrowseFolderListener(null, null, module.getProject(), FileChooserDescriptorFactory.createSingleFolderDescriptor());
   }
 
   @Nls
@@ -218,7 +222,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     if (!myConfiguration.TARGET_PLAYER.equals(myTargetPlayerCombo.getSelectedItem())) return true;
     if (!myConfiguration.MAIN_CLASS.equals(myMainClassTextField.getText().trim())) return true;
     if (!myConfiguration.OUTPUT_FILE_NAME.equals(myOutputFileNameTextField.getText().trim())) return true;
-    if (!myConfiguration.OUTPUT_FOLDER.equals(myOutputFolderField.getText().trim())) return true;
+    if (!myConfiguration.OUTPUT_FOLDER.equals(FileUtil.toSystemIndependentName(myOutputFolderField.getText().trim()))) return true;
 
     if (myDependenciesConfigurable.isModified()) return true;
     if (myCompilerOptionsConfigurable.isModified()) return true;
@@ -264,7 +268,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     configuration.TARGET_PLAYER = (String)myTargetPlayerCombo.getSelectedItem();
     configuration.MAIN_CLASS = myMainClassTextField.getText().trim();
     configuration.OUTPUT_FILE_NAME = myOutputFileNameTextField.getText().trim();
-    configuration.OUTPUT_FOLDER = myOutputFolderField.getText().trim();
+    configuration.OUTPUT_FOLDER = FileUtil.toSystemIndependentName(myOutputFolderField.getText().trim());
   }
 
   public void reset() {
@@ -277,7 +281,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myTargetPlayerCombo.setSelectedItem(myConfiguration.TARGET_PLAYER);
     myMainClassTextField.setText(myConfiguration.MAIN_CLASS);
     myOutputFileNameTextField.setText(myConfiguration.OUTPUT_FILE_NAME);
-    myOutputFolderField.setText(myConfiguration.OUTPUT_FOLDER);
+    myOutputFolderField.setText(FileUtil.toSystemDependentName(myConfiguration.OUTPUT_FOLDER));
     updateControls();
 
     myDependenciesConfigurable.reset();

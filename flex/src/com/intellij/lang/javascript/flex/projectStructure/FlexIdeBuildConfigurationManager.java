@@ -17,6 +17,8 @@ import com.intellij.openapi.project.ModuleAdapter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -54,8 +56,18 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
     }
   }
 
-  public static FlexIdeBuildConfigurationManager getInstance(final Module module) {
-    assert ModuleType.get(module) == FlexModuleType.getInstance();
+  @Nullable
+  public FlexIdeBuildConfiguration findConfigurationByName(final String name) {
+    for (final FlexIdeBuildConfiguration configuration : myConfigurations) {
+      if (configuration.NAME.equals(name)) {
+        return configuration;
+      }
+    }
+    return null;
+  }
+
+  public static FlexIdeBuildConfigurationManager getInstance(final @NotNull Module module) {
+    assert ModuleType.get(module) == FlexModuleType.getInstance() : ModuleType.get(module).getName() + ", " + module.toString();
     return (FlexIdeBuildConfigurationManager)module.getPicoContainer()
       .getComponentInstance(FlexIdeBuildConfigurationManager.class.getName());
   }

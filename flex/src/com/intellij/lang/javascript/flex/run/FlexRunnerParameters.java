@@ -18,17 +18,13 @@ public class FlexRunnerParameters implements Cloneable {
     HtmlOrSwfFile, Url, MainClass, ConnectToRunningFlashPlayer
   }
 
-  public enum LauncherType {
-    OSDefault, Browser, Player
-  }
-
   private @NotNull String myModuleName = "";
   private @NotNull RunMode myRunMode = RunMode.HtmlOrSwfFile;
   private @NotNull String myHtmlOrSwfFilePath = "";
   private @NotNull String myUrlToLaunch = "http://";
   private @NotNull String myMainClassName = "";
   private boolean myRunTrusted = true;
-  private @NotNull LauncherType myLauncherType = LauncherType.OSDefault;
+  private @NotNull LauncherParameters.LauncherType myLauncherType = LauncherParameters.LauncherType.OSDefault;
   private @NotNull BrowsersConfiguration.BrowserFamily myBrowserFamily = BrowsersConfiguration.BrowserFamily.FIREFOX;
   private @NotNull String myPlayerPath = SystemInfo.isMac
                                          ? "/Applications/Flash Player Debugger.app"
@@ -120,20 +116,20 @@ public class FlexRunnerParameters implements Cloneable {
 
   public void setLauncherTypeRaw(final @NotNull String launcherType) {
     try {
-      myLauncherType = LauncherType.valueOf(launcherType);
+      myLauncherType = LauncherParameters.LauncherType.valueOf(launcherType);
     }
     catch (IllegalArgumentException e) {
-      myLauncherType = LauncherType.OSDefault;
+      myLauncherType = LauncherParameters.LauncherType.OSDefault;
     }
   }
 
   @NotNull
   @Transient
-  public LauncherType getLauncherType() {
+  public LauncherParameters.LauncherType getLauncherType() {
     return myLauncherType;
   }
 
-  public void setLauncherType(final @NotNull LauncherType launcherType) {
+  public void setLauncherType(final @NotNull LauncherParameters.LauncherType launcherType) {
     myLauncherType = launcherType;
   }
 

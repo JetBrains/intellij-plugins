@@ -6,7 +6,6 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -44,7 +43,7 @@ public class AirMobileRunConfigurationType implements ConfigurationType {
   }
 
   public static AirMobileRunConfigurationType getInstance() {
-    return ContainerUtil.findInstance(Extensions.getExtensions(CONFIGURATION_TYPE_EP), AirMobileRunConfigurationType.class);
+    return Extensions.findExtension(CONFIGURATION_TYPE_EP, AirMobileRunConfigurationType.class);
   }
 
   public static ConfigurationFactory getFactory() {

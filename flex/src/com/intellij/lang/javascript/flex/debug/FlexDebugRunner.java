@@ -11,11 +11,10 @@ import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
-import com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters;
-import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
-import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
-import com.intellij.lang.javascript.flex.run.FlexRunnerParameters;
+import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.run.*;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -26,6 +25,7 @@ import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
@@ -47,6 +47,16 @@ public class FlexDebugRunner extends FlexBaseRunner {
   @NotNull
   public String getRunnerId() {
     return "FlexDebugRunner";
+  }
+
+  protected RunContentDescriptor launchFlexIdeConfig(final Module module,
+                                                     final FlexIdeBuildConfiguration config,
+                                                     final FlexIdeRunnerParameters params,
+                                                     final Executor executor,
+                                                     final RunContentDescriptor contentToReuse,
+                                                     final ExecutionEnvironment environment) {
+    // todo implement
+    return null;
   }
 
   protected RunContentDescriptor doLaunch(final Project project,

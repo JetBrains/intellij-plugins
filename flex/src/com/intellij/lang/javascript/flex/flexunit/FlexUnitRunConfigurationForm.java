@@ -10,7 +10,7 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.ModulesComboboxWrapper;
 import com.intellij.lang.javascript.flex.run.FlexLauncherDialog;
 import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
-import com.intellij.lang.javascript.flex.run.FlexRunnerParameters;
+import com.intellij.lang.javascript.flex.run.LauncherParameters;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -62,7 +62,7 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
   private JSReferenceEditor myClassField;
   private ModulesComboboxWrapper myModulesComboboxWrapper;
 
-  private FlexRunnerParameters.LauncherType myLauncherType;
+  private LauncherParameters.LauncherType myLauncherType;
   private BrowsersConfiguration.BrowserFamily myBrowserFamily;
   private String myPlayerPath;
 

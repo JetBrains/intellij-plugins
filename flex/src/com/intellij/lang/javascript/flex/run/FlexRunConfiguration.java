@@ -120,7 +120,7 @@ public class FlexRunConfiguration extends RunConfigurationBase
           throw new RuntimeConfigurationError(FlexBundle.message("flex.run.config.no.html.or.swf.specified"));
         }
         if (!path.toLowerCase().endsWith(".swf")) {
-          if (myRunnerParameters.getLauncherType() == FlexRunnerParameters.LauncherType.Player) {
+          if (myRunnerParameters.getLauncherType() == LauncherParameters.LauncherType.Player) {
             throw new RuntimeConfigurationError(FlexBundle.message("flex.run.config.only.swf.can.be.run.with.flash.player"));
           }
         }
@@ -132,7 +132,7 @@ public class FlexRunConfiguration extends RunConfigurationBase
         catch (MalformedURLException e) {
           throw new RuntimeConfigurationError(FlexBundle.message("flex.run.config.incorrect.url"));
         }
-        if (myRunnerParameters.getLauncherType() == FlexRunnerParameters.LauncherType.Player) {
+        if (myRunnerParameters.getLauncherType() == LauncherParameters.LauncherType.Player) {
           throw new RuntimeConfigurationError(FlexBundle.message("flex.run.config.url.can.not.be.run.with.flash.player"));
         }
         break;
@@ -300,7 +300,7 @@ public class FlexRunConfiguration extends RunConfigurationBase
     return module;
   }
 
-  public static String getLauncherDescription(final FlexRunnerParameters.LauncherType launcherType,
+  public static String getLauncherDescription(final LauncherParameters.LauncherType launcherType,
                                               final BrowsersConfiguration.BrowserFamily browserFamily,
                                               final String playerPath) {
     switch (launcherType) {
@@ -331,7 +331,7 @@ public class FlexRunConfiguration extends RunConfigurationBase
     private FlexSdkComboBoxWithBrowseButton myDebuggerSdkCombo;
     private final Project myProject;
     private ModulesComboboxWrapper myModuleComboboxWrapper;
-    private FlexRunnerParameters.LauncherType myLauncherType;
+    private LauncherParameters.LauncherType myLauncherType;
     private BrowsersConfiguration.BrowserFamily myBrowserFamily;
     private String myPlayerPath;
     private JSClassChooserDialog.PublicInheritor myMainClassFilter;

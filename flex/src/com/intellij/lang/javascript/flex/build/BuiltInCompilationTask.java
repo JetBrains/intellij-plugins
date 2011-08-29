@@ -26,7 +26,7 @@ public class BuiltInCompilationTask extends FlexCompilationTask {
   }
 
   public BuiltInCompilationTask(final @NotNull Module module, final @NotNull FlexIdeBuildConfiguration flexIdeConfig) {
-    super(module.getName() + " (" + flexIdeConfig.NAME + ")", module, null, null, flexIdeConfig);
+    super(flexIdeConfig.NAME + " (" + module.getName() + ")", module, null, null, flexIdeConfig);
     myBuiltInFlexCompilerHandler = FlexCompilerHandler.getInstance(module.getProject()).getBuiltInFlexCompilerHandler();
   }
 

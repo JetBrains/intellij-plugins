@@ -56,9 +56,9 @@ public class FlashPlayerTrustUtil {
   private FlashPlayerTrustUtil() {
   }
 
-  public static void trustSwfIfNeeded(final @NotNull Project project,
-                                      final boolean isDebug,
-                                      final @NotNull FlexRunnerParameters runnerParameters) {
+  public static void updateTrustedStatus(final @NotNull Project project,
+                                         final boolean isDebug,
+                                         final @NotNull FlexRunnerParameters runnerParameters) {
     if (FlexBaseRunner.isRunAsAir(runnerParameters)) {
       return;
     }
@@ -74,13 +74,20 @@ public class FlashPlayerTrustUtil {
       return;
     }
 
-    final VirtualFile ideaCfgFile = getIdeaUserTrustConfigFile(project, isDebug, runnerParameters.isRunTrusted());
+    updateTrustedStatus(project, runnerParameters.isRunTrusted(), isDebug, trustedSwfPaths);
+  }
+
+  public static void updateTrustedStatus(final Project project,
+                                         final boolean trustedStatus,
+                                         final boolean isDebug,
+                                         final String... swfPaths) {
+    final VirtualFile ideaCfgFile = getIdeaUserTrustConfigFile(project, isDebug, trustedStatus);
     if (ideaCfgFile == null) {
       return;
     }
 
     try {
-      fixIdeaCfgFileContentIfNeeded(ideaCfgFile, trustedSwfPaths, runnerParameters.isRunTrusted());
+      fixIdeaCfgFileContentIfNeeded(ideaCfgFile, swfPaths, trustedStatus);
     }
     catch (IOException e) {
       // always show

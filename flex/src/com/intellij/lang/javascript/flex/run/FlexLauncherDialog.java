@@ -29,7 +29,7 @@ public class FlexLauncherDialog extends DialogWrapper {
   private final Project myProject;
 
   public FlexLauncherDialog(final Project project,
-                            final FlexRunnerParameters.LauncherType launcherType,
+                            final LauncherParameters.LauncherType launcherType,
                             final BrowsersConfiguration.BrowserFamily browserFamily,
                             final String playerPath) {
     super(project);
@@ -44,6 +44,10 @@ public class FlexLauncherDialog extends DialogWrapper {
     updateControls();
 
     init();
+  }
+
+  public FlexLauncherDialog(final Project project, final LauncherParameters launcherParameters) {
+    this(project, launcherParameters.getLauncherType(), launcherParameters.getBrowserFamily(), launcherParameters.getPlayerPath());
   }
 
   private void initRadioButtons() {
@@ -78,12 +82,12 @@ public class FlexLauncherDialog extends DialogWrapper {
                                });
   }
 
-  private void initControls(final FlexRunnerParameters.LauncherType launcherType,
+  private void initControls(final LauncherParameters.LauncherType launcherType,
                             final BrowsersConfiguration.BrowserFamily browserFamily,
                             final String playerPath) {
-    myDefaultOSApplicationRadioButton.setSelected(launcherType == FlexRunnerParameters.LauncherType.OSDefault);
-    myBrowserRadioButton.setSelected(launcherType == FlexRunnerParameters.LauncherType.Browser);
-    myPlayerRadioButton.setSelected(launcherType == FlexRunnerParameters.LauncherType.Player);
+    myDefaultOSApplicationRadioButton.setSelected(launcherType == LauncherParameters.LauncherType.OSDefault);
+    myBrowserRadioButton.setSelected(launcherType == LauncherParameters.LauncherType.Browser);
+    myPlayerRadioButton.setSelected(launcherType == LauncherParameters.LauncherType.Player);
     myBrowserSelector.setSelectedBrowser(browserFamily);
     myPlayerTextWithBrowse.setText(FileUtil.toSystemDependentName(playerPath));
   }
@@ -97,10 +101,10 @@ public class FlexLauncherDialog extends DialogWrapper {
     return myMainPanel;
   }
 
-  public FlexRunnerParameters.LauncherType getLauncherType() {
+  public LauncherParameters.LauncherType getLauncherType() {
     return myPlayerRadioButton.isSelected()
-           ? FlexRunnerParameters.LauncherType.Player
-           : myBrowserRadioButton.isSelected() ? FlexRunnerParameters.LauncherType.Browser : FlexRunnerParameters.LauncherType.OSDefault;
+           ? LauncherParameters.LauncherType.Player
+           : myBrowserRadioButton.isSelected() ? LauncherParameters.LauncherType.Browser : LauncherParameters.LauncherType.OSDefault;
   }
 
   @Nullable
@@ -110,5 +114,11 @@ public class FlexLauncherDialog extends DialogWrapper {
 
   public String getPlayerPath() {
     return FileUtil.toSystemIndependentName(myPlayerTextWithBrowse.getText().trim());
+  }
+
+  public LauncherParameters getLauncherParameters() {
+    final BrowsersConfiguration.BrowserFamily browserFamily = getBrowserFamily();
+    return new LauncherParameters(getLauncherType(), browserFamily == null ? BrowsersConfiguration.BrowserFamily.FIREFOX : browserFamily,
+                                  getPlayerPath());
   }
 }

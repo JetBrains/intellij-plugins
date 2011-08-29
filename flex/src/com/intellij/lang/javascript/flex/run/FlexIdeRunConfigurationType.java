@@ -3,41 +3,36 @@ package com.intellij.lang.javascript.flex.run;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.lang.javascript.flex.FlexFacetType;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Maxim.Mossienko
- * Date: Dec 27, 2007
- * Time: 11:21:51 PM
- * To change this template use File | Settings | File Templates.
- */
-public class FlexRunConfigurationType implements ConfigurationType {
+public class FlexIdeRunConfigurationType implements ConfigurationType {
+
   private final ConfigurationFactory myFactory;
 
-  public FlexRunConfigurationType() {
+  public FlexIdeRunConfigurationType() {
     myFactory = new ConfigurationFactory(this) {
       public RunConfiguration createTemplateConfiguration(Project project) {
-        return new FlexRunConfiguration(project, this, "");
+        return new FlexIdeRunConfiguration(project, this, "");
       }
     };
   }
 
   public String getDisplayName() {
-    return "Flex";
+    return "Flash App";
   }
 
   public String getConfigurationTypeDescription() {
-    return "Flex run configuration";
+    return "Flash run configuration";
   }
 
   public Icon getIcon() {
-    return FlexFacetType.ourFlexIcon;
+    //todo how to show different icons for different run configurations? (based of target platform of BC)
+    return PlatformIcons.CUSTOM_FILE_ICON;
   }
 
   public ConfigurationFactory[] getConfigurationFactories() {
@@ -46,11 +41,11 @@ public class FlexRunConfigurationType implements ConfigurationType {
 
   @NotNull
   public String getId() {
-    return "FlexRunConfigurationType";
+    return "FlexIdeRunConfigurationType";
   }
 
-  public static FlexRunConfigurationType getInstance() {
-    return Extensions.findExtension(CONFIGURATION_TYPE_EP, FlexRunConfigurationType.class);
+  public static FlexIdeRunConfigurationType getInstance() {
+    return Extensions.findExtension(CONFIGURATION_TYPE_EP, FlexIdeRunConfigurationType.class);
   }
 
   public static ConfigurationFactory getFactory() {

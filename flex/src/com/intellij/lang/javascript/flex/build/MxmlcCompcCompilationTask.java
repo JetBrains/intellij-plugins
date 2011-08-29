@@ -27,7 +27,7 @@ public class MxmlcCompcCompilationTask extends FlexCompilationTask {
   }
 
   public MxmlcCompcCompilationTask(final @NotNull Module module, final @NotNull FlexIdeBuildConfiguration flexIdeConfig) {
-    super(module.getName() + " (" + flexIdeConfig.NAME + ")", module, null, null, flexIdeConfig);
+    super(flexIdeConfig.NAME + " (" + module.getName() + ")", module, null, null, flexIdeConfig);
   }
 
   protected void doStart(final FlexCompilationManager compilationManager) throws IOException {
