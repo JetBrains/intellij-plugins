@@ -46,6 +46,7 @@ public class SdkPathCombo extends ComboboxWithBrowseButton implements TextAccess
           @Override
           public void consume(String s) {
             setText(FileUtil.toSystemDependentName(s));
+            myEventDispatcher.getMulticaster().stateChanged(new ChangeEvent(SdkPathCombo.this));
           }
         });
       }
