@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.flex {
 import flash.display.BlendMode;
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.display.Stage;
 import flash.geom.Point;
 import flash.system.ApplicationDomain;
@@ -85,6 +86,14 @@ internal final class ElementUtilImpl implements ElementUtil {
             }
           }
         }
+      }
+    }
+
+    // IDEA-72691
+    if (object != null && currentDomain.hasDefinition("mx.controls.scrollClasses.ScrollBar")) {
+      if (object.parent is Class(currentDomain.getDefinition("mx.controls.scrollClasses.ScrollBar"))) {
+        var p:DisplayObjectContainer = object.parent.parent;
+        return p is SystemManagerSB ? object.parent : p;
       }
     }
 
