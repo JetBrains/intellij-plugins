@@ -33,7 +33,7 @@ public class LinkageType {
   }
 
   private static final LinkageType[] FRAMEWORK_LINKAGE_VALUES = new LinkageType[]{Default, Merged, RSL, External, Include};
-  private static final LinkageType[] SWC_LINKAGE_VALUES = new LinkageType[]{Merged, RSL, External, Include, LoadInRuntime};
+  private static final LinkageType[] SWC_LINKAGE_VALUES = new LinkageType[]{Merged, RSL, External, Include};
 
   private LinkageType(String serializedText, String longText, String shortText) {
     myLongText = longText;

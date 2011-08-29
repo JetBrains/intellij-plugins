@@ -166,15 +166,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
 
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-      LinkageType[] linkageTypes;
-      if (myItem instanceof BCItem &&
-          ((BCItem)myItem).configurable.getOutputType() == FlexIdeBuildConfiguration.OutputType.RuntimeLoadedModule) {
-        linkageTypes = new LinkageType[]{LinkageType.LoadInRuntime};
-      }
-      else {
-        linkageTypes = LinkageType.getSwcLinkageValues();
-      }
-      ComboBoxModel model = new CollectionComboBoxModel(Arrays.asList(linkageTypes), value);
+      ComboBoxModel model = new CollectionComboBoxModel(Arrays.asList(LinkageType.getSwcLinkageValues()), value);
       model.setSelectedItem(value);
       myCombo = new ComboBox(model, table.getColumnModel().getColumn(1).getWidth());
       myCombo.setRenderer(new ListCellRendererWrapper(myCombo.getRenderer()) {
