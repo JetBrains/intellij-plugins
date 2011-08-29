@@ -2,16 +2,16 @@ package com.google.jstestdriver.idea.assertFramework.qunit;
 
 import com.google.common.collect.Maps;
 import com.google.jstestdriver.idea.assertFramework.Annotation;
+import com.google.jstestdriver.idea.assertFramework.CompoundId;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.util.TextRange;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MarkedQUnitStructureUtils {
+class MarkedQUnitStructureBuilder {
 
   private static final Pattern MODULE_PATTERN = Pattern.compile("/\\*module (.+?)\\*/");
   private static final Pattern MODULE_END_PATTERN = Pattern.compile("/\\*moduleEnd (.+?)\\*/");
@@ -19,7 +19,7 @@ public class MarkedQUnitStructureUtils {
   private static final Pattern TEST_PATTERN = Pattern.compile("/\\*test (.+?)\\*/");
   private static final Pattern TEST_END_PATTERN = Pattern.compile("/\\*testEnd (.+?)\\*/");
 
-  private MarkedQUnitStructureUtils() {
+  private MarkedQUnitStructureBuilder() {
   }
 
   public static MarkedQUnitFileStructure buildMarkedQUnitFileStructureByFileText(String fileText, JSFile jsFile) {
@@ -38,7 +38,7 @@ public class MarkedQUnitStructureUtils {
   private static void assignTestsToModules(MarkedQUnitFileStructure markedQUnitFileStructure,
                                            Collection<MarkedQUnitTestMethodStructure> markedQUnitTestStructures) {
     for (MarkedQUnitTestMethodStructure markedQUnitTestStructure : markedQUnitTestStructures) {
-      MarkedQUnitModuleStructure markedQUnitModuleStructure = markedQUnitFileStructure.findById(markedQUnitTestStructure.getTestCaseId());
+      MarkedQUnitModuleStructure markedQUnitModuleStructure = markedQUnitFileStructure.findById(markedQUnitTestStructure.getModuleId());
       markedQUnitModuleStructure.addTestStructure(markedQUnitTestStructure);
     }
   }
@@ -46,8 +46,8 @@ public class MarkedQUnitStructureUtils {
   private static void handleBeginOfMarkedModule(MarkedQUnitFileStructure markedQUnitFileStructure, String fileText) {
     Matcher moduleMatcher = MODULE_PATTERN.matcher(fileText);
     while (moduleMatcher.find()) {
-      Annotation annotation = new Annotation("module", moduleMatcher.start(), moduleMatcher.end(), moduleMatcher.group(1));
-      int id = MarkedQUnitModuleStructure.getId(annotation);
+      Annotation annotation = Annotation.fromMatcher(moduleMatcher);
+      int id = annotation.getPositiveIntId();
       MarkedQUnitModuleStructure markedQUnitModuleStructure = markedQUnitFileStructure.findById(id);
       if (markedQUnitModuleStructure != null) {
         throw new RuntimeException("Duplicated module with id " + id + " found");
@@ -60,13 +60,13 @@ public class MarkedQUnitStructureUtils {
   private static void handleEndOfMarkedModule(MarkedQUnitFileStructure markedQUnitFileStructure, String fileText, JSFile jsFile) {
     Matcher moduleEndMatcher = MODULE_END_PATTERN.matcher(fileText);
     while (moduleEndMatcher.find()) {
-      Annotation endAnnotation = new Annotation("moduleEnd", moduleEndMatcher.start(), moduleEndMatcher.end(), moduleEndMatcher.group(1));
-      int moduleId = MarkedQUnitModuleStructure.getId(endAnnotation);
+      Annotation endAnnotation = Annotation.fromMatcher(moduleEndMatcher);
+      int moduleId = endAnnotation.getPositiveIntId();
       MarkedQUnitModuleStructure markedQUnitModuleStructure = markedQUnitFileStructure.findById(moduleId);
       if (markedQUnitModuleStructure == null) {
         throw new RuntimeException("'" + moduleEndMatcher.group() + "' references undefined module");
       }
-      markedQUnitModuleStructure.endEncountered(TextRange.create(moduleEndMatcher.start(), moduleEndMatcher.end()), jsFile);
+      markedQUnitModuleStructure.endAnnotationEncountered(TextRange.create(moduleEndMatcher.start(), moduleEndMatcher.end()), jsFile);
     }
   }
 
@@ -77,7 +77,7 @@ public class MarkedQUnitStructureUtils {
   }
 
   private static Collection<MarkedQUnitTestMethodStructure> buildMarkedQUnitTestStructures(String fileText, JSFile jsFile) {
-    Map<String, MarkedQUnitTestMethodStructure> markedTestStructureMap = Maps.newHashMap();
+    Map<CompoundId, MarkedQUnitTestMethodStructure> markedTestStructureMap = Maps.newHashMap();
     handleBeginOfMarkedQUnitTest(markedTestStructureMap, fileText);
     handleEndOfMarkedQUnitTest(markedTestStructureMap, fileText, jsFile);
 
@@ -90,11 +90,11 @@ public class MarkedQUnitStructureUtils {
     return markedQUnitTestStructures;
   }
 
-  private static void handleBeginOfMarkedQUnitTest(Map<String, MarkedQUnitTestMethodStructure> markedQUniTestStructureMap, String fileText) {
+  private static void handleBeginOfMarkedQUnitTest(Map<CompoundId, MarkedQUnitTestMethodStructure> markedQUniTestStructureMap, String fileText) {
     Matcher testMatcher = TEST_PATTERN.matcher(fileText);
     while (testMatcher.find()) {
-      Annotation annotation = new Annotation("test", testMatcher.start(), testMatcher.end(), testMatcher.group(1));
-      String testId = MarkedQUnitTestMethodStructure.getId(annotation);
+      Annotation annotation = Annotation.fromMatcher(testMatcher);
+      CompoundId testId = annotation.getCompoundId();
       MarkedQUnitTestMethodStructure markedQUnitTestStructure = markedQUniTestStructureMap.get(testId);
       if (markedQUnitTestStructure != null) {
         throw new RuntimeException("Test with id " + testId + " is duplicated");
@@ -104,26 +104,17 @@ public class MarkedQUnitStructureUtils {
     }
   }
 
-  private static void handleEndOfMarkedQUnitTest(Map<String, MarkedQUnitTestMethodStructure> markedQUnitTestStructureMap, String fileText, JSFile jsFile) {
+  private static void handleEndOfMarkedQUnitTest(Map<CompoundId, MarkedQUnitTestMethodStructure> markedQUnitTestStructureMap, String fileText, JSFile jsFile) {
     Matcher testEndMatcher = TEST_END_PATTERN.matcher(fileText);
     while (testEndMatcher.find()) {
-      Annotation annotation = new Annotation("testEnd", testEndMatcher.start(), testEndMatcher.end(), testEndMatcher.group(1));
-      String testId = MarkedQUnitTestMethodStructure.getId(annotation);
+      Annotation annotation = Annotation.fromMatcher(testEndMatcher);
+      CompoundId testId = annotation.getCompoundId();
       MarkedQUnitTestMethodStructure markedQUnitTestStructure = markedQUnitTestStructureMap.get(testId);
       if (markedQUnitTestStructure == null) {
         throw new RuntimeException("Test with id " + testId + " is not found");
       }
       markedQUnitTestStructure.endEncountered(annotation.getTextRange(), jsFile);
     }
-  }
-
-  @NotNull
-  public static String getRequiredAttributeValue(String attributeKey, Annotation annotation) {
-    String value = annotation.getValue(attributeKey);
-    if (value == null) {
-      throw new RuntimeException("Attribute '" + attributeKey + "' should be specified, " + annotation);
-    }
-    return value;
   }
 
 }

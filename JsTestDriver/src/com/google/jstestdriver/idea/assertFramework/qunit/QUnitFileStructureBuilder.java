@@ -20,20 +20,18 @@ public class QUnitFileStructureBuilder extends AbstractTestFileStructureBuilder 
   }
 
   private static class Builder {
-    private final JSFile myJsFile;
     private final QUnitFileStructure myFileStructure;
     @NotNull
     private QUnitModuleStructure myCurrentModuleStructure;
 
     private Builder(JSFile jsFile) {
-      myJsFile = jsFile;
       myFileStructure = new QUnitFileStructure(jsFile);
       myCurrentModuleStructure = QUnitModuleStructure.newDefaultModule();
       myFileStructure.addModuleStructure(myCurrentModuleStructure);
     }
 
     public QUnitFileStructure build() {
-      List<JSElement> jsElements = JsPsiUtils.listJsElementsInExecutionOrder(myJsFile);
+      List<JSElement> jsElements = JsPsiUtils.listJsElementsInExecutionOrder(myFileStructure.getJsFile());
       for (JSElement jsElement : jsElements) {
         update(jsElement);
       }
@@ -50,7 +48,7 @@ public class QUnitFileStructureBuilder extends AbstractTestFileStructureBuilder 
       }
     }
 
-    private void updateJsCallExpression(JSCallExpression callExpression) {
+    private void updateJsCallExpression(@NotNull JSCallExpression callExpression) {
       JSReferenceExpression methodExpression = CastUtils.tryCast(callExpression.getMethodExpression(), JSReferenceExpression.class);
       JSArgumentList argumentList = callExpression.getArgumentList();
       if (methodExpression != null && argumentList != null) {

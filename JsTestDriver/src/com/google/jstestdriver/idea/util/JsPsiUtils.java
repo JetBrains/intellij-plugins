@@ -226,4 +226,13 @@ public class JsPsiUtils {
     return extractNumberLiteral(jsExpression) != null;
   }
 
+  @Nullable
+  public static JSCallExpression asCallExpressionStatement(JSElement element) {
+    JSExpressionStatement expressionStatement = CastUtils.tryCast(element, JSExpressionStatement.class);
+    if (expressionStatement != null) {
+      return CastUtils.tryCast(expressionStatement.getExpression(), JSCallExpression.class);
+    }
+    return null;
+  }
+
 }

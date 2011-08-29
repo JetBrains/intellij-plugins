@@ -1,5 +1,6 @@
-package com.google.jstestdriver.idea.assertFramework.qunit;
+package com.google.jstestdriver.idea.assertFramework.jasmine;
 
+import com.google.common.collect.Lists;
 import com.google.jstestdriver.idea.JsTestDriverTestUtils;
 import com.google.jstestdriver.idea.assertFramework.Annotation;
 import com.google.jstestdriver.idea.assertFramework.CompoundId;
@@ -10,7 +11,9 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import junit.framework.Assert;
 
-class MarkedQUnitTestMethodStructure {
+import java.util.List;
+
+class MarkedJasmineSuiteStructure extends MarkedJasmineSuiteStructureContainer {
 
   private static final String KEY_NAME = "name";
 
@@ -18,13 +21,10 @@ class MarkedQUnitTestMethodStructure {
   private final String myName;
   private final int myStartPosition;
   private PsiElement myPsiElement;
+  private final List<MarkedJasmineSpecStructure> myInnerSpecStructures = Lists.newArrayList();
 
-  public MarkedQUnitTestMethodStructure(Annotation startAnnotation) {
-    CompoundId id = startAnnotation.getCompoundId();
-    if (id.getComponentCount() != 2) {
-      throw new RuntimeException("Malformed test id: " + id + ", " + this);
-    }
-    myId = id;
+  public MarkedJasmineSuiteStructure(Annotation startAnnotation) {
+    myId = startAnnotation.getCompoundId();
     myName = startAnnotation.getRequiredValue(KEY_NAME);
     myStartPosition = startAnnotation.getTextRange().getEndOffset();
   }
@@ -33,15 +33,11 @@ class MarkedQUnitTestMethodStructure {
     return myId;
   }
 
-  public int getModuleId() {
-    return myId.getFirstComponent();
-  }
-
   public String getName() {
     return myName;
   }
 
-  public void endEncountered(TextRange endAnnotationTextRange, JSFile jsFile) {
+  public void endAnnotationEncountered(TextRange endAnnotationTextRange, JSFile jsFile) {
     if (myPsiElement != null) {
       throw new RuntimeException("End annotation is already encountered");
     }
@@ -49,15 +45,22 @@ class MarkedQUnitTestMethodStructure {
     myPsiElement = JsTestDriverTestUtils.findExactPsiElement(jsFile, TextRange.create(myStartPosition, endPosition));
   }
 
-  public void validateBuiltStructure() {
+  public void validate() {
     JSCallExpression jsCallExpression = CastUtils.tryCast(myPsiElement, JSCallExpression.class);
     if (jsCallExpression == null) {
-      Assert.fail("Unable to find underlying " + JSCallExpression.class + " for " + this + ", found: " + myPsiElement);
+      Assert.fail("Unable to find underlying " + JSCallExpression.class + " for " + this);
     }
   }
 
-  public JSCallExpression getCallExpression() {
-    return (JSCallExpression) myPsiElement;
+  public PsiElement getPsiElement() {
+    return myPsiElement;
   }
 
+  public void addSpecStructure(MarkedJasmineSpecStructure specStructure) {
+    myInnerSpecStructures.add(specStructure);
+  }
+
+  public List<MarkedJasmineSpecStructure> getInnerSpecStructures() {
+    return myInnerSpecStructures;
+  }
 }

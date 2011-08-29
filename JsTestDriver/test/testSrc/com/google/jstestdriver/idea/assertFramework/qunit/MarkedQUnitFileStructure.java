@@ -5,7 +5,7 @@ import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.Map;
 
-public class MarkedQUnitFileStructure {
+class MarkedQUnitFileStructure {
 
   private final Map<Integer, MarkedQUnitModuleStructure> myModules = Maps.newHashMap();
 

@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MarkedJstdTestStructureUtils {
+class MarkedJstdTestStructureUtils {
 
   private static final Pattern TEST_CASE_PATTERN = Pattern.compile("/\\*TestCase (.+?)\\*/");
   private static final Pattern TEST_CASE_END_PATTERN = Pattern.compile("/\\*TestCaseEnd id:(\\d+?)\\*/");

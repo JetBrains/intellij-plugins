@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractTestFileStructure {
 
-  private JSFile myJsFile;
+  private final JSFile myJsFile;
 
   public AbstractTestFileStructure(@NotNull JSFile jsFile) {
     myJsFile = jsFile;
