@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension;
 import com.intellij.lang.javascript.flex.projectStructure.options.*;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.fileChooser.FileChooser;
@@ -46,8 +47,10 @@ import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.ColumnInfo;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -80,16 +83,16 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
   private final Disposable myDisposable;
   private final AnActionButton myEditAction;
+  private final AnActionButton myRemoveButton;
 
   private abstract static class MyTableItem {
-    public final DependencyType dependencyType = new DependencyType();
-
     public abstract String getText();
 
     public abstract Icon getIcon();
   }
 
   private static class BCItem extends MyTableItem {
+    public final DependencyType dependencyType = new DependencyType();
     public final FlexIdeBCConfigurable configurable;
     public final String moduleName;
     public final String bcName;
@@ -127,6 +130,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   private static class ModuleLibraryItem extends MyTableItem {
+    public final DependencyType dependencyType = new DependencyType();
     public final ModuleLibraryEntry libraryEntry;
 
     public ModuleLibraryItem(ModuleLibraryEntry libraryEntry) {
@@ -149,6 +153,24 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     @Override
     public Icon getIcon() {
       return PlatformIcons.LIBRARY_ICON;
+    }
+  }
+
+  private static class SdkItem extends MyTableItem {
+    private final SdkEntry mySdk;
+
+    public SdkItem(SdkEntry sdk) {
+      mySdk = sdk;
+    }
+
+    @Override
+    public String getText() {
+      return MessageFormat.format("Flex SDK {0}", mySdk.detectFlexVersion());
+    }
+
+    @Override
+    public Icon getIcon() {
+      return FlexSdkType.getInstance().getIcon();
     }
   }
 
@@ -205,18 +227,43 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     @Override
     public LinkageType valueOf(MyTableItem item) {
-      return item.dependencyType.getLinkageType();
+      if (item instanceof BCItem) {
+        return ((BCItem)item).dependencyType.getLinkageType();
+      }
+      else if (item instanceof ModuleLibraryItem) {
+        return ((ModuleLibraryItem)item).dependencyType.getLinkageType();
+      }
+      else {
+        return null;
+      }
     }
 
     @Override
     public void setValue(MyTableItem item, LinkageType linkageType) {
-      item.dependencyType.setLinkageType(linkageType);
+      if (item instanceof BCItem) {
+        ((BCItem)item).dependencyType.setLinkageType(linkageType);
+      }
+      else if (item instanceof ModuleLibraryItem) {
+        ((ModuleLibraryItem)item).dependencyType.setLinkageType(linkageType);
+      }
+      else {
+        throw new IllegalArgumentException("unsupported item type: " + item);
+      }
     }
 
     @Override
     public TableCellRenderer getRenderer(MyTableItem item) {
-      boolean invalid = item instanceof BCItem && ((BCItem)item).configurable == null;
-      return invalid ? EMPTY_RENDERER : LINKAGE_TYPE_RENDERER;
+      boolean showLinkage;
+      if (item instanceof BCItem) {
+        showLinkage = ((BCItem)item).configurable != null;
+      }
+      else if (item instanceof ModuleLibraryItem) {
+        showLinkage = true;
+      }
+      else {
+        showLinkage = false;
+      }
+      return showLinkage ? LINKAGE_TYPE_RENDERER : EMPTY_RENDERER;
     }
 
     @Override
@@ -290,6 +337,15 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     myTable.setRootVisible(false);
     myTable.getTree().setLineStyleAngled();
 
+    // we need to add listener *before* ToolbarDecorator's, so our listener is invoked after it
+    myTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      @Override
+      public void valueChanged(ListSelectionEvent e) {
+        updateEditButton();
+        updateRemoveButton();
+      }
+    });
+
     ToolbarDecorator d = ToolbarDecorator.createDecorator(myTable);
     d.setAddAction(new AnActionButtonRunnable() {
       @Override
@@ -303,18 +359,18 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         removeSelection();
       }
     });
-    d.setUpAction(new AnActionButtonRunnable() {
-      @Override
-      public void run(AnActionButton anActionButton) {
-        moveSelection(-1);
-      }
-    });
-    d.setDownAction(new AnActionButtonRunnable() {
-      @Override
-      public void run(AnActionButton anActionButton) {
-        moveSelection(1);
-      }
-    });
+    //d.setUpAction(new AnActionButtonRunnable() {
+    //  @Override
+    //  public void run(AnActionButton anActionButton) {
+    //    moveSelection(-1);
+    //  }
+    //});
+    //d.setDownAction(new AnActionButtonRunnable() {
+    //  @Override
+    //  public void run(AnActionButton anActionButton) {
+    //    moveSelection(1);
+    //  }
+    //});
     myEditAction = new AnActionButton(ProjectBundle.message("module.classpath.button.edit"), IconUtil.getEditIcon()) {
       @Override
       public void actionPerformed(AnActionEvent e) {
@@ -323,14 +379,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
     };
     d.addExtraAction(myEditAction);
-    myTablePanel.add(d.createPanel(), BorderLayout.CENTER);
-
-    myTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      @Override
-      public void valueChanged(ListSelectionEvent e) {
-        updateEditButton();
-      }
-    });
+    JPanel panel = d.createPanel();
+    myTablePanel.add(panel, BorderLayout.CENTER);
+    myRemoveButton = ToolbarDecorator.findRemoveButton(panel);
 
     myTable.addMouseListener(new MouseAdapter() {
       @Override
@@ -358,6 +409,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       @Override
       public void moduleRemoved(Module module) {
         List<Integer> rowsToRemove = new ArrayList<Integer>();
+        // 1st-level nodes are always visible
+        // 2nd-level nodes cannot refer to BC
         for (int row = 0; row < myTable.getRowCount(); row++) {
           MyTableItem item = myTable.getItemAt(row);
           if (item instanceof BCItem) {
@@ -383,6 +436,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
           return;
         }
 
+        // 1st-level nodes are always visible
+        // 2nd-level nodes cannot refer to BC
         for (int row = 0; row < myTable.getRowCount(); row++) {
           MyTableItem item = myTable.getItemAt(row);
           if (item instanceof BCItem && ((BCItem)item).configurable == configurable) {
@@ -394,12 +449,33 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         }
       }
     }, myDisposable);
+
+    mySdkPanel.addListener(new ChangeListener() {
+      @Override
+      public void stateChanged(ChangeEvent e) {
+        updateSdkTableItem(mySdkPanel.getCurrentSdk());
+        myTable.refresh();
+      }
+    });
   }
 
   private void updateEditButton() {
     boolean librarySelected =
       myTable.getSelectedRowCount() == 1 && myTable.getItemAt(myTable.getSelectedRow()) instanceof ModuleLibraryItem;
     myEditAction.setEnabled(librarySelected);
+  }
+
+  private void updateRemoveButton() {
+    myRemoveButton.setEnabled(canDeleteSelection());
+  }
+
+  private boolean canDeleteSelection() {
+    if (myTable.getSelectedRowCount() == 0) return false;
+    for (int row : myTable.getSelectedRows()) {
+      MyTableItem item = myTable.getItemAt(row);
+      if (item instanceof SdkItem) return false;
+    }
+    return true;
   }
 
   private void editLibrary(ModuleLibraryEntry entry) {
@@ -545,6 +621,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     if (myDependencies.FRAMEWORK_LINKAGE != myFrameworkLinkageCombo.getSelectedItem()) return true;
 
     List<MyTableItem> items = myTable.getItems();
+    if (!items.isEmpty() && items.get(0) instanceof SdkItem) {
+      // SDK item is always first
+      items = items.subList(1, items.size());
+    }
     List<DependencyEntry> entries = myDependencies.getEntries();
     if (items.size() != entries.size()) return true;
     for (int i = 0; i < items.size(); i++) {
@@ -564,6 +644,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
           if (bcItem.moduleName.equals(bcEntry.getModuleName())) return true;
           if (bcItem.bcName.equals(bcEntry.getBcName())) return true;
         }
+        if (!bcItem.dependencyType.isEqual(entry.getDependencyType())) return true;
       }
       else if (item instanceof ModuleLibraryItem) {
         if (!(entry instanceof ModuleLibraryEntry)) {
@@ -574,8 +655,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         if (!libraryEntry.isEqual(libraryItem.libraryEntry)) {
           return true;
         }
+        if (!libraryItem.dependencyType.isEqual(entry.getDependencyType())) return true;
       }
-      if (!item.dependencyType.isEqual(entry.getDependencyType())) return true;
     }
     return false;
   }
@@ -599,16 +680,21 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         else {
           entry = new BuildConfigurationEntry(myProject, ((BCItem)item).moduleName, ((BCItem)item).bcName);
         }
+        ((BCItem)item).dependencyType.applyTo(entry.getDependencyType());
+        dependencies.getEntries().add(entry);
       }
       else if (item instanceof ModuleLibraryItem) {
         entry = new ModuleLibraryEntry();
         ((ModuleLibraryItem)item).libraryEntry.applyTo((ModuleLibraryEntry)entry);
+        ((ModuleLibraryItem)item).dependencyType.applyTo(entry.getDependencyType());
+        dependencies.getEntries().add(entry);
+      }
+      else if (item instanceof SdkItem) {
+        // ignore
       }
       else {
         throw new IllegalArgumentException("unexpected item type: " + item);
       }
-      item.dependencyType.applyTo(entry.getDependencyType());
-      dependencies.getEntries().add(entry);
     }
 
     SdkEntry currentSdk = mySdkPanel.getCurrentSdk();
@@ -623,6 +709,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     DefaultMutableTreeNode root = myTable.getRoot();
     root.removeAllChildren();
+
+    if (sdk != null) {
+      myTable.getRoot().insert(new DefaultMutableTreeNode(new SdkItem(sdk), true), 0);
+    }
     FlexIdeBCConfigurator configurator = FlexIdeModuleStructureExtension.getInstance().getConfigurator();
     for (DependencyEntry entry : myDependencies.getEntries()) {
       MyTableItem item = null;
@@ -642,17 +732,30 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         else {
           item = new BCItem(configurable);
         }
+        entry.getDependencyType().applyTo(((BCItem)item).dependencyType);
       }
       else if (entry instanceof ModuleLibraryEntry) {
         item = new ModuleLibraryItem(((ModuleLibraryEntry)entry).getCopy());
+        entry.getDependencyType().applyTo(((ModuleLibraryItem)item).dependencyType);
       }
       if (item != null) {
-        entry.getDependencyType().applyTo(item.dependencyType);
         root.add(new DefaultMutableTreeNode(item, false));
       }
     }
     myTable.refresh();
     updateEditButton();
+  }
+
+  private void updateSdkTableItem(@Nullable SdkEntry sdk) {
+    for (int row = 0; row < myTable.getRowCount(); row++) {
+      if (myTable.getItemAt(row) instanceof SdkItem) {
+        myTable.getRoot().remove(row);
+      }
+    }
+
+    if (sdk != null) {
+      myTable.getRoot().insert(new DefaultMutableTreeNode(new SdkItem(sdk), true), 0);
+    }
   }
 
   public void disposeUIResources() {

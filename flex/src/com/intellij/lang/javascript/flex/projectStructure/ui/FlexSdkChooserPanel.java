@@ -130,7 +130,7 @@ public class FlexSdkChooserPanel {
       }
     }
     else {
-      myInfoLabel.setText(MessageFormat.format("Flex: {0}", mySdk.detectFlexVersion()));
+      myInfoLabel.setText("");
     }
   }
 
