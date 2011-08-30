@@ -89,7 +89,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   }
 
   public String getBannerSlogan() {
-    return "Build Configuration '" + myConfiguration.NAME + "'";
+    return "Build Configuration '" + myName + "'";
   }
 
   public String getModuleName() {
