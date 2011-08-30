@@ -16,6 +16,8 @@ public class LinkageType {
   public static final LinkageType Include = new LinkageType("Include", "Include", "Include");
   public static final LinkageType LoadInRuntime = new LinkageType("Loaded", "Loaded in runtime", "Loaded");
 
+  private static final LinkageType[] SWC_LINKAGE_VALUES = new LinkageType[]{Merged, RSL, External, Include};
+
   private final String myLongText;
   private final String myShortText;
   private final String mySerializedText;
@@ -31,9 +33,6 @@ public class LinkageType {
   public String getShortText() {
     return myShortText;
   }
-
-  private static final LinkageType[] FRAMEWORK_LINKAGE_VALUES = new LinkageType[]{Default, Merged, RSL, External, Include};
-  private static final LinkageType[] SWC_LINKAGE_VALUES = new LinkageType[]{Merged, RSL, External, Include};
 
   private LinkageType(String serializedText, String longText, String shortText) {
     myLongText = longText;
@@ -54,10 +53,6 @@ public class LinkageType {
       }
     }
     throw new IllegalArgumentException("Unknown linkage type: " + linkageType);
-  }
-
-  public static LinkageType[] frameworkLinkageValues() {
-    return FRAMEWORK_LINKAGE_VALUES;
   }
 
   public static LinkageType[] getSwcLinkageValues() {
