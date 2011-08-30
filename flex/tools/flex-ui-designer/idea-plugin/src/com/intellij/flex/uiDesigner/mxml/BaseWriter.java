@@ -241,7 +241,7 @@ final class BaseWriter {
 
   public void writeObjectHeader(int className) {
     out.writeUInt29(className);
-    out.getByteOut().allocate(2);
+    out.allocateClearShort();
   }
 
   public void writeDocumentFactoryReference(int reference) {
@@ -327,6 +327,15 @@ final class BaseWriter {
     out.write(Amf3Types.OBJECT);
     writeObjectHeader(className);
     write("1");
+  }
+
+  public void writeConstructorHeader() {
+    write("1");
+  }
+
+  public void writeArrayHeader(int length) {
+    out.write(Amf3Types.ARRAY);
+    out.writeShort(length);
   }
 
   public void writeConstructorHeader(String className, int reference) {

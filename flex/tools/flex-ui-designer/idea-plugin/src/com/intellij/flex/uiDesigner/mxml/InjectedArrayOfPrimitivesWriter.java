@@ -1,30 +1,18 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-import com.intellij.flex.uiDesigner.io.Amf3Types;
+import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
-import com.intellij.lang.javascript.psi.JSExpression;
-import com.intellij.lang.javascript.psi.JSLiteralExpression;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.lang.javascript.psi.JSArrayLiteralExpression;
 
 class InjectedArrayOfPrimitivesWriter extends AbstractPrimitiveValueWriter {
-  private final JSExpression[] expressions;
+  private final JSArrayLiteralExpression arrayLiteralExpression;
 
-  public InjectedArrayOfPrimitivesWriter(JSExpression[] expressions) {
-    this.expressions = expressions;
+  public InjectedArrayOfPrimitivesWriter(JSArrayLiteralExpression arrayLiteralExpression) {
+    this.arrayLiteralExpression = arrayLiteralExpression;
   }
 
   @Override
-  protected void doWrite(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) {
-    out.write(Amf3Types.ARRAY);
-    out.writeShort(expressions.length);
-    for (int i = 0, expressionsLength = expressions.length; i < expressionsLength; i++) {
-      JSLiteralExpression expression = (JSLiteralExpression)expressions[i];
-      if (expression.isNumericLiteral()) {
-        out.writeAmfDouble(expression.getText());
-      }
-      else {
-        writer.writeString(StringUtil.stripQuotesAroundValue(expression.getText()));
-      }
-    }
+  protected void doWrite(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) throws InvalidPropertyException {
+    ExpressionBinding.writeArrayLiteralExpression(arrayLiteralExpression, out, writer, null);
   }
 }

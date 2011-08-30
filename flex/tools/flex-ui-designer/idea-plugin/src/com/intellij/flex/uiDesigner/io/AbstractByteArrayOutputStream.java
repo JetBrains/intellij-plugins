@@ -42,13 +42,19 @@ public abstract class AbstractByteArrayOutputStream extends OutputStream impleme
     count = newPosition;
   }
 
-  public int allocate(int size) {
-    int insertPosition = count;
+  int allocate(int size) {
+    final int insertPosition = count;
     // we can't simple increment count — we must erase old buffer content
     for (int i = 0; i < size; i++) {
       buffer[count++] = 0;
     }
 
+    return insertPosition;
+  }
+
+  int allocateDirty(int size) {
+    final int insertPosition = count;
+    count += size;
     return insertPosition;
   }
 

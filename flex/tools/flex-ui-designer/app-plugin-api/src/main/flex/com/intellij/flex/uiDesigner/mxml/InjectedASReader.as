@@ -6,9 +6,6 @@ import com.intellij.flex.uiDesigner.io.AmfUtil;
 import flash.utils.IDataInput;
 
 public class InjectedASReader {
-  private static const OBJECT:int = 0;
-  private static const ARRAY:int = 1;
-  
   private var deferredReferenceClass:Class;
   
   public function read(input:IDataInput, reader:MxmlReader):void {
@@ -38,21 +35,22 @@ public class InjectedASReader {
       var target:Object = reader.readObjectReference();
       var propertyName:String = reader.readClassOrPropertyName();
       var type:int = data.readByte();
-      var isStyle:Boolean = data.readBoolean();
+      var isStyle:Boolean = (type & 1) != 0;
+      type >>= 1;
 
       switch (type) {
-        case OBJECT:
+        case BindingType.MXML_OBJECT:
           o = readObjectReference(data, reader, new PropertyBindingTarget(target, propertyName));
           break;
 
-        case ARRAY:
-          const length:int = data.readByte();
-          var array:Array = new Array(length);
-          for (var j:int = 0; j < length; j++) {
-            array[j] = readObjectReference(data, reader, null);
+        case BindingType.VARIABLE:
+          var id:int = AmfUtil.readUInt29(data);
+          if (id == 0) {
+            o = reader.readExpression();
           }
-
-          o = array;
+          else {
+            o = reader.objectTable[id - 1];
+          }
           break;
 
         default:
@@ -101,4 +99,10 @@ public class InjectedASReader {
     return o;
   }
 }
+}
+
+final class BindingType {
+  public static const MXML_OBJECT:int = 0;
+  public static const VARIABLE:int = 1;
+  public static const EXPRESSION:int = 2;
 }

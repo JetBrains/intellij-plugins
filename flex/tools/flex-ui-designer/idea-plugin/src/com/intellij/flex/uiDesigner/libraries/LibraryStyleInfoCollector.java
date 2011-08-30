@@ -35,7 +35,7 @@ public class LibraryStyleInfoCollector implements Consumer<Library> {
   }
 
   private byte[] collectInherited(final VirtualFile jarFile) {
-    bytes.getByteArrayOut().allocate(2);
+    bytes.allocateShort();
 
     final VirtualFile libraryFile = jarFile.findChild("library.swf");
     assert libraryFile != null;

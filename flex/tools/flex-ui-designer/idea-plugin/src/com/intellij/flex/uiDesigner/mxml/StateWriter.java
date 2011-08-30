@@ -414,9 +414,9 @@ class StateWriter {
       }
 
       final int referredObjectsCount = instance.getReferredObjectsCount();
-      out.writeUInt29(out.getBlockOut().getDataRangeOwnLength(instance.getDataRange()) + (referredObjectsCount < 0x80 ? 1 : 2));
+      out.writeUInt29(writer.getBlockOut().getDataRangeOwnLength(instance.getDataRange()) + (referredObjectsCount < 0x80 ? 1 : 2));
       out.writeUInt29(referredObjectsCount);
-      out.getBlockOut().addMarker(new ByteRangeMarker(out.size(), instance.getDataRange()));
+      writer.getBlockOut().addMarker(new ByteRangeMarker(out.size(), instance.getDataRange()));
 
       if (instance.id != -1) {
         out.writeUInt29(instance.id);
@@ -436,7 +436,7 @@ class StateWriter {
     }
 
     for (State state : states) {
-      writer.getBlockOut().allocate(2); // reference
+      out.allocateClearShort(); // reference
       writer.writeProperty(NAME, state.name);
 
       if (!state.overrides.isEmpty()) {

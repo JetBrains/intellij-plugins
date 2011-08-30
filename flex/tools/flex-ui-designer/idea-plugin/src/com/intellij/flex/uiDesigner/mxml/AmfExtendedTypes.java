@@ -14,4 +14,6 @@ public interface AmfExtendedTypes {
   // see info about it in AS
   public int MXML_ARRAY = 50;
   public int MXML_VECTOR = 51;
+
+  public int SIMPLE_OBJECT = 52;
 }

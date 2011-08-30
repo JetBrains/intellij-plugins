@@ -385,7 +385,7 @@ class PropertyProcessor implements ValueWriter {
   private void writeInlineArray(XmlElementValueProvider valueProvider) {
     final PrimitiveAmfOutputStream out = writer.getOut();
     out.write(Amf3Types.ARRAY);
-    final int lengthPosition = writer.getBlockOut().allocate(2);
+    final int lengthPosition = out.allocateShort();
     int validChildrenCount = 0;
     final StringBuilder builder = StringBuilderSpinAllocator.alloc();
     final String value = valueProvider.getTrimmed();

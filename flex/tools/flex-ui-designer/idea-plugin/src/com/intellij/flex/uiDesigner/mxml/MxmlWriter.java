@@ -164,7 +164,7 @@ public class MxmlWriter {
     ByteRange dataRange = null;
     // if state specific property before includeIn, state override data range wil be added before object data range, so,
     // we keep current index and insert at the specified position
-    final int dataRangeIndex = out.getBlockOut().getNextMarkerIndex();
+    final int dataRangeIndex = writer.getBlockOut().getNextMarkerIndex();
 
     out.writeUInt29(writer.P_FUD_POSITION);
     out.writeUInt29(parent.getTextOffset());
@@ -188,7 +188,7 @@ public class MxmlWriter {
               }
 
               // must be before stateWriter.includeIn — start object data range before state data range
-              dataRange = out.getBlockOut().startRange(dataPosition, dataRangeIndex);
+              dataRange = writer.getBlockOut().startRange(dataPosition, dataRangeIndex);
               ((DynamicObjectContext)context).setDataRange(dataRange);
 
               stateWriter.includeInOrExcludeFrom(attribute.getValueElement(), parentContext, (DynamicObjectContext)context, excludeFrom);
@@ -253,7 +253,7 @@ public class MxmlWriter {
     if (dataPosition != -1) {
       writer.endObject();
       if (dataRange != null) {
-        out.getBlockOut().endRange(dataRange);
+        writer.getBlockOut().endRange(dataRange);
       }
     }
 
@@ -278,7 +278,7 @@ public class MxmlWriter {
 
   void processTagChildren(final XmlTag parent, final @Nullable Context context, final @Nullable Context parentContext,
                           boolean propertiesExpected, @Nullable PropertyKind listKind, boolean cssRulesetDefined) {
-    int lengthPosition = listKind == null ? 0 : out.getByteOut().allocate(2);
+    int lengthPosition = listKind == null ? 0 : out.allocateShort();
     int explicitContentOccured = -1;
     int validAndStaticChildrenCount = 0;
     final XmlTagChild[] children = parent.getValue().getChildren();
@@ -313,7 +313,7 @@ public class MxmlWriter {
               continue;
             }
             else if (defaultPropertyKind.isList()) {
-              lengthPosition = out.getByteOut().allocate(2);
+              lengthPosition = out.allocateShort();
               listKind = defaultPropertyKind;
             }
             else if (defaultPropertyKind == PropertyKind.PRIMITIVE) {
@@ -379,7 +379,7 @@ public class MxmlWriter {
             continue;
           }
           else if (defaultPropertyKind.isList()) {
-            lengthPosition = out.getByteOut().allocate(2);
+            lengthPosition = out.allocateShort();
             listKind = defaultPropertyKind;
           }
           else if (defaultPropertyKind == PropertyKind.PRIMITIVE) {
@@ -485,7 +485,7 @@ public class MxmlWriter {
       writer.write(descriptor.getQualifiedName());
     }
 
-    return processElements(tag, parentContext, hasStates && isListItem && parentContext != null, childDataPosition, out.getByteOut().allocate(2));
+    return processElements(tag, parentContext, hasStates && isListItem && parentContext != null, childDataPosition, out.allocateClearShort());
   }
 
   boolean processMxmlVector(XmlTag tag, @Nullable Context parentContext) {
@@ -525,7 +525,7 @@ public class MxmlWriter {
   }
 
   void processDeclarations(XmlTag parent) {
-    final int lengthPosition = out.getBlockOut().allocate(2);
+    final int lengthPosition = out.allocateShort();
     int validChildrenCount = 0;
     for (XmlTag tag : parent.getSubTags()) {
       ClassBackedElementDescriptor descriptor = (ClassBackedElementDescriptor)tag.getDescriptor();

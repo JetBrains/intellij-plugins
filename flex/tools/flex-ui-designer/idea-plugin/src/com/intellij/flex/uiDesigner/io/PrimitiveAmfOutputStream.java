@@ -50,6 +50,14 @@ public class PrimitiveAmfOutputStream extends OutputStream {
     return (BlockDataOutputStream)out;
   }
 
+  public int allocateShort() {
+    return out.allocateDirty(2);
+  }
+
+  public int allocateClearShort() {
+    return out.allocate(2);
+  }
+
   public void write(Enum value) {
     write(value.ordinal());
   }

@@ -662,6 +662,67 @@ public final class MxmlReader implements DocumentReader {
   internal function readClassOrPropertyName():String {
     return stringRegistry.read(input);
   }
+
+  internal function readExpression():Object {
+    const amfType:int = input.readByte();
+    switch (amfType) {
+      case AmfExtendedTypes.SIMPLE_OBJECT:
+        return readSimpleObject();
+
+      case Amf3Types.STRING:
+        return AmfUtil.readString(input);
+
+      case AmfExtendedTypes.STRING_REFERENCE:
+        return stringRegistry.read(input);
+
+      case Amf3Types.INTEGER:
+        return (AmfUtil.readUInt29(input) << 3) >> 3;
+
+      case Amf3Types.DOUBLE:
+        return input.readDouble();
+
+      case Amf3Types.FALSE:
+        return false;
+
+      case Amf3Types.TRUE:
+        return true;
+
+      case Amf3Types.NULL:
+        return null;
+
+      case Amf3Types.ARRAY:
+        return readArray();
+
+      case AmfExtendedTypes.MXML_ARRAY:
+        return readMxmlArray();
+
+      case AmfExtendedTypes.MXML_VECTOR:
+        return readMxmlVector();
+
+      case AmfExtendedTypes.DOCUMENT_REFERENCE:
+        return readObjectFromFactory(readDocumentFactory().newInstance());
+
+      case AmfExtendedTypes.OBJECT_REFERENCE:
+        var o:Object;
+        if ((o = objectTable[AmfUtil.readUInt29(input)]) == null) {
+          throw new ArgumentError("must be not null");
+        }
+        return o;
+
+      default:
+        throw new ArgumentError("unknown property type " + amfType);
+    }    
+  }
+  
+  private function readSimpleObject():Object {
+    var o:Object = new Object();
+    var propertyName:String;
+    while ((propertyName = stringRegistry.read(input)) != null) {
+      o[propertyName] = readExpression();
+    }
+    
+    return o;
+  }
 }
 }
 

@@ -54,12 +54,6 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream impleme
     super(size);
     count = SERVICE_DATA_SIZE;
   }
-  
-  public UnbufferedOutput writeUnbufferedHeader(int size) throws IOException {
-    IOUtil.writeInt(size, out);
-    IOUtil.writeInt(messageCounter, out);
-    return new UnbufferedOutput(out, messageCounter++);
-  }
 
   private void writeHeader() {
     IOUtil.writeInt(count - lastBlockBegin - SERVICE_DATA_SIZE, buffer, lastBlockBegin);
@@ -290,10 +284,6 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream impleme
 
   public void addMarker(Marker marker) {
     markers.add(marker);
-  }
-
-  public void setPosition(int position) {
-    count = position;
   }
 
   private static class DebugOutput extends AuditorOutput {
