@@ -1,23 +1,30 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ide.ui.ListCellRendererWrapper;
+import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.DocumentAdapter;
 import org.jetbrains.annotations.Nls;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import java.util.ArrayList;
+import java.util.List;
 
-import static com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration.*;
+import static com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration.OutputType;
+import static com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration.TargetPlatform;
 
-public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable*/NamedConfigurable<FlexIdeBuildConfiguration> {
+public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable*/NamedConfigurable<FlexIdeBuildConfiguration>
+  implements CompositeConfigurable.Item {
 
   private JPanel myMainPanel;
 
@@ -33,9 +40,11 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   private JTextField myMainClassTextField;
   private JTextField myOutputFileNameTextField;
   private TextFieldWithBrowseButton myOutputFolderField;
+  private JTextField myNameField;
 
   private final Module myModule;
   private final FlexIdeBuildConfiguration myConfiguration;
+  private final Runnable myTreeNodeNameUpdater;
   private final ModifiableRootModel myModifiableRootModel;
   private String myName;
 
@@ -52,13 +61,14 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
                                final FlexIdeBuildConfiguration configuration,
                                final Runnable treeNodeNameUpdater,
                                ModifiableRootModel modifiableRootModel) {
-    super(true, treeNodeNameUpdater);
+    super(false, treeNodeNameUpdater);
     myModule = module;
     myConfiguration = configuration;
+    myTreeNodeNameUpdater = treeNodeNameUpdater;
     myModifiableRootModel = modifiableRootModel;
     myName = configuration.NAME;
 
-    myDependenciesConfigurable =new DependenciesConfigurable(configuration, module.getProject());
+    myDependenciesConfigurable = new DependenciesConfigurable(configuration, module.getProject());
     myCompilerOptionsConfigurable = new CompilerOptionsConfigurable(module, configuration.COMPILER_OPTIONS);
     myHtmlWrapperConfigurable = new HtmlWrapperConfigurable(module.getProject(), configuration.HTML_WRAPPER_OPTIONS);
     myAirDescriptorConfigurable = new AirDescriptorConfigurable(configuration.AIR_DESCRIPTOR_OPTIONS);
@@ -66,6 +76,15 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
       new AirDesktopPackagingConfigurable(module.getProject(), configuration.AIR_DESKTOP_PACKAGING_OPTIONS);
     myAndroidPackagingConfigurable = new AndroidPackagingConfigurable(module.getProject(), configuration.ANDROID_PACKAGING_OPTIONS);
     myIOSPackagingConfigurable = new IOSPackagingConfigurable(module.getProject(), configuration.IOS_PACKAGING_OPTIONS);
+
+    myNameField.getDocument().addDocumentListener(new DocumentAdapter() {
+      protected void textChanged(DocumentEvent e) {
+        setDisplayName(myNameField.getText());
+        if (treeNodeNameUpdater != null) {
+          treeNodeNameUpdater.run();
+        }
+      }
+    });
 
     myListener = new ChangeListener() {
       @Override
@@ -75,13 +94,16 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     };
     myDependenciesConfigurable.addFlexSdkListener(myListener);
     initCombos();
-    myOutputFolderField
-      .addBrowseFolderListener(null, null, module.getProject(), FileChooserDescriptorFactory.createSingleFolderDescriptor());
   }
 
   @Nls
   public String getDisplayName() {
     return myName;
+  }
+
+  @Override
+  public void updateName() {
+    myNameField.setText(getDisplayName());
   }
 
   public void setDisplayName(final String name) {
@@ -344,5 +366,50 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
       // no validation
     }
     return configuration;
+  }
+
+  public List<NamedConfigurable> getChildren() {
+    List<NamedConfigurable> children = new ArrayList<NamedConfigurable>();
+    children.add(getDependenciesConfigurable());
+    children.add(getCompilerOptionsConfigurable());
+
+    final FlexIdeBuildConfiguration configuration = getEditableObject();
+    switch (configuration.TARGET_PLATFORM) {
+      case Web:
+        children.add(getHtmlWrapperConfigurable());
+        break;
+      case Desktop:
+        children.add(getAirDescriptorConfigurable());
+        children.add(getAirDesktopPackagingConfigurable());
+        break;
+      case Mobile:
+        children.add(getAirDescriptorConfigurable());
+        children.add(getAndroidPackagingConfigurable());
+        children.add(getIOSPackagingConfigurable());
+        break;
+    }
+    return children;
+  }
+
+  public NamedConfigurable wrapInTabsIfNeeded() {
+    if (!FlexIdeUtils.isFlatUi()) return this;
+
+    List<NamedConfigurable> tabs = new ArrayList<NamedConfigurable>();
+    tabs.add(this);
+    tabs.addAll(getChildren());
+    return new CompositeConfigurable(tabs, myTreeNodeNameUpdater);
+  }
+
+  public static FlexIdeBCConfigurable unwrapIfNeeded(NamedConfigurable c) {
+    if (!FlexIdeUtils.isFlatUi()) {
+      return (FlexIdeBCConfigurable)c;
+    }
+
+    return (FlexIdeBCConfigurable)((CompositeConfigurable)c).getMainChild();
+  }
+
+  @Override
+  public String getTabTitle() {
+    return "General";
   }
 }
