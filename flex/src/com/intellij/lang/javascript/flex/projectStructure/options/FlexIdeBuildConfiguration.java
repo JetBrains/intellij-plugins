@@ -20,10 +20,11 @@ public class FlexIdeBuildConfiguration implements Cloneable {
   public String MAIN_CLASS = "";
   public String OUTPUT_FILE_NAME = "";
   public String OUTPUT_FOLDER = "";
+  public boolean USE_HTML_WRAPPER = false;
+  public String WRAPPER_TEMPLATE_PATH = "";
 
   public Dependencies DEPENDENCIES = new Dependencies();
   public CompilerOptions COMPILER_OPTIONS = new CompilerOptions();
-  public HtmlWrapperOptions HTML_WRAPPER_OPTIONS = new HtmlWrapperOptions();
   public AirDescriptorOptions AIR_DESCRIPTOR_OPTIONS = new AirDescriptorOptions();
   public AirDesktopPackagingOptions AIR_DESKTOP_PACKAGING_OPTIONS = new AirDesktopPackagingOptions();
   public AndroidPackagingOptions ANDROID_PACKAGING_OPTIONS = new AndroidPackagingOptions();
@@ -53,7 +54,6 @@ public class FlexIdeBuildConfiguration implements Cloneable {
 
       clone.DEPENDENCIES = DEPENDENCIES.clone();
       clone.COMPILER_OPTIONS = COMPILER_OPTIONS.clone();
-      clone.HTML_WRAPPER_OPTIONS = HTML_WRAPPER_OPTIONS.clone();
       clone.AIR_DESCRIPTOR_OPTIONS = AIR_DESCRIPTOR_OPTIONS.clone();
       clone.AIR_DESKTOP_PACKAGING_OPTIONS = AIR_DESKTOP_PACKAGING_OPTIONS.clone();
       clone.ANDROID_PACKAGING_OPTIONS = ANDROID_PACKAGING_OPTIONS.clone();

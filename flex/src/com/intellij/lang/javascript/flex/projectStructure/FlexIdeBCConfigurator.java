@@ -188,13 +188,25 @@ public class FlexIdeBCConfigurator {
       new AddBuildConfigurationDialog(project, dialogTitle, getUsedNames(module), configuration.TARGET_PLATFORM,
                                       configuration.PURE_ACTION_SCRIPT, configuration.OUTPUT_TYPE);
     dialog.show();
-    if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+
+    if (dialog.isOK()) {
       myModified = true;
 
       configuration.NAME = dialog.getName();
       configuration.TARGET_PLATFORM = dialog.getTargetPlatform();
       configuration.PURE_ACTION_SCRIPT = dialog.isPureActionScript();
       configuration.OUTPUT_TYPE = dialog.getOutputType();
+
+      // just to simplify serialized view
+      resetNonApplicableValuesToDefaults(configuration);
+
+      // set correct output file extension for cloned configuration
+      final String outputFileName = configuration.OUTPUT_FILE_NAME;
+      final String lowercase = outputFileName.toLowerCase();
+      if (lowercase.endsWith(".swf") || lowercase.endsWith(".swc")) {
+        final String extension = configuration.OUTPUT_TYPE == FlexIdeBuildConfiguration.OutputType.Library ? ".swc" : ".swf";
+        configuration.OUTPUT_FILE_NAME = outputFileName.substring(0, outputFileName.length() - ".sw_".length()) + extension;
+      }
 
       final FlexIdeBCConfigurable configurable = new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, modifiableRootModel);
 
@@ -211,6 +223,29 @@ public class FlexIdeBCConfigurator {
       final Place place = new Place().putPath(ProjectStructureConfigurable.CATEGORY, moduleStructureConfigurable)
         .putPath(MasterDetailsComponent.TREE_OBJECT, configuration);
       ProjectStructureConfigurable.getInstance(project).navigateTo(place, true);
+    }
+  }
+
+  private static void resetNonApplicableValuesToDefaults(final FlexIdeBuildConfiguration configuration) {
+    final FlexIdeBuildConfiguration defaultConfiguration = new FlexIdeBuildConfiguration();
+
+    if (configuration.OUTPUT_TYPE != FlexIdeBuildConfiguration.OutputType.RuntimeLoadedModule) {
+      configuration.OPTIMIZE_FOR = defaultConfiguration.OPTIMIZE_FOR;
+    }
+
+    if (configuration.OUTPUT_TYPE == FlexIdeBuildConfiguration.OutputType.Library) {
+      configuration.MAIN_CLASS = defaultConfiguration.MAIN_CLASS;
+    }
+
+    if (configuration.TARGET_PLATFORM != FlexIdeBuildConfiguration.TargetPlatform.Web) {
+      configuration.USE_HTML_WRAPPER = defaultConfiguration.USE_HTML_WRAPPER;
+      configuration.WRAPPER_TEMPLATE_PATH = defaultConfiguration.WRAPPER_TEMPLATE_PATH;
+
+      configuration.DEPENDENCIES.TARGET_PLAYER = defaultConfiguration.DEPENDENCIES.TARGET_PLAYER;
+    }
+
+    if (configuration.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Mobile || configuration.PURE_ACTION_SCRIPT) {
+      configuration.DEPENDENCIES.COMPONENT_SET = defaultConfiguration.DEPENDENCIES.COMPONENT_SET;
     }
   }
 

@@ -11,13 +11,14 @@ import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.DocumentAdapter;
 import org.jetbrains.annotations.Nls;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,10 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   private JTextField myOutputFileNameTextField;
   private TextFieldWithBrowseButton myOutputFolderField;
 
+  private JCheckBox myUseHTMLWrapperCheckBox;
+  private JLabel myWrapperFolderLabel;
+  private TextFieldWithBrowseButton myWrapperTemplateTextWithBrowse;
+
   private final Module myModule;
   private final FlexIdeBuildConfiguration myConfiguration;
   private final Runnable myTreeNodeNameUpdater;
@@ -50,17 +55,15 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
   private final DependenciesConfigurable myDependenciesConfigurable;
   private final CompilerOptionsConfigurable myCompilerOptionsConfigurable;
-  private final HtmlWrapperConfigurable myHtmlWrapperConfigurable;
   private final AirDescriptorConfigurable myAirDescriptorConfigurable;
   private final AirDesktopPackagingConfigurable myAirDesktopPackagingConfigurable;
   private final AndroidPackagingConfigurable myAndroidPackagingConfigurable;
   private final IOSPackagingConfigurable myIOSPackagingConfigurable;
-  private final ChangeListener myListener;
 
   public FlexIdeBCConfigurable(final Module module,
                                final FlexIdeBuildConfiguration configuration,
                                final Runnable treeNodeNameUpdater,
-                               ModifiableRootModel modifiableRootModel) {
+                               final ModifiableRootModel modifiableRootModel) {
     super(false, treeNodeNameUpdater);
     myModule = module;
     myConfiguration = configuration;
@@ -70,7 +73,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
     myDependenciesConfigurable = new DependenciesConfigurable(configuration, module.getProject());
     myCompilerOptionsConfigurable = new CompilerOptionsConfigurable(module, configuration.COMPILER_OPTIONS);
-    myHtmlWrapperConfigurable = new HtmlWrapperConfigurable(module.getProject(), configuration.HTML_WRAPPER_OPTIONS);
     myAirDescriptorConfigurable = new AirDescriptorConfigurable(configuration.AIR_DESCRIPTOR_OPTIONS);
     myAirDesktopPackagingConfigurable =
       new AirDesktopPackagingConfigurable(module.getProject(), configuration.AIR_DESKTOP_PACKAGING_OPTIONS);
@@ -86,16 +88,21 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
       }
     });
 
-    myListener = new ChangeListener() {
-      @Override
-      public void stateChanged(ChangeEvent e) {
-        // TODO
-      }
-    };
-    myDependenciesConfigurable.addFlexSdkListener(myListener);
     initCombos();
-    myOutputFolderField
-      .addBrowseFolderListener(null, null, module.getProject(), FileChooserDescriptorFactory.createSingleFolderDescriptor());
+    myOutputFolderField.addBrowseFolderListener(null, null, module.getProject(),
+                                                FileChooserDescriptorFactory.createSingleFolderDescriptor());
+
+    myUseHTMLWrapperCheckBox.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        updateControls();
+        IdeFocusManager.getInstance(module.getProject()).requestFocus(myWrapperTemplateTextWithBrowse.getTextField(), true);
+      }
+    });
+
+    final String title = "Select folder with HTML wrapper template";
+    final String description = "Folder must contain 'index.template.html' file which must contain '${swf}' macro.";
+    myWrapperTemplateTextWithBrowse.addBrowseFolderListener(title, description, module.getProject(),
+                                                            FileChooserDescriptorFactory.createSingleFolderDescriptor());
   }
 
   @Nls
@@ -150,16 +157,10 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
         setText(value.PRESENTABLE_TEXT);
       }
     });
-
-    //myTargetPlayerCombo.setModel(); set in updateControls()
   }
 
   private void updateControls() {
-    final TargetPlatform targetPlatform = (TargetPlatform)myTargetPlatformCombo.getSelectedItem();
-    final boolean webPlatform = targetPlatform == TargetPlatform.Web;
     final OutputType outputType = (OutputType)myOutputTypeCombo.getSelectedItem();
-
-    //myOutputTypeCombo.setModel(getSuitableOutputTypes(targetPlatform)); todo implement
 
     myOptimizeForLabel.setVisible(outputType == OutputType.RuntimeLoadedModule);
     myOptimizeForCombo.setVisible(outputType == OutputType.RuntimeLoadedModule);
@@ -168,12 +169,13 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myMainClassLabel.setVisible(showMainClass);
     myMainClassTextField.setVisible(showMainClass);
 
-    final String outputFileName = myOutputFileNameTextField.getText();
-    final String lowercase = outputFileName.toLowerCase();
-    if (lowercase.endsWith(".swf") || lowercase.endsWith(".swc")) {
-      myOutputFileNameTextField.setText(
-        outputFileName.substring(0, outputFileName.length() - ".sw_".length()) + (outputType == OutputType.Library ? ".swc" : ".swf"));
-    }
+    final boolean webPlatform = myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Web;
+    final boolean enabled = webPlatform && myUseHTMLWrapperCheckBox.isSelected();
+    myUseHTMLWrapperCheckBox.setVisible(webPlatform);
+    myWrapperFolderLabel.setVisible(webPlatform);
+    myWrapperFolderLabel.setEnabled(enabled);
+    myWrapperTemplateTextWithBrowse.setVisible(webPlatform);
+    myWrapperTemplateTextWithBrowse.setEnabled(enabled);
   }
 
   public ModifiableRootModel getModifiableRootModel() {
@@ -182,6 +184,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
   /**
    * TODO remove this
+   *
    * @Deprecated
    */
   @Deprecated
@@ -233,10 +236,13 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     if (!myConfiguration.MAIN_CLASS.equals(myMainClassTextField.getText().trim())) return true;
     if (!myConfiguration.OUTPUT_FILE_NAME.equals(myOutputFileNameTextField.getText().trim())) return true;
     if (!myConfiguration.OUTPUT_FOLDER.equals(FileUtil.toSystemIndependentName(myOutputFolderField.getText().trim()))) return true;
+    if (myConfiguration.USE_HTML_WRAPPER != myUseHTMLWrapperCheckBox.isSelected()) return true;
+    if (!myConfiguration.WRAPPER_TEMPLATE_PATH.equals(FileUtil.toSystemIndependentName(myWrapperTemplateTextWithBrowse.getText().trim()))) {
+      return true;
+    }
 
     if (myDependenciesConfigurable.isModified()) return true;
     if (myCompilerOptionsConfigurable.isModified()) return true;
-    if (myHtmlWrapperConfigurable.isModified()) return true;
     if (myAirDescriptorConfigurable.isModified()) return true;
     if (myAirDesktopPackagingConfigurable.isModified()) return true;
     if (myAndroidPackagingConfigurable.isModified()) return true;
@@ -250,7 +256,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
     myDependenciesConfigurable.apply();
     myCompilerOptionsConfigurable.apply();
-    myHtmlWrapperConfigurable.apply();
     myAirDescriptorConfigurable.apply();
     myAirDesktopPackagingConfigurable.apply();
     myAndroidPackagingConfigurable.apply();
@@ -262,7 +267,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
     myDependenciesConfigurable.applyTo(configuration.DEPENDENCIES);
     myCompilerOptionsConfigurable.applyTo(configuration.COMPILER_OPTIONS);
-    myHtmlWrapperConfigurable.applyTo(configuration.HTML_WRAPPER_OPTIONS);
     myAirDescriptorConfigurable.applyTo(configuration.AIR_DESCRIPTOR_OPTIONS);
     myAirDesktopPackagingConfigurable.applyTo(configuration.AIR_DESKTOP_PACKAGING_OPTIONS);
     myAndroidPackagingConfigurable.applyTo(configuration.ANDROID_PACKAGING_OPTIONS);
@@ -281,6 +285,8 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     configuration.MAIN_CLASS = myMainClassTextField.getText().trim();
     configuration.OUTPUT_FILE_NAME = myOutputFileNameTextField.getText().trim();
     configuration.OUTPUT_FOLDER = FileUtil.toSystemIndependentName(myOutputFolderField.getText().trim());
+    configuration.USE_HTML_WRAPPER = myUseHTMLWrapperCheckBox.isSelected();
+    configuration.WRAPPER_TEMPLATE_PATH = FileUtil.toSystemIndependentName(myWrapperTemplateTextWithBrowse.getText().trim());
   }
 
   public void reset() {
@@ -293,11 +299,13 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myMainClassTextField.setText(myConfiguration.MAIN_CLASS);
     myOutputFileNameTextField.setText(myConfiguration.OUTPUT_FILE_NAME);
     myOutputFolderField.setText(FileUtil.toSystemDependentName(myConfiguration.OUTPUT_FOLDER));
+    myUseHTMLWrapperCheckBox.setSelected(myConfiguration.USE_HTML_WRAPPER);
+    myWrapperTemplateTextWithBrowse.setText(FileUtil.toSystemDependentName(myConfiguration.WRAPPER_TEMPLATE_PATH));
+
     updateControls();
 
     myDependenciesConfigurable.reset();
     myCompilerOptionsConfigurable.reset();
-    myHtmlWrapperConfigurable.reset();
     myAirDescriptorConfigurable.reset();
     myAirDesktopPackagingConfigurable.reset();
     myAndroidPackagingConfigurable.reset();
@@ -307,12 +315,10 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   public void disposeUIResources() {
     myDependenciesConfigurable.disposeUIResources();
     myCompilerOptionsConfigurable.disposeUIResources();
-    myHtmlWrapperConfigurable.disposeUIResources();
     myAirDescriptorConfigurable.disposeUIResources();
     myAirDesktopPackagingConfigurable.disposeUIResources();
     myAndroidPackagingConfigurable.disposeUIResources();
     myIOSPackagingConfigurable.disposeUIResources();
-    myDependenciesConfigurable.removeFlexSdkListener(myListener);
   }
 
   public DependenciesConfigurable getDependenciesConfigurable() {
@@ -321,10 +327,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
   public CompilerOptionsConfigurable getCompilerOptionsConfigurable() {
     return myCompilerOptionsConfigurable;
-  }
-
-  public HtmlWrapperConfigurable getHtmlWrapperConfigurable() {
-    return myHtmlWrapperConfigurable;
   }
 
   public AirDescriptorConfigurable getAirDescriptorConfigurable() {
@@ -362,7 +364,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     final FlexIdeBuildConfiguration configuration = getEditableObject();
     switch (configuration.TARGET_PLATFORM) {
       case Web:
-        children.add(getHtmlWrapperConfigurable());
         break;
       case Desktop:
         children.add(getAirDescriptorConfigurable());

@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.flex.run;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.options.HtmlWrapperOptions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
@@ -147,7 +146,7 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
 
     if (web) {
       String bcOutput = config.OUTPUT_FILE_NAME;
-      if (!bcOutput.isEmpty() && config.HTML_WRAPPER_OPTIONS.WRAPPER_TYPE != HtmlWrapperOptions.WrapperType.NoWrapper) {
+      if (!bcOutput.isEmpty() && config.USE_HTML_WRAPPER) {
         bcOutput += " via HTML wrapper";
       }
       myBCOutputLabel.setText(bcOutput);
