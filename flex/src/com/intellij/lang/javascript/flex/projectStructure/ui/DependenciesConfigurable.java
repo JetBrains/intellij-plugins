@@ -719,10 +719,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       if (entry instanceof BuildConfigurationEntry) {
         final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
         Module module = bcEntry.getModule();
-        FlexIdeBCConfigurable configurable =
-          module != null ? ContainerUtil.find(configurator.getBCConfigurables(module), new Condition<FlexIdeBCConfigurable>() {
+        NamedConfigurable<FlexIdeBuildConfiguration> configurable =
+          module != null ? ContainerUtil.find(configurator.getBCConfigurables(module), new Condition<NamedConfigurable<FlexIdeBuildConfiguration>>() {
             @Override
-            public boolean value(FlexIdeBCConfigurable configurable) {
+            public boolean value(NamedConfigurable<FlexIdeBuildConfiguration> configurable) {
               return configurable.getEditableObject().NAME.equals(bcEntry.getBcName());
             }
           }) : null;
@@ -730,7 +730,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
           item = new BCItem(bcEntry.getModuleName(), bcEntry.getBcName());
         }
         else {
-          item = new BCItem(configurable);
+          item = new BCItem(FlexIdeBCConfigurable.unwrapIfNeeded(configurable));
         }
         entry.getDependencyType().applyTo(((BCItem)item).dependencyType);
       }
@@ -812,11 +812,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         if (ModuleType.get(module) != FlexModuleType.getInstance()) {
           continue;
         }
-        for (FlexIdeBCConfigurable configurable : configurator.getBCConfigurables(module)) {
-          if (dependencies.contains(configurable) || configurable.getDependenciesConfigurable() == DependenciesConfigurable.this) {
+        for (NamedConfigurable<FlexIdeBuildConfiguration> configurable : configurator.getBCConfigurables(module)) {
+          FlexIdeBCConfigurable flexIdeBCConfigurable = FlexIdeBCConfigurable.unwrapIfNeeded(configurable);
+          if (dependencies.contains(flexIdeBCConfigurable) || flexIdeBCConfigurable.getDependenciesConfigurable() == DependenciesConfigurable.this) {
             continue;
           }
-          FlexIdeBuildConfiguration.OutputType outputType = configurable.getOutputType();
+          FlexIdeBuildConfiguration.OutputType outputType = flexIdeBCConfigurable.getOutputType();
           if (outputType != FlexIdeBuildConfiguration.OutputType.Library &&
               outputType != FlexIdeBuildConfiguration.OutputType.RuntimeLoadedModule) {
             continue;
@@ -827,7 +828,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
             list = new ArrayList<FlexIdeBCConfigurable>();
             treeItems.put(module, list);
           }
-          list.add(configurable);
+          list.add(flexIdeBCConfigurable);
         }
       }
 

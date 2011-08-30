@@ -7,6 +7,10 @@ import com.intellij.openapi.projectRoots.SdkType;
  * @author ksafonov
  */
 public class FlexIdeUtils {
+  public static boolean isFlatUi() {
+    return "true".equals(System.getProperty("flexide.ui.in.tabs"));
+  }
+
   public static boolean isNewUI() {
     return "true".equals(System.getProperty("flexide.new.ui"));
   }

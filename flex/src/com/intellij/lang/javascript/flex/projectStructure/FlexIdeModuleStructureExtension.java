@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.projectStructure;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.ui.CompositeConfigurable;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -52,13 +53,13 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
       return false;
     }
 
-    final List<FlexIdeBCConfigurable> configurables =
+    final List<NamedConfigurable<FlexIdeBuildConfiguration>> configurables =
       myConfigurator.getOrCreateConfigurables(module, treeNodeNameUpdater, modifiableRootModel);
 
-    for (final FlexIdeBCConfigurable configurable : configurables) {
+    for (final NamedConfigurable<FlexIdeBuildConfiguration> configurable : configurables) {
       if (MasterDetailsComponent.findNodeByObject(moduleNode, configurable.getEditableObject()) == null) {
         final MasterDetailsComponent.MyNode configurationNode = new BuildConfigurationNode(configurable);
-        addConfigurationChildNodes(module.getProject(), configurable, configurationNode);
+        addConfigurationChildNodes(module.getProject(), FlexIdeBCConfigurable.unwrapIfNeeded(configurable), configurationNode);
         moduleNode.add(configurationNode);
       }
     }
@@ -69,24 +70,11 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
   static void addConfigurationChildNodes(final Project project,
                                          final FlexIdeBCConfigurable configurable,
                                          final MasterDetailsComponent.MyNode configurationNode) {
-    configurationNode.add(new MasterDetailsComponent.MyNode(configurable.getDependenciesConfigurable()));
-    configurationNode.add(new MasterDetailsComponent.MyNode(configurable.getCompilerOptionsConfigurable()));
-
-    final FlexIdeBuildConfiguration configuration = configurable.getEditableObject();
-
-    switch (configuration.TARGET_PLATFORM) {
-      case Web:
-        configurationNode.add(new MasterDetailsComponent.MyNode(configurable.getHtmlWrapperConfigurable()));
-        break;
-      case Desktop:
-        configurationNode.add(new MasterDetailsComponent.MyNode(configurable.getAirDescriptorConfigurable()));
-        configurationNode.add(new MasterDetailsComponent.MyNode(configurable.getAirDesktopPackagingConfigurable()));
-        break;
-      case Mobile:
-        configurationNode.add(new MasterDetailsComponent.MyNode(configurable.getAirDescriptorConfigurable()));
-        configurationNode.add(new MasterDetailsComponent.MyNode(configurable.getAndroidPackagingConfigurable()));
-        configurationNode.add(new MasterDetailsComponent.MyNode(configurable.getIOSPackagingConfigurable()));
-        break;
+    if (!FlexIdeUtils.isFlatUi()) {
+      List<NamedConfigurable> children = configurable.getChildren();
+      for (NamedConfigurable child : children) {
+        configurationNode.add(new MasterDetailsComponent.MyNode(child));
+      }
     }
   }
 
@@ -125,13 +113,17 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
   }
 
   public boolean canBeCopied(final NamedConfigurable configurable) {
-    return configurable instanceof FlexIdeBCConfigurable;
+    if (FlexIdeUtils.isFlatUi()) {
+      return configurable instanceof CompositeConfigurable;
+    }
+    else {
+      return configurable instanceof FlexIdeBCConfigurable;
+    }
   }
 
   public void copy(final NamedConfigurable configurable, final Runnable treeNodeNameUpdater) {
-    if (configurable instanceof FlexIdeBCConfigurable) {
-      myConfigurator.copy((FlexIdeBCConfigurable)configurable, treeNodeNameUpdater);
-    }
+    FlexIdeBCConfigurable bcConfigurable = FlexIdeBCConfigurable.unwrapIfNeeded(configurable);
+    myConfigurator.copy(bcConfigurable, treeNodeNameUpdater);
   }
 
   public Collection<AnAction> createAddActions(final NullableComputable<MasterDetailsComponent.MyNode> selectedNodeRetriever,

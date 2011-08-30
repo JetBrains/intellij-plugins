@@ -16,6 +16,7 @@ import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.MasterDetailsComponent;
+import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.EventDispatcher;
 import gnu.trove.THashMap;
@@ -31,7 +32,7 @@ public class FlexIdeBCConfigurator {
   }
 
   // keep these maps in sync!
-  private Map<Module, List<FlexIdeBCConfigurable>> myModuleToConfigurablesMap = new THashMap<Module, List<FlexIdeBCConfigurable>>();
+  private Map<Module, List<NamedConfigurable<FlexIdeBuildConfiguration>>> myModuleToConfigurablesMap = new THashMap<Module, List<NamedConfigurable<FlexIdeBuildConfiguration>>>();
   private Map<FlexIdeBuildConfiguration, Module> myConfigurationsToModuleMap = new THashMap<FlexIdeBuildConfiguration, Module>();
   private boolean myModified;
 
@@ -42,30 +43,30 @@ public class FlexIdeBCConfigurator {
   }
 
   public void reset() {
-    for (final Map.Entry<Module, List<FlexIdeBCConfigurable>> entry : myModuleToConfigurablesMap.entrySet()) {
-      final List<FlexIdeBCConfigurable> configurables = entry.getValue();
+    for (final Map.Entry<Module, List<NamedConfigurable<FlexIdeBuildConfiguration>>> entry : myModuleToConfigurablesMap.entrySet()) {
+      final List<NamedConfigurable<FlexIdeBuildConfiguration>> configurables = entry.getValue();
 
-      for (final FlexIdeBCConfigurable configurable : configurables) {
+      for (final NamedConfigurable configurable : configurables) {
         configurable.reset();
       }
     }
     myModified = false;
   }
 
-  public List<FlexIdeBCConfigurable> getOrCreateConfigurables(final Module module,
+  public List<NamedConfigurable<FlexIdeBuildConfiguration>> getOrCreateConfigurables(final Module module,
                                                               final Runnable treeNodeNameUpdater,
                                                               ModifiableRootModel modifiableRootModel) {
-    List<FlexIdeBCConfigurable> configurables = myModuleToConfigurablesMap.get(module);
+    List<NamedConfigurable<FlexIdeBuildConfiguration>> configurables = myModuleToConfigurablesMap.get(module);
 
     if (configurables == null) {
       final FlexIdeBuildConfiguration[] configurations = FlexIdeBuildConfigurationManager.getInstance(module).getBuildConfigurations();
-      configurables = new LinkedList<FlexIdeBCConfigurable>();
+      configurables = new LinkedList<NamedConfigurable<FlexIdeBuildConfiguration>>();
 
       for (final FlexIdeBuildConfiguration configuration : configurations) {
         final FlexIdeBuildConfiguration clonedConfiguration = configuration.clone();
         FlexIdeBCConfigurable configurable =
           new FlexIdeBCConfigurable(module, clonedConfiguration, treeNodeNameUpdater, modifiableRootModel);
-        configurables.add(configurable);
+        configurables.add(configurable.wrapInTabsIfNeeded());
         myConfigurationsToModuleMap.put(clonedConfiguration, module);
       }
 
@@ -80,7 +81,7 @@ public class FlexIdeBCConfigurator {
       return;
     }
 
-    for (final FlexIdeBCConfigurable configurable : myModuleToConfigurablesMap.get(module)) {
+    for (final NamedConfigurable<FlexIdeBuildConfiguration> configurable : myModuleToConfigurablesMap.get(module)) {
       myConfigurationsToModuleMap.remove(configurable.getEditableObject());
     }
 
@@ -91,8 +92,8 @@ public class FlexIdeBCConfigurator {
   public boolean isModified() {
     if (myModified) return true;
 
-    for (final List<FlexIdeBCConfigurable> configurables : myModuleToConfigurablesMap.values()) {
-      for (final FlexIdeBCConfigurable configurable : configurables) {
+    for (final List<NamedConfigurable<FlexIdeBuildConfiguration>> configurables : myModuleToConfigurablesMap.values()) {
+      for (final NamedConfigurable configurable : configurables) {
         if (configurable.isModified()) {
           return true;
         }
@@ -103,13 +104,13 @@ public class FlexIdeBCConfigurator {
 
 
   public void apply() throws ConfigurationException {
-    for (final Map.Entry<Module, List<FlexIdeBCConfigurable>> entry : myModuleToConfigurablesMap.entrySet()) {
+    for (final Map.Entry<Module, List<NamedConfigurable<FlexIdeBuildConfiguration>>> entry : myModuleToConfigurablesMap.entrySet()) {
       final Module module = entry.getKey();
 
       final List<FlexIdeBuildConfiguration> configurations = new LinkedList<FlexIdeBuildConfiguration>();
-      final List<FlexIdeBCConfigurable> configurables = entry.getValue();
+      final List<NamedConfigurable<FlexIdeBuildConfiguration>> configurables = entry.getValue();
 
-      for (final FlexIdeBCConfigurable configurable : configurables) {
+      for (final NamedConfigurable<FlexIdeBuildConfiguration> configurable : configurables) {
         configurable.apply();
         configurations.add(configurable.getEditableObject().clone());
       }
@@ -142,12 +143,12 @@ public class FlexIdeBCConfigurator {
     myModified = true;
     final Module module = myConfigurationsToModuleMap.get(configuration);
     myConfigurationsToModuleMap.remove(configuration);
-    final Iterator<FlexIdeBCConfigurable> configurablesIterator = myModuleToConfigurablesMap.get(module).iterator();
+    final Iterator<NamedConfigurable<FlexIdeBuildConfiguration>> configurablesIterator = myModuleToConfigurablesMap.get(module).iterator();
     while (configurablesIterator.hasNext()) {
-      final FlexIdeBCConfigurable configurable = configurablesIterator.next();
+      final NamedConfigurable<FlexIdeBuildConfiguration> configurable = configurablesIterator.next();
       if (configuration == configurable.getEditableObject()) {
         configurablesIterator.remove();
-        myEventDispatcher.getMulticaster().buildConfigurationRemoved(configurable);
+        myEventDispatcher.getMulticaster().buildConfigurationRemoved(FlexIdeBCConfigurable.unwrapIfNeeded(configurable));
         break;
       }
     }
@@ -187,11 +188,11 @@ public class FlexIdeBCConfigurator {
 
       final FlexIdeBCConfigurable configurable = new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, modifiableRootModel);
 
-      final List<FlexIdeBCConfigurable> configurables = myModuleToConfigurablesMap.get(module);
+      final List<NamedConfigurable<FlexIdeBuildConfiguration>> configurables = myModuleToConfigurablesMap.get(module);
       configurables.add(configurable);
       myConfigurationsToModuleMap.put(configuration, module);
 
-      final MasterDetailsComponent.MyNode node = new BuildConfigurationNode(configurable);
+      final MasterDetailsComponent.MyNode node = new BuildConfigurationNode(configurable.wrapInTabsIfNeeded());
       FlexIdeModuleStructureExtension.addConfigurationChildNodes(project, configurable, node);
 
       final ModuleStructureConfigurable moduleStructureConfigurable = ModuleStructureConfigurable.getInstance(project);
@@ -205,7 +206,7 @@ public class FlexIdeBCConfigurator {
 
   private Collection<String> getUsedNames(final Module module) {
     final Collection<String> result = new LinkedList<String>();
-    for (final FlexIdeBCConfigurable configurable : myModuleToConfigurablesMap.get(module)) {
+    for (final NamedConfigurable<FlexIdeBuildConfiguration> configurable : myModuleToConfigurablesMap.get(module)) {
       result.add(configurable.getDisplayName());
     }
     return result;
@@ -218,17 +219,17 @@ public class FlexIdeBCConfigurator {
    */
   @Deprecated
   public boolean isModulesConfiguratorModified() {
-    for (List<FlexIdeBCConfigurable> configurables : myModuleToConfigurablesMap.values()) {
-      for (FlexIdeBCConfigurable configurable : configurables) {
-        if (configurable.isModuleConfiguratorModified()) {
-          return true;
-        }
-      }
-    }
+    //for (List<NamedConfigurable<FlexIdeBuildConfiguration>> configurables : myModuleToConfigurablesMap.values()) {
+    //  for (NamedConfigurable<FlexIdeBuildConfiguration> configurable : configurables) {
+    //    if (configurable.isModuleConfiguratorModified()) {
+    //      return true;
+    //    }
+    //  }
+    //}
     return false;
   }
 
-  public List<FlexIdeBCConfigurable> getBCConfigurables(@NotNull Module module) {
+  public List<NamedConfigurable<FlexIdeBuildConfiguration>> getBCConfigurables(@NotNull Module module) {
     return myModuleToConfigurablesMap.get(module);
   }
 }
