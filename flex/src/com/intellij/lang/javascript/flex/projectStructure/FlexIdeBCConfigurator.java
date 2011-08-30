@@ -22,17 +22,20 @@ import com.intellij.util.EventDispatcher;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
+import java.text.MessageFormat;
 import java.util.*;
 
 public class FlexIdeBCConfigurator {
 
   public interface Listener extends EventListener {
     void moduleRemoved(Module module);
+
     void buildConfigurationRemoved(FlexIdeBCConfigurable configurable);
   }
 
   // keep these maps in sync!
-  private Map<Module, List<NamedConfigurable<FlexIdeBuildConfiguration>>> myModuleToConfigurablesMap = new THashMap<Module, List<NamedConfigurable<FlexIdeBuildConfiguration>>>();
+  private Map<Module, List<NamedConfigurable<FlexIdeBuildConfiguration>>> myModuleToConfigurablesMap =
+    new THashMap<Module, List<NamedConfigurable<FlexIdeBuildConfiguration>>>();
   private Map<FlexIdeBuildConfiguration, Module> myConfigurationsToModuleMap = new THashMap<FlexIdeBuildConfiguration, Module>();
   private boolean myModified;
 
@@ -54,8 +57,8 @@ public class FlexIdeBCConfigurator {
   }
 
   public List<NamedConfigurable<FlexIdeBuildConfiguration>> getOrCreateConfigurables(final Module module,
-                                                              final Runnable treeNodeNameUpdater,
-                                                              ModifiableRootModel modifiableRootModel) {
+                                                                                     final Runnable treeNodeNameUpdater,
+                                                                                     ModifiableRootModel modifiableRootModel) {
     List<NamedConfigurable<FlexIdeBuildConfiguration>> configurables = myModuleToConfigurablesMap.get(module);
 
     if (configurables == null) {
@@ -110,6 +113,13 @@ public class FlexIdeBCConfigurator {
       final List<FlexIdeBuildConfiguration> configurations = new LinkedList<FlexIdeBuildConfiguration>();
       final List<NamedConfigurable<FlexIdeBuildConfiguration>> configurables = entry.getValue();
 
+      Set<String> names = new HashSet<String>(configurables.size());
+      for (NamedConfigurable<FlexIdeBuildConfiguration> configurable : configurables) {
+        if (!names.add(configurable.getDisplayName())) {
+          throw new ConfigurationException(MessageFormat.format("Module ''{0}'' has duplicate build configuration names: {1}", module.getName(),
+                                                                configurable.getDisplayName()));
+        }
+      }
       for (final NamedConfigurable<FlexIdeBuildConfiguration> configurable : configurables) {
         configurable.apply();
         configurations.add(configurable.getEditableObject().clone());
@@ -215,6 +225,7 @@ public class FlexIdeBCConfigurator {
 
   /**
    * TODO remove this
+   *
    * @Deprecated
    */
   @Deprecated
