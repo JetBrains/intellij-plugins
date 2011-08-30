@@ -226,6 +226,7 @@ public class Dependencies implements Cloneable {
           return dependencyEntry.getCopy();
         }
       }) : null;
+      clone.mySdk = mySdk != null ? mySdk.getCopy() : null;
       return clone;
     }
     catch (CloneNotSupportedException e) {
