@@ -39,4 +39,8 @@ public class BuildConfigurationEntry extends DependencyEntry {
     return myBcName;
   }
 
+  @Override
+  public BuildConfigurationEntry getCopy() {
+    return new BuildConfigurationEntry(myModulePointer, myBcName);
+  }
 }

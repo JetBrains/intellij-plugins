@@ -34,7 +34,7 @@ public class Dependencies implements Cloneable {
   private SdkEntry mySdk;
 
   @Tag("entry")
-  public static class EntryInfo {
+  public static class EntryInfo implements Cloneable {
     @Tag("module")
     public String MODULE_NAME;
     @Tag("buildConfiguration")
@@ -43,6 +43,16 @@ public class Dependencies implements Cloneable {
     public Element LIBRARY_ELEMENT;
     @Tag("type")
     public Element DEPENDENCY_TYPE_ELEMENT;
+
+    @Override
+    public EntryInfo clone() {
+      try {
+        return (EntryInfo)super.clone();
+      }
+      catch (CloneNotSupportedException ignored) {
+        return null;
+      }
+    }
   }
 
   @Tag("entries")
@@ -202,8 +212,19 @@ public class Dependencies implements Cloneable {
       Dependencies clone = (Dependencies)super.clone();
       clone.COMPONENT_SET = COMPONENT_SET;
       clone.FRAMEWORK_LINKAGE = FRAMEWORK_LINKAGE;
-      clone.myEntriesInfos = myEntriesInfos;
-      clone.myEntries = new ArrayList<DependencyEntry>(myEntries);
+      clone.myEntriesInfos =
+        myEntriesInfos != null ? ContainerUtil.map2Array(myEntriesInfos, EntryInfo.class, new Function<EntryInfo, EntryInfo>() {
+          @Override
+          public EntryInfo fun(EntryInfo entryInfo) {
+            return entryInfo.clone();
+          }
+        }) : null;
+      clone.myEntries = myEntries != null ? ContainerUtil.map(myEntries, new Function<DependencyEntry, DependencyEntry>() {
+        @Override
+        public DependencyEntry fun(DependencyEntry dependencyEntry) {
+          return dependencyEntry.getCopy();
+        }
+      }) : null;
       return clone;
     }
     catch (CloneNotSupportedException e) {

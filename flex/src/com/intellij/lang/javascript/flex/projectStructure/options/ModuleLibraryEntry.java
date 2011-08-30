@@ -121,6 +121,7 @@ public class ModuleLibraryEntry extends DependencyEntry implements JDOMExternali
   //  myJarDirectories.remove(rootType, url);
   //}
 
+  @Override
   public ModuleLibraryEntry getCopy() {
     ModuleLibraryEntry copy = new ModuleLibraryEntry();
     applyTo(copy);

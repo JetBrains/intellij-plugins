@@ -10,5 +10,7 @@ public abstract class DependencyEntry {
   public DependencyType getDependencyType() {
     return myDependencyType;
   }
+
+  public abstract DependencyEntry getCopy();
 }
 
