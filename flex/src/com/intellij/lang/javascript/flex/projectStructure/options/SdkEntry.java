@@ -108,7 +108,7 @@ public class SdkEntry implements JDOMExternalizable {
 
   public boolean isEqual(@NotNull SdkEntry that) {
     if (!myHomePath.equals(that.myHomePath)) return false;
-    if (ModuleLibraryEntry.isEqual(myRoots, that.myRoots)) return false;
+    if (!ModuleLibraryEntry.isEqual(myRoots, that.myRoots)) return false;
     Iterator<String> i1 = myDependencyTypes.keySet().iterator();
     Iterator<String> i2 = that.myDependencyTypes.keySet().iterator();
     while (i1.hasNext() && i2.hasNext()) {
