@@ -96,7 +96,7 @@ public class CompilerConfigGenerator {
       // todo uncomment in xml and do not add as standard option
       //final String revision = getValueAndSource(CompilerOptionInfo.getOptionInfo("target-player-revision")).first;
       final String revision = "0";
-      final String targetPlayer = myConfig.TARGET_PLAYER + "." + revision;
+      final String targetPlayer = myConfig.DEPENDENCIES.TARGET_PLAYER + "." + revision;
       addOption(rootElement, CompilerOptionInfo.TARGET_PLAYER_INFO, targetPlayer);
     }
     else if (myConfig.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Mobile) {

@@ -17,7 +17,6 @@ public class FlexIdeBuildConfiguration implements Cloneable {
   public boolean PURE_ACTION_SCRIPT = false;
   public OutputType OUTPUT_TYPE = OutputType.Application;
   public String OPTIMIZE_FOR = "";
-  public String TARGET_PLAYER = "";
   public String MAIN_CLASS = "";
   public String OUTPUT_FILE_NAME = "";
   public String OUTPUT_FOLDER = "";

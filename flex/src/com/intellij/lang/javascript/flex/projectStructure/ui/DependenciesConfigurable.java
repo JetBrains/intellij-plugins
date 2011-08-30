@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.flex.projectStructure.options.*;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.module.Module;
@@ -34,7 +35,9 @@ import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.*;
 import com.intellij.ui.navigation.Place;
@@ -64,16 +67,20 @@ import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
   private static final Icon MISSING_BC_ICON = null;
+  private static final Pattern PLAYER_FOLDER_PATTERN = Pattern.compile("\\d{1,2}(\\.\\d{1,2})?");
 
   private JPanel myMainPanel;
   private FlexSdkChooserPanel mySdkPanel;
+  private JLabel myTargetPlayerLabel;
+  private JComboBox myTargetPlayerCombo;
+  private JLabel myComponentSetLabel;
   private JComboBox myComponentSetCombo;
   private JComboBox myFrameworkLinkageCombo;
-  private JLabel myComponentSetLabel;
   private JPanel myTablePanel;
   private final EditableTreeTable<MyTableItem> myTable;
 
@@ -298,6 +305,15 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     myDisposable = Disposer.newDisposable();
     final boolean mobilePlatform = bc.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Mobile;
+    final boolean webPlatform = bc.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Web;
+
+    myTargetPlayerLabel.setVisible(webPlatform);
+    myTargetPlayerCombo.setVisible(webPlatform);
+    mySdkPanel.addListener(new ChangeListener() {
+      public void stateChanged(final ChangeEvent e) {
+        updateAvailableTargetPlayers();
+      }
+    });
 
     myComponentSetLabel.setVisible(!mobilePlatform && !bc.PURE_ACTION_SCRIPT);
     myComponentSetCombo.setVisible(!mobilePlatform && !bc.PURE_ACTION_SCRIPT);
@@ -617,7 +633,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       if (myDependencies.getSdk() != null) return true;
     }
 
-    if (myDependencies.COMPONENT_SET != myComponentSetCombo.getSelectedItem()) return true;
+    final Object targetPlayer = myTargetPlayerCombo.getSelectedItem();
+    if (myTargetPlayerCombo.isVisible() && targetPlayer != null && !myDependencies.TARGET_PLAYER.equals(targetPlayer)) return true;
+    if (myComponentSetCombo.isVisible() && myDependencies.COMPONENT_SET != myComponentSetCombo.getSelectedItem()) return true;
     if (myDependencies.FRAMEWORK_LINKAGE != myFrameworkLinkageCombo.getSelectedItem()) return true;
 
     List<MyTableItem> items = myTable.getItems();
@@ -666,8 +684,13 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   public void applyTo(final Dependencies dependencies) {
+    final Object targetPlayer = myTargetPlayerCombo.getSelectedItem();
+    if (targetPlayer != null) {
+      dependencies.TARGET_PLAYER = (String)targetPlayer;
+    }
     dependencies.COMPONENT_SET = (FlexIdeBuildConfiguration.ComponentSet)myComponentSetCombo.getSelectedItem();
     dependencies.FRAMEWORK_LINKAGE = (LinkageType)myFrameworkLinkageCombo.getSelectedItem();
+    
     dependencies.getEntries().clear();
     List<MyTableItem> items = myTable.getItems();
     for (MyTableItem item : items) {
@@ -704,6 +727,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   public void reset() {
     SdkEntry sdk = myDependencies.getSdk();
     mySdkPanel.reset(sdk != null ? sdk.getCopy() : null);
+    
+    updateAvailableTargetPlayers();
+    myTargetPlayerCombo.setSelectedItem(myDependencies.TARGET_PLAYER);
     myComponentSetCombo.setSelectedItem(myDependencies.COMPONENT_SET);
     myFrameworkLinkageCombo.setSelectedItem(myDependencies.FRAMEWORK_LINKAGE);
 
@@ -744,6 +770,41 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
     myTable.refresh();
     updateEditButton();
+  }
+
+  private void updateAvailableTargetPlayers() {
+    final SdkEntry currentSdk = mySdkPanel.getCurrentSdk();
+    final String sdkHome = currentSdk == null ? null : currentSdk.getHomePath();
+    final String playerFolderPath = sdkHome == null ? null : sdkHome + "/frameworks/libs/player";
+    if (playerFolderPath != null) {
+      final VirtualFile playerFolder = ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
+        public VirtualFile compute() {
+          final VirtualFile playerFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(playerFolderPath);
+          if (playerFolder != null && playerFolder.isDirectory()) {
+            playerFolder.refresh(false, true);
+            return playerFolder;
+          }
+          return null;
+        }
+      });
+      
+      if (playerFolder != null) {
+        final Collection<String> availablePlayers = new ArrayList<String>(2);
+        for (final VirtualFile subDir : playerFolder.getChildren()) {
+          if (subDir.isDirectory() &&
+              subDir.findChild("playerglobal.swc") != null &&
+              PLAYER_FOLDER_PATTERN.matcher(subDir.getName()).matches()) {
+            availablePlayers.add(subDir.getName());
+          }
+        }
+        
+        final Object selectedItem = myTargetPlayerCombo.getSelectedItem();
+        myTargetPlayerCombo.setModel(new DefaultComboBoxModel(availablePlayers.toArray(new String[availablePlayers.size()])));
+        if (selectedItem != null) {
+          myTargetPlayerCombo.setSelectedItem(selectedItem);
+        }
+      }
+    }
   }
 
   private void updateSdkTableItem(@Nullable SdkEntry sdk) {

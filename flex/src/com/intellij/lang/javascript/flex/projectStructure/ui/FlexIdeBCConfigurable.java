@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -28,19 +29,18 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
   private JPanel myMainPanel;
 
+  private JTextField myNameField;
+
   private JComboBox myTargetPlatformCombo;
   private JCheckBox myPureActionScriptCheckBox;
   private JComboBox myOutputTypeCombo;
   private JLabel myOptimizeForLabel;
   private JComboBox myOptimizeForCombo;
-  private JLabel myTargetPlayerLabel;
-  private JComboBox myTargetPlayerCombo;
 
   private JLabel myMainClassLabel;
   private JTextField myMainClassTextField;
   private JTextField myOutputFileNameTextField;
   private TextFieldWithBrowseButton myOutputFolderField;
-  private JTextField myNameField;
 
   private final Module myModule;
   private final FlexIdeBuildConfiguration myConfiguration;
@@ -94,6 +94,8 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     };
     myDependenciesConfigurable.addFlexSdkListener(myListener);
     initCombos();
+    myOutputFolderField
+      .addBrowseFolderListener(null, null, module.getProject(), FileChooserDescriptorFactory.createSingleFolderDescriptor());
   }
 
   @Nls
@@ -162,14 +164,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myOptimizeForLabel.setVisible(outputType == OutputType.RuntimeLoadedModule);
     myOptimizeForCombo.setVisible(outputType == OutputType.RuntimeLoadedModule);
 
-    myTargetPlayerLabel.setVisible(webPlatform);
-    myTargetPlayerCombo.setVisible(webPlatform);
-    if (webPlatform) {
-      final Object selectedPlayer = myTargetPlayerCombo.getSelectedItem();
-      myTargetPlayerCombo.setModel(new DefaultComboBoxModel(getAvailablePlayersFromSdk()));
-      myTargetPlayerCombo.setSelectedItem(selectedPlayer);
-    }
-
     final boolean showMainClass = outputType == OutputType.Application || outputType == OutputType.RuntimeLoadedModule;
     myMainClassLabel.setVisible(showMainClass);
     myMainClassTextField.setVisible(showMainClass);
@@ -180,11 +174,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
       myOutputFileNameTextField.setText(
         outputFileName.substring(0, outputFileName.length() - ".sw_".length()) + (outputType == OutputType.Library ? ".swc" : ".swf"));
     }
-  }
-
-  private String[] getAvailablePlayersFromSdk() {
-    //String sdkVersion = myDependenciesConfigurable.getSdkChooserPanel().getCurrentSdk();
-    return new String[]{"10.1", "10.2"}; // TODO implement
   }
 
   public ModifiableRootModel getModifiableRootModel() {
@@ -241,7 +230,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     if (myConfiguration.PURE_ACTION_SCRIPT != myPureActionScriptCheckBox.isSelected()) return true;
     if (myConfiguration.OUTPUT_TYPE != myOutputTypeCombo.getSelectedItem()) return true;
     if (!myConfiguration.OPTIMIZE_FOR.equals(myOptimizeForCombo.getSelectedItem())) return true;
-    if (!myConfiguration.TARGET_PLAYER.equals(myTargetPlayerCombo.getSelectedItem())) return true;
     if (!myConfiguration.MAIN_CLASS.equals(myMainClassTextField.getText().trim())) return true;
     if (!myConfiguration.OUTPUT_FILE_NAME.equals(myOutputFileNameTextField.getText().trim())) return true;
     if (!myConfiguration.OUTPUT_FOLDER.equals(FileUtil.toSystemIndependentName(myOutputFolderField.getText().trim()))) return true;
@@ -290,7 +278,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     configuration.PURE_ACTION_SCRIPT = myPureActionScriptCheckBox.isSelected();
     configuration.OUTPUT_TYPE = (OutputType)myOutputTypeCombo.getSelectedItem();
     configuration.OPTIMIZE_FOR = (String)myOptimizeForCombo.getSelectedItem(); // todo myOptimizeForCombo should contain live information
-    configuration.TARGET_PLAYER = (String)myTargetPlayerCombo.getSelectedItem();
     configuration.MAIN_CLASS = myMainClassTextField.getText().trim();
     configuration.OUTPUT_FILE_NAME = myOutputFileNameTextField.getText().trim();
     configuration.OUTPUT_FOLDER = FileUtil.toSystemIndependentName(myOutputFolderField.getText().trim());
@@ -303,7 +290,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myOutputTypeCombo.setSelectedItem(myConfiguration.OUTPUT_TYPE);
     myOptimizeForCombo.setSelectedItem(myConfiguration.OPTIMIZE_FOR);
 
-    myTargetPlayerCombo.setSelectedItem(myConfiguration.TARGET_PLAYER);
     myMainClassTextField.setText(myConfiguration.MAIN_CLASS);
     myOutputFileNameTextField.setText(myConfiguration.OUTPUT_FILE_NAME);
     myOutputFolderField.setText(FileUtil.toSystemDependentName(myConfiguration.OUTPUT_FOLDER));
