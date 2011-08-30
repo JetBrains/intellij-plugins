@@ -21,6 +21,6 @@ public class VariableBinding extends Binding {
     throws InvalidPropertyException {
     super.write(out, writer, valueReferenceResolver);
 
-    valueReferenceResolver.getValueReference(variable);
+    valueReferenceResolver.getValueReference(variable).write(out, writer, valueReferenceResolver);
   }
 }

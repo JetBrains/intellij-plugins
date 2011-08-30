@@ -129,12 +129,6 @@ class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor 
     }
   }
 
-  private void warnUnsupported(JSCallExpression expression, JSExpression itemExpression) {
-    unsupported = true;
-    MxmlWriter.LOG.warn("unsupported injected AS: " + itemExpression.getText() + " in outer expression " + expression.getText() +
-                        " (mxml: " + host.getText() + ")");
-  }
-
   private ValueWriter checkEmbed(JSFile jsFile) {
     PsiElement firstChild = jsFile.getFirstChild();
     if (firstChild instanceof LeafPsiElement && ((LeafPsiElement)firstChild).getElementType() == JSTokenTypes.AT) {

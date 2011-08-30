@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlTag;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
@@ -45,8 +46,14 @@ class InjectedASWriter implements ValueReferenceResolver {
     this.problemsHolder = problemsHolder;
   }
 
+  @NotNull
   @Override
   public VariableReference getValueReference(JSVariable jsVariable) {
+    return variableReferenceMap.get(jsVariable);
+  }
+
+  @Override
+  public VariableReference getNullableValueReference(JSVariable jsVariable) {
     return variableReferenceMap.get(jsVariable);
   }
 
@@ -74,6 +81,8 @@ class InjectedASWriter implements ValueReferenceResolver {
     else {
       visitor = new InjectedPsiVisitor(host, type, problemsHolder);
     }
+
+    InjectedLanguageUtil.enumerate(host, visitor);
 
     //noinspection ThrowableResultOfMethodCallIgnored
     if (visitor.getInvalidPropertyException() != null) {
@@ -110,9 +119,8 @@ class InjectedASWriter implements ValueReferenceResolver {
   }
 
   public void write() {
-    PrimitiveAmfOutputStream out = writer.getOut();
     writeDeclarations();
-    writeBinding(out);
+    writeBinding(writer.getOut());
 
     reset();
   }

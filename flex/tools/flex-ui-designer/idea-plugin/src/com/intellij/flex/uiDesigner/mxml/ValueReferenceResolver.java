@@ -6,8 +6,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 interface ValueReferenceResolver {
-  @Nullable
+  @NotNull
   VariableReference getValueReference(JSVariable jsVariable);
   @NotNull
   MxmlObjectReference getValueReference(String id) throws InvalidPropertyException;
+
+  @Nullable
+  VariableReference getNullableValueReference(JSVariable jsVariable);
 }

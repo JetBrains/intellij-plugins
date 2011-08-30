@@ -91,7 +91,7 @@ class ExpressionBinding extends Binding {
       writer.writeClass(((JSClass)element).getQualifiedName());
     }
     else if (element instanceof JSVariable) {
-      VariableReference valueReference = valueReferenceResolver.getValueReference((JSVariable)element);
+      VariableReference valueReference = valueReferenceResolver.getNullableValueReference((JSVariable)element);
       if (valueReference != null) {
         // may be already referenced, i.e. VariableReference created for this variable
         valueReference.write(out, writer, valueReferenceResolver);
