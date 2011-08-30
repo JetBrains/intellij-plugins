@@ -236,7 +236,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   }
 
   public void apply() throws ConfigurationException {
-    applyOwnTo(myConfiguration);
+    applyOwnTo(myConfiguration, true);
 
     myDependenciesConfigurable.apply();
     myCompilerOptionsConfigurable.apply();
@@ -247,8 +247,8 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myIOSPackagingConfigurable.apply();
   }
 
-  private void applyTo(final FlexIdeBuildConfiguration configuration) {
-    applyOwnTo(configuration);
+  private void applyTo(final FlexIdeBuildConfiguration configuration, boolean validate) throws ConfigurationException {
+    applyOwnTo(configuration, validate);
 
     myDependenciesConfigurable.applyTo(configuration.DEPENDENCIES);
     myCompilerOptionsConfigurable.applyTo(configuration.COMPILER_OPTIONS);
@@ -259,7 +259,10 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myIOSPackagingConfigurable.applyTo(configuration.IOS_PACKAGING_OPTIONS);
   }
 
-  private void applyOwnTo(FlexIdeBuildConfiguration configuration) {
+  private void applyOwnTo(FlexIdeBuildConfiguration configuration, boolean validate) throws ConfigurationException {
+    if (validate && StringUtil.isEmptyOrSpaces(myName)) {
+      throw new ConfigurationException("Module '" + myModifiableRootModel.getModule().getName() + "': build configuration name is empty");
+    }
     configuration.NAME = myName;
     configuration.TARGET_PLATFORM = (TargetPlatform)myTargetPlatformCombo.getSelectedItem();
     configuration.PURE_ACTION_SCRIPT = myPureActionScriptCheckBox.isSelected();
@@ -334,7 +337,12 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
   public FlexIdeBuildConfiguration getCurrentConfiguration() {
     final FlexIdeBuildConfiguration configuration = new FlexIdeBuildConfiguration();
-    applyTo(configuration);
+    try {
+      applyTo(configuration, false);
+    }
+    catch (ConfigurationException ignored) {
+      // no validation
+    }
     return configuration;
   }
 }
