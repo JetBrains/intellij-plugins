@@ -50,8 +50,10 @@ public abstract class FlexCompilationTask {
         FlexCompilationUtils.deleteCacheForFile(outputFilePath);
       }
 
-      if (myOldConfig != null && !myOldConfig.USE_CUSTOM_CONFIG_FILE) {
-        FlexCompilationUtils.ensureOutputFileWritable(myModule.getProject(), myOldConfig.getOutputFileFullPath());
+      if (myOldConfig != null) {
+        if (!myOldConfig.USE_CUSTOM_CONFIG_FILE) {
+          FlexCompilationUtils.ensureOutputFileWritable(myModule.getProject(), myOldConfig.getOutputFileFullPath());
+        }
       }
       else {
         assert myFlexIdeConfig != null;
