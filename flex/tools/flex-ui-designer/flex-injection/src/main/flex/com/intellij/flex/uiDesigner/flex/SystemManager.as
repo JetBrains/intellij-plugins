@@ -737,8 +737,16 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
       listeners = proxiedListeners[event.type];
     }
 
-    for each (var listener:Function in listeners.slice() /* copy, because may be removed in removeEventListener (side effect by call listener) */) {
-      listener(event);
+    try {
+      // IDEA-73488
+      setStyleManagerForTalentAdobeEngineers(true);
+      for each (var listener:Function in
+        listeners.slice() /* copy, because may be removed in removeEventListener (side effect by call listener) */) {
+        listener(event);
+      }
+    }
+    finally {
+      setStyleManagerForTalentAdobeEngineers(false);
     }
   }
 
