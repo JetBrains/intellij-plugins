@@ -38,11 +38,7 @@
           </grid>
         </constraints>
         <properties>
-          <model>
-            <item value="Sprark + MX"/>
-            <item value="Spark only"/>
-            <item value="MX only"/>
-          </model>
+          <model/>
         </properties>
       </component>
       <component id="50c02" class="javax.swing.JComboBox" binding="myFrameworkLinkageCombo">
@@ -50,12 +46,7 @@
           <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <model>
-            <item value="Default (Runtime shared library)"/>
-            <item value="Merged into code"/>
-            <item value="Runtime shared library"/>
-            <item value="External"/>
-          </model>
+          <model/>
         </properties>
       </component>
       <vspacer id="71119">
@@ -99,9 +90,7 @@
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <model>
-            <item value="10.2"/>
-          </model>
+          <model/>
         </properties>
       </component>
       <hspacer id="b17c9">

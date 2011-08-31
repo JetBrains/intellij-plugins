@@ -75,6 +75,8 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
 
+import static com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration.ComponentSet;
+
 public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
   private static final Icon MISSING_BC_ICON = null;
@@ -387,16 +389,18 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     myTargetPlayerLabel.setVisible(myNature.isWebPlatform());
     myTargetPlayerCombo.setVisible(myNature.isWebPlatform());
 
+    // make sure that myComponentSetCombo.getSelectedItem() is never null
+    myComponentSetCombo.setModel(new DefaultComboBoxModel(ComponentSet.values()));
+
     mySdkPanel.addListener(new ChangeListener() {
       public void stateChanged(final ChangeEvent e) {
         updateAvailableTargetPlayers();
-        updateComponentSetComboVisibility();
+        updateComponentSetCombo();
       }
     });
 
-    myComponentSetCombo.setModel(new DefaultComboBoxModel(FlexIdeBuildConfiguration.ComponentSet.values()));
-    myComponentSetCombo.setRenderer(new ListCellRendererWrapper<FlexIdeBuildConfiguration.ComponentSet>(myComponentSetCombo.getRenderer()) {
-      public void customize(JList list, FlexIdeBuildConfiguration.ComponentSet value, int index, boolean selected, boolean hasFocus) {
+    myComponentSetCombo.setRenderer(new ListCellRendererWrapper<ComponentSet>(myComponentSetCombo.getRenderer()) {
+      public void customize(JList list, ComponentSet value, int index, boolean selected, boolean hasFocus) {
         setText(value.PRESENTABLE_TEXT);
       }
     });
@@ -427,7 +431,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         }
       }
     };
-    
+
     myTargetPlayerCombo.addItemListener(updateSdkItemsListener);
     myComponentSetCombo.addItemListener(updateSdkItemsListener);
     myFrameworkLinkageCombo.addItemListener(updateSdkItemsListener);
@@ -794,7 +798,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     if (targetPlayer != null) {
       dependencies.TARGET_PLAYER = (String)targetPlayer;
     }
-    dependencies.COMPONENT_SET = (FlexIdeBuildConfiguration.ComponentSet)myComponentSetCombo.getSelectedItem();
+    dependencies.COMPONENT_SET = (ComponentSet)myComponentSetCombo.getSelectedItem();
     dependencies.FRAMEWORK_LINKAGE = (LinkageType)myFrameworkLinkageCombo.getSelectedItem();
 
     dependencies.getEntries().clear();
@@ -837,7 +841,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     updateAvailableTargetPlayers();
     myTargetPlayerCombo.setSelectedItem(myDependencies.TARGET_PLAYER);
 
-    updateComponentSetComboVisibility();
+    updateComponentSetCombo();
     myComponentSetCombo.setSelectedItem(myDependencies.COMPONENT_SET);
 
     myFrameworkLinkageCombo.setSelectedItem(myDependencies.FRAMEWORK_LINKAGE);
@@ -899,7 +903,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
           return null;
         }
       });
-      
+
       if (playerDir != null) {
         final Collection<String> availablePlayers = new ArrayList<String>(2);
         FlexSdkUtils.processPlayerglobalSwcFiles(playerDir, new Processor<VirtualFile>() {
@@ -908,7 +912,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
             return true;
           }
         });
-        
+
         final Object selectedItem = myTargetPlayerCombo.getSelectedItem();
         myTargetPlayerCombo.setModel(new DefaultComboBoxModel(availablePlayers.toArray(new String[availablePlayers.size()])));
         if (selectedItem != null) {
@@ -918,7 +922,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
   }
 
-  private void updateComponentSetComboVisibility() {
+  private void updateComponentSetCombo() {
     final SdkEntry sdkEntry = mySdkPanel.getCurrentSdk();
     final boolean visible = sdkEntry != null &&
                             StringUtil.compareVersionNumbers(sdkEntry.getFlexVersion(), "4") >= 0 &&
@@ -926,6 +930,14 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
                             !myNature.pureAS;
     myComponentSetLabel.setVisible(visible);
     myComponentSetCombo.setVisible(visible);
+    if (visible) {
+      final Object selectedItem = myComponentSetCombo.getSelectedItem();
+      final ComponentSet[] values = StringUtil.compareVersionNumbers(sdkEntry.getFlexVersion(), "4.5") >= 0
+                                    ? ComponentSet.values()
+                                    : new ComponentSet[]{ComponentSet.SparkAndMx, ComponentSet.MxOnly};
+      myComponentSetCombo.setModel(new DefaultComboBoxModel(values));
+      myComponentSetCombo.setSelectedItem(selectedItem);
+    }
   }
 
   private void updateSdkTableItem(@Nullable SdkEntry sdk) {
@@ -948,7 +960,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
   private void updateSdkEntries(DefaultMutableTreeNode sdkNode, SdkEntry sdk) {
     sdkNode.removeAllChildren();
-    FlexIdeBuildConfiguration.ComponentSet componentSet = (FlexIdeBuildConfiguration.ComponentSet)myComponentSetCombo.getSelectedItem();
+    ComponentSet componentSet = (ComponentSet)myComponentSetCombo.getSelectedItem();
     String targetPlayer = (String)myTargetPlayerCombo.getSelectedItem();
 
     for (String url : sdk.getAllClassRoots()) {
