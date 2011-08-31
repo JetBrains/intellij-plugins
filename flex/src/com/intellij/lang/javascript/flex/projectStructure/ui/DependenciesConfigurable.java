@@ -595,7 +595,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     if (myTable.getSelectedRowCount() == 0) return false;
     for (int row : myTable.getSelectedRows()) {
       MyTableItem item = myTable.getItemAt(row);
-      if (item instanceof SdkItem) return false;
+      if (item instanceof SdkItem || item instanceof SdkEntryItem) return false;
     }
     return true;
   }
