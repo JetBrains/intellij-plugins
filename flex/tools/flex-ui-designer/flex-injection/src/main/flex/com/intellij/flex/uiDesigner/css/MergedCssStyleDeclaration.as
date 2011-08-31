@@ -80,5 +80,16 @@ public class MergedCssStyleDeclaration extends AbstractCssStyleDeclaration imple
   override public function get specificity():int {
     return mySelector.specificity;
   }
+
+  [Inspectable(environment="none")]
+  override public function get defaultFactory():Function {
+    throw new IllegalOperationError();
+  }
+
+  override public function set defaultFactory(value:Function):void {
+    // see mx.charts.AxisRenderer.initStyles HaloDefaults.createSelector
+    // styleManager.getStyleDeclaration(selectorName) returns our MergedCssStyleDeclaration and this method will be called
+    addRuleset(InlineCssRuleset.createExternalInlineWithFactory(value));
+  }
 }
 }

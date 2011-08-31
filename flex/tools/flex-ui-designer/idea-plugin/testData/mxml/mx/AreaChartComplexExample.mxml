@@ -1,0 +1,70 @@
+<Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+             xmlns="library://ns.adobe.com/flex/spark"
+             xmlns:mx="library://ns.adobe.com/flex/mx">
+
+  <fx:Script>
+        <![CDATA[
+    import mx.collections.ArrayCollection;
+
+    [Bindable]
+    private var expensesAC:ArrayCollection = new ArrayCollection([
+      { Month:"Jan", Profit:2000, Expenses:1500, Amount:450 },
+      { Month:"Feb", Profit:1000, Expenses:200, Amount:600 },
+      { Month:"Mar", Profit:1500, Expenses:500, Amount:300 },
+      { Month:"Apr", Profit:1800, Expenses:1200, Amount:900 },
+      { Month:"May", Profit:2400, Expenses:575, Amount:500 }
+    ]);
+    ]]>
+    </fx:Script>
+
+  <fx:Declarations>
+    <!-- Define custom colors for use as fills in the AreaChart control. -->
+    <mx:SolidColor id="sc1" color="blue" alpha=".3"/>
+    <mx:SolidColor id="sc2" color="red" alpha=".3"/>
+    <mx:SolidColor id="sc3" color="green" alpha=".3"/>
+
+    <!-- Define custom Strokes. -->
+    <mx:SolidColorStroke id="s1" color="blue" weight="2"/>
+    <mx:SolidColorStroke id="s2" color="red" weight="2"/>
+    <mx:SolidColorStroke id="s3" color="green" weight="2"/>
+  </fx:Declarations>
+
+  <mx:Panel title="LineChart and AreaChart Controls Example"
+            height="100%" width="100%" layout="horizontal">
+
+    <mx:LineChart id="linechart" height="100%" width="45%"
+                  paddingLeft="5" paddingRight="5"
+                  showDataTips="true" dataProvider="{expensesAC}">
+
+      <mx:horizontalAxis>
+        <mx:CategoryAxis categoryField="Month"/>
+      </mx:horizontalAxis>
+
+      <mx:series>
+        <mx:LineSeries yField="Profit" form="curve" displayName="Profit" lineStroke="{s1}"/>
+        <mx:LineSeries yField="Expenses" form="curve" displayName="Expenses" lineStroke="{s2}"/>
+        <mx:LineSeries yField="Amount" form="curve" displayName="Amount" lineStroke="{s3}"/>
+      </mx:series>
+    </mx:LineChart>
+
+    <mx:Legend dataProvider="{linechart}"/>
+
+    <mx:AreaChart id="Areachart" height="100%" width="45%"
+                  paddingLeft="5" paddingRight="5"
+                  showDataTips="true" dataProvider="{expensesAC}">
+
+      <mx:horizontalAxis>
+        <mx:CategoryAxis categoryField="Month"/>
+      </mx:horizontalAxis>
+
+      <mx:series>
+        <mx:AreaSeries yField="Profit" form="curve" displayName="Profit" areaStroke="{s1}" areaFill="{sc1}"/>
+        <mx:AreaSeries yField="Expenses" form="curve" displayName="Expenses" areaStroke="{s2}" areaFill="{sc2}"/>
+        <mx:AreaSeries yField="Amount" form="curve" displayName="Amount" areaStroke="{s3}" areaFill="{sc3}"/>
+      </mx:series>
+    </mx:AreaChart>
+
+    <mx:Legend dataProvider="{Areachart}"/>
+
+  </mx:Panel>
+</Application>

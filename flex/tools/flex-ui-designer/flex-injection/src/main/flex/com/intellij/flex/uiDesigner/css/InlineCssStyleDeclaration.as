@@ -4,15 +4,15 @@ import mx.core.mx_internal;
 use namespace mx_internal;
 
 public class InlineCssStyleDeclaration extends AbstractCssStyleDeclaration {
-  protected var _ruleset:CssRuleset;
+  protected var _ruleset:InlineCssRuleset;
 
-  public function InlineCssStyleDeclaration(ruleset:CssRuleset, styleValueResolver:StyleValueResolver) {
+  public function InlineCssStyleDeclaration(ruleset:InlineCssRuleset, styleValueResolver:StyleValueResolver) {
     _ruleset = ruleset;
 
     super(styleValueResolver);
   }
 
-  public function get ruleset():CssRuleset {
+  public function get ruleset():InlineCssRuleset {
     return _ruleset;
   }
 
@@ -32,6 +32,12 @@ public class InlineCssStyleDeclaration extends AbstractCssStyleDeclaration {
 
   override mx_internal function setLocalStyle(styleProp:String, newValue:*):void {
     ruleset.put(styleProp, newValue);
+  }
+
+  override public function set defaultFactory(value:Function):void {
+    // see mx.charts.AxisRenderer.initStyles HaloDefaults.createSelector
+    // styleManager.getStyleDeclaration(selectorName) returns our MergedCssStyleDeclaration and this method will be called
+    InlineCssRuleset.fillFromFactory(value, ruleset);
   }
 }
 }

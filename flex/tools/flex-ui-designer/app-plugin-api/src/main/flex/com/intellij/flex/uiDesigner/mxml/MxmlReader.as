@@ -660,7 +660,15 @@ public final class MxmlReader implements DocumentReader {
           break;
 
         case ExpressionMessageTypes.MXML_OBJECT_REFERENCE:
-          array[i++] = injectedASReader.readObjectReference(input, this, null);
+          array[i++] = injectedASReader.readMxmlObjectReference(input, this, null);
+          break;
+
+        case ExpressionMessageTypes.VARIABLE_REFERENCE:
+          array[i++] = injectedASReader.readVariableReference(input, this);
+          break;
+
+        case ExpressionMessageTypes.SIMPLE_OBJECT:
+          array[i++] = readSimpleObject();
           break;
 
         default:
@@ -715,7 +723,7 @@ public final class MxmlReader implements DocumentReader {
         return readMxmlVector();
 
       case ExpressionMessageTypes.MXML_OBJECT_REFERENCE:
-        return injectedASReader.readObjectReference(input, this, null);
+        return injectedASReader.readMxmlObjectReference(input, this, null);
 
       case AmfExtendedTypes.OBJECT_REFERENCE:
         var o:Object;

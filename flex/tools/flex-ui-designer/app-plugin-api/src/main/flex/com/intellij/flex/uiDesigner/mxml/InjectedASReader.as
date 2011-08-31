@@ -41,27 +41,14 @@ public class InjectedASReader {
       switch (type) {
         case BindingType.MXML_OBJECT:
         case BindingType.MXML_OBJECT_WRAP_TO_ARRAY:
-          o = readObjectReference(data, reader, new PropertyBindingTarget(target, propertyName));
+          o = readMxmlObjectReference(data, reader, new PropertyBindingTarget(target, propertyName));
           if (type == BindingType.MXML_OBJECT_WRAP_TO_ARRAY) {
             o = [o];
           }
           break;
 
         case BindingType.VARIABLE:
-          var id:int = AmfUtil.readUInt29(data);
-          if ((id & 1) == 0) {
-            o = reader.readExpression();
-          }
-
-          id = id >> 1;
-          if (id != 0) {
-            if (o == null) {
-              o = reader.objectTable[id - 1];
-            }
-            else {
-              reader.saveReferredObject(id - 1, o);
-            }
-          }
+          o = readVariableReference(data, reader);
           break;
 
         case BindingType.EXPRESSION:
@@ -85,10 +72,31 @@ public class InjectedASReader {
     deferredReferenceClass = null;
   }
 
-  internal function readObjectReference(data:IDataInput, reader:MxmlReader, bindingTarget:BindingTarget):Object {
-    var id:int = AmfUtil.readUInt29(data);
+  //noinspection JSMethodCanBeStatic
+  internal function readVariableReference(input:IDataInput, reader:MxmlReader):Object {
     var o:Object;
-    // is object reference or StaticInstanceReferenceInDeferredParentInstance data
+    var id:int = AmfUtil.readUInt29(input);
+    if ((id & 1) == 0) {
+      o = reader.readExpression();
+    }
+
+    id = id >> 1;
+    if (id != 0) {
+      if (o == null) {
+        o = reader.objectTable[id - 1];
+      }
+      else {
+        reader.saveReferredObject(id - 1, o);
+      }
+    }
+    
+    return o;
+  }
+
+  internal function readMxmlObjectReference(input:IDataInput, reader:MxmlReader, bindingTarget:BindingTarget):Object {
+    var id:int = AmfUtil.readUInt29(input);
+    var o:Object;
+    // is object reference or StaticInstanceReferenceInDeferredParentInstance input
     if ((id & 1) == 0) {
       o = reader.objectTable[id >> 1];
       if (o is DeferredInstanceFromBytesBase) {
@@ -108,7 +116,7 @@ public class InjectedASReader {
       o.reference = id >> 1;
       o.deferredParentInstance = reader.readObjectReference();
 
-      reader.saveReferredObject(AmfUtil.readUInt29(data), o);
+      reader.saveReferredObject(AmfUtil.readUInt29(input), o);
     }
     
     return o;

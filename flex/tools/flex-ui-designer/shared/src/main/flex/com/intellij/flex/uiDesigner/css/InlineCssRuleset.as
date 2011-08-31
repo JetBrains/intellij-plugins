@@ -41,6 +41,23 @@ public class InlineCssRuleset extends CssRuleset {
     return ruleset;
   }
 
+  public static function fillFromFactory(defaultFactory:Function, ruleset:InlineCssRuleset):void {
+    defaultFactory.prototype = {};
+    var data:Object = new defaultFactory();
+    var map:Dictionary = ruleset._declarationMap;
+    var list:Vector.<CssDeclaration> = ruleset.declarations;
+    list.fixed = false;
+    var declaration:CssDeclarationImpl;
+    for (var key:String in data) {
+      declaration = CssDeclarationImpl.createRuntime(key, data[key], false);
+      map[key] = declaration;
+
+      list[list.length] = declaration;
+    }
+
+    list.fixed = true;
+  }
+
   override public function get inline():Boolean {
     return true;
   }

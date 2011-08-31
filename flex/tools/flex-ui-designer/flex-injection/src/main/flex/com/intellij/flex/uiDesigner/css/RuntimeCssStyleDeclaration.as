@@ -17,7 +17,7 @@ public class RuntimeCssStyleDeclaration extends InlineCssStyleDeclaration {
     mySelector = selector;
   }
 
-  override public function get ruleset():CssRuleset {
+  override public function get ruleset():InlineCssRuleset {
     if (_ruleset == null) {
       _ruleset = InlineCssRuleset.createExternalInlineWithFactory(source.defaultFactory);
       source = null;
