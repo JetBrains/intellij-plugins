@@ -8,6 +8,7 @@ import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
+import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Tag;
 import com.intellij.util.xmlb.annotations.Transient;
 import org.jdom.Element;
@@ -19,10 +20,11 @@ import java.util.List;
 public class Dependencies implements Cloneable {
 
   private static final Logger LOG = Logger.getInstance(Dependencies.class.getName());
+  private static final LinkageType DEFAULT_FRAMEWORK_LINKAGE = LinkageType.Default;
 
   public String TARGET_PLAYER = "";
   public FlexIdeBuildConfiguration.ComponentSet COMPONENT_SET = FlexIdeBuildConfiguration.ComponentSet.SparkAndMx;
-  public LinkageType FRAMEWORK_LINKAGE = LinkageType.Default;
+  private LinkageType myFrameworkLinkage = DEFAULT_FRAMEWORK_LINKAGE;
   private static final String DEPENDENCY_TYPE_ELEMENT_NAME = "type";
   private static final String SDK_ELEMENT_NAME = "sdk";
 
@@ -137,6 +139,23 @@ public class Dependencies implements Cloneable {
     return myEntries;
   }
 
+  @SuppressWarnings("UnusedDeclaration")
+  @Attribute("frameworkLinkage")
+  public String getSerializedFrameworkLinkage() {
+    return myFrameworkLinkage.getSerializedText();
+  }
+
+  @SuppressWarnings("UnusedDeclaration")
+  public void setSerializedFrameworkLinkage(String value) {
+    try {
+      myFrameworkLinkage = LinkageType.valueOf(value);
+    }
+    catch (IllegalArgumentException e) {
+      LOG.warn(e);
+      myFrameworkLinkage = DEFAULT_FRAMEWORK_LINKAGE;
+    }
+  }
+
   public void initialize(Project project) {
     LOG.assertTrue(myEntries.isEmpty(), "already initialized");
     ModulePointerManager pointerManager = ModulePointerManager.getInstance(project);
@@ -181,6 +200,15 @@ public class Dependencies implements Cloneable {
     serializeDependencyType(entry, entryInfo);
   }
 
+  @Transient
+  public LinkageType getFrameworkLinkage() {
+    return myFrameworkLinkage;
+  }
+
+  public void setFrameworkLinkage(LinkageType frameworkLinkage) {
+    myFrameworkLinkage = frameworkLinkage;
+  }
+
   @Nullable
   private static ModuleLibraryEntry deserializeModuleLibraryEntry(EntryInfo info) {
     ModuleLibraryEntry libraryEntry = new ModuleLibraryEntry();
@@ -212,7 +240,7 @@ public class Dependencies implements Cloneable {
     try {
       Dependencies clone = (Dependencies)super.clone();
       clone.COMPONENT_SET = COMPONENT_SET;
-      clone.FRAMEWORK_LINKAGE = FRAMEWORK_LINKAGE;
+      clone.myFrameworkLinkage = myFrameworkLinkage;
       clone.myEntriesInfos =
         myEntriesInfos != null ? ContainerUtil.map2Array(myEntriesInfos, EntryInfo.class, new Function<EntryInfo, EntryInfo>() {
           @Override

@@ -389,18 +389,16 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     myTargetPlayerLabel.setVisible(myNature.isWebPlatform());
     myTargetPlayerCombo.setVisible(myNature.isWebPlatform());
 
-    // make sure that myComponentSetCombo.getSelectedItem() is never null
-    myComponentSetCombo.setModel(new DefaultComboBoxModel(ComponentSet.values()));
-
     mySdkPanel.addListener(new ChangeListener() {
       public void stateChanged(final ChangeEvent e) {
         updateAvailableTargetPlayers();
-        updateComponentSetCombo();
+        updateComponentSetComboVisibility();
       }
     });
 
-    myComponentSetCombo.setRenderer(new ListCellRendererWrapper<ComponentSet>(myComponentSetCombo.getRenderer()) {
-      public void customize(JList list, ComponentSet value, int index, boolean selected, boolean hasFocus) {
+    myComponentSetCombo.setModel(new DefaultComboBoxModel(FlexIdeBuildConfiguration.ComponentSet.values()));
+    myComponentSetCombo.setRenderer(new ListCellRendererWrapper<FlexIdeBuildConfiguration.ComponentSet>(myComponentSetCombo.getRenderer()) {
+      public void customize(JList list, FlexIdeBuildConfiguration.ComponentSet value, int index, boolean selected, boolean hasFocus) {
         setText(value.PRESENTABLE_TEXT);
       }
     });
@@ -431,7 +429,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         }
       }
     };
-
+    
     myTargetPlayerCombo.addItemListener(updateSdkItemsListener);
     myComponentSetCombo.addItemListener(updateSdkItemsListener);
     myFrameworkLinkageCombo.addItemListener(updateSdkItemsListener);
@@ -746,13 +744,16 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     final String targetPlayer = (String)myTargetPlayerCombo.getSelectedItem();
     if (myTargetPlayerCombo.isVisible() && targetPlayer != null && !myDependencies.TARGET_PLAYER.equals(targetPlayer)) return true;
     if (myComponentSetCombo.isVisible() && myDependencies.COMPONENT_SET != myComponentSetCombo.getSelectedItem()) return true;
-    if (myDependencies.FRAMEWORK_LINKAGE != myFrameworkLinkageCombo.getSelectedItem()) return true;
+    if (myDependencies.getFrameworkLinkage() != myFrameworkLinkageCombo.getSelectedItem()) return true;
 
     List<MyTableItem> items = myTable.getItems();
-    if (!items.isEmpty() && items.get(0) instanceof SdkItem) {
-      // SDK item is always first
-      items = items.subList(1, items.size());
-    }
+    ContainerUtil.filter(items, new Condition<MyTableItem>() {
+      @Override
+      public boolean value(MyTableItem item) {
+        return !(item instanceof SdkItem || item instanceof SdkEntryItem);
+      }
+    });
+
     List<DependencyEntry> entries = myDependencies.getEntries();
     if (items.size() != entries.size()) return true;
     for (int i = 0; i < items.size(); i++) {
@@ -798,8 +799,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     if (targetPlayer != null) {
       dependencies.TARGET_PLAYER = (String)targetPlayer;
     }
-    dependencies.COMPONENT_SET = (ComponentSet)myComponentSetCombo.getSelectedItem();
-    dependencies.FRAMEWORK_LINKAGE = (LinkageType)myFrameworkLinkageCombo.getSelectedItem();
+    dependencies.COMPONENT_SET = (FlexIdeBuildConfiguration.ComponentSet)myComponentSetCombo.getSelectedItem();
+    dependencies.setFrameworkLinkage((LinkageType)myFrameworkLinkageCombo.getSelectedItem());
 
     dependencies.getEntries().clear();
     List<MyTableItem> items = myTable.getItems();
@@ -844,7 +845,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     updateComponentSetCombo();
     myComponentSetCombo.setSelectedItem(myDependencies.COMPONENT_SET);
 
-    myFrameworkLinkageCombo.setSelectedItem(myDependencies.FRAMEWORK_LINKAGE);
+    myFrameworkLinkageCombo.setSelectedItem(myDependencies.getFrameworkLinkage());
 
     DefaultMutableTreeNode root = myTable.getRoot();
     root.removeAllChildren();
