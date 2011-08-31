@@ -2,11 +2,13 @@ package com.intellij.flex.uiDesigner.ui {
 import flash.text.engine.BreakOpportunity;
 import flash.text.engine.ElementFormat;
 import flash.text.engine.FontDescription;
+import flash.text.engine.FontPosture;
 import flash.text.engine.FontWeight;
 
 // todo grab from server
 public final class CssElementFormat {
   public static const MONOSPACED_FONT_DESCRIPTION:FontDescription = new FontDescription("Menlo, Monaco, Consolas, Inconsolata, Bitstream Vera Sans Mono, Courier, monospace");
+  public static const MONOSPACED_FONT_DESCRIPTION_ITALIC:FontDescription = CssElementFormat.adobePleaseSetFontPostureBeforeAnyUsage();
 
   private static const LUCIDA_FONT_BOLD_ESCRIPTION:FontDescription = new FontDescription("Lucida Grande, Segoe UI, Sans", FontWeight.BOLD);
 
@@ -16,6 +18,9 @@ public final class CssElementFormat {
   linkHover.breakOpportunity = BreakOpportunity.ANY;
 
   public static const defaultText:ElementFormat = new ElementFormat(MONOSPACED_FONT_DESCRIPTION, 12);
+
+  public static const comment:ElementFormat = new ElementFormat(MONOSPACED_FONT_DESCRIPTION_ITALIC, 12, 0x808080);
+
   public static const identifier:ElementFormat = new ElementFormat(MONOSPACED_FONT_DESCRIPTION, 12, 0x000080);
   public static const func:ElementFormat = identifier;
   public static const string:ElementFormat = new ElementFormat(MONOSPACED_FONT_DESCRIPTION, 12, 0x008000);
@@ -23,5 +28,11 @@ public final class CssElementFormat {
 
   public static const number:ElementFormat = new ElementFormat(MONOSPACED_FONT_DESCRIPTION, 12, 0x0000ff);
   public static const propertyName:ElementFormat = number;
+
+  private static function adobePleaseSetFontPostureBeforeAnyUsage():FontDescription {
+    var fontDescription:FontDescription = MONOSPACED_FONT_DESCRIPTION.clone();
+    fontDescription.fontPosture = FontPosture.ITALIC;
+    return fontDescription;
+  }
 }
 }

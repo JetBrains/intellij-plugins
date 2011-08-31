@@ -192,7 +192,9 @@ public class CssRulesetPrinter {
       return CssPropertyType.NUMBER;
     }
     else if (value is Array) {
+      var a:Array = value as Array;
       return CssPropertyType.ARRAY_OF_NUMBER;
+      //return a.length > 0 && a[0] is String ? CssPropertyType.ARRAY_OF_STRING : CssPropertyType.ARRAY_OF_NUMBER;
     }
     else if (value is _module.getClass("mx.effects.IEffect")) {
       return CssPropertyType.EFFECT;
@@ -222,11 +224,13 @@ public class CssRulesetPrinter {
       case -1:
         if (descriptor.value is Class) {
           content = printClassReference(contentIndex, getQualifiedClassName(descriptor.value).replace("::", "."));
+          contentIndex = -1;
         }
         else {
-          throw new ArgumentError("unknown type of value: " + descriptor.value);
+          content = new Vector.<ContentElement>(contentIndex + 2, true);
+          content[contentIndex++] = new TextElement(descriptor.value.toString(), CssElementFormat.comment);
+          linkableStyle = false;
         }
-        contentIndex = -1;
         break;
 
       case CssPropertyType.STRING:
@@ -285,10 +289,18 @@ public class CssRulesetPrinter {
 
       case CssPropertyType.ARRAY_OF_NUMBER:
         array = descriptor.value as Array;
+        if (array.length == 0) {
+          content = new Vector.<ContentElement>(contentIndex + 2, true);
+          content[contentIndex++] = new TextElement("empty array", CssElementFormat.defaultText);
+          linkableStyle = false;
+          break;
+        }
+
         maxI = array.length - 1;
         content = new Vector.<ContentElement>(array.length + maxI + 3, true);
         for (i = 0; ; i++) {
-          content[contentIndex++] = new TextElement(array[i].toString(), CssElementFormat.number);
+          var item:Object = array[i];
+          content[contentIndex++] = new TextElement(item.toString(), item is String ? CssElementFormat.string : CssElementFormat.number);
           if (i == maxI) {
             break;
           }

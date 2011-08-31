@@ -24,23 +24,19 @@ import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.display.Sprite;
 import flash.text.engine.ElementFormat;
-import flash.text.engine.FontDescription;
-import flash.text.engine.FontPosture;
 import flash.text.engine.TextLine;
 
 use namespace ui;
 
 public class ValueRendererManager extends TextRendererManager {
-  private static const FONT_DESCRIPTION_ITALIC:FontDescription = adobePleaseSetFontPostureBeforeAnyUsage();
-
   private static const DISABLED_COLOR:uint = 0x808080;
   internal static const stringDisabled:ElementFormat = new ElementFormat(CssElementFormat.MONOSPACED_FONT_DESCRIPTION, 11, DISABLED_COLOR);
   private static const identifier:ElementFormat = new ElementFormat(CssElementFormat.MONOSPACED_FONT_DESCRIPTION, 11, 0x000080);
   private static const func:ElementFormat = identifier;
   private static const numberFormat:ElementFormat = new ElementFormat(CssElementFormat.MONOSPACED_FONT_DESCRIPTION, 11, 0x0000ff);
   private static const numberFormatDisabled:ElementFormat = stringDisabled;
-  private static const staticField:ElementFormat = new ElementFormat(FONT_DESCRIPTION_ITALIC, 11, 0x660e7a);
-  private static const staticFieldDisabled:ElementFormat = new ElementFormat(FONT_DESCRIPTION_ITALIC, 11, DISABLED_COLOR);
+  private static const staticField:ElementFormat = new ElementFormat(CssElementFormat.MONOSPACED_FONT_DESCRIPTION_ITALIC, 11, 0x660e7a);
+  private static const staticFieldDisabled:ElementFormat = new ElementFormat(CssElementFormat.MONOSPACED_FONT_DESCRIPTION_ITALIC, 11, DISABLED_COLOR);
 
   private var laf:LookAndFeel;
   private var myDataSource:MyTableViewDataSource;
@@ -48,12 +44,6 @@ public class ValueRendererManager extends TextRendererManager {
   private static var arrowsFactory:TextLineAndDisplayObjectEntryFactory;
   private static var disabledArrowsFactory:TextLineAndDisplayObjectEntryFactory;
   private static var checkBoxFactory:CheckBoxEntryFactory;
-
-  private static function adobePleaseSetFontPostureBeforeAnyUsage():FontDescription {
-    var fontDescription:FontDescription = CssElementFormat.MONOSPACED_FONT_DESCRIPTION.clone();
-    fontDescription.fontPosture = FontPosture.ITALIC;
-    return fontDescription;
-  }
 
   public function ValueRendererManager(laf:LookAndFeel, textFormat:TextFormat, textInsets:Insets, dataSource:MyTableViewDataSource) {
     this.laf = laf;
