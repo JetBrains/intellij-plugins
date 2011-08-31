@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension;
 import com.intellij.lang.javascript.flex.projectStructure.options.*;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -47,6 +48,7 @@ import com.intellij.ui.navigation.Place;
 import com.intellij.util.IconUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformIcons;
+import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
 import com.intellij.util.ui.AbstractTableCellEditor;
@@ -72,12 +74,10 @@ import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
   private static final Icon MISSING_BC_ICON = null;
-  private static final Pattern PLAYER_FOLDER_PATTERN = Pattern.compile("\\d{1,2}(\\.\\d{1,2})?");
 
   private JPanel myMainPanel;
   private FlexSdkChooserPanel mySdkPanel;
@@ -226,7 +226,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     @Override
     public String getText() {
-      return MessageFormat.format("Flex SDK {0}", mySdk.detectFlexVersion());
+      return MessageFormat.format("Flex SDK {0}", mySdk.getFlexVersion());
     }
 
     @Override
@@ -386,14 +386,13 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     myTargetPlayerLabel.setVisible(myNature.isWebPlatform());
     myTargetPlayerCombo.setVisible(myNature.isWebPlatform());
+
     mySdkPanel.addListener(new ChangeListener() {
       public void stateChanged(final ChangeEvent e) {
         updateAvailableTargetPlayers();
+        updateComponentSetComboVisibility();
       }
     });
-
-    myComponentSetLabel.setVisible(!myNature.isMobilePlatform() && !bc.PURE_ACTION_SCRIPT);
-    myComponentSetCombo.setVisible(!myNature.isMobilePlatform() && !bc.PURE_ACTION_SCRIPT);
 
     myComponentSetCombo.setModel(new DefaultComboBoxModel(FlexIdeBuildConfiguration.ComponentSet.values()));
     myComponentSetCombo.setRenderer(new ListCellRendererWrapper<FlexIdeBuildConfiguration.ComponentSet>(myComponentSetCombo.getRenderer()) {
@@ -428,9 +427,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         }
       }
     };
+    
+    myTargetPlayerCombo.addItemListener(updateSdkItemsListener);
     myComponentSetCombo.addItemListener(updateSdkItemsListener);
     myFrameworkLinkageCombo.addItemListener(updateSdkItemsListener);
-    myTargetPlayerCombo.addItem(updateSdkItemsListener);
 
     myTable = new EditableTreeTable<MyTableItem>("", DEPENDENCY_TYPE_COLUMN) {
       @Override
@@ -836,7 +836,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     updateAvailableTargetPlayers();
     myTargetPlayerCombo.setSelectedItem(myDependencies.TARGET_PLAYER);
+
+    updateComponentSetComboVisibility();
     myComponentSetCombo.setSelectedItem(myDependencies.COMPONENT_SET);
+
     myFrameworkLinkageCombo.setSelectedItem(myDependencies.FRAMEWORK_LINKAGE);
 
     DefaultMutableTreeNode root = myTable.getRoot();
@@ -886,7 +889,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     final String sdkHome = currentSdk == null ? null : currentSdk.getHomePath();
     final String playerFolderPath = sdkHome == null ? null : sdkHome + "/frameworks/libs/player";
     if (playerFolderPath != null) {
-      final VirtualFile playerFolder = ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
+      final VirtualFile playerDir = ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
         public VirtualFile compute() {
           final VirtualFile playerFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(playerFolderPath);
           if (playerFolder != null && playerFolder.isDirectory()) {
@@ -896,17 +899,16 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
           return null;
         }
       });
-
-      if (playerFolder != null) {
+      
+      if (playerDir != null) {
         final Collection<String> availablePlayers = new ArrayList<String>(2);
-        for (final VirtualFile subDir : playerFolder.getChildren()) {
-          if (subDir.isDirectory() &&
-              subDir.findChild("playerglobal.swc") != null &&
-              PLAYER_FOLDER_PATTERN.matcher(subDir.getName()).matches()) {
-            availablePlayers.add(subDir.getName());
+        FlexSdkUtils.processPlayerglobalSwcFiles(playerDir, new Processor<VirtualFile>() {
+          public boolean process(final VirtualFile playerglobalSwcFile) {
+            availablePlayers.add(playerglobalSwcFile.getParent().getName());
+            return true;
           }
-        }
-
+        });
+        
         final Object selectedItem = myTargetPlayerCombo.getSelectedItem();
         myTargetPlayerCombo.setModel(new DefaultComboBoxModel(availablePlayers.toArray(new String[availablePlayers.size()])));
         if (selectedItem != null) {
@@ -914,6 +916,16 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         }
       }
     }
+  }
+
+  private void updateComponentSetComboVisibility() {
+    final SdkEntry sdkEntry = mySdkPanel.getCurrentSdk();
+    final boolean visible = sdkEntry != null &&
+                            StringUtil.compareVersionNumbers(sdkEntry.getFlexVersion(), "4") >= 0 &&
+                            !myNature.isMobilePlatform() &&
+                            !myNature.pureAS;
+    myComponentSetLabel.setVisible(visible);
+    myComponentSetCombo.setVisible(visible);
   }
 
   private void updateSdkTableItem(@Nullable SdkEntry sdk) {

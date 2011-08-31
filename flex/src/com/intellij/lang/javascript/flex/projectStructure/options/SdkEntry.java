@@ -51,7 +51,7 @@ public class SdkEntry implements JDOMExternalizable {
 
   private void detectRoots() {
     VirtualFile sdkRoot = LocalFileSystem.getInstance().findFileByPath(myHomePath);
-    FlexSdkUtils.setupSdkPaths(sdkRoot, FlexSdkType.getInstance(), new MySdkModificator());
+    FlexSdkUtils.setupSdkPaths(sdkRoot, null, new MySdkModificator());
     myDependencyTypes.clear();
     // TODO dependency types
   }
@@ -108,7 +108,7 @@ public class SdkEntry implements JDOMExternalizable {
   }
 
   @NotNull
-  public String detectFlexVersion() {
+  public String getFlexVersion() {
     if (myFlexVersion == null) {
       VirtualFile sdkRoot = LocalFileSystem.getInstance().findFileByPath(myHomePath);
       myFlexVersion = FlexSdkUtils.readFlexSdkVersion(sdkRoot);

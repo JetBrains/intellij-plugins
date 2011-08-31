@@ -56,8 +56,11 @@ public class BCUtils {
       return bcNature.isWebPlatform() ? null : LinkageType.External;
     }
 
-    if (url.endsWith("/frameworks/libs/player/" + targetPlayer + "/playerglobal.swc")) {
-      return bcNature.isWebPlatform() ? LinkageType.External : null;
+    if (url.endsWith("/playerglobal.swc") && url.contains("/frameworks/libs/player/")) {
+      if (url.endsWith("/frameworks/libs/player/" + targetPlayer + "/playerglobal.swc")) {
+        return bcNature.isWebPlatform() ? LinkageType.External : null;
+      }
+      return null;
     }
 
     final int lastSlashIndex = url.lastIndexOf('/');
