@@ -8,11 +8,11 @@
 
     [Bindable]
     private var expensesAC:ArrayCollection = new ArrayCollection([
-      { Month:"Jan", Profit:2000, Expenses:1500, Amount:450 },
-      { Month:"Feb", Profit:1000, Expenses:200, Amount:600 },
-      { Month:"Mar", Profit:1500, Expenses:500, Amount:300 },
-      { Month:"Apr", Profit:1800, Expenses:1200, Amount:900 },
-      { Month:"May", Profit:2400, Expenses:575, Amount:500 }
+      { Month: "Jan", Profit: 2000, Expenses: 1500, Amount: 450 },
+      { Month: "Feb", Profit: 1000, Expenses: 200, Amount: 600 },
+      { Month: "Mar", Profit: 1500, Expenses: 500, Amount: 300 },
+      { Month: "Apr", Profit: 1800, Expenses: 1200, Amount: 900 },
+      { Month: "May", Profit: 2400, Expenses: 575, Amount: 500 }
     ]);
     ]]>
     </fx:Script>

@@ -19,7 +19,7 @@ public class RuntimeCssStyleDeclaration extends InlineCssStyleDeclaration {
 
   override public function get ruleset():InlineCssRuleset {
     if (_ruleset == null) {
-      _ruleset = InlineCssRuleset.createExternalInlineWithFactory(source.defaultFactory);
+      _ruleset = InlineCssRuleset.createExternalInlineWithFactory(source.defaultFactory, true);
       source = null;
     }
 

@@ -5,8 +5,11 @@ import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.openapi.application.AccessToken;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 class ExpressionBinding extends Binding {
@@ -63,12 +66,7 @@ class ExpressionBinding extends Binding {
 
   private static void writeNewExpression(JSNewExpression expression, PrimitiveAmfOutputStream out, BaseWriter writer,
                                          ValueReferenceResolver valueReferenceResolver) throws InvalidPropertyException {
-    PsiElement element = ((JSReferenceExpression)expression.getMethodExpression()).resolve();
-    if (element == null) {
-      throw new InvalidPropertyException("unresolved... create normal message", element);
-    }
-
-    JSClass jsClass = (JSClass)element.getParent();
+    JSClass jsClass = (JSClass)resolveReferenceExpression(((JSReferenceExpression)expression.getMethodExpression())).getParent();
     JSExpression[] arguments = expression.getArguments();
     writer.writeNew(jsClass.getQualifiedName(), arguments.length);
     for (JSExpression argument : arguments) {
@@ -76,14 +74,28 @@ class ExpressionBinding extends Binding {
     }
   }
 
-  private static void writeReferenceExpression(JSReferenceExpression expression, PrimitiveAmfOutputStream out, BaseWriter writer,
-                                               ValueReferenceResolver valueReferenceResolver)
-    throws InvalidPropertyException {
-    PsiElement element = expression.resolve();
+  @NotNull
+  private static PsiElement resolveReferenceExpression(JSReferenceExpression expression) throws InvalidPropertyException {
+    final AccessToken token = ReadAction.start();
+    final PsiElement element;
+    try {
+      element = expression.resolve();
+    }
+    finally {
+      token.finish();
+    }
+
     if (element == null) {
       throw new InvalidPropertyException(expression, "unresolved.variable.or.type", expression.getReferencedName());
     }
 
+    return element;
+  }
+
+  private static void writeReferenceExpression(JSReferenceExpression expression, PrimitiveAmfOutputStream out, BaseWriter writer,
+                                               ValueReferenceResolver valueReferenceResolver)
+    throws InvalidPropertyException {
+    PsiElement element = resolveReferenceExpression(expression);
     if (element instanceof JSClass) {
       writer.writeClass(((JSClass)element).getQualifiedName());
     }

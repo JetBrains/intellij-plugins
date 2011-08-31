@@ -89,7 +89,7 @@ public class MergedCssStyleDeclaration extends AbstractCssStyleDeclaration imple
   override public function set defaultFactory(value:Function):void {
     // see mx.charts.AxisRenderer.initStyles HaloDefaults.createSelector
     // styleManager.getStyleDeclaration(selectorName) returns our MergedCssStyleDeclaration and this method will be called
-    addRuleset(InlineCssRuleset.createExternalInlineWithFactory(value));
+    addRuleset(InlineCssRuleset.createExternalInlineWithFactory(value, true));
   }
 }
 }

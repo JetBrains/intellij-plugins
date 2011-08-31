@@ -25,7 +25,7 @@ use namespace mx_internal;
 
 public class StyleProtoChain {
   // debug only
-  FtyleProtoChain.STYLE_UNINITIALIZED.wtf = true;
+  //FtyleProtoChain.STYLE_UNINITIALIZED.wtf = true;
 
   public static const STYLE_UNINITIALIZED:Object = FtyleProtoChain.STYLE_UNINITIALIZED;
 
@@ -115,7 +115,7 @@ public class StyleProtoChain {
   //noinspection JSUnusedGlobalSymbols
   public static function initProtoChain(object:IStyleClient):void {
     if (object.styleDeclaration != null && !(object.styleDeclaration is AbstractCssStyleDeclaration)) {
-      object.styleDeclaration = new InlineCssStyleDeclaration(InlineCssRuleset.createExternalInlineWithFactory(object.styleDeclaration.defaultFactory), StyleManagerEx(getStyleManager(object)).styleValueResolver);
+      object.styleDeclaration = new InlineCssStyleDeclaration(InlineCssRuleset.createExternalInlineWithFactory(object.styleDeclaration.defaultFactory, false), StyleManagerEx(getStyleManager(object)).styleValueResolver);
     }
 
     FtyleProtoChain.initProtoChain(object);

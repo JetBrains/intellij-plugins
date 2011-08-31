@@ -22,7 +22,7 @@ public class InlineCssRuleset extends CssRuleset {
     return ruleset;
   }
   
-  public static function createExternalInlineWithFactory(defaultFactory:Function):InlineCssRuleset {
+  public static function createExternalInlineWithFactory(defaultFactory:Function, fromAs:Boolean):InlineCssRuleset {
     var ruleset:InlineCssRuleset = new InlineCssRuleset();
     defaultFactory.prototype = {};
     var data:Object = new defaultFactory();
@@ -31,7 +31,7 @@ public class InlineCssRuleset extends CssRuleset {
     ruleset._declarationMap = map;
     var declaration:CssDeclarationImpl;
     for (var key:String in data) {
-      declaration = CssDeclarationImpl.createRuntime(key, data[key], false);
+      declaration = CssDeclarationImpl.createRuntime(key, data[key], fromAs);
       map[key] = declaration;
 
       list[list.length] = declaration;
