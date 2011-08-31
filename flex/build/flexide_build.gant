@@ -615,8 +615,12 @@ def layoutMac(Map args, String target) {
   args["platform_prefix"] = "Flex"
   args["idea.properties.path"] = "$target/bin/idea.properties"
 
+  Map launchProps = new HashMap()
   processLaunchProperties() {
-    pair -> args[pair["key"]] = args["value"]
+    pair -> launchProps[pair["key"]] = pair["value"]
+  }
+  if (!launchProps.empty) {
+    args["idea.properties"] = launchProps
   }
 
   layoutMacApp(target, "$home/community", args)
