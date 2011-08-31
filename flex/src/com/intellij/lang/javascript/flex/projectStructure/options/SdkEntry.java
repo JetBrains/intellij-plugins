@@ -63,15 +63,13 @@ public class SdkEntry implements JDOMExternalizable {
     return ArrayUtil.toStringArray(ContainerUtil.filter(urls, new Condition<String>() {
       @Override
       public boolean value(String url) {
-        LinkageType anyLinkageType = LinkageType.Default;
-        return BCUtils.getSdkEntryLinkageType(url, nature, anyLinkageType, componentSet) != null;
+        return BCUtils.getSdkEntryLinkageType(url, nature, componentSet) != null;
       }
     }));
   }
 
-  public LinkageType getEntryLinkageType(String url, BuildConfigurationNature nature,
-                                         LinkageType frameworkLinkage, final FlexIdeBuildConfiguration.ComponentSet componentSet) {
-    return BCUtils.getSdkEntryLinkageType(url, nature, frameworkLinkage, componentSet);
+  public LinkageType getEntryLinkageType(String url, BuildConfigurationNature nature, FlexIdeBuildConfiguration.ComponentSet componentSet) {
+    return BCUtils.getSdkEntryLinkageType(url, nature, componentSet);
   }
 
   @Override
