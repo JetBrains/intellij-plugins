@@ -3,10 +3,12 @@ package com.google.jstestdriver.idea.util;
 import com.google.common.collect.Lists;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.ResolveResult;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +16,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class JsPsiUtils {
+
+  private static final JSProperty[] EMPTY_ARRAY = new JSProperty[] {};
 
   private JsPsiUtils() {}
 
@@ -235,4 +239,64 @@ public class JsPsiUtils {
     return null;
   }
 
+  @NotNull
+  public static JSProperty[] getProperties(@NotNull JSObjectLiteralExpression objectLiteralExpression) {
+    JSProperty[] properties = objectLiteralExpression.getProperties();
+    if (properties == null) {
+      properties = EMPTY_ARRAY;
+    }
+    int cnt = 0;
+    for (JSProperty property : properties) {
+      if (property != null) {
+        cnt++;
+      }
+    }
+    if (cnt < properties.length) {
+      JSProperty[] a = new JSProperty[cnt];
+      int id = 0;
+      for (JSProperty property : properties) {
+        if (property != null) {
+          a[id] = property;
+          id++;
+        }
+      }
+      return a;
+    }
+    return properties;
+  }
+
+  public static boolean isStrictlyInside(@NotNull TextRange textRange, int offset) {
+    return textRange.getStartOffset() < offset && offset < textRange.getEndOffset();
+  }
+
+  @NotNull
+  public static JSExpression[] getArguments(@Nullable JSArgumentList argumentList) {
+    JSExpression[] expressions = null;
+    if (argumentList != null) {
+      expressions = argumentList.getArguments();
+    }
+    if (expressions == null) {
+      expressions = JSExpression.EMPTY_ARRAY;
+    }
+    return expressions;
+  }
+
+  @NotNull
+  public static JSExpression[] getArguments(@NotNull JSCallExpression jsCallExpression) {
+    return getArguments(jsCallExpression.getArgumentList());
+  }
+
+  @Nullable
+  public static PsiElement getPropertyNamePsiElement(@NotNull JSProperty property) {
+    return CastUtils.tryCast(property.getFirstChild(), LeafPsiElement.class);
+  }
+
+  @Nullable
+  public static String getPropertyName(@NotNull JSProperty property) {
+    PsiElement testMethodNameDeclaration = getPropertyNamePsiElement(property);
+    if (testMethodNameDeclaration == null) {
+      return null;
+    }
+    return StringUtil.stripQuotesAroundValue(testMethodNameDeclaration.getText());
+  }
 }

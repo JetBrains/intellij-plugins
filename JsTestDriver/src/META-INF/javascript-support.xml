@@ -21,6 +21,9 @@
       <action id="JstdQUnitCreateTestAction" class="com.google.jstestdriver.idea.testIntegration.JstdQUnitCreateTestAction"/>
       <action id="JstdQUnitCreateSetupAction" class="com.google.jstestdriver.idea.testIntegration.JstdQUnitCreateSetupAction"/>
       <action id="JstdQUnitCreateTearDownAction" class="com.google.jstestdriver.idea.testIntegration.JstdQUnitCreateTeardownAction"/>
+      <action id="JstdCreateTestAction" class="com.google.jstestdriver.idea.assertFramework.jstd.generate.JstdGenerateNewTestAction"/>
+      <action id="JstdCreateSetupAction" class="com.google.jstestdriver.idea.assertFramework.jstd.generate.JstdGenerateSetupAction"/>
+      <action id="JstdCreateTearDownAction" class="com.google.jstestdriver.idea.assertFramework.jstd.generate.JstdGenerateTearDownAction"/>
       <add-to-group group-id="GenerateGroup" anchor="first"/>
     </group>
   </actions>
