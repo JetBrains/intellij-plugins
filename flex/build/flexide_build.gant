@@ -40,7 +40,7 @@ setProperty("pluginFilter", [
             "less", "sass",
             "tasks", "tasks-core", "tasks-api", "jira-connector",
             "JavaScriptDebugger", "FirefoxConnector", "ChromeConnector",
-            "flex-plugin", "flex-ui-designer", "flex-profiler", "properties",
+            "flex-plugin", "flex-profiler", "properties",
             "ant", "maven", "maven-server-api", "maven2-server-impl", "maven3-server-impl"
             ])
 
