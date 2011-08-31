@@ -5,6 +5,7 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author ksafonov
@@ -16,13 +17,15 @@ public class DependencyType implements JDOMExternalizable {
   private static final String LINKAGE_TYPE_ATTR = "linkage";
   private static final LinkageType DEFAULT_TYPE = LinkageType.Merged;
 
+  @NotNull
   private LinkageType myLinkageType = DEFAULT_TYPE;
 
+  @NotNull
   public LinkageType getLinkageType() {
     return myLinkageType;
   }
 
-  public void setLinkageType(LinkageType linkageType) {
+  public void setLinkageType(@NotNull LinkageType linkageType) {
     myLinkageType = linkageType;
   }
 

@@ -96,6 +96,14 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     public abstract String getText();
 
     public abstract Icon getIcon();
+
+    public abstract boolean showLinkage();
+
+    public abstract boolean isLinkageEditable();
+
+    public abstract LinkageType getLinkageType();
+
+    public abstract void setLinkageType(LinkageType linkageType);
   }
 
   private static class BCItem extends MyTableItem {
@@ -134,6 +142,26 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     public Icon getIcon() {
       return configurable != null ? configurable.getIcon() : MISSING_BC_ICON;
     }
+
+    @Override
+    public boolean showLinkage() {
+      return configurable != null;
+    }
+
+    @Override
+    public boolean isLinkageEditable() {
+      return configurable != null && configurable.getOutputType() != FlexIdeBuildConfiguration.OutputType.RuntimeLoadedModule;
+    }
+
+    @Override
+    public LinkageType getLinkageType() {
+      return dependencyType.getLinkageType();
+    }
+
+    @Override
+    public void setLinkageType(LinkageType linkageType) {
+      dependencyType.setLinkageType(linkageType);
+    }
   }
 
   private static class ModuleLibraryItem extends MyTableItem {
@@ -161,6 +189,26 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     public Icon getIcon() {
       return PlatformIcons.LIBRARY_ICON;
     }
+
+    @Override
+    public boolean showLinkage() {
+      return true;
+    }
+
+    @Override
+    public boolean isLinkageEditable() {
+      return true;
+    }
+
+    @Override
+    public LinkageType getLinkageType() {
+      return dependencyType.getLinkageType();
+    }
+
+    @Override
+    public void setLinkageType(LinkageType linkageType) {
+      dependencyType.setLinkageType(linkageType);
+    }
   }
 
   private static class SdkItem extends MyTableItem {
@@ -178,6 +226,26 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     @Override
     public Icon getIcon() {
       return FlexSdkType.getInstance().getIcon();
+    }
+
+    @Override
+    public boolean showLinkage() {
+      return false;
+    }
+
+    @Override
+    public LinkageType getLinkageType() {
+      return null;
+    }
+
+    @Override
+    public boolean isLinkageEditable() {
+      return false;
+    }
+
+    @Override
+    public void setLinkageType(LinkageType linkageType) {
+      throw new UnsupportedOperationException();
     }
   }
 
@@ -234,43 +302,17 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     @Override
     public LinkageType valueOf(MyTableItem item) {
-      if (item instanceof BCItem) {
-        return ((BCItem)item).dependencyType.getLinkageType();
-      }
-      else if (item instanceof ModuleLibraryItem) {
-        return ((ModuleLibraryItem)item).dependencyType.getLinkageType();
-      }
-      else {
-        return null;
-      }
+      return item.getLinkageType();
     }
 
     @Override
     public void setValue(MyTableItem item, LinkageType linkageType) {
-      if (item instanceof BCItem) {
-        ((BCItem)item).dependencyType.setLinkageType(linkageType);
-      }
-      else if (item instanceof ModuleLibraryItem) {
-        ((ModuleLibraryItem)item).dependencyType.setLinkageType(linkageType);
-      }
-      else {
-        throw new IllegalArgumentException("unsupported item type: " + item);
-      }
+      item.setLinkageType(linkageType);
     }
 
     @Override
     public TableCellRenderer getRenderer(MyTableItem item) {
-      boolean showLinkage;
-      if (item instanceof BCItem) {
-        showLinkage = ((BCItem)item).configurable != null;
-      }
-      else if (item instanceof ModuleLibraryItem) {
-        showLinkage = true;
-      }
-      else {
-        showLinkage = false;
-      }
-      return showLinkage ? LINKAGE_TYPE_RENDERER : EMPTY_RENDERER;
+      return item.showLinkage() ? LINKAGE_TYPE_RENDERER : EMPTY_RENDERER;
     }
 
     @Override
@@ -280,17 +322,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     @Override
     public boolean isCellEditable(MyTableItem item) {
-      if (item instanceof BCItem) {
-        if (((BCItem)item).configurable != null) {
-          return ((BCItem)item).configurable.getOutputType() != FlexIdeBuildConfiguration.OutputType.RuntimeLoadedModule;
-        }
-        else {
-          return false;
-        }
-      }
-      else {
-        return true;
-      }
+      return item.isLinkageEditable();
     }
 
     @Override
@@ -689,7 +721,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
     dependencies.COMPONENT_SET = (FlexIdeBuildConfiguration.ComponentSet)myComponentSetCombo.getSelectedItem();
     dependencies.FRAMEWORK_LINKAGE = (LinkageType)myFrameworkLinkageCombo.getSelectedItem();
-    
+
     dependencies.getEntries().clear();
     List<MyTableItem> items = myTable.getItems();
     for (MyTableItem item : items) {
@@ -726,7 +758,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   public void reset() {
     SdkEntry sdk = myDependencies.getSdk();
     mySdkPanel.reset(sdk != null ? sdk.getCopy() : null);
-    
+
     updateAvailableTargetPlayers();
     myTargetPlayerCombo.setSelectedItem(myDependencies.TARGET_PLAYER);
     myComponentSetCombo.setSelectedItem(myDependencies.COMPONENT_SET);
@@ -786,7 +818,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
           return null;
         }
       });
-      
+
       if (playerFolder != null) {
         final Collection<String> availablePlayers = new ArrayList<String>(2);
         for (final VirtualFile subDir : playerFolder.getChildren()) {
@@ -796,7 +828,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
             availablePlayers.add(subDir.getName());
           }
         }
-        
+
         final Object selectedItem = myTargetPlayerCombo.getSelectedItem();
         myTargetPlayerCombo.setModel(new DefaultComboBoxModel(availablePlayers.toArray(new String[availablePlayers.size()])));
         if (selectedItem != null) {
