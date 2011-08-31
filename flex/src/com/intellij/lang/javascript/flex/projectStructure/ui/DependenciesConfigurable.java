@@ -325,7 +325,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
     });
 
-    final LinkageType defaultLinkage = BCUtils.getDefaultFrameworkLinkage(bc.TARGET_PLATFORM, bc.PURE_ACTION_SCRIPT, bc.OUTPUT_TYPE);
+    final LinkageType defaultLinkage = BCUtils.getDefaultFrameworkLinkage(bc.getNature());
     myFrameworkLinkageCombo
       .setRenderer(new ListCellRendererWrapper<LinkageType>(myFrameworkLinkageCombo.getRenderer()) {
         public void customize(JList list, LinkageType value, int index, boolean selected, boolean hasFocus) {
@@ -338,8 +338,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         }
       });
 
-    myFrameworkLinkageCombo.setModel(new DefaultComboBoxModel(BCUtils.getSuitableFrameworkLinkages(bc.TARGET_PLATFORM,
-                                                                                                   bc.PURE_ACTION_SCRIPT, bc.OUTPUT_TYPE)));
+    myFrameworkLinkageCombo.setModel(new DefaultComboBoxModel(BCUtils.getSuitableFrameworkLinkages(bc.getNature())));
     myTable = new EditableTreeTable<MyTableItem>("", DEPENDENCY_TYPE_COLUMN) {
       @Override
       protected void render(SimpleColoredComponent c, MyTableItem item) {

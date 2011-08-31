@@ -71,6 +71,10 @@ public class FlexIdeBuildConfiguration implements Cloneable {
     DEPENDENCIES.initialize(project);
   }
 
+  public BuildConfigurationNature getNature() {
+    return new BuildConfigurationNature(TARGET_PLATFORM, PURE_ACTION_SCRIPT, OUTPUT_TYPE);
+  }
+
   public static enum TargetPlatform {
     Web("Web"),
     Desktop("Desktop"),
