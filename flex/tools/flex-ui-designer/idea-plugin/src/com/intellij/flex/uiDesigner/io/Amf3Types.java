@@ -15,6 +15,4 @@ public final class Amf3Types {
 
   public static final int DICTIONARY = 17;
   public static final int ARRAY = 9;
-
-  public static final int BYTE_ARRAY = 12;
 }

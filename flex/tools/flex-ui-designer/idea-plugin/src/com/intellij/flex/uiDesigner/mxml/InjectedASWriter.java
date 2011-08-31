@@ -60,11 +60,7 @@ class InjectedASWriter implements ValueReferenceResolver {
   @NotNull
   @Override
   public MxmlObjectReference getValueReference(String id) throws InvalidPropertyException {
-    final MxmlObjectReference reference = idReferenceMap.get(id);
-    if (reference == null) {
-      throw new InvalidPropertyException("error.unresolved.variable", id);
-    }
-    return reference;
+    return idReferenceMap.get(id);
   }
 
   public ValueWriter processProperty(XmlElementValueProvider valueProvider, String name, @Nullable String type, boolean isStyle,

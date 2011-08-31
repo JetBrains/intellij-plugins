@@ -11,7 +11,5 @@ public final class AmfExtendedTypes {
   public static const MXML_ARRAY:int = 50;
   public static const MXML_VECTOR:int = 51;
   public static const OBJECT_REFERENCE:int = 45;
-
-  public static const SIMPLE_OBJECT:int = 52;
 }
 }

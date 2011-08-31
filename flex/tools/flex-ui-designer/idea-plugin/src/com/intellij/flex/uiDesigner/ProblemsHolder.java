@@ -1,11 +1,13 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -23,14 +25,12 @@ public class ProblemsHolder {
     return problems.isEmpty();
   }
 
-  private static Document getDocument(@NotNull PsiElement element) {
-    VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
-    assert virtualFile != null;
-    return FileDocumentManager.getInstance().getDocument(virtualFile);
-  }
-
   private static int getLineNumber(PsiElement element) {
-    return getDocument(element).getLineNumber(element.getTextOffset()) + 1;
+    final int elementTextOffset = InjectedLanguageManager.getInstance(element.getProject()).injectedToHost(element, element.getTextOffset());
+    final PsiFile psiFile = InjectedLanguageUtil.getTopLevelFile(element);
+    final Document document = PsiDocumentManager.getInstance(element.getProject()).getCachedDocument(psiFile);
+    assert document != null;
+    return document.getLineNumber(elementTextOffset) + 1;
   }
 
   public void setCurrentFile(@Nullable VirtualFile currentFile) {

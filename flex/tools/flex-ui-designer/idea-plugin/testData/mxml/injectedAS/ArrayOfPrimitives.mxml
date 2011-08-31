@@ -7,10 +7,10 @@
     <ArrayCollection source="{['IntelliJ IDEA', 'Flex IDE', 'ReSharper', 'YouTrack', 'TeamCity']}"/>
   </List>
   <List dataProvider="{data}"/>
-  <!--<List dataProvider="{unresolvedData}"/>-->
-  <!--<List>-->
-    <!--<ArrayCollection>-->
-      <!--<source>{['IntelliJ IDEA', 'Flex IDE', 'ReSharper', 'YouTrack', 'TeamCity']}</source>-->
-    <!--</ArrayCollection>-->
-  <!--</List>-->
+  <List dataProvider="{unresolvedData}"/>
+  <List>
+    <ArrayCollection>
+      <source>{['IntelliJ IDEA', 'Flex IDE', 'ReSharper', 'YouTrack', 'TeamCity']}</source>
+    </ArrayCollection>
+  </List>
 </VGroup>

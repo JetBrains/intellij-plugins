@@ -56,7 +56,7 @@ public class MxmlTest extends MxmlTestBase {
     else {
       assertThat(problems,
                  m("Initializer for Group cannot be represented in text (line: 2)", "Initializer for Container cannot be represented in text (line: 5)", "Children of Accordion must be mx.core.INavigatorContent (line: 8)"),
-                 m("Unresolved variable unresolvedData"),
+                 m("Unresolved variable or type unresolvedData (line: 10)"),
                  m("Support only MXML-based component AuxActionScriptProjectComponent"),
                  m("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-72175\">Inline components are not supported</a> (line: 9)"),
                  m("Invalid color name invalidcolorname (line: 2)", "Invalid integer value (line: 3)", "Invalid number value (line: 4)"),

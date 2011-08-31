@@ -4,12 +4,17 @@ import com.intellij.flex.uiDesigner.FlexUIDesignerBundle;
 import com.intellij.flex.uiDesigner.InjectionUtil;
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.ProblemsHolder;
+import com.intellij.injected.editor.DocumentWindow;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
@@ -106,7 +111,7 @@ class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor 
       JSReferenceExpression referenceExpression = (JSReferenceExpression)arguments[0];
       PsiElement element = referenceExpression.resolve();
       if (element == null) {
-        invalidPropertyException = new InvalidPropertyException(expression, "unresolved.variable.or.type",
+       invalidPropertyException = new InvalidPropertyException(expression, "unresolved.variable.or.type",
                                                                 referenceExpression.getReferencedName());
       }
       else if (element instanceof JSClass) {
@@ -121,7 +126,7 @@ class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor 
         binding = new VariableBinding(((JSVariable)element));
       }
       else {
-        binding = new MxmlObjectBinding(referenceExpression.getReferencedName());
+        binding = new MxmlObjectBinding(referenceExpression.getReferencedName(), JSCommonTypeNames.ARRAY_CLASS_NAME.equals(expectedType));
       }
     }
     else {

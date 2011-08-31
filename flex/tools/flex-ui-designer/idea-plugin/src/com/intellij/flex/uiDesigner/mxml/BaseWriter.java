@@ -350,4 +350,10 @@ final class BaseWriter {
     writeConstructorHeader(className);
     out.write(constructorArgType);
   }
+
+  public void writeNew(String className, int argumentsLength) {
+    out.write(ExpressionMessageTypes.NEW);
+    write(className);
+    out.write(argumentsLength);
+  }
 }

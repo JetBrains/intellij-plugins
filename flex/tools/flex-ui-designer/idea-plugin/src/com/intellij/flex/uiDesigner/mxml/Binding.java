@@ -16,8 +16,8 @@ abstract class Binding {
 
   protected abstract int getType();
 
-  void write(PrimitiveAmfOutputStream out, BaseWriter writer,
-             ValueReferenceResolver valueReferenceResolver) throws InvalidPropertyException {
+  void write(PrimitiveAmfOutputStream out, BaseWriter writer, ValueReferenceResolver valueReferenceResolver)
+    throws InvalidPropertyException {
     out.writeUInt29(target);
     out.writeUInt29(propertyName);
     out.write(getType() << 1 | (isStyle ? 1 : 0));
@@ -25,7 +25,8 @@ abstract class Binding {
 
   static final class BindingType {
     final static int MXML_OBJECT = 0;
-    final static int VARIABLE = 1;
-    final static int EXPRESSION = 2;
+    final static int MXML_OBJECT_WRAP_TO_ARRAY = 1;
+    final static int VARIABLE = 2;
+    final static int EXPRESSION = 3;
   }
 }

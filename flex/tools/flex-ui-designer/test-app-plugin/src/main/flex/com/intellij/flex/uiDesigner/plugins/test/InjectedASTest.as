@@ -100,7 +100,12 @@ public class InjectedASTest extends BaseTestCase {
   public function ArrayOfPrimitives():void {
     var m:Object = {dataProvider: null};
     var m2:Object = {source: ['IntelliJ IDEA', 'Flex IDE', 'ReSharper', 'YouTrack', 'TeamCity']};
-    assertThat(app, [{dataProvider: m2, selectionColor: 0xffffffff, rollOverColor: 0xffffffff}, m, m, {dataProvider: m2}]);
+    assertThat(app, [
+      {dataProvider: m2, selectionColor: 0xffffffff, rollOverColor: 0xffffffff},
+      {dataProvider: {source: ["Item 1"]}},
+      m,
+      {dataProvider: m2}
+    ]);
   }
 
   public function UnresolvedVariableInScriptAsArrayItem():void {

@@ -62,18 +62,15 @@ class ExpressionBinding extends Binding {
   }
 
   private static void writeNewExpression(JSNewExpression expression, PrimitiveAmfOutputStream out, BaseWriter writer,
-                                         ValueReferenceResolver valueReferenceResolver)
-    throws InvalidPropertyException {
+                                         ValueReferenceResolver valueReferenceResolver) throws InvalidPropertyException {
     PsiElement element = ((JSReferenceExpression)expression.getMethodExpression()).resolve();
     if (element == null) {
-      // todo write log
-      return;
+      throw new InvalidPropertyException("unresolved... create normal message", element);
     }
 
     JSClass jsClass = (JSClass)element.getParent();
-    writer.write(jsClass.getQualifiedName());
     JSExpression[] arguments = expression.getArguments();
-    out.write(arguments.length);
+    writer.writeNew(jsClass.getQualifiedName(), arguments.length);
     for (JSExpression argument : arguments) {
       writeExpression(argument, out, writer, valueReferenceResolver);
     }
@@ -101,6 +98,7 @@ class ExpressionBinding extends Binding {
       writeJSVariable(((JSVariable)element), out, writer, valueReferenceResolver);
     }
     else {
+      out.write(ExpressionMessageTypes.MXML_OBJECT_REFERENCE);
       valueReferenceResolver.getValueReference(expression.getReferencedName()).write(out, writer, valueReferenceResolver);
     }
   }
@@ -109,7 +107,7 @@ class ExpressionBinding extends Binding {
                               ValueReferenceResolver valueReferenceResolver) throws InvalidPropertyException {
     JSExpression initializer = variable.getInitializer();
     if (initializer == null) {
-      MxmlWriter.LOG.warn("unsupported JSVariable without initializer: " + variable.getParent().getText() + " in " + variable.getParent().getParent().getText());
+      MxmlWriter.LOG.warn("Unsupported variable without initializer: " + variable.getParent().getText() + ", write as null");
       out.write(Amf3Types.NULL);
     }
     else {
@@ -129,7 +127,7 @@ class ExpressionBinding extends Binding {
   private static void writeObjectExpression(JSObjectLiteralExpression expression, PrimitiveAmfOutputStream out, BaseWriter writer,
                                             ValueReferenceResolver valueReferenceResolver) throws InvalidPropertyException {
     JSProperty[] properties = expression.getProperties();
-    out.write(AmfExtendedTypes.SIMPLE_OBJECT);
+    out.write(ExpressionMessageTypes.SIMPLE_OBJECT);
     for (JSProperty property : properties) {
       writer.write(property.getName());
       writeExpression(property.getValue(), out, writer, valueReferenceResolver);

@@ -25,13 +25,13 @@ public class InjectedASReader {
   }
   
   private function readBinding(data:IDataInput, reader:MxmlReader):void {
-    const size:int = data.readShort();
+    const size:int = data.readUnsignedShort();
     if (size == 0) {
       return;
     }
-    
-    var o:Object;
+
     for (var i:int = 0; i < size; i++) {
+      var o:Object = null;
       var target:Object = reader.readObjectReference();
       var propertyName:String = reader.readClassOrPropertyName();
       var type:int = data.readByte();
@@ -40,21 +40,36 @@ public class InjectedASReader {
 
       switch (type) {
         case BindingType.MXML_OBJECT:
+        case BindingType.MXML_OBJECT_WRAP_TO_ARRAY:
           o = readObjectReference(data, reader, new PropertyBindingTarget(target, propertyName));
+          if (type == BindingType.MXML_OBJECT_WRAP_TO_ARRAY) {
+            o = [o];
+          }
           break;
 
         case BindingType.VARIABLE:
           var id:int = AmfUtil.readUInt29(data);
-          if (id == 0) {
+          if ((id & 1) == 0) {
             o = reader.readExpression();
           }
-          else {
-            o = reader.objectTable[id - 1];
+
+          id = id >> 1;
+          if (id != 0) {
+            if (o == null) {
+              o = reader.objectTable[id - 1];
+            }
+            else {
+              reader.saveReferredObject(id - 1, o);
+            }
           }
           break;
 
+        case BindingType.EXPRESSION:
+          o = reader.readExpression();
+          break;
+
         default:
-          throw new ArgumentError("unknown binding type");
+          throw new ArgumentError("unknown binding type " + type);
       }
 
       if (o != null /* binding */) {
@@ -70,14 +85,18 @@ public class InjectedASReader {
     deferredReferenceClass = null;
   }
 
-  private function readObjectReference(data:IDataInput, reader:MxmlReader, bindingTarget:BindingTarget):Object {
+  internal function readObjectReference(data:IDataInput, reader:MxmlReader, bindingTarget:BindingTarget):Object {
     var id:int = AmfUtil.readUInt29(data);
     var o:Object;
     // is object reference or StaticInstanceReferenceInDeferredParentInstance data
     if ((id & 1) == 0) {
       o = reader.objectTable[id >> 1];
       if (o is DeferredInstanceFromBytesBase) {
-        DeferredInstanceFromBytesBase(o).getInstanceIfCreatedOrRegisterBinding(bindingTarget);
+        // todo null if called from readExpression
+        if (bindingTarget != null) {
+          trace("unsupported DeferredInstanceFromBytesBase in readExpression");
+          DeferredInstanceFromBytesBase(o).getInstanceIfCreatedOrRegisterBinding(bindingTarget);
+        }
         return null;
       }
     }
@@ -89,11 +108,7 @@ public class InjectedASReader {
       o.reference = id >> 1;
       o.deferredParentInstance = reader.readObjectReference();
 
-      id = AmfUtil.readUInt29(data);
-      if (reader.objectTable[id] != null) {
-        throw new ArgumentError("must be null");
-      }
-      reader.objectTable[id] = o;
+      reader.saveReferredObject(AmfUtil.readUInt29(data), o);
     }
     
     return o;
@@ -103,6 +118,7 @@ public class InjectedASReader {
 
 final class BindingType {
   public static const MXML_OBJECT:int = 0;
-  public static const VARIABLE:int = 1;
-  public static const EXPRESSION:int = 2;
+  public static const MXML_OBJECT_WRAP_TO_ARRAY:int = 1;
+  public static const VARIABLE:int = 2;
+  public static const EXPRESSION:int = 3;
 }

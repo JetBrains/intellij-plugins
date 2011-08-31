@@ -5,9 +5,11 @@ import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 
 class MxmlObjectBinding extends Binding {
   private final String value;
+  private final boolean wrapToArray;
 
-  MxmlObjectBinding(String value) {
+  MxmlObjectBinding(String value, boolean wrapToArray) {
     this.value = value;
+    this.wrapToArray = wrapToArray;
   }
 
   @Override
@@ -20,6 +22,6 @@ class MxmlObjectBinding extends Binding {
 
   @Override
   protected int getType() {
-    return BindingType.MXML_OBJECT;
+    return wrapToArray ? BindingType.MXML_OBJECT_WRAP_TO_ARRAY : BindingType.MXML_OBJECT;
   }
 }

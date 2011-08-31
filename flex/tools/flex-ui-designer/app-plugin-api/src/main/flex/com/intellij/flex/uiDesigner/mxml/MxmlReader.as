@@ -471,13 +471,17 @@ public final class MxmlReader implements DocumentReader {
     return object;
   }
 
-  private function processReference(reference:int, object:Object):void {
+  private function processReference(reference:int, o:Object):void {
     if (reference != 0) {
-      if (objectTable[reference - 1] != null) {
-        throw new ArgumentError("must be null");
-      }
-      objectTable[reference - 1] = object;
+      saveReferredObject(reference - 1, o);
     }
+  }
+
+  internal function saveReferredObject(id:int, o:Object):void {
+    if (objectTable[id] != null) {
+      throw new ArgumentError("must be null");
+    }
+    objectTable[id] = o;
   }
 
   private function readDocumentFactory():Object {
@@ -629,6 +633,10 @@ public final class MxmlReader implements DocumentReader {
           array[i++] = true;
           break;
 
+        case Amf3Types.NULL:
+          array[i++] = null;
+          break;
+
         case Amf3Types.ARRAY:
           array[i++] = readArray();
           break;
@@ -651,6 +659,10 @@ public final class MxmlReader implements DocumentReader {
           }
           break;
 
+        case ExpressionMessageTypes.MXML_OBJECT_REFERENCE:
+          array[i++] = injectedASReader.readObjectReference(input, this, null);
+          break;
+
         default:
           throw new ArgumentError("unknown property type " + amfType);
       }
@@ -666,7 +678,7 @@ public final class MxmlReader implements DocumentReader {
   internal function readExpression():Object {
     const amfType:int = input.readByte();
     switch (amfType) {
-      case AmfExtendedTypes.SIMPLE_OBJECT:
+      case ExpressionMessageTypes.SIMPLE_OBJECT:
         return readSimpleObject();
 
       case Amf3Types.STRING:
@@ -693,14 +705,17 @@ public final class MxmlReader implements DocumentReader {
       case Amf3Types.ARRAY:
         return readArray();
 
+      case ExpressionMessageTypes.NEW:
+        return constructObject();
+
       case AmfExtendedTypes.MXML_ARRAY:
         return readMxmlArray();
 
       case AmfExtendedTypes.MXML_VECTOR:
         return readMxmlVector();
 
-      case AmfExtendedTypes.DOCUMENT_REFERENCE:
-        return readObjectFromFactory(readDocumentFactory().newInstance());
+      case ExpressionMessageTypes.MXML_OBJECT_REFERENCE:
+        return injectedASReader.readObjectReference(input, this, null);
 
       case AmfExtendedTypes.OBJECT_REFERENCE:
         var o:Object;
@@ -712,6 +727,40 @@ public final class MxmlReader implements DocumentReader {
       default:
         throw new ArgumentError("unknown property type " + amfType);
     }    
+  }
+
+  private function constructObject():Object {
+    var clazz:Class = moduleContext.getClass(stringRegistry.readNotNull(input));
+    const constructorArgumentsLength:int = input.readUnsignedByte();
+    if (constructorArgumentsLength == 0) {
+      return new clazz();
+    }
+    else {
+      switch (constructorArgumentsLength) {
+        case 1:
+          return new clazz(readExpression());
+        case 2:
+          return new clazz(readExpression(), readExpression());
+        case 3:
+          return new clazz(readExpression(), readExpression(), readExpression());
+        case 4:
+          return new clazz(readExpression(), readExpression(), readExpression(), readExpression());
+        case 5:
+          return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression());
+        case 6:
+          return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression());
+        case 7:
+          return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression());
+        case 8:
+          return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression());
+        case 9:
+          return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression());
+        case 10:
+          return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression());
+      }
+
+      throw new ArgumentError("constructorArguments is too long");
+    }
   }
   
   private function readSimpleObject():Object {
