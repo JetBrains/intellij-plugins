@@ -41,6 +41,8 @@ public class BuildConfigurationEntry extends DependencyEntry {
 
   @Override
   public BuildConfigurationEntry getCopy() {
-    return new BuildConfigurationEntry(myModulePointer, myBcName);
+    BuildConfigurationEntry copy = new BuildConfigurationEntry(myModulePointer, myBcName);
+    super.applyTo(copy);
+    return copy;
   }
 }

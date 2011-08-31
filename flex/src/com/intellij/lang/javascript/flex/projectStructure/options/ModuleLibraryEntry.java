@@ -128,10 +128,13 @@ public class ModuleLibraryEntry extends DependencyEntry implements JDOMExternali
     return copy;
   }
 
-  public void applyTo(ModuleLibraryEntry copy) {
-    copy.myName = myName;
-    copyContainer(myRootContainer, copy.myRootContainer);
-    copy.myJarDirectories.copyFrom(myJarDirectories);
+  @Override
+  public void applyTo(DependencyEntry copy) {
+    super.applyTo(copy);
+    ModuleLibraryEntry libraryEntry = (ModuleLibraryEntry)copy;
+    libraryEntry.myName = myName;
+    copyContainer(myRootContainer, libraryEntry.myRootContainer);
+    libraryEntry.myJarDirectories.copyFrom(myJarDirectories);
   }
 
   static void copyContainer(ProjectRootContainerImpl source, ProjectRootContainerImpl target) {
