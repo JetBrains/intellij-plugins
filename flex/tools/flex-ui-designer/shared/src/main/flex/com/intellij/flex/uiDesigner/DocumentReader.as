@@ -10,7 +10,7 @@ public interface DocumentReader {
   
   function readDeferredInstanceFromBytes(input:IDataInput, factoryContext:DeferredInstanceFromBytesContext):Object;
 
-  function createDeferredMxContainersChildren(applicationDomain:ApplicationDomain):void;
+  function createDeferredMxContainersChildren(systemManager:ApplicationDomain):void;
 
   function getObjectTableForDeferredInstanceFromBytes():Vector.<Object>;
 }

@@ -203,7 +203,7 @@ public class SwcDependenciesSorter {
       final long timeStamp = swfFile.getTimeStamp();
       if (timeStamp != modifiedSwf.lastModified()) {
         if (filter == null) {
-          filter = new AbcFilter(isFromSdk);
+          filter = new AbcFilter(isFromSdk ? flexSdkVersion : null);
         }
         filter.filter(swfFile, modifiedSwf, filteredDefinitions == null ? null : new AbcNameFilterByNameSet(filteredDefinitions));
         //noinspection ResultOfMethodCallIgnored

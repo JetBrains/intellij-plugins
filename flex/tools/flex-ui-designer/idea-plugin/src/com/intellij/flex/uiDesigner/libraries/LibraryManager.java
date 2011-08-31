@@ -32,7 +32,7 @@ import java.util.List;
 
 @SuppressWarnings("MethodMayBeStatic")
 public class LibraryManager extends EntityListManager<VirtualFile, Library> {
-  private static final String ABC_FILTER_VERSION = "7";
+  private static final String ABC_FILTER_VERSION = "8";
   private static final String ABC_FILTER_VERSION_VALUE_NAME = "fud_abcFilterVersion";
 
   private File appDir;

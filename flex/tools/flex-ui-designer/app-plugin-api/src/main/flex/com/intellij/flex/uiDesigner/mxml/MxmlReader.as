@@ -528,19 +528,21 @@ public final class MxmlReader implements DocumentReader {
     readArrayOrVector(array, length);
   }
 
-  public function createDeferredMxContainersChildren(applicationDomain:ApplicationDomain):void {
+  public function createDeferredMxContainersChildren(systemManager:ApplicationDomain):void {
     if (deferredMxContainers == null || deferredMxContainers.length == 0) {
       return;
     }
 
-    var mxNs:Namespace = Namespace(applicationDomain.getDefinition("mx.core.mx_internal"));
+    var mxNs:Namespace = Namespace(systemManager.getDefinition("mx.core.mx_internal"));
     var createdComponentsQName:QName = new QName(mxNs, "createdComponents");
     var numChildrenCreatedQName:QName = new QName(mxNs, "numChildrenCreated");
-    var flexEventClass:Class = Class(applicationDomain.getDefinition(FLEX_EVENT_CLASS_NAME));
+    var flexEventClass:Class = Class(systemManager.getDefinition(FLEX_EVENT_CLASS_NAME));
+    var controlBarClass:Class = Class(systemManager.getDefinition("mx.containers.ControlBar"));
+    var panelClass:Class = Class(systemManager.getDefinition("mx.containers.Panel"));
     for each (var container:DisplayObjectContainer in deferredMxContainers) {
       // initialized equals false, because processedDescriptors equals false, so, we check inheritingStyles (if is StyleDeclarationProxy, so, already "initialized")
       if (container["inheritingStyles"] is StyleDeclarationProxy) {
-        createMxContainerChildren(container, createdComponentsQName, numChildrenCreatedQName, flexEventClass);
+        createMxContainerChildren(container, createdComponentsQName, numChildrenCreatedQName, flexEventClass, controlBarClass, container is panelClass);
       }
       else {
         container.addEventListener("preinitialize", mxContainerPreinitializeHandler);
@@ -555,15 +557,29 @@ public final class MxmlReader implements DocumentReader {
     container.removeEventListener("preinitialize", mxContainerPreinitializeHandler);
     var sm:SystemManagerSB = SystemManagerSB(Object(container).systemManager);
     var mxNs:Namespace = Namespace(sm.getDefinitionByName("mx.core.mx_internal"));
-    createMxContainerChildren(container, new QName(mxNs, "createdComponents"), new QName(mxNs, "numChildrenCreated"), Class(sm.getDefinitionByName(FLEX_EVENT_CLASS_NAME)));
+    createMxContainerChildren(container, new QName(mxNs, "createdComponents"), new QName(mxNs, "numChildrenCreated"),
+      Class(sm.getDefinitionByName(FLEX_EVENT_CLASS_NAME)), Class(sm.getDefinitionByName("mx.containers.ControlBar")),
+      container is Class(sm.getDefinitionByName("mx.containers.Panel")));
   }
 
   private static function createMxContainerChildren(container:DisplayObjectContainer, createdComponentsQName:QName,
-                                                    numChildrenCreatedQName:QName, flexEventClass:Class):void {
+                                                    numChildrenCreatedQName:QName, flexEventClass:Class, controlBarClass:Class, isPanel:Boolean):void {
     var chidlren:Array = container[createdComponentsQName];
-    for each (var child:DisplayObject in chidlren) {
-      container.addChild(child);
+    for (var i:int = 0, n:int = chidlren.length == 1 ? 1 : chidlren.length - 1; i < n; i++) {
+      container.addChild(chidlren[i]);
     }
+
+    if (chidlren.length > 1) {
+      var lastChild:DisplayObject = chidlren[i];
+      if (isPanel && lastChild is controlBarClass) {
+        container["rawChildren"].addChild(lastChild);
+        container["setControlBar"](lastChild);
+      }
+      else {
+        container.addChild(lastChild);
+      }
+    }
+    
     container["processedDescriptors"] = true;
     container[numChildrenCreatedQName] = chidlren.length;
     container.dispatchEvent(new flexEventClass("contentCreationComplete"));

@@ -1,4 +1,6 @@
 package com.intellij.flex.uiDesigner.flex {
+import com.intellij.flex.uiDesigner.css.StyleDeclarationProxy;
+
 import flash.display.BlendMode;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -6,6 +8,8 @@ import flash.display.Stage;
 import flash.geom.Point;
 import flash.system.ApplicationDomain;
 import flash.utils.getQualifiedClassName;
+
+import mx.core.Container;
 
 import mx.core.ILayoutElement;
 import mx.core.IUIComponent;

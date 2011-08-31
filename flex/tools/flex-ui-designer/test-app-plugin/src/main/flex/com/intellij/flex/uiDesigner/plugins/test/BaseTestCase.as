@@ -29,6 +29,10 @@ internal class BaseTestCase implements TestCase {
       }
     }
   }
+
+  protected function getMxInternal(propertyName:String):QName {
+    return new QName(mxInternal, propertyName);
+  }
   
   private var _app:Object;
   protected final function get app():Object {

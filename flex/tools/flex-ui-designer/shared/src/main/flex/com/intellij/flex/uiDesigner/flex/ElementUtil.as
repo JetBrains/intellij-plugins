@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.flex {
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.display.Stage;
 import flash.geom.Point;
 

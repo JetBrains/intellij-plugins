@@ -32,7 +32,7 @@ public class StyleTest extends BaseTestCase {
 
   public function emptyForCheckLibrariesCssDefaults():void {
     var librarySets:Vector.<LibrarySet> = documentManager.document.module.librarySets;
-    assertThat(librarySets, [{items: arrayWithSize(9)}]);
+    assertThat(librarySets, [{items: arrayWithSize(10)}]);
     assertThat(librarySets, arrayWithSize(1));
     var library:LibrarySetItem;
     for each (var l:LibrarySetItem in librarySets[0].items) {

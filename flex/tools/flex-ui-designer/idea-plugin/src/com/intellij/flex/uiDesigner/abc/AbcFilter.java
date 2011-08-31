@@ -25,7 +25,7 @@ public class AbcFilter extends SwfTranscoder {
   
   protected final ArrayList<Decoder> decoders = new ArrayList<Decoder>();
 
-  private final boolean useFlexEncoder;
+  private final String flexSdkVersion;
   private final boolean onlyAbcAsTag;
   private String inputFileParentName;
 
@@ -34,12 +34,12 @@ public class AbcFilter extends SwfTranscoder {
   private int sA;
   private int sB;
 
-  public AbcFilter(boolean useFlexEncoder) {
-    this(useFlexEncoder, false);
+  public AbcFilter(String flexSdkVersion) {
+    this(flexSdkVersion, false);
   }
 
-  public AbcFilter(boolean useFlexEncoder, boolean onlyAbcAsTag) {
-    this.useFlexEncoder = useFlexEncoder;
+  public AbcFilter(String flexSdkVersion, boolean onlyAbcAsTag) {
+    this.flexSdkVersion = flexSdkVersion;
     this.onlyAbcAsTag = onlyAbcAsTag;
   }
 
@@ -248,7 +248,7 @@ public class AbcFilter extends SwfTranscoder {
   }
 
   private void mergeDoAbc(boolean asTag, boolean hasClassAssociatedWithMainTimeLine) throws IOException {
-    final Encoder encoder = useFlexEncoder ? new FlexEncoder(inputFileParentName) : new Encoder();
+    final Encoder encoder = flexSdkVersion != null ? new FlexEncoder(inputFileParentName, flexSdkVersion) : new Encoder();
     encoder.configure(decoders, hasClassAssociatedWithMainTimeLine ? transientNameString : null);
     SwfUtil.mergeDoAbc(decoders, encoder);
     encoder.writeDoAbc(channel, asTag);

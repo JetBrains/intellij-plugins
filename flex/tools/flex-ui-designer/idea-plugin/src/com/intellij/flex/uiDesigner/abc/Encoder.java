@@ -561,7 +561,7 @@ class Encoder {
   }
 
   public void methodTrait(int trait_kind, int name, int dispId, int methodInfo, int[] metadata, DataBuffer in) {
-    currentBuffer.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
+    writeMethodTraitName(name, trait_kind, in);
     TIntArrayList new_metadata = trimMetadata(metadata);
     if (((trait_kind >> 4) & TRAIT_FLAG_metadata) != 0 && new_metadata == null) {
       trait_kind = trait_kind & ~(TRAIT_FLAG_metadata << 4);
@@ -572,6 +572,10 @@ class Encoder {
     currentBuffer.writeU32(this.methodInfo.getIndex(poolIndex, methodInfo));
 
     encodeMetaData(new_metadata);
+  }
+
+  protected void writeMethodTraitName(int name, int trait_kind, DataBuffer in) {
+    currentBuffer.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
   }
 
   public void classTrait(int kind, int name, int slotId, int classInfoIndex, int[] metadata) {

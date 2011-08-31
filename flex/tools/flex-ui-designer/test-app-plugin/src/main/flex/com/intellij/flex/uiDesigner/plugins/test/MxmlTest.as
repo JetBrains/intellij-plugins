@@ -41,6 +41,8 @@ public class MxmlTest extends BaseTestCase {
       EmbedImageAsClass();
       Vector();
       ToolTip();
+      MxPanelWithControlBar();
+      AreaChartComplexExample();
     }
   }
   
@@ -216,6 +218,15 @@ public class MxmlTest extends BaseTestCase {
 
   public function ToolTip():void {
    
+  }
+
+  // IDEA-72935
+  public function MxPanelWithControlBar():void {
+    assertThat(app, [{width: 250}]);
+  }
+
+  public function AreaChartComplexExample():void {
+    validateUI();
   }
 }
 }

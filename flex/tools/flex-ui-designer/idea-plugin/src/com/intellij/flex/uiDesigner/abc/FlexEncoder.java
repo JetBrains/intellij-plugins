@@ -20,13 +20,17 @@ class FlexEncoder extends Encoder {
 
   private boolean skipColorCorrection;
   private boolean skipInitialize;
+  // IDEA-72935
+  private boolean skipPanelAddChild;
   private boolean modifyConstructor;
 
   private String modifyAccessModifier;
 
   private final byte[] debugBasepath;
+  private final boolean isFlex45;
 
-  public FlexEncoder(String inputFilename) {
+  public FlexEncoder(String inputFilename, String flexSdkVersion) {
+    isFlex45 = flexSdkVersion.startsWith("4.5");
     debugBasepath = new byte[inputFilename.length() + 1];
     debugBasepath[0] = '$';
     //noinspection deprecation
@@ -41,10 +45,9 @@ class FlexEncoder extends Encoder {
         in.seek(positions[i]);
         if (in.readU8() == CONSTANT_PackageNamespace) {
           in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[in.readU32()]);
-          int stringLength = in.readU32();
           // magic, I don't know, cannot find info in AVM spec
           // but ns with kind CONSTANT_PackageNamespace is public and ns with empty name is current public in current class
-          if (stringLength == 0) {
+          if (in.readU32() == 0) {
             return i;
           }
         }
@@ -61,34 +64,52 @@ class FlexEncoder extends Encoder {
   // new String(in.data, in.position + in.offset, stringLength)
   protected void writeSlotTraitName(int name, int trait_kind, DataBuffer in) {
     if (modifyAccessModifier != null && ((trait_kind & 0x0f) == TRAIT_Var)) {
-      final int originalPosition = in.position();
-      in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.MULTINAME)[name]);
-      int constKind = in.readU8();
-      assert constKind == CONSTANT_Qname || constKind == CONSTANT_QnameA;
-      int ns = in.readU32();
-      int localName = in.readU32();
-      in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.NS)[ns]);
-      int nsKind = in.readU8();
-      if (nsKind == CONSTANT_PrivateNamespace) {
-        in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
-        int stringLength = in.readU32();
-        if (modifyAccessModifier != null && compare(in, stringLength, modifyAccessModifier)) {
-          currentBuffer.writeU32(history.getIndexWithSpecifiedNsRaw(poolIndex, name, findPublicNamespace(in)));
-          in.seek(originalPosition);
-          modifyAccessModifier = null;
-          return;
-        }
+      if (changeAccessModifier(name, in)) {
+        return;
       }
-
-      in.seek(originalPosition);
     }
-    
+
     super.writeSlotTraitName(name, trait_kind, in);
   }
-  
+
+  @Override
+  protected void writeMethodTraitName(int name, int trait_kind, DataBuffer in) {
+    if (modifyAccessModifier != null && (trait_kind & 0x0f) == TRAIT_Method && ((trait_kind >> 4) & TRAIT_FLAG_Override) == 0) {
+      if (changeAccessModifier(name, in)) {
+        return;
+      }
+    }
+
+    super.writeMethodTraitName(name, trait_kind, in);
+  }
+
+  private boolean changeAccessModifier(int name, DataBuffer in) {
+    final int originalPosition = in.position();
+    in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.MULTINAME)[name]);
+    int constKind = in.readU8();
+    assert constKind == CONSTANT_Qname || constKind == CONSTANT_QnameA;
+    int ns = in.readU32();
+    int localName = in.readU32();
+    in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.NS)[ns]);
+    int nsKind = in.readU8();
+    if (nsKind == CONSTANT_PrivateNamespace) {
+      in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
+      int stringLength = in.readU32();
+      if (modifyAccessModifier != null && compare(in, stringLength, modifyAccessModifier)) {
+        currentBuffer.writeU32(history.getIndexWithSpecifiedNsRaw(poolIndex, name, findPublicNamespace(in)));
+        modifyAccessModifier = null;
+        in.seek(originalPosition);
+        return true;
+      }
+    }
+
+    in.seek(originalPosition);
+    return false;
+  }
+
   public void methodTrait(int trait_kind, int name, int dispId, int methodInfo, int[] metadata, DataBuffer in) {
     final int kind = trait_kind & 0x0f;
-    if ((skipInitialize && kind == TRAIT_Method && ((trait_kind >> 4) & TRAIT_FLAG_Override) != 0) ||
+    if (((skipInitialize || skipPanelAddChild) && kind == TRAIT_Method && ((trait_kind >> 4) & TRAIT_FLAG_Override) != 0) ||
         (skipColorCorrection && kind == TRAIT_Setter)) {
       final int originalPosition = in.position();
       in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.MULTINAME)[name]);
@@ -109,6 +130,11 @@ class FlexEncoder extends Encoder {
         }
         else if (skipColorCorrection && compare(in, stringLength, "colorCorrection")) {
           history.getModifiedMethodBodies(poolIndex).put(methodInfo, EMPTY_METHOD_BODY);
+        }
+        else if (skipPanelAddChild && compare(in, stringLength, "addChildAt")) {
+          in.seek(originalPosition);
+          skipPanelAddChild = false;
+          return;
         }
       }
 
@@ -158,6 +184,11 @@ class FlexEncoder extends Encoder {
     else if (compare(in, packageLength, SPARK_COMPONENTS_SUPPORT_CLASSES)) {
       in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
       skipInitialize = compare(in, VIEW_NAVIGATOR_APPLICATION_BASE);
+    }
+    else if (isFlex45 && compare(in, packageLength, "mx.containers")) {
+      in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
+      skipPanelAddChild = compare(in, "Panel");
+      modifyAccessModifier = "setControlBar";
     }
   }
 
@@ -224,7 +255,7 @@ class FlexEncoder extends Encoder {
   
   @Override
   public void traitCount(int traitCount) {
-    currentBuffer.writeU32(skipInitialize ? (traitCount - 1) : traitCount);
+    currentBuffer.writeU32((skipInitialize || skipPanelAddChild) ? (traitCount - 1) : traitCount);
   }
 
   @Override
@@ -233,6 +264,7 @@ class FlexEncoder extends Encoder {
     skipInitialize = false;
     modifyConstructor = false;
     skipColorCorrection = false;
+    skipPanelAddChild = false;
     modifyAccessModifier = null;
   }
 

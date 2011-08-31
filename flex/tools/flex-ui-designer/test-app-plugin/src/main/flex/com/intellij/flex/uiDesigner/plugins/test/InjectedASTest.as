@@ -71,10 +71,7 @@ public class InjectedASTest extends BaseTestCase {
     // todo
   }
   
-  private function getMxInternal(propertyName:String):QName {
-    return new QName(mxInternal, propertyName);
-  }
-  
+
   public function ExplicitRadioButtonGroup():void {
     var group:Object = app.getElementAt(0).getElementAt(0).group;
     var mxInternalName:QName = getMxInternal("name");
