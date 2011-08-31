@@ -392,7 +392,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     mySdkPanel.addListener(new ChangeListener() {
       public void stateChanged(final ChangeEvent e) {
         updateAvailableTargetPlayers();
-        updateComponentSetComboVisibility();
+        updateComponentSetCombo();
       }
     });
 
