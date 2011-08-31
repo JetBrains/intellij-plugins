@@ -11,13 +11,11 @@ public class BCUtils {
   private static LinkageType[] FLEX_APP_LINKAGES = {LinkageType.Default, LinkageType.Merged, LinkageType.RSL};
   private static LinkageType[] AS_APP_LINKAGES = {LinkageType.Default, LinkageType.Merged};
 
-  public static LinkageType[] getSuitableFrameworkLinkages(final FlexIdeBuildConfiguration.TargetPlatform targetPlatform,
-                                                           final boolean pureAS,
-                                                           final FlexIdeBuildConfiguration.OutputType outputType) {
-    if (outputType == FlexIdeBuildConfiguration.OutputType.Library) {
+  public static LinkageType[] getSuitableFrameworkLinkages(BuildConfigurationNature nature) {
+    if (nature.outputType == FlexIdeBuildConfiguration.OutputType.Library) {
       return LIB_LINKAGES;
     }
-    else if (pureAS) {
+    else if (nature.pureAS) {
       return AS_APP_LINKAGES;
     }
     else {
@@ -25,16 +23,14 @@ public class BCUtils {
     }
   }
 
-  public static LinkageType getDefaultFrameworkLinkage(final FlexIdeBuildConfiguration.TargetPlatform targetPlatform,
-                                                       final boolean pureAS,
-                                                       final FlexIdeBuildConfiguration.OutputType outputType) {
-    if (outputType == FlexIdeBuildConfiguration.OutputType.Library) {
+  public static LinkageType getDefaultFrameworkLinkage(BuildConfigurationNature nature) {
+    if (nature.outputType == FlexIdeBuildConfiguration.OutputType.Library) {
       return LinkageType.External;
     }
-    else if (pureAS) {
+    else if (nature.pureAS) {
       return LinkageType.Merged;
     }
-    else if (targetPlatform == FlexIdeBuildConfiguration.TargetPlatform.Web) {
+    else if (nature.targetPlatform == FlexIdeBuildConfiguration.TargetPlatform.Web) {
       return LinkageType.RSL; // Web Flex App
     }
     else {
