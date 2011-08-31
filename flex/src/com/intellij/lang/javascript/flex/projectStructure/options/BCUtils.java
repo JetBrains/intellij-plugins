@@ -50,12 +50,13 @@ public class BCUtils {
   @Nullable
   public static LinkageType getSdkEntryLinkageType(final String url,
                                                    final BuildConfigurationNature bcNature,
+                                                   String targetPlayer,
                                                    final FlexIdeBuildConfiguration.ComponentSet componentSet) {
     if (url.endsWith("/frameworks/libs/air/airglobal.swc")) {
       return bcNature.isWebPlatform() ? null : LinkageType.External;
     }
 
-    if (url.endsWith("/playerglobal.swc") && url.contains("/frameworks/libs/player/")) {
+    if (url.endsWith("/frameworks/libs/player/" + targetPlayer + "/playerglobal.swc")) {
       return bcNature.isWebPlatform() ? LinkageType.External : null;
     }
 

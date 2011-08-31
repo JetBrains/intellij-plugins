@@ -8,6 +8,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.EditableModel;
+import com.intellij.util.ui.tree.TreeUtil;
 
 import javax.swing.*;
 import javax.swing.table.JTableHeader;
@@ -17,6 +18,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -139,7 +141,9 @@ abstract class EditableTreeTable<T> extends TreeTable {
   }
 
   public void refresh() {
+    List<TreePath> expandedPaths = TreeUtil.collectExpandedPaths(getTree());
     ((DefaultTreeModel)getTree().getModel()).reload();
+    TreeUtil.restoreExpandedPaths(getTree(), expandedPaths);
   }
 
   protected abstract void render(SimpleColoredComponent coloredTreeCellRenderer, T userObject);

@@ -9,6 +9,7 @@ import com.intellij.openapi.projectRoots.ex.ProjectRoot;
 import com.intellij.openapi.projectRoots.impl.ProjectRootContainerImpl;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
@@ -55,21 +56,12 @@ public class SdkEntry implements JDOMExternalizable {
     // TODO dependency types
   }
 
-  public String[] getClassRoots(final BuildConfigurationNature nature, final FlexIdeBuildConfiguration.ComponentSet componentSet) {
+  public String[] getAllClassRoots() {
     Collection<String> urls = new ArrayList<String>();
     for (ProjectRoot root : myRoots.getRoots(OrderRootType.CLASSES)) {
       urls.addAll(Arrays.asList(root.getUrls()));
     }
-    return ArrayUtil.toStringArray(ContainerUtil.filter(urls, new Condition<String>() {
-      @Override
-      public boolean value(String url) {
-        return BCUtils.getSdkEntryLinkageType(url, nature, componentSet) != null;
-      }
-    }));
-  }
-
-  public LinkageType getEntryLinkageType(String url, BuildConfigurationNature nature, FlexIdeBuildConfiguration.ComponentSet componentSet) {
-    return BCUtils.getSdkEntryLinkageType(url, nature, componentSet);
+    return ArrayUtil.toStringArray(urls);
   }
 
   @Override

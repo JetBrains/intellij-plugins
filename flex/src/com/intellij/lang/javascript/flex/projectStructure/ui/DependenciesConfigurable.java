@@ -37,8 +37,11 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.*;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.IconUtil;
@@ -62,6 +65,8 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
@@ -91,6 +96,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   private final Disposable myDisposable;
   private final AnActionButton myEditAction;
   private final AnActionButton myRemoveButton;
+  private final BuildConfigurationNature myNature;
 
   private abstract static class MyTableItem {
     public abstract String getText();
@@ -249,6 +255,46 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
   }
 
+  private static class SdkEntryItem extends MyTableItem {
+    private final String url;
+    private final LinkageType linkageType;
+
+    private SdkEntryItem(String url, LinkageType linkageType) {
+      this.url = url;
+      this.linkageType = linkageType;
+    }
+
+    @Override
+    public String getText() {
+      return url;
+    }
+
+    @Override
+    public Icon getIcon() {
+      return PlatformIcons.LIBRARY_ICON;
+    }
+
+    @Override
+    public boolean showLinkage() {
+      return true;
+    }
+
+    @Override
+    public boolean isLinkageEditable() {
+      return false;
+    }
+
+    @Override
+    public LinkageType getLinkageType() {
+      return linkageType;
+    }
+
+    @Override
+    public void setLinkageType(LinkageType linkageType) {
+      throw new UnsupportedOperationException();
+    }
+  }
+
   private static final DefaultTableCellRenderer LINKAGE_TYPE_RENDERER = new DefaultTableCellRenderer() {
     @Override
     public Component getTableCellRendererComponent(JTable table,
@@ -334,21 +380,20 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   public DependenciesConfigurable(final FlexIdeBuildConfiguration bc, Project project) {
     myDependencies = bc.DEPENDENCIES;
     myProject = project;
+    myNature = bc.getNature();
 
     myDisposable = Disposer.newDisposable();
-    final boolean mobilePlatform = bc.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Mobile;
-    final boolean webPlatform = bc.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Web;
 
-    myTargetPlayerLabel.setVisible(webPlatform);
-    myTargetPlayerCombo.setVisible(webPlatform);
+    myTargetPlayerLabel.setVisible(myNature.isWebPlatform());
+    myTargetPlayerCombo.setVisible(myNature.isWebPlatform());
     mySdkPanel.addListener(new ChangeListener() {
       public void stateChanged(final ChangeEvent e) {
         updateAvailableTargetPlayers();
       }
     });
 
-    myComponentSetLabel.setVisible(!mobilePlatform && !bc.PURE_ACTION_SCRIPT);
-    myComponentSetCombo.setVisible(!mobilePlatform && !bc.PURE_ACTION_SCRIPT);
+    myComponentSetLabel.setVisible(!myNature.isMobilePlatform() && !bc.PURE_ACTION_SCRIPT);
+    myComponentSetCombo.setVisible(!myNature.isMobilePlatform() && !bc.PURE_ACTION_SCRIPT);
 
     myComponentSetCombo.setModel(new DefaultComboBoxModel(FlexIdeBuildConfiguration.ComponentSet.values()));
     myComponentSetCombo.setRenderer(new ListCellRendererWrapper<FlexIdeBuildConfiguration.ComponentSet>(myComponentSetCombo.getRenderer()) {
@@ -357,7 +402,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
     });
 
-    final LinkageType defaultLinkage = BCUtils.getDefaultFrameworkLinkage(bc.getNature());
+    final LinkageType defaultLinkage = BCUtils.getDefaultFrameworkLinkage(myNature);
     myFrameworkLinkageCombo
       .setRenderer(new ListCellRendererWrapper<LinkageType>(myFrameworkLinkageCombo.getRenderer()) {
         public void customize(JList list, LinkageType value, int index, boolean selected, boolean hasFocus) {
@@ -370,7 +415,23 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         }
       });
 
-    myFrameworkLinkageCombo.setModel(new DefaultComboBoxModel(BCUtils.getSuitableFrameworkLinkages(bc.getNature())));
+    myFrameworkLinkageCombo.setModel(new DefaultComboBoxModel(BCUtils.getSuitableFrameworkLinkages(myNature)));
+
+    ItemListener updateSdkItemsListener = new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        DefaultMutableTreeNode sdkNode = findSdkNode();
+        SdkEntry currentSdk = mySdkPanel.getCurrentSdk();
+        if (sdkNode != null && currentSdk != null) {
+          updateSdkEntries(sdkNode, currentSdk);
+          myTable.refresh();
+        }
+      }
+    };
+    myComponentSetCombo.addItemListener(updateSdkItemsListener);
+    myFrameworkLinkageCombo.addItemListener(updateSdkItemsListener);
+    myTargetPlayerCombo.addItem(updateSdkItemsListener);
+
     myTable = new EditableTreeTable<MyTableItem>("", DEPENDENCY_TYPE_COLUMN) {
       @Override
       protected void render(SimpleColoredComponent c, MyTableItem item) {
@@ -382,6 +443,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
     };
     myTable.setRootVisible(false);
+    myTable.getTree().setShowsRootHandles(true);
     myTable.getTree().setLineStyleAngled();
 
     // we need to add listener *before* ToolbarDecorator's, so our listener is invoked after it
@@ -504,6 +566,19 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         myTable.refresh();
       }
     });
+  }
+
+  @Nullable
+  private DefaultMutableTreeNode findSdkNode() {
+    for (int row = 0; row < myTable.getRowCount(); row++) {
+      MyTableItem item = myTable.getItemAt(row);
+      if (myTable.getItemAt(row) instanceof SdkItem) {
+        if (item instanceof SdkItem) {
+          return (DefaultMutableTreeNode)myTable.getRoot().getChildAt(row);
+        }
+      }
+    }
+    return null;
   }
 
   private void updateEditButton() {
@@ -664,7 +739,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       if (myDependencies.getSdk() != null) return true;
     }
 
-    final Object targetPlayer = myTargetPlayerCombo.getSelectedItem();
+    final String targetPlayer = (String)myTargetPlayerCombo.getSelectedItem();
     if (myTargetPlayerCombo.isVisible() && targetPlayer != null && !myDependencies.TARGET_PLAYER.equals(targetPlayer)) return true;
     if (myComponentSetCombo.isVisible() && myDependencies.COMPONENT_SET != myComponentSetCombo.getSelectedItem()) return true;
     if (myDependencies.FRAMEWORK_LINKAGE != myFrameworkLinkageCombo.getSelectedItem()) return true;
@@ -739,11 +814,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
       else if (item instanceof ModuleLibraryItem) {
         entry = new ModuleLibraryEntry();
-        ((ModuleLibraryItem)item).libraryEntry.applyTo((ModuleLibraryEntry)entry);
+        ((ModuleLibraryItem)item).libraryEntry.applyTo(entry);
         ((ModuleLibraryItem)item).dependencyType.applyTo(entry.getDependencyType());
         dependencies.getEntries().add(entry);
       }
-      else if (item instanceof SdkItem) {
+      else if (item instanceof SdkItem || item instanceof SdkEntryItem) {
         // ignore
       }
       else {
@@ -768,7 +843,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     root.removeAllChildren();
 
     if (sdk != null) {
-      myTable.getRoot().insert(new DefaultMutableTreeNode(new SdkItem(sdk), true), 0);
+      DefaultMutableTreeNode sdkNode = new DefaultMutableTreeNode(new SdkItem(sdk), true);
+      myTable.getRoot().insert(sdkNode, 0);
+      updateSdkEntries(sdkNode, sdk);
     }
     FlexIdeBCConfigurator configurator = FlexIdeModuleStructureExtension.getInstance().getConfigurator();
     for (DependencyEntry entry : myDependencies.getEntries()) {
@@ -777,12 +854,13 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
         Module module = bcEntry.getModule();
         NamedConfigurable<FlexIdeBuildConfiguration> configurable =
-          module != null ? ContainerUtil.find(configurator.getBCConfigurables(module), new Condition<NamedConfigurable<FlexIdeBuildConfiguration>>() {
-            @Override
-            public boolean value(NamedConfigurable<FlexIdeBuildConfiguration> configurable) {
-              return configurable.getEditableObject().NAME.equals(bcEntry.getBcName());
-            }
-          }) : null;
+          module != null ? ContainerUtil
+            .find(configurator.getBCConfigurables(module), new Condition<NamedConfigurable<FlexIdeBuildConfiguration>>() {
+              @Override
+              public boolean value(NamedConfigurable<FlexIdeBuildConfiguration> configurable) {
+                return configurable.getEditableObject().NAME.equals(bcEntry.getBcName());
+              }
+            }) : null;
         if (configurable == null) {
           item = new BCItem(bcEntry.getModuleName(), bcEntry.getBcName());
         }
@@ -839,14 +917,45 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   private void updateSdkTableItem(@Nullable SdkEntry sdk) {
-    for (int row = 0; row < myTable.getRowCount(); row++) {
-      if (myTable.getItemAt(row) instanceof SdkItem) {
-        myTable.getRoot().remove(row);
-      }
-    }
-
+    DefaultMutableTreeNode sdkNode = findSdkNode();
     if (sdk != null) {
-      myTable.getRoot().insert(new DefaultMutableTreeNode(new SdkItem(sdk), true), 0);
+      SdkItem sdkItem = new SdkItem(sdk);
+      if (sdkNode != null) {
+        sdkNode.setUserObject(sdkItem);
+      }
+      else {
+        sdkNode = new DefaultMutableTreeNode(sdkItem, true);
+        myTable.getRoot().insert(sdkNode, 0);
+      }
+      updateSdkEntries(sdkNode, sdk);
+    }
+    else if (sdkNode != null) {
+      myTable.getRoot().remove(sdkNode);
+    }
+  }
+
+  private void updateSdkEntries(DefaultMutableTreeNode sdkNode, SdkEntry sdk) {
+    sdkNode.removeAllChildren();
+    FlexIdeBuildConfiguration.ComponentSet componentSet = (FlexIdeBuildConfiguration.ComponentSet)myComponentSetCombo.getSelectedItem();
+    String targetPlayer = (String)myTargetPlayerCombo.getSelectedItem();
+
+    for (String url : sdk.getAllClassRoots()) {
+      url = VirtualFileManager.extractPath(StringUtil.trimEnd(url, JarFileSystem.JAR_SEPARATOR));
+      LinkageType linkageType = BCUtils.getSdkEntryLinkageType(url, myNature, targetPlayer, componentSet);
+      if (linkageType == null) {
+        // this url is not applicable
+        continue;
+      }
+
+      if (linkageType == LinkageType.Default) {
+        linkageType = (LinkageType)myFrameworkLinkageCombo.getSelectedItem();
+        if (linkageType == LinkageType.Default) {
+          linkageType = BCUtils.getDefaultFrameworkLinkage(myNature);
+        }
+      }
+
+      SdkEntryItem item = new SdkEntryItem(FileUtil.toSystemDependentName(url), linkageType);
+      sdkNode.add(new DefaultMutableTreeNode(item, false));
     }
   }
 
@@ -906,7 +1015,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         }
         for (NamedConfigurable<FlexIdeBuildConfiguration> configurable : configurator.getBCConfigurables(module)) {
           FlexIdeBCConfigurable flexIdeBCConfigurable = FlexIdeBCConfigurable.unwrapIfNeeded(configurable);
-          if (dependencies.contains(flexIdeBCConfigurable) || flexIdeBCConfigurable.getDependenciesConfigurable() == DependenciesConfigurable.this) {
+          if (dependencies.contains(flexIdeBCConfigurable) ||
+              flexIdeBCConfigurable.getDependenciesConfigurable() == DependenciesConfigurable.this) {
             continue;
           }
           FlexIdeBuildConfiguration.OutputType outputType = flexIdeBCConfigurable.getOutputType();
