@@ -12,6 +12,7 @@ def product = "FlexIDE"
 requireProperty("buildNumber", requireProperty("build.number", "108.SNAPSHOT"))
 setProperty("buildName", "${product}-${buildNumber}")
 setProperty("product", "${product}")
+requireProperty("launchProperties", "")
 
 
 // load ApplicationInfo.xml properties
@@ -204,6 +205,12 @@ target('default': "Build artifacts") {
 
   buildSearchableOptions()
 
+  ant.copy(file: "$home/flex/build/flexide.exe.vmoptions", tofile: "$paths.sandbox/flexide.exe.vmoptions")
+
+  processLaunchProperties() {
+    pair -> ant.echo(file: "$paths.sandbox/flexide.exe.vmoptions", append: "true", message: "-D${pair["key"]}=${pair["value"]}\r\n")
+  }
+
   wireBuildDate(buildNumber)
   LayoutInfo layoutInfo = layoutFull(paths.distAll, usedJars)
   generateLicensesTable("$paths.artifacts/third-party-libraries.txt", layoutInfo.usedModules);
@@ -229,6 +236,15 @@ target('default': "Build artifacts") {
   buildWinZip()
 
   buildNsis()
+}
+
+private def processLaunchProperties(Closure processor) {
+  if (launchProperties != "") {
+    launchProperties.tokenize(";").each {
+      tokens = it.tokenize("=");
+      processor(key: tokens[0], value: tokens[1]);
+    }
+  }
 }
 
 private def buildWinZip() {
@@ -380,7 +396,7 @@ def buildExe() {
 def layoutLinux(String target) {
   layout(target) {
     dir("bin") {
-      renamedFile("$home/flex/build/flexide.exe.vmoptions", "flexide.vmoptions")
+      renamedFile("$paths.sandbox/flexide.exe.vmoptions", "flexide.vmoptions")
 
       fileset(dir: "$home/flex/build") {
         include(name: "idea.properties")
@@ -595,6 +611,10 @@ def layoutMac(Map args, String target) {
   args["platform_prefix"] = "Flex"
   args["idea.properties.path"] = "$target/bin/idea.properties"
 
+  processLaunchProperties() {
+    pair -> args[pair["key"]] = args["value"]
+  }
+
   layoutMacApp(target, "$home/community", args)
 }
 
@@ -611,8 +631,8 @@ def layoutWin(String target) {
       fileset(dir: "$home/flex/build") {
         include(name: "flexide.bat")
         include(name: "idea.properties")
-        include(name: "flexide.exe.vmoptions")
       }
+      fileset(file: "$paths.sandbox/flexide.exe.vmoptions")
       fileset(dir: "$home/community/bin") {
         include(name: "log.xml")
       }
