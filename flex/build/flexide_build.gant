@@ -119,6 +119,10 @@ target('default': "Build artifacts") {
 
   loadProject()
 
+  processLaunchProperties() {
+    pair -> project.info("launch property: " + pair["key"] + "=" + pair["value"])
+  }
+
   project.targetFolder = "$paths.sandbox/classes"
   project.dryRun = dryRun
 
