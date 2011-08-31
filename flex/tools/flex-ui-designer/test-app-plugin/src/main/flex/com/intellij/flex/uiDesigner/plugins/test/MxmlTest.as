@@ -43,6 +43,7 @@ public class MxmlTest extends BaseTestCase {
       ToolTip();
       MxPanelWithControlBar();
       AreaChartComplexExample();
+      ComplexContentAsSubTagsForObjectTypedProperty();
     }
   }
   
@@ -227,6 +228,11 @@ public class MxmlTest extends BaseTestCase {
 
   public function AreaChartComplexExample():void {
     validateUI();
+  }
+
+  // IDEA-73099
+  public function ComplexContentAsSubTagsForObjectTypedProperty():void {
+    assertThat(app, {dataProvider: {source: [strictlyEqualTo("1"), strictlyEqualTo("2"), strictlyEqualTo("3")]}});
   }
 }
 }

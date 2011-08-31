@@ -340,7 +340,10 @@ class PropertyProcessor implements ValueWriter {
       return VECTOR;
     }
     else if (type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME) || type.equals(JSCommonTypeNames.ANY_TYPE)) {
-      writeUntypedPropertyValue(valueProvider, descriptor);
+      if (!writeUntypedPropertyValue(valueProvider, descriptor)) {
+        out.write(Amf3Types.OBJECT);
+        return isStyle ? COMPLEX_STYLE : COMPLEX;
+      }
     }
     else if (type.equals(FlexCommonTypeNames.IFACTORY)) {
       writeClassFactory(valueProvider);
@@ -454,21 +457,27 @@ class PropertyProcessor implements ValueWriter {
     out.putShort(validChildrenCount, lengthPosition);
   }
 
-  private void writeUntypedPropertyValue(XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor) {
+  private boolean writeUntypedPropertyValue(XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor) {
     if (descriptor.isRichTextContent()) {
       writeString(valueProvider, descriptor);
-      return;
+      return true;
     }
 
-    // todo support not only attribute, but tag too
     if (valueProvider instanceof XmlAttributeValueProvider && isInlineArray(valueProvider.getTrimmed())) {
       writeInlineArray(valueProvider);
-      return;
+      return true;
+    }
+
+    // IDEA-73099
+    if (valueProvider instanceof XmlTagValueProvider) {
+      if (((XmlTag)valueProvider.getElement()).getSubTags().length > 0) {
+        return false;
+      }
     }
 
     final CharSequence charSequence = writeIfEmpty(valueProvider);
     if (charSequence == null) {
-      return;
+      return true;
     }
 
     final String value = charSequence.toString();
@@ -483,6 +492,8 @@ class PropertyProcessor implements ValueWriter {
         writer.writeString(charSequence);
       }
     }
+
+    return true;
   }
 
   private void writeClassFactory(XmlElementValueProvider valueProvider) throws InvalidPropertyException {

@@ -1,0 +1,9 @@
+<ButtonBar xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/mx">
+  <dataProvider>
+    <ArrayCollection>
+      <fx:String>1</fx:String>
+      <fx:String>2</fx:String>
+      <fx:String>3</fx:String>
+    </ArrayCollection>
+  </dataProvider>
+</ButtonBar>

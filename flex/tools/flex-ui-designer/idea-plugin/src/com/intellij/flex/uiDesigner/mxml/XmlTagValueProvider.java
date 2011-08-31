@@ -64,10 +64,6 @@ class XmlTagValueProvider implements XmlElementValueProvider {
     return tag;
   }
 
-  static CharSequence getDisplay(XmlTag tag) {
-    return getDisplay(tag.getValue().getChildren());
-  }
-
   private static CharSequence getDisplay(XmlTagChild[] children) {
     if (children.length == 1) {
       if (children[0] instanceof XmlText) {
