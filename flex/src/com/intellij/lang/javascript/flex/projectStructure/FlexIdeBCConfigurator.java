@@ -210,11 +210,12 @@ public class FlexIdeBCConfigurator {
 
       final FlexIdeBCConfigurable configurable = new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, modifiableRootModel);
 
+      NamedConfigurable<FlexIdeBuildConfiguration> wrapped = configurable.wrapInTabsIfNeeded();
       final List<NamedConfigurable<FlexIdeBuildConfiguration>> configurables = myModuleToConfigurablesMap.get(module);
-      configurables.add(configurable);
+      configurables.add(wrapped);
       myConfigurationsToModuleMap.put(configuration, module);
 
-      final MasterDetailsComponent.MyNode node = new BuildConfigurationNode(configurable.wrapInTabsIfNeeded());
+      final MasterDetailsComponent.MyNode node = new BuildConfigurationNode(wrapped);
       FlexIdeModuleStructureExtension.addConfigurationChildNodes(project, configurable, node);
 
       final ModuleStructureConfigurable moduleStructureConfigurable = ModuleStructureConfigurable.getInstance(project);

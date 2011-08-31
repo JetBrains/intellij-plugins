@@ -378,7 +378,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     return children;
   }
 
-  public NamedConfigurable wrapInTabsIfNeeded() {
+  public NamedConfigurable<FlexIdeBuildConfiguration> wrapInTabsIfNeeded() {
     if (!FlexIdeUtils.isFlatUi()) return this;
 
     List<NamedConfigurable> tabs = new ArrayList<NamedConfigurable>();
