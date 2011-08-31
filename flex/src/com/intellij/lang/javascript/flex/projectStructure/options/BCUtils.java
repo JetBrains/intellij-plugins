@@ -1,5 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * @author ksafonov
  */
@@ -38,5 +40,17 @@ public class BCUtils {
     else {
       return LinkageType.Merged; // Desktop (AIR) Flex App
     }
+  }
+
+  /**
+   * @return <code>null</code> if entry should not be included at all
+   */
+  @Nullable
+  public static LinkageType getSdkEntryLinkageType(String url,
+                                                   BuildConfigurationNature buildConfigurationNature,
+                                                   LinkageType frameworkLinkage,
+                                                   FlexIdeBuildConfiguration.ComponentSet componentSet) {
+    // TODO implement
+    return LinkageType.Merged;
   }
 }

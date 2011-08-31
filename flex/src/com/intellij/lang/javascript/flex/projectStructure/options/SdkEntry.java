@@ -2,29 +2,30 @@ package com.intellij.lang.javascript.flex.projectStructure.options;
 
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.projectRoots.SdkAdditionalData;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.projectRoots.ex.ProjectRoot;
 import com.intellij.openapi.projectRoots.impl.ProjectRootContainerImpl;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizable;
-import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.hash.LinkedHashMap;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author ksafonov
  */
 public class SdkEntry implements JDOMExternalizable {
+
+  private static final Logger LOG = Logger.getInstance(SdkEntry.class.getName());
 
   private static final String HOME_ATTR = "home";
   private static final String DEPENDENCY_TYPE_ELEM = "entry";
@@ -52,6 +53,25 @@ public class SdkEntry implements JDOMExternalizable {
     FlexSdkUtils.setupSdkPaths(sdkRoot, FlexSdkType.getInstance(), new MySdkModificator());
     myDependencyTypes.clear();
     // TODO dependency types
+  }
+
+  public String[] getClassRoots(final BuildConfigurationNature nature, final FlexIdeBuildConfiguration.ComponentSet componentSet) {
+    Collection<String> urls = new ArrayList<String>();
+    for (ProjectRoot root : myRoots.getRoots(OrderRootType.CLASSES)) {
+      urls.addAll(Arrays.asList(root.getUrls()));
+    }
+    return ArrayUtil.toStringArray(ContainerUtil.filter(urls, new Condition<String>() {
+      @Override
+      public boolean value(String url) {
+        LinkageType anyLinkageType = LinkageType.Default;
+        return BCUtils.getSdkEntryLinkageType(url, nature, anyLinkageType, componentSet) != null;
+      }
+    }));
+  }
+
+  public LinkageType getEntryLinkageType(String url, BuildConfigurationNature nature,
+                                         LinkageType frameworkLinkage, final FlexIdeBuildConfiguration.ComponentSet componentSet) {
+    return BCUtils.getSdkEntryLinkageType(url, nature, frameworkLinkage, componentSet);
   }
 
   @Override
