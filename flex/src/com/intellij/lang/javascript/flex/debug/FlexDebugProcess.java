@@ -12,6 +12,8 @@ import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
+import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.options.SdkEntry;
 import com.intellij.lang.javascript.flex.run.*;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
@@ -116,23 +118,6 @@ public class FlexDebugProcess extends XDebugProcess {
 
   private String myFdbLaunchCommand;
 
-  @Override
-  public String getCurrentStateMessage() {
-    return getSession().isStopped()
-           ? XDebuggerBundle.message("debugger.state.message.disconnected")
-           : startupDone
-             ? XDebuggerBundle.message("debugger.state.message.connected")
-             : fdbWaitingForPlayerStateReached
-               ? FlexBundle.message("debugger.waiting.player")
-               : FlexBundle.message("initializing.flex.debugger");
-  }
-
-  @NotNull
-  @Override
-  public XDebuggerEditorsProvider getEditorsProvider() {
-    return new FlexDebuggerEditorsProvider();
-  }
-
   private final LinkedList<DebuggerCommand> commandsToWrite = new LinkedList<DebuggerCommand>() {
     @Override
     public synchronized DebuggerCommand removeFirst() {
@@ -173,6 +158,39 @@ public class FlexDebugProcess extends XDebugProcess {
   private FlexUnitConnection myFlexUnitConnection;
   private SwfPolicyFileConnection myPolicyFileConnection;
 
+  public FlexDebugProcess(final XDebugSession session, final FlexIdeBuildConfiguration config, final FlexIdeRunnerParameters params)
+    throws IOException {
+
+    super(session);
+
+    final SdkEntry sdkEntry = config.DEPENDENCIES.getSdk();
+    assert sdkEntry != null; // checked in FlexBaseRunner
+    final String sdkHome = sdkEntry.getHomePath();
+
+    myDebuggerVersion = StringUtil.notNullize(sdkEntry.getFlexVersion(), "unknown");
+    myBreakpointsHandler = new FlexBreakpointsHandler(this);
+    mySdkLocation = FileUtil.toSystemIndependentName(sdkHome);
+
+    myPolicyFileConnection = null;
+    myFlexUnitConnection = null;
+
+    final List<String> fdbLaunchCommand = FlexSdkUtils
+      .getCommandLineForSdkTool(session.getProject(), sdkHome, null, getFdbClasspath(), "flex.tools.debugger.cli.DebugCLI", null);
+
+    if (config.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Web) {
+      // todo support wrapper
+      fdbProcess = launchFlex(fdbLaunchCommand, config.getOutputFilePath(), params.getLauncherParameters());
+    }
+    else  {
+      // todo implement
+      throw new IOException("not implemented yet");
+    }
+
+    reader = new MyFdbOutputReader(fdbProcess.getInputStream());
+
+    startCommandProcessingThread();
+  }
+
   public FlexDebugProcess(final XDebugSession session, final Sdk flexSdk, final FlexRunnerParameters flexRunnerParameters)
     throws IOException {
 
@@ -182,49 +200,31 @@ public class FlexDebugProcess extends XDebugProcess {
 
     myDebuggerVersion = StringUtil.notNullize(debuggerSdk.getVersionString(), "unknown");
     myBreakpointsHandler = new FlexBreakpointsHandler(this);
-    mySdkLocation = flexSdk.getHomePath().replace(File.separatorChar, '/');
+    mySdkLocation = FileUtil.toSystemIndependentName(flexSdk.getHomePath());
 
     if (flexRunnerParameters instanceof FlexUnitRunnerParameters) {
-      try {
-        final FlexUnitRunnerParameters params = (FlexUnitRunnerParameters)flexRunnerParameters;
-        myPolicyFileConnection = new SwfPolicyFileConnection();
-        myPolicyFileConnection.open(params.getSocketPolicyPort());
-
-        myFlexUnitConnection = new FlexUnitConnection();
-        myFlexUnitConnection.addListener(new FlexUnitConnection.Listener() {
-          public void statusChanged(FlexUnitConnection.ConnectionStatus status) {
-            if (status == FlexUnitConnection.ConnectionStatus.CONNECTION_FAILED) {
-              getSession().stop();
-            }
-          }
-
-          public void onData(String line) {
-            getProcessHandler().notifyTextAvailable(line + "\n", ProcessOutputTypes.STDOUT);
-          }
-
-          public void onFinish() {
-            getProcessHandler().detachProcess();
-          }
-        });
-        myFlexUnitConnection.open(params.getPort());
-      }
-      catch (ExecutionException e) {
-        Notifications.Bus.notify(new Notification(
-          DEBUGGER_GROUP_ID,
-          FlexBundle.message("flex.debugger.startup.error"),
-          FlexBundle.message("flexunit.startup.error", e.getMessage()),
-          NotificationType.ERROR
-        ), session.getProject());
-        myFlexUnitConnection = null;
-        myPolicyFileConnection = null;
-      }
+      final FlexUnitRunnerParameters flexUnitParams = (FlexUnitRunnerParameters)flexRunnerParameters;
+      openFlexUnitConnections(flexUnitParams.getSocketPolicyPort(), flexUnitParams.getPort());
     }
     else {
       myPolicyFileConnection = null;
       myFlexUnitConnection = null;
     }
 
-    String classpath = FileUtil.toSystemDependentName(debuggerSdk.getHomePath() + "/lib/fdb.jar");
+    final List<String> fdbLaunchCommand =
+      FlexSdkUtils.getCommandLineForSdkTool(session.getProject(), debuggerSdk, getFdbClasspath(), "flex.tools.debugger.cli.DebugCLI", null);
+
+    fdbProcess = FlexBaseRunner.isRunAsAir(flexRunnerParameters)
+                 ? launchAir(fdbLaunchCommand, (AirRunnerParameters)flexRunnerParameters, flexSdk)
+                 : launchFlex(fdbLaunchCommand, flexRunnerParameters);
+
+    reader = new MyFdbOutputReader(fdbProcess.getInputStream());
+
+    startCommandProcessingThread();
+  }
+
+  private String getFdbClasspath() {
+    String classpath = mySdkLocation + "/lib/fdb.jar";
 
     if (isDebuggerFromSdk3()) {
       classpath = FlexUtils.getPathToBundledJar("idea-fdb-3-fix.jar") + File.pathSeparator + classpath;
@@ -237,55 +237,104 @@ public class FlexDebugProcess extends XDebugProcess {
         classpath = FlexUtils.getPathToBundledJar("idea-fdb-4.5.0.20967-fix.jar") + File.pathSeparator + classpath;
       }
     }
+    return classpath;
+  }
 
-    final List<String> fdbLaunchCommand =
-      FlexSdkUtils.getCommandLineForSdkTool(session.getProject(), debuggerSdk, classpath, "flex.tools.debugger.cli.DebugCLI", null);
+  private void openFlexUnitConnections(final int socketPolicyPort, final int port) {
+    try {
+      myPolicyFileConnection = new SwfPolicyFileConnection();
+      myPolicyFileConnection.open(socketPolicyPort);
 
-    fdbProcess = FlexBaseRunner.isRunAsAir(flexRunnerParameters)
-                   ? launchAir(fdbLaunchCommand, (AirRunnerParameters)flexRunnerParameters, flexSdk)
-                   : launchFlex(fdbLaunchCommand, flexRunnerParameters);
-
-      reader = new MyFdbOutputReader(fdbProcess.getInputStream());
-
-      ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-        public void run() {
-          myDebuggerManagerThread = Thread.currentThread();
-          synchronized (FlexDebugProcess.this) {
-            if (!debugSessionInitialized) {
-              try {
-                FlexDebugProcess.this.wait();
-              }
-              catch (InterruptedException e) {
-                // ignore
-              }
-            }
-          }
-
-          try {
-            while(true) {
-              processOneCommandLoop();
-            }
-          } catch (IOException ex) {
-            myConsoleView.print(ex.toString(), ConsoleViewContentType.ERROR_OUTPUT);
-            getProcessHandler().detachProcess();
-            fdbProcess.destroy();
-            LOG.warn(ex);
-          }
-          catch (InterruptedException e) {
-            return;
-          } catch (RuntimeException ex) {
-            final Throwable throwable = ex.getCause();
-            if (throwable instanceof InterruptedException) return;
-            throw ex;
-          }
-          finally {
-            try {
-              fdbProcess.getInputStream().close();
-            } catch (IOException ex) {}
+      myFlexUnitConnection = new FlexUnitConnection();
+      myFlexUnitConnection.addListener(new FlexUnitConnection.Listener() {
+        public void statusChanged(FlexUnitConnection.ConnectionStatus status) {
+          if (status == FlexUnitConnection.ConnectionStatus.CONNECTION_FAILED) {
+            getSession().stop();
           }
         }
-      });
 
+        public void onData(String line) {
+          getProcessHandler().notifyTextAvailable(line + "\n", ProcessOutputTypes.STDOUT);
+        }
+
+        public void onFinish() {
+          getProcessHandler().detachProcess();
+        }
+      });
+      myFlexUnitConnection.open(port);
+    }
+    catch (ExecutionException e) {
+      Notifications.Bus.notify(new Notification(
+        DEBUGGER_GROUP_ID,
+        FlexBundle.message("flex.debugger.startup.error"),
+        FlexBundle.message("flexunit.startup.error", e.getMessage()),
+        NotificationType.ERROR
+      ), getSession().getProject());
+      myFlexUnitConnection = null;
+      myPolicyFileConnection = null;
+    }
+  }
+
+  private void startCommandProcessingThread() {
+    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+      public void run() {
+        myDebuggerManagerThread = Thread.currentThread();
+        synchronized (FlexDebugProcess.this) {
+          if (!debugSessionInitialized) {
+            try {
+              FlexDebugProcess.this.wait();
+            }
+            catch (InterruptedException e) {
+              // ignore
+            }
+          }
+        }
+
+        try {
+          while (true) {
+            processOneCommandLoop();
+          }
+        }
+        catch (IOException ex) {
+          myConsoleView.print(ex.toString(), ConsoleViewContentType.ERROR_OUTPUT);
+          getProcessHandler().detachProcess();
+          fdbProcess.destroy();
+          LOG.warn(ex);
+        }
+        catch (InterruptedException e) {
+          return;
+        }
+        catch (RuntimeException ex) {
+          final Throwable throwable = ex.getCause();
+          if (throwable instanceof InterruptedException) return;
+          throw ex;
+        }
+        finally {
+          try {
+            fdbProcess.getInputStream().close();
+          }
+          catch (IOException ex) {
+          }
+        }
+      }
+    });
+  }
+
+  @Override
+  public String getCurrentStateMessage() {
+    return getSession().isStopped()
+           ? XDebuggerBundle.message("debugger.state.message.disconnected")
+           : startupDone
+             ? XDebuggerBundle.message("debugger.state.message.connected")
+             : fdbWaitingForPlayerStateReached
+               ? FlexBundle.message("debugger.waiting.player")
+               : FlexBundle.message("initializing.flex.debugger");
+  }
+
+  @NotNull
+  @Override
+  public XDebuggerEditorsProvider getEditorsProvider() {
+    return new FlexDebuggerEditorsProvider();
   }
 
   public static Sdk getDebuggerSdk(final FlexRunnerParameters flexRunnerParameters, final Sdk flexSdk) throws IOException {
@@ -399,7 +448,8 @@ public class FlexDebugProcess extends XDebugProcess {
                                                 needToRemoveAirRuntimeDir ? airRuntimeDirForFlexmojosSdk : null));
   }
 
-  private Process launchFlex(final List<String> fdbLaunchCommand, FlexRunnerParameters flexRunnerParameters) throws IOException {
+  private Process launchFlex(final List<String> fdbLaunchCommand,
+                             final FlexRunnerParameters flexRunnerParameters) throws IOException {
     final FlexRunnerParameters.RunMode runMode = flexRunnerParameters.getRunMode();
     connectToRunningFlashPlayerMode = runMode == FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer;
 
@@ -412,15 +462,23 @@ public class FlexDebugProcess extends XDebugProcess {
                            ? flexRunnerParameters.getHtmlOrSwfFilePath()
                            // launch nothing if runMode == FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer
                            : null;
+    return launchFlex(fdbLaunchCommand, url, new LauncherParameters(flexRunnerParameters.getLauncherType(),
+                                                                    flexRunnerParameters.getBrowserFamily(),
+                                                                    flexRunnerParameters.getPlayerPath()));
+  }
+
+  private Process launchFlex(final List<String> fdbLaunchCommand,
+                             final String url,
+                             final LauncherParameters launcherParameters) throws IOException {
     ensureExecutable(fdbLaunchCommand.get(0));
     myFdbLaunchCommand = StringUtil.join(fdbLaunchCommand, new Function<String, String>() {
-        public String fun(final String s) {
-          return s.indexOf(' ') >= 0 && !(s.startsWith("\"") && s.endsWith("\"")) ? '\"' + s + '\"' : s;
-        }
-      }, " ");
+      public String fun(final String s) {
+        return s.indexOf(' ') >= 0 && !(s.startsWith("\"") && s.endsWith("\"")) ? '\"' + s + '\"' : s;
+      }
+    }, " ");
     final Process process = Runtime.getRuntime().exec(ArrayUtil.toStringArray(fdbLaunchCommand));
     sendCommand(new ReadGreetingCommand());
-    sendCommand(url == null ? new StartDebuggingCommand() : new LaunchBrowserCommand(url, flexRunnerParameters));
+    sendCommand(url == null ? new StartDebuggingCommand() : new LaunchBrowserCommand(url, launcherParameters));
     return process;
   }
 
@@ -1330,17 +1388,15 @@ public class FlexDebugProcess extends XDebugProcess {
 
   class LaunchBrowserCommand extends StartDebuggingCommand {
     private final @NotNull String myUrl;
-    private final FlexRunnerParameters myFlexRunnerParameters;
+    private final LauncherParameters myLauncherParameters;
 
-    LaunchBrowserCommand(final @NotNull String url, FlexRunnerParameters flexRunnerParameters) {
+    LaunchBrowserCommand(final @NotNull String url, final LauncherParameters launcherParameters) {
       myUrl = url;
-      myFlexRunnerParameters = flexRunnerParameters;
+      myLauncherParameters = launcherParameters;
     }
 
     void launchDebuggedApplication() {
-      FlexBaseRunner.launchWithSelectedApplication(myUrl, new LauncherParameters(myFlexRunnerParameters.getLauncherType(),
-                                                                                 myFlexRunnerParameters.getBrowserFamily(),
-                                                                                 myFlexRunnerParameters.getPlayerPath()));
+      FlexBaseRunner.launchWithSelectedApplication(myUrl, myLauncherParameters);
     }
   }
 

@@ -31,6 +31,7 @@ import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.options.SdkEntry;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.extensions.Extensions;
@@ -108,6 +109,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     if (runProfile instanceof FlexIdeRunConfiguration) {
       final FlexIdeRunnerParameters params = ((FlexIdeRunConfiguration)runProfile).getRunnerParameters();
       final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig = checkModuleAndConfig(project, params);
+      checkConfiguration(moduleAndConfig.first, moduleAndConfig.second);
       return launchFlexIdeConfig(moduleAndConfig.first, moduleAndConfig.second, params, executor, contentToReuse, environment);
     }
 
@@ -146,7 +148,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                                               final FlexIdeBuildConfiguration config,
                                                               final FlexIdeRunnerParameters params, final Executor executor,
                                                               final RunContentDescriptor contentToReuse,
-                                                              final ExecutionEnvironment environment);
+                                                              final ExecutionEnvironment environment) throws ExecutionException;
 
   private static Pair<Module, FlexIdeBuildConfiguration> checkModuleAndConfig(final Project project, final FlexIdeRunnerParameters params)
     throws ExecutionException {
@@ -180,7 +182,16 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     return Pair.create(module, config);
   }
 
+  private static void checkConfiguration(final Module module, final FlexIdeBuildConfiguration config) throws ExecutionException {
+    final SdkEntry sdk = config.DEPENDENCIES.getSdk();
+    if (sdk == null) {
+      throw new CantRunException(
+        MessageFormat.format("SDK is not set for cuild configuration ''{0}'' of module ''{1}''", config.NAME, module.getName()));
+    }
 
+    // todo check all that affects launch
+  }
+  
   private static boolean needToCheckThatCompilationEnabled(final FlexRunnerParameters parameters) {
     return parameters instanceof FlexUnitRunnerParameters
            || (parameters instanceof AirMobileRunnerParameters &&

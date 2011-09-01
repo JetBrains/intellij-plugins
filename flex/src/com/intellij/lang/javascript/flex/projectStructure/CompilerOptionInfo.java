@@ -41,6 +41,8 @@ public class CompilerOptionInfo {
   private static final Map<String, CompilerOptionInfo> ourIdToInfoMap = new THashMap<String, CompilerOptionInfo>(150);
   private static final Collection<CompilerOptionInfo> ourOptionsWithSpecialValues = new LinkedList<CompilerOptionInfo>();
 
+  public static final CompilerOptionInfo DEBUG_INFO =
+    new CompilerOptionInfo("compiler.debug", "fake", OptionType.Boolean, null, null, false, null, true, true, true, "");
   public static final CompilerOptionInfo EXTERNAL_LIBRARY_INFO =
     new CompilerOptionInfo("compiler.external-library-path", "fake", OptionType.List, null,
                            new ListElement[]{new ListElement("path-element", ListElementType.String)}, false, null, true, true, true, "");

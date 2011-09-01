@@ -71,7 +71,8 @@ public class CompilerConfigGenerator {
                                                   final String sdkVersion,
                                                   final FlexIdeBuildConfiguration config) throws IOException {
     final String text = new CompilerConfigGenerator(module, sdkRootPath, sdkVersion, config).generateConfigFileText();
-    final String name = FlexCompilerHandler.generateConfigFileName(module, config.NAME, PlatformUtils.getPlatformPrefix(), null);
+    final String name =
+      FlexCompilerHandler.generateConfigFileName(module, config.NAME, PlatformUtils.getPlatformPrefix().toLowerCase(), null);
     return FlexCompilationUtils.getOrCreateConfigFile(module.getProject(), name, text);
   }
 
@@ -79,6 +80,7 @@ public class CompilerConfigGenerator {
     final Element rootElement =
       new Element(FlexCompilerConfigFileUtil.FLEX_CONFIG, FlexApplicationComponent.HTTP_WWW_ADOBE_COM_2006_FLEX_CONFIG);
 
+    addDebugOption(rootElement);
     addMandatoryOptions(rootElement);
     handleOptionsWithSpecialValues(rootElement);
     addNamespaces(rootElement);
@@ -89,6 +91,13 @@ public class CompilerConfigGenerator {
     addInputOutputPaths(rootElement);
 
     return JDOMUtil.writeElement(rootElement, "\n");
+  }
+
+  private void addDebugOption(final Element rootElement) {
+    final FlexCompilerProjectConfiguration instance = FlexCompilerProjectConfiguration.getInstance(myModule.getProject());
+    final boolean debug =
+      myConfig.OUTPUT_TYPE == FlexIdeBuildConfiguration.OutputType.Library ? instance.SWC_DEBUG_ENABLED : instance.SWF_DEBUG_ENABLED;
+    addOption(rootElement, CompilerOptionInfo.DEBUG_INFO, String.valueOf(debug));
   }
 
   private void addMandatoryOptions(final Element rootElement) {

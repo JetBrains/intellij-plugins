@@ -40,6 +40,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Alarm;
+import com.intellij.util.PlatformUtils;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.messages.MessageBusConnection;
@@ -281,8 +282,11 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
         final File[] filesToDelete = dir.listFiles(new FilenameFilter() {
           public boolean accept(final File dir, final String name) {
             if (name.endsWith(".xml")) {
+              if (name.startsWith(PlatformUtils.getPlatformPrefix().toLowerCase() + "-" + hash1)) {
+                return true;
+              }
               for (final FlexBuildConfiguration.Type type : FlexBuildConfiguration.Type.values()) {
-                if (name.startsWith(type.getConfigFilePrefix() + hash1)) {
+                if (name.startsWith(type.getConfigFilePrefix() + "-" + hash1)) {
                   return true;
                 }
               }

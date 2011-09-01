@@ -38,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.*;
@@ -108,7 +109,8 @@ public class FlexSdkUtils {
         });
 
         final VirtualFile baseDir = playerDir.getParent().getParent();
-        addSwcRoots(sdkModificator, baseDir, Collections.singletonList("libs/air/airglobal.swc"), false); // let it be in the beginning of the list
+        addSwcRoots(sdkModificator, baseDir, Collections.singletonList("libs/air/airglobal.swc"),
+                    false); // let it be in the beginning of the list
         addSwcRoots(sdkModificator, baseDir, Arrays.asList("libs", "libs/mx", "libs/air", "libs/mobile"), true);
       }
     }
@@ -577,20 +579,27 @@ public class FlexSdkUtils {
     return version != null && version.startsWith("4.");
   }
 
-  /**
-   * @param project
-   * @param flexSdk
-   * @param additionalClasspath
-   * @param mainClass           used in case of Flexmojos SDK, also used for ordinary Flex/AIR SDK if <code>jarName</code> is <code>null</code>
-   * @param jarName             if not <code>null</code> - this parameter used in case of Flex/AIR SDK; always ignored in case of Flexmojos SDK
-   * @return
-   */
   public static List<String> getCommandLineForSdkTool(final @NotNull Project project,
-                                                      final @NotNull Sdk flexSdk,
+                                                      final @NotNull Sdk sdk,
                                                       final @Nullable String additionalClasspath,
                                                       final @NotNull String mainClass,
                                                       final @Nullable String jarName) {
-    final boolean isFlexmojos = flexSdk.getSdkType() instanceof FlexmojosSdkType;
+    final FlexmojosSdkAdditionalData data = sdk.getSdkType() instanceof FlexmojosSdkType
+                                            ? (FlexmojosSdkAdditionalData)sdk.getSdkAdditionalData() : null;
+    return getCommandLineForSdkTool(project, sdk.getHomePath(), data, additionalClasspath, mainClass, jarName);
+  }
+
+  /**
+   * @param mainClass used in case of Flexmojos SDK, also used for ordinary Flex/AIR SDK if <code>jarName</code> is <code>null</code>
+   * @param jarName   if not <code>null</code> - this parameter used in case of Flex/AIR SDK; always ignored in case of Flexmojos SDK
+   */
+  public static List<String> getCommandLineForSdkTool(final @NotNull Project project,
+                                                      final @NotNull String sdkHome,
+                                                      final @Nullable FlexmojosSdkAdditionalData flexmojosSdkAdditionalData,
+                                                      final @Nullable String additionalClasspath,
+                                                      final @NotNull String mainClass,
+                                                      final @Nullable String jarName) {
+    final boolean isFlexmojos = flexmojosSdkAdditionalData != null;
     String javaHome = SystemProperties.getJavaHome();
     boolean customJavaHomeSet = false;
     String additionalJavaArgs = null;
@@ -598,49 +607,57 @@ public class FlexSdkUtils {
     String classpath = additionalClasspath;
 
     if (isFlexmojos) {
-      final FlexmojosSdkAdditionalData data = (FlexmojosSdkAdditionalData)flexSdk.getSdkAdditionalData();
-      classpath = (StringUtil.isEmpty(classpath) ? "" : (classpath + File.pathSeparator)) +
-                  FileUtil.toSystemDependentName(StringUtil.join(data.getFlexCompilerClasspath(), File.pathSeparator));
+      classpath =
+        (StringUtil.isEmpty(classpath) ? "" : (classpath + File.pathSeparator)) +
+        FileUtil.toSystemDependentName(StringUtil.join(flexmojosSdkAdditionalData.getFlexCompilerClasspath(), File.pathSeparator));
     }
     else {
-      final VirtualFile jvmConfigFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(flexSdk.getHomePath() + "/bin/jvm.config");
-      if (jvmConfigFile != null) {
+      FileInputStream inputStream = null;
+
+      try {
+        inputStream = new FileInputStream(FileUtil.toSystemDependentName(sdkHome + "/bin/jvm.config"));
+
         final Properties properties = new Properties();
-        try {
-          properties.load(jvmConfigFile.getInputStream());
-          final String configuredJavaHome = properties.getProperty("java.home");
-          if (configuredJavaHome != null && configuredJavaHome.trim().length() > 0) {
-            javaHome = configuredJavaHome;
-            customJavaHomeSet = true;
-          }
+        properties.load(inputStream);
 
-          final String javaArgs = properties.getProperty("java.args");
-          if (javaArgs != null && javaArgs.trim().length() > 0) {
-            additionalJavaArgs = javaArgs;
-            final Matcher matcher = XMX_PATTERN.matcher(javaArgs);
-            if (matcher.matches()) {
-              try {
-                heapSizeMbFromJvmConfig = Integer.parseInt(matcher.group(2));
-              }
-              catch (NumberFormatException e) {/*ignore*/}
-            }
-          }
-
-          final String classpathFromJvmConfig = properties.getProperty("java.class.path");
-          if (classpathFromJvmConfig != null && classpathFromJvmConfig.trim().length() > 0) {
-            classpath = (StringUtil.isEmpty(classpath) ? "" : (classpath + File.pathSeparator)) + classpathFromJvmConfig;
-          }
-          //jvm.config also has properties which are not handled here: 'env' and 'java.library.path'; though not sure that there's any sense in them
+        final String configuredJavaHome = properties.getProperty("java.home");
+        if (configuredJavaHome != null && configuredJavaHome.trim().length() > 0) {
+          javaHome = configuredJavaHome;
+          customJavaHomeSet = true;
         }
-        catch (IOException e) {
-          // not a big problem, will use default settings
+
+        final String javaArgs = properties.getProperty("java.args");
+        if (javaArgs != null && javaArgs.trim().length() > 0) {
+          additionalJavaArgs = javaArgs;
+          final Matcher matcher = XMX_PATTERN.matcher(javaArgs);
+          if (matcher.matches()) {
+            try {
+              heapSizeMbFromJvmConfig = Integer.parseInt(matcher.group(2));
+            }
+            catch (NumberFormatException e) {/*ignore*/}
+          }
+        }
+
+        final String classpathFromJvmConfig = properties.getProperty("java.class.path");
+        if (classpathFromJvmConfig != null && classpathFromJvmConfig.trim().length() > 0) {
+          classpath = (StringUtil.isEmpty(classpath) ? "" : (classpath + File.pathSeparator)) + classpathFromJvmConfig;
+        }
+        //jvm.config also has properties which are not handled here: 'env' and 'java.library.path'; though not sure that there's any sense in them
+      }
+      catch (IOException e) {
+        // not a big problem, will use default settings
+        if (inputStream != null) {
+          try {
+            inputStream.close();
+          }
+          catch (IOException e1) {/*ignore*/}
         }
       }
     }
 
     final String javaExecutable = FileUtil.toSystemDependentName((javaHome + "/bin/java" + (SystemInfo.isWindows ? ".exe" : "")));
     final String applicationHomeParam =
-      isFlexmojos ? null : ("-Dapplication.home=" + FileUtil.toSystemDependentName(flexSdk.getHomePath()));
+      isFlexmojos ? null : ("-Dapplication.home=" + FileUtil.toSystemDependentName(sdkHome));
 
     final String d32 = (!customJavaHomeSet && SystemInfo.isMac && is64BitJava(javaExecutable)) ? "-d32" : null;
 
@@ -673,7 +690,7 @@ public class FlexSdkUtils {
     }
     else {
       result.add("-jar");
-      result.add(FileUtil.toSystemDependentName(flexSdk.getHomePath() + "/lib/" + jarName));
+      result.add(FileUtil.toSystemDependentName(sdkHome + "/lib/" + jarName));
     }
 
     return result;

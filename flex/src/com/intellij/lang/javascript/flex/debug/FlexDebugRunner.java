@@ -25,7 +25,6 @@ import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
@@ -41,7 +40,8 @@ public class FlexDebugRunner extends FlexBaseRunner {
   private static final Logger LOG = Logger.getInstance(FlexDebugRunner.class.getName());
 
   public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {
-    return DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) && profile instanceof FlexRunConfiguration;
+    return DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) &&
+           (profile instanceof FlexRunConfiguration || profile instanceof FlexIdeRunConfiguration);
   }
 
   @NotNull
@@ -54,7 +54,25 @@ public class FlexDebugRunner extends FlexBaseRunner {
                                                      final FlexIdeRunnerParameters params,
                                                      final Executor executor,
                                                      final RunContentDescriptor contentToReuse,
-                                                     final ExecutionEnvironment environment) {
+                                                     final ExecutionEnvironment env) throws ExecutionException  {
+    if (config.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Web) {
+      final Project project = module.getProject();
+      final XDebugSession debugSession =
+        XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
+          @NotNull
+          public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
+            try {
+              return new FlexDebugProcess(session, config, params);
+            }
+            catch (IOException e) {
+              throw new ExecutionException(e.getMessage(), e);
+            }
+          }
+        });
+
+      return debugSession.getRunContentDescriptor();
+    }
+
     // todo implement
     return null;
   }
