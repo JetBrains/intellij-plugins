@@ -1,3 +1,6 @@
 <Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+  <fx:Declarations>
+    <fx:String id="myText">true</fx:String>
+  </fx:Declarations>
   <Label text="Label in child custom mxml component"/>
 </Group>

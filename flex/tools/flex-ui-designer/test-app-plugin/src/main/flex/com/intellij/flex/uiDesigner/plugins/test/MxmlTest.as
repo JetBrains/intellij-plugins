@@ -197,7 +197,7 @@ public class MxmlTest extends BaseTestCase {
   }
 
   public function ProjectMxmlComponentAsChild():void {
-    assertThat(app, [[{text: "Label in child custom mxml component"}]]);
+    assertThat(app, [allOf({name: "IDEA-73453"}, [{text: "Label in child custom mxml component"}])]);
   }
 
   public function EmbedSwfAndImageFromCss():void {

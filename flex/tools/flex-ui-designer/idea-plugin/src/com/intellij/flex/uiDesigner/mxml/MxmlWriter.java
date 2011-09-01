@@ -215,6 +215,11 @@ public class MxmlWriter {
           writer.writeIdProperty(explicitId);
           injectedASWriter.processObjectWithExplicitId(explicitId, context);
         }
+        else if (descriptor.getTypeName() == null) {
+          //IDEA-73453
+          // skip
+          LOG.warn("Skip " + descriptor.getName() + " in " + parent.getText() + " due to IDEA-73453");
+        }
         else if (descriptor.getTypeName().equals(FlexAnnotationNames.EVENT) ||
                  descriptor.getTypeName().equals(FlexAnnotationNames.BINDABLE)) {
           // skip
