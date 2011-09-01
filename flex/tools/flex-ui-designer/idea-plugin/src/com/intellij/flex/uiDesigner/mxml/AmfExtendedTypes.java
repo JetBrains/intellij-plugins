@@ -13,5 +13,6 @@ public final class AmfExtendedTypes {
 
   // see info about it in AS
   public static final int MXML_ARRAY = 50;
+  public static final int ARRAY_IF_LENGTH_GREATER_THAN_1 = 56;
   public static final int MXML_VECTOR = 51;
 }

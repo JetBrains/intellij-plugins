@@ -558,7 +558,7 @@ public class MxmlWriter {
     problemsHolder.add(xmlElement, FlexUIDesignerBundle.message(key, params));
   }
 
-  // fescriptor will be null if child is XmlText
+  // descriptor will be null if child is XmlText
   @Nullable
   private PropertyKind processDefaultProperty(XmlTag parentTag, XmlElementValueProvider valueProvider,
                                               @Nullable ClassBackedElementDescriptor descriptor, int childrenLength, Context context,
@@ -631,7 +631,7 @@ public class MxmlWriter {
           writeSubstitutedString(valueProvider.getSubstituted());
         }
         else if (defaultDescriptor.contentIsArrayable()) {
-          out.write(Amf3Types.ARRAY);
+          out.write(type.equals(JSCommonTypeNames.ARRAY_CLASS_NAME) ? Amf3Types.ARRAY : AmfExtendedTypes.ARRAY_IF_LENGTH_GREATER_THAN_1);
           return PropertyKind.ARRAY;
         }
         else if (defaultDescriptor.getArrayType() != null /* Vector */) {

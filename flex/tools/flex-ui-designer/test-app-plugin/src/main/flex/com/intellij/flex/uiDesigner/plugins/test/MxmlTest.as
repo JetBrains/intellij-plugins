@@ -232,7 +232,10 @@ public class MxmlTest extends BaseTestCase {
 
   // IDEA-73099
   public function ComplexContentAsSubTagsForObjectTypedProperty():void {
-    assertThat(app, {dataProvider: {source: [strictlyEqualTo("1"), strictlyEqualTo("2"), strictlyEqualTo("3")]}});
+    assertThat(app, [
+      {dataProvider: {source: [strictlyEqualTo("1"), strictlyEqualTo("2"), strictlyEqualTo("3")]}},
+      {dataProvider: {list: {source: [strictlyEqualTo("1"), strictlyEqualTo("2")]}}}
+    ]);
   }
 }
 }

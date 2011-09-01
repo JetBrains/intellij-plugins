@@ -381,6 +381,13 @@ public final class MxmlReader implements DocumentReader {
           propertyHolder[propertyName] = readArray();
           break;
 
+        case AmfExtendedTypes.ARRAY_IF_LENGTH_GREATER_THAN_1:
+          var ta:Array = readArray() as Array;
+          if (ta.length > 0) {
+            propertyHolder[propertyName] = ta.length == 1 ? ta[0] : ta;
+          }
+          break;
+
         case Amf3Types.VECTOR_OBJECT:
           propertyHolder[propertyName] = readVector();
           break;
