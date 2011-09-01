@@ -107,6 +107,7 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
     });
 
     JPanel p = new JPanel(new BorderLayout());
+    p.setPreferredSize(new Dimension(400, 430));
     p.add(ScrollPaneFactory.createScrollPane(myTree), BorderLayout.CENTER);
     TreeUtil.expandAll(myTree);
     myTree.addMouseListener(new MouseAdapter() {
