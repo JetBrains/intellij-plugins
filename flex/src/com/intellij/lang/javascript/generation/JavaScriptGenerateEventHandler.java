@@ -338,7 +338,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
           final PsiLanguageInjectionHost valueElement = (PsiLanguageInjectionHost)xmlAttribute.getValueElement();
           if (valueElement != null) {
             final Ref<PsiElement> ref = new Ref<PsiElement>();
-            valueElement.processInjectedPsi(new PsiLanguageInjectionHost.InjectedPsiVisitor() {
+            InjectedLanguageUtil.enumerate(valueElement, new PsiLanguageInjectionHost.InjectedPsiVisitor() {
               public void visit(@NotNull final PsiFile injectedPsi, @NotNull final List<PsiLanguageInjectionHost.Shred> places) {
                 int i = injectedPsi.getText().indexOf(attributeValue);
                 if (i != -1) {

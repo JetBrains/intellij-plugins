@@ -12,6 +12,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.ui.SimpleColoredComponent;
@@ -304,12 +305,11 @@ public class FlexStackFrame extends XStackFrame {
 
             if (psiLanguageInjectionHost != null) {
               final Ref<PsiElement> result = new Ref<PsiElement>();
-              psiLanguageInjectionHost.processInjectedPsi(new PsiLanguageInjectionHost.InjectedPsiVisitor() {
+              InjectedLanguageUtil.enumerate(psiLanguageInjectionHost, new PsiLanguageInjectionHost.InjectedPsiVisitor() {
                 public void visit(@NotNull final PsiFile injectedPsi, @NotNull final List<PsiLanguageInjectionHost.Shred> places) {
                   final PsiLanguageInjectionHost.Shred shred = places.get(0);
                   final int injectedStart = shred.host.getTextOffset() + shred.getRangeInsideHost().getStartOffset();
-                  final PsiElement value = injectedPsi.findElementAt(
-                      offset - injectedStart + (shred.prefix != null ? shred.prefix.length() : 0));
+                  final PsiElement value = injectedPsi.findElementAt(offset - injectedStart + (shred.prefix != null ? shred.prefix.length() : 0));
                   result.set(value);
                 }
               });
