@@ -25,6 +25,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.ComboboxWithBrowseButton;
+import com.intellij.ui.ComponentWithAnchor;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -37,7 +38,7 @@ import java.util.List;
 
 import static com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParameters.FilePathAndPathInPackage;
 
-public class PackageAirInstallerDialog extends DialogWrapper {
+public class PackageAirInstallerDialog extends DialogWrapper implements ComponentWithAnchor {
 
   private JPanel myMainPanel;
 
@@ -45,6 +46,7 @@ public class PackageAirInstallerDialog extends DialogWrapper {
   private LabeledComponent<ComboboxWithBrowseButton> myAirDescriptorComponent;
   private LabeledComponent<JTextField> myInstallerFileNameComponent;
   private LabeledComponent<TextFieldWithBrowseButton> myInstallerLocationComponent;
+  private JComponent anchor;
 
   private FilesToPackageForm myFilesToPackageForm;
   private JCheckBox myDoNotSignCheckBox;
@@ -69,6 +71,8 @@ public class PackageAirInstallerDialog extends DialogWrapper {
     loadDefaultParameters();
     updateSigningOptionsPanel();
     init();
+
+    setAnchor(myFlexSdkComponent.getLabel());
   }
 
   public JComponent getPreferredFocusedComponent() {
@@ -440,5 +444,20 @@ public class PackageAirInstallerDialog extends DialogWrapper {
   protected String getHelpId() {
     return "reference.flex.package.air.installation.file";
   }
+
+  @Override
+  public JComponent getAnchor() {
+    return anchor;
+  }
+
+  @Override
+  public void setAnchor(JComponent anchor) {
+    this.anchor = anchor;
+    myAirDescriptorComponent.setAnchor(anchor);
+    myInstallerFileNameComponent.setAnchor(anchor);
+    myInstallerLocationComponent.setAnchor(anchor);
+    myFlexSdkComponent.setAnchor(anchor);
+  }
+
 }
 

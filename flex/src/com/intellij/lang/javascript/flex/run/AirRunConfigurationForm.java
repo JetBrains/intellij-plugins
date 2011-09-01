@@ -23,7 +23,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.ComboboxWithBrowseButton;
+import com.intellij.ui.ComponentWithAnchor;
 import com.intellij.ui.RawCommandLineEditor;
+import com.intellij.ui.components.JBLabel;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -32,7 +34,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 
-public class AirRunConfigurationForm extends SettingsEditor<AirRunConfiguration> {
+public class AirRunConfigurationForm extends SettingsEditor<AirRunConfiguration> implements ComponentWithAnchor {
 
   private final Project myProject;
 
@@ -46,8 +48,9 @@ public class AirRunConfigurationForm extends SettingsEditor<AirRunConfiguration>
   private LabeledComponent<RawCommandLineEditor> myAdlOptionsComponent;
   private LabeledComponent<RawCommandLineEditor> myProgramParametersComponent;
   private FlexSdkComboBoxWithBrowseButton myDebuggerSdkCombo;
+  private JBLabel myLabel;
   private JSClassChooserDialog.PublicInheritor myMainClassFilter;
-
+  private JComponent anchor;
   private ModulesComboboxWrapper myModulesComboboxWrapper;
 
   public AirRunConfigurationForm(final Project project) {
@@ -79,6 +82,8 @@ public class AirRunConfigurationForm extends SettingsEditor<AirRunConfiguration>
 
     updateControls();
     updateMainClassField(myProject, myModulesComboboxWrapper, myMainClassComponent.getComponent(), myMainClassFilter);
+
+    setAnchor(myAdlOptionsComponent.getLabel());
   }
 
   static void updateMainClassField(final Project project,
@@ -204,5 +209,21 @@ public class AirRunConfigurationForm extends SettingsEditor<AirRunConfiguration>
     myMainClassComponent = LabeledComponent.create(JSReferenceEditor.forClassName("", myProject, null, GlobalSearchScope.EMPTY_SCOPE, null,
                                                                                   myMainClassFilter, ExecutionBundle
       .message("choose.main.class.dialog.title")), "");
+  }
+
+  @Override
+  public JComponent getAnchor() {
+    return anchor;
+  }
+
+  @Override
+  public void setAnchor(JComponent anchor) {
+    this.anchor = anchor;
+    myAdlOptionsComponent.setAnchor(anchor);
+    myApplicationDescriptorComponent.setAnchor(anchor);
+    myProgramParametersComponent.setAnchor(anchor);
+    myMainClassComponent.setAnchor(anchor);
+    myRootDirectoryComponent.setAnchor(anchor);
+    myLabel.setAnchor(anchor);
   }
 }

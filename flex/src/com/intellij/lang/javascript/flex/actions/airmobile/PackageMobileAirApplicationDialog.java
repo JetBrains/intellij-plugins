@@ -26,6 +26,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.ComboboxWithBrowseButton;
+import com.intellij.ui.ComponentWithAnchor;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -39,7 +40,7 @@ import java.util.List;
 import static com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParameters.FilePathAndPathInPackage;
 import static com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters.*;
 
-public class PackageMobileAirApplicationDialog extends DialogWrapper {
+public class PackageMobileAirApplicationDialog extends DialogWrapper implements ComponentWithAnchor {
 
   private JPanel myMainPanel;
 
@@ -53,6 +54,7 @@ public class PackageMobileAirApplicationDialog extends DialogWrapper {
   private LabeledComponent<ComboboxWithBrowseButton> myAirDescriptorComponent;
   private LabeledComponent<JTextField> myInstallerFileNameComponent;
   private LabeledComponent<TextFieldWithBrowseButton> myInstallerLocationComponent;
+  private JComponent anchor;
 
   private FilesToPackageForm myFilesToPackageForm;
   private SigningOptionsForm mySigningOptionsForm;
@@ -77,6 +79,8 @@ public class PackageMobileAirApplicationDialog extends DialogWrapper {
     updateTargetSpecificControls();
 
     init();
+
+    setAnchor(myFlexSdkComponent.getLabel());
   }
 
   public JComponent getPreferredFocusedComponent() {
@@ -350,6 +354,20 @@ public class PackageMobileAirApplicationDialog extends DialogWrapper {
                                           MobileAirUtil.getLocalHostAddress(), MobileAirUtil.DEBUG_PORT_DEFAULT, "",
                                           provisioningProfilePath, keystorePath, keystoreType, keystorePassword, keyAlias, keyPassword,
                                           provider, tsa);
+  }
+
+  @Override
+  public JComponent getAnchor() {
+    return anchor;
+  }
+
+  @Override
+  public void setAnchor(JComponent anchor) {
+    this.anchor = anchor;
+    myAirDescriptorComponent.setAnchor(anchor);
+    myInstallerFileNameComponent.setAnchor(anchor);
+    myInstallerLocationComponent.setAnchor(anchor);
+    myFlexSdkComponent.setAnchor(anchor);
   }
 
   private static List<String> getOutputFilePaths(final Module module) {

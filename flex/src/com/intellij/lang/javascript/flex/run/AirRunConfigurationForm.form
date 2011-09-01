@@ -26,7 +26,6 @@
             <properties>
               <componentClass value="com.intellij.ui.ComboboxWithBrowseButton"/>
               <labelLocation value="West"/>
-              <labelPreferredSize width="185" height="16"/>
               <text value="AIR application &amp;descriptor"/>
             </properties>
           </component>
@@ -37,7 +36,6 @@
             <properties>
               <componentClass value="com.intellij.openapi.ui.TextFieldWithBrowseButton"/>
               <labelLocation value="West"/>
-              <labelPreferredSize width="185" height="16"/>
               <text value="&amp;Root directory"/>
             </properties>
           </component>
@@ -48,7 +46,6 @@
             <properties>
               <componentClass value="com.intellij.ui.RawCommandLineEditor"/>
               <labelLocation value="West"/>
-              <labelPreferredSize width="185" height="16"/>
               <text value="&amp;Program parameters"/>
             </properties>
           </component>
@@ -58,7 +55,6 @@
             </constraints>
             <properties>
               <labelLocation value="West"/>
-              <labelPreferredSize width="185" height="16"/>
               <text value="Mai&amp;n class"/>
             </properties>
           </component>
@@ -101,7 +97,6 @@
             <properties>
               <componentClass value="com.intellij.ui.RawCommandLineEditor"/>
               <labelLocation value="West"/>
-              <labelPreferredSize width="185" height="16"/>
               <text value="AIR Debug Launcher &amp;options"/>
             </properties>
           </component>
@@ -152,14 +147,11 @@
         </clientProperties>
         <border type="etched" title="Options"/>
         <children>
-          <component id="8345b" class="javax.swing.JLabel">
+          <component id="54fbe" class="com.intellij.ui.components.JBLabel" binding="myLabel">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                <preferred-size width="185" height="-1"/>
-              </grid>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <labelFor value="c46fb"/>
               <text value="Use d&amp;ebugger from SDK:"/>
             </properties>
           </component>
