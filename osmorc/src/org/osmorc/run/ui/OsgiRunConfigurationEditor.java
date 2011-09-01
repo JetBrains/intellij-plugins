@@ -38,7 +38,9 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
+import com.intellij.ui.ComponentWithAnchor;
 import com.intellij.ui.RawCommandLineEditor;
+import com.intellij.ui.components.JBLabel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.BundleSelectionAction;
@@ -72,8 +74,10 @@ import java.util.List;
  * @author Robert F. Beeger (robert@beeger.net)
  * @version $Id$
  */
-public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfiguration> implements BundleSelectionAction.Context {
+public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfiguration> implements BundleSelectionAction.Context,
+                                                                                                ComponentWithAnchor {
   private final DefaultActionGroup frameworkSpecificBundleSelectionActions;
+  private JComponent anchor;
 
   public OsgiRunConfigurationEditor(final Project project) {
     ApplicationSettings registry = ServiceManager.getService(ApplicationSettings.class);
@@ -151,7 +155,9 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     });
     // avoid text fields growing the dialog when much text is entered.
     vmParams.getTextField().setPreferredSize(new Dimension(100,20));
-    programParameters.getTextField().setPreferredSize(new Dimension(100,20));  
+    programParameters.getTextField().setPreferredSize(new Dimension(100,20));
+
+    setAnchor(alternativeJREPanel.getCbEnabled());
   }
 
   /**
@@ -338,9 +344,21 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
   private AlternativeJREPanel alternativeJREPanel;
   private JSpinner myFrameworkStartLevel;
   private JSpinner myDefaultStartLevel;
+  private JBLabel myProgramParametersLabel;
   private final Project project;
   private FrameworkRunPropertiesEditor currentFrameworkRunPropertiesEditor;
 
+  @Override
+  public JComponent getAnchor() {
+    return anchor;
+  }
+
+  @Override
+  public void setAnchor(JComponent anchor) {
+    this.anchor = anchor;
+    myProgramParametersLabel.setAnchor(anchor);
+    alternativeJREPanel.setAnchor(anchor);
+  }
 
   private static class RunConfigurationTableModel extends AbstractTableModel {
     private final List<SelectedBundle> selectedBundles;
