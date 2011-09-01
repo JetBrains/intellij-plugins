@@ -446,6 +446,10 @@ def buildTarGz() {
     }
     tarfileset(dir: "$home/community/bin/linux", prefix: "$tarRoot/bin") {
       exclude(name: "libbreakgen*")
+      exclude(name: "fsnotifier*")
+    }
+    tarfileset(dir: "$home/community/bin/linux", filemode: "755", prefix: "$tarRoot/bin") {
+      include(name: "fsnotifier*")
     }
     tarfileset(dir: "$paths.distLinux", filemode: "755", prefix: "$tarRoot") {
       include(name: "bin/*.sh")
