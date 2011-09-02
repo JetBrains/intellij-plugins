@@ -7,9 +7,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.ui.Util;
 import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.libraries.ui.AttachRootButtonDescriptor;
-import com.intellij.openapi.roots.libraries.ui.ChooserBasedAttachRootButtonDescriptor;
-import com.intellij.openapi.roots.libraries.ui.OrderRootTypePresentation;
+import com.intellij.openapi.roots.libraries.ui.*;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.DefaultLibraryRootsComponentDescriptor;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
 import com.intellij.openapi.util.IconLoader;
@@ -19,9 +17,10 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public class FlexLibraryRootsComponentDescriptor extends DefaultLibraryRootsComponentDescriptor {
+public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDescriptor {
 
   private static final Icon DOC_ICON = IconLoader.findIcon("documentation.png");
 
@@ -29,7 +28,13 @@ public class FlexLibraryRootsComponentDescriptor extends DefaultLibraryRootsComp
     if (type instanceof JavadocOrderRootType) {
       return new OrderRootTypePresentation("Documentation", DOC_ICON);
     }
-    return super.getRootTypePresentation(type);
+    return DefaultLibraryRootsComponentDescriptor.getDefaultPresentation(type);
+  }
+
+  @NotNull
+  @Override
+  public List<? extends RootDetector> getRootDetectors() {
+    return Collections.emptyList();
   }
 
   @NotNull
