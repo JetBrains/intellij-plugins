@@ -56,7 +56,7 @@ public class FlexSdkUtils {
   static final String TARGET_PLAYER_MAJOR_VERSION_TOKEN = "{targetPlayerMajorVersion}";
   static final String TARGET_PLAYER_MINOR_VERSION_TOKEN = "{targetPlayerMinorVersion}";
   static final String LOCALE_TOKEN = "{locale}";
-  static final String ADL_RELATIVE_PATH = File.separatorChar + "bin" + File.separatorChar + "adl" + (SystemInfo.isWindows ? ".exe" : "");
+  public static final String ADL_RELATIVE_PATH = File.separatorChar + "bin" + File.separatorChar + "adl" + (SystemInfo.isWindows ? ".exe" : "");
   static final String AIR_RUNTIME_RELATIVE_PATH =
     File.separatorChar + "runtimes" + File.separatorChar + "air" + File.separatorChar +
     (SystemInfo.isWindows ? "win" : (SystemInfo.isLinux ? "linux" : "mac"));
@@ -394,46 +394,49 @@ public class FlexSdkUtils {
   }
 
   public static String getAirVersion(final Sdk sdk) {
-    if (sdk != null) {
-      final String version = sdk.getVersionString();
-      if (version != null) {
-        if (version.startsWith("3.")) {
-          if (version.startsWith("3.0")) {
-            return "1.0";
-          }
-          if (version.startsWith("3.1")) {
-            return "1.1";
-          }
-          if (version.startsWith("3.2")) {
-            return "1.5";
-          }
-          if (version.startsWith("3.3")) {
-            return "1.5";
-          }
-          if (version.startsWith("3.4")) {
-            return "1.5.2";
-          }
-
-          return "1.5.3";
-        }
-
-        if (version.startsWith("4.")) {
-          if (version.startsWith("4.0")) {
-            return "1.5.3";
-          }
-          if (version.startsWith("4.1")) {
-            return "2.0";
-          }
-          if (version.startsWith("4.5")) {
-            return getFlexSdkRevision(version) >= 20967 ? "2.6" : "2.5";
-          }
-
-          return "2.5";
-        }
-      }
+    final String version = sdk == null ? null : sdk.getVersionString();
+    if (version != null) {
+      return getAirVersion(version);
     }
 
     return "1.5";
+  }
+
+  public static String getAirVersion(final String flexVersion) {
+    // todo store adt -version
+
+    if (flexVersion.startsWith("4.")) {
+      if (flexVersion.startsWith("4.0")) {
+        return "1.5.3";
+      }
+      if (flexVersion.startsWith("4.1")) {
+        return "2.0";
+      }
+
+      return "2.6";
+    }
+
+    if (flexVersion.startsWith("3.")) {
+      if (flexVersion.startsWith("3.0")) {
+        return "1.0";
+      }
+      if (flexVersion.startsWith("3.1")) {
+        return "1.1";
+      }
+      if (flexVersion.startsWith("3.2")) {
+        return "1.5";
+      }
+      if (flexVersion.startsWith("3.3")) {
+        return "1.5";
+      }
+      if (flexVersion.startsWith("3.4")) {
+        return "1.5.2";
+      }
+
+      return "1.5.3";
+    }
+
+    return "2.6";
   }
 
   public static int getFlexSdkRevision(final String sdkVersion) {

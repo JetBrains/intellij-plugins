@@ -116,6 +116,7 @@
             </constraints>
             <properties>
               <labelFor value="90e30"/>
+              <text resource-bundle="com/intellij/lang/javascript/flex/FlexBundle" key="flex.run.config.use.module"/>
             </properties>
           </component>
           <component id="90e30" class="javax.swing.JComboBox" binding="myModuleComboBox">

@@ -53,6 +53,7 @@ public class FlexDebugRunner extends FlexBaseRunner {
                                                      final FlexIdeBuildConfiguration config,
                                                      final FlexIdeRunnerParameters params,
                                                      final Executor executor,
+                                                     final RunProfileState state,
                                                      final RunContentDescriptor contentToReuse,
                                                      final ExecutionEnvironment env) throws ExecutionException  {
     if (config.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Web) {

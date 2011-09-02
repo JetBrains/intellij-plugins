@@ -6,10 +6,15 @@ public class FlexIdeRunnerParameters implements Cloneable {
 
   private @NotNull String myModuleName = "";
   private @NotNull String myBCName = "";
+  
   private boolean myLaunchUrl = false;
   private @NotNull String myUrl = "http://";
+  
   private @NotNull LauncherParameters myLauncherParameters = new LauncherParameters();
   private boolean myRunTrusted = true;
+  
+  private @NotNull String myAdlOptions = "";
+  private @NotNull String myAirProgramParameters = "";
 
   @NotNull
   public String getModuleName() {
@@ -61,6 +66,24 @@ public class FlexIdeRunnerParameters implements Cloneable {
 
   public void setRunTrusted(final boolean runTrusted) {
     myRunTrusted = runTrusted;
+  }
+
+  @NotNull
+  public String getAdlOptions() {
+    return myAdlOptions;
+  }
+
+  public void setAdlOptions(@NotNull final String adlOptions) {
+    myAdlOptions = adlOptions;
+  }
+
+  @NotNull
+  public String getAirProgramParameters() {
+    return myAirProgramParameters;
+  }
+
+  public void setAirProgramParameters(@NotNull final String airProgramParameters) {
+    myAirProgramParameters = airProgramParameters;
   }
 
   protected FlexIdeRunnerParameters clone() {

@@ -2,7 +2,7 @@ package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.compiler.ModuleCompilerUtil;
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -12,7 +12,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -20,6 +19,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.graph.Graph;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -142,6 +142,16 @@ public class FlexCompilationManager {
         }
         else {
           addMessage(task, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.successfull"), null, -1, -1);
+
+          final FlexIdeBuildConfiguration config = task.getFlexIdeConfig();
+          if (config != null) {
+            try {
+              FlexCompilationUtils.performPostCompileActions(config);
+            }
+            catch (FlexCompilerException e) {
+              addMessage(task, CompilerMessageCategory.ERROR, e.getMessage(), e.getUrl(), e.getLine(), e.getColumn());
+            }
+          }
         }
 
         if (task.useCache()) {

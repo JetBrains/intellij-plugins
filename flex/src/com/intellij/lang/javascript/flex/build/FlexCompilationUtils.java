@@ -2,6 +2,13 @@ package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.actions.airdescriptor.AirDescriptorParameters;
+import com.intellij.lang.javascript.flex.actions.airdescriptor.CreateAirDescriptorAction;
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdkManager;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
+import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.options.SdkEntry;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
@@ -14,6 +21,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
@@ -22,7 +30,11 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.SystemProperties;
 import com.intellij.util.text.StringTokenizer;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -283,10 +295,132 @@ public class FlexCompilationUtils {
     final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
     if (file != null && !file.isWritable()) {
       ApplicationManager.getApplication().invokeAndWait(new Runnable() {
+        public void run() {
+          ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(file);
+        }
+      }, ModalityState.defaultModalityState());
+    }
+  }
+
+  public static void performPostCompileActions(final @NotNull FlexIdeBuildConfiguration config) throws FlexCompilerException {
+    switch (config.TARGET_PLATFORM) {
+      case Web:
+        if (config.USE_HTML_WRAPPER) {
+          // todo copy to out and replace {swf}
+        }
+        break;
+      case Desktop:
+        if (config.AIR_DESKTOP_PACKAGING_OPTIONS.USE_GENERATED_DESCRIPTOR) {
+          generateAirDescriptor(config);
+        }
+        else {
+          copyAndFixCustomAirDescriptor(config);
+        }
+        break;
+      case Mobile:
+        break;
+    }
+  }
+
+  private static void generateAirDescriptor(final FlexIdeBuildConfiguration config) throws FlexCompilerException {
+    final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
+
+    ApplicationManager.getApplication().invokeAndWait(new Runnable() {
+      public void run() {
+        try {
+          final String descriptorFileName = BCUtils.getGeneratedAirDescriptorName(config);
+          final SdkEntry sdkEntry = config.DEPENDENCIES.getSdkEntry();
+          assert sdkEntry != null;
+          final FlexSdk sdk = FlexSdkManager.getInstance().findSdk(sdkEntry.getHomePath());
+          assert sdk != null;
+          final String airVersion = FlexSdkUtils.getAirVersion(sdk.getFlexVersion());
+          final String fileName = FileUtil.getNameWithoutExtension(config.OUTPUT_FILE_NAME);
+
+          CreateAirDescriptorAction.createAirDescriptor(
+            new AirDescriptorParameters(descriptorFileName, config.OUTPUT_FOLDER, airVersion, config.MAIN_CLASS, fileName, fileName,
+                                        "1.0", config.OUTPUT_FILE_NAME, fileName, 400, 300, false));
+        }
+        catch (IOException e) {
+          exceptionRef.set(new FlexCompilerException("Failed to generate AIR descriptor: " + e));
+        }
+      }
+    }, ModalityState.any());
+
+    if (!exceptionRef.isNull()) {
+      throw exceptionRef.get();
+    }
+  }
+
+  private static void copyAndFixCustomAirDescriptor(final FlexIdeBuildConfiguration config) throws FlexCompilerException {
+    final String path = config.AIR_DESKTOP_PACKAGING_OPTIONS.CUSTOM_DESCRIPTOR_PATH;
+    final VirtualFile descriptorTemplateFile = LocalFileSystem.getInstance().findFileByPath(path);
+    if (descriptorTemplateFile == null) {
+      throw new FlexCompilerException("Custom AIR descriptor file not found: " + path);
+    }
+
+    final VirtualFile outputFolder = LocalFileSystem.getInstance().findFileByPath(config.OUTPUT_FOLDER);
+    assert outputFolder != null;
+
+
+    final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
+
+    ApplicationManager.getApplication().invokeAndWait(new Runnable() {
+      public void run() {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
           public void run() {
-            ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(file);
+            try {
+              final String content = fixInitialContent(descriptorTemplateFile, config.OUTPUT_FILE_NAME);
+              FlexUtils.addFileWithContent(descriptorTemplateFile.getName(), content, outputFolder);
+            }
+            catch (FlexCompilerException e) {
+              exceptionRef.set(e);
+            }
+            catch (IOException e) {
+              exceptionRef.set(new FlexCompilerException("Failed to copy AIR descriptor to output folder", null, -1, -1));
+            }
           }
-        }, ModalityState.defaultModalityState());
+        });
+      }
+    }, ModalityState.any());
+
+    if (!exceptionRef.isNull()) {
+      throw exceptionRef.get();
+    }
+  }
+
+  private static String fixInitialContent(final VirtualFile descriptorFile, final String swfName) throws FlexCompilerException {
+    try {
+      final Document document;
+      try {
+        document = JDOMUtil.loadDocument(descriptorFile.getInputStream());
+      }
+      catch (IOException e) {
+        throw new FlexCompilerException("Failed to read AIR descriptor content: " + e.getMessage(), descriptorFile.getUrl(), -1, -1);
+      }
+
+      final Element rootElement = document.getRootElement();
+      if (rootElement == null || !"application".equals(rootElement.getName())) {
+        throw new FlexCompilerException("AIR descriptor file has incorrect root tag", descriptorFile.getUrl(), -1, -1);
+      }
+
+      Element initialWindowElement = rootElement.getChild("initialWindow", rootElement.getNamespace());
+      if (initialWindowElement == null) {
+        initialWindowElement = new Element("initialWindow", rootElement.getNamespace());
+        rootElement.addContent(initialWindowElement);
+      }
+
+      Element contentElement = initialWindowElement.getChild("content", rootElement.getNamespace());
+      if (contentElement == null) {
+        contentElement = new Element("content", rootElement.getNamespace());
+        initialWindowElement.addContent(contentElement);
+      }
+
+      contentElement.setText(swfName);
+
+      return JDOMUtil.writeDocument(document, SystemProperties.getLineSeparator());
+    }
+    catch (JDOMException e) {
+      throw new FlexCompilerException("AIR descriptor file has incorrect format: " + e.getMessage(), descriptorFile.getUrl(), -1, -1);
     }
   }
 }

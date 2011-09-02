@@ -18,5 +18,10 @@
       <add-to-group group-id="MainToolBar" anchor="last"/>
     </action>
     -->
+    <group id="FlexIdeToolbarGroup">
+      <action id="ChooseActiveBuildConfiguration" class="com.intellij.lang.javascript.flex.projectStructure.ui.ChooseActiveBuildConfigurationAction" />
+
+      <add-to-group group-id="MainToolBar" relative-to-action="HelpTopics" anchor="before"/>
+    </group>
   </actions>
 </idea-plugin>

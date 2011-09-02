@@ -15,8 +15,12 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.ModuleAdapter;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
+import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,6 +34,7 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
   private final Module myModule;
   private FlexIdeBuildConfiguration[] myConfigurations = new FlexIdeBuildConfiguration[]{new FlexIdeBuildConfiguration()};
   private CompilerOptions myModuleLevelCompilerOptions = new CompilerOptions();
+  private FlexIdeBuildConfiguration myActiveConfiguration;
 
   public FlexIdeBuildConfigurationManager(final Module module) {
     myModule = module;
@@ -66,6 +71,18 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
     return null;
   }
 
+  public FlexIdeBuildConfiguration getActiveConfiguration() {
+    return myActiveConfiguration;
+  }
+
+  public void setActiveBuildConfiguration(FlexIdeBuildConfiguration buildConfiguration) {
+    if(!ArrayUtil.contains(buildConfiguration, myConfigurations)) {
+      throw new IllegalArgumentException(
+        "Build configuration " + buildConfiguration.NAME + " does not belong to module " + myModule.getName());
+    }
+    myActiveConfiguration = buildConfiguration;
+  }
+
   public static FlexIdeBuildConfigurationManager getInstance(final @NotNull Module module) {
     assert ModuleType.get(module) == FlexModuleType.getInstance() : ModuleType.get(module).getName() + ", " + module.toString();
     return (FlexIdeBuildConfigurationManager)module.getPicoContainer()
@@ -81,14 +98,34 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
   }
 
   void setBuildConfigurations(final FlexIdeBuildConfiguration[] configurations) {
+    final String activeName = myActiveConfiguration != null ? myActiveConfiguration.NAME : null;
     ApplicationManager.getApplication().assertWriteAccessAllowed();
     myConfigurations = getValidatedConfigurations(Arrays.asList(configurations));
+    updateActiveConfiguration(activeName);
+  }
+
+  private void updateActiveConfiguration(@Nullable final String activeName) {
+    if (myConfigurations.length > 0) {
+      myActiveConfiguration = activeName != null ? ContainerUtil.find(myConfigurations, new Condition<FlexIdeBuildConfiguration>() {
+        @Override
+        public boolean value(FlexIdeBuildConfiguration flexIdeBuildConfiguration) {
+          return flexIdeBuildConfiguration.NAME.equals(activeName);
+        }
+      }) : null;
+      if (myActiveConfiguration == null) {
+        myActiveConfiguration = myConfigurations[0];
+      }
+    }
+    else {
+      myActiveConfiguration = null;
+    }
   }
 
   public State getState() {
     final State state = new State();
     Collections.addAll(state.myConfigurations, myConfigurations);
     state.myModuleLevelCompilerOptions = myModuleLevelCompilerOptions.clone();
+    state.myActiveConfigurationName = myActiveConfiguration != null ? myActiveConfiguration.NAME : null;
     return state;
   }
 
@@ -97,6 +134,7 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
     for (FlexIdeBuildConfiguration configuration : myConfigurations) {
       configuration.initialize(myModule.getProject());
     }
+    updateActiveConfiguration(state.myActiveConfigurationName);
     myModuleLevelCompilerOptions = state.myModuleLevelCompilerOptions.clone();
   }
 
@@ -124,5 +162,8 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
     public Collection<FlexIdeBuildConfiguration> myConfigurations = new ArrayList<FlexIdeBuildConfiguration>();
 
     public CompilerOptions myModuleLevelCompilerOptions = new CompilerOptions();
+
+    @Attribute("active")
+    public String myActiveConfigurationName;
   }
 }

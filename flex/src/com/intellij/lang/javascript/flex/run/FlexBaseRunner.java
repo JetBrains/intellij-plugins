@@ -4,12 +4,15 @@ import com.intellij.CommonBundle;
 import com.intellij.compiler.CompilerSettingsFactory;
 import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.execution.*;
+import com.intellij.execution.configurations.ConfigurationPerRunnerSettings;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.impl.RunDialog;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
+import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
 import com.intellij.execution.ui.ExecutionConsole;
@@ -96,6 +99,20 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   private static final int URL_CHECK_TIMEOUT = 3000;
 
+  public static final RunProfileState EMPTY_RUN_STATE = new RunProfileState() {
+    public ExecutionResult execute(final Executor executor, @NotNull final ProgramRunner runner) throws ExecutionException {
+      return null;
+    }
+
+    public RunnerSettings getRunnerSettings() {
+      return null;
+    }
+
+    public ConfigurationPerRunnerSettings getConfigurationSettings() {
+      return null;
+    }
+  };
+
   @Nullable
   protected RunContentDescriptor doExecute(final Project project,
                                            final Executor executor,
@@ -108,9 +125,21 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
     if (runProfile instanceof FlexIdeRunConfiguration) {
       final FlexIdeRunnerParameters params = ((FlexIdeRunConfiguration)runProfile).getRunnerParameters();
-      final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig = checkModuleAndConfig(project, params);
-      checkConfiguration(moduleAndConfig.first, moduleAndConfig.second);
-      return launchFlexIdeConfig(moduleAndConfig.first, moduleAndConfig.second, params, executor, contentToReuse, environment);
+      final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig = getModuleAndConfig(project, params);
+      final Module module = moduleAndConfig.first;
+      final FlexIdeBuildConfiguration config = moduleAndConfig.second;
+
+      checkConfiguration(module, config);
+
+      if (config.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Web && !params.isLaunchUrl()) {
+        try {
+          final String canonicalPath = new File(config.getOutputFilePath()).getCanonicalPath();
+          FlashPlayerTrustUtil.updateTrustedStatus(module.getProject(), params.isRunTrusted(), false, canonicalPath);
+        }
+        catch (IOException e) {/**/}
+      }
+
+      return launchFlexIdeConfig(module, config, params, executor, state, contentToReuse, environment);
     }
 
     final FlexRunnerParameters flexRunnerParameters = (((FlexRunConfiguration)runProfile)).getRunnerParameters();
@@ -146,11 +175,13 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   @Nullable
   protected abstract RunContentDescriptor launchFlexIdeConfig(final Module module,
                                                               final FlexIdeBuildConfiguration config,
-                                                              final FlexIdeRunnerParameters params, final Executor executor,
+                                                              final FlexIdeRunnerParameters params,
+                                                              final Executor executor,
+                                                              final RunProfileState state,
                                                               final RunContentDescriptor contentToReuse,
                                                               final ExecutionEnvironment environment) throws ExecutionException;
 
-  private static Pair<Module, FlexIdeBuildConfiguration> checkModuleAndConfig(final Project project, final FlexIdeRunnerParameters params)
+  static Pair<Module, FlexIdeBuildConfiguration> getModuleAndConfig(final Project project, final FlexIdeRunnerParameters params)
     throws ExecutionException {
     final String moduleName = params.getModuleName();
     final String bcName = params.getBCName();
@@ -173,23 +204,23 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       throw new CantRunException(message);
     }
 
-    if (config.OUTPUT_TYPE != FlexIdeBuildConfiguration.OutputType.Application) {
-      throw new CantRunException(
-        MessageFormat.format("Build configuration ''{0}'' of module ''{1}'' does not have ''Application'' output type",
-                             bcName, moduleName));
-    }
-
     return Pair.create(module, config);
   }
 
   private static void checkConfiguration(final Module module, final FlexIdeBuildConfiguration config) throws ExecutionException {
-    final SdkEntry sdk = config.DEPENDENCIES.getSdkEntry();
-    if (sdk == null) {
+    if (config.OUTPUT_TYPE != FlexIdeBuildConfiguration.OutputType.Application) {
       throw new CantRunException(
-        MessageFormat.format("SDK is not set for cuild configuration ''{0}'' of module ''{1}''", config.NAME, module.getName()));
+        MessageFormat.format("Build configuration ''{0}'' of module ''{1}'' does not have ''Application'' output type",
+                             config.NAME, module.getName()));
     }
 
-    // todo check all that affects launch
+
+    final SdkEntry sdkEntry = config.DEPENDENCIES.getSdkEntry();
+    if (sdkEntry == null) {
+      throw new CantRunException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", config.NAME, module.getName()));
+    }
+
+    // todo check all that affects launch.
   }
 
   private static boolean needToCheckThatCompilationEnabled(final FlexRunnerParameters parameters) {

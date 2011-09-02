@@ -2,7 +2,6 @@ package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.ExecutionException;
-import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -62,8 +61,8 @@ import java.net.URL;
 
 /**
  * @author Maxim.Mossienko
- * Date: Dec 27, 2007
- * Time: 11:54:47 PM
+ *         Date: Dec 27, 2007
+ *         Time: 11:54:47 PM
  */
 public class FlexRunConfiguration extends RunConfigurationBase
   implements RunProfileWithCompileBeforeLaunchOption, LocatableConfiguration, RefactoringListenerProvider {
@@ -95,19 +94,7 @@ public class FlexRunConfiguration extends RunConfigurationBase
   }
 
   public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
-    return new RunProfileState() {
-      public ExecutionResult execute(final Executor executor, @NotNull final ProgramRunner runner) throws ExecutionException {
-        return null;
-      }
-
-      public RunnerSettings getRunnerSettings() {
-        return null;
-      }
-
-      public ConfigurationPerRunnerSettings getConfigurationSettings() {
-        return null;
-      }
-    };
+    return FlexBaseRunner.EMPTY_RUN_STATE;
   }
 
   public void checkConfiguration() throws RuntimeConfigurationException {

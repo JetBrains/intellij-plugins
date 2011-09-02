@@ -113,4 +113,9 @@ public abstract class FlexCompilationTask {
   public boolean useCache() {
     return myOldConfig != null && myOldConfig.getType() == FlexBuildConfiguration.Type.Default;
   }
+
+  @Nullable
+  public FlexIdeBuildConfiguration getFlexIdeConfig() {
+    return myFlexIdeConfig;
+  }
 }
