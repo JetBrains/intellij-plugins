@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner.mxml;
 import com.intellij.flex.uiDesigner.InjectionUtil;
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.ProblemsHolder;
+import com.intellij.flex.uiDesigner.AssetCounter;
 import com.intellij.flex.uiDesigner.css.CssWriter;
 import com.intellij.flex.uiDesigner.css.LocalCssWriter;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
@@ -28,6 +29,11 @@ public class StyleTagWriter {
   public StyleTagWriter(StringRegistry.StringWriter stringWriter, ProblemsHolder problemsHolder,
                         List<XmlFile> unregisteredDocumentReferences) {
     cssWriter = new LocalCssWriter(stringWriter, problemsHolder, unregisteredDocumentReferences);
+  }
+
+  @Nullable
+  public AssetCounter getRequiredAssetsInfo() {
+    return cssWriter.getAssetCounter();
   }
 
   public byte[] write(XmlTag tag, Module module) throws InvalidPropertyException {

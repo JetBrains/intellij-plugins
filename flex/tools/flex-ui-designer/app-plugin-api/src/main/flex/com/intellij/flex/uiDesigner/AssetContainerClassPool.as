@@ -141,11 +141,6 @@ public class AssetContainerClassPool {
     loaderInfo.removeEventListener(AsyncErrorEvent.ASYNC_ERROR, loadErrorHandler);
     loaderInfo.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, loadErrorHandler);
   }
-
-  public function fillFromLibraries(classCount:int):void {
-    assert(names == null);
-    adjustCache(classCount);
-  }
 }
 }
 

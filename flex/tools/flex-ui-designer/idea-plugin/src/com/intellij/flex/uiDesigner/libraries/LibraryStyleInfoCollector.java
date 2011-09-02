@@ -86,7 +86,7 @@ public class LibraryStyleInfoCollector implements Consumer<Library> {
     VirtualFile defaultsCssVirtualFile = library.getDefaultsCssFile();
     if (defaultsCssVirtualFile != null) {
       library.defaultsStyle = cssWriter.write(defaultsCssVirtualFile, module);
-      library.requiredAssetsInfo = cssWriter.getRequiredAssetsInfo();
+      library.assetCounter = cssWriter.getAssetCounter();
     }
   }
 }

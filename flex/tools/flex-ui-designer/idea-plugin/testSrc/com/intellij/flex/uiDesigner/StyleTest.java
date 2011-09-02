@@ -24,8 +24,7 @@ public class StyleTest extends MxmlTestBase {
 
     if (getName().equals("testStyleTag")) {
       final ProblemsHolder problemsHolder = new ProblemsHolder();
-      final RequiredAssetsInfo requiredAssetsInfo = new RequiredAssetsInfo();
-      client.registerDocumentReferences(unregisteredDocumentReferences, myModule, problemsHolder, requiredAssetsInfo);
+      client.registerDocumentReferences(unregisteredDocumentReferences, myModule, problemsHolder);
       assertTrue(problemsHolder.isEmpty());
     }
   }

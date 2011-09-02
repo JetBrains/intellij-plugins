@@ -11,8 +11,9 @@ public class ProjectInfo extends Info<Project> {
   private LibrarySet librarySet;
 
   private final Sdk sdk;
-  
-  public RequiredAssetsInfo totalDefinedAssetContainerClassInfo;
+
+  // Shares between modules, if module sdk equals project sdk (project sdk equals sdk of first registered module). Otherwise module will has own demandedAssetCounter and allocatedAssetCounter
+  public AssetCounterInfo assetCounterInfo;
 
   public ProjectInfo(Project project, LibrarySet sdkLibrarySet, Sdk sdk) {
     super(project);

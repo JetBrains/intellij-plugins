@@ -75,16 +75,16 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
         break;
 
       case ClientMethod.fillImageClassPool:
-        fillAssetCClassPool(input, messageSize, false);
+        fillAssetClassPool(input, messageSize, false);
         break;
 
       case ClientMethod.fillSwfClassPool:
-        fillAssetCClassPool(input, messageSize, true);
+        fillAssetClassPool(input, messageSize, true);
         break;
     }
   }
 
-  private function fillAssetCClassPool(input:IDataInput, messageSize:int, isSwf:Boolean):void {
+  private function fillAssetClassPool(input:IDataInput, messageSize:int, isSwf:Boolean):void {
     const prevBytesAvailable:int = input.bytesAvailable;
     var context:ModuleContextEx = moduleManager.getById(input.readUnsignedShort()).context;
     const classCount:int = input.readUnsignedShort();
@@ -103,19 +103,10 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   }
 
   private function registerModule(input:IDataInput):void {
-    const imageCount:int = input.readUnsignedShort();
-    const swfCount:int = input.readUnsignedShort();
     stringRegistry.readStringTable(input);
     var module:Module = new Module(input.readUnsignedShort(), projectManager.getById(input.readUnsignedShort()),
                                    libraryManager.idsToInstancesAndMarkAsUsed(input.readObject()), input.readObject());
     moduleManager.register(module);
-
-    if (imageCount != 0) {
-      module.context.imageAssetContainerClassPool.fillFromLibraries(imageCount);
-    }
-    if (swfCount != 0) {
-      module.context.swfAssetContainerClassPool.fillFromLibraries(swfCount);
-    }
   }
   
   private function registerDocumentFactory(input:IDataInput, messageSize:int):void {

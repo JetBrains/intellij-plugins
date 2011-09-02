@@ -10,14 +10,14 @@ public class EmbedSwfManager extends EmbedAssetManager<SwfAssetInfo> {
     return ServiceManager.getService(EmbedSwfManager.class);
   }
 
-  public int add(@NotNull VirtualFile file, @Nullable String symbolName, @NotNull RequiredAssetsInfo requiredAssetsInfo) {
+  public int add(@NotNull VirtualFile file, @Nullable String symbolName, @NotNull AssetCounter assetCounter) {
     for (SwfAssetInfo asset : assets) {
       if (asset.file == file && (symbolName == null ? asset.symbolName == null : symbolName.equals(asset.symbolName))) {
         return asset.id;
       }
     }
 
-    requiredAssetsInfo.swfCount++;
+    assetCounter.swfCount++;
     final int id = allocateId();
     add(new SwfAssetInfo(file, symbolName, id));
     return id;

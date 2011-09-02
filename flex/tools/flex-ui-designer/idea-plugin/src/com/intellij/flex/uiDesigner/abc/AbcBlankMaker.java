@@ -21,7 +21,7 @@ final class AbcBlankMaker {
     //new AbcFilter().filter(new File("/Users/develar/workspace/idea/flex/tools/flex-ui-designer/idea-plugin/testData/libraryWithIncompatibleMxFlexModuleFactory.swf"), new File("/Users/develar/workspace/idea/flex/tools/flex-ui-designer/idea-plugin/testData/o.swf"), null);
     //new AbcFilter().filter(new File("/Users/develar/workspace/idea/flex/tools/flex-ui-designer/test-data-libs/target/test-data-libs 2/library.swf"), new File("/Users/develar/workspace/idea/flex/tools/flex-ui-designer/test-data-libs/target/test-data-libs 2/o.swf"), null);
     //new AbcFilter().filter(new File("/Developer/SDKs/flex_sdk_4.5.0.19786/frameworks/libs/core/library.swf"), new File("/Users/develar/ot.swf"), null);
-    //new FlexSdkAbcInjector("4.5", null, new RequiredAssetsInfo()).filter(new File("/Users/develar/workspace/idea/flex/tools/flex-ui-designer/idea-plugin/testData/sdk/4.5/mobilecomponents/library.swf"), new File("/Users/develar/ot.swf"), null);
+    //new FlexSdkAbcInjector("4.5", null, new AssetCounter()).filter(new File("/Users/develar/workspace/idea/flex/tools/flex-ui-designer/idea-plugin/testData/sdk/4.5/mobilecomponents/library.swf"), new File("/Users/develar/ot.swf"), null);
     //new AbcFilter().filter(new File("/Users/develar/output.swf"), new File("/Users/develar/ot.swf"), null);
 
     //makeBlanks();

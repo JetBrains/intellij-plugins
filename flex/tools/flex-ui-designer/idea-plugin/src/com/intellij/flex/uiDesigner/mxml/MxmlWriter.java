@@ -60,12 +60,12 @@ public class MxmlWriter {
   }
 
   public XmlFile[] write(@NotNull final XmlFile psiFile, @NotNull final ProblemsHolder problemsHolder,
-                         @NotNull final RequiredAssetsInfo requiredAssetsInfo) throws IOException {
+                         @NotNull final AssetCounter assetCounter) throws IOException {
     try {
       this.problemsHolder = problemsHolder;
       problemsHolder.setCurrentFile(psiFile.getVirtualFile());
       injectedASWriter.setProblemsHolder(problemsHolder);
-      writer.requiredAssetsInfo = requiredAssetsInfo;
+      writer.assetCounter = assetCounter;
       requireCallResetAfterMessage = true;
 
       writer.beginMessage();
@@ -103,7 +103,7 @@ public class MxmlWriter {
     finally {
       problemsHolder.setCurrentFile(null);
       this.problemsHolder = null;
-      writer.requiredAssetsInfo = null;
+      writer.assetCounter = null;
       injectedASWriter.setProblemsHolder(null);
       requireCallResetAfterMessage = false;
       resetAfterMessage();

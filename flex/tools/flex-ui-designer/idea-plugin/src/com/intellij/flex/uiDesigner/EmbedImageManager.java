@@ -10,14 +10,14 @@ public class EmbedImageManager extends EmbedAssetManager<ImageAssetInfo> {
     return ServiceManager.getService(EmbedImageManager.class);
   }
 
-  public int add(@NotNull VirtualFile file, @Nullable String mimeType, @NotNull RequiredAssetsInfo requiredAssetsInfo) {
+  public int add(@NotNull VirtualFile file, @Nullable String mimeType, @NotNull AssetCounter assetCounter) {
     for (ImageAssetInfo asset : assets) {
       if (asset.file == file) {
         return asset.id;
       }
     }
 
-    requiredAssetsInfo.imageCount++;
+    assetCounter.imageCount++;
     final int id = allocateId();
     add(new ImageAssetInfo(file, mimeType, id));
     return id;

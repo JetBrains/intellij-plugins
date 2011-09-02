@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner.abc;
 
 import com.intellij.flex.uiDesigner.ComplementSwfBuilder;
 import com.intellij.flex.uiDesigner.DebugPathManager;
-import com.intellij.flex.uiDesigner.RequiredAssetsInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 
@@ -20,14 +19,12 @@ public class FlexSdkAbcInjector extends AbcFilter {
   private boolean flexInjected;
   private final String flexSdkVersion;
   private final URLConnection injectionUrlConnection;
-  private final RequiredAssetsInfo requiredAssetsInfo;
 
-  public FlexSdkAbcInjector(String flexSdkVersion, URLConnection injectionUrlConnection, RequiredAssetsInfo requiredAssetsInfo) {
+  public FlexSdkAbcInjector(String flexSdkVersion, URLConnection injectionUrlConnection) {
     super(flexSdkVersion);
 
     this.flexSdkVersion = flexSdkVersion;
     this.injectionUrlConnection = injectionUrlConnection;
-    this.requiredAssetsInfo = requiredAssetsInfo;
   }
 
   @Override
@@ -68,13 +65,6 @@ public class FlexSdkAbcInjector extends AbcFilter {
         finally {
           inputStream.close();
         }
-      }
-
-      if (requiredAssetsInfo.imageCount != 0) {
-        AssetClassPoolGenerator.generateBitmap(decoders, requiredAssetsInfo.imageCount);
-      }
-      if (requiredAssetsInfo.swfCount != 0) {
-        AssetClassPoolGenerator.generateSprite(decoders, requiredAssetsInfo.swfCount);
       }
     }
   }

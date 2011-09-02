@@ -15,44 +15,23 @@ public class LibraryManager implements LibrarySetLoadProgressListener {
   }
 
   public function complete(librarySet:LibrarySet):void {
-    var currentQueue:LoaderQueue = resolveQueue[librarySet];
-    if (currentQueue != null) {
-      var leftBrotherQueue:LoaderQueue;
-      var leftmostBrother:LoaderQueue;
-      do {
-        if (currentQueue.size == 1) {
-          try {
-            currentQueue.apply();
-          }
-          catch (e:Error) {
-            UncaughtErrorManager.instance.handleError(e);
-          }
+    var queueList:Vector.<LoaderQueue> = resolveQueue[librarySet];
+    if (queueList == null) {
+      return;
+    }
 
-          if (leftBrotherQueue == null) {
-            if (currentQueue.tail == null) {
-              delete resolveQueue[librarySet];
-              break;
-            }
-            else {
-              // optimization, set local var instead of put in map
-              leftmostBrother = currentQueue.tail;
-            }
-          }
-          else {
-            leftBrotherQueue.tail = currentQueue.tail;
-          }
+    for each (var item:LoaderQueue in queueList) {
+      if (--item.count == 0) {
+        try {
+          item.apply();
         }
-        else {
-          currentQueue.size--;
-          leftBrotherQueue = currentQueue;
+        catch (e:Error) {
+          UncaughtErrorManager.instance.handleError(e);
         }
-      }
-      while ((currentQueue = currentQueue.tail) != null);
-
-      if (leftmostBrother != null) {
-        resolveQueue[librarySet] = leftmostBrother;
       }
     }
+
+    delete resolveQueue[librarySet];
   }
 
   public function register(librarySet:LibrarySet):void {
@@ -97,15 +76,17 @@ public class LibraryManager implements LibrarySetLoadProgressListener {
             queue = new LoaderQueue(readyHandler, readyHandlerArguments);
           }
 
-          var leftBrotherQueue:LoaderQueue = resolveQueue[librarySet];
-          if (leftBrotherQueue == null) {
-            resolveQueue[librarySet] = queue;
+          queue.count++;
+
+          var queueList:Vector.<LoaderQueue> = resolveQueue[librarySet];
+          if (queueList == null) {
+            queueList = new Vector.<LoaderQueue>(1);
+            queueList[0] = queue;
+            resolveQueue[librarySet] = queueList;
           }
           else {
-            queue.tail = leftBrotherQueue.tail;
-            leftBrotherQueue.tail = queue;
+            queueList[queueList.length] = queue;
           }
-          queue.size++;
         }
       }
       while ((librarySet = librarySet.parent) != null);
@@ -118,12 +99,11 @@ public class LibraryManager implements LibrarySetLoadProgressListener {
 }
 }
 
-class LoaderQueue {
+final class LoaderQueue {
+  public var count:int;
+
   private var handler:Function;
   private var handlerArguments:Array;
-  public var size:int;
-
-  public var tail:LoaderQueue;
 
   public function LoaderQueue(handler:Function, handlerArguments:Array) {
     this.handler = handler;

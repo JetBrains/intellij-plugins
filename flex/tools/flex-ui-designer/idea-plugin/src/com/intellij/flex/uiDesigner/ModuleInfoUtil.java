@@ -2,9 +2,9 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.facet.FacetManager;
 import com.intellij.flex.uiDesigner.css.LocalCssWriter;
-import com.intellij.flex.uiDesigner.mxml.StyleTagWriter;
-import com.intellij.flex.uiDesigner.io.StringRegistry;
+import com.intellij.flex.uiDesigner.io.StringRegistry.StringWriter;
 import com.intellij.flex.uiDesigner.libraries.Library;
+import com.intellij.flex.uiDesigner.mxml.StyleTagWriter;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexFacet;
@@ -31,7 +31,8 @@ import java.util.List;
 
 public class ModuleInfoUtil {
   public static void collectLocalStyleHolders(final ModuleInfo moduleInfo, final String flexSdkVersion,
-      final StringRegistry.StringWriter stringWriter, final ProblemsHolder problemsHolder, List<XmlFile> unregisteredDocumentReferences) {
+                                              final StringWriter stringWriter, final ProblemsHolder problemsHolder,
+                                              List<XmlFile> unregisteredDocumentReferences, AssetCounter assetCounter) {
     final Module module = moduleInfo.getModule();
     final FlexBuildConfiguration flexBuildConfiguration;
     if (ModuleType.get(module) instanceof FlexModuleType) {
@@ -46,10 +47,11 @@ public class ModuleInfoUtil {
     AccessToken token = ReadAction.start();
     try {
       if (FlexBuildConfiguration.APPLICATION.equals(flexBuildConfiguration.OUTPUT_TYPE)) {
-        collectApplicationLocalStyle(moduleInfo, flexSdkVersion, problemsHolder, stringWriter, unregisteredDocumentReferences);
+        collectApplicationLocalStyle(moduleInfo, flexSdkVersion, problemsHolder, stringWriter, unregisteredDocumentReferences,
+                                     assetCounter);
       }
       else {
-        collectLibraryLocalStyle(module, moduleInfo, stringWriter, problemsHolder, unregisteredDocumentReferences);
+        collectLibraryLocalStyle(module, moduleInfo, stringWriter, problemsHolder, unregisteredDocumentReferences, assetCounter);
       }
     }
     finally {
@@ -57,8 +59,9 @@ public class ModuleInfoUtil {
     }
   }
 
-  private static void collectLibraryLocalStyle(Module module, ModuleInfo moduleInfo, StringRegistry.StringWriter stringWriter,
-      ProblemsHolder problemsHolder, List<XmlFile> unregisteredDocumentReferences) {
+  private static void collectLibraryLocalStyle(Module module, ModuleInfo moduleInfo, StringWriter stringWriter,
+                                               ProblemsHolder problemsHolder, List<XmlFile> unregisteredDocumentReferences,
+                                               AssetCounter assetCounter) {
     VirtualFile defaultsCss = null;
     for (VirtualFile sourceRoot : ModuleRootManager.getInstance(moduleInfo.getModule()).getSourceRoots(false)) {
       if ((defaultsCss = sourceRoot.findChild(Library.DEFAULTS_CSS)) != null) {
@@ -67,17 +70,19 @@ public class ModuleInfoUtil {
     }
 
     if (defaultsCss != null) {
-      moduleInfo.addLocalStyleHolder(
-          new LocalStyleHolder(defaultsCss, new LocalCssWriter(stringWriter, problemsHolder, unregisteredDocumentReferences).write(defaultsCss, module)));
+      final LocalCssWriter cssWriter = new LocalCssWriter(stringWriter, problemsHolder, unregisteredDocumentReferences);
+      moduleInfo.addLocalStyleHolder(new LocalStyleHolder(defaultsCss, cssWriter.write(defaultsCss, module)));
+      assetCounter.append(cssWriter.getAssetCounter());
     }
   }
 
   private static void collectApplicationLocalStyle(final ModuleInfo moduleInfo, String flexSdkVersion, final ProblemsHolder problemsHolder,
-      StringRegistry.StringWriter stringWriter, List<XmlFile> unregisteredDocumentReferences) {
+                                                   StringWriter stringWriter, List<XmlFile> unregisteredDocumentReferences,
+                                                   final AssetCounter assetCounter) {
     final GlobalSearchScope moduleWithDependenciesAndLibrariesScope =
         moduleInfo.getModule().getModuleWithDependenciesAndLibrariesScope(false);
 
-    List<JSClass> holders = new ArrayList<JSClass>(2);
+    final List<JSClass> holders = new ArrayList<JSClass>(2);
     if (flexSdkVersion.charAt(0) > '3') {
       JSClass clazz = ((JSClass)JSResolveUtil.findClassByQName("spark.components.Application", moduleWithDependenciesAndLibrariesScope));
       // it is not legal case, but user can use patched/modified Flex SDK
@@ -135,5 +140,7 @@ public class ModuleInfoUtil {
     for (JSClass holder : holders) {
       JSClassSearch.searchClassInheritors(new JSClassSearch.SearchParameters(holder, true, moduleScope)).forEach(processor);
     }
+
+    assetCounter.append(localStyleWriter.getRequiredAssetsInfo());
   }
 }

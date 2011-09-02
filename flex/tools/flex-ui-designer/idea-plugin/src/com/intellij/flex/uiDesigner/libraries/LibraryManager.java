@@ -32,7 +32,7 @@ import java.util.List;
 
 @SuppressWarnings("MethodMayBeStatic")
 public class LibraryManager extends EntityListManager<VirtualFile, Library> {
-  private static final String ABC_FILTER_VERSION = "8";
+  private static final String ABC_FILTER_VERSION = "9";
   private static final String ABC_FILTER_VERSION_VALUE_NAME = "fud_abcFilterVersion";
 
   private File appDir;
@@ -125,14 +125,13 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     ProjectInfo info = registeredProjects.getNullableInfo(project);
     final boolean isNewProject = info == null;
 
-    RequiredAssetsInfo requiredAssetsInfo = null;
-
+    final AssetCounterInfo assetCounterInfo;
     if (isNewProject) {
+      assetCounterInfo = new AssetCounterInfo(libraryCollector.sdkLibraries);
       if (librarySet == null) {
         final SwcDependenciesSorter swcDependenciesSorter = new SwcDependenciesSorter(appDir, module);
         librarySet = createLibrarySet(projectLocationHash + "_fdk", null, libraryCollector.sdkLibraries,
                                       libraryCollector.getFlexSdkVersion(), swcDependenciesSorter, true);
-        requiredAssetsInfo = swcDependenciesSorter.getRequiredAssetsInfo();
         client.registerLibrarySet(librarySet);
       }
 
@@ -146,8 +145,11 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
         final SwcDependenciesSorter swcDependenciesSorter = new SwcDependenciesSorter(appDir, module);
         librarySet = createLibrarySet(Integer.toHexString(module.getName().hashCode()) + "_fdk", null, libraryCollector.sdkLibraries,
                                       libraryCollector.getFlexSdkVersion(), swcDependenciesSorter, true);
-        requiredAssetsInfo = swcDependenciesSorter.getRequiredAssetsInfo();
+        assetCounterInfo = new AssetCounterInfo(libraryCollector.sdkLibraries);
         client.registerLibrarySet(librarySet);
+      }
+      else {
+        assetCounterInfo = info.assetCounterInfo;
       }
     }
 
@@ -159,6 +161,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     else if (isNewProject) {
       librarySet = createLibrarySet(projectLocationHash, librarySet, libraryCollector.externalLibraries,
                                     libraryCollector.getFlexSdkVersion(), new SwcDependenciesSorter(appDir, module), false);
+      assetCounterInfo.demanded.append(libraryCollector.externalLibraries);
       client.registerLibrarySet(librarySet);
       info.setLibrarySet(librarySet);
     }
@@ -168,13 +171,14 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
       throw new UnsupportedOperationException("merge existing libraries and new");
     }
 
-    final ModuleInfo moduleInfo = new ModuleInfo(module);
+    final ModuleInfo moduleInfo = new ModuleInfo(module, assetCounterInfo);
     final List<XmlFile> unregisteredDocumentReferences = new ArrayList<XmlFile>();
     if (collectLocalStyleHolders) {
       // client.registerModule finalize it
       stringWriter.startChange();
       try {
-        ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter, problemsHolder, unregisteredDocumentReferences);
+        ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter, problemsHolder,
+                                                unregisteredDocumentReferences, assetCounterInfo.demanded);
       }
       catch (Throwable e) {
         stringWriter.rollbackChange();
@@ -182,7 +186,8 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
       }
     }
 
-    client.registerModule(project, moduleInfo, new String[]{librarySet.getId()}, stringWriter, requiredAssetsInfo);
+    client.registerModule(project, moduleInfo, new String[]{librarySet.getId()}, stringWriter);
+    client.fillAssetClassPoolIfNeed(module);
 
     module.getMessageBus().connect(moduleInfo).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
       @Override

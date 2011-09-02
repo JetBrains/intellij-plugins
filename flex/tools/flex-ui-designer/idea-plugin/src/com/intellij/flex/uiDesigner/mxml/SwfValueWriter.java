@@ -24,6 +24,6 @@ class SwfValueWriter extends BinaryValueWriter {
     if (!isStyle) {
       out.write(AmfExtendedTypes.SWF);
     }
-    out.writeUInt29(EmbedSwfManager.getInstance().add(virtualFile, symbol, writer.getRequiredAssetsInfo()));
+    out.writeUInt29(EmbedSwfManager.getInstance().add(virtualFile, symbol, writer.getAssetCounter()));
   }
 }

@@ -14,8 +14,11 @@ import java.util.List;
 public class ModuleInfo extends Info<Module> implements Disposable {
   private List<LocalStyleHolder> localStyleHolders;
 
-  public ModuleInfo(Module module) {
+  public final AssetCounterInfo assetCounterInfo;
+
+  public ModuleInfo(Module module, AssetCounterInfo assetCounterInfo) {
     super(module);
+    this.assetCounterInfo = assetCounterInfo;
   }
 
   public Module getModule() {

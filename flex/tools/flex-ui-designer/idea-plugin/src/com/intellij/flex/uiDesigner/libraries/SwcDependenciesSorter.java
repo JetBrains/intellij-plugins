@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.ComplementSwfBuilder;
 import com.intellij.flex.uiDesigner.DebugPathManager;
-import com.intellij.flex.uiDesigner.RequiredAssetsInfo;
 import com.intellij.flex.uiDesigner.abc.AbcFilter;
 import com.intellij.flex.uiDesigner.abc.AbcNameFilterByNameSet;
 import com.intellij.flex.uiDesigner.abc.AbcNameFilterByNameSetAndStartsWith;
@@ -19,7 +18,6 @@ import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import gnu.trove.TLinkedList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import java.io.File;
@@ -79,12 +77,6 @@ public class SwcDependenciesSorter {
     this.module = module;
   }
 
-  private RequiredAssetsInfo requiredAssetsInfo;
-  @Nullable
-  public RequiredAssetsInfo getRequiredAssetsInfo() {
-    return requiredAssetsInfo;
-  }
-
   public List<LibrarySetItem> getItems() {
     return items;
   }
@@ -115,7 +107,6 @@ public class SwcDependenciesSorter {
   }
 
   public void sort(final List<Library> libraries, final String postfix, final String flexSdkVersion, final boolean isFromSdk) throws IOException {
-    requiredAssetsInfo = null;
     useIndexForFindDefinitions = !isFromSdk;
 
     List<LibrarySetItem> unsortedItems = new ArrayList<LibrarySetItem>(libraries.size());
@@ -172,7 +163,7 @@ public class SwcDependenciesSorter {
       if (isFromSdk) {
         String path = item.library.getPath();
         if (path.startsWith("framework")) {
-          injectFrameworkSwc(flexSdkVersion, item, libraries);
+          injectFrameworkSwc(flexSdkVersion, item);
           continue;
         }
         else {
@@ -270,7 +261,7 @@ public class SwcDependenciesSorter {
     writer.flush();
   }
 
-  private void injectFrameworkSwc(String flexSdkVersion, LibrarySetItem library, List<Library> libraries) throws IOException {
+  private void injectFrameworkSwc(String flexSdkVersion, LibrarySetItem library) throws IOException {
     VirtualFile swfFile = library.library.getSwfFile();
     File modifiedSwf = createSwfOutFile(library.library);
     final long timeStamp = swfFile.getTimeStamp();
@@ -287,19 +278,6 @@ public class SwcDependenciesSorter {
       injectionLastModified = injectionUrlConnection.getLastModified();
     }
 
-    // must be calculated even if library is not outdated
-    requiredAssetsInfo = new RequiredAssetsInfo();
-    for (Library originalLibrary : libraries) {
-      if (originalLibrary.requiredAssetsInfo != null) {
-        requiredAssetsInfo.append(originalLibrary.requiredAssetsInfo);
-      }
-    }
-
-    // todo requiredAssetsInfo is not collected for local style holders — it is bug
-    // in any case, we preallocate addtional classes to avoid allocate on document opening
-    requiredAssetsInfo.imageCount *= 2;
-    requiredAssetsInfo.swfCount *= 2;
-
     if (library.hasUnresolvedDefinitions() ||
         timeStamp > modifiedSwf.lastModified() ||
         injectionLastModified > modifiedSwf.lastModified()) {
@@ -314,7 +292,7 @@ public class SwcDependenciesSorter {
       definitions.add(FlexSdkAbcInjector.RESOURCE_MANAGER + "Impl");
       definitions.add("mx.styles:StyleManagerImpl");
 
-      new FlexSdkAbcInjector(flexSdkVersion, injectionUrlConnection, requiredAssetsInfo).filter(swfFile, modifiedSwf,
+      new FlexSdkAbcInjector(flexSdkVersion, injectionUrlConnection).filter(swfFile, modifiedSwf,
                              new AbcNameFilterByNameSetAndStartsWith(definitions, new String[]{"mx.managers.marshalClasses:"}));
     }
   }

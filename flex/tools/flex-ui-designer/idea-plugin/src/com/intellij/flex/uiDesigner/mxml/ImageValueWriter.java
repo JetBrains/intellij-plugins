@@ -25,6 +25,6 @@ class ImageValueWriter extends BinaryValueWriter {
     if (!isStyle) {
       out.write(AmfExtendedTypes.IMAGE);
     }
-    out.writeUInt29(EmbedImageManager.getInstance().add(virtualFile, mimeType, writer.getRequiredAssetsInfo()));
+    out.writeUInt29(EmbedImageManager.getInstance().add(virtualFile, mimeType, writer.getAssetCounter()));
   }
 }

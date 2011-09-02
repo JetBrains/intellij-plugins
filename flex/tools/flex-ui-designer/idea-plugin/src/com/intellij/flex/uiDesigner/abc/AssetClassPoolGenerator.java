@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner.abc;
 
 import com.intellij.flex.uiDesigner.Client;
-import com.intellij.flex.uiDesigner.RequiredAssetsInfo;
+import com.intellij.flex.uiDesigner.AssetCounter;
 import com.intellij.flex.uiDesigner.io.AbstractByteArrayOutputStream;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 
@@ -70,19 +70,19 @@ public final class AssetClassPoolGenerator extends AbcEncoder {
     }
   }
 
-  public static void generate(Client.ClientMethod method, int size, RequiredAssetsInfo initialNumber, AbstractByteArrayOutputStream out) throws IOException {
+  public static void generate(Client.ClientMethod method, int size, AssetCounter allocatedCount, AbstractByteArrayOutputStream out) throws IOException {
     final int start = out.size();
     out.getBuffer(SwfUtil.getWrapHeaderLength());
 
     ArrayList<Decoder> decoders = new ArrayList<Decoder>(size);
     switch (method) {
       case fillImageClassPool:
-        generate(false, decoders, size, initialNumber.imageCount);
-        initialNumber.imageCount += size;
+        generate(false, decoders, size, allocatedCount.imageCount);
+        allocatedCount.imageCount += size;
         break;
       case fillSwfClassPool:
-        generate(true, decoders, size, initialNumber.swfCount);
-        initialNumber.swfCount += size;
+        generate(true, decoders, size, allocatedCount.swfCount);
+        allocatedCount.swfCount += size;
         break;
 
       default:

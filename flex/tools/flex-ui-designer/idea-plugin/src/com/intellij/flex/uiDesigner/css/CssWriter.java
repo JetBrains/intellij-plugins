@@ -42,15 +42,16 @@ public class CssWriter {
 
   private ProblemsHolder problemsHolder;
 
-  private RequiredAssetsInfo requiredAssetsInfo;
+  private AssetCounter assetCounter;
 
   public CssWriter(StringRegistry.StringWriter stringWriter, ProblemsHolder problemsHolder) {
     this.stringWriter = stringWriter;
     this.problemsHolder = problemsHolder;
   }
 
-  public RequiredAssetsInfo getRequiredAssetsInfo() {
-    return requiredAssetsInfo;
+  @Nullable
+  public AssetCounter getAssetCounter() {
+    return assetCounter;
   }
 
   public byte[] write(VirtualFile file, Module module) {
@@ -77,7 +78,7 @@ public class CssWriter {
   }
 
   private byte[] write(CssFile cssFile, Document document, Module module) {
-    requiredAssetsInfo = null;
+    assetCounter = null;
 
     rulesetVectorWriter.prepareIteration();
 
@@ -534,17 +535,17 @@ public class CssWriter {
       throw new InvalidPropertyException(cssFunction, FlexUIDesignerBundle.message("error.embed.source.not.specified", cssFunction.getText()));
     }
 
-    if (requiredAssetsInfo == null) {
-      requiredAssetsInfo = new RequiredAssetsInfo();
+    if (assetCounter == null) {
+      assetCounter = new AssetCounter();
     }
 
     final int fileId;
     final boolean isSwf = InjectionUtil.isSwf(source, mimeType);
     if (isSwf) {
-      fileId = EmbedSwfManager.getInstance().add(source, symbol, requiredAssetsInfo);
+      fileId = EmbedSwfManager.getInstance().add(source, symbol, assetCounter);
     }
     else {
-      fileId = EmbedImageManager.getInstance().add(source, mimeType, requiredAssetsInfo);
+      fileId = EmbedImageManager.getInstance().add(source, mimeType, assetCounter);
     }
 
     propertyOut.write(isSwf ? AmfExtendedTypes.SWF : AmfExtendedTypes.IMAGE);

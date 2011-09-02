@@ -227,22 +227,10 @@ public class Client implements Closable {
     }
   }
 
-  public void registerModule(Project project, ModuleInfo moduleInfo, String[] librarySetIds, StringRegistry.StringWriter stringWriter,
-                             RequiredAssetsInfo requiredAssetsInfo) {
+  public void registerModule(Project project, ModuleInfo moduleInfo, String[] librarySetIds, StringRegistry.StringWriter stringWriter) {
     boolean hasError = true;
     try {
       beginMessage(ClientMethod.registerModule);
-
-      if (requiredAssetsInfo == null) {
-        out.writeShort(0);
-        out.writeShort(0);
-      }
-      else {
-        out.writeShort(requiredAssetsInfo.imageCount);
-        out.writeShort(requiredAssetsInfo.swfCount);
-        registeredProjects.getInfo(project).totalDefinedAssetContainerClassInfo = requiredAssetsInfo;
-      }
-
       stringWriter.writeToIfStarted(out);
 
       out.writeShort(registeredModules.add(moduleInfo));
@@ -257,14 +245,13 @@ public class Client implements Closable {
   }
 
   public void openDocument(Module module, XmlFile psiFile) throws IOException {
-    openDocument(module, psiFile, false, new ProblemsHolder(), new RequiredAssetsInfo());
+    openDocument(module, psiFile, false, new ProblemsHolder());
   }
 
   /**
-   * final, full open document — responsible for handle problemsHolder and requiredAssetsInfo — you must not do it
+   * final, full open document — responsible for handle problemsHolder and assetCounter — you must not do it
    */
-  public boolean openDocument(Module module, XmlFile psiFile, boolean notifyOpened, ProblemsHolder problemsHolder,
-                           RequiredAssetsInfo requiredAssetsInfo) {
+  public boolean openDocument(Module module, XmlFile psiFile, boolean notifyOpened, ProblemsHolder problemsHolder) {
     final DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance(module.getProject());
     final VirtualFile virtualFile = psiFile.getVirtualFile();
     final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
@@ -274,17 +261,12 @@ public class Client implements Closable {
       return updateDocumentFactory(documentFactoryManager.getId(virtualFile), module, psiFile);
     }
 
-    final int factoryId = registerDocumentFactoryIfNeed(module, psiFile, virtualFile, false, problemsHolder, requiredAssetsInfo);
+    final int factoryId = registerDocumentFactoryIfNeed(module, psiFile, virtualFile, false, problemsHolder);
     if (factoryId == -1) {
       return false;
     }
 
-    if (requiredAssetsInfo.imageCount > 0) {
-      fillAssetClassPool(module, requiredAssetsInfo.imageCount, ClientMethod.fillImageClassPool);
-    }
-    if (requiredAssetsInfo.swfCount > 0) {
-      fillAssetClassPool(module, requiredAssetsInfo.swfCount, ClientMethod.fillSwfClassPool);
-    }
+    fillAssetClassPoolIfNeed(module);
 
     if (!problemsHolder.isEmpty()) {
       DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
@@ -298,15 +280,33 @@ public class Client implements Closable {
     return true;
   }
 
+  public void fillAssetClassPoolIfNeed(Module module) {
+    final AssetCounterInfo assetCounter = registeredModules.getInfo(module).assetCounterInfo;
+    int diff = assetCounter.demanded.imageCount - assetCounter.allocated.imageCount;
+    if (diff > 0) {
+      // reduce number of call fill asset class pool
+      diff *= 2;
+      fillAssetClassPool(module, diff, ClientMethod.fillImageClassPool);
+      assetCounter.allocated.imageCount += diff;
+    }
+
+    diff = assetCounter.demanded.swfCount - assetCounter.allocated.swfCount;
+    if (diff > 0) {
+      // reduce number of call fill asset class pool
+      diff *= 2;
+      fillAssetClassPool(module, diff, ClientMethod.fillSwfClassPool);
+      assetCounter.allocated.swfCount += diff;
+    }
+  }
+
   private void fillAssetClassPool(Module module, int classCount, ClientMethod method) {
     boolean hasError = true;
     try {
       beginMessage(method);
       writeId(module);
       out.writeShort(classCount);
-      final RequiredAssetsInfo totalDefinedAssetContainerClassInfo = registeredProjects
-          .getInfo(module.getProject()).totalDefinedAssetContainerClassInfo;
-      AssetClassPoolGenerator.generate(method, classCount, totalDefinedAssetContainerClassInfo, blockOut);
+      final AssetCounterInfo assetCounterInfo = registeredModules.getInfo(module).assetCounterInfo;
+      AssetClassPoolGenerator.generate(method, classCount, assetCounterInfo.allocated, blockOut);
       hasError = false;
     }
     catch (Throwable e) {
@@ -353,9 +353,8 @@ public class Client implements Closable {
       writeId(module);
       out.writeShort(factoryId);
 
-      RequiredAssetsInfo requiredAssetsInfo = new RequiredAssetsInfo();
       ProblemsHolder problemsHolder = new ProblemsHolder();
-      writeDocumentFactory(module, psiFile, problemsHolder, requiredAssetsInfo);
+      writeDocumentFactory(module, psiFile, problemsHolder);
       if (!problemsHolder.isEmpty()) {
         DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
       }
@@ -374,7 +373,7 @@ public class Client implements Closable {
   }
 
   private int registerDocumentFactoryIfNeed(Module module, XmlFile psiFile, VirtualFile virtualFile, boolean force,
-                                            ProblemsHolder problemsHolder, RequiredAssetsInfo requiredAssetsInfo) {
+                                            ProblemsHolder problemsHolder) {
     final DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance(module.getProject());
     final boolean registered = !force && documentFactoryManager.isRegistered(virtualFile);
     final int id = documentFactoryManager.getId(virtualFile);
@@ -390,7 +389,7 @@ public class Client implements Closable {
         assert jsClass != null;
         out.writeAmfUtf(jsClass.getQualifiedName());
 
-        hasError = !writeDocumentFactory(module, psiFile, problemsHolder, requiredAssetsInfo);
+        hasError = !writeDocumentFactory(module, psiFile, problemsHolder);
       }
       catch (Throwable e) {
         LogMessageUtil.processInternalError(e, virtualFile);
@@ -407,15 +406,13 @@ public class Client implements Closable {
     return id;
   }
 
-  private boolean writeDocumentFactory(Module module, XmlFile psiFile, ProblemsHolder problemsHolder, RequiredAssetsInfo requiredAssetsInfo)
+  private boolean writeDocumentFactory(Module module, XmlFile psiFile, ProblemsHolder problemsHolder)
     throws IOException {
-    XmlFile[] unregisteredDocumentReferences = mxmlWriter.write(psiFile, problemsHolder, requiredAssetsInfo);
-    return unregisteredDocumentReferences == null || registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder,
-                                                                                requiredAssetsInfo);
+    XmlFile[] unregisteredDocumentReferences = mxmlWriter.write(psiFile, problemsHolder, registeredModules.getInfo(module).assetCounterInfo.demanded);
+    return unregisteredDocumentReferences == null || registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder);
   }
 
-  public boolean registerDocumentReferences(XmlFile[] files, Module module, ProblemsHolder problemsHolder,
-                                            RequiredAssetsInfo requiredAssetsInfo) {
+  public boolean registerDocumentReferences(XmlFile[] files, Module module, ProblemsHolder problemsHolder) {
     for (XmlFile file : files) {
       VirtualFile virtualFile = file.getVirtualFile();
       assert virtualFile != null;
@@ -432,7 +429,7 @@ public class Client implements Closable {
       }
 
       // force register, it is registered (id allocated) only on server side
-      if (registerDocumentFactoryIfNeed(module, file, virtualFile, true, problemsHolder, requiredAssetsInfo) == -1) {
+      if (registerDocumentFactoryIfNeed(module, file, virtualFile, true, problemsHolder) == -1) {
         return false;
       }
     }
