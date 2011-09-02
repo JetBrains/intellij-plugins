@@ -4,7 +4,6 @@ import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.options.ModuleLibraryEntry;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.ex.ProjectRoot;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.JarDirectories;
@@ -12,22 +11,16 @@ import com.intellij.openapi.roots.libraries.DummyLibraryProperties;
 import com.intellij.openapi.roots.libraries.LibraryProperties;
 import com.intellij.openapi.roots.libraries.LibraryType;
 import com.intellij.openapi.roots.libraries.ui.*;
-import com.intellij.openapi.roots.ui.configuration.FacetsProvider;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointerContainer;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
-import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -174,7 +167,7 @@ public class FlexLibraryEditor implements LibraryEditor, Disposable {
 
   @Override
   public LibraryType<?> getType() {
-    return new LibraryTypeWrapper<DummyLibraryProperties>(LibraryType.EP_NAME.findExtension(FlexLibraryType.class));
+    return new FilteringLibraryType<DummyLibraryProperties>(LibraryType.EP_NAME.findExtension(FlexLibraryType.class), myEditableRootTypes);
   }
 
   @Override
@@ -216,94 +209,4 @@ public class FlexLibraryEditor implements LibraryEditor, Disposable {
     }
   }
 
-  private class LibraryTypeWrapper<P extends LibraryProperties> extends LibraryType<P> {
-    private final LibraryType<P> myLibraryType;
-
-    public LibraryTypeWrapper(LibraryType<P> libraryType) {
-      super(libraryType.getKind());
-      myLibraryType = libraryType;
-    }
-
-    @Override
-    public String getCreateActionName() {
-      return myLibraryType.getCreateActionName();
-    }
-
-    @NotNull
-    @Override
-    public P createDefaultProperties() {
-      return myLibraryType.createDefaultProperties();
-    }
-
-    @Override
-    public LibraryPropertiesEditor createPropertiesEditor(@NotNull LibraryEditorComponent<P> libraryEditorComponent) {
-      return myLibraryType.createPropertiesEditor(libraryEditorComponent);
-    }
-
-    @Override
-    public Icon getIcon() {
-      return myLibraryType.getIcon();
-    }
-
-    @Override
-    public boolean isSuitableModule(@NotNull Module module, @NotNull FacetsProvider facetsProvider) {
-      return myLibraryType.isSuitableModule(module, facetsProvider);
-    }
-
-    @Override
-    public LibraryRootsComponentDescriptor createLibraryRootsComponentDescriptor() {
-      return new LibraryRootsComponentDescriptorWrapper(myLibraryType.createLibraryRootsComponentDescriptor());
-    }
-
-    @Override
-    public P detect(@NotNull List<VirtualFile> classesRoots) {
-      return myLibraryType.detect(classesRoots);
-    }
-
-    @Override
-    public OrderRootType[] getExternalRootTypes() {
-      return myLibraryType.getExternalRootTypes();
-    }
-
-    @Override
-    public OrderRootType[] getAdditionalRootTypes() {
-      return myLibraryType.getAdditionalRootTypes();
-    }
-  }
-
-  private class LibraryRootsComponentDescriptorWrapper extends LibraryRootsComponentDescriptor {
-
-    private final LibraryRootsComponentDescriptor myDescriptor;
-
-    public LibraryRootsComponentDescriptorWrapper(LibraryRootsComponentDescriptor descriptor) {
-      myDescriptor = descriptor;
-    }
-
-    @Override
-    public OrderRootTypePresentation getRootTypePresentation(@NotNull OrderRootType type) {
-      return myDescriptor.getRootTypePresentation(type);
-    }
-
-    @NotNull
-    @Override
-    public List<? extends RootDetector> getRootDetectors() {
-      return ContainerUtil.filter(myDescriptor.getRootDetectors(), new Condition<RootDetector>() {
-        @Override
-        public boolean value(RootDetector rootDetector) {
-          return ArrayUtil.contains(rootDetector.getRootType(), myEditableRootTypes);
-        }
-      });
-    }
-
-    @NotNull
-    @Override
-    public List<? extends AttachRootButtonDescriptor> createAttachButtons() {
-      return ContainerUtil.filter(myDescriptor.createAttachButtons(), new Condition<AttachRootButtonDescriptor>() {
-        @Override
-        public boolean value(AttachRootButtonDescriptor attachRootButtonDescriptor) {
-          return ArrayUtil.contains(attachRootButtonDescriptor.getRootType(), myEditableRootTypes);
-        }
-      });
-    }
-  }
 }
