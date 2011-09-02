@@ -7,7 +7,8 @@ import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildCo
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
@@ -53,7 +54,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   private final Module myModule;
   private final FlexIdeBuildConfiguration myConfiguration;
   private final Runnable myTreeNodeNameUpdater;
-  private final ModifiableRootModel myModifiableRootModel;
   private String myName;
 
   private final DependenciesConfigurable myDependenciesConfigurable;
@@ -64,13 +64,12 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
   public FlexIdeBCConfigurable(final Module module,
                                final FlexIdeBuildConfiguration configuration,
-                               final Runnable treeNodeNameUpdater,
-                               final ModifiableRootModel modifiableRootModel, FlexSdksModifiableModel sdksModel) {
+                               final FlexSdksModifiableModel sdksModel,
+                               final Runnable treeNodeNameUpdater) {
     super(false, treeNodeNameUpdater);
     myModule = module;
     myConfiguration = configuration;
     myTreeNodeNameUpdater = treeNodeNameUpdater;
-    myModifiableRootModel = modifiableRootModel;
     myName = configuration.NAME;
 
     final BuildConfigurationNature nature = configuration.getNature();
@@ -131,8 +130,15 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     return "Build Configuration '" + myName + "'";
   }
 
+  public Module getModule() {
+    return myModule;
+  }
+
   public String getModuleName() {
-    return myModifiableRootModel.getModule().getName();
+    final ModuleEditor moduleEditor =
+      ModuleStructureConfigurable.getInstance(myModule.getProject()).getContext().getModulesConfigurator().getModuleEditor(myModule);
+    assert moduleEditor != null : myModule;
+    return moduleEditor.getName();
   }
 
   public Icon getIcon() {
@@ -184,20 +190,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myWrapperFolderLabel.setEnabled(enabled);
     myWrapperTemplateTextWithBrowse.setVisible(webPlatform);
     myWrapperTemplateTextWithBrowse.setEnabled(enabled);
-  }
-
-  public ModifiableRootModel getModifiableRootModel() {
-    return myModifiableRootModel;
-  }
-
-  /**
-   * TODO remove this
-   *
-   * @Deprecated
-   */
-  @Deprecated
-  public boolean isModuleConfiguratorModified() {
-    return false;
   }
 
   public String getTreeNodeText() {
@@ -280,7 +272,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
   private void applyOwnTo(FlexIdeBuildConfiguration configuration, boolean validate) throws ConfigurationException {
     if (validate && StringUtil.isEmptyOrSpaces(myName)) {
-      throw new ConfigurationException("Module '" + myModifiableRootModel.getModule().getName() + "': build configuration name is empty");
+      throw new ConfigurationException("Module '" + getModuleName() + "': build configuration name is empty");
     }
     configuration.NAME = myName;
     configuration.TARGET_PLATFORM = (TargetPlatform)myTargetPlatformCombo.getSelectedItem();

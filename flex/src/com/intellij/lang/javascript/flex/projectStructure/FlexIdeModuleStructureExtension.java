@@ -11,9 +11,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureExtension;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.NamedConfigurable;
@@ -47,19 +44,18 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
 
   public boolean addModuleNodeChildren(final Module module,
                                        final MasterDetailsComponent.MyNode moduleNode,
-                                       ModifiableRootModel modifiableRootModel,
                                        final Runnable treeNodeNameUpdater) {
     if (!(ModuleType.get(module) instanceof FlexModuleType) || !FlexIdeUtils.isNewUI()) {
       return false;
     }
 
     final List<NamedConfigurable<FlexIdeBuildConfiguration>> configurables =
-      myConfigurator.getOrCreateConfigurables(module, treeNodeNameUpdater, modifiableRootModel);
+      myConfigurator.getOrCreateConfigurables(module, treeNodeNameUpdater);
 
     for (final NamedConfigurable<FlexIdeBuildConfiguration> configurable : configurables) {
       if (MasterDetailsComponent.findNodeByObject(moduleNode, configurable.getEditableObject()) == null) {
         final MasterDetailsComponent.MyNode configurationNode = new BuildConfigurationNode(configurable);
-        addConfigurationChildNodes(module.getProject(), FlexIdeBCConfigurable.unwrapIfNeeded(configurable), configurationNode);
+        addConfigurationChildNodes(FlexIdeBCConfigurable.unwrapIfNeeded(configurable), configurationNode);
         moduleNode.add(configurationNode);
       }
     }
@@ -67,9 +63,7 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
     return configurables.size() > 0;
   }
 
-  static void addConfigurationChildNodes(final Project project,
-                                         final FlexIdeBCConfigurable configurable,
-                                         final MasterDetailsComponent.MyNode configurationNode) {
+  static void addConfigurationChildNodes(final FlexIdeBCConfigurable configurable, final MasterDetailsComponent.MyNode configurationNode) {
     if (!FlexIdeUtils.isFlatUi()) {
       List<NamedConfigurable> children = configurable.getChildren();
       for (NamedConfigurable child : children) {
@@ -84,11 +78,6 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
 
   public boolean isModified() {
     return myConfigurator.isModified();
-  }
-
-  @Override
-  public boolean isModulesConfiguratorModified() {
-    return myConfigurator.isModulesConfiguratorModified();
   }
 
   public void apply() throws ConfigurationException {
@@ -127,8 +116,7 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
   }
 
   public Collection<AnAction> createAddActions(final NullableComputable<MasterDetailsComponent.MyNode> selectedNodeRetriever,
-                                               final Runnable treeNodeNameUpdater,
-                                               final ModulesConfigurator modulesConfigurator) {
+                                               final Runnable treeNodeNameUpdater) {
     final Collection<AnAction> actions = new ArrayList<AnAction>(2);
     actions.add(new Separator());
     actions.add(new DumbAwareAction("Build Configuration") {
@@ -137,7 +125,8 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
       }
 
       public void actionPerformed(final AnActionEvent e) {
-        myConfigurator.addConfiguration(getModuleForNode(selectedNodeRetriever.compute()), treeNodeNameUpdater, modulesConfigurator);
+        final Module module = getModuleForNode(selectedNodeRetriever.compute());
+        myConfigurator.addConfiguration(module, treeNodeNameUpdater);
       }
     });
     return actions;

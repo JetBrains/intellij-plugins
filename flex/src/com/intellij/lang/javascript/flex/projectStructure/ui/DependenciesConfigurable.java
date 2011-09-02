@@ -533,7 +533,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
           MyTableItem item = myTable.getItemAt(row);
           if (item instanceof BCItem) {
             FlexIdeBCConfigurable configurable = ((BCItem)item).configurable;
-            if (configurable != null && configurable.getModifiableRootModel().getModule() == module) {
+            if (configurable != null && configurable.getModule() == module) {
               rowsToRemove.add(row);
             }
           }
@@ -766,7 +766,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         BCItem bcItem = (BCItem)item;
         BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
         if (bcItem.configurable != null) {
-          if (bcItem.configurable.getModifiableRootModel().getModule() != bcEntry.getModule()) return true;
+          if (bcItem.configurable.getModule() != bcEntry.getModule()) return true;
           if (!bcItem.configurable.getDisplayName().equals(bcEntry.getBcName())) return true;
         }
         else {
@@ -809,7 +809,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       if (item instanceof BCItem) {
         FlexIdeBCConfigurable configurable = ((BCItem)item).configurable;
         if (configurable != null) {
-          entry = new BuildConfigurationEntry(configurable.getModifiableRootModel().getModule(), configurable.getDisplayName());
+          entry = new BuildConfigurationEntry(configurable.getModule(), configurable.getDisplayName());
         }
         else {
           entry = new BuildConfigurationEntry(myProject, ((BCItem)item).moduleName, ((BCItem)item).bcName);
