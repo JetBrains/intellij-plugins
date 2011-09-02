@@ -3,6 +3,7 @@ package com.google.jstestdriver.idea.execution.settings.ui;
 import com.google.jstestdriver.idea.execution.JstdRunConfiguration;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.TestType;
+import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
@@ -154,11 +155,10 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
     @NotNull
     private JComboBox createTestTypeComboBox(TestTypeListItem[] testTypeListItems) {
       JComboBox comboBox = new JComboBox(testTypeListItems);
-      final ListCellRenderer oldRenderer = comboBox.getRenderer();
-      comboBox.setRenderer(new ListCellRenderer() {
+      comboBox.setRenderer(new ListCellRendererWrapper<TestTypeListItem>(comboBox.getRenderer()) {
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-          return oldRenderer.getListCellRendererComponent(list, ((TestTypeListItem) value).getDisplayName(), index, isSelected, cellHasFocus);
+        public void customize(JList list, TestTypeListItem value, int index, boolean selected, boolean hasFocus) {
+          setText(value.getDisplayName());
         }
       });
       comboBox.addActionListener(new ActionListener() {
