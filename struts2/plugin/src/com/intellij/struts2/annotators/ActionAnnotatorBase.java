@@ -40,6 +40,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.*;
 
 /**
@@ -69,7 +70,17 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
         @Override
         public Collection<? extends GotoRelatedItem> fun(final PathReference pathReference) {
           final PsiElement resolve = pathReference.resolve();
-          return resolve != null ? Collections.singleton(new GotoRelatedItem(resolve)) : Collections.<GotoRelatedItem>emptyList();
+          return resolve != null ? Collections.singleton(new GotoRelatedItem(resolve) {
+            @Override
+            public Icon getCustomIcon() {
+              return pathReference.getIcon();
+            }
+
+            @Override
+            public String getCustomName() {
+              return pathReference.getPath();
+            }
+          }) : Collections.<GotoRelatedItem>emptyList();
         }
       };
 
