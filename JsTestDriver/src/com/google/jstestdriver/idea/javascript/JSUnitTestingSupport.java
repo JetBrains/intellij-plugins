@@ -19,11 +19,12 @@ import com.google.jstestdriver.idea.javascript.navigation.NavigationRegistryBuil
 import com.intellij.lang.javascript.library.JSLibraryManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.scripting.ScriptingLibraryModel;
 import com.intellij.openapi.startup.StartupActivity;
 
-public class JSUnitTestingSupport implements StartupActivity {
+public class JSUnitTestingSupport implements StartupActivity, DumbAware {
 
   @Override
   public void runActivity(Project project) {
