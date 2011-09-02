@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.library;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
+import com.intellij.openapi.fileChooser.FileElement;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.ui.Util;
 import com.intellij.openapi.roots.JavadocOrderRootType;
@@ -127,6 +128,11 @@ public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDe
       return null;
     }
 
+    @Override
+    public FileChooserDescriptor createChooserDescriptor() {
+      return JARS_ZIPS_FOLDERS;
+    }
+
     //@NotNull
     //public VirtualFile[] scanForActualRoots(@NotNull final VirtualFile[] rootCandidates, JComponent parent) {
     //  return PathUIUtils.scanAndSelectDetectedJavaSourceRoots(parent, rootCandidates);   TODO: implement for ActionScript (IDEA-47751)
@@ -144,6 +150,11 @@ public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDe
 
     public String getChooserDescription() {
       return null;
+    }
+
+    @Override
+    public FileChooserDescriptor createChooserDescriptor() {
+      return JARS_ZIPS_FOLDERS;
     }
   }
 
@@ -164,6 +175,24 @@ public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDe
       return VirtualFile.EMPTY_ARRAY;
     }
   }
+
+  private static final FileChooserDescriptor JARS_ZIPS_FOLDERS = new FileChooserDescriptor(true, true, true, true, false, true) {
+
+    @Override
+    public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
+      if(FileElement.isFileHidden(file)) {
+        return false;
+      }
+
+      if (file.isDirectory()) {
+        return true;
+      }
+      else {
+        String name = file.getName();
+        return name.endsWith(".zip") || name.endsWith(".jar");
+      }
+    }
+  };
 }
 
 
