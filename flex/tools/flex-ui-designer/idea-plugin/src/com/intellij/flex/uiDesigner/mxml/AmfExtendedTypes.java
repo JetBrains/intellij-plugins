@@ -17,4 +17,6 @@ public final class AmfExtendedTypes {
   public static final int MXML_VECTOR = 51;
 
   public static final int REFERABLE_PRIMITIVE = 57;
+
+  public static final int XML_LIST = 58;
 }

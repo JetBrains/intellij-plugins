@@ -16,5 +16,7 @@ public final class AmfExtendedTypes {
 
   // IDEA-73801
   public static const REFERABLE_PRIMITIVE:int = 57;
+
+  public static const XML_LIST:int = 58;
 }
 }

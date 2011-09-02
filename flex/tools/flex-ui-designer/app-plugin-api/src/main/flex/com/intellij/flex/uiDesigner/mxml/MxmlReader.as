@@ -454,6 +454,10 @@ public final class MxmlReader implements DocumentReader {
           propertyHolder[propertyName] = readReferablePrimitive();
           break;
 
+        case AmfExtendedTypes.XML_LIST:
+          propertyHolder[propertyName] = readXmlList();
+          break;
+
         default:
           throw new ArgumentError("unknown property type " + amfType);
       }
@@ -480,6 +484,13 @@ public final class MxmlReader implements DocumentReader {
     }
     
     return object;
+  }
+
+  private function readXmlList():Object {
+    var r:int = input.readUnsignedShort();
+    var o:XMLList = new XMLList(AmfUtil.readString(input));
+    processReference(r, o);
+    return o;
   }
 
   private function readReferablePrimitive():Object {
@@ -707,6 +718,10 @@ public final class MxmlReader implements DocumentReader {
 
         case AmfExtendedTypes.REFERABLE_PRIMITIVE:
           array[i++] = readReferablePrimitive();
+          break;
+
+        case AmfExtendedTypes.XML_LIST:
+          array[i++] = readXmlList();
           break;
 
         default:
