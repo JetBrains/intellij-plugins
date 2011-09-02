@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.run;
 
+import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
@@ -17,7 +18,6 @@ import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -69,26 +69,21 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     }
     myAllConfigs = allConfigs.toArray(new FlexIdeBuildConfiguration[allConfigs.size()]);
 
-    myBCsCombo.setRenderer(new DefaultListCellRenderer() {
-      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-
+    myBCsCombo.setRenderer(new ListCellRendererWrapper(myBCsCombo.getRenderer()) {
+      @Override
+      public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
         if (value instanceof Pair) {
           final String moduleName = (String)((Pair)value).first;
           final String configName = (String)((Pair)value).second;
-
           setIcon(PlatformIcons.ERROR_INTRODUCTION_ICON);
           setText("<html><font color='red'>" + getPresentableText(moduleName, configName, mySingleModuleProject) + "</font></html>");
         }
         else {
           assert value instanceof FlexIdeBuildConfiguration : value;
           final FlexIdeBuildConfiguration config = (FlexIdeBuildConfiguration)value;
-
           setIcon(config.getIcon());
           setText(getPresentableText(myBCToModuleMap.get(config).getName(), config.NAME, mySingleModuleProject));
         }
-
-        return this;
       }
     });
 
