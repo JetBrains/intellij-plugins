@@ -18,40 +18,21 @@ package com.google.jstestdriver.idea.javascript;
 import com.google.jstestdriver.idea.javascript.navigation.NavigationRegistryBuilderImpl;
 import com.intellij.lang.javascript.library.JSLibraryManager;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.scripting.ScriptingLibraryModel;
-import com.intellij.openapi.startup.StartupManager;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.startup.StartupActivity;
 
-public class JSUnitTestingSupport implements ProjectComponent {
-
-  private Project myProject;
-
-  public JSUnitTestingSupport(Project project) {
-    myProject = project;
-  }
-
-  @NotNull
-  @Override
-  public String getComponentName() {
-    return JSUnitTestingSupport.class.getName();
-  }
+public class JSUnitTestingSupport implements StartupActivity {
 
   @Override
-  public void projectOpened() {
-    StartupManager.getInstance(myProject).registerPostStartupActivity(new Runnable() {
-      @Override
-      public void run() {
-        installLibrary();
-        NavigationRegistryBuilderImpl.register();
-      }
-    });
+  public void runActivity(Project project) {
+    installLibrary(project);
+    NavigationRegistryBuilderImpl.register();
   }
 
-  private void installLibrary() {
-    final JSLibraryManager libraryManager = ServiceManager.getService(myProject, JSLibraryManager.class);
+  private static void installLibrary(Project project) {
+    final JSLibraryManager libraryManager = ServiceManager.getService(project, JSLibraryManager.class);
     String libraryName = "JsTD Assertion Framework";
     ScriptingLibraryModel scriptingLibraryModel = libraryManager.getLibraryByName(libraryName);
     if (scriptingLibraryModel != null) {
@@ -64,13 +45,4 @@ public class JSUnitTestingSupport implements ProjectComponent {
       });
     }
   }
-
-  @Override
-  public void projectClosed() {}
-
-  @Override
-  public void initComponent() {}
-
-  @Override
-  public void disposeComponent() {}
 }

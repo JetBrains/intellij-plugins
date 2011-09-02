@@ -28,14 +28,9 @@
     </group>
   </actions>
 
-  <project-components>
-    <component>
-      <implementation-class>com.google.jstestdriver.idea.javascript.JSUnitTestingSupport</implementation-class>
-    </component>
-  </project-components>
-
   <extensions defaultExtensionNs="com.intellij">
     <inspectionToolProvider implementation="com.google.jstestdriver.idea.assertFramework.support.JstdInspectionToolProvider"/>
+    <postStartupActivity implementation="com.google.jstestdriver.idea.javascript.JSUnitTestingSupport"/>
   </extensions>
 
 </idea-plugin>
