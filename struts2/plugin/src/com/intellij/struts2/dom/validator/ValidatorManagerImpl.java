@@ -127,7 +127,7 @@ public class ValidatorManagerImpl extends ValidatorManager {
 
   @NotNull
   @Override
-  public List<PsiElement> findValidationFilesFor(@NotNull final PsiClass clazz) {
+  public List<XmlFile> findValidationFilesFor(@NotNull final PsiClass clazz) {
     final PsiFile psiFile = clazz.getContainingFile().getOriginalFile();
     final PsiDirectory containingDirectory = psiFile.getContainingDirectory();
     if (containingDirectory == null) {
@@ -152,9 +152,9 @@ public class ValidatorManagerImpl extends ValidatorManager {
           }
         });
 
-    return ContainerUtil.map(filtered, new Function<DomFileElement<Validators>, PsiElement>() {
+    return ContainerUtil.map(filtered, new Function<DomFileElement<Validators>, XmlFile>() {
       @Override
-      public PsiElement fun(final DomFileElement<Validators> validatorsDomFileElement) {
+      public XmlFile fun(final DomFileElement<Validators> validatorsDomFileElement) {
         return validatorsDomFileElement.getFile();
       }
     });

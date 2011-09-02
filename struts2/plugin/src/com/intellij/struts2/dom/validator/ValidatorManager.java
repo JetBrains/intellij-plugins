@@ -20,7 +20,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyKey;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.validator.config.ValidatorConfig;
@@ -83,12 +82,12 @@ public abstract class ValidatorManager {
   public abstract boolean isCustomValidatorConfigFile(@NotNull PsiFile psiFile);
 
   /**
-   * Finds all corresponding {@code ActionClass-[MethodName-]validation.xml} files.
+   * Finds all corresponding {@code ActionClass-[ActionPath-]validation.xml} files.
    *
    * @param clazz Class.
    * @return Empty list if none found.
    */
   @NotNull
-  public abstract List<PsiElement> findValidationFilesFor(@NotNull final PsiClass clazz);
+  public abstract List<XmlFile> findValidationFilesFor(@NotNull final PsiClass clazz);
 
 }

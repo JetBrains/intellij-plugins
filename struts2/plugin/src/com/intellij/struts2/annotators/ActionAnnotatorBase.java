@@ -24,6 +24,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.psi.*;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
@@ -197,7 +198,7 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
   private void installValidationTargets(final PsiElement element,
                                         final Collection<? super RelatedItemLineMarkerInfo> lineMarkerInfos,
                                         final PsiClass clazz) {
-    final List<PsiElement> files = ValidatorManager.getInstance(element.getProject()).findValidationFilesFor(clazz);
+    final List<XmlFile> files = ValidatorManager.getInstance(element.getProject()).findValidationFilesFor(clazz);
     if (files.isEmpty()) {
       return;
     }
