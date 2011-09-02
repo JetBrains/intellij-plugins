@@ -73,7 +73,7 @@ final class BaseWriter {
     preallocatedId = -1;
   }
 
-  public StaticObjectContext createStaticContext(Context parentContext, int referencePosition) {
+  public StaticObjectContext createStaticContext(@Nullable Context parentContext, int referencePosition) {
     if (parentContext == null || parentContext.getBackSibling() == null) {
       return new StaticObjectContext(referencePosition, out, preallocatedId, rootScope);
     }
@@ -140,8 +140,7 @@ final class BaseWriter {
   }
 
   public void endMessage() throws IOException {
-    int stringTableSize = stringWriter.size();
-    blockOut.beginWritePrepended(stringTableSize + IOUtil.sizeOf(rootScope.referenceCounter), startPosition);
+    blockOut.beginWritePrepended(stringWriter.size() + IOUtil.uint29SizeOf(rootScope.referenceCounter), startPosition);
     blockOut.writePrepended(stringWriter.getCounter(), stringWriter.getByteArrayOut());
     blockOut.writePrepended(rootScope.referenceCounter);
     blockOut.endWritePrepended(startPosition);
@@ -326,10 +325,6 @@ final class BaseWriter {
   public void writeConstructorHeader(String className) {
     out.write(Amf3Types.OBJECT);
     writeObjectHeader(className);
-    write("1");
-  }
-
-  public void writeConstructorHeader() {
     write("1");
   }
 

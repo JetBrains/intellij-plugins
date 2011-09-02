@@ -2,6 +2,8 @@ package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.io.ByteRange;
 
+import java.util.ArrayList;
+
 class DynamicObjectContext extends Context {
   private ByteRange dataRange;
   private Scope scope;

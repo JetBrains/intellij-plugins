@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner.mxml;
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.io.ByteRange;
 import com.intellij.flex.uiDesigner.io.ByteRangeMarker;
+import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PropertyKind;
 import com.intellij.javascript.flex.FlexReferenceContributor.StateReference;
@@ -250,7 +251,7 @@ class StateWriter {
 
     PropertyKind propertyKind;
     try {
-      propertyKind = valueWriter.write(descriptor, valueProvider, out, writer, false);
+      propertyKind = valueWriter.write(descriptor, valueProvider, out, writer, false, context);
     }
     catch (InvalidPropertyException invalidProperty) {
       // todo handle invalidProperty for state
@@ -258,15 +259,12 @@ class StateWriter {
     }
 
     if (propertyKind.isComplex()) {
+      assert context != null;
       mxmlWriter.processPropertyTagValue((XmlTag)element, context, propertyKind);
     }
 
     override.targetId = writer.getObjectOrFactoryId(context);
-    if (pendingFirstSetProperty == null) {
-      pendingFirstSetProperty = override;
-    }
-
-    if (context == null && parentContext != null && parentContext.ownerIsDynamic() && pendingFirstSetProperty == null) {
+    if (pendingFirstSetProperty == null || (context == null && parentContext != null && parentContext.ownerIsDynamic() && pendingFirstSetProperty == null)) {
       pendingFirstSetProperty = override;
     }
 
@@ -279,12 +277,8 @@ class StateWriter {
     return true;
   }
 
-  public Context createContextForStaticBackSiblingAndFinalizeStateSpecificAttributes(boolean allowIncludeInExludeFrom,
-                                                                                     int referencePosition, @Nullable Context parentContext,
-                                                                                     InjectedASWriter injectedASWriter) {
+  public StaticObjectContext createContextForStaticBackSibling(boolean allowIncludeInExludeFrom, int referencePosition, @Nullable Context parentContext) {
     assert referencePosition != -1;
-
-    final StaticObjectContext context;
     if (allowIncludeInExludeFrom) {
       assert parentContext != null;
       int backSiblingId = (writer.isIdPreallocated() && !parentContext.ownerIsDynamic()) ? writer.getPreallocatedId() : -1;
@@ -298,18 +292,15 @@ class StateWriter {
         parentContext.getBackSibling().reinitialize(referencePosition, backSiblingId);
         resetActiveAddItems(parentContext.getBackSibling().activeAddItems);
       }
-      context = parentContext.getBackSibling();
+      return parentContext.getBackSibling();
     }
     else {
-      context = writer.createStaticContext(parentContext, referencePosition);
+      return writer.createStaticContext(parentContext, referencePosition);
     }
-
-    finalizeStateSpecificAttributes(context, parentContext, injectedASWriter);
-    return context;
   }
 
-  private void finalizeStateSpecificAttributes(@NotNull StaticObjectContext context, @Nullable Context parentContext,
-                                               InjectedASWriter injectedASWriter) {
+  public void finalizeStateSpecificAttributes(@NotNull StaticObjectContext context, @Nullable Context parentContext,
+                                              InjectedASWriter injectedASWriter) {
     // 1
     if (!writer.isIdPreallocated()) {
       assert pendingFirstSetProperty == null;
@@ -414,7 +405,7 @@ class StateWriter {
       }
 
       final int referredObjectsCount = instance.getReferredObjectsCount();
-      out.writeUInt29(writer.getBlockOut().getDataRangeOwnLength(instance.getDataRange()) + (referredObjectsCount < 0x80 ? 1 : 2));
+      out.writeUInt29(writer.getBlockOut().getDataRangeOwnLength(instance.getDataRange()) + IOUtil.uint29SizeOf(referredObjectsCount));
       out.writeUInt29(referredObjectsCount);
       writer.getBlockOut().addMarker(new ByteRangeMarker(out.size(), instance.getDataRange()));
 

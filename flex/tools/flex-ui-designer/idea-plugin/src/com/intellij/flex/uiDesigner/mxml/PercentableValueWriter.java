@@ -15,7 +15,7 @@ class PercentableValueWriter implements ValueWriter {
   @Override
   public PropertyProcessor.PropertyKind write(AnnotationBackedDescriptor descriptor, XmlElementValueProvider valueProvider,
                                               PrimitiveAmfOutputStream out, BaseWriter writer,
-                                              boolean isStyle) {
+                                              boolean isStyle, Context parentContext) {
     out.writeAmfDouble(value);
     return PropertyKind.PRIMITIVE;
   }

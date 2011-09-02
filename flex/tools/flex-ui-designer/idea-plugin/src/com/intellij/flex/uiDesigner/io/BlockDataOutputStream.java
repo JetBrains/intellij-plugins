@@ -253,18 +253,16 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream impleme
     }
   }
 
-  public ByteRange startRange() {
-    return startRange(count);
-  }
-
   public int getNextMarkerIndex() {
     return markers.size();
   }
 
+  public ByteRange startRange() {
+    return startRange(count);
+  }
+
   public ByteRange startRange(int start) {
-    ByteRange byteRange = new ByteRange(start, markers.size());
-    markers.add(byteRange);
-    return byteRange;
+    return startRange(start, markers.size());
   }
 
   public ByteRange startRange(int start, int index) {

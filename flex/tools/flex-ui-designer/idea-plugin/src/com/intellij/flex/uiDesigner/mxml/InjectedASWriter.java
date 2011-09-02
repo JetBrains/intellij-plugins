@@ -33,7 +33,7 @@ class InjectedASWriter implements ValueReferenceResolver {
     @Override
     public PropertyProcessor.PropertyKind write(AnnotationBackedDescriptor descriptor, XmlElementValueProvider valueProvider,
                                                 PrimitiveAmfOutputStream out, BaseWriter writer,
-                                                boolean isStyle) {
+                                                boolean isStyle, Context parentContext) {
       throw new UnsupportedOperationException();
     }
   };
@@ -169,6 +169,10 @@ class InjectedASWriter implements ValueReferenceResolver {
   void processObjectWithExplicitId(String explicitId, Context context) {
     lastObjectReference = new MxmlObjectReference(writer.getObjectOrFactoryId(context));
     idReferenceMap.put(explicitId, lastObjectReference);
+  }
+
+  void putMxmlObjectReference(@NotNull String explicitId, Context context) {
+    idReferenceMap.put(explicitId, new MxmlObjectReference(writer.getObjectOrFactoryId(context)));
   }
 
   void setDeferredReferenceForObjectWithExplicitId(StaticInstanceReferenceInDeferredParentInstance staticReferenceInDeferredParentInstance, int referenceInstance) {

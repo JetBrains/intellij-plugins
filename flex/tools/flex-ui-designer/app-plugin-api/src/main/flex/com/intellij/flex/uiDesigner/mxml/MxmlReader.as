@@ -450,6 +450,10 @@ public final class MxmlReader implements DocumentReader {
           propertyHolder[propertyName] = moduleContext.applicationDomain.getDefinition(stringRegistry.read(input));
           break;
 
+        case AmfExtendedTypes.REFERABLE_PRIMITIVE:
+          propertyHolder[propertyName] = readReferablePrimitive();
+          break;
+
         default:
           throw new ArgumentError("unknown property type " + amfType);
       }
@@ -476,6 +480,13 @@ public final class MxmlReader implements DocumentReader {
     }
     
     return object;
+  }
+
+  private function readReferablePrimitive():Object {
+    var r:int = input.readUnsignedShort();
+    var o:Object = readExpression();
+    processReference(r, o);
+    return o;
   }
 
   private function processReference(reference:int, o:Object):void {
@@ -692,6 +703,10 @@ public final class MxmlReader implements DocumentReader {
 
         case ExpressionMessageTypes.SIMPLE_OBJECT:
           array[i++] = readSimpleObject();
+          break;
+
+        case AmfExtendedTypes.REFERABLE_PRIMITIVE:
+          array[i++] = readReferablePrimitive();
           break;
 
         default:

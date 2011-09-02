@@ -131,7 +131,7 @@ public class StringRegistry {
     }
 
     public int size() {
-      return IOUtil.sizeOf(counter) + out.size();
+      return IOUtil.uint29SizeOf(counter) + out.size();
     }
 
     public ByteArrayOutputStreamEx getByteArrayOut() {

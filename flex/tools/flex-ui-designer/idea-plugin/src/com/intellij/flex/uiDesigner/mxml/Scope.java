@@ -1,7 +1,8 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-public class Scope {
+class Scope {
   private final DynamicObjectContext owner;
+
   public int referenceCounter;
 
   public Scope(DynamicObjectContext owner) {

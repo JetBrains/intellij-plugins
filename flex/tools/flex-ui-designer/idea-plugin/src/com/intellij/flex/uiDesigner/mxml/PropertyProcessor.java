@@ -9,6 +9,7 @@ import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.css.FlexCssPropertyDescriptor;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
+import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -190,8 +191,24 @@ class PropertyProcessor implements ValueWriter {
     isEffect = false;
   }
 
+  StaticObjectContext writeIfPrimitive(XmlTagValueProvider valueProvider, String type, PrimitiveAmfOutputStream out,
+                                       @Nullable Context parentContext, boolean allowIncludeInExludeFrom)
+    throws InvalidPropertyException {
+    final XmlTag tag = valueProvider.getTag();
+    if (JavaScriptSupportLoader.MXML_URI3.equals(tag.getNamespace()) && !type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME)) {
+      out.write(AmfExtendedTypes.REFERABLE_PRIMITIVE);
+      final StaticObjectContext context = mxmlWriter.processIdAttributeOfBuiltInTypeLanguageTag(tag, parentContext,
+                                                                                                allowIncludeInExludeFrom);
+      final boolean result = writeIfPrimitive(valueProvider, type, out, null);
+      MxmlWriter.LOG.assertTrue(result);
+      return context;
+    }
+
+    return null;
+  }
+
   boolean writeIfPrimitive(XmlElementValueProvider valueProvider, String type, PrimitiveAmfOutputStream out,
-                           BaseWriter writer, @Nullable AnnotationBackedDescriptor descriptor) throws InvalidPropertyException {
+                           @Nullable AnnotationBackedDescriptor descriptor) throws InvalidPropertyException {
     if (type.equals(JSCommonTypeNames.STRING_CLASS_NAME)) {
       writeString(valueProvider, descriptor);
     }
@@ -265,7 +282,7 @@ class PropertyProcessor implements ValueWriter {
 
   @Override
   public PropertyKind write(AnnotationBackedDescriptor descriptor, XmlElementValueProvider valueProvider, PrimitiveAmfOutputStream out,
-                            BaseWriter writer, boolean isStyle) throws InvalidPropertyException {
+                            BaseWriter writer, boolean isStyle, Context parentContext) throws InvalidPropertyException {
     final String type = descriptor.getType();
     if (isStyle) {
       int flags = 0;
@@ -284,7 +301,7 @@ class PropertyProcessor implements ValueWriter {
       return COMPLEX;
     }
 
-    if (writeIfPrimitive(valueProvider, type, out, writer, descriptor)) {
+    if (writeIfPrimitive(valueProvider, type, out, descriptor)) {
 
     }
     else if (type.equals(JSCommonTypeNames.ARRAY_CLASS_NAME)) {
@@ -327,7 +344,7 @@ class PropertyProcessor implements ValueWriter {
           final XmlElementDescriptor contentTagDescriptor = contentTag.getDescriptor();
           if (contentTagDescriptor instanceof ClassBackedElementDescriptor &&
               CodeContext.AS3_VEC_VECTOR_QUALIFIED_NAME.equals(contentTagDescriptor.getQualifiedName())) {
-            if (!mxmlWriter.processMxmlVector(contentTag, null)) {
+            if (!mxmlWriter.processMxmlVector(contentTag, parentContext, false)) {
               throw new InvalidPropertyException(contentTag, "invalid.vector.value");
             }
             
@@ -470,7 +487,7 @@ class PropertyProcessor implements ValueWriter {
 
     // IDEA-73099
     if (valueProvider instanceof XmlTagValueProvider) {
-      if (((XmlTag)valueProvider.getElement()).getSubTags().length > 0) {
+      if (((XmlTagValueProvider)valueProvider).getTag().getSubTags().length > 0) {
         return false;
       }
     }

@@ -7,5 +7,5 @@ import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 
 interface ValueWriter {
   PropertyKind write(AnnotationBackedDescriptor descriptor, XmlElementValueProvider valueProvider, PrimitiveAmfOutputStream out,
-                     BaseWriter writer, boolean isStyle) throws InvalidPropertyException;
+                     BaseWriter writer, boolean isStyle, Context parentContext) throws InvalidPropertyException;
 }

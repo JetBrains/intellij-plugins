@@ -13,5 +13,8 @@ public final class AmfExtendedTypes {
   public static const ARRAY_IF_LENGTH_GREATER_THAN_1:int = 56;
   public static const MXML_VECTOR:int = 51;
   public static const OBJECT_REFERENCE:int = 45;
+
+  // IDEA-73801
+  public static const REFERABLE_PRIMITIVE:int = 57;
 }
 }

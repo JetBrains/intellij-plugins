@@ -47,7 +47,7 @@ public final class IOUtil {
     target.setLastModified(sourceLastModified);
   }
 
-  public static int sizeOf(int counter) {
+  public static int uint29SizeOf(int counter) {
     return counter < 0x80 ? 1 : 2;
   }
 

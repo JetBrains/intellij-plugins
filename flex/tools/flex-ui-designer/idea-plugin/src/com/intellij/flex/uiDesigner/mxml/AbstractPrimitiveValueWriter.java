@@ -13,7 +13,7 @@ abstract class AbstractPrimitiveValueWriter implements ValueWriter {
 
   @Override
   public PropertyKind write(AnnotationBackedDescriptor descriptor, XmlElementValueProvider valueProvider, PrimitiveAmfOutputStream out,
-                            BaseWriter writer, boolean isStyle) throws InvalidPropertyException {
+                            BaseWriter writer, boolean isStyle, Context parentContext) throws InvalidPropertyException {
     if (isStyle) {
       out.write(getStyleFlags());
     }
