@@ -550,7 +550,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
       @Override
       public void buildConfigurationRemoved(FlexIdeBCConfigurable configurable) {
-        if (configurable.getDependenciesConfigurable() == DependenciesConfigurable.this) {
+        if (configurable.isParentFor(DependenciesConfigurable.this)) {
           return;
         }
 
@@ -1039,8 +1039,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         }
         for (NamedConfigurable<FlexIdeBuildConfiguration> configurable : configurator.getBCConfigurables(module)) {
           FlexIdeBCConfigurable flexIdeBCConfigurable = FlexIdeBCConfigurable.unwrapIfNeeded(configurable);
-          if (dependencies.contains(flexIdeBCConfigurable) ||
-              flexIdeBCConfigurable.getDependenciesConfigurable() == DependenciesConfigurable.this) {
+          if (dependencies.contains(flexIdeBCConfigurable) || flexIdeBCConfigurable.isParentFor(DependenciesConfigurable.this)) {
             continue;
           }
           FlexIdeBuildConfiguration.OutputType outputType = flexIdeBCConfigurable.getOutputType();

@@ -25,7 +25,7 @@ public class BCUtils {
   }
 
   public static LinkageType[] getSuitableFrameworkLinkages(BuildConfigurationNature nature) {
-    if (nature.outputType == OutputType.Library) {
+    if (nature.isLib()) {
       return LIB_LINKAGES;
     }
     else if (nature.pureAS) {
@@ -37,7 +37,7 @@ public class BCUtils {
   }
 
   public static LinkageType getDefaultFrameworkLinkage(BuildConfigurationNature nature) {
-    if (nature.outputType == OutputType.Library) {
+    if (nature.isLib()) {
       return LinkageType.External;
     }
     else if (nature.pureAS) {

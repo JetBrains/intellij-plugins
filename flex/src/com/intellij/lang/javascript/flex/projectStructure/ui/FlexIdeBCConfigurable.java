@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
+import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
@@ -13,7 +14,9 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -55,9 +58,9 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
   private final DependenciesConfigurable myDependenciesConfigurable;
   private final CompilerOptionsConfigurable myCompilerOptionsConfigurable;
-  private final AirDesktopPackagingConfigurable myAirDesktopPackagingConfigurable;
-  private final AndroidPackagingConfigurable myAndroidPackagingConfigurable;
-  private final IOSPackagingConfigurable myIOSPackagingConfigurable;
+  private final @Nullable AirDesktopPackagingConfigurable myAirDesktopPackagingConfigurable;
+  private final @Nullable AndroidPackagingConfigurable myAndroidPackagingConfigurable;
+  private final @Nullable IOSPackagingConfigurable myIOSPackagingConfigurable;
 
   public FlexIdeBCConfigurable(final Module module,
                                final FlexIdeBuildConfiguration configuration,
@@ -70,11 +73,19 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myModifiableRootModel = modifiableRootModel;
     myName = configuration.NAME;
 
+    final BuildConfigurationNature nature = configuration.getNature();
+
     myDependenciesConfigurable = new DependenciesConfigurable(configuration, module.getProject(), sdksModel);
     myCompilerOptionsConfigurable = new CompilerOptionsConfigurable(module, configuration.COMPILER_OPTIONS);
-    myAirDesktopPackagingConfigurable = new AirDesktopPackagingConfigurable(module, configuration.AIR_DESKTOP_PACKAGING_OPTIONS);
-    myAndroidPackagingConfigurable = new AndroidPackagingConfigurable(module.getProject(), configuration.ANDROID_PACKAGING_OPTIONS);
-    myIOSPackagingConfigurable = new IOSPackagingConfigurable(module.getProject(), configuration.IOS_PACKAGING_OPTIONS);
+    myAirDesktopPackagingConfigurable = nature.isDesktopPlatform() && nature.isApp()
+                                        ? new AirDesktopPackagingConfigurable(module, configuration.AIR_DESKTOP_PACKAGING_OPTIONS)
+                                        : null;
+    myAndroidPackagingConfigurable = nature.isMobilePlatform() && nature.isApp()
+                                     ? new AndroidPackagingConfigurable(module.getProject(), configuration.ANDROID_PACKAGING_OPTIONS)
+                                     : null;
+    myIOSPackagingConfigurable = nature.isMobilePlatform() && nature.isApp()
+                                 ? new IOSPackagingConfigurable(module.getProject(), configuration.IOS_PACKAGING_OPTIONS)
+                                 : null;
 
     myNameField.getDocument().addDocumentListener(new DocumentAdapter() {
       protected void textChanged(DocumentEvent e) {
@@ -240,9 +251,9 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
     if (myDependenciesConfigurable.isModified()) return true;
     if (myCompilerOptionsConfigurable.isModified()) return true;
-    if (myAirDesktopPackagingConfigurable.isModified()) return true;
-    if (myAndroidPackagingConfigurable.isModified()) return true;
-    if (myIOSPackagingConfigurable.isModified()) return true;
+    if (myAirDesktopPackagingConfigurable != null && myAirDesktopPackagingConfigurable.isModified()) return true;
+    if (myAndroidPackagingConfigurable != null && myAndroidPackagingConfigurable.isModified()) return true;
+    if (myIOSPackagingConfigurable != null && myIOSPackagingConfigurable.isModified()) return true;
 
     return false;
   }
@@ -252,9 +263,9 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
     myDependenciesConfigurable.apply();
     myCompilerOptionsConfigurable.apply();
-    myAirDesktopPackagingConfigurable.apply();
-    myAndroidPackagingConfigurable.apply();
-    myIOSPackagingConfigurable.apply();
+    if (myAirDesktopPackagingConfigurable != null) myAirDesktopPackagingConfigurable.apply();
+    if (myAndroidPackagingConfigurable != null) myAndroidPackagingConfigurable.apply();
+    if (myIOSPackagingConfigurable != null) myIOSPackagingConfigurable.apply();
   }
 
   private void applyTo(final FlexIdeBuildConfiguration configuration, boolean validate) throws ConfigurationException {
@@ -262,9 +273,9 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
     myDependenciesConfigurable.applyTo(configuration.DEPENDENCIES);
     myCompilerOptionsConfigurable.applyTo(configuration.COMPILER_OPTIONS);
-    myAirDesktopPackagingConfigurable.applyTo(configuration.AIR_DESKTOP_PACKAGING_OPTIONS);
-    myAndroidPackagingConfigurable.applyTo(configuration.ANDROID_PACKAGING_OPTIONS);
-    myIOSPackagingConfigurable.applyTo(configuration.IOS_PACKAGING_OPTIONS);
+    if (myAirDesktopPackagingConfigurable != null) myAirDesktopPackagingConfigurable.applyTo(configuration.AIR_DESKTOP_PACKAGING_OPTIONS);
+    if (myAndroidPackagingConfigurable != null) myAndroidPackagingConfigurable.applyTo(configuration.ANDROID_PACKAGING_OPTIONS);
+    if (myIOSPackagingConfigurable != null) myIOSPackagingConfigurable.applyTo(configuration.IOS_PACKAGING_OPTIONS);
   }
 
   private void applyOwnTo(FlexIdeBuildConfiguration configuration, boolean validate) throws ConfigurationException {
@@ -300,39 +311,19 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
     myDependenciesConfigurable.reset();
     myCompilerOptionsConfigurable.reset();
-    myAirDesktopPackagingConfigurable.reset();
-    myAndroidPackagingConfigurable.reset();
-    myIOSPackagingConfigurable.reset();
+    if (myAirDesktopPackagingConfigurable != null) myAirDesktopPackagingConfigurable.reset();
+    if (myAndroidPackagingConfigurable != null) myAndroidPackagingConfigurable.reset();
+    if (myIOSPackagingConfigurable != null) myIOSPackagingConfigurable.reset();
   }
 
   public void disposeUIResources() {
     if (FlexIdeUtils.isFlatUi()) {
       myDependenciesConfigurable.disposeUIResources();
       myCompilerOptionsConfigurable.disposeUIResources();
-      myAirDesktopPackagingConfigurable.disposeUIResources();
-      myAndroidPackagingConfigurable.disposeUIResources();
-      myIOSPackagingConfigurable.disposeUIResources();
+      if (myAirDesktopPackagingConfigurable != null) myAirDesktopPackagingConfigurable.disposeUIResources();
+      if (myAndroidPackagingConfigurable != null) myAndroidPackagingConfigurable.disposeUIResources();
+      if (myIOSPackagingConfigurable != null) myIOSPackagingConfigurable.disposeUIResources();
     }
-  }
-
-  public DependenciesConfigurable getDependenciesConfigurable() {
-    return myDependenciesConfigurable;
-  }
-
-  public CompilerOptionsConfigurable getCompilerOptionsConfigurable() {
-    return myCompilerOptionsConfigurable;
-  }
-
-  public AirDesktopPackagingConfigurable getAirDesktopPackagingConfigurable() {
-    return myAirDesktopPackagingConfigurable;
-  }
-
-  public AndroidPackagingConfigurable getAndroidPackagingConfigurable() {
-    return myAndroidPackagingConfigurable;
-  }
-
-  public IOSPackagingConfigurable getIOSPackagingConfigurable() {
-    return myIOSPackagingConfigurable;
   }
 
   public FlexIdeBuildConfiguration getCurrentConfiguration() {
@@ -347,22 +338,14 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   }
 
   public List<NamedConfigurable> getChildren() {
-    List<NamedConfigurable> children = new ArrayList<NamedConfigurable>();
-    children.add(getDependenciesConfigurable());
-    children.add(getCompilerOptionsConfigurable());
+    final List<NamedConfigurable> children = new ArrayList<NamedConfigurable>();
 
-    final FlexIdeBuildConfiguration configuration = getEditableObject();
-    switch (configuration.TARGET_PLATFORM) {
-      case Web:
-        break;
-      case Desktop:
-        children.add(getAirDesktopPackagingConfigurable());
-        break;
-      case Mobile:
-        children.add(getAndroidPackagingConfigurable());
-        children.add(getIOSPackagingConfigurable());
-        break;
-    }
+    children.add(myDependenciesConfigurable);
+    children.add(myCompilerOptionsConfigurable);
+    ContainerUtil.addIfNotNull(myAirDesktopPackagingConfigurable, children);
+    ContainerUtil.addIfNotNull(myAndroidPackagingConfigurable, children);
+    ContainerUtil.addIfNotNull(myIOSPackagingConfigurable, children);
+
     return children;
   }
 
@@ -373,6 +356,10 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     tabs.add(this);
     tabs.addAll(getChildren());
     return new CompositeConfigurable(tabs, myTreeNodeNameUpdater);
+  }
+
+  public boolean isParentFor(final DependenciesConfigurable dependenciesConfigurable) {
+    return myDependenciesConfigurable == dependenciesConfigurable;
   }
 
   public static FlexIdeBCConfigurable unwrapIfNeeded(NamedConfigurable c) {

@@ -6,7 +6,7 @@ package com.intellij.lang.javascript.flex.projectStructure.options;
 public class BuildConfigurationNature {
   private final FlexIdeBuildConfiguration.TargetPlatform targetPlatform;
   public final boolean pureAS;
-  public final FlexIdeBuildConfiguration.OutputType outputType;
+  private final FlexIdeBuildConfiguration.OutputType outputType;
 
   public BuildConfigurationNature(FlexIdeBuildConfiguration.TargetPlatform targetPlatform,
                                   boolean pureAS,
@@ -26,5 +26,13 @@ public class BuildConfigurationNature {
 
   public boolean isMobilePlatform() {
     return targetPlatform == FlexIdeBuildConfiguration.TargetPlatform.Mobile;
+  }
+
+  public boolean isApp() {
+    return outputType == FlexIdeBuildConfiguration.OutputType.Application;
+  }
+
+  public boolean isLib() {
+    return outputType == FlexIdeBuildConfiguration.OutputType.Library;
   }
 }
