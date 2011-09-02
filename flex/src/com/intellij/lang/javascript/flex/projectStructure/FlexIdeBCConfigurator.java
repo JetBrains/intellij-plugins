@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.projectStructure;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.ui.AddBuildConfigurationDialog;
+import com.intellij.lang.javascript.flex.projectStructure.ui.FlexSdksModifiableModel;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -14,7 +15,6 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.ui.navigation.Place;
@@ -41,6 +41,15 @@ public class FlexIdeBCConfigurator {
 
   private final EventDispatcher<Listener> myEventDispatcher = EventDispatcher.create(Listener.class);
 
+  private final LazyInitializer myFlexSdksModifiableModelInitializer = new LazyInitializer() {
+    @Override
+    protected void initialize() {
+      mySdksModel.resetFrom(FlexSdkManager.getInstance());
+    }
+  };
+
+  private final FlexSdksModifiableModel mySdksModel = new FlexSdksModifiableModel();
+
   public void addListener(Listener listener, Disposable parentDisposable) {
     myEventDispatcher.addListener(listener, parentDisposable);
   }
@@ -59,6 +68,8 @@ public class FlexIdeBCConfigurator {
   public List<NamedConfigurable<FlexIdeBuildConfiguration>> getOrCreateConfigurables(final Module module,
                                                                                      final Runnable treeNodeNameUpdater,
                                                                                      ModifiableRootModel modifiableRootModel) {
+    myFlexSdksModifiableModelInitializer.ensureInitialized();
+
     List<NamedConfigurable<FlexIdeBuildConfiguration>> configurables = myModuleToConfigurablesMap.get(module);
 
     if (configurables == null) {
@@ -68,7 +79,7 @@ public class FlexIdeBCConfigurator {
       for (final FlexIdeBuildConfiguration configuration : configurations) {
         final FlexIdeBuildConfiguration clonedConfiguration = configuration.clone();
         FlexIdeBCConfigurable configurable =
-          new FlexIdeBCConfigurable(module, clonedConfiguration, treeNodeNameUpdater, modifiableRootModel);
+          new FlexIdeBCConfigurable(module, clonedConfiguration, treeNodeNameUpdater, modifiableRootModel, mySdksModel);
         configurables.add(configurable.wrapInTabsIfNeeded());
         myConfigurationsToModuleMap.put(clonedConfiguration, module);
       }
@@ -116,8 +127,9 @@ public class FlexIdeBCConfigurator {
       Set<String> names = new HashSet<String>(configurables.size());
       for (NamedConfigurable<FlexIdeBuildConfiguration> configurable : configurables) {
         if (!names.add(configurable.getDisplayName())) {
-          throw new ConfigurationException(MessageFormat.format("Module ''{0}'' has duplicate build configuration names: {1}", module.getName(),
-                                                                configurable.getDisplayName()));
+          throw new ConfigurationException(
+            MessageFormat.format("Module ''{0}'' has duplicate build configuration names: {1}", module.getName(),
+                                 configurable.getDisplayName()));
         }
       }
       for (final NamedConfigurable<FlexIdeBuildConfiguration> configurable : configurables) {
@@ -133,12 +145,15 @@ public class FlexIdeBCConfigurator {
       });
     }
 
+    mySdksModel.applyTo(FlexSdkManager.getInstance());
     myModified = false;
   }
 
-  public void clearMaps() {
+  public void dispose() {
+    // configurables are disposed by MasterDetailsComponent
     myModuleToConfigurablesMap.clear();
     myConfigurationsToModuleMap.clear();
+    myFlexSdksModifiableModelInitializer.dispose();
   }
 
   public int getBCCount(final FlexIdeBuildConfiguration configuration) {
@@ -208,7 +223,8 @@ public class FlexIdeBCConfigurator {
         configuration.OUTPUT_FILE_NAME = outputFileName.substring(0, outputFileName.length() - ".sw_".length()) + extension;
       }
 
-      final FlexIdeBCConfigurable configurable = new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, modifiableRootModel);
+      final FlexIdeBCConfigurable configurable = new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, modifiableRootModel,
+                                                                           mySdksModel);
 
       NamedConfigurable<FlexIdeBuildConfiguration> wrapped = configurable.wrapInTabsIfNeeded();
       final List<NamedConfigurable<FlexIdeBuildConfiguration>> configurables = myModuleToConfigurablesMap.get(module);

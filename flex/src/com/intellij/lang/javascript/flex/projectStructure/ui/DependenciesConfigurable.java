@@ -8,6 +8,7 @@ import com.intellij.ide.util.frameworkSupport.CustomLibraryDescriptionBase;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension;
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.options.*;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
@@ -82,7 +83,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   private static final Icon MISSING_BC_ICON = null;
 
   private JPanel myMainPanel;
-  private FlexSdkChooserPanel mySdkPanel;
+  private FlexSdkPanel mySdkPanel;
   private JLabel myTargetPlayerLabel;
   private JComboBox myTargetPlayerCombo;
   private JLabel myComponentSetLabel;
@@ -99,6 +100,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   private final AnActionButton myEditAction;
   private final AnActionButton myRemoveButton;
   private final BuildConfigurationNature myNature;
+  private final FlexSdksModifiableModel mySdksModel;
 
   private abstract static class MyTableItem {
     public abstract String getText();
@@ -220,9 +222,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   private static class SdkItem extends MyTableItem {
-    private final SdkEntry mySdk;
+    private final FlexSdk mySdk;
 
-    public SdkItem(SdkEntry sdk) {
+    public SdkItem(FlexSdk sdk) {
       mySdk = sdk;
     }
 
@@ -379,12 +381,14 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
   };
 
-  public DependenciesConfigurable(final FlexIdeBuildConfiguration bc, Project project) {
+  public DependenciesConfigurable(final FlexIdeBuildConfiguration bc, Project project, FlexSdksModifiableModel sdksModel) {
+    mySdksModel = sdksModel;
     myDependencies = bc.DEPENDENCIES;
     myProject = project;
     myNature = bc.getNature();
 
     myDisposable = Disposer.newDisposable();
+    Disposer.register(myDisposable, mySdkPanel);
 
     myTargetPlayerLabel.setVisible(myNature.isWebPlatform());
     myTargetPlayerCombo.setVisible(myNature.isWebPlatform());
@@ -393,8 +397,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       public void stateChanged(final ChangeEvent e) {
         updateAvailableTargetPlayers();
         updateComponentSetCombo();
+        updateSdkTableItem(mySdkPanel.getCurrentSdk());
+        myTable.refresh();
       }
-    });
+    }, myDisposable);
 
     myComponentSetCombo.setModel(new DefaultComboBoxModel(FlexIdeBuildConfiguration.ComponentSet.values()));
     myComponentSetCombo.setRenderer(new ListCellRendererWrapper<FlexIdeBuildConfiguration.ComponentSet>(myComponentSetCombo.getRenderer()) {
@@ -422,14 +428,14 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       @Override
       public void itemStateChanged(ItemEvent e) {
         DefaultMutableTreeNode sdkNode = findSdkNode();
-        SdkEntry currentSdk = mySdkPanel.getCurrentSdk();
+        FlexSdk currentSdk = mySdkPanel.getCurrentSdk();
         if (sdkNode != null && currentSdk != null) {
           updateSdkEntries(sdkNode, currentSdk);
           myTable.refresh();
         }
       }
     };
-    
+
     myTargetPlayerCombo.addItemListener(updateSdkItemsListener);
     myComponentSetCombo.addItemListener(updateSdkItemsListener);
     myFrameworkLinkageCombo.addItemListener(updateSdkItemsListener);
@@ -519,6 +525,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     FlexIdeModuleStructureExtension.getInstance().getConfigurator().addListener(new FlexIdeBCConfigurator.Listener() {
       @Override
       public void moduleRemoved(Module module) {
+        // TODO return if module == this module
         List<Integer> rowsToRemove = new ArrayList<Integer>();
         // 1st-level nodes are always visible
         // 2nd-level nodes cannot refer to BC
@@ -560,14 +567,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         }
       }
     }, myDisposable);
-
-    mySdkPanel.addListener(new ChangeListener() {
-      @Override
-      public void stateChanged(ChangeEvent e) {
-        updateSdkTableItem(mySdkPanel.getCurrentSdk());
-        myTable.refresh();
-      }
-    });
   }
 
   @Nullable
@@ -733,12 +732,13 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   public boolean isModified() {
-    SdkEntry currentSdk = mySdkPanel.getCurrentSdk();
+    FlexSdk currentSdk = mySdkPanel.getCurrentSdk();
+    SdkEntry sdkEntry = myDependencies.getSdkEntry();
     if (currentSdk != null) {
-      if (myDependencies.getSdk() == null || !currentSdk.isEqual(myDependencies.getSdk())) return true;
+      if (sdkEntry == null || !currentSdk.getHomePath().equals(sdkEntry.getHomePath())) return true;
     }
     else {
-      if (myDependencies.getSdk() != null) return true;
+      if (sdkEntry != null) return true;
     }
 
     final String targetPlayer = (String)myTargetPlayerCombo.getSelectedItem();
@@ -747,7 +747,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     if (myDependencies.getFrameworkLinkage() != myFrameworkLinkageCombo.getSelectedItem()) return true;
 
     List<MyTableItem> items = myTable.getItems();
-    ContainerUtil.filter(items, new Condition<MyTableItem>() {
+    items = ContainerUtil.filter(items, new Condition<MyTableItem>() {
       @Override
       public boolean value(MyTableItem item) {
         return !(item instanceof SdkItem || item instanceof SdkEntryItem);
@@ -831,13 +831,21 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
     }
 
-    SdkEntry currentSdk = mySdkPanel.getCurrentSdk();
-    dependencies.setSdk(currentSdk != null ? currentSdk.getCopy() : null);
+    FlexSdk currentSdk = mySdkPanel.getCurrentSdk();
+    if (currentSdk != null) {
+      SdkEntry sdkEntry = new SdkEntry();
+      sdkEntry.setHomePath(currentSdk.getHomePath());
+      dependencies.setSdkEntry(sdkEntry);
+    }
+    else {
+      dependencies.setSdkEntry(null);
+    }
   }
 
   public void reset() {
-    SdkEntry sdk = myDependencies.getSdk();
-    mySdkPanel.reset(sdk != null ? sdk.getCopy() : null);
+    SdkEntry sdkEntry = myDependencies.getSdkEntry();
+    mySdkPanel.reset();
+    mySdkPanel.setCurrentHomePath(sdkEntry != null ? sdkEntry.getHomePath() : null);
 
     updateAvailableTargetPlayers();
     myTargetPlayerCombo.setSelectedItem(myDependencies.TARGET_PLAYER);
@@ -850,10 +858,13 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     DefaultMutableTreeNode root = myTable.getRoot();
     root.removeAllChildren();
 
-    if (sdk != null) {
-      DefaultMutableTreeNode sdkNode = new DefaultMutableTreeNode(new SdkItem(sdk), true);
-      myTable.getRoot().insert(sdkNode, 0);
-      updateSdkEntries(sdkNode, sdk);
+    if (sdkEntry != null) {
+      FlexSdk flexSdk = mySdksModel.findOrCreateSdk(sdkEntry.getHomePath());
+      if (flexSdk != null) {
+        DefaultMutableTreeNode sdkNode = new DefaultMutableTreeNode(new SdkItem(flexSdk), true);
+        myTable.getRoot().insert(sdkNode, 0);
+        updateSdkEntries(sdkNode, flexSdk);
+      }
     }
     FlexIdeBCConfigurator configurator = FlexIdeModuleStructureExtension.getInstance().getConfigurator();
     for (DependencyEntry entry : myDependencies.getEntries()) {
@@ -890,7 +901,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   private void updateAvailableTargetPlayers() {
-    final SdkEntry currentSdk = mySdkPanel.getCurrentSdk();
+    final FlexSdk currentSdk = mySdkPanel.getCurrentSdk();
     final String sdkHome = currentSdk == null ? null : currentSdk.getHomePath();
     final String playerFolderPath = sdkHome == null ? null : sdkHome + "/frameworks/libs/player";
     if (playerFolderPath != null) {
@@ -924,7 +935,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   private void updateComponentSetCombo() {
-    final SdkEntry sdkEntry = mySdkPanel.getCurrentSdk();
+    final FlexSdk sdkEntry = mySdkPanel.getCurrentSdk();
     final boolean visible = sdkEntry != null &&
                             StringUtil.compareVersionNumbers(sdkEntry.getFlexVersion(), "4") >= 0 &&
                             !myNature.isMobilePlatform() &&
@@ -941,7 +952,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
   }
 
-  private void updateSdkTableItem(@Nullable SdkEntry sdk) {
+  private void updateSdkTableItem(@Nullable FlexSdk sdk) {
     DefaultMutableTreeNode sdkNode = findSdkNode();
     if (sdk != null) {
       SdkItem sdkItem = new SdkItem(sdk);
@@ -959,7 +970,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
   }
 
-  private void updateSdkEntries(DefaultMutableTreeNode sdkNode, SdkEntry sdk) {
+  private void updateSdkEntries(DefaultMutableTreeNode sdkNode, FlexSdk sdk) {
     sdkNode.removeAllChildren();
     ComponentSet componentSet = (ComponentSet)myComponentSetCombo.getSelectedItem();
     String targetPlayer = (String)myTargetPlayerCombo.getSelectedItem();
@@ -989,19 +1000,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   private void createUIComponents() {
-    mySdkPanel = new FlexSdkChooserPanel(myProject);
-  }
-
-  public FlexSdkChooserPanel getSdkChooserPanel() {
-    return mySdkPanel;
-  }
-
-  public void addFlexSdkListener(ChangeListener listener) {
-    mySdkPanel.addListener(listener);
-  }
-
-  public void removeFlexSdkListener(ChangeListener listener) {
-    mySdkPanel.removeListener(listener);
+    mySdkPanel = new FlexSdkPanel(mySdksModel);
   }
 
   private void initPopupActions() {

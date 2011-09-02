@@ -127,11 +127,11 @@ public class Dependencies implements Cloneable {
 
   @Transient
   @Nullable
-  public SdkEntry getSdk() {
+  public SdkEntry getSdkEntry() {
     return mySdk;
   }
 
-  public void setSdk(@Nullable SdkEntry sdk) {
+  public void setSdkEntry(@Nullable SdkEntry sdk) {
     mySdk = sdk;
   }
 

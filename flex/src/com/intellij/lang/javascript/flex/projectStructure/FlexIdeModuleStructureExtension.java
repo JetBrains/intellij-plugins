@@ -96,7 +96,7 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
   }
 
   public void disposeUIResources() {
-    myConfigurator.clearMaps();
+    myConfigurator.dispose();
   }
 
   public boolean canBeRemoved(final Object editableObject) {

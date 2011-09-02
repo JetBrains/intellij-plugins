@@ -80,31 +80,35 @@ public class CompositeConfigurable extends NamedConfigurable {
 
   @Override
   public boolean isModified() {
-    for (NamedConfigurable child : myChildren) {
-      if (child.isModified()) return true;
-    }
-    return false;
+    //for (NamedConfigurable child : myChildren) {
+    //  if (child.isModified()) return true;
+    //}
+    //return false;
+    return getMainChild().isModified();
   }
 
   @Override
   public void apply() throws ConfigurationException {
-    for (NamedConfigurable child : myChildren) {
-      child.apply();
-    }
+    //for (NamedConfigurable child : myChildren) {
+    //  child.apply();
+    //}
+    getMainChild().apply();
   }
 
   @Override
   public void reset() {
-    for (NamedConfigurable child : myChildren) {
-      child.reset();
-    }
+    //for (NamedConfigurable child : myChildren) {
+    //  child.reset();
+    //}
+    getMainChild().reset();
   }
 
   @Override
   public void disposeUIResources() {
-    for (NamedConfigurable child : myChildren) {
-      child.disposeUIResources();
-    }
+    //for (NamedConfigurable child : myChildren) {
+    //  child.disposeUIResources();
+    //}
+    getMainChild().disposeUIResources();
     Disposer.dispose(myDisposable);
   }
 }

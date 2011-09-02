@@ -137,7 +137,7 @@ public class ModuleLibraryEntry extends DependencyEntry implements JDOMExternali
     libraryEntry.myJarDirectories.copyFrom(myJarDirectories);
   }
 
-  static void copyContainer(ProjectRootContainerImpl source, ProjectRootContainerImpl target) {
+  public static void copyContainer(ProjectRootContainerImpl source, ProjectRootContainerImpl target) {
     target.startChange();
     target.removeAllRoots();
     for (OrderRootType rootType : OrderRootType.getAllTypes()) {

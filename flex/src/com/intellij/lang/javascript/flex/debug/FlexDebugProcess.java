@@ -12,6 +12,8 @@ import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdkManager;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.SdkEntry;
 import com.intellij.lang.javascript.flex.run.*;
@@ -73,8 +75,8 @@ import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.Ai
 
 /**
  * @author Maxim.Mossienko
- * Date: Jan 22, 2008
- * Time: 4:38:36 PM
+ *         Date: Jan 22, 2008
+ *         Time: 4:38:36 PM
  */
 public class FlexDebugProcess extends XDebugProcess {
   private static final String TRACE_MARKER = "[trace] ";
@@ -96,7 +98,7 @@ public class FlexDebugProcess extends XDebugProcess {
   @NonNls private static final String WAITING_PLAYER_MARKER = "Waiting for Player to connect";
   @NonNls static final String ATTEMPTING_TO_RESOLVE_BREAKPOINT_MARKER = "Attempting to resolve breakpoint ";
 
-  @NonNls private static final String ADL_PREFIX = "[AIR Debug Launcher]: "; 
+  @NonNls private static final String ADL_PREFIX = "[AIR Debug Launcher]: ";
 
   private static boolean ourReportedAboutPossibleStartupFailure;
   private boolean myCheckForUnexpectedStartupStop;
@@ -107,7 +109,7 @@ public class FlexDebugProcess extends XDebugProcess {
   @NonNls private static final String FAULT_MARKER = "[Fault] ";
   private static final Logger LOG = LoggerFactory.getInstance().getLoggerInstance(FlexDebugProcess.class.getName());
   private static boolean doSimpleTracing = ((ApplicationEx)ApplicationManager.getApplication()).isInternal();
-  
+
   private Object myStackFrameEqualityObject;
   private Map<String, String> myQName2IdMap;
 
@@ -144,12 +146,13 @@ public class FlexDebugProcess extends XDebugProcess {
         while (size() == 0) {
           wait();
         }
-      } catch (InterruptedException ex) {
+      }
+      catch (InterruptedException ex) {
         throw new RuntimeException(ex);
       }
     }
   };
-  
+
   private boolean suspended;
   private boolean fdbWaitingForPlayerStateReached;
   private boolean connectToRunningFlashPlayerMode;
@@ -163,11 +166,12 @@ public class FlexDebugProcess extends XDebugProcess {
 
     super(session);
 
-    final SdkEntry sdkEntry = config.DEPENDENCIES.getSdk();
+    final SdkEntry sdkEntry = config.DEPENDENCIES.getSdkEntry();
     assert sdkEntry != null; // checked in FlexBaseRunner
     final String sdkHome = sdkEntry.getHomePath();
 
-    myDebuggerVersion = StringUtil.notNullize(sdkEntry.getFlexVersion(), "unknown");
+    FlexSdk flexSdk = FlexSdkManager.getInstance().findSdk(sdkEntry.getHomePath());
+    myDebuggerVersion = StringUtil.notNullize(flexSdk != null ? flexSdk.getFlexVersion() : null, "unknown");
     myBreakpointsHandler = new FlexBreakpointsHandler(this);
     mySdkLocation = FileUtil.toSystemIndependentName(sdkHome);
 
@@ -181,7 +185,7 @@ public class FlexDebugProcess extends XDebugProcess {
       // todo support wrapper
       fdbProcess = launchFlex(fdbLaunchCommand, config.getOutputFilePath(), params.getLauncherParameters());
     }
-    else  {
+    else {
       // todo implement
       throw new IOException("not implemented yet");
     }
@@ -483,12 +487,14 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   private static final Set<String> ourAlreadyMadeExecutable = new THashSet<String>();
+
   private static synchronized void ensureExecutable(String path) {
-    if(!SystemInfo.isWindows && !ourAlreadyMadeExecutable.contains(path)) {
+    if (!SystemInfo.isWindows && !ourAlreadyMadeExecutable.contains(path)) {
       try {
         ourAlreadyMadeExecutable.add(path);
         Runtime.getRuntime().exec(new String[]{"chmod", "+x", path});
-      } catch (IOException ex) {
+      }
+      catch (IOException ex) {
         log(ex);
       }
     }
@@ -542,15 +548,15 @@ public class FlexDebugProcess extends XDebugProcess {
       boolean toInsertContinue = false;
       boolean encounteredNonsuspendableBreakpoint = false;
       int index;
-      
-      while(iterator.hasNext()) {
+
+      while (iterator.hasNext()) {
         final String line = iterator.next();
 
         if (line.indexOf("Additional ActionScript code has been loaded") != -1) {
           if (!suspended) reader.readLine(false);
           myFileIdIsUpToDate = false;
-        } else
-        if ((index = line.indexOf(BREAKPOINT_MARKER)) != -1 && line.indexOf(" created") == -1) { // TODO: move to break point handler
+        }
+        else if ((index = line.indexOf(BREAKPOINT_MARKER)) != -1 && line.indexOf(" created") == -1) { // TODO: move to break point handler
           // Breakpoint 1, aaa() at A.mxml:14
           try {
             final int from = index + BREAKPOINT_MARKER.length();
@@ -564,15 +570,15 @@ public class FlexDebugProcess extends XDebugProcess {
 
             if (endOfBreakpointIndexPosition != -1) {
               if (colonIndex != -1) {
-                endOfBreakpointIndexPosition = Math.min(colonIndex, endOfBreakpointIndexPosition );
+                endOfBreakpointIndexPosition = Math.min(colonIndex, endOfBreakpointIndexPosition);
               }
               if (spaceIndex != -1) {
-                endOfBreakpointIndexPosition = Math.min(spaceIndex, endOfBreakpointIndexPosition );
+                endOfBreakpointIndexPosition = Math.min(spaceIndex, endOfBreakpointIndexPosition);
               }
               index = Integer.parseInt(line.substring(from, endOfBreakpointIndexPosition));
               final XLineBreakpoint<XBreakpointProperties> breakpoint = myBreakpointsHandler.getBreakpointByIndex(index);
 
-              if(breakpoint != null) {
+              if (breakpoint != null) {
                 FlexSuspendContext suspendContext = new FlexSuspendContext(new FlexStackFrame(this, breakpoint.getSourcePosition()));
                 boolean suspend = getSession().breakpointReached(breakpoint, suspendContext);
                 final VirtualFile file = breakpoint.getSourcePosition().getFile();
@@ -584,7 +590,8 @@ public class FlexDebugProcess extends XDebugProcess {
                   encounteredNonsuspendableBreakpoint = true;
                   toInsertContinue = true;
                 }
-              } else {
+              }
+              else {
                 insertCommand(myBreakpointsHandler.new RemoveBreakpointCommand(index, breakpoint));  // run to cursor break point
               }
             }
@@ -593,16 +600,19 @@ public class FlexDebugProcess extends XDebugProcess {
             log(ex);
           }
         }
-        else if (line.length() > 0 && Character.isDigit(line.charAt(0))) {  // we are on new location: e.g. " 119           trace('\x30 \123')"  
+        else if (line.length() > 0 &&
+                 Character.isDigit(line.charAt(0))) {  // we are on new location: e.g. " 119           trace('\x30 \123')"
           if (!encounteredNonsuspendableBreakpoint) insertCommand(new DumpSourceLocationCommand(this));
-        } else if (handleStdResponse(line, iterator)) {
+        }
+        else if (handleStdResponse(line, iterator)) {
         }
         else if (line.startsWith(RESOLVED_BREAKPOINT_MARKER)) { // TODO: move to break point handler
           // Resolved breakpoint 1 to aaa() at A.mxml:14
           final String breakPointNumber =
-              line.substring(RESOLVED_BREAKPOINT_MARKER.length(), line.indexOf(' ', RESOLVED_BREAKPOINT_MARKER.length()));
+            line.substring(RESOLVED_BREAKPOINT_MARKER.length(), line.indexOf(' ', RESOLVED_BREAKPOINT_MARKER.length()));
           myBreakpointsHandler.updateBreakpointStatusToVerified(breakPointNumber);
-        } else if (line.startsWith(ATTEMPTING_TO_RESOLVE_BREAKPOINT_MARKER)) {  // TODO: move to break point handler
+        }
+        else if (line.startsWith(ATTEMPTING_TO_RESOLVE_BREAKPOINT_MARKER)) {  // TODO: move to break point handler
           int breakpointId = Integer.parseInt(line.substring(ATTEMPTING_TO_RESOLVE_BREAKPOINT_MARKER.length(), line.indexOf(',')));
           final XLineBreakpoint<XBreakpointProperties> breakpoint = myBreakpointsHandler.getBreakpointByIndex(breakpointId);
 
@@ -611,11 +621,12 @@ public class FlexDebugProcess extends XDebugProcess {
 
             myBreakpointsHandler.updateBreakpointStatusToInvalid(breakpoint);
             toInsertContinue = true;
-          } else if (iterator.hasNext() && iterator.getNext().indexOf(AMBIGUOUS_MATCHING_FILE_NAMES) != -1) {
+          }
+          else if (iterator.hasNext() && iterator.getNext().indexOf(AMBIGUOUS_MATCHING_FILE_NAMES) != -1) {
             iterator.next();
             iterator.next();
 
-            while(iterator.hasNext() && iterator.getNext().indexOf("#") != -1) {
+            while (iterator.hasNext() && iterator.getNext().indexOf("#") != -1) {
               iterator.next();
             }
 
@@ -631,9 +642,11 @@ public class FlexDebugProcess extends XDebugProcess {
         else if (line.startsWith("Set additional breakpoints")) {
           //Set additional breakpoints as desired, and then type 'continue'.
           toInsertContinue = true;    // TODO: move to break point handler
-        } else if (line.startsWith("Player session terminated")) {
+        }
+        else if (line.startsWith("Player session terminated")) {
           handleProbablyUnexpectedStop(line);
-        } else if (line.indexOf("Execution halted") != -1) {
+        }
+        else if (line.indexOf("Execution halted") != -1) {
           if (!getSession().isPaused()) {
             getSession().pause();
           }
@@ -641,7 +654,8 @@ public class FlexDebugProcess extends XDebugProcess {
       }
 
       if (toInsertContinue) insertCommand(new ContinueCommand());
-    } while (explicitlyContinueRead || reader.hasSomeDataPending());
+    }
+    while (explicitlyContinueRead || reader.hasSomeDataPending());
   }
 
   String defaultReadCommand(DebuggerCommand command) throws IOException {
@@ -683,13 +697,14 @@ public class FlexDebugProcess extends XDebugProcess {
 
   protected void ensureFilePathToIdMapIsUpToDate() {
     if (myFileIdIsUpToDate) return; // this calculation is VERY costly
-    sendAndProcessOneCommand(new DebuggerCommand("show files", CommandOutputProcessingType.SPECIAL_PROCESSING, VMState.SUSPENDED, VMState.SUSPENDED) {
-      @Override
-      CommandOutputProcessingMode onTextAvailable(@NonNls String s) {
-        processShowFilesResult(new StringTokenizer(s, "\r\n"));
-        return CommandOutputProcessingMode.DONE;
-      }
-    }, null);
+    sendAndProcessOneCommand(
+      new DebuggerCommand("show files", CommandOutputProcessingType.SPECIAL_PROCESSING, VMState.SUSPENDED, VMState.SUSPENDED) {
+        @Override
+        CommandOutputProcessingMode onTextAvailable(@NonNls String s) {
+          processShowFilesResult(new StringTokenizer(s, "\r\n"));
+          return CommandOutputProcessingMode.DONE;
+        }
+      }, null);
     myFileIdIsUpToDate = true;
   }
 
@@ -723,8 +738,9 @@ public class FlexDebugProcess extends XDebugProcess {
     String id = myFilePathToIdMap.get(file.getPresentableUrl().replace(File.separatorChar, '/'));
 
     if (id != null) {
-      marker = "#"+id;
-    } else {
+      marker = "#" + id;
+    }
+    else {
       marker = file.getName();
       String expectedPackageNameFromFile = JSResolveUtil.getExpectedPackageNameFromFile(file, getSession().getProject());
       if (!StringUtil.isEmpty(expectedPackageNameFromFile)) marker = expectedPackageNameFromFile + "." + marker;
@@ -909,12 +925,15 @@ public class FlexDebugProcess extends XDebugProcess {
       }
       command.post(this);
       return command;
-    } else if (!currentlyExecuting) {
+    }
+    else if (!currentlyExecuting) {
       if (command.getEndVMState() == VMState.RUNNING) {
         final DebuggerCommand nextCommand = commandsToWrite.peek();
         if (nextCommand != null && nextCommand.getStartVMState() == VMState.SUSPENDED) {
           command = commandsToWrite.removeFirst();
-          if (nextCommand.getEndVMState() == VMState.SUSPENDED && !(nextCommand instanceof QuitCommand)) insertCommand(new ContinueCommand());
+          if (nextCommand.getEndVMState() == VMState.SUSPENDED && !(nextCommand instanceof QuitCommand)) {
+            insertCommand(new ContinueCommand());
+          }
         }
       }
     }
@@ -930,7 +949,7 @@ public class FlexDebugProcess extends XDebugProcess {
   boolean isDebuggerFromSdk4() {
     return myDebuggerVersion.startsWith("4.");
   }
-  
+
   boolean isDebuggerFromSdk3() {
     return myDebuggerVersion.startsWith("3.");
   }
@@ -939,12 +958,15 @@ public class FlexDebugProcess extends XDebugProcess {
     final String text = command.getText();
 
     setSuspended(
-        command.getOutputProcessingMode() != CommandOutputProcessingType.NO_PROCESSING ? false:command.getEndVMState() == VMState.SUSPENDED);
+      command.getOutputProcessingMode() != CommandOutputProcessingType.NO_PROCESSING
+      ? false
+      : command.getEndVMState() == VMState.SUSPENDED);
     log("Sent:" + text);
     fdbProcess.getOutputStream().write((text + "\n").getBytes());
     try {
       fdbProcess.getOutputStream().flush();
-    } catch (IOException ex) {
+    }
+    catch (IOException ex) {
       handleProbablyUnexpectedStop(FlexBundle.message("flex.debugger.unexpected.communication.error"));
     }
   }
@@ -1006,17 +1028,19 @@ public class FlexDebugProcess extends XDebugProcess {
         try {
           if (reader.hasSomeDataPending()) {
             sendCommand(new DumpOutputCommand());
-          } else if (!myOutputAlarm.isDisposed()) {
+          }
+          else if (!myOutputAlarm.isDisposed()) {
             myOutputAlarm.addRequest(this, 100);
           }
-        } catch (IOException ex) {
+        }
+        catch (IOException ex) {
           myOutputAlarm.cancelAllRequests();
         }
       }
     };
     myOutputAlarm.addRequest(action, 500);
   }
-  
+
   void addPendingCommand(final DebuggerCommand command, int delay) {
     myOutputAlarm.addRequest(new Runnable() {
       public void run() {
@@ -1109,10 +1133,15 @@ public class FlexDebugProcess extends XDebugProcess {
     insertCommand(command);
     try {
       processOneCommandLoop();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       log(e);
-      if (onException != null) onException.fun(e);
-      else throw new RuntimeException(e);
+      if (onException != null) {
+        onException.fun(e);
+      }
+      else {
+        throw new RuntimeException(e);
+      }
     }
   }
 
@@ -1131,7 +1160,8 @@ public class FlexDebugProcess extends XDebugProcess {
       }
       if (s.length() > 0 && Character.isDigit(s.charAt(0))) {
         sendCommand(new DumpSourceLocationCommand(this));
-      } else if (!handleStdResponse(line, iterator)) {
+      }
+      else if (!handleStdResponse(line, iterator)) {
         stdcontent = false;
       }
     }
@@ -1139,16 +1169,17 @@ public class FlexDebugProcess extends XDebugProcess {
     if (stdcontent) return true;
     return false;
   }
-  
+
   void setQName2Id(Map<String, String> qName2IdMap, Object equalityObject) {
     myStackFrameEqualityObject = equalityObject;
     myQName2IdMap = qName2IdMap;
   }
 
-  @Nullable Map<String, String> getQName2IdIfSameEqualityObject(Object equalityObject) {
+  @Nullable
+  Map<String, String> getQName2IdIfSameEqualityObject(Object equalityObject) {
     if (equalityObject != null && equalityObject.equals(myStackFrameEqualityObject)) return myQName2IdMap;
     return null;
-  }  
+  }
 
   class MyFdbOutputReader {
     private final InputStreamReader myReader;
@@ -1172,11 +1203,11 @@ public class FlexDebugProcess extends XDebugProcess {
         if (lastText != null) return lastText;
       }
 
-      while(true) {
+      while (true) {
         int read = myReader.read(buf, 0, buf.length);
         if (read == -1) return null;
         lastText.append(buf, 0, read);
-        
+
         if (read < buf.length) {
           final String lastText = getNextLine(nonblock);
           if (lastText != null) return lastText;
@@ -1188,7 +1219,7 @@ public class FlexDebugProcess extends XDebugProcess {
       String result;
       String marker = FDB_MARKER;
       int i = lastText.indexOf(marker, lastTextMarkerScanningStart);
-      
+
       if (i == -1) {
         marker = "(y or n)";
         i = lastText.indexOf(marker, lastTextMarkerScanningStart);
@@ -1208,7 +1239,8 @@ public class FlexDebugProcess extends XDebugProcess {
         if (isBlank(lastText)) lastText.setLength(0);
         setSuspended(marker.length() != 0);
         return result;
-      } else {
+      }
+      else {
         lastTextMarkerScanningStart = lastText.length();
         result = null;
       }
@@ -1216,7 +1248,7 @@ public class FlexDebugProcess extends XDebugProcess {
     }
 
     private boolean isBlank(StringBuilder lastText) {
-      for(int i = 0; i < lastText.length(); ++i) {
+      for (int i = 0; i < lastText.length(); ++i) {
         if (lastText.charAt(i) != ' ') return false;
       }
       return true;
@@ -1250,7 +1282,9 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   static class QuitCommand extends DebuggerCommand {
-    QuitCommand() { super("quit\ny", CommandOutputProcessingType.SPECIAL_PROCESSING); }
+    QuitCommand() {
+      super("quit\ny", CommandOutputProcessingType.SPECIAL_PROCESSING);
+    }
   }
 
   static class ContinueCommand extends DebuggerCommand {
@@ -1363,7 +1397,6 @@ public class FlexDebugProcess extends XDebugProcess {
           }
         }
       });
-
     }
   }
 
@@ -1422,8 +1455,8 @@ public class FlexDebugProcess extends XDebugProcess {
     CommandOutputProcessingMode onTextAvailable(String s) {
       StringBuilder builder = new StringBuilder(s.length());
       StringTokenizer tokenizer = new StringTokenizer(s, "\r\n");
-      
-      while(tokenizer.hasMoreTokens()) {
+
+      while (tokenizer.hasMoreTokens()) {
         String next = tokenizer.nextToken();
         if (next.indexOf("type 'continue'") == -1) {
           builder.append(next + "\n");
@@ -1481,7 +1514,8 @@ public class FlexDebugProcess extends XDebugProcess {
       return CommandOutputProcessingMode.PROCEEDING;
     }
 
-    void launchDebuggedApplication() throws IOException {}
+    void launchDebuggedApplication() throws IOException {
+    }
   }
 
   private class SuspendResumeDebuggerCommand extends SuspendDebuggerCommand {

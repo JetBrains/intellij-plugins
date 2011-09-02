@@ -63,7 +63,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   public FlexIdeBCConfigurable(final Module module,
                                final FlexIdeBuildConfiguration configuration,
                                final Runnable treeNodeNameUpdater,
-                               final ModifiableRootModel modifiableRootModel) {
+                               final ModifiableRootModel modifiableRootModel, FlexSdksModifiableModel sdksModel) {
     super(false, treeNodeNameUpdater);
     myModule = module;
     myConfiguration = configuration;
@@ -71,7 +71,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myModifiableRootModel = modifiableRootModel;
     myName = configuration.NAME;
 
-    myDependenciesConfigurable = new DependenciesConfigurable(configuration, module.getProject());
+    myDependenciesConfigurable = new DependenciesConfigurable(configuration, module.getProject(), sdksModel);
     myCompilerOptionsConfigurable = new CompilerOptionsConfigurable(module, configuration.COMPILER_OPTIONS);
     myAirDescriptorConfigurable = new AirDescriptorConfigurable(configuration.AIR_DESCRIPTOR_OPTIONS);
     myAirDesktopPackagingConfigurable =
@@ -313,12 +313,14 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   }
 
   public void disposeUIResources() {
-    myDependenciesConfigurable.disposeUIResources();
-    myCompilerOptionsConfigurable.disposeUIResources();
-    myAirDescriptorConfigurable.disposeUIResources();
-    myAirDesktopPackagingConfigurable.disposeUIResources();
-    myAndroidPackagingConfigurable.disposeUIResources();
-    myIOSPackagingConfigurable.disposeUIResources();
+    if (FlexIdeUtils.isFlatUi()) {
+      myDependenciesConfigurable.disposeUIResources();
+      myCompilerOptionsConfigurable.disposeUIResources();
+      myAirDescriptorConfigurable.disposeUIResources();
+      myAirDesktopPackagingConfigurable.disposeUIResources();
+      myAndroidPackagingConfigurable.disposeUIResources();
+      myIOSPackagingConfigurable.disposeUIResources();
+    }
   }
 
   public DependenciesConfigurable getDependenciesConfigurable() {

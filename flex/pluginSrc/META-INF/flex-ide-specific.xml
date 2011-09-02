@@ -5,8 +5,10 @@
 
     <projectService serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeProjectLevelCompilerOptionsHolder"/>
     <moduleService serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager"/>
-    <configuration.ModuleStructureExtension implementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension"/>
+    <configuration.ModuleStructureExtension
+        implementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension"/>
     <configurationType implementation="com.intellij.lang.javascript.flex.run.FlexIdeRunConfigurationType"/>
+    <applicationService serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.FlexSdkManager"/>
   </extensions>
 
   <actions>

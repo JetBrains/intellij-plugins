@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.intellij.lang.javascript.flex.projectStructure.ui.FlexSdkChooserPanel">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.intellij.lang.javascript.flex.projectStructure.ui.FlexSdkPanel">
   <grid id="27dc6" binding="myContentPane" layout-manager="GridLayoutManager" row-count="4" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
@@ -21,7 +21,7 @@
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
-      <component id="290fe" class="com.intellij.lang.javascript.flex.projectStructure.ui.SdkPathCombo" binding="mySdkPathCombo" custom-create="true">
+      <component id="47dd2" class="com.intellij.ui.ComboboxWithBrowseButton" binding="myCombo">
         <constraints>
           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -32,7 +32,7 @@
           <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="&amp;Edit..."/>
+          <text value="&amp;Edit sources &amp;&amp; docs..."/>
         </properties>
       </component>
       <component id="ee6a9" class="javax.swing.JLabel" binding="myInfoLabel">

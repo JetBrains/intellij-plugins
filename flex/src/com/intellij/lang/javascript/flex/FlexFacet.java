@@ -64,7 +64,7 @@ public class FlexFacet extends Facet<FlexFacetConfiguration> implements IFlexFac
 
     public void beforeRootsChange(final ModuleRootEvent event) {
       // if module inherits project sdk which is changed then there's no way to get sdk before change because following commented line gives new sdk
-      //myPreviousSdk = ModuleRootManager.getInstance(myModule).getSdk();
+      //myPreviousSdk = ModuleRootManager.getInstance(myModule).getSdkEntry();
     }
 
     public void rootsChanged(final ModuleRootEvent event) {
@@ -131,46 +131,49 @@ public class FlexFacet extends Facet<FlexFacetConfiguration> implements IFlexFac
       if (choice == 0) {
 
         ApplicationManager.getApplication().invokeLater(new Runnable() {
-          public void run() {
-            final FlexFacet flexFacet = FacetManager.getInstance(myModule).getFacetByType(ID);
-            if (flexFacet == null) return;
+                                                          public void run() {
+                                                            final FlexFacet flexFacet =
+                                                              FacetManager.getInstance(myModule).getFacetByType(ID);
+                                                            if (flexFacet == null) return;
 
-            ApplicationManager.getApplication().runWriteAction(new Runnable() {
-              public void run() {
-                myConfiguringMyself = true;
-                try {
-                  final ModifiableRootModel modifiableRootModel = ModuleRootManager.getInstance(myModule).getModifiableModel();
-                  flexFacet.getConfiguration().setFlexSdk(newSdk, modifiableRootModel);
-                  modifiableRootModel.commit();
+                                                            ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                                                              public void run() {
+                                                                myConfiguringMyself = true;
+                                                                try {
+                                                                  final ModifiableRootModel modifiableRootModel =
+                                                                    ModuleRootManager.getInstance(myModule).getModifiableModel();
+                                                                  flexFacet.getConfiguration().setFlexSdk(newSdk, modifiableRootModel);
+                                                                  modifiableRootModel.commit();
 
-                  final ModuleStructureConfigurable moduleStructureConfigurable =
-                    ModuleStructureConfigurable.getInstance(myModule.getProject());
-                  final ModuleEditor moduleEditor = FlexUtils.getModuleEditor(myModule, moduleStructureConfigurable);
-                  if (moduleEditor != null) {
-                    try {
-                      moduleEditor.canApply();
-                      moduleEditor.apply();
-                    }
-                    catch (ConfigurationException e) {
-                      LOG.warn(e);
-                    }
-                    // update UI
-                    moduleEditor.moduleCountChanged();
-                    moduleStructureConfigurable.getFacetConfigurator().resetEditors();
-                  }
-                }
-                finally {
-                  myConfiguringMyself = false;
-                }
-              }
-            });
-          }
-        }, ModalityState.current(), new Condition() {
+                                                                  final ModuleStructureConfigurable moduleStructureConfigurable =
+                                                                    ModuleStructureConfigurable.getInstance(myModule.getProject());
+                                                                  final ModuleEditor moduleEditor =
+                                                                    FlexUtils.getModuleEditor(myModule, moduleStructureConfigurable);
+                                                                  if (moduleEditor != null) {
+                                                                    try {
+                                                                      moduleEditor.canApply();
+                                                                      moduleEditor.apply();
+                                                                    }
+                                                                    catch (ConfigurationException e) {
+                                                                      LOG.warn(e);
+                                                                    }
+                                                                    // update UI
+                                                                    moduleEditor.moduleCountChanged();
+                                                                    moduleStructureConfigurable.getFacetConfigurator().resetEditors();
+                                                                  }
+                                                                }
+                                                                finally {
+                                                                  myConfiguringMyself = false;
+                                                                }
+                                                              }
+                                                            });
+                                                          }
+                                                        }, ModalityState.current(), new Condition() {
           public boolean value(final Object o) {
             return myModule.isDisposed();
           }
-        });
-
+        }
+        );
       }
     }
   }

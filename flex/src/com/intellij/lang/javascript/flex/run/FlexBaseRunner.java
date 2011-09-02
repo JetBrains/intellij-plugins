@@ -183,7 +183,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   }
 
   private static void checkConfiguration(final Module module, final FlexIdeBuildConfiguration config) throws ExecutionException {
-    final SdkEntry sdk = config.DEPENDENCIES.getSdk();
+    final SdkEntry sdk = config.DEPENDENCIES.getSdkEntry();
     if (sdk == null) {
       throw new CantRunException(
         MessageFormat.format("SDK is not set for cuild configuration ''{0}'' of module ''{1}''", config.NAME, module.getName()));
@@ -191,7 +191,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
     // todo check all that affects launch
   }
-  
+
   private static boolean needToCheckThatCompilationEnabled(final FlexRunnerParameters parameters) {
     return parameters instanceof FlexUnitRunnerParameters
            || (parameters instanceof AirMobileRunnerParameters &&
