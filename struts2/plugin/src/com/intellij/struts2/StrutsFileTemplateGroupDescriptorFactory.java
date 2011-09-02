@@ -51,9 +51,9 @@ public class StrutsFileTemplateGroupDescriptorFactory implements FileTemplateGro
   public static final String STRUTS_2_3_XML = "struts_2_3.xml";
 
   /**
-   * Template for {@code validation.xml}.
+   * Template for {@code validation.xml}.  TODO cannot name "validation.xml" due to SA using this template name.
    */
-  public static final String VALIDATOR_XML = "validator.xml";
+  public static final String VALIDATION_XML = "validator.xml";
 
   public FileTemplateGroupDescriptor getFileTemplatesDescriptor() {
     final FileTemplateGroupDescriptor group = new FileTemplateGroupDescriptor(StrutsBundle.message("struts2"),
@@ -67,7 +67,7 @@ public class StrutsFileTemplateGroupDescriptorFactory implements FileTemplateGro
     group.addTemplate(new FileTemplateDescriptor(STRUTS_2_3_XML,
                                                  StrutsIcons.STRUTS_CONFIG_FILE));
 
-    group.addTemplate(new FileTemplateDescriptor(VALIDATOR_XML,
+    group.addTemplate(new FileTemplateDescriptor(VALIDATION_XML,
                                                  StrutsIcons.VALIDATION_CONFIG_FILE));
     return group;
   }

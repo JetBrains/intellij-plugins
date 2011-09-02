@@ -164,7 +164,7 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
     assert directory != null : sourceRoot.getPresentableUrl();
 
     final FileTemplateManager templateManager = FileTemplateManager.getInstance();
-    final FileTemplate validationTemplate = templateManager.getJ2eeTemplate(StrutsFileTemplateGroupDescriptorFactory.VALIDATOR_XML);
+    final FileTemplate validationTemplate = templateManager.getJ2eeTemplate(StrutsFileTemplateGroupDescriptorFactory.VALIDATION_XML);
 
     final PsiDirectory packageDirectoryInSourceRoot = RefactoringUtil.createPackageDirectoryInSourceRoot(targetPackage,
                                                                                                          sourceRoot);
