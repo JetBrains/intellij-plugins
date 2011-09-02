@@ -215,8 +215,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     }
 
 
-    final SdkEntry sdk = config.DEPENDENCIES.getSdk();
-    if (sdk == null) {
+    final SdkEntry sdkEntry = config.DEPENDENCIES.getSdkEntry();
+    if (sdkEntry == null) {
       throw new CantRunException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", config.NAME, module.getName()));
     }
 
