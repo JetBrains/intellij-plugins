@@ -34,6 +34,7 @@ import mx.effects.EffectManager;
 import mx.events.DynamicEvent;
 import mx.events.FlexEvent;
 import mx.managers.DragManagerImpl;
+import mx.managers.IActiveWindowManager;
 import mx.managers.IFocusManager;
 import mx.managers.IFocusManagerContainer;
 import mx.managers.ILayoutManagerClient;
@@ -50,7 +51,7 @@ import mx.styles.StyleManager;
 use namespace mx_internal;
 
 // must be IFocusManagerContainer, it is only way how UIComponent can find focusManager (see UIComponent.focusManager)
-public class SystemManager extends Sprite implements ISystemManager, SystemManagerSB, IFocusManagerContainer {
+public class SystemManager extends Sprite implements ISystemManager, SystemManagerSB, IFocusManagerContainer, IActiveWindowManager {
   // link
   ElementUtilImpl;
 
@@ -149,6 +150,8 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
 
     flexModuleFactory = FlexModuleFactory(moduleFactory);
     implementations[SYSTEM_MANAGER_CHILD_MANAGER] = this;
+    // PopUpManager requires IActiveWindowManager, IDEA-73806
+    implementations["mx.managers::IActiveWindowManager"] = this;
     _focusManager = new DocumentFocusManager(this);
   }
 
@@ -801,6 +804,19 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
 
   public function get layoutManager():Object {
     return UIComponentGlobals.layoutManager;
+  }
+
+  // fake impl IActiveWindowManager
+  public function addFocusManager(f:IFocusManagerContainer):void {
+  }
+
+  public function removeFocusManager(f:IFocusManagerContainer):void {
+  }
+
+  public function activate(f:Object):void {
+  }
+
+  public function deactivate(f:Object):void {
   }
 }
 }

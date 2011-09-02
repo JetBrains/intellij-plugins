@@ -8,6 +8,7 @@ import org.hamcrest.core.allOf;
 import org.hamcrest.core.isA;
 import org.hamcrest.core.not;
 import org.hamcrest.object.equalTo;
+import org.hamcrest.object.instanceOf;
 import org.hamcrest.object.strictlyEqualTo;
 
 public class MxmlTest extends BaseTestCase {
@@ -44,6 +45,7 @@ public class MxmlTest extends BaseTestCase {
       MxPanelWithControlBar();
       AreaChartComplexExample();
       ComplexContentAsSubTagsForObjectTypedProperty();
+      IDEA_73806();
     }
   }
   
@@ -236,6 +238,11 @@ public class MxmlTest extends BaseTestCase {
       {dataProvider: {source: [strictlyEqualTo("1"), strictlyEqualTo("2"), strictlyEqualTo("3")]}},
       {dataProvider: {list: {source: [strictlyEqualTo("1"), strictlyEqualTo("2")]}}}
     ]);
+  }
+
+  public function IDEA_73806():void {
+    validateUI(); // force model commit
+    assertThat(app, [{dataProvider: {source: instanceOf(XMLList)}}]);
   }
 }
 }
