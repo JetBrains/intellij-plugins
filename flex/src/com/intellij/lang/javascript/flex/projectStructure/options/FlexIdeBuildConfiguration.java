@@ -25,7 +25,6 @@ public class FlexIdeBuildConfiguration implements Cloneable {
 
   public Dependencies DEPENDENCIES = new Dependencies();
   public CompilerOptions COMPILER_OPTIONS = new CompilerOptions();
-  public AirDescriptorOptions AIR_DESCRIPTOR_OPTIONS = new AirDescriptorOptions();
   public AirDesktopPackagingOptions AIR_DESKTOP_PACKAGING_OPTIONS = new AirDesktopPackagingOptions();
   public AndroidPackagingOptions ANDROID_PACKAGING_OPTIONS = new AndroidPackagingOptions();
   public IOSPackagingOptions IOS_PACKAGING_OPTIONS = new IOSPackagingOptions();
@@ -54,7 +53,6 @@ public class FlexIdeBuildConfiguration implements Cloneable {
 
       clone.DEPENDENCIES = DEPENDENCIES.clone();
       clone.COMPILER_OPTIONS = COMPILER_OPTIONS.clone();
-      clone.AIR_DESCRIPTOR_OPTIONS = AIR_DESCRIPTOR_OPTIONS.clone();
       clone.AIR_DESKTOP_PACKAGING_OPTIONS = AIR_DESKTOP_PACKAGING_OPTIONS.clone();
       clone.ANDROID_PACKAGING_OPTIONS = ANDROID_PACKAGING_OPTIONS.clone();
       clone.IOS_PACKAGING_OPTIONS = IOS_PACKAGING_OPTIONS.clone();

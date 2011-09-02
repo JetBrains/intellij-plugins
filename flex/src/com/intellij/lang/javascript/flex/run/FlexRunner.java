@@ -31,8 +31,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -46,27 +44,27 @@ public class FlexRunner extends FlexBaseRunner {
                                                      final FlexIdeBuildConfiguration config,
                                                      final FlexIdeRunnerParameters params,
                                                      final Executor executor,
+                                                     final RunProfileState state,
                                                      final RunContentDescriptor contentToReuse,
-                                                     final ExecutionEnvironment environment) {
+                                                     final ExecutionEnvironment environment) throws ExecutionException {
     switch (config.TARGET_PLATFORM) {
       case Web:
         // todo handle html wrapper!
-        if (config.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Web && params.isLaunchUrl()) {
+        if (params.isLaunchUrl()) {
           launchWithSelectedApplication(params.getUrl(), params.getLauncherParameters());
         }
         else {
-          final String outputPath = config.getOutputFilePath();
-          try {
-            final String canonicalPath = new File(config.getOutputFilePath()).getCanonicalPath();
-            FlashPlayerTrustUtil.updateTrustedStatus(module.getProject(), params.isRunTrusted(), false, canonicalPath);
-          }
-          catch (IOException e) {/**/}
-          launchWithSelectedApplication(outputPath, params.getLauncherParameters());
+          launchWithSelectedApplication(config.getOutputFilePath(), params.getLauncherParameters());
         }
         break;
       case Desktop:
-        // todo implement
-        break;
+        final ExecutionResult executionResult = state.execute(executor, this);
+        if (executionResult == null) return null;
+
+        final RunContentBuilder contentBuilder = new RunContentBuilder(module.getProject(), this, executor);
+        contentBuilder.setExecutionResult(executionResult);
+        contentBuilder.setEnvironment(environment);
+        return contentBuilder.showRunContent(contentToReuse);
       case Mobile:
         // todo implement
         break;
@@ -97,7 +95,7 @@ public class FlexRunner extends FlexBaseRunner {
     }
 
     return isRunAsAir(flexRunnerParameters)
-           ? launchAir(project, executor, state, contentToReuse, env, flexSdk, flexRunnerParameters)
+           ? launchAir(project, executor, state, contentToReuse, env, flexRunnerParameters)
            : launchFlex(project, executor, state, contentToReuse, env, flexSdk, flexRunnerParameters);
   }
 
@@ -181,7 +179,6 @@ public class FlexRunner extends FlexBaseRunner {
                                          final RunProfileState state,
                                          final RunContentDescriptor contentToReuse,
                                          final ExecutionEnvironment env,
-                                         final Sdk flexSdk,
                                          final FlexRunnerParameters flexRunnerParameters) throws ExecutionException {
     final ExecutionResult executionResult;
     if (flexRunnerParameters instanceof FlexUnitRunnerParameters) {

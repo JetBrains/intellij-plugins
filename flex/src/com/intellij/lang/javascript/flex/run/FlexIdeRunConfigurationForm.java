@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.util.PlatformIcons;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
@@ -28,14 +29,20 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
 
   private JPanel myMainPanel;
   private JComboBox myBCsCombo;
+  
   private JPanel myLaunchPanel;
   private JRadioButton myBCOutputRadioButton;
   private JLabel myBCOutputLabel;
   private JRadioButton myURLRadioButton;
   private JTextField myURLTextField;
+
+  private JPanel myWebOptionsPanel;
   private TextFieldWithBrowseButton myLauncherParametersTextWithBrowse;
   private JCheckBox myRunTrustedCheckBox;
-  private JPanel myWebOptionsPanel;
+
+  private JPanel myDesktopOptionsPanel;
+  private RawCommandLineEditor myAdlOptionsEditor;
+  private RawCommandLineEditor myAirProgramParametersEditor;
 
   private final Project myProject;
   private FlexIdeBuildConfiguration[] myAllConfigs;
@@ -141,8 +148,11 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     final FlexIdeBuildConfiguration config = item instanceof FlexIdeBuildConfiguration ? (FlexIdeBuildConfiguration)item : null;
 
     final boolean web = config != null && config.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Web;
+    final boolean desktop = config != null && config.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Desktop;
+    
     myLaunchPanel.setVisible(web);
     myWebOptionsPanel.setVisible(web);
+    myDesktopOptionsPanel.setVisible(desktop);
 
     if (web) {
       String bcOutput = config.OUTPUT_FILE_NAME;
@@ -151,11 +161,12 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
       }
       myBCOutputLabel.setText(bcOutput);
 
+      myURLTextField.setEnabled(myURLRadioButton.isSelected());
+
       myLauncherParametersTextWithBrowse.getTextField().setText(myLauncherParameters.getPresentableText());
+      myRunTrustedCheckBox.setEnabled(!myURLRadioButton.isSelected());
     }
 
-    myURLTextField.setEnabled(myURLRadioButton.isSelected());
-    myRunTrustedCheckBox.setEnabled(!myURLRadioButton.isSelected());
   }
 
   private static String getPresentableText(String moduleName, String configName, final boolean singleModuleProject) {
@@ -171,7 +182,7 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
 
   protected void resetEditorFrom(final FlexIdeRunConfiguration configuration) {
     final FlexIdeRunnerParameters params = configuration.getRunnerParameters();
-    myLauncherParameters = params.getLauncherParameters().clone();
+    myLauncherParameters = params.getLauncherParameters().clone(); // must be before myBCsCombo.setModel()
 
     final Module module = ModuleManager.getInstance(myProject).findModuleByName(params.getModuleName());
     final FlexIdeBuildConfiguration config =
@@ -194,7 +205,11 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     myBCOutputRadioButton.setSelected(!params.isLaunchUrl());
     myURLRadioButton.setSelected(params.isLaunchUrl());
     myURLTextField.setText(params.getUrl());
+
     myRunTrustedCheckBox.setSelected(params.isRunTrusted());
+
+    myAdlOptionsEditor.setText(params.getAdlOptions());
+    myAirProgramParametersEditor.setText(params.getAirProgramParameters());
 
     updateControls();
   }
@@ -216,8 +231,12 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
 
     params.setLaunchUrl(myURLRadioButton.isSelected());
     params.setUrl(myURLTextField.getText().trim());
+
     params.setLauncherParameters(myLauncherParameters);
     params.setRunTrusted(myRunTrustedCheckBox.isSelected());
+
+    params.setAdlOptions(myAdlOptionsEditor.getText().trim());
+    params.setAirProgramParameters(myAirProgramParametersEditor.getText().trim());
   }
 
   protected void disposeEditor() {

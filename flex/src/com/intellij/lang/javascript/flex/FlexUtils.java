@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -65,6 +66,15 @@ public class FlexUtils {
     Pattern.compile("<key>CFBundleExecutable</key>(?:(?:\\s*)(?:<!--(?:.*)-->(?:\\s*))*)<string>(.*)</string>");
 
   private FlexUtils() {
+  }
+
+  public static FileChooserDescriptor createFileChooserDescriptor(final String allowedExtension) {
+    return new FileChooserDescriptor(true, false, false, false, false, false) {
+      public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
+        return super.isFileVisible(file, showHiddenFiles) && (file.isDirectory() || allowedExtension.equalsIgnoreCase(
+          file.getExtension()));
+      }
+    };
   }
 
   public static FlexFacet addFlexFacet(final Module module, final @Nullable Sdk flexSdk, final ModifiableRootModel modifiableRootModel) {

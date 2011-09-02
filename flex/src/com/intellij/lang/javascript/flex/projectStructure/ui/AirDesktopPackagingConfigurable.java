@@ -1,33 +1,58 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.FilesToPackageForm;
 import com.intellij.lang.javascript.flex.actions.SigningOptionsForm;
 import com.intellij.lang.javascript.flex.projectStructure.options.AirDesktopPackagingOptions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.NamedConfigurable;
-import com.intellij.openapi.util.NullableComputable;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.EmptyRunnable;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.wm.IdeFocusManager;
 import org.jetbrains.annotations.Nls;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class AirDesktopPackagingConfigurable extends NamedConfigurable<AirDesktopPackagingOptions> {
-  private JPanel myMainPanel;
-  private LabeledComponent myInstallerFileNameComponent;
-  private LabeledComponent myInstallerLocationComponent;
-  private FilesToPackageForm myFilesToPackageForm;
-  private SigningOptionsForm mySigningOptionsForm;
-  private JCheckBox myDoNotSignCheckBox;
 
-  private final Project myProject;
+  private JPanel myMainPanel;
+
+  private JRadioButton myGeneratedDescriptorRadioButton;
+  private JRadioButton myCustomDescriptorRadioButton;
+  private TextFieldWithBrowseButton myCustomDescriptorTextWithBrowse;
+
+  private JTextField myInstallerFileNameTextField;
+
+  private FilesToPackageForm myFilesToPackageForm;
+  private JCheckBox myDoNotSignCheckBox;
+  private SigningOptionsForm mySigningOptionsForm;
+
+  private final Module myModule;
   private final AirDesktopPackagingOptions myAirDesktopPackagingOptions;
 
-  public AirDesktopPackagingConfigurable(final Project project, final AirDesktopPackagingOptions airDesktopPackagingOptions) {
-    myProject = project;
+  public AirDesktopPackagingConfigurable(final Module module, final AirDesktopPackagingOptions airDesktopPackagingOptions) {
+    myModule = module;
     myAirDesktopPackagingOptions = airDesktopPackagingOptions;
+
+    final ActionListener listener = new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        myCustomDescriptorTextWithBrowse.setEnabled(myCustomDescriptorRadioButton.isSelected());
+        if (myCustomDescriptorRadioButton.isSelected()) {
+          IdeFocusManager.getInstance(module.getProject()).requestFocus(myCustomDescriptorTextWithBrowse.getTextField(), true);
+        }
+      }
+    };
+
+    myGeneratedDescriptorRadioButton.addActionListener(listener);
+    myCustomDescriptorRadioButton.addActionListener(listener);
+
+    myCustomDescriptorTextWithBrowse.addBrowseFolderListener(null, null, module.getProject(), FlexUtils.createFileChooserDescriptor("xml"));
   }
 
   @Nls
@@ -59,6 +84,13 @@ public class AirDesktopPackagingConfigurable extends NamedConfigurable<AirDeskto
   }
 
   public boolean isModified() {
+    if (myAirDesktopPackagingOptions.USE_GENERATED_DESCRIPTOR != myGeneratedDescriptorRadioButton.isSelected()) return true;
+    if (!myAirDesktopPackagingOptions.CUSTOM_DESCRIPTOR_PATH
+      .equals(FileUtil.toSystemIndependentName(myCustomDescriptorTextWithBrowse.getText().trim()))) {
+      return true;
+    }
+    if (!myAirDesktopPackagingOptions.INSTALLER_FILE_NAME.equals(myInstallerFileNameTextField.getText().trim())) return true;
+
     return false;
   }
 
@@ -67,30 +99,27 @@ public class AirDesktopPackagingConfigurable extends NamedConfigurable<AirDeskto
   }
 
   public void applyTo(final AirDesktopPackagingOptions airDesktopPackagingOptions) {
-
+    airDesktopPackagingOptions.USE_GENERATED_DESCRIPTOR = myGeneratedDescriptorRadioButton.isSelected();
+    airDesktopPackagingOptions.CUSTOM_DESCRIPTOR_PATH = FileUtil.toSystemIndependentName(myCustomDescriptorTextWithBrowse.getText().trim());
+    airDesktopPackagingOptions.INSTALLER_FILE_NAME = myInstallerFileNameTextField.getText().trim();
   }
 
   public void reset() {
+    myGeneratedDescriptorRadioButton.setSelected(myAirDesktopPackagingOptions.USE_GENERATED_DESCRIPTOR);
+    myCustomDescriptorRadioButton.setSelected(!myAirDesktopPackagingOptions.USE_GENERATED_DESCRIPTOR);
+    myCustomDescriptorTextWithBrowse.setText(FileUtil.toSystemDependentName(myAirDesktopPackagingOptions.CUSTOM_DESCRIPTOR_PATH));
+    myInstallerFileNameTextField.setText(myAirDesktopPackagingOptions.INSTALLER_FILE_NAME);
   }
 
   public void disposeUIResources() {
   }
 
   private void createUIComponents() {
-    myFilesToPackageForm = new FilesToPackageForm(myProject);
+    myFilesToPackageForm = new FilesToPackageForm(myModule.getProject());
 
-    mySigningOptionsForm = new SigningOptionsForm(myProject, new NullableComputable<Module>() {
-      public Module compute() {
-        return null;
-      }
-    }, new NullableComputable<Sdk>() {
-      public Sdk compute() {
-        return null;
-      }
-    }, new Runnable() {
-      public void run() {
-      }
-    }
-    );
+    mySigningOptionsForm = new SigningOptionsForm(myModule.getProject(), new Computable.PredefinedValueComputable<Module>(myModule),
+                                                  new Computable.PredefinedValueComputable<Sdk>(null), EmptyRunnable.INSTANCE);
+    mySigningOptionsForm.setProvisioningProfileApplicable(false);
+    mySigningOptionsForm.setCreateCertificateButtonApplicable(false);
   }
 }

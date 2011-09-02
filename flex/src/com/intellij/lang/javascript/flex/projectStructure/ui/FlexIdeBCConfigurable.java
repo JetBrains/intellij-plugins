@@ -55,7 +55,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
   private final DependenciesConfigurable myDependenciesConfigurable;
   private final CompilerOptionsConfigurable myCompilerOptionsConfigurable;
-  private final AirDescriptorConfigurable myAirDescriptorConfigurable;
   private final AirDesktopPackagingConfigurable myAirDesktopPackagingConfigurable;
   private final AndroidPackagingConfigurable myAndroidPackagingConfigurable;
   private final IOSPackagingConfigurable myIOSPackagingConfigurable;
@@ -73,9 +72,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
     myDependenciesConfigurable = new DependenciesConfigurable(configuration, module.getProject(), sdksModel);
     myCompilerOptionsConfigurable = new CompilerOptionsConfigurable(module, configuration.COMPILER_OPTIONS);
-    myAirDescriptorConfigurable = new AirDescriptorConfigurable(configuration.AIR_DESCRIPTOR_OPTIONS);
-    myAirDesktopPackagingConfigurable =
-      new AirDesktopPackagingConfigurable(module.getProject(), configuration.AIR_DESKTOP_PACKAGING_OPTIONS);
+    myAirDesktopPackagingConfigurable = new AirDesktopPackagingConfigurable(module, configuration.AIR_DESKTOP_PACKAGING_OPTIONS);
     myAndroidPackagingConfigurable = new AndroidPackagingConfigurable(module.getProject(), configuration.ANDROID_PACKAGING_OPTIONS);
     myIOSPackagingConfigurable = new IOSPackagingConfigurable(module.getProject(), configuration.IOS_PACKAGING_OPTIONS);
 
@@ -243,7 +240,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
     if (myDependenciesConfigurable.isModified()) return true;
     if (myCompilerOptionsConfigurable.isModified()) return true;
-    if (myAirDescriptorConfigurable.isModified()) return true;
     if (myAirDesktopPackagingConfigurable.isModified()) return true;
     if (myAndroidPackagingConfigurable.isModified()) return true;
     if (myIOSPackagingConfigurable.isModified()) return true;
@@ -256,7 +252,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
     myDependenciesConfigurable.apply();
     myCompilerOptionsConfigurable.apply();
-    myAirDescriptorConfigurable.apply();
     myAirDesktopPackagingConfigurable.apply();
     myAndroidPackagingConfigurable.apply();
     myIOSPackagingConfigurable.apply();
@@ -267,7 +262,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
     myDependenciesConfigurable.applyTo(configuration.DEPENDENCIES);
     myCompilerOptionsConfigurable.applyTo(configuration.COMPILER_OPTIONS);
-    myAirDescriptorConfigurable.applyTo(configuration.AIR_DESCRIPTOR_OPTIONS);
     myAirDesktopPackagingConfigurable.applyTo(configuration.AIR_DESKTOP_PACKAGING_OPTIONS);
     myAndroidPackagingConfigurable.applyTo(configuration.ANDROID_PACKAGING_OPTIONS);
     myIOSPackagingConfigurable.applyTo(configuration.IOS_PACKAGING_OPTIONS);
@@ -306,7 +300,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
     myDependenciesConfigurable.reset();
     myCompilerOptionsConfigurable.reset();
-    myAirDescriptorConfigurable.reset();
     myAirDesktopPackagingConfigurable.reset();
     myAndroidPackagingConfigurable.reset();
     myIOSPackagingConfigurable.reset();
@@ -316,7 +309,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     if (FlexIdeUtils.isFlatUi()) {
       myDependenciesConfigurable.disposeUIResources();
       myCompilerOptionsConfigurable.disposeUIResources();
-      myAirDescriptorConfigurable.disposeUIResources();
       myAirDesktopPackagingConfigurable.disposeUIResources();
       myAndroidPackagingConfigurable.disposeUIResources();
       myIOSPackagingConfigurable.disposeUIResources();
@@ -329,10 +321,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
   public CompilerOptionsConfigurable getCompilerOptionsConfigurable() {
     return myCompilerOptionsConfigurable;
-  }
-
-  public AirDescriptorConfigurable getAirDescriptorConfigurable() {
-    return myAirDescriptorConfigurable;
   }
 
   public AirDesktopPackagingConfigurable getAirDesktopPackagingConfigurable() {
@@ -368,11 +356,9 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
       case Web:
         break;
       case Desktop:
-        children.add(getAirDescriptorConfigurable());
         children.add(getAirDesktopPackagingConfigurable());
         break;
       case Mobile:
-        children.add(getAirDescriptorConfigurable());
         children.add(getAndroidPackagingConfigurable());
         children.add(getIOSPackagingConfigurable());
         break;
