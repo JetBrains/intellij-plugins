@@ -109,7 +109,8 @@ public class StyleTest extends BaseTestCase {
   }
   
   public function ComponentWithCustomSkin():void {
-    assertThat(app.skin, [{fill: {color: 0x3366ff}}, {id: "contentGroup", left: -181}]);
+    //assertThat(app.skin, [{fill: {color: 0x3366ff}}, {id: "contentGroup", left: -181}]);
+    assertThat(app, [{skin: {minWidth: 21}}]);
   }
   
   public function ComponentWithCustomSkinInPackage():void {

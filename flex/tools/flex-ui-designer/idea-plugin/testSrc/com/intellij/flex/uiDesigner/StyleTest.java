@@ -59,7 +59,7 @@ public class StyleTest extends MxmlTestBase {
 
   @Flex(rawProjectRoot=true)
   public void testComponentWithCustomSkin() throws Exception {
-    testFiles(new String[]{"ComponentWithCustomSkin.mxml", "ComponentWithCustomSkinInPackage.mxml", "ComponentWithCustomSkinAsBinding.mxml"}, "CustomSkin.mxml", "testPackage/CustomSkinInPackage.mxml");
+    testFiles(new String[]{"ComponentWithCustomSkin.mxml", "ComponentWithCustomSkinInPackage.mxml", "ComponentWithCustomSkinAsBinding.mxml"}, "CustomSkin.mxml", "AuxMyButtonSkin.mxml", "testPackage/CustomSkinInPackage.mxml");
   }
   
   @Flex(requireLocalStyleHolder=true)
