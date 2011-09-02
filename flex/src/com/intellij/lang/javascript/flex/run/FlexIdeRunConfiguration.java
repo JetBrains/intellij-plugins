@@ -112,7 +112,7 @@ public class FlexIdeRunConfiguration extends RunConfigurationBase implements Run
 
       final GeneralCommandLine commandLine = new GeneralCommandLine();
 
-      final SdkEntry sdkEntry = config.DEPENDENCIES.getSdk();
+      final SdkEntry sdkEntry = config.DEPENDENCIES.getSdkEntry();
       if (sdkEntry == null) {
         throw new CantRunException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", config.NAME, module.getName()));
       }

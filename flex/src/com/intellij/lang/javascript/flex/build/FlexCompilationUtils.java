@@ -4,6 +4,8 @@ import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airdescriptor.AirDescriptorParameters;
 import com.intellij.lang.javascript.flex.actions.airdescriptor.CreateAirDescriptorAction;
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdkManager;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.SdkEntry;
@@ -327,9 +329,11 @@ public class FlexCompilationUtils {
       public void run() {
         try {
           final String descriptorFileName = BCUtils.getGeneratedAirDescriptorName(config);
-          final SdkEntry sdkEntry = config.DEPENDENCIES.getSdk();
+          final SdkEntry sdkEntry = config.DEPENDENCIES.getSdkEntry();
           assert sdkEntry != null;
-          final String airVersion = FlexSdkUtils.getAirVersion(sdkEntry.getFlexVersion());
+          final FlexSdk sdk = FlexSdkManager.getInstance().findSdk(sdkEntry.getHomePath());
+          assert sdk != null;
+          final String airVersion = FlexSdkUtils.getAirVersion(sdk.getFlexVersion());
           final String fileName = FileUtil.getNameWithoutExtension(config.OUTPUT_FILE_NAME);
 
           CreateAirDescriptorAction.createAirDescriptor(
