@@ -176,7 +176,7 @@ public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDe
     }
   }
 
-  private static final FileChooserDescriptor JARS_ZIPS_FOLDERS = new FileChooserDescriptor(true, true, true, true, false, true) {
+  private static final FileChooserDescriptor JARS_ZIPS_FOLDERS = new FileChooserDescriptor(true, true, true, false, false, true) {
 
     @Override
     public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
