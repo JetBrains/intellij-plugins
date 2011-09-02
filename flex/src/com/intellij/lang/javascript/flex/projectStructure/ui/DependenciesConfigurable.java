@@ -602,7 +602,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   private void editLibrary(ModuleLibraryEntry entry) {
-    ModuleLibraryEditor editor = new ModuleLibraryEditor(entry);
+    FlexLibraryEditor editor = new FlexLibraryEditor(entry);
     try {
       LibraryCompositionSettings settings = new LibraryCompositionSettings(new CustomLibraryDescriptionBase("") {
         @NotNull
@@ -975,7 +975,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     ComponentSet componentSet = (ComponentSet)myComponentSetCombo.getSelectedItem();
     String targetPlayer = (String)myTargetPlayerCombo.getSelectedItem();
 
-    for (String url : sdk.getAllClassRoots()) {
+    for (String url : sdk.getRoots(OrderRootType.CLASSES)) {
       url = VirtualFileManager.extractPath(StringUtil.trimEnd(url, JarFileSystem.JAR_SEPARATOR));
       LinkageType linkageType = BCUtils.getSdkEntryLinkageType(url, myNature, targetPlayer, componentSet);
       if (linkageType == null) {

@@ -1,18 +1,18 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
-import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.projectStructure.options.ModuleLibraryEntry;
 import com.intellij.lang.javascript.flex.projectStructure.options.ProjectRootContainerModificator;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.projectRoots.ex.ProjectRoot;
 import com.intellij.openapi.projectRoots.impl.ProjectRootContainerImpl;
+import com.intellij.openapi.projectRoots.impl.SimpleProjectRoot;
+import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import org.jdom.Element;
@@ -30,6 +30,7 @@ public class FlexSdk {
 
   public static final String SDK_ELEM = "sdk";
   private static final String HOME_ATTR = "home";
+  public static final OrderRootType[] EDITABLE_ROOT_TYPES = new OrderRootType[]{OrderRootType.SOURCES, JavadocOrderRootType.getInstance()};
 
   @NotNull
   private final String myHomePath;
@@ -70,9 +71,9 @@ public class FlexSdk {
     return myHomePath;
   }
 
-  public String[] getAllClassRoots() {
+  public String[] getRoots(OrderRootType rootType) {
     Collection<String> urls = new ArrayList<String>();
-    for (ProjectRoot root : myRoots.getRoots(OrderRootType.CLASSES)) {
+    for (ProjectRoot root : myRoots.getRoots(rootType)) {
       urls.addAll(Arrays.asList(root.getUrls()));
     }
     return ArrayUtil.toStringArray(urls);
@@ -94,5 +95,20 @@ public class FlexSdk {
   public boolean isValid() {
     VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(myHomePath);
     return vFile != null && FlexSdkUtils.isValidSdkRoot(FlexIdeUtils.getSdkType(), vFile);
+  }
+
+  public void setRoots(OrderRootType rootType, String[] urls) {
+    myRoots.startChange();
+    myRoots.removeAllRoots(rootType);
+    for (String url : urls) {
+      myRoots.addRoot(new SimpleProjectRoot(url), rootType);
+    }
+    myRoots.finishChange();
+  }
+
+  public boolean equalsTo(FlexSdk other) {
+    if (!myHomePath.equals(other.myHomePath)) return false;
+    if (!ModuleLibraryEntry.isEqual(myRoots, other.myRoots)) return false;
+    return true;
   }
 }

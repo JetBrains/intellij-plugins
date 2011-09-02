@@ -143,8 +143,8 @@ public class ModuleLibraryEntry extends DependencyEntry implements JDOMExternali
     for (OrderRootType rootType : OrderRootType.getAllTypes()) {
       ProjectRoot[] roots = source.getRoots(rootType);
       for (ProjectRoot root : roots) {
-        for (VirtualFile file : root.getVirtualFiles()) {
-          target.addRoot(file, rootType);
+        for (String url : root.getUrls()) {
+          target.addRoot(new SimpleProjectRoot(url), rootType);
         }
       }
     }
@@ -159,7 +159,7 @@ public class ModuleLibraryEntry extends DependencyEntry implements JDOMExternali
     return true;
   }
 
-  static boolean isEqual(ProjectRootContainer c1, ProjectRootContainer c2) {
+  public static boolean isEqual(ProjectRootContainer c1, ProjectRootContainer c2) {
     for (OrderRootType rootType : OrderRootType.getAllTypes()) {
       ProjectRoot[] myRoots = c1.getRoots(rootType);
       ProjectRoot[] thatRoots = c2.getRoots(rootType);

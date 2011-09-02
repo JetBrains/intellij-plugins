@@ -104,7 +104,7 @@ public class FlexIdeBCConfigurator {
   }
 
   public boolean isModified() {
-    if (myModified) return true;
+    if (myModified || mySdksModel.isModified(FlexSdkManager.getInstance())) return true;
 
     for (final List<NamedConfigurable<FlexIdeBuildConfiguration>> configurables : myModuleToConfigurablesMap.values()) {
       for (final NamedConfigurable configurable : configurables) {

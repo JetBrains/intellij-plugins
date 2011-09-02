@@ -1,15 +1,22 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.facet.impl.ui.libraries.EditLibraryDialog;
+import com.intellij.facet.impl.ui.libraries.LibraryCompositionSettings;
+import com.intellij.framework.library.FrameworkLibraryVersion;
 import com.intellij.ide.ui.ListCellRendererWrapper;
+import com.intellij.ide.util.frameworkSupport.CustomLibraryDescriptionBase;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
+import com.intellij.openapi.roots.libraries.LibraryKind;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.util.Consumer;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -19,6 +26,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * @author ksafonov
@@ -134,6 +143,25 @@ public class FlexSdkPanel implements Disposable {
   }
 
   private void editSdk() {
+    FlexLibraryEditor editor = new FlexLibraryEditor(getCurrentSdk());
+    try {
+      LibraryCompositionSettings settings = new LibraryCompositionSettings(new CustomLibraryDescriptionBase("") {
+        @NotNull
+        @Override
+        public Set<? extends LibraryKind<?>> getSuitableLibraryKinds() {
+          return Collections.emptySet();
+        }
+      }, "", null, Collections.<FrameworkLibraryVersion>emptyList());
+
+      EditFlexSdkDialog d = new EditFlexSdkDialog(myContentPane, settings, editor);
+      d.show();
+      if (d.isOK()) {
+        editor.applyTo(getCurrentSdk());
+      }
+    }
+    finally {
+      Disposer.dispose(editor);
+    }
   }
 
   public void addListener(ChangeListener listener, Disposable parentDisposable) {

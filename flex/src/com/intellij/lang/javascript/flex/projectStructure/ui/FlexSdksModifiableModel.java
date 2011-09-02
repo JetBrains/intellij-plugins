@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdkManager;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.Function;
@@ -104,13 +105,33 @@ public class FlexSdksModifiableModel {
   }
 
   public void applyTo(FlexSdkManager target) {
-    List<FlexSdk> result = new ArrayList<FlexSdk>();
-    for (FlexSdk sdk : mySdks) {
-      if (!myUsedSkds.containsValue(sdk.getHomePath())) {
-        continue;
+    target.setSdks(getUsedSdks());
+  }
+
+  private List<FlexSdk> getUsedSdks() {
+    return ContainerUtil.filter(mySdks, new Condition<FlexSdk>() {
+      @Override
+      public boolean value(FlexSdk flexSdk) {
+        return myUsedSkds.containsValue(flexSdk.getHomePath());
       }
-      result.add(sdk.getCopy());
+    });
+  }
+
+  public boolean isModified(FlexSdkManager instance) {
+    List<FlexSdk> currentSdks = getUsedSdks();
+    FlexSdk[] originalSdks = instance.getSdks();
+    if (currentSdks.size() != originalSdks.length) {
+      return true;
     }
-    target.setSdks(result);
+    Map<String, FlexSdk> currentMap = new HashMap<String, FlexSdk>(currentSdks.size());
+    for (FlexSdk currentSdk : currentSdks) {
+      currentMap.put(currentSdk.getHomePath(), currentSdk);
+    }
+    for (FlexSdk originalSdk : originalSdks) {
+      if (!originalSdk.equalsTo(currentMap.get(originalSdk.getHomePath()))) {
+        return true;
+      }
+    }
+    return false;
   }
 }
