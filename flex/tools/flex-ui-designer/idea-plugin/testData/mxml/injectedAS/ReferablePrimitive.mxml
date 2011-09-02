@@ -1,0 +1,16 @@
+<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+  <fx:Declarations>
+    <fx:String id="myText">gggzfdbxfnbxzgzng</fx:String>
+  </fx:Declarations>
+  <Scroller>
+    <DataGroup itemRenderer="spark.skins.spark.DefaultItemRenderer" height="100" typicalItem="{myText}">
+      <layout>
+        <VerticalLayout useVirtualLayout="true"/>
+      </layout>
+      <ArrayList>
+        <fx:String>some string</fx:String>
+        <fx:String>long long long long long long long string</fx:String>
+      </ArrayList>
+    </DataGroup>
+  </Scroller>
+</Group>

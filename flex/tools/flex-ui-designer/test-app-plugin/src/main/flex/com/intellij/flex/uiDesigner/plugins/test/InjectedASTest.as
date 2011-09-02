@@ -32,6 +32,7 @@ public class InjectedASTest extends BaseTestCase {
       Constructor();
       Model();
       BindingToDeferredInstanceFromBytes();
+      ReferablePrimitive();
     }
   }
   
@@ -117,6 +118,10 @@ public class InjectedASTest extends BaseTestCase {
 
   public function BindingToDeferredInstanceFromBytes():void {
     validateUI();
+  }
+  
+  public function ReferablePrimitive():void {
+    assertThat(app, [{viewport: {typicalItem: "gggzfdbxfnbxzgzng"}}]);
   }
 }
 }
