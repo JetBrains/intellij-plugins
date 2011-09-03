@@ -38,6 +38,9 @@ public class FlexSdk {
   @Nullable
   private String myFlexVersion;
 
+  @Nullable
+  private Boolean myValidFlag;
+
   private final ProjectRootContainerImpl myRoots = new ProjectRootContainerImpl(true);
 
   public FlexSdk(@NotNull String homePath) {
@@ -93,8 +96,11 @@ public class FlexSdk {
   }
 
   public boolean isValid() {
-    VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(myHomePath);
-    return vFile != null && FlexSdkUtils.isValidSdkRoot(FlexIdeUtils.getSdkType(), vFile);
+    if (myValidFlag == null) {
+      VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(myHomePath);
+      myValidFlag = Boolean.valueOf(vFile != null && FlexSdkUtils.isValidSdkRoot(FlexIdeUtils.getSdkType(), vFile));
+    }
+    return myValidFlag.booleanValue();
   }
 
   public void setRoots(OrderRootType rootType, String[] urls) {
