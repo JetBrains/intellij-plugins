@@ -4,7 +4,6 @@ import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.roots.libraries.DummyLibraryProperties;
 import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.libraries.LibraryType;
 import com.intellij.openapi.roots.libraries.ui.LibraryEditorComponent;
@@ -19,8 +18,8 @@ import javax.swing.*;
 /**
  * @author nik
  */
-public class FlexLibraryType extends LibraryType<DummyLibraryProperties> {
-  public static final LibraryKind<DummyLibraryProperties> FLEX_LIBRARY = LibraryKind.create("flex");
+public class FlexLibraryType extends LibraryType<FlexLibraryProperties> {
+  public static final LibraryKind<FlexLibraryProperties> FLEX_LIBRARY = LibraryKind.create("flex");
 
   public FlexLibraryType() {
     super(FLEX_LIBRARY);
@@ -34,8 +33,8 @@ public class FlexLibraryType extends LibraryType<DummyLibraryProperties> {
 
   @NotNull
   @Override
-  public DummyLibraryProperties createDefaultProperties() {
-    return DummyLibraryProperties.INSTANCE;
+  public FlexLibraryProperties createDefaultProperties() {
+    return new FlexLibraryProperties();
   }
 
   @Override
@@ -43,7 +42,7 @@ public class FlexLibraryType extends LibraryType<DummyLibraryProperties> {
     return ModuleType.get(module).equals(FlexModuleType.getInstance()) || !facetsProvider.getFacetsByType(module, FlexFacet.ID).isEmpty();
   }
 
-  public LibraryPropertiesEditor createPropertiesEditor(@NotNull final LibraryEditorComponent<DummyLibraryProperties> properties) {
+  public LibraryPropertiesEditor createPropertiesEditor(@NotNull final LibraryEditorComponent<FlexLibraryProperties> properties) {
     return null;
   }
 

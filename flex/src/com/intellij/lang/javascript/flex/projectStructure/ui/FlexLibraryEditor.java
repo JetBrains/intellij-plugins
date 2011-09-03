@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.options.ModuleLibraryEntry;
@@ -167,7 +168,7 @@ public class FlexLibraryEditor implements LibraryEditor, Disposable {
 
   @Override
   public LibraryType<?> getType() {
-    return new FilteringLibraryType<DummyLibraryProperties>(LibraryType.EP_NAME.findExtension(FlexLibraryType.class), myEditableRootTypes);
+    return new FilteringLibraryType<FlexLibraryProperties>(LibraryType.EP_NAME.findExtension(FlexLibraryType.class), myEditableRootTypes);
   }
 
   @Override
