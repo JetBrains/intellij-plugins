@@ -23,17 +23,14 @@ import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
-import com.intellij.openapi.roots.impl.libraries.LibraryTableImplUtil;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablePresentation;
 import com.intellij.openapi.roots.libraries.ui.LibraryRootsComponentDescriptor;
 import com.intellij.openapi.roots.libraries.ui.RootDetector;
 import com.intellij.openapi.roots.ui.configuration.LibraryTableModifiableModelProvider;
-import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.classpath.CreateModuleLibraryChooser;
-import com.intellij.openapi.roots.ui.configuration.libraries.LibraryEditingUtil;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.EditExistingLibraryDialog;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
@@ -574,7 +571,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
                 ProjectStructureConfigurable.getInstance(myProject).navigateTo(place, true);
               }
             }
-            else if (item instanceof ModuleLibraryItem) {
+            else if (item instanceof ModuleLibraryItem && canEditLibrary((ModuleLibraryItem)item)) {
               editLibrary(((ModuleLibraryItem)item).orderEntry);
             }
           }
@@ -645,12 +642,16 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   private void updateEditButton() {
     if (myTable.getSelectedRowCount() == 1) {
       MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
-      if (item instanceof ModuleLibraryItem && ((ModuleLibraryItem)item).orderEntry != null) {
+      if (item instanceof ModuleLibraryItem && canEditLibrary((ModuleLibraryItem)item)) {
         myEditAction.setEnabled(true);
         return;
       }
     }
     myEditAction.setEnabled(false);
+  }
+
+  private static boolean canEditLibrary(ModuleLibraryItem item) {
+    return item.orderEntry != null;
   }
 
   private void updateRemoveButton() {
