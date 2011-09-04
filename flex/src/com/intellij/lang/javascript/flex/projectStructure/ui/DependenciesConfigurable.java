@@ -672,7 +672,23 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       return;
     }
 
-    LibraryTablePresentation presentation = LibraryEditingUtil.getLibraryTablePresentation(myProject, LibraryTableImplUtil.MODULE_LEVEL);
+    LibraryTablePresentation presentation = new LibraryTablePresentation() {
+      @Override
+      public String getDisplayName(boolean plural) {
+        return plural ? "Flex Libraries" : "Flex Library";
+      }
+
+      @Override
+      public String getDescription() {
+        return ProjectBundle.message("libraries.node.text.module");
+      }
+
+      @Override
+      public String getLibraryTableEditorTitle() {
+        return "Configure Flex Library";
+      }
+    };
+
     LibraryTableModifiableModelProvider provider = new LibraryTableModifiableModelProvider() {
       public LibraryTable.ModifiableModel getModifiableModel() {
         return myModifiableRootModel.getModuleLibraryTable().getModifiableModel();
