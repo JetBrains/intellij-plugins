@@ -23,9 +23,11 @@ import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
+import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablePresentation;
+import com.intellij.openapi.roots.libraries.LibraryType;
 import com.intellij.openapi.roots.libraries.ui.LibraryRootsComponentDescriptor;
 import com.intellij.openapi.roots.libraries.ui.RootDetector;
 import com.intellij.openapi.roots.ui.configuration.LibraryTableModifiableModelProvider;
@@ -58,6 +60,7 @@ import com.intellij.util.IconUtil;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.FilteringIterator;
 import com.intellij.util.containers.HashMap;
 import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.ColumnInfo;
@@ -1176,7 +1179,30 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     @Override
     public void run() {
-      LibraryTable.ModifiableModel librariesModel = myModifiableRootModel.getModuleLibraryTable().getModifiableModel();
+      final Collection<Library> usedLibraries = new ArrayList<Library>();
+      List<MyTableItem> items = myTable.getItems();
+      for (MyTableItem item : items) {
+        if (item instanceof ModuleLibraryItem) {
+          LibraryOrderEntry orderEntry = ((ModuleLibraryItem)item).orderEntry;
+          if (orderEntry != null) {
+            Library library = orderEntry.getLibrary();
+            if (library != null) {
+              usedLibraries.add(orderEntry.getLibrary());
+            }
+          }
+        }
+      }
+      Condition<Library> filter = new Condition<Library>() {
+        @Override
+        public boolean value(Library library) {
+          return usedLibraries.contains(library);
+        }
+      };
+
+      LibraryTableBase.ModifiableModelEx modifiableModel =
+        (LibraryTableBase.ModifiableModelEx)myModifiableRootModel.getModuleLibraryTable().getModifiableModel();
+      LibraryTable.ModifiableModel librariesModelWrapper = new LibraryTableModifiableModelWrapper(modifiableModel, filter);
+
       Module module = myModifiableRootModel.getModule();
       List<? extends FlexLibraryType> libraryTypes = Collections.singletonList(new FlexLibraryType() {
         @Override
@@ -1196,7 +1222,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
           return new FlexLibraryProperties(UUID.randomUUID().toString());
         }
       });
-      CreateModuleLibraryChooser c = new CreateModuleLibraryChooser(libraryTypes, myMainPanel, module, librariesModel);
+      CreateModuleLibraryChooser c = new CreateModuleLibraryChooser(libraryTypes, myMainPanel, module, librariesModelWrapper);
       try {
         c.doChoose();
         if (!c.isOK()) {
@@ -1221,6 +1247,61 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       finally {
         Disposer.dispose(c);
       }
+    }
+  }
+
+  private static class LibraryTableModifiableModelWrapper implements LibraryTableBase.ModifiableModelEx {
+    private final LibraryTableBase.ModifiableModelEx myDelegate;
+    private final Condition<Library> myLibraryFilter;
+
+    private LibraryTableModifiableModelWrapper(LibraryTableBase.ModifiableModelEx delegate, Condition<Library> libraryFilter) {
+      myDelegate = delegate;
+      myLibraryFilter = libraryFilter;
+    }
+
+    @Override
+    public Library createLibrary(String name) {
+      return myDelegate.createLibrary(name);
+    }
+
+    @Override
+    public void removeLibrary(@NotNull Library library) {
+      myDelegate.removeLibrary(library);
+    }
+
+    @Override
+    public void commit() {
+      myDelegate.commit();
+    }
+
+    @Override
+    @NotNull
+    public Iterator<Library> getLibraryIterator() {
+      return new FilteringIterator<Library, Library>(myDelegate.getLibraryIterator(), myLibraryFilter);
+    }
+
+    @Override
+    @Nullable
+    public Library getLibraryByName(@NotNull String name) {
+      Library library = myDelegate.getLibraryByName(name);
+      return myLibraryFilter.value(library) ? library : null;
+    }
+
+    @Override
+    @NotNull
+    public Library[] getLibraries() {
+      List<Library> filtered = ContainerUtil.filter(myDelegate.getLibraries(), myLibraryFilter);
+      return filtered.toArray(new Library[filtered.size()]);
+    }
+
+    @Override
+    public boolean isChanged() {
+      return myDelegate.isChanged();
+    }
+
+    @Override
+    public Library createLibrary(String name, @Nullable LibraryType type) {
+      return myDelegate.createLibrary(name, type);
     }
   }
 }
