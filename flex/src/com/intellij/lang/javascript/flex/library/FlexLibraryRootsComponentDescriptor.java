@@ -5,6 +5,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileChooser.FileElement;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.projectRoots.ui.Util;
 import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
@@ -193,6 +194,14 @@ public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDe
       }
     }
   };
+
+  public static RootFilter SWC_LIBRARY_DETECTOR = new RootFilter(OrderRootType.CLASSES, false, "SWC library") {
+    @Override
+    public boolean isAccepted(@NotNull VirtualFile rootCandidate, @NotNull ProgressIndicator progressIndicator) {
+      return "swc".equalsIgnoreCase(rootCandidate.getExtension());
+    }
+  };
+
 }
 
 

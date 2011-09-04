@@ -7,7 +7,9 @@ import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildCo
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
+import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -74,7 +76,8 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
     final BuildConfigurationNature nature = configuration.getNature();
 
-    myDependenciesConfigurable = new DependenciesConfigurable(configuration, module.getProject(), sdksModel);
+    ModifiableRootModel modifiableRootModel = getModulesConfigurator().getOrCreateModuleEditor(myModule).getModifiableRootModelProxy();
+    myDependenciesConfigurable = new DependenciesConfigurable(configuration, module.getProject(), sdksModel, modifiableRootModel);
     myCompilerOptionsConfigurable = new CompilerOptionsConfigurable(module, configuration.COMPILER_OPTIONS);
     myAirDesktopPackagingConfigurable = nature.isDesktopPlatform() && nature.isApp()
                                         ? new AirDesktopPackagingConfigurable(module, configuration.AIR_DESKTOP_PACKAGING_OPTIONS)
@@ -135,10 +138,13 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   }
 
   public String getModuleName() {
-    final ModuleEditor moduleEditor =
-      ModuleStructureConfigurable.getInstance(myModule.getProject()).getContext().getModulesConfigurator().getModuleEditor(myModule);
+    final ModuleEditor moduleEditor = getModulesConfigurator().getModuleEditor(myModule);
     assert moduleEditor != null : myModule;
     return moduleEditor.getName();
+  }
+
+  private ModulesConfigurator getModulesConfigurator() {
+    return ModuleStructureConfigurable.getInstance(myModule.getProject()).getContext().getModulesConfigurator();
   }
 
   public Icon getIcon() {

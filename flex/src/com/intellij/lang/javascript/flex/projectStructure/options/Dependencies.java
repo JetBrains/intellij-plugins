@@ -211,9 +211,8 @@ public class Dependencies implements Cloneable {
 
   @Nullable
   private static ModuleLibraryEntry deserializeModuleLibraryEntry(EntryInfo info) {
-    ModuleLibraryEntry libraryEntry = new ModuleLibraryEntry();
     try {
-      libraryEntry.readExternal(info.LIBRARY_ELEMENT);
+      ModuleLibraryEntry libraryEntry = new ModuleLibraryEntry(info.LIBRARY_ELEMENT);
       deserializeDependencyType(info, libraryEntry);
       return libraryEntry;
     }

@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
-import com.intellij.facet.impl.ui.libraries.EditLibraryDialog;
 import com.intellij.facet.impl.ui.libraries.LibraryCompositionSettings;
 import com.intellij.framework.library.FrameworkLibraryVersion;
 import com.intellij.ide.ui.ListCellRendererWrapper;
@@ -143,25 +142,25 @@ public class FlexSdkPanel implements Disposable {
   }
 
   private void editSdk() {
-    FlexLibraryEditor editor = new FlexLibraryEditor(getCurrentSdk());
-    try {
-      LibraryCompositionSettings settings = new LibraryCompositionSettings(new CustomLibraryDescriptionBase("") {
-        @NotNull
-        @Override
-        public Set<? extends LibraryKind<?>> getSuitableLibraryKinds() {
-          return Collections.emptySet();
-        }
-      }, "", null, Collections.<FrameworkLibraryVersion>emptyList());
-
-      EditFlexSdkDialog d = new EditFlexSdkDialog(myContentPane, settings, editor);
-      d.show();
-      if (d.isOK()) {
-        editor.applyTo(getCurrentSdk());
-      }
-    }
-    finally {
-      Disposer.dispose(editor);
-    }
+    //FlexLibraryEditor editor = new FlexLibraryEditor(getCurrentSdk());
+    //try {
+    //  LibraryCompositionSettings settings = new LibraryCompositionSettings(new CustomLibraryDescriptionBase("") {
+    //    @NotNull
+    //    @Override
+    //    public Set<? extends LibraryKind<?>> getSuitableLibraryKinds() {
+    //      return Collections.emptySet();
+    //    }
+    //  }, "", null, Collections.<FrameworkLibraryVersion>emptyList());
+    //
+    //  EditFlexSdkDialog d = new EditFlexSdkDialog(myContentPane, settings, editor);
+    //  d.show();
+    //  if (d.isOK()) {
+    //    editor.applyTo(getCurrentSdk());
+    //  }
+    //}
+    //finally {
+    //  Disposer.dispose(editor);
+    //}
   }
 
   public void addListener(ChangeListener listener, Disposable parentDisposable) {

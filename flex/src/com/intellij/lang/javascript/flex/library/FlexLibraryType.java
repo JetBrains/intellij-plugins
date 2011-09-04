@@ -54,4 +54,8 @@ public class FlexLibraryType extends LibraryType<FlexLibraryProperties> {
   public LibraryRootsComponentDescriptor createLibraryRootsComponentDescriptor() {
     return new FlexLibraryRootsComponentDescriptor();
   }
+
+  public static FlexLibraryType getInstance() {
+    return LibraryType.EP_NAME.findExtension(FlexLibraryType.class);
+  }
 }

@@ -13,8 +13,5 @@ public abstract class DependencyEntry {
 
   public abstract DependencyEntry getCopy();
 
-  public void applyTo(DependencyEntry other) {
-    myDependencyType.applyTo(other.myDependencyType);
-  }
 }
 
