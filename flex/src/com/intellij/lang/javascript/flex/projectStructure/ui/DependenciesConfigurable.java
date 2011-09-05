@@ -19,9 +19,7 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectBundle;
-import com.intellij.openapi.roots.LibraryOrderEntry;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.Library;
@@ -56,9 +54,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.*;
 import com.intellij.ui.navigation.Place;
-import com.intellij.util.IconUtil;
-import com.intellij.util.PlatformIcons;
-import com.intellij.util.Processor;
+import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FilteringIterator;
 import com.intellij.util.containers.HashMap;
@@ -128,7 +124,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     public abstract boolean isValid();
 
-    public abstract void onRemove(ModifiableRootModel modifiableModel);
+    public abstract void beforeRemove(ModifiableRootModel modifiableModel, List<MyTableItem> items);
   }
 
   private static class BCItem extends MyTableItem {
@@ -194,7 +190,32 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
 
     @Override
-    public void onRemove(ModifiableRootModel modifiableModel) {
+    public void beforeRemove(ModifiableRootModel modifiableModel, List<MyTableItem> items) {
+      if (configurable == null) {
+        return;
+      }
+
+      for (MyTableItem item : items) {
+        if (item == this || !(item instanceof BCItem)) {
+          continue;
+        }
+        BCItem bcItem = (BCItem)item;
+        if (bcItem.configurable == null) {
+          continue;
+        }
+        if (bcItem.configurable.getModule() == configurable.getModule()) {
+          // there's other dependency on this module though different BC
+          return;
+        }
+      }
+
+      OrderEntry moduleEntry = ContainerUtil.find(modifiableModel.getOrderEntries(), new Condition<OrderEntry>() {
+        @Override
+        public boolean value(OrderEntry orderEntry) {
+          return orderEntry instanceof ModuleOrderEntry && ((ModuleOrderEntry)orderEntry).getModule() == configurable.getModule();
+        }
+      });
+      modifiableModel.removeOrderEntry(moduleEntry);
     }
   }
 
@@ -252,7 +273,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
 
     @Override
-    public void onRemove(ModifiableRootModel modifiableModel) {
+    public void beforeRemove(ModifiableRootModel modifiableModel, List<MyTableItem> items) {
       if (orderEntry != null) {
         modifiableModel.removeOrderEntry(orderEntry);
       }
@@ -302,7 +323,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
 
     @Override
-    public void onRemove(ModifiableRootModel modifiableModel) {
+    public void beforeRemove(ModifiableRootModel modifiableModel, List<MyTableItem> items) {
     }
   }
 
@@ -351,7 +372,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
 
     @Override
-    public void onRemove(ModifiableRootModel modifiableModel) {
+    public void beforeRemove(ModifiableRootModel modifiableModel, List<MyTableItem> items) {
       throw new UnsupportedOperationException();
     }
   }
@@ -750,7 +771,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     DefaultMutableTreeNode root = myTable.getRoot();
     for (int i = 0; i < selectedRows.length; i++) {
       int index = selectedRows[i] - i;
-      myTable.getItemAt(index).onRemove(myModifiableRootModel);
+      myTable.getItemAt(index).beforeRemove(myModifiableRootModel, myTable.getItems());
       root.remove(index);
     }
     myTable.refresh();
@@ -1160,6 +1181,18 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
 
       FlexIdeBCConfigurable[] configurables = d.getSelectedConfigurables();
+      Set<Module> newModulesToDependOn = ContainerUtil.map2Set(configurables, new Function<FlexIdeBCConfigurable, Module>() {
+        @Override
+        public Module fun(FlexIdeBCConfigurable flexIdeBCConfigurable) {
+          return flexIdeBCConfigurable.getModule();
+        }
+      });
+      newModulesToDependOn.removeAll(Arrays.asList(myModifiableRootModel.getModuleDependencies(true)));
+
+      for (Module module : newModulesToDependOn) {
+        myModifiableRootModel.addModuleOrderEntry(module);
+      }
+
       DefaultMutableTreeNode root = myTable.getRoot();
       for (FlexIdeBCConfigurable configurable : configurables) {
         root.add(new DefaultMutableTreeNode(new BCItem(configurable), false));
