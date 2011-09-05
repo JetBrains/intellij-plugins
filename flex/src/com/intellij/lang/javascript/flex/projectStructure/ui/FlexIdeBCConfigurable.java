@@ -189,12 +189,13 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myMainClassLabel.setVisible(showMainClass);
     myMainClassTextField.setVisible(showMainClass);
 
-    final boolean webPlatform = myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Web;
-    final boolean enabled = webPlatform && myUseHTMLWrapperCheckBox.isSelected();
-    myUseHTMLWrapperCheckBox.setVisible(webPlatform);
-    myWrapperFolderLabel.setVisible(webPlatform);
+    final boolean wrapperApplicable =
+      myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Web && myOutputTypeCombo.getSelectedItem() == OutputType.Application;
+    final boolean enabled = wrapperApplicable && myUseHTMLWrapperCheckBox.isSelected();
+    myUseHTMLWrapperCheckBox.setVisible(wrapperApplicable);
+    myWrapperFolderLabel.setVisible(wrapperApplicable);
     myWrapperFolderLabel.setEnabled(enabled);
-    myWrapperTemplateTextWithBrowse.setVisible(webPlatform);
+    myWrapperTemplateTextWithBrowse.setVisible(wrapperApplicable);
     myWrapperTemplateTextWithBrowse.setEnabled(enabled);
   }
 
