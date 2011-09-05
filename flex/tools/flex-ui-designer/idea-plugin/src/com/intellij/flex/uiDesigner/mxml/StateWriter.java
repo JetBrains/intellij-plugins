@@ -139,26 +139,23 @@ class StateWriter {
   public void includeInOrExcludeFrom(XmlAttributeValue xmlAttributeValue, Context parentContext, DynamicObjectContext context, boolean excludeFrom) {
     // currently, all references in includeIn/exludeFrom attribute value are StateReference, so, we skip instanceof StateReference
     final PsiReference[] references = xmlAttributeValue.getReferences();
+    assert context.includeInStates.isEmpty();
     if (excludeFrom) {
-      includeIn(parentContext, context, computeIncludedStates(references));
+      context.includeInStates.addAll(states);
+      for (PsiReference reference : references) {
+        context.includeInStates.removeAll(nameToState.get(reference.getCanonicalText()));
+      }
     }
     else {
       for (PsiReference reference : references) {
-        includeIn(parentContext, context, nameToState.get(reference.getCanonicalText()));
+        context.includeInStates.addAll(nameToState.get(reference.getCanonicalText()));
       }
     }
 
+    includeIn(parentContext, context, context.includeInStates);
+
     autoItemDestruction = false;
     pendingFirstSetProperty = null;
-  }
-
-  private List<State> computeIncludedStates(final PsiReference[] references) {
-    final ArrayList<State> includedStates = new ArrayList<State>(states);
-    for (PsiReference reference : references) {
-      includedStates.removeAll(nameToState.get(reference.getCanonicalText()));
-    }
-
-    return includedStates;
   }
 
   private void includeIn(Context parentContext, DynamicObjectContext context, List<State> includedStates) {
@@ -206,7 +203,7 @@ class StateWriter {
 
   public boolean checkStateSpecificPropertyValue(MxmlWriter mxmlWriter, PropertyProcessor propertyProcessor, XmlElement element,
                                                  XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor,
-                                                 @Nullable Context context, @Nullable Context parentContext) {
+                                                 @Nullable Context context) {
     PsiReference[] references = element.getReferences();
     if (references.length < 2) {
       return false;
@@ -224,6 +221,28 @@ class StateWriter {
 
     if (states == null) {
       return false;
+    }
+
+    final List<State> filteredStates;
+    if (context instanceof DynamicObjectContext) {
+      final ArrayList<State> includeInStates = ((DynamicObjectContext)context).includeInStates;
+      filteredStates = new ArrayList<State>(states.size());
+      for (State state : states) {
+        if (includeInStates.contains(state)) {
+          filteredStates.add(state);
+        }
+        else {
+          MxmlWriter.LOG.warn("Skip " + element.getText() + " from " + state.name + " " +
+                              "due to element parent object included only in " + includeInStates);
+        }
+      }
+
+      if (filteredStates.isEmpty()) {
+        return true;
+      }
+    }
+    else {
+      filteredStates = states;
     }
 
     ValueWriter valueWriter = null;
@@ -273,7 +292,7 @@ class StateWriter {
 
     writer.getBlockOut().endRange(override.dataRange);
 
-    for (State state : states) {
+    for (State state : filteredStates) {
       state.overrides.add(override);
     }
 
@@ -302,8 +321,8 @@ class StateWriter {
     }
   }
 
-  public void finalizeStateSpecificAttributes(@NotNull StaticObjectContext context, @Nullable Context parentContext,
-                                              InjectedASWriter injectedASWriter) {
+  public void finalizeStateSpecificAttributesForStaticContext(@NotNull StaticObjectContext context, @Nullable Context parentContext,
+                                                              InjectedASWriter injectedASWriter) {
     // 1
     if (!writer.isIdPreallocated()) {
       assert pendingFirstSetProperty == null;

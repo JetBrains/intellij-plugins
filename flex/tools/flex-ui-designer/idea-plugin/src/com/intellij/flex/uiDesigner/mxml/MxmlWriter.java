@@ -226,7 +226,7 @@ public class MxmlWriter {
         }
         else if (hasStates && stateWriter.checkStateSpecificPropertyValue(this, propertyProcessor, attribute,
                                                                           createValueProvider(attribute),
-                                                                          descriptor, context, parentContext)) {
+                                                                          descriptor, context)) {
           // skip
         }
         else {
@@ -241,7 +241,7 @@ public class MxmlWriter {
     if (hasStates) {
       if (context == null) {
         context = stateWriter.createContextForStaticBackSibling(allowIncludeInExludeFrom, referencePosition, parentContext);
-        stateWriter.finalizeStateSpecificAttributes((StaticObjectContext)context, parentContext, injectedASWriter);
+        stateWriter.finalizeStateSpecificAttributesForStaticContext((StaticObjectContext)context, parentContext, injectedASWriter);
       }
     }
     else {
@@ -352,7 +352,7 @@ public class MxmlWriter {
             }
           }
           else if (hasStates && stateWriter.checkStateSpecificPropertyValue(this, propertyProcessor, tag, createValueProvider(tag),
-                                                                            annotationBackedDescriptor, context, parentContext)) {
+                                                                            annotationBackedDescriptor, context)) {
             // skip
           }
           else {
