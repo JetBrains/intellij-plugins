@@ -86,7 +86,8 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
   private static class GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
     private static final Pattern MAVEN_ERROR_PATTERN = Pattern.compile("^\\[ERROR\\] (.*)$", Pattern.MULTILINE);
 
-    public static final String CONFIGURATOR_GOAL = "com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.4.2:generate";
+    public static final String CONFIGURATOR_VERSION = "1.4.3";
+    public static final String CONFIGURATOR_GOAL = "com.intellij.flex.maven:idea-flexmojos-maven-plugin:" + CONFIGURATOR_VERSION + ":generate";
 
     public GenerateFlexConfigTask(MavenProject mavenProject, MavenProjectsTree tree) {
       super(mavenProject, tree);
@@ -102,12 +103,10 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
       final String workingDirPath;
       if (rootProjects.size() > 1) {
         // todo
-        MavenLog.LOG.error("Why root projects list > 1");
-        return;
+        MavenLog.LOG.warn("Why root projects list > 1");
       }
-      else {
-        workingDirPath = rootProjects.get(0).getDirectory();
-      }
+
+      workingDirPath = rootProjects.get(0).getDirectory();
 
       final long start = System.currentTimeMillis();
       indicator.setText(FlexBundle.message("generating.flex.configs"));
@@ -202,7 +201,7 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
 
     private void copyConfuguratorToLocalRepository(MavenConsole console) {
       final File localRepo = new File(myMavenProject.getLocalRepository(), "com/intellij/flex/maven");
-      if (!new File(localRepo, "idea-configurator/1.4.2").exists()) {
+      if (!new File(localRepo, "idea-configurator/" + CONFIGURATOR_VERSION).exists()) {
         ZipFile zipFile = null;
         try {
           //noinspection IOResourceOpenedButNotSafelyClosed
