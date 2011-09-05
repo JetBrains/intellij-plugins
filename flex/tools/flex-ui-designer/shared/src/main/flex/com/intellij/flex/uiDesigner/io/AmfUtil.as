@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner.io {
+import flash.utils.ByteArray;
 import flash.utils.IDataInput;
 
 public final class AmfUtil {
@@ -28,6 +29,12 @@ public final class AmfUtil {
   public static function readNullableString(input:IDataInput):String {
     const l:int = readUInt29(input);
     return l == 0 ? null : input.readUTFBytes(l);
+  }
+
+  public static function readByteArray(input:IDataInput):ByteArray {
+    var r:ByteArray = new ByteArray();
+    input.readBytes(r, 0, readUInt29(input));
+    return r;
   }
 }
 }

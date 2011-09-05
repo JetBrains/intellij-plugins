@@ -24,7 +24,7 @@ public class DocumentFactoryManager {
 
   public function register(factory:DocumentFactory):void {
     var id:int = factory.id;
-    assert(id == factories.length || (id < factories.length && factories[id] == null));
+    assert(id >= factories.length || (id < factories.length && factories[id] == null));
     
     factories[id] = factory;
   }

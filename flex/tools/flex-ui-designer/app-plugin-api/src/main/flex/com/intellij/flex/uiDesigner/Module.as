@@ -4,7 +4,8 @@ import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 
 public final class Module {
-  public function Module(id:int, project:Project, librarySets:Vector.<LibrarySet>, localStyleHolders:Vector.<LocalStyleHolder>) {
+  public function Module(id:int, project:Project, isApp:Boolean, librarySets:Vector.<LibrarySet>, localStyleHolders:Vector.<LocalStyleHolder>) {
+    _isApp = isApp;
     _localStyleHolders = localStyleHolders;
     _context = new ModuleContextImpl(librarySets, project);
 
@@ -18,6 +19,11 @@ public final class Module {
 
   public function get project():Project {
     return _context.project;
+  }
+
+  private var _isApp:Boolean;
+  public function get isApp():Boolean {
+    return _isApp;
   }
   
   private var _context:ModuleContextImpl;

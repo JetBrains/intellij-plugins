@@ -146,7 +146,7 @@ class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor 
         final String name = p.getName();
         if (name == null || name.equals("source")) {
           try {
-            source = InjectionUtil.getReferencedFile(p, true);
+            source = InjectionUtil.getReferencedFile(p);
           }
           catch (InvalidPropertyException e) {
             problemsHolder.add(e);

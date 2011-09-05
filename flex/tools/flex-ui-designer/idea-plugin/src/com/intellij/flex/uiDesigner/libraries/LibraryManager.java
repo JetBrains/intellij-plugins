@@ -171,7 +171,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
       throw new UnsupportedOperationException("merge existing libraries and new");
     }
 
-    final ModuleInfo moduleInfo = new ModuleInfo(module, assetCounterInfo);
+    final ModuleInfo moduleInfo = ModuleInfoUtil.createInfo(module, assetCounterInfo);
     final List<XmlFile> unregisteredDocumentReferences = new ArrayList<XmlFile>();
     if (collectLocalStyleHolders) {
       // client.registerModule finalize it

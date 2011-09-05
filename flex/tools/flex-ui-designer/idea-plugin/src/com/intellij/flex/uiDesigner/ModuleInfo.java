@@ -15,10 +15,16 @@ public class ModuleInfo extends Info<Module> implements Disposable {
   private List<LocalStyleHolder> localStyleHolders;
 
   public final AssetCounterInfo assetCounterInfo;
+  private final boolean app;
 
-  public ModuleInfo(Module module, AssetCounterInfo assetCounterInfo) {
+  ModuleInfo(Module module, AssetCounterInfo assetCounterInfo, boolean isApp) {
     super(module);
     this.assetCounterInfo = assetCounterInfo;
+    app = isApp;
+  }
+
+  public boolean isApp() {
+    return app;
   }
 
   public Module getModule() {
@@ -44,8 +50,8 @@ public class ModuleInfo extends Info<Module> implements Disposable {
 }
 
 class LocalStyleHolder implements AmfOutputable {
-  final VirtualFile file;
-  final byte[] data;
+  private final VirtualFile file;
+  private final byte[] data;
 
   LocalStyleHolder(VirtualFile file, byte[] data) {
     this.file = file;
@@ -56,5 +62,34 @@ class LocalStyleHolder implements AmfOutputable {
   public void writeExternal(AmfOutputStream out) {
     Client.writeVirtualFile(file, out);
     out.writeAmfByteArray(data);
+    writeUsers(out);
+  }
+
+  protected void writeUsers(AmfOutputStream out) {
+    out.write(0);
   }
 }
+
+class ExternalLocalStyleHolder extends LocalStyleHolder {
+  final List<VirtualFile> users;
+
+  ExternalLocalStyleHolder(VirtualFile file, byte[] data, VirtualFile user) {
+    super(file, data);
+
+    users = new ArrayList<VirtualFile>(5);
+    users.add(user);
+  }
+
+  public void addUser(VirtualFile user) {
+    users.add(user);
+  }
+
+  @Override
+  protected void writeUsers(AmfOutputStream out) {
+    out.write(users.size());
+    for (VirtualFile user : users) {
+      Client.writeVirtualFile(user, out);
+    }
+  }
+}
+

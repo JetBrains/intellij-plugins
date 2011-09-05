@@ -51,17 +51,17 @@ internal final class StateReader {
     return v;
   }
   
-  public function readDeferredInstanceFromBytes(reader:MxmlReader, data:IDataInput):DeferredInstanceFromBytesBase {
-    var kind:int = data.readByte();
+  public function readDeferredInstanceFromBytes(reader:MxmlReader, input:IDataInput):DeferredInstanceFromBytesBase {
+    var kind:int = input.readByte();
     var immediateCreation:Boolean = (kind & 1) != 0;
     kind = kind >> 1;
     if (kind == AmfExtendedTypes.OBJECT_REFERENCE) {
       return DeferredInstanceFromBytesBase(reader.readObjectReference());
     }
     else {
-      var o:DeferredInstanceFromBytesBase = new reader.context.moduleContext.deferredInstanceFromBytesClass(reader.readBytes());
+      var o:DeferredInstanceFromBytesBase = new reader.context.moduleContext.deferredInstanceFromBytesClass(AmfUtil.readByteArray(input));
       if (kind == 1) {
-        var id:int = AmfUtil.readUInt29(data);
+        var id:int = AmfUtil.readUInt29(input);
         if (reader.objectTable[id] != null) {
           throw new ArgumentError("must be null");
         }

@@ -65,6 +65,11 @@ public class StyleTest extends MxmlTestBase {
   public void testLibraryWithDefaultsCss() throws Exception {
     testFile("LibraryWithDefaultsCss.mxml", "defaults.css");
   }
+
+  @Flex(requireLocalStyleHolder = true)
+  public void testSeveralStyleSources() throws Exception {
+    testFile("SeveralStyleSources.mxml", "defaults.css");
+  }
   
   @Override
   protected Module createModule(@NonNls final String moduleName) {

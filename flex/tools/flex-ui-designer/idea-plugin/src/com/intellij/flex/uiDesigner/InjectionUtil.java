@@ -3,6 +3,10 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSFileReference;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.roots.ModuleFileIndex;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -86,15 +90,19 @@ public final class InjectionUtil {
   }
 
   @NotNull
-  public static VirtualFile getReferencedFile(PsiElement element, boolean resolveToFirstIfMulti)
+  public static VirtualFile getReferencedFile(PsiElement element)
       throws InvalidPropertyException {
     //noinspection ConstantConditions
-    return getReferencedPsiFile(element, resolveToFirstIfMulti).getVirtualFile();
+    return getReferencedPsiFile(element).getVirtualFile();
   }
 
   @NotNull
-  public static PsiFileSystemItem getReferencedPsiFile(PsiElement element, boolean resolveToFirstIfMulti)
-      throws InvalidPropertyException {
+  public static PsiFileSystemItem getReferencedPsiFile(PsiElement element) throws InvalidPropertyException {
+    return getReferencedPsiFile(element, false);
+  }
+
+  @NotNull
+  public static PsiFileSystemItem getReferencedPsiFile(PsiElement element, boolean resolveToFirstIfMulti) throws InvalidPropertyException {
     final PsiReference[] references = element.getReferences();
     final JSFileReference fileReference;
     int i = references.length - 1;
@@ -109,6 +117,7 @@ public final class InjectionUtil {
       }
     }
 
+    // IDEA-68144
     ResolveResult[] resolveResults = fileReference.multiResolve(false);
     final PsiFileSystemItem psiFile;
     if (resolveResults.length == 0) {
@@ -135,10 +144,25 @@ public final class InjectionUtil {
   @Nullable
   private static PsiFileSystemItem resolveResult(PsiElement element, ResolveResult[] resolveResults) {
     final PsiFile currentTopLevelFile = InjectedLanguageUtil.getTopLevelFile(element);
+    // find equal files
     for (ResolveResult resolveResult : resolveResults) {
       PsiElement resolvedElement = resolveResult.getElement();
       if (InjectedLanguageUtil.getTopLevelFile(resolvedElement).equals(currentTopLevelFile)) {
         return (PsiFileSystemItem)resolvedElement;
+      }
+    }
+
+    final Module module = ModuleUtil.findModuleForPsiElement(element);
+    if (module != null) {
+      final ModuleFileIndex fileIndex = ModuleRootManager.getInstance(module).getFileIndex();
+      // return if is local file
+      for (ResolveResult resolveResult : resolveResults) {
+        PsiFileSystemItem resolvedElement = (PsiFileSystemItem)resolveResult.getElement();
+        assert resolvedElement != null;
+        VirtualFile virtualFile = resolvedElement.getVirtualFile();
+        if (virtualFile != null && fileIndex.isInSourceContent(virtualFile)) {
+          return resolvedElement;
+        }
       }
     }
 

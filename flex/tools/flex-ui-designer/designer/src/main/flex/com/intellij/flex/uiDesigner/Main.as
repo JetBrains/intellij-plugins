@@ -8,6 +8,8 @@ import cocoa.renderer.InteractiveBorderRendererManager;
 import cocoa.renderer.TextRendererManager;
 import cocoa.util.FileUtil;
 
+import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
+
 import com.intellij.flex.uiDesigner.css.Stylesheet;
 import com.intellij.flex.uiDesigner.libraries.Library;
 import com.intellij.flex.uiDesigner.libraries.QueueLoader;
@@ -64,6 +66,7 @@ public class Main extends MainWindowedApplication {
     Stylesheet;
     Library;
     AssetContainerClassPool;
+    LocalStyleHolder;
     // Burn in hell, Adobe
     // Burn in hell, Adobe
     // Burn in hell, Adobe

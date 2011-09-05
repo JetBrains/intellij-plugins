@@ -12,6 +12,8 @@ import org.hamcrest.*;
 import org.hamcrest.collection.arrayWithSize;
 import org.hamcrest.core.allOf;
 import org.hamcrest.object.instanceOf;
+import org.hamcrest.object.notNullValue;
+import org.hamcrest.object.nullValue;
 import org.hamcrest.object.strictlyEqualTo;
 
 public class StyleTest extends BaseTestCase {
@@ -27,6 +29,7 @@ public class StyleTest extends BaseTestCase {
       ComponentWithCustomSkinAsBinding();
       LibraryWithDefaultsCss();
       ApplicationLevelGlobalSelector();
+      SeveralStyleSources();
     }
   }
 
@@ -127,6 +130,10 @@ public class StyleTest extends BaseTestCase {
 
   public function ApplicationLevelGlobalSelector():void {
     assertThat(app, {fontSize: 14, fontStyle: FontPosture.ITALIC});
+  }
+
+  public function SeveralStyleSources():void {
+    assertThat(app, [{styleName: "myCustomButton", color: 0x000000, icon: notNullValue()}, {styleName: "custom", color: 0xff0000, icon: nullValue()}]);
   }
 }
 }

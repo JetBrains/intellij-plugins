@@ -207,7 +207,7 @@ public final class MxmlReader implements DocumentReader {
         return new objectClass(stateReader.readArrayOfDeferredInstanceFromBytes(this, input), getOrCreateFactoryContext());
 
       case Amf3Types.BYTE_ARRAY:
-        return new objectClass(readBytes(), getOrCreateFactoryContext());
+        return new objectClass(AmfUtil.readByteArray(input), getOrCreateFactoryContext());
       
       case Amf3Types.ARRAY:
         return new objectClass(readArray());
@@ -533,12 +533,6 @@ public final class MxmlReader implements DocumentReader {
     return factoryContext;
   }
 
-  internal function readBytes():ByteArray {
-    var bytes:ByteArray = new ByteArray();
-    input.readBytes(bytes, 0, AmfUtil.readUInt29(input));
-    return bytes;
-  }
-  
   private function getMxNs():Namespace {
     return Namespace(moduleContext.applicationDomain.getDefinition("mx.core.mx_internal"));
   }

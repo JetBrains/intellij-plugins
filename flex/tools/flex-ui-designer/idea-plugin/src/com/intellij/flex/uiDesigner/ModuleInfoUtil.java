@@ -1,10 +1,12 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.facet.FacetManager;
+import com.intellij.flex.uiDesigner.css.CssWriter;
 import com.intellij.flex.uiDesigner.css.LocalCssWriter;
+import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.io.StringRegistry.StringWriter;
 import com.intellij.flex.uiDesigner.libraries.Library;
-import com.intellij.flex.uiDesigner.mxml.StyleTagWriter;
+import com.intellij.flex.uiDesigner.mxml.MxmlUtil;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexFacet;
@@ -19,21 +21,28 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileSystemItem;
+import com.intellij.psi.PsiLanguageInjectionHost;
+import com.intellij.psi.css.CssFile;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Processor;
+import gnu.trove.THashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class ModuleInfoUtil {
-  public static void collectLocalStyleHolders(final ModuleInfo moduleInfo, final String flexSdkVersion,
-                                              final StringWriter stringWriter, final ProblemsHolder problemsHolder,
-                                              List<XmlFile> unregisteredDocumentReferences, AssetCounter assetCounter) {
-    final Module module = moduleInfo.getModule();
+  public static ModuleInfo createInfo(Module module, AssetCounterInfo assetCounterInfo) {
     final FlexBuildConfiguration flexBuildConfiguration;
     if (ModuleType.get(module) instanceof FlexModuleType) {
       flexBuildConfiguration = FlexBuildConfiguration.getInstance(module);
@@ -44,9 +53,16 @@ public class ModuleInfoUtil {
       flexBuildConfiguration = FlexBuildConfiguration.getInstance(flexFacets.iterator().next());
     }
 
+    return new ModuleInfo(module, assetCounterInfo, FlexBuildConfiguration.APPLICATION.equals(flexBuildConfiguration.OUTPUT_TYPE));
+  }
+
+  public static void collectLocalStyleHolders(final ModuleInfo moduleInfo, final String flexSdkVersion,
+                                              final StringWriter stringWriter, final ProblemsHolder problemsHolder,
+                                              List<XmlFile> unregisteredDocumentReferences, AssetCounter assetCounter) {
+    final Module module = moduleInfo.getModule();
     AccessToken token = ReadAction.start();
     try {
-      if (FlexBuildConfiguration.APPLICATION.equals(flexBuildConfiguration.OUTPUT_TYPE)) {
+      if (moduleInfo.isApp()) {
         collectApplicationLocalStyle(moduleInfo, flexSdkVersion, problemsHolder, stringWriter, unregisteredDocumentReferences,
                                      assetCounter);
       }
@@ -109,21 +125,22 @@ public class ModuleInfoUtil {
         if (containingFile instanceof XmlFile) {
           XmlTag rootTag = ((XmlFile)containingFile).getRootTag();
           if (rootTag != null) {
-            problemsHolder.setCurrentFile(containingFile.getVirtualFile());
+            final VirtualFile virtualFile = containingFile.getVirtualFile();
+            problemsHolder.setCurrentFile(virtualFile);
             try {
+              // IDEA-73558
               for (final XmlTag subTag : rootTag.getSubTags()) {
                 if (subTag.getNamespace().equals(JavaScriptSupportLoader.MXML_URI3) &&
                     subTag.getLocalName().equals(FlexPredefinedTagNames.STYLE)) {
                   try {
-                    byte[] data = localStyleWriter.write(subTag, moduleInfo.getModule());
-                    if (data != null) {
-                      moduleInfo.addLocalStyleHolder(new LocalStyleHolder(containingFile.getVirtualFile(), data));
+                    LocalStyleHolder localStyleHolder = localStyleWriter.write(subTag, moduleInfo.getModule(), virtualFile);
+                    if (localStyleHolder != null) {
+                      moduleInfo.addLocalStyleHolder(localStyleHolder);
                     }
                   }
                   catch (InvalidPropertyException e) {
                     problemsHolder.add(e);
                   }
-                  break;
                 }
               }
             }
@@ -142,5 +159,89 @@ public class ModuleInfoUtil {
     }
 
     assetCounter.append(localStyleWriter.getRequiredAssetsInfo());
+  }
+
+  private static class StyleTagWriter {
+    private final CssWriter cssWriter;
+    private final THashMap<VirtualFile, ExternalLocalStyleHolder> externalLocalStyleHolders = new THashMap<VirtualFile, ExternalLocalStyleHolder>();
+
+    public StyleTagWriter(StringRegistry.StringWriter stringWriter, ProblemsHolder problemsHolder,
+                          List<XmlFile> unregisteredDocumentReferences) {
+      cssWriter = new LocalCssWriter(stringWriter, problemsHolder, unregisteredDocumentReferences);
+    }
+
+    @Nullable
+    public AssetCounter getRequiredAssetsInfo() {
+      return cssWriter.getAssetCounter();
+    }
+
+    public LocalStyleHolder write(XmlTag tag, Module module, VirtualFile userVirtualFile) throws InvalidPropertyException {
+      CssFile cssFile = null;
+      XmlAttribute source = tag.getAttribute("source");
+      if (source != null) {
+        XmlAttributeValue valueElement = source.getValueElement();
+        if (valueElement != null) {
+          final PsiFileSystemItem psiFile = InjectionUtil.getReferencedPsiFile(valueElement);
+          if (psiFile instanceof CssFile) {
+            cssFile = (CssFile)psiFile;
+          }
+          else {
+            throw new InvalidPropertyException(valueElement, "error.embed.source.is.not.css.file", psiFile.getName());
+          }
+
+          final VirtualFile virtualFile = cssFile.getVirtualFile();
+          final ExternalLocalStyleHolder existingLocalStyleHolder = externalLocalStyleHolders.get(virtualFile);
+          if (existingLocalStyleHolder == null) {
+            ExternalLocalStyleHolder localStyleHolder = new ExternalLocalStyleHolder(virtualFile, cssWriter.write(cssFile, module), userVirtualFile);
+            externalLocalStyleHolders.put(virtualFile, localStyleHolder);
+            return localStyleHolder;
+          }
+          else {
+            existingLocalStyleHolder.addUser(userVirtualFile);
+            return null;
+          }
+        }
+      }
+      else {
+        PsiElement host = MxmlUtil.getInjectedHost(tag);
+        if (host != null) {
+          InjectedPsiVisitor visitor = new InjectedPsiVisitor(host);
+          InjectedLanguageUtil.enumerate(host, visitor);
+          cssFile = visitor.getCssFile();
+        }
+      }
+
+      if (cssFile == null) {
+        return null;
+      }
+      else {
+        return new LocalStyleHolder(InjectedLanguageUtil.getTopLevelFile(cssFile).getVirtualFile(), cssWriter.write(cssFile, module));
+      }
+    }
+
+    private static class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor {
+      private final PsiElement host;
+      private boolean visited;
+
+      private CssFile cssFile;
+
+      public InjectedPsiVisitor(PsiElement host) {
+        this.host = host;
+      }
+
+      @Nullable
+      public CssFile getCssFile() {
+        return cssFile;
+      }
+
+      public void visit(@NotNull PsiFile injectedPsi, @NotNull List<PsiLanguageInjectionHost.Shred> places) {
+        assert !visited;
+        visited = true;
+
+        assert places.size() == 1;
+        assert places.get(0).host == host;
+        cssFile = (CssFile)injectedPsi;
+      }
+    }
   }
 }

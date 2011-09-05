@@ -235,6 +235,7 @@ public class Client implements Closable {
 
       out.writeShort(registeredModules.add(moduleInfo));
       writeId(project);
+      out.write(moduleInfo.isApp());
       out.write(librarySetIds);
       out.write(moduleInfo.getLocalStyleHolders(), "lsh", true);
       hasError = false;

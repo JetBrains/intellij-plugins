@@ -512,12 +512,12 @@ public class CssWriter {
       }
       else {
         if (firstChild instanceof CssString) {
-          source = InjectionUtil.getReferencedFile(firstChild, false);
+          source = InjectionUtil.getReferencedFile(firstChild);
         }
         else if (firstChild instanceof XmlToken && ((XmlToken)firstChild).getTokenType() == CssElementTypes.CSS_IDENT) {
           String name = firstChild.getText();
           if (name.equals("source")) {
-            source = InjectionUtil.getReferencedFile(terms[++i].getFirstChild(), false);
+            source = InjectionUtil.getReferencedFile(terms[++i].getFirstChild());
           }
           else if (name.equals("symbol")) {
             //noinspection ConstantConditions

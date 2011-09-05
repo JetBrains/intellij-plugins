@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Pattern;
 
-final class MxmlUtil {
+public final class MxmlUtil {
   private static final Pattern FLEX_SDK_ABSTRACT_CLASSES = Pattern.compile("^(mx|spark)\\.(.*)?Base$");
 
   static Document getDocument(@NotNull PsiElement element) {

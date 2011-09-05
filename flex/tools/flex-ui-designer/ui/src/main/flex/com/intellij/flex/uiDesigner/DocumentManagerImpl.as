@@ -237,16 +237,20 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     var cssReaderClass:Class = module.getClass("com.intellij.flex.uiDesigner.css.CssReaderImpl");
     var cssReader:CssReader = new cssReaderClass();
     cssReader.styleManager = module.styleManager;
-    
-    var suitableLocalStyleHolder:LocalStyleHolder = module.localStyleHolders[0];
-    for each (var localStyleHolder:LocalStyleHolder in module.localStyleHolders) {
-      if (localStyleHolder.file.url == documentFactory.file.url) {
-        suitableLocalStyleHolder = localStyleHolder;
-        break;
+
+    var localStyleHolder:LocalStyleHolder;
+    if (module.isApp) {
+      for each (localStyleHolder in module.localStyleHolders) {
+        if (localStyleHolder.isApplicable(documentFactory)) {
+          cssReader.read(localStyleHolder.getStylesheet(module.project).rulesets, localStyleHolder.file);
+        }
       }
     }
+    else {
+      localStyleHolder = module.localStyleHolders[0];
+      cssReader.read(localStyleHolder.getStylesheet(module.project).rulesets, localStyleHolder.file);
+    }
 
-    cssReader.read(suitableLocalStyleHolder.getStylesheet(module.project).rulesets, suitableLocalStyleHolder.file);
     cssReader.finalizeRead();
   }
 

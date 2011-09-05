@@ -104,7 +104,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
 
   private function registerModule(input:IDataInput):void {
     stringRegistry.readStringTable(input);
-    var module:Module = new Module(input.readUnsignedShort(), projectManager.getById(input.readUnsignedShort()),
+    var module:Module = new Module(input.readUnsignedShort(), projectManager.getById(input.readUnsignedShort()), input.readBoolean(),
                                    libraryManager.idsToInstancesAndMarkAsUsed(input.readObject()), input.readObject());
     moduleManager.register(module);
   }
