@@ -20,7 +20,7 @@ public class ResolveExternalInlineStyleSourceActionTest extends FlexUIDesignerBa
     configureByFile(BASE_PATH + "/innerComponentInDeclarations.mxml");
   }
 
-  @Override
+  //@Override
   protected String getBasePath() {
     return BASE_PATH;
   }

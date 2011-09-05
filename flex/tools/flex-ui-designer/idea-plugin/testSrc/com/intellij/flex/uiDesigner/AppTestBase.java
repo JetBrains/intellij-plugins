@@ -36,7 +36,7 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   protected Sdk sdk;
   protected final List<Pair<VirtualFile, VirtualFile>> libs = new ArrayList<Pair<VirtualFile, VirtualFile>>();
   
-  @Override
+  //@Override
   protected String getBasePath() {
     return BASE_PATH;
   }

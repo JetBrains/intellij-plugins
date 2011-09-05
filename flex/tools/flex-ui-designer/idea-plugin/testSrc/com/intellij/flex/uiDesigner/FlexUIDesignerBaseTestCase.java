@@ -1,10 +1,11 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.lang.javascript.JSDaemonAnalyzerTestCase;
 import com.intellij.lang.javascript.JSTestUtils;
 
-abstract class FlexUIDesignerBaseTestCase extends JSDaemonAnalyzerTestCase {
+abstract class FlexUIDesignerBaseTestCase extends DaemonAnalyzerTestCase {
   private static String testDataPath;
 
   public static String getTestDataPathImpl() {
@@ -18,7 +19,7 @@ abstract class FlexUIDesignerBaseTestCase extends JSDaemonAnalyzerTestCase {
     return DebugPathManager.getFudHome();
   }
 
-  @Override
+  //@Override
   protected String getExtension() {
     return "mxml";
   }
