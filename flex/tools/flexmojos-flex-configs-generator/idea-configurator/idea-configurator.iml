@@ -30,7 +30,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu.inject:guice-bean-converters:2.1.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu.inject:guice-plexus-metadata:2.1.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu.inject:guice-plexus-converters:2.1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-utils:2.0.7" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-utils:2.0.6" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu.inject:guice-plexus-locators:2.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-classworlds:2.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu.inject:guice-plexus-binders:2.1.1" level="project" />
