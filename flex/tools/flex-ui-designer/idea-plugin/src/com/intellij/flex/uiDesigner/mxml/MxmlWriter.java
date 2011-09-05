@@ -249,6 +249,8 @@ public class MxmlWriter {
       context = writer.createStaticContext(parentContext, referencePosition);
     }
 
+    //assert stateWriter == null || stateWriter.pendingFirstSetProperty == null;
+
     writer.resetPreallocatedId();
 
     processTagChildren(parent, context, parentContext, true, null, cssDeclarationSourceDefined);

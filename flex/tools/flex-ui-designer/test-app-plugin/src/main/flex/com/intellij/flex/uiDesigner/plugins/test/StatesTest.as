@@ -58,6 +58,7 @@ public class StatesTest extends BaseTestCase {
       ProjectMxmlComponentAsStateSpecificChild();
       ProjectStatefulMxmlComponentAsChild();
       IDEA_73547();
+      IDEA_73608();
     }
   }
 
@@ -370,6 +371,9 @@ public class StatesTest extends BaseTestCase {
   }
 
   public function IDEA_73547():void {
+  }
+
+  public function IDEA_73608():void {
   }
 
   public function IDEA_73550():void {

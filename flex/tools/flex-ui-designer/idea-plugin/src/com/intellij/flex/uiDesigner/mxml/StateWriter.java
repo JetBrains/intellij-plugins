@@ -46,7 +46,7 @@ class StateWriter {
   private final Map<String, List<State>> nameToState = new THashMap<String, List<State>>();
   private BaseWriter writer;
 
-  private SetPropertyOrStyle pendingFirstSetProperty;
+   SetPropertyOrStyle pendingFirstSetProperty;
 
   private boolean autoItemDestruction;
 
@@ -264,9 +264,12 @@ class StateWriter {
     }
 
     override.targetId = writer.getObjectOrFactoryId(context);
-    if (pendingFirstSetProperty == null || (context == null && parentContext != null && parentContext.ownerIsDynamic() && pendingFirstSetProperty == null)) {
+    if (pendingFirstSetProperty == null && context == null) {
       pendingFirstSetProperty = override;
     }
+    //if (pendingFirstSetProperty == null || (context == null && parentContext != null && parentContext.ownerIsDynamic() && pendingFirstSetProperty == null)) {
+    //  pendingFirstSetProperty = override;
+    //}
 
     writer.getBlockOut().endRange(override.dataRange);
 
@@ -452,5 +455,6 @@ class StateWriter {
     states.clear();
     nameToState.clear();
     namesInitialized = false;
+    pendingFirstSetProperty = null;
   }
 }

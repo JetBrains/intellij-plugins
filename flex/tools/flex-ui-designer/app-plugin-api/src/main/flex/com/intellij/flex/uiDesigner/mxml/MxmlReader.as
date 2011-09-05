@@ -415,10 +415,7 @@ public final class MxmlReader implements DocumentReader {
           break;
 
         case AmfExtendedTypes.OBJECT_REFERENCE:
-          if ((o = objectTable[AmfUtil.readUInt29(input)]) == null) {
-            throw new ArgumentError("must be not null");
-          }
-          propertyHolder[propertyName] = o;
+          propertyHolder[propertyName] = readObjectReference();
           break;
         
         case AmfExtendedTypes.DOCUMENT_FACTORY_REFERENCE:
@@ -693,9 +690,7 @@ public final class MxmlReader implements DocumentReader {
           break;
 
         case AmfExtendedTypes.OBJECT_REFERENCE:
-          if ((array[i++] = objectTable[AmfUtil.readUInt29(input)]) == null) {
-            throw new ArgumentError("must be not null");
-          }
+          array[i++] = readObjectReference();
           break;
 
         case ExpressionMessageTypes.MXML_OBJECT_REFERENCE:
@@ -773,11 +768,7 @@ public final class MxmlReader implements DocumentReader {
         return injectedASReader.readMxmlObjectReference(input, this, null);
 
       case AmfExtendedTypes.OBJECT_REFERENCE:
-        var o:Object;
-        if ((o = objectTable[AmfUtil.readUInt29(input)]) == null) {
-          throw new ArgumentError("must be not null");
-        }
-        return o;
+        return readObjectReference();
 
       default:
         throw new ArgumentError("unknown property type " + amfType);
