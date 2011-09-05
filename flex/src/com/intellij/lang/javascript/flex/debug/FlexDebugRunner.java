@@ -56,26 +56,21 @@ public class FlexDebugRunner extends FlexBaseRunner {
                                                      final RunProfileState state,
                                                      final RunContentDescriptor contentToReuse,
                                                      final ExecutionEnvironment env) throws ExecutionException  {
-    if (config.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Web) {
-      final Project project = module.getProject();
-      final XDebugSession debugSession =
-        XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
-          @NotNull
-          public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
-            try {
-              return new FlexDebugProcess(session, config, params);
-            }
-            catch (IOException e) {
-              throw new ExecutionException(e.getMessage(), e);
-            }
+    final Project project = module.getProject();
+    final XDebugSession debugSession =
+      XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
+        @NotNull
+        public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
+          try {
+            return new FlexDebugProcess(session, config, params);
           }
-        });
+          catch (IOException e) {
+            throw new ExecutionException(e.getMessage(), e);
+          }
+        }
+      });
 
-      return debugSession.getRunContentDescriptor();
-    }
-
-    // todo implement
-    return null;
+    return debugSession.getRunContentDescriptor();
   }
 
   protected RunContentDescriptor doLaunch(final Project project,

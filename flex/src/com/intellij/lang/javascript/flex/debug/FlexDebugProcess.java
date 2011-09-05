@@ -1,6 +1,8 @@
 package com.intellij.lang.javascript.flex.debug;
 
+import com.intellij.execution.CantRunException;
 import com.intellij.execution.ExecutionException;
+import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
@@ -155,7 +157,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
   private boolean suspended;
   private boolean fdbWaitingForPlayerStateReached;
-  private boolean connectToRunningFlashPlayerMode;
+  private final boolean connectToRunningFlashPlayerMode;
   private boolean startupDone;
   private ConsoleView myConsoleView;
   private FlexUnitConnection myFlexUnitConnection;
@@ -170,7 +172,7 @@ public class FlexDebugProcess extends XDebugProcess {
     assert sdkEntry != null; // checked in FlexBaseRunner
     final String sdkHome = sdkEntry.getHomePath();
 
-    FlexSdk flexSdk = FlexSdkManager.getInstance().findSdk(sdkEntry.getHomePath());
+    final FlexSdk flexSdk = FlexSdkManager.getInstance().findSdk(sdkEntry.getHomePath());
     myDebuggerVersion = StringUtil.notNullize(flexSdk != null ? flexSdk.getFlexVersion() : null, "unknown");
     myBreakpointsHandler = new FlexBreakpointsHandler(this);
     mySdkLocation = FileUtil.toSystemIndependentName(sdkHome);
@@ -181,12 +183,23 @@ public class FlexDebugProcess extends XDebugProcess {
     final List<String> fdbLaunchCommand = FlexSdkUtils
       .getCommandLineForSdkTool(session.getProject(), sdkHome, null, getFdbClasspath(), "flex.tools.debugger.cli.DebugCLI", null);
 
+    fdbProcess = launchFdb(fdbLaunchCommand);
+    connectToRunningFlashPlayerMode = false;
+
     if (config.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Web) {
       // todo support wrapper
-      fdbProcess = launchFlex(fdbLaunchCommand, config.getOutputFilePath(), params.getLauncherParameters());
+      final String urlOrPath = params.isLaunchUrl() ? params.getUrl() : config.getOutputFilePath();
+      sendCommand(new LaunchBrowserCommand(urlOrPath, params.getLauncherParameters()));
+    }
+    else if (config.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Desktop) {
+      try {
+        sendCommand(new StartAirAppDebuggingCommand(FlexBaseRunner.createAdlCommandLine(params, config)));
+      }
+      catch (CantRunException e) {
+        throw new IOException(e.getMessage());
+      }
     }
     else {
-      // todo implement
       throw new IOException("not implemented yet");
     }
 
@@ -218,9 +231,25 @@ public class FlexDebugProcess extends XDebugProcess {
     final List<String> fdbLaunchCommand =
       FlexSdkUtils.getCommandLineForSdkTool(session.getProject(), debuggerSdk, getFdbClasspath(), "flex.tools.debugger.cli.DebugCLI", null);
 
-    fdbProcess = FlexBaseRunner.isRunAsAir(flexRunnerParameters)
-                 ? launchAir(fdbLaunchCommand, (AirRunnerParameters)flexRunnerParameters, flexSdk)
-                 : launchFlex(fdbLaunchCommand, flexRunnerParameters);
+    if (flexRunnerParameters instanceof AirMobileRunnerParameters
+        && ((AirMobileRunnerParameters)flexRunnerParameters).getAirMobileRunTarget() == AirMobileRunTarget.AndroidDevice
+        && ((AirMobileRunnerParameters)flexRunnerParameters).getDebugTransport() == AirMobileDebugTransport.USB) {
+      fdbLaunchCommand.add("-p");
+      fdbLaunchCommand.add(String.valueOf(((AirMobileRunnerParameters)flexRunnerParameters).getUsbDebugPort()));
+    }
+
+    fdbProcess = launchFdb(fdbLaunchCommand);
+
+    final boolean runAsAir = FlexBaseRunner.isRunAsAir(flexRunnerParameters);
+    connectToRunningFlashPlayerMode =
+      !runAsAir && flexRunnerParameters.getRunMode() == FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer;
+
+    if (runAsAir) {
+      launchAir((AirRunnerParameters)flexRunnerParameters, flexSdk);
+    }
+    else {
+      launchFlex(flexRunnerParameters);
+    }
 
     reader = new MyFdbOutputReader(fdbProcess.getInputStream());
 
@@ -277,6 +306,19 @@ public class FlexDebugProcess extends XDebugProcess {
       myFlexUnitConnection = null;
       myPolicyFileConnection = null;
     }
+  }
+
+  private Process launchFdb(final List<String> fdbLaunchCommand) throws IOException {
+    ensureExecutable(fdbLaunchCommand.get(0));
+    myFdbLaunchCommand = StringUtil.join(fdbLaunchCommand, new Function<String, String>() {
+      public String fun(final String s) {
+        return s.indexOf(' ') >= 0 && !(s.startsWith("\"") && s.endsWith("\"")) ? '\"' + s + '\"' : s;
+      }
+    }, " ");
+
+    final Process process = Runtime.getRuntime().exec(ArrayUtil.toStringArray(fdbLaunchCommand));
+    sendCommand(new ReadGreetingCommand()); // just to read copyrights and wait for "(fdb)"
+    return process;
   }
 
   private void startCommandProcessingThread() {
@@ -355,26 +397,7 @@ public class FlexDebugProcess extends XDebugProcess {
     }
   }
 
-  private Process launchAir(final List<String> fdbLaunchCommand, final AirRunnerParameters airRunnerParameters, final Sdk flexSdk)
-    throws IOException {
-
-    if (airRunnerParameters instanceof AirMobileRunnerParameters
-        && ((AirMobileRunnerParameters)airRunnerParameters).getAirMobileRunTarget() == AirMobileRunTarget.AndroidDevice
-        && ((AirMobileRunnerParameters)airRunnerParameters).getDebugTransport() == AirMobileDebugTransport.USB) {
-      fdbLaunchCommand.add("-p");
-      fdbLaunchCommand.add(String.valueOf(((AirMobileRunnerParameters)airRunnerParameters).getUsbDebugPort()));
-    }
-
-    ensureExecutable(fdbLaunchCommand.get(0));
-    myFdbLaunchCommand = StringUtil.join(fdbLaunchCommand, new Function<String, String>() {
-      public String fun(final String s) {
-        return s.indexOf(' ') >= 0 && !(s.startsWith("\"") && s.endsWith("\"")) ? '\"' + s + '\"' : s;
-      }
-    }, " ");
-
-    final Process process = Runtime.getRuntime().exec(ArrayUtil.toStringArray(fdbLaunchCommand));
-    sendCommand(new ReadGreetingCommand()); // just to read copyrights and wait for "(fdb)"
-
+  private void launchAir(final AirRunnerParameters airRunnerParameters, final Sdk flexSdk) throws IOException {
     if (airRunnerParameters instanceof AirMobileRunnerParameters) {
       final AirMobileRunnerParameters mobileParams = (AirMobileRunnerParameters)airRunnerParameters;
       switch (mobileParams.getAirMobileRunTarget()) {
@@ -390,8 +413,6 @@ public class FlexDebugProcess extends XDebugProcess {
     else {
       scheduleAdlLaunch(flexSdk, airRunnerParameters);
     }
-
-    return process;
   }
 
   private void scheduleAdlLaunch(Sdk flexSdk, AirRunnerParameters airRunnerParameters) throws IOException {
@@ -452,10 +473,8 @@ public class FlexDebugProcess extends XDebugProcess {
                                                 needToRemoveAirRuntimeDir ? airRuntimeDirForFlexmojosSdk : null));
   }
 
-  private Process launchFlex(final List<String> fdbLaunchCommand,
-                             final FlexRunnerParameters flexRunnerParameters) throws IOException {
+  private void launchFlex(final FlexRunnerParameters flexRunnerParameters) throws IOException {
     final FlexRunnerParameters.RunMode runMode = flexRunnerParameters.getRunMode();
-    connectToRunningFlashPlayerMode = runMode == FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer;
 
     final String url = runMode == FlexRunnerParameters.RunMode.HtmlOrSwfFile
                        ? flexRunnerParameters.getHtmlOrSwfFilePath()
@@ -466,24 +485,10 @@ public class FlexDebugProcess extends XDebugProcess {
                            ? flexRunnerParameters.getHtmlOrSwfFilePath()
                            // launch nothing if runMode == FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer
                            : null;
-    return launchFlex(fdbLaunchCommand, url, new LauncherParameters(flexRunnerParameters.getLauncherType(),
-                                                                    flexRunnerParameters.getBrowserFamily(),
-                                                                    flexRunnerParameters.getPlayerPath()));
-  }
-
-  private Process launchFlex(final List<String> fdbLaunchCommand,
-                             final String url,
-                             final LauncherParameters launcherParameters) throws IOException {
-    ensureExecutable(fdbLaunchCommand.get(0));
-    myFdbLaunchCommand = StringUtil.join(fdbLaunchCommand, new Function<String, String>() {
-      public String fun(final String s) {
-        return s.indexOf(' ') >= 0 && !(s.startsWith("\"") && s.endsWith("\"")) ? '\"' + s + '\"' : s;
-      }
-    }, " ");
-    final Process process = Runtime.getRuntime().exec(ArrayUtil.toStringArray(fdbLaunchCommand));
-    sendCommand(new ReadGreetingCommand());
+    final LauncherParameters launcherParameters = new LauncherParameters(flexRunnerParameters.getLauncherType(),
+                                                                         flexRunnerParameters.getBrowserFamily(),
+                                                                         flexRunnerParameters.getPlayerPath());
     sendCommand(url == null ? new StartDebuggingCommand() : new LaunchBrowserCommand(url, launcherParameters));
-    return process;
   }
 
   private static final Set<String> ourAlreadyMadeExecutable = new THashSet<String>();
@@ -1312,27 +1317,45 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   class StartAirAppDebuggingCommand extends StartDebuggingCommand {
+    private final GeneralCommandLine myAdlCommandLine;
     private final String[] myAirLaunchCommand;
     private final @Nullable VirtualFile myTempDirToDeleteWhenProcessFinished;
 
     StartAirAppDebuggingCommand(final String[] airLaunchCommand, final @Nullable VirtualFile tempDirToDeleteWhenProcessFinished) {
+      myAdlCommandLine = null;
       myAirLaunchCommand = airLaunchCommand;
       myTempDirToDeleteWhenProcessFinished = tempDirToDeleteWhenProcessFinished;
     }
 
+    public StartAirAppDebuggingCommand(final GeneralCommandLine adlCommandLine) {
+      myAdlCommandLine = adlCommandLine;
+      myAirLaunchCommand = null;
+      myTempDirToDeleteWhenProcessFinished = null;
+    }
 
     void launchDebuggedApplication() throws IOException {
       launchAdl();
     }
 
     private void launchAdl() throws IOException {
-      final Function<String, String> quoter = new Function<String, String>() {
-        public String fun(final String s) {
-          return s.contains(" ") ? "\"" + s + "\"" : s;
+      if (myAdlCommandLine != null) {
+        try {
+          myConsoleView.print(myAdlCommandLine.getCommandLineString() + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+          adlProcess = myAdlCommandLine.createProcess();
         }
-      };
-      myConsoleView.print(ADL_PREFIX + StringUtil.join(myAirLaunchCommand, quoter, " ") + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
-      adlProcess = Runtime.getRuntime().exec(myAirLaunchCommand);
+        catch (ExecutionException e) {
+          throw new IOException(e.getMessage());
+        }
+      }
+      else {
+        final Function<String, String> quoter = new Function<String, String>() {
+          public String fun(final String s) {
+            return s.contains(" ") ? "\"" + s + "\"" : s;
+          }
+        };
+        myConsoleView.print(ADL_PREFIX + StringUtil.join(myAirLaunchCommand, quoter, " ") + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+        adlProcess = Runtime.getRuntime().exec(myAirLaunchCommand);
+      }
 
       ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
         public void run() {

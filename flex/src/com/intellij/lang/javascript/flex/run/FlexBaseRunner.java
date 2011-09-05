@@ -4,10 +4,7 @@ import com.intellij.CommonBundle;
 import com.intellij.compiler.CompilerSettingsFactory;
 import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.execution.*;
-import com.intellij.execution.configurations.ConfigurationPerRunnerSettings;
-import com.intellij.execution.configurations.RunProfile;
-import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.configurations.RunnerSettings;
+import com.intellij.execution.configurations.*;
 import com.intellij.execution.impl.RunDialog;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -33,8 +30,10 @@ import com.intellij.lang.javascript.flex.flexunit.FlexUnitConsoleProperties;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.SdkEntry;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.extensions.Extensions;
@@ -65,6 +64,7 @@ import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.PathUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.concurrency.Semaphore;
 import org.jetbrains.annotations.NotNull;
@@ -838,5 +838,35 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     }
 
     return null;
+  }
+
+  public static GeneralCommandLine createAdlCommandLine(final FlexIdeRunnerParameters params, final FlexIdeBuildConfiguration config)
+    throws CantRunException {
+    final SdkEntry sdkEntry = config.DEPENDENCIES.getSdkEntry();
+    if (sdkEntry == null) {
+      throw new CantRunException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", config.NAME, params.getModuleName()));
+    }
+
+    final GeneralCommandLine commandLine = new GeneralCommandLine();
+
+    commandLine.setExePath(FileUtil.toSystemDependentName(sdkEntry.getHomePath() + FlexSdkUtils.ADL_RELATIVE_PATH));
+
+    final String adlOptions = params.getAdlOptions();
+    if (!StringUtil.isEmptyOrSpaces(adlOptions)) {
+      commandLine.addParameters(StringUtil.split(adlOptions, " "));
+    }
+
+    final String descriptorName = (config.AIR_DESKTOP_PACKAGING_OPTIONS.USE_GENERATED_DESCRIPTOR
+                                   ? BCUtils.getGeneratedAirDescriptorName(config)
+                                   : PathUtil.getFileName(config.AIR_DESKTOP_PACKAGING_OPTIONS.CUSTOM_DESCRIPTOR_PATH));
+    commandLine.addParameter(FileUtil.toSystemDependentName(config.OUTPUT_FOLDER + "/" + descriptorName));
+    commandLine.addParameter(FileUtil.toSystemDependentName(config.OUTPUT_FOLDER));
+    final String programParameters = params.getAirProgramParameters();
+    if (!StringUtil.isEmptyOrSpaces(programParameters)) {
+      commandLine.addParameter("--");
+      commandLine.addParameters(StringUtil.split(programParameters, " "));
+    }
+
+    return commandLine;
   }
 }

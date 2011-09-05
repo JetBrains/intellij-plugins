@@ -50,12 +50,8 @@ public class FlexRunner extends FlexBaseRunner {
     switch (config.TARGET_PLATFORM) {
       case Web:
         // todo handle html wrapper!
-        if (params.isLaunchUrl()) {
-          launchWithSelectedApplication(params.getUrl(), params.getLauncherParameters());
-        }
-        else {
-          launchWithSelectedApplication(config.getOutputFilePath(), params.getLauncherParameters());
-        }
+        final String urlOrPath = params.isLaunchUrl() ? params.getUrl() : config.getOutputFilePath();
+        launchWithSelectedApplication(urlOrPath, params.getLauncherParameters());
         break;
       case Desktop:
         final ExecutionResult executionResult = state.execute(executor, this);
