@@ -40,6 +40,9 @@ public final class Module {
   }
 
   private var _styleManager:StyleManagerEx;
+  /**
+   * Don't forget — styleManager may be per document, so, in general case, you must use document.styleManager
+   */
   public function get styleManager():StyleManagerEx {
     return _styleManager == null ? _context.styleManager : _styleManager;
   }

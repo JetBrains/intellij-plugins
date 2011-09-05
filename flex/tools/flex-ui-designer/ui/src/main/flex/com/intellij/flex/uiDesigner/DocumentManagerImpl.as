@@ -3,6 +3,7 @@ import cocoa.DocumentWindow;
 
 import com.intellij.flex.uiDesigner.css.CssReader;
 import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
+import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import com.intellij.flex.uiDesigner.css.StyleValueResolverImpl;
 import com.intellij.flex.uiDesigner.flex.MainFocusManagerSB;
 import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
@@ -132,7 +133,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   private function createAndOpen(documentFactory:DocumentFactory, documentOpened:Function):Boolean {
     var document:Document = new Document(documentFactory);
     var module:Module = documentFactory.module;
-    createStyleManager(module, documentFactory);
+    createStyleManager(document, module, documentFactory);
     createSystemManager(document, module);
 
     if (doOpen(documentFactory, document, documentOpened)) {
@@ -188,22 +189,40 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     return true;
   }
 
-  private static function createStyleManager(module:Module, documentFactory:DocumentFactory):void {
+  private static function createStyleManager(document:Document, module:Module, documentFactory:DocumentFactory):void {
     if (module.context.styleManager == null) {
       createStyleManagerForContext(module.context);
     }
-    if (!module.hasOwnStyleManager && module.localStyleHolders != null) {
-      createStyleManagerForModule(module, documentFactory);
+
+    if (module.localStyleHolders == null) {
+      return;
     }
+
+    if (module.isApp && document.documentFactory.isApp) {
+      createStyleManagerForAppDocument(document, module);
+    }
+    else if (!module.hasOwnStyleManager) {
+      createStyleManagerForModule(module);
+    }
+  }
+
+  private static function createCssReader(context:ModuleContextEx, styleManager:StyleManagerEx):CssReader {
+    var c:Class = context.getClass("com.intellij.flex.uiDesigner.css.CssReaderImpl");
+    var cssReader:CssReader = new c();
+    cssReader.styleManager = styleManager;
+    return cssReader;
+  }
+
+  private static function createChildStyleManager(context:ModuleContextEx):StyleManagerEx {
+    var c:Class = context.getClass("com.intellij.flex.uiDesigner.css.ChildStyleManager");
+    return new c(context.styleManager);
   }
   
   private static function createStyleManagerForContext(context:ModuleContextEx):void {
     var inheritingStyleMapList:Vector.<Dictionary> = new Vector.<Dictionary>();
     var styleManagerClass:Class = context.getClass("com.intellij.flex.uiDesigner.css.RootStyleManager");
     context.styleManager = new styleManagerClass(inheritingStyleMapList, new StyleValueResolverImpl(context));
-    var cssReaderClass:Class = context.getClass("com.intellij.flex.uiDesigner.css.CssReaderImpl");
-    var cssReader:CssReader = new cssReaderClass();
-    cssReader.styleManager = context.styleManager; 
+    var cssReader:CssReader = createCssReader(context, context.styleManager);
     // FakeObjectProxy/FakeBooleanSetProxy/MergedCssStyleDeclaration find in list from 0 to end, then we add in list in reverse order
     // (because the library with index 4 overrides the library with index 2)
     var librarySets:Vector.<LibrarySet> = context.librarySets;
@@ -230,25 +249,27 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     cssReader.finalizeRead();
     inheritingStyleMapList.fixed = true;
   }
-  
-  private static function createStyleManagerForModule(module:Module, documentFactory:DocumentFactory):void {
-    var styleManagerClass:Class = module.getClass("com.intellij.flex.uiDesigner.css.ChildStyleManager");
-    module.styleManager = new styleManagerClass(module.context.styleManager);
-    var cssReaderClass:Class = module.getClass("com.intellij.flex.uiDesigner.css.CssReaderImpl");
-    var cssReader:CssReader = new cssReaderClass();
-    cssReader.styleManager = module.styleManager;
+
+  private static function createStyleManagerForModule(module:Module):void {
+    var styleManager:StyleManagerEx = createChildStyleManager(module.context);
+    module.styleManager = styleManager;
+    var cssReader:CssReader = createCssReader(module.context, styleManager);
+
+    var localStyleHolder:LocalStyleHolder = module.localStyleHolders[0];
+    cssReader.read(localStyleHolder.getStylesheet(module.project).rulesets, localStyleHolder.file);
+    cssReader.finalizeRead();
+  }
+
+  private static function createStyleManagerForAppDocument(document:Document, module:Module):void {
+    var styleManager:StyleManagerEx = createChildStyleManager(module.context);
+    document.styleManager = styleManager;
+    var cssReader:CssReader = createCssReader(module.context, styleManager);
 
     var localStyleHolder:LocalStyleHolder;
-    if (module.isApp) {
-      for each (localStyleHolder in module.localStyleHolders) {
-        if (localStyleHolder.isApplicable(documentFactory)) {
-          cssReader.read(localStyleHolder.getStylesheet(module.project).rulesets, localStyleHolder.file);
-        }
+    for each (localStyleHolder in module.localStyleHolders) {
+      if (localStyleHolder.isApplicable(document.documentFactory)) {
+        cssReader.read(localStyleHolder.getStylesheet(module.project).rulesets, localStyleHolder.file);
       }
-    }
-    else {
-      localStyleHolder = module.localStyleHolders[0];
-      cssReader.read(localStyleHolder.getStylesheet(module.project).rulesets, localStyleHolder.file);
     }
 
     cssReader.finalizeRead();
@@ -264,7 +285,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     if (!systemManager.sharedInitialized) {
       systemManager.initShared(window.stage, module.project, server, UncaughtErrorManager.instance);
     }
-    systemManager.init(new flexModuleFactoryClass(module.styleManager, module.context.applicationDomain), UncaughtErrorManager.instance,
+    systemManager.init(new flexModuleFactoryClass(document.styleManager, module.context.applicationDomain), UncaughtErrorManager.instance,
                        MainFocusManagerSB(module.project.window.focusManager), document.documentFactory);
     document.container = new DocumentContainer(Sprite(systemManager));
   }

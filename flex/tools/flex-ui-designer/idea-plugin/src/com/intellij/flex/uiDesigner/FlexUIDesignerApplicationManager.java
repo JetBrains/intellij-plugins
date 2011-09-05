@@ -159,9 +159,14 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         public void run() {
           Client client = Client.getInstance();
           try {
+            final ProblemsHolder problemsHolder = new ProblemsHolder();
             if (!client.isModuleRegistered(module)) {
               try {
-                LibraryManager.getInstance().initLibrarySets(module);
+                final XmlFile[] unregisteredDocumentReferences = LibraryManager.getInstance().initLibrarySets(module);
+                if (unregisteredDocumentReferences != null &&
+                    !client.registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder)) {
+                  return;
+                }
               }
               catch (InitException e) {
                 LOG.error(e.getCause());
@@ -169,11 +174,8 @@ public class FlexUIDesignerApplicationManager implements Disposable {
               }
             }
 
-            client.openDocument(module, psiFile);
+            client.openDocument(module, psiFile, problemsHolder);
             client.flush();
-          }
-          catch (IOException e) {
-            LOG.error(e);
           }
           finally {
             documentOpening = false;
@@ -228,9 +230,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           assert client.isModuleRegistered(module);
           client.updateDocumentFactory(factoryId, module, psiFile);
           client.flush();
-        }
-        catch (IOException e) {
-          LOG.error(e);
         }
         finally {
           documentOpening = false;
@@ -345,7 +344,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     private final Semaphore semaphore = new Semaphore();
     private ProgressIndicator indicator;
     
-    public XmlFile[] unregisteredDocumentReferences;
+    private XmlFile[] unregisteredDocumentReferences;
 
     public FirstOpenDocumentTask(@NotNull final XmlFile psiFile, final @NotNull Module module, final boolean debug) {
       super(module.getProject(), getOpenActionTitle(debug));
@@ -370,48 +369,45 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     private void openDocument() {
       indicator.setText(FlexUIDesignerBundle.message("open.document"));
       Client client = Client.getInstance();
-      try {
-        client.flush();
-
-        final ProblemsHolder problemsHolder = new ProblemsHolder();
-        if (unregisteredDocumentReferences != null) {
-          if (!client.registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder)) {
-            return;
-          }
-        }
-
-        final MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(appParentDisposable);
-        connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentOpenedListener() {
-          @Override
-          public void documentOpened() {
-            semaphoreUp();
-          }
-
-          @Override
-          public void errorOccured() {
-            semaphoreUp();
-          }
-
-          private void semaphoreUp() {
-            connection.disconnect();
-            semaphore.up();
-          }
-        });
-
-        semaphore.down();
-        if (client.openDocument(module, psiFile, true, problemsHolder)) {
-          client.flush();
-          indicator.setText(FlexUIDesignerBundle.message("load.libraries"));
-          semaphore.waitFor();
-        }
-        else {
-          semaphore.up();
-          connection.disconnect();
-        }
-      }
-      catch (IOException e) {
-        LOG.error(e);
+      if (!client.flush()) {
         cancel();
+      }
+
+      final ProblemsHolder problemsHolder = new ProblemsHolder();
+      if (unregisteredDocumentReferences != null &&
+          !client.registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder)) {
+        return;
+      }
+
+      final MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(appParentDisposable);
+      connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentOpenedListener() {
+        @Override
+        public void documentOpened() {
+          semaphoreUp();
+        }
+
+        @Override
+        public void errorOccured() {
+          semaphoreUp();
+        }
+
+        private void semaphoreUp() {
+          connection.disconnect();
+          semaphore.up();
+        }
+      });
+
+      semaphore.down();
+      if (client.openDocument(module, psiFile, true, problemsHolder)) {
+        if (!client.flush()) {
+          cancel();
+        }
+        indicator.setText(FlexUIDesignerBundle.message("load.libraries"));
+        semaphore.waitFor();
+      }
+      else {
+        semaphore.up();
+        connection.disconnect();
       }
     }
 

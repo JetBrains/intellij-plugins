@@ -1,7 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.facet.FacetManager;
-import com.intellij.flex.uiDesigner.css.CssWriter;
 import com.intellij.flex.uiDesigner.css.LocalCssWriter;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.io.StringRegistry.StringWriter;
@@ -11,8 +10,10 @@ import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.openapi.application.AccessToken;
@@ -92,6 +93,18 @@ public class ModuleInfoUtil {
     }
   }
 
+  public static boolean isApplicationDocument(XmlFile psiFile) {
+    AccessToken token = ReadAction.start();
+    try {
+      JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(psiFile);
+      return jsClass != null && (JSInheritanceUtil.isParentClass(jsClass, "spark.components.Application") ||
+                                 JSInheritanceUtil.isParentClass(jsClass, "mx.core.Application"));
+    }
+    finally {
+      token.finish();
+    }
+  }
+
   private static void collectApplicationLocalStyle(final ModuleInfo moduleInfo, String flexSdkVersion, final ProblemsHolder problemsHolder,
                                                    StringWriter stringWriter, List<XmlFile> unregisteredDocumentReferences,
                                                    final AssetCounter assetCounter) {
@@ -162,7 +175,7 @@ public class ModuleInfoUtil {
   }
 
   private static class StyleTagWriter {
-    private final CssWriter cssWriter;
+    private final LocalCssWriter cssWriter;
     private final THashMap<VirtualFile, ExternalLocalStyleHolder> externalLocalStyleHolders = new THashMap<VirtualFile, ExternalLocalStyleHolder>();
 
     public StyleTagWriter(StringRegistry.StringWriter stringWriter, ProblemsHolder problemsHolder,

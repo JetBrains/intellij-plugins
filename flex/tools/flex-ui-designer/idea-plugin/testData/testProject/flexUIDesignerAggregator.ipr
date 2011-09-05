@@ -132,6 +132,7 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/IDEA-72345.iml" filepath="$PROJECT_DIR$/IDEA-72345.iml" />
       <module fileurl="file://$PROJECT_DIR$/abc-builder-maven-plugin.iml" filepath="$PROJECT_DIR$/abc-builder-maven-plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/app-loader.iml" filepath="$PROJECT_DIR$/app-loader.iml" />
       <module fileurl="file://$PROJECT_DIR$/app-plugin-api.iml" filepath="$PROJECT_DIR$/app-plugin-api.iml" />

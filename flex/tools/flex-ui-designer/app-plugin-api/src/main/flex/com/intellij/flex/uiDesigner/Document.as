@@ -25,6 +25,9 @@ public class Document {
   public function get styleManager():StyleManagerEx {
     return _styleManager == null ? module.styleManager : _styleManager;
   }
+  public function set styleManager(value:StyleManagerEx):void {
+    _styleManager = value;
+  }
 
   private var _documentFactory:DocumentFactory;
   public function get documentFactory():DocumentFactory {

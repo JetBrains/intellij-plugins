@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,7 +73,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     propertiesComponent.setValue(ABC_FILTER_VERSION_VALUE_NAME, ABC_FILTER_VERSION);
   }
 
-  public XmlFile[] initLibrarySets(@NotNull final Module module) throws IOException, InitException {
+  public XmlFile[] initLibrarySets(@NotNull final Module module) throws InitException {
     final ProblemsHolder problemsHolder = new ProblemsHolder();
     XmlFile[] unregisteredDocumentReferences = initLibrarySets(module, true, problemsHolder, null);
     if (!problemsHolder.isEmpty()) {

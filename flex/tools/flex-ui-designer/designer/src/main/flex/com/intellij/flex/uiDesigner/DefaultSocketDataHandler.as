@@ -113,11 +113,11 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     const prevBytesAvailable:int = input.bytesAvailable;
     var module:Module = moduleManager.getById(input.readUnsignedShort());
     var bytes:ByteArray = new ByteArray();
-    var documentFactory:DocumentFactory = new DocumentFactory(input.readUnsignedShort(), bytes, VirtualFileImpl.create(input), AmfUtil.readString(input), module);
+    var documentFactory:DocumentFactory = new DocumentFactory(input.readUnsignedShort(), bytes, VirtualFileImpl.create(input),
+                                                              AmfUtil.readString(input), input.readBoolean(), module);
     getDocumentFactoryManager(module).register(documentFactory);
     
-    stringRegistry.readStringTable(input);
- 
+   stringRegistry.readStringTable(input);
     input.readBytes(bytes, 0, messageSize - (prevBytesAvailable - input.bytesAvailable));
   }
   
@@ -125,6 +125,8 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     const prevBytesAvailable:int = input.bytesAvailable;
     var module:Module = moduleManager.getById(input.readUnsignedShort());
     var documentFactory:DocumentFactory = getDocumentFactoryManager(module).get(input.readUnsignedShort());
+
+    input.readBoolean(); // todo isApp update document styleManager
     
     stringRegistry.readStringTable(input);
 

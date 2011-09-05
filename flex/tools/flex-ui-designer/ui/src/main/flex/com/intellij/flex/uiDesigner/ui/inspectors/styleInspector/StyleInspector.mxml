@@ -21,10 +21,10 @@
     private const namespaceUnificator:NamespaceUnificator = new NamespaceUnificator();
 
     private static const cssDeclarationItemRendererFactory:ClassFactory = new ClassFactory(TextBlockRenderer);
-    cssDeclarationItemRendererFactory.properties = {blockFactory:CssRulesetTextBlockFactory};
+    cssDeclarationItemRendererFactory.properties = {blockFactory: CssRulesetTextBlockFactory};
 
     private static const namespaceListRendererFactory:ClassFactory = new ClassFactory(TextBlockRenderer);
-    namespaceListRendererFactory.properties = {blockFactory:NamespaceListTextBlockFactory};
+    namespaceListRendererFactory.properties = {blockFactory: NamespaceListTextBlockFactory};
 
     private static const groupItemRendererFactory:ClassFactory = new ClassFactory(GroupItemRenderer);
 
@@ -41,7 +41,14 @@
     private var module:Module;
 
     public function set document(value:Document):void {
-      module = value == null ? null : value.module;
+      if (value == null) {
+        module = null;
+        _styleManager = null;
+      }
+      else {
+        module = value.module;
+        _styleManager = value.styleManager;
+      }
 
       _rulesetPrinter.module = module;
       _rulesetPrinter.interactor.module = module;
@@ -77,7 +84,6 @@
       source[0] = namespaceUnificator;
 
       namespaceUnificator.reset();
-      _styleManager = module.styleManager;
 
       var collected:Dictionary = new Dictionary();
       collect(element.inheritingStyles, collected, false);

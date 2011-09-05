@@ -60,8 +60,16 @@ public class Client implements Closable {
     return registeredProjects.getElement(id);
   }
 
-  public void flush() throws IOException {
-    out.flush();
+  public boolean flush() {
+    try {
+      out.flush();
+      return true;
+    }
+    catch (IOException e) {
+      LogMessageUtil.processInternalError(e);
+    }
+
+    return false;
   }
 
   @Override
@@ -245,8 +253,12 @@ public class Client implements Closable {
     }
   }
 
-  public void openDocument(Module module, XmlFile psiFile) throws IOException {
-    openDocument(module, psiFile, false, new ProblemsHolder());
+  public void openDocument(Module module, XmlFile psiFile) {
+    openDocument(module, psiFile, new ProblemsHolder());
+  }
+
+  public void openDocument(Module module, XmlFile psiFile, ProblemsHolder problemsHolder) {
+    openDocument(module, psiFile, false, problemsHolder);
   }
 
   /**
@@ -409,6 +421,7 @@ public class Client implements Closable {
 
   private boolean writeDocumentFactory(Module module, XmlFile psiFile, ProblemsHolder problemsHolder)
     throws IOException {
+    out.write(ModuleInfoUtil.isApplicationDocument(psiFile));
     XmlFile[] unregisteredDocumentReferences = mxmlWriter.write(psiFile, problemsHolder, registeredModules.getInfo(module).assetCounterInfo.demanded);
     return unregisteredDocumentReferences == null || registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder);
   }
