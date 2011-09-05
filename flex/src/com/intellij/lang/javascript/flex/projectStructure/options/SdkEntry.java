@@ -1,51 +1,56 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
-import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
+import com.intellij.openapi.diagnostic.Log;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.projectRoots.ex.ProjectRoot;
-import com.intellij.openapi.projectRoots.impl.ProjectRootContainerImpl;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.util.*;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ArrayUtil;
+import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
+import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.hash.LinkedHashMap;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @author ksafonov
  */
-public class SdkEntry implements JDOMExternalizable {
+public class SdkEntry {
+  private static Logger LOG = Logger.getInstance(SdkEntry.class.getName());
 
   private static final String HOME_ATTR = "home";
+  private static final String LIBRARY_ID_ATTR = "id";
   private static final String DEPENDENCY_TYPE_ELEM = "entry";
   private static final String URL_ATTR = "url";
+
   @NotNull
-  private String myHomePath;
+  private final String myLibraryId;
+
+  @NotNull
+  private final String myHomePath;
+
   private final LinkedHashMap<String, DependencyType> myDependencyTypes = new LinkedHashMap<String, DependencyType>();
 
-  @NotNull
-  public String getHomePath() {
-    return myHomePath;
-  }
+  public SdkEntry(Element element) throws InvalidDataException {
+    String libraryId = element.getAttributeValue(LIBRARY_ID_ATTR);
+    if (StringUtil.isEmpty(libraryId)) {
+      throw new InvalidDataException("library id is empty");
+    }
+    myLibraryId = libraryId;
 
-  public void setHomePath(@NotNull String homePath) {
-    myHomePath = homePath;
-    myDependencyTypes.clear();
-  }
-
-  @Override
-  public void readExternal(Element element) throws InvalidDataException {
     String home = element.getAttributeValue(HOME_ATTR);
-    if (home == null) {
-      throw new InvalidDataException("home path should not be null");
+    if (StringUtil.isEmpty(home)) {
+      throw new InvalidDataException("home path is empty");
     }
     myHomePath = home;
 
-    myDependencyTypes.clear();
     for (Object dependencyTypeElement : element.getChildren(DEPENDENCY_TYPE_ELEM)) {
       String url = ((Element)dependencyTypeElement).getAttributeValue(URL_ATTR);
       DependencyType dependencyType = new DependencyType();
@@ -54,8 +59,13 @@ public class SdkEntry implements JDOMExternalizable {
     }
   }
 
-  @Override
+  public SdkEntry(@NotNull String libraryId, String homePath) {
+    myLibraryId = libraryId;
+    myHomePath = homePath;
+  }
+
   public void writeExternal(Element element) throws WriteExternalException {
+    element.setAttribute(LIBRARY_ID_ATTR, myLibraryId);
     element.setAttribute(HOME_ATTR, myHomePath);
     for (Map.Entry<String, DependencyType> entry : myDependencyTypes.entrySet()) {
       Element dependencyTypeElement = new Element(DEPENDENCY_TYPE_ELEM);
@@ -66,18 +76,14 @@ public class SdkEntry implements JDOMExternalizable {
   }
 
   public SdkEntry getCopy() {
-    SdkEntry copy = new SdkEntry();
-    applyTo(copy);
+    SdkEntry copy = new SdkEntry(myLibraryId, myHomePath);
+    copy.myDependencyTypes.clear();
+    copy.myDependencyTypes.putAll(myDependencyTypes);
     return copy;
   }
 
-  private void applyTo(SdkEntry copy) {
-    copy.myHomePath = myHomePath;
-    copy.myDependencyTypes.clear();
-    copy.myDependencyTypes.putAll(myDependencyTypes);
-  }
-
   public boolean isEqual(@NotNull SdkEntry that) {
+    if (!myLibraryId.equals(that.myLibraryId)) return false;
     if (!myHomePath.equals(that.myHomePath)) return false;
     Iterator<String> i1 = myDependencyTypes.keySet().iterator();
     Iterator<String> i2 = that.myDependencyTypes.keySet().iterator();
@@ -89,5 +95,29 @@ public class SdkEntry implements JDOMExternalizable {
     }
     if (i1.hasNext() || i2.hasNext()) return false;
     return true;
+  }
+
+  @NotNull
+  public String getLibraryId() {
+    return myLibraryId;
+  }
+
+  @NotNull
+  public String getHomePath() {
+    return myHomePath;
+  }
+
+  @Nullable
+  public Library findLibrary() {
+    Library result = ContainerUtil.find(LibraryTablesRegistrar.getInstance().getLibraryTable().getLibraries(), new Condition<Library>() {
+      @Override
+      public boolean value(Library library) {
+        return FlexSdk.isFlexSdk(library) && FlexSdk.getLibraryId(library).equals(myLibraryId);
+      }
+    });
+    if (result != null) {
+      LOG.assertTrue(myHomePath.equals(FlexSdk.getHomePath(result)), "Unexpected home path");
+    }
+    return result;
   }
 }

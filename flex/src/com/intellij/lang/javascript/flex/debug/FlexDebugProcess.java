@@ -15,7 +15,6 @@ import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
-import com.intellij.lang.javascript.flex.projectStructure.FlexSdkManager;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.SdkEntry;
 import com.intellij.lang.javascript.flex.run.*;
@@ -34,6 +33,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Pair;
@@ -172,8 +172,8 @@ public class FlexDebugProcess extends XDebugProcess {
     assert sdkEntry != null; // checked in FlexBaseRunner
     final String sdkHome = sdkEntry.getHomePath();
 
-    final FlexSdk flexSdk = FlexSdkManager.getInstance().findSdk(sdkEntry.getHomePath());
-    myDebuggerVersion = StringUtil.notNullize(flexSdk != null ? flexSdk.getFlexVersion() : null, "unknown");
+    final Library sdk = sdkEntry.findLibrary();
+    myDebuggerVersion = StringUtil.notNullize(sdk != null ? FlexSdk.getFlexVersion(sdk) : null, "unknown");
     myBreakpointsHandler = new FlexBreakpointsHandler(this);
     mySdkLocation = FileUtil.toSystemIndependentName(sdkHome);
 

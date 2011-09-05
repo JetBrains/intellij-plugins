@@ -298,7 +298,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     @Override
     public boolean isValid() {
-      return mySdk.isValid();
+      return true; // we just don't add Flex SDK table item for invalid SDKs
     }
 
     @Override
@@ -820,10 +820,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   public boolean isModified() {
     if (myModifiableRootModel.isChanged()) return true;
 
-    FlexSdk currentSdk = mySdkPanel.getCurrentSdk();
+    String currentSdkId = mySdkPanel.getCurrentSdkId();
     SdkEntry sdkEntry = myDependencies.getSdkEntry();
-    if (currentSdk != null) {
-      if (sdkEntry == null || !currentSdk.getHomePath().equals(sdkEntry.getHomePath())) return true;
+    if (currentSdkId != null) {
+      if (sdkEntry == null || !currentSdkId.equals(sdkEntry.getLibraryId())) return true;
     }
     else {
       if (sdkEntry != null) return true;
@@ -924,8 +924,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     FlexSdk currentSdk = mySdkPanel.getCurrentSdk();
     if (currentSdk != null) {
-      SdkEntry sdkEntry = new SdkEntry();
-      sdkEntry.setHomePath(currentSdk.getHomePath());
+      SdkEntry sdkEntry = new SdkEntry(currentSdk.getLibraryId(), currentSdk.getHomePath());
       dependencies.setSdkEntry(sdkEntry);
     }
     else {
@@ -936,7 +935,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   public void reset() {
     SdkEntry sdkEntry = myDependencies.getSdkEntry();
     mySdkPanel.reset();
-    mySdkPanel.setCurrentHomePath(sdkEntry != null ? sdkEntry.getHomePath() : null);
+    mySdkPanel.setCurrentSdk(sdkEntry);
 
     updateAvailableTargetPlayers();
     myTargetPlayerCombo.setSelectedItem(myDependencies.TARGET_PLAYER);
@@ -950,7 +949,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     root.removeAllChildren();
 
     if (sdkEntry != null) {
-      FlexSdk flexSdk = mySdksModel.findOrCreateSdk(sdkEntry.getHomePath());
+      FlexSdk flexSdk = mySdksModel.findSdk(sdkEntry.getLibraryId());
       if (flexSdk != null) {
         DefaultMutableTreeNode sdkNode = new DefaultMutableTreeNode(new SdkItem(flexSdk), true);
         myTable.getRoot().insert(sdkNode, 0);

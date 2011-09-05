@@ -5,18 +5,18 @@ import com.intellij.openapi.Disposable;
 /**
  * User: ksafonov
  */
-public abstract class LazyInitializer {
+public abstract class LazyInitializer<T> {
 
   private boolean myInitialized;
 
-  public void ensureInitialized() {
+  public void ensureInitialized(T t) {
     if (!myInitialized) {
-      initialize();
+      initialize(t);
       myInitialized = true;
     }
   }
 
-  protected abstract void initialize();
+  protected abstract void initialize(T t);
 
   public void dispose() {
     myInitialized = false;

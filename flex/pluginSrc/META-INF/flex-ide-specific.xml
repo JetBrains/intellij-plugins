@@ -8,7 +8,7 @@
     <configuration.ModuleStructureExtension
         implementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension"/>
     <configurationType implementation="com.intellij.lang.javascript.flex.run.FlexIdeRunConfigurationType"/>
-    <applicationService serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.FlexSdkManager"/>
+    <library.type implementation="com.intellij.lang.javascript.flex.projectStructure.FlexSdkLibraryType"/>
   </extensions>
 
   <actions>

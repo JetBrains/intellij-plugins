@@ -114,8 +114,7 @@ public class Dependencies implements Cloneable {
   public void setSerializedSdk(Element element) {
     if (element != null) {
       try {
-        mySdk = new SdkEntry();
-        mySdk.readExternal(element);
+        mySdk = new SdkEntry(element);
         return;
       }
       catch (InvalidDataException e) {

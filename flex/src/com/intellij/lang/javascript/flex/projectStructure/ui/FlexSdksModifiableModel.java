@@ -1,23 +1,29 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
-import com.intellij.lang.javascript.flex.projectStructure.FlexSdkManager;
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdkLibraryType;
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdkProperties;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.impl.libraries.LibraryEx;
+import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
+import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
+import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.EventDispatcher;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * User: ksafonov
@@ -26,19 +32,21 @@ public class FlexSdksModifiableModel {
 
   private EventDispatcher<ChangeListener> mySdkListDispatcher = EventDispatcher.create(ChangeListener.class);
 
-  private final List<FlexSdk> mySdks = new ArrayList<FlexSdk>();
+  private final Collection<Library> myLibrariesExistedBefore = new HashSet<Library>();
+  private final Map<Object, Library> myUsedLibraries = new HashMap<Object, Library>();
+  private LibraryTableBase.ModifiableModelEx myModifiableModel;
 
-  private static final Object USED_BY_OTHERS = new Object();
+  public void reset(Project project) {
+    LibraryTable globalLibraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable();
+    myModifiableModel =
+      (LibraryTableBase.ModifiableModelEx)ProjectStructureConfigurable.getInstance(project).getContext()
+        .getModifiableLibraryTable(globalLibraryTable);
 
-  private final Map<Object, String> myUsedSkds = new HashMap<Object, String>();
-
-  public void resetFrom(FlexSdkManager source) {
-    mySdks.clear();
-    myUsedSkds.clear();
-    if (source != null) {
-      for (FlexSdk sdk : source.getSdks()) {
-        mySdks.add(sdk.getCopy());
-        myUsedSkds.put(USED_BY_OTHERS, sdk.getHomePath());
+    myUsedLibraries.clear();
+    myLibrariesExistedBefore.clear();
+    for (Library library : myModifiableModel.getLibraries()) {
+      if (FlexSdk.isFlexSdk(library)) {
+        myLibrariesExistedBefore.add(library);
       }
     }
     fireChanged();
@@ -52,86 +60,90 @@ public class FlexSdksModifiableModel {
     mySdkListDispatcher.addListener(listener, parentDisposable);
   }
 
-  public String[] getHomePaths() {
-    return ContainerUtil.map2Array(mySdks, String.class, new Function<FlexSdk, String>() {
+  public Library[] getLibraries() {
+    return ContainerUtil.findAllAsArray(myModifiableModel.getLibraries(), new Condition<Library>() {
       @Override
-      public String fun(FlexSdk sdk) {
-        return sdk.getHomePath();
+      public boolean value(Library library) {
+        return FlexSdk.isFlexSdk(library);
       }
     });
   }
 
-  @Nullable
-  private FlexSdk tryCreateSdk(@NotNull String sdkHome) {
-    FlexSdk flexSdk = new FlexSdk(sdkHome);
-    if (!flexSdk.isValid()) {
-      return null;
-    }
+  @NotNull
+  private FlexSdk createSdk(@NotNull String homePath) {
+    final VirtualFile sdkHome = LocalFileSystem.getInstance().findFileByPath(homePath);
 
-    FlexSdkUtils.setupSdkPaths(LocalFileSystem.getInstance().findFileByPath(sdkHome), null, flexSdk.createRootsModificator());
-    mySdks.add(0, flexSdk); // let most recent SDK show up first
-    fireChanged();
-    return flexSdk;
-  }
-
-  @Nullable
-  public FlexSdk findSdk(@NotNull String sdkHome) {
-    for (FlexSdk sdk : mySdks) {
-      if (sdk.getHomePath().equals(sdkHome)) {
-        return sdk;
+    Library library = myModifiableModel.createLibrary("Flex SDK", FlexSdkLibraryType.getInstance());
+    LibraryEx.ModifiableModelEx libraryModifiableModel = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
+    ((FlexSdkProperties)libraryModifiableModel.getProperties()).setId(UUID.randomUUID().toString());
+    ((FlexSdkProperties)libraryModifiableModel.getProperties()).setHomePath(homePath);
+    final FlexSdkModificator sdkModificator = new FlexSdkModificator(libraryModifiableModel);
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        FlexSdkUtils.setupSdkPaths(sdkHome, null, sdkModificator);
       }
-    }
-    return null;
+    });
+    // TODO let most recent SDK show up first
+    fireChanged();
+    return new FlexSdk(library);
   }
 
   @Nullable
-  public FlexSdk findOrCreateSdk(@NotNull String sdkHome) {
-    FlexSdk sdk = findSdk(sdkHome);
-    return sdk != null ? sdk : tryCreateSdk(sdkHome);
+  public FlexSdk findSdk(@NotNull final String libraryId) {
+    Library library = ContainerUtil.find(myModifiableModel.getLibraries(), new Condition<Library>() {
+      @Override
+      public boolean value(Library library) {
+        return FlexSdk.isFlexSdk(library) && FlexSdk.getLibraryId(library).equals(libraryId);
+      }
+    });
+    return library != null ? new FlexSdk(library) : null;
   }
 
-  public void setUsed(Object user, @Nullable String sdkHome) {
-    if (sdkHome == null) {
-      myUsedSkds.remove(user);
+  @NotNull
+  public FlexSdk findOrCreateSdk(@NotNull final String homePath) {
+    Library library = ContainerUtil.find(myModifiableModel.getLibraries(), new Condition<Library>() {
+      @Override
+      public boolean value(Library library) {
+        return FlexSdk.isFlexSdk(library) && FlexSdk.getHomePath(library).equals(homePath);
+      }
+    });
+    return library != null ? new FlexSdk(library) : createSdk(homePath);
+  }
+
+  public void setUsed(Object user, @Nullable Library sdk) {
+    if (sdk == null) {
+      myUsedLibraries.remove(user);
     }
     else {
-
-      if (findSdk(sdkHome) == null) {
-        throw new IllegalArgumentException("Unknown home path: " + sdkHome);
-      }
-
-      myUsedSkds.put(user, sdkHome);
+      myUsedLibraries.put(user, sdk);
     }
   }
 
-  public void applyTo(FlexSdkManager target) {
-    target.setSdks(getUsedSdks());
-  }
-
-  private List<FlexSdk> getUsedSdks() {
-    return ContainerUtil.filter(mySdks, new Condition<FlexSdk>() {
+  public void apply() {
+    Collection<Library> unusedLibraries = ContainerUtil.filter(myModifiableModel.getLibraries(), new Condition<Library>() {
       @Override
-      public boolean value(FlexSdk flexSdk) {
-        return myUsedSkds.containsValue(flexSdk.getHomePath());
+      public boolean value(Library library) {
+        return FlexSdk.isFlexSdk(library) && !myUsedLibraries.containsValue(library) && !myLibrariesExistedBefore.contains(library);
       }
     });
+
+    for (Library unusedLibrary : unusedLibraries) {
+      myModifiableModel.removeLibrary(unusedLibrary);
+    }
+    myModifiableModel.commit();
   }
 
-  public boolean isModified(FlexSdkManager instance) {
-    List<FlexSdk> currentSdks = getUsedSdks();
-    FlexSdk[] originalSdks = instance.getSdks();
-    if (currentSdks.size() != originalSdks.length) {
-      return true;
-    }
-    Map<String, FlexSdk> currentMap = new HashMap<String, FlexSdk>(currentSdks.size());
-    for (FlexSdk currentSdk : currentSdks) {
-      currentMap.put(currentSdk.getHomePath(), currentSdk);
-    }
-    for (FlexSdk originalSdk : originalSdks) {
-      if (!originalSdk.equalsTo(currentMap.get(originalSdk.getHomePath()))) {
-        return true;
+  public boolean isModified() {
+    Set<Library> currentLibraries = new HashSet<Library>(ContainerUtil.filter(myModifiableModel.getLibraries(), new Condition<Library>() {
+      @Override
+      public boolean value(Library library) {
+        return !FlexSdk.isFlexSdk(library) || myUsedLibraries.containsValue(library);
       }
-    }
-    return false;
+    }));
+    currentLibraries.addAll(myLibrariesExistedBefore);
+    LibraryTable globalLibraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable();
+    Set<Library> originalLibraries = new HashSet<Library>(Arrays.asList(globalLibraryTable.getLibraries()));
+    return !currentLibraries.equals(originalLibraries);
   }
 }
