@@ -11,7 +11,7 @@ import java.io.IOException;
 public class StyleTest extends MxmlTestBase {
   @Override
   protected String getBasePath() {
-    return "/css";
+    return getName().equals("testAlwaysCreateChildStyleManagerForAppDocument") ? "/AlwaysCreateChildStyleManagerForAppDocument" : "/css";
   }
   
   public void testLibraryCssDefaults() throws Exception {
@@ -70,7 +70,12 @@ public class StyleTest extends MxmlTestBase {
   public void testSeveralStyleSources() throws Exception {
     testFile("SeveralStyleSources.mxml", "defaults.css");
   }
-  
+
+  @Flex(requireLocalStyleHolder = true)
+  public void testAlwaysCreateChildStyleManagerForAppDocument() throws Exception {
+    testFiles(new String[]{"App2.mxml", "App1.mxml"}, "../css/defaults.css");
+  }
+
   @Override
   protected Module createModule(@NonNls final String moduleName) {
     Module module = super.createModule(moduleName);

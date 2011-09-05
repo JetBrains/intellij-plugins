@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner.plugins.test {
+import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.css.CssClassCondition;
 import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.css.CssPseudoCondition;
@@ -30,6 +31,8 @@ public class StyleTest extends BaseTestCase {
       LibraryWithDefaultsCss();
       ApplicationLevelGlobalSelector();
       SeveralStyleSources();
+      App1();
+      App2();
     }
   }
 
@@ -134,6 +137,20 @@ public class StyleTest extends BaseTestCase {
 
   public function SeveralStyleSources():void {
     assertThat(app, [{styleName: "myCustomButton", color: 0x000000, icon: notNullValue()}, {styleName: "custom", color: 0xff0000, icon: nullValue()}]);
+  }
+
+  public function App1(a:Object = null):void {
+    if (a == null) {
+      a = app;
+    }
+    assertThat(a, [{text: "label1", color: 0x000000}]);
+  }
+
+  public function App2():void {
+    assertThat(app, {color: 0xff0000, fontSize: 18});
+    var app1:Object = DocumentFactoryManager(projectManager.project.getComponent(DocumentFactoryManager)).get(0).document.uiComponent;
+    assertThat(app1, notNullValue());
+    App1(app1);
   }
 }
 }

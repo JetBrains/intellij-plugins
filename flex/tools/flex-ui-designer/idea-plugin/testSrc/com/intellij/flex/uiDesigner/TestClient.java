@@ -12,7 +12,7 @@ class TestClient extends Client {
   public void test(String filename, String parentFilename) throws IOException {
     char c = parentFilename.charAt(0);
     test(filename,
-         c == 's' ? STATES_TEST_CLASS_ID : c == 'i' ? INJECTED_AS_TEST_CLASS_ID : (c == 'c' ? STYLE_TEST_CLASS_ID : MXML_TEST_CLASS_ID));
+         c == 's' ? STATES_TEST_CLASS_ID : c == 'i' ? INJECTED_AS_TEST_CLASS_ID : (c == 'c' || c == 'A' ? STYLE_TEST_CLASS_ID : MXML_TEST_CLASS_ID));
   }
   
   public void test(String filename, int c) throws IOException {

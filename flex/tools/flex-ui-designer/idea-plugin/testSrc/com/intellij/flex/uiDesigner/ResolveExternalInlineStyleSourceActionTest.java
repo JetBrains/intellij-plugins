@@ -20,11 +20,6 @@ public class ResolveExternalInlineStyleSourceActionTest extends FlexUIDesignerBa
     configureByFile(BASE_PATH + "/innerComponentInDeclarations.mxml");
   }
 
-  //@Override
-  protected String getBasePath() {
-    return BASE_PATH;
-  }
-
   @JSTestOptions({JSTestOption.WithGumboSdk, JSTestOption.WithFlexFacet})
   public void testFindInnerComponentInDeclarations() throws Exception {
     Map<String, String> styles = new THashMap<String, String>();
