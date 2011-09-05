@@ -77,6 +77,7 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
   }
 
   public boolean isModified() {
+    if (!FlexIdeUtils.isNewUI()) return false;
     return myConfigurator.isModified();
   }
 
