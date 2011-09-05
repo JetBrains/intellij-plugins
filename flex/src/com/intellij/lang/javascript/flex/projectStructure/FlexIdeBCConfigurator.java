@@ -260,10 +260,13 @@ public class FlexIdeBCConfigurator {
       configuration.MAIN_CLASS = defaultConfiguration.MAIN_CLASS;
     }
 
-    if (configuration.TARGET_PLATFORM != FlexIdeBuildConfiguration.TargetPlatform.Web) {
+    if (configuration.TARGET_PLATFORM != FlexIdeBuildConfiguration.TargetPlatform.Web ||
+        configuration.OUTPUT_TYPE != FlexIdeBuildConfiguration.OutputType.Application) {
       configuration.USE_HTML_WRAPPER = defaultConfiguration.USE_HTML_WRAPPER;
       configuration.WRAPPER_TEMPLATE_PATH = defaultConfiguration.WRAPPER_TEMPLATE_PATH;
+    }
 
+    if (configuration.TARGET_PLATFORM != FlexIdeBuildConfiguration.TargetPlatform.Web) {
       configuration.DEPENDENCIES.TARGET_PLAYER = defaultConfiguration.DEPENDENCIES.TARGET_PLAYER;
     }
 
