@@ -16,10 +16,8 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.facet.impl.ui.libraries.LibraryCompositionSettings;
-import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
-import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryNameAndLevelPanel;
-import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryRootsComponent;
-import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.*;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.FormBuilder;
@@ -30,34 +28,23 @@ import java.awt.*;
 /**
  * @author ksafonov
  */
-public class EditFlexSdkDialog extends DialogWrapper {
+public class EditFlexSdkDialog extends LibraryEditorDialogBase {
 
-  private LibraryCompositionSettings mySettings;
-  private LibraryRootsComponent myLibraryRootsComponent;
-  private FormBuilder myBuilder;
-
-  public EditFlexSdkDialog(Component parent, LibraryCompositionSettings settings, final LibraryEditor libraryEditor) {
-    super(parent, true);
-    mySettings = settings;
-    myLibraryRootsComponent = new LibraryRootsComponent(null, libraryEditor);
-    myLibraryRootsComponent.resetProperties();
-
-    Disposer.register(getDisposable(), myLibraryRootsComponent);
-
-    setTitle("Edit " + libraryEditor.getName());
-
-    myBuilder = LibraryNameAndLevelPanel.createFormBuilder();
+  public EditFlexSdkDialog(Project project, LibraryEditor libraryEditor, Component parent) {
+    super(parent, new LibraryRootsComponent(project, libraryEditor));
+    setTitle("Configure " + libraryEditor.getName());
     init();
   }
 
   @Override
-  protected JComponent createCenterPanel() {
-    return myLibraryRootsComponent.getComponent();
+  protected JComponent createNorthPanel() {
+    // create name editor, but hide it
+    super.createNorthPanel();
+    return null;
   }
 
   @Override
-  protected void doOKAction() {
-    myLibraryRootsComponent.applyProperties();
-    super.doOKAction();
+  protected boolean shouldCheckName(String newName) {
+    return false;
   }
 }

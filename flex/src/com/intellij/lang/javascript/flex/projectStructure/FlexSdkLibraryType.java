@@ -1,11 +1,14 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
+import com.intellij.lang.javascript.flex.library.FlexLibraryType;
+import com.intellij.lang.javascript.flex.projectStructure.ui.FilteringLibraryRootsComponentDescriptor;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.libraries.LibraryType;
 import com.intellij.openapi.roots.libraries.ui.LibraryEditorComponent;
 import com.intellij.openapi.roots.libraries.ui.LibraryPropertiesEditor;
+import com.intellij.openapi.roots.libraries.ui.LibraryRootsComponentDescriptor;
 import com.intellij.openapi.roots.ui.configuration.FacetsProvider;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,5 +53,11 @@ public class FlexSdkLibraryType extends LibraryType<FlexSdkProperties> {
 
   public static FlexSdkLibraryType getInstance() {
     return LibraryType.EP_NAME.findExtension(FlexSdkLibraryType.class);
+  }
+
+  @Override
+  public LibraryRootsComponentDescriptor createLibraryRootsComponentDescriptor() {
+    return new FilteringLibraryRootsComponentDescriptor(
+      FlexLibraryType.getInstance().createLibraryRootsComponentDescriptor(), FlexSdk.EDITABLE_ROOT_TYPES);
   }
 }

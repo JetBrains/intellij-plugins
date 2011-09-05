@@ -13,6 +13,8 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesModifiableModel;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -35,8 +37,10 @@ public class FlexSdksModifiableModel {
   private final Collection<Library> myLibrariesExistedBefore = new HashSet<Library>();
   private final Map<Object, Library> myUsedLibraries = new HashMap<Object, Library>();
   private LibraryTableBase.ModifiableModelEx myModifiableModel;
+  private Project myProject;
 
   public void reset(Project project) {
+    myProject = project;
     LibraryTable globalLibraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable();
     myModifiableModel =
       (LibraryTableBase.ModifiableModelEx)ProjectStructureConfigurable.getInstance(project).getContext()
@@ -145,5 +149,13 @@ public class FlexSdksModifiableModel {
     LibraryTable globalLibraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable();
     Set<Library> originalLibraries = new HashSet<Library>(Arrays.asList(globalLibraryTable.getLibraries()));
     return !currentLibraries.equals(originalLibraries);
+  }
+
+  public Project getProject() {
+    return myProject;
+  }
+
+  public LibraryEditor getLibraryEditor(Library library) {
+    return ((LibrariesModifiableModel)myModifiableModel).getLibraryEditor(library);
   }
 }

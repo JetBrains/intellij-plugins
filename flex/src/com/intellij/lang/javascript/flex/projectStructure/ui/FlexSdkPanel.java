@@ -5,8 +5,19 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.options.SdkEntry;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.roots.libraries.LibraryTablePresentation;
+import com.intellij.openapi.roots.ui.configuration.LibraryTableModifiableModelProvider;
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.EditExistingLibraryDialog;
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditorDialogBase;
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryRootsComponent;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
@@ -159,25 +170,15 @@ public class FlexSdkPanel implements Disposable {
   }
 
   private void editSdk() {
-    //FlexLibraryEditor editor = new FlexLibraryEditor(getCurrentSdk());
-    //try {
-    //  LibraryCompositionSettings settings = new LibraryCompositionSettings(new CustomLibraryDescriptionBase("") {
-    //    @NotNull
-    //    @Override
-    //    public Set<? extends LibraryKind<?>> getSuitableLibraryKinds() {
-    //      return Collections.emptySet();
-    //    }
-    //  }, "", null, Collections.<FrameworkLibraryVersion>emptyList());
-    //
-    //  EditFlexSdkDialog d = new EditFlexSdkDialog(myContentPane, settings, editor);
-    //  d.show();
-    //  if (d.isOK()) {
-    //    editor.applyTo(getCurrentSdk());
-    //  }
-    //}
-    //finally {
-    //  Disposer.dispose(editor);
-    //}
+    FlexSdk currentSdk = getCurrentSdk();
+    if (currentSdk == null) {
+      return;
+    }
+
+    Library library = currentSdk.getLibrary();
+    LibraryEditor libraryEditor = myModifiableModel.getLibraryEditor(library);
+    Project project = myModifiableModel.getProject();
+    new EditFlexSdkDialog(project, libraryEditor, myContentPane).show();
   }
 
   public void addListener(ChangeListener listener, Disposable parentDisposable) {
