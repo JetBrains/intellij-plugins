@@ -55,6 +55,9 @@ public class CompilerOptionInfo {
   public static final CompilerOptionInfo SOURCE_PATH_INFO =
     new CompilerOptionInfo("compiler.source-path", "fake", OptionType.List, null,
                            new ListElement[]{new ListElement("path-element", ListElementType.String)}, false, null, true, true, true, "");
+  public static final CompilerOptionInfo INCLUDE_CLASSES_INFO =
+    new CompilerOptionInfo("include-classes", "fake", OptionType.List, null,
+                           new ListElement[]{new ListElement("class", ListElementType.String)}, false, null, true, true, true, "");
   public static final CompilerOptionInfo RSL_ONE_URL_PATH_INFO =
     new CompilerOptionInfo("runtime-shared-library-path", "fake", OptionType.List, null,
                            new ListElement[]{

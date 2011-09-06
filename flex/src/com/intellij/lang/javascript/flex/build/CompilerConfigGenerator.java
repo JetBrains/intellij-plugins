@@ -6,14 +6,13 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.*;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.roots.LibraryOrderEntry;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.PathUtil;
@@ -365,7 +364,31 @@ public class CompilerConfigGenerator {
 
   private void addInputOutputPaths(final Element rootElement) {
     if (myConfig.OUTPUT_TYPE == FlexIdeBuildConfiguration.OutputType.Library) {
-      // todo
+      final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(myModule.getProject()).getFileIndex();
+
+      ContentIterator ci = new ContentIterator() {
+        public boolean processFile(final VirtualFile fileOrDir) {
+          if (FlexCompilerHandler.includeInCompilation(myModule.getProject(), fileOrDir)) {
+            //if (!isTest && projectFileIndex.isInTestSourceContent(fileOrDir)) {
+            //  return true;
+            //}
+
+            final VirtualFile rootForFile = projectFileIndex.getSourceRootForFile(fileOrDir);
+            if (rootForFile != null) {
+              final String packageText = VfsUtil.getRelativePath(fileOrDir.getParent(), rootForFile, '.');
+              assert packageText != null;
+              final String qName = (packageText.length() > 0 ? packageText + "." : "") + fileOrDir.getNameWithoutExtension();
+
+              if (FlexCompilerHandler.isMxmlOrFxgOrASWithPublicDeclaration(myModule, fileOrDir, qName)) {
+                addOption(rootElement, CompilerOptionInfo.INCLUDE_CLASSES_INFO, qName);
+              }
+            }
+          }
+          return true;
+        }
+      };
+
+      ModuleRootManager.getInstance(myModule).getFileIndex().iterateContent(ci);
     }
     else {
       final String pathToMainClassFile = FlexUtils.getPathToMainClassFile(myConfig.MAIN_CLASS, myModule);
