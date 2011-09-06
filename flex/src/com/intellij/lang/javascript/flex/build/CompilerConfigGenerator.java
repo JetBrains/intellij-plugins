@@ -1,24 +1,26 @@
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.javascript.flex.FlexApplicationComponent;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeProjectLevelCompilerOptionsHolder;
-import com.intellij.lang.javascript.flex.projectStructure.ValueSource;
-import com.intellij.lang.javascript.flex.projectStructure.options.CompilerOptions;
-import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.lang.javascript.flex.projectStructure.*;
+import com.intellij.lang.javascript.flex.projectStructure.options.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformUtils;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -28,49 +30,47 @@ import java.util.Set;
 
 public class CompilerConfigGenerator {
 
+  private static final String[] LIB_ORDER =
+    {"framework", "textLayout", "osmf", "spark", "sparkskins", "rpc", "charts", "spark_dmv", "osmf", "mx", "advancedgrids"};
+  
   private final Module myModule;
-  private final String mySdkRootPath;
-  private final String mySdkVersion;
   private final FlexIdeBuildConfiguration myConfig;
+  private final String mySdkHome;
+  private final String mySdkVersion;
+  private final String[] mySdkRootUrls;
   private final CompilerOptions myModuleLevelCompilerOptions;
   private final CompilerOptions myProjectLevelCompilerOptions;
 
-  private CompilerConfigGenerator(final Module module,
-                                  final String sdkRootPath,
-                                  final String sdkVersion,
-                                  final FlexIdeBuildConfiguration config) {
-    this.myModule = module;
-    this.mySdkRootPath = sdkRootPath;
-    this.mySdkVersion = sdkVersion;
-    this.myConfig = config;
-    myModuleLevelCompilerOptions = FlexIdeBuildConfigurationManager.getInstance(module).getModuleLevelCompilerOptions();
-    myProjectLevelCompilerOptions =
-      FlexIdeProjectLevelCompilerOptionsHolder.getInstance(module.getProject()).getProjectLevelCompilerOptions();
-  }
-
-  /**
-   * called from tests via reflection
-   */
-  private CompilerConfigGenerator(final Module module,
-                                  final String sdkRootPath,
-                                  final String sdkVersion,
-                                  final FlexIdeBuildConfiguration config,
-                                  final CompilerOptions moduleLevelCompilerOptions,
-                                  final CompilerOptions projectLevelCompilerOptions) {
-    assert ApplicationManager.getApplication().isUnitTestMode();
+  private CompilerConfigGenerator(final @NotNull Module module,
+                                  final @NotNull FlexIdeBuildConfiguration config,
+                                  final @NotNull String sdkHome,
+                                  final @NotNull String sdkVersion,
+                                  final @NotNull String[] sdkRootUrls,
+                                  final @NotNull CompilerOptions moduleLevelCompilerOptions,
+                                  final @NotNull CompilerOptions projectLevelCompilerOptions) {
     myModule = module;
-    mySdkRootPath = sdkRootPath;
-    mySdkVersion = sdkVersion;
     myConfig = config;
+    mySdkHome = sdkHome;
+    mySdkVersion = sdkVersion;
+    mySdkRootUrls = sdkRootUrls;
     myModuleLevelCompilerOptions = moduleLevelCompilerOptions;
     myProjectLevelCompilerOptions = projectLevelCompilerOptions;
   }
 
-  public static VirtualFile getOrCreateConfigFile(final Module module,
-                                                  final String sdkRootPath,
-                                                  final String sdkVersion,
-                                                  final FlexIdeBuildConfiguration config) throws IOException {
-    final String text = new CompilerConfigGenerator(module, sdkRootPath, sdkVersion, config).generateConfigFileText();
+  public static VirtualFile getOrCreateConfigFile(final Module module, final FlexIdeBuildConfiguration config) throws IOException {
+    final SdkEntry sdkEntry = config.DEPENDENCIES.getSdkEntry();
+    final Library sdkLib = sdkEntry == null ? null : sdkEntry.findLibrary();
+    if (sdkLib == null) {
+      throw new IOException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", config.NAME, module.getName()));
+    }
+
+    final CompilerConfigGenerator generator =
+      new CompilerConfigGenerator(module, config, FlexSdk.getHomePath(sdkLib), FlexSdk.getFlexVersion(sdkLib),
+                                  sdkLib.getUrls(OrderRootType.CLASSES),
+                                  FlexIdeBuildConfigurationManager.getInstance(module).getModuleLevelCompilerOptions(),
+                                  FlexIdeProjectLevelCompilerOptionsHolder.getInstance(module.getProject())
+                                    .getProjectLevelCompilerOptions());
+    final String text = generator.generateConfigFileText();
     final String name =
       FlexCompilerHandler.generateConfigFileName(module, config.NAME, PlatformUtils.getPlatformPrefix().toLowerCase(), null);
     return FlexCompilationUtils.getOrCreateConfigFile(module.getProject(), name, text);
@@ -177,43 +177,95 @@ public class CompilerConfigGenerator {
   }
 
   private void addRootsFromSdk(final Element rootElement) {
-    final String globalLib = myConfig.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Web
-                             ? "${FLEX_SDK}/frameworks/libs/player/{targetPlayerMajorVersion}" +
-                               (StringUtil.compareVersionNumbers(mySdkVersion, "4") < 0 ? "" : ".{targetPlayerMinorVersion}") +
-                               "/playerglobal.swc"
-                             : "${FLEX_SDK}/frameworks/libs/air/airglobal.swc";
-    addOption(rootElement, CompilerOptionInfo.EXTERNAL_LIBRARY_INFO, globalLib);
+    final CompilerOptionInfo localeInfo = CompilerOptionInfo.getOptionInfo("compiler.locale");
+    if (!getValueAndSource(localeInfo).first.isEmpty()) {
+      addOption(rootElement, CompilerOptionInfo.LIBRARY_PATH_INFO, mySdkHome + "/frameworks/locale/{locale}");
+    }
+    
+    final Map<String, String> libNameToRslInfo = new THashMap<String, String>();
 
-    final StringBuilder libBuilder = new StringBuilder();
-    libBuilder
-      .append("${FLEX_SDK}/frameworks/libs")
-      .append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR)
-      .append("${FLEX_SDK}/frameworks/locale/{locale}");
+    for (final String swcUrl : mySdkRootUrls) {
+      final String swcPath = VirtualFileManager.extractPath(StringUtil.trimEnd(swcUrl, JarFileSystem.JAR_SEPARATOR));
 
-    if (myConfig.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Desktop) {
-      libBuilder
-        .append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR)
-        .append("${FLEX_SDK}/frameworks/libs/air");
+      LinkageType linkageType = BCUtils
+        .getSdkEntryLinkageType(swcPath, myConfig.getNature(), myConfig.DEPENDENCIES.TARGET_PLAYER, myConfig.DEPENDENCIES.COMPONENT_SET);
+
+      // check applicability
+      if (linkageType == null) continue;
+      // resolve default
+      if (linkageType == LinkageType.Default) linkageType = myConfig.DEPENDENCIES.getFrameworkLinkage();
+      if (linkageType == LinkageType.Default) linkageType = BCUtils.getDefaultFrameworkLinkage(myConfig.getNature());
+
+      final CompilerOptionInfo info = linkageType == LinkageType.Merged ? CompilerOptionInfo.LIBRARY_PATH_INFO :
+                                      linkageType == LinkageType.RSL ? CompilerOptionInfo.LIBRARY_PATH_INFO :
+                                      linkageType == LinkageType.External ? CompilerOptionInfo.EXTERNAL_LIBRARY_INFO :
+                                      linkageType == LinkageType.Include ? CompilerOptionInfo.INCLUDE_LIBRARY_INFO :
+                                      null;
+      assert info != null : swcPath + ": " + linkageType.getShortText();
+
+      addOption(rootElement, info, swcPath);
+
+      if (linkageType == LinkageType.RSL) {
+        final String swcName = PathUtil.getFileName(swcPath);
+        assert swcName.endsWith(".swc") : swcUrl;
+        final String libName = swcName.substring(0, swcName.length() - ".swc".length());
+
+        final String swzVersion = libName.equals("textLayout")
+                                  ? getTextLayoutSwzVersion(mySdkVersion)
+                                  : libName.equals("osmf")
+                                    ? getOsmfSwzVersion(mySdkVersion)
+                                    : mySdkVersion;
+        final String swzUrl;
+        swzUrl = libName.equals("textLayout")
+                 ? "http://fpdownload.adobe.com/pub/swz/tlf/" + swzVersion + "/textLayout_" + swzVersion + ".swz"
+                 : "http://fpdownload.adobe.com/pub/swz/flex/" + mySdkVersion + "/" + libName + "_" + swzVersion + ".swz";
+
+        final StringBuilder rslBuilder = new StringBuilder();
+        rslBuilder
+          .append(swcPath)
+          .append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)
+          .append(swzUrl)
+          .append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)
+          .append("http://fpdownload.adobe.com/pub/swz/crossdomain.xml")
+          .append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)
+          .append(libName).append('_').append(swzVersion).append(".swz")
+          .append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)
+          .append(""); // no failover policy file url
+        
+        libNameToRslInfo.put(libName, rslBuilder.toString());
+      }
+    }
+    
+    addRslInfo(rootElement, libNameToRslInfo);
+  }
+
+  private void addRslInfo(final Element rootElement, final Map<String, String> libNameToRslInfo) {
+    if (libNameToRslInfo.isEmpty()) return;
+
+    // RSL order is important!
+    for (final String libName : LIB_ORDER) {
+      final String rslInfo = libNameToRslInfo.remove(libName);
+      if (rslInfo != null) {
+        addOption(rootElement, CompilerOptionInfo.RSL_TWO_URLS_PATH_INFO, rslInfo);
+      }
     }
 
-    if (StringUtil.compareVersionNumbers(mySdkVersion, "4.5") >= 0) {
-      if (myConfig.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Mobile) {
-        libBuilder
-          .append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR)
-          .append("${FLEX_SDK}/frameworks/libs/mobile")
-          .append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR)
-          .append("${FLEX_SDK}/frameworks/libs/air/servicemonitor.swc");
-      }
-      else {
-        libBuilder
-          .append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR)
-          .append("${FLEX_SDK}/frameworks/libs/mx");
-      }
+    // now add other in random order, though up to Flex SDK 4.5.1 the map should be empty at this stage
+    for (final String rslInfo : libNameToRslInfo.values()) {
+      addOption(rootElement, CompilerOptionInfo.RSL_TWO_URLS_PATH_INFO, rslInfo);
     }
+  }
 
-    addOption(rootElement, CompilerOptionInfo.LIBRARY_PATH_INFO, libBuilder.toString());
+  private static String getTextLayoutSwzVersion(final String sdkVersion) {
+    return sdkVersion.startsWith("4.0")
+           ? "textLayout_1.0.0.595"
+           : sdkVersion.startsWith("4.1")
+             ? "1.1.0.604"
+             : "2.0.0.232";
+  }
 
-    // todo handle RSL/include/external linkage
+  private static String getOsmfSwzVersion(final String sdkVersion) {
+    return StringUtil.compareVersionNumbers(sdkVersion, "4.5") < 0 ? "4.0.0.13495" : "1.0.0.16316";
   }
 
   private void addLibs(final Element rootElement) {
@@ -284,7 +336,7 @@ public class CompilerConfigGenerator {
       return;
     }
 
-    final String value = StringUtil.escapeXml(FlexUtils.replacePathMacros(rawValue, myModule, mySdkRootPath));
+    final String value = StringUtil.escapeXml(FlexUtils.replacePathMacros(rawValue, myModule, mySdkHome));
 
     final List<String> elementNames = StringUtil.split(info.ID, ".");
     Element parentElement = rootElement;
@@ -309,13 +361,12 @@ public class CompilerConfigGenerator {
         break;
       case List:
         if (info.LIST_ELEMENTS.length == 1) {
-          final Element listHolderElement = new Element(elementName, parentElement.getNamespace());
+          final Element listHolderElement = getOrCreateElement(parentElement, elementName);
           for (final String listElementValue : StringUtil.split(value, String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR))) {
             final Element child = new Element(info.LIST_ELEMENTS[0].NAME, listHolderElement.getNamespace());
             child.setText(listElementValue);
             listHolderElement.addContent(child);
           }
-          parentElement.addContent(listHolderElement);
         }
         else {
           for (final String listEntry : StringUtil.split(value, String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR))) {

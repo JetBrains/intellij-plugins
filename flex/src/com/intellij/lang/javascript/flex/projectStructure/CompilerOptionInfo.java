@@ -55,6 +55,22 @@ public class CompilerOptionInfo {
   public static final CompilerOptionInfo SOURCE_PATH_INFO =
     new CompilerOptionInfo("compiler.source-path", "fake", OptionType.List, null,
                            new ListElement[]{new ListElement("path-element", ListElementType.String)}, false, null, true, true, true, "");
+  public static final CompilerOptionInfo RSL_ONE_URL_PATH_INFO =
+    new CompilerOptionInfo("runtime-shared-library-path", "fake", OptionType.List, null,
+                           new ListElement[]{
+                             new ListElement("path-element", ListElementType.String),
+                             new ListElement("rsl-url", ListElementType.String),
+                             new ListElement("policy-file-url", ListElementType.String)
+                           }, false, null, true, true, true, "");
+  public static final CompilerOptionInfo RSL_TWO_URLS_PATH_INFO =
+    new CompilerOptionInfo("runtime-shared-library-path", "fake", OptionType.List, null,
+                           new ListElement[]{
+                             new ListElement("path-element", ListElementType.String),
+                             new ListElement("rsl-url", ListElementType.String),
+                             new ListElement("policy-file-url", ListElementType.String),
+                             new ListElement("rsl-url", ListElementType.String),
+                             new ListElement("policy-file-url", ListElementType.String)
+                           }, false, null, true, true, true, "");
   public static final CompilerOptionInfo MOBILE_INFO =
     new CompilerOptionInfo("compiler.mobile", "fake", OptionType.Boolean, null, null, false, null, true, true, true, "");
   public static final CompilerOptionInfo TARGET_PLAYER_INFO =

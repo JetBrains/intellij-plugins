@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -74,10 +73,7 @@ public abstract class FlexCompilationTask {
       return FlexCompilationUtils.getConfigFiles(myOldConfig, myModule, myFlexFacet, null);
     }
     else {
-      // todo take correct SDK myFlexIdeConfig.DEPENDENCIES...
-      final Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(myModule);
-      return Collections.singletonList(
-        CompilerConfigGenerator.getOrCreateConfigFile(myModule, sdk.getHomePath(), sdk.getVersionString(), myFlexIdeConfig));
+      return Collections.singletonList(CompilerConfigGenerator.getOrCreateConfigFile(myModule, myFlexIdeConfig));
     }
   }
 

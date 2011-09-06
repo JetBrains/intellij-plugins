@@ -109,8 +109,8 @@ public class FlexSdkUtils {
         });
 
         final VirtualFile baseDir = playerDir.getParent().getParent();
-        addSwcRoots(sdkModificator, baseDir, Collections.singletonList("libs/air/airglobal.swc"),
-                    false); // let it be in the beginning of the list
+        // let global lib be in the beginning of the list
+        addSwcRoots(sdkModificator, baseDir, Collections.singletonList("libs/air/airglobal.swc"), false);
         addSwcRoots(sdkModificator, baseDir, Arrays.asList("libs", "libs/mx", "libs/air", "libs/mobile"), true);
       }
     }

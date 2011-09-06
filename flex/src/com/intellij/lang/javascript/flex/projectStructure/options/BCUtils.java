@@ -57,45 +57,45 @@ public class BCUtils {
    * @return <code>null</code> if entry should not be included at all
    */
   @Nullable
-  public static LinkageType getSdkEntryLinkageType(final String url,
+  public static LinkageType getSdkEntryLinkageType(final String path,
                                                    final BuildConfigurationNature bcNature,
                                                    String targetPlayer,
                                                    final FlexIdeBuildConfiguration.ComponentSet componentSet) {
-    if (url.endsWith("/frameworks/libs/air/airglobal.swc")) {
+    if (path.endsWith("/frameworks/libs/air/airglobal.swc")) {
       return bcNature.isWebPlatform() ? null : LinkageType.External;
     }
 
-    if (url.endsWith("/playerglobal.swc") && url.contains("/frameworks/libs/player/")) {
-      if (url.endsWith("/frameworks/libs/player/" + targetPlayer + "/playerglobal.swc")) {
+    if (path.endsWith("/playerglobal.swc") && path.contains("/frameworks/libs/player/")) {
+      if (path.endsWith("/frameworks/libs/player/" + targetPlayer + "/playerglobal.swc")) {
         return bcNature.isWebPlatform() ? LinkageType.External : null;
       }
       return null;
     }
 
-    final int lastSlashIndex = url.lastIndexOf('/');
-    if (lastSlashIndex <= 0 || lastSlashIndex == url.length() - 1) {
-      LOG.error("Unexpected Flex SDK root: " + url);
+    final int lastSlashIndex = path.lastIndexOf('/');
+    if (lastSlashIndex <= 0 || lastSlashIndex == path.length() - 1) {
+      LOG.error("Unexpected Flex SDK root: " + path);
     }
-    final String swcName = url.substring(lastSlashIndex + 1);
-    final String folderUrl = url.substring(0, lastSlashIndex);
+    final String swcName = path.substring(lastSlashIndex + 1);
+    final String folderPath = path.substring(0, lastSlashIndex);
 
-    if (folderUrl.endsWith("/frameworks/libs")) {
+    if (folderPath.endsWith("/frameworks/libs")) {
       return getLibraryFromLibsFolderLinkage(bcNature, componentSet, swcName);
     }
 
-    if (folderUrl.endsWith("/frameworks/libs/air")) {
+    if (folderPath.endsWith("/frameworks/libs/air")) {
       return getAirLibraryLinkage(bcNature, componentSet, swcName);
     }
 
-    if (folderUrl.endsWith("/frameworks/libs/mobile")) {
+    if (folderPath.endsWith("/frameworks/libs/mobile")) {
       return getMobileLibraryLinkage(bcNature, swcName);
     }
 
-    if (folderUrl.endsWith("/frameworks/libs/mx")) {
+    if (folderPath.endsWith("/frameworks/libs/mx")) {
       return getMxLibraryLinkage(bcNature, componentSet, swcName);
     }
 
-    LOG.error("Unknown Flex SDK root: " + url);
+    LOG.error("Unknown Flex SDK root: " + path);
     return LinkageType.Merged;
   }
 
