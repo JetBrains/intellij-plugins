@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
+import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModulePointer;
 import com.intellij.openapi.module.ModulePointerManager;
@@ -31,8 +32,14 @@ public class BuildConfigurationEntry extends DependencyEntry {
   }
 
   @Nullable
-  public Module getModule() {
+  public Module findModule() {
     return myModulePointer.getModule();
+  }
+
+  @Nullable
+  public FlexIdeBuildConfiguration findBuildConfiguration() {
+    Module module = findModule();
+    return module != null ? FlexIdeBuildConfigurationManager.getInstance(module).findConfigurationByName(myBcName) : null;
   }
 
   public String getBcName() {

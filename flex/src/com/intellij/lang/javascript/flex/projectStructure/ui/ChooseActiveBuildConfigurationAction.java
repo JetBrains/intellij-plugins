@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
@@ -16,6 +17,8 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.PsiModificationTrackerImpl;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,10 +36,6 @@ public class ChooseActiveBuildConfigurationAction extends ComboBoxAction impleme
   private static Module findModule(DataContext dataContext) {
     Project project = PlatformDataKeys.PROJECT.getData(dataContext);
     if (project == null) {
-      return null;
-    }
-    Editor editor = PlatformDataKeys.EDITOR.getData(dataContext);
-    if (editor == null) {
       return null;
     }
     VirtualFile file = PlatformDataKeys.VIRTUAL_FILE.getData(dataContext);
@@ -125,12 +124,7 @@ public class ChooseActiveBuildConfigurationAction extends ComboBoxAction impleme
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        @Override
-        public void run() {
-          FlexIdeBuildConfigurationManager.getInstance(myModule).setActiveBuildConfiguration(myBuildConfiguration);
-        }
-      });
+      FlexIdeBuildConfigurationManager.getInstance(myModule).setActiveBuildConfiguration(myBuildConfiguration);
     }
   }
 }

@@ -875,7 +875,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         BCItem bcItem = (BCItem)item;
         BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
         if (bcItem.configurable != null) {
-          if (bcItem.configurable.getModule() != bcEntry.getModule()) return true;
+          if (bcItem.configurable.getModule() != bcEntry.findModule()) return true;
           if (!bcItem.configurable.getDisplayName().equals(bcEntry.getBcName())) return true;
         }
         else {
@@ -982,7 +982,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       MyTableItem item = null;
       if (entry instanceof BuildConfigurationEntry) {
         final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
-        Module module = bcEntry.getModule();
+        Module module = bcEntry.findModule();
         NamedConfigurable<FlexIdeBuildConfiguration> configurable =
           module != null ? ContainerUtil
             .find(configurator.getBCConfigurables(module), new Condition<NamedConfigurable<FlexIdeBuildConfiguration>>() {

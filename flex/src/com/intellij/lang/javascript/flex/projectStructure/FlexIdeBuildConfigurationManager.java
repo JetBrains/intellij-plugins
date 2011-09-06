@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
 import com.intellij.ProjectTopics;
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationEntry;
 import com.intellij.lang.javascript.flex.projectStructure.options.CompilerOptions;
@@ -15,8 +16,12 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.ModuleAdapter;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.PsiModificationTrackerImpl;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
@@ -54,7 +59,7 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
       // TODO remove 'optimize for' links
       for (Iterator<DependencyEntry> i = configuration.DEPENDENCIES.getEntries().iterator(); i.hasNext(); ) {
         DependencyEntry entry = i.next();
-        if (entry instanceof BuildConfigurationEntry && ((BuildConfigurationEntry)entry).getModule() == module) {
+        if (entry instanceof BuildConfigurationEntry && ((BuildConfigurationEntry)entry).findModule() == module) {
           i.remove();
         }
       }
@@ -75,12 +80,20 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
     return myActiveConfiguration;
   }
 
-  public void setActiveBuildConfiguration(FlexIdeBuildConfiguration buildConfiguration) {
-    if(!ArrayUtil.contains(buildConfiguration, myConfigurations)) {
+  public void setActiveBuildConfiguration(final FlexIdeBuildConfiguration buildConfiguration) {
+    if (!ArrayUtil.contains(buildConfiguration, myConfigurations)) {
       throw new IllegalArgumentException(
         "Build configuration " + buildConfiguration.NAME + " does not belong to module " + myModule.getName());
     }
-    myActiveConfiguration = buildConfiguration;
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        myActiveConfiguration = buildConfiguration;
+        ProjectRootManagerEx.getInstanceEx(myModule.getProject()).makeRootsChange(EmptyRunnable.getInstance(), false, true);
+        ((PsiModificationTrackerImpl)PsiManager.getInstance(myModule.getProject()).getModificationTracker()).incCounter();
+      }
+    });
+    DaemonCodeAnalyzer.getInstance(myModule.getProject()).restart();
   }
 
   public static FlexIdeBuildConfigurationManager getInstance(final @NotNull Module module) {
