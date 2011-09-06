@@ -205,7 +205,7 @@ class PropertyProcessor implements ValueWriter {
         out.writeAmfUtf(tag.getValue().getText());
       }
       else {
-        final boolean result = writeIfPrimitive(valueProvider, type, out, null);
+        final boolean result = writeIfPrimitive(valueProvider, type, out, (AnnotationBackedDescriptor)null, false);
         MxmlWriter.LOG.assertTrue(result);
       }
 
@@ -215,8 +215,8 @@ class PropertyProcessor implements ValueWriter {
     return null;
   }
 
-  boolean writeIfPrimitive(XmlElementValueProvider valueProvider, String type, PrimitiveAmfOutputStream out,
-                           @Nullable AnnotationBackedDescriptor descriptor) throws InvalidPropertyException {
+  private boolean writeIfPrimitive(XmlElementValueProvider valueProvider, String type, PrimitiveAmfOutputStream out,
+                                   @Nullable AnnotationBackedDescriptor descriptor, boolean isStyle) throws InvalidPropertyException {
     if (type.equals(JSCommonTypeNames.STRING_CLASS_NAME)) {
       writeString(valueProvider, descriptor);
     }
@@ -309,7 +309,7 @@ class PropertyProcessor implements ValueWriter {
       return COMPLEX;
     }
 
-    if (writeIfPrimitive(valueProvider, type, out, descriptor)) {
+    if (writeIfPrimitive(valueProvider, type, out, descriptor, isStyle)) {
 
     }
     else if (type.equals(JSCommonTypeNames.ARRAY_CLASS_NAME)) {

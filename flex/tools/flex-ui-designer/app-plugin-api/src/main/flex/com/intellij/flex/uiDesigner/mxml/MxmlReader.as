@@ -269,9 +269,9 @@ public final class MxmlReader implements DocumentReader {
     
     var propertyHolder:Object = object;
     var cssDeclaration:CssDeclarationImpl;
-    var o:Object;
+    var marker:int;
     for (; propertyName != null; propertyName = stringRegistry.read(input)) {
-      switch (input.readByte()) {
+      switch ((marker = input.readByte())) {
         case PropertyClassifier.PROPERTY:
           break;
 
@@ -330,11 +330,10 @@ public final class MxmlReader implements DocumentReader {
           continue;
 
         default:
-          throw new ArgumentError("unknown property classifier");
+          throw new ArgumentError("unknown property \"" + propertyName + "\" classifier " + marker);
       }
 
-      const amfType:int = input.readByte();
-      switch (amfType) {
+      switch ((marker = input.readByte())) {
         case Amf3Types.STRING:
           propertyHolder[propertyName] = AmfUtil.readString(input);
           if (cssDeclaration != null) {
@@ -401,7 +400,7 @@ public final class MxmlReader implements DocumentReader {
           break;
 
         case COLOR_STYLE_MARKER:
-          if (cssDeclaration == null) {
+          if (cssDeclaration == null) { 
             // todo property inspector
             propertyHolder[propertyName] = input.readObject();
           }
@@ -456,7 +455,7 @@ public final class MxmlReader implements DocumentReader {
           break;
 
         default:
-          throw new ArgumentError("unknown property type " + amfType);
+          throw new ArgumentError("unknown property type " + marker);
       }
 
       if (cssDeclaration != null) {

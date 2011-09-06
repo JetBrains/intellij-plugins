@@ -46,7 +46,7 @@ class StateWriter {
   private final Map<String, List<State>> nameToState = new THashMap<String, List<State>>();
   private BaseWriter writer;
 
-   SetPropertyOrStyle pendingFirstSetProperty;
+  private SetPropertyOrStyle pendingFirstSetProperty;
 
   private boolean autoItemDestruction;
 
