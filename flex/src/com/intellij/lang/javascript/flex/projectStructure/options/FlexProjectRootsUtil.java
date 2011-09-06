@@ -46,7 +46,7 @@ public class FlexProjectRootsUtil {
       return false;
     }
 
-    return getSdkId(library).equals(sdkEntry.getLibraryId());
+    return getSdkLibraryId(library).equals(sdkEntry.getLibraryId());
   }
 
   public static boolean dependOnSdk(Iterable<FlexIdeBuildConfiguration> bcs, @NotNull final Library sdk) {
@@ -58,11 +58,11 @@ public class FlexProjectRootsUtil {
     });
   }
 
-  private static String getLibraryId(Library library) {
+  public static String getLibraryId(Library library) {
     return ((FlexLibraryProperties)((LibraryEx)library).getProperties()).getId();
   }
 
-  private static String getSdkId(Library library) {
+  public static String getSdkLibraryId(@NotNull Library library) {
     return ((FlexSdkProperties)((LibraryEx)library).getProperties()).getId();
   }
 }

@@ -98,7 +98,7 @@ public class ModuleLibraryEntry extends DependencyEntry {
         if (library == null || !(library.getType() instanceof FlexLibraryType)) {
           continue;
         }
-        if (myLibraryId.equals(((FlexLibraryProperties)library.getProperties()).getId())) {
+        if (myLibraryId.equals(FlexProjectRootsUtil.getLibraryId(library))) {
           return (LibraryOrderEntry)orderEntry;
         }
       }

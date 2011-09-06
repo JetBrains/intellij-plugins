@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
-import com.intellij.openapi.diagnostic.Log;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
@@ -112,7 +111,7 @@ public class SdkEntry {
     Library result = ContainerUtil.find(LibraryTablesRegistrar.getInstance().getLibraryTable().getLibraries(), new Condition<Library>() {
       @Override
       public boolean value(Library library) {
-        return FlexSdk.isFlexSdk(library) && FlexSdk.getLibraryId(library).equals(myLibraryId);
+        return FlexSdk.isFlexSdk(library) && FlexProjectRootsUtil.getSdkLibraryId(library).equals(myLibraryId);
       }
     });
     if (result != null) {

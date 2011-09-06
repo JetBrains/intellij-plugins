@@ -3,21 +3,13 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
+import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.projectStructure.options.SdkEntry;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryTable;
-import com.intellij.openapi.roots.libraries.LibraryTablePresentation;
-import com.intellij.openapi.roots.ui.configuration.LibraryTableModifiableModelProvider;
-import com.intellij.openapi.roots.ui.configuration.libraryEditor.EditExistingLibraryDialog;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
-import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditorDialogBase;
-import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryRootsComponent;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
@@ -229,7 +221,7 @@ public class FlexSdkPanel implements Disposable {
   public String getCurrentSdkId() {
     Object selectedItem = myCombo.getComboBox().getSelectedItem();
     if (selectedItem instanceof Library) {
-      return FlexSdk.getLibraryId((Library)selectedItem);
+      return FlexProjectRootsUtil.getSdkLibraryId((Library)selectedItem);
     }
     else if (selectedItem instanceof Pair) {
       return ((Pair<String, String>)selectedItem).first;

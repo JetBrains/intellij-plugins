@@ -1267,7 +1267,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
         DefaultMutableTreeNode rootNode = myTable.getRoot();
         for (Library library : libraries) {
-          String libraryId = ((FlexLibraryProperties)((LibraryEx)library).getProperties()).getId();
+          String libraryId = FlexProjectRootsUtil.getLibraryId(library);
           LibraryOrderEntry libraryEntry = myModifiableRootModel.findLibraryOrderEntry(library);
           rootNode.add(new DefaultMutableTreeNode(new ModuleLibraryItem(libraryId, libraryEntry), false));
         }

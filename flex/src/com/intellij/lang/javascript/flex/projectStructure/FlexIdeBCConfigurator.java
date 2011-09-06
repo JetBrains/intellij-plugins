@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.projectStructure;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.projectStructure.options.SdkEntry;
 import com.intellij.lang.javascript.flex.projectStructure.ui.AddBuildConfigurationDialog;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
@@ -192,7 +193,7 @@ public class FlexIdeBCConfigurator {
   private SdkEntry findRecentSdk() {
     // TODO assign the same SDK as neighbour configurations have
     Library[] libraries = mySdksModel.getLibraries();
-    return libraries.length > 0 ? new SdkEntry(FlexSdk.getLibraryId(libraries[0]), FlexSdk.getHomePath(libraries[0])) : null;
+    return libraries.length > 0 ? new SdkEntry(FlexProjectRootsUtil.getSdkLibraryId(libraries[0]), FlexSdk.getHomePath(libraries[0])) : null;
   }
 
   public void copy(final FlexIdeBCConfigurable configurable, final Runnable treeNodeNameUpdater) {

@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdkLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdkProperties;
+import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -98,7 +99,7 @@ public class FlexSdksModifiableModel {
     Library library = ContainerUtil.find(myModifiableModel.getLibraries(), new Condition<Library>() {
       @Override
       public boolean value(Library library) {
-        return FlexSdk.isFlexSdk(library) && FlexSdk.getLibraryId(library).equals(libraryId);
+        return FlexSdk.isFlexSdk(library) && FlexProjectRootsUtil.getSdkLibraryId(library).equals(libraryId);
       }
     });
     return library != null ? new FlexSdk(library) : null;

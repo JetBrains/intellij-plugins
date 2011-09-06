@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
+import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
@@ -28,7 +29,7 @@ public class FlexSdk {
   public static final OrderRootType[] EDITABLE_ROOT_TYPES = new OrderRootType[]{OrderRootType.SOURCES, JavadocOrderRootType.getInstance()};
 
   public String getLibraryId() {
-    return getLibraryId(myLibrary);
+    return FlexProjectRootsUtil.getSdkLibraryId(myLibrary);
   }
 
   public String getHomePath() {
@@ -41,10 +42,6 @@ public class FlexSdk {
 
   public static String getFlexVersion(@NotNull Library library) {
     return ((FlexSdkProperties)((LibraryEx)library).getProperties()).getVersion();
-  }
-
-  public static String getLibraryId(@NotNull Library library) {
-    return ((FlexSdkProperties)((LibraryEx)library).getProperties()).getId();
   }
 
   public static String getHomePath(@NotNull Library library) {
