@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner.mxml {
+import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContext;
 import com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromBytesBase;
 import com.intellij.flex.uiDesigner.io.AmfExtendedTypes;
@@ -78,7 +79,8 @@ internal final class StateReader {
     }
   }
 
-  public function reset(byteFactoryContext:DeferredInstanceFromBytesContext):void {
+  public function reset(byteFactoryContext:DeferredInstanceFromBytesContext,
+                        styleManager:StyleManagerEx):void {
     if (deferredInstancesForImmediateCreation != null && deferredInstancesForImmediateCreation.length != 0) {
       for each (var deferredInstanceFromBytesBase:DeferredInstanceFromBytesBase in deferredInstancesForImmediateCreation) {
         deferredInstanceFromBytesBase.create(byteFactoryContext);

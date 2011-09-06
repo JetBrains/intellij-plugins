@@ -352,7 +352,8 @@ class StateWriter {
       // 3
       StaticInstanceReferenceInDeferredParentInstance staticInstanceReferenceInDeferredParentInstance =
         new StaticInstanceReferenceInDeferredParentInstance(objectInstance, deferredParentInstance);
-      injectedASWriter.setDeferredReferenceForObjectWithExplicitId(staticInstanceReferenceInDeferredParentInstance, referenceInstance);
+      injectedASWriter.setDeferredReferenceForObjectWithExplicitIdOrBinding(staticInstanceReferenceInDeferredParentInstance,
+                                                                            referenceInstance);
 
       context.setStaticInstanceReferenceInDeferredParentInstance(staticInstanceReferenceInDeferredParentInstance);
     }

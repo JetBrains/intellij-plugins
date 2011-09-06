@@ -23,7 +23,7 @@ class InjectedASWriter implements ValueReferenceResolver {
 
   private final List<Binding> bindingItems = new ArrayList<Binding>();
   private final BaseWriter writer;
-  private MxmlObjectReference lastObjectReference;
+  MxmlObjectReference lastMxmlObjectReference;
 
   private ProblemsHolder problemsHolder;
 
@@ -98,7 +98,11 @@ class InjectedASWriter implements ValueReferenceResolver {
           }
         }
 
-        binding.setTarget(writer.getObjectOrFactoryId(context), writer.getNameReference(name), isStyle);
+        if (lastMxmlObjectReference == null) {
+          lastMxmlObjectReference = new MxmlObjectReference(writer.getObjectOrFactoryId(context));
+        }
+
+        binding.setTarget(lastMxmlObjectReference, writer.getNameReference(name), isStyle);
         bindingItems.add(binding);
         return IGNORE;
       }
@@ -163,20 +167,23 @@ class InjectedASWriter implements ValueReferenceResolver {
     idReferenceMap.clear();
     variableReferenceMap.clear();
 
-    lastObjectReference = null;
+    lastMxmlObjectReference = null;
   }
 
   void processObjectWithExplicitId(String explicitId, Context context) {
-    lastObjectReference = new MxmlObjectReference(writer.getObjectOrFactoryId(context));
-    idReferenceMap.put(explicitId, lastObjectReference);
+    lastMxmlObjectReference = new MxmlObjectReference(writer.getObjectOrFactoryId(context));
+    idReferenceMap.put(explicitId, lastMxmlObjectReference);
   }
 
   void putMxmlObjectReference(@NotNull String explicitId, Context context) {
     idReferenceMap.put(explicitId, new MxmlObjectReference(writer.getObjectOrFactoryId(context)));
   }
 
-  void setDeferredReferenceForObjectWithExplicitId(StaticInstanceReferenceInDeferredParentInstance staticReferenceInDeferredParentInstance, int referenceInstance) {
-    assert lastObjectReference.id == referenceInstance;
-    lastObjectReference.staticReferenceInDeferredParentInstance = staticReferenceInDeferredParentInstance;
+  void setDeferredReferenceForObjectWithExplicitIdOrBinding(
+    StaticInstanceReferenceInDeferredParentInstance staticReferenceInDeferredParentInstance, int referenceInstance) {
+    assert lastMxmlObjectReference.id == referenceInstance;
+    lastMxmlObjectReference.staticReferenceInDeferredParentInstance = staticReferenceInDeferredParentInstance;
+
+    lastMxmlObjectReference = null;
   }
 }

@@ -20,10 +20,18 @@ public class DeferredInstanceFromBytesBase {
 
   public function create(context:DeferredInstanceFromBytesContext):Object {
     if (instance == null) {
-      instance = context.reader.readDeferredInstanceFromBytes(bytes, context);
-      objectTable = context.reader.getObjectTableForDeferredInstanceFromBytes();
-
-      executeBindinds();
+      var styleManagerSingleton:Class = context.readerContext.moduleContext.getClass("mx.styles.StyleManager");
+      try {
+        // IDEA-72499
+        styleManagerSingleton.tempStyleManagerForTalentAdobeEngineers = context.styleManager;
+        instance = context.reader.readDeferredInstanceFromBytes(bytes, context);
+        objectTable = context.reader.getObjectTableForDeferredInstanceFromBytes();
+        
+        executeBindinds();
+      }
+      finally {
+        styleManagerSingleton.tempStyleManagerForTalentAdobeEngineers = null;
+      }
     }
 
     return instance;
@@ -37,16 +45,16 @@ public class DeferredInstanceFromBytesBase {
     }
   }
 
-  public function getInstanceIfCreatedOrRegisterBinding(bindingTarget:BindingTarget):Object {
-    if (instance == null) {
-      if (bindingTargets == null) {
-        bindingTargets = new Vector.<BindingTarget>();
-      }
-
-      bindingTargets.push(bindingTarget);
+  public function registerBinding(bindingTarget:BindingTarget):void {
+    if (bindingTargets == null) {
+      bindingTargets = new Vector.<BindingTarget>();
     }
 
-    return instance;
+    bindingTargets[bindingTargets.length] = bindingTarget;
+
+    if (instance != null) {
+      bindingTarget.execute(instance);
+    }
   }
 
   public function getInstance():Object {

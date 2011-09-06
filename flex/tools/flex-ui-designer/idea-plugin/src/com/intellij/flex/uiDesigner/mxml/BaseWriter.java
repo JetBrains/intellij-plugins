@@ -160,8 +160,7 @@ final class BaseWriter {
   }
 
   public void writeProperty(int propertyNameReference, String value) {
-    out.writeUInt29(propertyNameReference);
-    out.write(PropertyClassifier.PROPERTY);
+    writePropertyHeader(propertyNameReference);
     out.write(Amf3Types.STRING);
     out.writeAmfUtf(value, false);
   }
@@ -187,8 +186,7 @@ final class BaseWriter {
   }
 
   public void writeStringReference(int propertyName, int reference) {
-    out.writeUInt29(propertyName);
-    out.write(PropertyClassifier.PROPERTY);
+    writePropertyHeader(propertyName);
     out.write(AmfExtendedTypes.STRING_REFERENCE);
     out.writeUInt29(reference);
   }
@@ -213,9 +211,13 @@ final class BaseWriter {
   }
 
   public void writeObjectReference(int propertyName, int reference) {
+    writePropertyHeader(propertyName);
+    writeObjectReference(reference);
+  }
+
+  public void writePropertyHeader(int propertyName) {
     out.writeUInt29(propertyName);
     out.write(PropertyClassifier.PROPERTY);
-    writeObjectReference(reference);
   }
 
   public void writeObjectReference(int propertyName, Context context) {
@@ -223,8 +225,7 @@ final class BaseWriter {
   }
 
   public void writeObjectHeader(int propertyName, int className) {
-    out.writeUInt29(propertyName);
-    out.write(PropertyClassifier.PROPERTY);
+    writePropertyHeader(propertyName);
     out.write(Amf3Types.OBJECT);
     writeObjectHeader(className);
   }
@@ -340,8 +341,7 @@ final class BaseWriter {
   }
 
   public void writeConstructorHeader(int propertyName, String className, int constructorArgType) {
-    out.writeUInt29(propertyName);
-    out.write(PropertyClassifier.PROPERTY);
+    writePropertyHeader(propertyName);
     writeConstructorHeader(className);
     out.write(constructorArgType);
   }

@@ -1,7 +1,9 @@
 package com.intellij.flex.uiDesigner.mxml {
-import com.intellij.flex.uiDesigner.flex.BindingTarget;
 import com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromBytesBase;
+import com.intellij.flex.uiDesigner.flex.states.StaticInstanceReferenceInDeferredParentInstanceBase;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
+
+import flash.errors.IllegalOperationError;
 
 import flash.utils.IDataInput;
 
@@ -32,18 +34,38 @@ public class InjectedASReader {
 
     for (var i:int = 0; i < size; i++) {
       var o:Object = null;
-      var target:Object = reader.readObjectReference();
+      var target:Object = readMxmlObjectReference(data, reader);
       var propertyName:String = reader.readClassOrPropertyName();
       var type:int = data.readByte();
       var isStyle:Boolean = (type & 1) != 0;
       type >>= 1;
 
+      var targetBinding:PropertyBindingTarget;
+      if (target is StaticInstanceReferenceInDeferredParentInstanceBase) {
+        targetBinding = new PropertyBindingTarget(target, propertyName, isStyle);
+      }
+      else if (target is DeferredInstanceFromBytesBase) {
+        throw new IllegalOperationError("unsupported");
+      }
+
       switch (type) {
         case BindingType.MXML_OBJECT:
         case BindingType.MXML_OBJECT_WRAP_TO_ARRAY:
-          o = readMxmlObjectReference(data, reader, new PropertyBindingTarget(target, propertyName));
+          o = readMxmlObjectReference(data, reader);
+          // if target can be get only via binding, execute it
+          // 1) on deferredParentInstance creation if value is static
+          // 2) on value creation if value is dynamic
+          if (o is DeferredInstanceFromBytesBase) {
+            DeferredInstanceFromBytesBase(o).registerBinding(targetBinding == null ? new PropertyBindingTarget(target, propertyName, isStyle) : targetBinding);
+            continue;
+          }
+
           if (type == BindingType.MXML_OBJECT_WRAP_TO_ARRAY) {
             o = [o];
+          }
+
+          if (targetBinding != null) {
+            targetBinding.staticValue = o;
           }
           break;
 
@@ -59,13 +81,16 @@ public class InjectedASReader {
           throw new ArgumentError("unknown binding type " + type);
       }
 
-      if (o != null /* binding */) {
+      if (targetBinding == null) {
         if (isStyle) {
           target.setStyle(propertyName, o);
         }
         else {
           target[propertyName] = o;
         }
+      }
+      else if (targetBinding.staticValue != null) {
+        StaticInstanceReferenceInDeferredParentInstanceBase(target).deferredParentInstance.registerBinding(targetBinding);
       }
     }
     
@@ -93,33 +118,23 @@ public class InjectedASReader {
     return o;
   }
 
-  internal function readMxmlObjectReference(input:IDataInput, reader:MxmlReader, bindingTarget:BindingTarget):Object {
+  // todo trace("unsupported DeferredInstanceFromBytesBase in readExpression");
+  internal function readMxmlObjectReference(input:IDataInput, reader:MxmlReader):Object {
     var id:int = AmfUtil.readUInt29(input);
-    var o:Object;
     // is object reference or StaticInstanceReferenceInDeferredParentInstance input
     if ((id & 1) == 0) {
-      o = reader.objectTable[id >> 1];
-      if (o is DeferredInstanceFromBytesBase) {
-        // todo null if called from readExpression
-        if (bindingTarget != null) {
-          trace("unsupported DeferredInstanceFromBytesBase in readExpression");
-          DeferredInstanceFromBytesBase(o).getInstanceIfCreatedOrRegisterBinding(bindingTarget);
-        }
-        return null;
-      }
+      return reader.objectTable[id >> 1];
     }
     else {
       if (deferredReferenceClass == null) {
-        deferredReferenceClass = reader.context.moduleContext.getClass("com.intellij.flex.uiDesigner.mxml.StaticInstanceReferenceInDeferredParentInstance");
+        deferredReferenceClass = reader.context.moduleContext.getClass("com.intellij.flex.uiDesigner.flex.states.StaticInstanceReferenceInDeferredParentInstance");
       }
-      o = new deferredReferenceClass();
+      var o:StaticInstanceReferenceInDeferredParentInstanceBase = new deferredReferenceClass();
       o.reference = id >> 1;
-      o.deferredParentInstance = reader.readObjectReference();
-
+      o.deferredParentInstance = DeferredInstanceFromBytesBase(reader.readObjectReference());
       reader.saveReferredObject(AmfUtil.readUInt29(input), o);
+      return o;
     }
-    
-    return o;
   }
 }
 }

@@ -4,11 +4,11 @@ import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 
 abstract class Binding {
-  private int target;
+  private MxmlObjectReference target;
   private int propertyName;
   private boolean isStyle;
 
-  void setTarget(int target, int propertyName, boolean isStyle) {
+  void setTarget(MxmlObjectReference target, int propertyName, boolean isStyle) {
     this.target = target;
     this.propertyName = propertyName;
     this.isStyle = isStyle;
@@ -18,7 +18,7 @@ abstract class Binding {
 
   void write(PrimitiveAmfOutputStream out, BaseWriter writer, ValueReferenceResolver valueReferenceResolver)
     throws InvalidPropertyException {
-    out.writeUInt29(target);
+    target.write(out, writer, valueReferenceResolver);
     out.writeUInt29(propertyName);
     out.write(getType() << 1 | (isStyle ? 1 : 0));
   }

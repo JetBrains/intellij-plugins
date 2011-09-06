@@ -252,6 +252,7 @@ public class MxmlWriter {
     //assert stateWriter == null || stateWriter.pendingFirstSetProperty == null;
 
     writer.resetPreallocatedId();
+    injectedASWriter.lastMxmlObjectReference = null;
 
     processTagChildren(parent, context, parentContext, true, null, cssDeclarationSourceDefined);
     // initializeReference must be after process all elements — after sub tag also, due to <RadioButton id="visa" label="Visa" 

@@ -105,7 +105,7 @@ public final class Stylesheet {
     var factory:Object = moduleContext.getDocumentFactory(id);
     if (factory == null) {
       factory = new moduleContext.documentFactoryClass(documentFactory,
-          new DeferredInstanceFromBytesContext(documentFactory, DocumentReader(project.getComponent(DocumentReader))));
+          new DeferredInstanceFromBytesContext(documentFactory, DocumentReader(project.getComponent(DocumentReader)), moduleContext.styleManager));
       moduleContext.putDocumentFactory(id, factory);
     }
 

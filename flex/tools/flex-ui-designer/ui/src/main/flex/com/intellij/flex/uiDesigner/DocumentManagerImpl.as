@@ -133,7 +133,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   private function createAndOpen(documentFactory:DocumentFactory, documentOpened:Function):Boolean {
     var document:Document = new Document(documentFactory);
     var module:Module = documentFactory.module;
-    createStyleManager(document, module, documentFactory);
+    createStyleManager(document, module);
     createSystemManager(document, module);
 
     if (doOpen(documentFactory, document, documentOpened)) {
@@ -164,7 +164,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       try {
         // IDEA-72499
         document.systemManager.setStyleManagerForTalentAdobeEngineers(true);
-        var object:Object = documentReader.read(documentFactory.data, documentFactory);
+        var object:Object = documentReader.read(documentFactory.data, documentFactory, document.styleManager);
         document.uiComponent = object;
         document.systemManager.setUserDocument(DisplayObject(object));
       }
@@ -189,7 +189,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     return true;
   }
 
-  private static function createStyleManager(document:Document, module:Module, documentFactory:DocumentFactory):void {
+  private static function createStyleManager(document:Document, module:Module):void {
     if (module.context.styleManager == null) {
       createStyleManagerForContext(module.context);
     }
