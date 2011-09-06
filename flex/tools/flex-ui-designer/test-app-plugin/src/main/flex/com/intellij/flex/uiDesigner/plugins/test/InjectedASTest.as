@@ -33,6 +33,7 @@ public class InjectedASTest extends BaseTestCase {
       Model();
       BindingToDeferredInstanceFromBytes();
       ReferablePrimitive();
+      BindingTargetIsStaticInstanceInDynamicParent();
     }
   }
   
@@ -122,6 +123,14 @@ public class InjectedASTest extends BaseTestCase {
   
   public function ReferablePrimitive():void {
     assertThat(app, [{viewport: {typicalItem: "gggzfdbxfnbxzgzng"}}]);
+  }
+
+  public function BindingTargetIsStaticInstanceInDynamicParent():void {
+    validateUI();
+    assertThat(app, []);
+
+    setState(B);
+    assertThat(app, [[{text: "label"}, {text: "newString"}, {text: "label2"}, {text: "\n      mxmlBackedVariable\n    "}, {id: "specifiedId", text: "label"}], {text: "bar"}]);
   }
 }
 }

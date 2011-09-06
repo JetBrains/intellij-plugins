@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner.plugins.test {
 import com.intellij.flex.uiDesigner.DocumentManager;
 import com.intellij.flex.uiDesigner.ModuleContextEx;
 import com.intellij.flex.uiDesigner.ProjectManager;
+import com.intellij.flex.uiDesigner.StatesBarManager;
 
 import flash.events.Event;
 import flash.events.IEventDispatcher;
@@ -9,8 +10,13 @@ import flash.net.Socket;
 
 [Abstract]
 internal class BaseTestCase implements TestCase {
+  protected static const A:String = "A";
+  protected static const B:String = "B";
+
   protected var documentManager:DocumentManager;
   protected var projectManager:ProjectManager;
+
+  protected var stateManager:StatesBarManager;
 
   protected var _asyncSuccessHandler:Function;
   public function set asyncSuccessHandler(value:Function):void {
@@ -28,6 +34,8 @@ internal class BaseTestCase implements TestCase {
         _app = documentManager.document.uiComponent;
       }
     }
+
+    stateManager = StatesBarManager(projectManager.project.getComponent(StatesBarManager));
   }
 
   protected function getMxInternal(propertyName:String):QName {
@@ -65,6 +73,11 @@ internal class BaseTestCase implements TestCase {
   protected final function asyncSuccess(event:Event, eventHandler:Function):void {
     IEventDispatcher(event.currentTarget).removeEventListener(event.type, eventHandler);
     _asyncSuccessHandler();
+  }
+
+  protected final function setState(name:String):void {
+    stateManager.stateName = name;
+    validateUI();
   }
 }
 }

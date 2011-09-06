@@ -63,10 +63,6 @@ public class InjectedASReader {
           if (type == BindingType.MXML_OBJECT_WRAP_TO_ARRAY) {
             o = [o];
           }
-
-          if (targetBinding != null) {
-            targetBinding.staticValue = o;
-          }
           break;
 
         case BindingType.VARIABLE:
@@ -89,7 +85,8 @@ public class InjectedASReader {
           target[propertyName] = o;
         }
       }
-      else if (targetBinding.staticValue != null) {
+      else {
+        targetBinding.staticValue = o;
         StaticInstanceReferenceInDeferredParentInstanceBase(target).deferredParentInstance.registerBinding(targetBinding);
       }
     }

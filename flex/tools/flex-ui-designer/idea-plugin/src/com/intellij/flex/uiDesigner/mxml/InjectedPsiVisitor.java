@@ -130,7 +130,7 @@ class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor 
       }
     }
     else {
-      logUnsupported();
+      binding = new ExpressionBinding(arguments[0]);
     }
   }
 

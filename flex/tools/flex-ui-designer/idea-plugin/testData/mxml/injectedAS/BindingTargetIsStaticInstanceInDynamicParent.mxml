@@ -1,0 +1,23 @@
+<VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+  <fx:Script><![CDATA[
+    private var text:String = "label";
+    ]]></fx:Script>
+  <fx:Declarations>
+    <fx:String id="mxmlBackedVariable">
+      mxmlBackedVariable
+    </fx:String>
+  </fx:Declarations>
+
+  <states>
+    <State name="A"/>
+    <State name="B"/>
+  </states>
+  <VGroup includeIn="B">
+    <Label text="{text}"/>
+    <Label text="{new String('newString')}"/>
+    <Label text="label2"/>
+    <Label text="{mxmlBackedVariable}"/>
+    <Label id="specifiedId" text="{text}"/>
+  </VGroup>
+  <Label includeIn="B" text="{'bar'}"/>
+</VGroup>

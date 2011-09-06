@@ -19,15 +19,11 @@ import org.hamcrest.object.strictlyEqualTo;
 import org.hamcrest.text.containsString;
 
 public class StatesTest extends BaseTestCase {
-  private var stateManager:StatesBarManager;
-  
   private static const DEFAULT:String = "default";
   
   private static const FIRST_STATE:String = "default";
   private static const SECOND_STATE:String = "Register";
-  
-  private static const A:String = "A";
-  private static const B:String = "B";
+
   private static const C:String = "C";
 
   public function StatesTest() {
@@ -75,11 +71,6 @@ public class StatesTest extends BaseTestCase {
 
   }
   
-  private function setState(name:String):void {
-    stateManager.stateName = name;
-    validateUI();
-  }
-  
   private var _states:Array;
   private function get states():Array {
     if (_states == null) {
@@ -87,12 +78,6 @@ public class StatesTest extends BaseTestCase {
     }
     
     return _states;
-  }
-  
-  override public function setUp():void {
-    super.setUp();
-    
-    stateManager = StatesBarManager(projectManager.project.getComponent(StatesBarManager));
   }
   
   public function RootChildrenAndSetProperty():void {

@@ -1,3 +1,9 @@
+package {
+public final class String {
+  native public function String(value:* = ""):*;
+}
+}
+
 package flash.display {
 public class Sprite {
   native public function set name(value:String):void;
