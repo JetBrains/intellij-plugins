@@ -35,7 +35,6 @@
     <orderEntry type="module" module-name="IntelliLang-js" />
     <orderEntry type="module" module-name="CSS" />
     <orderEntry type="module" module-name="JavaScriptLanguage" />
-    <orderEntry type="module" module-name="flex-plugin" />
     <orderEntry type="module" module-name="flex-ui-designer" />
     <orderEntry type="module" module-name="IntelliLang-java" />
     <orderEntry type="module" module-name="JSInspections" />
