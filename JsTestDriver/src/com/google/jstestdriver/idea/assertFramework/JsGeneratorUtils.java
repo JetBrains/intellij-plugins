@@ -6,12 +6,10 @@ import com.intellij.codeInsight.template.impl.ConstantNode;
 import com.intellij.codeInsight.template.impl.TemplateImpl;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.lang.javascript.psi.JSArgumentList;
-import com.intellij.lang.javascript.psi.JSExpression;
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
-import com.intellij.lang.javascript.psi.JSProperty;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +31,7 @@ public class JsGeneratorUtils {
     if (precedingAnchor == null) {
       return;
     }
-    final int caretOffset = context.getCaretOffsetInDocument();
+    final int caretOffset = context.getDocumentCaretOffset();
     JSProperty precedingProperty = findPrecedingProperty(objectLiteralExpression, caretOffset);
     JSProperty followingProperty = findFollowingProperty(objectLiteralExpression, caretOffset);
     boolean generateCommaBefore = false;
@@ -57,7 +55,7 @@ public class JsGeneratorUtils {
       boolean commaBeforeRequired,
       boolean commaAfterRequired
   ) {
-    final int caretOffset = context.getCaretOffsetInDocument();
+    final int caretOffset = context.getDocumentCaretOffset();
     final boolean insideWhitespaceArea = whitespaceTextRange.contains(caretOffset);
     int moveCaretToOffset = insideWhitespaceArea ? caretOffset : whitespaceTextRange.getStartOffset();
     if (commaBeforeRequired) {
@@ -141,10 +139,9 @@ public class JsGeneratorUtils {
     int startOffset = element.getTextRange().getEndOffset();
     int endOffset = startOffset;
     PsiElement e = element.getNextSibling();
-    while (e instanceof ASTNode) {
-      ASTNode node = (ASTNode) e;
-      if (node.getElementType() == JSTokenTypes.WHITE_SPACE) {
-        endOffset = node.getTextRange().getEndOffset();
+    while (e != null) {
+      if (JsPsiUtils.isElementOfType(e, JSTokenTypes.WHITE_SPACE)) {
+        endOffset = e.getTextRange().getEndOffset();
         e = e.getNextSibling();
       } else {
         break;
@@ -178,6 +175,39 @@ public class JsGeneratorUtils {
     context.startTemplate(template);
   }
 
+  /**
+   * @param psiElement {@code com.intellij.psi.PsiElement} under caret
+   * @param caretOffset caret document offset
+   * @return suitable offset for new statement insertion, preferably without caret moving.
+   */
+  public static int findSuitableOffsetForNewStatement(@NotNull PsiElement psiElement, int caretOffset) {
+    PsiElement parent = psiElement.getParent();
+    while (parent != null) {
+      if (parent instanceof JSBlockStatement) {
+        break;
+      }
+      if (parent instanceof PsiFile) {
+        break;
+      }
+      psiElement = parent;
+      parent = parent.getParent();
+    }
+    if (JsPsiUtils.isElementOfType(psiElement, JSTokenTypes.RBRACE)) {
+      return psiElement.getTextRange().getStartOffset();
+    }
+    final TextRange whitespaceTextRange;
+    if (JsPsiUtils.isElementOfType(psiElement, JSTokenTypes.WHITE_SPACE)) {
+      whitespaceTextRange = psiElement.getTextRange();
+    } else {
+      whitespaceTextRange = unionFollowingWhitespaceTextRanges(psiElement);
+    }
+    if (whitespaceTextRange.containsOffset(caretOffset)) {
+      return caretOffset;
+    }
+    return whitespaceTextRange.getStartOffset();
+  }
+
+  @NotNull
   public static Template createDefaultTemplate(@Nullable String markedText) {
     Template template = new TemplateImpl("", "");
     template.setToIndent(true);

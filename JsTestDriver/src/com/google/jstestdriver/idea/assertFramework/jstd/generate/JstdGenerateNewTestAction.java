@@ -19,7 +19,7 @@ public class JstdGenerateNewTestAction extends AbstractJsGenerateAction {
   @NotNull
   @Override
   public String getHumanReadableDescription() {
-    return "Test Method";
+    return "JsTestDriver Test";
   }
 
   @Override
@@ -45,7 +45,7 @@ public class JstdGenerateNewTestAction extends AbstractJsGenerateAction {
 
   @Nullable
   private static Runnable buildGenerator(@NotNull JstdTestFileStructure fileStructure, @NotNull GenerateActionContext context) {
-    int caretOffset = context.getCaretOffsetInDocument();
+    int caretOffset = context.getDocumentCaretOffset();
     JstdTestCaseStructure jstdTestCaseStructure = fileStructure.findEnclosingTestCaseByOffset(caretOffset);
     if (jstdTestCaseStructure != null) {
       JSObjectLiteralExpression testsObjectLiteral = jstdTestCaseStructure.getTestsObjectsLiteral();
@@ -64,7 +64,7 @@ public class JstdGenerateNewTestAction extends AbstractJsGenerateAction {
     } else {
       for (JstdTestCaseStructure testCaseStructure : fileStructure.getTestCaseStructures()) {
         JSObjectLiteralExpression testsObjectLiteral = testCaseStructure.getTestsObjectsLiteral();
-        if (testsObjectLiteral != null && JsPsiUtils.isStrictlyInside(testsObjectLiteral.getTextRange(), caretOffset)) {
+        if (testsObjectLiteral != null && JsPsiUtils.containsOffsetStrictly(testsObjectLiteral.getTextRange(), caretOffset)) {
           return new TestGeneratorOnObjectLiteral(testsObjectLiteral, context);
         }
       }
@@ -83,7 +83,7 @@ public class JstdGenerateNewTestAction extends AbstractJsGenerateAction {
     }
 
     public void run() {
-      JsGeneratorUtils.generateProperty(myTestsObjectLiteral, myContext, "test${Name}: function() {|}");
+      JsGeneratorUtils.generateProperty(myTestsObjectLiteral, myContext, "\"test ${name}\": function() {|}");
     }
   }
 
@@ -100,7 +100,7 @@ public class JstdGenerateNewTestAction extends AbstractJsGenerateAction {
 
     @Override
     public void run() {
-      JsGeneratorUtils.generateObjectLiteralWithPropertyAsArgument(myContext, "{\ntest${Name}: function() {|}\n}", myArgumentList, 1);
+      JsGeneratorUtils.generateObjectLiteralWithPropertyAsArgument(myContext, "{\n\"test ${name}\": function() {|}\n}", myArgumentList, 1);
     }
   }
 }

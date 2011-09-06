@@ -1,6 +1,7 @@
 package com.google.jstestdriver.idea.util;
 
 import com.google.common.collect.Lists;
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.openapi.util.TextRange;
@@ -265,7 +266,7 @@ public class JsPsiUtils {
     return properties;
   }
 
-  public static boolean isStrictlyInside(@NotNull TextRange textRange, int offset) {
+  public static boolean containsOffsetStrictly(@NotNull TextRange textRange, int offset) {
     return textRange.getStartOffset() < offset && offset < textRange.getEndOffset();
   }
 
@@ -298,5 +299,13 @@ public class JsPsiUtils {
       return null;
     }
     return StringUtil.stripQuotesAroundValue(testMethodNameDeclaration.getText());
+  }
+
+  public static boolean isElementOfType(@NotNull PsiElement psiElement, @NotNull IElementType type) {
+    if (psiElement instanceof ASTNode) {
+      ASTNode node = (ASTNode) psiElement;
+      return node.getElementType() == type;
+    }
+    return false;
   }
 }

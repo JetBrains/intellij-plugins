@@ -33,7 +33,7 @@ public abstract class AbstractJstdCreateStaticMethodAction extends AbstractJsGen
     if (fileStructure.getTestCaseCount() == 0) {
       return null;
     }
-    int caretOffset = context.getCaretOffsetInDocument();
+    int caretOffset = context.getDocumentCaretOffset();
     JstdTestCaseStructure testCaseStructure = fileStructure.findEnclosingTestCaseByOffset(caretOffset);
     if (testCaseStructure != null) {
       JSObjectLiteralExpression testsObjectLiteral = testCaseStructure.getTestsObjectsLiteral();
@@ -52,7 +52,7 @@ public abstract class AbstractJstdCreateStaticMethodAction extends AbstractJsGen
     } else {
       for (JstdTestCaseStructure testCase : fileStructure.getTestCaseStructures()) {
         JSObjectLiteralExpression testsObjectLiteral = testCase.getTestsObjectsLiteral();
-        if (testsObjectLiteral != null && JsPsiUtils.isStrictlyInside(testsObjectLiteral.getTextRange(), caretOffset)) {
+        if (testsObjectLiteral != null && JsPsiUtils.containsOffsetStrictly(testsObjectLiteral.getTextRange(), caretOffset)) {
           if (!findMethod(testsObjectLiteral)) {
             return new StaticMethodGenerator(testsObjectLiteral, context);
           }

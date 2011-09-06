@@ -57,7 +57,7 @@ public class JstdTestFileStructure extends AbstractTestFileStructure {
   public JstdTestCaseStructure findEnclosingTestCaseByOffset(int documentOffset) {
     for (JstdTestCaseStructure testCaseStructure : myTestCaseStructures) {
       TextRange testCaseCallExpressionTextRange = testCaseStructure.getEnclosingCallExpression().getTextRange();
-      if (JsPsiUtils.isStrictlyInside(testCaseCallExpressionTextRange, documentOffset)) {
+      if (JsPsiUtils.containsOffsetStrictly(testCaseCallExpressionTextRange, documentOffset)) {
         return testCaseStructure;
       }
     }

@@ -22,12 +22,11 @@ public class QUnitFileStructureBuilder extends AbstractTestFileStructureBuilder 
   private static class Builder {
     private final QUnitFileStructure myFileStructure;
     @NotNull
-    private QUnitModuleStructure myCurrentModuleStructure;
+    private AbstractQUnitModuleStructure myCurrentModuleStructure;
 
     private Builder(JSFile jsFile) {
       myFileStructure = new QUnitFileStructure(jsFile);
-      myCurrentModuleStructure = QUnitModuleStructure.newDefaultModule();
-      myFileStructure.addModuleStructure(myCurrentModuleStructure);
+      myCurrentModuleStructure = myFileStructure.getDefaultModuleStructure();
     }
 
     public QUnitFileStructure build() {
@@ -59,20 +58,22 @@ public class QUnitFileStructureBuilder extends AbstractTestFileStructureBuilder 
           if (name != null) {
             if ("module".equals(methodName)) {
               boolean ok = arguments.length == 1;
+              JSObjectLiteralExpression lifecycleObjectLiteral = null;
               if (arguments.length == 2) {
-                boolean isObject = JsPsiUtils.isObjectElement(arguments[1]);
-                if (isObject) {
+                lifecycleObjectLiteral = JsPsiUtils.extractObjectLiteralExpression(arguments[1]);
+                if (lifecycleObjectLiteral != null) {
                   ok = true;
                 }
               }
               if (ok) {
-                myCurrentModuleStructure = QUnitModuleStructure.newRegularModule(name, callExpression);
-                myFileStructure.addModuleStructure(myCurrentModuleStructure);
+                QUnitModuleStructure moduleStructure = new QUnitModuleStructure(myFileStructure, name, callExpression, lifecycleObjectLiteral);
+                myFileStructure.addModuleStructure(moduleStructure);
+                myCurrentModuleStructure = moduleStructure;
               }
             } else if ("test".equals(methodName) && arguments.length == 2) {
               JSFunctionExpression body = JsPsiUtils.extractFunctionExpression(arguments[1]);
               if (body != null) {
-                QUnitTestMethodStructure testMethodStructure = new QUnitTestMethodStructure(name, callExpression, body);
+                QUnitTestMethodStructure testMethodStructure = new QUnitTestMethodStructure(myCurrentModuleStructure, name, callExpression, body);
                 myCurrentModuleStructure.addTestMethodStructure(testMethodStructure);
               }
             }
