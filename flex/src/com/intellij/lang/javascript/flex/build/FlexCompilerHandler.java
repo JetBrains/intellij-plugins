@@ -1067,7 +1067,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
   }
 
   @Nullable
-  private static VirtualFile getRealFile(final VirtualFile libFile) {
+  public static VirtualFile getRealFile(final VirtualFile libFile) {
     if (libFile.getFileSystem() instanceof JarFileSystem) {
       return JarFileSystem.getInstance().getVirtualFileForJar(libFile);
     }

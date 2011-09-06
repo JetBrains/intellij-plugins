@@ -258,6 +258,11 @@ public class FlexCompiler implements SourceProcessingCompiler {
   }
 
   public boolean validateConfiguration(final CompileScope scope) {
+    if (PlatformUtils.isFlexIde() && FlexIdeUtils.isNewUI()) {
+      // todo implement
+      return true;
+    }
+    
     Module moduleToSkipValidation = null; // will be validated later in FlexUnitPrecompilerTask or RunMainClassPrecompileTask
     final RunConfiguration runConfiguration = CompileStepBeforeRun.getRunConfiguration(scope);
     if (runConfiguration instanceof FlexUnitRunConfiguration ||

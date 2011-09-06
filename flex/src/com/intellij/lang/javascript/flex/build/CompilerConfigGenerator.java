@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.*;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
@@ -32,7 +33,7 @@ public class CompilerConfigGenerator {
 
   private static final String[] LIB_ORDER =
     {"framework", "textLayout", "osmf", "spark", "sparkskins", "rpc", "charts", "spark_dmv", "osmf", "mx", "advancedgrids"};
-  
+
   private final Module myModule;
   private final FlexIdeBuildConfiguration myConfig;
   private final String mySdkHome;
@@ -83,10 +84,10 @@ public class CompilerConfigGenerator {
     addDebugOption(rootElement);
     addMandatoryOptions(rootElement);
     handleOptionsWithSpecialValues(rootElement);
+    addSourcePaths(rootElement);
     addNamespaces(rootElement);
     addRootsFromSdk(rootElement);
     addLibs(rootElement);
-    addSourcePaths(rootElement);
     addOtherOptions(rootElement);
     addInputOutputPaths(rootElement);
 
@@ -181,7 +182,7 @@ public class CompilerConfigGenerator {
     if (!getValueAndSource(localeInfo).first.isEmpty()) {
       addOption(rootElement, CompilerOptionInfo.LIBRARY_PATH_INFO, mySdkHome + "/frameworks/locale/{locale}");
     }
-    
+
     final Map<String, String> libNameToRslInfo = new THashMap<String, String>();
 
     for (final String swcUrl : mySdkRootUrls) {
@@ -231,11 +232,11 @@ public class CompilerConfigGenerator {
           .append(libName).append('_').append(swzVersion).append(".swz")
           .append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)
           .append(""); // no failover policy file url
-        
+
         libNameToRslInfo.put(libName, rslBuilder.toString());
       }
     }
-    
+
     addRslInfo(rootElement, libNameToRslInfo);
   }
 
@@ -269,7 +270,52 @@ public class CompilerConfigGenerator {
   }
 
   private void addLibs(final Element rootElement) {
-    // todo implement
+    for (final DependencyEntry entry : myConfig.DEPENDENCIES.getEntries()) {
+      final LinkageType linkageType = entry.getDependencyType().getLinkageType();
+
+      if (entry instanceof BuildConfigurationEntry) {
+        if (linkageType == LinkageType.LoadInRuntime) continue;
+
+        final FlexIdeBuildConfiguration config = ((BuildConfigurationEntry)entry).findBuildConfiguration();
+
+        if (config != null) {
+          addLib(rootElement, config.getOutputFilePath(), linkageType);
+        }
+      }
+      else if (entry instanceof ModuleLibraryEntry) {
+        final LibraryOrderEntry orderEntry = ((ModuleLibraryEntry)entry).findOrderEntry(ModuleRootManager.getInstance(myModule));
+
+        if (orderEntry == null) continue;
+
+        for (VirtualFile libFile : orderEntry.getRootFiles(OrderRootType.CLASSES)) {
+          libFile = FlexCompilerHandler.getRealFile(libFile);
+
+          if (libFile != null && libFile.isDirectory()) {
+            addOption(rootElement, CompilerOptionInfo.SOURCE_PATH_INFO, libFile.getPath());
+          }
+          else if (libFile != null && !libFile.isDirectory() && "swc".equalsIgnoreCase(libFile.getExtension())) {
+            addLib(rootElement, libFile.getPath(), linkageType);
+          }
+        }
+      }
+    }
+  }
+
+  private void addLib(final Element rootElement, final String swcPath, final LinkageType linkageType) {
+    final CompilerOptionInfo info = linkageType == LinkageType.Merged || linkageType == LinkageType.RSL
+                                    ? CompilerOptionInfo.LIBRARY_PATH_INFO
+                                    : linkageType == LinkageType.External
+                                      ? CompilerOptionInfo.EXTERNAL_LIBRARY_INFO
+                                      : linkageType == LinkageType.Include
+                                        ? CompilerOptionInfo.INCLUDE_LIBRARY_INFO
+                                        : null;
+    assert info != null : swcPath + ": " + linkageType;
+
+    addOption(rootElement, info, swcPath);
+
+    if (linkageType == LinkageType.RSL) {
+      // todo add RSL URLs
+    }
   }
 
   private void addSourcePaths(final Element rootElement) {
