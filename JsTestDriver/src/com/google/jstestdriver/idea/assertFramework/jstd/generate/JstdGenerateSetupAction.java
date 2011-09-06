@@ -6,7 +6,7 @@ public class JstdGenerateSetupAction extends AbstractJstdCreateStaticMethodActio
   @NotNull
   @Override
   public String getHumanReadableDescription() {
-    return "Setup Method";
+    return "JsTestDriver Setup";
   }
 
   @NotNull

@@ -18,9 +18,9 @@
 
   <actions>
     <group id="JstdGenerateCodeInsideGroup">
-      <action id="JstdQUnitCreateTestAction" class="com.google.jstestdriver.idea.testIntegration.JstdQUnitCreateTestAction"/>
-      <action id="JstdQUnitCreateSetupAction" class="com.google.jstestdriver.idea.testIntegration.JstdQUnitCreateSetupAction"/>
-      <action id="JstdQUnitCreateTearDownAction" class="com.google.jstestdriver.idea.testIntegration.JstdQUnitCreateTeardownAction"/>
+      <action id="QUnitGenerateNewTestAction" class="com.google.jstestdriver.idea.assertFramework.qunit.generate.QUnitGenerateNewTestAction"/>
+      <action id="QUnitGenerateSetupAction" class="com.google.jstestdriver.idea.assertFramework.qunit.generate.QUnitGenerateSetupAction"/>
+      <action id="QUnitGenerateTearDownAction" class="com.google.jstestdriver.idea.assertFramework.qunit.generate.QUnitGenerateTearDownAction"/>
       <action id="JstdCreateTestAction" class="com.google.jstestdriver.idea.assertFramework.jstd.generate.JstdGenerateNewTestAction"/>
       <action id="JstdCreateSetupAction" class="com.google.jstestdriver.idea.assertFramework.jstd.generate.JstdGenerateSetupAction"/>
       <action id="JstdCreateTearDownAction" class="com.google.jstestdriver.idea.assertFramework.jstd.generate.JstdGenerateTearDownAction"/>

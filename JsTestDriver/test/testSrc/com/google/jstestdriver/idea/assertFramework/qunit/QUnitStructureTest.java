@@ -62,16 +62,16 @@ public class QUnitStructureTest extends AbstractJsPsiTestCase {
         Assert.fail("Can't find automatically collected module with name '" + markedQUnitModuleStructure.getName() + "'");
       }
     }
-    if (qUnitFileStructure.getModuleCount() != markedQUnitFileStructure.getModules().size()) {
+    if (qUnitFileStructure.getNonDefaultModuleCount() != markedQUnitFileStructure.getModules().size()) {
       Assert.fail("Found marked " + markedQUnitFileStructure.getModules().size() + " modules, but automatically found "
-                  + qUnitFileStructure.getModuleCount() + " modules");
+                  + qUnitFileStructure.getNonDefaultModuleCount() + " modules");
     }
   }
 
   private static void validateQUnitModule(MarkedQUnitModuleStructure markedQUnitModuleStructure,
                                           QUnitModuleStructure qUnitModuleStructure) {
     Assert.assertEquals(markedQUnitModuleStructure.getName(), qUnitModuleStructure.getName());
-    Assert.assertEquals(markedQUnitModuleStructure.getPsiElement(), qUnitModuleStructure.getJsCallExpression());
+    Assert.assertEquals(markedQUnitModuleStructure.getPsiElement(), qUnitModuleStructure.getEnclosingCallExpression());
     for (MarkedQUnitTestMethodStructure markedQUnitTestStructure : markedQUnitModuleStructure.getTestStructures()) {
       QUnitTestMethodStructure qUnitTestMethodStructure =
           qUnitModuleStructure.getTestMethodStructureByName(markedQUnitTestStructure.getName());

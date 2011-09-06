@@ -6,7 +6,7 @@ public class JstdGenerateTearDownAction extends AbstractJstdCreateStaticMethodAc
   @NotNull
   @Override
   public String getHumanReadableDescription() {
-    return "TearDown Method";
+    return "JsTestDriver TearDown";
   }
 
   @NotNull

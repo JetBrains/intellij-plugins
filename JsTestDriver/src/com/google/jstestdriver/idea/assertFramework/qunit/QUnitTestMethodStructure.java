@@ -6,11 +6,16 @@ import org.jetbrains.annotations.NotNull;
 
 public class QUnitTestMethodStructure {
 
+  private final AbstractQUnitModuleStructure myModuleStructure;
   private final String myName;
   private final JSCallExpression myJsCallExpression;
   private final JSFunctionExpression myFunctionExpression;
 
-  public QUnitTestMethodStructure(@NotNull String name, @NotNull JSCallExpression jsCallExpression, @NotNull JSFunctionExpression jsFunctionExpression) {
+  public QUnitTestMethodStructure(@NotNull AbstractQUnitModuleStructure moduleStructure,
+                                  @NotNull String name,
+                                  @NotNull JSCallExpression jsCallExpression,
+                                  @NotNull JSFunctionExpression jsFunctionExpression) {
+    myModuleStructure = moduleStructure;
     myName = name;
     myJsCallExpression = jsCallExpression;
     myFunctionExpression = jsFunctionExpression;
@@ -20,7 +25,13 @@ public class QUnitTestMethodStructure {
     return myName;
   }
 
+  @NotNull
   public JSCallExpression getCallExpression() {
     return myJsCallExpression;
+  }
+
+  @NotNull
+  public AbstractQUnitModuleStructure getModuleStructure() {
+    return myModuleStructure;
   }
 }

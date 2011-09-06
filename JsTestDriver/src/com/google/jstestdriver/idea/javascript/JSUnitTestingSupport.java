@@ -28,11 +28,11 @@ public class JSUnitTestingSupport implements StartupActivity, DumbAware {
 
   @Override
   public void runActivity(Project project) {
-    installLibrary(project);
+    uninstallOldLibrary(project);
     NavigationRegistryBuilderImpl.register();
   }
 
-  private static void installLibrary(Project project) {
+  private static void uninstallOldLibrary(Project project) {
     final JSLibraryManager libraryManager = ServiceManager.getService(project, JSLibraryManager.class);
     String libraryName = "JsTD Assertion Framework";
     ScriptingLibraryModel scriptingLibraryModel = libraryManager.getLibraryByName(libraryName);
