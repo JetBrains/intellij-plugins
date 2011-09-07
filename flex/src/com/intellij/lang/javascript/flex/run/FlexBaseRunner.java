@@ -181,8 +181,9 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                                               final RunContentDescriptor contentToReuse,
                                                               final ExecutionEnvironment environment) throws ExecutionException;
 
-  static Pair<Module, FlexIdeBuildConfiguration> getModuleAndConfig(final Project project, final FlexIdeRunnerParameters params)
+  public static Pair<Module, FlexIdeBuildConfiguration> getModuleAndConfig(final Project project, final FlexIdeRunnerParameters params)
     throws ExecutionException {
+
     final String moduleName = params.getModuleName();
     final String bcName = params.getBCName();
 

@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.compiler.options.CompileStepBeforeRun;
+import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.facet.FacetManager;
@@ -8,9 +9,8 @@ import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
-import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
-import com.intellij.lang.javascript.flex.run.RunMainClassPrecompileTask;
+import com.intellij.lang.javascript.flex.projectStructure.options.*;
+import com.intellij.lang.javascript.flex.run.*;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkAdditionalData;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.application.ApplicationManager;
@@ -20,8 +20,10 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkAdditionalData;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
@@ -259,10 +261,22 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
   public boolean validateConfiguration(final CompileScope scope) {
     if (PlatformUtils.isFlexIde() && FlexIdeUtils.isNewUI()) {
-      // todo implement
+      try {
+        // todo add quick fixes to ConfigurationException
+        final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndConfigsToCompile = getModulesAndConfigsToCompile(scope);
+
+        for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig : modulesAndConfigsToCompile) {
+          validateConfiguration(moduleAndConfig.first, moduleAndConfig.second);
+        }
+      }
+      catch (ConfigurationException e) {
+        Messages.showErrorDialog(e.getMessage(), e.getTitle());
+        return false;
+      }
+
       return true;
     }
-    
+
     Module moduleToSkipValidation = null; // will be validated later in FlexUnitPrecompilerTask or RunMainClassPrecompileTask
     final RunConfiguration runConfiguration = CompileStepBeforeRun.getRunConfiguration(scope);
     if (runConfiguration instanceof FlexUnitRunConfiguration ||
@@ -318,6 +332,108 @@ public class FlexCompiler implements SourceProcessingCompiler {
       }
     }
     return true;
+  }
+
+  private static Collection<Pair<Module, FlexIdeBuildConfiguration>> getModulesAndConfigsToCompile(final CompileScope scope)
+    throws ConfigurationException {
+    final RunConfiguration runConfiguration = CompileStepBeforeRun.getRunConfiguration(scope);
+
+    if (runConfiguration instanceof FlexIdeRunConfiguration) {
+      final Collection<Pair<Module, FlexIdeBuildConfiguration>> result = new HashSet<Pair<Module, FlexIdeBuildConfiguration>>();
+
+      final FlexIdeRunnerParameters params = ((FlexIdeRunConfiguration)runConfiguration).getRunnerParameters();
+      final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig;
+
+      try {
+        moduleAndConfig = FlexBaseRunner.getModuleAndConfig(runConfiguration.getProject(), params);
+      }
+      catch (ExecutionException e) {
+        throw new ConfigurationException(e.getMessage(), FlexBundle.message("run.configuration.0", runConfiguration.getName()));
+      }
+
+      if (!moduleAndConfig.second.SKIP_COMPILE) {
+        result.add(moduleAndConfig);
+        appendBCDependencies(result, moduleAndConfig.first, moduleAndConfig.second);
+      }
+
+      return result;
+    }
+    else {
+      final Collection<Pair<Module, FlexIdeBuildConfiguration>> result = new ArrayList<Pair<Module, FlexIdeBuildConfiguration>>();
+
+      for (final Module module : scope.getAffectedModules()) {
+        for (final FlexIdeBuildConfiguration config : FlexIdeBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
+          if (!config.SKIP_COMPILE) {
+            result.add(Pair.create(module, config));
+          }
+        }
+      }
+
+      return result;
+    }
+  }
+
+  private static void appendBCDependencies(final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndConfigs,
+                                           final Module module,
+                                           final FlexIdeBuildConfiguration config) throws ConfigurationException {
+    for (final DependencyEntry entry : config.DEPENDENCIES.getEntries()) {
+      if (entry instanceof BuildConfigurationEntry) {
+        final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
+
+        final Module otherModule = bcEntry.findModule();
+        final FlexIdeBuildConfiguration otherConfig = bcEntry.findBuildConfiguration();
+
+        if (otherConfig == null) {
+          throw new ConfigurationException(FlexBundle.message("bc.dependency.does.not.exist", bcEntry.getBcName(), bcEntry.getModuleName(),
+                                                              config.NAME, module.getName()), FlexBundle.message(
+            "project.setup.problem.title"));
+        }
+
+        final Pair<Module, FlexIdeBuildConfiguration> otherModuleAndConfig = Pair.create(otherModule, otherConfig);
+        if (!otherConfig.SKIP_COMPILE && !modulesAndConfigs.contains(otherModuleAndConfig)) {
+          modulesAndConfigs.add(otherModuleAndConfig);
+          appendBCDependencies(modulesAndConfigs, otherModule, otherConfig);
+        }
+      }
+    }
+  }
+
+  private static void validateConfiguration(final Module module, final FlexIdeBuildConfiguration config) throws ConfigurationException {
+    assert !config.SKIP_COMPILE;
+    final BuildConfigurationNature nature = config.getNature();
+
+    final SdkEntry sdkEntry = config.DEPENDENCIES.getSdkEntry();
+    final Library sdkLib = sdkEntry == null ? null : sdkEntry.findLibrary();
+    if (sdkLib == null) {
+      throw new ConfigurationException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", config.NAME, module.getName()),
+                                       FlexBundle.message("project.setup.problem.title"));
+    }
+
+    if (!nature.isLib() && config.MAIN_CLASS.isEmpty()) {
+      throw new ConfigurationException(FlexBundle.message("main.class.not.set.for.bc.0.of.module.1", config.NAME, module.getName()),
+                                       FlexBundle.message("project.setup.problem.title"));
+      // todo real main class validation?
+    }
+
+    if (config.OUTPUT_FILE_NAME.isEmpty()) {
+      throw new ConfigurationException(FlexBundle.message("output.file.name.not.set.for.bc.0.of.module.1", config.NAME, module.getName()),
+                                       FlexBundle.message("project.setup.problem.title"));
+    }
+
+    if (nature.isWebPlatform() && nature.isApp() && config.USE_HTML_WRAPPER) {
+      if (config.WRAPPER_TEMPLATE_PATH.isEmpty()) {
+        throw new ConfigurationException(
+          FlexBundle.message("html.template.folder.not.set.for.bc.0.of.module.1", config.NAME, module.getName()),
+          FlexBundle.message("project.setup.problem.title"));
+      }
+      final VirtualFile wrapperTemplateDir = LocalFileSystem.getInstance().findFileByPath(config.WRAPPER_TEMPLATE_PATH);
+      if (wrapperTemplateDir == null || !wrapperTemplateDir.isDirectory()) {
+        throw new ConfigurationException(FlexBundle
+                                           .message("html.template.folder.not.found.for.bc.0.of.module.1.2", config.NAME, module.getName(),
+                                                    config.WRAPPER_TEMPLATE_PATH), FlexBundle.message("project.setup.problem.title"));
+        // todo check that it contains wrapper template
+      }
+    }
   }
 
   @NotNull
