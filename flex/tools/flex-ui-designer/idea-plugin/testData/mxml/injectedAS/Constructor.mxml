@@ -14,4 +14,5 @@
                     disabledRanges="{[ {rangeEnd: new Date(2009, 11, 30)} ]}" color="0x000000"/>
     </mx:FormItem>
   </mx:Form>
+  <mx:DateChooser disabledRanges="{[new Date(2011,8,11)]}"/>
 </VGroup>

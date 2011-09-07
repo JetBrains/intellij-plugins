@@ -650,83 +650,7 @@ public final class MxmlReader implements DocumentReader {
   internal function readArrayOrVector(array:Object, length:int):Object {
     var i:int = 0;
     while (i < length) {
-      const amfType:int = input.readByte();
-      switch (amfType) {
-        case Amf3Types.OBJECT:
-          array[i++] = readObjectFromClass(stringRegistry.readNotNull(input));
-          break;
-
-        case Amf3Types.STRING:
-          array[i++] = AmfUtil.readString(input);
-          break;
-
-        case AmfExtendedTypes.STRING_REFERENCE:
-          array[i++] = stringRegistry.read(input);
-          break;
-
-        case Amf3Types.INTEGER:
-          array[i++] = (AmfUtil.readUInt29(input) << 3) >> 3;
-          break;
-
-        case Amf3Types.DOUBLE:
-          array[i++] = input.readDouble();
-          break;
-
-        case Amf3Types.FALSE:
-          array[i++] = false;
-          break;
-
-        case Amf3Types.TRUE:
-          array[i++] = true;
-          break;
-
-        case Amf3Types.NULL:
-          array[i++] = null;
-          break;
-
-        case Amf3Types.ARRAY:
-          array[i++] = readArray();
-          break;
-
-        case AmfExtendedTypes.MXML_ARRAY:
-          array[i++] = readMxmlArray();
-          break;
-
-        case AmfExtendedTypes.MXML_VECTOR:
-          array[i++] = readMxmlVector();
-          break;
-
-        case AmfExtendedTypes.DOCUMENT_REFERENCE:
-          array[i++] = readObjectFromFactory(readDocumentFactory().newInstance());
-          break;
-
-        case AmfExtendedTypes.OBJECT_REFERENCE:
-          array[i++] = readObjectReference();
-          break;
-
-        case ExpressionMessageTypes.MXML_OBJECT_REFERENCE:
-          array[i++] = injectedASReader.readMxmlObjectReference(input, this);
-          break;
-
-        case ExpressionMessageTypes.VARIABLE_REFERENCE:
-          array[i++] = injectedASReader.readVariableReference(input, this);
-          break;
-
-        case ExpressionMessageTypes.SIMPLE_OBJECT:
-          array[i++] = readSimpleObject();
-          break;
-
-        case AmfExtendedTypes.REFERABLE_PRIMITIVE:
-          array[i++] = readReferablePrimitive();
-          break;
-
-        case AmfExtendedTypes.XML_LIST:
-          array[i++] = readXmlList();
-          break;
-
-        default:
-          throw new ArgumentError("unknown property type " + amfType);
-      }
+      array[i++] = readExpression();
     }
 
     return array;
@@ -739,6 +663,10 @@ public final class MxmlReader implements DocumentReader {
   internal function readExpression():* {
     const amfType:int = input.readByte();
     switch (amfType) {
+      case Amf3Types.OBJECT:
+        return readObjectFromClass(stringRegistry.readNotNull(input));
+        break;
+
       case ExpressionMessageTypes.SIMPLE_OBJECT:
         return readSimpleObject();
 
@@ -783,6 +711,21 @@ public final class MxmlReader implements DocumentReader {
 
       case AmfExtendedTypes.OBJECT_REFERENCE:
         return readObjectReference();
+
+      case AmfExtendedTypes.DOCUMENT_REFERENCE:
+        return readObjectFromFactory(readDocumentFactory().newInstance());
+
+      case ExpressionMessageTypes.VARIABLE_REFERENCE:
+        return injectedASReader.readVariableReference(input, this);
+        break;
+
+      case AmfExtendedTypes.REFERABLE_PRIMITIVE:
+        return readReferablePrimitive();
+        break;
+
+      case AmfExtendedTypes.XML_LIST:
+        return readXmlList();
+        break;
 
       default:
         throw new ArgumentError("unknown property type " + amfType);
