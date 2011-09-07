@@ -49,11 +49,13 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   private JTextField myOutputFileNameTextField;
   private TextFieldWithBrowseButton myOutputFolderField;
 
+  private JPanel myHtmlWrapperPanel;
   private JCheckBox myUseHTMLWrapperCheckBox;
   private JLabel myWrapperFolderLabel;
   private TextFieldWithBrowseButton myWrapperTemplateTextWithBrowse;
-  private JCheckBox mySkipCompilationCheckBox;
   private JButton myCreateHtmlTemplateButton;
+
+  private JCheckBox mySkipCompilationCheckBox;
 
   private final Module myModule;
   private final FlexIdeBuildConfiguration myConfiguration;
@@ -190,14 +192,10 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myMainClassLabel.setVisible(showMainClass);
     myMainClassTextField.setVisible(showMainClass);
 
-    final boolean wrapperApplicable =
-      myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Web && myOutputTypeCombo.getSelectedItem() == OutputType.Application;
-    final boolean enabled = wrapperApplicable && myUseHTMLWrapperCheckBox.isSelected();
-    myUseHTMLWrapperCheckBox.setVisible(wrapperApplicable);
-    myWrapperFolderLabel.setVisible(wrapperApplicable);
-    myWrapperFolderLabel.setEnabled(enabled);
-    myWrapperTemplateTextWithBrowse.setVisible(wrapperApplicable);
-    myWrapperTemplateTextWithBrowse.setEnabled(enabled);
+    myHtmlWrapperPanel.setVisible(
+      myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Web && myOutputTypeCombo.getSelectedItem() == OutputType.Application);
+    myWrapperFolderLabel.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
+    myWrapperTemplateTextWithBrowse.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
   }
 
   public String getTreeNodeText() {
