@@ -1154,9 +1154,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
           if (dependencies.contains(flexIdeBCConfigurable) || flexIdeBCConfigurable.isParentFor(DependenciesConfigurable.this)) {
             continue;
           }
-          FlexIdeBuildConfiguration.OutputType outputType = flexIdeBCConfigurable.getOutputType();
-          if (outputType != FlexIdeBuildConfiguration.OutputType.Library &&
-              outputType != FlexIdeBuildConfiguration.OutputType.RuntimeLoadedModule) {
+
+          if (!BCUtils.isApplicableForDependency(myNature, flexIdeBCConfigurable.getOutputType())) {
             continue;
           }
 

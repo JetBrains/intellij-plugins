@@ -225,4 +225,27 @@ public class BCUtils {
            ? null
            : LinkageType.Default;
   }
+
+  public static boolean isApplicable(BuildConfigurationNature dependantNature, LinkageType dependencyLinkageType) {
+    if (dependencyLinkageType == LinkageType.Default) {
+      return false;
+    }
+
+    if (dependantNature.isLib()) {
+      return dependencyLinkageType != LinkageType.LoadInRuntime;
+    }
+    else {
+      return true;
+    }
+  }
+
+  public static boolean isApplicableForDependency(BuildConfigurationNature dependantNature, OutputType dependencyOutputType) {
+    if (dependantNature.isLib()) {
+      return dependencyOutputType == FlexIdeBuildConfiguration.OutputType.Library;
+    }
+    else {
+      return dependencyOutputType == FlexIdeBuildConfiguration.OutputType.Library ||
+             dependencyOutputType == FlexIdeBuildConfiguration.OutputType.RuntimeLoadedModule;
+    }
+  }
 }
