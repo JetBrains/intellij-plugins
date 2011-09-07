@@ -159,7 +159,8 @@ public class StyleProtoChain {
     EffectManager.setStyle(styleProp, object);
     
     var styleManager:IStyleManager2 = getStyleManager(object);
-    var isProtoChainInitialized:Boolean = object.inheritingStyles != STYLE_UNINITIALIZED;
+    const isProtoChainInitialized:Boolean = object.inheritingStyles != STYLE_UNINITIALIZED;
+    const callStyleChangedAfter:Boolean = isProtoChainInitialized && object.getStyle(styleProp) != newValue;
     if (object.styleDeclaration == null) {
       object.styleDeclaration = new InlineCssStyleDeclaration(InlineCssRuleset.createExternalInline(styleProp, newValue), StyleManagerEx(styleManager).styleValueResolver);
       if (isProtoChainInitialized) {
@@ -170,7 +171,7 @@ public class StyleProtoChain {
       InlineCssStyleDeclaration(object.styleDeclaration).ruleset.put(styleProp, newValue);
     }
 
-    if (isProtoChainInitialized && object.getStyle(styleProp) != newValue) {
+    if (callStyleChangedAfter) {
       object.styleChanged(styleProp);
       object.notifyStyleChangeInChildren(styleProp, styleManager.isInheritingStyle(styleProp));
     }

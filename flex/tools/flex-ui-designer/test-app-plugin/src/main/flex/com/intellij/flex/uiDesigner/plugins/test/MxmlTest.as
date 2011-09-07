@@ -46,6 +46,7 @@ public class MxmlTest extends BaseTestCase {
       AreaChartComplexExample();
       ComplexContentAsSubTagsForObjectTypedProperty();
       IDEA_73806();
+      IDEA_73613();
     }
   }
   
@@ -243,6 +244,12 @@ public class MxmlTest extends BaseTestCase {
   public function IDEA_73806():void {
     validateUI(); // force model commit
     assertThat(app, [{dataProvider: {source: instanceOf(XMLList)}}]);
+  }
+
+  public function IDEA_73613():void {
+    assertThat(app, [{color: 0}]);
+    setState(B);
+    assertThat(app, [{color: 0x008000}]);
   }
 }
 }
