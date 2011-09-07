@@ -15,6 +15,8 @@
 
 package com.intellij.lang.ognl.highlight;
 
+import com.intellij.ide.highlighter.HtmlFileHighlighter;
+import com.intellij.ide.highlighter.XmlFileHighlighter;
 import com.intellij.lang.ognl.psi.OgnlTokenTypes;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.HighlighterColors;
@@ -126,6 +128,9 @@ public class OgnlHighlighter extends SyntaxHighlighterBase {
 
     keys1.put(OgnlTokenTypes.LBRACE, PARENTHS);
     keys1.put(OgnlTokenTypes.RBRACE, PARENTHS);
+
+    XmlFileHighlighter.registerEmbeddedTokenAttributes(keys1, null);
+    HtmlFileHighlighter.registerEmbeddedTokenAttributes(keys1, null);
   }
 
 }
