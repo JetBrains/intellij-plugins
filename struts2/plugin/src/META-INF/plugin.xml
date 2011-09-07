@@ -221,6 +221,7 @@
                             implementationClass="com.intellij.lang.ognl.completion.OgnlKeywordCompletionContributor"/>
 
     <colorSettingsPage implementation="com.intellij.lang.ognl.highlight.OgnlColorSettingsPage"/>
+    <liveTemplateContext implementation="com.intellij.lang.ognl.template.OgnlTemplateContextType"/>
 
   </extensions>
 
