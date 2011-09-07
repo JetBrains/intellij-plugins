@@ -33,9 +33,9 @@ internal class BaseTestCase implements TestCase {
       if (documentManager.document != null) {
         _app = documentManager.document.uiComponent;
       }
-    }
 
-    stateManager = StatesBarManager(projectManager.project.getComponent(StatesBarManager));
+      stateManager = StatesBarManager(projectManager.project.getComponent(StatesBarManager));
+    }
   }
 
   protected function getMxInternal(propertyName:String):QName {

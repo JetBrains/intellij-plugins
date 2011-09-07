@@ -12,9 +12,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 class ExpressionBinding extends Binding {
   private final JSExpression expression;
 
@@ -64,7 +61,7 @@ class ExpressionBinding extends Binding {
   private static void writeCallExpression(JSCallExpression expression, PrimitiveAmfOutputStream out, BaseWriter writer,
                                           ValueReferenceResolver valueReferenceResolver) throws InvalidPropertyException {
     final JSReferenceExpression methodExpression = (JSReferenceExpression)expression.getMethodExpression();
-    final JSFunction function = (JSFunction)resolveReferenceExpression(methodExpression);
+    final JSFunction function = (JSFunction)resolveReferenceExpression(methodExpression, true);
     final JSExpression[] arguments;
     final int rollbackPosition;
     final int start;
@@ -117,10 +114,12 @@ class ExpressionBinding extends Binding {
     }
   }
 
-  //private static
-
   @NotNull
-  private static PsiElement resolveReferenceExpression(JSReferenceExpression expression) throws InvalidPropertyException {
+  private static PsiElement resolveReferenceExpression(JSReferenceExpression expression, boolean qualificatorSupported) throws InvalidPropertyException {
+    if (!qualificatorSupported && expression.getQualifier() != null) {
+      throw new UnsupportedOperationException(expression.getText());
+    }
+
     final AccessToken token = ReadAction.start();
     final PsiElement element;
     try {
@@ -140,7 +139,7 @@ class ExpressionBinding extends Binding {
   private static void writeReferenceExpression(JSReferenceExpression expression, PrimitiveAmfOutputStream out, BaseWriter writer,
                                                ValueReferenceResolver valueReferenceResolver)
     throws InvalidPropertyException {
-    PsiElement element = resolveReferenceExpression(expression);
+    PsiElement element = resolveReferenceExpression(expression, false);
     if (element instanceof JSClass) {
       writer.writeClass(((JSClass)element).getQualifiedName());
     }

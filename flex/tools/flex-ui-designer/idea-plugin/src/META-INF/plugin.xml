@@ -3,7 +3,7 @@
   <description>Provides editing support for Flex UI (currently, only view)</description>
   <version>0.5.6</version>
   <vendor logo="/general/ijLogo.png">JetBrains</vendor>
-  <idea-version since-build="108.727"/>
+  <idea-version since-build="108.1193"/>
 
   <resource-bundle>messages.FlexUIDesignerBundle</resource-bundle>
 
@@ -14,7 +14,6 @@
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager" serviceImplementation="com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.SocketInputHandler" serviceImplementation="com.intellij.flex.uiDesigner.SocketInputHandlerImpl"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.io.StringRegistry" serviceImplementation="com.intellij.flex.uiDesigner.io.StringRegistry"/>
-    <applicationService serviceInterface="com.intellij.flex.uiDesigner.DocumentFactoryManager" serviceImplementation="com.intellij.flex.uiDesigner.DocumentFactoryManager"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.EmbedImageManager" serviceImplementation="com.intellij.flex.uiDesigner.EmbedImageManager"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.EmbedSwfManager" serviceImplementation="com.intellij.flex.uiDesigner.EmbedSwfManager"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.DocumentProblemManager" serviceImplementation="com.intellij.flex.uiDesigner.DocumentProblemManager"/>
