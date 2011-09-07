@@ -222,6 +222,7 @@
 
     <colorSettingsPage implementation="com.intellij.lang.ognl.highlight.OgnlColorSettingsPage"/>
     <liveTemplateContext implementation="com.intellij.lang.ognl.template.OgnlTemplateContextType"/>
+    <defaultLiveTemplatesProvider implementation="com.intellij.lang.ognl.template.OgnlDefaultLiveTemplatesProvider"/>
 
   </extensions>
 
