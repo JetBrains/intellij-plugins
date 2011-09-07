@@ -39,7 +39,7 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
   private final Module myModule;
   private FlexIdeBuildConfiguration[] myConfigurations = new FlexIdeBuildConfiguration[]{new FlexIdeBuildConfiguration()};
   private CompilerOptions myModuleLevelCompilerOptions = new CompilerOptions();
-  private FlexIdeBuildConfiguration myActiveConfiguration;
+  private FlexIdeBuildConfiguration myActiveConfiguration = myConfigurations[0];
 
   public FlexIdeBuildConfigurationManager(final Module module) {
     myModule = module;
