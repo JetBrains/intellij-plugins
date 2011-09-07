@@ -7,6 +7,7 @@ public final class ServerMethod {
   public static const RESOLVE_EXTERNAL_INLINE_STYLE_DECLARATION_SOURCE:int = 2;
 
   public static const SHOW_ERROR:int = 3;
+  public static const LOG_WARNING:int = 14;
 
   public static const UNREGISTER_DOCUMENT_FACTORIES:int = 4;
 

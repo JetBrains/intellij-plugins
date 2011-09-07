@@ -18,9 +18,9 @@ public class InvalidPropertyException extends Exception {
   }
 
   public InvalidPropertyException(String message, PsiElement psiElement) {
-      super(message);
-      this.psiElement = psiElement;
-    }
+    super(message);
+    this.psiElement = psiElement;
+  }
 
   public InvalidPropertyException(@PropertyKey(resourceBundle = FlexUIDesignerBundle.BUNDLE) String key, Object... params) {
     super(FlexUIDesignerBundle.message(key, params));

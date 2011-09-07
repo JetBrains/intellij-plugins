@@ -150,6 +150,9 @@ class InjectedASWriter implements ValueReferenceResolver {
         binding.write(out, writer, this);
         continue;
       }
+      catch (UnsupportedOperationException e) {
+        MxmlWriter.LOG.warn("unsupported injected AS: " + e.getMessage());
+      }
       catch (Throwable e) {
         problemsHolder.add(e);
       }

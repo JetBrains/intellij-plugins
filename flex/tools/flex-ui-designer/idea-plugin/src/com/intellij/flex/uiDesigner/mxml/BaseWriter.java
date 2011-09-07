@@ -255,7 +255,7 @@ final class BaseWriter {
   }
 
   public void writeColor(XmlElement element, String value, boolean isPrimitiveStyle) throws InvalidPropertyException {
-    out.write(AmfExtendedTypes.COLOR_STYLE_MARKER);
+    out.write(AmfExtendedTypes.COLOR_STYLE);
     if (value.charAt(0) == '#') {
       if (isPrimitiveStyle) {
         out.write(CssPropertyType.COLOR_INT);

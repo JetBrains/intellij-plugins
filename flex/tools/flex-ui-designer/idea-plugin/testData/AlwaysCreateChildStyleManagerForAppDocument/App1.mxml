@@ -1,3 +1,15 @@
 <Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
-  <Label text="label1"/>
+
+
+  <states>
+      <State name="Login"/>
+      <State name="LoggedIn"/>
+    </states>
+    <Panel id="loggedInPanel" includeIn="LoggedIn" title="LoggedIn">
+      <Form id="ImageForm">
+        <FormItem label="Image:">
+          <SWFLoader id="flower1" horizontalAlign="center" width="100%" y="20" source="@Embed(source='/Users/develar/ss.png')"/>
+        </FormItem>
+      </Form>
+    </Panel>
 </Application>

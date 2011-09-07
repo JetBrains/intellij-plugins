@@ -4,7 +4,7 @@ import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 public interface StylePaneContext {
   function get rulesetPrinter():CssRulesetPrinter;
   
-  function get styleManager():StyleManagerEx;
+  function get documentStyleManager():StyleManagerEx;
   
   function get rulesets():Vector.<Object>;
 }

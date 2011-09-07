@@ -1,9 +1,4 @@
-<?xml version="1.0" ?>
-<Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark" xmlns:mx="library://ns.adobe.com/flex/mx">
-  <layout>
-    <VerticalLayout/>
-  </layout>
-  
+<VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark" xmlns:mx="library://ns.adobe.com/flex/mx">
   <HGroup>
     <mx:Text text="Use the arrows to change tabs"/>
     <Spinner id="mySpinner" maximum="3"/>
@@ -27,4 +22,4 @@
 
   <!-- Label that displays the current value of the Spark Spinner -->
   <mx:Label text="Current Tab = {mySpinner.value+1}" color="purple"/>
-</Application>
+</VGroup>

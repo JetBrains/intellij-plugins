@@ -12,6 +12,9 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class ExpressionBinding extends Binding {
   private final JSExpression expression;
 
@@ -45,14 +48,64 @@ class ExpressionBinding extends Binding {
       writeArrayLiteralExpression((JSArrayLiteralExpression)expression, out, writer, valueReferenceResolver);
     }
     else if (expression instanceof JSNewExpression) {
-      writeNewExpression((JSNewExpression)expression, out, writer, valueReferenceResolver);
+      writeCallExpression((JSNewExpression)expression, out, writer, valueReferenceResolver);
     }
     else if (expression instanceof JSReferenceExpression) {
       writeReferenceExpression((JSReferenceExpression)expression, out, writer, valueReferenceResolver);
     }
+    else if (expression instanceof JSCallExpression) {
+      writeCallExpression((JSCallExpression)expression, out, writer, valueReferenceResolver);
+    }
     else {
       throw new UnsupportedOperationException(expression.getText());
     }
+  }
+
+  private static void writeCallExpression(JSCallExpression expression, PrimitiveAmfOutputStream out, BaseWriter writer,
+                                          ValueReferenceResolver valueReferenceResolver) throws InvalidPropertyException {
+    final JSReferenceExpression methodExpression = (JSReferenceExpression)expression.getMethodExpression();
+    final JSFunction function = (JSFunction)resolveReferenceExpression(methodExpression);
+    final JSExpression[] arguments;
+    final int rollbackPosition;
+    final int start;
+    if (function.isConstructor()) {
+      arguments = expression.getArguments();
+      final JSClass jsClass = (JSClass)function.getParent();
+      // text="{new String('newString')}"
+      writer.writeNew(jsClass.getQualifiedName(), arguments.length);
+      rollbackPosition = out.allocateShort();
+      start = out.size();
+    }
+    else {
+      out.write(ExpressionMessageTypes.CALL);
+      rollbackPosition = out.allocateShort();
+      start = out.size();
+      // text="{resourceManager.getString('core', 'viewSource')}"
+      JSReferenceExpression qualifier = (JSReferenceExpression)methodExpression.getQualifier();
+      while (qualifier != null) {
+        writer.write(qualifier.getReferencedName());
+        qualifier = (JSReferenceExpression)qualifier.getQualifier();
+      }
+
+      out.write(0);
+
+      writer.write(function.getName());
+
+      if (function.isGetProperty()) {
+        out.write(-1);
+        return;
+      }
+      else {
+        arguments = expression.getArguments();
+        out.write(arguments.length);
+      }
+    }
+
+    for (JSExpression argument : arguments) {
+      writeExpression(argument, out, writer, valueReferenceResolver);
+    }
+
+    out.putShort(out.size() - start, rollbackPosition);
   }
 
   static void writeArrayLiteralExpression(JSArrayLiteralExpression expression, PrimitiveAmfOutputStream out, BaseWriter writer,
@@ -64,15 +117,7 @@ class ExpressionBinding extends Binding {
     }
   }
 
-  private static void writeNewExpression(JSNewExpression expression, PrimitiveAmfOutputStream out, BaseWriter writer,
-                                         ValueReferenceResolver valueReferenceResolver) throws InvalidPropertyException {
-    JSClass jsClass = (JSClass)resolveReferenceExpression(((JSReferenceExpression)expression.getMethodExpression())).getParent();
-    JSExpression[] arguments = expression.getArguments();
-    writer.writeNew(jsClass.getQualifiedName(), arguments.length);
-    for (JSExpression argument : arguments) {
-      writeExpression(argument, out, writer, valueReferenceResolver);
-    }
-  }
+  //private static
 
   @NotNull
   private static PsiElement resolveReferenceExpression(JSReferenceExpression expression) throws InvalidPropertyException {
@@ -112,7 +157,31 @@ class ExpressionBinding extends Binding {
     }
     else {
       out.write(ExpressionMessageTypes.MXML_OBJECT_REFERENCE);
-      valueReferenceResolver.getValueReference(expression.getReferencedName()).write(out, writer, valueReferenceResolver);
+
+      JSReferenceExpression qualifier = (JSReferenceExpression)expression.getQualifier();
+      //List<String> qualifiers = null;
+      if (qualifier != null) {
+        throw new UnsupportedOperationException(expression.getText());
+        //qualifiers = new ArrayList<String>(4);
+        //do {
+        //  qualifiers.add(qualifier.getReferencedName());
+        //}
+        //while ((qualifier = (JSReferenceExpression)qualifier.getQualifier()) != null);
+      }
+
+      try {
+        valueReferenceResolver.getValueReference(expression.getReferencedName()).write(out, writer, valueReferenceResolver);
+      }
+      catch (IllegalStateException e) {
+        // getValueReference throws IllegalStateException if value reference is null
+        throw new UnsupportedOperationException(expression.getText());
+      }
+      //if (qualifiers == null) {
+      //  out.write(0);
+      //}
+      //else {
+      //  out.write(qualifiers.size());
+      //}
     }
   }
 

@@ -20,4 +20,7 @@
     <Label id="specifiedId" text="{text}"/>
   </VGroup>
   <Label includeIn="B" text="{'bar'}"/>
+  <Label id="specifiedId2" includeIn="B" text="{333}"/>
+
+  <Label includeIn="A" text="{resourceManager.getString('core', 'viewSource')}" id="specifiedId3"/>
 </VGroup>

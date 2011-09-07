@@ -59,6 +59,10 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
         else {
           throw new IOException(message);
         }
+        
+      case ServerMethod.LOG_WARNING:
+        LOG.warn(reader.readUTF());
+        break;
 
       default:
         if (customMessageHandler != null && customMessageHandler.getExpectedCommand() == command) {

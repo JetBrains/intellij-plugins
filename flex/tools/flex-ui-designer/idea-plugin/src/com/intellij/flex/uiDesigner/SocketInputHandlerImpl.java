@@ -43,7 +43,7 @@ import java.io.*;
 import java.util.List;
 
 public class SocketInputHandlerImpl extends SocketInputHandler {
-  private static final Logger LOG = Logger.getInstance(SocketInputHandlerImpl.class.getName());
+  protected static final Logger LOG = Logger.getInstance(SocketInputHandlerImpl.class.getName());
 
   protected Reader reader;
 
@@ -162,6 +162,10 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
       case ServerMethod.SHOW_ERROR:
         showError();
+        break;
+
+      case ServerMethod.LOG_WARNING:
+        logWarning();
         break;
 
       case ServerMethod.CLOSE_PROJECT:
@@ -493,6 +497,10 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
       userMessage = technicalMessage;
     }
     LOG.error(LogMessageUtil.createEvent(userMessage, technicalMessage, file));
+  }
+
+  private void logWarning() throws IOException {
+    LOG.warn(reader.readUTF());
   }
 
   private Module readModule() throws IOException {

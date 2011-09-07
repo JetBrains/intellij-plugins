@@ -224,6 +224,7 @@ public class Server implements ResourceBundleProvider {
 
   public function getResourceBundle(project:Object, locale:String, bundleName:String):Dictionary {
     var resultReadyFile:File;
+    var result:Dictionary;
     try {
       const resultReadyFilename:String = generateResultReadyFilename();
       socket.writeByte(ServerMethod.GET_RESOURCE_BUNDLE);
@@ -241,7 +242,7 @@ public class Server implements ResourceBundleProvider {
       var fileStream:FileStream = new FileStream();
       fileStream.open(resultFile, FileMode.READ);
       try {
-        return fileStream.readObject();
+        result = fileStream.readObject();
       }
       finally {
         fileStream.close();
@@ -254,7 +255,10 @@ public class Server implements ResourceBundleProvider {
       postCheckSyncMessaging(resultReadyFile, project);
     }
 
-    return null;
+    if (result == null) {
+      UncaughtErrorManager.instance.logWarning("Cannot find resource bundle " + bundleName + " for locale " + locale);
+    }
+    return result;
   }
 
   private static function generateResultReadyFilename():String {

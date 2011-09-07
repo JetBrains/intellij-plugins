@@ -120,9 +120,6 @@ public class TestSocketDataHandler implements SocketDataHandler {
   
   private function test(clazz:Class, method:String, testAnnotation:TestAnnotation):void {
     trace("execute test " + method);
-
-
-    
     var test:TestCase = new clazz();
     test.init(projectManager, _socket);
     test.setUp();

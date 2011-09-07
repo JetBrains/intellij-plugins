@@ -127,5 +127,19 @@ public class UncaughtErrorManager implements UiErrorHandler {
 
     socket.flush();
   }
+
+  public function logWarning(message:String):void {
+    socket.writeByte(ServerMethod.LOG_WARNING);
+    socket.writeUTF(message);
+    socket.flush();
+  }
+
+  public function logWarning2(e:Error):void {
+    logWarning(Capabilities.isDebugger ? buildErrorMessage(e) : e.message);
+  }
+
+  public function logWarning3(message:String, cause:Error):void {
+    logWarning(message + ":\n" + Capabilities.isDebugger ? buildErrorMessage(cause) : cause.message);
+  }
 }
 }

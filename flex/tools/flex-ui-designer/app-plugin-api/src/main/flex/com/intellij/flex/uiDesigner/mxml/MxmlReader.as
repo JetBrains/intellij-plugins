@@ -7,6 +7,7 @@ import com.intellij.flex.uiDesigner.EmbedImageManager;
 import com.intellij.flex.uiDesigner.EmbedSwfManager;
 import com.intellij.flex.uiDesigner.ModuleContextEx;
 import com.intellij.flex.uiDesigner.StringRegistry;
+import com.intellij.flex.uiDesigner.UncaughtErrorManager;
 import com.intellij.flex.uiDesigner.css.CssDeclaration;
 import com.intellij.flex.uiDesigner.css.CssDeclarationImpl;
 import com.intellij.flex.uiDesigner.css.CssEmbedImageDeclaration;
@@ -34,8 +35,6 @@ import flash.utils.Proxy;
 public final class MxmlReader implements DocumentReader {
   private static const FLEX_EVENT_CLASS_NAME:String = "mx.events.FlexEvent";
 
-  private static const COLOR_STYLE_MARKER:int = 42;
-
   private var input:IDataInput;
   
   private var stringRegistry:StringRegistry;
@@ -54,6 +53,8 @@ public final class MxmlReader implements DocumentReader {
   internal var objectTable:Vector.<Object>;
   
   internal var factoryContext:DeferredInstanceFromBytesContext;
+
+  private var rootObject:Object;
 
   public function MxmlReader(stringRegistry:StringRegistry, embedImageManager:EmbedImageManager, embedSwfManager:EmbedSwfManager) {
     this.stringRegistry = stringRegistry;
@@ -163,6 +164,7 @@ public final class MxmlReader implements DocumentReader {
     const oldContext:DocumentReaderContext = this.context;
     context = documentReaderContext;
     moduleContext = ModuleContextEx(context.moduleContext);
+    const oldRootObject:Object = rootObject;
     var object:Object = readObjectFromClass(stringRegistry.read(input), true);
     stateReader.read(this, input, object);
     injectedASReader.read(input, this);
@@ -181,6 +183,8 @@ public final class MxmlReader implements DocumentReader {
     var t:DeferredInstanceFromBytesContext = factoryContext;
     factoryContext = null;
     stateReader.reset(t, styleManager);
+
+    rootObject = oldRootObject;
 
     if (input is ByteArray) {
       assert(input.bytesAvailable == 0);
@@ -238,6 +242,7 @@ public final class MxmlReader implements DocumentReader {
       if (setDocument) {
         // perfomance, early set document, avoid recursive set later (see UIComponent.document setter)
         object.document = object;
+        rootObject = object;
       }
       if (propertyName == "$fud_position") {
         objectDeclarationTextOffset = AmfUtil.readUInt29(input);
@@ -405,7 +410,7 @@ public final class MxmlReader implements DocumentReader {
           propertyHolder[propertyName] = readMxmlVector();
           break;
 
-        case COLOR_STYLE_MARKER:
+        case AmfExtendedTypes.COLOR_STYLE:
           if (cssDeclaration == null) { 
             // todo property inspector
             propertyHolder[propertyName] = input.readObject();
@@ -459,9 +464,6 @@ public final class MxmlReader implements DocumentReader {
         case AmfExtendedTypes.XML_LIST:
           propertyHolder[propertyName] = readXmlList();
           break;
-
-        case ExpressionMessageTypes.NEW:
-          propertyHolder[propertyName] = constructObject();
 
         default:
           throw new ArgumentError("unknown property type " + marker);
@@ -734,7 +736,7 @@ public final class MxmlReader implements DocumentReader {
     return stringRegistry.read(input);
   }
 
-  internal function readExpression():Object {
+  internal function readExpression():* {
     const amfType:int = input.readByte();
     switch (amfType) {
       case ExpressionMessageTypes.SIMPLE_OBJECT:
@@ -764,6 +766,9 @@ public final class MxmlReader implements DocumentReader {
       case Amf3Types.ARRAY:
         return readArray();
 
+      case ExpressionMessageTypes.CALL:
+        return callFunction();
+
       case ExpressionMessageTypes.NEW:
         return constructObject();
 
@@ -784,37 +789,103 @@ public final class MxmlReader implements DocumentReader {
     }    
   }
 
-  private function constructObject():Object {
-    var clazz:Class = moduleContext.getClass(stringRegistry.readNotNull(input));
-    const constructorArgumentsLength:int = input.readUnsignedByte();
-    if (constructorArgumentsLength == 0) {
-      return new clazz();
-    }
-    else {
-      switch (constructorArgumentsLength) {
-        case 1:
-          return new clazz(readExpression());
-        case 2:
-          return new clazz(readExpression(), readExpression());
-        case 3:
-          return new clazz(readExpression(), readExpression(), readExpression());
-        case 4:
-          return new clazz(readExpression(), readExpression(), readExpression(), readExpression());
-        case 5:
-          return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression());
-        case 6:
-          return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression());
-        case 7:
-          return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression());
-        case 8:
-          return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression());
-        case 9:
-          return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression());
-        case 10:
-          return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression());
+  private function callFunction():* {
+    const dataLength:int = input.readUnsignedShort();
+    const start:int = input.bytesAvailable;
+    try {
+      var qualifier:Object = rootObject;
+      var qualifierName:String;
+      try {
+        while ((qualifierName = stringRegistry.read(input)) != null) {
+          qualifier = qualifier[qualifierName];
+        }
+      }
+      catch (e:Error) {
+        // skip end
+        input.readByte();
+
+        if (e.errorID == 1069 && qualifierName == "resourceManager") {
+          qualifier = moduleContext.getClass("mx.resources.ResourceManager")["getInstance"]();
+        }
+        else {
+          //noinspection ExceptionCaughtLocallyJS
+          throw e;
+        }
       }
 
-      throw new ArgumentError("constructorArguments is too long");
+      const functionName:String = stringRegistry.readNotNull(input);
+      const argumentsLength:int = input.readByte();
+      // isGetter
+      if (argumentsLength == -1) {
+        return qualifier[functionName];
+      }
+      else if (argumentsLength == 0) {
+        return qualifier[functionName]();
+      }
+      else {
+        return (qualifier[functionName] as Function).apply(null, readArrayOrVector(new Array(argumentsLength), argumentsLength));
+      }
+    }
+    catch (e:Error) {
+      handleCallExpressionBindingError(e, dataLength, start);
+    }
+
+    return null;
+  }
+
+  private function constructObject():Object {
+    var clazz:Class = moduleContext.getClass(stringRegistry.readNotNull(input));
+    const argumentsLength:int = input.readUnsignedByte();
+    const dataLength:int = input.readUnsignedShort();
+    const start:int = input.bytesAvailable;
+    try {
+      if (argumentsLength == 0) {
+        return new clazz();
+      }
+      else {
+        switch (argumentsLength) {
+          case 1:
+            return new clazz(readExpression());
+          case 2:
+            return new clazz(readExpression(), readExpression());
+          case 3:
+            return new clazz(readExpression(), readExpression(), readExpression());
+          case 4:
+            return new clazz(readExpression(), readExpression(), readExpression(), readExpression());
+          case 5:
+            return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression());
+          case 6:
+            return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression());
+          case 7:
+            return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(),
+                             readExpression());
+          case 8:
+            return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(),
+                             readExpression(), readExpression());
+          case 9:
+            return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(),
+                             readExpression(), readExpression(), readExpression());
+          case 10:
+            return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(),
+                             readExpression(), readExpression(), readExpression(), readExpression());
+        }
+
+        UncaughtErrorManager.instance.logWarning("Can't execute binding, constructorArguments is too long");
+      }
+    }
+    catch (e:Error) {
+      handleCallExpressionBindingError(e, dataLength, start);
+    }
+
+    return null;
+  }
+
+  private function handleCallExpressionBindingError(e:Error, dataLength:int, start:int):void {
+    UncaughtErrorManager.instance.logWarning3("Can't execute binding", e);
+
+    var unreadLength:int = dataLength - (start - input.bytesAvailable);
+    if (unreadLength > 0) {
+      input.readBytes(new ByteArray(), 0, unreadLength);
     }
   }
   
@@ -841,9 +912,8 @@ import flash.utils.flash_proxy;
 
 class PropertyClassifier {
   public static const PROPERTY:int = 0;
-
   public static const STYLE:int = 1;
-
+  
   public static const ID:int = 2;
 
   public static const MX_CONTAINER_CHILDREN:int = 4;

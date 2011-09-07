@@ -188,7 +188,7 @@ class TextDecoration implements ITextDecor {
     for (; i < n; i++) {
       var textBlock:TextBlock = _textEngine.analytics.getBlockAt(i);
       var declarationName:String = TextElement(GroupElement(textBlock.content).getElementAt(0)).text;
-      if (stylePaneContext.styleManager.isInheritingStyle(declarationName)) {
+      if (stylePaneContext.documentStyleManager.isInheritingStyle(declarationName)) {
         for (var j:int = 0; j < rulesetIndex; j++) {
           var childRuleset:CssRuleset = rulesets[j] as CssRuleset; // may be group item
           if (childRuleset != null && declarationName in childRuleset.declarationMap) {

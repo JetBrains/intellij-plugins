@@ -43,13 +43,13 @@
     public function set document(value:Document):void {
       if (value == null) {
         module = null;
-        _styleManager = null;
       }
       else {
         module = value.module;
-        _styleManager = value.styleManager;
+        userDocument = value;
       }
 
+      userDocument = value;
       _rulesetPrinter.module = module;
       _rulesetPrinter.interactor.module = module;
     }
@@ -60,9 +60,9 @@
       updateData(value);
     }
 
-    private var _styleManager:StyleManagerEx;
-    public function get styleManager():StyleManagerEx {
-      return _styleManager;
+    private var userDocument:Document;
+    public function get documentStyleManager():StyleManagerEx {
+      return userDocument.styleManager;
     }
 
     private function updateData(element:Object):void {
@@ -158,7 +158,7 @@
     private function containsInheritStyle(ruleset:CssRuleset):Boolean {
       var declarations:Vector.<CssDeclaration> = ruleset.declarations;
       for (var i:int, n:int = declarations.length; i < n; i++) {
-        if (styleManager.isInheritingStyle(declarations[i].name)) {
+        if (documentStyleManager.isInheritingStyle(declarations[i].name)) {
           return true;
         }
       }
@@ -194,7 +194,6 @@
     }
 
     private function clear():void {
-      _styleManager = null;
       if (list.dataProvider != null) {
         source.length = 0;
         sourceList.refresh();
