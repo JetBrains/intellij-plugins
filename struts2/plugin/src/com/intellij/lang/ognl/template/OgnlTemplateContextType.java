@@ -16,14 +16,13 @@
 package com.intellij.lang.ognl.template;
 
 import com.intellij.codeInsight.template.TemplateContextType;
-import com.intellij.lang.Language;
 import com.intellij.lang.ognl.OgnlFileType;
 import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.highlight.OgnlHighlighter;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiUtilBase;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -43,9 +42,7 @@ public class OgnlTemplateContextType extends TemplateContextType {
       return true;
     }
 
-    final PsiElement at = psiFile.findElementAt(offset);
-    final Language language = at != null ? at.getParent().getLanguage() : null;
-    return language != null && language == OgnlLanguage.INSTANCE;
+    return PsiUtilBase.getLanguageAtOffset(psiFile, offset) == OgnlLanguage.INSTANCE;
   }
 
   @Override
