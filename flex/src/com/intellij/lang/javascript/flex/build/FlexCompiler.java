@@ -31,6 +31,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -266,7 +267,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
         final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndConfigsToCompile = getModulesAndConfigsToCompile(scope);
 
         for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig : modulesAndConfigsToCompile) {
-          validateConfiguration(moduleAndConfig.first, moduleAndConfig.second);
+          validateConfiguration(moduleAndConfig.first.getName(), moduleAndConfig.second);
         }
       }
       catch (ConfigurationException e) {
@@ -381,58 +382,104 @@ public class FlexCompiler implements SourceProcessingCompiler {
         final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
 
         final Module otherModule = bcEntry.findModule();
-        final FlexIdeBuildConfiguration otherConfig = bcEntry.findBuildConfiguration();
+        final FlexIdeBuildConfiguration otherConfig = otherModule == null ? null : bcEntry.findBuildConfiguration();
 
-        if (otherConfig == null) {
+        if (otherModule == null || otherConfig == null) {
           throw new ConfigurationException(FlexBundle.message("bc.dependency.does.not.exist", bcEntry.getBcName(), bcEntry.getModuleName(),
-                                                              config.NAME, module.getName()), FlexBundle.message(
-            "project.setup.problem.title"));
+                                                              config.NAME, module.getName()),
+                                           FlexBundle.message("project.setup.problem.title"));
         }
 
         final Pair<Module, FlexIdeBuildConfiguration> otherModuleAndConfig = Pair.create(otherModule, otherConfig);
-        if (!otherConfig.SKIP_COMPILE && !modulesAndConfigs.contains(otherModuleAndConfig)) {
-          modulesAndConfigs.add(otherModuleAndConfig);
-          appendBCDependencies(modulesAndConfigs, otherModule, otherConfig);
+        if (!otherConfig.SKIP_COMPILE) {
+          if (modulesAndConfigs.add(otherModuleAndConfig)) {
+            appendBCDependencies(modulesAndConfigs, otherModule, otherConfig);
+          }
         }
       }
     }
   }
 
-  private static void validateConfiguration(final Module module, final FlexIdeBuildConfiguration config) throws ConfigurationException {
+  private static void validateConfiguration(final String moduleName, final FlexIdeBuildConfiguration config) throws ConfigurationException {
     assert !config.SKIP_COMPILE;
     final BuildConfigurationNature nature = config.getNature();
 
     final SdkEntry sdkEntry = config.DEPENDENCIES.getSdkEntry();
     final Library sdkLib = sdkEntry == null ? null : sdkEntry.findLibrary();
     if (sdkLib == null) {
-      throw new ConfigurationException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", config.NAME, module.getName()),
+      throw new ConfigurationException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", config.NAME, moduleName),
                                        FlexBundle.message("project.setup.problem.title"));
     }
 
     if (!nature.isLib() && config.MAIN_CLASS.isEmpty()) {
-      throw new ConfigurationException(FlexBundle.message("main.class.not.set.for.bc.0.of.module.1", config.NAME, module.getName()),
+      throw new ConfigurationException(FlexBundle.message("main.class.not.set.for.bc.0.of.module.1", config.NAME, moduleName),
                                        FlexBundle.message("project.setup.problem.title"));
       // todo real main class validation?
     }
 
     if (config.OUTPUT_FILE_NAME.isEmpty()) {
-      throw new ConfigurationException(FlexBundle.message("output.file.name.not.set.for.bc.0.of.module.1", config.NAME, module.getName()),
+      throw new ConfigurationException(FlexBundle.message("output.file.name.not.set.for.bc.0.of.module.1", config.NAME, moduleName),
                                        FlexBundle.message("project.setup.problem.title"));
     }
 
     if (nature.isWebPlatform() && nature.isApp() && config.USE_HTML_WRAPPER) {
       if (config.WRAPPER_TEMPLATE_PATH.isEmpty()) {
         throw new ConfigurationException(
-          FlexBundle.message("html.template.folder.not.set.for.bc.0.of.module.1", config.NAME, module.getName()),
+          FlexBundle.message("html.template.folder.not.set.for.bc.0.of.module.1", config.NAME, moduleName),
           FlexBundle.message("project.setup.problem.title"));
       }
       final VirtualFile wrapperTemplateDir = LocalFileSystem.getInstance().findFileByPath(config.WRAPPER_TEMPLATE_PATH);
       if (wrapperTemplateDir == null || !wrapperTemplateDir.isDirectory()) {
         throw new ConfigurationException(FlexBundle
-                                           .message("html.template.folder.not.found.for.bc.0.of.module.1.2", config.NAME, module.getName(),
+                                           .message("html.template.folder.not.found.for.bc.0.of.module.1.2", config.NAME, moduleName,
                                                     config.WRAPPER_TEMPLATE_PATH), FlexBundle.message("project.setup.problem.title"));
         // todo check that it contains wrapper template
       }
+    }
+
+    checkDependencies(moduleName, config);
+  }
+
+  private static void checkDependencies(final String moduleName, final FlexIdeBuildConfiguration config) throws ConfigurationException {
+    for (final DependencyEntry entry : config.DEPENDENCIES.getEntries()) {
+      if (entry instanceof BuildConfigurationEntry) {
+        final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
+        checkDependencyType(moduleName, config, bcEntry.getModuleName(), bcEntry.findBuildConfiguration(),
+                            bcEntry.getDependencyType().getLinkageType());
+      }
+    }
+  }
+
+  private static void checkDependencyType(final String moduleName,
+                                          final FlexIdeBuildConfiguration config,
+                                          final String dependencyModuleName,
+                                          final FlexIdeBuildConfiguration dependencyConfig,
+                                          final LinkageType linkageType) throws ConfigurationException {
+    final BuildConfigurationNature nature = config.getNature();
+    final boolean ok;
+
+    switch (dependencyConfig.OUTPUT_TYPE) {
+      case Application:
+        ok = false;
+        break;
+      case RuntimeLoadedModule:
+        ok = nature.isApp() && linkageType == LinkageType.LoadInRuntime;
+        break;
+      case Library:
+        ok = ArrayUtil.contains(linkageType, LinkageType.getSwcLinkageValues());
+        break;
+      default:
+        assert false;
+        ok = false;
+    }
+
+    if (!ok) {
+      throw new ConfigurationException(
+        FlexBundle.message("bc.dependency.problem",
+                           config.NAME, moduleName, config.OUTPUT_TYPE.PRESENTABLE_TEXT,
+                           dependencyConfig.NAME, dependencyModuleName, dependencyConfig.OUTPUT_TYPE.PRESENTABLE_TEXT,
+                           linkageType.getShortText()),
+        FlexBundle.message("project.setup.problem.title"));
     }
   }
 
