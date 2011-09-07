@@ -22,6 +22,7 @@ public class FlexIdeBuildConfiguration implements Cloneable {
   public String OUTPUT_FOLDER = "";
   public boolean USE_HTML_WRAPPER = false;
   public String WRAPPER_TEMPLATE_PATH = "";
+  public boolean SKIP_COMPILE = false;
 
   public Dependencies DEPENDENCIES = new Dependencies();
   public CompilerOptions COMPILER_OPTIONS = new CompilerOptions();

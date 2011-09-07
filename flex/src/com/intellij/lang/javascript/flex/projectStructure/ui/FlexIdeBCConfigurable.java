@@ -41,7 +41,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   private JComboBox myTargetPlatformCombo;
   private JCheckBox myPureActionScriptCheckBox;
   private JComboBox myOutputTypeCombo;
-  private JLabel myOptimizeForLabel;
+  private JPanel myOptimizeForPanel;
   private JComboBox myOptimizeForCombo;
 
   private JLabel myMainClassLabel;
@@ -52,6 +52,8 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   private JCheckBox myUseHTMLWrapperCheckBox;
   private JLabel myWrapperFolderLabel;
   private TextFieldWithBrowseButton myWrapperTemplateTextWithBrowse;
+  private JCheckBox mySkipCompilationCheckBox;
+  private JButton myCreateHtmlTemplateButton;
 
   private final Module myModule;
   private final FlexIdeBuildConfiguration myConfiguration;
@@ -182,8 +184,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   private void updateControls() {
     final OutputType outputType = (OutputType)myOutputTypeCombo.getSelectedItem();
 
-    myOptimizeForLabel.setVisible(outputType == OutputType.RuntimeLoadedModule);
-    myOptimizeForCombo.setVisible(outputType == OutputType.RuntimeLoadedModule);
+    myOptimizeForPanel.setVisible(outputType == OutputType.RuntimeLoadedModule);
 
     final boolean showMainClass = outputType == OutputType.Application || outputType == OutputType.RuntimeLoadedModule;
     myMainClassLabel.setVisible(showMainClass);
@@ -247,6 +248,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     if (!myConfiguration.WRAPPER_TEMPLATE_PATH.equals(FileUtil.toSystemIndependentName(myWrapperTemplateTextWithBrowse.getText().trim()))) {
       return true;
     }
+    if (myConfiguration.SKIP_COMPILE != mySkipCompilationCheckBox.isSelected()) return true;
 
     if (myDependenciesConfigurable.isModified()) return true;
     if (myCompilerOptionsConfigurable.isModified()) return true;
@@ -291,6 +293,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     configuration.OUTPUT_FOLDER = FileUtil.toSystemIndependentName(myOutputFolderField.getText().trim());
     configuration.USE_HTML_WRAPPER = myUseHTMLWrapperCheckBox.isSelected();
     configuration.WRAPPER_TEMPLATE_PATH = FileUtil.toSystemIndependentName(myWrapperTemplateTextWithBrowse.getText().trim());
+    configuration.SKIP_COMPILE = mySkipCompilationCheckBox.isSelected();
   }
 
   public void reset() {
@@ -305,6 +308,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myOutputFolderField.setText(FileUtil.toSystemDependentName(myConfiguration.OUTPUT_FOLDER));
     myUseHTMLWrapperCheckBox.setSelected(myConfiguration.USE_HTML_WRAPPER);
     myWrapperTemplateTextWithBrowse.setText(FileUtil.toSystemDependentName(myConfiguration.WRAPPER_TEMPLATE_PATH));
+    mySkipCompilationCheckBox.setSelected(myConfiguration.SKIP_COMPILE);
 
     updateControls();
 
