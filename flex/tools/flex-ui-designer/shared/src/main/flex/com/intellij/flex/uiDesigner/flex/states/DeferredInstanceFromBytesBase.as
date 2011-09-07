@@ -57,6 +57,10 @@ public class DeferredInstanceFromBytesBase {
     }
   }
 
+  public function getNullableInstance():Object {
+    return instance;
+  }
+
   public function getInstance():Object {
     if (instance == null) {
       throw new IllegalOperationError("must be created before this moment");

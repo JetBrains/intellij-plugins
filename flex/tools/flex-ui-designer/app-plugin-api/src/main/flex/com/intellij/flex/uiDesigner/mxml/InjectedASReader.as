@@ -40,12 +40,15 @@ public class InjectedASReader {
       var isStyle:Boolean = (type & 1) != 0;
       type >>= 1;
 
-      var targetBinding:PropertyBindingTarget;
+      var targetBinding:PropertyBindingTarget = null;
+      var deferredParentInstance:DeferredInstanceFromBytesBase = null;
       if (target is StaticInstanceReferenceInDeferredParentInstanceBase) {
         targetBinding = new PropertyBindingTarget(target, propertyName, isStyle);
+        deferredParentInstance = StaticInstanceReferenceInDeferredParentInstanceBase(target).deferredParentInstance;
       }
       else if (target is DeferredInstanceFromBytesBase) {
-        throw new IllegalOperationError("unsupported");
+        deferredParentInstance = DeferredInstanceFromBytesBase(target);
+        targetBinding = new PropertyBindingDeferredTarget(deferredParentInstance, propertyName, isStyle);
       }
 
       switch (type) {
@@ -87,7 +90,7 @@ public class InjectedASReader {
       }
       else {
         targetBinding.staticValue = o;
-        StaticInstanceReferenceInDeferredParentInstanceBase(target).deferredParentInstance.registerBinding(targetBinding);
+        deferredParentInstance.registerBinding(targetBinding);
       }
     }
     
