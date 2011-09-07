@@ -1,0 +1,8 @@
+OgnlFile:MissingClosingBrace.ognl
+  EXPRESSION_HOLDER
+    PsiElement(%{)('%{')
+    PsiWhiteSpace(' ')
+    ReferenceExpression
+      PsiElement(IDENTIFIER)('a')
+    PsiErrorElement:'}' expected
+      <empty list>

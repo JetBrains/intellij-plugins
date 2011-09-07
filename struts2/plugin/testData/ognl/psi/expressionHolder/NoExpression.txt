@@ -1,0 +1,6 @@
+OgnlFile:NoExpression.ognl
+  EXPRESSION_HOLDER
+    PsiElement(%{)('%{')
+    PsiErrorElement:Expression expected
+      <empty list>
+    PsiElement(})('}')

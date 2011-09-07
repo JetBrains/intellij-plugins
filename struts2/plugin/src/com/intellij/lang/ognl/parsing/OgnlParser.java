@@ -49,7 +49,7 @@ public class OgnlParser extends PrattParser {
     registerParser(EXPRESSION_START, INITIAL_LEVEL, new ReducingParser() {
       @Override
       public IElementType parseFurther(final PrattBuilder builder) {
-        builder.createChildBuilder(EXPR_LEVEL).parse();
+        parseExpression(builder);
         builder.assertToken(EXPRESSION_END, "'}' expected");
         return OgnlElementTypes.EXPRESSION_HOLDER;
       }
