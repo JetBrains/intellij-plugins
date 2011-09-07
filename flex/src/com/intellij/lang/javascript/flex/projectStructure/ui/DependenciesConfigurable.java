@@ -1186,6 +1186,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
           return flexIdeBCConfigurable.getModule();
         }
       });
+      newModulesToDependOn.remove(myModifiableRootModel.getModule());
       newModulesToDependOn.removeAll(Arrays.asList(myModifiableRootModel.getModuleDependencies(true)));
 
       for (Module module : newModulesToDependOn) {
