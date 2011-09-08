@@ -291,7 +291,15 @@ public class OgnlParser extends PrattParser {
       }
     });
 
-    // TODO in, not in
+    // "X in ...", "X not in ..." TODO require sequence expr
+    registerParser(IN_KEYWORD,
+                   EXPR_LEVEL + 1,
+                   path().left(),
+                   expression(EXPR_LEVEL, OgnlElementTypes.BINARY_EXPRESSION));
+    registerParser(NOT_IN_KEYWORD,
+                   EXPR_LEVEL + 1,
+                   path().left(),
+                   expression(EXPR_LEVEL, OgnlElementTypes.BINARY_EXPRESSION));
 
     // TODO new, instanceof
 
@@ -323,7 +331,7 @@ public class OgnlParser extends PrattParser {
     // TODO sub-expression: e1.(e2)
     // TODO chained sub-expression: headline.parent.(ensureLoaded(), name)
 
-    // TODO list creation: { e, ... }
+    // TODO list creation: { e, ... } --> already via sequence?
     // TODO array creation: new array-component-class[] { e, ... }
     // TODO map creation: #{ e1 : e2, ... }
     // TODO map creation w/ class: #@classname@{ e1 : e2, ... }

@@ -79,8 +79,7 @@ public class OgnlTokenTypes implements TokenType {
   public static final OgnlTokenType INSTANCEOF_KEYWORD = new OgnlTokenType("INSTANCEOF_KEYWORD");
 
   public static final TokenSet KEYWORDS = TokenSet.create(
-      NOT_IN_KEYWORD, IN_KEYWORD, NEW_KEYWORD,
-      TRUE_KEYWORD, FALSE_KEYWORD, NULL_KEYWORD, INSTANCEOF_KEYWORD);
+      NEW_KEYWORD, TRUE_KEYWORD, FALSE_KEYWORD, NULL_KEYWORD, INSTANCEOF_KEYWORD);
 
   // bit-shift
   public static final OgnlTokenType SHIFT_LEFT = new OgnlTokenType("SHIFT_LEFT");
@@ -134,7 +133,7 @@ public class OgnlTokenTypes implements TokenType {
       SHIFT_LEFT, SHIFT_RIGHT, SHIFT_RIGHT_LOGICAL);
 
   public static final TokenSet OPERATION_KEYWORDS = TokenSet.create(
-      NOT_KEYWORD,
+      NOT_KEYWORD, NOT_IN_KEYWORD, IN_KEYWORD,
       SHIFT_LEFT_KEYWORD, SHIFT_RIGHT_KEYWORD, SHIFT_RIGHT_LOGICAL_KEYWORD,
       AND_KEYWORD, BAND_KEYWORD, OR_KEYWORD, BOR_KEYWORD, XOR_KEYWORD, EQ_KEYWORD, NEQ_KEYWORD,
       LT_KEYWORD, LT_EQ_KEYWORD, GT_KEYWORD, GT_EQ_KEYWORD);
