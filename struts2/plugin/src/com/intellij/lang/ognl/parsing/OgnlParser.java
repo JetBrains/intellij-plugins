@@ -20,6 +20,7 @@ import com.intellij.lang.pratt.PrattBuilder;
 import com.intellij.lang.pratt.PrattParser;
 import com.intellij.lang.pratt.ReducingParser;
 import com.intellij.lang.pratt.TokenParser;
+import com.intellij.patterns.IElementTypePattern;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,6 +43,9 @@ public class OgnlParser extends PrattParser {
   public static final int NUMBERS_LEVEL = EQ_COMP_LEVEL + 10;
   public static final int UNARY_LEVEL = NUMBERS_LEVEL + 20;
   public static final int ATOM_LEVEL = UNARY_LEVEL + 20;
+
+  private static final IElementTypePattern IDENTIFIER_PATTERN = elementType().or(OgnlElementTypes.REFERENCE_EXPRESSION,
+                                                                                 OgnlElementTypes.VARIABLE_EXPRESSION);
 
   static {
 
@@ -246,10 +250,7 @@ public class OgnlParser extends PrattParser {
     });
 
     // [...]: indexed expression, only after identifier/var
-    registerParser(LBRACKET,
-                   ATOM_LEVEL + 1,
-                   path().left(elementType().or(OgnlElementTypes.REFERENCE_EXPRESSION,
-                                                OgnlElementTypes.VARIABLE_EXPRESSION)).up(),
+    registerParser(LBRACKET, ATOM_LEVEL + 1, path().left(IDENTIFIER_PATTERN).up(),
                    new ReducingParser() {
                      @Override
                      public IElementType parseFurther(final PrattBuilder builder) {
@@ -294,7 +295,25 @@ public class OgnlParser extends PrattParser {
 
     // TODO new, instanceof
 
-    // TODO method calls
+    // method calls: reference([paramA, paramB, ..])
+    registerParser(LPARENTH,
+                   EXPR_LEVEL + 1,
+                   path().left(OgnlElementTypes.REFERENCE_EXPRESSION).up(),
+                   new ReducingParser() {
+                     @Override
+                     public IElementType parseFurther(final PrattBuilder builder) {
+                       if (!builder.checkToken(RPARENTH)) {
+                         parseExpression(builder);
+
+                         while (builder.checkToken(COMMA)) {
+                           parseExpression(builder);
+                         }
+
+                         builder.assertToken(RPARENTH, "')' expected");
+                       }
+                       return OgnlElementTypes.METHOD_CALL_EXPRESSION;
+                     }
+                   });
     // TODO static method calls @class@method
 
     // TODO static field ref @class@field

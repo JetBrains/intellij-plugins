@@ -44,6 +44,13 @@ public class OgnlElementTypes {
     }
   };
 
+  public static final OgnlElementType METHOD_CALL_EXPRESSION = new OgnlElementType("MethodCallExpression") {
+    @Override
+    public PsiElement createPsiElement(final ASTNode node) {
+      return new OgnlMethodCallExpression(node);
+    }
+  };
+
   public static final OgnlElementType INDEXED_EXPRESSION = new OgnlElementType("IndexedExpression") {
     @Override
     public PsiElement createPsiElement(final ASTNode node) {

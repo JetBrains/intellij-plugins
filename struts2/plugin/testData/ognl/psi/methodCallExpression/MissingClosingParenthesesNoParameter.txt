@@ -1,0 +1,7 @@
+OgnlFile:MissingClosingParenthesesNoParameter.ognl
+  MethodCallExpression
+    ReferenceExpression
+      PsiElement(IDENTIFIER)('methodName')
+    PsiElement(()('(')
+    PsiErrorElement:Expression expected
+      <empty list>
