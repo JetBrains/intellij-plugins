@@ -28,7 +28,8 @@ public class FlexIdeBuildConfiguration implements Cloneable {
   public boolean SKIP_COMPILE = false;
 
   public Dependencies DEPENDENCIES = new Dependencies();
-  public CompilerOptions COMPILER_OPTIONS = new CompilerOptions();
+  @Transient
+  public CompilerOptionsImpl COMPILER_OPTIONS = new CompilerOptionsImpl();
   @Transient
   public AirDesktopPackagingOptionsImpl AIR_DESKTOP_PACKAGING_OPTIONS = new AirDesktopPackagingOptionsImpl();
   @Transient
@@ -77,6 +78,15 @@ public class FlexIdeBuildConfiguration implements Cloneable {
     IOS_PACKAGING_OPTIONS.loadState(state);
   }
 
+  @Property(surroundWithTag = false)
+  public CompilerOptionsImpl.State getCompilerOptionsState() {
+    return COMPILER_OPTIONS.getState();
+  }
+
+  public void setCompilerOptionsState(CompilerOptionsImpl.State state) {
+    COMPILER_OPTIONS.loadState(state);
+  }
+
   public String getOutputFilePath() {
     return OUTPUT_FOLDER + (OUTPUT_FOLDER.isEmpty() ? "" : "/") + OUTPUT_FILE_NAME;
   }
@@ -86,7 +96,7 @@ public class FlexIdeBuildConfiguration implements Cloneable {
       final FlexIdeBuildConfiguration clone = (FlexIdeBuildConfiguration)super.clone();
 
       clone.DEPENDENCIES = DEPENDENCIES.clone();
-      clone.COMPILER_OPTIONS = COMPILER_OPTIONS.clone();
+      clone.COMPILER_OPTIONS = COMPILER_OPTIONS.getCopy();
       clone.AIR_DESKTOP_PACKAGING_OPTIONS = AIR_DESKTOP_PACKAGING_OPTIONS.getCopy();
       clone.ANDROID_PACKAGING_OPTIONS = ANDROID_PACKAGING_OPTIONS.getCopy();
       clone.IOS_PACKAGING_OPTIONS = IOS_PACKAGING_OPTIONS.getCopy();

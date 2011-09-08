@@ -1,8 +1,10 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
-import com.intellij.lang.javascript.flex.projectStructure.options.CompilerOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptionsImpl;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableCompilerOptions;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.xmlb.annotations.Property;
 
 @State(
   name = "FlexIdeProjectLevelCompilerOptionsHolder",
@@ -11,23 +13,31 @@ import com.intellij.openapi.project.Project;
     @Storage(file = "$PROJECT_CONFIG_DIR$/flexCompiler.xml", scheme = StorageScheme.DIRECTORY_BASED)
   }
 )
-public class FlexIdeProjectLevelCompilerOptionsHolder implements PersistentStateComponent<FlexIdeProjectLevelCompilerOptionsHolder> {
+public class FlexIdeProjectLevelCompilerOptionsHolder implements PersistentStateComponent<FlexIdeProjectLevelCompilerOptionsHolder.State> {
 
-  public CompilerOptions myProjectLevelCompilerOptions = new CompilerOptions();
+  private final CompilerOptionsImpl myModel = new CompilerOptionsImpl();
 
-  public FlexIdeProjectLevelCompilerOptionsHolder getState() {
-    return this;
+  public FlexIdeProjectLevelCompilerOptionsHolder.State getState() {
+    FlexIdeProjectLevelCompilerOptionsHolder.State state = new State();
+    state.compilerOptions = myModel.getState();
+    return state;
   }
 
-  public void loadState(final FlexIdeProjectLevelCompilerOptionsHolder state) {
-    myProjectLevelCompilerOptions = state.myProjectLevelCompilerOptions.clone();
+  public void loadState(final FlexIdeProjectLevelCompilerOptionsHolder.State state) {
+    myModel.loadState(state.compilerOptions);
   }
 
   public static FlexIdeProjectLevelCompilerOptionsHolder getInstance(final Project project) {
     return ServiceManager.getService(project, FlexIdeProjectLevelCompilerOptionsHolder.class);
   }
 
-  public CompilerOptions getProjectLevelCompilerOptions() {
-    return myProjectLevelCompilerOptions;
+  // TODO should be getModifiableModel()!
+  public ModifiableCompilerOptions getProjectLevelCompilerOptions() {
+    return myModel;
+  }
+
+  public static class State {
+    @Property(surroundWithTag = false)
+    public CompilerOptionsImpl.State compilerOptions = new CompilerOptionsImpl.State();
   }
 }

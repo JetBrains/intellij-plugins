@@ -4,10 +4,7 @@ import com.intellij.javascript.flex.FlexApplicationComponent;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.*;
-import com.intellij.lang.javascript.flex.projectStructure.model.ComponentSet;
-import com.intellij.lang.javascript.flex.projectStructure.model.LinkageType;
-import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.*;
@@ -357,9 +354,9 @@ public class CompilerConfigGenerator {
   }
 
   private void addOtherOptions(final Element rootElement) {
-    final Map<String, String> options = new THashMap<String, String>(myProjectLevelCompilerOptions.OPTIONS);
-    options.putAll(myModuleLevelCompilerOptions.OPTIONS);
-    options.putAll(myConfig.COMPILER_OPTIONS.OPTIONS);
+    final Map<String, String> options = new THashMap<String, String>(myProjectLevelCompilerOptions.getAllOptions());
+    options.putAll(myModuleLevelCompilerOptions.getAllOptions());
+    options.putAll(myConfig.COMPILER_OPTIONS.getAllOptions());
 
     for (final Map.Entry<String, String> entry : options.entrySet()) {
       addOption(rootElement, CompilerOptionInfo.getOptionInfo(entry.getKey()), entry.getValue());
@@ -480,13 +477,13 @@ public class CompilerConfigGenerator {
   private Pair<String, ValueSource> getValueAndSource(final CompilerOptionInfo info) {
     assert !info.isGroup() : info.DISPLAY_NAME;
 
-    final String bcLevelValue = myConfig.COMPILER_OPTIONS.OPTIONS.get(info.ID);
+    final String bcLevelValue = myConfig.COMPILER_OPTIONS.getOption(info.ID);
     if (bcLevelValue != null) return Pair.create(bcLevelValue, ValueSource.BC);
 
-    final String moduleLevelValue = myModuleLevelCompilerOptions.OPTIONS.get(info.ID);
+    final String moduleLevelValue = myModuleLevelCompilerOptions.getOption(info.ID);
     if (moduleLevelValue != null) return Pair.create(moduleLevelValue, ValueSource.ModuleDefault);
 
-    final String projectLevelValue = myProjectLevelCompilerOptions.OPTIONS.get(info.ID);
+    final String projectLevelValue = myProjectLevelCompilerOptions.getOption(info.ID);
     if (projectLevelValue != null) return Pair.create(projectLevelValue, ValueSource.ProjectDefault);
 
     return Pair.create(info.getDefaultValue(mySdkVersion, myConfig.TARGET_PLATFORM), ValueSource.GlobalDefault);

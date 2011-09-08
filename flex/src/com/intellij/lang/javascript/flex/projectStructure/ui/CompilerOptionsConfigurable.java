@@ -4,9 +4,10 @@ import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.ValueSource;
+import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableCompilerOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
-import com.intellij.lang.javascript.flex.projectStructure.options.CompilerOptions;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.module.Module;
@@ -66,17 +67,17 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   private final String myName;
   private final FlexIdeBuildConfigurationManager myBCManager;
   private final FlexIdeProjectLevelCompilerOptionsHolder myProjectLevelOptionsHolder;
-  private final CompilerOptions myCompilerOptions;
+  private final ModifiableCompilerOptions myModel;
   private final Map<String, String> myCurrentOptions;
   private boolean myModified;
 
   private enum Mode {BC, Module, Project}
 
-  public CompilerOptionsConfigurable(final Module module, final CompilerOptions compilerOptions) {
-    this(Mode.BC, module, module.getProject(), compilerOptions);
+  public CompilerOptionsConfigurable(final Module module, final ModifiableCompilerOptions model) {
+    this(Mode.BC, module, module.getProject(), model);
   }
 
-  private CompilerOptionsConfigurable(final Mode mode, final Module module, final Project project, final CompilerOptions compilerOptions) {
+  private CompilerOptionsConfigurable(final Mode mode, final Module module, final Project project, final ModifiableCompilerOptions model) {
     myMode = mode;
     myModule = module;
     myProject = project;
@@ -87,7 +88,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
                : MessageFormat.format("Default Compiler Options For Project ''{0}''", project.getName());
     myBCManager = myMode == Mode.BC ? FlexIdeBuildConfigurationManager.getInstance(module) : null;
     myProjectLevelOptionsHolder = FlexIdeProjectLevelCompilerOptionsHolder.getInstance(project);
-    myCompilerOptions = compilerOptions;
+    myModel = model;
     myCurrentOptions = new THashMap<String, String>();
 
     myShowAllOptionsCheckBox.addActionListener(new ActionListener() {
@@ -109,8 +110,8 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     else {
       myProjectDefaultsButton.addActionListener(new ActionListener() {
         public void actionPerformed(final ActionEvent e) {
-          final CompilerOptions compilerOptions = myProjectLevelOptionsHolder.getProjectLevelCompilerOptions();
-          final boolean changed = ShowSettingsUtil.getInstance()
+          ModifiableCompilerOptions compilerOptions = myProjectLevelOptionsHolder.getProjectLevelCompilerOptions();
+          boolean changed = ShowSettingsUtil.getInstance()
             .editConfigurable(myProject, new CompilerOptionsConfigurable(Mode.Project, null, myProject, compilerOptions));
           if (changed) {
             updateTreeTable();
@@ -125,8 +126,8 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     else {
       myModuleDefaultsButton.addActionListener(new ActionListener() {
         public void actionPerformed(final ActionEvent e) {
-          final CompilerOptions compilerOptions = myBCManager.getModuleLevelCompilerOptions();
-          final boolean changed = ShowSettingsUtil.getInstance()
+          ModifiableCompilerOptions compilerOptions = myBCManager.getModuleLevelCompilerOptions();
+          boolean changed = ShowSettingsUtil.getInstance()
             .editConfigurable(myProject, new CompilerOptionsConfigurable(Mode.Module, myModule, myProject, compilerOptions));
           if (changed) {
             updateTreeTable();
@@ -153,7 +154,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   }
 
   public CompilerOptions getEditableObject() {
-    return myCompilerOptions;
+    return myModel;
   }
 
   public String getHelpTopic() {
@@ -171,21 +172,20 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   }
 
   public void apply() throws ConfigurationException {
-    applyTo(myCompilerOptions);
+    applyTo(myModel);
   }
 
-  public void applyTo(final CompilerOptions compilerOptions) {
+  public void applyTo(final ModifiableCompilerOptions compilerOptions) {
     TableUtil.stopEditing(myTreeTable);
-    compilerOptions.OPTIONS.clear();
-    compilerOptions.OPTIONS.putAll(myCurrentOptions);
-    if (compilerOptions == myCompilerOptions) {
+    compilerOptions.setAllOptions(myCurrentOptions);
+    if (compilerOptions == myModel) {
       myModified = false;
     }
   }
 
   public void reset() {
     myCurrentOptions.clear();
-    myCurrentOptions.putAll(myCompilerOptions.OPTIONS);
+    myCurrentOptions.putAll(myModel.getAllOptions());
     myModified = false;
     updateTreeTable();
   }
@@ -285,7 +285,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
             return myCheckBox;
           case String:
           case Int:
-          case List: 
+          case List:
           case IncludeClasses:
           case IncludeFiles:
             myLabel.setBackground(table.getBackground());
@@ -538,14 +538,14 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     }
 
     if (myMode == Mode.BC) {
-      final String moduleDefaultValue = myBCManager.getModuleLevelCompilerOptions().OPTIONS.get(info.ID);
+      final String moduleDefaultValue = myBCManager.getModuleLevelCompilerOptions().getOption(info.ID);
       if (moduleDefaultValue != null) {
         return Pair.create(moduleDefaultValue, ValueSource.ModuleDefault);
       }
     }
 
     if (myMode == Mode.BC || myMode == Mode.Module) {
-      final String projectDefaultValue = myProjectLevelOptionsHolder.getProjectLevelCompilerOptions().OPTIONS.get(info.ID);
+      final String projectDefaultValue = myProjectLevelOptionsHolder.getProjectLevelCompilerOptions().getOption(info.ID);
       if (projectDefaultValue != null) {
         return Pair.create(projectDefaultValue, ValueSource.ProjectDefault);
       }

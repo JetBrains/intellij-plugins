@@ -3,8 +3,10 @@ package com.intellij.lang.javascript.flex.projectStructure;
 import com.intellij.ProjectTopics;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptionsImpl;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableCompilerOptions;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationEntry;
-import com.intellij.lang.javascript.flex.projectStructure.options.CompilerOptions;
 import com.intellij.lang.javascript.flex.projectStructure.options.DependencyEntry;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.openapi.application.ApplicationManager;
@@ -26,6 +28,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Attribute;
+import com.intellij.util.xmlb.annotations.Property;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,7 +41,7 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
 
   private final Module myModule;
   private FlexIdeBuildConfiguration[] myConfigurations = new FlexIdeBuildConfiguration[]{new FlexIdeBuildConfiguration()};
-  private CompilerOptions myModuleLevelCompilerOptions = new CompilerOptions();
+  private final CompilerOptionsImpl myModuleLevelCompilerOptions = new CompilerOptionsImpl();
   private FlexIdeBuildConfiguration myActiveConfiguration = myConfigurations[0];
 
   public FlexIdeBuildConfigurationManager(final Module module) {
@@ -106,7 +109,8 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
     return Arrays.copyOf(myConfigurations, myConfigurations.length);
   }
 
-  public CompilerOptions getModuleLevelCompilerOptions() {
+  // TODO should be getModifiableModel()!
+  public ModifiableCompilerOptions getModuleLevelCompilerOptions() {
     return myModuleLevelCompilerOptions;
   }
 
@@ -137,7 +141,7 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
   public State getState() {
     final State state = new State();
     Collections.addAll(state.myConfigurations, myConfigurations);
-    state.myModuleLevelCompilerOptions = myModuleLevelCompilerOptions.clone();
+    state.myModuleLevelCompilerOptions = myModuleLevelCompilerOptions.getState();
     state.myActiveConfigurationName = myActiveConfiguration != null ? myActiveConfiguration.NAME : null;
     return state;
   }
@@ -148,7 +152,7 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
       configuration.initialize(myModule.getProject());
     }
     updateActiveConfiguration(state.myActiveConfigurationName);
-    myModuleLevelCompilerOptions = state.myModuleLevelCompilerOptions.clone();
+    myModuleLevelCompilerOptions.loadState(state.myModuleLevelCompilerOptions);
   }
 
   private static FlexIdeBuildConfiguration[] getValidatedConfigurations(Collection<FlexIdeBuildConfiguration> configurations) {
@@ -174,7 +178,8 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
     @AbstractCollection(elementTypes = FlexIdeBuildConfiguration.class)
     public Collection<FlexIdeBuildConfiguration> myConfigurations = new ArrayList<FlexIdeBuildConfiguration>();
 
-    public CompilerOptions myModuleLevelCompilerOptions = new CompilerOptions();
+    @Property(surroundWithTag = false)
+    public CompilerOptionsImpl.State myModuleLevelCompilerOptions = new CompilerOptionsImpl.State();
 
     @Attribute("active")
     public String myActiveConfigurationName;
