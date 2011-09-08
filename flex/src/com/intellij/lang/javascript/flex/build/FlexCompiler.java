@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
+import com.intellij.lang.javascript.flex.projectStructure.model.LinkageType;
 import com.intellij.lang.javascript.flex.projectStructure.options.*;
 import com.intellij.lang.javascript.flex.run.*;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkAdditionalData;

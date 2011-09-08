@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.ComponentSet;
+import com.intellij.lang.javascript.flex.projectStructure.model.LinkageType;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.*;

@@ -56,28 +56,6 @@ public class AirDesktopPackagingOptionsImpl implements ModifiableAirDesktopPacka
     copy.myInstallerFileName = myInstallerFileName;
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    AirDesktopPackagingOptionsImpl that = (AirDesktopPackagingOptionsImpl)o;
-
-    if (myUseGeneratedDescriptor != that.myUseGeneratedDescriptor) return false;
-    if (!myCustomDescriptorPath.equals(that.myCustomDescriptorPath)) return false;
-    if (!myInstallerFileName.equals(that.myInstallerFileName)) return false;
-
-    return true;
-  }
-
-  @Override
-  public int hashCode() {
-    int result = (myUseGeneratedDescriptor ? 1 : 0);
-    result = 31 * result + myCustomDescriptorPath.hashCode();
-    result = 31 * result + myInstallerFileName.hashCode();
-    return result;
-  }
-
   public State getState() {
     State state = new State();
     state.USE_GENERATED_DESCRIPTOR = myUseGeneratedDescriptor;
@@ -92,7 +70,7 @@ public class AirDesktopPackagingOptionsImpl implements ModifiableAirDesktopPacka
     myInstallerFileName = state.INSTALLER_FILE_NAME;
   }
 
-  @Tag("air-desktop-packaging")
+  @Tag("packaging-air-desktop")
   public static class State {
     @Attribute("use-generated-descriptor")
     public boolean USE_GENERATED_DESCRIPTOR = true;

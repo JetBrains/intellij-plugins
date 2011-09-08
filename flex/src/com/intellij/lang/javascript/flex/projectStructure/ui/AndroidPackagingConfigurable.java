@@ -2,7 +2,8 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.actions.FilesToPackageForm;
 import com.intellij.lang.javascript.flex.actions.SigningOptionsForm;
-import com.intellij.lang.javascript.flex.projectStructure.options.AndroidPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.AndroidPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableAndroidPackagingOptions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
@@ -26,11 +27,11 @@ public class AndroidPackagingConfigurable extends NamedConfigurable<AndroidPacka
   private SigningOptionsForm mySigningOptionsForm;
 
   private final Project myProject;
-  private final AndroidPackagingOptions myAndroidPackagingOptions;
+  private final ModifiableAndroidPackagingOptions myModel;
 
-  public AndroidPackagingConfigurable(final Project project, final AndroidPackagingOptions androidPackagingOptions) {
+  public AndroidPackagingConfigurable(final Project project, final ModifiableAndroidPackagingOptions model) {
     myProject = project;
-    myAndroidPackagingOptions = androidPackagingOptions;
+    myModel = model;
   }
 
   @Nls
@@ -50,7 +51,7 @@ public class AndroidPackagingConfigurable extends NamedConfigurable<AndroidPacka
   }
 
   public AndroidPackagingOptions getEditableObject() {
-    return myAndroidPackagingOptions;
+    return myModel;
   }
 
   public String getHelpTopic() {
@@ -66,10 +67,10 @@ public class AndroidPackagingConfigurable extends NamedConfigurable<AndroidPacka
   }
 
   public void apply() throws ConfigurationException {
-    applyTo(myAndroidPackagingOptions);
+    applyTo(myModel);
   }
 
-  public void applyTo(final AndroidPackagingOptions androidPackagingOptions) {
+  public void applyTo(final ModifiableAndroidPackagingOptions androidPackagingOptions) {
   }
 
   public void reset() {

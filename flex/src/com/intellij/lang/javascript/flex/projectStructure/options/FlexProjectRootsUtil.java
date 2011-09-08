@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.projectStructure.options;
 
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdkProperties;
+import com.intellij.lang.javascript.flex.projectStructure.model.LinkageType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.util.Processor;

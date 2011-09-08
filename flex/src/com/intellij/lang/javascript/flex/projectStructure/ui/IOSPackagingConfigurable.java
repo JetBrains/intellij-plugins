@@ -2,7 +2,8 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.actions.FilesToPackageForm;
 import com.intellij.lang.javascript.flex.actions.SigningOptionsForm;
-import com.intellij.lang.javascript.flex.projectStructure.options.IOSPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.IosPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableIosPackagingOptions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.Nls;
 
 import javax.swing.*;
 
-public class IOSPackagingConfigurable extends NamedConfigurable<IOSPackagingOptions> {
+public class IOSPackagingConfigurable extends NamedConfigurable<IosPackagingOptions> {
   private JPanel myMainPanel;
   private JCheckBox myCreatePackageOnMakeCheckBox;
   private LabeledComponent myInstallerFileNameComponent;
@@ -26,11 +27,11 @@ public class IOSPackagingConfigurable extends NamedConfigurable<IOSPackagingOpti
   private SigningOptionsForm mySigningOptionsForm;
 
   private final Project myProject;
-  private final IOSPackagingOptions myIOSPackagingOptions;
+  private final ModifiableIosPackagingOptions myModel;
 
-  public IOSPackagingConfigurable(final Project project, final IOSPackagingOptions iOSPackagingOptions) {
+  public IOSPackagingConfigurable(final Project project, final ModifiableIosPackagingOptions model) {
     myProject = project;
-    myIOSPackagingOptions = iOSPackagingOptions;
+    myModel = model;
   }
 
   @Nls
@@ -49,8 +50,8 @@ public class IOSPackagingConfigurable extends NamedConfigurable<IOSPackagingOpti
     return null;
   }
 
-  public IOSPackagingOptions getEditableObject() {
-    return myIOSPackagingOptions;
+  public IosPackagingOptions getEditableObject() {
+    return myModel;
   }
 
   public String getHelpTopic() {
@@ -66,10 +67,10 @@ public class IOSPackagingConfigurable extends NamedConfigurable<IOSPackagingOpti
   }
 
   public void apply() throws ConfigurationException {
-    applyTo(myIOSPackagingOptions);
+    applyTo(myModel);
   }
 
-  public void applyTo(final IOSPackagingOptions iosPackagingOptions) {
+  public void applyTo(final ModifiableIosPackagingOptions iosPackagingOptions) {
   }
 
   public void reset() {

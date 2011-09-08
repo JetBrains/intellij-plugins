@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.projectStructure;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
+import com.intellij.lang.javascript.flex.projectStructure.model.LinkageType;
 import com.intellij.lang.javascript.flex.projectStructure.options.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;

@@ -1,14 +1,11 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
 import com.intellij.lang.javascript.flex.FlexFacetType;
-import com.intellij.lang.javascript.flex.projectStructure.model.AirDesktopPackagingOptionsImpl;
-import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.annotations.Property;
-import com.intellij.util.xmlb.annotations.Tag;
 import com.intellij.util.xmlb.annotations.Transient;
 
 import javax.swing.*;
@@ -34,8 +31,10 @@ public class FlexIdeBuildConfiguration implements Cloneable {
   public CompilerOptions COMPILER_OPTIONS = new CompilerOptions();
   @Transient
   public AirDesktopPackagingOptionsImpl AIR_DESKTOP_PACKAGING_OPTIONS = new AirDesktopPackagingOptionsImpl();
-  public AndroidPackagingOptions ANDROID_PACKAGING_OPTIONS = new AndroidPackagingOptions();
-  public IOSPackagingOptions IOS_PACKAGING_OPTIONS = new IOSPackagingOptions();
+  @Transient
+  public AndroidPackagingOptionsImpl ANDROID_PACKAGING_OPTIONS = new AndroidPackagingOptionsImpl();
+  @Transient
+  public IosPackagingOptionsImpl IOS_PACKAGING_OPTIONS = new IosPackagingOptionsImpl();
 
   public Icon getIcon() {
     switch (TARGET_PLATFORM) {
@@ -60,6 +59,24 @@ public class FlexIdeBuildConfiguration implements Cloneable {
     AIR_DESKTOP_PACKAGING_OPTIONS.loadState(state);
   }
 
+  @Property(surroundWithTag = false)
+  public AndroidPackagingOptionsImpl.State getAndroidPackagingOptionsState() {
+    return ANDROID_PACKAGING_OPTIONS.getState();
+  }
+
+  public void setAndroidPackagingOptionsState(AndroidPackagingOptionsImpl.State state) {
+    ANDROID_PACKAGING_OPTIONS.loadState(state);
+  }
+
+  @Property(surroundWithTag = false)
+  public IosPackagingOptionsImpl.State getIosPackagingOptionsState() {
+    return IOS_PACKAGING_OPTIONS.getState();
+  }
+
+  public void setIosPackagingOptionsState(IosPackagingOptionsImpl.State state) {
+    IOS_PACKAGING_OPTIONS.loadState(state);
+  }
+
   public String getOutputFilePath() {
     return OUTPUT_FOLDER + (OUTPUT_FOLDER.isEmpty() ? "" : "/") + OUTPUT_FILE_NAME;
   }
@@ -71,8 +88,8 @@ public class FlexIdeBuildConfiguration implements Cloneable {
       clone.DEPENDENCIES = DEPENDENCIES.clone();
       clone.COMPILER_OPTIONS = COMPILER_OPTIONS.clone();
       clone.AIR_DESKTOP_PACKAGING_OPTIONS = AIR_DESKTOP_PACKAGING_OPTIONS.getCopy();
-      clone.ANDROID_PACKAGING_OPTIONS = ANDROID_PACKAGING_OPTIONS.clone();
-      clone.IOS_PACKAGING_OPTIONS = IOS_PACKAGING_OPTIONS.clone();
+      clone.ANDROID_PACKAGING_OPTIONS = ANDROID_PACKAGING_OPTIONS.getCopy();
+      clone.IOS_PACKAGING_OPTIONS = IOS_PACKAGING_OPTIONS.getCopy();
 
       return clone;
     }

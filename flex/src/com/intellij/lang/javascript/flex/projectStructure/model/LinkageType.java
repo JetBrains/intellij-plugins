@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.flex.projectStructure.options;
+package com.intellij.lang.javascript.flex.projectStructure.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
