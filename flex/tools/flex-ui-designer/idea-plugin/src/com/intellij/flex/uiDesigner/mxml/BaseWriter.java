@@ -150,111 +150,71 @@ final class BaseWriter {
     return stringWriter.getReference(classOrPropertyName);
   }
 
-  public void write(String classOrPropertyName) {
+  public void classOrPropertyName(String classOrPropertyName) {
     stringWriter.write(classOrPropertyName, out);
   }
 
-  public void writeVectorHeader(String elementType) {
+  public void vectorHeader(String elementType) {
     out.write(Amf3Types.VECTOR_OBJECT);
     stringWriter.write(elementType, out);
   }
 
-  public void writeProperty(int propertyNameReference, String value) {
-    writePropertyHeader(propertyNameReference);
-    out.write(Amf3Types.STRING);
-    out.writeAmfUtf(value, false);
-  }
-
-  public void writeProperty(String propertyName, int value) {
-    stringWriter.writeNullable(propertyName, out);
-    out.write(PropertyClassifier.PROPERTY);
-    out.writeAmfInt(value);
-  }
-
-  public void writeIdProperty(String value) {
-    write(FlexMxmlLanguageAttributeNames.ID);
+  public void idMxmlProperty(String value) {
+    classOrPropertyName(FlexMxmlLanguageAttributeNames.ID);
     out.write(PropertyClassifier.ID);
     out.writeAmfUtf(value, false);
   }
 
-  public void writeStringReference(String propertyName, String reference) {
-    writeStringReference(getNameReference(propertyName), getNameReference(reference));
-  }
-
-  public void writeStringReference(int propertyName, String reference) {
-    writeStringReference(propertyName, getNameReference(reference));
-  }
-
-  public void writeStringReference(int propertyName, int reference) {
-    writePropertyHeader(propertyName);
+  public void stringReference(int reference) {
     out.write(AmfExtendedTypes.STRING_REFERENCE);
     out.writeUInt29(reference);
   }
 
-  public void writeStringReference(String reference) {
+  public void stringReference(String reference) {
     out.write(AmfExtendedTypes.STRING_REFERENCE);
     stringWriter.write(reference, out);
   }
 
-  public void writeString(CharSequence value) {
+  public void string(CharSequence value) {
     out.write(Amf3Types.STRING);
     out.writeAmfUtf(value, false);
   }
 
-  public void writeObjectReference(String propertyName, int reference) {
-    writeObjectReference(getNameReference(propertyName), reference);
-  }
-
-  public void writeObjectReference(int reference) {
+  public void objectReference(int reference) {
     out.write(AmfExtendedTypes.OBJECT_REFERENCE);
     out.writeUInt29(reference);
   }
 
-  public void writeObjectReference(int propertyName, int reference) {
-    writePropertyHeader(propertyName);
-    writeObjectReference(reference);
+  public void objectReference(Context context) {
+    objectReference(allocateObjectId(context));
   }
 
-  public void writePropertyHeader(int propertyName) {
-    out.writeUInt29(propertyName);
-    out.write(PropertyClassifier.PROPERTY);
-  }
-
-  public void writeObjectReference(int propertyName, Context context) {
-    writeObjectReference(propertyName, allocateObjectId(context));
-  }
-
-  public void writeObjectHeader(int propertyName, int className) {
-    writePropertyHeader(propertyName);
-    out.write(Amf3Types.OBJECT);
-    writeObjectHeader(className);
-  }
-
-  public void writeObjectHeader(String className) {
-    writeObjectHeader(getNameReference(className));
-  }
-
-  public void writeObjectHeader(String className, int reference) {
-    write(className);
-    out.writeShort(reference + 1);
-  }
-
-  public void writeObjectHeader(int className) {
+  public void objectHeader(int className) {
+    out.write(AmfExtendedTypes.OBJECT);
     out.writeUInt29(className);
+  }
+
+  public void mxmlObjectHeader(String className) {
+    stringWriter.write(className, out);
     out.allocateClearShort();
   }
 
-  public void writeDocumentFactoryReference(int reference) {
+  public void documentFactoryReference(int reference) {
     out.write(AmfExtendedTypes.DOCUMENT_FACTORY_REFERENCE);
     out.writeUInt29(reference);
   }
 
-  public void writeClass(String className) {
-    out.write(AmfExtendedTypes.CLASS_REFERENCE);
-    write(className);
+  public void documentReference(int reference) {
+    out.write(AmfExtendedTypes.DOCUMENT_REFERENCE);
+    out.writeUInt29(reference);
   }
 
-  public void writeColor(XmlElement element, String value, boolean isPrimitiveStyle) throws InvalidPropertyException {
+  public void classReference(String className) {
+    out.write(AmfExtendedTypes.CLASS_REFERENCE);
+    classOrPropertyName(className);
+  }
+
+  public void color(XmlElement element, String value, boolean isPrimitiveStyle) throws InvalidPropertyException {
     out.write(AmfExtendedTypes.COLOR_STYLE);
     if (value.charAt(0) == '#') {
       if (isPrimitiveStyle) {
@@ -318,37 +278,40 @@ final class BaseWriter {
     }
   }
 
-  public void writeDeferredInstanceFromArray() {
-    writeConstructorHeader("com.intellij.flex.uiDesigner.flex.DeferredInstanceFromArray");
-    out.write(Amf3Types.ARRAY);
-  }
-
-  public void writeConstructorHeader(String className) {
-    out.write(Amf3Types.OBJECT);
-    writeObjectHeader(className);
-    write("1");
-  }
-
-  public void writeArrayHeader(int length) {
+  public void arrayHeader(int length) {
     out.write(Amf3Types.ARRAY);
     out.writeShort(length);
   }
 
-  public void writeConstructorHeader(String className, int reference) {
-    out.write(Amf3Types.OBJECT);
-    writeObjectHeader(className, reference);
-    write("1");
-  }
-
-  public void writeConstructorHeader(int propertyName, String className, int constructorArgType) {
-    writePropertyHeader(propertyName);
-    writeConstructorHeader(className);
-    out.write(constructorArgType);
-  }
-
-  public void writeNew(String className, int argumentsLength) {
+  public BaseWriter newInstance(String className, int argumentsLength, boolean rollbackable) {
     out.write(ExpressionMessageTypes.NEW);
-    write(className);
-    out.write(argumentsLength);
+    classOrPropertyName(className);
+    out.write((argumentsLength << 1) | (rollbackable ? 1 : 0));
+    return this;
+  }
+
+  public BaseWriter referablePrimitiveHeader(int reference) {
+    out.write(AmfExtendedTypes.REFERABLE_PRIMITIVE);
+    out.writeShort(reference + 1);
+    return this;
+  }
+
+  public int referablePrimitiveHeader() {
+    out.write(AmfExtendedTypes.REFERABLE_PRIMITIVE);
+    return out.allocateClearShort();
+  }
+
+  public BaseWriter property(int propertyName) {
+    out.writeUInt29(propertyName);
+    return this;
+  }
+
+  public BaseWriter property(String propertyName) {
+    classOrPropertyName(propertyName);
+    return this;
+  }
+
+  public void typeMarker(int typeMarker) {
+    out.write(typeMarker);
   }
 }

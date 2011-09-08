@@ -18,8 +18,9 @@ internal final class StateReader {
     }
    
     var states:Array = new Array(size);
+    var stateClass:Class = reader.context.moduleContext.getClass("com.intellij.flex.uiDesigner.flex.states.State");
     for (var i:int = 0; i < size; i++) {
-      var state:Object = reader.readObjectFromClass("com.intellij.flex.uiDesigner.flex.states.State");
+      var state:Object = reader.readSimpleObject(new stateClass());
       state.context = reader.factoryContext;
       states[i] = state;
     }
@@ -55,7 +56,7 @@ internal final class StateReader {
   public function readDeferredInstanceFromBytes(reader:MxmlReader, input:IDataInput):DeferredInstanceFromBytesBase {
     var kind:int = input.readByte();
     var immediateCreation:Boolean = (kind & 1) != 0;
-    kind = kind >> 1;
+    kind >>= 1;
     if (kind == AmfExtendedTypes.OBJECT_REFERENCE) {
       return DeferredInstanceFromBytesBase(reader.readObjectReference());
     }

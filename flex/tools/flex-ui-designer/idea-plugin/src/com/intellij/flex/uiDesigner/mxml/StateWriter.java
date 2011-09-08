@@ -1,10 +1,7 @@
 package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
-import com.intellij.flex.uiDesigner.io.ByteRange;
-import com.intellij.flex.uiDesigner.io.ByteRangeMarker;
-import com.intellij.flex.uiDesigner.io.IOUtil;
-import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
+import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PropertyKind;
 import com.intellij.javascript.flex.FlexReferenceContributor.StateReference;
 import com.intellij.javascript.flex.FlexStateElementNames;
@@ -40,7 +37,7 @@ class StateWriter {
   int TARGET;
 
   private int STATIC_INSTANCE_REFERENCE_IN_DEFERRED_PARENT_INSTANCE;
-  private int ADD_ITEMS;
+  int ADD_ITEMS;
 
   private final ArrayList<State> states = new ArrayList<State>();
   private final Map<String, List<State>> nameToState = new THashMap<String, List<State>>();
@@ -173,14 +170,13 @@ class StateWriter {
 
   AddItems createAddItems(DynamicObjectContext context, Context parentContext, boolean autoDestruction) {
     AddItems override = new AddItems(writer.getBlockOut().startRange(), context, autoDestruction);
-    writer.writeObjectHeader(ADD_ITEMS);
 
     DynamicObjectContext parentScopeOwner = parentContext.getScope().getOwner();
     if (parentScopeOwner != null && parentScopeOwner != parentContext) {
       writeDeferredInstanceFromObjectReference(DESTINATION, parentContext, parentContext);
     }
     else {
-      writer.writeObjectReference(DESTINATION, parentContext);
+      writer.property(DESTINATION).objectReference(parentContext);
     }
 
     final int position;
@@ -193,10 +189,12 @@ class StateWriter {
         writeDeferredInstanceFromObjectReference(RELATIVE_TO, parentContext.getBackSibling(), parentContext);
       }
       else {
-        writer.writeObjectReference(RELATIVE_TO, parentContext.getBackSibling());
+        writer.property(RELATIVE_TO).objectReference(parentContext.getBackSibling());
       }
     }
-    writer.writeStringReference(POSITION, position);
+
+    writer.property(POSITION).stringReference(position);
+    
     writer.getBlockOut().endRange(override.dataRange);
     return override;
   }
@@ -258,16 +256,13 @@ class StateWriter {
     }
 
     final PrimitiveAmfOutputStream out = writer.getOut();
-
     SetPropertyOrStyle override = new SetPropertyOrStyle(writer.getBlockOut().startRange());
-    writer.writeObjectHeader(propertyProcessor.isStyle()
-                             ? "com.intellij.flex.uiDesigner.flex.states.SetStyle"
-                             : "com.intellij.flex.uiDesigner.flex.states.SetProperty");
-    writer.writeStringReference(NAME, propertyProcessor.getName());
+    writer.classOrPropertyName(propertyProcessor.isStyle()
+                               ? "com.intellij.flex.uiDesigner.flex.states.SetStyle"
+                               : "com.intellij.flex.uiDesigner.flex.states.SetProperty");
+    writer.property(NAME).stringReference(propertyProcessor.getName());
 
-    out.writeUInt29(VALUE);
-    out.write(PropertyClassifier.PROPERTY);
-
+    writer.property(VALUE);
     PropertyKind propertyKind;
     try {
       propertyKind = valueWriter.write(descriptor, valueProvider, out, writer, false, context);
@@ -286,9 +281,6 @@ class StateWriter {
     if (pendingFirstSetProperty == null && context == null) {
       pendingFirstSetProperty = override;
     }
-    //if (pendingFirstSetProperty == null || (context == null && parentContext != null && parentContext.ownerIsDynamic() && pendingFirstSetProperty == null)) {
-    //  pendingFirstSetProperty = override;
-    //}
 
     writer.getBlockOut().endRange(override.dataRange);
 
@@ -386,7 +378,7 @@ class StateWriter {
     else {
       StaticInstanceReferenceInDeferredParentInstance referenceInDeferredParentInstance = context.getStaticInstanceReferenceInDeferredParentInstance();
       if (referenceInDeferredParentInstance == null) {
-        writer.writeObjectReference(propertyName, referenceInstanceReference);
+        writer.property(propertyName).objectReference(referenceInstanceReference);
       }
       else {
         writeDeferredInstanceFromObjectReference(propertyName, referenceInDeferredParentInstance.getObjectInstance(),
@@ -399,11 +391,12 @@ class StateWriter {
 
   private void writeDeferredInstanceFromObjectReference(int propertyName, int objectInstanceReference, int deferredParentInstance,
                                                         int referenceInstanceReference) {
-    writer.writeObjectHeader(propertyName, STATIC_INSTANCE_REFERENCE_IN_DEFERRED_PARENT_INSTANCE);
-    StaticObjectContext.initializeReference(referenceInstanceReference, writer.getOut(), writer.getOut().size() - 2);
+    writer.property(propertyName).referablePrimitiveHeader(referenceInstanceReference).objectHeader(
+      STATIC_INSTANCE_REFERENCE_IN_DEFERRED_PARENT_INSTANCE);
 
-    writer.writeProperty("reference", objectInstanceReference);
-    writer.writeObjectReference("deferredParentInstance", deferredParentInstance);
+    writer.property("reference").getOut().writeAmfInt(objectInstanceReference);
+    writer.property("deferredParentInstance").objectReference(deferredParentInstance);
+    
     writer.endObject();
   }
 
@@ -450,15 +443,10 @@ class StateWriter {
     }
 
     for (State state : states) {
-      out.allocateClearShort(); // reference
-      writer.writeProperty(NAME, state.name);
+      writer.property(NAME).string(state.name);
 
       if (!state.overrides.isEmpty()) {
-        out.writeUInt29(OVERRIDES);
-        out.write(PropertyClassifier.PROPERTY);
-        out.write(AmfExtendedTypes.MXML_ARRAY);
-        out.writeShort(0);
-        out.writeShort(state.overrides.size());
+        writer.property(OVERRIDES).arrayHeader(state.overrides.size());
         for (OverrideBase override : state.overrides) {
           override.write(writer, this);
         }

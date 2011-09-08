@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.ByteRange;
 
 import java.util.ArrayList;
@@ -20,19 +19,17 @@ class AddItems extends OverrideBase {
 
   @Override
   void write(BaseWriter writer, StateWriter stateWriter) {
-    writer.getOut().write(Amf3Types.OBJECT);
+    writer.objectHeader(stateWriter.ADD_ITEMS);
     writer.addMarker(dataRange);
 
     if (autoDestruction) {
-      writer.writeStringReference("destructionPolicy", "auto");
-      writer.writeConstructorHeader(stateWriter.ITEMS_FACTORY,
-                                    "com.intellij.flex.uiDesigner.flex.states.TransientArrayOfDeferredInstanceFromBytes",
-                                    PropertyClassifier.VECTOR_OF_DEFERRED_INSTANCE_FROM_BYTES);
+      writer.classOrPropertyName("destructionPolicy");
+      writer.stringReference("auto");
+
+      writer.property(stateWriter.ITEMS_FACTORY).typeMarker(AmfExtendedTypes.TRANSIENT_ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES);
     }
     else {
-      writer.writeConstructorHeader(stateWriter.ITEMS_FACTORY,
-                                    "com.intellij.flex.uiDesigner.flex.states.PermanentArrayOfDeferredInstanceFromBytes",
-                                    PropertyClassifier.ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES);
+      writer.property(stateWriter.ITEMS_FACTORY).typeMarker(AmfExtendedTypes.PERMANENT_ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES);
     }
 
     writer.getOut().write(itemDeferredInstances.size());

@@ -37,6 +37,7 @@ public final class ModuleContextImpl implements ModuleContextEx {
 
   public function set librariesResolved(value:Boolean):void {
     _librariesResolved = value;
+    _applicationDomain = _librarySets[_librarySets.length - 1].applicationDomain;
   }
 
   public function getDocumentFactory(id:int):Object {
@@ -74,8 +75,9 @@ public final class ModuleContextImpl implements ModuleContextEx {
     return _librarySets;
   }
 
+  private var _applicationDomain:ApplicationDomain;
   public function get applicationDomain():ApplicationDomain {
-    return _librarySets[_librarySets.length - 1].applicationDomain;
+    return _applicationDomain;
   }
   
   private var _inlineCssStyleDeclarationClass:Class;

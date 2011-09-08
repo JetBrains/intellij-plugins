@@ -69,7 +69,7 @@ class ExpressionBinding extends Binding {
       arguments = expression.getArguments();
       final JSClass jsClass = (JSClass)function.getParent();
       // text="{new String('newString')}"
-      writer.writeNew(jsClass.getQualifiedName(), arguments.length);
+      writer.newInstance(jsClass.getQualifiedName(), arguments.length, true);
       rollbackPosition = out.allocateShort();
       start = out.size();
     }
@@ -80,13 +80,13 @@ class ExpressionBinding extends Binding {
       // text="{resourceManager.getString('core', 'viewSource')}"
       JSReferenceExpression qualifier = (JSReferenceExpression)methodExpression.getQualifier();
       while (qualifier != null) {
-        writer.write(qualifier.getReferencedName());
+        writer.classOrPropertyName(qualifier.getReferencedName());
         qualifier = (JSReferenceExpression)qualifier.getQualifier();
       }
 
       out.write(0);
 
-      writer.write(function.getName());
+      writer.classOrPropertyName(function.getName());
 
       if (function.isGetProperty()) {
         out.write(-1);
@@ -108,7 +108,7 @@ class ExpressionBinding extends Binding {
   static void writeArrayLiteralExpression(JSArrayLiteralExpression expression, PrimitiveAmfOutputStream out, BaseWriter writer,
                                           @Nullable ValueReferenceResolver valueReferenceResolver) throws InvalidPropertyException {
     JSExpression[] expressions = expression.getExpressions();
-    writer.writeArrayHeader(expressions.length);
+    writer.arrayHeader(expressions.length);
     for (JSExpression item : expressions) {
       writeExpression(item, out, writer, valueReferenceResolver);
     }
@@ -141,7 +141,7 @@ class ExpressionBinding extends Binding {
     throws InvalidPropertyException {
     PsiElement element = resolveReferenceExpression(expression, false);
     if (element instanceof JSClass) {
-      writer.writeClass(((JSClass)element).getQualifiedName());
+      writer.classReference(((JSClass)element).getQualifiedName());
     }
     else if (element instanceof JSVariable) {
       VariableReference valueReference = valueReferenceResolver.getNullableValueReference((JSVariable)element);
@@ -201,7 +201,7 @@ class ExpressionBinding extends Binding {
       out.writeAmfDouble(expression.getText());
     }
     else {
-      writer.writeString(StringUtil.stripQuotesAroundValue(expression.getText()));
+      writer.string(StringUtil.stripQuotesAroundValue(expression.getText()));
     }
   }
 
@@ -210,7 +210,7 @@ class ExpressionBinding extends Binding {
     JSProperty[] properties = expression.getProperties();
     out.write(ExpressionMessageTypes.SIMPLE_OBJECT);
     for (JSProperty property : properties) {
-      writer.write(property.getName());
+      writer.classOrPropertyName(property.getName());
       writeExpression(property.getValue(), out, writer, valueReferenceResolver);
     }
     writer.endObject();

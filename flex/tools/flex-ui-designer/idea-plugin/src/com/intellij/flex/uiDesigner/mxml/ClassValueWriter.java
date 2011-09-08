@@ -16,6 +16,6 @@ class ClassValueWriter extends AbstractPrimitiveValueWriter {
 
   @Override
   protected void doWrite(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) {
-    writer.writeClass(jsClas.getQualifiedName());
+    writer.classReference(jsClas.getQualifiedName());
   }
 }

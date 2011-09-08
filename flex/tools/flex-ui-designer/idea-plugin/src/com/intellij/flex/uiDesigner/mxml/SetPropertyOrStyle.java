@@ -1,13 +1,13 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.ByteRange;
 
 class SetPropertyOrStyle extends OverrideBase {
   int targetId = -1;
 
   private ByteRange targetRange;
-  private int reference = -2;
+  private int reference = -1;
+  private int referencePosition = -1;
 
   public void setTargetRange(ByteRange targetRange) {
     this.targetRange = targetRange;
@@ -19,13 +19,15 @@ class SetPropertyOrStyle extends OverrideBase {
 
   @Override
   void write(BaseWriter writer, StateWriter stateWriter) {
-    if (reference == -2) {
-      writer.getOut().write(Amf3Types.OBJECT);
+    if (referencePosition == -1) {
+      referencePosition = writer.referablePrimitiveHeader();
+
+      writer.getOut().write(AmfExtendedTypes.OBJECT);
       writer.addMarker(dataRange);
       reference = -1;
 
       if (targetRange == null) {
-        writer.writeObjectReference(stateWriter.TARGET, targetId);
+        writer.property(stateWriter.TARGET).objectReference(targetId);
       }
       else {
         writer.addMarker(targetRange);
@@ -35,32 +37,11 @@ class SetPropertyOrStyle extends OverrideBase {
     }
     else {
       if (reference == -1) {
-        // set object reference
-        final byte[] data = writer.getBlockOut().getBuffer();
-        // skip class name
-        final int referencePosition = skipUInt29(dataRange.getStart(), data);
-        assert data[referencePosition] == 0 && data[referencePosition + 1] == 0;
         reference = writer.allocateAbsoluteStaticObjectId();
-        writer.getOut().putShort(reference + 1, referencePosition);
+        StaticObjectContext.initializeReference(reference, writer.getOut(), referencePosition);
       }
 
-      writer.writeObjectReference(reference);
+      writer.objectReference(reference);
     }
-  }
-
-  private static int skipUInt29(int offset, byte[] data)  {
-    if ((data[offset++] & 0xFF) < 128) {
-      return offset;
-    }
-
-    if ((data[offset++] & 0xFF) < 128) {
-      return offset;
-    }
-
-    if ((data[offset++] & 0xFF) < 128) {
-      return offset;
-    }
-
-    return offset + 1;
   }
 }

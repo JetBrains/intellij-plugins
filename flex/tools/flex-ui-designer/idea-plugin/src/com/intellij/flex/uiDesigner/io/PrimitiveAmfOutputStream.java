@@ -55,7 +55,7 @@ public class PrimitiveAmfOutputStream extends OutputStream {
   }
 
   public int allocateClearShort() {
-    return out.allocate(2);
+    return out.allocateClearShort();
   }
 
   public void write(Enum value) {

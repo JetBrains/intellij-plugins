@@ -3,8 +3,6 @@ import com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromBytesBase;
 import com.intellij.flex.uiDesigner.flex.states.StaticInstanceReferenceInDeferredParentInstanceBase;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
-import flash.errors.IllegalOperationError;
-
 import flash.utils.IDataInput;
 
 public class InjectedASReader {
@@ -73,7 +71,7 @@ public class InjectedASReader {
           break;
 
         case BindingType.EXPRESSION:
-          o = reader.readExpression();
+          o = reader.readExpression(data.readByte());
           break;
 
         default:
@@ -102,7 +100,7 @@ public class InjectedASReader {
     var o:Object;
     var id:int = AmfUtil.readUInt29(input);
     if ((id & 1) == 0) {
-      o = reader.readExpression();
+      o = reader.readExpression(input.readByte());
     }
 
     id = id >> 1;

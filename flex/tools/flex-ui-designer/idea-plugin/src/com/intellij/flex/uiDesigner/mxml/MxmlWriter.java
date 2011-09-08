@@ -76,7 +76,7 @@ public class MxmlWriter {
         assert rootTag != null;
         ClassBackedElementDescriptor rootTagDescriptor = (ClassBackedElementDescriptor)rootTag.getDescriptor();
         assert rootTagDescriptor != null;
-        writer.writeObjectHeader(rootTagDescriptor.getQualifiedName());
+        writer.mxmlObjectHeader(rootTagDescriptor.getQualifiedName());
         processElements(rootTag, null, false, -1, out.size() - 2);
       }
       finally {
@@ -212,7 +212,7 @@ public class MxmlWriter {
         }
         else if (descriptor.hasIdType() && MxmlUtil.isIdLanguageIdAttribute(attribute)) {
           String explicitId = attribute.getValue();
-          writer.writeIdProperty(explicitId);
+          writer.idMxmlProperty(explicitId);
           injectedASWriter.processObjectWithExplicitId(explicitId, context);
         }
         else if (descriptor.getTypeName() == null) {
@@ -421,7 +421,7 @@ public class MxmlWriter {
           break;
         }
 
-        writer.writeString(((XmlText)child).getValue());
+        writer.string(((XmlText)child).getValue());
         validAndStaticChildrenCount++;
       }
     }
@@ -483,15 +483,14 @@ public class MxmlWriter {
         writer.getBlockOut().setPosition(writer.getBlockOut().size() - 1);
       }
 
-      out.write(AmfExtendedTypes.DOCUMENT_REFERENCE);
-      out.writeUInt29(projectComponentFactoryId);
+      writer.documentReference(projectComponentFactoryId);
     }
     else {
       if (isListItem) {
         out.write(Amf3Types.OBJECT);
       }
 
-      writer.write(descriptor.getQualifiedName());
+      writer.classOrPropertyName(descriptor.getQualifiedName());
     }
 
     return processElements(tag, parentContext, allowIncludeInExludeFrom, childDataPosition, out.allocateClearShort());
@@ -507,7 +506,7 @@ public class MxmlWriter {
 
     final XmlAttribute fixedAttribute = tag.getAttribute("fixed");
     out.write(AmfExtendedTypes.MXML_VECTOR);
-    writer.write(type);
+    writer.classOrPropertyName(type);
     out.write(fixedAttribute != null && fixedAttribute.getDisplayValue().charAt(0) == 't');
     processTagChildren(tag, processIdAttributeOfBuiltInTypeLanguageTag(tag, parentContext, allowIncludeInExludeFrom), parentContext, false, PropertyKind.VECTOR, false);
     return true;
@@ -601,7 +600,7 @@ public class MxmlWriter {
           return null;
         }
 
-        writer.write("0");
+        writer.classOrPropertyName("0");
         out.write(PropertyClassifier.MX_CONTAINER_CHILDREN);
         return PropertyKind.ARRAY;
       }
@@ -634,10 +633,10 @@ public class MxmlWriter {
         }
       }
 
-      writer.write(defaultDescriptor.getName());
+      writer.classOrPropertyName(defaultDescriptor.getName());
       out.write(PropertyClassifier.PROPERTY);
       if (defaultDescriptor.isDeferredInstance()) {
-        writer.writeDeferredInstanceFromArray();
+        writer.newInstance("com.intellij.flex.uiDesigner.flex.DeferredInstanceFromArray", 1, false).typeMarker(Amf3Types.ARRAY);
         return PropertyKind.ARRAY;
       }
       else {
@@ -657,7 +656,7 @@ public class MxmlWriter {
             return null;
           }
 
-          writer.writeVectorHeader(defaultDescriptor.getArrayType());
+          writer.vectorHeader(defaultDescriptor.getArrayType());
           return PropertyKind.VECTOR;
         }
         else if (type.equals(JSCommonTypeNames.NUMBER_CLASS_NAME)) {
@@ -678,10 +677,10 @@ public class MxmlWriter {
 
   private void writeSubstitutedString(CharSequence value) {
     if (value == XmlElementValueProvider.EMPTY) {
-      writer.writeStringReference(XmlElementValueProvider.EMPTY);
+      writer.stringReference(XmlElementValueProvider.EMPTY);
     }
     else {
-      writer.writeString(value);
+      writer.string(value);
     }
   }
 
@@ -716,7 +715,7 @@ public class MxmlWriter {
   }
 
   private void writePropertyHeader(String name, XmlElement element, boolean cssRulesetDefined, boolean isStyle) {
-    writer.write(name);
+    writer.classOrPropertyName(name);
     if (isStyle) {
       out.write(PropertyClassifier.STYLE);
       if (!cssRulesetDefined) {

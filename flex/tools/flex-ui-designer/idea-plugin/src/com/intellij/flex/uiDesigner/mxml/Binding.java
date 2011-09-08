@@ -19,8 +19,7 @@ abstract class Binding {
   void write(PrimitiveAmfOutputStream out, BaseWriter writer, ValueReferenceResolver valueReferenceResolver)
     throws InvalidPropertyException {
     target.write(out, writer, valueReferenceResolver);
-    out.writeUInt29(propertyName);
-    out.write(getType() << 1 | (isStyle ? 1 : 0));
+    writer.property(propertyName).getOut().write(getType() << 1 | (isStyle ? 1 : 0));
   }
 
   static final class BindingType {

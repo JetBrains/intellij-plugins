@@ -21,4 +21,9 @@ public final class AmfExtendedTypes {
   public static final int REFERABLE_PRIMITIVE = 53;
 
   public static final int XML_LIST = 54;
+
+  public static final int OBJECT = 55;
+
+  public static int TRANSIENT_ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES = 56;
+  public static int PERMANENT_ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES = 57;
 }

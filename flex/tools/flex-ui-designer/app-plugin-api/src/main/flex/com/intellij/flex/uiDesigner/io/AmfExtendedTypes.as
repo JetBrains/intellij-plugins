@@ -22,5 +22,10 @@ public final class AmfExtendedTypes {
   public static const REFERABLE_PRIMITIVE:int = 53;
 
   public static const XML_LIST:int = 54;
+
+  public static const OBJECT:int = 55;
+
+  public static const TRANSIENT_ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES:int = 56;
+  public static const PERMANENT_ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES:int = 57;
 }
 }

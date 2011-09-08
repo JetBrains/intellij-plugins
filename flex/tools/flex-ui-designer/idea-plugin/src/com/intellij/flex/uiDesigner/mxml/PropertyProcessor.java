@@ -237,7 +237,7 @@ class PropertyProcessor implements ValueWriter {
       }
 
       if (descriptor != null && FlexCssPropertyDescriptor.COLOR_FORMAT.equals(descriptor.getFormat())) {
-        writer.writeColor(valueProvider.getElement(), trimmed, isStyle);
+        writer.color(valueProvider.getElement(), trimmed, isStyle);
       }
       else {
         out.writeAmfInt(trimmed);
@@ -280,7 +280,7 @@ class PropertyProcessor implements ValueWriter {
       final Module module = ModuleUtil.findModuleForPsiElement(valueProvider.getElement());
       if (module != null &&
           JSResolveUtil.findClassByQName(trimmed, module.getModuleWithDependenciesAndLibrariesScope(false)) != null) {
-        writer.writeClass(trimmed);
+        writer.classReference(trimmed);
         return true;
       }
 
@@ -361,7 +361,7 @@ class PropertyProcessor implements ValueWriter {
         }
       }
 
-      writer.writeVectorHeader(descriptor.getArrayType());
+      writer.vectorHeader(descriptor.getArrayType());
       return VECTOR;
     }
     else if (type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME) || type.equals(JSCommonTypeNames.ANY_TYPE)) {
@@ -388,12 +388,12 @@ class PropertyProcessor implements ValueWriter {
 
   private void writeString(XmlElementValueProvider valueProvider, @Nullable AnnotationBackedDescriptor descriptor) {
     if (descriptor != null && descriptor.isEnumerated()) {
-      writer.writeStringReference(valueProvider.getTrimmed());
+      writer.stringReference(valueProvider.getTrimmed());
     }
     else {
       CharSequence v = writeIfEmpty(valueProvider);
       if (v != null) {
-        writer.writeString(v);
+        writer.string(v);
       }
     }
   }
@@ -402,7 +402,7 @@ class PropertyProcessor implements ValueWriter {
   private CharSequence writeIfEmpty(XmlElementValueProvider valueProvider) {
     CharSequence v = valueProvider.getSubstituted();
     if (v == XmlElementValueProvider.EMPTY) {
-      writer.writeStringReference(XmlElementValueProvider.EMPTY);
+      writer.stringReference(XmlElementValueProvider.EMPTY);
       return null;
     }
     else {
@@ -459,7 +459,7 @@ class PropertyProcessor implements ValueWriter {
               }
 
               if (endIndex == 0) {
-                writer.writeStringReference(XmlElementValueProvider.EMPTY);
+                writer.stringReference(XmlElementValueProvider.EMPTY);
               }
               else {
                 out.write(Amf3Types.STRING);
@@ -514,7 +514,7 @@ class PropertyProcessor implements ValueWriter {
         writer.getOut().writeAmfDouble(Double.parseDouble(value));
       }
       catch (NumberFormatException ignored) {
-        writer.writeString(charSequence);
+        writer.string(charSequence);
       }
     }
 
@@ -533,7 +533,7 @@ class PropertyProcessor implements ValueWriter {
     String className = valueProvider.getTrimmed();
     int reference = classFactoryMap.get(className);
     if (reference != -1) {
-      writer.writeObjectReference(reference);
+      writer.objectReference(reference);
       return;
     }
 
@@ -547,11 +547,10 @@ class PropertyProcessor implements ValueWriter {
       reference = writer.getRootScope().referenceCounter++;
       classFactoryMap.put(className, reference);
 
-      writer.writeConstructorHeader(FlexCommonTypeNames.CLASS_FACTORY, reference);
-      writer.writeClass(className);
+      writer.referablePrimitiveHeader(reference).newInstance(FlexCommonTypeNames.CLASS_FACTORY, 1, false).classReference(className);
     }
     else {
-      writer.writeDocumentFactoryReference(projectComponentFactoryId);
+      writer.documentFactoryReference(projectComponentFactoryId);
     }
   }
 }

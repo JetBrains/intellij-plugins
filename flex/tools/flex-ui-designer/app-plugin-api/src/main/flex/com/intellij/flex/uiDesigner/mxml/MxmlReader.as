@@ -88,7 +88,7 @@ public final class MxmlReader implements DocumentReader {
     var object:Object;
     switch (input.readByte()) {
       case Amf3Types.OBJECT:
-        object = readObjectFromClass(stringRegistry.read(input));
+        object = readMxmlObjectFromClass(stringRegistry.read(input));
         break;
 
       case AmfExtendedTypes.DOCUMENT_REFERENCE:
@@ -165,7 +165,7 @@ public final class MxmlReader implements DocumentReader {
     context = documentReaderContext;
     moduleContext = ModuleContextEx(context.moduleContext);
     const oldRootObject:Object = rootObject;
-    var object:Object = readObjectFromClass(stringRegistry.read(input), true);
+    var object:Object = readMxmlObjectFromClass(stringRegistry.read(input), true);
     stateReader.read(this, input, object);
     injectedASReader.read(input, this);
 
@@ -204,51 +204,24 @@ public final class MxmlReader implements DocumentReader {
 
     return o;
   }
-  
-  private function readConstructor(objectClass:Class):Object {
-    switch (input.readByte()) {
-      case AmfExtendedTypes.CLASS_REFERENCE:
-        return new objectClass(moduleContext.applicationDomain.getDefinition(stringRegistry.read(input)));
 
-      case PropertyClassifier.VECTOR_OF_DEFERRED_INSTANCE_FROM_BYTES:
-        return new objectClass(stateReader.readVectorOfDeferredInstanceFromBytes(this, input), getOrCreateFactoryContext());
-
-      case PropertyClassifier.ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES:
-        return new objectClass(stateReader.readArrayOfDeferredInstanceFromBytes(this, input), getOrCreateFactoryContext());
-
-      case Amf3Types.BYTE_ARRAY:
-        return new objectClass(AmfUtil.readByteArray(input), getOrCreateFactoryContext());
-      
-      case Amf3Types.ARRAY:
-        return new objectClass(readArray());
-
-      default:
-        throw new ArgumentError("unknown property classifier");
-    }
-  }
-
-  internal function readObjectFromClass(className:String, setDocument:Boolean = false):Object {
+  internal function readMxmlObjectFromClass(className:String, setDocument:Boolean = false):Object {
     var clazz:Class = moduleContext.getClass(className);
     var reference:int = input.readUnsignedShort();
     var propertyName:String = stringRegistry.read(input);
     var object:Object;
     var objectDeclarationTextOffset:int;
-    if (propertyName == "1") {
-      object = readConstructor(clazz);
-      propertyName = null;
+
+    object = new clazz();
+    if (setDocument) {
+      // perfomance, early set document, avoid recursive set later (see UIComponent.document setter)
+      object.document = object;
+      rootObject = object;
     }
-    else {
-      object = new clazz();
-      if (setDocument) {
-        // perfomance, early set document, avoid recursive set later (see UIComponent.document setter)
-        object.document = object;
-        rootObject = object;
-      }
-      if (propertyName == "$fud_position") {
-        objectDeclarationTextOffset = AmfUtil.readUInt29(input);
-        context.registerObjectDeclarationPosition(object, objectDeclarationTextOffset);
-        propertyName = stringRegistry.read(input);
-      }
+    if (propertyName == "$fud_position") {
+      objectDeclarationTextOffset = AmfUtil.readUInt29(input);
+      context.registerObjectDeclarationPosition(object, objectDeclarationTextOffset);
+      propertyName = stringRegistry.read(input);
     }
 
     return initObject(object, reference, propertyName, objectDeclarationTextOffset);
@@ -381,7 +354,7 @@ public final class MxmlReader implements DocumentReader {
           break;
 
         case Amf3Types.OBJECT:
-          propertyHolder[propertyName] = readObjectFromClass(stringRegistry.readNotNull(input));
+          propertyHolder[propertyName] = readMxmlObjectFromClass(stringRegistry.readNotNull(input));
           if (cssDeclaration != null) {
             cssDeclaration.type = CssPropertyType.EFFECT;
           }
@@ -432,10 +405,6 @@ public final class MxmlReader implements DocumentReader {
           propertyHolder[propertyName] = readDocumentFactory();
           break;
 
-        case AmfExtendedTypes.DOCUMENT_REFERENCE:
-          propertyHolder[propertyName] = readObjectFromFactory(readDocumentFactory().newInstance());
-          break;
-
         case AmfExtendedTypes.IMAGE:
           propertyHolder[propertyName] = embedImageManager.get(AmfUtil.readUInt29(input), moduleContext.imageAssetContainerClassPool,
                                                                moduleContext.project);
@@ -448,25 +417,9 @@ public final class MxmlReader implements DocumentReader {
             cssDeclaration.type = CssPropertyType.EMBED;
           }
           break;
-        
-        case AmfExtendedTypes.STRING_REFERENCE:
-          propertyHolder[propertyName] = stringRegistry.read(input);
-          break;
-        
-        case AmfExtendedTypes.CLASS_REFERENCE:
-          propertyHolder[propertyName] = moduleContext.applicationDomain.getDefinition(stringRegistry.read(input));
-          break;
-
-        case AmfExtendedTypes.REFERABLE_PRIMITIVE:
-          propertyHolder[propertyName] = readReferablePrimitive();
-          break;
-
-        case AmfExtendedTypes.XML_LIST:
-          propertyHolder[propertyName] = readXmlList();
-          break;
 
         default:
-          throw new ArgumentError("unknown property type " + marker);
+          propertyHolder[propertyName] = readExpression(marker);
       }
 
       if (cssDeclaration != null) {
@@ -502,7 +455,7 @@ public final class MxmlReader implements DocumentReader {
 
   private function readReferablePrimitive():Object {
     var r:int = input.readUnsignedShort();
-    var o:Object = readExpression();
+    var o:Object = readExpression(input.readByte());
     processReference(r, o);
     return o;
   }
@@ -650,7 +603,7 @@ public final class MxmlReader implements DocumentReader {
   internal function readArrayOrVector(array:Object, length:int):Object {
     var i:int = 0;
     while (i < length) {
-      array[i++] = readExpression();
+      array[i++] = readExpression(input.readByte());
     }
 
     return array;
@@ -660,15 +613,14 @@ public final class MxmlReader implements DocumentReader {
     return stringRegistry.read(input);
   }
 
-  internal function readExpression():* {
-    const amfType:int = input.readByte();
+  internal function readExpression(amfType:int):* {
     switch (amfType) {
       case Amf3Types.OBJECT:
-        return readObjectFromClass(stringRegistry.readNotNull(input));
+        return readMxmlObjectFromClass(stringRegistry.readNotNull(input));
         break;
 
       case ExpressionMessageTypes.SIMPLE_OBJECT:
-        return readSimpleObject();
+        return readSimpleObject(new Object());
 
       case Amf3Types.STRING:
         return AmfUtil.readString(input);
@@ -727,6 +679,22 @@ public final class MxmlReader implements DocumentReader {
         return readXmlList();
         break;
 
+      case AmfExtendedTypes.OBJECT:
+        return readSimpleObject(new (moduleContext.getClass(stringRegistry.readNotNull(input)))());
+        break;
+
+      case AmfExtendedTypes.CLASS_REFERENCE:
+        return moduleContext.applicationDomain.getDefinition(stringRegistry.readNotNull(input));
+
+      case AmfExtendedTypes.TRANSIENT_ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES:
+        return new (moduleContext.getClass("com.intellij.flex.uiDesigner.flex.states.TransientArrayOfDeferredInstanceFromBytes"))(stateReader.readVectorOfDeferredInstanceFromBytes(this, input), getOrCreateFactoryContext());
+
+      case AmfExtendedTypes.PERMANENT_ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES:
+        return new (moduleContext.getClass("com.intellij.flex.uiDesigner.flex.states.PermanentArrayOfDeferredInstanceFromBytes"))(stateReader.readArrayOfDeferredInstanceFromBytes(this, input), getOrCreateFactoryContext());
+
+      case AmfExtendedTypes.COLOR_STYLE:
+        return input.readObject();
+
       default:
         throw new ArgumentError("unknown property type " + amfType);
     }    
@@ -778,9 +746,17 @@ public final class MxmlReader implements DocumentReader {
 
   private function constructObject():Object {
     var clazz:Class = moduleContext.getClass(stringRegistry.readNotNull(input));
-    const argumentsLength:int = input.readUnsignedByte();
-    const dataLength:int = input.readUnsignedShort();
-    const start:int = input.bytesAvailable;
+    var argumentsLength:int = input.readByte();
+
+    var dataLength:int;
+    var start:int;
+    if ((argumentsLength & 1) != 0) {
+      dataLength = input.readUnsignedShort();
+      start = input.bytesAvailable;
+    }
+
+    argumentsLength >>= 1;
+
     try {
       if (argumentsLength == 0) {
         return new clazz();
@@ -788,36 +764,41 @@ public final class MxmlReader implements DocumentReader {
       else {
         switch (argumentsLength) {
           case 1:
-            return new clazz(readExpression());
+            return new clazz(readExpression(input.readByte()));
           case 2:
-            return new clazz(readExpression(), readExpression());
+            return new clazz(readExpression(input.readByte()), readExpression(input.readByte()));
           case 3:
-            return new clazz(readExpression(), readExpression(), readExpression());
+            return new clazz(readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()));
           case 4:
-            return new clazz(readExpression(), readExpression(), readExpression(), readExpression());
+            return new clazz(readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()));
           case 5:
-            return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression());
+            return new clazz(readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()));
           case 6:
-            return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression());
+            return new clazz(readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()));
           case 7:
-            return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(),
-                             readExpression());
+            return new clazz(readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()),
+                             readExpression(input.readByte()));
           case 8:
-            return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(),
-                             readExpression(), readExpression());
+            return new clazz(readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()),
+                             readExpression(input.readByte()), readExpression(input.readByte()));
           case 9:
-            return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(),
-                             readExpression(), readExpression(), readExpression());
+            return new clazz(readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()),
+                             readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()));
           case 10:
-            return new clazz(readExpression(), readExpression(), readExpression(), readExpression(), readExpression(), readExpression(),
-                             readExpression(), readExpression(), readExpression(), readExpression());
+            return new clazz(readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()),
+                             readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()), readExpression(input.readByte()));
         }
 
         UncaughtErrorManager.instance.logWarning("Can't execute binding, constructorArguments is too long");
       }
     }
     catch (e:Error) {
-      handleCallExpressionBindingError(e, dataLength, start);
+      if (dataLength == 0) {
+        throw e;
+      }
+      else {
+        handleCallExpressionBindingError(e, dataLength, start);
+      }
     }
 
     return null;
@@ -832,11 +813,10 @@ public final class MxmlReader implements DocumentReader {
     }
   }
   
-  private function readSimpleObject():Object {
-    var o:Object = new Object();
+  internal function readSimpleObject(o:Object):Object {
     var propertyName:String;
     while ((propertyName = stringRegistry.read(input)) != null) {
-      o[propertyName] = readExpression();
+      o[propertyName] = readExpression(input.readByte());
     }
     
     return o;
@@ -853,16 +833,13 @@ import com.intellij.flex.uiDesigner.css.InlineCssRuleset;
 import flash.utils.Proxy;
 import flash.utils.flash_proxy;
 
-class PropertyClassifier {
+final class PropertyClassifier {
   public static const PROPERTY:int = 0;
   public static const STYLE:int = 1;
   
   public static const ID:int = 2;
 
   public static const MX_CONTAINER_CHILDREN:int = 4;
-
-  public static const ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES:int = 6;
-  public static const VECTOR_OF_DEFERRED_INSTANCE_FROM_BYTES:int = 7;
 }
 
 use namespace flash_proxy;
