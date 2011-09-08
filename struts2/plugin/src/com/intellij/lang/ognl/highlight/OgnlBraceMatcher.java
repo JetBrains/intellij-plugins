@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 public class OgnlBraceMatcher implements PairedBraceMatcher {
 
   private final BracePair[] pairs = new BracePair[]{
+      new BracePair(OgnlTokenTypes.LBRACE, OgnlTokenTypes.RBRACE, false),
       new BracePair(OgnlTokenTypes.LBRACKET, OgnlTokenTypes.RBRACKET, false),
       new BracePair(OgnlTokenTypes.LPARENTH, OgnlTokenTypes.RPARENTH, false),
   };
