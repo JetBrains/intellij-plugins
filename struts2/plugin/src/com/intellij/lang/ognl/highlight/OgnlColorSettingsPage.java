@@ -42,6 +42,7 @@ public class OgnlColorSettingsPage implements ColorSettingsPage {
       new AttributesDescriptor("Number", OgnlHighlighter.NUMBER),
       new AttributesDescriptor("Parentheses", OgnlHighlighter.PARENTHS),
       new AttributesDescriptor("Brackets", OgnlHighlighter.BRACKETS),
+      new AttributesDescriptor("Braces", OgnlHighlighter.BRACES)
   };
 
   @NotNull
@@ -86,7 +87,9 @@ public class OgnlColorSettingsPage implements ColorSettingsPage {
         "\n" +
         "%{myAction.method()}"+
         "\n" +
-        "%{#myBigInteger * 452H}";
+        "%{#myBigInteger * 452H}" +
+        "\n"+
+        "%{id not in {1, 2}}";
   }
 
   @Override

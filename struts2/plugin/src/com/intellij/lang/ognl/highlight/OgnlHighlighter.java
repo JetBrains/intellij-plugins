@@ -93,6 +93,10 @@ public class OgnlHighlighter extends SyntaxHighlighterBase {
       "OGNL.PARENTHS",
       SyntaxHighlighterColors.PARENTHS.getDefaultAttributes());
 
+  public static final TextAttributesKey BRACES = TextAttributesKey.createTextAttributesKey(
+      "OGNL.BRACES",
+      SyntaxHighlighterColors.BRACES.getDefaultAttributes());
+
   static {
     keys1 = new HashMap<IElementType, TextAttributesKey>();
 
@@ -126,8 +130,8 @@ public class OgnlHighlighter extends SyntaxHighlighterBase {
     keys1.put(OgnlTokenTypes.LPARENTH, PARENTHS);
     keys1.put(OgnlTokenTypes.RPARENTH, PARENTHS);
 
-    keys1.put(OgnlTokenTypes.LBRACE, PARENTHS);
-    keys1.put(OgnlTokenTypes.RBRACE, PARENTHS);
+    keys1.put(OgnlTokenTypes.LBRACE, BRACES);
+    keys1.put(OgnlTokenTypes.RBRACE, BRACES);
 
     XmlFileHighlighter.registerEmbeddedTokenAttributes(keys1, null);
     HtmlFileHighlighter.registerEmbeddedTokenAttributes(keys1, null);
