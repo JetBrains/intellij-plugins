@@ -3,13 +3,16 @@
     <renameHandler implementation="com.intellij.javascript.flex.refactoring.FlexDirectoryAsPackageRenameHandler"/>
     <elementDescriptionProvider implementation="com.intellij.javascript.flex.refactoring.FlexPackageImpl$DescriptionProvider"/>
 
-    <projectService serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeProjectLevelCompilerOptionsHolder"/>
-    <moduleService serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager"/>
+    <projectService serviceInterface="com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder"
+                    serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectLevelCompilerOptionsHolderImpl"/>
+    <moduleService serviceInterface="com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager"
+                   serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl"/>
     <configuration.ModuleStructureExtension
         implementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension"/>
     <configurationType implementation="com.intellij.lang.javascript.flex.run.FlexIdeRunConfigurationType"/>
     <library.type implementation="com.intellij.lang.javascript.flex.projectStructure.FlexSdkLibraryType"/>
-    <orderEnumerationHandlerFactory implementation="com.intellij.lang.javascript.flex.projectStructure.FlexOrderEnumerationHandler$FactoryImpl"/>
+    <orderEnumerationHandlerFactory
+        implementation="com.intellij.lang.javascript.flex.projectStructure.FlexOrderEnumerationHandler$FactoryImpl"/>
   </extensions>
 
   <actions>
@@ -20,7 +23,8 @@
     </action>
     -->
     <group id="FlexIdeToolbarGroup">
-      <action id="ChooseActiveBuildConfiguration" class="com.intellij.lang.javascript.flex.projectStructure.ui.ChooseActiveBuildConfigurationAction" />
+      <action id="ChooseActiveBuildConfiguration"
+              class="com.intellij.lang.javascript.flex.projectStructure.ui.ChooseActiveBuildConfigurationAction"/>
 
       <add-to-group group-id="MainToolBar" relative-to-action="HelpTopics" anchor="before"/>
     </group>

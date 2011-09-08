@@ -1,8 +1,8 @@
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.lang.javascript.flex.FlexFacet;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
-import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.io.FileUtil;
@@ -27,7 +27,7 @@ public class BuiltInCompilationTask extends FlexCompilationTask {
   }
 
   public BuiltInCompilationTask(final @NotNull Module module, final @NotNull FlexIdeBuildConfiguration flexIdeConfig) {
-    super(flexIdeConfig.NAME + " (" + module.getName() + ")", module, null, null, flexIdeConfig);
+    super(flexIdeConfig.getName() + " (" + module.getName() + ")", module, null, null, flexIdeConfig);
     myBuiltInFlexCompilerHandler = FlexCompilerHandler.getInstance(module.getProject()).getBuiltInFlexCompilerHandler();
   }
 
@@ -52,7 +52,7 @@ public class BuiltInCompilationTask extends FlexCompilationTask {
     }
     else {
       assert myFlexIdeConfig != null;
-      final boolean swf = myFlexIdeConfig.OUTPUT_TYPE != OutputType.Library;
+      final boolean swf = myFlexIdeConfig.getOutputType() != OutputType.Library;
       final List<String> compilerCommand = Collections.singletonList(swf ? "mxmlc" : "compc");
       return FlexCompilationUtils.buildCommand(compilerCommand, getConfigFiles());
     }

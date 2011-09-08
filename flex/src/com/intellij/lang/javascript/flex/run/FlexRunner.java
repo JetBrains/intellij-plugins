@@ -19,7 +19,7 @@ import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
-import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -47,7 +47,7 @@ public class FlexRunner extends FlexBaseRunner {
                                                      final RunProfileState state,
                                                      final RunContentDescriptor contentToReuse,
                                                      final ExecutionEnvironment environment) throws ExecutionException {
-    switch (config.TARGET_PLATFORM) {
+    switch (config.getTargetPlatform()) {
       case Web:
         // todo handle html wrapper!
         final String urlOrPath = params.isLaunchUrl() ? params.getUrl() : config.getOutputFilePath();

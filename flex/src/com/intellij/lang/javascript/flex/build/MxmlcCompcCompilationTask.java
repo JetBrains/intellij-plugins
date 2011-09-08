@@ -2,8 +2,8 @@ package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
-import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
@@ -28,13 +28,13 @@ public class MxmlcCompcCompilationTask extends FlexCompilationTask {
   }
 
   public MxmlcCompcCompilationTask(final @NotNull Module module, final @NotNull FlexIdeBuildConfiguration flexIdeConfig) {
-    super(flexIdeConfig.NAME + " (" + module.getName() + ")", module, null, null, flexIdeConfig);
+    super(flexIdeConfig.getName() + " (" + module.getName() + ")", module, null, null, flexIdeConfig);
   }
 
   protected void doStart(final FlexCompilationManager compilationManager) throws IOException {
     final boolean swf = myOldConfig != null
                         ? myOldConfig.OUTPUT_TYPE.equals(FlexBuildConfiguration.APPLICATION)
-                        : myFlexIdeConfig.OUTPUT_TYPE != OutputType.Library;
+                        : myFlexIdeConfig.getOutputType() != OutputType.Library;
     // todo take correct SDK from myFlexIdeConfig.DEPENDENCIES...
     final Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(myModule);
 

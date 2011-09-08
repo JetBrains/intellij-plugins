@@ -8,9 +8,10 @@ import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
-import com.intellij.lang.javascript.flex.projectStructure.model.ComponentSet;
-import com.intellij.lang.javascript.flex.projectStructure.model.LinkageType;
-import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.*;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
@@ -99,7 +100,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   private JPanel myTablePanel;
   private final EditableTreeTable<MyTableItem> myTable;
 
-  private final Dependencies myDependencies;
+  private final ModifiableDependencies myDependencies;
   private final Project myProject;
   private AddItemPopupAction[] myPopupActions;
 
@@ -129,13 +130,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   private static class BCItem extends MyTableItem {
-    public final DependencyType dependencyType = new DependencyType();
+    public final ModifiableDependencyType dependencyType = Factory.createDependencyTypeInstance();
     public final FlexIdeBCConfigurable configurable;
     public final String moduleName;
     public final String bcName;
 
-    public BCItem(@NotNull String moduleName,
-                  @NotNull String bcName) {
+    public BCItem(@NotNull String moduleName, @NotNull String bcName) {
       this.moduleName = moduleName;
       this.bcName = bcName;
       this.configurable = null;
@@ -221,7 +221,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   private static class ModuleLibraryItem extends MyTableItem {
-    public final DependencyType dependencyType = new DependencyType();
+    public final ModifiableDependencyType dependencyType = Factory.createDependencyTypeInstance();
     public final String libraryId;
     @Nullable
     public final LibraryOrderEntry orderEntry;
@@ -460,13 +460,13 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
   };
 
-  public DependenciesConfigurable(final FlexIdeBuildConfiguration bc,
+  public DependenciesConfigurable(final ModifiableFlexIdeBuildConfiguration bc,
                                   Project project,
                                   FlexSdksModifiableModel sdksModel,
                                   ModifiableRootModel modifiableRootModel) {
     mySdksModel = sdksModel;
     myModifiableRootModel = modifiableRootModel;
-    myDependencies = bc.DEPENDENCIES;
+    myDependencies = bc.getDependencies();
     myProject = project;
     myNature = bc.getNature();
 
@@ -852,8 +852,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
 
     final String targetPlayer = (String)myTargetPlayerCombo.getSelectedItem();
-    if (myTargetPlayerCombo.isVisible() && targetPlayer != null && !myDependencies.TARGET_PLAYER.equals(targetPlayer)) return true;
-    if (myComponentSetCombo.isVisible() && myDependencies.COMPONENT_SET != myComponentSetCombo.getSelectedItem()) return true;
+    if (myTargetPlayerCombo.isVisible() && targetPlayer != null && !myDependencies.getTargetPlayer().equals(targetPlayer)) return true;
+    if (myComponentSetCombo.isVisible() && myDependencies.getComponentSet() != myComponentSetCombo.getSelectedItem()) return true;
     if (myDependencies.getFrameworkLinkage() != myFrameworkLinkageCombo.getSelectedItem()) return true;
 
     List<MyTableItem> items = myTable.getItems();
@@ -864,11 +864,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
     });
 
-    List<DependencyEntry> entries = myDependencies.getEntries();
-    if (items.size() != entries.size()) return true;
+    DependencyEntry[] entries = myDependencies.getEntries();
+    if (items.size() != entries.length) return true;
     for (int i = 0; i < items.size(); i++) {
       MyTableItem item = items.get(i);
-      DependencyEntry entry = entries.get(i);
+      DependencyEntry entry = entries[i];
       if (item instanceof BCItem) {
         if (!(entry instanceof BuildConfigurationEntry)) {
           return true;
@@ -908,33 +908,33 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
   }
 
-  public void applyTo(final Dependencies dependencies) {
+  public void applyTo(final ModifiableDependencies dependencies) {
     final Object targetPlayer = myTargetPlayerCombo.getSelectedItem();
     if (targetPlayer != null) {
-      dependencies.TARGET_PLAYER = (String)targetPlayer;
+      dependencies.setTargetPlayer((String)targetPlayer);
     }
-    dependencies.COMPONENT_SET = (ComponentSet)myComponentSetCombo.getSelectedItem();
+    dependencies.setComponentSet((ComponentSet)myComponentSetCombo.getSelectedItem());
     dependencies.setFrameworkLinkage((LinkageType)myFrameworkLinkageCombo.getSelectedItem());
 
-    dependencies.getEntries().clear();
+    dependencies.getModifiableEntries().clear();
     List<MyTableItem> items = myTable.getItems();
     for (MyTableItem item : items) {
-      DependencyEntry entry;
+      ModifiableDependencyEntry entry;
       if (item instanceof BCItem) {
         FlexIdeBCConfigurable configurable = ((BCItem)item).configurable;
         if (configurable != null) {
-          entry = new BuildConfigurationEntry(configurable.getModule(), configurable.getDisplayName());
+          entry = Factory.createBuildConfigurationEntry(configurable.getModule(), configurable.getDisplayName());
         }
         else {
-          entry = new BuildConfigurationEntry(myProject, ((BCItem)item).moduleName, ((BCItem)item).bcName);
+          entry = Factory.createBuildConfigurationEntry(myProject, ((BCItem)item).moduleName, ((BCItem)item).bcName);
         }
-        ((BCItem)item).dependencyType.applyTo(entry.getDependencyType());
-        dependencies.getEntries().add(entry);
+        entry.getDependencyType().copyFrom(((BCItem)item).dependencyType);
+        dependencies.getModifiableEntries().add(entry);
       }
       else if (item instanceof ModuleLibraryItem) {
-        entry = new ModuleLibraryEntry(((ModuleLibraryItem)item).libraryId);
-        ((ModuleLibraryItem)item).dependencyType.applyTo(entry.getDependencyType());
-        dependencies.getEntries().add(entry);
+        entry = Factory.createModuleLibraryEntry(((ModuleLibraryItem)item).libraryId);
+        entry.getDependencyType().copyFrom(((ModuleLibraryItem)item).dependencyType);
+        dependencies.getModifiableEntries().add(entry);
       }
       else if (item instanceof SdkItem || item instanceof SdkEntryItem) {
         // ignore
@@ -946,7 +946,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     FlexSdk currentSdk = mySdkPanel.getCurrentSdk();
     if (currentSdk != null) {
-      SdkEntry sdkEntry = new SdkEntry(currentSdk.getLibraryId(), currentSdk.getHomePath());
+      SdkEntry sdkEntry = Factory.createSdkEntry(currentSdk.getLibraryId(), currentSdk.getHomePath());
       dependencies.setSdkEntry(sdkEntry);
     }
     else {
@@ -960,10 +960,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     mySdkPanel.setCurrentSdk(sdkEntry);
 
     updateAvailableTargetPlayers();
-    myTargetPlayerCombo.setSelectedItem(myDependencies.TARGET_PLAYER);
+    myTargetPlayerCombo.setSelectedItem(myDependencies.getTargetPlayer());
 
     updateComponentSetCombo();
-    myComponentSetCombo.setSelectedItem(myDependencies.COMPONENT_SET);
+    myComponentSetCombo.setSelectedItem(myDependencies.getComponentSet());
 
     myFrameworkLinkageCombo.setSelectedItem(myDependencies.getFrameworkLinkage());
 
@@ -989,7 +989,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
             .find(configurator.getBCConfigurables(module), new Condition<NamedConfigurable<FlexIdeBuildConfiguration>>() {
               @Override
               public boolean value(NamedConfigurable<FlexIdeBuildConfiguration> configurable) {
-                return configurable.getEditableObject().NAME.equals(bcEntry.getBcName());
+                return configurable.getEditableObject().getName().equals(bcEntry.getBcName());
               }
             }) : null;
         if (configurable == null) {
@@ -998,12 +998,13 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         else {
           item = new BCItem(FlexIdeBCConfigurable.unwrapIfNeeded(configurable));
         }
-        entry.getDependencyType().applyTo(((BCItem)item).dependencyType);
+        ((BCItem)item).dependencyType.copyFrom(entry.getDependencyType());
       }
       else if (entry instanceof ModuleLibraryEntry) {
         ModuleLibraryEntry moduleLibraryEntry = (ModuleLibraryEntry)entry;
-        item = new ModuleLibraryItem(moduleLibraryEntry.getLibraryId(), moduleLibraryEntry.findOrderEntry(myModifiableRootModel));
-        entry.getDependencyType().applyTo(((ModuleLibraryItem)item).dependencyType);
+        item = new ModuleLibraryItem(moduleLibraryEntry.getLibraryId(),
+                                     FlexProjectRootsUtil.findOrderEntry(moduleLibraryEntry, myModifiableRootModel));
+        ((ModuleLibraryItem)item).dependencyType.copyFrom(entry.getDependencyType());
       }
       if (item != null) {
         root.add(new DefaultMutableTreeNode(item, false));

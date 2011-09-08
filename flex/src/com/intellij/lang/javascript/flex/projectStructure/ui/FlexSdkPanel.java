@@ -3,8 +3,9 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
+import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
-import com.intellij.lang.javascript.flex.projectStructure.options.SdkEntry;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
@@ -64,7 +65,7 @@ public class FlexSdkPanel implements Disposable {
           @Override
           public void consume(String homePath) {
             FlexSdk sdk = myModifiableModel.findOrCreateSdk(homePath);// will update the model through listener
-            setCurrentSdk(new SdkEntry(sdk.getLibraryId(), sdk.getHomePath()));
+            setCurrentSdk(Factory.createSdkEntry(sdk.getLibraryId(), sdk.getHomePath()));
             myEventDispatcher.getMulticaster().stateChanged(new ChangeEvent(FlexSdkPanel.this));
           }
         });

@@ -1,8 +1,10 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.*;
 import com.intellij.lang.javascript.flex.projectStructure.ui.AddBuildConfigurationDialog;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
@@ -76,12 +78,12 @@ public class FlexIdeBCConfigurator {
     List<NamedConfigurable<FlexIdeBuildConfiguration>> configurables = myModuleToConfigurablesMap.get(module);
 
     if (configurables == null) {
-      final FlexIdeBuildConfiguration[] configurations = FlexIdeBuildConfigurationManager.getInstance(module).getBuildConfigurations();
+      final FlexIdeBuildConfiguration[] configurations = FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations();
       configurables = new LinkedList<NamedConfigurable<FlexIdeBuildConfiguration>>();
 
       for (final FlexIdeBuildConfiguration configuration : configurations) {
-        final FlexIdeBuildConfiguration clonedConfiguration = configuration.clone();
-        final FlexIdeBCConfigurable configurable = new FlexIdeBCConfigurable(module, clonedConfiguration, mySdksModel, treeNodeNameUpdater);
+        ModifiableFlexIdeBuildConfiguration clonedConfiguration = Factory.getCopy(configuration);
+        FlexIdeBCConfigurable configurable = new FlexIdeBCConfigurable(module, clonedConfiguration, mySdksModel, treeNodeNameUpdater);
         configurables.add(configurable.wrapInTabsIfNeeded());
         myConfigurationsToModuleMap.put(clonedConfiguration, module);
       }
@@ -136,12 +138,12 @@ public class FlexIdeBCConfigurator {
       }
       for (final NamedConfigurable<FlexIdeBuildConfiguration> configurable : configurables) {
         configurable.apply();
-        configurations.add(configurable.getEditableObject().clone());
+        configurations.add(Factory.getCopy(configurable.getEditableObject()));
       }
 
       ApplicationManager.getApplication().runWriteAction(new Runnable() {
         public void run() {
-          FlexIdeBuildConfigurationManager.getInstance(module)
+          FlexBuildConfigurationManager.getInstance(module)
             .setBuildConfigurations(configurations.toArray(new FlexIdeBuildConfiguration[configurations.size()]));
         }
       });
@@ -183,8 +185,8 @@ public class FlexIdeBCConfigurator {
 
   public void addConfiguration(final Module module, final Runnable treeNodeNameUpdater) {
     if (module != null) {
-      final FlexIdeBuildConfiguration configuration = new FlexIdeBuildConfiguration();
-      configuration.DEPENDENCIES.setSdkEntry(findRecentSdk());
+      final ModifiableFlexIdeBuildConfiguration configuration = Factory.createBuildConfiguration();
+      configuration.getDependencies().setSdkEntry(findRecentSdk());
       addConfiguration(module, configuration, "Add Build Configuration", treeNodeNameUpdater);
     }
   }
@@ -194,44 +196,43 @@ public class FlexIdeBCConfigurator {
     // TODO assign the same SDK as neighbour configurations have
     Library[] libraries = mySdksModel.getLibraries();
     return libraries.length > 0
-           ? new SdkEntry(FlexProjectRootsUtil.getSdkLibraryId(libraries[0]), FlexSdk.getHomePath(libraries[0]))
-           : null;
+           ? Factory.createSdkEntry(FlexProjectRootsUtil.getSdkLibraryId(libraries[0]), FlexSdk.getHomePath(libraries[0])) : null;
   }
 
   public void copy(final FlexIdeBCConfigurable configurable, final Runnable treeNodeNameUpdater) {
-    final FlexIdeBuildConfiguration configuration = configurable.getCurrentConfiguration();
-    final FlexIdeBuildConfiguration newConfiguration = configuration.clone();
-    final Module module = myConfigurationsToModuleMap.get(configurable.getEditableObject());
+    FlexIdeBuildConfiguration configuration = configurable.getCurrentConfiguration();
+    ModifiableFlexIdeBuildConfiguration newConfiguration = Factory.getCopy(configuration);
+    Module module = myConfigurationsToModuleMap.get(configurable.getEditableObject());
     addConfiguration(module, newConfiguration, "Copy Build Configuration", treeNodeNameUpdater);
   }
 
   private void addConfiguration(final Module module,
-                                final FlexIdeBuildConfiguration configuration,
+                                final ModifiableFlexIdeBuildConfiguration configuration,
                                 final String dialogTitle,
                                 final Runnable treeNodeNameUpdater) {
     final Project project = module.getProject();
     final AddBuildConfigurationDialog dialog =
-      new AddBuildConfigurationDialog(project, dialogTitle, getUsedNames(module), configuration.TARGET_PLATFORM,
-                                      configuration.PURE_ACTION_SCRIPT, configuration.OUTPUT_TYPE);
+      new AddBuildConfigurationDialog(project, dialogTitle, getUsedNames(module), configuration.getTargetPlatform(),
+                                      configuration.isPureAs(), configuration.getOutputType());
     dialog.show();
 
     if (dialog.isOK()) {
       myModified = true;
 
-      configuration.NAME = dialog.getName();
-      configuration.TARGET_PLATFORM = dialog.getTargetPlatform();
-      configuration.PURE_ACTION_SCRIPT = dialog.isPureActionScript();
-      configuration.OUTPUT_TYPE = dialog.getOutputType();
+      configuration.setName(dialog.getName());
+      configuration.setTargetPlatform(dialog.getTargetPlatform());
+      configuration.setPureAs(dialog.isPureActionScript());
+      configuration.setOutputType(dialog.getOutputType());
 
       // just to simplify serialized view
       resetNonApplicableValuesToDefaults(configuration);
 
       // set correct output file extension for cloned configuration
-      final String outputFileName = configuration.OUTPUT_FILE_NAME;
+      final String outputFileName = configuration.getOutputFileName();
       final String lowercase = outputFileName.toLowerCase();
       if (lowercase.endsWith(".swf") || lowercase.endsWith(".swc")) {
-        final String extension = configuration.OUTPUT_TYPE == OutputType.Library ? ".swc" : ".swf";
-        configuration.OUTPUT_FILE_NAME = outputFileName.substring(0, outputFileName.length() - ".sw_".length()) + extension;
+        final String extension = configuration.getOutputType() == OutputType.Library ? ".swc" : ".swf";
+        configuration.setOutputFileName(outputFileName.substring(0, outputFileName.length() - ".sw_".length()) + extension);
       }
 
       final FlexIdeBCConfigurable configurable = new FlexIdeBCConfigurable(module, configuration, mySdksModel, treeNodeNameUpdater);
@@ -252,33 +253,33 @@ public class FlexIdeBCConfigurator {
     }
   }
 
-  private static void resetNonApplicableValuesToDefaults(final FlexIdeBuildConfiguration configuration) {
-    final FlexIdeBuildConfiguration defaultConfiguration = new FlexIdeBuildConfiguration();
+  private static void resetNonApplicableValuesToDefaults(final ModifiableFlexIdeBuildConfiguration configuration) {
+    final FlexIdeBuildConfiguration defaultConfiguration = Factory.createBuildConfiguration();
 
-    if (configuration.OUTPUT_TYPE != OutputType.RuntimeLoadedModule) {
-      configuration.OPTIMIZE_FOR = defaultConfiguration.OPTIMIZE_FOR;
+    if (configuration.getOutputType() != OutputType.RuntimeLoadedModule) {
+      configuration.setOptimizeFor(defaultConfiguration.getOptimizeFor());
     }
 
-    if (configuration.OUTPUT_TYPE == OutputType.Library) {
-      configuration.MAIN_CLASS = defaultConfiguration.MAIN_CLASS;
+    if (configuration.getOutputType() == OutputType.Library) {
+      configuration.setMainClass(defaultConfiguration.getMainClass());
     }
 
-    if (configuration.TARGET_PLATFORM != TargetPlatform.Web ||
-        configuration.OUTPUT_TYPE != OutputType.Application) {
-      configuration.USE_HTML_WRAPPER = defaultConfiguration.USE_HTML_WRAPPER;
-      configuration.WRAPPER_TEMPLATE_PATH = defaultConfiguration.WRAPPER_TEMPLATE_PATH;
+    if (configuration.getTargetPlatform() != TargetPlatform.Web ||
+        configuration.getOutputType() != OutputType.Application) {
+      configuration.setUseHtmlWrapper(defaultConfiguration.isUseHtmlWrapper());
+      configuration.setWrapperTemplatePath(defaultConfiguration.getWrapperTemplatePath());
     }
 
-    if (configuration.TARGET_PLATFORM != TargetPlatform.Web) {
-      configuration.DEPENDENCIES.TARGET_PLAYER = defaultConfiguration.DEPENDENCIES.TARGET_PLAYER;
+    if (configuration.getTargetPlatform() != TargetPlatform.Web) {
+      configuration.getDependencies().setTargetPlayer(defaultConfiguration.getDependencies().getTargetPlayer());
     }
 
-    if (configuration.TARGET_PLATFORM == TargetPlatform.Mobile || configuration.PURE_ACTION_SCRIPT) {
-      configuration.DEPENDENCIES.COMPONENT_SET = defaultConfiguration.DEPENDENCIES.COMPONENT_SET;
+    if (configuration.getTargetPlatform() == TargetPlatform.Mobile || configuration.isPureAs()) {
+      configuration.getDependencies().setComponentSet(defaultConfiguration.getDependencies().getComponentSet());
     }
 
     BuildConfigurationNature nature = configuration.getNature();
-    for (Iterator<DependencyEntry> i = configuration.DEPENDENCIES.getEntries().iterator(); i.hasNext(); ) {
+    for (Iterator<ModifiableDependencyEntry> i = configuration.getDependencies().getModifiableEntries().iterator(); i.hasNext(); ) {
       if (!BCUtils.isApplicable(nature, i.next().getDependencyType().getLinkageType())) {
         i.remove();
       }

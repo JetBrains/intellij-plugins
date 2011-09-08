@@ -1,13 +1,9 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeProjectLevelCompilerOptionsHolder;
+import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.ValueSource;
-import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableCompilerOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.module.Module;
@@ -65,8 +61,8 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   private final Module myModule;
   private final Project myProject;
   private final String myName;
-  private final FlexIdeBuildConfigurationManager myBCManager;
-  private final FlexIdeProjectLevelCompilerOptionsHolder myProjectLevelOptionsHolder;
+  private final FlexBuildConfigurationManager myBCManager;
+  private final FlexProjectLevelCompilerOptionsHolder myProjectLevelOptionsHolder;
   private final ModifiableCompilerOptions myModel;
   private final Map<String, String> myCurrentOptions;
   private boolean myModified;
@@ -86,8 +82,8 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
              : myMode == Mode.Module
                ? MessageFormat.format("Default Compiler Options For Module ''{0}''", module.getName())
                : MessageFormat.format("Default Compiler Options For Project ''{0}''", project.getName());
-    myBCManager = myMode == Mode.BC ? FlexIdeBuildConfigurationManager.getInstance(module) : null;
-    myProjectLevelOptionsHolder = FlexIdeProjectLevelCompilerOptionsHolder.getInstance(project);
+    myBCManager = myMode == Mode.BC ? FlexBuildConfigurationManager.getInstance(module) : null;
+    myProjectLevelOptionsHolder = FlexProjectLevelCompilerOptionsHolder.getInstance(project);
     myModel = model;
     myCurrentOptions = new THashMap<String, String>();
 

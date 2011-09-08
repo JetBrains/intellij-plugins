@@ -1,13 +1,20 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
+import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdkProperties;
-import com.intellij.lang.javascript.flex.projectStructure.model.LinkageType;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.openapi.roots.LibraryOrderEntry;
+import com.intellij.openapi.roots.ModuleRootModel;
+import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
+import com.intellij.openapi.roots.impl.libraries.LibraryTableImplUtil;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * User: ksafonov
@@ -16,7 +23,7 @@ public class FlexProjectRootsUtil {
 
   public static boolean dependsOnModuleLibrary(@NotNull FlexIdeBuildConfiguration bc, @NotNull Library library, final boolean transitive) {
     final String libraryId = getLibraryId(library);
-    return !ContainerUtil.process(bc.DEPENDENCIES.getEntries(), new Processor<DependencyEntry>() {
+    return !ContainerUtil.process(bc.getDependencies().getEntries(), new Processor<DependencyEntry>() {
       @Override
       public boolean process(DependencyEntry dependencyEntry) {
         if (transitive && dependencyEntry.getDependencyType().getLinkageType() != LinkageType.Include) {
@@ -42,7 +49,7 @@ public class FlexProjectRootsUtil {
   }
 
   public static boolean dependsOnSdk(@NotNull FlexIdeBuildConfiguration bc, @NotNull Library library) {
-    SdkEntry sdkEntry = bc.DEPENDENCIES.getSdkEntry();
+    SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
     if (sdkEntry == null) {
       return false;
     }
@@ -65,5 +72,24 @@ public class FlexProjectRootsUtil {
 
   public static String getSdkLibraryId(@NotNull Library library) {
     return ((FlexSdkProperties)((LibraryEx)library).getProperties()).getId();
+  }
+
+  @Nullable
+  public static LibraryOrderEntry findOrderEntry(ModuleLibraryEntry entry, ModuleRootModel rootModel) {
+    for (OrderEntry orderEntry : rootModel.getOrderEntries()) {
+      if (orderEntry instanceof LibraryOrderEntry) {
+        if (!LibraryTableImplUtil.MODULE_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel())) {
+          continue;
+        }
+        LibraryEx library = (LibraryEx)((LibraryOrderEntry)orderEntry).getLibrary();
+        if (library == null || !(library.getType() instanceof FlexLibraryType)) {
+          continue;
+        }
+        if (entry.getLibraryId().equals(getLibraryId(library))) {
+          return (LibraryOrderEntry)orderEntry;
+        }
+      }
+    }
+    return null;
   }
 }

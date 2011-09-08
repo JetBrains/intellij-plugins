@@ -2,10 +2,12 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
-import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
@@ -57,7 +59,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   private JCheckBox mySkipCompilationCheckBox;
 
   private final Module myModule;
-  private final FlexIdeBuildConfiguration myConfiguration;
+  private final ModifiableFlexIdeBuildConfiguration myConfiguration;
   private final Runnable myTreeNodeNameUpdater;
   private String myName;
 
@@ -68,28 +70,28 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   private final @Nullable IOSPackagingConfigurable myIOSPackagingConfigurable;
 
   public FlexIdeBCConfigurable(final Module module,
-                               final FlexIdeBuildConfiguration configuration,
+                               final ModifiableFlexIdeBuildConfiguration configuration,
                                final FlexSdksModifiableModel sdksModel,
                                final Runnable treeNodeNameUpdater) {
     super(false, treeNodeNameUpdater);
     myModule = module;
     myConfiguration = configuration;
     myTreeNodeNameUpdater = treeNodeNameUpdater;
-    myName = configuration.NAME;
+    myName = configuration.getName();
 
     final BuildConfigurationNature nature = configuration.getNature();
 
     ModifiableRootModel modifiableRootModel = getModulesConfigurator().getOrCreateModuleEditor(myModule).getModifiableRootModelProxy();
     myDependenciesConfigurable = new DependenciesConfigurable(configuration, module.getProject(), sdksModel, modifiableRootModel);
-    myCompilerOptionsConfigurable = new CompilerOptionsConfigurable(module, configuration.COMPILER_OPTIONS);
+    myCompilerOptionsConfigurable = new CompilerOptionsConfigurable(module, configuration.getCompilerOptions());
     myAirDesktopPackagingConfigurable = nature.isDesktopPlatform() && nature.isApp()
-                                        ? new AirDesktopPackagingConfigurable(module, configuration.AIR_DESKTOP_PACKAGING_OPTIONS)
+                                        ? new AirDesktopPackagingConfigurable(module, configuration.getAirDesktopPackagingOptions())
                                         : null;
     myAndroidPackagingConfigurable = nature.isMobilePlatform() && nature.isApp()
-                                     ? new AndroidPackagingConfigurable(module.getProject(), configuration.ANDROID_PACKAGING_OPTIONS)
+                                     ? new AndroidPackagingConfigurable(module.getProject(), configuration.getAndroidPackagingOptions())
                                      : null;
     myIOSPackagingConfigurable = nature.isMobilePlatform() && nature.isApp()
-                                 ? new IOSPackagingConfigurable(module.getProject(), configuration.IOS_PACKAGING_OPTIONS)
+                                 ? new IOSPackagingConfigurable(module.getProject(), configuration.getIosPackagingOptions())
                                  : null;
 
     myNameField.getDocument().addDocumentListener(new DocumentAdapter() {
@@ -229,23 +231,24 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
   public OutputType getOutputType() {
     // immutable field
-    return myConfiguration.OUTPUT_TYPE;
+    return myConfiguration.getOutputType();
   }
 
   public boolean isModified() {
-    if (!myConfiguration.NAME.equals(myName)) return true;
-    if (myConfiguration.TARGET_PLATFORM != myTargetPlatformCombo.getSelectedItem()) return true;
-    if (myConfiguration.PURE_ACTION_SCRIPT != myPureActionScriptCheckBox.isSelected()) return true;
-    if (myConfiguration.OUTPUT_TYPE != myOutputTypeCombo.getSelectedItem()) return true;
-    if (!myConfiguration.OPTIMIZE_FOR.equals(myOptimizeForCombo.getSelectedItem())) return true;
-    if (!myConfiguration.MAIN_CLASS.equals(myMainClassTextField.getText().trim())) return true;
-    if (!myConfiguration.OUTPUT_FILE_NAME.equals(myOutputFileNameTextField.getText().trim())) return true;
-    if (!myConfiguration.OUTPUT_FOLDER.equals(FileUtil.toSystemIndependentName(myOutputFolderField.getText().trim()))) return true;
-    if (myConfiguration.USE_HTML_WRAPPER != myUseHTMLWrapperCheckBox.isSelected()) return true;
-    if (!myConfiguration.WRAPPER_TEMPLATE_PATH.equals(FileUtil.toSystemIndependentName(myWrapperTemplateTextWithBrowse.getText().trim()))) {
+    if (!myConfiguration.getName().equals(myName)) return true;
+    if (myConfiguration.getTargetPlatform() != myTargetPlatformCombo.getSelectedItem()) return true;
+    if (myConfiguration.isPureAs() != myPureActionScriptCheckBox.isSelected()) return true;
+    if (myConfiguration.getOutputType() != myOutputTypeCombo.getSelectedItem()) return true;
+    if (!myConfiguration.getOptimizeFor().equals(myOptimizeForCombo.getSelectedItem())) return true;
+    if (!myConfiguration.getMainClass().equals(myMainClassTextField.getText().trim())) return true;
+    if (!myConfiguration.getOutputFileName().equals(myOutputFileNameTextField.getText().trim())) return true;
+    if (!myConfiguration.getOutputFolder().equals(FileUtil.toSystemIndependentName(myOutputFolderField.getText().trim()))) return true;
+    if (myConfiguration.isUseHtmlWrapper() != myUseHTMLWrapperCheckBox.isSelected()) return true;
+    if (!myConfiguration.getWrapperTemplatePath()
+      .equals(FileUtil.toSystemIndependentName(myWrapperTemplateTextWithBrowse.getText().trim()))) {
       return true;
     }
-    if (myConfiguration.SKIP_COMPILE != mySkipCompilationCheckBox.isSelected()) return true;
+    if (myConfiguration.isSkipCompile() != mySkipCompilationCheckBox.isSelected()) return true;
 
     if (myDependenciesConfigurable.isModified()) return true;
     if (myCompilerOptionsConfigurable.isModified()) return true;
@@ -266,46 +269,46 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     if (myIOSPackagingConfigurable != null) myIOSPackagingConfigurable.apply();
   }
 
-  private void applyTo(final FlexIdeBuildConfiguration configuration, boolean validate) throws ConfigurationException {
+  private void applyTo(final ModifiableFlexIdeBuildConfiguration configuration, boolean validate) throws ConfigurationException {
     applyOwnTo(configuration, validate);
 
-    myDependenciesConfigurable.applyTo(configuration.DEPENDENCIES);
-    myCompilerOptionsConfigurable.applyTo(configuration.COMPILER_OPTIONS);
-    if (myAirDesktopPackagingConfigurable != null) myAirDesktopPackagingConfigurable.applyTo(configuration.AIR_DESKTOP_PACKAGING_OPTIONS);
-    if (myAndroidPackagingConfigurable != null) myAndroidPackagingConfigurable.applyTo(configuration.ANDROID_PACKAGING_OPTIONS);
-    if (myIOSPackagingConfigurable != null) myIOSPackagingConfigurable.applyTo(configuration.IOS_PACKAGING_OPTIONS);
+    myDependenciesConfigurable.applyTo(configuration.getDependencies());
+    myCompilerOptionsConfigurable.applyTo(configuration.getCompilerOptions());
+    if (myAirDesktopPackagingConfigurable != null) myAirDesktopPackagingConfigurable.applyTo(configuration.getAirDesktopPackagingOptions());
+    if (myAndroidPackagingConfigurable != null) myAndroidPackagingConfigurable.applyTo(configuration.getAndroidPackagingOptions());
+    if (myIOSPackagingConfigurable != null) myIOSPackagingConfigurable.applyTo(configuration.getIosPackagingOptions());
   }
 
-  private void applyOwnTo(FlexIdeBuildConfiguration configuration, boolean validate) throws ConfigurationException {
+  private void applyOwnTo(ModifiableFlexIdeBuildConfiguration configuration, boolean validate) throws ConfigurationException {
     if (validate && StringUtil.isEmptyOrSpaces(myName)) {
       throw new ConfigurationException("Module '" + getModuleName() + "': build configuration name is empty");
     }
-    configuration.NAME = myName;
-    configuration.TARGET_PLATFORM = (TargetPlatform)myTargetPlatformCombo.getSelectedItem();
-    configuration.PURE_ACTION_SCRIPT = myPureActionScriptCheckBox.isSelected();
-    configuration.OUTPUT_TYPE = (OutputType)myOutputTypeCombo.getSelectedItem();
-    configuration.OPTIMIZE_FOR = (String)myOptimizeForCombo.getSelectedItem(); // todo myOptimizeForCombo should contain live information
-    configuration.MAIN_CLASS = myMainClassTextField.getText().trim();
-    configuration.OUTPUT_FILE_NAME = myOutputFileNameTextField.getText().trim();
-    configuration.OUTPUT_FOLDER = FileUtil.toSystemIndependentName(myOutputFolderField.getText().trim());
-    configuration.USE_HTML_WRAPPER = myUseHTMLWrapperCheckBox.isSelected();
-    configuration.WRAPPER_TEMPLATE_PATH = FileUtil.toSystemIndependentName(myWrapperTemplateTextWithBrowse.getText().trim());
-    configuration.SKIP_COMPILE = mySkipCompilationCheckBox.isSelected();
+    configuration.setName(myName);
+    configuration.setTargetPlatform((TargetPlatform)myTargetPlatformCombo.getSelectedItem());
+    configuration.setPureAs(myPureActionScriptCheckBox.isSelected());
+    configuration.setOutputType((OutputType)myOutputTypeCombo.getSelectedItem());
+    configuration.setOptimizeFor((String)myOptimizeForCombo.getSelectedItem()); // todo myOptimizeForCombo should contain live information
+      configuration.setMainClass(myMainClassTextField.getText().trim());
+    configuration.setOutputFileName(myOutputFileNameTextField.getText().trim());
+    configuration.setOutputFolder(FileUtil.toSystemIndependentName(myOutputFolderField.getText().trim()));
+    configuration.setUseHtmlWrapper(myUseHTMLWrapperCheckBox.isSelected());
+    configuration.setWrapperTemplatePath(FileUtil.toSystemIndependentName(myWrapperTemplateTextWithBrowse.getText().trim()));
+    configuration.setSkipCompile(mySkipCompilationCheckBox.isSelected());
   }
 
   public void reset() {
-    setDisplayName(myConfiguration.NAME);
-    myTargetPlatformCombo.setSelectedItem(myConfiguration.TARGET_PLATFORM);
-    myPureActionScriptCheckBox.setSelected(myConfiguration.PURE_ACTION_SCRIPT);
-    myOutputTypeCombo.setSelectedItem(myConfiguration.OUTPUT_TYPE);
-    myOptimizeForCombo.setSelectedItem(myConfiguration.OPTIMIZE_FOR);
+    setDisplayName(myConfiguration.getName());
+    myTargetPlatformCombo.setSelectedItem(myConfiguration.getTargetPlatform());
+    myPureActionScriptCheckBox.setSelected(myConfiguration.isPureAs());
+    myOutputTypeCombo.setSelectedItem(myConfiguration.getOutputType());
+    myOptimizeForCombo.setSelectedItem(myConfiguration.getOptimizeFor());
 
-    myMainClassTextField.setText(myConfiguration.MAIN_CLASS);
-    myOutputFileNameTextField.setText(myConfiguration.OUTPUT_FILE_NAME);
-    myOutputFolderField.setText(FileUtil.toSystemDependentName(myConfiguration.OUTPUT_FOLDER));
-    myUseHTMLWrapperCheckBox.setSelected(myConfiguration.USE_HTML_WRAPPER);
-    myWrapperTemplateTextWithBrowse.setText(FileUtil.toSystemDependentName(myConfiguration.WRAPPER_TEMPLATE_PATH));
-    mySkipCompilationCheckBox.setSelected(myConfiguration.SKIP_COMPILE);
+    myMainClassTextField.setText(myConfiguration.getMainClass());
+    myOutputFileNameTextField.setText(myConfiguration.getOutputFileName());
+    myOutputFolderField.setText(FileUtil.toSystemDependentName(myConfiguration.getOutputFolder()));
+    myUseHTMLWrapperCheckBox.setSelected(myConfiguration.isUseHtmlWrapper());
+    myWrapperTemplateTextWithBrowse.setText(FileUtil.toSystemDependentName(myConfiguration.getWrapperTemplatePath()));
+    mySkipCompilationCheckBox.setSelected(myConfiguration.isSkipCompile());
 
     updateControls();
 
@@ -327,7 +330,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   }
 
   public FlexIdeBuildConfiguration getCurrentConfiguration() {
-    final FlexIdeBuildConfiguration configuration = new FlexIdeBuildConfiguration();
+    final ModifiableFlexIdeBuildConfiguration configuration = Factory.createBuildConfiguration();
     try {
       applyTo(configuration, false);
     }

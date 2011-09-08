@@ -5,9 +5,9 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airdescriptor.AirDescriptorParameters;
 import com.intellij.lang.javascript.flex.actions.airdescriptor.CreateAirDescriptorAction;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
-import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.options.SdkEntry;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
@@ -303,14 +303,14 @@ public class FlexCompilationUtils {
   }
 
   public static void performPostCompileActions(final @NotNull FlexIdeBuildConfiguration config) throws FlexCompilerException {
-    switch (config.TARGET_PLATFORM) {
+    switch (config.getTargetPlatform()) {
       case Web:
-        if (config.USE_HTML_WRAPPER) {
+        if (config.isUseHtmlWrapper()) {
           // todo copy to out and replace {swf}
         }
         break;
       case Desktop:
-        if (config.AIR_DESKTOP_PACKAGING_OPTIONS.isUseGeneratedDescriptor()) {
+        if (config.getAirDesktopPackagingOptions().isUseGeneratedDescriptor()) {
           generateAirDescriptor(config);
         }
         else {
@@ -329,16 +329,16 @@ public class FlexCompilationUtils {
       public void run() {
         try {
           final String descriptorFileName = BCUtils.getGeneratedAirDescriptorName(config);
-          final SdkEntry sdkEntry = config.DEPENDENCIES.getSdkEntry();
+          final SdkEntry sdkEntry = config.getDependencies().getSdkEntry();
           assert sdkEntry != null;
           final Library sdk = sdkEntry.findLibrary();
           assert sdk != null;
           final String airVersion = FlexSdkUtils.getAirVersion(FlexSdk.getFlexVersion(sdk));
-          final String fileName = FileUtil.getNameWithoutExtension(config.OUTPUT_FILE_NAME);
+          final String fileName = FileUtil.getNameWithoutExtension(config.getOutputFileName());
 
           CreateAirDescriptorAction.createAirDescriptor(
-            new AirDescriptorParameters(descriptorFileName, config.OUTPUT_FOLDER, airVersion, config.MAIN_CLASS, fileName, fileName,
-                                        "1.0", config.OUTPUT_FILE_NAME, fileName, 400, 300, false));
+            new AirDescriptorParameters(descriptorFileName, config.getOutputFolder(), airVersion, config.getMainClass(), fileName, fileName,
+                                        "1.0", config.getOutputFileName(), fileName, 400, 300, false));
         }
         catch (IOException e) {
           exceptionRef.set(new FlexCompilerException("Failed to generate AIR descriptor: " + e));
@@ -352,13 +352,13 @@ public class FlexCompilationUtils {
   }
 
   private static void copyAndFixCustomAirDescriptor(final FlexIdeBuildConfiguration config) throws FlexCompilerException {
-    final String path = config.AIR_DESKTOP_PACKAGING_OPTIONS.getCustomDescriptorPath();
+    final String path = config.getAirDesktopPackagingOptions().getCustomDescriptorPath();
     final VirtualFile descriptorTemplateFile = LocalFileSystem.getInstance().findFileByPath(path);
     if (descriptorTemplateFile == null) {
       throw new FlexCompilerException("Custom AIR descriptor file not found: " + path);
     }
 
-    final VirtualFile outputFolder = LocalFileSystem.getInstance().findFileByPath(config.OUTPUT_FOLDER);
+    final VirtualFile outputFolder = LocalFileSystem.getInstance().findFileByPath(config.getOutputFolder());
     assert outputFolder != null;
 
 
@@ -369,7 +369,7 @@ public class FlexCompilationUtils {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
           public void run() {
             try {
-              final String content = fixInitialContent(descriptorTemplateFile, config.OUTPUT_FILE_NAME);
+              final String content = fixInitialContent(descriptorTemplateFile, config.getOutputFileName());
               FlexUtils.addFileWithContent(descriptorTemplateFile.getName(), content, outputFolder);
             }
             catch (FlexCompilerException e) {

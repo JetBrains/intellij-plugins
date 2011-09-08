@@ -1,8 +1,9 @@
-package com.intellij.lang.javascript.flex.projectStructure.model;
+package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableIosPackagingOptions;
 import com.intellij.util.xmlb.annotations.Tag;
 
-public class IosPackagingOptionsImpl implements ModifiableIosPackagingOptions {
+class IosPackagingOptionsImpl implements ModifiableIosPackagingOptions {
 
   public IosPackagingOptionsImpl getCopy() {
     return new IosPackagingOptionsImpl();
@@ -13,6 +14,10 @@ public class IosPackagingOptionsImpl implements ModifiableIosPackagingOptions {
   }
 
   public void loadState(State state) {
+  }
+
+  void applyTo(IosPackagingOptionsImpl copy) {
+
   }
 
   @Tag("packaging-ios")

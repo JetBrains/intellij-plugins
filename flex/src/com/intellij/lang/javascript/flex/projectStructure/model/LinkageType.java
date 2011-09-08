@@ -46,13 +46,13 @@ public class LinkageType {
     return getShortText();
   }
 
-  public static LinkageType valueOf(String linkageType) {
+  public static LinkageType valueOf(String linkageType, LinkageType defaultValue) {
     for (LinkageType type : all) {
       if (type.getSerializedText().equals(linkageType)) {
         return type;
       }
     }
-    throw new IllegalArgumentException("Unknown linkage type: " + linkageType);
+    return defaultValue;
   }
 
   public static LinkageType[] getSwcLinkageValues() {

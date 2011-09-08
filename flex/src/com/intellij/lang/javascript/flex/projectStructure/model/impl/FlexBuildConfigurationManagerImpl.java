@@ -1,21 +1,14 @@
-package com.intellij.lang.javascript.flex.projectStructure;
+package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.ProjectTopics;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
-import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptionsImpl;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableCompilerOptions;
-import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationEntry;
-import com.intellij.lang.javascript.flex.projectStructure.options.DependencyEntry;
-import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.ModuleAdapter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
@@ -29,22 +22,24 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Property;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-@State(name = "FlexIdeBuildConfigurationManager", storages = {@Storage(file = "$MODULE_FILE$")})
-public class FlexIdeBuildConfigurationManager implements PersistentStateComponent<FlexIdeBuildConfigurationManager.State> {
+@State(name = "FlexBuildConfigurationManager", storages = {@Storage(file = "$MODULE_FILE$")})
+public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationManager
+  implements PersistentStateComponent<FlexBuildConfigurationManagerImpl.State> {
 
-  private static final Logger LOG = Logger.getInstance(FlexIdeBuildConfigurationManager.class.getName());
+  private static final Logger LOG = Logger.getInstance(FlexBuildConfigurationManagerImpl.class.getName());
 
   private final Module myModule;
-  private FlexIdeBuildConfiguration[] myConfigurations = new FlexIdeBuildConfiguration[]{new FlexIdeBuildConfiguration()};
-  private final CompilerOptionsImpl myModuleLevelCompilerOptions = new CompilerOptionsImpl();
-  private FlexIdeBuildConfiguration myActiveConfiguration = myConfigurations[0];
+  private FlexIdeBuildConfigurationImpl[] myConfigurations = new FlexIdeBuildConfigurationImpl[]{new FlexIdeBuildConfigurationImpl()};
 
-  public FlexIdeBuildConfigurationManager(final Module module) {
+  private final CompilerOptionsImpl myModuleLevelCompilerOptions = new CompilerOptionsImpl();
+  private FlexIdeBuildConfigurationImpl myActiveConfiguration = myConfigurations[0];
+
+  public FlexBuildConfigurationManagerImpl(final Module module) {
     myModule = module;
 
     myModule.getProject().getMessageBus().connect(myModule).subscribe(ProjectTopics.MODULES, new ModuleAdapter() {
@@ -58,9 +53,9 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
   }
 
   private void removeDependenciesOn(Module module) {
-    for (FlexIdeBuildConfiguration configuration : myConfigurations) {
+    for (ModifiableFlexIdeBuildConfiguration configuration : myConfigurations) {
       // TODO remove 'optimize for' links
-      for (Iterator<DependencyEntry> i = configuration.DEPENDENCIES.getEntries().iterator(); i.hasNext(); ) {
+      for (Iterator<ModifiableDependencyEntry> i = configuration.getDependencies().getModifiableEntries().iterator(); i.hasNext(); ) {
         DependencyEntry entry = i.next();
         if (entry instanceof BuildConfigurationEntry && ((BuildConfigurationEntry)entry).findModule() == module) {
           i.remove();
@@ -69,29 +64,32 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
     }
   }
 
+  @Override
   @Nullable
   public FlexIdeBuildConfiguration findConfigurationByName(final String name) {
-    for (final FlexIdeBuildConfiguration configuration : myConfigurations) {
-      if (configuration.NAME.equals(name)) {
+    for (ModifiableFlexIdeBuildConfiguration configuration : myConfigurations) {
+      if (configuration.getName().equals(name)) {
         return configuration;
       }
     }
     return null;
   }
 
+  @Override
   public FlexIdeBuildConfiguration getActiveConfiguration() {
     return myActiveConfiguration;
   }
 
+  @Override
   public void setActiveBuildConfiguration(final FlexIdeBuildConfiguration buildConfiguration) {
     if (!ArrayUtil.contains(buildConfiguration, myConfigurations)) {
       throw new IllegalArgumentException(
-        "Build configuration " + buildConfiguration.NAME + " does not belong to module " + myModule.getName());
+        "Build configuration " + buildConfiguration.getName() + " does not belong to module " + myModule.getName());
     }
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {
-        myActiveConfiguration = buildConfiguration;
+        myActiveConfiguration = (FlexIdeBuildConfigurationImpl)buildConfiguration;
         ProjectRootManagerEx.getInstanceEx(myModule.getProject()).makeRootsChange(EmptyRunnable.getInstance(), false, true);
         ((PsiModificationTrackerImpl)PsiManager.getInstance(myModule.getProject()).getModificationTracker()).incCounter();
       }
@@ -99,23 +97,20 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
     DaemonCodeAnalyzer.getInstance(myModule.getProject()).restart();
   }
 
-  public static FlexIdeBuildConfigurationManager getInstance(final @NotNull Module module) {
-    assert ModuleType.get(module) == FlexModuleType.getInstance() : ModuleType.get(module).getName() + ", " + module.toString();
-    return (FlexIdeBuildConfigurationManager)module.getPicoContainer()
-      .getComponentInstance(FlexIdeBuildConfigurationManager.class.getName());
-  }
-
   public FlexIdeBuildConfiguration[] getBuildConfigurations() {
     return Arrays.copyOf(myConfigurations, myConfigurations.length);
   }
 
   // TODO should be getModifiableModel()!
+  @Override
   public ModifiableCompilerOptions getModuleLevelCompilerOptions() {
     return myModuleLevelCompilerOptions;
   }
 
-  void setBuildConfigurations(final FlexIdeBuildConfiguration[] configurations) {
-    final String activeName = myActiveConfiguration != null ? myActiveConfiguration.NAME : null;
+
+  @Override
+  public void setBuildConfigurations(FlexIdeBuildConfiguration[] configurations) {
+    final String activeName = myActiveConfiguration != null ? myActiveConfiguration.getName() : null;
     ApplicationManager.getApplication().assertWriteAccessAllowed();
     myConfigurations = getValidatedConfigurations(Arrays.asList(configurations));
     updateActiveConfiguration(activeName);
@@ -123,12 +118,13 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
 
   private void updateActiveConfiguration(@Nullable final String activeName) {
     if (myConfigurations.length > 0) {
-      myActiveConfiguration = activeName != null ? ContainerUtil.find(myConfigurations, new Condition<FlexIdeBuildConfiguration>() {
-        @Override
-        public boolean value(FlexIdeBuildConfiguration flexIdeBuildConfiguration) {
-          return flexIdeBuildConfiguration.NAME.equals(activeName);
-        }
-      }) : null;
+      myActiveConfiguration =
+        activeName != null ? ContainerUtil.find(myConfigurations, new Condition<FlexIdeBuildConfigurationImpl>() {
+          @Override
+          public boolean value(FlexIdeBuildConfigurationImpl flexIdeBuildConfiguration) {
+            return flexIdeBuildConfiguration.getName().equals(activeName);
+          }
+        }) : null;
       if (myActiveConfiguration == null) {
         myActiveConfiguration = myConfigurations[0];
       }
@@ -140,43 +136,50 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
 
   public State getState() {
     final State state = new State();
-    Collections.addAll(state.myConfigurations, myConfigurations);
+    for (FlexIdeBuildConfigurationImpl configuration : myConfigurations) {
+      state.CONFIGURATIONS.add(configuration.getState());
+    }
     state.myModuleLevelCompilerOptions = myModuleLevelCompilerOptions.getState();
-    state.myActiveConfigurationName = myActiveConfiguration != null ? myActiveConfiguration.NAME : null;
+    state.myActiveConfigurationName = myActiveConfiguration != null ? myActiveConfiguration.getName() : null;
     return state;
   }
 
   public void loadState(final State state) {
-    myConfigurations = getValidatedConfigurations(state.myConfigurations);
-    for (FlexIdeBuildConfiguration configuration : myConfigurations) {
-      configuration.initialize(myModule.getProject());
+    Collection<FlexIdeBuildConfigurationImpl> configurations = new ArrayList<FlexIdeBuildConfigurationImpl>(state.CONFIGURATIONS.size());
+    for (FlexIdeBuildConfigurationImpl.State configurationState : state.CONFIGURATIONS) {
+      FlexIdeBuildConfigurationImpl configuration = new FlexIdeBuildConfigurationImpl();
+      configuration.loadState(configurationState, myModule.getProject());
+      configurations.add(configuration);
     }
+    myConfigurations = getValidatedConfigurations(configurations);
     updateActiveConfiguration(state.myActiveConfigurationName);
     myModuleLevelCompilerOptions.loadState(state.myModuleLevelCompilerOptions);
   }
 
-  private static FlexIdeBuildConfiguration[] getValidatedConfigurations(Collection<FlexIdeBuildConfiguration> configurations) {
-    LinkedHashMap<String, FlexIdeBuildConfiguration> name2configuration =
-      new LinkedHashMap<String, FlexIdeBuildConfiguration>(configurations.size());
+  private static FlexIdeBuildConfigurationImpl[] getValidatedConfigurations(Collection<? extends FlexIdeBuildConfiguration> configurations) {
+    LinkedHashMap<String, FlexIdeBuildConfigurationImpl> name2configuration =
+      new LinkedHashMap<String, FlexIdeBuildConfigurationImpl>(configurations.size());
     for (FlexIdeBuildConfiguration configuration : configurations) {
-      if (StringUtil.isEmpty(configuration.NAME)) {
+      if (StringUtil.isEmpty(configuration.getName())) {
         LOG.error("Empty build configuration name");
       }
-      if (name2configuration.put(configuration.NAME, configuration) != null) {
-        LOG.error("Duplicate build configuration name: " + configuration.NAME);
+      if (name2configuration.put(configuration.getName(), (FlexIdeBuildConfigurationImpl)configuration) != null) {
+        LOG.error("Duplicate build configuration name: " + configuration.getName());
       }
     }
 
     if (configurations.isEmpty()) {
-      LOG.error("No configurations found");
-      return new FlexIdeBuildConfiguration[]{new FlexIdeBuildConfiguration()};
+      // TODO this project is opened with new UI the first time -> convert
+      LOG.warn("No configurations found");
+      return new FlexIdeBuildConfigurationImpl[]{new FlexIdeBuildConfigurationImpl()};
     }
-    return name2configuration.values().toArray(new FlexIdeBuildConfiguration[name2configuration.size()]);
+    return name2configuration.values().toArray(new FlexIdeBuildConfigurationImpl[name2configuration.size()]);
   }
 
   public static class State {
-    @AbstractCollection(elementTypes = FlexIdeBuildConfiguration.class)
-    public Collection<FlexIdeBuildConfiguration> myConfigurations = new ArrayList<FlexIdeBuildConfiguration>();
+    @Tag("configurations")
+    @AbstractCollection(surroundWithTag = false, elementTag = "configuration")
+    public List<FlexIdeBuildConfigurationImpl.State> CONFIGURATIONS = new ArrayList<FlexIdeBuildConfigurationImpl.State>();
 
     @Property(surroundWithTag = false)
     public CompilerOptionsImpl.State myModuleLevelCompilerOptions = new CompilerOptionsImpl.State();

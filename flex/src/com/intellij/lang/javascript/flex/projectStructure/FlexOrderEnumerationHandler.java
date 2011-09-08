@@ -2,8 +2,9 @@ package com.intellij.lang.javascript.flex.projectStructure;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
-import com.intellij.lang.javascript.flex.projectStructure.model.LinkageType;
-import com.intellij.lang.javascript.flex.projectStructure.options.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
@@ -71,7 +72,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
     }
 
     if (configuration == null) {
-      configuration = FlexIdeBuildConfigurationManager.getInstance(module).getActiveConfiguration();
+      configuration = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
     }
 
     if (configuration == null || !processedConfigurations.add(configuration)) {
@@ -79,7 +80,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
     }
 
     modules2activeConfigurations.putValue(module, configuration);
-    for (DependencyEntry entry : configuration.DEPENDENCIES.getEntries()) {
+    for (DependencyEntry entry : configuration.getDependencies().getEntries()) {
       if (entry instanceof BuildConfigurationEntry) {
         if (entry.getDependencyType().getLinkageType() == LinkageType.LoadInRuntime) {
           continue;
@@ -108,7 +109,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
     }
     else {
       // let all configurations be accessible in ProjectOrderEnumerator
-      accessibleConfigurations = Arrays.asList(FlexIdeBuildConfigurationManager.getInstance(module).getBuildConfigurations());
+      accessibleConfigurations = Arrays.asList(FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations());
     }
     if (orderEntry instanceof LibraryOrderEntry) {
       final LibraryEx library = (LibraryEx)((LibraryOrderEntry)orderEntry).getLibrary();

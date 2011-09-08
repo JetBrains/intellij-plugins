@@ -1,5 +1,6 @@
-package com.intellij.lang.javascript.flex.projectStructure.model;
+package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableCompilerOptions;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.Map;
 
-public class CompilerOptionsImpl implements ModifiableCompilerOptions {
+class CompilerOptionsImpl implements ModifiableCompilerOptions {
 
   private final Map<String, String> myOptions = new THashMap<String, String>();
 
@@ -41,7 +42,7 @@ public class CompilerOptionsImpl implements ModifiableCompilerOptions {
     return copy;
   }
 
-  private void applyTo(ModifiableCompilerOptions copy) {
+  void applyTo(ModifiableCompilerOptions copy) {
     copy.setAllOptions(myOptions);
   }
 

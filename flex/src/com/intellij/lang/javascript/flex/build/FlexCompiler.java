@@ -7,10 +7,11 @@ import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.facet.FacetManager;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
-import com.intellij.lang.javascript.flex.projectStructure.model.LinkageType;
-import com.intellij.lang.javascript.flex.projectStructure.options.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
+import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.lang.javascript.flex.run.*;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkAdditionalData;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
@@ -249,7 +250,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
                                                   final Module module,
                                                   final boolean builtInCompiler) {
     if (ModuleType.get(module) instanceof FlexModuleType) {
-      for (final FlexIdeBuildConfiguration config : FlexIdeBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
+      for (final FlexIdeBuildConfiguration config : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
         compilationTasks.add(builtInCompiler ? new BuiltInCompilationTask(module, config)
                                              : new MxmlcCompcCompilationTask(module, config));
       }
@@ -353,7 +354,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
         throw new ConfigurationException(e.getMessage(), FlexBundle.message("run.configuration.0", runConfiguration.getName()));
       }
 
-      if (!moduleAndConfig.second.SKIP_COMPILE) {
+      if (!moduleAndConfig.second.isSkipCompile()) {
         result.add(moduleAndConfig);
         appendBCDependencies(result, moduleAndConfig.first, moduleAndConfig.second);
       }
@@ -364,8 +365,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
       final Collection<Pair<Module, FlexIdeBuildConfiguration>> result = new ArrayList<Pair<Module, FlexIdeBuildConfiguration>>();
 
       for (final Module module : scope.getAffectedModules()) {
-        for (final FlexIdeBuildConfiguration config : FlexIdeBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
-          if (!config.SKIP_COMPILE) {
+        for (final FlexIdeBuildConfiguration config : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
+          if (!config.isSkipCompile()) {
             result.add(Pair.create(module, config));
           }
         }
@@ -378,7 +379,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
   private static void appendBCDependencies(final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndConfigs,
                                            final Module module,
                                            final FlexIdeBuildConfiguration config) throws ConfigurationException {
-    for (final DependencyEntry entry : config.DEPENDENCIES.getEntries()) {
+    for (final DependencyEntry entry : config.getDependencies().getEntries()) {
       if (entry instanceof BuildConfigurationEntry) {
         final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
 
@@ -387,12 +388,12 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
         if (otherModule == null || otherConfig == null) {
           throw new ConfigurationException(FlexBundle.message("bc.dependency.does.not.exist", bcEntry.getBcName(), bcEntry.getModuleName(),
-                                                              config.NAME, module.getName()),
+                                                              config.getName(), module.getName()),
                                            FlexBundle.message("project.setup.problem.title"));
         }
 
         final Pair<Module, FlexIdeBuildConfiguration> otherModuleAndConfig = Pair.create(otherModule, otherConfig);
-        if (!otherConfig.SKIP_COMPILE) {
+        if (!otherConfig.isSkipCompile()) {
           if (modulesAndConfigs.add(otherModuleAndConfig)) {
             appendBCDependencies(modulesAndConfigs, otherModule, otherConfig);
           }
@@ -402,38 +403,39 @@ public class FlexCompiler implements SourceProcessingCompiler {
   }
 
   private static void validateConfiguration(final String moduleName, final FlexIdeBuildConfiguration config) throws ConfigurationException {
-    assert !config.SKIP_COMPILE;
+    assert !config.isSkipCompile();
     final BuildConfigurationNature nature = config.getNature();
 
-    final SdkEntry sdkEntry = config.DEPENDENCIES.getSdkEntry();
+    final SdkEntry sdkEntry = config.getDependencies().getSdkEntry();
     final Library sdkLib = sdkEntry == null ? null : sdkEntry.findLibrary();
     if (sdkLib == null) {
-      throw new ConfigurationException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", config.NAME, moduleName),
+      throw new ConfigurationException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", config.getName(), moduleName),
                                        FlexBundle.message("project.setup.problem.title"));
     }
 
-    if (!nature.isLib() && config.MAIN_CLASS.isEmpty()) {
-      throw new ConfigurationException(FlexBundle.message("main.class.not.set.for.bc.0.of.module.1", config.NAME, moduleName),
+    if (!nature.isLib() && config.getMainClass().isEmpty()) {
+      throw new ConfigurationException(FlexBundle.message("main.class.not.set.for.bc.0.of.module.1", config.getName(), moduleName),
                                        FlexBundle.message("project.setup.problem.title"));
       // todo real main class validation?
     }
 
-    if (config.OUTPUT_FILE_NAME.isEmpty()) {
-      throw new ConfigurationException(FlexBundle.message("output.file.name.not.set.for.bc.0.of.module.1", config.NAME, moduleName),
+    if (config.getOutputFileName().isEmpty()) {
+      throw new ConfigurationException(FlexBundle.message("output.file.name.not.set.for.bc.0.of.module.1", config.getName(), moduleName),
                                        FlexBundle.message("project.setup.problem.title"));
     }
 
-    if (nature.isWebPlatform() && nature.isApp() && config.USE_HTML_WRAPPER) {
-      if (config.WRAPPER_TEMPLATE_PATH.isEmpty()) {
+    if (nature.isWebPlatform() && nature.isApp() && config.isUseHtmlWrapper()) {
+      if (config.getWrapperTemplatePath().isEmpty()) {
+
         throw new ConfigurationException(
-          FlexBundle.message("html.template.folder.not.set.for.bc.0.of.module.1", config.NAME, moduleName),
+          FlexBundle.message("html.template.folder.not.set.for.bc.0.of.module.1", config.getName(), moduleName),
           FlexBundle.message("project.setup.problem.title"));
       }
-      final VirtualFile wrapperTemplateDir = LocalFileSystem.getInstance().findFileByPath(config.WRAPPER_TEMPLATE_PATH);
+      final VirtualFile wrapperTemplateDir = LocalFileSystem.getInstance().findFileByPath(config.getWrapperTemplatePath());
       if (wrapperTemplateDir == null || !wrapperTemplateDir.isDirectory()) {
         throw new ConfigurationException(FlexBundle
-                                           .message("html.template.folder.not.found.for.bc.0.of.module.1.2", config.NAME, moduleName,
-                                                    config.WRAPPER_TEMPLATE_PATH), FlexBundle.message("project.setup.problem.title"));
+                                           .message("html.template.folder.not.found.for.bc.0.of.module.1.2", config.getName(), moduleName,
+                                                    config.getWrapperTemplatePath()), FlexBundle.message("project.setup.problem.title"));
         // todo check that it contains wrapper template
       }
     }
@@ -442,7 +444,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
   }
 
   private static void checkDependencies(final String moduleName, final FlexIdeBuildConfiguration config) throws ConfigurationException {
-    for (final DependencyEntry entry : config.DEPENDENCIES.getEntries()) {
+    for (final DependencyEntry entry : config.getDependencies().getEntries()) {
       if (entry instanceof BuildConfigurationEntry) {
         final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
         checkDependencyType(moduleName, config, bcEntry.getModuleName(), bcEntry.findBuildConfiguration(),
@@ -459,7 +461,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
     final BuildConfigurationNature nature = config.getNature();
     final boolean ok;
 
-    switch (dependencyConfig.OUTPUT_TYPE) {
+    switch (dependencyConfig.getOutputType()) {
       case Application:
         ok = false;
         break;
@@ -477,8 +479,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
     if (!ok) {
       throw new ConfigurationException(
         FlexBundle.message("bc.dependency.problem",
-                           config.NAME, moduleName, config.OUTPUT_TYPE.getPresentableText(),
-                           dependencyConfig.NAME, dependencyModuleName, dependencyConfig.OUTPUT_TYPE.getPresentableText(),
+                           config.getName(), moduleName, config.getOutputType().getPresentableText(),
+                           dependencyConfig.getName(), dependencyModuleName, dependencyConfig.getOutputType().getPresentableText(),
                            linkageType.getShortText()),
         FlexBundle.message("project.setup.problem.title"));
     }

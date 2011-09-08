@@ -1,10 +1,11 @@
-package com.intellij.lang.javascript.flex.projectStructure.model;
+package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableAirDesktopPackagingOptions;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.annotations.NotNull;
 
-public class AirDesktopPackagingOptionsImpl implements ModifiableAirDesktopPackagingOptions {
+class AirDesktopPackagingOptionsImpl implements ModifiableAirDesktopPackagingOptions {
 
   private boolean myUseGeneratedDescriptor = true;
   @NotNull
@@ -50,7 +51,7 @@ public class AirDesktopPackagingOptionsImpl implements ModifiableAirDesktopPacka
     return copy;
   }
 
-  private void applyTo(AirDesktopPackagingOptionsImpl copy) {
+  void applyTo(AirDesktopPackagingOptionsImpl copy) {
     copy.myUseGeneratedDescriptor = myUseGeneratedDescriptor;
     copy.myCustomDescriptorPath = myCustomDescriptorPath;
     copy.myInstallerFileName = myInstallerFileName;

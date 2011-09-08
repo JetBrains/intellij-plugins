@@ -2,10 +2,10 @@ package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
-import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
@@ -68,8 +68,8 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     mySingleModuleProject = modules.length == 1;
     for (final Module module : modules) {
       if (ModuleType.get(module) instanceof FlexModuleType) {
-        for (final FlexIdeBuildConfiguration config : FlexIdeBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
-          if (config.OUTPUT_TYPE == OutputType.Application) {
+        for (final FlexIdeBuildConfiguration config : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
+          if (config.getOutputType() == OutputType.Application) {
             allConfigs.add(config);
             myBCToModuleMap.put(config, module);
           }
@@ -91,7 +91,7 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
           assert value instanceof FlexIdeBuildConfiguration : value;
           final FlexIdeBuildConfiguration config = (FlexIdeBuildConfiguration)value;
           setIcon(config.getIcon());
-          setText(getPresentableText(myBCToModuleMap.get(config).getName(), config.NAME, mySingleModuleProject));
+          setText(getPresentableText(myBCToModuleMap.get(config).getName(), config.getName(), mySingleModuleProject));
         }
       }
     });
@@ -144,16 +144,16 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     final Object item = myBCsCombo.getSelectedItem();
     final FlexIdeBuildConfiguration config = item instanceof FlexIdeBuildConfiguration ? (FlexIdeBuildConfiguration)item : null;
 
-    final boolean web = config != null && config.TARGET_PLATFORM == TargetPlatform.Web;
-    final boolean desktop = config != null && config.TARGET_PLATFORM == TargetPlatform.Desktop;
+    final boolean web = config != null && config.getTargetPlatform() == TargetPlatform.Web;
+    final boolean desktop = config != null && config.getTargetPlatform() == TargetPlatform.Desktop;
     
     myLaunchPanel.setVisible(web);
     myWebOptionsPanel.setVisible(web);
     myDesktopOptionsPanel.setVisible(desktop);
 
     if (web) {
-      String bcOutput = config.OUTPUT_FILE_NAME;
-      if (!bcOutput.isEmpty() && config.USE_HTML_WRAPPER) {
+      String bcOutput = config.getOutputFileName();
+      if (!bcOutput.isEmpty() && config.isUseHtmlWrapper()) {
         bcOutput += " via HTML wrapper";
       }
       myBCOutputLabel.setText(bcOutput);
@@ -184,7 +184,7 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     final Module module = ModuleManager.getInstance(myProject).findModuleByName(params.getModuleName());
     final FlexIdeBuildConfiguration config =
       module != null && (ModuleType.get(module) instanceof FlexModuleType)
-      ? FlexIdeBuildConfigurationManager.getInstance(module).findConfigurationByName(params.getBCName())
+      ? FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(params.getBCName())
       : null;
 
     if (config == null) {
@@ -223,7 +223,7 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     else {
       assert selectedItem instanceof FlexIdeBuildConfiguration : selectedItem;
       params.setModuleName(myBCToModuleMap.get(((FlexIdeBuildConfiguration)selectedItem)).getName());
-      params.setBCName(((FlexIdeBuildConfiguration)selectedItem).NAME);
+      params.setBCName(((FlexIdeBuildConfiguration)selectedItem).getName());
     }
 
     params.setLaunchUrl(myURLRadioButton.isSelected());

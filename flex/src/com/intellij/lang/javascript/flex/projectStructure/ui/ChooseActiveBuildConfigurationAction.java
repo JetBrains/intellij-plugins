@@ -1,14 +1,11 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
-import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtil;
@@ -17,8 +14,6 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.PsiModificationTrackerImpl;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -63,9 +58,9 @@ public class ChooseActiveBuildConfigurationAction extends ComboBoxAction impleme
 
     myLastModule = module;
     e.getPresentation().setEnabled(true);
-    FlexIdeBuildConfiguration activeConfiguration = FlexIdeBuildConfigurationManager.getInstance(module).getActiveConfiguration();
+    FlexIdeBuildConfiguration activeConfiguration = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
     if (activeConfiguration != null) {
-      e.getPresentation().setText(activeConfiguration.NAME);
+      e.getPresentation().setText(activeConfiguration.getName());
       e.getPresentation().setIcon(activeConfiguration.getIcon());
     }
     else {
@@ -77,7 +72,7 @@ public class ChooseActiveBuildConfigurationAction extends ComboBoxAction impleme
   @Override
   protected DefaultActionGroup createPopupActionGroup(JComponent button) {
     DefaultActionGroup group = new DefaultActionGroup();
-    FlexIdeBuildConfigurationManager bcManager = FlexIdeBuildConfigurationManager.getInstance(myLastModule);
+    FlexBuildConfigurationManager bcManager = FlexBuildConfigurationManager.getInstance(myLastModule);
     FlexIdeBuildConfiguration[] buildConfigurations = bcManager.getBuildConfigurations();
     for (FlexIdeBuildConfiguration c : buildConfigurations) {
       if (c == bcManager.getActiveConfiguration()) {
@@ -118,13 +113,13 @@ public class ChooseActiveBuildConfigurationAction extends ComboBoxAction impleme
 
     @Override
     public void update(AnActionEvent e) {
-      e.getPresentation().setText(myBuildConfiguration.NAME);
+      e.getPresentation().setText(myBuildConfiguration.getName());
       e.getPresentation().setIcon(myBuildConfiguration.getIcon());
     }
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-      FlexIdeBuildConfigurationManager.getInstance(myModule).setActiveBuildConfiguration(myBuildConfiguration);
+      FlexBuildConfigurationManager.getInstance(myModule).setActiveBuildConfiguration(myBuildConfiguration);
     }
   }
 }

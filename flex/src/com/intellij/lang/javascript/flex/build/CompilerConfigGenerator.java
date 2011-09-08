@@ -5,7 +5,9 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
-import com.intellij.lang.javascript.flex.projectStructure.options.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
+import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
@@ -59,21 +61,21 @@ public class CompilerConfigGenerator {
   }
 
   public static VirtualFile getOrCreateConfigFile(final Module module, final FlexIdeBuildConfiguration config) throws IOException {
-    final SdkEntry sdkEntry = config.DEPENDENCIES.getSdkEntry();
+    final SdkEntry sdkEntry = config.getDependencies().getSdkEntry();
     final Library sdkLib = sdkEntry == null ? null : sdkEntry.findLibrary();
     if (sdkLib == null) {
-      throw new IOException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", config.NAME, module.getName()));
+      throw new IOException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", config.getName(), module.getName()));
     }
 
     final CompilerConfigGenerator generator =
       new CompilerConfigGenerator(module, config, FlexSdk.getHomePath(sdkLib), FlexSdk.getFlexVersion(sdkLib),
                                   sdkLib.getUrls(OrderRootType.CLASSES),
-                                  FlexIdeBuildConfigurationManager.getInstance(module).getModuleLevelCompilerOptions(),
-                                  FlexIdeProjectLevelCompilerOptionsHolder.getInstance(module.getProject())
+                                  FlexBuildConfigurationManager.getInstance(module).getModuleLevelCompilerOptions(),
+                                  FlexProjectLevelCompilerOptionsHolder.getInstance(module.getProject())
                                     .getProjectLevelCompilerOptions());
     final String text = generator.generateConfigFileText();
     final String name =
-      FlexCompilerHandler.generateConfigFileName(module, config.NAME, PlatformUtils.getPlatformPrefix().toLowerCase(), null);
+      FlexCompilerHandler.generateConfigFileName(module, config.getName(), PlatformUtils.getPlatformPrefix().toLowerCase(), null);
     return FlexCompilationUtils.getOrCreateConfigFile(module.getProject(), name, text);
   }
 
@@ -97,19 +99,19 @@ public class CompilerConfigGenerator {
   private void addDebugOption(final Element rootElement) {
     final FlexCompilerProjectConfiguration instance = FlexCompilerProjectConfiguration.getInstance(myModule.getProject());
     final boolean debug =
-      myConfig.OUTPUT_TYPE == OutputType.Library ? instance.SWC_DEBUG_ENABLED : instance.SWF_DEBUG_ENABLED;
+      myConfig.getOutputType() == OutputType.Library ? instance.SWC_DEBUG_ENABLED : instance.SWF_DEBUG_ENABLED;
     addOption(rootElement, CompilerOptionInfo.DEBUG_INFO, String.valueOf(debug));
   }
 
   private void addMandatoryOptions(final Element rootElement) {
-    if (myConfig.TARGET_PLATFORM == TargetPlatform.Web) {
+    if (myConfig.getTargetPlatform() == TargetPlatform.Web) {
       // todo uncomment in xml and do not add as standard option
       //final String revision = getValueAndSource(CompilerOptionInfo.getOptionInfo("target-player-revision")).first;
       final String revision = "0";
-      final String targetPlayer = myConfig.DEPENDENCIES.TARGET_PLAYER + "." + revision;
+      final String targetPlayer = myConfig.getDependencies().getTargetPlayer() + "." + revision;
       addOption(rootElement, CompilerOptionInfo.TARGET_PLAYER_INFO, targetPlayer);
     }
-    else if (myConfig.TARGET_PLATFORM == TargetPlatform.Mobile) {
+    else if (myConfig.getTargetPlatform() == TargetPlatform.Mobile) {
       addOption(rootElement, CompilerOptionInfo.MOBILE_INFO, "true");
     }
   }
@@ -129,7 +131,7 @@ public class CompilerConfigGenerator {
   }
 
   private void addNamespaces(final Element rootElement) {
-    if (myConfig.PURE_ACTION_SCRIPT) return;
+    if (myConfig.isPureAs()) return;
 
     final StringBuilder namespaceBuilder = new StringBuilder();
 
@@ -145,9 +147,9 @@ public class CompilerConfigGenerator {
         append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR).
         append("${FLEX_SDK}/frameworks/mxml-2009-manifest.xml");
 
-      if (myConfig.TARGET_PLATFORM == TargetPlatform.Mobile ||
-          myConfig.DEPENDENCIES.COMPONENT_SET == ComponentSet.SparkAndMx ||
-          myConfig.DEPENDENCIES.COMPONENT_SET == ComponentSet.SparkOnly) {
+      if (myConfig.getTargetPlatform() == TargetPlatform.Mobile ||
+          myConfig.getDependencies().getComponentSet() == ComponentSet.SparkAndMx ||
+          myConfig.getDependencies().getComponentSet() == ComponentSet.SparkOnly) {
         namespaceBuilder.
           append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR).
           append("library://ns.adobe.com/flex/spark").
@@ -155,9 +157,9 @@ public class CompilerConfigGenerator {
           append("${FLEX_SDK}/frameworks/spark-manifest.xml");
       }
 
-      if (myConfig.TARGET_PLATFORM != TargetPlatform.Mobile) {
-        if (myConfig.DEPENDENCIES.COMPONENT_SET == ComponentSet.SparkAndMx ||
-            myConfig.DEPENDENCIES.COMPONENT_SET == ComponentSet.MxOnly) {
+      if (myConfig.getTargetPlatform() != TargetPlatform.Mobile) {
+        if (myConfig.getDependencies().getComponentSet() == ComponentSet.SparkAndMx ||
+            myConfig.getDependencies().getComponentSet() == ComponentSet.MxOnly) {
           namespaceBuilder.
             append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR).
             append("library://ns.adobe.com/flex/mx").
@@ -189,12 +191,12 @@ public class CompilerConfigGenerator {
       final String swcPath = VirtualFileManager.extractPath(StringUtil.trimEnd(swcUrl, JarFileSystem.JAR_SEPARATOR));
 
       LinkageType linkageType = BCUtils
-        .getSdkEntryLinkageType(swcPath, myConfig.getNature(), myConfig.DEPENDENCIES.TARGET_PLAYER, myConfig.DEPENDENCIES.COMPONENT_SET);
+        .getSdkEntryLinkageType(swcPath, myConfig.getNature(), myConfig.getDependencies().getTargetPlayer(), myConfig.getDependencies().getComponentSet());
 
       // check applicability
       if (linkageType == null) continue;
       // resolve default
-      if (linkageType == LinkageType.Default) linkageType = myConfig.DEPENDENCIES.getFrameworkLinkage();
+      if (linkageType == LinkageType.Default) linkageType = myConfig.getDependencies().getFrameworkLinkage();
       if (linkageType == LinkageType.Default) linkageType = BCUtils.getDefaultFrameworkLinkage(myConfig.getNature());
 
       final CompilerOptionInfo info = linkageType == LinkageType.Merged ? CompilerOptionInfo.LIBRARY_PATH_INFO :
@@ -270,7 +272,7 @@ public class CompilerConfigGenerator {
   }
 
   private void addLibs(final Element rootElement) {
-    for (final DependencyEntry entry : myConfig.DEPENDENCIES.getEntries()) {
+    for (final DependencyEntry entry : myConfig.getDependencies().getEntries()) {
       final LinkageType linkageType = entry.getDependencyType().getLinkageType();
 
       if (entry instanceof BuildConfigurationEntry) {
@@ -283,7 +285,7 @@ public class CompilerConfigGenerator {
         }
       }
       else if (entry instanceof ModuleLibraryEntry) {
-        final LibraryOrderEntry orderEntry = ((ModuleLibraryEntry)entry).findOrderEntry(ModuleRootManager.getInstance(myModule));
+        final LibraryOrderEntry orderEntry = FlexProjectRootsUtil.findOrderEntry((ModuleLibraryEntry)entry, ModuleRootManager.getInstance(myModule));
 
         if (orderEntry == null) continue;
 
@@ -356,7 +358,7 @@ public class CompilerConfigGenerator {
   private void addOtherOptions(final Element rootElement) {
     final Map<String, String> options = new THashMap<String, String>(myProjectLevelCompilerOptions.getAllOptions());
     options.putAll(myModuleLevelCompilerOptions.getAllOptions());
-    options.putAll(myConfig.COMPILER_OPTIONS.getAllOptions());
+    options.putAll(myConfig.getCompilerOptions().getAllOptions());
 
     for (final Map.Entry<String, String> entry : options.entrySet()) {
       addOption(rootElement, CompilerOptionInfo.getOptionInfo(entry.getKey()), entry.getValue());
@@ -364,7 +366,7 @@ public class CompilerConfigGenerator {
   }
 
   private void addInputOutputPaths(final Element rootElement) {
-    if (myConfig.OUTPUT_TYPE == OutputType.Library) {
+    if (myConfig.getOutputType() == OutputType.Library) {
       final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(myModule.getProject()).getFileIndex();
 
       ContentIterator ci = new ContentIterator() {
@@ -392,7 +394,7 @@ public class CompilerConfigGenerator {
       ModuleRootManager.getInstance(myModule).getFileIndex().iterateContent(ci);
     }
     else {
-      final String pathToMainClassFile = FlexUtils.getPathToMainClassFile(myConfig.MAIN_CLASS, myModule);
+      final String pathToMainClassFile = FlexUtils.getPathToMainClassFile(myConfig.getMainClass(), myModule);
       addOption(rootElement, CompilerOptionInfo.MAIN_CLASS_INFO, pathToMainClassFile);
     }
 
@@ -402,7 +404,7 @@ public class CompilerConfigGenerator {
   private void addOption(final Element rootElement,
                          final CompilerOptionInfo info,
                          final String rawValue) {
-    if (!info.isApplicable(mySdkVersion, myConfig.TARGET_PLATFORM, myConfig.PURE_ACTION_SCRIPT, myConfig.OUTPUT_TYPE)) {
+    if (!info.isApplicable(mySdkVersion, myConfig.getTargetPlatform(), myConfig.isPureAs(), myConfig.getOutputType())) {
       return;
     }
 
@@ -477,7 +479,7 @@ public class CompilerConfigGenerator {
   private Pair<String, ValueSource> getValueAndSource(final CompilerOptionInfo info) {
     assert !info.isGroup() : info.DISPLAY_NAME;
 
-    final String bcLevelValue = myConfig.COMPILER_OPTIONS.getOption(info.ID);
+    final String bcLevelValue = myConfig.getCompilerOptions().getOption(info.ID);
     if (bcLevelValue != null) return Pair.create(bcLevelValue, ValueSource.BC);
 
     final String moduleLevelValue = myModuleLevelCompilerOptions.getOption(info.ID);
@@ -486,6 +488,6 @@ public class CompilerConfigGenerator {
     final String projectLevelValue = myProjectLevelCompilerOptions.getOption(info.ID);
     if (projectLevelValue != null) return Pair.create(projectLevelValue, ValueSource.ProjectDefault);
 
-    return Pair.create(info.getDefaultValue(mySdkVersion, myConfig.TARGET_PLATFORM), ValueSource.GlobalDefault);
+    return Pair.create(info.getDefaultValue(mySdkVersion, myConfig.getTargetPlatform()), ValueSource.GlobalDefault);
   }
 }
