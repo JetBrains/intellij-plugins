@@ -5,7 +5,6 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.impl.beanProperties.BeanProperty;
 import com.intellij.psi.impl.beanProperties.BeanPropertyElement;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
@@ -84,7 +83,7 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
 
   @NotNull
   public final ResolveResult[] multiResolve(final boolean incompleteCode) {
-    return ((PsiManagerEx)myElement.getManager()).getResolveCache().resolveWithCaching(this, MY_RESOLVER, true, false);
+    return ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, MY_RESOLVER, true, false);
   }
 
   @Nullable
