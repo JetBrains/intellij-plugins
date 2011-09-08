@@ -196,12 +196,24 @@ class PropertyProcessor implements ValueWriter {
     throws InvalidPropertyException {
     final XmlTag tag = valueProvider.getTag();
     if (JavaScriptSupportLoader.MXML_URI3.equals(tag.getNamespace()) && !type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME)) {
-      final boolean isXmlList = type.equals(JSCommonTypeNames.XML_LIST_CLASS_NAME);
-      out.write(isXmlList ? AmfExtendedTypes.XML_LIST : AmfExtendedTypes.REFERABLE_PRIMITIVE);
+      final boolean isXml;
+      if (type.equals(JSCommonTypeNames.XML_LIST_CLASS_NAME)) {
+        out.write(AmfExtendedTypes.XML_LIST);
+        isXml = true;
+      }
+      else if (type.equals(JSCommonTypeNames.XML_CLASS_NAME)) {
+        out.write(AmfExtendedTypes.XML);
+        isXml = true;
+      }
+      else {
+        out.write(AmfExtendedTypes.REFERABLE_PRIMITIVE);
+        isXml = false;
+      }
+
       final StaticObjectContext context = mxmlWriter.processIdAttributeOfBuiltInTypeLanguageTag(tag, parentContext,
                                                                                                 allowIncludeInExludeFrom);
 
-      if (isXmlList) {
+      if (isXml) {
         out.writeAmfUtf(tag.getValue().getText());
       }
       else {

@@ -21,6 +21,7 @@ public final class AmfExtendedTypes {
   public static final int REFERABLE_PRIMITIVE = 53;
 
   public static final int XML_LIST = 54;
+  public static final int XML = 58;
 
   public static final int OBJECT = 55;
 

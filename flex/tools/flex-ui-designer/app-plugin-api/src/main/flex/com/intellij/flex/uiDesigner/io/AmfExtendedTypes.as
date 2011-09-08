@@ -22,6 +22,7 @@ public final class AmfExtendedTypes {
   public static const REFERABLE_PRIMITIVE:int = 53;
 
   public static const XML_LIST:int = 54;
+  public static const XML:int = 58;
 
   public static const OBJECT:int = 55;
 

@@ -1,10 +1,19 @@
-<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns="library://ns.adobe.com/flex/spark">
+<VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns="library://ns.adobe.com/flex/spark">
   <fx:Declarations>
     <fx:XMLList id="myPopup">
       <node label="A"/>
       <node label="B"/>
       <node label="C"/>
     </fx:XMLList>
+    <fx:XML id="myData">
+      <root>
+        <forsale>
+          <item name="weight" value="32.5698"/>
+        </forsale>
+      </root>
+    </fx:XML>
   </fx:Declarations>
   <mx:PopUpMenuButton id="p2" dataProvider="{myPopup}" labelField="@label"/>
-</Group>
+  <!-- IDEA-74064 -->
+  <Label text="{myData.forsale.item.@value}"/>
+</VGroup>

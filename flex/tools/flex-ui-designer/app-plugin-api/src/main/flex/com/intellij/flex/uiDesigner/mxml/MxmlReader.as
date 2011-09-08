@@ -446,9 +446,16 @@ public final class MxmlReader implements DocumentReader {
     return object;
   }
 
-  private function readXmlList():Object {
+  private function readXmlList():XMLList {
     var r:int = input.readUnsignedShort();
     var o:XMLList = new XMLList(AmfUtil.readString(input));
+    processReference(r, o);
+    return o;
+  }
+
+  private function readXml():XML {
+    var r:int = input.readUnsignedShort();
+    var o:XML = new XML(AmfUtil.readString(input));
     processReference(r, o);
     return o;
   }
@@ -677,6 +684,10 @@ public final class MxmlReader implements DocumentReader {
 
       case AmfExtendedTypes.XML_LIST:
         return readXmlList();
+        break;
+
+      case AmfExtendedTypes.XML:
+        return readXml();
         break;
 
       case AmfExtendedTypes.OBJECT:

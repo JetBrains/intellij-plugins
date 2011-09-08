@@ -10,6 +10,7 @@ import org.hamcrest.core.not;
 import org.hamcrest.object.equalTo;
 import org.hamcrest.object.instanceOf;
 import org.hamcrest.object.strictlyEqualTo;
+import org.hamcrest.text.emptyString;
 
 public class MxmlTest extends BaseTestCase {
   public function MxmlTest() {
@@ -243,7 +244,7 @@ public class MxmlTest extends BaseTestCase {
 
   public function IDEA_73806():void {
     validateUI(); // force model commit
-    assertThat(app, [{dataProvider: {source: instanceOf(XMLList)}}]);
+    assertThat(app, [{dataProvider: {source: instanceOf(XMLList)}}, {text: ""}]);
   }
 
   public function IDEA_73613():void {
