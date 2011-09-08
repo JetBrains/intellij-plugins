@@ -61,8 +61,17 @@ class ExpressionBinding extends Binding {
   private static void writeCallExpression(JSCallExpression expression, PrimitiveAmfOutputStream out, BaseWriter writer,
                                           ValueReferenceResolver valueReferenceResolver) throws InvalidPropertyException {
     final JSReferenceExpression methodExpression = (JSReferenceExpression)expression.getMethodExpression();
-    final JSFunction function = (JSFunction)resolveReferenceExpression(methodExpression, true);
+    final PsiElement psiElement = resolveReferenceExpression(methodExpression, true);
     final JSExpression[] arguments;
+    if (psiElement instanceof JSClass) {
+      // IDEA-74060, {Number('20')}
+      arguments = expression.getArguments();
+      assert arguments.length == 1;
+      writeExpression(arguments[0], out, writer, valueReferenceResolver);
+      return;
+    }
+
+    final JSFunction function = (JSFunction)psiElement;
     final int rollbackPosition;
     final int start;
     if (function.isConstructor()) {

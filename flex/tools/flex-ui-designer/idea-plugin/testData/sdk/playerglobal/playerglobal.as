@@ -2,6 +2,10 @@ package {
 public final class String {
   native public function String(value:* = ""):*;
 }
+
+public final class Number {
+  native public function Number(value:* = 0):*;
+}
 }
 
 package flash.display {
