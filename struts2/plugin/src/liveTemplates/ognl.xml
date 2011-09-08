@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templateSet group="OGNL">
-  <template name="gtxt" value="getText('$END$')" description="getText()" toReformat="false" toShortenFQNames="false">
-    <context>
-      <option name="OGNL" value="true"/>
-    </context>
-  </template>
-  <template name="in" value="in {$VAR0$, $VAR1$}" description="in {..., ...}" toReformat="false" toShortenFQNames="false">
+  <template name="in" value="in {$VAR0$, $VAR1$}" description="in {..., ...}" toReformat="false"
+            toShortenFQNames="false">
     <variable alwaysStopAt="true" defaultValue="" expression="" name="VAR0"/>
     <variable alwaysStopAt="true" defaultValue="" expression="" name="VAR1"/>
     <context>

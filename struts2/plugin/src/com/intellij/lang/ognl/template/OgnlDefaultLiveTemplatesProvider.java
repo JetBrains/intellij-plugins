@@ -26,7 +26,7 @@ public class OgnlDefaultLiveTemplatesProvider implements DefaultLiveTemplatesPro
 
   @Override
   public String[] getDefaultLiveTemplateFiles() {
-    return new String[]{"/liveTemplates/ognl"};
+    return new String[]{"/liveTemplates/ognl", "/liveTemplates/ognl-struts2"};
   }
 
   @Override

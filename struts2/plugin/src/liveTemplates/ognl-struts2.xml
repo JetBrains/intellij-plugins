@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templateSet group="OGNL (Struts 2)">
+  <template name="gtxt" value="getText('$END$')" description="getText()" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="OGNL" value="true"/>
+    </context>
+  </template>
+</templateSet>
