@@ -21,6 +21,8 @@ class InjectedASWriter implements ValueReferenceResolver {
   private final THashMap<String, MxmlObjectReference> idReferenceMap = new THashMap<String, MxmlObjectReference>();
   private final THashMap<JSVariable, VariableReference> variableReferenceMap = new THashMap<JSVariable, VariableReference>();
 
+  private static final MxmlObjectReference MODEL_MXML_OBJECT_REFERENCE = new MxmlObjectReference(-1);
+
   private final List<Binding> bindingItems = new ArrayList<Binding>();
   private final BaseWriter writer;
   MxmlObjectReference lastMxmlObjectReference;
@@ -60,7 +62,11 @@ class InjectedASWriter implements ValueReferenceResolver {
   @NotNull
   @Override
   public MxmlObjectReference getValueReference(String id) throws InvalidPropertyException {
-    return idReferenceMap.get(id);
+    final MxmlObjectReference mxmlObjectReference = idReferenceMap.get(id);
+    if (mxmlObjectReference == MODEL_MXML_OBJECT_REFERENCE) {
+      throw new UnsupportedOperationException("Model");
+    }
+    return mxmlObjectReference;
   }
 
   public ValueWriter processProperty(XmlElementValueProvider valueProvider, String name, @Nullable String type, boolean isStyle,
@@ -180,6 +186,10 @@ class InjectedASWriter implements ValueReferenceResolver {
 
   void putMxmlObjectReference(@NotNull String explicitId, Context context) {
     idReferenceMap.put(explicitId, new MxmlObjectReference(writer.getObjectOrFactoryId(context)));
+  }
+
+  void putUnsupportedModelMxmlObjectReference(@NotNull String explicitId) {
+    idReferenceMap.put(explicitId, MODEL_MXML_OBJECT_REFERENCE);
   }
 
   void setDeferredReferenceForObjectWithExplicitIdOrBinding(

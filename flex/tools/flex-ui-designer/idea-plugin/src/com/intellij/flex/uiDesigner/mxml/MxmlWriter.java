@@ -548,6 +548,14 @@ public class MxmlWriter {
       assert descriptor != null;
       if (descriptor.isPredefined()) {
         // todo IDEA-72123
+        // todo FlexPredefinedTagNames add "Model"
+        if (descriptor.getName().equals("Model")) {
+          // IDEA-74056
+          final XmlAttribute idAttribute = tag.getAttribute("id");
+          if (idAttribute != null) {
+            injectedASWriter.putUnsupportedModelMxmlObjectReference(idAttribute.getDisplayValue());
+          }
+        }
         continue;
       }
       else if (MxmlUtil.isComponentLanguageTag(tag)) {
