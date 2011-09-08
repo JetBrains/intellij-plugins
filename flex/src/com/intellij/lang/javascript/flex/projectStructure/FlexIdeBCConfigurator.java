@@ -1,6 +1,8 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.*;
 import com.intellij.lang.javascript.flex.projectStructure.ui.AddBuildConfigurationDialog;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
@@ -228,7 +230,7 @@ public class FlexIdeBCConfigurator {
       final String outputFileName = configuration.OUTPUT_FILE_NAME;
       final String lowercase = outputFileName.toLowerCase();
       if (lowercase.endsWith(".swf") || lowercase.endsWith(".swc")) {
-        final String extension = configuration.OUTPUT_TYPE == FlexIdeBuildConfiguration.OutputType.Library ? ".swc" : ".swf";
+        final String extension = configuration.OUTPUT_TYPE == OutputType.Library ? ".swc" : ".swf";
         configuration.OUTPUT_FILE_NAME = outputFileName.substring(0, outputFileName.length() - ".sw_".length()) + extension;
       }
 
@@ -253,25 +255,25 @@ public class FlexIdeBCConfigurator {
   private static void resetNonApplicableValuesToDefaults(final FlexIdeBuildConfiguration configuration) {
     final FlexIdeBuildConfiguration defaultConfiguration = new FlexIdeBuildConfiguration();
 
-    if (configuration.OUTPUT_TYPE != FlexIdeBuildConfiguration.OutputType.RuntimeLoadedModule) {
+    if (configuration.OUTPUT_TYPE != OutputType.RuntimeLoadedModule) {
       configuration.OPTIMIZE_FOR = defaultConfiguration.OPTIMIZE_FOR;
     }
 
-    if (configuration.OUTPUT_TYPE == FlexIdeBuildConfiguration.OutputType.Library) {
+    if (configuration.OUTPUT_TYPE == OutputType.Library) {
       configuration.MAIN_CLASS = defaultConfiguration.MAIN_CLASS;
     }
 
-    if (configuration.TARGET_PLATFORM != FlexIdeBuildConfiguration.TargetPlatform.Web ||
-        configuration.OUTPUT_TYPE != FlexIdeBuildConfiguration.OutputType.Application) {
+    if (configuration.TARGET_PLATFORM != TargetPlatform.Web ||
+        configuration.OUTPUT_TYPE != OutputType.Application) {
       configuration.USE_HTML_WRAPPER = defaultConfiguration.USE_HTML_WRAPPER;
       configuration.WRAPPER_TEMPLATE_PATH = defaultConfiguration.WRAPPER_TEMPLATE_PATH;
     }
 
-    if (configuration.TARGET_PLATFORM != FlexIdeBuildConfiguration.TargetPlatform.Web) {
+    if (configuration.TARGET_PLATFORM != TargetPlatform.Web) {
       configuration.DEPENDENCIES.TARGET_PLAYER = defaultConfiguration.DEPENDENCIES.TARGET_PLAYER;
     }
 
-    if (configuration.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Mobile || configuration.PURE_ACTION_SCRIPT) {
+    if (configuration.TARGET_PLATFORM == TargetPlatform.Mobile || configuration.PURE_ACTION_SCRIPT) {
       configuration.DEPENDENCIES.COMPONENT_SET = defaultConfiguration.DEPENDENCIES.COMPONENT_SET;
     }
 

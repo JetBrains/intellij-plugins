@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
-import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -160,13 +161,13 @@ public class CompilerOptionInfo {
   }
 
   public boolean isApplicable(final @NotNull String sdkVersion,
-                              final FlexIdeBuildConfiguration.TargetPlatform targetPlatform,
-                              final boolean pureAS, final FlexIdeBuildConfiguration.OutputType outputType) {
+                              final TargetPlatform targetPlatform,
+                              final boolean pureAS, final OutputType outputType) {
     if (mySinceVersion != null && StringUtil.compareVersionNumbers(sdkVersion, mySinceVersion) < 0) {
       return false;
     }
 
-    if (!myOkForAir && targetPlatform != FlexIdeBuildConfiguration.TargetPlatform.Web) {
+    if (!myOkForAir && targetPlatform != TargetPlatform.Web) {
       return false;
     }
 
@@ -174,7 +175,7 @@ public class CompilerOptionInfo {
       return false;
     }
 
-    if (!myOkForSwf && outputType != FlexIdeBuildConfiguration.OutputType.Library) {
+    if (!myOkForSwf && outputType != OutputType.Library) {
       return false;
     }
 
@@ -198,12 +199,12 @@ public class CompilerOptionInfo {
     return info;
   }
 
-  public String getDefaultValue(final String sdkVersion, final FlexIdeBuildConfiguration.TargetPlatform targetPlatform) {
+  public String getDefaultValue(final String sdkVersion, final TargetPlatform targetPlatform) {
     assert !isGroup() : DISPLAY_NAME;
 
     if (SPECIAL_DEFAULT_VALUE.equals(myDefaultValue)) {
       if ("compiler.accessible".equals(ID)) {
-        return targetPlatform == FlexIdeBuildConfiguration.TargetPlatform.Mobile
+        return targetPlatform == TargetPlatform.Mobile
                ? "false"
                : StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0 ? "true" : "false";
       }
@@ -211,11 +212,11 @@ public class CompilerOptionInfo {
         return "en_US";
       }
       else if ("compiler.preloader".equals(ID)) {
-        return targetPlatform == FlexIdeBuildConfiguration.TargetPlatform.Mobile ? "spark.preloaders.SplashScreen" : "";
+        return targetPlatform == TargetPlatform.Mobile ? "spark.preloaders.SplashScreen" : "";
       }
       else if ("compiler.theme".equals(ID)) {
-        if (targetPlatform != FlexIdeBuildConfiguration.TargetPlatform.Desktop && StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0) {
-          return targetPlatform == FlexIdeBuildConfiguration.TargetPlatform.Mobile
+        if (targetPlatform != TargetPlatform.Desktop && StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0) {
+          return targetPlatform == TargetPlatform.Mobile
                  ? "${FLEX_SDK}/frameworks/themes/Mobile/mobile.swc"
                  : "${FLEX_SDK}/frameworks/themes/Spark/spark.css";
         }

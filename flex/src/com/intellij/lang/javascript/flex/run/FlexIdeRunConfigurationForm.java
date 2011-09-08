@@ -3,6 +3,8 @@ package com.intellij.lang.javascript.flex.run;
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -67,7 +69,7 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     for (final Module module : modules) {
       if (ModuleType.get(module) instanceof FlexModuleType) {
         for (final FlexIdeBuildConfiguration config : FlexIdeBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
-          if (config.OUTPUT_TYPE == FlexIdeBuildConfiguration.OutputType.Application) {
+          if (config.OUTPUT_TYPE == OutputType.Application) {
             allConfigs.add(config);
             myBCToModuleMap.put(config, module);
           }
@@ -142,8 +144,8 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     final Object item = myBCsCombo.getSelectedItem();
     final FlexIdeBuildConfiguration config = item instanceof FlexIdeBuildConfiguration ? (FlexIdeBuildConfiguration)item : null;
 
-    final boolean web = config != null && config.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Web;
-    final boolean desktop = config != null && config.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Desktop;
+    final boolean web = config != null && config.TARGET_PLATFORM == TargetPlatform.Web;
+    final boolean desktop = config != null && config.TARGET_PLATFORM == TargetPlatform.Desktop;
     
     myLaunchPanel.setVisible(web);
     myWebOptionsPanel.setVisible(web);

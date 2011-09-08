@@ -1,38 +1,41 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+
 /**
  * @author ksafonov
  */
 public class BuildConfigurationNature {
-  private final FlexIdeBuildConfiguration.TargetPlatform targetPlatform;
+  private final TargetPlatform targetPlatform;
   public final boolean pureAS;
-  private final FlexIdeBuildConfiguration.OutputType outputType;
+  private final OutputType outputType;
 
-  public BuildConfigurationNature(FlexIdeBuildConfiguration.TargetPlatform targetPlatform,
+  public BuildConfigurationNature(TargetPlatform targetPlatform,
                                   boolean pureAS,
-                                  FlexIdeBuildConfiguration.OutputType outputType) {
+                                  OutputType outputType) {
     this.targetPlatform = targetPlatform;
     this.pureAS = pureAS;
     this.outputType = outputType;
   }
 
   public boolean isWebPlatform() {
-    return targetPlatform == FlexIdeBuildConfiguration.TargetPlatform.Web;
+    return targetPlatform == TargetPlatform.Web;
   }
 
   public boolean isDesktopPlatform() {
-    return targetPlatform == FlexIdeBuildConfiguration.TargetPlatform.Desktop;
+    return targetPlatform == TargetPlatform.Desktop;
   }
 
   public boolean isMobilePlatform() {
-    return targetPlatform == FlexIdeBuildConfiguration.TargetPlatform.Mobile;
+    return targetPlatform == TargetPlatform.Mobile;
   }
 
   public boolean isApp() {
-    return outputType == FlexIdeBuildConfiguration.OutputType.Application;
+    return outputType == OutputType.Application;
   }
 
   public boolean isLib() {
-    return outputType == FlexIdeBuildConfiguration.OutputType.Library;
+    return outputType == OutputType.Library;
   }
 }

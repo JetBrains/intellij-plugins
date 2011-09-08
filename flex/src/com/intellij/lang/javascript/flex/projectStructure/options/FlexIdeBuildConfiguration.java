@@ -1,9 +1,15 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
 import com.intellij.lang.javascript.flex.FlexFacetType;
+import com.intellij.lang.javascript.flex.projectStructure.model.AirDesktopPackagingOptionsImpl;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.xmlb.annotations.Property;
+import com.intellij.util.xmlb.annotations.Tag;
+import com.intellij.util.xmlb.annotations.Transient;
 
 import javax.swing.*;
 
@@ -26,7 +32,8 @@ public class FlexIdeBuildConfiguration implements Cloneable {
 
   public Dependencies DEPENDENCIES = new Dependencies();
   public CompilerOptions COMPILER_OPTIONS = new CompilerOptions();
-  public AirDesktopPackagingOptions AIR_DESKTOP_PACKAGING_OPTIONS = new AirDesktopPackagingOptions();
+  @Transient
+  public AirDesktopPackagingOptionsImpl AIR_DESKTOP_PACKAGING_OPTIONS = new AirDesktopPackagingOptionsImpl();
   public AndroidPackagingOptions ANDROID_PACKAGING_OPTIONS = new AndroidPackagingOptions();
   public IOSPackagingOptions IOS_PACKAGING_OPTIONS = new IOSPackagingOptions();
 
@@ -43,7 +50,16 @@ public class FlexIdeBuildConfiguration implements Cloneable {
         return FlexFacetType.ourFlexIcon;
     }
   }
-  
+
+  @Property(surroundWithTag = false)
+  public AirDesktopPackagingOptionsImpl.State getAirDesktopPackagingOptionsState() {
+    return AIR_DESKTOP_PACKAGING_OPTIONS.getState();
+  }
+
+  public void setAirDesktopPackagingOptionsState(AirDesktopPackagingOptionsImpl.State state) {
+    AIR_DESKTOP_PACKAGING_OPTIONS.loadState(state);
+  }
+
   public String getOutputFilePath() {
     return OUTPUT_FOLDER + (OUTPUT_FOLDER.isEmpty() ? "" : "/") + OUTPUT_FILE_NAME;
   }
@@ -54,7 +70,7 @@ public class FlexIdeBuildConfiguration implements Cloneable {
 
       clone.DEPENDENCIES = DEPENDENCIES.clone();
       clone.COMPILER_OPTIONS = COMPILER_OPTIONS.clone();
-      clone.AIR_DESKTOP_PACKAGING_OPTIONS = AIR_DESKTOP_PACKAGING_OPTIONS.clone();
+      clone.AIR_DESKTOP_PACKAGING_OPTIONS = AIR_DESKTOP_PACKAGING_OPTIONS.getCopy();
       clone.ANDROID_PACKAGING_OPTIONS = ANDROID_PACKAGING_OPTIONS.clone();
       clone.IOS_PACKAGING_OPTIONS = IOS_PACKAGING_OPTIONS.clone();
 
@@ -72,41 +88,5 @@ public class FlexIdeBuildConfiguration implements Cloneable {
 
   public BuildConfigurationNature getNature() {
     return new BuildConfigurationNature(TARGET_PLATFORM, PURE_ACTION_SCRIPT, OUTPUT_TYPE);
-  }
-
-  public static enum TargetPlatform {
-    Web("Web"),
-    Desktop("Desktop"),
-    Mobile("Mobile");
-
-    public final String PRESENTABLE_TEXT;
-
-    TargetPlatform(final String presentableText) {
-      PRESENTABLE_TEXT = presentableText;
-    }
-  }
-
-  public static enum OutputType {
-    Application("Application (*.swf)"),
-    RuntimeLoadedModule("Runtime loaded module (*.swf)"),
-    Library("Library (*.swc)");
-
-    public final String PRESENTABLE_TEXT;
-
-    OutputType(final String presentableText) {
-      PRESENTABLE_TEXT = presentableText;
-    }
-  }
-
-  public static enum ComponentSet {
-    SparkAndMx("Spark + MX"),
-    SparkOnly("Spark only"),
-    MxOnly("MX only");
-
-    public final String PRESENTABLE_TEXT;
-
-    ComponentSet(final String presentableText) {
-      PRESENTABLE_TEXT = presentableText;
-    }
   }
 }

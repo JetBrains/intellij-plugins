@@ -476,8 +476,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
     if (!ok) {
       throw new ConfigurationException(
         FlexBundle.message("bc.dependency.problem",
-                           config.NAME, moduleName, config.OUTPUT_TYPE.PRESENTABLE_TEXT,
-                           dependencyConfig.NAME, dependencyModuleName, dependencyConfig.OUTPUT_TYPE.PRESENTABLE_TEXT,
+                           config.NAME, moduleName, config.OUTPUT_TYPE.getPresentableText(),
+                           dependencyConfig.NAME, dependencyModuleName, dependencyConfig.OUTPUT_TYPE.getPresentableText(),
                            linkageType.getShortText()),
         FlexBundle.message("project.setup.problem.title"));
     }

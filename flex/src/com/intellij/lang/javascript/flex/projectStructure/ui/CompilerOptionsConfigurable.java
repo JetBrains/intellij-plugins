@@ -4,6 +4,8 @@ import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.ValueSource;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.CompilerOptions;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -48,9 +50,6 @@ import java.awt.event.ActionListener;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
-
-import static com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration.OutputType;
-import static com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration.TargetPlatform;
 
 public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptions> {
   private JPanel myMainPanel;

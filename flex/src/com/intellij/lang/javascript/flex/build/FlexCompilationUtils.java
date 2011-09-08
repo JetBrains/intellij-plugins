@@ -310,7 +310,7 @@ public class FlexCompilationUtils {
         }
         break;
       case Desktop:
-        if (config.AIR_DESKTOP_PACKAGING_OPTIONS.USE_GENERATED_DESCRIPTOR) {
+        if (config.AIR_DESKTOP_PACKAGING_OPTIONS.isUseGeneratedDescriptor()) {
           generateAirDescriptor(config);
         }
         else {
@@ -352,7 +352,7 @@ public class FlexCompilationUtils {
   }
 
   private static void copyAndFixCustomAirDescriptor(final FlexIdeBuildConfiguration config) throws FlexCompilerException {
-    final String path = config.AIR_DESKTOP_PACKAGING_OPTIONS.CUSTOM_DESCRIPTOR_PATH;
+    final String path = config.AIR_DESKTOP_PACKAGING_OPTIONS.getCustomDescriptorPath();
     final VirtualFile descriptorTemplateFile = LocalFileSystem.getInstance().findFileByPath(path);
     if (descriptorTemplateFile == null) {
       throw new FlexCompilerException("Custom AIR descriptor file not found: " + path);

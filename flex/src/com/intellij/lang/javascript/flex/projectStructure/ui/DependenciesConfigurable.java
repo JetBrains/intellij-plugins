@@ -8,6 +8,8 @@ import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
+import com.intellij.lang.javascript.flex.projectStructure.model.ComponentSet;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.options.*;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
@@ -82,8 +84,6 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
 
-import static com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration.ComponentSet;
-
 public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
   private static final Icon MISSING_BC_ICON = null;
@@ -144,7 +144,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       this.moduleName = null;
       this.bcName = null;
       this.configurable = configurable;
-      if (configurable.getOutputType() == FlexIdeBuildConfiguration.OutputType.RuntimeLoadedModule) {
+      if (configurable.getOutputType() == OutputType.RuntimeLoadedModule) {
         dependencyType.setLinkageType(LinkageType.LoadInRuntime);
       }
     }
@@ -171,7 +171,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     @Override
     public boolean isLinkageEditable() {
-      return configurable != null && configurable.getOutputType() != FlexIdeBuildConfiguration.OutputType.RuntimeLoadedModule;
+      return configurable != null && configurable.getOutputType() != OutputType.RuntimeLoadedModule;
     }
 
     @Override
@@ -484,10 +484,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
     }, myDisposable);
 
-    myComponentSetCombo.setModel(new DefaultComboBoxModel(FlexIdeBuildConfiguration.ComponentSet.values()));
-    myComponentSetCombo.setRenderer(new ListCellRendererWrapper<FlexIdeBuildConfiguration.ComponentSet>(myComponentSetCombo.getRenderer()) {
-      public void customize(JList list, FlexIdeBuildConfiguration.ComponentSet value, int index, boolean selected, boolean hasFocus) {
-        setText(value.PRESENTABLE_TEXT);
+    myComponentSetCombo.setModel(new DefaultComboBoxModel(ComponentSet.values()));
+    myComponentSetCombo.setRenderer(new ListCellRendererWrapper<ComponentSet>(myComponentSetCombo.getRenderer()) {
+      public void customize(JList list, ComponentSet value, int index, boolean selected, boolean hasFocus) {
+        setText(value.getPresentableText());
       }
     });
 
@@ -912,7 +912,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     if (targetPlayer != null) {
       dependencies.TARGET_PLAYER = (String)targetPlayer;
     }
-    dependencies.COMPONENT_SET = (FlexIdeBuildConfiguration.ComponentSet)myComponentSetCombo.getSelectedItem();
+    dependencies.COMPONENT_SET = (ComponentSet)myComponentSetCombo.getSelectedItem();
     dependencies.setFrameworkLinkage((LinkageType)myFrameworkLinkageCombo.getSelectedItem());
 
     dependencies.getEntries().clear();

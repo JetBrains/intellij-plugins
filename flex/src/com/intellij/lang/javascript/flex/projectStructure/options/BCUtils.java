@@ -1,11 +1,11 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
+import com.intellij.lang.javascript.flex.projectStructure.model.ComponentSet;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.Nullable;
-
-import static com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration.OutputType;
-import static com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration.TargetPlatform;
 
 /**
  * @author ksafonov
@@ -60,7 +60,7 @@ public class BCUtils {
   public static LinkageType getSdkEntryLinkageType(final String path,
                                                    final BuildConfigurationNature bcNature,
                                                    String targetPlayer,
-                                                   final FlexIdeBuildConfiguration.ComponentSet componentSet) {
+                                                   final ComponentSet componentSet) {
     if (path.endsWith("/frameworks/libs/air/airglobal.swc")) {
       return bcNature.isWebPlatform() ? null : LinkageType.External;
     }
@@ -101,10 +101,10 @@ public class BCUtils {
 
   @Nullable
   private static LinkageType getLibraryFromLibsFolderLinkage(final BuildConfigurationNature bcNature,
-                                                             final FlexIdeBuildConfiguration.ComponentSet componentSet,
+                                                             final ComponentSet componentSet,
                                                              final String swcName) {
     if (swcName.equals("advancedgrids.swc")) {
-      return bcNature.isMobilePlatform() || bcNature.pureAS || componentSet == FlexIdeBuildConfiguration.ComponentSet.SparkOnly
+      return bcNature.isMobilePlatform() || bcNature.pureAS || componentSet == ComponentSet.SparkOnly
              ? null
              : LinkageType.Default;
     }
@@ -147,18 +147,18 @@ public class BCUtils {
 
     if (swcName.endsWith("spark.swc")) {
       return bcNature.pureAS ? null
-                             : (bcNature.isMobilePlatform() || componentSet != FlexIdeBuildConfiguration.ComponentSet.MxOnly)
+                             : (bcNature.isMobilePlatform() || componentSet != ComponentSet.MxOnly)
                                ? LinkageType.Default
                                : null;
     }
 
     if (swcName.endsWith("spark_dmv.swc")) {
-      return !bcNature.pureAS && !bcNature.isMobilePlatform() && componentSet == FlexIdeBuildConfiguration.ComponentSet.SparkAndMx
+      return !bcNature.pureAS && !bcNature.isMobilePlatform() && componentSet == ComponentSet.SparkAndMx
              ? LinkageType.Default : null;
     }
 
     if (swcName.endsWith("sparkskins.swc")) {
-      return !bcNature.pureAS && !bcNature.isMobilePlatform() && componentSet != FlexIdeBuildConfiguration.ComponentSet.MxOnly
+      return !bcNature.pureAS && !bcNature.isMobilePlatform() && componentSet != ComponentSet.MxOnly
              ? LinkageType.Default : null;
     }
 
@@ -185,7 +185,7 @@ public class BCUtils {
 
   @Nullable
   private static LinkageType getAirLibraryLinkage(final BuildConfigurationNature bcNature,
-                                                  final FlexIdeBuildConfiguration.ComponentSet componentSet,
+                                                  final ComponentSet componentSet,
                                                   final String swcName) {
     if (bcNature.isMobilePlatform()) {
       return swcName.equals("servicemonitor.swc") ? LinkageType.Merged : null;
@@ -197,7 +197,7 @@ public class BCUtils {
       }
 
       if (swcName.equals("airspark.swc")) {
-        return bcNature.pureAS || componentSet == FlexIdeBuildConfiguration.ComponentSet.MxOnly ? null : LinkageType.Merged;
+        return bcNature.pureAS || componentSet == ComponentSet.MxOnly ? null : LinkageType.Merged;
       }
 
       return LinkageType.Merged;
@@ -216,12 +216,12 @@ public class BCUtils {
 
   @Nullable
   private static LinkageType getMxLibraryLinkage(final BuildConfigurationNature bcNature,
-                                                 final FlexIdeBuildConfiguration.ComponentSet componentSet,
+                                                 final ComponentSet componentSet,
                                                  final String swcName) {
     if (!swcName.equals("mx.swc")) {
       LOG.warn("Unknown SWC in '<Flex SDK>/frameworks/libs/mx' folder: " + swcName);
     }
-    return bcNature.isMobilePlatform() || bcNature.pureAS || componentSet == FlexIdeBuildConfiguration.ComponentSet.SparkOnly
+    return bcNature.isMobilePlatform() || bcNature.pureAS || componentSet == ComponentSet.SparkOnly
            ? null
            : LinkageType.Default;
   }
@@ -241,11 +241,11 @@ public class BCUtils {
 
   public static boolean isApplicableForDependency(BuildConfigurationNature dependantNature, OutputType dependencyOutputType) {
     if (dependantNature.isLib()) {
-      return dependencyOutputType == FlexIdeBuildConfiguration.OutputType.Library;
+      return dependencyOutputType == OutputType.Library;
     }
     else {
-      return dependencyOutputType == FlexIdeBuildConfiguration.OutputType.Library ||
-             dependencyOutputType == FlexIdeBuildConfiguration.OutputType.RuntimeLoadedModule;
+      return dependencyOutputType == OutputType.Library ||
+             dependencyOutputType == OutputType.RuntimeLoadedModule;
     }
   }
 }

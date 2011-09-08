@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
@@ -33,7 +34,7 @@ public class MxmlcCompcCompilationTask extends FlexCompilationTask {
   protected void doStart(final FlexCompilationManager compilationManager) throws IOException {
     final boolean swf = myOldConfig != null
                         ? myOldConfig.OUTPUT_TYPE.equals(FlexBuildConfiguration.APPLICATION)
-                        : myFlexIdeConfig.OUTPUT_TYPE != FlexIdeBuildConfiguration.OutputType.Library;
+                        : myFlexIdeConfig.OUTPUT_TYPE != OutputType.Library;
     // todo take correct SDK from myFlexIdeConfig.DEPENDENCIES...
     final Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(myModule);
 

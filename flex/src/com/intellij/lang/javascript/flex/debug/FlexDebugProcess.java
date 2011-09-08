@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.SdkEntry;
 import com.intellij.lang.javascript.flex.run.*;
@@ -186,12 +187,12 @@ public class FlexDebugProcess extends XDebugProcess {
     fdbProcess = launchFdb(fdbLaunchCommand);
     connectToRunningFlashPlayerMode = false;
 
-    if (config.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Web) {
+    if (config.TARGET_PLATFORM == TargetPlatform.Web) {
       // todo support wrapper
       final String urlOrPath = params.isLaunchUrl() ? params.getUrl() : config.getOutputFilePath();
       sendCommand(new LaunchBrowserCommand(urlOrPath, params.getLauncherParameters()));
     }
-    else if (config.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Desktop) {
+    else if (config.TARGET_PLATFORM == TargetPlatform.Desktop) {
       try {
         sendCommand(new StartAirAppDebuggingCommand(FlexBaseRunner.createAdlCommandLine(params, config)));
       }

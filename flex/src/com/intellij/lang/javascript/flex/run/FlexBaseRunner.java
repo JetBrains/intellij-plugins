@@ -30,6 +30,8 @@ import com.intellij.lang.javascript.flex.flexunit.FlexUnitConsoleProperties;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.SdkEntry;
@@ -131,7 +133,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
       checkConfiguration(module, config);
 
-      if (config.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Web && !params.isLaunchUrl()) {
+      if (config.TARGET_PLATFORM == TargetPlatform.Web && !params.isLaunchUrl()) {
         try {
           final String canonicalPath = new File(config.getOutputFilePath()).getCanonicalPath();
           FlashPlayerTrustUtil.updateTrustedStatus(module.getProject(), params.isRunTrusted(), false, canonicalPath);
@@ -209,7 +211,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   }
 
   private static void checkConfiguration(final Module module, final FlexIdeBuildConfiguration config) throws ExecutionException {
-    if (config.OUTPUT_TYPE != FlexIdeBuildConfiguration.OutputType.Application) {
+    if (config.OUTPUT_TYPE != OutputType.Application) {
       throw new CantRunException(
         MessageFormat.format("Build configuration ''{0}'' of module ''{1}'' does not have ''Application'' output type",
                              config.NAME, module.getName()));
@@ -857,9 +859,9 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       commandLine.addParameters(StringUtil.split(adlOptions, " "));
     }
 
-    final String descriptorName = (config.AIR_DESKTOP_PACKAGING_OPTIONS.USE_GENERATED_DESCRIPTOR
+    final String descriptorName = (config.AIR_DESKTOP_PACKAGING_OPTIONS.isUseGeneratedDescriptor()
                                    ? BCUtils.getGeneratedAirDescriptorName(config)
-                                   : PathUtil.getFileName(config.AIR_DESKTOP_PACKAGING_OPTIONS.CUSTOM_DESCRIPTOR_PATH));
+                                   : PathUtil.getFileName(config.AIR_DESKTOP_PACKAGING_OPTIONS.getCustomDescriptorPath()));
     commandLine.addParameter(FileUtil.toSystemDependentName(config.OUTPUT_FOLDER + "/" + descriptorName));
     commandLine.addParameter(FileUtil.toSystemDependentName(config.OUTPUT_FOLDER));
     final String programParameters = params.getAirProgramParameters();

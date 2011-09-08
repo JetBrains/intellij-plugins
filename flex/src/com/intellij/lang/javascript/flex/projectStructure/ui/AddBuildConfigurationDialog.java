@@ -1,6 +1,8 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ide.ui.ListCellRendererWrapper;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.NonFocusableCheckBox;
@@ -8,9 +10,6 @@ import com.intellij.ui.NonFocusableCheckBox;
 import javax.swing.*;
 import java.text.MessageFormat;
 import java.util.Collection;
-
-import static com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration.OutputType;
-import static com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration.TargetPlatform;
 
 public class AddBuildConfigurationDialog extends DialogWrapper {
 
@@ -41,14 +40,14 @@ public class AddBuildConfigurationDialog extends DialogWrapper {
     myTargetPlatformCombo.setModel(new DefaultComboBoxModel(TargetPlatform.values()));
     myTargetPlatformCombo.setRenderer(new ListCellRendererWrapper<TargetPlatform>(myTargetPlatformCombo.getRenderer()) {
       public void customize(JList list, TargetPlatform value, int index, boolean selected, boolean hasFocus) {
-        setText(value.PRESENTABLE_TEXT);
+        setText(value.getPresentableText());
       }
     });
 
     myOutputTypeCombo.setModel(new DefaultComboBoxModel(OutputType.values()));
     myOutputTypeCombo.setRenderer(new ListCellRendererWrapper<OutputType>(myOutputTypeCombo.getRenderer()) {
       public void customize(JList list, OutputType value, int index, boolean selected, boolean hasFocus) {
-        setText(value.PRESENTABLE_TEXT);
+        setText(value.getPresentableText());
       }
     });
   }

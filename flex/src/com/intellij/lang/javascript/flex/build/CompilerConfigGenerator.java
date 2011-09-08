@@ -4,6 +4,9 @@ import com.intellij.javascript.flex.FlexApplicationComponent;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.ComponentSet;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.*;
@@ -96,19 +99,19 @@ public class CompilerConfigGenerator {
   private void addDebugOption(final Element rootElement) {
     final FlexCompilerProjectConfiguration instance = FlexCompilerProjectConfiguration.getInstance(myModule.getProject());
     final boolean debug =
-      myConfig.OUTPUT_TYPE == FlexIdeBuildConfiguration.OutputType.Library ? instance.SWC_DEBUG_ENABLED : instance.SWF_DEBUG_ENABLED;
+      myConfig.OUTPUT_TYPE == OutputType.Library ? instance.SWC_DEBUG_ENABLED : instance.SWF_DEBUG_ENABLED;
     addOption(rootElement, CompilerOptionInfo.DEBUG_INFO, String.valueOf(debug));
   }
 
   private void addMandatoryOptions(final Element rootElement) {
-    if (myConfig.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Web) {
+    if (myConfig.TARGET_PLATFORM == TargetPlatform.Web) {
       // todo uncomment in xml and do not add as standard option
       //final String revision = getValueAndSource(CompilerOptionInfo.getOptionInfo("target-player-revision")).first;
       final String revision = "0";
       final String targetPlayer = myConfig.DEPENDENCIES.TARGET_PLAYER + "." + revision;
       addOption(rootElement, CompilerOptionInfo.TARGET_PLAYER_INFO, targetPlayer);
     }
-    else if (myConfig.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Mobile) {
+    else if (myConfig.TARGET_PLATFORM == TargetPlatform.Mobile) {
       addOption(rootElement, CompilerOptionInfo.MOBILE_INFO, "true");
     }
   }
@@ -144,9 +147,9 @@ public class CompilerConfigGenerator {
         append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR).
         append("${FLEX_SDK}/frameworks/mxml-2009-manifest.xml");
 
-      if (myConfig.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Mobile ||
-          myConfig.DEPENDENCIES.COMPONENT_SET == FlexIdeBuildConfiguration.ComponentSet.SparkAndMx ||
-          myConfig.DEPENDENCIES.COMPONENT_SET == FlexIdeBuildConfiguration.ComponentSet.SparkOnly) {
+      if (myConfig.TARGET_PLATFORM == TargetPlatform.Mobile ||
+          myConfig.DEPENDENCIES.COMPONENT_SET == ComponentSet.SparkAndMx ||
+          myConfig.DEPENDENCIES.COMPONENT_SET == ComponentSet.SparkOnly) {
         namespaceBuilder.
           append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR).
           append("library://ns.adobe.com/flex/spark").
@@ -154,9 +157,9 @@ public class CompilerConfigGenerator {
           append("${FLEX_SDK}/frameworks/spark-manifest.xml");
       }
 
-      if (myConfig.TARGET_PLATFORM != FlexIdeBuildConfiguration.TargetPlatform.Mobile) {
-        if (myConfig.DEPENDENCIES.COMPONENT_SET == FlexIdeBuildConfiguration.ComponentSet.SparkAndMx ||
-            myConfig.DEPENDENCIES.COMPONENT_SET == FlexIdeBuildConfiguration.ComponentSet.MxOnly) {
+      if (myConfig.TARGET_PLATFORM != TargetPlatform.Mobile) {
+        if (myConfig.DEPENDENCIES.COMPONENT_SET == ComponentSet.SparkAndMx ||
+            myConfig.DEPENDENCIES.COMPONENT_SET == ComponentSet.MxOnly) {
           namespaceBuilder.
             append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR).
             append("library://ns.adobe.com/flex/mx").
@@ -363,7 +366,7 @@ public class CompilerConfigGenerator {
   }
 
   private void addInputOutputPaths(final Element rootElement) {
-    if (myConfig.OUTPUT_TYPE == FlexIdeBuildConfiguration.OutputType.Library) {
+    if (myConfig.OUTPUT_TYPE == OutputType.Library) {
       final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(myModule.getProject()).getFileIndex();
 
       ContentIterator ci = new ContentIterator() {

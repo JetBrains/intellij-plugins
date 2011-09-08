@@ -3,7 +3,8 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.FilesToPackageForm;
 import com.intellij.lang.javascript.flex.actions.SigningOptionsForm;
-import com.intellij.lang.javascript.flex.projectStructure.options.AirDesktopPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.AirDesktopPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableAirDesktopPackagingOptions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -34,11 +35,11 @@ public class AirDesktopPackagingConfigurable extends NamedConfigurable<AirDeskto
   private SigningOptionsForm mySigningOptionsForm;
 
   private final Module myModule;
-  private final AirDesktopPackagingOptions myAirDesktopPackagingOptions;
+  private final ModifiableAirDesktopPackagingOptions myModel;
 
-  public AirDesktopPackagingConfigurable(final Module module, final AirDesktopPackagingOptions airDesktopPackagingOptions) {
+  public AirDesktopPackagingConfigurable(final Module module, final ModifiableAirDesktopPackagingOptions model) {
     myModule = module;
-    myAirDesktopPackagingOptions = airDesktopPackagingOptions;
+    myModel = model;
 
     final ActionListener listener = new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
@@ -72,7 +73,7 @@ public class AirDesktopPackagingConfigurable extends NamedConfigurable<AirDeskto
   }
 
   public AirDesktopPackagingOptions getEditableObject() {
-    return myAirDesktopPackagingOptions;
+    return myModel;
   }
 
   public String getHelpTopic() {
@@ -84,31 +85,30 @@ public class AirDesktopPackagingConfigurable extends NamedConfigurable<AirDeskto
   }
 
   public boolean isModified() {
-    if (myAirDesktopPackagingOptions.USE_GENERATED_DESCRIPTOR != myGeneratedDescriptorRadioButton.isSelected()) return true;
-    if (!myAirDesktopPackagingOptions.CUSTOM_DESCRIPTOR_PATH
-      .equals(FileUtil.toSystemIndependentName(myCustomDescriptorTextWithBrowse.getText().trim()))) {
+    if (myModel.isUseGeneratedDescriptor() != myGeneratedDescriptorRadioButton.isSelected()) return true;
+    if (!myModel.getCustomDescriptorPath().equals(FileUtil.toSystemIndependentName(myCustomDescriptorTextWithBrowse.getText().trim()))) {
       return true;
     }
-    if (!myAirDesktopPackagingOptions.INSTALLER_FILE_NAME.equals(myInstallerFileNameTextField.getText().trim())) return true;
+    if (!myModel.getInstallerFileName().equals(myInstallerFileNameTextField.getText().trim())) return true;
 
     return false;
   }
 
   public void apply() throws ConfigurationException {
-    applyTo(myAirDesktopPackagingOptions);
+    applyTo(myModel);
   }
 
-  public void applyTo(final AirDesktopPackagingOptions airDesktopPackagingOptions) {
-    airDesktopPackagingOptions.USE_GENERATED_DESCRIPTOR = myGeneratedDescriptorRadioButton.isSelected();
-    airDesktopPackagingOptions.CUSTOM_DESCRIPTOR_PATH = FileUtil.toSystemIndependentName(myCustomDescriptorTextWithBrowse.getText().trim());
-    airDesktopPackagingOptions.INSTALLER_FILE_NAME = myInstallerFileNameTextField.getText().trim();
+  public void applyTo(final ModifiableAirDesktopPackagingOptions model) {
+    model.setUseGeneratedDescriptor(myGeneratedDescriptorRadioButton.isSelected());
+    model.setCustomDescriptorPath(FileUtil.toSystemIndependentName(myCustomDescriptorTextWithBrowse.getText().trim()));
+    model.setInstallerFileName(myInstallerFileNameTextField.getText().trim());
   }
 
   public void reset() {
-    myGeneratedDescriptorRadioButton.setSelected(myAirDesktopPackagingOptions.USE_GENERATED_DESCRIPTOR);
-    myCustomDescriptorRadioButton.setSelected(!myAirDesktopPackagingOptions.USE_GENERATED_DESCRIPTOR);
-    myCustomDescriptorTextWithBrowse.setText(FileUtil.toSystemDependentName(myAirDesktopPackagingOptions.CUSTOM_DESCRIPTOR_PATH));
-    myInstallerFileNameTextField.setText(myAirDesktopPackagingOptions.INSTALLER_FILE_NAME);
+    myGeneratedDescriptorRadioButton.setSelected(myModel.isUseGeneratedDescriptor());
+    myCustomDescriptorRadioButton.setSelected(!myModel.isUseGeneratedDescriptor());
+    myCustomDescriptorTextWithBrowse.setText(FileUtil.toSystemDependentName(myModel.getCustomDescriptorPath()));
+    myInstallerFileNameTextField.setText(myModel.getInstallerFileName());
   }
 
   public void disposeUIResources() {

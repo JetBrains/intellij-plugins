@@ -2,6 +2,8 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -27,9 +29,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration.OutputType;
-import static com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration.TargetPlatform;
 
 public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable*/NamedConfigurable<FlexIdeBuildConfiguration>
   implements CompositeConfigurable.Item {
@@ -171,14 +170,14 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myTargetPlatformCombo.setModel(new DefaultComboBoxModel(TargetPlatform.values()));
     myTargetPlatformCombo.setRenderer(new ListCellRendererWrapper<TargetPlatform>(myTargetPlatformCombo.getRenderer()) {
       public void customize(JList list, TargetPlatform value, int index, boolean selected, boolean hasFocus) {
-        setText(value.PRESENTABLE_TEXT);
+        setText(value.getPresentableText());
       }
     });
 
     myOutputTypeCombo.setModel(new DefaultComboBoxModel(OutputType.values()));
     myOutputTypeCombo.setRenderer(new ListCellRendererWrapper<OutputType>(myOutputTypeCombo.getRenderer()) {
       public void customize(JList list, OutputType value, int index, boolean selected, boolean hasFocus) {
-        setText(value.PRESENTABLE_TEXT);
+        setText(value.getPresentableText());
       }
     });
   }

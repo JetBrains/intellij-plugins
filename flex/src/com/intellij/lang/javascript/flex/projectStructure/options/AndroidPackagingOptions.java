@@ -1,6 +1,8 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
-public class AndroidPackagingOptions extends AirPackagingOptions implements Cloneable {
+import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
+
+public class AndroidPackagingOptions implements AirPackagingOptions, Cloneable {
 
   protected AndroidPackagingOptions clone() {
     try {

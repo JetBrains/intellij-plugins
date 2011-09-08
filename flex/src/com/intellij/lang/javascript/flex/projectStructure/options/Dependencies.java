@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
+import com.intellij.lang.javascript.flex.projectStructure.model.ComponentSet;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModulePointerManager;
 import com.intellij.openapi.project.Project;
@@ -23,7 +24,7 @@ public class Dependencies implements Cloneable {
   private static final LinkageType DEFAULT_FRAMEWORK_LINKAGE = LinkageType.Default;
 
   public String TARGET_PLAYER = "";
-  public FlexIdeBuildConfiguration.ComponentSet COMPONENT_SET = FlexIdeBuildConfiguration.ComponentSet.SparkAndMx;
+  public ComponentSet COMPONENT_SET = ComponentSet.SparkAndMx;
   private LinkageType myFrameworkLinkage = DEFAULT_FRAMEWORK_LINKAGE;
   private static final String DEPENDENCY_TYPE_ELEMENT_NAME = "type";
   private static final String SDK_ELEMENT_NAME = "sdk";

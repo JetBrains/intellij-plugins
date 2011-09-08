@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.lang.javascript.flex.FlexFacet;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
@@ -51,7 +52,7 @@ public class BuiltInCompilationTask extends FlexCompilationTask {
     }
     else {
       assert myFlexIdeConfig != null;
-      final boolean swf = myFlexIdeConfig.OUTPUT_TYPE != FlexIdeBuildConfiguration.OutputType.Library;
+      final boolean swf = myFlexIdeConfig.OUTPUT_TYPE != OutputType.Library;
       final List<String> compilerCommand = Collections.singletonList(swf ? "mxmlc" : "compc");
       return FlexCompilationUtils.buildCommand(compilerCommand, getConfigFiles());
     }
