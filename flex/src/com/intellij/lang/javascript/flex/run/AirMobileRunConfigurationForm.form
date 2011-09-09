@@ -57,12 +57,11 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="61e94" class="javax.swing.JRadioButton" binding="myAirDescriptorRadioButton">
+              <component id="61e94" class="com.intellij.ui.components.JBRadioButton" binding="myAirDescriptorRadioButton">
                 <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <horizontalTextPosition value="11"/>
                   <text value="A&amp;IR application descriptor:"/>
                 </properties>
               </component>
@@ -89,15 +88,6 @@
                 </constraints>
                 <properties/>
               </component>
-              <component id="e6ee" class="javax.swing.JLabel" binding="myRootDirLabel">
-                <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <labelFor value="caed4"/>
-                  <text value="&amp;Root directory:"/>
-                </properties>
-              </component>
               <component id="ded91" class="com.intellij.ui.ComboboxWithBrowseButton" binding="myAirDescriptorComboWithBrowse">
                 <constraints>
                   <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -116,6 +106,25 @@
                 </constraints>
                 <properties/>
               </component>
+              <grid id="54b75" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="25" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="e6ee" class="javax.swing.JLabel" binding="myRootDirLabel">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <labelFor value="caed4"/>
+                      <text value="&amp;Root directory:"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
             </children>
           </grid>
         </children>
@@ -243,7 +252,7 @@
               <text value="&amp;Packaging Options..."/>
             </properties>
           </component>
-          <component id="1c582" class="javax.swing.JLabel" binding="myAdlOptionsLabel">
+          <component id="1c582" class="com.intellij.ui.components.JBLabel" binding="myAdlOptionsLabel">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>

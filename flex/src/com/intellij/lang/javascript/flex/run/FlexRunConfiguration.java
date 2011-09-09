@@ -47,10 +47,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.ui.ComboboxWithBrowseButton;
+import com.intellij.ui.ComponentWithAnchor;
+import com.intellij.ui.components.JBLabel;
+import com.intellij.ui.components.JBRadioButton;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -302,10 +306,10 @@ public class FlexRunConfiguration extends RunConfigurationBase
     }
   }
 
-  static class FlexRunConfigurationOptions extends SettingsEditor<FlexRunConfiguration> {
+  static class FlexRunConfigurationOptions extends SettingsEditor<FlexRunConfiguration> implements ComponentWithAnchor {
     private JPanel myPanel;
     private JComboBox myModuleComboBox;
-    private JRadioButton myUseHtmlOrSwfRadioButton;
+    private JBRadioButton myUseHtmlOrSwfRadioButton;
     private JRadioButton myUseUrlRadioButton;
     private JRadioButton myUseMainClassRadioButton;
     private JRadioButton myConnectToRunningPlayerRadioButton;
@@ -314,7 +318,7 @@ public class FlexRunConfiguration extends RunConfigurationBase
     private JSReferenceEditor myMainClassTextWithBrowse;
     private JCheckBox myRunTrustedCheckBox;
     private TextFieldWithBrowseButton myLaunchWithTextWithBrowse;
-    private JLabel myLaunchWithLabel;
+    private JBLabel myLaunchWithLabel;
     private FlexSdkComboBoxWithBrowseButton myDebuggerSdkCombo;
     private final Project myProject;
     private ModulesComboboxWrapper myModuleComboboxWrapper;
@@ -322,6 +326,7 @@ public class FlexRunConfiguration extends RunConfigurationBase
     private BrowsersConfiguration.BrowserFamily myBrowserFamily;
     private String myPlayerPath;
     private JSClassChooserDialog.PublicInheritor myMainClassFilter;
+    private JComponent anchor;
 
     FlexRunConfigurationOptions(final Project project) {
       myProject = project;
@@ -377,6 +382,8 @@ public class FlexRunConfiguration extends RunConfigurationBase
       myDebuggerSdkCombo.showModuleSdk(true);
 
       updateMainClassField();
+
+      setAnchor(myUseHtmlOrSwfRadioButton);
     }
 
     private void updateMainClassField() {
@@ -493,6 +500,18 @@ public class FlexRunConfiguration extends RunConfigurationBase
       myMainClassTextWithBrowse = JSReferenceEditor.forClassName("", myProject, null, GlobalSearchScope.EMPTY_SCOPE, null,
                                                                  myMainClassFilter, ExecutionBundle.message(
         "choose.main.class.dialog.title"));
+    }
+
+    @Override
+    public JComponent getAnchor() {
+      return anchor;
+    }
+
+    @Override
+    public void setAnchor(@Nullable JComponent anchor) {
+      this.anchor = anchor;
+      myUseHtmlOrSwfRadioButton.setAnchor(anchor);
+      myLaunchWithLabel.setAnchor(anchor);
     }
   }
 }

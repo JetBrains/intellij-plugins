@@ -60,7 +60,7 @@
               <text resource-bundle="com/intellij/lang/javascript/flex/FlexBundle" key="flex.run.config.url"/>
             </properties>
           </component>
-          <component id="33312" class="javax.swing.JRadioButton" binding="myUseHtmlOrSwfRadioButton">
+          <component id="33312" class="com.intellij.ui.components.JBRadioButton" binding="myUseHtmlOrSwfRadioButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -122,12 +122,6 @@
         </clientProperties>
         <border type="etched" title="Options"/>
         <children>
-          <component id="424d2" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myLaunchWithTextWithBrowse">
-            <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties/>
-          </component>
           <component id="28692" class="javax.swing.JCheckBox" binding="myRunTrustedCheckBox">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -136,44 +130,30 @@
               <text resource-bundle="com/intellij/lang/javascript/flex/FlexBundle" key="run.trusted"/>
             </properties>
           </component>
-          <grid id="87e79" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="5" bottom="0" right="0"/>
+          <component id="e0e0c" class="com.intellij.ui.components.JBLabel" binding="myLaunchWithLabel">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <labelFor value="424d2"/>
+              <text value="Lau&amp;nch with:"/>
+            </properties>
+          </component>
+          <component id="424d2" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myLaunchWithTextWithBrowse">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
-            <border type="none"/>
-            <children>
-              <component id="e0e0c" class="javax.swing.JLabel" binding="myLaunchWithLabel">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <labelFor value="424d2"/>
-                  <text value="Lau&amp;nch with:"/>
-                </properties>
-              </component>
-            </children>
-          </grid>
-          <grid id="fa1fb" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="5" bottom="0" right="0"/>
+          </component>
+          <component id="3a9bc" class="javax.swing.JLabel">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties/>
-            <border type="none"/>
-            <children>
-              <component id="3a9bc" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <labelFor value="a9394"/>
-                  <text value="Use de&amp;bugger from SDK:"/>
-                </properties>
-              </component>
-            </children>
-          </grid>
+            <properties>
+              <labelFor value="a9394"/>
+              <text value="Use de&amp;bugger from SDK:"/>
+            </properties>
+          </component>
           <component id="a9394" class="com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton" binding="myDebuggerSdkCombo" custom-create="true">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>

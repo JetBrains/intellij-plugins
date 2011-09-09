@@ -26,9 +26,13 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.ComboboxWithBrowseButton;
+import com.intellij.ui.ComponentWithAnchor;
 import com.intellij.ui.RawCommandLineEditor;
+import com.intellij.ui.components.JBLabel;
+import com.intellij.ui.components.JBRadioButton;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
@@ -40,7 +44,7 @@ import java.util.List;
 import static com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParametersBase.FilePathAndPathInPackage;
 import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.*;
 
-public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunConfiguration> {
+public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunConfiguration> implements ComponentWithAnchor {
   private final Project myProject;
   private ModulesComboboxWrapper myModulesComboboxWrapper;
   private JSClassChooserDialog.PublicInheritor myMainClassFilter;
@@ -49,7 +53,7 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
   private JComboBox myModuleComboBox;
 
   private JRadioButton myMainClassRadioButton;
-  private JRadioButton myAirDescriptorRadioButton;
+  private JBRadioButton myAirDescriptorRadioButton;
   private JRadioButton myExistingPackageRadioButton;
 
   private JSReferenceEditor myMainClassEditor;
@@ -79,11 +83,13 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
   private JRadioButton myDebugOverUSBRadioButton;
   private JTextField myUsbDebugPortTextField;
 
-  private JLabel myAdlOptionsLabel;
+  private JBLabel myAdlOptionsLabel;
   private RawCommandLineEditor myAdlOptionsField;
   private FlexSdkComboBoxWithBrowseButton myDebuggerSdkCombo;
 
   private List<AirInstallerParametersBase.FilePathAndPathInPackage> myFilesToPackage;
+
+  private JComponent anchor;
 
   public AirMobileRunConfigurationForm(final Project project) {
     myProject = project;
@@ -133,6 +139,8 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
 
     updateControls();
     AirRunConfigurationForm.updateMainClassField(myProject, myModulesComboboxWrapper, myMainClassEditor, myMainClassFilter);
+
+    setAnchor(myAirDescriptorRadioButton);
   }
 
   private void initEmulatorRelatedControls() {
@@ -412,5 +420,17 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
     myMainClassEditor =
       JSReferenceEditor.forClassName("", myProject, null, GlobalSearchScope.EMPTY_SCOPE, null, myMainClassFilter, ExecutionBundle.message(
         "choose.main.class.dialog.title"));
+  }
+
+  @Override
+  public JComponent getAnchor() {
+    return anchor;
+  }
+
+  @Override
+  public void setAnchor(@Nullable JComponent anchor) {
+    this.anchor = anchor;
+    myAirDescriptorRadioButton.setAnchor(anchor);
+    myAdlOptionsLabel.setAnchor(anchor);
   }
 }
