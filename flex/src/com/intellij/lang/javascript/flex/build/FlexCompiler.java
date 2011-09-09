@@ -8,10 +8,9 @@ import com.intellij.facet.FacetManager;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
-import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.lang.javascript.flex.run.*;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkAdditionalData;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
@@ -23,12 +22,15 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkAdditionalData;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -36,6 +38,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.DataInput;
 import java.io.IOException;
@@ -50,24 +53,44 @@ public class FlexCompiler implements SourceProcessingCompiler {
   public static final String CONDITIONAL_COMPILATION_VARIABLE_PATTERN = "[a-zA-Z_$][a-zA-Z0-9_&]*::[a-zA-Z_$][a-zA-Z0-9_&]*";
   private static final Key<Collection<Module>> MODULES_TO_SKIP_FLEX_FACET_COMPILATION =
     Key.create("MODULES_TO_SKIP_FLEX_FACET_COMPILATION");
+  private static final Logger LOG = Logger.getInstance(FlexCompiler.class.getName());
 
   @NotNull
   public ProcessingItem[] getProcessingItems(final CompileContext context) {
-    final List<ProcessingItem> myItems = new ArrayList<ProcessingItem>();
-    boolean doneSave = false;
+    saveProject(context.getProject());
+    final List<ProcessingItem> itemList = new ArrayList<ProcessingItem>();
+
+    if (PlatformUtils.isFlexIde() && FlexIdeUtils.isNewUI()) {
+      try {
+        for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig : getModulesAndConfigsToCompile(context.getCompileScope())) {
+          itemList.add(new MyProcessingItem(moduleAndConfig.first, moduleAndConfig.second));
+        }
+      }
+      catch (ConfigurationException e) {
+        // can't happen because already validated
+        throw new RuntimeException(e);
+      }
+
+      if (!itemList.isEmpty() && context.isRebuild()) {
+        final FlexCompilerHandler flexCompilerHandler = FlexCompilerHandler.getInstance(context.getProject());
+        flexCompilerHandler.quitCompilerShell();
+        flexCompilerHandler.getCompilerDependenciesCache().clear();
+      }
+
+      return itemList.toArray(new ProcessingItem[itemList.size()]);
+    }
 
     for (final Module module : context.getCompileScope().getAffectedModules()) {
       for (final FlexBuildConfiguration config : FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(module)) {
         if (config.DO_BUILD) {
           // currently one MyProcessingItem(module) is added if module contains several Flex facets. Better solution could potentially exist.
-          myItems.add(new MyProcessingItem(module));
-          doneSave = ensureDocumentsSaved(doneSave);
+          itemList.add(new MyProcessingItem(module));
           break;
         }
       }
     }
 
-    final ProcessingItem[] items = myItems.toArray(new ProcessingItem[myItems.size()]);
+    final ProcessingItem[] items = itemList.toArray(new ProcessingItem[itemList.size()]);
     if (items.length > 0 && context.isRebuild()) {
       final FlexCompilerHandler flexCompilerHandler = FlexCompilerHandler.getInstance(context.getProject());
       flexCompilerHandler.quitCompilerShell();
@@ -88,28 +111,26 @@ public class FlexCompiler implements SourceProcessingCompiler {
     return items;
   }
 
-  private static boolean ensureDocumentsSaved(boolean doneSave) {
-    if (!doneSave) {
-      Runnable runnable = new Runnable() {
-        public void run() {
-          ApplicationManager.getApplication().saveAll();
-        }
-      };
-
-      if (ApplicationManager.getApplication().isDispatchThread()) {
-        runnable.run();
+  private static void saveProject(final Project project) {
+    Runnable runnable = new Runnable() {
+      public void run() {
+        project.save();
       }
-      else {
-        ApplicationManager.getApplication().invokeAndWait(runnable, ModalityState.defaultModalityState());
-      }
+    };
 
-      doneSave = true;
+    if (ApplicationManager.getApplication().isDispatchThread()) {
+      runnable.run();
     }
-    return doneSave;
+    else {
+      ApplicationManager.getApplication().invokeAndWait(runnable, ModalityState.defaultModalityState());
+    }
   }
 
   public ProcessingItem[] process(final CompileContext context, final ProcessingItem[] items) {
-    // todo switch to mxmlc/compc processes if different SDKs used.
+    if (PlatformUtils.isFlexIde() && FlexIdeUtils.isNewUI()) {
+      return processFlexIdeConfigs(context, items);
+    }
+
     final FlexCompilerHandler flexCompilerHandler = FlexCompilerHandler.getInstance(context.getProject());
     final FlexCompilerProjectConfiguration flexCompilerConfiguration = FlexCompilerProjectConfiguration.getInstance(context.getProject());
 
@@ -146,56 +167,48 @@ public class FlexCompiler implements SourceProcessingCompiler {
           continue;
         }
 
-        if (PlatformUtils.isFlexIde() && FlexIdeUtils.isNewUI()) {
-          // not enabled in IDEA yet
-          appendFlexIdeBCCompilations(compilationTasks, module, builtIn);
+        if (overriddenConfig != null && module == overriddenConfig.getModule()) {
+          final Pair<Boolean, String> validationResultWithMessage =
+            validateConfiguration(overriddenConfig, module, FlexBundle.message("module.name", module.getName()), false);
+
+          if (!validationResultWithMessage.first) {
+            if (validationResultWithMessage.second != null) {
+              context.addMessage(CompilerMessageCategory.ERROR, validationResultWithMessage.second, null, -1, -1);
+            }
+            return ProcessingItem.EMPTY_ARRAY;
+          }
+          compilationTasks.add(builtIn ? new BuiltInCompilationTask(module, null, overriddenConfig)
+                                       : new MxmlcCompcCompilationTask(module, null, overriddenConfig));
         }
         else {
-          if (overriddenConfig != null && module == overriddenConfig.getModule()) {
-            final Pair<Boolean, String> validationResultWithMessage =
-              validateConfiguration(overriddenConfig, module, FlexBundle.message("module.name", module.getName()), false);
-
-            if (!validationResultWithMessage.first) {
-              if (validationResultWithMessage.second != null) {
-                context.addMessage(CompilerMessageCategory.ERROR, validationResultWithMessage.second, null, -1, -1);
-              }
-              return ProcessingItem.EMPTY_ARRAY;
+          if (ModuleType.get(module) instanceof FlexModuleType) {
+            final FlexBuildConfiguration config = FlexBuildConfiguration.getInstance(module);
+            if (config.DO_BUILD) {
+              compilationTasks.add(builtIn ? new BuiltInCompilationTask(module, null, config)
+                                           : new MxmlcCompcCompilationTask(module, null, config));
             }
-            compilationTasks.add(builtIn ? new BuiltInCompilationTask(module, null, overriddenConfig)
-                                         : new MxmlcCompcCompilationTask(module, null, overriddenConfig));
           }
           else {
-            if (ModuleType.get(module) instanceof FlexModuleType) {
-              final FlexBuildConfiguration config = FlexBuildConfiguration.getInstance(module);
+            final Collection<FlexFacet> flexFacets = FacetManager.getInstance(module).getFacetsByType(FlexFacet.ID);
+            for (FlexFacet flexFacet : flexFacets) {
+              final FlexBuildConfiguration config = FlexBuildConfiguration.getInstance(flexFacet);
               if (config.DO_BUILD) {
-                compilationTasks.add(builtIn ? new BuiltInCompilationTask(module, null, config)
-                                             : new MxmlcCompcCompilationTask(module, null, config));
-              }
-            }
-            else {
-              final Collection<FlexFacet> flexFacets = FacetManager.getInstance(module).getFacetsByType(FlexFacet.ID);
-              for (FlexFacet flexFacet : flexFacets) {
-                final FlexBuildConfiguration config = FlexBuildConfiguration.getInstance(flexFacet);
-                if (config.DO_BUILD) {
-                  compilationTasks.add(builtIn ? new BuiltInCompilationTask(module, flexFacet, config)
-                                               : new MxmlcCompcCompilationTask(module, flexFacet, config));
-                }
+                compilationTasks.add(builtIn ? new BuiltInCompilationTask(module, flexFacet, config)
+                                             : new MxmlcCompcCompilationTask(module, flexFacet, config));
               }
             }
           }
-          appendCssCompilationTasks(compilationTasks, module, builtIn);
         }
+        appendCssCompilationTasks(compilationTasks, module, builtIn);
       }
 
       if (!compilationTasks.isEmpty()) {
         context.addMessage(CompilerMessageCategory.INFORMATION,
                            FlexBundle.message(builtIn ? "using.builtin.compiler" : "using.mxmlc.compc",
-                                              flexCompilerConfiguration.MAX_PARALLEL_COMPILATIONS),
-                           null, -1, -1);
+                                              flexCompilerConfiguration.MAX_PARALLEL_COMPILATIONS), null, -1, -1);
 
         if (builtIn) {
           try {
-            // todo take correct SDK from myFlexIdeConfig.DEPENDENCIES...
             final Sdk someSdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(compilationTasks.iterator().next().getModule());
             flexCompilerHandler.getBuiltInFlexCompilerHandler().startCompilerIfNeeded(someSdk, context);
           }
@@ -209,7 +222,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
         final int activeCompilationsNumber = flexCompilerHandler.getBuiltInFlexCompilerHandler().getActiveCompilationsNumber();
         if (activeCompilationsNumber != 0) {
-          Logger.getInstance(getClass().getName()).error(activeCompilationsNumber + " Flex compilation(s) are not finished!");
+          LOG.error(activeCompilationsNumber + " Flex compilation(s) are not finished!");
         }
       }
     }
@@ -246,15 +259,80 @@ public class FlexCompiler implements SourceProcessingCompiler {
     }
   }
 
-  private static void appendFlexIdeBCCompilations(final Collection<FlexCompilationTask> compilationTasks,
-                                                  final Module module,
-                                                  final boolean builtInCompiler) {
-    if (ModuleType.get(module) instanceof FlexModuleType) {
-      for (final FlexIdeBuildConfiguration config : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
-        compilationTasks.add(builtInCompiler ? new BuiltInCompilationTask(module, config)
-                                             : new MxmlcCompcCompilationTask(module, config));
+  private static ProcessingItem[] processFlexIdeConfigs(final CompileContext context, final ProcessingItem[] items) {
+    final FlexCompilerHandler flexCompilerHandler = FlexCompilerHandler.getInstance(context.getProject());
+    final FlexCompilerProjectConfiguration flexCompilerConfiguration = FlexCompilerProjectConfiguration.getInstance(context.getProject());
+
+    if (flexCompilerConfiguration.USE_FCSH) {
+      context.addMessage(CompilerMessageCategory.INFORMATION,
+                         "FCSH tool is not supported yet. Please choose another compiler at File | Settings | Compiler | Flex Compiler",
+                         null, -1, -1);
+      return ProcessingItem.EMPTY_ARRAY;
+    }
+    else {
+      boolean builtIn = flexCompilerConfiguration.USE_BUILT_IN_COMPILER;
+
+      final Pair<String, String> sdkHomeAndVersion = getSdkHomeAndVersionIfSame(items);
+      if (builtIn && sdkHomeAndVersion == null) {
+        builtIn = false;
+        flexCompilerHandler.getBuiltInFlexCompilerHandler().stopCompilerProcess();
+        context.addMessage(CompilerMessageCategory.INFORMATION, FlexBundle.message("can.not.use.built.in.compiler.shell"), null, -1, -1);
+      }
+      context.addMessage(CompilerMessageCategory.INFORMATION,
+                         FlexBundle.message(builtIn ? "using.builtin.compiler" : "using.mxmlc.compc",
+                                            flexCompilerConfiguration.MAX_PARALLEL_COMPILATIONS), null, -1, -1);
+      final Collection<FlexCompilationTask> compilationTasks = new ArrayList<FlexCompilationTask>();
+      for (final ProcessingItem item : items) {
+        final Collection<FlexIdeBuildConfiguration> dependencies = new HashSet<FlexIdeBuildConfiguration>();
+        // todo add 'optimize for' dependencies
+        for (final DependencyEntry entry : ((MyProcessingItem)item).myConfig.getDependencies().getEntries()) {
+          if (entry instanceof BuildConfigurationEntry) {
+            final FlexIdeBuildConfiguration dependencyConfig = ((BuildConfigurationEntry)entry).findBuildConfiguration();
+            if (dependencyConfig != null && !dependencyConfig.isSkipCompile()) {
+              dependencies.add(dependencyConfig);
+            }
+          }
+        }
+
+        compilationTasks
+          .add(builtIn ? new BuiltInCompilationTask(((MyProcessingItem)item).myModule, ((MyProcessingItem)item).myConfig, dependencies)
+                       : new MxmlcCompcCompilationTask(((MyProcessingItem)item).myModule, ((MyProcessingItem)item).myConfig, dependencies));
+      }
+
+      if (builtIn) {
+        try {
+          flexCompilerHandler.getBuiltInFlexCompilerHandler()
+            .startCompilerIfNeeded(sdkHomeAndVersion.first, sdkHomeAndVersion.second, null, context);
+        }
+        catch (IOException e) {
+          context.addMessage(CompilerMessageCategory.ERROR, e.toString(), null, -1, -1);
+          return ProcessingItem.EMPTY_ARRAY;
+        }
+      }
+
+      new FlexCompilationManager(context, compilationTasks).compile();
+
+      final int activeCompilationsNumber = flexCompilerHandler.getBuiltInFlexCompilerHandler().getActiveCompilationsNumber();
+      if (activeCompilationsNumber != 0) {
+        LOG.error(activeCompilationsNumber + " Flex compilation(s) are not finished!");
+      }
+      return items;
+    }
+  }
+
+  @SuppressWarnings("ConstantConditions") // already checked in validateConfiguration()
+  @Nullable
+  private static Pair<String, String> getSdkHomeAndVersionIfSame(final ProcessingItem[] items) {
+    final Library sdkLib = ((MyProcessingItem)items[0]).myConfig.getDependencies().getSdkEntry().findLibrary();
+    final String sdkHome = FlexSdk.getHomePath(sdkLib);
+
+    for (int i = 1; i < items.length; i++) {
+      if (!sdkHome.equals(((MyProcessingItem)items[i]).myConfig.getDependencies().getSdkEntry().getHomePath())) {
+        return null;
       }
     }
+
+    return Pair.create(sdkHome, FlexSdk.getFlexVersion(sdkLib));
   }
 
   @NotNull
@@ -347,11 +425,22 @@ public class FlexCompiler implements SourceProcessingCompiler {
       final FlexIdeRunnerParameters params = ((FlexIdeRunConfiguration)runConfiguration).getRunnerParameters();
       final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig;
 
-      try {
-        moduleAndConfig = FlexBaseRunner.getModuleAndConfig(runConfiguration.getProject(), params);
-      }
-      catch (ExecutionException e) {
-        throw new ConfigurationException(e.getMessage(), FlexBundle.message("run.configuration.0", runConfiguration.getName()));
+      final Ref<ExecutionException> exceptionRef = new Ref<ExecutionException>();
+      moduleAndConfig =
+        ApplicationManager.getApplication().runReadAction(new NullableComputable<Pair<Module, FlexIdeBuildConfiguration>>() {
+          public Pair<Module, FlexIdeBuildConfiguration> compute() {
+            try {
+              return FlexBaseRunner.getModuleAndConfig(runConfiguration.getProject(), params);
+            }
+            catch (ExecutionException e) {
+              exceptionRef.set(e);
+              return null;
+            }
+          }
+        });
+      if (!exceptionRef.isNull()) {
+        throw new ConfigurationException(exceptionRef.get().getMessage(),
+                                         FlexBundle.message("run.configuration.0", runConfiguration.getName()));
       }
 
       if (!moduleAndConfig.second.isSkipCompile()) {
@@ -607,9 +696,16 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
   private static class MyProcessingItem implements ProcessingItem {
     private final Module myModule;
+    private final FlexIdeBuildConfiguration myConfig;
 
     public MyProcessingItem(final Module module) {
       myModule = module;
+      myConfig = null;
+    }
+
+    private MyProcessingItem(final Module module, final FlexIdeBuildConfiguration config) {
+      myModule = module;
+      myConfig = config;
     }
 
     @NotNull

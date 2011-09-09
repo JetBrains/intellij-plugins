@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,6 +22,7 @@ public abstract class FlexCompilationTask {
   // one of the following configs is not null
   protected final @Nullable FlexBuildConfiguration myOldConfig;
   protected final @Nullable FlexIdeBuildConfiguration myFlexIdeConfig;
+  protected final @Nullable Collection<FlexIdeBuildConfiguration> myConfigDependencies;
 
   private List<VirtualFile> myConfigFiles;
 
@@ -31,12 +33,14 @@ public abstract class FlexCompilationTask {
                                 final @NotNull Module module,
                                 final @Nullable FlexFacet flexFacet,
                                 final @Nullable FlexBuildConfiguration oldConfig,
-                                final @Nullable FlexIdeBuildConfiguration flexIdeConfig) {
+                                final @Nullable FlexIdeBuildConfiguration flexIdeConfig,
+                                final @Nullable Collection<FlexIdeBuildConfiguration> configDependencies) {
     myModule = module;
     myPresentableName = presentableName;
     myFlexFacet = flexFacet;
     myOldConfig = oldConfig;
     myFlexIdeConfig = flexIdeConfig;
+    myConfigDependencies = configDependencies;
   }
 
   public void start(final FlexCompilationManager compilationManager) {
@@ -113,5 +117,10 @@ public abstract class FlexCompilationTask {
   @Nullable
   public FlexIdeBuildConfiguration getFlexIdeConfig() {
     return myFlexIdeConfig;
+  }
+
+  @Nullable
+  public Collection<FlexIdeBuildConfiguration> getConfigDependencies() {
+    return myConfigDependencies;
   }
 }

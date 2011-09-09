@@ -17,18 +17,23 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Collection;
 import java.util.List;
 
 public class MxmlcCompcCompilationTask extends FlexCompilationTask {
 
   private Process myProcess;
 
-  public MxmlcCompcCompilationTask(final @NotNull Module module, final @Nullable FlexFacet flexFacet, final @NotNull FlexBuildConfiguration oldConfig) {
-    super(module.getName() + (flexFacet == null ? "" : " (" + flexFacet.getName() + ")"), module, flexFacet, oldConfig, null);
+  public MxmlcCompcCompilationTask(final @NotNull Module module,
+                                   final @Nullable FlexFacet flexFacet,
+                                   final @NotNull FlexBuildConfiguration oldConfig) {
+    super(module.getName() + (flexFacet == null ? "" : " (" + flexFacet.getName() + ")"), module, flexFacet, oldConfig, null, null);
   }
 
-  public MxmlcCompcCompilationTask(final @NotNull Module module, final @NotNull FlexIdeBuildConfiguration flexIdeConfig) {
-    super(flexIdeConfig.getName() + " (" + module.getName() + ")", module, null, null, flexIdeConfig);
+  public MxmlcCompcCompilationTask(final @NotNull Module module,
+                                   final @NotNull FlexIdeBuildConfiguration flexIdeConfig,
+                                   final @NotNull Collection<FlexIdeBuildConfiguration> configDependencies) {
+    super(flexIdeConfig.getName() + " (" + module.getName() + ")", module, null, null, flexIdeConfig, configDependencies);
   }
 
   protected void doStart(final FlexCompilationManager compilationManager) throws IOException {

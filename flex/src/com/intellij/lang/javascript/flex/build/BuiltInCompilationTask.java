@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,13 +22,17 @@ public class BuiltInCompilationTask extends FlexCompilationTask {
   private final BuiltInFlexCompilerHandler myBuiltInFlexCompilerHandler;
   private BuiltInFlexCompilerHandler.Listener myListener;
 
-  public BuiltInCompilationTask(final @NotNull Module module, final @Nullable FlexFacet flexFacet, final @NotNull FlexBuildConfiguration oldConfig) {
-    super(module.getName() + (flexFacet == null ? "" : " (" + flexFacet.getName() + ")"), module, flexFacet, oldConfig, null);
+  public BuiltInCompilationTask(final @NotNull Module module,
+                                final @Nullable FlexFacet flexFacet,
+                                final @NotNull FlexBuildConfiguration oldConfig) {
+    super(module.getName() + (flexFacet == null ? "" : " (" + flexFacet.getName() + ")"), module, flexFacet, oldConfig, null, null);
     myBuiltInFlexCompilerHandler = FlexCompilerHandler.getInstance(module.getProject()).getBuiltInFlexCompilerHandler();
   }
 
-  public BuiltInCompilationTask(final @NotNull Module module, final @NotNull FlexIdeBuildConfiguration flexIdeConfig) {
-    super(flexIdeConfig.getName() + " (" + module.getName() + ")", module, null, null, flexIdeConfig);
+  public BuiltInCompilationTask(final @NotNull Module module,
+                                final @NotNull FlexIdeBuildConfiguration flexIdeConfig,
+                                final @NotNull Collection<FlexIdeBuildConfiguration> configDependencies) {
+    super(flexIdeConfig.getName() + " (" + module.getName() + ")", module, null, null, flexIdeConfig, configDependencies);
     myBuiltInFlexCompilerHandler = FlexCompilerHandler.getInstance(module.getProject()).getBuiltInFlexCompilerHandler();
   }
 

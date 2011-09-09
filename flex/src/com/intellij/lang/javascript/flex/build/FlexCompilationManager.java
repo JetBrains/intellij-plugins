@@ -49,7 +49,10 @@ public class FlexCompilationManager {
     myInProgressTasks = new LinkedList<FlexCompilationTask>();
     myFinishedTasks = new LinkedList<FlexCompilationTask>();
 
-    myModuleGraph = ModuleCompilerUtil.createModuleGraph(ModuleManager.getInstance(context.getProject()).getModules());
+    myModuleGraph = compilationTasks.iterator().next().getFlexIdeConfig() == null
+                    ? ModuleCompilerUtil.createModuleGraph(ModuleManager.getInstance(context.getProject()).getModules())
+                    : null;
+
     myCompilationFinished = false;
     myCompilerDependenciesCache = FlexCompilerHandler.getInstance(context.getProject()).getCompilerDependenciesCache();
   }
@@ -75,7 +78,6 @@ public class FlexCompilationManager {
         catch (InterruptedException e) {
           assert false;
         }
-
       }
     }
     finally {
@@ -130,13 +132,16 @@ public class FlexCompilationManager {
         myFinishedTasks.add(task);
 
         if (task.isCompilationFailed()) {
-          if (hasNotStartedDependentTasks(task)) {
-            addMessage(task, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.failed.dependent.will.be.skipped"), null,
-                       -1, -1);
-            cancelNotStartedDependentTasks(task);
+          final Collection<FlexCompilationTask> cancelledTasks = getNotStartedDependentTasks(task);
+          if (cancelledTasks.isEmpty()) {
+            addMessage(task, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.failed"), null, -1, -1);
           }
           else {
-            addMessage(task, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.failed"), null, -1, -1);
+            addMessage(task, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.failed.dependent.will.be.skipped"), null,
+                       -1, -1);
+            for (final FlexCompilationTask cancelledTask : cancelledTasks) {
+              addMessage(cancelledTask, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.skipped"), null, -1, -1);
+            }
           }
         }
         else {
@@ -198,28 +203,33 @@ public class FlexCompilationManager {
     return true;
   }
 
-  private boolean hasNotStartedDependentTasks(final FlexCompilationTask failedTask) {
-    final Iterator<Module> dependentModulesIterator = myModuleGraph.getOut(failedTask.getModule());
-    while (dependentModulesIterator.hasNext()) {
-      final Module dependentModule = dependentModulesIterator.next();
-      for (FlexCompilationTask task : myNotStartedTasks) {
-        if (dependentModule.equals(task.getModule())) {
-          return true;
+  private Collection<FlexCompilationTask> getNotStartedDependentTasks(final FlexCompilationTask failedTask) {
+    final Collection<FlexCompilationTask> cancelledTasks = new LinkedList<FlexCompilationTask>();
+    appendNotStartedDependentTasks(cancelledTasks, failedTask);
+    return cancelledTasks;
+  }
+
+  private void appendNotStartedDependentTasks(final Collection<FlexCompilationTask> cancelledTasks,
+                                              final FlexCompilationTask task) {
+    final Collection<FlexCompilationTask> tasksToCancel = new ArrayList<FlexCompilationTask>();
+
+    if (task.getFlexIdeConfig() == null) {
+      final Iterator<Module> dependentModulesIterator = myModuleGraph.getOut(task.getModule());
+
+      while (dependentModulesIterator.hasNext()) {
+        final Module dependentModule = dependentModulesIterator.next();
+        for (FlexCompilationTask notStartedTask : myNotStartedTasks) {
+          if (dependentModule.equals(notStartedTask.getModule())) {
+            tasksToCancel.add(notStartedTask);
+          }
         }
       }
     }
-    return false;
-  }
-
-  private void cancelNotStartedDependentTasks(final FlexCompilationTask failedTask) {
-    final Collection<FlexCompilationTask> tasksToCancel = new ArrayList<FlexCompilationTask>();
-    final Iterator<Module> dependentModulesIterator = myModuleGraph.getOut(failedTask.getModule());
-
-    while (dependentModulesIterator.hasNext()) {
-      final Module dependentModule = dependentModulesIterator.next();
-      for (FlexCompilationTask task : myNotStartedTasks) {
-        if (dependentModule.equals(task.getModule())) {
-          tasksToCancel.add(task);
+    else {
+      for (FlexCompilationTask notStartedTask : myNotStartedTasks) {
+        //noinspection ConstantConditions
+        if (notStartedTask.getConfigDependencies().contains(task.getFlexIdeConfig())) {
+          tasksToCancel.add(notStartedTask);
         }
       }
     }
@@ -229,8 +239,8 @@ public class FlexCompilationManager {
         taskToCancel.cancel();
         if (myNotStartedTasks.remove(taskToCancel)) {
           myFinishedTasks.add(taskToCancel);
-          addMessage(taskToCancel, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.skipped"), null, -1, -1);
-          cancelNotStartedDependentTasks(taskToCancel);
+          cancelledTasks.add(taskToCancel);
+          appendNotStartedDependentTasks(cancelledTasks, taskToCancel);
         }
       }
     }
@@ -281,16 +291,27 @@ public class FlexCompilationManager {
   }
 
   private boolean hasDependenciesIn(final FlexCompilationTask task, final Collection<FlexCompilationTask> tasksToSearchDependencies) {
-    final Iterator<Module> dependencies = myModuleGraph.getIn(task.getModule());
-    while (dependencies.hasNext()) {
-      final Module dependency = dependencies.next();
-      for (FlexCompilationTask potentialDependency : tasksToSearchDependencies) {
-        if (dependency.equals(potentialDependency.getModule())) {
+    if (task.getFlexIdeConfig() == null) {
+      final Iterator<Module> dependencies = myModuleGraph.getIn(task.getModule());
+      while (dependencies.hasNext()) {
+        final Module dependency = dependencies.next();
+        for (FlexCompilationTask potentialDependency : tasksToSearchDependencies) {
+          if (dependency.equals(potentialDependency.getModule())) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+    else {
+      for (final FlexCompilationTask otherTask : tasksToSearchDependencies) {
+        //noinspection ConstantConditions
+        if (task.getConfigDependencies().contains(otherTask.getFlexIdeConfig())) {
           return true;
         }
       }
+      return false;
     }
-    return false;
   }
 
   private void updateProgressIndicator() {
