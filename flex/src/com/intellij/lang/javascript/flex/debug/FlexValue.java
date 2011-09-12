@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.javascript.JSDebuggerSupportUtils;
-import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -248,13 +247,13 @@ class FlexValue extends XValue {
   }
 
   private static void setXmlListPresentation(final XValueNode node, final String value, final FlexValue flexValue) {
-    node.setFullValueEvaluator(new XFullValueEvaluator(FlexBundle.message("debugger.show.full.value")) {
+    node.setFullValueEvaluator(new XFullValueEvaluator() {
       public void startEvaluation(@NotNull XFullValueEvaluationCallback callback) {
         new XmlObjectEvaluator(flexValue, callback).startEvaluation();
       }
     });
 
-    node.setPresentation(flexValue.getIcon(), XMLLIST_TYPE, value.concat(" "), true);
+    node.setPresentation(flexValue.getIcon(), XMLLIST_TYPE, value, true);
   }
 
   private static void setXmlPresentation(final XValueNode node, final String additionalInfo, final FlexValue flexValue) {
@@ -284,10 +283,10 @@ class FlexValue extends XValue {
         final String tagName = startTag.substring(1, spaceIndex > 0 ? spaceIndex : startTag.length() - 1);
         textToShow = startTag + "..." + "</" + tagName + "> ";
         if (textToShow.length() > XValueNode.MAX_VALUE_LENGTH) {
-          textToShow = textToShow.substring(0, XValueNode.MAX_VALUE_LENGTH).concat("... ");
+          textToShow = textToShow.substring(0, XValueNode.MAX_VALUE_LENGTH);
         }
 
-        node.setFullValueEvaluator(new XFullValueEvaluator(FlexBundle.message("debugger.show.full.value")) {
+        node.setFullValueEvaluator(new XFullValueEvaluator() {
           public void startEvaluation(@NotNull XFullValueEvaluationCallback callback) {
             new XmlObjectEvaluator(flexValue, callback).startEvaluation();
           }
@@ -343,15 +342,13 @@ class FlexValue extends XValue {
 
       if (value.length() > XValueNode.MAX_VALUE_LENGTH) {
         final String ending = doubleQuoted ? "\" " : quoted ? "\' " : " ";
-        value = value.substring(0, XValueNode.MAX_VALUE_LENGTH).concat("...").concat(ending);
+        value = value.substring(0, XValueNode.MAX_VALUE_LENGTH).concat(ending);
       }
-      else if (!value.endsWith(" ")) {
-        value = value.concat(" ");  // just a separator between text value and hyperlink
-      }
+      value = value.trim();
 
       final String unquoted = quoted || doubleQuoted ? fullValue.substring(1, fullValue.length() - 1) : fullValue;
       node.setFullValueEvaluator(
-        new XFullValueEvaluator(FlexBundle.message("debugger.show.full.value")) {
+        new XFullValueEvaluator() {
           public void startEvaluation(@NotNull XFullValueEvaluationCallback callback) {
             callback.evaluated(unquoted, isXml ? XmlObjectEvaluator.MONOSPACED_FONT : null);
           }
