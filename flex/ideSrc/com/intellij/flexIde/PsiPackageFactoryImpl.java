@@ -23,6 +23,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiBundle;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiDirectoryContainer;
 import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import com.intellij.psi.impl.file.PsiDirectoryImpl;
@@ -53,6 +54,11 @@ public class PsiPackageFactoryImpl extends PsiDirectoryFactory {
       return "";
     }
     return presentable ? ProjectUtil.getLocationRelativeToUserHome(directory.getVirtualFile().getPresentableUrl()) : "";
+  }
+
+  @Override
+  public PsiDirectoryContainer getDirectoryContainer(@NotNull PsiDirectory directory) {
+    return null;//todo
   }
 
   @Override
