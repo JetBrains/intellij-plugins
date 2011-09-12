@@ -1,4 +1,4 @@
-package com.google.jstestdriver.idea.assertFramework.qunit.generate;
+package com.google.jstestdriver.idea.assertFramework.qunit.codeInsight;
 
 import com.google.jstestdriver.idea.assertFramework.AbstractJsGenerateAction;
 import com.google.jstestdriver.idea.assertFramework.GenerateActionContext;

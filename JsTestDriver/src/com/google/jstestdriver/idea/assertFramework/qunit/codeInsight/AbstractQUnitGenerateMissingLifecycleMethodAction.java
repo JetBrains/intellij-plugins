@@ -1,4 +1,4 @@
-package com.google.jstestdriver.idea.assertFramework.qunit.generate;
+package com.google.jstestdriver.idea.assertFramework.qunit.codeInsight;
 
 import com.google.jstestdriver.idea.assertFramework.AbstractJsGenerateAction;
 import com.google.jstestdriver.idea.assertFramework.GenerateActionContext;
@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractQUnitGenerateMissingLifecycleMethodAction extends AbstractJsGenerateAction {
+abstract class AbstractQUnitGenerateMissingLifecycleMethodAction extends AbstractJsGenerateAction {
   @NotNull
   @Override
   public abstract String getHumanReadableDescription();

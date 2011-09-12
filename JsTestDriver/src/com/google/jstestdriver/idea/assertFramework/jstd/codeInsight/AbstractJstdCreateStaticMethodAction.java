@@ -1,4 +1,4 @@
-package com.google.jstestdriver.idea.assertFramework.jstd.generate;
+package com.google.jstestdriver.idea.assertFramework.jstd.codeInsight;
 
 import com.google.jstestdriver.idea.assertFramework.AbstractJsGenerateAction;
 import com.google.jstestdriver.idea.assertFramework.GenerateActionContext;

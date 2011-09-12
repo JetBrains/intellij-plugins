@@ -1,4 +1,4 @@
-package com.google.jstestdriver.idea.assertFramework.qunit.generate;
+package com.google.jstestdriver.idea.assertFramework.qunit.codeInsight;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -1,4 +1,4 @@
-package com.google.jstestdriver.idea.assertFramework.jasmine.codeInsight;
+package com.google.jstestdriver.idea.assertFramework.codeInsight;
 
 import com.google.jstestdriver.idea.assertFramework.codeInsight.JsCallTemplateContextProvider;
 import com.google.jstestdriver.idea.assertFramework.codeInsight.MethodTemplateLookupElement;
