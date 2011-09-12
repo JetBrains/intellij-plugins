@@ -240,7 +240,7 @@ public class OgnlParser extends PrattParser {
     registerParser(NULL_KEYWORD, ATOM_LEVEL + 1, path().up(), TokenParser.postfix(OgnlElementTypes.NULL_LITERAL));
 
     // (...): parenthesized expression
-    registerParser(LPARENTH, ATOM_LEVEL + 1, path().up(), new ReducingParser() {
+    registerParser(LPARENTH, EXPR_LEVEL + 1, path().up(), new ReducingParser() {
       @NotNull
       public IElementType parseFurther(@NotNull final PrattBuilder builder) {
         parseExpression(builder);
