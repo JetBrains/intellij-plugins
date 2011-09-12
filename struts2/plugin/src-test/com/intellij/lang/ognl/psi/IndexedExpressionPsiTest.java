@@ -46,6 +46,21 @@ public class IndexedExpressionPsiTest extends PsiTestCase {
     assertElementType(OgnlElementTypes.INDEXED_EXPRESSION, expression);
   }
 
+  public void testReferenceIndex() {
+    final OgnlExpression expression = parse("identifier[length]");
+    assertElementType(OgnlElementTypes.INDEXED_EXPRESSION, expression);
+  }
+
+  public void testPropertyReferenceIndex() {
+    final OgnlExpression expression = parse("identifier[\"length\"]");
+    assertElementType(OgnlElementTypes.INDEXED_EXPRESSION, expression);
+  }
+
+  public void testPropertyExpressionReferenceIndex() {
+    final OgnlExpression expression = parse("identifier[\"len\" + \"gth\"]");
+    assertElementType(OgnlElementTypes.INDEXED_EXPRESSION, expression);
+  }
+
   private OgnlExpression parse(@Language(value = OgnlLanguage.ID,
                                          prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                          suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {

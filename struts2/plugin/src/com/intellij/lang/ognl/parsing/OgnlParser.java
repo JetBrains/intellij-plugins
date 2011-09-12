@@ -250,7 +250,7 @@ public class OgnlParser extends PrattParser {
     });
 
     // [...]: indexed expression, only after identifier/var
-    registerParser(LBRACKET, ATOM_LEVEL + 1, path().left(IDENTIFIER_PATTERN).up(),
+    registerParser(LBRACKET, EXPR_LEVEL + 1, path().left(IDENTIFIER_PATTERN).up(),
                    new ReducingParser() {
                      @Override
                      public IElementType parseFurther(final PrattBuilder builder) {
