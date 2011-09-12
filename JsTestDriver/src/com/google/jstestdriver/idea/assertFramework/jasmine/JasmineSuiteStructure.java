@@ -2,7 +2,9 @@ package com.google.jstestdriver.idea.assertFramework.jasmine;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.JSCallExpression;
+import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,14 +14,14 @@ import java.util.Map;
 public class JasmineSuiteStructure implements JasmineSuiteChild {
 
   private final String myName;
-  private final JSCallExpression mySuiteCallExpression;
+  private final JSCallExpression myEnclosingCallExpression;
   private final List<JasmineSuiteStructure> mySuiteChildren = Lists.newArrayList();
   private final List<JasmineSpecStructure> mySpecChildren = Lists.newArrayList();
   private final Map<String, JasmineSuiteChild> myChildByNameMap = Maps.newLinkedHashMap();
 
-  public JasmineSuiteStructure(@NotNull String name, @NotNull JSCallExpression suiteCallExpression) {
+  public JasmineSuiteStructure(@NotNull String name, @NotNull JSCallExpression enclosingCallExpression) {
     myName = name;
-    mySuiteCallExpression = suiteCallExpression;
+    myEnclosingCallExpression = enclosingCallExpression;
   }
 
   @NotNull
@@ -28,8 +30,8 @@ public class JasmineSuiteStructure implements JasmineSuiteChild {
   }
 
   @NotNull
-  public JSCallExpression getSuiteCallExpression() {
-    return mySuiteCallExpression;
+  public JSCallExpression getEnclosingCallExpression() {
+    return myEnclosingCallExpression;
   }
 
   public void addChild(@NotNull JasmineSuiteChild child) {
@@ -68,5 +70,22 @@ public class JasmineSuiteStructure implements JasmineSuiteChild {
 
   public int getSpecChildrenCount() {
     return mySpecChildren.size();
+  }
+
+  @Nullable
+  public JasmineSpecStructure findSpecContainingOffset(int offset) {
+    for (JasmineSpecStructure specChild : mySpecChildren) {
+      TextRange specTextRange = specChild.getEnclosingCallExpression().getTextRange();
+      if (JsPsiUtils.containsOffsetStrictly(specTextRange, offset)) {
+        return specChild;
+      }
+    }
+    for (JasmineSuiteStructure suiteChild : mySuiteChildren) {
+      JasmineSpecStructure specStructure = suiteChild.findSpecContainingOffset(offset);
+      if (specStructure != null) {
+        return specStructure;
+      }
+    }
+    return null;
   }
 }

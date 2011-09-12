@@ -180,7 +180,7 @@ public class JsGeneratorUtils {
    * @param caretOffset caret document offset
    * @return suitable offset for new statement insertion, preferably without caret moving.
    */
-  public static int findSuitableOffsetForNewStatement(@NotNull PsiElement psiElement, int caretOffset) {
+  public static int findSuitableOffsetForNewStatement(@NotNull PsiElement psiElement, final int caretOffset) {
     PsiElement parent = psiElement.getParent();
     while (parent != null) {
       if (parent instanceof JSBlockStatement) {

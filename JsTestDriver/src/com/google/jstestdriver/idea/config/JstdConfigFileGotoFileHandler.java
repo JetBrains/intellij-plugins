@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver.idea.config;
 
+import com.google.jstestdriver.idea.util.JsPsiUtils;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.psi.YAMLCompoundValue;
 import org.jetbrains.yaml.psi.YAMLDocument;
@@ -32,19 +33,18 @@ public class JstdConfigFileGotoFileHandler implements GotoDeclarationHandler {
 
   @Override
   public PsiElement[] getGotoDeclarationTargets(PsiElement sourceElement) {
-    TreeElement treeElement = CastUtils.tryCast(sourceElement, TreeElement.class);
-    if (treeElement != null) {
-      if (treeElement.getElementType() == YAMLTokenTypes.TEXT) {
-        YAMLDocument document = JstdConfigFileUtils.getVerifiedHierarchyHead(sourceElement.getParent(),
-            new Class[] {
-                YAMLSequence.class,
-                YAMLCompoundValue.class,
-                YAMLKeyValue.class
-            },
-            YAMLDocument.class
-        );
-        if (document != null) {
-          VirtualFile basePath = JstdConfigFileUtils.extractBasePath(document);
+    if (sourceElement != null && JsPsiUtils.isElementOfType(sourceElement, YAMLTokenTypes.TEXT)) {
+      YAMLDocument document = JstdConfigFileUtils.getVerifiedHierarchyHead(sourceElement.getParent(),
+          new Class[] {
+              YAMLSequence.class,
+              YAMLCompoundValue.class,
+              YAMLKeyValue.class
+          },
+          YAMLDocument.class
+      );
+      if (document != null) {
+        VirtualFile basePath = JstdConfigFileUtils.extractBasePath(document);
+        if (basePath != null) {
           String relativePath = sourceElement.getText();
           VirtualFile gotoVFile = basePath.findFileByRelativePath(relativePath);
           if (gotoVFile != null) {

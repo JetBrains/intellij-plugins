@@ -18,19 +18,32 @@
 
   <actions>
     <group id="JstdGenerateCodeInsideGroup">
+      <action id="JasmineGenerateNewSuiteAction" class="com.google.jstestdriver.idea.assertFramework.jasmine.codeInsight.JasmineGenerateNewSuiteAction"/>
+      <action id="JasmineGenerateNewSpecAction" class="com.google.jstestdriver.idea.assertFramework.jasmine.codeInsight.JasmineGenerateNewSpecAction"/>
+      <separator/>
       <action id="QUnitGenerateNewTestAction" class="com.google.jstestdriver.idea.assertFramework.qunit.generate.QUnitGenerateNewTestAction"/>
       <action id="QUnitGenerateSetupAction" class="com.google.jstestdriver.idea.assertFramework.qunit.generate.QUnitGenerateSetupAction"/>
       <action id="QUnitGenerateTearDownAction" class="com.google.jstestdriver.idea.assertFramework.qunit.generate.QUnitGenerateTearDownAction"/>
+      <separator/>
       <action id="JstdCreateTestAction" class="com.google.jstestdriver.idea.assertFramework.jstd.generate.JstdGenerateNewTestAction"/>
       <action id="JstdCreateSetupAction" class="com.google.jstestdriver.idea.assertFramework.jstd.generate.JstdGenerateSetupAction"/>
       <action id="JstdCreateTearDownAction" class="com.google.jstestdriver.idea.assertFramework.jstd.generate.JstdGenerateTearDownAction"/>
+      <separator/>
       <add-to-group group-id="GenerateGroup" anchor="first"/>
     </group>
   </actions>
 
+  <extensions defaultExtensionNs="com.google.jstestdriver.idea">
+    <jsCallTemplate implementation="com.google.jstestdriver.idea.assertFramework.jasmine.codeInsight.JasmineSuiteCallTemplateContextProvider"/>
+    <jsCallTemplate implementation="com.google.jstestdriver.idea.assertFramework.jasmine.codeInsight.JasmineSpecCallTemplateContextProvider"/>
+  </extensions>
+
   <extensions defaultExtensionNs="com.intellij">
     <inspectionToolProvider implementation="com.google.jstestdriver.idea.assertFramework.support.JstdInspectionToolProvider"/>
+
     <postStartupActivity implementation="com.google.jstestdriver.idea.javascript.JSUnitTestingSupport"/>
+
+    <completion.contributor order="first" language="JavaScript" implementationClass="com.google.jstestdriver.idea.assertFramework.jasmine.codeInsight.FilteringCompletionContributor"/>
   </extensions>
 
 </idea-plugin>

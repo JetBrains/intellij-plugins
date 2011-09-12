@@ -46,6 +46,7 @@ public class JstdConfigFileUtils {
 
   private JstdConfigFileUtils() {}
 
+  @Nullable
   public static String extractBasePathAsRawString(@NotNull YAMLDocument document) {
     List<YAMLPsiElement> children = document.getYAMLElements();
     for (YAMLPsiElement child : children) {
@@ -87,7 +88,7 @@ public class JstdConfigFileUtils {
     return initialBasePath;
   }
 
-  static <T extends PsiElement, K> K getVerifiedHierarchyHead(PsiElement psiElement, Class<?>[] hierarchyClasses, Class<K> headHierarchyClass) {
+  public static <T extends PsiElement, K> K getVerifiedHierarchyHead(PsiElement psiElement, Class<?>[] hierarchyClasses, Class<K> headHierarchyClass) {
     for (Class<?> clazz : hierarchyClasses) {
       if (!clazz.isInstance(psiElement)) {
         return null;

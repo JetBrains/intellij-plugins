@@ -19,7 +19,7 @@ public class JasmineSpecStructure implements JasmineSuiteChild {
     return myName;
   }
 
-  public JSCallExpression getSpecCallExpression() {
+  public JSCallExpression getEnclosingCallExpression() {
     return mySpecCallExpression;
   }
 }

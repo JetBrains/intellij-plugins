@@ -22,6 +22,10 @@
           email="js-test-driver@googlegroups.com">Google</vendor>
   <idea-version since-build="106.0" until-build="109.0"/>
 
+  <extensionPoints>
+    <extensionPoint qualifiedName="com.google.jstestdriver.idea.jsCallTemplate" interface="com.google.jstestdriver.idea.assertFramework.codeInsight.JsCallTemplateContextProvider"/>
+  </extensionPoints>
+
   <depends>com.intellij.modules.lang</depends>
   <depends optional="true" config-file="yaml-support.xml">org.jetbrains.plugins.yaml</depends>
   <depends optional="true" config-file="javascript-support.xml">JavaScript</depends>

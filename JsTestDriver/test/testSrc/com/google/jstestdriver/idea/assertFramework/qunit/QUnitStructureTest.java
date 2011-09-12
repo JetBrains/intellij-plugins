@@ -2,6 +2,7 @@ package com.google.jstestdriver.idea.assertFramework.qunit;
 
 import com.google.jstestdriver.idea.AbstractJsPsiTestCase;
 import com.google.jstestdriver.idea.JsTestDriverTestUtils;
+import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import junit.framework.Assert;
 import org.junit.Test;
@@ -52,32 +53,33 @@ public class QUnitStructureTest extends AbstractJsPsiTestCase {
     return builder.buildTestFileStructure(jsFile);
   }
 
-  private static void validateQUnitFileStructure(MarkedQUnitFileStructure markedQUnitFileStructure, QUnitFileStructure qUnitFileStructure) {
-    for (MarkedQUnitModuleStructure markedQUnitModuleStructure : markedQUnitFileStructure.getModules()) {
-      QUnitModuleStructure qUnitModuleStructure = qUnitFileStructure.getQUnitModuleByName(markedQUnitModuleStructure.getName());
-      if (qUnitModuleStructure != null) {
-        validateQUnitModule(markedQUnitModuleStructure, qUnitModuleStructure);
+  private static void validateQUnitFileStructure(MarkedQUnitFileStructure markedFileStructure, QUnitFileStructure fileStructure) {
+    for (MarkedQUnitModuleStructure markedModuleStructure : markedFileStructure.getModules()) {
+      AbstractQUnitModuleStructure moduleStructure = fileStructure.getQUnitModuleByName(markedModuleStructure.getName());
+      if (moduleStructure != null) {
+        validateQUnitModule(markedModuleStructure, moduleStructure);
       }
       else {
-        Assert.fail("Can't find automatically collected module with name '" + markedQUnitModuleStructure.getName() + "'");
+        Assert.fail("Can't find automatically collected module with name '" + markedModuleStructure.getName() + "'");
       }
     }
-    if (qUnitFileStructure.getNonDefaultModuleCount() != markedQUnitFileStructure.getModules().size()) {
-      Assert.fail("Found marked " + markedQUnitFileStructure.getModules().size() + " modules, but automatically found "
-                  + qUnitFileStructure.getNonDefaultModuleCount() + " modules");
+    if (fileStructure.getAllModuleCount() != markedFileStructure.getModules().size()) {
+      Assert.fail("Found marked " + markedFileStructure.getModules().size() + " modules, but automatically found "
+                  + fileStructure.getNonDefaultModuleCount() + " modules");
     }
   }
 
   private static void validateQUnitModule(MarkedQUnitModuleStructure markedQUnitModuleStructure,
-                                          QUnitModuleStructure qUnitModuleStructure) {
-    Assert.assertEquals(markedQUnitModuleStructure.getName(), qUnitModuleStructure.getName());
-    Assert.assertEquals(markedQUnitModuleStructure.getPsiElement(), qUnitModuleStructure.getEnclosingCallExpression());
+                                          AbstractQUnitModuleStructure moduleStructure) {
+    Assert.assertEquals(markedQUnitModuleStructure.getName(), moduleStructure.getName());
+    JSCallExpression autoCallExpr = moduleStructure.isDefault() ? null : ((QUnitModuleStructure) moduleStructure).getEnclosingCallExpression();
+    Assert.assertEquals(markedQUnitModuleStructure.getPsiElement(), autoCallExpr);
     for (MarkedQUnitTestMethodStructure markedQUnitTestStructure : markedQUnitModuleStructure.getTestStructures()) {
       QUnitTestMethodStructure qUnitTestMethodStructure =
-          qUnitModuleStructure.getTestMethodStructureByName(markedQUnitTestStructure.getName());
+          moduleStructure.getTestMethodStructureByName(markedQUnitTestStructure.getName());
       if (qUnitTestMethodStructure == null) {
         Assert.fail("Can't find automatically collected test with name '" + markedQUnitTestStructure.getName() + "' inside module '"
-                    + qUnitModuleStructure.getName() + "'");
+                    + moduleStructure.getName() + "'");
       }
       validateQUnitTestStructure(markedQUnitTestStructure, qUnitTestMethodStructure);
     }

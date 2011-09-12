@@ -78,7 +78,7 @@ public class JasmineStructureTest extends AbstractJsPsiTestCase {
   private static void matchJasmineSuites(@NotNull JasmineSuiteStructure jasmineSuiteStructure,
                                          @NotNull MarkedJasmineSuiteStructure markedJasmineSuiteStructure) {
     Assert.assertEquals(jasmineSuiteStructure.getName(), markedJasmineSuiteStructure.getName());
-    Assert.assertEquals(jasmineSuiteStructure.getSuiteCallExpression(), markedJasmineSuiteStructure.getPsiElement());
+    Assert.assertEquals(jasmineSuiteStructure.getEnclosingCallExpression(), markedJasmineSuiteStructure.getPsiElement());
     Collection<MarkedJasmineSuiteStructure> innerMarkedSuiteStructures = markedJasmineSuiteStructure.getInnerSuiteStructures();
     for (MarkedJasmineSuiteStructure innerMarkedSuiteStructure : innerMarkedSuiteStructures) {
       JasmineSuiteStructure innerSuiteStructure = jasmineSuiteStructure.getInnerSuiteByName(innerMarkedSuiteStructure.getName());
@@ -111,6 +111,6 @@ public class JasmineStructureTest extends AbstractJsPsiTestCase {
   private static void matchJasmineSpecs(@NotNull JasmineSpecStructure specStructure,
                                         @NotNull MarkedJasmineSpecStructure markedSpecStructure) {
     Assert.assertEquals(markedSpecStructure.getName(), specStructure.getName());
-    Assert.assertEquals(markedSpecStructure.getPsiElement(), specStructure.getSpecCallExpression());
+    Assert.assertEquals(markedSpecStructure.getPsiElement(), specStructure.getEnclosingCallExpression());
   }
 }

@@ -21,20 +21,23 @@ public class QUnitGenerateNewTestAction extends AbstractJsGenerateAction {
 
   @Override
   public boolean isEnabled(@NotNull GenerateActionContext context) {
-    QUnitFileStructureBuilder builder = QUnitFileStructureBuilder.getInstance();
-    QUnitFileStructure fileStructure = builder.buildTestFileStructure(context.getJsFile());
-    Runnable generator = createGenerator(context, fileStructure);
+    Runnable generator = createGenerator(context);
     return generator != null;
   }
 
   @Override
   public void actionPerformed(@NotNull GenerateActionContext context) {
-    QUnitFileStructureBuilder builder = QUnitFileStructureBuilder.getInstance();
-    QUnitFileStructure fileStructure = builder.buildTestFileStructure(context.getJsFile());
-    Runnable generator = createGenerator(context, fileStructure);
+    Runnable generator = createGenerator(context);
     if (generator != null) {
       generator.run();
     }
+  }
+
+  @Nullable
+  private static Runnable createGenerator(final @NotNull GenerateActionContext context) {
+    QUnitFileStructureBuilder builder = QUnitFileStructureBuilder.getInstance();
+    QUnitFileStructure fileStructure = builder.buildTestFileStructure(context.getJsFile());
+    return createGenerator(context, fileStructure);
   }
 
   @Nullable

@@ -180,9 +180,9 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
   }
 
   private static void addTopLevelKeysCompletions(CompletionResultSet result, String prefix) {
+    result = result.withPrefixMatcher(prefix);
     for (String key : JstdConfigFileUtils.VALID_TOP_LEVEL_KEYS) {
       if (key.startsWith(prefix)) {
-        result = result.withPrefixMatcher(prefix);
         result.addElement(LookupItem.fromString(key + ":"));
       }
     }

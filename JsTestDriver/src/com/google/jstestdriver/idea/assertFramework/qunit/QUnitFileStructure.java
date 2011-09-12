@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class QUnitFileStructure extends AbstractTestFileStructure {
 
-  private final List<QUnitModuleStructure> myModuleStructures = Lists.newArrayList();
+  private final List<QUnitModuleStructure> myNonDefaultModuleStructures = Lists.newArrayList();
   private final Map<String, QUnitModuleStructure> myModuleStructureByNameMap = Maps.newHashMap();
   private final DefaultQUnitModuleStructure myDefaultModuleStructure = new DefaultQUnitModuleStructure(this);
 
@@ -22,22 +22,32 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
     super(jsFile);
   }
 
-  public int getNonDefaultModuleCount() {
-    return myModuleStructures.size();
+  public int getAllModuleCount() {
+    return myNonDefaultModuleStructures.size() + 1;
   }
 
-  public List<QUnitModuleStructure> getModuleStructures() {
-    return myModuleStructures;
+  public int getNonDefaultModuleCount() {
+    return myNonDefaultModuleStructures.size();
+  }
+
+  public List<QUnitModuleStructure> getNonDefaultModuleStructures() {
+    return myNonDefaultModuleStructures;
   }
 
   public void addModuleStructure(@NotNull QUnitModuleStructure moduleStructure) {
     myModuleStructureByNameMap.put(moduleStructure.getName(), moduleStructure);
-    myModuleStructures.add(moduleStructure);
+    myNonDefaultModuleStructures.add(moduleStructure);
   }
 
   @Nullable
-  public QUnitModuleStructure getQUnitModuleByName(String qUnitModuleName) {
-    return myModuleStructureByNameMap.get(qUnitModuleName);
+  public AbstractQUnitModuleStructure getQUnitModuleByName(String qUnitModuleName) {
+    AbstractQUnitModuleStructure moduleStructure = myModuleStructureByNameMap.get(qUnitModuleName);
+    if (moduleStructure == null) {
+      if (myDefaultModuleStructure.getName().equals(qUnitModuleName)) {
+        moduleStructure = myDefaultModuleStructure;
+      }
+    }
+    return moduleStructure;
   }
 
   @NotNull
@@ -51,7 +61,7 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
 
   @Nullable
   public QUnitModuleStructure findModuleStructureContainingOffset(int offset) {
-    for (QUnitModuleStructure moduleStructure : myModuleStructures) {
+    for (QUnitModuleStructure moduleStructure : myNonDefaultModuleStructures) {
       TextRange moduleTextRange = moduleStructure.getEnclosingCallExpression().getTextRange();
       if (JsPsiUtils.containsOffsetStrictly(moduleTextRange, offset)) {
         return moduleStructure;
@@ -66,7 +76,7 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
     if (testMethodStructure != null) {
       return testMethodStructure;
     }
-    for (QUnitModuleStructure moduleStructure : myModuleStructures) {
+    for (QUnitModuleStructure moduleStructure : myNonDefaultModuleStructures) {
       testMethodStructure = moduleStructure.findTestMethodStructureContainingOffset(offset);
       if (testMethodStructure != null) {
         return testMethodStructure;
