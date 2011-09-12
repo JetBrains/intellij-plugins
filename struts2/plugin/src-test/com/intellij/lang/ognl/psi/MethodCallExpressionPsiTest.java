@@ -46,6 +46,19 @@ public class MethodCallExpressionPsiTest extends PsiTestCase {
     assertElementType(OgnlElementTypes.STRING_LITERAL, parameter);
   }
 
+  public void testNestedMethodCalls() {
+    final OgnlMethodCallExpression methodCallExpression = parse("method(ensureLoaded(1,2), name)");
+    assertEquals(2, methodCallExpression.getParameterCount());
+    final OgnlExpression parameter0 = methodCallExpression.getParameter(0);
+    assertElementType(OgnlElementTypes.METHOD_CALL_EXPRESSION, parameter0);
+    assertEquals(2, ((OgnlMethodCallExpression) parameter0).getParameterCount());
+    final OgnlExpression parameter1 = methodCallExpression.getParameter(1);
+    assertElementType(OgnlElementTypes.REFERENCE_EXPRESSION, parameter1);
+  }
+
+  // TODO method((ensureLoaded(1,2), name))
+  //             ^
+
   private OgnlMethodCallExpression parse(@Language(value = OgnlLanguage.ID,
                                                    prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                                    suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
