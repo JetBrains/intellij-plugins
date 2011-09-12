@@ -3,11 +3,7 @@ package com.google.jstestdriver.idea.assertFramework.jasmine;
 import com.google.common.collect.Lists;
 import com.google.inject.internal.Maps;
 import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructure;
-import com.google.jstestdriver.idea.assertFramework.qunit.QUnitModuleStructure;
-import com.google.jstestdriver.idea.assertFramework.qunit.QUnitTestMethodStructure;
-import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,11 +38,11 @@ public class JasmineFileStructure extends AbstractTestFileStructure {
   }
 
   @Nullable
-  public JasmineSuiteStructure findSuiteStructureContainingOffset(int offset) {
+  public JasmineSuiteStructure findLowestSuiteStructureContainingOffset(int offset) {
     for (JasmineSuiteStructure suiteStructure : mySuiteStructures) {
-      TextRange suiteTextRange = suiteStructure.getEnclosingCallExpression().getTextRange();
-      if (JsPsiUtils.containsOffsetStrictly(suiteTextRange, offset)) {
-        return suiteStructure;
+      JasmineSuiteStructure inner = suiteStructure.findLowestSuiteStructureContainingOffset(offset);
+      if (inner != null) {
+        return inner;
       }
     }
     return null;

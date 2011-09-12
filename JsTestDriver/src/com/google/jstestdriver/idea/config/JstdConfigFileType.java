@@ -36,14 +36,13 @@ import org.jetbrains.yaml.YAMLLanguage;
 import javax.swing.*;
 import java.io.File;
 import java.util.Arrays;
-import java.util.Set;
 
 public class JstdConfigFileType extends LanguageFileType implements FileTypeIdentifiableByVirtualFile {
 
   public static final JstdConfigFileType INSTANCE = new JstdConfigFileType();
 
-  private static final Set<String> SUITABLE_FILE_NAMES_WITHOUT_EXTENSION;
-  private static final Set<String> SUITABLE_FILE_EXTENSIONS;
+  private static final ImmutableSet<String> SUITABLE_FILE_NAMES_WITHOUT_EXTENSION;
+  private static final ImmutableSet<String> EXTRA_FILE_EXTENSIONS;
 
   static {
     Function<String, String> lower = new Function<String, String>() {
@@ -55,7 +54,7 @@ public class JstdConfigFileType extends LanguageFileType implements FileTypeIden
     SUITABLE_FILE_NAMES_WITHOUT_EXTENSION = ImmutableSet.copyOf(Iterables.transform(Arrays.asList(
         "jsTestDriver", "js-test-driver", "js_test_driver"
     ), lower));
-    SUITABLE_FILE_EXTENSIONS = ImmutableSet.copyOf(Iterables.transform(Arrays.asList(
+    EXTRA_FILE_EXTENSIONS = ImmutableSet.copyOf(Iterables.transform(Arrays.asList(
         "conf", "yml", "yaml"
     ), lower));
   }
@@ -93,11 +92,24 @@ public class JstdConfigFileType extends LanguageFileType implements FileTypeIden
 
   @Override
   public boolean isMyFileType(VirtualFile file) {
-    if (SUITABLE_FILE_EXTENSIONS.contains(file.getExtension())) {
-      if (SUITABLE_FILE_NAMES_WITHOUT_EXTENSION.contains(StringUtil.toLowerCase(file.getNameWithoutExtension()))) {
+    if (EXTRA_FILE_EXTENSIONS.contains(file.getExtension())) {
+      if (isSuitableNameWithoutExtension(file)) {
         return true;
       }
       if (isReferencedByJstdRunConfiguration(file)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private static boolean isSuitableNameWithoutExtension(@NotNull VirtualFile file) {
+    String nameWithoutExtension = StringUtil.toLowerCase(file.getNameWithoutExtension());
+    if (nameWithoutExtension == null) {
+      return false;
+    }
+    for (String prefix : SUITABLE_FILE_NAMES_WITHOUT_EXTENSION) {
+      if (nameWithoutExtension.startsWith(prefix)) {
         return true;
       }
     }

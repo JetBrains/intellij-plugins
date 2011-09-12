@@ -52,7 +52,7 @@ public class JasmineFileStructureBuilder extends AbstractTestFileStructureBuilde
           String name = JsPsiUtils.extractStringValue(arguments[0]);
           JSFunctionExpression specDefinitions = JsPsiUtils.extractFunctionExpression(arguments[1]);
           if (name != null && specDefinitions != null) {
-            JasmineSuiteStructure suiteStructure = new JasmineSuiteStructure(name, callExpression);
+            JasmineSuiteStructure suiteStructure = new JasmineSuiteStructure(name, callExpression, specDefinitions);
             if (parentSuiteStructure != null) {
               parentSuiteStructure.addChild(suiteStructure);
             } else {

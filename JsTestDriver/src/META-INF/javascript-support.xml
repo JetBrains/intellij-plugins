@@ -20,14 +20,16 @@
     <group id="JstdGenerateCodeInsideGroup">
       <action id="JasmineGenerateNewSuiteAction" class="com.google.jstestdriver.idea.assertFramework.jasmine.codeInsight.JasmineGenerateNewSuiteAction"/>
       <action id="JasmineGenerateNewSpecAction" class="com.google.jstestdriver.idea.assertFramework.jasmine.codeInsight.JasmineGenerateNewSpecAction"/>
+      <action id="JasmineGenerateBeforeEachMethodAction" class="com.google.jstestdriver.idea.assertFramework.jasmine.codeInsight.JasmineGenerateBeforeEachMethodAction"/>
+      <action id="JasmineGenerateAfterEachMethodAction" class="com.google.jstestdriver.idea.assertFramework.jasmine.codeInsight.JasmineGenerateAfterEachMethodAction"/>
       <separator/>
-      <action id="QUnitGenerateNewTestAction" class="com.google.jstestdriver.idea.assertFramework.qunit.generate.QUnitGenerateNewTestAction"/>
-      <action id="QUnitGenerateSetupAction" class="com.google.jstestdriver.idea.assertFramework.qunit.generate.QUnitGenerateSetupAction"/>
-      <action id="QUnitGenerateTearDownAction" class="com.google.jstestdriver.idea.assertFramework.qunit.generate.QUnitGenerateTearDownAction"/>
+      <action id="QUnitGenerateNewTestAction" class="com.google.jstestdriver.idea.assertFramework.qunit.codeInsight.QUnitGenerateNewTestAction"/>
+      <action id="QUnitGenerateSetupAction" class="com.google.jstestdriver.idea.assertFramework.qunit.codeInsight.QUnitGenerateSetupAction"/>
+      <action id="QUnitGenerateTearDownAction" class="com.google.jstestdriver.idea.assertFramework.qunit.codeInsight.QUnitGenerateTearDownAction"/>
       <separator/>
-      <action id="JstdCreateTestAction" class="com.google.jstestdriver.idea.assertFramework.jstd.generate.JstdGenerateNewTestAction"/>
-      <action id="JstdCreateSetupAction" class="com.google.jstestdriver.idea.assertFramework.jstd.generate.JstdGenerateSetupAction"/>
-      <action id="JstdCreateTearDownAction" class="com.google.jstestdriver.idea.assertFramework.jstd.generate.JstdGenerateTearDownAction"/>
+      <action id="JstdCreateTestAction" class="com.google.jstestdriver.idea.assertFramework.jstd.codeInsight.JstdGenerateNewTestAction"/>
+      <action id="JstdCreateSetupAction" class="com.google.jstestdriver.idea.assertFramework.jstd.codeInsight.JstdGenerateSetupAction"/>
+      <action id="JstdCreateTearDownAction" class="com.google.jstestdriver.idea.assertFramework.jstd.codeInsight.JstdGenerateTearDownAction"/>
       <separator/>
       <add-to-group group-id="GenerateGroup" anchor="first"/>
     </group>
@@ -43,7 +45,7 @@
 
     <postStartupActivity implementation="com.google.jstestdriver.idea.javascript.JSUnitTestingSupport"/>
 
-    <completion.contributor order="first" language="JavaScript" implementationClass="com.google.jstestdriver.idea.assertFramework.jasmine.codeInsight.FilteringCompletionContributor"/>
+    <completion.contributor order="first" language="JavaScript" implementationClass="com.google.jstestdriver.idea.assertFramework.codeInsight.FilteringCompletionContributor"/>
   </extensions>
 
 </idea-plugin>

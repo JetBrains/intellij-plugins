@@ -308,4 +308,19 @@ public class JsPsiUtils {
     }
     return false;
   }
+
+  @Nullable
+  public static PsiElement getFunctionLeftBrace(@Nullable JSFunction function) {
+    if (function == null) {
+      return null;
+    }
+    JSSourceElement[] jsSourceElements = ObjectUtils.notNull(function.getBody(), JSSourceElement.EMPTY_ARRAY);
+    for (JSSourceElement jsSourceElement : jsSourceElements) {
+      if (jsSourceElement instanceof JSBlockStatement) {
+        JSBlockStatement jsBlockStatement = (JSBlockStatement) jsSourceElement;
+        return jsBlockStatement.getFirstChild();
+      }
+    }
+    return null;
+  }
 }
