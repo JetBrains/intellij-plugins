@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.xdebugger.XSourcePosition;
+import com.intellij.xdebugger.evaluation.EvaluationMode;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +26,7 @@ class FlexDebuggerEditorsProvider extends XDebuggerEditorsProvider {
 
   @NotNull
     public Document createDocument(@NotNull final Project project,
-                                 @NotNull final String text, @Nullable final XSourcePosition position) {
+                                   @NotNull final String text, @Nullable final XSourcePosition position, @NotNull EvaluationMode mode) {
     return JSDebuggerSupportUtils.createDocument(
         text,
         project,
