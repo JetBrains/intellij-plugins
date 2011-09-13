@@ -16,6 +16,7 @@
 package com.intellij.lang.ognl.psi.binaryexpression;
 
 import com.intellij.lang.ognl.OgnlLanguage;
+import com.intellij.lang.ognl.parsing.OgnlElementType;
 import com.intellij.lang.ognl.psi.OgnlBinaryExpression;
 import com.intellij.lang.ognl.psi.OgnlExpression;
 import com.intellij.lang.ognl.psi.OgnlTokenType;
@@ -28,6 +29,26 @@ abstract class BinaryExpressionPsiTestCase extends PsiTestCase {
                                                  prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                                  suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
     return (OgnlBinaryExpression) parseSingleExpression(expression);
+  }
+
+  protected void assertBinaryExpression(@Language(value = OgnlLanguage.ID,
+                                                  prefix = OgnlLanguage.EXPRESSION_PREFIX,
+                                                  suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression,
+                                        final OgnlElementType leftType,
+                                        final OgnlTokenType operationSign,
+                                        final OgnlElementType rightType) {
+    final OgnlBinaryExpression binaryExpression = parse(expression);
+    assertNotNull(binaryExpression);
+
+    final OgnlExpression leftOperand = binaryExpression.getLeftOperand();
+    assertNotNull(leftOperand);
+    assertElementType(leftType, leftOperand);
+
+    assertEquals(operationSign, binaryExpression.getOperationSign());
+
+    final OgnlExpression rightOperand = binaryExpression.getRightOperand();
+    assertNotNull(rightOperand);
+    assertElementType(rightType, rightOperand);
   }
 
   protected void assertConstantBinaryExpression(@Language(value = OgnlLanguage.ID,

@@ -16,7 +16,6 @@
 package com.intellij.lang.ognl.psi.binaryexpression;
 
 import com.intellij.lang.ognl.parsing.OgnlElementTypes;
-import com.intellij.lang.ognl.psi.OgnlBinaryExpression;
 import com.intellij.lang.ognl.psi.OgnlTokenTypes;
 
 /**
@@ -25,17 +24,17 @@ import com.intellij.lang.ognl.psi.OgnlTokenTypes;
 public class InNotInBinaryExpressionPsiTest extends BinaryExpressionPsiTestCase {
 
   public void testSimpleIn() {
-    final OgnlBinaryExpression binaryExpression = parse("a in {1,2}");
-    assertEquals(OgnlTokenTypes.IN_KEYWORD, binaryExpression.getOperationSign());
-    assertElementType(OgnlElementTypes.REFERENCE_EXPRESSION, binaryExpression.getLeftOperand());
-    assertElementType(OgnlElementTypes.SEQUENCE_EXPRESSION, binaryExpression.getRightOperand());
+    assertBinaryExpression("a in {1,2}",
+                           OgnlElementTypes.REFERENCE_EXPRESSION,
+                           OgnlTokenTypes.IN_KEYWORD,
+                           OgnlElementTypes.SEQUENCE_EXPRESSION);
   }
 
   public void testSimpleNotIn() {
-    final OgnlBinaryExpression binaryExpression = parse("a not in {1,2}");
-    assertEquals(OgnlTokenTypes.NOT_IN_KEYWORD, binaryExpression.getOperationSign());
-    assertElementType(OgnlElementTypes.REFERENCE_EXPRESSION, binaryExpression.getLeftOperand());
-    assertElementType(OgnlElementTypes.SEQUENCE_EXPRESSION, binaryExpression.getRightOperand());
+    assertBinaryExpression("a not in {1,2}",
+                           OgnlElementTypes.REFERENCE_EXPRESSION,
+                           OgnlTokenTypes.NOT_IN_KEYWORD,
+                           OgnlElementTypes.SEQUENCE_EXPRESSION);
   }
 
 }

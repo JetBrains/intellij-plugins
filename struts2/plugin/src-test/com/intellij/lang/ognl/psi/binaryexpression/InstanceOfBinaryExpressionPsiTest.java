@@ -16,7 +16,6 @@
 package com.intellij.lang.ognl.psi.binaryexpression;
 
 import com.intellij.lang.ognl.parsing.OgnlElementTypes;
-import com.intellij.lang.ognl.psi.OgnlBinaryExpression;
 import com.intellij.lang.ognl.psi.OgnlTokenTypes;
 
 /**
@@ -25,10 +24,10 @@ import com.intellij.lang.ognl.psi.OgnlTokenTypes;
 public class InstanceOfBinaryExpressionPsiTest extends BinaryExpressionPsiTestCase {
 
   public void testSimpleInstanceOf() {
-    final OgnlBinaryExpression binaryExpression = parse("a instanceof b");
-    assertEquals(OgnlTokenTypes.INSTANCEOF_KEYWORD, binaryExpression.getOperationSign());
-    assertElementType(OgnlElementTypes.REFERENCE_EXPRESSION, binaryExpression.getLeftOperand());
-    assertElementType(OgnlElementTypes.REFERENCE_EXPRESSION, binaryExpression.getRightOperand());
+    assertBinaryExpression("a instanceof b",
+                           OgnlElementTypes.REFERENCE_EXPRESSION,
+                           OgnlTokenTypes.INSTANCEOF_KEYWORD,
+                           OgnlElementTypes.REFERENCE_EXPRESSION);
   }
 
 }
