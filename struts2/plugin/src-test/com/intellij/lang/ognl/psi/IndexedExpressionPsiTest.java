@@ -17,6 +17,7 @@ package com.intellij.lang.ognl.psi;
 
 import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.parsing.OgnlElementTypes;
+import com.intellij.psi.PsiType;
 import org.intellij.lang.annotations.Language;
 
 /**
@@ -28,12 +29,16 @@ public class IndexedExpressionPsiTest extends PsiTestCase {
 
   public void testIdentifierSimpleIntegerIndex() {
     final OgnlIndexedExpression indexedExpression = parse("identifier[0]");
-    assertElementType(OgnlElementTypes.INTEGER_LITERAL, indexedExpression.getExpression());
+    final OgnlExpression expression = indexedExpression.getExpression();
+    assertElementType(OgnlElementTypes.INTEGER_LITERAL, expression);
+    assertEquals(PsiType.INT, expression.getType());
   }
 
   public void testIdentifierExpressionIntegerIndex() {
     final OgnlIndexedExpression indexedExpression = parse("identifier[1+2]");
-    assertElementType(OgnlElementTypes.BINARY_EXPRESSION, indexedExpression.getExpression());
+    final OgnlExpression expression = indexedExpression.getExpression();
+    assertElementType(OgnlElementTypes.BINARY_EXPRESSION, expression);
+    assertEquals(PsiType.INT, expression.getType());
   }
 
   public void testVarSimpleIntegerIndex() {

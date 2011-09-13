@@ -17,6 +17,7 @@ package com.intellij.lang.ognl.psi;
 
 import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.parsing.OgnlElementTypes;
+import com.intellij.psi.PsiType;
 import org.intellij.lang.annotations.Language;
 
 /**
@@ -28,6 +29,7 @@ public class ParenthesizedExpressionPsiTest extends PsiTestCase {
     final OgnlParenthesizedExpression parenthesizedExpression = parse("(3 + 4)");
     final OgnlExpression expression = parenthesizedExpression.getExpression();
     assertElementType(OgnlElementTypes.BINARY_EXPRESSION, expression);
+    assertEquals(PsiType.INT, expression.getType());
 
     final OgnlBinaryExpression binaryExpression = (OgnlBinaryExpression) expression;
     assertElementType(OgnlElementTypes.INTEGER_LITERAL, binaryExpression.getLeftOperand());

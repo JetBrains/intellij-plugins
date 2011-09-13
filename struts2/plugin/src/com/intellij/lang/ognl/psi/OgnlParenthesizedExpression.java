@@ -32,7 +32,7 @@ public class OgnlParenthesizedExpression extends OgnlExpressionBase {
 
   @Override
   public PsiType getType() {
-    return null;
+    return getExpression().getType();
   }
 
   /**
