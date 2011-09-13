@@ -28,4 +28,8 @@ public class ParenthesizedExpressionParsingTest extends OgnlParsingTestCase {
     doTest(true);
   }
 
+  public void testMissingClosingRightParenthesisNested() {
+    doTest(true);
+  }
+
 }
