@@ -34,7 +34,7 @@ public class OgnlSequenceExpression extends OgnlExpressionBase {
 
   @Override
   public PsiType getType() {
-    return null;
+    return getExpressionType(0);
   }
 
 }

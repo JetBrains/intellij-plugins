@@ -17,6 +17,7 @@ package com.intellij.lang.ognl.psi;
 
 import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.parsing.OgnlElementTypes;
+import com.intellij.psi.PsiType;
 import org.intellij.lang.annotations.Language;
 
 /**
@@ -29,6 +30,8 @@ public class SequenceExpressionPsiTest extends PsiTestCase {
   public void testSimpleIntegerLiteralSequence() {
     final OgnlSequenceExpression expression = parse("{1,2,3}");
     assertSize(3, expression.getElements());
+    assertEquals(PsiType.INT, expression.getType());
+    
     final OgnlExpression firstExpression = expression.getExpression(0);
     assertElementType(OgnlElementTypes.INTEGER_LITERAL, firstExpression);
   }
