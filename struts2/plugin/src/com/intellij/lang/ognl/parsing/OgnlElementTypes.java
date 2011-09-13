@@ -49,12 +49,7 @@ public class OgnlElementTypes {
   public static final OgnlElementType INDEXED_EXPRESSION = new OgnlElementType("IndexedExpression") {
     @Override
     public PsiElement createPsiElement(final ASTNode node) {
-      return new OgnlExpressionBase(node) {
-        @Override
-        public PsiType getType() {
-          return null;
-        }
-      };
+      return new OgnlIndexedExpression(node);
     }
   };
 
