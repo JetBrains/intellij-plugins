@@ -18,6 +18,7 @@ package com.google.jstestdriver.idea.config;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.idea.util.CastUtils;
+import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
@@ -115,11 +116,9 @@ public class JstdConfigFileAnnotator implements Annotator {
     compoundValue.acceptChildren(new PsiElementVisitor() {
       @Override
       public void visitElement(PsiElement element) {
-        YAMLSequence sequence = CastUtils.tryCast(element, YAMLSequence.class);
+        final YAMLSequence sequence = CastUtils.tryCast(element, YAMLSequence.class);
         if (sequence != null) {
-          int startLine = document.getLineNumber(sequence.getTextRange().getStartOffset());
-          int endLine = document.getLineNumber(sequence.getTextRange().getEndOffset());
-          if (startLine < endLine - 1) {
+          if (!isOneLineText(sequence, document)) {
             holder.createErrorAnnotation(sequence, "Unexpected multiline path");
           }
           return;
@@ -138,6 +137,27 @@ public class JstdConfigFileAnnotator implements Annotator {
         }
       }
     });
+  }
+
+  private static boolean isOneLineText(@NotNull YAMLSequence sequence, @NotNull final Document document) {
+    final Ref<Integer> startLineNumberRef = Ref.create(null);
+    final Ref<Integer> endLineNumberRef = Ref.create(null);
+    sequence.acceptChildren(new PsiElementVisitor() {
+      @Override
+      public void visitElement(PsiElement element) {
+        if (JsPsiUtils.isElementOfType(element, YAMLTokenTypes.TEXT)) {
+          int startLine = document.getLineNumber(element.getTextRange().getStartOffset());
+          int endLine = document.getLineNumber(element.getTextRange().getEndOffset());
+          if (startLineNumberRef.isNull()) {
+            startLineNumberRef.set(startLine);
+          }
+          endLineNumberRef.set(endLine);
+        }
+      }
+    });
+    Integer startLineNumber = startLineNumberRef.get();
+    Integer endLineNumber = endLineNumberRef.get();
+    return startLineNumber != null && startLineNumber.equals(endLineNumber);
   }
 
   @Nullable

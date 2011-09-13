@@ -1,6 +1,6 @@
 package com.google.jstestdriver.idea.assertFramework.jasmine.codeInsight;
 
-import com.google.jstestdriver.idea.assertFramework.JsGeneratorUtils;
+import com.google.jstestdriver.idea.assertFramework.codeInsight.JsGeneratorUtils;
 import com.google.jstestdriver.idea.assertFramework.codeInsight.JsCallTemplateContextProvider;
 import com.google.jstestdriver.idea.config.JstdConfigFileUtils;
 import com.intellij.codeInsight.completion.CompletionParameters;

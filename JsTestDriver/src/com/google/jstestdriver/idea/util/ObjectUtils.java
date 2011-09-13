@@ -8,8 +8,8 @@ public class ObjectUtils {
   private ObjectUtils() {}
 
   @NotNull
-  public static <T, K extends T> T notNull(@Nullable T value, @NotNull K defaultValue) {
-    return value == null ? defaultValue : value;
+  public static <T> T notNull(@Nullable T value, @NotNull T defaultValue) {
+    return value != null ? value : defaultValue;
   }
 
   @Nullable

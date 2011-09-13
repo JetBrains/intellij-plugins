@@ -1,7 +1,5 @@
 package com.google.jstestdriver.idea.assertFramework.codeInsight;
 
-import com.google.jstestdriver.idea.assertFramework.codeInsight.JsCallTemplateContextProvider;
-import com.google.jstestdriver.idea.assertFramework.codeInsight.MethodTemplateLookupElement;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;

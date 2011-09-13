@@ -25,12 +25,12 @@ import com.intellij.patterns.VirtualFilePattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.psi.YAMLCompoundValue;
 import org.jetbrains.yaml.psi.YAMLDocument;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLSequence;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -42,14 +42,17 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
 
   public JstdConfigFileCompletionContributor() {
     ElementPattern<PsiElement> place = PlatformPatterns.psiElement().inVirtualFile(
-        new VirtualFilePattern().ofType(JstdConfigFileType.INSTANCE)
+      new VirtualFilePattern().ofType(JstdConfigFileType.INSTANCE)
     );
     extend(CompletionType.BASIC, place, new CompletionProvider<CompletionParameters>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters parameters,
                                     ProcessingContext context,
                                     @NotNull CompletionResultSet result) {
-        PsiElement element = parameters.getPosition();
+        PsiElement element = parameters.getOriginalPosition();
+        if (element == null) {
+          element = parameters.getPosition();
+        }
         int prefixLength = parameters.getOffset() - element.getTextRange().getStartOffset();
         BipartiteString caretBipartiteElementText = splitByPrefixLength(element.getText(), prefixLength);
         addPathCompletionsIfNeeded(result, element, caretBipartiteElementText);
@@ -59,20 +62,32 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
   }
 
   public void beforeCompletion(@NotNull CompletionInitializationContext context) {
+    boolean acceptPathSeparator = false;
+    {
+      final int offset = context.getEditor().getCaretModel().getOffset();
+      PsiElement element = context.getFile().findElementAt(offset);
+      if (element != null) {
+        int prefixLength = offset - element.getTextRange().getStartOffset();
+        BipartiteString caretBipartiteElementText = splitByPrefixLength(element.getText(), prefixLength);
+        Character separator = extractDirectoryTrailingFileSeparator(caretBipartiteElementText);
+        acceptPathSeparator = separator != null;
+      }
+    }
     final OffsetMap offsetMap = context.getOffsetMap();
     int idEnd = offsetMap.getOffset(CompletionInitializationContext.IDENTIFIER_END_OFFSET);
     final String text = context.getFile().getText();
-    boolean acceptedChar = true;
-    while (idEnd < text.length() && acceptedChar) {
+    while (idEnd < text.length()) {
       final char ch = text.charAt(idEnd);
-      acceptedChar = Character.isJavaIdentifierPart(ch);
-      acceptedChar = acceptedChar || IDENTIFIER_END_PATTERN.indexOf(ch) >= 0;
-      boolean stop = ch == UNIX_PATH_SEPARATOR || ch == WINDOWS_PATH_SEPARATOR;
-      acceptedChar = acceptedChar || stop;
+      if (acceptPathSeparator) {
+        if (ch == UNIX_PATH_SEPARATOR || ch == WINDOWS_PATH_SEPARATOR) {
+          idEnd++;
+          break;
+        }
+      }
+      boolean acceptedChar = Character.isJavaIdentifierPart(ch) || IDENTIFIER_END_PATTERN.indexOf(ch) >= 0;
       if (acceptedChar) {
         idEnd++;
-      }
-      if (stop) {
+      } else {
         break;
       }
     }
@@ -83,15 +98,15 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
                                                         @NotNull PsiElement element,
                                                         @NotNull BipartiteString caretBipartiteElementText) {
     YAMLDocument document = JstdConfigFileUtils.getVerifiedHierarchyHead(
-        element.getParent(),
-        new Class[]{YAMLKeyValue.class},
-        YAMLDocument.class
+      element.getParent(),
+      new Class[]{YAMLKeyValue.class},
+      YAMLDocument.class
     );
     if (document == null) {
       document = JstdConfigFileUtils.getVerifiedHierarchyHead(
-          element.getParent(),
-          new Class[]{},
-          YAMLDocument.class
+        element.getParent(),
+        new Class[]{},
+        YAMLDocument.class
       );
     }
     if (document != null) {
@@ -103,13 +118,13 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
                                                  @NotNull PsiElement element,
                                                  @NotNull BipartiteString caretBipartiteElementText) {
     YAMLDocument document = JstdConfigFileUtils.getVerifiedHierarchyHead(
-        element.getParent(),
-        new Class[]{
-            YAMLSequence.class,
-            YAMLCompoundValue.class,
-            YAMLKeyValue.class
-        },
-        YAMLDocument.class
+      element.getParent(),
+      new Class[]{
+        YAMLSequence.class,
+        YAMLCompoundValue.class,
+        YAMLKeyValue.class
+      },
+      YAMLDocument.class
     );
     if (document != null) {
       VirtualFile basePath = JstdConfigFileUtils.extractBasePath(document);
@@ -122,9 +137,29 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
   private static void addPathCompletions(CompletionResultSet result,
                                          @NotNull BipartiteString caretBipartiteElementText,
                                          @NotNull VirtualFile basePath) {
+    ParentDirWithLastComponentPrefix parentWithLastComponentPrefix = findParentWithLastComponentPrefix(
+      basePath, caretBipartiteElementText.getPrefix()
+    );
+    if (parentWithLastComponentPrefix != null) {
+      result = result.withPrefixMatcher(parentWithLastComponentPrefix.getLastComponentPrefix());
+      VirtualFile[] children = parentWithLastComponentPrefix.getParent().getChildren();
+      Character dirSeparatorSuffix = extractDirectoryTrailingFileSeparator(caretBipartiteElementText);
+      for (VirtualFile child : children) {
+        String name = child.getName();
+        if (child.isDirectory() && dirSeparatorSuffix != null) {
+          name += dirSeparatorSuffix;
+        }
+        result.addElement(LookupItem.fromString(name));
+      }
+    }
+  }
+
+  @Nullable
+  private static ParentDirWithLastComponentPrefix findParentWithLastComponentPrefix(@NotNull VirtualFile basePath,
+                                                                                    @NotNull String pathBeforeCaret) {
     BipartiteString[] allSplits = new BipartiteString[]{
-        splitByLastIndexOfSeparatorOccurrence(caretBipartiteElementText.getPrefix(), UNIX_PATH_SEPARATOR),
-        splitByLastIndexOfSeparatorOccurrence(caretBipartiteElementText.getPrefix(), WINDOWS_PATH_SEPARATOR)
+      splitByLastIndexOfSeparatorOccurrence(pathBeforeCaret, UNIX_PATH_SEPARATOR),
+      splitByLastIndexOfSeparatorOccurrence(pathBeforeCaret, WINDOWS_PATH_SEPARATOR)
     };
     Arrays.sort(allSplits, new Comparator<BipartiteString>() {
       @Override
@@ -132,27 +167,13 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
         return o1.getSuffix().length() - o2.getSuffix().length();
       }
     });
-    BipartiteString firstValid = null;
-    VirtualFile parentFile = null;
     for (BipartiteString bipartite : allSplits) {
-      parentFile = basePath.findFileByRelativePath(FileUtil.toSystemIndependentName(bipartite.getPrefix()));
+      VirtualFile parentFile = basePath.findFileByRelativePath(FileUtil.toSystemIndependentName(bipartite.getPrefix()));
       if (parentFile != null) {
-        firstValid = bipartite;
-        break;
+        return new ParentDirWithLastComponentPrefix(parentFile, bipartite.getSuffix());
       }
     }
-    if (firstValid != null) {
-      result = result.withPrefixMatcher(firstValid.getSuffix());
-      VirtualFile[] children = parentFile.getChildren();
-      char dirSeparatorSuffix = extractDirectoryTrailingFileSeparator(caretBipartiteElementText);
-      for (VirtualFile child : children) {
-        String name = child.getName();
-        if (child.isDirectory()) {
-          name += dirSeparatorSuffix;
-        }
-        result.addElement(LookupItem.fromString(name));
-      }
-    }
+    return null;
   }
 
   private static Character extractPrevalentSeparator(String str) {
@@ -167,8 +188,9 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
     return null;
   }
 
-  private static char extractDirectoryTrailingFileSeparator(BipartiteString caretBipartiteElementText) {
-    Character prefixPrevalentSeparator = extractPrevalentSeparator(caretBipartiteElementText.getPrefix());
+  @Nullable
+  private static Character extractDirectoryTrailingFileSeparator(BipartiteString caretBipartiteElementText) {
+    Character prefixPrevalentSeparator = extractPrevalentSeparator(caretBipartiteElementText.getWholeString());
     if (prefixPrevalentSeparator != null) {
       return prefixPrevalentSeparator;
     }
@@ -176,7 +198,7 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
     if (suffixPrevalentSeparator != null) {
       return suffixPrevalentSeparator;
     }
-    return File.separatorChar;
+    return null;
   }
 
   private static void addTopLevelKeysCompletions(CompletionResultSet result, String prefix) {
@@ -203,12 +225,31 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
     return new BipartiteString(str.substring(0, prefixLength), str.substring(prefixLength));
   }
 
+  private static class ParentDirWithLastComponentPrefix {
+    private VirtualFile myParent;
+    private String myLastComponentPrefix;
+
+    private ParentDirWithLastComponentPrefix(@NotNull VirtualFile parent, @NotNull String lastComponentPrefix) {
+      myParent = parent;
+      myLastComponentPrefix = lastComponentPrefix;
+    }
+
+    @NotNull
+    public VirtualFile getParent() {
+      return myParent;
+    }
+
+    @NotNull
+    public String getLastComponentPrefix() {
+      return myLastComponentPrefix;
+    }
+  }
 
   private static class BipartiteString {
     private final String myPrefix;
     private final String mySuffix;
 
-    private BipartiteString(String prefix, String suffix) {
+    private BipartiteString(@NotNull String prefix, @NotNull String suffix) {
       myPrefix = prefix;
       mySuffix = suffix;
     }
@@ -221,6 +262,16 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
     @NotNull
     public String getSuffix() {
       return mySuffix;
+    }
+
+    @NotNull
+    public String getWholeString() {
+      return myPrefix + mySuffix;
+    }
+
+    @Override
+    public String toString() {
+      return "prefix:'" + myPrefix + "'\', suffix='" + mySuffix + '\'';
     }
   }
 }

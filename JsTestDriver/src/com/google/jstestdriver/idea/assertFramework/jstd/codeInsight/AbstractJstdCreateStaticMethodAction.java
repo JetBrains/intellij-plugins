@@ -1,8 +1,8 @@
 package com.google.jstestdriver.idea.assertFramework.jstd.codeInsight;
 
-import com.google.jstestdriver.idea.assertFramework.AbstractJsGenerateAction;
-import com.google.jstestdriver.idea.assertFramework.GenerateActionContext;
-import com.google.jstestdriver.idea.assertFramework.JsGeneratorUtils;
+import com.google.jstestdriver.idea.assertFramework.codeInsight.AbstractJsGenerateAction;
+import com.google.jstestdriver.idea.assertFramework.codeInsight.GenerateActionContext;
+import com.google.jstestdriver.idea.assertFramework.codeInsight.JsGeneratorUtils;
 import com.google.jstestdriver.idea.assertFramework.jstd.JstdTestCaseStructure;
 import com.google.jstestdriver.idea.assertFramework.jstd.JstdTestFileStructure;
 import com.google.jstestdriver.idea.assertFramework.jstd.JstdTestFileStructureBuilder;
@@ -113,7 +113,8 @@ public abstract class AbstractJstdCreateStaticMethodAction extends AbstractJsGen
 
     @Override
     public void run() {
-      JsGeneratorUtils.generateObjectLiteralWithPropertyAsArgument(myContext, "{\n" + getMethodName() + ": function() {|}\n}", myArgumentList, 1);
+      JsGeneratorUtils
+        .generateObjectLiteralWithPropertyAsArgument(myContext, "{\n" + getMethodName() + ": function() {|}\n}", myArgumentList, 1);
     }
   }
 

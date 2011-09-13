@@ -1,8 +1,8 @@
 package com.google.jstestdriver.idea.assertFramework.qunit.codeInsight;
 
-import com.google.jstestdriver.idea.assertFramework.AbstractJsGenerateAction;
-import com.google.jstestdriver.idea.assertFramework.GenerateActionContext;
-import com.google.jstestdriver.idea.assertFramework.JsGeneratorUtils;
+import com.google.jstestdriver.idea.assertFramework.codeInsight.AbstractJsGenerateAction;
+import com.google.jstestdriver.idea.assertFramework.codeInsight.GenerateActionContext;
+import com.google.jstestdriver.idea.assertFramework.codeInsight.JsGeneratorUtils;
 import com.google.jstestdriver.idea.assertFramework.qunit.*;
 import com.intellij.lang.javascript.psi.JSArgumentList;
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;

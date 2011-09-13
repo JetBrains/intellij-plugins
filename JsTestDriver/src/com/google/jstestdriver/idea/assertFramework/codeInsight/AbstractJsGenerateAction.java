@@ -1,4 +1,4 @@
-package com.google.jstestdriver.idea.assertFramework;
+package com.google.jstestdriver.idea.assertFramework.codeInsight;
 
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.actionSystem.*;
