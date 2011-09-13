@@ -301,7 +301,13 @@ public class OgnlParser extends PrattParser {
                    path().left(),
                    expression(EXPR_LEVEL, OgnlElementTypes.BINARY_EXPRESSION));
 
-    // TODO new, instanceof
+    // TODO new
+
+    // instanceof
+    registerParser(INSTANCEOF_KEYWORD,
+                   EXPR_LEVEL + 1,
+                   path().left(),
+                   expression(EXPR_LEVEL, OgnlElementTypes.BINARY_EXPRESSION));
 
     // method calls: reference([paramA, paramB, ..])
     registerParser(LPARENTH,
@@ -322,6 +328,7 @@ public class OgnlParser extends PrattParser {
                        return OgnlElementTypes.METHOD_CALL_EXPRESSION;
                      }
                    });
+
     // TODO static method calls @class@method
 
     // TODO static field ref @class@field
