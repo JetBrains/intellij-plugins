@@ -35,12 +35,7 @@ public class OgnlElementTypes {
   public static final OgnlElementType PARENTHESIZED_EXPRESSION = new OgnlElementType("ParenthesizedExpression") {
     @Override
     public PsiElement createPsiElement(final ASTNode node) {
-      return new OgnlExpressionBase(node) {
-        @Override
-        public PsiType getType() {
-          return null;
-        }
-      };
+      return new OgnlParenthesizedExpression(node);
     }
   };
 

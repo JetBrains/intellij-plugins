@@ -25,24 +25,55 @@ import org.intellij.lang.annotations.Language;
 public class ParenthesizedExpressionPsiTest extends PsiTestCase {
 
   public void testSimpleParentheses() {
-    final OgnlExpression expression = parse("(3 + 4)");
-    assertElementType(OgnlElementTypes.PARENTHESIZED_EXPRESSION, expression);
+    final OgnlParenthesizedExpression parenthesizedExpression = parse("(3 + 4)");
+    final OgnlExpression expression = parenthesizedExpression.getExpression();
+    assertElementType(OgnlElementTypes.BINARY_EXPRESSION, expression);
+
+    final OgnlBinaryExpression binaryExpression = (OgnlBinaryExpression) expression;
+    assertElementType(OgnlElementTypes.INTEGER_LITERAL, binaryExpression.getLeftOperand());
+    assertEquals(OgnlTokenTypes.PLUS, binaryExpression.getOperationSign());
+    assertElementType(OgnlElementTypes.INTEGER_LITERAL, binaryExpression.getRightOperand());
   }
 
   public void testNestedParentheses() {
-    final OgnlExpression expression = parse("(3 + (4 * 5))");
-    assertElementType(OgnlElementTypes.PARENTHESIZED_EXPRESSION, expression);
+    final OgnlParenthesizedExpression parenthesizedExpression = parse("(3 + (4 * 5))");
+    final OgnlExpression expression = parenthesizedExpression.getExpression();
+    assertElementType(OgnlElementTypes.BINARY_EXPRESSION, expression);
+
+    final OgnlBinaryExpression binaryExpression = (OgnlBinaryExpression) expression;
+    assertElementType(OgnlElementTypes.INTEGER_LITERAL, binaryExpression.getLeftOperand());
+    assertEquals(OgnlTokenTypes.PLUS, binaryExpression.getOperationSign());
+    assertElementType(OgnlElementTypes.PARENTHESIZED_EXPRESSION, binaryExpression.getRightOperand());
+
+    final OgnlParenthesizedExpression nestedParenthesizedExpression = (OgnlParenthesizedExpression) binaryExpression.getRightOperand();
+    assertNotNull(nestedParenthesizedExpression);
+    assertElementType(OgnlElementTypes.BINARY_EXPRESSION, nestedParenthesizedExpression.getExpression());
+    final OgnlBinaryExpression nestedBinaryExpression = (OgnlBinaryExpression) nestedParenthesizedExpression.getExpression();
+    assertElementType(OgnlElementTypes.INTEGER_LITERAL, nestedBinaryExpression.getLeftOperand());
+    assertEquals(OgnlTokenTypes.MULTIPLY, nestedBinaryExpression.getOperationSign());
+    assertElementType(OgnlElementTypes.INTEGER_LITERAL, nestedBinaryExpression.getRightOperand());
   }
 
   public void testNestedParenthesesWithMethodCall() {
-    final OgnlExpression expression = parse("(3 + ( multiply(4, 5)))");
-    assertElementType(OgnlElementTypes.PARENTHESIZED_EXPRESSION, expression);
+    final OgnlParenthesizedExpression parenthesizedExpression = parse("(3 + ( multiply(4, 5)))");
+    assertEquals("(3 + ( multiply(4, 5)))", parenthesizedExpression.getText());
+    final OgnlExpression expression = parenthesizedExpression.getExpression();
+    assertElementType(OgnlElementTypes.BINARY_EXPRESSION, expression);
+
+    final OgnlBinaryExpression binaryExpression = (OgnlBinaryExpression) expression;
+    assertElementType(OgnlElementTypes.INTEGER_LITERAL, binaryExpression.getLeftOperand());
+    assertEquals(OgnlTokenTypes.PLUS, binaryExpression.getOperationSign());
+    assertElementType(OgnlElementTypes.PARENTHESIZED_EXPRESSION, binaryExpression.getRightOperand());
+
+    final OgnlParenthesizedExpression nestedParenthesizedExpression = (OgnlParenthesizedExpression) binaryExpression.getRightOperand();
+    assertNotNull(nestedParenthesizedExpression);
+    assertElementType(OgnlElementTypes.METHOD_CALL_EXPRESSION, nestedParenthesizedExpression.getExpression());
   }
 
-  private OgnlExpression parse(@Language(value = OgnlLanguage.ID,
-                                         prefix = OgnlLanguage.EXPRESSION_PREFIX,
-                                         suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
-    return (OgnlExpression) parseSingleExpression(expression);
+  private OgnlParenthesizedExpression parse(@Language(value = OgnlLanguage.ID,
+                                                      prefix = OgnlLanguage.EXPRESSION_PREFIX,
+                                                      suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
+    return (OgnlParenthesizedExpression) parseSingleExpression(expression);
   }
 
 }
