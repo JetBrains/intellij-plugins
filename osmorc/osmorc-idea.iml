@@ -127,7 +127,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/pax-runner-1.7.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/biz.aQute.bndlib.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -136,7 +136,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/biz.aQute.bndlib.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/pax-runner.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
