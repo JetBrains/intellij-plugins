@@ -148,10 +148,10 @@
 -->
         <copy file="${module.osmorc.basedir}/lib/org.eclipse.osgi.jar"
               tofile="${tmp.dir.osmorc}/lib/org.eclipse.osgi.jar"/>
-        <copy file="${module.osmorc.basedir}/lib/bnd-${bnd.version}.jar" tofile="${tmp.dir.osmorc}/lib/bnd-${bnd.version}.jar"/>
+        <copy file="${module.osmorc.basedir}/lib/biz.aQute.bndlib.jar" tofile="${tmp.dir.osmorc}/lib/biz.aQute.bndlib.jar"/>
         <copy file="${module.osmorc.basedir}/lib/binding-2.0.6.jar" tofile="${tmp.dir.osmorc}/lib/binding-2.0.6.jar"/>
-        <copy file="${module.osmorc.basedir}/lib/pax-runner-${pax.runner.version}.jar"
-              tofile="${tmp.dir.osmorc}/lib/pax-runner-${pax.runner.version}.jar"/>
+        <copy file="${module.osmorc.basedir}/lib/pax-runner.jar"
+              tofile="${tmp.dir.osmorc}/lib/pax-runner.jar"/>
       <copy file="${module.osmorc.basedir}/lib/com.springsource.bundlor-1.0.0.RELEASE.jar" tofile="${tmp.dir.osmorc}/lib/com.springsource.bundlor-1.0.0.RELEASE.jar"/>
       <copy file="${module.osmorc.basedir}/lib/com.springsource.bundlor.ant-1.0.0.RELEASE.jar" tofile="${tmp.dir.osmorc}/lib/com.springsource.bundlor.ant-1.0.0.RELEASE.jar"/>
       <copy file="${module.osmorc.basedir}/lib/com.springsource.bundlor.blint-1.0.0.RELEASE.jar" tofile="${tmp.dir.osmorc}/lib/com.springsource.bundlor.blint-1.0.0.RELEASE.jar"/>

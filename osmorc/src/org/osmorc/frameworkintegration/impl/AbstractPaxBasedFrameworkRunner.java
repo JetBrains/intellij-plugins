@@ -52,7 +52,7 @@ import java.util.regex.Pattern;
  * @version $Id:$
  */
 public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProperties> extends AbstractFrameworkRunner<P> implements ExternalVMFrameworkRunner {
-  private static final String PaxRunnerLib = "pax-runner-1.7.1.jar";
+  private static final String PaxRunnerLib = "pax-runner.jar";
 
   protected AbstractPaxBasedFrameworkRunner() {
   }
@@ -161,7 +161,7 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
     }
     commandLineParameters.add(vmOptionsParam.toString());
     commandLineParameters.add("--keepOriginalUrls");
-    commandLineParameters.add("--skipInvalidBundles");
+     commandLineParameters.add("--skipInvalidBundles");
     final String additionalProgramParams = getRunConfiguration().getProgramParameters();
     if ( additionalProgramParams != null && !"".equals(additionalProgramParams)) {
       commandLineParameters.addParametersString(additionalProgramParams);
