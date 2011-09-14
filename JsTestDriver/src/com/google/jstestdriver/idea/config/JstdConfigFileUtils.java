@@ -21,6 +21,7 @@ import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.psi.YAMLDocument;
@@ -84,6 +85,7 @@ public class JstdConfigFileUtils {
           return vf;
         }
       }
+      return null;
     }
     return initialBasePath;
   }
@@ -104,6 +106,17 @@ public class JstdConfigFileUtils {
     }
     FileType fileType = FileTypeManager.getInstance().getFileTypeByFile(virtualFile);
     return fileType == JstdConfigFileType.INSTANCE;
+  }
+
+  public static boolean isJstdConfigFileByPsiElement(@NotNull PsiElement element) {
+    PsiFile file = element.getContainingFile();
+    if (file != null) {
+      VirtualFile virtualFile = file.getVirtualFile();
+      if (virtualFile != null) {
+        return isJstdConfigFile(virtualFile);
+      }
+    }
+    return false;
   }
 
 }

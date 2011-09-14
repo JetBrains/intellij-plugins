@@ -16,47 +16,53 @@
 package com.google.jstestdriver.idea.config;
 
 import com.google.jstestdriver.idea.util.JsPsiUtils;
+import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandlerBase;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiManager;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.psi.YAMLCompoundValue;
 import org.jetbrains.yaml.psi.YAMLDocument;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLSequence;
 
-import com.google.jstestdriver.idea.util.CastUtils;
-import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.source.tree.TreeElement;
-
-public class JstdConfigFileGotoFileHandler implements GotoDeclarationHandler {
+public class JstdConfigFileGotoFileHandler extends GotoDeclarationHandlerBase {
 
   @Override
-  public PsiElement[] getGotoDeclarationTargets(PsiElement sourceElement) {
+  public PsiElement getGotoDeclarationTarget(PsiElement sourceElement) {
     if (sourceElement != null && JsPsiUtils.isElementOfType(sourceElement, YAMLTokenTypes.TEXT)) {
-      YAMLDocument document = JstdConfigFileUtils.getVerifiedHierarchyHead(sourceElement.getParent(),
-          new Class[] {
-              YAMLSequence.class,
-              YAMLCompoundValue.class,
-              YAMLKeyValue.class
-          },
-          YAMLDocument.class
-      );
-      if (document != null) {
-        VirtualFile basePath = JstdConfigFileUtils.extractBasePath(document);
-        if (basePath != null) {
-          String relativePath = sourceElement.getText();
-          VirtualFile gotoVFile = basePath.findFileByRelativePath(relativePath);
-          if (gotoVFile != null) {
-            PsiElement psiElement = PsiManager.getInstance(sourceElement.getProject()).findFile(gotoVFile);
-            if (psiElement != null) {
-              return new PsiElement[] { psiElement };
+      boolean jstdConfigFile = JstdConfigFileUtils.isJstdConfigFileByPsiElement(sourceElement);
+      if (jstdConfigFile) {
+        YAMLDocument document = getDocumentByElement(sourceElement);
+        if (document != null) {
+          VirtualFile basePath = JstdConfigFileUtils.extractBasePath(document);
+          if (basePath != null) {
+            String relativePath = FileUtil.toSystemIndependentName(sourceElement.getText());
+            VirtualFile gotoVFile = basePath.findFileByRelativePath(relativePath);
+            if (gotoVFile != null) {
+              PsiElement psiElement = PsiManager.getInstance(sourceElement.getProject()).findFile(gotoVFile);
+              if (psiElement != null) {
+                return psiElement;
+              }
             }
           }
         }
       }
     }
-    return PsiElement.EMPTY_ARRAY;
+    return null;
   }
 
+  private static YAMLDocument getDocumentByElement(@NotNull PsiElement sourceElement) {
+    return JstdConfigFileUtils.getVerifiedHierarchyHead(
+      sourceElement.getParent(),
+      new Class[] {
+        YAMLSequence.class,
+        YAMLCompoundValue.class,
+        YAMLKeyValue.class
+      },
+      YAMLDocument.class
+    );
+  }
 }
