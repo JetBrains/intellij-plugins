@@ -260,7 +260,7 @@ public class BundleCompiler implements PackagingCompiler {
 
             } else {
                 // fully osmorc controlled, no bnd file.
-                bndFileUrl = makeBndFile(module, configuration.asManifestString(), compileContext);
+                bndFileUrl = makeBndFile(module, configuration.asBndFile(), compileContext);
               if ( bndFileUrl == null ) {
                   // couldnt create bnd file.
                   return;

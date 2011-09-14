@@ -48,15 +48,6 @@
     <orderEntry type="module" module-name="compiler-openapi" />
     <orderEntry type="module" module-name="execution-openapi" />
     <orderEntry type="module" module-name="execution-impl" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/bnd-0.0.384.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="module" module-name="testFramework-java" scope="TEST" />
     <orderEntry type="module" module-name="compiler-openapi" />
     <orderEntry type="module" module-name="execution-openapi" />
@@ -137,6 +128,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/pax-runner-1.7.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/biz.aQute.bndlib.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
