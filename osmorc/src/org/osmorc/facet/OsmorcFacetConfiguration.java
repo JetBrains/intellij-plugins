@@ -28,6 +28,7 @@ import com.intellij.facet.FacetConfiguration;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.facet.ui.FacetValidatorsManager;
+import com.intellij.openapi.diagnostic.Log;
 import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.util.InvalidDataException;
@@ -43,10 +44,9 @@ import org.osmorc.facet.ui.OsmorcFacetManifestGenerationEditorTab;
 import org.osmorc.settings.ProjectSettings;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -401,9 +401,9 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
 
 
   /**
-   * @return the contents of this configuration as a single string that can be put into a manifest file.
+   * @return the contents of this configuration as a string that comprises a BND configuration file.
    */
-  public String asManifestString() {
+  public String asBndFile() {
     return Constants.BUNDLE_SYMBOLICNAME + ":" + getBundleSymbolicName() + "\n" +
            Constants.BUNDLE_VERSION + ":" + getBundleVersion() + "\n" +
            Constants.BUNDLE_ACTIVATOR + ":" + getBundleActivator() + "\n" +
@@ -420,15 +420,21 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   @NotNull
   public Map<String, String> getAdditionalPropertiesAsMap() {
     Map<String, String> result = new HashMap<String, String>();
-    String[] lines = getAdditionalProperties().split("\n");
-    for (String line : lines) {
-      int sep = line.indexOf(':');
-      if (sep != -1) {
-        String key = line.substring(0, sep).trim();
-        String value = line.substring(sep + 1).trim();
-        result.put(key, value);
-      }
+
+    Properties p = new Properties();
+    try {
+      p.load(new StringReader(getAdditionalProperties()));
     }
+    catch (IOException e) {
+      Log.print("Error when reading properties", true);
+      return result;
+    }
+
+    Set<String> propNames = p.stringPropertyNames();
+    for (String propName : propNames) {
+      result.put(propName,  p.getProperty(propName));
+    }
+
     return result;
   }
 
@@ -448,8 +454,10 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     }
     // now create a string.
     StringBuilder builder = new StringBuilder();
-    for (String s : existing.keySet()) {
-      builder.append(s).append(": ").append(existing.get(s)).append("\n");
+    for (String key : existing.keySet()) {
+      String value = existing.get(key);
+      value  = value.replace("\n", "\\\n");
+      builder.append(key).append(": ").append(value).append("\n");
     }
     setAdditionalProperties(builder.toString());
   }
