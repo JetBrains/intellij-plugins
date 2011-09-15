@@ -45,7 +45,7 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
   public XmlElementDescriptor[] getElementsDescriptors(XmlTag context) {
     XmlElementDescriptor[] htmlDescriptors = myHtmlDelegate.getElementsDescriptors(context);
     XmlElementDescriptor[] tapestryDescriptors = DescriptorUtil.getTmlSubelementDescriptors(context);
-    return ArrayUtil.mergeArrays(htmlDescriptors, tapestryDescriptors, XmlElementDescriptor.class);
+    return ArrayUtil.mergeArrays(htmlDescriptors, tapestryDescriptors);
   }
 
   public XmlElementDescriptor getElementDescriptor(XmlTag childTag, XmlTag contextTag) {
@@ -62,7 +62,7 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
     XmlAttributeDescriptor[] tapestryAttrs =
       context != null ? DescriptorUtil.getAttributeDescriptors(context) : DescriptorUtil.getAttributeDescriptors(myComponent, null);
-    return ArrayUtil.mergeArrays(tapestryAttrs, myHtmlDelegate.getAttributesDescriptors(context), XmlAttributeDescriptor.class);
+    return ArrayUtil.mergeArrays(tapestryAttrs, myHtmlDelegate.getAttributesDescriptors(context));
   }
 
   public XmlAttributeDescriptor getAttributeDescriptor(@NonNls String attributeName, @Nullable XmlTag context) {
