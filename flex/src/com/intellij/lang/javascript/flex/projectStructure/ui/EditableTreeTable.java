@@ -32,7 +32,7 @@ abstract class EditableTreeTable<T> extends TreeTable {
 
   public EditableTreeTable(String firstColumnName, ColumnInfo... columns) {
     super(new ListTreeTableModelOnColumns(new DefaultMutableTreeNode(),
-                                          ArrayUtil.join(new ColumnInfo[]{new FirstColumnInfo(firstColumnName)}, wrap(columns))));
+                                          ArrayUtil.mergeArrays(new ColumnInfo[]{new FirstColumnInfo(firstColumnName)}, wrap(columns))));
 
     final ColoredTreeCellRenderer r = new ColoredTreeCellRenderer() {
 
