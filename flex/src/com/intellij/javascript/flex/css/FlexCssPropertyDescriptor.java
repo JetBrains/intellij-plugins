@@ -351,9 +351,8 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     return myPropertyName;
   }
 
-  @Nullable
-  public String getInherited() {
-    return myInherit;
+  public boolean getInherited() {
+    return "yes".equalsIgnoreCase(myInherit) || "true".equals(myInherit);
   }
 
   private class MyMetaDataProcessor implements JSResolveUtil.MetaDataProcessor {
