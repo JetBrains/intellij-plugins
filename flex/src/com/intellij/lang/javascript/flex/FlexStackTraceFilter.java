@@ -20,7 +20,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.PsiUtilBase;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBList;
@@ -207,7 +207,7 @@ public class FlexStackTraceFilter implements Filter {
           }
         }
 
-        final JList list = new JBList(PsiUtilBase.toPsiFileArray(psiFiles));
+        final JList list = new JBList(PsiUtilCore.toPsiFileArray(psiFiles));
         list.setCellRenderer(new DefaultPsiElementCellRenderer());
 
         final PopupChooserBuilder builder = new PopupChooserBuilder(list);
