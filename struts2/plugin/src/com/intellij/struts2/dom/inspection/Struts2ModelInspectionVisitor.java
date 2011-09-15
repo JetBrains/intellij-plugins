@@ -111,7 +111,7 @@ class Struts2ModelInspectionVisitor implements DomElementVisitor {
       if (psiReference instanceof LocalQuickFixProvider) {
         final LocalQuickFix[] fixes = ((LocalQuickFixProvider) psiReference).getQuickFixes();
         if (fixes != null) {
-          quickFixes = ArrayUtil.mergeArrays(fixes, quickFixes, LocalQuickFix.class);
+          quickFixes = ArrayUtil.mergeArrays(fixes, quickFixes);
         }
       }
     }

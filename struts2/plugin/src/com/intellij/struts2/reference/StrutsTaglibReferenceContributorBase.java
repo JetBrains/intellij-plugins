@@ -113,7 +113,7 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
         @NotNull
         @Override
         public Object[] getVariants() {
-          return ArrayUtil.mergeArrays(super.getVariants(), additionalVariants, Object.class);
+          return ArrayUtil.mergeArrays(super.getVariants(), additionalVariants);
         }
       }};
     }
