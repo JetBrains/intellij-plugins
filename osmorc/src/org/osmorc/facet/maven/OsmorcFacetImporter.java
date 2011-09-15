@@ -45,7 +45,7 @@ import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.facet.OsmorcFacetType;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -106,7 +106,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
       Element instructionsNode = getConfig(mavenProject, "instructions");
       // Fix for IDEADEV-38685, NPE when the element is not set.
       if (instructionsNode != null) {
-        Map<String, String> props = new HashMap<String, String>();
+        Map<String, String> props = new LinkedHashMap<String, String>(); // linkedhashmap, because we want to preserve the order of elements.
         @SuppressWarnings({"unchecked"})
         List<Element> children = instructionsNode.getChildren();
         boolean useExistingManifest = false;

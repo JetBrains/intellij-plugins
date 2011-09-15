@@ -42,6 +42,7 @@ import org.osmorc.facet.ui.OsmorcFacetGeneralEditorTab;
 import org.osmorc.facet.ui.OsmorcFacetJAREditorTab;
 import org.osmorc.facet.ui.OsmorcFacetManifestGenerationEditorTab;
 import org.osmorc.settings.ProjectSettings;
+import org.osmorc.util.OrderedProperties;
 
 import java.io.File;
 import java.io.IOException;
@@ -184,19 +185,13 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
 
     Element props = new Element(ADDITIONAL_PROPERTIES);
 
-    // more robust storage of values as fix for OSMORC-43
-    // I deliberately do not use getAdditionalPropertiesAsMap to preserve the order of the entries
-    String[] lines = getAdditionalProperties().split("\n");
-    for (String line : lines) {
-      int sep = line.indexOf(':');
-      if (sep != -1) {
-        String key = line.substring(0, sep).trim();
-        String value = line.substring(sep + 1).trim();
-        Element prop = new Element(PROPERTY);
-        prop.setAttribute(KEY, key);
-        prop.setAttribute(VALUE, value);
-        props.addContent(prop);
-      }
+
+    Map<String, String> additionalPropertiesAsMap = getAdditionalPropertiesAsMap();
+    for (String key : additionalPropertiesAsMap.keySet()) {
+      Element prop = new Element(PROPERTY);
+      prop.setAttribute(KEY, key);
+      prop.setAttribute(VALUE, additionalPropertiesAsMap.get(key));
+      props.addContent(prop);
     }
     element.addContent(props);
 
@@ -407,15 +402,16 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   /**
    * Returns all additional properties as a map.Changes to this map will not change the facet configuration. If you want
    * to change additional properties use the {@link #importAdditionalProperties(java.util.Map, boolean)} method to reimport the
-   * map once you have changed it.
+   * map once you have changed it. The returned map is ordered and will return entries in the same order as they have been specified in the
+   * settings dialog.
    *
    * @return the additional properties as a Map for convenciene.
    */
   @NotNull
   public Map<String, String> getAdditionalPropertiesAsMap() {
-    Map<String, String> result = new HashMap<String, String>();
+    Map<String, String> result = new LinkedHashMap<String, String>();
 
-    Properties p = new Properties();
+    Properties p = new OrderedProperties();
     try {
       p.load(new StringReader(getAdditionalProperties()));
     }
