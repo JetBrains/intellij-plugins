@@ -1,2 +1,2 @@
-pax-runner.jar -> 1.7.4
+pax-runner.jar -> 1.7.5
 biz.aQute.bndlib.jar -> 1.44.0
