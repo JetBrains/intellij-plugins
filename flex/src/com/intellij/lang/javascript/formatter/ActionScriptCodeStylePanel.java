@@ -5,6 +5,7 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeEditorHighlighterProviders;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +36,7 @@ public class ActionScriptCodeStylePanel extends JSCodeStylePanel {
   @Override
   protected EditorHighlighter createHighlighter(final EditorColorsScheme scheme) {
     return FileTypeEditorHighlighterProviders.INSTANCE.forFileType(getFileType())
-      .getEditorHighlighter(getCurrentProject(), getFileType(), null, scheme);
+      .getEditorHighlighter(ProjectUtil.guessCurrentProject(getPanel()), getFileType(), null, scheme);
   }
 
   @Override
