@@ -51,6 +51,7 @@
             <implementation-class>org.osmorc.ModuleChangeHandler</implementation-class>
         </component>
     </project-components>
+
     <module-components>
         <component>
             <implementation-class>org.osmorc.OsmorcModuleComponent</implementation-class>
@@ -68,7 +69,10 @@
         <extensionPoint name="obr" interface="org.osmorc.obrimport.Obr"/>
         <extensionPoint name="moduleChangeListener" interface="org.osmorc.ModuleChangeListener"/>
     </extensionPoints>
+
     <extensions defaultExtensionNs="com.intellij">
+        <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+
         <!-- ##### Application Services ##### -->
         <!-- Applications settings and application settings editors -->
         <applicationService serviceInterface="org.osmorc.settings.ApplicationSettings"
