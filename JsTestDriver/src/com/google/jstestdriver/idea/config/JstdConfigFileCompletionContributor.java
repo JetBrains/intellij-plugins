@@ -15,36 +15,35 @@
  */
 package com.google.jstestdriver.idea.config;
 
+import com.google.jstestdriver.idea.util.CastUtils;
+import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupItem;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.patterns.ElementPattern;
-import com.intellij.patterns.PlatformPatterns;
-import com.intellij.patterns.VirtualFilePattern;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.psi.YAMLCompoundValue;
 import org.jetbrains.yaml.psi.YAMLDocument;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLSequence;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
 
 public class JstdConfigFileCompletionContributor extends CompletionContributor {
 
-  private static final char UNIX_PATH_SEPARATOR = '/';
-  private static final char WINDOWS_PATH_SEPARATOR = '\\';
   private static final String IDENTIFIER_END_PATTERN = ".-:";
 
   public JstdConfigFileCompletionContributor() {
-    ElementPattern<PsiElement> place = PlatformPatterns.psiElement().inVirtualFile(
-      new VirtualFilePattern().ofType(JstdConfigFileType.INSTANCE)
-    );
-    extend(CompletionType.BASIC, place, new CompletionProvider<CompletionParameters>() {
+    extend(CompletionType.BASIC, JstdConfigFileUtils.CONFIG_FILE_ELEMENT_PATTERN, new CompletionProvider<CompletionParameters>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters parameters,
                                     ProcessingContext context,
@@ -54,11 +53,29 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
           element = parameters.getPosition();
         }
         int prefixLength = parameters.getOffset() - element.getTextRange().getStartOffset();
-        BipartiteString caretBipartiteElementText = splitByPrefixLength(element.getText(), prefixLength);
-        addPathCompletionsIfNeeded(result, element, caretBipartiteElementText);
-        addTopLevelKeysCompletionIfNeeded(result, element, caretBipartiteElementText);
+        String text = element.getText();
+        if (JsPsiUtils.isElementOfType(element, YAMLTokenTypes.SCALAR_DSTRING)) {
+          text = text.substring(1, text.length() - 1);
+          prefixLength = Math.max(0, prefixLength - 1);
+        }
+        BipartiteString caretBipartiteElementText = splitByPrefixLength(text, prefixLength);
+        boolean atFirstColumn = isAtStart(element, parameters.getOffset());
+
+        addInnerSequencePathCompletionsIfNeeded(result, element, caretBipartiteElementText);
+        addBasePathCompletionsIfNeeded(result, element, caretBipartiteElementText, atFirstColumn);
+        addTopLevelKeysCompletionIfNeeded(result, element, caretBipartiteElementText, atFirstColumn);
       }
     });
+  }
+
+  private static boolean isAtStart(@NotNull PsiElement element, int caretOffset) {
+    Document document = PsiDocumentManager.getInstance(element.getProject()).getDocument(element.getContainingFile());
+    if (document != null) {
+      int lineNumber = document.getLineNumber(caretOffset);
+      int startOffset = document.getLineStartOffset(lineNumber);
+      return startOffset == caretOffset;
+    }
+    return false;
   }
 
   public void beforeCompletion(@NotNull CompletionInitializationContext context) {
@@ -79,7 +96,7 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
     while (idEnd < text.length()) {
       final char ch = text.charAt(idEnd);
       if (acceptPathSeparator) {
-        if (ch == UNIX_PATH_SEPARATOR || ch == WINDOWS_PATH_SEPARATOR) {
+        if (ch == JstdConfigFileUtils.UNIX_PATH_SEPARATOR || ch == JstdConfigFileUtils.WINDOWS_PATH_SEPARATOR) {
           idEnd++;
           break;
         }
@@ -87,7 +104,8 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
       boolean acceptedChar = Character.isJavaIdentifierPart(ch) || IDENTIFIER_END_PATTERN.indexOf(ch) >= 0;
       if (acceptedChar) {
         idEnd++;
-      } else {
+      }
+      else {
         break;
       }
     }
@@ -96,40 +114,61 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
 
   private static void addTopLevelKeysCompletionIfNeeded(@NotNull CompletionResultSet result,
                                                         @NotNull PsiElement element,
-                                                        @NotNull BipartiteString caretBipartiteElementText) {
-    YAMLDocument document = JstdConfigFileUtils.getVerifiedHierarchyHead(
-      element.getParent(),
-      new Class[]{YAMLKeyValue.class},
-      YAMLDocument.class
-    );
-    if (document == null) {
+                                                        @NotNull BipartiteString caretBipartiteElementText,
+                                                        boolean atFirstColumn) {
+    YAMLDocument document = CastUtils.tryCast(element.getParent(), YAMLDocument.class);
+    if (atFirstColumn && document == null) {
       document = JstdConfigFileUtils.getVerifiedHierarchyHead(
         element.getParent(),
-        new Class[]{},
+        new Class[]{YAMLKeyValue.class},
         YAMLDocument.class
       );
     }
     if (document != null) {
-      addTopLevelKeysCompletions(result, caretBipartiteElementText.getPrefix());
+      String prefix = caretBipartiteElementText.getPrefix();
+      result = result.withPrefixMatcher(prefix);
+      for (String key : JstdConfigFileUtils.VALID_TOP_LEVEL_KEYS) {
+        if (key.startsWith(prefix)) {
+          result.addElement(LookupItem.fromString(key + ":"));
+        }
+      }
     }
   }
 
-  private static void addPathCompletionsIfNeeded(@NotNull CompletionResultSet result,
-                                                 @NotNull PsiElement element,
-                                                 @NotNull BipartiteString caretBipartiteElementText) {
-    YAMLDocument document = JstdConfigFileUtils.getVerifiedHierarchyHead(
+  private static void addInnerSequencePathCompletionsIfNeeded(@NotNull CompletionResultSet result,
+                                                              @NotNull PsiElement element,
+                                                              @NotNull BipartiteString caretBipartiteElementText) {
+    YAMLKeyValue keyValue = JstdConfigFileUtils.getVerifiedHierarchyHead(
       element.getParent(),
       new Class[]{
         YAMLSequence.class,
-        YAMLCompoundValue.class,
-        YAMLKeyValue.class
+        YAMLCompoundValue.class
       },
-      YAMLDocument.class
+      YAMLKeyValue.class
     );
-    if (document != null) {
-      VirtualFile basePath = JstdConfigFileUtils.extractBasePath(document);
-      if (basePath != null) {
-        addPathCompletions(result, caretBipartiteElementText, basePath);
+    if (keyValue != null) {
+      YAMLDocument document = CastUtils.tryCast(keyValue.getParent(), YAMLDocument.class);
+      if (document != null && JstdConfigFileUtils.isKeyWithInnerFileSequence(keyValue)) {
+        VirtualFile basePath = JstdConfigFileUtils.extractBasePath(document);
+        if (basePath != null) {
+          addPathCompletions(result, caretBipartiteElementText, basePath);
+        }
+      }
+    }
+  }
+
+  private static void addBasePathCompletionsIfNeeded(@NotNull CompletionResultSet result,
+                                                     @NotNull PsiElement element,
+                                                     @NotNull BipartiteString caretBipartiteElementText,
+                                                     boolean atFirstColumn) {
+    YAMLKeyValue keyValue = CastUtils.tryCast(element.getParent(), YAMLKeyValue.class);
+    if (!atFirstColumn && keyValue != null) {
+      YAMLDocument document = CastUtils.tryCast(keyValue.getParent(), YAMLDocument.class);
+      if (document != null && JstdConfigFileUtils.isBasePathKey(keyValue)) {
+        VirtualFile basePath = JstdConfigFileUtils.getConfigDir(document);
+        if (basePath != null) {
+          addPathCompletions(result, caretBipartiteElementText, basePath);
+        }
       }
     }
   }
@@ -158,8 +197,8 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
   private static ParentDirWithLastComponentPrefix findParentWithLastComponentPrefix(@NotNull VirtualFile basePath,
                                                                                     @NotNull String pathBeforeCaret) {
     BipartiteString[] allSplits = new BipartiteString[]{
-      splitByLastIndexOfSeparatorOccurrence(pathBeforeCaret, UNIX_PATH_SEPARATOR),
-      splitByLastIndexOfSeparatorOccurrence(pathBeforeCaret, WINDOWS_PATH_SEPARATOR)
+      splitByLastIndexOfSeparatorOccurrence(pathBeforeCaret, JstdConfigFileUtils.UNIX_PATH_SEPARATOR),
+      splitByLastIndexOfSeparatorOccurrence(pathBeforeCaret, JstdConfigFileUtils.WINDOWS_PATH_SEPARATOR)
     };
     Arrays.sort(allSplits, new Comparator<BipartiteString>() {
       @Override
@@ -168,22 +207,33 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
       }
     });
     for (BipartiteString bipartite : allSplits) {
-      VirtualFile parentFile = basePath.findFileByRelativePath(FileUtil.toSystemIndependentName(bipartite.getPrefix()));
-      if (parentFile != null) {
-        return new ParentDirWithLastComponentPrefix(parentFile, bipartite.getSuffix());
+      if (!bipartite.getPrefix().isEmpty()) {
+        VirtualFile parentFile = basePath.findFileByRelativePath(FileUtil.toSystemIndependentName(bipartite.getPrefix()));
+        if (parentFile != null) {
+          return new ParentDirWithLastComponentPrefix(parentFile, bipartite.getSuffix());
+        }
+      }
+    }
+    for (BipartiteString bipartite : allSplits) {
+      File absolutePath = new File(FileUtil.toSystemIndependentName(bipartite.getPrefix()));
+      if (absolutePath.isAbsolute()) {
+        VirtualFile absolute = LocalFileSystem.getInstance().findFileByIoFile(absolutePath);
+        if (absolute != null) {
+          return new ParentDirWithLastComponentPrefix(absolute, bipartite.getSuffix());
+        }
       }
     }
     return null;
   }
 
   private static Character extractPrevalentSeparator(String str) {
-    boolean unix = str.indexOf(UNIX_PATH_SEPARATOR) >= 0;
-    boolean windows = str.indexOf(WINDOWS_PATH_SEPARATOR) >= 0;
+    boolean unix = str.indexOf(JstdConfigFileUtils.UNIX_PATH_SEPARATOR) >= 0;
+    boolean windows = str.indexOf(JstdConfigFileUtils.WINDOWS_PATH_SEPARATOR) >= 0;
     if (unix && !windows) {
-      return UNIX_PATH_SEPARATOR;
+      return JstdConfigFileUtils.UNIX_PATH_SEPARATOR;
     }
     if (!unix && windows) {
-      return WINDOWS_PATH_SEPARATOR;
+      return JstdConfigFileUtils.WINDOWS_PATH_SEPARATOR;
     }
     return null;
   }
@@ -201,20 +251,11 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
     return null;
   }
 
-  private static void addTopLevelKeysCompletions(CompletionResultSet result, String prefix) {
-    result = result.withPrefixMatcher(prefix);
-    for (String key : JstdConfigFileUtils.VALID_TOP_LEVEL_KEYS) {
-      if (key.startsWith(prefix)) {
-        result.addElement(LookupItem.fromString(key + ":"));
-      }
-    }
-  }
-
   @NotNull
   private static BipartiteString splitByLastIndexOfSeparatorOccurrence(@NotNull String str, char separator) {
     int index = str.lastIndexOf(separator);
     if (index > 0) {
-      return new BipartiteString(str.substring(0, index), str.substring(index + 1));
+      return new BipartiteString(str.substring(0, index + 1), str.substring(index + 1));
     }
     return new BipartiteString("", str);
   }

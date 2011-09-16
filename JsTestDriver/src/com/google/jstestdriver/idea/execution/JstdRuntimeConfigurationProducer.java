@@ -1,5 +1,7 @@
 package com.google.jstestdriver.idea.execution;
 
+import com.google.jstestdriver.idea.assertFramework.TestFileStructureManager;
+import com.google.jstestdriver.idea.assertFramework.TestFileStructurePack;
 import com.google.jstestdriver.idea.config.JstdConfigFileUtils;
 import com.google.jstestdriver.idea.execution.settings.JstdConfigType;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
@@ -268,13 +270,13 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
       if (virtualFile == null) {
         return null;
       }
-      NavigationRegistry navigationRegistry = NavigationUtils.fetchNavigationRegistryByJsFile(jsFile);
-      if (navigationRegistry == null) {
+      TestFileStructurePack pack = TestFileStructureManager.getInstance().fetchTestFileStructurePackByJsFile(jsFile);
+      if (true) {
         return null;
       }
       PsiElement current = psiElement;
       while (current != jsFile) {
-        Object target = navigationRegistry.getTarget(current);
+        Object target = null;//navigationRegistry.getTarget(current);
         if (target instanceof TestCase) {
           TestCase testCase = (TestCase) target;
           return new JstdRunSettings.Builder()

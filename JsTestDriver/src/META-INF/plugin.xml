@@ -33,6 +33,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <configurationType implementation="com.google.jstestdriver.idea.execution.JstdConfigurationType"/>
     <programRunner implementation="com.google.jstestdriver.idea.execution.JstdClientRunner"/>
+    <configurationProducer implementation="com.google.jstestdriver.idea.execution.JstdRuntimeConfigurationProducer"/>
   </extensions>
 
   <project-components>

@@ -45,7 +45,7 @@
 
     <postStartupActivity implementation="com.google.jstestdriver.idea.javascript.JSUnitTestingSupport"/>
 
-    <completion.contributor order="first" language="JavaScript" implementationClass="com.google.jstestdriver.idea.assertFramework.codeInsight.FilteringCompletionContributor"/>
+    <!--<completion.contributor order="first" language="JavaScript" implementationClass="com.google.jstestdriver.idea.assertFramework.codeInsight.FilteringCompletionContributor"/>-->
   </extensions>
 
 </idea-plugin>

@@ -4,11 +4,10 @@ import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.ResolveResult;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
@@ -322,5 +321,13 @@ public class JsPsiUtils {
       }
     }
     return null;
+  }
+
+  public static Document getDocument(@NotNull PsiElement element) {
+    PsiFile psiFile = element.getContainingFile();
+    if (psiFile == null) {
+      return null;
+    }
+    return PsiDocumentManager.getInstance(element.getProject()).getDocument(psiFile);
   }
 }
