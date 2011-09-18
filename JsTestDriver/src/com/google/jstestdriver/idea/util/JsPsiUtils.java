@@ -308,6 +308,15 @@ public class JsPsiUtils {
     return false;
   }
 
+  public static boolean isElementOfType(@NotNull PsiElement psiElement, @NotNull IElementType type1, @NotNull IElementType type2) {
+    if (psiElement instanceof ASTNode) {
+      ASTNode node = (ASTNode) psiElement;
+      IElementType type = node.getElementType();
+      return type == type1 || type == type2;
+    }
+    return false;
+  }
+
   @Nullable
   public static PsiElement getFunctionLeftBrace(@Nullable JSFunction function) {
     if (function == null) {

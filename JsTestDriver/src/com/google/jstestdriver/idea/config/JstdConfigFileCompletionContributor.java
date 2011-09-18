@@ -35,8 +35,6 @@ import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLSequence;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Comparator;
 
 public class JstdConfigFileCompletionContributor extends CompletionContributor {
 
@@ -176,7 +174,7 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
   private static void addPathCompletions(CompletionResultSet result,
                                          @NotNull BipartiteString caretBipartiteElementText,
                                          @NotNull VirtualFile basePath) {
-    ParentDirWithLastComponentPrefix parentWithLastComponentPrefix = findParentWithLastComponentPrefix(
+    ParentDirWithLastComponentPrefix parentWithLastComponentPrefix = findParentDirWithLastComponentPrefix(
       basePath, caretBipartiteElementText.getPrefix()
     );
     if (parentWithLastComponentPrefix != null) {
@@ -194,36 +192,33 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
   }
 
   @Nullable
-  private static ParentDirWithLastComponentPrefix findParentWithLastComponentPrefix(@NotNull VirtualFile basePath,
-                                                                                    @NotNull String pathBeforeCaret) {
-    BipartiteString[] allSplits = new BipartiteString[]{
-      splitByLastIndexOfSeparatorOccurrence(pathBeforeCaret, JstdConfigFileUtils.UNIX_PATH_SEPARATOR),
-      splitByLastIndexOfSeparatorOccurrence(pathBeforeCaret, JstdConfigFileUtils.WINDOWS_PATH_SEPARATOR)
-    };
-    Arrays.sort(allSplits, new Comparator<BipartiteString>() {
-      @Override
-      public int compare(BipartiteString o1, BipartiteString o2) {
-        return o1.getSuffix().length() - o2.getSuffix().length();
-      }
-    });
-    for (BipartiteString bipartite : allSplits) {
-      if (!bipartite.getPrefix().isEmpty()) {
-        VirtualFile parentFile = basePath.findFileByRelativePath(FileUtil.toSystemIndependentName(bipartite.getPrefix()));
-        if (parentFile != null) {
-          return new ParentDirWithLastComponentPrefix(parentFile, bipartite.getSuffix());
-        }
+  private static ParentDirWithLastComponentPrefix findParentDirWithLastComponentPrefix(@NotNull VirtualFile basePath,
+                                                                                       @NotNull String pathBeforeCaret) {
+    BipartiteString parentDirStrWithLastComponent = findParentDirStrWithLastComponentPrefix(pathBeforeCaret);
+    {
+      VirtualFile parentFile = basePath.findFileByRelativePath(FileUtil.toSystemIndependentName(parentDirStrWithLastComponent.getPrefix()));
+      if (parentFile != null) {
+        return new ParentDirWithLastComponentPrefix(parentFile, parentDirStrWithLastComponent.getSuffix());
       }
     }
-    for (BipartiteString bipartite : allSplits) {
-      File absolutePath = new File(FileUtil.toSystemIndependentName(bipartite.getPrefix()));
-      if (absolutePath.isAbsolute()) {
-        VirtualFile absolute = LocalFileSystem.getInstance().findFileByIoFile(absolutePath);
-        if (absolute != null) {
-          return new ParentDirWithLastComponentPrefix(absolute, bipartite.getSuffix());
-        }
+    File absolutePath = new File(FileUtil.toSystemIndependentName(parentDirStrWithLastComponent.getPrefix()));
+    if (absolutePath.isAbsolute()) {
+      VirtualFile absolute = LocalFileSystem.getInstance().findFileByIoFile(absolutePath);
+      if (absolute != null) {
+        return new ParentDirWithLastComponentPrefix(absolute, parentDirStrWithLastComponent.getSuffix());
       }
     }
     return null;
+  }
+
+  private static BipartiteString findParentDirStrWithLastComponentPrefix(String pathBeforeCaret) {
+    BipartiteString unixBipartiteString = splitByLastIndexOfSeparatorOccurrence(pathBeforeCaret, JstdConfigFileUtils.UNIX_PATH_SEPARATOR);
+    BipartiteString winBipartiteString = splitByLastIndexOfSeparatorOccurrence(pathBeforeCaret, JstdConfigFileUtils.WINDOWS_PATH_SEPARATOR);
+    if (unixBipartiteString.getSuffix().length() < winBipartiteString.getSuffix().length()) {
+      return unixBipartiteString;
+    } else {
+      return winBipartiteString;
+    }
   }
 
   private static Character extractPrevalentSeparator(String str) {
@@ -308,6 +303,23 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
     @NotNull
     public String getWholeString() {
       return myPrefix + mySuffix;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      BipartiteString that = (BipartiteString)o;
+
+      return myPrefix.equals(that.myPrefix) && mySuffix.equals(that.mySuffix);
+    }
+
+    @Override
+    public int hashCode() {
+      int result = myPrefix.hashCode();
+      result = 31 * result + mySuffix.hashCode();
+      return result;
     }
 
     @Override

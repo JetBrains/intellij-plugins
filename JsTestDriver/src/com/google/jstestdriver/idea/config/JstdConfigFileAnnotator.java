@@ -30,7 +30,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
@@ -87,24 +86,23 @@ public class JstdConfigFileAnnotator implements Annotator {
         }
         if (JstdConfigFileUtils.isBasePathKey(keyValue)) {
           annotateBasePath(yamlDocument, keyValue, holder);
-        } else if (JstdConfigFileUtils.isKeyWithInnerFileSequence(keyValue)) {
+        }
+        else if (JstdConfigFileUtils.isKeyWithInnerFileSequence(keyValue)) {
           annotateKeyValueWithInnerFileSequence(keyValue, holder, basePath);
         }
-      } else {
+      }
+      else {
         PsiElement element = group.getUnexpectedElement();
-        if (element instanceof ASTNode) {
-          ASTNode astNode = (ASTNode)element;
-          if (astNode.getElementType() != YAMLTokenTypes.EOL && astNode.getElementType() != YAMLTokenTypes.INDENT) {
-            holder.createErrorAnnotation(astNode, "Unexpected element '" + astNode.getText() + "'");
-          }
-        } else {
+        if (!JsPsiUtils.isElementOfType(element, YAMLTokenTypes.EOL, YAMLTokenTypes.INDENT)) {
           holder.createErrorAnnotation(element, "Unexpected element '" + element.getText() + "'");
         }
       }
     }
   }
 
-  private static void annotateBasePath(@NotNull YAMLDocument yamlDocument, @NotNull YAMLKeyValue basePathKeyValue, @NotNull AnnotationHolder holder) {
+  private static void annotateBasePath(@NotNull YAMLDocument yamlDocument,
+                                       @NotNull YAMLKeyValue basePathKeyValue,
+                                       @NotNull AnnotationHolder holder) {
     VirtualFile configDir = JstdConfigFileUtils.getConfigDir(basePathKeyValue);
     PsiElement content = basePathKeyValue.getValue();
     if (configDir != null && content != null) {
@@ -113,19 +111,32 @@ public class JstdConfigFileAnnotator implements Annotator {
         TextRange textRange = TextRange.create(1, content.getTextLength() - 1);
         basePathValueFragment = PsiElementFragment.create(content, textRange);
       } else {
-        Document document = JsPsiUtils.getDocument(yamlDocument);
-        if (document != null) {
-          int startLine = getEndLine(document, content);
-          int documentStartOffset = content.getTextRange().getStartOffset();
-          int documentEndOffset = document.getLineStartOffset(startLine + 1);
-          int yamlDocumentStartOffset = yamlDocument.getTextRange().getStartOffset();
-          TextRange textRangeInYamlDocument = TextRange.create(documentStartOffset - yamlDocumentStartOffset, documentEndOffset - yamlDocumentStartOffset);
-          basePathValueFragment = PsiElementFragment.create(yamlDocument, textRangeInYamlDocument);
-        } else {
+        if (content.getTextLength() == 0) {
+          int start = basePathKeyValue.getKey().getTextRange().getEndOffset();
+          holder.createErrorAnnotation(TextRange.create(start - 1, start), "path is unspecified");
           return;
         }
+        Document document = JsPsiUtils.getDocument(yamlDocument);
+        if (document == null) {
+          return;
+        }
+        int startLine = getEndLineNumber(document, content);
+        int documentStartOffset = content.getTextRange().getStartOffset();
+        int documentEndOffset = document.getLineStartOffset(startLine + 1) - 1;
+        int yamlDocumentStartOffset = yamlDocument.getTextRange().getStartOffset();
+        TextRange textRangeInYamlDocument =
+          TextRange.create(documentStartOffset - yamlDocumentStartOffset, documentEndOffset - yamlDocumentStartOffset);
+        basePathValueFragment = PsiElementFragment.create(yamlDocument, textRangeInYamlDocument);
       }
-      annotatePath(configDir, basePathValueFragment, holder, false);
+      annotatePath(configDir, basePathValueFragment, holder, false, true);
+    }
+  }
+
+  private static void markAllNextSiblingsAsUnexpected(@NotNull PsiElement lastValidElement, @NotNull AnnotationHolder holder) {
+    PsiElement next = lastValidElement.getNextSibling();
+    while (next != null) {
+      holder.createErrorAnnotation(next, "Unexpected element");
+      next = next.getNextSibling();
     }
   }
 
@@ -137,8 +148,8 @@ public class JstdConfigFileAnnotator implements Annotator {
       holder.createErrorAnnotation(keyValue, "YAML sequence is expected here");
       return;
     }
-    ASTNode firstIndent = CastUtils.tryCast(compoundValue.getPrevSibling(), ASTNode.class);
-    if (firstIndent == null || firstIndent.getElementType() != YAMLTokenTypes.INDENT) {
+    PsiElement firstIndent = compoundValue.getPrevSibling();
+    if (firstIndent == null || !JsPsiUtils.isElementOfType(firstIndent, YAMLTokenTypes.INDENT)) {
       int offset = compoundValue.getTextRange().getStartOffset();
       holder.createErrorAnnotation(TextRange.create(offset, offset), "Indent is expected here");
       return;
@@ -177,7 +188,7 @@ public class JstdConfigFileAnnotator implements Annotator {
     }
     PsiElementFragment<YAMLSequence> sequenceTextFragment = JstdConfigFileUtils.buildSequenceTextFragment(sequence);
     if (basePath != null && sequenceTextFragment != null) {
-      annotatePath(basePath, sequenceTextFragment, holder, true);
+      annotatePath(basePath, sequenceTextFragment, holder, true, false);
     }
   }
 
@@ -197,14 +208,16 @@ public class JstdConfigFileAnnotator implements Annotator {
   }
 
   private static boolean annotatePath(@NotNull VirtualFile basePath,
-                                   @NotNull PsiElementFragment<? extends PsiElement> pathFragment,
-                                   @NotNull final AnnotationHolder holder,
-                                   boolean tolerateRemoteLocations) {
+                                      @NotNull PsiElementFragment<? extends PsiElement> pathFragment,
+                                      @NotNull final AnnotationHolder holder,
+                                      boolean tolerateRemoteLocations,
+                                      boolean directoryIsExpected) {
     String pathStr = pathFragment.getText();
     if (tolerateRemoteLocations && (pathStr.startsWith("http:") || pathStr.startsWith("https:"))) {
       return true;
     }
     if (StringUtil.isEmptyOrSpaces(pathStr)) {
+      holder.createErrorAnnotation(pathFragment.getDocumentTextRange(), "Invalid path");
       return false;
     }
     int documentOffset = pathFragment.getDocumentTextRange().getStartOffset();
@@ -224,7 +237,13 @@ public class JstdConfigFileAnnotator implements Annotator {
         }
       }
     }
+    if (directoryIsExpected && !components.isEmpty() && components.get(components.size() - 1).isEmpty()) {
+      components = components.subList(0, components.size() - 1);
+    }
     for (String component : components) {
+      if (component.contains("*")) {
+        return true;
+      }
       if (component.isEmpty()) {
         holder.createErrorAnnotation(TextRange.create(documentOffset, documentOffset + 1), "Empty name");
         break;
@@ -237,38 +256,50 @@ public class JstdConfigFileAnnotator implements Annotator {
       documentOffset += component.length() + 1;
       current = next;
     }
+    if (directoryIsExpected) {
+      if (!current.isDirectory()) {
+        holder.createErrorAnnotation(pathFragment.getDocumentTextRange(), "Not a directory");
+      }
+    } else {
+      if (current.isDirectory()) {
+        holder.createErrorAnnotation(pathFragment.getDocumentTextRange(), "Not a file");
+      }
+    }
     return true;
   }
 
   @Nullable
   private static List<Group> buildGroups(@NotNull YAMLDocument yamlDocument) {
-    final Document document = PsiDocumentManager.getInstance(yamlDocument.getProject()).getDocument(yamlDocument.getContainingFile());
+    final Document document = JsPsiUtils.getDocument(yamlDocument);
     if (document == null) {
       return null;
     }
     final List<Group> groups = Lists.newArrayList();
-    final Ref<Integer> endLineOfPreviousKeyValueRef = Ref.create(-1);
+    final Ref<Integer> previousKeyValueEndLineNumberRef = Ref.create(-1);
     yamlDocument.acceptChildren(new PsiElementVisitor() {
       @Override
       public void visitElement(PsiElement element) {
-        int line = document.getLineNumber(element.getTextRange().getStartOffset());
-        if (line == endLineOfPreviousKeyValueRef.get()) {
-          return;
-        }
-        if (element instanceof YAMLKeyValue) {
-          YAMLKeyValue yamlKeyValue = (YAMLKeyValue)element;
-          endLineOfPreviousKeyValueRef.set(getEndLine(document, yamlKeyValue));
-          groups.add(new Group(yamlKeyValue, null));
-        }
-        else {
-          groups.add(new Group(null, element));
+        int startLineNumber = getStartLineNumber(document, element);
+        if (previousKeyValueEndLineNumberRef.get() < startLineNumber) {
+          if (element instanceof YAMLKeyValue) {
+            YAMLKeyValue yamlKeyValue = (YAMLKeyValue)element;
+            previousKeyValueEndLineNumberRef.set(getEndLineNumber(document, yamlKeyValue));
+            groups.add(new Group(yamlKeyValue, null));
+          }
+          else {
+            groups.add(new Group(null, element));
+          }
         }
       }
     });
     return groups;
   }
 
-  private static int getEndLine(@NotNull Document document, @NotNull PsiElement element) {
+  private static int getStartLineNumber(@NotNull Document document, @NotNull PsiElement element) {
+    return document.getLineNumber(element.getTextRange().getStartOffset());
+  }
+
+  private static int getEndLineNumber(@NotNull Document document, @NotNull PsiElement element) {
     return document.getLineNumber(element.getTextRange().getEndOffset());
   }
 

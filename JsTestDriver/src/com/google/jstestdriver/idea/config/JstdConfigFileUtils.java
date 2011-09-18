@@ -23,6 +23,7 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.PlatformPatterns;
@@ -81,23 +82,23 @@ public class JstdConfigFileUtils {
   public static VirtualFile extractBasePath(@NotNull YAMLDocument document) {
     VirtualFile initialBasePath = getConfigDir(document);
     String basePathStr = extractBasePathAsRawString(document);
-    if (basePathStr != null) {
-      if (initialBasePath != null) {
-        VirtualFile vf = initialBasePath.findFileByRelativePath(basePathStr);
-        if (vf != null) {
-          return vf;
-        }
-      }
-      File file = new File(basePathStr);
-      if (file.isAbsolute() && file.exists()) {
-        VirtualFile vf = LocalFileSystem.getInstance().findFileByIoFile(file);
-        if (vf != null) {
-          return vf;
-        }
-      }
-      return null;
+    if (basePathStr == null) {
+      return initialBasePath;
     }
-    return initialBasePath;
+    File file = new File(basePathStr);
+    if (file.isAbsolute() && file.exists()) {
+      VirtualFile absoluteBasePath = LocalFileSystem.getInstance().findFileByIoFile(file);
+      if (absoluteBasePath != null && absoluteBasePath.isDirectory()) {
+        return absoluteBasePath;
+      }
+    }
+    if (initialBasePath != null) {
+      VirtualFile relativeBasePath = initialBasePath.findFileByRelativePath(basePathStr);
+      if (relativeBasePath != null && relativeBasePath.isDirectory()) {
+        return relativeBasePath;
+      }
+    }
+    return null;
   }
 
   @Nullable
@@ -107,7 +108,7 @@ public class JstdConfigFileUtils {
       if (child instanceof YAMLKeyValue) {
         YAMLKeyValue keyValue = (YAMLKeyValue) child;
         if (BASE_PATH_KEY.equals(keyValue.getKeyText())) {
-          return keyValue.getValueText();
+          return StringUtil.notNullize(keyValue.getValueText());
         }
       }
     }
