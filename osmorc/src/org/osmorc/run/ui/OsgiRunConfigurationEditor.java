@@ -38,7 +38,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
-import com.intellij.ui.ComponentWithAnchor;
+import com.intellij.ui.PanelWithAnchor;
 import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.ui.components.JBLabel;
 import org.jetbrains.annotations.NotNull;
@@ -75,7 +75,7 @@ import java.util.List;
  * @version $Id$
  */
 public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfiguration> implements BundleSelectionAction.Context,
-                                                                                                ComponentWithAnchor {
+                                                                                                PanelWithAnchor {
   private final DefaultActionGroup frameworkSpecificBundleSelectionActions;
   private JComponent anchor;
 
