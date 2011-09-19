@@ -23,7 +23,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.ComboboxWithBrowseButton;
-import com.intellij.ui.ComponentWithAnchor;
+import com.intellij.ui.PanelWithAnchor;
 import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.ui.components.JBLabel;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +34,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 
-public class AirRunConfigurationForm extends SettingsEditor<AirRunConfiguration> implements ComponentWithAnchor {
+public class AirRunConfigurationForm extends SettingsEditor<AirRunConfiguration> implements PanelWithAnchor {
 
   private final Project myProject;
 

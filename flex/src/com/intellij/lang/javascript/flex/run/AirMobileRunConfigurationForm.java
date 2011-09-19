@@ -26,7 +26,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.ComboboxWithBrowseButton;
-import com.intellij.ui.ComponentWithAnchor;
+import com.intellij.ui.PanelWithAnchor;
 import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBRadioButton;
@@ -44,7 +44,7 @@ import java.util.List;
 import static com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParametersBase.FilePathAndPathInPackage;
 import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.*;
 
-public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunConfiguration> implements ComponentWithAnchor {
+public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunConfiguration> implements PanelWithAnchor {
   private final Project myProject;
   private ModulesComboboxWrapper myModulesComboboxWrapper;
   private JSClassChooserDialog.PublicInheritor myMainClassFilter;

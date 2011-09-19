@@ -26,7 +26,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.ComboboxWithBrowseButton;
-import com.intellij.ui.ComponentWithAnchor;
+import com.intellij.ui.PanelWithAnchor;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -40,7 +40,7 @@ import java.util.List;
 import static com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParameters.FilePathAndPathInPackage;
 import static com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters.*;
 
-public class PackageMobileAirApplicationDialog extends DialogWrapper implements ComponentWithAnchor {
+public class PackageMobileAirApplicationDialog extends DialogWrapper implements PanelWithAnchor {
 
   private JPanel myMainPanel;
 

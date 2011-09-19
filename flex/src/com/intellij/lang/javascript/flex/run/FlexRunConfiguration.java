@@ -47,7 +47,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.ui.ComboboxWithBrowseButton;
-import com.intellij.ui.ComponentWithAnchor;
+import com.intellij.ui.PanelWithAnchor;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBRadioButton;
 import com.intellij.util.ArrayUtil;
@@ -306,7 +306,7 @@ public class FlexRunConfiguration extends RunConfigurationBase
     }
   }
 
-  static class FlexRunConfigurationOptions extends SettingsEditor<FlexRunConfiguration> implements ComponentWithAnchor {
+  static class FlexRunConfigurationOptions extends SettingsEditor<FlexRunConfiguration> implements PanelWithAnchor {
     private JPanel myPanel;
     private JComboBox myModuleComboBox;
     private JBRadioButton myUseHtmlOrSwfRadioButton;
