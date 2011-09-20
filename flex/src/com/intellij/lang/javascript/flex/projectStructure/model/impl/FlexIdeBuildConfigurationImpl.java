@@ -19,12 +19,12 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
   private String myName = "Unnamed";
 
   @NotNull
-  private TargetPlatform myTargetPlatform = TargetPlatform.Web;
+  private TargetPlatform myTargetPlatform = BuildConfigurationNature.DEFAULT.targetPlatform;
 
-  private boolean myPureAs = false;
+  private boolean myPureAs = BuildConfigurationNature.DEFAULT.pureAS;
 
   @NotNull
-  private OutputType myOutputType = OutputType.Application;
+  private OutputType myOutputType = BuildConfigurationNature.DEFAULT.outputType;
 
   @NotNull
   private String myOptimizeFor = "";
@@ -117,6 +117,13 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
   @Override
   public void setName(@NotNull String name) {
     myName = name;
+  }
+
+  @Override
+  public void setNature(BuildConfigurationNature nature) {
+    myTargetPlatform = nature.targetPlatform;
+    myPureAs = nature.pureAS;
+    myOutputType = nature.outputType;
   }
 
   @Override

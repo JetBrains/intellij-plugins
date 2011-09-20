@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.model;
 
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -29,6 +29,8 @@ public interface ModifiableFlexIdeBuildConfiguration extends FlexIdeBuildConfigu
   ModifiableIosPackagingOptions getIosPackagingOptions();
 
   void setTargetPlatform(@NotNull TargetPlatform targetPlatform);
+
+  void setNature(BuildConfigurationNature nature);
 
   void setPureAs(boolean pureAs);
 

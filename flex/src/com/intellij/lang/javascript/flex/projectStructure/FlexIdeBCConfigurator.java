@@ -20,6 +20,7 @@ import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.NamedConfigurable;
+import com.intellij.openapi.util.Pair;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.EventDispatcher;
 import gnu.trove.THashMap;
@@ -184,11 +185,21 @@ public class FlexIdeBCConfigurator {
   }
 
   public void addConfiguration(final Module module, final Runnable treeNodeNameUpdater) {
-    if (module != null) {
-      final ModifiableFlexIdeBuildConfiguration configuration = Factory.createBuildConfiguration();
-      configuration.getDependencies().setSdkEntry(findRecentSdk());
-      addConfiguration(module, configuration, "Add Build Configuration", treeNodeNameUpdater);
+    if (module == null) {
+      return;
     }
+
+    Pair<String, BuildConfigurationNature> nameAndNature =
+      promptForCreation(module, "Add Build Configuration", BuildConfigurationNature.DEFAULT);
+    if (nameAndNature == null) {
+      return;
+    }
+
+    final ModifiableFlexIdeBuildConfiguration configuration = Factory.createBuildConfiguration();
+    configuration.setName(nameAndNature.first);
+    configuration.setNature(nameAndNature.second);
+    configuration.getDependencies().setSdkEntry(findRecentSdk());
+    createConfigurableNode(configuration, module, treeNodeNameUpdater);
   }
 
   @Nullable
@@ -201,56 +212,57 @@ public class FlexIdeBCConfigurator {
 
   public void copy(final FlexIdeBCConfigurable configurable, final Runnable treeNodeNameUpdater) {
     FlexIdeBuildConfiguration configuration = configurable.getCurrentConfiguration();
+
+    Pair<String, BuildConfigurationNature> nameAndNature =
+      promptForCreation(configurable.getModule(), "Copy Build Configuration", configuration.getNature());
+    if (nameAndNature == null) {
+      return;
+    }
+
     ModifiableFlexIdeBuildConfiguration newConfiguration = Factory.getCopy(configuration);
-    Module module = myConfigurationsToModuleMap.get(configurable.getEditableObject());
-    addConfiguration(module, newConfiguration, "Copy Build Configuration", treeNodeNameUpdater);
+    newConfiguration.setName(nameAndNature.first);
+    newConfiguration.setNature(nameAndNature.second);
+    newConfiguration.getDependencies().setSdkEntry(findRecentSdk());
+    // just to simplify serialized view
+    resetNonApplicableValuesToDefaults(newConfiguration);
+
+    // set correct output file extension for cloned configuration
+    final String outputFileName = configuration.getOutputFileName();
+    final String lowercase = outputFileName.toLowerCase();
+    if (lowercase.endsWith(".swf") || lowercase.endsWith(".swc")) {
+      final String extension = configuration.getOutputType() == OutputType.Library ? ".swc" : ".swf";
+      newConfiguration.setOutputFileName(outputFileName.substring(0, outputFileName.length() - ".sw_".length()) + extension);
+    }
+
+    createConfigurableNode(newConfiguration, configurable.getModule(), treeNodeNameUpdater);
   }
 
-  private void addConfiguration(final Module module,
-                                final ModifiableFlexIdeBuildConfiguration configuration,
-                                final String dialogTitle,
-                                final Runnable treeNodeNameUpdater) {
-    final Project project = module.getProject();
-    final AddBuildConfigurationDialog dialog =
-      new AddBuildConfigurationDialog(project, dialogTitle, getUsedNames(module), configuration.getTargetPlatform(),
-                                      configuration.isPureAs(), configuration.getOutputType());
+  @Nullable
+  private Pair<String, BuildConfigurationNature> promptForCreation(Module module,
+                                                                   String dialogTitle,
+                                                                   BuildConfigurationNature defaultNature) {
+    Project project = module.getProject();
+    AddBuildConfigurationDialog dialog = new AddBuildConfigurationDialog(project, dialogTitle, getUsedNames(module), defaultNature);
     dialog.show();
+    return dialog.isOK() ? Pair.create(dialog.getName(), dialog.getNature()) : null;
+  }
 
-    if (dialog.isOK()) {
-      myModified = true;
+  private void createConfigurableNode(ModifiableFlexIdeBuildConfiguration configuration, Module module, Runnable treeNodeNameUpdater) {
+    final FlexIdeBCConfigurable configurable = new FlexIdeBCConfigurable(module, configuration, mySdksModel, treeNodeNameUpdater);
 
-      configuration.setName(dialog.getName());
-      configuration.setTargetPlatform(dialog.getTargetPlatform());
-      configuration.setPureAs(dialog.isPureActionScript());
-      configuration.setOutputType(dialog.getOutputType());
+    NamedConfigurable<FlexIdeBuildConfiguration> wrapped = configurable.wrapInTabsIfNeeded();
+    myModuleToConfigurablesMap.get(module).add(wrapped);
+    myConfigurationsToModuleMap.put(configuration, module);
 
-      // just to simplify serialized view
-      resetNonApplicableValuesToDefaults(configuration);
+    final MasterDetailsComponent.MyNode node = new BuildConfigurationNode(wrapped);
+    FlexIdeModuleStructureExtension.addConfigurationChildNodes(configurable, node);
 
-      // set correct output file extension for cloned configuration
-      final String outputFileName = configuration.getOutputFileName();
-      final String lowercase = outputFileName.toLowerCase();
-      if (lowercase.endsWith(".swf") || lowercase.endsWith(".swc")) {
-        final String extension = configuration.getOutputType() == OutputType.Library ? ".swc" : ".swf";
-        configuration.setOutputFileName(outputFileName.substring(0, outputFileName.length() - ".sw_".length()) + extension);
-      }
+    final ModuleStructureConfigurable moduleStructureConfigurable = ModuleStructureConfigurable.getInstance(module.getProject());
+    moduleStructureConfigurable.addNode(node, moduleStructureConfigurable.findModuleNode(module));
 
-      final FlexIdeBCConfigurable configurable = new FlexIdeBCConfigurable(module, configuration, mySdksModel, treeNodeNameUpdater);
-
-      NamedConfigurable<FlexIdeBuildConfiguration> wrapped = configurable.wrapInTabsIfNeeded();
-      myModuleToConfigurablesMap.get(module).add(wrapped);
-      myConfigurationsToModuleMap.put(configuration, module);
-
-      final MasterDetailsComponent.MyNode node = new BuildConfigurationNode(wrapped);
-      FlexIdeModuleStructureExtension.addConfigurationChildNodes(configurable, node);
-
-      final ModuleStructureConfigurable moduleStructureConfigurable = ModuleStructureConfigurable.getInstance(project);
-      moduleStructureConfigurable.addNode(node, moduleStructureConfigurable.findModuleNode(module));
-
-      final Place place = new Place().putPath(ProjectStructureConfigurable.CATEGORY, moduleStructureConfigurable)
-        .putPath(MasterDetailsComponent.TREE_OBJECT, configuration);
-      ProjectStructureConfigurable.getInstance(project).navigateTo(place, true);
-    }
+    Place place = new Place().putPath(ProjectStructureConfigurable.CATEGORY, moduleStructureConfigurable)
+      .putPath(MasterDetailsComponent.TREE_OBJECT, configuration);
+    ProjectStructureConfigurable.getInstance(module.getProject()).navigateTo(place, true);
   }
 
   private static void resetNonApplicableValuesToDefaults(final ModifiableFlexIdeBuildConfiguration configuration) {

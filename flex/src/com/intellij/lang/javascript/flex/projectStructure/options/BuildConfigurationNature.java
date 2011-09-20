@@ -7,9 +7,9 @@ import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
  * @author ksafonov
  */
 public class BuildConfigurationNature {
-  private final TargetPlatform targetPlatform;
+  public final TargetPlatform targetPlatform;
   public final boolean pureAS;
-  private final OutputType outputType;
+  public final OutputType outputType;
 
   public BuildConfigurationNature(TargetPlatform targetPlatform,
                                   boolean pureAS,
@@ -38,4 +38,6 @@ public class BuildConfigurationNature {
   public boolean isLib() {
     return outputType == OutputType.Library;
   }
+
+  public static final BuildConfigurationNature DEFAULT = new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Application);
 }

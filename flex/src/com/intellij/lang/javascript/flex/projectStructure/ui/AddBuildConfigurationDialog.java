@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.NonFocusableCheckBox;
@@ -23,16 +24,14 @@ public class AddBuildConfigurationDialog extends DialogWrapper {
   public AddBuildConfigurationDialog(final Project project,
                                      final String dialogTitle,
                                      final Collection<String> usedNames,
-                                     final TargetPlatform targetPlatform,
-                                     final boolean pureActionScript,
-                                     final OutputType outputType) {
+                                     BuildConfigurationNature defaultNature) {
     super(project);
     myUsedNames = usedNames;
     setTitle(dialogTitle);
     initCombos();
-    myTargetPlatformCombo.setSelectedItem(targetPlatform);
-    myPureActionScriptCheckBox.setSelected(pureActionScript);
-    myOutputTypeCombo.setSelectedItem(outputType);
+    myTargetPlatformCombo.setSelectedItem(defaultNature.targetPlatform);
+    myPureActionScriptCheckBox.setSelected(defaultNature.pureAS);
+    myOutputTypeCombo.setSelectedItem(defaultNature.outputType);
     init();
   }
 
@@ -80,16 +79,12 @@ public class AddBuildConfigurationDialog extends DialogWrapper {
     return myNameTextField.getText().trim();
   }
 
-  public TargetPlatform getTargetPlatform() {
-    return (TargetPlatform)myTargetPlatformCombo.getSelectedItem();
+  public BuildConfigurationNature getNature() {
+    TargetPlatform targetPlatform = (TargetPlatform)myTargetPlatformCombo.getSelectedItem();
+    boolean isPureAs = myPureActionScriptCheckBox.isSelected();
+    OutputType outputType = (OutputType)myOutputTypeCombo.getSelectedItem();
+    return new BuildConfigurationNature(targetPlatform, isPureAs, outputType);
   }
 
-  public boolean isPureActionScript() {
-    return myPureActionScriptCheckBox.isSelected();
-  }
-
-  public OutputType getOutputType() {
-    return (OutputType)myOutputTypeCombo.getSelectedItem();
-  }
 }
 
