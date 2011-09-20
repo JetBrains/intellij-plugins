@@ -665,7 +665,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
       return parentDescriptor.getElementsDescriptors(context);
     }
 
-    if (arrayElementType != null) {
+    if (arrayElementType != null && JSResolveUtil.findClassByQName(arrayElementType, context) != null) {
       return parentDescriptor.getElementDescriptorsInheritedFromGivenType(arrayElementType);
     }
     if (type != null && ClassBackedElementDescriptor.isAdequateType(type)) {
@@ -696,8 +696,10 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     }
 
     if (arrayElementType != null) {
-      if (isVectorType(type) && isVectorDescriptor(descriptor) ||
-          JSCommonTypeNames.ARRAY_CLASS_NAME.equals(type) && isArrayDescriptor(descriptor)) {
+      if (descriptor == null ||
+          isVectorType(type) && isVectorDescriptor(descriptor) ||
+          JSCommonTypeNames.ARRAY_CLASS_NAME.equals(type) && isArrayDescriptor(descriptor) ||
+          JSResolveUtil.findClassByQName(arrayElementType, childTag) == null) {
         return descriptor;
       }
 
