@@ -32,9 +32,7 @@ import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
@@ -44,7 +42,6 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.ArrayUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.BundleManager;
@@ -154,23 +151,14 @@ public class BundleCompiler implements PackagingCompiler {
                 if (affectedModules.length == 0) {
                     return ProcessingItem.EMPTY_ARRAY;
                 }
-                Project project = affectedModules[0].getProject();
-                Module[] modules = ModuleManager.getInstance(project).getModules();
-                THashSet<Module> thashset = new THashSet<Module>();
 
-                for (Module module : modules) {
-                    if (!OsmorcFacet.hasOsmorcFacet(module) || module.getModuleFile() == null) {
-                        continue;
-                    }
-                    thashset.add(module);
+              List<ProcessingItem> result = new ArrayList<ProcessingItem>();
+              for (Module affectedModule : affectedModules) {
+                if ( OsmorcFacet.hasOsmorcFacet(affectedModule)) {
+                  result.add(new BundleProcessingItem(affectedModule));
                 }
-
-                ProcessingItem[] result = new ProcessingItem[thashset.size()];
-                int i = 0;
-                for (Module module : thashset) {
-                    result[i++] = new BundleProcessingItem(module);
-                }
-                return result;
+              }
+              return result.toArray(new ProcessingItem[result.size()]);
             }
         });
     }
@@ -209,10 +197,11 @@ public class BundleCompiler implements PackagingCompiler {
     private static void buildBundle(final Module module, final ProgressIndicator progressIndicator,
                                     final CompileContext compileContext)
             throws IOException {
+        progressIndicator.setText("Building bundle for module " + module.getName());
         // create the jar file
         final File jarFile = new File(VfsUtil.urlToPath(getJarFileName(module)));
         if (jarFile.exists()) { //noinspection ResultOfMethodCallIgnored
-            jarFile.delete();
+            jarFile.delete(); 
         }
         if (!FileUtil.createParentDirs(jarFile)) {
           compileContext.addMessage(CompilerMessageCategory.ERROR, "Cannot create path to " + jarFile.getPath(),null, 0,0);
