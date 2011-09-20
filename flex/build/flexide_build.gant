@@ -539,6 +539,10 @@ def layoutFull(String target, Set usedJars) {
       jar("icons.jar") { module("icons") }
       jar("boot.jar") { module("boot") }
 
+      jar("compile-server.jar") {
+        module("compile-server")
+      }
+
       usedJars.each {
         fileset(file: it)
       }
