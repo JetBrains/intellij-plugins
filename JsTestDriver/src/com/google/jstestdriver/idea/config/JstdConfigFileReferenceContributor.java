@@ -3,11 +3,11 @@ package com.google.jstestdriver.idea.config;
 import com.google.common.collect.Lists;
 import com.google.jstestdriver.idea.util.CastUtils;
 import com.google.jstestdriver.idea.util.PsiElementFragment;
+import com.intellij.openapi.editor.DocumentFragment;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.patterns.ElementPattern;
-import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.*;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
@@ -28,29 +28,53 @@ public class JstdConfigFileReferenceContributor extends PsiReferenceContributor 
 
   @Override
   public void registerReferenceProviders(PsiReferenceRegistrar registrar) {
-    ElementPattern<PsiElement> place = JstdConfigFileUtils.CONFIG_FILE_ELEMENT_PATTERN.and(PlatformPatterns.psiElement(YAMLKeyValue.class));
-    registrar.registerReferenceProvider(place, new PsiReferenceProvider() {
+    registrar.registerReferenceProvider(JstdConfigFileUtils.CONFIG_FILE_ELEMENT_PATTERN, new PsiReferenceProvider() {
       @NotNull
       @Override
       public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-        YAMLKeyValue keyValue = CastUtils.tryCast(element, YAMLKeyValue.class);
-        if (keyValue != null && JstdConfigFileUtils.isKeyWithInnerFileSequence(keyValue)) {
-          YAMLDocument yamlDocument = getDocumentByKeyValueElement(keyValue);
-          if (yamlDocument != null) {
-            VirtualFile basePath = JstdConfigFileUtils.extractBasePath(yamlDocument);
-            if (basePath != null) {
-              return findAllReferencesForKeyValue(basePath, keyValue);
-            }
+        final YAMLKeyValue keyValue = CastUtils.tryCast(element, YAMLKeyValue.class);
+        if (keyValue == null) {
+          return PsiReference.EMPTY_ARRAY;
+        }
+        final YAMLDocument yamlDocument = CastUtils.tryCast(keyValue.getParent(), YAMLDocument.class);
+        if (yamlDocument == null) {
+          return PsiReference.EMPTY_ARRAY;
+        }
+        final BasePathInfo basePathInfo = new BasePathInfo(yamlDocument);
+        if (BasePathInfo.isBasePathKey(keyValue)) {
+          PsiReference basePathRef = createBasePathRef(basePathInfo);
+          if (basePathRef != null) {
+            return new PsiReference[] {basePathRef};
+          }
+        } else if (JstdConfigFileUtils.isTopLevelKeyWithInnerFileSequence(keyValue)) {
+          VirtualFile basePath = basePathInfo.getBasePath();
+          if (basePath != null) {
+            List<PsiReference> references = Lists.newArrayList();
+            addReferencesForKeyValueWithInnerFileSequence(basePathInfo, keyValue, references);
+            return references.toArray(new PsiReference[references.size()]);
           }
         }
         return PsiReference.EMPTY_ARRAY;
-      }
+    }
     });
   }
 
-  @NotNull
-  private static PsiReference[] findAllReferencesForKeyValue(@NotNull final VirtualFile basePath, @NotNull final YAMLKeyValue keyValue) {
-    final List<PsiReference> references = Lists.newArrayList();
+  @Nullable
+  private static PsiReference createBasePathRef(@NotNull BasePathInfo basePathInfo) {
+    DocumentFragment documentFragment = basePathInfo.getValueAsDocumentFragment();
+    YAMLKeyValue keyValue = basePathInfo.getKeyValue();
+    if (documentFragment != null && keyValue != null) {
+      PsiElementFragment<YAMLKeyValue> keyValueFragment = PsiElementFragment.create(keyValue, documentFragment);
+      if (keyValueFragment != null) {
+        return new MyPsiReference(keyValueFragment, basePathInfo, ".");
+      }
+    }
+    return null;
+  }
+
+  private static void addReferencesForKeyValueWithInnerFileSequence(@NotNull final BasePathInfo basePathInfo,
+                                                                    @NotNull final YAMLKeyValue keyValue,
+                                                                    @NotNull final List<PsiReference> references) {
     keyValue.acceptChildren(new PsiElementVisitor() {
       @Override
       public void visitElement(PsiElement element) {
@@ -61,7 +85,7 @@ public class JstdConfigFileReferenceContributor extends PsiReferenceContributor 
             public void visitElement(PsiElement element) {
               YAMLSequence yamlSequence = CastUtils.tryCast(element, YAMLSequence.class);
               if (yamlSequence != null) {
-                PsiReference ref = getReferenceBySequence(basePath, yamlSequence, keyValue);
+                PsiReference ref = getReferenceBySequence(basePathInfo, keyValue, yamlSequence);
                 if (ref != null) {
                   references.add(ref);
                 }
@@ -71,65 +95,62 @@ public class JstdConfigFileReferenceContributor extends PsiReferenceContributor 
         }
       }
     });
-    return references.toArray(new PsiReference[references.size()]);
   }
 
   @Nullable
-  private static PsiReference getReferenceBySequence(@NotNull final VirtualFile basePath,
-                                                     @NotNull YAMLSequence sequence,
-                                                     @NotNull YAMLKeyValue keyValue) {
+  private static PsiReference getReferenceBySequence(@NotNull BasePathInfo basePathInfo,
+                                                     @NotNull YAMLKeyValue keyValue,
+                                                     @NotNull YAMLSequence sequence) {
     PsiElementFragment<YAMLSequence> sequenceFragment = JstdConfigFileUtils.buildSequenceTextFragment(sequence);
     if (sequenceFragment != null) {
       String text = sequenceFragment.getText();
       String relativePath = FileUtil.toSystemIndependentName(text);
       PsiElementFragment<YAMLKeyValue> keyValueFragment = sequenceFragment.getSameTextRangeForParent(keyValue);
-      return new MyReference(keyValueFragment.getElement(), keyValueFragment.getTextRangeInElement(), basePath, relativePath);
+      return new MyPsiReference(keyValueFragment, basePathInfo, relativePath);
     }
     return null;
   }
 
-  private static YAMLDocument getDocumentByKeyValueElement(@NotNull YAMLKeyValue keyValue) {
-    return JstdConfigFileUtils.getVerifiedHierarchyHead(
-      keyValue,
-      new Class[]{
-        YAMLKeyValue.class
-      },
-      YAMLDocument.class
-    );
-  }
+  private static class MyPsiReference implements PsiReference {
 
-  private static class MyReference implements PsiReference {
-
-    private final YAMLKeyValue myKeyValue;
-    private final TextRange myTextRangeInSequence;
-
-    private final VirtualFile myBasePath;
+    private final PsiElementFragment<YAMLKeyValue> myYamlDocumentFragment;
+    private final BasePathInfo myBasePathInfo;
     private final String myRelativePath;
 
-    private MyReference(@NotNull YAMLKeyValue keyValue, @NotNull TextRange textRangeInSequence, @NotNull VirtualFile basePath, @NotNull String relativePath) {
-      myKeyValue = keyValue;
-      myTextRangeInSequence = textRangeInSequence;
-      myBasePath = basePath;
+    private MyPsiReference(@NotNull PsiElementFragment<YAMLKeyValue> yamlDocumentFragment,
+                           @NotNull BasePathInfo basePathInfo,
+                           @NotNull String relativePath) {
+      myYamlDocumentFragment = yamlDocumentFragment;
+      myBasePathInfo = basePathInfo;
       myRelativePath = relativePath;
     }
 
     @Override
     public PsiElement getElement() {
-      return myKeyValue;
+      return myYamlDocumentFragment.getElement();
     }
 
     @Override
     public TextRange getRangeInElement() {
-      return myTextRangeInSequence;
+      return myYamlDocumentFragment.getTextRangeInElement();
     }
 
     @Override
     public PsiElement resolve() {
-      VirtualFile targetVirtualFile = myBasePath.findFileByRelativePath(myRelativePath);
-      if (targetVirtualFile != null) {
-        final PsiFile targetPsiFile = PsiManager.getInstance(myKeyValue.getProject()).findFile(targetVirtualFile);
-        if (targetPsiFile != null && targetPsiFile.isValid()) {
-          return targetPsiFile;
+      VirtualFile targetVirtualFile = myBasePathInfo.findFile(myRelativePath);
+      if (targetVirtualFile != null && targetVirtualFile.isValid()) {
+        Project project = myYamlDocumentFragment.getElement().getProject();
+        PsiManager psiManager = PsiManager.getInstance(project);
+        if (targetVirtualFile.isDirectory()) {
+          PsiDirectory targetPsiDirectory = psiManager.findDirectory(targetVirtualFile);
+          if (targetPsiDirectory != null && targetPsiDirectory.isValid()) {
+            return targetPsiDirectory;
+          }
+        } else {
+          final PsiFile targetPsiFile = psiManager.findFile(targetVirtualFile);
+          if (targetPsiFile != null && targetPsiFile.isValid()) {
+            return targetPsiFile;
+          }
         }
       }
       return null;
@@ -138,7 +159,7 @@ public class JstdConfigFileReferenceContributor extends PsiReferenceContributor 
     @NotNull
     @Override
     public String getCanonicalText() {
-      return myTextRangeInSequence.substring(myKeyValue.getText());
+      return myYamlDocumentFragment.getText();
     }
 
     @Override

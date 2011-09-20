@@ -4,6 +4,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.DocumentFragment;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,9 +47,20 @@ public class PsiElementFragment<T extends PsiElement> {
     return myTextRangeInElement.substring(myElement.getText());
   }
 
+  @NotNull
   public <P extends PsiElement> PsiElementFragment<P> getSameTextRangeForParent(P parent) {
+    PsiElement element = myElement;
+    while (element != parent) {
+      element = element.getParent();
+      if (element instanceof PsiFile) {
+        break;
+      }
+    }
+    if (element != parent) {
+      throw new RuntimeException("Parent " + parent + " was not found for " + myElement);
+    }
     int shift = myElement.getTextRange().getStartOffset() - parent.getTextRange().getStartOffset();
-    return new PsiElementFragment<P>(parent, TextRange.create(myTextRangeInElement.getStartOffset() + shift, myTextRangeInElement.getEndOffset() + shift));
+    return new PsiElementFragment<P>(parent, myTextRangeInElement.shiftRight(shift));
   }
 
   @Nullable
@@ -57,9 +69,26 @@ public class PsiElementFragment<T extends PsiElement> {
     if (document == null) {
       return null;
     }
-    int startElementOffset = myElement.getTextRange().getStartOffset();
-    TextRange documentTextRange = myTextRangeInElement.shiftRight(startElementOffset);
+    TextRange documentTextRange = getDocumentTextRange();
     return new DocumentFragment(document, documentTextRange.getStartOffset(), documentTextRange.getEndOffset());
+  }
+
+  @Nullable
+  public static <T extends PsiElement> PsiElementFragment<T> create(@NotNull T element,
+                                                                    @NotNull DocumentFragment documentFragment) {
+    Document document = JsPsiUtils.getDocument(element);
+    if (document != documentFragment.getDocument()) {
+      throw new RuntimeException("Documents are different: " + element
+                                 + ", '" + element.getText() + "'");
+    }
+    TextRange dtr = documentFragment.getTextRange();
+    TextRange common = dtr.intersection(element.getTextRange());
+    if (common == null) {
+      return null;
+    }
+    int startOffset = element.getTextRange().getStartOffset();
+    TextRange textRange = new TextRange(common.getStartOffset() - startOffset, common.getEndOffset() - startOffset);
+    return new PsiElementFragment<T>(element, textRange);
   }
 
   public static <T extends PsiElement> PsiElementFragment<T> create(@NotNull T element, @NotNull TextRange textRangeInElement) {

@@ -145,9 +145,10 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
       YAMLKeyValue.class
     );
     if (keyValue != null) {
-      YAMLDocument document = CastUtils.tryCast(keyValue.getParent(), YAMLDocument.class);
-      if (document != null && JstdConfigFileUtils.isKeyWithInnerFileSequence(keyValue)) {
-        VirtualFile basePath = JstdConfigFileUtils.extractBasePath(document);
+      YAMLDocument yamlDocument = CastUtils.tryCast(keyValue.getParent(), YAMLDocument.class);
+      if (yamlDocument != null && JstdConfigFileUtils.isTopLevelKeyWithInnerFileSequence(keyValue)) {
+        BasePathInfo basePathInfo = new BasePathInfo(yamlDocument);
+        VirtualFile basePath = basePathInfo.getBasePath();
         if (basePath != null) {
           addPathCompletions(result, caretBipartiteElementText, basePath);
         }
@@ -161,9 +162,10 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
                                                      boolean atFirstColumn) {
     YAMLKeyValue keyValue = CastUtils.tryCast(element.getParent(), YAMLKeyValue.class);
     if (!atFirstColumn && keyValue != null) {
-      YAMLDocument document = CastUtils.tryCast(keyValue.getParent(), YAMLDocument.class);
-      if (document != null && JstdConfigFileUtils.isBasePathKey(keyValue)) {
-        VirtualFile basePath = JstdConfigFileUtils.getConfigDir(document);
+      YAMLDocument yamlDocument = CastUtils.tryCast(keyValue.getParent(), YAMLDocument.class);
+      if (yamlDocument != null && BasePathInfo.isBasePathKey(keyValue)) {
+        BasePathInfo basePathInfo = new BasePathInfo(yamlDocument);
+        VirtualFile basePath = basePathInfo.getConfigDir();
         if (basePath != null) {
           addPathCompletions(result, caretBipartiteElementText, basePath);
         }

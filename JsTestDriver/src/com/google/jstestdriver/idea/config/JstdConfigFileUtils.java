@@ -19,12 +19,12 @@ import com.google.common.collect.Lists;
 import com.google.jstestdriver.idea.util.CastUtils;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.google.jstestdriver.idea.util.PsiElementFragment;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.DocumentFragment;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiElementPattern;
@@ -35,12 +35,9 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.YAMLTokenTypes;
-import org.jetbrains.yaml.psi.YAMLDocument;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
-import org.jetbrains.yaml.psi.YAMLPsiElement;
 import org.jetbrains.yaml.psi.YAMLSequence;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -51,7 +48,6 @@ public class JstdConfigFileUtils {
   public static final char UNIX_PATH_SEPARATOR = '/';
   public static final char WINDOWS_PATH_SEPARATOR = '\\';
 
-  private static final String BASE_PATH_KEY = "basepath";
   private static final Set<String> KEYS_WITH_INNER_SEQUENCE = new HashSet<String>(Arrays.asList("load", "test", "exclude", "serve"));
   public static final Set<String> VALID_TOP_LEVEL_KEYS = new HashSet<String>(Arrays.asList("server", "plugin", "timeout", "proxy"));
 
@@ -60,17 +56,13 @@ public class JstdConfigFileUtils {
   );
 
   static {
-    VALID_TOP_LEVEL_KEYS.add(BASE_PATH_KEY);
+    VALID_TOP_LEVEL_KEYS.add(BasePathInfo.BASE_PATH_KEY);
     VALID_TOP_LEVEL_KEYS.addAll(KEYS_WITH_INNER_SEQUENCE);
   }
 
   private JstdConfigFileUtils() {}
 
-  public static boolean isBasePathKey(@NotNull YAMLKeyValue keyValue) {
-    return BASE_PATH_KEY.equals(keyValue.getKeyText());
-  }
-
-  public static boolean isKeyWithInnerFileSequence(@NotNull YAMLKeyValue keyValue) {
+  public static boolean isTopLevelKeyWithInnerFileSequence(@NotNull YAMLKeyValue keyValue) {
     return KEYS_WITH_INNER_SEQUENCE.contains(keyValue.getKeyText());
   }
 
@@ -79,46 +71,34 @@ public class JstdConfigFileUtils {
   }
 
   @Nullable
-  public static VirtualFile extractBasePath(@NotNull YAMLDocument document) {
-    VirtualFile initialBasePath = getConfigDir(document);
-    String basePathStr = extractBasePathAsRawString(document);
-    if (basePathStr == null) {
-      return initialBasePath;
+  public static DocumentFragment extractValueAsDocumentFragment(@NotNull YAMLKeyValue keyValue) {
+    PsiElement content = keyValue.getValue();
+    if (content == null || content.getTextLength() == 0) {
+      return null;
     }
-    File file = new File(basePathStr);
-    if (file.isAbsolute() && file.exists()) {
-      VirtualFile absoluteBasePath = LocalFileSystem.getInstance().findFileByIoFile(file);
-      if (absoluteBasePath != null && absoluteBasePath.isDirectory()) {
-        return absoluteBasePath;
-      }
+    if (JsPsiUtils.isElementOfType(content, YAMLTokenTypes.SCALAR_DSTRING)) {
+      TextRange textRange = TextRange.create(1, content.getTextLength() - 1);
+      return PsiElementFragment.create(content, textRange).toDocumentFragment();
     }
-    if (initialBasePath != null) {
-      VirtualFile relativeBasePath = initialBasePath.findFileByRelativePath(basePathStr);
-      if (relativeBasePath != null && relativeBasePath.isDirectory()) {
-        return relativeBasePath;
-      }
+    Document document = JsPsiUtils.getDocument(keyValue);
+    if (document == null) {
+      return null;
     }
-    return null;
+    TextRange contentTextRange = content.getTextRange();
+    int nextLineNumber = document.getLineNumber(contentTextRange.getEndOffset());
+    if (document.getLineStartOffset(nextLineNumber) < contentTextRange.getEndOffset()) {
+      nextLineNumber++;
+    }
+    int documentEndOffset = document.getLineStartOffset(nextLineNumber) - 1;
+    return new DocumentFragment(document, contentTextRange.getStartOffset(), documentEndOffset);
   }
 
-  @Nullable
-  private static String extractBasePathAsRawString(@NotNull YAMLDocument document) {
-    List<YAMLPsiElement> children = document.getYAMLElements();
-    for (YAMLPsiElement child : children) {
-      if (child instanceof YAMLKeyValue) {
-        YAMLKeyValue keyValue = (YAMLKeyValue) child;
-        if (BASE_PATH_KEY.equals(keyValue.getKeyText())) {
-          return StringUtil.notNullize(keyValue.getValueText());
-        }
-      }
-    }
-    return null;
+  public static int getStartLineNumber(@NotNull Document document, @NotNull PsiElement element) {
+    return document.getLineNumber(element.getTextRange().getStartOffset());
   }
 
-  @Nullable
-  public static VirtualFile getConfigDir(@NotNull YAMLPsiElement document) {
-    VirtualFile configVF = document.getContainingFile().getOriginalFile().getVirtualFile();
-    return configVF == null ? null : configVF.getParent();
+  public static int getEndLineNumber(@NotNull Document document, @NotNull PsiElement element) {
+    return document.getLineNumber(element.getTextRange().getEndOffset());
   }
 
   @Nullable

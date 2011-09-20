@@ -337,6 +337,6 @@ public class JsPsiUtils {
     if (psiFile == null) {
       return null;
     }
-    return PsiDocumentManager.getInstance(element.getProject()).getDocument(psiFile);
+    return PsiDocumentManager.getInstance(element.getProject()).getDocument(psiFile.getOriginalFile());
   }
 }
