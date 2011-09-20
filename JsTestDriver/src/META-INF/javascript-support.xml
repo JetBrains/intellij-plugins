@@ -40,11 +40,16 @@
     <jsCallTemplate implementation="com.google.jstestdriver.idea.assertFramework.jasmine.codeInsight.JasmineSpecCallTemplateContextProvider"/>
   </extensions>
 
+  <project-components>
+    <component>
+      <implementation-class>com.google.jstestdriver.idea.javascript.JSUnitTestingSupport</implementation-class>
+    </component>
+  </project-components>
+
   <extensions defaultExtensionNs="com.intellij">
     <inspectionToolProvider implementation="com.google.jstestdriver.idea.assertFramework.support.JstdInspectionToolProvider"/>
 
-    <postStartupActivity implementation="com.google.jstestdriver.idea.javascript.JSUnitTestingSupport"/>
-
+    <!--<postStartupActivity implementation="com.google.jstestdriver.idea.javascript.JSUnitTestingSupport"/>-->
     <!--<completion.contributor order="first" language="JavaScript" implementationClass="com.google.jstestdriver.idea.assertFramework.codeInsight.FilteringCompletionContributor"/>-->
   </extensions>
 

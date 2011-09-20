@@ -18,22 +18,41 @@ package com.google.jstestdriver.idea.javascript;
 import com.google.jstestdriver.idea.javascript.navigation.NavigationRegistryBuilderImpl;
 import com.intellij.lang.javascript.library.JSLibraryManager;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.scripting.ScriptingLibraryModel;
-import com.intellij.openapi.startup.StartupActivity;
+import com.intellij.openapi.startup.StartupManager;
+import org.jetbrains.annotations.NotNull;
 
-public class JSUnitTestingSupport implements StartupActivity, DumbAware {
+public class JSUnitTestingSupport implements ProjectComponent {
 
-  @Override
-  public void runActivity(Project project) {
-    uninstallOldLibrary(project);
-    NavigationRegistryBuilderImpl.register();
+  private Project myProject;
+
+  public JSUnitTestingSupport(Project project) {
+    myProject = project;
   }
 
-  private static void uninstallOldLibrary(Project project) {
-    final JSLibraryManager libraryManager = ServiceManager.getService(project, JSLibraryManager.class);
+  @NotNull
+  @Override
+  public String getComponentName() {
+    return JSUnitTestingSupport.class.getName();
+  }
+
+  @Override
+  public void projectOpened() {
+    StartupManager.getInstance(myProject).registerPostStartupActivity(new Runnable() {
+      @Override
+      public void run() {
+        installLibrary();
+        NavigationRegistryBuilderImpl.register();
+      }
+    });
+  }
+
+  private void installLibrary() {
+    final JSLibraryManager libraryManager = ServiceManager.getService(myProject, JSLibraryManager.class);
     String libraryName = "JsTD Assertion Framework";
     ScriptingLibraryModel scriptingLibraryModel = libraryManager.getLibraryByName(libraryName);
     if (scriptingLibraryModel != null) {
@@ -46,4 +65,13 @@ public class JSUnitTestingSupport implements StartupActivity, DumbAware {
       });
     }
   }
+
+  @Override
+  public void projectClosed() {}
+
+  @Override
+  public void initComponent() {}
+
+  @Override
+  public void disposeComponent() {}
 }

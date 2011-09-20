@@ -308,11 +308,25 @@ public class JsPsiUtils {
     return false;
   }
 
-  public static boolean isElementOfType(@NotNull PsiElement psiElement, @NotNull IElementType type1, @NotNull IElementType type2) {
+  public static boolean isElementOfType(@NotNull PsiElement psiElement,
+                                        @NotNull IElementType type1,
+                                        @NotNull IElementType type2) {
     if (psiElement instanceof ASTNode) {
-      ASTNode node = (ASTNode) psiElement;
+      ASTNode node = (ASTNode)psiElement;
       IElementType type = node.getElementType();
       return type == type1 || type == type2;
+    }
+    return false;
+  }
+
+  public static boolean isElementOfType(@NotNull PsiElement psiElement,
+                                        @NotNull IElementType type1,
+                                        @NotNull IElementType type2,
+                                        @NotNull IElementType type3) {
+    if (psiElement instanceof ASTNode) {
+      ASTNode node = (ASTNode)psiElement;
+      IElementType type = node.getElementType();
+      return type == type1 || type == type2 || type == type3;
     }
     return false;
   }
@@ -332,11 +346,12 @@ public class JsPsiUtils {
     return null;
   }
 
+  @Nullable
   public static Document getDocument(@NotNull PsiElement element) {
     PsiFile psiFile = element.getContainingFile();
     if (psiFile == null) {
       return null;
     }
-    return PsiDocumentManager.getInstance(element.getProject()).getDocument(psiFile.getOriginalFile());
+    return PsiDocumentManager.getInstance(element.getProject()).getDocument(psiFile);
   }
 }

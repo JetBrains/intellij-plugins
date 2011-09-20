@@ -4,7 +4,6 @@ import com.google.jstestdriver.idea.util.CastUtils;
 import com.intellij.openapi.editor.DocumentFragment;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -109,7 +108,6 @@ public class BasePathInfo {
       return null;
     }
     String pathStr = myDocumentFragment.getDocument().getText(myDocumentFragment.getTextRange());
-    pathStr = StringUtil.unquoteString(pathStr);
     VirtualFile basePath = findFile(getConfigDir(), pathStr);
     if (basePath != null && basePath.isDirectory()) {
       return basePath;

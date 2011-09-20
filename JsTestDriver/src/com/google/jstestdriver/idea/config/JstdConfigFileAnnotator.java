@@ -178,12 +178,11 @@ public class JstdConfigFileAnnotator implements Annotator {
   }
 
   private static void annotatePath(@NotNull VirtualFile basePath,
-                                      @NotNull DocumentFragment pathAsDocumentFragment,
-                                      @NotNull final AnnotationHolder holder,
-                                      boolean tolerateRemoteLocations,
-                                      boolean expectDirectory) {
+                                   @NotNull DocumentFragment pathAsDocumentFragment,
+                                   @NotNull final AnnotationHolder holder,
+                                   boolean tolerateRemoteLocations,
+                                   boolean expectDirectory) {
     String pathStr = pathAsDocumentFragment.getDocument().getText(pathAsDocumentFragment.getTextRange());
-    pathStr = StringUtil.unquoteString(pathStr);
     if (tolerateRemoteLocations && (pathStr.startsWith("http:") || pathStr.startsWith("https:"))) {
       return;
     }

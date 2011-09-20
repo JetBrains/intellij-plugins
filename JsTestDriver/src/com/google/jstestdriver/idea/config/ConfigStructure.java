@@ -11,6 +11,7 @@ import com.google.jstestdriver.config.UserConfigurationSource;
 import com.google.jstestdriver.config.YamlParser;
 import com.google.jstestdriver.hooks.FileParsePostProcessor;
 import com.google.jstestdriver.util.DisplayPathSanitizer;
+import com.intellij.openapi.diagnostic.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +20,8 @@ import java.util.List;
 import java.util.Set;
 
 public class ConfigStructure {
+
+  private static final Logger LOG = Logger.getInstance(ConfigStructure.class);
 
   private final File myJstdConfigPath;
   private final File myBasePath;
@@ -32,7 +35,7 @@ public class ConfigStructure {
       try {
         myLoadFiles.add(loadFile.getCanonicalFile());
       } catch (IOException e) {
-        e.printStackTrace();
+        LOG.warn(e);
       }
     }
   }

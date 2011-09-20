@@ -16,7 +16,6 @@
 package com.google.jstestdriver.idea.config;
 
 import com.google.jstestdriver.idea.util.CastUtils;
-import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupItem;
 import com.intellij.openapi.editor.Document;
@@ -28,7 +27,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.psi.YAMLCompoundValue;
 import org.jetbrains.yaml.psi.YAMLDocument;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
@@ -50,13 +48,9 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
         if (element == null) {
           element = parameters.getPosition();
         }
-        int prefixLength = parameters.getOffset() - element.getTextRange().getStartOffset();
-        String text = element.getText();
-        if (JsPsiUtils.isElementOfType(element, YAMLTokenTypes.SCALAR_DSTRING)) {
-          text = text.substring(1, text.length() - 1);
-          prefixLength = Math.max(0, prefixLength - 1);
-        }
-        BipartiteString caretBipartiteElementText = splitByPrefixLength(text, prefixLength);
+        QuotedText text = new QuotedText(element);
+        int prefixLength = Math.max(0, parameters.getOffset() - text.getUsefulDocumentTextRange().getStartOffset());
+        BipartiteString caretBipartiteElementText = splitByPrefixLength(text.getUsefulText(), prefixLength);
         boolean atFirstColumn = isAtStart(element, parameters.getOffset());
 
         addInnerSequencePathCompletionsIfNeeded(result, element, caretBipartiteElementText);
@@ -214,8 +208,12 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
   }
 
   private static BipartiteString findParentDirStrWithLastComponentPrefix(String pathBeforeCaret) {
-    BipartiteString unixBipartiteString = splitByLastIndexOfSeparatorOccurrence(pathBeforeCaret, JstdConfigFileUtils.UNIX_PATH_SEPARATOR);
-    BipartiteString winBipartiteString = splitByLastIndexOfSeparatorOccurrence(pathBeforeCaret, JstdConfigFileUtils.WINDOWS_PATH_SEPARATOR);
+    BipartiteString unixBipartiteString = splitByLastIndexOfSeparatorOccurrence(
+      pathBeforeCaret, JstdConfigFileUtils.UNIX_PATH_SEPARATOR
+    );
+    BipartiteString winBipartiteString = splitByLastIndexOfSeparatorOccurrence(
+      pathBeforeCaret, JstdConfigFileUtils.WINDOWS_PATH_SEPARATOR
+    );
     if (unixBipartiteString.getSuffix().length() < winBipartiteString.getSuffix().length()) {
       return unixBipartiteString;
     } else {
@@ -251,7 +249,7 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
   @NotNull
   private static BipartiteString splitByLastIndexOfSeparatorOccurrence(@NotNull String str, char separator) {
     int index = str.lastIndexOf(separator);
-    if (index > 0) {
+    if (index >= 0) {
       return new BipartiteString(str.substring(0, index + 1), str.substring(index + 1));
     }
     return new BipartiteString("", str);

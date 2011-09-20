@@ -76,21 +76,19 @@ public class JstdConfigFileUtils {
     if (content == null || content.getTextLength() == 0) {
       return null;
     }
-    if (JsPsiUtils.isElementOfType(content, YAMLTokenTypes.SCALAR_DSTRING)) {
-      TextRange textRange = TextRange.create(1, content.getTextLength() - 1);
-      return PsiElementFragment.create(content, textRange).toDocumentFragment();
-    }
     Document document = JsPsiUtils.getDocument(keyValue);
     if (document == null) {
       return null;
     }
     TextRange contentTextRange = content.getTextRange();
-    int nextLineNumber = document.getLineNumber(contentTextRange.getEndOffset());
-    if (document.getLineStartOffset(nextLineNumber) < contentTextRange.getEndOffset()) {
-      nextLineNumber++;
+    int lastLineNumber = document.getLineNumber(contentTextRange.getEndOffset());
+    if (lastLineNumber > 0 && document.getLineStartOffset(lastLineNumber) == contentTextRange.getEndOffset()) {
+      lastLineNumber--;
     }
-    int documentEndOffset = document.getLineStartOffset(nextLineNumber) - 1;
-    return new DocumentFragment(document, contentTextRange.getStartOffset(), documentEndOffset);
+    int documentEndOffset = document.getLineEndOffset(lastLineNumber);
+
+    DocumentFragment fragment = new DocumentFragment(document, contentTextRange.getStartOffset(), documentEndOffset);
+    return QuotedText.unquoteDocumentFragment(fragment);
   }
 
   public static int getStartLineNumber(@NotNull Document document, @NotNull PsiElement element) {
@@ -108,21 +106,16 @@ public class JstdConfigFileUtils {
     sequence.acceptChildren(new PsiElementVisitor() {
       @Override
       public void visitElement(PsiElement element) {
-        boolean quotedString = JsPsiUtils.isElementOfType(element, YAMLTokenTypes.SCALAR_DSTRING);
-        if (JsPsiUtils.isElementOfType(element, YAMLTokenTypes.TEXT) || quotedString) {
-          TextRange elementTextRange = element.getTextRange();
+        if (JsPsiUtils.isElementOfType(
+          element,
+          YAMLTokenTypes.TEXT, YAMLTokenTypes.SCALAR_DSTRING, YAMLTokenTypes.SCALAR_STRING
+        )) {
+          QuotedText quotedText = new QuotedText(element);
+          TextRange usefulTextRange = quotedText.getUsefulDocumentTextRange();
           if (startOffsetRef.isNull()) {
-            int startOffset = elementTextRange.getStartOffset();
-            if (quotedString) {
-              startOffset++;
-            }
-            startOffsetRef.set(startOffset);
+            startOffsetRef.set(usefulTextRange.getStartOffset());
           }
-          int endOffset = elementTextRange.getEndOffset();
-          if (quotedString) {
-            endOffset--;
-          }
-          endOffsetRef.set(endOffset);
+          endOffsetRef.set(usefulTextRange.getEndOffset());
         }
       }
     });
@@ -136,7 +129,7 @@ public class JstdConfigFileUtils {
     return PsiElementFragment.create(sequence, textRangeInSequence);
   }
 
-  public static <T extends PsiElement, K> K getVerifiedHierarchyHead(PsiElement psiElement, Class<?>[] hierarchyClasses, Class<K> headHierarchyClass) {
+  public static <K> K getVerifiedHierarchyHead(PsiElement psiElement, Class<?>[] hierarchyClasses, Class<K> headHierarchyClass) {
     for (Class<?> clazz : hierarchyClasses) {
       if (!clazz.isInstance(psiElement)) {
         return null;
