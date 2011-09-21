@@ -34,6 +34,7 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
@@ -45,12 +46,12 @@ import org.jetbrains.annotations.Nullable;
 import org.osgi.framework.Constants;
 import org.osmorc.StacktraceUtil;
 import org.osmorc.frameworkintegration.LibraryBundlificationRule;
-import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.ApplicationSettings;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -74,18 +75,21 @@ public class BndWrapper {
      * for this library that have been set up in Osmorcs library bundlification dialog.
      * <p/>
      *
+     *
+     * @param module
      * @param compileContext a compile context
      * @param sourceJarUrl   the URL to the source jar file
      * @param outputPath     the path where to place the bundled library.
      * @return the URL to the bundled library.
      */
     @Nullable
-    public String wrapLibrary(@NotNull CompileContext compileContext, final String sourceJarUrl, String outputPath) {
-        try {
+    public String wrapLibrary(Module module, @NotNull CompileContext compileContext, final String sourceJarUrl, String outputPath) {
+      String messagePrefix = "[" + module.getName() + "] ";
+      try {
             File targetDir = new File(outputPath);
             File sourceFile = new File(VfsUtil.urlToPath(sourceJarUrl));
             if (!sourceFile.exists() ) {
-               compileContext.addMessage(CompilerMessageCategory.WARNING, "The library " + sourceFile.getPath() + " does not exist. Please check your module settings. Ignoring missing library.", null, 0,0);
+               compileContext.addMessage(CompilerMessageCategory.WARNING, messagePrefix + "The library " + sourceFile.getPath() + " does not exist. Please check your module settings. Ignoring missing library.", null, 0,0);
                return null;
             }
             if ( sourceFile.isDirectory() ) {
@@ -118,7 +122,7 @@ public class BndWrapper {
 
             if (!targetFile.exists() || targetFile.lastModified() < sourceFile.lastModified() ||
                     targetFile.lastModified() < lastModified) {
-                if (doWrap(compileContext, sourceFile, targetFile, additionalProperties)) {
+                if (doWrap(module, compileContext, sourceFile, targetFile, additionalProperties)) {
                     return VfsUtil.pathToUrl(targetFile.getCanonicalPath());
                 }
             } else {
@@ -134,7 +138,7 @@ public class BndWrapper {
             // IDEA-27101
             // IDEA-69149 - Changed this form ERROR to WARNING, as a non-bundlified library might not be fatal (especially when importing a ton of libs from maven)
             compileContext.addMessage(CompilerMessageCategory.WARNING,
-                    OsmorcBundle.getTranslation("bundlecompiler.bundlifying.problem.message", sourceJarUrl, StacktraceUtil.stackTraceToString(e)), null, 0, 0);
+                    MessageFormat.format(messagePrefix + "There was an unexpected problem when trying to bundlify {0}: {1}", sourceJarUrl, StacktraceUtil.stackTraceToString(e)), null, 0, 0);
 
         }
         return null;
@@ -143,6 +147,8 @@ public class BndWrapper {
     /**
      * Internal function which does the actual wrapping. This is 90% borrowed from bnd's source code.
      *
+     *
+     * @param module
      * @param compileContext the compile context
      * @param inputJar       the input file
      * @param outputJar      the output file
@@ -150,8 +156,13 @@ public class BndWrapper {
      * @return true if the bundling was successful, false otherwise.
      * @throws Exception in case something goes wrong.
      */
-    private boolean doWrap(@NotNull final CompileContext compileContext, @NotNull File inputJar, @NotNull final File outputJar,
+    private boolean doWrap(@NotNull Module module,
+                           @NotNull final CompileContext compileContext,
+                           @NotNull File inputJar,
+                           @NotNull final File outputJar,
                            @NotNull Map<String, String> properties) throws Exception {
+      final String messagePrefix = "[" + module.getName() + "][Library " + inputJar.getName() + "] ";
+
         String sourceFileUrl = VfsUtil.pathToUrl(inputJar.getPath());
         Analyzer analyzer = new ReportingAnalyzer(compileContext, sourceFileUrl);
         analyzer.setPedantic(false);
@@ -169,7 +180,7 @@ public class BndWrapper {
                 base = m.group(1);
             } else {
                 compileContext.addMessage(CompilerMessageCategory.ERROR,
-                        "Can not calculate name of output bundle, rename jar or use -properties", sourceFileUrl, 0, 0);
+                        messagePrefix + "Can not calculate name of output bundle, rename jar or use -properties", sourceFileUrl, 0, 0);
                 return false;
             }
 
@@ -198,7 +209,7 @@ public class BndWrapper {
       if ( outputJar.exists() ) {
         if ( !outputJar.delete() ) {
           compileContext.addMessage(CompilerMessageCategory.ERROR,
-                  "Could not delete outdated generated bundle. Is " + outputJar.getPath() + " writable?", null, 0, 0);
+                  messagePrefix + "Could not delete outdated generated bundle. Is " + outputJar.getPath() + " writable?", null, 0, 0);
            return false;
         }
       }
@@ -214,7 +225,7 @@ public class BndWrapper {
                 VirtualFile src = LocalFileSystem.getInstance().findFileByIoFile(f);
                 if (src == null) {
                   compileContext.addMessage(CompilerMessageCategory.ERROR,
-                                            "No jar file was created. This should not happen. Is " + f.getPath() + " writable?", null, 0,
+                                            messagePrefix + "No jar file was created. This should not happen. Is " + f.getPath() + " writable?", null, 0,
                                             0);
                   return false;
                 }
@@ -223,7 +234,7 @@ public class BndWrapper {
                 if (!parentFolder.exists()) {
                   if (!parentFolder.mkdirs()) {
                     compileContext
-                      .addMessage(CompilerMessageCategory.ERROR, "Cannot create output folder. Is " + parentFolder.getPath() + " writable?",
+                      .addMessage(CompilerMessageCategory.ERROR, messagePrefix + "Cannot create output folder. Is " + parentFolder.getPath() + " writable?",
                                   null, 0, 0);
                     return false;
                   }
@@ -234,7 +245,7 @@ public class BndWrapper {
                 if (target == null) {
                   // this actually should not happen but since we are bound by murphy's law, we check this as well
                   // and believe it or not it DID happen.
-                  compileContext.addMessage(CompilerMessageCategory.ERROR, "Output path " +
+                  compileContext.addMessage(CompilerMessageCategory.ERROR, messagePrefix + "Output path " +
                                                                            parentFolder.getPath() +
                                                                            " was created but cannot be found anymore. This should not happen.",
                                             null, 0, 0);
@@ -246,7 +257,7 @@ public class BndWrapper {
                   VfsUtil.copyFile(this, src, target, outputJar.getName());
                 }
                 catch (IOException e) {
-                  compileContext.addMessage(CompilerMessageCategory.ERROR, "Could not copy " + src + " to " + target, null, 0, 0);
+                  compileContext.addMessage(CompilerMessageCategory.ERROR, messagePrefix + "Could not copy " + src + " to " + target, null, 0, 0);
                   return false;
                 }
               }
@@ -259,11 +270,12 @@ public class BndWrapper {
     }
 
 
-    public boolean build(@NotNull CompileContext compileContext, @NotNull String bndFileUrl,
+    public boolean build(@NotNull Module module, @NotNull CompileContext compileContext, @NotNull String bndFileUrl,
                          @NotNull String[] classPathUrls, @NotNull String outputPath,
                          @NotNull Map<String, String> additionalProperties) {
 
-        File[] classPathEntries = new File[classPathUrls.length];
+      String messagePrefix = "["+module.getName()+"] ";
+      File[] classPathEntries = new File[classPathUrls.length];
         for (int i = 0; i < classPathUrls.length; i++) {
             String classPathUrl = classPathUrls[i];
             classPathEntries[i] = new File(VfsUtil.urlToPath(classPathUrl));
@@ -273,31 +285,32 @@ public class BndWrapper {
         File outFile = new File(outputPath);
         Properties props = new Properties();
         for (Map.Entry<String, String> stringStringEntry : additionalProperties.entrySet()) {
-            props.put(stringStringEntry.getKey(), stringStringEntry.getValue());
+            props.setProperty(stringStringEntry.getKey(), stringStringEntry.getValue());
         }
         try {
-            return doBuild(compileContext, bndFile, classPathEntries, outFile, props);
+            return doBuild(module, compileContext, bndFile, classPathEntries, outFile, props);
         }
         catch (Exception e) {
-            compileContext.addMessage(CompilerMessageCategory.ERROR, "Unexpected error: " + e.getMessage(), null, 0, 0);
+            compileContext.addMessage(CompilerMessageCategory.ERROR, messagePrefix + "Unexpected error: " + e.getMessage(), null, 0, 0);
             return false;
         }
 
     }
 
-    private boolean doBuild(@NotNull CompileContext compileContext, @NotNull File bndFile, @NotNull File[] classpath,
+    private boolean doBuild(@NotNull Module module, @NotNull CompileContext compileContext, @NotNull File bndFile, @NotNull File[] classpath,
                             @NotNull File output, @NotNull Properties additionalProperties)
             throws Exception {
-        ReportingBuilder builder = new ReportingBuilder(compileContext, VfsUtil.pathToUrl(bndFile.getPath()));
+      String messagePrefix = "["+module.getName()+"] ";
+        ReportingBuilder builder = new ReportingBuilder(compileContext, VfsUtil.pathToUrl(bndFile.getPath()), module);
         builder.setPedantic(false);
         builder.setProperties(bndFile);
         builder.mergeProperties(additionalProperties, true);
 
         // FIX for IDEADEV-39089
         // am not really sure if this is a good idea all the time but then again what use is building a bundle without exports in 90% of the cases?
-        if (builder.getProperty(Constants.EXPORT_PACKAGE) == null) {
-            builder.setProperty(Constants.EXPORT_PACKAGE, "*");
-        }
+        //if (builder.getProperty(Constants.EXPORT_PACKAGE) == null) {
+        //    builder.setProperty(Constants.EXPORT_PACKAGE, "*");
+        //}
         builder.setClasspath(classpath);
         // XXX: seems to be a new bug in bnd, when calling build(), begin is not called, therefore the ignores dont work..
         // so i have overridden it and calling it manually here..
@@ -309,17 +322,21 @@ public class BndWrapper {
             File manifestFile = builder.getFile(manifest);
             if (manifestFile != null && manifestFile.exists() && manifestFile.canRead()) {
                 Properties props = new Properties();
+              FileInputStream fileInputStream = new FileInputStream(manifestFile);
                 try {
-                    props.load(new FileInputStream(manifestFile));
+                  props.load(fileInputStream);
                     final String value = props.getProperty(Attributes.Name.MANIFEST_VERSION.toString());
                     if (value == null || value.length() == 0 || value.trim().length() == 0) {
                         compileContext.addMessage(CompilerMessageCategory.WARNING,
-                                "Your manifest does not contain a Manifest-Version entry. This will produce an empty manifest in the resulting bundle.",
+                                messagePrefix + "Your manifest does not contain a Manifest-Version entry. This will produce an empty manifest in the resulting bundle.",
                                 VfsUtil.pathToUrl(manifestFile.getAbsolutePath()), 0, 0);
                     }
                 }
                 catch (Exception ex) {
-                    compileContext.addMessage(CompilerMessageCategory.INFORMATION, "There was a problem reading your manifest.", null, 0, 0);
+                    compileContext.addMessage(CompilerMessageCategory.INFORMATION, messagePrefix + "There was a problem reading your manifest.", VfsUtil.pathToUrl(manifestFile.getAbsolutePath()) , 0, 0);
+                }
+                finally {
+                  fileInputStream.close();
                 }
             }
         }
