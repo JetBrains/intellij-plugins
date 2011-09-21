@@ -44,16 +44,28 @@
 
   <change-notes>
     <![CDATA[
-<h4>Version 1.3.6, ?? August 2011 (build on JsTestDriver v1.3.2):</h4>
+<h4>Version 1.3.6, ?? September 2011 (build on JsTestDriver v1.3.2):</h4>
 <ul>
   <li>Bug fixes:
     <ul>
-      <li>Generated configuration file content has buggy relative paths if temporary dir is a symlink or JavaScript files and temporary dir locates on different Windows logical disks.</li>
+      <li><a href="http://code.google.com/p/js-test-driver/issues/detail?id=255" style="text-decoration: line-through">issue 255</a>
+        Generated configuration file content has buggy relative paths if temporary dir is a symlink or JavaScript files and temporary dir locates on different Windows logical disks.
+      </li>
+      <li><a href="http://youtrack.jetbrains.net/issue/WI-7446" style="text-decoration: line-through">WI-7446</a>
+        Hovering over objects with Command key depressed does not show a link.
+      </li>
     </ul>
   </li>
   <li>New features:
     <ul>
-      <li>Jasmine support</li>
+      <li><a href="http://code.google.com/p/js-test-driver/issues/detail?id=252" style="text-decoration: line-through">issue 252</a>
+        Jasmine support
+      </li>
+      <li>Inspection for QUnit and Jasmine adapters installing is available if user types some framework-special symbols for the first time</li
+      <li>QUnit and Jasmine generate actions are available with use of Alt+Insert.</li>
+      <li>Completion for JsTestDriver configuration file is improved ('basepath' key is supported now).</li>
+      <li>Annotation for JsTestDriver configuration file is improved.</li>
+      <li>File is classified as JsTestDriver configuration file if its name is equals to 'jsTestDriver.conf' or similar names.</li>
     </ul>
   </li>
 </ul>

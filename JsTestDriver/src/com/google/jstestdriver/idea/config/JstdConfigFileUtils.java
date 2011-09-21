@@ -88,7 +88,7 @@ public class JstdConfigFileUtils {
     int documentEndOffset = document.getLineEndOffset(lastLineNumber);
 
     DocumentFragment fragment = new DocumentFragment(document, contentTextRange.getStartOffset(), documentEndOffset);
-    return QuotedText.unquoteDocumentFragment(fragment);
+    return UnquotedText.unquoteDocumentFragment(fragment);
   }
 
   public static int getStartLineNumber(@NotNull Document document, @NotNull PsiElement element) {
@@ -110,8 +110,8 @@ public class JstdConfigFileUtils {
           element,
           YAMLTokenTypes.TEXT, YAMLTokenTypes.SCALAR_DSTRING, YAMLTokenTypes.SCALAR_STRING
         )) {
-          QuotedText quotedText = new QuotedText(element);
-          TextRange usefulTextRange = quotedText.getUsefulDocumentTextRange();
+          UnquotedText unquotedText = new UnquotedText(element);
+          TextRange usefulTextRange = unquotedText.getUnquotedDocumentTextRange();
           if (startOffsetRef.isNull()) {
             startOffsetRef.set(usefulTextRange.getStartOffset());
           }

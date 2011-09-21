@@ -48,9 +48,9 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
         if (element == null) {
           element = parameters.getPosition();
         }
-        QuotedText text = new QuotedText(element);
-        int prefixLength = Math.max(0, parameters.getOffset() - text.getUsefulDocumentTextRange().getStartOffset());
-        BipartiteString caretBipartiteElementText = splitByPrefixLength(text.getUsefulText(), prefixLength);
+        UnquotedText text = new UnquotedText(element);
+        int prefixLength = Math.max(0, parameters.getOffset() - text.getUnquotedDocumentTextRange().getStartOffset());
+        BipartiteString caretBipartiteElementText = splitByPrefixLength(text.getUnquotedText(), prefixLength);
         boolean atFirstColumn = isAtStart(element, parameters.getOffset());
 
         addInnerSequencePathCompletionsIfNeeded(result, element, caretBipartiteElementText);

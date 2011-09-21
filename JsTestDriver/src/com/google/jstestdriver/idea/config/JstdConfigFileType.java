@@ -52,7 +52,7 @@ public class JstdConfigFileType extends LanguageFileType implements FileTypeIden
       }
     };
     SUITABLE_FILE_NAMES_WITHOUT_EXTENSION = ImmutableSet.copyOf(Iterables.transform(Arrays.asList(
-        "jsTestDriver", "js-test-driver", "js_test_driver"
+        "jsTestDriver", "js-test-driver", "js_test_driver", "jstd"
     ), lower));
     EXTRA_FILE_EXTENSIONS = ImmutableSet.copyOf(Iterables.transform(Arrays.asList(
         "conf", "yml", "yaml"

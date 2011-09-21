@@ -9,14 +9,14 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Sergey Simonchik
  */
-public class QuotedText {
+class UnquotedText {
 
   private final PsiElement myPsiElement;
-  private final TextRange myUsefulDocumentTextRange;
+  private final TextRange myUnquotedDocumentTextRange;
 
-  public QuotedText(@NotNull PsiElement psiElement) {
+  public UnquotedText(@NotNull PsiElement psiElement) {
     myPsiElement = psiElement;
-    myUsefulDocumentTextRange = calcUsefulDocumentTextRange(psiElement);
+    myUnquotedDocumentTextRange = calcUnquotedDocumentTextRange(psiElement);
   }
 
   @NotNull
@@ -25,30 +25,30 @@ public class QuotedText {
   }
 
   @NotNull
-  public String getUsefulText() {
+  public String getUnquotedText() {
     int base = myPsiElement.getTextRange().getStartOffset();
-    int start = myUsefulDocumentTextRange.getStartOffset() - base;
-    int end = myUsefulDocumentTextRange.getEndOffset() - base;
+    int start = myUnquotedDocumentTextRange.getStartOffset() - base;
+    int end = myUnquotedDocumentTextRange.getEndOffset() - base;
     String text = myPsiElement.getText();
     return text.substring(start, end);
   }
 
   @NotNull
-  public TextRange getUsefulDocumentTextRange() {
-    return myUsefulDocumentTextRange;
+  public TextRange getUnquotedDocumentTextRange() {
+    return myUnquotedDocumentTextRange;
   }
 
   public static DocumentFragment unquoteDocumentFragment(@NotNull DocumentFragment fragment) {
     String str = fragment.getDocument().getText(fragment.getTextRange());
-    TextRange usefulRange = calcUsefulDocumentTextRange(str, fragment.getTextRange());
-    return new DocumentFragment(fragment.getDocument(), usefulRange.getStartOffset(), usefulRange.getEndOffset());
+    TextRange unquoted = calcUnquotedDocumentTextRange(str, fragment.getTextRange());
+    return new DocumentFragment(fragment.getDocument(), unquoted.getStartOffset(), unquoted.getEndOffset());
   }
 
-  private static TextRange calcUsefulDocumentTextRange(@NotNull PsiElement element) {
-    return calcUsefulDocumentTextRange(element.getText(), element.getTextRange());
+  private static TextRange calcUnquotedDocumentTextRange(@NotNull PsiElement element) {
+    return calcUnquotedDocumentTextRange(element.getText(), element.getTextRange());
   }
 
-  private static TextRange calcUsefulDocumentTextRange(@NotNull String str, @NotNull TextRange textRange) {
+  private static TextRange calcUnquotedDocumentTextRange(@NotNull String str, @NotNull TextRange textRange) {
     String unquotedStr = StringUtil.unquoteString(str);
     boolean quoted = !str.equals(unquotedStr);
     int startOffset = textRange.getStartOffset();
