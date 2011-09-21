@@ -197,6 +197,7 @@ public class BundleCompiler implements PackagingCompiler {
     private static void buildBundle(final Module module, final ProgressIndicator progressIndicator,
                                     final CompileContext compileContext)
             throws IOException {
+      String messagePrefix = "["+module.getName()+"] ";
         progressIndicator.setText("Building bundle for module " + module.getName());
         // create the jar file
         final File jarFile = new File(VfsUtil.urlToPath(getJarFileName(module)));
@@ -204,7 +205,7 @@ public class BundleCompiler implements PackagingCompiler {
             jarFile.delete(); 
         }
         if (!FileUtil.createParentDirs(jarFile)) {
-          compileContext.addMessage(CompilerMessageCategory.ERROR, "Cannot create path to " + jarFile.getPath(),null, 0,0);
+          compileContext.addMessage(CompilerMessageCategory.ERROR, messagePrefix + "Cannot create path to " + jarFile.getPath(),null, 0,0);
           return;
         }
 
@@ -231,7 +232,7 @@ public class BundleCompiler implements PackagingCompiler {
                 File bndFile = findFileInModuleContentRoots(configuration.getBndFileLocation(), module);
                 if (bndFile == null || !bndFile.exists()) {
                     compileContext.addMessage(CompilerMessageCategory.ERROR,
-                            String.format("The bnd file \"%s\" for module \"%s\" does not exist.",
+                            String.format(messagePrefix + "The bnd file \"%s\" for module \"%s\" does not exist.",
                                     configuration.getBndFileLocation(), module.getName()),
                             configuration.getBndFileLocation(), 0, 0);
                     return;
@@ -271,7 +272,7 @@ public class BundleCompiler implements PackagingCompiler {
             }
             if (!manifestExists) {
                 compileContext.addMessage(CompilerMessageCategory.ERROR,
-                        "Manifest file for module " + module.getName() + ": '" + OsmorcFacet.getInstance(module).getManifestLocation() +
+                        messagePrefix + "Manifest file for module " + module.getName() + ": '" + OsmorcFacet.getInstance(module).getManifestLocation() +
                                 "' does not exist or cannot be found. Check that file exists and is not excluded from the module.", null, 0, 0);
                 return;
             }
@@ -304,7 +305,7 @@ public class BundleCompiler implements PackagingCompiler {
 
             if (!configuration.isIgnorePatternValid()) {
                 compileContext.addMessage(CompilerMessageCategory.ERROR,
-                        "The file ignore pattern in the facet configuration is invalid.", null, 0, 0);
+                        messagePrefix  + "The file ignore pattern in the facet configuration is invalid.", null, 0, 0);
                 return;
             }
 
@@ -321,14 +322,14 @@ public class BundleCompiler implements PackagingCompiler {
           outputPath += ".tmp.jar";
         }
 
-        wrapper.build(compileContext, bndFileUrl, ArrayUtil.toStringArray(classPaths), outputPath, additionalProperties);
+        wrapper.build(module, compileContext, bndFileUrl, ArrayUtil.toStringArray(classPaths), outputPath, additionalProperties);
 
         // if we use bundlor, let bundlor work on the generated file.
         if ( configuration.isUseBundlorFile() ) {
              File bundlorFile = findFileInModuleContentRoots(configuration.getBundlorFileLocation(), module);
                 if (bundlorFile == null || !bundlorFile.exists()) {
                     compileContext.addMessage(CompilerMessageCategory.ERROR,
-                            String.format("The Bundlor file \"%s\" for module \"%s\" does not exist.",
+                            String.format(messagePrefix  + "The Bundlor file \"%s\" for module \"%s\" does not exist.",
                                     configuration.getBundlorFileLocation(), module.getName()),
                             configuration.getBundlorFileLocation(), 0, 0);
                     return;
@@ -337,7 +338,7 @@ public class BundleCompiler implements PackagingCompiler {
            try {
                if (!bw.wrapModule(compileContext, outputPath, jarFile.getPath(), bundlorFile.getPath())) {
 
-                   compileContext.addMessage(CompilerMessageCategory.ERROR, "Bundlifying the file " + jarFile.getPath() + " with Bundlor failed.", null, 0,0);
+                   compileContext.addMessage(CompilerMessageCategory.ERROR, messagePrefix + "Bundlifying the file " + jarFile.getPath() + " with Bundlor failed.", null, 0,0);
                    return;
                }
            } finally {
@@ -345,7 +346,7 @@ public class BundleCompiler implements PackagingCompiler {
                File tempJar = new File(outputPath);
                if ( tempJar.exists() ) {
                  if (!tempJar.delete()) {
-                   compileContext.addMessage(CompilerMessageCategory.WARNING, "Could not delete temporary file: " + tempJar.getPath(), null, 0,0);
+                   compileContext.addMessage(CompilerMessageCategory.WARNING, messagePrefix + "Could not delete temporary file: " + tempJar.getPath(), null, 0,0);
                  }
                }
            }
@@ -480,7 +481,7 @@ public class BundleCompiler implements PackagingCompiler {
                  // couldnt create output path, abort here..
                  break;
               }
-              String bundledLocation = wrapper.wrapLibrary(compileContext, url, outputPath);
+              String bundledLocation = wrapper.wrapLibrary(module, compileContext, url, outputPath);
                 // if no bundle could (or should) be created, we exempt this library
                 if (bundledLocation != null) {
                     result.add(fixFileURL(bundledLocation));
