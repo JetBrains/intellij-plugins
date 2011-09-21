@@ -267,7 +267,7 @@ public class JavaScriptGenerateAccessorHandler extends BaseJSGenerateHandler {
     private static PsiElement findEventConstantIdentifier(final PsiElement psiElement, final String eventConstantName) {
       final Ref<PsiElement> elementRef = new Ref<PsiElement>();
       PsiTreeUtil.processElements(psiElement, new PsiElementProcessor() {
-        public boolean execute(final PsiElement element) {
+        public boolean execute(@NotNull final PsiElement element) {
           if (element instanceof JSReferenceExpression && element.getText().equals(eventConstantName)) {
             elementRef.set(element);
             return false;

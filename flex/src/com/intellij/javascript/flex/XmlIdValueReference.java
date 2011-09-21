@@ -86,7 +86,7 @@ public class XmlIdValueReference extends BasicAttributeValueReference {
     process(new PsiElementProcessor<PsiElement>() {
       final String canonicalText = getCanonicalText();
 
-      public boolean execute(final PsiElement element) {
+      public boolean execute(@NotNull final PsiElement element) {
         final String idValue = getIdValue(element);
         if (idValue != null && idValue.equals(canonicalText)) {
           result.set(getIdValueElement(element));
@@ -104,7 +104,7 @@ public class XmlIdValueReference extends BasicAttributeValueReference {
     final List<String> result = new LinkedList<String>();
 
     process(new PsiElementProcessor<PsiElement>() {
-      public boolean execute(final PsiElement element) {
+      public boolean execute(@NotNull final PsiElement element) {
         result.add(getIdValue(element));
         return true;
       }
