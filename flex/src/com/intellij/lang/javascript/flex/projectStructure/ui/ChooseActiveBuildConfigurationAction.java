@@ -9,16 +9,21 @@ import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.options.ShowSettingsUtil;
+import com.intellij.openapi.options.newEditor.OptionsEditorDialog;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * User: ksafonov
@@ -26,6 +31,18 @@ import javax.swing.*;
 public class ChooseActiveBuildConfigurationAction extends ComboBoxAction implements DumbAware {
 
   private Module myLastModule;
+
+  @Override
+  public final JComponent createCustomComponent(Presentation presentation) {
+    JPanel p = new JPanel(new GridBagLayout());
+    p.add(new JLabel("Flex build configuration:"),
+          new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH,
+                                 new Insets(0, 5, 0, 0), 0, 0));
+    p.add(super.createCustomComponent(presentation),
+          new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH,
+                                 new Insets(0, 0, 0, 0), 0, 0));
+    return p;
+  }
 
   @Nullable
   private static Module findModule(DataContext dataContext) {
@@ -74,10 +91,9 @@ public class ChooseActiveBuildConfigurationAction extends ComboBoxAction impleme
     DefaultActionGroup group = new DefaultActionGroup();
     FlexBuildConfigurationManager bcManager = FlexBuildConfigurationManager.getInstance(myLastModule);
     FlexIdeBuildConfiguration[] buildConfigurations = bcManager.getBuildConfigurations();
+    group.add(new EditBcsAction());
+    group.addSeparator();
     for (FlexIdeBuildConfiguration c : buildConfigurations) {
-      if (c == bcManager.getActiveConfiguration()) {
-        continue;
-      }
       group.add(new BCAction(myLastModule, c));
     }
     return group;
@@ -120,6 +136,20 @@ public class ChooseActiveBuildConfigurationAction extends ComboBoxAction impleme
     @Override
     public void actionPerformed(AnActionEvent e) {
       FlexBuildConfigurationManager.getInstance(myModule).setActiveBuildConfiguration(myBuildConfiguration);
+    }
+  }
+
+  private static class EditBcsAction extends DumbAwareAction {
+
+    public EditBcsAction() {
+      super("Configure project", "Edit Flex build configurations", IconLoader.getIcon("/actions/editSource.png"));
+    }
+
+    @Override
+    public void actionPerformed(AnActionEvent e) {
+      Project project = getEventProject(e);
+      ShowSettingsUtil.getInstance()
+        .editConfigurable(project, OptionsEditorDialog.DIMENSION_KEY, ProjectStructureConfigurable.getInstance(project));
     }
   }
 }
