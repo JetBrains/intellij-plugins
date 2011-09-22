@@ -12,6 +12,7 @@
   <module value="com.intellij.modules.all"/>
   <module value="com.intellij.modules.flexide"/>
   <xi:include href="/META-INF/ultimate.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/duplicates.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <project-components>
     <component>
