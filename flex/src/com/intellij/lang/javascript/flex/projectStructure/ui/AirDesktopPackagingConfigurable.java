@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nls;
 public class AirDesktopPackagingConfigurable extends AirPackagingConfigurableBase<ModifiableAirDesktopPackagingOptions> {
 
   public AirDesktopPackagingConfigurable(final Module module, final ModifiableAirDesktopPackagingOptions model) {
-    super(module, model, Mode.Desktop);
+    super(module, model);
   }
 
   @Nls

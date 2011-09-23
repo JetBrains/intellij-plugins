@@ -38,13 +38,6 @@ class AirDesktopPackagingOptionsImpl extends AirPackagingOptionsBase implements 
     setSigningOptions(state.SIGNING_OPTIONS);
   }
 
-  public boolean isEqual(AirDesktopPackagingOptionsImpl copy) {
-    if (copy.myUseGeneratedDescriptor != myUseGeneratedDescriptor) return false;
-    if (!copy.myCustomDescriptorPath.equals(myCustomDescriptorPath)) return false;
-    if (!copy.myInstallerFileName.equals(myInstallerFileName)) return false;
-    return true;
-  }
-
   @Tag("packaging-air-desktop")
   public static class State {
     @Attribute("use-generated-descriptor")

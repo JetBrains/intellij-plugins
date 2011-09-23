@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nls;
 public class AndroidPackagingConfigurable extends AirPackagingConfigurableBase<ModifiableAndroidPackagingOptions> {
 
   public AndroidPackagingConfigurable(final Module module, final ModifiableAndroidPackagingOptions model) {
-    super(module, model, Mode.Android);
+    super(module, model);
   }
 
   @Nls

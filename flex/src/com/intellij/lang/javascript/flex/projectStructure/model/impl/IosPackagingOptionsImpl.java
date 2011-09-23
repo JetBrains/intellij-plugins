@@ -42,10 +42,6 @@ class IosPackagingOptionsImpl extends AirPackagingOptionsBase implements Modifia
     setSigningOptions(state.SIGNING_OPTIONS);
   }
 
-  public boolean isEqual(IosPackagingOptionsImpl iosPackagingOptions) {
-    return true;
-  }
-
   @Tag("packaging-ios")
   public static class State {
     @Attribute("enabled")

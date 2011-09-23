@@ -1,18 +1,14 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.AirSigningOptions;
 import com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParametersBase;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableAirDesktopPackagingOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableAndroidPackagingOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableIosPackagingOptions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class AirPackagingOptionsBase implements ModifiableAirDesktopPackagingOptions,
-                                         ModifiableAndroidPackagingOptions,
-                                         ModifiableIosPackagingOptions {
+class AirPackagingOptionsBase {
   private boolean myEnabled = false;
   private boolean myUseGeneratedDescriptor = true;
   @NotNull private String myApplicationId = "";
@@ -93,5 +89,17 @@ class AirPackagingOptionsBase implements ModifiableAirDesktopPackagingOptions,
     copy.myFilesToPackage.clear();
     copy.myFilesToPackage.addAll(AirInstallerParametersBase.cloneList(myFilesToPackage));
     copy.mySigningOptions = mySigningOptions.getCopy();
+  }
+
+  public boolean isEqual(AirPackagingOptionsBase copy) {
+    if (copy.myEnabled != myEnabled) return false;
+    if (copy.myUseGeneratedDescriptor != myUseGeneratedDescriptor) return false;
+    if (!copy.myApplicationId.equals(myApplicationId)) return false;
+    if (!copy.myCustomDescriptorPath.equals(myCustomDescriptorPath)) return false;
+    if (!copy.myPackageFileName.equals(myPackageFileName)) return false;
+    if (!FlexUtils.equalLists(copy.myFilesToPackage, myFilesToPackage)) return false;
+    if (!copy.mySigningOptions.equals(mySigningOptions)) return false;
+
+    return true;
   }
 }

@@ -27,14 +27,16 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
 
   private final Module myModule;
   private final T myModel;
-  private final Mode myMode;
 
-  enum Mode {Desktop, Android, IOS}
+  private final boolean isAndroid;
+  private final boolean isIOS;
 
-  public AirPackagingConfigurableBase(final Module module, final T model, final Mode mode) {
+  public AirPackagingConfigurableBase(final Module module, final T model) {
     myModule = module;
     myModel = model;
-    myMode = mode;
+
+    isAndroid = model instanceof ModifiableAndroidPackagingOptions;
+    isIOS = model instanceof ModifiableIosPackagingOptions;
 
     myEnabledCheckBox.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
@@ -75,10 +77,10 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
   }
 
   public void reset() {
-    myEnabledCheckBox.setVisible(myMode == Mode.Android || myMode == Mode.IOS);
+    myEnabledCheckBox.setVisible(isAndroid || isIOS);
 
-    if (myMode == Mode.Android) myEnabledCheckBox.setSelected(((AndroidPackagingOptions)myModel).isEnabled());
-    if (myMode == Mode.IOS) myEnabledCheckBox.setSelected(((IosPackagingOptions)myModel).isEnabled());
+    if (isAndroid) myEnabledCheckBox.setSelected(((AndroidPackagingOptions)myModel).isEnabled());
+    if (isIOS) myEnabledCheckBox.setSelected(((IosPackagingOptions)myModel).isEnabled());
 
     myAirDescriptorForm.resetFrom(myModel);
     myPackageFileNameTextField.setText(myModel.getPackageFileName());
@@ -89,8 +91,8 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
   }
 
   public boolean isModified() {
-    if (myMode == Mode.Android && myEnabledCheckBox.isSelected() != ((AndroidPackagingOptions)myModel).isEnabled()) return true;
-    if (myMode == Mode.IOS && myEnabledCheckBox.isSelected() != ((IosPackagingOptions)myModel).isEnabled()) return true;
+    if (isAndroid && myEnabledCheckBox.isSelected() != ((AndroidPackagingOptions)myModel).isEnabled()) return true;
+    if (isIOS && myEnabledCheckBox.isSelected() != ((IosPackagingOptions)myModel).isEnabled()) return true;
 
     if (myAirDescriptorForm.isModified(myModel)) return true;
     if (!myModel.getPackageFileName().equals(myPackageFileNameTextField.getText().trim())) return true;
@@ -105,8 +107,8 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
   }
 
   public void applyTo(final ModifiableAirPackagingOptions model) {
-    if (myMode == Mode.Android) ((ModifiableAndroidPackagingOptions)model).setEnabled(myEnabledCheckBox.isSelected());
-    if (myMode == Mode.IOS) ((ModifiableIosPackagingOptions)model).setEnabled(myEnabledCheckBox.isSelected());
+    if (isAndroid) ((ModifiableAndroidPackagingOptions)model).setEnabled(myEnabledCheckBox.isSelected());
+    if (isIOS) ((ModifiableIosPackagingOptions)model).setEnabled(myEnabledCheckBox.isSelected());
 
     myAirDescriptorForm.applyTo(model);
     model.setPackageFileName(myPackageFileNameTextField.getText().trim());
@@ -118,14 +120,13 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
   }
 
   private void createUIComponents() {
-    final boolean ios = myMode == Mode.IOS;
-    myAirDescriptorForm = new AirDescriptorForm(myModule.getProject(), ios);
+    myAirDescriptorForm = new AirDescriptorForm(myModule.getProject(), isIOS);
     myFilesToPackageForm = new FilesToPackageForm(myModule.getProject());
 
     mySigningOptionsForm = new SigningOptionsForm(myModule.getProject(), new Computable.PredefinedValueComputable<Module>(myModule),
                                                   new Computable.PredefinedValueComputable<Sdk>(null), EmptyRunnable.INSTANCE);
-    mySigningOptionsForm.setUseTempCertificateCheckBoxVisible(!ios);
-    mySigningOptionsForm.setProvisioningProfileApplicable(ios);
+    mySigningOptionsForm.setUseTempCertificateCheckBoxVisible(!isIOS);
+    mySigningOptionsForm.setProvisioningProfileApplicable(isIOS);
     mySigningOptionsForm.setCreateCertificateButtonApplicable(false);
   }
 }

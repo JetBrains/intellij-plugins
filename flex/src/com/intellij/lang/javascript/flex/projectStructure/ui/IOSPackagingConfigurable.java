@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nls;
 public class IOSPackagingConfigurable extends AirPackagingConfigurableBase<ModifiableIosPackagingOptions> {
 
   public IOSPackagingConfigurable(final Module module, final ModifiableIosPackagingOptions model) {
-    super(module, model, Mode.IOS);
+    super(module, model);
   }
 
   @Nls

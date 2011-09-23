@@ -40,10 +40,6 @@ class AndroidPackagingOptionsImpl extends AirPackagingOptionsBase implements Mod
     setSigningOptions(state.SIGNING_OPTIONS);
   }
 
-  public boolean isEqual(AndroidPackagingOptionsImpl androidPackagingOptions) {
-    return true;
-  }
-
   @Tag("packaging-android")
   public static class State {
     @Attribute("enabled")
