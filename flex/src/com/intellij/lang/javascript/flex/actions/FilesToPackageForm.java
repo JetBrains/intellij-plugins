@@ -204,7 +204,7 @@ public class FilesToPackageForm {
   }
 
   public boolean isModified(final List<FilePathAndPathInPackage> filesToPackage) {
-    return FlexUtils.equalLists(filesToPackage, myFilesToPackage);
+    return !FlexUtils.equalLists(filesToPackage, myFilesToPackage);
   }
 
   public void applyTo(final List<FilePathAndPathInPackage> filesToPackage) {
