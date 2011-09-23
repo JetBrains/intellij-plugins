@@ -27,7 +27,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
-import com.intellij.psi.search.GlobalSearchScopes;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -334,7 +334,7 @@ public class JavaScriptGenerateAccessorHandler extends BaseJSGenerateHandler {
         JSVariable copy = (JSVariable)jsVariable.copy();
         String newVarName = codeStyleSettings.FIELD_PREFIX + varName;
         copy.setName(newVarName);
-        for(PsiReference ref:ReferencesSearch.search(jsVariable, GlobalSearchScopes.fileScope(jsVariable.getContainingFile())).findAll()) {
+        for(PsiReference ref:ReferencesSearch.search(jsVariable, GlobalSearchScope.fileScope(jsVariable.getContainingFile())).findAll()) {
           if (JSResolveUtil.getClassOfContext(ref.getElement()) != myJsClass) continue;
           if (ref.getElement().getParent() != jsVariable) ref.bindToElement(copy);
         }

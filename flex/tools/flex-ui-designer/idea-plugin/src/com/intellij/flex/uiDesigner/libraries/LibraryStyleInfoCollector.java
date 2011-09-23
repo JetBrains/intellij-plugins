@@ -11,7 +11,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.GlobalSearchScopes;
 import com.intellij.util.Consumer;
 import com.intellij.util.Processor;
 import com.intellij.util.indexing.FileBasedIndex;
@@ -41,7 +40,7 @@ public class LibraryStyleInfoCollector implements Consumer<Library> {
     assert libraryFile != null;
 
     final FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
-    final GlobalSearchScope searchScope = GlobalSearchScopes.fileScope(project, libraryFile);
+    final GlobalSearchScope searchScope = GlobalSearchScope.fileScope(project, libraryFile);
     final THashSet<String> uniqueGuard = new THashSet<String>();
     fileBasedIndex.processAllKeys(FlexStyleIndex.INDEX_ID, new Processor<String>() {
       @Override
