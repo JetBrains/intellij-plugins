@@ -18,6 +18,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -162,7 +163,7 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
                                                   }
 
                                                   public boolean processFile(final VirtualFile file, final VirtualFile root) {
-                                                    final String packageName = VfsUtil.getRelativePath(file.getParent(), root, '.');
+                                                    final String packageName = VfsUtilCore.getRelativePath(file.getParent(), root, '.');
                                                     if (packageName != null) {
                                                       result.add(getNamespaceForClass(module, packageName, tagName, illegalNamespaces));
                                                     }

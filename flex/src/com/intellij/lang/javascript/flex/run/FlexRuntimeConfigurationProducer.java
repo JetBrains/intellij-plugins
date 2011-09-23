@@ -20,7 +20,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -92,7 +92,7 @@ public class FlexRuntimeConfigurationProducer extends RuntimeConfigurationProduc
       final Collection<FlexBuildConfiguration> configs = FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(module);
       return configs.isEmpty() || sourceRoot == null
              ? vFile.getPath()
-             : configs.iterator().next().getCompileOutputPath() + "/" + VfsUtil.getRelativePath(vFile, sourceRoot, '/');
+             : configs.iterator().next().getCompileOutputPath() + "/" + VfsUtilCore.getRelativePath(vFile, sourceRoot, '/');
     }
     return null;
   }

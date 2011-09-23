@@ -14,10 +14,7 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.*;
 import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformUtils;
 import gnu.trove.THashMap;
@@ -378,7 +375,7 @@ public class CompilerConfigGenerator {
 
             final VirtualFile rootForFile = projectFileIndex.getSourceRootForFile(fileOrDir);
             if (rootForFile != null) {
-              final String packageText = VfsUtil.getRelativePath(fileOrDir.getParent(), rootForFile, '.');
+              final String packageText = VfsUtilCore.getRelativePath(fileOrDir.getParent(), rootForFile, '.');
               assert packageText != null;
               final String qName = (packageText.length() > 0 ? packageText + "." : "") + fileOrDir.getNameWithoutExtension();
 

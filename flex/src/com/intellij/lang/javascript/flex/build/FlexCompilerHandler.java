@@ -825,7 +825,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
 
             final VirtualFile rootForFile = projectFileIndex.getSourceRootForFile(fileOrDir);
             if (rootForFile != null) {
-              final String packageText = VfsUtil.getRelativePath(fileOrDir.getParent(), rootForFile, '.');
+              final String packageText = VfsUtilCore.getRelativePath(fileOrDir.getParent(), rootForFile, '.');
               assert packageText != null;
               final String qName = (packageText.length() > 0 ? packageText + "." : "") + fileOrDir.getNameWithoutExtension();
 
@@ -836,7 +836,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
           } else if (includeFilesInSwc && isResourceFile(fileOrDir, compilerConfig)) {
             final VirtualFile rootForFile = projectFileIndex.getSourceRootForFile(fileOrDir);
             if (rootForFile != null) {
-              final String packageText = VfsUtil.getRelativePath(fileOrDir.getParent(), rootForFile, '/');
+              final String packageText = VfsUtilCore.getRelativePath(fileOrDir.getParent(), rootForFile, '/');
               final String pathInSwc = (packageText.length() > 0 ? packageText + "/" : "") + fileOrDir.getName();
               filesToInclude.add(new Pair<String, String>(pathInSwc, fileOrDir.getPath()));
             }

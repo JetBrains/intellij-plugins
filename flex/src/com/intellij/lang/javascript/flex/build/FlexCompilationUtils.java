@@ -26,10 +26,7 @@ import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.ReadonlyStatusHandler;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.*;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.text.StringTokenizer;
 import org.jdom.Document;
@@ -274,7 +271,7 @@ public class FlexCompilationUtils {
     final VirtualFile sourceRoot = cssFile == null
                                    ? null
                                    : ProjectRootManager.getInstance(project).getFileIndex().getSourceRootForFile(cssFile);
-    final String relativePath = sourceRoot == null ? null : VfsUtil.getRelativePath(cssFile, sourceRoot, '/');
+    final String relativePath = sourceRoot == null ? null : VfsUtilCore.getRelativePath(cssFile, sourceRoot, '/');
     final String cssFileName = cssFilePath.substring(FileUtil.toSystemIndependentName(cssFilePath).lastIndexOf("/") + 1);
     final String relativeFolder = relativePath == null ? "" : relativePath.substring(0, relativePath.lastIndexOf('/') + 1);
     return relativeFolder + FileUtil.getNameWithoutExtension(cssFileName) + ".swf";

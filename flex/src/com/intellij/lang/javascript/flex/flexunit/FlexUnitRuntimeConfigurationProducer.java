@@ -16,7 +16,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDirectoryContainer;
@@ -140,7 +140,7 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
     final Module module = FlexRunConfiguration.findModuleFromFile(file, directory.getProject());
     if (FlexUnitSupport.getSupport(module) == null) return false;
 
-    String packageName = VfsUtil.getRelativePath(file, rootForFile, '.');
+    String packageName = VfsUtilCore.getRelativePath(file, rootForFile, '.');
     if (!JSUtils.packageExists(packageName, GlobalSearchScope.moduleScope(module))) return false;
 
     params.setPackageName(packageName);
