@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.model;
 
-import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,5 +15,5 @@ public interface SdkEntry {
   String getHomePath();
 
   @Nullable
-  Library findLibrary();
+  LibraryEx findLibrary();
 }

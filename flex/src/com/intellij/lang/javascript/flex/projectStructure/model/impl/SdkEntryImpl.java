@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.openapi.components.StateStorageException;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Comparing;
@@ -100,7 +101,7 @@ class SdkEntryImpl implements SdkEntry {
 
   @Override
   @Nullable
-  public Library findLibrary() {
+  public LibraryEx findLibrary() {
     Library result = ContainerUtil.find(LibraryTablesRegistrar.getInstance().getLibraryTable().getLibraries(), new Condition<Library>() {
       @Override
       public boolean value(Library library) {
@@ -110,7 +111,7 @@ class SdkEntryImpl implements SdkEntry {
     if (result != null) {
       LOG.assertTrue(myHomePath.equals(FlexSdk.getHomePath(result)), "Unexpected home path");
     }
-    return result;
+    return (LibraryEx)result;
   }
 
   public State getState() {

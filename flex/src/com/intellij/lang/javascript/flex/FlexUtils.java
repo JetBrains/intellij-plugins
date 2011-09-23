@@ -7,9 +7,16 @@ import com.intellij.facet.FacetType;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
+import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
+import com.intellij.lang.javascript.flex.projectStructure.ui.FlexSdkModificator;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -22,7 +29,11 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkAdditionalData;
+import com.intellij.openapi.projectRoots.SdkModificator;
+import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
@@ -30,6 +41,7 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigur
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -184,6 +196,22 @@ public class FlexUtils {
 
   @Nullable
   public static Sdk getFlexSdkForFlexModuleOrItsFlexFacets(final @NotNull Module module) {
+    if (FlexIdeUtils.isNewUI()) {
+      if (ModuleType.get(module) instanceof FlexModuleType) {
+        FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
+        SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
+        if (sdkEntry != null) {
+          LibraryEx sdk = sdkEntry.findLibrary();
+          return new FlexSdkWrapper(sdk);
+        }
+        else {
+          return null;
+        }
+      }
+      else {
+        return null;
+      }
+    }
     if (ModuleType.get(module) instanceof FlexModuleType) {
       final Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
       if (sdk != null && sdk.getSdkType() instanceof IFlexSdkType) {
@@ -681,5 +709,63 @@ public class FlexUtils {
       return text.length() > 1 && Character.isDigit(text.charAt(1));
     }
     return !text.startsWith("+");
+  }
+
+  private static class FlexSdkWrapper extends UserDataHolderBase implements Sdk {
+    private final LibraryEx myLibrary;
+
+    public FlexSdkWrapper(LibraryEx library) {
+      myLibrary = library;
+    }
+
+    @NotNull
+    @Override
+    public SdkType getSdkType() {
+      return FlexSdkType.getInstance();
+    }
+
+    @NotNull
+    @Override
+    public String getName() {
+      return myLibrary.getName();
+    }
+
+    @Override
+    public String getVersionString() {
+      return FlexSdk.getFlexVersion(myLibrary);
+    }
+
+    @Override
+    public String getHomePath() {
+      return FlexSdk.getHomePath(myLibrary);
+    }
+
+    @Override
+    public VirtualFile getHomeDirectory() {
+      String homePath = getHomePath();
+      return homePath != null ? LocalFileSystem.getInstance().findFileByPath(homePath) : null;
+    }
+
+    @NotNull
+    @Override
+    public RootProvider getRootProvider() {
+      return myLibrary.getRootProvider();
+    }
+
+    @NotNull
+    @Override
+    public SdkModificator getSdkModificator() {
+      return new FlexSdkModificator((LibraryEx.ModifiableModelEx)myLibrary.getModifiableModel());
+    }
+
+    @Override
+    public SdkAdditionalData getSdkAdditionalData() {
+      return null;
+    }
+
+    @Override
+    public Object clone() {
+      return super.clone();
+    }
   }
 }
