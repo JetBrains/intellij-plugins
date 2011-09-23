@@ -17,7 +17,7 @@ package com.intellij.struts2.dom.struts;
 
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.xml.ConvertContext;
@@ -49,7 +49,7 @@ public abstract class IncludeFileResolvingConverter extends ResolvingConverter<P
       return null;
     }
 
-    return VfsUtil.getRelativePath(file, root, '/');
+    return VfsUtilCore.getRelativePath(file, root, '/');
   }
 
   @Nullable

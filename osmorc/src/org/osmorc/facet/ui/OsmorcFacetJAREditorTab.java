@@ -42,6 +42,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
@@ -273,13 +274,13 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
     for (VirtualFile contentRoot : contentRoots) {
       if (VfsUtil.isAncestor(contentRoot, file, false)) {
-        return VfsUtil.getRelativePath(file, contentRoot, '/');
+        return VfsUtilCore.getRelativePath(file, contentRoot, '/');
       }
     }
 
     VirtualFile projectBaseFolder = project.getBaseDir();
     if (projectBaseFolder != null && VfsUtil.isAncestor(projectBaseFolder, file, false)) {
-      return VfsUtil.getRelativePath(file, projectBaseFolder, '/');
+      return VfsUtilCore.getRelativePath(file, projectBaseFolder, '/');
     }
     return file.getName();
   }
