@@ -66,6 +66,12 @@ public class ChooseActiveBuildConfigurationAction extends ComboBoxAction impleme
 
     super.update(e);
     Module module = findModule(e.getDataContext());
+    if (module == null) {
+      if (myLastModule != null && myLastModule.isDisposed()) {
+        myLastModule = null;
+      }
+      module = myLastModule;
+    }
     if (module == null || FlexModuleType.getInstance() != ModuleType.get(module)) {
       e.getPresentation().setEnabled(false);
       e.getPresentation().setText("(none)");
