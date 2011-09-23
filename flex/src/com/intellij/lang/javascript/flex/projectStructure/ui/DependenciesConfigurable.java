@@ -24,7 +24,8 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectBundle;
-import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.LibraryOrderEntry;
+import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.Library;
@@ -33,13 +34,13 @@ import com.intellij.openapi.roots.libraries.LibraryTablePresentation;
 import com.intellij.openapi.roots.libraries.LibraryType;
 import com.intellij.openapi.roots.libraries.ui.LibraryRootsComponentDescriptor;
 import com.intellij.openapi.roots.libraries.ui.RootDetector;
+import com.intellij.openapi.roots.ui.OrderEntryAppearanceService;
 import com.intellij.openapi.roots.ui.configuration.LibraryTableModifiableModelProvider;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.classpath.CreateModuleLibraryChooser;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.EditExistingLibraryDialog;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
-import com.intellij.openapi.roots.ui.util.OrderEntryCellAppearanceUtils;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.Messages;
@@ -91,7 +92,6 @@ import java.util.*;
 import java.util.List;
 
 public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
-
   private static final Icon MISSING_BC_ICON = null;
 
   private JPanel myMainPanel;
@@ -200,9 +200,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     @Nullable
     public final LibraryOrderEntry orderEntry;
 
-    public ModuleLibraryItem(@NotNull String libraryId, @Nullable LibraryOrderEntry orderEntry) {
+    private final Project project;
+
+    public ModuleLibraryItem(@NotNull String libraryId, @Nullable LibraryOrderEntry orderEntry, @NotNull Project project) {
       this.libraryId = libraryId;
       this.orderEntry = orderEntry;
+      this.project = project;
     }
 
     @Override
@@ -211,7 +214,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         Library library = orderEntry.getLibrary();
         if (library != null) {
           boolean hasInvalidRoots = !((LibraryEx)library).getInvalidRootUrls(OrderRootType.CLASSES).isEmpty();
-          return OrderEntryCellAppearanceUtils.forLibrary(library, hasInvalidRoots).getText();
+          return OrderEntryAppearanceService.getInstance(project).forLibrary(library, hasInvalidRoots).getText();
         }
       }
       return "<unknown>";
@@ -959,8 +962,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
       else if (entry instanceof ModuleLibraryEntry) {
         ModuleLibraryEntry moduleLibraryEntry = (ModuleLibraryEntry)entry;
-        item = new ModuleLibraryItem(moduleLibraryEntry.getLibraryId(), myConfigEditor.findLibraryOrderEntry(myDependencies,
-                                                                                                             moduleLibraryEntry));
+        item = new ModuleLibraryItem(moduleLibraryEntry.getLibraryId(),
+                                     myConfigEditor.findLibraryOrderEntry(myDependencies, moduleLibraryEntry),
+                                     myProject);
         ((ModuleLibraryItem)item).dependencyType.copyFrom(entry.getDependencyType());
       }
       if (item != null) {
@@ -1215,7 +1219,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         for (Library library : libraries) {
           String libraryId = FlexProjectRootsUtil.getLibraryId(library);
           LibraryOrderEntry libraryEntry = myConfigEditor.findLibraryOrderEntry(myDependencies, library);
-          rootNode.add(new DefaultMutableTreeNode(new ModuleLibraryItem(libraryId, libraryEntry), false));
+          rootNode.add(new DefaultMutableTreeNode(new ModuleLibraryItem(libraryId, libraryEntry, myProject), false));
         }
         myTable.refresh();
         myTable.getSelectionModel().clearSelection();
