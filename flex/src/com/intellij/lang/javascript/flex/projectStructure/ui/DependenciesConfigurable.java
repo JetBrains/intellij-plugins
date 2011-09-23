@@ -10,9 +10,10 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructure
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.options.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
+import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
+import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.Disposable;
@@ -58,7 +59,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.*;
 import com.intellij.ui.navigation.Place;
-import com.intellij.util.*;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.IconUtil;
+import com.intellij.util.PlatformIcons;
+import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FilteringIterator;
 import com.intellij.util.containers.HashMap;
@@ -109,7 +113,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   private final AnActionButton myRemoveButton;
   private final BuildConfigurationNature myNature;
   private final FlexSdksModifiableModel mySdksModel;
-  private final ModifiableRootModel myModifiableRootModel;
+
+  private final FlexProjectConfigurationEditor myConfigEditor;
 
   private abstract static class MyTableItem {
     public abstract String getText();
@@ -125,8 +130,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     public abstract void setLinkageType(LinkageType linkageType);
 
     public abstract boolean isValid();
-
-    public abstract void beforeRemove(ModifiableRootModel modifiableModel, List<MyTableItem> items);
   }
 
   private static class BCItem extends MyTableItem {
@@ -189,35 +192,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     public boolean isValid() {
       return configurable != null;
     }
-
-    @Override
-    public void beforeRemove(ModifiableRootModel modifiableModel, List<MyTableItem> items) {
-      if (configurable == null) {
-        return;
-      }
-
-      for (MyTableItem item : items) {
-        if (item == this || !(item instanceof BCItem)) {
-          continue;
-        }
-        BCItem bcItem = (BCItem)item;
-        if (bcItem.configurable == null) {
-          continue;
-        }
-        if (bcItem.configurable.getModule() == configurable.getModule()) {
-          // there's other dependency on this module though different BC
-          return;
-        }
-      }
-
-      OrderEntry moduleEntry = ContainerUtil.find(modifiableModel.getOrderEntries(), new Condition<OrderEntry>() {
-        @Override
-        public boolean value(OrderEntry orderEntry) {
-          return orderEntry instanceof ModuleOrderEntry && ((ModuleOrderEntry)orderEntry).getModule() == configurable.getModule();
-        }
-      });
-      modifiableModel.removeOrderEntry(moduleEntry);
-    }
   }
 
   private static class ModuleLibraryItem extends MyTableItem {
@@ -272,13 +246,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     public boolean isValid() {
       return orderEntry != null;
     }
-
-    @Override
-    public void beforeRemove(ModifiableRootModel modifiableModel, List<MyTableItem> items) {
-      if (orderEntry != null) {
-        modifiableModel.removeOrderEntry(orderEntry);
-      }
-    }
   }
 
   private static class SdkItem extends MyTableItem {
@@ -321,10 +288,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     @Override
     public boolean isValid() {
       return true; // we just don't add Flex SDK table item for invalid SDKs
-    }
-
-    @Override
-    public void beforeRemove(ModifiableRootModel modifiableModel, List<MyTableItem> items) {
     }
   }
 
@@ -370,11 +333,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     @Override
     public boolean isValid() {
       return true;
-    }
-
-    @Override
-    public void beforeRemove(ModifiableRootModel modifiableModel, List<MyTableItem> items) {
-      throw new UnsupportedOperationException();
     }
   }
 
@@ -463,9 +421,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   public DependenciesConfigurable(final ModifiableFlexIdeBuildConfiguration bc,
                                   Project project,
                                   FlexSdksModifiableModel sdksModel,
-                                  ModifiableRootModel modifiableRootModel) {
+                                  @NotNull FlexProjectConfigurationEditor configEditor) {
     mySdksModel = sdksModel;
-    myModifiableRootModel = modifiableRootModel;
+    myConfigEditor = configEditor;
     myDependencies = bc.getDependencies();
     myProject = project;
     myNature = bc.getNature();
@@ -717,14 +675,14 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     LibraryTableModifiableModelProvider provider = new LibraryTableModifiableModelProvider() {
       public LibraryTable.ModifiableModel getModifiableModel() {
-        return myModifiableRootModel.getModuleLibraryTable().getModifiableModel();
+        return myConfigEditor.getLibraryModel(myDependencies);
       }
     };
 
     StructureConfigurableContext context = ModuleStructureConfigurable.getInstance(myProject).getContext();
     EditExistingLibraryDialog dialog =
       EditExistingLibraryDialog.createDialog(myMainPanel, provider, library, myProject, presentation, context);
-    dialog.setContextModule(myModifiableRootModel.getModule());
+    dialog.setContextModule(myConfigEditor.getModule(myDependencies));
     dialog.show();
     myTable.refresh();
   }
@@ -772,7 +730,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     DefaultMutableTreeNode root = myTable.getRoot();
     for (int i = 0; i < selectedRows.length; i++) {
       int index = selectedRows[i] - i;
-      myTable.getItemAt(index).beforeRemove(myModifiableRootModel, myTable.getItems());
       root.remove(index);
     }
     myTable.refresh();
@@ -840,12 +797,15 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   public boolean isModified() {
-    if (myModifiableRootModel.isChanged()) return true;
-
     String currentSdkId = mySdkPanel.getCurrentSdkId();
     SdkEntry sdkEntry = myDependencies.getSdkEntry();
     if (currentSdkId != null) {
-      if (sdkEntry == null || !currentSdkId.equals(sdkEntry.getLibraryId())) return true;
+      if (sdkEntry == null) {
+        return mySdkPanel.getCurrentSdk() != null;
+      }
+      else if (!currentSdkId.equals(sdkEntry.getLibraryId())) {
+        return true;
+      }
     }
     else {
       if (sdkEntry != null) return true;
@@ -902,10 +862,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
   public void apply() throws ConfigurationException {
     applyTo(myDependencies);
-
-    if (myModifiableRootModel.isChanged()) {
-      ModuleStructureConfigurable.getInstance(myProject).getContext().getModulesConfigurator().apply();
-    }
   }
 
   public void applyTo(final ModifiableDependencies dependencies) {
@@ -916,25 +872,25 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     dependencies.setComponentSet((ComponentSet)myComponentSetCombo.getSelectedItem());
     dependencies.setFrameworkLinkage((LinkageType)myFrameworkLinkageCombo.getSelectedItem());
 
-    dependencies.getModifiableEntries().clear();
     List<MyTableItem> items = myTable.getItems();
+    List<ModifiableDependencyEntry> newEntries = new ArrayList<ModifiableDependencyEntry>();
     for (MyTableItem item : items) {
       ModifiableDependencyEntry entry;
       if (item instanceof BCItem) {
         FlexIdeBCConfigurable configurable = ((BCItem)item).configurable;
         if (configurable != null) {
-          entry = Factory.createBuildConfigurationEntry(configurable.getModule(), configurable.getDisplayName());
+          entry = myConfigEditor.createBcEntry(dependencies, configurable.getEditableObject());
         }
         else {
-          entry = Factory.createBuildConfigurationEntry(myProject, ((BCItem)item).moduleName, ((BCItem)item).bcName);
+          entry = myConfigEditor.createBcEntry(dependencies, ((BCItem)item).moduleName, ((BCItem)item).bcName);
         }
         entry.getDependencyType().copyFrom(((BCItem)item).dependencyType);
-        dependencies.getModifiableEntries().add(entry);
+        newEntries.add(entry);
       }
       else if (item instanceof ModuleLibraryItem) {
-        entry = Factory.createModuleLibraryEntry(((ModuleLibraryItem)item).libraryId);
+        entry = myConfigEditor.createModuleLibraryEntry(dependencies, ((ModuleLibraryItem)item).libraryId);
         entry.getDependencyType().copyFrom(((ModuleLibraryItem)item).dependencyType);
-        dependencies.getModifiableEntries().add(entry);
+        newEntries.add(entry);
       }
       else if (item instanceof SdkItem || item instanceof SdkEntryItem) {
         // ignore
@@ -943,6 +899,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         throw new IllegalArgumentException("unexpected item type: " + item);
       }
     }
+    myConfigEditor.setEntries(dependencies, newEntries);
 
     FlexSdk currentSdk = mySdkPanel.getCurrentSdk();
     if (currentSdk != null) {
@@ -984,11 +941,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       if (entry instanceof BuildConfigurationEntry) {
         final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
         Module module = bcEntry.findModule();
-        NamedConfigurable<FlexIdeBuildConfiguration> configurable =
+        NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable =
           module != null ? ContainerUtil
-            .find(configurator.getBCConfigurables(module), new Condition<NamedConfigurable<FlexIdeBuildConfiguration>>() {
+            .find(configurator.getBCConfigurables(module), new Condition<NamedConfigurable<ModifiableFlexIdeBuildConfiguration>>() {
               @Override
-              public boolean value(NamedConfigurable<FlexIdeBuildConfiguration> configurable) {
+              public boolean value(NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable) {
                 return configurable.getEditableObject().getName().equals(bcEntry.getBcName());
               }
             }) : null;
@@ -1002,8 +959,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
       else if (entry instanceof ModuleLibraryEntry) {
         ModuleLibraryEntry moduleLibraryEntry = (ModuleLibraryEntry)entry;
-        item = new ModuleLibraryItem(moduleLibraryEntry.getLibraryId(),
-                                     FlexProjectRootsUtil.findOrderEntry(moduleLibraryEntry, myModifiableRootModel));
+        item = new ModuleLibraryItem(moduleLibraryEntry.getLibraryId(), myConfigEditor.findLibraryOrderEntry(myDependencies,
+                                                                                                             moduleLibraryEntry));
         ((ModuleLibraryItem)item).dependencyType.copyFrom(entry.getDependencyType());
       }
       if (item != null) {
@@ -1040,7 +997,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         });
 
         final Object selectedItem = myTargetPlayerCombo.getSelectedItem();
-        myTargetPlayerCombo.setModel(new DefaultComboBoxModel(availablePlayers.toArray(new String[availablePlayers.size()])));
+        myTargetPlayerCombo.setModel(new DefaultComboBoxModel(ArrayUtil.toStringArray(availablePlayers)));
         if (selectedItem != null) {
           myTargetPlayerCombo.setSelectedItem(selectedItem);
         }
@@ -1151,7 +1108,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         if (ModuleType.get(module) != FlexModuleType.getInstance()) {
           continue;
         }
-        for (NamedConfigurable<FlexIdeBuildConfiguration> configurable : configurator.getBCConfigurables(module)) {
+        for (NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable : configurator.getBCConfigurables(module)) {
           FlexIdeBCConfigurable flexIdeBCConfigurable = FlexIdeBCConfigurable.unwrapIfNeeded(configurable);
           if (dependencies.contains(flexIdeBCConfigurable) || flexIdeBCConfigurable.isParentFor(DependenciesConfigurable.this)) {
             continue;
@@ -1182,19 +1139,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
 
       FlexIdeBCConfigurable[] configurables = d.getSelectedConfigurables();
-      Set<Module> newModulesToDependOn = ContainerUtil.map2Set(configurables, new Function<FlexIdeBCConfigurable, Module>() {
-        @Override
-        public Module fun(FlexIdeBCConfigurable flexIdeBCConfigurable) {
-          return flexIdeBCConfigurable.getModule();
-        }
-      });
-      newModulesToDependOn.remove(myModifiableRootModel.getModule());
-      newModulesToDependOn.removeAll(Arrays.asList(myModifiableRootModel.getModuleDependencies(true)));
-
-      for (Module module : newModulesToDependOn) {
-        myModifiableRootModel.addModuleOrderEntry(module);
-      }
-
       DefaultMutableTreeNode root = myTable.getRoot();
       for (FlexIdeBCConfigurable configurable : configurables) {
         root.add(new DefaultMutableTreeNode(new BCItem(configurable), false));
@@ -1213,6 +1157,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     @Override
     public void run() {
+      // TODO we can have problems if we add the same library twice for one module?
       final Collection<Library> usedLibraries = new ArrayList<Library>();
       List<MyTableItem> items = myTable.getItems();
       for (MyTableItem item : items) {
@@ -1233,11 +1178,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         }
       };
 
-      LibraryTableBase.ModifiableModelEx modifiableModel =
-        (LibraryTableBase.ModifiableModelEx)myModifiableRootModel.getModuleLibraryTable().getModifiableModel();
+      LibraryTableBase.ModifiableModelEx modifiableModel = myConfigEditor.getLibraryModel(myDependencies);
       LibraryTable.ModifiableModel librariesModelWrapper = new LibraryTableModifiableModelWrapper(modifiableModel, filter);
 
-      Module module = myModifiableRootModel.getModule();
+      Module module = myConfigEditor.getModule(myDependencies);
       List<? extends FlexLibraryType> libraryTypes = Collections.singletonList(new FlexLibraryType() {
         @Override
         public LibraryRootsComponentDescriptor createLibraryRootsComponentDescriptor() {
@@ -1270,7 +1214,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         DefaultMutableTreeNode rootNode = myTable.getRoot();
         for (Library library : libraries) {
           String libraryId = FlexProjectRootsUtil.getLibraryId(library);
-          LibraryOrderEntry libraryEntry = myModifiableRootModel.findLibraryOrderEntry(library);
+          LibraryOrderEntry libraryEntry = myConfigEditor.findLibraryOrderEntry(myDependencies, library);
           rootNode.add(new DefaultMutableTreeNode(new ModuleLibraryItem(libraryId, libraryEntry), false));
         }
         myTable.refresh();

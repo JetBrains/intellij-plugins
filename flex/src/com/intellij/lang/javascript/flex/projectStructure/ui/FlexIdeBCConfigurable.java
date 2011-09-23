@@ -2,11 +2,11 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
@@ -23,6 +23,7 @@ import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -32,7 +33,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable*/NamedConfigurable<FlexIdeBuildConfiguration>
+public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable*/NamedConfigurable<ModifiableFlexIdeBuildConfiguration>
   implements CompositeConfigurable.Item {
 
   private JPanel myMainPanel;
@@ -72,7 +73,8 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   public FlexIdeBCConfigurable(final Module module,
                                final ModifiableFlexIdeBuildConfiguration configuration,
                                final FlexSdksModifiableModel sdksModel,
-                               final Runnable treeNodeNameUpdater) {
+                               final Runnable treeNodeNameUpdater,
+                               @NotNull FlexProjectConfigurationEditor configEditor) {
     super(false, treeNodeNameUpdater);
     myModule = module;
     myConfiguration = configuration;
@@ -81,8 +83,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
     final BuildConfigurationNature nature = configuration.getNature();
 
-    ModifiableRootModel modifiableRootModel = getModulesConfigurator().getOrCreateModuleEditor(myModule).getModifiableRootModelProxy();
-    myDependenciesConfigurable = new DependenciesConfigurable(configuration, module.getProject(), sdksModel, modifiableRootModel);
+    myDependenciesConfigurable = new DependenciesConfigurable(configuration, module.getProject(), sdksModel, configEditor);
     myCompilerOptionsConfigurable = new CompilerOptionsConfigurable(module, configuration.getCompilerOptions());
     myAirDesktopPackagingConfigurable = nature.isDesktopPlatform() && nature.isApp()
                                         ? new AirDesktopPackagingConfigurable(module, configuration.getAirDesktopPackagingOptions())
@@ -156,7 +157,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     return myConfiguration.getIcon();
   }
 
-  public FlexIdeBuildConfiguration getEditableObject() {
+  public ModifiableFlexIdeBuildConfiguration getEditableObject() {
     return myConfiguration;
   }
 
@@ -288,7 +289,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     configuration.setPureAs(myPureActionScriptCheckBox.isSelected());
     configuration.setOutputType((OutputType)myOutputTypeCombo.getSelectedItem());
     configuration.setOptimizeFor((String)myOptimizeForCombo.getSelectedItem()); // todo myOptimizeForCombo should contain live information
-      configuration.setMainClass(myMainClassTextField.getText().trim());
+    configuration.setMainClass(myMainClassTextField.getText().trim());
     configuration.setOutputFileName(myOutputFileNameTextField.getText().trim());
     configuration.setOutputFolder(FileUtil.toSystemIndependentName(myOutputFolderField.getText().trim()));
     configuration.setUseHtmlWrapper(myUseHTMLWrapperCheckBox.isSelected());
@@ -329,16 +330,16 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     }
   }
 
-  public FlexIdeBuildConfiguration getCurrentConfiguration() {
-    final ModifiableFlexIdeBuildConfiguration configuration = Factory.createBuildConfiguration();
-    try {
-      applyTo(configuration, false);
-    }
-    catch (ConfigurationException ignored) {
-      // no validation
-    }
-    return configuration;
-  }
+  //public ModifiableFlexIdeBuildConfiguration getCurrentConfiguration() {
+  //  final ModifiableFlexIdeBuildConfiguration configuration = Factory.createBuildConfiguration();
+  //  try {
+  //    applyTo(configuration, false);
+  //  }
+  //  catch (ConfigurationException ignored) {
+  //    // no validation
+  //  }
+  //  return configuration;
+  //}
 
   public List<NamedConfigurable> getChildren() {
     final List<NamedConfigurable> children = new ArrayList<NamedConfigurable>();
@@ -352,7 +353,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     return children;
   }
 
-  public NamedConfigurable<FlexIdeBuildConfiguration> wrapInTabsIfNeeded() {
+  public NamedConfigurable<ModifiableFlexIdeBuildConfiguration> wrapInTabsIfNeeded() {
     if (!FlexIdeUtils.isFlatUi()) return this;
 
     List<NamedConfigurable> tabs = new ArrayList<NamedConfigurable>();

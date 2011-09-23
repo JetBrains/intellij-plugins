@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.ui.CompositeConfigurable;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -49,10 +49,10 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
       return false;
     }
 
-    final List<NamedConfigurable<FlexIdeBuildConfiguration>> configurables =
+    final List<NamedConfigurable<ModifiableFlexIdeBuildConfiguration>> configurables =
       myConfigurator.getOrCreateConfigurables(module, treeNodeNameUpdater);
 
-    for (final NamedConfigurable<FlexIdeBuildConfiguration> configurable : configurables) {
+    for (final NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable : configurables) {
       if (MasterDetailsComponent.findNodeByObject(moduleNode, configurable.getEditableObject()) == null) {
         final MasterDetailsComponent.MyNode configurationNode = new BuildConfigurationNode(configurable);
         addConfigurationChildNodes(FlexIdeBCConfigurable.unwrapIfNeeded(configurable), configurationNode);
@@ -90,13 +90,13 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
   }
 
   public boolean canBeRemoved(final Object editableObject) {
-    return editableObject instanceof FlexIdeBuildConfiguration &&
-           myConfigurator.getBCCount(((FlexIdeBuildConfiguration)editableObject)) > 1;
+    return editableObject instanceof ModifiableFlexIdeBuildConfiguration &&
+           myConfigurator.getBCCount((ModifiableFlexIdeBuildConfiguration)editableObject) > 1;
   }
 
   public boolean removeObject(final Object editableObject) {
-    if (editableObject instanceof FlexIdeBuildConfiguration) {
-      myConfigurator.removeConfiguration(((FlexIdeBuildConfiguration)editableObject));
+    if (editableObject instanceof ModifiableFlexIdeBuildConfiguration) {
+      myConfigurator.removeConfiguration(((ModifiableFlexIdeBuildConfiguration)editableObject));
       return true;
     }
     return false;
@@ -112,8 +112,7 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
   }
 
   public void copy(final NamedConfigurable configurable, final Runnable treeNodeNameUpdater) {
-    FlexIdeBCConfigurable bcConfigurable = FlexIdeBCConfigurable.unwrapIfNeeded(configurable);
-    myConfigurator.copy(bcConfigurable, treeNodeNameUpdater);
+    myConfigurator.copy(configurable, treeNodeNameUpdater);
   }
 
   public Collection<AnAction> createAddActions(final NullableComputable<MasterDetailsComponent.MyNode> selectedNodeRetriever,

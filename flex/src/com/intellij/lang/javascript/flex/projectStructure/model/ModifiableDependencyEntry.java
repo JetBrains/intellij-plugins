@@ -11,4 +11,5 @@ public interface ModifiableDependencyEntry extends DependencyEntry {
   @Override
   ModifiableDependencyType getDependencyType();
 
+  boolean isEqual(ModifiableDependencyEntry other);
 }

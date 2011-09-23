@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableBuildConfigurationEntry;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableDependencyEntry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModulePointer;
 import com.intellij.openapi.module.ModulePointerManager;
@@ -70,6 +71,15 @@ class BuildConfigurationEntryImpl implements ModifiableBuildConfigurationEntry {
 
   private void applyTo(ModifiableBuildConfigurationEntry copy) {
     myDependencyType.applyTo(copy.getDependencyType());
+  }
+
+  @Override
+  public boolean isEqual(ModifiableDependencyEntry other) {
+    if (!(other instanceof BuildConfigurationEntryImpl)) return false;
+    if (!myBcName.equals(((BuildConfigurationEntryImpl)other).myBcName)) return false;
+    if (!getModuleName().equals(((BuildConfigurationEntryImpl)other).getModuleName())) return false;
+    if (!myDependencyType.isEqual(((BuildConfigurationEntryImpl)other).myDependencyType)) return false;
+    return true;
   }
 
   public EntryState getState() {

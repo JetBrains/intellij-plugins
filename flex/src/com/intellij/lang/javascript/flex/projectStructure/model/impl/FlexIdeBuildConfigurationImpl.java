@@ -232,7 +232,7 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     return copy;
   }
 
-  private void applyTo(FlexIdeBuildConfigurationImpl copy) {
+  void applyTo(FlexIdeBuildConfigurationImpl copy) {
     myAirDesktopPackagingOptions.applyTo(copy.myAirDesktopPackagingOptions);
     myAndroidPackagingOptions.applyTo(copy.myAndroidPackagingOptions);
     myCompilerOptions.applyTo(copy.myCompilerOptions);
@@ -249,6 +249,26 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     copy.myTargetPlatform = myTargetPlatform;
     copy.myUseHtmlWrapper = myUseHtmlWrapper;
     copy.myWrapperTemplatePath = myWrapperTemplatePath;
+  }
+
+  boolean isEqual(FlexIdeBuildConfigurationImpl other) {
+    if (!myAirDesktopPackagingOptions.isEqual(other.myAirDesktopPackagingOptions)) return false;
+    if (!myAndroidPackagingOptions.isEqual(other.myAndroidPackagingOptions)) return false;
+    if (!myCompilerOptions.isEqual(other.myCompilerOptions)) return false;
+    if (!myDependencies.isEqual(other.myDependencies)) return false;
+    if (!myIosPackagingOptions.isEqual(other.myIosPackagingOptions)) return false;
+    if (!other.myMainClass.equals(myMainClass)) return false;
+    if (!other.myName.equals(myName)) return false;
+    if (!other.myOptimizeFor.equals(myOptimizeFor)) return false;
+    if (!other.myOutputFileName.equals(myOutputFileName)) return false;
+    if (!other.myOutputFolder.equals(myOutputFolder)) return false;
+    if (other.myOutputType != myOutputType) return false;
+    if (other.myPureAs != myPureAs) return false;
+    if (other.mySkipCompile != mySkipCompile) return false;
+    if (other.myTargetPlatform != myTargetPlatform) return false;
+    if (other.myUseHtmlWrapper != myUseHtmlWrapper) return false;
+    if (!other.myWrapperTemplatePath.equals(myWrapperTemplatePath)) return false;
+    return true;
   }
 
   @Override

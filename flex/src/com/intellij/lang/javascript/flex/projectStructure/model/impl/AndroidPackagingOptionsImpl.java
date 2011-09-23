@@ -19,6 +19,10 @@ class AndroidPackagingOptionsImpl implements ModifiableAndroidPackagingOptions {
   void applyTo(AndroidPackagingOptionsImpl copy) {
   }
 
+  public boolean isEqual(AndroidPackagingOptionsImpl androidPackagingOptions) {
+    return true;
+  }
+
   @Tag("packaging-android")
   public static class State {
   }

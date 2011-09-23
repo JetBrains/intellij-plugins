@@ -20,6 +20,10 @@ class IosPackagingOptionsImpl implements ModifiableIosPackagingOptions {
 
   }
 
+  public boolean isEqual(IosPackagingOptionsImpl iosPackagingOptions) {
+    return true;
+  }
+
   @Tag("packaging-ios")
   public static class State {
   }

@@ -71,6 +71,13 @@ class AirDesktopPackagingOptionsImpl implements ModifiableAirDesktopPackagingOpt
     myInstallerFileName = state.INSTALLER_FILE_NAME;
   }
 
+  public boolean isEqual(AirDesktopPackagingOptionsImpl copy) {
+    if (copy.myUseGeneratedDescriptor != myUseGeneratedDescriptor) return false;
+    if (!copy.myCustomDescriptorPath.equals(myCustomDescriptorPath)) return false;
+    if (!copy.myInstallerFileName.equals(myInstallerFileName)) return false;
+    return true;
+  }
+
   @Tag("packaging-air-desktop")
   public static class State {
     @Attribute("use-generated-descriptor")

@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableDependencyEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableModuleLibraryEntry;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,6 +38,14 @@ class ModuleLibraryEntryImpl implements ModifiableModuleLibraryEntry {
 
   private void applyTo(ModifiableModuleLibraryEntry copy) {
     myDependencyType.applyTo(copy.getDependencyType());
+  }
+
+  @Override
+  public boolean isEqual(ModifiableDependencyEntry other) {
+    if (!(other instanceof ModuleLibraryEntryImpl)) return false;
+    if (!myLibraryId.equals(((ModuleLibraryEntryImpl)other).myLibraryId)) return false;
+    if (!myDependencyType.isEqual(((ModuleLibraryEntryImpl)other).myDependencyType)) return false;
+    return true;
   }
 
   public EntryState getState() {

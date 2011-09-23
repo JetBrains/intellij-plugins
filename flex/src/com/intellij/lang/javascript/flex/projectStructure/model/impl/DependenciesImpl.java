@@ -2,7 +2,6 @@ package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.openapi.components.StateStorageException;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModulePointerManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.Function;
@@ -112,6 +111,20 @@ class DependenciesImpl implements ModifiableDependencies {
       }
     }));
     copy.mySdk = mySdk != null ? mySdk.getCopy() : null;
+  }
+
+  public boolean isEqual(DependenciesImpl other) {
+    if (!other.myTargetPlayer.equals(myTargetPlayer)) return false;
+    if (other.myComponentSet != myComponentSet) return false;
+    if (other.myFrameworkLinkage != myFrameworkLinkage) return false;
+    if (myEntries.size() != other.myEntries.size()) return false;
+    if (mySdk != null ? (other.mySdk == null || !mySdk.isEqual(other.mySdk)) : other.mySdk != null) return false;
+    for (int i = 0; i < myEntries.size(); i++) {
+      if (!myEntries.get(i).isEqual(other.myEntries.get(i))) {
+        return false;
+      }
+    }
+    return true;
   }
 
   public State getState() {

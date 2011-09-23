@@ -3,34 +3,43 @@ package com.intellij.lang.javascript.flex.projectStructure;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.options.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
+import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
+import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.projectStructure.ui.AddBuildConfigurationDialog;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexSdksModifiableModel;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.impl.ModuleManagerImpl;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.EventDispatcher;
-import gnu.trove.THashMap;
+import com.intellij.util.Function;
+import com.intellij.util.containers.BidirectionalMap;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.text.MessageFormat;
 import java.util.*;
 
 public class FlexIdeBCConfigurator {
+
+  private static Logger LOG = Logger.getInstance(FlexIdeBCConfigurator.class.getName());
 
   public interface Listener extends EventListener {
     void moduleRemoved(Module module);
@@ -40,148 +49,143 @@ public class FlexIdeBCConfigurator {
 
   // we can have only one Project Structure configuration dialog at a time, so it's OK to hold state for one project
 
-  // keep these maps in sync!
-  private Map<Module, List<NamedConfigurable<FlexIdeBuildConfiguration>>> myModuleToConfigurablesMap =
-    new THashMap<Module, List<NamedConfigurable<FlexIdeBuildConfiguration>>>();
-  private Map<FlexIdeBuildConfiguration, Module> myConfigurationsToModuleMap = new THashMap<FlexIdeBuildConfiguration, Module>();
-  private boolean myModified;
+  private BidirectionalMap<ModifiableFlexIdeBuildConfiguration, NamedConfigurable<ModifiableFlexIdeBuildConfiguration>> myConfigurablesMap =
+    new BidirectionalMap<ModifiableFlexIdeBuildConfiguration, NamedConfigurable<ModifiableFlexIdeBuildConfiguration>>();
 
   private final EventDispatcher<Listener> myEventDispatcher = EventDispatcher.create(Listener.class);
 
-  private final LazyInitializer<Project> myFlexSdksModifiableModelInitializer = new LazyInitializer<Project>() {
+  private final LazyInitializer<Project> myModifiableModelInitializer = new LazyInitializer<Project>() {
     @Override
-    protected void initialize(Project project) {
+    protected void initialize(final Project project) {
       mySdksModel.reset(project);
+
+      LOG.assertTrue(myConfigEditor == null);
+      final ModulesConfigurator configurator = ModuleStructureConfigurable.getInstance(project).getContext().getModulesConfigurator();
+      myConfigEditor = new FlexProjectConfigurationEditor(project, new FlexProjectConfigurationEditor.ProjectModifiableModelProvider() {
+
+        @Override
+        public Module[] getModules() {
+          return configurator.getModuleModel().getModules();
+        }
+
+        @Override
+        public ModifiableRootModel getModuleModifiableModel(Module module) {
+          return configurator.getOrCreateModuleEditor(module).getModifiableRootModelProxy();
+        }
+
+        @Override
+        public void addListener(Listener listener, Disposable parentDisposable) {
+          FlexIdeBCConfigurator.this.addListener(listener, parentDisposable);
+        }
+
+        @Override
+        public void commitModifiableModels() throws ConfigurationException {
+          ModuleStructureConfigurable.getInstance(project).getContext().getModulesConfigurator().apply();
+        }
+      });
+    }
+
+    @Override
+    public void doDispose() {
+      Disposer.dispose(myConfigEditor);
+      myConfigEditor = null;
     }
   };
 
   private final FlexSdksModifiableModel mySdksModel = new FlexSdksModifiableModel();
+  private FlexProjectConfigurationEditor myConfigEditor;
 
   public void addListener(Listener listener, Disposable parentDisposable) {
     myEventDispatcher.addListener(listener, parentDisposable);
   }
 
   public void reset() {
-    for (final Map.Entry<Module, List<NamedConfigurable<FlexIdeBuildConfiguration>>> entry : myModuleToConfigurablesMap.entrySet()) {
-      final List<NamedConfigurable<FlexIdeBuildConfiguration>> configurables = entry.getValue();
-
-      for (final NamedConfigurable configurable : configurables) {
-        ModuleStructureConfigurable.getInstance(entry.getKey().getProject()).ensureInitialized(configurable);
-      }
+    // this method seems to be called after getOrCreateConfigurables(), so we assume that myConfigEditor is already initialized
+    ModuleStructureConfigurable moduleStructureConfigurable = ModuleStructureConfigurable.getInstance(myConfigEditor.getProject());
+    for (final NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable : myConfigurablesMap.values()) {
+      moduleStructureConfigurable.ensureInitialized(configurable);
     }
-    myModified = false;
   }
 
-  public List<NamedConfigurable<FlexIdeBuildConfiguration>> getOrCreateConfigurables(final Module module,
-                                                                                     final Runnable treeNodeNameUpdater) {
-    myFlexSdksModifiableModelInitializer.ensureInitialized(module.getProject());
+  public List<NamedConfigurable<ModifiableFlexIdeBuildConfiguration>> getOrCreateConfigurables(final Module module,
+                                                                                               final Runnable treeNodeNameUpdater) {
+    myModifiableModelInitializer.ensureInitialized(module.getProject());
 
-    List<NamedConfigurable<FlexIdeBuildConfiguration>> configurables = myModuleToConfigurablesMap.get(module);
+    final ModifiableFlexIdeBuildConfiguration[] configurations = myConfigEditor.getConfigurations(module);
 
-    if (configurables == null) {
-      final FlexIdeBuildConfiguration[] configurations = FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations();
-      configurables = new LinkedList<NamedConfigurable<FlexIdeBuildConfiguration>>();
+    List<NamedConfigurable<ModifiableFlexIdeBuildConfiguration>> configurables =
+      new ArrayList<NamedConfigurable<ModifiableFlexIdeBuildConfiguration>>(configurations.length);
 
-      for (final FlexIdeBuildConfiguration configuration : configurations) {
-        ModifiableFlexIdeBuildConfiguration clonedConfiguration = Factory.getCopy(configuration);
-        FlexIdeBCConfigurable configurable = new FlexIdeBCConfigurable(module, clonedConfiguration, mySdksModel, treeNodeNameUpdater);
-        configurables.add(configurable.wrapInTabsIfNeeded());
-        myConfigurationsToModuleMap.put(clonedConfiguration, module);
+    for (final ModifiableFlexIdeBuildConfiguration configuration : configurations) {
+      NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable = myConfigurablesMap.get(configuration);
+      if (configurable == null) {
+        configurable =
+          new FlexIdeBCConfigurable(module, configuration, mySdksModel, treeNodeNameUpdater, myConfigEditor).wrapInTabsIfNeeded();
+        myConfigurablesMap.put(configuration, configurable);
       }
-
-      myModuleToConfigurablesMap.put(module, configurables);
+      configurables.add(configurable);
     }
-
     return configurables;
   }
 
   public void moduleRemoved(final Module module) {
+    // config editor will handle event and update modifiable model on its own, we just need to update the map
     if (ModuleType.get(module) != FlexModuleType.getInstance()) {
       return;
     }
 
-    for (final NamedConfigurable<FlexIdeBuildConfiguration> configurable : myModuleToConfigurablesMap.get(module)) {
-      myConfigurationsToModuleMap.remove(configurable.getEditableObject());
+    for (Iterator<ModifiableFlexIdeBuildConfiguration> i = myConfigurablesMap.keySet().iterator(); i.hasNext(); ) {
+      if (myConfigEditor.getModule(i.next()) == module) {
+        i.remove();
+      }
     }
-
-    myModuleToConfigurablesMap.remove(module);
     myEventDispatcher.getMulticaster().moduleRemoved(module);
   }
 
   public boolean isModified() {
-    if (myModified || mySdksModel.isModified()) return true;
+    if (myConfigEditor.isModified() || mySdksModel.isModified()) return true;
 
-    for (final List<NamedConfigurable<FlexIdeBuildConfiguration>> configurables : myModuleToConfigurablesMap.values()) {
-      for (final NamedConfigurable configurable : configurables) {
-        if (configurable.isModified()) {
-          return true;
-        }
+    for (final NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable : myConfigurablesMap.values()) {
+      if (configurable.isModified()) {
+        return true;
       }
     }
     return false;
   }
 
-
   public void apply() throws ConfigurationException {
-    for (final Map.Entry<Module, List<NamedConfigurable<FlexIdeBuildConfiguration>>> entry : myModuleToConfigurablesMap.entrySet()) {
-      final Module module = entry.getKey();
-
-      final List<FlexIdeBuildConfiguration> configurations = new LinkedList<FlexIdeBuildConfiguration>();
-      final List<NamedConfigurable<FlexIdeBuildConfiguration>> configurables = entry.getValue();
-
-      Set<String> names = new HashSet<String>(configurables.size());
-      for (NamedConfigurable<FlexIdeBuildConfiguration> configurable : configurables) {
-        if (!names.add(configurable.getDisplayName())) {
-          throw new ConfigurationException(
-            MessageFormat.format("Module ''{0}'' has duplicate build configuration names: {1}", module.getName(),
-                                 configurable.getDisplayName()));
-        }
-      }
-      for (final NamedConfigurable<FlexIdeBuildConfiguration> configurable : configurables) {
+    for (final NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable : myConfigurablesMap.values()) {
+      if (configurable.isModified()) {
         configurable.apply();
-        configurations.add(Factory.getCopy(configurable.getEditableObject()));
       }
-
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        public void run() {
-          FlexBuildConfigurationManager.getInstance(module)
-            .setBuildConfigurations(configurations.toArray(new FlexIdeBuildConfiguration[configurations.size()]));
-        }
-      });
     }
 
-    mySdksModel.apply();
-    myModified = false;
+    if (myConfigEditor.isModified()) {
+      myConfigEditor.checkCanCommit();
+      myConfigEditor.commit();
+    }
+
+    if (mySdksModel.isModified()) {
+      mySdksModel.apply();
+    }
   }
 
   public void dispose() {
     // configurables are disposed by MasterDetailsComponent
-    myModuleToConfigurablesMap.clear();
-    myConfigurationsToModuleMap.clear();
-    myFlexSdksModifiableModelInitializer.dispose();
+    Disposer.dispose(myConfigEditor);
+    myModifiableModelInitializer.dispose();
+    myConfigurablesMap.clear();
   }
 
-  public int getBCCount(final FlexIdeBuildConfiguration configuration) {
-    return getBCCount(myConfigurationsToModuleMap.get(configuration));
+  public int getBCCount(final ModifiableFlexIdeBuildConfiguration configuration) {
+    Module module = myConfigEditor.getModule(configuration);
+    return myConfigEditor.getConfigurations(module).length;
   }
 
-  public int getBCCount(Module module) {
-    return myModuleToConfigurablesMap.get(module).size();
-  }
-
-  public void removeConfiguration(final FlexIdeBuildConfiguration configuration) {
-    myModified = true;
-    final Module module = myConfigurationsToModuleMap.get(configuration);
-    myConfigurationsToModuleMap.remove(configuration);
-    final Iterator<NamedConfigurable<FlexIdeBuildConfiguration>> configurablesIterator = myModuleToConfigurablesMap.get(module).iterator();
-    while (configurablesIterator.hasNext()) {
-      final NamedConfigurable<FlexIdeBuildConfiguration> configurable = configurablesIterator.next();
-      if (configuration == configurable.getEditableObject()) {
-        configurablesIterator.remove();
-        myEventDispatcher.getMulticaster().buildConfigurationRemoved(FlexIdeBCConfigurable.unwrapIfNeeded(configurable));
-        break;
-      }
-    }
+  public void removeConfiguration(final ModifiableFlexIdeBuildConfiguration configuration) {
+    myConfigEditor.removeConfiguration(configuration);
+    NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable = myConfigurablesMap.remove(configuration);
+    myEventDispatcher.getMulticaster().buildConfigurationRemoved(FlexIdeBCConfigurable.unwrapIfNeeded(configurable));
   }
 
   public void addConfiguration(final Module module, final Runnable treeNodeNameUpdater) {
@@ -195,7 +199,7 @@ public class FlexIdeBCConfigurator {
       return;
     }
 
-    final ModifiableFlexIdeBuildConfiguration configuration = Factory.createBuildConfiguration();
+    final ModifiableFlexIdeBuildConfiguration configuration = myConfigEditor.createConfiguration(module);
     configuration.setName(nameAndNature.first);
     configuration.setNature(nameAndNature.second);
     configuration.getDependencies().setSdkEntry(findRecentSdk());
@@ -210,21 +214,19 @@ public class FlexIdeBCConfigurator {
            ? Factory.createSdkEntry(FlexProjectRootsUtil.getSdkLibraryId(libraries[0]), FlexSdk.getHomePath(libraries[0])) : null;
   }
 
-  public void copy(final FlexIdeBCConfigurable configurable, final Runnable treeNodeNameUpdater) {
-    FlexIdeBuildConfiguration configuration = configurable.getCurrentConfiguration();
+  public void copy(final NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable, final Runnable treeNodeNameUpdater) {
+    ModifiableFlexIdeBuildConfiguration configuration = myConfigurablesMap.getKeysByValue(configurable).get(0);
 
-    Pair<String, BuildConfigurationNature> nameAndNature =
-      promptForCreation(configurable.getModule(), "Copy Build Configuration", configuration.getNature());
+    FlexIdeBCConfigurable unwrapped = FlexIdeBCConfigurable.unwrapIfNeeded(configurable);
+    Pair<String, BuildConfigurationNature> nameAndNature = promptForCreation(unwrapped.getModule(), "Copy Build Configuration",
+                                                                             configuration.getNature());
     if (nameAndNature == null) {
       return;
     }
 
-    ModifiableFlexIdeBuildConfiguration newConfiguration = Factory.getCopy(configuration);
+    ModifiableFlexIdeBuildConfiguration newConfiguration = myConfigEditor.copyConfiguration(configuration, nameAndNature.second);
     newConfiguration.setName(nameAndNature.first);
-    newConfiguration.setNature(nameAndNature.second);
     newConfiguration.getDependencies().setSdkEntry(findRecentSdk());
-    // just to simplify serialized view
-    resetNonApplicableValuesToDefaults(newConfiguration);
 
     // set correct output file extension for cloned configuration
     final String outputFileName = configuration.getOutputFileName();
@@ -234,7 +236,7 @@ public class FlexIdeBCConfigurator {
       newConfiguration.setOutputFileName(outputFileName.substring(0, outputFileName.length() - ".sw_".length()) + extension);
     }
 
-    createConfigurableNode(newConfiguration, configurable.getModule(), treeNodeNameUpdater);
+    createConfigurableNode(newConfiguration, unwrapped.getModule(), treeNodeNameUpdater);
   }
 
   @Nullable
@@ -248,12 +250,11 @@ public class FlexIdeBCConfigurator {
   }
 
   private void createConfigurableNode(ModifiableFlexIdeBuildConfiguration configuration, Module module, Runnable treeNodeNameUpdater) {
-    final FlexIdeBCConfigurable configurable = new FlexIdeBCConfigurable(module, configuration, mySdksModel, treeNodeNameUpdater);
+    final FlexIdeBCConfigurable configurable =
+      new FlexIdeBCConfigurable(module, configuration, mySdksModel, treeNodeNameUpdater, myConfigEditor);
 
-    NamedConfigurable<FlexIdeBuildConfiguration> wrapped = configurable.wrapInTabsIfNeeded();
-    myModuleToConfigurablesMap.get(module).add(wrapped);
-    myConfigurationsToModuleMap.put(configuration, module);
-
+    NamedConfigurable<ModifiableFlexIdeBuildConfiguration> wrapped = configurable.wrapInTabsIfNeeded();
+    myConfigurablesMap.put(configuration, wrapped);
     final MasterDetailsComponent.MyNode node = new BuildConfigurationNode(wrapped);
     FlexIdeModuleStructureExtension.addConfigurationChildNodes(configurable, node);
 
@@ -265,48 +266,21 @@ public class FlexIdeBCConfigurator {
     ProjectStructureConfigurable.getInstance(module.getProject()).navigateTo(place, true);
   }
 
-  private static void resetNonApplicableValuesToDefaults(final ModifiableFlexIdeBuildConfiguration configuration) {
-    final FlexIdeBuildConfiguration defaultConfiguration = Factory.createBuildConfiguration();
-
-    if (configuration.getOutputType() != OutputType.RuntimeLoadedModule) {
-      configuration.setOptimizeFor(defaultConfiguration.getOptimizeFor());
-    }
-
-    if (configuration.getOutputType() == OutputType.Library) {
-      configuration.setMainClass(defaultConfiguration.getMainClass());
-    }
-
-    if (configuration.getTargetPlatform() != TargetPlatform.Web ||
-        configuration.getOutputType() != OutputType.Application) {
-      configuration.setUseHtmlWrapper(defaultConfiguration.isUseHtmlWrapper());
-      configuration.setWrapperTemplatePath(defaultConfiguration.getWrapperTemplatePath());
-    }
-
-    if (configuration.getTargetPlatform() != TargetPlatform.Web) {
-      configuration.getDependencies().setTargetPlayer(defaultConfiguration.getDependencies().getTargetPlayer());
-    }
-
-    if (configuration.getTargetPlatform() == TargetPlatform.Mobile || configuration.isPureAs()) {
-      configuration.getDependencies().setComponentSet(defaultConfiguration.getDependencies().getComponentSet());
-    }
-
-    BuildConfigurationNature nature = configuration.getNature();
-    for (Iterator<ModifiableDependencyEntry> i = configuration.getDependencies().getModifiableEntries().iterator(); i.hasNext(); ) {
-      if (!BCUtils.isApplicable(nature, i.next().getDependencyType().getLinkageType())) {
-        i.remove();
-      }
-    }
-  }
-
   private Collection<String> getUsedNames(final Module module) {
     final Collection<String> result = new LinkedList<String>();
-    for (final NamedConfigurable<FlexIdeBuildConfiguration> configurable : myModuleToConfigurablesMap.get(module)) {
-      result.add(configurable.getDisplayName());
+    for (final ModifiableFlexIdeBuildConfiguration configuration : myConfigEditor.getConfigurations(module)) {
+      result.add(myConfigurablesMap.get(configuration).getDisplayName());
     }
     return result;
   }
 
-  public List<NamedConfigurable<FlexIdeBuildConfiguration>> getBCConfigurables(@NotNull Module module) {
-    return myModuleToConfigurablesMap.get(module);
+  public List<NamedConfigurable<ModifiableFlexIdeBuildConfiguration>> getBCConfigurables(@NotNull Module module) {
+    return ContainerUtil.map(myConfigEditor.getConfigurations(module),
+                             new Function<ModifiableFlexIdeBuildConfiguration, NamedConfigurable<ModifiableFlexIdeBuildConfiguration>>() {
+                               @Override
+                               public NamedConfigurable<ModifiableFlexIdeBuildConfiguration> fun(ModifiableFlexIdeBuildConfiguration configuration) {
+                                 return myConfigurablesMap.get(configuration);
+                               }
+                             });
   }
 }

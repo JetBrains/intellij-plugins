@@ -14,26 +14,8 @@ public class Factory {
     return new CompilerOptionsImpl();
   }
 
-  public static ModifiableFlexIdeBuildConfiguration getCopy(FlexIdeBuildConfiguration configuration) {
-    return ((FlexIdeBuildConfigurationImpl)configuration).getCopy();
-  }
-
   public static ModifiableFlexIdeBuildConfiguration createBuildConfiguration() {
     return new FlexIdeBuildConfigurationImpl();
-  }
-
-  public static ModifiableBuildConfigurationEntry createBuildConfigurationEntry(@NotNull Module module, @NotNull String bcName) {
-    return new BuildConfigurationEntryImpl(module, bcName);
-  }
-
-  public static ModifiableBuildConfigurationEntry createBuildConfigurationEntry(@NotNull Project project,
-                                                                                @NotNull String moduleName,
-                                                                                @NotNull String bcName) {
-    return new BuildConfigurationEntryImpl(project, moduleName, bcName);
-  }
-
-  public static ModifiableModuleLibraryEntry createModuleLibraryEntry(@NotNull String libraryId) {
-    return new ModuleLibraryEntryImpl(libraryId);
   }
 
   public static ModifiableDependencyType createDependencyTypeInstance() {

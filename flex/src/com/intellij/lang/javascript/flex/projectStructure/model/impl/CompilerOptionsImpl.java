@@ -57,6 +57,10 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions {
     myOptions.putAll(state.options);
   }
 
+  public boolean isEqual(CompilerOptionsImpl other) {
+    return myOptions.equals(other.myOptions);
+  }
+
   @Tag("compiler-options")
   public static class State {
     @Property(surroundWithTag = false)

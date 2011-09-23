@@ -1,24 +1,32 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
-import com.intellij.openapi.Disposable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * User: ksafonov
  */
 public abstract class LazyInitializer<T> {
 
-  private boolean myInitialized;
+  @Nullable
+  private T myInitializedFor;
 
   public void ensureInitialized(T t) {
-    if (!myInitialized) {
+    if (myInitializedFor == null) {
       initialize(t);
-      myInitialized = true;
+      myInitializedFor = t;
+    }
+    else if (myInitializedFor != t) {
+      throw new IllegalArgumentException(
+        "Trying to initialize for different entity " + t + ", was originally initialized for " + myInitializedFor);
     }
   }
 
   protected abstract void initialize(T t);
 
-  public void dispose() {
-    myInitialized = false;
+  public final void dispose() {
+    myInitializedFor = null;
+    doDispose();
   }
+
+  protected abstract void doDispose();
 }
