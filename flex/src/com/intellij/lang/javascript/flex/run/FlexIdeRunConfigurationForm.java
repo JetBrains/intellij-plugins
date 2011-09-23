@@ -16,7 +16,9 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.RawCommandLineEditor;
+import com.intellij.ui.components.JBLabel;
 import com.intellij.util.PlatformIcons;
+import com.intellij.util.ui.UIUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +33,7 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
 
   private JPanel myMainPanel;
   private JComboBox myBCsCombo;
-  
+
   private JPanel myLaunchPanel;
   private JRadioButton myBCOutputRadioButton;
   private JLabel myBCOutputLabel;
@@ -46,6 +48,27 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
   private RawCommandLineEditor myAdlOptionsEditor;
   private RawCommandLineEditor myAirProgramParametersEditor;
 
+  private JPanel myMobileRunPanel;
+  private JRadioButton myOnEmulatorRadioButton;
+  private JRadioButton myOnAndroidDeviceRadioButton;
+  private JRadioButton myOnIOSDeviceRadioButton;
+
+  private JComboBox myEmulatorCombo;
+  private JPanel myEmulatorScreenSizePanel;
+  private JTextField myScreenWidth;
+  private JTextField myScreenHeight;
+  private JTextField myFullScreenWidth;
+  private JTextField myFullScreenHeight;
+
+  private JPanel myMobileOptionsPanel;
+  private JPanel myDebugTransportPanel;
+  private JLabel myDebugOverLabel;
+  private JRadioButton myDebugOverNetworkRadioButton;
+  private JRadioButton myDebugOverUSBRadioButton;
+  private JTextField myUsbDebugPortTextField;
+  private JBLabel myAdlOptionsLabel;
+  private RawCommandLineEditor myEmulatorAdlOptionsEditor;
+
   private final Project myProject;
   private FlexIdeBuildConfiguration[] myAllConfigs;
   private boolean mySingleModuleProject;
@@ -59,6 +82,7 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     initBCCombo();
     initRadioButtons();
     initLaunchWithTextWithBrowse();
+    initMobileControls();
   }
 
   private void initBCCombo() {
@@ -117,7 +141,7 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
         updateControls();
       }
     });
-    
+
     myURLRadioButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         updateControls();
@@ -140,16 +164,65 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     });
   }
 
+  private void initMobileControls() {
+    initEmulatorRelatedControls();
+    myOnIOSDeviceRadioButton.setVisible(false); // until supported
+
+    final ActionListener debugTransportListener = new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        updateDebugTransportRelatedControls();
+      }
+    };
+    myDebugOverNetworkRadioButton.addActionListener(debugTransportListener);
+    myDebugOverUSBRadioButton.addActionListener(debugTransportListener);
+
+    myEmulatorAdlOptionsEditor.setDialogCaption("AIR Debug Launcher Options");
+  }
+
+  private void initEmulatorRelatedControls() {
+    myEmulatorCombo.setModel(new DefaultComboBoxModel(AirMobileRunnerParameters.Emulator.values()));
+
+    myEmulatorCombo.setRenderer(new ListCellRendererWrapper<AirMobileRunnerParameters.Emulator>(myEmulatorCombo.getRenderer()) {
+      @Override
+      public void customize(JList list, AirMobileRunnerParameters.Emulator value, int index, boolean selected, boolean hasFocus) {
+        setText(value.name);
+      }
+    });
+
+    myEmulatorCombo.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        updateEmulatorRelatedControls();
+      }
+    });
+
+    final ActionListener targetDeviceListener = new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        updateControls();
+
+        if (myOnEmulatorRadioButton.isSelected()) {
+          IdeFocusManager.getInstance(myProject).requestFocus(myEmulatorCombo, true);
+        }
+      }
+    };
+
+    myOnEmulatorRadioButton.addActionListener(targetDeviceListener);
+    myOnAndroidDeviceRadioButton.addActionListener(targetDeviceListener);
+    myOnIOSDeviceRadioButton.addActionListener(targetDeviceListener);
+  }
+
   private void updateControls() {
     final Object item = myBCsCombo.getSelectedItem();
     final FlexIdeBuildConfiguration config = item instanceof FlexIdeBuildConfiguration ? (FlexIdeBuildConfiguration)item : null;
 
     final boolean web = config != null && config.getTargetPlatform() == TargetPlatform.Web;
     final boolean desktop = config != null && config.getTargetPlatform() == TargetPlatform.Desktop;
-    
+    final boolean mobile = config != null && config.getTargetPlatform() == TargetPlatform.Mobile;
+
     myLaunchPanel.setVisible(web);
     myWebOptionsPanel.setVisible(web);
     myDesktopOptionsPanel.setVisible(desktop);
+    myMobileRunPanel.setVisible(mobile);
+    myMobileOptionsPanel.setVisible(mobile);
 
     if (web) {
       String bcOutput = config.getOutputFileName();
@@ -164,7 +237,55 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
       myRunTrustedCheckBox.setEnabled(!myURLRadioButton.isSelected());
     }
 
+    if (mobile) {
+      myOnAndroidDeviceRadioButton.setEnabled(config.getAndroidPackagingOptions().isEnabled());
+      if (myOnAndroidDeviceRadioButton.isSelected() && !myOnAndroidDeviceRadioButton.isEnabled()) {
+        myOnEmulatorRadioButton.setSelected(true);
+      }
+
+      final boolean runOnEmulator = myOnEmulatorRadioButton.isSelected();
+      myEmulatorCombo.setEnabled(runOnEmulator);
+      UIUtil.setEnabled(myEmulatorScreenSizePanel, runOnEmulator, true);
+      myAdlOptionsLabel.setEnabled(runOnEmulator);
+      myEmulatorAdlOptionsEditor.setEnabled(runOnEmulator);
+
+      if (runOnEmulator) {
+        updateEmulatorRelatedControls();
+      }
+
+      updateDebugTransportRelatedControls();
+    }
   }
+
+  private void updateEmulatorRelatedControls() {
+    final AirMobileRunnerParameters.Emulator emulator = (AirMobileRunnerParameters.Emulator)myEmulatorCombo.getSelectedItem();
+    if (emulator.adlAlias == null) {
+      myScreenWidth.setEditable(true);
+      myScreenHeight.setEditable(true);
+      myFullScreenWidth.setEditable(true);
+      myFullScreenHeight.setEditable(true);
+    }
+    else {
+      myScreenWidth.setEditable(false);
+      myScreenHeight.setEditable(false);
+      myFullScreenWidth.setEditable(false);
+      myFullScreenHeight.setEditable(false);
+      myScreenWidth.setText(String.valueOf(emulator.screenWidth));
+      myScreenHeight.setText(String.valueOf(emulator.screenHeight));
+      myFullScreenWidth.setText(String.valueOf(emulator.fullScreenWidth));
+      myFullScreenHeight.setText(String.valueOf(emulator.fullScreenHeight));
+    }
+  }
+
+  private void updateDebugTransportRelatedControls() {
+    final boolean enabled = !myOnEmulatorRadioButton.isSelected();
+    myDebugOverLabel.setEnabled(enabled);
+    UIUtil.setEnabled(myDebugTransportPanel, enabled, true);
+    if (enabled) {
+      myUsbDebugPortTextField.setEnabled(myDebugOverUSBRadioButton.isSelected());
+    }
+  }
+
 
   private static String getPresentableText(String moduleName, String configName, final boolean singleModuleProject) {
     moduleName = moduleName.isEmpty() ? "[no module]" : moduleName;
@@ -208,6 +329,24 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     myAdlOptionsEditor.setText(params.getAdlOptions());
     myAirProgramParametersEditor.setText(params.getAirProgramParameters());
 
+    myOnEmulatorRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunnerParameters.AirMobileRunTarget.Emulator);
+    myEmulatorCombo.setSelectedItem(params.getEmulator());
+    if (params.getEmulator().adlAlias == null) {
+      myScreenWidth.setText(String.valueOf(params.getScreenWidth()));
+      myScreenHeight.setText(String.valueOf(params.getScreenHeight()));
+      myFullScreenWidth.setText(String.valueOf(params.getFullScreenWidth()));
+      myFullScreenHeight.setText(String.valueOf(params.getFullScreenHeight()));
+    }
+
+    myOnAndroidDeviceRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunnerParameters.AirMobileRunTarget.AndroidDevice);
+    myOnIOSDeviceRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunnerParameters.AirMobileRunTarget.iOSDevice);
+
+    myDebugOverNetworkRadioButton.setSelected(params.getDebugTransport() == AirMobileRunnerParameters.AirMobileDebugTransport.Network);
+    myDebugOverUSBRadioButton.setSelected(params.getDebugTransport() == AirMobileRunnerParameters.AirMobileDebugTransport.USB);
+    myUsbDebugPortTextField.setText(String.valueOf(params.getUsbDebugPort()));
+
+    myEmulatorAdlOptionsEditor.setText(params.getEmulatorAdlOptions());
+
     updateControls();
   }
 
@@ -234,6 +373,39 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
 
     params.setAdlOptions(myAdlOptionsEditor.getText().trim());
     params.setAirProgramParameters(myAirProgramParametersEditor.getText().trim());
+
+    final AirMobileRunnerParameters.AirMobileRunTarget mobileRunTarget = myOnEmulatorRadioButton.isSelected()
+                                                                         ? AirMobileRunnerParameters.AirMobileRunTarget.Emulator
+                                                                         : myOnAndroidDeviceRadioButton.isSelected()
+                                                                           ? AirMobileRunnerParameters.AirMobileRunTarget.AndroidDevice
+                                                                           : AirMobileRunnerParameters.AirMobileRunTarget.iOSDevice;
+    params.setMobileRunTarget(mobileRunTarget);
+
+    final AirMobileRunnerParameters.Emulator emulator = (AirMobileRunnerParameters.Emulator)myEmulatorCombo.getSelectedItem();
+    params.setEmulator(emulator);
+
+    if (emulator.adlAlias == null) {
+      try {
+        params.setScreenWidth(Integer.parseInt(myScreenWidth.getText()));
+        params.setScreenHeight(Integer.parseInt(myScreenHeight.getText()));
+        params.setFullScreenWidth(Integer.parseInt(myFullScreenWidth.getText()));
+        params.setFullScreenHeight(Integer.parseInt(myFullScreenHeight.getText()));
+      }
+      catch (NumberFormatException e) {/**/}
+    }
+
+    params.setDebugTransport(myDebugOverNetworkRadioButton.isSelected()
+                             ? AirMobileRunnerParameters.AirMobileDebugTransport.Network
+                             : AirMobileRunnerParameters.AirMobileDebugTransport.USB);
+    try {
+      final int port = Integer.parseInt(myUsbDebugPortTextField.getText().trim());
+      if (port > 0 && port < 65535) {
+        params.setUsbDebugPort(port);
+      }
+    }
+    catch (NumberFormatException ignore) {/*ignore*/}
+
+    params.setEmulatorAdlOptions(myEmulatorAdlOptionsEditor.getText().trim());
   }
 
   protected void disposeEditor() {
