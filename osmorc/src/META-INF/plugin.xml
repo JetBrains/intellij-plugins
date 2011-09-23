@@ -165,7 +165,7 @@
         <fileTypeFactory implementation="org.osmorc.manifest.ManifestFileTypeFactory"/>
         <compiler implementation="org.osmorc.make.BundleCompiler"/>
         <refactoring.elementListenerProvider implementation="org.osmorc.facet.OsmorcFacetRefactoringListenerProvider"/>
-        <programRunner implementation="org.osmorc.run.OsgiDebuggerRunner"/>
+<!--        <programRunner implementation="org.osmorc.run.OsgiDebuggerRunner"/> -->
         <projectConfigurable instance="org.osmorc.settings.ProjectSettingsEditor"/>
         <applicationConfigurable instance="org.osmorc.settings.ApplicationSettingsEditor"/>
     </extensions>
