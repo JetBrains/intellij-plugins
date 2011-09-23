@@ -74,7 +74,9 @@ public class AirInstallerParametersBase {
   }
 
   public static class FilePathAndPathInPackage implements Cloneable {
+    //@Attribute("file-path") uncommenting will drop compatibility, though may be we don't care
     public String FILE_PATH = "";
+    //@Attribute("path-in-package")
     public String PATH_IN_PACKAGE = "";
 
     public FilePathAndPathInPackage() {

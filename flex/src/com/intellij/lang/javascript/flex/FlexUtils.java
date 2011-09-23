@@ -770,4 +770,15 @@ public class FlexUtils {
       return super.clone();
     }
   }
+
+  public static <T> boolean equalLists(final List<T> list1, final List<T> list2) {
+    if (list1.size() != list2.size()) return true;
+
+    final Iterator<T> iterator = list1.iterator();
+    for (final T element : list2) {
+      if (!iterator.next().equals(element)) return true;
+    }
+
+    return false;
+  }
 }

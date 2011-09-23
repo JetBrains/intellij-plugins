@@ -10,6 +10,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.HoverHyperlinkLabel;
@@ -27,6 +28,9 @@ public class SigningOptionsForm {
   private static final String LESS_OPTIONS = "Less options";
 
   private JPanel myMainPanel; // required to reuse this form
+
+  private JCheckBox myUseTempCertificateCheckBox;
+  private JPanel myOptionsPanel;
 
   private JLabel myProvisioningProfileLabel;
   private TextFieldWithBrowseButton myProvisioningProfileTextWithBrowse;
@@ -60,6 +64,8 @@ public class SigningOptionsForm {
     mySdkComputable = sdkComputable;
     myResizeHandler = resizeHandler;
 
+    initUseTempCertificateCheckBox();
+
     myProvisioningProfileTextWithBrowse.addBrowseFolderListener(null, null, myProject,
                                                                 FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor());
     myKeystoreFileTextWithBrowse
@@ -68,6 +74,14 @@ public class SigningOptionsForm {
     initCreateCertButton();
     initMoreOptionsHyperlinkLabel();
     updateMoreOptions();
+  }
+
+  private void initUseTempCertificateCheckBox() {
+    myUseTempCertificateCheckBox.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        updateControls();
+      }
+    });
   }
 
   private void initCreateCertButton() {
@@ -146,11 +160,23 @@ public class SigningOptionsForm {
     myTsaUrlTextField.setVisible(showingMoreOption);
   }
 
-  public void setEnabled(final boolean enabled) {
-    UIUtil.setEnabled(myMainPanel, enabled, true);
+  private void updateControls() {
+    UIUtil.setEnabled(myOptionsPanel, !myUseTempCertificateCheckBox.isVisible() || !myUseTempCertificateCheckBox.isSelected(), true);
     if (myMoreOptionsHyperlinkLabel.isEnabled()) {
       myMoreOptionsHyperlinkLabel.setForeground(Color.BLUE); // workaround of JLabel-related workaround at UIUtil.setEnabled(..)
     }
+  }
+
+  public void setEnabled(final boolean enabled) {
+    UIUtil.setEnabled(myMainPanel, enabled, true);
+    if (enabled) {
+      updateControls();
+    }
+  }
+
+  public void setUseTempCertificateCheckBoxVisible(final boolean visible) {
+    myUseTempCertificateCheckBox.setVisible(visible);
+    updateControls();
   }
 
   public void setProvisioningProfileApplicable(final boolean applicable) {
@@ -233,5 +259,52 @@ public class SigningOptionsForm {
     if (StringUtil.isNotEmpty(tsaUrl)) {
       showMoreOptions(true);
     }
+  }
+
+  public void resetFrom(final AirSigningOptions signingOptions) {
+    myUseTempCertificateCheckBox.setSelected(signingOptions.isUseTempCertificate());
+    myProvisioningProfileTextWithBrowse.setText(FileUtil.toSystemDependentName(signingOptions.getProvisioningProfilePath()));
+    myKeystoreFileTextWithBrowse.setText(FileUtil.toSystemDependentName(signingOptions.getKeystorePath()));
+    myKeystoreTypeCombo.setSelectedItem(signingOptions.getKeystoreType());
+    myKeystorePasswordField.setText(signingOptions.getKeystorePassword());
+    myKeyAliasTextField.setText(signingOptions.getKeyAlias());
+    myKeyPasswordField.setText(signingOptions.getKeyPassword());
+    myProviderClassNameTextField.setText(signingOptions.getProvider());
+    myTsaUrlTextField.setText(signingOptions.getTsa());
+    updateControls();
+  }
+
+  public boolean isModified(final AirSigningOptions signingOptions) {
+    if (myUseTempCertificateCheckBox.isVisible() && myUseTempCertificateCheckBox.isSelected() != signingOptions.isUseTempCertificate()) {
+      return true;
+    }
+    final String provisioningPath = FileUtil.toSystemIndependentName(myProvisioningProfileTextWithBrowse.getText().trim());
+    if (myProvisioningProfileTextWithBrowse.isVisible() && !provisioningPath.equals(signingOptions.getProvisioningProfilePath())) {
+      return true;
+    }
+    if (!FileUtil.toSystemIndependentName(myKeystoreFileTextWithBrowse.getText().trim()).equals(signingOptions.getKeystorePath())) {
+      return true;
+    }
+    if (!myKeystoreTypeCombo.getSelectedItem().equals(signingOptions.getKeystoreType())) return true;
+    if (!myKeystorePasswordField.getText().equals(signingOptions.getKeystorePassword())) return true;
+    if (!myKeyAliasTextField.getText().equals(signingOptions.getKeyAlias())) return true;
+    if (!myKeyPasswordField.getText().equals(signingOptions.getKeyPassword())) return true;
+    if (!myProviderClassNameTextField.getText().equals(signingOptions.getProvider())) return true;
+    if (!myTsaUrlTextField.getText().equals(signingOptions.getTsa())) return true;
+
+    return false;
+  }
+
+
+  public void applyTo(final AirSigningOptions signingOptions) {
+    signingOptions.setUseTempCertificate(myUseTempCertificateCheckBox.isSelected());
+    signingOptions.setProvisioningProfilePath(FileUtil.toSystemIndependentName(myProvisioningProfileTextWithBrowse.getText().trim()));
+    signingOptions.setKeystorePath(FileUtil.toSystemIndependentName(myKeystoreFileTextWithBrowse.getText().trim()));
+    signingOptions.setKeystoreType((String)myKeystoreTypeCombo.getSelectedItem());
+    signingOptions.setKeystorePassword(new String(myKeystorePasswordField.getPassword()));
+    signingOptions.setKeyAlias(myKeyAliasTextField.getText());
+    signingOptions.setKeyPassword(new String(myKeyPasswordField.getPassword()));
+    signingOptions.setProvider(myProviderClassNameTextField.getText());
+    signingOptions.setTsa(myTsaUrlTextField.getText());
   }
 }

@@ -1,49 +1,18 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
+import com.intellij.lang.javascript.flex.actions.AirSigningOptions;
+import com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParametersBase;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableAirDesktopPackagingOptions;
+import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Attribute;
+import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.annotations.NotNull;
 
-class AirDesktopPackagingOptionsImpl implements ModifiableAirDesktopPackagingOptions {
+import java.util.ArrayList;
+import java.util.List;
 
-  private boolean myUseGeneratedDescriptor = true;
-  @NotNull
-  private String myCustomDescriptorPath = "";
-  @NotNull
-  private String myInstallerFileName = "";
-
-  @Override
-  public boolean isUseGeneratedDescriptor() {
-    return myUseGeneratedDescriptor;
-  }
-
-  @Override
-  @NotNull
-  public String getCustomDescriptorPath() {
-    return myCustomDescriptorPath;
-  }
-
-  @Override
-  @NotNull
-  public String getInstallerFileName() {
-    return myInstallerFileName;
-  }
-
-  @Override
-  public void setUseGeneratedDescriptor(boolean useGeneratedDescriptor) {
-    myUseGeneratedDescriptor = useGeneratedDescriptor;
-  }
-
-  @Override
-  public void setCustomDescriptorPath(@NotNull String customDescriptorPath) {
-    myCustomDescriptorPath = customDescriptorPath;
-  }
-
-  @Override
-  public void setInstallerFileName(@NotNull String installerFileName) {
-    myInstallerFileName = installerFileName;
-  }
+class AirDesktopPackagingOptionsImpl extends AirPackagingOptionsBase implements ModifiableAirDesktopPackagingOptions {
 
   public AirDesktopPackagingOptionsImpl getCopy() {
     AirDesktopPackagingOptionsImpl copy = new AirDesktopPackagingOptionsImpl();
@@ -51,24 +20,22 @@ class AirDesktopPackagingOptionsImpl implements ModifiableAirDesktopPackagingOpt
     return copy;
   }
 
-  void applyTo(AirDesktopPackagingOptionsImpl copy) {
-    copy.myUseGeneratedDescriptor = myUseGeneratedDescriptor;
-    copy.myCustomDescriptorPath = myCustomDescriptorPath;
-    copy.myInstallerFileName = myInstallerFileName;
-  }
-
   public State getState() {
-    State state = new State();
-    state.USE_GENERATED_DESCRIPTOR = myUseGeneratedDescriptor;
-    state.CUSTOM_DESCRIPTOR_PATH = myCustomDescriptorPath;
-    state.INSTALLER_FILE_NAME = myInstallerFileName;
+    final State state = new State();
+    state.USE_GENERATED_DESCRIPTOR = isUseGeneratedDescriptor();
+    state.CUSTOM_DESCRIPTOR_PATH = getCustomDescriptorPath();
+    state.PACKAGE_FILE_NAME = getPackageFileName();
+    state.FILES_TO_PACKAGE = getFilesToPackage();
+    state.SIGNING_OPTIONS = getSigningOptions();
     return state;
   }
 
   public void loadState(@NotNull State state) {
-    myUseGeneratedDescriptor = state.USE_GENERATED_DESCRIPTOR;
-    myCustomDescriptorPath = state.CUSTOM_DESCRIPTOR_PATH;
-    myInstallerFileName = state.INSTALLER_FILE_NAME;
+    setUseGeneratedDescriptor(state.USE_GENERATED_DESCRIPTOR);
+    setCustomDescriptorPath(state.CUSTOM_DESCRIPTOR_PATH);
+    setPackageFileName(state.PACKAGE_FILE_NAME);
+    setFilesToPackage(state.FILES_TO_PACKAGE);
+    setSigningOptions(state.SIGNING_OPTIONS);
   }
 
   public boolean isEqual(AirDesktopPackagingOptionsImpl copy) {
@@ -84,7 +51,13 @@ class AirDesktopPackagingOptionsImpl implements ModifiableAirDesktopPackagingOpt
     public boolean USE_GENERATED_DESCRIPTOR = true;
     @Attribute("custom-descriptor-path")
     public String CUSTOM_DESCRIPTOR_PATH = "";
-    @Attribute("installer")
-    public String INSTALLER_FILE_NAME = "";
+    @Attribute("package-file-name")
+    public String PACKAGE_FILE_NAME = "";
+    @Tag("files-to-package")
+    @AbstractCollection(surroundWithTag = false)
+    public List<AirInstallerParametersBase.FilePathAndPathInPackage> FILES_TO_PACKAGE =
+      new ArrayList<AirInstallerParametersBase.FilePathAndPathInPackage>();
+    @Property(surroundWithTag = false)
+    public AirSigningOptions SIGNING_OPTIONS = new AirSigningOptions();
   }
 }

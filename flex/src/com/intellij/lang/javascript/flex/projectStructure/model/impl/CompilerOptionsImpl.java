@@ -15,12 +15,14 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions {
 
   private final Map<String, String> myOptions = new THashMap<String, String>();
 
-  @Override@Nullable
+  @Override
+  @Nullable
   public String getOption(@NotNull String name) {
     return myOptions.get(name);
   }
 
-  @Override public Map<String, String> getAllOptions() {
+  @Override
+  public Map<String, String> getAllOptions() {
     return Collections.unmodifiableMap(myOptions);
   }
 
@@ -35,7 +37,6 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions {
     myOptions.putAll(newOptions);
   }
 
-  
   public CompilerOptionsImpl getCopy() {
     CompilerOptionsImpl copy = new CompilerOptionsImpl();
     applyTo(copy);

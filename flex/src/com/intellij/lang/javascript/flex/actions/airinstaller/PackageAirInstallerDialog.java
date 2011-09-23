@@ -166,10 +166,10 @@ public class PackageAirInstallerDialog extends DialogWrapper implements PanelWit
   private void initInstallerLocationComponent() {
     myInstallerLocationComponent.getComponent()
       .addBrowseFolderListener(null, null, myProject, new FileChooserDescriptor(false, true, false, false, false, false) {
-                                 public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
-                                   return super.isFileVisible(file, showHiddenFiles) && file.isDirectory();
-                                 }
-                               }, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
+        public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
+          return super.isFileVisible(file, showHiddenFiles) && file.isDirectory();
+        }
+      }, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
   }
 
   private void initDoNotSignCheckBox() {
@@ -355,6 +355,7 @@ public class PackageAirInstallerDialog extends DialogWrapper implements PanelWit
     };
 
     mySigningOptionsForm = new SigningOptionsForm(myProject, moduleComputable, sdkComputable, resizeHandler);
+    mySigningOptionsForm.setUseTempCertificateCheckBoxVisible(false); // todo make true
     mySigningOptionsForm.setProvisioningProfileApplicable(false);
   }
 
@@ -407,7 +408,7 @@ public class PackageAirInstallerDialog extends DialogWrapper implements PanelWit
         myAirDescriptorComponent.getComponent().getComboBox().setSelectedItem(parameters.AIR_DESCRIPTOR_PATH);
         myInstallerFileNameComponent.getComponent().setText(parameters.INSTALLER_FILE_NAME);
         myInstallerLocationComponent.getComponent().setText(parameters.INSTALLER_FILE_LOCATION);
-        myFilesToPackageForm.setFilesToPackage(AirInstallerParametersBase.cloneList(parameters.FILES_TO_PACKAGE));
+        myFilesToPackageForm.resetFrom(parameters.FILES_TO_PACKAGE);
 
         myDoNotSignCheckBox.setSelected(parameters.DO_NOT_SIGN);
         mySigningOptionsForm.setKeystorePath(parameters.KEYSTORE_PATH);
@@ -458,6 +459,5 @@ public class PackageAirInstallerDialog extends DialogWrapper implements PanelWit
     myInstallerLocationComponent.setAnchor(anchor);
     myFlexSdkComponent.setAnchor(anchor);
   }
-
 }
 

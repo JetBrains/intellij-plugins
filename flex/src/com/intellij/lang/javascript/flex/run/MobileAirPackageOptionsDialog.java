@@ -10,8 +10,6 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Computable;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 import static com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParametersBase.FilePathAndPathInPackage;
@@ -21,7 +19,6 @@ public class MobileAirPackageOptionsDialog extends DialogWrapper {
   private JPanel myMainPanel;
 
   private FilesToPackageForm myFilesToPackageForm;
-  private JCheckBox myUseTempCertificateCheckBox;
   private SigningOptionsForm mySigningOptionsForm;
 
   private final Project myProject;
@@ -36,17 +33,10 @@ public class MobileAirPackageOptionsDialog extends DialogWrapper {
     myProject = project;
     myModule = module;
     myRunTarget = runTarget;
-    myFilesToPackageForm.setFilesToPackage(filesToPackage);
+    myFilesToPackageForm.resetFrom(filesToPackage);
     myFilesToPackageForm.setPanelTitle("Assets to package");
     setTitle("Packaging Options");
 
-    myUseTempCertificateCheckBox.addActionListener(new ActionListener() {
-      public void actionPerformed(final ActionEvent e) {
-        mySigningOptionsForm.setEnabled(!myUseTempCertificateCheckBox.isSelected());
-      }
-    });
-
-    myUseTempCertificateCheckBox.setVisible(false);    // not supported yet
     mySigningOptionsForm.getMainPanel().setVisible(false);  // not supported yet
 
     init();

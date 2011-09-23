@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.flex.actions.ExternalTask;
 import com.intellij.lang.javascript.flex.actions.FilesToPackageForm;
 import com.intellij.lang.javascript.flex.actions.SigningOptionsForm;
 import com.intellij.lang.javascript.flex.actions.airdescriptor.CreateAirDescriptorAction;
-import com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParametersBase;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -423,6 +422,7 @@ public class PackageMobileAirApplicationDialog extends DialogWrapper implements 
     };
 
     mySigningOptionsForm = new SigningOptionsForm(myProject, moduleComputable, sdkComputable, resizeHandler);
+    mySigningOptionsForm.setUseTempCertificateCheckBoxVisible(false); // todo make true for Android
   }
 
   private boolean packageMobileApplication() {
@@ -478,7 +478,7 @@ public class PackageMobileAirApplicationDialog extends DialogWrapper implements 
       myAirDescriptorComponent.getComponent().getComboBox().setSelectedItem(parameters.AIR_DESCRIPTOR_PATH);
       myInstallerFileNameComponent.getComponent().setText(parameters.INSTALLER_FILE_NAME);
       myInstallerLocationComponent.getComponent().setText(parameters.INSTALLER_FILE_LOCATION);
-      myFilesToPackageForm.setFilesToPackage(AirInstallerParametersBase.cloneList(parameters.FILES_TO_PACKAGE));
+      myFilesToPackageForm.resetFrom(parameters.FILES_TO_PACKAGE);
 
       mySigningOptionsForm.setProvisioningProfilePath(parameters.PROVISIONING_PROFILE_PATH);
       mySigningOptionsForm.setKeystorePath(parameters.KEYSTORE_PATH);

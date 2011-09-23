@@ -4,7 +4,6 @@ import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
-import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
@@ -87,10 +86,10 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
                                         ? new AirDesktopPackagingConfigurable(module, configuration.getAirDesktopPackagingOptions())
                                         : null;
     myAndroidPackagingConfigurable = nature.isMobilePlatform() && nature.isApp()
-                                     ? new AndroidPackagingConfigurable(module.getProject(), configuration.getAndroidPackagingOptions())
+                                     ? new AndroidPackagingConfigurable(module, configuration.getAndroidPackagingOptions())
                                      : null;
     myIOSPackagingConfigurable = nature.isMobilePlatform() && nature.isApp()
-                                 ? new IOSPackagingConfigurable(module.getProject(), configuration.getIosPackagingOptions())
+                                 ? new IOSPackagingConfigurable(module, configuration.getIosPackagingOptions())
                                  : null;
 
     myNameField.getDocument().addDocumentListener(new DocumentAdapter() {

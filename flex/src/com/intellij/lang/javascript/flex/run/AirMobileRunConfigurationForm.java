@@ -178,8 +178,7 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
     myPackagingOptionsButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         final MobileAirPackageOptionsDialog dialog =
-          new MobileAirPackageOptionsDialog(myProject, myModulesComboboxWrapper.getSelectedModule(), getRunTarget(),
-                                            (AirInstallerParametersBase.cloneList(myFilesToPackage)));
+          new MobileAirPackageOptionsDialog(myProject, myModulesComboboxWrapper.getSelectedModule(), getRunTarget(), myFilesToPackage);
         dialog.show();
         if (dialog.isOK()) {
           final List<FilePathAndPathInPackage> newFilesToPackage = dialog.getFilesToPackage();

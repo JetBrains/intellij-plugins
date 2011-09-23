@@ -1,9 +1,12 @@
 package com.intellij.lang.javascript.flex.actions;
 
+import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParametersBase;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.IdeBorderFactory;
@@ -38,11 +41,11 @@ public class FilesToPackageForm {
   private enum Column {
     Path("Path to file or folder", String.class) {
       Object getValue(final FilePathAndPathInPackage row) {
-        return row.FILE_PATH;
+        return FileUtil.toSystemDependentName(row.FILE_PATH);
       }
 
       void setValue(final List<FilePathAndPathInPackage> myFilesToPackage, final int row, final Object value) {
-        myFilesToPackage.get(row).FILE_PATH = (String)value;
+        myFilesToPackage.get(row).FILE_PATH = FileUtil.toSystemIndependentName((String)value);
       }
     },
 
@@ -154,7 +157,7 @@ public class FilesToPackageForm {
       public void actionPerformed(ActionEvent e) {
         VirtualFile[] files = FileChooser.chooseFiles(myProject, new FileChooserDescriptor(true, true, false, true, false, true));
         for (final VirtualFile file : files) {
-          myFilesToPackage.add(new FilePathAndPathInPackage(file.getPresentableUrl(), file.getName()));
+          myFilesToPackage.add(new FilePathAndPathInPackage(file.getPath(), file.getName()));
           fireDataChanged();
         }
       }
@@ -180,7 +183,7 @@ public class FilesToPackageForm {
   }
 
   public void setPanelTitle(final String title) {
-    myMainPanel.setBorder(IdeBorderFactory.createTitledBorder(title, false,false, true));
+    myMainPanel.setBorder(IdeBorderFactory.createTitledBorder(title, false, false, true));
   }
 
   public void stopEditing() {
@@ -195,8 +198,17 @@ public class FilesToPackageForm {
     return myFilesToPackage;
   }
 
-  public void setFilesToPackage(final List<FilePathAndPathInPackage> filePathAndPathInPackages) {
-    myFilesToPackage = filePathAndPathInPackages;
+  public void resetFrom(final List<FilePathAndPathInPackage> filePathAndPathInPackages) {
+    myFilesToPackage = AirInstallerParametersBase.cloneList(filePathAndPathInPackages);
     fireDataChanged();
+  }
+
+  public boolean isModified(final List<FilePathAndPathInPackage> filesToPackage) {
+    return FlexUtils.equalLists(filesToPackage, myFilesToPackage);
+  }
+
+  public void applyTo(final List<FilePathAndPathInPackage> filesToPackage) {
+    filesToPackage.clear();
+    filesToPackage.addAll(AirInstallerParametersBase.cloneList(myFilesToPackage));
   }
 }
