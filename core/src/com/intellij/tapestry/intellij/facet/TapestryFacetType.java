@@ -10,7 +10,7 @@ import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.tapestry.core.TapestryConstants;
@@ -85,7 +85,7 @@ public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetCon
       for (VirtualFile root : model.getSourceRoots()) {
         VirtualFile dir = findDirectoryByName(root, new HashSet<String>(Arrays.asList(TapestryConstants.ELEMENT_PACKAGES)), 2);
         if (dir != null) {
-          String relativePath = VfsUtil.getRelativePath(dir.getParent(), root, '.');
+          String relativePath = VfsUtilCore.getRelativePath(dir.getParent(), root, '.');
           configuration.setApplicationPackage(relativePath);
           break;
         }
