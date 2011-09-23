@@ -19,21 +19,13 @@ import com.intellij.psi.PsiClass;
 import com.intellij.struts2.dom.struts.strutspackage.GlobalResult;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
-import com.intellij.struts2.structure.LocationPresentation;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Yann C&eacute;bron
  */
 @SuppressWarnings({"AbstractClassNeverImplemented"})
-public abstract class GlobalResultImpl implements GlobalResult, LocationPresentation {
-
-  @Nullable
-  @NonNls
-  public String getLocation() {
-    return getStringValue();
-  }
+public abstract class GlobalResultImpl implements GlobalResult {
 
   @Nullable
   public PsiClass getParamsClass() {

@@ -19,26 +19,13 @@ import com.intellij.psi.PsiClass;
 import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
-import com.intellij.struts2.structure.LocationPresentation;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Yann C&eacute;bron
  */
 @SuppressWarnings({"AbstractClassNeverImplemented"})
-public abstract class ResultImpl implements Result, LocationPresentation {
-
-  /**
-   * Show result location if path is resolvable.
-   *
-   * @return Result location (e.g. /somePath/myJsp.jsp).
-   */
-  @Nullable
-  @NonNls
-  public String getLocation() {
-    return getStringValue();
-  }
+public abstract class ResultImpl implements Result {
 
   @Nullable
   public PsiClass getParamsClass() {

@@ -15,23 +15,23 @@
 
 package com.intellij.struts2.structure;
 
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.psi.ElementDescriptionLocation;
+import com.intellij.psi.ElementDescriptionProvider;
 
 /**
- * Provide additional location information (e.g. path to resource) for display use.
+ * Element description for structure tree.
  *
  * @author Yann C&eacute;bron
  */
-public interface LocationPresentation {
+public class StrutsTreeDescriptionLocation extends ElementDescriptionLocation {
 
-  /**
-   * Gets the location string to display "as is".
-   *
-   * @return Location or <code>null</code> if no information available.
-   */
-  @Nullable
-  @NonNls
-  String getLocation();
+  public static final StrutsTreeDescriptionLocation INSTANCE = new StrutsTreeDescriptionLocation();
+
+  private static final ElementDescriptionProvider PROVIDER = new StrutsTreeDescriptionProvider();
+
+  @Override
+  public ElementDescriptionProvider getDefaultProvider() {
+    return PROVIDER;
+  }
 
 }
