@@ -231,13 +231,13 @@ public class FlexProjectConfigurationEditor implements Disposable {
       ModifiableRootModel modifiableModel = myProvider.getModuleModifiableModel(module);
 
       // ---------------- SDK entries ----------------------
-      Map<Library, Boolean> sdksToAdd = new HashMap<Library, Boolean>(); // Library -> add_library_entry_flag
+      Map<LibraryEx, Boolean> sdksToAdd = new HashMap<LibraryEx, Boolean>(); // Library -> add_library_entry_flag
       for (Editor editor : myModule2Editors.get(module)) {
         SdkEntry sdkEntry = editor.getDependencies().getSdkEntry();
         if (sdkEntry != null) {
-          Library sdk = sdkEntry.findLibrary();
-          if (sdk != null) {
-            sdksToAdd.put(sdk, true);
+          LibraryEx sdkLibrary = sdkEntry.findLibrary();
+          if (sdkLibrary != null) {
+            sdksToAdd.put(sdkLibrary, true);
           }
         }
       }
@@ -246,11 +246,11 @@ public class FlexProjectConfigurationEditor implements Disposable {
       for (OrderEntry orderEntry : modifiableModel.getOrderEntries()) {
         if (orderEntry instanceof LibraryOrderEntry) {
           if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel())) {
-            Library library = ((LibraryOrderEntry)orderEntry).getLibrary();
-            if (sdksToAdd.containsKey(library)) {
-              sdksToAdd.put(library, false);
+            LibraryEx sdkLibrary = (LibraryEx)((LibraryOrderEntry)orderEntry).getLibrary();
+            if (sdksToAdd.containsKey(sdkLibrary)) {
+              sdksToAdd.put(sdkLibrary, false);
             }
-            else if (library != null && ((LibraryEx)library).getType() instanceof FlexSdkLibraryType) {
+            else if (sdkLibrary != null && sdkLibrary.getType() instanceof FlexSdkLibraryType) {
               sdkEntriesToRemove.add(orderEntry);
             }
           }
@@ -261,8 +261,8 @@ public class FlexProjectConfigurationEditor implements Disposable {
         modifiableModel.removeOrderEntry(e);
       }
 
-      for (Library library : sdksToAdd.keySet()) {
-        if (sdksToAdd.get(library)) {
+      for (LibraryEx library : sdksToAdd.keySet()) {
+        if (!library.isDisposed() && sdksToAdd.get(library) && myProvider.getGlobalLibrariesModifiableModel().getLibraryByName(library.getName()) != null) {
           modifiableModel.addLibraryEntry(library);
         }
       }

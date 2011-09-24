@@ -201,8 +201,8 @@ public class FlexUtils {
         FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
         SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
         if (sdkEntry != null) {
-          LibraryEx sdk = sdkEntry.findLibrary();
-          return new FlexSdkWrapper(sdk);
+          LibraryEx sdkLibrary = sdkEntry.findLibrary();
+          return sdkLibrary != null ? new FlexSdkWrapper(sdkLibrary) : null;
         }
         else {
           return null;
@@ -712,9 +712,10 @@ public class FlexUtils {
   }
 
   private static class FlexSdkWrapper extends UserDataHolderBase implements Sdk {
+    @NotNull
     private final LibraryEx myLibrary;
 
-    public FlexSdkWrapper(LibraryEx library) {
+    public FlexSdkWrapper(@NotNull LibraryEx library) {
       myLibrary = library;
     }
 
