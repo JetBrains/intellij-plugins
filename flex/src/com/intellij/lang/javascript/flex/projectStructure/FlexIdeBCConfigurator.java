@@ -1,32 +1,32 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.projectStructure.ui.AddBuildConfigurationDialog;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
-import com.intellij.lang.javascript.flex.projectStructure.ui.FlexSdksModifiableModel;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.impl.ModuleManagerImpl;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
+import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.NamedConfigurable;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Pair;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.Function;
@@ -39,7 +39,7 @@ import java.util.*;
 
 public class FlexIdeBCConfigurator {
 
-  private static Logger LOG = Logger.getInstance(FlexIdeBCConfigurator.class.getName());
+  private static final Logger LOG = Logger.getInstance(FlexIdeBCConfigurator.class.getName());
 
   public interface Listener extends EventListener {
     void moduleRemoved(Module module);
@@ -47,18 +47,16 @@ public class FlexIdeBCConfigurator {
     void buildConfigurationRemoved(FlexIdeBCConfigurable configurable);
   }
 
-  // we can have only one Project Structure configuration dialog at a time, so it's OK to hold state for one project
-
-  private BidirectionalMap<ModifiableFlexIdeBuildConfiguration, NamedConfigurable<ModifiableFlexIdeBuildConfiguration>> myConfigurablesMap =
+  private final BidirectionalMap<ModifiableFlexIdeBuildConfiguration, NamedConfigurable<ModifiableFlexIdeBuildConfiguration>>
+    myConfigurablesMap =
     new BidirectionalMap<ModifiableFlexIdeBuildConfiguration, NamedConfigurable<ModifiableFlexIdeBuildConfiguration>>();
 
   private final EventDispatcher<Listener> myEventDispatcher = EventDispatcher.create(Listener.class);
 
+  // we can have only one Project Structure configuration dialog at a time, so it's OK to hold state for one project
   private final LazyInitializer<Project> myModifiableModelInitializer = new LazyInitializer<Project>() {
     @Override
     protected void initialize(final Project project) {
-      mySdksModel.reset(project);
-
       LOG.assertTrue(myConfigEditor == null);
       final ModulesConfigurator configurator = ModuleStructureConfigurable.getInstance(project).getContext().getModulesConfigurator();
       myConfigEditor = new FlexProjectConfigurationEditor(project, new FlexProjectConfigurationEditor.ProjectModifiableModelProvider() {
@@ -80,7 +78,13 @@ public class FlexIdeBCConfigurator {
 
         @Override
         public void commitModifiableModels() throws ConfigurationException {
-          ModuleStructureConfigurable.getInstance(project).getContext().getModulesConfigurator().apply();
+          configurator.apply();
+        }
+
+        @Override
+        public LibraryTableBase.ModifiableModelEx getGlobalLibrariesModifiableModel() {
+          return (LibraryTableBase.ModifiableModelEx)ProjectStructureConfigurable.getInstance(project).getContext()
+            .getModifiableLibraryTable(ApplicationLibraryTable.getApplicationTable());
         }
       });
     }
@@ -92,7 +96,6 @@ public class FlexIdeBCConfigurator {
     }
   };
 
-  private final FlexSdksModifiableModel mySdksModel = new FlexSdksModifiableModel();
   private FlexProjectConfigurationEditor myConfigEditor;
 
   public void addListener(Listener listener, Disposable parentDisposable) {
@@ -120,7 +123,7 @@ public class FlexIdeBCConfigurator {
       NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable = myConfigurablesMap.get(configuration);
       if (configurable == null) {
         configurable =
-          new FlexIdeBCConfigurable(module, configuration, mySdksModel, treeNodeNameUpdater, myConfigEditor).wrapInTabsIfNeeded();
+          new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, myConfigEditor).wrapInTabsIfNeeded();
         myConfigurablesMap.put(configuration, configurable);
       }
       configurables.add(configurable);
@@ -143,7 +146,7 @@ public class FlexIdeBCConfigurator {
   }
 
   public boolean isModified() {
-    if (myConfigEditor.isModified() || mySdksModel.isModified()) return true;
+    if (myConfigEditor.isModified()) return true;
 
     for (final NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable : myConfigurablesMap.values()) {
       if (configurable.isModified()) {
@@ -164,15 +167,10 @@ public class FlexIdeBCConfigurator {
       myConfigEditor.checkCanCommit();
       myConfigEditor.commit();
     }
-
-    if (mySdksModel.isModified()) {
-      mySdksModel.apply();
-    }
   }
 
   public void dispose() {
     // configurables are disposed by MasterDetailsComponent
-    Disposer.dispose(myConfigEditor);
     myModifiableModelInitializer.dispose();
     myConfigurablesMap.clear();
   }
@@ -209,7 +207,7 @@ public class FlexIdeBCConfigurator {
   @Nullable
   private SdkEntry findRecentSdk() {
     // TODO assign the same SDK as neighbour configurations have
-    Library[] libraries = mySdksModel.getLibraries();
+    Library[] libraries = myConfigEditor.getSdksLibraries();
     return libraries.length > 0
            ? Factory.createSdkEntry(FlexProjectRootsUtil.getSdkLibraryId(libraries[0]), FlexSdk.getHomePath(libraries[0])) : null;
   }
@@ -251,7 +249,7 @@ public class FlexIdeBCConfigurator {
 
   private void createConfigurableNode(ModifiableFlexIdeBuildConfiguration configuration, Module module, Runnable treeNodeNameUpdater) {
     final FlexIdeBCConfigurable configurable =
-      new FlexIdeBCConfigurable(module, configuration, mySdksModel, treeNodeNameUpdater, myConfigEditor);
+      new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, myConfigEditor);
 
     NamedConfigurable<ModifiableFlexIdeBuildConfiguration> wrapped = configurable.wrapInTabsIfNeeded();
     myConfigurablesMap.put(configuration, wrapped);

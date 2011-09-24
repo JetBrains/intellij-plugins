@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
@@ -34,8 +35,6 @@ import java.awt.event.ItemListener;
  */
 public class FlexSdkPanel implements Disposable {
 
-  private final FlexSdksModifiableModel myModifiableModel;
-
   private ComboboxWithBrowseButton myCombo;
   private JButton myEditButton;
   private JLabel myInfoLabel;
@@ -44,14 +43,15 @@ public class FlexSdkPanel implements Disposable {
 
   private final EventDispatcher<ChangeListener> myEventDispatcher;
   private boolean myMute;
+  private final FlexProjectConfigurationEditor myConfigEditor;
 
-  public FlexSdkPanel(FlexSdksModifiableModel modifiableModel) {
-    myModifiableModel = modifiableModel;
+  public FlexSdkPanel(FlexProjectConfigurationEditor configEditor) {
+    myConfigEditor = configEditor;
     myEventDispatcher = EventDispatcher.create(ChangeListener.class);
     mySdkLabel.setLabelFor(myCombo.getComboBox());
     myInfoLabel.setIcon(UIUtil.getBalloonWarningIcon());
 
-    myModifiableModel.addSdkListListener(new ChangeListener() {
+    myConfigEditor.addSdkListListener(new ChangeListener() {
       @Override
       public void stateChanged(ChangeEvent e) {
         rebuildComboModel();
@@ -64,7 +64,7 @@ public class FlexSdkPanel implements Disposable {
         SdkConfigurationUtil.selectSdkHome(FlexIdeUtils.getSdkType(), new Consumer<String>() {
           @Override
           public void consume(String homePath) {
-            FlexSdk sdk = myModifiableModel.findOrCreateSdk(homePath);// will update the model through listener
+            FlexSdk sdk = myConfigEditor.findOrCreateSdk(homePath);// will update the model through listener
             setCurrentSdk(Factory.createSdkEntry(sdk.getLibraryId(), sdk.getHomePath()));
             myEventDispatcher.getMulticaster().stateChanged(new ChangeEvent(FlexSdkPanel.this));
           }
@@ -76,7 +76,7 @@ public class FlexSdkPanel implements Disposable {
       @Override
       public void itemStateChanged(ItemEvent e) {
         Object selectedItem = myCombo.getComboBox().getSelectedItem();
-        myModifiableModel.setUsed(FlexSdkPanel.this, selectedItem instanceof Library ? (Library)selectedItem : null);
+        myConfigEditor.setSdkLibraryUsed(FlexSdkPanel.this, selectedItem instanceof Library ? (Library)selectedItem : null);
         if (myMute) {
           return;
         }
@@ -133,7 +133,7 @@ public class FlexSdkPanel implements Disposable {
     myMute = true;
     try {
       Object selection = myCombo.getComboBox().getSelectedItem();
-      Library[] libraries = myModifiableModel.getLibraries();
+      Library[] libraries = myConfigEditor.getSdksLibraries();
       DefaultComboBoxModel model = new DefaultComboBoxModel(libraries);
       myCombo.getComboBox().setModel(model);
       if (selection instanceof Pair) {
@@ -158,7 +158,7 @@ public class FlexSdkPanel implements Disposable {
     }
     if (matchingLibrary != null) {
       comboItemChanged();
-      myModifiableModel.setUsed(this, matchingLibrary);
+      myConfigEditor.setSdkLibraryUsed(this, matchingLibrary);
     }
   }
 
@@ -169,8 +169,8 @@ public class FlexSdkPanel implements Disposable {
     }
 
     Library library = currentSdk.getLibrary();
-    LibraryEditor libraryEditor = myModifiableModel.getLibraryEditor(library);
-    Project project = myModifiableModel.getProject();
+    LibraryEditor libraryEditor = myConfigEditor.getSdkLibraryEditor(library);
+    Project project = myConfigEditor.getProject();
     new EditFlexSdkDialog(project, libraryEditor, myContentPane).show();
   }
 
@@ -182,7 +182,7 @@ public class FlexSdkPanel implements Disposable {
     myMute = true;
     try {
       if (sdkEntry != null) {
-        FlexSdk sdk = myModifiableModel.findSdk(sdkEntry.getLibraryId());
+        FlexSdk sdk = myConfigEditor.findSdk(sdkEntry.getLibraryId());
         if (sdk != null) {
           myCombo.getComboBox().setSelectedItem(sdk.getLibrary());
         }
@@ -232,7 +232,7 @@ public class FlexSdkPanel implements Disposable {
 
   @Override
   public void dispose() {
-    myModifiableModel.setUsed(this, null);
+    myConfigEditor.setSdkLibraryUsed(this, null);
   }
 
   public void reset() {

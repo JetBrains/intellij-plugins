@@ -3,16 +3,17 @@ package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdkLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
+import com.intellij.lang.javascript.flex.projectStructure.ui.FlexSdkPanel;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
@@ -26,16 +27,16 @@ import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
 import com.intellij.openapi.util.Condition;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.*;
 import com.intellij.util.containers.HashMap;
-import com.intellij.util.containers.HashSet;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.event.ChangeListener;
 import java.util.*;
 
 /**
@@ -43,7 +44,7 @@ import java.util.*;
  */
 public class FlexProjectConfigurationEditor implements Disposable {
 
-  private static Logger LOG = Logger.getInstance(FlexProjectConfigurationEditor.class.getName());
+  private static final Logger LOG = Logger.getInstance(FlexProjectConfigurationEditor.class.getName());
 
   private static class Editor extends FlexIdeBuildConfigurationImpl {
     private final Module myModule;
@@ -73,6 +74,8 @@ public class FlexProjectConfigurationEditor implements Disposable {
     void addListener(FlexIdeBCConfigurator.Listener listener, Disposable parentDisposable);
 
     void commitModifiableModels() throws ConfigurationException;
+
+    LibraryTableBase.ModifiableModelEx getGlobalLibrariesModifiableModel();
   }
 
   private boolean myDisposed;
@@ -80,10 +83,12 @@ public class FlexProjectConfigurationEditor implements Disposable {
   private final Project myProject;
 
   private final Map<Module, List<Editor>> myModule2Editors = new HashMap<Module, List<Editor>>();
+  private final FlexSdksEditor mySdksEditor;
 
   public FlexProjectConfigurationEditor(Project project, ProjectModifiableModelProvider provider) {
     myProject = project;
     myProvider = provider;
+    mySdksEditor = new FlexSdksEditor(project, myProvider.getGlobalLibrariesModifiableModel());
 
     provider.addListener(new FlexIdeBCConfigurator.Listener() {
       @Override
@@ -326,6 +331,10 @@ public class FlexProjectConfigurationEditor implements Disposable {
           FlexIdeBuildConfiguration[] current = ContainerUtil.map2Array(myModule2Editors.get(module), FlexIdeBuildConfiguration.class, f);
           FlexBuildConfigurationManager.getInstance(module).setBuildConfigurations(current);
         }
+
+        if (mySdksEditor.isModified()) {
+          mySdksEditor.commit();
+        }
       }
     });
   }
@@ -358,6 +367,10 @@ public class FlexProjectConfigurationEditor implements Disposable {
           return true;
         }
       }
+    }
+
+    if (mySdksEditor.isModified()) {
+      return true;
     }
     return false;
   }
@@ -508,6 +521,31 @@ public class FlexProjectConfigurationEditor implements Disposable {
     return (LibraryTableBase.ModifiableModelEx)modifiableModel.getModuleLibraryTable().getModifiableModel();
   }
 
+  public Library[] getSdksLibraries() {
+    return mySdksEditor.getLibraries();
+  }
+
+  @Nullable
+  public FlexSdk findSdk(String libraryId) {
+    return mySdksEditor.findSdk(libraryId);
+  }
+
+  public void addSdkListListener(ChangeListener changeListener, Disposable parentDisposable) {
+    mySdksEditor.addSdkListListener(changeListener, parentDisposable);
+  }
+
+  @NotNull
+  public FlexSdk findOrCreateSdk(@NotNull String homePath) {
+    return mySdksEditor.findOrCreateSdk(homePath);
+  }
+
+  public void setSdkLibraryUsed(Object user, @Nullable Library sdk) {
+    mySdksEditor.setUsed(user, sdk);
+  }
+
+  public LibraryEditor getSdkLibraryEditor(Library library) {
+    return mySdksEditor.getLibraryEditor(library);
+  }
 }
 
 

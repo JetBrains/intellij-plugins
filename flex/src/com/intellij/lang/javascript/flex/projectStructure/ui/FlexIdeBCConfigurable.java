@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
@@ -11,7 +10,6 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigura
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
@@ -72,7 +70,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
   public FlexIdeBCConfigurable(final Module module,
                                final ModifiableFlexIdeBuildConfiguration configuration,
-                               final FlexSdksModifiableModel sdksModel,
                                final Runnable treeNodeNameUpdater,
                                @NotNull FlexProjectConfigurationEditor configEditor) {
     super(false, treeNodeNameUpdater);
@@ -83,7 +80,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
     final BuildConfigurationNature nature = configuration.getNature();
 
-    myDependenciesConfigurable = new DependenciesConfigurable(configuration, module.getProject(), sdksModel, configEditor);
+    myDependenciesConfigurable = new DependenciesConfigurable(configuration, module.getProject(), configEditor);
     myCompilerOptionsConfigurable = new CompilerOptionsConfigurable(module, configuration.getCompilerOptions());
     myAirDesktopPackagingConfigurable = nature.isDesktopPlatform() && nature.isApp()
                                         ? new AirDesktopPackagingConfigurable(module, configuration.getAirDesktopPackagingOptions())

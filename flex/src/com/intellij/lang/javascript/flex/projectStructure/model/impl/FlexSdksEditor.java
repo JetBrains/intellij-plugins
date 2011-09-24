@@ -1,20 +1,18 @@
-package com.intellij.lang.javascript.flex.projectStructure.ui;
+package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdkLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdkProperties;
-import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
+import com.intellij.lang.javascript.flex.projectStructure.ui.FlexSdkModificator;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryTable;
-import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
-import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesModifiableModel;
 import com.intellij.openapi.util.Condition;
@@ -32,21 +30,18 @@ import java.util.*;
 /**
  * User: ksafonov
  */
-public class FlexSdksModifiableModel {
+class FlexSdksEditor {
 
-  private EventDispatcher<ChangeListener> mySdkListDispatcher = EventDispatcher.create(ChangeListener.class);
+  private final EventDispatcher<ChangeListener> mySdkListDispatcher = EventDispatcher.create(ChangeListener.class);
 
   private final Collection<Library> myLibrariesExistedBefore = new HashSet<Library>();
   private final Map<Object, Library> myUsedLibraries = new HashMap<Object, Library>();
-  private LibraryTableBase.ModifiableModelEx myModifiableModel;
-  private Project myProject;
+  private final LibraryTableBase.ModifiableModelEx myModifiableModel;
+  private final Project myProject;
 
-  public void reset(Project project) {
+  public FlexSdksEditor(Project project, LibraryTableBase.ModifiableModelEx modifiableModel) {
     myProject = project;
-    LibraryTable globalLibraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable();
-    myModifiableModel =
-      (LibraryTableBase.ModifiableModelEx)ProjectStructureConfigurable.getInstance(project).getContext()
-        .getModifiableLibraryTable(globalLibraryTable);
+    myModifiableModel = modifiableModel;
 
     myUsedLibraries.clear();
     myLibrariesExistedBefore.clear();
@@ -126,7 +121,7 @@ public class FlexSdksModifiableModel {
     }
   }
 
-  public void apply() {
+  public void commit() {
     Collection<Library> unusedLibraries = ContainerUtil.filter(myModifiableModel.getLibraries(), new Condition<Library>() {
       @Override
       public boolean value(Library library) {
@@ -148,8 +143,7 @@ public class FlexSdksModifiableModel {
       }
     }));
     currentLibraries.addAll(myLibrariesExistedBefore);
-    LibraryTable globalLibraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable();
-    Set<Library> originalLibraries = new HashSet<Library>(Arrays.asList(globalLibraryTable.getLibraries()));
+    Set<Library> originalLibraries = new HashSet<Library>(Arrays.asList(ApplicationLibraryTable.getApplicationTable().getLibraries()));
     return !currentLibraries.equals(originalLibraries);
   }
 

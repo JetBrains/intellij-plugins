@@ -4,10 +4,8 @@ import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableBuildConfigurationEntry;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableDependencyEntry;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -17,8 +15,10 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
@@ -29,10 +29,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * User: ksafonov
@@ -94,6 +91,68 @@ public class FlexProjectConfigTest extends ModuleTestCase {
     });
     assertFalse(doesDepend(myModule, module2));
     assertFalse(doesDepend(module2, myModule));
+
+    final Module module3 = createModule("module3");
+    final Module module4 = createModule("module4");
+    modifyConfig(new Consumer<FlexProjectConfigurationEditor>() {
+      @Override
+      public void consume(FlexProjectConfigurationEditor editor) {
+        ModifiableFlexIdeBuildConfiguration m1bc1 = editor.getConfigurations(myModule)[0];
+        ModifiableFlexIdeBuildConfiguration m1bc2 = createConfiguration(editor, myModule);
+        ModifiableFlexIdeBuildConfiguration m1bc3 = createConfiguration(editor, myModule);
+        ModifiableFlexIdeBuildConfiguration m1bc4 = createConfiguration(editor, myModule);
+
+        ModifiableFlexIdeBuildConfiguration m2bc1 = editor.getConfigurations(module2)[0];
+        ModifiableFlexIdeBuildConfiguration m3bc1 = editor.getConfigurations(module3)[0];
+        ModifiableFlexIdeBuildConfiguration m2bc2 = createConfiguration(editor, module2);
+
+        ModifiableBuildConfigurationEntry e1 = editor.createBcEntry(m1bc1.getDependencies(), m2bc1);
+        editor.setEntries(m1bc1.getDependencies(), Collections.singletonList(e1));
+
+        ModifiableBuildConfigurationEntry e2 = editor.createBcEntry(m1bc2.getDependencies(), m2bc2);
+        ModifiableBuildConfigurationEntry e3 = editor.createBcEntry(m1bc2.getDependencies(), m3bc1);
+        editor.setEntries(m1bc1.getDependencies(), Arrays.asList(e2, e3));
+      }
+    });
+    assertTrue(doesDepend(myModule, module2));
+    assertTrue(doesDepend(myModule, module3));
+    assertFalse(doesDepend(myModule, module4));
+  }
+
+  public void testSdkDependency() throws ConfigurationException {
+    ProjectLibraryTable.getInstance(myProject).createLibrary();
+    modifyConfig(new Consumer<FlexProjectConfigurationEditor>() {
+      @Override
+      public void consume(FlexProjectConfigurationEditor editor) {
+        ModifiableFlexIdeBuildConfiguration c1 = editor.getConfigurations(myModule)[0];
+        //SdkEntry sdk = Factory.createSdkEntry();
+        //c1.getDependencies().setSdkEntry(sdk);
+      }
+    });
+  }
+
+
+  private static ModifiableFlexIdeBuildConfiguration createConfiguration(FlexProjectConfigurationEditor editor, Module module) {
+    int i = 1;
+    String name = "Config";
+    while (true) {
+      boolean found = false;
+      for (ModifiableFlexIdeBuildConfiguration configuration : editor.getConfigurations(module)) {
+        if (configuration.getName().equals(name = "Config " + String.valueOf(i))) {
+          found = true;
+          break;
+        }
+      }
+      if (found) {
+        i++;
+      }
+      else {
+        break;
+      }
+    }
+    ModifiableFlexIdeBuildConfiguration c = editor.createConfiguration(module);
+    c.setName(name);
+    return c;
   }
 
   private void modifyConfig(Consumer<FlexProjectConfigurationEditor> modificator) throws ConfigurationException {
@@ -192,6 +251,11 @@ public class FlexProjectConfigTest extends ModuleTestCase {
             }
           }
         });
+      }
+
+      @Override
+      public LibraryTableBase.ModifiableModelEx getGlobalLibrariesModifiableModel() {
+        return (LibraryTableBase.ModifiableModelEx)ApplicationLibraryTable.getApplicationTable().getModifiableModel();
       }
     });
   }

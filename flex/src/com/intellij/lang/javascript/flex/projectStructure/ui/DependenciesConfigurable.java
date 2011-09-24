@@ -112,7 +112,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   private final AnActionButton myEditAction;
   private final AnActionButton myRemoveButton;
   private final BuildConfigurationNature myNature;
-  private final FlexSdksModifiableModel mySdksModel;
 
   private final FlexProjectConfigurationEditor myConfigEditor;
 
@@ -423,9 +422,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
   public DependenciesConfigurable(final ModifiableFlexIdeBuildConfiguration bc,
                                   Project project,
-                                  FlexSdksModifiableModel sdksModel,
                                   @NotNull FlexProjectConfigurationEditor configEditor) {
-    mySdksModel = sdksModel;
     myConfigEditor = configEditor;
     myDependencies = bc.getDependencies();
     myProject = project;
@@ -931,7 +928,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     root.removeAllChildren();
 
     if (sdkEntry != null) {
-      FlexSdk flexSdk = mySdksModel.findSdk(sdkEntry.getLibraryId());
+      FlexSdk flexSdk = myConfigEditor.findSdk(sdkEntry.getLibraryId());
       if (flexSdk != null) {
         DefaultMutableTreeNode sdkNode = new DefaultMutableTreeNode(new SdkItem(flexSdk), true);
         myTable.getRoot().insert(sdkNode, 0);
@@ -1075,7 +1072,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   private void createUIComponents() {
-    mySdkPanel = new FlexSdkPanel(mySdksModel);
+    mySdkPanel = new FlexSdkPanel(myConfigEditor);
   }
 
   private void initPopupActions() {
