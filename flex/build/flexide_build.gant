@@ -76,13 +76,15 @@ private List platformImplementationModules() {
           "execution-impl",
           "dom-impl",
           "idea-ui",
-          "jsp-spi"
+          "jsp-spi",
+          "java-psi-impl"
   ]
 }
 
 private List<String> platformApiModules() {
   return ["core-api", "platform-api", "lvcs-api", "lang-api", "vcs-api", "usageView", "xdebugger-api", "xml-openapi", "dom-openapi", "webide-api",
-          "openapi", "testFramework-java", "debugger-openapi", "compiler-openapi", "execution-openapi", "jsp-openapi", "jsp-base-openapi"]
+          "openapi", "testFramework-java", "debugger-openapi", "compiler-openapi", "execution-openapi", "jsp-openapi", "jsp-base-openapi",
+          "java-psi-api"]
 }
 
 class Paths {
