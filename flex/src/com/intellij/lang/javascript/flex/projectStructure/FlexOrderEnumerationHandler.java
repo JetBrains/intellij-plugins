@@ -27,7 +27,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
   public static class FactoryImpl extends Factory {
     @Override
     public boolean isApplicable(@NotNull Project project) {
-      return FlexIdeUtils.isNewUI();
+      return true;
     }
 
     @Override

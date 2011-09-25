@@ -59,11 +59,6 @@ public class ChooseActiveBuildConfigurationAction extends ComboBoxAction impleme
 
   @Override
   public void update(AnActionEvent e) {
-    if (!FlexIdeUtils.isNewUI()) {
-      e.getPresentation().setVisible(false);
-      return;
-    }
-
     super.update(e);
     Module module = findModule(e.getDataContext());
     if (module == null) {

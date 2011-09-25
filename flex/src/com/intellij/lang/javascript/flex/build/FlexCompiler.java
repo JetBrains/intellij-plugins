@@ -60,7 +60,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
     saveProject(context.getProject());
     final List<ProcessingItem> itemList = new ArrayList<ProcessingItem>();
 
-    if (PlatformUtils.isFlexIde() && FlexIdeUtils.isNewUI()) {
+    if (PlatformUtils.isFlexIde()) {
       try {
         for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig : getModulesAndConfigsToCompile(context.getCompileScope())) {
           itemList.add(new MyProcessingItem(moduleAndConfig.first, moduleAndConfig.second));
@@ -127,7 +127,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
   }
 
   public ProcessingItem[] process(final CompileContext context, final ProcessingItem[] items) {
-    if (PlatformUtils.isFlexIde() && FlexIdeUtils.isNewUI()) {
+    if (PlatformUtils.isFlexIde()) {
       return processFlexIdeConfigs(context, items);
     }
 
@@ -341,7 +341,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
   }
 
   public boolean validateConfiguration(final CompileScope scope) {
-    if (PlatformUtils.isFlexIde() && FlexIdeUtils.isNewUI()) {
+    if (PlatformUtils.isFlexIde()) {
       try {
         // todo add quick fixes to ConfigurationException
         final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndConfigsToCompile = getModulesAndConfigsToCompile(scope);

@@ -44,7 +44,7 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
   public boolean addModuleNodeChildren(final Module module,
                                        final MasterDetailsComponent.MyNode moduleNode,
                                        final Runnable treeNodeNameUpdater) {
-    if (!(ModuleType.get(module) instanceof FlexModuleType) || !FlexIdeUtils.isNewUI()) {
+    if (!(ModuleType.get(module) instanceof FlexModuleType)) {
       return false;
     }
 
@@ -63,7 +63,6 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
   }
 
   public boolean isModified() {
-    if (!FlexIdeUtils.isNewUI()) return false;
     return myConfigurator.isModified();
   }
 

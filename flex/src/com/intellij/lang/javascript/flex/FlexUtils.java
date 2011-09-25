@@ -53,6 +53,7 @@ import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.PlatformUtils;
 import com.intellij.util.Processor;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.xml.NanoXmlUtil;
@@ -196,7 +197,7 @@ public class FlexUtils {
 
   @Nullable
   public static Sdk getFlexSdkForFlexModuleOrItsFlexFacets(final @NotNull Module module) {
-    if (FlexIdeUtils.isNewUI()) {
+    if (PlatformUtils.isFlexIde()) {
       if (ModuleType.get(module) instanceof FlexModuleType) {
         FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
         SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();

@@ -25,7 +25,7 @@ public class FlexModuleConfigurationEditorProvider implements ModuleConfiguratio
     if (ModuleType.get(module) != FlexModuleType.getInstance()) return ModuleConfigurationEditor.EMPTY;
 
     List<ModuleConfigurationEditor> result = new ArrayList<ModuleConfigurationEditor>();
-    if (PlatformUtils.isFlexIde() && FlexIdeUtils.isNewUI()) {
+    if (PlatformUtils.isFlexIde()) {
       result.add(new FlexModuleEditor(state));
     }
     else {
