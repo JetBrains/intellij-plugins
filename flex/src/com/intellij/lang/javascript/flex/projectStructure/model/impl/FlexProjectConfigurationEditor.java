@@ -5,12 +5,14 @@ import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdkLibraryType;
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdkProperties;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
-import com.intellij.lang.javascript.flex.projectStructure.ui.FlexSdkPanel;
+import com.intellij.lang.javascript.flex.projectStructure.ui.FlexSdkModificator;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -25,13 +27,15 @@ import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesModifiableModel;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 import com.intellij.util.Processor;
-import com.intellij.util.containers.*;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,6 +49,24 @@ import java.util.*;
 public class FlexProjectConfigurationEditor implements Disposable {
 
   private static final Logger LOG = Logger.getInstance(FlexProjectConfigurationEditor.class.getName());
+
+  public LibraryEx createFlexSdkLibrary(String homePath) {
+    final VirtualFile sdkHome = LocalFileSystem.getInstance().findFileByPath(homePath);
+
+    LibraryEx library =
+      (LibraryEx)myProvider.getGlobalLibrariesModifiableModel().createLibrary("Flex SDK", FlexSdkLibraryType.getInstance());
+    LibraryEx.ModifiableModelEx libraryModifiableModel = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
+    ((FlexSdkProperties)libraryModifiableModel.getProperties()).setId(UUID.randomUUID().toString());
+    ((FlexSdkProperties)libraryModifiableModel.getProperties()).setHomePath(homePath);
+    final FlexSdkModificator sdkModificator = new FlexSdkModificator(libraryModifiableModel);
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        FlexSdkUtils.setupSdkPaths(sdkHome, null, sdkModificator);
+      }
+    });
+    return library;
+  }
 
   private static class Editor extends FlexIdeBuildConfigurationImpl {
     private final Module myModule;
@@ -88,7 +110,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
   public FlexProjectConfigurationEditor(Project project, ProjectModifiableModelProvider provider) {
     myProject = project;
     myProvider = provider;
-    mySdksEditor = new FlexSdksEditor(project, myProvider.getGlobalLibrariesModifiableModel());
+    mySdksEditor = new FlexSdksEditor(this);
 
     provider.addListener(new FlexIdeBCConfigurator.Listener() {
       @Override
@@ -262,7 +284,9 @@ public class FlexProjectConfigurationEditor implements Disposable {
       }
 
       for (LibraryEx library : sdksToAdd.keySet()) {
-        if (!library.isDisposed() && sdksToAdd.get(library) && myProvider.getGlobalLibrariesModifiableModel().getLibraryByName(library.getName()) != null) {
+        if (!library.isDisposed() &&
+            sdksToAdd.get(library) &&
+            myProvider.getGlobalLibrariesModifiableModel().getLibraryByName(library.getName()) != null) {
           modifiableModel.addLibraryEntry(library);
         }
       }
@@ -521,8 +545,13 @@ public class FlexProjectConfigurationEditor implements Disposable {
     return (LibraryTableBase.ModifiableModelEx)modifiableModel.getModuleLibraryTable().getModifiableModel();
   }
 
-  public Library[] getSdksLibraries() {
-    return mySdksEditor.getLibraries();
+  public LibraryEx[] getSdksLibraries() {
+    return ContainerUtil.mapNotNull(myProvider.getGlobalLibrariesModifiableModel().getLibraries(), new Function<Library, LibraryEx>() {
+      @Override
+      public LibraryEx fun(Library library) {
+        return FlexSdk.isFlexSdk(library) ? (LibraryEx)library : null;
+      }
+    }, new LibraryEx[0]);
   }
 
   @Nullable
@@ -539,12 +568,16 @@ public class FlexProjectConfigurationEditor implements Disposable {
     return mySdksEditor.findOrCreateSdk(homePath);
   }
 
-  public void setSdkLibraryUsed(Object user, @Nullable Library sdk) {
+  public void setSdkLibraryUsed(Object user, @Nullable LibraryEx sdk) {
     mySdksEditor.setUsed(user, sdk);
   }
 
   public LibraryEditor getSdkLibraryEditor(Library library) {
-    return mySdksEditor.getLibraryEditor(library);
+    return ((LibrariesModifiableModel)myProvider.getGlobalLibrariesModifiableModel()).getLibraryEditor(library);
+  }
+
+  public void removeFlexSdkLibrary(Library library) {
+    myProvider.getGlobalLibrariesModifiableModel().removeLibrary(library);
   }
 }
 

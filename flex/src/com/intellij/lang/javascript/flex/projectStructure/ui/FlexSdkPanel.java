@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRoo
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
+import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
 import com.intellij.openapi.util.Condition;
@@ -76,7 +77,7 @@ public class FlexSdkPanel implements Disposable {
       @Override
       public void itemStateChanged(ItemEvent e) {
         Object selectedItem = myCombo.getComboBox().getSelectedItem();
-        myConfigEditor.setSdkLibraryUsed(FlexSdkPanel.this, selectedItem instanceof Library ? (Library)selectedItem : null);
+        myConfigEditor.setSdkLibraryUsed(FlexSdkPanel.this, selectedItem instanceof LibraryEx ? (LibraryEx)selectedItem : null);
         if (myMute) {
           return;
         }
@@ -129,18 +130,18 @@ public class FlexSdkPanel implements Disposable {
   }
 
   private void rebuildComboModel() {
-    Library matchingLibrary = null;
+    LibraryEx matchingLibrary = null;
     myMute = true;
     try {
       Object selection = myCombo.getComboBox().getSelectedItem();
-      Library[] libraries = myConfigEditor.getSdksLibraries();
+      LibraryEx[] libraries = myConfigEditor.getSdksLibraries();
       DefaultComboBoxModel model = new DefaultComboBoxModel(libraries);
       myCombo.getComboBox().setModel(model);
       if (selection instanceof Pair) {
         final String homePath = ((Pair<String, String>)selection).second;
-        matchingLibrary = ContainerUtil.find(libraries, new Condition<Library>() {
+        matchingLibrary = ContainerUtil.find(libraries, new Condition<LibraryEx>() {
           @Override
-          public boolean value(Library library) {
+          public boolean value(LibraryEx library) {
             return FlexSdk.getHomePath(library).equals(homePath);
           }
         });
