@@ -36,6 +36,14 @@ import java.util.*;
  */
 public class FlexProjectConfigTest extends ModuleTestCase {
 
+  static {
+    init();
+  }
+
+  public static void init() {
+    System.setProperty("idea.platform.prefix", "Flex");
+  }
+
   @Override
   protected void tearDown() throws Exception {
     Disposer.dispose(myTestRootDisposable);
