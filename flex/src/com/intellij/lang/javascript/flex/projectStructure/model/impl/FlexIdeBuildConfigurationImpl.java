@@ -276,6 +276,11 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     return new BuildConfigurationNature(myTargetPlatform, myPureAs, myOutputType);
   }
 
+  @Override
+  public String toString() {
+    return myName + ": " + getNature().toString();
+  }
+
   public State getState() {
     State state = new State();
     state.AIR_DESKTOP_PACKAGING_OPTIONS = myAirDesktopPackagingOptions.getState();

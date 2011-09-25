@@ -40,4 +40,34 @@ public class BuildConfigurationNature {
   }
 
   public static final BuildConfigurationNature DEFAULT = new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Application);
+
+  @Override
+  public String toString() {
+    StringBuilder b = new StringBuilder();
+    if (targetPlatform == TargetPlatform.Mobile) {
+      b.append("Mobile");
+    }
+    else if (targetPlatform == TargetPlatform.Desktop) {
+      b.append("AIR");
+    }
+    else {
+      if (pureAS) {
+        b.append("AS");
+      }
+      else {
+        b.append("Flex");
+      }
+    }
+    b.append(" ");
+    if (outputType == OutputType.Application) {
+      b.append("App");
+    }
+    else if (outputType == OutputType.RuntimeLoadedModule) {
+      b.append("Runtime module");
+    }
+    else {
+      b.append("Lib");
+    }
+    return b.toString();
+  }
 }
