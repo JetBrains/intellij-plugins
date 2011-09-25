@@ -198,21 +198,11 @@ public class FlexUtils {
   @Nullable
   public static Sdk getFlexSdkForFlexModuleOrItsFlexFacets(final @NotNull Module module) {
     if (PlatformUtils.isFlexIde()) {
-      if (ModuleType.get(module) instanceof FlexModuleType) {
-        FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
-        SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
-        if (sdkEntry != null) {
-          LibraryEx sdkLibrary = sdkEntry.findLibrary();
-          return sdkLibrary != null ? new FlexSdkWrapper(sdkLibrary) : null;
-        }
-        else {
-          return null;
-        }
-      }
-      else {
-        return null;
-      }
+      return ModuleType.get(module) instanceof FlexModuleType
+             ? createFlexSdkWrapper(FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration())
+             : null;
     }
+
     if (ModuleType.get(module) instanceof FlexModuleType) {
       final Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
       if (sdk != null && sdk.getSdkType() instanceof IFlexSdkType) {
@@ -232,6 +222,17 @@ public class FlexUtils {
       if (sdk != null && sdk.getSdkType() instanceof IFlexSdkType) {
         return sdk;
       }
+    }
+
+    return null;
+  }
+
+  @Nullable
+  public static Sdk createFlexSdkWrapper(final FlexIdeBuildConfiguration bc) {
+    final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
+    if (sdkEntry != null) {
+      final LibraryEx sdkLibrary = sdkEntry.findLibrary();
+      return sdkLibrary != null ? new FlexSdkWrapper(sdkLibrary) : null;
     }
 
     return null;

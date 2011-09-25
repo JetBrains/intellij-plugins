@@ -9,12 +9,14 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.run.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -55,7 +57,7 @@ public class FlexDebugRunner extends FlexBaseRunner {
                                                      final Executor executor,
                                                      final RunProfileState state,
                                                      final RunContentDescriptor contentToReuse,
-                                                     final ExecutionEnvironment env) throws ExecutionException  {
+                                                     final ExecutionEnvironment env) throws ExecutionException {
     final Project project = module.getProject();
     final XDebugSession debugSession =
       XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
@@ -97,13 +99,17 @@ public class FlexDebugRunner extends FlexBaseRunner {
         final Pair<String, String> swfPathAndApplicationId = getSwfPathAndApplicationId(mobileParams);
         appId = swfPathAndApplicationId.second;
 
-        if (!packAndInstallToDevice(project, flexSdk, mobileParams, swfPathAndApplicationId.first, swfPathAndApplicationId.second, true)) {
+        final Module module = ModuleManager.getInstance(project).findModuleByName(mobileParams.getModuleName());
+        final MobileAirPackageParameters packageParameters =
+          createAndroidPackageParams(flexSdk, swfPathAndApplicationId.first, mobileParams, true);
+
+        if (!packAndInstallToAndroidDevice(module, flexSdk, packageParameters, swfPathAndApplicationId.second, true)) {
           return null;
         }
       }
 
       if (mobileParams.getDebugTransport() == AirMobileDebugTransport.USB) {
-        launchOnDevice(project, flexSdk, mobileParams, appId, true);
+        launchOnAndroidDevice(project, flexSdk, appId, true);
         waitUntilCountdownStartsOnDevice(project, appId);
         MobileAirUtil.forwardTcpPort(project, flexSdk, mobileParams.getUsbDebugPort());
       }

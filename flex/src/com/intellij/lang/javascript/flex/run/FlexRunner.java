@@ -15,6 +15,8 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
@@ -22,6 +24,7 @@ import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Disposer;
@@ -60,7 +63,12 @@ public class FlexRunner extends FlexBaseRunner {
           case Emulator:
             return standardLaunch(module.getProject(), executor, state, contentToReuse, environment);
           case AndroidDevice:
-            break;
+            final String applicationId = getApplicationId(getAirDescriptorPath(config, config.getAndroidPackagingOptions()));
+            final Sdk sdk = FlexUtils.createFlexSdkWrapper(config);
+            if (packAndInstallToAndroidDevice(module, sdk, createAndroidPackageParams(sdk, config, params, false), applicationId, false)) {
+              launchOnAndroidDevice(module.getProject(), sdk, applicationId, false);
+            }
+            return null;
         }
         break;
     }
@@ -93,14 +101,19 @@ public class FlexRunner extends FlexBaseRunner {
     if (isRunOnDevice(flexRunnerParameters)) {
       final AirMobileRunnerParameters mobileParams = (AirMobileRunnerParameters)flexRunnerParameters;
       if (mobileParams.getAirMobileRunMode() == AirMobileRunnerParameters.AirMobileRunMode.ExistingPackage) {
-        return launchExistingPackage(project, flexSdk, mobileParams);
+        launchExistingPackage(project, flexSdk, mobileParams);
+        return null;
       }
       else {
         final Pair<String, String> swfPathAndApplicationId = getSwfPathAndApplicationId(mobileParams);
-        return packAndInstallToDevice(project, flexSdk, mobileParams, swfPathAndApplicationId.first,
-                                      swfPathAndApplicationId.second, false)
-               ? launchOnDevice(project, flexSdk, mobileParams, swfPathAndApplicationId.second, false)
-               : null;
+        final Module module = ModuleManager.getInstance(project).findModuleByName(mobileParams.getModuleName());
+        final MobileAirPackageParameters packageParameters =
+          createAndroidPackageParams(flexSdk, swfPathAndApplicationId.first, mobileParams, false);
+
+        if (packAndInstallToAndroidDevice(module, flexSdk, packageParameters, swfPathAndApplicationId.second, false)) {
+          launchOnAndroidDevice(project, flexSdk, swfPathAndApplicationId.second, false);
+        }
+        return null;
       }
     }
 
@@ -109,15 +122,17 @@ public class FlexRunner extends FlexBaseRunner {
            : launchFlex(project, executor, state, contentToReuse, env, flexSdk, flexRunnerParameters);
   }
 
-  private static RunContentDescriptor launchExistingPackage(final Project project,
-                                                            final Sdk flexSdk,
-                                                            final AirMobileRunnerParameters mobileParams)
+  private static void launchExistingPackage(final Project project, final Sdk flexSdk, final AirMobileRunnerParameters mobileParams)
     throws ExecutionException {
+
     final String appId = MobileAirUtil.getAppIdFromPackage(mobileParams.getExistingPackagePath());
     if (appId == null) {
       throw new ExecutionException("Failed to get application id for package: " + mobileParams.getExistingPackagePath());
     }
-    return installToDevice(project, flexSdk, mobileParams, appId) ? launchOnDevice(project, flexSdk, mobileParams, appId, false) : null;
+
+    if (installToDevice(project, flexSdk, mobileParams, appId)) {
+      launchOnAndroidDevice(project, flexSdk, appId, false);
+    }
   }
 
   @Nullable

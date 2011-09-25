@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.flex.actions.airdescriptor.AirDescriptorPara
 import com.intellij.lang.javascript.flex.actions.airdescriptor.CreateAirDescriptorAction;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.AndroidPackagingOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
@@ -324,14 +325,17 @@ public class FlexCompilationUtils {
   private static void handleAirDescriptor(final FlexIdeBuildConfiguration config, final AirPackagingOptions packagingOptions)
     throws FlexCompilerException {
     if (packagingOptions.isUseGeneratedDescriptor()) {
-      generateAirDescriptor(config, BCUtils.getGeneratedAirDescriptorName(config, packagingOptions));
+      final boolean android = packagingOptions instanceof AndroidPackagingOptions;
+      generateAirDescriptor(config, BCUtils.getGeneratedAirDescriptorName(config, packagingOptions), android);
     }
     else {
       copyAndFixCustomAirDescriptor(config, packagingOptions.getCustomDescriptorPath());
     }
   }
 
-  private static void generateAirDescriptor(final FlexIdeBuildConfiguration config, final String descriptorFileName)
+  private static void generateAirDescriptor(final FlexIdeBuildConfiguration config,
+                                            final String descriptorFileName,
+                                            final boolean addAndroidPermissions)
     throws FlexCompilerException {
     final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
 
@@ -347,7 +351,7 @@ public class FlexCompilationUtils {
 
           CreateAirDescriptorAction.createAirDescriptor(
             new AirDescriptorParameters(descriptorFileName, config.getOutputFolder(), airVersion, config.getMainClass(), fileName, fileName,
-                                        "1.0", config.getOutputFileName(), fileName, 400, 300, false));
+                                        "1.0", config.getOutputFileName(), fileName, 400, 300, addAndroidPermissions));
         }
         catch (IOException e) {
           exceptionRef.set(new FlexCompilerException("Failed to generate AIR descriptor: " + e));
