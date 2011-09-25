@@ -14,6 +14,8 @@
     <orderEnumerationHandlerFactory
         implementation="com.intellij.lang.javascript.flex.projectStructure.FlexOrderEnumerationHandler$FactoryImpl"/>
     <moduleConfigurationEditorProvider implementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleConfigurationEditorProvider"/>
+    <projectService serviceInterface="com.intellij.openapi.roots.ui.configuration.ProjectSettingsService"
+                    serviceImplementation="com.intellij.flexIde.FlexIdeProjectSettingsService"/>
   </extensions>
 
   <actions>

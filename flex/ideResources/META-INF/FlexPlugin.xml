@@ -72,7 +72,8 @@
     <projectViewPane implementation="com.intellij.ide.projectView.impl.PackageViewPane"/>
 
     <fileIconProvider implementation="com.intellij.flexIde.FlexIdeIconProvider"/>
-
+    <projectService serviceInterface="com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable"
+                    serviceImplementation="com.intellij.flexIde.FlexIdeProjectStructureConfigurable"/>
   </extensions>
 
 </idea-plugin>

@@ -16,7 +16,7 @@ import javax.swing.border.EmptyBorder;
  * @author ksafonov
  */
 public class FlexModuleEditor implements ModuleConfigurationEditor {
-  private static final String DISPLAY_NAME = "Flex";
+  public static final String DISPLAY_NAME = "Flex";
 
   private final CommonContentEntriesEditor myEntriesEditor;
   private final Module myModule;
