@@ -725,6 +725,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   private void removeSelection() {
+    TableUtil.stopEditing(myTable);
     int[] selectedRows = myTable.getSelectedRows();
     Arrays.sort(selectedRows);
     DefaultMutableTreeNode root = myTable.getRoot();
