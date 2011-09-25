@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ide.ui.ListCellRendererWrapper;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
@@ -330,13 +329,11 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   }
 
   public void disposeUIResources() {
-    if (FlexIdeUtils.isFlatUi()) {
-      myDependenciesConfigurable.disposeUIResources();
-      myCompilerOptionsConfigurable.disposeUIResources();
-      if (myAirDesktopPackagingConfigurable != null) myAirDesktopPackagingConfigurable.disposeUIResources();
-      if (myAndroidPackagingConfigurable != null) myAndroidPackagingConfigurable.disposeUIResources();
-      if (myIOSPackagingConfigurable != null) myIOSPackagingConfigurable.disposeUIResources();
-    }
+    myDependenciesConfigurable.disposeUIResources();
+    myCompilerOptionsConfigurable.disposeUIResources();
+    if (myAirDesktopPackagingConfigurable != null) myAirDesktopPackagingConfigurable.disposeUIResources();
+    if (myAndroidPackagingConfigurable != null) myAndroidPackagingConfigurable.disposeUIResources();
+    if (myIOSPackagingConfigurable != null) myIOSPackagingConfigurable.disposeUIResources();
   }
 
   //public ModifiableFlexIdeBuildConfiguration getCurrentConfiguration() {
@@ -362,9 +359,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     return children;
   }
 
-  public NamedConfigurable<ModifiableFlexIdeBuildConfiguration> wrapInTabsIfNeeded() {
-    if (!FlexIdeUtils.isFlatUi()) return this;
-
+  public CompositeConfigurable wrapInTabs() {
     List<NamedConfigurable> tabs = new ArrayList<NamedConfigurable>();
     tabs.add(this);
     tabs.addAll(getChildren());
@@ -375,12 +370,8 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     return myDependenciesConfigurable == dependenciesConfigurable;
   }
 
-  public static FlexIdeBCConfigurable unwrapIfNeeded(NamedConfigurable c) {
-    if (!FlexIdeUtils.isFlatUi()) {
-      return (FlexIdeBCConfigurable)c;
-    }
-
-    return (FlexIdeBCConfigurable)((CompositeConfigurable)c).getMainChild();
+  public static FlexIdeBCConfigurable unwrap(CompositeConfigurable c) {
+    return (FlexIdeBCConfigurable)c.getMainChild();
   }
 
   @Override

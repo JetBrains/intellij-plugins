@@ -387,7 +387,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
   };
 
-  private static ColumnInfo<MyTableItem, LinkageType> DEPENDENCY_TYPE_COLUMN = new ColumnInfo<MyTableItem, LinkageType>("Type") {
+  private static final ColumnInfo<MyTableItem, LinkageType> DEPENDENCY_TYPE_COLUMN = new ColumnInfo<MyTableItem, LinkageType>("Type") {
 
     @Override
     public LinkageType valueOf(MyTableItem item) {
@@ -941,19 +941,18 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       if (entry instanceof BuildConfigurationEntry) {
         final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
         Module module = bcEntry.findModule();
-        NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable =
-          module != null ? ContainerUtil
-            .find(configurator.getBCConfigurables(module), new Condition<NamedConfigurable<ModifiableFlexIdeBuildConfiguration>>() {
-              @Override
-              public boolean value(NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable) {
-                return configurable.getEditableObject().getName().equals(bcEntry.getBcName());
-              }
-            }) : null;
+        CompositeConfigurable configurable =
+          module != null ? ContainerUtil.find(configurator.getBCConfigurables(module), new Condition<CompositeConfigurable>() {
+            @Override
+            public boolean value(CompositeConfigurable configurable) {
+              return configurable.getDisplayName().equals(bcEntry.getBcName());
+            }
+          }) : null;
         if (configurable == null) {
           item = new BCItem(bcEntry.getModuleName(), bcEntry.getBcName());
         }
         else {
-          item = new BCItem(FlexIdeBCConfigurable.unwrapIfNeeded(configurable));
+          item = new BCItem(FlexIdeBCConfigurable.unwrap(configurable));
         }
         ((BCItem)item).dependencyType.copyFrom(entry.getDependencyType());
       }
@@ -1109,8 +1108,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         if (ModuleType.get(module) != FlexModuleType.getInstance()) {
           continue;
         }
-        for (NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable : configurator.getBCConfigurables(module)) {
-          FlexIdeBCConfigurable flexIdeBCConfigurable = FlexIdeBCConfigurable.unwrapIfNeeded(configurable);
+        for (CompositeConfigurable configurable : configurator.getBCConfigurables(module)) {
+          FlexIdeBCConfigurable flexIdeBCConfigurable = FlexIdeBCConfigurable.unwrap(configurable);
           if (dependencies.contains(flexIdeBCConfigurable) || flexIdeBCConfigurable.isParentFor(DependenciesConfigurable.this)) {
             continue;
           }

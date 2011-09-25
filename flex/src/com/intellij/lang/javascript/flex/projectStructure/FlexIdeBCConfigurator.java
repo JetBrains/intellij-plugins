@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProject
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.projectStructure.ui.AddBuildConfigurationDialog;
+import com.intellij.lang.javascript.flex.projectStructure.ui.CompositeConfigurable;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
@@ -47,9 +48,8 @@ public class FlexIdeBCConfigurator {
     void buildConfigurationRemoved(FlexIdeBCConfigurable configurable);
   }
 
-  private final BidirectionalMap<ModifiableFlexIdeBuildConfiguration, NamedConfigurable<ModifiableFlexIdeBuildConfiguration>>
-    myConfigurablesMap =
-    new BidirectionalMap<ModifiableFlexIdeBuildConfiguration, NamedConfigurable<ModifiableFlexIdeBuildConfiguration>>();
+  private final BidirectionalMap<ModifiableFlexIdeBuildConfiguration, CompositeConfigurable> myConfigurablesMap =
+    new BidirectionalMap<ModifiableFlexIdeBuildConfiguration, CompositeConfigurable>();
 
   private final EventDispatcher<Listener> myEventDispatcher = EventDispatcher.create(Listener.class);
 
@@ -110,20 +110,17 @@ public class FlexIdeBCConfigurator {
     }
   }
 
-  public List<NamedConfigurable<ModifiableFlexIdeBuildConfiguration>> getOrCreateConfigurables(final Module module,
-                                                                                               final Runnable treeNodeNameUpdater) {
+  public List<CompositeConfigurable> getOrCreateConfigurables(final Module module, final Runnable treeNodeNameUpdater) {
     myModifiableModelInitializer.ensureInitialized(module.getProject());
 
     final ModifiableFlexIdeBuildConfiguration[] configurations = myConfigEditor.getConfigurations(module);
 
-    List<NamedConfigurable<ModifiableFlexIdeBuildConfiguration>> configurables =
-      new ArrayList<NamedConfigurable<ModifiableFlexIdeBuildConfiguration>>(configurations.length);
+    List<CompositeConfigurable> configurables = new ArrayList<CompositeConfigurable>(configurations.length);
 
     for (final ModifiableFlexIdeBuildConfiguration configuration : configurations) {
-      NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable = myConfigurablesMap.get(configuration);
+      CompositeConfigurable configurable = myConfigurablesMap.get(configuration);
       if (configurable == null) {
-        configurable =
-          new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, myConfigEditor).wrapInTabsIfNeeded();
+        configurable = new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, myConfigEditor).wrapInTabs();
         myConfigurablesMap.put(configuration, configurable);
       }
       configurables.add(configurable);
@@ -182,8 +179,8 @@ public class FlexIdeBCConfigurator {
 
   public void removeConfiguration(final ModifiableFlexIdeBuildConfiguration configuration) {
     myConfigEditor.removeConfiguration(configuration);
-    NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable = myConfigurablesMap.remove(configuration);
-    myEventDispatcher.getMulticaster().buildConfigurationRemoved(FlexIdeBCConfigurable.unwrapIfNeeded(configurable));
+    CompositeConfigurable configurable = myConfigurablesMap.remove(configuration);
+    myEventDispatcher.getMulticaster().buildConfigurationRemoved(FlexIdeBCConfigurable.unwrap(configurable));
   }
 
   public void addConfiguration(final Module module, final Runnable treeNodeNameUpdater) {
@@ -212,10 +209,10 @@ public class FlexIdeBCConfigurator {
            ? Factory.createSdkEntry(FlexProjectRootsUtil.getSdkLibraryId(libraries[0]), FlexSdk.getHomePath(libraries[0])) : null;
   }
 
-  public void copy(final NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable, final Runnable treeNodeNameUpdater) {
+  public void copy(final CompositeConfigurable configurable, final Runnable treeNodeNameUpdater) {
     ModifiableFlexIdeBuildConfiguration configuration = myConfigurablesMap.getKeysByValue(configurable).get(0);
 
-    FlexIdeBCConfigurable unwrapped = FlexIdeBCConfigurable.unwrapIfNeeded(configurable);
+    FlexIdeBCConfigurable unwrapped = FlexIdeBCConfigurable.unwrap(configurable);
     Pair<String, BuildConfigurationNature> nameAndNature = promptForCreation(unwrapped.getModule(), "Copy Build Configuration",
                                                                              configuration.getNature());
     if (nameAndNature == null) {
@@ -251,10 +248,9 @@ public class FlexIdeBCConfigurator {
     final FlexIdeBCConfigurable configurable =
       new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, myConfigEditor);
 
-    NamedConfigurable<ModifiableFlexIdeBuildConfiguration> wrapped = configurable.wrapInTabsIfNeeded();
+    CompositeConfigurable wrapped = configurable.wrapInTabs();
     myConfigurablesMap.put(configuration, wrapped);
     final MasterDetailsComponent.MyNode node = new BuildConfigurationNode(wrapped);
-    FlexIdeModuleStructureExtension.addConfigurationChildNodes(configurable, node);
 
     final ModuleStructureConfigurable moduleStructureConfigurable = ModuleStructureConfigurable.getInstance(module.getProject());
     moduleStructureConfigurable.addNode(node, moduleStructureConfigurable.findModuleNode(module));
@@ -272,11 +268,11 @@ public class FlexIdeBCConfigurator {
     return result;
   }
 
-  public List<NamedConfigurable<ModifiableFlexIdeBuildConfiguration>> getBCConfigurables(@NotNull Module module) {
+  public List<CompositeConfigurable> getBCConfigurables(@NotNull Module module) {
     return ContainerUtil.map(myConfigEditor.getConfigurations(module),
-                             new Function<ModifiableFlexIdeBuildConfiguration, NamedConfigurable<ModifiableFlexIdeBuildConfiguration>>() {
+                             new Function<ModifiableFlexIdeBuildConfiguration, CompositeConfigurable>() {
                                @Override
-                               public NamedConfigurable<ModifiableFlexIdeBuildConfiguration> fun(ModifiableFlexIdeBuildConfiguration configuration) {
+                               public CompositeConfigurable fun(ModifiableFlexIdeBuildConfiguration configuration) {
                                  return myConfigurablesMap.get(configuration);
                                }
                              });

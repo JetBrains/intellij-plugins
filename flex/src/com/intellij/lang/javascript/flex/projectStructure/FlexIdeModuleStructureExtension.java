@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.flex.projectStructure;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.ui.CompositeConfigurable;
-import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Separator;
@@ -49,27 +48,14 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
       return false;
     }
 
-    final List<NamedConfigurable<ModifiableFlexIdeBuildConfiguration>> configurables =
-      myConfigurator.getOrCreateConfigurables(module, treeNodeNameUpdater);
-
-    for (final NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable : configurables) {
+    final List<CompositeConfigurable> configurables = myConfigurator.getOrCreateConfigurables(module, treeNodeNameUpdater);
+    for (final CompositeConfigurable configurable : configurables) {
       if (MasterDetailsComponent.findNodeByObject(moduleNode, configurable.getEditableObject()) == null) {
-        final MasterDetailsComponent.MyNode configurationNode = new BuildConfigurationNode(configurable);
-        addConfigurationChildNodes(FlexIdeBCConfigurable.unwrapIfNeeded(configurable), configurationNode);
-        moduleNode.add(configurationNode);
+        moduleNode.add(new BuildConfigurationNode(configurable));
       }
     }
 
     return configurables.size() > 0;
-  }
-
-  static void addConfigurationChildNodes(final FlexIdeBCConfigurable configurable, final MasterDetailsComponent.MyNode configurationNode) {
-    if (!FlexIdeUtils.isFlatUi()) {
-      List<NamedConfigurable> children = configurable.getChildren();
-      for (NamedConfigurable child : children) {
-        configurationNode.add(new MasterDetailsComponent.MyNode(child));
-      }
-    }
   }
 
   public void moduleRemoved(final Module module) {
@@ -103,16 +89,11 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
   }
 
   public boolean canBeCopied(final NamedConfigurable configurable) {
-    if (FlexIdeUtils.isFlatUi()) {
-      return configurable instanceof CompositeConfigurable;
-    }
-    else {
-      return configurable instanceof FlexIdeBCConfigurable;
-    }
+    return configurable instanceof CompositeConfigurable;
   }
 
   public void copy(final NamedConfigurable configurable, final Runnable treeNodeNameUpdater) {
-    myConfigurator.copy(configurable, treeNodeNameUpdater);
+    myConfigurator.copy(((CompositeConfigurable)configurable), treeNodeNameUpdater);
   }
 
   public Collection<AnAction> createAddActions(final NullableComputable<MasterDetailsComponent.MyNode> selectedNodeRetriever,
