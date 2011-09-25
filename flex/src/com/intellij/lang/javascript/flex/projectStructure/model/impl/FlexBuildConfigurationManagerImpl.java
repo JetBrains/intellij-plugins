@@ -114,6 +114,9 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
     ApplicationManager.getApplication().assertWriteAccessAllowed();
     myConfigurations = getValidatedConfigurations(Arrays.asList(configurations));
     updateActiveConfiguration(activeName);
+    ProjectRootManagerEx.getInstanceEx(myModule.getProject()).makeRootsChange(EmptyRunnable.getInstance(), false, true);
+    ((PsiModificationTrackerImpl)PsiManager.getInstance(myModule.getProject()).getModificationTracker()).incCounter();
+    DaemonCodeAnalyzer.getInstance(myModule.getProject()).restart();
   }
 
   private void updateActiveConfiguration(@Nullable final String activeName) {
