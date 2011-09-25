@@ -3,21 +3,23 @@ package com.intellij.lang.javascript.flex.projectStructure;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
+import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
+import com.intellij.openapi.util.Condition;
+import com.intellij.util.Processor;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * User: ksafonov
@@ -149,5 +151,44 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
     else {
       return AddDependencyType.DEFAULT;
     }
+  }
+
+  @Override
+  public boolean addCustomOutput(@NotNull OrderEntry forOrderEntry, @NotNull OrderRootType type, @NotNull Collection<String> urls) {
+    if (type != OrderRootType.CLASSES || !(forOrderEntry instanceof LibraryOrderEntry)) {
+      return false;
+    }
+
+    if (myActiveConfigurations == null) {
+      return false;
+    }
+    LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry)forOrderEntry;
+    if (libraryOrderEntry.getLibraryLevel() != LibraryTablesRegistrar.APPLICATION_LEVEL) {
+      return false;
+    }
+
+    Library library = libraryOrderEntry.getLibrary();
+    if (library == null || !FlexSdk.isFlexSdk(library)) {
+      return false;
+    }
+
+    final String[] allUrls = library.getUrls(OrderRootType.CLASSES);
+    Collection<FlexIdeBuildConfiguration> accessibleConfigurations = myActiveConfigurations.get(forOrderEntry.getOwnerModule());
+    final Set<String> allAccessibleUrls = new HashSet<String>();
+    ContainerUtil.process(accessibleConfigurations, new Processor<FlexIdeBuildConfiguration>() {
+      @Override
+      public boolean process(final FlexIdeBuildConfiguration bc) {
+        allAccessibleUrls.addAll(ContainerUtil.filter(allUrls, new Condition<String>() {
+          @Override
+          public boolean value(String s) {
+            return BCUtils.getSdkEntryLinkageType(s, bc.getNature(), bc.getDependencies().getTargetPlayer(),
+                                                  bc.getDependencies().getComponentSet()) != null;
+          }
+        }));
+        return true;
+      }
+    });
+    urls.addAll(allAccessibleUrls);
+    return true;
   }
 }
