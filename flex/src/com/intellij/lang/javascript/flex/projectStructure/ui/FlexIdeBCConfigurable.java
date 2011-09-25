@@ -18,6 +18,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nls;
@@ -29,6 +30,7 @@ import javax.swing.event.DocumentEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable*/NamedConfigurable<ModifiableFlexIdeBuildConfiguration>
@@ -116,6 +118,16 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     final String description = "Folder must contain 'index.template.html' file which must contain '${swf}' macro.";
     myWrapperTemplateTextWithBrowse.addBrowseFolderListener(title, description, module.getProject(),
                                                             FileChooserDescriptorFactory.createSingleFolderDescriptor());
+
+    myOptimizeForCombo.setModel(new CollectionComboBoxModel(Arrays.asList(""), ""));
+    myOptimizeForCombo.setRenderer(new ListCellRendererWrapper(myOptimizeForCombo.getRenderer()) {
+      @Override
+      public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
+        if ("".equals(value)) {
+          setText("<no optimization>");
+        }
+      }
+    });
   }
 
   @Nls
