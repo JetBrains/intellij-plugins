@@ -235,7 +235,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
       for (Editor editor : myModule2Editors.get(module)) {
         SdkEntry sdkEntry = editor.getDependencies().getSdkEntry();
         if (sdkEntry != null) {
-          LibraryEx sdkLibrary = sdkEntry.findLibrary();
+          LibraryEx sdkLibrary = ((SdkEntryImpl)sdkEntry).findLibrary(myProvider.getGlobalLibrariesModifiableModel().getLibraries());
           if (sdkLibrary != null) {
             sdksToAdd.put(sdkLibrary, true);
           }

@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.openapi.components.StateStorageException;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
@@ -102,7 +103,11 @@ class SdkEntryImpl implements SdkEntry {
   @Override
   @Nullable
   public LibraryEx findLibrary() {
-    Library result = ContainerUtil.find(LibraryTablesRegistrar.getInstance().getLibraryTable().getLibraries(), new Condition<Library>() {
+    return findLibrary(ApplicationLibraryTable.getApplicationTable().getLibraries());
+  }
+
+  public LibraryEx findLibrary(Library[] libraries) {
+    Library result = ContainerUtil.find(libraries, new Condition<Library>() {
       @Override
       public boolean value(Library library) {
         return FlexSdk.isFlexSdk(library) && FlexProjectRootsUtil.getSdkLibraryId(library).equals(myLibraryId);
