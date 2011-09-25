@@ -9,7 +9,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
@@ -64,7 +64,9 @@ public class FlexIdeRunConfiguration extends RunConfigurationBase implements Run
   public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
     final FlexIdeBuildConfiguration config = FlexBaseRunner.getModuleAndConfig(getProject(), myRunnerParameters).second;
 
-    if (config.getTargetPlatform() == TargetPlatform.Desktop) {
+    final BuildConfigurationNature nature = config.getNature();
+    if (nature.isDesktopPlatform() ||
+        (nature.isMobilePlatform() && myRunnerParameters.getMobileRunTarget() == AirMobileRunnerParameters.AirMobileRunTarget.Emulator)) {
       final AirRunState airRunState = new AirRunState(env);
       airRunState.setConsoleBuilder(TextConsoleBuilderFactory.getInstance().createBuilder(getProject()));
       return airRunState;

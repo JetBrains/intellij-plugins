@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -21,9 +20,12 @@ public class BCUtils {
 
   private static Logger LOG = Logger.getInstance(BCUtils.class);
 
-  public static String getGeneratedAirDescriptorName(final FlexIdeBuildConfiguration config) {
-    assert config.getTargetPlatform() == TargetPlatform.Desktop && config.getOutputType() == OutputType.Application;
-    return FileUtil.getNameWithoutExtension(config.getOutputFileName()) + "-descriptor.xml";
+  public static String getGeneratedAirDescriptorName(final FlexIdeBuildConfiguration config, final AirPackagingOptions packagingOptions) {
+    final String suffix = packagingOptions instanceof AirDesktopPackagingOptions
+                          ? "-descriptor.xml"
+                          : packagingOptions instanceof AndroidPackagingOptions ? "-android-descriptor.xml"
+                                                                                : "-ios-descriptor";
+    return FileUtil.getNameWithoutExtension(config.getOutputFileName()) + suffix;
   }
 
   public static LinkageType[] getSuitableFrameworkLinkages(BuildConfigurationNature nature) {

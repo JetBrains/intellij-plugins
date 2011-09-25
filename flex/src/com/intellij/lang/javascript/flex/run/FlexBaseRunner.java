@@ -30,7 +30,6 @@ import com.intellij.lang.javascript.flex.flexunit.FlexUnitConsoleProperties;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.Application;
@@ -851,20 +850,53 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
     commandLine.setExePath(FileUtil.toSystemDependentName(sdkEntry.getHomePath() + FlexSdkUtils.ADL_RELATIVE_PATH));
 
-    final String adlOptions = params.getAdlOptions();
-    if (!StringUtil.isEmptyOrSpaces(adlOptions)) {
-      commandLine.addParameters(StringUtil.split(adlOptions, " "));
-    }
+    if (config.getNature().isDesktopPlatform()) {
+      final String adlOptions = params.getAdlOptions();
+      if (!StringUtil.isEmptyOrSpaces(adlOptions)) {
+        commandLine.addParameters(StringUtil.split(adlOptions, " "));
+      }
 
-    final String descriptorName = (config.getAirDesktopPackagingOptions().isUseGeneratedDescriptor()
-                                   ? BCUtils.getGeneratedAirDescriptorName(config)
-                                   : PathUtil.getFileName(config.getAirDesktopPackagingOptions().getCustomDescriptorPath()));
-    commandLine.addParameter(FileUtil.toSystemDependentName(config.getOutputFolder() + "/" + descriptorName));
-    commandLine.addParameter(FileUtil.toSystemDependentName(config.getOutputFolder()));
-    final String programParameters = params.getAirProgramParameters();
-    if (!StringUtil.isEmptyOrSpaces(programParameters)) {
-      commandLine.addParameter("--");
-      commandLine.addParameters(StringUtil.split(programParameters, " "));
+      final AirDesktopPackagingOptions packagingOptions = config.getAirDesktopPackagingOptions();
+      final String descriptorName = (packagingOptions.isUseGeneratedDescriptor()
+                                     ? BCUtils.getGeneratedAirDescriptorName(config, packagingOptions)
+                                     : PathUtil.getFileName(packagingOptions.getCustomDescriptorPath()));
+      commandLine.addParameter(FileUtil.toSystemDependentName(config.getOutputFolder() + "/" + descriptorName));
+      commandLine.addParameter(FileUtil.toSystemDependentName(config.getOutputFolder()));
+      final String programParameters = params.getAirProgramParameters();
+      if (!StringUtil.isEmptyOrSpaces(programParameters)) {
+        commandLine.addParameter("--");
+        commandLine.addParameters(StringUtil.split(programParameters, " "));
+      }
+    }
+    else {
+      assert config.getNature().isMobilePlatform() : config.getTargetPlatform();
+      assert params.getMobileRunTarget() == AirMobileRunTarget.Emulator : params.getMobileRunTarget();
+
+      commandLine.addParameter("-profile");
+      commandLine.addParameter("mobileDevice");
+
+      commandLine.addParameter("-screensize");
+      final String adlAlias = params.getEmulator().adlAlias;
+      if (adlAlias != null) {
+        commandLine.addParameter(adlAlias);
+      }
+      else {
+        commandLine.addParameter(params.getScreenWidth() + "x" + params.getScreenHeight() +
+                                 ":" + params.getFullScreenWidth() + "x" + params.getFullScreenHeight());
+      }
+
+      final String adlOptions = params.getEmulatorAdlOptions();
+      if (!StringUtil.isEmptyOrSpaces(adlOptions)) {
+        commandLine.addParameters(StringUtil.split(adlOptions, " "));
+      }
+
+      // todo why android? which to take for emulator should probably be selected in run configuration.
+      final AndroidPackagingOptions packagingOptions = config.getAndroidPackagingOptions();
+      final String descriptorName = (packagingOptions.isUseGeneratedDescriptor()
+                                     ? BCUtils.getGeneratedAirDescriptorName(config, packagingOptions)
+                                     : PathUtil.getFileName(packagingOptions.getCustomDescriptorPath()));
+      commandLine.addParameter(FileUtil.toSystemDependentName(config.getOutputFolder() + "/" + descriptorName));
+      commandLine.addParameter(FileUtil.toSystemDependentName(config.getOutputFolder()));
     }
 
     return commandLine;

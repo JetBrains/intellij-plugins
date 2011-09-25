@@ -187,21 +187,24 @@ public class FlexDebugProcess extends XDebugProcess {
     fdbProcess = launchFdb(fdbLaunchCommand);
     connectToRunningFlashPlayerMode = false;
 
-    if (config.getTargetPlatform() == TargetPlatform.Web) {
-      // todo support wrapper
-      final String urlOrPath = params.isLaunchUrl() ? params.getUrl() : config.getOutputFilePath();
-      sendCommand(new LaunchBrowserCommand(urlOrPath, params.getLauncherParameters()));
-    }
-    else if (config.getTargetPlatform() == TargetPlatform.Desktop) {
-      try {
-        sendCommand(new StartAirAppDebuggingCommand(FlexBaseRunner.createAdlCommandLine(params, config)));
-      }
-      catch (CantRunException e) {
-        throw new IOException(e.getMessage());
-      }
-    }
-    else {
-      throw new IOException("not implemented yet");
+    switch (config.getTargetPlatform()) {
+      case Web:
+        // todo support wrapper
+        final String urlOrPath = params.isLaunchUrl() ? params.getUrl() : config.getOutputFilePath();
+        sendCommand(new LaunchBrowserCommand(urlOrPath, params.getLauncherParameters()));
+        break;
+      case Desktop:
+        sendAdlStartingCommand(config, params);
+        break;
+      case Mobile:
+        switch (params.getMobileRunTarget()) {
+          case Emulator:
+            sendAdlStartingCommand(config, params);
+            break;
+          case AndroidDevice:
+            break;
+        }
+        break;
     }
 
     reader = new MyFdbOutputReader(fdbProcess.getInputStream());
@@ -365,6 +368,15 @@ public class FlexDebugProcess extends XDebugProcess {
         }
       }
     });
+  }
+
+  private void sendAdlStartingCommand(final FlexIdeBuildConfiguration config, final FlexIdeRunnerParameters params) throws IOException {
+    try {
+      sendCommand(new StartAirAppDebuggingCommand(FlexBaseRunner.createAdlCommandLine(params, config)));
+    }
+    catch (CantRunException e) {
+      throw new IOException(e.getMessage());
+    }
   }
 
   @Override

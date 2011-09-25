@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airdescriptor.AirDescriptorParameters;
 import com.intellij.lang.javascript.flex.actions.airdescriptor.CreateAirDescriptorAction;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
+import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
@@ -307,25 +308,36 @@ public class FlexCompilationUtils {
         }
         break;
       case Desktop:
-        if (config.getAirDesktopPackagingOptions().isUseGeneratedDescriptor()) {
-          generateAirDescriptor(config);
-        }
-        else {
-          copyAndFixCustomAirDescriptor(config);
-        }
+        handleAirDescriptor(config, config.getAirDesktopPackagingOptions());
         break;
       case Mobile:
+        if (config.getAndroidPackagingOptions().isEnabled()) {
+          handleAirDescriptor(config, config.getAndroidPackagingOptions());
+        }
+        if (config.getIosPackagingOptions().isEnabled()) {
+          handleAirDescriptor(config, config.getIosPackagingOptions());
+        }
         break;
     }
   }
 
-  private static void generateAirDescriptor(final FlexIdeBuildConfiguration config) throws FlexCompilerException {
+  private static void handleAirDescriptor(final FlexIdeBuildConfiguration config, final AirPackagingOptions packagingOptions)
+    throws FlexCompilerException {
+    if (packagingOptions.isUseGeneratedDescriptor()) {
+      generateAirDescriptor(config, BCUtils.getGeneratedAirDescriptorName(config, packagingOptions));
+    }
+    else {
+      copyAndFixCustomAirDescriptor(config, packagingOptions.getCustomDescriptorPath());
+    }
+  }
+
+  private static void generateAirDescriptor(final FlexIdeBuildConfiguration config, final String descriptorFileName)
+    throws FlexCompilerException {
     final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
 
     ApplicationManager.getApplication().invokeAndWait(new Runnable() {
       public void run() {
         try {
-          final String descriptorFileName = BCUtils.getGeneratedAirDescriptorName(config);
           final SdkEntry sdkEntry = config.getDependencies().getSdkEntry();
           assert sdkEntry != null;
           final Library sdk = sdkEntry.findLibrary();
@@ -348,11 +360,11 @@ public class FlexCompilationUtils {
     }
   }
 
-  private static void copyAndFixCustomAirDescriptor(final FlexIdeBuildConfiguration config) throws FlexCompilerException {
-    final String path = config.getAirDesktopPackagingOptions().getCustomDescriptorPath();
-    final VirtualFile descriptorTemplateFile = LocalFileSystem.getInstance().findFileByPath(path);
+  private static void copyAndFixCustomAirDescriptor(final FlexIdeBuildConfiguration config, final String customDescriptorPath)
+    throws FlexCompilerException {
+    final VirtualFile descriptorTemplateFile = LocalFileSystem.getInstance().findFileByPath(customDescriptorPath);
     if (descriptorTemplateFile == null) {
-      throw new FlexCompilerException("Custom AIR descriptor file not found: " + path);
+      throw new FlexCompilerException("Custom AIR descriptor file not found: " + customDescriptorPath);
     }
 
     final VirtualFile outputFolder = LocalFileSystem.getInstance().findFileByPath(config.getOutputFolder());

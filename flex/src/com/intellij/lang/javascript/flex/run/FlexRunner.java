@@ -54,18 +54,32 @@ public class FlexRunner extends FlexBaseRunner {
         launchWithSelectedApplication(urlOrPath, params.getLauncherParameters());
         break;
       case Desktop:
-        final ExecutionResult executionResult = state.execute(executor, this);
-        if (executionResult == null) return null;
-
-        final RunContentBuilder contentBuilder = new RunContentBuilder(module.getProject(), this, executor);
-        contentBuilder.setExecutionResult(executionResult);
-        contentBuilder.setEnvironment(environment);
-        return contentBuilder.showRunContent(contentToReuse);
+        return standardLaunch(module.getProject(), executor, state, contentToReuse, environment);
       case Mobile:
-        // todo implement
+        switch (params.getMobileRunTarget()) {
+          case Emulator:
+            return standardLaunch(module.getProject(), executor, state, contentToReuse, environment);
+          case AndroidDevice:
+            break;
+        }
         break;
     }
     return null;
+  }
+
+  @Nullable
+  private RunContentDescriptor standardLaunch(final Project project,
+                                              final Executor executor,
+                                              final RunProfileState state,
+                                              final RunContentDescriptor contentToReuse, final ExecutionEnvironment environment)
+    throws ExecutionException {
+    final ExecutionResult executionResult = state.execute(executor, this);
+    if (executionResult == null) return null;
+
+    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor);
+    contentBuilder.setExecutionResult(executionResult);
+    contentBuilder.setEnvironment(environment);
+    return contentBuilder.showRunContent(contentToReuse);
   }
 
   @Nullable
