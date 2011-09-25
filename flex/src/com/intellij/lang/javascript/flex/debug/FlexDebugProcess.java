@@ -184,6 +184,13 @@ public class FlexDebugProcess extends XDebugProcess {
     final List<String> fdbLaunchCommand = FlexSdkUtils
       .getCommandLineForSdkTool(session.getProject(), sdkHome, null, getFdbClasspath(), "flex.tools.debugger.cli.DebugCLI", null);
 
+    if (config.getTargetPlatform() == TargetPlatform.Mobile
+        && params.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice
+        && params.getDebugTransport() == AirMobileDebugTransport.USB) {
+      fdbLaunchCommand.add("-p");
+      fdbLaunchCommand.add(String.valueOf(params.getUsbDebugPort()));
+    }
+
     fdbProcess = launchFdb(fdbLaunchCommand);
     connectToRunningFlashPlayerMode = false;
 
@@ -202,9 +209,13 @@ public class FlexDebugProcess extends XDebugProcess {
             sendAdlStartingCommand(config, params);
             break;
           case AndroidDevice:
+            final String appId =
+              FlexBaseRunner.getApplicationId(FlexBaseRunner.getAirDescriptorPath(config, config.getAndroidPackagingOptions()));
+            sendCommand(params.getDebugTransport() == AirMobileDebugTransport.Network
+                        ? new StartAppOnAndroidDeviceCommand(FlexUtils.createFlexSdkWrapper(config), appId)
+                        : new StartDebuggingCommand());
             break;
         }
-        break;
     }
 
     reader = new MyFdbOutputReader(fdbProcess.getInputStream());
@@ -1440,16 +1451,29 @@ public class FlexDebugProcess extends XDebugProcess {
 
     private final Sdk myFlexSdk;
     private final AirMobileRunnerParameters myRunnerParameters;
+    private final String myAppId;
+
+    StartAppOnAndroidDeviceCommand(final Sdk flexSdk, final String appId) {
+      myFlexSdk = flexSdk;
+      myAppId = appId;
+      myRunnerParameters = null;
+    }
 
     public StartAppOnAndroidDeviceCommand(final Sdk flexSdk, final AirMobileRunnerParameters runnerParameters) {
       myFlexSdk = flexSdk;
       myRunnerParameters = runnerParameters;
+      myAppId = null;
     }
 
     void launchDebuggedApplication() throws IOException {
       ApplicationManager.getApplication().invokeLater(new Runnable() {
         public void run() {
-          FlexBaseRunner.launchOnDevice(getSession().getProject(), myFlexSdk, myRunnerParameters, true);
+          if (myRunnerParameters != null) {
+            FlexBaseRunner.launchOnDevice(getSession().getProject(), myFlexSdk, myRunnerParameters, true);
+          }
+          else {
+            FlexBaseRunner.launchOnAndroidDevice(getSession().getProject(), myFlexSdk, myAppId, true);
+          }
         }
       });
     }

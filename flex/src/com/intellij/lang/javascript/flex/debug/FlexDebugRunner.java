@@ -9,10 +9,12 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.run.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -31,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 
 import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileDebugTransport;
+import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileRunTarget;
 
 /**
  * User: Maxim.Mossienko
@@ -59,6 +62,24 @@ public class FlexDebugRunner extends FlexBaseRunner {
                                                      final RunContentDescriptor contentToReuse,
                                                      final ExecutionEnvironment env) throws ExecutionException {
     final Project project = module.getProject();
+
+    if (config.getTargetPlatform() == TargetPlatform.Mobile && params.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice) {
+      final Sdk flexSdk = FlexUtils.createFlexSdkWrapper(config);
+      final String appId = getApplicationId(getAirDescriptorPath(config, config.getAndroidPackagingOptions()));
+
+      final MobileAirPackageParameters packageParameters = createAndroidPackageParams(flexSdk, config, params, true);
+
+      if (!packAndInstallToAndroidDevice(module, flexSdk, packageParameters, appId, true)) {
+        return null;
+      }
+
+      if (params.getDebugTransport() == AirMobileDebugTransport.USB) {
+        launchOnAndroidDevice(project, flexSdk, appId, true);
+        waitUntilCountdownStartsOnDevice(project, appId);
+        MobileAirUtil.forwardTcpPort(project, flexSdk, params.getUsbDebugPort());
+      }
+    }
+
     final XDebugSession debugSession =
       XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
         @NotNull
