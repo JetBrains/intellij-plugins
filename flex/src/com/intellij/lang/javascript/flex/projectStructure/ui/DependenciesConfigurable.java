@@ -1061,6 +1061,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         }
       }
 
+      url = VirtualFileManager.extractPath(StringUtil.trimEnd(url, JarFileSystem.JAR_SEPARATOR));
       SdkEntryItem item = new SdkEntryItem(FileUtil.toSystemDependentName(url), linkageType);
       sdkNode.add(new DefaultMutableTreeNode(item, false));
     }
