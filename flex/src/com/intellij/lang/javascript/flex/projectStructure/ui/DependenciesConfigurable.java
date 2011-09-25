@@ -118,6 +118,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   private abstract static class MyTableItem {
     public abstract String getText();
 
+    @Nullable
     public abstract Icon getIcon();
 
     public abstract boolean showLinkage();
@@ -162,6 +163,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
     }
 
+    @Nullable
     @Override
     public Icon getIcon() {
       return configurable != null ? configurable.getIcon() : MISSING_BC_ICON;
@@ -566,7 +568,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       @Override
       public void moduleRemoved(Module module) {
         // TODO return if module == this module
-        List<Integer> rowsToRemove = new ArrayList<Integer>();
+        Set<MyTableItem> itemsToRemove = new HashSet<MyTableItem>();
         // 1st-level nodes are always visible
         // 2nd-level nodes cannot refer to BC
         for (int row = 0; row < myTable.getRowCount(); row++) {
@@ -574,18 +576,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
           if (item instanceof BCItem) {
             FlexIdeBCConfigurable configurable = ((BCItem)item).configurable;
             if (configurable != null && configurable.getModule() == module) {
-              rowsToRemove.add(row);
+              itemsToRemove.add(item);
             }
           }
         }
 
-        if (!rowsToRemove.isEmpty()) {
-          DefaultMutableTreeNode root = myTable.getRoot();
-          for (int i = 0; i < rowsToRemove.size(); i++) {
-            root.remove(rowsToRemove.get(i) - i);
-          }
-          myTable.refresh();
-        }
+        removeItems(itemsToRemove);
       }
 
       @Override
@@ -599,8 +595,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         for (int row = 0; row < myTable.getRowCount(); row++) {
           MyTableItem item = myTable.getItemAt(row);
           if (item instanceof BCItem && ((BCItem)item).configurable == configurable) {
-            myTable.getRoot().remove(row);
-            myTable.refresh();
+            removeItems(Collections.singleton(item));
             // there may be only one dependency on a BC
             break;
           }
@@ -727,13 +722,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   private void removeSelection() {
     TableUtil.stopEditing(myTable);
     int[] selectedRows = myTable.getSelectedRows();
-    Arrays.sort(selectedRows);
-    DefaultMutableTreeNode root = myTable.getRoot();
-    for (int i = 0; i < selectedRows.length; i++) {
-      int index = selectedRows[i] - i;
-      root.remove(index);
+    Set<MyTableItem> itemsToRemove = new HashSet<MyTableItem>(selectedRows.length);
+    for (int row : selectedRows) {
+      itemsToRemove.add(myTable.getItemAt(row));
     }
-    myTable.refresh();
+    removeItems(itemsToRemove);
     if (myTable.getRowCount() > 0) {
       int toSelect = Math.min(myTable.getRowCount() - 1, selectedRows[0]);
       myTable.clearSelection();
@@ -741,7 +734,25 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
   }
 
+  private void removeItems(Set<MyTableItem> itemsToDelete) {
+    if (itemsToDelete.isEmpty()) return;
+    
+    DefaultMutableTreeNode root = myTable.getRoot();
+
+    for (int i = 0; i < root.getChildCount(); ) {
+      Object item = ((DefaultMutableTreeNode)root.getChildAt(i)).getUserObject();
+      if (itemsToDelete.contains(((MyTableItem)item))) {
+        root.remove(i);
+      }
+      else {
+        i++;
+      }
+    }
+    myTable.refresh();
+  }
+
   private void moveSelection(int delta) {
+    // TODO check the case when SDK item is expanded!
     int[] selectedRows = myTable.getSelectedRows();
     Arrays.sort(selectedRows);
     DefaultMutableTreeNode root = myTable.getRoot();
