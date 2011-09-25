@@ -21,12 +21,7 @@
     <programRunner implementation="com.intellij.lang.javascript.flex.debug.FlexDebugRunner"/>
     <programRunner implementation="com.intellij.lang.javascript.flex.run.FlexRunner"/>
     <xdebugger.breakpointType implementation="com.intellij.lang.javascript.flex.debug.FlexBreakpointType"/>
-    <configurationType implementation="com.intellij.lang.javascript.flex.run.FlexRunConfigurationType"/>
-    <configurationType implementation="com.intellij.lang.javascript.flex.run.AirRunConfigurationType"/>
-    <configurationType implementation="com.intellij.lang.javascript.flex.run.AirMobileRunConfigurationType"/>
-    <configurationType implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfigurationType"/>
     <moduleType id="Flex" implementationClass="com.intellij.lang.javascript.flex.FlexModuleType"/>
-    <moduleConfigurationEditorProvider implementation="com.intellij.lang.javascript.flex.FlexModuleConfigurationEditorProvider"/>
     <xmlStructureViewBuilderProvider implementation="com.intellij.lang.javascript.flex.presentation.FlexStructureViewProvider"/>
     <referenceImporter implementation="com.intellij.lang.javascript.flex.FlexReferenceImporter"/>
     <frameworkSupport implementation="com.intellij.javascript.flex.FlexSupportProvider"/>
@@ -68,10 +63,6 @@
     <structureViewBuilder key="SWF" factoryClass="com.intellij.javascript.flex.compiled.SwfStructureViewBuilderProvider"/>
 
     <testSrcLocator implementation="com.intellij.lang.javascript.flex.flexunit.FlexQualifiedNameLocationProvider"/>
-    <configurationProducer implementation="com.intellij.lang.javascript.flex.run.FlexRuntimeConfigurationProducer"/>
-    <configurationProducer implementation="com.intellij.lang.javascript.flex.run.AirRuntimeConfigurationProducer"/>
-    <configurationProducer implementation="com.intellij.lang.javascript.flex.run.AirMobileRuntimeConfigurationProducer"/>
-    <configurationProducer implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitRuntimeConfigurationProducer"/>
     <psi.referenceContributor implementation="com.intellij.javascript.flex.FlexReferenceContributor"/>
     <lookup.charFilter implementation="com.intellij.lang.javascript.flex.ActionScriptCharFilter"/>
     <inspectionToolProvider implementation="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitInspectionToolProvider"/>

@@ -13,6 +13,7 @@
     <library.type implementation="com.intellij.lang.javascript.flex.projectStructure.FlexSdkLibraryType"/>
     <orderEnumerationHandlerFactory
         implementation="com.intellij.lang.javascript.flex.projectStructure.FlexOrderEnumerationHandler$FactoryImpl"/>
+    <moduleConfigurationEditorProvider implementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleConfigurationEditorProvider"/>
   </extensions>
 
   <actions>
