@@ -117,12 +117,12 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
         return AddDependencyType.DEFAULT;
       }
 
-      if (library.getType() == FlexLibraryType.getInstance()) {
+      if (library.getType() instanceof FlexLibraryType) {
         return FlexProjectRootsUtil.dependOnModuleLibrary(accessibleConfigurations, library, module != myRootModule)
                ? AddDependencyType.DEFAULT
                : AddDependencyType.DO_NOT_ADD;
       }
-      else if (library.getType() == FlexSdkLibraryType.getInstance()) {
+      else if (library.getType() instanceof FlexSdkLibraryType) {
         // never add transitive dependency to Flex SDK
         return module == myRootModule && FlexProjectRootsUtil.dependOnSdk(accessibleConfigurations, library)
                ? AddDependencyType.DEFAULT
