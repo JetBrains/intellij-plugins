@@ -185,10 +185,8 @@ public class CompilerConfigGenerator {
     final Map<String, String> libNameToRslInfo = new THashMap<String, String>();
 
     for (final String swcUrl : mySdkRootUrls) {
-      final String swcPath = VirtualFileManager.extractPath(StringUtil.trimEnd(swcUrl, JarFileSystem.JAR_SEPARATOR));
-
-      LinkageType linkageType = BCUtils
-        .getSdkEntryLinkageType(swcPath, myConfig.getNature(), myConfig.getDependencies().getTargetPlayer(), myConfig.getDependencies().getComponentSet());
+      LinkageType linkageType = BCUtils.getSdkEntryLinkageType(swcUrl, myConfig.getNature(), myConfig.getDependencies().getTargetPlayer(),
+                                                               myConfig.getDependencies().getComponentSet());
 
       // check applicability
       if (linkageType == null) continue;
@@ -201,6 +199,8 @@ public class CompilerConfigGenerator {
                                       linkageType == LinkageType.External ? CompilerOptionInfo.EXTERNAL_LIBRARY_INFO :
                                       linkageType == LinkageType.Include ? CompilerOptionInfo.INCLUDE_LIBRARY_INFO :
                                       null;
+
+      final String swcPath = VirtualFileManager.extractPath(StringUtil.trimEnd(swcUrl, JarFileSystem.JAR_SEPARATOR));
       assert info != null : swcPath + ": " + linkageType.getShortText();
 
       addOption(rootElement, info, swcPath);

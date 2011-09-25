@@ -4,6 +4,9 @@ import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.JarFileSystem;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -56,10 +59,13 @@ public class BCUtils {
    * @return <code>null</code> if entry should not be included at all
    */
   @Nullable
-  public static LinkageType getSdkEntryLinkageType(final String path,
+  public static LinkageType getSdkEntryLinkageType(String path,
                                                    final BuildConfigurationNature bcNature,
                                                    String targetPlayer,
                                                    final ComponentSet componentSet) {
+    LOG.assertTrue(path.endsWith(JarFileSystem.JAR_SEPARATOR), "path in JAR filesystem expected");
+    path = VirtualFileManager.extractPath(StringUtil.trimEnd(path, JarFileSystem.JAR_SEPARATOR));
+    
     if (path.endsWith("/frameworks/libs/air/airglobal.swc")) {
       return bcNature.isWebPlatform() ? null : LinkageType.External;
     }
