@@ -196,7 +196,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
       @Override
       public void rootsChanged(ModuleRootEvent event) {
         new Notification(FlexUIDesignerBundle.message("plugin.name"), FlexUIDesignerBundle.message("plugin.name"),
-            "Listen library changes is not yet supported. Please, reopen project.",
+            "Please reopen your project to update on library changes.",
             NotificationType.WARNING).notify(project);
       }
     });
