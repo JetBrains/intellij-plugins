@@ -4,7 +4,6 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -32,7 +31,7 @@ public class ProfileFileTypeFactory extends FileTypeFactory {
     }
 
     public Icon getIcon() {
-      return PlatformIcons.CUSTOM_FILE_ICON;
+      return DefaultProfilerExecutor.ICON;
     }
 
     public boolean isBinary() {

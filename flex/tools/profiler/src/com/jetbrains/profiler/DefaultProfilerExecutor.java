@@ -18,7 +18,7 @@ public class DefaultProfilerExecutor extends Executor {
   public static final String EXECUTOR_ID = "Profile";
 
   private static final Icon TOOL_WINDOW_ICON = IconLoader.getIcon("/general/toolWindowDebugger.png");
-  private static final Icon ICON;
+  public static final Icon ICON;
 
   static {
     Icon icon = IconLoader.findIcon("/actions/profuleCPU.png", DefaultProfilerExecutor.class, true);
