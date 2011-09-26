@@ -37,7 +37,7 @@ import java.util.*;
 public class FlexProjectConfigTest extends ModuleTestCase {
 
   static {
-    init();
+    //init();
   }
 
   public static void init() {
