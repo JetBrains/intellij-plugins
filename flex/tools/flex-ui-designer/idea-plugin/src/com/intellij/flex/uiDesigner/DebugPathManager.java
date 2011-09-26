@@ -20,7 +20,7 @@ public final class DebugPathManager {
   private static String fudHome;
 
   static {
-    ideaHome = getRootByClass(DebugPathManager.class);
+    ideaHome = PathManager.getHomePathFor(DebugPathManager.class);
     Application app = ApplicationManager.getApplication();
     if (app == null) {
       // running SwcDependenciesSorter
@@ -86,24 +86,4 @@ public final class DebugPathManager {
     return fudHome;
   }
 
-  @Nullable
-  private static String getRootByClass(Class aClass) {
-    String rootPath = PathManager.getResourceRoot(aClass, "/" + aClass.getName().replace('.', '/') + ".class");
-    File root = new File(rootPath).getAbsoluteFile();
-    do {
-      final String parent = root.getParent();
-      if (parent == null) {
-        return null;
-      }
-      root = new File(parent).getAbsoluteFile();
-    }
-    while (root != null && !isIdeaHome(root));
-
-    return root == null ? null : root.getAbsolutePath();
-  }
-
-  private static boolean isIdeaHome(final File root) {
-    return new File(root, FileUtil.toSystemDependentName("bin/idea.properties")).exists() ||
-           new File(root, FileUtil.toSystemDependentName("community/bin/idea.properties")).exists();
-  }
 }
