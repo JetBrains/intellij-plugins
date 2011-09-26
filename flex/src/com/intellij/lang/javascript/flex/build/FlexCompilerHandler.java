@@ -143,6 +143,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
   public void projectOpened() {
     CompilerManager.getInstance(myProject).addBeforeTask(new FlexUnitPrecompileTask(myProject));
     CompilerManager.getInstance(myProject).addBeforeTask(new RunMainClassPrecompileTask(myProject));
+    CompilerManager.getInstance(myProject).setValidationEnabled(FlexModuleType.getInstance(), false);
   }
 
   public void projectClosed() {
