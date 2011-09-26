@@ -292,12 +292,12 @@ public class FlexProjectConfigurationEditor implements Disposable {
       }
 
       // ---------------- modules entries ----------------------
-      final Map<Module, Boolean> modulesToAdd = new HashMap<Module, Boolean>(); // Library -> add_module_entry_flag
+        final Map<Module, Boolean> modulesToAdd = new HashMap<Module, Boolean>(); // Library -> add_module_entry_flag
       for (Editor editor : myModule2Editors.get(module)) {
         for (DependencyEntry dependencyEntry : editor.getDependencies().getEntries()) {
           if (dependencyEntry instanceof BuildConfigurationEntry) {
             Editor bc = findBc((BuildConfigurationEntry)dependencyEntry);
-            if (bc != null) {
+            if (bc != null && bc.myModule != module) {
               modulesToAdd.put(bc.myModule, true);
             }
           }
