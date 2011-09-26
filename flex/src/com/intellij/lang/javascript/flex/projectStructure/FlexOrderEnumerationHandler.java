@@ -157,7 +157,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
   }
 
   @Override
-  public boolean addCustomOutput(@NotNull OrderEntry forOrderEntry, @NotNull OrderRootType type, @NotNull Collection<String> urls) {
+  public boolean addCustomRootsForLibrary(@NotNull OrderEntry forOrderEntry, @NotNull OrderRootType type, @NotNull Collection<String> urls) {
     if (type != OrderRootType.CLASSES || !(forOrderEntry instanceof LibraryOrderEntry)) {
       return false;
     }
