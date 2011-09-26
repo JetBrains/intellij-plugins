@@ -3,6 +3,7 @@ package com.google.jstestdriver.idea.assertFramework.qunit;
 import com.google.common.collect.Lists;
 import com.google.inject.internal.Maps;
 import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructure;
+import com.google.jstestdriver.idea.assertFramework.JstdRunElement;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.util.TextRange;
@@ -83,5 +84,17 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
       }
     }
     return null;
+  }
+
+  @Override
+  @Nullable
+  public JstdRunElement findJstdRunElement(@NotNull TextRange textRange) {
+    for (QUnitModuleStructure nonDefaultModuleStructure : myNonDefaultModuleStructures) {
+      JstdRunElement jstdRunElement = nonDefaultModuleStructure.findJstdRunElement(textRange);
+      if (jstdRunElement != null) {
+        return jstdRunElement;
+      }
+    }
+    return myDefaultModuleStructure.findJstdRunElement(textRange);
   }
 }

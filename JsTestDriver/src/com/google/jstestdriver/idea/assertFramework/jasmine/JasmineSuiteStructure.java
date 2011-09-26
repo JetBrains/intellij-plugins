@@ -2,6 +2,7 @@ package com.google.jstestdriver.idea.assertFramework.jasmine;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.jstestdriver.idea.assertFramework.JstdRunElement;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSFunctionExpression;
@@ -114,4 +115,23 @@ public class JasmineSuiteStructure implements JasmineSuiteChild {
     return null;
   }
 
+  @Nullable
+  JstdRunElement findJstdRunElement(@NotNull TextRange textRange) {
+    for (JasmineSpecStructure specChild : mySpecChildren) {
+      TextRange callTextRange = specChild.getEnclosingCallExpression().getTextRange();
+      if (callTextRange.contains(textRange)) {
+        return JstdRunElement.newTestMethodRunElement(myName, specChild.getName());
+      }
+    }
+    for (JasmineSuiteStructure suiteChild : mySuiteChildren) {
+      JstdRunElement jstdRunElement = suiteChild.findJstdRunElement(textRange);
+      if (jstdRunElement != null) {
+        return jstdRunElement;
+      }
+    }
+    if (myEnclosingCallExpression.getTextRange().contains(textRange)) {
+      return JstdRunElement.newTestCaseRunElement(myName);
+    }
+    return null;
+  }
 }

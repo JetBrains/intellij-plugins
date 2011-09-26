@@ -3,6 +3,7 @@ package com.google.jstestdriver.idea.assertFramework.jstd;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructure;
+import com.google.jstestdriver.idea.assertFramework.JstdRunElement;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.util.TextRange;
@@ -51,6 +52,18 @@ public class JstdTestFileStructure extends AbstractTestFileStructure {
 
   public int getTestCaseCount() {
     return myTestCaseStructures.size();
+  }
+
+  @Override
+  @Nullable
+  public JstdRunElement findJstdRunElement(@NotNull TextRange textRange) {
+    for (JstdTestCaseStructure testCaseStructure : myTestCaseStructures) {
+      JstdRunElement jstdRunElement = testCaseStructure.findJstdRunElement(textRange);
+      if (jstdRunElement != null) {
+        return jstdRunElement;
+      }
+    }
+    return null;
   }
 
   @Nullable

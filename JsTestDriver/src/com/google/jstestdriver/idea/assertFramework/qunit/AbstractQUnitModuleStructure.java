@@ -2,6 +2,7 @@ package com.google.jstestdriver.idea.assertFramework.qunit;
 
 import com.google.common.collect.Lists;
 import com.google.inject.internal.Maps;
+import com.google.jstestdriver.idea.assertFramework.JstdRunElement;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
@@ -66,4 +67,14 @@ public class AbstractQUnitModuleStructure {
     return null;
   }
 
+  @Nullable
+  JstdRunElement findJstdRunElement(@NotNull TextRange textRange) {
+    for (QUnitTestMethodStructure testMethodStructure : myTestMethodStructures) {
+      TextRange testTextRange = testMethodStructure.getCallExpression().getTextRange();
+      if (testTextRange.contains(textRange)) {
+        return JstdRunElement.newTestMethodRunElement(myName, "test " + testMethodStructure.getName());
+      }
+    }
+    return null;
+  }
 }

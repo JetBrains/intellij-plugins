@@ -109,14 +109,14 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
                                                         @NotNull BipartiteString caretBipartiteElementText,
                                                         boolean atFirstColumn) {
     YAMLDocument document = CastUtils.tryCast(element.getParent(), YAMLDocument.class);
-    if (atFirstColumn && document == null) {
+    if (document == null) {
       document = JstdConfigFileUtils.getVerifiedHierarchyHead(
         element.getParent(),
         new Class[]{YAMLKeyValue.class},
         YAMLDocument.class
       );
     }
-    if (document != null) {
+    if (atFirstColumn && document != null) {
       String prefix = caretBipartiteElementText.getPrefix();
       result = result.withPrefixMatcher(prefix);
       for (String key : JstdConfigFileUtils.VALID_TOP_LEVEL_KEYS) {
@@ -174,9 +174,14 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
       basePath, caretBipartiteElementText.getPrefix()
     );
     if (parentWithLastComponentPrefix != null) {
-      result = result.withPrefixMatcher(parentWithLastComponentPrefix.getLastComponentPrefix());
-      VirtualFile[] children = parentWithLastComponentPrefix.getParent().getChildren();
+      PrefixMatcher matcher = new StrictPrefixMatcher(parentWithLastComponentPrefix.getLastComponentPrefix(), false);
+      result = result.withPrefixMatcher(matcher);
+      VirtualFile parentFile = parentWithLastComponentPrefix.getParent();
+      VirtualFile[] children = parentFile.getChildren();
       Character dirSeparatorSuffix = extractDirectoryTrailingFileSeparator(caretBipartiteElementText);
+      if (parentFile.isDirectory()) {
+        result.addElement(LookupItem.fromString(".."));
+      }
       for (VirtualFile child : children) {
         String name = child.getName();
         if (child.isDirectory() && dirSeparatorSuffix != null) {
@@ -325,6 +330,27 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
     @Override
     public String toString() {
       return "prefix:'" + myPrefix + "'\', suffix='" + mySuffix + '\'';
+    }
+  }
+
+  private static class StrictPrefixMatcher extends PrefixMatcher {
+
+    private final boolean myIgnoreCase;
+
+    public StrictPrefixMatcher(@NotNull String prefix, boolean ignoreCase) {
+      super(prefix);
+      myIgnoreCase = ignoreCase;
+    }
+
+    @Override
+    public boolean prefixMatches(@NotNull String name) {
+      return name.regionMatches(myIgnoreCase, 0, myPrefix, 0, myPrefix.length());
+    }
+
+    @NotNull
+    @Override
+    public PrefixMatcher cloneWithPrefix(@NotNull String prefix) {
+      return new StrictPrefixMatcher(prefix, myIgnoreCase);
     }
   }
 }

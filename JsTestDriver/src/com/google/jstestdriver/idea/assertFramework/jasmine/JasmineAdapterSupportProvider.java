@@ -1,7 +1,7 @@
 package com.google.jstestdriver.idea.assertFramework.jasmine;
 
 import com.google.jstestdriver.idea.assertFramework.jasmine.jsSrc.JasmineAdapterSrcMarker;
-import com.google.jstestdriver.idea.assertFramework.support.AbstractAdapterSupportProvider;
+import com.google.jstestdriver.idea.assertFramework.support.AbstractAddAdapterSupportInspection;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.google.jstestdriver.idea.util.VfsUtils;
 import com.intellij.lang.javascript.psi.JSExpression;
@@ -9,7 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 
 import java.util.List;
 
-public class JasmineAdapterSupportProvider extends AbstractAdapterSupportProvider {
+public class JasmineAdapterSupportProvider extends AbstractAddAdapterSupportInspection {
   @Override
   public String getAssertFrameworkName() {
     return "Jasmine";

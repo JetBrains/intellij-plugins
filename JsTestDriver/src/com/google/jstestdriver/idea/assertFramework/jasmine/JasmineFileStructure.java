@@ -3,7 +3,9 @@ package com.google.jstestdriver.idea.assertFramework.jasmine;
 import com.google.common.collect.Lists;
 import com.google.inject.internal.Maps;
 import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructure;
+import com.google.jstestdriver.idea.assertFramework.JstdRunElement;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,6 +56,18 @@ public class JasmineFileStructure extends AbstractTestFileStructure {
       JasmineSpecStructure specStructure = suiteStructure.findSpecContainingOffset(offset);
       if (specStructure != null) {
         return specStructure;
+      }
+    }
+    return null;
+  }
+
+  @Override
+  @Nullable
+  public JstdRunElement findJstdRunElement(@NotNull TextRange textRange) {
+    for (JasmineSuiteStructure suiteStructure : mySuiteStructures) {
+      JstdRunElement jstdRunElement = suiteStructure.findJstdRunElement(textRange);
+      if (jstdRunElement != null) {
+        return jstdRunElement;
       }
     }
     return null;

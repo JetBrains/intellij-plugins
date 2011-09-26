@@ -4,6 +4,7 @@ import com.google.jstestdriver.idea.util.CastUtils;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.JSFunctionExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
@@ -28,7 +29,7 @@ public class JstdTestStructure {
   }
 
   @NotNull
-  public String getTestName() {
+  public String getName() {
     return myTestName;
   }
 
@@ -45,6 +46,19 @@ public class JstdTestStructure {
   @Nullable
   public JSFunctionExpression getTestMethodBody() {
     return myTestMethodBody;
+  }
+
+  public boolean containsTextRange(@NotNull TextRange textRange) {
+    if (myJsProperty != null) {
+      TextRange enclosingTextRange = myJsProperty.getTextRange();
+      return enclosingTextRange.contains(textRange);
+    }
+    TextRange nameTextRange = myTestMethodNameDeclaration.getTextRange();
+    if (nameTextRange.contains(textRange)) {
+      return true;
+    }
+    TextRange bodyTextRange = myTestMethodBody.getTextRange();
+    return bodyTextRange.contains(textRange);
   }
 
   @Nullable

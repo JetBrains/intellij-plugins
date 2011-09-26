@@ -1,6 +1,5 @@
 package com.google.jstestdriver.idea.assertFramework.support;
 
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.application.ApplicationManager;
@@ -16,16 +15,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
-class AdapterFix implements IntentionAction, LocalQuickFix {
+class AdapterFix implements LocalQuickFix {
 
-  private final AbstractAdapterSupportProvider myAssertFrameworkAdapterSupportProvider;
+  private final AbstractAddAdapterSupportInspection myAssertFrameworkAdapterSupportProvider;
 
-  AdapterFix(AbstractAdapterSupportProvider assertFrameworkAdapterSupportProvider) {
-    myAssertFrameworkAdapterSupportProvider = assertFrameworkAdapterSupportProvider;
+  AdapterFix(AbstractAddAdapterSupportInspection assertFrameworkAddAdapterSupportInspection) {
+    myAssertFrameworkAdapterSupportProvider = assertFrameworkAddAdapterSupportInspection;
   }
 
   @NotNull
-  @Override
+  //@Override
   public String getText() {
     String assertFrameworkName = myAssertFrameworkAdapterSupportProvider.getAssertFrameworkName();
     return "Add " + assertFrameworkName + " adapter support for JsTestDriver";
@@ -37,17 +36,11 @@ class AdapterFix implements IntentionAction, LocalQuickFix {
     return getText();
   }
 
-  @Override
-  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-    return !project.isDisposed();
-  }
-
-  @Override
   public void invoke(@NotNull final Project project, Editor editor, final PsiFile file) throws IncorrectOperationException {
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
-        AdapterSupportDialog dialog = new AdapterSupportDialog(
+        AddAdapterSupportDialog dialog = new AddAdapterSupportDialog(
             project,
             myAssertFrameworkAdapterSupportProvider.getAssertFrameworkName(),
             myAssertFrameworkAdapterSupportProvider.getAdapterSourceFiles()
@@ -67,12 +60,6 @@ class AdapterFix implements IntentionAction, LocalQuickFix {
       }
     });
   }
-
-  @Override
-  public boolean startInWriteAction() {
-    return false;
-  }
-
 
 //  LocalQuickFix methods implementation
 
