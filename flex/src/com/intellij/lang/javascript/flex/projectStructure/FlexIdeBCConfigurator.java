@@ -130,13 +130,15 @@ public class FlexIdeBCConfigurator {
   }
 
   public void moduleRemoved(final Module module) {
-    // config editor will handle event and update modifiable model on its own, we just need to update the map
     if (ModuleType.get(module) != FlexModuleType.getInstance()) {
       return;
     }
 
+    // config editor will handle event and update modifiable model on its own, we just need to update configurables
     for (Iterator<ModifiableFlexIdeBuildConfiguration> i = myConfigurablesMap.keySet().iterator(); i.hasNext(); ) {
-      if (myConfigEditor.getModule(i.next()) == module) {
+      ModifiableFlexIdeBuildConfiguration bc = i.next();
+      if (myConfigEditor.getModule(bc) == module) {
+        myConfigurablesMap.get(bc).disposeUIResources();
         i.remove();
       }
     }
