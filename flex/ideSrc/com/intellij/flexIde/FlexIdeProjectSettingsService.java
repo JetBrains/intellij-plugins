@@ -75,7 +75,7 @@ public class FlexIdeProjectSettingsService extends ProjectSettingsService {
 
   @Override
   public boolean canOpenModuleDependenciesSettings() {
-    return false; // TODO
+    return true;
   }
 
   @Override
@@ -83,6 +83,7 @@ public class FlexIdeProjectSettingsService extends ProjectSettingsService {
     ShowSettingsUtil.getInstance().editConfigurable(myProject, ProjectStructureConfigurable.getInstance(myProject), new Runnable() {
       @Override
       public void run() {
+        // TODO open BC
         ProjectStructureConfigurable.getInstance(myProject).selectOrderEntry(module, orderEntry);
       }
     });

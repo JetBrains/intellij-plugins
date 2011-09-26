@@ -33,11 +33,13 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.ui.ProjectJdksEditor;
+import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
+import com.intellij.util.PlatformUtils;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.messages.Topic;
@@ -427,8 +429,16 @@ public class FlexUIDesignerApplicationManager implements Disposable {
             @Override
             public void consume(String id) {
               if ("edit".equals(id)) {
-                new ProjectJdksEditor(null, module.getProject(), WindowManager.getInstance().suggestParentWindow(module.getProject()))
+                // TODO wrap this in ProjectSettingsService?
+                if (PlatformUtils.isFlexIde()) {
+                  if (ProjectSettingsService.getInstance(myProject).canOpenModuleDependenciesSettings()) {
+                    ProjectSettingsService.getInstance(myProject).openModuleDependenciesSettings(module, null);
+                  }
+                }
+                else {
+                  new ProjectJdksEditor(null, module.getProject(), WindowManager.getInstance().suggestParentWindow(module.getProject()))
                     .show();
+                }
               }
               else {
                 LOG.error("unexpected id: " + id);
