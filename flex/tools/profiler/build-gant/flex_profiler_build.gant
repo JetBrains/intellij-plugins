@@ -41,8 +41,8 @@ private def doExecute(home, sandbox, targetFolder) {
     replacefilter(token: "@@repo@@", value: "$flexSandbox/repo")
   }
 
-  buildFlex("Agent9Config", "$targetFolder/profiler_agent_3.swf")
-  buildFlex("Agent10Config", "$targetFolder/profiler_agent_4.swf")
+  buildFlex("Agent9Config", "$targetFolder/profiler_agent_9.swf")
+  buildFlex("Agent10Config", "$targetFolder/profiler_agent_10.swf")
 }
 
 def buildFlex(configName, target) {
