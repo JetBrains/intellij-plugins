@@ -13,6 +13,9 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.JarFileSystem;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
@@ -181,6 +184,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
         allAccessibleUrls.addAll(ContainerUtil.filter(allUrls, new Condition<String>() {
           @Override
           public boolean value(String s) {
+            s = VirtualFileManager.extractPath(StringUtil.trimEnd(s, JarFileSystem.JAR_SEPARATOR));
             return BCUtils.getSdkEntryLinkageType(s, bc.getNature(), bc.getDependencies().getTargetPlayer(),
                                                   bc.getDependencies().getComponentSet()) != null;
           }

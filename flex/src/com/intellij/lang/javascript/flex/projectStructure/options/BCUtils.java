@@ -65,9 +65,8 @@ public class BCUtils {
                                                    final BuildConfigurationNature bcNature,
                                                    String targetPlayer,
                                                    final ComponentSet componentSet) {
-    LOG.assertTrue(path.endsWith(JarFileSystem.JAR_SEPARATOR), "path in JAR filesystem expected");
-    path = VirtualFileManager.extractPath(StringUtil.trimEnd(path, JarFileSystem.JAR_SEPARATOR));
-    
+    LOG.assertTrue(!path.endsWith(JarFileSystem.JAR_SEPARATOR), "plain local filesystem path is expected");
+
     if (path.endsWith("/frameworks/libs/air/airglobal.swc")) {
       return bcNature.isWebPlatform() ? null : LinkageType.External;
     }

@@ -1059,6 +1059,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     String targetPlayer = (String)myTargetPlayerCombo.getSelectedItem();
 
     for (String url : sdk.getRoots(OrderRootType.CLASSES)) {
+      url = VirtualFileManager.extractPath(StringUtil.trimEnd(url, JarFileSystem.JAR_SEPARATOR));
       LinkageType linkageType = BCUtils.getSdkEntryLinkageType(url, myNature, targetPlayer, componentSet);
       if (linkageType == null) {
         // this url is not applicable
@@ -1072,7 +1073,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         }
       }
 
-      url = VirtualFileManager.extractPath(StringUtil.trimEnd(url, JarFileSystem.JAR_SEPARATOR));
       SdkEntryItem item = new SdkEntryItem(FileUtil.toSystemDependentName(url), linkageType);
       sdkNode.add(new DefaultMutableTreeNode(item, false));
     }
