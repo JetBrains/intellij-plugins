@@ -84,12 +84,14 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
   private boolean myDisposed;
   private final ProjectModifiableModelProvider myProvider;
+  
+  @Nullable
   private final Project myProject;
 
   private final Map<Module, List<Editor>> myModule2Editors = new HashMap<Module, List<Editor>>();
   private final FlexSdksEditor mySdksEditor;
 
-  public FlexProjectConfigurationEditor(Project project, ProjectModifiableModelProvider provider) {
+  public FlexProjectConfigurationEditor(@Nullable Project project, ProjectModifiableModelProvider provider) {
     myProject = project;
     myProvider = provider;
     mySdksEditor = new FlexSdksEditor(this);
@@ -222,6 +224,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
     return ((Editor)configuration).myModule;
   }
 
+  @Nullable
   public Project getProject() {
     return myProject;
   }
@@ -342,7 +345,9 @@ public class FlexProjectConfigurationEditor implements Disposable {
           mySdksEditor.commit();
         }
 
-        FlexBuildConfigurationManagerImpl.resetHighlighting(myProject);
+        if (myProject != null) {
+          FlexBuildConfigurationManagerImpl.resetHighlighting(myProject);
+        }
       }
     });
   }

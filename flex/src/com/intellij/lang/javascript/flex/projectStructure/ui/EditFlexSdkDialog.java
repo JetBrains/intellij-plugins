@@ -15,12 +15,11 @@
  */
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
-import com.intellij.facet.impl.ui.libraries.LibraryCompositionSettings;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ui.configuration.libraryEditor.*;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.util.ui.FormBuilder;
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditorDialogBase;
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryRootsComponent;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,7 +29,7 @@ import java.awt.*;
  */
 public class EditFlexSdkDialog extends LibraryEditorDialogBase {
 
-  public EditFlexSdkDialog(Project project, LibraryEditor libraryEditor, Component parent) {
+  public EditFlexSdkDialog(@Nullable Project project, LibraryEditor libraryEditor, Component parent) {
     super(parent, new LibraryRootsComponent(project, libraryEditor));
     setTitle("Configure " + libraryEditor.getName());
     init();
