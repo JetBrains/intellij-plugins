@@ -392,10 +392,13 @@ public class FlexProjectConfigurationEditor implements Disposable {
     return ModuleType.get(module) == FlexModuleType.getInstance();
   }
 
-  public ModifiableBuildConfigurationEntry createBcEntry(ModifiableDependencies dependant, ModifiableFlexIdeBuildConfiguration dependency) {
+  public ModifiableBuildConfigurationEntry createBcEntry(ModifiableDependencies dependant,
+                                                         ModifiableFlexIdeBuildConfiguration dependency,
+                                                         @Nullable String currentName) {
     assertAlive();
     Module dependencyModule = ((Editor)dependency).myModule;
-    ModifiableBuildConfigurationEntry e = new BuildConfigurationEntryImpl(dependencyModule, dependency.getName());
+    ModifiableBuildConfigurationEntry e =
+      new BuildConfigurationEntryImpl(dependencyModule, currentName != null ? currentName : dependency.getName());
 
     //Module dependantModule = getEditor(dependant).myModule;
     //if (dependantModule != dependencyModule) {

@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
-import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -83,7 +82,7 @@ public class FlexProjectConfigTest extends ModuleTestCase {
       public void consume(FlexProjectConfigurationEditor editor) {
         ModifiableFlexIdeBuildConfiguration module1Config = editor.getConfigurations(myModule)[0];
         ModifiableFlexIdeBuildConfiguration module2Config = editor.getConfigurations(module2)[0];
-        ModifiableBuildConfigurationEntry entry = editor.createBcEntry(module1Config.getDependencies(), module2Config);
+        ModifiableBuildConfigurationEntry entry = editor.createBcEntry(module1Config.getDependencies(), module2Config, null);
         editor.setEntries(module1Config.getDependencies(), Collections.singletonList(entry));
       }
     });
@@ -114,11 +113,11 @@ public class FlexProjectConfigTest extends ModuleTestCase {
         ModifiableFlexIdeBuildConfiguration m3bc1 = editor.getConfigurations(module3)[0];
         ModifiableFlexIdeBuildConfiguration m2bc2 = createConfiguration(editor, module2);
 
-        ModifiableBuildConfigurationEntry e1 = editor.createBcEntry(m1bc1.getDependencies(), m2bc1);
+        ModifiableBuildConfigurationEntry e1 = editor.createBcEntry(m1bc1.getDependencies(), m2bc1, null);
         editor.setEntries(m1bc1.getDependencies(), Collections.singletonList(e1));
 
-        ModifiableBuildConfigurationEntry e2 = editor.createBcEntry(m1bc2.getDependencies(), m2bc2);
-        ModifiableBuildConfigurationEntry e3 = editor.createBcEntry(m1bc2.getDependencies(), m3bc1);
+        ModifiableBuildConfigurationEntry e2 = editor.createBcEntry(m1bc2.getDependencies(), m2bc2, null);
+        ModifiableBuildConfigurationEntry e3 = editor.createBcEntry(m1bc2.getDependencies(), m3bc1, null);
         editor.setEntries(m1bc1.getDependencies(), Arrays.asList(e2, e3));
       }
     });

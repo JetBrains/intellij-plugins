@@ -891,7 +891,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       if (item instanceof BCItem) {
         FlexIdeBCConfigurable configurable = ((BCItem)item).configurable;
         if (configurable != null) {
-          entry = myConfigEditor.createBcEntry(dependencies, configurable.getEditableObject());
+          // configurable may be not yet applied at the moment
+          entry = myConfigEditor.createBcEntry(dependencies, configurable.getEditableObject(), configurable.getDisplayName());
         }
         else {
           entry = myConfigEditor.createBcEntry(dependencies, ((BCItem)item).moduleName, ((BCItem)item).bcName);
