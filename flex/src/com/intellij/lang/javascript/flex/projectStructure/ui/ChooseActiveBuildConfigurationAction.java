@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
+import com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.openapi.actionSystem.*;
@@ -10,7 +10,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.options.ShowSettingsUtil;
-import com.intellij.openapi.options.newEditor.OptionsEditorDialog;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -18,6 +17,7 @@ import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.navigation.Place;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -92,7 +92,7 @@ public class ChooseActiveBuildConfigurationAction extends ComboBoxAction impleme
     DefaultActionGroup group = new DefaultActionGroup();
     FlexBuildConfigurationManager bcManager = FlexBuildConfigurationManager.getInstance(myLastModule);
     FlexIdeBuildConfiguration[] buildConfigurations = bcManager.getBuildConfigurations();
-    group.add(new EditBcsAction(myLastModule.getProject()));
+    group.add(new EditBcsAction(myLastModule));
     group.addSeparator();
     for (FlexIdeBuildConfiguration c : buildConfigurations) {
       group.add(new BCAction(myLastModule, c));
@@ -141,17 +141,24 @@ public class ChooseActiveBuildConfigurationAction extends ComboBoxAction impleme
   }
 
   private static class EditBcsAction extends DumbAwareAction {
-    private final Project myProject;
+    private final Module myModule;
 
-    public EditBcsAction(Project project) {
+    public EditBcsAction(Module module) {
       super("Configure project", "Edit Flex build configurations", IconLoader.getIcon("/actions/editSource.png"));
-      myProject = project;
+      myModule = module;
     }
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-      ShowSettingsUtil.getInstance()
-        .editConfigurable(myProject, OptionsEditorDialog.DIMENSION_KEY, ProjectStructureConfigurable.getInstance(myProject));
+      final FlexIdeBuildConfiguration activeConfiguration = FlexBuildConfigurationManager.getInstance(myModule).getActiveConfiguration();
+      final ProjectStructureConfigurable c = ProjectStructureConfigurable.getInstance(myModule.getProject());
+      ShowSettingsUtil.getInstance().editConfigurable(myModule.getProject(), c, new Runnable() {
+        @Override
+        public void run() {
+          Place p = FlexIdeModuleStructureExtension.getInstance().getConfigurator().getPlaceFor(myModule, activeConfiguration);
+          c.navigateTo(p, true);
+        }
+      });
     }
   }
 }

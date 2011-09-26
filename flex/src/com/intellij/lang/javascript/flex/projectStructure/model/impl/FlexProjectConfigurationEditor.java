@@ -84,7 +84,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
   private boolean myDisposed;
   private final ProjectModifiableModelProvider myProvider;
-  
+
   @Nullable
   private final Project myProject;
 
@@ -588,6 +588,16 @@ public class FlexProjectConfigurationEditor implements Disposable {
       }
     });
     return library;
+  }
+
+  @Nullable
+  public FlexIdeBuildConfiguration findCurrentConfiguration(Module module, final FlexIdeBuildConfiguration origin) {
+    return ContainerUtil.find(myModule2Editors.get(module), new Condition<Editor>() {
+      @Override
+      public boolean value(Editor editor) {
+        return editor.myOrigin == origin;
+      }
+    });
   }
 }
 
