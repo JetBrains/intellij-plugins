@@ -186,8 +186,7 @@ public class CompilerConfigGenerator {
 
     for (final String swcUrl : mySdkRootUrls) {
       final String swcPath = VirtualFileManager.extractPath(StringUtil.trimEnd(swcUrl, JarFileSystem.JAR_SEPARATOR));
-      LinkageType linkageType = BCUtils.getSdkEntryLinkageType(swcPath, myConfig.getNature(), myConfig.getDependencies().getTargetPlayer(),
-                                                               myConfig.getDependencies().getComponentSet());
+      LinkageType linkageType = BCUtils.getSdkEntryLinkageType(swcPath, myConfig);
 
       // check applicability
       if (linkageType == null) continue;

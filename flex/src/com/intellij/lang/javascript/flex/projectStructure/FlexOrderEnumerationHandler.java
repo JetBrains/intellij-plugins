@@ -22,7 +22,10 @@ import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * User: ksafonov
@@ -157,7 +160,9 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
   }
 
   @Override
-  public boolean addCustomRootsForLibrary(@NotNull OrderEntry forOrderEntry, @NotNull OrderRootType type, @NotNull Collection<String> urls) {
+  public boolean addCustomRootsForLibrary(@NotNull OrderEntry forOrderEntry,
+                                          @NotNull OrderRootType type,
+                                          @NotNull Collection<String> urls) {
     if (type != OrderRootType.CLASSES || !(forOrderEntry instanceof LibraryOrderEntry)) {
       return false;
     }
@@ -185,8 +190,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
           @Override
           public boolean value(String s) {
             s = VirtualFileManager.extractPath(StringUtil.trimEnd(s, JarFileSystem.JAR_SEPARATOR));
-            return BCUtils.getSdkEntryLinkageType(s, bc.getNature(), bc.getDependencies().getTargetPlayer(),
-                                                  bc.getDependencies().getComponentSet()) != null;
+            return BCUtils.getSdkEntryLinkageType(s, bc) != null;
           }
         }));
         return true;

@@ -28,12 +28,11 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkAdditionalData;
-import com.intellij.openapi.projectRoots.SdkModificator;
-import com.intellij.openapi.projectRoots.SdkType;
+import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
@@ -52,10 +51,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.PlatformUtils;
-import com.intellij.util.Processor;
-import com.intellij.util.SystemProperties;
+import com.intellij.util.*;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.NanoXmlUtil;
 import com.intellij.util.xml.XmlFileHeader;
 import org.jetbrains.annotations.NonNls;
@@ -236,6 +233,20 @@ public class FlexUtils {
     }
 
     return null;
+  }
+
+  public static Sdk[] getAllFlexSkds() {
+    if (PlatformUtils.isFlexIde()) {
+      return ContainerUtil.mapNotNull(ApplicationLibraryTable.getApplicationTable().getLibraries(), new Function<Library, Sdk>() {
+        @Override
+        public Sdk fun(Library library) {
+          return FlexSdk.isFlexSdk(library) ? new FlexSdkWrapper((LibraryEx)library) : null;
+        }
+      }, new Sdk[0]);
+    }
+    else {
+      return ProjectJdkTable.getInstance().getAllJdks();
+    }
   }
 
   public static boolean isXmlExtension(String extension) {

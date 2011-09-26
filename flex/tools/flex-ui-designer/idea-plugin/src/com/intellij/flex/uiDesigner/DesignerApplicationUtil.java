@@ -13,6 +13,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.flex.uiDesigner.debug.FlexRunner;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunConfigurationType;
@@ -23,7 +24,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
@@ -63,7 +63,7 @@ final class DesignerApplicationUtil {
     }
 
     final List<Sdk> sdks = new ArrayList<Sdk>();
-    for (Sdk sdk: ProjectJdkTable.getInstance().getAllJdks()) {
+    for (Sdk sdk: FlexUtils.getAllFlexSkds()) {
       if (sdk.getSdkType() instanceof IFlexSdkType && StringUtil.compareVersionNumbers(sdk.getVersionString(), "4.5") >= 0) {
         sdks.add(sdk);
       }

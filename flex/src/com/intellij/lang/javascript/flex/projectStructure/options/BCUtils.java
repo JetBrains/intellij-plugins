@@ -61,6 +61,16 @@ public class BCUtils {
    * @return <code>null</code> if entry should not be included at all
    */
   @Nullable
+  public static LinkageType getSdkEntryLinkageType(String path, FlexIdeBuildConfiguration bc) {
+    return getSdkEntryLinkageType(path, bc.getNature(), bc.getDependencies().getTargetPlayer(), bc.getDependencies().getComponentSet());
+  }
+
+  /**
+   * If <code>LinkageType.Default</code> is returned then use {@link #getDefaultFrameworkLinkage(BuildConfigurationNature)} to get real value.
+   *
+   * @return <code>null</code> if entry should not be included at all
+   */
+  @Nullable
   public static LinkageType getSdkEntryLinkageType(String path,
                                                    final BuildConfigurationNature bcNature,
                                                    String targetPlayer,
