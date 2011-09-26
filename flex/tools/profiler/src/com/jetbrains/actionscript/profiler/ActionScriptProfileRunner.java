@@ -9,9 +9,7 @@ import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.run.AirRunConfiguration;
-import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
-import com.intellij.lang.javascript.flex.run.FlexRunner;
+import com.intellij.lang.javascript.flex.run.*;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -19,9 +17,9 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.SettingsEditor;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
@@ -54,8 +52,8 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
 
   public boolean canRun(@NotNull String executorId, @NotNull RunProfile runProfile) {
     return executorId.equals(DefaultProfilerExecutor.EXECUTOR_ID) &&
-           runProfile instanceof FlexRunConfiguration &&
-           !(runProfile instanceof AirRunConfiguration);
+           (runProfile instanceof FlexRunConfiguration &&
+           !(runProfile instanceof AirRunConfiguration) || runProfile instanceof FlexIdeRunConfiguration);
   }
 
   public ProfileSettings createConfigurationData(ConfigurationInfoProvider configurationInfoProvider) {
@@ -79,21 +77,52 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
   }
 
   public void execute(@NotNull Executor executor, @NotNull ExecutionEnvironment executionEnvironment) throws ExecutionException {
+    execute(executor, executionEnvironment, null);
+  }
+
+  public void execute(@NotNull Executor executor, @NotNull ExecutionEnvironment executionEnvironment, @Nullable Callback callback)
+    throws ExecutionException {
     final RunnerSettings runnerSettings = executionEnvironment.getRunnerSettings();
     if (runnerSettings == null) {
       return; // TODO: what does this mean?
     }
-    startProfiling(
-      (FlexRunConfiguration)executionEnvironment.getRunProfile(), 
-      (ProfileSettings) runnerSettings.getData()
-    );
+    RunProfile runProfile = executionEnvironment.getRunProfile();
+    if (runProfile instanceof FlexRunConfiguration) {
+      startProfiling((FlexRunConfiguration)runProfile, (ProfileSettings)runnerSettings.getData());
+    }
+    else {
+      if (!startProfiling((FlexIdeRunConfiguration)runProfile, (ProfileSettings)runnerSettings.getData())) {
+        return;
+      }
+    }
     Executor executorById = ExecutorRegistry.getInstance().getExecutorById(DefaultRunExecutor.EXECUTOR_ID);
-    myFlexRunner.execute(executorById, executionEnvironment);
+    myFlexRunner.execute(executorById, executionEnvironment, callback);
   }
 
-  private void startProfiling(FlexRunConfiguration state, ProfileSettings profileSettings) {
+  private static boolean startProfiling(FlexIdeRunConfiguration state, ProfileSettings profileSettings) {
+    Module[] modules = state.getModules();
+    if (modules.length > 0) {
+      Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(modules[0]);
+      startProfiling(sdk, state.getProject(), profileSettings);
+      return true;
+    }
+    else {
+      // TODO error message
+      return false;
+    }
+  }
+
+  private static void startProfiling(FlexRunConfiguration state, ProfileSettings profileSettings) {
+    Module[] modules = state.getModules();
+    Sdk sdk = modules.length > 0 ?
+              FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(modules[0]) :
+              IdeaFacade.getInstance().getProjectSdk(ProjectRootManager.getInstance(state.getProject()));
+    startProfiling(sdk, state.getProject(), profileSettings);
+  }
+
+  private static void startProfiling(Sdk sdk, Project project, ProfileSettings profileSettings) {
     String s = ActionScriptProfileProvider.ACTIONSCRIPT_SNAPSHOT;
-    FileEditorManager editorManager = FileEditorManager.getInstance(state.getProject());
+    FileEditorManager editorManager = FileEditorManager.getInstance(project);
     ActionScriptProfileView profileView;
 
     for(FileEditor fe: editorManager.getAllEditors()) {
@@ -104,22 +133,18 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
       }
     }
 
-    Module[] modules = state.getModules();
-    Sdk sdk = modules.length > 0 ?
-      FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(modules[0]):
-      IdeaFacade.getInstance().getProjectSdk(ProjectRootManager.getInstance(state.getProject()));
-    initProfilingAgent(sdk, profileSettings.getHost(), profileSettings.getPort());
+    initProfilingAgent(sdk, project, profileSettings.getHost(), profileSettings.getPort());
 
     VirtualFile virtualFile = new LightVirtualFile(s, "");
     virtualFile.putUserData(
       ActionScriptProfileView.ourProfilingManagerKey,
       new ProfilingManager(profileSettings.getPort())
     );
-    OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(state.getProject(), virtualFile);
+    OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
     openFileDescriptor.navigate(true);
   }
 
-  public static void initProfilingAgent(Sdk sdk, String host, int port) {
+  public static void initProfilingAgent(Sdk sdk, Project project, String host, int port) {
     try {
       String agentName = detectSuitableAgentNameForSdkUsedToLaunch(sdk);
 
@@ -143,7 +168,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
       String pathToAgent = agentFile.getAbsolutePath();
 
       pathToAgent +="?port=" + port + "&host=" + host;
-      ensureFlashPlayerBlessOurProfilerSwf(pathToAgent);
+      FlashPlayerTrustUtil.updateTrustedStatus(project, true, false, pathToAgent);
       begFlashPlayerToPreloadProfilerSwf(pathToAgent);
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -239,38 +264,4 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
     FileUtil.writeToFile(file, mmCfgContent.toString().getBytes());
   }
 
-  private static void ensureFlashPlayerBlessOurProfilerSwf(String pathToAgent) throws IOException {
-    String base = SystemProperties.getUserHome() + File.separator;
-    String path = "";
-    String last = "ij.cfg";
-
-    if (SystemInfo.isWindows) {
-      path = "Application Data/Macromedia/Flash Player";
-    } else if (SystemInfo.isMac) {
-      path = "Library/Preferences/Macromedia/Flash Player";
-    } else {
-      path = ".macromedia/Flash_Player";
-    }
-    path += "/#Security/FlashPlayerTrust";
-    File f = new File( base + path + File.separator + last );
-
-    if (!f.exists() || !new String(FileUtil.loadFileBytes(f)).equals(pathToAgent)) { // adding file://
-      FileUtil.writeToFile(f, pathToAgent.getBytes());
-    }
-  }
-
-  public void execute(@NotNull Executor executor, @NotNull ExecutionEnvironment executionEnvironment, @Nullable Callback callback) throws ExecutionException {
-    final RunnerSettings runnerSettings = executionEnvironment.getRunnerSettings();
-    if (runnerSettings == null) {
-      return; // TODO: what does this mean ?
-    }
-
-    Executor executorById = ExecutorRegistry.getInstance().getExecutorById(DefaultRunExecutor.EXECUTOR_ID);
-    myFlexRunner.execute(executorById, executionEnvironment, callback);
-    RunProfileState state = executionEnvironment.getState(executorById);
-    startProfiling(
-      (FlexRunConfiguration)state,
-      (ProfileSettings) runnerSettings.getData()
-    );
-  }
 }
