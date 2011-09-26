@@ -92,7 +92,7 @@ public class ChooseActiveBuildConfigurationAction extends ComboBoxAction impleme
     DefaultActionGroup group = new DefaultActionGroup();
     FlexBuildConfigurationManager bcManager = FlexBuildConfigurationManager.getInstance(myLastModule);
     FlexIdeBuildConfiguration[] buildConfigurations = bcManager.getBuildConfigurations();
-    group.add(new EditBcsAction());
+    group.add(new EditBcsAction(myLastModule.getProject()));
     group.addSeparator();
     for (FlexIdeBuildConfiguration c : buildConfigurations) {
       group.add(new BCAction(myLastModule, c));
@@ -141,16 +141,17 @@ public class ChooseActiveBuildConfigurationAction extends ComboBoxAction impleme
   }
 
   private static class EditBcsAction extends DumbAwareAction {
+    private final Project myProject;
 
-    public EditBcsAction() {
+    public EditBcsAction(Project project) {
       super("Configure project", "Edit Flex build configurations", IconLoader.getIcon("/actions/editSource.png"));
+      myProject = project;
     }
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-      Project project = getEventProject(e);
       ShowSettingsUtil.getInstance()
-        .editConfigurable(project, OptionsEditorDialog.DIMENSION_KEY, ProjectStructureConfigurable.getInstance(project));
+        .editConfigurable(myProject, OptionsEditorDialog.DIMENSION_KEY, ProjectStructureConfigurable.getInstance(myProject));
     }
   }
 }
