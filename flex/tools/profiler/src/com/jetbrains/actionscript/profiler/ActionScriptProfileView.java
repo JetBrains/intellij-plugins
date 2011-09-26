@@ -324,7 +324,7 @@ public class ActionScriptProfileView extends ProfileView {
           if (data != null) {
             SwingUtilities.invokeLater(new Runnable() {
               public void run() {
-                myStatus.setText("Connected with profiling agent");
+                myStatus.setText("Connected to profiling agent");
                 switchToState(State.NONE);
                 resetDependents(true);
               }
@@ -355,7 +355,7 @@ public class ActionScriptProfileView extends ProfileView {
         switchToState(State.SIMPLE_WORKING);
         resetMemoryData();
 
-        myStatus.setText("About to capture memory snapshot");
+        myStatus.setText("Capturing memory snapshot...");
         myProfilingManager.captureMemorySnapshot(new ProfilingManager.Callback() {
           public void finished(String str, IOException ex) {
             if (ex != null) {
@@ -372,7 +372,7 @@ public class ActionScriptProfileView extends ProfileView {
               public void run() {
                 dumpMemory(data);
                 myTabbedPane.setSelectedIndex(MEMORY_TAB_INDEX);
-                myStatus.setText("Captured memory snapshot");
+                myStatus.setText("Memory snapshot captured");
                 switchToState(State.NONE);
               }
             });
@@ -463,11 +463,11 @@ public class ActionScriptProfileView extends ProfileView {
             SwingUtilities.invokeLater(new Runnable() {
               public void run() {
                 if (b) {
-                  myStatus.setText("Stopped sampling");
+                  myStatus.setText("Sampling stopped");
                   switchToState(State.NONE);
                   resetDependents(true);
                 } else {
-                  myStatus.setText("Started sampling");
+                  myStatus.setText("Sampling started");
                   switchToState(State.CPU_PROFILING);
                   resetDependents(false);
                 }
@@ -486,10 +486,10 @@ public class ActionScriptProfileView extends ProfileView {
       };
 
       if (b) {
-        myStatus.setText("About to stop profiling");
+        myStatus.setText("Stopping profiling...");
         myProfilingManager.stopCpuProfiling(callback);
       } else {
-        myStatus.setText("About to start profiling");
+        myStatus.setText("Starting profiling...");
         myProfilingManager.startCpuProfiling(callback);
       }
     }
