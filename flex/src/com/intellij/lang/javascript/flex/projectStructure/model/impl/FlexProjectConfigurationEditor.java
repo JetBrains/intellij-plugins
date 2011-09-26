@@ -50,24 +50,6 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
   private static final Logger LOG = Logger.getInstance(FlexProjectConfigurationEditor.class.getName());
 
-  public LibraryEx createFlexSdkLibrary(String homePath) {
-    final VirtualFile sdkHome = LocalFileSystem.getInstance().findFileByPath(homePath);
-
-    LibraryEx library =
-      (LibraryEx)myProvider.getGlobalLibrariesModifiableModel().createLibrary("Flex SDK", FlexSdkLibraryType.getInstance());
-    LibraryEx.ModifiableModelEx libraryModifiableModel = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
-    ((FlexSdkProperties)libraryModifiableModel.getProperties()).setId(UUID.randomUUID().toString());
-    ((FlexSdkProperties)libraryModifiableModel.getProperties()).setHomePath(homePath);
-    final FlexSdkModificator sdkModificator = new FlexSdkModificator(libraryModifiableModel);
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        FlexSdkUtils.setupSdkPaths(sdkHome, null, sdkModificator);
-      }
-    });
-    return library;
-  }
-
   private static class Editor extends FlexIdeBuildConfigurationImpl {
     private final Module myModule;
     private final FlexIdeBuildConfigurationImpl myOrigin;
@@ -292,7 +274,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
       }
 
       // ---------------- modules entries ----------------------
-        final Map<Module, Boolean> modulesToAdd = new HashMap<Module, Boolean>(); // Library -> add_module_entry_flag
+      final Map<Module, Boolean> modulesToAdd = new HashMap<Module, Boolean>(); // Library -> add_module_entry_flag
       for (Editor editor : myModule2Editors.get(module)) {
         for (DependencyEntry dependencyEntry : editor.getDependencies().getEntries()) {
           if (dependencyEntry instanceof BuildConfigurationEntry) {
@@ -353,12 +335,14 @@ public class FlexProjectConfigurationEditor implements Disposable {
             }
           };
           FlexIdeBuildConfiguration[] current = ContainerUtil.map2Array(myModule2Editors.get(module), FlexIdeBuildConfiguration.class, f);
-          FlexBuildConfigurationManager.getInstance(module).setBuildConfigurations(current);
+          ((FlexBuildConfigurationManagerImpl)FlexBuildConfigurationManager.getInstance(module)).setBuildConfigurations(current);
         }
 
         if (mySdksEditor.isModified()) {
           mySdksEditor.commit();
         }
+
+        FlexBuildConfigurationManagerImpl.resetHighlighting(myProject);
       }
     });
   }
@@ -578,6 +562,24 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
   public void removeFlexSdkLibrary(Library library) {
     myProvider.getGlobalLibrariesModifiableModel().removeLibrary(library);
+  }
+
+  public LibraryEx createFlexSdkLibrary(String homePath) {
+    final VirtualFile sdkHome = LocalFileSystem.getInstance().findFileByPath(homePath);
+
+    LibraryEx library =
+      (LibraryEx)myProvider.getGlobalLibrariesModifiableModel().createLibrary("Flex SDK", FlexSdkLibraryType.getInstance());
+    LibraryEx.ModifiableModelEx libraryModifiableModel = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
+    ((FlexSdkProperties)libraryModifiableModel.getProperties()).setId(UUID.randomUUID().toString());
+    ((FlexSdkProperties)libraryModifiableModel.getProperties()).setHomePath(homePath);
+    final FlexSdkModificator sdkModificator = new FlexSdkModificator(libraryModifiableModel);
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        FlexSdkUtils.setupSdkPaths(sdkHome, null, sdkModificator);
+      }
+    });
+    return library;
   }
 }
 

@@ -11,8 +11,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class FlexBuildConfigurationManager {
 
-  public abstract void setBuildConfigurations(FlexIdeBuildConfiguration[] flexIdeBuildConfigurations);
-
   public abstract FlexIdeBuildConfiguration[] getBuildConfigurations();
 
   public abstract FlexIdeBuildConfiguration getActiveConfiguration();

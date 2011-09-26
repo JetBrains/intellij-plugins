@@ -90,11 +90,9 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
       @Override
       public void run() {
         myActiveConfiguration = (FlexIdeBuildConfigurationImpl)buildConfiguration;
-        ProjectRootManagerEx.getInstanceEx(myModule.getProject()).makeRootsChange(EmptyRunnable.getInstance(), false, true);
-        ((PsiModificationTrackerImpl)PsiManager.getInstance(myModule.getProject()).getModificationTracker()).incCounter();
+        resetHighlighting(myModule.getProject());
       }
     });
-    DaemonCodeAnalyzer.getInstance(myModule.getProject()).restart();
   }
 
   public FlexIdeBuildConfiguration[] getBuildConfigurations() {
@@ -107,16 +105,11 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
     return myModuleLevelCompilerOptions;
   }
 
-
-  @Override
-  public void setBuildConfigurations(FlexIdeBuildConfiguration[] configurations) {
+  void setBuildConfigurations(FlexIdeBuildConfiguration[] configurations) {
     final String activeName = myActiveConfiguration != null ? myActiveConfiguration.getName() : null;
     ApplicationManager.getApplication().assertWriteAccessAllowed();
     myConfigurations = getValidatedConfigurations(Arrays.asList(configurations));
     updateActiveConfiguration(activeName);
-    ProjectRootManagerEx.getInstanceEx(myModule.getProject()).makeRootsChange(EmptyRunnable.getInstance(), false, true);
-    ((PsiModificationTrackerImpl)PsiManager.getInstance(myModule.getProject()).getModificationTracker()).incCounter();
-    DaemonCodeAnalyzer.getInstance(myModule.getProject()).restart();
   }
 
   private void updateActiveConfiguration(@Nullable final String activeName) {
@@ -157,6 +150,12 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
     myConfigurations = getValidatedConfigurations(configurations);
     updateActiveConfiguration(state.myActiveConfigurationName);
     myModuleLevelCompilerOptions.loadState(state.myModuleLevelCompilerOptions);
+  }
+
+  static void resetHighlighting(Project project) {
+    ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.getInstance(), false, true);
+    ((PsiModificationTrackerImpl)PsiManager.getInstance(project).getModificationTracker()).incCounter();
+    DaemonCodeAnalyzer.getInstance(project).restart();
   }
 
   private static FlexIdeBuildConfigurationImpl[] getValidatedConfigurations(Collection<? extends FlexIdeBuildConfiguration> configurations) {
