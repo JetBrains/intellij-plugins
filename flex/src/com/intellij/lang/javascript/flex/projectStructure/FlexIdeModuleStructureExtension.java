@@ -10,6 +10,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureExtension;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.NamedConfigurable;
@@ -37,8 +38,8 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
     return myConfigurator;
   }
 
-  public void reset() {
-    myConfigurator.reset();
+  public void reset(Project project) {
+    myConfigurator.reset(project);
   }
 
   public boolean addModuleNodeChildren(final Module module,

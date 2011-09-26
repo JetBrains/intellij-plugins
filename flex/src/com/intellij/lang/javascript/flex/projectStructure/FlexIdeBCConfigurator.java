@@ -101,9 +101,9 @@ public class FlexIdeBCConfigurator {
     myEventDispatcher.addListener(listener, parentDisposable);
   }
 
-  public void reset() {
-    // this method seems to be called after getOrCreateConfigurables(), so we assume that myConfigEditor is already initialized
-    ModuleStructureConfigurable moduleStructureConfigurable = ModuleStructureConfigurable.getInstance(myConfigEditor.getProject());
+  public void reset(Project project) {
+    myModifiableModelInitializer.ensureInitialized(project);
+    ModuleStructureConfigurable moduleStructureConfigurable = ModuleStructureConfigurable.getInstance(project);
     for (final NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable : myConfigurablesMap.values()) {
       moduleStructureConfigurable.ensureInitialized(configurable);
     }
