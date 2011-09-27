@@ -35,7 +35,7 @@ public class BCUtils {
     final String suffix = packagingOptions instanceof AirDesktopPackagingOptions
                           ? "-descriptor.xml"
                           : packagingOptions instanceof AndroidPackagingOptions ? "-android-descriptor.xml"
-                                                                                : "-ios-descriptor";
+                                                                                : "-ios-descriptor.xml";
     return FileUtil.getNameWithoutExtension(config.getOutputFileName()) + suffix;
   }
 
