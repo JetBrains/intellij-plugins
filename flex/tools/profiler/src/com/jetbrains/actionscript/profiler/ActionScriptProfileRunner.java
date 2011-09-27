@@ -51,8 +51,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
 
   public boolean canRun(@NotNull String executorId, @NotNull RunProfile runProfile) {
     return executorId.equals(DefaultProfilerExecutor.EXECUTOR_ID) &&
-           (runProfile instanceof FlexRunConfiguration &&
-           !(runProfile instanceof AirRunConfiguration) || runProfile instanceof FlexIdeRunConfiguration);
+           (runProfile instanceof FlexRunConfiguration || runProfile instanceof FlexIdeRunConfiguration);
   }
 
   public ProfileSettings createConfigurationData(ConfigurationInfoProvider configurationInfoProvider) {

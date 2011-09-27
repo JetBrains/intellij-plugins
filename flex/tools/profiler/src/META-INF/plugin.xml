@@ -1,13 +1,15 @@
 <idea-plugin version="2">
   <name>ActionScript Profiler</name>
   <description>The plugin allows you to profile your ActionScript and Flex applications by showing CPU sampling and memory snapshot information.</description>
-  <version>0.2.3</version>
+  <version>0.2.4</version>
   <vendor>JetBrains</vendor>
   <idea-version since-build="93.13"/>
   <depends>com.intellij.modules.ultimate</depends>
   <depends>com.intellij.flex</depends>
 
   <change-notes>
+    In 0.2.4
+    Profile Air applications. Proper handling of Windows 7 / Vista. &lt;br&gt;
     In 0.2.3
     Added view for live class instances with reachability information (let's start leak hunting). &lt;br&gt;
     In 0.2.2
