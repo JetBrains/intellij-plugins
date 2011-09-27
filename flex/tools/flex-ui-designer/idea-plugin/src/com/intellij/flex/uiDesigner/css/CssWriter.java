@@ -544,8 +544,11 @@ public class CssWriter {
     if (isSwf) {
       fileId = EmbedSwfManager.getInstance().add(source, symbol, assetCounter);
     }
-    else {
+    else if (InjectionUtil.isImage(source, mimeType)) {
       fileId = EmbedImageManager.getInstance().add(source, mimeType, assetCounter);
+    }
+    else {
+      throw new InvalidPropertyException(cssFunction, FlexUIDesignerBundle.message("unsupported.embed.asset.type", cssFunction.getText()));
     }
 
     propertyOut.write(isSwf ? AmfExtendedTypes.SWF : AmfExtendedTypes.IMAGE);

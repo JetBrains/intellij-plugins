@@ -295,12 +295,7 @@ public class MxmlWriter {
         XmlElementDescriptor descriptor = tag.getDescriptor();
         assert descriptor != null;
         if (descriptor instanceof ClassBackedElementDescriptor) {
-          if (explicitContentOccured == 1) {
-            LOG.warn("Default content already processed, skip " + child);
-            continue;
-          }
-
-          ClassBackedElementDescriptor classBackedDescriptor = (ClassBackedElementDescriptor)descriptor;
+          final ClassBackedElementDescriptor classBackedDescriptor = (ClassBackedElementDescriptor)descriptor;
           if (classBackedDescriptor.isPredefined()) {
             if (descriptor.getQualifiedName().equals(FlexPredefinedTagNames.DECLARATIONS)) {
               injectedASWriter.readDeclarations(this, tag);
@@ -310,6 +305,11 @@ public class MxmlWriter {
           }
           else if (MxmlUtil.isAbstract(classBackedDescriptor)) {
             addProblem(child, "error.abstract.class", classBackedDescriptor.getQualifiedName());
+            continue;
+          }
+          
+          if (explicitContentOccured == 1) {
+            LOG.warn("Default content already processed, skip " + child);
             continue;
           }
 

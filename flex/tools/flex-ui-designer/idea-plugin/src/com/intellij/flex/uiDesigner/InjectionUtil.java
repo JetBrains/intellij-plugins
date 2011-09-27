@@ -22,6 +22,23 @@ public final class InjectionUtil {
     return mimeType == null ? source.getName().endsWith(".swf") : mimeType.equals("application/x-shockwave-flash");
   }
 
+  public static boolean isImage(VirtualFile source, String mimeType) {
+    if (mimeType == null) {
+      String extension = source.getExtension();
+      if (extension != null) {
+        extension = extension.toLowerCase();
+        if (extension.equals("png") || extension.equals("gif") || extension.equals("jpg") || extension.equals("jpeg")) {
+          return true;
+        }
+      }
+    }
+    else if (mimeType.equals("image/png") || mimeType.equals("image/gif") || mimeType.equals("image/jpeg")) {
+      return true;
+    }
+
+    return false;
+  }
+
   public static int getProjectComponentFactoryId(String qualifiedClassName, PsiElement element, List<XmlFile> unregisteredDocumentFactories)
       throws InvalidPropertyException {
     // MxmlBackedElementDescriptor returns declaration as MxmlFile, but ClassBackedElementDescriptor returns as JSClass

@@ -166,10 +166,16 @@ class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor 
       }
       else {
         if (symbol != null) {
-          problemsHolder.add(host, FlexUIDesignerBundle.message("error.embed.symbol.unneeded", host.getText()));
+          MxmlWriter.LOG.warn("Attribute symbol is unneeded for " + host.getText());
         }
 
-        return new ImageValueWriter(source, mimeType);
+        if (InjectionUtil.isImage(source, mimeType)) {
+          return new ImageValueWriter(source, mimeType);
+        }
+        else {
+          problemsHolder.add(host, FlexUIDesignerBundle.message("unsupported.embed.asset.type", host.getText()));
+          return InjectedASWriter.IGNORE;
+        }
       }
     }
 
