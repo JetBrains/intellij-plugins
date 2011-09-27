@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSFileReference;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.properties.ResourceBundleReference;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.roots.ModuleFileIndex;
@@ -10,6 +11,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlFile;
 import org.jetbrains.annotations.NotNull;
@@ -121,12 +123,13 @@ public final class InjectionUtil {
   @NotNull
   public static PsiFileSystemItem getReferencedPsiFile(PsiElement element, boolean resolveToFirstIfMulti) throws InvalidPropertyException {
     final PsiReference[] references = element.getReferences();
-    final JSFileReference fileReference;
+    final PsiPolyVariantReference fileReference;
     int i = references.length - 1;
     // injection in mxml has com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeNameValuePairImpl$NameReference as last reference
     while (true) {
-      if (references[i] instanceof JSFileReference) {
-        fileReference = (JSFileReference)references[i];
+      final PsiReference reference = references[i];
+      if (reference instanceof JSFileReference || reference instanceof ResourceBundleReference) {
+        fileReference = (PsiPolyVariantReference)reference;
         break;
       }
       else if (--i < 0) {
@@ -148,10 +151,15 @@ public final class InjectionUtil {
     }
 
     if (psiFile == null) {
-      throw new InvalidPropertyException(fileReference.getUnresolvedMessagePattern(), element);
+      if (fileReference instanceof FileReference) {
+        throw new InvalidPropertyException(((FileReference)fileReference).getUnresolvedMessagePattern(), element);
+      }
+      else {
+        throw new InvalidPropertyException(element, "unresolved.resource.bundle", fileReference.getCanonicalText());
+      }
     }
     else if (psiFile.isDirectory()) {
-      throw new InvalidPropertyException(element, "error.embed.source.is.directory", fileReference.getText());
+      throw new InvalidPropertyException(element, "error.embed.source.is.directory", fileReference.getCanonicalText());
     }
     else {
       return psiFile;

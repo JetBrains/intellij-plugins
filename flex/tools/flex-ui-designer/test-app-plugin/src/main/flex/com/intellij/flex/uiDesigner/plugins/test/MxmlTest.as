@@ -22,6 +22,7 @@ public class MxmlTest extends BaseTestCase {
       SparkComponents();
       MxComponents();
       Embed();
+      ResourceDirective();
       UntypedProperty();
       ClassProperty();
       ItemRendererAndMixDefaultExplicitContent();
@@ -96,6 +97,10 @@ public class MxmlTest extends BaseTestCase {
                    {}
                  ]
                ]);
+  }
+  
+  public function ResourceDirective():void {
+    assertThat(app, [{text: "Label"}, {text: ""}]);
   }
   
   public function UntypedProperty():void {

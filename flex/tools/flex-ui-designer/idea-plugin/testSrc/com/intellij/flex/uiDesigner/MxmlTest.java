@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -20,6 +21,12 @@ public class MxmlTest extends MxmlTestBase {
       addLibrary(model, getFudHome() + "/test-data-libs/target/test-data-libs.swc");
       final VirtualFile assetsDir = getVFile(getTestDataPath() + "/assets");
       model.addContentEntry(assetsDir).addSourceFolder(assetsDir, false);
+
+      final VirtualFile localesDir = getVFile(getTestDataPath() + "/locales");
+      final ContentEntry localesContentEntry = model.addContentEntry(localesDir);
+      //noinspection ConstantConditions
+      localesContentEntry.addSourceFolder(localesDir.findChild("en_US"), false);
+      //localesContentEntry.addSourceFolder(localesDir.findChild("ru_RU"), false);
     }
   }
 

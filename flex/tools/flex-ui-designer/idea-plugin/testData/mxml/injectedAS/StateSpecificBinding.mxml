@@ -9,5 +9,5 @@
     <VerticalLayout verticalAlign="middle" horizontalAlign="center"/>
   </layout>
 
-  <Label id="p1" text="1" text.A="{resourceManager.getString('Common', 'label')}"/>
+  <Label id="p1" text="1" text.A="{resourceManager.getString('core', 'label')}"/>
 </Group>

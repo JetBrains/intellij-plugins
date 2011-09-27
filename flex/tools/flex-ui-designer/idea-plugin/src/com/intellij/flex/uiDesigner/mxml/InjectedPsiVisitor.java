@@ -4,21 +4,25 @@ import com.intellij.flex.uiDesigner.FlexUIDesignerBundle;
 import com.intellij.flex.uiDesigner.InjectionUtil;
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.ProblemsHolder;
+import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.properties.IProperty;
+import com.intellij.lang.properties.psi.PropertiesFile;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiLanguageInjectionHost;
+import com.intellij.psi.*;
 import com.intellij.psi.PsiLanguageInjectionHost.Shred;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+import static com.intellij.flex.uiDesigner.mxml.MxmlWriter.LOG;
 
 class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor {
   private final PsiElement host;
@@ -66,7 +70,7 @@ class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor 
     JSFile jsFile = (JSFile)injectedPsi;
     JSSourceElement[] statements = jsFile.getStatements();
     if (statements.length == 0) {
-      if ((valueWriter = checkEmbed(jsFile)) != null) {
+      if ((valueWriter = checkCompilerDirective(jsFile)) != null) {
         return;
       }
     }
@@ -129,57 +133,113 @@ class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor 
     }
   }
 
-  private ValueWriter checkEmbed(JSFile jsFile) {
+  private ValueWriter checkCompilerDirective(JSFile jsFile) {
     PsiElement firstChild = jsFile.getFirstChild();
     if (firstChild instanceof LeafPsiElement && ((LeafPsiElement)firstChild).getElementType() == JSTokenTypes.AT) {
       JSAttribute attribute = (JSAttribute)firstChild.getNextSibling();
       assert attribute != null;
-      VirtualFile source = null;
-      String mimeType = null;
-      String symbol = null;
-      for (JSAttributeNameValuePair p : attribute.getValues()) {
-        final String name = p.getName();
-        if (name == null || name.equals("source")) {
-          try {
-            source = InjectionUtil.getReferencedFile(p);
-          }
-          catch (InvalidPropertyException e) {
-            problemsHolder.add(e);
-            return InjectedASWriter.IGNORE;
-          }
-        }
-        else if (name.equals("mimeType")) {
-          mimeType = p.getSimpleValue();
-        }
-        else if (name.equals("symbol")) {
-          symbol = p.getSimpleValue();
-        }
+      final String attributeName = attribute.getName();
+      if (FlexAnnotationNames.EMBED.equals(attributeName)) {
+        return processEmbedDirective(attribute);
       }
-
-      if (source == null) {
-        problemsHolder.add(host, FlexUIDesignerBundle.message("error.embed.source.not.specified", host.getText()));
-        return InjectedASWriter.IGNORE;
-      }
-
-      if (InjectionUtil.isSwf(source, mimeType)) {
-        return new SwfValueWriter(source, symbol);
+      else if (FlexAnnotationNames.RESOURCE.equals(attributeName)) {
+        return processResourceDirective(attribute);
       }
       else {
-        if (symbol != null) {
-          MxmlWriter.LOG.warn("Attribute symbol is unneeded for " + host.getText());
+        if (!StringUtil.isEmpty(attributeName)) {
+          problemsHolder.add(host, FlexUIDesignerBundle.message("unsupported.compiler.directive", host.getText()));
         }
+        return InjectedASWriter.IGNORE;
+      }
+    }
 
-        if (InjectionUtil.isImage(source, mimeType)) {
-          return new ImageValueWriter(source, mimeType);
+    return null;
+  }
+
+  private ValueWriter processResourceDirective(JSAttribute attribute) {
+    String key = null;
+    PropertiesFile bundle = null;
+    for (JSAttributeNameValuePair p : attribute.getValues()) {
+      final String name = p.getName();
+      if ("key".equals(name)) {
+        key = p.getSimpleValue();
+      }
+      else if ("bundle".equals(name)) {
+        try {
+          // IDEA-74868
+          final PsiFileSystemItem referencedPsiFile = InjectionUtil.getReferencedPsiFile(p);
+          if (referencedPsiFile instanceof PropertiesFile) {
+            bundle = (PropertiesFile)referencedPsiFile;
+          }
+          else {
+            LOG.warn("skip resource directive, referenced file is not properties file " + host.getText());
+          }
         }
-        else {
-          problemsHolder.add(host, FlexUIDesignerBundle.message("unsupported.embed.asset.type", host.getText()));
+        catch (InvalidPropertyException e) {
+          invalidPropertyException = e;
           return InjectedASWriter.IGNORE;
         }
       }
     }
 
-    return null;
+    if (key == null || key.isEmpty() || bundle == null) {
+      LOG.warn("skip resource directive, one of the required attributes is missed " + host.getText());
+      return InjectedASWriter.IGNORE;
+    }
+
+    final IProperty property = bundle.findPropertyByKey(key);
+    if (property == null) {
+      LOG.warn("skip resource directive, key not found " + host.getText());
+      return InjectedASWriter.IGNORE;
+    }
+
+    return new ResourceDirectiveValueWriter(property.getUnescapedValue());
+  }
+
+  private ValueWriter processEmbedDirective(JSAttribute attribute) {
+    VirtualFile source = null;
+    String mimeType = null;
+    String symbol = null;
+    for (JSAttributeNameValuePair p : attribute.getValues()) {
+      final String name = p.getName();
+      if (name == null || name.equals("source")) {
+        try {
+          source = InjectionUtil.getReferencedFile(p);
+        }
+        catch (InvalidPropertyException e) {
+          problemsHolder.add(e);
+          return InjectedASWriter.IGNORE;
+        }
+      }
+      else if (name.equals("mimeType")) {
+        mimeType = p.getSimpleValue();
+      }
+      else if (name.equals("symbol")) {
+        symbol = p.getSimpleValue();
+      }
+    }
+
+    if (source == null) {
+      problemsHolder.add(host, FlexUIDesignerBundle.message("error.embed.source.not.specified", host.getText()));
+      return InjectedASWriter.IGNORE;
+    }
+
+    if (InjectionUtil.isSwf(source, mimeType)) {
+      return new SwfValueWriter(source, symbol);
+    }
+    else {
+      if (symbol != null) {
+        LOG.warn("Attribute symbol is unneeded for " + host.getText());
+      }
+
+      if (InjectionUtil.isImage(source, mimeType)) {
+        return new ImageValueWriter(source, mimeType);
+      }
+      else {
+        problemsHolder.add(host, FlexUIDesignerBundle.message("unsupported.embed.asset.type", host.getText()));
+        return InjectedASWriter.IGNORE;
+      }
+    }
   }
 
   private boolean isUnexpected(String actualType) {
@@ -198,7 +258,7 @@ class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor 
   }
 
   private void logUnsupported() {
-    MxmlWriter.LOG.warn("unsupported injected AS: " + host.getText());
+    LOG.warn("unsupported injected AS: " + host.getText());
     unsupported = true;
   }
 }
