@@ -186,7 +186,6 @@ public class FlexIdeBCConfigurator {
   }
 
   public void removeConfiguration(final ModifiableFlexIdeBuildConfiguration configuration) {
-    myConfigEditor.removeConfiguration(configuration);
     CompositeConfigurable configurable = myConfigurablesMap.remove(configuration);
     myEventDispatcher.getMulticaster().buildConfigurationRemoved(FlexIdeBCConfigurable.unwrap(configurable));
   }

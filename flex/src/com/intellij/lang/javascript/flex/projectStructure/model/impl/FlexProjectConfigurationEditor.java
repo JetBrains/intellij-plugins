@@ -122,7 +122,11 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
       @Override
       public void buildConfigurationRemoved(FlexIdeBCConfigurable configurable) {
-        // TODO
+        assertAlive();
+        Editor editor = (Editor)configurable.getEditableObject();
+        List<Editor> editors = myModule2Editors.get(editor.myModule);
+        boolean contained = editors.remove(editor);
+        LOG.assertTrue(contained);
       }
     }, this);
 
@@ -350,14 +354,6 @@ public class FlexProjectConfigurationEditor implements Disposable {
         }
       }
     });
-  }
-
-  public void removeConfiguration(ModifiableFlexIdeBuildConfiguration configuration) {
-    assertAlive();
-    Editor editor = (Editor)configuration;
-    List<Editor> editors = myModule2Editors.get(editor.myModule);
-    boolean contained = editors.remove(editor);
-    LOG.assertTrue(contained);
   }
 
   public boolean isModified() {
