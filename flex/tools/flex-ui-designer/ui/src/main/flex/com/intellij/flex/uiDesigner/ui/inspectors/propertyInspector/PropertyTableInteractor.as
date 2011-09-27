@@ -29,6 +29,8 @@ public class PropertyTableInteractor extends TableViewInteractor {
   private var isOver:Boolean;
   private var valueRendererManager:ValueRendererManager;
 
+  private var openedEditorInfo:OpenedEditorInfo;
+
   public function PropertyTableInteractor(tableView:TableView, valueRendererManager:ValueRendererManager) {
     this.valueRendererManager = valueRendererManager;
 
@@ -67,6 +69,7 @@ public class PropertyTableInteractor extends TableViewInteractor {
           openedEditor = valueRendererManager.createEditor(currentRowIndex, entry, tableColumn.actualWidth, tableView.rowHeight);
           if (openedEditor != null) {
             registerEditor();
+            openedEditorInfo = new OpenedEditorInfo(currentColumnIndex, currentRowIndex);
           }
         }
       }
@@ -154,10 +157,10 @@ public class PropertyTableInteractor extends TableViewInteractor {
     var value:String;
     var entry:TextLineEntry;
     if (commit) {
-      entry = findEntry();
+      entry = valueRendererManager.findEntry(openedEditorInfo.rowIndex);
       value = EditableTextView(openedEditor).text;
       var tableView:TableView = TableView(tableSkin.component);
-      var tableColumn:TableColumn = tableView.columns[currentColumnIndex];
+      var tableColumn:TableColumn = tableView.columns[openedEditorInfo.columnIndex];
       valueRendererManager.closeEditorAndCommit(openedEditor, value, entry, tableColumn.actualWidth);
     }
     else {
@@ -165,11 +168,22 @@ public class PropertyTableInteractor extends TableViewInteractor {
     }
 
     openedEditor = null;
+    openedEditorInfo = null;
 
     if (commit) {
       var dataContext:DataContext = DataManager.instance.getDataContext(DisplayObject(tableSkin));
-      Modifier(Project(PlatformDataKeys.PROJECT.getData(dataContext)).getComponent(Modifier)).applyString(valueRendererManager.getDescription(currentRowIndex), value, dataContext);
+      Modifier(Project(PlatformDataKeys.PROJECT.getData(dataContext)).getComponent(Modifier)).applyString(valueRendererManager.getDescription(openedEditorInfo.rowIndex), value, dataContext);
     }
   }
 }
+}
+
+final class OpenedEditorInfo {
+  public var rowIndex:int;
+  public var columnIndex:int;
+
+  public function OpenedEditorInfo(columnIndex:int, rowIndex:int) {
+    this.columnIndex = columnIndex;
+    this.rowIndex = rowIndex;
+  }
 }

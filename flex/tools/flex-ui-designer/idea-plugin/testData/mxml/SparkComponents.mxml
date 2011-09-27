@@ -38,7 +38,7 @@
           <DropShadowFilter distance="15" angle="45" color="0xFF33FF" alpha=".8" blurX="8" blurY="8" strength=".65" inner="false" knockout="false"/>
         </filters>
       </Button>
-      <Button label="Touch me">
+      <Button label="Touch me" cachePolicy="normal">
         <filters>
           <!-- IDEA-72575 -->
           <DropShadowFilter distance="15" angle="45" color="#00ff00" alpha=".4"/>

@@ -235,9 +235,16 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
         throw new IllegalArgumentException("unknown value type");
     }
 
-    final XmlTag tag = PsiTreeUtil.getParentOfType(rootTag.findElementAt(offset), XmlTag.class);
-    assert tag != null;
-
+    final XmlTag tag;
+    AccessToken token = ReadAction.start();
+    try {
+      tag = PsiTreeUtil.getParentOfType(rootTag.findElementAt(offset), XmlTag.class);
+      assert tag != null;
+    }
+    finally {
+      token.finish();
+    }
+    
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
