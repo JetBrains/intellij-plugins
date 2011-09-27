@@ -16,7 +16,6 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -29,7 +28,6 @@ import java.util.Arrays;
 import java.util.List;
 
 abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
-  protected static final Key<Boolean> IS_USER_LIB = Key.create("FUD_IS_USER_LIB");
   private static final String BASE_PATH = "/mxml";
 
   protected String flexSdkRootPath;
@@ -109,19 +107,12 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
       }
     }
   }
-  
-  protected void addLibrary(SdkModificator sdkModificator, String path) {
-    addLibrary(sdkModificator, path, true);
-  }
 
-  protected void addLibrary(SdkModificator sdkModificator, String path, boolean fromSdk) {
+  protected void addLibrary(SdkModificator sdkModificator, String path) {
     VirtualFile virtualFile = getVFile(path);
     VirtualFile jarFile = JarFileSystem.getInstance().getJarRootForLocalFile(virtualFile);
     assert jarFile != null;
-    
-    if (!fromSdk) {
-      jarFile.putUserData(IS_USER_LIB, true);
-    }
+
     
     libs.add(new Pair<VirtualFile, VirtualFile>(virtualFile, jarFile));
     sdkModificator.addRoot(jarFile, OrderRootType.CLASSES);
@@ -131,7 +122,6 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
     VirtualFile virtualFile = getVFile(path);
     VirtualFile jarFile = JarFileSystem.getInstance().getJarRootForLocalFile(virtualFile);
     assert jarFile != null;
-    jarFile.putUserData(IS_USER_LIB, true);
 
     libs.add(new Pair<VirtualFile, VirtualFile>(virtualFile, jarFile));
     Library.ModifiableModel libraryModel = model.getModuleLibraryTable().createLibrary(path).getModifiableModel();

@@ -28,6 +28,9 @@ public class SwcDependenciesSorterTest extends MxmlTestBase {
     if (getName().equals("testDelete")) {
       addLibrary(sdkModificator, getTestDataPath() + "/flash-integration_4.1.swc");
     }
+    else if (getName().equals("testIgnoreSwcWithoutLibraryFile")) {
+      addLibrary(sdkModificator, getTestDataPath() + "/swcWithoutLibrarySwf.swc");
+    }
     
     super.modifySdk(sdk, sdkModificator);
 
@@ -36,8 +39,8 @@ public class SwcDependenciesSorterTest extends MxmlTestBase {
     }
     else if (getName().equals("testResolveToClassWithBiggestTimestamp")) {
       final String path = getTestDataPath() + "/ResolveToClassWithBiggestTimestamp/bin/";
-      addLibrary(sdkModificator, path + "lib_1.swc", false);
-      addLibrary(sdkModificator, path + "lib_2.swc", false);
+      addLibrary(sdkModificator, path + "lib_1.swc");
+      addLibrary(sdkModificator, path + "lib_2.swc");
     }
 
     Disposer.register(myModule, new Disposable() {
@@ -81,6 +84,10 @@ public class SwcDependenciesSorterTest extends MxmlTestBase {
   }
 
   public void testResolveToClassWithBiggestTimestamp() throws Exception {
+    testFile(SPARK_COMPONENTS_FILE);
+  }
+
+  public void testIgnoreSwcWithoutLibraryFile() throws Exception {
     testFile(SPARK_COMPONENTS_FILE);
   }
 

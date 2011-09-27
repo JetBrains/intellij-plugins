@@ -59,7 +59,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     new Topic<FlexUIDesignerApplicationListener>("Flex UI Designer Application open and close events",
                                                  FlexUIDesignerApplicationListener.class);
 
-  static final Logger LOG = Logger.getInstance(FlexUIDesignerApplicationManager.class.getName());
+  public static final Logger LOG = Logger.getInstance(FlexUIDesignerApplicationManager.class.getName());
 
   public static final String DESIGNER_SWF = "designer.swf";
   public static final String DESCRIPTOR_XML = "descriptor.xml";

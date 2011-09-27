@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner.libraries;
 
-import com.intellij.flex.uiDesigner.css.CssWriter;
 import com.intellij.flex.uiDesigner.ProblemsHolder;
+import com.intellij.flex.uiDesigner.css.CssWriter;
 import com.intellij.flex.uiDesigner.io.ByteArrayOutputStreamEx;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
@@ -36,9 +36,7 @@ public class LibraryStyleInfoCollector implements Consumer<Library> {
   private byte[] collectInherited(final VirtualFile jarFile) {
     bytes.allocateShort();
 
-    final VirtualFile libraryFile = jarFile.findChild("library.swf");
-    assert libraryFile != null;
-
+    final VirtualFile libraryFile = Library.getSwfFile(jarFile);
     final FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
     final GlobalSearchScope searchScope = GlobalSearchScope.fileScope(project, libraryFile);
     final THashSet<String> uniqueGuard = new THashSet<String>();

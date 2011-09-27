@@ -13,7 +13,7 @@ import java.util.Map;
 public class Library extends Info<VirtualFile> {
   public static final String DEFAULTS_CSS = "defaults.css";
   private static final String CATALOG = "catalog.xml";
-  private static final String SWF = "library.swf";
+  public static final String SWF = "library.swf";
 
   public byte[] inheritingStyles;
   public byte[] defaultsStyle;
@@ -48,7 +48,12 @@ public class Library extends Info<VirtualFile> {
 
   @NotNull
   public VirtualFile getSwfFile() {
-    VirtualFile child = element.findChild(SWF);
+    return getSwfFile(element);
+  }
+
+  @NotNull
+  public static VirtualFile getSwfFile(VirtualFile swcFile) {
+    VirtualFile child = swcFile.findChild(SWF);
     assert child != null;
     return child;
   }
