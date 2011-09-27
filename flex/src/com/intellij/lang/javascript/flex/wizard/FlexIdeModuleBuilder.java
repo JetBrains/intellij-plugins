@@ -1,5 +1,7 @@
 package com.intellij.lang.javascript.flex.wizard;
 
+import com.intellij.execution.RunManagerEx;
+import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
@@ -10,6 +12,9 @@ import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
+import com.intellij.lang.javascript.flex.run.FlexIdeRunConfiguration;
+import com.intellij.lang.javascript.flex.run.FlexIdeRunConfigurationType;
+import com.intellij.lang.javascript.flex.run.FlexIdeRunnerParameters;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -102,7 +107,11 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
 
     final ModifiableFlexIdeBuildConfiguration[] configurations = flexConfigEditor.getConfigurations(module);
     assert configurations.length == 1;
-    setupBC(module, configurations[0]);
+    final ModifiableFlexIdeBuildConfiguration bc = configurations[0];
+    setupBC(module, bc);
+    if (bc.getOutputType() == OutputType.Application) {
+      createRunConfiguration(module, bc.getName());
+    }
 
     commitIfNeeded(globalLibrariesModifiableModel, flexConfigEditor, needToCommitFlexEditor);
   }
@@ -185,6 +194,20 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
 
     configuration.getDependencies().setSdkEntry(Factory.createSdkEntry(myFlexSdk.getLibraryId(), myFlexSdk.getHomePath())); // todo correct?
     configuration.getDependencies().setTargetPlayer(myTargetPlayer);
+  }
+
+  private static void createRunConfiguration(final Module module, final String bcName) {
+    final RunManagerEx runManager = RunManagerEx.getInstanceEx(module.getProject());
+
+    final RunnerAndConfigurationSettings settings = runManager.createConfiguration(bcName, FlexIdeRunConfigurationType.getFactory());
+    settings.setTemporary(false);
+    runManager.addConfiguration(settings, false);
+    runManager.setActiveConfiguration(settings);
+
+    final FlexIdeRunConfiguration runConfiguration = (FlexIdeRunConfiguration)settings.getConfiguration();
+    final FlexIdeRunnerParameters params = runConfiguration.getRunnerParameters();
+    params.setModuleName(module.getName());
+    params.setBCName(bcName);
   }
 
   private void setupSourceRoots(final ContentEntry contentEntry) {
