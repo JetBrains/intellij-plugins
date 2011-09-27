@@ -26,7 +26,6 @@ import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.ui.MasterDetailsComponent;
-import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
@@ -35,6 +34,7 @@ import com.intellij.util.EventDispatcher;
 import com.intellij.util.Function;
 import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -136,12 +136,13 @@ public class FlexIdeBCConfigurator {
     }
 
     // config editor will handle event and update modifiable model on its own, we just need to update configurables
-    Collection<ModifiableFlexIdeBuildConfiguration> configsToRemove = ContainerUtil.findAll(myConfigurablesMap.keySet(), new Condition<ModifiableFlexIdeBuildConfiguration>() {
-      @Override
-      public boolean value(ModifiableFlexIdeBuildConfiguration bc) {
-        return myConfigEditor.getModule(bc) == module;
-      }
-    });
+    Collection<ModifiableFlexIdeBuildConfiguration> configsToRemove =
+      ContainerUtil.findAll(myConfigurablesMap.keySet(), new Condition<ModifiableFlexIdeBuildConfiguration>() {
+        @Override
+        public boolean value(ModifiableFlexIdeBuildConfiguration bc) {
+          return myConfigEditor.getModule(bc) == module;
+        }
+      });
 
     for (ModifiableFlexIdeBuildConfiguration bc : configsToRemove) {
       CompositeConfigurable configurable = myConfigurablesMap.remove(bc);
@@ -178,11 +179,6 @@ public class FlexIdeBCConfigurator {
     // configurables are disposed by MasterDetailsComponent
     myModifiableModelInitializer.dispose();
     myConfigurablesMap.clear();
-  }
-
-  public int getBCCount(final ModifiableFlexIdeBuildConfiguration configuration) {
-    Module module = myConfigEditor.getModule(configuration);
-    return myConfigEditor.getConfigurations(module).length;
   }
 
   public void removeConfiguration(final ModifiableFlexIdeBuildConfiguration configuration) {
@@ -290,5 +286,22 @@ public class FlexIdeBCConfigurator {
     p = p.putPath(ProjectStructureConfigurable.CATEGORY, ModuleStructureConfigurable.getInstance(myConfigEditor.getProject()));
     p = p.putPath(MasterDetailsComponent.TREE_OBJECT, myConfigEditor.findCurrentConfiguration(module, origin));
     return p;
+  }
+
+  public boolean canBeRemoved(ModifiableFlexIdeBuildConfiguration[] configurations) {
+    Map<Module, Integer> module2ConfigCount = new HashMap<Module, Integer>();
+    for (ModifiableFlexIdeBuildConfiguration bc : configurations) {
+      Module module = myConfigEditor.getModule(bc);
+      Integer count = module2ConfigCount.get(module);
+      module2ConfigCount.put(module, count != null ? count + 1 : 1);
+    }
+
+    for (Map.Entry<Module, Integer> entry : module2ConfigCount.entrySet()) {
+      Module module = entry.getKey();
+      if (myConfigEditor.getConfigurations(module).length == entry.getValue()) {
+        return false;
+      }
+    }
+    return true;
   }
 }

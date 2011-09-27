@@ -15,6 +15,8 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureEx
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.util.NullableComputable;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.TreeNode;
@@ -75,9 +77,15 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
     myConfigurator.dispose();
   }
 
-  public boolean canBeRemoved(final Object editableObject) {
-    return editableObject instanceof ModifiableFlexIdeBuildConfiguration &&
-           myConfigurator.getBCCount((ModifiableFlexIdeBuildConfiguration)editableObject) > 1;
+  public boolean canBeRemoved(final Object[] editableObjects) {
+    ModifiableFlexIdeBuildConfiguration[] configurations =
+      ContainerUtil.mapNotNull(editableObjects, new Function<Object, ModifiableFlexIdeBuildConfiguration>() {
+        @Override
+        public ModifiableFlexIdeBuildConfiguration fun(Object o) {
+          return o instanceof ModifiableFlexIdeBuildConfiguration ? (ModifiableFlexIdeBuildConfiguration)o : null;
+        }
+      }, new ModifiableFlexIdeBuildConfiguration[0]);
+    return configurations.length == editableObjects.length && myConfigurator.canBeRemoved(configurations);
   }
 
   public boolean removeObject(final Object editableObject) {
