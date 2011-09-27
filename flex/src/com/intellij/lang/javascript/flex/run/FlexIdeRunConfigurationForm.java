@@ -227,7 +227,8 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     if (web) {
       String bcOutput = config.getOutputFileName();
       if (!bcOutput.isEmpty() && config.isUseHtmlWrapper()) {
-        bcOutput += " via HTML wrapper";
+        // todo support
+        //bcOutput += " via HTML wrapper";
       }
       myBCOutputLabel.setText(bcOutput);
 

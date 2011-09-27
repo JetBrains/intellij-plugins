@@ -192,6 +192,9 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
       myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Web && myOutputTypeCombo.getSelectedItem() == OutputType.Application);
     myWrapperFolderLabel.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
     myWrapperTemplateTextWithBrowse.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
+
+    // todo support
+    myHtmlWrapperPanel.setVisible(false);
   }
 
   public String getTreeNodeText() {
