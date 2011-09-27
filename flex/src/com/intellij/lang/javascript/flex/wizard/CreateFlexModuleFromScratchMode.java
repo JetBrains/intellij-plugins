@@ -1,10 +1,9 @@
-package com.intellij.flexIde;
+package com.intellij.lang.javascript.flex.wizard;
 
 import com.intellij.ide.util.newProjectWizard.StepSequence;
 import com.intellij.ide.util.newProjectWizard.modes.CreateFromScratchMode;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.ide.util.projectWizard.WizardContext;
-import com.intellij.lang.javascript.flex.wizard.FlexIdeModuleBuilder;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 
 public class CreateFlexModuleFromScratchMode extends CreateFromScratchMode {

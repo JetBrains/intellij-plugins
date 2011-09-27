@@ -1,12 +1,10 @@
-package com.intellij.flexIde;
+package com.intellij.lang.javascript.flex.wizard;
 
 import com.intellij.ide.util.newProjectWizard.ProjectNameWithTypeStep;
 import com.intellij.ide.util.newProjectWizard.StepSequence;
 import com.intellij.ide.util.newProjectWizard.modes.WizardMode;
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.wizard.FlexIdeModuleBuilder;
-import com.intellij.lang.javascript.flex.wizard.FlexIdeModuleWizardForm;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.DocumentAdapter;
 
