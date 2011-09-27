@@ -102,7 +102,9 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
       }
     });
 
-    initCombos();
+    TargetPlatform.initCombo(myTargetPlatformCombo);
+    OutputType.initCombo(myOutputTypeCombo);
+
     myOutputFolderField.addBrowseFolderListener(null, null, module.getProject(),
                                                 FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
@@ -175,22 +177,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
   public JComponent createOptionsPanel() {
     return myMainPanel;
-  }
-
-  private void initCombos() {
-    myTargetPlatformCombo.setModel(new DefaultComboBoxModel(TargetPlatform.values()));
-    myTargetPlatformCombo.setRenderer(new ListCellRendererWrapper<TargetPlatform>(myTargetPlatformCombo.getRenderer()) {
-      public void customize(JList list, TargetPlatform value, int index, boolean selected, boolean hasFocus) {
-        setText(value.getPresentableText());
-      }
-    });
-
-    myOutputTypeCombo.setModel(new DefaultComboBoxModel(OutputType.values()));
-    myOutputTypeCombo.setRenderer(new ListCellRendererWrapper<OutputType>(myOutputTypeCombo.getRenderer()) {
-      public void customize(JList list, OutputType value, int index, boolean selected, boolean hasFocus) {
-        setText(value.getPresentableText());
-      }
-    });
   }
 
   private void updateControls() {

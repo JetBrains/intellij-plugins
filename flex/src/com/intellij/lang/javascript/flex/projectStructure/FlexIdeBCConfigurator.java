@@ -100,6 +100,14 @@ public class FlexIdeBCConfigurator {
 
   private FlexProjectConfigurationEditor myConfigEditor;
 
+  /**
+   * @return current editor if Project Structure dialog is open
+   */
+  @Nullable
+  public FlexProjectConfigurationEditor getConfigEditor() {
+    return myConfigEditor;
+  }
+
   public void addListener(Listener listener, Disposable parentDisposable) {
     myEventDispatcher.addListener(listener, parentDisposable);
   }

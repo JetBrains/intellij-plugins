@@ -1,12 +1,23 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.ui.FlexSdkPanel;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.Processor;
 import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * @author ksafonov
@@ -262,6 +273,40 @@ public class BCUtils {
     else {
       return dependencyOutputType == OutputType.Library ||
              dependencyOutputType == OutputType.RuntimeLoadedModule;
+    }
+  }
+
+  public static void updateAvailableTargetPlayers(final FlexSdkPanel flexSdkPanel, final JComboBox targetPlayerCombo) {
+    final FlexSdk currentSdk = flexSdkPanel.getCurrentSdk();
+    final String sdkHome = currentSdk == null ? null : currentSdk.getHomePath();
+    final String playerFolderPath = sdkHome == null ? null : sdkHome + "/frameworks/libs/player";
+    if (playerFolderPath != null) {
+      final VirtualFile playerDir = ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
+        public VirtualFile compute() {
+          final VirtualFile playerFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(playerFolderPath);
+          if (playerFolder != null && playerFolder.isDirectory()) {
+            playerFolder.refresh(false, true);
+            return playerFolder;
+          }
+          return null;
+        }
+      });
+
+      if (playerDir != null) {
+        final Collection<String> availablePlayers = new ArrayList<String>(2);
+        FlexSdkUtils.processPlayerglobalSwcFiles(playerDir, new Processor<VirtualFile>() {
+          public boolean process(final VirtualFile playerglobalSwcFile) {
+            availablePlayers.add(playerglobalSwcFile.getParent().getName());
+            return true;
+          }
+        });
+
+        final Object selectedItem = targetPlayerCombo.getSelectedItem();
+        targetPlayerCombo.setModel(new DefaultComboBoxModel(ArrayUtil.toStringArray(availablePlayers)));
+        if (selectedItem != null) {
+          targetPlayerCombo.setSelectedItem(selectedItem);
+        }
+      }
     }
   }
 }

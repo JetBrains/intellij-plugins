@@ -82,7 +82,7 @@
         </constraints>
         <properties>
           <labelFor value="a2f1a"/>
-          <text value="Target &amp;Player:"/>
+          <text value="Target &amp;player:"/>
         </properties>
       </component>
       <component id="a2f1a" class="javax.swing.JComboBox" binding="myTargetPlayerCombo" default-binding="true">

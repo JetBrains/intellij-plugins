@@ -239,4 +239,19 @@ public class FlexSdkPanel implements Disposable {
   public void reset() {
     rebuildComboModel();
   }
+
+  public void setSdkLabelVisible(final boolean visible) {
+    mySdkLabel.setVisible(visible);
+  }
+
+  public void setEditButtonVisible(final boolean visible) {
+    myEditButton.setVisible(visible);
+  }
+
+  public void setNotNullCurrentSdkIfPossible() {
+    final JComboBox comboBox = myCombo.getComboBox();
+    if (comboBox.getSelectedItem() == null && comboBox.getModel().getSize() > 0) {
+      comboBox.setSelectedItem(comboBox.getModel().getElementAt(0));
+    }
+  }
 }

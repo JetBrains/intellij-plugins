@@ -15,10 +15,8 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
@@ -51,19 +49,14 @@ import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.*;
 import com.intellij.ui.navigation.Place;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.IconUtil;
 import com.intellij.util.PlatformIcons;
-import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FilteringIterator;
 import com.intellij.util.containers.HashMap;
@@ -438,7 +431,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     mySdkPanel.addListener(new ChangeListener() {
       public void stateChanged(final ChangeEvent e) {
-        updateAvailableTargetPlayers();
+        BCUtils.updateAvailableTargetPlayers(mySdkPanel, myTargetPlayerCombo);
         updateComponentSetCombo();
         updateSdkTableItem(mySdkPanel.getCurrentSdk());
         myTable.refresh();
@@ -736,7 +729,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
   private void removeItems(Set<MyTableItem> itemsToDelete) {
     if (itemsToDelete.isEmpty()) return;
-    
+
     DefaultMutableTreeNode root = myTable.getRoot();
 
     for (int i = 0; i < root.getChildCount(); ) {
@@ -929,7 +922,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     mySdkPanel.reset();
     mySdkPanel.setCurrentSdk(sdkEntry);
 
-    updateAvailableTargetPlayers();
+    BCUtils.updateAvailableTargetPlayers(mySdkPanel, myTargetPlayerCombo);
     myTargetPlayerCombo.setSelectedItem(myDependencies.getTargetPlayer());
 
     updateComponentSetCombo();
@@ -982,40 +975,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
     myTable.refresh();
     updateEditButton();
-  }
-
-  private void updateAvailableTargetPlayers() {
-    final FlexSdk currentSdk = mySdkPanel.getCurrentSdk();
-    final String sdkHome = currentSdk == null ? null : currentSdk.getHomePath();
-    final String playerFolderPath = sdkHome == null ? null : sdkHome + "/frameworks/libs/player";
-    if (playerFolderPath != null) {
-      final VirtualFile playerDir = ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
-        public VirtualFile compute() {
-          final VirtualFile playerFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(playerFolderPath);
-          if (playerFolder != null && playerFolder.isDirectory()) {
-            playerFolder.refresh(false, true);
-            return playerFolder;
-          }
-          return null;
-        }
-      });
-
-      if (playerDir != null) {
-        final Collection<String> availablePlayers = new ArrayList<String>(2);
-        FlexSdkUtils.processPlayerglobalSwcFiles(playerDir, new Processor<VirtualFile>() {
-          public boolean process(final VirtualFile playerglobalSwcFile) {
-            availablePlayers.add(playerglobalSwcFile.getParent().getName());
-            return true;
-          }
-        });
-
-        final Object selectedItem = myTargetPlayerCombo.getSelectedItem();
-        myTargetPlayerCombo.setModel(new DefaultComboBoxModel(ArrayUtil.toStringArray(availablePlayers)));
-        if (selectedItem != null) {
-          myTargetPlayerCombo.setSelectedItem(selectedItem);
-        }
-      }
-    }
   }
 
   private void updateComponentSetCombo() {

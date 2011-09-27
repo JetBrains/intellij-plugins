@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
-import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
@@ -36,19 +35,8 @@ public class AddBuildConfigurationDialog extends DialogWrapper {
   }
 
   private void initCombos() {
-    myTargetPlatformCombo.setModel(new DefaultComboBoxModel(TargetPlatform.values()));
-    myTargetPlatformCombo.setRenderer(new ListCellRendererWrapper<TargetPlatform>(myTargetPlatformCombo.getRenderer()) {
-      public void customize(JList list, TargetPlatform value, int index, boolean selected, boolean hasFocus) {
-        setText(value.getPresentableText());
-      }
-    });
-
-    myOutputTypeCombo.setModel(new DefaultComboBoxModel(OutputType.values()));
-    myOutputTypeCombo.setRenderer(new ListCellRendererWrapper<OutputType>(myOutputTypeCombo.getRenderer()) {
-      public void customize(JList list, OutputType value, int index, boolean selected, boolean hasFocus) {
-        setText(value.getPresentableText());
-      }
-    });
+    TargetPlatform.initCombo(myTargetPlatformCombo);
+    OutputType.initCombo(myOutputTypeCombo);
   }
 
   public JComponent getPreferredFocusedComponent() {
@@ -85,6 +73,5 @@ public class AddBuildConfigurationDialog extends DialogWrapper {
     OutputType outputType = (OutputType)myOutputTypeCombo.getSelectedItem();
     return new BuildConfigurationNature(targetPlatform, isPureAs, outputType);
   }
-
 }
 
