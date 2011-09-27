@@ -8,8 +8,6 @@ import com.google.jstestdriver.idea.execution.settings.JstdConfigType;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.ServerType;
 import com.google.jstestdriver.idea.execution.settings.TestType;
-import com.google.jstestdriver.idea.javascript.navigation.Test;
-import com.google.jstestdriver.idea.javascript.navigation.TestCase;
 import com.google.jstestdriver.idea.util.CastUtils;
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
@@ -203,7 +201,6 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
         if (matchTestSource(entity.getName())) {
           testFound = true;
         }
-        System.out.println("Checking " + entity.getPath() + " ... testFound: " + testFound);
         if (entity.equals(projectDir)) {
           break;
         }
