@@ -73,9 +73,8 @@ public class FlexSdkPanel implements Disposable {
       }
     });
 
-    myCombo.getChildComponent().addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
+    myCombo.getChildComponent().addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
         Object selectedItem = myCombo.getComboBox().getSelectedItem();
         myConfigEditor.setSdkLibraryUsed(FlexSdkPanel.this, selectedItem instanceof LibraryEx ? (LibraryEx)selectedItem : null);
         if (myMute) {
@@ -157,8 +156,9 @@ public class FlexSdkPanel implements Disposable {
     finally {
       myMute = false;
     }
+
+    comboItemChanged();
     if (matchingLibrary != null) {
-      comboItemChanged();
       myConfigEditor.setSdkLibraryUsed(this, matchingLibrary);
     }
   }
