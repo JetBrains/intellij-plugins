@@ -28,4 +28,15 @@ public class TestFileStructurePack {
     }
     return null;
   }
+
+  @Nullable
+  public PsiElement findPsiElement(@NotNull String testCaseName, @Nullable String testMethodName) {
+    for (AbstractTestFileStructure testFileStructure : myTestFileStructures) {
+      PsiElement element = testFileStructure.findPsiElement(testCaseName, testMethodName);
+      if (element != null) {
+        return element;
+      }
+    }
+    return null;
+  }
 }

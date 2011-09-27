@@ -16,9 +16,8 @@
 package com.google.jstestdriver.idea.execution.tree;
 
 import com.google.common.collect.Maps;
-import com.google.jstestdriver.idea.config.ConfigStructure;
+import com.google.jstestdriver.idea.config.JstdConfigStructure;
 import com.google.jstestdriver.idea.execution.TestListenerContext;
-import com.google.jstestdriver.idea.javascript.navigation.NavigationRegistry;
 import com.intellij.execution.testframework.sm.runner.SMTestProxy;
 import com.intellij.execution.testframework.sm.runner.ui.SMTestRunnerResultsForm;
 import com.intellij.openapi.util.Key;
@@ -40,22 +39,18 @@ import static com.google.jstestdriver.TestResult.Result;
 public class RemoteTestListener {
   private final TestListenerContext myContext;
   private final Map<String, BrowserNode> browserMap = Maps.newHashMap();
-  private final Map<VirtualFile, NavigationRegistry> myNavigationRegistryMap;
   private final VirtualFile myDirectory;
   private final StringBuilder myRootNodeLog = new StringBuilder();
   private Node myLastTestCaseParentNode;
   private File myLastConfigFile;
 
-  public RemoteTestListener(@NotNull Map<VirtualFile, NavigationRegistry> navigationRegistryMap,
-                            @NotNull TestListenerContext ctx,
-                            @Nullable VirtualFile directory) {
+  public RemoteTestListener(@NotNull TestListenerContext ctx, @Nullable VirtualFile directory) {
     myContext = ctx;
-    myNavigationRegistryMap = navigationRegistryMap;
     myDirectory = directory;
   }
 
   // This method must only be called on the AWT event thread, as it updates the UI.
-  public void onTestStarted(TestResultProtocolMessage message) {
+  public void onTestStarted(@NotNull TestResultProtocolMessage message) {
     createTestNode(message);
   }
 
@@ -68,7 +63,7 @@ public class RemoteTestListener {
   }
 
   @NotNull
-  private TestNode createTestNode(TestResultProtocolMessage message) {
+  private TestNode createTestNode(@NotNull TestResultProtocolMessage message) {
     BrowserNode browserNode = browserMap.get(message.browser);
     if (browserNode == null) {
       browserNode = new BrowserNode(message.browser);
@@ -88,7 +83,7 @@ public class RemoteTestListener {
 
     Node testCaseParentNode = fakeJstdConfigFileNode ? browserNode : jstdConfigFileNode;
     if (!jstdConfigFileNodeAlreadyExists) {
-      ConfigStructure configStructure = ConfigStructure.newConfigStructure(jstdConfigFileNode.getConfigFile());
+      JstdConfigStructure configStructure = JstdConfigStructure.newConfigStructure(jstdConfigFileNode.getConfigFile());
       StacktracePrinter stacktracePrinter = new StacktracePrinter(myContext.consoleView(), configStructure, message.browser);
       testCaseParentNode.wirePrinter(stacktracePrinter);
     }
@@ -98,8 +93,7 @@ public class RemoteTestListener {
     TestCaseNode testCaseNode = jstdConfigFileNode.getTestCaseNode(message.testCase);
     myLastConfigFile = jstdConfigFileNode.getConfigFile();
     if (testCaseNode == null) {
-      NavigationRegistry navigationRegistry = myNavigationRegistryMap.get(jstdConfigFileNode.getVirtualFile());
-      testCaseNode = new TestCaseNode(jstdConfigFileNode, message.testCase, navigationRegistry);
+      testCaseNode = new TestCaseNode(jstdConfigFileNode, message.testCase);
       onSuiteStarted(testCaseParentNode.getTestProxy(), testCaseNode.getTestProxy());
     }
 
@@ -173,7 +167,7 @@ public class RemoteTestListener {
     }
   }
 
-  private void onSuiteStarted(SMTestProxy parent, SMTestProxy child) {
+  private static void onSuiteStarted(SMTestProxy parent, SMTestProxy child) {
     parent.addChild(child);
   }
 
@@ -182,7 +176,7 @@ public class RemoteTestListener {
     getSMTestRunnerResultsForm().onTestStarted(child);
   }
 
-  public void onSuiteFinished(SMTestProxy node) {
+  public static void onSuiteFinished(SMTestProxy node) {
     node.setFinished();
   }
 

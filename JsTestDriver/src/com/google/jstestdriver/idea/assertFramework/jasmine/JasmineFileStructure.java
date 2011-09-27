@@ -6,6 +6,7 @@ import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructure;
 import com.google.jstestdriver.idea.assertFramework.JstdRunElement;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,6 +69,22 @@ public class JasmineFileStructure extends AbstractTestFileStructure {
       JstdRunElement jstdRunElement = suiteStructure.findJstdRunElement(textRange);
       if (jstdRunElement != null) {
         return jstdRunElement;
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public PsiElement findPsiElement(@NotNull String testCaseName, @Nullable String testMethodName) {
+    JasmineSuiteStructure suiteStructure = mySuiteMap.get(testCaseName);
+    if (suiteStructure != null) {
+      if (testMethodName != null) {
+        JasmineSpecStructure specStructure = suiteStructure.getInnerSpecByName(testMethodName);
+        if (specStructure != null) {
+          return specStructure.getEnclosingCallExpression();
+        }
+      } else {
+        return suiteStructure.getEnclosingCallExpression();
       }
     }
     return null;

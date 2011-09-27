@@ -12,6 +12,7 @@ import com.google.jstestdriver.config.YamlParser;
 import com.google.jstestdriver.hooks.FileParsePostProcessor;
 import com.google.jstestdriver.util.DisplayPathSanitizer;
 import com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,16 +20,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class ConfigStructure {
+public class JstdConfigStructure {
 
-  private static final Logger LOG = Logger.getInstance(ConfigStructure.class);
+  private static final Logger LOG = Logger.getInstance(JstdConfigStructure.class);
 
-  private final File myJstdConfigPath;
+  private final File myJstdConfigFile;
   private final File myBasePath;
   private final Set<File> myLoadFiles;
 
-  public ConfigStructure(File jstdConfigPath, File basePath, List<File> loadFiles) {
-    myJstdConfigPath = jstdConfigPath;
+  public JstdConfigStructure(@NotNull File jstdConfigFile, @NotNull File basePath, @NotNull List<File> loadFiles) {
+    myJstdConfigFile = jstdConfigFile;
     myBasePath = basePath;
     myLoadFiles = Sets.newHashSet();
     for (File loadFile : loadFiles) {
@@ -40,12 +41,19 @@ public class ConfigStructure {
     }
   }
 
-  public File getJstdConfigPath() {
-    return myJstdConfigPath;
+  @NotNull
+  public File getJstdConfigFile() {
+    return myJstdConfigFile;
   }
 
+  @NotNull
   public File getBasePath() {
     return myBasePath;
+  }
+
+  @NotNull
+  public Set<File> getLoadFiles() {
+    return myLoadFiles;
   }
 
   public File findLoadFile(String relativeFilePath) {
@@ -59,23 +67,23 @@ public class ConfigStructure {
     return null;
   }
 
-  public static ConfigStructure newConfigStructure(File jstdConfigPath) {
-    Configuration resolvedConfiguration = resolveConfiguration(jstdConfigPath);
+  public static JstdConfigStructure newConfigStructure(@NotNull File jstdConfigFile) {
+    Configuration resolvedConfiguration = resolveConfiguration(jstdConfigFile);
     Set<FileInfo> fileInfoSet = resolvedConfiguration.getFilesList();
     List<File> loadFiles = Lists.newArrayList();
     for (FileInfo fileInfo : fileInfoSet) {
       File file = fileInfo.toFile(null);
       loadFiles.add(file);
     }
-    return new ConfigStructure(jstdConfigPath, resolvedConfiguration.getBasePath(), loadFiles);
+    return new JstdConfigStructure(jstdConfigFile, resolvedConfiguration.getBasePath(), loadFiles);
   }
 
-  private static Configuration resolveConfiguration(File configFile) {
+  private static Configuration resolveConfiguration(File jstdConfigFile) {
     FlagsImpl flags = new FlagsImpl();
     flags.setServer("test:1");
     try {
-      ConfigurationSource confSrc = new UserConfigurationSource(configFile);
-      File initialBasePath = configFile.getParentFile();
+      ConfigurationSource confSrc = new UserConfigurationSource(jstdConfigFile);
+      File initialBasePath = jstdConfigFile.getParentFile();
       Configuration parsedConf = confSrc.parse(initialBasePath, new YamlParser());
       File resolvedBasePath = parsedConf.getBasePath().getCanonicalFile();
       PathResolver pathResolver = new PathResolver(
@@ -85,7 +93,7 @@ public class ConfigStructure {
       );
       return parsedConf.resolvePaths(pathResolver, flags);
     } catch (IOException e) {
-      throw new RuntimeException("Failed to read settings file " + configFile, e);
+      throw new RuntimeException("Failed to read settings file " + jstdConfigFile, e);
     }
   }
 

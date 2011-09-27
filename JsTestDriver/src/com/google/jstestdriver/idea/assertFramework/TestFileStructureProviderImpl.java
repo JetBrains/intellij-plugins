@@ -42,7 +42,8 @@ public class TestFileStructureProviderImpl implements TestFileStructureManager.P
               fileStructures.add(testFileStructure);
             }
             long endTime = System.currentTimeMillis();
-            System.out.println("Taken time is " + (endTime - startTime) + " ms");
+            System.out.println("Creating TestFileStructurePack for " + jsFile.getName() + " takes "
+                               + (endTime - startTime) + " ms");
             return Result.create(new TestFileStructurePack(fileStructures), jsFile);
           }
         }, false);

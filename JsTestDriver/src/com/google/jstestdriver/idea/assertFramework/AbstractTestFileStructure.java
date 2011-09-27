@@ -21,4 +21,7 @@ public abstract class AbstractTestFileStructure {
 
   @Nullable
   public abstract JstdRunElement findJstdRunElement(@NotNull TextRange textRange);
+
+  @Nullable
+  public abstract PsiElement findPsiElement(@NotNull String testCaseName, @Nullable String testMethodName);
 }

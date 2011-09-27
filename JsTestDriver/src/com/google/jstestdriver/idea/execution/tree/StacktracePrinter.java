@@ -1,6 +1,6 @@
 package com.google.jstestdriver.idea.execution.tree;
 
-import com.google.jstestdriver.idea.config.ConfigStructure;
+import com.google.jstestdriver.idea.config.JstdConfigStructure;
 import com.intellij.execution.filters.HyperlinkInfo;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.testframework.ui.TestsOutputConsolePrinter;
@@ -25,10 +25,10 @@ class StacktracePrinter extends TestsOutputConsolePrinter {
 
   private static final String DEFAULT_PATH_PREFIX = "/test/";
 
-  private final ConfigStructure myConfigStructure;
+  private final JstdConfigStructure myConfigStructure;
   private final HyperlinkInfoHelper myHyperlinkInfoHelper;
 
-  public StacktracePrinter(SMTRunnerConsoleView consoleView, ConfigStructure configStructure, String browserName) {
+  public StacktracePrinter(SMTRunnerConsoleView consoleView, JstdConfigStructure configStructure, String browserName) {
     super(consoleView, consoleView.getProperties(), null);
     myConfigStructure = configStructure;
     myHyperlinkInfoHelper = findHyperlinkPrinter(browserName);

@@ -1,8 +1,9 @@
 package com.google.jstestdriver.idea.execution.tree;
 
-import com.google.jstestdriver.idea.javascript.navigation.Test;
-import com.google.jstestdriver.idea.javascript.navigation.TestCase;
 import com.intellij.execution.Location;
+import com.intellij.execution.PsiLocation;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -13,12 +14,18 @@ class TestNode extends Node {
   private final TestCaseNode myTestCaseNode;
   private boolean myDone = false;
 
-  public TestNode(@NotNull TestCaseNode testCaseNode, @NotNull String testName) {
+  public TestNode(@NotNull final TestCaseNode testCaseNode, @NotNull final String testName) {
     myTestCaseNode = testCaseNode;
-    TestCase testCaseStructure = testCaseNode.getTestCaseStructure();
-    Test test = testCaseStructure != null ? testCaseStructure.getTestByName(testName) : null;
-    Location testLocation = test != null ? test.getLocation() : null;
-    setTestProxy(new SMTestProxyWithPrinterAndLocation(testName, false, LocationProvider.createConstantProvider(testLocation)));
+    setTestProxy(new SMTestProxyWithPrinterAndLocation(testName, false, new LocationProvider() {
+      @Override
+      Location provideLocation(@NotNull Project project) {
+        PsiElement element = NavUtils.findPsiElement(project,
+                                testCaseNode.getJstdConfigFileNode().getConfigFile(),
+                                testCaseNode.getName(),
+                                testName);
+        return PsiLocation.fromPsiElement(element);
+      }
+    }));
     myTestCaseNode.registerTestNode(this);
   }
 
