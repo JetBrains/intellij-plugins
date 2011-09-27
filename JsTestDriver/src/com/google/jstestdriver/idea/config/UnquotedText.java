@@ -62,4 +62,8 @@ class UnquotedText {
     return new TextRange(startOffset, endOffset);
   }
 
+  @Override
+  public String toString() {
+    return getUnquotedText();
+  }
 }

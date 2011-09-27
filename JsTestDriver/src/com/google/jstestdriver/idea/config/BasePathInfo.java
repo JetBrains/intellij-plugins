@@ -18,7 +18,7 @@ import java.io.File;
 /**
  * @author Sergey Simonchik
  */
-public class BasePathInfo {
+class BasePathInfo {
 
   static final String BASE_PATH_KEY = "basepath";
 

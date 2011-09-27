@@ -16,7 +16,7 @@ public class PsiElementFragment<T extends PsiElement> {
   private final T myElement;
   private final TextRange myTextRangeInElement;
 
-  public PsiElementFragment(@NotNull T element, @NotNull TextRange textRangeInElement) {
+  private PsiElementFragment(@NotNull T element, @NotNull TextRange textRangeInElement) {
     if (textRangeInElement.getStartOffset() < 0 || textRangeInElement.getEndOffset() < textRangeInElement.getStartOffset()) {
       throw new RuntimeException("TextRange " + textRangeInElement + " is not valid!");
     }
@@ -89,6 +89,10 @@ public class PsiElementFragment<T extends PsiElement> {
     int startOffset = element.getTextRange().getStartOffset();
     TextRange textRange = new TextRange(common.getStartOffset() - startOffset, common.getEndOffset() - startOffset);
     return new PsiElementFragment<T>(element, textRange);
+  }
+
+  public static <T extends PsiElement> PsiElementFragment<T> createWholeElement(@NotNull T element) {
+    return new PsiElementFragment<T>(element, element.getTextRange());
   }
 
   public static <T extends PsiElement> PsiElementFragment<T> create(@NotNull T element, @NotNull TextRange textRangeInElement) {

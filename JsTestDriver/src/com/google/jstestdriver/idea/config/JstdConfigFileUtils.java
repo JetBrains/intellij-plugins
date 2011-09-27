@@ -91,11 +91,11 @@ public class JstdConfigFileUtils {
     return UnquotedText.unquoteDocumentFragment(fragment);
   }
 
-  public static int getStartLineNumber(@NotNull Document document, @NotNull PsiElement element) {
+  static int getStartLineNumber(@NotNull Document document, @NotNull PsiElement element) {
     return document.getLineNumber(element.getTextRange().getStartOffset());
   }
 
-  public static int getEndLineNumber(@NotNull Document document, @NotNull PsiElement element) {
+  static int getEndLineNumber(@NotNull Document document, @NotNull PsiElement element) {
     return document.getLineNumber(element.getTextRange().getEndOffset());
   }
 
