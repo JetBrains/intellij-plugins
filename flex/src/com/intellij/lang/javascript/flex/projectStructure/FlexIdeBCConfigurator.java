@@ -27,6 +27,7 @@ import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.NamedConfigurable;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.ui.navigation.Place;
@@ -106,7 +107,7 @@ public class FlexIdeBCConfigurator {
   public void reset(Project project) {
     myModifiableModelInitializer.ensureInitialized(project);
     ModuleStructureConfigurable moduleStructureConfigurable = ModuleStructureConfigurable.getInstance(project);
-    for (final NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable : myConfigurablesMap.values()) {
+    for (final CompositeConfigurable configurable : myConfigurablesMap.values()) {
       moduleStructureConfigurable.ensureInitialized(configurable);
     }
   }
@@ -135,12 +136,16 @@ public class FlexIdeBCConfigurator {
     }
 
     // config editor will handle event and update modifiable model on its own, we just need to update configurables
-    for (Iterator<ModifiableFlexIdeBuildConfiguration> i = myConfigurablesMap.keySet().iterator(); i.hasNext(); ) {
-      ModifiableFlexIdeBuildConfiguration bc = i.next();
-      if (myConfigEditor.getModule(bc) == module) {
-        myConfigurablesMap.get(bc).disposeUIResources();
-        i.remove();
+    Collection<ModifiableFlexIdeBuildConfiguration> configsToRemove = ContainerUtil.findAll(myConfigurablesMap.keySet(), new Condition<ModifiableFlexIdeBuildConfiguration>() {
+      @Override
+      public boolean value(ModifiableFlexIdeBuildConfiguration bc) {
+        return myConfigEditor.getModule(bc) == module;
       }
+    });
+
+    for (ModifiableFlexIdeBuildConfiguration bc : configsToRemove) {
+      CompositeConfigurable configurable = myConfigurablesMap.remove(bc);
+      configurable.disposeUIResources();
     }
     myEventDispatcher.getMulticaster().moduleRemoved(module);
   }
@@ -148,7 +153,7 @@ public class FlexIdeBCConfigurator {
   public boolean isModified() {
     if (myConfigEditor.isModified()) return true;
 
-    for (final NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable : myConfigurablesMap.values()) {
+    for (final CompositeConfigurable configurable : myConfigurablesMap.values()) {
       if (configurable.isModified()) {
         return true;
       }
@@ -157,7 +162,7 @@ public class FlexIdeBCConfigurator {
   }
 
   public void apply() throws ConfigurationException {
-    for (final NamedConfigurable<ModifiableFlexIdeBuildConfiguration> configurable : myConfigurablesMap.values()) {
+    for (final CompositeConfigurable configurable : myConfigurablesMap.values()) {
       if (configurable.isModified()) {
         configurable.apply();
       }
