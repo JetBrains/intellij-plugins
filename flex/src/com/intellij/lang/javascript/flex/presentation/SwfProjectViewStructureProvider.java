@@ -42,8 +42,11 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
   private static final Comparator<JSQualifiedNamedElement> QNAME_COMPARATOR = new Comparator<JSQualifiedNamedElement>() {
     @Override
     public int compare(JSQualifiedNamedElement o1, JSQualifiedNamedElement o2) {
-      String[] tokens1 = o1.getQualifiedName().split("\\.");
-      String[] tokens2 = o2.getQualifiedName().split("\\.");
+      final String qName = o1.getQualifiedName();
+      final String qName2 = o2.getQualifiedName();
+      if (qName == null || qName2 == null) return qName == qName2 ? 0: qName != null ? 1:-1;
+      String[] tokens1 = qName.split("\\.");
+      String[] tokens2 = qName2.split("\\.");
 
       for (int i = 0; i < tokens1.length && i < tokens2.length; i++) {
         int result = tokens1[i].compareTo(tokens2[i]);
