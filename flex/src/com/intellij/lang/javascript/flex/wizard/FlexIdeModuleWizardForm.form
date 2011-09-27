@@ -71,12 +71,12 @@
           <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
       </hspacer>
-      <component id="450cd" class="javax.swing.JCheckBox" binding="myMainClassCheckBox" default-binding="true">
+      <component id="450cd" class="javax.swing.JCheckBox" binding="mySampleAppCheckBox">
         <constraints>
           <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Create main class:"/>
+          <text value="Create sample app:"/>
         </properties>
       </component>
       <component id="eeb6a" class="javax.swing.JLabel" binding="myTargetPlayerLabel">
@@ -94,7 +94,7 @@
         </constraints>
         <properties/>
       </component>
-      <component id="38910" class="javax.swing.JTextField" binding="myMainClassTextField">
+      <component id="38910" class="javax.swing.JTextField" binding="mySampleAppTextField">
         <constraints>
           <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="100" height="-1"/>

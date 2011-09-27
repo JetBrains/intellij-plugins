@@ -4,6 +4,7 @@ import com.intellij.execution.RunManagerEx;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
@@ -26,7 +27,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.util.NullableComputable;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
@@ -40,8 +41,8 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
   private OutputType myOutputType = OutputType.Application;
   private FlexSdk myFlexSdk;
   private String myTargetPlayer;
-  private boolean myCreateMainClass;
-  private String myMainClassName;
+  private boolean myCreateSampleApp;
+  private String mySampleAppName;
   private boolean myCreateHtmlWrapperTemplate;
 
   public ModuleType getModuleType() {
@@ -68,12 +69,12 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
     myTargetPlayer = targetPlayer;
   }
 
-  public void setCreateMainClass(final boolean createMainClass) {
-    myCreateMainClass = createMainClass;
+  public void setCreateSampleApp(final boolean createSampleApp) {
+    myCreateSampleApp = createSampleApp;
   }
 
-  public void setMainClassName(final String mainClassName) {
-    myMainClassName = mainClassName;
+  public void setSampleAppName(final String sampleAppName) {
+    mySampleAppName = sampleAppName;
   }
 
   public void setCreateHtmlWrapperTemplate(final boolean createHtmlWrapperTemplate) {
@@ -84,7 +85,7 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
     final ContentEntry contentEntry = doAddContentEntry(modifiableRootModel);
     if (contentEntry == null) return;
 
-    setupSourceRoots(contentEntry);
+    final VirtualFile sourceRoot = createSourceRoot(contentEntry);
 
     final Module module = modifiableRootModel.getModule();
     final LibraryTableBase.ModifiableModelEx globalLibrariesModifiableModel;
@@ -108,9 +109,21 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
     final ModifiableFlexIdeBuildConfiguration[] configurations = flexConfigEditor.getConfigurations(module);
     assert configurations.length == 1;
     final ModifiableFlexIdeBuildConfiguration bc = configurations[0];
+
     setupBC(module, bc);
+
     if (bc.getOutputType() == OutputType.Application) {
       createRunConfiguration(module, bc.getName());
+    }
+
+    if (sourceRoot != null && myCreateSampleApp) {
+      try {
+        final boolean flex4 = myFlexSdk.getFlexVersion().startsWith("4");
+        FlexUtils.createSampleApp(module.getProject(), sourceRoot, mySampleAppName, myTargetPlatform, flex4);
+      }
+      catch (IOException ex) {
+        throw new ConfigurationException(ex.getMessage());
+      }
     }
 
     commitIfNeeded(globalLibrariesModifiableModel, flexConfigEditor, needToCommitFlexEditor);
@@ -178,22 +191,28 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
     }
   }
 
-  private void setupBC(final Module module, final ModifiableFlexIdeBuildConfiguration configuration) {
-    configuration.setName(module.getName());
-    configuration.setTargetPlatform(myTargetPlatform);
-    configuration.setPureAs(isPureActionScript);
-    configuration.setOutputType(myOutputType);
-    if (myCreateMainClass) {
-      configuration.setMainClass(myMainClassName);
-      configuration.setOutputFileName(StringUtil.getShortName(myMainClassName) + (myOutputType == OutputType.Library ? ".swc" : ".swf"));
+  private void setupBC(final Module module, final ModifiableFlexIdeBuildConfiguration bc) {
+    bc.setName(module.getName());
+    bc.setTargetPlatform(myTargetPlatform);
+    bc.setPureAs(isPureActionScript);
+    bc.setOutputType(myOutputType);
+    if (myCreateSampleApp) {
+      final String className = FileUtil.getNameWithoutExtension(mySampleAppName);
+      bc.setMainClass(className);
+      bc.setOutputFileName(className + (myOutputType == OutputType.Library ? ".swc" : ".swf"));
     }
     else {
-      configuration.setOutputFileName(module.getName() + (myOutputType == OutputType.Library ? ".swc" : ".swf"));
+      bc.setOutputFileName(module.getName() + (myOutputType == OutputType.Library ? ".swc" : ".swf"));
     }
-    configuration.setOutputFolder(VfsUtil.urlToPath(CompilerModuleExtension.getInstance(module).getCompilerOutputUrl()));
+    bc.setOutputFolder(VfsUtil.urlToPath(CompilerModuleExtension.getInstance(module).getCompilerOutputUrl()));
 
-    configuration.getDependencies().setSdkEntry(Factory.createSdkEntry(myFlexSdk.getLibraryId(), myFlexSdk.getHomePath())); // todo correct?
-    configuration.getDependencies().setTargetPlayer(myTargetPlayer);
+    bc.getDependencies().setSdkEntry(Factory.createSdkEntry(myFlexSdk.getLibraryId(), myFlexSdk.getHomePath())); // todo correct?
+    bc.getDependencies().setTargetPlayer(myTargetPlayer);
+
+    if (myTargetPlatform == TargetPlatform.Mobile) {
+      bc.getAndroidPackagingOptions().setEnabled(true);
+      bc.getIosPackagingOptions().setEnabled(true);
+    }
   }
 
   private static void createRunConfiguration(final Module module, final String bcName) {
@@ -210,9 +229,10 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
     params.setBCName(bcName);
   }
 
-  private void setupSourceRoots(final ContentEntry contentEntry) {
+  @Nullable
+  private VirtualFile createSourceRoot(final ContentEntry contentEntry) {
     final VirtualFile contentRoot = contentEntry.getFile();
-    if (contentRoot == null) return;
+    if (contentRoot == null) return null;
 
     VirtualFile sourceRoot = VfsUtil.findRelativeFile(contentRoot, "src");
 
@@ -228,8 +248,12 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
         }
       });
     }
+
     if (sourceRoot != null) {
       contentEntry.addSourceFolder(sourceRoot, false);
+      return sourceRoot;
     }
+
+    return null;
   }
 }

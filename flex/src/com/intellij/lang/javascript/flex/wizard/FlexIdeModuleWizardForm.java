@@ -16,6 +16,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.NonFocusableCheckBox;
 import com.intellij.util.ui.UIUtil;
@@ -40,8 +41,8 @@ public class FlexIdeModuleWizardForm {
   private JComboBox myTargetPlayerCombo;
   private FlexSdkPanel myFlexSdkPanel;
 
-  private JCheckBox myMainClassCheckBox;
-  private JTextField myMainClassTextField;
+  private JCheckBox mySampleAppCheckBox;
+  private JTextField mySampleAppTextField;
   private JCheckBox myHtmlWrapperCheckBox;
   private JCheckBox myEnableHistoryCheckBox;
   private JCheckBox myCheckPlayerVersionCheckBox;
@@ -67,7 +68,7 @@ public class FlexIdeModuleWizardForm {
 
     myTargetPlatformCombo.addActionListener(listener);
     myOutputTypeCombo.addActionListener(listener);
-    myMainClassCheckBox.addActionListener(listener);
+    mySampleAppCheckBox.addActionListener(listener);
     myHtmlWrapperCheckBox.addActionListener(listener);
 
     myFlexSdkPanel.addListener(new ChangeListener() {
@@ -76,7 +77,19 @@ public class FlexIdeModuleWizardForm {
       }
     }, myDisposable);
 
-    myMainClassTextField.getDocument().addDocumentListener(new DocumentAdapter() {
+    myPureActionScriptCheckBox.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        final String sampleApp = mySampleAppTextField.getText().trim();
+        if (sampleApp.endsWith(".as") || sampleApp.endsWith("mxml")) {
+          mySettingModuleNameFromCode = true;
+          mySampleAppTextField
+            .setText(FileUtil.getNameWithoutExtension(sampleApp) + (myPureActionScriptCheckBox.isSelected() ? ".as" : ".mxml"));
+          mySettingModuleNameFromCode = false;
+        }
+      }
+    });
+
+    mySampleAppTextField.getDocument().addDocumentListener(new DocumentAdapter() {
       protected void textChanged(final DocumentEvent e) {
         if (!mySettingModuleNameFromCode) {
           myClassNameChangedByUser = true;
@@ -102,7 +115,7 @@ public class FlexIdeModuleWizardForm {
     myOutputTypeCombo.setSelectedItem(OutputType.Application);
     myFlexSdkPanel.reset();
     myFlexSdkPanel.setNotNullCurrentSdkIfPossible();
-    myMainClassCheckBox.setSelected(true);
+    mySampleAppCheckBox.setSelected(true);
     onModuleNameChanged(moduleName);
     myHtmlWrapperCheckBox.setSelected(true);
 
@@ -119,26 +132,25 @@ public class FlexIdeModuleWizardForm {
   private void updateControls() {
     final boolean web = myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Web;
     final boolean app = myOutputTypeCombo.getSelectedItem() == OutputType.Application;
-    final boolean rlm = myOutputTypeCombo.getSelectedItem() == OutputType.RuntimeLoadedModule;
 
-    final boolean createMainClassWasEnabled = myMainClassCheckBox.isEnabled();
+    final boolean createMainClassWasEnabled = mySampleAppCheckBox.isEnabled();
     final boolean createHtmlWrapperWasEnabled = myHtmlWrapperCheckBox.isEnabled();
 
     myTargetPlayerLabel.setEnabled(web);
     myTargetPlayerCombo.setEnabled(web);
-    myMainClassCheckBox.setEnabled(app || rlm);
-    myMainClassTextField.setEnabled(app || rlm);
+    mySampleAppCheckBox.setEnabled(app);
+    mySampleAppTextField.setEnabled(app);
     myHtmlWrapperCheckBox.setEnabled(web && app);
 
-    if (createMainClassWasEnabled != myMainClassCheckBox.isEnabled()) {
-      myMainClassCheckBox.setSelected(myMainClassCheckBox.isEnabled());
+    if (createMainClassWasEnabled != mySampleAppCheckBox.isEnabled()) {
+      mySampleAppCheckBox.setSelected(mySampleAppCheckBox.isEnabled());
     }
 
     if (createHtmlWrapperWasEnabled != myHtmlWrapperCheckBox.isEnabled()) {
       myHtmlWrapperCheckBox.setSelected(myHtmlWrapperCheckBox.isEnabled());
     }
 
-    myMainClassTextField.setEnabled(myMainClassCheckBox.isEnabled() && myMainClassCheckBox.isSelected());
+    mySampleAppTextField.setEnabled(mySampleAppCheckBox.isEnabled() && mySampleAppCheckBox.isSelected());
   }
 
   public void disposeUIResources() {
@@ -213,8 +225,8 @@ public class FlexIdeModuleWizardForm {
     moduleBuilder.setOutputType((OutputType)myOutputTypeCombo.getSelectedItem());
     moduleBuilder.setFlexSdk(myFlexSdkPanel.getCurrentSdk());
     moduleBuilder.setTargetPlayer((String)myTargetPlayerCombo.getSelectedItem());
-    moduleBuilder.setCreateMainClass(myMainClassCheckBox.isEnabled() && myMainClassCheckBox.isSelected());
-    moduleBuilder.setMainClassName(myMainClassTextField.getText().trim());
+    moduleBuilder.setCreateSampleApp(mySampleAppCheckBox.isEnabled() && mySampleAppCheckBox.isSelected());
+    moduleBuilder.setSampleAppName(mySampleAppTextField.getText().trim());
     moduleBuilder.setCreateHtmlWrapperTemplate(myHtmlWrapperCheckBox.isEnabled() && myHtmlWrapperCheckBox.isSelected());
   }
 
@@ -234,9 +246,10 @@ public class FlexIdeModuleWizardForm {
         builder.insert(0, "Main_");
       }
       builder.replace(0, 1, String.valueOf(Character.toUpperCase(builder.charAt(0))));
+      builder.append(myPureActionScriptCheckBox.isSelected() ? ".as" : ".mxml");
 
       mySettingModuleNameFromCode = true;
-      myMainClassTextField.setText(builder.toString());
+      mySampleAppTextField.setText(builder.toString());
       mySettingModuleNameFromCode = false;
     }
   }

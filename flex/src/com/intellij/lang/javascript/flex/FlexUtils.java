@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexSdkModificator;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
@@ -136,39 +137,48 @@ public class FlexUtils {
 
     if (sdk != null && sampleFileName != null) {
       assert sampleFileName.endsWith(".mxml") || sampleFileName.endsWith(".as");
-      final String sampleClassName = sampleFileName.substring(0, sampleFileName.lastIndexOf('.'));
-      final String extension = sampleFileName.substring(sampleFileName.lastIndexOf('.'));
-      final String sampleTechnology =
-        sdk.getSdkType() instanceof AirMobileSdkType ? "AIRMobile" : sdk.getSdkType() instanceof AirSdkType ? "AIR" : "Flex";
+      config.MAIN_CLASS = FileUtil.getNameWithoutExtension(sampleFileName);
 
-      String suffix = "";
-      if (".mxml".equals(extension) && FlexSdkUtils.isFlex4Sdk(sdk)) {
-        suffix = sdk.getSdkType() instanceof AirMobileSdkType ? FlexSdkUtils.getFlexSdkRevision(sdk.getVersionString()) >= 20967
-                                                                ? "_ViewNavigator"
-                                                                : "_MobileApplication"
-                                                              : "_Spark";
+      final TargetPlatform platform = sdk.getSdkType() instanceof AirMobileSdkType
+                                      ? TargetPlatform.Mobile
+                                      : sdk.getSdkType() instanceof AirSdkType ? TargetPlatform.Desktop : TargetPlatform.Web;
+      final boolean flex4 = FlexSdkUtils.isFlex4Sdk(sdk);
+
+      createSampleApp(project, sourceRoot, sampleFileName, platform, flex4);
+    }
+  }
+
+  public static void createSampleApp(final Project project,
+                                     final VirtualFile sourceRoot,
+                                     final String sampleFileName,
+                                     final TargetPlatform platform,
+                                     final boolean isFlex4) throws IOException {
+    final String sampleClassName = sampleFileName.substring(0, sampleFileName.lastIndexOf('.'));
+    final String extension = sampleFileName.substring(sampleFileName.lastIndexOf('.'));
+    final String sampleTechnology = platform == TargetPlatform.Mobile ? "AIRMobile" : platform == TargetPlatform.Desktop ? "AIR" : "Flex";
+
+    String suffix = "";
+    if (".mxml".equals(extension) && isFlex4) {
+      suffix = platform == TargetPlatform.Mobile ? "_ViewNavigator" : "_Spark";
+    }
+
+    final String helloWorldTemplate = "HelloWorld_" + sampleTechnology + suffix + extension + ".ft";
+    final InputStream stream = FlexUtils.class.getResourceAsStream(helloWorldTemplate);
+    assert stream != null;
+    final String sampleFileContent = FileUtil.loadTextAndClose(new InputStreamReader(stream)).replace("${class.name}", sampleClassName);
+    final VirtualFile sampleApplicationFile = addFileWithContent(sampleFileName, sampleFileContent, sourceRoot);
+    if (sampleApplicationFile != null) {
+      final Runnable runnable = new Runnable() {
+        public void run() {
+          FileEditorManager.getInstance(project).openFile(sampleApplicationFile, true);
+        }
+      };
+
+      if (project.isInitialized()) {
+        runnable.run();
       }
-
-      final String helloWorldTemplate = "HelloWorld_" + sampleTechnology + suffix + extension + ".ft";
-      final InputStream stream = FlexUtils.class.getResourceAsStream(helloWorldTemplate);
-      assert stream != null;
-      final String sampleFileContent = FileUtil.loadTextAndClose(new InputStreamReader(stream)).replace("${class.name}", sampleClassName);
-      final VirtualFile sampleApplicationFile = addFileWithContent(sampleFileName, sampleFileContent, sourceRoot);
-      if (sampleApplicationFile != null) {
-        config.MAIN_CLASS = sampleApplicationFile.getNameWithoutExtension();
-
-        final Runnable runnable = new Runnable() {
-          public void run() {
-            FileEditorManager.getInstance(project).openFile(sampleApplicationFile, true);
-          }
-        };
-
-        if (project.isInitialized()) {
-          runnable.run();
-        }
-        else {
-          StartupManager.getInstance(project).registerPostStartupActivity(runnable);
-        }
+      else {
+        StartupManager.getInstance(project).registerPostStartupActivity(runnable);
       }
     }
   }
