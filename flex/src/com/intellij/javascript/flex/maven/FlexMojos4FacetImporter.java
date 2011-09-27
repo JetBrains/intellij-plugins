@@ -11,10 +11,10 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.IgnoredBeanFactory;
 import com.intellij.util.StringBuilderSpinAllocator;
-import com.intellij.util.io.ZipUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.execution.MavenExternalParameters;
@@ -26,13 +26,15 @@ import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
 import org.jetbrains.idea.maven.utils.MavenProgressIndicator;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
   @Override
@@ -86,7 +88,7 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
   private static class GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
     private static final Pattern MAVEN_ERROR_PATTERN = Pattern.compile("^\\[ERROR\\] (.*)$", Pattern.MULTILINE);
 
-    public static final String CONFIGURATOR_VERSION = "1.4.3";
+    public static final String CONFIGURATOR_VERSION = "1.4.4";
     public static final String CONFIGURATOR_GOAL = "com.intellij.flex.maven:idea-flexmojos-maven-plugin:" + CONFIGURATOR_VERSION + ":generate";
 
     public GenerateFlexConfigTask(MavenProject mavenProject, MavenProjectsTree tree) {
@@ -97,7 +99,15 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
     public void perform(Project project, MavenEmbeddersManager embeddersManager, MavenConsole console, MavenProgressIndicator indicator)
       throws MavenProcessCanceledException {
 
-      copyConfuguratorToLocalRepository(console);
+      try {
+        copyConfiguratorToLocalRepository();
+      }
+      catch (IOException e) {
+        console.printException(e);
+        showWarning("", project);
+        MavenLog.LOG.error(e);
+        return;
+      }
 
       final List<MavenProject> rootProjects = myTree.getRootProjects();
       final String workingDirPath;
@@ -126,7 +136,6 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
       catch (ExecutionException e) {
         // resolve maven home
         new Notification("Maven", FlexBundle.message("flexmojos.project.import"), e.getMessage(), NotificationType.ERROR).notify(project);
-        console.printException(e);
         MavenLog.LOG.warn(e);
         return;
       }
@@ -139,7 +148,7 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
       }
       catch (ExecutionException e) {
         console.printException(e);
-        MavenLog.LOG.warn(e);
+        MavenLog.LOG.error(e);
         showWarning("", project);
         return;
       }
@@ -199,28 +208,39 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
                        NotificationType.WARNING).notify(project);
     }
 
-    private void copyConfuguratorToLocalRepository(MavenConsole console) {
+    private void copyConfiguratorToLocalRepository() throws IOException {
       final File localRepo = new File(myMavenProject.getLocalRepository(), "com/intellij/flex/maven");
-      if (!new File(localRepo, "idea-configurator/" + CONFIGURATOR_VERSION).exists()) {
-        ZipFile zipFile = null;
-        try {
-          //noinspection IOResourceOpenedButNotSafelyClosed
-          zipFile = new ZipFile(getClass().getResource("/flexmojos-configurator.zip").getFile());
-          ZipUtil.extract(zipFile, localRepo, null);
-        }
-        catch (IOException e) {
-          console.printException(e);
-          MavenLog.LOG.warn(e);
-        }
-        finally {
-          if (zipFile != null) {
+      if (new File(localRepo, "idea-configurator/" + CONFIGURATOR_VERSION).isDirectory()) {
+        return;
+      }
+
+      if (localRepo.exists()) {
+        FileUtil.delete(localRepo);
+      }
+
+      final ZipInputStream zipInputStream = new ZipInputStream(getClass().getResource("/flexmojos-configurator.zip").openStream());
+      try {
+        ZipEntry entry;
+        while ((entry = zipInputStream.getNextEntry()) != null) {
+          final File file = new File(localRepo, entry.getName());
+          FileUtil.createParentDirs(file);
+          if (entry.isDirectory()) {
+            //noinspection ResultOfMethodCallIgnored
+            file.mkdir();
+          }
+          else {
+            final FileOutputStream outputStream = new FileOutputStream(file);
             try {
-              zipFile.close();
+              FileUtil.copy(zipInputStream, outputStream);
             }
-            catch (IOException ignored) {
+            finally {
+              outputStream.close();
             }
           }
         }
+      }
+      finally {
+        zipInputStream.close();
       }
     }
   }
