@@ -3,9 +3,9 @@
 		<accessible>false</accessible>
 		<debug>true</debug>
 		<external-library-path>
-			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20968/framework-4.5.0.20968.swc</path-element>
-			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.0.20968/spark-4.5.0.20968.swc</path-element>
-			<path-element>@@repo@@/com/adobe/flex/framework/mx/4.5.0.20968/mx-4.5.0.20968.swc</path-element>
+			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/framework-4.5.2.21576.swc</path-element>
+			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576.swc</path-element>
+			<path-element>@@repo@@/com/adobe/flex/framework/mx/4.5.2.21576/mx-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/playerglobal/10.2/playerglobal.swc</path-element>
 		</external-library-path>
 		<fixed-literal-vector>true</fixed-literal-vector>
@@ -18,19 +18,19 @@
 		<namespaces>
 			<namespace>
 				<uri>http://ns.adobe.com/mxml/2009</uri>
-				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20968/configs_zip/mxml-2009-manifest.xml</manifest>
+				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/configs_zip/mxml-2009-manifest.xml</manifest>
 			</namespace>
 			<namespace>
 				<uri>library://ns.adobe.com/flex/spark</uri>
-				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20968/configs_zip/spark-manifest.xml</manifest>
+				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/configs_zip/spark-manifest.xml</manifest>
 			</namespace>
 			<namespace>
 				<uri>library://ns.adobe.com/flex/mx</uri>
-				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20968/configs_zip/mx-manifest.xml</manifest>
+				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/configs_zip/mx-manifest.xml</manifest>
 			</namespace>
 			<namespace>
 				<uri>http://www.adobe.com/2006/mxml</uri>
-				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20968/configs_zip/mxml-manifest.xml</manifest>
+				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/configs_zip/mxml-manifest.xml</manifest>
 			</namespace>
 			<namespace>
 				<uri>test</uri>
@@ -53,6 +53,7 @@
 		<title>test-data-libs</title>
 	</metadata>
 	<output>@@target@@/test-data-libs.swc</output>
+	<swf-version>9</swf-version>
 	<target-player>10.2</target-player>
 	<tools-locale>en_US</tools-locale>
 </flex-config>

@@ -21,9 +21,9 @@
 		<include-libraries/>
 		<library-path>
 			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20967/framework-4.5.0.20967.swc</path-element>
-			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.0.20968/spark-4.5.0.20968.swc</path-element>
-			<path-element>@@repo@@/com/adobe/flex/framework/airspark/4.5.0.20968/airspark-4.5.0.20968.swc</path-element>
-			<path-element>@@repo@@/com/adobe/flex/framework/airframework/4.5.0.20968/airframework-4.5.0.20968.swc</path-element>
+			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576.swc</path-element>
+			<path-element>@@repo@@/com/adobe/flex/framework/airspark/4.5.2.21576/airspark-4.5.2.21576.swc</path-element>
+			<path-element>@@repo@@/com/adobe/flex/framework/airframework/4.5.2.21576/airframework-4.5.2.21576.swc</path-element>
 		</library-path>
 		<locale/>
 		<namespaces>
