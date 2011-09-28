@@ -8,7 +8,9 @@ import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.components.PathMacroManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
 import com.intellij.openapi.projectRoots.impl.ProjectJdkTableImpl;
@@ -151,10 +153,14 @@ class FlexIdeConverter extends ProjectConverter {
         Element element = new Element("application");
         document = new Document(element);
       }
+
       Element libraryTable = JDomConvertingUtil.findOrCreateComponentElement(document.getRootElement(), COMPONENT_NAME);
+      final PathMacroManager pathMacroManager = PathMacroManager.getInstance(ApplicationManager.getApplication());
+
       for (Map.Entry<String, String> entry : sdks.entrySet()) {
-        final VirtualFile sdkHome = LocalFileSystem.getInstance().findFileByPath(entry.getKey());
-        ConverterFlexSdkModificator sdkModificator = new ConverterFlexSdkModificator(entry.getKey(), entry.getValue());
+        final String homePath = pathMacroManager.expandPath(entry.getKey());
+        final VirtualFile sdkHome = LocalFileSystem.getInstance().findFileByPath(homePath);
+        ConverterFlexSdkModificator sdkModificator = new ConverterFlexSdkModificator(homePath, entry.getValue());
         FlexSdkUtils.setupSdkPaths(sdkHome, null, sdkModificator);
         if (sdkModificator.getLibraryElement() != null) {
           libraryTable.addContent(sdkModificator.getLibraryElement());
