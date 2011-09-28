@@ -7,7 +7,7 @@ includeTargets << new File("${guessHome(this)}/community/build/scripts/utils.gan
 includeTargets << new File("${guessHome(this)}/build/scripts/libLicenses.gant")
 includeTool << Jps
 
-def product = "FlexIDE"
+def product = "Astella"
 
 requireProperty("buildNumber", requireProperty("build.number", "108.SNAPSHOT"))
 setProperty("buildName", "${product}-${buildNumber}")
@@ -18,7 +18,7 @@ requireProperty("launchProperties", "")
 // load ApplicationInfo.xml properties
 ant.xmlproperty(file: "$home/flex/ideResources/idea/FlexApplicationInfo.xml", collapseAttributes: "true")
 
-setProperty("system_selector", "FlexIde${p("component.version.major")}0")
+setProperty("system_selector", "Astella${p("component.version.major")}0")
 
 setProperty("ch", "$home/community")
 setProperty("dryRun", false)
@@ -211,10 +211,10 @@ target('default': "Build artifacts") {
 
   buildSearchableOptions()
 
-  ant.copy(file: "$home/flex/build/flexide.exe.vmoptions", tofile: "$paths.sandbox/flexide.exe.vmoptions")
+  ant.copy(file: "$home/flex/build/flexide.exe.vmoptions", tofile: "$paths.sandbox/astella.exe.vmoptions")
 
   processLaunchProperties() {
-    pair -> ant.echo(file: "$paths.sandbox/flexide.exe.vmoptions", append: "true", message: "-D${pair["key"]}=${pair["value"]}\r\n")
+    pair -> ant.echo(file: "$paths.sandbox/astella.exe.vmoptions", append: "true", message: "-D${pair["key"]}=${pair["value"]}\r\n")
   }
 
   wireBuildDate(buildNumber)
@@ -390,7 +390,7 @@ def buildExe() {
     ant.mkdir(dir: paths.distWin)
     executeExternalAnt(
             "config.file": "$home/flex/build/flex-ide.exe4j",
-            "output.file": "flexide.exe",
+            "output.file": "astella.exe",
             "system_selector" : system_selector,
             "$home/build/buildLauncher.xml")
   }
@@ -402,15 +402,15 @@ def buildExe() {
 def layoutLinux(String target) {
   layout(target) {
     dir("bin") {
-      renamedFile("$paths.sandbox/flexide.exe.vmoptions", "flexide.vmoptions")
+      renamedFile("$paths.sandbox/astella.exe.vmoptions", "astella.vmoptions")
 
       fileset(dir: "$home/flex/build") {
         include(name: "idea.properties")
-        include(name: "flexide.sh")
       }
-      fileset(dir: "$home/flex/ideResources/artwork") {
-        include(name: "flexide.png")
-      }
+
+      renamedFile("$home/flex/build/flexide.sh", "astella.sh")
+      renamedFile("$home/flex/ideResources/artwork/flexide.png", "astella.png")
+
       fileset(dir: "$home/community/bin") {
         include(name: "log.xml")
       }
@@ -430,7 +430,7 @@ def layoutLinux(String target) {
 
   patchPropertiesFile(target)
 
-  ant.replace(file: "$target/bin/flexide.sh") {
+  ant.replace(file: "$target/bin/astella.sh") {
     replacefilter(token: "@@isEap@@", value: isEap())
     replacefilter(token: "@@system_selector@@", value: system_selector)
   }
@@ -618,9 +618,9 @@ def layoutMac(Map args, String target) {
   ant.fixcrlf(srcDir: "$target/bin", includes: "*.sh", eol: "unix")
 
   args["buildNumber"] = buildNumber
-  args["executable"] = "flexide"
+  args["executable"] = "astella"
   args["icns"] = "$home/flex/ideResources/artwork/flexide.icns"
-  args["bundle_name"] = "FlexIde"
+  args["bundle_name"] = "Astella"
   args["bundleIdentifier"] = "com.jetbrains.flexide"
   args["platform_prefix"] = "Flex"
   args["idea.properties.path"] = "$target/bin/idea.properties"
@@ -647,10 +647,12 @@ def layoutWin(String target) {
         exclude(name: "idea.bat")
       }
       fileset(dir: "$home/flex/build") {
-        include(name: "flexide.bat")
         include(name: "idea.properties")
       }
-      fileset(file: "$paths.sandbox/flexide.exe.vmoptions")
+      renamedFile("$home/flex/build/flexide.bat", "astella.bat")
+
+      fileset(file: "$paths.sandbox/astella.exe.vmoptions")
+
       fileset(dir: "$home/community/bin") {
         include(name: "log.xml")
       }
@@ -667,7 +669,7 @@ def layoutWin(String target) {
 
   patchPropertiesFile(target)
 
-  ant.replace(file: "$target/bin/flexide.bat") {
+  ant.replace(file: "$target/bin/astella.bat") {
     replacefilter(token: "@@system_selector@@", value: system_selector)
   }
 
