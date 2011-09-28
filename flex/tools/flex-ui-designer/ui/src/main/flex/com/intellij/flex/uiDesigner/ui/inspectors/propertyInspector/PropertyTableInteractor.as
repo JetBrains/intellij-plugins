@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector {
 import cocoa.plaf.ButtonSkinInteraction;
 import cocoa.plaf.TableViewSkin;
+import cocoa.plaf.basic.OpenedEditorInfo;
 import cocoa.plaf.basic.TableViewInteractor;
 import cocoa.renderer.CheckBoxEntry;
 import cocoa.renderer.TextLineEntry;
@@ -28,8 +29,6 @@ public class PropertyTableInteractor extends TableViewInteractor {
 
   private var isOver:Boolean;
   private var valueRendererManager:ValueRendererManager;
-
-  private var openedEditorInfo:OpenedEditorInfo;
 
   public function PropertyTableInteractor(tableView:TableView, valueRendererManager:ValueRendererManager) {
     this.valueRendererManager = valueRendererManager;
@@ -66,10 +65,10 @@ public class PropertyTableInteractor extends TableViewInteractor {
         var tableView:TableView = TableView(tableSkin.component);
         var tableColumn:TableColumn = tableView.columns[currentColumnIndex];
         if (tableColumn.rendererManager == valueRendererManager) {
-          openedEditor = valueRendererManager.createEditor(currentRowIndex, entry, tableColumn.actualWidth, tableView.rowHeight);
-          if (openedEditor != null) {
+          var editor:Sprite = valueRendererManager.createEditor(currentRowIndex, entry, tableColumn.actualWidth, tableView.rowHeight);
+          if (editor != null) {
+            openedEditorInfo = new OpenedEditorInfo(editor, currentColumnIndex, currentRowIndex);
             registerEditor();
-            openedEditorInfo = new OpenedEditorInfo(currentColumnIndex, currentRowIndex);
           }
         }
       }
@@ -151,39 +150,20 @@ public class PropertyTableInteractor extends TableViewInteractor {
     return CheckBoxEntry(findEntry()).interaction;
   }
 
-  override protected function closeEditor(commit:Boolean):void {
-    super.closeEditor(commit);
+  override protected function closeAndCommit():void {
+    var entry:TextLineEntry = valueRendererManager.findEntry(openedEditorInfo.rowIndex);
+    var value:String = EditableTextView(openedEditorInfo.editor).text;
+    var tableView:TableView = TableView(tableSkin.component);
+    var tableColumn:TableColumn = tableView.columns[openedEditorInfo.columnIndex];
+    valueRendererManager.closeEditorAndCommit(openedEditorInfo.editor, value, entry, tableColumn.actualWidth);
 
-    var value:String;
-    var entry:TextLineEntry;
-    if (commit) {
-      entry = valueRendererManager.findEntry(openedEditorInfo.rowIndex);
-      value = EditableTextView(openedEditor).text;
-      var tableView:TableView = TableView(tableSkin.component);
-      var tableColumn:TableColumn = tableView.columns[openedEditorInfo.columnIndex];
-      valueRendererManager.closeEditorAndCommit(openedEditor, value, entry, tableColumn.actualWidth);
-    }
-    else {
-      valueRendererManager.closeEditor(openedEditor);
-    }
+    var dataContext:DataContext = DataManager.instance.getDataContext(DisplayObject(tableSkin));
+    Modifier(Project(PlatformDataKeys.PROJECT.getData(dataContext)).getComponent(Modifier)).applyString(valueRendererManager.getDescription(openedEditorInfo.rowIndex),
+                                                                                                        value, dataContext);
+  }
 
-    openedEditor = null;
-    openedEditorInfo = null;
-
-    if (commit) {
-      var dataContext:DataContext = DataManager.instance.getDataContext(DisplayObject(tableSkin));
-      Modifier(Project(PlatformDataKeys.PROJECT.getData(dataContext)).getComponent(Modifier)).applyString(valueRendererManager.getDescription(openedEditorInfo.rowIndex), value, dataContext);
-    }
+  override protected function closeAndRollback():void {
+    valueRendererManager.closeEditor(openedEditorInfo.editor);
   }
 }
-}
-
-final class OpenedEditorInfo {
-  public var rowIndex:int;
-  public var columnIndex:int;
-
-  public function OpenedEditorInfo(columnIndex:int, rowIndex:int) {
-    this.columnIndex = columnIndex;
-    this.rowIndex = rowIndex;
-  }
 }
