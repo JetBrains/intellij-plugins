@@ -54,7 +54,7 @@ public class FlexIdeModuleWizardForm {
   private boolean myClassNameChangedByUser;
   private boolean mySettingModuleNameFromCode;
   private boolean myNeedToDisposeFlexEditor = false;
-  private final Disposable myDisposable = Disposer.newDisposable();
+  private Disposable myDisposable;
 
   public FlexIdeModuleWizardForm() {
     TargetPlatform.initCombo(myTargetPlatformCombo);
@@ -168,9 +168,7 @@ public class FlexIdeModuleWizardForm {
       myFlexConfigEditor = null;
     }
 
-    myFlexSdkPanel.dispose();
-    myFlexSdkPanel = null;
-
+    //myFlexSdkPanel disposed as a child of myDisposable
     Disposer.dispose(myDisposable);
   }
 
@@ -215,6 +213,8 @@ public class FlexIdeModuleWizardForm {
     }
 
     myFlexSdkPanel = new FlexSdkPanel(myFlexConfigEditor);
+    myDisposable = Disposer.newDisposable();
+    Disposer.register(myDisposable, myFlexSdkPanel);
     myFlexSdkPanel.setSdkLabelVisible(false);
     myFlexSdkPanel.setEditButtonVisible(false);
   }
