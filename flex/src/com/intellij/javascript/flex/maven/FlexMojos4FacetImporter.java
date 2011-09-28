@@ -98,7 +98,6 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
     @Override
     public void perform(Project project, MavenEmbeddersManager embeddersManager, MavenConsole console, MavenProgressIndicator indicator)
       throws MavenProcessCanceledException {
-
       try {
         copyConfiguratorToLocalRepository();
       }
@@ -108,6 +107,8 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
         MavenLog.LOG.error(e);
         return;
       }
+
+      indicator.checkCanceled();
 
       final List<MavenProject> rootProjects = myTree.getRootProjects();
       final String workingDirPath;
@@ -142,6 +143,9 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
 
       commandLine.setWorkDirectory(workingDirPath);
       commandLine.setRedirectErrorStream(true);
+
+      indicator.checkCanceled();
+      
       final Process process;
       try {
         process = commandLine.createProcess();
@@ -160,6 +164,11 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
         int read;
         while ((read = reader.read(buf, 0, buf.length)) >= 0) {
           stringBuilder.append(buf, 0, read);
+
+          if (indicator.isCanceled()) {
+            process.destroy();
+          }
+          indicator.checkCanceled();
         }
 
         try {
