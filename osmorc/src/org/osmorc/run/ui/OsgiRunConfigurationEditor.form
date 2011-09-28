@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.osmorc.run.ui.OsgiRunConfigurationEditor">
-  <tabbedpane id="f3c0a" binding="root">
+  <tabbedpane id="f3c0a" class="com.intellij.ui.components.JBTabbedPane" binding="root">
     <constraints>
       <xy x="20" y="20" width="831" height="613"/>
     </constraints>
@@ -33,27 +33,6 @@
           <size top="4" left="4" bottom="4" right="4"/>
         </border>
         <children>
-          <scrollpane id="2054a">
-            <constraints>
-              <grid row="2" column="0" row-span="7" col-span="4" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <forms defaultalign-horz="false" defaultalign-vert="false"/>
-            </constraints>
-            <properties/>
-            <border type="none"/>
-            <children>
-              <component id="2afb6" class="javax.swing.JTable" binding="modulesList">
-                <constraints/>
-                <properties>
-                  <showHorizontalLines value="true"/>
-                  <showVerticalLines value="true"/>
-                </properties>
-                <clientProperties>
-                  <JTable.autoStartsEdit class="java.lang.Boolean" value="false"/>
-                  <Table.isFileList class="java.lang.Boolean" value="false"/>
-                </clientProperties>
-              </component>
-            </children>
-          </scrollpane>
           <component id="38fe2" class="javax.swing.JButton" binding="addButton">
             <constraints>
               <grid row="2" column="5" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -155,6 +134,41 @@
                 </constraints>
                 <properties/>
               </component>
+            </children>
+          </grid>
+          <grid id="69e17" layout-manager="FormLayout">
+            <rowspec value="center:d:grow"/>
+            <colspec value="fill:d:grow"/>
+            <constraints>
+              <grid row="2" column="0" row-span="7" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false" defaultalign-vert="false"/>
+            </constraints>
+            <properties>
+              <background color="-1"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <scrollpane id="2054a" class="com.intellij.ui.components.JBScrollPane">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="2afb6" class="javax.swing.JTable" binding="modulesList">
+                    <constraints/>
+                    <properties>
+                      <showHorizontalLines value="true"/>
+                      <showVerticalLines value="true"/>
+                    </properties>
+                    <clientProperties>
+                      <JTable.autoStartsEdit class="java.lang.Boolean" value="false"/>
+                      <Table.isFileList class="java.lang.Boolean" value="false"/>
+                    </clientProperties>
+                  </component>
+                </children>
+              </scrollpane>
             </children>
           </grid>
         </children>
