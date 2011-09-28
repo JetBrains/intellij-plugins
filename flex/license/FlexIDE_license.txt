@@ -8,7 +8,7 @@ IF YOU DO NOT AGREE TO THE TERMS AND CONDITIONS OF THIS AGREEMENT, YOU SHOULD NO
 
 (a) "Evaluation Period" means a period of time beginning on the date of the first launch of JetBrains Technology on Your computer and automatically ending on the date set by JetBrains in JetBrains Technology ("System Date") or otherwise as stated in Section 5 hereunder.
 
-(b) "JetBrains Technology" means the current build of a preview version of the software program known as JetBrains Flex IDE which is not generally available, including its documentation, any modifications, and any Third Party Software.
+(b) "JetBrains Technology" means the current build of a preview version of the software program known as JetBrains Astella which is not generally available, including its documentation, any modifications, and any Third Party Software.
 
 (c) Third Party Software means software programs that are owned and licensed by parties other than Licensor and that either integrated with or made part of JetBrains Technology. 
 

@@ -1,5 +1,5 @@
 <component>
-  <version codename="EAP" major="1" minor="0" eap="true" update-channel="FI1EAP"/>
+  <version codename="EAP" major="1" minor="0" eap="true" update-channel="AS1EAP"/>
   <build number="__BUILD_NUMBER__" date="__BUILD_DATE__"/>
   <install-over minbuild="0" maxbuild="0" version="1.0"/>
 
@@ -7,15 +7,15 @@
   <about url="/artwork/flexide_about.png"/>
   <icon size32="/artwork/flexide.png" size16="/artwork/flexide16.png" size32opaque="/artwork/flexide_wbg.png" size12="/artwork/flexide12.png"/>
   <package code="__PACKAGE_CODE__"/>
-  <names product="Flex IDE" fullname="JetBrains Flex IDE" script="flexx"/>
+  <names product="Astella" fullname="JetBrains Astella" script="astella"/>
 
   <welcome-screen caption-url="/artwork/flexideWelcomeCaption.png" slogan-url="/artwork/flexideDevelopSlogan.png"/>
  
   <update-urls check="http://www.jetbrains.com/updates/updates.xml"
                patches="http://download.jetbrains.com/idea/"/>
 
-  <feedback eap-url="http://www.jetbrains.com/feedback/feedback.jsp?product=FlexIDE&amp;build=$BUILD&amp;timezone=$TIMEZONE&amp;eval=$EVAL"
-            release-url="http://www.jetbrains.com/feedback/feedback.jsp?product=FlexIDE&amp;build=$BUILD&amp;timezone=$TIMEZONE&amp;eval=$EVAL"/>
+  <feedback eap-url="http://www.jetbrains.com/feedback/feedback.jsp?product=Astella&amp;build=$BUILD&amp;timezone=$TIMEZONE&amp;eval=$EVAL"
+            release-url="http://www.jetbrains.com/feedback/feedback.jsp?product=Astella&amp;build=$BUILD&amp;timezone=$TIMEZONE&amp;eval=$EVAL"/>
 
   <help file="help.jar" root="flexide"/>
 </component>
