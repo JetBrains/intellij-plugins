@@ -19,9 +19,10 @@ import javax.swing.*;
 public class AirSdkType extends SdkType implements IFlexSdkType {
 
   public static final Icon airIcon = IconLoader.getIcon("air.png", AirSdkType.class);
+  public static final String NAME = "AIR SDK Type";
 
   public AirSdkType() {
-    super("AIR SDK Type");
+    super(NAME);
   }
 
   public Subtype getSubtype() {

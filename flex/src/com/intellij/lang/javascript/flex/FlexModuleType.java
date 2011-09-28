@@ -18,7 +18,7 @@ import javax.swing.*;
  */
 public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
   public static final Icon ourFlexModuleType = IconLoader.getIcon("flex_24.png", FlexModuleType.class);
-  @NonNls private static final String MODULE_TYPE_ID = "Flex";
+  @NonNls public static final String MODULE_TYPE_ID = "Flex";
   @NonNls static final String CREATE_MODULE_HELP_ID = "reference.dialogs.new.project.fromScratch.flex";
   private static final Icon NODE_ICON_OPEN = IconLoader.getIcon("/nodes/ModuleOpen.png");
   private static final Icon NODE_ICON_CLOSED = IconLoader.getIcon("/nodes/ModuleClosed.png");

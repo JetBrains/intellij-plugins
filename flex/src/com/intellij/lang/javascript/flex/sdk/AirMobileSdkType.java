@@ -19,9 +19,10 @@ import javax.swing.*;
 public class AirMobileSdkType extends SdkType implements IFlexSdkType {
 
   public static final Icon airMobileIcon = IconLoader.getIcon("airmobile.png", AirMobileSdkType.class);
+  public static final String NAME = "AIR Mobile SDK Type";
 
   public AirMobileSdkType() {
-    super("AIR Mobile SDK Type");
+    super(NAME);
   }
 
   public Subtype getSubtype() {

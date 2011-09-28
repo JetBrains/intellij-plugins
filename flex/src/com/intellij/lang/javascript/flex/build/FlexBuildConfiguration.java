@@ -32,7 +32,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 @State(
-  name = "Flex.Build.Configuration",
+  name = FlexBuildConfiguration.COMPONENT_NAME,
   storages = {
     @Storage(
       file = "$MODULE_FILE$"
@@ -40,6 +40,8 @@ import java.util.List;
   }
 )
 public class FlexBuildConfiguration implements ModuleComponent, PersistentStateComponent<FlexBuildConfiguration>, Cloneable {
+
+  public static final String COMPONENT_NAME = "Flex.Build.Configuration";
 
   public enum Type {
     Default("idea-flex"), FlexUnit("idea-flexunit"), OverriddenMainClass("idea-flex-main-class");

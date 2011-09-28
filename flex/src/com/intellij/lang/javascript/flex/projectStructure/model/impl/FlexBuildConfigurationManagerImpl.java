@@ -27,29 +27,34 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-@State(name = "FlexBuildConfigurationManager", storages = {@Storage(file = "$MODULE_FILE$")})
+@State(name = FlexBuildConfigurationManagerImpl.COMPONENT_NAME, storages = {@Storage(file = "$MODULE_FILE$")})
 public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationManager
   implements PersistentStateComponent<FlexBuildConfigurationManagerImpl.State> {
 
   private static final Logger LOG = Logger.getInstance(FlexBuildConfigurationManagerImpl.class.getName());
 
+  public static final String COMPONENT_NAME = "FlexBuildConfigurationManager";
+
+  @Nullable
   private final Module myModule;
   private FlexIdeBuildConfigurationImpl[] myConfigurations = new FlexIdeBuildConfigurationImpl[]{new FlexIdeBuildConfigurationImpl()};
 
   private final CompilerOptionsImpl myModuleLevelCompilerOptions = new CompilerOptionsImpl();
   private FlexIdeBuildConfigurationImpl myActiveConfiguration = myConfigurations[0];
 
-  public FlexBuildConfigurationManagerImpl(final Module module) {
+  public FlexBuildConfigurationManagerImpl(@Nullable final Module module) {
     myModule = module;
 
-    myModule.getProject().getMessageBus().connect(myModule).subscribe(ProjectTopics.MODULES, new ModuleAdapter() {
-      @Override
-      public void beforeModuleRemoved(Project project, Module module) {
-        if (module != myModule) {
-          removeDependenciesOn(module);
+    if (myModule != null) {
+      myModule.getProject().getMessageBus().connect(myModule).subscribe(ProjectTopics.MODULES, new ModuleAdapter() {
+        @Override
+        public void beforeModuleRemoved(Project project, Module module) {
+          if (module != myModule) {
+            removeDependenciesOn(module);
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   private void removeDependenciesOn(Module module) {
@@ -84,15 +89,22 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
   public void setActiveBuildConfiguration(final FlexIdeBuildConfiguration buildConfiguration) {
     if (!ArrayUtil.contains(buildConfiguration, myConfigurations)) {
       throw new IllegalArgumentException(
-        "Build configuration " + buildConfiguration.getName() + " does not belong to module " + myModule.getName());
+        "Build configuration " + buildConfiguration.getName() + " does not belong to module " +
+        (myModule != null ? myModule.getName() : "(dummy)"));
     }
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        myActiveConfiguration = (FlexIdeBuildConfigurationImpl)buildConfiguration;
-        resetHighlighting(myModule.getProject());
-      }
-    });
+
+    if (myModule != null) {
+      ApplicationManager.getApplication().runWriteAction(new Runnable() {
+        @Override
+        public void run() {
+          myActiveConfiguration = (FlexIdeBuildConfigurationImpl)buildConfiguration;
+          resetHighlighting(myModule.getProject());
+        }
+      });
+    }
+    else {
+      myActiveConfiguration = (FlexIdeBuildConfigurationImpl)buildConfiguration;
+    }
   }
 
   public FlexIdeBuildConfiguration[] getBuildConfigurations() {
@@ -141,6 +153,9 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
   }
 
   public void loadState(final State state) {
+    if (myModule == null) {
+      throw new IllegalStateException("Cannot load state of a dummy config manager instance");
+    }
     Collection<FlexIdeBuildConfigurationImpl> configurations = new ArrayList<FlexIdeBuildConfigurationImpl>(state.CONFIGURATIONS.size());
     for (FlexIdeBuildConfigurationImpl.State configurationState : state.CONFIGURATIONS) {
       FlexIdeBuildConfigurationImpl configuration = new FlexIdeBuildConfigurationImpl();

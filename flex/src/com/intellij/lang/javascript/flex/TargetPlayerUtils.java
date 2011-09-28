@@ -120,7 +120,7 @@ public class TargetPlayerUtils {
   }
 
   @Nullable
-  public static String getTargetPlayerFromConfigXmlFile(final VirtualFile sdkRoot, final SdkType sdkType) {
+  public static String getTargetPlayerFromConfigXmlFile(final VirtualFile sdkRoot, @Nullable final SdkType sdkType) {
     if (sdkRoot == null || !sdkRoot.isValid()) {
       return null;
     }

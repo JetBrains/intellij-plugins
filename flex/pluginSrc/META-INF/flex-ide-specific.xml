@@ -16,6 +16,7 @@
     <moduleConfigurationEditorProvider implementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleConfigurationEditorProvider"/>
     <projectService serviceInterface="com.intellij.openapi.roots.ui.configuration.ProjectSettingsService"
                     serviceImplementation="com.intellij.flexIde.FlexIdeProjectSettingsService"/>
+    <project.converterProvider implementation="com.intellij.lang.javascript.flex.projectStructure.conversion.FlexIdeConverterProvider"/>
     <wizardMode implementation="com.intellij.lang.javascript.flex.wizard.CreateFlexModuleFromScratchMode" order="first"/>
   </extensions>
 
