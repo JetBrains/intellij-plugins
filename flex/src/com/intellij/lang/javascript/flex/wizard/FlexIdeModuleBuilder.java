@@ -211,7 +211,6 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
 
     if (myTargetPlatform == TargetPlatform.Mobile) {
       bc.getAndroidPackagingOptions().setEnabled(true);
-      bc.getIosPackagingOptions().setEnabled(true);
     }
   }
 
