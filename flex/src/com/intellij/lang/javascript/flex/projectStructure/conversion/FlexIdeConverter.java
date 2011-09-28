@@ -119,6 +119,9 @@ class FlexIdeConverter extends ProjectConverter {
         if (libraryTable != null) {
           for (Object o : libraryTable.getChildren(LibraryImpl.ELEMENT)) {
             Element library = (Element)o;
+            String name = library.getAttributeValue(LibraryImpl.LIBRARY_NAME_ATTR);
+            myParams.addExistingGlobalLibraryName(name);
+
             String type = library.getAttributeValue(LibraryImpl.LIBRARY_TYPE_ATTR);
             if (!FlexSdkLibraryType.FLEX_SDK.getKindId().equals(type)) {
               continue;
@@ -160,11 +163,13 @@ class FlexIdeConverter extends ProjectConverter {
       for (Map.Entry<String, String> entry : sdks.entrySet()) {
         final String homePath = pathMacroManager.expandPath(entry.getKey());
         final VirtualFile sdkHome = LocalFileSystem.getInstance().findFileByPath(homePath);
-        ConverterFlexSdkModificator sdkModificator = new ConverterFlexSdkModificator(homePath, entry.getValue());
+        ConverterFlexSdkModificator sdkModificator =
+          new ConverterFlexSdkModificator(homePath, entry.getValue(), myParams.getExistingGlobalLibrariesNames());
         FlexSdkUtils.setupSdkPaths(sdkHome, null, sdkModificator);
         if (sdkModificator.getLibraryElement() != null) {
           libraryTable.addContent(sdkModificator.getLibraryElement());
         }
+        myParams.addExistingGlobalLibraryName(sdkModificator.getName());
       }
 
       JDOMUtil.writeDocument(document, libConfigFile, "\n");

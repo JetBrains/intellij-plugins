@@ -779,7 +779,7 @@ public class FlexUtils {
     @NotNull
     @Override
     public SdkModificator getSdkModificator() {
-      return new FlexSdkModificator((LibraryEx.ModifiableModelEx)myLibrary.getModifiableModel());
+      return new FlexSdkModificator((LibraryEx.ModifiableModelEx)myLibrary.getModifiableModel(), Collections.<String>emptyList());
     }
 
     @Override

@@ -1,9 +1,11 @@
 package com.intellij.lang.javascript.flex.projectStructure.conversion;
 
 import com.intellij.util.containers.HashMap;
+import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
@@ -15,7 +17,8 @@ public class ConversionParams {
   public String projectSdkType;
   private final Map<String, String> myIdeaSkds = new HashMap<String, String>();
   private final Map<String, String> myExistingFlexIdeSkds = new HashMap<String, String>();
-  private Map<String, String> myFlexIdeSdksToCreate = new HashMap<String, String>();
+  private final Map<String, String> myFlexIdeSdksToCreate = new HashMap<String, String>();
+  private final Collection<String> myExistingGlobalLibrariesNames = new HashSet<String>();
 
   public void addIdeaSdk(@NotNull String name, @NotNull String homePath) {
     myIdeaSkds.put(name, homePath);
@@ -44,5 +47,13 @@ public class ConversionParams {
 
   public Map<String, String> getFlexIdeSdksToCreate() {
     return myFlexIdeSdksToCreate;
+  }
+  
+  public void addExistingGlobalLibraryName(String name) {
+    myExistingGlobalLibrariesNames.add(name);
+  }
+
+  public Collection<String> getExistingGlobalLibrariesNames() {
+    return myExistingGlobalLibrariesNames;
   }
 }

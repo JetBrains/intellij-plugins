@@ -7,8 +7,12 @@ import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+
+import java.text.MessageFormat;
+import java.util.Collection;
 
 /**
  * User: ksafonov
@@ -16,9 +20,11 @@ import org.jetbrains.annotations.NotNull;
 public class FlexSdkModificator implements SdkModificator, Disposable {
 
   private final LibraryEx.ModifiableModelEx myModifiableModel;
+  private final Collection<String> myForbiddenNames;
 
-  public FlexSdkModificator(LibraryEx.ModifiableModelEx modifiableModel) {
+  public FlexSdkModificator(LibraryEx.ModifiableModelEx modifiableModel, Collection<String> forbiddenNames) {
     myModifiableModel = modifiableModel;
+    myForbiddenNames = forbiddenNames;
   }
 
   @Override
@@ -96,11 +102,21 @@ public class FlexSdkModificator implements SdkModificator, Disposable {
 
   @Override
   public void commitChanges() {
-    String version = getVersionString();
-    if (version != null) {
-      setName("Flex SDK " + version);
-    }
+    setName(generateName(getVersionString(), myForbiddenNames));
     myModifiableModel.commit();
+  }
+
+  public static String generateName(String version, Collection<String> forbiddenNames) {
+    String prefix = "Flex SDK";
+    if (StringUtil.isNotEmpty(version)) {
+      prefix += " " + version;
+    }
+    String name = prefix;
+    int i = 1;
+    while (forbiddenNames.contains(name)) {
+      name = MessageFormat.format("{0} ({1})", prefix, i++);
+    }
+    return name;
   }
 
   @Override
