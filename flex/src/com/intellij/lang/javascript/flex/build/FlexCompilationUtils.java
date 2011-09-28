@@ -5,10 +5,7 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airdescriptor.AirDescriptorParameters;
 import com.intellij.lang.javascript.flex.actions.airdescriptor.CreateAirDescriptorAction;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
-import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.AndroidPackagingOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
@@ -326,7 +323,9 @@ public class FlexCompilationUtils {
     throws FlexCompilerException {
     if (packagingOptions.isUseGeneratedDescriptor()) {
       final boolean android = packagingOptions instanceof AndroidPackagingOptions;
-      generateAirDescriptor(config, BCUtils.getGeneratedAirDescriptorName(config, packagingOptions), android);
+      final String predefinedAppId =
+        packagingOptions instanceof IosPackagingOptions ? ((IosPackagingOptions)packagingOptions).getApplicationId() : null;
+      generateAirDescriptor(config, BCUtils.getGeneratedAirDescriptorName(config, packagingOptions), android, predefinedAppId);
     }
     else {
       copyAndFixCustomAirDescriptor(config, packagingOptions.getCustomDescriptorPath());
@@ -335,7 +334,8 @@ public class FlexCompilationUtils {
 
   private static void generateAirDescriptor(final FlexIdeBuildConfiguration config,
                                             final String descriptorFileName,
-                                            final boolean addAndroidPermissions)
+                                            final boolean addAndroidPermissions, 
+                                            final @Nullable String predefinedAppId)
     throws FlexCompilerException {
     final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
 
@@ -348,9 +348,10 @@ public class FlexCompilationUtils {
           assert sdk != null;
           final String airVersion = FlexSdkUtils.getAirVersion(FlexSdk.getFlexVersion(sdk));
           final String fileName = FileUtil.getNameWithoutExtension(config.getOutputFileName());
+          final String appId = predefinedAppId != null ? predefinedAppId : fixApplicationId(config.getMainClass());
 
           CreateAirDescriptorAction.createAirDescriptor(
-            new AirDescriptorParameters(descriptorFileName, config.getOutputFolder(), airVersion, config.getMainClass(), fileName, fileName,
+            new AirDescriptorParameters(descriptorFileName, config.getOutputFolder(), airVersion, appId, fileName, fileName,
                                         "1.0", config.getOutputFileName(), fileName, 400, 300, addAndroidPermissions));
         }
         catch (IOException e) {
@@ -362,6 +363,17 @@ public class FlexCompilationUtils {
     if (!exceptionRef.isNull()) {
       throw exceptionRef.get();
     }
+  }
+
+  private static String fixApplicationId(final String appId) {
+    StringBuilder builder = new StringBuilder();
+    for (int i = 0; i < appId.length(); i++) {
+      final char ch = appId.charAt(i);
+      if (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch >= '0' && ch <= '9' || ch == '-' || ch == '.') {
+        builder.append(ch);
+      }
+    }
+    return builder.toString();
   }
 
   private static void copyAndFixCustomAirDescriptor(final FlexIdeBuildConfiguration config, final String customDescriptorPath)
