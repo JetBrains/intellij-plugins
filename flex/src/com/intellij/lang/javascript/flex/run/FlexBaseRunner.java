@@ -200,7 +200,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     if (config == null) {
       final String message = bcName.isEmpty()
                              ? "Build configuration not set"
-                             : MessageFormat.format("Module ''{0}'' does not contain build configuration: ''{1}''", moduleName, bcName);
+                             : FlexBundle.message("module.does.not.contain.bc", moduleName, bcName);
       throw new CantRunException(message);
     }
 

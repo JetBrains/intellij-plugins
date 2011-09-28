@@ -7,7 +7,9 @@ import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.openapi.module.Module;
@@ -76,6 +78,19 @@ public class FlexIdeRunConfiguration extends RunConfigurationBase implements Run
   }
 
   public void checkConfiguration() throws RuntimeConfigurationException {
+    if (myRunnerParameters.getModuleName().isEmpty() || myRunnerParameters.getBCName().isEmpty()) {
+      throw new RuntimeConfigurationException(FlexBundle.message("bc.not.specified"));
+    }
+
+    final Module module = ModuleManager.getInstance(getProject()).findModuleByName(myRunnerParameters.getModuleName());
+    if (module == null || !(ModuleType.get(module) instanceof FlexModuleType)) {
+      throw new RuntimeConfigurationException(FlexBundle.message("bc.not.specified"));
+    }
+
+    if (FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(myRunnerParameters.getBCName()) == null) {
+      throw new RuntimeConfigurationException(
+        FlexBundle.message("module.does.not.contain.bc", myRunnerParameters.getModuleName(), myRunnerParameters.getBCName()));
+    }
   }
 
   @NotNull
