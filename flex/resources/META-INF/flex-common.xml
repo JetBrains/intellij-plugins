@@ -185,38 +185,6 @@
       <add-to-group anchor="last" group-id="RunMenu"/>
     </action>
 
-    <group id="FlexActionsGroup" popup="true" text="Flex" icon="/com/intellij/lang/javascript/flex/actions/flex_actions_group.png">
-      <add-to-group group-id="ToolsMenu" anchor="last"/>
-    </group>
-
-    <action id="Flex.Create.HTML.Wrapper"
-            class="com.intellij.lang.javascript.flex.actions.htmlwrapper.CreateHtmlWrapperAction"
-            text="Create HTML Wrapper"
-            icon="/com/intellij/lang/javascript/flex/actions/htmlwrapper/html_wrapper_action.png">
-      <add-to-group anchor="last" group-id="FlexActionsGroup"/>
-    </action>
-
-    <action id="Flex.Create.AIR.Descriptor"
-            class="com.intellij.lang.javascript.flex.actions.airdescriptor.CreateAirDescriptorAction"
-            text="Create AIR Application Descriptor"
-            icon="/com/intellij/lang/javascript/flex/actions/airdescriptor/air_descriptor_action.png">
-      <add-to-group anchor="last" group-id="FlexActionsGroup"/>
-    </action>
-
-    <action id="Flex.Package.AIR.Installer"
-            class="com.intellij.lang.javascript.flex.actions.airinstaller.PackageAirInstallerAction"
-            text="Package AIR Installation File"
-            icon="/com/intellij/lang/javascript/flex/actions/airdescriptor/air_descriptor_action.png">
-      <add-to-group anchor="last" group-id="FlexActionsGroup"/>
-    </action>
-
-    <action id="Flex.Package.AIR.Mobile.Application"
-            class="com.intellij.lang.javascript.flex.actions.airmobile.PackageMobileAirApplicationAction"
-            text="Package Mobile AIR Application"
-            icon="/com/intellij/lang/javascript/flex/sdk/airmobile.png">
-      <add-to-group anchor="last" group-id="FlexActionsGroup"/>
-    </action>
-
     <action id="Generate.TestMethod.Actionscript" class="com.intellij.lang.javascript.generation.JSGenerateTestMethodAction"
             text="Test Method">
       <add-to-group anchor="first" group-id="GenerateGroup"/>
