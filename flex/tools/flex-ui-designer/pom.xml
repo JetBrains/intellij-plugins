@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.flyti.superPOMs</groupId>
     <artifactId>common</artifactId>
-    <version>29</version>
+    <version>30</version>
   </parent>
   
   <properties>
@@ -92,10 +92,10 @@
       <id>project-repo</id>
       <url>file://${user.dir}/build/repo</url>
     </repository>
-    <repository>
-      <id>flyti</id>
-      <url>http://repository.flyti.org/</url>
-    </repository>
+    <!--<repository>-->
+      <!--<id>flyti</id>-->
+      <!--<url>http://repository.flyti.org/</url>-->
+    <!--</repository>-->
   </repositories>
 
   <profiles>

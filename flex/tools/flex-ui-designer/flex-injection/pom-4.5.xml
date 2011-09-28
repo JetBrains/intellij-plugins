@@ -30,12 +30,12 @@
           <dependency>
             <groupId>com.adobe.flex</groupId>
             <artifactId>compiler</artifactId>
-            <version>4.5.0.20968</version>
+            <version>${fdk.version}</version>
             <type>pom</type>
           </dependency>
         </dependencies>
         <configuration>
-          <ignoreVersionIssues>true</ignoreVersionIssues>
+          <iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking>true</iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking>
           <defines combine.children="append">
             <property>
               <name>flex::v4_1</name>

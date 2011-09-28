@@ -3,44 +3,68 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.adobe.flex.framework</groupId>
-  <artifactId>flex-framework-small</artifactId>
-  <version>4.5.0.20968</version>
+  <artifactId>air-framework-small</artifactId>
+  <version>4.5.2.21576</version>
   <packaging>pom</packaging>
   <dependencies>
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>framework</artifactId>
-      <version>4.5.0.20968</version>
+      <artifactId>airframework</artifactId>
+      <version>4.5.2.21576</version>
       <type>swc</type>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>playerglobal</artifactId>
-      <version>10.2</version>
+      <artifactId>airglobal</artifactId>
+      <version>2.6</version>
+      <type>swc</type>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.flex.framework</groupId>
+      <artifactId>airspark</artifactId>
+      <version>4.5.2.21576</version>
+      <type>swc</type>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.flex.framework</groupId>
+      <artifactId>framework</artifactId>
+      <version>4.5.2.21576</version>
       <type>swc</type>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>spark</artifactId>
-      <version>4.5.0.20968</version>
+      <version>4.5.2.21576</version>
       <type>swc</type>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
+      <artifactId>airframework</artifactId>
+      <version>4.5.2.21576</version>
+      <type>rb.swc</type>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.flex.framework</groupId>
+      <artifactId>airspark</artifactId>
+      <version>4.5.2.21576</version>
+      <type>rb.swc</type>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.flex.framework</groupId>
       <artifactId>framework</artifactId>
-      <version>4.5.0.20968</version>
+      <version>4.5.2.21576</version>
       <type>rb.swc</type>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>spark</artifactId>
-      <version>4.5.0.20968</version>
+      <version>4.5.2.21576</version>
       <type>rb.swc</type>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>framework</artifactId>
-      <version>4.5.0.20968</version>
+      <version>4.5.2.21576</version>
       <type>zip</type>
       <classifier>configs</classifier>
     </dependency>

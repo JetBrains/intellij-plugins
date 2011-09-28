@@ -147,8 +147,8 @@ public class FlexRunner extends GenericProgramRunner {
             }
           }
         }
-        else if (line.startsWith("/Users/develar/workspace/flex_sdk_4.5_modified", spaceIndex + 1)) {
-          final int beginIndex = "/Users/develar/workspace/flex_sdk_4.5_modified/frameworks/projects/".length() + spaceIndex + 1;
+        else if (line.startsWith("/Users/develar/Documents/flex", spaceIndex + 1)) {
+          final int beginIndex = "/Users/develar/Documents/flex/frameworks/projects/".length() + spaceIndex + 1;
           final int endIndex = line.indexOf('/', beginIndex + 2);
           String libName = line.substring(beginIndex, endIndex);
           fullPath = "/Users/develar/.m2/repository/com/adobe/flex/framework/" + libName + "/4.5.0.20968/" + libName + "-4.5.0.20968-sources.jar!" + line.substring(endIndex + "src".length() + 1, commaPos);
