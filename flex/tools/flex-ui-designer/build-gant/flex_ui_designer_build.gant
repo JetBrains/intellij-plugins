@@ -103,7 +103,6 @@ private def compileAbcBuilder(sandbox) {
   ant.javac(srcdir: "$flexBuildHome/../abc-builder-maven-module/src/main/java", destdir: "$flexSandbox", fork: "yes") {
     classpath {
       pathelement(path: "$sandbox/classes/production/flex-ui-designer")
-      pathelement(path: "$sandbox/classes/production/xml")
       pathelement(path: "$home/community/plugins/maven/maven2-server-impl/lib/maven-2.2.1-uber.jar")
     }
   }
@@ -115,6 +114,7 @@ private def invokeAbcBuilder(sandbox, flexVersion) {
       pathelement(path: "$flexSandbox")
       pathelement(path: "$sandbox/classes/production/flex-ui-designer")
       pathelement(path: "$sandbox/classes/production/util")
+      pathelement(path: "$sandbox/classes/production/xml")
       pathelement(path: "$home/community/plugins/maven/maven2-server-impl/lib/maven-2.2.1-uber.jar")
       pathelement(path: "$home/community/lib/trove4j.jar")
     }
