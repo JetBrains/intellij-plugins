@@ -76,7 +76,7 @@ public class CompilerConfigGenerator {
     return FlexCompilationUtils.getOrCreateConfigFile(module.getProject(), name, text);
   }
 
-  private String generateConfigFileText() {
+  private String generateConfigFileText() throws IOException {
     final Element rootElement =
       new Element(FlexCompilerConfigFileUtil.FLEX_CONFIG, FlexApplicationComponent.HTTP_WWW_ADOBE_COM_2006_FLEX_CONFIG);
 
@@ -361,7 +361,7 @@ public class CompilerConfigGenerator {
     }
   }
 
-  private void addInputOutputPaths(final Element rootElement) {
+  private void addInputOutputPaths(final Element rootElement) throws IOException {
     if (myConfig.getOutputType() == OutputType.Library) {
       final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(myModule.getProject()).getFileIndex();
 
@@ -391,6 +391,9 @@ public class CompilerConfigGenerator {
     }
     else {
       final String pathToMainClassFile = FlexUtils.getPathToMainClassFile(myConfig.getMainClass(), myModule);
+      if (pathToMainClassFile.isEmpty()) {
+        throw new IOException(FlexBundle.message("bc.incorrect.main.class", myConfig.getMainClass(), myConfig.getName(), myModule.getName()));
+      }
       addOption(rootElement, CompilerOptionInfo.MAIN_CLASS_INFO, pathToMainClassFile);
     }
 

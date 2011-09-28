@@ -505,7 +505,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
     if (!nature.isLib() && config.getMainClass().isEmpty()) {
       throw new ConfigurationException(FlexBundle.message("main.class.not.set.for.bc.0.of.module.1", config.getName(), moduleName),
                                        FlexBundle.message("project.setup.problem.title"));
-      // todo real main class validation?
+      // real main class validation is done later in CompilerConfigGenerator
     }
 
     if (config.getOutputFileName().isEmpty()) {
