@@ -41,8 +41,8 @@ public class CreateFlexModuleStep extends ProjectNameWithTypeStep {
     myForm.setEnabled(myCreateModuleCb.isSelected());
   }
 
-  protected String getSelectedBuilderId() {
-    return FlexModuleType.getInstance().getId();
+  public boolean isCreateModule() {
+    return myCreateModuleCb.isSelected();
   }
 
   public void updateStep() {
