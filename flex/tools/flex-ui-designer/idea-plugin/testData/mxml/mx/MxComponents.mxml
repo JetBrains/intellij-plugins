@@ -1,4 +1,11 @@
 <Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/mx" xmlns:s="library://ns.adobe.com/flex/spark">
+  <fx:Script><![CDATA[
+      private static function formatDateTime(date:Date):String {
+        return "";
+      }
+      ]]>
+      </fx:Script>
+
   <fx:Declarations>
     <!-- IDEA-73090 -->
     <s:WebService id="WeatherService" wsdl="http:/example.com/ws/WeatherService?wsdl"/>
@@ -6,6 +13,9 @@
 
   <!-- IDEA-72499 -->
   <Image source="@Embed('/background.jpg')"/>
+
+  <!--IDEA-74041-->
+  <DateField id="df" labelFunction="formatDateTime"/>
   
   <TabNavigator width="200" height="200">
     <s:NavigatorContent label="Tab 1">

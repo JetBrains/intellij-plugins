@@ -114,7 +114,8 @@ class PropertyProcessor implements ValueWriter {
         return null;
       }
     }
-    else if (typeName.equals(FlexAnnotationNames.EVENT) /* skip event handlers */) {
+    else if (typeName.equals(FlexAnnotationNames.EVENT) /* skip event handlers */ ||
+             type.equals(JSCommonTypeNames.FUNCTION_CLASS_NAME) /* skip functions, IDEA-74041 */) {
       return null;
     }
 
