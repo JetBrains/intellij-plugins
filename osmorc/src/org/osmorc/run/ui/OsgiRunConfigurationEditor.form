@@ -29,7 +29,7 @@
         <properties>
           <minimumSize width="500" height="200"/>
         </properties>
-        <border type="empty">
+        <border type="none">
           <size top="4" left="4" bottom="4" right="4"/>
         </border>
         <children>
@@ -194,7 +194,7 @@
           <tabbedpane title="Parameters"/>
         </constraints>
         <properties/>
-        <border type="empty">
+        <border type="none">
           <size top="4" left="4" bottom="4" right="4"/>
         </border>
         <children>
@@ -291,7 +291,7 @@
           <tabbedpane title="Additional Framework Properties"/>
         </constraints>
         <properties/>
-        <border type="empty">
+        <border type="none">
           <size top="4" left="4" bottom="4" right="4"/>
         </border>
         <children/>
