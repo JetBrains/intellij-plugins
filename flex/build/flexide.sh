@@ -1,15 +1,15 @@
 #!/bin/sh
 #
 # ------------------------------------------------------
-#  Flex IDE Startup Script for Unix
+#  Astella Startup Script for Unix
 # ------------------------------------------------------
 #
 
 # ---------------------------------------------------------------------
-#   Before you run Flex IDE specify the location of the
+#   Before you run Astella specify the location of the
 #   JDK 1.6 installation directory which will be used for running it.
 
-JDK="$FLEXIDE_JDK"
+JDK="$ASTELLA_JDK"
 if [ -z "$JDK" ]; then
   [ `uname -s` = "Darwin" ] && OS_TYPE="MAC" || OS_TYPE="NOT_MAC"
   JDK="$JDK_HOME"
@@ -43,8 +43,8 @@ if [ -z "$JDK" ]; then
   fi
 
   if [ -z "$JDK" ]; then
-    echo ERROR: cannot start Flex IDE.
-    echo No JDK found. Please validate either FLEXIDE_JDK, JDK_HOME or JAVA_HOME environment variable points to valid JDK installation.
+    echo ERROR: cannot start Astella.
+    echo No JDK found. Please validate either ASTELLA_JDK, JDK_HOME or JAVA_HOME environment variable points to valid JDK installation.
     echo
     echo Press Enter to continue.
     read IGNORE
@@ -65,7 +65,7 @@ if [ $OPEN_JDK -eq 0 ]; then
   echo          THIS IS STRICTLY UNSUPPORTED DUE TO KNOWN PERFORMANCE AND GRAPHICS PROBLEMS
   echo
   echo NOTE:    If you have both Sun JDK and OpenJDK installed
-  echo          please validate either FLEXIDE_JDK, JDK_HOME, or JAVA_HOME environment variable points to valid Sun JDK installation.
+  echo          please validate either ASTELLA_JDK, JDK_HOME, or JAVA_HOME environment variable points to valid Sun JDK installation.
   echo
   echo Press Enter to continue.
   read IGNORE
@@ -78,7 +78,7 @@ fi
 
 #--------------------------------------------------------------------------
 #   Ensure the IDE_HOME var for this script points to the
-#   home directory where Flex IDE is installed on your system.
+#   home directory where Astella is installed on your system.
 
 SCRIPT_LOCATION=$0
 # step through symlinks to find where the script really is
@@ -89,23 +89,23 @@ done
 IDE_HOME=`dirname "$SCRIPT_LOCATION"`/..
 IDE_BIN_HOME=`dirname "$SCRIPT_LOCATION"`
 
-if [ -n "$FLEXIDE_PROPERTIES" ]; then
-  IDE_PROPERTIES_PROPERTY="-Didea.properties.file=\"$FLEXIDE_PROPERTIES\""
+if [ -n "$ASTELLA_PROPERTIES" ]; then
+  IDE_PROPERTIES_PROPERTY="-Didea.properties.file=\"$ASTELLA_PROPERTIES\""
 fi
 
-MAIN_CLASSNAME="$FLEXIDE_MAIN_CLASS_NAME"
+MAIN_CLASSNAME="$ASTELLA_MAIN_CLASS_NAME"
 if [ -z "$MAIN_CLASS_NAME" ]; then
   MAIN_CLASS_NAME="com.intellij.idea.Main"
 fi
 
-VM_OPTIONS_FILE="$FLEXIDE_VM_OPTIONS"
+VM_OPTIONS_FILE="$ASTELLA_VM_OPTIONS"
 if [ -z "$VM_OPTIONS_FILE" ]; then
-  VM_OPTIONS_FILE="$IDE_BIN_HOME/flexide.vmoptions"
+  VM_OPTIONS_FILE="$IDE_BIN_HOME/astella.vmoptions"
 fi
 
 # isEap
 #if [ "@@isEap@@" = "true" ]; then
-#  $AGENT="-agentlib:yjpagent$BITS=disablej2ee,sessionname=flexide"
+#  $AGENT="-agentlib:yjpagent$BITS=disablej2ee,sessionname=astella"
 #fi
 
 # if VM options file exists - use it
@@ -135,7 +135,7 @@ CLASSPATH=$CLASSPATH:../lib/extensions.jar
 CLASSPATH=$CLASSPATH:../lib/trove4j.jar
 CLASSPATH=$CLASSPATH:../lib/jna.jar
 CLASSPATH=$CLASSPATH:$JDK/lib/tools.jar
-CLASSPATH=$CLASSPATH:$FLEXIDE_CLASSPATH
+CLASSPATH=$CLASSPATH:$ASTELLA_CLASSPATH
 export CLASSPATH
 
 LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
