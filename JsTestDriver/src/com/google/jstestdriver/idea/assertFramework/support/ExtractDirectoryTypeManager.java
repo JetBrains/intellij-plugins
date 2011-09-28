@@ -1,5 +1,6 @@
 package com.google.jstestdriver.idea.assertFramework.support;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 import com.google.jstestdriver.idea.util.SwingUtils;
 import com.google.jstestdriver.idea.util.TextChangeListener;
@@ -14,7 +15,6 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.Producer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,18 +47,18 @@ class ExtractDirectoryTypeManager {
   }
 
   private void populate(JRadioButton defaultRadioButton, JRadioButton customRadioButton) {
-    addContentForExtractDirecoryType(defaultRadioButton, DirectoryType.DEFAULT, new Producer<JPanel>() {
+    addContentForExtractDirecoryType(defaultRadioButton, DirectoryType.DEFAULT, new Supplier<JPanel>() {
       @Override
-      public JPanel produce() {
+      public JPanel get() {
         JPanel defaultDirectoryTypePanel = new JPanel(new BorderLayout());
         defaultDirectoryTypePanel.add(new JLabel(myDefaultDir.getPath()), BorderLayout.WEST);
         return defaultDirectoryTypePanel;
       }
     });
 
-    addContentForExtractDirecoryType(customRadioButton, DirectoryType.CUSTOM, new Producer<JPanel>() {
+    addContentForExtractDirecoryType(customRadioButton, DirectoryType.CUSTOM, new Supplier<JPanel>() {
       @Override
-      public JPanel produce() {
+      public JPanel get() {
         FileChooserDescriptor fileChooserDescriptor =
           new FileChooserDescriptor(false, true, false, false, false, false);
         String adapterName = myAssertionFrameworkName + " adapter";
@@ -87,9 +87,9 @@ class ExtractDirectoryTypeManager {
   }
 
   private void addContentForExtractDirecoryType(
-      JRadioButton radioButton, DirectoryType directoryType, Producer<JPanel> producer
+      JRadioButton radioButton, DirectoryType directoryType, Supplier<JPanel> producer
   ) {
-    JPanel panel = producer.produce();
+    JPanel panel = producer.get();
     if (panel == null) {
       throw new RuntimeException();
     }
