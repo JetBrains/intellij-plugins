@@ -35,12 +35,12 @@ public class ChooseActiveBuildConfigurationAction extends ComboBoxAction impleme
   @Override
   public final JComponent createCustomComponent(Presentation presentation) {
     JPanel p = new JPanel(new GridBagLayout());
-    p.add(new JLabel("Flex build configuration:"),
-          new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH,
-                                 new Insets(0, 5, 0, 0), 0, 0));
+    final JLabel label = new JLabel("Build configuration:");
+    //action description in plugin.xml provides tooltip for combobox, let's set the same tooltip for label
+    label.setToolTipText("The selected configuration is used for source files highlighting");
+    p.add(label, new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 5, 0, 0), 0, 0));
     p.add(super.createCustomComponent(presentation),
-          new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH,
-                                 new Insets(0, 0, 0, 0), 0, 0));
+          new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
     return p;
   }
 

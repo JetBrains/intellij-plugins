@@ -27,7 +27,7 @@
     </action>
     -->
     <group id="FlexIdeToolbarGroup">
-      <action id="ChooseActiveBuildConfiguration"
+      <action id="ChooseActiveBuildConfiguration" description="The selected configuration is used for source files highlighting"
               class="com.intellij.lang.javascript.flex.projectStructure.ui.ChooseActiveBuildConfigurationAction"/>
 
       <add-to-group group-id="MainToolBar" relative-to-action="HelpTopics" anchor="before"/>
