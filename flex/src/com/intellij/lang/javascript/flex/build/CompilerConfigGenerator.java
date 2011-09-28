@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
@@ -391,7 +392,7 @@ public class CompilerConfigGenerator {
     }
     else {
       final String pathToMainClassFile = FlexUtils.getPathToMainClassFile(myConfig.getMainClass(), myModule);
-      if (pathToMainClassFile.isEmpty()) {
+      if (pathToMainClassFile.isEmpty() && !ApplicationManager.getApplication().isUnitTestMode()) {
         throw new IOException(FlexBundle.message("bc.incorrect.main.class", myConfig.getMainClass(), myConfig.getName(), myModule.getName()));
       }
       addOption(rootElement, CompilerOptionInfo.MAIN_CLASS_INFO, pathToMainClassFile);
