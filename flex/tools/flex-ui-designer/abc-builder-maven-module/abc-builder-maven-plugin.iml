@@ -34,6 +34,7 @@
     <orderEntry type="library" name="Maven: com.intellij.flex.uiDesigner:idea-plugin:1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.intellij:utils:1.0" level="project" />
     <orderEntry type="library" name="Maven: com.intellij:trove4j:1.0" level="project" />
+    <orderEntry type="library" name="Maven: com.intellij:idea:1.0" level="project" />
   </component>
 </module>
 

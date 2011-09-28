@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.abc.*;
+import com.intellij.flex.uiDesigner.libraries.SwcDependenciesSorter;
 import com.intellij.openapi.util.text.StringUtil;
 
 import java.io.File;
@@ -11,32 +12,29 @@ import java.util.Collection;
 public class ComplementSwfBuilder {
   public static void build(String rootPath, String flexVersion) throws IOException {
     final AbcNameFilter sparkInclusionNameFilter = new AbcNameFilterStartsWith("com.intellij.flex.uiDesigner.flex", true);
-    final Collection<CharSequence> airsparkDefinitions = new ArrayList<CharSequence>(1);
-    airsparkDefinitions.add("spark.components:WindowedApplication");
 
     final Collection<CharSequence> commonDefinitions = new ArrayList<CharSequence>(1);
     commonDefinitions.add("com.intellij.flex.uiDesigner:SpecialClassForAdobeEngineers");
 
-    // SpriteLoaderAsset must be loaded with framework.swc, because _s000 located in framework.swc
-    AbcNameFilterByNameSetAndStartsWith filter =
-      new AbcNameFilterByNameSetAndStartsWith(commonDefinitions, new String[]{"mx.", "spark."}) {
-        @Override
-        public boolean accept(CharSequence name) {
-          return StringUtil.startsWith(name, "com.intellij.flex.uiDesigner.flex:SpriteLoaderAsset") || StringUtil.startsWith(name, FlexSdkAbcInjector.STYLE_PROTO_CHAIN) || StringUtil.startsWith(name, "mx.styles:StyleManager") ||
-                 StringUtil.startsWith(name, FlexSdkAbcInjector.LAYOUT_MANAGER) || StringUtil.startsWith(name, FlexSdkAbcInjector.RESOURCE_MANAGER) ||
-                 (super.accept(name) && !sparkInclusionNameFilter.accept(name) && !airsparkDefinitions.contains(name));
-        }
-      };
+    final AbcNameFilter air4InclusionNameFilter = new AbcNameFilterByNameSet(SwcDependenciesSorter.OVERLOADED_AIR_SPARK_CLASSES, true);
 
+    // SpriteLoaderAsset must be loaded with framework.swc, because _s000 located in framework.swc
     File source = getSourceFile(rootPath, flexVersion);
-    new AbcFilter(null).filter(source, createAbcFile(rootPath, flexVersion), filter);
+    new AbcFilter(null).filter(source, createAbcFile(rootPath, flexVersion),
+                               new AbcNameFilterByNameSetAndStartsWith(commonDefinitions, new String[]{"mx.", "spark."}) {
+                                 @Override
+                                 public boolean accept(CharSequence name) {
+                                   return StringUtil.startsWith(name, "com.intellij.flex.uiDesigner.flex:SpriteLoaderAsset") ||
+                                          StringUtil.startsWith(name, FlexSdkAbcInjector.STYLE_PROTO_CHAIN) ||
+                                          StringUtil.startsWith(name, "mx.styles:StyleManager") ||
+                                          StringUtil.startsWith(name, FlexSdkAbcInjector.LAYOUT_MANAGER) ||
+                                          StringUtil.startsWith(name, FlexSdkAbcInjector.RESOURCE_MANAGER) ||
+                                          (super.accept(name) && !sparkInclusionNameFilter.accept(name) &&
+                                           !air4InclusionNameFilter.accept(name));
+                                 }
+                               });
     new AbcFilter(null).filter(source, new File(rootPath + "/complement-flex" + flexVersion + ".swf"), sparkInclusionNameFilter);
-    new AbcFilter(null).filter(source, new File(rootPath + "/complement-air4.swf"), new AbcNameFilter() {
-      @Override
-      public boolean accept(CharSequence name) {
-        return airsparkDefinitions.contains(name);
-      }
-    });
+    new AbcFilter(null).filter(source, new File(rootPath + "/complement-air4.swf"), air4InclusionNameFilter);
   }
 
   public static File getSourceFile(String folder, String flexVersion) {

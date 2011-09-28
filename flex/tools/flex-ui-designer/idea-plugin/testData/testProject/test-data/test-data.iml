@@ -20,7 +20,7 @@
     <content url="file://$MODULE_DIR$/../../mxml">
       <sourceFolder url="file://$MODULE_DIR$/../../mxml" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="flex_4.5.1 small" jdkType="Flex SDK Type" />
+    <orderEntry type="jdk" jdkName="flex_4.5.1 AIR" jdkType="AIR SDK Type" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

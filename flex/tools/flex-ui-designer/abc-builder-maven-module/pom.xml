@@ -39,5 +39,12 @@
       <scope>system</scope>
       <systemPath>/Applications/Idea.app/lib/trove4j.jar</systemPath>
     </dependency>
+    <dependency>
+      <groupId>com.intellij</groupId>
+      <artifactId>idea</artifactId>
+      <version>1.0</version>
+      <scope>system</scope>
+      <systemPath>/Applications/Idea.app/lib/idea.jar</systemPath>
+    </dependency>
   </dependencies>
 </project>

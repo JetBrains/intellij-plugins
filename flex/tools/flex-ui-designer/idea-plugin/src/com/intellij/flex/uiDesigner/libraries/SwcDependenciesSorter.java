@@ -44,11 +44,16 @@ public class SwcDependenciesSorter {
   private List<LibrarySetEmbedItem> embedItems;
 
   private static final Map<String,Set<CharSequence>> badClasses = new THashMap<String, Set<CharSequence>>();
-  
+
+  public static final Set<CharSequence> OVERLOADED_AIR_SPARK_CLASSES = new THashSet<CharSequence>(2, AbcFilter.HASHING_STRATEGY);
+
   static {
+    OVERLOADED_AIR_SPARK_CLASSES.add("spark.components:Window");
+    OVERLOADED_AIR_SPARK_CLASSES.add("spark.components:WindowedApplication");
+
     THashSet<CharSequence> set = new THashSet<CharSequence>(2, AbcFilter.HASHING_STRATEGY);
     set.add("AIRSparkClasses");
-    set.add("spark.components:WindowedApplication");
+    set.addAll(OVERLOADED_AIR_SPARK_CLASSES);
     badClasses.put("airspark", set);
 
     set = new THashSet<CharSequence>(1, AbcFilter.HASHING_STRATEGY);
@@ -278,8 +283,7 @@ public class SwcDependenciesSorter {
       injectionLastModified = injectionUrlConnection.getLastModified();
     }
 
-    if (library.hasUnresolvedDefinitions() ||
-        timeStamp > modifiedSwf.lastModified() ||
+    if (library.hasUnresolvedDefinitions() || timeStamp > modifiedSwf.lastModified() ||
         injectionLastModified > modifiedSwf.lastModified()) {
       Set<CharSequence> definitions = library.hasUnresolvedDefinitions() ? library.unresolvedDefinitions : new THashSet<CharSequence>(8, AbcFilter.HASHING_STRATEGY);
       definitions.add("FrameworkClasses");

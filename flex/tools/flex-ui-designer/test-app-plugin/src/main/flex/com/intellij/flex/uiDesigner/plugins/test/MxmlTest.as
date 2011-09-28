@@ -27,6 +27,7 @@ public class MxmlTest extends BaseTestCase {
       ClassProperty();
       ItemRendererAndMixDefaultExplicitContent();
       WindowedApplication();
+      SparkWindow();
       PropertyAsTagWithArrayType();
       RichTextAndCollapseWhitespace();
       MixedTextAndSubTags();
@@ -126,7 +127,11 @@ public class MxmlTest extends BaseTestCase {
   public function WindowedApplication():void {
 
   }
-  
+
+  public function SparkWindow():void {
+    assertThat(app, [{text: "This is a document wffindow."}]);
+  }
+
   public function PropertyAsTagWithArrayType():void {
     assertThat(app.transitions, [{fromState: "*"}, {fromState: "A"}]);
   }

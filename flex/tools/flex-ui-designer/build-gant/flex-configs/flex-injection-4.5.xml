@@ -122,6 +122,7 @@
 		<symbol>mx.managers.LayoutManager</symbol>
 		<symbol>mx.resources.ResourceManager</symbol>
 		<symbol>spark.components.WindowedApplication</symbol>
+		<symbol>spark.components.Window</symbol>
 	</includes>
 	<metadata>
 		<title>flex-injection-4.5</title>

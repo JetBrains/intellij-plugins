@@ -7,11 +7,10 @@ public class AbcNameFilterByNameSet implements AbcNameFilter {
   protected final boolean inclusion;
 
   public AbcNameFilterByNameSet(Collection<CharSequence> definitions) {
-    this.definitions = definitions;
-    inclusion = false;
+    this(definitions, false);
   }
 
-  AbcNameFilterByNameSet(Collection<CharSequence> definitions, boolean inclusion) {
+  public AbcNameFilterByNameSet(Collection<CharSequence> definitions, boolean inclusion) {
     this.definitions = definitions;
     this.inclusion = inclusion;
   }
