@@ -563,10 +563,10 @@ def layoutFull(String target, Set usedJars) {
     //  }
     //}
 
-    //dir("license") {
-    //  fileset(dir: "$home/ruby/license")
-    //}
-    //
+  dir("license") {
+      renamedFile("$home/flex/license/FlexIDE_license.txt", "Astella_license.txt")
+  }
+
     def layouts = includeFile("$home/build/scripts/layouts.gant")
     println("layout plugins\n\n")
 
