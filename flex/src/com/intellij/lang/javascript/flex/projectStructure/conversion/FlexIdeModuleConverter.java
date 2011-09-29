@@ -5,6 +5,7 @@ import com.intellij.conversion.ConversionProcessor;
 import com.intellij.conversion.ModuleSettings;
 import com.intellij.ide.impl.convert.JDomConvertingUtil;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.TargetPlayerUtils;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
@@ -14,14 +15,20 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.PathMacroManager;
 import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.roots.impl.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
+import com.intellij.openapi.util.Pair;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Attribute;
 import org.jdom.Element;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,20 +61,26 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
     FlexBuildConfigurationManagerImpl configurationManager = ConversionHelper.createBuildConfigurationManager();
     ModifiableFlexIdeBuildConfiguration buildConfiguration =
       (ModifiableFlexIdeBuildConfiguration)configurationManager.getBuildConfigurations()[0];
+    buildConfiguration.setName(moduleSettings.getModuleName());
 
     Element flexBuildConfigurationElement = moduleSettings.getComponentElement(FlexBuildConfiguration.COMPONENT_NAME);
     FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(flexBuildConfigurationElement, FlexBuildConfiguration.class);
     if (oldConfiguration == null) {
       buildConfiguration.setOutputType(OutputType.Application);
     }
-    else if (FlexBuildConfiguration.APPLICATION.equals(oldConfiguration.OUTPUT_TYPE)) {
-      buildConfiguration.setOutputType(OutputType.Application);
-    }
-    else if (FlexBuildConfiguration.LIBRARY.equals(oldConfiguration.OUTPUT_TYPE)) {
-      buildConfiguration.setOutputType(OutputType.Library);
-    }
     else {
-      //?
+      if (FlexBuildConfiguration.LIBRARY.equals(oldConfiguration.OUTPUT_TYPE)) {
+        buildConfiguration.setOutputType(OutputType.Library);
+      }
+      else {
+        buildConfiguration.setOutputType(OutputType.Application);
+      }
+
+      if (buildConfiguration.getOutputType() == OutputType.Application) {
+        buildConfiguration.setMainClass(oldConfiguration.MAIN_CLASS);
+      }
+      buildConfiguration.setOutputFileName(oldConfiguration.OUTPUT_FILE_NAME);
+      //buildConfiguration.setOutputFolder(VfsUtil.urlToPath(CompilerModuleExtension));
     }
 
     // TODO filter out java libraries
@@ -110,10 +123,50 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
       }
     }
 
+    if (buildConfiguration.getTargetPlatform() == TargetPlatform.Web) {
+      final SdkEntry sdkEntry = buildConfiguration.getDependencies().getSdkEntry();
+      if (sdkEntry != null) {
+        final String sdkHome = PathMacroManager.getInstance(ApplicationManager.getApplication()).expandPath(sdkEntry.getHomePath());
+        buildConfiguration.getDependencies().setTargetPlayer(getTargetPlayer(oldConfiguration, sdkHome));
+      }
+    }
+
     Element componentElement =
       JDomConvertingUtil.findOrCreateComponentElement(moduleSettings.getRootElement(), FlexBuildConfigurationManagerImpl.COMPONENT_NAME);
     Element e = XmlSerializer.serialize(configurationManager.getState(), new SkipDefaultValuesSerializationFilters());
     addContent(e, componentElement);
+  }
+
+  private static String getTargetPlayer(final FlexBuildConfiguration oldConfiguration, final String sdkHome) {
+    String targetPlayer = null;
+    final String[] targetPlayers = getTargetPlayers(sdkHome);
+    if (oldConfiguration != null) {
+      final Pair<String, String> majorMinor = TargetPlayerUtils.getPlayerMajorMinorVersion(oldConfiguration.TARGET_PLAYER_VERSION);
+      if (ArrayUtil.contains(majorMinor.first, targetPlayers)) {
+        targetPlayer = majorMinor.first;
+      }
+      else if (ArrayUtil.contains(majorMinor.first + "." + majorMinor.second, targetPlayers)) {
+        targetPlayer = majorMinor.first + "." + majorMinor.second;
+      }
+    }
+
+    if (targetPlayer == null) {
+      targetPlayer = targetPlayers.length > 0 ? targetPlayers[0] : "";
+    }
+    return targetPlayer;
+  }
+
+  private static String[] getTargetPlayers(final String sdkHome) {
+    final File playerFolder = new File(sdkHome + "/frameworks/libs/player");
+    if (playerFolder.isDirectory()) {
+      return playerFolder.list(new FilenameFilter() {
+        public boolean accept(final File dir, final String name) {
+          return new File(playerFolder, name + "/playerglobal.swc").isFile();
+        }
+      });
+    }
+
+    return ArrayUtil.EMPTY_STRING_ARRAY;
   }
 
   private void processSdkEntry(ModifiableFlexIdeBuildConfiguration buildConfiguration, String sdkName, String sdkType) {
