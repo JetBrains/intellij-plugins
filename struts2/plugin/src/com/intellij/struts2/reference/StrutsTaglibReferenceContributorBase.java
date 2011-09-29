@@ -51,8 +51,6 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
   protected static final PsiReferenceProvider ACTION_REFERENCE_PROVIDER = new ActionReferenceProvider();
 
   protected static final PsiReferenceProvider ACTION_PROPERTY_REFERENCE_PROVIDER =
-      new ActionPropertyReferenceProvider(false);
-  protected static final PsiReferenceProvider ACTION_READONLY_PROPERTY_REFERENCE_PROVIDER =
       new ActionPropertyReferenceProvider(true);
 
   protected static final PsiReferenceProvider RELATIVE_PATH_PROVIDER = new PsiReferenceProvider() {

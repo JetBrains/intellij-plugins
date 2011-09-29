@@ -4,7 +4,13 @@ public class MyAction {
   private boolean myBooleanField;
 
   private List readonlyList;
+  
+  private User user;
 
+  public User getUser() {
+    return user;
+  }
+  
   public String getMyField() {
     return myField;
   }
@@ -25,4 +31,19 @@ public class MyAction {
     return readonlyList;
   }
 
+  
+  public class User {
+    
+    private String foreName;
+
+    public String getForeName() {
+      return foreName;
+    }
+
+    public String setForeName(String foreName) {
+      this.foreName = foreName;      
+    }
+    
+  }
+  
 }
