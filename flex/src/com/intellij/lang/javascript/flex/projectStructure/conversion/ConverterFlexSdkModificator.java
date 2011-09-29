@@ -2,7 +2,6 @@ package com.intellij.lang.javascript.flex.projectStructure.conversion;
 
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdkLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdkProperties;
-import com.intellij.lang.javascript.flex.projectStructure.ui.FlexSdkModificator;
 import com.intellij.openapi.projectRoots.SdkAdditionalData;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.projectRoots.impl.ProjectRootUtil;
@@ -23,10 +22,10 @@ public class ConverterFlexSdkModificator implements SdkModificator {
   private final Element myLibraryElement;
   private final FlexSdkProperties myProperties;
   private final Map<OrderRootType, LinkedHashSet<String>> myRoots = new HashMap<OrderRootType, LinkedHashSet<String>>();
-  private final Collection<String> myForbiddenNames;
+  private final String myLibraryName;
 
-  public ConverterFlexSdkModificator(String homePath, String libraryId, Collection<String> forbiddenNames) {
-    myForbiddenNames = forbiddenNames;
+  public ConverterFlexSdkModificator(String homePath, String libraryId, String libraryName) {
+    myLibraryName = libraryName;
     myLibraryElement = new Element(LibraryImpl.ELEMENT);
     myProperties = new FlexSdkProperties(libraryId);
     myProperties.setHomePath(homePath);
@@ -114,7 +113,7 @@ public class ConverterFlexSdkModificator implements SdkModificator {
 
   @Override
   public void commitChanges() {
-    myLibraryElement.setAttribute(LibraryImpl.LIBRARY_NAME_ATTR, FlexSdkModificator.generateName(getVersionString(), myForbiddenNames));
+    myLibraryElement.setAttribute(LibraryImpl.LIBRARY_NAME_ATTR, myLibraryName);
     myLibraryElement.setAttribute(LibraryImpl.LIBRARY_TYPE_ATTR, FlexSdkLibraryType.FLEX_SDK.getKindId());
     Element propertiesElement = new Element(LibraryImpl.PROPERTIES_ELEMENT);
     XmlSerializer.serializeInto(myProperties, propertiesElement);

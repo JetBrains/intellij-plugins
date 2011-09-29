@@ -12,7 +12,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ConversionHelper {
 
-  private static class LightweightBuildConfigurationEntry implements BuildConfigurationEntry, ModifiableBuildConfigurationEntry {
+  private static class LightweightBuildConfigurationEntry
+    implements BuildConfigurationEntry, ModifiableBuildConfigurationEntry, StatefulDependencyEntry {
     private final DependencyTypeImpl myDependencyType = new DependencyTypeImpl();
 
     @NotNull
@@ -53,6 +54,15 @@ public class ConversionHelper {
     @Override
     public ModifiableDependencyType getDependencyType() {
       return myDependencyType;
+    }
+
+    @Override
+    public EntryState getState() {
+      EntryState state = new EntryState();
+      state.MODULE_NAME = getModuleName();
+      state.BC_NAME = myBcName;
+      state.DEPENDENCY_TYPE = myDependencyType.getState();
+      return state;
     }
 
     @Override

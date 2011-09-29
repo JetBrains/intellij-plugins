@@ -136,11 +136,8 @@ class DependenciesImpl implements ModifiableDependencies {
                                              new Function<ModifiableDependencyEntry, EntryState>() {
                                                @Override
                                                public EntryState fun(ModifiableDependencyEntry entry) {
-                                                 if (entry instanceof BuildConfigurationEntryImpl) {
-                                                   return ((BuildConfigurationEntryImpl)entry).getState();
-                                                 }
-                                                 else if (entry instanceof ModuleLibraryEntryImpl) {
-                                                   return ((ModuleLibraryEntryImpl)entry).getState();
+                                                 if (entry instanceof StatefulDependencyEntry) {
+                                                   return ((StatefulDependencyEntry)entry).getState();
                                                  }
                                                  else {
                                                    throw new StateStorageException("Unexpected entry type: " + entry);

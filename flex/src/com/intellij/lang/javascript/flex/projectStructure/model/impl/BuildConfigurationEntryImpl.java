@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-class BuildConfigurationEntryImpl implements ModifiableBuildConfigurationEntry {
+class BuildConfigurationEntryImpl implements ModifiableBuildConfigurationEntry, StatefulDependencyEntry {
 
   private final DependencyTypeImpl myDependencyType = new DependencyTypeImpl();
 

@@ -10,6 +10,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
 import java.util.Collection;
@@ -106,7 +107,7 @@ public class FlexSdkModificator implements SdkModificator, Disposable {
     myModifiableModel.commit();
   }
 
-  public static String generateName(String version, Collection<String> forbiddenNames) {
+  public static String generateName(@Nullable String version, Collection<String> forbiddenNames) {
     String prefix = "Flex SDK";
     if (StringUtil.isNotEmpty(version)) {
       prefix += " " + version;

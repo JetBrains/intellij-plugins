@@ -3,12 +3,14 @@ package com.intellij.lang.javascript.flex.projectStructure.conversion;
 import com.intellij.conversion.CannotConvertException;
 import com.intellij.conversion.ConversionProcessor;
 import com.intellij.conversion.ModuleSettings;
+import com.intellij.conversion.impl.ModuleSettingsImpl;
 import com.intellij.ide.impl.convert.JDomConvertingUtil;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.TargetPlayerUtils;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.ConversionHelper;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
@@ -20,15 +22,20 @@ import com.intellij.openapi.components.PathMacroManager;
 import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.roots.impl.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Attribute;
 import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -83,7 +90,9 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
       //buildConfiguration.setOutputFolder(VfsUtil.urlToPath(CompilerModuleExtension));
     }
 
-    // TODO filter out java libraries
+    Collection<Element> orderEntriesToRemove = new ArrayList<Element>();
+    Collection<Element> orderEntriesToAdd = new ArrayList<Element>();
+    // TODO filter out java libraries and remove their order entries
     for (Element orderEntry : moduleSettings.getOrderEntries()) {
       String orderEntryType = orderEntry.getAttributeValue(OrderEntryFactory.ORDER_ENTRY_TYPE_ATTR);
       if (ModuleLibraryOrderEntryImpl.ENTRY_TYPE.equals(orderEntryType)) {
@@ -110,25 +119,28 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
       }
       else if (ModuleOrderEntryImpl.ENTRY_TYPE.equals(orderEntryType)) {
         String moduleName = orderEntry.getAttributeValue(ModuleOrderEntryImpl.MODULE_NAME_ATTR);
-        ModifiableBuildConfigurationEntry bcEntry = ConversionHelper.createBuildConfigurationEntry(moduleName, "Unnamed"); // TODO name
+        ModifiableBuildConfigurationEntry bcEntry = ConversionHelper.createBuildConfigurationEntry(moduleName, moduleName);
         buildConfiguration.getDependencies().getModifiableEntries().add(bcEntry);
       }
       else if (ModuleJdkOrderEntryImpl.ENTRY_TYPE.equals(orderEntryType)) {
         String sdkName = orderEntry.getAttributeValue(ModuleJdkOrderEntryImpl.JDK_NAME_ATTR);
         String sdkType = orderEntry.getAttributeValue(ModuleJdkOrderEntryImpl.JDK_TYPE_ATTR);
-        processSdkEntry(buildConfiguration, sdkName, sdkType);
+        Element entryToAdd = processSdkEntry(buildConfiguration, sdkName, sdkType);
+        ContainerUtil.addIfNotNull(entryToAdd, orderEntriesToAdd);
+        orderEntriesToRemove.add(orderEntry);
       }
       else if (InheritedJdkOrderEntryImpl.ENTRY_TYPE.equals(orderEntryType)) {
-        processSdkEntry(buildConfiguration, myParams.projectSdkName, myParams.projectSdkType);
+        Element entryToAdd = processSdkEntry(buildConfiguration, myParams.projectSdkName, myParams.projectSdkType);
+        ContainerUtil.addIfNotNull(entryToAdd, orderEntriesToAdd);
+        orderEntriesToRemove.add(orderEntry);
       }
     }
 
-    if (buildConfiguration.getTargetPlatform() == TargetPlatform.Web) {
-      final SdkEntry sdkEntry = buildConfiguration.getDependencies().getSdkEntry();
-      if (sdkEntry != null) {
-        final String sdkHome = PathMacroManager.getInstance(ApplicationManager.getApplication()).expandPath(sdkEntry.getHomePath());
-        buildConfiguration.getDependencies().setTargetPlayer(getTargetPlayer(oldConfiguration, sdkHome));
-      }
+    if (!orderEntriesToRemove.isEmpty()) {
+      moduleSettings.getOrderEntries().removeAll(orderEntriesToRemove);
+    }
+    for (Element entryToAdd : orderEntriesToAdd) {
+      moduleSettings.getComponentElement(ModuleSettingsImpl.MODULE_ROOT_MANAGER_COMPONENT).addContent(entryToAdd);
     }
 
     Element componentElement =
@@ -169,29 +181,36 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
     return ArrayUtil.EMPTY_STRING_ARRAY;
   }
 
-  private void processSdkEntry(ModifiableFlexIdeBuildConfiguration buildConfiguration, String sdkName, String sdkType) {
-    if (AirMobileSdkType.NAME.equals(sdkType)) {
+  /**
+   * @return order entry element to be added to the module
+   */
+  @Nullable
+  private Element processSdkEntry(ModifiableFlexIdeBuildConfiguration buildConfiguration, String ideaSdkName, String ideaSdkType) {
+    if (AirMobileSdkType.NAME.equals(ideaSdkType)) {
       buildConfiguration.setTargetPlatform(TargetPlatform.Mobile);
     }
-    else if (AirSdkType.NAME.equals(sdkType)) {
+    else if (AirSdkType.NAME.equals(ideaSdkType)) {
       buildConfiguration.setTargetPlatform(TargetPlatform.Desktop);
     }
     else {
       buildConfiguration.setTargetPlatform(TargetPlatform.Web);
     }
 
-    if (sdkName != null) {
-      String homePath = myParams.getIdeaSdkHomePath(sdkName);
+    if (ideaSdkName != null && ideaSdkType != null) {
+      String homePath = ConversionParams.getIdeaSdkHomePath(ideaSdkName);
       if (homePath != null) {
-        String sdkId = myParams.getExistingFlexIdeSdkId(homePath);
-        if (sdkId == null) {
-          sdkId = myParams.requireFlexIdeSdk(homePath);
-        }
-        SdkEntry sdkEntry = Factory.createSdkEntry(sdkId, homePath);
+        FlexSdk sdk = myParams.getOrCreateFlexIdeSdk(homePath);
+        SdkEntry sdkEntry = Factory.createSdkEntry(sdk.getLibraryId(), sdk.getHomePath());
         // TODO roots dependencies types
         buildConfiguration.getDependencies().setSdkEntry(sdkEntry);
+        Element orderEntryElement = new Element(OrderEntryFactory.ORDER_ENTRY_ELEMENT_NAME);
+        orderEntryElement.setAttribute(OrderEntryFactory.ORDER_ENTRY_TYPE_ATTR, "library");
+        orderEntryElement.setAttribute("name", sdk.getLibrary().getName());
+        orderEntryElement.setAttribute("level", LibraryTablesRegistrar.APPLICATION_LEVEL);
+        return orderEntryElement;
       }
     }
+    return null;
   }
 
   private static void addContent(Element source, Element target) {
