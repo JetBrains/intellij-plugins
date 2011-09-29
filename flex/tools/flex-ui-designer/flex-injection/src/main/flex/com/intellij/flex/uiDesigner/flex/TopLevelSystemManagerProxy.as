@@ -12,224 +12,211 @@ import flash.utils.Dictionary;
 import mx.core.IChildList;
 import mx.managers.ISystemManager;
 
-internal class TopLevelSystemManager extends BaseFlexModuleFactoryImpl implements ISystemManager {
-  private var _stage:Stage;
-
-  public function TopLevelSystemManager(stage:Stage) {
-    _stage = stage;
-  }
+// see mx/managers/DragManagerImpl.as sm = SystemManagerGlobals.topLevelSystemManagers[0];
+internal class TopLevelSystemManagerProxy extends BaseFlexModuleFactoryImpl implements ISystemManager {
+  internal var activeSystemManager:SystemManager;
 
   public function get cursorChildren():IChildList {
-    return null;
+    return activeSystemManager.cursorChildren;
   }
 
   public function get document():Object {
-    return null;
+    return activeSystemManager.document;
   }
 
   public function set document(value:Object):void {
+    activeSystemManager.document = value;
   }
 
   public function get embeddedFontList():Object {
-    return null;
+    return activeSystemManager.embeddedFontList;
   }
 
   public function get focusPane():Sprite {
-    return null;
+    return activeSystemManager.focusPane;
   }
 
   public function set focusPane(value:Sprite):void {
+    activeSystemManager.focusPane = value;
   }
 
   public function get isProxy():Boolean {
-    return false;
+    return activeSystemManager.isProxy;
   }
 
   public function get loaderInfo():LoaderInfo {
-    return null;
+    return activeSystemManager.loaderInfo;
   }
 
   public function get numModalWindows():int {
-    return 0;
+    return activeSystemManager.numModalWindows;
   }
 
   public function set numModalWindows(value:int):void {
+    activeSystemManager.numModalWindows = value;
   }
 
   public function get popUpChildren():IChildList {
-    return null;
+    return activeSystemManager.popUpChildren;
   }
 
   public function get rawChildren():IChildList {
-    return null;
+    return activeSystemManager.rawChildren;
   }
 
   public function get screen():Rectangle {
-    return null;
+    return activeSystemManager.screen;
   }
 
   public function get stage():Stage {
-    return _stage;
+    return activeSystemManager.stage;
   }
 
   public function get toolTipChildren():IChildList {
-    return null;
+    return activeSystemManager.toolTipChildren;
   }
 
   public function get topLevelSystemManager():ISystemManager {
-    return null;
+    return activeSystemManager.topLevelSystemManager;
   }
 
   public function getDefinitionByName(name:String):Object {
-    return null;
+    return activeSystemManager.getDefinitionByName(name);
   }
 
   public function isTopLevel():Boolean {
-    return true;
+    return activeSystemManager.isTopLevel();
   }
 
   public function isFontFaceEmbedded(tf:TextFormat):Boolean {
-    return false;
+    return activeSystemManager.isFontFaceEmbedded(tf);
   }
 
   public function isTopLevelRoot():Boolean {
-    return false;
+    return activeSystemManager.isTopLevelRoot();
   }
 
   public function getTopLevelRoot():DisplayObject {
-    return null;
+    return activeSystemManager.getTopLevelRoot();
   }
 
   public function getSandboxRoot():DisplayObject {
-    return null;
+    return activeSystemManager.getSandboxRoot();
   }
 
   public function deployMouseShields(deploy:Boolean):void {
+    activeSystemManager.deployMouseShields(deploy);
   }
 
   public function invalidateParentSizeAndDisplayList():void {
+    activeSystemManager.invalidateParentSizeAndDisplayList();
   }
 
   public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0,
                                    useWeakReference:Boolean = false):void {
-    //trace("tsm: skip addEventListener " + type);
+    activeSystemManager.addEventListener(type, listener, useCapture, priority, useWeakReference);
   }
 
   public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {
-    trace("tsm: skip removeEventListener " + type);
+    activeSystemManager.removeEventListener(type, listener, useCapture);
   }
 
   public function dispatchEvent(event:Event):Boolean {
-    trace("tsm: skip dispatchEvent " + event.toString());
-    return false;
+    return activeSystemManager.dispatchEvent(event);
   }
 
   public function hasEventListener(type:String):Boolean {
-    // Event.RENDER or Event.ENTER_FRAME are not problem — LayoutManager never use this method, in any case (twice add event lisneter), it is not cause memory leaks
-    return type == "initializeError" || type == "callLaterError";
+    return activeSystemManager.hasEventListener(type);
   }
 
   public function willTrigger(type:String):Boolean {
-    return hasEventListener(type);
+    return activeSystemManager.willTrigger(type);
   }
 
   public function get numChildren():int {
-    return 0;
+    return activeSystemManager.numChildren;
   }
 
   public function addChild(child:DisplayObject):DisplayObject {
-    return null;
+    return activeSystemManager.addChild(child);
   }
 
   public function addChildAt(child:DisplayObject, index:int):DisplayObject {
-    return null;
+    return activeSystemManager.addChildAt(child, index);
   }
 
   public function removeChild(child:DisplayObject):DisplayObject {
-    return null;
+    return activeSystemManager.removeChild(child);
   }
 
   public function removeChildAt(index:int):DisplayObject {
-    return null;
+    return activeSystemManager.removeChildAt(index);
   }
 
   public function getChildAt(index:int):DisplayObject {
-    return null;
+    return activeSystemManager.getChildAt(index);
   }
 
   public function getChildByName(name:String):DisplayObject {
-    return null;
+    return activeSystemManager.getChildByName(name);
   }
 
   public function getChildIndex(child:DisplayObject):int {
-    return 0;
+    return activeSystemManager.getChildIndex(child);
   }
 
   public function setChildIndex(child:DisplayObject, newIndex:int):void {
+    activeSystemManager.setChildIndex(child, newIndex)
   }
 
   public function getObjectsUnderPoint(point:Point):Array {
-    return null;
+    return activeSystemManager.getObjectsUnderPoint(point);
   }
 
   public function contains(child:DisplayObject):Boolean {
-    return false;
+    return activeSystemManager.contains(child);
   }
 
   public function get preloadedRSLs():Dictionary {
-    return null;
+    return activeSystemManager.preloadedRSLs;
   }
 
   public function allowDomain(... rest):void {
+    activeSystemManager.allowDomain.apply(null, rest);
   }
 
   public function allowInsecureDomain(... rest):void {
+    activeSystemManager.allowInsecureDomain.apply(null, rest);
   }
 
   public function callInContext(fn:Function, thisArg:Object, argArray:Array, returns:Boolean = true):* {
-    return null;
+    return activeSystemManager.callInContext(fn, thisArg, argArray, returns);
   }
 
   public function create(... rest):Object {
-    return null;
+    return activeSystemManager.create.apply(null, rest);
   }
 
-  private var fakeSystemManagerChildManager:FakeSystemManagerChildManager;
   public function getImplementation(interfaceName:String):Object {
-    if (interfaceName == SystemManager.SYSTEM_MANAGER_CHILD_MANAGER) {
-      if (fakeSystemManagerChildManager == null) {
-        fakeSystemManagerChildManager = new FakeSystemManagerChildManager();
-      }
-      return fakeSystemManagerChildManager;
-    }
-    else {
-      trace("tsm: skip getImplementation: " + interfaceName);
-      return null;
-    }
+    return activeSystemManager.getImplementation(interfaceName);
   }
 
   public function info():Object {
-    return null;
+    return activeSystemManager.info();
   }
 
   public function registerImplementation(interfaceName:String, impl:Object):void {
+    activeSystemManager.registerImplementation(interfaceName, impl);
   }
 
   flex::v4_5
   public function getVisibleApplicationRect(bounds:Rectangle = null, skipToSandboxRoot:Boolean = false):Rectangle {
-    return null;
+    return activeSystemManager.getVisibleApplicationRect(bounds, skipToSandboxRoot);
   }
 
   flex::v4_1
   public function getVisibleApplicationRect(bounds:Rectangle = null):Rectangle {
-    return null;
+    return activeSystemManager.getVisibleApplicationRect(bounds);
   }
 }
-}
-
-class FakeSystemManagerChildManager {
-  // mx.managers::ISystemManagerChildManager, ChildManager, "cm.notifyStyleChangeInChildren(styleProp, true);" in CSSStyleDeclaration
-  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
-  public function notifyStyleChangeInChildren(styleProp:String, recursive:Boolean):void {
-  }
 }

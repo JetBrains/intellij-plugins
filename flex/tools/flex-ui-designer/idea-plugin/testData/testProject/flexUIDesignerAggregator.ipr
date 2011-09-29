@@ -172,24 +172,26 @@
     <mapping directory="" vcs="" />
   </component>
   <component name="libraryTable">
-    <library name="Maven: com.adobe.flex.framework:airframework:rb.swc:4.5.0.20968">
-      <CLASSES />
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airframework/4.5.0.20968/airframework-4.5.0.20968-asdoc.zip!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airframework/4.5.0.20968/airframework-4.5.0.20968-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: com.adobe.flex.framework:airframework:swc:4.5.0.20968">
+    <library name="Maven: com.adobe.flex.framework:airframework:rb.swc:4.5.2.21576">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airframework/4.5.0.20968/airframework-4.5.0.20968.swc!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airframework/4.5.2.21576/airframework-4.5.2.21576-en_US.rb.swc!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airframework/4.5.0.20968/airframework-4.5.0.20968-asdoc.zip!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airframework/4.5.2.21576/airframework-4.5.2.21576-asdoc.zip!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airframework/4.5.0.20968/airframework-4.5.0.20968-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airframework/4.5.2.21576/airframework-4.5.2.21576-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: com.adobe.flex.framework:airframework:swc:4.5.2.21576">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airframework/4.5.2.21576/airframework-4.5.2.21576.swc!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airframework/4.5.2.21576/airframework-4.5.2.21576-asdoc.zip!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airframework/4.5.2.21576/airframework-4.5.2.21576-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: com.adobe.flex.framework:airglobal:swc:2.6">
@@ -203,55 +205,59 @@
         <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airglobal/2.6/airglobal-2.6-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: com.adobe.flex.framework:airspark:rb.swc:4.5.0.20968">
-      <CLASSES />
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airspark/4.5.0.20968/airspark-4.5.0.20968-asdoc.zip!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airspark/4.5.0.20968/airspark-4.5.0.20968-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: com.adobe.flex.framework:airspark:swc:4.5.0.20968">
+    <library name="Maven: com.adobe.flex.framework:airspark:rb.swc:4.5.2.21576">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airspark/4.5.0.20968/airspark-4.5.0.20968.swc!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airspark/4.5.2.21576/airspark-4.5.2.21576-en_US.rb.swc!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airspark/4.5.0.20968/airspark-4.5.0.20968-asdoc.zip!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airspark/4.5.2.21576/airspark-4.5.2.21576-asdoc.zip!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airspark/4.5.0.20968/airspark-4.5.0.20968-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airspark/4.5.2.21576/airspark-4.5.2.21576-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: com.adobe.flex.framework:framework:rb.swc:4.5.0.20968">
-      <CLASSES />
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/framework/4.5.0.20968/framework-4.5.0.20968-asdoc.zip!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/framework/4.5.0.20968/framework-4.5.0.20968-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: com.adobe.flex.framework:framework:swc:4.5.0.20968">
+    <library name="Maven: com.adobe.flex.framework:airspark:swc:4.5.2.21576">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/framework/4.5.0.20968/framework-4.5.0.20968.swc!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airspark/4.5.2.21576/airspark-4.5.2.21576.swc!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/framework/4.5.0.20968/framework-4.5.0.20968-asdoc.zip!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airspark/4.5.2.21576/airspark-4.5.2.21576-asdoc.zip!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/framework/4.5.0.20968/framework-4.5.0.20968-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airspark/4.5.2.21576/airspark-4.5.2.21576-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: com.adobe.flex.framework:mx:swc:4.5.0.20968">
+    <library name="Maven: com.adobe.flex.framework:framework:rb.swc:4.5.2.21576">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/mx/4.5.0.20968/mx-4.5.0.20968.swc!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/framework/4.5.2.21576/framework-4.5.2.21576-en_US.rb.swc!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/mx/4.5.0.20968/mx-4.5.0.20968-asdoc.zip!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/framework/4.5.2.21576/framework-4.5.2.21576-asdoc.zip!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/mx/4.5.0.20968/mx-4.5.0.20968-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/framework/4.5.2.21576/framework-4.5.2.21576-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: com.adobe.flex.framework:framework:swc:4.5.2.21576">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/framework/4.5.2.21576/framework-4.5.2.21576.swc!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/framework/4.5.2.21576/framework-4.5.2.21576-asdoc.zip!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/framework/4.5.2.21576/framework-4.5.2.21576-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: com.adobe.flex.framework:mx:swc:4.5.2.21576">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/mx/4.5.2.21576/mx-4.5.2.21576.swc!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/mx/4.5.2.21576/mx-4.5.2.21576-asdoc.zip!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/mx/4.5.2.21576/mx-4.5.2.21576-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: com.adobe.flex.framework:playerglobal:swc:10.2">
@@ -265,29 +271,38 @@
         <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/playerglobal/10.2/playerglobal-10.2-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: com.adobe.flex.framework:spark:rb.swc:4.5.0.20968">
-      <CLASSES />
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/spark/4.5.0.20968/spark-4.5.0.20968-asdoc.zip!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/spark/4.5.0.20968/spark-4.5.0.20968-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: com.adobe.flex.framework:spark:swc:4.5.0.20968">
+    <library name="Maven: com.adobe.flex.framework:spark:rb.swc:4.5.2.21576">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/spark/4.5.0.20968/spark-4.5.0.20968.swc!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576-en_US.rb.swc!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/spark/4.5.0.20968/spark-4.5.0.20968-asdoc.zip!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576-asdoc.zip!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/spark/4.5.0.20968/spark-4.5.0.20968-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: com.adobe.flex.framework:spark:swc:4.5.2.21576">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576.swc!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576-asdoc.zip!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: com.intellij.flex.uiDesigner:idea-plugin:1.0-SNAPSHOT">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/../../../out/artifacts/FlexUIDesigner/lib/flex-ui-designer.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="Maven: com.intellij:idea:1.0">
+      <CLASSES>
+        <root url="jar://$APPLICATION_HOME_DIR$/lib/idea.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

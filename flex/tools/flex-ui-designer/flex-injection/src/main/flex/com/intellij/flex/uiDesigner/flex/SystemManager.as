@@ -97,7 +97,7 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
                              uiErrorHandler:UiErrorHandler):void {
     UIComponentGlobals.designMode = true;
     UIComponentGlobals.catchCallLaterExceptions = true;
-    SystemManagerGlobals.topLevelSystemManagers[0] = new TopLevelSystemManager(stage);
+    SystemManagerGlobals.topLevelSystemManagers[0] = new TopLevelSystemManagerProxy();
     SystemManagerGlobals.bootstrapLoaderInfoURL = "app:/_Main.swf";
 
     Singleton.registerClass(LAYOUT_MANAGER_FQN, LayoutManager);
@@ -245,7 +245,7 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     return super.getChildIndex(child) - OFFSET;
   }
 
-  public function $getChildIndex(child:DisplayObject):int {
+  internal function $getChildIndex(child:DisplayObject):int {
     return super.getChildIndex(child);
   }
 
@@ -357,10 +357,18 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     return noTopMostIndex - OFFSET;
   }
 
+  internal function get $numChildren():int {
+    return super.numChildren;
+  }
+
   internal function addRawChildAt(child:DisplayObject, index:int):DisplayObject {
     addingChild(child);
     super.addChildAt(child, index);
+    childAdded(child);
+    return child;
+  }
 
+  private static function childAdded(child:DisplayObject):void {
     if (child.hasEventListener(FlexEvent.ADD)) {
       child.dispatchEvent(new FlexEvent(FlexEvent.ADD));
     }
@@ -368,7 +376,12 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     if (child is IUIComponent) {
       IUIComponent(child).initialize();
     }
+  }
 
+  internal function addRawChild(child:DisplayObject):DisplayObject {
+    addingChild(child);
+    super.addChild(child);
+    childAdded(child);
     return child;
   }
 
@@ -455,6 +468,7 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     mainFocusManager.activeDocumentFocusManager = _focusManager;
     
     FlexGlobals.topLevelApplication = _document;
+    TopLevelSystemManagerProxy(SystemManagerGlobals.topLevelSystemManagers[0]).activeSystemManager = this;
   }
 
   public function deactivated():void {
@@ -463,6 +477,8 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     // We can not leave empty FlexGlobals.topLevelApplication, as example, VideoPlayer uses FlexGlobals.topLevelApplication as parent when opening fullscreen
     // but we can not set it as SystemManager, because it wants UIComponent (for style)
     FlexGlobals.topLevelApplication = null;
+
+    TopLevelSystemManagerProxy(SystemManagerGlobals.topLevelSystemManagers[0]).activeSystemManager = null;
   }
 
   private const _explicitDocumentSize:Rectangle = new Rectangle();
@@ -577,8 +593,13 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   public function set numModalWindows(value:int):void {
   }
 
+  private var _rawChildren:SystemRawChildrenList;
   public function get rawChildren():IChildList {
-    return null;
+    if (_rawChildren == null) {
+      _rawChildren = new SystemRawChildrenList(this);
+    }
+    
+    return _rawChildren;
   }
 
   private var _screen:Rectangle;
@@ -840,3 +861,9 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   }
 }
 }
+
+
+
+
+
+
