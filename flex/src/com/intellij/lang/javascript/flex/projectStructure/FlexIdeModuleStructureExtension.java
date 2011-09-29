@@ -14,11 +14,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureExtension;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.NamedConfigurable;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import javax.swing.tree.TreeNode;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,6 +29,7 @@ import java.util.List;
 public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
 
   final FlexIdeBCConfigurator myConfigurator;
+  private static final Icon ICON = IconLoader.getIcon("buildConfig.png");
 
   public FlexIdeModuleStructureExtension() {
     myConfigurator = new FlexIdeBCConfigurator();
@@ -108,7 +111,7 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
                                                final Runnable treeNodeNameUpdater) {
     final Collection<AnAction> actions = new ArrayList<AnAction>(2);
     actions.add(new Separator());
-    actions.add(new DumbAwareAction("Build Configuration") {
+    actions.add(new DumbAwareAction("Build Configuration", "Create Build Configuration", ICON) {
       public void update(final AnActionEvent e) {
         e.getPresentation().setVisible(getModuleForNode(selectedNodeRetriever.compute()) != null);
       }
