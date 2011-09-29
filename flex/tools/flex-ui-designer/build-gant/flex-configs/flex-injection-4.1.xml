@@ -120,6 +120,7 @@
 		<symbol>mx.styles.StyleProtoChain</symbol>
 		<symbol>mx.styles.StyleManager</symbol>
 		<symbol>mx.managers.LayoutManager</symbol>
+		<symbol>mx.managers.CursorManager</symbol>
 		<symbol>mx.resources.ResourceManager</symbol>
 		<symbol>spark.components.WindowedApplication</symbol>
 		<symbol>spark.components.Window</symbol>
