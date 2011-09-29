@@ -19,7 +19,7 @@ public class FlexIdeConverterProvider extends ConverterProvider {
   @NotNull
   @Override
   public String getConversionDescription() {
-    return "Flex modules configuration will be transformed";
+    return "Flex modules configuration will be transformed.<br/>Modules of other types will be removed from the project.<br/>";
   }
 
   @Override
@@ -27,7 +27,7 @@ public class FlexIdeConverterProvider extends ConverterProvider {
     return "Project '" +
            context.getProjectFile().getName() +
            "' needs to be converted to be opened in " +
-           ApplicationNamesInfo.getInstance().getProductName() + ". Converted project will remain compatible with IntelliJ IDEA.";
+           ApplicationNamesInfo.getInstance().getProductName() + ".<br/><b>Warning:</b>&nbsp;converted project will become incompatible with IntelliJ IDEA.";
   }
 
   @NotNull
