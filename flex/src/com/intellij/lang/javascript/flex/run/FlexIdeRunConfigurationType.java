@@ -14,6 +14,8 @@ import javax.swing.*;
 public class FlexIdeRunConfigurationType implements ConfigurationType {
 
   private static final Icon ICON = IconLoader.getIcon("flex_ide_run_configuration.png");
+  public static final String TYPE = "FlexIdeRunConfigurationType";
+  public static final String DISPLAY_NAME = "Flash App";
 
   private final ConfigurationFactory myFactory;
 
@@ -26,7 +28,7 @@ public class FlexIdeRunConfigurationType implements ConfigurationType {
   }
 
   public String getDisplayName() {
-    return "Flash App";
+    return DISPLAY_NAME;
   }
 
   public String getConfigurationTypeDescription() {
@@ -43,7 +45,7 @@ public class FlexIdeRunConfigurationType implements ConfigurationType {
 
   @NotNull
   public String getId() {
-    return "FlexIdeRunConfigurationType";
+    return TYPE;
   }
 
   public static FlexIdeRunConfigurationType getInstance() {

@@ -20,10 +20,14 @@ import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.util.Pair;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * User: ksafonov
@@ -32,6 +36,8 @@ public class ConversionParams {
   public String projectSdkName;
   public String projectSdkType;
 
+  private final Collection<Pair<String, String>> myAppModuleAndBCNames = new ArrayList<Pair<String, String>>();
+  
   private final FlexProjectConfigurationEditor myEditor;
   private final LibraryTable.ModifiableModel myGlobalLibrariesModifiableModel;
   private final ConversionContext myContext;
@@ -110,6 +116,17 @@ public class ConversionParams {
     return sdk;
   }
 
+  /**
+   * Run configurations will be created for these BCs
+   */
+  void addAppModuleAndBCName(final String moduleName, final String bcName) {
+    myAppModuleAndBCNames.add(Pair.create(moduleName, bcName));
+  }
+
+  public Collection<Pair<String, String>> getAppModuleAndBCNames() {
+    return myAppModuleAndBCNames;
+  }
+  
   public boolean isApplicableForDependency(String moduleName) {
     ModuleSettings moduleSettings = myContext.getModuleSettings(moduleName);
     if (moduleSettings == null) return false; // module is missing

@@ -88,6 +88,7 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
 
       if (buildConfiguration.getOutputType() == OutputType.Application) {
         buildConfiguration.setMainClass(oldConfiguration.MAIN_CLASS);
+        myParams.addAppModuleAndBCName(moduleSettings.getModuleName(), buildConfiguration.getName());
       }
       buildConfiguration.setOutputFileName(oldConfiguration.OUTPUT_FILE_NAME);
     }

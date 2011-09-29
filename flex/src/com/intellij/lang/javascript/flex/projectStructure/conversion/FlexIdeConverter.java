@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Collection;
@@ -42,6 +43,11 @@ class FlexIdeConverter extends ProjectConverter {
   @Override
   public ConversionProcessor<ModuleSettings> createModuleFileConverter() {
     return new FlexIdeModuleConverter(getParams());
+  }
+
+  @Nullable
+  public ConversionProcessor<WorkspaceSettings> createWorkspaceFileConverter() {
+    return isConversionNeeded() ? new FlexWorkspaceConverter(getParams()) : null;
   }
 
   public ConversionParams getParams() {
