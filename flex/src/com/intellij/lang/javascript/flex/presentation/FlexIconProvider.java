@@ -48,7 +48,8 @@ public class FlexIconProvider extends IconProvider {
     if (icon != null) {
       final PsiFile psiFile = element.getContainingFile();
       final VirtualFile vFile = psiFile == null ? null : psiFile.getVirtualFile();
-      if (vFile != null && CompilerManager.getInstance(element.getProject()).isExcludedFromCompilation(vFile)) {
+      CompilerManager compilerManager = CompilerManager.getInstance(element.getProject());
+      if (vFile != null && compilerManager != null && compilerManager.isExcludedFromCompilation(vFile)) {
         icon = new LayeredIcon(icon, PlatformIcons.EXCLUDED_FROM_COMPILE_ICON);
       }
     }
