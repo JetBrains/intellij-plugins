@@ -1,6 +1,4 @@
 package com.intellij.flex.uiDesigner.plugins.test {
-import com.intellij.flex.uiDesigner.StatesBarManager;
-
 import flash.errors.IllegalOperationError;
 
 import org.hamcrest.Matcher;
@@ -10,7 +8,6 @@ import org.hamcrest.collection.arrayWithSize;
 import org.hamcrest.core.allOf;
 import org.hamcrest.core.not;
 import org.hamcrest.core.throws;
-import org.hamcrest.object.HasPropertiesMatcher;
 import org.hamcrest.object.equalTo;
 import org.hamcrest.object.hasProperties;
 import org.hamcrest.object.hasProperty;
@@ -216,10 +213,6 @@ public class StatesTest extends BaseTestCase {
     
     setState(B);
     assertThat(container, [matcher, allOf(m3, [allOf({id: "backSibling", toolTip: "d", layout: {gap: 1}}), {text: "i"}]), allOf(m2, [ls(4)])]);
-  }
-  
-  private static function l(i:int):Object {
-    return new HasPropertiesMatcher({text: i.toString()});
   }
   
   private static function ls(size:int):Matcher {

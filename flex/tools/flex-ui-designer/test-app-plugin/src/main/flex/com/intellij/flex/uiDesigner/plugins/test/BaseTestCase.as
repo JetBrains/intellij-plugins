@@ -8,6 +8,8 @@ import flash.events.Event;
 import flash.events.IEventDispatcher;
 import flash.net.Socket;
 
+import org.hamcrest.object.HasPropertiesMatcher;
+
 [Abstract]
 internal class BaseTestCase implements TestCase {
   protected static const A:String = "A";
@@ -17,6 +19,10 @@ internal class BaseTestCase implements TestCase {
   protected var projectManager:ProjectManager;
 
   protected var stateManager:StatesBarManager;
+
+  protected static function l(i:Object):Object {
+    return new HasPropertiesMatcher({text: i.toString()});
+  }
 
   protected var _asyncSuccessHandler:Function;
   public function set asyncSuccessHandler(value:Function):void {

@@ -36,4 +36,11 @@
     <buttonMode>true</buttonMode>
     34
   </Label>
+
+  <!-- ignore illegal text between legal child -->
+  <VGroup>
+    <Label text="1"/>
+    ad
+    <Label text="2"/>
+  </VGroup>
 </Group>

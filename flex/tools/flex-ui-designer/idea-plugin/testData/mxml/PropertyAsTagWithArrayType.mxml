@@ -1,4 +1,3 @@
-<?xml version="1.0" ?>
 <Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark" width="400">
   <states>
     <State name="default"/>

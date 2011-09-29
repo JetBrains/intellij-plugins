@@ -157,7 +157,7 @@ public class MxmlWriter {
 
   private boolean processElements(final XmlTag parent, final @Nullable Context parentContext, final boolean allowIncludeInExludeFrom,
                                int dataPosition, final int referencePosition) {
-    boolean cssDeclarationSourceDefined = false;
+    boolean cssRulesetDefined = false;
     boolean staticChild = true;
 
     Context context = null;
@@ -230,7 +230,7 @@ public class MxmlWriter {
           // skip
         }
         else {
-          cssDeclarationSourceDefined = writeProperty(attribute, descriptor, context, cssDeclarationSourceDefined);
+          cssRulesetDefined = writeProperty(attribute, descriptor, context, cssRulesetDefined);
         }
       }
       else if (attributeDescriptor instanceof AnyXmlAttributeDescriptor) {
@@ -254,7 +254,7 @@ public class MxmlWriter {
     writer.resetPreallocatedId();
     injectedASWriter.lastMxmlObjectReference = null;
 
-    processTagChildren(parent, context, parentContext, true, null, cssDeclarationSourceDefined);
+    processTagChildren(parent, context, parentContext, true, null, cssRulesetDefined);
     // initializeReference must be after process all elements — after sub tag also, due to <RadioButton id="visa" label="Visa" 
     // width="150"><group>{cardtype} !!id (for binding target, RadioButton id="visa") allocation here!!</group></RadioButton>
     if (dataPosition != -1) {
@@ -268,20 +268,20 @@ public class MxmlWriter {
   }
 
   private boolean writeProperty(XmlAttribute attribute, AnnotationBackedDescriptor descriptor, Context context,
-                                boolean cssDeclarationSourceDefined) {
+                                boolean cssRulesetDefined) {
     int beforePosition = out.size();
-    final PropertyKind propertyKind = writeProperty(attribute, createValueProvider(attribute), descriptor, cssDeclarationSourceDefined,
+    final PropertyKind propertyKind = writeProperty(attribute, createValueProvider(attribute), descriptor, cssRulesetDefined,
                                                     context);
     if (propertyKind != PropertyKind.IGNORE) {
       if (propertyProcessor.isStyle()) {
-        cssDeclarationSourceDefined = true;
+        cssRulesetDefined = true;
       }
       if (propertyKind.isComplex()) {
         writer.getBlockOut().setPosition(beforePosition);
         addProblem(attribute, "error.unknown.attribute.value.type", descriptor.getType());
       }
     }
-    return cssDeclarationSourceDefined;
+    return cssRulesetDefined;
   }
 
   void processTagChildren(final XmlTag parent, final @NotNull Context context, final @Nullable Context parentContext,
@@ -290,6 +290,13 @@ public class MxmlWriter {
     int explicitContentOccured = -1;
     int validAndStaticChildrenCount = 0;
     final XmlTagChild[] children = parent.getValue().getChildren();
+
+    if (listKind != null) {
+      final XmlElementDescriptor parentDescriptor = parent.getDescriptor();
+      if (parentDescriptor instanceof ClassBackedElementDescriptor) {
+      }
+    }
+
     for (XmlTagChild child : children) {
       if (child instanceof XmlTag) {
         XmlTag tag = (XmlTag)child;
@@ -366,7 +373,12 @@ public class MxmlWriter {
       }
       else if (child instanceof XmlText && !MxmlUtil.containsOnlyWhitespace(child)) {
         if (explicitContentOccured == 1) {
-          LOG.warn("Default content already processed, skip " + child);
+          LOG.warn("Default content already processed, skip '" + child.getText().trim() + "'");
+          continue;
+        }
+
+        if (context.getChildrenType() != null && !context.getChildrenType().equals(JSCommonTypeNames.STRING_CLASS_NAME)) {
+          LOG.warn("Illegal child type, skip '" + child.getText().trim() + "'");
           continue;
         }
 
@@ -639,6 +651,7 @@ public class MxmlWriter {
 
       if (defaultDescriptor.getType().equals(JSCommonTypeNames.ARRAY_CLASS_NAME) && defaultDescriptor.getArrayType() != null) {
         final String elementType = defaultDescriptor.getArrayType();
+        context.setChildrenType(elementType);
         final boolean isString = elementType.equals(JSCommonTypeNames.STRING_CLASS_NAME);
         if (isString) {
           if (descriptor != null && !descriptor.getQualifiedName().equals(JSCommonTypeNames.STRING_CLASS_NAME)) {

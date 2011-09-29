@@ -13,6 +13,8 @@ abstract class Context {
   // state index => AddItems
   AddItems[] activeAddItems;
 
+  protected String childrenType;
+
   abstract Scope getParentScope();
 
   abstract void referenceInitialized();
@@ -47,5 +49,15 @@ abstract class Context {
 
   public void setBackSibling(StaticObjectContext backSibling) {
     this.backSibling = backSibling;
+  }
+
+  @Nullable
+  public String getChildrenType() {
+    return childrenType;
+  }
+
+  public void setChildrenType(String value) {
+    assert childrenType == null;
+    childrenType = value;
   }
 }

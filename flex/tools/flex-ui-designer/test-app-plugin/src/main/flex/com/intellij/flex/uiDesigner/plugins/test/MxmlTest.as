@@ -143,8 +143,8 @@ public class MxmlTest extends BaseTestCase {
       {text: "TextArea 1. TextArea 2. TextArea 3."},
       {text: " TextArea as Default Property 1. TextArea as Default Property 2. TextArea as Default Property 3. "},
       {text: " This is paragraph 1. This is paragraph 2. This is paragraph 3. \nThis is paragraph 2."},
-      {text: "BIG NEW"},
-      {text: "a      https://bugs.adobe.com/jira/browse/SDK-3983           "}
+      l("BIG NEW"),
+      l("a      https://bugs.adobe.com/jira/browse/SDK-3983           ")
     ]);
     
     assertThat(app.getElementAt(5).textFlow.getElementByID("span1").fontSize, strictlyEqualTo(16));
@@ -159,7 +159,8 @@ public class MxmlTest extends BaseTestCase {
       {text: "TRAMUU&"},
       {text: strictlyEqualTo("12"), buttonMode: strictlyEqualTo(true)},
       {text: strictlyEqualTo("\n    34\n    "), buttonMode: strictlyEqualTo(true)},
-      {text: strictlyEqualTo("\n    34\n  "), buttonMode: strictlyEqualTo(true)}
+      {text: strictlyEqualTo("\n    34\n  "), buttonMode: strictlyEqualTo(true)},
+      [l(1), l(2)]
     ]);
   }
   
@@ -176,7 +177,7 @@ public class MxmlTest extends BaseTestCase {
 
   public function RuntimeError():void {
     validateUI(); // force update for predictable asserts (updateDisplayList with expected error logs before our tests passed result)
-    assertThat(app, [{text: 1}, {} , {text: 2}]);
+    assertThat(app, [l(1), {} , l(2)]);
   }
 
   [Test(nullableDocument)]
