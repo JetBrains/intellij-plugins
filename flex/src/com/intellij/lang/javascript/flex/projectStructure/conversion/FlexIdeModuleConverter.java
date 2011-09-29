@@ -140,7 +140,15 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
       moduleSettings.getOrderEntries().removeAll(orderEntriesToRemove);
     }
     for (Element entryToAdd : orderEntriesToAdd) {
-      moduleSettings.getComponentElement(ModuleSettingsImpl.MODULE_ROOT_MANAGER_COMPONENT).addContent(entryToAdd);
+      moduleSettings.getComponentElement(ModuleSettings.MODULE_ROOT_MANAGER_COMPONENT).addContent(entryToAdd);
+    }
+
+    if (buildConfiguration.getTargetPlatform() == TargetPlatform.Web) {
+      final SdkEntry sdkEntry = buildConfiguration.getDependencies().getSdkEntry();
+      if (sdkEntry != null) {
+        final String sdkHome = PathMacroManager.getInstance(ApplicationManager.getApplication()).expandPath(sdkEntry.getHomePath());
+        buildConfiguration.getDependencies().setTargetPlayer(getTargetPlayer(oldConfiguration, sdkHome));
+      }
     }
 
     Element componentElement =
