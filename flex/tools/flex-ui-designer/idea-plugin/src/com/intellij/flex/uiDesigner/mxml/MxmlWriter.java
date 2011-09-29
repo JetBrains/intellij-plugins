@@ -291,12 +291,6 @@ public class MxmlWriter {
     int validAndStaticChildrenCount = 0;
     final XmlTagChild[] children = parent.getValue().getChildren();
 
-    if (listKind != null) {
-      final XmlElementDescriptor parentDescriptor = parent.getDescriptor();
-      if (parentDescriptor instanceof ClassBackedElementDescriptor) {
-      }
-    }
-
     for (XmlTagChild child : children) {
       if (child instanceof XmlTag) {
         XmlTag tag = (XmlTag)child;

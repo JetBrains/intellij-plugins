@@ -14,4 +14,10 @@
       <fx:String>2</fx:String>
     </ArrayList>
   </ComboBox>
+  <ButtonBar>
+    <dataProvider>
+      <fx:String>Button 1</fx:String>
+      <fx:String>Button 2</fx:String>
+    </dataProvider>
+  </ButtonBar>
 </VBox>

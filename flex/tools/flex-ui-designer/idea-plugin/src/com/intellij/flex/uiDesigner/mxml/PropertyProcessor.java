@@ -378,9 +378,9 @@ class PropertyProcessor implements ValueWriter {
       return VECTOR;
     }
     else if (type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME) || type.equals(JSCommonTypeNames.ANY_TYPE)) {
-      if (!writeUntypedPropertyValue(valueProvider, descriptor)) {
-        out.write(Amf3Types.OBJECT);
-        return isStyle ? COMPLEX_STYLE : COMPLEX;
+      final PropertyKind propertyKind = writeUntypedPropertyValue(out, valueProvider, descriptor, isStyle);
+      if (propertyKind != null) {
+        return propertyKind;
       }
     }
     else if (type.equals(FlexCommonTypeNames.IFACTORY)) {
@@ -495,43 +495,52 @@ class PropertyProcessor implements ValueWriter {
     out.putShort(validChildrenCount, lengthPosition);
   }
 
-  private boolean writeUntypedPropertyValue(XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor) {
+  private PropertyKind writeUntypedPropertyValue(PrimitiveAmfOutputStream out, XmlElementValueProvider valueProvider,
+                                                 AnnotationBackedDescriptor descriptor, boolean isStyle) {
     if (descriptor.isRichTextContent()) {
       writeString(valueProvider, descriptor);
-      return true;
+      return null;
     }
 
     if (valueProvider instanceof XmlAttributeValueProvider && isInlineArray(valueProvider.getTrimmed())) {
       writeInlineArray(valueProvider);
-      return true;
+      return null;
     }
 
-    // IDEA-73099
+    // IDEA-73099, IDEA-73960
     if (valueProvider instanceof XmlTagValueProvider) {
-      if (((XmlTagValueProvider)valueProvider).getTag().getSubTags().length > 0) {
-        return false;
+      final int length = ((XmlTagValueProvider)valueProvider).getTag().getSubTags().length;
+      if (length > 0) {
+        if (length == 1) {
+          out.write(Amf3Types.OBJECT);
+          return isStyle ? COMPLEX_STYLE : COMPLEX;
+        }
+        else {
+          out.write(Amf3Types.ARRAY);
+          return ARRAY;
+        }
       }
     }
 
     final CharSequence charSequence = writeIfEmpty(valueProvider);
     if (charSequence == null) {
-      return true;
+      return null;
     }
 
     final String value = charSequence.toString();
     try {
-      writer.getOut().writeAmfInt(Integer.parseInt(value));
+      out.writeAmfInt(Integer.parseInt(value));
     }
     catch (NumberFormatException e) {
       try {
-        writer.getOut().writeAmfDouble(Double.parseDouble(value));
+        out.writeAmfDouble(Double.parseDouble(value));
       }
       catch (NumberFormatException ignored) {
         writer.string(charSequence);
       }
     }
 
-    return true;
+    return null;
   }
 
   private void writeClassFactory(XmlElementValueProvider valueProvider) throws InvalidPropertyException {

@@ -434,6 +434,8 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     
     // early set, before activated()
     FlexGlobals.topLevelApplication = _document;
+    var topLevelSystemManagerProxy:TopLevelSystemManagerProxy = TopLevelSystemManagerProxy(SystemManagerGlobals.topLevelSystemManagers[0]);
+    topLevelSystemManagerProxy.activeSystemManager = this;
 
     if (object is UIComponent) {
       UIComponent(object).focusManager = _focusManager;
@@ -456,6 +458,9 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
       _document = null;
       if (FlexGlobals.topLevelApplication == _document) {
         FlexGlobals.topLevelApplication = null;
+      }
+      if (topLevelSystemManagerProxy.activeSystemManager == this) {
+        topLevelSystemManagerProxy.activeSystemManager = null;
       }
 
       throw e;
