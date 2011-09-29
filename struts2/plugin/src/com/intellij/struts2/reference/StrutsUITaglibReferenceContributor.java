@@ -107,6 +107,10 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
 
     registerBoolean("required", registrar, TAGLIB_UI_FORM_TAGS);
 
+    registerTags(ID_REFERENCE_PROVIDER,
+                 "id", registrar,
+                 TAGLIB_UI_FORM_INPUT_TAGS);
+
     registerTags(new StaticStringValuesReferenceProvider(false, "left", "right"),
                  "requiredposition", registrar,
                  TAGLIB_UI_FORM_TAGS);

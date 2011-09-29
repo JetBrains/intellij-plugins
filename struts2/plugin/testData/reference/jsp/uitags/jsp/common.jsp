@@ -2,6 +2,11 @@
 
 <%-- common attributes ============== --%>
 
+<%-- "id" duplicates --%>
+<s:textfield id="id22"/>
+<s:textfield id=<error descr="Duplicate id reference">"id1"</error>/>
+<s:textfield id=<error descr="Duplicate id reference">"id1"</error>/>
+
 <%-- "disabled" --%>
 <s:textfield disabled="true"/>
 <s:textfield disabled="false"/>
