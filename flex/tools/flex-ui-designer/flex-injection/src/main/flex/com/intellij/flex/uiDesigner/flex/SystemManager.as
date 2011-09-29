@@ -416,9 +416,9 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     }
     
     _document = object;
-    // We can not leave empty FlexGlobals.topLevelApplication, as example, VideoPlayer uses FlexGlobals.topLevelApplication as parent when opening fullscreen
-    // but we can not set it in SystemManager, because it wants UIComponent (for style)
-    FlexGlobals.topLevelApplication = object;
+    
+    // early set, before activated()
+    FlexGlobals.topLevelApplication = _document;
 
     if (object is UIComponent) {
       UIComponent(object).focusManager = _focusManager;
@@ -430,7 +430,21 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
       _explicitDocumentSize.height = documentUI.explicitHeight;
     }
 
-    addRawChildAt(object, 0);
+    try {
+      addRawChildAt(object, 0);
+    }
+    catch (e:Error) {
+      if (super.contains(_document)) {
+        removeRawChild(_document);
+      }
+
+      _document = null;
+      if (FlexGlobals.topLevelApplication == _document) {
+        FlexGlobals.topLevelApplication = null;
+      }
+
+      throw e;
+    }
   }
 
   public function added():void {
@@ -439,10 +453,16 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
 
   public function activated():void {
     mainFocusManager.activeDocumentFocusManager = _focusManager;
+    
+    FlexGlobals.topLevelApplication = _document;
   }
 
   public function deactivated():void {
     mainFocusManager.activeDocumentFocusManager = null;
+
+    // We can not leave empty FlexGlobals.topLevelApplication, as example, VideoPlayer uses FlexGlobals.topLevelApplication as parent when opening fullscreen
+    // but we can not set it as SystemManager, because it wants UIComponent (for style)
+    FlexGlobals.topLevelApplication = null;
   }
 
   private const _explicitDocumentSize:Rectangle = new Rectangle();

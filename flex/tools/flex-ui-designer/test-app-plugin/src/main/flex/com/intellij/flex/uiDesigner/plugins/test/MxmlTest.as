@@ -10,7 +10,6 @@ import org.hamcrest.core.not;
 import org.hamcrest.object.equalTo;
 import org.hamcrest.object.instanceOf;
 import org.hamcrest.object.strictlyEqualTo;
-import org.hamcrest.text.emptyString;
 
 public class MxmlTest extends BaseTestCase {
   public function MxmlTest() {
@@ -50,6 +49,7 @@ public class MxmlTest extends BaseTestCase {
       ComplexContentAsSubTagsForObjectTypedProperty();
       IDEA_73806();
       IDEA_73613();
+      FxObject();
     }
   }
   
@@ -261,6 +261,20 @@ public class MxmlTest extends BaseTestCase {
     assertThat(app, [{color: 0}]);
     setState(B);
     assertThat(app, [{color: 0x008000}]);
+  }
+
+  public function FxObject():void {
+    validateUI(); // force state specific set
+
+    assertThat(app, [
+      {dataProvider: {source: [
+        {Artist: "AA", Price: 0.0, Album: "First"}, {Artist: "2423", Price: 0.0, Album: "Second"}
+      ]}},
+      {dataProvider: {source: [
+        {Artist: "AA", Price: 0.0, Album: "First"}, {Artist: "2423", Price: 0.0, Album: "Second"}
+      ]}},
+      {}
+    ]);
   }
 }
 }

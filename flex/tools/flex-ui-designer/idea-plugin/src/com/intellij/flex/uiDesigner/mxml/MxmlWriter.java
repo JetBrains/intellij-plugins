@@ -234,7 +234,7 @@ public class MxmlWriter {
         }
       }
       else if (attributeDescriptor instanceof AnyXmlAttributeDescriptor) {
-        writeProperty(attribute, new AnyXmlAttributeDescriptorWrapper((AnyXmlAttributeDescriptor)attributeDescriptor), context, false);
+        writeProperty(attribute, new AnyXmlAttributeDescriptorWrapper(attributeDescriptor), context, false);
       }
     }
 
@@ -270,7 +270,8 @@ public class MxmlWriter {
   private boolean writeProperty(XmlAttribute attribute, AnnotationBackedDescriptor descriptor, Context context,
                                 boolean cssDeclarationSourceDefined) {
     int beforePosition = out.size();
-    final PropertyKind propertyKind = writeProperty(attribute, createValueProvider(attribute), descriptor, cssDeclarationSourceDefined, context);
+    final PropertyKind propertyKind = writeProperty(attribute, createValueProvider(attribute), descriptor, cssDeclarationSourceDefined,
+                                                    context);
     if (propertyKind != PropertyKind.IGNORE) {
       if (propertyProcessor.isStyle()) {
         cssDeclarationSourceDefined = true;
@@ -297,7 +298,12 @@ public class MxmlWriter {
         if (descriptor instanceof ClassBackedElementDescriptor) {
           final ClassBackedElementDescriptor classBackedDescriptor = (ClassBackedElementDescriptor)descriptor;
           if (classBackedDescriptor.isPredefined()) {
-            if (descriptor.getQualifiedName().equals(FlexPredefinedTagNames.DECLARATIONS)) {
+            if (parent.getNamespace().equals(JavaScriptSupportLoader.MXML_URI3) &&
+                parent.getLocalName().equals(JSCommonTypeNames.OBJECT_CLASS_NAME)) {
+              // IDEA-73482
+              processPropertyTag(tag, new AnyXmlAttributeDescriptorWrapper(descriptor), context, false);
+            }
+            else if (descriptor.getQualifiedName().equals(FlexPredefinedTagNames.DECLARATIONS)) {
               injectedASWriter.readDeclarations(this, tag);
             }
 
@@ -315,7 +321,8 @@ public class MxmlWriter {
 
           if (propertiesExpected && explicitContentOccured == -1) {
             explicitContentOccured = 0;
-            final PropertyKind defaultPropertyKind = processDefaultProperty(parent, createValueProvider(tag), classBackedDescriptor, children.length, context, cssRulesetDefined);
+            final PropertyKind defaultPropertyKind = processDefaultProperty(parent, createValueProvider(tag), classBackedDescriptor,
+                                                                            children.length, context, cssRulesetDefined);
             if (defaultPropertyKind == null) {
               continue;
             }
@@ -352,23 +359,8 @@ public class MxmlWriter {
               stateWriter.readDeclaration(tag);
             }
           }
-          else if (hasStates && stateWriter.checkStateSpecificPropertyValue(this, propertyProcessor, tag, createValueProvider(tag),
-                                                                            annotationBackedDescriptor, context)) {
-            // skip
-          }
           else {
-            final PropertyKind propertyKind = writeProperty(tag, createValueProvider(tag), annotationBackedDescriptor, cssRulesetDefined,
-                                              context);
-            if (propertyKind != PropertyKind.IGNORE) {
-              if (propertyProcessor.isStyle()) {
-                cssRulesetDefined = true;
-              }
-
-              if (propertyKind.isComplex()) {
-                assert context != null;
-                processPropertyTagValue(tag, context, propertyKind);
-              }
-            }
+            cssRulesetDefined = processPropertyTag(tag, annotationBackedDescriptor, context, cssRulesetDefined);
           }
         }
       }
@@ -429,6 +421,28 @@ public class MxmlWriter {
     endList(listKind, validAndStaticChildrenCount, lengthPosition);
   }
 
+  private boolean processPropertyTag(XmlTag tag, AnnotationBackedDescriptor annotationBackedDescriptor, @NotNull Context context,
+                                  boolean cssRulesetDefined) {
+    if (hasStates && stateWriter.checkStateSpecificPropertyValue(this, propertyProcessor, tag, createValueProvider(tag),
+                                                                 annotationBackedDescriptor, context)) {
+      return cssRulesetDefined;
+    }
+
+    final PropertyKind propertyKind = writeProperty(tag, createValueProvider(tag), annotationBackedDescriptor, cssRulesetDefined,
+                                                    context);
+    if (propertyKind != PropertyKind.IGNORE) {
+      if (propertyProcessor.isStyle()) {
+        cssRulesetDefined = true;
+      }
+
+      if (propertyKind.isComplex()) {
+        processPropertyTagValue(tag, context, propertyKind);
+      }
+    }
+
+    return cssRulesetDefined;
+  }
+
   private void endList(@Nullable PropertyKind listKind, int validChildrenCount, int lengthPosition) {
     if (listKind != null) {
       assert validChildrenCount < 65535;
@@ -437,14 +451,13 @@ public class MxmlWriter {
   }
 
   // process tag value, opposite to processTagChildren expects only ClassBackedSubTag or XmlText (attributes already processed or isn't expected)
-  void processPropertyTagValue(final XmlTag parent, final @NotNull Context parentContext, final PropertyKind propertyKind) {
-    processTagChildren(parent, parentContext, null, false, propertyKind.isList() ? propertyKind : null, false);
+  void processPropertyTagValue(final XmlTag parent, final @NotNull Context parentContext, @Nullable final PropertyKind propertyKind) {
+    processTagChildren(parent, parentContext, null, false, propertyKind != null && propertyKind.isList() ? propertyKind : null, false);
   }
 
   private boolean processClassBackedSubTag(final XmlTag tag, final ClassBackedElementDescriptor descriptor, @Nullable final Context parentContext,
                                            final boolean isListItem) {
     final boolean allowIncludeInExludeFrom = hasStates && isListItem && parentContext != null;
-
     if (JSCommonTypeNames.ARRAY_CLASS_NAME.equals(descriptor.getQualifiedName())) {
       // see valArr in EmbedSwfAndImageFromCss
       out.write(AmfExtendedTypes.MXML_ARRAY);

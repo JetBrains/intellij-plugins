@@ -29,8 +29,8 @@ public final class MxmlUtil {
   }
 
   static boolean isComponentLanguageTag(XmlTag tag) {
-      return tag.getNamespace().equals(JavaScriptSupportLoader.MXML_URI3) && tag.getLocalName().equals("Component");
-    }
+    return tag.getNamespace().equals(JavaScriptSupportLoader.MXML_URI3) && tag.getLocalName().equals("Component");
+  }
 
   static boolean containsOnlyWhitespace(XmlTagChild child) {
     PsiElement firstChild = child.getFirstChild();

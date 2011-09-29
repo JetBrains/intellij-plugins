@@ -1,0 +1,46 @@
+<VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+  <states>
+    <State name="a"/>
+    <State name="b"/>
+  </states>
+
+  <fx:Script><![CDATA[
+    import mx.events.CollectionEvent;
+    import mx.events.CollectionEventKind;
+    ]]></fx:Script>
+
+  <DataGrid id="destgrid" width="100%">
+    <ArrayList>
+      <fx:Object>
+        <fx:Artist>AA</fx:Artist>
+        <fx:Price>0.0</fx:Price>
+        <fx:Album>First</fx:Album>
+      </fx:Object>
+      <fx:Object>
+        <fx:Artist>2423</fx:Artist>
+        <fx:Price>0.0</fx:Price>
+        <fx:Album>Second</fx:Album>
+      </fx:Object>
+    </ArrayList>
+  </DataGrid>
+<!--k-->
+  
+  <DataGrid id="dehstgrid" width="100%">
+      <ArrayList>
+        <fx:Object>
+          <fx:Artist.a>AA</fx:Artist.a>
+          <fx:Artist.b>wegewergerg</fx:Artist.b>
+          <fx:Price>0.0</fx:Price>
+          <fx:Album>First</fx:Album>
+        </fx:Object>
+        <fx:Object>
+          <fx:Artist.a>2423</fx:Artist.a>
+          <fx:Artist.b>324234234</fx:Artist.b>
+          <fx:Price>0.0</fx:Price>
+          <fx:Album>Second</fx:Album>
+        </fx:Object>
+      </ArrayList>
+    </DataGrid>
+
+  <Button label="Change state" click="currentState = 'b'; destgrid.dataProvider.dispatchEvent(new CollectionEvent(CollectionEvent.COLLECTION_CHANGE, false, CollectionEventKind.REFRESH))"/>
+</VGroup>

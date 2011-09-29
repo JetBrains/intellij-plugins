@@ -3,15 +3,16 @@ package com.intellij.flex.uiDesigner.mxml;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.meta.PsiMetaData;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformIcons;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlElementsGroup;
 import com.intellij.xml.XmlNSDescriptor;
-import com.intellij.xml.impl.schema.AnyXmlAttributeDescriptor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,9 +20,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 class AnyXmlAttributeDescriptorWrapper implements AnnotationBackedDescriptor {
-  private final AnyXmlAttributeDescriptor descriptor;
+  private final PsiMetaData descriptor;
 
-  public AnyXmlAttributeDescriptorWrapper(AnyXmlAttributeDescriptor descriptor) {
+  public AnyXmlAttributeDescriptorWrapper(PsiMetaData descriptor) {
     this.descriptor = descriptor;
   }
 
@@ -92,12 +93,12 @@ class AnyXmlAttributeDescriptorWrapper implements AnnotationBackedDescriptor {
 
   @Override
   public boolean isRequired() {
-    return descriptor.isRequired();
+    return false;
   }
 
   @Override
   public boolean isFixed() {
-    return descriptor.isFixed();
+    return false;
   }
 
   @Override
@@ -117,27 +118,27 @@ class AnyXmlAttributeDescriptorWrapper implements AnnotationBackedDescriptor {
 
   @Override
   public boolean isEnumerated() {
-    return descriptor.isEnumerated();
+    return false;
   }
 
   @Override
   public String[] getEnumeratedValues() {
-    return descriptor.getEnumeratedValues();
+    return ArrayUtil.EMPTY_STRING_ARRAY;
   }
 
   @Override
   public String validateValue(XmlElement xmlElement, String s) {
-    return descriptor.validateValue(xmlElement, s);
+    return null;
   }
 
   @Override
   public String getQualifiedName() {
-    return descriptor.getQualifiedName();
+    return descriptor.getName();
   }
 
   @Override
   public String getDefaultName() {
-    return descriptor.getDefaultName();
+    return descriptor.getName();
   }
 
   @Override
