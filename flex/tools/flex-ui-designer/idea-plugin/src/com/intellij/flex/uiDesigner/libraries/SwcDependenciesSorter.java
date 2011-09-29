@@ -46,10 +46,19 @@ public class SwcDependenciesSorter {
   private static final Map<String,Set<CharSequence>> badClasses = new THashMap<String, Set<CharSequence>>();
 
   public static final Set<CharSequence> OVERLOADED_AIR_SPARK_CLASSES = new THashSet<CharSequence>(2, AbcFilter.HASHING_STRATEGY);
+  public static final Set<CharSequence> OVERLOADED_MX_CLASSES = new THashSet<CharSequence>(6, AbcFilter.HASHING_STRATEGY);
 
   static {
     OVERLOADED_AIR_SPARK_CLASSES.add("spark.components:Window");
     OVERLOADED_AIR_SPARK_CLASSES.add("spark.components:WindowedApplication");
+
+    OVERLOADED_MX_CLASSES.add("mx.managers:LayoutManager");
+    OVERLOADED_MX_CLASSES.add("mx.managers:CursorManager");
+    OVERLOADED_MX_CLASSES.add("mx.managers:CursorManagerImpl");
+    OVERLOADED_MX_CLASSES.add("mx.resources:ResourceManager");
+    OVERLOADED_MX_CLASSES.add("mx.resources:ResourceManagerImpl");
+    OVERLOADED_MX_CLASSES.add("mx.styles:StyleManager");
+    OVERLOADED_MX_CLASSES.add("mx.styles:StyleManagerImpl");
 
     THashSet<CharSequence> set = new THashSet<CharSequence>(2, AbcFilter.HASHING_STRATEGY);
     set.add("AIRSparkClasses");
@@ -290,11 +299,7 @@ public class SwcDependenciesSorter {
       definitions.add("mx.managers.systemClasses:MarshallingSupport");
       definitions.add("mx.managers:SystemManagerProxy");
 
-      definitions.add("mx.styles:StyleManager");
-      definitions.add(FlexSdkAbcInjector.LAYOUT_MANAGER);
-      definitions.add(FlexSdkAbcInjector.RESOURCE_MANAGER);
-      definitions.add(FlexSdkAbcInjector.RESOURCE_MANAGER + "Impl");
-      definitions.add("mx.styles:StyleManagerImpl");
+      definitions.addAll(OVERLOADED_MX_CLASSES);
 
       new FlexSdkAbcInjector(flexSdkVersion, injectionUrlConnection).filter(swfFile, modifiedSwf,
                              new AbcNameFilterByNameSetAndStartsWith(definitions, new String[]{"mx.managers.marshalClasses:"}));

@@ -26,9 +26,7 @@ public class ComplementSwfBuilder {
                                  public boolean accept(CharSequence name) {
                                    return StringUtil.startsWith(name, "com.intellij.flex.uiDesigner.flex:SpriteLoaderAsset") ||
                                           StringUtil.startsWith(name, FlexSdkAbcInjector.STYLE_PROTO_CHAIN) ||
-                                          StringUtil.startsWith(name, "mx.styles:StyleManager") ||
-                                          StringUtil.startsWith(name, FlexSdkAbcInjector.LAYOUT_MANAGER) ||
-                                          StringUtil.startsWith(name, FlexSdkAbcInjector.RESOURCE_MANAGER) ||
+                                          SwcDependenciesSorter.OVERLOADED_MX_CLASSES.contains(name) ||
                                           (super.accept(name) && !sparkInclusionNameFilter.accept(name) &&
                                            !air4InclusionNameFilter.accept(name));
                                  }
@@ -44,7 +42,7 @@ public class ComplementSwfBuilder {
   public static File createAbcFile(String folder, String flexVersion) {
     return new File(folder, generateInjectionName(flexVersion));
   }
-  
+
   public static String generateInjectionName(String flexSdkVersion) {
     return "flex-injection-" + flexSdkVersion + ".abc";
   }

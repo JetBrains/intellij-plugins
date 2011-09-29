@@ -33,6 +33,7 @@ import mx.core.mx_internal;
 import mx.effects.EffectManager;
 import mx.events.DynamicEvent;
 import mx.events.FlexEvent;
+import mx.managers.CursorManager;
 import mx.managers.DragManagerImpl;
 import mx.managers.IActiveWindowManager;
 import mx.managers.IFocusManager;
@@ -112,6 +113,7 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     Singleton.registerClass(TOOL_TIP_MANAGER_FQN, ToolTipManager);
     //Singleton.registerClass("mx.styles::IStyleManager2", RootStyleManager);
     Singleton.registerClass("mx.resources::IResourceManager", ResourceManager);
+    Singleton.registerClass("mx.managers::ICursorManager", CursorManager);
     Singleton.registerClass("mx.managers::IDragManager", DragManagerImpl);
     Singleton.registerClass("mx.managers::IHistoryManager", HistoryManagerImpl);
     Singleton.registerClass("mx.managers::IBrowserManager", BrowserManagerImpl);

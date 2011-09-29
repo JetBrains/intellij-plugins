@@ -22,11 +22,11 @@ public class RootStyleManager extends AbstractStyleManager implements IStyleMana
     Singleton.registerClass("mx.styles::IStyleManager2", RootStyleManager);
   }
   
-  private static var _instance:AbstractStyleManager;
+  private static var _instance:RootStyleManager;
   /**
    * impl for mx.core.Singleton
    */
-  public static function getInstance():AbstractStyleManager {
+  public static function getInstance():RootStyleManager {
     return _instance;
   }
   
