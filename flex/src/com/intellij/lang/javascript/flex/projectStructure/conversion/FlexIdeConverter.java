@@ -38,7 +38,7 @@ class FlexIdeConverter extends ProjectConverter {
 
   public ConversionParams getParams() {
     if (myParams == null) {
-      myParams = new ConversionParams();
+      myParams = new ConversionParams(myContext);
     }
     return myParams;
   }

@@ -57,11 +57,13 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
   }
 
   static boolean isConversionNeededStatic(ModuleSettings moduleSettings) {
-    if (!FlexModuleType.MODULE_TYPE_ID.equals(moduleSettings.getModuleType())) {
-      return false;
-    }
+    if (!isFlexModule(moduleSettings)) return false;
 
     return moduleSettings.getComponentElement(FlexBuildConfigurationManagerImpl.COMPONENT_NAME) == null;
+  }
+
+  static boolean isFlexModule(ModuleSettings moduleSettings) {
+    return FlexModuleType.MODULE_TYPE_ID.equals(moduleSettings.getModuleType());
   }
 
   @Override
@@ -121,8 +123,13 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
       }
       else if (ModuleOrderEntryImpl.ENTRY_TYPE.equals(orderEntryType)) {
         String moduleName = orderEntry.getAttributeValue(ModuleOrderEntryImpl.MODULE_NAME_ATTR);
-        ModifiableBuildConfigurationEntry bcEntry = ConversionHelper.createBuildConfigurationEntry(moduleName, moduleName);
-        buildConfiguration.getDependencies().getModifiableEntries().add(bcEntry);
+        if (myParams.isApplicableForDependency(moduleName)) {
+          ModifiableBuildConfigurationEntry bcEntry = ConversionHelper.createBuildConfigurationEntry(moduleName, moduleName);
+          buildConfiguration.getDependencies().getModifiableEntries().add(bcEntry);
+        }
+        else {
+          orderEntriesToRemove.add(orderEntry);
+        }
       }
       else if (ModuleJdkOrderEntryImpl.ENTRY_TYPE.equals(orderEntryType)) {
         String sdkName = orderEntry.getAttributeValue(ModuleJdkOrderEntryImpl.JDK_NAME_ATTR);

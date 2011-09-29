@@ -1,7 +1,10 @@
 package com.intellij.lang.javascript.flex.projectStructure.conversion;
 
 import com.intellij.conversion.CannotConvertException;
+import com.intellij.conversion.ConversionContext;
+import com.intellij.conversion.ModuleSettings;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
+import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
@@ -17,7 +20,8 @@ import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.LibraryTable;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesModifiableModel;
+import com.intellij.util.xmlb.XmlSerializer;
+import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,8 +34,10 @@ public class ConversionParams {
 
   private final FlexProjectConfigurationEditor myEditor;
   private final LibraryTable.ModifiableModel myGlobalLibrariesModifiableModel;
+  private final ConversionContext myContext;
 
-  public ConversionParams() {
+  public ConversionParams(ConversionContext context) {
+    myContext = context;
     myGlobalLibrariesModifiableModel = ApplicationLibraryTable.getApplicationTable().getModifiableModel();
     myEditor = new FlexProjectConfigurationEditor(null, new FlexProjectConfigurationEditor.ProjectModifiableModelProvider() {
       @Override
@@ -102,5 +108,15 @@ public class ConversionParams {
     FlexSdk sdk = myEditor.findOrCreateSdk(homePath);
     myEditor.setSdkLibraryUsed(new Object(), (LibraryEx)sdk.getLibrary());
     return sdk;
+  }
+
+  public boolean isApplicableForDependency(String moduleName) {
+    ModuleSettings moduleSettings = myContext.getModuleSettings(moduleName);
+    if (moduleSettings == null) return false; // module is missing
+    if (!FlexIdeModuleConverter.isFlexModule(moduleSettings)) return false; // non-Flex module
+    Element flexBuildConfigurationElement = moduleSettings.getComponentElement(FlexBuildConfiguration.COMPONENT_NAME);
+    if (flexBuildConfigurationElement == null) return false;
+    FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(flexBuildConfigurationElement, FlexBuildConfiguration.class);
+    return oldConfiguration != null && FlexBuildConfiguration.LIBRARY.equals(oldConfiguration.OUTPUT_TYPE);
   }
 }
