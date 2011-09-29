@@ -5,12 +5,15 @@ import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
 public class FlexIdeRunConfigurationType implements ConfigurationType {
+
+  private static final Icon ICON = IconLoader.getIcon("flex_ide_run_configuration.png");
 
   private final ConfigurationFactory myFactory;
 
@@ -31,8 +34,7 @@ public class FlexIdeRunConfigurationType implements ConfigurationType {
   }
 
   public Icon getIcon() {
-    //todo how to show different icons for different run configurations? (based of target platform of BC)
-    return PlatformIcons.CUSTOM_FILE_ICON;
+    return ICON;
   }
 
   public ConfigurationFactory[] getConfigurationFactories() {
