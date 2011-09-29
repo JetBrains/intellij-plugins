@@ -52,7 +52,7 @@ public class FlexIdeProjectSettingsService extends ProjectSettingsService {
   }
 
   public void openModuleSettings(final Module module) {
-    ModulesConfigurator.showDialog(myProject, module.getName(), null, false);
+    ModulesConfigurator.showDialog(myProject, module.getName(), null);
   }
 
   @Override
@@ -61,7 +61,7 @@ public class FlexIdeProjectSettingsService extends ProjectSettingsService {
   }
 
   public void openModuleLibrarySettings(final Module module) {
-    ModulesConfigurator.showDialog(myProject, module.getName(), ClasspathEditor.NAME, false);
+    ModulesConfigurator.showDialog(myProject, module.getName(), ClasspathEditor.NAME);
   }
 
   @Override
@@ -70,7 +70,7 @@ public class FlexIdeProjectSettingsService extends ProjectSettingsService {
   }
 
   public void openContentEntriesSettings(final Module module) {
-    ModulesConfigurator.showDialog(myProject, module.getName(), ContentEntriesEditor.NAME, false);
+    ModulesConfigurator.showDialog(myProject, module.getName(), ContentEntriesEditor.NAME);
   }
 
   @Override
@@ -122,8 +122,8 @@ public class FlexIdeProjectSettingsService extends ProjectSettingsService {
   }
 
   @Override
-  public void showModuleConfigurationDialog(String moduleToSelect, String editorNameToSelect, boolean showModuleWizard) {
-    ModulesConfigurator.showDialog(myProject, moduleToSelect, editorNameToSelect, showModuleWizard);
+  public void showModuleConfigurationDialog(String moduleToSelect, String editorNameToSelect) {
+    ModulesConfigurator.showDialog(myProject, moduleToSelect, editorNameToSelect);
   }
 
   @Override
