@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.flex.projectStructure.conversion;
 import com.intellij.conversion.CannotConvertException;
 import com.intellij.conversion.ConversionProcessor;
 import com.intellij.conversion.ModuleSettings;
-import com.intellij.conversion.impl.ModuleSettingsImpl;
 import com.intellij.ide.impl.convert.JDomConvertingUtil;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.TargetPlayerUtils;
@@ -19,11 +18,13 @@ import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PathMacroManager;
+import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.roots.impl.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters;
@@ -87,8 +88,8 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
         buildConfiguration.setMainClass(oldConfiguration.MAIN_CLASS);
       }
       buildConfiguration.setOutputFileName(oldConfiguration.OUTPUT_FILE_NAME);
-      //buildConfiguration.setOutputFolder(VfsUtil.urlToPath(CompilerModuleExtension));
     }
+    buildConfiguration.setOutputFolder(getOutputFolder(moduleSettings));
 
     Collection<Element> orderEntriesToRemove = new ArrayList<Element>();
     Collection<Element> orderEntriesToAdd = new ArrayList<Element>();
@@ -99,6 +100,7 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
         Element library = orderEntry.getChild(LibraryImpl.ELEMENT);
         library.setAttribute(LibraryImpl.LIBRARY_TYPE_ATTR, FlexLibraryType.FLEX_LIBRARY.getKindId());
         Element libraryProperties = new Element(LibraryImpl.PROPERTIES_ELEMENT);
+        //noinspection unchecked
         library.getChildren().add(0, libraryProperties);
         String libraryId = UUID.randomUUID().toString();
         XmlSerializer.serializeInto(new FlexLibraryProperties(libraryId), libraryProperties);
@@ -139,8 +141,11 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
     if (!orderEntriesToRemove.isEmpty()) {
       moduleSettings.getOrderEntries().removeAll(orderEntriesToRemove);
     }
-    for (Element entryToAdd : orderEntriesToAdd) {
-      moduleSettings.getComponentElement(ModuleSettings.MODULE_ROOT_MANAGER_COMPONENT).addContent(entryToAdd);
+    final Element rootManagerElement = moduleSettings.getComponentElement(ModuleSettings.MODULE_ROOT_MANAGER_COMPONENT);
+    if (rootManagerElement != null) {
+      for (Element entryToAdd : orderEntriesToAdd) {
+        rootManagerElement.addContent(entryToAdd);
+      }
     }
 
     if (buildConfiguration.getTargetPlatform() == TargetPlatform.Web) {
@@ -155,6 +160,25 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
       JDomConvertingUtil.findOrCreateComponentElement(moduleSettings.getRootElement(), FlexBuildConfigurationManagerImpl.COMPONENT_NAME);
     Element e = XmlSerializer.serialize(configurationManager.getState(), new SkipDefaultValuesSerializationFilters());
     addContent(e, componentElement);
+  }
+
+  private static String getOutputFolder(final ModuleSettings moduleSettings) {
+    final Element rootManagerElement = moduleSettings.getComponentElement(ModuleSettings.MODULE_ROOT_MANAGER_COMPONENT);
+    if (rootManagerElement != null) {
+      final boolean inheritOutput = "true".equals(rootManagerElement.getAttributeValue("inherit-compiler-output"));
+      if (!inheritOutput) {
+        final Element outputElement = rootManagerElement.getChild("output");
+        final String outputUrl = outputElement == null ? null : outputElement.getAttributeValue("url");
+        if (outputUrl != null) {
+          return VfsUtil.urlToPath(moduleSettings.expandPath(outputUrl));
+        }
+      }
+    }
+
+    final String projectOutputUrl = moduleSettings.getProjectOutputUrl();
+    return projectOutputUrl == null ? ""
+                                    : VfsUtil.urlToPath(moduleSettings.expandPath(projectOutputUrl)) +
+                                      "/" + CompilerModuleExtension.PRODUCTION + "/" + moduleSettings.getModuleName();
   }
 
   private static String getTargetPlayer(final FlexBuildConfiguration oldConfiguration, final String sdkHome) {
