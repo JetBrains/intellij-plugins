@@ -65,7 +65,6 @@
     <testSrcLocator implementation="com.intellij.lang.javascript.flex.flexunit.FlexQualifiedNameLocationProvider"/>
     <psi.referenceContributor implementation="com.intellij.javascript.flex.FlexReferenceContributor"/>
     <lookup.charFilter implementation="com.intellij.lang.javascript.flex.ActionScriptCharFilter"/>
-    <inspectionToolProvider implementation="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitInspectionToolProvider"/>
     <codeInsight.overrideMethod language="JavaScript"
                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptOverrideMethodsHandler"/>
     <codeInsight.overrideMethod language="XML"
@@ -121,6 +120,55 @@
     <testCreator language="XML" implementationClass="com.intellij.lang.javascript.flex.flexunit.FlexUnitTestCreator"/>
     <codeStyleSettingsProvider implementation="com.intellij.lang.javascript.formatter.ActionScriptCodeStyleSettingsProvider"/>
     <colorSettingsPage implementation="com.intellij.lang.javascript.highlighting.ActionScriptColorsAndFontsPage"/>
+
+    <localInspection shortName="FlexUnitClassInProductSourceInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+                     key="flexunit.inspection.testclassinproductsource.displayname" groupKey="flexunit.inspections.group"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitClassInProductSourceInspection"/>
+    <localInspection shortName="FlexUnitClassVisibilityInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+                     key="flexunit.inspection.testclassvisibility.displayname" groupKey="flexunit.inspections.group" enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitClassVisibilityInspection"/>
+    <localInspection shortName="FlexUnitMethodVisibilityInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+                     key="flexunit.inspection.testmethodvisibility.displayname" groupKey="flexunit.inspections.group"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitMethodVisibilityInspection"/>
+    <localInspection shortName="FlexUnitMethodIsStaticInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+                     key="flexunit.inspection.testmethodisstatic.displayname" groupKey="flexunit.inspections.group" enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitMethodIsStaticInspection"/>
+    <localInspection shortName="FlexUnitMethodIsPropertyInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+                     key="flexunit.inspection.testmethodisproperty.displayname" groupKey="flexunit.inspections.group"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitMethodIsPropertyInspection"/>
+    <localInspection shortName="FlexUnitMethodHasParametersInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+                     key="flexunit.inspection.testmethodhasparameters.displayname" groupKey="flexunit.inspections.group"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitMethodHasParametersInspection"/>
+    <localInspection shortName="FlexUnitMethodReturnTypeInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+                     key="flexunit.inspection.testmethodreturntype.displayname" groupKey="flexunit.inspections.group"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitMethodReturnTypeInspection"/>
+    <localInspection shortName="FlexUnitMixedAPIInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+                     key="flexunit.inspection.mixedapi.displayname" groupKey="flexunit.inspections.group" enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitMixedAPIInspection"/>
+    <localInspection shortName="FlexUnitClassWithNoTestsInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+                     key="flexunit.inspection.testclasswithnotests.displayname" groupKey="flexunit.inspections.group"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitClassWithNoTestsInspection"/>
+    <localInspection shortName="FlexUnitMethodInSuiteInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+                     key="flexunit.inspection.testmethodinsuite.displayname" groupKey="flexunit.inspections.group" enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitMethodInSuiteInspection"/>
+    <localInspection shortName="FlexUnitEmptySuiteInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+                     key="flexunit.inspection.emptysuite.displayname" groupKey="flexunit.inspections.group" enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitEmptySuiteInspection"/>
+    <localInspection shortName="FlexUnitSuiteWithNoRunnerInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+                     key="flexunit.inspection.suitewithnorunner.displayname" groupKey="flexunit.inspections.group" enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitSuiteWithNoRunnerInspection"/>
 
     <intentionAction>
       <className>com.intellij.lang.javascript.intentions.CreateJSSubclassIntention</className>
