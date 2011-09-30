@@ -3,9 +3,7 @@ package com.intellij.lang.javascript.flex.actions.newfile;
 import com.intellij.ide.actions.CreateFileFromTemplateDialog;
 import com.intellij.ide.actions.CreateTemplateInPackageAction;
 import com.intellij.ide.fileTemplates.FileTemplate;
-import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
@@ -45,18 +43,6 @@ public abstract class NewJSClassActionBase extends CreateTemplateInPackageAction
   @Override
   protected boolean checkPackageExists(PsiDirectory directory) {
     return DirectoryIndex.getInstance(directory.getProject()).getPackageName(directory.getVirtualFile()) != null;
-  }
-
-  @Override
-  protected void doCheckCreate(PsiDirectory dir, String className, String templateName)
-    throws IncorrectOperationException {
-    if (CreateClassOrInterfaceAction.isClassifierTemplate(templateName) && !JSUtils.isValidClassName(className, false)) {
-      throw new IncorrectOperationException(JSBundle.message("0.is.not.a.legal.name", className));
-    }
-
-    for (String extension : myTemplatesExtensions) {
-      dir.checkCreateFile(className + "." + extension);
-    }
   }
 
   @Nullable
