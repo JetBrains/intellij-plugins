@@ -28,6 +28,7 @@
         <importer implementation="org.osmorc.facet.maven.OsmorcFacetImporter"/>
     </extensions>
     <extensions defaultExtensionNs="com.intellij">
-        <inspectionToolProvider implementation="org.osmorc.inspection.maven.OsgiMavenInspectionProvider"/>
+      <localInspection shortName="osmorcNonOsgiMavenDependency" displayName="Non-OSGi dependency" groupName="OSGi" enabledByDefault="true"
+                       level="WARNING" implementationClass="org.osmorc.inspection.maven.NonOsgiMavenDependencyInspection"/>
     </extensions>
 </idea-plugin>
