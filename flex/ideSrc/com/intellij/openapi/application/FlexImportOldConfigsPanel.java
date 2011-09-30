@@ -1,5 +1,9 @@
 package com.intellij.openapi.application;
 
+import com.intellij.ide.plugins.PluginManager;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.ThreeState;
+
 import java.io.File;
 import java.text.MessageFormat;
 
@@ -13,8 +17,8 @@ public class FlexImportOldConfigsPanel extends ImportOldConfigsPanel {
   }
 
   @Override
-  protected String getProductName(boolean full) {
-    return "IntelliJ IDEA";
+  protected String getProductName(ThreeState full) {
+    return full == ThreeState.NO ? "IDEA" : "IntelliJ IDEA";
   }
 
   @Override
@@ -58,5 +62,13 @@ public class FlexImportOldConfigsPanel extends ImportOldConfigsPanel {
   @Override
   protected String getInaccessibleHomeErrorText(String instHome) {
     return super.getInaccessibleHomeErrorText(instHome);    //To change body of overridden methods use File | Settings | File Templates.
+  }
+
+  @Override
+  public void importFinished(String newConfigPath) {
+    File disabledPluginsFile = new File(newConfigPath, PluginManager.DISABLED_PLUGINS_FILENAME);
+    if (disabledPluginsFile.exists()) {
+      FileUtil.delete(disabledPluginsFile);
+    }
   }
 }
