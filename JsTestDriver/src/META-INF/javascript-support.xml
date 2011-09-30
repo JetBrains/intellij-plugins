@@ -1,4 +1,3 @@
-<!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
 <!--
  * Copyright 2009 Google Inc.
  *
@@ -41,7 +40,17 @@
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <inspectionToolProvider implementation="com.google.jstestdriver.idea.assertFramework.support.JstdInspectionToolProvider"/>
+    <localInspection shortName="JsTestDriverDefaultAssertionFrameworkSupport" displayName="Add JsTestDriver assertion framework support"
+                     groupBundle="com.intellij.lang.javascript.JavaScriptBundle" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="ERROR"
+                     implementationClass="com.google.jstestdriver.idea.assertFramework.jstd.JstdDefaultAssertionFrameworkSupportInspection"/>
+    <localInspection shortName="QUnitAssertionFrameworkAdapterSupportForJsTestDriver"
+                     displayName="Add QUnit adapter support for JsTestDriver" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="ERROR" implementationClass="com.google.jstestdriver.idea.assertFramework.qunit.QUnitAdapterSupportProvider"/>
+    <localInspection shortName="JasmineAssertionFrameworkAdapterSupportForJsTestDriver"
+                     displayName="Add Jasmine adapter support for JsTestDriver" groupKey="js.inspection.group.name" enabledByDefault="true"
+                     level="ERROR"
+                     implementationClass="com.google.jstestdriver.idea.assertFramework.jasmine.JasmineAdapterSupportProvider"/>
     <applicationService serviceImplementation="com.google.jstestdriver.idea.assertFramework.TestFileStructureProviderImpl"/>
     <!--<completion.contributor order="first" language="JavaScript" implementationClass="com.google.jstestdriver.idea.assertFramework.codeInsight.FilteringCompletionContributor"/>-->
   </extensions>
