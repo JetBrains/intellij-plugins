@@ -20,7 +20,7 @@ class SetPropertyOrStyle extends OverrideBase {
   @Override
   void write(BaseWriter writer, StateWriter stateWriter) {
     if (referencePosition == -1) {
-      referencePosition = writer.referablePrimitiveHeader();
+      referencePosition = writer.referableHeader();
 
       writer.getOut().write(AmfExtendedTypes.OBJECT);
       writer.addMarker(dataRange);

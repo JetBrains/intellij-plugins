@@ -33,7 +33,7 @@ public final class MxmlUtil {
   }
 
   static boolean containsOnlyWhitespace(XmlTagChild child) {
-    PsiElement firstChild = child.getFirstChild();
+    final PsiElement firstChild = child.getFirstChild();
     return firstChild == child.getLastChild() && (firstChild == null || firstChild instanceof PsiWhiteSpace);
   }
 

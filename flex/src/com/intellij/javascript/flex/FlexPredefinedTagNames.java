@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NonNls;
 
 @NonNls
 public interface FlexPredefinedTagNames {
+  String MODEL = "Model";
   String SCRIPT = "Script";
   String STYLE = "Style";
   String DECLARATIONS = "Declarations";

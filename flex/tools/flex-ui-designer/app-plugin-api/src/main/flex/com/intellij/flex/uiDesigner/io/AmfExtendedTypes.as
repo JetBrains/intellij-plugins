@@ -19,7 +19,7 @@ public final class AmfExtendedTypes {
   public static const MXML_VECTOR:int = 51;
 
   // IDEA-73801
-  public static const REFERABLE_PRIMITIVE:int = 53;
+  public static const REFERABLE:int = 53;
 
   public static const XML_LIST:int = 54;
   public static const XML:int = 58;

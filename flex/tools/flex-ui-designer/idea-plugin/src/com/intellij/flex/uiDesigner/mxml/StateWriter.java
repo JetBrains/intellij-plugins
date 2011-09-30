@@ -391,7 +391,7 @@ class StateWriter {
 
   private void writeDeferredInstanceFromObjectReference(int propertyName, int objectInstanceReference, int deferredParentInstance,
                                                         int referenceInstanceReference) {
-    writer.property(propertyName).referablePrimitiveHeader(referenceInstanceReference).objectHeader(
+    writer.property(propertyName).referableHeader(referenceInstanceReference).objectHeader(
       STATIC_INSTANCE_REFERENCE_IN_DEFERRED_PARENT_INSTANCE);
 
     writer.property("reference").getOut().writeAmfInt(objectInstanceReference);

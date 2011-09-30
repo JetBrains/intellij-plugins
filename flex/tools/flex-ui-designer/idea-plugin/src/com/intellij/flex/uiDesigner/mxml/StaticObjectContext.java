@@ -41,6 +41,7 @@ class StaticObjectContext extends Context {
 
   public StaticObjectContext reinitialize(int referencePosition, int id) {
     childrenType = null;
+    cssRulesetDefined = false;
 
     this.referencePosition = referencePosition;
     staticInstanceReferenceInDeferredParentInstance = null;

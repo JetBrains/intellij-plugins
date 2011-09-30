@@ -460,7 +460,7 @@ public final class MxmlReader implements DocumentReader {
     return o;
   }
 
-  private function readReferablePrimitive():Object {
+  private function readReferable():Object {
     var r:int = input.readUnsignedShort();
     var o:Object = readExpression(input.readByte());
     processReference(r, o);
@@ -678,8 +678,8 @@ public final class MxmlReader implements DocumentReader {
         return injectedASReader.readVariableReference(input, this);
         break;
 
-      case AmfExtendedTypes.REFERABLE_PRIMITIVE:
-        return readReferablePrimitive();
+      case AmfExtendedTypes.REFERABLE:
+        return readReferable();
         break;
 
       case AmfExtendedTypes.XML_LIST:

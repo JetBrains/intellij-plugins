@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 abstract class Context {
   protected StaticObjectContext backSibling;
   protected Scope parentScope;
+  protected boolean cssRulesetDefined;
 
   protected StaticInstanceReferenceInDeferredParentInstance staticInstanceReferenceInDeferredParentInstance;
 
@@ -59,5 +60,14 @@ abstract class Context {
   public void setChildrenType(String value) {
     assert childrenType == null;
     childrenType = value;
+  }
+
+  public boolean isCssRulesetDefined() {
+    return cssRulesetDefined;
+  }
+  
+  public void markCssRulesetDefined() {
+    assert !cssRulesetDefined;
+    cssRulesetDefined = true;
   }
 }

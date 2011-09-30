@@ -17,9 +17,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.xml.XmlElement;
-import com.intellij.psi.xml.XmlFile;
-import com.intellij.psi.xml.XmlTag;
+import com.intellij.psi.xml.*;
 import com.intellij.util.StringBuilderSpinAllocator;
 import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.intellij.flex.uiDesigner.mxml.MxmlWriter.LOG;
 import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PropertyKind.*;
 
 class PropertyProcessor implements ValueWriter {
@@ -92,7 +91,7 @@ class PropertyProcessor implements ValueWriter {
   public ValueWriter process(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor,
                              Context context) throws InvalidPropertyException {
     if (descriptor.isPredefined()) {
-      MxmlWriter.LOG.error("unknown language element " + descriptor.getName());
+      LOG.error("unknown language element " + descriptor.getName());
       return null;
     }
 
@@ -109,7 +108,7 @@ class PropertyProcessor implements ValueWriter {
       }
       else {
         if (!typeName.equals(FlexAnnotationNames.BINDABLE)) { // skip binding
-          MxmlWriter.LOG.error("unsupported element: " + element.getText());
+          LOG.error("unsupported element: " + element.getText());
         }
         return null;
       }
@@ -192,6 +191,46 @@ class PropertyProcessor implements ValueWriter {
     isEffect = false;
   }
 
+  void processFxModel(XmlTag tag) throws InvalidPropertyException {
+    final XmlAttribute idAttribute = tag.getAttribute("id");
+    if (idAttribute == null || StringUtil.isEmpty(idAttribute.getDisplayValue())) {
+      LOG.warn("Skip model, id is not specified or empty: " + tag.getText());
+      return;
+    }
+
+    writer.getOut().write(AmfExtendedTypes.REFERABLE);
+    // parentContext for fx:Model always null, because located inside fx:Declarations (i.e. parentContext always is top level)
+    // state specific is not allowed for fx:Model (flex compiler doesn't support it)
+    final StaticObjectContext context = mxmlWriter.processIdAttributeOfBuiltInTypeLanguageTag(tag, null, false);
+    final XmlTag[] subTags = tag.getSubTags();
+    if (subTags.length == 1) {
+      for (XmlTag childTag : subTags[0].getSubTags()) {
+        writer.property(childTag.getLocalName());
+        //processInjected()
+
+        final XmlTagChild[] children = childTag.getValue().getChildren();
+        final int length = countActualChildren(children);
+        if (length == 0) {
+          writer.getOut().write(Amf3Types.NULL);
+        }
+        else {
+          ValueWriter valueWriter = processInjected(mxmlWriter.valueProviderFactory.create(childTag), new AnyXmlAttributeDescriptorWrapper(childTag.getDescriptor()), false, context);
+          if (valueWriter != null) {
+            return valueWriter == InjectedASWriter.IGNORE ? null : valueWriter;
+          }
+          for (XmlTagChild child : children) {
+            if (child instanceof XmlTag)
+          }
+        }
+      }
+    }
+    else if (subTags.length > 1) {
+      LOG.warn("Skip model, only one root tag is allowed: " + tag.getText());
+    }
+
+    writer.endObject();
+  }
+
   StaticObjectContext writeIfPrimitive(XmlTagValueProvider valueProvider, String type, PrimitiveAmfOutputStream out,
                                        @Nullable Context parentContext, boolean allowIncludeInExludeFrom)
     throws InvalidPropertyException {
@@ -207,7 +246,7 @@ class PropertyProcessor implements ValueWriter {
         isXml = true;
       }
       else {
-        out.write(AmfExtendedTypes.REFERABLE_PRIMITIVE);
+        out.write(AmfExtendedTypes.REFERABLE);
         isXml = false;
       }
 
@@ -219,7 +258,7 @@ class PropertyProcessor implements ValueWriter {
       }
       else {
         final boolean result = writeIfPrimitive(valueProvider, type, out, (AnnotationBackedDescriptor)null, false);
-        MxmlWriter.LOG.assertTrue(result);
+        LOG.assertTrue(result);
       }
 
       return context;
@@ -509,7 +548,8 @@ class PropertyProcessor implements ValueWriter {
 
     // IDEA-73099, IDEA-73960
     if (valueProvider instanceof XmlTagValueProvider) {
-      final int length = ((XmlTagValueProvider)valueProvider).getTag().getSubTags().length;
+      final XmlTagChild[] children = ((XmlTagValueProvider)valueProvider).getTag().getValue().getChildren();
+      final int length = countActualChildren(children);
       if (length > 0) {
         if (length == 1) {
           out.write(Amf3Types.OBJECT);
@@ -543,6 +583,16 @@ class PropertyProcessor implements ValueWriter {
     return null;
   }
 
+  private static int countActualChildren(XmlTagChild[] children) {
+    int length = 0;
+    for (XmlTagChild child : children) {
+      if (child instanceof XmlTag || (child instanceof XmlText && !MxmlUtil.containsOnlyWhitespace(child))) {
+        length++;
+      }
+    }
+    return length;
+  }
+
   private void writeClassFactory(XmlElementValueProvider valueProvider) throws InvalidPropertyException {
     if (valueProvider instanceof XmlTagValueProvider) {
       XmlTag tag = ((XmlTagValueProvider)valueProvider).getTag();
@@ -569,7 +619,7 @@ class PropertyProcessor implements ValueWriter {
       reference = writer.getRootScope().referenceCounter++;
       classFactoryMap.put(className, reference);
 
-      writer.referablePrimitiveHeader(reference).newInstance(FlexCommonTypeNames.CLASS_FACTORY, 1, false).classReference(className);
+      writer.referableHeader(reference).newInstance(FlexCommonTypeNames.CLASS_FACTORY, 1, false).classReference(className);
     }
     else {
       writer.documentFactoryReference(projectComponentFactoryId);

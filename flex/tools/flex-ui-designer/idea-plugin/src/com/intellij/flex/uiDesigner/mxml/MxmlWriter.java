@@ -42,15 +42,13 @@ public class MxmlWriter {
   private StateWriter stateWriter;
   private final InjectedASWriter injectedASWriter;
 
-  private XmlTextValueProvider xmlTextValueProvider;
-  private XmlTagValueProvider xmlTagValueProvider;
-  private final XmlAttributeValueProvider xmlAttributeValueProvider = new XmlAttributeValueProvider();
-
   private boolean hasStates;
   private final PropertyProcessor propertyProcessor;
   private boolean requireCallResetAfterMessage;
 
   private ProblemsHolder problemsHolder;
+
+  ValueProviderFactory valueProviderFactory = new ValueProviderFactory();
 
   public MxmlWriter(PrimitiveAmfOutputStream out) {
     this.out = out;
@@ -62,6 +60,7 @@ public class MxmlWriter {
   public XmlFile[] write(@NotNull final XmlFile psiFile, @NotNull final ProblemsHolder problemsHolder,
                          @NotNull final AssetCounter assetCounter) throws IOException {
     try {
+      valueProviderFactory = new ValueProviderFactory();
       this.problemsHolder = problemsHolder;
       problemsHolder.setCurrentFile(psiFile.getVirtualFile());
       injectedASWriter.setProblemsHolder(problemsHolder);
@@ -101,6 +100,7 @@ public class MxmlWriter {
              : unregisteredDocumentReferences.toArray(new XmlFile[unregisteredDocumentReferences.size()]);
     }
     finally {
+      valueProviderFactory = null;
       problemsHolder.setCurrentFile(null);
       this.problemsHolder = null;
       writer.assetCounter = null;
@@ -124,35 +124,8 @@ public class MxmlWriter {
   }
 
   private void resetAfterMessage() {
-    xmlAttributeValueProvider.setAttribute(null);
-    xmlTextValueProvider = null;
-    xmlTagValueProvider = null;
-
     writer.resetAfterMessage();
     propertyProcessor.reset();
-  }
-
-  private XmlElementValueProvider createValueProvider(XmlText xmlText) {
-    if (xmlTextValueProvider == null) {
-      xmlTextValueProvider = new XmlTextValueProvider();
-    }
-
-    xmlTextValueProvider.setXmlText(xmlText);
-    return xmlTextValueProvider;
-  }
-
-  private XmlTagValueProvider createValueProvider(XmlTag tag) {
-    if (xmlTagValueProvider == null) {
-      xmlTagValueProvider = new XmlTagValueProvider();
-    }
-
-    xmlTagValueProvider.setTag(tag);
-    return xmlTagValueProvider;
-  }
-
-  private XmlElementValueProvider createValueProvider(XmlAttribute attribute) {
-    xmlAttributeValueProvider.setAttribute(attribute);
-    return xmlAttributeValueProvider;
   }
 
   private boolean processElements(final XmlTag parent, final @Nullable Context parentContext, final boolean allowIncludeInExludeFrom,
@@ -225,7 +198,7 @@ public class MxmlWriter {
           // skip
         }
         else if (hasStates && stateWriter.checkStateSpecificPropertyValue(this, propertyProcessor, attribute,
-                                                                          createValueProvider(attribute),
+                                                                          valueProviderFactory.create(attribute),
                                                                           descriptor, context)) {
           // skip
         }
@@ -270,7 +243,7 @@ public class MxmlWriter {
   private boolean writeProperty(XmlAttribute attribute, AnnotationBackedDescriptor descriptor, Context context,
                                 boolean cssRulesetDefined) {
     int beforePosition = out.size();
-    final PropertyKind propertyKind = writeProperty(attribute, createValueProvider(attribute), descriptor, cssRulesetDefined,
+    final PropertyKind propertyKind = writeProperty(attribute, valueProviderFactory.create(attribute), descriptor, cssRulesetDefined,
                                                     context);
     if (propertyKind != PropertyKind.IGNORE) {
       if (propertyProcessor.isStyle()) {
@@ -322,7 +295,7 @@ public class MxmlWriter {
 
           if (propertiesExpected && explicitContentOccured == -1) {
             explicitContentOccured = 0;
-            final PropertyKind defaultPropertyKind = processDefaultProperty(parent, createValueProvider(tag), classBackedDescriptor,
+            final PropertyKind defaultPropertyKind = processDefaultProperty(parent, valueProviderFactory.create(tag), classBackedDescriptor,
                                                                             children.length, context, cssRulesetDefined);
             if (defaultPropertyKind == null) {
               continue;
@@ -378,7 +351,7 @@ public class MxmlWriter {
 
         if (propertiesExpected && explicitContentOccured == -1) {
           explicitContentOccured = 0;
-          final XmlElementValueProvider valueProvider = createValueProvider((XmlText)child);
+          final XmlElementValueProvider valueProvider = valueProviderFactory.create((XmlText)child);
           final PropertyKind defaultPropertyKind = processDefaultProperty(parent, valueProvider, null, children.length, context, cssRulesetDefined);
           if (defaultPropertyKind == null) {
             continue;
@@ -429,12 +402,12 @@ public class MxmlWriter {
 
   private boolean processPropertyTag(XmlTag tag, AnnotationBackedDescriptor annotationBackedDescriptor, @NotNull Context context,
                                   boolean cssRulesetDefined) {
-    if (hasStates && stateWriter.checkStateSpecificPropertyValue(this, propertyProcessor, tag, createValueProvider(tag),
+    if (hasStates && stateWriter.checkStateSpecificPropertyValue(this, propertyProcessor, tag, valueProviderFactory.create(tag),
                                                                  annotationBackedDescriptor, context)) {
       return cssRulesetDefined;
     }
 
-    final PropertyKind propertyKind = writeProperty(tag, createValueProvider(tag), annotationBackedDescriptor, cssRulesetDefined,
+    final PropertyKind propertyKind = writeProperty(tag, valueProviderFactory.create(tag), annotationBackedDescriptor, cssRulesetDefined,
                                                     context);
     if (propertyKind != PropertyKind.IGNORE) {
       if (propertyProcessor.isStyle()) {
@@ -475,7 +448,7 @@ public class MxmlWriter {
     }
 
     try {
-      if (propertyProcessor.writeIfPrimitive(createValueProvider(tag), descriptor.getQualifiedName(), out, parentContext,
+      if (propertyProcessor.writeIfPrimitive(valueProviderFactory.create(tag), descriptor.getQualifiedName(), out, parentContext,
                                              allowIncludeInExludeFrom) != null) {
         return true;
       }
@@ -567,13 +540,8 @@ public class MxmlWriter {
       assert descriptor != null;
       if (descriptor.isPredefined()) {
         // todo IDEA-72123
-        // todo FlexPredefinedTagNames add "Model"
-        if (descriptor.getName().equals("Model")) {
-          // IDEA-74056
-          final XmlAttribute idAttribute = tag.getAttribute("id");
-          if (idAttribute != null) {
-            injectedASWriter.putUnsupportedModelMxmlObjectReference(idAttribute.getDisplayValue());
-          }
+        if (descriptor.getName().equals(FlexPredefinedTagNames.MODEL)) {
+          //propertyProcessor.processFxModel(tag);
         }
         continue;
       }
@@ -737,7 +705,7 @@ public class MxmlWriter {
     catch (Throwable e) {
       problemsHolder.add(e);
     }
-    
+
     writer.getBlockOut().setPosition(beforePosition);
     return PropertyKind.IGNORE;
   }
@@ -777,9 +745,9 @@ public class MxmlWriter {
     catch (Throwable e) {
       problemsHolder.add(e);
     }
-    
+
     writer.getBlockOut().setPosition(beforePosition);
     // true, ignore
     return true;
-  }  
+  }
 }

@@ -194,6 +194,11 @@ final class BaseWriter {
     out.writeUInt29(className);
   }
 
+  public void objectHeader(String className) {
+    out.write(AmfExtendedTypes.OBJECT);
+    stringWriter.write(className, out);
+  }
+
   public void mxmlObjectHeader(String className) {
     stringWriter.write(className, out);
     out.allocateClearShort();
@@ -290,14 +295,14 @@ final class BaseWriter {
     return this;
   }
 
-  public BaseWriter referablePrimitiveHeader(int reference) {
-    out.write(AmfExtendedTypes.REFERABLE_PRIMITIVE);
+  public BaseWriter referableHeader(int reference) {
+    out.write(AmfExtendedTypes.REFERABLE);
     out.writeShort(reference + 1);
     return this;
   }
 
-  public int referablePrimitiveHeader() {
-    out.write(AmfExtendedTypes.REFERABLE_PRIMITIVE);
+  public int referableHeader() {
+    out.write(AmfExtendedTypes.REFERABLE);
     return out.allocateClearShort();
   }
 
