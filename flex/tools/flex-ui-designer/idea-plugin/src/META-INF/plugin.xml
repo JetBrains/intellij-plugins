@@ -32,7 +32,7 @@
   <actions>
     <group id="FlexUIDesigner.MainToolbarActions">
       <separator/>
-      <action id="FlexUIDesigner.RunDesignView" class="com.intellij.flex.uiDesigner.actions.RunDesignViewAction" icon="/actions/preview.png">
+      <action id="FlexUIDesigner.RunDesignView" class="com.intellij.flex.uiDesigner.actions.RunDesignViewAction" icon="/images/ui-designer.png">
         <!--<keyboard-shortcut first-keystroke="meta i" keymap="Mac OS X"/>-->
       </action>
       <action id="FlexUIDesigner.DebugDesignView" class="com.intellij.flex.uiDesigner.actions.DebugDesignViewAction" icon="/images/preview-debug.png">
