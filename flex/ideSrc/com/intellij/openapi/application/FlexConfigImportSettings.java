@@ -10,11 +10,10 @@ import java.text.MessageFormat;
 /**
  * User: ksafonov
  */
-public class FlexImportOldConfigsPanel extends ImportOldConfigsPanel {
 
-  public FlexImportOldConfigsPanel(final File guessedOldConfig) {
-    super(guessedOldConfig);
-  }
+// see com.intellij.openapi.application.ConfigImportHelper.getConfigImportSettings
+@SuppressWarnings("UnusedDeclaration")
+public class FlexConfigImportSettings extends ConfigImportSettings {
 
   @Override
   protected String getProductName(ThreeState full) {
@@ -25,7 +24,8 @@ public class FlexImportOldConfigsPanel extends ImportOldConfigsPanel {
   protected String getTitleLabel(String productName) {
     return
       "<html>You can import your settings from existing installation of IntelliJ IDEA.<br>This is recommended if you plan to open your IntelliJ IDEA projects in " +
-      ApplicationNamesInfo.getInstance().getProductName() + ".</html>";
+      ApplicationNamesInfo.getInstance().getProductName() +
+      ".</html>";
   }
 
   @Override
@@ -71,4 +71,10 @@ public class FlexImportOldConfigsPanel extends ImportOldConfigsPanel {
       FileUtil.delete(disabledPluginsFile);
     }
   }
+
+  @Override
+  public String getCustomPathsSelector() {
+    return ".IntelliJIdea10";
+  }
+
 }
