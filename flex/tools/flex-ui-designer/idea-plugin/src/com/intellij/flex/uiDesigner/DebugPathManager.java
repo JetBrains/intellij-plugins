@@ -4,10 +4,6 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.FileUtil;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
 
 public final class DebugPathManager {
   private static final String FLEX_TOOLS_FLEX_UI_DESIGNER = "/flex/tools/flex-ui-designer";
@@ -17,7 +13,7 @@ public final class DebugPathManager {
   public final static String ADL_RUNTIME;
 
   private static String ideaHome;
-  private static String fudHome;
+  private final static String fudHome;
 
   static {
     ideaHome = PathManager.getHomePathFor(DebugPathManager.class);
@@ -58,21 +54,19 @@ public final class DebugPathManager {
       }
       ADL_RUNTIME = adlRuntime;
     }
-    else if (ideaHome != null) {
-      // running bundled product, or from IDEA project
-      IS_DEV = false;
-      ADL_EXECUTABLE = null; // not used
-      ADL_RUNTIME = null; // not used
-      ideaHome = null; // not used
-      fudHome = null; // not used
-    }
     else {
-      // running from flex-ui-designer plugin project
-      IS_DEV = true;
-      fudHome = System.getProperty("fud.home");
-      if (fudHome == null) {
-        throw new IllegalStateException("Please define 'fud.home' to point to 'IDEA" + FLEX_TOOLS_FLEX_UI_DESIGNER + "' folder");
+      if (ideaHome == null) {
+        // running from flex-ui-designer plugin project, or from bundled product
+        fudHome = System.getProperty("fud.home");
+        IS_DEV = fudHome != null;
       }
+      else {
+        // running from IDEA project
+        IS_DEV = false;
+        ideaHome = null; // not used
+        fudHome = null; // not used
+      }
+
       ADL_EXECUTABLE = null; // not used
       ADL_RUNTIME = null; // not used
     }
@@ -85,5 +79,4 @@ public final class DebugPathManager {
   public static String getFudHome() {
     return fudHome;
   }
-
 }
