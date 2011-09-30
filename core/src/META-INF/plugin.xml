@@ -68,7 +68,9 @@
 
     <projectViewPane implementation="com.intellij.tapestry.intellij.view.TapestryProjectViewPane"/>
 
-    <inspectionToolProvider implementation="com.intellij.tapestry.intellij.inspections.TapestryInspectionToolProvider"/>
+    <localInspection shortName="TelReferencesInspection" bundle="messages.TapestryBundle" key="tel.references.inspection"
+                     groupKey="tapestry.inspections.group" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.intellij.tapestry.intellij.inspections.TelReferencesInspection"/>
     <moduleService serviceImplementation="com.intellij.tapestry.intellij.TapestryModuleSupportLoader"/>
   </extensions>
 
