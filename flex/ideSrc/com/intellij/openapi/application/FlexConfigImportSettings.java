@@ -1,6 +1,7 @@
 package com.intellij.openapi.application;
 
 import com.intellij.ide.plugins.PluginManager;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.ThreeState;
@@ -71,7 +72,7 @@ public class FlexConfigImportSettings extends ConfigImportSettings {
 
   @Override
   public String getCustomPathsSelector() {
-    return ".IntelliJIdea10";
+    return SystemInfo.isMac ? "IntelliJIdea10" : ".IntelliJIdea10";
   }
 
   @Override
