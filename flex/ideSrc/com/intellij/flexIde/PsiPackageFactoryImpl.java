@@ -16,9 +16,9 @@
 
 package com.intellij.flexIde;
 
-import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.DirectoryIndex;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiBundle;
@@ -53,7 +53,7 @@ public class PsiPackageFactoryImpl extends PsiDirectoryFactory {
       }
       return "";
     }
-    return presentable ? ProjectUtil.getLocationRelativeToUserHome(directory.getVirtualFile().getPresentableUrl()) : "";
+    return presentable ? FileUtil.getLocationRelativeToUserHome(directory.getVirtualFile().getPresentableUrl()) : "";
   }
 
   @Override
