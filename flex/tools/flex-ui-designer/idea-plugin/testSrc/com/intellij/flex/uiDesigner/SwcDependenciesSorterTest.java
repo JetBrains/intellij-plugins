@@ -93,14 +93,17 @@ public class SwcDependenciesSorterTest extends MxmlTestBase {
 
   @Override
   protected void tearDown() throws Exception {
-    if (appDir != null && appDir.exists()) {
-      LibrarySet sdkLibrarySet = client.getRegisteredProjects().getInfo(myProject).getSdkLibrarySet();
-      for (LibrarySetItem item : myLibraries()) {
-        //noinspection ResultOfMethodCallIgnored
-        new File(appDir, item.library.getPath() + (item.filtered ? "_" + sdkLibrarySet.getId() + ".swf" : ".swf")).delete();
+    try {
+      if (appDir != null && appDir.exists()) {
+        LibrarySet sdkLibrarySet = client.getRegisteredProjects().getInfo(myProject).getSdkLibrarySet();
+        for (LibrarySetItem item : myLibraries()) {
+          //noinspection ResultOfMethodCallIgnored
+          new File(appDir, item.library.getPath() + (item.filtered ? "_" + sdkLibrarySet.getId() + ".swf" : ".swf")).delete();
+        }
       }
     }
-
-    super.tearDown();
+    finally {
+      super.tearDown();
+    }
   }
 }

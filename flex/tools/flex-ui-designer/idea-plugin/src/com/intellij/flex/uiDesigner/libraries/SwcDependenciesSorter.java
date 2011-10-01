@@ -165,12 +165,7 @@ public class SwcDependenciesSorter {
       }
 
       if (item.inDegree == 0) {
-        if (item.hasUnresolvedDefinitions()) {
-          // if lib has inDegree == 0 and has unresolved defitions, then all item definitions are unresolved
-        }
-        else {
-          queue.add(item);
-        }
+        queue.add(item);
       }
 
       Collection<CharSequence> filteredDefinitions = null;
