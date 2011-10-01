@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
+import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
@@ -64,12 +65,13 @@ class InjectedASWriter implements ValueReferenceResolver {
   }
 
   public ValueWriter processProperty(XmlElementValueProvider valueProvider, String name, @Nullable String type, boolean isStyle,
-                                     @Nullable Context context) throws InvalidPropertyException {
-    PsiElement host = valueProvider.getInjectedHost();
-    if (host == null) {
-      return null;
-    }
+                                       @Nullable Context context) throws InvalidPropertyException {
+    final XmlElement host = valueProvider.getInjectedHost();
+    return host == null ? null : processProperty(host, name, type, isStyle, context);
+  }
 
+  public ValueWriter processProperty(PsiElement host, String name, @Nullable String type, boolean isStyle, @Nullable Context context)
+    throws InvalidPropertyException {
     final InjectedPsiVisitor visitor;
     if (JSCommonTypeNames.ARRAY_CLASS_NAME.equals(type)) {
       visitor = new InjectedPsiVisitor(host, JSCommonTypeNames.ARRAY_CLASS_NAME, problemsHolder);

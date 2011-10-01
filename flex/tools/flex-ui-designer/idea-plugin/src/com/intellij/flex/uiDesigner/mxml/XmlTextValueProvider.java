@@ -19,6 +19,10 @@ class XmlTextValueProvider implements XmlElementValueProvider {
 
   @Override
   public CharSequence getSubstituted() {
+    return getSubstituted(xmlText);
+  }
+
+  public static CharSequence getSubstituted(XmlText xmlText) {
     return xmlText.getValue();
   }
 

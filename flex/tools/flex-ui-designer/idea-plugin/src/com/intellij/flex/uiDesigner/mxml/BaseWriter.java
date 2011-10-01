@@ -288,6 +288,11 @@ final class BaseWriter {
     out.writeShort(length);
   }
 
+  public int arrayHeader() {
+    out.write(Amf3Types.ARRAY);
+    return out.allocateClearShort();
+  }
+
   public BaseWriter newInstance(String className, int argumentsLength, boolean rollbackable) {
     out.write(ExpressionMessageTypes.NEW);
     classOrPropertyName(className);

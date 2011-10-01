@@ -250,7 +250,8 @@ public class MxmlTest extends BaseTestCase {
     assertThat(app, [
       {dataProvider: {source: [strictlyEqualTo("1"), strictlyEqualTo("2"), strictlyEqualTo("3")]}},
       {dataProvider: {list: {source: [strictlyEqualTo("1"), strictlyEqualTo("2")]}}},
-      {dataProvider: [strictlyEqualTo("Button 1"), strictlyEqualTo("Button 2")]}
+      {dataProvider: [strictlyEqualTo("Button 1"), strictlyEqualTo("Button 2")]},
+      {dataProvider: [strictlyEqualTo("Button 1")]}
     ]);
   }
 

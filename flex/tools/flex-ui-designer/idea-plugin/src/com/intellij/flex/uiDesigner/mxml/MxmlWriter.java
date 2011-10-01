@@ -8,7 +8,6 @@ import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.FlexStateElementNames;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
-import com.intellij.javascript.flex.mxml.schema.CodeContext;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
@@ -46,7 +45,7 @@ public class MxmlWriter {
   private final PropertyProcessor propertyProcessor;
   private boolean requireCallResetAfterMessage;
 
-  private ProblemsHolder problemsHolder;
+  ProblemsHolder problemsHolder;
 
   ValueProviderFactory valueProviderFactory = new ValueProviderFactory();
 
@@ -243,8 +242,8 @@ public class MxmlWriter {
   private boolean writeProperty(XmlAttribute attribute, AnnotationBackedDescriptor descriptor, Context context,
                                 boolean cssRulesetDefined) {
     int beforePosition = out.size();
-    final PropertyKind propertyKind = writeProperty(attribute, valueProviderFactory.create(attribute), descriptor, cssRulesetDefined,
-                                                    context);
+    final PropertyKind propertyKind = writeMxmlProperty(attribute, valueProviderFactory.create(attribute), descriptor, cssRulesetDefined,
+                                                        context);
     if (propertyKind != PropertyKind.IGNORE) {
       if (propertyProcessor.isStyle()) {
         cssRulesetDefined = true;
@@ -381,9 +380,6 @@ public class MxmlWriter {
             else if (valueWriter == InjectedASWriter.IGNORE) {
               continue;
             }
-            else {
-
-            }
           }
         }
         else if (listKind == PropertyKind.VECTOR) {
@@ -407,8 +403,9 @@ public class MxmlWriter {
       return cssRulesetDefined;
     }
 
-    final PropertyKind propertyKind = writeProperty(tag, valueProviderFactory.create(tag), annotationBackedDescriptor, cssRulesetDefined,
-                                                    context);
+    final PropertyKind propertyKind = writeMxmlProperty(tag, valueProviderFactory.create(tag), annotationBackedDescriptor,
+                                                        cssRulesetDefined,
+                                                        context);
     if (propertyKind != PropertyKind.IGNORE) {
       if (propertyProcessor.isStyle()) {
         cssRulesetDefined = true;
@@ -437,19 +434,8 @@ public class MxmlWriter {
   private boolean processClassBackedSubTag(final XmlTag tag, final ClassBackedElementDescriptor descriptor, @Nullable final Context parentContext,
                                            final boolean isListItem) {
     final boolean allowIncludeInExludeFrom = hasStates && isListItem && parentContext != null;
-    if (JSCommonTypeNames.ARRAY_CLASS_NAME.equals(descriptor.getQualifiedName())) {
-      // see valArr in EmbedSwfAndImageFromCss
-      out.write(AmfExtendedTypes.MXML_ARRAY);
-      processTagChildren(tag, processIdAttributeOfBuiltInTypeLanguageTag(tag, parentContext, allowIncludeInExludeFrom), parentContext, false, PropertyKind.ARRAY, false);
-      return true;
-    }
-    else if (CodeContext.AS3_VEC_VECTOR_QUALIFIED_NAME.equals(descriptor.getQualifiedName())) {
-      return processMxmlVector(tag, parentContext, allowIncludeInExludeFrom);
-    }
-
     try {
-      if (propertyProcessor.writeIfPrimitive(valueProviderFactory.create(tag), descriptor.getQualifiedName(), out, parentContext,
-                                             allowIncludeInExludeFrom) != null) {
+      if (propertyProcessor.writeTagIfFx(tag, descriptor.getQualifiedName(), out, parentContext, allowIncludeInExludeFrom)) {
         return true;
       }
     }
@@ -500,11 +486,11 @@ public class MxmlWriter {
     out.write(AmfExtendedTypes.MXML_VECTOR);
     writer.classOrPropertyName(type);
     out.write(fixedAttribute != null && fixedAttribute.getDisplayValue().charAt(0) == 't');
-    processTagChildren(tag, processIdAttributeOfBuiltInTypeLanguageTag(tag, parentContext, allowIncludeInExludeFrom), parentContext, false, PropertyKind.VECTOR, false);
+    processTagChildren(tag, processIdAttributeOfFxTag(tag, parentContext, allowIncludeInExludeFrom), parentContext, false, PropertyKind.VECTOR, false);
     return true;
   }
 
-  StaticObjectContext processIdAttributeOfBuiltInTypeLanguageTag(XmlTag tag, @Nullable Context parentContext, boolean allowIncludeInExludeFrom) {
+  StaticObjectContext processIdAttributeOfFxTag(XmlTag tag, @Nullable Context parentContext, boolean allowIncludeInExludeFrom) {
     assert !writer.isIdPreallocated();
 
     final StaticObjectContext context;
@@ -687,8 +673,18 @@ public class MxmlWriter {
     out.writeUInt29(textOffset);
   }
 
-  private PropertyKind writeProperty(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor,
-                            boolean cssRulesetDefined, Context context) {
+  private PropertyKind writeMxmlProperty(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor,
+                                           boolean cssRulesetDefined, Context context) {
+    return writeMxmlOrSimpleProperty(element, valueProvider, descriptor, cssRulesetDefined, context, true);
+  }
+
+  PropertyKind writeSimpleProperty(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor) {
+    return writeMxmlOrSimpleProperty(element, valueProvider, descriptor, false, null, false);
+  }
+
+  private PropertyKind writeMxmlOrSimpleProperty(XmlElement element, XmlElementValueProvider valueProvider,
+                                                 AnnotationBackedDescriptor descriptor,
+                                                 boolean cssRulesetDefined, @Nullable Context context, boolean isMxmlProperty) {
     final int beforePosition = writer.getBlockOut().size();
     try {
       ValueWriter valueWriter = propertyProcessor.process(element, valueProvider, descriptor, context);
@@ -696,7 +692,12 @@ public class MxmlWriter {
         return PropertyKind.IGNORE;
       }
 
-      writePropertyHeader(propertyProcessor.getName(), element, cssRulesetDefined, propertyProcessor.isStyle());
+      if (isMxmlProperty) {
+        writePropertyHeader(propertyProcessor.getName(), element, cssRulesetDefined, propertyProcessor.isStyle());
+      }
+      else {
+        writer.property(propertyProcessor.getName());
+      }
       return valueWriter.write(descriptor, valueProvider, out, writer, propertyProcessor.isStyle(), context);
     }
     catch (RuntimeException e) {

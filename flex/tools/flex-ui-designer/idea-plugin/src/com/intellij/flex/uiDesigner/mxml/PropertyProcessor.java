@@ -29,6 +29,8 @@ import static com.intellij.flex.uiDesigner.mxml.MxmlWriter.LOG;
 import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PropertyKind.*;
 
 class PropertyProcessor implements ValueWriter {
+  
+
   enum PropertyKind {
     ARRAY, VECTOR, COMPLEX, COMPLEX_STYLE, PRIMITIVE, PRIMITIVE_STYLE, IGNORE;
 
@@ -201,27 +203,12 @@ class PropertyProcessor implements ValueWriter {
     writer.getOut().write(AmfExtendedTypes.REFERABLE);
     // parentContext for fx:Model always null, because located inside fx:Declarations (i.e. parentContext always is top level)
     // state specific is not allowed for fx:Model (flex compiler doesn't support it)
-    final StaticObjectContext context = mxmlWriter.processIdAttributeOfBuiltInTypeLanguageTag(tag, null, false);
+    final StaticObjectContext context = mxmlWriter.processIdAttributeOfFxTag(tag, null, false);
     final XmlTag[] subTags = tag.getSubTags();
     if (subTags.length == 1) {
-      for (XmlTag childTag : subTags[0].getSubTags()) {
-        writer.property(childTag.getLocalName());
-        //processInjected()
-
-        final XmlTagChild[] children = childTag.getValue().getChildren();
-        final int length = countActualChildren(children);
-        if (length == 0) {
-          writer.getOut().write(Amf3Types.NULL);
-        }
-        else {
-          ValueWriter valueWriter = processInjected(mxmlWriter.valueProviderFactory.create(childTag), new AnyXmlAttributeDescriptorWrapper(childTag.getDescriptor()), false, context);
-          if (valueWriter != null) {
-            return valueWriter == InjectedASWriter.IGNORE ? null : valueWriter;
-          }
-          for (XmlTagChild child : children) {
-            if (child instanceof XmlTag)
-          }
-        }
+      final XmlTag[] subTags1 = subTags[0].getSubTags();
+      for (XmlTag childTag : subTags1) {
+        writeFxModelValueTag(childTag);
       }
     }
     else if (subTags.length > 1) {
@@ -231,43 +218,155 @@ class PropertyProcessor implements ValueWriter {
     writer.endObject();
   }
 
-  StaticObjectContext writeIfPrimitive(XmlTagValueProvider valueProvider, String type, PrimitiveAmfOutputStream out,
-                                       @Nullable Context parentContext, boolean allowIncludeInExludeFrom)
-    throws InvalidPropertyException {
-    final XmlTag tag = valueProvider.getTag();
-    if (JavaScriptSupportLoader.MXML_URI3.equals(tag.getNamespace()) && !type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME)) {
-      final boolean isXml;
-      if (type.equals(JSCommonTypeNames.XML_LIST_CLASS_NAME)) {
-        out.write(AmfExtendedTypes.XML_LIST);
-        isXml = true;
-      }
-      else if (type.equals(JSCommonTypeNames.XML_CLASS_NAME)) {
-        out.write(AmfExtendedTypes.XML);
-        isXml = true;
-      }
-      else {
-        out.write(AmfExtendedTypes.REFERABLE);
-        isXml = false;
-      }
-
-      final StaticObjectContext context = mxmlWriter.processIdAttributeOfBuiltInTypeLanguageTag(tag, parentContext,
-                                                                                                allowIncludeInExludeFrom);
-
-      if (isXml) {
-        out.writeAmfUtf(tag.getValue().getText());
-      }
-      else {
-        final boolean result = writeIfPrimitive(valueProvider, type, out, (AnnotationBackedDescriptor)null, false);
-        LOG.assertTrue(result);
-      }
-
-      return context;
+  private void writeFxModelValueTag(XmlTag tag) {
+    // flex compiler — only XmlTag, but not XmlText is allowed — "Warning: Ignoring rr CDATA because other XML elements exist..."
+    final XmlTag[] subTags = tag.getSubTags();
+    if (subTags.length == 0) {
+      writer.property(tag.getLocalName());
+      writer.getOut().write(Amf3Types.NULL);
     }
+    else {
+      if (subTags.length == 0) {
+        
+      }
 
-    return null;
+      for (XmlTag subTag : subTags) {
+        final XmlTag[] tags = tag.findSubTags(subTag.getLocalName(), subTag.getNamespace());
+        if (tags.length == 0) {
+
+        }
+
+        final PropertyKind propertyKind = mxmlWriter.writeSimpleProperty(tag, mxmlWriter.valueProviderFactory.create(tag),
+                                                                               new AnyXmlAttributeDescriptorWrapper(tag.getDescriptor()));
+        if (propertyKind.isComplex()) {
+                writeFxModelValueTag(tag);
+              }
+      }
+    }
   }
 
-  private boolean writeIfPrimitive(XmlElementValueProvider valueProvider, String type, PrimitiveAmfOutputStream out,
+  private boolean processFxModelTagChildren(XmlTag parent, boolean isListItem) {
+    for (XmlTagChild child : parent.getValue().getChildren()) {
+      if (child instanceof XmlText && !MxmlUtil.containsOnlyWhitespace(child)) {
+        final ValueWriter valueWriter;
+        try {
+          valueWriter = injectedASWriter.processProperty(child, name, null, false, null);
+        }
+        catch (InvalidPropertyException e) {
+          injectedASWriter.lastMxmlObjectReference = null;
+          writer.resetPreallocatedId();
+          // we don't need any out rollback — nothing is written yet
+          mxmlWriter.problemsHolder.add(e);
+          return false;
+        }
+
+        if (valueWriter == InjectedASWriter.IGNORE) {
+          if (injectedASWriter.lastMxmlObjectReference != null) {
+            writer.objectReference(injectedASWriter.lastMxmlObjectReference.id);
+            injectedASWriter.lastMxmlObjectReference = null;
+            writer.resetPreallocatedId();
+          }
+        }
+        else {
+          if (valueWriter != null) {
+            throw new IllegalStateException("What?");
+          }
+          else {
+            writeUntypedPrimitiveValue(writer.getOut(), ((XmlText)child).getValue());
+          }
+        }
+
+        // ignore any attributes
+        return true;
+      }
+      else if (child instanceof XmlTag) {
+        final XmlTag[] parentSubTags = parent.getSubTags();
+        for (XmlTag tag : parentSubTags) {
+          final XmlTag[] subTags = tag.findSubTags(tag.getLocalName(), tag.getNamespace());
+          writer.property(tag.getLocalName());
+          if (subTags.length > 1) {
+            final int lengthPosition = writer.arrayHeader();
+            int length = 0;
+            for (XmlTag subTag : subTags) {
+              if (processFxModelTagChildren(subTag, true)) {
+                length++;
+              }
+            }
+
+            writer.getOut().putShort(length, lengthPosition);
+          }
+          else {
+            processFxModelTagChildren(tag, false);
+          }
+        }
+        break;
+      }
+    }
+
+    mxmlWriter.writeSimpleProperty(parent, mxmlWriter.valueProviderFactory.create(parent),
+                                   new AnyXmlAttributeDescriptorWrapper(parent.getDescriptor()));
+
+    final int referencePosition = writer.referableHeader();
+    writer.objectHeader("mx.utils.ObjectProxy");
+    for (final XmlAttribute attribute : parent.getAttributes()) {
+      mxmlWriter.writeSimpleProperty(attribute, mxmlWriter.valueProviderFactory.create(attribute),
+                                     new AnyXmlAttributeDescriptorWrapper(attribute.getDescriptor()));
+    }
+
+    final StaticObjectContext context = writer.createStaticContext(null, referencePosition);
+    writer.resetPreallocatedId();
+
+
+
+    writer.endObject();
+
+    return true;
+  }
+
+  boolean writeTagIfFx(XmlTag tag, String type, PrimitiveAmfOutputStream out, @Nullable Context parentContext,
+                       boolean allowIncludeInExludeFrom) throws InvalidPropertyException {
+    if (!JavaScriptSupportLoader.MXML_URI3.equals(tag.getNamespace()) || type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME)) {
+      return false;
+    }
+
+    if (JSCommonTypeNames.ARRAY_CLASS_NAME.equals(type)) {
+      // see valArr in EmbedSwfAndImageFromCss
+      out.write(AmfExtendedTypes.MXML_ARRAY);
+      mxmlWriter.processTagChildren(tag, mxmlWriter.processIdAttributeOfFxTag(tag, parentContext, allowIncludeInExludeFrom), parentContext,
+                                    false, PropertyKind.ARRAY, false);
+      return true;
+    }
+    else if (CodeContext.AS3_VEC_VECTOR_QUALIFIED_NAME.equals(type)) {
+      return mxmlWriter.processMxmlVector(tag, parentContext, allowIncludeInExludeFrom);
+    }
+
+    final boolean isXml;
+    if (type.equals(JSCommonTypeNames.XML_LIST_CLASS_NAME)) {
+      out.write(AmfExtendedTypes.XML_LIST);
+      isXml = true;
+    }
+    else if (type.equals(JSCommonTypeNames.XML_CLASS_NAME)) {
+      out.write(AmfExtendedTypes.XML);
+      isXml = true;
+    }
+    else {
+      out.write(AmfExtendedTypes.REFERABLE);
+      isXml = false;
+    }
+
+    mxmlWriter.processIdAttributeOfFxTag(tag, parentContext, allowIncludeInExludeFrom);
+    if (isXml) {
+      out.writeAmfUtf(tag.getValue().getText());
+    }
+    else {
+      final boolean result = writeIfPrimitive(mxmlWriter.valueProviderFactory.create(tag), type, out, null, false);
+      LOG.assertTrue(result);
+    }
+
+    return true;
+  }
+
+  boolean writeIfPrimitive(XmlElementValueProvider valueProvider, String type, PrimitiveAmfOutputStream out,
                                    @Nullable AnnotationBackedDescriptor descriptor, boolean isStyle) throws InvalidPropertyException {
     if (type.equals(JSCommonTypeNames.STRING_CLASS_NAME)) {
       writeString(valueProvider, descriptor);
@@ -417,7 +516,7 @@ class PropertyProcessor implements ValueWriter {
       return VECTOR;
     }
     else if (type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME) || type.equals(JSCommonTypeNames.ANY_TYPE)) {
-      final PropertyKind propertyKind = writeUntypedPropertyValue(out, valueProvider, descriptor, isStyle);
+      final PropertyKind propertyKind = writeUntypedPropertyValue(out, valueProvider, descriptor, isStyle, parentContext);
       if (propertyKind != null) {
         return propertyKind;
       }
@@ -535,7 +634,8 @@ class PropertyProcessor implements ValueWriter {
   }
 
   private PropertyKind writeUntypedPropertyValue(PrimitiveAmfOutputStream out, XmlElementValueProvider valueProvider,
-                                                 AnnotationBackedDescriptor descriptor, boolean isStyle) {
+                                                 AnnotationBackedDescriptor descriptor, boolean isStyle, Context parentContext)
+    throws InvalidPropertyException {
     if (descriptor.isRichTextContent()) {
       writeString(valueProvider, descriptor);
       return null;
@@ -546,27 +646,64 @@ class PropertyProcessor implements ValueWriter {
       return null;
     }
 
+    final CharSequence charSequence;
     // IDEA-73099, IDEA-73960
     if (valueProvider instanceof XmlTagValueProvider) {
-      final XmlTagChild[] children = ((XmlTagValueProvider)valueProvider).getTag().getValue().getChildren();
-      final int length = countActualChildren(children);
-      if (length > 0) {
-        if (length == 1) {
+      final XmlTag tag = ((XmlTagValueProvider)valueProvider).getTag();
+      final XmlTagChild[] children = tag.getValue().getChildren();
+      int subTagsLength = 0;
+      XmlText xmlText = null;
+      for (XmlTagChild child : children) {
+        if (child instanceof XmlTag) {
+          subTagsLength++;
+          if (xmlText != null || subTagsLength > 1) {
+            break;
+          }
+        }
+        else if (child instanceof XmlText && !MxmlUtil.containsOnlyWhitespace(child)) {
+          assert xmlText == null;
+          xmlText = (XmlText)child;
+        }
+      }
+
+      if (subTagsLength == 0) {
+        if (xmlText == null) {
+          writer.stringReference(XmlElementValueProvider.EMPTY);
+          return null;
+        }
+        else {
+          charSequence = XmlTextValueProvider.getSubstituted(xmlText);
+        }
+      }
+      else if (subTagsLength == 1 && xmlText == null) {
+        final XmlTag childTag = tag.getSubTags()[0];
+        final XmlElementDescriptor childTagDescriptor = childTag.getDescriptor();
+        LOG.assertTrue(childTagDescriptor != null);
+        if (writeTagIfFx(childTag, childTagDescriptor.getQualifiedName(), out, parentContext, false)) {
+          return null;
+        }
+        else {
           out.write(Amf3Types.OBJECT);
           return isStyle ? COMPLEX_STYLE : COMPLEX;
         }
-        else {
-          out.write(Amf3Types.ARRAY);
-          return ARRAY;
-        }
+      }
+      else {
+        out.write(Amf3Types.ARRAY);
+        return ARRAY;
       }
     }
-
-    final CharSequence charSequence = writeIfEmpty(valueProvider);
-    if (charSequence == null) {
-      return null;
+    else {
+      charSequence = writeIfEmpty(valueProvider);
     }
 
+    if (charSequence != null) {
+      writeUntypedPrimitiveValue(out, charSequence);
+    }
+
+    return null;
+  }
+
+  private void writeUntypedPrimitiveValue(PrimitiveAmfOutputStream out, CharSequence charSequence) {
     final String value = charSequence.toString();
     try {
       out.writeAmfInt(Integer.parseInt(value));
@@ -579,8 +716,6 @@ class PropertyProcessor implements ValueWriter {
         writer.string(charSequence);
       }
     }
-
-    return null;
   }
 
   private static int countActualChildren(XmlTagChild[] children) {
