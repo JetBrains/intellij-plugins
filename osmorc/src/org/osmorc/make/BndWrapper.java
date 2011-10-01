@@ -40,6 +40,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -254,7 +255,7 @@ public class BndWrapper {
                 // IDEA-26817: target must be the dir, not the the file, so:
                 // and then put this in. This should produce the correct result.
                 try {
-                  VfsUtil.copyFile(this, src, target, outputJar.getName());
+                  VfsUtilCore.copyFile(this, src, target, outputJar.getName());
                 }
                 catch (IOException e) {
                   compileContext.addMessage(CompilerMessageCategory.ERROR, messagePrefix + "Could not copy " + src + " to " + target, null, 0, 0);

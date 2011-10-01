@@ -10,7 +10,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -166,7 +166,7 @@ class DirectoryTypeManager {
     List<VirtualFile> copiedFiles = Lists.newArrayList();
     for (VirtualFile virtualFile : virtualFiles) {
       try {
-        copiedFiles.add(VfsUtil.copyFile(null, virtualFile, targetDir));
+        copiedFiles.add(VfsUtilCore.copyFile(null, virtualFile, targetDir));
       } catch (IOException e) {
         Messages.showErrorDialog("Extract operation failed!\nUnable to copy " + virtualFile.getPath() + " to " + targetDir.getPath(),
             "Adding " + myAssertionFrameworkName + " adapter support for JsTestDriver");
