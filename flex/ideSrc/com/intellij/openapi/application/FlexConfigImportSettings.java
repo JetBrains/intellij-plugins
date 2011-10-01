@@ -2,6 +2,7 @@ package com.intellij.openapi.application;
 
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.SystemProperties;
 import com.intellij.util.ThreeState;
 
 import java.io.File;
@@ -35,7 +36,8 @@ public class FlexConfigImportSettings extends ConfigImportSettings {
 
   @Override
   protected String getAutoImportLabel(File guessedOldConfig) {
-    return MessageFormat.format("I want to import my settings from existing installation ({0})", guessedOldConfig);
+    String shortPath = guessedOldConfig.getAbsolutePath().replace(SystemProperties.getUserHome(), "~");
+    return MessageFormat.format("I want to import my settings from existing installation (config folder: {0})", shortPath);
   }
 
   @Override
