@@ -193,60 +193,37 @@ class PropertyProcessor implements ValueWriter {
     isEffect = false;
   }
 
-  void processFxModel(XmlTag tag) throws InvalidPropertyException {
+  boolean processFxModel(XmlTag tag) {
     final XmlAttribute idAttribute = tag.getAttribute("id");
     if (idAttribute == null || StringUtil.isEmpty(idAttribute.getDisplayValue())) {
       LOG.warn("Skip model, id is not specified or empty: " + tag.getText());
-      return;
+      return false;
     }
 
     writer.getOut().write(AmfExtendedTypes.REFERABLE);
     // parentContext for fx:Model always null, because located inside fx:Declarations (i.e. parentContext always is top level)
     // state specific is not allowed for fx:Model (flex compiler doesn't support it)
-    final StaticObjectContext context = mxmlWriter.processIdAttributeOfFxTag(tag, null, false);
+    mxmlWriter.processIdAttributeOfFxTag(tag, null, false);
     final XmlTag[] subTags = tag.getSubTags();
     if (subTags.length == 1) {
-      final XmlTag[] subTags1 = subTags[0].getSubTags();
-      for (XmlTag childTag : subTags1) {
-        writeFxModelValueTag(childTag);
-      }
-    }
-    else if (subTags.length > 1) {
-      LOG.warn("Skip model, only one root tag is allowed: " + tag.getText());
-    }
-
-    writer.endObject();
-  }
-
-  private void writeFxModelValueTag(XmlTag tag) {
-    // flex compiler — only XmlTag, but not XmlText is allowed — "Warning: Ignoring rr CDATA because other XML elements exist..."
-    final XmlTag[] subTags = tag.getSubTags();
-    if (subTags.length == 0) {
-      writer.property(tag.getLocalName());
-      writer.getOut().write(Amf3Types.NULL);
+      processFxModelTagChildren(subTags[0]);
     }
     else {
-      if (subTags.length == 0) {
-        
-      }
+      // as object without any properties
+      writer.objectHeader("mx.utils.ObjectProxy");
+      writer.endObject();
 
-      for (XmlTag subTag : subTags) {
-        final XmlTag[] tags = tag.findSubTags(subTag.getLocalName(), subTag.getNamespace());
-        if (tags.length == 0) {
-
-        }
-
-        final PropertyKind propertyKind = mxmlWriter.writeSimpleProperty(tag, mxmlWriter.valueProviderFactory.create(tag),
-                                                                               new AnyXmlAttributeDescriptorWrapper(tag.getDescriptor()));
-        if (propertyKind.isComplex()) {
-                writeFxModelValueTag(tag);
-              }
+      if (subTags.length > 1) {
+        LOG.warn("Skip model, only one root tag is allowed: " + tag.getText());
       }
     }
+
+    return true;
   }
 
-  private boolean processFxModelTagChildren(XmlTag parent, boolean isListItem) {
+  private boolean writeFxModelTagIfContainsXmlText(XmlTag parent) {
     for (XmlTagChild child : parent.getValue().getChildren()) {
+      // ignore any subtags if XmlText presents, according to flex compiler behavior
       if (child instanceof XmlText && !MxmlUtil.containsOnlyWhitespace(child)) {
         final ValueWriter valueWriter;
         try {
@@ -257,7 +234,7 @@ class PropertyProcessor implements ValueWriter {
           writer.resetPreallocatedId();
           // we don't need any out rollback — nothing is written yet
           mxmlWriter.problemsHolder.add(e);
-          return false;
+          return true;
         }
 
         if (valueWriter == InjectedASWriter.IGNORE) {
@@ -280,46 +257,43 @@ class PropertyProcessor implements ValueWriter {
         return true;
       }
       else if (child instanceof XmlTag) {
-        final XmlTag[] parentSubTags = parent.getSubTags();
-        for (XmlTag tag : parentSubTags) {
-          final XmlTag[] subTags = tag.findSubTags(tag.getLocalName(), tag.getNamespace());
-          writer.property(tag.getLocalName());
-          if (subTags.length > 1) {
-            final int lengthPosition = writer.arrayHeader();
-            int length = 0;
-            for (XmlTag subTag : subTags) {
-              if (processFxModelTagChildren(subTag, true)) {
-                length++;
-              }
-            }
-
-            writer.getOut().putShort(length, lengthPosition);
-          }
-          else {
-            processFxModelTagChildren(tag, false);
-          }
-        }
-        break;
+        return false;
       }
     }
 
-    mxmlWriter.writeSimpleProperty(parent, mxmlWriter.valueProviderFactory.create(parent),
-                                   new AnyXmlAttributeDescriptorWrapper(parent.getDescriptor()));
+    return false;
+  }
 
-    final int referencePosition = writer.referableHeader();
+  private boolean processFxModelTagChildren(final XmlTag parent) {
+    // fx:Model tags is not referable
     writer.objectHeader("mx.utils.ObjectProxy");
-    for (final XmlAttribute attribute : parent.getAttributes()) {
-      mxmlWriter.writeSimpleProperty(attribute, mxmlWriter.valueProviderFactory.create(attribute),
-                                     new AnyXmlAttributeDescriptorWrapper(attribute.getDescriptor()));
+
+    final XmlTag[] parentSubTags = parent.getSubTags();
+    for (XmlTag tag : parentSubTags) {
+      final String tagLocalName = tag.getLocalName();
+      final XmlTag[] subTags = parent.findSubTags(tagLocalName, tag.getNamespace());
+      writer.property(tagLocalName);
+      if (subTags.length > 1) {
+        final int lengthPosition = writer.arrayHeader();
+        int length = 0;
+        for (XmlTag subTag : subTags) {
+          if (writeFxModelTagIfContainsXmlText(subTag) || processFxModelTagChildren(subTag)) {
+            length++;
+          }
+        }
+
+        writer.getOut().putShort(length, lengthPosition);
+      }
+      else if (!writeFxModelTagIfContainsXmlText(tag)) {
+        processFxModelTagChildren(tag);
+      }
     }
 
-    final StaticObjectContext context = writer.createStaticContext(null, referencePosition);
-    writer.resetPreallocatedId();
-
-
+    for (final XmlAttribute attribute : parent.getAttributes()) {
+      mxmlWriter.writeProperty(attribute, new AnyXmlAttributeDescriptorWrapper(attribute.getDescriptor()), null, false, true);
+    }
 
     writer.endObject();
-
     return true;
   }
 
@@ -716,16 +690,6 @@ class PropertyProcessor implements ValueWriter {
         writer.string(charSequence);
       }
     }
-  }
-
-  private static int countActualChildren(XmlTagChild[] children) {
-    int length = 0;
-    for (XmlTagChild child : children) {
-      if (child instanceof XmlTag || (child instanceof XmlText && !MxmlUtil.containsOnlyWhitespace(child))) {
-        length++;
-      }
-    }
-    return length;
   }
 
   private void writeClassFactory(XmlElementValueProvider valueProvider) throws InvalidPropertyException {

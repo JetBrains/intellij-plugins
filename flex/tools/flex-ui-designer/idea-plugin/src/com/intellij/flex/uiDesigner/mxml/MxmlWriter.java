@@ -202,11 +202,11 @@ public class MxmlWriter {
           // skip
         }
         else {
-          cssRulesetDefined = writeProperty(attribute, descriptor, context, cssRulesetDefined);
+          cssRulesetDefined = writeProperty(attribute, descriptor, context, cssRulesetDefined, true);
         }
       }
       else if (attributeDescriptor instanceof AnyXmlAttributeDescriptor) {
-        writeProperty(attribute, new AnyXmlAttributeDescriptorWrapper(attributeDescriptor), context, false);
+        writeProperty(attribute, new AnyXmlAttributeDescriptorWrapper(attributeDescriptor), context, false, true);
       }
     }
 
@@ -220,8 +220,6 @@ public class MxmlWriter {
       assert context == null;
       context = writer.createStaticContext(parentContext, referencePosition);
     }
-
-    //assert stateWriter == null || stateWriter.pendingFirstSetProperty == null;
 
     writer.resetPreallocatedId();
     injectedASWriter.lastMxmlObjectReference = null;
@@ -239,11 +237,11 @@ public class MxmlWriter {
     return staticChild;
   }
 
-  private boolean writeProperty(XmlAttribute attribute, AnnotationBackedDescriptor descriptor, Context context,
-                                boolean cssRulesetDefined) {
-    int beforePosition = out.size();
-    final PropertyKind propertyKind = writeMxmlProperty(attribute, valueProviderFactory.create(attribute), descriptor, cssRulesetDefined,
-                                                        context);
+  boolean writeProperty(XmlAttribute attribute, AnnotationBackedDescriptor descriptor, @Nullable Context context,
+                                boolean cssRulesetDefined, boolean isMxmlProperty) {
+    final int beforePosition = out.size();
+    final PropertyKind propertyKind = writeMxmlOrSimpleProperty(attribute, valueProviderFactory.create(attribute), descriptor,
+                                                                cssRulesetDefined, context, isMxmlProperty);
     if (propertyKind != PropertyKind.IGNORE) {
       if (propertyProcessor.isStyle()) {
         cssRulesetDefined = true;
@@ -527,7 +525,9 @@ public class MxmlWriter {
       if (descriptor.isPredefined()) {
         // todo IDEA-72123
         if (descriptor.getName().equals(FlexPredefinedTagNames.MODEL)) {
-          //propertyProcessor.processFxModel(tag);
+          if (propertyProcessor.processFxModel(tag)) {
+            validChildrenCount++;
+          }
         }
         continue;
       }

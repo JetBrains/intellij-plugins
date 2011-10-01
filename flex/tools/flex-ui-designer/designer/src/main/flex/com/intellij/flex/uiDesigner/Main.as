@@ -12,6 +12,7 @@ import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 
 import com.intellij.flex.uiDesigner.css.Stylesheet;
 import com.intellij.flex.uiDesigner.libraries.Library;
+import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.libraries.QueueLoader;
 import com.intellij.flex.uiDesigner.plaf.EditorTabBarRendererManager;
 import com.intellij.flex.uiDesigner.plaf.ProjectViewSkin;
@@ -65,6 +66,7 @@ public class Main extends MainWindowedApplication {
     DefaultSocketDataHandler;
     Stylesheet;
     Library;
+    LibraryManager;
     AssetContainerClassPool;
     LocalStyleHolder;
     // Burn in hell, Adobe
