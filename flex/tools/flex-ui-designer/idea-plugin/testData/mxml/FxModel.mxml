@@ -1,4 +1,5 @@
-<VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark" xmlns:t="com.intellij.flex.uiDesigner.test.*">
+<VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark" xmlns:t="com.intellij.flex.uiDesigner.test.*"
+        xmlns:mx="library://ns.adobe.com/flex/mx">
   <fx:Declarations>
     <fx:Model id="simple">
       <employee>
@@ -10,12 +11,12 @@
         <email/>
       </employee>
     </fx:Model>
-    <!--<fx:Model id="reg">-->
-      <!--<registration>-->
-        <!--<email>{email.text}</email>-->
-      <!--</registration>-->
-    <!--</fx:Model>-->
-    <!--<mx:EmailValidator source="{reg}" property="email" trigger="{submit}" triggerEvent="click" listener="{email}"/>-->
+    <fx:Model id="reg">
+      <registration>
+        <email>{email.text}</email>
+      </registration>
+    </fx:Model>
+    <mx:EmailValidator source="{reg}" property="email" trigger="{submit}" triggerEvent="click" listener="{email}"/>
   </fx:Declarations>
 
   <t:Collector data="{simple}"/>

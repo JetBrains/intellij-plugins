@@ -204,6 +204,15 @@ class PropertyProcessor implements ValueWriter {
     // parentContext for fx:Model always null, because located inside fx:Declarations (i.e. parentContext always is top level)
     // state specific is not allowed for fx:Model (flex compiler doesn't support it)
     mxmlWriter.processIdAttributeOfFxTag(tag, null, false);
+
+    try {
+      // temp
+      injectedASWriter.lastMxmlObjectReference = injectedASWriter.getValueReference(idAttribute.getDisplayValue());
+    }
+    catch (InvalidPropertyException e) {
+      throw new IllegalStateException(e);
+    }
+
     final XmlTag[] subTags = tag.getSubTags();
     if (subTags.length == 1) {
       processFxModelTagChildren(subTags[0]);
@@ -218,16 +227,18 @@ class PropertyProcessor implements ValueWriter {
       }
     }
 
+    injectedASWriter.lastMxmlObjectReference = null;
     return true;
   }
 
-  private boolean writeFxModelTagIfContainsXmlText(XmlTag parent) {
+  private boolean writeFxModelTagIfContainsXmlText(XmlTag parent, String tagLocalName) {
     for (XmlTagChild child : parent.getValue().getChildren()) {
       // ignore any subtags if XmlText presents, according to flex compiler behavior
       if (child instanceof XmlText && !MxmlUtil.containsOnlyWhitespace(child)) {
         final ValueWriter valueWriter;
+        final boolean referenceIdAssigned = injectedASWriter.lastMxmlObjectReference != null;
         try {
-          valueWriter = injectedASWriter.processProperty(child, name, null, false, null);
+          valueWriter = injectedASWriter.processProperty(child, tagLocalName, null, false, null);
         }
         catch (InvalidPropertyException e) {
           injectedASWriter.lastMxmlObjectReference = null;
@@ -238,10 +249,9 @@ class PropertyProcessor implements ValueWriter {
         }
 
         if (valueWriter == InjectedASWriter.IGNORE) {
-          if (injectedASWriter.lastMxmlObjectReference != null) {
-            writer.objectReference(injectedASWriter.lastMxmlObjectReference.id);
-            injectedASWriter.lastMxmlObjectReference = null;
-            writer.resetPreallocatedId();
+          if (!referenceIdAssigned) {
+            writer.property("2");
+            writer.getOut().writeUInt29(injectedASWriter.lastMxmlObjectReference.id);
           }
         }
         else {
@@ -249,6 +259,7 @@ class PropertyProcessor implements ValueWriter {
             throw new IllegalStateException("What?");
           }
           else {
+            writer.property(tagLocalName);
             writeUntypedPrimitiveValue(writer.getOut(), ((XmlText)child).getValue());
           }
         }
@@ -265,26 +276,26 @@ class PropertyProcessor implements ValueWriter {
   }
 
   private boolean processFxModelTagChildren(final XmlTag parent) {
-    // fx:Model tags is not referable
     writer.objectHeader("mx.utils.ObjectProxy");
 
     final XmlTag[] parentSubTags = parent.getSubTags();
     for (XmlTag tag : parentSubTags) {
       final String tagLocalName = tag.getLocalName();
       final XmlTag[] subTags = parent.findSubTags(tagLocalName, tag.getNamespace());
-      writer.property(tagLocalName);
       if (subTags.length > 1) {
+        writer.property(tagLocalName);
         final int lengthPosition = writer.arrayHeader();
         int length = 0;
         for (XmlTag subTag : subTags) {
-          if (writeFxModelTagIfContainsXmlText(subTag) || processFxModelTagChildren(subTag)) {
+          if (writeFxModelTagIfContainsXmlText(subTag, tagLocalName) || processFxModelTagChildren(subTag)) {
             length++;
           }
         }
 
         writer.getOut().putShort(length, lengthPosition);
       }
-      else if (!writeFxModelTagIfContainsXmlText(tag)) {
+      else if (!writeFxModelTagIfContainsXmlText(tag, tagLocalName)) {
+        writer.property(tagLocalName);
         processFxModelTagChildren(tag);
       }
     }
@@ -293,6 +304,7 @@ class PropertyProcessor implements ValueWriter {
       mxmlWriter.writeProperty(attribute, new AnyXmlAttributeDescriptorWrapper(attribute.getDescriptor()), null, false, true);
     }
 
+    injectedASWriter.lastMxmlObjectReference = null;
     writer.endObject();
     return true;
   }

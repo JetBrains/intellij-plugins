@@ -827,7 +827,12 @@ public final class MxmlReader implements DocumentReader {
   internal function readSimpleObject(o:Object):Object {
     var propertyName:String;
     while ((propertyName = stringRegistry.read(input)) != null) {
-      o[propertyName] = readExpression(input.readByte());
+      if (propertyName == "2") {
+        saveReferredObject(AmfUtil.readUInt29(input), o);
+      }
+      else {
+        o[propertyName] = readExpression(input.readByte());
+      }
     }
     
     return o;

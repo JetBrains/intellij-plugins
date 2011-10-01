@@ -18,6 +18,7 @@ public class Collector extends UIComponent {
     label = new Label();
     label.width = 200;
     label.height = 100;
+    applyData();
     addChild(label);
   }
 
@@ -28,7 +29,13 @@ public class Collector extends UIComponent {
 
   public function set data(value:Object):void {
     _data = value;
-    label.text = ObjectUtil.toString(value);
+    if (label != null) {
+      applyData();
+    }
+  }
+
+  private function applyData():void {
+    label.text = ObjectUtil.toString(_data);
   }
 }
 }
