@@ -62,11 +62,6 @@ public class FlexConfigImportSettings extends ConfigImportSettings {
   }
 
   @Override
-  protected String getInaccessibleHomeErrorText(String instHome) {
-    return super.getInaccessibleHomeErrorText(instHome);    //To change body of overridden methods use File | Settings | File Templates.
-  }
-
-  @Override
   public void importFinished(String newConfigPath) {
     File disabledPluginsFile = new File(newConfigPath, PluginManager.DISABLED_PLUGINS_FILENAME);
     if (disabledPluginsFile.exists()) {
@@ -79,4 +74,11 @@ public class FlexConfigImportSettings extends ConfigImportSettings {
     return ".IntelliJIdea10";
   }
 
+  @Override
+  public String fixConfigDir(String configDir) {
+    String s = FileUtil.toSystemIndependentName(configDir);
+    String idea = ".IntelliJIdea";
+    if (s.contains("/" + idea + "/")) return configDir.replace(idea, idea + "11");
+    return null;
+  }
 }
