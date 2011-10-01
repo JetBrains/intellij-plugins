@@ -228,6 +228,7 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
   private Element processSdkEntry(ModifiableFlexIdeBuildConfiguration buildConfiguration, String ideaSdkName, String ideaSdkType) {
     if (AirMobileSdkType.NAME.equals(ideaSdkType)) {
       buildConfiguration.setTargetPlatform(TargetPlatform.Mobile);
+      buildConfiguration.getAndroidPackagingOptions().setEnabled(true);
     }
     else if (AirSdkType.NAME.equals(ideaSdkType)) {
       buildConfiguration.setTargetPlatform(TargetPlatform.Desktop);
