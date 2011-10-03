@@ -7,8 +7,13 @@
           <first>FN</first>
           <last>LN</last>
         </name>
+        <age>18</age>
+        <h>13.2</h>
         <department/>
         <email/>
+        <child name="Diana"/>
+        <child name="Olga"/>
+        <married>true</married>
       </employee>
     </fx:Model>
     <fx:Model id="reg">
@@ -20,7 +25,7 @@
   </fx:Declarations>
 
   <t:Collector data="{simple}"/>
-  
+
   <TextInput id="email" width="200"/>
   <Button id="submit" label="Validate"/>
 </VGroup>

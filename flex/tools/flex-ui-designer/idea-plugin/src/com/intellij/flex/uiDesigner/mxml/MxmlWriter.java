@@ -237,7 +237,11 @@ public class MxmlWriter {
     return staticChild;
   }
 
-  boolean writeProperty(XmlAttribute attribute, AnnotationBackedDescriptor descriptor, @Nullable Context context,
+  boolean writeSimplProperty(XmlAttribute attribute, AnnotationBackedDescriptor descriptor) {
+    return writeProperty(attribute, descriptor, null, false, false);
+  }
+
+  private boolean writeProperty(XmlAttribute attribute, AnnotationBackedDescriptor descriptor, @Nullable Context context,
                                 boolean cssRulesetDefined, boolean isMxmlProperty) {
     final int beforePosition = out.size();
     final PropertyKind propertyKind = writeMxmlOrSimpleProperty(attribute, valueProviderFactory.create(attribute), descriptor,

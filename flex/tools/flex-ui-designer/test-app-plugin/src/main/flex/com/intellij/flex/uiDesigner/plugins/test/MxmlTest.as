@@ -8,6 +8,7 @@ import org.hamcrest.core.allOf;
 import org.hamcrest.core.isA;
 import org.hamcrest.core.not;
 import org.hamcrest.object.equalTo;
+import org.hamcrest.object.instanceOf;
 import org.hamcrest.object.strictlyEqualTo;
 
 [Test(dir="mxml")]
@@ -52,7 +53,12 @@ public class MxmlTest extends BaseTestCase {
   }
   
   public function UntypedProperty():void {
-    assertThat(app, {left: allOf(isA(int), strictlyEqualTo(0)), right: strictlyEqualTo("c22:12"), top: strictlyEqualTo(0.4), bottom: allOf(isA(int), strictlyEqualTo(-30))});
+    var tM:Object = {data: strictlyEqualTo(true)};
+    var fM:Object = {data: strictlyEqualTo(false)};
+    assertThat(app, allOf({left: allOf(isA(int),
+                                       strictlyEqualTo(0)), right: strictlyEqualTo("c22:12"), top: strictlyEqualTo(0.4), bottom: allOf(isA(int),
+                                                                                                                                       strictlyEqualTo(-30))},
+                          [tM, tM, tM, fM, fM, fM, fM, {data: strictlyEqualTo(33)}, {data: strictlyEqualTo(null)}]));
   }
   
   public function ClassProperty():void {
@@ -153,7 +159,7 @@ public class MxmlTest extends BaseTestCase {
     assertThat(app, [{layout: {constraintColumns: {length: 1, fixed: false}}},
       {selectedIndices: allOf([0, 2], {fixed: false})},
       {selectedIndices: allOf([1, 3], {fixed: false})},
-      {selectedIndices: allOf([1, 2], {fixed: false /* false, because our vector copied in spark List*/})}
+      {selectedIndices: allOf([1, 2], {fixed: false /* false, because our vector copied in spark List */})}
     ]);
   }
 
@@ -178,7 +184,16 @@ public class MxmlTest extends BaseTestCase {
   }
 
   public function FxModel():void {
-
+    var opClass:Class = Class(getDefinition("mx.utils.ObjectProxy"));
+    assertThat(app, [
+      {data: allOf(instanceOf(opClass),
+                   {name: {first: "FN", last: "LN"}, age: strictlyEqualTo(18), h: strictlyEqualTo(13.2), child: allOf(instanceOf(Array), [
+                     {name: "Diana"},
+                     {name: "Olga"}
+                   ]), email: instanceOf(opClass), department: instanceOf(opClass), married: strictlyEqualTo(true)})},
+      {},
+      {}
+    ]);
   }
 }
 }

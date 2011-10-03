@@ -3,12 +3,14 @@ package com.intellij.flex.uiDesigner.mxml;
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
+import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -210,7 +212,25 @@ class ExpressionBinding extends Binding {
       out.writeAmfDouble(expression.getText());
     }
     else {
-      writer.string(StringUtil.stripQuotesAroundValue(expression.getText()));
+      final PsiElement firstChild = expression.getFirstChild();
+      if (firstChild == null) {
+        writer.string(XmlTextValueProvider.EMPTY);
+        return;
+      }
+
+      final IElementType elementType = firstChild.getNode().getElementType();
+      if (elementType == JSTokenTypes.TRUE_KEYWORD) {
+        writer.getOut().write(Amf3Types.TRUE);
+      }
+      else if (elementType == JSTokenTypes.FALSE_KEYWORD) {
+        writer.getOut().write(Amf3Types.FALSE);
+      }
+      else if (elementType == JSTokenTypes.NULL_KEYWORD) {
+        writer.getOut().write(Amf3Types.NULL);
+      }
+      else {
+        writer.string(StringUtil.stripQuotesAroundValue(expression.getText()));
+      }
     }
   }
 

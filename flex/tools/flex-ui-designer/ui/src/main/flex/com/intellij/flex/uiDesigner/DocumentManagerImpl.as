@@ -117,9 +117,8 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     var module:Module = documentFactory.module;
     module.context.librariesResolved = true;
     if (createAndOpen(documentFactory, documentOpened) && !ApplicationManager.instance.unitTestMode) {
-      var w:DocumentWindow = module.project.window;
       if (NativeWindow.supportsNotification) {
-        w.notifyUser(NotificationType.INFORMATIONAL);
+        module.project.window.notifyUser(NotificationType.INFORMATIONAL);
       }
       else {
         var dockIcon:DockIcon = NativeApplication.nativeApplication.icon as DockIcon;

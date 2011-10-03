@@ -32,7 +32,7 @@
     <orderEntry type="module-library" scope="TEST">
       <library>
         <CLASSES>
-          <root url="file://$APPLICATION_HOME_DIR$/out/classes/test/JavaScript-tests" />
+          <root url="file://$MODULE_DIR$/../../../../out/classes/test/JavaScript-tests" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

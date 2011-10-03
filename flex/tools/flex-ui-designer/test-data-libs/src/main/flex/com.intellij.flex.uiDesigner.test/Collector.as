@@ -1,25 +1,29 @@
 package com.intellij.flex.uiDesigner.test {
-import mx.core.UIComponent;
 import mx.utils.ObjectUtil;
 
-import spark.components.Label;
+import spark.components.RichEditableText;
+import spark.components.Scroller;
 
-public class Collector extends UIComponent {
-  private var label:Label;
+public class Collector extends Scroller {
+  private var textView:RichEditableText;
 
   public function Collector() {
     width = 200;
-    height = 100;
+    height = 200;
   }
 
   override protected function createChildren():void {
     super.createChildren();
 
-    label = new Label();
-    label.width = 200;
-    label.height = 100;
+    textView = new RichEditableText();
+    textView.editable = false;
+    textView.selectable = false;
+
+    textView.width = 200;
+    textView.height = 200;
     applyData();
-    addChild(label);
+
+    viewport = textView;
   }
 
   private var _data:Object;
@@ -29,13 +33,13 @@ public class Collector extends UIComponent {
 
   public function set data(value:Object):void {
     _data = value;
-    if (label != null) {
+    if (textView != null) {
       applyData();
     }
   }
 
   private function applyData():void {
-    label.text = ObjectUtil.toString(_data);
+    textView.text = ObjectUtil.toString(_data);
   }
 }
 }

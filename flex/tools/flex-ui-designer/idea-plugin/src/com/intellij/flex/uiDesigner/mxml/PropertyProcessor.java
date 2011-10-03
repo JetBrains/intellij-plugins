@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.mxml;
 
+import com.google.common.base.CharMatcher;
 import com.intellij.flex.uiDesigner.InjectionUtil;
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
@@ -231,7 +232,8 @@ class PropertyProcessor implements ValueWriter {
     return true;
   }
 
-  private boolean writeFxModelTagIfContainsXmlText(XmlTag parent, String tagLocalName) {
+  // tagLocalName is null, if parent is list item (i.e. not as property value, but as array item)
+  private boolean writeFxModelTagIfContainsXmlText(XmlTag parent, @Nullable String tagLocalName) {
     for (XmlTagChild child : parent.getValue().getChildren()) {
       // ignore any subtags if XmlText presents, according to flex compiler behavior
       if (child instanceof XmlText && !MxmlUtil.containsOnlyWhitespace(child)) {
@@ -259,7 +261,9 @@ class PropertyProcessor implements ValueWriter {
             throw new IllegalStateException("What?");
           }
           else {
-            writer.property(tagLocalName);
+            if (tagLocalName != null) {
+              writer.property(tagLocalName);
+            }
             writeUntypedPrimitiveValue(writer.getOut(), ((XmlText)child).getValue());
           }
         }
@@ -287,7 +291,7 @@ class PropertyProcessor implements ValueWriter {
         final int lengthPosition = writer.arrayHeader();
         int length = 0;
         for (XmlTag subTag : subTags) {
-          if (writeFxModelTagIfContainsXmlText(subTag, tagLocalName) || processFxModelTagChildren(subTag)) {
+          if (writeFxModelTagIfContainsXmlText(subTag, null) || processFxModelTagChildren(subTag)) {
             length++;
           }
         }
@@ -301,7 +305,7 @@ class PropertyProcessor implements ValueWriter {
     }
 
     for (final XmlAttribute attribute : parent.getAttributes()) {
-      mxmlWriter.writeProperty(attribute, new AnyXmlAttributeDescriptorWrapper(attribute.getDescriptor()), null, false, true);
+      mxmlWriter.writeSimplProperty(attribute, new AnyXmlAttributeDescriptorWrapper(attribute.getDescriptor()));
     }
 
     injectedASWriter.lastMxmlObjectReference = null;
@@ -690,15 +694,25 @@ class PropertyProcessor implements ValueWriter {
   }
 
   private void writeUntypedPrimitiveValue(PrimitiveAmfOutputStream out, CharSequence charSequence) {
-    final String value = charSequence.toString();
+    final String s = CharMatcher.WHITESPACE.trimFrom(charSequence);
+    if (s.equals("true")) {
+      out.write(Amf3Types.TRUE);
+      return;
+    }
+    if (s.equals("false")) {
+      out.write(Amf3Types.FALSE);
+      return;
+    }
+
     try {
-      out.writeAmfInt(Integer.parseInt(value));
+      out.writeAmfInt(Integer.parseInt(s));
     }
     catch (NumberFormatException e) {
       try {
-        out.writeAmfDouble(Double.parseDouble(value));
+        out.writeAmfDouble(Double.parseDouble(s));
       }
       catch (NumberFormatException ignored) {
+        // write untrimmed string
         writer.string(charSequence);
       }
     }

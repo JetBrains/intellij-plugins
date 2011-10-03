@@ -28,7 +28,9 @@
           <root url="jar://$MODULE_DIR$/../../../../test-data-libs/target/test-data-libs.swc!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../../../../test-data-libs/src/main/flex" />
+        </SOURCES>
       </library>
     </orderEntry>
   </component>
