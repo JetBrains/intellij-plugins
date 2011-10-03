@@ -158,11 +158,8 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
 
   public boolean processActions(final Processor<Action> processor) {
     for (final StrutsPackage strutsPackage : getStrutsPackages()) {
-      for (final Action action : strutsPackage.getActions()) {
-        if (!processor.process(action)) {
-          return false;
-        }
-      }
+      List<Action> actions = strutsPackage.getActions();
+      if (!ContainerUtil.process(actions, processor)) return false;
     }
     return true;
   }
