@@ -17,10 +17,10 @@ package com.google.jstestdriver.idea.ui;
 
 import com.google.common.collect.Maps;
 import com.google.jstestdriver.BrowserInfo;
-import com.google.jstestdriver.JsTestDriverServer;
-import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.browser.BrowserCaptureEvent;
+import com.google.jstestdriver.hooks.ServerListener;
 import com.google.jstestdriver.idea.PluginResources.BrowserIcon;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,14 +30,12 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)
  */
 @SuppressWarnings("serial")
-public class CapturedBrowsersPanel extends JPanel implements Observer {
+public class CapturedBrowsersPanel extends JPanel implements ServerListener {
   private static final Logger log = Logger.getInstance(CapturedBrowsersPanel.class);
 
   private final Map<String, BrowserLabel> myBrowserLabelByNameMap;
@@ -81,28 +79,48 @@ public class CapturedBrowsersPanel extends JPanel implements Observer {
     return myBrowserLabelByNameMap.get(browserName.toLowerCase());
   }
 
-  public void update(final Observable observable, final Object event) {
-    SwingUtilities.invokeLater(new Runnable() {
+  @Override
+  public void serverStarted() {
+    batchChangeBrowserState(BrowserCaptureEvent.Event.DISCONNECTED);
+  }
+
+  @Override
+  public void serverStopped() {
+    batchChangeBrowserState(BrowserCaptureEvent.Event.DISCONNECTED);
+  }
+
+  private void batchChangeBrowserState(@NotNull final BrowserCaptureEvent.Event event) {
+    ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
-        if (observable instanceof JsTestDriverServer) {
-          JsTestDriverServer.Event serverEvent = (JsTestDriverServer.Event) event;
-          if (serverEvent == JsTestDriverServer.Event.STOPPED) {
-            for (BrowserLabel browserLabel : myBrowserLabelByNameMap.values()) {
-              browserLabel.setIcon(browserLabel.getBrowserIcon().getIconForEvent(BrowserCaptureEvent.Event.DISCONNECTED));
-            }
-          }
-        } else if (event instanceof BrowserCaptureEvent) {
-          BrowserCaptureEvent browserCaptureEvent = (BrowserCaptureEvent) event;
-          SlaveBrowser slaveBrowser = browserCaptureEvent.getBrowser();
-          BrowserInfo browserInfo = slaveBrowser.getBrowserInfo();
-          BrowserLabel browserLabel = getBrowserLabelByName(browserInfo.getName());
-          if (browserLabel != null) {
-            browserLabel.setIcon(browserLabel.getBrowserIcon().getIconForEvent(browserCaptureEvent.event));
-          } else {
-            log.warn("Unregistered browser '" + browserInfo.getName()
-                + "' BrowserCaptureEvent has been received. " + slaveBrowser + ", type: " + browserCaptureEvent.event);
-          }
+        for (BrowserLabel browserLabel : myBrowserLabelByNameMap.values()) {
+          Icon icon = browserLabel.getBrowserIcon().getIconForEvent(event);
+          browserLabel.setIcon(icon);
+        }
+      }
+    });
+  }
+
+  @Override
+  public void browserCaptured(BrowserInfo info) {
+    browserStateChanged(info, BrowserCaptureEvent.Event.CONNECTED);
+  }
+
+  @Override
+  public void browserPanicked(BrowserInfo info) {
+    browserStateChanged(info, BrowserCaptureEvent.Event.DISCONNECTED);
+  }
+
+  private void browserStateChanged(@NotNull final BrowserInfo info, final BrowserCaptureEvent.Event event) {
+    ApplicationManager.getApplication().invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        BrowserLabel browserLabel = getBrowserLabelByName(info.getName());
+        if (browserLabel != null) {
+          browserLabel.setIcon(browserLabel.getBrowserIcon().getIconForEvent(event));
+        } else {
+          log.warn("Unregistered browser '" + info.getName()
+              + "' BrowserCaptureEvent has been received. " + info + ", type: " + event);
         }
       }
     });

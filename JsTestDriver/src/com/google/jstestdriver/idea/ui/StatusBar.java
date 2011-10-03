@@ -15,77 +15,74 @@
  */
 package com.google.jstestdriver.idea.ui;
 
-import com.google.inject.Inject;
-import com.google.jstestdriver.CapturedBrowsers;
-import com.google.jstestdriver.JsTestDriverServer;
-
-import java.awt.Color;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.ResourceBundle;
+import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.hooks.ServerListener;
+import com.intellij.openapi.application.ApplicationManager;
 
 import javax.swing.*;
+import java.awt.*;
+import java.util.ResourceBundle;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)
  */
-public class StatusBar extends JPanel implements Observer {
+public class StatusBar extends JPanel implements ServerListener {
 
   private static final long serialVersionUID = 8729866568493622493L;
+
+  private final JLabel myLabel;
+  private final ResourceBundle myMessageBundle;
+
+  public StatusBar(ResourceBundle messageBundle) {
+    myLabel = new JLabel();
+    add(myLabel);
+    myMessageBundle = messageBundle;
+    setStatusDeferred(Status.NOT_RUNNING);
+  }
+
+  private void setStatusDeferred(final Status status) {
+    ApplicationManager.getApplication().invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        StatusBar.this.setBackground(status.getColor());
+        myLabel.setText(myMessageBundle.getString(status.name()));
+      }
+    });
+  }
+
+  @Override
+  public void serverStarted() {
+    setStatusDeferred(Status.NO_BROWSERS);
+  }
+
+  @Override
+  public void serverStopped() {
+    setStatusDeferred(Status.NOT_RUNNING);
+  }
+
+  @Override
+  public void browserCaptured(BrowserInfo info) {
+    setStatusDeferred(Status.READY);
+  }
+
+  @Override
+  public void browserPanicked(BrowserInfo info) {
+  }
 
   public enum Status {
     NOT_RUNNING("#FF6666"),
     NO_BROWSERS("#FFFF66"),
     READY("#66CC66");
 
-    private final Color color;
+    private final Color myColor;
 
     Status(String hexColorStr) {
-      color = Color.decode(hexColorStr);
+      myColor = Color.decode(hexColorStr);
     }
 
     public Color getColor() {
-      return color;
+      return myColor;
     }
   }
 
-  private JLabel label;
-  private final ResourceBundle messageBundle;
-
-  @Inject
-  public StatusBar(Status status, ResourceBundle messageBundle) {
-    label = new JLabel();
-    add(label);
-    this.messageBundle = messageBundle;
-    this.setStatus(status);
-  }
-
-  private void setStatus(Status status) {
-    this.setBackground(status.getColor());
-    label.setText(messageBundle.getString(status.name()));
-  }
-
-  public void update(final Observable observable, final Object event) {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        if (observable instanceof JsTestDriverServer) {
-          switch ((JsTestDriverServer.Event) event) {
-            case STARTED:
-              setStatus(Status.NO_BROWSERS);
-              break;
-            case STOPPED:
-              setStatus(Status.NOT_RUNNING);
-              break;
-          }
-        } else if (observable instanceof CapturedBrowsers) {
-          if (((CapturedBrowsers)observable).getBrowsers().isEmpty()) {
-            setStatus(Status.NO_BROWSERS);
-          } else {
-            setStatus(Status.READY);
-          }
-        }
-      }
-    });
-  }
 }

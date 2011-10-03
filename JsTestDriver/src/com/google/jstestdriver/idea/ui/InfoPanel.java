@@ -95,7 +95,7 @@ public class InfoPanel extends JPanel {
     }}, SOUTH);
   }
   
-  private class ClipboardCopier implements ClipboardOwner {
+  private static class ClipboardCopier implements ClipboardOwner {
     public void toClipboard(String value) {
       SecurityManager sm = System.getSecurityManager();
       if (sm != null) {
