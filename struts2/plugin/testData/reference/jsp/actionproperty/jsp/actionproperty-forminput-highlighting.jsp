@@ -60,6 +60,8 @@
 
   <s:textfield name="myField"/>
   <s:textfield name="<error>INVALID_VALUE</error>"/>
+  <s:textfield name="user.foreName"/>
+  <s:textfield name="user.<error>INVALID_VALUE</error>"/>
 
   <s:updownselect name="myField"/>
   <s:updownselect name="<error>INVALID_VALUE</error>"/>

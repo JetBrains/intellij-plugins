@@ -37,10 +37,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.*;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import org.jetbrains.annotations.Nls;
@@ -153,7 +150,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
 
         if (manifestFileLocation != null) {
             for (VirtualFile root : roots) {
-                String relativePath = VfsUtil.getRelativePath(manifestFileLocation, root, File.separatorChar);
+                String relativePath = VfsUtilCore.getRelativePath(manifestFileLocation, root, File.separatorChar);
                 if (relativePath != null) {
                     // okay, it resides inside one of our content roots, so far so good.
                     if (manifestFileLocation.isDirectory()) {
@@ -196,7 +193,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
 
     if (fileLocation != null) {
         for (VirtualFile root : roots) {
-            String relativePath = VfsUtil
+            String relativePath = VfsUtilCore
                     .getRelativePath(fileLocation, root, File.separatorChar);
             if (relativePath != null) {
                 field.setText(relativePath);

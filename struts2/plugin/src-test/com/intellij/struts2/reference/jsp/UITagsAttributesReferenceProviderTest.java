@@ -14,8 +14,10 @@
  */
 package com.intellij.struts2.reference.jsp;
 
+import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.struts2.BasicHighlightingTestCase;
 import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
+import com.intellij.xml.util.XmlDuplicatedIdInspection;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,6 +26,11 @@ import org.jetbrains.annotations.NotNull;
  * @author Yann C&eacute;bron
  */
 public class UITagsAttributesReferenceProviderTest extends BasicHighlightingTestCase<WebModuleFixtureBuilder> {
+
+  @Override
+  protected LocalInspectionTool[] getHighlightingInspections() {
+    return new LocalInspectionTool[]{new XmlDuplicatedIdInspection()};
+  }
 
   @Override
   @NotNull

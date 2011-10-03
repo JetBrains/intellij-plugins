@@ -2,16 +2,17 @@ package com.google.jstestdriver.idea.execution.tree;
 
 import com.intellij.execution.Location;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 abstract class LocationProvider {
 
   @Nullable
-  abstract Location provideLocation(Project project);
+  abstract Location provideLocation(@NotNull Project project);
 
   public static LocationProvider EMPTY = new LocationProvider() {
     @Override
-    public Location provideLocation(Project project) {
+    public Location provideLocation(@NotNull Project project) {
       return null;
     }
   };
@@ -23,7 +24,7 @@ abstract class LocationProvider {
     return new LocationProvider() {
       @Override
       @Nullable
-      Location provideLocation(Project project) {
+      Location provideLocation(@NotNull Project project) {
         return location;
       }
     };

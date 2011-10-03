@@ -15,11 +15,8 @@
  */
 package com.google.jstestdriver.idea.execution;
 
-import com.google.common.collect.Maps;
 import com.google.jstestdriver.idea.RemoteTestResultReceiver;
 import com.google.jstestdriver.idea.execution.tree.RemoteTestListener;
-import com.google.jstestdriver.idea.javascript.navigation.NavigationRegistry;
-import com.google.jstestdriver.idea.javascript.navigation.NavigationRegistryBuilder;
 import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
@@ -45,7 +42,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -132,20 +128,12 @@ class TestRunnerState extends CommandLineState {
   }
 
   private RemoteTestListener createRemoteTestListener(TestListenerContext context) {
-    Map<VirtualFile, NavigationRegistry> navigationRegistryMap = Maps.newHashMap();
-    for (VirtualFile configVirtualFile : myConfigVirtualFiles) {
-      NavigationRegistryBuilder builder = NavigationRegistryBuilder.getInstance();
-      NavigationRegistry registry = builder.buildNavigationRegistry(myProject, configVirtualFile);
-      if (registry != null) {
-        navigationRegistryMap.put(registry.getVirtualFile(), registry);
-      }
-    }
     VirtualFile virtualFile = null;
     if (myRunConfiguration.getRunSettings().isAllInDirectory()) {
       File directory = new File(myRunConfiguration.getRunSettings().getDirectory());
       virtualFile = LocalFileSystem.getInstance().findFileByIoFile(directory);
     }
-    return new RemoteTestListener(navigationRegistryMap, context, virtualFile);
+    return new RemoteTestListener(context, virtualFile);
   }
 
   @NotNull

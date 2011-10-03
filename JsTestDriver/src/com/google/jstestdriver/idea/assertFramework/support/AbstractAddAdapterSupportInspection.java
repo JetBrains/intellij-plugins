@@ -17,11 +17,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public abstract class AbstractAdapterSupportProvider extends JSInspection {
+public abstract class AbstractAddAdapterSupportInspection extends JSInspection {
 
   private final AdapterFix myAdapterQuickFix;
 
-  protected AbstractAdapterSupportProvider() {
+  protected AbstractAddAdapterSupportInspection() {
     myAdapterQuickFix = new AdapterFix(this);
   }
 

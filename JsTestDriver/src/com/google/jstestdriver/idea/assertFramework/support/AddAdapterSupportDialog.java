@@ -1,14 +1,16 @@
 package com.google.jstestdriver.idea.assertFramework.support;
 
+import com.google.jstestdriver.idea.util.CastUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.util.List;
 
-public class AdapterSupportDialog extends DialogWrapper {
+public class AddAdapterSupportDialog extends DialogWrapper {
 
   private final String myAssertFrameworkName;
   private List<VirtualFile> myAdapterSourceFiles;
@@ -19,32 +21,50 @@ public class AdapterSupportDialog extends DialogWrapper {
   private JRadioButton myCustomRadioButton;
   private JPanel myLibraryNameDefinitionPanel;
   private JTextField myNewLibraryNameTextField;
+  private JPanel myTestsRunPanel;
+  private JPanel myCodeAssistancePanel;
 
-  private final DirectoryTypeManager myDirectoryTypeManager;
+  private final ExtractDirectoryTypeManager myDirectoryTypeManager;
   private final NewLibraryCreationManager myNewLibraryCreationManager;
 
-  public AdapterSupportDialog(@NotNull Project project,
-                              @NotNull String assertionFrameworkName,
-                              @NotNull List<VirtualFile> adapterSourceFiles) {
+  public AddAdapterSupportDialog(@NotNull Project project,
+                                 @NotNull String assertionFrameworkName,
+                                 @NotNull List<VirtualFile> adapterSourceFiles) {
     super(project);
     myAssertFrameworkName = assertionFrameworkName;
     myAdapterSourceFiles = adapterSourceFiles;
 
     setModal(true);
     updateAssertionFrameworkSpecificDescriptions();
-    myDirectoryTypeManager = DirectoryTypeManager.install(project, myDirectoryTypeContent, assertionFrameworkName, myDefaultRadioButton, myCustomRadioButton);
-    myNewLibraryCreationManager = NewLibraryCreationManager.install(project, myLibraryNameDefinitionPanel, myNewLibraryNameTextField, assertionFrameworkName);
+    myDirectoryTypeManager = ExtractDirectoryTypeManager.install(
+      project, myDirectoryTypeContent, assertionFrameworkName, myDefaultRadioButton, myCustomRadioButton
+    );
+    myNewLibraryCreationManager = NewLibraryCreationManager.install(
+      project, myLibraryNameDefinitionPanel, myNewLibraryNameTextField, assertionFrameworkName
+    );
     myDirectoryTypeManager.addChangeListener(myNewLibraryCreationManager);
     myDirectoryTypeManager.init();
     init();
   }
 
-  private String getAssertFrameworkNameAdapter() {
+  private String getAssertFrameworkAdapterName() {
     return myAssertFrameworkName + " adapter";
   }
 
   private void updateAssertionFrameworkSpecificDescriptions() {
-    setTitle("Add " + getAssertFrameworkNameAdapter() + " support for JsTestDriver");
+    setTitle("Add " + getAssertFrameworkAdapterName() + " support for JsTestDriver");
+    TitledBorder testsRunPanelTitledBorder = CastUtils.tryCast(myTestsRunPanel.getBorder(), TitledBorder.class);
+    if (testsRunPanelTitledBorder != null) {
+      String title = String.format(testsRunPanelTitledBorder.getTitle(), myAssertFrameworkName);
+      testsRunPanelTitledBorder.setTitle(title);
+    }
+    TitledBorder codeAssistancePanelTitledBorder = CastUtils.tryCast(
+      myCodeAssistancePanel.getBorder(), TitledBorder.class
+    );
+    if (codeAssistancePanelTitledBorder != null) {
+      String title = String.format(codeAssistancePanelTitledBorder.getTitle(), myAssertFrameworkName);
+      codeAssistancePanelTitledBorder.setTitle(title);
+    }
   }
 
   @Override
@@ -73,7 +93,9 @@ public class AdapterSupportDialog extends DialogWrapper {
 
   @Override
   protected Action[] createActions() {
-    return new Action[] { getOKAction(), getCancelAction() };
+    Action okAction = getOKAction();
+    okAction.putValue(Action.NAME, "Install");
+    return new Action[] { okAction, getCancelAction() };
   }
 
 }

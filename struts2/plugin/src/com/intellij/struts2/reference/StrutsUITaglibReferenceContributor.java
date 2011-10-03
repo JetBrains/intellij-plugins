@@ -101,11 +101,15 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
     registerTags(ACTION_PROPERTY_REFERENCE_PROVIDER,
                  "name", registrar,
                  TAGLIB_UI_FORM_INPUT_TAGS);
-    registerTags(ACTION_READONLY_PROPERTY_REFERENCE_PROVIDER,
+    registerTags(ACTION_PROPERTY_REFERENCE_PROVIDER,
                  "list", registrar,
                  "doubleselect", "inputtransferselect", "optiontransferselect", "select", "updownselect");
 
     registerBoolean("required", registrar, TAGLIB_UI_FORM_TAGS);
+
+    registerTags(ID_REFERENCE_PROVIDER,
+                 "id", registrar,
+                 TAGLIB_UI_FORM_INPUT_TAGS);
 
     registerTags(new StaticStringValuesReferenceProvider(false, "left", "right"),
                  "requiredposition", registrar,
@@ -170,7 +174,7 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
     registerTags(ACTION_PROPERTY_REFERENCE_PROVIDER,
                  "doubleName", registrar,
                  "doubleselect", "optiontransferselect");
-    registerTags(ACTION_READONLY_PROPERTY_REFERENCE_PROVIDER,
+    registerTags(ACTION_PROPERTY_REFERENCE_PROVIDER,
                  "doubleList", registrar,
                  "doubleselect", "optiontransferselect");
 

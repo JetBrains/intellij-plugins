@@ -1,6 +1,9 @@
 package com.google.jstestdriver.idea.assertFramework.support;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
+import com.google.jstestdriver.idea.util.SwingUtils;
+import com.google.jstestdriver.idea.util.TextChangeListener;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -26,7 +29,7 @@ import java.util.List;
 /*
  * All operations should be executed on EDT.
  */
-class DirectoryTypeManager {
+class ExtractDirectoryTypeManager {
 
   private final Project myProject;
   private final JPanel myDirectoryTypeContent;
@@ -36,7 +39,7 @@ class DirectoryTypeManager {
   private TextFieldWithBrowseButton myCustomDirectoryTextFieldWithBrowseButton;
   private DirectoryType mySelectedDirectoryType;
 
-  private DirectoryTypeManager(Project project, JPanel directoryTypeContent, String assertionFrameworkName) {
+  private ExtractDirectoryTypeManager(Project project, JPanel directoryTypeContent, String assertionFrameworkName) {
     myProject = project;
     myDirectoryTypeContent = directoryTypeContent;
     myAssertionFrameworkName = assertionFrameworkName;
@@ -44,49 +47,66 @@ class DirectoryTypeManager {
   }
 
   private void populate(JRadioButton defaultRadioButton, JRadioButton customRadioButton) {
-    JPanel defaultDirectoryTypePanel = createDefaultDirectoryPanel();
-    addCardToDirectoryTypeContent(defaultDirectoryTypePanel, DirectoryType.DEFAULT);
+    addContentForExtractDirecoryType(defaultRadioButton, DirectoryType.DEFAULT, new Supplier<JPanel>() {
+      @Override
+      public JPanel get() {
+        JPanel defaultDirectoryTypePanel = new JPanel(new BorderLayout());
+        defaultDirectoryTypePanel.add(new JLabel(myDefaultDir.getPath()), BorderLayout.WEST);
+        return defaultDirectoryTypePanel;
+      }
+    });
 
-    JPanel customDirectoryPanel = createCustomDirectoryPanel();
-    addCardToDirectoryTypeContent(customDirectoryPanel, DirectoryType.CUSTOM);
+    addContentForExtractDirecoryType(customRadioButton, DirectoryType.CUSTOM, new Supplier<JPanel>() {
+      @Override
+      public JPanel get() {
+        FileChooserDescriptor fileChooserDescriptor =
+          new FileChooserDescriptor(false, true, false, false, false, false);
+        String adapterName = myAssertionFrameworkName + " adapter";
+        String title = "Select a folder for " + adapterName;
+        String description = adapterName + " source files will be extracted into the selected folder";
+        myCustomDirectoryTextFieldWithBrowseButton = new TextFieldWithBrowseButton();
+        myCustomDirectoryTextFieldWithBrowseButton.addBrowseFolderListener(
+          title, description, myProject, fileChooserDescriptor
+        );
+        SwingUtils.addTextChangeListener(myCustomDirectoryTextFieldWithBrowseButton.getTextField(),
+            new TextChangeListener() {
+              @Override
+              public void textChanged(String oldText, @NotNull String newText) {
+                fireDirectoryTypeSelected();
+              }
+            }
+        );
 
-    defaultRadioButton.addActionListener(new MyActionListener(DirectoryType.DEFAULT));
-    customRadioButton.addActionListener(new MyActionListener(DirectoryType.CUSTOM));
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(myCustomDirectoryTextFieldWithBrowseButton, BorderLayout.NORTH);
+        return panel;
+      }
+    });
 
     selectDirectoryType(DirectoryType.DEFAULT);
   }
 
-  private void addCardToDirectoryTypeContent(@NotNull JComponent child, @NotNull DirectoryType directoryType) {
-    myDirectoryTypeContent.add(child, directoryType.name());
+  private void addContentForExtractDirecoryType(
+      JRadioButton radioButton, DirectoryType directoryType, Supplier<JPanel> producer
+  ) {
+    JPanel panel = producer.get();
+    if (panel == null) {
+      throw new RuntimeException();
+    }
+    myDirectoryTypeContent.add(panel, directoryType.name());
+    radioButton.addActionListener(new MyActionListener(directoryType));
   }
 
-  private JPanel createDefaultDirectoryPanel() {
-    JPanel defaultDirectoryTypePanel = new JPanel(new BorderLayout());
-    defaultDirectoryTypePanel.add(new JLabel(myDefaultDir.getPath()), BorderLayout.WEST);
-    return defaultDirectoryTypePanel;
-  }
-
-  private JPanel createCustomDirectoryPanel() {
-    FileChooserDescriptor fileChooserDescriptor = new FileChooserDescriptor(false, true, false, false, false, false);
-    String adapterName = myAssertionFrameworkName + " adapter";
-    String title = "Select a folder for " + adapterName;
-    String description = adapterName + " source files will be extracted into selected folder";
-    myCustomDirectoryTextFieldWithBrowseButton = new TextFieldWithBrowseButton();
-    myCustomDirectoryTextFieldWithBrowseButton.addBrowseFolderListener(title, description, myProject, fileChooserDescriptor);
-
-    JPanel panel = new JPanel(new BorderLayout());
-    panel.add(myCustomDirectoryTextFieldWithBrowseButton, BorderLayout.NORTH);
-    return panel;
-  }
-
-  public static DirectoryTypeManager install(
+  public static ExtractDirectoryTypeManager install(
       @NotNull Project project,
       @NotNull JPanel directoryTypeContent,
       @NotNull String assertionFrameworkName,
       @NotNull JRadioButton defaultRadioButton,
       @NotNull JRadioButton customRadioButton
   ) {
-    DirectoryTypeManager directoryTypeManager = new DirectoryTypeManager(project, directoryTypeContent, assertionFrameworkName);
+    ExtractDirectoryTypeManager directoryTypeManager = new ExtractDirectoryTypeManager(
+      project, directoryTypeContent, assertionFrameworkName
+    );
     directoryTypeManager.populate(defaultRadioButton, customRadioButton);
     return directoryTypeManager;
   }
@@ -98,9 +118,8 @@ class DirectoryTypeManager {
   private File getExtractDir() {
     if (mySelectedDirectoryType == DirectoryType.DEFAULT) {
       return myDefaultDir;
-    } else {
-      return new File(myCustomDirectoryTextFieldWithBrowseButton.getText());
     }
+    return new File(myCustomDirectoryTextFieldWithBrowseButton.getText());
   }
 
   public DialogWrapper.ValidationInfo validate() {
@@ -109,7 +128,8 @@ class DirectoryTypeManager {
     }
     File extractDirectory = getExtractDir();
     if (!extractDirectory.isDirectory()) {
-      return new DialogWrapper.ValidationInfo("'" + extractDirectory.getPath() + "' is not a directory.", myCustomDirectoryTextFieldWithBrowseButton);
+      return new DialogWrapper.ValidationInfo("'" + extractDirectory.getPath() + "' is not a directory.",
+                                              myCustomDirectoryTextFieldWithBrowseButton);
     }
     return null;
   }
@@ -118,13 +138,13 @@ class DirectoryTypeManager {
     CardLayout cardLayout = (CardLayout) myDirectoryTypeContent.getLayout();
     cardLayout.show(myDirectoryTypeContent, directoryType.name());
     mySelectedDirectoryType = directoryType;
-    fireDirectoryTypeSelected(directoryType);
+    fireDirectoryTypeSelected();
   }
 
-  private void fireDirectoryTypeSelected(DirectoryType newDirectoryType) {
-    File directory = newDirectoryType == DirectoryType.DEFAULT ? myDefaultDir : new File(myCustomDirectoryTextFieldWithBrowseButton.getText());
+  private void fireDirectoryTypeSelected() {
+    File extractDir = getExtractDir();
     for (ChangeListener changeListener : myChangeListeners) {
-      changeListener.onExtractDirectoryChanged(directory);
+      changeListener.onExtractDirectoryChanged(extractDir);
     }
   }
 
@@ -133,14 +153,14 @@ class DirectoryTypeManager {
    * @param bundledAdapterFiles files for coping
    * @return extracted file list or null if extraction was failed
    */
+  @Nullable
   public List<VirtualFile> extractAdapterFiles(final List<VirtualFile> bundledAdapterFiles) {
     return ApplicationManager.getApplication().runWriteAction(new Computable<List<VirtualFile>>() {
 
       @Override
       public List<VirtualFile> compute() {
         VirtualFile extractDir = getExtractDirAsVirtualFile();
-        List<VirtualFile> copiedFiles = copyVirtualFilesToDir(bundledAdapterFiles, extractDir);
-        return copiedFiles;
+        return copyVirtualFilesToDir(bundledAdapterFiles, extractDir);
       }
     });
   }
@@ -149,7 +169,7 @@ class DirectoryTypeManager {
   private VirtualFile getExtractDirAsVirtualFile() {
     if (mySelectedDirectoryType == DirectoryType.DEFAULT) {
       if (!myDefaultDir.isDirectory() && !myDefaultDir.mkdirs()) {
-        throw new RuntimeException("Can't create VirtualFile " + myDefaultDir.getAbsolutePath());
+        throw new RuntimeException("Can't create dir " + myDefaultDir.getAbsolutePath());
       }
     }
     File extractDir = getExtractDir();
@@ -180,6 +200,15 @@ class DirectoryTypeManager {
     selectDirectoryType(DirectoryType.DEFAULT);
   }
 
+  private static File getDefaultDir(String assertionFrameworkName) {
+    File file = new File(PathManager.getSystemPath(), "extLibs/" + assertionFrameworkName + "AdapterForJsTestDriver");
+    try {
+      return file.getCanonicalFile();
+    } catch (IOException e) {
+      return file;
+    }
+  }
+
   private class MyActionListener implements ActionListener {
 
     private final DirectoryType myDirectoryType;
@@ -196,15 +225,6 @@ class DirectoryTypeManager {
 
   interface ChangeListener {
     void onExtractDirectoryChanged(File extractDirectory);
-  }
-
-  private static File getDefaultDir(String assertionFrameworkName) {
-    File file = new File(PathManager.getSystemPath(), "extLibs/" + assertionFrameworkName + "AdapterForJsTestDriver");
-    try {
-      return file.getCanonicalFile();
-    } catch (IOException e) {
-      return file;
-    }
   }
 
   private enum DirectoryType {

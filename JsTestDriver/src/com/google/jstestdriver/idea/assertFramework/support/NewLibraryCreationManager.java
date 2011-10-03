@@ -1,7 +1,9 @@
 package com.google.jstestdriver.idea.assertFramework.support;
 
 import com.google.common.collect.Sets;
+import com.intellij.ide.scriptingContext.ScriptingLibraryMappings;
 import com.intellij.lang.javascript.library.JSLibraryManager;
+import com.intellij.lang.javascript.library.JSLibraryMappings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
@@ -24,7 +26,7 @@ import java.util.Set;
 /*
  * All operations should be executed on EDT.
  */
-class NewLibraryCreationManager implements DirectoryTypeManager.ChangeListener {
+class NewLibraryCreationManager implements ExtractDirectoryTypeManager.ChangeListener {
 
   private final Project myProject;
   private final JPanel myLibraryNameDefinitionPanel;
@@ -82,7 +84,7 @@ class NewLibraryCreationManager implements DirectoryTypeManager.ChangeListener {
   @Override
   public void onExtractDirectoryChanged(File extractDirectory) {
     boolean insideContentRoots = isInsideContentRoots(extractDirectory);
-    myLibraryNameDefinitionPanel.setEnabled(!insideContentRoots);
+    myNewLibraryNameTextField.setEnabled(!insideContentRoots);
     myExtractDirectory = extractDirectory;
   }
 
@@ -121,30 +123,35 @@ class NewLibraryCreationManager implements DirectoryTypeManager.ChangeListener {
       @Override
       public Boolean compute() {
         boolean insideContentRoots = isInsideContentRoots(myExtractDirectory);
-        if (!insideContentRoots) {
-          ScriptingLibraryModel libraryModel = myScriptingLibraryManager.createLibrary(
-              myNewLibraryNameTextField.getText(),
-              VfsUtil.toVirtualFileArray(extractedAdapterSourceFiles),
-              VirtualFile.EMPTY_ARRAY,
-              ArrayUtil.EMPTY_STRING_ARRAY
-          );
-          boolean success = false;
-          try {
-            if (libraryModel != null) {
-              myScriptingLibraryManager.commitChanges();
-              success = true;
-            }
-          } catch (Exception ignore) {
-          }
-          if (!success) {
-            Messages.showErrorDialog("Unable to create '" + myNewLibraryNameTextField.getText() + "' JavaScript library",
-                "Adding " + myAssertionFrameworkName + " adapter support for JsTestDriver");
-          }
-          return success;
+        if (insideContentRoots) {
+          return true;
         }
-        return true;
+        return createLibrary(extractedAdapterSourceFiles);
       }
     });
   }
 
+  private boolean createLibrary(List<VirtualFile> extractedAdapterSourceFiles) {
+    ScriptingLibraryModel libraryModel = myScriptingLibraryManager.createLibrary(
+        myNewLibraryNameTextField.getText(),
+        VfsUtil.toVirtualFileArray(extractedAdapterSourceFiles),
+        VirtualFile.EMPTY_ARRAY,
+        ArrayUtil.EMPTY_STRING_ARRAY
+    );
+    boolean success = false;
+    try {
+      if (libraryModel != null) {
+        myScriptingLibraryManager.commitChanges();
+        success = true;
+        ScriptingLibraryMappings libraryMappings = ServiceManager.getService(myProject, JSLibraryMappings.class);
+        libraryMappings.setMapping(myProject.getBaseDir(), libraryModel);
+      }
+    } catch (Exception ignore) {
+    }
+    if (!success) {
+      Messages.showErrorDialog("Unable to create '" + myNewLibraryNameTextField.getText() + "' JavaScript library",
+                               "Adding " + myAssertionFrameworkName + " adapter support for JsTestDriver");
+    }
+    return success;
+  }
 }

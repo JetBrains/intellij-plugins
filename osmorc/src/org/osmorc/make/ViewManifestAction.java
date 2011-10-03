@@ -39,8 +39,6 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.Nullable;
 
 /**

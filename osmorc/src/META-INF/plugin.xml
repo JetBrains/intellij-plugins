@@ -35,7 +35,7 @@
         <![CDATA[
                 ]]>
     </change-notes>
-    <version>1.3.5</version>
+    <version>1.4.0</version>
     <vendor url="http://osmorc.org" email="info@osmorc.org">Osmorc Development Team</vendor>
     <idea-version since-build="108.000" until-build="111.9999"/>
     <category>Framework integration</category>
@@ -160,13 +160,21 @@
         <project.converterProvider
                 implementation="org.osmorc.frameworkintegration.impl.equinox.EquinoxRunConfigurationConverterProvider"/>
 
-        <inspectionToolProvider implementation="org.osmorc.inspection.OsmorcInspectionToolProvider"/>
-        <facetType implementation="org.osmorc.facet.OsmorcFacetType"/>
+      <localInspection shortName="osmorcMisspelledHeaderName" displayName="Unknown or Misspelled Header Name" groupName="OSGi"
+                       enabledByDefault="true" level="WARNING" implementationClass="org.osmorc.inspection.MisspelledHeaderNameInspection"/>
+      <localInspection shortName="osmorcUnregisteredActivator" displayName="Bundle Activator not registered" groupName="OSGi"
+                       enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.UnregisteredActivatorInspection"/>
+      <localInspection shortName="osmorcMissingFinalNewline" displayName="Missing Final New Line" groupName="OSGi" enabledByDefault="true"
+                       level="ERROR" implementationClass="org.osmorc.inspection.MissingFinalNewlineInspection"/>
+      <localInspection shortName="osmorcClassInDefaultPackage" displayName="Class is in default package" groupName="OSGi"
+                       enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.ClassInDefaultPackageInspection"/>
+
+      <facetType implementation="org.osmorc.facet.OsmorcFacetType"/>
         <framework.detector implementation="org.osmorc.facet.OsmorcFrameworkDetector"/>
         <fileTypeFactory implementation="org.osmorc.manifest.ManifestFileTypeFactory"/>
         <compiler implementation="org.osmorc.make.BundleCompiler"/>
         <refactoring.elementListenerProvider implementation="org.osmorc.facet.OsmorcFacetRefactoringListenerProvider"/>
-        <programRunner implementation="org.osmorc.run.OsgiDebuggerRunner"/>
+<!--        <programRunner implementation="org.osmorc.run.OsgiDebuggerRunner"/> -->
         <projectConfigurable instance="org.osmorc.settings.ProjectSettingsEditor"/>
         <applicationConfigurable instance="org.osmorc.settings.ApplicationSettingsEditor"/>
     </extensions>

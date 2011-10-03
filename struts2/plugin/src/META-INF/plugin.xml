@@ -73,8 +73,17 @@
         implementation="com.intellij.struts2.reference.StrutsJQueryRichtextTaglibReferenceContributor"/>
 
     <iconProvider implementation="com.intellij.struts2.Struts2IconProvider"/>
+    <elementDescriptionProvider implementation="com.intellij.struts2.structure.StrutsTreeDescriptionProvider"/>
 
-    <inspectionToolProvider implementation="com.intellij.struts2.StrutsInspectionToolProvider"/>
+    <localInspection shortName="Struts2ModelInspection" bundle="resources.Struts2Bundle" key="inspections.struts2.model.displayname"
+                     groupKey="inspections.groupdisplayname" enabledByDefault="true" level="ERROR"
+                     implementationClass="com.intellij.struts2.dom.inspection.Struts2ModelInspection"/>
+    <localInspection shortName="ValidatorModelInspection" bundle="resources.Struts2Bundle" key="inspections.validator.model.displayname"
+                     groupKey="inspections.groupdisplayname" enabledByDefault="true" level="ERROR"
+                     implementationClass="com.intellij.struts2.dom.inspection.ValidatorModelInspection"/>
+    <localInspection shortName="ValidatorConfigModelInspection" bundle="resources.Struts2Bundle"
+                     key="inspections.validatorconfig.model.displayname" groupKey="inspections.groupdisplayname" enabledByDefault="true"
+                     level="ERROR" implementationClass="com.intellij.struts2.dom.inspection.ValidatorConfigModelInspection"/>
 
     <standardResourceProvider implementation="com.intellij.struts2.Struts2ResourceProvider"/>
 
@@ -86,8 +95,6 @@
 
     <dom.implementation interfaceClass="com.intellij.struts2.dom.struts.action.Action"
                         implementationClass="com.intellij.struts2.dom.struts.impl.ActionImpl"/>
-    <dom.implementation interfaceClass="com.intellij.struts2.dom.struts.constant.Constant"
-                        implementationClass="com.intellij.struts2.dom.struts.constant.ConstantImpl"/>
     <dom.implementation interfaceClass="com.intellij.struts2.dom.struts.strutspackage.GlobalResult"
                         implementationClass="com.intellij.struts2.dom.struts.impl.GlobalResultImpl"/>
     <dom.implementation interfaceClass="com.intellij.struts2.dom.struts.strutspackage.Interceptor"
@@ -96,8 +103,6 @@
                         implementationClass="com.intellij.struts2.dom.struts.impl.InterceptorRefImpl"/>
     <dom.implementation interfaceClass="com.intellij.struts2.dom.struts.strutspackage.InterceptorStack"
                         implementationClass="com.intellij.struts2.dom.struts.impl.InterceptorStackImpl"/>
-    <dom.implementation interfaceClass="com.intellij.struts2.dom.params.Param"
-                        implementationClass="com.intellij.struts2.dom.params.ParamImpl"/>
     <dom.implementation interfaceClass="com.intellij.struts2.dom.struts.action.Result"
                         implementationClass="com.intellij.struts2.dom.struts.impl.ResultImpl"/>
     <dom.implementation interfaceClass="com.intellij.struts2.dom.struts.strutspackage.StrutsPackage"

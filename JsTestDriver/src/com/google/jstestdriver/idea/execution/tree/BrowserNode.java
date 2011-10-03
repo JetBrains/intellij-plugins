@@ -23,27 +23,6 @@ public class BrowserNode extends Node {
     return myJstdConfigFileMap.get(absoluteFilePath);
   }
 
-/*
-  public boolean allJstdConfigFilesComplete() {
-    for (JstdConfigFileNode jstdConfigFileNode : myJstdConfigFileMap.values()) {
-      if (!jstdConfigFileNode.allTestCasesComplete()) {
-        return false;
-      }
-    }
-    return true;
-  }
-*/
-
-/*
-  public void setTestFailed(Result result) {
-    if (result == Result.error && worstResult != Result.error) {
-      getTestProxy().setTestFailed("", "", true);
-    } else if (result == Result.failed && worstResult == Result.passed) {
-      getTestProxy().setTestFailed("", "", false);
-    }
-  }
-*/
-
   public void registerJstdConfigFileNode(JstdConfigFileNode jstdConfigFileNode) {
     myJstdConfigFileMap.put(jstdConfigFileNode.getAbsoluteFilePath(), jstdConfigFileNode);
   }

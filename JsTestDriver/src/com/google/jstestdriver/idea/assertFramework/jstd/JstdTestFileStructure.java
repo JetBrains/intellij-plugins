@@ -3,6 +3,7 @@ package com.google.jstestdriver.idea.assertFramework.jstd;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructure;
+import com.google.jstestdriver.idea.assertFramework.JstdRunElement;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.util.TextRange;
@@ -30,16 +31,6 @@ public class JstdTestFileStructure extends AbstractTestFileStructure {
     return myTestCaseStructures;
   }
 
-  @Nullable
-  JstdTestStructure getTestByPsiElement(@NotNull PsiElement psiElement) {
-    return null;
-  }
-
-  @Nullable
-  JstdTestCaseStructure getTestCaseByPsiElement(@NotNull PsiElement psiElement) {
-    return null;
-  }
-
   public JstdTestCaseStructure getTestCaseStructureByName(String testCaseName) {
     return myTestCaseStructureByNameMap.get(testCaseName);
   }
@@ -51,6 +42,34 @@ public class JstdTestFileStructure extends AbstractTestFileStructure {
 
   public int getTestCaseCount() {
     return myTestCaseStructures.size();
+  }
+
+  @Override
+  @Nullable
+  public JstdRunElement findJstdRunElement(@NotNull TextRange textRange) {
+    for (JstdTestCaseStructure testCaseStructure : myTestCaseStructures) {
+      JstdRunElement jstdRunElement = testCaseStructure.findJstdRunElement(textRange);
+      if (jstdRunElement != null) {
+        return jstdRunElement;
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public PsiElement findPsiElement(@NotNull String testCaseName, @Nullable String testMethodName) {
+    JstdTestCaseStructure testCaseStructure = myTestCaseStructureByNameMap.get(testCaseName);
+    if (testCaseStructure != null) {
+      if (testMethodName != null) {
+        JstdTestStructure testStructure = testCaseStructure.getTestStructureByName(testMethodName);
+        if (testStructure != null) {
+          return testStructure.getTestMethodNameDeclaration();
+        }
+      } else {
+        return testCaseStructure.getEnclosingCallExpression();
+      }
+    }
+    return null;
   }
 
   @Nullable

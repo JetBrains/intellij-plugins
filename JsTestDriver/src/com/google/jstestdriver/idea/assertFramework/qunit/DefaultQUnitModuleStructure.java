@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 public class DefaultQUnitModuleStructure extends AbstractQUnitModuleStructure {
 
   public DefaultQUnitModuleStructure(@NotNull QUnitFileStructure fileStructure) {
-    super(fileStructure, "Default");
+    super(fileStructure, "Default Module");
   }
 
 }

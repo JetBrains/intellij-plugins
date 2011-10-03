@@ -24,6 +24,7 @@
  */
 package org.osmorc.frameworkintegration.impl.equinox;
 
+import com.intellij.execution.configurations.ParametersList;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.impl.AbstractPaxBasedFrameworkRunner;
 import org.osmorc.run.ui.SelectedBundle;
@@ -49,27 +50,25 @@ public class EquinoxFrameworkRunner extends AbstractPaxBasedFrameworkRunner<Equi
 
   }
 
-  @NotNull
   @Override
-  protected String getAdditionalTargetVMProperties(@NotNull SelectedBundle[] urlsOfBundlesToInstall) {
-    StringBuilder result = new StringBuilder(super.getAdditionalTargetVMProperties(urlsOfBundlesToInstall));
+  protected void addAdditionalTargetVMProperties(@NotNull ParametersList vmParameters,
+                                                 @NotNull SelectedBundle[] urlsOfBundlesToInstall) {
     String product = getFrameworkProperties().getEquinoxProduct();
     if (product != null && product.length() > 0) {
-      result.append(" -Declipse.product=").append(product);
-      result.append(" -Declipse.ignoreApp=").append("false");
+      vmParameters.defineProperty("eclipse.product", product);
+      vmParameters.defineProperty("eclipse.ignoreApp", String.valueOf(false));
     }
     else {
       String application = getFrameworkProperties().getEquinoxApplication();
       if (application != null && application.length() > 0) {
-        result.append(" -Declipse.application=").append(application);
-        result.append(" -Declipse.ignoreApp=").append("false");
+        vmParameters.defineProperty("eclipse.application", application);
+        vmParameters.defineProperty("eclipse.ignoreApp", String.valueOf(false));
 
       }
       else {
-        result.append(" -Declipse.ignoreApp=").append("false");
+        vmParameters.defineProperty("eclipse.ignoreApp", String.valueOf(true));
       }
     }
-    return result.toString();  
   }
 
   @NotNull

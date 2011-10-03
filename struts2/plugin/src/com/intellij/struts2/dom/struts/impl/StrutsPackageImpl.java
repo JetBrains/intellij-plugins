@@ -19,7 +19,6 @@ import com.intellij.javaee.model.xml.impl.BaseImpl;
 import com.intellij.struts2.dom.struts.strutspackage.DefaultClassRef;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
-import com.intellij.struts2.structure.LocationPresentation;
 import com.intellij.util.xml.DomUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,11 +29,7 @@ import java.util.List;
  * @author Yann C&eacute;bron
  */
 @SuppressWarnings({"AbstractClassNeverImplemented"})
-public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackage, LocationPresentation {
-
-  public String getLocation() {
-    return searchNamespace();
-  }
+public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackage {
 
   @NotNull
   public String searchNamespace() {

@@ -2,8 +2,10 @@ package com.google.jstestdriver.idea.assertFramework.jstd;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.jstestdriver.idea.assertFramework.JstdRunElement;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
+import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,7 +45,7 @@ public class JstdTestCaseStructure {
 
   public void addTestStructure(JstdTestStructure testStructure) {
     myTestStructures.add(testStructure);
-    myTestStructureByNameMap.put(testStructure.getTestName(), testStructure);
+    myTestStructureByNameMap.put(testStructure.getName(), testStructure);
   }
 
   @NotNull
@@ -66,5 +68,19 @@ public class JstdTestCaseStructure {
 
   public List<JstdTestStructure> getTestStructures() {
     return myTestStructures;
+  }
+
+  @Nullable
+  public JstdRunElement findJstdRunElement(@NotNull TextRange textRange) {
+    for (JstdTestStructure testStructure : myTestStructures) {
+      if (testStructure.containsTextRange(textRange)) {
+        return JstdRunElement.newTestMethodRunElement(myName, testStructure.getName());
+      }
+    }
+    TextRange testCaseCallTextRange = myEnclosingCallExpression.getTextRange();
+    if (testCaseCallTextRange.contains(textRange)) {
+      return JstdRunElement.newTestCaseRunElement(myName);
+    }
+    return null;
   }
 }

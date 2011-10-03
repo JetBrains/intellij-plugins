@@ -51,7 +51,8 @@ import java.util.regex.Pattern;
  * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
-public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProperties> extends AbstractFrameworkRunner<P> implements ExternalVMFrameworkRunner {
+public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProperties> extends AbstractFrameworkRunner<P>
+  implements ExternalVMFrameworkRunner {
   private static final String PaxRunnerLib = "pax-runner.jar";
 
   protected AbstractPaxBasedFrameworkRunner() {
@@ -89,33 +90,36 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
 
   public void fillCommandLineParameters(@NotNull ParametersList commandLineParameters, @NotNull SelectedBundle[] bundlesToInstall) {
     commandLineParameters.add("--p=" + getOsgiFrameworkName().toLowerCase());
-    commandLineParameters.add("--nologo=true"); 
+    commandLineParameters.add("--nologo=true");
     // Use the selected version if specified.
     FrameworkInstanceDefinition definition = getRunConfiguration().getInstanceToUse();
-    String version = definition.getVersion();
-    if ( version != null && version.length() > 0) {
-      commandLineParameters.add("--v="+version);
+    String version = null;
+    if (definition != null) {
+      version = definition.getVersion();
+    }
+    if (version != null && version.length() > 0) {
+      commandLineParameters.add("--v=" + version);
     }
 
     for (SelectedBundle bundle : bundlesToInstall) {
       String prefix = CachingBundleInfoProvider.isExploded(bundle.getBundleUrl()) ? "scan-bundle:" : "";
       if (bundle.isStartAfterInstallation() && !CachingBundleInfoProvider.isFragmentBundle(bundle.getBundleUrl())) {
         int bundleStartLevel = bundle.isDefaultStartLevel() ? getRunConfiguration().getDefaultStartLevel() : bundle.getStartLevel();
-        commandLineParameters.add(prefix+bundle.getBundleUrl() + "@" + bundleStartLevel);
+        commandLineParameters.add(prefix + bundle.getBundleUrl() + "@" + bundleStartLevel);
       }
       else {
-        if ( CachingBundleInfoProvider.isFragmentBundle(bundle.getBundleUrl())) {
-          commandLineParameters.add(prefix+bundle.getBundleUrl() + "@nostart");
+        if (CachingBundleInfoProvider.isFragmentBundle(bundle.getBundleUrl())) {
+          commandLineParameters.add(prefix + bundle.getBundleUrl() + "@nostart");
         }
-        else{
-          commandLineParameters.add(prefix+bundle.getBundleUrl());
+        else {
+          commandLineParameters.add(prefix + bundle.getBundleUrl());
         }
       }
     }
     final P frameworkProperties = getFrameworkProperties();
     String bootDelegation = frameworkProperties.getBootDelegation();
     if (bootDelegation != null && !(bootDelegation.trim().length() == 0)) {
-      commandLineParameters.add("--bd="+bootDelegation);
+      commandLineParameters.add("--bd=" + bootDelegation);
     }
 
     String systemPackages = frameworkProperties.getSystemPackages();
@@ -124,11 +128,11 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
     }
 
     int startLevel = getFrameworkStartLevel(bundlesToInstall);
-    commandLineParameters.add("--sl="+startLevel);
+    commandLineParameters.add("--sl=" + startLevel);
 
     int defaultStartLevel = getRunConfiguration().getDefaultStartLevel();
-    commandLineParameters.add("--bsl="+defaultStartLevel);
-    
+    commandLineParameters.add("--bsl=" + defaultStartLevel);
+
     if (frameworkProperties.isDebugMode()) {
       commandLineParameters.add("--log=DEBUG");
     }
@@ -140,46 +144,31 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
       commandLineParameters.add("--noConsole");
     }
 
-
-    StringBuilder vmOptionsParam = new StringBuilder();
-    vmOptionsParam.append("--vmOptions=");
-    String vmParameters = getRunConfiguration().getVmParameters();
-
-    if (vmParameters.length() > 0) {
-      vmOptionsParam.append(vmParameters);
-    }
-    String additionalVmOptions = getAdditionalTargetVMProperties(bundlesToInstall);
-    if (additionalVmOptions.length() > 0) {
-      vmOptionsParam.append(" ").append(additionalVmOptions);
-    }
-
-    if (isDebugRun()) {
-      String debugParams =
-        "-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=n,suspend=n,address=" + getDebugPort();
-      vmOptionsParam.append(" ").append(debugParams);
-
-    }
-    commandLineParameters.add(vmOptionsParam.toString());
+    commandLineParameters.add("--executor=inProcess");
     commandLineParameters.add("--keepOriginalUrls");
-     commandLineParameters.add("--skipInvalidBundles");
+    commandLineParameters.add("--skipInvalidBundles");
     final String additionalProgramParams = getRunConfiguration().getProgramParameters();
-    if ( additionalProgramParams != null && !"".equals(additionalProgramParams)) {
+    if (additionalProgramParams != null && !"".equals(additionalProgramParams)) {
       commandLineParameters.addParametersString(additionalProgramParams);
     }
-
   }
 
   public void fillVmParameters(ParametersList vmParameters, @NotNull SelectedBundle[] bundlesToInstall) {
     // fill proxy settings
 
-      HttpConfigurable httpConfigurable = HttpConfigurable.getInstance();
-      if (httpConfigurable.USE_HTTP_PROXY) {
-        vmParameters.defineProperty("proxySet", "true");
-        vmParameters.defineProperty("http.proxyHost", httpConfigurable.PROXY_HOST);
-        vmParameters.defineProperty("http.proxyPort", Integer.toString(httpConfigurable.PROXY_PORT));
-        vmParameters.defineProperty("https.proxyHost", httpConfigurable.PROXY_HOST);
-        vmParameters.defineProperty("https.proxyPort", Integer.toString(httpConfigurable.PROXY_PORT));
-      }
+    HttpConfigurable httpConfigurable = HttpConfigurable.getInstance();
+    if (httpConfigurable.USE_HTTP_PROXY) {
+      vmParameters.defineProperty("proxySet", "true");
+      vmParameters.defineProperty("http.proxyHost", httpConfigurable.PROXY_HOST);
+      vmParameters.defineProperty("http.proxyPort", Integer.toString(httpConfigurable.PROXY_PORT));
+      vmParameters.defineProperty("https.proxyHost", httpConfigurable.PROXY_HOST);
+      vmParameters.defineProperty("https.proxyPort", Integer.toString(httpConfigurable.PROXY_PORT));
+    }
+
+    String vmParamsFromConfig = getRunConfiguration().getVmParameters();
+    vmParameters.addParametersString(vmParamsFromConfig);
+
+    addAdditionalTargetVMProperties(vmParameters, bundlesToInstall);
   }
 
   public void runCustomInstallationSteps(@NotNull SelectedBundle[] bundlesToInstall) throws ExecutionException {
@@ -199,12 +188,12 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
    * Returns a list of additional VM parameters that should be given to the VM that is launched by PAX. For convencience this method
    * will return the empty string in this base class, so overriding classes do not need to call super.
    *
+   * @param vmParameters
    * @param urlsOfBundlesToInstall the list of bundles to install
    * @return a string with VM parameters.
    */
-  @NotNull
-  protected String getAdditionalTargetVMProperties(@NotNull SelectedBundle[] urlsOfBundlesToInstall) {
-    return "";
+  protected void addAdditionalTargetVMProperties(@NotNull ParametersList vmParameters,
+                                                 @NotNull SelectedBundle[] urlsOfBundlesToInstall) {
   }
 
 
@@ -218,6 +207,4 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
   protected final Pattern getFrameworkStarterClasspathPattern() {
     return null;
   }
-
-
 }

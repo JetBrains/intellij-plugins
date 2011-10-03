@@ -1,6 +1,6 @@
 package com.google.jstestdriver.idea.assertFramework.qunit;
 
-import com.google.jstestdriver.idea.assertFramework.support.AbstractAdapterSupportProvider;
+import com.google.jstestdriver.idea.assertFramework.support.AbstractAddAdapterSupportInspection;
 import com.google.jstestdriver.idea.assertFramework.qunit.jsSrc.QUnitAdapterSrcMarker;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.google.jstestdriver.idea.util.VfsUtils;
@@ -9,7 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 
 import java.util.List;
 
-public class QUnitAdapterSupportProvider extends AbstractAdapterSupportProvider {
+public class QUnitAdapterSupportProvider extends AbstractAddAdapterSupportInspection {
 
   @Override
   public String getAssertFrameworkName() {

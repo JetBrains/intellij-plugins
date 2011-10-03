@@ -20,6 +20,8 @@ import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.navigation.ColoredItemPresentation;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.psi.ElementDescriptionUtil;
+import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ConstantFunction;
@@ -92,7 +94,7 @@ class StructureViewTreeElement extends DomStructureTreeElement implements Colore
       }
     });
 
-    return ArrayUtil.toObjectArray(result,TreeElement.class);
+    return ArrayUtil.toObjectArray(result, TreeElement.class);
   }
 
   /**
@@ -102,13 +104,10 @@ class StructureViewTreeElement extends DomStructureTreeElement implements Colore
    */
   @Nullable
   public String getLocationString() {
-    final DomElement element = getElement();
-
-    if (element instanceof LocationPresentation) {
-      return ((LocationPresentation) element).getLocation();
-    }
-
-    return super.getLocationString();
+    final XmlElement xmlElement = getElement().getXmlElement();
+    assert xmlElement != null : getElement();
+    return ElementDescriptionUtil.getElementDescription(xmlElement,
+                                                        StrutsTreeDescriptionLocation.INSTANCE);
   }
 
 }

@@ -38,14 +38,11 @@ class JstdConfigFileNode extends Node {
     String displayPath = calcDisplayPath(directory, virtualFile, absoluteFilePath);
     return new SMTestProxyWithPrinterAndLocation(displayPath, true, new LocationProvider() {
       @Override
-      public Location provideLocation(Project project) {
+      public Location provideLocation(@NotNull Project project) {
         if (virtualFile == null) {
           return null;
         }
         PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
-        if (psiFile == null) {
-          return null;
-        }
         return PsiLocation.fromPsiElement(psiFile);
       }
     });
@@ -80,27 +77,6 @@ class JstdConfigFileNode extends Node {
   public File getConfigFile() {
     return new File(myAbsoluteFilePath);
   }
-
-/*
-  public boolean allTestCasesComplete() {
-    for (TestCaseNode testCaseNode : myTestCaseMap.values()) {
-      if (!testCaseNode.allTestsComplete()) {
-        return false;
-      }
-    }
-    return true;
-  }
-*/
-
-/*
-  public void setTestFailed(TestResult.Result result) {
-    if (result == TestResult.Result.error && worstResult != TestResult.Result.error) {
-      getTestProxy().setTestFailed("", "", true);
-    } else if (result == TestResult.Result.failed && worstResult == TestResult.Result.passed) {
-      getTestProxy().setTestFailed("", "", false);
-    }
-  }
-*/
 
   public TestCaseNode getTestCaseNode(String testCase) {
     return myTestCaseMap.get(testCase);

@@ -109,8 +109,8 @@ public class JstdStructureTest extends AbstractJsPsiTestCase {
   }
 
   private static void matchTest(@NotNull MarkedTestStructure markedTestStructure, @NotNull JstdTestStructure testStructure) {
-    Assert.assertEquals("Build test name is not equal to the marked one", markedTestStructure.getName(), testStructure.getTestName());
-    String testName = testStructure.getTestName();
+    Assert.assertEquals("Build test name is not equal to the marked one", markedTestStructure.getName(), testStructure.getName());
+    String testName = testStructure.getName();
     JSProperty markedJsProperty = markedTestStructure.getPropertyPsiElement();
     if (markedJsProperty != null) {
       matchPsiElement(testName, "property", markedJsProperty, testStructure.getJsProperty());

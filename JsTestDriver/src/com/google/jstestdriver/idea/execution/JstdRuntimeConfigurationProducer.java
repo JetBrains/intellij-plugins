@@ -1,5 +1,6 @@
 package com.google.jstestdriver.idea.execution;
 
+import com.google.jstestdriver.idea.assertFramework.JstdRunElement;
 import com.google.jstestdriver.idea.assertFramework.TestFileStructureManager;
 import com.google.jstestdriver.idea.assertFramework.TestFileStructurePack;
 import com.google.jstestdriver.idea.config.JstdConfigFileUtils;
@@ -7,10 +8,6 @@ import com.google.jstestdriver.idea.execution.settings.JstdConfigType;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.ServerType;
 import com.google.jstestdriver.idea.execution.settings.TestType;
-import com.google.jstestdriver.idea.javascript.navigation.NavigationRegistry;
-import com.google.jstestdriver.idea.javascript.navigation.NavigationUtils;
-import com.google.jstestdriver.idea.javascript.navigation.Test;
-import com.google.jstestdriver.idea.javascript.navigation.TestCase;
 import com.google.jstestdriver.idea.util.CastUtils;
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
@@ -36,7 +33,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
   private static final JstdRunSettingsProvider[] RUN_SETTINGS_PROVIDERS = {
       new JstdDirectoryRunSettingsProvider(),
       new JstdConfigFileRunSettingsProvider(),
-      new TestCaseRunSettingsProvider(),
+      new TestElementRunSettingsProvider(),
       new JsFileRunSettingsProvider()
   };
 
@@ -120,11 +117,13 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
               bestRaCSettings = candidateRaCSettings;
             } else {
               JstdRunConfiguration bestRunConfiguration = CastUtils.tryCast(bestRaCSettings.getConfiguration(), JstdRunConfiguration.class);
-              JstdRunSettings bestRunSettings = bestRunConfiguration.getRunSettings();
-              if (bestRunSettings.getConfigType() == JstdConfigType.GENERATED) {
-                bestRaCSettings = candidateRaCSettings;
-              } else if (!new File(bestRunSettings.getConfigFile()).isFile()) {
-                bestRaCSettings = candidateRaCSettings;
+              if (bestRunConfiguration != null) {
+                JstdRunSettings bestRunSettings = bestRunConfiguration.getRunSettings();
+                if (bestRunSettings.getConfigType() == JstdConfigType.GENERATED) {
+                  bestRaCSettings = candidateRaCSettings;
+                } else if (!new File(bestRunSettings.getConfigFile()).isFile()) {
+                  bestRaCSettings = candidateRaCSettings;
+                }
               }
             }
           }
@@ -135,19 +134,19 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
   }
 
   @Nullable
-  private RunSettingsContext buildRunSettingsContext(Location<PsiElement> location) {
-    if (!(location instanceof PsiLocation)) return null;
-
-    PsiElement element = location.getPsiElement();
-
-    JstdRunSettings runSettings = findJstdRunSettings(element);
-    if (runSettings != null) {
-      return new RunSettingsContext(runSettings, element);
+  private static RunSettingsContext buildRunSettingsContext(@Nullable Location<PsiElement> location) {
+    if (location instanceof PsiLocation) {
+      PsiElement element = location.getPsiElement();
+      JstdRunSettings runSettings = findJstdRunSettings(element);
+      if (runSettings != null) {
+        return new RunSettingsContext(runSettings, element);
+      }
     }
     return null;
   }
 
-  private JstdRunSettings findJstdRunSettings(PsiElement element) {
+  @Nullable
+  private static JstdRunSettings findJstdRunSettings(@NotNull PsiElement element) {
     for (JstdRunSettingsProvider jstdRunSettingsProvider : RUN_SETTINGS_PROVIDERS) {
       JstdRunSettings runSettings = jstdRunSettingsProvider.provideSettings(element);
       if (runSettings != null) {
@@ -174,7 +173,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
 
   private static class JsFileRunSettingsProvider implements JstdRunSettingsProvider {
 
-    private boolean matchTestSource(String s) {
+    private static boolean matchTestSource(String s) {
       StringTokenizer st = new StringTokenizer(s, "-_");
       while (st.hasMoreTokens()) {
         String token = st.nextToken().toLowerCase();
@@ -202,7 +201,6 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
         if (matchTestSource(entity.getName())) {
           testFound = true;
         }
-        System.out.println("Checking " + entity.getPath() + " ... testFound: " + testFound);
         if (entity.equals(projectDir)) {
           break;
         }
@@ -225,15 +223,16 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
     @Override
     public JstdRunSettings provideSettings(@NotNull PsiElement psiElement) {
       PsiFile psiFile = psiElement.getContainingFile();
-      if (psiFile == null) return null;
-      final VirtualFile virtualFile = psiFile.getVirtualFile();
-      if (virtualFile == null || !JstdConfigFileUtils.isJstdConfigFile(virtualFile)) {
-        return null;
+      if (psiFile != null) {
+        VirtualFile virtualFile = psiFile.getVirtualFile();
+        if (virtualFile != null && JstdConfigFileUtils.isJstdConfigFile(virtualFile)) {
+          JstdRunSettings.Builder builder = new JstdRunSettings.Builder();
+          builder.setConfigFile(virtualFile.getPath())
+                 .setServerType(ServerType.INTERNAL);
+          return builder.build();
+        }
       }
-      JstdRunSettings.Builder builder = new JstdRunSettings.Builder();
-      builder.setConfigFile(virtualFile.getPath())
-             .setServerType(ServerType.INTERNAL);
-      return builder.build();
+      return null;
     }
   }
 
@@ -258,43 +257,35 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
     }
   }
 
-  private static class TestCaseRunSettingsProvider implements JstdRunSettingsProvider {
+  private static class TestElementRunSettingsProvider implements JstdRunSettingsProvider {
 
     @Override
     public JstdRunSettings provideSettings(@NotNull PsiElement psiElement) {
-      if (!(psiElement.getContainingFile() instanceof JSFile)) {
-        return null;
-      }
-      JSFile jsFile = (JSFile) psiElement.getContainingFile();
-      VirtualFile virtualFile = jsFile.getVirtualFile();
+      JSFile jsFile = CastUtils.tryCast(psiElement.getContainingFile(), JSFile.class);
+      VirtualFile virtualFile = jsFile != null ? jsFile.getVirtualFile() : null;
       if (virtualFile == null) {
         return null;
       }
-      TestFileStructurePack pack = TestFileStructureManager.getInstance().fetchTestFileStructurePackByJsFile(jsFile);
-      if (true) {
-        return null;
-      }
-      PsiElement current = psiElement;
-      while (current != jsFile) {
-        Object target = null;//navigationRegistry.getTarget(current);
-        if (target instanceof TestCase) {
-          TestCase testCase = (TestCase) target;
-          return new JstdRunSettings.Builder()
-              .setTestType(TestType.TEST_CASE)
-              .setJSFilePath(virtualFile.getPath())
-              .setTestCaseName(testCase.getName())
-              .build();
+      TestFileStructurePack pack = TestFileStructureManager.fetchTestFileStructurePackByJsFile(jsFile);
+      if (pack != null) {
+        JstdRunElement jstdRunElement = pack.getJstdRunElement(psiElement);
+        if (jstdRunElement != null) {
+          String testMethodName = jstdRunElement.getTestMethodName();
+          if (testMethodName != null) {
+            return new JstdRunSettings.Builder()
+                .setTestType(TestType.TEST_METHOD)
+                .setJSFilePath(virtualFile.getPath())
+                .setTestCaseName(jstdRunElement.getTestCaseName())
+                .setTestMethodName(testMethodName)
+                .build();
+          } else {
+            return new JstdRunSettings.Builder()
+                .setTestType(TestType.TEST_CASE)
+                .setJSFilePath(virtualFile.getPath())
+                .setTestCaseName(jstdRunElement.getTestCaseName())
+                .build();
+          }
         }
-        if (target instanceof Test) {
-          Test test = (Test) target;
-          return new JstdRunSettings.Builder()
-              .setTestType(TestType.TEST_METHOD)
-              .setJSFilePath(virtualFile.getPath())
-              .setTestCaseName(test.getTestCase().getName())
-              .setTestMethodName(test.getName())
-              .build();
-        }
-        current = current.getParent();
       }
       return null;
     }

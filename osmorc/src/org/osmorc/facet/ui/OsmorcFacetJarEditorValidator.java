@@ -14,9 +14,6 @@ import org.osmorc.facet.OsmorcFacetConfiguration;
 
 import javax.swing.*;
 
-/**
- *
- */
 public class OsmorcFacetJarEditorValidator extends FacetEditorValidator {
   private FacetEditorContext myEditorContext;
   private OsmorcFacetJAREditorTab myJarEditorTab;

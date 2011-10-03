@@ -1,10 +1,11 @@
 package com.google.jstestdriver.idea.execution.tree;
 
 import com.google.common.collect.Maps;
-import com.google.jstestdriver.idea.javascript.navigation.NavigationRegistry;
-import com.google.jstestdriver.idea.javascript.navigation.TestCase;
 import com.intellij.execution.Location;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.execution.PsiLocation;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Map;
@@ -17,22 +18,17 @@ class TestCaseNode extends Node {
 
   private final JstdConfigFileNode myJstdConfigFileNode;
   private final Map<String, TestNode> myTestNodeMap = Maps.newHashMap();
-  private final TestCase myTestCaseStructure;
-  // Determines how we represent the node. If any children fail, for example, the parent is also marked failed.
-//  private Result myWorstResult = Result.passed;
 
-  public TestCaseNode(JstdConfigFileNode jstdConfigFileNode, String testCaseName, @Nullable NavigationRegistry navigationRegistry) {
+  public TestCaseNode(final JstdConfigFileNode jstdConfigFileNode, final String testCaseName) {
     myJstdConfigFileNode = jstdConfigFileNode;
-    TestCase testCaseStructure = navigationRegistry != null ? navigationRegistry.getTestCaseByName(testCaseName) : null;
-    Location location = testCaseStructure != null ? testCaseStructure.getLocation() : null;
-    setTestProxy(new SMTestProxyWithPrinterAndLocation(testCaseName, true, LocationProvider.createConstantProvider(location)));
+    setTestProxy(new SMTestProxyWithPrinterAndLocation(testCaseName, true, new LocationProvider() {
+      @Override
+      Location provideLocation(@NotNull Project project) {
+        PsiElement element = NavUtils.findPsiElement(project, jstdConfigFileNode.getConfigFile(), testCaseName, null);
+        return PsiLocation.fromPsiElement(element);
+      }
+    }));
     myJstdConfigFileNode.registerTestCaseNode(this);
-    myTestCaseStructure = testCaseStructure;
-  }
-
-  @Nullable
-  public TestCase getTestCaseStructure() {
-    return myTestCaseStructure;
   }
 
   public JstdConfigFileNode getJstdConfigFileNode() {
@@ -43,38 +39,9 @@ class TestCaseNode extends Node {
     return myTestNodeMap.get(testName);
   }
 
-/*
-  public boolean allTestsComplete() {
-    for (TestNode testNode : myTestNodeMap.values()) {
-      if (testNode.getTestProxy().isInProgress()) {
-        return false;
-      }
-    }
-    return true;
-  }
-*/
-
-/*
-  public void setTestFailed(Result result) {
-    if (result == Result.error && myWorstResult != Result.error) {
-      getTestProxy().setTestFailed("", "", true);
-    } else if (result == Result.failed && myWorstResult == Result.passed) {
-      getTestProxy().setTestFailed("", "", false);
-    }
-  }
-*/
-
   public void registerTestNode(TestNode testNode) {
     myTestNodeMap.put(testNode.getTestProxy().getName(), testNode);
   }
-
-//  public boolean isTestDone(String testName) {
-//    return myDoneTestNames.contains(testName);
-//  }
-//
-//  public void testDone(String testName) {
-//    myDoneTestNames.add(testName);
-//  }
 
   @Override
   public Collection<? extends Node> getChildren() {

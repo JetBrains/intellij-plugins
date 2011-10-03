@@ -21,6 +21,7 @@ import com.intellij.patterns.XmlAttributeValuePattern;
 import com.intellij.psi.*;
 import com.intellij.psi.css.impl.util.CssInHtmlClassOrIdReferenceProvider;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.IdRefReference;
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.IdReferenceProvider;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.struts2.reference.jsp.ActionPropertyReferenceProvider;
 import com.intellij.struts2.reference.jsp.ActionReferenceProvider;
@@ -51,8 +52,6 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
   protected static final PsiReferenceProvider ACTION_REFERENCE_PROVIDER = new ActionReferenceProvider();
 
   protected static final PsiReferenceProvider ACTION_PROPERTY_REFERENCE_PROVIDER =
-      new ActionPropertyReferenceProvider(false);
-  protected static final PsiReferenceProvider ACTION_READONLY_PROPERTY_REFERENCE_PROVIDER =
       new ActionPropertyReferenceProvider(true);
 
   protected static final PsiReferenceProvider RELATIVE_PATH_PROVIDER = new PsiReferenceProvider() {
@@ -74,6 +73,18 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
     public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
                                                  @NotNull final ProcessingContext context) {
       return new PsiReference[]{new IdRefReference(element)};
+    }
+  };
+
+  /**
+   * "ID" self reference for validation.
+   */
+  public static final PsiReferenceProvider ID_REFERENCE_PROVIDER = new PsiReferenceProvider() {
+    @NotNull
+    @Override
+    public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement,
+                                                 @NotNull final ProcessingContext processingContext) {
+      return new PsiReference[]{new IdReferenceProvider.GlobalAttributeValueSelfReference(psiElement, false)};
     }
   };
 

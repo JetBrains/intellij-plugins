@@ -8,6 +8,7 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PatternCondition;
@@ -58,7 +59,7 @@ public class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcF
       for (VirtualFile contentRoot : contentRoots) {
         if (VfsUtil.isAncestor(contentRoot, manifestFile, false)) {
           // IDEADEV-40357
-          osmorcFacetConfiguration.setManifestLocation(VfsUtil.getRelativePath(manifestFile, contentRoot, '/'));
+          osmorcFacetConfiguration.setManifestLocation(VfsUtilCore.getRelativePath(manifestFile, contentRoot, '/'));
           break;
         }
       }
