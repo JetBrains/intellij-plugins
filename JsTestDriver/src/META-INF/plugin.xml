@@ -17,9 +17,9 @@
 <idea-plugin>
   <name>JSTestDriver Plugin</name>
   <description>Execute JavaScript unit tests using JsTestDriver</description>
-  <version>1.3.6</version>
+  <version>1.3.7</version>
   <vendor url="http://code.google.com/p/js-test-driver/"
-          email="js-test-driver@googlegroups.com">Google</vendor>
+          email="js-test-driver@googlegroups.com">Google; JetBrains</vendor>
   <idea-version since-build="106.0" until-build="109.0"/>
 
   <extensionPoints>
@@ -44,6 +44,8 @@
 
   <change-notes>
     <![CDATA[
+<h4>Version 1.3.7, 30 September 2011 (build on JsTestDriver v1.3.3b):</h4>
+
 <h4>Version 1.3.6, 28 September 2011 (build on JsTestDriver v1.3.2):</h4>
 <ul>
   <li>Bug fixes:

@@ -41,14 +41,14 @@ import com.google.jstestdriver.html.HtmlDocModule;
  */
 public class IDEPluginActionBuilder {
 
-  private final Configuration resolvedConfiguration;
-  private final FlagsImpl flags;
+  private final Configuration myResolvedConfiguration;
+  private final FlagsImpl myFlags;
 
   private final LinkedList<Module> modules = new LinkedList<Module>();
 
   public IDEPluginActionBuilder(Configuration resolvedConfiguration, FlagsImpl flags) {
-    this.resolvedConfiguration = resolvedConfiguration;
-    this.flags = flags;
+    myResolvedConfiguration = resolvedConfiguration;
+    myFlags = flags;
   }
 
   public IDEPluginActionBuilder addAllTests() {
@@ -56,17 +56,17 @@ public class IDEPluginActionBuilder {
   }
 
   public IDEPluginActionBuilder addTests(List<String> testCases) {
-    flags.setTests(concatLists(flags.getTests(), testCases));
+    myFlags.setTests(concatLists(myFlags.getTests(), testCases));
     return this;
   }
 
   public IDEPluginActionBuilder dryRunFor(List<String> dryRunFor) {
-    flags.setDryRunFor(concatLists(flags.getDryRunFor(), dryRunFor));
+    myFlags.setDryRunFor(concatLists(myFlags.getDryRunFor(), dryRunFor));
     return this;
   }
 
   public IDEPluginActionBuilder resetBrowsers() {
-    flags.setReset(true);
+    myFlags.setReset(true);
     return this;
   }
 
@@ -78,28 +78,36 @@ public class IDEPluginActionBuilder {
   public ActionRunner build() {
     install(new HtmlDocModule());
     install(new DebugModule(true));
+    String serverAddress = myResolvedConfiguration.getServer(
+        myFlags.getServer(),
+        myFlags.getPort(),
+        myFlags.getServerHandlerPrefix()
+    );
+    String captureAddress = myResolvedConfiguration.getCaptureAddress(
+        serverAddress,
+        myFlags.getCaptureAddress(),
+        myFlags.getServerHandlerPrefix()
+    );
     Injector injector = Guice.createInjector(
             new CompositeModule(modules),
             new JsTestDriverModule(
-                    flags,
-                    resolvedConfiguration.getFilesList(),
-                    resolvedConfiguration.getServer(
-                            flags.getServer(),
-                            flags.getPort(),
-                            flags.getServerHandlerPrefix()
-                    ),
+              myFlags,
+                    myResolvedConfiguration.getFilesList(),
+                    serverAddress,
+                    captureAddress,
                     System.out,
-                    resolvedConfiguration.getBasePath(),
-                    resolvedConfiguration.getTestSuiteTimeout(),
-                    resolvedConfiguration.getTests(),
+                    myResolvedConfiguration.getBasePath(),
+                    myResolvedConfiguration.getTestSuiteTimeout(),
+                    myResolvedConfiguration.getTests(),
                     Collections.<FileInfo>emptyList(),
-                    resolvedConfiguration.getProxyConfiguration())
+                    myResolvedConfiguration.getGatewayConfiguration()
+            )
     );
 
     return injector.getInstance(ActionRunner.class);
   }
 
-  private <E> List<E> concatLists(List<E> list1, List<E> list2) {
+  private static <E> List<E> concatLists(List<E> list1, List<E> list2) {
     List<E> res = Lists.newArrayList(list1);
     res.addAll(list2);
     return res;
@@ -107,15 +115,15 @@ public class IDEPluginActionBuilder {
 
   private static class CompositeModule implements Module {
 
-    private final List<Module> modules;
+    private final List<Module> myModules;
 
     public CompositeModule(List<Module> modules) {
-      this.modules = modules;
+      myModules = modules;
     }
 
     @Override
     public void configure(Binder binder) {
-      for (Module module : modules) {
+      for (Module module : myModules) {
         binder.install(module);
       }
     }
