@@ -19,7 +19,7 @@
           <root url="jar://$MODULE_DIR$/lib/dev/hamcrest-generator-1.3.0RC2.jar!/" />
           <root url="jar://$MODULE_DIR$/lib/dev/junit-dep-4.9b2.jar!/" />
           <root url="jar://$MODULE_DIR$/lib/dev/hamcrest-core-1.3.0RC2.jar!/" />
-          <root url="jar://$MODULE_DIR$/../../../../community/lib/junit.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/community/lib/junit.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
@@ -32,7 +32,7 @@
     <orderEntry type="module-library" scope="TEST">
       <library>
         <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../../out/classes/test/JavaScript-tests" />
+          <root url="file://$APPLICATION_HOME_DIR$/out/classes/test/JavaScript-tests" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

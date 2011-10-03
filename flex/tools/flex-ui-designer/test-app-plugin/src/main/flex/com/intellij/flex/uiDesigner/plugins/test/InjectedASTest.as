@@ -15,28 +15,8 @@ import org.hamcrest.object.QualifiedName;
 import org.hamcrest.object.equalTo;
 import org.hamcrest.object.hasProperties;
 
+[Test(dir="mxml/injectedAS")]
 public class InjectedASTest extends BaseTestCase {
-  public function InjectedASTest() {
-    // disable unused inspection
-    //noinspection ConstantIfStatementJS
-    if (false) {
-      ArrayLiteralOfReferences();
-      Transitions();
-      PopUpAnchor();
-      StateSpecificBinding();
-      ExplicitRadioButtonGroup();
-      OneElementAsArray();
-      TwoWayBinding();
-      ArrayOfPrimitives();
-      UnresolvedVariableInScriptAsArrayItem();
-      Constructor();
-      Model();
-      BindingToDeferredInstanceFromBytes();
-      ReferablePrimitive();
-      BindingTargetIsStaticInstanceInDynamicParent();
-    }
-  }
-  
   private static function mouseDown(target:Object):void {
     IEventDispatcher(target).dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN));
   }

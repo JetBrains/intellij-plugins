@@ -17,25 +17,8 @@ import org.hamcrest.object.notNullValue;
 import org.hamcrest.object.nullValue;
 import org.hamcrest.object.strictlyEqualTo;
 
+[Test(dir="css")]
 public class StyleTest extends BaseTestCase {
-  public function StyleTest() {
-    //noinspection ConstantIfStatementJS
-    if (false) {
-      emptyForCheckLibrariesCssDefaults();
-      StyleTag();
-      StyleTagWithSource();
-      StyleTagWithSourceAsRelativePath();
-      ComponentWithCustomSkin();
-      ComponentWithCustomSkinInPackage();
-      ComponentWithCustomSkinAsBinding();
-      LibraryWithDefaultsCss();
-      ApplicationLevelGlobalSelector();
-      SeveralStyleSources();
-      App1();
-      App2();
-    }
-  }
-
   public function emptyForCheckLibrariesCssDefaults():void {
     var librarySets:Vector.<LibrarySet> = documentManager.document.module.librarySets;
     assertThat(librarySets, [{items: arrayWithSize(10)}]);

@@ -1,0 +1,14 @@
+<idea-plugin version="2">
+  <name>Flex UI Designer Test Assistant</name>
+  <description>Assists in writing and maintaining tests for Flex UI Designer's code</description>
+  <version>0.1</version>
+  <vendor url="http://www.jetbrains.com" logo="/general/ijLogo.png">JetBrains</vendor>
+
+  <depends optional="false">com.intellij.flex</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <implicitUsageProvider implementation="com.intellij.flex.uiDesigner.testAssistant.MyImplicitUsageProvider"/>
+
+    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+  </extensions>
+</idea-plugin>

@@ -15,6 +15,7 @@ import org.hamcrest.object.instanceOf;
 import org.hamcrest.object.strictlyEqualTo;
 import org.hamcrest.text.containsString;
 
+[Test(dir="mxml/states")]
 public class StatesTest extends BaseTestCase {
   private static const DEFAULT:String = "default";
   
@@ -22,38 +23,6 @@ public class StatesTest extends BaseTestCase {
   private static const SECOND_STATE:String = "Register";
 
   private static const C:String = "C";
-
-  public function StatesTest() {
-    // disable unused inspection
-    //noinspection ConstantIfStatementJS
-    if (false) {
-      ChildrenInTheSameState();
-      RootChildrenAndSetProperty();
-      UnusedStates();
-      TwoStatesWithParentByExplicitIdWithoutBackSibling();
-      TwoStatesWithParentByExplicitIdWithBackSiblingByExplicitId();
-      TwoStatesWithParentWithBackSiblingByExplicitId();
-      TwoStatesWithParentWithBackSibling();
-      DynamicParent();
-      DynamicParentWithBackSibling();
-      DynamicParentWithDeepBackSibling();
-      DynamicOuterParentWithBackSiblingManyDynamicChildrenInInnerDynamicObject();
-      DynamicChildrenLayering();
-      ItemDestructionPolicy();
-      ItemDestructionPolicyMergeItems();
-      ItemDestructionPolicyMergeItems2();
-      FirstPendingSetPropertyAndStateGroup();
-      SetProperty();
-      LoginForm();
-      IncludeInAfterStateSpecificProperty();
-      IDEA_72004();
-      ExcludeFrom();
-      ProjectMxmlComponentAsStateSpecificChild();
-      ProjectStatefulMxmlComponentAsChild();
-      IDEA_73547();
-      IDEA_73608();
-    }
-  }
 
   private function getForm():Object {
     return app.contentGroup.getElementAt(0).contentGroup.getElementAt(0);

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 class TestClient extends Client {
   private static final int MXML_TEST_CLASS_ID = 0;
+  private static final int MXML_MX_TEST_CLASS_ID = 6;
   private static final int STATES_TEST_CLASS_ID = 1;
   private static final int INJECTED_AS_TEST_CLASS_ID = 2;
   private static final int STYLE_TEST_CLASS_ID = 4;
@@ -11,8 +12,13 @@ class TestClient extends Client {
   // MxmlTest on idea side splitted as MxmlTest, StatesTest and InjectedAsTest on client side.
   public void test(String filename, String parentFilename) throws IOException {
     char c = parentFilename.charAt(0);
-    test(filename,
-         c == 's' ? STATES_TEST_CLASS_ID : c == 'i' ? INJECTED_AS_TEST_CLASS_ID : (c == 'c' || c == 'A' ? STYLE_TEST_CLASS_ID : MXML_TEST_CLASS_ID));
+    test(filename, c == 's'
+                   ? STATES_TEST_CLASS_ID
+                   : c == 'i'
+                     ? INJECTED_AS_TEST_CLASS_ID
+                     : (c == 'c' || c == 'A'
+                        ? STYLE_TEST_CLASS_ID
+                        : (parentFilename.length() == 2 ? MXML_MX_TEST_CLASS_ID : MXML_TEST_CLASS_ID)));
   }
   
   public void test(String filename, int c) throws IOException {

@@ -8,60 +8,11 @@ import org.hamcrest.core.allOf;
 import org.hamcrest.core.isA;
 import org.hamcrest.core.not;
 import org.hamcrest.object.equalTo;
-import org.hamcrest.object.instanceOf;
 import org.hamcrest.object.strictlyEqualTo;
 
+[Test(dir="mxml")]
 public class MxmlTest extends BaseTestCase {
-  public function MxmlTest() {
-    //noinspection ConstantIfStatementJS
-    if (false) {
-      SparkApplication();
-      SparkComponentsDependOnMx();
-      ViewNavigatorApplication();
-      SparkComponents();
-      MxComponents();
-      Embed();
-      ResourceDirective();
-      UntypedProperty();
-      ClassProperty();
-      ItemRendererAndMixDefaultExplicitContent();
-      WindowedApplication();
-      SparkWindow();
-      PropertyAsTagWithArrayType();
-      RichTextAndCollapseWhitespace();
-      MixedTextAndSubTags();
-      InlineArrayAsAttributeValue();
-      InvalidColorName();
-      RuntimeError();
-      CannotFindDefaultProperty();
-      AbstractClass();
-      MouseSelectionTest();
-      ColorEquals0();
-      ChildrenTypeCheck();
-      ProjectActionScriptComponentAsChild();
-      ProjectMxmlComponentAsChild();
-      EmbedSwfAndImageFromCss();
-      EmbedImageAsClass();
-      Vector();
-      ToolTip();
-      MxPanelWithControlBar();
-      AreaChartComplexExample();
-      ComplexContentAsSubTagsForObjectTypedProperty();
-      IDEA_73806();
-      IDEA_73613();
-      FxObject();
-    }
-  }
-  
   public function SparkComponents():void {
-    assertThat(app, {document: app});
-  }
-
-  public function SparkComponentsDependOnMx():void {
-    assertThat(app, {document: app});
-  }
-
-  public function MxComponents():void {
     assertThat(app, {document: app});
   }
 
@@ -70,10 +21,6 @@ public class MxmlTest extends BaseTestCase {
     assertThat(app, m);
     app.colorCorrection = ColorCorrection.ON;
     assertThat(app, m);
-  }
-
-  public function ViewNavigatorApplication():void {
-
   }
 
   public function Embed():void {
@@ -163,14 +110,7 @@ public class MxmlTest extends BaseTestCase {
       [l(1), l(2)]
     ]);
   }
-  
-  public function InlineArrayAsAttributeValue():void {
-    assertThat(app, [
-      {dataProvider: {source: ['Appetizers', 'Entrees', 'Desserts']}},
-      {dataProvider: ['one', 'two']}
-    ]);
-  }
-  
+
   public function InvalidColorName():void {
     assertThat(app, [{color: 0}, {color: 0}, {depth: 0}]);
   }
@@ -196,15 +136,8 @@ public class MxmlTest extends BaseTestCase {
     assertThat(app, [{label: "before invalid control"}, {columns: {source: [{dataField: "foo"}, {dataField: "bar"}]}}]);
   }
 
-  public function MouseSelectionTest():void {
-  }
-
   public function ColorEquals0():void {
     assertThat(app, [{color: 0}]);
-  }
-
-  public function ChildrenTypeCheck():void {
-    assertThat(app, [[], [], []]);
   }
 
   public function ProjectActionScriptComponentAsChild():void {
@@ -215,49 +148,13 @@ public class MxmlTest extends BaseTestCase {
     assertThat(app, [allOf({name: "IDEA-73453"}, [{text: "Label in child custom mxml component"}])]);
   }
 
-  public function EmbedSwfAndImageFromCss():void {
-    validateUI();
-  }
-
-  public function EmbedImageAsClass():void {
-    // todo test over
-  }
-
-  public function Vector():void {
+  public function FxVector():void {
     validateUI(); // force list selectedIndices commit
     assertThat(app, [{layout: {constraintColumns: {length: 1, fixed: false}}},
       {selectedIndices: allOf([0, 2], {fixed: false})},
       {selectedIndices: allOf([1, 3], {fixed: false})},
       {selectedIndices: allOf([1, 2], {fixed: false /* false, because our vector copied in spark List*/})}
     ]);
-  }
-
-  public function ToolTip():void {
-   
-  }
-
-  // IDEA-72935
-  public function MxPanelWithControlBar():void {
-    assertThat(app, [{width: 250}]);
-  }
-
-  public function AreaChartComplexExample():void {
-    validateUI();
-  }
-
-  // IDEA-73099
-  public function ComplexContentAsSubTagsForObjectTypedProperty():void {
-    assertThat(app, [
-      {dataProvider: {source: [strictlyEqualTo("1"), strictlyEqualTo("2"), strictlyEqualTo("3")]}},
-      {dataProvider: {list: {source: [strictlyEqualTo("1"), strictlyEqualTo("2")]}}},
-      {dataProvider: [strictlyEqualTo("Button 1"), strictlyEqualTo("Button 2")]},
-      {dataProvider: [strictlyEqualTo("Button 1")]}
-    ]);
-  }
-
-  public function IDEA_73806():void {
-    validateUI(); // force model commit
-    assertThat(app, [{dataProvider: {source: instanceOf(XMLList)}}, {text: ""}]);
   }
 
   public function IDEA_73613():void {
@@ -278,6 +175,10 @@ public class MxmlTest extends BaseTestCase {
       ]}},
       {}
     ]);
+  }
+
+  public function FxModel():void {
+
   }
 }
 }

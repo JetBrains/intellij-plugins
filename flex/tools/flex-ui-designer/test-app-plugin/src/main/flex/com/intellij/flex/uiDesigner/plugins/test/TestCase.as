@@ -9,6 +9,5 @@ public interface TestCase {
   function setUp():void;
   
   function set asyncSuccessHandler(value:Function):void;
-
 }
 }

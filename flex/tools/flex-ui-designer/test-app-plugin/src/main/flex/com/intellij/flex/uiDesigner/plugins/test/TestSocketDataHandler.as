@@ -26,7 +26,7 @@ import flash.utils.getQualifiedClassName;
 public class TestSocketDataHandler implements SocketDataHandler {
   public static const CLASS:int = 1;
   
-  private static const c:Vector.<Class> = new <Class>[MxmlTest, StatesTest, InjectedASTest, AppTest, StyleTest, UITest];
+  private static const c:Vector.<Class> = new <Class>[MxmlTest, StatesTest, InjectedASTest, AppTest, StyleTest, UITest, MxmlMxTest];
   private const describeCache:Dictionary = new Dictionary();
 
   private var projectManager:ProjectManager;
