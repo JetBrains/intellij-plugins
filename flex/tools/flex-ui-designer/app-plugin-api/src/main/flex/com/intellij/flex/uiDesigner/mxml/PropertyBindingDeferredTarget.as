@@ -25,15 +25,7 @@ public final class PropertyBindingDeferredTarget extends PropertyBindingTarget {
         resetChangeWatcher();
       }
       else if (!changeWatcher.isWatching()) {
-        var newHost:Object = changeWatcherHost is DeferredInstanceFromBytesBase
-          ? DeferredInstanceFromBytesBase(changeWatcherHost).getNullableInstance() : changeWatcherHost;
-        if (newHost == null) {
-          return;
-        }
-
-        changeWatcher.reset(newHost);
-        changeWatcher.setHandler(changeWatcherHandler);
-        changeWatcherHandler(null);
+        watchHost(null, changeWatcherHandler);
       }
 
       return;
@@ -55,11 +47,6 @@ public final class PropertyBindingDeferredTarget extends PropertyBindingTarget {
       applyValue(t, pendingValue);
       pendingValue = undefined;
     }
-  }
-
-  public function initChangeWatcher(value:Object, changeWatcherHost:Object):void {
-    changeWatcher = value;
-    this.changeWatcherHost = changeWatcherHost;
   }
 
   //noinspection JSUnusedLocalSymbols

@@ -125,12 +125,6 @@ public class InjectedASReader {
     var changeWatcher:Object = watchMxmlObjectChain(reader.context.moduleContext.getClass("mx.binding.utils.ChangeWatcher"),
                                                     reader.stringRegistry, input);
     var host:Object = readMxmlObjectReference(input, reader);
-    if (host is StaticInstanceReferenceInDeferredParentInstanceBase) {
-     // todo
-      trace("unsupported binding");
-      return;
-    }
-
     if (targetBinding == null) {
       if (host is DeferredInstanceFromBytesBase) {
         var propertyBindingTarget:PropertyBindingTarget = new PropertyBindingTarget(target, propertyName, isStyle);
@@ -138,6 +132,12 @@ public class InjectedASReader {
         propertyBindingTarget.initChangeWatcher2(changeWatcher);
       }
       else {
+        if (host is StaticInstanceReferenceInDeferredParentInstanceBase) {
+          // todo
+          trace("unsupported binding");
+          return;
+        }
+
         changeWatcher.reset(host);
         var handler:Function = createChangeWatcherHandler(target, propertyName, changeWatcher, isStyle);
         changeWatcher.setHandler(handler);
@@ -148,7 +148,13 @@ public class InjectedASReader {
       if (host is DeferredInstanceFromBytesBase) {
         DeferredInstanceFromBytesBase(host).registerBinding(targetBinding);
       }
-      PropertyBindingDeferredTarget(targetBinding).initChangeWatcher(changeWatcher, host);
+
+      if (targetBinding is PropertyBindingDeferredTarget) {
+        PropertyBindingDeferredTarget(targetBinding).initChangeWatcher(changeWatcher, host);
+      }
+      else {
+        PropertyBindingTarget(targetBinding).initChangeWatcher(changeWatcher, host);
+      }
     }
   }
 

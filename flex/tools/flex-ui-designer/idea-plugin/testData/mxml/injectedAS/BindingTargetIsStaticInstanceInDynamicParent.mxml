@@ -12,6 +12,7 @@
     <State name="A"/>
     <State name="B"/>
   </states>
+
   <VGroup includeIn="B">
     <Label text="{text}"/>
     <Label text="{new String('newString')}"/>
@@ -31,4 +32,8 @@
   <Label includeIn="B" text="{dynamicTextHolder.text}"/>
   
   <Label text="{labelBar.text}"/>
+
+  <Group includeIn="B">
+    <Label text="{labelBar.text}"/>
+  </Group>
 </VGroup>

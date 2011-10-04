@@ -20,7 +20,7 @@ internal class BaseTestCase implements TestCase {
 
   protected var stateManager:StatesBarManager;
 
-  protected static function l(i:Object):Object {
+  protected static function l(i:Object):HasPropertiesMatcher {
     return new HasPropertiesMatcher({text: i.toString()});
   }
 

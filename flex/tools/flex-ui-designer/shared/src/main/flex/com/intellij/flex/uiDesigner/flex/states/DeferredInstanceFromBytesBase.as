@@ -57,7 +57,7 @@ public class DeferredInstanceFromBytesBase {
     }
   }
 
-  public function getNullableInstance():Object {
+  public final function getNullableInstance():Object {
     return instance;
   }
 
@@ -76,13 +76,17 @@ public class DeferredInstanceFromBytesBase {
     executeBindinds();
   }
 
-  internal function getReferredChild(reference:int):Object {
+  internal final function getReferredChild(reference:int):Object {
     var o:Object;
     if ((o = objectTable[reference]) == null) {
       throw new ArgumentError("must be not null");
     }
 
     return o;
+  }
+
+  internal final function getNullableReferredChild(reference:int):Object {
+    return objectTable == null ? null : objectTable[reference];
   }
 }
 }

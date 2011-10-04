@@ -13,5 +13,9 @@ public class StaticInstanceReferenceInDeferredParentInstanceBase {
   public function getInstance():Object {
     return deferredParentInstance.getReferredChild(reference);
   }
+
+  public function getNullableInstance():Object {
+    return deferredParentInstance.getNullableReferredChild(reference);
+  }
 }
 }

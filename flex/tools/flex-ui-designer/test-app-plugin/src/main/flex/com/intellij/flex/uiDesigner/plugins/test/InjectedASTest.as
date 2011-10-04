@@ -11,6 +11,7 @@ import org.hamcrest.Matcher;
 import org.hamcrest.assertThat;
 import org.hamcrest.core.allOf;
 import org.hamcrest.core.not;
+import org.hamcrest.object.HasPropertiesMatcher;
 import org.hamcrest.object.QualifiedName;
 import org.hamcrest.object.equalTo;
 import org.hamcrest.object.hasProperties;
@@ -111,6 +112,7 @@ public class InjectedASTest extends BaseTestCase {
     assertThat(app, [{id: "specifiedId3", text: "View Source"}, l("testText"), l("")]);
 
     setState(B);
+    var m:HasPropertiesMatcher = l("bar");
     assertThat(app, [
       [
         l("label"),
@@ -119,7 +121,7 @@ public class InjectedASTest extends BaseTestCase {
         l("\n      mxmlBackedVariable\n    "),
         {id: "specifiedId", text: "label"}
       ],
-      l("bar"),
+      m,
       {id: "specifiedId2", text: "333"},
       
       {id: "textHolder", text: "testText"},
@@ -128,20 +130,25 @@ public class InjectedASTest extends BaseTestCase {
       {id: "dynamicTextHolder", text: "testText"},
       l("testText"),
 
-      l("bar")
+      m,
+      [m]
     ]);
 
     app.getElementAt(3).text = "newTestText";
     assertThat(app.getElementAt(4), l("newTestText"));
 
-    app.getElementAt(5).text = "23423142f";
-    assertThat(app.getElementAt(6), l("23423142f"));
+    var newText:String = "23423142f";
+    app.getElementAt(5).text = newText;
+    m = l(newText);
+    assertThat(app.getElementAt(6), m);
 
     app.getElementAt(1).text = "sfe";
-    assertThat(app.getElementAt(7), l("sfe"));
+    m = l("sfe");
+    assertThat(app.getElementAt(7), m);
+    assertThat(app.getElementAt(8).getElementAt(0), m);
 
     setState(A);
-    assertThat(app.getElementAt(2), l("sfe"));
+    assertThat(app.getElementAt(2), m);
   }
 }
 }
