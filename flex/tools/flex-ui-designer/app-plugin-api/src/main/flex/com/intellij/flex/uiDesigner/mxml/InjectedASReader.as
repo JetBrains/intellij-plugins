@@ -132,10 +132,17 @@ public class InjectedASReader {
     }
 
     if (targetBinding == null) {
-      changeWatcher.reset(host);
-      var handler:Function = createChangeWatcherHandler(target, propertyName, changeWatcher, isStyle);
-      changeWatcher.setHandler(handler);
-      handler(null);
+      if (host is DeferredInstanceFromBytesBase) {
+        var propertyBindingTarget:PropertyBindingTarget = new PropertyBindingTarget(target, propertyName, isStyle);
+        DeferredInstanceFromBytesBase(host).registerBinding(propertyBindingTarget);
+        propertyBindingTarget.initChangeWatcher2(changeWatcher);
+      }
+      else {
+        changeWatcher.reset(host);
+        var handler:Function = createChangeWatcherHandler(target, propertyName, changeWatcher, isStyle);
+        changeWatcher.setHandler(handler);
+        handler(null);
+      }
     }
     else {
       if (host is DeferredInstanceFromBytesBase) {

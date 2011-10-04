@@ -126,7 +126,9 @@ public class InjectedASTest extends BaseTestCase {
       l("testText"),
 
       {id: "dynamicTextHolder", text: "testText"},
-      l("testText")
+      l("testText"),
+
+      l("bar")
     ]);
 
     app.getElementAt(3).text = "newTestText";
@@ -134,6 +136,12 @@ public class InjectedASTest extends BaseTestCase {
 
     app.getElementAt(5).text = "23423142f";
     assertThat(app.getElementAt(6), l("23423142f"));
+
+    app.getElementAt(1).text = "sfe";
+    assertThat(app.getElementAt(7), l("sfe"));
+
+    setState(A);
+    assertThat(app.getElementAt(2), l("sfe"));
   }
 }
 }

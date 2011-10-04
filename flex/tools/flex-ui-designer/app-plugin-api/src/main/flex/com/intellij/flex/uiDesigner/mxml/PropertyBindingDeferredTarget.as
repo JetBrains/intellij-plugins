@@ -5,9 +5,6 @@ public final class PropertyBindingDeferredTarget extends PropertyBindingTarget {
   private var deferredParentInstance:DeferredInstanceFromBytesBase;
   private var pendingValue:*;
 
-  private var changeWatcher:Object;
-  private var changeWatcherHost:Object;
-
   public function PropertyBindingDeferredTarget(target:DeferredInstanceFromBytesBase, propertyName:String, isStyle:Boolean) {
     deferredParentInstance = target;
     
@@ -25,10 +22,7 @@ public final class PropertyBindingDeferredTarget extends PropertyBindingTarget {
       if (value == null) {
         // reset in both cases — or host became null (change state), or target became null
         // we don't set target value as null according to flex compiler (as example — target is static, but host is dynamic)
-        if (changeWatcher.isWatching()) {
-          changeWatcher.reset(null);
-          changeWatcher.setHandler(null);
-        }
+        resetChangeWatcher();
       }
       else if (!changeWatcher.isWatching()) {
         var newHost:Object = changeWatcherHost is DeferredInstanceFromBytesBase

@@ -19,7 +19,7 @@
     <Label text="{mxmlBackedVariable}"/>
     <Label id="specifiedId" text="{text}"/>
   </VGroup>
-  <Label includeIn="B" text="{'bar'}" id="labelBar"/>
+  <TextInput includeIn="B" text="{'bar'}" id="labelBar"/>
   <Label id="specifiedId2" includeIn="B" text="{333}"/>
 
   <Label includeIn="A" text="{resourceManager.getString('core', 'viewSource')}" id="specifiedId3"/>
