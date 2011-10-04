@@ -14,6 +14,10 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 class ExpressionBinding extends Binding {
   private final JSExpression expression;
 
@@ -31,7 +35,13 @@ class ExpressionBinding extends Binding {
     throws InvalidPropertyException {
     super.write(out, writer, valueReferenceResolver);
 
-    writeExpression(expression, out, writer, valueReferenceResolver);
+    // chain (not null expression.getQualifier()) supported only for binding from MXML, not from variable initializer value
+    if (expression instanceof JSReferenceExpression) {
+      writeReferenceExpression((JSReferenceExpression)expression, out, writer, valueReferenceResolver, true);
+    }
+    else {
+      writeExpression(expression, out, writer, valueReferenceResolver);
+    }
   }
 
   private static void writeExpression(JSExpression expression, PrimitiveAmfOutputStream out, BaseWriter writer,
@@ -50,7 +60,7 @@ class ExpressionBinding extends Binding {
       writeCallExpression((JSNewExpression)expression, out, writer, valueReferenceResolver);
     }
     else if (expression instanceof JSReferenceExpression) {
-      writeReferenceExpression((JSReferenceExpression)expression, out, writer, valueReferenceResolver);
+      writeReferenceExpression((JSReferenceExpression)expression, out, writer, valueReferenceResolver, false);
     }
     else if (expression instanceof JSCallExpression) {
       writeCallExpression((JSCallExpression)expression, out, writer, valueReferenceResolver);
@@ -127,8 +137,8 @@ class ExpressionBinding extends Binding {
 
   @NotNull
   private static PsiElement resolveReferenceExpression(JSReferenceExpression expression, boolean qualificatorSupported) throws InvalidPropertyException {
-    if (!qualificatorSupported && expression.getQualifier() != null) {
-      throw new UnsupportedOperationException(expression.getText());
+    if (!qualificatorSupported) {
+      checkQualifier(expression);
     }
 
     final AccessToken token = ReadAction.start();
@@ -147,14 +157,38 @@ class ExpressionBinding extends Binding {
     return element;
   }
 
+  private static void checkQualifier(JSReferenceExpression expression) {
+    if (expression.getQualifier() != null) {
+      throw new UnsupportedOperationException(expression.getText());
+    }
+  }
+
   private static void writeReferenceExpression(JSReferenceExpression expression, PrimitiveAmfOutputStream out, BaseWriter writer,
-                                               ValueReferenceResolver valueReferenceResolver)
+                                               ValueReferenceResolver valueReferenceResolver, boolean qualificatorSupportedForMxmlBinding)
     throws InvalidPropertyException {
-    PsiElement element = resolveReferenceExpression(expression, false);
+    final PsiElement element;
+    List<String> qualifiers = null;
+    JSReferenceExpression qualifier = (JSReferenceExpression)expression.getQualifier();
+    if (qualificatorSupportedForMxmlBinding && qualifier != null) {
+      JSReferenceExpression topElement;
+      qualifiers = new ArrayList<String>();
+      do {
+        qualifiers.add(qualifier.getReferencedName());
+        topElement = qualifier;
+      }
+      while ((qualifier = (JSReferenceExpression)qualifier.getQualifier()) != null);
+      element = resolveReferenceExpression(topElement, true);
+    }
+    else {
+      element = resolveReferenceExpression(expression, false);
+    }
+
     if (element instanceof JSClass) {
+      checkQualifier(expression);
       writer.classReference(((JSClass)element).getQualifiedName());
     }
     else if (element instanceof JSVariable) {
+      checkQualifier(expression);
       VariableReference valueReference = valueReferenceResolver.getNullableValueReference((JSVariable)element);
       if (valueReference != null) {
         out.write(ExpressionMessageTypes.VARIABLE_REFERENCE);
@@ -166,32 +200,29 @@ class ExpressionBinding extends Binding {
       writeJSVariable(((JSVariable)element), out, writer, valueReferenceResolver);
     }
     else {
-      out.write(ExpressionMessageTypes.MXML_OBJECT_REFERENCE);
+      final String hostObjectId;
+      if (qualifiers == null) {
+        out.write(ExpressionMessageTypes.MXML_OBJECT_REFERENCE);
+        hostObjectId = expression.getReferencedName();
+      }
+      else {
+        out.write(ExpressionMessageTypes.MXML_OBJECT_CHAIN);
+        writer.classOrPropertyName(expression.getReferencedName());
+        for (int i = qualifiers.size() - 2 /* last qualifier is not included to chain, it is host object */; i >= 0; i--) {
+          writer.classOrPropertyName(qualifiers.get(i));
+        }
+        writer.endObject();
 
-      JSReferenceExpression qualifier = (JSReferenceExpression)expression.getQualifier();
-      //List<String> qualifiers = null;
-      if (qualifier != null) {
-        throw new UnsupportedOperationException(expression.getText());
-        //qualifiers = new ArrayList<String>(4);
-        //do {
-        //  qualifiers.add(qualifier.getReferencedName());
-        //}
-        //while ((qualifier = (JSReferenceExpression)qualifier.getQualifier()) != null);
+        hostObjectId = qualifiers.get(qualifiers.size() - 1);
       }
 
       try {
-        valueReferenceResolver.getValueReference(expression.getReferencedName()).write(out, writer, valueReferenceResolver);
+        valueReferenceResolver.getValueReference(hostObjectId).write(out, writer, valueReferenceResolver);
       }
       catch (IllegalStateException e) {
         // getValueReference throws IllegalStateException if value reference is null
         throw new UnsupportedOperationException(expression.getText());
       }
-      //if (qualifiers == null) {
-      //  out.write(0);
-      //}
-      //else {
-      //  out.write(qualifiers.size());
-      //}
     }
   }
 

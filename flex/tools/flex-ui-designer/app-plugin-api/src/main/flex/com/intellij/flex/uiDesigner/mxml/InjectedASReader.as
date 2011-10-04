@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner.mxml {
+import com.intellij.flex.uiDesigner.StringRegistry;
 import com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromBytesBase;
 import com.intellij.flex.uiDesigner.flex.states.StaticInstanceReferenceInDeferredParentInstanceBase;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
@@ -24,17 +25,17 @@ public class InjectedASReader {
     reader.readArrayOrVector(vector, length); // result vector is ignored
   }
   
-  private function readBinding(data:IDataInput, reader:MxmlReader):void {
-    const size:int = data.readUnsignedShort();
+  private function readBinding(input:IDataInput, reader:MxmlReader):void {
+    const size:int = input.readUnsignedShort();
     if (size == 0) {
       return;
     }
 
     for (var i:int = 0; i < size; i++) {
       var o:Object = null;
-      var target:Object = readMxmlObjectReference(data, reader);
+      var target:Object = readMxmlObjectReference(input, reader);
       var propertyName:String = reader.readClassOrPropertyName();
-      var type:int = data.readByte();
+      var type:int = input.readByte();
       var isStyle:Boolean = (type & 1) != 0;
       type >>= 1;
 
@@ -52,7 +53,7 @@ public class InjectedASReader {
       switch (type) {
         case BindingType.MXML_OBJECT:
         case BindingType.MXML_OBJECT_WRAP_TO_ARRAY:
-          o = readMxmlObjectReference(data, reader);
+          o = readMxmlObjectReference(input, reader);
           // if target can be get only via binding, execute it
           // 1) on deferredParentInstance creation if value is static
           // 2) on value creation if value is dynamic
@@ -67,11 +68,18 @@ public class InjectedASReader {
           break;
 
         case BindingType.VARIABLE:
-          o = readVariableReference(data, reader);
+          o = readVariableReference(input, reader);
           break;
 
         case BindingType.EXPRESSION:
-          o = reader.readExpression(data.readByte());
+          var amfType:int = input.readByte();
+          if (amfType == ExpressionMessageTypes.MXML_OBJECT_CHAIN) {
+            readMxmlObjectChain(reader, input, target, propertyName);
+            continue;
+          }
+          else {
+            o = reader.readExpression(amfType);
+          }
           break;
 
         default:
@@ -93,6 +101,36 @@ public class InjectedASReader {
     }
     
     deferredReferenceClass = null;
+  }
+  
+  private static function createChangeWatcherHandler(target:Object, propertyName:String, changeWatcher:Object):Function {
+    return function(event:*):void {
+      target[propertyName] = changeWatcher.getValue();
+    };
+  }
+
+  private function readMxmlObjectChain(reader:MxmlReader, input:IDataInput, target:Object,
+                                       propertyName:String):void {
+    var changeWatcher:Object = watchMxmlObjectChain(reader.context.moduleContext.getClass("mx.binding.utils.ChangeWatcher"),
+                                                    reader.stringRegistry, input);
+    var host:Object = readMxmlObjectReference(input, reader);
+    if (host is StaticInstanceReferenceInDeferredParentInstanceBase) {
+     // todo
+      trace("unsupported binding");
+      return;
+    }
+    
+    changeWatcher.reset(host);
+    var handler:Function = createChangeWatcherHandler(target, propertyName, changeWatcher);
+    changeWatcher.setHandler(handler);
+    handler(null);
+  }
+
+  private static function watchMxmlObjectChain(changeWatcherClass:Class, stringRegistry:StringRegistry,
+                                               input:IDataInput):Object {
+    var propertyName:String = stringRegistry.read(input);
+    return propertyName == null ? null : new changeWatcherClass(propertyName, null, false,
+                                                                watchMxmlObjectChain(changeWatcherClass, stringRegistry, input));
   }
 
   //noinspection JSMethodCanBeStatic

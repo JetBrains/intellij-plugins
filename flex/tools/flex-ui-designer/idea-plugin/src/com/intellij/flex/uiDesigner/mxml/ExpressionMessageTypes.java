@@ -8,4 +8,6 @@ final class ExpressionMessageTypes {
   
   static final int MXML_OBJECT_REFERENCE = 63;
   static final int VARIABLE_REFERENCE = 64;
+
+  static final int MXML_OBJECT_CHAIN = 65;
 }

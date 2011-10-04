@@ -37,7 +37,7 @@ public final class MxmlReader implements DocumentReader {
 
   private var input:IDataInput;
   
-  private var stringRegistry:StringRegistry;
+  internal var stringRegistry:StringRegistry;
   private var embedImageManager:EmbedImageManager;
   private var embedSwfManager:EmbedSwfManager;
 
