@@ -1173,30 +1173,21 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         }
       });
       CreateModuleLibraryChooser c = new CreateModuleLibraryChooser(libraryTypes, myMainPanel, module, librariesModelWrapper);
-      try {
-        c.doChoose();
-        if (!c.isOK()) {
-          return;
-        }
-        final List<Library> libraries = c.getChosenElements();
-        if (libraries.isEmpty()) {
-          return;
-        }
+      final List<Library> libraries = c.chooseElements();
+      if (libraries.isEmpty()) {
+        return;
+      }
 
-        DefaultMutableTreeNode rootNode = myTable.getRoot();
-        for (Library library : libraries) {
-          String libraryId = FlexProjectRootsUtil.getLibraryId(library);
-          LibraryOrderEntry libraryEntry = myConfigEditor.findLibraryOrderEntry(myDependencies, library);
-          rootNode.add(new DefaultMutableTreeNode(new ModuleLibraryItem(libraryId, libraryEntry, myProject), false));
-        }
-        myTable.refresh();
-        myTable.getSelectionModel().clearSelection();
-        int rowCount = myTable.getRowCount();
-        myTable.getSelectionModel().addSelectionInterval(rowCount - libraries.size(), rowCount - 1);
+      DefaultMutableTreeNode rootNode = myTable.getRoot();
+      for (Library library : libraries) {
+        String libraryId = FlexProjectRootsUtil.getLibraryId(library);
+        LibraryOrderEntry libraryEntry = myConfigEditor.findLibraryOrderEntry(myDependencies, library);
+        rootNode.add(new DefaultMutableTreeNode(new ModuleLibraryItem(libraryId, libraryEntry, myProject), false));
       }
-      finally {
-        Disposer.dispose(c);
-      }
+      myTable.refresh();
+      myTable.getSelectionModel().clearSelection();
+      int rowCount = myTable.getRowCount();
+      myTable.getSelectionModel().addSelectionInterval(rowCount - libraries.size(), rowCount - 1);
     }
   }
 
