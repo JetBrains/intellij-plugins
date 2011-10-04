@@ -2,10 +2,12 @@ package com.intellij.flex.uiDesigner.mxml;
 
 import org.jetbrains.annotations.Nullable;
 
-abstract class Context {
+abstract class Context implements MxmlObjectReferenceProvider {
   protected StaticObjectContext backSibling;
   protected Scope parentScope;
   protected boolean cssRulesetDefined;
+
+  protected MxmlObjectReference mxmlObjectReference;
 
   protected StaticInstanceReferenceInDeferredParentInstance staticInstanceReferenceInDeferredParentInstance;
 
@@ -69,5 +71,28 @@ abstract class Context {
   public void markCssRulesetDefined() {
     assert !cssRulesetDefined;
     cssRulesetDefined = true;
+  }
+
+  public void setMxmlObjectReference(MxmlObjectReference mxmlObjectReference) {
+    assert this.mxmlObjectReference == null;
+    this.mxmlObjectReference = mxmlObjectReference;
+  }
+
+  public int getOrAllocateId() {
+    if (id == -1) {
+      id = getParentScope().referenceCounter++;
+      referenceInitialized();
+    }
+
+    return id;
+  }
+
+
+  public MxmlObjectReference getMxmlObjectReference() {
+    if (mxmlObjectReference == null) {
+      mxmlObjectReference = new MxmlObjectReference(getOrAllocateId());
+    }
+
+    return mxmlObjectReference;
   }
 }

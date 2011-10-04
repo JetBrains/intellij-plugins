@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.io.ByteRange;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
@@ -16,9 +17,10 @@ class DynamicObjectContext extends Context {
   // IDEA-73040
   final ArrayList<State> includeInStates = new ArrayList<State>();
 
-  DynamicObjectContext(int id, Scope parentScope) {
+  DynamicObjectContext(int id, Scope parentScope, @Nullable MxmlObjectReference mxmlObjectReference) {
     this.parentScope = parentScope;
     this.id = id;
+    this.mxmlObjectReference = mxmlObjectReference;
   }
 
   @Override

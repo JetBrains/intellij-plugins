@@ -42,6 +42,7 @@ class StaticObjectContext extends Context {
   public StaticObjectContext reinitialize(int referencePosition, int id) {
     childrenType = null;
     cssRulesetDefined = false;
+    mxmlObjectReference = null;
 
     this.referencePosition = referencePosition;
     staticInstanceReferenceInDeferredParentInstance = null;

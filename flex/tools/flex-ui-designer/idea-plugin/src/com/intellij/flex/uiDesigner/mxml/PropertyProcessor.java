@@ -21,6 +21,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.xml.*;
 import com.intellij.util.StringBuilderSpinAllocator;
 import com.intellij.xml.XmlElementDescriptor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -92,7 +93,7 @@ class PropertyProcessor implements ValueWriter {
 
   @Nullable
   public ValueWriter process(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor,
-                             Context context) throws InvalidPropertyException {
+                             @NotNull MxmlObjectReferenceProvider objectReferenceProvider) throws InvalidPropertyException {
     if (descriptor.isPredefined()) {
       LOG.error("unknown language element " + descriptor.getName());
       return null;
@@ -121,7 +122,7 @@ class PropertyProcessor implements ValueWriter {
       return null;
     }
 
-    ValueWriter valueWriter = processInjected(valueProvider, descriptor, isStyle, context);
+    ValueWriter valueWriter = processInjected(valueProvider, descriptor, isStyle, objectReferenceProvider);
     if (valueWriter != null) {
       return valueWriter == InjectedASWriter.IGNORE ? null : valueWriter;
     }
@@ -148,9 +149,9 @@ class PropertyProcessor implements ValueWriter {
     return processInjected(valueProvider, defaultPropertyDescriptor, defaultPropertyDescriptor.isStyle(), context);
   }
 
-  public ValueWriter processInjected(XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor, boolean isStyle, Context context)
+  public ValueWriter processInjected(XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor, boolean isStyle, @NotNull MxmlObjectReferenceProvider mxmlObjectReferenceProvider)
     throws InvalidPropertyException {
-    ValueWriter valueWriter = injectedASWriter.processProperty(valueProvider, descriptor.getName(), descriptor.getType(), isStyle, context);
+    ValueWriter valueWriter = injectedASWriter.processProperty(valueProvider, descriptor.getName(), descriptor.getType(), isStyle, mxmlObjectReferenceProvider);
     if (valueWriter instanceof ClassValueWriter && isSkinClass(descriptor)) {
       SkinProjectClassValueWriter skinProjectClassValueWriter = getSkinProjectClassValueWriter(
         getProjectComponentFactoryId(((ClassValueWriter)valueWriter).getJsClas()));
@@ -196,27 +197,23 @@ class PropertyProcessor implements ValueWriter {
 
   boolean processFxModel(XmlTag tag) {
     final XmlAttribute idAttribute = tag.getAttribute("id");
-    if (idAttribute == null || StringUtil.isEmpty(idAttribute.getDisplayValue())) {
+    final String id;
+    if (idAttribute == null || StringUtil.isEmpty((id = idAttribute.getDisplayValue()))) {
       LOG.warn("Skip model, id is not specified or empty: " + tag.getText());
       return false;
     }
 
-    writer.getOut().write(AmfExtendedTypes.REFERABLE);
     // parentContext for fx:Model always null, because located inside fx:Declarations (i.e. parentContext always is top level)
     // state specific is not allowed for fx:Model (flex compiler doesn't support it)
-    mxmlWriter.processIdAttributeOfFxTag(tag, null, false);
-
-    try {
-      // temp
-      injectedASWriter.lastMxmlObjectReference = injectedASWriter.getValueReference(idAttribute.getDisplayValue());
-    }
-    catch (InvalidPropertyException e) {
-      throw new IllegalStateException(e);
-    }
+    final MxmlObjectReference objectReference = new MxmlObjectReference(writer.allocateAbsoluteStaticObjectId());
+    injectedASWriter.putMxmlObjectReference(id, objectReference);
+    writer.referableHeader(objectReference.id);
 
     final XmlTag[] subTags = tag.getSubTags();
     if (subTags.length == 1) {
-      processFxModelTagChildren(subTags[0]);
+      final ModelObjectReferenceProvider modelObjectReference = new ModelObjectReferenceProvider(writer);
+      modelObjectReference.reference = objectReference;
+      processFxModelTagChildren(subTags[0], modelObjectReference);
     }
     else {
       // as object without any properties
@@ -228,35 +225,47 @@ class PropertyProcessor implements ValueWriter {
       }
     }
 
-    injectedASWriter.lastMxmlObjectReference = null;
     return true;
   }
 
+  private static class ModelObjectReferenceProvider implements MxmlObjectReferenceProvider {
+    private MxmlObjectReference reference;
+    private final BaseWriter writer;
+
+    public ModelObjectReferenceProvider(BaseWriter writer) {
+      this.writer = writer;
+    }
+
+    @Override
+    public MxmlObjectReference getMxmlObjectReference() {
+      if (reference == null) {
+        reference = new MxmlObjectReference(writer.allocateAbsoluteStaticObjectId());
+
+        writer.property("2");
+        writer.getOut().writeUInt29(reference.id);
+      }
+
+      return reference;
+    }
+  }
+
   // tagLocalName is null, if parent is list item (i.e. not as property value, but as array item)
-  private boolean writeFxModelTagIfContainsXmlText(XmlTag parent, @Nullable String tagLocalName) {
+  private int writeFxModelTagIfContainsXmlText(XmlTag parent, @Nullable String tagLocalName,
+                                                   ModelObjectReferenceProvider objectReferenceProvider) {
     for (XmlTagChild child : parent.getValue().getChildren()) {
       // ignore any subtags if XmlText presents, according to flex compiler behavior
       if (child instanceof XmlText && !MxmlUtil.containsOnlyWhitespace(child)) {
         final ValueWriter valueWriter;
-        final boolean referenceIdAssigned = injectedASWriter.lastMxmlObjectReference != null;
         try {
-          valueWriter = injectedASWriter.processProperty(child, tagLocalName, null, false, null);
+          valueWriter = injectedASWriter.processProperty(child, tagLocalName, null, false, objectReferenceProvider);
         }
         catch (InvalidPropertyException e) {
-          injectedASWriter.lastMxmlObjectReference = null;
-          writer.resetPreallocatedId();
           // we don't need any out rollback — nothing is written yet
           mxmlWriter.problemsHolder.add(e);
-          return true;
+          return -1;
         }
 
-        if (valueWriter == InjectedASWriter.IGNORE) {
-          if (!referenceIdAssigned) {
-            writer.property("2");
-            writer.getOut().writeUInt29(injectedASWriter.lastMxmlObjectReference.id);
-          }
-        }
-        else {
+        if (valueWriter != InjectedASWriter.IGNORE) {
           if (valueWriter != null) {
             throw new IllegalStateException("What?");
           }
@@ -269,17 +278,17 @@ class PropertyProcessor implements ValueWriter {
         }
 
         // ignore any attributes
-        return true;
+        return 1;
       }
       else if (child instanceof XmlTag) {
-        return false;
+        return 0;
       }
     }
 
-    return false;
+    return 0;
   }
 
-  private boolean processFxModelTagChildren(final XmlTag parent) {
+  private boolean processFxModelTagChildren(final XmlTag parent, ModelObjectReferenceProvider parentObjectReferenceProvider) {
     writer.objectHeader("mx.utils.ObjectProxy");
 
     final XmlTag[] parentSubTags = parent.getSubTags();
@@ -290,25 +299,37 @@ class PropertyProcessor implements ValueWriter {
         writer.property(tagLocalName);
         final int lengthPosition = writer.arrayHeader();
         int length = 0;
+        ModelObjectReferenceProvider subObjectReferenceProvider = null;
         for (XmlTag subTag : subTags) {
-          if (writeFxModelTagIfContainsXmlText(subTag, null) || processFxModelTagChildren(subTag)) {
+          final int result = writeFxModelTagIfContainsXmlText(subTag, null, parentObjectReferenceProvider);
+          if (result == 1) {
             length++;
+          }
+          else if (result == 0) {
+            if (subObjectReferenceProvider == null) {
+              subObjectReferenceProvider = new ModelObjectReferenceProvider(writer);
+            }
+
+            if (processFxModelTagChildren(subTag, subObjectReferenceProvider)) {
+              length++;
+            }
+            subObjectReferenceProvider.reference = null;
           }
         }
 
         writer.getOut().putShort(length, lengthPosition);
       }
-      else if (!writeFxModelTagIfContainsXmlText(tag, tagLocalName)) {
+      else if (writeFxModelTagIfContainsXmlText(tag, tagLocalName, parentObjectReferenceProvider) == 0) {
         writer.property(tagLocalName);
-        processFxModelTagChildren(tag);
+        processFxModelTagChildren(tag, new ModelObjectReferenceProvider(writer));
       }
     }
 
     for (final XmlAttribute attribute : parent.getAttributes()) {
-      mxmlWriter.writeSimplProperty(attribute, new AnyXmlAttributeDescriptorWrapper(attribute.getDescriptor()));
+      mxmlWriter.writeSimpleAttributeBackedProperty(attribute, new AnyXmlAttributeDescriptorWrapper(attribute.getDescriptor()),
+                                                    parentObjectReferenceProvider);
     }
 
-    injectedASWriter.lastMxmlObjectReference = null;
     writer.endObject();
     return true;
   }
@@ -431,7 +452,7 @@ class PropertyProcessor implements ValueWriter {
 
   @Override
   public PropertyKind write(AnnotationBackedDescriptor descriptor, XmlElementValueProvider valueProvider, PrimitiveAmfOutputStream out,
-                            BaseWriter writer, boolean isStyle, Context parentContext) throws InvalidPropertyException {
+                            BaseWriter writer, boolean isStyle, @Nullable Context parentContext) throws InvalidPropertyException {
     final String type = descriptor.getType();
     if (isStyle) {
       int flags = 0;
@@ -624,7 +645,7 @@ class PropertyProcessor implements ValueWriter {
   }
 
   private PropertyKind writeUntypedPropertyValue(PrimitiveAmfOutputStream out, XmlElementValueProvider valueProvider,
-                                                 AnnotationBackedDescriptor descriptor, boolean isStyle, Context parentContext)
+                                                 AnnotationBackedDescriptor descriptor, boolean isStyle, @Nullable Context parentContext)
     throws InvalidPropertyException {
     if (descriptor.isRichTextContent()) {
       writeString(valueProvider, descriptor);

@@ -45,6 +45,8 @@ public class MxmlWriter {
   private final PropertyProcessor propertyProcessor;
   private boolean requireCallResetAfterMessage;
 
+  final MxmlObjectReferenceProviderImpl tagAttributeProcessContext;
+
   ProblemsHolder problemsHolder;
 
   ValueProviderFactory valueProviderFactory = new ValueProviderFactory();
@@ -54,6 +56,7 @@ public class MxmlWriter {
     writer = new BaseWriter(out);
     injectedASWriter = new InjectedASWriter(writer);
     propertyProcessor = new PropertyProcessor(injectedASWriter, writer, this);
+    tagAttributeProcessContext = new MxmlObjectReferenceProviderImpl(writer);
   }
 
   public XmlFile[] write(@NotNull final XmlFile psiFile, @NotNull final ProblemsHolder problemsHolder,
@@ -123,12 +126,13 @@ public class MxmlWriter {
   }
 
   private void resetAfterMessage() {
+    tagAttributeProcessContext.reference = null;
     writer.resetAfterMessage();
     propertyProcessor.reset();
   }
 
   private boolean processElements(final XmlTag parent, final @Nullable Context parentContext, final boolean allowIncludeInExludeFrom,
-                               int dataPosition, final int referencePosition) {
+                                  final int dataPosition, final int referencePosition) {
     boolean cssRulesetDefined = false;
     boolean staticChild = true;
 
@@ -149,14 +153,14 @@ public class MxmlWriter {
         // id and includeIn/excludeFrom only as attribute, not as tag
         if (descriptor.isPredefined()) {
           if (descriptor.hasIdType()) {
-            injectedASWriter.processObjectWithExplicitId(attribute.getValue(), context);
+            processObjectWithExplicitId(attribute.getValue(), context);
           }
           else if (allowIncludeInExludeFrom) {
             String name = descriptor.getName();
             boolean excludeFrom = false;
             if (name.equals(FlexStateElementNames.INCLUDE_IN) || (excludeFrom = name.equals(FlexStateElementNames.EXCLUDE_FROM))) {
               if (context == null) {
-                context = writer.createDynamicObjectStateContext();
+                context = writer.createDynamicObjectContext(tagAttributeProcessContext.reference);
               }
 
               // must be before stateWriter.includeIn — start object data range before state data range
@@ -169,7 +173,7 @@ public class MxmlWriter {
             else if (name.equals(FlexStateElementNames.ITEM_CREATION_POLICY)) {
               if (attribute.getValue().charAt(0) == 'i') {
                 if (context == null) {
-                  context = writer.createDynamicObjectStateContext();
+                  context = writer.createDynamicObjectContext(tagAttributeProcessContext.reference);
                 }
 
                 ((DynamicObjectContext)context).setImmediateCreation(true);
@@ -185,7 +189,7 @@ public class MxmlWriter {
         else if (descriptor.hasIdType() && MxmlUtil.isIdLanguageIdAttribute(attribute)) {
           String explicitId = attribute.getValue();
           writer.idMxmlProperty(explicitId);
-          injectedASWriter.processObjectWithExplicitId(explicitId, context);
+          processObjectWithExplicitId(explicitId, context);
         }
         else if (descriptor.getTypeName() == null) {
           //IDEA-73453
@@ -198,31 +202,32 @@ public class MxmlWriter {
         }
         else if (hasStates && stateWriter.checkStateSpecificPropertyValue(this, propertyProcessor, attribute,
                                                                           valueProviderFactory.create(attribute),
-                                                                          descriptor, context)) {
+                                                                          descriptor, context, tagAttributeProcessContext.getEffectiveObjectReferenceProvider(context))) {
           // skip
         }
         else {
-          cssRulesetDefined = writeProperty(attribute, descriptor, context, cssRulesetDefined, true);
+          cssRulesetDefined = writeAttributeBackedProperty(attribute, descriptor, tagAttributeProcessContext.getEffectiveObjectReferenceProvider(context), context, cssRulesetDefined, true);
         }
       }
       else if (attributeDescriptor instanceof AnyXmlAttributeDescriptor) {
-        writeProperty(attribute, new AnyXmlAttributeDescriptorWrapper(attributeDescriptor), context, false, true);
+        writeAttributeBackedProperty(attribute, new AnyXmlAttributeDescriptorWrapper(attributeDescriptor), tagAttributeProcessContext.getEffectiveObjectReferenceProvider(context),
+                                     context, false, true);
       }
     }
 
     if (hasStates) {
       if (context == null) {
-        context = stateWriter.createContextForStaticBackSibling(allowIncludeInExludeFrom, referencePosition, parentContext);
-        stateWriter.finalizeStateSpecificAttributesForStaticContext((StaticObjectContext)context, parentContext, injectedASWriter);
+        context = stateWriter.createContextForStaticBackSibling(allowIncludeInExludeFrom, referencePosition, parentContext, tagAttributeProcessContext.reference);
+        stateWriter.finalizeStateSpecificAttributesForStaticContext((StaticObjectContext)context, parentContext, this);
       }
     }
     else {
       assert context == null;
-      context = writer.createStaticContext(parentContext, referencePosition);
+      context = writer.createStaticContext(parentContext, referencePosition, tagAttributeProcessContext.reference);
     }
 
+    tagAttributeProcessContext.reference = null;
     writer.resetPreallocatedId();
-    injectedASWriter.lastMxmlObjectReference = null;
 
     processTagChildren(parent, context, parentContext, true, null, cssRulesetDefined);
     // initializeReference must be after process all elements — after sub tag also, due to <RadioButton id="visa" label="Visa" 
@@ -237,15 +242,19 @@ public class MxmlWriter {
     return staticChild;
   }
 
-  boolean writeSimplProperty(XmlAttribute attribute, AnnotationBackedDescriptor descriptor) {
-    return writeProperty(attribute, descriptor, null, false, false);
+  void writeSimpleAttributeBackedProperty(XmlAttribute attribute, AnnotationBackedDescriptor descriptor,
+                                             @NotNull MxmlObjectReferenceProvider mxmlObjectReferenceProvider) {
+    writeAttributeBackedProperty(attribute, descriptor, mxmlObjectReferenceProvider, null, false, false);
   }
 
-  private boolean writeProperty(XmlAttribute attribute, AnnotationBackedDescriptor descriptor, @Nullable Context context,
-                                boolean cssRulesetDefined, boolean isMxmlProperty) {
+  private boolean writeAttributeBackedProperty(XmlAttribute attribute, AnnotationBackedDescriptor descriptor,
+                                               @NotNull MxmlObjectReferenceProvider mxmlObjectReferenceProvider,
+                                               @Nullable Context parentContext,
+                                               boolean cssRulesetDefined, boolean isMxmlProperty) {
     final int beforePosition = out.size();
-    final PropertyKind propertyKind = writeMxmlOrSimpleProperty(attribute, valueProviderFactory.create(attribute), descriptor,
-                                                                cssRulesetDefined, context, isMxmlProperty);
+    final PropertyKind propertyKind = writeProperty(attribute, valueProviderFactory.create(attribute), descriptor,
+                                                    mxmlObjectReferenceProvider, parentContext, cssRulesetDefined,
+                                                    isMxmlProperty);
     if (propertyKind != PropertyKind.IGNORE) {
       if (propertyProcessor.isStyle()) {
         cssRulesetDefined = true;
@@ -401,13 +410,11 @@ public class MxmlWriter {
   private boolean processPropertyTag(XmlTag tag, AnnotationBackedDescriptor annotationBackedDescriptor, @NotNull Context context,
                                   boolean cssRulesetDefined) {
     if (hasStates && stateWriter.checkStateSpecificPropertyValue(this, propertyProcessor, tag, valueProviderFactory.create(tag),
-                                                                 annotationBackedDescriptor, context)) {
+                                                                 annotationBackedDescriptor, context, context)) {
       return cssRulesetDefined;
     }
-
-    final PropertyKind propertyKind = writeMxmlProperty(tag, valueProviderFactory.create(tag), annotationBackedDescriptor,
-                                                        cssRulesetDefined,
-                                                        context);
+    final PropertyKind propertyKind = writeProperty(tag, valueProviderFactory.create(tag), annotationBackedDescriptor,
+                                                    context, context, cssRulesetDefined, true);
     if (propertyKind != PropertyKind.IGNORE) {
       if (propertyProcessor.isStyle()) {
         cssRulesetDefined = true;
@@ -493,15 +500,13 @@ public class MxmlWriter {
   }
 
   StaticObjectContext processIdAttributeOfFxTag(XmlTag tag, @Nullable Context parentContext, boolean allowIncludeInExludeFrom) {
-    assert !writer.isIdPreallocated();
-
     final StaticObjectContext context;
     final int referencePosition = out.allocateClearShort();
     if (hasStates) {
-      context = stateWriter.createContextForStaticBackSibling(allowIncludeInExludeFrom, referencePosition, parentContext);
+      context = stateWriter.createContextForStaticBackSibling(allowIncludeInExludeFrom, referencePosition, parentContext, null);
     }
     else {
-      context = writer.createStaticContext(parentContext, referencePosition);
+      context = writer.createStaticContext(parentContext, referencePosition, null);
     }
 
     final XmlAttribute idAttribute = tag.getAttribute("id");
@@ -512,8 +517,7 @@ public class MxmlWriter {
       }
       else {
         // IDEA-73516
-        injectedASWriter.putMxmlObjectReference(id, context);
-        writer.resetPreallocatedId();
+        injectedASWriter.putMxmlObjectReference(id, context.getMxmlObjectReference());
       }
     }
 
@@ -677,21 +681,51 @@ public class MxmlWriter {
     out.writeUInt29(textOffset);
   }
 
-  private PropertyKind writeMxmlProperty(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor,
-                                           boolean cssRulesetDefined, Context context) {
-    return writeMxmlOrSimpleProperty(element, valueProvider, descriptor, cssRulesetDefined, context, true);
+   private static class MxmlObjectReferenceProviderImpl implements MxmlObjectReferenceProvider {
+     private MxmlObjectReference reference;
+     private final BaseWriter writer;
+
+     public MxmlObjectReferenceProviderImpl(BaseWriter writer) {
+       this.writer = writer;
+     }
+
+     private MxmlObjectReference createObjectReferenceForExplicit(@Nullable Context context) {
+       if (context != null) {
+         return context.getMxmlObjectReference();
+       }
+
+       if (reference == null) {
+        reference = new MxmlObjectReference(writer.preallocateIdIfNeed());
+       }
+       
+       return reference;
+     }
+
+     private MxmlObjectReferenceProvider getEffectiveObjectReferenceProvider(@Nullable Context context) {
+       return context == null ? this : context;
+     }
+
+    @Override
+    public MxmlObjectReference getMxmlObjectReference() {
+      if (reference == null) {
+        reference = new MxmlObjectReference(writer.preallocateIdIfNeed());
+      }
+
+      return reference;
+    }
   }
 
-  PropertyKind writeSimpleProperty(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor) {
-    return writeMxmlOrSimpleProperty(element, valueProvider, descriptor, false, null, false);
+  private void processObjectWithExplicitId(String explicitId, Context context) {
+    injectedASWriter.putMxmlObjectReference(explicitId, tagAttributeProcessContext.createObjectReferenceForExplicit(context));
   }
 
-  private PropertyKind writeMxmlOrSimpleProperty(XmlElement element, XmlElementValueProvider valueProvider,
-                                                 AnnotationBackedDescriptor descriptor,
-                                                 boolean cssRulesetDefined, @Nullable Context context, boolean isMxmlProperty) {
+  private PropertyKind writeProperty(XmlElement element, XmlElementValueProvider valueProvider,
+                                     AnnotationBackedDescriptor descriptor,
+                                     @NotNull MxmlObjectReferenceProvider objectReferenceProvider, @Nullable Context parentContext,
+                                     boolean cssRulesetDefined, boolean isMxmlProperty) {
     final int beforePosition = writer.getBlockOut().size();
     try {
-      ValueWriter valueWriter = propertyProcessor.process(element, valueProvider, descriptor, context);
+      ValueWriter valueWriter = propertyProcessor.process(element, valueProvider, descriptor, objectReferenceProvider);
       if (valueWriter == null) {
         return PropertyKind.IGNORE;
       }
@@ -702,7 +736,8 @@ public class MxmlWriter {
       else {
         writer.property(propertyProcessor.getName());
       }
-      return valueWriter.write(descriptor, valueProvider, out, writer, propertyProcessor.isStyle(), context);
+      // parentContext required only for process tag chilrent, for attribute it can be null
+      return valueWriter.write(descriptor, valueProvider, out, writer, propertyProcessor.isStyle(), parentContext);
     }
     catch (RuntimeException e) {
       problemsHolder.add(element, e, descriptor.getName());
@@ -729,7 +764,7 @@ public class MxmlWriter {
   }
 
   private boolean writeXmlTextAsDefaultPropertyInjectedValue(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor,
-                              boolean cssRulesetDefined, Context context) {
+                              boolean cssRulesetDefined, @NotNull Context context) {
     final int beforePosition = writer.getBlockOut().size();
     try {
       ValueWriter valueWriter = propertyProcessor.processInjected(valueProvider, descriptor, descriptor.isStyle(), context);
@@ -754,5 +789,12 @@ public class MxmlWriter {
     writer.getBlockOut().setPosition(beforePosition);
     // true, ignore
     return true;
+  }
+
+  void setDeferredReferenceForObjectWithExplicitIdOrBinding(StaticInstanceReferenceInDeferredParentInstance staticReferenceInDeferredParentInstance, int referenceInstance) {
+    assert tagAttributeProcessContext.reference.id == referenceInstance;
+    tagAttributeProcessContext.reference.staticReferenceInDeferredParentInstance = staticReferenceInDeferredParentInstance;
+
+    tagAttributeProcessContext.reference = null;
   }
 }

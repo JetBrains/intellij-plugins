@@ -201,7 +201,7 @@ class StateWriter {
 
   public boolean checkStateSpecificPropertyValue(MxmlWriter mxmlWriter, PropertyProcessor propertyProcessor, XmlElement element,
                                                  XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor,
-                                                 @Nullable Context context) {
+                                                 @Nullable Context context, @NotNull MxmlObjectReferenceProvider objectReferenceProvider) {
     PsiReference[] references = element.getReferences();
     if (references.length < 2) {
       return false;
@@ -245,7 +245,7 @@ class StateWriter {
 
     ValueWriter valueWriter = null;
     try {
-      valueWriter = propertyProcessor.process(element, valueProvider, descriptor, context);
+      valueWriter = propertyProcessor.process(element, valueProvider, descriptor, objectReferenceProvider);
     }
     catch (InvalidPropertyException ignored) {
 
@@ -291,7 +291,8 @@ class StateWriter {
     return true;
   }
 
-  public StaticObjectContext createContextForStaticBackSibling(boolean allowIncludeInExludeFrom, int referencePosition, @Nullable Context parentContext) {
+  public StaticObjectContext createContextForStaticBackSibling(boolean allowIncludeInExludeFrom, int referencePosition,
+                                                               @Nullable Context parentContext, @Nullable MxmlObjectReference mxmlObjectReference) {
     assert referencePosition != -1;
     if (allowIncludeInExludeFrom) {
       assert parentContext != null;
@@ -309,12 +310,12 @@ class StateWriter {
       return parentContext.getBackSibling();
     }
     else {
-      return writer.createStaticContext(parentContext, referencePosition);
+      return writer.createStaticContext(parentContext, referencePosition, mxmlObjectReference);
     }
   }
 
   public void finalizeStateSpecificAttributesForStaticContext(@NotNull StaticObjectContext context, @Nullable Context parentContext,
-                                                              InjectedASWriter injectedASWriter) {
+                                                              MxmlWriter mxmlWriter) {
     // 1
     if (!writer.isIdPreallocated()) {
       assert pendingFirstSetProperty == null;
@@ -327,7 +328,7 @@ class StateWriter {
     }
 
     final int objectInstance = parentContext.getScope().referenceCounter++;
-    final int deferredParentInstance = writer.allocateObjectId(parentContext.getScope().getOwner());
+    final int deferredParentInstance = parentContext.getScope().getOwner().getOrAllocateId();
     final int referenceInstance = writer.getPreallocatedId();
 
     // 2
@@ -344,7 +345,7 @@ class StateWriter {
       // 3
       StaticInstanceReferenceInDeferredParentInstance staticInstanceReferenceInDeferredParentInstance =
         new StaticInstanceReferenceInDeferredParentInstance(objectInstance, deferredParentInstance);
-      injectedASWriter.setDeferredReferenceForObjectWithExplicitIdOrBinding(staticInstanceReferenceInDeferredParentInstance,
+      mxmlWriter.setDeferredReferenceForObjectWithExplicitIdOrBinding(staticInstanceReferenceInDeferredParentInstance,
                                                                             referenceInstance);
 
       context.setStaticInstanceReferenceInDeferredParentInstance(staticInstanceReferenceInDeferredParentInstance);
@@ -373,7 +374,7 @@ class StateWriter {
       context.setId(referenceInstanceReference);
 
       writeDeferredInstanceFromObjectReference(propertyName, objectInstanceReference,
-                                               writer.allocateObjectId(parentContext.getScope().getOwner()), referenceInstanceReference);
+                                               parentContext.getScope().getOwner().getOrAllocateId(), referenceInstanceReference);
     }
     else {
       StaticInstanceReferenceInDeferredParentInstance referenceInDeferredParentInstance = context.getStaticInstanceReferenceInDeferredParentInstance();
@@ -409,7 +410,7 @@ class StateWriter {
     else {
       // IDEA-72004
       if (instance.overrideUserCount > 0) {
-        writer.allocateObjectId(instance);
+        instance.getOrAllocateId();
       }
 
       if (instance.id == -1) {

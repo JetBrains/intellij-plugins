@@ -24,7 +24,6 @@ class InjectedASWriter implements ValueReferenceResolver {
 
   private final List<Binding> bindingItems = new ArrayList<Binding>();
   private final BaseWriter writer;
-  MxmlObjectReference lastMxmlObjectReference;
 
   private ProblemsHolder problemsHolder;
 
@@ -65,12 +64,12 @@ class InjectedASWriter implements ValueReferenceResolver {
   }
 
   public ValueWriter processProperty(XmlElementValueProvider valueProvider, String name, @Nullable String type, boolean isStyle,
-                                       @Nullable Context context) throws InvalidPropertyException {
+                                       @NotNull MxmlObjectReferenceProvider mxmlObjectReferenceProvider) throws InvalidPropertyException {
     final XmlElement host = valueProvider.getInjectedHost();
-    return host == null ? null : processProperty(host, name, type, isStyle, context);
+    return host == null ? null : processProperty(host, name, type, isStyle, mxmlObjectReferenceProvider);
   }
 
-  public ValueWriter processProperty(PsiElement host, String name, @Nullable String type, boolean isStyle, @Nullable Context context)
+  public ValueWriter processProperty(PsiElement host, String name, @Nullable String type, boolean isStyle, @NotNull MxmlObjectReferenceProvider mxmlObjectReferenceProvider)
     throws InvalidPropertyException {
     final InjectedPsiVisitor visitor;
     if (JSCommonTypeNames.ARRAY_CLASS_NAME.equals(type)) {
@@ -100,11 +99,7 @@ class InjectedASWriter implements ValueReferenceResolver {
           }
         }
 
-        if (lastMxmlObjectReference == null) {
-          lastMxmlObjectReference = new MxmlObjectReference(writer.getObjectOrFactoryId(context));
-        }
-
-        binding.setTarget(lastMxmlObjectReference, writer.getNameReference(name), isStyle);
+        binding.setTarget(mxmlObjectReferenceProvider.getMxmlObjectReference(), writer.getNameReference(name), isStyle);
         bindingItems.add(binding);
         return IGNORE;
       }
@@ -171,24 +166,9 @@ class InjectedASWriter implements ValueReferenceResolver {
 
     idReferenceMap.clear();
     variableReferenceMap.clear();
-
-    lastMxmlObjectReference = null;
   }
 
-  void processObjectWithExplicitId(String explicitId, Context context) {
-    lastMxmlObjectReference = new MxmlObjectReference(writer.getObjectOrFactoryId(context));
-    idReferenceMap.put(explicitId, lastMxmlObjectReference);
-  }
-
-  void putMxmlObjectReference(@NotNull String explicitId, Context context) {
-    idReferenceMap.put(explicitId, new MxmlObjectReference(writer.getObjectOrFactoryId(context)));
-  }
-
-  void setDeferredReferenceForObjectWithExplicitIdOrBinding(
-    StaticInstanceReferenceInDeferredParentInstance staticReferenceInDeferredParentInstance, int referenceInstance) {
-    assert lastMxmlObjectReference.id == referenceInstance;
-    lastMxmlObjectReference.staticReferenceInDeferredParentInstance = staticReferenceInDeferredParentInstance;
-
-    lastMxmlObjectReference = null;
+  void putMxmlObjectReference(@NotNull String explicitId, @NotNull MxmlObjectReference mxmlObjectReference) {
+    idReferenceMap.put(explicitId, mxmlObjectReference);
   }
 }

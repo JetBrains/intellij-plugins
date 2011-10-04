@@ -57,7 +57,7 @@ final class BaseWriter {
   }
 
   // 4
-  private int preallocateIdIfNeed() {
+  public int preallocateIdIfNeed() {
     if (!isIdPreallocated()) {
       preallocatedId = rootScope.referenceCounter++;
     }
@@ -73,7 +73,7 @@ final class BaseWriter {
     preallocatedId = -1;
   }
 
-  public StaticObjectContext createStaticContext(@Nullable Context parentContext, int referencePosition) {
+  public StaticObjectContext createStaticContext(@Nullable Context parentContext, int referencePosition, @Nullable MxmlObjectReference reference) {
     if (parentContext == null || parentContext.getBackSibling() == null) {
       return new StaticObjectContext(referencePosition, out, preallocatedId, rootScope);
     }
@@ -82,8 +82,8 @@ final class BaseWriter {
     }
   }
 
-  public DynamicObjectContext createDynamicObjectStateContext() {
-    return new DynamicObjectContext(preallocatedId, rootScope);
+  public DynamicObjectContext createDynamicObjectContext(@Nullable MxmlObjectReference mxmlObjectReference) {
+    return new DynamicObjectContext(preallocatedId, rootScope, mxmlObjectReference);
   }
 
   public void reset() {
@@ -121,22 +121,12 @@ final class BaseWriter {
     startPosition = out.size();
   }
 
-  @SuppressWarnings("MethodMayBeStatic")
-  public int allocateObjectId(Context context) {
-    if (context.getId() == -1) {
-      context.setId(context.getParentScope().referenceCounter++);
-      context.referenceInitialized();
-    }
-
-    return context.getId();
-  }
-
   public int allocateAbsoluteStaticObjectId() {
     return rootScope.referenceCounter++;
   }
 
   public int getObjectOrFactoryId(@Nullable Context context) {
-    return context == null ? preallocateIdIfNeed() : allocateObjectId(context);
+    return context == null ? preallocateIdIfNeed() : context.getOrAllocateId();
   }
 
   public void endMessage() throws IOException {
@@ -186,7 +176,7 @@ final class BaseWriter {
   }
 
   public void objectReference(Context context) {
-    objectReference(allocateObjectId(context));
+    objectReference(context.getOrAllocateId());
   }
 
   public void objectHeader(int className) {
