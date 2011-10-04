@@ -59,10 +59,8 @@ public class InjectedASReader {
           // 2) on value creation if value is dynamic
           if (o is DeferredInstanceFromBytesBase) {
             DeferredInstanceFromBytesBase(o).registerBinding(targetBinding == null ? new PropertyBindingTarget(target, propertyName, isStyle) : targetBinding);
-            continue;
           }
-
-          if (type == BindingType.MXML_OBJECT_WRAP_TO_ARRAY) {
+          else if (type == BindingType.MXML_OBJECT_WRAP_TO_ARRAY) {
             o = [o];
           }
           break;
@@ -74,11 +72,16 @@ public class InjectedASReader {
         case BindingType.EXPRESSION:
           var amfType:int = input.readByte();
           if (amfType == ExpressionMessageTypes.MXML_OBJECT_CHAIN) {
-            readMxmlObjectChain(reader, input, target, propertyName);
-            continue;
+            readMxmlObjectChain(reader, input, target, propertyName, targetBinding, isStyle);
+            if (targetBinding == null) {
+              continue;
+            }
           }
           else {
             o = reader.readExpression(amfType);
+            if (targetBinding != null && o == null) {
+              targetBinding.staticValue = o;
+            }
           }
           break;
 
@@ -95,7 +98,9 @@ public class InjectedASReader {
         }
       }
       else {
-        targetBinding.staticValue = o;
+        if (o != null) {
+          targetBinding.staticValue = o;
+        }
         deferredParentInstance.registerBinding(targetBinding);
       }
     }
@@ -103,14 +108,20 @@ public class InjectedASReader {
     deferredReferenceClass = null;
   }
   
-  private static function createChangeWatcherHandler(target:Object, propertyName:String, changeWatcher:Object):Function {
+  private static function createChangeWatcherHandler(target:Object, propertyName:String, changeWatcher:Object, isStyle:Boolean):Function {
     return function(event:*):void {
-      target[propertyName] = changeWatcher.getValue();
+      if (!isStyle) {
+        target[propertyName] = changeWatcher.getValue();
+      }
+      else {
+        target.setStyle(propertyName, changeWatcher.getValue());
+      }
     };
   }
 
   private function readMxmlObjectChain(reader:MxmlReader, input:IDataInput, target:Object,
-                                       propertyName:String):void {
+                                       propertyName:String, targetBinding:PropertyBindingTarget,
+                                       isStyle:Boolean):void {
     var changeWatcher:Object = watchMxmlObjectChain(reader.context.moduleContext.getClass("mx.binding.utils.ChangeWatcher"),
                                                     reader.stringRegistry, input);
     var host:Object = readMxmlObjectReference(input, reader);
@@ -119,11 +130,16 @@ public class InjectedASReader {
       trace("unsupported binding");
       return;
     }
-    
-    changeWatcher.reset(host);
-    var handler:Function = createChangeWatcherHandler(target, propertyName, changeWatcher);
-    changeWatcher.setHandler(handler);
-    handler(null);
+
+    if (targetBinding == null) {
+      changeWatcher.reset(host);
+      var handler:Function = createChangeWatcherHandler(target, propertyName, changeWatcher, isStyle);
+      changeWatcher.setHandler(handler);
+      handler(null);
+    }
+    else {
+      PropertyBindingDeferredTarget(targetBinding).initChangeWatcher(changeWatcher, host);
+    }
   }
 
   private static function watchMxmlObjectChain(changeWatcherClass:Class, stringRegistry:StringRegistry,

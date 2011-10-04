@@ -121,7 +121,7 @@ final class DesignerApplicationUtil {
         public Integer call() throws Exception {
           return checkProcess.waitFor();
         }
-      }).get(5, TimeUnit.SECONDS);
+      }).get(10, TimeUnit.SECONDS);
     }
     catch (InterruptedException e) {
       checkProcess.destroy();

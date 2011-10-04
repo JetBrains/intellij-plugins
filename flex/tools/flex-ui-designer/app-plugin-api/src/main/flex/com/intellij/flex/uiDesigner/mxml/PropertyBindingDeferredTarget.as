@@ -1,9 +1,12 @@
 package com.intellij.flex.uiDesigner.mxml {
 import com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromBytesBase;
 
-public class PropertyBindingDeferredTarget extends PropertyBindingTarget {
+public final class PropertyBindingDeferredTarget extends PropertyBindingTarget {
   private var deferredParentInstance:DeferredInstanceFromBytesBase;
   private var pendingValue:*;
+
+  private var changeWatcher:Object;
+  private var changeWatcherHost:Object;
 
   public function PropertyBindingDeferredTarget(target:DeferredInstanceFromBytesBase, propertyName:String, isStyle:Boolean) {
     deferredParentInstance = target;
@@ -12,6 +15,22 @@ public class PropertyBindingDeferredTarget extends PropertyBindingTarget {
   }
 
   override public function execute(value:Object):void {
+    if (changeWatcher != null) {
+      if (value == null) {
+        if (changeWatcher.isWatching()) {
+          changeWatcher.reset(null);
+          changeWatcher.setHandler(null);
+        }
+      }
+      else if (!changeWatcher.isWatching()) {
+        changeWatcher.reset(changeWatcherHost);
+        changeWatcher.setHandler(changeWatcherHandler);
+        changeWatcherHandler(null);
+      }
+
+      return;
+    }
+
     var t:Object = deferredParentInstance.getNullableInstance();
     if (t == null) {
       if (staticValue === undefined) {
@@ -29,6 +48,16 @@ public class PropertyBindingDeferredTarget extends PropertyBindingTarget {
       applyValue(t, pendingValue);
       pendingValue = undefined;
     }
+  }
+
+  public function initChangeWatcher(value:Object, changeWatcherHost:Object):void {
+    changeWatcher = value;
+    this.changeWatcherHost = changeWatcherHost;
+  }
+
+  //noinspection JSUnusedLocalSymbols
+  private function changeWatcherHandler(event:Object):void {
+    applyValue(deferredParentInstance.getNullableInstance(), changeWatcher.getValue());
   }
 }
 }
