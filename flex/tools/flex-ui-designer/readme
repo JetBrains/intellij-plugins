@@ -21,3 +21,4 @@ mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.4.4:replicate-repo -o 
 
 
 mvn compile -Prelease -Dflex.swf.uncompressed=true -o
+mvn compile -PreleaseForTesters -Dflex.swf.uncompressed=true -o

@@ -487,7 +487,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
                     adlProcessHandler = null;
 
                     // even 0 is not correct exit code, why adl exited while open socket?
-                    LOG.error("ADL exited with error code " + exitCode);
+                    LOG.error("ADL exited with error code " + exitCode + " OS: " + SystemInfo.OS_NAME + " runConfiguration: " + runConfiguration.arguments.toString());
                     adlExitCode = exitCode;
                     if (libraryAndModuleInitialized) {
                       cancel();

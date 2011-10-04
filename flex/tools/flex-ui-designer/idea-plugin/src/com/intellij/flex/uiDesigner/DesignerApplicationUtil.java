@@ -83,8 +83,8 @@ final class DesignerApplicationUtil {
         continue;
       }
 
-      final String runtime = FlexSdkUtils.getAirRuntimePath(sdk);
-      if (checkRuntime(adlPath, runtime, checkDescriptorPath) || checkRuntime(adlPath, installedRuntime, checkDescriptorPath)) {
+      String runtime = FlexSdkUtils.getAirRuntimePath(sdk);
+      if (checkRuntime(adlPath, runtime, checkDescriptorPath) || checkRuntime(adlPath, (runtime = installedRuntime), checkDescriptorPath)) {
         return new AdlRunConfiguration(adlPath, runtime);
       }
     }
@@ -134,6 +134,7 @@ final class DesignerApplicationUtil {
     }
     catch (TimeoutException e) {
       checkProcess.destroy();
+      LOG.warn("Timeout while check runtime for " + adlPath + " " + runtimePath);
       return false;
     }
 
