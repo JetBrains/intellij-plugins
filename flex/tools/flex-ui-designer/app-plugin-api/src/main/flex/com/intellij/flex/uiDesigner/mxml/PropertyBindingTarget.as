@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner.mxml {
 import com.intellij.flex.uiDesigner.UncaughtErrorManager;
 import com.intellij.flex.uiDesigner.flex.BindingTarget;
-import com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromBytesBase;
+import com.intellij.flex.uiDesigner.flex.states.InstanceProvider;
 import com.intellij.flex.uiDesigner.flex.states.StaticInstanceReferenceInDeferredParentInstanceBase;
 
 import flash.display.DisplayObject;
@@ -23,27 +23,29 @@ internal class PropertyBindingTarget implements BindingTarget {
   }
 
   public function execute(value:Object):void {
-    var t:Object = target is StaticInstanceReferenceInDeferredParentInstanceBase
-      ? StaticInstanceReferenceInDeferredParentInstanceBase(target).getNullableInstance() : target;
+    const t:Object = target is StaticInstanceReferenceInDeferredParentInstanceBase
+      ? StaticInstanceReferenceInDeferredParentInstanceBase(target).nullableInstance : target;
     if (changeWatcher == null) {
       applyValue(t, value);
     }
     else {
-      if (t == null && value != null) {
-        return;
-      }
-
-      if (value == null) {
-        resetChangeWatcher();
-      }
-      else if (!changeWatcher.isWatching()) {
-        watchHost(value, changeWatcherHandler);
-      }
+      executeWithChangeWatcher(t, value, true, changeWatcherHandler);
     }
   }
 
-  public function initChangeWatcher2(value:Object):void {
-    changeWatcher = value;
+  protected final function executeWithChangeWatcher(t:Object, value:Object, passValue:Boolean, handler:Function):void {
+    if (t == null && value != null) {
+      return;
+    }
+
+    if (value == null) {
+      // reset in both cases — or host became null (change state), or target became null
+      // we don't set target value as null according to flex compiler (as example — target is static, but host is dynamic)
+      resetChangeWatcher();
+    }
+    else if (!changeWatcher.isWatching()) {
+      watchHost(passValue ? value : null, handler);
+    }
   }
 
   public function initChangeWatcher(value:Object, changeWatcherHost:Object):void {
@@ -57,8 +59,17 @@ internal class PropertyBindingTarget implements BindingTarget {
   }
 
   protected final function watchHost(value:Object, handler:Function):void {
-    var newHost:Object = changeWatcherHost == null ? value : (changeWatcherHost is DeferredInstanceFromBytesBase
-      ? DeferredInstanceFromBytesBase(changeWatcherHost).getNullableInstance() : changeWatcherHost);
+    var newHost:Object;
+    if (changeWatcherHost == null) {
+      newHost = value;
+    }
+    else if (changeWatcherHost is InstanceProvider) {
+      newHost = InstanceProvider(changeWatcherHost).nullableInstance;
+    }
+    else {
+      newHost = changeWatcherHost;
+    }
+
     if (newHost == null) {
       return;
     }

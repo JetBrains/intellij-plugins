@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.mxml {
 import com.intellij.flex.uiDesigner.StringRegistry;
 import com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromBytesBase;
+import com.intellij.flex.uiDesigner.flex.states.InstanceProvider;
 import com.intellij.flex.uiDesigner.flex.states.StaticInstanceReferenceInDeferredParentInstanceBase;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
@@ -126,18 +127,13 @@ public class InjectedASReader {
                                                     reader.stringRegistry, input);
     var host:Object = readMxmlObjectReference(input, reader);
     if (targetBinding == null) {
-      if (host is DeferredInstanceFromBytesBase) {
+      if (host is InstanceProvider) {
         var propertyBindingTarget:PropertyBindingTarget = new PropertyBindingTarget(target, propertyName, isStyle);
-        DeferredInstanceFromBytesBase(host).registerBinding(propertyBindingTarget);
-        propertyBindingTarget.initChangeWatcher2(changeWatcher);
+        InstanceProvider(host).bindingExecutor.registerBinding(propertyBindingTarget);
+        // if host is DeferredInstanceFromBytesBase, we can get host via value on call execute(value:Object):void
+        propertyBindingTarget.initChangeWatcher(changeWatcher, host is DeferredInstanceFromBytesBase ? null : host);
       }
       else {
-        if (host is StaticInstanceReferenceInDeferredParentInstanceBase) {
-          // todo
-          trace("unsupported binding");
-          return;
-        }
-
         changeWatcher.reset(host);
         var handler:Function = createChangeWatcherHandler(target, propertyName, changeWatcher, isStyle);
         changeWatcher.setHandler(handler);
@@ -149,12 +145,7 @@ public class InjectedASReader {
         DeferredInstanceFromBytesBase(host).registerBinding(targetBinding);
       }
 
-      if (targetBinding is PropertyBindingDeferredTarget) {
-        PropertyBindingDeferredTarget(targetBinding).initChangeWatcher(changeWatcher, host);
-      }
-      else {
-        PropertyBindingTarget(targetBinding).initChangeWatcher(changeWatcher, host);
-      }
+      PropertyBindingTarget(targetBinding).initChangeWatcher(changeWatcher, host);
     }
   }
 

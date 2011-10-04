@@ -6,7 +6,7 @@ import flash.errors.IllegalOperationError;
 import flash.utils.ByteArray;
 
 [Abstract]
-public class DeferredInstanceFromBytesBase {
+public class DeferredInstanceFromBytesBase implements InstanceProvider {
   private var bytes:ByteArray;
   private var objectTable:Vector.<Object>;
 
@@ -57,7 +57,7 @@ public class DeferredInstanceFromBytesBase {
     }
   }
 
-  public final function getNullableInstance():Object {
+  public function get nullableInstance():Object {
     return instance;
   }
 
@@ -87,6 +87,10 @@ public class DeferredInstanceFromBytesBase {
 
   internal final function getNullableReferredChild(reference:int):Object {
     return objectTable == null ? null : objectTable[reference];
+  }
+
+  public function get bindingExecutor():DeferredInstanceFromBytesBase {
+    return this;
   }
 }
 }

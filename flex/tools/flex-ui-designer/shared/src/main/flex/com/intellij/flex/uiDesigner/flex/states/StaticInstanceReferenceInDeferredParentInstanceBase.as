@@ -2,7 +2,7 @@ package com.intellij.flex.uiDesigner.flex.states {
 import flash.errors.IllegalOperationError;
 
 [Abstract]
-public class StaticInstanceReferenceInDeferredParentInstanceBase {
+public class StaticInstanceReferenceInDeferredParentInstanceBase implements InstanceProvider {
   public var reference:int;
   public var deferredParentInstance:DeferredInstanceFromBytesBase;
 
@@ -14,8 +14,12 @@ public class StaticInstanceReferenceInDeferredParentInstanceBase {
     return deferredParentInstance.getReferredChild(reference);
   }
 
-  public function getNullableInstance():Object {
+  public function get nullableInstance():Object {
     return deferredParentInstance.getNullableReferredChild(reference);
+  }
+
+  public function get bindingExecutor():DeferredInstanceFromBytesBase {
+    return deferredParentInstance;
   }
 }
 }

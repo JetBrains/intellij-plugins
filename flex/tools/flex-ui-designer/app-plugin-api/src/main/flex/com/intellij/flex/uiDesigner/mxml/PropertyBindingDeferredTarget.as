@@ -12,22 +12,9 @@ public final class PropertyBindingDeferredTarget extends PropertyBindingTarget {
   }
 
   override public function execute(value:Object):void {
-    const t:Object = deferredParentInstance.getNullableInstance();
-
+    const t:Object = deferredParentInstance.nullableInstance;
     if (changeWatcher != null) {
-      if (t == null && value != null) {
-        return;
-      }
-      
-      if (value == null) {
-        // reset in both cases — or host became null (change state), or target became null
-        // we don't set target value as null according to flex compiler (as example — target is static, but host is dynamic)
-        resetChangeWatcher();
-      }
-      else if (!changeWatcher.isWatching()) {
-        watchHost(null, changeWatcherHandler);
-      }
-
+      executeWithChangeWatcher(t, value, false, changeWatcherHandler);
       return;
     }
 
@@ -51,7 +38,7 @@ public final class PropertyBindingDeferredTarget extends PropertyBindingTarget {
 
   //noinspection JSUnusedLocalSymbols
   private function changeWatcherHandler(event:Object):void {
-    applyValue(deferredParentInstance.getNullableInstance(), changeWatcher.getValue());
+    applyValue(deferredParentInstance.nullableInstance, changeWatcher.getValue());
   }
 }
 }

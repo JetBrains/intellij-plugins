@@ -34,6 +34,8 @@
   <Label text="{labelBar.text}"/>
 
   <Group includeIn="B">
-    <Label text="{labelBar.text}"/>
+    <TextInput id="sHInDP" text="{labelBar.text}"/>
   </Group>
+
+  <Label text="{sHInDP.text}"/>
 </VGroup>
