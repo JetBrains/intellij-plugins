@@ -11,6 +11,6 @@ public class TmlLanguage extends XMLLanguage {
   public static final TmlLanguage INSTANCE = new TmlLanguage();
 
   private TmlLanguage() {
-    super("TML");
+    super(XMLLanguage.INSTANCE, "TML");
   }
 }
