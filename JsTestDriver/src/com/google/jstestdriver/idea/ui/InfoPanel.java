@@ -29,11 +29,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import static java.awt.BorderLayout.NORTH;
 import static java.awt.BorderLayout.SOUTH;
-import static java.text.MessageFormat.format;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)
@@ -52,8 +52,8 @@ public class InfoPanel extends JPanel {
 
   @Inject
   public InfoPanel(@Named("port") int port , ResourceBundle messageBundle) {
-    final String serverUrl = format("http://{0}:{1,number,###}/capture", getHostName(), port);
-    final String captureMsg = format(messageBundle.getString("captureLabel"));
+    final String serverUrl = MessageFormat.format("http://{0}:{1,number,###}/capture", getHostName(), port);
+    final String captureMsg = messageBundle.getString("captureLabel");
 
     setLayout(new BorderLayout());
     add(new JLabel(captureMsg), NORTH);
@@ -111,7 +111,7 @@ public class InfoPanel extends JPanel {
       cp.setContents(st, this);
     }
 
-    public void lostOwnership(java.awt.datatransfer.Clipboard clipboard, Transferable contents) {
+    public void lostOwnership(Clipboard clipboard, Transferable contents) {
       // this doesn't seem to be important
     }
   }

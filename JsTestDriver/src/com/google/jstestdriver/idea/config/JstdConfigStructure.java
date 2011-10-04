@@ -13,6 +13,7 @@ import com.google.jstestdriver.hooks.FileParsePostProcessor;
 import com.google.jstestdriver.util.DisplayPathSanitizer;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,13 +57,23 @@ public class JstdConfigStructure {
     return myLoadFiles;
   }
 
-  public File findLoadFile(String relativeFilePath) {
-    try {
-      File file = new File(myBasePath, relativeFilePath).getCanonicalFile();
-      if (myLoadFiles.contains(file)) {
-        return file;
+  @Nullable
+  public File findLoadFile(@NotNull String filePath) {
+    File file = new File(myBasePath, filePath);
+    if (!file.isFile()) {
+      File absoluteFile = new File(filePath);
+      if (absoluteFile.isAbsolute() && absoluteFile.isFile()) {
+        file = absoluteFile;
       }
-    } catch (IOException ignored) {
+    }
+    if (file.isFile()) {
+      try {
+        File canonicalFile = file.getCanonicalFile();
+        if (myLoadFiles.contains(canonicalFile)) {
+          return file;
+        }
+      } catch (IOException ignored) {
+      }
     }
     return null;
   }
