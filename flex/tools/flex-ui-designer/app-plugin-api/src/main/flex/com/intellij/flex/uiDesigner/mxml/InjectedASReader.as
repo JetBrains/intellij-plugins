@@ -138,6 +138,9 @@ public class InjectedASReader {
       handler(null);
     }
     else {
+      if (host is DeferredInstanceFromBytesBase) {
+        DeferredInstanceFromBytesBase(host).registerBinding(targetBinding);
+      }
       PropertyBindingDeferredTarget(targetBinding).initChangeWatcher(changeWatcher, host);
     }
   }

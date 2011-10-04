@@ -26,4 +26,9 @@
 
   <TextInput id="textHolder" text="testText"/>
   <Label includeIn="B" text="{textHolder.text}"/>
+
+  <TextInput id="dynamicTextHolder" text="testText" includeIn="B"/>
+  <Label includeIn="B" text="{dynamicTextHolder.text}"/>
+  
+  <Label text="{labelBar.text}"/>
 </VGroup>

@@ -15,15 +15,29 @@ public final class PropertyBindingDeferredTarget extends PropertyBindingTarget {
   }
 
   override public function execute(value:Object):void {
+    const t:Object = deferredParentInstance.getNullableInstance();
+
     if (changeWatcher != null) {
+      if (t == null && value != null) {
+        return;
+      }
+      
       if (value == null) {
+        // reset in both cases — or host became null (change state), or target became null
+        // we don't set target value as null according to flex compiler (as example — target is static, but host is dynamic)
         if (changeWatcher.isWatching()) {
           changeWatcher.reset(null);
           changeWatcher.setHandler(null);
         }
       }
       else if (!changeWatcher.isWatching()) {
-        changeWatcher.reset(changeWatcherHost);
+        var newHost:Object = changeWatcherHost is DeferredInstanceFromBytesBase
+          ? DeferredInstanceFromBytesBase(changeWatcherHost).getNullableInstance() : changeWatcherHost;
+        if (newHost == null) {
+          return;
+        }
+
+        changeWatcher.reset(newHost);
         changeWatcher.setHandler(changeWatcherHandler);
         changeWatcherHandler(null);
       }
@@ -31,7 +45,6 @@ public final class PropertyBindingDeferredTarget extends PropertyBindingTarget {
       return;
     }
 
-    var t:Object = deferredParentInstance.getNullableInstance();
     if (t == null) {
       if (staticValue === undefined) {
         pendingValue = value;
