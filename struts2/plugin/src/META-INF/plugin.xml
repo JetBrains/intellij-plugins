@@ -73,6 +73,7 @@
         implementation="com.intellij.struts2.reference.StrutsJQueryRichtextTaglibReferenceContributor"/>
 
     <iconProvider implementation="com.intellij.struts2.Struts2IconProvider"/>
+    <problemFileHighlightFilter implementation="com.intellij.struts2.Struts2ProblemFileHighlightFilter"/>
     <elementDescriptionProvider implementation="com.intellij.struts2.structure.StrutsTreeDescriptionProvider"/>
 
     <localInspection shortName="Struts2ModelInspection" bundle="resources.Struts2Bundle" key="inspections.struts2.model.displayname"
