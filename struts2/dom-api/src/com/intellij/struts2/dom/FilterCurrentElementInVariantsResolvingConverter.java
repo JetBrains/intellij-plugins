@@ -24,7 +24,8 @@ import java.util.Collection;
  *
  * @author Yann C&eacute;bron
  */
-public abstract class FilterCurrentElementInVariantsResolvingConverter<T extends DomElement> extends ResolvingConverter<T> {
+public abstract class FilterCurrentElementInVariantsResolvingConverter<T extends DomElement>
+    extends ResolvingConverter<T> {
 
   protected Collection<? extends T> filterVariants(final ConvertContext context,
                                                    final Collection<? extends T> allVariants) {
@@ -33,9 +34,14 @@ public abstract class FilterCurrentElementInVariantsResolvingConverter<T extends
     final T currentElement = (T) DomUtil.getDomElement(context.getTag());
     assert currentElement != null : "currentElement was null for " + context.getTag();
     final GenericDomValue currentNameElement = currentElement.getGenericInfo().getNameDomElement(currentElement);
-    assert currentNameElement != null : "currentNameElement was null for " + currentElement;
+    if (currentNameElement == null) {
+      return allVariants; // skip due to XML errors
+    }
+
     final String currentName = currentNameElement.getStringValue();
-    assert currentName != null : "currentName was null for " + currentNameElement;
+    if (currentName == null) {
+      return allVariants; // skip due to XML errors
+    }
 
     final T currentElementInVariants = DomUtil.findByName(allVariants, currentName);
     if (currentElementInVariants != null) {
