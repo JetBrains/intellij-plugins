@@ -18,7 +18,6 @@ package com.intellij.struts2.annotators;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
-import com.intellij.ide.util.PsiElementListCellRenderer;
 import com.intellij.navigation.GotoRelatedItem;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -52,7 +51,14 @@ import java.util.*;
  */
 abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
 
-  private static DomElementListCellRenderer ACTION_RENDERER;
+  private static final DomElementListCellRenderer ACTION_RENDERER =
+      new DomElementListCellRenderer<Action>(StrutsBundle.message("annotators.action.noname")) {
+        @NotNull
+        @NonNls
+        public String getAdditionalLocation(final Action action) {
+          return action != null ? "[" + action.getNamespace() + "] " : "";
+        }
+      };
 
   private static final NotNullFunction<PathReference, Collection<? extends PsiElement>> PATH_REFERENCE_CONVERTER =
       new NotNullFunction<PathReference, Collection<? extends PsiElement>>() {
@@ -152,7 +158,7 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
                                    .setPopupTitle(StrutsBundle.message("annotators.action.goto.declaration"))
                                    .setTargets(actions)
                                    .setTooltipTitle(tooltip)
-                                   .setCellRenderer(getActionRenderer());
+                                   .setCellRenderer(ACTION_RENDERER);
     lineMarkerInfos.add(gutterIconBuilder.createLineMarkerInfo(element));
   }
 
@@ -220,19 +226,6 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
                                    .setPopupTitle(StrutsBundle.message("annotators.action.goto.validation"))
                                    .setTooltipTitle(StrutsBundle.message("annotators.action.goto.validation.tooltip"));
     lineMarkerInfos.add(validatorBuilder.createLineMarkerInfo(element));
-  }
-
-  private static synchronized PsiElementListCellRenderer getActionRenderer() {
-    if (ACTION_RENDERER == null) {
-      ACTION_RENDERER = new DomElementListCellRenderer<Action>(StrutsBundle.message("annotators.action.noname")) {
-        @NotNull
-        @NonNls
-        public String getAdditionalLocation(final Action action) {
-          return action != null ? "[" + action.getNamespace() + "] " : "";
-        }
-      };
-    }
-    return ACTION_RENDERER;
   }
 
 }
