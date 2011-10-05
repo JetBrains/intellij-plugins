@@ -30,9 +30,9 @@ import javax.swing.*;
 /**
  * Renderer for "GoTo"-gutter-popups.
  *
+ * @param <T> Navigation target DOM element type.
  * @author Dmitry Avdeev
  * @author Yann C&eacute;bron
- * @param <T> Navigation target DOM element type.
  */
 abstract class DomElementListCellRenderer<T extends DomElement> extends PsiElementListCellRenderer<XmlTag> {
 
@@ -46,7 +46,6 @@ abstract class DomElementListCellRenderer<T extends DomElement> extends PsiEleme
    * Gets an additional location string.
    *
    * @param domElement Target navigation element.
-   *
    * @return Empty String if not suitable.
    */
   @NotNull
@@ -64,8 +63,12 @@ abstract class DomElementListCellRenderer<T extends DomElement> extends PsiEleme
   }
 
   protected String getContainerText(final XmlTag element, final String name) {
-    return getAdditionalLocation(getDomElement(element)) +
-           " (" + element.getContainingFile().getName() + ')';
+    final T domElement = getDomElement(element);
+    if (domElement == null) {
+      return " (" + element.getContainingFile().getName() + ')';
+    }
+
+    return getAdditionalLocation(domElement) + " (" + element.getContainingFile().getName() + ')';
   }
 
   protected int getIconFlags() {
