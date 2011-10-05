@@ -63,12 +63,14 @@ abstract class DomElementListCellRenderer<T extends DomElement> extends PsiEleme
   }
 
   protected String getContainerText(final XmlTag element, final String name) {
+    final String containingFile = " (" + element.getContainingFile().getName() + ')';
+
     final T domElement = getDomElement(element);
     if (domElement == null) {
-      return " (" + element.getContainingFile().getName() + ')';
+      return containingFile;
     }
 
-    return getAdditionalLocation(domElement) + " (" + element.getContainingFile().getName() + ')';
+    return getAdditionalLocation(domElement) + containingFile;
   }
 
   protected int getIconFlags() {
