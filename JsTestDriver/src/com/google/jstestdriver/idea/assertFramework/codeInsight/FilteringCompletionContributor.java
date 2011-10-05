@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class FilteringCompletionContributor extends CompletionContributor {
+
   public FilteringCompletionContributor() {
     extend(CompletionType.BASIC, PlatformPatterns.psiElement(), new CompletionProvider<CompletionParameters>() {
       @Override
@@ -47,7 +48,7 @@ public class FilteringCompletionContributor extends CompletionContributor {
 
   @NotNull
   private static List<JsCallTemplateContextProvider> filterContextProviders(@NotNull final String prefix,
-                                                                                    @NotNull final CompletionParameters parameters) {
+                                                                            @NotNull final CompletionParameters parameters) {
     return ContainerUtil.filter(JsCallTemplateContextProvider.EP_NAME.getExtensions(), new Condition<JsCallTemplateContextProvider>() {
       @Override
       public boolean value(JsCallTemplateContextProvider contextProvider) {
