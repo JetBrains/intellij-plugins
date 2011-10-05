@@ -4,8 +4,7 @@ public final class CssPropertyType {
   public static const COLOR_STRING:int = 7;
 
   public static const ARRAY_OF_COLOR:int = 2;
-  public static const ARRAY_OF_NUMBER:int = 3;
-  //public static const ARRAY_OF_STRING:int = 12;
+  public static const ARRAY:int = 3;
 
   public static const CLASS_REFERENCE:int = 4;
   public static const EMBED:int = 5;

@@ -193,7 +193,7 @@ public class CssRulesetPrinter {
     }
     else if (value is Array) {
       var a:Array = value as Array;
-      return CssPropertyType.ARRAY_OF_NUMBER;
+      return CssPropertyType.ARRAY;
       //return a.length > 0 && a[0] is String ? CssPropertyType.ARRAY_OF_STRING : CssPropertyType.ARRAY_OF_NUMBER;
     }
     else if (value is _module.getClass("mx.effects.IEffect")) {
@@ -287,7 +287,7 @@ public class CssRulesetPrinter {
         }
         break;
 
-      case CssPropertyType.ARRAY_OF_NUMBER:
+      case CssPropertyType.ARRAY:
         array = descriptor.value as Array;
         if (array.length == 0) {
           content = new Vector.<ContentElement>(contentIndex + 2, true);

@@ -249,6 +249,10 @@ public class PrimitiveAmfOutputStream extends OutputStream {
     IOUtil.writeShort(v, out.getBuffer(2), offset);
   }
 
+  public final void putByte(int v, int position) {
+    out.getBuffer()[position] = (byte)v;
+  }
+
   public final void putShort(int v, int position) {
     IOUtil.writeShort(v, out.getBuffer(), position);
   }

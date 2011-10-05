@@ -59,6 +59,10 @@
     #IDEA_72072 {
       skinClass: ClassReference("testPackage.CustomSkinInPackage");
     }
+
+    s|List {
+      cornerRadius: 4px 23 "f";
+    }
   </fx:Style>
 
   <layout>

@@ -65,7 +65,7 @@ public class StyleTest extends BaseTestCase {
   private static function checkFrameworkDefaultsCss(library:LibrarySetItem):void {
     var rulesets:Vector.<CssRuleset> = library.defaultsStyle.rulesets;
     assertThat(rulesets.length, 7);
-    assertThat(rulesets[0].declarations[59], {name: "highlightAlphas", type: CssPropertyType.ARRAY_OF_NUMBER, value: [0.3, 0]});
+    assertThat(rulesets[0].declarations[59], {name: "highlightAlphas", type: CssPropertyType.ARRAY, value: [0.3, 0]});
     assertThat(rulesets[0].declarations[72], {name: "kerning", type: CssPropertyType.STRING, value: "default"});
   }
 

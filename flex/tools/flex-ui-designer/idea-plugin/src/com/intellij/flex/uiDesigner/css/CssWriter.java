@@ -19,6 +19,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.css.*;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.CssTermTypes;
@@ -267,7 +268,7 @@ public class CssWriter {
       }
       else if ((isInt = (arrayType.equals(JSCommonTypeNames.INT_TYPE_NAME) || arrayType.equals(JSCommonTypeNames.UINT_TYPE_NAME))) ||
                arrayType.equals(JSCommonTypeNames.NUMBER_CLASS_NAME)) {
-        propertyOut.write(CssPropertyType.ARRAY_OF_NUMBER);
+        propertyOut.write(CssPropertyType.ARRAY);
         CssTerm[] terms = PsiTreeUtil.getChildrenOfType(value, CssTerm.class);
         assert terms != null;
         declarationVectorWriter.writeArrayValueHeader(terms.length);
@@ -388,6 +389,22 @@ public class CssWriter {
     propertyOut.writeAmfUInt(color.getRGB());
   }
 
+  private static boolean isArray(PsiElement sibling) {
+    if (sibling == null) {
+      return false;
+    }
+
+    if (sibling instanceof PsiWhiteSpace) {
+      sibling = sibling.getNextSibling();
+      if (sibling == null) {
+        return false;
+      }
+    }
+
+    // ignore any other CssTerm if delimited by whitespace, according to flex compiler
+    return sibling.getNode().getElementType() == CssElementTypes.CSS_COMMA;
+  }
+
   /**
    * If there is no descriptor (FlexCssPropertyDescriptor) for property, then:
    * 1) property is outdated and unused, but it have forgotten remove it
@@ -395,58 +412,92 @@ public class CssWriter {
    * 5
    */
   private void writeUndefinedPropertyValue(CssTermList value) throws InvalidPropertyException {
-    CssTerm[] terms = PsiTreeUtil.getChildrenOfType(value, CssTerm.class);
-    assert terms != null && terms.length > 0;
-    CssTermType termType = terms[0].getTermType();
-    if (termType == CssTermTypes.COLOR) {
-      // todo test for CSS_FUNCTION — rgb()
-      if (terms.length == 1) {
-        propertyOut.write(CssPropertyType.COLOR_INT);
-        writeColor(value);
-      }
-      else {
-        propertyOut.write(CssPropertyType.ARRAY_OF_COLOR);
-        declarationVectorWriter.writeArrayValueHeader(terms.length);
-        for (CssTerm colorTerm : terms) {
-          writeColor(colorTerm);
-        }
-      }
+    final PsiElement firstChild = value.getFirstChild();
+    if (firstChild == null) {
+      throw new InvalidPropertyException(value, "error.invalid.value");
     }
-    else if (termType == CssTermTypes.IDENT) {
-      //noinspection ConstantConditions
-      final ASTNode node = value.getFirstChild().getFirstChild().getNode();
-      if (node.getElementType() == CssElementTypes.CSS_FUNCTION) {
-        writeFunctionValue((CssFunction)node, null);
-      }
-      else {
-        assert terms.length == 1;
-        String v = value.getText();
-        if (v.charAt(0) == 't') {
-          propertyOut.write(CssPropertyType.BOOL);
-          propertyOut.write(Amf3Types.TRUE);
-        }
-        else if (v.charAt(0) == 'f') {
-          propertyOut.write(CssPropertyType.BOOL);
-          propertyOut.write(Amf3Types.FALSE);
-        }
-        else {
-          propertyOut.write(Amf3Types.STRING);
-          propertyOut.writeAmfUtf(StringUtil.stripQuotesAroundValue(v));
-        }
-      }
-    }
-    else if (termType == CssTermTypes.NUMBER || termType == CssTermTypes.NEGATIVE_NUMBER) {
-      if (terms.length > 1) {
-        propertyOut.write(CssPropertyType.ARRAY_OF_NUMBER);
-        declarationVectorWriter.writeArrayValueHeader(terms.length);
-      }
-      else {
-        propertyOut.write(CssPropertyType.NUMBER);
-      }
-      writeNumberTerms(terms, false);
+
+    int lengthPosition = -1;
+    final boolean writeCssTypeMarker;
+    if (isArray(firstChild.getNextSibling())) {
+      propertyOut.write(CssPropertyType.ARRAY);
+      propertyOut.write(Amf3Types.ARRAY);
+      lengthPosition = propertyOut.size(); // assume array length will be less 64
+      propertyOut.write(0); // allocate for length
+      propertyOut.write(1);
+      writeCssTypeMarker = false;
     }
     else {
-      throw new IllegalArgumentException("unknown css term type: " + termType);
+      writeCssTypeMarker = true;
+    }
+
+    int length = 0;
+    boolean expectTerm = true;
+    for (PsiElement child = value.getFirstChild(); child != null; child = child.getNextSibling()) {
+      if (child instanceof CssTerm) {
+        if (!expectTerm) {
+          break;
+        }
+
+        CssTermType termType = ((CssTerm)child).getTermType();
+        if (termType == CssTermTypes.COLOR) {
+          if (writeCssTypeMarker) {
+            propertyOut.write(CssPropertyType.COLOR_INT);
+          }
+          writeColor(child);
+        }
+        else if (termType == CssTermTypes.IDENT) {
+          //noinspection ConstantConditions
+          final ASTNode node = child.getFirstChild().getNode();
+          if (node.getElementType() == CssElementTypes.CSS_FUNCTION) {
+            writeFunctionValue((CssFunction)node, null);
+          }
+          else {
+            String v = value.getText();
+            if (v.charAt(0) == 't') {
+              if (writeCssTypeMarker) {
+                propertyOut.write(CssPropertyType.BOOL);
+              }
+              propertyOut.write(Amf3Types.TRUE);
+            }
+            else if (v.charAt(0) == 'f') {
+              if (writeCssTypeMarker) {
+                propertyOut.write(CssPropertyType.BOOL);
+              }
+              propertyOut.write(Amf3Types.FALSE);
+            }
+            else {
+              propertyOut.write(Amf3Types.STRING);
+              propertyOut.writeAmfUtf(StringUtil.stripQuotesAroundValue(v));
+            }
+          }
+        }
+        else if (termType == CssTermTypes.NUMBER || termType == CssTermTypes.NEGATIVE_NUMBER || termType == CssTermTypes.LENGTH ||
+                 termType == CssTermTypes.NEGATIVE_LENGTH) {
+          // todo if termType equals CssTermTypes.LENGTH, we must respect unit
+          //noinspection ConstantConditions
+          writeNumberValue(child.getFirstChild().getNode(), false, writeCssTypeMarker);
+        }
+        else {
+          throw new InvalidPropertyException("unknown css term type: " + termType + " in " + value.getText(), value);
+        }
+
+        length++;
+        expectTerm = false;
+      }
+      else if (child.getNode().getElementType() == CssElementTypes.CSS_COMMA) {
+        if (expectTerm) {
+          break;
+        }
+
+        expectTerm = true;
+      }
+    }
+
+    if (lengthPosition != -1) {
+      length = (length << 1) | 1;
+      assert length < 128;
+      propertyOut.putByte(length, lengthPosition);
     }
   }
 
