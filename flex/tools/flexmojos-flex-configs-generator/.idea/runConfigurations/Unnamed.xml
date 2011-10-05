@@ -6,7 +6,7 @@
           <option name="checksumPolicy" value="FAIL" />
           <option name="failureBehavior" value="FAST" />
           <option name="localRepository" value="" />
-          <option name="mavenHome" value="" />
+          <option name="mavenHome" value="/usr/local/Cellar/maven/3.0.3/libexec" />
           <option name="nonRecursive" value="false" />
           <option name="pluginUpdatePolicy" value="DO_NOT_UPDATE" />
           <option name="printErrorStackTraces" value="false" />
@@ -31,14 +31,16 @@
         <MavenRunnerParameters>
           <option name="goals">
             <list>
-              <option value="com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.1:generateConfig" />
+              <option value="com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.3.4:generate" />
+              <option value="-o" />
               <option value="-e" />
+              <option value="-DuseOldLocation" />
             </list>
           </option>
           <option name="profiles">
             <set />
           </option>
-          <option name="workingDirPath" value="$PROJECT_DIR$/../idea/flex/tools/flex-ui-designer" />
+          <option name="workingDirPath" value="$PROJECT_DIR$/idea-configurator/src/test/simple-generation" />
         </MavenRunnerParameters>
       </option>
     </MavenSettings>

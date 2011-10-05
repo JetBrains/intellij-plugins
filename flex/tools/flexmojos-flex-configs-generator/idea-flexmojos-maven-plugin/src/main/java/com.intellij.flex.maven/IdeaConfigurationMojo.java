@@ -8,14 +8,13 @@ import org.apache.maven.plugin.*;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
-import org.codehaus.plexus.classworlds.strategy.AbstractStrategy;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,19 +65,14 @@ public class IdeaConfigurationMojo extends AbstractMojo {
   @SuppressWarnings({"UnusedDeclaration"})
   private boolean generateNonShareable;
 
-  static {
-    // link dep
-    MethodComparator.class.getName();
-  }
-
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
-    List<IdeaConfigurator> configurators = new ArrayList<IdeaConfigurator>(2);
+    List<String> configurators = new ArrayList<String>(2);
     if (generateNonShareable) {
-      configurators.add(new IdeaConfigurator(session));
+      configurators.add("com.intellij.flex.maven.IdeaConfigurator");
     }
     if (generateShareable) {
-      configurators.add(new ShareableFlexConfigGenerator(session));
+      configurators.add("com.intellij.flex.maven.ShareableFlexConfigGenerator");
     }
 
     // for some unknown reasons (WTF?), project artifact is not equals is not the same instance as in dependentProject.getArtifacts(),
@@ -88,7 +82,7 @@ public class IdeaConfigurationMojo extends AbstractMojo {
     final HashMap<Artifact, MavenProject> ourProjects = new HashMap<Artifact, MavenProject>(session.getProjects().size());
     final String rootProjectDirPath = session.getTopLevelProject().getBasedir().getPath();
     for (MavenProject project : session.getProjects()) {
-      if (!Utils.isFlashProject(project)) {
+      if (!(project.getPackaging().equals("swc") || project.getPackaging().equals("swf"))) {
         continue;
       }
 
@@ -124,7 +118,7 @@ public class IdeaConfigurationMojo extends AbstractMojo {
     }
   }
 
-  private void generateForProject(MavenProject project, List<IdeaConfigurator> configurators) throws Exception {
+  private void generateForProject(MavenProject project, List<String> configurators) throws Exception {
     MojoExecution flexmojosMojoExecution = null;
     MojoExecution flexmojosGeneratorMojoExecution = null;
     for (Plugin plugin : project.getBuildPlugins()) {
@@ -148,24 +142,33 @@ public class IdeaConfigurationMojo extends AbstractMojo {
 
     ClassRealm flexmojosPluginRealm = pluginManager.getPluginRealm(session,
                                                                    flexmojosMojoExecution.getMojoDescriptor().getPluginDescriptor());
+
+    //flexmojosPluginRealm.addURL(new URL("file://" + session.getLocalRepository().getUrl() Users/develar/Documents/flexmojos-idea-configurator/idea-configurator/target/classes/"));
+    flexmojosPluginRealm.addURL(new URL(session.getLocalRepository().getUrl() + "/com/intellij/flex/maven/idea-configurator/1.4.4/idea-configurator-1.4.4.jar"));
     Mojo mojo = null;
     try {
       mojo = mavenPluginManager.getConfiguredMojo(Mojo.class, session, flexmojosMojoExecution);
-      modifyOurClassRealm(flexmojosPluginRealm);
 
-      for (IdeaConfigurator configurator : configurators) {
-        configurator.preGenerate(project, getClassifier(mojo, flexmojosPluginRealm), flexmojosGeneratorMojoExecution);
+      for (String configuratorClassName : configurators) {
+        Class configuratorClass = flexmojosPluginRealm.loadClass(configuratorClassName);
+        Object configurator = configuratorClass.getConstructor(MavenSession.class).newInstance(session);
+        Method preGenerate = configuratorClass.getMethod("preGenerate", MavenProject.class, String.class, MojoExecution.class);
+        preGenerate.setAccessible(true);
+        preGenerate.invoke(configurator, project, getClassifier(mojo, flexmojosPluginRealm), flexmojosGeneratorMojoExecution);
         try {
           if ("swc".equals(project.getPackaging())) {
-            configurator.generate(mojo, flexmojosPluginRealm.loadClass("org.sonatype.flexmojos.compiler.ICompcConfiguration"));
+            Method generate = configuratorClass.getMethod("generate", Mojo.class);
+            generate.setAccessible(true);
+            generate.invoke(configurator, mojo);
           }
           else {
-            configurator.generate(mojo, getSourceFileForSwf(mojo, flexmojosPluginRealm), flexmojosPluginRealm.loadClass(
-              "org.sonatype.flexmojos.compiler.ICommandLineConfiguration"));
+            Method generate = configuratorClass.getMethod("generate", Mojo.class, File.class);
+            generate.setAccessible(true);
+            generate.invoke(configurator, mojo, getSourceFileForSwf(mojo, flexmojosPluginRealm));
           }
         }
         finally {
-          configurator.postGenerate();
+          configuratorClass.getMethod("postGenerate").invoke(configurator);
         }
       }
     }
@@ -182,11 +185,6 @@ public class IdeaConfigurationMojo extends AbstractMojo {
     return mojoExecution;
   }
 
-  private void modifyOurClassRealm(ClassRealm flexmojosPluginRealm) throws NoSuchFieldException, IllegalAccessException {
-    final Field realm = AbstractStrategy.class.getDeclaredField("realm");
-    realm.setAccessible(true);
-    realm.set(mojoExecution.getMojoDescriptor().getPluginDescriptor().getClassRealm().getStrategy(), flexmojosPluginRealm);
-  }
 
   private File getSourceFileForSwf(Mojo mojo, ClassRealm flexmojosPluginRealm)
     throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {

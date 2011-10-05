@@ -19,6 +19,7 @@ public class Main {
           return file.getName().equals(".m2");
         }
         else if (file.isDirectory()) {
+          //return !file.getName().equals("idea-configurator");
           return true;
         }
 
@@ -26,6 +27,8 @@ public class Main {
         return name.endsWith(".jar") || name.endsWith(".pom");
       }
     }, null);
+
+    //ZipUtil.addFileToZip(zip, new File("/Users/develar/Documents/flexmojos-idea-configurator/idea-configurator/target/classes/com/intellij/flex/maven/IdeaConfigurator.class"), "com/intellij/flex/maven/IdeaConfigurator.class", null, null);
 
     zip.close();
   }

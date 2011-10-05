@@ -11,14 +11,6 @@
 
   <packaging>maven-plugin</packaging>
 
-  <dependencies>
-    <dependency>
-      <groupId>com.intellij.flex.maven</groupId>
-      <artifactId>idea-configurator</artifactId>
-      <version>1.4.4</version>
-    </dependency>
-  </dependencies>
-
   <build>
     <plugins>
       <plugin>

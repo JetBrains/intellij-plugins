@@ -12,7 +12,6 @@ import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.compiler.*;
-import org.sonatype.flexmojos.generator.iface.StringUtil;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -31,7 +30,7 @@ public class IdeaConfigurator {
 
   protected final MavenSession session;
 
-  protected OutputStreamWriter out;
+  protected Writer out;
   private Build build;
 
   private MojoExecution flexmojosGeneratorMojoExecution;
@@ -62,13 +61,17 @@ public class IdeaConfigurator {
     CHILD_TAG_NAME_MAP.put("theme", "filename");
   }
 
-  public void generate(Mojo configuration, File sourceFile, Class configurationClass) throws Exception {
+  public void generate(Mojo configuration, File sourceFile) throws Exception {
     //noinspection NullableProblems
-    build(configuration, configurationClass, "\n\t", null);
+    build(configuration, ICommandLineConfiguration.class, "\n\t", null);
 
     out.append("\n\t<file-specs>\n");
     writeTag("\t\t", PATH_ELEMENT, sourceFile.getAbsolutePath(), FILE_SPECS);
     out.append("\n\t</file-specs>");
+  }
+
+  public void generate(Mojo configuration) throws Exception {
+    build(configuration, ICompcConfiguration.class, "\n\t", null);
   }
 
   public void preGenerate(MavenProject project, String classifier, MojoExecution flexmojosGeneratorMojoExecution) throws IOException {
@@ -77,7 +80,7 @@ public class IdeaConfigurator {
     File configFile = new File(getConfigFilePath(project, classifier));
     //noinspection ResultOfMethodCallIgnored
     configFile.getParentFile().mkdirs();
-    out = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(configFile)), "utf-8");
+    out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(configFile), "utf-8"));
     out.write("<flex-config xmlns=\"http://www.adobe.com/2006/flex-config\">");
   }
 
@@ -100,11 +103,6 @@ public class IdeaConfigurator {
     out = null;
   }
 
-  public void generate(Mojo configuration, Class configurationClass) throws Exception {
-    //noinspection NullableProblems
-    build(configuration, configurationClass, "\n\t", null);
-  }
-
   protected String getConfigFilePath(MavenProject project, String classifier) {
     StringBuilder pathBuilder = new StringBuilder(configsDir.getAbsolutePath()).append(File.separatorChar);
     // artifact id is first in path — it is convenient for us
@@ -120,7 +118,12 @@ public class IdeaConfigurator {
     boolean parentTagWritten = configurationName == null;
 
     final Method[] methods = configClass.getDeclaredMethods();
-    Arrays.sort(methods, new MethodComparator());
+    Arrays.sort(methods, new Comparator<Method>() {
+      @Override
+      public int compare(Method o1, Method o2) {
+        return o1.getName().compareTo(o2.getName());
+      }
+    });
 
     for (Method method : methods) {
       method.setAccessible(true);
@@ -148,7 +151,7 @@ public class IdeaConfigurator {
       }
 
       final Class<?> returnType = method.getReturnType();
-      final String name = parseName(methodName);
+      final String name = camelCaseToSnake(methodName);
 
       if (value instanceof IFlexConfiguration) {
         build(value, returnType, indent + "\t", name.substring(0, name.length() - 14));
@@ -350,7 +353,7 @@ public class IdeaConfigurator {
     if (name.equals(LOCAL_FONTS_SNAPSHOT)) {
       final File fontsSer = new File(build.getOutputDirectory(), FONTS_SER);
       String defaultPath;
-      // the same as flexmojos do
+      // the same as flexmojos does
       try {
         defaultPath = fontsSer.getCanonicalPath();
       }
@@ -379,17 +382,30 @@ public class IdeaConfigurator {
     out.append(indent).append("\t<").append(name).append(">").append(value).append("</").append(name).append('>');
   }
 
-  private static String parseName(String name) {
-    String[] nodes = StringUtil.splitCamelCase(StringUtil.removePrefix(name));
-
-    StringBuilder finalName = new StringBuilder();
-    for (String node : nodes) {
-      if (finalName.length() != 0) {
-        finalName.append('-');
+  private static String camelCaseToSnake(final String s) {
+    StringBuilder builder = new StringBuilder();
+    for (int i = removePrefix(s), n = s.length(); i < n; i++) {
+      char c = s.charAt(i);
+      if (Character.isUpperCase(c)) {
+        builder.append('-').append(Character.toLowerCase(c));
       }
-      finalName.append(node.toLowerCase());
+      else {
+        builder.append(c);
+      }
     }
 
-    return finalName.toString();
+    return builder.toString();
+  }
+
+  private static int removePrefix(String s) {
+    int cut = 0;
+    for (int i = 0; i < s.length(); i++) {
+      if (Character.isUpperCase(s.charAt(i))) {
+        cut = i;
+        break;
+      }
+    }
+
+    return cut;
   }
 }
