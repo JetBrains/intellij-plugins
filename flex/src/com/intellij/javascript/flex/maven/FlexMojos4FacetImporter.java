@@ -132,6 +132,7 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
         JavaParameters javaParameters = MavenExternalParameters.createJavaParameters(project, runnerParameters,
                                                                                      mavenProjectsManager.getGeneralSettings(),
                                                                                      mavenRunnerSettings);
+        javaParameters.getProgramParametersList().add("-e");
         commandLine = CommandLineBuilder.createFromJavaParameters(javaParameters);
       }
       catch (ExecutionException e) {
@@ -145,6 +146,8 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
       commandLine.setRedirectErrorStream(true);
 
       indicator.checkCanceled();
+
+      MavenLog.LOG.info("Generating flex configs command line: " + commandLine.getCommandLineString());
       
       final Process process;
       try {
@@ -180,7 +183,7 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
         int exitCode = process.exitValue();
         final String result = stringBuilder.toString();
         if (exitCode != 0) {
-          MavenLog.LOG.warn("idea flexmojos generator exited with exit code " + exitCode);
+          MavenLog.LOG.warn("Generating flex configs exited with exit code " + exitCode);
 
           final Matcher matcher = MAVEN_ERROR_PATTERN.matcher(result);
           stringBuilder.setLength(0);
@@ -191,7 +194,7 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
           showWarning(stringBuilder.toString(), project);
         }
 
-        MavenLog.LOG.info("idea flexmojos generator out:\n" + result);
+        MavenLog.LOG.info("Generating flex configs out:\n" + result);
       }
       catch (IOException e) {
         process.destroy();
