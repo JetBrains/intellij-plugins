@@ -19,10 +19,12 @@ package com.intellij.struts2.dom;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiReferenceProvider;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.Converter;
 import com.intellij.util.xml.CustomReferenceConverter;
+import com.intellij.util.xml.ExtendClass;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -31,7 +33,8 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public abstract class ExtendableClassConverter extends Converter<PsiClass> implements CustomReferenceConverter<PsiClass> {
+public abstract class ExtendableClassConverter extends Converter<PsiClass>
+    implements CustomReferenceConverter<PsiClass> {
 
   /**
    * Stores the reference type display name(s).
@@ -48,11 +51,20 @@ public abstract class ExtendableClassConverter extends Converter<PsiClass> imple
   /**
    * Contributes results to {@link ExtendableClassConverter}.
    * <p/>
-   * If the provided reference implements {@link com.intellij.codeInspection.LocalQuickFixProvider}, its fixes will be added automatically.
+   * If the provided reference implements {@link com.intellij.codeInspection.LocalQuickFixProvider}
+   * its fixes will be added automatically.
    *
    * @author Yann C&eacute;bron
    */
-  public abstract static class ExtendableClassConverterContributor extends PsiReferenceProvider {
+  public abstract static class ExtendableClassConverterContributor {
+
+    /**
+     * Returns this contributor's type name for display in messages.
+     *
+     * @return Type name.
+     */
+    @NotNull
+    public abstract String getTypeName();
 
     /**
      * Is this contributor suitable in the current resolving context.
@@ -63,11 +75,17 @@ public abstract class ExtendableClassConverter extends Converter<PsiClass> imple
     public abstract boolean isSuitable(@NotNull final ConvertContext convertContext);
 
     /**
-     * Returns this contributor's type name for display in messages.
+     * Creates references if this contributor is suitable.
      *
-     * @return Display name.
+     * @param convertContext Current context.
+     * @param psiElement     Reference element.
+     * @param extendClass    Extend class definition for this element.
+     * @return References.
      */
-    public abstract String getContributorType();
+    @NotNull
+    public abstract PsiReference[] getReferences(@NotNull final ConvertContext convertContext,
+                                                 @NotNull final PsiElement psiElement,
+                                                 @NotNull final ExtendClass extendClass);
 
   }
 

@@ -27,11 +27,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ProcessingContext;
-import com.intellij.util.xml.ConvertContext;
-import com.intellij.util.xml.DomJavaUtil;
-import com.intellij.util.xml.ExtendClass;
-import com.intellij.util.xml.GenericDomValue;
+import com.intellij.util.xml.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,9 +52,11 @@ public class ExtendableClassConverterImpl extends ExtendableClassConverter {
     final XmlElement element = context.getReferenceXmlElement();
     assert element != null;
 
+    final ExtendClass extendClass = getExtendsAnnotation(context.getInvocationElement());
+
     for (final ExtendableClassConverterContributor contributor : Extensions.getExtensions(EP_NAME)) {
       if (contributor.isSuitable(context)) {
-        final PsiReference[] add = contributor.getReferencesByElement(element, new ProcessingContext());
+        final PsiReference[] add = contributor.getReferences(context, element, extendClass);
         if (add.length == 1) {
           final PsiElement resolveElement = add[0].resolve();
           if (resolveElement != null) {
@@ -79,8 +77,7 @@ public class ExtendableClassConverterImpl extends ExtendableClassConverter {
   public PsiReference[] createReferences(final GenericDomValue<PsiClass> psiClassGenericDomValue,
                                          final PsiElement element,
                                          final ConvertContext context) {
-    final ExtendClass extendClass = psiClassGenericDomValue.getAnnotation(ExtendClass.class);
-    assert extendClass != null : psiClassGenericDomValue + " must be annotated with @ExtendClass";
+    final ExtendClass extendClass = getExtendsAnnotation(psiClassGenericDomValue);
 
     // 1. "normal" JAVA classes
     final GlobalSearchScope scope = getResolveScope(psiClassGenericDomValue);
@@ -111,20 +108,28 @@ public class ExtendableClassConverterImpl extends ExtendableClassConverter {
 
     @NonNls String[] referenceTypes = allowInterface ? new String[]{"class", "interface"} : new String[]{"class"};
 
-    // 2. additional resolvers (currently Spring only)
+    // 2. additional resolvers
     for (final ExtendableClassConverterContributor contributor : Extensions.getExtensions(EP_NAME)) {
       if (contributor.isSuitable(context)) {
-        final PsiReference[] additionalReferences = contributor.getReferencesByElement(element,
-                                                                                       new ProcessingContext());
-        javaClassReferences = ArrayUtil.mergeArrays(javaClassReferences, additionalReferences, PsiReference.ARRAY_FACTORY);
+        final PsiReference[] additionalReferences = contributor.getReferences(context, element, extendClass);
+        javaClassReferences = ArrayUtil.mergeArrays(javaClassReferences,
+                                                    additionalReferences,
+                                                    PsiReference.ARRAY_FACTORY);
         referenceTypes = ArrayUtil.append(referenceTypes,
-                                          contributor.getContributorType(),
+                                          contributor.getTypeName(),
                                           ArrayUtil.STRING_ARRAY_FACTORY);
       }
     }
 
     psiClassGenericDomValue.putUserData(REFERENCES_TYPES, referenceTypes);
     return javaClassReferences;
+  }
+
+  @NotNull
+  private static ExtendClass getExtendsAnnotation(final DomElement psiClassDomElement) {
+    final ExtendClass extendClass = psiClassDomElement.getAnnotation(ExtendClass.class);
+    assert extendClass != null : psiClassDomElement + " must be annotated with @ExtendClass";
+    return extendClass;
   }
 
   @Nullable

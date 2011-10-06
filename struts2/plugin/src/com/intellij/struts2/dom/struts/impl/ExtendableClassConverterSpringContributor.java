@@ -17,7 +17,6 @@ package com.intellij.struts2.dom.struts.impl;
 
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -30,8 +29,9 @@ import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ProcessingContext;
-import com.intellij.util.xml.*;
+import com.intellij.util.xml.ConvertContext;
+import com.intellij.util.xml.DomJavaUtil;
+import com.intellij.util.xml.ExtendClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,6 +47,11 @@ import java.util.List;
 public class ExtendableClassConverterSpringContributor
     extends ExtendableClassConverter.ExtendableClassConverterContributor {
 
+  @NotNull
+  public String getTypeName() {
+    return StrutsBundle.message("dom.extendable.class.converter.type.spring");
+  }
+
   /**
    * Checks if struts2-spring-plugin is present in current module.
    *
@@ -54,51 +59,21 @@ public class ExtendableClassConverterSpringContributor
    * @return true if yes.
    */
   public boolean isSuitable(@NotNull final ConvertContext convertContext) {
+    if (SpringFacet.getInstance(convertContext.getModule()) == null) {
+      return false;
+    }
+
     return DomJavaUtil.findClass(StrutsConstants.SPRING_OBJECT_FACTORY_CLASS,
                                  convertContext.getInvocationElement()) != null;
   }
 
-  public String getContributorType() {
-    return StrutsBundle.message("dom.extendable.class.converter.type.spring");
-  }
-
   @NotNull
-  public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
-                                               @NotNull final ProcessingContext context) {
-    final Module module = ModuleUtil.findModuleForPsiElement(element);
-    if (module == null) {
-      return PsiReference.EMPTY_ARRAY;
-    }
-
-    if (SpringFacet.getInstance(module) == null) {
-      return PsiReference.EMPTY_ARRAY;
-    }
-
-    return new PsiReference[]{new SpringBeanReference((XmlAttributeValue) element, module)};
-  }
-
-  /**
-   * Determines a possible subclass for the current reference element.
-   *
-   * @param psiElement Current completion element.
-   * @param module     Current module.
-   * @return Subclass the Spring bean reference must implement or {@code null} if no subclass defined.
-   */
-  @Nullable
-  private static PsiClass getPossibleSubClass(final PsiElement psiElement,
-                                              final Module module) {
-    final DomElement domElement = DomUtil.getDomElement(psiElement);
-    assert domElement != null;
-    final ExtendClass extendClass = domElement.getAnnotation(ExtendClass.class);
-    assert extendClass != null : "must be annotated with @ExtendClass: " + psiElement.getText();
-
-    final String subClassName = extendClass.value();
-    if (subClassName == null) {
-      return null;
-    }
-
-    final GlobalSearchScope searchScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false);
-    return JavaPsiFacade.getInstance(psiElement.getProject()).findClass(subClassName, searchScope);
+  public PsiReference[] getReferences(@NotNull final ConvertContext convertContext,
+                                      @NotNull final PsiElement psiElement,
+                                      @NotNull final ExtendClass extendClass) {
+    return new PsiReference[]{new SpringBeanReference((XmlAttributeValue) psiElement,
+                                                      convertContext.getModule(),
+                                                      extendClass)};
   }
 
 
@@ -106,16 +81,21 @@ public class ExtendableClassConverterSpringContributor
   private static class SpringBeanReference extends PsiReferenceBase<XmlAttributeValue> {
 
     private final Module module;
+    private final ExtendClass extendClass;
 
     private SpringBeanReference(final XmlAttributeValue element,
-                                final Module module) {
+                                final Module module,
+                                final ExtendClass extendClass) {
       super(element, true);
       this.module = module;
+      this.extendClass = extendClass;
     }
 
-    @Nullable
+    @NotNull
     private SpringModel getSpringModel() {
-      return SpringManager.getInstance(module.getProject()).getCombinedModel(module);
+      final SpringModel springModel = SpringManager.getInstance(module.getProject()).getCombinedModel(module);
+      assert springModel != null : "no SpringModel found on " + module;
+      return springModel;
     }
 
     public PsiElement resolve() {
@@ -125,10 +105,6 @@ public class ExtendableClassConverterSpringContributor
       }
 
       final SpringModel springModel = getSpringModel();
-      if (springModel == null) {
-        return null;
-      }
-
       final SpringBeanPointer springBean = springModel.findBean(beanName);
       if (springBean == null) {
         return null;
@@ -141,11 +117,8 @@ public class ExtendableClassConverterSpringContributor
     @SuppressWarnings({"unchecked"})
     public Object[] getVariants() {
       final SpringModel springModel = getSpringModel();
-      if (springModel == null) {
-        return ArrayUtil.EMPTY_OBJECT_ARRAY;
-      }
 
-      final PsiClass subClass = getPossibleSubClass(myElement, module);
+      final PsiClass subClass = getPossibleSubClass();
       final Collection<? extends SpringBeanPointer> list;
       if (subClass != null) {
         list = springModel.findBeansByPsiClassWithInheritance(subClass.getQualifiedName());
@@ -169,6 +142,21 @@ public class ExtendableClassConverterSpringContributor
       return ArrayUtil.toObjectArray(variants, LookupElementBuilder.class);
     }
 
+    /**
+     * Determines a possible subclass for the current reference element.
+     *
+     * @return Subclass the Spring bean reference must implement or {@code null} if no subclass defined.
+     */
+    @Nullable
+    private PsiClass getPossibleSubClass() {
+      final String subClassName = extendClass.value();
+      if (subClassName == null) {
+        return null;
+      }
+
+      final GlobalSearchScope searchScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false);
+      return JavaPsiFacade.getInstance(module.getProject()).findClass(subClassName, searchScope);
+    }
   }
 
 }
