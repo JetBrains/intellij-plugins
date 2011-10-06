@@ -44,8 +44,8 @@ public class StrutsConstantManagerWithStrutsPluginXmlTest extends StrutsConstant
   }
 
   public void testSpringPluginXml() throws Throwable {
-    createStrutsFileSet(STRUTS_XML);
-    addStrutsXmlFromJar(STRUTS2_SPRING_PLUGIN_JAR + "!/struts-plugin.xml");
+    createStrutsFileSet(STRUTS_XML,
+                        STRUTS2_SPRING_PLUGIN_JAR + "!/struts-plugin.xml");
 
     final PsiClass springObjectFactoryClass = JavaPsiFacade.getInstance(myProject)
         .findClass(StrutsConstants.SPRING_OBJECT_FACTORY_CLASS,

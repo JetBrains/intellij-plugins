@@ -32,7 +32,6 @@ import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.*;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Set;
@@ -175,35 +174,27 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     }.execute().throwException().getResultObject();
   }
 
-  protected void createStrutsFileSet(@NonNls final String... fileNames) {
+  /**
+   * For files located in JAR: {@code [PATH_TO_JAR]!/[PATH_TO_STRUTS_XML]}.
+   *
+   * @param strutsXmlPaths Paths to files.
+   */
+  protected void createStrutsFileSet(@NonNls final String... strutsXmlPaths) {
     final StrutsFacetConfiguration facetConfiguration = myFacet.getConfiguration();
 
     final StrutsFileSet fileSet = new StrutsFileSet("test", "test", facetConfiguration);
-    for (final String fileName : fileNames) {
-      final VirtualFile file = myFixture.copyFileToProject(fileName);
+    for (final String fileName : strutsXmlPaths) {
+      final VirtualFile file;
+      if (fileName.contains("!")) {
+        file = JarFileSystem.getInstance().findFileByPath(testDataRootPath + "/" + fileName);
+      } else {
+        file = myFixture.copyFileToProject(fileName);
+      }
       assertNotNull("could not find file: '" + fileName + "'", file);
       fileSet.addFile(file);
     }
     final Set<StrutsFileSet> strutsFileSetSet = facetConfiguration.getFileSets();
     strutsFileSetSet.add(fileSet);
-  }
-
-  /**
-   * Adds {@code struts.xml} files located in JARs.
-   * <p/>
-   * Must be called <em>after</em> {@link #createStrutsFileSet(String...)}.
-   *
-   * @param jarPath Path to struts.xml contained in JAR ({@code [PATH_TO_JAR]!/[PATH_TO_STRUTS_XML]}.
-   */
-  protected void addStrutsXmlFromJar(@NotNull @NonNls final String jarPath) {
-    final StrutsFacetConfiguration facetConfiguration = myFacet.getConfiguration();
-    final Set<StrutsFileSet> fileSets = facetConfiguration.getFileSets();
-    assert !fileSets.isEmpty() : "call createStrutsFileSet() before";
-    final StrutsFileSet fileSet = fileSets.iterator().next();
-
-    final VirtualFile virtualFile = JarFileSystem.getInstance().findFileByPath(testDataRootPath + "/" + jarPath);
-    assert virtualFile != null : "could not find '" + jarPath + "'";
-    fileSet.addFile(virtualFile);
   }
 
 }
