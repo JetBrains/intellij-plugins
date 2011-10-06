@@ -5,11 +5,14 @@ import com.intellij.execution.testframework.Printer;
 import com.intellij.execution.testframework.sm.runner.SMTestProxy;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 class SMTestProxyWithPrinterAndLocation extends SMTestProxy {
 
   private final LocationProvider myLocationProvider;
   private Printer myWiredPrinter;
+  @Nullable
+  private String myFixedName;
 
   public SMTestProxyWithPrinterAndLocation(String testName, boolean isSuite, @NotNull LocationProvider locationProvider) {
     super(testName, isSuite, null);
@@ -51,4 +54,17 @@ class SMTestProxyWithPrinterAndLocation extends SMTestProxy {
       printerLocationChild.wirePrinter(myWiredPrinter);
     }
   }
+
+  public void setFixedName(@NotNull String fixedName) {
+    myFixedName = fixedName;
+  }
+
+  @Override
+  public String getName() {
+    if (myFixedName != null) {
+      return myFixedName;
+    }
+    return super.getName();
+  }
+
 }

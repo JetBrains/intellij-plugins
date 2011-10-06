@@ -19,12 +19,12 @@ class TestCaseNode extends Node {
   private final JstdConfigFileNode myJstdConfigFileNode;
   private final Map<String, TestNode> myTestNodeMap = Maps.newHashMap();
 
-  public TestCaseNode(final JstdConfigFileNode jstdConfigFileNode, final String testCaseName) {
+  public TestCaseNode(final JstdConfigFileNode jstdConfigFileNode, String testCaseName) {
     myJstdConfigFileNode = jstdConfigFileNode;
     setTestProxy(new SMTestProxyWithPrinterAndLocation(testCaseName, true, new LocationProvider() {
       @Override
       Location provideLocation(@NotNull Project project) {
-        PsiElement element = NavUtils.findPsiElement(project, jstdConfigFileNode.getConfigFile(), testCaseName, null);
+        PsiElement element = NavUtils.findPsiElement(project, jstdConfigFileNode.getConfigFile(), getName(), null);
         return PsiLocation.fromPsiElement(element);
       }
     }));

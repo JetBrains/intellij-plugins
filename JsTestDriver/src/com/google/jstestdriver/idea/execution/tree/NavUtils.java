@@ -1,5 +1,6 @@
 package com.google.jstestdriver.idea.execution.tree;
 
+import com.google.common.collect.Lists;
 import com.google.jstestdriver.idea.assertFramework.TestFileStructureManager;
 import com.google.jstestdriver.idea.assertFramework.TestFileStructurePack;
 import com.google.jstestdriver.idea.config.JstdConfigStructure;
@@ -14,14 +15,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * @author Sergey Simonchik
  */
 public class NavUtils {
 
-  private NavUtils() {
-  }
+  private NavUtils() {}
 
   @Nullable
   public static PsiElement findPsiElement(@NotNull Project project,
@@ -29,7 +30,10 @@ public class NavUtils {
                                           @NotNull String testCaseName,
                                           @Nullable String testMethodName) {
     JstdConfigStructure configStructure = JstdConfigStructure.newConfigStructure(jstdConfigFile);
-    for (File loadFile : configStructure.getLoadFiles()) {
+    List<File> files = Lists.newArrayList();
+    files.addAll(configStructure.getLoadFiles());
+    files.addAll(configStructure.getTestFiles());
+    for (File loadFile : files) {
       VirtualFile vf = LocalFileSystem.getInstance().findFileByIoFile(loadFile);
       if (vf != null) {
         PsiFile psiFile = PsiManager.getInstance(project).findFile(vf);
@@ -54,4 +58,5 @@ public class NavUtils {
     }
     return null;
   }
+
 }

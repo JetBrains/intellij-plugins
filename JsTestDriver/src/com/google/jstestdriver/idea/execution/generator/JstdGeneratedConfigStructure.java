@@ -12,7 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class JstdConfigStructure {
+public class JstdGeneratedConfigStructure {
 
   private static Set<File> OUR_FILE_SYSTEM_ROOTS = Sets.newHashSet(Arrays.asList(File.listRoots()));
 

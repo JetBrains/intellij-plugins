@@ -20,6 +20,7 @@ import java.io.Serializable;
 
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.TestResult;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This class is serialized using Java serialization, and sent across the socket from the
@@ -72,6 +73,14 @@ public class TestResultProtocolMessage implements Serializable {
 
   public boolean isDryRun() {
     return phase.equals("dryRun");
+  }
+
+  @Nullable
+  public String getFullTestName() {
+    if (testCase == null || testName == null) {
+      return null;
+    }
+    return testCase + "." + testName;
   }
 
 }

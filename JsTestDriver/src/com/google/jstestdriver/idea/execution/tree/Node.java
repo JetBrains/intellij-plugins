@@ -24,7 +24,7 @@ abstract class Node {
     myTestProxy = testProxy;
   }
 
-  public SMTestProxy getTestProxy() {
+  public SMTestProxyWithPrinterAndLocation getTestProxy() {
     return myTestProxy;
   }
 

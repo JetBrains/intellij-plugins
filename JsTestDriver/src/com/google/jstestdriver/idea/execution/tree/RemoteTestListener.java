@@ -22,10 +22,12 @@ import com.intellij.execution.testframework.sm.runner.SMTestProxy;
 import com.intellij.execution.testframework.sm.runner.ui.SMTestRunnerResultsForm;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.Map;
 
 import static com.google.jstestdriver.TestResult.Result;
@@ -37,10 +39,12 @@ import static com.google.jstestdriver.TestResult.Result;
  * @author alexeagle@google.com (Alex Eagle)
  */
 public class RemoteTestListener {
+
   private final TestListenerContext myContext;
   private final Map<String, BrowserNode> browserMap = Maps.newHashMap();
   private final VirtualFile myDirectory;
   private final StringBuilder myRootNodeLog = new StringBuilder();
+  private final MultiMap<String, TestNode> myRunningTestByFullNameMap = new MultiMap<String, TestNode>();
   private Node myLastTestCaseParentNode;
   private File myLastConfigFile;
 
@@ -51,7 +55,11 @@ public class RemoteTestListener {
 
   // This method must only be called on the AWT event thread, as it updates the UI.
   public void onTestStarted(@NotNull TestResultProtocolMessage message) {
-    createTestNode(message);
+    TestNode testNode = createTestNode(message);
+    String fullTestName = message.getFullTestName();
+    if (fullTestName != null) {
+      myRunningTestByFullNameMap.putValue(message.getFullTestName(), testNode);
+    }
   }
 
   private SMTestRunnerResultsForm getSMTestRunnerResultsForm() {
@@ -123,11 +131,24 @@ public class RemoteTestListener {
   }
 
   // This method must only be called on the AWT event thread, as it updates the UI.
-  public void onTestFinished(TestResultProtocolMessage message) {
+  public void onTestFinished(final TestResultProtocolMessage message) {
     TestNode testNode = findTestNode(message);
     if (testNode == null) {
-      // jasmine adapter hack
-      testNode = createTestNode(message);
+      String fullName = message.getFullTestName();
+      final Iterator<TestNode> startedTestNodesIt = myRunningTestByFullNameMap.get(fullName).iterator();
+      if (startedTestNodesIt.hasNext()) {
+        TestNode startedTestNode = startedTestNodesIt.next();
+        startedTestNodesIt.remove();
+
+        // fixes problem when testCase or test name contains '.'
+        startedTestNode.getTestProxy().setFixedName(message.testName);
+        TestCaseNode startedTestCaseNode = startedTestNode.getTestCaseNode();
+        startedTestCaseNode.getTestProxy().setFixedName(message.testCase);
+        testNode = startedTestNode;
+      } else {
+        // jasmine adapter hack
+        testNode = createTestNode(message);
+      }
     }
     testNode.done();
 

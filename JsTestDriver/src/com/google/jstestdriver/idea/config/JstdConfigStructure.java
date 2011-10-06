@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -28,18 +29,28 @@ public class JstdConfigStructure {
   private final File myJstdConfigFile;
   private final File myBasePath;
   private final Set<File> myLoadFiles;
+  private final Set<File> myTestFiles;
 
-  public JstdConfigStructure(@NotNull File jstdConfigFile, @NotNull File basePath, @NotNull List<File> loadFiles) {
+  private JstdConfigStructure(@NotNull File jstdConfigFile, @NotNull File basePath,
+                              @NotNull Collection<File> loadFiles,
+                              @NotNull Collection<File> testFiles) {
     myJstdConfigFile = jstdConfigFile;
     myBasePath = basePath;
-    myLoadFiles = Sets.newHashSet();
-    for (File loadFile : loadFiles) {
+    myLoadFiles = map2CanonicalFiles(loadFiles);
+    myTestFiles = map2CanonicalFiles(testFiles);
+  }
+
+  @NotNull
+  private static Set<File> map2CanonicalFiles(@NotNull Collection<File> files) {
+    Set<File> canonicalFiles = Sets.newHashSet();
+    for (File file : files) {
       try {
-        myLoadFiles.add(loadFile.getCanonicalFile());
+        canonicalFiles.add(file.getCanonicalFile());
       } catch (IOException e) {
         LOG.warn(e);
       }
     }
+    return canonicalFiles;
   }
 
   @NotNull
@@ -57,6 +68,11 @@ public class JstdConfigStructure {
     return myLoadFiles;
   }
 
+  @NotNull
+  public Set<File> getTestFiles() {
+    return myTestFiles;
+  }
+
   @Nullable
   public File findLoadFile(@NotNull String filePath) {
     File file = new File(myBasePath, filePath);
@@ -69,7 +85,7 @@ public class JstdConfigStructure {
     if (file.isFile()) {
       try {
         File canonicalFile = file.getCanonicalFile();
-        if (myLoadFiles.contains(canonicalFile)) {
+        if (myLoadFiles.contains(canonicalFile) || myTestFiles.contains(canonicalFile)) {
           return file;
         }
       } catch (IOException ignored) {
@@ -80,13 +96,18 @@ public class JstdConfigStructure {
 
   public static JstdConfigStructure newConfigStructure(@NotNull File jstdConfigFile) {
     Configuration resolvedConfiguration = resolveConfiguration(jstdConfigFile);
-    Set<FileInfo> fileInfoSet = resolvedConfiguration.getFilesList();
-    List<File> loadFiles = Lists.newArrayList();
-    for (FileInfo fileInfo : fileInfoSet) {
+    Collection<File> loadFiles = mapFileInfos2Files(resolvedConfiguration.getFilesList());
+    Collection<File> testFiles = mapFileInfos2Files(resolvedConfiguration.getTests());
+    return new JstdConfigStructure(jstdConfigFile, resolvedConfiguration.getBasePath(), loadFiles, testFiles);
+  }
+
+  private static List<File> mapFileInfos2Files(Collection<FileInfo> fileInfos) {
+    List<File> files = Lists.newArrayList();
+    for (FileInfo fileInfo : fileInfos) {
       File file = fileInfo.toFile(null);
-      loadFiles.add(file);
+      files.add(file);
     }
-    return new JstdConfigStructure(jstdConfigFile, resolvedConfiguration.getBasePath(), loadFiles);
+    return files;
   }
 
   private static Configuration resolveConfiguration(File jstdConfigFile) {

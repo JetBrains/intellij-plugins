@@ -31,12 +31,12 @@ public class JstdConfigGenerator {
   public static final JstdConfigGenerator INSTANCE = new JstdConfigGenerator();
 
   @NotNull
-  public JstdConfigStructure generateJstdConfigStructure(@NotNull JSFile jsFile) {
+  public JstdGeneratedConfigStructure generateJstdConfigStructure(@NotNull JSFile jsFile) {
     VirtualFile jsVirtualFile = jsFile.getVirtualFile();
     if (jsVirtualFile == null) {
       throw new RuntimeException("JavaScript file should have virtual file.");
     }
-    JstdConfigStructure configStructure = new JstdConfigStructure();
+    JstdGeneratedConfigStructure configStructure = new JstdGeneratedConfigStructure();
     DependencyContainer dependencyContainer = new DependencyContainer(jsFile.getProject());
     fillDependencyMap(jsFile, dependencyContainer);
     Set<VirtualFile> added = Sets.newHashSet();
@@ -45,7 +45,7 @@ public class JstdConfigGenerator {
   }
 
   @NotNull
-  private JstdConfigStructure generateJstdConfigStructure(@NotNull Project project, @NotNull File jsIoFile) {
+  private JstdGeneratedConfigStructure generateJstdConfigStructure(@NotNull Project project, @NotNull File jsIoFile) {
     VirtualFile jsVirtualFile = LocalFileSystem.getInstance().findFileByIoFile(jsIoFile);
     if (jsVirtualFile == null) {
       throw new RuntimeException("Could not find virtual file by io file " + jsIoFile.getAbsolutePath());
@@ -58,7 +58,7 @@ public class JstdConfigGenerator {
     return generateJstdConfigStructure(jsPsiFile);
   }
 
-  private void addAllDependenciesInOrder(Set<VirtualFile> added, JstdConfigStructure configStructure, VirtualFile jsVirtualFile, DependencyContainer dependencyContainer) {
+  private void addAllDependenciesInOrder(Set<VirtualFile> added, JstdGeneratedConfigStructure configStructure, VirtualFile jsVirtualFile, DependencyContainer dependencyContainer) {
     if (added.contains(jsVirtualFile)) {
       return;
     }
@@ -146,7 +146,7 @@ public class JstdConfigGenerator {
   }
 
   public File generateTempConfig(Project project, File jsIoFile) throws IOException {
-    JstdConfigStructure configStructure = generateJstdConfigStructure(project, jsIoFile);
+    JstdGeneratedConfigStructure configStructure = generateJstdConfigStructure(project, jsIoFile);
     String lastName = jsIoFile.getName().replace('.', '-');
     File tempConfigFile = FileUtil.createTempFile("generated-" + lastName, ".jstd");
     PrintWriter writer = new PrintWriter(tempConfigFile);

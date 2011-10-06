@@ -22,7 +22,7 @@ class TestNode extends Node {
         PsiElement element = NavUtils.findPsiElement(project,
                                 testCaseNode.getJstdConfigFileNode().getConfigFile(),
                                 testCaseNode.getName(),
-                                testName);
+                                getName());
         return PsiLocation.fromPsiElement(element);
       }
     }));

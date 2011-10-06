@@ -1,7 +1,7 @@
 package com.google.jstestdriver.idea.execution.settings.ui;
 
 import com.google.jstestdriver.idea.execution.generator.JstdConfigGenerator;
-import com.google.jstestdriver.idea.execution.generator.JstdConfigStructure;
+import com.google.jstestdriver.idea.execution.generator.JstdGeneratedConfigStructure;
 import com.google.jstestdriver.idea.util.CastUtils;
 import com.google.jstestdriver.idea.util.TextChangeListener;
 import com.intellij.ide.util.PropertiesComponent;
@@ -159,7 +159,7 @@ public class GeneratedConfigTypeComponent extends JPanel {
     }
 
     private void writeJstdConfigTo(@NotNull final File outputFile) throws IOException {
-      ResultWithError<JstdConfigStructure, String> configStructureResult = buildConfigStructureResult();
+      ResultWithError<JstdGeneratedConfigStructure, String> configStructureResult = buildConfigStructureResult();
       String errorMessage = configStructureResult.getError();
       if (errorMessage != null) {
         showFailMessage(errorMessage);
@@ -186,7 +186,7 @@ public class GeneratedConfigTypeComponent extends JPanel {
         }
       }
 
-      final JstdConfigStructure configStructure = configStructureResult.getResult();
+      final JstdGeneratedConfigStructure configStructure = configStructureResult.getResult();
       final String content = configStructure.asFileContent();
       final VirtualFile outputDirVirtualFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outputDir);
       if (outputDirVirtualFile == null) {
@@ -242,10 +242,10 @@ public class GeneratedConfigTypeComponent extends JPanel {
     }
 
     @NotNull
-    private ResultWithError<JstdConfigStructure, String> buildConfigStructureResult() {
-      return ApplicationManager.getApplication().runReadAction(new Computable<ResultWithError<JstdConfigStructure, String>>() {
+    private ResultWithError<JstdGeneratedConfigStructure, String> buildConfigStructureResult() {
+      return ApplicationManager.getApplication().runReadAction(new Computable<ResultWithError<JstdGeneratedConfigStructure, String>>() {
         @Override
-        public ResultWithError<JstdConfigStructure, String> compute() {
+        public ResultWithError<JstdGeneratedConfigStructure, String> compute() {
           File jsIoFile = new File(myJsFilePath);
           VirtualFile jsVirtualFile = LocalFileSystem.getInstance().findFileByIoFile(jsIoFile);
           if (jsVirtualFile == null || !jsVirtualFile.isValid()) {
@@ -257,7 +257,7 @@ public class GeneratedConfigTypeComponent extends JPanel {
             return ResultWithError.newError("Could not process " + jsIoFile.getAbsolutePath() + " as JavaScript file.");
           }
           JstdConfigGenerator generator = JstdConfigGenerator.INSTANCE;
-          JstdConfigStructure configStructure = generator.generateJstdConfigStructure(jsPsiFile);
+          JstdGeneratedConfigStructure configStructure = generator.generateJstdConfigStructure(jsPsiFile);
           return ResultWithError.newResult(configStructure);
         }
       });

@@ -4,8 +4,8 @@ import com.google.jstestdriver.idea.execution.tree.JstdTestRunnerFailure;
 import com.google.jstestdriver.idea.execution.tree.RemoteTestListener;
 import com.google.jstestdriver.idea.execution.tree.TestResultProtocolMessage;
 import com.google.jstestdriver.idea.util.CastUtils;
+import com.intellij.openapi.application.ApplicationManager;
 
-import javax.swing.*;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -81,7 +81,7 @@ public class RemoteTestResultReceiver implements Runnable {
         Object obj = in.readObject();
         final TestResultProtocolMessage message = CastUtils.tryCast(obj, TestResultProtocolMessage.class);
         if (message != null) {
-          SwingUtilities.invokeLater(new Runnable() {
+          ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
               if (message.isDryRun()) {
@@ -94,7 +94,7 @@ public class RemoteTestResultReceiver implements Runnable {
         }
         final JstdTestRunnerFailure testRunnerFailure = CastUtils.tryCast(obj, JstdTestRunnerFailure.class);
         if (testRunnerFailure != null) {
-          SwingUtilities.invokeLater(new Runnable() {
+          ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
               listener.onTestRunnerFailed(testRunnerFailure);
