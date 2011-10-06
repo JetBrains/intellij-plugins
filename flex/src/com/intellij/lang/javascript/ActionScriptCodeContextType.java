@@ -2,7 +2,6 @@ package com.intellij.lang.javascript;
 
 import com.intellij.codeInsight.template.TemplateContextType;
 import com.intellij.lang.Language;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -23,10 +22,5 @@ public class ActionScriptCodeContextType extends TemplateContextType {
 
     final Language language = JavaScriptCodeContextType.getLanguage(file, offset);
     return language != null && language.isKindOf(JavaScriptSupportLoader.ECMA_SCRIPT_L4);
-  }
-
-  @Override
-  public boolean isInContext(final @NotNull FileType fileType) {
-    return fileType instanceof JavaScriptFileType;
   }
 }
