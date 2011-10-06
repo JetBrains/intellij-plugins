@@ -19,7 +19,6 @@ import com.intellij.codeInsight.template.TemplateContextType;
 import com.intellij.lang.ognl.OgnlFileType;
 import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.highlight.OgnlHighlighter;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiUtilBase;
@@ -38,16 +37,11 @@ public class OgnlTemplateContextType extends TemplateContextType {
 
   @Override
   public boolean isInContext(@NotNull final PsiFile psiFile, final int offset) {
-    if (isInContext(psiFile.getFileType())) {
+    if (psiFile.getFileType() == OgnlFileType.INSTANCE) {
       return true;
     }
 
     return PsiUtilBase.getLanguageAtOffset(psiFile, offset) == OgnlLanguage.INSTANCE;
-  }
-
-  @Override
-  public boolean isInContext(@NotNull final FileType fileType) {
-    return fileType == OgnlFileType.INSTANCE;
   }
 
   @Override
