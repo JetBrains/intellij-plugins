@@ -17,7 +17,7 @@
 <idea-plugin>
   <name>JSTestDriver Plugin</name>
   <description>Execute JavaScript unit tests using JsTestDriver</description>
-  <version>1.3.7</version>
+  <version>1.3.8</version>
   <vendor url="http://code.google.com/p/js-test-driver/"
           email="js-test-driver@googlegroups.com">Google; JetBrains</vendor>
   <idea-version since-build="106.0" until-build="109.0"/>
@@ -44,6 +44,21 @@
 
   <change-notes>
     <![CDATA[
+<h4>Version 1.3.8, 6 October 2011 (build on JsTestDriver v1.3.3b)</h4>
+<ul>
+  <li>New features:
+    <ul>
+      <li>Supported <a href="http://code.google.com/p/js-test-driver/wiki/HtmlDoc">Html Doc</a>: html tag completion, syntax highlighting, error checking.</li>
+    </ul>
+  </li>
+  <li>Bug fixes:
+    <ul>
+      <li>Stacktrace paths referring JavaScript files from 'test:' config section are clickable now.</li>
+      <li>Test result tree is fixed if tests of JsTestDriver build-in assertion framework have dot symbol in their names.</li>
+    </ul>
+  </li>
+</ul>
+
 <h4>Version 1.3.7, 4 October 2011 (build on JsTestDriver v1.3.3b)</h4>
 <ul>
   <li>Usability bugfix:

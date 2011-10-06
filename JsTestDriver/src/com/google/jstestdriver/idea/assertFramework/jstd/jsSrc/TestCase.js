@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Google Inc.
+ * Copyright 2011 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -14,30 +14,50 @@
  * the License.
  */
 
+/**
+ * @fileoverview
+ * @author corysmith@google.com (Cory Smith)
+ * @author rdionne@google.com (Robert Dionne)
+ */
 
+/**
+ * Modified by JsTestDriver plugin for reference resolving purpose.
+ * See http://js-test-driver.googlecode.com/svn/tags/1.3.3b/JsTestDriver/src/com/google/jstestdriver/javascript/TestCaseBuilder.js
+ * for original implementation.
+ */
+
+/**
+ * Defines a test case.
+ * @param {string} testCaseName The name of the test case.
+ * @param {Object} opt_proto An optional prototype.
+ * @param {Object} opt_type Either DEFAULT_TYPE or ASYNC_TYPE.
+ * @return {Function} Base function that represents the test case class.
+ */
 function TestCase(testCaseName, opt_proto, opt_type) {
-  var testCaseClass = function() {
-  };
-
+  jstestdriver.checkNotBeginsWith_(testCaseName, '-');
+  jstestdriver.checkNotContains_(testCaseName, ',');
+  jstestdriver.checkNotContains_(testCaseName, '#');
+  var testCaseClass = function() {};
   if (opt_proto) {
     testCaseClass.prototype = opt_proto;
   }
   if (typeof testCaseClass.prototype.setUp == 'undefined') {
-    testCaseClass.prototype.setUp = function() {
-    };
+    testCaseClass.prototype.setUp = function() {};
   }
   if (!testCaseClass.prototype.hasOwnProperty('toString')) {
     testCaseClass.prototype.toString = function() {
-      return "TestCase(" + testCaseName + ")";
+      return "TestCase(" + testCaseName +")";
     };
   }
   if (typeof testCaseClass.prototype.tearDown == 'undefined') {
-    testCaseClass.prototype.tearDown = function() {
-    };
+    testCaseClass.prototype.tearDown = function() {};
   }
-
+  jstestdriver.testCaseManager_.add(
+      new jstestdriver.TestCaseInfo(testCaseName, testCaseClass, opt_type));
   return testCaseClass;
-}
+};
+
+
 
 
 /**
@@ -49,7 +69,7 @@ function TestCase(testCaseName, opt_proto, opt_type) {
  */
 function AsyncTestCase(testCaseName, opt_proto) {
   return TestCase(testCaseName, opt_proto, 'async');
-}
+};
 
 
 /**
@@ -65,9 +85,13 @@ function ConditionalTestCase(testCaseName, condition, opt_proto, opt_type) {
   if (condition()) {
     return TestCase(testCaseName, opt_proto, opt_type);
   }
+  jstestdriver.testCaseManager_.add(
+      new jstestdriver.TestCaseInfo(
+          testCaseName,
+          function() {},
+          opt_type));
   return function(){};
-}
-
+};
 
 /**
  * An AsyncTestCase that will only be executed when a certain condition is true.
@@ -78,5 +102,22 @@ function ConditionalTestCase(testCaseName, condition, opt_proto, opt_type) {
  * @return {Function} Base function that represents the TestCase class.
  */
 function ConditionalAsyncTestCase(testCaseName, condition, opt_proto) {
-  return ConditionalTestCase(testCaseName, condition, opt_proto, 'async');
-}
+  return ConditionalTestCase(
+      testCaseName, condition, opt_proto, 'async');
+};
+
+var jstestdriver = {
+    checkNotBeginsWith_: function(testCaseName, illegalString) {
+        if (testCaseName.indexOf(illegalString) == 0) {
+            throw new Error('Test case names must not begin with \'' +
+                            illegalString + '\'');
+        }
+    },
+
+    checkNotContains_: function(testCaseName, illegalString) {
+        if (testCaseName.indexOf(illegalString) > -1) {
+            throw new Error('Test case names must not contain \'' + illegalString + '\'');
+        }
+    }
+};
+
