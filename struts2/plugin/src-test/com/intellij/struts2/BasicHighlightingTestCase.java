@@ -17,12 +17,9 @@ package com.intellij.struts2;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.facet.FacetManager;
-import com.intellij.facet.FacetType;
-import com.intellij.javaee.JavaeeUtil;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.javaee.web.facet.WebFacetType;
 import com.intellij.openapi.application.Result;
-import com.intellij.openapi.application.RunResult;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -167,22 +164,15 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   }
 
   protected final StrutsFacet createFacet() {
-    final RunResult<StrutsFacet> runResult = new WriteCommandAction<StrutsFacet>(myProject) {
+    return new WriteCommandAction<StrutsFacet>(myProject) {
       @Override
       protected void run(final Result<StrutsFacet> result) throws Throwable {
-        final FacetType<StrutsFacet, StrutsFacetConfiguration> strutsFacetType = StrutsFacetType.getInstance();
-        final String name = strutsFacetType.getPresentableName();
-        final WebFacet webFacet = JavaeeUtil.addFacet(myModule, WebFacetType.getInstance());
-        final StrutsFacet facet = FacetManager.getInstance(myModule).addFacet(strutsFacetType, name, webFacet);
-        result.setResult(facet);
+        final FacetManager facetManager = FacetManager.getInstance(myModule);
+        final WebFacet webFacet = facetManager.addFacet(WebFacetType.getInstance(), "web", null);
+        final StrutsFacet strutsFacet = facetManager.addFacet(StrutsFacetType.getInstance(), "struts2", webFacet);
+        result.setResult(strutsFacet);
       }
-    }.execute();
-    final Throwable throwable = runResult.getThrowable();
-    if (throwable != null) {
-      throw new RuntimeException("error setting up StrutsFacet", throwable);
-    }
-
-    return runResult.getResultObject();
+    }.execute().throwException().getResultObject();
   }
 
   protected void createStrutsFileSet(@NonNls final String... fileNames) {
