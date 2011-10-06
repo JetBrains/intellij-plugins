@@ -185,21 +185,16 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     return runResult.getResultObject();
   }
 
-  private void addToFileSet(final StrutsFileSet fileSet, @NonNls final String path) {
-    final VirtualFile file = myFixture.copyFileToProject(path);
-    assertNotNull("could not find file: '" + path + "'", file);
-    fileSet.addFile(file);
-  }
-
   protected void createStrutsFileSet(@NonNls final String... fileNames) {
     final StrutsFacetConfiguration facetConfiguration = myFacet.getConfiguration();
 
     final StrutsFileSet fileSet = new StrutsFileSet("test", "test", facetConfiguration);
     for (final String fileName : fileNames) {
-      addToFileSet(fileSet, fileName);
+      final VirtualFile file = myFixture.copyFileToProject(fileName);
+      assertNotNull("could not find file: '" + fileName + "'", file);
+      fileSet.addFile(file);
     }
     final Set<StrutsFileSet> strutsFileSetSet = facetConfiguration.getFileSets();
-    strutsFileSetSet.clear();
     strutsFileSetSet.add(fileSet);
   }
 
