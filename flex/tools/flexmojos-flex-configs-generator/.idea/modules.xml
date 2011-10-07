@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/flexmojos-idea-configurator-aggregator.iml" filepath="$PROJECT_DIR$/flexmojos-idea-configurator-aggregator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/generator-server/generator-server.iml" filepath="$PROJECT_DIR$/generator-server/generator-server.iml" />
       <module fileurl="file://$PROJECT_DIR$/idea-configurator/idea-configurator.iml" filepath="$PROJECT_DIR$/idea-configurator/idea-configurator.iml" />
       <module fileurl="file://$PROJECT_DIR$/idea-flexmojos-maven-plugin/idea-flexmojos-maven-plugin.iml" filepath="$PROJECT_DIR$/idea-flexmojos-maven-plugin/idea-flexmojos-maven-plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/zipper/zipper.iml" filepath="$PROJECT_DIR$/zipper/zipper.iml" />

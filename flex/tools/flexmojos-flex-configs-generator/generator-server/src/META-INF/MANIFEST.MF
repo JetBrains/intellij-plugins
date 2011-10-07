@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Class-Path: aether-api-1.11.jar maven-settings-3.0.3.jar plexus-classw
+ orlds-2.4.jar sisu-inject-plexus-2.1.1.jar maven-core-3.0.3.jar maven
+ -settings-builder-3.0.3.jar maven-artifact-3.0.3.jar maven-model-buil
+ der-3.0.3.jar aether-util-1.11.jar
+
