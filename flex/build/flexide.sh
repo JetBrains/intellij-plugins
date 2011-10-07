@@ -123,7 +123,7 @@ if [ -f "$IDE_HOME/Contents/Info.plist" -a -z "$IDE_PROPERTIES_PROPERTY" ]; then
   MAC_VM_OPTIONS="`osascript \"$IDE_BIN_HOME/info_plist_parser.scpt\"$INFO_PLIST_PARSER_OPTIONS`"
 fi
 
-REQUIRED_JVM_ARGS="-Xbootclasspath/a:../lib/boot.jar -Didea.paths.selector=@@system_selector@@ $IDE_PROPERTIES_PROPERTY $REQUIRED_JVM_ARGS"
+REQUIRED_JVM_ARGS="-Xbootclasspath/a:../lib/boot.jar -Didea.no.jre.check=true -Didea.paths.selector=@@system_selector@@ $IDE_PROPERTIES_PROPERTY $REQUIRED_JVM_ARGS"
 
 JVM_ARGS="$JVM_ARGS $REQUIRED_JVM_ARGS $MAC_VM_OPTIONS $AGENT"
 
@@ -134,7 +134,6 @@ CLASSPATH=$CLASSPATH:../lib/log4j.jar
 CLASSPATH=$CLASSPATH:../lib/extensions.jar
 CLASSPATH=$CLASSPATH:../lib/trove4j.jar
 CLASSPATH=$CLASSPATH:../lib/jna.jar
-CLASSPATH=$CLASSPATH:$JDK/lib/tools.jar
 CLASSPATH=$CLASSPATH:$ASTELLA_CLASSPATH
 export CLASSPATH
 
