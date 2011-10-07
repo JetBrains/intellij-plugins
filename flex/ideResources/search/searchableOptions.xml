@@ -9173,6 +9173,7 @@
     <option name="tag" hit="Tag" />
     <option name="name" hit="Tag name" />
     <option name="tag" hit="Tag name" />
+    <option name="code" hit="HTML code" />
   </configurable>
   <configurable id="reference.settingsdialog.IDE.editor.colors.CSS" configurable_name="CSS">
     <option name="background" hit="Background" />
