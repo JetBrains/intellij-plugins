@@ -67,11 +67,6 @@ public class ActionPathResultContributor extends StrutsResultContributor {
       return false;
     }
 
-    final List<String> actionExtensions = StrutsConstantHelper.getActionExtensions(psiElement);
-    if (actionExtensions.isEmpty()) {
-      return false;
-    }
-
     final TextRange rangeInElement = ElementManipulators.getManipulator(psiElement).getRangeInElement(psiElement);
     final String fullPath = psiElement.getText();
     final String trimmedPath = rangeInElement.substring(fullPath);
@@ -79,10 +74,9 @@ public class ActionPathResultContributor extends StrutsResultContributor {
                                                       PathReference.trimPath(trimmedPath).length());
 
     final PsiReference actionReference = new ActionPathReference((XmlTag) psiElement,
-                                                                 trimmedPathRange, currentPackage,
-                                                                 model,
-                                                                 actionExtensions
-    );
+                                                                 trimmedPathRange,
+                                                                 currentPackage,
+                                                                 model);
 
     references.add(actionReference);
     return false;
@@ -98,25 +92,25 @@ public class ActionPathResultContributor extends StrutsResultContributor {
 
     private final String currentPackage;
     private final StrutsModel model;
-    private final List<String> actionExtensions;
 
     private ActionPathReference(final XmlTag psiElement,
                                 final TextRange textRange,
                                 final String currentPackage,
-                                final StrutsModel model,
-                                @NotNull @NonNls final List<String> actionExtensions) {
+                                final StrutsModel model) {
       super(psiElement, textRange, true);
-
       this.currentPackage = currentPackage;
       this.model = model;
-      this.actionExtensions = actionExtensions;
+    }
+
+    private List<String> getActionExtensions() {
+      return StrutsConstantHelper.getActionExtensions(myElement);
     }
 
     public PsiElement resolve() {
       final String path = getCanonicalText();
 
       int extensionIndex = -1;
-      for (final String actionExtension : actionExtensions) {
+      for (final String actionExtension : getActionExtensions()) {
         extensionIndex = path.lastIndexOf(actionExtension);
         if (extensionIndex != -1) {
           break;
@@ -153,7 +147,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
 
     @NotNull
     public Object[] getVariants() {
-      final String firstExtension = actionExtensions.get(0);
+      final String firstExtension = getActionExtensions().get(0);
 
       final List<Action> allActions = model.getActionsForNamespace(null);
       final List<LookupElementBuilder> variants = new ArrayList<LookupElementBuilder>(allActions.size());
