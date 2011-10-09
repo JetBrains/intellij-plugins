@@ -16,13 +16,19 @@
 package com.intellij.struts2.gotosymbol;
 
 import com.intellij.ide.util.gotoByName.GotoSymbolModel2;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.psi.PsiFile;
 import com.intellij.struts2.BasicHighlightingTestCase;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.struts2.facet.StrutsFacetConfiguration;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
+import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.util.ArrayUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * {@link GoToActionSymbolProvider} and {@link GoToPackageSymbolProvider}.
@@ -35,13 +41,24 @@ public class GoToSymbolProviderTest extends LightCodeInsightFixtureTestCase {
 
   protected void setUp() throws Exception {
     super.setUp();
-    myFacet = BasicHighlightingTestCase.createFacet(myModule);
   }
 
   @Override
   protected void tearDown() throws Exception {
     myFacet = null;
     super.tearDown();
+  }
+
+  @NotNull
+  @Override
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return new DefaultLightProjectDescriptor() {
+      @Override
+      public void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry) {
+        super.configureModule(module, model, contentEntry);
+        myFacet = BasicHighlightingTestCase.createFacet(module);
+      }
+    };
   }
 
   public void testGotoAction() throws Exception {
