@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.struts2.StrutsBundle;
+import com.intellij.struts2.dom.ConverterUtil;
 import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.struts2.dom.struts.Bean;
 import com.intellij.struts2.dom.struts.action.Action;
@@ -55,7 +56,13 @@ class Struts2ModelInspectionVisitor implements DomElementVisitor {
   }
 
   public void visitAction(final Action action) {
-    checkExtendableClassConverter(action.getActionClass());
+    final GenericAttributeValue<PsiClass> actionClass = action.getActionClass();
+    if (action.isWildcardMapping() &&
+        ConverterUtil.hasWildcardReference(actionClass.getStringValue())) {
+      return;
+    }
+
+    checkExtendableClassConverter(actionClass);
   }
 
   public void visitBean(final Bean bean) {
@@ -98,8 +105,8 @@ class Struts2ModelInspectionVisitor implements DomElementVisitor {
 
     final String[] referenceTypesUserData = clazzAttributeValue.getUserData(ExtendableClassConverter.REFERENCES_TYPES);
     final String referenceTypes = referenceTypesUserData != null ?
-                                  StringUtil.join(referenceTypesUserData, "|") :
-                                  StrutsBundle.message("dom.extendable.class.converter.type.class");
+        StringUtil.join(referenceTypesUserData, "|") :
+        StrutsBundle.message("dom.extendable.class.converter.type.class");
 
     final String message = StrutsBundle.message("dom.extendable.class.converter.cannot.resolve",
                                                 referenceTypes,

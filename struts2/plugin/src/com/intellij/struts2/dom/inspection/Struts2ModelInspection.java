@@ -16,15 +16,16 @@
 package com.intellij.struts2.dom.inspection;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsBundle;
+import com.intellij.struts2.dom.ConverterUtil;
 import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.struts2.dom.params.ParamNameConverter;
 import com.intellij.struts2.dom.params.ParamsElement;
 import com.intellij.struts2.dom.struts.HasResultType;
 import com.intellij.struts2.dom.struts.StrutsRoot;
+import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.action.StrutsPathReferenceConverter;
 import com.intellij.struts2.dom.struts.impl.path.ResultTypeResolver;
@@ -123,12 +124,17 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
       }
 
       if (!ResultTypeResolver.hasResultTypeContributor(resultType.getName().getStringValue())) {
-         return false;
+        return false;
+      }
+
+      // suppress paths with wildcard reference
+      if (ConverterUtil.hasWildcardReference(stringValue)) {
+        final Action action = DomUtil.getParentOfType(value, Action.class, true);
+        return action != null && !action.isWildcardMapping();
       }
     }
 
-    // hack for suppressing wildcard-resolving
-    return stringValue == null || !StringUtil.containsChar(stringValue, '{') ;
+    return true;
   }
 
   protected void checkDomElement(final DomElement element,

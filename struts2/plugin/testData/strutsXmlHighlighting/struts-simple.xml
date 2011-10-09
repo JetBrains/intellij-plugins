@@ -123,6 +123,8 @@
   <!-- "class" -->
   <package name="action4">
     <action name="validName" class="MyClass"/>
+    <action name="validWildcard*" class="My{0}WildcardClass"/>
+    <action name="validNameButNoWildcard" class="<error descr="Cannot resolve class 'My{0}WildcardClass'">My{0}WildcardClass</error>"/>
     <action name="unknownClass" class="<error>INVALID_VALUE</error>"/>
     <action name="interfaceNotAllowed" class='<error descr="Interface not allowed">MyInterface</error>'/>
     <action name="abstractClassNotAllowed" class='<error descr="Abstract class is not allowed">MyAbstractClass</error>'/>

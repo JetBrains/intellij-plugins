@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.struts2.dom.struts.action.Action;
@@ -36,8 +37,18 @@ import java.util.List;
 @SuppressWarnings({"AbstractClassNeverImplemented"})
 public abstract class ActionImpl implements Action {
 
+  private String getNameValue() {
+    return getName().getStringValue();
+  }
+
+  @Override
+  public boolean isWildcardMapping() {
+    final String name = getNameValue();
+    return name != null && StringUtil.indexOf(name, '*') != -1;
+  }
+
   public boolean matchesPath(@NotNull final String path) {
-    final String myPath = getName().getStringValue();
+    final String myPath = getNameValue();
     if (myPath == null) {
       return false;
     }
@@ -48,8 +59,7 @@ public abstract class ActionImpl implements Action {
   @NotNull
   public StrutsPackage getStrutsPackage() {
     final StrutsPackage strutsPackage = DomUtil.getParentOfType(this, StrutsPackage.class, true);
-    assert strutsPackage != null : "could not resolve enclosing <package> for " + this + " (" +
-                                   getName().getStringValue() + ")";
+    assert strutsPackage != null : "could not resolve enclosing <package> for " + this + " (" + getNameValue() + ")";
     return strutsPackage;
   }
 

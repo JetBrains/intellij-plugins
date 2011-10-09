@@ -42,7 +42,7 @@ final class ActionUtil {
   }
 
   /**
-   * Does the given path match the Action's path (including support for wild-cards and bang notation).
+   * Does the given path match the Action's path (including support for wildcards and bang notation).
    *
    * @param actionPath Path of Action.
    * @param checkPath  Path to check.

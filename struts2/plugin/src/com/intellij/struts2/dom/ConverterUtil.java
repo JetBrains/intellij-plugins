@@ -21,12 +21,17 @@ import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.util.xml.ConvertContext;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.regex.Pattern;
+
 /**
  * Utility methods for DOM-Converters.
  *
  * @author Yann C&eacute;bron
  */
 public final class ConverterUtil {
+
+  // "{0}" through "{9}"
+  private static final Pattern WILDCARD_PATTERN = Pattern.compile("\\{\\d\\}");
 
   private ConverterUtil() {
   }
@@ -57,6 +62,16 @@ public final class ConverterUtil {
     }
 
     return StrutsManager.getInstance(context.getFile().getProject()).getCombinedModel(context.getModule());
+  }
+
+  /**
+   * Returns whether the value contains a wildcard-reference.
+   *
+   * @param value Value to check for wildcard pattern.
+   * @return {@code true} if contains wildcard value.
+   */
+  public static boolean hasWildcardReference(@Nullable final String value) {
+    return value != null && WILDCARD_PATTERN.matcher(value).find();
   }
 
 }
