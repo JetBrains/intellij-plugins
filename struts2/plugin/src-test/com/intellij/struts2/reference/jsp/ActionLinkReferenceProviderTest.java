@@ -42,7 +42,7 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
   @Override
   protected void configureModule(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
     super.configureModule(moduleBuilder);
-    addLibrary(moduleBuilder, "servlet-api", "servlet-api.jar");
+
     moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp", "/");
     moduleBuilder.setWebXml(myFixture.getTempDirPath() + "/WEB-INF/web.xml");
   }
