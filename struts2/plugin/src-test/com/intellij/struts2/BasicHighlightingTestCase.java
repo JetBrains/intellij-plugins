@@ -116,7 +116,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     myProject = myFixture.getProject();
     myModuleTestFixture = moduleBuilder.getFixture();
     myModule = myModuleTestFixture.getModule();
-    myFacet = createFacet();
+    myFacet = createFacet(myModule);
   }
 
   @Override
@@ -162,11 +162,11 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     moduleBuilder.addLibraryJars(libraryName, testDataRootPath, jarPaths);
   }
 
-  protected final StrutsFacet createFacet() {
-    return new WriteCommandAction<StrutsFacet>(myProject) {
+  public static StrutsFacet createFacet(final Module module) {
+    return new WriteCommandAction<StrutsFacet>(module.getProject()) {
       @Override
       protected void run(final Result<StrutsFacet> result) throws Throwable {
-        final FacetManager facetManager = FacetManager.getInstance(myModule);
+        final FacetManager facetManager = FacetManager.getInstance(module);
         final WebFacet webFacet = facetManager.addFacet(WebFacetType.getInstance(), "web", null);
         final StrutsFacet strutsFacet = facetManager.addFacet(StrutsFacetType.getInstance(), "struts2", webFacet);
         result.setResult(strutsFacet);
