@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,7 +17,6 @@ package com.intellij.struts2.dom.struts;
 
 import com.intellij.facet.FacetManager;
 import com.intellij.openapi.application.Result;
-import com.intellij.openapi.application.RunResult;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -64,8 +63,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
   }
 
   public void testStrutsSpringHighlighting() throws Throwable {
-    final SpringFileSet springFileSet = configureSpringFileSet();
-    addFile(springFileSet, SPRING_XML);
+    createSpringFileSet(SPRING_XML);
 
     performHighlightingTest("struts-spring.xml");
   }
@@ -74,8 +72,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
     @NonNls final String strutsXml = "struts-completionvariants-spring.xml";
     createStrutsFileSet(strutsXml);
 
-    final SpringFileSet springFileSet = configureSpringFileSet();
-    addFile(springFileSet, SPRING_XML);
+    createSpringFileSet(SPRING_XML);
 
     // TODO <alias> does not appear here, see com.intellij.spring.impl.SpringModelImpl#myOwnBeans
     final List<String> variants = myFixture.getCompletionVariants(strutsXml);
@@ -89,8 +86,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
     @NonNls final String strutsXml = "struts-completionvariants-subclass-spring.xml";
     createStrutsFileSet(strutsXml);
 
-    final SpringFileSet springFileSet = configureSpringFileSet();
-    addFile(springFileSet, SPRING_XML);
+    createSpringFileSet(SPRING_XML);
 
     final List<String> variants = myFixture.getCompletionVariants(strutsXml);
 
@@ -116,43 +112,33 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
 
   // stuff below is Spring related ===============================================
 
-  protected SpringFileSet configureSpringFileSet() throws Throwable {
-    final SpringFacet mySpringFacet = createSpringFacet();
+  protected void createSpringFileSet(final String... springXmlPaths) throws Throwable {
+    final SpringFacet springFacet = createSpringFacet();
 
-    final SpringFacetConfiguration configuration = mySpringFacet.getConfiguration();
+    final SpringFacetConfiguration configuration = springFacet.getConfiguration();
     final Set<SpringFileSet> list = configuration.getFileSets();
     @NonNls final SpringFileSet fileSet = new SpringFileSet("", "default", configuration);
     list.add(fileSet);
-    return fileSet;
-  }
 
-  protected void addFile(final SpringFileSet fileSet, @NonNls final String path) {
-    myFixture.copyFileToProject(path);
+    for (final String springXmlPath : springXmlPaths) {
+      myFixture.copyFileToProject(springXmlPath);
+      final VirtualFile file = myFixture.getTempDirFixture().getFile(springXmlPath);
+      assert file != null;
+      fileSet.addFile(file);
+    }
 
-    final VirtualFile file = myFixture.getTempDirFixture().getFile(path);
-    assert file != null;
-    fileSet.addFile(file);
-
-    final SpringFacet springFacet = SpringFacet.getInstance(myModule);
-    assert springFacet != null;
     springFacet.getConfiguration().setModified();
   }
 
   protected SpringFacet createSpringFacet() {
-    final RunResult<SpringFacet> runResult = new WriteCommandAction<SpringFacet>(myFixture.getProject()) {
+    return new WriteCommandAction<SpringFacet>(myFixture.getProject()) {
       @Override
       protected void run(final Result<SpringFacet> result) throws Throwable {
-        final String name = SpringFacetType.getInstance().getPresentableName();
-        final SpringFacet facet = FacetManager.getInstance(myModule).addFacet(SpringFacetType.getInstance(), name, null);
+        final SpringFacetType springFacetType = SpringFacetType.getInstance();
+        final SpringFacet facet = FacetManager.getInstance(myModule).addFacet(springFacetType, "spring", null);
         result.setResult(facet);
       }
-    }.execute();
-    final Throwable throwable = runResult.getThrowable();
-    if (throwable != null) {
-      throw new RuntimeException(throwable);
-    }
-
-    return runResult.getResultObject();
+    }.execute().throwException().getResultObject();
   }
 
 }
