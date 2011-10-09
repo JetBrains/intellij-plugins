@@ -18,6 +18,8 @@ package com.intellij.struts2.dom.struts.impl.path;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
@@ -55,7 +57,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
                                   @NotNull final List<PsiReference> references,
                                   final boolean soft) {
     final StrutsModel model = StrutsManager.getInstance(psiElement.getProject())
-      .getModelByFile((XmlFile) psiElement.getContainingFile());
+                                           .getModelByFile((XmlFile) psiElement.getContainingFile());
     if (model == null) {
       return false;
     }
@@ -70,10 +72,17 @@ public class ActionPathResultContributor extends StrutsResultContributor {
       return false;
     }
 
+    final TextRange rangeInElement = ElementManipulators.getManipulator(psiElement).getRangeInElement(psiElement);
+    final String fullPath = psiElement.getText();
+    final String trimmedPath = rangeInElement.substring(fullPath);
+    final TextRange trimmedPathRange = TextRange.from(rangeInElement.getStartOffset(),
+                                                      PathReference.trimPath(trimmedPath).length());
+
     final PsiReference actionReference = new ActionPathReference((XmlTag) psiElement,
-                                                                 currentPackage,
+                                                                 trimmedPathRange, currentPackage,
                                                                  model,
-                                                                 actionExtensions);
+                                                                 actionExtensions
+    );
 
     references.add(actionReference);
     return false;
@@ -84,6 +93,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
     return createDefaultPathReference(path, element, StrutsIcons.ACTION);
   }
 
+
   private static class ActionPathReference extends PsiReferenceBase<XmlTag> {
 
     private final String currentPackage;
@@ -91,10 +101,12 @@ public class ActionPathResultContributor extends StrutsResultContributor {
     private final List<String> actionExtensions;
 
     private ActionPathReference(final XmlTag psiElement,
+                                final TextRange textRange,
                                 final String currentPackage,
                                 final StrutsModel model,
                                 @NotNull @NonNls final List<String> actionExtensions) {
-      super(psiElement, true);
+      super(psiElement, textRange, true);
+
       this.currentPackage = currentPackage;
       this.model = model;
       this.actionExtensions = actionExtensions;
@@ -161,9 +173,9 @@ public class ActionPathResultContributor extends StrutsResultContributor {
           }
 
           final LookupElementBuilder builder = LookupElementBuilder.create(action.getXmlTag(), fullPath)
-            .setBold(isInCurrentPackage)
-            .setIcon(StrutsIcons.ACTION)
-            .setTypeText(action.getNamespace());
+                                                                   .setBold(isInCurrentPackage)
+                                                                   .setIcon(StrutsIcons.ACTION)
+                                                                   .setTypeText(action.getNamespace());
           variants.add(builder);
         }
       }
