@@ -54,7 +54,9 @@ public class GoToSymbolProviderTest extends LightCodeInsightFixtureTestCase {
   protected LightProjectDescriptor getProjectDescriptor() {
     return new DefaultLightProjectDescriptor() {
       @Override
-      public void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry) {
+      public void configureModule(final Module module,
+                                  final ModifiableRootModel model,
+                                  final ContentEntry contentEntry) {
         super.configureModule(module, model, contentEntry);
         myFacet = BasicHighlightingTestCase.createFacet(module);
       }
