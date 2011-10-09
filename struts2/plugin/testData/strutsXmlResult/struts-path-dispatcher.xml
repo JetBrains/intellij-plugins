@@ -42,6 +42,7 @@
       </result>
       <result name="valid4">http://www.jetbrains.com</result>
       <result name="valid5">ftp://ftp.jetbrains.net</result>
+      <result name="valid6">${someActionProperty}</result>
 
       <!-- redirect -->
       <result name="RedirectValid1" type="redirect">index.jsp</result>

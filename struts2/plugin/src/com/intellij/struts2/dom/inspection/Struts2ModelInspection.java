@@ -16,6 +16,7 @@
 package com.intellij.struts2.dom.inspection;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsBundle;
@@ -106,9 +107,7 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
     // suppress <result> path
     if (converter instanceof StrutsPathReferenceConverter) {
 
-      // global URLs
-      if (stringValue != null &&
-          stringValue.contains("://")) {
+      if (stringValue == null) {
         return false;
       }
 
@@ -131,6 +130,16 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
       if (ConverterUtil.hasWildcardReference(stringValue)) {
         final Action action = DomUtil.getParentOfType(value, Action.class, true);
         return action != null && !action.isWildcardMapping();
+      }
+
+      // "${actionProperty}"
+      if (StringUtil.startsWith(stringValue, "${")) {
+        return false;
+      }
+
+      // global URLs
+      if (stringValue.contains("://")) {
+        return false;
       }
     }
 
