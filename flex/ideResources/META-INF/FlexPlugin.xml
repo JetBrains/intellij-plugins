@@ -19,6 +19,11 @@
       <interface-class>com.intellij.psi.JavaPsiFacade</interface-class>
       <implementation-class>com.intellij.psi.impl.JavaPsiFacadeImpl</implementation-class>
     </component>
+    <component>
+      <interface-class>com.intellij.psi.impl.file.impl.JavaFileManager</interface-class>
+      <implementation-class>com.intellij.psi.impl.file.impl.JavaFileManagerImpl</implementation-class>
+      <loadForDefaultProject/>
+    </component>
   </project-components>
 
   <extensionPoints>
