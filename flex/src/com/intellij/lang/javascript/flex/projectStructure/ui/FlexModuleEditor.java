@@ -3,14 +3,15 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleConfigurationEditor;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ui.configuration.CommonContentEntriesEditor;
 import com.intellij.openapi.roots.ui.configuration.ModuleConfigurationState;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nls;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import java.util.List;
 
 /**
  * @author ksafonov
@@ -23,7 +24,14 @@ public class FlexModuleEditor implements ModuleConfigurationEditor {
 
   public FlexModuleEditor(ModuleConfigurationState state) {
     myModule = state.getRootModel().getModule();
-    myEntriesEditor = new CommonContentEntriesEditor(myModule.getName(), state, true, true);
+    myEntriesEditor = new CommonContentEntriesEditor(myModule.getName(), state, true, true) {
+      @Override
+      protected List<ContentEntry> addContentEntries(VirtualFile[] files) {
+        List<ContentEntry> entries = super.addContentEntries(files);
+        addContentEntryPanels(entries.toArray(new ContentEntry[entries.size()]));
+        return entries;
+      }
+    };
     myEntriesEditor.getComponent().setBorder(new EmptyBorder(0, 0, 0, 0));
   }
 
