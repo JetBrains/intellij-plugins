@@ -53,8 +53,9 @@ public class FlexConfigImportSettings extends ConfigImportSettings {
 
   @Override
   protected String getCurrentHomeErrorText(String productWithVendor) {
-    return MessageFormat.format("You have selected current {0} installation home.\\nPlease select existing IntelliJ IDEA installation home",
-                                productWithVendor);
+    return MessageFormat
+      .format("<html>You have selected current {0} installation home.<br/>Please select existing IntelliJ IDEA installation home.</html>",
+              ApplicationNamesInfo.getInstance().getFullProductName());
   }
 
   @Override
