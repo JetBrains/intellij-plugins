@@ -44,11 +44,17 @@
 
   <change-notes>
     <![CDATA[
-<h4>Version 1.3.9, 10 October 2011 (build on JsTestDriver v1.3.3c)</h4>
+<h4>Version 1.3.9, 10 October 2011 (build on JsTestDriver-1.3.3c)</h4>
 <ul>
-  <li>Bugfix:
+  <li>Bug fixes:
     <ul>
-      <li>Stacktrace paths that are not started with 'http://' are clickable now.</li>
+      <li>Stacktrace navigation has been improved:
+        <ul>
+          <li>Stacktrace paths that are not started with 'http://' are clickable now.</li>
+          <li>Firefox 7 stacktrace path navigation has been fixes.</li>
+          <li>Positioning caret inside a line (if column number is provided) was wrong when there were leading TAB separators.</li>
+        </ul>
+      </li>
     </ul>
   </li>
 </ul>
