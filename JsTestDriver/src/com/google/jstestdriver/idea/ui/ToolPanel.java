@@ -29,7 +29,6 @@ import com.google.jstestdriver.idea.MessageBundle;
 import com.google.jstestdriver.idea.PluginResources;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.model.NullPathPrefix;
-import com.google.jstestdriver.server.JettyModule;
 import com.google.jstestdriver.server.JstdTestCaseStore;
 import com.google.jstestdriver.util.NullStopWatch;
 import com.intellij.openapi.application.ApplicationManager;
@@ -39,8 +38,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.Set;
 

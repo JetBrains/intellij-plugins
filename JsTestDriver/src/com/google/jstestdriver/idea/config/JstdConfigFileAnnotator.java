@@ -44,7 +44,7 @@ public class JstdConfigFileAnnotator implements Annotator {
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     YAMLFile yamlFile = CastUtils.tryCast(element, YAMLFile.class);
-    if (yamlFile != null) {
+    if (yamlFile != null && JstdConfigFileUtils.isJstdConfigFile(yamlFile)) {
       annotateFile(yamlFile, holder);
     }
   }

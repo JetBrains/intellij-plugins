@@ -17,10 +17,10 @@
 <idea-plugin>
   <name>JSTestDriver Plugin</name>
   <description>Execute JavaScript unit tests using JsTestDriver</description>
-  <version>1.3.8</version>
+  <version>1.3.9</version>
   <vendor url="http://code.google.com/p/js-test-driver/"
           email="js-test-driver@googlegroups.com">Google; JetBrains</vendor>
-  <idea-version since-build="106.0" until-build="109.0"/>
+  <idea-version since-build="106.0" until-build="111.0"/>
 
   <extensionPoints>
     <extensionPoint qualifiedName="com.google.jstestdriver.idea.jsCallTemplate" interface="com.google.jstestdriver.idea.assertFramework.codeInsight.JsCallTemplateContextProvider"/>
@@ -52,7 +52,7 @@
         <ul>
           <li>Stacktrace paths that are not started with 'http://' are clickable now.</li>
           <li>Firefox 7 stacktrace path navigation has been fixes.</li>
-          <li>Positioning caret inside a line (if column number is provided) was wrong when there were leading TAB separators.</li>
+          <li>Caret positioning inside a line (when column number was provided) was wrong if there were leading TAB separators.</li>
         </ul>
       </li>
     </ul>

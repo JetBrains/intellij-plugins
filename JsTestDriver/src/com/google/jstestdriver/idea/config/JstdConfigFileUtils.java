@@ -147,6 +147,14 @@ public class JstdConfigFileUtils {
     return fileType == JstdConfigFileType.INSTANCE;
   }
 
+  public static boolean isJstdConfigFile(@NotNull PsiFile psiFile) {
+    VirtualFile virtualFile = psiFile.getVirtualFile();
+    if (virtualFile == null) {
+      return false;
+    }
+    return isJstdConfigFile(virtualFile);
+  }
+
   public static boolean isJstdConfigFileByPsiElement(@NotNull PsiElement element) {
     PsiFile file = element.getContainingFile();
     if (file != null) {
