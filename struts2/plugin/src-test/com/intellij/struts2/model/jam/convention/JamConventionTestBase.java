@@ -33,6 +33,17 @@ import org.jetbrains.annotations.NotNull;
  */
 abstract class JamConventionTestBase<T extends JavaModuleFixtureBuilder> extends BasicHighlightingTestCase<T> {
 
+  @Override
+  @NotNull
+  protected String getTestDataLocation() {
+    return "model/jam/convention/" + getTestDataFolder();
+  }
+
+  @Override
+  protected boolean hasJavaSources() {
+    return true;
+  }
+
   /**
    * Returns the test data folder name located relative to {@code model/jam/convention}.
    *
@@ -49,17 +60,6 @@ abstract class JamConventionTestBase<T extends JavaModuleFixtureBuilder> extends
    * @throws Exception On errors.
    */
   protected void postConfigureModule(final T moduleBuilder) throws Exception {
-  }
-
-  @Override
-  @NotNull
-  protected String getTestDataLocation() {
-    return "model/jam/convention/" + getTestDataFolder();
-  }
-
-  @Override
-  protected boolean hasJavaSources() {
-    return true;
   }
 
   @Override
@@ -84,7 +84,7 @@ abstract class JamConventionTestBase<T extends JavaModuleFixtureBuilder> extends
     myFixture.configureByFile(SOURCE_PATH + "/" + StringUtil.replace(clazzName, ".", "/") + ".java");
 
     final PsiClass myClass = JavaPsiFacade.getInstance(myProject)
-      .findClass(clazzName, GlobalSearchScope.moduleScope(myModule));
+                                          .findClass(clazzName, GlobalSearchScope.moduleScope(myModule));
     assertNotNull("could not find class '" + clazzName + "'", myClass);
 
     final Jam jam = meta.getJamElement(myClass);
