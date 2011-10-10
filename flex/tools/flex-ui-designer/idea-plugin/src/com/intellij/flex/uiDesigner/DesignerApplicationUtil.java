@@ -63,7 +63,7 @@ final class DesignerApplicationUtil {
     }
 
     final List<Sdk> sdks = new ArrayList<Sdk>();
-    for (Sdk sdk: FlexUtils.getAllFlexSkds()) {
+    for (Sdk sdk: FlexSdkUtils.getAllFlexSdks()) {
       if (sdk.getSdkType() instanceof IFlexSdkType && StringUtil.compareVersionNumbers(sdk.getVersionString(), "4.5") >= 0) {
         sdks.add(sdk);
       }

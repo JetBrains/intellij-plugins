@@ -9,6 +9,8 @@ import com.intellij.execution.process.ProcessEvent;
 import com.intellij.facet.FacetManager;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.module.Module;
@@ -20,6 +22,9 @@ import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
+import com.intellij.openapi.roots.impl.libraries.LibraryEx;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.ClasspathEditor;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.util.*;
@@ -31,6 +36,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.peer.PeerFactory;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.PlatformUtils;
 import com.intellij.util.Processor;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.io.ZipUtil;
@@ -285,11 +291,17 @@ public class FlexSdkUtils {
   }
 
   public static List<Sdk> getAllFlexSdks() {
-    return ProjectJdkTable.getInstance().getSdksOfType(FlexSdkType.getInstance());
-  }
+    if (PlatformUtils.isFlexIde()) {
+      List<Sdk> result = new ArrayList<Sdk>();
+      for (Library library : ApplicationLibraryTable.getApplicationTable().getLibraries()) {
+        if (FlexSdk.isFlexSdk(library)) {
+          result.add(new FlexSdkWrapper((LibraryEx)library, TargetPlatform.Web));
+        }
+      }
+      return result;
+    }
 
-  public static List<Sdk> getAllAirSdks() {
-    return ProjectJdkTable.getInstance().getSdksOfType(AirSdkType.getInstance());
+    return ProjectJdkTable.getInstance().getSdksOfType(FlexSdkType.getInstance());
   }
 
   public static List<Sdk> getAllFlexOrAirOrMobileSdks() {

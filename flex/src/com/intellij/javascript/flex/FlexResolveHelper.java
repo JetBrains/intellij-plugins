@@ -1,12 +1,15 @@
 package com.intellij.javascript.flex;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.JSResolveHelper;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -124,6 +127,11 @@ public class FlexResolveHelper implements JSResolveHelper {
 
   public boolean isAdequatePlaceForImport(final PsiElement place) {
     return place instanceof CssString;
+  }
+
+  @Nullable
+  public Sdk getFlexSdk(Module module) {
+    return FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
   }
 
   public static boolean processAllMxmlAndFxgFiles(final GlobalSearchScope scope,
