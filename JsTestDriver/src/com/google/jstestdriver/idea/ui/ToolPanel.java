@@ -18,6 +18,7 @@ package com.google.jstestdriver.idea.ui;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.*;
 import com.google.jstestdriver.browser.BrowserIdStrategy;
+import com.google.jstestdriver.config.ExecutionType;
 import com.google.jstestdriver.hooks.FileInfoScheme;
 import com.google.jstestdriver.hooks.FileLoadPostProcessor;
 import com.google.jstestdriver.hooks.ServerListener;
@@ -28,7 +29,6 @@ import com.google.jstestdriver.idea.MessageBundle;
 import com.google.jstestdriver.idea.PluginResources;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.model.NullPathPrefix;
-import com.google.jstestdriver.server.JettyModule;
 import com.google.jstestdriver.server.JstdTestCaseStore;
 import com.google.jstestdriver.util.NullStopWatch;
 import com.intellij.openapi.application.ApplicationManager;
@@ -38,8 +38,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.Set;
 
@@ -150,8 +148,6 @@ public class ToolPanel extends JPanel implements ServerListener {
     public void actionPerformed(ActionEvent e) {
       CapturedBrowsers browsers = new CapturedBrowsers(new BrowserIdStrategy(new TimeImpl()));
 
-      changeKeystrokeFieldInJettyModuleClass();
-
       FileLoader fileLoader = new ProcessingFileLoader(
           new SimpleFileReader(),
           Collections.<FileLoadPostProcessor>singleton(new InlineHtmlProcessor(new HtmlDocParser(), new HtmlDocLexer())),
@@ -170,23 +166,6 @@ public class ToolPanel extends JPanel implements ServerListener {
 
       final String serverUrl = format("http://{0}:{1,number,###}/capture", InfoPanel.getHostName(), serverPort);
       myCaptureUrl.setText(serverUrl);
-    }
-  }
-
-  private void changeKeystrokeFieldInJettyModuleClass() {
-    try {
-      Field field = JettyModule.class.getDeclaredField("KEYSTORE");
-      field.setAccessible(true);
-
-      Field modifiersField = Field.class.getDeclaredField("modifiers");
-      modifiersField.setAccessible(true);
-      modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-
-      field.set(null, getClass().getClassLoader().getResource("com/google/jstestdriver/keystore"));
-    } catch (NoSuchFieldException e) {
-      throw new RuntimeException(e);
-    } catch (IllegalAccessException e) {
-      throw new RuntimeException(e);
     }
   }
 
@@ -209,7 +188,7 @@ public class ToolPanel extends JPanel implements ServerListener {
 
     public JsTestDriverServer create(int port, int sslPort, JstdTestCaseStore testCaseStore) {
       return new JsTestDriverServerImpl(port, sslPort, testCaseStore, myCapturedBrowsers, myTimeout,
-          myHandlerPathPrefix, myServerListeners, Collections.<FileInfoScheme>emptySet());
+          myHandlerPathPrefix, myServerListeners, Collections.<FileInfoScheme>emptySet(), ExecutionType.INTERACTIVE);
     }
   }
 
