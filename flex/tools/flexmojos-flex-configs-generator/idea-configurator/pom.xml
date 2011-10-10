@@ -16,5 +16,11 @@
       <version>4.0-RC2</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-maven-plugin</artifactId>
+      <version>4.0-RC2</version>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
 </project>

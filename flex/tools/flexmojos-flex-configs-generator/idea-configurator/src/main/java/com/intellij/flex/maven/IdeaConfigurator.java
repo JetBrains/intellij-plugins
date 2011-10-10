@@ -121,7 +121,7 @@ public class IdeaConfigurator implements FlexConfigGenerator {
   private <E> void build(E configuration, Class configClass, String indent, String configurationName) throws Exception {
     boolean parentTagWritten = configurationName == null;
 
-    final Method[] methods = configClass.getDeclaredMethods();
+    final Method[] methods = configClass.getMethods();
     Arrays.sort(methods, new Comparator<Method>() {
       @Override
       public int compare(Method o1, Method o2) {
@@ -131,7 +131,7 @@ public class IdeaConfigurator implements FlexConfigGenerator {
 
     for (Method method : methods) {
       method.setAccessible(true);
-      if (!Modifier.isPublic(method.getModifiers()) || method.getParameterTypes().length != 0) {
+      if (method.getParameterTypes().length != 0) {
         continue;
       }
 

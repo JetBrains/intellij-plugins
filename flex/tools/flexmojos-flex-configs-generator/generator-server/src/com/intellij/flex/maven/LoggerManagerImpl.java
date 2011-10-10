@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 class LoggerManagerImpl extends AbstractLoggerManager {
-  private final Logger logger;
+  final Logger logger;
 
   public LoggerManagerImpl(MyOutputStream out) {
     logger = new LoggerImpl(getThreshold(), out);
@@ -52,19 +52,22 @@ class LoggerManagerImpl extends AbstractLoggerManager {
 
     @Override
     public void debug(String s, Throwable throwable) {
-
+      error(s, throwable);
     }
 
     @Override
     public void info(String s, Throwable throwable) {
+      error(s, throwable);
     }
 
     @Override
     public void warn(String s, Throwable throwable) {
+      error(s, throwable);
     }
 
     @Override
     public void error(String s, Throwable throwable) {
+      System.out.print('\n');
       System.out.print(s);
       System.out.print(throwableToString(throwable));
       //try {
@@ -90,15 +93,16 @@ class LoggerManagerImpl extends AbstractLoggerManager {
       return this;
     }
 
-    private static String throwableToString(Throwable throwable) {
+    private static CharSequence throwableToString(Throwable throwable) {
       if (throwable == null) {
         return "";
       }
 
       StringWriter stringWriter = new StringWriter();
+      stringWriter.append('\n');
       PrintWriter writer = new PrintWriter(stringWriter);
       throwable.printStackTrace(writer);
-      return stringWriter.getBuffer().toString();
+      return stringWriter.getBuffer();
     }
   }
 }

@@ -7,7 +7,7 @@ import org.apache.maven.project.MavenProject;
 import java.io.File;
 import java.io.IOException;
 
-interface FlexConfigGenerator {
+public interface FlexConfigGenerator {
   void generate(Mojo configuration, File sourceFile) throws Exception;
 
   void generate(Mojo configuration) throws Exception;
