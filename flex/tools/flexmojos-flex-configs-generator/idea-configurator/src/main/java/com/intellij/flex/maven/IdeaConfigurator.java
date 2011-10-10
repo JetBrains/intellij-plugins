@@ -19,7 +19,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-public class IdeaConfigurator {
+public class IdeaConfigurator implements FlexConfigGenerator {
   private static final Map<String, String> CHILD_TAG_NAME_MAP = new HashMap<String, String>(12);
   
   protected static final String PATH_ELEMENT = "path-element";
@@ -36,15 +36,15 @@ public class IdeaConfigurator {
   private MojoExecution flexmojosGeneratorMojoExecution;
   private ExpressionEvaluator flexmojosGeneratorExpressionEvaluator;
 
-  protected final File configsDir;
+  protected final File outputDirectory;
   protected File sharedFontsSer;
   protected String sharedFontsSerPath;
 
-  public IdeaConfigurator(MavenSession session) {
+  public IdeaConfigurator(MavenSession session, File outputDirectory) {
     this.session = session;
-    configsDir = new File(session.getTopLevelProject().getBasedir(), ".idea/flexmojos");
+    this.outputDirectory = outputDirectory;
     //noinspection ResultOfMethodCallIgnored
-    configsDir.mkdirs();
+    outputDirectory.mkdirs();
   }
 
   static {
@@ -61,6 +61,7 @@ public class IdeaConfigurator {
     CHILD_TAG_NAME_MAP.put("theme", "filename");
   }
 
+  @Override
   public void generate(Mojo configuration, File sourceFile) throws Exception {
     //noinspection NullableProblems
     build(configuration, ICommandLineConfiguration.class, "\n\t", null);
@@ -70,10 +71,12 @@ public class IdeaConfigurator {
     out.append("\n\t</file-specs>");
   }
 
+  @Override
   public void generate(Mojo configuration) throws Exception {
     build(configuration, ICompcConfiguration.class, "\n\t", null);
   }
 
+  @Override
   public void preGenerate(MavenProject project, String classifier, MojoExecution flexmojosGeneratorMojoExecution) throws IOException {
     this.flexmojosGeneratorMojoExecution = flexmojosGeneratorMojoExecution;
     build = project.getBuild();
@@ -84,6 +87,7 @@ public class IdeaConfigurator {
     out.write("<flex-config xmlns=\"http://www.adobe.com/2006/flex-config\">");
   }
 
+  @Override
   public void postGenerate() {
     build = null;
     flexmojosGeneratorMojoExecution = null;
@@ -104,7 +108,7 @@ public class IdeaConfigurator {
   }
 
   protected String getConfigFilePath(MavenProject project, String classifier) {
-    StringBuilder pathBuilder = new StringBuilder(configsDir.getAbsolutePath()).append(File.separatorChar);
+    StringBuilder pathBuilder = new StringBuilder(outputDirectory.getAbsolutePath()).append(File.separatorChar);
     // artifact id is first in path — it is convenient for us
     pathBuilder.append(project.getArtifactId()).append('-').append(project.getGroupId());
     if (classifier != null) {
@@ -363,7 +367,7 @@ public class IdeaConfigurator {
 
       if (value.equals(defaultPath)) {
         if (sharedFontsSer == null) {
-          sharedFontsSer = new File(configsDir, FONTS_SER);
+          sharedFontsSer = new File(outputDirectory, FONTS_SER);
           if (!sharedFontsSer.exists()) {
             FileUtils.copyFile(fontsSer, sharedFontsSer);
           }
@@ -383,11 +387,18 @@ public class IdeaConfigurator {
   }
 
   private static String camelCaseToSnake(final String s) {
-    StringBuilder builder = new StringBuilder();
+    StringBuilder builder = new StringBuilder(s.length() + 4 /* probable max hyphen count */);
+    boolean isFirst = true;
     for (int i = removePrefix(s), n = s.length(); i < n; i++) {
       char c = s.charAt(i);
       if (Character.isUpperCase(c)) {
-        builder.append('-').append(Character.toLowerCase(c));
+        if (!isFirst) {
+          builder.append('-');
+        }
+        else {
+          isFirst = false;
+        }
+        builder.append(Character.toLowerCase(c));
       }
       else {
         builder.append(c);

@@ -12,7 +12,7 @@
 
   <modules>
     <module>idea-configurator</module>
-    <module>idea-flexmojos-maven-plugin</module>
+    <!--<module>idea-flexmojos-maven-plugin</module>-->
   </modules>
 
   <build>
