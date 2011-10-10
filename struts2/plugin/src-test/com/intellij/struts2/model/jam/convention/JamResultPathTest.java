@@ -46,6 +46,7 @@ public class JamResultPathTest extends JamConventionTestBase<WebModuleFixtureBui
   /**
    * "property" variants from struts.properties.
    */
+  @SkipStrutsLibrary
   public void testCompletionActionProperty() throws Exception {
     myFixture.testCompletionVariants("/src/testcompletion/ActionProperty.java",
                                      "myProperty1", "myProperty2");
@@ -54,6 +55,7 @@ public class JamResultPathTest extends JamConventionTestBase<WebModuleFixtureBui
   /**
    * "property" resolving to key in struts.properties.
    */
+  @SkipStrutsLibrary
   public void testResolveActionProperty() throws Exception {
     final JamResultPath jamResultPath = getClassJam("jam.ActionProperty", JamResultPath.META_CLASS);
     final IProperty property = jamResultPath.getProperty().getValue();
@@ -64,6 +66,7 @@ public class JamResultPathTest extends JamConventionTestBase<WebModuleFixtureBui
   /**
    * "value" resolving to web-dir.
    */
+  @SkipStrutsLibrary
   public void testResolveActionValue() throws Exception {
     myFixture.configureByFile("/WEB-INF/customContent/test.jsp");
 

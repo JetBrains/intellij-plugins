@@ -40,12 +40,14 @@ public class StrutsIncludeTest extends BasicStrutsHighlightingTestCase<JavaModul
     moduleBuilder.addSourceRoot(SOURCE_DIR);
   }
 
+  @SkipStrutsLibrary
   public void testInclude() throws Throwable {
     performHighlightingTest("src/struts.xml",
                             "src/struts-include.xml",
                             "src/com/test/struts-sub.xml");
   }
 
+  @SkipStrutsLibrary
   public void testIncludeNotInFileset() throws Throwable {
     performHighlightingTest("src/struts-notinfileset.xml",
                             "src/com/test/struts-sub.xml");

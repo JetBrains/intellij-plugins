@@ -44,6 +44,7 @@ public class StrutsHighlightingTest extends BasicStrutsHighlightingTestCase<Java
     performHighlightingTest("struts-param.xml");
   }
 
+  @SkipStrutsLibrary
   public void testConstants() throws Throwable {
     performHighlightingTest("struts-constants.xml");
   }
@@ -64,10 +65,12 @@ public class StrutsHighlightingTest extends BasicStrutsHighlightingTestCase<Java
     performHighlightingTest("struts-unknownhandlerstack.xml");
   }
 
+  @SkipStrutsLibrary
   public void testActionAllowedMethods() throws Throwable {
     performHighlightingTest("struts-action-allowedMethods.xml");
   }
 
+  @SkipStrutsLibrary
   public void testStrutsWithErrorsNotInFilesetNoHighlighting() throws Throwable {
     createStrutsFileSet("struts-default.xml");
     myFixture.testHighlighting(false, false, false, "struts-errors.xml");

@@ -59,6 +59,7 @@ public class StrutsConstantManagerNoCustomTest extends StrutsConstantManagerTest
   /**
    * Non-existent configuration property.
    */
+  @SkipStrutsLibrary
   public void testNoCustomNonExistentConfiguration() throws Throwable {
     createStrutsFileSet(STRUTS_XML);
 

@@ -39,6 +39,7 @@ public class StrutsIntentionTest extends BasicStrutsHighlightingTestCase<JavaMod
    *
    * @throws Throwable Any exceptions.
    */
+  @SkipStrutsLibrary
   public void testCreateActionMethodIntention() throws Throwable {
     createStrutsFileSet("struts-action-method.xml");
     final List<IntentionAction> list = myFixture.getAllQuickFixes("struts-action-method.xml");

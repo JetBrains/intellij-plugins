@@ -65,17 +65,20 @@ public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase {
     AnnotatorTestUtils.checkGutterTargets(renderer, nameResolveFunction, expectedNames);
   }
 
+  @SkipStrutsLibrary
   public void testGutterMyAction() {
     createStrutsFileSet("struts-actionClass.xml");
     checkGutterTargetElements("/src/MyAction.java", ACTION_NAME_RESOLVE, "myActionPath");
   }
 
+  @SkipStrutsLibrary
   public void testGutterMyActionMultipleMappings() {
     createStrutsFileSet("struts-actionClass-multiple_mappings.xml");
     checkGutterTargetElements("/src/MyAction.java", ACTION_NAME_RESOLVE,
                               "myActionPath1", "myActionPath2", "myActionPath3");
   }
 
+  @SkipStrutsLibrary
   public void testGutterValidationXml() {
     createStrutsFileSet("struts-validation.xml");
     myFixture.copyFileToProject("/src/com/MyValidationAction-validation.xml");

@@ -40,6 +40,7 @@ public class StrutsCompletionTest extends BasicStrutsHighlightingTestCase<JavaMo
     return true;
   }
 
+  @SkipStrutsLibrary
   public void testCompletionVariantsResultName() throws Throwable {
     performCompletionVariantTest("struts-completionvariants-result_name.xml",
                                  "error", "input", "login", "success");
@@ -55,6 +56,7 @@ public class StrutsCompletionTest extends BasicStrutsHighlightingTestCase<JavaMo
                                  "chain", "dispatcher", "freemarker", "httpheader", "velocity");
   }
 
+  @SkipStrutsLibrary
   public void testCompletionVariantsPackageExtends() throws Throwable {
     performCompletionVariantTest("struts-completionvariants-package_extends.xml",
                                  "extendTest", "extendTest2");
@@ -75,6 +77,7 @@ public class StrutsCompletionTest extends BasicStrutsHighlightingTestCase<JavaMo
    *
    * @throws Throwable On any errors.
    */
+  @SkipStrutsLibrary
   public void testCompletionVariantsActionMethod() throws Throwable {
     performCompletionVariantTest("struts-completionvariants-action_method.xml",
                                  "validActionMethod",

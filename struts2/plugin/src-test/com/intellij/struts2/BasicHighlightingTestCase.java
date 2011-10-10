@@ -34,6 +34,10 @@ import com.intellij.testFramework.fixtures.*;
 import org.jetbrains.annotations.NonNls;
 
 import java.io.File;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Set;
 
 /**
@@ -72,6 +76,14 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   @NonNls
   protected static final String STRUTS2_TILES_PLUGIN_JAR = "struts2-tiles-plugin-" + STRUTS2_VERSION + ".jar";
 
+  /**
+   * If present, Struts libraries are <em>not</em> added to classpath automatically.
+   */
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target({ElementType.METHOD, ElementType.TYPE})
+  public @interface SkipStrutsLibrary {
+  }
+
   protected Class<T> getModuleFixtureBuilderClass() {
     //noinspection unchecked
     return (Class<T>) JavaModuleFixtureBuilder.class;
@@ -93,6 +105,16 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
    */
   protected boolean hasJavaSources() {
     return false;
+  }
+
+  /**
+   * Returns true if test uses Struts JARs.
+   *
+   * @return true.
+   * @see SkipStrutsLibrary
+   */
+  protected boolean usesStrutsLibrary() {
+    return !annotatedWith(SkipStrutsLibrary.class);
   }
 
   @Override
@@ -141,7 +163,10 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
       moduleBuilder.addContentRoot(getTestDataPath() + SOURCE_PATH);
       moduleBuilder.addSourceRoot(SOURCE_DIR);
     }
-    addStrutsJars(moduleBuilder);
+
+    if (usesStrutsLibrary()) {
+      addStrutsJars(moduleBuilder);
+    }
   }
 
   /**

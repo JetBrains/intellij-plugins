@@ -34,24 +34,28 @@ public class JamParentPackageTest extends JamConventionTestBase<JavaModuleFixtur
     return "parentPackage";
   }
 
+  @SkipStrutsLibrary
   public void testCompletionAction() throws Exception {
     createStrutsFileSet(STRUTS_XML);
     myFixture.testCompletionVariants("/src/testcompletion/Action.java",
                                      "myPackage", "myPackage2");
   }
 
+  @SkipStrutsLibrary
   public void testCompletionPackageInfo() throws Exception {
     createStrutsFileSet(STRUTS_XML);
     myFixture.testCompletionVariants("/src/testcompletion/package-info.java",
                                      "myPackage", "myPackage2");
   }
 
+  @SkipStrutsLibrary
   public void testResolveAction() throws Exception {
     createStrutsFileSet(STRUTS_XML);
     final JamParentPackage jamParentPackage = getClassJam("jam.Action", JamParentPackage.META_CLASS);
     checkResolve(jamParentPackage);
   }
 
+  @SkipStrutsLibrary
   public void testResolveJamPackageInfo() throws Exception {
     createStrutsFileSet(STRUTS_XML);
 

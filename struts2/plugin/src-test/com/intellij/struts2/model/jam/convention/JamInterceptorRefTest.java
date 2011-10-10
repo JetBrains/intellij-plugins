@@ -32,12 +32,14 @@ public class JamInterceptorRefTest extends JamConventionTestBase<JavaModuleFixtu
     return "interceptorRef";
   }
 
+  @SkipStrutsLibrary
   public void testCompletionActionSingle() throws Exception {
     createStrutsFileSet(STRUTS_XML);
     myFixture.testCompletionVariants("/src/completion/ActionSingle.java",
                                      "myCustomInterceptor", "myInterceptorStack");
   }
 
+  @SkipStrutsLibrary
   public void testResolveActionSingle() throws Exception {
     createStrutsFileSet(STRUTS_XML);
     final JamInterceptorRef jamInterceptorRef = getClassJam("jam.ActionSingle", JamInterceptorRef.META_CLASS);

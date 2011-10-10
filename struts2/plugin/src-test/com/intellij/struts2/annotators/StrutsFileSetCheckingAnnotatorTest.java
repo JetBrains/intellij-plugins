@@ -33,12 +33,14 @@ public class StrutsFileSetCheckingAnnotatorTest extends BasicHighlightingTestCas
     return "strutsXmlHighlighting";
   }
 
+  @SkipStrutsLibrary
   public void testStrutsXmlNoFacetSetup() throws Throwable {
     final IntentionAction intention = myFixture.getAvailableIntention("Edit Struts 2 facet settings",
                                                                       "struts-simple.xml");
     assertNotNull(intention);
   }
 
+  @SkipStrutsLibrary
   public void testStrutsXmlNotInFileSet() throws Throwable {
     createStrutsFileSet("struts-simple.xml");
     final IntentionAction intention = myFixture.getAvailableIntention("Add struts-default.xml to file set",
