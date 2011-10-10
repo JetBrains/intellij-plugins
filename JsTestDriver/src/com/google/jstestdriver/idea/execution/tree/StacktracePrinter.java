@@ -114,7 +114,7 @@ class StacktracePrinter extends TestsOutputConsolePrinter {
     if (columnNo != null) {
       columnNo = hyperlinkInfoHelper.zeroBaseColumnNo(columnNo);
     }
-    return writeStructuredUrlIfPossible(urlStr, lineNo, columnNo);
+    return createHyperlinkInfoFromParts(urlStr, lineNo, columnNo);
   }
 
   private static Integer toInteger(@NotNull String s) {
@@ -125,32 +125,43 @@ class StacktracePrinter extends TestsOutputConsolePrinter {
     }
   }
 
-  private HyperlinkInfo writeStructuredUrlIfPossible(String urlStr, final int zbLineNo, final @Nullable Integer zbColumnNo) {
+  private HyperlinkInfo createHyperlinkInfoFromParts(String urlStr,
+                                                     final int zbLineNo,
+                                                     final @Nullable Integer zbColumnNo) {
+    final File file = findFileByPath(urlStr);
+    if (file != null && file.isFile()) {
+      return new HyperlinkInfo() {
+        @Override
+        public void navigate(final Project project) {
+          ApplicationManager.getApplication().runReadAction(new Runnable() {
+            @Override
+            public void run() {
+              final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByIoFile(file);
+              if (virtualFile != null) {
+                int col = zbColumnNo != null ? zbColumnNo : 0;
+                OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile, zbLineNo, col);
+                openFileDescriptor.navigate(true);
+              }
+            }
+          });
+        }
+      };
+    }
+    return null;
+  }
+
+  private File findFileByPath(String urlStr) {
+    File file = myConfigStructure.findLoadFile(urlStr);
+    if (file != null) {
+      return file;
+    }
     try {
       URL url = new URL(urlStr);
       String path = url.getPath();
       if (path.startsWith(DEFAULT_PATH_PREFIX)) {
         path = path.substring(DEFAULT_PATH_PREFIX.length());
       }
-      final File file = myConfigStructure.findLoadFile(path);
-      if (file != null && file.isFile()) {
-        return new HyperlinkInfo() {
-          @Override
-          public void navigate(final Project project) {
-            ApplicationManager.getApplication().runReadAction(new Runnable() {
-              @Override
-              public void run() {
-                final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByIoFile(file);
-                if (virtualFile != null) {
-                  int col = zbColumnNo != null ? zbColumnNo : 0;
-                  OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile, zbLineNo, col);
-                  openFileDescriptor.navigate(true);
-                }
-              }
-            });
-          }
-        };
-      }
+      return myConfigStructure.findLoadFile(path);
     } catch (MalformedURLException ignored) {
     }
     return null;
@@ -172,7 +183,7 @@ class StacktracePrinter extends TestsOutputConsolePrinter {
 
     private static final ChromeHyperlinkInfoHelper INSTANCE = new ChromeHyperlinkInfoHelper();
     private static final Pattern[] URL_PATTERNS = {
-        Pattern.compile("^\\s*at\\s.*\\((http://[^\\(]*)\\)$"),
+        Pattern.compile("^\\s*at\\s.*\\(([^\\(]*)\\)$"),
         Pattern.compile("^\\s*at\\s*(http://[^\\(]*)$")
     };
 

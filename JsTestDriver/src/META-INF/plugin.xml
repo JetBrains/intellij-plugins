@@ -44,6 +44,15 @@
 
   <change-notes>
     <![CDATA[
+<h4>Version 1.3.9, 10 October 2011 (build on JsTestDriver v1.3.3c)</h4>
+<ul>
+  <li>Bugfix:
+    <ul>
+      <li>Stacktrace paths that are not started with 'http://' are clickable now.</li>
+    </ul>
+  </li>
+</ul>
+
 <h4>Version 1.3.8, 6 October 2011 (build on JsTestDriver v1.3.3b)</h4>
 <ul>
   <li>New features:
