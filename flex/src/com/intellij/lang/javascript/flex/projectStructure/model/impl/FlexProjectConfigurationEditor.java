@@ -201,8 +201,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
       configuration.setMainClass(defaultConfiguration.getMainClass());
     }
 
-    if (configuration.getTargetPlatform() != TargetPlatform.Web ||
-        configuration.getOutputType() != OutputType.Application) {
+    if (configuration.getTargetPlatform() != TargetPlatform.Web || configuration.getOutputType() != OutputType.Application) {
       configuration.setUseHtmlWrapper(defaultConfiguration.isUseHtmlWrapper());
       configuration.setWrapperTemplatePath(defaultConfiguration.getWrapperTemplatePath());
     }
@@ -220,6 +219,18 @@ public class FlexProjectConfigurationEditor implements Disposable {
       if (!BCUtils.isApplicable(nature, i.next().getDependencyType().getLinkageType())) {
         i.remove();
       }
+    }
+
+    if (configuration.getTargetPlatform() != TargetPlatform.Desktop || configuration.getOutputType() != OutputType.Application) {
+      ((AirDesktopPackagingOptionsImpl)defaultConfiguration.getAirDesktopPackagingOptions())
+        .applyTo(((AirDesktopPackagingOptionsImpl)configuration.getAirDesktopPackagingOptions()));
+    }
+
+    if (configuration.getTargetPlatform() != TargetPlatform.Mobile || configuration.getOutputType() != OutputType.Application) {
+      ((AndroidPackagingOptionsImpl)defaultConfiguration.getAndroidPackagingOptions())
+        .applyTo(((AndroidPackagingOptionsImpl)configuration.getAndroidPackagingOptions()));
+      ((IosPackagingOptionsImpl)defaultConfiguration.getIosPackagingOptions())
+        .applyTo(((IosPackagingOptionsImpl)configuration.getIosPackagingOptions()));
     }
   }
 
