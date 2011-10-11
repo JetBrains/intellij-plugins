@@ -1,11 +1,16 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.execution.ExecutionBundle;
 import com.intellij.ide.ui.ListCellRendererWrapper;
+import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
+import com.intellij.lang.javascript.ui.JSClassChooserDialog;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
@@ -14,9 +19,11 @@ import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.containers.ContainerUtil;
@@ -46,7 +53,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   private JComboBox myOptimizeForCombo;
 
   private JLabel myMainClassLabel;
-  private JTextField myMainClassTextField;
+  private JSReferenceEditor myMainClassComponent;
   private JTextField myOutputFileNameTextField;
   private TextFieldWithBrowseButton myOutputFolderField;
 
@@ -186,7 +193,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
     final boolean showMainClass = outputType == OutputType.Application || outputType == OutputType.RuntimeLoadedModule;
     myMainClassLabel.setVisible(showMainClass);
-    myMainClassTextField.setVisible(showMainClass);
+    myMainClassComponent.setVisible(showMainClass);
 
     myHtmlWrapperPanel.setVisible(
       myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Web && myOutputTypeCombo.getSelectedItem() == OutputType.Application);
@@ -238,7 +245,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     if (myConfiguration.isPureAs() != myPureActionScriptCheckBox.isSelected()) return true;
     if (myConfiguration.getOutputType() != myOutputTypeCombo.getSelectedItem()) return true;
     if (!myConfiguration.getOptimizeFor().equals(myOptimizeForCombo.getSelectedItem())) return true;
-    if (!myConfiguration.getMainClass().equals(myMainClassTextField.getText().trim())) return true;
+    if (!myConfiguration.getMainClass().equals(myMainClassComponent.getText().trim())) return true;
     if (!myConfiguration.getOutputFileName().equals(myOutputFileNameTextField.getText().trim())) return true;
     if (!myConfiguration.getOutputFolder().equals(FileUtil.toSystemIndependentName(myOutputFolderField.getText().trim()))) return true;
     if (myConfiguration.isUseHtmlWrapper() != myUseHTMLWrapperCheckBox.isSelected()) return true;
@@ -286,7 +293,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     configuration.setPureAs(myPureActionScriptCheckBox.isSelected());
     configuration.setOutputType((OutputType)myOutputTypeCombo.getSelectedItem());
     configuration.setOptimizeFor((String)myOptimizeForCombo.getSelectedItem()); // todo myOptimizeForCombo should contain live information
-    configuration.setMainClass(myMainClassTextField.getText().trim());
+    configuration.setMainClass(myMainClassComponent.getText().trim());
     configuration.setOutputFileName(myOutputFileNameTextField.getText().trim());
     configuration.setOutputFolder(FileUtil.toSystemIndependentName(myOutputFolderField.getText().trim()));
     configuration.setUseHtmlWrapper(myUseHTMLWrapperCheckBox.isSelected());
@@ -301,7 +308,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myOutputTypeCombo.setSelectedItem(myConfiguration.getOutputType());
     myOptimizeForCombo.setSelectedItem(myConfiguration.getOptimizeFor());
 
-    myMainClassTextField.setText(myConfiguration.getMainClass());
+    myMainClassComponent.setText(myConfiguration.getMainClass());
     myOutputFileNameTextField.setText(myConfiguration.getOutputFileName());
     myOutputFolderField.setText(FileUtil.toSystemDependentName(myConfiguration.getOutputFolder()));
     myUseHTMLWrapperCheckBox.setSelected(myConfiguration.isUseHtmlWrapper());
@@ -357,6 +364,15 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
   public boolean isParentFor(final DependenciesConfigurable dependenciesConfigurable) {
     return myDependenciesConfigurable == dependenciesConfigurable;
+  }
+
+  private void createUIComponents() {
+    final String baseClass = myConfiguration.getOutputType() == OutputType.RuntimeLoadedModule
+                             ? FlexCompilerSettingsEditor.MODULE_BASE_CLASS_NAME
+                             : FlexCompilerSettingsEditor.SPRITE_CLASS_NAME;
+    final Condition<JSClass> filter = new JSClassChooserDialog.PublicInheritor(myModule, baseClass, true);
+    myMainClassComponent = JSReferenceEditor.forClassName("", myModule.getProject(), null, GlobalSearchScope.moduleScope(myModule), null,
+                                                          filter, ExecutionBundle.message("choose.main.class.dialog.title"));
   }
 
   public static FlexIdeBCConfigurable unwrap(CompositeConfigurable c) {
