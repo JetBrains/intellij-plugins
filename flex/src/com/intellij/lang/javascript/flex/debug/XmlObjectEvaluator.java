@@ -1,10 +1,12 @@
 package com.intellij.lang.javascript.flex.debug;
 
+import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xdebugger.frame.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -150,6 +152,11 @@ public class XmlObjectEvaluator {
 
     @Override
     public void setErrorMessage(@NotNull String errorMessage, @Nullable XDebuggerTreeNodeHyperlink link) {
+    }
+
+    @Override
+    public void setMessage(@NotNull String message,
+                           final Icon icon, @NotNull final SimpleTextAttributes attributes, @Nullable XDebuggerTreeNodeHyperlink link) {
     }
 
     public boolean isObsolete() {
