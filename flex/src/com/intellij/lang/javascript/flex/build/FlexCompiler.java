@@ -529,6 +529,19 @@ public class FlexCompiler implements SourceProcessingCompiler {
       }
     }
 
+    if (nature.isMobilePlatform() && nature.isApp()) {
+      if (config.getAndroidPackagingOptions().isEnabled() && config.getAndroidPackagingOptions().getPackageFileName().isEmpty()) {
+        throw new ConfigurationException(
+               FlexBundle.message("android.package.not.set.for.bc.0.of.module.1", config.getName(), moduleName),
+               FlexBundle.message("project.setup.problem.title"));
+      }
+      if (config.getIosPackagingOptions().isEnabled() && config.getIosPackagingOptions().getPackageFileName().isEmpty()) {
+        throw new ConfigurationException(
+               FlexBundle.message("ios.package.not.set.for.bc.0.of.module.1", config.getName(), moduleName),
+               FlexBundle.message("project.setup.problem.title"));
+      }
+    }
+
     checkDependencies(moduleName, config);
   }
 

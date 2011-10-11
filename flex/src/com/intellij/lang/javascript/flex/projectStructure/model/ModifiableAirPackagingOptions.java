@@ -12,7 +12,7 @@ public interface ModifiableAirPackagingOptions extends AirPackagingOptions {
 
   void setCustomDescriptorPath(@NotNull String customDescriptorPath);
 
-  void setPackageFileName(@NotNull String installerFileName);
+  void setPackageFileName(@NotNull String packageFileName);
 
   void setFilesToPackage(@NotNull List<AirInstallerParametersBase.FilePathAndPathInPackage> filesToPackage);
 

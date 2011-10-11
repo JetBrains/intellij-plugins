@@ -196,8 +196,10 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
     bc.setTargetPlatform(myTargetPlatform);
     bc.setPureAs(isPureActionScript);
     bc.setOutputType(myOutputType);
+
+    final String className = FileUtil.getNameWithoutExtension(mySampleAppName);
+
     if (myCreateSampleApp) {
-      final String className = FileUtil.getNameWithoutExtension(mySampleAppName);
       bc.setMainClass(className);
       bc.setOutputFileName(className + (myOutputType == OutputType.Library ? ".swc" : ".swf"));
     }
@@ -206,11 +208,13 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
     }
     bc.setOutputFolder(VfsUtil.urlToPath(CompilerModuleExtension.getInstance(module).getCompilerOutputUrl()));
 
-    bc.getDependencies().setSdkEntry(Factory.createSdkEntry(myFlexSdk.getLibraryId(), myFlexSdk.getHomePath())); // todo correct?
+    bc.getDependencies().setSdkEntry(Factory.createSdkEntry(myFlexSdk.getLibraryId(), myFlexSdk.getHomePath()));
     bc.getDependencies().setTargetPlayer(myTargetPlayer);
 
-    if (myTargetPlatform == TargetPlatform.Mobile) {
+    if (myTargetPlatform == TargetPlatform.Mobile && myOutputType == OutputType.Application) {
       bc.getAndroidPackagingOptions().setEnabled(true);
+      bc.getAndroidPackagingOptions().setPackageFileName(className + ".apk");
+      bc.getIosPackagingOptions().setPackageFileName(className + ".ipa");
     }
   }
 
