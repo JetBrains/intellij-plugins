@@ -87,7 +87,7 @@ final class Maven {
       mojoExecutionPoolMap.put(poolMapKey, new ArrayList<MojoExecution>());
     }
     else if (!mojoExecutions.isEmpty()) {
-      return mojoExecutions.remove(mojoExecutions.size());
+      return mojoExecutions.remove(mojoExecutions.size() - 1);
     }
 
     return null;
@@ -108,7 +108,7 @@ final class Maven {
   public synchronized void releaseMojoExecution(String goal, MojoExecution mojoExecution) throws Exception {
     Plugin plugin = mojoExecution.getPlugin();
     mojoExecution.setConfiguration(null);
-    mojoExecutionPoolMap.get(createMojoExecutionPoolCacheKey(goal, plugin)).add(mojoExecution);
+    //mojoExecutionPoolMap.get(createMojoExecutionPoolCacheKey(goal, plugin)).add(mojoExecution);
   }
 
   private static String createMojoExecutionPoolCacheKey(String goal, Plugin plugin) {

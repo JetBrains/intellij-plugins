@@ -10,17 +10,15 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
-import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.compiler.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
 public class IdeaConfigurator implements FlexConfigGenerator {
-  private static final Map<String, String> CHILD_TAG_NAME_MAP = new HashMap<String, String>(12);
-  
   protected static final String PATH_ELEMENT = "path-element";
   protected static final String FILE_SPECS = "file-specs";
   private static final String SOURCE_PATH = "source-path";
@@ -29,40 +27,26 @@ public class IdeaConfigurator implements FlexConfigGenerator {
 
   protected final MavenSession session;
 
-  protected Writer out;
+  protected StringBuilder out;
   private Build build;
 
+  private String classifier;
   private MojoExecution flexmojosGeneratorMojoExecution;
   private ExpressionEvaluator flexmojosGeneratorExpressionEvaluator;
 
   protected final File outputDirectory;
-  protected File sharedFontsSer;
-  protected String sharedFontsSerPath;
+  @SuppressWarnings("StaticNonFinalField")
+  protected static File sharedFontsSer;
+  @SuppressWarnings("StaticNonFinalField")
+  protected static String sharedFontsSerPath;
 
   public IdeaConfigurator(MavenSession session, File outputDirectory) {
     this.session = session;
     this.outputDirectory = outputDirectory;
-    //noinspection ResultOfMethodCallIgnored
-    outputDirectory.mkdirs();
-  }
-
-  static {
-    CHILD_TAG_NAME_MAP.put("keep-as3-metadata", "name");
-    CHILD_TAG_NAME_MAP.put("include-namespaces", "uri");
-    CHILD_TAG_NAME_MAP.put("include-classes", "class");
-    CHILD_TAG_NAME_MAP.put("include-libraries", "library");
-    CHILD_TAG_NAME_MAP.put("locale", "locale-element");
-    CHILD_TAG_NAME_MAP.put("managers", "manager-class");
-    CHILD_TAG_NAME_MAP.put("externs", "symbol");
-    CHILD_TAG_NAME_MAP.put("includes", "symbol");
-    CHILD_TAG_NAME_MAP.put("extensions", "extension");
-    CHILD_TAG_NAME_MAP.put("include-resource-bundles", "bundle");
-    CHILD_TAG_NAME_MAP.put("theme", "filename");
   }
 
   @Override
   public void generate(Mojo configuration, File sourceFile) throws Exception {
-    //noinspection NullableProblems
     build(configuration, ICommandLineConfiguration.class, "\n\t", null);
 
     out.append("\n\t<file-specs>\n");
@@ -77,43 +61,26 @@ public class IdeaConfigurator implements FlexConfigGenerator {
 
   @Override
   public void preGenerate(MavenProject project, String classifier, MojoExecution flexmojosGeneratorMojoExecution) throws IOException {
+    this.classifier = classifier;
     this.flexmojosGeneratorMojoExecution = flexmojosGeneratorMojoExecution;
     build = project.getBuild();
-    File configFile = new File(getConfigFilePath(project, classifier));
-    //noinspection ResultOfMethodCallIgnored
-    configFile.getParentFile().mkdirs();
-    out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(configFile), "utf-8"));
-    out.write("<flex-config xmlns=\"http://www.adobe.com/2006/flex-config\">");
+    out = new StringBuilder(8192);
+    out.append("<flex-config xmlns=\"http://www.adobe.com/2006/flex-config\">");
   }
 
   @Override
-  public void postGenerate() {
-    build = null;
-    flexmojosGeneratorMojoExecution = null;
-    flexmojosGeneratorExpressionEvaluator = null;
-
-    if (out == null) {
-      return;
-    }
-
-    try {
-      out.write("\n</flex-config>");
-      out.close();
-    }
-    catch (IOException ignored) {
-    }
-
-    out = null;
+  public void postGenerate(MavenProject project) throws IOException {
+    out.append("\n</flex-config>");
+    Utils.write(out, getConfigFile(project, classifier));
   }
 
-  protected String getConfigFilePath(MavenProject project, String classifier) {
-    StringBuilder pathBuilder = new StringBuilder(outputDirectory.getAbsolutePath()).append(File.separatorChar);
+  protected File getConfigFile(MavenProject project, String classifier) {
     // artifact id is first in path — it is convenient for us
-    pathBuilder.append(project.getArtifactId()).append('-').append(project.getGroupId());
+    StringBuilder pathBuilder = new StringBuilder(32).append(project.getArtifactId()).append('-').append(project.getGroupId());
     if (classifier != null) {
       pathBuilder.append('-').append(classifier);
     }
-    return pathBuilder.append("-config.xml").toString();
+    return new File(outputDirectory, pathBuilder.append(".xml").toString());
   }
 
   @SuppressWarnings({"ConstantConditions"})
@@ -259,7 +226,7 @@ public class IdeaConfigurator implements FlexConfigGenerator {
         else {
           out.append('>');
 
-          String childTagName = CHILD_TAG_NAME_MAP.get(name);
+          String childTagName = Utils.CHILD_TAG_NAME_MAP.get(name);
           if (childTagName == null) {
             childTagName = PATH_ELEMENT;
           }
@@ -368,7 +335,7 @@ public class IdeaConfigurator implements FlexConfigGenerator {
         if (sharedFontsSer == null) {
           sharedFontsSer = new File(outputDirectory, FONTS_SER);
           if (!sharedFontsSer.exists()) {
-            FileUtils.copyFile(fontsSer, sharedFontsSer);
+            Utils.copyFile(fontsSer, sharedFontsSer);
           }
 
           sharedFontsSerPath = sharedFontsSer.getAbsolutePath();
@@ -381,7 +348,7 @@ public class IdeaConfigurator implements FlexConfigGenerator {
     out.append(value);
   }
 
-  protected void writeTag(String indent, String name, String value, String parentName) throws IOException {
+  protected void writeTag(String indent, String name, String value, @SuppressWarnings("UnusedParameters") String parentName) throws IOException {
     out.append(indent).append("\t<").append(name).append(">").append(value).append("</").append(name).append('>');
   }
 

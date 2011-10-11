@@ -66,10 +66,10 @@ public class GeneratorServer {
     throws ComponentLookupException, IOException, MavenExecutionRequestPopulationException, SettingsBuildingException,
            PlexusContainerException, InterruptedException {
     generatorOutputDirectory = new File(args[4]);
-    in = new DataInputStream(new BufferedInputStream(System.in));
+    //noinspection ResultOfMethodCallIgnored
+    generatorOutputDirectory.mkdirs();
 
-    final List<String> generators = new ArrayList<String>(2);
-    generators.add("com.intellij.flex.maven.IdeaConfigurator");
+    in = new DataInputStream(new BufferedInputStream(System.in));
 
     LoggerManager loggerManager = new ConsoleLoggerManager();
     logger = loggerManager.getLoggerForComponent(null);
@@ -79,6 +79,10 @@ public class GeneratorServer {
 
     session = createSession(createExecutionRequest(args));
     maven = new Maven(plexusContainer, session);
+    
+    final List<String> generators = new ArrayList<String>(2);
+    final URL generatorJarPath = new URL("file://" + in.readUTF());
+    generators.add(in.readUTF());
 
     final int projectsCount = in.readUnsignedShort();
     final ExecutorService executorService = plexusContainer.lookup(ThreadConfigurationService.class)
@@ -90,12 +94,12 @@ public class GeneratorServer {
           @Override
           public void run() {
             try {
-              generate(pathname, generators);
+              generate(pathname, generators, generatorJarPath);
               synchronized (System.out) {
                 System.out.append("\n[fcg] generated: ").append(pathname).append("[/fcg]").flush();
               }
             }
-            catch (Exception e) {
+            catch (Throwable e) {
               getLogger().error("Cannnot generate flex config for " + pathname, e);
             }
           }
@@ -108,7 +112,7 @@ public class GeneratorServer {
     }
   }
 
-  private void generate(String pathname, final List<String> generators) throws Exception {
+  private void generate(final String pathname, final List<String> generators, final URL generatorJarPath) throws Exception {
     final MavenProject project = maven.readProject(new File(pathname));
     session.setCurrentProject(project);
 
@@ -132,27 +136,23 @@ public class GeneratorServer {
       }
 
       assert flexmojosMojoExecution != null;
-      ClassRealm flexmojosPluginRealm = maven.getPluginRealm(flexmojosMojoExecution);
-      flexmojosPluginRealm.addURL(new URL("file:///Users/develar/Documents/flexmojos-idea-configurator/out/artifacts/idea-configurator.jar"));
+      final ClassRealm flexmojosPluginRealm = maven.getPluginRealm(flexmojosMojoExecution);
+      flexmojosPluginRealm.addURL(generatorJarPath);
 
-      Mojo mojo = null;
+      final Mojo mojo = mavenPluginManager.getConfiguredMojo(Mojo.class, session, flexmojosMojoExecution);
       try {
-        mojo = mavenPluginManager.getConfiguredMojo(Mojo.class, session, flexmojosMojoExecution);
         for (String configuratorClassName : generators) {
           Class configuratorClass = flexmojosPluginRealm.loadClass(configuratorClassName);
-          FlexConfigGenerator configurator = (FlexConfigGenerator)configuratorClass.getConstructor(MavenSession.class, File.class).newInstance(session, generatorOutputDirectory);
+          FlexConfigGenerator configurator = (FlexConfigGenerator)configuratorClass.getConstructor(MavenSession.class, File.class)
+                                                                                   .newInstance(session, generatorOutputDirectory);
           configurator.preGenerate(project, getClassifier(mojo), flexmojosGeneratorMojoExecution);
-          try {
-            if ("swc".equals(project.getPackaging())) {
-              configurator.generate(mojo);
-            }
-            else {
-              configurator.generate(mojo, getSourceFileForSwf(mojo));
-            }
+          if ("swc".equals(project.getPackaging())) {
+            configurator.generate(mojo);
           }
-          finally {
-            configurator.postGenerate();
+          else {
+            configurator.generate(mojo, getSourceFileForSwf(mojo));
           }
+          configurator.postGenerate(project);
         }
       }
       finally {
@@ -160,6 +160,7 @@ public class GeneratorServer {
       }
     }
     finally {
+      session.setCurrentProject(null);
       if (flexmojosMojoExecution != null) {
         maven.releaseMojoExecution(compileGoal, flexmojosMojoExecution);
       }
@@ -187,12 +188,13 @@ public class GeneratorServer {
   public File getOutputFile(File pomFile) throws Exception {
     final MavenProject project = maven.readProject(pomFile);
     final MavenProject oldProject = session.getCurrentProject();
+    final String compileGoal = "compile-" + project.getPackaging();
+    MojoExecution flexmojosMojoExecution = null;
     try {
       session.setCurrentProject(project);
-      MojoExecution flexmojosMojoExecution = null;
       for (Plugin plugin : project.getBuildPlugins()) {
         if (plugin.getGroupId().equals("org.sonatype.flexmojos") && plugin.getArtifactId().equals("flexmojos-maven-plugin")) {
-          flexmojosMojoExecution = maven.createMojoExecution(plugin, "compile-" + project.getPackaging(), project);
+          flexmojosMojoExecution = maven.createMojoExecution(plugin, compileGoal, project);
           break;
         }
       }
@@ -200,7 +202,6 @@ public class GeneratorServer {
       if (flexmojosMojoExecution == null) {
         return null;
       }
-
 
       // getPluginRealm creates plugin realm and populates pluginDescriptor.classRealm field
       maven.getPluginRealm(flexmojosMojoExecution);
@@ -215,11 +216,15 @@ public class GeneratorServer {
     }
     finally {
       session.setCurrentProject(oldProject);
+      if (flexmojosMojoExecution != null) {
+        maven.releaseMojoExecution(compileGoal, flexmojosMojoExecution);
+      }
     }
   }
 
   private MavenSession createSession(MavenExecutionRequest request) throws ComponentLookupException {
-    return new MavenSession(plexusContainer, createRepositorySession(request), request, new DefaultMavenExecutionResult());
+    return new ThreadSafeMavenSession(plexusContainer, createRepositorySession(request), request,
+                                                       new DefaultMavenExecutionResult());
   }
 
   private RepositorySystemSession createRepositorySession(MavenExecutionRequest request) throws ComponentLookupException {

@@ -6,6 +6,7 @@ import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.ParametersList;
 import com.intellij.execution.configurations.SimpleJavaParameters;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
@@ -37,7 +38,7 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
 
   private Process process;
   private MavenProgressIndicator indicator;
-  private final List<MavenProject> projects = new ArrayList<MavenProject>();
+  private List<MavenProject> projects = new ArrayList<MavenProject>();
 
   public Flexmojos4GenerateFlexConfigTask(MavenProjectsTree tree) {
     //noinspection NullableProblems
@@ -58,6 +59,7 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
 
     try {
       runGeneratorServer(MavenProjectsManager.getInstance(project), project);
+      writeProjects();
     }
     catch (IOException e) {
       showWarning(project);
@@ -72,106 +74,24 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
       return;
     }
 
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        while (true) {
-          try {
-            //noinspection BusyWait
-            Thread.sleep(500);
-          }
-          catch (InterruptedException e) {
-            break;
-          }
-          if (indicator.isCanceled()) {
-            break;
-          }
-        }
-
+    //noinspection WhileLoopSpinsOnField
+    while (process != null) {
+      try {
+        //noinspection BusyWait
+        Thread.sleep(500);
+      }
+      catch (InterruptedException e) {
+        break;
+      }
+      if (indicator.isCanceled()) {
         LOG.warn("Generating flex configs canceled");
         process.destroy();
-      }
-    });
-
-    StringBuilder stringBuilder = null;
-    int exitCode = -1;
-    final InputStreamReader reader = new InputStreamReader(process.getInputStream());
-    try {
-      writeProjects();
-
-      stringBuilder = StringBuilderSpinAllocator.alloc();
-      char[] buf = new char[128];
-      int read;
-      final Matcher matcher = RESULT_PATTERN.matcher(stringBuilder);
-      while ((read = reader.read(buf, 0, buf.length)) >= 0) {
-        final int startForResultParse = stringBuilder.length();
-        stringBuilder.append(buf, 0, read);
-
-        if (indicator.isCanceled()) {
-          process.destroy();
-        }
-
-        if (matcher.find(startForResultParse)) {
-          indicator.setText2(matcher.group(1));
-        }
-      }
-
-      try {
-        process.waitFor();
-      }
-      catch (InterruptedException ignored) {
-      }
-
-      exitCode = process.exitValue();
-    }
-    catch (IOException e) {
-      if (stringBuilder != null) {
-        LOG.warn(stringBuilder.toString(), e);
+        break;
       }
     }
-    finally {
-      if (stringBuilder != null) {
-        final String result = stringBuilder.toString();
-        StringBuilderSpinAllocator.dispose(stringBuilder);
-        if (exitCode != 0) {
-          LOG.warn("Generating flex configs exited with exit code " + exitCode);
-          showWarning(project);
-        }
-        LOG.info("Generating flex configs out:\n" + result);
-      }
 
-      final Matcher matcher = MAVEN_ERROR_PATTERN.matcher(stringBuilder);
-      if (matcher.find()) {
-        stringBuilder = StringBuilderSpinAllocator.alloc();
-        try {
-          do {
-            stringBuilder.append("<br>").append(matcher.group(1));
-          }
-          while (matcher.find());
-          showWarning(stringBuilder.toString(), project);
-        }
-        finally {
-          StringBuilderSpinAllocator.dispose(stringBuilder);
-        }
-      }
-
-      try {
-        reader.close();
-      }
-      catch (IOException ignored) {
-      }
-
-      try {
-        out.close();
-      }
-      catch (IOException ignored) {
-      }
-
-      process.destroy();
-
-      final long duration = System.currentTimeMillis() - start;
-      LOG.info("Generating flex configs took " + duration + " ms: " + duration / 60000 + " min " + (duration % 60000) / 1000 + "sec");
-    }
+    final long duration = System.currentTimeMillis() - start;
+    LOG.info("Generating flex configs took " + duration + " ms: " + duration / 60000 + " min " + (duration % 60000) / 1000 + "sec");
   }
 
   private void writeProjects() throws IOException {
@@ -181,6 +101,8 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
       out.writeUTF(pendingProject.getFile().getPath());
     }
     out.flush();
+
+    projects = null;
   }
 
   void submit(MavenProject mavenProject) {
@@ -205,7 +127,7 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
     programParametersList.add(project.getBaseDir().getPath() + "/.idea/flexmojos");
 
     configureMavenClassPath(mavenGeneralSettings, params.getClassPath());
-    params.getClassPath().add("/Users/develar/Documents/flexmojos-idea-configurator/out/artifacts/flex-config-generator-server.jar");
+
     params.getVMParametersList().addParametersString("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5011");
     //params.getVMParametersList().addParametersString("-agentpath:/Applications/Idea.app/bin/libyjpagent.jnilib=onexit=snapshot,disablej2ee,disablealloc,disablecounts,sampling,sessionname=mavenFCG");
     //params.getVMParametersList().addParametersString("-agentpath:/Applications/Idea.app/bin/libyjpagent.jnilib=onexit=snapshot,disablej2ee,disablealloc,tracing,sessionname=mavenFCG");
@@ -218,11 +140,90 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
     indicator.checkCanceled();
 
     process = commandLine.createProcess();
+    ApplicationManager.getApplication().executeOnPooledThread(new OutputReader(project));
 
     //noinspection IOResourceOpenedButNotSafelyClosed
     out = new DataOutputStream(new BufferedOutputStream(process.getOutputStream()));
     writeExplicitProfiles(mavenProjectsManager.getExplicitProfiles());
     writeWorkspaceMap(myTree.getProjects());
+
+    out.writeUTF(FlexUtils.getPathToBundledJar("flexmojos-idea-configurator.jar"));
+    out.writeUTF("com.intellij.flex.maven.IdeaConfigurator");
+  }
+
+  private final class OutputReader implements Runnable {
+    private final Project project;
+
+    public OutputReader(Project project) {
+      this.project = project;
+    }
+
+    @Override
+    public void run() {
+      StringBuilder stringBuilder = null;
+      int exitCode = -1;
+      final InputStreamReader reader = new InputStreamReader(process.getInputStream());
+      try {
+        stringBuilder = StringBuilderSpinAllocator.alloc();
+        char[] buf = new char[1024];
+        int read;
+        final Matcher matcher = RESULT_PATTERN.matcher(stringBuilder);
+        while ((read = reader.read(buf, 0, buf.length)) >= 0) {
+          final int startForResultParse = stringBuilder.length();
+          stringBuilder.append(buf, 0, read);
+
+          if (indicator.isCanceled()) {
+            process.destroy();
+          }
+
+          if (matcher.find(startForResultParse)) {
+            indicator.setText2(matcher.group(1));
+          }
+        }
+
+        try {
+          process.waitFor();
+        }
+        catch (InterruptedException ignored) {
+        }
+
+        exitCode = process.exitValue();
+      }
+      catch (IOException e) {
+        if (stringBuilder != null) {
+          LOG.warn(stringBuilder.toString(), e);
+        }
+      }
+      finally {
+        process.destroy();
+        process = null;
+
+        if (stringBuilder != null) {
+          final String result = stringBuilder.toString();
+          StringBuilderSpinAllocator.dispose(stringBuilder);
+          if (exitCode != 0) {
+            LOG.warn("Generating flex configs exited with exit code " + exitCode);
+            showWarning(project);
+          }
+          LOG.info("Generating flex configs out:\n" + result);
+        }
+
+        final Matcher matcher = MAVEN_ERROR_PATTERN.matcher(stringBuilder);
+        if (matcher.find()) {
+          stringBuilder = StringBuilderSpinAllocator.alloc();
+          try {
+            do {
+              stringBuilder.append("<br>").append(matcher.group(1));
+            }
+            while (matcher.find());
+            showWarning(stringBuilder.toString(), project);
+          }
+          finally {
+            StringBuilderSpinAllocator.dispose(stringBuilder);
+          }
+        }
+      }
+    }
   }
 
   private void writeExplicitProfiles(Collection<String> explicitProfiles) throws IOException {
@@ -265,6 +266,8 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
   }
 
   private static void configureMavenClassPath(MavenGeneralSettings mavenGeneralSettings, PathsList classPath) throws ExecutionException {
+    classPath.add(FlexUtils.getPathToBundledJar("flexmojos-flex-configs-generator-server.jar"));
+
     final String mavenHome = MavenExternalParameters.resolveMavenHome(mavenGeneralSettings) + File.separator;
     final String libDirPath = mavenHome + "lib";
     for (String s : new File(libDirPath).list()) {

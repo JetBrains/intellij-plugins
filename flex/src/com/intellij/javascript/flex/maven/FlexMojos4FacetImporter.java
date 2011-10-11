@@ -69,6 +69,6 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
   @Override
   protected String getCompilerConfigFile(Module module, MavenProject mavenProject, String suffix) {
     return getCompilerConfigsDir(module.getProject()) + "/" + mavenProject.getMavenId().getArtifactId() + "-" +
-           mavenProject.getMavenId().getGroupId() + suffix + "-config.xml";
+           mavenProject.getMavenId().getGroupId() + suffix + ".xml";
   }
 }

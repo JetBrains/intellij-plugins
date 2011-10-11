@@ -8,6 +8,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -76,7 +77,12 @@ class WorkspaceReaderImpl implements WorkspaceReader {
 
   @Override
   public List<String> findVersions(Artifact artifact) {
-    return null;
+    final ArtifactData data = map.get(new ArtifactKey(artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion()));
+    if (data == null) {
+      return null;
+    }
+
+    return Collections.singletonList(artifact.getVersion());
   }
 
   private static class ArtifactKey {
