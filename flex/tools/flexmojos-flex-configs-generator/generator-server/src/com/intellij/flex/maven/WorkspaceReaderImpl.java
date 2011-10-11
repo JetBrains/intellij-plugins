@@ -79,7 +79,7 @@ class WorkspaceReaderImpl implements WorkspaceReader {
   public List<String> findVersions(Artifact artifact) {
     final ArtifactData data = map.get(new ArtifactKey(artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion()));
     if (data == null) {
-      return null;
+      return Collections.emptyList();
     }
 
     return Collections.singletonList(artifact.getVersion());

@@ -69,18 +69,20 @@ public class IdeaConfigurator implements FlexConfigGenerator {
   }
 
   @Override
-  public void postGenerate(MavenProject project) throws IOException {
+  public String postGenerate(MavenProject project) throws IOException {
     out.append("\n</flex-config>");
-    Utils.write(out, getConfigFile(project, classifier));
+    final String configFile = getConfigFile(project, classifier);
+    Utils.write(out, new File(outputDirectory, configFile));
+    return configFile;
   }
 
-  protected File getConfigFile(MavenProject project, String classifier) {
+  protected String getConfigFile(MavenProject project, String classifier) {
     // artifact id is first in path — it is convenient for us
     StringBuilder pathBuilder = new StringBuilder(32).append(project.getArtifactId()).append('-').append(project.getGroupId());
     if (classifier != null) {
       pathBuilder.append('-').append(classifier);
     }
-    return new File(outputDirectory, pathBuilder.append(".xml").toString());
+    return pathBuilder.append(".xml").toString();
   }
 
   @SuppressWarnings({"ConstantConditions"})
@@ -339,6 +341,7 @@ public class IdeaConfigurator implements FlexConfigGenerator {
           }
 
           sharedFontsSerPath = sharedFontsSer.getAbsolutePath();
+
         }
 
         value = sharedFontsSerPath;

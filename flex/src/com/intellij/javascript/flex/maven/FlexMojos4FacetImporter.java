@@ -56,7 +56,7 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
     generateFlexConfigTask.submit(mavenProject);
   }
   
-  private static String getCompilerConfigsDir(Project project) {
+  static String getCompilerConfigsDir(Project project) {
     //noinspection ConstantConditions
     return project.getBaseDir().getPath() + "/.idea/flexmojos";
   }

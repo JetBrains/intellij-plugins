@@ -12,6 +12,8 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathsList;
 import com.intellij.util.StringBuilderSpinAllocator;
 import com.intellij.util.SystemProperties;
@@ -20,6 +22,7 @@ import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.project.*;
 import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
 import org.jetbrains.idea.maven.utils.MavenProgressIndicator;
+import org.jetbrains.idea.maven.utils.MavenUtil;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -31,7 +34,7 @@ import java.util.regex.Pattern;
 import static org.jetbrains.idea.maven.utils.MavenLog.LOG;
 
 class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
-  private static final Pattern RESULT_PATTERN = Pattern.compile("^\\[fcg\\] generated: (.*)\\[/fcg\\]$", Pattern.MULTILINE);
+  private static final Pattern RESULT_PATTERN = Pattern.compile("^\\[fcg\\] generated: (.*):(.*)\\[/fcg\\]$", Pattern.MULTILINE);
   private static final Pattern MAVEN_ERROR_PATTERN = Pattern.compile("^\\[ERROR\\] (.*)$", Pattern.MULTILINE);
 
   private DataOutputStream out;
@@ -162,10 +165,12 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
     public void run() {
       StringBuilder stringBuilder = null;
       int exitCode = -1;
+      @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
       final InputStreamReader reader = new InputStreamReader(process.getInputStream());
+      final List<String> filesForRefresh = new ArrayList<String>();
       try {
         stringBuilder = StringBuilderSpinAllocator.alloc();
-        char[] buf = new char[1024];
+        char[] buf = new char[64];
         int read;
         final Matcher matcher = RESULT_PATTERN.matcher(stringBuilder);
         while ((read = reader.read(buf, 0, buf.length)) >= 0) {
@@ -178,6 +183,7 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
 
           if (matcher.find(startForResultParse)) {
             indicator.setText2(matcher.group(1));
+            filesForRefresh.add(matcher.group(2));
           }
         }
 
@@ -222,6 +228,24 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
             StringBuilderSpinAllocator.dispose(stringBuilder);
           }
         }
+
+        MavenUtil.invokeAndWaitWriteAction(project, new Runnable() {
+          public void run() {
+            // need to refresh externally created file
+            final VirtualFile p = LocalFileSystem.getInstance().refreshAndFindFileByPath(
+              FlexMojos4FacetImporter.getCompilerConfigsDir(project));
+            if (p == null) {
+              return;
+            }
+
+            for (String path : filesForRefresh) {
+              final VirtualFile file = p.findChild(path);
+              if (file != null) {
+                file.refresh(false, false);
+              }
+            }
+          }
+        });
       }
     }
   }

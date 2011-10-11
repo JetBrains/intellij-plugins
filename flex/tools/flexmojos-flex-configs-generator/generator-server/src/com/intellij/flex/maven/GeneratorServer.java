@@ -6,6 +6,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.*;
 import org.apache.maven.lifecycle.internal.ThreadConfigurationService;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.plugin.LegacySupport;
 import org.apache.maven.plugin.MavenPluginManager;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecution;
@@ -94,9 +95,9 @@ public class GeneratorServer {
           @Override
           public void run() {
             try {
-              generate(pathname, generators, generatorJarPath);
+              final String configFilePath = generate(pathname, generators, generatorJarPath);
               synchronized (System.out) {
-                System.out.append("\n[fcg] generated: ").append(pathname).append("[/fcg]").flush();
+                System.out.append("\n[fcg] generated: ").append(pathname).append(':').append(configFilePath).append("[/fcg]").flush();
               }
             }
             catch (Throwable e) {
@@ -112,7 +113,7 @@ public class GeneratorServer {
     }
   }
 
-  private void generate(final String pathname, final List<String> generators, final URL generatorJarPath) throws Exception {
+  private String generate(final String pathname, final List<String> generators, final URL generatorJarPath) throws Exception {
     final MavenProject project = maven.readProject(new File(pathname));
     session.setCurrentProject(project);
 
@@ -141,8 +142,8 @@ public class GeneratorServer {
 
       final Mojo mojo = mavenPluginManager.getConfiguredMojo(Mojo.class, session, flexmojosMojoExecution);
       try {
-        for (String configuratorClassName : generators) {
-          Class configuratorClass = flexmojosPluginRealm.loadClass(configuratorClassName);
+        //for (String configuratorClassName : generators) {
+          Class configuratorClass = flexmojosPluginRealm.loadClass(generators.get(0));
           FlexConfigGenerator configurator = (FlexConfigGenerator)configuratorClass.getConstructor(MavenSession.class, File.class)
                                                                                    .newInstance(session, generatorOutputDirectory);
           configurator.preGenerate(project, getClassifier(mojo), flexmojosGeneratorMojoExecution);
@@ -152,8 +153,8 @@ public class GeneratorServer {
           else {
             configurator.generate(mojo, getSourceFileForSwf(mojo));
           }
-          configurator.postGenerate(project);
-        }
+          return configurator.postGenerate(project);
+        //}
       }
       finally {
         plexusContainer.release(mojo);
@@ -223,8 +224,11 @@ public class GeneratorServer {
   }
 
   private MavenSession createSession(MavenExecutionRequest request) throws ComponentLookupException {
-    return new ThreadSafeMavenSession(plexusContainer, createRepositorySession(request), request,
-                                                       new DefaultMavenExecutionResult());
+    final ThreadSafeMavenSession session = new ThreadSafeMavenSession(plexusContainer, createRepositorySession(request), request,
+                                                                           new DefaultMavenExecutionResult());
+    // flexmojos uses old LegacyRepositorySystem
+    plexusContainer.lookup(LegacySupport.class).setSession(session);
+    return session;
   }
 
   private RepositorySystemSession createRepositorySession(MavenExecutionRequest request) throws ComponentLookupException {
@@ -287,4 +291,12 @@ public class GeneratorServer {
     container.setLoggerManager(loggerManager);
     return container;
   }
+
+  //private static <T> void setImplementation(PlexusContainer container, Class<T> componentClass, Class<? extends T> implementationClass) {
+  //  final ComponentDescriptor<?> componentDescriptor = container.getComponentDescriptor(componentClass.getName(), "default");
+  //  final ComponentRequirement requirement = new ComponentRequirement();
+  //  requirement.setFieldName("");
+  //  componentDescriptor.addRequirement(requirement);
+  //  componentDescriptor.setImplementation(implementationClass.getName());
+  //}
 }

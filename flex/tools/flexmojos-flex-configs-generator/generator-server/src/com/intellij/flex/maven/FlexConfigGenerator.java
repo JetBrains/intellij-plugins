@@ -14,5 +14,5 @@ public interface FlexConfigGenerator {
 
   void preGenerate(MavenProject project, String classifier, MojoExecution flexmojosGeneratorMojoExecution) throws IOException;
 
-  void postGenerate(MavenProject project) throws IOException;
+  String postGenerate(MavenProject project) throws IOException;
 }

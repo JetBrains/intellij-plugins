@@ -12,7 +12,7 @@ public final class Utils {
 
   private static final ThreadLocal<char[]> CHAR_BUFFER = new ThreadLocal<char[]>() {
     protected char[] initialValue() {
-      return new char[1024 * 1];
+      return new char[1024 * 8];
     }
   };
 
@@ -51,23 +51,20 @@ public final class Utils {
     int srcBegin = 0;
     int srcEnd = Math.min(chars.length, totalLength);
     try {
-      streamWriter.write(stringBuilder.toString());
+      while (true) {
+        stringBuilder.getChars(srcBegin, srcEnd, chars, 0);
+        streamWriter.write(chars, 0, srcEnd - srcBegin);
 
+        srcBegin += chars.length;
+        if (srcBegin >= totalLength) {
+          break;
+        }
 
-      //while (true) {
-      //  stringBuilder.getChars(srcBegin, srcEnd, chars, 0);
-      //  streamWriter.write(chars, 0, srcEnd - srcBegin);
-      //
-      //  srcBegin += chars.length;
-      //  if (srcBegin >= totalLength) {
-      //    break;
-      //  }
-      //
-      //  srcEnd += chars.length;
-      //  if (totalLength < srcEnd) {
-      //    srcEnd = totalLength;
-      //  }
-      //}
+        srcEnd += chars.length;
+        if (totalLength < srcEnd) {
+          srcEnd = totalLength;
+        }
+      }
     }
     finally {
       try {

@@ -19,6 +19,7 @@
     <orderEntry type="library" name="Maven: org.apache.maven:maven-model:3.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-plugin-api:3.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-utils:2.0.6" level="project" />
+    <orderEntry type="library" name="gg" level="project" />
   </component>
 </module>
 
