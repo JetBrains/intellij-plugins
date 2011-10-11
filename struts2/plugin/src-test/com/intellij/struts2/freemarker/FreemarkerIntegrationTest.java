@@ -38,11 +38,6 @@ public class FreemarkerIntegrationTest extends BasicHighlightingTestCase<JavaMod
     return new LocalInspectionTool[] {new FtlReferencesInspection()};
   }
 
-  @Override
-  protected boolean hasJavaSources() {
-    return true;
-  }
-
   public void testMacroParametersResolveOnlyToParameters() throws Throwable {
     myFixture.enableInspections(new FtlInspectionToolProvider());
     myFixture.testHighlighting(true, false, false, "MacroParametersResolveOnlyToParameters.ftl");
@@ -52,6 +47,7 @@ public class FreemarkerIntegrationTest extends BasicHighlightingTestCase<JavaMod
     myFixture.testHighlighting(true, false, false, "StrutsCommonVariables.ftl");
   }
 
+  @HasJavaSources
   public void testStrutsActionToplevel() throws Throwable {
     createStrutsFileSet("StrutsActionToplevel-struts.xml");
     myFixture.testHighlighting(true, false, false, "StrutsActionToplevel.ftl");

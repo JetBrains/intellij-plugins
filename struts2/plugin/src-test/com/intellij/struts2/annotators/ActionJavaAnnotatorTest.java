@@ -34,7 +34,7 @@ public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase {
   private final Function<PsiElement, String> ACTION_NAME_RESOLVE = new Function<PsiElement, String>() {
     @Override
     public String fun(final PsiElement psiElement) {
-      return ((XmlTag) psiElement).getAttributeValue("name");
+      return ((XmlTag)psiElement).getAttributeValue("name");
     }
   };
 
@@ -42,11 +42,6 @@ public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase {
   @NotNull
   protected String getTestDataLocation() {
     return "/gutterJava/actionClass";
-  }
-
-  @Override
-  protected boolean hasJavaSources() {
-    return true;
   }
 
   /**
@@ -65,12 +60,14 @@ public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase {
     AnnotatorTestUtils.checkGutterTargets(renderer, nameResolveFunction, expectedNames);
   }
 
+  @HasJavaSources
   @SkipStrutsLibrary
   public void testGutterMyAction() {
     createStrutsFileSet("struts-actionClass.xml");
     checkGutterTargetElements("/src/MyAction.java", ACTION_NAME_RESOLVE, "myActionPath");
   }
 
+  @HasJavaSources
   @SkipStrutsLibrary
   public void testGutterMyActionMultipleMappings() {
     createStrutsFileSet("struts-actionClass-multiple_mappings.xml");
@@ -78,6 +75,7 @@ public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase {
                               "myActionPath1", "myActionPath2", "myActionPath3");
   }
 
+  @HasJavaSources
   @SkipStrutsLibrary
   public void testGutterValidationXml() {
     createStrutsFileSet("struts-validation.xml");
@@ -86,9 +84,8 @@ public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase {
     checkGutterTargetElements("/src/com/MyValidationAction.java", new Function<PsiElement, String>() {
       @Override
       public String fun(final PsiElement psiElement) {
-        return ((PsiFile) psiElement).getName();
+        return ((PsiFile)psiElement).getName();
       }
     }, "MyValidationAction-validation.xml");
   }
-
 }

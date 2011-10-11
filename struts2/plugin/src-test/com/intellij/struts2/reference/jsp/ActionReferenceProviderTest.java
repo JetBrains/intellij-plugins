@@ -43,11 +43,7 @@ public class ActionReferenceProviderTest extends BasicHighlightingTestCase<WebMo
     moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp", "/");
   }
 
-  @Override
-  protected boolean hasJavaSources() {
-    return true;
-  }
-
+  @HasJavaSources
   public void testActionHighlighting() throws Throwable {
     createStrutsFileSet("struts-action.xml");
     myFixture.testHighlighting(true, false, false, "/jsp/action-highlighting.jsp");
@@ -59,6 +55,7 @@ public class ActionReferenceProviderTest extends BasicHighlightingTestCase<WebMo
                                      "bangAction", "namespace1Action", "namespace2Action", "myWildCard*");
   }
 
+  @HasJavaSources
   public void testActionCompletionVariantsBang() throws Throwable {
     createStrutsFileSet("struts-action.xml");
     myFixture.testCompletionVariants("/jsp/action-completionvariants-bang.jsp",

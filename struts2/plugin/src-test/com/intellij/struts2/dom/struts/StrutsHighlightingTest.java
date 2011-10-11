@@ -31,15 +31,12 @@ public class StrutsHighlightingTest extends BasicStrutsHighlightingTestCase<Java
     return "strutsXmlHighlighting";
   }
 
-  @Override
-  protected boolean hasJavaSources() {
-    return true;
-  }
-
+  @HasJavaSources
   public void testSimpleStruts() throws Throwable {
     performHighlightingTest("struts-simple.xml");
   }
 
+  @HasJavaSources
   public void testParam() throws Throwable {
     performHighlightingTest("struts-param.xml");
   }
@@ -49,6 +46,7 @@ public class StrutsHighlightingTest extends BasicStrutsHighlightingTestCase<Java
     performHighlightingTest("struts-constants.xml");
   }
 
+  @HasJavaSources
   public void testExceptionMapping() throws Throwable {
     performHighlightingTest("struts-exceptionmapping.xml");
   }
@@ -61,10 +59,12 @@ public class StrutsHighlightingTest extends BasicStrutsHighlightingTestCase<Java
     performHighlightingTest("struts-default-2_1_8.xml");
   }
 
+  @HasJavaSources
   public void testUnknownHandlerStack() throws Throwable {
     performHighlightingTest("struts-unknownhandlerstack.xml");
   }
 
+  @HasJavaSources
   @SkipStrutsLibrary
   public void testActionAllowedMethods() throws Throwable {
     performHighlightingTest("struts-action-allowedMethods.xml");

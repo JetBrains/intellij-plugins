@@ -36,14 +36,10 @@ public class StrutsConstantManagerWithStrutsPropertiesTest extends StrutsConstan
     return "model/constant/withStrutsProperties";
   }
 
-  @Override
-  protected boolean hasJavaSources() {
-    return true;
-  }
-
   /**
    * Must override {@code "bar"} from struts.xml.
    */
+  @HasJavaSources
   public void testStrutsProperties() throws Throwable {
     createStrutsFileSet(STRUTS_XML);
 

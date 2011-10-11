@@ -35,11 +35,6 @@ public class StrutsCompletionTest extends BasicStrutsHighlightingTestCase<JavaMo
     return "strutsXmlCompletion";
   }
 
-  @Override
-  protected boolean hasJavaSources() {
-    return true;
-  }
-
   @SkipStrutsLibrary
   public void testCompletionVariantsResultName() throws Throwable {
     performCompletionVariantTest("struts-completionvariants-result_name.xml",
@@ -77,6 +72,7 @@ public class StrutsCompletionTest extends BasicStrutsHighlightingTestCase<JavaMo
    *
    * @throws Throwable On any errors.
    */
+  @HasJavaSources
   @SkipStrutsLibrary
   public void testCompletionVariantsActionMethod() throws Throwable {
     performCompletionVariantTest("struts-completionvariants-action_method.xml",

@@ -43,11 +43,6 @@ public class JspActionAnnotatorTest extends BasicHighlightingTestCase<WebModuleF
   }
 
   @Override
-  protected boolean hasJavaSources() {
-    return true;
-  }
-
-  @Override
   protected void configureModule(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
     super.configureModule(moduleBuilder);
     moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp/", "/");
@@ -71,12 +66,14 @@ public class JspActionAnnotatorTest extends BasicHighlightingTestCase<WebModuleF
     }, expectedActionNames);
   }
 
+  @HasJavaSources
   public void testGutterActionAttribute() throws Throwable {
     createStrutsFileSet("struts-actionClass.xml");
     checkGutterActionMethodTargetElements("/jsp/test_gutter_action_attribute.jsp",
                                           "validActionMethod");
   }
 
+  @HasJavaSources
   public void testGutterNameAttribute() throws Throwable {
     createStrutsFileSet("struts-actionClass.xml");
     checkGutterActionMethodTargetElements("/jsp/test_gutter_name_attribute.jsp",

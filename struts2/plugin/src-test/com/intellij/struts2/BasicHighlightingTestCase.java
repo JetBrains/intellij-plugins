@@ -84,6 +84,14 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   public @interface SkipStrutsLibrary {
   }
 
+  /**
+   * If present, Java source path is added to module.
+   */
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target({ElementType.METHOD, ElementType.TYPE})
+  public @interface HasJavaSources {
+  }
+
   protected Class<T> getModuleFixtureBuilderClass() {
     //noinspection unchecked
     return (Class<T>) JavaModuleFixtureBuilder.class;
@@ -101,17 +109,16 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   /**
    * Return true if test uses JAVA sources.
    *
-   * @return false.
+   * @return {@code true} if test annotated with {@link HasJavaSources}.
    */
   protected boolean hasJavaSources() {
-    return false;
+    return annotatedWith(HasJavaSources.class);
   }
 
   /**
    * Returns true if test uses Struts JARs.
    *
-   * @return true.
-   * @see SkipStrutsLibrary
+   * @return true, false if test annotated with {@link HasJavaSources}.
    */
   protected boolean usesStrutsLibrary() {
     return !annotatedWith(SkipStrutsLibrary.class);

@@ -26,18 +26,14 @@ import org.jetbrains.annotations.NotNull;
 public class ValidationHighlightingTest extends BasicValidationHighlightingTestCase<JavaModuleFixtureBuilder> {
 
   @Override
-  protected boolean hasJavaSources() {
-    return true;
-  }
-
-  @Override
   @NotNull
   protected String getTestDataLocation() {
     return "validationXmlHighlighting";
   }
 
+  @HasJavaSources
   public void testValidationSimple() throws Throwable {
-    myFixture.copyFileToProject("src/com/MyAction.java"); // WTF?
+    myFixture.copyFileToProject("src/com/MyAction.java");
     performHighlightingTest("src/com/MyAction-validation.xml");
   }
 

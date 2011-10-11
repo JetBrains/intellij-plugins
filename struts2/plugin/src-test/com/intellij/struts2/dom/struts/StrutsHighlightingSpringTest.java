@@ -50,11 +50,6 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
   }
 
   @Override
-  protected boolean hasJavaSources() {
-    return true;
-  }
-
-  @Override
   protected void configureModule(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
     super.configureModule(moduleBuilder);
 
@@ -62,12 +57,14 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
     addLibrary(moduleBuilder, "struts2-spring-plugin", STRUTS2_SPRING_PLUGIN_JAR);
   }
 
+  @HasJavaSources
   public void testStrutsSpringHighlighting() throws Throwable {
     createSpringFileSet(SPRING_XML);
 
     performHighlightingTest("struts-spring.xml");
   }
 
+  @HasJavaSources
   public void testStrutsSpringCompletionVariants() throws Throwable {
     @NonNls final String strutsXml = "struts-completionvariants-spring.xml";
     createStrutsFileSet(strutsXml);
@@ -82,6 +79,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
                                                       variants));
   }
 
+  @HasJavaSources
   public void testStrutsSpringCompletionVariantsSubclass() throws Throwable {
     @NonNls final String strutsXml = "struts-completionvariants-subclass-spring.xml";
     createStrutsFileSet(strutsXml);

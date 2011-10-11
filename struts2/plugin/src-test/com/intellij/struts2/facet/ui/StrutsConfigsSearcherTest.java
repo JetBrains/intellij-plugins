@@ -37,16 +37,12 @@ public class StrutsConfigsSearcherTest extends BasicHighlightingTestCase<JavaMod
     return "configsSearcher";
   }
 
-  @Override
-  protected boolean hasJavaSources() {
-    return true;
-  }
-
+  @HasJavaSources
   public void testSearch() throws Exception {
     final StrutsConfigsSearcher configsSearcher = new StrutsConfigsSearcher(myModule);
     configsSearcher.search();
 
-    final MultiMap<Module,PsiFile> map = configsSearcher.getFilesByModules();
+    final MultiMap<Module, PsiFile> map = configsSearcher.getFilesByModules();
     assertEquals(1, map.size());
     assertEquals(1, map.get(myModule).size()); // /src/struts.xml
     assertEquals(STRUTS_XML, map.get(myModule).iterator().next().getName());
