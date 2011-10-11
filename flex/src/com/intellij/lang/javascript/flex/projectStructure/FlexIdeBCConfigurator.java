@@ -208,19 +208,37 @@ public class FlexIdeBCConfigurator {
     final ModifiableFlexIdeBuildConfiguration configuration = myConfigEditor.createConfiguration(module);
     configuration.setName(nameAndNature.first);
     configuration.setNature(nameAndNature.second);
-    configuration.getDependencies().setSdkEntry(findRecentSdk());
+
+    final ModifiableFlexIdeBuildConfiguration someExistingConfig = myConfigEditor.getConfigurations(module)[0];
+    final FlexIdeBCConfigurable configurable = FlexIdeBCConfigurable.unwrap(myConfigurablesMap.get(someExistingConfig));
+    try {
+      configurable.apply();
+    }
+    catch (ConfigurationException ignored) {/**/}
+
+    // may be also set main class, output file name, package file names?
+    configuration.setOutputFolder(someExistingConfig.getOutputFolder());
+
+    final SdkEntry sdkEntry = someExistingConfig.getDependencies().getSdkEntry();
+    final SdkEntry newSdkEntry = sdkEntry == null ? findAnySdk() : Factory.createSdkEntry(sdkEntry.getLibraryId(), sdkEntry.getHomePath());
+    configuration.getDependencies().setSdkEntry(newSdkEntry);
+
     createConfigurableNode(configuration, module, treeNodeNameUpdater);
   }
 
   @Nullable
-  private SdkEntry findRecentSdk() {
-    // TODO assign the same SDK as neighbour configurations have
+  private SdkEntry findAnySdk() {
     Library[] libraries = myConfigEditor.getSdksLibraries();
     return libraries.length > 0
            ? Factory.createSdkEntry(FlexProjectRootsUtil.getSdkLibraryId(libraries[0]), FlexSdk.getHomePath(libraries[0])) : null;
   }
 
   public void copy(final CompositeConfigurable configurable, final Runnable treeNodeNameUpdater) {
+    try {
+      configurable.apply();
+    }
+    catch (ConfigurationException ignored) {/**/}
+
     ModifiableFlexIdeBuildConfiguration configuration = myConfigurablesMap.getKeysByValue(configurable).get(0);
 
     FlexIdeBCConfigurable unwrapped = FlexIdeBCConfigurable.unwrap(configurable);
@@ -232,7 +250,6 @@ public class FlexIdeBCConfigurator {
 
     ModifiableFlexIdeBuildConfiguration newConfiguration = myConfigEditor.copyConfiguration(configuration, nameAndNature.second);
     newConfiguration.setName(nameAndNature.first);
-    newConfiguration.getDependencies().setSdkEntry(findRecentSdk());
 
     // set correct output file extension for cloned configuration
     final String outputFileName = configuration.getOutputFileName();
