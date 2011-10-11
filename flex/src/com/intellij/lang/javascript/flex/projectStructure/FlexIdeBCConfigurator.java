@@ -238,7 +238,7 @@ public class FlexIdeBCConfigurator {
     final String outputFileName = configuration.getOutputFileName();
     final String lowercase = outputFileName.toLowerCase();
     if (lowercase.endsWith(".swf") || lowercase.endsWith(".swc")) {
-      final String extension = configuration.getOutputType() == OutputType.Library ? ".swc" : ".swf";
+      final String extension = newConfiguration.getOutputType() == OutputType.Library ? ".swc" : ".swf";
       newConfiguration.setOutputFileName(outputFileName.substring(0, outputFileName.length() - ".sw_".length()) + extension);
     }
 
