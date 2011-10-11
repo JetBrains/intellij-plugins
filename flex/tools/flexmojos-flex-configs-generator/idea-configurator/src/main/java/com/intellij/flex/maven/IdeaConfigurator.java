@@ -16,7 +16,6 @@ import org.sonatype.flexmojos.compiler.*;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class IdeaConfigurator implements FlexConfigGenerator {
