@@ -144,6 +144,8 @@ public class Main extends MainWindowedApplication {
     socketManager.connect("localhost", port, errorPort);
     
     UncaughtErrorManager.instance.listen(parent.loaderInfo);
+    // hello, it is flash. we must listen our loaderInfo.uncaughtErrorEvents for errors in plugin swf (as example, our test plugin)
+    UncaughtErrorManager.instance.listen(loaderInfo);
     loaderInfo.uncaughtErrorEvents.removeEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, uncaughtErrorHandler);
   }
 

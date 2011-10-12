@@ -86,8 +86,9 @@ public class StyleTest extends BaseTestCase {
       {skin: {name: "p"}}
     ]);
 
-    appContent.styleManager.getStyleDeclarations("spark.components.List").getStyle("cornerRadius");
-    assertThat();
+    var styleDeclarations:Array = appContent.styleManager.getStyleDeclarations("spark.components.List");
+    assertThat(styleDeclarations, arrayWithSize(2));
+    assertThat(styleDeclarations[1].getStyle("cornerRadius"), strictlyEqualTo(4));
   }
   
   public function StyleTagWithSource():void {
