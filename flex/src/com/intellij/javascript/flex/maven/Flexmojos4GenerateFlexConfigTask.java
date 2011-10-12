@@ -9,7 +9,9 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -22,7 +24,6 @@ import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.project.*;
 import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
 import org.jetbrains.idea.maven.utils.MavenProgressIndicator;
-import org.jetbrains.idea.maven.utils.MavenUtil;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -229,23 +230,39 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
           }
         }
 
-        MavenUtil.invokeAndWaitWriteAction(project, new Runnable() {
-          public void run() {
-            // need to refresh externally created file
-            final VirtualFile p = LocalFileSystem.getInstance().refreshAndFindFileByPath(
-              FlexMojos4FacetImporter.getCompilerConfigsDir(project));
-            if (p == null) {
-              return;
-            }
+        ApplicationManager.getApplication()
+          .invokeLater(new RefreshConfigFiles(filesForRefresh, FlexMojos4FacetImporter.getCompilerConfigsDir(project)));
+      }
+    }
+  }
 
-            for (String path : filesForRefresh) {
-              final VirtualFile file = p.findChild(path);
-              if (file != null) {
-                file.refresh(false, false);
-              }
-            }
+  private final static class RefreshConfigFiles implements Runnable {
+    private final List<String> filesForRefresh;
+    private final String compilerConfigsDir;
+
+    public RefreshConfigFiles(List<String> filesForRefresh, String compilerConfigsDir) {
+      this.filesForRefresh = filesForRefresh;
+      this.compilerConfigsDir = compilerConfigsDir;
+    }
+
+    public void run() {
+      AccessToken token = WriteAction.start();
+      try {
+        // need to refresh externally created file
+        final VirtualFile p = LocalFileSystem.getInstance().refreshAndFindFileByPath(compilerConfigsDir);
+        if (p == null) {
+          return;
+        }
+
+        for (String path : filesForRefresh) {
+          final VirtualFile file = p.findChild(path);
+          if (file != null) {
+            file.refresh(false, false);
           }
-        });
+        }
+      }
+      finally {
+        token.finish();
       }
     }
   }

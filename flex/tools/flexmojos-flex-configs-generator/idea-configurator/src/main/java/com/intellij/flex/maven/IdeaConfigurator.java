@@ -50,7 +50,7 @@ public class IdeaConfigurator implements FlexConfigGenerator {
     build(configuration, ICommandLineConfiguration.class, "\n\t", null);
 
     out.append("\n\t<file-specs>\n");
-    writeTag("\t\t", PATH_ELEMENT, sourceFile.getAbsolutePath(), FILE_SPECS);
+    writeTag("\t", PATH_ELEMENT, sourceFile.getAbsolutePath(), FILE_SPECS);
     out.append("\n\t</file-specs>");
   }
 
