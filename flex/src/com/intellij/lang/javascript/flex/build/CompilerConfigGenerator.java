@@ -14,6 +14,7 @@ import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.util.PathUtil;
@@ -364,6 +365,7 @@ public class CompilerConfigGenerator {
 
   private void addInputOutputPaths(final Element rootElement) throws IOException {
     if (myConfig.getOutputType() == OutputType.Library) {
+      final Ref<Boolean> noClasses = new Ref<Boolean>(true);
       final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(myModule.getProject()).getFileIndex();
 
       ContentIterator ci = new ContentIterator() {
@@ -381,6 +383,7 @@ public class CompilerConfigGenerator {
 
               if (FlexCompilerHandler.isMxmlOrFxgOrASWithPublicDeclaration(myModule, fileOrDir, qName)) {
                 addOption(rootElement, CompilerOptionInfo.INCLUDE_CLASSES_INFO, qName);
+                noClasses.set(false);
               }
             }
           }
@@ -389,6 +392,9 @@ public class CompilerConfigGenerator {
       };
 
       ModuleRootManager.getInstance(myModule).getFileIndex().iterateContent(ci);
+      if (noClasses.get()) {
+        throw new IOException(FlexBundle.message("nothing.to.compile.in.library", myModule.getName(), myConfig.getName()));
+      }
     }
     else {
       final String pathToMainClassFile = FlexUtils.getPathToMainClassFile(myConfig.getMainClass(), myModule);
