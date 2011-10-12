@@ -15,7 +15,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.flexmojos:flexmojos-flex-compiler:4.0-RC2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.sonatype.flexmojos:flexmojos-threadlocaltoolkit-wrapper:4.0-RC2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.flexmojos:flexmojos-generator-internal-compiler-iface:4.0-RC2" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.sonatype.flexmojos:flexmojos-generator-api:4.1-de0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.sonatype.flexmojos:flexmojos-generator-api:4.0-RC2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.sonatype.sisu.inject:guice-plexus-shim:2.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-component-annotations:1.5.5" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: javax.inject:javax.inject:1" level="project" />
@@ -35,36 +35,69 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.sonatype.sisu.inject:guice-plexus-binders:2.1.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.sonatype.sisu.inject:guice-plexus-scanners:2.1.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.ws.jaxme:jaxmejs:0.5.2" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:adt:2.6" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:afe:4.5.2.21576" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:aglj40:4.5.2.21576" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:asc:4.5.2.21576" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:adt:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:afe:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:aglj40:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:asc:4.5.1.21328" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:asdoc:4.5.1.21328" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:batik-all-flex:4.5.2.21576" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:commons-collections:4.5.2.21576" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:commons-discovery:4.5.2.21576" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:commons-logging:4.5.2.21576" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:baksmali:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:batik-all-flex:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:batik_de:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:batik_fr:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:batik_ja:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:batik_ko:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:batik_ru:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:batik_zh_CN:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:commons-collections:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:commons-discovery:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:commons-logging:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:compc:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:copylocale:4.5.1.21328" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:digest:4.5.1.21328" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:fcsh:4.5.2.21576" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:fdb:4.5.2.21576" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:flex-compiler-oem:4.5.2.21576" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:flex-fontkit:4.5.2.21576" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:flex-messaging-common:4.5.2.21576" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:fxgutils:4.5.2.21576" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:fcsh:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:fdb:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:flex-compiler-oem:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:flex-fontkit:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:flex-messaging-common:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:fxgutils:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:license:4.5.1.21328" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:mxmlc:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:mxmlc_da:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:mxmlc_de:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:mxmlc_es:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:mxmlc_fi:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:mxmlc_fr:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:mxmlc_it:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:mxmlc_ja:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:mxmlc_ko:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:mxmlc_nb:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:mxmlc_nl:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:mxmlc_pt:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:mxmlc_ru:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:mxmlc_sv:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:mxmlc_zh_CN:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:mxmlc_zh_TW:4.5.1.21328" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:optimizer:4.5.1.21328" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:rideau:4.5.2.21576" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:saxon9:4.5.2.21576" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:rideau:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:saxon9:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:smali:4.5.1.21328" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:swcdepends:4.5.1.21328" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:swfutils:4.5.2.21576" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:velocity-dep-1.4-flex:4.5.2.21576" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:xalan:4.5.2.21576" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:xercesImpl:4.5.2.21576" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:xercesPatch:4.5.2.21576" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:xmlParserAPIs:4.5.2.21576" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:swfdump:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:swfutils:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:velocity-dep-1.4-flex:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:xalan:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:xercesImpl:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:xercesImpl_de:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:xercesImpl_fr:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:xercesImpl_ja:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:xercesImpl_ko:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:xercesImpl_ru:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:xercesImpl_zh_CN:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:xercesPatch:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.compiler:xmlParserAPIs:4.5.1.21328" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.hamcrest:hamcrest-library:1.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.sonatype.flexmojos:flexmojos-maven-plugin:4.1-de0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.sonatype.flexmojos:flexmojos-maven-plugin:4.0-RC2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-plugin-api:3.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-model:3.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-artifact:3.0.3" level="project" />
@@ -84,8 +117,8 @@
     <orderEntry type="library" name="Maven: org.sonatype.aether:aether-spi:1.11" level="project" />
     <orderEntry type="library" name="Maven: org.sonatype.aether:aether-util:1.11" level="project" />
     <orderEntry type="library" name="Maven: org.sonatype.aether:aether-impl:1.11" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.sonatype.flexmojos:flexmojos-configurator:4.1-de0" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.sonatype.flexmojos:flexmojos-generator-graniteds-2.2.0:4.1-de0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.sonatype.flexmojos:flexmojos-configurator:4.0-RC2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.sonatype.flexmojos:flexmojos-generator-graniteds-2.2.0:4.0-RC2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.graniteds:granite-generator:2.2.0.RC2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.graniteds:granite-generator-share:2.2.0.RC2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: javax.persistence:persistence-api:1.0" level="project" />
@@ -96,8 +129,8 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.ant:ant-launcher:1.7.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: jline:jline:0.9.94" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: javax.transaction:jta:1.1" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.sonatype.flexmojos:flexmojos-generator-constraints:4.1-de0" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.sonatype.flexmojos:flexmojos-coverage-reporter:4.1-de0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.sonatype.flexmojos:flexmojos-generator-constraints:4.0-RC2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.sonatype.flexmojos:flexmojos-coverage-reporter:4.0-RC2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.googlecode.apparat:apparat-core:1.0-RC9" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.googlecode.apparat:apparat-log:1.0-RC9" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.scala-lang:scala-library:2.8.1" level="project" />
@@ -108,7 +141,7 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: asm:asm-tree:3.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: log4j:log4j:1.2.9" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: emma:emma:2.0.5312" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.sonatype.flexmojos:flexmojos-util:4.1-de0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.sonatype.flexmojos:flexmojos-util:4.0-RC2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: dom4j:dom4j:1.6.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: xml-apis:xml-apis:1.0.b2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: jaxen:jaxen:1.1" level="project" />
@@ -134,17 +167,13 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: eu.cedarsoft.utils:zip:1.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: eu.cedarsoft:guice-annotations:1.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.intellij:annotations:6.0.3" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.sonatype.flexmojos:flexmojos-tester:4.1-de0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.sonatype.flexmojos:flexmojos-tester:4.0-RC2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: net.sf.saxon:saxon-dom:9.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.googlecode.lambdaj:lambdaj:2.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.objenesis:objenesis:1.2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: cglib:cglib-nodep:2.2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.mockito:mockito-core:1.8.5" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.googlecode.apparat:apparat-maven-plugin:1.0-RC9" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.maven:maven-embedder:3.0.3" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.maven:maven-compat:3.0.3" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.maven.wagon:wagon-provider-api:1.0-beta-7" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: commons-cli:commons-cli:1.2" level="project" />
   </component>
 </module>
 

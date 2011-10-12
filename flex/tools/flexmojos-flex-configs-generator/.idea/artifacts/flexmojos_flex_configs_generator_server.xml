@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact build-on-make="true" name="flexmojos-flex-configs-generator-server">
-    <output-path>$APPLICATION_HOME_DIR$/plugins/flex/lib</output-path>
+    <output-path>$PROJECT_DIR$/../../lib</output-path>
     <root id="root">
       <element id="archive" name="flexmojos-flex-configs-generator-server.jar">
         <element id="module-output" name="generator-server" />

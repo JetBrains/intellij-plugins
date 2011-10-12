@@ -132,7 +132,7 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
 
     configureMavenClassPath(mavenGeneralSettings, params.getClassPath());
 
-    params.getVMParametersList().addParametersString("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5011");
+    //params.getVMParametersList().addParametersString("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5011");
     //params.getVMParametersList().addParametersString("-agentpath:/Applications/Idea.app/bin/libyjpagent.jnilib=onexit=snapshot,disablej2ee,disablealloc,disablecounts,sampling,sessionname=mavenFCG");
     //params.getVMParametersList().addParametersString("-agentpath:/Applications/Idea.app/bin/libyjpagent.jnilib=onexit=snapshot,disablej2ee,disablealloc,tracing,sessionname=mavenFCG");
     params.setMainClass("com.intellij.flex.maven.GeneratorServer");
