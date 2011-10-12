@@ -2,7 +2,6 @@ package com.intellij.flex.maven;
 
 import org.apache.maven.DefaultMaven;
 import org.apache.maven.artifact.InvalidRepositoryException;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.*;
 import org.apache.maven.lifecycle.internal.ThreadConfigurationService;
 import org.apache.maven.model.Plugin;
@@ -17,15 +16,17 @@ import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuilder;
 import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
-import org.codehaus.plexus.*;
+import org.codehaus.plexus.DefaultContainerConfiguration;
+import org.codehaus.plexus.DefaultPlexusContainer;
+import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.LoggerManager;
-import org.codehaus.plexus.logging.console.ConsoleLoggerManager;
 import org.sonatype.aether.RepositorySystemSession;
+import org.sonatype.aether.impl.internal.DefaultRepositorySystem;
 import org.sonatype.aether.repository.RepositoryPolicy;
+import org.sonatype.aether.spi.localrepo.LocalRepositoryManagerFactory;
 import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
 import java.io.BufferedInputStream;
@@ -36,12 +37,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class GeneratorServer {
-  private final PlexusContainer plexusContainer;
+  private final DefaultPlexusContainer plexusContainer;
   private final MavenSession session;
 
   private final DataInputStream in;
@@ -65,17 +67,15 @@ public class GeneratorServer {
 
   public GeneratorServer(String[] args)
     throws ComponentLookupException, IOException, MavenExecutionRequestPopulationException, SettingsBuildingException,
-           PlexusContainerException, InterruptedException {
+           PlexusContainerException, InterruptedException, InvalidRepositoryException {
     generatorOutputDirectory = new File(args[4]);
     //noinspection ResultOfMethodCallIgnored
     generatorOutputDirectory.mkdirs();
 
     in = new DataInputStream(new BufferedInputStream(System.in));
 
-    LoggerManager loggerManager = new ConsoleLoggerManager();
-    logger = loggerManager.getLoggerForComponent(null);
-    plexusContainer = createPlexusContainer(loggerManager);
-
+    plexusContainer = createPlexusContainer();
+    logger = plexusContainer.getLoggerManager().getLoggerForComponent(null);
     mavenPluginManager = plexusContainer.lookup(MavenPluginManager.class);
 
     session = createSession(createExecutionRequest(args));
@@ -240,13 +240,14 @@ public class GeneratorServer {
   }
 
   private MavenExecutionRequest createExecutionRequest(String[] args)
-    throws ComponentLookupException, SettingsBuildingException, MavenExecutionRequestPopulationException, IOException {
+    throws ComponentLookupException, SettingsBuildingException, MavenExecutionRequestPopulationException, IOException,
+           InvalidRepositoryException {
     MavenExecutionRequest request = new DefaultMavenExecutionRequest();
     request.setGlobalSettingsFile(new File(args[0]));
     if (!args[1].equals(" ")) {
       request.setUserSettingsFile(new File(args[1]));
     }
-    request.setLocalRepository(createLocalRepository(args[2]));
+    request.setLocalRepository(plexusContainer.lookup(RepositorySystem.class).createLocalRepository(new File(args[2])));
     request.setSystemProperties(System.getProperties());
 
     request.setOffline(args[3].equals("t")).setUpdateSnapshots(false).setCacheNotFound(true).setCacheTransferError(true);
@@ -266,16 +267,6 @@ public class GeneratorServer {
     return request;
   }
 
-  public ArtifactRepository createLocalRepository(String localRepositoryPath) throws ComponentLookupException {
-    try {
-      return plexusContainer.lookup(RepositorySystem.class).createLocalRepository(new File(localRepositoryPath));
-    }
-    catch (InvalidRepositoryException ex) {
-      // can't happen
-      throw new IllegalStateException(ex);
-    }
-  }
-
   private Settings createSettings(MavenExecutionRequest mavenExecutionRequest) throws ComponentLookupException, SettingsBuildingException {
     SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
     request.setSystemProperties(request.getSystemProperties());
@@ -284,11 +275,12 @@ public class GeneratorServer {
     return plexusContainer.lookup(SettingsBuilder.class).build(request).getEffectiveSettings();
   }
 
-  private DefaultPlexusContainer createPlexusContainer(LoggerManager loggerManager) throws PlexusContainerException {
-    ContainerConfiguration mavenCoreCC = new DefaultContainerConfiguration().setClassWorld(new ClassWorld("plexus.core", ClassWorld.class.getClassLoader())).setName("mavenCore");
-    mavenCoreCC.setAutoWiring(true);
-    final DefaultPlexusContainer container = new DefaultPlexusContainer(mavenCoreCC);
-    container.setLoggerManager(loggerManager);
+  private DefaultPlexusContainer createPlexusContainer() throws PlexusContainerException, ComponentLookupException {
+    final DefaultPlexusContainer container = new DefaultPlexusContainer(new DefaultContainerConfiguration().setClassWorld(new ClassWorld("plexus.core", Thread.currentThread().getContextClassLoader())).setName("maven").setAutoWiring(true));
+
+    // tracked impl is not suitable for us (our list of remote repo may be not equals — we don't want think about it)
+    ((DefaultRepositorySystem)container.lookup(org.sonatype.aether.RepositorySystem.class)).setLocalRepositoryManagerFactories(Collections.singletonList(
+      container.lookup(LocalRepositoryManagerFactory.class, "simple")));
     return container;
   }
 

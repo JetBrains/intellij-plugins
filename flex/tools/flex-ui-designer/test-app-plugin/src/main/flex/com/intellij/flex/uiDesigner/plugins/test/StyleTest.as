@@ -1,5 +1,4 @@
 package com.intellij.flex.uiDesigner.plugins.test {
-import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.css.CssClassCondition;
 import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.css.CssPseudoCondition;
@@ -86,6 +85,9 @@ public class StyleTest extends BaseTestCase {
       [{text: "H__________________________|", fontSize: 28, textIndent: -10}],
       {skin: {name: "p"}}
     ]);
+
+    appContent.styleManager.getStyleDeclarations("spark.components.List").getStyle("cornerRadius");
+    assertThat();
   }
   
   public function StyleTagWithSource():void {
@@ -127,13 +129,6 @@ public class StyleTest extends BaseTestCase {
       a = app;
     }
     assertThat(a, [{text: "label1", color: 0x000000}]);
-  }
-
-  public function App2():void {
-    assertThat(app, {color: 0xff0000, fontSize: 18});
-    var app1:Object = DocumentFactoryManager(projectManager.project.getComponent(DocumentFactoryManager)).get(0).document.uiComponent;
-    assertThat(app1, notNullValue());
-    App1(app1);
   }
 }
 }
