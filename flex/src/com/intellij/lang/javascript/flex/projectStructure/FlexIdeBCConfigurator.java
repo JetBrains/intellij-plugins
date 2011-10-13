@@ -216,7 +216,8 @@ public class FlexIdeBCConfigurator {
     }
     catch (ConfigurationException ignored) {/**/}
 
-    // may be also set main class, output file name, package file names?
+    // may be also set main class, package file names?
+    configuration.setOutputFileName(nameAndNature.first + (configuration.getOutputType() == OutputType.Library ? ".swc" : ".swf"));
     configuration.setOutputFolder(someExistingConfig.getOutputFolder());
 
     final SdkEntry sdkEntry = someExistingConfig.getDependencies().getSdkEntry();
