@@ -16,10 +16,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.NonFocusableCheckBox;
-import com.intellij.ui.PopupHandler;
-import com.intellij.ui.TableUtil;
-import com.intellij.ui.TreeTableSpeedSearch;
+import com.intellij.ui.*;
 import com.intellij.ui.treeStructure.treetable.ListTreeTableModel;
 import com.intellij.ui.treeStructure.treetable.TreeTable;
 import com.intellij.ui.treeStructure.treetable.TreeTableModel;
@@ -221,7 +218,8 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
         final Object userObject = ((DefaultMutableTreeNode)o.getLastPathComponent()).getUserObject();
         return userObject instanceof CompilerOptionInfo ? ((CompilerOptionInfo)userObject).DISPLAY_NAME : "";
       }
-    });
+    }).setComparator(new SpeedSearchBase.SpeedSearchComparator(false));
+
     return treeTable;
   }
 
