@@ -1,0 +1,147 @@
+package com.intellij.flex.uiDesigner.abc;
+
+import macromedia.abc.AbcParser;
+import macromedia.asc.embedding.CompilerHandler;
+import macromedia.asc.embedding.avmplus.ActionBlockEmitter;
+import macromedia.asc.embedding.avmplus.Features;
+import macromedia.asc.embedding.avmplus.GlobalBuilder;
+import macromedia.asc.parser.*;
+import macromedia.asc.semantics.*;
+import macromedia.asc.util.*;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Main {
+  public static void main(String[] args) throws IOException {
+    final String sourceFilePath = "/Users/develar/Documents/idea/flex/tools/flex-ui-designer/app-plugin-api/src/main/flex/Test.as";
+    final long start = System.currentTimeMillis();
+
+    TypeValue.init();
+    ObjectValue.init();
+
+    ContextStatics statics = new ContextStatics();
+    statics.handler = new CompilerHandler();
+    statics.use_static_semantics = true; // -strict
+    statics.dialect = 10; // -AS3
+    statics.setAbcVersion(Features.TARGET_AVM2);
+
+    Context cx = new Context(statics);
+    cx.setLanguage("EN");
+    cx.setPath("/Users/develar/Documents/idea/flex/tools/flex-ui-designer/app-plugin-api/src/main/flex");
+    cx.setScriptName("Test");
+    ActionBlockEmitter emitter = new ActionBlockEmitter(cx, cx.scriptName(), new StringPrintWriter() /* code_out */, new StringPrintWriter()
+                                                        /* header_out */, false, false, false, false);
+    cx.setEmitter(emitter);
+    cx.setHandler(statics.handler);
+
+    Builder globalBuilder = new GlobalBuilder();
+    ObjectValue global = new ObjectValue(cx, globalBuilder, null);
+
+    List<String> import_filespecs = new ArrayList<String>();
+    //import_filespecs.add("/Users/develar/Documents/flex/modules/asc/abc/toplevel.abc");
+    import_filespecs.add("/Users/develar/Documents/flex/modules/asc/abc/builtin.abc");
+
+    compile(cx, global, new FileInputStream(sourceFilePath), sourceFilePath, false, false, false, false, import_filespecs);
+    int error_count = cx.errorCount();
+
+    if (error_count == 1) {
+      System.err.println();
+      System.err.println("1 error found");
+    }
+    else if (error_count > 1) {
+      System.err.println();
+      System.err.println(error_count + " errors found");
+    }
+
+    ByteList bytes = new ByteList();
+    emitter.emit(bytes);            // Emit it
+    if (bytes.size() != 0) {
+      BufferedOutputStream code_out = null;
+      try {
+        code_out = new BufferedOutputStream(new FileOutputStream(new File(sourceFilePath + ".abc")));
+        code_out.write(bytes.toByteArray());
+        code_out.flush();
+      }
+      catch (IOException ex) {
+        ex.printStackTrace();
+      }
+      finally {
+        if (code_out != null) {
+          try {
+            code_out.close();
+          }
+          catch (IOException ex) {
+          }
+        }
+      }
+    }
+    statics.clear();
+    ObjectValue.clear();
+    TypeValue.clear();
+
+    final long duration = System.currentTimeMillis() - start;
+    System.out.print("Generating ABC took " + duration + " ms: " + duration / 60000 + " min " + (duration % 60000) / 1000 + "sec");
+  }
+
+  static void compile(Context cx, ObjectValue global,
+                      InputStream in, String filename,
+                      boolean show_flow,
+                      boolean emit_metadata, boolean save_comment_nodes, boolean emit_debug_info,
+                      List<String> import_filespecs) throws IOException {
+    ProgramNode second;
+
+    ObjectList<ImportNode> imports = new ObjectList<ImportNode>();
+    for (String filespec : import_filespecs) {
+      Context cx2 = new Context(cx.statics);
+      assert filespec.endsWith(".abc");
+      second = new AbcParser(cx2, filespec).parseAbc();
+      assert second != null;
+
+      NodeFactory nodeFactory = cx2.getNodeFactory();
+      imports.push_back(nodeFactory.Import(cx2, nodeFactory.literalString(filespec, 0), second));
+      cx2.getNodeFactory().pkg_defs.clear();
+    }
+
+    cx.setPath(new File(filename).getAbsoluteFile().getParent());
+    ProgramNode node = (new Parser(cx, in, filename, null, false, save_comment_nodes)).parseProgram();
+    node.imports = imports; // add the imports
+
+    cx.pushScope(global); // first scope is always considered the global scope.
+
+    node.pkgdefs.clear();
+    node.pkgdefs.addAll(cx.getNodeFactory().pkg_defs);
+
+    // Analyze
+    if (cx.errorCount() == 0) {
+      ConfigurationEvaluator ce = new ConfigurationEvaluator();
+      node.evaluate(cx, ce);
+    }
+    if (cx.errorCount() == 0) {
+      FlowGraphEmitter flowem = new FlowGraphEmitter(cx, filename, show_flow);
+      FlowAnalyzer flower = new FlowAnalyzer(flowem);
+      // 1. ProgramNode.state == Inheritance
+      node.evaluate(cx, flower);
+      // 2. ProgramNode.state == else
+      node.evaluate(cx, flower);
+    }
+
+    if (cx.errorCount() == 0 && emit_metadata) {
+      node.evaluate(cx, new MetaDataEvaluator(emit_debug_info));
+    }
+    if (cx.errorCount() == 0) {
+      node.evaluate(cx, new ConstantEvaluator(cx));
+    }
+
+    // Generate
+    if (cx.errorCount() == 0) {
+      Emitter emitter = cx.getEmitter();
+      CodeGenerator generator = new CodeGenerator(emitter);
+      node.evaluate(cx, generator);
+    }
+
+    // Clean up
+    cx.popScope();
+  }
+}

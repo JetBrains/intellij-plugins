@@ -15,14 +15,6 @@ public final class AssetClassPoolGenerator extends AbcEncoder {
 
   private static final int NAME_POS = 12;
 
-  public static void generateSprite(ArrayList<Decoder> decoders, int size) throws IOException {
-    generate(true, decoders, size, -1);
-  }
-
-  public static void generateBitmap(ArrayList<Decoder> decoders, int size) throws IOException {
-    generate(false, decoders, size, -1);
-  }
-
   private static void generate(final boolean isSwf, final ArrayList<Decoder> decoders, int size, int counter)
       throws IOException {
     final byte[] abc;
