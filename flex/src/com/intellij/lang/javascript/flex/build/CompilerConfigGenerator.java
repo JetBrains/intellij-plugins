@@ -392,7 +392,7 @@ public class CompilerConfigGenerator {
       };
 
       ModuleRootManager.getInstance(myModule).getFileIndex().iterateContent(ci);
-      if (noClasses.get()) {
+      if (noClasses.get() && !ApplicationManager.getApplication().isUnitTestMode()) {
         throw new IOException(FlexBundle.message("nothing.to.compile.in.library", myModule.getName(), myConfig.getName()));
       }
     }
