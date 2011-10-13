@@ -1,0 +1,152 @@
+/*
+ * Copyright 2009 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package com.google.jstestdriver.idea.execution;
+
+import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
+import com.google.jstestdriver.idea.execution.settings.JstdRunSettingsSerializationUtils;
+import com.google.jstestdriver.idea.execution.settings.TestType;
+import com.google.jstestdriver.idea.execution.settings.ui.JstdRunConfigurationEditor;
+import com.intellij.execution.ExecutionException;
+import com.intellij.execution.Executor;
+import com.intellij.execution.configurations.*;
+import com.intellij.execution.executors.DefaultDebugExecutor;
+import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.runners.ProgramRunner;
+import com.intellij.openapi.options.SettingsEditor;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.psi.PsiElement;
+import com.intellij.refactoring.listeners.RefactoringElementListener;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+
+/**
+ * One configured instance of the Run Configuration. The user can create several different configs
+ * and save them all.
+ * @author alexeagle@google.com (Alex Eagle)
+ */
+public class JstdRunConfiguration extends RunConfigurationBase implements LocatableConfiguration, RefactoringListenerProvider {
+
+  private JstdRunSettings myRunSettings = new JstdRunSettings.Builder().build();
+
+  public JstdRunConfiguration(Project project,
+                              ConfigurationFactory jsTestDriverConfigurationFactory,
+                              String pluginName) {
+    super(project, jsTestDriverConfigurationFactory, pluginName);
+  }
+
+  @Override
+  public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
+    return new JstdRunConfigurationEditor(getProject());
+  }
+
+  @SuppressWarnings({"deprecation"})
+  @Override
+  public com.intellij.openapi.util.JDOMExternalizable createRunnerSettings(ConfigurationInfoProvider provider) {
+    return null;
+  }
+
+  @SuppressWarnings({"deprecation", "RawUseOfParameterizedType"})
+  @Override
+  public SettingsEditor<com.intellij.openapi.util.JDOMExternalizable> getRunnerSettingsEditor(ProgramRunner runner) {
+    return null;
+  }
+
+  @Override
+  public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env)
+      throws ExecutionException {
+    if (DefaultDebugExecutor.EXECUTOR_ID.equals(executor.getId())) {
+      throw new ExecutionException("Debugging is not implemented");
+    }
+    try {
+      checkConfiguration();
+    } catch (RuntimeConfigurationException e) {
+      throw new ExecutionException(e.getMessage());
+    }
+    return new TestRunnerState(this, getProject(), env);
+  }
+
+  public void setRunSettings(@NotNull JstdRunSettings runSettings) {
+    myRunSettings = runSettings;
+  }
+
+  @NotNull
+  public JstdRunSettings getRunSettings() {
+    return myRunSettings;
+  }
+
+  @Override
+  public void checkConfiguration() throws RuntimeConfigurationException {
+    JstdRunConfigurationVerifier.verify(myRunSettings);
+  }
+
+  @Override
+  public void readExternal(Element element) throws InvalidDataException {
+    super.readExternal(element);
+    JstdRunSettings runSettings = JstdRunSettingsSerializationUtils.readFromJDomElement(element);
+    setRunSettings(runSettings);
+  }
+
+  @Override
+  public void writeExternal(Element element) throws WriteExternalException {
+    super.writeExternal(element);
+    JstdRunSettingsSerializationUtils.writeFromJDomElement(element, myRunSettings);
+  }
+
+  @Override
+  public boolean isGeneratedName() {
+    return suggestedName().equals(getName());
+  }
+
+  @Override
+  public String suggestedName() {
+    if (myRunSettings != null) {
+      TestType testType = myRunSettings.getTestType();
+      if (testType == TestType.ALL_CONFIGS_IN_DIRECTORY) {
+        String directoryPath = myRunSettings.getDirectory();
+        File directory = new File(directoryPath);
+        if (!directoryPath.isEmpty() && directory.isDirectory()) {
+          return "All in " + directory.getName();
+        }
+      } else if (testType == TestType.CONFIG_FILE) {
+        File file = new File(myRunSettings.getConfigFile());
+        if (file.isFile()) {
+          return file.getName();
+        }
+      } else if (testType == TestType.JS_FILE) {
+        File file = new File(myRunSettings.getJsFilePath());
+        if (file.isFile()) {
+          return file.getName();
+        }
+      } else if (testType == TestType.TEST_CASE) {
+        return myRunSettings.getTestCaseName();
+      } else if (testType == TestType.TEST_METHOD) {
+        return myRunSettings.getTestCaseName() + "." + myRunSettings.getTestMethodName();
+      }
+    }
+    return "Unknown";
+  }
+
+  @Override
+  public RefactoringElementListener getRefactoringElementListener(PsiElement element) {
+    JstdRunConfigurationRefactoringHandler refactoringHandler = new JstdRunConfigurationRefactoringHandler(this);
+    return refactoringHandler.getRefactoringElementListener(element);
+  }
+
+}

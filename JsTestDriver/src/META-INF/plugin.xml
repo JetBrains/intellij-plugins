@@ -1,0 +1,256 @@
+<!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
+<!--
+ * Copyright 2009 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+-->
+<idea-plugin>
+  <name>JSTestDriver Plugin</name>
+  <description>Execute JavaScript unit tests using JsTestDriver</description>
+  <version>1.3.9</version>
+  <vendor url="http://code.google.com/p/js-test-driver/"
+          email="js-test-driver@googlegroups.com">Google; JetBrains</vendor>
+  <idea-version since-build="106.0" until-build="111.0"/>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="com.google.jstestdriver.idea.jsCallTemplate" interface="com.google.jstestdriver.idea.assertFramework.codeInsight.JsCallTemplateContextProvider"/>
+  </extensionPoints>
+
+  <depends>com.intellij.modules.lang</depends>
+  <depends optional="true" config-file="yaml-support.xml">org.jetbrains.plugins.yaml</depends>
+  <depends optional="true" config-file="javascript-support.xml">JavaScript</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <configurationType implementation="com.google.jstestdriver.idea.execution.JstdConfigurationType"/>
+    <programRunner implementation="com.google.jstestdriver.idea.execution.JstdClientRunner"/>
+    <configurationProducer implementation="com.google.jstestdriver.idea.execution.JstdRuntimeConfigurationProducer"/>
+  </extensions>
+
+  <project-components>
+    <component>
+      <implementation-class>com.google.jstestdriver.idea.JSTestDriverToolWindow</implementation-class>
+    </component>
+  </project-components>
+
+  <change-notes>
+    <![CDATA[
+<h4>Version 1.3.9, 10 October 2011 (build on JsTestDriver-1.3.3c)</h4>
+<ul>
+  <li>Bug fixes:
+    <ul>
+      <li>Stacktrace navigation has been improved:
+        <ul>
+          <li>Stacktrace paths that are not started with 'http://' are clickable now.</li>
+          <li>Firefox 7 stacktrace path navigation has been fixes.</li>
+          <li>Caret positioning inside a line (when column number was provided) was wrong if there were leading TAB separators.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h4>Version 1.3.8, 6 October 2011 (build on JsTestDriver v1.3.3b)</h4>
+<ul>
+  <li>New features:
+    <ul>
+      <li>Supported <a href="http://code.google.com/p/js-test-driver/wiki/HtmlDoc">Html Doc</a>: html tag completion, syntax highlighting, error checking.</li>
+    </ul>
+  </li>
+  <li>Bug fixes:
+    <ul>
+      <li>Stacktrace paths referring JavaScript files from 'test:' config section are clickable now.</li>
+      <li>Test result tree is fixed if tests of JsTestDriver build-in assertion framework have dot symbol in their names.</li>
+    </ul>
+  </li>
+</ul>
+
+<h4>Version 1.3.7, 4 October 2011 (build on JsTestDriver v1.3.3b)</h4>
+<ul>
+  <li>Usability bugfix:
+    <ul>
+      <li>Select all capture browser URL text on double mouse click or focus gaining.</li>
+    </ul>
+  </li>
+</ul>
+
+<h4>Version 1.3.6, 28 September 2011 (build on JsTestDriver v1.3.2):</h4>
+<ul>
+  <li>Bug fixes:
+    <ul>
+      <li><a href="http://code.google.com/p/js-test-driver/issues/detail?id=255" style="text-decoration: line-through">issue 255</a>
+        Generated configuration file content has buggy relative paths if temporary dir is a symlink or JavaScript files and temporary dir locates on different Windows logical disks.
+      </li>
+      <li><a href="http://youtrack.jetbrains.net/issue/WI-7446" style="text-decoration: line-through">WI-7446</a>
+        Hovering over objects with Command key depressed does not show a link.
+      </li>
+    </ul>
+  </li>
+  <li>New features:
+    <ul>
+      <li><a href="http://code.google.com/p/js-test-driver/issues/detail?id=252" style="text-decoration: line-through">issue 252</a>
+        Jasmine support
+      </li>
+      <li>Inspection for QUnit and Jasmine adapters installing is available if user types some framework-special symbols for the first time</li>
+      <li>QUnit and Jasmine generate actions are available with use of Alt+Insert.</li>
+      <li>Completion for JsTestDriver configuration file is improved ('basepath' key is supported now).</li>
+      <li>Annotation for JsTestDriver configuration file is improved.</li>
+      <li>File is classified as JsTestDriver configuration file if its name matches 'jsTestDriver.conf' or similar pattern.</li>
+    </ul>
+  </li>
+</ul>
+
+<h4>Version 1.3.5, 20 June 2011 (build on JsTestDriver v1.3.2):</h4>
+<ul>
+  <li>Bug fixes:
+    <ul>
+      <li>Tests were duplicated in the test tree view if a browser was captured more than once.</li>
+    </ul>
+  </li>
+  <li>New features:
+    <ul>
+      <li><a href="http://code.google.com/p/js-test-driver/issues/detail?id=186" style="text-decoration: line-through">issue 186</a>
+        Tests are not connected with their source lines and log file prepends browser path to file path.
+      </li>
+      <li>Messages sent to console.log() are shown in IDE.</li>
+      <li>Error messages are improved when user tries to run tests but JsTestDriver configuration file is incorrect or JsTestDriver server is not running.</li>
+    </ul>
+  </li>
+</ul>
+
+<h4>Version 1.3.4, 1 June 2011 (build on JsTestDriver v1.3.2):</h4>
+<ul>
+  <li>Bug fixes:
+    <ul>
+      <li>Run Configuration UI -> 'Save As' generated config action: ask user to replace file if file exists.</li>
+      <li>Run Configuration UI -> 'Save As' generated config action: update saved file content in editor.</li>
+      <li>QUnitAdapter integration: equiv.js was not added to generated config.</li>
+    </ul>
+  </li>
+</ul>
+
+<h4>Version 1.3.3.1, 1 June 2011 (build on JsTestDriver v1.3.2):</h4>
+<ul>
+  <li>Bug fixes:
+    <ul>
+      <li>Run Configuration UI: label titles are corrected, mnemonics are added.</li>
+      <li>Configuration file generation was improved for QUnitAdapter.</li>
+    </ul>
+  </li>
+</ul>
+
+<h4>Version 1.3.3, 30 May 2011 (build on JsTestDriver v1.3.2):</h4>
+<ul>
+  <li>Bug fixes:
+    <ul>
+      <li><a href="http://code.google.com/p/js-test-driver/issues/detail?id=173" style="text-decoration: line-through">issue 173</a>
+        Browser was highlighted as attached after stopping JsTestDriver server
+      </li>
+    </ul>
+  </li>
+  <li>New features:
+    <ul>
+      <li>Run all test cases from single JavaScript test file (right click on *.js file in Project View or use Ctrl+Shift+F10 shortcut).</li>
+      <li>Run all test methods from single test case (right click in editor or use Ctrl+Shift+F10 shortcut).</li>
+      <li><a href="http://code.google.com/p/js-test-driver/issues/detail?id=56" style="text-decoration: line-through">issue 56</a>
+        Run single test method (right click in editor or use Ctrl+Shift+F10 shortcut).
+      </li>
+      <li>Support basepath parameter in JsTestDriver configuration file.</li>
+    </ul>
+  </li>
+</ul>
+
+<h4>Version 1.3.2, 7 May 2011 (build on JsTestDriver v1.3.2):</h4>
+<ul>
+  <li>Bug fixes:
+    <ul>
+      <li>The wiped Global Libraries bug fixed in IDEA v10 .. v10.0.3 inclusively.</li>
+      <li>Saved Run Configuration with 'All in directory' checkbox enabled became temporary after running it from context menu.</li>
+    </ul>
+  </li>
+</ul>
+
+<h4>Version 1.3.1.1, 4 May 2011 (build on JsTestDriver v1.3.2):</h4>
+<ul>
+  <li>Support IDEA v10.5, WebStorm v2.1, PhpStorm v2.1, PyCharm v1.5</li>
+</ul>
+
+<h4>Version 1.3.1, 3 May 2011 (build on JsTestDriver v1.3.2):</h4>
+<ul>
+  <li>Bug fixes:
+    <ul>
+      <li>'Debug' button from execution panel is disabled if JsTestDriver Run Configuration is selected (debug is not supported now).</li>
+      <li>Show error message in case of invalid JsTestDriver Run Configuration run.</li>
+    </ul>
+  <li>New features:
+    <ul>
+      <li>It's possible to run tests from all JsTestDriver configuration files located in a chosen directory (or in one of its sub-directory).</li>
+      <li>'Test Connection' button is added to JsTestDriver Run Configuration dialog. It checks JsTestDriver server availability.</li>
+      <li>Now it's possible to run tests from selected JsTestDriver configuration file (or directory) with help of Context Menu or Ctrl+Shift+F10 shortcut.</li>
+    </ul>
+  </li>
+</ul>
+
+<h4>Version 1.3, 22 April 2011 (build on JsTestDriver v1.3.2):</h4>
+<ul>
+  <li>Bug fixes:
+    <ul>
+      <li>Compatibility problems preventing test run are solved.</li>
+    </ul>
+  </li>
+  <li>New features:
+    <ul>
+      <li>Navigation from test result tree to source code is available with double click or F4, 'Javascript support' plugin required.</li>
+      <li>JsTestDriver assert framework and QUnit Adapter are supported, 'Javascript support' plugin required.</li>
+      <li>Generate action are added for QUnit tests: 'Create test', 'Create SetUp Method', 'Create TearDown Method'.</li>
+      <li>JsTestDriver config file structure is partially supported, 'YAML' plugin required:
+        <ul>
+          <li>Path completion added for 'load' section (no globbing support).</li>
+          <li>It's possible to go to the file declaration with help of Ctrl+Click or Ctrl+B shortcut.</li>
+          <li>Now it's possible to run tests from JsTestDriver config file with help of context menu (or Ctrl+Shift+F10 shortcut).</li>
+          <li>File is classified as JsTestDriver config file if it has '*.jstd' file extension or
+              referred by any JsTestDriver Run Configuration (in the latter case config file can have any extension).
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h4>Version 1.2:</h4>
+<ul>
+    <li>Enable plugins when running tests, such as the coverage plugin</li>
+    <li>Bug fix: when browser disconnects, icon goes grey. When all browsers
+        disconnect, status bar goes yellow and message is updated
+    </li>
+    <li>Bug fix: don't make a socket connection on the UI event thread, as it may hang.</li>
+    <li>Bug fix: when server shuts down, status bar goes red. Start and stop buttons
+        only enabled as appropriate.
+    </li>
+    <li>Move Server control tool panel to the bottom by default.</li>
+</ul>
+
+<h4>Version 0.1.1:</h4>
+<ul>
+    <li>Support IDEA version 8</li>
+    <li>Use built-in IDEA Run UI for showing test results</li>
+</ul>
+
+<h4>Version 0.1:</h4>
+<ul>
+    <li>Initial release</li>
+    <li>Start server within IDE, run tests</li>
+</ul>
+
+  ]]>
+  </change-notes>
+</idea-plugin>
