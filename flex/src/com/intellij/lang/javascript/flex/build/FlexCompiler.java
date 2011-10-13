@@ -7,7 +7,6 @@ import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.facet.FacetManager;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
@@ -27,16 +26,15 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkAdditionalData;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.NullableComputable;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformUtils;
+import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -349,9 +347,13 @@ public class FlexCompiler implements SourceProcessingCompiler {
         for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig : modulesAndConfigsToCompile) {
           validateConfiguration(moduleAndConfig.first.getName(), moduleAndConfig.second);
         }
+
+        checkSimilarOutputFiles(modulesAndConfigsToCompile);
       }
       catch (ConfigurationException e) {
-        Messages.showErrorDialog(e.getMessage(), e.getTitle());
+        final String title =
+          ConfigurationException.DEFAULT_TITLE.equals(e.getTitle()) ? FlexBundle.message("project.setup.problem.title") : e.getTitle();
+        Messages.showErrorDialog(e.getMessage(), title);
         return false;
       }
 
@@ -413,6 +415,44 @@ public class FlexCompiler implements SourceProcessingCompiler {
       }
     }
     return true;
+  }
+
+  private static boolean checkSimilarOutputFiles(final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndConfigsToCompile)
+    throws ConfigurationException {
+
+    final Map<String, Pair<Module, FlexIdeBuildConfiguration>> outputPathToModuleAndConfig =
+      new THashMap<String, Pair<Module, FlexIdeBuildConfiguration>>();
+    for (Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig : modulesAndConfigsToCompile) {
+      final FlexIdeBuildConfiguration config = moduleAndConfig.second;
+      checkOutputPathUnique(config.getOutputFilePath(), moduleAndConfig, outputPathToModuleAndConfig);
+
+      if (config.getTargetPlatform() == TargetPlatform.Mobile && config.getOutputType() == OutputType.Application) {
+        if (config.getAndroidPackagingOptions().isEnabled()) {
+          final String outputPath = config.getOutputFolder() + "/" + config.getAndroidPackagingOptions().getPackageFileName();
+          checkOutputPathUnique(outputPath, moduleAndConfig, outputPathToModuleAndConfig);
+        }
+        if (config.getIosPackagingOptions().isEnabled()) {
+          final String outputPath = config.getOutputFolder() + "/" + config.getIosPackagingOptions().getPackageFileName();
+          checkOutputPathUnique(outputPath, moduleAndConfig, outputPathToModuleAndConfig);
+        }
+      }
+    }
+    return true;
+  }
+
+  private static void checkOutputPathUnique(final String outputPath,
+                                            final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig,
+                                            final Map<String, Pair<Module, FlexIdeBuildConfiguration>> outputPathToModuleAndConfig)
+    throws ConfigurationException {
+    final String caseAwarePath = SystemInfo.isFileSystemCaseSensitive ? outputPath : outputPath.toLowerCase();
+
+    final Pair<Module, FlexIdeBuildConfiguration> existing = outputPathToModuleAndConfig.put(caseAwarePath, moduleAndConfig);
+    if (existing != null) {
+      throw new ConfigurationException(FlexBundle
+                                         .message("same.output.files", moduleAndConfig.second.getName(), moduleAndConfig.first.getName(),
+                                                  existing.second.getName(), existing.first.getName(),
+                                                  FileUtil.toSystemDependentName(outputPath)));
+    }
   }
 
   private static Collection<Pair<Module, FlexIdeBuildConfiguration>> getModulesAndConfigsToCompile(final CompileScope scope)
@@ -477,8 +517,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
         if (otherModule == null || otherConfig == null) {
           throw new ConfigurationException(FlexBundle.message("bc.dependency.does.not.exist", bcEntry.getBcName(), bcEntry.getModuleName(),
-                                                              config.getName(), module.getName()),
-                                           FlexBundle.message("project.setup.problem.title"));
+                                                              config.getName(), module.getName()));
         }
 
         final Pair<Module, FlexIdeBuildConfiguration> otherModuleAndConfig = Pair.create(otherModule, otherConfig);
@@ -498,47 +537,37 @@ public class FlexCompiler implements SourceProcessingCompiler {
     final SdkEntry sdkEntry = config.getDependencies().getSdkEntry();
     final Library sdkLib = sdkEntry == null ? null : sdkEntry.findLibrary();
     if (sdkLib == null) {
-      throw new ConfigurationException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", config.getName(), moduleName),
-                                       FlexBundle.message("project.setup.problem.title"));
+      throw new ConfigurationException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", config.getName(), moduleName));
     }
 
     if (!nature.isLib() && config.getMainClass().isEmpty()) {
-      throw new ConfigurationException(FlexBundle.message("main.class.not.set.for.bc.0.of.module.1", config.getName(), moduleName),
-                                       FlexBundle.message("project.setup.problem.title"));
+      throw new ConfigurationException(FlexBundle.message("main.class.not.set.for.bc.0.of.module.1", config.getName(), moduleName));
       // real main class validation is done later in CompilerConfigGenerator
     }
 
     if (config.getOutputFileName().isEmpty()) {
-      throw new ConfigurationException(FlexBundle.message("output.file.name.not.set.for.bc.0.of.module.1", config.getName(), moduleName),
-                                       FlexBundle.message("project.setup.problem.title"));
+      throw new ConfigurationException(FlexBundle.message("output.file.name.not.set.for.bc.0.of.module.1", config.getName(), moduleName));
     }
 
     if (nature.isWebPlatform() && nature.isApp() && config.isUseHtmlWrapper()) {
       if (config.getWrapperTemplatePath().isEmpty()) {
 
-        throw new ConfigurationException(
-          FlexBundle.message("html.template.folder.not.set.for.bc.0.of.module.1", config.getName(), moduleName),
-          FlexBundle.message("project.setup.problem.title"));
+        throw new ConfigurationException(FlexBundle.message("html.template.folder.not.set.for.bc.0.of.module.1", config.getName(), moduleName));
       }
       final VirtualFile wrapperTemplateDir = LocalFileSystem.getInstance().findFileByPath(config.getWrapperTemplatePath());
       if (wrapperTemplateDir == null || !wrapperTemplateDir.isDirectory()) {
-        throw new ConfigurationException(FlexBundle
-                                           .message("html.template.folder.not.found.for.bc.0.of.module.1.2", config.getName(), moduleName,
-                                                    config.getWrapperTemplatePath()), FlexBundle.message("project.setup.problem.title"));
+        throw new ConfigurationException(FlexBundle.message("html.template.folder.not.found.for.bc.0.of.module.1.2", config.getName(), moduleName,config.getWrapperTemplatePath()));
         // todo check that it contains wrapper template
       }
     }
 
     if (nature.isMobilePlatform() && nature.isApp()) {
       if (config.getAndroidPackagingOptions().isEnabled() && config.getAndroidPackagingOptions().getPackageFileName().isEmpty()) {
-        throw new ConfigurationException(
-               FlexBundle.message("android.package.not.set.for.bc.0.of.module.1", config.getName(), moduleName),
-               FlexBundle.message("project.setup.problem.title"));
+        throw new ConfigurationException(FlexBundle.message("android.package.not.set.for.bc.0.of.module.1", config.getName(), moduleName));
       }
       if (config.getIosPackagingOptions().isEnabled() && config.getIosPackagingOptions().getPackageFileName().isEmpty()) {
         throw new ConfigurationException(
-               FlexBundle.message("ios.package.not.set.for.bc.0.of.module.1", config.getName(), moduleName),
-               FlexBundle.message("project.setup.problem.title"));
+          FlexBundle.message("ios.package.not.set.for.bc.0.of.module.1", config.getName(), moduleName));
       }
     }
 
@@ -583,8 +612,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
         FlexBundle.message("bc.dependency.problem",
                            config.getName(), moduleName, config.getOutputType().getPresentableText(),
                            dependencyConfig.getName(), dependencyModuleName, dependencyConfig.getOutputType().getPresentableText(),
-                           linkageType.getShortText()),
-        FlexBundle.message("project.setup.problem.title"));
+                           linkageType.getShortText()));
     }
   }
 
