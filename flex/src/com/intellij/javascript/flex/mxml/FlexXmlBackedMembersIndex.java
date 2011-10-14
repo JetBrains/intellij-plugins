@@ -13,7 +13,6 @@ import com.intellij.lang.javascript.types.JSFileElementType;
 import com.intellij.navigation.PsiElementNavigationItem;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
