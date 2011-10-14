@@ -16,8 +16,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.PathMacroManager;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.roots.impl.*;
@@ -26,6 +24,7 @@ import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters;
 import com.intellij.util.xmlb.XmlSerializer;
@@ -159,7 +158,7 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
     if (buildConfiguration.getTargetPlatform() == TargetPlatform.Web) {
       final SdkEntry sdkEntry = buildConfiguration.getDependencies().getSdkEntry();
       if (sdkEntry != null) {
-        final String sdkHome = PathMacroManager.getInstance(ApplicationManager.getApplication()).expandPath(sdkEntry.getHomePath());
+        final String sdkHome = PathUtil.getCanonicalPath(moduleSettings.expandPath(sdkEntry.getHomePath()));
         buildConfiguration.getDependencies().setTargetPlayer(getTargetPlayer(oldConfiguration, sdkHome));
       }
     }
@@ -178,14 +177,14 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
         final Element outputElement = rootManagerElement.getChild("output");
         final String outputUrl = outputElement == null ? null : outputElement.getAttributeValue("url");
         if (outputUrl != null) {
-          return VfsUtil.urlToPath(moduleSettings.expandPath(outputUrl));
+          return PathUtil.getCanonicalPath(VfsUtil.urlToPath(moduleSettings.expandPath(outputUrl)));
         }
       }
     }
 
     final String projectOutputUrl = moduleSettings.getProjectOutputUrl();
     return projectOutputUrl == null ? ""
-                                    : VfsUtil.urlToPath(moduleSettings.expandPath(projectOutputUrl)) +
+                                    : PathUtil.getCanonicalPath(VfsUtil.urlToPath(moduleSettings.expandPath(projectOutputUrl))) +
                                       "/" + CompilerModuleExtension.PRODUCTION + "/" + moduleSettings.getModuleName();
   }
 
