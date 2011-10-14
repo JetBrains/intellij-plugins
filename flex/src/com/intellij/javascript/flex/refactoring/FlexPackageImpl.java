@@ -46,17 +46,17 @@ public class FlexPackageImpl extends PsiPackageBase implements NavigationItem, J
 
   private volatile CachedValue<Collection<PsiDirectory>> myDirectories;
 
-  public FlexPackageImpl(PsiManagerEx manager, String qualifiedName) {
+  public FlexPackageImpl(PsiManager manager, String qualifiedName) {
     super(manager, qualifiedName);
   }
 
   @Override
   protected PsiElement findPackage(String qName) {
-    return createInstance((PsiManagerEx)getManager(), qName);
+    return createInstance(getManager(), qName);
   }
 
   @Override
-  protected FlexPackageImpl createInstance(PsiManagerEx manager, String qName) {
+  protected FlexPackageImpl createInstance(PsiManager manager, String qName) {
     return new FlexPackageImpl(manager, qName);
   }
 
