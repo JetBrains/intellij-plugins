@@ -541,8 +541,9 @@ def layoutFull(String target, Set usedJars) {
       jar("icons.jar") { module("icons") }
       jar("boot.jar") { module("boot") }
 
-      jar("compile-server.jar") {
-        module("compile-server")
+      jar("jps-server.jar") {
+        module("jps-builders")
+        module("jps-model")
       }
 
       usedJars.each {
