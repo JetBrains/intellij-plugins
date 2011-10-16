@@ -603,7 +603,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     final FlexUnitRunConfiguration runConfiguration = (FlexUnitRunConfiguration)env.getRunProfile();
     final FlexUnitConsoleProperties consoleProps = new FlexUnitConsoleProperties(runConfiguration, executor);
     final BaseTestsOutputConsoleView consoleView = SMTestRunnerConnectionUtil
-      .attachRunner("FlexUnit", processHandler, consoleProps, env.getRunnerSettings(), env.getConfigurationSettings());
+      .createAndAttachConsole("FlexUnit", processHandler, consoleProps, env.getRunnerSettings(), env.getConfigurationSettings());
     consoleView.addMessageFilter(new FlexStackTraceFilter(project));
     Disposer.register(project, consoleView);
     return consoleView;
