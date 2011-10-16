@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil.attachRunner;
+import static com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil.createAndAttachConsole;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
 /**
@@ -120,7 +120,7 @@ class TestRunnerState extends CommandLineState {
 
     ProcessHandler processHandler = startProcess();
     BaseTestsOutputConsoleView consoleView =
-        attachRunner(myProject.getName(), processHandler, testConsoleProperties, getRunnerSettings(), getConfigurationSettings());
+        createAndAttachConsole(myProject.getName(), processHandler, testConsoleProperties, getRunnerSettings(), getConfigurationSettings());
     processDataFuture.set(new ProcessData((SMTRunnerConsoleView) consoleView, processHandler));
 
     return new DefaultExecutionResult(context.consoleView(), context.processHandler(),
