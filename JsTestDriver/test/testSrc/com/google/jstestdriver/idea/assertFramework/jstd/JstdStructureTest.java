@@ -45,7 +45,12 @@ public class JstdStructureTest extends AbstractJsPsiTestCase {
   }
 
   @Test
-  public void testPrototypeAndLiteralSimpleMix() throws Exception {
+  public void testMixObjectLiteralAndPrototypeMethodTests_with_var() throws Exception {
+    validateJsFile();
+  }
+
+  @Test
+  public void testMixObjectLiteralAndPrototypeMethodTests_without_var() throws Exception {
     validateJsFile();
   }
 

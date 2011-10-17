@@ -57,9 +57,8 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
                   JSReferenceExpression jsReferenceExpression = CastUtils.tryCast(jsDefinitionExpression.getExpression(), JSReferenceExpression.class);
                   if (jsReferenceExpression != null) {
                     PsiElement psiElement = JsPsiUtils.resolveUniquely(jsReferenceExpression);
-                    JSVariable testCastJsVariable = CastUtils.tryCast(psiElement, JSVariable.class);
-                    if (testCastJsVariable != null) {
-                      addPrototypeTests(testCaseStructure, testCastJsVariable);
+                    if (psiElement instanceof JSElement) {
+                      addPrototypeTests(testCaseStructure, (JSElement) psiElement);
                     }
                   }
                 }
@@ -87,7 +86,7 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
     }
   }
 
-  private static void addPrototypeTests(@NotNull final JstdTestCaseStructure testCaseStructure, @NotNull final JSVariable jsVariable) {
+  private static void addPrototypeTests(@NotNull final JstdTestCaseStructure testCaseStructure, @NotNull final JSElement jsVariable) {
     Query<PsiReference> referenceQuery = ReferencesSearch.search(jsVariable);
     referenceQuery.forEach(new Processor<PsiReference>() {
       @Override
