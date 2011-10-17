@@ -27,7 +27,7 @@ public class IdeaConfigurator implements FlexConfigGenerator {
 
   protected final MavenSession session;
 
-  protected StringBuilder out;
+  protected final StringBuilder out;
   private Build build;
 
   private String classifier;
@@ -43,6 +43,9 @@ public class IdeaConfigurator implements FlexConfigGenerator {
   public IdeaConfigurator(MavenSession session, File outputDirectory) {
     this.session = session;
     this.outputDirectory = outputDirectory;
+
+    out = new StringBuilder(8192);
+    out.append("<flex-config xmlns=\"http://www.adobe.com/2006/flex-config\">");
   }
 
   @Override
@@ -64,8 +67,6 @@ public class IdeaConfigurator implements FlexConfigGenerator {
     this.classifier = classifier;
     this.flexmojosGeneratorMojoExecution = flexmojosGeneratorMojoExecution;
     build = project.getBuild();
-    out = new StringBuilder(8192);
-    out.append("<flex-config xmlns=\"http://www.adobe.com/2006/flex-config\">");
   }
 
   @Override
@@ -212,7 +213,6 @@ public class IdeaConfigurator implements FlexConfigGenerator {
       else if (returnType.isArray() || value instanceof Collection<?>) {
         Object[] values;
         if (returnType.isArray()) {
-          //noinspection ConstantConditions
           values = (Object[])value;
         }
         else {
@@ -334,14 +334,12 @@ public class IdeaConfigurator implements FlexConfigGenerator {
       }
 
       if (value.equals(defaultPath)) {
-        if (sharedFontsSer == null) {
+        if (sharedFontsSerPath == null) {
           sharedFontsSer = new File(outputDirectory, FONTS_SER);
+          sharedFontsSerPath = sharedFontsSer.getPath();
           if (!sharedFontsSer.exists()) {
             Utils.copyFile(fontsSer, sharedFontsSer);
           }
-
-          sharedFontsSerPath = sharedFontsSer.getAbsolutePath();
-
         }
 
         value = sharedFontsSerPath;
@@ -357,24 +355,17 @@ public class IdeaConfigurator implements FlexConfigGenerator {
 
   private static String camelCaseToSnake(final String s) {
     StringBuilder builder = new StringBuilder(s.length() + 4 /* probable max hyphen count */);
-    boolean isFirst = true;
     for (int i = removePrefix(s), n = s.length(); i < n; i++) {
       char c = s.charAt(i);
       if (Character.isUpperCase(c)) {
-        if (!isFirst) {
-          builder.append('-');
-        }
-        else {
-          isFirst = false;
-        }
-        builder.append(Character.toLowerCase(c));
+        builder.append('-').append(Character.toLowerCase(c));
       }
       else {
         builder.append(c);
       }
     }
 
-    return builder.toString();
+    return builder.substring(builder.charAt(0) == '-' ? 1 : 0);
   }
 
   private static int removePrefix(String s) {

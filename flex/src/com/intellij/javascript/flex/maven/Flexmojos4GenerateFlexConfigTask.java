@@ -14,6 +14,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
+import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathsList;
@@ -131,10 +133,12 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
     programParametersList.add(project.getBaseDir().getPath() + "/.idea/flexmojos");
 
     configureMavenClassPath(mavenGeneralSettings, params.getClassPath());
+    
+    final File userVmP = new File(System.getProperty("user.home"), "fcg-vmp");
+    if (userVmP.exists()) {
+      params.getVMParametersList().addParametersString(FileUtil.loadFile(userVmP));
+    }
 
-    //params.getVMParametersList().addParametersString("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5011");
-    //params.getVMParametersList().addParametersString("-agentpath:/Applications/Idea.app/bin/libyjpagent.jnilib=onexit=snapshot,disablej2ee,disablealloc,disablecounts,sampling,sessionname=mavenFCG");
-    //params.getVMParametersList().addParametersString("-agentpath:/Applications/Idea.app/bin/libyjpagent.jnilib=onexit=snapshot,disablej2ee,disablealloc,tracing,sessionname=mavenFCG");
     params.setMainClass("com.intellij.flex.maven.GeneratorServer");
 
     final GeneralCommandLine commandLine = CommandLineBuilder.createFromJavaParameters(params);
