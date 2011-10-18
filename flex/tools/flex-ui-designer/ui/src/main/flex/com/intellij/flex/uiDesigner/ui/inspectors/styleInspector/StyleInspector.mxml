@@ -61,6 +61,7 @@
     }
 
     private var userDocument:Document;
+
     public function get documentStyleManager():StyleManagerEx {
       return userDocument.styleManager;
     }
@@ -116,7 +117,9 @@
           if (declaration is MergedCssStyleDeclarationEx) {
             for each (var ruleset:CssRuleset in MergedCssStyleDeclarationEx(declaration).rulesets) {
               if (!onlyRulesetWithInheritedStyles || containsInheritStyle(ruleset)) {
-                namespaceUnificator.process(ruleset);
+                if (!ruleset.inline) {
+                  namespaceUnificator.process(ruleset);
+                }
                 source[sourceItemCounter++] = ruleset;
               }
             }

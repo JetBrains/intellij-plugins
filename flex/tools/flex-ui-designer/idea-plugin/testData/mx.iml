@@ -4,10 +4,19 @@
     <option name="TARGET_PLAYER_VERSION" value="10.2.0" />
     <option name="VERSION" value="3" />
   </component>
-  <component name="FlexBuildConfigurationManager" active="common">
+  <component name="FlexBuildConfigurationManager" active="mx a">
     <configurations>
-      <configuration name="common" output-type="Library" output-file="Common.swc" output-folder="$MODULE_DIR$/out/production/common" skip-build="true">
-        <dependencies target-player="10.2" component-set="SparkOnly">
+      <configuration name="mx" output-type="Library" output-file="mx.swc" output-folder="$MODULE_DIR$/out/production/mx" skip-build="true">
+        <dependencies target-player="10.2">
+          <sdk library-id="bda50fbf-ccd5-43bc-800d-7ba94ad6d273" home-path="/Developer/SDKs/flex_4.5.1" />
+        </dependencies>
+        <compiler-options />
+        <packaging-air-desktop />
+        <packaging-android />
+        <packaging-ios />
+      </configuration>
+      <configuration name="mx a" output-file="mx.swf" output-folder="$MODULE_DIR$/out/production/mx" skip-build="true">
+        <dependencies target-player="10.2">
           <sdk library-id="bda50fbf-ccd5-43bc-800d-7ba94ad6d273" home-path="/Developer/SDKs/flex_4.5.1" />
         </dependencies>
         <compiler-options />
@@ -20,8 +29,8 @@
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$MODULE_DIR$/src/common">
-      <sourceFolder url="file://$MODULE_DIR$/src/common" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/src/mx">
+      <sourceFolder url="file://$MODULE_DIR$/src/mx" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Flex SDK 4.5.1.21328" level="application" />

@@ -13,11 +13,8 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.flex.uiDesigner.debug.FlexRunner;
-import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
-import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
-import com.intellij.lang.javascript.flex.run.FlexRunConfigurationType;
-import com.intellij.lang.javascript.flex.run.FlexRunnerParameters;
+import com.intellij.lang.javascript.flex.run.*;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -30,6 +27,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
+import com.intellij.util.PlatformUtils;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
@@ -51,6 +49,9 @@ final class DesignerApplicationUtil {
 
   private static final Logger LOG = Logger.getInstance(DesignerApplicationUtil.class.getName());
   private static final String MAC_AIR_RUNTIME_DEFAULT_PATH = "/Library/Frameworks";
+
+  private DesignerApplicationUtil() {
+  }
 
   public static AdlRunConfiguration createTestAdlRunConfiguration() throws IOException {
     return new AdlRunConfiguration(DebugPathManager.ADL_EXECUTABLE, DebugPathManager.ADL_RUNTIME);
@@ -145,6 +146,7 @@ final class DesignerApplicationUtil {
   }
 
   // http://kb2.adobe.com/cps/407/kb407625.html
+  @Nullable
   private static String findInstalledRuntime() throws IOException {
     if (SystemInfo.isMac) {
       String runtime = MAC_AIR_RUNTIME_DEFAULT_PATH;
@@ -168,9 +170,15 @@ final class DesignerApplicationUtil {
 
   public static void runDebugger(final Module module, final AdlRunTask task) throws ExecutionException {
     RunManagerEx runManager = RunManagerEx.getInstanceEx(module.getProject());
-    RunnerAndConfigurationSettings settings = runManager.createConfiguration("FlexUIDesigner", FlexRunConfigurationType.getFactory());
-    FlexRunnerParameters runnerParameters = ((FlexRunConfiguration)settings.getConfiguration()).getRunnerParameters();
-    runnerParameters.setRunMode(FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer);
+    final RunnerAndConfigurationSettings settings;
+    if (PlatformUtils.isFlexIde()) {
+      settings = runManager.createConfiguration("FlexUIDesigner", FlexIdeRunConfigurationType.getFactory());
+    }
+    else {
+      settings = runManager.createConfiguration("FlexUIDesigner", FlexRunConfigurationType.getFactory());
+      ((FlexRunConfiguration)settings.getConfiguration()).getRunnerParameters().setRunMode(
+        FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer);
+    }
 
     final CompileStepBeforeRun.MakeBeforeRunTask runTask =
       runManager.getBeforeRunTask(settings.getConfiguration(), CompileStepBeforeRun.ID);

@@ -15,6 +15,9 @@ public final class DebugPathManager {
   private static String ideaHome;
   private final static String fudHome;
 
+  private DebugPathManager() {
+  }
+
   static {
     ideaHome = PathManager.getHomePathFor(DebugPathManager.class);
     Application app = ApplicationManager.getApplication();
@@ -55,16 +58,10 @@ public final class DebugPathManager {
       ADL_RUNTIME = adlRuntime;
     }
     else {
-      if (ideaHome == null) {
-        // running from flex-ui-designer plugin project, or from bundled product
-        fudHome = System.getProperty("fud.home");
-        IS_DEV = fudHome != null;
-      }
-      else {
-        // running from IDEA project
-        IS_DEV = false;
+      fudHome = System.getProperty("fud.home");
+      IS_DEV = fudHome != null;
+      if (ideaHome != null && !IS_DEV) {
         ideaHome = null; // not used
-        fudHome = null; // not used
       }
 
       ADL_EXECUTABLE = null; // not used
