@@ -179,16 +179,22 @@ class FlexEncoder extends Encoder {
         modifyConstructor = skipInitialize ||
                             compare(in, stringLength, VIEW_NAVIGATOR_APPLICATION) ||
                             compare(in, stringLength, TABBED_VIEW_NAVIGATOR_APPLICATION);
+        // AS-66
+        if (!skipInitialize && isFlex45) {
+          skipInitialize = compare(in, stringLength, "View");
+        }
       }
     }
-    else if (compare(in, packageLength, SPARK_COMPONENTS_SUPPORT_CLASSES)) {
-      in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
-      skipInitialize = compare(in, VIEW_NAVIGATOR_APPLICATION_BASE);
-    }
-    else if (isFlex45 && compare(in, packageLength, "mx.containers")) {
-      in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
-      skipPanelAddChild = compare(in, "Panel");
-      modifyAccessModifier = "setControlBar";
+    else if (isFlex45) {
+      if (compare(in, packageLength, SPARK_COMPONENTS_SUPPORT_CLASSES)) {
+        in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
+        skipInitialize = compare(in, VIEW_NAVIGATOR_APPLICATION_BASE);
+      }
+      else if (compare(in, packageLength, "mx.containers")) {
+        in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
+        skipPanelAddChild = compare(in, "Panel");
+        modifyAccessModifier = "setControlBar";
+      }
     }
   }
 
@@ -205,15 +211,15 @@ class FlexEncoder extends Encoder {
     modifyAccessModifier = null;
   }
 
-  private static boolean compare(final DataBuffer in, final String s) {
-    return compare(in, in.readU32(), s);
-  }
-
   @Override
   protected void instanceEnding(int oldIInit) {
     if (modifyConstructor) {
       history.getModifiedMethodBodies(poolIndex).put(oldIInit, MODIFY_INIT_METHOD_BODY_MARKER);
     }
+  }
+
+  private static boolean compare(final DataBuffer in, final String s) {
+    return compare(in, in.readU32(), s);
   }
 
   private static boolean compare(final DataBuffer in, final int stringLength, final String s) {

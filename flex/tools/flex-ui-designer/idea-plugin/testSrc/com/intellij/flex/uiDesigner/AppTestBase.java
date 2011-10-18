@@ -28,35 +28,28 @@ import java.util.Arrays;
 import java.util.List;
 
 abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
-  private static final String BASE_PATH = "/mxml";
-
   protected String flexSdkRootPath;
   protected Sdk sdk;
   protected final List<Pair<VirtualFile, VirtualFile>> libs = new ArrayList<Pair<VirtualFile, VirtualFile>>();
-  
-  //@Override
-  protected String getBasePath() {
-    return BASE_PATH;
+
+  protected String getSourceBasePath() {
+    return "common";
   }
   
-  protected String getTestPath() {
-    return getTestDataPath() + getBasePath();
+  protected final String getTestPath() {
+    return getTestDataPath() + "/src/" + getSourceBasePath();
   }
-  
-  private String getPlayerGlobalRootPath() {
-    return getTestDataPath() + "/sdk/playerglobal";
-  }
-  
-  protected static VirtualFile getVFile(String file) {
-    VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(file);
-    assert vFile != null;
+
+  protected static VirtualFile getVFile(String path) {
+    VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(path.charAt(0) == '/' ? path : (doGetTestDataPath() + '/' + path));
+    assertNotNull(vFile);
     return vFile;
   }
 
   @Override
   protected void setUpJdk() {
     final String flexVersion = getFlexVersion();
-    flexSdkRootPath = getTestDataPath() + "/sdk/" + flexVersion;
+    flexSdkRootPath = getTestDataPath() + "/lib/flex-sdk/" + flexVersion;
     doSetupFlexSdk(myModule, flexSdkRootPath, true, flexVersion + "." + (flexVersion.equals("4.1") ? "16076" : "20967"));
   }
 
@@ -97,7 +90,7 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   }
   
   protected void modifySdk(Sdk sdk, SdkModificator sdkModificator) {
-    sdkModificator.addRoot(LocalFileSystem.getInstance().findFileByPath(getPlayerGlobalRootPath()), OrderRootType.CLASSES);
+    sdkModificator.addRoot(getVFile("lib/playerglobal"), OrderRootType.CLASSES);
     
     String[] list = new File(flexSdkRootPath).list();
     Arrays.sort(list);
@@ -109,6 +102,10 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   }
 
   protected void addLibrary(SdkModificator sdkModificator, String path) {
+    if (path.charAt(0) != '/') {
+      path = getTestDataPath() + "/lib/" + path;
+    }
+
     VirtualFile virtualFile = getVFile(path);
     VirtualFile jarFile = JarFileSystem.getInstance().getJarRootForLocalFile(virtualFile);
     assert jarFile != null;

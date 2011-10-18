@@ -47,14 +47,14 @@ final class Decoder {
     final int estimatedSize;
     protected final int[] positions;
 
-    Info(DataBuffer in) {
+    Info(DataBuffer in) throws DecoderException {
       int pos = in.position();
       this.in = in;
       positions = scan();
       estimatedSize = in.position() - pos;
     }
 
-    abstract protected int[] scan();
+    abstract protected int[] scan() throws DecoderException;
 
     public int size() {
       return positions.length;
@@ -62,7 +62,7 @@ final class Decoder {
   }
 
   static final class MethodInfo extends Info {
-    MethodInfo(DataBuffer in) {
+    MethodInfo(DataBuffer in) throws DecoderException {
       super(in);
     }
 
@@ -80,7 +80,7 @@ final class Decoder {
   }
 
   static final class MetaDataInfo extends Info {
-    MetaDataInfo(DataBuffer in) {
+    MetaDataInfo(DataBuffer in) throws DecoderException {
       super(in);
     }
 
@@ -106,7 +106,7 @@ final class Decoder {
     private final Traits classTraits;
     private final Traits instanceTraits;
 
-    ClassInfo(DataBuffer in) {
+    ClassInfo(DataBuffer in) throws DecoderException {
       this.in = in;
       int pos = in.position();
       int size = in.readU32();
@@ -149,13 +149,13 @@ final class Decoder {
   public static final class ScriptInfo extends Info {
     private final Traits traits;
 
-    ScriptInfo(DataBuffer in) {
+    ScriptInfo(DataBuffer in) throws DecoderException {
       super(in);
       traits = new Traits(in);
     }
 
     @Override
-    protected int[] scan() {
+    protected int[] scan() throws DecoderException {
       return Scanner.scanScripts(in);
     }
 
@@ -175,13 +175,13 @@ final class Decoder {
   public final class MethodBodies extends Info {
     private final Traits traits;
 
-    MethodBodies(DataBuffer in) {
+    MethodBodies(DataBuffer in) throws DecoderException {
       super(in);
       traits = new Traits(in);
     }
 
     @Override
-    protected int[] scan() {
+    protected int[] scan() throws DecoderException {
       return Scanner.scanMethodBodies(in);
     }
 
@@ -270,7 +270,9 @@ final class Decoder {
       for (int i = 0; i < count; i++) {
         int name = in.readU32();
         int kind = in.readU8();
-        int slotID, typeID, valueID;
+        int slotID;
+        int typeID;
+        int valueID;
         int value_kind = 0;
 
         switch (kind & 0x0f) {
@@ -299,6 +301,7 @@ final class Decoder {
       }
     }
 
+    @Nullable
     private int[] decodeMetaData(int kind) {
       int[] md = null;
       if (((kind >> 4) & TRAIT_FLAG_metadata) != 0) {

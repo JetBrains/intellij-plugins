@@ -27,8 +27,8 @@ public class UITest extends MxmlTestBase {
   private static SocketInputHandlerImpl.Reader reader;
   
   @Override
-  protected String getBasePath() {
-    return getName().equals("testStyleNavigationToSkinClass") ? "/css" : super.getBasePath();
+  protected String getSourceBasePath() {
+    return getName().equals("testStyleNavigationToSkinClass") ? "css" : super.getSourceBasePath();
   }
   
   @Override
@@ -111,7 +111,7 @@ public class UITest extends MxmlTestBase {
       }, "Embed.mxml");
   }
 
-  protected void assertNotAvailable() throws IOException {
+  protected static void assertNotAvailable() throws IOException {
     try {
       Thread.sleep(50); // wait data
     }

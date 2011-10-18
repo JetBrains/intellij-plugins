@@ -26,16 +26,16 @@ public class SwcDependenciesSorterTest extends MxmlTestBase {
   protected void modifySdk(final Sdk sdk, SdkModificator sdkModificator) {
     // must be added before super (i. e. before framework.swc)
     if (getName().equals("testDelete")) {
-      addLibrary(sdkModificator, getTestDataPath() + "/flash-integration_4.1.swc");
+      addLibrary(sdkModificator, "flash-integration_4.1.swc");
     }
     else if (getName().equals("testIgnoreSwcWithoutLibraryFile")) {
-      addLibrary(sdkModificator, getTestDataPath() + "/swcWithoutLibrarySwf.swc");
+      addLibrary(sdkModificator, "swcWithoutLibrarySwf.swc");
     }
     
     super.modifySdk(sdk, sdkModificator);
 
     if (getName().equals("testDeleteIfAllDefitionsHaveUnresolvedDependencies")) {
-      addLibrary(sdkModificator, getTestDataPath() + "/spark_dmv_4.5.swc");
+      addLibrary(sdkModificator, "spark_dmv_4.5.swc");
     }
     else if (getName().equals("testResolveToClassWithBiggestTimestamp")) {
       final String path = getTestDataPath() + "/ResolveToClassWithBiggestTimestamp/bin/";
@@ -48,8 +48,7 @@ public class SwcDependenciesSorterTest extends MxmlTestBase {
       public void dispose() {
         AccessToken token = WriteAction.start();
         try {
-          final ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
-          projectJdkTable.removeJdk(sdk);
+          ProjectJdkTable.getInstance().removeJdk(sdk);
         }
         finally {
           token.finish();

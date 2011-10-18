@@ -3,6 +3,9 @@ package com.intellij.flex.uiDesigner.abc;
 import static com.intellij.flex.uiDesigner.abc.ActionBlockConstants.*;
 
 final class Scanner {
+  private Scanner() {
+  }
+
   public static int[] scanIntConstants(DataBuffer in) {
     int size = in.readU32();
     int[] positions = new int[size];
@@ -134,7 +137,7 @@ final class Scanner {
     return positions;
   }
 
-  public static int[] scanInstances(DataBuffer in, int size) {
+  public static int[] scanInstances(DataBuffer in, int size) throws DecoderException {
     int[] positions = new int[size];
 
     for (int i = 0; i < size; i++) {
@@ -156,7 +159,7 @@ final class Scanner {
     return positions;
   }
 
-  public static int[] scanClasses(DataBuffer in, int size) {
+  public static int[] scanClasses(DataBuffer in, int size) throws DecoderException {
     int[] positions = new int[size];
 
     for (int i = 0; i < size; i++) {
@@ -168,7 +171,7 @@ final class Scanner {
     return positions;
   }
 
-  public static int[] scanScripts(DataBuffer in) {
+  public static int[] scanScripts(DataBuffer in) throws DecoderException {
     int size = in.readU32();
     int[] positions = new int[size];
 
@@ -181,7 +184,7 @@ final class Scanner {
     return positions;
   }
 
-  public static int[] scanMethodBodies(DataBuffer in) {
+  public static int[] scanMethodBodies(DataBuffer in) throws DecoderException {
     int size = in.readU32();
     int[] positions = new int[size];
 
@@ -201,16 +204,10 @@ final class Scanner {
   }
 
   private static void scanExceptions(DataBuffer in) {
-    int count = in.readU32();
-    if (in.minorVersion() == 15) {
-      in.skipEntries(count * 4);
-    }
-    else {
-      in.skipEntries(count * 5);
-    }
+    in.skipEntries(in.readU32() * 5);
   }
 
-  private static void scanTraits(DataBuffer in) {
+  private static void scanTraits(DataBuffer in) throws DecoderException {
     long count = in.readU32();
 
     for (long i = 0; i < count; i++) {
@@ -238,9 +235,7 @@ final class Scanner {
           in.skipEntries(2);
           break;
         default:
-          // throw new DecoderException("Invalid trait type: " + kind);
-          System.err.println("invalid trait type: " + tag);
-          break;
+          throw new DecoderException("Invalid trait type: " + kind);
       }
 
       if (((kind >> 4) & TRAIT_FLAG_metadata) != 0) {

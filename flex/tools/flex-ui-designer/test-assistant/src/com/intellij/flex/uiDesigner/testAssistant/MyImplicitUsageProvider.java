@@ -43,10 +43,10 @@ public class MyImplicitUsageProvider implements ImplicitUsageProvider {
       return false;
     }
 
-    File testDataPath = new File(projectBaseDir.getPath(), "idea-plugin/testData");
-    if (!testDataPath.exists()) {
-      testDataPath = new File(projectBaseDir.getPath(), "flex/tools/flex-ui-designer/idea-plugin/testData");
-      assert testDataPath.exists();
+    File testSourcePath = new File(projectBaseDir.getPath(), "idea-plugin/testData/src");
+    if (!testSourcePath.exists()) {
+      testSourcePath = new File(projectBaseDir.getPath(), "flex/tools/flex-ui-designer/idea-plugin/testData");
+      assert testSourcePath.exists();
     }
 
     final JSAttributeList classAttributeList = clazz.getAttributeList();
@@ -56,7 +56,7 @@ public class MyImplicitUsageProvider implements ImplicitUsageProvider {
         return false;
       }
 
-      return new File(testDataPath, testAnnotation.getValueByName("dir").getSimpleValue() + File.separatorChar + methodName + ".mxml")
+      return new File(testSourcePath, testAnnotation.getValueByName("dir").getSimpleValue() + File.separatorChar + methodName + ".mxml")
         .exists();
     }
 

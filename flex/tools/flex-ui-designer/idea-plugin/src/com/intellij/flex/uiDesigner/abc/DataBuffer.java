@@ -1,6 +1,8 @@
 package com.intellij.flex.uiDesigner.abc;
 
-import java.io.UnsupportedEncodingException;
+import com.google.common.base.Charsets;
+import org.jetbrains.annotations.TestOnly;
+
 import java.nio.ByteBuffer;
 
 class DataBuffer {
@@ -90,13 +92,9 @@ class DataBuffer {
     return Double.longBitsToDouble(first & 0xFFFFFFFFL | second << 32);
   }
 
+  @TestOnly
   public String readString(int length) {
-    try {
-      return new String(data, offset + position, length, "UTF8");
-    }
-    catch (UnsupportedEncodingException ex) {
-      return null;
-    }
+    return new String(data, offset + position, length, Charsets.UTF_8);
   }
 
   public void skip(int length) {
@@ -120,6 +118,7 @@ class DataBuffer {
 
     end1 += offset;
     for (int i = start1 + offset, j = start2 + b.offset; i < end1;) {
+      //noinspection AssignmentToForLoopParameter
       if (data[i++] != b.data[j++]) {
         return false;
       }
@@ -140,9 +139,5 @@ class DataBuffer {
 
   public final void writeTo(ByteBuffer buffer, int start, int end) {
     buffer.put(data, offset + start, end - start);
-  }
-
-  public int minorVersion() {
-    return 16;
   }
 }

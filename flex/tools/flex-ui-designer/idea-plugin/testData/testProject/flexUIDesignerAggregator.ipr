@@ -156,6 +156,7 @@
       <module fileurl="file://$PROJECT_DIR$/designer.iml" filepath="$PROJECT_DIR$/designer.iml" />
       <module fileurl="file://$PROJECT_DIR$/flex-injection.iml" filepath="$PROJECT_DIR$/flex-injection.iml" group="plafAggregator and modules" />
       <module fileurl="file://$PROJECT_DIR$/flexUIDesignerAggregator.iml" filepath="$PROJECT_DIR$/flexUIDesignerAggregator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mobile/mobile.iml" filepath="$PROJECT_DIR$/mobile/mobile.iml" />
       <module fileurl="file://$PROJECT_DIR$/plafAggregator.iml" filepath="$PROJECT_DIR$/plafAggregator.iml" group="plafAggregator and modules" />
       <module fileurl="file://$PROJECT_DIR$/shared.iml" filepath="$PROJECT_DIR$/shared.iml" />
       <module fileurl="file://$PROJECT_DIR$/test.iml" filepath="$PROJECT_DIR$/test.iml" />

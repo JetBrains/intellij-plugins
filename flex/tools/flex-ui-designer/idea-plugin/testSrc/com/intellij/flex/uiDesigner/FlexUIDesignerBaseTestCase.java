@@ -11,7 +11,7 @@ abstract class FlexUIDesignerBaseTestCase extends CodeInsightTestCase {
       return false;
     }
 
-  public static String getTestDataPathImpl() {
+  protected static String doGetTestDataPath() {
     if (testDataPath == null) {
       testDataPath = DebugPathManager.getFudHome() + "/idea-plugin/testData";
     }
@@ -24,7 +24,7 @@ abstract class FlexUIDesignerBaseTestCase extends CodeInsightTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return getTestDataPathImpl();
+    return doGetTestDataPath();
   }
 
   @Override

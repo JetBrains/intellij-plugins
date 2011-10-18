@@ -10,8 +10,8 @@ import java.io.IOException;
 @Flex(version="4.5")
 public class StyleTest extends MxmlTestBase {
   @Override
-  protected String getBasePath() {
-    return getName().equals("testAlwaysCreateChildStyleManagerForAppDocument") ? "/AlwaysCreateChildStyleManagerForAppDocument" : "/css";
+  protected String getSourceBasePath() {
+    return getName().equals("testAlwaysCreateChildStyleManagerForAppDocument") ? "AlwaysCreateChildStyleManagerForAppDocument" : "css";
   }
   
   public void testLibraryCssDefaults() throws Exception {
@@ -38,7 +38,7 @@ public class StyleTest extends MxmlTestBase {
   // see mx.controls.ButtonBar line 528 in flex sdk 4.1
   public void testMxButtonBar41WithLocalStyleHolder() throws Exception {
     // must be tested with local style holder
-    testFile("../mxml/mx/MxComponents.mxml", "StyleTagWithSource.mxml", "externalCss.css");
+    testFile("../mx/MxComponents.mxml", "StyleTagWithSource.mxml", "externalCss.css");
   }
   
   @Flex(requireLocalStyleHolder=true)

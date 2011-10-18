@@ -3,7 +3,7 @@ package com.intellij.flex.uiDesigner;
 import java.io.IOException;
 
 class TestClient extends Client {
-  private static final int MXML_TEST_CLASS_ID = 0;
+  private static final int COMMON_TEST_CLASS_ID = 0;
   private static final int MXML_MX_TEST_CLASS_ID = 6;
   private static final int STATES_TEST_CLASS_ID = 1;
   private static final int INJECTED_AS_TEST_CLASS_ID = 2;
@@ -16,9 +16,9 @@ class TestClient extends Client {
                    ? STATES_TEST_CLASS_ID
                    : c == 'i'
                      ? INJECTED_AS_TEST_CLASS_ID
-                     : (c == 'c' || c == 'A'
+                     : ((c == 'c' && parentFilename.charAt(1) == 's') || c == 'A'
                         ? STYLE_TEST_CLASS_ID
-                        : (parentFilename.length() == 2 ? MXML_MX_TEST_CLASS_ID : MXML_TEST_CLASS_ID)));
+                        : (parentFilename.length() == 2 ? MXML_MX_TEST_CLASS_ID : COMMON_TEST_CLASS_ID)));
   }
   
   public void test(String filename, int c) throws IOException {

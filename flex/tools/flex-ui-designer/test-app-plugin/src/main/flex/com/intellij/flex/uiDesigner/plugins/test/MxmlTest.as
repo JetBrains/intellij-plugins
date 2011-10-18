@@ -11,7 +11,7 @@ import org.hamcrest.object.equalTo;
 import org.hamcrest.object.instanceOf;
 import org.hamcrest.object.strictlyEqualTo;
 
-[Test(dir="mxml")]
+[Test(dir="common")]
 public class MxmlTest extends BaseTestCase {
   public function SparkComponents():void {
     assertThat(app, {document: app});

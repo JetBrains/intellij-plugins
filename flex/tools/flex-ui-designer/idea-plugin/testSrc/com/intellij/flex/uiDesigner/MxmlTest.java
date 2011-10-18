@@ -19,15 +19,22 @@ public class MxmlTest extends MxmlTestBase {
   protected void modifyModule(ModifiableRootModel model, VirtualFile rootDir) {
     if (getName().equals("test45")) {
       addLibrary(model, getFudHome() + "/test-data-libs/target/test-data-libs.swc");
-      final VirtualFile assetsDir = getVFile(getTestDataPath() + "/assets");
+      final VirtualFile assetsDir = getVFile("assets");
       model.addContentEntry(assetsDir).addSourceFolder(assetsDir, false);
 
-      final VirtualFile localesDir = getVFile(getTestDataPath() + "/locales");
+      final VirtualFile localesDir = getVFile("locales");
       final ContentEntry localesContentEntry = model.addContentEntry(localesDir);
       //noinspection ConstantConditions
       localesContentEntry.addSourceFolder(localesDir.findChild("en_US"), false);
       //localesContentEntry.addSourceFolder(localesDir.findChild("ru_RU"), false);
     }
+    else if (getName().equals("testMobile")) {
+      addLibrary(model, getFudHome() + "/test-data-libs/target/test-data-libs.swc");
+    }
+  }
+
+  public void testMobile() throws Exception {
+
   }
 
   public void test45() throws Exception {
@@ -62,7 +69,9 @@ public class MxmlTest extends MxmlTestBase {
     }
     else {
       assertThat(problems,
-                 m("Initializer for Group cannot be represented in text (line: 2)", "Initializer for Container cannot be represented in text (line: 5)", "Children of Accordion must be mx.core.INavigatorContent (line: 8)"),
+                 m("Initializer for Group cannot be represented in text (line: 2)",
+                   "Initializer for Container cannot be represented in text (line: 5)",
+                   "Children of Accordion must be mx.core.INavigatorContent (line: 8)"),
                  m("Unresolved variable or type unresolvedData (line: 10)"),
                  m("Support only MXML-based component AuxActionScriptProjectComponent"),
                  m("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-72175\">Inline components are not supported</a> (line: 9)"),
@@ -115,7 +124,8 @@ public class MxmlTest extends MxmlTestBase {
     ArrayList<String> auxFiles = new ArrayList<String>(8);
     
     collectMxmlFiles(files, auxFiles, new File(getTestPath()));
-    
+    collectMxmlFiles(files, auxFiles, new File(getTestDataPath() + "/src/mx"));
+
     String[] list = files.toArray(new String[files.size()]);
     String[] auxList = auxFiles.toArray(new String[auxFiles.size()]);
     
@@ -138,7 +148,7 @@ public class MxmlTest extends MxmlTestBase {
       }
 
       File file = new File(parent, name);
-      if (file.isDirectory() && !name.equals("mobile")) {
+      if (file.isDirectory()) {
         collectMxmlFiles(files, auxFiles, file);
       }
     }
