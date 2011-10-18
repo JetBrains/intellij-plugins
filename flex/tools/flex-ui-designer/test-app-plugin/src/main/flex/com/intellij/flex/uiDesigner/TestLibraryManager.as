@@ -1,4 +1,4 @@
-package com.intellij.flex.uiDesigner.plugins.test {
+package com.intellij.flex.uiDesigner {
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 

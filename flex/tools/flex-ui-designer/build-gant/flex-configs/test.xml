@@ -68,6 +68,6 @@
 	<target-player>10.2</target-player>
 	<tools-locale>en_US</tools-locale>
 	<file-specs>
-		<path-element>@@source@@/flex/com/intellij/flex/uiDesigner/plugins/test/Main.as</path-element>
+		<path-element>@@source@@/flex/com/intellij/flex/uiDesigner/Main.as</path-element>
 	</file-specs>
 </flex-config>

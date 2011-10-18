@@ -1,10 +1,10 @@
-package com.intellij.flex.uiDesigner.plugins.test {
+package com.intellij.flex.uiDesigner {
 import org.hamcrest.assertThat;
 import org.hamcrest.object.instanceOf;
 import org.hamcrest.object.strictlyEqualTo;
 
 [Test(dir="mxml/mx")]
-public class MxmlMxTest extends BaseTestCase {
+public class MxTest extends BaseTestCase {
   public function SparkComponentsDependOnMx():void {
     assertThat(app, {document: app});
   }

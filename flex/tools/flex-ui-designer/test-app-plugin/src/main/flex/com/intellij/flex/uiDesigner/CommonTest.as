@@ -1,4 +1,4 @@
-package com.intellij.flex.uiDesigner.plugins.test {
+package com.intellij.flex.uiDesigner {
 import flash.display.BitmapData;
 import flash.display.ColorCorrection;
 
@@ -12,7 +12,7 @@ import org.hamcrest.object.instanceOf;
 import org.hamcrest.object.strictlyEqualTo;
 
 [Test(dir="common")]
-public class MxmlTest extends BaseTestCase {
+public class CommonTest extends BaseTestCase {
   public function SparkComponents():void {
     assertThat(app, {document: app});
   }

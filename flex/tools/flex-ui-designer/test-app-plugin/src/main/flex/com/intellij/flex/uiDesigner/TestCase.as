@@ -1,6 +1,4 @@
-package com.intellij.flex.uiDesigner.plugins.test {
-import com.intellij.flex.uiDesigner.ProjectManager;
-
+package com.intellij.flex.uiDesigner {
 import flash.net.Socket;
 
 public interface TestCase {

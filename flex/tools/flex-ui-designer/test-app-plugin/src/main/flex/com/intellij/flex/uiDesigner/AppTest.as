@@ -1,4 +1,4 @@
-package com.intellij.flex.uiDesigner.plugins.test {
+package com.intellij.flex.uiDesigner {
 import flash.desktop.NativeApplication;
 import flash.display.NativeWindow;
 import flash.events.Event;

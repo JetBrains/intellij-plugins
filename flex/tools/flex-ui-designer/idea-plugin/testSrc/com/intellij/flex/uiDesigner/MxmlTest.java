@@ -29,12 +29,12 @@ public class MxmlTest extends MxmlTestBase {
       //localesContentEntry.addSourceFolder(localesDir.findChild("ru_RU"), false);
     }
     else if (getName().equals("testMobile")) {
-      addLibrary(model, getFudHome() + "/test-data-libs/target/test-data-libs.swc");
+      addLibrary(model, "mobilecomponents-4.5.1.swc");
     }
   }
 
   public void testMobile() throws Exception {
-
+    testFile("../mobile/SparkView.mxml");
   }
 
   public void test45() throws Exception {

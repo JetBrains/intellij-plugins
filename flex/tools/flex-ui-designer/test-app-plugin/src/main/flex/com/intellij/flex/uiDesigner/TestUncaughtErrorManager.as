@@ -1,9 +1,4 @@
-package com.intellij.flex.uiDesigner.plugins.test {
-import com.intellij.flex.uiDesigner.Project;
-import com.intellij.flex.uiDesigner.ServerMethod;
-import com.intellij.flex.uiDesigner.SocketManager;
-import com.intellij.flex.uiDesigner.UncaughtErrorManager;
-
+package com.intellij.flex.uiDesigner {
 import org.hamcrest.AssertionError;
 
 public class TestUncaughtErrorManager extends UncaughtErrorManager {

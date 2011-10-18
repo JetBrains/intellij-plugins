@@ -116,6 +116,10 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   }
 
   protected void addLibrary(ModifiableRootModel model, String path) {
+    if (path.charAt(0) != '/') {
+      path = getTestDataPath() + "/lib/" + path;
+    }
+
     VirtualFile virtualFile = getVFile(path);
     VirtualFile jarFile = JarFileSystem.getInstance().getJarRootForLocalFile(virtualFile);
     assert jarFile != null;

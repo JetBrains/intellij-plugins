@@ -1,9 +1,4 @@
-package com.intellij.flex.uiDesigner.plugins.test {
-import com.intellij.flex.uiDesigner.DocumentManager;
-import com.intellij.flex.uiDesigner.ModuleContextEx;
-import com.intellij.flex.uiDesigner.ProjectManager;
-import com.intellij.flex.uiDesigner.StatesBarManager;
-
+package com.intellij.flex.uiDesigner {
 import flash.events.Event;
 import flash.events.IEventDispatcher;
 import flash.net.Socket;

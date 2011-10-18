@@ -1,4 +1,4 @@
-package com.intellij.flex.uiDesigner.plugins.test {
+package com.intellij.flex.uiDesigner {
 import flash.errors.IllegalOperationError;
 
 import org.hamcrest.Matcher;

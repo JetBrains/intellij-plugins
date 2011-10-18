@@ -1,5 +1,4 @@
-package com.intellij.flex.uiDesigner.plugins.test {
-import com.intellij.flex.uiDesigner.DocumentFactoryManager;
+package com.intellij.flex.uiDesigner {
 import com.intellij.flex.uiDesigner.css.CssClassCondition;
 import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.css.CssPseudoCondition;

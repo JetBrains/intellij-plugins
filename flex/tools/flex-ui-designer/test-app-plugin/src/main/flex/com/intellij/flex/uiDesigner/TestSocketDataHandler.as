@@ -1,4 +1,4 @@
-package com.intellij.flex.uiDesigner.plugins.test {
+package com.intellij.flex.uiDesigner {
 import avmplus.HIDE_NSURI_METHODS;
 import avmplus.HIDE_OBJECT;
 import avmplus.INCLUDE_METADATA;
@@ -7,9 +7,6 @@ import avmplus.INCLUDE_TRAITS;
 import avmplus.USE_ITRAITS;
 import avmplus.describe;
 
-import com.intellij.flex.uiDesigner.DocumentManager;
-import com.intellij.flex.uiDesigner.ProjectManager;
-import com.intellij.flex.uiDesigner.SocketDataHandler;
 import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
 
 import flash.display.NativeWindow;
@@ -26,7 +23,7 @@ import flash.utils.getQualifiedClassName;
 public class TestSocketDataHandler implements SocketDataHandler {
   public static const CLASS:int = 1;
   
-  private static const c:Vector.<Class> = new <Class>[MxmlTest, StatesTest, InjectedASTest, AppTest, StyleTest, UITest, MxmlMxTest];
+  private static const c:Vector.<Class> = new <Class>[CommonTest, StatesTest, InjectedASTest, AppTest, StyleTest, UITest, MxTest, MobileTest];
   private const describeCache:Dictionary = new Dictionary();
 
   private var projectManager:ProjectManager;

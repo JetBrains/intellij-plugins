@@ -1,7 +1,4 @@
-package com.intellij.flex.uiDesigner.plugins.test {
-import com.intellij.flex.uiDesigner.SocketDataHandler;
-import com.intellij.flex.uiDesigner.SocketManager;
-
+package com.intellij.flex.uiDesigner {
 import flash.display.Sprite;
 
 import org.flyti.plexus.PlexusContainer;
