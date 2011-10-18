@@ -592,13 +592,14 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
     LibraryEx library = (LibraryEx)model.createLibrary("Flex SDK", FlexSdkLibraryType.getInstance());
     LibraryEx.ModifiableModelEx libraryModifiableModel = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
-    ((FlexSdkProperties)libraryModifiableModel.getProperties()).setId(UUID.randomUUID().toString());
+    ((FlexSdkProperties)libraryModifiableModel.getProperties()).setId(FlexLibraryIdGenerator.generateId());
     ((FlexSdkProperties)libraryModifiableModel.getProperties()).setHomePath(homePath);
     final FlexSdkModificator sdkModificator = new FlexSdkModificator(libraryModifiableModel, existingNames);
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {
         FlexSdkUtils.setupSdkPaths(sdkHome, null, sdkModificator);
+        sdkModificator.commitChanges();
       }
     });
     return library;

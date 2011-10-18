@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructure
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexLibraryIdGenerator;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
@@ -1169,7 +1170,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         @NotNull
         @Override
         public FlexLibraryProperties createDefaultProperties() {
-          return new FlexLibraryProperties(UUID.randomUUID().toString());
+          return new FlexLibraryProperties(FlexLibraryIdGenerator.generateId());
         }
       });
       CreateModuleLibraryChooser c = new CreateModuleLibraryChooser(libraryTypes, myMainPanel, module, librariesModelWrapper);

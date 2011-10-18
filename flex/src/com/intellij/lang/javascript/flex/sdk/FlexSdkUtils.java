@@ -74,7 +74,9 @@ public class FlexSdkUtils {
   }
 
   static void setupSdkPaths(final Sdk sdk) {
-    setupSdkPaths(sdk.getHomeDirectory(), sdk.getSdkType(), sdk.getSdkModificator());
+    SdkModificator modificator = sdk.getSdkModificator();
+    setupSdkPaths(sdk.getHomeDirectory(), sdk.getSdkType(), modificator);
+    modificator.commitChanges();
   }
 
   /**
@@ -82,10 +84,6 @@ public class FlexSdkUtils {
    *                and also all available versions of playerglobal.swc files
    */
   public static void setupSdkPaths(final VirtualFile sdkRoot, @Nullable final SdkType sdkType, final SdkModificator sdkModificator) {
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
-      return;
-    }
-
     if (sdkRoot == null || !sdkRoot.isValid()) {
       return;
     }
@@ -139,8 +137,6 @@ public class FlexSdkUtils {
     if (projectsDir != null && projectsDir.isDirectory()) {
       findSourceRoots(projectsDir, sdkModificator);
     }
-
-    sdkModificator.commitChanges();
   }
 
   public static void processPlayerglobalSwcFiles(final VirtualFile playerDir, final Processor<VirtualFile> processor) {

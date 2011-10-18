@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.ConversionHelper;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexLibraryIdGenerator;
 import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.DependencyScope;
@@ -108,8 +109,7 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
 
     Element componentElement =
       JDomConvertingUtil.findOrCreateComponentElement(moduleSettings.getRootElement(), FlexBuildConfigurationManagerImpl.COMPONENT_NAME);
-    Element e = XmlSerializer.serialize(configurationManager.getState(), new SkipDefaultValuesSerializationFilters());
-    addContent(e, componentElement);
+    addContent(ConversionHelper.serialize(configurationManager), componentElement);
   }
 
   private void processConfiguration(@Nullable FlexBuildConfiguration oldConfiguration,
@@ -153,7 +153,7 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
         Element libraryProperties = new Element(LibraryImpl.PROPERTIES_ELEMENT);
         //noinspection unchecked
         library.getChildren().add(0, libraryProperties);
-        String libraryId = UUID.randomUUID().toString();
+        String libraryId = FlexLibraryIdGenerator.generateId();
         XmlSerializer.serializeInto(new FlexLibraryProperties(libraryId), libraryProperties);
 
         ModifiableModuleLibraryEntry moduleLibraryEntry = ConversionHelper.createModuleLibraryEntry(libraryId);
@@ -231,15 +231,17 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
         final Element outputElement = rootManagerElement.getChild("output");
         final String outputUrl = outputElement == null ? null : outputElement.getAttributeValue("url");
         if (outputUrl != null) {
-          return PathUtil.getCanonicalPath(VfsUtil.urlToPath(moduleSettings.expandPath(outputUrl)));
+          String path = PathUtil.getCanonicalPath(VfsUtil.urlToPath(moduleSettings.expandPath(outputUrl)));
+          return moduleSettings.collapsePath(path);
         }
       }
     }
 
     final String projectOutputUrl = moduleSettings.getProjectOutputUrl();
-    return projectOutputUrl == null ? ""
-                                    : PathUtil.getCanonicalPath(VfsUtil.urlToPath(moduleSettings.expandPath(projectOutputUrl))) +
-                                      "/" + CompilerModuleExtension.PRODUCTION + "/" + moduleSettings.getModuleName();
+    String path = projectOutputUrl == null ? "" :
+                  VfsUtil.urlToPath(moduleSettings.expandPath(projectOutputUrl) +
+                                    "/" + CompilerModuleExtension.PRODUCTION + "/" + moduleSettings.getModuleName());
+    return moduleSettings.collapsePath(path);
   }
 
   /**

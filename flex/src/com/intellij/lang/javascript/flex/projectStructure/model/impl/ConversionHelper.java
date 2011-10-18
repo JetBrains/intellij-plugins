@@ -1,7 +1,12 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
+import com.intellij.application.options.PathMacrosImpl;
+import com.intellij.application.options.ReplacePathToMacroMap;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.openapi.components.ExpandMacroToPathMap;
+import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters;
 import com.intellij.util.xmlb.XmlSerializer;
@@ -103,7 +108,24 @@ public class ConversionHelper {
   //  return c;
   //}
   //
-  public static Element serialize(ModifiableFlexIdeBuildConfiguration configuration) {
-    return XmlSerializer.serialize(((FlexIdeBuildConfigurationImpl)configuration).getState(), new SkipDefaultValuesSerializationFilters());
+
+  public static Element serialize(PersistentStateComponent c) {
+    Element element = XmlSerializer.serialize(c.getState(), new SkipDefaultValuesSerializationFilters());
+    collapsePaths(element);
+    return element;
   }
+
+  public static void collapsePaths(Element element) {
+    ReplacePathToMacroMap map = new ReplacePathToMacroMap();
+    PathMacrosImpl.getInstanceEx().addMacroReplacements(map);
+    map.substitute(element, SystemInfo.isFileSystemCaseSensitive, true);
+  }
+  public static void expandPaths(Element element) {
+    ExpandMacroToPathMap map = new ExpandMacroToPathMap();
+    PathMacrosImpl.getInstanceEx().addMacroExpands(map);
+    map.substitute(element, SystemInfo.isFileSystemCaseSensitive, true);
+  }
+
+
+
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<state>
+  <library name="Flex SDK 4.5.1.21328" type="Flex SDK">
+    <properties home="$TEST_SDK_HOME$" id="0" version="4.5.1.21328" />
+    <CLASSES>
+      <root url="jar://$TEST_SDK_HOME$/frameworks/libs/player/10.2/playerglobal.swc!/" />
+      <root url="jar://$TEST_SDK_HOME$/frameworks/libs/player/11.0/playerglobal.swc!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</state>
+

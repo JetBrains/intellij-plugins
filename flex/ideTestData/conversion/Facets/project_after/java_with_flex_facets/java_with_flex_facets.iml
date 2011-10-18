@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="Flex" version="4">
+  <component name="FacetManager" />
+  <component name="FlexBuildConfigurationManager" active="A">
+    <configurations>
+      <configuration name="A" target-platform="Mobile" main-class="A" output-file="Java_with_flex_facets_A.swf" output-folder="$TEST_PROJECT$/out/production/java_with_flex_facets">
+        <dependencies>
+          <sdk library-id="0" home-path="$TEST_SDK_HOME$" />
+        </dependencies>
+        <compiler-options />
+        <packaging-air-desktop />
+        <packaging-android enabled="true" />
+        <packaging-ios />
+      </configuration>
+      <configuration name="B" target-platform="Mobile" main-class="B" output-file="Java_with_flex_facets_B.swf" output-folder="$TEST_PROJECT$/out/production/java_with_flex_facets">
+        <dependencies>
+          <sdk library-id="0" home-path="$TEST_SDK_HOME$" />
+        </dependencies>
+        <compiler-options />
+        <packaging-air-desktop />
+        <packaging-android enabled="true" />
+        <packaging-ios />
+      </configuration>
+    </configurations>
+    <compiler-options />
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Flex SDK 4.5.1.21328" level="application" />
+  </component>
+</module>
+
