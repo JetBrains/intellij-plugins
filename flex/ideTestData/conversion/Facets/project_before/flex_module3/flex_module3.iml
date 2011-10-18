@@ -3,7 +3,7 @@
   <component name="Flex.Build.Configuration">
     <option name="DO_BUILD" value="true" />
     <option name="MAIN_CLASS" value="Abc" />
-    <option name="OUTPUT_FILE_NAME" value="flex_module3.swf" />
+    <option name="OUTPUT_FILE_NAME" value="flex_module3.swc" />
     <option name="OUTPUT_TYPE" value="Library" />
     <option name="TARGET_PLAYER_VERSION" value="10.2.0" />
     <option name="VERSION" value="3" />
@@ -15,7 +15,7 @@
     </content>
     <orderEntry type="jdk" jdkName="some_air_sdk" jdkType="AIR SDK Type" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="" scope="PROVIDED" >
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/flexunit-4.0.0.swc!/" />

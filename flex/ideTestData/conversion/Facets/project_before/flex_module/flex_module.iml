@@ -23,7 +23,7 @@
     </content>
     <orderEntry type="jdk" jdkName="some_flex_sdk" jdkType="Flex SDK Type" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="" >
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/flexunit-4.0.0.swc!/" />
@@ -32,7 +32,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="java_with_flex_facets" />
+    <orderEntry type="module" module-name="java_with_flex_facets" scope="PROVIDED" />
     <orderEntry type="module" module-name="flex_module2" />
     <orderEntry type="module" module-name="flex_module3" exported="" />
   </component>

@@ -13,6 +13,9 @@
         <dependencies>
           <entries>
             <entry library-id="2">
+              <dependency linkage="External" />
+            </entry>
+            <entry module-name="flex_module3" build-configuration-name="flex_module3">
               <dependency linkage="Merged" />
             </entry>
           </entries>
@@ -32,7 +35,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="PROVIDED">
       <library type="flex">
         <properties id="2" />
         <CLASSES>
@@ -42,6 +45,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="flex_module3" />
     <orderEntry type="library" name="Flex SDK 4.5.1.21328" level="application" />
   </component>
 </module>

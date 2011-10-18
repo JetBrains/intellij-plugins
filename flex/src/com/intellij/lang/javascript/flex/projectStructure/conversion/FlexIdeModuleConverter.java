@@ -187,17 +187,7 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
         XmlSerializer.serializeInto(new FlexLibraryProperties(libraryId), libraryProperties);
 
         ModifiableModuleLibraryEntry moduleLibraryEntry = ConversionHelper.createModuleLibraryEntry(libraryId);
-        DependencyScope scope = DependencyScope.readExternal(orderEntry);
-        boolean isExported = orderEntry.getAttribute(ModuleLibraryOrderEntryImpl.EXPORTED_ATTR) != null;
-        if (scope == DependencyScope.PROVIDED) {
-          moduleLibraryEntry.getDependencyType().setLinkageType(LinkageType.External);
-        }
-        else if (isExported) {
-          moduleLibraryEntry.getDependencyType().setLinkageType(LinkageType.Include);
-        }
-        else {
-          moduleLibraryEntry.getDependencyType().setLinkageType(LinkageType.Merged);
-        }
+        convertDependencyType(orderEntry, moduleLibraryEntry.getDependencyType());
         newBuildConfiguration.getDependencies().getModifiableEntries().add(moduleLibraryEntry);
       }
       else if (ModuleOrderEntryImpl.ENTRY_TYPE.equals(orderEntryType)) {
@@ -257,12 +247,17 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
   }
 
   private static void convertDependencyType(Element orderEntry, ModifiableDependencyType dependencyType) {
-    boolean isExported = orderEntry.getAttribute(ModuleLibraryOrderEntryImpl.EXPORTED_ATTR) != null;
     DependencyScope scope = DependencyScope.readExternal(orderEntry);
-    if (isExported && scope == DependencyScope.COMPILE) {
+    boolean isExported = orderEntry.getAttribute(ModuleLibraryOrderEntryImpl.EXPORTED_ATTR) != null;
+    if (scope == DependencyScope.PROVIDED) {
+      dependencyType.setLinkageType(LinkageType.External);
+    }
+    else if (isExported) {
       dependencyType.setLinkageType(LinkageType.Include);
     }
-    // TODO
+    else {
+      dependencyType.setLinkageType(LinkageType.Merged);
+    }
   }
 
   private static String getOutputFolder(final ModuleSettings moduleSettings) {
