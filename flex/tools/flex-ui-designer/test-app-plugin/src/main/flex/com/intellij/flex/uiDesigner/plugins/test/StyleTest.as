@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner.plugins.test {
+import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.css.CssClassCondition;
 import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.css.CssPseudoCondition;
@@ -101,8 +102,8 @@ public class StyleTest extends BaseTestCase {
   }
   
   public function ComponentWithCustomSkin():void {
-    //assertThat(app.skin, [{fill: {color: 0x3366ff}}, {id: "contentGroup", left: -181}]);
-    assertThat(app, [{skin: {minWidth: 21}}]);
+    validateUI();
+    assertThat(app, [{skin: {minWidth: 21}, labelDisplay: l("My Skinned Button")}]);
   }
   
   public function ComponentWithCustomSkinInPackage():void {
@@ -130,6 +131,14 @@ public class StyleTest extends BaseTestCase {
       a = app;
     }
     assertThat(a, [{text: "label1", color: 0x000000}]);
+  }
+
+  //noinspection JSUnusedGlobalSymbols
+  public function App2():void {
+    assertThat(app, {color: 0xff0000, fontSize: 18});
+    var app1:Object = DocumentFactoryManager(projectManager.project.getComponent(DocumentFactoryManager)).get(0).document.uiComponent;
+    assertThat(app1, notNullValue());
+    App1(app1);
   }
 }
 }

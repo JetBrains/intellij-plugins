@@ -307,6 +307,7 @@ public final class MxmlReader implements DocumentReader {
 
         case PropertyClassifier.ID:
           propertyHolder.id = AmfUtil.readString(input);
+          context.registerObjectWithId(propertyHolder.id, propertyHolder);
           continue;
         
         case PropertyClassifier.MX_CONTAINER_CHILDREN:

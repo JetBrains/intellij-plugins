@@ -134,6 +134,9 @@
     <option name="PER_PROJECT_SETTINGS">
       <value>
         <option name="USE_SAME_INDENTS" value="true" />
+        <XML>
+          <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
+        </XML>
         <codeStyleSettings language="JavaScript">
           <indentOptions>
             <option name="CONTINUATION_INDENT_SIZE" value="8" />

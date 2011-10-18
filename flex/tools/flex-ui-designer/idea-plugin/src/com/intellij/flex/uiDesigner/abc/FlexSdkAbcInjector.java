@@ -1,73 +1,66 @@
 package com.intellij.flex.uiDesigner.abc;
 
+import com.google.common.base.Charsets;
 import com.intellij.flex.uiDesigner.ComplementSwfBuilder;
 import com.intellij.flex.uiDesigner.DebugPathManager;
+import com.intellij.flex.uiDesigner.libraries.FlexOverloadedClasses;
+import com.intellij.flex.uiDesigner.libraries.FlexOverloadedClasses.InjectionClassifier;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.text.CharArrayUtil;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URLConnection;
+import java.nio.CharBuffer;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CodingErrorAction;
 
-public class FlexSdkAbcInjector extends AbcFilter {
-  public static final String STYLE_PROTO_CHAIN = "mx.styles:StyleProtoChain";
+public abstract class FlexSdkAbcInjector extends AbcFilter {
+  private static final char OVERLOADED_AND_BACKED_CLASS_MARK = 'F';
 
-  private boolean flexInjected;
+  protected boolean flexInjected;
   private final String flexSdkVersion;
   private final URLConnection injectionUrlConnection;
 
-  public FlexSdkAbcInjector(String flexSdkVersion, URLConnection injectionUrlConnection) {
+  FlexSdkAbcInjector(String flexSdkVersion, URLConnection injectionUrlConnection) {
     super(flexSdkVersion);
 
     this.flexSdkVersion = flexSdkVersion;
     this.injectionUrlConnection = injectionUrlConnection;
   }
 
-  @Override
-  protected void doAbc2(int length) throws IOException {
-    if (flexInjected) {
-      super.doAbc2(length);
-      return;
+  protected void changeAbcName(final String className) throws IOException {
+    final int oldPosition = buffer.position();
+    buffer.position(buffer.position() + 4 + transientNameString.length() + 1 /* null-terminated string */);
+    parseCPoolAndRename(className.substring(className.indexOf(':') + 1));
+
+    // modify abcname
+    buffer.position(oldPosition + 4 + 10);
+    buffer.put((byte)OVERLOADED_AND_BACKED_CLASS_MARK);
+    buffer.position(oldPosition);
+  }
+  
+  abstract InjectionClassifier getInjectionClassifier();
+
+  protected void inject() throws IOException {
+    flexInjected = true;
+    if (injectionUrlConnection == null) {
+      decoders.add(new Decoder(new DataBuffer(FileUtil.loadFileBytes(ComplementSwfBuilder.createAbcFile(
+        DebugPathManager.getFudHome() + "/flex-injection/target", flexSdkVersion, getInjectionClassifier())))));
     }
-
-    boolean isStyleProtoChain = StringUtil.equals(transientNameString, STYLE_PROTO_CHAIN);
-    if (isStyleProtoChain) {
-      final int oldPosition = buffer.position();
-      buffer.position(buffer.position() + 4 + transientNameString.length() + 1 /* null-terminated string */);
-      parseCPoolAndRenameStyleProtoChain();
-
-      // modify abcname
-      buffer.position(oldPosition + 4 + 10);
-      buffer.put((byte)'F');
-      buffer.position(oldPosition);
-    }
-
-    super.doAbc2(length);
-
-    // for flex 4.5 we can inject our classes after StyleProtoChain, but for 4.1 (mx.swc is not yet extracted in this SDK version)
-    // we cannot — CSSStyleDeclaration located later, so, we inject after it
-    // at the same time we cannot inject after CSSStyleDeclaration for 4.5, so, injection place depends on Flex SDK version
-    if (StringUtil.equals(transientNameString, "mx.styles:CSSStyleDeclaration")) {
-      flexInjected = true;
-      if (injectionUrlConnection == null) {
-        decoders.add(new Decoder(new DataBuffer(FileUtil.loadFileBytes(new File(
-          DebugPathManager.getFudHome() + "/flex-injection/target/" + ComplementSwfBuilder.generateInjectionName(flexSdkVersion))))));
+    else {
+      InputStream inputStream = injectionUrlConnection.getInputStream();
+      try {
+        decoders.add(new Decoder(new DataBuffer((FileUtil.loadBytes(inputStream)))));
       }
-      else {
-        InputStream inputStream = injectionUrlConnection.getInputStream();
-        try {
-          decoders.add(new Decoder(new DataBuffer((FileUtil.loadBytes(inputStream)))));
-        }
-        finally {
-          inputStream.close();
-        }
+      finally {
+        inputStream.close();
       }
     }
   }
 
-  private void parseCPoolAndRenameStyleProtoChain() throws IOException {
+  protected void parseCPoolAndRename(String from) throws IOException {
     buffer.position(buffer.position() + 4);
 
     int n = readU32();
@@ -86,56 +79,80 @@ public class FlexSdkAbcInjector extends AbcFilter {
     }
 
     n = readU32();
+    final CharsetEncoder charsetEncoder = Charsets.UTF_8.newEncoder().onMalformedInput(CodingErrorAction.REPLACE).onUnmappableCharacter(
+      CodingErrorAction.REPLACE);
     while (n-- > 1) {
       int l = readU32();
-      String name = readUTFBytes(l).replace("StyleProtoChain", "FtyleProtoChain");
-      buffer.position(buffer.position() - l);
-      writeUTF(name, l);
+      buffer.limit(buffer.position() + l);
+      buffer.mark();
+      final CharBuffer charBuffer = Charsets.UTF_8.decode(buffer);
+      buffer.limit(buffer.capacity());
+      final int index = CharArrayUtil.indexOf(charBuffer, from, 0);
+      if (index == -1) {
+        continue;
+      }
+
+      charBuffer.put(index, OVERLOADED_AND_BACKED_CLASS_MARK);
+      buffer.reset();
+      charsetEncoder.encode(charBuffer, buffer, true);
+      charsetEncoder.reset();
     }
   }
 
-  private String readUTFBytes(int i) {
-    try {
-      byte[] buf = new byte[i];
-      while (i > 0) {
-        buf[(buf.length - i)] = buffer.get();
-        --i;
-      }
-      return new String(buf, "utf-8");
+  public static class FrameworkAbcInjector extends FlexSdkAbcInjector {
+    public FrameworkAbcInjector(String flexSdkVersion, URLConnection injectionUrlConnection) {
+      super(flexSdkVersion, injectionUrlConnection);
     }
-    catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e);
+
+    @Override
+    InjectionClassifier getInjectionClassifier() {
+      return InjectionClassifier.framework;
+    }
+
+    @Override
+    protected void doAbc2(int length) throws IOException {
+      if (flexInjected) {
+        super.doAbc2(length);
+        return;
+      }
+
+      if (StringUtil.equals(transientNameString, FlexOverloadedClasses.STYLE_PROTO_CHAIN)) {
+        changeAbcName(FlexOverloadedClasses.STYLE_PROTO_CHAIN);
+      }
+
+      super.doAbc2(length);
+
+      if (StringUtil.equals(transientNameString, "mx.styles:CSSStyleDeclaration")) {
+        inject();
+      }
     }
   }
 
-  private void writeUTF(String str, int utflen) throws IOException {
-    int strlen = str.length();
-    int c, count = 0;
-
-    byte[] bytearr = new byte[utflen];
-
-    int i;
-    for (i = 0; i < strlen; i++) {
-      c = str.charAt(i);
-      if (!((c >= 0x0001) && (c <= 0x007F))) break;
-      bytearr[count++] = (byte)c;
+  public static class SparkAbcInjector extends FlexSdkAbcInjector {
+    public SparkAbcInjector(String flexSdkVersion, URLConnection injectionUrlConnection) {
+      super(flexSdkVersion, injectionUrlConnection);
     }
 
-    for (; i < strlen; i++) {
-      c = str.charAt(i);
-      if ((c >= 0x0001) && (c <= 0x007F)) {
-        bytearr[count++] = (byte)c;
+    @Override
+    InjectionClassifier getInjectionClassifier() {
+      return InjectionClassifier.spark;
+    }
+
+    @Override
+    protected void doAbc2(int length) throws IOException {
+      if (flexInjected) {
+        super.doAbc2(length);
+        return;
       }
-      else if (c > 0x07FF) {
-        bytearr[count++] = (byte)(0xE0 | ((c >> 12) & 0x0F));
-        bytearr[count++] = (byte)(0x80 | ((c >> 6) & 0x3F));
-        bytearr[count++] = (byte)(0x80 | ((c) & 0x3F));
+
+      if (StringUtil.equals(transientNameString, FlexOverloadedClasses.SKINNABLE_COMPONENT)) {
+        changeAbcName(FlexOverloadedClasses.SKINNABLE_COMPONENT);
+        super.doAbc2(length);
+        inject();
       }
       else {
-        bytearr[count++] = (byte)(0xC0 | ((c >> 6) & 0x1F));
-        bytearr[count++] = (byte)(0x80 | ((c) & 0x3F));
+        super.doAbc2(length);
       }
     }
-    buffer.put(bytearr);
   }
 }

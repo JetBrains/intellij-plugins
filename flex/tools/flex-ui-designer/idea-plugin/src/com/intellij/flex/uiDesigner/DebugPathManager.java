@@ -19,7 +19,7 @@ public final class DebugPathManager {
     ideaHome = PathManager.getHomePathFor(DebugPathManager.class);
     Application app = ApplicationManager.getApplication();
     if (app == null) {
-      // running SwcDependenciesSorter
+      // running ComplementSwfBuilder
       assert ideaHome != null;
       fudHome = ideaHome + FLEX_TOOLS_FLEX_UI_DESIGNER;
       IS_DEV = true; // not used actually

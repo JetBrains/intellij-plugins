@@ -5,7 +5,9 @@ import com.intellij.flex.uiDesigner.DebugPathManager;
 import com.intellij.flex.uiDesigner.abc.AbcFilter;
 import com.intellij.flex.uiDesigner.abc.AbcNameFilterByNameSet;
 import com.intellij.flex.uiDesigner.abc.AbcNameFilterByNameSetAndStartsWith;
-import com.intellij.flex.uiDesigner.abc.FlexSdkAbcInjector;
+import com.intellij.flex.uiDesigner.abc.FlexSdkAbcInjector.FrameworkAbcInjector;
+import com.intellij.flex.uiDesigner.abc.FlexSdkAbcInjector.SparkAbcInjector;
+import com.intellij.flex.uiDesigner.libraries.FlexOverloadedClasses.InjectionClassifier;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
@@ -26,7 +28,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
-import java.util.zip.DataFormatException;
 
 public class SwcDependenciesSorter {
   static final String SWF_EXTENSION = ".swf";
@@ -43,47 +44,29 @@ public class SwcDependenciesSorter {
   private List<LibrarySetItem> resourceBundleOnlyitems;
   private List<LibrarySetEmbedItem> embedItems;
 
-  private static final Map<String,Set<CharSequence>> badClasses = new THashMap<String, Set<CharSequence>>();
-
-  public static final Set<CharSequence> OVERLOADED_AIR_SPARK_CLASSES = new THashSet<CharSequence>(2, AbcFilter.HASHING_STRATEGY);
-  public static final Set<CharSequence> OVERLOADED_MX_CLASSES = new THashSet<CharSequence>(6, AbcFilter.HASHING_STRATEGY);
+  private static final Map<String,Set<CharSequence>> BAD_CLASSES = new THashMap<String, Set<CharSequence>>();
 
   static {
-    OVERLOADED_AIR_SPARK_CLASSES.add("spark.components:Window");
-    OVERLOADED_AIR_SPARK_CLASSES.add("spark.components:WindowedApplication");
-
-    OVERLOADED_MX_CLASSES.add("mx.managers:LayoutManager");
-    OVERLOADED_MX_CLASSES.add("mx.managers:CursorManager");
-    OVERLOADED_MX_CLASSES.add("mx.managers:CursorManagerImpl");
-    OVERLOADED_MX_CLASSES.add("mx.resources:ResourceManager");
-    OVERLOADED_MX_CLASSES.add("mx.resources:ResourceManagerImpl");
-    OVERLOADED_MX_CLASSES.add("mx.styles:StyleManager");
-    OVERLOADED_MX_CLASSES.add("mx.styles:StyleManagerImpl");
-
-    THashSet<CharSequence> set = new THashSet<CharSequence>(2, AbcFilter.HASHING_STRATEGY);
+    THashSet<CharSequence> set = createSet(FlexOverloadedClasses.AIR_SPARK_CLASSES.size() + 1);
     set.add("AIRSparkClasses");
-    set.addAll(OVERLOADED_AIR_SPARK_CLASSES);
-    badClasses.put("airspark", set);
+    set.addAll(FlexOverloadedClasses.AIR_SPARK_CLASSES);
+    BAD_CLASSES.put("airspark", set);
 
-    set = new THashSet<CharSequence>(1, AbcFilter.HASHING_STRATEGY);
-    set.add("SparkClasses");
-    badClasses.put("spark", set);
-
-    set = new THashSet<CharSequence>(1, AbcFilter.HASHING_STRATEGY);
+    set = createSet(1);
     set.add("MobileComponentsClasses");
-    badClasses.put("mobilecomponents", set);
+    BAD_CLASSES.put("mobilecomponents", set);
 
-    set = new THashSet<CharSequence>(1, AbcFilter.HASHING_STRATEGY);
+    set = createSet(1);
     set.add("RPCClasses");
-    badClasses.put("rpc", set);
+    BAD_CLASSES.put("rpc", set);
 
-    set = new THashSet<CharSequence>(1, AbcFilter.HASHING_STRATEGY);
+    set = createSet(1);
     set.add("MxClasses");
-    badClasses.put("mx", set);
+    BAD_CLASSES.put("mx", set);
 
-    set = new THashSet<CharSequence>(1, AbcFilter.HASHING_STRATEGY);
+    set = createSet(1);
     set.add("AIRFrameworkClasses");
-    badClasses.put("airframework", set);
+    BAD_CLASSES.put("airframework", set);
   }
 
   public SwcDependenciesSorter(@NotNull File appDir, @NotNull Module module) {
@@ -103,20 +86,15 @@ public class SwcDependenciesSorter {
     return resourceBundleOnlyitems;
   }
 
-  public static void main(String[] args) throws IOException, DataFormatException {
-    createInjectionAbc("4.1", true);
-    createInjectionAbc("4.5", true);
-  }
-
-  private static long createInjectionAbc(String flexSdkVersion, boolean force) throws IOException {
+  private static long createInjectionAbc(String flexSdkVersion, InjectionClassifier classifier, boolean force) throws IOException {
     final String rootPath = DebugPathManager.getFudHome() + "/flex-injection/target";
     File abcSource = ComplementSwfBuilder.getSourceFile(rootPath, flexSdkVersion);
-    File abc = ComplementSwfBuilder.createAbcFile(rootPath, flexSdkVersion);
+    File abc = ComplementSwfBuilder.createAbcFile(rootPath, flexSdkVersion, classifier);
     if (!force && abcSource.lastModified() < abc.lastModified()) {
       return abc.lastModified();
     }
 
-    ComplementSwfBuilder.build(rootPath, flexSdkVersion);
+    ComplementSwfBuilder.build(rootPath, flexSdkVersion, classifier);
     return abc.lastModified();
   }
 
@@ -139,8 +117,15 @@ public class SwcDependenciesSorter {
       }
     }
 
+
+    
+    LibrarySetItem sparkLib = null;
     if (isFromSdk) {
       analyzeDefinitions();
+      final Definition definition = definitionMap.get("spark.components.supportClasses:SkinnableComponent");
+      if (definition != null) {
+        sparkLib = definition.getLibrary();
+      }
     }
     else {
       AccessToken token = ReadAction.start();
@@ -170,15 +155,15 @@ public class SwcDependenciesSorter {
 
       Collection<CharSequence> filteredDefinitions = null;
       if (isFromSdk) {
-        String path = item.library.getPath();
-        if (path.startsWith("framework")) {
-          injectFrameworkSwc(flexSdkVersion, item);
+        final String path = item.library.getPath();
+        if (path.startsWith("framework") || item == sparkLib) {
+          injectFrameworkSwc(flexSdkVersion, item, item == sparkLib);
           continue;
         }
         else {
-          int firstDotIndex = path.indexOf('.');
+          final int firstDotIndex = path.indexOf('.');
           if (firstDotIndex != -1) {
-            filteredDefinitions = badClasses.get(path.substring(0, firstDotIndex));
+            filteredDefinitions = BAD_CLASSES.get(path.substring(0, firstDotIndex));
             if (filteredDefinitions != null && !item.hasMissedDefinitions() && item.unresolvedDefinitionPolicy != 0) {
               item.unresolvedDefinitions.addAll(filteredDefinitions);
               filteredDefinitions = item.unresolvedDefinitions;
@@ -270,35 +255,48 @@ public class SwcDependenciesSorter {
     writer.flush();
   }
 
-  private void injectFrameworkSwc(String flexSdkVersion, LibrarySetItem library) throws IOException {
-    VirtualFile swfFile = library.library.getSwfFile();
-    File modifiedSwf = createSwfOutFile(library.library);
+  private void injectFrameworkSwc(String flexSdkVersion, LibrarySetItem library, boolean isSpark) throws IOException {
+    final VirtualFile swfFile = library.library.getSwfFile();
+    final File modifiedSwf = createSwfOutFile(library.library);
     final long timeStamp = swfFile.getTimeStamp();
     
     final long injectionLastModified;
     final URLConnection injectionUrlConnection;
+    final InjectionClassifier classifier = isSpark ? InjectionClassifier.spark : InjectionClassifier.framework;
     if (DebugPathManager.IS_DEV) {
-      injectionLastModified = createInjectionAbc(flexSdkVersion, false);
+      injectionLastModified = createInjectionAbc(flexSdkVersion, classifier, false);
       injectionUrlConnection = null;
     }
     else {
-      URL url = getClass().getClassLoader().getResource(ComplementSwfBuilder.generateInjectionName(flexSdkVersion));
+      URL url = getClass().getClassLoader().getResource(ComplementSwfBuilder.generateInjectionName(flexSdkVersion, classifier));
       injectionUrlConnection = url.openConnection();
       injectionLastModified = injectionUrlConnection.getLastModified();
     }
 
     if (library.hasUnresolvedDefinitions() || timeStamp > modifiedSwf.lastModified() ||
         injectionLastModified > modifiedSwf.lastModified()) {
-      Set<CharSequence> definitions = library.hasUnresolvedDefinitions() ? library.unresolvedDefinitions : new THashSet<CharSequence>(8, AbcFilter.HASHING_STRATEGY);
-      definitions.add("FrameworkClasses");
-      definitions.add("mx.managers.systemClasses:MarshallingSupport");
-      definitions.add("mx.managers:SystemManagerProxy");
+      final Set<CharSequence> definitions = library.hasUnresolvedDefinitions()
+                                            ? library.unresolvedDefinitions
+                                            : createSet((isSpark ? 0 : FlexOverloadedClasses.MX_CLASSES.size()) + 3);
+      if (isSpark) {
+        definitions.add("SparkClasses");
+        new SparkAbcInjector(flexSdkVersion, injectionUrlConnection).filter(swfFile, modifiedSwf, new AbcNameFilterByNameSet(definitions));
+      }
+      else {
+        definitions.add("FrameworkClasses");
+        definitions.add("mx.managers.systemClasses:MarshallingSupport");
+        definitions.add("mx.managers:SystemManagerProxy");
 
-      definitions.addAll(OVERLOADED_MX_CLASSES);
+        definitions.addAll(FlexOverloadedClasses.MX_CLASSES);
 
-      new FlexSdkAbcInjector(flexSdkVersion, injectionUrlConnection).filter(swfFile, modifiedSwf,
-                             new AbcNameFilterByNameSetAndStartsWith(definitions, new String[]{"mx.managers.marshalClasses:"}));
+        new FrameworkAbcInjector(flexSdkVersion, injectionUrlConnection)
+          .filter(swfFile, modifiedSwf, new AbcNameFilterByNameSetAndStartsWith(definitions, new String[]{"mx.managers.marshalClasses:"}));
+      }
     }
+  }
+
+  private static THashSet<CharSequence> createSet(int size) {
+    return new THashSet<CharSequence>(size, AbcFilter.HASHING_STRATEGY);
   }
 
   private void analyzeDefinitions() {

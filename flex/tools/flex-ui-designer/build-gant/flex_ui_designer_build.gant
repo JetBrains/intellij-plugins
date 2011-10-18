@@ -64,9 +64,7 @@ private def doExecute(home, sandbox, targetFolder) {
     }
   };
 
-  compileAbcBuilder(sandbox)
-  invokeAbcBuilder(sandbox, "4.1")
-  invokeAbcBuilder(sandbox, "4.5")
+  invokeAbcBuilder(sandbox)
 
   buildAssets()
 
@@ -99,27 +97,15 @@ private def buildAssets() {
   }
 }
 
-private def compileAbcBuilder(sandbox) {
-  ant.javac(srcdir: "$flexBuildHome/../abc-builder-maven-module/src/main/java", destdir: "$flexSandbox", fork: "yes") {
-    classpath {
-      pathelement(path: "$sandbox/classes/production/flex-ui-designer")
-      pathelement(path: "$home/community/plugins/maven/maven2-server-impl/lib/maven-2.2.1-uber.jar")
-    }
-  }
-}
-
-private def invokeAbcBuilder(sandbox, flexVersion) {
-  ant.java(className: "com.intellij.flex.uiDesigner.AbcBuilderMojo", fork: "true", failOnError: "true") {
+private def invokeAbcBuilder(sandbox) {
+  ant.java(className: "com.intellij.flex.uiDesigner.ComplementSwfBuilder", fork: "true", failOnError: "true") {
     classpath {
       pathelement(path: "$flexSandbox")
       pathelement(path: "$sandbox/classes/production/flex-ui-designer")
       pathelement(path: "$sandbox/classes/production/util")
-      pathelement(path: "$sandbox/classes/production/xml")
-      pathelement(path: "$home/community/plugins/maven/maven2-server-impl/lib/maven-2.2.1-uber.jar")
       pathelement(path: "$home/community/lib/trove4j.jar")
     }
     arg(value: "$flexSandbox") // folder
-    arg(value: "$flexVersion") // flex version
   }
 }
 

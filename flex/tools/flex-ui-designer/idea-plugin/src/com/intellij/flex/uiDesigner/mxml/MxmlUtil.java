@@ -25,7 +25,7 @@ public final class MxmlUtil {
   // about id http://opensource.adobe.com/wiki/display/flexsdk/id+property+in+MXML+2009
   static boolean isIdLanguageIdAttribute(XmlAttribute attribute) {
     final String ns = attribute.getNamespace();
-    return ns.length() == 0 || ns.equals(JavaScriptSupportLoader.MXML_URI3);
+    return ns.isEmpty() || ns.equals(JavaScriptSupportLoader.MXML_URI3);
   }
 
   static boolean isComponentLanguageTag(XmlTag tag) {

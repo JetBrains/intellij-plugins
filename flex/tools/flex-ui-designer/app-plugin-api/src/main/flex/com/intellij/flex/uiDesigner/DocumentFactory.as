@@ -9,7 +9,7 @@ public class DocumentFactory implements SerializedDocumentDataProvider, Document
   public var document:Document;
 
   private const objectDeclarationPositionMap:Dictionary = new Dictionary(true);
-  
+
   public function DocumentFactory(id:int, data:ByteArray, file:VirtualFile, className:String, isApp:Boolean, module:Module) {
     _id = id;
     _data = data;
@@ -88,6 +88,10 @@ public class DocumentFactory implements SerializedDocumentDataProvider, Document
     else {
       return r;
     }
+  }
+
+  public function registerObjectWithId(id:String, object:Object):void {
+    // empty, actual only for FlexDocumentFactory
   }
 }
 }

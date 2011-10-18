@@ -49,21 +49,6 @@
           </defines>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>com.intellij.flex.uiDesigner</groupId>
-        <artifactId>abc-builder-maven-plugin</artifactId>
-        <version>1.0-SNAPSHOT</version>
-        <executions>
-          <execution>
-            <configuration>
-              <flexVersion>4.1</flexVersion>
-            </configuration>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 </project>

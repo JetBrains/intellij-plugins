@@ -5,5 +5,7 @@ public interface DocumentReaderContext {
   function get moduleContext():ModuleContext;
 
   function registerObjectDeclarationPosition(object:Object, textOffset:int):void;
+
+  function registerObjectWithId(id:String, object:Object):void;
 }
 }

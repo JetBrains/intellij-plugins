@@ -61,7 +61,6 @@
   </dependencyManagement>
 
   <modules>
-    <module>abc-builder-maven-module</module>
     <module>shared</module>
     <module>flex-injection/pom-4.1.xml</module>
     <module>flex-injection/pom-4.5.xml</module>
