@@ -173,6 +173,11 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
     List<JSQualifiedNamedElement> elements = new ArrayList<JSQualifiedNamedElement>();
     for (JSSourceElement e : ((JSFile)file).getStatements()) {
       if (e instanceof JSQualifiedNamedElement) {
+        String qName = ((JSQualifiedNamedElement)e).getQualifiedName();
+        if (qName == null) {
+          LOG.error("Null qname " + e.getClass().getName() + " '" + (e.getParent() != null ? e.getParent().getText() : e.getText()) + "'");
+          continue;
+        }
         elements.add((JSQualifiedNamedElement)e);
       }
       else if (e instanceof JSVarStatement) {
