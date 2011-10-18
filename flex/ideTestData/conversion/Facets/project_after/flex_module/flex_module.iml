@@ -31,7 +31,7 @@
               <dependency linkage="Merged" />
             </entry>
             <entry module-name="flex_module3" build-configuration-name="flex_module3">
-              <dependency linkage="Merged" />
+              <dependency linkage="Include" />
             </entry>
           </entries>
           <sdk library-id="0" home-path="$TEST_SDK_HOME$" />
@@ -61,7 +61,7 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="java_with_flex_facets" />
-    <orderEntry type="module" module-name="flex_module3" />
+    <orderEntry type="module" module-name="flex_module3" exported="" />
     <orderEntry type="library" name="Flex SDK 4.5.1.21328" level="application" />
   </component>
 </module>

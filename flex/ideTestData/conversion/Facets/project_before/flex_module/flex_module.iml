@@ -34,7 +34,7 @@
     </orderEntry>
     <orderEntry type="module" module-name="java_with_flex_facets" />
     <orderEntry type="module" module-name="flex_module2" />
-    <orderEntry type="module" module-name="flex_module3" />
+    <orderEntry type="module" module-name="flex_module3" exported="" />
   </component>
 </module>
 

@@ -206,6 +206,7 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
         for (String bcName : bcNames) {
           ModifiableBuildConfigurationEntry bcEntry =
             ConversionHelper.createBuildConfigurationEntry(moduleName, bcName);
+          convertDependencyType(orderEntry, bcEntry.getDependencyType());
           newBuildConfiguration.getDependencies().getModifiableEntries().add(bcEntry);
         }
         if (bcNames.isEmpty()) {
@@ -253,6 +254,15 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
                                                                                                   sdkHome));
       }
     }
+  }
+
+  private static void convertDependencyType(Element orderEntry, ModifiableDependencyType dependencyType) {
+    boolean isExported = orderEntry.getAttribute(ModuleLibraryOrderEntryImpl.EXPORTED_ATTR) != null;
+    DependencyScope scope = DependencyScope.readExternal(orderEntry);
+    if (isExported && scope == DependencyScope.COMPILE) {
+      dependencyType.setLinkageType(LinkageType.Include);
+    }
+    // TODO
   }
 
   private static String getOutputFolder(final ModuleSettings moduleSettings) {
