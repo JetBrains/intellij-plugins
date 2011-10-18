@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
+import com.intellij.lang.javascript.flex.wizard.FlexIdeModuleBuilder;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.module.Module;
@@ -133,6 +134,10 @@ public class FlashBuilderModuleImporter {
 
     setupDependencies(mainBC, fbProject);
 
+    if (mainBC.getOutputType() == OutputType.Application) {
+      FlexIdeModuleBuilder.createRunConfiguration(rootModel.getModule(), mainBC.getName());
+    }
+
     setupOtherAppsAndModules(rootModel, mainBC, fbProject);
   }
 
@@ -145,6 +150,7 @@ public class FlashBuilderModuleImporter {
       bc.setName(shortName);
       bc.setMainClass(mainClass);
       bc.setOutputFileName(shortName + ".swf");
+      FlexIdeModuleBuilder.createRunConfiguration(rootModel.getModule(), bc.getName());
     }
 
     for (final Pair<String, String> sourcePathAndDestPath : fbProject.getModules()) {

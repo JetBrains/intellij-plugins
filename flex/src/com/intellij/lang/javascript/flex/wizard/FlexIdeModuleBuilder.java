@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.wizard;
 
 import com.intellij.execution.RunManagerEx;
 import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -30,6 +31,7 @@ import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -218,10 +220,12 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
     }
   }
 
-  private static void createRunConfiguration(final Module module, final String bcName) {
+  public static void createRunConfiguration(final Module module, final String bcName) {
     final RunManagerEx runManager = RunManagerEx.getInstanceEx(module.getProject());
 
-    final RunnerAndConfigurationSettings settings = runManager.createConfiguration(bcName, FlexIdeRunConfigurationType.getFactory());
+    final String suggestedName = bcName.equals(module.getName()) ? bcName : (bcName + " (" + module.getName() + ")");
+    final String name = getUniqueName(suggestedName, runManager.getConfigurations(FlexIdeRunConfigurationType.getInstance()));
+    final RunnerAndConfigurationSettings settings = runManager.createConfiguration(name, FlexIdeRunConfigurationType.getFactory());
     settings.setTemporary(false);
     runManager.addConfiguration(settings, false);
     runManager.setActiveConfiguration(settings);
@@ -230,6 +234,24 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
     final FlexIdeRunnerParameters params = runConfiguration.getRunnerParameters();
     params.setModuleName(module.getName());
     params.setBCName(bcName);
+  }
+
+  private static String getUniqueName(final String suggestedName, final RunConfiguration[] existingConfigurations) {
+    final String[] used = new String[existingConfigurations.length];
+    for (int i = 0; i < existingConfigurations.length; i++) {
+      used[i] = existingConfigurations[i].getName();
+    }
+    
+    if (ArrayUtil.contains(suggestedName, used)) {
+      int i = 1;
+      String name;
+      while (ArrayUtil.contains((name = suggestedName + " (" + i + ")"), used)) {
+        i++;
+      }
+      return name;
+    }
+    
+    return suggestedName;
   }
 
   @Nullable
