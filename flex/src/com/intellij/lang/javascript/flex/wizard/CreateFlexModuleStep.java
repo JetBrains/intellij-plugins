@@ -63,7 +63,7 @@ public class CreateFlexModuleStep extends ProjectNameWithTypeStep {
       return false;
     }
 
-    return myForm.validate();
+    return !myCreateModuleCb.isSelected() || myForm.validate();
   }
 
   public void disposeUIResources() {
