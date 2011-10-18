@@ -223,8 +223,17 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
   public static void createRunConfiguration(final Module module, final String bcName) {
     final RunManagerEx runManager = RunManagerEx.getInstanceEx(module.getProject());
 
+    final RunConfiguration[] existingConfigurations = runManager.getConfigurations(FlexIdeRunConfigurationType.getInstance());
+    for (RunConfiguration configuration : existingConfigurations) {
+      final FlexIdeRunnerParameters parameters = ((FlexIdeRunConfiguration)configuration).getRunnerParameters();
+      if (module.getName().equals(parameters.getModuleName()) && bcName.equals(parameters.getBCName())) {
+        //already exists
+        return;
+      }
+    }
+
     final String suggestedName = bcName.equals(module.getName()) ? bcName : (bcName + " (" + module.getName() + ")");
-    final String name = getUniqueName(suggestedName, runManager.getConfigurations(FlexIdeRunConfigurationType.getInstance()));
+    final String name = getUniqueName(suggestedName, existingConfigurations);
     final RunnerAndConfigurationSettings settings = runManager.createConfiguration(name, FlexIdeRunConfigurationType.getFactory());
     settings.setTemporary(false);
     runManager.addConfiguration(settings, false);
