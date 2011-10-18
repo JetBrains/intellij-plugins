@@ -136,7 +136,15 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
       }
       newBuildConfiguration.setOutputFileName(oldConfiguration.OUTPUT_FILE_NAME);
     }
-    newBuildConfiguration.setOutputFolder(getOutputFolder(module));
+
+    String outputFolder;
+    if (facet && oldConfiguration != null && oldConfiguration.USE_FACET_COMPILE_OUTPUT_PATH) {
+      outputFolder = PathUtil.getCanonicalPath(module.expandPath(oldConfiguration.FACET_COMPILE_OUTPUT_PATH));
+    }
+    else {
+      outputFolder = getOutputFolder(module);
+    }
+    newBuildConfiguration.setOutputFolder(outputFolder);
 
     Collection<Element> orderEntriesToRemove = new ArrayList<Element>();
     Collection<Element> orderEntriesToAdd = new ArrayList<Element>();

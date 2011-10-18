@@ -42,8 +42,8 @@
         <option name="APPLICATION_ENTRY_POINT" value="" />
         <option name="MAIN_CLASS" value="B" />
         <option name="OUTPUT_FILE_NAME" value="Java_with_flex_facets_B.swf" />
-        <option name="USE_FACET_COMPILE_OUTPUT_PATH" value="false" />
-        <option name="FACET_COMPILE_OUTPUT_PATH" value="$MODULE_DIR$/../out/production/java_with_flex_facets" />
+        <option name="USE_FACET_COMPILE_OUTPUT_PATH" value="true" />
+        <option name="FACET_COMPILE_OUTPUT_PATH" value="$MODULE_DIR$/../out/production/java_with_flex_facets/facetB" />
         <option name="FACET_COMPILE_OUTPUT_PATH_FOR_TESTS" value="$MODULE_DIR$/../out/test/java_with_flex_facets" />
         <option name="INCLUDE_RESOURCE_FILES_IN_SWC" value="false" />
         <option name="TARGET_PLAYER_VERSION" value="10.2.0" />

@@ -12,7 +12,7 @@
         <packaging-android enabled="true" />
         <packaging-ios />
       </configuration>
-      <configuration name="B" target-platform="Mobile" main-class="B" output-file="Java_with_flex_facets_B.swf" output-folder="$TEST_PROJECT$/out/production/java_with_flex_facets">
+      <configuration name="B" target-platform="Mobile" main-class="B" output-file="Java_with_flex_facets_B.swf" output-folder="$TEST_PROJECT$/out/production/java_with_flex_facets/facetB">
         <dependencies>
           <sdk library-id="0" home-path="$TEST_SDK_HOME$" />
         </dependencies>
