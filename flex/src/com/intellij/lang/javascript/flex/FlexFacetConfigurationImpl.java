@@ -63,7 +63,7 @@ public class FlexFacetConfigurationImpl extends FlexFacetConfiguration {
   private static final String FLEX_SDK_NOT_YET_SELECTED_FOR_NEW_FACET = "Flex SDK not yet selected for Flex facet";
 
   private FlexBuildConfiguration myFlexBuildConfiguration;
-  private static final @NonNls String FLEX_SDK_ATTR_NAME = "flex_sdk";
+  public static final @NonNls String FLEX_SDK_ATTR_NAME = "flex_sdk";
   private static final String NAMESPACE_AND_MANIFEST_FILE_INFO_LIST_ELEMENT_NAME = "NAMESPACE_AND_MANIFEST_FILE_INFO_LIST";
   private static final String CONDITIONAL_COMPILER_DEFINITION_LIST_ELEMENT_NAME = "CONDITIONAL_COMPILATION_DEFINITION_LIST";
   private static final String CSS_FILES_LIST_ELEMENT_NAME = "CSS_FILES_LIST";

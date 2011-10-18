@@ -494,6 +494,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
       final Collection<Pair<Module, FlexIdeBuildConfiguration>> result = new ArrayList<Pair<Module, FlexIdeBuildConfiguration>>();
 
       for (final Module module : scope.getAffectedModules()) {
+        if (ModuleType.get(module) != FlexModuleType.getInstance()) continue;
         for (final FlexIdeBuildConfiguration config : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
           if (!config.isSkipCompile()) {
             result.add(Pair.create(module, config));

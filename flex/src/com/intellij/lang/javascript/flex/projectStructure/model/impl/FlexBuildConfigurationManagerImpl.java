@@ -111,6 +111,10 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
     return Arrays.copyOf(myConfigurations, myConfigurations.length);
   }
 
+  FlexIdeBuildConfigurationImpl[] doGetBuildConfigurations() {
+    return myConfigurations;
+  }
+
   // TODO should be getModifiableModel()!
   @Override
   public ModifiableCompilerOptions getModuleLevelCompilerOptions() {
@@ -120,8 +124,13 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
   void setBuildConfigurations(FlexIdeBuildConfiguration[] configurations) {
     final String activeName = myActiveConfiguration != null ? myActiveConfiguration.getName() : null;
     ApplicationManager.getApplication().assertWriteAccessAllowed();
-    myConfigurations = getValidatedConfigurations(Arrays.asList(configurations));
+    FlexIdeBuildConfigurationImpl[] validatedConfigurations = getValidatedConfigurations(Arrays.asList(configurations));
+    doSetBuildConfigurations(validatedConfigurations);
     updateActiveConfiguration(activeName);
+  }
+
+  void doSetBuildConfigurations(FlexIdeBuildConfigurationImpl[] configurations) {
+    myConfigurations = configurations;
   }
 
   private void updateActiveConfiguration(@Nullable final String activeName) {
@@ -162,7 +171,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
       configuration.loadState(configurationState, myModule.getProject());
       configurations.add(configuration);
     }
-    myConfigurations = getValidatedConfigurations(configurations);
+    doSetBuildConfigurations(getValidatedConfigurations(configurations));
     updateActiveConfiguration(state.myActiveConfigurationName);
     myModuleLevelCompilerOptions.loadState(state.myModuleLevelCompilerOptions);
   }

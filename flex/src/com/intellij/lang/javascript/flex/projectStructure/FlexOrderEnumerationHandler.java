@@ -106,11 +106,15 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
   @Override
   public AddDependencyType shouldAddDependency(@NotNull OrderEntry orderEntry,
                                                @NotNull OrderEnumeratorSettings settings) {
+    Module module = orderEntry.getOwnerModule();
+    if (ModuleType.get(module) != FlexModuleType.getInstance()) {
+      return super.shouldAddDependency(orderEntry, settings);
+    }
+
     if (orderEntry instanceof JdkOrderEntry) {
       return AddDependencyType.DO_NOT_ADD; // we have our own SDK entry
     }
 
-    Module module = orderEntry.getOwnerModule();
     Collection<FlexIdeBuildConfiguration> accessibleConfigurations;
     if (myActiveConfigurations != null) {
       accessibleConfigurations = myActiveConfigurations.get(module);

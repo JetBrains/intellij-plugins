@@ -60,8 +60,6 @@
 
 
 
-    <moduleType id="JAVA_MODULE" implementationClass="com.intellij.openapi.module.JavaModuleType"/>
-
     <iconProvider implementation="com.intellij.psi.impl.JavaDirectoryIconProvider"/>
     <moduleExtension implementation="com.intellij.openapi.roots.impl.CompilerModuleExtensionImpl"/>
     <directoryIndexExcludePolicy implementation="com.intellij.openapi.roots.impl.ExcludeCompilerOutputPolicy"/>

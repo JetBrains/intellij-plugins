@@ -17,6 +17,7 @@
                           implementation="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderOpenProcessor"
                           order="before EclipseProjectOpenProcessor"/>
 
+    <facetType implementation="com.intellij.lang.javascript.flex.FlexFacetType"/>
   </extensions>
 
   <actions>

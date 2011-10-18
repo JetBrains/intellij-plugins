@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.openapi.module.Module;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
@@ -83,6 +84,13 @@ public class ConversionHelper {
     FlexBuildConfigurationManagerImpl m = new FlexBuildConfigurationManagerImpl(null);
     m.setActiveBuildConfiguration(m.getBuildConfigurations()[0]);
     return m;
+  }
+
+  public static ModifiableFlexIdeBuildConfiguration createBuildConfiguration(FlexBuildConfigurationManagerImpl m) {
+    FlexIdeBuildConfigurationImpl[] configurations = m.doGetBuildConfigurations();
+    FlexIdeBuildConfigurationImpl result = new FlexIdeBuildConfigurationImpl();
+    m.doSetBuildConfigurations(ArrayUtil.append(configurations, result));
+    return result;
   }
 
   public static ModifiableModuleLibraryEntry createModuleLibraryEntry(String libraryId) {

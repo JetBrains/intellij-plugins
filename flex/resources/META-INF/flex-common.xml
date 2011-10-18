@@ -29,7 +29,6 @@
     <sdkType implementation="com.intellij.lang.javascript.flex.sdk.AirSdkType"/>
     <sdkType implementation="com.intellij.lang.javascript.flex.sdk.AirMobileSdkType"/>
     <sdkType implementation="com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType"/>
-    <facetType implementation="com.intellij.lang.javascript.flex.FlexFacetType"/>
     <library.type implementation="com.intellij.lang.javascript.flex.library.FlexLibraryType"/>
     <xml.schemaProvider implementation="com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler"/>
     <xml.xmlExtension implementation="com.intellij.javascript.flex.mxml.schema.FlexXmlExtension"/>

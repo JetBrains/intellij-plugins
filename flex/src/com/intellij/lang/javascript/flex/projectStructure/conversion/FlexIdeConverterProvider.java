@@ -19,7 +19,7 @@ public class FlexIdeConverterProvider extends ConverterProvider {
   @NotNull
   @Override
   public String getConversionDescription() {
-    return "Flex modules configuration will be transformed.<br/>Modules of other types will be removed from the project.<br/>";
+    return "Flex modules configuration will be updated.<br/>Java modules with Flex facets will be converted to Flex modules.<br/>";
   }
 
   @Override
