@@ -153,6 +153,9 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
       return children;
     }
     PsiFile psiFile = ((PsiFileNode)parent).getValue();
+    if (psiFile == null) {
+      return children;
+    }
     if (FileTypeManager.getInstance().getFileTypeByFileName(psiFile.getName()) != FlexApplicationComponent.SWF_FILE_TYPE) {
       return children;
     }
