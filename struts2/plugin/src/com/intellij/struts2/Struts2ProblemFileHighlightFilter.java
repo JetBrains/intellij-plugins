@@ -15,10 +15,12 @@
 
 package com.intellij.struts2;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -50,11 +52,6 @@ public class Struts2ProblemFileHighlightFilter implements Condition<VirtualFile>
       return false;
     }
 
-    final PsiFile file = PsiManager.getInstance(project).findFile(virtualFile);
-    if (file == null) {
-      return false;
-    }
-
     final Module module = ModuleUtil.findModuleForFile(virtualFile, project);
     if (module == null) {
       return false;
@@ -63,7 +60,17 @@ public class Struts2ProblemFileHighlightFilter implements Condition<VirtualFile>
     if (StrutsFacet.getInstance(module) == null) {
       return false;
     }
-    
+
+    final PsiFile file = ApplicationManager.getApplication().runReadAction(new Computable<PsiFile>() {
+      @Override
+      public PsiFile compute() {
+        return PsiManager.getInstance(project).findFile(virtualFile);
+      }
+    });
+    if (file == null) {
+      return false;
+    }
+
     final StrutsManager strutsManager = StrutsManager.getInstance(project);
     if (strutsManager.isStruts2ConfigFile((XmlFile) file) &&
         strutsManager.getModelByFile((XmlFile) file) != null) {
