@@ -12,7 +12,16 @@
         <packaging-android enabled="true" />
         <packaging-ios />
       </configuration>
-      <configuration name="B" target-platform="Mobile" main-class="B" output-file="Java_with_flex_facets_B.swf" output-folder="$TEST_PROJECT$/out/production/java_with_flex_facets/facetB" skip-build="true">
+      <configuration name="B" target-platform="Mobile" output-type="Library" output-file="Java_with_flex_facets_B.swf" output-folder="$TEST_PROJECT$/out/production/java_with_flex_facets/facetB" skip-build="true">
+        <dependencies>
+          <sdk library-id="0" home-path="$TEST_SDK_HOME$" />
+        </dependencies>
+        <compiler-options />
+        <packaging-air-desktop />
+        <packaging-android enabled="true" />
+        <packaging-ios />
+      </configuration>
+      <configuration name="C" target-platform="Mobile" output-type="Library" output-file="Java_with_flex_facets_C.swf" output-folder="$TEST_PROJECT$/out/production/java_with_flex_facets">
         <dependencies>
           <sdk library-id="0" home-path="$TEST_SDK_HOME$" />
         </dependencies>

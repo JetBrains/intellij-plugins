@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="RunManager" selected="Flash App.B">
+  <component name="RunManager" selected="Flash App.A">
     <configuration default="true" type="FlexIdeRunConfigurationType" factoryName="Flash App">
       <option name="BCName" value="" />
       <option name="adlOptions" value="" />
@@ -133,10 +133,6 @@
     <configuration default="false" name="A" type="FlexIdeRunConfigurationType" factoryName="Flash App">
       <option name="moduleName" value="java_with_flex_facets" />
       <option name="BCName" value="A" />
-    </configuration>
-    <configuration default="false" name="B" type="FlexIdeRunConfigurationType" factoryName="Flash App">
-      <option name="moduleName" value="java_with_flex_facets" />
-      <option name="BCName" value="B" />
     </configuration>
   </component>
 </project>

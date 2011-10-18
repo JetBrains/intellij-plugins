@@ -15,7 +15,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.ConversionH
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexLibraryIdGenerator;
-import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.DependencyScope;
@@ -26,7 +25,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Attribute;
 import org.jdom.Element;
@@ -57,24 +55,26 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
   }
 
   static boolean hasFlex(ModuleSettings moduleSettings) {
-    if (FlexModuleType.MODULE_TYPE_ID.equals(moduleSettings.getModuleType())) {
-      return true;
-    }
-    if (StdModuleTypes.JAVA.getId().equals(moduleSettings.getModuleType())) {
-      Collection<? extends Element> facetElements = moduleSettings.getFacetElements(FlexFacet.ID.toString());
-      return !facetElements.isEmpty();
-    }
-    return false;
+    return isFlexModule(moduleSettings) || !getFlexFacets(moduleSettings).isEmpty();
+  }
+
+  public static boolean isFlexModule(ModuleSettings moduleSettings) {
+    return FlexModuleType.MODULE_TYPE_ID.equals(moduleSettings.getModuleType());
+  }
+  
+  public static List<Element> getFlexFacets(ModuleSettings module) {
+    if (!StdModuleTypes.JAVA.getId().equals(module.getModuleType())) return Collections.emptyList();
+    return new ArrayList<Element>(module.getFacetElements(FlexFacet.ID.toString()));
   }
 
   @Override
   public void process(ModuleSettings moduleSettings) throws CannotConvertException {
     FlexBuildConfigurationManagerImpl configurationManager = ConversionHelper.createBuildConfigurationManager();
 
-    if (FlexModuleType.MODULE_TYPE_ID.equals(moduleSettings.getModuleType())) {
+    if (isFlexModule(moduleSettings)) {
       ModifiableFlexIdeBuildConfiguration newConfiguration =
         (ModifiableFlexIdeBuildConfiguration)configurationManager.getBuildConfigurations()[0];
-      newConfiguration.setName(moduleSettings.getModuleName());
+      newConfiguration.setName(generateModuleBcName(moduleSettings));
 
       Element oldConfigurationElement = moduleSettings.getComponentElement(FlexBuildConfiguration.COMPONENT_NAME);
       FlexBuildConfiguration oldConfiguration =
@@ -82,7 +82,7 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
       processConfiguration(oldConfiguration, newConfiguration, moduleSettings, false, null, null);
     }
     else {
-      List<Element> flexFacets = new ArrayList<Element>(moduleSettings.getFacetElements(FlexFacet.ID.toString()));
+      List<Element> flexFacets = getFlexFacets(moduleSettings);
       Set<String> sdkLibrariesIds = new HashSet<String>();
       for (int i = 0; i < flexFacets.size(); i++) {
         Element facet = flexFacets.get(i);
@@ -93,7 +93,7 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
         else {
           newConfiguration = ConversionHelper.createBuildConfiguration(configurationManager);
         }
-        newConfiguration.setName(facet.getAttributeValue(FacetManagerImpl.NAME_ATTRIBUTE));
+        newConfiguration.setName(generateFacetBcName(facet));
         Element oldConfigurationElement = facet.getChild(FacetManagerImpl.CONFIGURATION_ELEMENT);
         if (oldConfigurationElement != null) {
           FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(oldConfigurationElement, FlexBuildConfiguration.class);
@@ -182,11 +182,13 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
       }
       else if (ModuleOrderEntryImpl.ENTRY_TYPE.equals(orderEntryType)) {
         String moduleName = orderEntry.getAttributeValue(ModuleOrderEntryImpl.MODULE_NAME_ATTR);
-        if (myParams.isApplicableForDependency(moduleName)) {
-          ModifiableBuildConfigurationEntry bcEntry = ConversionHelper.createBuildConfigurationEntry(moduleName, moduleName); // TODO
+        Collection<String> bcNames = myParams.getBcNamesForDependency(moduleName);
+        for (String bcName : bcNames) {
+          ModifiableBuildConfigurationEntry bcEntry =
+            ConversionHelper.createBuildConfigurationEntry(moduleName, bcName);
           newBuildConfiguration.getDependencies().getModifiableEntries().add(bcEntry);
         }
-        else {
+        if (bcNames.isEmpty()) {
           orderEntriesToRemove.add(orderEntry);
         }
       }
@@ -310,4 +312,13 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
       target.addContent((Element)((Element)child).clone());
     }
   }
+  
+  public static String generateModuleBcName(ModuleSettings module) {
+    return module.getModuleName();
+  }
+
+  public static String generateFacetBcName(Element facet) {
+    return facet.getAttributeValue(FacetManagerImpl.NAME_ATTRIBUTE);
+  }
+
 }

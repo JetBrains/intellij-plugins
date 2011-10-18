@@ -33,7 +33,7 @@
     <facet type="flex" name="B">
       <configuration flex_sdk="some_airmobile_sdk">
         <option name="DO_BUILD" value="false" />
-        <option name="OUTPUT_TYPE" value="Application" />
+        <option name="OUTPUT_TYPE" value="Library" />
         <option name="USE_DEFAULT_SDK_CONFIG_FILE" value="true" />
         <option name="USE_CUSTOM_CONFIG_FILE" value="false" />
         <option name="CUSTOM_CONFIG_FILE" value="" />
@@ -44,6 +44,35 @@
         <option name="OUTPUT_FILE_NAME" value="Java_with_flex_facets_B.swf" />
         <option name="USE_FACET_COMPILE_OUTPUT_PATH" value="true" />
         <option name="FACET_COMPILE_OUTPUT_PATH" value="$MODULE_DIR$/../out/production/java_with_flex_facets/facetB" />
+        <option name="FACET_COMPILE_OUTPUT_PATH_FOR_TESTS" value="$MODULE_DIR$/../out/test/java_with_flex_facets" />
+        <option name="INCLUDE_RESOURCE_FILES_IN_SWC" value="false" />
+        <option name="TARGET_PLAYER_VERSION" value="10.2.0" />
+        <option name="STATIC_LINK_RUNTIME_SHARED_LIBRARIES" value="true" />
+        <option name="USE_LOCALE_SETTINGS" value="false" />
+        <option name="LOCALE" value="en_US" />
+        <option name="ADDITIONAL_COMPILER_OPTIONS" value="" />
+        <option name="PATH_TO_SERVICES_CONFIG_XML" value="" />
+        <option name="CONTEXT_ROOT" value="" />
+        <option name="VERSION" value="3" />
+        <NAMESPACE_AND_MANIFEST_FILE_INFO_LIST />
+        <CONDITIONAL_COMPILATION_DEFINITION_LIST />
+        <CSS_FILES_LIST />
+      </configuration>
+    </facet>
+    <facet type="flex" name="C">
+      <configuration flex_sdk="some_airmobile_sdk">
+        <option name="DO_BUILD" value="true" />
+        <option name="OUTPUT_TYPE" value="Library" />
+        <option name="USE_DEFAULT_SDK_CONFIG_FILE" value="true" />
+        <option name="USE_CUSTOM_CONFIG_FILE" value="false" />
+        <option name="CUSTOM_CONFIG_FILE" value="" />
+        <option name="USE_CUSTOM_CONFIG_FILE_FOR_TESTS" value="false" />
+        <option name="CUSTOM_CONFIG_FILE_FOR_TESTS" value="" />
+        <option name="APPLICATION_ENTRY_POINT" value="" />
+        <option name="MAIN_CLASS" value="C" />
+        <option name="OUTPUT_FILE_NAME" value="Java_with_flex_facets_C.swf" />
+        <option name="USE_FACET_COMPILE_OUTPUT_PATH" value="false" />
+        <option name="FACET_COMPILE_OUTPUT_PATH" value="$MODULE_DIR$/../out/production/java_with_flex_facets" />
         <option name="FACET_COMPILE_OUTPUT_PATH_FOR_TESTS" value="$MODULE_DIR$/../out/test/java_with_flex_facets" />
         <option name="INCLUDE_RESOURCE_FILES_IN_SWC" value="false" />
         <option name="TARGET_PLAYER_VERSION" value="10.2.0" />

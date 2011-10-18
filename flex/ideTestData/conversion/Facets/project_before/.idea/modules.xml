@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/flex_module/flex_module.iml" filepath="$PROJECT_DIR$/flex_module/flex_module.iml" />
       <module fileurl="file://$PROJECT_DIR$/flex_module2/flex_module2.iml" filepath="$PROJECT_DIR$/flex_module2/flex_module2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/flex_module3/flex_module3.iml" filepath="$PROJECT_DIR$/flex_module3/flex_module3.iml" />
       <module fileurl="file://$PROJECT_DIR$/java_module/java_module.iml" filepath="$PROJECT_DIR$/java_module/java_module.iml" />
       <module fileurl="file://$PROJECT_DIR$/java_with_flex_facets/java_with_flex_facets.iml" filepath="$PROJECT_DIR$/java_with_flex_facets/java_with_flex_facets.iml" />
     </modules>

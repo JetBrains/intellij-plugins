@@ -3,25 +3,17 @@
   <component name="Flex.Build.Configuration">
     <option name="DO_BUILD" value="true" />
     <option name="MAIN_CLASS" value="Abc" />
-    <option name="OUTPUT_FILE_NAME" value="flex_module.swf" />
+    <option name="OUTPUT_FILE_NAME" value="flex_module3.swf" />
+    <option name="OUTPUT_TYPE" value="Library" />
     <option name="TARGET_PLAYER_VERSION" value="10.2.0" />
     <option name="VERSION" value="3" />
   </component>
-  <component name="FlexBuildConfigurationManager" active="flex_module">
+  <component name="FlexBuildConfigurationManager" active="flex_module3">
     <configurations>
-      <configuration name="flex_module" main-class="Abc" output-file="flex_module.swf" output-folder="$TEST_PROJECT$/out/production/flex_module">
-        <dependencies target-player="10.2">
+      <configuration name="flex_module3" target-platform="Desktop" output-type="Library" output-file="flex_module3.swf" output-folder="$TEST_PROJECT$/out/production/flex_module3">
+        <dependencies>
           <entries>
-            <entry library-id="1">
-              <dependency linkage="Merged" />
-            </entry>
-            <entry module-name="java_with_flex_facets" build-configuration-name="B">
-              <dependency linkage="Merged" />
-            </entry>
-            <entry module-name="java_with_flex_facets" build-configuration-name="C">
-              <dependency linkage="Merged" />
-            </entry>
-            <entry module-name="flex_module3" build-configuration-name="flex_module3">
+            <entry library-id="3">
               <dependency linkage="Merged" />
             </entry>
           </entries>
@@ -43,7 +35,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library type="flex">
-        <properties id="1" />
+        <properties id="3" />
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/flexunit-4.0.0.swc!/" />
         </CLASSES>
@@ -51,8 +43,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="java_with_flex_facets" />
-    <orderEntry type="module" module-name="flex_module3" />
     <orderEntry type="library" name="Flex SDK 4.5.1.21328" level="application" />
   </component>
 </module>

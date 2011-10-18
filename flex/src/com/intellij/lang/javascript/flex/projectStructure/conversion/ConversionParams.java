@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.projectStructure.conversion;
 import com.intellij.conversion.CannotConvertException;
 import com.intellij.conversion.ConversionContext;
 import com.intellij.conversion.ModuleSettings;
+import com.intellij.facet.FacetManagerImpl;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
@@ -22,6 +23,8 @@ import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +32,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * User: ksafonov
@@ -129,13 +134,34 @@ public class ConversionParams {
     return myAppModuleAndBCNames;
   }
 
-  public boolean isApplicableForDependency(String moduleName) {
+  public Collection<String> getBcNamesForDependency(String moduleName) {
     ModuleSettings moduleSettings = myContext.getModuleSettings(moduleName);
-    if (moduleSettings == null) return false; // module is missing
-    if (!FlexIdeModuleConverter.hasFlex(moduleSettings)) return false; // non-Flex module
-    Element flexBuildConfigurationElement = moduleSettings.getComponentElement(FlexBuildConfiguration.COMPONENT_NAME);
-    if (flexBuildConfigurationElement == null) return false;
-    FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(flexBuildConfigurationElement, FlexBuildConfiguration.class);
-    return oldConfiguration != null && FlexBuildConfiguration.LIBRARY.equals(oldConfiguration.OUTPUT_TYPE);
+    if (moduleSettings == null) return Collections.emptyList(); // module is missing
+
+    if (FlexIdeModuleConverter.isFlexModule(moduleSettings)) {
+      Element flexBuildConfigurationElement = moduleSettings.getComponentElement(FlexBuildConfiguration.COMPONENT_NAME);
+      if (flexBuildConfigurationElement != null) {
+        FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(flexBuildConfigurationElement, FlexBuildConfiguration.class);
+        if (oldConfiguration != null && FlexBuildConfiguration.LIBRARY.equals(oldConfiguration.OUTPUT_TYPE)) {
+          return Collections.singletonList(FlexIdeModuleConverter.generateModuleBcName(moduleSettings));
+        }
+      }
+      return Collections.emptyList();
+    }
+
+    List<Element> facets = FlexIdeModuleConverter.getFlexFacets(moduleSettings);
+    return ContainerUtil.mapNotNull(facets, new Function<Element, String>() {
+      @Override
+      public String fun(Element facet) {
+        Element oldConfigurationElement = facet.getChild(FacetManagerImpl.CONFIGURATION_ELEMENT);
+        if (oldConfigurationElement != null) {
+          FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(oldConfigurationElement, FlexBuildConfiguration.class);
+          if (oldConfiguration != null && FlexBuildConfiguration.LIBRARY.equals(oldConfiguration.OUTPUT_TYPE)) {
+            return FlexIdeModuleConverter.generateFacetBcName(facet);
+          }
+        }
+        return null;
+      }
+    });
   }
 }
