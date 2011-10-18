@@ -238,7 +238,7 @@ public class BCUtils {
     if (!swcName.equals("mobilecomponents.swc")) {
       LOG.warn("Unknown SWC in '<Flex SDK>/frameworks/libs/mobile' folder: " + swcName);
     }
-    return bcNature.pureAS ? null : LinkageType.Merged;
+    return bcNature.pureAS || !bcNature.isMobilePlatform() ? null : LinkageType.Merged;
   }
 
   @Nullable
