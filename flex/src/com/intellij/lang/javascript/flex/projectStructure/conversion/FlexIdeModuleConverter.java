@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexLibraryIdGenerator;
 import com.intellij.openapi.module.JavaModuleType;
+import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.roots.impl.*;
@@ -59,7 +60,7 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
     if (FlexModuleType.MODULE_TYPE_ID.equals(moduleSettings.getModuleType())) {
       return true;
     }
-    if (JavaModuleType.ID.equals(moduleSettings.getModuleType())) {
+    if (StdModuleTypes.JAVA.getId().equals(moduleSettings.getModuleType())) {
       Collection<? extends Element> facetElements = moduleSettings.getFacetElements(FlexFacet.ID.toString());
       return !facetElements.isEmpty();
     }

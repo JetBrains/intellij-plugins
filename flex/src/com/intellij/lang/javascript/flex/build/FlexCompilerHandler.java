@@ -23,10 +23,7 @@ import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.StdFileTypes;
-import com.intellij.openapi.module.JavaModuleType;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.ModuleTypeManager;
+import com.intellij.openapi.module.*;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -149,7 +146,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
       compilerManager.addBeforeTask(new RunMainClassPrecompileTask(myProject));
       compilerManager.setValidationEnabled(FlexModuleType.getInstance(), false);
       if (PlatformUtils.isFlexIde()) {
-        compilerManager.setValidationEnabled(ModuleTypeManager.getInstance().findByID(JavaModuleType.ID), false);
+        compilerManager.setValidationEnabled(StdModuleTypes.JAVA, false);
       }
     }
   }
