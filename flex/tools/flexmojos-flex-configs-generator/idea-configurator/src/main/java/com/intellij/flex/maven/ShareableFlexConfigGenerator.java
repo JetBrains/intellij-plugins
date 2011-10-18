@@ -16,8 +16,8 @@ public class ShareableFlexConfigGenerator extends IdeaConfigurator {
   private String localRepositoryBasedir;
   private int localRepositoryBasedirLength;
 
-  public ShareableFlexConfigGenerator(MavenSession session) {
-    super(session);
+  public ShareableFlexConfigGenerator(MavenSession session, File outputDirectory) {
+    super(session, new File("build-gant/flex-configs"));
   }
 
   @Override
@@ -29,14 +29,14 @@ public class ShareableFlexConfigGenerator extends IdeaConfigurator {
 
     if (!listForGantGenerated) {
       listForGantGenerated = true;
-      
-      OutputStreamWriter s = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(new File("build-gant/flex_ui_designer_swfs_build.gant"))), "utf-8");
+
+      StringBuilder s = new StringBuilder(8192);
       s.append("def List<SwfDescriptor> getList() {\n\treturn [");
 
       boolean isFirst = true;
       final int absPathPrefixLength = session.getTopLevelProject().getBasedir().getPath().length();
       for (MavenProject p : session.getProjects()) {
-        if (Utils.isFlashProject(p)) {
+        if (p.getPackaging().equals("swf") || p.getPackaging().equals("swc")) {
           if (!isFirst) {
             s.append(", ");
           }
@@ -57,18 +57,18 @@ public class ShareableFlexConfigGenerator extends IdeaConfigurator {
       }
 
       s.append("\n\t];\n}");
-      s.close();
+      Utils.write(s, new File("build-gant/flex_ui_designer_swfs_build.gant"));
     }
   }
 
   @Override
   protected String getConfigFilePath(MavenProject project, String classifier) {
-    return "build-gant/flex-configs/" + project.getArtifactId() + ".xml";
+    return project.getArtifactId() + ".xml";
   }
 
   @Override
   protected void processValue(String value, String name) throws IOException {
-    if (name.equals("local-fonts-snapshot")) {
+    if (name.equals(LOCAL_FONTS_SNAPSHOT)) {
       out.append("@@repo@@/fonts.ser");
     }
     else if (name.equals("output")) {

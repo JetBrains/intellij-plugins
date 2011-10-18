@@ -144,32 +144,24 @@ public class IdeaConfigurationMojo extends AbstractMojo {
                                                                    flexmojosMojoExecution.getMojoDescriptor().getPluginDescriptor());
 
     //flexmojosPluginRealm.addURL(new URL("file://" + session.getLocalRepository().getUrl() Users/develar/Documents/flexmojos-idea-configurator/idea-configurator/target/classes/"));
-    flexmojosPluginRealm.addURL(new URL(session.getLocalRepository().getUrl() + "/com/intellij/flex/maven/idea-configurator/1.4.4/idea-configurator-1.4.4.jar"));
+    flexmojosPluginRealm.addURL(new URL("file:///Users/develar/Documents/idea/flex/lib/flexmojos-idea-configurator.jar"));
+    flexmojosPluginRealm.importFrom(getClass().getClassLoader(), "com.intellij.flex.maven.FlexConfigGenerator");
+    flexmojosPluginRealm.importFrom(getClass().getClassLoader(), "com.intellij.flex.maven.Utils");
     Mojo mojo = null;
     try {
       mojo = mavenPluginManager.getConfiguredMojo(Mojo.class, session, flexmojosMojoExecution);
 
       for (String configuratorClassName : configurators) {
         Class configuratorClass = flexmojosPluginRealm.loadClass(configuratorClassName);
-        FlexC  configurator = configuratorClass.getConstructor(MavenSession.class).newInstance(session);
-        Method preGenerate = configuratorClass.getMethod("preGenerate", MavenProject.class, String.class, MojoExecution.class);
-        preGenerate.setAccessible(true);
-        preGenerate.invoke(configurator, project, getClassifier(mojo, flexmojosPluginRealm), flexmojosGeneratorMojoExecution);
-        try {
-          if ("swc".equals(project.getPackaging())) {
-            Method generate = configuratorClass.getMethod("generate", Mojo.class);
-            generate.setAccessible(true);
-            generate.invoke(configurator, mojo);
-          }
-          else {
-            Method generate = configuratorClass.getMethod("generate", Mojo.class, File.class);
-            generate.setAccessible(true);
-            generate.invoke(configurator, mojo, getSourceFileForSwf(mojo, flexmojosPluginRealm));
-          }
+        FlexConfigGenerator configurator = (FlexConfigGenerator)configuratorClass.getConstructor(MavenSession.class, File.class).newInstance(session, null);
+        configurator.preGenerate(project, getClassifier(mojo), flexmojosGeneratorMojoExecution);
+        if ("swc".equals(project.getPackaging())) {
+          configurator.generate(mojo);
         }
-        finally {
-          configuratorClass.getMethod("postGenerate").invoke(configurator);
+        else {
+          configurator.generate(mojo, getSourceFileForSwf(mojo));
         }
+        configurator.postGenerate(project);
       }
     }
     finally {
@@ -186,18 +178,16 @@ public class IdeaConfigurationMojo extends AbstractMojo {
   }
 
 
-  private File getSourceFileForSwf(Mojo mojo, ClassRealm flexmojosPluginRealm)
+  private File getSourceFileForSwf(Mojo mojo)
     throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
-    Method getSourceFileMethod = flexmojosPluginRealm.loadClass("org.sonatype.flexmojos.plugin.compiler.MxmlcMojo").getDeclaredMethod(
-      "getSourceFile");
+    Method getSourceFileMethod = mojo.getClass().getDeclaredMethod("getSourceFile");
     getSourceFileMethod.setAccessible(true);
     return (File)getSourceFileMethod.invoke(mojo);
   }
 
-  private String getClassifier(Mojo mojo, ClassRealm flexmojosPluginRealm)
+  private String getClassifier(Mojo mojo)
     throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
-    Method getSourceFileMethod = flexmojosPluginRealm.loadClass("org.sonatype.flexmojos.plugin.compiler.AbstractFlexCompilerMojo").getDeclaredMethod(
-      "getClassifier");
+    Method getSourceFileMethod = mojo.getClass().getMethod("getClassifier");
     getSourceFileMethod.setAccessible(true);
     return (String)getSourceFileMethod.invoke(mojo);
   }

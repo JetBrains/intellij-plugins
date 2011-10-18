@@ -40,7 +40,6 @@
 
 	<target name="airframework" description="Builds libs/airframework.swc">
 		<compc static-link-runtime-shared-libraries="true"  fork="true" include-classes="AIRFrameworkClasses" output="${basedir}/libs/air/airframework.swc" locale="" accessible="true">
-			value="10.2"
 			<namespace uri="library://ns.adobe.com/flex/mx" manifest="${airframework.dir}/manifest.xml"/>
 			<include-namespaces uri="library://ns.adobe.com/flex/mx"/>
 			<source-path path-element="${airframework.dir}/src"/>
@@ -87,7 +86,6 @@
 
 	<target name="airframework_rb" description="Builds locale/en_US/airframework_rb.swc">
 		<compc static-link-runtime-shared-libraries="true"  fork="true" output="${basedir}/locale/${locale}/airframework_rb.swc" locale="${locale}">
-            value="10.2"
             <include-resource-bundles bundle="SharedResources"/>
             <include-resource-bundles bundle="aircontrols"/>
             <include-resource-bundles bundle="collections"/>
@@ -111,7 +109,7 @@
 	
 	<target name="airspark" description="Builds libs/airspark.swc">
 		<compc static-link-runtime-shared-libraries="true"  fork="true" include-classes="AIRSparkClasses" output="${basedir}/libs/air/airspark.swc" locale="" accessible="true">
-			value="10.2"
+			
 			<namespace uri="library://ns.adobe.com/flex/spark" manifest="${airspark.dir}/manifest.xml"/>
 			<include-namespaces uri="library://ns.adobe.com/flex/spark"/>
 			<source-path path-element="${airspark.dir}/src"/>
@@ -170,7 +168,7 @@
 	
 	<target name="charts_rb" description="Builds locale/en_US/charts_rb.swc">
 		<compc static-link-runtime-shared-libraries="true"  fork="true" output="${basedir}/locale/${locale}/charts_rb.swc" locale="${locale}">
-            value="10.2"
+            
             <include-resource-bundles bundle="charts"/>
             <source-path path-element="${charts.dir}/bundles/${locale}"/>
 			<source-path path-element="${framework.dir}/src"/>
@@ -208,7 +206,6 @@
 	
 	<target name="advancedgrids_rb" description="Builds locale/en_US/advancedgrids_rb.swc">
 		<compc static-link-runtime-shared-libraries="true"  fork="true" output="${basedir}/locale/${locale}/advancedgrids_rb.swc" locale="${locale}">
-            value="10.2"
             <include-resource-bundles bundle="datamanagement"/>
             <include-resource-bundles bundle="olap"/>
             <source-path path-element="${advancedgrids.dir}/bundles/${locale}"/>
@@ -221,8 +218,7 @@
 
 	<target name="core" description="Builds core.swc">
 		<compc static-link-runtime-shared-libraries="true"  fork="true" include-classes="CoreClasses" output="${basedir}/libs/core.swc" locale="" accessible="true">
-            value="10.2"
-			<source-path path-element="${core.dir}/src"/>
+            <source-path path-element="${core.dir}/src"/>
 			<source-path path-element="${framework.dir}/src"/>
 			 <load-config filename="${framework.dir}/framework-config.xml"/>
 			<library-path/>
@@ -242,8 +238,7 @@
 		
 	<target name="framework" description="Builds libs/framework.swc">
 		<compc static-link-runtime-shared-libraries="true"  fork="true" include-classes="FrameworkClasses" output="${basedir}/libs/framework.swc" locale="" accessible="true">
-            value="10.2"
-			<namespace uri="library://ns.adobe.com/flex/mx" manifest="${framework.dir}/manifest.xml"/>
+            <namespace uri="library://ns.adobe.com/flex/mx" manifest="${framework.dir}/manifest.xml"/>
 		    <namespace uri="http://www.adobe.com/2006/mxml" manifest="${framework.dir}/manifest.xml"/>
 			<include-namespaces uri="library://ns.adobe.com/flex/mx"/>
 			<source-path path-element="${framework.dir}/src"/>
@@ -270,7 +265,6 @@
 
 	<target name="framework_rb" description="Builds locale/en_US/framework_rb.swc">
 		<compc static-link-runtime-shared-libraries="true"  fork="true" output="${basedir}/locale/${locale}/framework_rb.swc" locale="${locale}">
-            value="10.2"
             <include-resource-bundles bundle="SharedResources"/>
             <include-resource-bundles bundle="collections"/>
             <include-resource-bundles bundle="controls"/>
@@ -295,8 +289,7 @@
 	<target name="rpc" description="Builds libs/rpc.swc">
 		<echo file="${basedir}/version.properties" append="false">build=${build.number}</echo>
 		<compc static-link-runtime-shared-libraries="true"  fork="true" include-classes="RPCClasses" output="${basedir}/libs/rpc.swc" locale="" accessible="true">
-            value="10.2"
-			<namespace uri="library://ns.adobe.com/flex/mx" manifest="${rpc.dir}/manifest.xml"/>
+           <namespace uri="library://ns.adobe.com/flex/mx" manifest="${rpc.dir}/manifest.xml"/>
 			<include-file name="version.properties" path="${basedir}/version.properties"/>
 			<include-namespaces uri="library://ns.adobe.com/flex/mx"/>
 			<source-path path-element="${rpc.dir}/src"/>
@@ -314,7 +307,6 @@
 	
 	<target name="rpc_rb" description="Builds locale/en_US/rpc_rb.swc">
 		<compc static-link-runtime-shared-libraries="true"  fork="true" output="${basedir}/locale/${locale}/rpc_rb.swc" locale="${locale}">
-            value="10.2"
             <include-resource-bundles bundle="collections"/>
 			<include-resource-bundles bundle="core"/>
 			<include-resource-bundles bundle="logging"/>
@@ -333,8 +325,7 @@
 	
 	<target name="spark" description="Builds the spark.swc">
 		<compc static-link-runtime-shared-libraries="true"  fork="true" include-classes="SparkClasses" output="${basedir}/libs/spark.swc" locale="" accessible="true">
-		    value="10.2"
-			<namespace uri="library://ns.adobe.com/flex/spark" manifest="${spark.dir}/manifest.xml"/>
+		    <namespace uri="library://ns.adobe.com/flex/spark" manifest="${spark.dir}/manifest.xml"/>
 			<include-namespaces uri="library://ns.adobe.com/flex/spark"/>
 			<source-path path-element="${spark.dir}/src"/>
 			<library-path />
@@ -354,8 +345,7 @@
 
 	<target name="spark_dmv" description="Builds the spark_dmv.swc">
 		<compc static-link-runtime-shared-libraries="true"  fork="true" include-classes="SparkDmvClasses" output="${basedir}/libs/spark_dmv.swc" locale="" accessible="true">
-		    value="10.2"
-			<namespace uri="library://ns.adobe.com/flex/spark" manifest="${spark_dmv.dir}/manifest_spark_dmv.xml"/>
+		    <namespace uri="library://ns.adobe.com/flex/spark" manifest="${spark_dmv.dir}/manifest_spark_dmv.xml"/>
 			<include-namespaces uri="library://ns.adobe.com/flex/spark"/>
 			<source-path path-element="${spark_dmv.dir}/src"/>
 			<library-path />
@@ -376,8 +366,7 @@
 	<target name="spark_rb">
 		<echo message="Compiling frameworks/locale/${locale}/spark_rb.swc"/>
 		<compc static-link-runtime-shared-libraries="true"  fork="true" output="${basedir}/locale/${locale}/spark_rb.swc" locale="${locale}">
-            value="10.2"
- 			<include-resource-bundles bundle="components"/>
+            <include-resource-bundles bundle="components"/>
 			<include-resource-bundles bundle="sparkEffects"/>
 			<include-resource-bundles bundle="layout"/>
 			<include-resource-bundles bundle="textLayout"/>
@@ -431,9 +420,7 @@
 	<target name="wireframe" description="Builds the wireframe.swc">
 		<compc static-link-runtime-shared-libraries="true"  fork="true" output="${basedir}/themes/Wireframe/wireframe.swc">
             <!-- If you change this, update ${local.playerglobal.version} above. -->
-            value="10.2"
-			
-			<include-classes>WireframeClasses</include-classes>
+            <include-classes>WireframeClasses</include-classes>
 			<source-path path-element="${wireframe.dir}/src"/>
 			<library-path/>
             <external-library-path dir="${basedir}/libs">

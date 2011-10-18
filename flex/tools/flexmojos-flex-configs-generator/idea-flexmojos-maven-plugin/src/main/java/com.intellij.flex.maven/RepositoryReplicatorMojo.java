@@ -75,7 +75,7 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
     outputDirectory.mkdirs();
 
     for (MavenProject project : session.getProjects()) {
-      if (!Utils.isFlashProject(project)) {
+      if (!(project.getPackaging().equals("swf") || project.getPackaging().equals("swc"))) {
         continue;
       }
 

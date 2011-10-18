@@ -20,7 +20,7 @@
 		</fonts>
 		<include-libraries/>
 		<library-path>
-			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20967/framework-4.5.0.20967.swc</path-element>
+			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.1.21328/framework-4.5.1.21328.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airspark/4.5.2.21576/airspark-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airframework/4.5.2.21576/airframework-4.5.2.21576.swc</path-element>
@@ -29,19 +29,19 @@
 		<namespaces>
 			<namespace>
 				<uri>http://ns.adobe.com/mxml/2009</uri>
-				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20967/configs_zip/mxml-2009-manifest.xml</manifest>
+				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.1.21328/configs_zip/mxml-2009-manifest.xml</manifest>
 			</namespace>
 			<namespace>
 				<uri>library://ns.adobe.com/flex/spark</uri>
-				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20967/configs_zip/spark-manifest.xml</manifest>
+				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.1.21328/configs_zip/spark-manifest.xml</manifest>
 			</namespace>
 			<namespace>
 				<uri>library://ns.adobe.com/flex/mx</uri>
-				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20967/configs_zip/mx-manifest.xml</manifest>
+				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.1.21328/configs_zip/mx-manifest.xml</manifest>
 			</namespace>
 			<namespace>
 				<uri>http://www.adobe.com/2006/mxml</uri>
-				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20967/configs_zip/mxml-manifest.xml</manifest>
+				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.1.21328/configs_zip/mxml-manifest.xml</manifest>
 			</namespace>
 		</namespaces>
 		<source-path>
@@ -132,6 +132,6 @@
 	<target-player>10.2</target-player>
 	<tools-locale>en_US</tools-locale>
 	<file-specs>
-			<path-element>@@source@@/flex/com/intellij/flex/uiDesigner/SpecialClassForAdobeEngineers.as</path-element>
+		<path-element>@@source@@/flex/com/intellij/flex/uiDesigner/SpecialClassForAdobeEngineers.as</path-element>
 	</file-specs>
 </flex-config>

@@ -72,12 +72,12 @@ public class IdeaConfigurator implements FlexConfigGenerator {
   @Override
   public String postGenerate(MavenProject project) throws IOException {
     out.append("\n</flex-config>");
-    final String configFile = getConfigFile(project, classifier);
+    final String configFile = getConfigFilePath(project, classifier);
     Utils.write(out, new File(outputDirectory, configFile));
     return configFile;
   }
 
-  protected String getConfigFile(MavenProject project, String classifier) {
+  protected String getConfigFilePath(MavenProject project, String classifier) {
     // artifact id is first in path — it is convenient for us
     StringBuilder pathBuilder = new StringBuilder(32).append(project.getArtifactId()).append('-').append(project.getGroupId());
     if (classifier != null) {
