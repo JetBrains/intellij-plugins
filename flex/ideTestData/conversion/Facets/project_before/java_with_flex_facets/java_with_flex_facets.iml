@@ -32,7 +32,7 @@
     </facet>
     <facet type="flex" name="B">
       <configuration flex_sdk="some_airmobile_sdk">
-        <option name="DO_BUILD" value="true" />
+        <option name="DO_BUILD" value="false" />
         <option name="OUTPUT_TYPE" value="Application" />
         <option name="USE_DEFAULT_SDK_CONFIG_FILE" value="true" />
         <option name="USE_CUSTOM_CONFIG_FILE" value="false" />

@@ -135,6 +135,7 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
         myParams.addAppModuleAndBCName(module.getModuleName(), newBuildConfiguration.getName());
       }
       newBuildConfiguration.setOutputFileName(oldConfiguration.OUTPUT_FILE_NAME);
+      newBuildConfiguration.setSkipCompile(!oldConfiguration.DO_BUILD);
     }
 
     String outputFolder;
