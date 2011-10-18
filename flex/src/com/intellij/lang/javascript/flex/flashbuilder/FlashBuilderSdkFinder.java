@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.flashbuilder;
 
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
@@ -13,6 +14,7 @@ import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.PlatformUtils;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -35,6 +37,7 @@ public class FlashBuilderSdkFinder {
   private Map<String, String> mySdkNameToRootPath = new HashMap<String, String>();
   private Collection<VirtualFile> mySdkRootsFromFBInstallation = new ArrayList<VirtualFile>();
   private Sdk mySdk;
+  private String mySdkHome;
 
   private static final String FLEX_SDK_PROPERTY = "com.adobe.flexbuilder.project.flex_sdks";
   private static final String SDKS_ELEMENT = "sdks";
@@ -44,15 +47,18 @@ public class FlashBuilderSdkFinder {
   private static final String SDK_LOCATION_ATTR = "location";
 
   private static final String COMMON_SDK_NAME_BEGINNING = "Flex ";
+  private FlexProjectConfigurationEditor myFlexConfigEditor;
 
   private enum WhereToLookForSdkInfo {
     InWorkspace, InFBInstallationDir, UseIdeaSdk
   }
 
   public FlashBuilderSdkFinder(final Project project,
+                               final FlexProjectConfigurationEditor flexConfigEditor,
                                final String initiallySelectedDirPath,
                                final Collection<FlashBuilderProject> flashBuilderProjects) {
     myProject = project;
+    myFlexConfigEditor = flexConfigEditor;
     myInitiallySelectedDirPath = initiallySelectedDirPath;
     myFlashBuilderProjects = flashBuilderProjects;
   }
@@ -63,7 +69,30 @@ public class FlashBuilderSdkFinder {
   }
 
   @Nullable
+  public String findSdkHome(final FlashBuilderProject flashBuilderProject) {
+    assert PlatformUtils.isFlexIde();
+
+    if (!myInitialized) {
+      initialize();
+      myInitialized = true;
+    }
+
+    switch (myWhereToLookForSdkInfo) {
+      case InWorkspace:
+        return mySdkNameToRootPath.get(flashBuilderProject.getSdkName());
+      case InFBInstallationDir:
+        return findMostSuitableSdkInInstallation(flashBuilderProject);
+      case UseIdeaSdk:
+        return mySdkHome;
+    }
+
+    return null;
+  }
+
+  @Nullable
   public Sdk findSdk(final FlashBuilderProject flashBuilderProject) {
+    assert !PlatformUtils.isFlexIde();
+
     if (!myInitialized) {
       initialize();
       myInitialized = true;
@@ -74,7 +103,7 @@ public class FlashBuilderSdkFinder {
         final String sdkRootPath = mySdkNameToRootPath.get(flashBuilderProject.getSdkName());
         return createOrGetSdk(sdkRootPath, flashBuilderProject.getProjectType());
       case InFBInstallationDir:
-        return findMostSuitableSdkInInstallation(flashBuilderProject);
+        return createOrGetSdk(findMostSuitableSdkInInstallation(flashBuilderProject), flashBuilderProject.getProjectType());
       case UseIdeaSdk:
         return mySdk;
     }
@@ -83,7 +112,7 @@ public class FlashBuilderSdkFinder {
   }
 
   @Nullable
-  private Sdk findMostSuitableSdkInInstallation(final FlashBuilderProject flashBuilderProject) {
+  private String findMostSuitableSdkInInstallation(final FlashBuilderProject flashBuilderProject) {
     final String sdkName = flashBuilderProject.getSdkName();
 
     if ("".equals(sdkName) && !mySdkRootsFromFBInstallation.isEmpty()) {
@@ -94,21 +123,19 @@ public class FlashBuilderSdkFinder {
           latestSdkRoot = nextSdkRoot;
         }
       }
-      return createOrGetSdk(latestSdkRoot.getPath(), flashBuilderProject.getProjectType());
+      return latestSdkRoot.getPath();
     }
 
     if (sdkName.startsWith(COMMON_SDK_NAME_BEGINNING)) {
       final String sdkVersion = sdkName.substring(COMMON_SDK_NAME_BEGINNING.length());
       for (VirtualFile sdkRoot : mySdkRootsFromFBInstallation) {
         if (sdkRoot.getName().startsWith(sdkVersion)) {
-          return createOrGetSdk(sdkRoot.getPath(), flashBuilderProject.getProjectType());
+          return sdkRoot.getPath();
         }
       }
     }
 
-    return mySdkRootsFromFBInstallation.isEmpty()
-           ? null
-           : createOrGetSdk(mySdkRootsFromFBInstallation.iterator().next().getPath(), flashBuilderProject.getProjectType());
+    return mySdkRootsFromFBInstallation.isEmpty() ? null : mySdkRootsFromFBInstallation.iterator().next().getPath();
   }
 
   private void initialize() {
@@ -117,7 +144,7 @@ public class FlashBuilderSdkFinder {
       initializeForWorkspace(myWorkspacePath);
     }
     else {
-      final FlashBuilderSdkDialog dialog = new FlashBuilderSdkDialog(myProject, true);
+      final FlashBuilderSdkDialog dialog = new FlashBuilderSdkDialog(myProject, myFlexConfigEditor, true);
       if (!ApplicationManager.getApplication().isUnitTestMode()) {
         dialog.show();
       }
@@ -127,7 +154,12 @@ public class FlashBuilderSdkFinder {
       if (dialog.isOK()) {
         if (dialog.isUseIdeaSdkSelected()) {
           myWhereToLookForSdkInfo = WhereToLookForSdkInfo.UseIdeaSdk;
-          mySdk = dialog.getSdk();
+          if (PlatformUtils.isFlexIde()) {
+            mySdkHome = dialog.getSdkHome();
+          }
+          else {
+            mySdk = dialog.getSdk();
+          }
         }
         else {
           myWorkspacePath = dialog.getWorkspacePath();
@@ -157,7 +189,7 @@ public class FlashBuilderSdkFinder {
 
   private void initializeForWorkspace(final String workspacePath) {
     if (!initializeSdksConfiguredInWorkspace(workspacePath)) {
-      final FlashBuilderSdkDialog dialog = new FlashBuilderSdkDialog(myProject, false);
+      final FlashBuilderSdkDialog dialog = new FlashBuilderSdkDialog(myProject, myFlexConfigEditor, false);
       if (!ApplicationManager.getApplication().isUnitTestMode()) {
         dialog.show();
       }
@@ -167,7 +199,12 @@ public class FlashBuilderSdkFinder {
       if (dialog.isOK()) {
         if (dialog.isUseIdeaSdkSelected()) {
           myWhereToLookForSdkInfo = WhereToLookForSdkInfo.UseIdeaSdk;
-          mySdk = dialog.getSdk();
+          if (PlatformUtils.isFlexIde()) {
+            mySdkHome = dialog.getSdkHome();
+          }
+          else {
+            mySdk = dialog.getSdk();
+          }
         }
         else {
           initializeForFBInstallationDir(dialog.getFBInstallationPath());

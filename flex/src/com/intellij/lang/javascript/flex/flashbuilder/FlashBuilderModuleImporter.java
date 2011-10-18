@@ -6,6 +6,12 @@ import com.intellij.facet.FacetType;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
+import com.intellij.lang.javascript.flex.library.FlexLibraryType;
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.module.Module;
@@ -13,6 +19,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.impl.ProjectMacrosUtil;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.impl.libraries.LibraryEx;
+import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.util.Disposer;
@@ -20,7 +28,9 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
+import com.intellij.util.PlatformUtils;
 import gnu.trove.THashMap;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -36,27 +46,123 @@ public class FlashBuilderModuleImporter {
   private static final String PATHVARIABLE_DOT = "pathvariable.";
 
   private final Project myIdeaProject;
-  private final Collection<String> myAllImportedModuleNames;
+  private FlexProjectConfigurationEditor myFlexConfigEditor;
+  private final Collection<FlashBuilderProject> myAllFBProjects;
   private final FlashBuilderSdkFinder mySdkFinder;
   private final Set<String> myPathVariables;
   private boolean myPathVariablesInitialized = false;
 
   public FlashBuilderModuleImporter(final Project ideaProject,
-                                    final Collection<String> allImportedModuleNames,
-                                    final FlashBuilderSdkFinder sdkFinder,
-                                    final Set<String> pathVariables) {
+                                    final @Nullable FlexProjectConfigurationEditor flexConfigEditor,
+                                    final Collection<FlashBuilderProject> allFBProjects,
+                                    final FlashBuilderSdkFinder sdkFinder) {
     myIdeaProject = ideaProject;
-    myAllImportedModuleNames = allImportedModuleNames;
+    myFlexConfigEditor = flexConfigEditor;
+    myAllFBProjects = allFBProjects;
     mySdkFinder = sdkFinder;
-    myPathVariables = pathVariables;
+
+    myPathVariables = new THashSet<String>();
+    for (final FlashBuilderProject flashBuilderProject : allFBProjects) {
+      myPathVariables.addAll(flashBuilderProject.getUsedPathVariables());
+    }
   }
 
   public void setupModule(final ModifiableRootModel rootModel, final FlashBuilderProject flashBuilderProject) {
-    rootModel.inheritSdk();
-    setupRoots(rootModel, flashBuilderProject);
-    setupOutput(rootModel, flashBuilderProject);
-    setupDependencies(rootModel, flashBuilderProject);
-    setupFacets(rootModel, flashBuilderProject);
+    if (PlatformUtils.isFlexIde()) {
+      setupRoots(rootModel, flashBuilderProject);
+      setupBuildConfigs(rootModel, flashBuilderProject);
+    }
+    else {
+      rootModel.inheritSdk();
+      setupRoots(rootModel, flashBuilderProject);
+      setupOutput(rootModel, flashBuilderProject);
+      setupDependencies(rootModel, flashBuilderProject);
+      setupFacets(rootModel, flashBuilderProject);
+    }
+  }
+
+  private void setupBuildConfigs(final ModuleRootModel rootModel, final FlashBuilderProject fbProject) {
+    final String sdkHome = fbProject.isSdkUsed() ? mySdkFinder.findSdkHome(fbProject) : null;
+
+    final ModifiableFlexIdeBuildConfiguration[] configurations = myFlexConfigEditor.getConfigurations(rootModel.getModule());
+    assert configurations.length == 1;
+    final ModifiableFlexIdeBuildConfiguration mainBC = configurations[0];
+
+    final String bcName = suggestMainBCName(fbProject);
+    mainBC.setName(bcName);
+
+    final FlashBuilderProject.ProjectType projectType = fbProject.getProjectType();
+    final TargetPlatform targetPlatform = projectType == FlashBuilderProject.ProjectType.MobileAIR
+                                          ? TargetPlatform.Mobile
+                                          : projectType == FlashBuilderProject.ProjectType.AIR
+                                            ? TargetPlatform.Desktop
+                                            : TargetPlatform.Web;
+    mainBC.setTargetPlatform(targetPlatform);
+    // todo how are pure AS desktop and mobile projects are set in FB (probably by sdk roots)?
+    mainBC.setPureAs(targetPlatform == TargetPlatform.Web && projectType == FlashBuilderProject.ProjectType.ActionScript);
+    final OutputType outputType =
+      FlexBuildConfiguration.LIBRARY.equals(fbProject.getCompilerOutputType()) ? OutputType.Library : OutputType.Application;
+    mainBC.setOutputType(outputType);
+
+    if (outputType == OutputType.Application) {
+      final String mainClass = fbProject.getMainAppClassName();
+      mainBC.setMainClass(mainClass);
+      mainBC.setOutputFileName(StringUtil.getShortName(mainClass) + ".swf");
+    }
+    else {
+      mainBC.setOutputFileName(fbProject.getName() + ".swc");
+    }
+
+    mainBC.setOutputFolder(getAbsolutePathWithLinksHandled(fbProject, fbProject.getOutputFolderPath()));
+
+    if (targetPlatform == TargetPlatform.Web && outputType == OutputType.Application) {
+      // todo check if correct and uncomment
+      //mainBC.setUseHtmlWrapper(true);
+      //mainBC.setWrapperTemplatePath(fbProject.getProjectRootPath() + "/html-template");
+    }
+
+    final ModifiableDependencies dependencies = mainBC.getDependencies();
+    if (sdkHome != null) {
+      final FlexSdk sdk = myFlexConfigEditor.findOrCreateSdk(sdkHome);
+      dependencies.setSdkEntry(Factory.createSdkEntry(sdk.getLibraryId(), sdk.getHomePath()));
+    }
+
+    dependencies.setTargetPlayer(TargetPlayerUtils.getTargetPlayer(fbProject.getTargetPlayerVersion(), sdkHome));
+    // todo dependencies.setComponentSet();
+    // todo dependencies.setFrameworkLinkage();
+
+    setupDependencies(mainBC, fbProject);
+
+    setupOtherAppsAndModules(rootModel, mainBC, fbProject);
+  }
+
+  private void setupOtherAppsAndModules(final ModuleRootModel rootModel,
+                                        final ModifiableFlexIdeBuildConfiguration mainBC,
+                                        final FlashBuilderProject fbProject) {
+    for (String mainClass : fbProject.getApplicationClassNames()) {
+      final ModifiableFlexIdeBuildConfiguration bc = myFlexConfigEditor.copyConfiguration(mainBC, mainBC.getNature());
+      final String shortName = StringUtil.getShortName(mainClass);
+      bc.setName(shortName);
+      bc.setMainClass(mainClass);
+      bc.setOutputFileName(shortName + ".swf");
+    }
+
+    for (final Pair<String, String> sourcePathAndDestPath : fbProject.getModules()) {
+      final ModifiableFlexIdeBuildConfiguration bc = myFlexConfigEditor.copyConfiguration(mainBC, mainBC.getNature());
+      final String mainClass = getModuleClassName(fbProject, sourcePathAndDestPath.first, rootModel.getSourceRootUrls());
+      final String shortName = StringUtil.getShortName(mainClass);
+      bc.setName(shortName);
+      bc.setOutputType(OutputType.RuntimeLoadedModule);
+      //bc.setOptimizeFor(); todo
+      bc.setMainClass(mainClass);
+      bc.setOutputFileName(shortName + ".swf");
+    }
+  }
+
+  private static String suggestMainBCName(final FlashBuilderProject fbProject) {
+    return FlexBuildConfiguration.APPLICATION.equals(fbProject.getCompilerOutputType())
+           ? StringUtil.getShortName(fbProject.getMainAppClassName())
+           : fbProject.getName();
   }
 
   private void setupFacets(final ModifiableRootModel rootModel, final FlashBuilderProject flashBuilderProject) {
@@ -105,7 +211,7 @@ public class FlashBuilderModuleImporter {
   private String getModuleClassName(final FlashBuilderProject flashBuilderProject,
                                     final String moduleSourcePath,
                                     final String[] sourceRootUrls) {
-    final String mainClassPathUrl =VfsUtil.pathToUrl(getAbsolutePathWithLinksHandled(flashBuilderProject, moduleSourcePath));
+    final String mainClassPathUrl = VfsUtil.pathToUrl(getAbsolutePathWithLinksHandled(flashBuilderProject, moduleSourcePath));
     for (final String sourceRootUrl : sourceRootUrls) {
       if (mainClassPathUrl.startsWith(sourceRootUrl + "/")) {
         return FlashBuilderProjectLoadUtil.getClassName(mainClassPathUrl.substring(sourceRootUrl.length() + 1));
@@ -270,56 +376,96 @@ public class FlashBuilderModuleImporter {
     config.NAMESPACE_AND_MANIFEST_FILE_INFO_LIST.add(info);
   }
 
-  private void setupDependencies(final ModifiableRootModel rootModel, final FlashBuilderProject flashBuilderProject) {
+  private void setupDependencies(final ModifiableFlexIdeBuildConfiguration bc, final FlashBuilderProject fbProject) {
+    OUTER:
+    for (final String libraryPathOrig : fbProject.getLibraryPaths()) {
+      for (FlashBuilderProject otherProject : myAllFBProjects) {
+        if (otherProject != fbProject && libraryPathOrig.startsWith("/" + otherProject.getName() + "/")) {
+          final ModifiableBuildConfigurationEntry bcEntry =
+            myFlexConfigEditor.createBcEntry(bc.getDependencies(), otherProject.getName(), suggestMainBCName(otherProject));
+          bc.getDependencies().getModifiableEntries().add(bcEntry);
+          continue OUTER;
+        }
+      }
+
+      final LibraryTableBase.ModifiableModelEx libraryModel = myFlexConfigEditor.getLibraryModel(bc.getDependencies());
+
+      final Library library = libraryModel.createLibrary(null, FlexLibraryType.getInstance());
+
+      final LibraryEx.ModifiableModelEx libraryModifiableModel = ((LibraryEx.ModifiableModelEx)library.getModifiableModel());
+      final String libraryId = UUID.randomUUID().toString();
+      libraryModifiableModel.setProperties(new FlexLibraryProperties(libraryId));
+
+      final String libraryPath = getAbsolutePathWithLinksHandled(fbProject, libraryPathOrig);
+
+      if (libraryPath.toLowerCase().endsWith(".swc")) {
+        libraryModifiableModel.addRoot(VirtualFileManager.constructUrl(JarFileSystem.PROTOCOL, libraryPath) + JarFileSystem.JAR_SEPARATOR,
+                                       OrderRootType.CLASSES);
+      }
+      else {
+        libraryModifiableModel.addJarDirectory(VfsUtil.pathToUrl(libraryPath), false);
+      }
+
+      for (final String librarySourcePath : fbProject.getLibrarySourcePaths(libraryPathOrig)) {
+        libraryModifiableModel.addRoot(VfsUtil.pathToUrl(getAbsolutePathWithLinksHandled(fbProject, librarySourcePath)),
+                                       OrderRootType.SOURCES);
+      }
+
+      ApplicationManager.getApplication().runWriteAction(new Runnable() {
+        public void run() {
+          libraryModifiableModel.commit();
+        }
+      });
+
+      final ModifiableModuleLibraryEntry libraryEntry = myFlexConfigEditor.createModuleLibraryEntry(bc.getDependencies(), libraryId);
+      libraryEntry.getDependencyType().setLinkageType(LinkageType.Merged); // todo set correct linkage!
+      bc.getDependencies().getModifiableEntries().add(libraryEntry);
+    }
+  }
+
+  private void setupDependencies(final ModifiableRootModel rootModel, final FlashBuilderProject fbProject) {
     final LibraryTable libraryTable = rootModel.getModuleLibraryTable();
+
     for (final Library library : libraryTable.getLibraries()) {
       if (isImportedFromFlashBuilder(library)) {
         libraryTable.removeLibrary(library);
       }
     }
 
-    for (final String libraryPathOrig : flashBuilderProject.getLibraryPaths()) {
-      final boolean moduleDependency = setupModuleDependencyIfApplicable(rootModel, libraryPathOrig, myAllImportedModuleNames);
-
-      if (!moduleDependency) {
-        final String libraryPath = getAbsolutePathWithLinksHandled(flashBuilderProject, libraryPathOrig);
-        final int slashIndex = libraryPath.lastIndexOf('/');
-        final int dotIndex = libraryPath.lastIndexOf('.');
-        final String libraryName =
-          dotIndex > slashIndex ? libraryPath.substring(slashIndex + 1, dotIndex) : libraryPath.substring(slashIndex + 1);
-        final Library library = libraryTable.createLibrary(LIBRARY_NAME_PREFIX + libraryName);
-        final Library.ModifiableModel libraryModel = library.getModifiableModel();
-        if (libraryPath.toLowerCase().endsWith(".swc")) {
-          libraryModel.addRoot(VirtualFileManager.constructUrl(JarFileSystem.PROTOCOL, libraryPath) + JarFileSystem.JAR_SEPARATOR,
-                               OrderRootType.CLASSES);
+    OUTER:
+    for (final String libraryPathOrig : fbProject.getLibraryPaths()) {
+      for (FlashBuilderProject otherProject : myAllFBProjects) {
+        if (otherProject != fbProject && libraryPathOrig.startsWith("/" + otherProject.getName() + "/")) {
+          rootModel.addInvalidModuleEntry(otherProject.getName());
+          continue OUTER;
         }
-        else {
-          libraryModel.addJarDirectory(VfsUtil.pathToUrl(libraryPath), false);
-        }
-
-        for (final String librarySourcePath : flashBuilderProject.getLibrarySourcePaths(libraryPathOrig)) {
-          libraryModel
-            .addRoot(VfsUtil.pathToUrl(getAbsolutePathWithLinksHandled(flashBuilderProject, librarySourcePath)), OrderRootType.SOURCES);
-        }
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          public void run() {
-            libraryModel.commit();
-          }
-        });
       }
-    }
-  }
 
-  private static boolean setupModuleDependencyIfApplicable(final ModifiableRootModel rootModel,
-                                                           final String libraryPath,
-                                                           final Collection<String> allImportedModuleNames) {
-    for (final String moduleName : allImportedModuleNames) {
-      if (!moduleName.equals(rootModel.getModule().getName()) && libraryPath.startsWith("/" + moduleName + "/")) {
-        rootModel.addInvalidModuleEntry(moduleName);
-        return true;
+      final String libraryPath = getAbsolutePathWithLinksHandled(fbProject, libraryPathOrig);
+      final int slashIndex = libraryPath.lastIndexOf('/');
+      final int dotIndex = libraryPath.lastIndexOf('.');
+      final String libraryName =
+        dotIndex > slashIndex ? libraryPath.substring(slashIndex + 1, dotIndex) : libraryPath.substring(slashIndex + 1);
+      final Library library = libraryTable.createLibrary(LIBRARY_NAME_PREFIX + libraryName);
+      final Library.ModifiableModel libraryModel = library.getModifiableModel();
+      if (libraryPath.toLowerCase().endsWith(".swc")) {
+        libraryModel.addRoot(VirtualFileManager.constructUrl(JarFileSystem.PROTOCOL, libraryPath) + JarFileSystem.JAR_SEPARATOR,
+                             OrderRootType.CLASSES);
       }
+      else {
+        libraryModel.addJarDirectory(VfsUtil.pathToUrl(libraryPath), false);
+      }
+
+      for (final String librarySourcePath : fbProject.getLibrarySourcePaths(libraryPathOrig)) {
+        libraryModel.addRoot(VfsUtil.pathToUrl(getAbsolutePathWithLinksHandled(fbProject, librarySourcePath)), OrderRootType.SOURCES);
+      }
+
+      ApplicationManager.getApplication().runWriteAction(new Runnable() {
+        public void run() {
+          libraryModel.commit();
+        }
+      });
     }
-    return false;
   }
 
   /**

@@ -28,6 +28,8 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -325,5 +327,40 @@ public class TargetPlayerUtils {
     while (version1.endsWith(".")) version1 = version1.substring(0, version1.length() - 1);
     while (version2.endsWith(".")) version2 = version2.substring(0, version2.length() - 1);
     return version1.equals(version2);
+  }
+
+  /**
+   * Returned string is equal to folder name in which playerglobal.swc resides
+   */
+  public static String getTargetPlayer(final @Nullable String playerVersionInAnyForm, final String sdkHome) {
+    String targetPlayer = null;
+    final String[] targetPlayers = getTargetPlayers(sdkHome);
+    if (playerVersionInAnyForm != null) {
+      final Pair<String, String> majorMinor = getPlayerMajorMinorVersion(playerVersionInAnyForm);
+      if (ArrayUtil.contains(majorMinor.first, targetPlayers)) {
+        targetPlayer = majorMinor.first;
+      }
+      else if (ArrayUtil.contains(majorMinor.first + "." + majorMinor.second, targetPlayers)) {
+        targetPlayer = majorMinor.first + "." + majorMinor.second;
+      }
+    }
+
+    if (targetPlayer == null) {
+      targetPlayer = targetPlayers.length > 0 ? targetPlayers[0] : "";
+    }
+    return targetPlayer;
+  }
+
+  private static String[] getTargetPlayers(final String sdkHome) {
+    final File playerFolder = new File(sdkHome + "/frameworks/libs/player");
+    if (playerFolder.isDirectory()) {
+      return playerFolder.list(new FilenameFilter() {
+        public boolean accept(final File dir, final String name) {
+          return new File(playerFolder, name + "/playerglobal.swc").isFile();
+        }
+      });
+    }
+
+    return ArrayUtil.EMPTY_STRING_ARRAY;
   }
 }

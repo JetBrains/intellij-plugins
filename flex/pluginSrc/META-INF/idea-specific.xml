@@ -11,12 +11,6 @@
 
     <moduleConfigurationEditorProvider implementation="com.intellij.lang.javascript.flex.FlexModuleConfigurationEditorProvider"/>
 
-    <projectImportBuilder implementation="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderImporter"/>
-    <projectImportProvider implementation="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderImportProvider"/>
-    <projectOpenProcessor id="FlashBuilderOpenProcessor"
-                          implementation="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderOpenProcessor"
-                          order="before EclipseProjectOpenProcessor"/>
-
     <facetType implementation="com.intellij.lang.javascript.flex.FlexFacetType"/>
   </extensions>
 

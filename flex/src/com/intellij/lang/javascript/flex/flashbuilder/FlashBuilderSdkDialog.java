@@ -3,6 +3,9 @@ package com.intellij.lang.javascript.flex.flashbuilder;
 import com.intellij.CommonBundle;
 import com.intellij.ide.IdeBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
+import com.intellij.lang.javascript.flex.projectStructure.ui.FlexSdkPanel;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
@@ -11,12 +14,16 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.util.PlatformUtils;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -29,10 +36,28 @@ public class FlashBuilderSdkDialog extends DialogWrapper {
   private LabeledComponent<TextFieldWithBrowseButton> myInstallationDirComponent;
   private JRadioButton myUseIdeaSdkRadioButton;
   private FlexSdkComboBoxWithBrowseButton myFlexSdkComboWithBrowse;
+  private JPanel myFlexSdkPanelHolder;
+  private FlexSdkPanel myFlexSdkPanel;
 
-  public FlashBuilderSdkDialog(final Project project, final boolean chooseWorkspace) {
+  public FlashBuilderSdkDialog(final Project project,
+                               final @Nullable FlexProjectConfigurationEditor flexConfigEditor,
+                               final boolean chooseWorkspace) {
     super(project);
     myProject = project;
+
+    assert PlatformUtils.isFlexIde() == (flexConfigEditor != null);
+    if (PlatformUtils.isFlexIde()) {
+      myFlexSdkPanel = new FlexSdkPanel(flexConfigEditor);
+      Disposer.register(myDisposable, myFlexSdkPanel);
+      myFlexSdkPanel.setSdkLabelVisible(false);
+      myFlexSdkPanel.setEditButtonVisible(false);
+      myFlexSdkPanel.reset();
+      myFlexSdkPanel.setNotNullCurrentSdkIfPossible();
+
+      myFlexSdkPanelHolder.add(myFlexSdkPanel.getContentPane(), BorderLayout.CENTER);
+      myFlexSdkComboWithBrowse.setVisible(false);
+    }
+
     myImportSdkSettingsRadioButton.setSelected(true);
     myWorkspaceDirectoryComponent.setVisible(chooseWorkspace);
     myInstallationDirComponent.setVisible(!chooseWorkspace);
@@ -51,14 +76,18 @@ public class FlashBuilderSdkDialog extends DialogWrapper {
     myImportSdkSettingsRadioButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         updateControls();
-        IdeFocusManager.findInstanceByComponent(myMainPanel).requestFocus(myWorkspaceDirectoryComponent.getComponent().getTextField(), true);
+        final JTextField toFocus = myWorkspaceDirectoryComponent.isVisible()
+                                   ? myWorkspaceDirectoryComponent.getComponent().getTextField()
+                                   : myInstallationDirComponent.getComponent().getTextField();
+        IdeFocusManager.findInstanceByComponent(myMainPanel).requestFocus(toFocus, true);
       }
     });
 
     myUseIdeaSdkRadioButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         updateControls();
-        IdeFocusManager.findInstanceByComponent(myMainPanel).requestFocus(myFlexSdkComboWithBrowse, true);
+        final JComponent toFocus = myFlexSdkComboWithBrowse.isVisible() ? myFlexSdkComboWithBrowse : myFlexSdkPanel.getCombo();
+        IdeFocusManager.findInstanceByComponent(myMainPanel).requestFocus(toFocus, true);
       }
     });
   }
@@ -85,7 +114,10 @@ public class FlashBuilderSdkDialog extends DialogWrapper {
 
   public void updateControls() {
     myWorkspaceDirectoryComponent.setEnabled(myImportSdkSettingsRadioButton.isSelected());
+    myInstallationDirComponent.setEnabled(myImportSdkSettingsRadioButton.isSelected());
+
     myFlexSdkComboWithBrowse.setEnabled(myUseIdeaSdkRadioButton.isSelected());
+    UIUtil.setEnabled(myFlexSdkPanelHolder, myUseIdeaSdkRadioButton.isSelected(), true);
   }
 
   protected JComponent createCenterPanel() {
@@ -102,7 +134,7 @@ public class FlashBuilderSdkDialog extends DialogWrapper {
     }
   }
 
-  
+
   public boolean isImportFlashBuilderSdkSettings() {
     return myImportSdkSettingsRadioButton.isSelected();
   }
@@ -121,7 +153,15 @@ public class FlashBuilderSdkDialog extends DialogWrapper {
 
   @Nullable
   public Sdk getSdk() {
+    assert !PlatformUtils.isFlexIde();
     return myFlexSdkComboWithBrowse.getSelectedSdk();
+  }
+
+  @Nullable
+  public String getSdkHome() {
+    assert PlatformUtils.isFlexIde();
+    final FlexSdk sdk = myFlexSdkPanel.getCurrentSdk();
+    return sdk == null ? null : sdk.getHomePath();
   }
 
   @Nullable

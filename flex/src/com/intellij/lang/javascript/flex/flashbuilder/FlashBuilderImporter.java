@@ -4,20 +4,28 @@ import com.intellij.ide.highlighter.ModuleFileType;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleBuilder;
+import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
+import com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.ModifiableModuleModel;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.StdModuleTypes;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.*;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
+import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
 import com.intellij.projectImport.ProjectImportBuilder;
+import com.intellij.util.PlatformUtils;
+import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 
 import javax.swing.*;
@@ -99,25 +107,15 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
 
     final ModifiableModuleModel moduleModel = model != null ? model : ModuleManager.getInstance(project).getModifiableModel();
     final Collection<FlashBuilderProject> flashBuilderProjects = FlashBuilderProjectLoadUtil.loadProjects(getList());
-    final List<Module> modules = new ArrayList<Module>(flashBuilderProjects.size());
-    final Collection<ModifiableRootModel> rootModels = new ArrayList<ModifiableRootModel>(flashBuilderProjects.size());
 
-    final Collection<String> allImportedModuleNames = new ArrayList<String>(flashBuilderProjects.size());
-    final Set<String> pathVariables = new THashSet<String>();
-    for (final FlashBuilderProject flashBuilderProject : flashBuilderProjects) {
-      allImportedModuleNames.add(flashBuilderProject.getName());
-      pathVariables.addAll(flashBuilderProject.getUsedPathVariables());
-    }
+    final ModuleType moduleType = PlatformUtils.isFlexIde() ? FlexModuleType.getInstance() : StdModuleTypes.JAVA;
 
-    final FlashBuilderSdkFinder sdkFinder =
-      new FlashBuilderSdkFinder(project, getParameters().initiallySelectedDirPath, flashBuilderProjects);
-
-    final FlashBuilderModuleImporter flashBuilderModuleImporter =
-      new FlashBuilderModuleImporter(project, allImportedModuleNames, sdkFinder, pathVariables);
-
+    final Map<FlashBuilderProject, ModifiableRootModel> flashBuilderProjectToModifiableModelMap =
+      new THashMap<FlashBuilderProject, ModifiableRootModel>();
+    final Map<Module, ModifiableRootModel> moduleToModifiableModelMap = new THashMap<Module, ModifiableRootModel>();
     final Set<String> moduleNames = new THashSet<String>(flashBuilderProjects.size());
 
-    for (final FlashBuilderProject flashBuilderProject : flashBuilderProjects) {
+    for (FlashBuilderProject flashBuilderProject : flashBuilderProjects) {
       final String moduleName = makeUnique(flashBuilderProject.getName(), moduleNames);
       moduleNames.add(moduleName);
 
@@ -131,19 +129,67 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
         });
       }
 
-      final Module module = moduleModel.newModule(moduleFilePath, StdModuleTypes.JAVA);
+      final Module module = moduleModel.newModule(moduleFilePath, moduleType);
       final ModifiableRootModel rootModel = ModuleRootManager.getInstance(module).getModifiableModel();
-      rootModels.add(rootModel);
-      flashBuilderModuleImporter.setupModule(rootModel, flashBuilderProject);
-      modules.add(module);
+
+      flashBuilderProjectToModifiableModelMap.put(flashBuilderProject, rootModel);
+      moduleToModifiableModelMap.put(module, rootModel);
+    }
+
+    final FlexProjectConfigurationEditor currentFlexEditor =
+      PlatformUtils.isFlexIde() ? FlexIdeModuleStructureExtension.getInstance().getConfigurator().getConfigEditor() : null;
+
+    final boolean needToCommitFlexEditor = PlatformUtils.isFlexIde() && currentFlexEditor == null;
+    final LibraryTableBase.ModifiableModelEx globalLibrariesModifiableModel;
+    final FlexProjectConfigurationEditor flexConfigEditor;
+
+    if (!PlatformUtils.isFlexIde()) {
+      globalLibrariesModifiableModel = null;
+      flexConfigEditor = null;
+    }
+    else if (currentFlexEditor != null) {
+      globalLibrariesModifiableModel = null;
+      flexConfigEditor = currentFlexEditor;
+    }
+    else {
+      globalLibrariesModifiableModel =
+        (LibraryTableBase.ModifiableModelEx)ApplicationLibraryTable.getApplicationTable().getModifiableModel();
+      flexConfigEditor = createFlexConfigEditor(project, moduleToModifiableModelMap, globalLibrariesModifiableModel);
+    }
+
+    final FlashBuilderSdkFinder sdkFinder =
+      new FlashBuilderSdkFinder(project, flexConfigEditor, getParameters().initiallySelectedDirPath, flashBuilderProjects);
+
+    final FlashBuilderModuleImporter flashBuilderModuleImporter =
+      new FlashBuilderModuleImporter(project, flexConfigEditor, flashBuilderProjects, sdkFinder);
+
+    for (final FlashBuilderProject flashBuilderProject : flashBuilderProjects) {
+      flashBuilderModuleImporter.setupModule(flashBuilderProjectToModifiableModelMap.get(flashBuilderProject), flashBuilderProject);
     }
 
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       public void run() {
+        if (PlatformUtils.isFlexIde()) {
+          if (globalLibrariesModifiableModel != null) {
+            globalLibrariesModifiableModel.commit();
+          }
+
+          if (needToCommitFlexEditor) {
+            try {
+              flexConfigEditor.commit();
+            }
+            catch (ConfigurationException e) {
+              Logger.getInstance(FlashBuilderImporter.class).error(e);
+            }
+          }
+        }
+
+        final Collection<ModifiableRootModel> rootModels = moduleToModifiableModelMap.values();
         ProjectRootManager.getInstance(project).multiCommit(moduleModel, rootModels.toArray(new ModifiableRootModel[rootModels.size()]));
       }
     });
-    return modules;
+
+    return new ArrayList<Module>(moduleToModifiableModelMap.keySet());
   }
 
   private static String makeUnique(final String name, final Set<String> moduleNames) {
@@ -153,5 +199,36 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
       uniqueName = name + '(' + i++ + ')';
     }
     return uniqueName;
+  }
+
+  private static FlexProjectConfigurationEditor createFlexConfigEditor(final Project project,
+                                                                       final Map<Module, ModifiableRootModel> moduleToModifiableModelMap,
+                                                                       final LibraryTableBase.ModifiableModelEx globalLibrariesModifiableModel) {
+    final FlexProjectConfigurationEditor.ProjectModifiableModelProvider provider =
+      new FlexProjectConfigurationEditor.ProjectModifiableModelProvider() {
+        public Module[] getModules() {
+          final Set<Module> modules = moduleToModifiableModelMap.keySet();
+          return modules.toArray(new Module[modules.size()]);
+        }
+
+        public ModifiableRootModel getModuleModifiableModel(final Module module) {
+          return moduleToModifiableModelMap.get(module);
+        }
+
+        public void addListener(final FlexIdeBCConfigurator.Listener listener,
+                                final Disposable parentDisposable) {
+          // modules and BCs are not removed here
+        }
+
+        public void commitModifiableModels() throws ConfigurationException {
+          // commit will be performed outside of #setupRootModel()
+        }
+
+        public LibraryTableBase.ModifiableModelEx getGlobalLibrariesModifiableModel() {
+          return globalLibrariesModifiableModel;
+        }
+      };
+
+    return new FlexProjectConfigurationEditor(project, provider);
   }
 }

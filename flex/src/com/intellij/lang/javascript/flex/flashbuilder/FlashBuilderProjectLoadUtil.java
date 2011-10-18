@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.flashbuilder;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -63,8 +64,17 @@ public class FlashBuilderProjectLoadUtil {
   private static final String BUILD_TARGET_ELEMENT = "buildTarget";
   private static final String BUILD_TARGET_NAME_ATTR = "buildTargetName";
   private static final String ANDROID_PLATFORM_ATTR_VALUE = "com.adobe.flexide.multiplatform.android.platform";
+  private static final String IOS_PLATFORM_ATTR_VALUE = "com.adobe.flexide.multiplatform.ios.platform";
+  private static final String BLACKBERRY_PLATFORM_ATTR_VALUE = "com.adobe.flexide.multiplatform.blackberry.platform";
 
   private FlashBuilderProjectLoadUtil() {
+  }
+
+  public static FlashBuilderProject getDummyFBProject(final String name) {
+    assert ApplicationManager.getApplication().isUnitTestMode();
+    final FlashBuilderProject fbProject = new FlashBuilderProject();
+    fbProject.setName(name);
+    return fbProject;
   }
 
   @NotNull
@@ -220,7 +230,10 @@ public class FlashBuilderProjectLoadUtil {
         //noinspection unchecked
         for (final Element buildTargetElement : (Iterable<Element>)(buildTargetsElement
                                                                       .getChildren(BUILD_TARGET_ELEMENT, parentElement.getNamespace()))) {
-          if (ANDROID_PLATFORM_ATTR_VALUE.equals(buildTargetElement.getAttributeValue(BUILD_TARGET_NAME_ATTR))) {
+          final String buildTarget = buildTargetElement.getAttributeValue(BUILD_TARGET_NAME_ATTR);
+          if (ANDROID_PLATFORM_ATTR_VALUE.equals(buildTarget) ||
+              IOS_PLATFORM_ATTR_VALUE.equals(buildTarget) ||
+              BLACKBERRY_PLATFORM_ATTR_VALUE.equals(buildTarget)) {
             flashBuilderProject.setProjectType(FlashBuilderProject.ProjectType.MobileAIR);
             return;
           }

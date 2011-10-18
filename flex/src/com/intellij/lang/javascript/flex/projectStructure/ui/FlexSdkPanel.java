@@ -39,7 +39,7 @@ public class FlexSdkPanel implements Disposable {
   private ComboboxWithBrowseButton myCombo;
   private JButton myEditButton;
   private JLabel myInfoLabel;
-  @SuppressWarnings("UnusedDeclaration") private JPanel myContentPane;
+  private JPanel myContentPane;
   private JLabel mySdkLabel;
 
   private final EventDispatcher<ChangeListener> myEventDispatcher;
@@ -103,6 +103,14 @@ public class FlexSdkPanel implements Disposable {
         editSdk();
       }
     });
+  }
+
+  public JPanel getContentPane() {
+    return myContentPane;
+  }
+
+  public ComboboxWithBrowseButton getCombo() {
+    return myCombo;
   }
 
   private void comboItemChanged() {

@@ -22,7 +22,6 @@ import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters;
@@ -31,8 +30,6 @@ import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.util.*;
 
 /**
@@ -220,7 +217,8 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
       final SdkEntry sdkEntry = newBuildConfiguration.getDependencies().getSdkEntry();
       if (sdkEntry != null) {
         final String sdkHome = PathUtil.getCanonicalPath(module.expandPath(sdkEntry.getHomePath()));
-        newBuildConfiguration.getDependencies().setTargetPlayer(getTargetPlayer(oldConfiguration, sdkHome));
+        newBuildConfiguration.getDependencies().setTargetPlayer(TargetPlayerUtils.getTargetPlayer(oldConfiguration.TARGET_PLAYER_VERSION,
+                                                                                                  sdkHome));
       }
     }
   }
@@ -242,38 +240,6 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
     return projectOutputUrl == null ? ""
                                     : PathUtil.getCanonicalPath(VfsUtil.urlToPath(moduleSettings.expandPath(projectOutputUrl))) +
                                       "/" + CompilerModuleExtension.PRODUCTION + "/" + moduleSettings.getModuleName();
-  }
-
-  private static String getTargetPlayer(final FlexBuildConfiguration oldConfiguration, final String sdkHome) {
-    String targetPlayer = null;
-    final String[] targetPlayers = getTargetPlayers(sdkHome);
-    if (oldConfiguration != null) {
-      final Pair<String, String> majorMinor = TargetPlayerUtils.getPlayerMajorMinorVersion(oldConfiguration.TARGET_PLAYER_VERSION);
-      if (ArrayUtil.contains(majorMinor.first, targetPlayers)) {
-        targetPlayer = majorMinor.first;
-      }
-      else if (ArrayUtil.contains(majorMinor.first + "." + majorMinor.second, targetPlayers)) {
-        targetPlayer = majorMinor.first + "." + majorMinor.second;
-      }
-    }
-
-    if (targetPlayer == null) {
-      targetPlayer = targetPlayers.length > 0 ? targetPlayers[0] : "";
-    }
-    return targetPlayer;
-  }
-
-  private static String[] getTargetPlayers(final String sdkHome) {
-    final File playerFolder = new File(sdkHome + "/frameworks/libs/player");
-    if (playerFolder.isDirectory()) {
-      return playerFolder.list(new FilenameFilter() {
-        public boolean accept(final File dir, final String name) {
-          return new File(playerFolder, name + "/playerglobal.swc").isFile();
-        }
-      });
-    }
-
-    return ArrayUtil.EMPTY_STRING_ARRAY;
   }
 
   /**
