@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="InvalidFacetManager">
+    <ignored-facets>
+      <facet id="flex_module/invalid/JRuby" />
+      <facet id="java_with_flex_facets/invalid/Android" />
+    </ignored-facets>
+  </component>
   <component name="RunManager" selected="Flash App.A">
     <configuration default="true" type="FlexIdeRunConfigurationType" factoryName="Flash App">
       <option name="BCName" value="" />

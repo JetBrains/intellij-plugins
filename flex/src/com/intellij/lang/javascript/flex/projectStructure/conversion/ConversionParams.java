@@ -4,6 +4,10 @@ import com.intellij.conversion.CannotConvertException;
 import com.intellij.conversion.ConversionContext;
 import com.intellij.conversion.ModuleSettings;
 import com.intellij.facet.FacetManagerImpl;
+import com.intellij.facet.impl.invalid.InvalidFacetManagerImpl;
+import com.intellij.facet.impl.invalid.InvalidFacetType;
+import com.intellij.facet.pointers.FacetPointersManager;
+import com.intellij.ide.impl.convert.JDomConvertingUtil;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
@@ -30,10 +34,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * User: ksafonov
@@ -47,6 +48,7 @@ public class ConversionParams {
   private final FlexProjectConfigurationEditor myEditor;
   private final LibraryTable.ModifiableModel myGlobalLibrariesModifiableModel;
   private final ConversionContext myContext;
+  private final Collection<String> myFacetsToIgnore = new HashSet<String>();
 
   public ConversionParams(ConversionContext context) {
     myContext = context;
@@ -77,7 +79,7 @@ public class ConversionParams {
     });
   }
 
-  public void saveGlobalLibraries() throws CannotConvertException {
+  private void saveGlobalLibraries() throws CannotConvertException {
     if (myEditor.isModified()) {
       try {
         myEditor.commit();
@@ -95,6 +97,27 @@ public class ConversionParams {
           myGlobalLibrariesModifiableModel.commit();
         }
       });
+    }
+  }
+
+  public void ignoreInvalidFacet(String moduleName, String type, String name) {
+    // in Flex IDE facet will be of type 'invalid'
+    myFacetsToIgnore.add(FacetPointersManager.constructId(moduleName, InvalidFacetType.TYPE_ID.toString(), name));
+  }
+
+  public void apply() throws CannotConvertException {
+    saveGlobalLibraries();
+    ignoreInvalidFacets();
+  }
+
+  private void ignoreInvalidFacets() throws CannotConvertException {
+    if (!myFacetsToIgnore.isEmpty()) {
+      Element invalidFacetManager = JDomConvertingUtil.findOrCreateComponentElement(myContext.getWorkspaceSettings().getRootElement(),
+                                                                                    InvalidFacetManagerImpl.COMPONENT_NAME);
+      InvalidFacetManagerImpl.InvalidFacetManagerState state =
+        XmlSerializer.deserialize(invalidFacetManager, InvalidFacetManagerImpl.InvalidFacetManagerState.class);
+      state.getIgnoredFacets().addAll(myFacetsToIgnore);
+      XmlSerializer.serializeInto(state, invalidFacetManager);
     }
   }
 

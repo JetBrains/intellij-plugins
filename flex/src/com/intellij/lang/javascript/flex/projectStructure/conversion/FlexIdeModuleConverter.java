@@ -21,6 +21,7 @@ import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.roots.impl.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
+import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.util.PathUtil;
@@ -61,9 +62,13 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
   public static boolean isFlexModule(ModuleSettings moduleSettings) {
     return FlexModuleType.MODULE_TYPE_ID.equals(moduleSettings.getModuleType());
   }
-  
+
+  private static boolean isJavaModule(ModuleSettings module) {
+    return StdModuleTypes.JAVA.getId().equals(module.getModuleType());
+  }
+
   public static List<Element> getFlexFacets(ModuleSettings module) {
-    if (!StdModuleTypes.JAVA.getId().equals(module.getModuleType())) return Collections.emptyList();
+    if (!isJavaModule(module)) return Collections.emptyList();
     return new ArrayList<Element>(module.getFacetElements(FlexFacet.ID.toString()));
   }
 
@@ -111,6 +116,21 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
     Element componentElement =
       JDomConvertingUtil.findOrCreateComponentElement(moduleSettings.getRootElement(), FlexBuildConfigurationManagerImpl.COMPONENT_NAME);
     addContent(ConversionHelper.serialize(configurationManager), componentElement);
+
+    ignoreInapplicableFacets(moduleSettings);
+  }
+
+  private void ignoreInapplicableFacets(ModuleSettings module) {
+    boolean allowFlexFacets = isJavaModule(module);
+    final Element facetManager = module.getComponentElement(FacetManagerImpl.COMPONENT_NAME);
+    for (Element facet : JDOMUtil.getChildren(facetManager, FacetManagerImpl.FACET_ELEMENT)) {
+      String type = facet.getAttributeValue(FacetManagerImpl.TYPE_ATTRIBUTE);
+      if (allowFlexFacets && FlexFacet.ID.toString().equals(type)) {
+        continue;
+      }
+      String name = facet.getAttributeValue(FacetManagerImpl.NAME_ATTRIBUTE);
+      myParams.ignoreInvalidFacet(module.getModuleName(), type, name);
+    }
   }
 
   private void processConfiguration(@Nullable FlexBuildConfiguration oldConfiguration,
@@ -312,7 +332,7 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
       target.addContent((Element)((Element)child).clone());
     }
   }
-  
+
   public static String generateModuleBcName(ModuleSettings module) {
     return module.getModuleName();
   }
@@ -320,5 +340,4 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
   public static String generateFacetBcName(Element facet) {
     return facet.getAttributeValue(FacetManagerImpl.NAME_ATTRIBUTE);
   }
-
 }

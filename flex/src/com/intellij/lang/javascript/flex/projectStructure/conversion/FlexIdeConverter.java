@@ -64,7 +64,7 @@ class FlexIdeConverter extends ProjectConverter {
 
   @Override
   public void postProcessingFinished() throws CannotConvertException {
-    getParams().saveGlobalLibraries();
+    getParams().apply();
   }
 
   @Override
