@@ -7,7 +7,6 @@ import com.intellij.execution.RunManagerEx;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.process.OSProcessHandler;
-import com.intellij.execution.process.OSProcessManager;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
@@ -300,19 +299,13 @@ final class DesignerApplicationUtil {
     }
 
     @Override
-    protected void destroyProcessImpl() {
-      final Process process = getProcess();
-      try {
-        process.getOutputStream().close();
-      }
-      catch (IOException e) {
-        LOG.error(e);
-      }
+    protected boolean shouldDestroyProcessRecursively() {
+      return true;
+    }
 
-      // force kill adl
-      if (!OSProcessManager.getInstance().killProcessTree(process)) {
-        process.destroy();
-      }
+    @Override
+    protected void doDestroyProcess() {
+      super.doDestroyProcess();
 
       callExitHandler(0);
     }
