@@ -11,6 +11,8 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -23,6 +25,8 @@ import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+
+import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileRunTarget;
 
 public class FlexIdeRunConfiguration extends RunConfigurationBase implements RunProfileWithCompileBeforeLaunchOption {
 
@@ -68,7 +72,7 @@ public class FlexIdeRunConfiguration extends RunConfigurationBase implements Run
 
     final BuildConfigurationNature nature = config.getNature();
     if (nature.isDesktopPlatform() ||
-        (nature.isMobilePlatform() && myRunnerParameters.getMobileRunTarget() == AirMobileRunnerParameters.AirMobileRunTarget.Emulator)) {
+        (nature.isMobilePlatform() && myRunnerParameters.getMobileRunTarget() == AirMobileRunTarget.Emulator)) {
       final AirRunState airRunState = new AirRunState(env);
       airRunState.setConsoleBuilder(TextConsoleBuilderFactory.getInstance().createBuilder(getProject()));
       return airRunState;
@@ -87,9 +91,23 @@ public class FlexIdeRunConfiguration extends RunConfigurationBase implements Run
       throw new RuntimeConfigurationException(FlexBundle.message("bc.not.specified"));
     }
 
-    if (FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(myRunnerParameters.getBCName()) == null) {
+    final FlexIdeBuildConfiguration bc =
+      FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(myRunnerParameters.getBCName());
+    if (bc == null) {
       throw new RuntimeConfigurationException(
         FlexBundle.message("module.does.not.contain.bc", myRunnerParameters.getModuleName(), myRunnerParameters.getBCName()));
+    }
+
+    if (bc.getOutputType() != OutputType.Application) {
+      throw new RuntimeConfigurationException(
+        FlexBundle.message("bc.does.not.produce.app", myRunnerParameters.getBCName(), myRunnerParameters.getModuleName()));
+    }
+
+    if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
+      if (myRunnerParameters.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice && !bc.getAndroidPackagingOptions().isEnabled()) {
+        throw new RuntimeConfigurationException(
+          FlexBundle.message("android.disabled.in.bc", myRunnerParameters.getBCName(), myRunnerParameters.getModuleName()));
+      }
     }
   }
 

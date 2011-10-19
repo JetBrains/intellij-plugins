@@ -239,11 +239,6 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     }
 
     if (mobile) {
-      myOnAndroidDeviceRadioButton.setEnabled(config.getAndroidPackagingOptions().isEnabled());
-      if (myOnAndroidDeviceRadioButton.isSelected() && !myOnAndroidDeviceRadioButton.isEnabled()) {
-        myOnEmulatorRadioButton.setSelected(true);
-      }
-
       final boolean runOnEmulator = myOnEmulatorRadioButton.isSelected();
       myEmulatorCombo.setEnabled(runOnEmulator);
       UIUtil.setEnabled(myEmulatorScreenSizePanel, runOnEmulator, true);
