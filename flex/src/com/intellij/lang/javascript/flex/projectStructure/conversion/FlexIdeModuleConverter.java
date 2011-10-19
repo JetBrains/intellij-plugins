@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
+import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.ConversionHelper;
@@ -27,6 +28,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.XmlSerializer;
+import gnu.trove.THashMap;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
@@ -156,6 +158,38 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
       }
       newBuildConfiguration.setOutputFileName(oldConfiguration.OUTPUT_FILE_NAME);
       newBuildConfiguration.setSkipCompile(!oldConfiguration.DO_BUILD);
+
+      final Map<String, String> options = new THashMap<String, String>(newBuildConfiguration.getCompilerOptions().getAllOptions());
+      
+      if (oldConfiguration.USE_LOCALE_SETTINGS) {
+        options.put("compiler.locale", oldConfiguration.LOCALE.replace(',', CompilerOptionInfo.LIST_ENTRIES_SEPARATOR));
+      }
+      
+      if (!oldConfiguration.CONDITIONAL_COMPILATION_DEFINITION_LIST.isEmpty()) {
+        final StringBuilder b = new StringBuilder();
+        for (FlexBuildConfiguration.ConditionalCompilationDefinition def : oldConfiguration.CONDITIONAL_COMPILATION_DEFINITION_LIST) {
+          if (b.length() > 0) b.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+          b.append(def.NAME).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR).append(def.VALUE);
+        }
+        options.put("compiler.define", b.toString());
+      }
+      
+      if (!oldConfiguration.NAMESPACE_AND_MANIFEST_FILE_INFO_LIST.isEmpty()) {
+        final StringBuilder b = new StringBuilder();
+        for (FlexBuildConfiguration.NamespaceAndManifestFileInfo info : oldConfiguration.NAMESPACE_AND_MANIFEST_FILE_INFO_LIST) {
+          if (b.length() > 0) b.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+          b.append(info.NAMESPACE).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR).append(info.MANIFEST_FILE_PATH);
+          // todo import info.INCLUDE_IN_SWC
+        }
+        options.put("compiler.namespaces.namespace", b.toString());
+      }
+      
+      if (!oldConfiguration.PATH_TO_SERVICES_CONFIG_XML.isEmpty()) {
+        options.put("compiler.services", oldConfiguration.PATH_TO_SERVICES_CONFIG_XML);
+        options.put("compiler.context-root", oldConfiguration.CONTEXT_ROOT);
+      }
+
+      newBuildConfiguration.getCompilerOptions().setAllOptions(options);
     }
 
     String outputFolder;
@@ -240,8 +274,9 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
       final SdkEntry sdkEntry = newBuildConfiguration.getDependencies().getSdkEntry();
       if (sdkEntry != null) {
         final String sdkHome = PathUtil.getCanonicalPath(module.expandPath(sdkEntry.getHomePath()));
-        newBuildConfiguration.getDependencies().setTargetPlayer(TargetPlayerUtils.getTargetPlayer(oldConfiguration.TARGET_PLAYER_VERSION,
-                                                                                                  sdkHome));
+        final String targetPlayer =
+          TargetPlayerUtils.getTargetPlayer(oldConfiguration == null ? null : oldConfiguration.TARGET_PLAYER_VERSION, sdkHome);
+        newBuildConfiguration.getDependencies().setTargetPlayer(targetPlayer);
       }
     }
   }
