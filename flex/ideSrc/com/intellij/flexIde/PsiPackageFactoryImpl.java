@@ -39,7 +39,7 @@ public class PsiPackageFactoryImpl extends PsiDirectoryFactory {
     myManager = manager;
   }
 
-  public PsiDirectory createDirectory(final VirtualFile file) {
+  public PsiDirectory createDirectory(@NotNull final VirtualFile file) {
     return new PsiDirectoryImpl(myManager, file);
   }
 
