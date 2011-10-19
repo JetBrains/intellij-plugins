@@ -113,11 +113,11 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
     actions.add(new Separator());
     actions.add(new DumbAwareAction("Build Configuration", "Create Build Configuration", ICON) {
       public void update(final AnActionEvent e) {
-        e.getPresentation().setVisible(getModuleForNode(selectedNodeRetriever.compute()) != null);
+        e.getPresentation().setVisible(getFlexModuleForNode(selectedNodeRetriever.compute()) != null);
       }
 
       public void actionPerformed(final AnActionEvent e) {
-        final Module module = getModuleForNode(selectedNodeRetriever.compute());
+        final Module module = getFlexModuleForNode(selectedNodeRetriever.compute());
         myConfigurator.addConfiguration(module, treeNodeNameUpdater);
       }
     });
@@ -125,11 +125,11 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
   }
 
   @Nullable
-  private static Module getModuleForNode(@Nullable MasterDetailsComponent.MyNode node) {
+  private static Module getFlexModuleForNode(@Nullable MasterDetailsComponent.MyNode node) {
     while (node != null) {
       final NamedConfigurable configurable = node.getConfigurable();
       final Object editableObject = configurable == null ? null : configurable.getEditableObject();
-      if (editableObject instanceof Module) {
+      if (editableObject instanceof Module && ModuleType.get((Module)editableObject) instanceof FlexModuleType) {
         return (Module)editableObject;
       }
       final TreeNode parent = node.getParent();
