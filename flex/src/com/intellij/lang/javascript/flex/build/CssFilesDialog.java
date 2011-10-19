@@ -24,7 +24,7 @@ public class CssFilesDialog extends AddRemoveTableRowsDialog<String> {
     return null;
   }
 
-  protected TableModelBase getTableModel() {
+  protected TableModelBase createTableModel() {
     return new TableModelBase() {
 
       public int getColumnCount() {

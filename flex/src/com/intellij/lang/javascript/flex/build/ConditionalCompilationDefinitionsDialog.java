@@ -31,7 +31,7 @@ public class ConditionalCompilationDefinitionsDialog extends AddRemoveTableRowsD
     return new AddConditionalCompilationDefinitionDialog(myProject);
   }
 
-  protected TableModelBase getTableModel() {
+  protected TableModelBase createTableModel() {
     return new TableModelBase() {
 
       public int getColumnCount() {

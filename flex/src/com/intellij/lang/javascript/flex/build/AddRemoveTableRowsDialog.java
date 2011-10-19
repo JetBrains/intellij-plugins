@@ -2,14 +2,17 @@ package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.ui.AnActionButton;
+import com.intellij.ui.AnActionButtonRunnable;
+import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.JBTable;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumnModel;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,8 +22,8 @@ public abstract class AddRemoveTableRowsDialog<T> extends DialogWrapper {
 
   private JPanel myMainPanel;
   private JTable myTable;
-  private JButton myAddButton;
-  private JButton myRemoveButton;
+
+  private boolean myEditAddedRow = false;
 
   public AddRemoveTableRowsDialog(final Project project, final String title, final List<T> list) {
     super(project);
@@ -29,23 +32,22 @@ public abstract class AddRemoveTableRowsDialog<T> extends DialogWrapper {
   }
 
   protected void init() {
+    myMainPanel = new JPanel(new BorderLayout());
+
     initTable();
     initButtons();
 
     super.init();
-    updateControls();
   }
 
   protected void initTable() {
-    myTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE); // otherwize model is not in sync with view
+    myTable = new JBTable();
+    myTable.setRowHeight(new JLabel("fj").getPreferredSize().height + 4);
+    myTable.setPreferredScrollableViewportSize(new Dimension(400, 150));
 
-    myTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        updateControls();
-      }
-    });
+    myTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE); // otherwise model is not in sync with view
 
-    myTable.setModel(getTableModel());
+    myTable.setModel(createTableModel());
     myTable.setDefaultRenderer(Boolean.class, new NoBackgroundBooleanTableCellRenderer());
 
     final TableColumnModel columnModel = myTable.getColumnModel();
@@ -54,22 +56,25 @@ public abstract class AddRemoveTableRowsDialog<T> extends DialogWrapper {
     }
   }
 
-  protected abstract TableModelBase getTableModel();
+  protected abstract TableModelBase createTableModel();
 
   protected int getPreferredColumnWidth(final int columnIndex) {
     return 75;
   }
 
   private void initButtons() {
-    myAddButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
+    ToolbarDecorator d = ToolbarDecorator.createDecorator(myTable);
+    d.setAddAction(new AnActionButtonRunnable() {
+      public void run(AnActionButton button) {
         addObject();
         ((AbstractTableModel)myTable.getModel()).fireTableDataChanged();
+        if (myEditAddedRow) {
+          myTable.editCellAt(myTable.getRowCount() - 1, 0);
+        }
       }
     });
-
-    myRemoveButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
+    d.setRemoveAction(new AnActionButtonRunnable() {
+      public void run(AnActionButton anActionButton) {
         final int[] selectedRows = myTable.getSelectedRows();
         Arrays.sort(selectedRows);
         for (int i = selectedRows.length - 1; i >= 0; i--) {
@@ -79,6 +84,12 @@ public abstract class AddRemoveTableRowsDialog<T> extends DialogWrapper {
         ((AbstractTableModel)myTable.getModel()).fireTableDataChanged();
       }
     });
+
+    myMainPanel.add(d.createPanel(), BorderLayout.CENTER);
+  }
+
+  public void setEditAddedRow(final boolean editAddedRow) {
+    myEditAddedRow = editAddedRow;
   }
 
   protected void addObject() {
@@ -90,10 +101,6 @@ public abstract class AddRemoveTableRowsDialog<T> extends DialogWrapper {
   }
 
   protected abstract AddObjectDialog<T> createAddObjectDialog();
-
-  private void updateControls() {
-    myRemoveButton.setEnabled(myTable.getSelectedRowCount() > 0);
-  }
 
   protected JComponent createCenterPanel() {
     return myMainPanel;

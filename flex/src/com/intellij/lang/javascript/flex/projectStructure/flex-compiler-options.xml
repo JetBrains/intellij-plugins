@@ -2,16 +2,16 @@
   <!-- Basic (mostly) -->
   <!--<option id="compiler.debug" displayName="Debug" type="Boolean" default="true"/>-->
   <option id="compiler.define" displayName="Conditional compiler definitions" type="List">
-    <listElement name="name" type="String"/>
-    <listElement name="value" type="String"/>
+    <listElement name="name" displayName="Constant Name" type="String"/>
+    <listElement name="value" displayName="Value" type="String"/>
   </option>
   <option id="compiler.locale" displayName="Locales" type="List" default="SPECIAL">
-    <listElement name="locale-element" type="Locale"/>
+    <listElement name="locale-element" displayName="Locale" type="Locale"/>
   </option>
 <!--  <option id="runtime-locale" displayName="Create runtime resource bundle for locales" type="RuntimeLocaleList" advanced="true"/> -->
   <option id="compiler.namespaces.namespace" displayName="Namespaces and manifests" type="List">
-    <listElement name="uri" type="String"/>
-    <listElement name="manifest" type="File" fileExtension="xml"/>
+    <listElement name="uri" displayName="Namespace" type="String"/>
+    <listElement name="manifest" displayName="Path To Manifest File" type="File" fileExtension="xml"/>
   </option>
   <group displayName="Include">
     <!--<option id="include-classes" displayName="Include classes" type="IncludeClasses" fileExtension="xml" okForSWF="false" default="All"/>-->
@@ -19,13 +19,13 @@
     <option id="include-inheritance-dependencies-only" displayName="Include inheritance dependencies only" type="Boolean" advanced="true" default="false"/>
     <option id="include-lookup-only" displayName="Include 'lookupOnly' manifest entries" type="Boolean" okForSWF="false" advanced="true" default="false"/>
     <option id="include-resource-bundles" displayName="Include resource bundles" type="List" advanced="true">
-      <listElement name="bundle" type="String"/>
+      <listElement name="bundle" displayName="Bundle" type="String"/>
     </option>
     <option id="include-stylesheet" displayName="Include stylesheet" type="List" okForSWF="false" advanced="true">
-      <listElement name="path-element" type="File"/>
+      <listElement name="path-element" displayName="Path To CSS File" type="File"/>
     </option>
     <option id="includes" displayName="Include symbols" type="List" okForSWF="false" advanced="true">
-      <listElement name="symbol" type="String"/>
+      <listElement name="symbol" displayName="Symbol" type="String"/>
     </option>
   </group>
   <group displayName="Server Technology">
@@ -39,29 +39,29 @@
   <option id="compiler.compress" displayName="Compress" type="Boolean" advanced="true" since="4.5" default="true"/>
   <group displayName="Default CSS">
     <option id="compiler.defaults-css-files" displayName="Default CSS files" type="List" advanced="true">
-      <listElement name="filename" type="File" fileExtension="css"/>
+      <listElement name="filename" displayName="Path To CSS File" type="File" fileExtension="css"/>
     </option>
     <option id="compiler.defaults-css-url" displayName="Default CSS URL" type="String" advanced="true"/>
   </group>
   <option id="compiler.enable-runtime-design-layers" displayName="Enable runtime design layers" type="Boolean" advanced="true" since="4.0" default="true"/>
   <option id="compiler.es" displayName="ECMAScript object model" type="Boolean" advanced="true" default="false"/>
   <option id="compiler.extensions.extension" displayName="Extensions" type="List" advanced="true" since="4.0">
-    <listElement name="extension" type="String"/>
-    <listElement name="parameters" type="String"/>
+    <listElement name="extension" displayName="Extension" type="String"/>
+    <listElement name="parameters" displayName="Parameters" type="String"/>
   </option>
   <group displayName="Fonts">
     <option id="compiler.fonts.advanced-anti-aliasing" displayName="Advanced anti-aliasing" type="Boolean" advanced="true" default="true"/>
     <option id="compiler.fonts.flash-type" displayName="Flash type" type="Boolean" advanced="true"/>
     <option id="compiler.fonts.language-range" displayName="Language range" type="List" advanced="true">
-      <listElement name="lang" type="String"/>
-      <listElement name="range" type="String"/>
+      <listElement name="lang" displayName="Language" type="String"/>
+      <listElement name="range" displayName="Range" type="String"/>
     </option>
     <option id="compiler.fonts.local-font-paths" displayName="Local font paths" type="List" advanced="true" since="4.0">
-      <listElement name="path-element" type="File"/>
+      <listElement name="path-element" displayName="Path" type="File"/>
     </option>
     <option id="compiler.fonts.local-fonts-snapshot" displayName="Local fonts snapshot" type="File" advanced="true"/>
     <option id="compiler.fonts.managers" displayName="Font manager classes" type="List" advanced="true" default="SPECIAL">
-      <listElement name="manager-class" type="String"/>
+      <listElement name="manager-class" displayName="Font Manager Class" type="String"/>
     </option>
     <option id="compiler.fonts.max-cached-fonts" displayName="Maximum cached fonts" type="Int" advanced="true" default="30"/>
     <option id="compiler.fonts.max-glyphs-per-face" displayName="Maximum glyphs per face" type="Int" advanced="true" default="1000"/>
@@ -70,7 +70,7 @@
   <option id="compiler.isolate-styles" displayName="Isolate styles" type="Boolean" advanced="true" since="4.0" default="true"/>
   <option id="compiler.keep-all-type-selectors" displayName="Keep all type selectors" type="Boolean" advanced="true" default="false"/>
   <option id="compiler.keep-as3-metadata" displayName="Keep AS3 metadata" type="List" advanced="true">
-    <listElement name="name" type="String"/>
+    <listElement name="name" displayName="Metadata" type="String"/>
   </option>
   <option id="compiler.keep-generated-actionscript" displayName="Keep generated ActionScript" type="Boolean" advanced="true" default="false"/>
   <option id="compiler.minimum-supported-version" displayName="Minimum supported version" type="String" advanced="true" since="4.0"/>
@@ -83,7 +83,7 @@
   <option id="compiler.optimize" displayName="Optimize" type="Boolean" advanced="true" default="true"/>
   <option id="compiler.preloader" displayName="Preloader" type="String" advanced="true" since="4.5" default="SPECIAL"/>
   <option id="compiler.theme" displayName="Theme" type="List" advanced="true" default="SPECIAL">
-    <listElement name="filename" type="File"/>
+    <listElement name="filename" displayName="CSS Or SWC Theme File" type="File"/>
   </option>
   <option id="compiler.use-resource-bundle-metadata" displayName="Use resource bundle metadata" type="Boolean" advanced="true" default="true"/>
   <option id="compiler.verbose-stacktraces" displayName="Verbose stacktraces" type="Boolean" advanced="true" default="false"/>
@@ -148,16 +148,16 @@
   <option id="directory" displayName="Output the library as an open directory" type="Boolean" advanced="true" okForSWF="false" default="false"/>
   <option id="dump-config" displayName="Save configuration dump to file" type="File" advanced="true"/>
   <option id="externs" displayName="Externs" type="List" advanced="true">
-    <listElement name="symbol" type="String"/>
+    <listElement name="symbol" displayName="Symbol" type="String"/>
   </option>
   <option id="frames.frame" displayName="Frames" type="List" advanced="true">
-    <listElement name="label" type="String"/>
-    <listElement name="classname" type="String"/>
+    <listElement name="label" displayName="Label" type="String"/>
+    <listElement name="classname" displayName="Class Name" type="String"/>
   </option>
   <option id="framework" displayName="Framework" type="String" advanced="true" default="halo"/>
   <option id="licenses.license" displayName="Licenses" type="List" advanced="true">
-    <listElement name="product" type="String"/>
-    <listElement name="serial-number" type="String"/>
+    <listElement name="product" displayName="Product" type="String"/>
+    <listElement name="serial-number" displayName="Serial Number" type="String"/>
   </option>
   <option id="link-report" displayName="Save link report to file" type="File" advanced="true"/>
   <option id="load-config" displayName="Load configuration file" type="File" fileExtension="xml" advanced="true"/>
@@ -169,12 +169,12 @@
     <option id="metadata.description" displayName="Description" type="String" advanced="true"/>
     <option id="metadata.language" displayName="Language" type="String" advanced="true"/>
     <option id="metadata.localized-description" displayName="Localized description" type="List" advanced="true">
-      <listElement name="text" type="String"/>
-      <listElement name="lang" type="String"/>
+      <listElement name="text" displayName="Text" type="String"/>
+      <listElement name="lang" displayName="Language" type="String"/>
     </option>
     <option id="metadata.localized-title" displayName="Localized title" type="List" advanced="true">
-      <listElement name="text" type="String"/>
-      <listElement name="lang" type="String"/>
+      <listElement name="text" displayName="Text" type="String"/>
+      <listElement name="lang" displayName="Language" type="String"/>
     </option>
     <option id="metadata.publisher" displayName="Publisher" type="String" advanced="true"/>
     <option id="metadata.title" displayName="Title" type="String" advanced="true"/>
@@ -183,7 +183,7 @@
   <option id="remove-unused-rsls" displayName="Remove unused RSLs" type="Boolean" advanced="true" since="4.5" default="true"/>
   <option id="resource-bundle-list" displayName="Save resource bundle list to file" type="File" advanced="true"/>
   <option id="runtime-shared-libraries" displayName="RSL URLs to load before start" type="List" advanced="true">
-    <listElement name="url" type="String"/>
+    <listElement name="url" displayName="URL" type="String"/>
   </option>
   <option id="size-report" displayName="Save size report to file" type="File" fileExtension="xml" advanced="true" since="4.5"/>
   <option id="static-link-runtime-shared-libraries" displayName="Statically link RSLs" type="Boolean" advanced="true" default="SPECIAL"/>

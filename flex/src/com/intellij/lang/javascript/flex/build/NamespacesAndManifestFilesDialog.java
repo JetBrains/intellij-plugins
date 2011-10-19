@@ -35,7 +35,7 @@ public class NamespacesAndManifestFilesDialog extends AddRemoveTableRowsDialog<N
     return new AddNamespaceAndManifestFileDialog(myProject, myIsSwcLibrary);
   }
 
-  protected TableModelBase getTableModel() {
+  protected TableModelBase createTableModel() {
     return new TableModelBase() {
 
       public int getColumnCount() {

@@ -21,6 +21,8 @@ import com.intellij.ui.treeStructure.treetable.ListTreeTableModel;
 import com.intellij.ui.treeStructure.treetable.TreeTable;
 import com.intellij.ui.treeStructure.treetable.TreeTableModel;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
+import com.intellij.util.Function;
+import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.Convertor;
 import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.ColumnInfo;
@@ -42,6 +44,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -283,7 +286,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
           case IncludeClasses:
           case IncludeFiles:
             myLabel.setBackground(table.getBackground());
-            myLabel.setText(getPresentableSummary(valueAndSource.first, info.TYPE));
+            myLabel.setText(getPresentableSummary(valueAndSource.first, info));
             renderAccordingToSource(myLabel, valueAndSource.second);
             return myLabel;
           case File:
@@ -301,10 +304,22 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     };
   }
 
-  private static String getPresentableSummary(final String rawValue, final CompilerOptionInfo.OptionType type) {
-    if (type == CompilerOptionInfo.OptionType.List) {
-      final int listSize = StringUtil.countChars(rawValue, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR) + 1;
-      return listSize < 2 ? rawValue : MessageFormat.format("({0} entries)", listSize);
+  private static String getPresentableSummary(final String rawValue, final CompilerOptionInfo info) {
+    if (info.TYPE == CompilerOptionInfo.OptionType.List) {
+      if (info.LIST_ELEMENTS.length == 1) {
+        return rawValue.replace(String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR), ", ");
+      }
+      if ("compiler.define".equals(info.ID)) {
+        return rawValue.replace(String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR), ", ")
+          .replace(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, '=');
+      }
+      final StringBuilder b = new StringBuilder();
+      for (String entry : StringUtil.split(rawValue, String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR))) {
+        if (b.length() > 0) b.append(", ");
+        b.append(entry.substring(0, entry.indexOf(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)));
+      }
+
+      return b.toString();
     }
     return rawValue;
   }
@@ -315,11 +330,13 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       //private LocalPathCellEditor myLocalPathCellEditor;
       private final JTextField myTextField = new JTextField();
       private final TextFieldWithBrowseButton myTextWithBrowse = new TextFieldWithBrowseButton();
+      private final RepeatableValueEditor myRepeatableValueEditor = new RepeatableValueEditor(myProject);
       private final ExtensionAwareFileChooserDescriptor myFileChooserDescriptor = new ExtensionAwareFileChooserDescriptor();
       private final JCheckBox myCheckBox = new JCheckBox();
 
       {
         myTextWithBrowse.addBrowseFolderListener(null, null, myProject, myFileChooserDescriptor);
+
         myCheckBox.addActionListener(new ActionListener() {
           public void actionPerformed(final ActionEvent e) {
             TableUtil.stopEditing(myTreeTable); // apply new check box state immediately
@@ -341,9 +358,12 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
             myCheckBox.setSelected("true".equalsIgnoreCase(optionValue));
             myCurrentEditor = myCheckBox;
             break;
+          case List:
+            myRepeatableValueEditor.setInfoAndValue(info, optionValue);
+            myCurrentEditor = myRepeatableValueEditor;
+            break;
           case String:
           case Int:   // todo dedicated renderers. Move them to CompilerOptionInfo class?
-          case List:
           case IncludeClasses:
           case IncludeFiles:
             myTextField.setText(optionValue);
@@ -371,6 +391,9 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
         }
         if (myCurrentEditor == myTextWithBrowse) {
           return myTextWithBrowse.getText().trim();
+        }
+        if (myCurrentEditor == myRepeatableValueEditor) {
+          return myRepeatableValueEditor.getValue();
         }
         assert false;
         return null;
@@ -547,6 +570,53 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
     // todo pass live parameters
     return Pair.create(info.getDefaultValue("4.5", TargetPlatform.Web), ValueSource.GlobalDefault);
+  }
+
+  private class RepeatableValueEditor extends TextFieldWithBrowseButton {
+    private final Project myProject;
+    private CompilerOptionInfo myInfo;
+    private String myValue;
+
+    private RepeatableValueEditor(final Project project) {
+      myProject = project;
+
+      getTextField().setEnabled(false);
+      setButtonIcon(PlatformIcons.OPEN_EDIT_DIALOG_ICON);
+
+      addActionListener(new ActionListener() {
+        public void actionPerformed(final ActionEvent e) {
+          final List<String> entries = StringUtil.split(myValue, String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR));
+          final List<StringBuilder> buffers = new ArrayList<StringBuilder>(entries.size());
+          for (String entry : entries) {
+            buffers.add(new StringBuilder(entry));
+          }
+
+          final RepeatableValueDialog dialog =
+            new RepeatableValueDialog(myProject, StringUtil.capitalizeWords(myInfo.DISPLAY_NAME, true), buffers, myInfo);
+          dialog.show();
+
+          if (dialog.isOK()) {
+            myValue = StringUtil.join(dialog.getCurrentList(), new Function<StringBuilder, String>() {
+              public String fun(final StringBuilder stringBuilder) {
+                return stringBuilder.toString();
+              }
+            }, String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR));
+          }
+
+          TableUtil.stopEditing(myTreeTable);
+        }
+      });
+    }
+
+    public void setInfoAndValue(final CompilerOptionInfo info, final String value) {
+      myInfo = info;
+      myValue = value;
+      setText(getPresentableSummary(value, info));
+    }
+
+    public String getValue() {
+      return myValue;
+    }
   }
 
   private static class ExtensionAwareFileChooserDescriptor extends FileChooserDescriptor {
