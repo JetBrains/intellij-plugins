@@ -2,15 +2,15 @@
   <!-- Basic (mostly) -->
   <!--<option id="compiler.debug" displayName="Debug" type="Boolean" default="true"/>-->
   <option id="compiler.define" displayName="Conditional compiler definitions" type="List">
-    <listElement name="name" displayName="Constant Name" type="String"/>
-    <listElement name="value" displayName="Value" type="String"/>
+    <listElement name="name" displayName="Constant Name" type="String" default="CONFIG::param"/>
+    <listElement name="value" displayName="Value" type="String" default="true"/>
   </option>
   <option id="compiler.locale" displayName="Locales" type="List" default="SPECIAL">
     <listElement name="locale-element" displayName="Locale" type="Locale"/>
   </option>
 <!--  <option id="runtime-locale" displayName="Create runtime resource bundle for locales" type="RuntimeLocaleList" advanced="true"/> -->
   <option id="compiler.namespaces.namespace" displayName="Namespaces and manifests" type="List">
-    <listElement name="uri" displayName="Namespace" type="String"/>
+    <listElement name="uri" displayName="Namespace" type="String" default="http://"/>
     <listElement name="manifest" displayName="Path To Manifest File" type="File" fileExtension="xml"/>
   </option>
   <group displayName="Include">

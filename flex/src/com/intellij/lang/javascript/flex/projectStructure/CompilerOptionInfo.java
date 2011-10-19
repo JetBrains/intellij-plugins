@@ -25,11 +25,17 @@ public class CompilerOptionInfo {
     public final String NAME;
     public final String DISPLAY_NAME;
     public final ListElementType LIST_ELEMENT_TYPE;
+    public String DEFAULT_VALUE;
 
-    private ListElement(final String name, final String displayName, final ListElementType listElementType) {
+    public ListElement(final String name) {
+      this(name, "", ListElementType.String, "");
+    }
+
+    private ListElement(final String name, final String displayName, final ListElementType listElementType, final String defaultValue) {
       NAME = name;
       DISPLAY_NAME = displayName;
       LIST_ELEMENT_TYPE = listElementType;
+      DEFAULT_VALUE = defaultValue;
     }
   }
 
@@ -48,39 +54,35 @@ public class CompilerOptionInfo {
     new CompilerOptionInfo("compiler.debug", "fake", OptionType.Boolean, null, null, false, null, true, true, true, "");
   public static final CompilerOptionInfo EXTERNAL_LIBRARY_INFO =
     new CompilerOptionInfo("compiler.external-library-path", "fake", OptionType.List, null,
-                           new ListElement[]{new ListElement("path-element", null, ListElementType.String)},
-                           false, null, true, true, true, "");
+                           new ListElement[]{new ListElement("path-element")}, false, null, true, true, true, "");
   public static final CompilerOptionInfo LIBRARY_PATH_INFO =
     new CompilerOptionInfo("compiler.library-path", "fake", OptionType.List, null,
-                           new ListElement[]{new ListElement("path-element", null, ListElementType.String)},
-                           false, null, true, true, true, "");
+                           new ListElement[]{new ListElement("path-element")}, false, null, true, true, true, "");
   public static final CompilerOptionInfo INCLUDE_LIBRARY_INFO =
     new CompilerOptionInfo("compiler.include-libraries", "fake", OptionType.List, null,
-                           new ListElement[]{new ListElement("library", null, ListElementType.String)},
-                           false, null, true, true, true, "");
+                           new ListElement[]{new ListElement("library")}, false, null, true, true, true, "");
   public static final CompilerOptionInfo SOURCE_PATH_INFO =
     new CompilerOptionInfo("compiler.source-path", "fake", OptionType.List, null,
-                           new ListElement[]{new ListElement("path-element", null, ListElementType.String)},
-                           false, null, true, true, true, "");
+                           new ListElement[]{new ListElement("path-element")}, false, null, true, true, true, "");
   public static final CompilerOptionInfo INCLUDE_CLASSES_INFO =
     new CompilerOptionInfo("include-classes", "fake", OptionType.List, null,
-                           new ListElement[]{new ListElement("class", null, ListElementType.String)},
+                           new ListElement[]{new ListElement("class")},
                            false, null, true, true, true, "");
   public static final CompilerOptionInfo RSL_ONE_URL_PATH_INFO =
     new CompilerOptionInfo("runtime-shared-library-path", "fake", OptionType.List, null,
                            new ListElement[]{
-                             new ListElement("path-element", null, ListElementType.String),
-                             new ListElement("rsl-url", null, ListElementType.String),
-                             new ListElement("policy-file-url", null, ListElementType.String)
+                             new ListElement("path-element"),
+                             new ListElement("rsl-url"),
+                             new ListElement("policy-file-url")
                            }, false, null, true, true, true, "");
   public static final CompilerOptionInfo RSL_TWO_URLS_PATH_INFO =
     new CompilerOptionInfo("runtime-shared-library-path", "fake", OptionType.List, null,
                            new ListElement[]{
-                             new ListElement("path-element", null, ListElementType.String),
-                             new ListElement("rsl-url", null, ListElementType.String),
-                             new ListElement("policy-file-url", null, ListElementType.String),
-                             new ListElement("rsl-url", null, ListElementType.String),
-                             new ListElement("policy-file-url", null, ListElementType.String)
+                             new ListElement("path-element"),
+                             new ListElement("rsl-url"),
+                             new ListElement("policy-file-url"),
+                             new ListElement("rsl-url"),
+                             new ListElement("policy-file-url")
                            }, false, null, true, true, true, "");
   public static final CompilerOptionInfo MOBILE_INFO =
     new CompilerOptionInfo("compiler.mobile", "fake", OptionType.Boolean, null, null, false, null, true, true, true, "");
@@ -376,7 +378,8 @@ public class CompilerOptionInfo {
       final String displayName = childElement.getAttributeValue("displayName");
       assert name != null : element.getName();
       final ListElementType listElementType = ListElementType.valueOf(childElement.getAttributeValue("type"));
-      result.add(new ListElement(name, displayName, listElementType));
+      final String defaultValue = StringUtil.notNullize(childElement.getAttributeValue("default"));
+      result.add(new ListElement(name, displayName, listElementType, defaultValue));
     }
 
     assert !result.isEmpty() : element.getName();
