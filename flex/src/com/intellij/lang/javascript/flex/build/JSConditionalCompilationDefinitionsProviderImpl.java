@@ -4,12 +4,16 @@ import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.execution.configurations.CommandLineTokenizer;
 import com.intellij.lang.javascript.JSConditionalCompilationDefinitionsProvider;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
+import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.PlatformUtils;
 import com.intellij.util.Processor;
 import gnu.trove.THashMap;
 import org.jdom.Document;
@@ -39,10 +43,10 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
       final String searchedName = namespace + "::" + (searchForPrefix ? "" : constantName);
       final Ref<Boolean> result = new Ref<Boolean>(false);
 
-      processConditionalCompilationDefinitions(module, new Processor<ConditionalCompilationDefinition>() {
-        public boolean process(final ConditionalCompilationDefinition definition) {
-          if ((searchForPrefix && definition.NAME.startsWith(searchedName)) ||
-              (!searchForPrefix && definition.NAME.equals(searchedName))
+      processConditionalCompilationDefinitions(module, new Processor<String>() {
+        public boolean process(final String name) {
+          if ((searchForPrefix && name.startsWith(searchedName)) ||
+              (!searchForPrefix && name.equals(searchedName))
             ) {
             result.set(true);
             return false;
@@ -62,10 +66,10 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
     if (module != null && !StringUtil.isEmpty(namespace)) {
       final String beginning = namespace + "::";
 
-      processConditionalCompilationDefinitions(module, new Processor<ConditionalCompilationDefinition>() {
-        public boolean process(final ConditionalCompilationDefinition definition) {
-          if (definition.NAME.startsWith(beginning)) {
-            result.add(definition.NAME.substring(beginning.length()));
+      processConditionalCompilationDefinitions(module, new Processor<String>() {
+        public boolean process(final String name) {
+          if (name.startsWith(beginning)) {
+            result.add(name.substring(beginning.length()));
           }
           return true;
         }
@@ -79,9 +83,9 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
     final Collection<String> result = new ArrayList<String>();
 
     if (module != null) {
-      processConditionalCompilationDefinitions(module, new Processor<ConditionalCompilationDefinition>() {
-        public boolean process(final ConditionalCompilationDefinition definition) {
-          result.add(definition.NAME);
+      processConditionalCompilationDefinitions(module, new Processor<String>() {
+        public boolean process(final String name) {
+          result.add(name);
           return true;
         }
       });
@@ -90,18 +94,51 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
     return result;
   }
 
-  private void processConditionalCompilationDefinitions(final Module module, final Processor<ConditionalCompilationDefinition> processor) {
-    outer:
-    for (FlexBuildConfiguration config : FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(module)) {
-      final Collection<ConditionalCompilationDefinition> definitions = config.USE_CUSTOM_CONFIG_FILE
-                                                                       ? getDefinitionsFromConfigFile(config.CUSTOM_CONFIG_FILE)
-                                                                       : config.CONDITIONAL_COMPILATION_DEFINITION_LIST;
-      for (ConditionalCompilationDefinition definition : definitions) {
-        if (!processor.process(definition)) break outer;
+  private void processConditionalCompilationDefinitions(final Module module, final Processor<String> processor) {
+    if (PlatformUtils.isFlexIde()) {
+      final FlexBuildConfigurationManager manager = FlexBuildConfigurationManager.getInstance(module);
+
+      String rawValue = manager.getActiveConfiguration().getCompilerOptions().getOption("compiler.define");
+      if (rawValue == null) rawValue = manager.getModuleLevelCompilerOptions().getOption("compiler.define");
+      if (rawValue == null) {
+        rawValue = FlexProjectLevelCompilerOptionsHolder.getInstance(module.getProject()).getProjectLevelCompilerOptions()
+          .getOption("compiler.define");
       }
 
-      for (ConditionalCompilationDefinition definition : getDefinitionsFromCompilerOptions(config.ADDITIONAL_COMPILER_OPTIONS)) {
-        if (!processor.process(definition)) break outer;
+      if (rawValue == null) return;
+
+      int pos = 0;
+      while (true) {
+        int index = rawValue.indexOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR, pos);
+        if (index == -1) break;
+        String token = rawValue.substring(pos, index);
+
+        final int tabIndex = token.indexOf(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);
+        if (tabIndex > 0 && !processor.process(token.substring(0, tabIndex))) {
+          return;
+        }
+
+        pos = index + 1;
+      }
+
+      final int tabIndex = rawValue.indexOf(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, pos);
+      if (tabIndex > pos) {
+        processor.process(rawValue.substring(pos, tabIndex));
+      }
+    }
+    else {
+      outer:
+      for (FlexBuildConfiguration config : FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(module)) {
+        final Collection<ConditionalCompilationDefinition> definitions = config.USE_CUSTOM_CONFIG_FILE
+                                                                         ? getDefinitionsFromConfigFile(config.CUSTOM_CONFIG_FILE)
+                                                                         : config.CONDITIONAL_COMPILATION_DEFINITION_LIST;
+        for (ConditionalCompilationDefinition definition : definitions) {
+          if (!processor.process(definition.NAME)) break outer;
+        }
+
+        for (ConditionalCompilationDefinition definition : getDefinitionsFromCompilerOptions(config.ADDITIONAL_COMPILER_OPTIONS)) {
+          if (!processor.process(definition.NAME)) break outer;
+        }
       }
     }
   }

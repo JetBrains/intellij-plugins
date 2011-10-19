@@ -2,7 +2,11 @@ package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableCompilerOptions;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StorageScheme;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.annotations.Property;
 
 @State(
@@ -15,7 +19,11 @@ import com.intellij.util.xmlb.annotations.Property;
 public class FlexProjectLevelCompilerOptionsHolderImpl extends FlexProjectLevelCompilerOptionsHolder
   implements PersistentStateComponent<FlexProjectLevelCompilerOptionsHolderImpl.State> {
 
-  private final CompilerOptionsImpl myModel = new CompilerOptionsImpl();
+  private final CompilerOptionsImpl myModel;
+
+  public FlexProjectLevelCompilerOptionsHolderImpl(final Project project) {
+    myModel = new CompilerOptionsImpl(project, true);
+  }
 
   public FlexProjectLevelCompilerOptionsHolderImpl.State getState() {
     FlexProjectLevelCompilerOptionsHolderImpl.State state = new State();

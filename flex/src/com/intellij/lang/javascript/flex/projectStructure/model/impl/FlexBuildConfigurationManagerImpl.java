@@ -39,11 +39,12 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
   private final Module myModule;
   private FlexIdeBuildConfigurationImpl[] myConfigurations = new FlexIdeBuildConfigurationImpl[]{new FlexIdeBuildConfigurationImpl()};
 
-  private final CompilerOptionsImpl myModuleLevelCompilerOptions = new CompilerOptionsImpl();
+  private final CompilerOptionsImpl myModuleLevelCompilerOptions;
   private FlexIdeBuildConfigurationImpl myActiveConfiguration = myConfigurations[0];
 
   public FlexBuildConfigurationManagerImpl(@Nullable final Module module) {
     myModule = module;
+    myModuleLevelCompilerOptions = module == null ? null : new CompilerOptionsImpl(module.getProject(), true);
 
     if (myModule != null) {
       myModule.getProject().getMessageBus().connect(myModule).subscribe(ProjectTopics.MODULES, new ModuleAdapter() {

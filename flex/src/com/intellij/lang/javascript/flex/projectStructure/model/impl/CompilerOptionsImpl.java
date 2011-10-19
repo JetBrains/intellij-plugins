@@ -1,6 +1,8 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableCompilerOptions;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
@@ -13,7 +15,19 @@ import java.util.Map;
 
 class CompilerOptionsImpl implements ModifiableCompilerOptions {
 
+  private final Project myProject;
+  private final boolean myResetHighlightingOnCommit;
+
   private final Map<String, String> myOptions = new THashMap<String, String>();
+
+  CompilerOptionsImpl() {
+    this(null, false);
+  }
+
+  CompilerOptionsImpl(final Project project, final boolean resetHighlightingOnCommit) {
+    myProject = project;
+    myResetHighlightingOnCommit = resetHighlightingOnCommit;
+  }
 
   @Override
   @Nullable
@@ -27,14 +41,16 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions {
   }
 
   @Override
-  public void setOption(@NotNull String name, @Nullable String value) {
-    myOptions.put(name, value);
-  }
-
-  @Override
   public void setAllOptions(Map<String, String> newOptions) {
     myOptions.clear();
     myOptions.putAll(newOptions);
+    if (myResetHighlightingOnCommit) {
+      ApplicationManager.getApplication().runWriteAction(new Runnable() {
+        public void run() {
+          FlexBuildConfigurationManagerImpl.resetHighlighting(myProject);
+        }
+      });
+    }
   }
 
   public CompilerOptionsImpl getCopy() {

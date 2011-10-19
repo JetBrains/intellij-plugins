@@ -580,7 +580,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     private RepeatableValueEditor(final Project project) {
       myProject = project;
 
-      getTextField().setEnabled(false);
+      getTextField().setEditable(false);
       setButtonIcon(PlatformIcons.OPEN_EDIT_DIALOG_ICON);
 
       addActionListener(new ActionListener() {
