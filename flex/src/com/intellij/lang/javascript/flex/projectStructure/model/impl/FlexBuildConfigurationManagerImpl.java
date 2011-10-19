@@ -44,7 +44,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
 
   public FlexBuildConfigurationManagerImpl(@Nullable final Module module) {
     myModule = module;
-    myModuleLevelCompilerOptions = module == null ? null : new CompilerOptionsImpl(module.getProject(), true);
+    myModuleLevelCompilerOptions = module == null ? new CompilerOptionsImpl() : new CompilerOptionsImpl(module.getProject(), true);
 
     if (myModule != null) {
       myModule.getProject().getMessageBus().connect(myModule).subscribe(ProjectTopics.MODULES, new ModuleAdapter() {
