@@ -22,3 +22,9 @@ mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.5:replicate-repo -o -e
 
 mvn compile -Prelease -Dflex.swf.uncompressed=true -o
 mvn compile -PreleaseForTesters -Dflex.swf.uncompressed=true -o
+
+
+diskutil erasevolume HFS+ "ramdisk" `hdiutil attach -nomount ram://2097152`
+ln -s /Volumes/ramdisk/production $DEV_IDEA_HOME/out/classes/production
+
+ln -s $DEV_IDEA_HOME/flex/tools/flex-ui-designer/app-loader/target/app-loader-1.0-SNAPSHOT.swf /Volumes/ramdisk/astella/system/flexUIDesigner/designer.swf

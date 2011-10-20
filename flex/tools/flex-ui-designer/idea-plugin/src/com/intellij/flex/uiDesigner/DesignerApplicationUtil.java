@@ -1,11 +1,13 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.compiler.options.CompileStepBeforeRun;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.ExecutionManager;
-import com.intellij.execution.RunManagerEx;
-import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.*;
+import com.intellij.execution.configurations.ConfigurationFactory;
+import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
+import com.intellij.execution.impl.RunnerAndConfigurationSettingsImpl;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -18,9 +20,11 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -29,8 +33,10 @@ import com.intellij.util.Consumer;
 import com.intellij.util.PlatformUtils;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -167,11 +173,18 @@ final class DesignerApplicationUtil {
     return m.find() && StringUtil.compareVersionNumbers(m.group(1), "2.6") >= 0;
   }
 
+  private static FlexRunConfigurationType ourFlexRunConfigurationType;
+
   public static void runDebugger(final Module module, final AdlRunTask task) throws ExecutionException {
     RunManagerEx runManager = RunManagerEx.getInstanceEx(module.getProject());
     final RunnerAndConfigurationSettings settings;
     if (PlatformUtils.isFlexIde()) {
-      settings = runManager.createConfiguration("FlexUIDesigner", FlexIdeRunConfigurationType.getFactory());
+      if (ourFlexRunConfigurationType == null) {
+        ourFlexRunConfigurationType = new FlexRunConfigurationType();
+      }
+      settings = runManager.createConfiguration("FlexUIDesigner", ourFlexRunConfigurationType.getConfigurationFactories()[0]);
+      ((FlexRunConfiguration)settings.getConfiguration()).getRunnerParameters().setRunMode(
+              FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer);
     }
     else {
       settings = runManager.createConfiguration("FlexUIDesigner", FlexRunConfigurationType.getFactory());

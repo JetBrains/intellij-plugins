@@ -10,12 +10,12 @@
                                                               ]);
     ]]></fx:Script>
 
-  <mx:Panel title="BarChart" height="500" width="500">
+  <mx:Panel title="edwqe" height="500" width="500">
     <mx:BarChart id="myChart"
                  dataProvider="{expenses}"
                  height="100%"
                  width="100%"
-                 showDataTips="true">
+                 showDataTips="true"> 
       <mx:verticalAxis>
         <mx:CategoryAxis dataProvider="{expenses}" categoryField="Month"/>
       </mx:verticalAxis>
