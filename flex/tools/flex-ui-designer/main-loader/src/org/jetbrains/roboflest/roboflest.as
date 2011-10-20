@@ -1,4 +1,4 @@
-package org.flyti.roboflest {
+package org.jetbrains.roboflest {
 public function roboflest():void {
   //noinspection BadExpressionStatementJS
   Recorder;
