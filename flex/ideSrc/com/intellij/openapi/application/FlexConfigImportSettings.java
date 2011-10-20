@@ -74,12 +74,4 @@ public class FlexConfigImportSettings extends ConfigImportSettings {
   public String getCustomPathsSelector() {
     return "IntelliJIdea10";
   }
-
-  @Override
-  public String fixConfigDir(String configDir) {
-    String s = FileUtil.toSystemIndependentName(configDir);
-    String idea = ".IntelliJIdea";
-    if (s.contains("/" + idea + "/")) return configDir.replace(idea, idea + "11");
-    return null;
-  }
 }
