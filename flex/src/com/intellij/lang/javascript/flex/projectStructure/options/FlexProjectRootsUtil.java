@@ -23,7 +23,7 @@ public class FlexProjectRootsUtil {
 
   public static boolean dependsOnModuleLibrary(@NotNull FlexIdeBuildConfiguration bc, @NotNull Library library, final boolean transitive) {
     final String libraryId = getLibraryId(library);
-    return !ContainerUtil.process(bc.getDependencies().getEntries(), new Processor<DependencyEntry>() {
+    return libraryId != null && !ContainerUtil.process(bc.getDependencies().getEntries(), new Processor<DependencyEntry>() {
       @Override
       public boolean process(DependencyEntry dependencyEntry) {
         if (transitive && dependencyEntry.getDependencyType().getLinkageType() != LinkageType.Include) {
@@ -54,7 +54,8 @@ public class FlexProjectRootsUtil {
       return false;
     }
 
-    return getSdkLibraryId(library).equals(sdkEntry.getLibraryId());
+    String id = getSdkLibraryId(library);
+    return id != null && id.equals(sdkEntry.getLibraryId());
   }
 
   public static boolean dependOnSdk(Iterable<FlexIdeBuildConfiguration> bcs, @NotNull final Library sdk) {
