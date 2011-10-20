@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,6 +30,7 @@ import com.intellij.struts2.reference.web.WebXmlStrutsConstantValueReferenceProv
 import static com.intellij.patterns.DomPatterns.*;
 import static com.intellij.patterns.PsiJavaPatterns.psiClass;
 import static com.intellij.patterns.StandardPatterns.or;
+import static com.intellij.patterns.StandardPatterns.string;
 import static com.intellij.patterns.XmlPatterns.xmlAttributeValue;
 import static com.intellij.patterns.XmlPatterns.xmlTag;
 
@@ -85,6 +86,11 @@ public class StrutsReferenceContributor extends PsiReferenceContributor {
         xmlAttributeValue().withLocalName("name").
             withSuperParent(2, withDom(domElement(Result.class))),
         new StaticStringValuesReferenceProvider("error", "input", "login", "success"));
+
+    // <result> action property
+    registrar.registerReferenceProvider(
+        xmlTag().and(withDom(domElement(Result.class))).withText(string().contains("${")),
+        new ResultActionPropertyReferenceProvider());
   }
 
   private void registerValidationXmlTags(final PsiReferenceRegistrar registrar) {

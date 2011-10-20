@@ -43,8 +43,23 @@ public class BeanPropertyPathReferenceSet extends ReferenceSetBase<BeanPropertyP
     this.supportsReadOnlyProperties = supportsReadOnlyProperties;
   }
 
+  public BeanPropertyPathReferenceSet(final String text,
+                                      @NotNull final PsiElement element,
+                                      final int offset,
+                                      final char separator,
+                                      final PsiClass beanClass,
+                                      final boolean supportsReadOnlyProperties) {
+    super(text, element, offset, separator);
+    this.beanClass = beanClass;
+    this.supportsReadOnlyProperties = supportsReadOnlyProperties;
+  }
+
   @NotNull
   protected BeanPropertyPathReference createReference(final TextRange range, final int index) {
+    return createBeanPropertyPathReference(range, index);
+  }
+
+  protected BeanPropertyPathReference createBeanPropertyPathReference(final TextRange range, final int index) {
     return new BeanPropertyPathReference(this, range, index);
   }
 
