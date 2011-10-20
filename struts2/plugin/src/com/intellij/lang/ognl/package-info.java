@@ -16,6 +16,6 @@
 /**
  * Object Graph Navigation Language.
  *
- * <a href="http://incubator.apache.org/ognl">OGNL homepage</a>
+ * <a href="http://commons.apache.org/ognl/">OGNL homepage</a>
  */
 package com.intellij.lang.ognl;
