@@ -78,6 +78,7 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
   public void process(ModuleSettings moduleSettings) throws CannotConvertException {
     FlexBuildConfigurationManagerImpl configurationManager = ConversionHelper.createBuildConfigurationManager();
 
+    Collection<Element> orderEntriesToAdd = new ArrayList<Element>();
     if (isFlexModule(moduleSettings)) {
       ModifiableFlexIdeBuildConfiguration newConfiguration =
         (ModifiableFlexIdeBuildConfiguration)configurationManager.getBuildConfigurations()[0];
@@ -86,7 +87,7 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
       Element oldConfigurationElement = moduleSettings.getComponentElement(FlexBuildConfiguration.COMPONENT_NAME);
       FlexBuildConfiguration oldConfiguration =
         oldConfigurationElement != null ? XmlSerializer.deserialize(oldConfigurationElement, FlexBuildConfiguration.class) : null;
-      processConfiguration(oldConfiguration, newConfiguration, moduleSettings, false, null, null);
+      processConfiguration(oldConfiguration, newConfiguration, moduleSettings, false, null, null, orderEntriesToAdd);
     }
     else {
       List<Element> flexFacets = getFlexFacets(moduleSettings);
@@ -105,15 +106,19 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
         if (oldConfigurationElement != null) {
           FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(oldConfigurationElement, FlexBuildConfiguration.class);
           final String facetSdkName = oldConfigurationElement.getAttributeValue(FlexFacetConfigurationImpl.FLEX_SDK_ATTR_NAME);
-          processConfiguration(oldConfiguration, newConfiguration, moduleSettings, true, facetSdkName, sdkLibrariesIds);
+          processConfiguration(oldConfiguration, newConfiguration, moduleSettings, true, facetSdkName, sdkLibrariesIds, orderEntriesToAdd);
         }
         else {
-          processConfiguration(null, newConfiguration, moduleSettings, true, null, sdkLibrariesIds);
+          processConfiguration(null, newConfiguration, moduleSettings, true, null, sdkLibrariesIds, orderEntriesToAdd);
         }
       }
       moduleSettings.setModuleType(FlexModuleType.MODULE_TYPE_ID);
       moduleSettings.getComponentElement(FacetManagerImpl.COMPONENT_NAME).getChildren(FacetManagerImpl.FACET_ELEMENT).removeAll(flexFacets);
     }
+
+    Element rootManagerElement = JDomConvertingUtil.findOrCreateComponentElement(moduleSettings.getRootElement(),
+                                                                                       ModuleSettings.MODULE_ROOT_MANAGER_COMPONENT);
+    rootManagerElement.addContent(orderEntriesToAdd);
 
     Element componentElement =
       JDomConvertingUtil.findOrCreateComponentElement(moduleSettings.getRootElement(), FlexBuildConfigurationManagerImpl.COMPONENT_NAME);
@@ -140,7 +145,8 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
                                     ModuleSettings module,
                                     boolean facet,
                                     @Nullable String facetSdkName,
-                                    @Nullable Set<String> sdkLibrariesIds) {
+                                    @Nullable Set<String> sdkLibrariesIds,
+                                    Collection<Element> orderEntriesToAdd) {
     if (oldConfiguration == null) {
       newBuildConfiguration.setOutputType(OutputType.Application);
     }
@@ -202,7 +208,6 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
     newBuildConfiguration.setOutputFolder(outputFolder);
 
     Collection<Element> orderEntriesToRemove = new ArrayList<Element>();
-    Collection<Element> orderEntriesToAdd = new ArrayList<Element>();
     // TODO filter out java libraries and remove their order entries
     for (Element orderEntry : module.getOrderEntries()) {
       String orderEntryType = orderEntry.getAttributeValue(OrderEntryFactory.ORDER_ENTRY_TYPE_ATTR);
@@ -213,10 +218,20 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
           continue;
         }
 
-        library.setAttribute(LibraryImpl.LIBRARY_TYPE_ATTR, FlexLibraryType.FLEX_LIBRARY.getKindId());
-        Element libraryProperties = new Element(LibraryImpl.PROPERTIES_ELEMENT);
-        //noinspection unchecked
-        library.getChildren().add(0, libraryProperties);
+        Element libraryProperties;
+        if (facet && FlexLibraryType.FLEX_LIBRARY.getKindId().equals(library.getAttributeValue(LibraryImpl.LIBRARY_TYPE_ATTR))) {
+          // this library is already used by another build configuration, create new entry with new library
+          Element newEntry = (Element)orderEntry.clone();
+          orderEntriesToAdd.add(newEntry);
+          library = orderEntry.getChild(LibraryImpl.ELEMENT);
+          libraryProperties = library.getChild(LibraryImpl.PROPERTIES_ELEMENT);
+        }
+        else {
+          library.setAttribute(LibraryImpl.LIBRARY_TYPE_ATTR, FlexLibraryType.FLEX_LIBRARY.getKindId());
+          libraryProperties = new Element(LibraryImpl.PROPERTIES_ELEMENT);
+          //noinspection unchecked
+          library.getChildren().add(0, libraryProperties);
+        }
         String libraryId = FlexLibraryIdGenerator.generateId();
         XmlSerializer.serializeInto(new FlexLibraryProperties(libraryId), libraryProperties);
 
@@ -262,12 +277,6 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
 
     if (!orderEntriesToRemove.isEmpty()) {
       module.getOrderEntries().removeAll(orderEntriesToRemove);
-    }
-    final Element rootManagerElement = module.getComponentElement(ModuleSettings.MODULE_ROOT_MANAGER_COMPONENT);
-    if (rootManagerElement != null) {
-      for (Element entryToAdd : orderEntriesToAdd) {
-        rootManagerElement.addContent(entryToAdd);
-      }
     }
 
     if (newBuildConfiguration.getTargetPlatform() == TargetPlatform.Web) {
