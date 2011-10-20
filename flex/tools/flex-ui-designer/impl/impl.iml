@@ -8,6 +8,26 @@
     <configurations>
       <configuration name="impl" target-platform="Desktop" output-type="Library" output-file="impl.swc" output-folder="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/.astella/out/production/impl">
         <dependencies target-player="10.2" component-set="SparkOnly">
+          <entries>
+            <entry library-id="3880eb2a-591e-458e-9a65-1ec53ae78cd2">
+              <dependency linkage="External" />
+            </entry>
+            <entry library-id="776a0608-b493-47a2-b9e9-0ad8f21e4522">
+              <dependency linkage="External" />
+            </entry>
+            <entry library-id="1ba138fc-ded2-4082-af68-3eb41079af78">
+              <dependency linkage="External" />
+            </entry>
+            <entry library-id="c1afa763-ed04-41ba-a9ba-8c921d7054e7">
+              <dependency linkage="External" />
+            </entry>
+            <entry library-id="61c3a268-8cbd-4c4d-8a98-16c9884f15d4">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry module-name="shared" build-configuration-name="shared">
+              <dependency linkage="External" />
+            </entry>
+          </entries>
           <sdk library-id="e8ff1736-f7b6-45b9-ba10-d7fc48867eda" home-path="$MODULE_DIR$/../../../../../flex" />
         </dependencies>
         <compiler-options />
@@ -25,6 +45,63 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Flex SDK 4.5.2.21576" level="application" />
+    <orderEntry type="module-library">
+      <library type="flex">
+        <properties id="3880eb2a-591e-458e-9a65-1ec53ae78cd2" />
+        <CLASSES>
+          <root url="jar://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/lib/acocoa.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library type="flex">
+        <properties id="776a0608-b493-47a2-b9e9-0ad8f21e4522" />
+        <CLASSES>
+          <root url="jar://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/lib/cocoa.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library type="flex">
+        <properties id="1ba138fc-ded2-4082-af68-3eb41079af78" />
+        <CLASSES>
+          <root url="jar://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/lib/collections-1.3.6.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/lib/src/collections-1.3.6-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library type="flex">
+        <properties id="c1afa763-ed04-41ba-a9ba-8c921d7054e7" />
+        <CLASSES>
+          <root url="jar://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/lib/foundation-1.2.3.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/lib/src/foundation-1.2.3-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library type="flex">
+        <properties id="61c3a268-8cbd-4c4d-8a98-16c9884f15d4" />
+        <CLASSES>
+          <root url="jar://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/lib/plexus-1.4.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/lib/src/plexus-1.4-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="shared" />
   </component>
 </module>
 

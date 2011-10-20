@@ -3,8 +3,11 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/designer/designer.iml" filepath="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/designer/designer.iml" />
+      <module fileurl="file://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/flex-injection/flex-injection.iml" filepath="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/flex-injection/flex-injection.iml" />
       <module fileurl="file://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/impl/impl.iml" filepath="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/impl/impl.iml" />
+      <module fileurl="file://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/main/main.iml" filepath="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/main/main.iml" />
       <module fileurl="file://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/shared/shared.iml" filepath="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/shared/shared.iml" />
+      <module fileurl="file://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/ui/ui.iml" filepath="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/ui/ui.iml" />
     </modules>
   </component>
 </project>

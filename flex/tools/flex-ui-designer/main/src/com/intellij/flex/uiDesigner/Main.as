@@ -111,10 +111,6 @@ public class Main extends MainWindowedApplication {
         var key:String = arguments[i];
         var value:String = arguments[i + 1];
         switch (key) {
-          case "-cdd":
-            QueueLoader.complementDevDir = value;
-            break;
-
           case "-p":
             deferredConnect = true;
             loadPlugin(value);

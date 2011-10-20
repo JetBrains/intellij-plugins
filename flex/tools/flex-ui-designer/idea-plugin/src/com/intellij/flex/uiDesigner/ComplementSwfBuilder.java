@@ -10,7 +10,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class ComplementSwfBuilder {
+public final class ComplementSwfBuilder {
+  private ComplementSwfBuilder() {
+  }
+
   public static void main(String[] args) throws IOException {
     if (args.length == 1) {
       // build all

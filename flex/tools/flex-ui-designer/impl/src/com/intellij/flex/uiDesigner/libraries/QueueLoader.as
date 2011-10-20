@@ -1,6 +1,4 @@
 package com.intellij.flex.uiDesigner.libraries {
-import cocoa.util.FileUtil;
-
 import com.intellij.flex.uiDesigner.LoaderContentParentAdobePleaseDoNextStep;
 
 import flash.display.LoaderInfo;
@@ -13,7 +11,6 @@ import flash.filesystem.File;
 import flash.net.URLRequest;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
-import flash.utils.ByteArray;
 
 /**
  * todo handle load error
@@ -22,36 +19,11 @@ public class QueueLoader {
   private var librarySet:LibrarySet;
   private var loadedCount:int;
 
-  //noinspection JSUnusedLocalSymbols
-  [Embed(source="/complement-flex4.1.swf", mimeType="application/octet-stream")]
-  private static const flex41ComplementClass:Class;
-  //noinspection JSUnusedLocalSymbols
-  private static var flex41ComplementBytes:ByteArray;
-  
-  //noinspection JSUnusedLocalSymbols
-  [Embed(source="/complement-flex4.5.swf", mimeType="application/octet-stream")]
-  private static const flex45ComplementClass:Class;
-  //noinspection JSUnusedLocalSymbols
-  private static var flex45ComplementBytes:ByteArray;
-
-  [Embed(source="/complement-air4.swf", mimeType="application/octet-stream")]
-  //noinspection JSUnusedLocalSymbols
-  private static const air4ComplementClass:Class;
-  //noinspection JSUnusedLocalSymbols
-  private static var air4ComplementBytes:ByteArray;
-
   private static var _rootDomain:ApplicationDomain;
   //noinspection JSUnusedGlobalSymbols
   public static function set rootDomain(value:ApplicationDomain):void {
     if (_rootDomain == null) {
       _rootDomain = value;
-    }
-  }
-
-  private static var _complementDevDir:String;
-  public static function set complementDevDir(value:String):void {
-    if (_complementDevDir == null) {
-      _complementDevDir = value;
     }
   }
 
@@ -118,27 +90,12 @@ public class QueueLoader {
     // *** Adobe http://juick.com/develar/896344  http://juick.com/develar/896278
     if (item is LibrarySetEmbedItem) {
       //trace("load: @" + library.path);
-      loader.loadBytes(getFlexComplementSwfBytes(item.path), loaderContext);
+      loader.load(new URLRequest("app:/.complement-" + item.path + ".swf"), loaderContext);
     }
     else {
       //trace("load: " + urlRequest.url);
       loader.load(new URLRequest("app:/" + item.path + (item.filtered ? "_" + librarySet.id + ".swf" : ".swf")), loaderContext);
     }
-  }
-
-  private static function getFlexComplementSwfBytes(path:String):ByteArray {
-    var propertyNameBase:String = path.replace(".", "");
-    var propertyByteName:String = propertyNameBase + "ComplementBytes";
-    if (QueueLoader[propertyByteName] == null) {
-      if (_complementDevDir == null) {
-        QueueLoader[propertyByteName] = new QueueLoader[propertyNameBase + "ComplementClass"]();
-      }
-      else {
-        QueueLoader[propertyByteName] = FileUtil.readBytesByFile(new File(_complementDevDir + "/complement-" + path + ".swf"));
-      }
-    }
-
-    return QueueLoader[propertyByteName];
   }
 
   private function loadCompleteHandler(event:Event):void {
