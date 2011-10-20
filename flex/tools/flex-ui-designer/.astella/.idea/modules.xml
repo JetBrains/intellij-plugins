@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/designer/designer.iml" filepath="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/designer/designer.iml" />
+      <module fileurl="file://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/impl/impl.iml" filepath="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/impl/impl.iml" />
+      <module fileurl="file://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/shared/shared.iml" filepath="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/shared/shared.iml" />
+    </modules>
+  </component>
+</project>
+
