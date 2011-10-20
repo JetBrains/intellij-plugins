@@ -28,7 +28,7 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.struts2.StrutsConstants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.patterns.PlatformPatterns.virtualFile;
@@ -68,16 +68,21 @@ public class TaglibOgnlInjector implements MultiHostInjector {
     if (OGNL_ELEMENT_PATTERN.accepts(psiElement)) {
       final TextRange range = new TextRange(1, psiElement.getTextLength() - 1);
       multiHostRegistrar.startInjecting(OgnlLanguage.INSTANCE)
-                        .addPlace(null, null, (PsiLanguageInjectionHost) psiElement, range)
+                        .addPlace(null,
+                                  null,
+                                  (PsiLanguageInjectionHost) psiElement,
+                                  range)
                         .doneInjecting();
       return;
     }
 
     if (OGNL_LIST_ELEMENT_PATTERN.accepts(psiElement)) {
-      final int textLength = psiElement.getTextLength();
-      final TextRange range = new TextRange(1, textLength - 1);
+      final TextRange range = new TextRange(1, psiElement.getTextLength() - 1);
       multiHostRegistrar.startInjecting(OgnlLanguage.INSTANCE)
-                        .addPlace("%{", "}", (PsiLanguageInjectionHost) psiElement, range)
+                        .addPlace(OgnlLanguage.EXPRESSION_PREFIX,
+                                  OgnlLanguage.EXPRESSION_SUFFIX,
+                                  (PsiLanguageInjectionHost) psiElement,
+                                  range)
                         .doneInjecting();
     }
   }
@@ -85,7 +90,7 @@ public class TaglibOgnlInjector implements MultiHostInjector {
   @NotNull
   @Override
   public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
-    return Arrays.asList(XmlAttributeValue.class);
+    return Collections.singletonList(XmlAttributeValue.class);
   }
 
 }
