@@ -235,6 +235,9 @@
     <liveTemplateContext implementation="com.intellij.lang.ognl.template.OgnlTemplateContextType"/>
     <defaultLiveTemplatesProvider implementation="com.intellij.lang.ognl.template.OgnlDefaultLiveTemplatesProvider"/>
 
+    <spellchecker.support language="OGNL"
+                          implementationClass="com.intellij.lang.ognl.spellchecker.OgnlSpellcheckingStrategy"/>
+
   </extensions>
 
   <application-components>
