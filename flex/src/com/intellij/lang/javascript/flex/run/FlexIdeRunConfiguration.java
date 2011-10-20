@@ -83,29 +83,29 @@ public class FlexIdeRunConfiguration extends RunConfigurationBase implements Run
 
   public void checkConfiguration() throws RuntimeConfigurationException {
     if (myRunnerParameters.getModuleName().isEmpty() || myRunnerParameters.getBCName().isEmpty()) {
-      throw new RuntimeConfigurationException(FlexBundle.message("bc.not.specified"));
+      throw new RuntimeConfigurationError(FlexBundle.message("bc.not.specified"));
     }
 
     final Module module = ModuleManager.getInstance(getProject()).findModuleByName(myRunnerParameters.getModuleName());
     if (module == null || !(ModuleType.get(module) instanceof FlexModuleType)) {
-      throw new RuntimeConfigurationException(FlexBundle.message("bc.not.specified"));
+      throw new RuntimeConfigurationError(FlexBundle.message("bc.not.specified"));
     }
 
     final FlexIdeBuildConfiguration bc =
       FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(myRunnerParameters.getBCName());
     if (bc == null) {
-      throw new RuntimeConfigurationException(
+      throw new RuntimeConfigurationError(
         FlexBundle.message("module.does.not.contain.bc", myRunnerParameters.getModuleName(), myRunnerParameters.getBCName()));
     }
 
     if (bc.getOutputType() != OutputType.Application) {
-      throw new RuntimeConfigurationException(
+      throw new RuntimeConfigurationError(
         FlexBundle.message("bc.does.not.produce.app", myRunnerParameters.getBCName(), myRunnerParameters.getModuleName()));
     }
 
     if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
       if (myRunnerParameters.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice && !bc.getAndroidPackagingOptions().isEnabled()) {
-        throw new RuntimeConfigurationException(
+        throw new RuntimeConfigurationError(
           FlexBundle.message("android.disabled.in.bc", myRunnerParameters.getBCName(), myRunnerParameters.getModuleName()));
       }
     }
