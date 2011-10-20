@@ -93,6 +93,8 @@
 
     <fileTemplateGroup implementation="com.intellij.struts2.StrutsFileTemplateGroupDescriptorFactory"/>
 
+    <spellchecker.bundledDictionaryProvider
+        implementation="com.intellij.struts2.spellchecker.Struts2BundledDictionaryProvider"/>
 
     <!-- struts.xml -->
     <dom.fileDescription implementation="com.intellij.struts2.dom.struts.Struts2DomFileDescription"/>
