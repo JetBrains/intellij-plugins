@@ -444,7 +444,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
         final Pair<String, ValueSource> valueAndSource = getValueAndSource(info);
 
         // don't apply if user just clicked through the table without typing anything
-        if (valueAndSource.second == ValueSource.BC || !value.equals(valueAndSource.first)) {
+        if (!value.equals(valueAndSource.first)) {
           myModified = true;
           myCurrentOptions.put(info.ID, (String)value);
           reloadNodeOrGroup(myTreeTable.getTree(), treeNode);
