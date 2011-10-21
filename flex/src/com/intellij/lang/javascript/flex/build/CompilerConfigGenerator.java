@@ -371,9 +371,9 @@ public class CompilerConfigGenerator {
       ContentIterator ci = new ContentIterator() {
         public boolean processFile(final VirtualFile fileOrDir) {
           if (FlexCompilerHandler.includeInCompilation(myModule.getProject(), fileOrDir)) {
-            //if (!isTest && projectFileIndex.isInTestSourceContent(fileOrDir)) {
-            //  return true;
-            //}
+            if (/*!isTest && */projectFileIndex.isInTestSourceContent(fileOrDir)) {
+              return true;
+            }
 
             final VirtualFile rootForFile = projectFileIndex.getSourceRootForFile(fileOrDir);
             if (rootForFile != null) {
