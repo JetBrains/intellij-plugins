@@ -1,22 +1,21 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>com.intellij.flex.uiDesigner</groupId>
-    <artifactId>plafAggregator</artifactId>
+    <artifactId>aggregator</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>aqua</artifactId>
+  <artifactId>ui</artifactId>
   <packaging>swc</packaging>
 
   <dependencies>
     <dependency>
       <groupId>com.intellij.flex.uiDesigner</groupId>
-      <artifactId>base</artifactId>
-      <type>swc</type>
+      <artifactId>impl</artifactId>
       <version>1.0-SNAPSHOT</version>
+      <type>swc</type>
     </dependency>
   </dependencies>
 
@@ -26,7 +25,12 @@
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
         <configuration>
-          <additionalSourcePath>../../flex-injection/target</additionalSourcePath>
+          <localesCompiled>
+            <locale>en_US</locale>
+          </localesCompiled>
+          <compilerWarnings>
+            <show-binding-warnings>false</show-binding-warnings>
+          </compilerWarnings>
         </configuration>
       </plugin>
     </plugins>

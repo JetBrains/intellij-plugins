@@ -3,6 +3,7 @@
   <component name="FlexIdeProjectLevelCompilerOptionsHolder">
     <compiler-options>
       <map>
+        <entry key="compiler.define" value="config::useRoboflest&#9;true" />
         <entry key="compiler.warn-no-constructor" value="false" />
       </map>
     </compiler-options>

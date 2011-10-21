@@ -4,18 +4,10 @@
     <option name="TARGET_PLAYER_VERSION" value="10.2" />
     <option name="VERSION" value="3" />
   </component>
-  <component name="FlexBuildConfigurationManager" active="main">
+  <component name="FlexBuildConfigurationManager" active="main-loader">
     <configurations>
-      <configuration name="main" target-platform="Desktop" output-file="main.swf" output-folder="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/.astella/out/production/main">
+      <configuration name="main-loader" target-platform="Desktop" pure-as="true" output-file="main-loader.swf" output-folder="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/.astella/out/production">
         <dependencies target-player="10.2">
-          <entries>
-            <entry module-name="ui" build-configuration-name="ui">
-              <dependency linkage="Merged" />
-            </entry>
-            <entry module-name="impl" build-configuration-name="impl">
-              <dependency linkage="Merged" />
-            </entry>
-          </entries>
           <sdk library-id="e8ff1736-f7b6-45b9-ba10-d7fc48867eda" home-path="$MODULE_DIR$/../../../../../flex" />
         </dependencies>
         <compiler-options />
@@ -30,11 +22,10 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/resources" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Flex SDK 4.5.2.21576" level="application" />
-    <orderEntry type="module" module-name="ui" />
-    <orderEntry type="module" module-name="impl" />
   </component>
 </module>
 

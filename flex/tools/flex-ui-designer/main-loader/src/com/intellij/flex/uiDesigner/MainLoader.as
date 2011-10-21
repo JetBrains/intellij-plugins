@@ -11,7 +11,7 @@ import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 import flash.utils.setInterval;
 
-import org.flyti.roboflest.roboflest;
+import org.jetbrains.roboflest.roboflest;
 
 public class MainLoader extends Sprite {
   [Embed(source="/designer-1.0-SNAPSHOT.swf", mimeType="application/octet-stream")]

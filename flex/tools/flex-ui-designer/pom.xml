@@ -1,0 +1,127 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.flyti.superPOMs</groupId>
+    <artifactId>common</artifactId>
+    <version>31</version>
+  </parent>
+  
+  <properties>
+    <config.useRoboflest>true</config.useRoboflest>
+    <config.fdbWorkaround>true</config.fdbWorkaround>
+  </properties>
+
+  <name>Flex UI Designer Aggregator</name>
+  <groupId>com.intellij.flex.uiDesigner</groupId>
+  <artifactId>aggregator</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.flyti.cocoa</groupId>
+        <artifactId>acocoa</artifactId>
+        <type>swc</type>
+        <version>1.4-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.flyti.cocoa</groupId>
+        <artifactId>aquaLaF</artifactId>
+        <version>1.4-SNAPSHOT</version>
+        <type>swc</type>
+      </dependency>
+      <dependency>
+        <groupId>org.flyti.cocoa</groupId>
+        <artifactId>cocoa</artifactId>
+        <version>1.4-SNAPSHOT</version>
+        <type>rb.swc</type>
+        <classifier>en_US</classifier>
+        <exclusions>
+          <exclusion>
+            <groupId>com.adobe.flex.framework</groupId>
+            <artifactId>playerglobal</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>flashx</groupId>
+        <artifactId>textLayout</artifactId>
+        <version>2.0.192-de1</version>
+        <type>swc</type>
+        <exclusions>
+          <exclusion>
+            <groupId>com.adobe.flex.framework</groupId>
+            <artifactId>playerglobal</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <modules>
+    <module>shared</module>
+    <module>flex-injection/pom-4.1.xml</module>
+    <module>flex-injection/pom-4.5.xml</module>
+    <module>plaf</module>
+    <module>impl</module>
+    <module>ui</module>
+    <module>main</module>
+    <module>main-loader</module>
+    <module>test-plugin</module>
+    <module>test-data-helper</module>
+  </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-maven-plugin</artifactId>
+        <configuration>
+          <debug>true</debug>
+          <fixedLiteralVector>true</fixedLiteralVector>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
+  <repositories>
+    <repository>
+      <id>project-repo</id>
+      <url>file://${user.dir}/build/repo</url>
+    </repository>
+    <!--<repository>-->
+      <!--<id>flyti</id>-->
+      <!--<url>http://repository.flyti.org/</url>-->
+    <!--</repository>-->
+  </repositories>
+
+  <profiles>
+    <profile>
+      <id>release</id>
+      <properties>
+        <config.useRoboflest>false</config.useRoboflest>
+        <config.fdbWorkaround>false</config.fdbWorkaround>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.sonatype.flexmojos</groupId>
+            <artifactId>flexmojos-maven-plugin</artifactId>
+            <configuration>
+              <debug>false</debug>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>releaseForTesters</id>
+      <properties>
+        <config.useRoboflest>false</config.useRoboflest>
+        <config.fdbWorkaround>false</config.fdbWorkaround>
+      </properties>
+    </profile>
+  </profiles>
+</project>
