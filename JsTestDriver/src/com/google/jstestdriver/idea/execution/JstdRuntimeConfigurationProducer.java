@@ -191,7 +191,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
         return null;
       }
       final VirtualFile virtualFile = psiFile.getVirtualFile();
-      if (virtualFile == null || FileTypeManager.getInstance().getFileTypeByFile(virtualFile) != JavaScriptSupportLoader.JAVASCRIPT) {
+      if (virtualFile == null || virtualFile.getFileType() != JavaScriptSupportLoader.JAVASCRIPT) {
         return null;
       }
       VirtualFile entity = virtualFile;

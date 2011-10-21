@@ -143,7 +143,7 @@ public class JstdConfigFileUtils {
     if (!virtualFile.isInLocalFileSystem()) {
       return false;
     }
-    FileType fileType = FileTypeManager.getInstance().getFileTypeByFile(virtualFile);
+    FileType fileType = virtualFile.getFileType();
     return fileType == JstdConfigFileType.INSTANCE;
   }
 

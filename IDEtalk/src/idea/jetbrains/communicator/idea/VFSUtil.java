@@ -238,7 +238,7 @@ public class VFSUtil {
   }
 
   public static boolean isArchive(VirtualFile sourceRoot) {
-    return FileTypeManager.getInstance().getFileTypeByFile(sourceRoot) == getArchiveFileType();
+    return sourceRoot.getFileType() == getArchiveFileType();
   }
 
   private static FileType getArchiveFileType() {
