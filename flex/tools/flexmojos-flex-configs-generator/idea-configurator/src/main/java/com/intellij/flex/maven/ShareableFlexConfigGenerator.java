@@ -7,7 +7,6 @@ import org.apache.maven.project.MavenProject;
 import java.io.*;
 
 public class ShareableFlexConfigGenerator extends IdeaConfigurator {
-  private static final String SRC_MAIN = "src/main";
   private static final String TARGET_WITH_FRONT_SLASH = "/target";
   private static final String CLASSSES_WITH_FRONT_SLASH = "/target/classes";
 
@@ -15,6 +14,8 @@ public class ShareableFlexConfigGenerator extends IdeaConfigurator {
 
   private String localRepositoryBasedir;
   private int localRepositoryBasedirLength;
+  
+  private String baseDir;
 
   public ShareableFlexConfigGenerator(MavenSession session, File outputDirectory) {
     super(session, new File("build-gant/flex-configs"));
@@ -23,6 +24,8 @@ public class ShareableFlexConfigGenerator extends IdeaConfigurator {
   @Override
   public void preGenerate(MavenProject project, String classifier, MojoExecution flexmojosGeneratorMojoExecution) throws IOException {
     super.preGenerate(project, classifier, flexmojosGeneratorMojoExecution);
+
+    baseDir = project.getBasedir().getPath();
 
     localRepositoryBasedir = session.getLocalRepository().getBasedir();
     localRepositoryBasedirLength = localRepositoryBasedir.length();
@@ -85,15 +88,17 @@ public class ShareableFlexConfigGenerator extends IdeaConfigurator {
       out.append(indent).append("\t<").append(name).append(">");
 
       if (parentName.equals(FILE_SPECS) || parentName.equals("source-path") || parentName.equals("include-sources") || parentName.equals("include-file")) {
-        int sIndex = value.indexOf(SRC_MAIN);
-        if (sIndex != -1) {
-          out.append("@@source@@").append(value, sIndex + SRC_MAIN.length(), value.length());
-        }
-        else if ((sIndex = value.indexOf(TARGET_WITH_FRONT_SLASH)) != -1) {
-          out.append("@@target@@").append(value, sIndex + TARGET_WITH_FRONT_SLASH.length(), value.length());
+        if (value.startsWith(baseDir)) {
+          out.append("@@baseDir@@").append(value, baseDir.length(), value.length());
         }
         else {
-          throw new IllegalArgumentException(value);
+          int sIndex = value.indexOf(TARGET_WITH_FRONT_SLASH);
+          if (sIndex != -1) {
+            out.append("@@target@@").append(value, sIndex + TARGET_WITH_FRONT_SLASH.length(), value.length());
+          }
+          else {
+            throw new IllegalArgumentException(value);
+          }
         }
       }
       else {

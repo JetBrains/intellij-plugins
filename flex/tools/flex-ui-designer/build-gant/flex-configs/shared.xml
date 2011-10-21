@@ -13,13 +13,13 @@
 		<library-path/>
 		<locale/>
 		<source-path>
-			<path-element>@@source@@/flex</path-element>
+			<path-element>@@baseDir@@/src</path-element>
 		</source-path>
 		<theme/>
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
 	<include-sources>
-		<path-element>@@source@@/flex</path-element>
+		<path-element>@@baseDir@@/src</path-element>
 	</include-sources>
 	<metadata>
 		<title>shared</title>

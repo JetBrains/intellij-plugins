@@ -2,19 +2,20 @@ package com.intellij.flex.maven;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.*;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MavenPluginManager;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.component.repository.ComponentDependency;
-import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -55,7 +56,7 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
 
     try {
       final PluginDescriptor pluginDescriptor = pluginManager.getPluginDescriptor(session.getTopLevelProject().getPlugin("org.sonatype.flexmojos:flexmojos-maven-plugin"), session.getCurrentProject().getRemotePluginRepositories(), session.getRepositorySession());
-      final File compilerLibsDirectory = new File(outputDirectory, "compiler");
+      final File compilerLibsDirectory = new File(outputDirectory, "../build-gant/compiler-libs");
       //noinspection ResultOfMethodCallIgnored
       compilerLibsDirectory.mkdirs();
       for (ComponentDependency dependency : pluginDescriptor.getDependencies()) {
@@ -65,7 +66,7 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
             continue;
           }
 
-          Utils.copyFile(new File(localRepositoryFile, "com/adobe/flex/compiler/" + artifactId + "/" + dependency.getVersion() + "/" + artifactId + "-" + dependency.getVersion() + ".jar"), new File(compilerLibsDirectory, artifactId + ".jar"));
+          copyIfLastModifiedNotEquals(new File(localRepositoryFile, "com/adobe/flex/compiler/" + artifactId + "/" + dependency.getVersion() + "/" + artifactId + "-" + dependency.getVersion() + ".jar"), new File(compilerLibsDirectory, artifactId + ".jar"));
         }
       }
     }
@@ -73,16 +74,13 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
       throw new MojoExecutionException("Cannot find flemxojos maven plugin", e);
     }
 
-    final String[] existingFiles;
     if (outputDirectory.exists()) {
-      final DirectoryScanner directoryScanner = new DirectoryScanner();
-      directoryScanner.setBasedir(outputDirectory);
-      directoryScanner.setIncludes(new String[]{"**/.swf", "**/.swc"});
-      directoryScanner.scan();
-      existingFiles = directoryScanner.getIncludedFiles();
-    }
-    else {
-      existingFiles = null;
+      try {
+        FileUtils.deleteDirectory(outputDirectory);
+      }
+      catch (IOException e) {
+        throw new MojoExecutionException("", e);
+      }
     }
 
     //noinspection ResultOfMethodCallIgnored
@@ -96,6 +94,12 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
       // skip projects artifacts
       copiedArtifacts.add(project.getArtifact());
       copyProjectArtifacts(localRepositoryFile, localRepositoryBasedirLength, project);
+    }
+  }
+
+  private static void copyIfLastModifiedNotEquals(File from, File to) throws IOException {
+    if (from.lastModified() != to.lastModified()) {
+      Utils.copyFile(from, to);
     }
   }
 

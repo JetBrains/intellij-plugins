@@ -3,7 +3,7 @@
 		<accessible>false</accessible>
 		<debug>true</debug>
 		<external-library-path>
-			<path-element>@@target@@/app-plugin-api-1.0-SNAPSHOT.swc</path-element>
+			<path-element>@@target@@/impl-1.0-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/org/flyti/cocoa/acocoa/1.4-SNAPSHOT/acocoa-1.4-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airframework/4.5.2.21576/airframework-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airspark/4.5.2.21576/airspark-4.5.2.21576.swc</path-element>
@@ -55,23 +55,23 @@
 		</namespaces>
 		<show-binding-warnings>false</show-binding-warnings>
 		<source-path>
-			<path-element>@@source@@/flex</path-element>
-			<path-element>@@source@@/locales/{locale}</path-element>
-			<path-element>@@source@@/resources</path-element>
+			<path-element>@@baseDir@@/src</path-element>
+			<path-element>@@baseDir@@/locales/{locale}</path-element>
+			<path-element>@@baseDir@@/resources</path-element>
 		</source-path>
 		<theme/>
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
 	<include-file>
 		<name>/grid.png</name>
-		<path>@@source@@/resources/grid.png</path>
+		<path>@@baseDir@@/resources/grid.png</path>
 	</include-file>
 	<include-file>
 		<name>/viewSelectionKnob.png</name>
-		<path>@@source@@/resources/viewSelectionKnob.png</path>
+		<path>@@baseDir@@/resources/viewSelectionKnob.png</path>
 	</include-file>
 	<include-sources>
-		<path-element>@@source@@/flex</path-element>
+		<path-element>@@baseDir@@/src</path-element>
 	</include-sources>
 	<metadata>
 		<language>en_US</language>

@@ -7,12 +7,12 @@
         <option name="OUTPUT_TYPE" value="Library" />
         <option name="USE_DEFAULT_SDK_CONFIG_FILE" value="false" />
         <option name="USE_CUSTOM_CONFIG_FILE" value="true" />
-        <option name="CUSTOM_CONFIG_FILE" value="$MODULE_DIR$/../.idea/flexmojos/ui-com.intellij.flex.uiDesigner.xml" />
+        <option name="CUSTOM_CONFIG_FILE" value="$MODULE_DIR$/../../.idea/flexmojos/aqua-com.intellij.flex.uiDesigner.xml" />
         <option name="USE_CUSTOM_CONFIG_FILE_FOR_TESTS" value="false" />
         <option name="CUSTOM_CONFIG_FILE_FOR_TESTS" value="" />
         <option name="APPLICATION_ENTRY_POINT" value="" />
         <option name="MAIN_CLASS" value="" />
-        <option name="OUTPUT_FILE_NAME" value="ui-1.0-SNAPSHOT.swc" />
+        <option name="OUTPUT_FILE_NAME" value="aqua-1.0-SNAPSHOT.swc" />
         <option name="USE_FACET_COMPILE_OUTPUT_PATH" value="true" />
         <option name="FACET_COMPILE_OUTPUT_PATH" value="$MODULE_DIR$/target" />
         <option name="FACET_COMPILE_OUTPUT_PATH_FOR_TESTS" value="$MODULE_DIR$/target/test-classes" />
@@ -20,7 +20,7 @@
         <option name="TARGET_PLAYER_VERSION" value="" />
         <option name="STATIC_LINK_RUNTIME_SHARED_LIBRARIES" value="false" />
         <option name="USE_LOCALE_SETTINGS" value="true" />
-        <option name="LOCALE" value="en_US" />
+        <option name="LOCALE" value="" />
         <option name="ADDITIONAL_COMPILER_OPTIONS" value="" />
         <option name="PATH_TO_SERVICES_CONFIG_XML" value="" />
         <option name="CONTEXT_ROOT" value="" />
@@ -41,23 +41,26 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="impl" />
-    <orderEntry type="library" name="Maven: org.flyti.cocoa:acocoa:swc:1.4-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airframework:swc:4.5.2.21576" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airglobal:swc:2.6" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airspark:swc:4.5.2.21576" level="project" />
+    <orderEntry type="module" module-name="base" />
+    <orderEntry type="library" name="Maven: org.flyti.cocoa:aquaLaF:swc:1.4-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.flyti.cocoa:cocoa:swc:1.4-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:framework:swc:4.5.2.21576" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:spark:swc:4.5.2.21576" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airframework:rb.swc:4.5.2.21576" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airspark:rb.swc:4.5.2.21576" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:framework:rb.swc:4.5.2.21576" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:spark:rb.swc:4.5.2.21576" level="project" />
-    <orderEntry type="library" name="Maven: org.flyti.cocoa:cocoa:swc:1.4-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: flashx:textLayout:swc:2.0.192-de1" level="project" />
     <orderEntry type="library" name="Maven: org.osflash:as3-signals:swc:0.8.1" level="project" />
     <orderEntry type="library" name="Maven: org.flyti:plexus:swc:1.4-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.flyti:collections:swc:1.3.6" level="project" />
     <orderEntry type="library" name="Maven: org.flyti:foundation:swc:1.2.3" level="project" />
+    <orderEntry type="module" module-name="ui" />
+    <orderEntry type="module" module-name="impl" />
+    <orderEntry type="library" name="Maven: org.flyti.cocoa:acocoa:swc:1.4-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airframework:swc:4.5.2.21576" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airglobal:swc:2.6" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airspark:swc:4.5.2.21576" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airframework:rb.swc:4.5.2.21576" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airspark:rb.swc:4.5.2.21576" level="project" />
     <orderEntry type="module" module-name="shared" />
     <orderEntry type="library" name="Maven: org.tinytlf:layouts:swc:1.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.tinytlf:core:swc:1.1-SNAPSHOT" level="project" />

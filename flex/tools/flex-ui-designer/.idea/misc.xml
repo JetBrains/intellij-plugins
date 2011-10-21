@@ -7,31 +7,13 @@
     <option name="printScope" value="1" />
     <option name="OUTPUT_DIRECTORY" value="$PROJECT_DIR$/exportToHTML" />
   </component>
-  <component name="FacetAutodetectingManager">
-    <autodetection-disabled>
-      <facet-type id="flex">
-        <modules>
-          <module name="app-loader" />
-          <module name="app-plugin-api" />
-          <module name="aqua" />
-          <module name="base" />
-          <module name="designer" />
-          <module name="flex-injection" />
-          <module name="flex-module-designer" />
-          <module name="flex-module-factory" />
-          <module name="IDEA-22472-UUUUUUUUUUU" />
-          <module name="IDEA-22472-workaround" />
-          <module name="IDEA-22472-workaround-4.1" />
-          <module name="IDEA-22472-workaround-4.5" />
-          <module name="shared" />
-          <module name="simple" />
-          <module name="test-app-plugin" />
-          <module name="test-data-libs" />
-          <module name="testSimpleApp" />
-          <module name="ui" />
-        </modules>
-      </facet-type>
-    </autodetection-disabled>
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="flex" url="file://$PROJECT_DIR$/flex-injection" />
+    <file type="flex" url="file://$PROJECT_DIR$/main" />
+    <file type="flex" url="file://$PROJECT_DIR$/plaf/aqua" />
+    <file type="flex" url="file://$PROJECT_DIR$/plaf/base" />
+    <file type="flex" url="file://$PROJECT_DIR$/shared" />
+    <file type="flex" url="file://$PROJECT_DIR$/ui" />
   </component>
   <component name="IdProvider" IDEtalkID="42DC4C01018861BA9502BF2A2C8BA619" />
   <component name="JavadocGenerationManager">

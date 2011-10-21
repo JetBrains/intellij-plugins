@@ -14,7 +14,7 @@
 			<path-element>@@repo@@/org/flyti/collections/1.3.6/collections-1.3.6.swc</path-element>
 			<path-element>@@repo@@/org/flyti/foundation/1.2.3/foundation-1.2.3.swc</path-element>
 			<path-element>@@target@@/ui-1.0-SNAPSHOT.swc</path-element>
-			<path-element>@@target@@/app-plugin-api-1.0-SNAPSHOT.swc</path-element>
+			<path-element>@@target@@/impl-1.0-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/org/flyti/cocoa/acocoa/1.4-SNAPSHOT/acocoa-1.4-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airframework/4.5.2.21576/airframework-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airspark/4.5.2.21576/airspark-4.5.2.21576.swc</path-element>
@@ -50,8 +50,8 @@
 			</namespace>
 		</namespaces>
 		<source-path>
-			<path-element>@@source@@/flex</path-element>
-			<path-element>@@source@@/resources</path-element>
+			<path-element>@@baseDir@@/src</path-element>
+			<path-element>@@baseDir@@/resources</path-element>
 			<path-element>@@target@@</path-element>
 		</source-path>
 		<theme/>
@@ -59,34 +59,34 @@
 	</compiler>
 	<include-file>
 		<name>/assets.yml</name>
-		<path>@@source@@/resources/assets.yml</path>
+		<path>@@baseDir@@/resources/assets.yml</path>
 	</include-file>
 	<include-file>
 		<name>/GroupItemRenderer.png</name>
-		<path>@@source@@/resources/GroupItemRenderer.png</path>
+		<path>@@baseDir@@/resources/GroupItemRenderer.png</path>
 	</include-file>
 	<include-file>
 		<name>/popup.arrows.small.disabled.png</name>
-		<path>@@source@@/resources/popup.arrows.small.disabled.png</path>
+		<path>@@baseDir@@/resources/popup.arrows.small.disabled.png</path>
 	</include-file>
 	<include-file>
 		<name>/popup.arrows.small.png</name>
-		<path>@@source@@/resources/popup.arrows.small.png</path>
+		<path>@@baseDir@@/resources/popup.arrows.small.png</path>
 	</include-file>
 	<include-file>
 		<name>/StatusText.png</name>
-		<path>@@source@@/resources/StatusText.png</path>
+		<path>@@baseDir@@/resources/StatusText.png</path>
 	</include-file>
 	<include-file>
 		<name>/TabLabel.PushButton.off.png</name>
-		<path>@@source@@/resources/TabLabel.PushButton.off.png</path>
+		<path>@@baseDir@@/resources/TabLabel.PushButton.off.png</path>
 	</include-file>
 	<include-file>
 		<name>/TabLabel.PushButton.on.png</name>
-		<path>@@source@@/resources/TabLabel.PushButton.on.png</path>
+		<path>@@baseDir@@/resources/TabLabel.PushButton.on.png</path>
 	</include-file>
 	<include-sources>
-		<path-element>@@source@@/flex</path-element>
+		<path-element>@@baseDir@@/src</path-element>
 	</include-sources>
 	<metadata>
 		<title>aqua</title>

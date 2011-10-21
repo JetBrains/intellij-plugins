@@ -2,19 +2,17 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/abc-blank-maker/abc-blank-maker.iml" filepath="$PROJECT_DIR$/abc-blank-maker/abc-blank-maker.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app-loader/app-loader.iml" filepath="$PROJECT_DIR$/app-loader/app-loader.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app-plugin-api/app-plugin-api.iml" filepath="$PROJECT_DIR$/app-plugin-api/app-plugin-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/aggregator.iml" filepath="$PROJECT_DIR$/aggregator.iml" />
       <module fileurl="file://$PROJECT_DIR$/plaf/aqua/aqua.iml" filepath="$PROJECT_DIR$/plaf/aqua/aqua.iml" group="plafAggregator and modules" />
       <module fileurl="file://$PROJECT_DIR$/plaf/base/base.iml" filepath="$PROJECT_DIR$/plaf/base/base.iml" group="plafAggregator and modules" />
-      <module fileurl="file://$PROJECT_DIR$/designer/designer.iml" filepath="$PROJECT_DIR$/designer/designer.iml" />
-      <module fileurl="file://$PROJECT_DIR$/flex-injection/flex-injection.iml" filepath="$PROJECT_DIR$/flex-injection/flex-injection.iml" />
-      <module fileurl="file://$PROJECT_DIR$/flexUIDesignerAggregator.iml" filepath="$PROJECT_DIR$/flexUIDesignerAggregator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/main/designer.iml" filepath="$PROJECT_DIR$/main/designer.iml" />
       <module fileurl="file://$PROJECT_DIR$/idea-plugin/idea-plugin.iml" filepath="$PROJECT_DIR$/idea-plugin/idea-plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/impl/impl.iml" filepath="$PROJECT_DIR$/impl/impl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/main-loader/main-loader.iml" filepath="$PROJECT_DIR$/main-loader/main-loader.iml" />
       <module fileurl="file://$PROJECT_DIR$/plaf/plafAggregator.iml" filepath="$PROJECT_DIR$/plaf/plafAggregator.iml" group="plafAggregator and modules" />
       <module fileurl="file://$PROJECT_DIR$/shared/shared.iml" filepath="$PROJECT_DIR$/shared/shared.iml" />
-      <module fileurl="file://$PROJECT_DIR$/test-app-plugin/test-app-plugin.iml" filepath="$PROJECT_DIR$/test-app-plugin/test-app-plugin.iml" />
-      <module fileurl="file://$PROJECT_DIR$/test-data-libs/test-data-libs.iml" filepath="$PROJECT_DIR$/test-data-libs/test-data-libs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/test-plugin/test.iml" filepath="$PROJECT_DIR$/test-plugin/test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/test-data-helper/test-data-helper.iml" filepath="$PROJECT_DIR$/test-data-helper/test-data-helper.iml" />
       <module fileurl="file://$PROJECT_DIR$/ui/ui.iml" filepath="$PROJECT_DIR$/ui/ui.iml" />
     </modules>
   </component>

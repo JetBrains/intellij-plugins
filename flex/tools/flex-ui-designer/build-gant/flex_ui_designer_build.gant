@@ -54,7 +54,7 @@ private def doExecute(home, sandbox, targetFolder) {
   ant.mkdir(dir: "$flexSandbox")
 
   ant.copy(toDir: "$flexSandbox/repo", overwrite: "true") {
-    fileset(dir: "$flexBuildHome/../build/repo")
+    fileset(dir: "$flexBuildHome/../lib")
   }
 
   List<SwfDescriptor> swfDescriptors = includeFile("$flexBuildHome/flex_ui_designer_swfs_build.gant").getList();
@@ -74,13 +74,12 @@ private def doExecute(home, sandbox, targetFolder) {
     }
   };
 
-  ant.copy(file: "$flexSandbox/app-loader-1.0-SNAPSHOT.swf", tofile: "$targetFolder/designer.swf")
-  ant.copy(file: "$flexBuildHome/../designer/src/main/resources/descriptor.xml", todir: "$targetFolder")
-  ant.copy(file: "$flexBuildHome/../designer/src/main/resources/check-descriptor.xml", todir: "$targetFolder")
-  ant.copy(file: "$flexSandbox/framework-injection-4.1.abc", todir: "$targetFolder")
-  ant.copy(file: "$flexSandbox/spark-injection-4.1.abc", todir: "$targetFolder")
-  ant.copy(file: "$flexSandbox/framework-injection-4.5.abc", todir: "$targetFolder")
-  ant.copy(file: "$flexSandbox/spark-injection-4.5.abc", todir: "$targetFolder")
+  ant.copy(file: "$flexSandbox/main-loader-1.0-SNAPSHOT.swf", tofile: "$targetFolder/designer.swf")
+  ant.copy(file: "$flexBuildHome/../main/resources/descriptor.xml", todir: "$targetFolder")
+  ant.copy(file: "$flexBuildHome/../main/resources/check-descriptor.xml", todir: "$targetFolder")
+  ant.copy(todir: "$targetFolder") {
+    fileset(dir: "$flexSandbox", includes: "**/*injection-*.abc,complement-*.swf")
+  }
 }
 
 private def buildAssets() {
@@ -93,9 +92,9 @@ private def buildAssets() {
       pathelement(path: "$flexBuildHome/libs/jai-codec-1.1.3.jar")
       pathelement(path: "$home/community/plugins/maven/maven2-server-impl/lib/maven-2.2.1-uber.jar")
     }
-    arg(value: "$flexBuildHome/../plaf/aqua/src/main/resources/assets.yml") // descriptor
+    arg(value: "$flexBuildHome/../plaf/aqua/resources/assets.yml") // descriptor
     arg(value: "$flexSandbox/assets") // output file
-    arg(value: "$flexBuildHome/../plaf/aqua/src/main/resources") // sources
+    arg(value: "$flexBuildHome/../plaf/aqua/resources") // sources
   }
 }
 
@@ -116,15 +115,9 @@ def buildFlex(config, basedir, flexBuildHome, flexSandbox, isSwc) {
 
   ant.replace(file: "$flexSandbox/${config}") {
     replacefilter(token: "@@target@@", value: "$flexSandbox")
-    replacefilter(token: "@@source@@", value: "$flexBuildHome/../$basedir/src/main")
+    replacefilter(token: "@@baseDir@@", value: "$flexBuildHome/../$basedir")
     replacefilter(token: "@@repo@@", value: "$flexSandbox/repo")
     replacefilter(token: "@@configs@@", value: "$flexBuildHome/flex-configs")
-  }
-
-  replacement = flexBuildHome.replaceAll("\\\\", "/") + "/../\\1/src/main"
-  ant.replaceregexp(file: "$flexSandbox/${config}", byline: "true") {
-    regexp(pattern: "@@source:(.*)@@")
-    substitution(expression: "$replacement")
   }
 
   ant.java(className: "${isSwc ? "flex2.tools.Compc" : "flex2.tools.Mxmlc"}", fork: "true", failOnError: "true") {

@@ -45,7 +45,7 @@
 			</namespace>
 		</namespaces>
 		<source-path>
-			<path-element>@@source@@/flex</path-element>
+			<path-element>@@baseDir@@/src</path-element>
 		</source-path>
 		<theme/>
 		<use-resource-bundle-metadata>false</use-resource-bundle-metadata>
@@ -132,6 +132,6 @@
 	<target-player>10.2</target-player>
 	<tools-locale>en_US</tools-locale>
 	<file-specs>
-		<path-element>@@source@@/flex/com/intellij/flex/uiDesigner/SpecialClassForAdobeEngineers.as</path-element>
+		<path-element>@@baseDir@@/src/com/intellij/flex/uiDesigner/SpecialClassForAdobeEngineers.as</path-element>
 	</file-specs>
 </flex-config>

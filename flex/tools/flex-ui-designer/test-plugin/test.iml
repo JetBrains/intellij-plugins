@@ -4,15 +4,15 @@
     <facet type="flex" name="Flex">
       <configuration flex_sdk="compiler-4.5.2.21576.pom">
         <option name="DO_BUILD" value="true" />
-        <option name="OUTPUT_TYPE" value="Library" />
+        <option name="OUTPUT_TYPE" value="Application" />
         <option name="USE_DEFAULT_SDK_CONFIG_FILE" value="false" />
         <option name="USE_CUSTOM_CONFIG_FILE" value="true" />
-        <option name="CUSTOM_CONFIG_FILE" value="$MODULE_DIR$/../.idea/flexmojos/ui-com.intellij.flex.uiDesigner.xml" />
+        <option name="CUSTOM_CONFIG_FILE" value="$MODULE_DIR$/../.idea/flexmojos/test-com.intellij.flex.uiDesigner.xml" />
         <option name="USE_CUSTOM_CONFIG_FILE_FOR_TESTS" value="false" />
         <option name="CUSTOM_CONFIG_FILE_FOR_TESTS" value="" />
         <option name="APPLICATION_ENTRY_POINT" value="" />
         <option name="MAIN_CLASS" value="" />
-        <option name="OUTPUT_FILE_NAME" value="ui-1.0-SNAPSHOT.swc" />
+        <option name="OUTPUT_FILE_NAME" value="test-1.0-SNAPSHOT.swf" />
         <option name="USE_FACET_COMPILE_OUTPUT_PATH" value="true" />
         <option name="FACET_COMPILE_OUTPUT_PATH" value="$MODULE_DIR$/target" />
         <option name="FACET_COMPILE_OUTPUT_PATH_FOR_TESTS" value="$MODULE_DIR$/target/test-classes" />
@@ -36,7 +36,6 @@
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/resources" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
@@ -62,6 +61,7 @@
     <orderEntry type="library" name="Maven: org.tinytlf:layouts:swc:1.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.tinytlf:core:swc:1.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.tinytlf:fte-utils:swc:1.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-as3:swc:1.1.4-SNAPSHOT" level="project" />
   </component>
 </module>
 

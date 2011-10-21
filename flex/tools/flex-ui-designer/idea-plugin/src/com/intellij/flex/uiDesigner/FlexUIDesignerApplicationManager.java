@@ -55,6 +55,8 @@ import java.util.List;
 import static com.intellij.flex.uiDesigner.DesignerApplicationUtil.*;
 
 public class FlexUIDesignerApplicationManager implements Disposable {
+  private static final String[] COMPLEMENTS = {"flex4.1", "flex4.5", "air4"};
+
   public static final Topic<FlexUIDesignerApplicationListener> MESSAGE_TOPIC =
     new Topic<FlexUIDesignerApplicationListener>("Flex UI Designer Application open and close events",
                                                  FlexUIDesignerApplicationListener.class);
@@ -259,17 +261,29 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
   static void copyAppFiles() throws IOException {
     if (DebugPathManager.IS_DEV) {
-      File home = new File(DebugPathManager.getFudHome());
-      IOUtil.saveStream(new File(home, "app-loader/target/app-loader-1.0-SNAPSHOT.swf"), new File(APP_DIR, DESIGNER_SWF));
-      IOUtil.saveStream(new File(home, "designer/src/main/resources/descriptor.xml"), new File(APP_DIR, DESCRIPTOR_XML));
-      IOUtil.saveStream(new File(home, "designer/src/main/resources/check-descriptor.xml"), new File(APP_DIR, CHECK_DESCRIPTOR_XML));
+      final File home = new File(DebugPathManager.getFudHome());
+      IOUtil.saveStream(new File(home, "main-loader/target/main-loader-1.0-SNAPSHOT.swf"), new File(APP_DIR, DESIGNER_SWF));
+      IOUtil.saveStream(new File(home, "main/resources/descriptor.xml"), new File(APP_DIR, DESCRIPTOR_XML));
+      IOUtil.saveStream(new File(home, "main/resources/check-descriptor.xml"), new File(APP_DIR, CHECK_DESCRIPTOR_XML));
+      for (String complement : COMPLEMENTS) {
+        final String name = complementFilename(complement);
+        IOUtil.saveStream(new File(home, "flex-injection/target/" + name), new File(APP_DIR, name));
+      }
     }
     else {
       final ClassLoader classLoader = FlexUIDesignerApplicationManager.class.getClassLoader();
       IOUtil.saveStream(classLoader.getResource(DESCRIPTOR_XML), new File(APP_DIR, DESCRIPTOR_XML));
       IOUtil.saveStream(classLoader.getResource(DESIGNER_SWF), new File(APP_DIR, DESIGNER_SWF));
       IOUtil.saveStream(classLoader.getResource(CHECK_DESCRIPTOR_XML), new File(APP_DIR, CHECK_DESCRIPTOR_XML));
+      for (String complement : COMPLEMENTS) {
+        final String name = complementFilename(complement);
+        IOUtil.saveStream(classLoader.getResource(name), new File(APP_DIR, "." + name));
+      }
     }
+  }
+
+  private static String complementFilename(String classifier) {
+    return "complement-" + classifier + ".swf";
   }
 
   private static String getOpenActionTitle(boolean debug) {

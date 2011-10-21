@@ -1,5 +1,5 @@
 <componentPackage>
-	<component class="Collector"/>
+	<component class="com.intellij.flex.uiDesigner.test.Collector"/>
 	<component class="com.intellij.flex.uiDesigner.test.DateFieldWithError"/>
 	<component class="com.intellij.flex.uiDesigner.test.LabelWithError"/>
 	<component class="com.intellij.flex.uiDesigner.test.PrimitiveCollector"/>
