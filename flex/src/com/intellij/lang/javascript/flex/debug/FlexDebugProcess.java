@@ -47,6 +47,7 @@ import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.util.Alarm;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
@@ -67,10 +68,13 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.event.HyperlinkEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
 
 import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileDebugTransport;
@@ -164,7 +168,7 @@ public class FlexDebugProcess extends XDebugProcess {
   private FlexUnitConnection myFlexUnitConnection;
   private SwfPolicyFileConnection myPolicyFileConnection;
 
-  public FlexDebugProcess(final XDebugSession session, final FlexIdeBuildConfiguration config, final FlexIdeRunnerParameters params)
+  public FlexDebugProcess(final XDebugSession session, final FlexIdeBuildConfiguration config, final BCBasedRunnerParameters params)
     throws IOException {
 
     super(session);
@@ -184,38 +188,47 @@ public class FlexDebugProcess extends XDebugProcess {
     final List<String> fdbLaunchCommand = FlexSdkUtils
       .getCommandLineForSdkTool(session.getProject(), sdkHome, null, getFdbClasspath(), "flex.tools.debugger.cli.DebugCLI", null);
 
-    if (config.getTargetPlatform() == TargetPlatform.Mobile
-        && params.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice
-        && params.getDebugTransport() == AirMobileDebugTransport.USB) {
+    if (params instanceof FlexIdeRunnerParameters &&
+        config.getTargetPlatform() == TargetPlatform.Mobile &&
+        ((FlexIdeRunnerParameters)params).getMobileRunTarget() == AirMobileRunTarget.AndroidDevice &&
+        ((FlexIdeRunnerParameters)params).getDebugTransport() == AirMobileDebugTransport.USB) {
       fdbLaunchCommand.add("-p");
-      fdbLaunchCommand.add(String.valueOf(params.getUsbDebugPort()));
+      fdbLaunchCommand.add(String.valueOf(((FlexIdeRunnerParameters)params).getUsbDebugPort()));
     }
 
     fdbProcess = launchFdb(fdbLaunchCommand);
-    connectToRunningFlashPlayerMode = false;
 
-    switch (config.getTargetPlatform()) {
-      case Web:
-        // todo support wrapper
-        final String urlOrPath = params.isLaunchUrl() ? params.getUrl() : config.getOutputFilePath();
-        sendCommand(new LaunchBrowserCommand(urlOrPath, params.getLauncherParameters()));
-        break;
-      case Desktop:
-        sendAdlStartingCommand(config, params);
-        break;
-      case Mobile:
-        switch (params.getMobileRunTarget()) {
-          case Emulator:
-            sendAdlStartingCommand(config, params);
-            break;
-          case AndroidDevice:
-            final String appId =
-              FlexBaseRunner.getApplicationId(FlexBaseRunner.getAirDescriptorPath(config, config.getAndroidPackagingOptions()));
-            sendCommand(params.getDebugTransport() == AirMobileDebugTransport.Network
-                        ? new StartAppOnAndroidDeviceCommand(FlexUtils.createFlexSdkWrapper(config), appId)
-                        : new StartDebuggingCommand());
-            break;
-        }
+    if (params instanceof FlexIdeRunnerParameters) {
+      connectToRunningFlashPlayerMode = false;
+      final FlexIdeRunnerParameters appParams = (FlexIdeRunnerParameters)params;
+
+      switch (config.getTargetPlatform()) {
+        case Web:
+          // todo support wrapper
+          final String urlOrPath = appParams.isLaunchUrl() ? appParams.getUrl() : config.getOutputFilePath();
+          sendCommand(new LaunchBrowserCommand(urlOrPath, appParams.getLauncherParameters()));
+          break;
+        case Desktop:
+          sendAdlStartingCommand(config, appParams);
+          break;
+        case Mobile:
+          switch (appParams.getMobileRunTarget()) {
+            case Emulator:
+              sendAdlStartingCommand(config, appParams);
+              break;
+            case AndroidDevice:
+              final String appId =
+                FlexBaseRunner.getApplicationId(FlexBaseRunner.getAirDescriptorPath(config, config.getAndroidPackagingOptions()));
+              sendCommand(appParams.getDebugTransport() == AirMobileDebugTransport.Network
+                          ? new StartAppOnAndroidDeviceCommand(FlexUtils.createFlexSdkWrapper(config), appId)
+                          : new StartDebuggingCommand());
+              break;
+          }
+      }
+    }
+    else {
+      connectToRunningFlashPlayerMode = true;
+      sendCommand(new StartDebuggingCommand());
     }
 
     reader = new MyFdbOutputReader(fdbProcess.getInputStream());
@@ -1498,7 +1511,22 @@ public class FlexDebugProcess extends XDebugProcess {
       ApplicationManager.getApplication().invokeLater(new Runnable() {
         public void run() {
           final ToolWindowManager manager = ToolWindowManager.getInstance(getSession().getProject());
-          manager.notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, FlexBundle.message("flash.player.right.click.debugger"));
+
+          final HyperlinkAdapter h = new HyperlinkAdapter() {
+            protected void hyperlinkActivated(final HyperlinkEvent e) {
+              String ipAddress;
+              try {
+                ipAddress = InetAddress.getLocalHost().getHostAddress();
+              }
+              catch (UnknownHostException ex) {
+                ipAddress = "unknown";
+              }
+
+              manager.notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, FlexBundle.message("remote.flash.debug.details", ipAddress));
+            }
+          };
+
+          manager.notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, FlexBundle.message("remote.flash.debugger.waiting"), null, h);
         }
       });
     }

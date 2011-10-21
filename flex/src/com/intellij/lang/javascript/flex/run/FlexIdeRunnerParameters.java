@@ -7,10 +7,7 @@ import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.Ai
 import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileRunTarget;
 import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.Emulator;
 
-public class FlexIdeRunnerParameters implements Cloneable {
-
-  private @NotNull String myModuleName = "";
-  private @NotNull String myBCName = "";
+public class FlexIdeRunnerParameters extends BCBasedRunnerParameters implements Cloneable {
 
   private boolean myLaunchUrl = false;
   private @NotNull String myUrl = "http://";
@@ -30,24 +27,6 @@ public class FlexIdeRunnerParameters implements Cloneable {
   private @NotNull AirMobileDebugTransport myDebugTransport = AirMobileDebugTransport.USB;
   private int myUsbDebugPort = MobileAirUtil.DEBUG_PORT_DEFAULT;
   private @NotNull String myEmulatorAdlOptions = "";
-
-  @NotNull
-  public String getModuleName() {
-    return myModuleName;
-  }
-
-  public void setModuleName(@NotNull final String moduleName) {
-    myModuleName = moduleName;
-  }
-
-  @NotNull
-  public String getBCName() {
-    return myBCName;
-  }
-
-  public void setBCName(@NotNull final String BCName) {
-    myBCName = BCName;
-  }
 
   public boolean isLaunchUrl() {
     return myLaunchUrl;
@@ -178,17 +157,14 @@ public class FlexIdeRunnerParameters implements Cloneable {
   }
 
   protected FlexIdeRunnerParameters clone() {
-    try {
-      final FlexIdeRunnerParameters clone = (FlexIdeRunnerParameters)super.clone();
-      clone.myLauncherParameters = myLauncherParameters.clone();
-      return clone;
-    }
-    catch (CloneNotSupportedException e) {
-      throw new RuntimeException(e);
-    }
+    final FlexIdeRunnerParameters clone = (FlexIdeRunnerParameters)super.clone();
+    clone.myLauncherParameters = myLauncherParameters.clone();
+    return clone;
   }
 
   public boolean equals(final Object o) {
+    if (!super.equals(o)) return false;
+
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
@@ -203,20 +179,13 @@ public class FlexIdeRunnerParameters implements Cloneable {
     if (myUsbDebugPort != that.myUsbDebugPort) return false;
     if (!myAdlOptions.equals(that.myAdlOptions)) return false;
     if (!myAirProgramParameters.equals(that.myAirProgramParameters)) return false;
-    if (!myBCName.equals(that.myBCName)) return false;
     if (myDebugTransport != that.myDebugTransport) return false;
     if (myEmulator != that.myEmulator) return false;
     if (!myEmulatorAdlOptions.equals(that.myEmulatorAdlOptions)) return false;
     if (!myLauncherParameters.equals(that.myLauncherParameters)) return false;
     if (myMobileRunTarget != that.myMobileRunTarget) return false;
-    if (!myModuleName.equals(that.myModuleName)) return false;
     if (!myUrl.equals(that.myUrl)) return false;
 
     return true;
-  }
-
-  public int hashCode() {
-    assert false;
-    return super.hashCode();
   }
 }

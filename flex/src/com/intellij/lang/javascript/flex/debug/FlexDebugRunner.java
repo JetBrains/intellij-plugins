@@ -46,7 +46,9 @@ public class FlexDebugRunner extends FlexBaseRunner {
 
   public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {
     return DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) &&
-           (profile instanceof FlexRunConfiguration || profile instanceof FlexIdeRunConfiguration);
+           (profile instanceof FlexRunConfiguration ||
+            profile instanceof FlexIdeRunConfiguration ||
+            profile instanceof RemoteFlashRunConfiguration);
   }
 
   @NotNull
@@ -80,20 +82,7 @@ public class FlexDebugRunner extends FlexBaseRunner {
       }
     }
 
-    final XDebugSession debugSession =
-      XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
-        @NotNull
-        public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
-          try {
-            return new FlexDebugProcess(session, config, params);
-          }
-          catch (IOException e) {
-            throw new ExecutionException(e.getMessage(), e);
-          }
-        }
-      });
-
-    return debugSession.getRunContentDescriptor();
+   return launchDebugProcess(module, config, params, contentToReuse, env);
   }
 
   protected RunContentDescriptor doLaunch(final Project project,

@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.compiler.options.CompileStepBeforeRun;
-import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.facet.FacetManager;
@@ -465,14 +464,14 @@ public class FlexCompiler implements SourceProcessingCompiler {
       final FlexIdeRunnerParameters params = ((FlexIdeRunConfiguration)runConfiguration).getRunnerParameters();
       final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig;
 
-      final Ref<ExecutionException> exceptionRef = new Ref<ExecutionException>();
+      final Ref<RuntimeConfigurationError> exceptionRef = new Ref<RuntimeConfigurationError>();
       moduleAndConfig =
         ApplicationManager.getApplication().runReadAction(new NullableComputable<Pair<Module, FlexIdeBuildConfiguration>>() {
           public Pair<Module, FlexIdeBuildConfiguration> compute() {
             try {
-              return FlexBaseRunner.getModuleAndConfig(runConfiguration.getProject(), params);
+              return BCBasedRunnerParameters.checkAndGetModuleAndBC(runConfiguration.getProject(), params);
             }
-            catch (ExecutionException e) {
+            catch (RuntimeConfigurationError e) {
               exceptionRef.set(e);
               return null;
             }
