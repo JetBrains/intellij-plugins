@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -172,7 +173,7 @@ public class ConversionParams {
       return Collections.emptyList();
     }
 
-    List<Element> facets = FlexIdeModuleConverter.getFlexFacets(moduleSettings);
+    final List<Element> facets = FlexIdeModuleConverter.getFlexFacets(moduleSettings);
     return ContainerUtil.mapNotNull(facets, new Function<Element, String>() {
       @Override
       public String fun(Element facet) {
@@ -180,7 +181,7 @@ public class ConversionParams {
         if (oldConfigurationElement != null) {
           FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(oldConfigurationElement, FlexBuildConfiguration.class);
           if (oldConfiguration != null && FlexBuildConfiguration.LIBRARY.equals(oldConfiguration.OUTPUT_TYPE)) {
-            return FlexIdeModuleConverter.generateFacetBcName(facet);
+            return FlexIdeModuleConverter.generateFacetBcName(facets, facet);
           }
         }
         return null;

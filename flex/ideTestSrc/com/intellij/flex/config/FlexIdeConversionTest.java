@@ -3,6 +3,7 @@ package com.intellij.flex.config;
 import com.intellij.conversion.ConversionListener;
 import com.intellij.conversion.ConversionService;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.ConversionHelper;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexLibraryIdGenerator;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathMacros;
@@ -24,6 +25,7 @@ import org.jdom.JDOMException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 public class FlexIdeConversionTest extends PlatformTestCase {
@@ -94,7 +96,9 @@ public class FlexIdeConversionTest extends PlatformTestCase {
       }
     });
     PathMacros.getInstance().removeMacro(SDK_HOME_VAR);
-    PathMacros.getInstance().removeMacro(PROJECT_VAR);
+    if (PathMacros.getInstance().getAllMacroNames().contains(PROJECT_VAR)) {
+      PathMacros.getInstance().removeMacro(PROJECT_VAR);
+    }
     super.tearDown();
   }
 
@@ -172,6 +176,18 @@ public class FlexIdeConversionTest extends PlatformTestCase {
       ConversionHelper.collapsePaths(globalLibState);
       assertTrue(JDOMUtil.areElementsEqual(d.getRootElement(), globalLibState));
     }
+  }
+
+  public void testUniqueNames() {
+    doTestUniqueNames(new String[]{}, new String[]{});
+    doTestUniqueNames(new String[]{"a", "b", "c", "a"}, new String[]{"a", "b", "c", "a (1)"});
+    doTestUniqueNames(new String[]{"a", "b", "c", "a", "a"}, new String[]{"a", "b", "c", "a (1)", "a (2)"});
+    doTestUniqueNames(new String[]{"a", "b", "c", "a", "a (1)", "a (2)"}, new String[]{"a", "b", "c", "a (3)", "a (1)", "a (2)"});
+  }
+
+  private static void doTestUniqueNames(String[] input, String[] output) {
+    List<String> result = FlexBuildConfigurationManagerImpl.generateUniqueNames(Arrays.asList(input));
+    assertTrue("output: " + Arrays.toString(result.toArray()) + ", expected: " + Arrays.toString(output), result.equals(Arrays.asList(output)));
   }
 
   private static class MyConversionListener implements ConversionListener {

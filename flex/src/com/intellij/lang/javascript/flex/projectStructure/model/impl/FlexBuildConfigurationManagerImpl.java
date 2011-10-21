@@ -18,6 +18,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiModificationTrackerImpl;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Attribute;
@@ -25,6 +26,7 @@ import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.MessageFormat;
 import java.util.*;
 
 @State(name = FlexBuildConfigurationManagerImpl.COMPONENT_NAME, storages = {@Storage(file = "$MODULE_FILE$")})
@@ -122,7 +124,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
     return myModuleLevelCompilerOptions;
   }
 
-  void setBuildConfigurations(FlexIdeBuildConfiguration[] configurations) {
+  void setBuildConfigurations(FlexIdeBuildConfigurationImpl[] configurations) {
     final String activeName = myActiveConfiguration != null ? myActiveConfiguration.getName() : null;
     ApplicationManager.getApplication().assertWriteAccessAllowed();
     FlexIdeBuildConfigurationImpl[] validatedConfigurations = getValidatedConfigurations(Arrays.asList(configurations));
@@ -183,24 +185,69 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
     DaemonCodeAnalyzer.getInstance(project).restart();
   }
 
-  private static FlexIdeBuildConfigurationImpl[] getValidatedConfigurations(Collection<? extends FlexIdeBuildConfiguration> configurations) {
-    LinkedHashMap<String, FlexIdeBuildConfigurationImpl> name2configuration =
-      new LinkedHashMap<String, FlexIdeBuildConfigurationImpl>(configurations.size());
-    for (FlexIdeBuildConfiguration configuration : configurations) {
+  private FlexIdeBuildConfigurationImpl[] getValidatedConfigurations(Collection<? extends FlexIdeBuildConfigurationImpl> configurations) {
+    if (configurations.isEmpty()) {
+      LOG.warn("No Flash build configurations found");
+      return new FlexIdeBuildConfigurationImpl[]{new FlexIdeBuildConfigurationImpl()};
+    }
+
+    List<FlexIdeBuildConfigurationImpl> configList = new ArrayList<FlexIdeBuildConfigurationImpl>(configurations);
+    for (FlexIdeBuildConfigurationImpl configuration : configList) {
       if (StringUtil.isEmpty(configuration.getName())) {
-        LOG.error("Empty build configuration name");
-      }
-      if (name2configuration.put(configuration.getName(), (FlexIdeBuildConfigurationImpl)configuration) != null) {
-        LOG.error("Duplicate build configuration name: " + configuration.getName());
+        LOG.warn("Empty build configuration name");
+        configuration.setName(myModule.getName());
       }
     }
 
-    if (configurations.isEmpty()) {
-      // TODO this project is opened with new UI the first time -> convert
-      LOG.warn("No configurations found");
-      return new FlexIdeBuildConfigurationImpl[]{new FlexIdeBuildConfigurationImpl()};
+    Set<String> names = new HashSet<String>();
+    String duplicateName = null;
+    for (FlexIdeBuildConfiguration c : configList) {
+      if (StringUtil.isEmpty(c.getName())) {
+        LOG.warn("Empty build configuration name");
+        continue;
+      }
+      if (!names.add(c.getName())) {
+        duplicateName = c.getName();
+        break;
+      }
     }
-    return name2configuration.values().toArray(new FlexIdeBuildConfigurationImpl[name2configuration.size()]);
+
+    if (duplicateName != null) {
+      LOG.warn("Duplicate build configuration name: " + duplicateName);
+      List<String> uniqueNames =
+        generateUniqueNames(ContainerUtil.map2List(configList, new Function<FlexIdeBuildConfigurationImpl, String>() {
+          @Override
+          public String fun(FlexIdeBuildConfigurationImpl flexIdeBuildConfiguration) {
+            return flexIdeBuildConfiguration.getName();
+          }
+        }));
+      for (int i = 0; i < configList.size(); i++) {
+        configList.get(i).setName(uniqueNames.get(i));
+      }
+    }
+    
+    return configList.toArray(new FlexIdeBuildConfigurationImpl[configList.size()]);
+  }
+
+  public static List<String> generateUniqueNames(List<String> names) {
+    List<String> result = new ArrayList<String>(names.size());
+    Set<String> namesBefore = new HashSet<String>();
+    for (int i = 0; i < names.size(); i++) {
+      String name = names.get(i);
+      String newName = name;
+      if (namesBefore.contains(newName)) {
+        Set<String> otherNames = new HashSet<String>(namesBefore);
+        otherNames.addAll(names.subList(i + 1, names.size()));
+        int index = 1;
+        while (true) {
+          newName = MessageFormat.format("{0} ({1})", name, index++);
+          if (!otherNames.contains(newName)) break;
+        }
+      }
+      result.add(newName);
+      namesBefore.add(newName);
+    }
+    return result;
   }
 
   public static class State {

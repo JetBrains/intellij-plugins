@@ -59,7 +59,7 @@
         <CSS_FILES_LIST />
       </configuration>
     </facet>
-    <facet type="flex" name="C">
+    <facet type="flex" name="A">
       <configuration flex_sdk="some_airmobile_sdk">
         <option name="DO_BUILD" value="true" />
         <option name="OUTPUT_TYPE" value="Library" />

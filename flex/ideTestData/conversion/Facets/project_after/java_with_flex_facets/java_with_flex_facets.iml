@@ -26,6 +26,11 @@
     <configurations>
       <configuration name="A" target-platform="Mobile" main-class="A" output-file="Java_with_flex_facets_A.swf" output-folder="$TEST_PROJECT$/out/production/java_with_flex_facets">
         <dependencies>
+          <entries>
+            <entry library-id="4">
+              <dependency linkage="Merged" />
+            </entry>
+          </entries>
           <sdk library-id="0" home-path="$TEST_SDK_HOME$" />
         </dependencies>
         <compiler-options />
@@ -35,6 +40,11 @@
       </configuration>
       <configuration name="B" target-platform="Mobile" output-type="Library" output-file="Java_with_flex_facets_B.swf" output-folder="$TEST_PROJECT$/out/production/java_with_flex_facets/facetB" skip-build="true">
         <dependencies>
+          <entries>
+            <entry library-id="5">
+              <dependency linkage="Merged" />
+            </entry>
+          </entries>
           <sdk library-id="0" home-path="$TEST_SDK_HOME$" />
         </dependencies>
         <compiler-options />
@@ -42,8 +52,13 @@
         <packaging-android enabled="true" />
         <packaging-ios />
       </configuration>
-      <configuration name="C" target-platform="Mobile" output-type="Library" output-file="Java_with_flex_facets_C.swf" output-folder="$TEST_PROJECT$/out/production/java_with_flex_facets">
+      <configuration name="A (1)" target-platform="Mobile" output-type="Library" output-file="Java_with_flex_facets_C.swf" output-folder="$TEST_PROJECT$/out/production/java_with_flex_facets">
         <dependencies>
+          <entries>
+            <entry library-id="6">
+              <dependency linkage="Merged" />
+            </entry>
+          </entries>
           <sdk library-id="0" home-path="$TEST_SDK_HOME$" />
         </dependencies>
         <compiler-options />
@@ -60,7 +75,37 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library type="flex">
+        <properties id="6" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/flexunit-4.0.0.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="library" name="Flex SDK 4.5.1.21328" level="application" />
+    <orderEntry type="module-library">
+      <library type="flex">
+        <properties id="4" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/flexunit-4.0.0.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library type="flex">
+        <properties id="5" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/flexunit-4.0.0.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
 

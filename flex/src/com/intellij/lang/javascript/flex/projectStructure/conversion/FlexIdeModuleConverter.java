@@ -25,6 +25,7 @@ import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.XmlSerializer;
@@ -38,7 +39,7 @@ import java.util.*;
 /**
  * User: ksafonov
  */
-class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
+public class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
 
   private final ConversionParams myParams;
 
@@ -101,7 +102,7 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
         else {
           newConfiguration = ConversionHelper.createBuildConfiguration(configurationManager);
         }
-        newConfiguration.setName(generateFacetBcName(facet));
+        newConfiguration.setName(generateFacetBcName(flexFacets, facet));
         Element oldConfigurationElement = facet.getChild(FacetManagerImpl.CONFIGURATION_ELEMENT);
         if (oldConfigurationElement != null) {
           FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(oldConfigurationElement, FlexBuildConfiguration.class);
@@ -117,7 +118,7 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
     }
 
     Element rootManagerElement = JDomConvertingUtil.findOrCreateComponentElement(moduleSettings.getRootElement(),
-                                                                                       ModuleSettings.MODULE_ROOT_MANAGER_COMPONENT);
+                                                                                 ModuleSettings.MODULE_ROOT_MANAGER_COMPONENT);
     rootManagerElement.addContent(orderEntriesToAdd);
 
     Element componentElement =
@@ -386,7 +387,14 @@ class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
     return module.getModuleName();
   }
 
-  public static String generateFacetBcName(Element facet) {
-    return facet.getAttributeValue(FacetManagerImpl.NAME_ATTRIBUTE);
+  public static String generateFacetBcName(List<Element> facets, Element facet) {
+    // TODO cache names for module
+    List<String> names = FlexBuildConfigurationManagerImpl.generateUniqueNames(ContainerUtil.map(facets, new Function<Element, String>() {
+      @Override
+      public String fun(Element element) {
+        return element.getAttributeValue(FacetManagerImpl.NAME_ATTRIBUTE);
+      }
+    }));
+    return names.get(facets.indexOf(facet));
   }
 }

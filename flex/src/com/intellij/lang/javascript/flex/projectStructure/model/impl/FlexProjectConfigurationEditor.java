@@ -244,8 +244,17 @@ public class FlexProjectConfigurationEditor implements Disposable {
     return myProject;
   }
 
-  public void checkCanCommit() {
-    //To change body of created methods use File | Settings | File Templates.
+  public void checkCanCommit() throws ConfigurationException {
+    for (Module module : myModule2Editors.keySet()) {
+      List<Editor> editors = myModule2Editors.get(module);
+      Set<String> names = new HashSet<String>();
+      for (Editor editor : editors) {
+        if (!names.add(editor.getName())) {
+          throw new ConfigurationException(
+            "Duplicate build configuration name '" + editor.getName() + "' in module '" + module.getName() + "'");
+        }
+      }
+    }
   }
 
   public void commit() throws ConfigurationException {
@@ -346,13 +355,14 @@ public class FlexProjectConfigurationEditor implements Disposable {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       public void run() {
         for (Module module : myModule2Editors.keySet()) {
-          Function<Editor, FlexIdeBuildConfiguration> f = new Function<Editor, FlexIdeBuildConfiguration>() {
+          Function<Editor, FlexIdeBuildConfigurationImpl> f = new Function<Editor, FlexIdeBuildConfigurationImpl>() {
             @Override
-            public FlexIdeBuildConfiguration fun(Editor editor) {
+            public FlexIdeBuildConfigurationImpl fun(Editor editor) {
               return editor.commit();
             }
           };
-          FlexIdeBuildConfiguration[] current = ContainerUtil.map2Array(myModule2Editors.get(module), FlexIdeBuildConfiguration.class, f);
+          FlexIdeBuildConfigurationImpl[] current =
+            ContainerUtil.map2Array(myModule2Editors.get(module), FlexIdeBuildConfigurationImpl.class, f);
           ((FlexBuildConfigurationManagerImpl)FlexBuildConfigurationManager.getInstance(module)).setBuildConfigurations(current);
         }
 
