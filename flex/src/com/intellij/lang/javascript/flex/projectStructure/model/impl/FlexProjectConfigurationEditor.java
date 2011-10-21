@@ -33,8 +33,8 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesModifiab
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.EventDispatcher;
 import com.intellij.util.Function;
-import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.NotNull;
@@ -82,6 +82,10 @@ public class FlexProjectConfigurationEditor implements Disposable {
     LibraryTableBase.ModifiableModelEx getGlobalLibrariesModifiableModel();
   }
 
+  public interface ModulesModelChangeListener extends EventListener {
+    void modulesModelsChanged(Collection<Module> modules);
+  }
+  
   private boolean myDisposed;
   private final ProjectModifiableModelProvider myProvider;
 
@@ -90,6 +94,8 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
   private final Map<Module, List<Editor>> myModule2Editors = new HashMap<Module, List<Editor>>();
   private final FlexSdksEditor mySdksEditor;
+  private final EventDispatcher<ModulesModelChangeListener> myModulesModelChangeEventDispatcher =
+    EventDispatcher.create(ModulesModelChangeListener.class);
 
   public FlexProjectConfigurationEditor(@Nullable Project project, ProjectModifiableModelProvider provider) {
     myProject = project;
@@ -136,6 +142,10 @@ public class FlexProjectConfigurationEditor implements Disposable {
       }
       addEditorsForModule(module);
     }
+  }
+
+  public void addModulesModelChangeListener(ModulesModelChangeListener listener, Disposable parentDisposable) {
+    myModulesModelChangeEventDispatcher.addListener(listener, parentDisposable);
   }
 
   private void addEditorsForModule(Module module) {
@@ -341,15 +351,16 @@ public class FlexProjectConfigurationEditor implements Disposable {
     }
 
     // ---------------- do commit ----------------------
-    boolean commitModifiableModel = !ContainerUtil.process(myModule2Editors.keySet(), new Processor<Module>() {
+    Collection<Module> modulesWithChangedModifiableModel = ContainerUtil.findAll(myModule2Editors.keySet(), new Condition<Module>() {
       @Override
-      public boolean process(Module module) {
-        return !myProvider.getModuleModifiableModel(module).isChanged();
+      public boolean value(Module module) {
+        return myProvider.getModuleModifiableModel(module).isChanged();
       }
     });
 
-    if (commitModifiableModel) {
+    if (!modulesWithChangedModifiableModel.isEmpty()) {
       myProvider.commitModifiableModels();
+      myModulesModelChangeEventDispatcher.getMulticaster().modulesModelsChanged(modulesWithChangedModifiableModel);
     }
 
     ApplicationManager.getApplication().runWriteAction(new Runnable() {

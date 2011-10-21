@@ -596,6 +596,21 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         }
       }
     }, myDisposable);
+
+    myConfigEditor.addModulesModelChangeListener(new FlexProjectConfigurationEditor.ModulesModelChangeListener() {
+      @Override
+      public void modulesModelsChanged(Collection<Module> modules) {
+        FlexIdeBCConfigurator configurator = FlexIdeModuleStructureExtension.getInstance().getConfigurator();
+        for (Module module : modules) {
+          for (CompositeConfigurable configurable : configurator.getBCConfigurables(module)) {
+            FlexIdeBCConfigurable flexIdeBCConfigurable = FlexIdeBCConfigurable.unwrap(configurable);
+            if (flexIdeBCConfigurable.isParentFor(DependenciesConfigurable.this)) {
+              resetTable(myDependencies.getSdkEntry(), true);
+            }
+          }
+        }
+      }
+    }, myDisposable);
   }
 
   @Nullable
@@ -931,6 +946,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     myFrameworkLinkageCombo.setSelectedItem(myDependencies.getFrameworkLinkage());
 
+    resetTable(sdkEntry, false);
+  }
+
+  private void resetTable(SdkEntry sdkEntry, boolean keepSelection) {
+    int[] selectedRows = keepSelection ? myTable.getSelectedRows() : new int[0];
+
     DefaultMutableTreeNode root = myTable.getRoot();
     root.removeAllChildren();
 
@@ -975,6 +996,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
     }
     myTable.refresh();
+
+    myTable.clearSelection();
+    for (int row : selectedRows) {
+      myTable.getSelectionModel().addSelectionInterval(row, row);
+    }
     updateEditButton();
   }
 
