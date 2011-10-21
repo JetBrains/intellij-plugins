@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
 <!--
 This file provides a convenient mapping of the Flash MX 2004 UnicodeTable.xml character ranges
-for use in Macromedia Flex's configuration file. You can copy ranges from this referenceInDeferredParentInstance list and add
+for use in Macromedia Flex's configuration file. You can copy ranges from this reference list and add
 them to Flex's configuration file.
 
 Developers embed fonts into applications as not every client has the same fonts installed. To reduce

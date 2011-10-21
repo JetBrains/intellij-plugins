@@ -143,10 +143,10 @@ public class IdeaConfigurationMojo extends AbstractMojo {
     ClassRealm flexmojosPluginRealm = pluginManager.getPluginRealm(session,
                                                                    flexmojosMojoExecution.getMojoDescriptor().getPluginDescriptor());
 
-    //flexmojosPluginRealm.addURL(new URL("file://" + session.getLocalRepository().getUrl() Users/develar/Documents/flexmojos-idea-configurator/idea-configurator/target/classes/"));
-    flexmojosPluginRealm.addURL(new URL("file:///Users/develar/Documents/idea/flex/lib/flexmojos-idea-configurator.jar"));
-    flexmojosPluginRealm.importFrom(getClass().getClassLoader(), "com.intellij.flex.maven.FlexConfigGenerator");
-    flexmojosPluginRealm.importFrom(getClass().getClassLoader(), "com.intellij.flex.maven.Utils");
+    final ClassLoader classLoader = getClass().getClassLoader();
+    flexmojosPluginRealm.addURL(classLoader.getResource("/idea-configurator-1.5.1.jar"));
+    flexmojosPluginRealm.importFrom(classLoader, "com.intellij.flex.maven.FlexConfigGenerator");
+    flexmojosPluginRealm.importFrom(classLoader, "com.intellij.flex.maven.Utils");
     Mojo mojo = null;
     try {
       mojo = mavenPluginManager.getConfiguredMojo(Mojo.class, session, flexmojosMojoExecution);

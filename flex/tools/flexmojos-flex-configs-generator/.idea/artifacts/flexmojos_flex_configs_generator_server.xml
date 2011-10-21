@@ -4,6 +4,7 @@
     <root id="root">
       <element id="archive" name="flexmojos-flex-configs-generator-server.jar">
         <element id="module-output" name="generator-server" />
+        <element id="module-output" name="shared" />
       </element>
     </root>
   </artifact>

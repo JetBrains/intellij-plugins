@@ -3,7 +3,7 @@
 
   <groupId>com.intellij.flex.maven</groupId>
   <artifactId>idea-flexmojos-aggregator</artifactId>
-  <version>1.5</version>
+  <version>1.5.1</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -11,6 +11,7 @@
   </properties>
 
   <modules>
+    <module>shared</module>
     <module>idea-configurator</module>
     <module>idea-flexmojos-maven-plugin</module>
   </modules>

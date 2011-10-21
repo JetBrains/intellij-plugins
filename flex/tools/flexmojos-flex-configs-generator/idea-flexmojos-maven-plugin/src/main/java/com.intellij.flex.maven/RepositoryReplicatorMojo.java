@@ -8,11 +8,13 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.component.repository.ComponentDependency;
+import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -32,7 +34,7 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
   private MavenSession session;
 
   /**
-   * @parameter expression="${outputDirectory}" expression="${outputDirectory}" default-value="build/repo"
+   * @parameter expression="${outputDirectory}" expression="${outputDirectory}" default-value="lib"
    * @readonly
    * @required
    */
@@ -47,13 +49,13 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
 
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
-    String localRepositoryBasedir = session.getLocalRepository().getBasedir();
-    File localRepositoryFile = new File(localRepositoryBasedir);
-    int localRepositoryBasedirLength = localRepositoryBasedir.length();
+    final String localRepositoryBasedir = session.getLocalRepository().getBasedir();
+    final File localRepositoryFile = new File(localRepositoryBasedir);
+    final int localRepositoryBasedirLength = localRepositoryBasedir.length();
 
     try {
-      PluginDescriptor pluginDescriptor = pluginManager.getPluginDescriptor(session.getTopLevelProject().getPlugin("org.sonatype.flexmojos:flexmojos-maven-plugin"), session.getCurrentProject().getRemotePluginRepositories(), session.getRepositorySession());
-      final File compilerLibsDirectory = new File(outputDirectory, "../../build-gant/compiler-libs");
+      final PluginDescriptor pluginDescriptor = pluginManager.getPluginDescriptor(session.getTopLevelProject().getPlugin("org.sonatype.flexmojos:flexmojos-maven-plugin"), session.getCurrentProject().getRemotePluginRepositories(), session.getRepositorySession());
+      final File compilerLibsDirectory = new File(outputDirectory, "compiler");
       //noinspection ResultOfMethodCallIgnored
       compilerLibsDirectory.mkdirs();
       for (ComponentDependency dependency : pluginDescriptor.getDependencies()) {
@@ -69,6 +71,18 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
     }
     catch (Exception e) {
       throw new MojoExecutionException("Cannot find flemxojos maven plugin", e);
+    }
+
+    final String[] existingFiles;
+    if (outputDirectory.exists()) {
+      final DirectoryScanner directoryScanner = new DirectoryScanner();
+      directoryScanner.setBasedir(outputDirectory);
+      directoryScanner.setIncludes(new String[]{"**/.swf", "**/.swc"});
+      directoryScanner.scan();
+      existingFiles = directoryScanner.getIncludedFiles();
+    }
+    else {
+      existingFiles = null;
     }
 
     //noinspection ResultOfMethodCallIgnored

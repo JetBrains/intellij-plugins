@@ -19,9 +19,9 @@
     <orderEntry type="library" name="Maven: org.apache.maven:maven-model:3.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-plugin-api:3.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-utils:2.0.6" level="project" />
-    <orderEntry type="library" name="gg" level="project" />
     <orderEntry type="library" name="Maven: org.sonatype.aether:aether-impl:1.11" level="project" />
     <orderEntry type="library" name="Maven: org.sonatype.aether:aether-spi:1.11" level="project" />
+    <orderEntry type="module" module-name="shared" />
   </component>
 </module>
 

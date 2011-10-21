@@ -4,14 +4,31 @@
   <parent>
     <groupId>com.intellij.flex.maven</groupId>
     <artifactId>idea-flexmojos-aggregator</artifactId>
-    <version>1.5</version>
+    <version>1.5.1</version>
   </parent>
 
   <artifactId>idea-flexmojos-maven-plugin</artifactId>
-
   <packaging>maven-plugin</packaging>
 
+  <dependencies>
+    <dependency>
+      <groupId>com.intellij.flex.maven</groupId>
+      <artifactId>shared</artifactId>
+      <version>1.5.1</version>
+    </dependency>
+  </dependencies>
+
   <build>
+    <resources>
+      <resource>
+        <directory>${project.basedir}/../idea-configurator/target</directory>
+        <filtering>false</filtering>
+        <includes>
+          <include>idea-configurator-*</include>
+        </includes>
+      </resource>
+    </resources>
+
     <plugins>
       <plugin>
         <groupId>org.codehaus.plexus</groupId>
