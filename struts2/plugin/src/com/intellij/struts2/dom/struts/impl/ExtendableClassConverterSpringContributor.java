@@ -93,8 +93,8 @@ public class ExtendableClassConverterSpringContributor
 
     @NotNull
     private SpringModel getSpringModel() {
-      final SpringModel springModel = SpringManager.getInstance(module.getProject()).getCombinedModel(module);
-      assert springModel != null : "no SpringModel found on " + module;
+      final SpringModel springModel = SpringManager.getInstance(module.getProject()).getCombinedModelWithDeps(module);
+      assert springModel != null : "no SpringModel found: " + module;
       return springModel;
     }
 
