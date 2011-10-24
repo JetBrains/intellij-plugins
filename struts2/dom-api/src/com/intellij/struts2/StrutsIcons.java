@@ -106,6 +106,8 @@ public final class StrutsIcons {
   public static final Icon PACKAGE = loadIcon(PACKAGE_PATH);
   public static final Icon PARAM = loadIcon(PARAM_PATH);
   public static final Icon RESULT = loadIcon(RESULT_PATH);
+  public static final Icon RESULT_TYPE = loadIcon("/resources/icons/presentation.png");
+  public static final LayeredIcon RESULT_TYPE_DEFAULT = new LayeredIcon(2);
 
   public static final LayeredIcon GLOBAL_RESULT = new LayeredIcon(2);
   public static final LayeredIcon GLOBAL_EXCEPTION_MAPPING = new LayeredIcon(2);
@@ -139,6 +141,7 @@ public final class StrutsIcons {
     createDefaultIcon(DEFAULT_ACTION_REF, ACTION);
     createDefaultIcon(DEFAULT_CLASS_REF, PlatformIcons.CLASS_ICON);
     createDefaultIcon(DEFAULT_INTERCEPTOR_REF, INTERCEPTOR);
+    createDefaultIcon(RESULT_TYPE_DEFAULT, RESULT_TYPE);
   }
 
   private static void createGlobalIcon(final LayeredIcon icon, final Icon baseIcon) {

@@ -17,6 +17,7 @@ package com.intellij.struts2.dom.struts.strutspackage;
 
 import com.intellij.ide.presentation.Presentation;
 import com.intellij.psi.PsiClass;
+import com.intellij.struts2.Struts2PresentationProvider;
 import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.util.xml.*;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Result Type", icon = "/resources/icons/presentation.png")
+@Presentation(typeName = "Result Type", provider = Struts2PresentationProvider.class)
 public interface ResultType extends DomElement {
 
   @NameValue

@@ -23,6 +23,7 @@ import com.intellij.struts2.dom.struts.action.ExceptionMapping;
 import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.strutspackage.*;
 import com.intellij.util.xml.DomUtil;
+import com.intellij.util.xml.GenericAttributeValue;
 
 import javax.swing.*;
 
@@ -72,6 +73,16 @@ public class Struts2PresentationProvider extends PresentationProvider {
       if (interceptorOrStackBase instanceof InterceptorStack) {
         return StrutsIcons.INTERCEPTOR_STACK;
       }
+    }
+
+    if (o instanceof ResultType) {
+      final ResultType resultType = (ResultType) o;
+      final GenericAttributeValue<Boolean> resultTypeDefault = resultType.getDefault();
+      if (resultTypeDefault != null &&
+          resultTypeDefault.getValue() == Boolean.TRUE) {
+        return StrutsIcons.RESULT_TYPE_DEFAULT;
+      }
+      return StrutsIcons.RESULT_TYPE;
     }
 
     return null;
