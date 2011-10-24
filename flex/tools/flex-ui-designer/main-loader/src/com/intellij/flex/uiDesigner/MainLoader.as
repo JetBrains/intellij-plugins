@@ -6,7 +6,6 @@ import flash.display.LoaderInfo;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
-import flash.events.KeyboardEvent;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 import flash.utils.setInterval;
@@ -14,7 +13,7 @@ import flash.utils.setInterval;
 import org.jetbrains.roboflest.roboflest;
 
 public class MainLoader extends Sprite {
-  [Embed(source="/designer-1.0-SNAPSHOT.swf", mimeType="application/octet-stream")]
+  [Embed(source="/main-1.0-SNAPSHOT.swf", mimeType="application/octet-stream")]
   private static var appClass:Class;
 
   [Embed(source="/icon256x256.png")]
@@ -46,8 +45,6 @@ public class MainLoader extends Sprite {
     loaderContext.requestedContentParent = this;
     loader.loadBytes(new appClass(), loaderContext);
     appClass = null;
-
-    addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
   }
 
   private static function loadErrorHandler(event:IOErrorEvent):void {
@@ -59,13 +56,10 @@ public class MainLoader extends Sprite {
     loader.contentLoaderInfo.applicationDomain.getDefinition("com.intellij.flex.uiDesigner.libraries.QueueLoader")["rootDomain"] = ApplicationDomain.currentDomain;
   }
 
-  private function keyDownHandler(event:KeyboardEvent):void {
-    trace(stage.focus, event);
-  }
-
   //noinspection JSMethodCanBeStatic
   config::useRoboflest
   private function debugTickler():void {
+    //noinspection JSUnusedLocalSymbols
     var i:int = 0;
   }
 }

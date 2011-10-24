@@ -11,7 +11,7 @@
         <option name="USE_CUSTOM_CONFIG_FILE_FOR_TESTS" value="false" />
         <option name="CUSTOM_CONFIG_FILE_FOR_TESTS" value="" />
         <option name="APPLICATION_ENTRY_POINT" value="" />
-        <option name="MAIN_CLASS" value="" />
+        <option name="MAIN_CLASS" value="com.intellij.flex.uiDesigner.TestPlugin" />
         <option name="OUTPUT_FILE_NAME" value="test-1.0-SNAPSHOT.swf" />
         <option name="USE_FACET_COMPILE_OUTPUT_PATH" value="true" />
         <option name="FACET_COMPILE_OUTPUT_PATH" value="$MODULE_DIR$/target" />

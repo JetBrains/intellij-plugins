@@ -2,18 +2,21 @@ package com.intellij.flex.uiDesigner.io;
 
 import com.intellij.flex.uiDesigner.Client;
 import com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager;
+import com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager.FirstOpenDocumentTask;
 import com.intellij.flex.uiDesigner.SocketInputHandler;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.SocketException;
 
 public class MessageSocketManager extends SocketManager {
   private FlexUIDesignerApplicationManager.FirstOpenDocumentTask pendingTask;
+  private final File appDir;
 
-  public MessageSocketManager(
-      FlexUIDesignerApplicationManager.FirstOpenDocumentTask pendingTask) {
+  public MessageSocketManager(FirstOpenDocumentTask pendingTask, File appDir) {
     this.pendingTask = pendingTask;
+    this.appDir = appDir;
   }
 
   @Override
@@ -33,7 +36,7 @@ public class MessageSocketManager extends SocketManager {
     pendingTask = null;
 
     try {
-      SocketInputHandler.getInstance().read(socket.getInputStream(), FlexUIDesignerApplicationManager.APP_DIR);
+      SocketInputHandler.getInstance().read(socket.getInputStream(), appDir);
     }
     catch (IOException e) {
       if (!(e instanceof SocketException && socket.isClosed())) {

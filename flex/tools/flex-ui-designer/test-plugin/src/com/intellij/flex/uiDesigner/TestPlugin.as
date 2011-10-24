@@ -5,13 +5,13 @@ import org.flyti.plexus.PlexusContainer;
 import org.flyti.plexus.PlexusManager;
 import org.jetbrains.ApplicationManager;
 
-public class Main extends Sprite {
-  public function Main() {
+public class TestPlugin extends Sprite {
+  public function TestPlugin() {
     init();
   }
 
   private static function init():void {
-    new ComponentSet();
+    new TestComponentSet();
     ApplicationManager.instance.unitTestMode = true;
     var container:PlexusContainer = PlexusManager.instance.container;
     var socketManager:SocketManager = SocketManager(container.lookup(SocketManager));

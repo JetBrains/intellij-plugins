@@ -18,7 +18,7 @@ public class MxmlTest extends MxmlTestBase {
   @Override
   protected void modifyModule(ModifiableRootModel model, VirtualFile rootDir) {
     if (getName().equals("test45")) {
-      addLibrary(model, getFudHome() + "/test-data-libs/target/test-data-libs.swc");
+      addLibrary(model, getFudHome() + "/test-data-helper/target/test-data-helper.swc");
       final VirtualFile assetsDir = getVFile("assets");
       model.addContentEntry(assetsDir).addSourceFolder(assetsDir, false);
 

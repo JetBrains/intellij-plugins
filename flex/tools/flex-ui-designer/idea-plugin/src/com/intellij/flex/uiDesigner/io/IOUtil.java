@@ -25,10 +25,6 @@ public final class IOUtil {
     }
   }
 
-  public static void saveStream(File source, File target) throws IOException {
-    saveStream(source.toURI().toURL(), target);
-  }
-
   public static void saveStream(URL source, File target) throws IOException {
     final URLConnection sourceConnection = source.openConnection();
     final long sourceLastModified = sourceConnection.getLastModified();
@@ -79,13 +75,6 @@ public final class IOUtil {
   public static void writeShort(final int v, final byte[] bytes, int offset) {
     bytes[offset++] = (byte)((v >>> 8) & 0xFF);
     bytes[offset] = (byte)(v & 0xFF);
-  }
-
-  public static void writeInt(final int v, final OutputStream out) throws IOException {
-    out.write((v >>> 24) & 0xff);
-    out.write((v >>> 16) & 0xff);
-    out.write((v >>> 8) & 0xff);
-    out.write(v & 0xff);
   }
 
   public static void close(Closable closable) {

@@ -33,6 +33,8 @@
         <artifactId>flexmojos-maven-plugin</artifactId>
         <configuration>
           <defaultScope>external</defaultScope>
+          <!-- http://juick.com/develar/1593499 -->
+          <sourceFile>com/intellij/flex/uiDesigner/TestPlugin.as</sourceFile>
         </configuration>
       </plugin>
     </plugins>

@@ -20,7 +20,7 @@ import flash.utils.IDataInput;
 import flash.utils.Timer;
 import flash.utils.getQualifiedClassName;
 
-public class TestSocketDataHandler implements SocketDataHandler {
+internal class TestSocketDataHandler implements SocketDataHandler {
   public static const CLASS:int = 1;
   
   private static const c:Vector.<Class> = new <Class>[CommonTest, StatesTest, InjectedASTest, AppTest, StyleTest, UITest, MxTest, MobileTest];

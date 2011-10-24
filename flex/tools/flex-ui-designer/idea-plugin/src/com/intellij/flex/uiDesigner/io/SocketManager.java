@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+@SuppressWarnings("SocketOpenedButNotSafelyClosed")
 abstract class SocketManager implements Runnable, Disposable {
   protected static final Logger LOG = Logger.getInstance(SocketManager.class.getName());
 

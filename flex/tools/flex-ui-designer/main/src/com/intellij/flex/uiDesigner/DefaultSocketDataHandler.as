@@ -16,7 +16,8 @@ import flash.utils.IDataInput;
 
 registerClassAlias("lsh", LocalStyleHolder);
 
-public class DefaultSocketDataHandler implements SocketDataHandler {
+// SocketDataHandler is extension component (i.e. DefaultSocketDataHandler as role, lookup must be container.lookup(DefaultSocketDataHandler))
+internal class DefaultSocketDataHandler implements SocketDataHandler {
   private var projectManager:ProjectManager;
   private var libraryManager:LibraryManager;
   private var moduleManager:ModuleManager;

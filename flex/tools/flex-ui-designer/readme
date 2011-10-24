@@ -1,16 +1,3 @@
-mkdir ~/Library/Caches/IntelliJIdea11/plugins-sandbox/system/flexUIDesigner
-
-ln -s $DEV_IDEA_HOME/flex/tools/flex-ui-designer/app-loader/target/app-loader-1.0-SNAPSHOT.swf ~/Library/Caches/IntelliJIdea11/plugins-sandbox/system/flexUIDesigner/designer.swf
-ln -s $DEV_IDEA_HOME/flex/tools/flex-ui-designer/designer/src/main/resources/descriptor.xml ~/Library/Caches/IntelliJIdea11/plugins-sandbox/system/flexUIDesigner/descriptor.xml
-ln -s $DEV_IDEA_HOME/flex/tools/flex-ui-designer/designer/src/main/resources/check-descriptor.xml ~/Library/Caches/IntelliJIdea11/plugins-sandbox/system/flexUIDesigner/check-descriptor.xml
-
-ln -s $DEV_IDEA_HOME/flex/tools/flex-ui-designer/app-loader/target/app-loader-1.0-SNAPSHOT.swf ~/Library/Caches/IntelliJIdea11/plugins-sandbox/test/system/flexUIDesigner/designer.swf
-ln -s $DEV_IDEA_HOME/flex/tools/flex-ui-designer/designer/src/main/resources/descriptor.xml ~/Library/Caches/IntelliJIdea11/plugins-sandbox/test/system/flexUIDesigner/descriptor.xml
-ln -s $DEV_IDEA_HOME/flex/tools/flex-ui-designer/designer/src/main/resources/check-descriptor.xml ~/Library/Caches/IntelliJIdea11/plugins-sandbox/test/system/flexUIDesigner/check-descriptor.xml
-
-ln -sf $DEV_IDEA_HOME/flex/tools/flex-ui-designer/app-loader/target/app-loader-1.0-SNAPSHOT.swf ~/Library/Caches/IntelliJIdea11/plugins-sandbox/test/testAppRoot/designer.swf
-
-
 mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.5.1:generate -o
 mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.5.1:generate -DgenerateNonShareable=false -DgenerateShareable -Prelease -o
 mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.5.1:generate -DgenerateNonShareable=false -DgenerateShareable -PreleaseForTesters -o
@@ -26,5 +13,3 @@ mvn compile -PreleaseForTesters -Dflex.swf.uncompressed=true -o
 
 diskutil erasevolume HFS+ "ramdisk" `hdiutil attach -nomount ram://2097152`
 ln -s /Volumes/ramdisk/production $DEV_IDEA_HOME/out/classes/production
-
-ln -s $DEV_IDEA_HOME/flex/tools/flex-ui-designer/app-loader/target/app-loader-1.0-SNAPSHOT.swf /Volumes/ramdisk/astella/system/flexUIDesigner/designer.swf

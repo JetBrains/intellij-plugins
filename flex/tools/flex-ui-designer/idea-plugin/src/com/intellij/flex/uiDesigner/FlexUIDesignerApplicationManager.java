@@ -3,6 +3,9 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.ProjectTopics;
 import com.intellij.execution.ExecutionException;
 import com.intellij.facet.FacetManager;
+import com.intellij.flex.uiDesigner.DesignerApplicationUtil.AdlRunConfiguration;
+import com.intellij.flex.uiDesigner.DesignerApplicationUtil.AdlRunTask;
+import com.intellij.flex.uiDesigner.DesignerApplicationUtil.MyOSProcessHandler;
 import com.intellij.flex.uiDesigner.io.ErrorSocketManager;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.io.MessageSocketManager;
@@ -18,7 +21,6 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.help.HelpManager;
@@ -47,28 +49,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.intellij.flex.uiDesigner.DesignerApplicationUtil.*;
+import static com.intellij.flex.uiDesigner.DesignerApplicationUtil.runAdl;
 
 public class FlexUIDesignerApplicationManager implements Disposable {
-  private static final String[] COMPLEMENTS = {"flex4.1", "flex4.5", "air4"};
-
   public static final Topic<FlexUIDesignerApplicationListener> MESSAGE_TOPIC =
     new Topic<FlexUIDesignerApplicationListener>("Flex UI Designer Application open and close events",
                                                  FlexUIDesignerApplicationListener.class);
 
   public static final Logger LOG = Logger.getInstance(FlexUIDesignerApplicationManager.class.getName());
-
-  public static final String DESIGNER_SWF = "designer.swf";
-  public static final String DESCRIPTOR_XML = "descriptor.xml";
-  private static final String CHECK_DESCRIPTOR_XML = "check-descriptor.xml";
-
-  public static final File APP_DIR = new File(PathManager.getSystemPath(), "flexUIDesigner");
-  private static final String CHECK_DESCRIPTOR_PATH = APP_DIR + File.separator + CHECK_DESCRIPTOR_XML;
 
   private MyOSProcessHandler adlProcessHandler;
 
@@ -259,33 +251,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         });
   }
 
-  static void copyAppFiles() throws IOException {
-    if (DebugPathManager.IS_DEV) {
-      final File home = new File(DebugPathManager.getFudHome());
-      IOUtil.saveStream(new File(home, "main-loader/target/main-loader-1.0-SNAPSHOT.swf"), new File(APP_DIR, DESIGNER_SWF));
-      IOUtil.saveStream(new File(home, "main/resources/descriptor.xml"), new File(APP_DIR, DESCRIPTOR_XML));
-      IOUtil.saveStream(new File(home, "main/resources/check-descriptor.xml"), new File(APP_DIR, CHECK_DESCRIPTOR_XML));
-      for (String complement : COMPLEMENTS) {
-        final String name = complementFilename(complement);
-        IOUtil.saveStream(new File(home, "flex-injection/target/" + name), new File(APP_DIR, name));
-      }
-    }
-    else {
-      final ClassLoader classLoader = FlexUIDesignerApplicationManager.class.getClassLoader();
-      IOUtil.saveStream(classLoader.getResource(DESCRIPTOR_XML), new File(APP_DIR, DESCRIPTOR_XML));
-      IOUtil.saveStream(classLoader.getResource(DESIGNER_SWF), new File(APP_DIR, DESIGNER_SWF));
-      IOUtil.saveStream(classLoader.getResource(CHECK_DESCRIPTOR_XML), new File(APP_DIR, CHECK_DESCRIPTOR_XML));
-      for (String complement : COMPLEMENTS) {
-        final String name = complementFilename(complement);
-        IOUtil.saveStream(classLoader.getResource(name), new File(APP_DIR, "." + name));
-      }
-    }
-  }
-
-  private static String complementFilename(String classifier) {
-    return "complement-" + classifier + ".swf";
-  }
-
   private static String getOpenActionTitle(boolean debug) {
     return FlexUIDesignerBundle.message(debug ? "action.FlexUIDesigner.DebugDesignView.text" : "action.FlexUIDesigner.RunDesignView.text");
   }
@@ -433,9 +398,9 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       AdlRunConfiguration adlRunConfiguration;
       try {
         indicator.setText(FlexUIDesignerBundle.message("copy.app.files"));
-        copyAppFiles();
+        DesignerApplicationUtil.copyAppFiles();
 
-        adlRunConfiguration = findSuitableFlexSdk(CHECK_DESCRIPTOR_PATH);
+        adlRunConfiguration = DesignerApplicationUtil.findSuitableFlexSdk();
         if (adlRunConfiguration == null) {
           String message = FlexUIDesignerBundle.message(
               SystemInfo.isLinux ? "no.sdk.to.launch.designer.linux" : "no.sdk.to.launch.designer");
@@ -470,11 +435,10 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         appParentDisposable = new ParentDisposable();
 
         final List<String> arguments = new ArrayList<String>();
-        arguments.add(String.valueOf(new MessageSocketManager(this).listen()));
+        arguments.add(String.valueOf(new MessageSocketManager(this, DesignerApplicationUtil.APP_DIR).listen()));
         arguments.add(String.valueOf(new ErrorSocketManager().listen()));
-
-        if (DebugPathManager.IS_DEV) {
-          addTestPlugin(arguments);
+        if (ApplicationManager.getApplication().isUnitTestMode()) {
+          DesignerApplicationUtil.addTestPlugin(arguments);
         }
 
         adlRunConfiguration.arguments = arguments;
@@ -494,14 +458,14 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           }
           
           try {
-            adlProcessHandler = runAdl(runConfiguration, APP_DIR.getPath() + "/" + DESCRIPTOR_XML,
+            adlProcessHandler = runAdl(runConfiguration, DesignerApplicationUtil.APP_DIR.getPath() + "/" + DesignerApplicationUtil.DESCRIPTOR_XML,
                 new Consumer<Integer>() {
                   @Override
                   public void consume(Integer exitCode) {
                     adlProcessHandler = null;
 
                     // even 0 is not correct exit code, why adl exited while open socket?
-                    LOG.error("ADL exited with error code " + exitCode + " OS: " + SystemInfo.OS_NAME + " runConfiguration: " + runConfiguration.arguments.toString());
+                    LOG.error(DesignerApplicationUtil.describeAdlExit(exitCode, runConfiguration));
                     adlExitCode = exitCode;
                     if (libraryAndModuleInitialized) {
                       cancel();
@@ -522,7 +486,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           @Override
           public void run() {
             try {
-              runDebugger(module, task);
+              DesignerApplicationUtil.runDebugger(module, task);
             }
             catch (ExecutionException e) {
               LOG.error(e);
@@ -551,13 +515,12 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     }
 
     private void runInitializeLibrariesAndModuleThread() {
-      LibraryManager.getInstance().setAppDir(APP_DIR);
+      LibraryManager.getInstance().setAppDir(DesignerApplicationUtil.APP_DIR);
 
       ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
         @Override
         public void run() {
-          indicator.setText(FlexUIDesignerBundle.message("delete.old.libraries"));
-          LibraryManager.getInstance().garbageCollection();
+          LibraryManager.getInstance().garbageCollection(indicator);
           checkCanceled();
 
           try {
@@ -653,17 +616,4 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     public void projectClosing(Project project) {
     }
   }
-
-  static void addTestPlugin(List<String> arguments) {
-    final String fudHome = DebugPathManager.getFudHome();
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
-      arguments.add("-p");
-      arguments.add(fudHome + "/test-app-plugin/target/test-1.0-SNAPSHOT.swf");
-    }
-
-    arguments.add("-cdd");
-    arguments.add(fudHome + "/flex-injection/target");
-  }
-
-
 }

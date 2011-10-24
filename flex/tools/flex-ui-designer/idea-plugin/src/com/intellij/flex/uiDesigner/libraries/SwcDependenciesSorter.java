@@ -37,12 +37,9 @@ public class SwcDependenciesSorter {
   private final File appDir;
   private final Module module;
 
+  private GlobalSearchScope definitionSearchScope;
   private boolean useIndexForFindDefinitions;
   private char[] fqnBuffer;
-
-  private List<LibrarySetItem> items;
-  private List<LibrarySetItem> resourceBundleOnlyitems;
-  private List<LibrarySetEmbedItem> embedItems;
 
   private static final Map<String,Set<CharSequence>> BAD_CLASSES = new THashMap<String, Set<CharSequence>>();
 
@@ -74,18 +71,6 @@ public class SwcDependenciesSorter {
     this.module = module;
   }
 
-  public List<LibrarySetItem> getItems() {
-    return items;
-  }
-
-  public List<LibrarySetEmbedItem> getEmbedItems() {
-    return embedItems;
-  }
-
-  public List<LibrarySetItem> getResourceBundleOnlyitems() {
-    return resourceBundleOnlyitems;
-  }
-
   private static long createInjectionAbc(String flexSdkVersion, InjectionClassifier classifier, boolean force) throws IOException {
     final String rootPath = DebugPathManager.getFudHome() + "/flex-injection/target";
     File abcSource = ComplementSwfBuilder.getSourceFile(rootPath, flexSdkVersion);
@@ -98,7 +83,7 @@ public class SwcDependenciesSorter {
     return abc.lastModified();
   }
 
-  public void sort(final List<Library> libraries, final String postfix, final String flexSdkVersion, final boolean isFromSdk) throws IOException {
+  public SortResult sort(final List<Library> libraries, final String postfix, final String flexSdkVersion, final boolean isFromSdk) throws IOException {
     useIndexForFindDefinitions = !isFromSdk;
 
     List<LibrarySetItem> unsortedItems = new ArrayList<LibrarySetItem>(libraries.size());
@@ -117,8 +102,6 @@ public class SwcDependenciesSorter {
       }
     }
 
-
-    
     LibrarySetItem sparkLib = null;
     if (isFromSdk) {
       analyzeDefinitions();
@@ -161,9 +144,9 @@ public class SwcDependenciesSorter {
           continue;
         }
         else {
-          final int firstDotIndex = path.indexOf('.');
-          if (firstDotIndex != -1) {
-            filteredDefinitions = BAD_CLASSES.get(path.substring(0, firstDotIndex));
+          final int namePostfixIndex = path.indexOf(LibraryManager.NAME_POSTFIX);
+          if (namePostfixIndex != -1) {
+            filteredDefinitions = BAD_CLASSES.get(path.substring(0, namePostfixIndex));
             if (filteredDefinitions != null && !item.hasMissedDefinitions() && item.unresolvedDefinitionPolicy != 0) {
               item.unresolvedDefinitions.addAll(filteredDefinitions);
               filteredDefinitions = item.unresolvedDefinitions;
@@ -196,11 +179,9 @@ public class SwcDependenciesSorter {
       }
     }
 
-    if (isFromSdk) {
-      embedItems = new ArrayList<LibrarySetEmbedItem>(2);
-    }
-
-    items = new ArrayList<LibrarySetItem>(unsortedItems.size());
+    final ArrayList<LibrarySetEmbedItem> embedItems = isFromSdk ? new ArrayList<LibrarySetEmbedItem>(2) : null;
+    final ArrayList<LibrarySetItem> items = new ArrayList<LibrarySetItem>(unsortedItems.size());
+    ArrayList<LibrarySetItem> resourceBundleOnlyitems = null;
     while (!queue.isEmpty()) {
       LibrarySetItem item = queue.removeFirst();
       assert item.hasDefinitions() || item.library.hasResourceBundles();
@@ -235,6 +216,8 @@ public class SwcDependenciesSorter {
         }
       }
     }
+    
+    return new SortResult(items, embedItems, resourceBundleOnlyitems);
   }
 
   private File createSwfOutFile(Library library) {
@@ -340,8 +323,6 @@ public class SwcDependenciesSorter {
     return definitions;
   }
 
-  private GlobalSearchScope definitionSearchScope;
-
   private boolean hasUnresolvedDependencies(Definition definition, CharSequence definitionName) {
     // set before to prevent stack overflow for crossed dependencies
     definition.hasUnresolvedDependencies = Definition.UnresolvedState.NO;
@@ -351,7 +332,7 @@ public class SwcDependenciesSorter {
       CharSequence dependencyId = dependencies[i];
       final Definition dependency = definitionMap.get(dependencyId);
       if (dependency == null && useIndexForFindDefinitions) {
-        int length = dependencyId.length();
+        final int length = dependencyId.length();
         if (definitionSearchScope == null) {
           definitionSearchScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false);
           fqnBuffer = new char[Math.max(length, 512)];
@@ -379,5 +360,17 @@ public class SwcDependenciesSorter {
     }
 
     return false;
+  }
+
+  public static class SortResult {
+    List<LibrarySetItem> items;
+    List<LibrarySetItem> resourceBundleOnlyitems;
+    final List<LibrarySetEmbedItem> embedItems;
+
+    private SortResult(List<LibrarySetItem> items, List<LibrarySetEmbedItem> embedItems, List<LibrarySetItem> resourceBundleOnlyitems) {
+      this.items = items;
+      this.embedItems = embedItems;
+      this.resourceBundleOnlyitems = resourceBundleOnlyitems;
+    }
   }
 }

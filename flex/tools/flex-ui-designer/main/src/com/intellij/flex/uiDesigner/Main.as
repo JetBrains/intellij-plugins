@@ -9,11 +9,9 @@ import cocoa.renderer.TextRendererManager;
 import cocoa.util.FileUtil;
 
 import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
-
 import com.intellij.flex.uiDesigner.css.Stylesheet;
 import com.intellij.flex.uiDesigner.libraries.Library;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
-import com.intellij.flex.uiDesigner.libraries.QueueLoader;
 import com.intellij.flex.uiDesigner.plaf.EditorTabBarRendererManager;
 import com.intellij.flex.uiDesigner.plaf.ProjectViewSkin;
 import com.intellij.flex.uiDesigner.plaf.aqua.IdeaAquaLookAndFeel;
@@ -25,6 +23,7 @@ import flash.display.LoaderInfo;
 import flash.events.Event;
 import flash.events.InvokeEvent;
 import flash.events.UncaughtErrorEvent;
+import flash.filesystem.File;
 
 import org.flyti.plexus.PlexusContainer;
 import org.flyti.plexus.PlexusManager;
@@ -37,18 +36,10 @@ public class Main extends MainWindowedApplication {
   private var port:int;
   private var errorPort:int;
 
+  public function Main() {
+  }
+
   config::fdbWorkaround {
-    // Burn in hell, Adobe
-    // Burn in hell, Adobe
-    // Burn in hell, Adobe
-    // Burn in hell, Adobe
-    // Burn in hell, Adobe
-    // Burn in hell, Adobe
-    // Burn in hell, Adobe
-    // Burn in hell, Adobe
-    // Burn in hell, Adobe
-    // Burn in hell, Adobe
-    // Burn in hell, Adobe
     // Burn in hell, Adobe
     ElementManager;
     ElementTreeBarManager;
@@ -69,16 +60,6 @@ public class Main extends MainWindowedApplication {
     LibraryManager;
     AssetContainerClassPool;
     LocalStyleHolder;
-    // Burn in hell, Adobe
-    // Burn in hell, Adobe
-    // Burn in hell, Adobe
-    // Burn in hell, Adobe
-    // Burn in hell, Adobe
-    // Burn in hell, Adobe
-    // Burn in hell, Adobe
-    // Burn in hell, Adobe
-    // Burn in hell, Adobe
-    // Burn in hell, Adobe
   }
 
   override protected function initializeMaps():void {
@@ -91,7 +72,10 @@ public class Main extends MainWindowedApplication {
   }
 
   private static function uncaughtErrorHandler(event:UncaughtErrorEvent):void {
-    trace(event.error.getStackTrace());
+    var stackTrace:String = event.error.getStackTrace();
+    trace(stackTrace);
+    FileUtil.writeString(File.applicationDirectory.nativePath + "/startup-error.txt", stackTrace);
+
     event.preventDefault();
     event.stopImmediatePropagation();
   }
@@ -106,7 +90,7 @@ public class Main extends MainWindowedApplication {
 
     var deferredConnect:Boolean;
     var arguments:Array = event.arguments;
-    if (arguments.length > 1) {
+    if (arguments.length > 2) {
       for (var i:int = 2; i < arguments.length; i += 2) {
         var key:String = arguments[i];
         var value:String = arguments[i + 1];
@@ -131,14 +115,13 @@ public class Main extends MainWindowedApplication {
 
   private function connect():void {
     var container:PlexusContainer = PlexusManager.instance.container;
-    
     // cache StringRegistry instance
     StringRegistry(container.lookup(StringRegistry));
-    
+
     var socketManager:SocketManager = SocketManager(container.lookup(SocketManager));
     socketManager.addSocketDataHandler(0, SocketDataHandler(container.lookup(DefaultSocketDataHandler)));
     socketManager.connect("localhost", port, errorPort);
-    
+
     UncaughtErrorManager.instance.listen(parent.loaderInfo);
     // hello, it is flash. we must listen our loaderInfo.uncaughtErrorEvents for errors in plugin swf (as example, our test plugin)
     UncaughtErrorManager.instance.listen(loaderInfo);

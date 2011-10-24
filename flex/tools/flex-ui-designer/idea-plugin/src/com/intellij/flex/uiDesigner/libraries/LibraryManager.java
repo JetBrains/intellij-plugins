@@ -4,6 +4,7 @@ import com.intellij.ProjectTopics;
 import com.intellij.flex.uiDesigner.*;
 import com.intellij.flex.uiDesigner.io.InfoList;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
+import com.intellij.flex.uiDesigner.libraries.SwcDependenciesSorter.SortResult;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.notification.Notification;
@@ -13,6 +14,7 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootEvent;
@@ -33,6 +35,7 @@ import java.util.List;
 public class LibraryManager extends EntityListManager<VirtualFile, Library> {
   private static final String ABC_FILTER_VERSION = "14";
   private static final String ABC_FILTER_VERSION_VALUE_NAME = "fud_abcFilterVersion";
+  public static final char NAME_POSTFIX = '@';
 
   private File appDir;
 
@@ -57,14 +60,16 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     return info != null && info.getSdk() == sdk;
   }
 
-  public void garbageCollection() {
+  public void garbageCollection(ProgressIndicator indicator) {
     PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
     if (ABC_FILTER_VERSION.equals(propertiesComponent.getValue(ABC_FILTER_VERSION_VALUE_NAME))) {
       return;
     }
 
+    indicator.setText(FlexUIDesignerBundle.message("delete.old.libraries"));
+
     for (String path : appDir.list()) {
-      if (path.endsWith(SwcDependenciesSorter.SWF_EXTENSION) && !path.equals(FlexUIDesignerApplicationManager.DESIGNER_SWF)) {
+      if (path.endsWith(SwcDependenciesSorter.SWF_EXTENSION) && path.indexOf(NAME_POSTFIX) != -1) {
         //noinspection ResultOfMethodCallIgnored
         new File(appDir, path).delete();
       }
@@ -128,9 +133,8 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     if (isNewProject) {
       assetCounterInfo = new AssetCounterInfo(libraryCollector.sdkLibraries);
       if (librarySet == null) {
-        final SwcDependenciesSorter swcDependenciesSorter = new SwcDependenciesSorter(appDir, module);
         librarySet = createLibrarySet(projectLocationHash + "_fdk", null, libraryCollector.sdkLibraries,
-                                      libraryCollector.getFlexSdkVersion(), swcDependenciesSorter, true);
+                                      libraryCollector.getFlexSdkVersion(), module, true);
         client.registerLibrarySet(librarySet);
       }
 
@@ -141,9 +145,8 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     else {
       // different flex sdk version for module
       if (libraryCollector.sdkLibraries != null) {
-        final SwcDependenciesSorter swcDependenciesSorter = new SwcDependenciesSorter(appDir, module);
         librarySet = createLibrarySet(Integer.toHexString(module.getName().hashCode()) + "_fdk", null, libraryCollector.sdkLibraries,
-                                      libraryCollector.getFlexSdkVersion(), swcDependenciesSorter, true);
+                                      libraryCollector.getFlexSdkVersion(), module, true);
         assetCounterInfo = new AssetCounterInfo(libraryCollector.sdkLibraries);
         client.registerLibrarySet(librarySet);
       }
@@ -159,7 +162,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     }
     else if (isNewProject) {
       librarySet = createLibrarySet(projectLocationHash, librarySet, libraryCollector.externalLibraries,
-                                    libraryCollector.getFlexSdkVersion(), new SwcDependenciesSorter(appDir, module), false);
+                                    libraryCollector.getFlexSdkVersion(), module, false);
       assetCounterInfo.demanded.append(libraryCollector.externalLibraries);
       client.registerLibrarySet(librarySet);
       info.setLibrarySet(librarySet);
@@ -205,13 +208,13 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
   }
 
   @NotNull
-  private static LibrarySet createLibrarySet(String id, @Nullable LibrarySet parent, List<Library> libraries, String flexSdkVersion,
-      SwcDependenciesSorter swcDependenciesSorter, final boolean isFromSdk)
+  private LibrarySet createLibrarySet(String id, @Nullable LibrarySet parent, List<Library> libraries, String flexSdkVersion,
+      Module module, final boolean isFromSdk)
     throws InitException {
     try {
-      swcDependenciesSorter.sort(libraries, id, flexSdkVersion, isFromSdk);
-      return new LibrarySet(id, parent, ApplicationDomainCreationPolicy.ONE, swcDependenciesSorter.getItems(),
-        swcDependenciesSorter.getResourceBundleOnlyitems(), swcDependenciesSorter.getEmbedItems());
+      final SortResult result = new SwcDependenciesSorter(appDir, module).sort(libraries, id, flexSdkVersion, isFromSdk);
+      return new LibrarySet(id, parent, ApplicationDomainCreationPolicy.ONE, result.items, result.resourceBundleOnlyitems,
+                            result.embedItems);
     }
     catch (Throwable e) {
       throw new InitException(e, "error.sort.libraries");
@@ -226,7 +229,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     else {
       final String path = virtualFile.getPath();
       Library library =
-        new Library(virtualFile.getNameWithoutExtension() + "." + Integer.toHexString(path.hashCode()), jarFile);
+        new Library(virtualFile.getNameWithoutExtension() + NAME_POSTFIX + Integer.toHexString(path.hashCode()), jarFile);
       initializer.consume(library);
       return library;
     }

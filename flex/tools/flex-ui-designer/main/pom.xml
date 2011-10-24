@@ -8,7 +8,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>designer</artifactId>
+  <artifactId>main</artifactId>
   <packaging>swf</packaging>
 
   <dependencies>

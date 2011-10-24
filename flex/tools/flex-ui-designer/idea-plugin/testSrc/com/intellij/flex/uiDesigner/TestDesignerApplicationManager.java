@@ -31,9 +31,9 @@ class TestDesignerApplicationManager {
   public final TestSocketInputHandler socketInputHandler;
 
   private TestDesignerApplicationManager() throws IOException {
-    LibraryManager.getInstance().setAppDir(FlexUIDesignerApplicationManager.APP_DIR);
+    LibraryManager.getInstance().setAppDir(DesignerApplicationUtil.APP_DIR);
 
-    DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration = DesignerApplicationUtil.createTestAdlRunConfiguration();
+    final DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration = DesignerApplicationUtil.createTestAdlRunConfiguration();
 
     adlRunConfiguration.arguments = new ArrayList<String>();
 
@@ -41,14 +41,14 @@ class TestDesignerApplicationManager {
     adlRunConfiguration.arguments.add(String.valueOf(serverSocket.getLocalPort()));
     adlRunConfiguration.arguments.add(String.valueOf(0));
 
-    FlexUIDesignerApplicationManager.addTestPlugin(adlRunConfiguration.arguments);
-    FlexUIDesignerApplicationManager.copyAppFiles();
+    DesignerApplicationUtil.addTestPlugin(adlRunConfiguration.arguments);
+    DesignerApplicationUtil.copyAppFiles();
 
-    adlProcessHandler =
-      DesignerApplicationUtil.runAdl(adlRunConfiguration, DebugPathManager.getFudHome() + "/designer/src/main/resources/descriptor.xml",
-                                     FlexUIDesignerApplicationManager.APP_DIR.getPath(), new Consumer<Integer>() {
-        @Override
-        public void consume(Integer exitCode) {
+    adlProcessHandler = DesignerApplicationUtil.runAdl(adlRunConfiguration, DebugPathManager.getFudHome() + "/" +
+                                                                            DesignerApplicationUtil.DESCRIPTOR_XML_DEV_PATH,
+                                                       DesignerApplicationUtil.APP_DIR.getPath(), new Consumer<Integer>() {
+      @Override
+      public void consume(Integer exitCode) {
         if (exitCode != 0) {
           try {
             serverSocket.close();
@@ -56,7 +56,7 @@ class TestDesignerApplicationManager {
           catch (IOException ignored) {
           }
 
-          throw new AssertionError("adl return " + exitCode);
+          throw new AssertionError(DesignerApplicationUtil.describeAdlExit(exitCode, adlRunConfiguration));
         }
       }
     });
@@ -80,7 +80,7 @@ class TestDesignerApplicationManager {
     Client.getInstance().setOut(socket.getOutputStream());
 
     socketInputHandler = (TestSocketInputHandler)ServiceManager.getService(SocketInputHandler.class);
-    socketInputHandler.init(socket.getInputStream(), FlexUIDesignerApplicationManager.APP_DIR);
+    socketInputHandler.init(socket.getInputStream(), DesignerApplicationUtil.APP_DIR);
   }
 
   static void changeServiceImplementation(Class key, Class implementation) {

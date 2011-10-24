@@ -7,7 +7,7 @@ def List<SwfDescriptor> getList() {
 		new SwfDescriptor("ui.xml", "ui", true), 
 		new SwfDescriptor("base.xml", "plaf/base", true), 
 		new SwfDescriptor("aqua.xml", "plaf/aqua", true), 
-		new SwfDescriptor("designer.xml", "main", false), 
+		new SwfDescriptor("main.xml", "main", false), 
 		new SwfDescriptor("main-loader.xml", "main-loader", false), 
 		new SwfDescriptor("test.xml", "test-plugin", false), 
 		new SwfDescriptor("test-data-helper.xml", "test-data-helper", true)
