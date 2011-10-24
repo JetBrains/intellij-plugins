@@ -16,9 +16,12 @@
 package com.intellij.struts2.dom.struts.impl;
 
 import com.intellij.javaee.model.xml.impl.BaseImpl;
+import com.intellij.openapi.util.Ref;
 import com.intellij.struts2.dom.struts.strutspackage.DefaultClassRef;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
+import com.intellij.struts2.dom.struts.strutspackage.StrutsPackageHierarchyWalker;
+import com.intellij.util.Processor;
 import com.intellij.util.xml.DomUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,44 +36,59 @@ public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackag
 
   @NotNull
   public String searchNamespace() {
-    StrutsPackage currentPackage = this;
-    while (currentPackage != null) {
-      if (DomUtil.hasXml(currentPackage.getNamespace())) {
-        //noinspection ConstantConditions
-        return currentPackage.getNamespace().getStringValue();
+    final Ref<String> result = new Ref<String>();
+    final StrutsPackageHierarchyWalker walker = new StrutsPackageHierarchyWalker(this, new Processor<StrutsPackage>() {
+      @Override
+      public boolean process(final StrutsPackage strutsPackage) {
+        if (DomUtil.hasXml(strutsPackage.getNamespace())) {
+          result.set(strutsPackage.getNamespace().getStringValue());
+          return true;
+        }
+        return false;
       }
-      currentPackage = currentPackage.getExtends().getValue();
-    }
+    });
+    walker.walkUp();
 
-    return DEFAULT_NAMESPACE;
+    return result.isNull() ? DEFAULT_NAMESPACE : result.get();
   }
 
   @Nullable
   public DefaultClassRef searchDefaultClassRef() {
-    StrutsPackage currentPackage = this;
-    while (currentPackage != null) {
-      if (DomUtil.hasXml(currentPackage.getDefaultClassRef())) {
-        return currentPackage.getDefaultClassRef();
+    final Ref<DefaultClassRef> result = new Ref<DefaultClassRef>();
+    final StrutsPackageHierarchyWalker walker = new StrutsPackageHierarchyWalker(this, new Processor<StrutsPackage>() {
+      @Override
+      public boolean process(final StrutsPackage strutsPackage) {
+        if (DomUtil.hasXml(strutsPackage.getDefaultClassRef())) {
+          result.set(strutsPackage.getDefaultClassRef());
+          return true;
+        }
+        return false;
       }
-      currentPackage = currentPackage.getExtends().getValue();
-    }
-    return null;
+    });
+    walker.walkUp();
+
+    return result.get();
   }
 
   @Nullable
   public ResultType searchDefaultResultType() {
-    StrutsPackage currentPackage = this;
-    while (currentPackage != null) {
-      final List<ResultType> resultTypes = currentPackage.getResultTypes();
-      for (final ResultType resultType : resultTypes) {
-        if (resultType.getDefault().getValue() == Boolean.TRUE) {
-          return resultType;
+    final Ref<ResultType> result = new Ref<ResultType>();
+    final StrutsPackageHierarchyWalker walker = new StrutsPackageHierarchyWalker(this, new Processor<StrutsPackage>() {
+      @Override
+      public boolean process(final StrutsPackage strutsPackage) {
+        final List<ResultType> resultTypes = strutsPackage.getResultTypes();
+        for (final ResultType resultType : resultTypes) {
+          if (resultType.getDefault().getValue() == Boolean.TRUE) {
+            result.set(resultType);
+            return true;
+          }
         }
+        return false;
       }
-      currentPackage = currentPackage.getExtends().getValue();
-    }
+    });
+    walker.walkUp();
 
-    return null;
+    return result.get();
   }
 
 }
