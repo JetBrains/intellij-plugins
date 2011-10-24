@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -65,6 +65,11 @@ public class StrutsCompletionTest extends BasicStrutsHighlightingTestCase<JavaMo
   public void testCompletionVariantsInterceptorRef() throws Throwable {
     performCompletionVariantTest("struts-completionvariants-interceptor-ref.xml",
                                  "alias", "autowiring", "chain", "testInterceptorRefStack");
+  }
+
+  public void testCompletionVariantsInterceptorRefExtendsPackage() throws Throwable {
+    performCompletionVariantTest("struts-completionvariants-interceptor-ref-extends.xml",
+                                 "alias", "autowiring", "testInterceptorRefStack");
   }
 
   /**

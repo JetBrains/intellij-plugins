@@ -108,6 +108,9 @@
     <default-interceptor-ref name="<error>INVALID_VALUE</error>"/>
   </package>
   
+  <package name="defaultInterceptorRefExtends" extends="defaultInterceptorRef">
+    <default-interceptor-ref name="myLocalInterceptorStack"/>
+  </package>
 
   <!-- ACTION =================================================================================================== -->
 

@@ -15,20 +15,23 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
-import com.intellij.struts2.dom.ConverterUtil;
-import com.intellij.struts2.dom.struts.model.StrutsModel;
+import com.intellij.openapi.util.Ref;
 import com.intellij.struts2.dom.struts.strutspackage.InterceptorOrStackBase;
 import com.intellij.struts2.dom.struts.strutspackage.InterceptorRefResolveConverter;
+import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
+import com.intellij.struts2.dom.struts.strutspackage.StrutsPackageHierarchyWalker;
+import com.intellij.util.Processor;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
+import com.intellij.util.xml.DomUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Yann C&eacute;bron
@@ -37,13 +40,20 @@ public class InterceptorRefResolveConverterImpl extends InterceptorRefResolveCon
 
   @NotNull
   public Collection<? extends InterceptorOrStackBase> getVariants(final ConvertContext context) {
-    final StrutsModel strutsModel = ConverterUtil.getStrutsModel(context);
+    final List<InterceptorOrStackBase> results = new SmartList<InterceptorOrStackBase>();
+    final Processor<StrutsPackage> processor = new Processor<StrutsPackage>() {
+      @Override
+      public boolean process(final StrutsPackage strutsPackage) {
+        final List<InterceptorOrStackBase> allInterceptors = getAllInterceptors(strutsPackage);
+        results.addAll(allInterceptors);
+        return false;
+      }
+    };
+    final StrutsPackageHierarchyWalker walker = new StrutsPackageHierarchyWalker(getCurrentStrutsPackage(context),
+                                                                                 processor);
+    walker.walkUp();
 
-    if (strutsModel == null) {
-      return Collections.emptySet();
-    }
-
-    return strutsModel.getAllInterceptorsAndStacks();
+    return results;
   }
 
   public InterceptorOrStackBase fromString(@Nullable @NonNls final String name, final ConvertContext context) {
@@ -51,17 +61,43 @@ public class InterceptorRefResolveConverterImpl extends InterceptorRefResolveCon
       return null;
     }
 
-    final StrutsModel strutsModel = ConverterUtil.getStrutsModel(context);
-
-    if (strutsModel == null) {
-      return null;
-    }
-
-    return ContainerUtil.find(strutsModel.getAllInterceptorsAndStacks(), new Condition<InterceptorOrStackBase>() {
+    final Condition<InterceptorOrStackBase> nameCondition = new Condition<InterceptorOrStackBase>() {
+      @Override
       public boolean value(final InterceptorOrStackBase interceptorOrStackBase) {
-        return Comparing.strEqual(interceptorOrStackBase.getName().getStringValue(), name);
+        return name.equals(interceptorOrStackBase.getName().getStringValue());
       }
-    });
+    };
+
+    final Ref<InterceptorOrStackBase> resolveResult = new Ref<InterceptorOrStackBase>();
+    final Processor<StrutsPackage> processor = new Processor<StrutsPackage>() {
+      @Override
+      public boolean process(final StrutsPackage strutsPackage) {
+        final InterceptorOrStackBase result = ContainerUtil.find(getAllInterceptors(strutsPackage), nameCondition);
+        if (result != null) {
+          resolveResult.set(result);
+          return true;
+        }
+
+        return false;
+      }
+    };
+    final StrutsPackageHierarchyWalker walker = new StrutsPackageHierarchyWalker(getCurrentStrutsPackage(context),
+                                                                                 processor);
+    walker.walkUp();
+
+    return resolveResult.get();
+  }
+
+  private static List<InterceptorOrStackBase> getAllInterceptors(final StrutsPackage strutsPackage) {
+    return ContainerUtil.concat(strutsPackage.getInterceptors(), strutsPackage.getInterceptorStacks());
+  }
+
+  private static StrutsPackage getCurrentStrutsPackage(final ConvertContext context) {
+    final StrutsPackage strutsPackage = DomUtil.getParentOfType(context.getInvocationElement(),
+                                                                StrutsPackage.class,
+                                                                true);
+    assert strutsPackage != null : context.getInvocationElement();
+    return strutsPackage;
   }
 
 }

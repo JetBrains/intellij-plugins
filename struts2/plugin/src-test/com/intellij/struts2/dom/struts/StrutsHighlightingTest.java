@@ -51,6 +51,10 @@ public class StrutsHighlightingTest extends BasicStrutsHighlightingTestCase<Java
     performHighlightingTest("struts-exceptionmapping.xml");
   }
 
+  public void testInterceptorRef() throws Throwable {
+    performHighlightingTest("struts-interceptor-ref.xml");
+  }
+
   public void testStrutsDefault() throws Throwable {
     performHighlightingTest("struts-default.xml");
   }

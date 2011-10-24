@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  ~ Copyright 2011 The authors
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<!-- <interceptor-ref> using multiple packages -->
+<struts>
+
+  <!-- NOT included -->
+  <package name="notExtendedPackage">
+    <interceptors>
+      <interceptor name="chain" class="com.opensymphony.xwork2.interceptor.ChainingInterceptor"/>
+    </interceptors>
+  </package>
+
+  <!-- included -->
+  <package name="extendedPackage">
+    <interceptors>
+      <interceptor name="alias" class="com.opensymphony.xwork2.interceptor.AliasInterceptor"/>
+      <interceptor name="autowiring" class="com.opensymphony.xwork2.spring.interceptor.ActionAutowiringInterceptor"/>
+    </interceptors>
+  </package>
+
+  <package name="testInterceptorRef" extends="extendedPackage">
+
+    <interceptors>
+      <interceptor-stack name="testInterceptorRefStack">
+        <interceptor-ref name="<caret>"/>
+      </interceptor-stack>
+    </interceptors>
+
+  </package>
+
+</struts>
