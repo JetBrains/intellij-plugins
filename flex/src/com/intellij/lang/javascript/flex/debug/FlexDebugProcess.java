@@ -36,6 +36,7 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.ui.MessageType;
+import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
@@ -1594,6 +1595,13 @@ public class FlexDebugProcess extends XDebugProcess {
       else {
         startupDone = (s.indexOf("Player connected; session starting.") != -1);
         if (startupDone) {
+          if (connectToRunningFlashPlayerMode) {
+            final Balloon balloon = ToolWindowManager.getInstance(getSession().getProject()).getToolWindowBalloon(ToolWindowId.DEBUG);
+            if (balloon != null) {
+              balloon.hide();
+            }
+          }
+
           getSession().rebuildViews();
           return CommandOutputProcessingMode.DONE;
         }
