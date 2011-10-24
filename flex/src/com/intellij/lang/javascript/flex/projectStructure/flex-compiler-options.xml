@@ -124,7 +124,7 @@
     <option id="compiler.warn-level-not-supported" displayName="warn-level-not-supported" type="Boolean" advanced="true" default="false"/>
     <option id="compiler.warn-missing-namespace-decl" displayName="warn-missing-namespace-decl" type="Boolean" advanced="true" default="true"/>
     <option id="compiler.warn-negative-uint-literal" displayName="warn-negative-uint-literal" type="Boolean" advanced="true" default="true"/>
-    <option id="compiler.warn-no-constructor" displayName="warn-no-constructor" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-no-constructor" displayName="warn-no-constructor" type="Boolean" advanced="true" default="SPECIAL"/>
     <option id="compiler.warn-no-explicit-super-call-in-constructor" displayName="warn-no-explicit-super-call-in-constructor" type="Boolean" advanced="true" default="false"/>
     <option id="compiler.warn-no-type-decl" displayName="warn-no-type-decl" type="Boolean" advanced="true" default="true"/>
     <option id="compiler.warn-number-from-string-changes" displayName="warn-number-from-string-changes" type="Boolean" advanced="true" default="false"/>
