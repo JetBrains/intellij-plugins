@@ -79,6 +79,12 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
     return myWorkspaceOrDirWithProjectsComponent.getComponent().getTextField();
   }
 
+  public void updateStep() {
+    if (getWizardContext().isProjectFileDirectorySet() && myWorkspaceOrDirWithProjectsComponent.getComponent().getText().isEmpty()) {
+      myWorkspaceOrDirWithProjectsComponent.getComponent().setText(getWizardContext().getProjectFileDirectory());
+    }
+  }
+
   public void updateDataModel() {
     final String dirPath = myWorkspaceOrDirWithProjectsComponent.getComponent().getText().trim();
     final FlashBuilderImporter importer = (FlashBuilderImporter)getBuilder();
