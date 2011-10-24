@@ -14,7 +14,7 @@ public class CreateFlexModuleFromScratchMode extends CreateFromScratchMode {
   private ModuleBuilder myEmptyModuleBuilder;
 
   protected StepSequence createSteps(final WizardContext context, final ModulesProvider modulesProvider) {
-    final StepSequence sequence = new StepSequence(null);
+    final StepSequence sequence = new StepSequence();
     myCreateFlexModuleStep = new CreateFlexModuleStep(context, sequence, this);
     sequence.addCommonStep(myCreateFlexModuleStep);
     return sequence;
