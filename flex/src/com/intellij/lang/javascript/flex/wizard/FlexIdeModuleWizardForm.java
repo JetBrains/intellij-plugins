@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.wizard;
 
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
@@ -17,6 +18,7 @@ import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.NonFocusableCheckBox;
 import com.intellij.util.ui.UIUtil;
@@ -259,7 +261,23 @@ public class FlexIdeModuleWizardForm {
     if (sdk == null) {
       throw new ConfigurationException("Flex SDK is not set");
     }
-    // todo others
+
+    if (myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Mobile &&
+        StringUtil.compareVersionNumbers(sdk.getFlexVersion(), "4.5") < 0) {
+      throw new ConfigurationException(FlexBundle.message("sdk.does.not.support.air.mobile", sdk.getFlexVersion()));
+    }
+
+    if (mySampleAppCheckBox.isSelected()) {
+      final String fileName = mySampleAppTextField.getText().trim();
+      if (fileName.isEmpty()) {
+        throw new ConfigurationException(FlexBundle.message("sample.app.name.empty"));
+      }
+
+      final String extension = FileUtil.getExtension(fileName).toLowerCase();
+      if (!"mxml".equals(extension) && !"as".equals(extension)) {
+        throw new ConfigurationException(FlexBundle.message("sample.app.incorrect.extension"));
+      }
+    }
 
     return true;
   }

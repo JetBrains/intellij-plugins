@@ -145,18 +145,23 @@ public class FlexUtils {
                                      final String sampleFileName,
                                      final TargetPlatform platform,
                                      final boolean isFlex4) throws IOException {
-    final String sampleClassName = sampleFileName.substring(0, sampleFileName.lastIndexOf('.'));
-    final String extension = sampleFileName.substring(sampleFileName.lastIndexOf('.'));
+    final String sampleClassName = FileUtil.getNameWithoutExtension(sampleFileName);
+    final String extension = FileUtil.getExtension(sampleFileName);
     final String sampleTechnology = platform == TargetPlatform.Mobile ? "AIRMobile" : platform == TargetPlatform.Desktop ? "AIR" : "Flex";
 
     String suffix = "";
-    if (".mxml".equals(extension) && isFlex4) {
-      suffix = platform == TargetPlatform.Mobile ? "_ViewNavigator" : "_Spark";
+    if ("mxml".equalsIgnoreCase(extension)) {
+      if (platform == TargetPlatform.Mobile) {
+        suffix = "_ViewNavigator";
+      }
+      else if (isFlex4) {
+       suffix = "_Spark";
+      }
     }
 
-    final String helloWorldTemplate = "HelloWorld_" + sampleTechnology + suffix + extension + ".ft";
+    final String helloWorldTemplate = "HelloWorld_" + sampleTechnology + suffix + "." + extension + ".ft";
     final InputStream stream = FlexUtils.class.getResourceAsStream(helloWorldTemplate);
-    assert stream != null;
+    assert stream != null : helloWorldTemplate;
     final String sampleFileContent = FileUtil.loadTextAndClose(new InputStreamReader(stream)).replace("${class.name}", sampleClassName);
     final VirtualFile sampleApplicationFile = addFileWithContent(sampleFileName, sampleFileContent, sourceRoot);
     if (sampleApplicationFile != null) {
