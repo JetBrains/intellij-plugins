@@ -65,6 +65,15 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
   }
 
   @HasJavaSources
+  public void testStrutsSpringCompletionVariantsNoSpringFacet() throws Throwable {
+    @NonNls final String strutsXml = "struts-completionvariants-spring.xml";
+    createStrutsFileSet(strutsXml);
+
+    final List<String> variants = myFixture.getCompletionVariants(strutsXml);
+    Assert.assertTrue(CollectionUtils.isSubCollection(Arrays.asList("MyClass"), variants));
+  }
+
+  @HasJavaSources
   public void testStrutsSpringCompletionVariants() throws Throwable {
     @NonNls final String strutsXml = "struts-completionvariants-spring.xml";
     createStrutsFileSet(strutsXml);
