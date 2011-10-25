@@ -9,15 +9,13 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.IdeBorderFactory;
-import com.intellij.ui.TableUtil;
+import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.ui.*;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.CellEditorComponentWithBrowseButton;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -30,10 +28,8 @@ import java.util.List;
 import static com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParametersBase.FilePathAndPathInPackage;
 
 public class FilesToPackageForm {
-  private JPanel myMainPanel; // needed for form reuse
+  private JPanel myMainPanel;
   private JBTable myFilesToPackageTable;
-  private JButton myAddButton;
-  private JButton myRemoveButton;
 
   private final Project myProject;
   private List<FilePathAndPathInPackage> myFilesToPackage = new LinkedList<FilePathAndPathInPackage>();
@@ -85,7 +81,6 @@ public class FilesToPackageForm {
     myProject = project;
     initTable();
     initTableButtons();
-    updateRemoveButtonState();
   }
 
   public JPanel getMainPanel() {
@@ -93,14 +88,10 @@ public class FilesToPackageForm {
   }
 
   private void initTable() {
+    myFilesToPackageTable = new JBTable();
     myFilesToPackageTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE); // otherwise model is not in sync with view
-    myFilesToPackageTable.setRowHeight(20);
-
-    myFilesToPackageTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        updateRemoveButtonState();
-      }
-    });
+    myFilesToPackageTable.setPreferredScrollableViewportSize(new Dimension(400, 150));
+    myFilesToPackageTable.setRowHeight(new JLabel("Fake").getPreferredSize().height + 4);
 
     myFilesToPackageTable.setModel(new DefaultTableModel() {
 
@@ -157,21 +148,24 @@ public class FilesToPackageForm {
   }
 
   private void initTableButtons() {
-    myAddButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
+    ToolbarDecorator d = ToolbarDecorator.createDecorator(myFilesToPackageTable);
+    d.setAddAction(new AnActionButtonRunnable() {
+      public void run(AnActionButton button) {
         VirtualFile[] files = FileChooser.chooseFiles(myProject, new FileChooserDescriptor(true, true, false, true, false, true));
         for (final VirtualFile file : files) {
           myFilesToPackage.add(new FilePathAndPathInPackage(file.getPath(), file.getName()));
+
           fireDataChanged();
+
+          IdeFocusManager.getInstance(myProject).requestFocus(myFilesToPackageTable, true);
+          final int rowCount = myFilesToPackageTable.getRowCount();
+          myFilesToPackageTable.setRowSelectionInterval(rowCount - 1, rowCount - 1);
         }
       }
     });
-
-    myRemoveButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        if (myFilesToPackageTable.isEditing()) {
-          myFilesToPackageTable.getCellEditor().stopCellEditing();
-        }
+    d.setRemoveAction(new AnActionButtonRunnable() {
+      public void run(AnActionButton anActionButton) {
+        //TableUtil.stopEditing(myFilesToPackageTable);
         final int[] selectedRows = myFilesToPackageTable.getSelectedRows();
         Arrays.sort(selectedRows);
         for (int i = selectedRows.length - 1; i >= 0; i--) {
@@ -180,10 +174,8 @@ public class FilesToPackageForm {
         fireDataChanged();
       }
     });
-  }
 
-  private void updateRemoveButtonState() {
-    myRemoveButton.setEnabled(myFilesToPackageTable.getSelectedRowCount() > 0);
+    myMainPanel.add(d.createPanel(), BorderLayout.CENTER);
   }
 
   public void setPanelTitle(final String title) {
