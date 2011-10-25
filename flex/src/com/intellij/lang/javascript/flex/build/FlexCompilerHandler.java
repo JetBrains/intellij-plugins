@@ -1146,8 +1146,13 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
       final CompilerMessageCategory messageCategory =
           "Warning".equals(type) ? CompilerMessageCategory.WARNING : CompilerMessageCategory.ERROR;
       final VirtualFile relativeFile = VfsUtil.findRelativeFile(file, null);
-      final String fullMessage = additionalInfo == null ? message : additionalInfo + " " + message;
-      messagesBuffer.addMessage(messageCategory, fullMessage, relativeFile != null ? relativeFile.getUrl() : null,
+
+      final StringBuilder fullMessage = new StringBuilder();
+      if (relativeFile == null) fullMessage.append(file).append(": ");
+      if (additionalInfo != null) fullMessage.append(additionalInfo).append(' ');
+      fullMessage.append(message);
+
+      messagesBuffer.addMessage(messageCategory, fullMessage.toString(), relativeFile != null ? relativeFile.getUrl() : null,
                                 line != null ? Integer.parseInt(line) : 0, column != null ? Integer.parseInt(column) : 0);
     }
     else if (isErrorMessage(errLine)) {
