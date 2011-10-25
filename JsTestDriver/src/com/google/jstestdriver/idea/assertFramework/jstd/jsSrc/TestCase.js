@@ -29,8 +29,8 @@
 /**
  * Defines a test case.
  * @param {string} testCaseName The name of the test case.
- * @param {Object} opt_proto An optional prototype.
- * @param {Object} opt_type Either DEFAULT_TYPE or ASYNC_TYPE.
+ * @param {Object?} opt_proto An optional prototype.
+ * @param {Object?} opt_type Either DEFAULT_TYPE or ASYNC_TYPE.
  * @return {Function} Base function that represents the test case class.
  */
 function TestCase(testCaseName, opt_proto, opt_type) {
@@ -52,33 +52,29 @@ function TestCase(testCaseName, opt_proto, opt_type) {
   if (typeof testCaseClass.prototype.tearDown == 'undefined') {
     testCaseClass.prototype.tearDown = function() {};
   }
-  jstestdriver.testCaseManager_.add(
-      new jstestdriver.TestCaseInfo(testCaseName, testCaseClass, opt_type));
   return testCaseClass;
-};
-
-
+}
 
 
 /**
  * Defines an asynchronous test case.
  * @param {string} testCaseName The name of the test case.
- * @param {Object} opt_proto An optional prototype.
+ * @param {Object?} opt_proto An optional prototype.
  * @return {Function} Base function that represents the asyncronous test case
  *     class.
  */
 function AsyncTestCase(testCaseName, opt_proto) {
   return TestCase(testCaseName, opt_proto, 'async');
-};
+}
 
 
 /**
  * A TestCase that will only be executed when a certain condition is true.
- * @param {string} The name of the TestCase.
- * @param {function():boolean} A function that indicates if this case should be
+ * @param {string} testCaseName The name of the TestCase.
+ * @param {function():boolean} condition A function that indicates if this case should be
  *     run.
- * @param {Object} opt_proto An optional prototype for the test case class.
- * @param {Object} opt_type Either DEFAULT_TYPE or ASYNC_TYPE.
+ * @param {Object?} opt_proto An optional prototype for the test case class.
+ * @param {Object?} opt_type Either DEFAULT_TYPE or ASYNC_TYPE.
  * @return {Function} Base function that represents the TestCase class.
  */
 function ConditionalTestCase(testCaseName, condition, opt_proto, opt_type) {
@@ -91,20 +87,20 @@ function ConditionalTestCase(testCaseName, condition, opt_proto, opt_type) {
           function() {},
           opt_type));
   return function(){};
-};
+}
 
 /**
  * An AsyncTestCase that will only be executed when a certain condition is true.
- * @param {String} The name of the AsyncTestCase.
- * @param {function():boolean} A function that indicates if this case should be
+ * @param {String} testCaseName The name of the AsyncTestCase.
+ * @param {function():boolean} condition A function that indicates if this case should be
  *     run.
- * @param {Object} opt_proto An optional prototype for the test case class.
+ * @param {Object?} opt_proto An optional prototype for the test case class.
  * @return {Function} Base function that represents the TestCase class.
  */
 function ConditionalAsyncTestCase(testCaseName, condition, opt_proto) {
   return ConditionalTestCase(
       testCaseName, condition, opt_proto, 'async');
-};
+}
 
 var jstestdriver = {
     checkNotBeginsWith_: function(testCaseName, illegalString) {
@@ -120,4 +116,3 @@ var jstestdriver = {
         }
     }
 };
-

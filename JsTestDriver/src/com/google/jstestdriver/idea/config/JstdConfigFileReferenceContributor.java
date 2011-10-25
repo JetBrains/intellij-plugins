@@ -103,7 +103,7 @@ public class JstdConfigFileReferenceContributor extends PsiReferenceContributor 
                                                      @NotNull YAMLSequence sequence) {
     PsiElementFragment<YAMLSequence> sequenceFragment = JstdConfigFileUtils.buildSequenceTextFragment(sequence);
     if (sequenceFragment != null) {
-      String text = sequenceFragment.getText();
+      String text = sequenceFragment.getText().trim();
       String relativePath = FileUtil.toSystemIndependentName(text);
       PsiElementFragment<YAMLKeyValue> keyValueFragment = sequenceFragment.getSameTextRangeForParent(keyValue);
       return new MyPsiReference(keyValueFragment, basePathInfo, relativePath);

@@ -2,13 +2,10 @@ package com.google.jstestdriver.idea.execution.tree;
 
 import com.google.jstestdriver.idea.config.JstdConfigStructure;
 import com.intellij.execution.filters.HyperlinkInfo;
+import com.intellij.execution.filters.OpenFileHyperlinkInfo;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.testframework.ui.TestsOutputConsolePrinter;
 import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -27,11 +24,14 @@ class StacktracePrinter extends TestsOutputConsolePrinter {
 
   private static final String DEFAULT_PATH_PREFIX = "/test/";
 
+  @NotNull
+  private Project myProject;
   private final JstdConfigStructure myConfigStructure;
   private final HyperlinkInfoHelper myHyperlinkInfoHelper;
 
   public StacktracePrinter(SMTRunnerConsoleView consoleView, JstdConfigStructure configStructure, String browserName) {
     super(consoleView, consoleView.getProperties(), null);
+    myProject = consoleView.getProperties().getProject();
     myConfigStructure = configStructure;
     myHyperlinkInfoHelper = findHyperlinkPrinter(browserName);
   }
@@ -139,29 +139,14 @@ class StacktracePrinter extends TestsOutputConsolePrinter {
                                                      final int lineNumber,
                                                      @Nullable final Integer columnNumber) {
     final File file = findFileByPath(url);
-    if (file == null) {
-      return null;
-    }
-    return new HyperlinkInfo() {
-      @Override
-      public void navigate(final Project project) {
-        ApplicationManager.getApplication().runReadAction(new Runnable() {
-          @Override
-          public void run() {
-            final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByIoFile(file);
-            if (virtualFile != null) {
-              Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
-              if (document != null) {
-                int startLineNumber = document.getLineStartOffset(lineNumber);
-                int resultOffset = startLineNumber + (columnNumber != null ? columnNumber : 0);
-                OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile, resultOffset);
-                openFileDescriptor.navigate(true);
-              }
-            }
-          }
-        });
+    if (file != null) {
+      VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByIoFile(file);
+      if (virtualFile != null) {
+        int column = columnNumber != null ? columnNumber : 0;
+        return new OpenFileHyperlinkInfo(myProject, virtualFile, lineNumber, column);
       }
-    };
+    }
+    return null;
   }
 
   private File findFileByPath(String urlStr) {
