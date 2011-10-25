@@ -148,6 +148,10 @@ public final class IOUtil {
     return isNegative ? result : -result;
   }
 
+  public static long parsePositiveLong(final CharSequence value) {
+    return parseLong(value, 0, false, 10);
+  }
+
   public static long parseLong(final CharSequence value, final int start, final boolean isNegative, final int radix) {
     final int end = value.length();
     long result = 0; // Accumulates negatively (avoid MIN_VALUE overflow).

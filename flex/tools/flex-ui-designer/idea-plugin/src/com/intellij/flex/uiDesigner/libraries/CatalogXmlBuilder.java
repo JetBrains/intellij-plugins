@@ -1,5 +1,7 @@
 package com.intellij.flex.uiDesigner.libraries;
 
+import com.intellij.flex.uiDesigner.io.IOUtil;
+import com.intellij.flex.uiDesigner.libraries.SwcDependenciesSorter.FlexLibsNames;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.impl.source.parsing.xml.XmlBuilder;
 import gnu.trove.THashSet;
@@ -92,17 +94,17 @@ class CatalogXmlBuilder implements XmlBuilder {
           definition.setTimeAsCharSequence(mod);
         }
         else {
-          definition.time = Long.parseLong(mod.toString());
+          definition.time = IOUtil.parsePositiveLong(mod);
           // todo see http://confluence.jetbrains.net/display/IDEA/Topological+sort+External+Dependencies+and+filter+unresolved+definitions last note
           //if (definition.time > oldDefinition.getTime()) {
-          final String path = library.library.getPath();
-          if (path.startsWith("framework") && !path.contains("rb")) {
+          final String libName = library.library.getName();
+          if (libName.equals(FlexLibsNames.FRAMEWORK) || libName.equals(FlexLibsNames.SPARK)) {
             oldDefinition.markAsUnresolved(value);
           }
           else {
             definition = null;
             // filter library, remove definition abc bytecode from lib swf
-            library.unresolvedDefinitions.add(value);
+            library.filteredDefinitions.add(value);
             return;
           }
         }

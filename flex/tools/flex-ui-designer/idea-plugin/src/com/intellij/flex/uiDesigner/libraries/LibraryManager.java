@@ -33,9 +33,9 @@ import java.util.List;
 
 @SuppressWarnings("MethodMayBeStatic")
 public class LibraryManager extends EntityListManager<VirtualFile, Library> {
-  private static final String ABC_FILTER_VERSION = "14";
+  private static final String ABC_FILTER_VERSION = "15";
   private static final String ABC_FILTER_VERSION_VALUE_NAME = "fud_abcFilterVersion";
-  public static final char NAME_POSTFIX = '@';
+  private static final char NAME_POSTFIX = '@';
 
   private File appDir;
 
@@ -221,18 +221,21 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     }
   }
 
-  public Library createOriginalLibrary(@NotNull final VirtualFile virtualFile, @NotNull final VirtualFile jarFile,
-                                               @NotNull final Consumer<Library> initializer) {
-    if (list.contains(jarFile)) {
-      return list.getInfo(jarFile);
+  // created library will be register later, in Client.registerLibrarySet, so, we expect that createOriginalLibrary never called with duplicated virtualFile, i.e.
+  // sdkLibraries doesn't contain duplicated virtualFiles and externalLibraries too (http://youtrack.jetbrains.net/issue/AS-200)
+  Library createOriginalLibrary(@NotNull final VirtualFile virtualFile, @NotNull final VirtualFile jarFile,
+                                @NotNull final Consumer<Library> initializer) {
+    final Library info = list.getNullableInfo(jarFile);
+    if (info != null) {
+      return info;
     }
-    else {
-      final String path = virtualFile.getPath();
-      Library library =
-        new Library(virtualFile.getNameWithoutExtension() + NAME_POSTFIX + Integer.toHexString(path.hashCode()), jarFile);
-      initializer.consume(library);
-      return library;
-    }
+
+    // todo for flexmojos we must use artifactId (because file name contains version and classifier)
+    final String nameWithoutExtension = virtualFile.getNameWithoutExtension();
+    Library library = new Library(nameWithoutExtension,
+                                  nameWithoutExtension + NAME_POSTFIX + Integer.toHexString(virtualFile.getPath().hashCode()), jarFile);
+    initializer.consume(library);
+    return library;
   }
 
   @SuppressWarnings("MethodMayBeStatic")

@@ -43,6 +43,9 @@ import java.util.Collection;
 import java.util.List;
 
 public class ModuleInfoUtil {
+  private static final String MX_APPLICATION = "mx.core.Application";
+  private static final String SPARK_APPLICATION = "spark.components.Application";
+
   public static ModuleInfo createInfo(Module module, AssetCounterInfo assetCounterInfo) {
     final FlexBuildConfiguration flexBuildConfiguration;
     if (ModuleType.get(module) instanceof FlexModuleType) {
@@ -94,11 +97,11 @@ public class ModuleInfoUtil {
   }
 
   public static boolean isApplicationDocument(XmlFile psiFile) {
-    AccessToken token = ReadAction.start();
+    final AccessToken token = ReadAction.start();
     try {
-      JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(psiFile);
-      return jsClass != null && (JSInheritanceUtil.isParentClass(jsClass, "spark.components.Application") ||
-                                 JSInheritanceUtil.isParentClass(jsClass, "mx.core.Application"));
+      final JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(psiFile);
+      return jsClass != null && (JSInheritanceUtil.isParentClass(jsClass, SPARK_APPLICATION) ||
+                                 JSInheritanceUtil.isParentClass(jsClass, MX_APPLICATION));
     }
     finally {
       token.finish();
@@ -113,14 +116,14 @@ public class ModuleInfoUtil {
 
     final List<JSClass> holders = new ArrayList<JSClass>(2);
     if (flexSdkVersion.charAt(0) > '3') {
-      JSClass clazz = ((JSClass)JSResolveUtil.findClassByQName("spark.components.Application", moduleWithDependenciesAndLibrariesScope));
+      JSClass clazz = ((JSClass)JSResolveUtil.findClassByQName(SPARK_APPLICATION, moduleWithDependenciesAndLibrariesScope));
       // it is not legal case, but user can use patched/modified Flex SDK
       if (clazz != null) {
         holders.add(clazz);
       }
     }
 
-    JSClass mxApplicationClass = ((JSClass)JSResolveUtil.findClassByQName("mx.core.Application", moduleWithDependenciesAndLibrariesScope));
+    JSClass mxApplicationClass = ((JSClass)JSResolveUtil.findClassByQName(MX_APPLICATION, moduleWithDependenciesAndLibrariesScope));
     // if null, mx.swc is not added to module dependencies
     if (mxApplicationClass != null) {
       holders.add(mxApplicationClass);

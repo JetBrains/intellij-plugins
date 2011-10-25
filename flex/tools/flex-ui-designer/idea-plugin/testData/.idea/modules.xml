@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/src/common/common.iml" filepath="$PROJECT_DIR$/src/common/common.iml" group="test data" />
+      <module fileurl="file://$PROJECT_DIR$/main-project-imls/impl.iml" filepath="$PROJECT_DIR$/main-project-imls/impl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/mx/mx.iml" filepath="$PROJECT_DIR$/src/mx/mx.iml" group="test data" />
+    </modules>
+  </component>
+</project>
+

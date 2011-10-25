@@ -90,7 +90,7 @@ public class QueueLoader {
     // *** Adobe http://juick.com/develar/896344  http://juick.com/develar/896278
     if (item is LibrarySetEmbedItem) {
       //trace("load: @" + library.path);
-      loader.load(new URLRequest("app:/.complement-" + item.path + ".swf"), loaderContext);
+      loader.load(new URLRequest("app:/complement-" + item.path + ".swf"), loaderContext);
     }
     else {
       //trace("load: " + urlRequest.url);

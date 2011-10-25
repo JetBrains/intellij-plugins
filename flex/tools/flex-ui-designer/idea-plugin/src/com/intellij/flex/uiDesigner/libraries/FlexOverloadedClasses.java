@@ -12,12 +12,14 @@ public final class FlexOverloadedClasses {
   public static final String STYLE_PROTO_CHAIN = "mx.styles:StyleProtoChain";
   public static final String SKINNABLE_COMPONENT = "spark.components.supportClasses:SkinnableComponent";
 
+  public static final String SPARK_WINDOW = "spark.components:Window";
+
   public enum InjectionClassifier {
     framework, spark
   }
 
   static {
-    AIR_SPARK_CLASSES.add("spark.components:Window");
+    AIR_SPARK_CLASSES.add(SPARK_WINDOW);
     AIR_SPARK_CLASSES.add("spark.components:WindowedApplication");
 
     MX_CLASSES.add("mx.managers:LayoutManager");

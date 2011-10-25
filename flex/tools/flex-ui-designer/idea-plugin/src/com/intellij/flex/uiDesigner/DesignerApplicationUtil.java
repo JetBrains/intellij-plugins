@@ -100,7 +100,7 @@ final class DesignerApplicationUtil {
       }
       for (String complement : COMPLEMENTS) {
         final String name = complementFilename(complement);
-        IOUtil.saveStream(new URL("file://" + home + "/flex-injection/target/" + name), new File(APP_DIR, "." + name));
+        IOUtil.saveStream(new URL("file://" + home + "/flex-injection/target/" + name), new File(APP_DIR, name));
       }
     }
     else {
@@ -111,7 +111,7 @@ final class DesignerApplicationUtil {
       }
       for (String complement : COMPLEMENTS) {
         final String name = complementFilename(complement);
-        IOUtil.saveStream(classLoader.getResource(name), new File(APP_DIR, "." + name));
+        IOUtil.saveStream(classLoader.getResource(name), new File(APP_DIR, name));
       }
     }
   }

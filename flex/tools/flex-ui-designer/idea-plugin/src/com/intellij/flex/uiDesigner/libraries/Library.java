@@ -20,13 +20,15 @@ public class Library extends Info<VirtualFile> {
   public AssetCounter assetCounter;
 
   private final String path;
+  private final String name;
 
   // en_US => {"layout", "components"}
   public final Map<String,THashSet<String>> resourceBundles = new THashMap<String,THashSet<String>>();
 
-  public Library(String relativePath, VirtualFile file) {
+  public Library(@Nullable String name, String relativePath, VirtualFile file) {
     super(file);
 
+    this.name = name;
     path = relativePath;
   }
 
@@ -58,9 +60,12 @@ public class Library extends Info<VirtualFile> {
     return child;
   }
 
-  @NotNull
   public String getPath() {
     return path;
+  }
+
+  public String getName() {
+    return name;
   }
 
   public VirtualFile getFile() {

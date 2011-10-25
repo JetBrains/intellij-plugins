@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.libraries;
 
+import com.intellij.flex.uiDesigner.io.IOUtil;
 import org.jetbrains.annotations.NotNull;
 
 class Definition {
@@ -15,9 +16,10 @@ class Definition {
     this.timeAsCharSequence = timeAsCharSequence;
   }
 
+  @SuppressWarnings("UnusedDeclaration")
   public long getTime() {
     if (time == -1) {
-      time = Long.parseLong(timeAsCharSequence.toString());
+      time = IOUtil.parsePositiveLong(timeAsCharSequence);
     }
 
     return time;
@@ -33,13 +35,13 @@ class Definition {
   }
 
   public void markAsUnresolved(CharSequence name) {
-    library.unresolvedDefinitions.add(name);
+    library.filteredDefinitions.add(name);
     library.definitionCounter--;
   }
 
-  static class UnresolvedState {
-    public static int UNKNOWN = 0;
-    public static int YES = 1;
-    public static int NO = -1;
+  static interface UnresolvedState {
+    int UNKNOWN = 0;
+    int YES = 1;
+    int NO = -1;
   }
 }
