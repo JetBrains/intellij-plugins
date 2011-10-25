@@ -23,7 +23,6 @@
 
     <multiHostInjector implementation="com.intellij.struts2.freemarker.FreeMarkerCssInlineStyleInjector"/>
     <multiHostInjector implementation="com.intellij.struts2.freemarker.FreeMarkerJavaScriptInjector"/>
-    <multiHostInjector implementation="com.intellij.struts2.freemarker.FreeMarkerOgnlInjector"/>
 
   </extensions>
 
