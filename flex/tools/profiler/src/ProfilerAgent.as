@@ -22,9 +22,12 @@ import flash.utils.Dictionary;
 import flash.utils.getQualifiedClassName;
 
 public class ProfilerAgent extends Sprite {
+  private static const VERIFY:String = "[verify]";
+  private static const BUILTINS:String = "[builtins]";
+  private static const ABC_DECODE:String = "[abc-decode]";
+
   private var connected:Boolean;
   private var socket:Socket = new Socket();
-  private var running:Boolean = false;
 
   private var stringDict:Object = {};
   private var stringDictSize:uint = 0;
@@ -52,6 +55,8 @@ public class ProfilerAgent extends Sprite {
     } catch(e:Error) {
       trace("unexpected connect exception:"+e);
     }
+
+    startSampling();
   }
 
   private function clearSlidingStuff():void {
@@ -73,21 +78,22 @@ public class ProfilerAgent extends Sprite {
     }
 
     startedTime = new Date().getTime();
-    running = true;
-    startSampling();
   }
 
   private function onEnterFrame(event:Event):void {
     pauseSampling();
-    running = true;
 
     for each(var s:Sample in getSamples()) {
       if (s == null) continue; // observed for player 10.1 COMPILE::PLAYER10_1 ?
-      
+
+      if (isProfilerAgentSample(s)) continue;
+
       if (s is NewObjectSample) {
         var nos:NewObjectSample = NewObjectSample(s);
 
         if (nos.object == undefined) continue; // object already gc'd
+        if(nos.stack && isNonHeapMemory(getQualifiedClassName(nos.type), nos.stack)) continue;
+
         if (!(nos.object is QName)) object2Id[nos.object] = nos.id; // TODO:
         id2SampleInfo[nos.id] = [nos.type, nos.stack, getSize(nos.object)];
         var object:* = clsStat[nos.type];
@@ -154,6 +160,43 @@ public class ProfilerAgent extends Sprite {
 
       if (stackFrameCount == matchedCount) break;
     }
+  }
+
+  private function isProfilerAgentSample(sample:Sample):Boolean{
+    if(sample.stack && sample.stack.length > 0){
+        /*
+        Most common stacks:
+        * [global/flash.sampler::startSampling(),ProfilerAgent/socketDataHandler()]
+        * [global/flash.sampler::startSampling(),ProfilerAgent/onEnterFrame(),[enterFrameEvent]()]
+        * [Date$cinit(),[newclass](),global$init(),ProfilerAgent/allComplete(),[all-complete]()]
+        * [flash.events::Event/formatToString(),flash.events::ProgressEvent/toString(),ProfilerAgent/socketDataHandler()]
+        */
+        var flag:Boolean = sample.stack[sample.stack.length - 1].name.indexOf("ProfilerAgent") == 0;    
+        flag ||= (sample.stack.length > 1) && (sample.stack[sample.stack.length - 2].name.indexOf("ProfilerAgent") == 0);
+        if(flag) return true;
+    }
+    if ((sample is NewObjectSample)){
+      var nos:NewObjectSample = NewObjectSample(sample);
+      if (nos.object && nos.object is Event && (Event(nos.object).currentTarget == this.socket || Event(nos.object).currentTarget == this)){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private function isNonHeapMemory(className:String, stack:Array):Boolean{
+    if(!stack || stack.length == 0) return false;
+    var result:Boolean = false;
+    if (className == "String"){
+      // ABC_DECODE occurred more frequent
+      result = stack[stack.length - 1].name == ABC_DECODE || stack[0].name == ABC_DECODE;
+      result ||= stack[stack.length - 1].name == VERIFY || stack[0].name == VERIFY;
+    } else if (className == "Object" || className == "Class" || className == "Function"){
+      result = stack[stack.length - 1].name == BUILTINS || stack[0].name == BUILTINS;
+    } else if (className == "Namespace"){
+      result = stack[stack.length - 1].name == ABC_DECODE || stack[0].name == ABC_DECODE;
+    }
+    return result;
   }
 
   private function securityErrorHandler(event:SecurityErrorEvent):void {
