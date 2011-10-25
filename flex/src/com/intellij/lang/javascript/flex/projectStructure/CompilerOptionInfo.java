@@ -248,7 +248,7 @@ public class CompilerOptionInfo {
       else if ("static-link-runtime-shared-libraries".equals(ID)) {
         return "false";
       }
-      else if ("compiler.warn-no-constructor/".equals(ID)) {
+      else if ("compiler.warn-no-constructor".equals(ID)) {
         return "false";
       }
 
