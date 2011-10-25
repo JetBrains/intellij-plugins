@@ -4,20 +4,20 @@ import com.intellij.ide.passwordSafe.PasswordSafe;
 import com.intellij.ide.passwordSafe.PasswordSafeException;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.actions.ExternalTask;
 import com.intellij.lang.javascript.flex.actions.FilesToPackageForm;
 import com.intellij.lang.javascript.flex.actions.SigningOptionsForm;
-import com.intellij.lang.javascript.flex.actions.airdescriptor.CreateAirDescriptorAction;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.CompilerModuleExtension;
-import com.intellij.openapi.ui.*;
+import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.LabeledComponent;
+import com.intellij.openapi.ui.TextComponentAccessor;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -26,7 +26,6 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.ui.PanelWithAnchor;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -59,8 +58,9 @@ public class PackageMobileAirApplicationDialog extends DialogWrapper implements 
   private SigningOptionsForm mySigningOptionsForm;
 
   private final Project myProject;
+  private MobileAirPackageParameters myPackageParameters;
 
-  private static final String TITLE = "Package Mobile AIR Application";
+  public static final String TITLE = "Package Mobile AIR Application";
 
   private static final String MOBILE_AIR_PACKAGE_KEYSTORE_PASSWORD_KEY = "MOBILE_AIR_PACKAGE_KEYSTORE_PASSWORD_KEY";
   private static final String MOBILE_AIR_PACKAGE_KEY_PASSWORD_KEY = "MOBILE_AIR_PACKAGE_KEY_PASSWORD_KEY";
@@ -231,50 +231,48 @@ public class PackageMobileAirApplicationDialog extends DialogWrapper implements 
 
   protected void doOKAction() {
     myFilesToPackageForm.stopEditing();
+    myPackageParameters = createPackageParameters();
+    saveAsDefaultParameters(myPackageParameters);
 
-    if (validateInput() && packageMobileApplication()) {
+    final String adtVersion = MobileAirUtil.getAdtVersion(myProject, myPackageParameters.getFlexSdk());
+    if (MobileAirUtil.checkAdtVersionForPackaging(myProject, adtVersion, myPackageParameters)) {
       super.doOKAction();
     }
   }
 
-  private boolean validateInput() {
-    final String errorMessage = getErrorMessage();
-    if (errorMessage != null) {
-      Messages.showErrorDialog(myProject, errorMessage, TITLE);
-      return false;
-    }
-    return true;
+  public MobileAirPackageParameters getPackageParameters() {
+    return myPackageParameters;
   }
 
-  @Nullable
-  private String getErrorMessage() {
+  protected ValidationInfo doValidate() {
     final String airDescriptorPath = ((String)myAirDescriptorComponent.getComponent().getComboBox().getEditor().getItem()).trim();
     if (airDescriptorPath.length() == 0) {
-      return "AIR application descriptor path is empty";
+      return new ValidationInfo("AIR application descriptor path is empty", myAirDescriptorComponent.getComponent());
     }
 
     final VirtualFile descriptor = LocalFileSystem.getInstance().findFileByPath(airDescriptorPath);
     if (descriptor == null || descriptor.isDirectory()) {
-      return FlexBundle.message("file.not.found", airDescriptorPath);
+      return new ValidationInfo(FlexBundle.message("file.not.found", airDescriptorPath), myAirDescriptorComponent.getComponent());
     }
 
     final String installerFileName = myInstallerFileNameComponent.getComponent().getText().trim();
     if (installerFileName.length() == 0) {
-      return "AIR installer file name is empty";
+      return new ValidationInfo("Package file name is empty", myInstallerFileNameComponent.getComponent());
     }
 
     final String installerLocation = FileUtil.toSystemDependentName(myInstallerLocationComponent.getComponent().getText().trim());
     if (installerLocation.length() == 0) {
-      return "AIR installer location is empty";
+      return new ValidationInfo("Package file location is empty", myInstallerLocationComponent.getComponent());
     }
 
     final VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(installerLocation);
     if (dir == null || !dir.isDirectory()) {
-      return FlexBundle.message("folder.does.not.exist", installerLocation);
+      return new ValidationInfo(FlexBundle.message("folder.does.not.exist", installerLocation),
+                                myInstallerLocationComponent.getComponent());
     }
 
     if (myFilesToPackageForm.getFilesToPackage().isEmpty()) {
-      return "No files to package";
+      return new ValidationInfo("No files to package", myFilesToPackageForm.getMainPanel());
     }
 
     for (FilePathAndPathInPackage path : myFilesToPackageForm.getFilesToPackage()) {
@@ -285,52 +283,28 @@ public class PackageMobileAirApplicationDialog extends DialogWrapper implements 
       }
 
       if (fullPath.length() == 0) {
-        return "Empty file path to package";
+        return new ValidationInfo("Empty file path to package", myFilesToPackageForm.getMainPanel());
       }
 
       final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(fullPath);
       if (file == null) {
-        return FlexBundle.message("file.not.found", fullPath);
+        return new ValidationInfo(FlexBundle.message("file.not.found", fullPath), myFilesToPackageForm.getMainPanel());
       }
 
       if (relPathInPackage.length() == 0) {
-        return "Empty relative file path in installation package";
+        return new ValidationInfo("Empty relative file path in installation package", myFilesToPackageForm.getMainPanel());
       }
 
       if (file.isDirectory() && !fullPath.endsWith("/" + relPathInPackage)) {
-        return MessageFormat.format("Relative folder path doesn''t match its full path: {0}", relPathInPackage);
+        return new ValidationInfo(MessageFormat.format("Relative folder path doesn''t match its full path: {0}", relPathInPackage),
+                                  myFilesToPackageForm.getMainPanel());
       }
     }
 
-    if (myTargetPlatformCombo.getSelectedItem() == MobilePlatform.iOS) {
-      final String provisioningProfilePath = mySigningOptionsForm.getProvisioningProfilePath();
-      if (provisioningProfilePath.length() == 0) {
-        return "Provisioning profile file path is empty";
-      }
-
-      final VirtualFile provisioningProfile = LocalFileSystem.getInstance().findFileByPath(provisioningProfilePath);
-      if (provisioningProfile == null || provisioningProfile.isDirectory()) {
-        return FlexBundle.message("file.not.found", provisioningProfilePath);
-      }
-    }
-
-    final String keystorePath = mySigningOptionsForm.getKeystorePath();
-    if (keystorePath.length() == 0) {
-      return "Keystore file path is empty";
-    }
-
-    final VirtualFile keystore = LocalFileSystem.getInstance().findFileByPath(keystorePath);
-    if (keystore == null || keystore.isDirectory()) {
-      return FlexBundle.message("file.not.found", keystorePath);
-    }
-
-    if (mySigningOptionsForm.getKeystorePassword().isEmpty()) {
-      return "Keystore password is empty";
-    }
-    return null;
+    return mySigningOptionsForm.validate();
   }
 
-  private MobileAirPackageParameters getPackageParameters() {
+  private MobileAirPackageParameters createPackageParameters() {
     final MobilePlatform mobilePlatform = (MobilePlatform)myTargetPlatformCombo.getSelectedItem();
     final AndroidPackageType androidPackageType = (AndroidPackageType)myAndroidPackageTypeCombo.getSelectedItem();
     final IOSPackageType iOSPackageType = (IOSPackageType)myIOSPackageTypeCombo.getSelectedItem();
@@ -423,25 +397,6 @@ public class PackageMobileAirApplicationDialog extends DialogWrapper implements 
 
     mySigningOptionsForm = new SigningOptionsForm(myProject, moduleComputable, sdkComputable, resizeHandler);
     mySigningOptionsForm.setUseTempCertificateCheckBoxVisible(false); // todo make true for Android
-  }
-
-  private boolean packageMobileApplication() {
-    final MobileAirPackageParameters parameters = getPackageParameters();
-    saveAsDefaultParameters(parameters);
-
-    FileDocumentManager.getInstance().saveAllDocuments();
-
-    final String adtVersion = MobileAirUtil.getAdtVersion(myProject, parameters.getFlexSdk());
-    final boolean ok = MobileAirUtil.checkAdtVersionForPackaging(myProject, adtVersion, parameters) &&
-                       ExternalTask.runWithProgress(MobileAirUtil.createMobileAirPackageTask(myProject, parameters),
-                                                    FlexBundle.message("packaging.application", parameters.MOBILE_PLATFORM), TITLE);
-
-    if (ok) {
-      final String message = FlexBundle.message("application.created", parameters.MOBILE_PLATFORM, parameters.INSTALLER_FILE_NAME);
-      CreateAirDescriptorAction.NOTIFICATION_GROUP.createNotification(message, MessageType.INFO).notify(myProject);
-    }
-
-    return ok;
   }
 
   private void saveAsDefaultParameters(final MobileAirPackageParameters parameters) {

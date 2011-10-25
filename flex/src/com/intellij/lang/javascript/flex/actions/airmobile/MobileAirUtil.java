@@ -75,9 +75,9 @@ public class MobileAirUtil {
         command.add("-version");
       }
 
-      protected boolean checkMessages(final List<String> messages) {
-        if (messages.size() == 1) {
-          String output = messages.get(0);
+      protected boolean checkMessages() {
+        if (myMessages.size() == 1) {
+          String output = myMessages.get(0);
           // adt version "1.5.0.7220"
           // 2.6.0.19120
 
@@ -117,9 +117,9 @@ public class MobileAirUtil {
           command.add("android");
         }
 
-        protected boolean checkMessages(final List<String> messages) {
-          if (messages.size() == 1) {
-            final String output = messages.get(0);
+        protected boolean checkMessages() {
+          if (myMessages.size() == 1) {
+            final String output = myMessages.get(0);
             // No Devices Detected
             // Failed to find package com.adobe.air
             // 2.6.0.1912
@@ -355,8 +355,8 @@ public class MobileAirUtil {
         command.add(applicationId);
       }
 
-      protected boolean checkMessages(final List<String> messages) {
-        if (messages.isEmpty() || (messages.size() == 1 && messages.get(0).equals("Failed to find package " + applicationId))) {
+      protected boolean checkMessages() {
+        if (myMessages.isEmpty() || (myMessages.size() == 1 && myMessages.get(0).equals("Failed to find package " + applicationId))) {
           return true;
         }
         return false;

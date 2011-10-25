@@ -88,6 +88,10 @@ public class FilesToPackageForm {
     updateRemoveButtonState();
   }
 
+  public JPanel getMainPanel() {
+    return myMainPanel;
+  }
+
   private void initTable() {
     myFilesToPackageTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE); // otherwise model is not in sync with view
     myFilesToPackageTable.setRowHeight(20);
