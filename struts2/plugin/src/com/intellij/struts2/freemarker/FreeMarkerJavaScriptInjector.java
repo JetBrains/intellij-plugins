@@ -29,7 +29,7 @@ import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
@@ -65,7 +65,7 @@ public class FreeMarkerJavaScriptInjector implements MultiHostInjector {
 
   @NotNull
   public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
-    return Arrays.asList(FtlStringLiteral.class);
+    return Collections.singletonList(FtlStringLiteral.class);
   }
 
 }
