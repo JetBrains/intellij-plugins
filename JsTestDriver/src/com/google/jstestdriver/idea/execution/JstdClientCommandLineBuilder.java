@@ -8,6 +8,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.JsTestDriverServer;
 import com.google.jstestdriver.idea.TestRunner;
+import com.google.jstestdriver.idea.config.JstdConfigFileType;
 import com.google.jstestdriver.idea.config.JstdConfigFileUtils;
 import com.google.jstestdriver.idea.execution.generator.JstdConfigGenerator;
 import com.google.jstestdriver.idea.execution.settings.JstdConfigType;
@@ -17,10 +18,16 @@ import com.google.jstestdriver.idea.execution.settings.TestType;
 import com.google.jstestdriver.idea.ui.ToolPanel;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.impl.ModuleImpl;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.search.FileTypeIndex;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.GlobalSearchScopes;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,12 +36,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.google.common.collect.Lists.transform;
+import static com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope.CONTENT;
+import static com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope.MODULES;
 import static java.io.File.pathSeparator;
 
 class JstdClientCommandLineBuilder {
@@ -110,7 +116,7 @@ class JstdClientCommandLineBuilder {
     if (testType == TestType.ALL_CONFIGS_IN_DIRECTORY) {
       VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByIoFile(new File(runSettings.getDirectory()));
       if (virtualFile != null) {
-        res = collectJstdConfigFilesInDirectory(virtualFile);
+        res = collectJstdConfigFilesInDirectory(virtualFile, project);
       }
     } else {
       File configFile = extractConfigFile(project, runSettings);
@@ -137,25 +143,16 @@ class JstdClientCommandLineBuilder {
   }
 
   @NotNull
-  public List<VirtualFile> collectJstdConfigFilesInDirectory(@Nullable VirtualFile directory) {
+  public List<VirtualFile> collectJstdConfigFilesInDirectory(@Nullable VirtualFile directory, @NotNull Project project) {
     if (directory != null) {
-      List<VirtualFile> configs = Lists.newArrayList();
-      collectJstdConfigs(directory, configs);
-      return configs;
-    } else {
-      return Collections.emptyList();
-    }
-  }
-
-  private void collectJstdConfigs(VirtualFile directory, List<VirtualFile> jstdConfigs) {
-    VirtualFile[] children = directory.getChildren();
-    for (VirtualFile child : children) {
-      if (child.isDirectory()) {
-        collectJstdConfigs(child, jstdConfigs);
-      } else if (JstdConfigFileUtils.isJstdConfigFile(child)) {
-        jstdConfigs.add(child);
+      final Module module = ProjectRootManager.getInstance(project).getFileIndex().getModuleForFile(directory);
+      if (module != null) {
+        final GlobalSearchScope scope = ((ModuleImpl)module).getCachedScope(CONTENT | MODULES).intersectWith(
+          GlobalSearchScopes.directoryScope(project, directory, true));
+        return new ArrayList<VirtualFile>(FileTypeIndex.getFiles(JstdConfigFileType.INSTANCE, scope));
       }
     }
+    return Collections.emptyList();
   }
 
   private String buildClasspath() {

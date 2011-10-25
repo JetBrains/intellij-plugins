@@ -245,7 +245,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
       }
       PsiDirectory psiDirectory = (PsiDirectory) psiElement;
       VirtualFile directory = psiDirectory.getVirtualFile();
-      List<VirtualFile> jstdConfigs = JstdClientCommandLineBuilder.INSTANCE.collectJstdConfigFilesInDirectory(directory);
+      List<VirtualFile> jstdConfigs = JstdClientCommandLineBuilder.INSTANCE.collectJstdConfigFilesInDirectory(directory, psiDirectory.getProject());
       if (jstdConfigs.isEmpty()) {
         return null;
       }
