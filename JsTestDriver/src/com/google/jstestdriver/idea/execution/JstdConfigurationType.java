@@ -17,62 +17,31 @@ package com.google.jstestdriver.idea.execution;
 
 import com.google.jstestdriver.idea.PluginResources;
 import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
 
 /**
  * Top-level of the plugin - this class is registered in the plugin XML.
  * Provides a new type of Run Configuration which launches the JSTestDriver server.
  * @author alexeagle@google.com (Alex Eagle)
  */
-public class JstdConfigurationType implements ConfigurationType {
+public class JstdConfigurationType extends ConfigurationTypeBase {
 
-  private final ConfigurationFactory myFactory = new ConfigurationFactory(this) {
+  public JstdConfigurationType() {
+    super("JSTestDriver:ConfigurationType", PluginResources.getPluginName(),
+          PluginResources.getPluginName(), PluginResources.getJstdSmallIcon());
+    addFactory(new ConfigurationFactory(this) {
       @Override
       public RunConfiguration createTemplateConfiguration(Project project) {
         return new JstdRunConfiguration(project, this, PluginResources.getPluginName());
       }
-
-    @Override
-    public String getName() {
-      return "JSTestDriver";
-    }
-  };
-
-  private final ConfigurationFactory[] myFactories = { myFactory };
+    });
+  }
 
   public static JstdConfigurationType getInstance() {
     return ConfigurationTypeUtil.findConfigurationType(JstdConfigurationType.class);
   }
 
-  @Override
-  public String getDisplayName() {
-    return PluginResources.getPluginName();
-  }
-
-  @Override
-  public String getConfigurationTypeDescription() {
-    return PluginResources.getPluginName();
-  }
-
-  @Override
-  public Icon getIcon() {
-    return PluginResources.getJstdSmallIcon();
-  }
-
-  @Override
-  @NotNull
-  public String getId() {
-    return "JSTestDriver:ConfigurationType";
-  }
-
-  @Override
-  public ConfigurationFactory[] getConfigurationFactories() {
-    return myFactories;
-  }
 }

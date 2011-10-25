@@ -22,7 +22,6 @@ import com.google.jstestdriver.idea.util.PsiElementFragment;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.DocumentFragment;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -81,11 +80,11 @@ public class JstdConfigFileUtils {
       return null;
     }
     TextRange contentTextRange = content.getTextRange();
-    int lastLineNumber = document.getLineNumber(contentTextRange.getEndOffset());
-    if (lastLineNumber > 0 && document.getLineStartOffset(lastLineNumber) == contentTextRange.getEndOffset()) {
-      lastLineNumber--;
+    int endLineNumber = getEndLineNumber(document, content);
+    if (endLineNumber > 0 && document.getLineStartOffset(endLineNumber) == contentTextRange.getEndOffset()) {
+      endLineNumber--;
     }
-    int documentEndOffset = document.getLineEndOffset(lastLineNumber);
+    int documentEndOffset = document.getLineEndOffset(endLineNumber);
 
     DocumentFragment fragment = new DocumentFragment(document, contentTextRange.getStartOffset(), documentEndOffset);
     return UnquotedText.unquoteDocumentFragment(fragment);
@@ -149,21 +148,7 @@ public class JstdConfigFileUtils {
 
   public static boolean isJstdConfigFile(@NotNull PsiFile psiFile) {
     VirtualFile virtualFile = psiFile.getVirtualFile();
-    if (virtualFile == null) {
-      return false;
-    }
-    return isJstdConfigFile(virtualFile);
-  }
-
-  public static boolean isJstdConfigFileByPsiElement(@NotNull PsiElement element) {
-    PsiFile file = element.getContainingFile();
-    if (file != null) {
-      VirtualFile virtualFile = file.getVirtualFile();
-      if (virtualFile != null) {
-        return isJstdConfigFile(virtualFile);
-      }
-    }
-    return false;
+    return virtualFile != null && isJstdConfigFile(virtualFile);
   }
 
   @NotNull
