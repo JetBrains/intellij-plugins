@@ -1,48 +1,48 @@
 package com.intellij.flex.uiDesigner.testAssistant.run;
 
-import com.google.common.base.Charsets;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
-import com.intellij.execution.process.DefaultJavaProcessHandler;
-import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.JDOMExternalizable;
-import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 
-public class MyAstellaConfigurationType implements ConfigurationType {
+public class AnyApplication implements ConfigurationType {
+  private static final Icon ICON = IconLoader.getIcon("/runConfigurations/application.png");
   private final ConfigurationFactory factory;
 
-  MyAstellaConfigurationType() {
+  AnyApplication() {
     factory = new ConfigurationFactory(this) {
       public RunConfiguration createTemplateConfiguration(Project project) {
-        return new MyRunConfiguration(project, this, "");
+        return new AnyApplicationConfiguration(project, this, "");
       }
     };
   }
 
   @Override
   public String getDisplayName() {
-    return "MyAstellaConfigurationType";
+    return "AnyApplication";
   }
 
   @Override
   public String getConfigurationTypeDescription() {
-    return "MyAstellaConfigurationType";
+    return "AnyApplication";
   }
 
-  private static final Icon ICON = IconLoader.getIcon("/runConfigurations/application.png");
   @Override
   public Icon getIcon() {
     return ICON;
@@ -51,16 +51,18 @@ public class MyAstellaConfigurationType implements ConfigurationType {
   @NotNull
   @Override
   public String getId() {
-    return "com.intellij.flex.uiDesigner.testAssistant.run.MyAstellaConfigurationType";
+    return "com.intellij.flex.uiDesigner.testAssistant.run.AnyApplication";
   }
 
   @Override
   public ConfigurationFactory[] getConfigurationFactories() {
-    return new ConfigurationFactory[] {factory};
+    return new ConfigurationFactory[]{factory};
   }
 
-  private static class MyRunConfiguration extends RunConfigurationBase implements RunConfiguration {
-    protected MyRunConfiguration(final Project project, final ConfigurationFactory factory, final String name) {
+  private static class AnyApplicationConfiguration extends RunConfigurationBase implements ModuleRunProfile {
+    private static final Module[] EMPTY_MODULES = new Module[0];
+
+    protected AnyApplicationConfiguration(final Project project, final ConfigurationFactory factory, final String name) {
       super(project, factory, name);
     }
 
@@ -81,21 +83,31 @@ public class MyAstellaConfigurationType implements ConfigurationType {
 
     @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
-      final CommandLineState state = new CommandLineState(env) {
-        @NotNull
+      final JavaCommandLineState state = new JavaCommandLineState(env) {
         @Override
-        protected ProcessHandler startProcess() throws ExecutionException {
-          final String commandLine;
-          final Process process;
+        protected JavaParameters createJavaParameters() throws ExecutionException {
+          final JavaParameters params = new JavaParameters();
+          params.setJdk(JavaAwareProjectJdkTableImpl.getInstanceEx().getInternalJdk());
+          params.setMainClass("com.intellij.idea.Main");
+          params.setWorkingDirectory(System.getProperty("user.home") + "/Documents/idea/bin/");
+
           try {
-            commandLine = FileUtil.loadFile(new File(System.getProperty("user.home") + "/astella.run"));
-            process = new ProcessBuilder(commandLine).start();
+            final BufferedReader reader = new BufferedReader(new FileReader(new File(System.getProperty("user.home") + "/astella.run")));
+            try {
+              params.getVMParametersList().addParametersString(reader.readLine());
+              reader.readLine();
+              params.getClassPath().add(reader.readLine());
+
+            }
+            finally {
+              reader.close();
+            }
           }
           catch (IOException e) {
-            throw new ExecutionException("", e);
+            throw new ExecutionException("Cannot run", e);
           }
 
-          return new DefaultJavaProcessHandler(process, commandLine, Charsets.UTF_8);
+          return params;
         }
       };
 
@@ -106,22 +118,26 @@ public class MyAstellaConfigurationType implements ConfigurationType {
     @Override
     public void checkConfiguration() throws RuntimeConfigurationException {
     }
+
+    @NotNull
+    @Override
+    public Module[] getModules() {
+      return EMPTY_MODULES;
+    }
   }
 
-  private static class UnknownSettingsEditor extends SettingsEditor<MyRunConfiguration> {
+  private static class UnknownSettingsEditor extends SettingsEditor<AnyApplicationConfiguration> {
     private final JPanel myPanel;
 
     private UnknownSettingsEditor() {
       myPanel = new JPanel();
       myPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0));
-
-      myPanel.add(new JLabel("This configuration can not be edited", JLabel.CENTER));
     }
 
-    protected void resetEditorFrom(final MyRunConfiguration s) {
+    protected void resetEditorFrom(final AnyApplicationConfiguration s) {
     }
 
-    protected void applyEditorTo(final MyRunConfiguration s) throws ConfigurationException {
+    protected void applyEditorTo(final AnyApplicationConfiguration s) throws ConfigurationException {
     }
 
     @NotNull

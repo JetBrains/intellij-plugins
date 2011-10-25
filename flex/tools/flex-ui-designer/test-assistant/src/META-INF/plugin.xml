@@ -9,7 +9,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <implicitUsageProvider implementation="com.intellij.flex.uiDesigner.testAssistant.MyImplicitUsageProvider"/>
 
-    <configurationType implementation="com.intellij.flex.uiDesigner.testAssistant.run.MyAstellaConfigurationType"/>
+    <configurationType implementation="com.intellij.flex.uiDesigner.testAssistant.run.AnyApplication"/>
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
   </extensions>
 </idea-plugin>
