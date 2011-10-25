@@ -18,8 +18,8 @@ package com.intellij.struts2.jsp;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.ognl.OgnlLanguage;
+import com.intellij.lang.ognl.OgnlLanguageInjector;
 import com.intellij.openapi.fileTypes.StdFileTypes;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.XmlAttributeValuePattern;
 import com.intellij.psi.PsiElement;
@@ -48,42 +48,33 @@ public class TaglibOgnlInjector implements MultiHostInjector {
       .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
                         virtualFile().ofType(StdFileTypes.JSPX)))
       .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
-                                                 StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI));
+                                                 StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI,
+                                                 StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI));
 
   // OGNL expression patterns
-  private static final ElementPattern<XmlAttributeValue> OGNL_ELEMENT_PATTERN =
+  private static final ElementPattern<XmlAttributeValue> OGNL_OCCURRENCE_PATTERN =
       STRUTS_TAG_ATTRIBUTE
-          .withTextLengthLongerThan(4)
-          .withValue(string().startsWith(OgnlLanguage.EXPRESSION_PREFIX));
+          .withTextLengthLongerThan(OgnlLanguage.EXPRESSION_PREFIX.length())
+          .withValue(string().contains(OgnlLanguage.EXPRESSION_PREFIX));
 
   // OGNL list expression pattern
   private static final ElementPattern<XmlAttributeValue> OGNL_LIST_ELEMENT_PATTERN =
       STRUTS_TAG_ATTRIBUTE
-          .withTextLengthLongerThan(4)
+          .withTextLengthLongerThan(OgnlLanguage.EXPRESSION_PREFIX.length())
           .withValue(string().startsWith("{"));
 
   @Override
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar multiHostRegistrar,
                                    @NotNull final PsiElement psiElement) {
-    if (OGNL_ELEMENT_PATTERN.accepts(psiElement)) {
-      final TextRange range = new TextRange(1, psiElement.getTextLength() - 1);
-      multiHostRegistrar.startInjecting(OgnlLanguage.INSTANCE)
-                        .addPlace(null,
-                                  null,
-                                  (PsiLanguageInjectionHost) psiElement,
-                                  range)
-                        .doneInjecting();
+    if (OGNL_OCCURRENCE_PATTERN.accepts(psiElement)) {
+      OgnlLanguageInjector.injectOccurrences(multiHostRegistrar,
+                                             (PsiLanguageInjectionHost) psiElement);
       return;
     }
 
     if (OGNL_LIST_ELEMENT_PATTERN.accepts(psiElement)) {
-      final TextRange range = new TextRange(1, psiElement.getTextLength() - 1);
-      multiHostRegistrar.startInjecting(OgnlLanguage.INSTANCE)
-                        .addPlace(OgnlLanguage.EXPRESSION_PREFIX,
-                                  OgnlLanguage.EXPRESSION_SUFFIX,
-                                  (PsiLanguageInjectionHost) psiElement,
-                                  range)
-                        .doneInjecting();
+      OgnlLanguageInjector.injectElement(multiHostRegistrar,
+                                         (PsiLanguageInjectionHost) psiElement);
     }
   }
 

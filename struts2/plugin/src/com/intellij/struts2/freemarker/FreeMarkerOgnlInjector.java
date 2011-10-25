@@ -20,7 +20,8 @@ import com.intellij.freemarker.psi.directives.FtlMacro;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.ognl.OgnlLanguage;
-import com.intellij.openapi.util.TextRange;
+import com.intellij.lang.ognl.OgnlLanguageInjector;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PatternCondition;
 import com.intellij.patterns.PsiElementPattern;
@@ -42,25 +43,44 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
 public class FreeMarkerOgnlInjector implements MultiHostInjector {
 
   private static final PsiElementPattern.Capture<FtlStringLiteral> OGNL_ELEMENT_PATTERN =
-      psiElement(FtlStringLiteral.class)
-          .withParent(psiElement(FtlNameValuePair.class).with(new PatternCondition<FtlNameValuePair>("S2 OGNL") {
-            @Override
-            public boolean accepts(@NotNull final FtlNameValuePair ftlNameValuePair,
-                                   final ProcessingContext processingContext) {
-              final PsiElement valueElement = ftlNameValuePair.getValueElement();
-              return valueElement != null &&
-                  StringUtil.stripQuotesAroundValue(valueElement.getText()).startsWith(OgnlLanguage.EXPRESSION_PREFIX);
-            }
-          }))
-          .withSuperParent(3, psiElement(FtlMacro.class).with(FreemarkerInjectionConstants.TAGLIB_PREFIX));
+      createPattern(new Condition<String>() {
+        @Override
+        public boolean value(final String s) {
+          return s.contains(OgnlLanguage.EXPRESSION_PREFIX);
+        }
+      });
+
+  private static final PsiElementPattern.Capture<FtlStringLiteral> OGNL_LIST_ELEMENT_PATTERN =
+      createPattern(new Condition<String>() {
+        @Override
+        public boolean value(final String s) {
+          return s.startsWith("{");
+        }
+      });
+
+  private static PsiElementPattern.Capture<FtlStringLiteral> createPattern(final Condition<String> valueTextCondition) {
+    return psiElement(FtlStringLiteral.class)
+        .withParent(psiElement(FtlNameValuePair.class).with(new PatternCondition<FtlNameValuePair>("S2 OGNL") {
+          @Override
+          public boolean accepts(@NotNull final FtlNameValuePair ftlNameValuePair,
+                                 final ProcessingContext processingContext) {
+            final PsiElement valueElement = ftlNameValuePair.getValueElement();
+            return valueElement != null &&
+                valueTextCondition.value(StringUtil.stripQuotesAroundValue(valueElement.getText()));
+          }
+        }))
+        .withSuperParent(3, psiElement(FtlMacro.class).with(FreemarkerInjectionConstants.TAGLIB_PREFIX));
+  }
 
   @Override
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement context) {
     if (OGNL_ELEMENT_PATTERN.accepts(context)) {
-      final TextRange range = new TextRange(1, context.getTextLength() - 1);
-      registrar.startInjecting(OgnlLanguage.INSTANCE)
-               .addPlace(null, null, (PsiLanguageInjectionHost) context, range)
-               .doneInjecting();
+      OgnlLanguageInjector.injectOccurrences(registrar, (PsiLanguageInjectionHost) context);
+      return;
+    }
+
+    if (OGNL_LIST_ELEMENT_PATTERN.accepts(context)) {
+      OgnlLanguageInjector.injectElement(registrar, (PsiLanguageInjectionHost) context);
     }
   }
 
@@ -71,4 +91,3 @@ public class FreeMarkerOgnlInjector implements MultiHostInjector {
   }
 
 }
-
