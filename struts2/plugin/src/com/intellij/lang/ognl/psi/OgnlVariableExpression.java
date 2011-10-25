@@ -52,12 +52,6 @@ public class OgnlVariableExpression extends OgnlExpressionBase {
     return findNotNullChildByType(OgnlTokenTypes.IDENTIFIER);
   }
 
-  @NotNull
-  @Override
-  public PsiReference[] getReferences() {
-    return new PsiReference[]{getReference()};
-  }
-
   @Override
   public PsiReference getReference() {
     return new PsiReferenceBase<OgnlExpressionBase>(this, TextRange.from(1, getTextLength() - 1)) {
