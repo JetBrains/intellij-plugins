@@ -16,6 +16,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -202,13 +203,19 @@ public class FlexIdeModuleWizardForm {
           assert false;
         }
 
-        public LibraryTableBase.ModifiableModelEx getGlobalLibrariesModifiableModel() {
-          if (myGlobalLibrariesModifiableModel == null) {
-            myGlobalLibrariesModifiableModel =
-              (LibraryTableBase.ModifiableModelEx)ApplicationLibraryTable.getApplicationTable().getModifiableModel();
+        public LibraryTableBase.ModifiableModelEx getLibrariesModifiableModel(final String level) {
+          if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(level)) {
+            if (myGlobalLibrariesModifiableModel == null) {
+              myGlobalLibrariesModifiableModel =
+                (LibraryTableBase.ModifiableModelEx)ApplicationLibraryTable.getApplicationTable().getModifiableModel();
+            }
+            return myGlobalLibrariesModifiableModel;
           }
-          return myGlobalLibrariesModifiableModel;
+          else {
+            throw new UnsupportedOperationException();
+          }
         }
+
       };
 
       myFlexConfigEditor = new FlexProjectConfigurationEditor(null, provider);

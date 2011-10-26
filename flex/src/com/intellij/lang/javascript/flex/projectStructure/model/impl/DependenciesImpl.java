@@ -102,6 +102,9 @@ class DependenciesImpl implements ModifiableDependencies {
         if (e instanceof ModuleLibraryEntryImpl) {
           return ((ModuleLibraryEntryImpl)e).getCopy();
         }
+        else if (e instanceof SharedLibraryEntryImpl) {
+          return ((SharedLibraryEntryImpl)e).getCopy();
+        }
         else if (e instanceof BuildConfigurationEntryImpl) {
           return ((BuildConfigurationEntryImpl)e).getCopy();
         }
@@ -161,6 +164,11 @@ class DependenciesImpl implements ModifiableDependencies {
     for (EntryState info : state.ENTRIES) {
       if (info.LIBRARY_ID != null) {
         ModuleLibraryEntryImpl libraryEntry = new ModuleLibraryEntryImpl(info.LIBRARY_ID);
+        libraryEntry.getDependencyType().loadState(info.DEPENDENCY_TYPE);
+        myEntries.add(libraryEntry);
+      }
+      else if (info.LIBRARY_NAME != null) {
+        SharedLibraryEntryImpl libraryEntry = new SharedLibraryEntryImpl(info.LIBRARY_NAME, info.LIBRARY_LEVEL);
         libraryEntry.getDependencyType().loadState(info.DEPENDENCY_TYPE);
         myEntries.add(libraryEntry);
       }

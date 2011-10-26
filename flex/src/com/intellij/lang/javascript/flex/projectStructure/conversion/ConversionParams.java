@@ -26,6 +26,7 @@ import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.Function;
@@ -73,9 +74,13 @@ public class ConversionParams {
       public void commitModifiableModels() throws ConfigurationException {
       }
 
-      @Override
-      public LibraryTableBase.ModifiableModelEx getGlobalLibrariesModifiableModel() {
-        return (LibraryTableBase.ModifiableModelEx)myGlobalLibrariesModifiableModel;
+      public LibraryTableBase.ModifiableModelEx getLibrariesModifiableModel(final String level) {
+        if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(level)) {
+          return (LibraryTableBase.ModifiableModelEx)myGlobalLibrariesModifiableModel;
+        }
+        else {
+          throw new UnsupportedOperationException();
+        }
       }
     });
   }

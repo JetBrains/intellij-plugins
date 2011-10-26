@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.Library;
@@ -116,6 +117,33 @@ public class FlexIdeSharedLibrariesExtension extends ModuleStructureExtension {
         return 0;
       }
     };
+  }
+
+  public boolean isModified() {
+    final ProjectLibrariesConfigurable projectLibrariesConfig =
+      ProjectStructureConfigurable.getInstance(myProject).getProjectLibrariesConfig();
+    if (projectLibrariesConfig.isModified()) {
+      return true;
+    }
+    final GlobalLibrariesConfigurable globalLibrariesConfig =
+      ProjectStructureConfigurable.getInstance(myProject).getGlobalLibrariesConfig();
+    if (globalLibrariesConfig.isModified()) {
+      return true;
+    }
+    return false;
+  }
+
+  public void apply() throws ConfigurationException {
+    final ProjectLibrariesConfigurable projectLibrariesConfig =
+      ProjectStructureConfigurable.getInstance(myProject).getProjectLibrariesConfig();
+    if (projectLibrariesConfig.isModified()) {
+      projectLibrariesConfig.apply();
+    }
+    final GlobalLibrariesConfigurable globalLibrariesConfig =
+      ProjectStructureConfigurable.getInstance(myProject).getGlobalLibrariesConfig();
+    if (globalLibrariesConfig.isModified()) {
+      globalLibrariesConfig.apply();
+    }
   }
 
   private static class CreateLibraryAction extends DumbAwareAction {

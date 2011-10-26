@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryRootsComponentDescriptor;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
+import com.intellij.lang.javascript.flex.projectStructure.FlexLibraryConfigurable;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
@@ -38,6 +39,7 @@ import com.intellij.openapi.roots.ui.configuration.LibraryTableModifiableModelPr
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.classpath.CreateModuleLibraryChooser;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.EditExistingLibraryDialog;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesModifiableModel;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
 import com.intellij.openapi.ui.ComboBox;
@@ -63,6 +65,7 @@ import com.intellij.util.containers.FilteringIterator;
 import com.intellij.util.containers.HashMap;
 import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.ColumnInfo;
+import com.intellij.util.ui.classpath.ChooseLibrariesFromTablesDialog;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -76,6 +79,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -129,7 +133,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     @Nullable
     public abstract ModifiableDependencyEntry apply(ModifiableDependencies dependencies);
-    
+
     public abstract boolean isModified(DependencyEntry entry);
 
     public abstract boolean canEdit();
@@ -325,6 +329,106 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     public boolean canEdit() {
       return isValid();
+    }
+  }
+
+  private class SharedLibraryItem extends MyTableItem {
+    public final ModifiableDependencyType dependencyType = Factory.createDependencyTypeInstance();
+    public final String libraryName;
+    public final String libraryLevel;
+    @Nullable
+    public final FlexLibraryConfigurable configurable;
+
+    private final Project project;
+
+    public SharedLibraryItem(@NotNull String libraryName,
+                             @NotNull String libraryLevel,
+                             @Nullable FlexLibraryConfigurable configurable,
+                             @NotNull Project project) {
+      this.libraryName = libraryName;
+      this.libraryLevel = libraryLevel;
+      this.configurable = configurable;
+      this.project = project;
+    }
+
+    @Override
+    public String getText() {
+      if (configurable != null) {
+        final LibraryEx library = configurable.getLibraryForPresentation();
+        return OrderEntryAppearanceService.getInstance(project).forLibrary(library, false).getText();
+      }
+      return "<unknown>";
+    }
+
+    @Override
+    public Icon getIcon() {
+      return PlatformIcons.LIBRARY_ICON;
+    }
+
+    @Override
+    public boolean showLinkage() {
+      return true;
+    }
+
+    @Override
+    public boolean isLinkageEditable() {
+      return true;
+    }
+
+    @Override
+    public LinkageType getLinkageType() {
+      return dependencyType.getLinkageType();
+    }
+
+    @Override
+    public void setLinkageType(LinkageType linkageType) {
+      dependencyType.setLinkageType(linkageType);
+    }
+
+    @Override
+    public boolean isValid() {
+      return configurable != null;
+    }
+
+    public void onDoubleClick() {
+      if (configurable != null) {
+        Place place = new Place().putPath(ProjectStructureConfigurable.CATEGORY, ModuleStructureConfigurable.getInstance(project))
+          .putPath(MasterDetailsComponent.TREE_OBJECT, configurable.getEditableObject());
+        ProjectStructureConfigurable.getInstance(project).navigateTo(place, true);
+      }
+    }
+
+    public ModifiableDependencyEntry apply(final ModifiableDependencies dependencies) {
+      ModifiableDependencyEntry entry;
+      if(configurable != null) {
+        entry = myConfigEditor.createSharedLibraryEntry(dependencies, configurable.getDisplayName(),
+                                                        configurable.getEditableObject().getTable().getTableLevel());
+      }
+      else {
+        entry = myConfigEditor.createSharedLibraryEntry(dependencies, libraryName, libraryLevel);
+      }
+      entry.getDependencyType().copyFrom(dependencyType);
+      return entry;
+    }
+
+    public boolean isModified(final DependencyEntry entry) {
+      if (!(entry instanceof ModifiableSharedLibraryEntry)) {
+        return true;
+      }
+      ModifiableSharedLibraryEntry libraryEntry = (ModifiableSharedLibraryEntry)entry;
+      if (configurable != null) {
+        if (!configurable.getDisplayName().equals(libraryEntry.getLibraryName())) return true;
+        if (!configurable.getEditableObject().getTable().getTableLevel().equals(libraryEntry.getLibraryLevel())) return true;
+      }
+      else {
+        if (!libraryName.equals(libraryEntry.getLibraryName())) return true;
+        if (!libraryLevel.equals(libraryEntry.getLibraryLevel())) return true;
+      }
+      return false;
+    }
+
+    public boolean canEdit() {
+      return false;
     }
   }
 
@@ -733,7 +837,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   private void updateEditButton() {
     if (myTable.getSelectedRowCount() == 1) {
       MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
-      myEditAction.setEnabled(item.canEdit());
+      myEditAction.setEnabled(item != null && item.canEdit());
       return;
     }
     myEditAction.setEnabled(false);
@@ -1043,6 +1147,16 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
                                      myProject);
         ((ModuleLibraryItem)item).dependencyType.copyFrom(entry.getDependencyType());
       }
+      else if (entry instanceof SharedLibraryEntry) {
+        SharedLibraryEntry moduleLibraryEntry = (SharedLibraryEntry)entry;
+        LibrariesModifiableModel model = ProjectStructureConfigurable.getInstance(myProject).getContext()
+          .createModifiableModelProvider(moduleLibraryEntry.getLibraryLevel()).getModifiableModel();
+        Library library = model.getLibraryByName(moduleLibraryEntry.getLibraryName());
+        item = new SharedLibraryItem(moduleLibraryEntry.getLibraryName(), moduleLibraryEntry.getLibraryLevel(),
+                                     library != null ? findConfigurable(library) : null,
+                                     myProject);
+        ((SharedLibraryItem)item).dependencyType.copyFrom(entry.getDependencyType());
+      }
       if (item != null) {
         root.add(new DefaultMutableTreeNode(item, false));
       }
@@ -1054,6 +1168,13 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       myTable.getSelectionModel().addSelectionInterval(row, row);
     }
     updateEditButton();
+  }
+
+  private FlexLibraryConfigurable findConfigurable(@NotNull Library library) {
+    ModuleStructureConfigurable modulesConfig = ProjectStructureConfigurable.getInstance(myProject).getModulesConfig();
+    TreeNode root = (TreeNode)modulesConfig.getTree().getModel().getRoot();
+    MasterDetailsComponent.MyNode configurableNode = MasterDetailsComponent.findNodeByObject(root, library);
+    return (FlexLibraryConfigurable)configurableNode.getConfigurable();
   }
 
   private void updateComponentSetCombo() {
@@ -1131,6 +1252,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       final List<AddItemPopupAction> actions = new ArrayList<AddItemPopupAction>();
       actions.add(new AddBuildConfigurationDependencyAction(actionIndex++));
       actions.add(new AddFilesAction(actionIndex++));
+      actions.add(new AddGlobalLibraryAction(actionIndex++));
       myPopupActions = actions.toArray(new AddItemPopupAction[actions.size()]);
     }
   }
@@ -1263,11 +1385,37 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         LibraryOrderEntry libraryEntry = myConfigEditor.findLibraryOrderEntry(myDependencies, library);
         rootNode.add(new DefaultMutableTreeNode(new ModuleLibraryItem(libraryId, libraryEntry, myProject), false));
       }
-      myTable.refresh();
-      myTable.getSelectionModel().clearSelection();
-      int rowCount = myTable.getRowCount();
-      myTable.getSelectionModel().addSelectionInterval(rowCount - libraries.size(), rowCount - 1);
+      updateTableOnItemsAdded(libraries.size());
     }
+  }
+
+  private class AddGlobalLibraryAction extends AddItemPopupAction {
+
+    public AddGlobalLibraryAction(int index) {
+      super(index, "Shared Library...", null);
+    }
+
+    public void run() {
+      final ChooseLibrariesDialog d = new ChooseLibrariesDialog();
+      d.show();
+      if (!d.isOK()) return;
+
+      final List<Library> libraries = d.getSelectedLibraries();
+      DefaultMutableTreeNode rootNode = myTable.getRoot();
+      for (Library library : libraries) {
+        SharedLibraryItem item = new SharedLibraryItem(library.getName(), library.getTable().getTableLevel(),
+                                                       findConfigurable(library), myProject);
+        rootNode.add(new DefaultMutableTreeNode(item, false));
+      }
+      updateTableOnItemsAdded(libraries.size());
+    }
+  }
+
+  private void updateTableOnItemsAdded(int count) {
+    myTable.refresh();
+    myTable.getSelectionModel().clearSelection();
+    int rowCount = myTable.getRowCount();
+    myTable.getSelectionModel().addSelectionInterval(rowCount - count, rowCount - 1);
   }
 
   private static class LibraryTableModifiableModelWrapper implements LibraryTableBase.ModifiableModelEx {
@@ -1322,6 +1470,24 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     @Override
     public Library createLibrary(String name, @Nullable LibraryType type) {
       return myDelegate.createLibrary(name, type);
+    }
+  }
+
+  private class ChooseLibrariesDialog extends ChooseLibrariesFromTablesDialog {
+    public ChooseLibrariesDialog() {
+      super(myMainPanel, "Choose Libraries", myProject, false);
+      init();
+    }
+
+    @NotNull
+    protected Library[] getLibraries(@NotNull final LibraryTable table) {
+      final List<Library> filtered = ContainerUtil.filter(super.getLibraries(table), new Condition<Library>() {
+        public boolean value(final Library library) {
+          if (!FlexProjectRootsUtil.isFlexLibrary(library)) return false;
+          return true;
+        }
+      });
+      return filtered.toArray(new Library[filtered.size()]);
     }
   }
 }

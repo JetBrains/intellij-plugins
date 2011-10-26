@@ -83,10 +83,8 @@ public class FlexIdeBCConfigurator {
           configurator.apply();
         }
 
-        @Override
-        public LibraryTableBase.ModifiableModelEx getGlobalLibrariesModifiableModel() {
-          return (LibraryTableBase.ModifiableModelEx)ProjectStructureConfigurable.getInstance(project).getContext()
-            .getModifiableLibraryTable(ApplicationLibraryTable.getApplicationTable());
+        public LibraryTableBase.ModifiableModelEx getLibrariesModifiableModel(final String level) {
+          return ProjectStructureConfigurable.getInstance(project).getContext().createModifiableModelProvider(level).getModifiableModel();
         }
       });
     }

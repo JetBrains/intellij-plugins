@@ -19,6 +19,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.testFramework.ModuleTestCase;
@@ -261,8 +262,13 @@ public class FlexProjectConfigTest extends ModuleTestCase {
       }
 
       @Override
-      public LibraryTableBase.ModifiableModelEx getGlobalLibrariesModifiableModel() {
-        return (LibraryTableBase.ModifiableModelEx)ApplicationLibraryTable.getApplicationTable().getModifiableModel();
+      public LibraryTableBase.ModifiableModelEx getLibrariesModifiableModel(final String level) {
+        if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(level)) {
+          return (LibraryTableBase.ModifiableModelEx)ApplicationLibraryTable.getApplicationTable().getModifiableModel();
+        }
+        else {
+          throw new UnsupportedOperationException();
+        }
       }
     });
   }

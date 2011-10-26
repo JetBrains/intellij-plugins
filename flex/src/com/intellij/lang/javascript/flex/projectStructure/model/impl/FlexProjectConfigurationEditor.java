@@ -79,13 +79,13 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
     void commitModifiableModels() throws ConfigurationException;
 
-    LibraryTableBase.ModifiableModelEx getGlobalLibrariesModifiableModel();
+    LibraryTableBase.ModifiableModelEx getLibrariesModifiableModel(String level);
   }
 
   public interface ModulesModelChangeListener extends EventListener {
     void modulesModelsChanged(Collection<Module> modules);
   }
-  
+
   private boolean myDisposed;
   private final ProjectModifiableModelProvider myProvider;
 
@@ -271,41 +271,51 @@ public class FlexProjectConfigurationEditor implements Disposable {
     for (Module module : myModule2Editors.keySet()) {
       ModifiableRootModel modifiableModel = myProvider.getModuleModifiableModel(module);
 
-      // ---------------- SDK entries ----------------------
-      Map<LibraryEx, Boolean> sdksToAdd = new HashMap<LibraryEx, Boolean>(); // Library -> add_library_entry_flag
+      // ---------------- SDK and shared libraries entries ----------------------
+      Map<LibraryEx, Boolean> librariesToAdd = new HashMap<LibraryEx, Boolean>(); // Library -> add_library_entry_flag
       for (Editor editor : myModule2Editors.get(module)) {
         SdkEntry sdkEntry = editor.getDependencies().getSdkEntry();
         if (sdkEntry != null) {
-          LibraryEx sdkLibrary = ((SdkEntryImpl)sdkEntry).findLibrary(myProvider.getGlobalLibrariesModifiableModel().getLibraries());
+          LibraryEx sdkLibrary = ((SdkEntryImpl)sdkEntry).findLibrary(myProvider.getLibrariesModifiableModel(
+            LibraryTablesRegistrar.APPLICATION_LEVEL).getLibraries());
           if (sdkLibrary != null) {
-            sdksToAdd.put(sdkLibrary, true);
+            librariesToAdd.put(sdkLibrary, true);
+          }
+        }
+
+        for (DependencyEntry dependencyEntry : editor.getDependencies().getEntries()) {
+          if (dependencyEntry instanceof SharedLibraryEntry) {
+            SharedLibraryEntry sharedLibraryEntry = (SharedLibraryEntry)dependencyEntry;
+            LibraryTableBase.ModifiableModelEx m = myProvider.getLibrariesModifiableModel(sharedLibraryEntry.getLibraryLevel());
+            LibraryEx library = (LibraryEx)m.getLibraryByName(sharedLibraryEntry.getLibraryName());
+            if (library != null) {
+              librariesToAdd.put(library, true);
+            }
           }
         }
       }
 
-      Collection<OrderEntry> sdkEntriesToRemove = new ArrayList<OrderEntry>();
+      Collection<OrderEntry> entriesToRemove = new ArrayList<OrderEntry>();
       for (OrderEntry orderEntry : modifiableModel.getOrderEntries()) {
         if (orderEntry instanceof LibraryOrderEntry) {
-          if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel())) {
-            LibraryEx sdkLibrary = (LibraryEx)((LibraryOrderEntry)orderEntry).getLibrary();
-            if (sdksToAdd.containsKey(sdkLibrary)) {
-              sdksToAdd.put(sdkLibrary, false);
-            }
-            else if (sdkLibrary != null && sdkLibrary.getType() instanceof FlexSdkLibraryType) {
-              sdkEntriesToRemove.add(orderEntry);
-            }
+          LibraryEx library = (LibraryEx)((LibraryOrderEntry)orderEntry).getLibrary();
+          if (librariesToAdd.containsKey(library)) {
+            librariesToAdd.put(library, false); // entry already exists for this library
+          }
+          else if (library != null && (library.getType() instanceof FlexSdkLibraryType || FlexProjectRootsUtil.isFlexLibrary(library))) {
+            entriesToRemove.add(orderEntry);
           }
         }
       }
 
-      for (OrderEntry e : sdkEntriesToRemove) {
+      for (OrderEntry e : entriesToRemove) {
         modifiableModel.removeOrderEntry(e);
       }
 
-      for (LibraryEx library : sdksToAdd.keySet()) {
+      for (LibraryEx library : librariesToAdd.keySet()) {
         if (!library.isDisposed() &&
-            sdksToAdd.get(library) &&
-            myProvider.getGlobalLibrariesModifiableModel().getLibraryByName(library.getName()) != null) {
+            librariesToAdd.get(library) &&
+            myProvider.getLibrariesModifiableModel(library.getTable().getTableLevel()).getLibraryByName(library.getName()) != null) {
           modifiableModel.addLibraryEntry(library);
         }
       }
@@ -454,6 +464,14 @@ public class FlexProjectConfigurationEditor implements Disposable {
     return e;
   }
 
+  public ModifiableDependencyEntry createSharedLibraryEntry(final ModifiableDependencies dependencies,
+                                                            final String libraryName,
+                                                            final String libraryLevel) {
+    assertAlive();
+    return new SharedLibraryEntryImpl(libraryName, libraryLevel);
+  }
+
+
   @Nullable
   private static Library findLibrary(ModifiableRootModel modifiableModel, String libraryId) {
     for (Library library : modifiableModel.getModuleLibraryTable().getLibraries()) {
@@ -566,12 +584,13 @@ public class FlexProjectConfigurationEditor implements Disposable {
   }
 
   public LibraryEx[] getSdksLibraries() {
-    return ContainerUtil.mapNotNull(myProvider.getGlobalLibrariesModifiableModel().getLibraries(), new Function<Library, LibraryEx>() {
-      @Override
-      public LibraryEx fun(Library library) {
-        return FlexSdk.isFlexSdk(library) ? (LibraryEx)library : null;
-      }
-    }, new LibraryEx[0]);
+    return ContainerUtil.mapNotNull(myProvider.getLibrariesModifiableModel(LibraryTablesRegistrar.APPLICATION_LEVEL).getLibraries(),
+                                    new Function<Library, LibraryEx>() {
+                                      @Override
+                                      public LibraryEx fun(Library library) {
+                                        return FlexSdk.isFlexSdk(library) ? (LibraryEx)library : null;
+                                      }
+                                    }, new LibraryEx[0]);
   }
 
   @Nullable
@@ -593,17 +612,18 @@ public class FlexProjectConfigurationEditor implements Disposable {
   }
 
   public LibraryEditor getSdkLibraryEditor(Library library) {
-    return ((LibrariesModifiableModel)myProvider.getGlobalLibrariesModifiableModel()).getLibraryEditor(library);
+    return ((LibrariesModifiableModel)myProvider.getLibrariesModifiableModel(LibraryTablesRegistrar.APPLICATION_LEVEL))
+      .getLibraryEditor(library);
   }
 
   public void removeFlexSdkLibrary(Library library) {
-    myProvider.getGlobalLibrariesModifiableModel().removeLibrary(library);
+    myProvider.getLibrariesModifiableModel(LibraryTablesRegistrar.APPLICATION_LEVEL).removeLibrary(library);
   }
 
   public LibraryEx createFlexSdkLibrary(String homePath) {
     final VirtualFile sdkHome = LocalFileSystem.getInstance().findFileByPath(homePath);
 
-    LibraryTableBase.ModifiableModelEx model = myProvider.getGlobalLibrariesModifiableModel();
+    LibraryTableBase.ModifiableModelEx model = myProvider.getLibrariesModifiableModel(LibraryTablesRegistrar.APPLICATION_LEVEL);
     Set<String> existingNames = ContainerUtil.map2Set(model.getLibraries(), new Function<Library, String>() {
       @Override
       public String fun(Library library) {

@@ -20,6 +20,12 @@ public class EntryState {
   @Attribute("library-id")
   public String LIBRARY_ID;
 
+  @Attribute("library-name")
+  public String LIBRARY_NAME;
+
+  @Attribute("library-level")
+  public String LIBRARY_LEVEL;
+
   @Property(surroundWithTag = false)
   public DependencyTypeImpl.State DEPENDENCY_TYPE;
 

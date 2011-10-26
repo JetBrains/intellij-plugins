@@ -19,6 +19,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -224,8 +225,13 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
           // commit will be performed outside of #setupRootModel()
         }
 
-        public LibraryTableBase.ModifiableModelEx getGlobalLibrariesModifiableModel() {
-          return globalLibrariesModifiableModel;
+        public LibraryTableBase.ModifiableModelEx getLibrariesModifiableModel(final String level) {
+          if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(level)) {
+            return globalLibrariesModifiableModel;
+          }
+          else {
+            throw new UnsupportedOperationException();
+          }
         }
       };
 
