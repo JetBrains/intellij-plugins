@@ -25,11 +25,6 @@ public class DocumentFactoryManager {
   public function register(factory:DocumentFactory):void {
     var id:int = factory.id;
     assert(id == factories.length || (id < factories.length && factories[id] == null));
-    //if (!(id == factories.length || (id < factories.length && factories[id] == null))) {
-    //  trace("assert failed", id);
-    //  factories.length = id;
-    //}
-    
     factories[id] = factory;
   }
   

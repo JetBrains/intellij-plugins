@@ -316,7 +316,7 @@ public class CssWriter {
     return chars.length() == (value.length() + 2) && StringUtil.startsWith(chars, 1, value);
   }
 
-  private void writeStringValue(ASTNode node, final FlexStyleIndexInfo info) {
+  private void writeStringValue(ASTNode node, @Nullable final FlexStyleIndexInfo info) {
     final boolean stripQuotes;
     if (node.getElementType() == CssElementTypes.CSS_STRING) {
       stripQuotes = true;
@@ -327,7 +327,7 @@ public class CssWriter {
     }
 
     final CharSequence chars = node.getChars();
-    if (info.getEnumeration() == null) {
+    if (info == null || info.getEnumeration() == null) {
       propertyOut.write(Amf3Types.STRING);
       if (stripQuotes) {
         writeCssStringToken(chars);
@@ -347,6 +347,12 @@ public class CssWriter {
   }
 
   private void writeNumberValue(ASTNode node, final boolean isInt) {
+    // EA-30756
+    if (node.getElementType() == CssElementTypes.CSS_STRING) {
+      writeStringValue(node, null);
+      return;
+    }
+
     writeNumberValue(node, isInt, true);
   }
 
