@@ -145,8 +145,8 @@ abstract class MxmlTestBase extends AppTestBase {
           tester.test(file, xmlFile, originalVFile);
           return null;
         }
-      //}).get(8888, TimeUnit.SECONDS);
-      }).get(8, TimeUnit.SECONDS);
+      }).get(8888, TimeUnit.SECONDS);
+      //}).get(8, TimeUnit.SECONDS);
     }
   }
 

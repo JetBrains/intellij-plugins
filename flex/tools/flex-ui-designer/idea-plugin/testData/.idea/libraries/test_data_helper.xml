@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="test-data-helper" type="flex">
+    <CLASSES>
+      <root url="jar://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/test-data-helper/target/test-data-helper.swc!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

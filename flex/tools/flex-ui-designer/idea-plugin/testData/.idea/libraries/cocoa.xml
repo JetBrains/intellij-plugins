@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="cocoa" type="flex">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../../../../cocoa/appkit/target/cocoa-1.4-SNAPSHOT.swc!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../cocoa/foundation/target/foundation-1.2.5.swc!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../../../../../../cocoa/appkit/src/main/flex" />
+      <root url="file://$PROJECT_DIR$/../../../../../../cocoa/foundation/src" />
+    </SOURCES>
+  </library>
+</component>

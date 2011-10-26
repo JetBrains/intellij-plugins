@@ -24,11 +24,11 @@ public class StyleTest extends BaseTestCase {
     assertThat(librarySets, arrayWithSize(1));
     var library:LibrarySetItem;
     for each (var l:LibrarySetItem in librarySets[0].items) {
-      if (l.path.indexOf("spark.") != -1) {
+      if (l.path.indexOf("spark@") != -1) {
         library = l;
         break;
       }
-      else if (l.path.indexOf("framework.") == 0) {
+      else if (l.path.indexOf("framework@") == 0) {
         checkFrameworkDefaultsCss(l);
       }
     }

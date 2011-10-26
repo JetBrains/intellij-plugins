@@ -126,6 +126,15 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
     }
   }
 
+  override public function removeRenderer(itemIndex:int, x:Number, y:Number, w:Number, h:Number):void {
+    super.removeRenderer(itemIndex, x, y, w, h);
+
+    var selectedIndex:int = EditorTabViewSkin(_container.parent).getSelectedIndex();
+    if (selectedIndex != -1) {
+      setSelected(selectedIndex, -1, true);
+    }
+  }
+
   override protected function drawEntry(entry:TextLineAndDisplayObjectEntry, itemIndex:int, g:Graphics, w:Number, h:Number, x:Number, y:Number):void {
     var skin:IUIComponent = CompositeEntry(entry).components[0].skin;
     skin.x = (x + w) - 2 - 1 - skin.getExplicitOrMeasuredWidth();
@@ -244,7 +253,10 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
     }
 
     var entry:TextLineAndDisplayObjectEntry = findEntry2(selectedIndex);
-    drawSelected(selectedIndex, entry.displayObject.x, entry.line.userData);
+    // overflow, i.e. entry is not rendered because it is invisible
+    if (entry != null) {
+      drawSelected(selectedIndex, entry.displayObject.x, entry.line.userData);
+    }
   }
 
   public function clearSelected():void {

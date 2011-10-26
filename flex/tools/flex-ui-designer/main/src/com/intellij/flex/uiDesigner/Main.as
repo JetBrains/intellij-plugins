@@ -36,9 +36,6 @@ public class Main extends MainWindowedApplication {
   private var port:int;
   private var errorPort:int;
 
-  public function Main() {
-  }
-
   config::fdbWorkaround {
     // Burn in hell, Adobe
     ElementManager;

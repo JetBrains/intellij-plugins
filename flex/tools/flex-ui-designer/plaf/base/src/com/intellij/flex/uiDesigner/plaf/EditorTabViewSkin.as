@@ -39,8 +39,12 @@ internal class EditorTabViewSkin extends AbstractTabViewSkin {
     }
   }
 
-  public function closeTab(itemIndex:int):void {
+  internal function closeTab(itemIndex:int):void {
     ListViewModifiableDataSource(TabView(component).dataSource).removeItemAt(itemIndex);
+  }
+
+  internal function getSelectedIndex():int {
+    return tabBar.selectedIndex;
   }
 
   override public function hide():void {
