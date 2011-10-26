@@ -124,9 +124,18 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     public abstract void setLinkageType(LinkageType linkageType);
 
     public abstract boolean isValid();
+
+    public abstract void onDoubleClick();
+
+    @Nullable
+    public abstract ModifiableDependencyEntry apply(ModifiableDependencies dependencies);
+    
+    public abstract boolean isModified(DependencyEntry entry);
+
+    public abstract boolean canEdit();
   }
 
-  private static class BCItem extends MyTableItem {
+  private class BCItem extends MyTableItem {
     public final ModifiableDependencyType dependencyType = Factory.createDependencyTypeInstance();
     public final FlexIdeBCConfigurable configurable;
     public final String moduleName;
@@ -187,9 +196,53 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     public boolean isValid() {
       return configurable != null;
     }
+
+    public void onDoubleClick() {
+      if (configurable != null) {
+        Project project = configurable.getModule().getProject();
+        Place place = new Place().putPath(ProjectStructureConfigurable.CATEGORY, ModuleStructureConfigurable.getInstance(project))
+          .putPath(MasterDetailsComponent.TREE_OBJECT, configurable.getEditableObject());
+        ProjectStructureConfigurable.getInstance(project).navigateTo(place, true);
+      }
+    }
+
+    public ModifiableDependencyEntry apply(ModifiableDependencies dependencies) {
+      ModifiableDependencyEntry entry;
+      if (configurable != null) {
+        // configurable may be not yet applied at the moment
+        entry = myConfigEditor.createBcEntry(dependencies, configurable.getEditableObject(), configurable.getDisplayName());
+      }
+      else {
+        entry = myConfigEditor.createBcEntry(dependencies, moduleName, bcName);
+      }
+      entry.getDependencyType().copyFrom(dependencyType);
+      return entry;
+    }
+
+    public boolean isModified(final DependencyEntry entry) {
+      if (!(entry instanceof BuildConfigurationEntry)) {
+        return true;
+      }
+      BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
+      if (configurable != null) {
+        if (configurable.getModule() != bcEntry.findModule()) return true;
+        if (!configurable.getDisplayName().equals(bcEntry.getBcName())) return true;
+      }
+      else {
+        if (moduleName.equals(bcEntry.getModuleName())) return true;
+        if (bcName.equals(bcEntry.getBcName())) return true;
+      }
+      if (!dependencyType.isEqual(entry.getDependencyType())) return true;
+      
+      return false;
+    }
+
+    public boolean canEdit() {
+      return false;
+    }
   }
 
-  private static class ModuleLibraryItem extends MyTableItem {
+  private class ModuleLibraryItem extends MyTableItem {
     public final ModifiableDependencyType dependencyType = Factory.createDependencyTypeInstance();
     public final String libraryId;
     @Nullable
@@ -244,6 +297,35 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     public boolean isValid() {
       return orderEntry != null;
     }
+
+    public void onDoubleClick() {
+      if (canEdit()) {
+        editLibrary(orderEntry);
+      }
+    }
+
+    public ModifiableDependencyEntry apply(final ModifiableDependencies dependencies) {
+      ModifiableDependencyEntry entry = myConfigEditor.createModuleLibraryEntry(dependencies, libraryId);
+      entry.getDependencyType().copyFrom(dependencyType);
+      return entry;
+    }
+
+    public boolean isModified(final DependencyEntry entry) {
+      if (!(entry instanceof ModuleLibraryEntry)) {
+        return true;
+      }
+      ModuleLibraryEntry libraryEntry = (ModuleLibraryEntry)entry;
+      if (!libraryEntry.getLibraryId().equals(libraryId)) {
+        return true;
+      }
+      if (!dependencyType.isEqual(entry.getDependencyType())) return true;
+      
+      return false;
+    }
+
+    public boolean canEdit() {
+      return isValid();
+    }
   }
 
   private static class SdkItem extends MyTableItem {
@@ -286,6 +368,23 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     @Override
     public boolean isValid() {
       return true; // we just don't add Flex SDK table item for invalid SDKs
+    }
+
+    public void onDoubleClick() {
+      // ignore
+    }
+
+    public ModifiableDependencyEntry apply(final ModifiableDependencies dependencies) {
+      // ignore
+      return null;
+    }
+
+    public boolean isModified(final DependencyEntry entry) {
+      return false;
+    }
+
+    public boolean canEdit() {
+      return false;
     }
   }
 
@@ -331,6 +430,22 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     @Override
     public boolean isValid() {
       return true;
+    }
+
+    public void onDoubleClick() {
+      // ignore
+    }
+
+    public ModifiableDependencyEntry apply(final ModifiableDependencies dependencies) {
+      return null; // ignore
+    }
+
+    public boolean isModified(final DependencyEntry entry) {
+      return false;
+    }
+
+    public boolean canEdit() {
+      return false;
     }
   }
 
@@ -541,18 +656,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
           if (myTable.getSelectedRowCount() == 1) {
-            MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
-            if (item instanceof BCItem) {
-              FlexIdeBCConfigurable configurable = ((BCItem)item).configurable;
-              if (configurable != null) {
-                Place place = new Place().putPath(ProjectStructureConfigurable.CATEGORY, ModuleStructureConfigurable.getInstance(myProject))
-                  .putPath(MasterDetailsComponent.TREE_OBJECT, configurable.getEditableObject());
-                ProjectStructureConfigurable.getInstance(myProject).navigateTo(place, true);
-              }
-            }
-            else if (item instanceof ModuleLibraryItem && canEditLibrary((ModuleLibraryItem)item)) {
-              editLibrary(((ModuleLibraryItem)item).orderEntry);
-            }
+            myTable.getItemAt(myTable.getSelectedRow()).onDoubleClick();
           }
         }
       }
@@ -629,16 +733,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   private void updateEditButton() {
     if (myTable.getSelectedRowCount() == 1) {
       MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
-      if (item instanceof ModuleLibraryItem && canEditLibrary((ModuleLibraryItem)item)) {
-        myEditAction.setEnabled(true);
-        return;
-      }
+      myEditAction.setEnabled(item.canEdit());
+      return;
     }
     myEditAction.setEnabled(false);
-  }
-
-  private static boolean canEditLibrary(ModuleLibraryItem item) {
-    return item.orderEntry != null;
   }
 
   private void updateRemoveButton() {
@@ -850,33 +948,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     for (int i = 0; i < items.size(); i++) {
       MyTableItem item = items.get(i);
       DependencyEntry entry = entries[i];
-      if (item instanceof BCItem) {
-        if (!(entry instanceof BuildConfigurationEntry)) {
-          return true;
-        }
-        BCItem bcItem = (BCItem)item;
-        BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
-        if (bcItem.configurable != null) {
-          if (bcItem.configurable.getModule() != bcEntry.findModule()) return true;
-          if (!bcItem.configurable.getDisplayName().equals(bcEntry.getBcName())) return true;
-        }
-        else {
-          if (bcItem.moduleName.equals(bcEntry.getModuleName())) return true;
-          if (bcItem.bcName.equals(bcEntry.getBcName())) return true;
-        }
-        if (!bcItem.dependencyType.isEqual(entry.getDependencyType())) return true;
-      }
-      else if (item instanceof ModuleLibraryItem) {
-        if (!(entry instanceof ModuleLibraryEntry)) {
-          return true;
-        }
-        ModuleLibraryItem libraryItem = (ModuleLibraryItem)item;
-        ModuleLibraryEntry libraryEntry = (ModuleLibraryEntry)entry;
-        if (!libraryEntry.getLibraryId().equals(libraryItem.libraryId)) {
-          return true;
-        }
-        if (!libraryItem.dependencyType.isEqual(entry.getDependencyType())) return true;
-      }
+      if (item.isModified(entry)) return true;
     }
     return false;
   }
@@ -896,29 +968,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     List<MyTableItem> items = myTable.getItems();
     List<ModifiableDependencyEntry> newEntries = new ArrayList<ModifiableDependencyEntry>();
     for (MyTableItem item : items) {
-      ModifiableDependencyEntry entry;
-      if (item instanceof BCItem) {
-        FlexIdeBCConfigurable configurable = ((BCItem)item).configurable;
-        if (configurable != null) {
-          // configurable may be not yet applied at the moment
-          entry = myConfigEditor.createBcEntry(dependencies, configurable.getEditableObject(), configurable.getDisplayName());
-        }
-        else {
-          entry = myConfigEditor.createBcEntry(dependencies, ((BCItem)item).moduleName, ((BCItem)item).bcName);
-        }
-        entry.getDependencyType().copyFrom(((BCItem)item).dependencyType);
+      ModifiableDependencyEntry entry = item.apply(dependencies);
+      if (entry != null) {
         newEntries.add(entry);
-      }
-      else if (item instanceof ModuleLibraryItem) {
-        entry = myConfigEditor.createModuleLibraryEntry(dependencies, ((ModuleLibraryItem)item).libraryId);
-        entry.getDependencyType().copyFrom(((ModuleLibraryItem)item).dependencyType);
-        newEntries.add(entry);
-      }
-      else if (item instanceof SdkItem || item instanceof SdkEntryItem) {
-        // ignore
-      }
-      else {
-        throw new IllegalArgumentException("unexpected item type: " + item);
       }
     }
     myConfigEditor.setEntries(dependencies, newEntries);
