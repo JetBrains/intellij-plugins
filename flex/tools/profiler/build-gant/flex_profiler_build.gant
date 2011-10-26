@@ -33,7 +33,7 @@ private def doExecute(home, sandbox, targetFolder) {
   ant.mkdir(dir: "$flexSandbox")
 
   ant.copy(toDir: "$flexSandbox/repo", overwrite: "true") {
-    fileset(dir: "$flexBuildHome/../flex-ui-designer/build/repo")
+    fileset(dir: "$flexBuildHome/../flex-ui-designer/lib")
   }
 
   ant.copy(file: "$flexBuildHome/build-gant/base.xml", toDir: "$flexSandbox")
