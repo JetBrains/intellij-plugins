@@ -69,6 +69,7 @@ public class JstdConfigFileAnnotator implements Annotator {
     if (keyValues == null) {
       return;
     }
+    markStrangeSymbols(yamlDocument, holder);
 
     BasePathInfo basePathInfo = new BasePathInfo(yamlDocument);
     annotateBasePath(basePathInfo, holder);
@@ -83,6 +84,17 @@ public class JstdConfigFileAnnotator implements Annotator {
       }
       else if (JstdConfigFileUtils.isTopLevelKeyWithInnerFileSequence(keyValue)) {
         annotateKeyValueWithInnerFileSequence(keyValue, holder, basePathInfo.getBasePath());
+      }
+    }
+  }
+
+  private static void markStrangeSymbols(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
+    TextRange textRange = psiElement.getTextRange();
+    String text = psiElement.getText();
+    for (int i = 0; i < text.length(); i++) {
+      if (text.charAt(i) == '\t') {
+        int offset = textRange.getStartOffset() + i;
+        holder.createErrorAnnotation(new TextRange(offset, offset + 1), "Tab character is not allowed");
       }
     }
   }
