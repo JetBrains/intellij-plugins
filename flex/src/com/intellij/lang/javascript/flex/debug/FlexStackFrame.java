@@ -409,9 +409,9 @@ public class FlexStackFrame extends XStackFrame {
 
   static String validObjectId(String s) {
     // some object ids from Flash player are negative (e.g. on Linux) and can not be consumed back e.g. for tracing
-    // so we transform them into unsigned ones assuming there is just sign transmition problem (see IDEADEV-39082)
+    // so we transform them into unsigned ones assuming there is just sign transmition problem (see IDEA-49837)
     long idVal = Long.parseLong(s);
-    return Long.toString(idVal & 0xFFFFFFFFL);
+    return s.charAt(0) == '-' ? Long.toString(idVal & 0xFFFFFFFFL) : Long.toString(idVal);
   }
 
   private class FlexDebuggerEvaluator extends XDebuggerEvaluator {
