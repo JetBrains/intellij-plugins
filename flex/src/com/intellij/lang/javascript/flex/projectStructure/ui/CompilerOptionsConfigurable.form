@@ -104,7 +104,7 @@
             </constraints>
             <properties>
               <enabled value="false"/>
-              <text value="Inherit default value"/>
+              <text value="Global default"/>
             </properties>
           </component>
           <component id="eaac5" class="javax.swing.JLabel" binding="myInheritProjectDefaultsLegend">
@@ -114,7 +114,7 @@
             <properties>
               <enabled value="false"/>
               <font style="1"/>
-              <text value="Inherit project default"/>
+              <text value="Project default"/>
             </properties>
           </component>
           <component id="fde7d" class="javax.swing.JLabel" binding="myInheritModuleDefaultsLegend">
@@ -122,7 +122,7 @@
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Inherit module default"/>
+              <text value="Module default"/>
             </properties>
           </component>
           <component id="df6c9" class="javax.swing.JLabel">

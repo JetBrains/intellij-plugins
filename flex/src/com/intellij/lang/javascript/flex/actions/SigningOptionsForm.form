@@ -150,7 +150,7 @@
             </constraints>
             <properties>
               <labelFor value="2ab0e"/>
-              <text value="Time Stamping Authority &amp;URL:"/>
+              <text value="Time-stamping authority &amp;URL:"/>
             </properties>
           </component>
           <component id="2ab0e" class="javax.swing.JTextField" binding="myTsaUrlTextField">
