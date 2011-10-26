@@ -174,7 +174,7 @@ public class FlexIdeConversionTest extends PlatformTestCase {
       Document d = JDOMUtil.loadDocument(new File(globalAfter, GLOBAL_LIBS_XML));
       Element globalLibState = ApplicationLibraryTable.getApplicationTable().getState();
       ConversionHelper.collapsePaths(globalLibState);
-      assertTrue(JDOMUtil.areElementsEqual(d.getRootElement(), globalLibState));
+      PlatformTestUtil.assertElementsEqual(d.getRootElement(), globalLibState);
     }
   }
 
@@ -187,7 +187,8 @@ public class FlexIdeConversionTest extends PlatformTestCase {
 
   private static void doTestUniqueNames(String[] input, String[] output) {
     List<String> result = FlexBuildConfigurationManagerImpl.generateUniqueNames(Arrays.asList(input));
-    assertTrue("output: " + Arrays.toString(result.toArray()) + ", expected: " + Arrays.toString(output), result.equals(Arrays.asList(output)));
+    assertTrue("output: " + Arrays.toString(result.toArray()) + ", expected: " + Arrays.toString(output),
+               result.equals(Arrays.asList(output)));
   }
 
   private static class MyConversionListener implements ConversionListener {

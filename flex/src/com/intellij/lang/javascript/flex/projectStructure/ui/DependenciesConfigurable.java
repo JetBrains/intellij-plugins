@@ -1172,11 +1172,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     updateEditButton();
   }
 
+  @Nullable
   private FlexLibraryConfigurable findConfigurable(@NotNull Library library) {
     ModuleStructureConfigurable modulesConfig = ProjectStructureConfigurable.getInstance(myProject).getModulesConfig();
     TreeNode root = (TreeNode)modulesConfig.getTree().getModel().getRoot();
     MasterDetailsComponent.MyNode configurableNode = MasterDetailsComponent.findNodeByObject(root, library);
-    return (FlexLibraryConfigurable)configurableNode.getConfigurable();
+    return configurableNode != null ? (FlexLibraryConfigurable)configurableNode.getConfigurable() : null;
   }
 
   private void updateComponentSetCombo() {

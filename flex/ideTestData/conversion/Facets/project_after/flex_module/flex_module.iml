@@ -33,6 +33,15 @@
             <entry module-name="flex_module3" build-configuration-name="flex_module3">
               <dependency linkage="Include" />
             </entry>
+            <entry library-name="FlexUnit1Lib(java)" library-level="project">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-name="SwiftSuspenders" library-level="application">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-name="Lib2" library-level="application">
+              <dependency linkage="External" />
+            </entry>
           </entries>
           <sdk library-id="0" home-path="$TEST_SDK_HOME$" />
         </dependencies>
@@ -62,6 +71,9 @@
     </orderEntry>
     <orderEntry type="module" module-name="java_with_flex_facets" scope="PROVIDED" />
     <orderEntry type="module" module-name="flex_module3" exported="" />
+    <orderEntry type="library" name="FlexUnit1Lib(java)" level="project" />
+    <orderEntry type="library" name="SwiftSuspenders" level="application" />
+    <orderEntry type="library" name="Lib2" level="application" scope="PROVIDED" />
     <orderEntry type="library" name="Flex SDK 4.5.1.21328" level="application" />
   </component>
 </module>

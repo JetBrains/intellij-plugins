@@ -24,6 +24,9 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="flex_module3" />
+    <orderEntry type="library" name="flexunit(flex)" level="project" exported=""/>
+    <orderEntry type="library" name="_missing_" level="project" exported=""/>
+    <orderEntry type="library" name="_missing_" level="appication" />
   </component>
 </module>
 

@@ -147,7 +147,7 @@ public class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> 
                                     boolean facet,
                                     @Nullable String facetSdkName,
                                     @Nullable Set<String> sdkLibrariesIds,
-                                    Collection<Element> orderEntriesToAdd) {
+                                    Collection<Element> orderEntriesToAdd) throws CannotConvertException {
     if (oldConfiguration == null) {
       newBuildConfiguration.setOutputType(OutputType.Application);
     }
@@ -239,6 +239,19 @@ public class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> 
         ModifiableModuleLibraryEntry moduleLibraryEntry = ConversionHelper.createModuleLibraryEntry(libraryId);
         convertDependencyType(orderEntry, moduleLibraryEntry.getDependencyType());
         newBuildConfiguration.getDependencies().getModifiableEntries().add(moduleLibraryEntry);
+      }
+      else if ("library".equals(orderEntryType)) {
+        String libraryName = orderEntry.getAttributeValue("name");
+        String libraryLevel = orderEntry.getAttributeValue("level");
+        if (myParams.libraryExists(libraryName, libraryLevel)) {
+          myParams.changeLibraryTypeToFlex(libraryName, libraryLevel);
+          ModifiableSharedLibraryEntry sharedLibraryEntry = ConversionHelper.createSharedLibraryEntry(libraryName, libraryLevel);
+          convertDependencyType(orderEntry, sharedLibraryEntry.getDependencyType());
+          newBuildConfiguration.getDependencies().getModifiableEntries().add(sharedLibraryEntry);
+        }
+        else {
+          orderEntriesToRemove.add(orderEntry);
+        }
       }
       else if (ModuleOrderEntryImpl.ENTRY_TYPE.equals(orderEntryType)) {
         String moduleName = orderEntry.getAttributeValue(ModuleOrderEntryImpl.MODULE_NAME_ATTR);

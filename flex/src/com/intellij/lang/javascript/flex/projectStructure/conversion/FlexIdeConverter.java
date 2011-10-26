@@ -67,8 +67,7 @@ class FlexIdeConverter extends ProjectConverter {
     getParams().apply();
   }
 
-  @Override
   public Collection<File> getAdditionalAffectedFiles() {
-    return Collections.singleton(myContext.getModulesSettings().getFile());
+    return getParams().getAffectedFiles();
   }
 }

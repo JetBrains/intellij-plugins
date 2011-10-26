@@ -102,6 +102,10 @@ public class ConversionHelper {
     return new ModuleLibraryEntryImpl(libraryId);
   }
 
+  public static ModifiableSharedLibraryEntry createSharedLibraryEntry(final String libraryName, final String libraryLevel) {
+    return new SharedLibraryEntryImpl(libraryName, libraryLevel);
+  }
+
   //public static ModifiableFlexIdeBuildConfiguration createConfigInstance(String name) {
   //  FlexIdeBuildConfigurationImpl c = new FlexIdeBuildConfigurationImpl();
   //  c.setName(name);

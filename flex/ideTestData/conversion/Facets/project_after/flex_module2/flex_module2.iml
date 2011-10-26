@@ -18,6 +18,9 @@
             <entry module-name="flex_module3" build-configuration-name="flex_module3">
               <dependency linkage="Merged" />
             </entry>
+            <entry library-name="flexunit(flex)" library-level="project">
+              <dependency linkage="Include" />
+            </entry>
           </entries>
           <sdk library-id="0" home-path="$TEST_SDK_HOME$" />
         </dependencies>
@@ -46,6 +49,7 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="flex_module3" />
+    <orderEntry type="library" name="flexunit(flex)" level="project" exported="" />
     <orderEntry type="library" name="Flex SDK 4.5.1.21328" level="application" />
   </component>
 </module>

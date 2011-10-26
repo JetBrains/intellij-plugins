@@ -35,6 +35,9 @@
     <orderEntry type="module" module-name="java_with_flex_facets" scope="PROVIDED" />
     <orderEntry type="module" module-name="flex_module2" />
     <orderEntry type="module" module-name="flex_module3" exported="" />
+    <orderEntry type="library" name="FlexUnit1Lib(java)" level="project" />
+    <orderEntry type="library" name="SwiftSuspenders" level="application" />
+    <orderEntry type="library" name="Lib2" level="application" scope="PROVIDED" />
   </component>
 </module>
 

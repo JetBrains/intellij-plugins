@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <state>
   <library name="Flex SDK 4.5.1.21328" type="Flex SDK">
     <properties home="$TEST_SDK_HOME$" id="0" version="4.5.1.21328" />
@@ -9,5 +8,18 @@
     <JAVADOC />
     <SOURCES />
   </library>
+  <library name="Lib2" type="flex">
+    <CLASSES>
+      <root url="jar://$TEST_SDK_HOME$/Lib2.swc!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+  <library name="SwiftSuspenders" type="flex">
+    <CLASSES>
+      <root url="jar://$TEST_SDK_HOME$/SwiftSuspenders-v1.6.0.swc!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
 </state>
-

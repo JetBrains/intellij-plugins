@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.projectStructure.conversion;
 import com.intellij.conversion.CannotConvertException;
 import com.intellij.conversion.ConversionContext;
 import com.intellij.conversion.ModuleSettings;
+import com.intellij.conversion.ProjectLibrarySettings;
 import com.intellij.facet.FacetManagerImpl;
 import com.intellij.facet.impl.invalid.InvalidFacetManagerImpl;
 import com.intellij.facet.impl.invalid.InvalidFacetType;
@@ -10,6 +11,8 @@ import com.intellij.facet.pointers.FacetPointersManager;
 import com.intellij.ide.impl.convert.JDomConvertingUtil;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
+import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl;
@@ -24,7 +27,9 @@ import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
+import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Disposer;
@@ -36,6 +41,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -51,7 +57,8 @@ public class ConversionParams {
   private final LibraryTable.ModifiableModel myGlobalLibrariesModifiableModel;
   private final ConversionContext myContext;
   private final Collection<String> myFacetsToIgnore = new HashSet<String>();
-
+  private final Collection<File> myAffectedFiles = new HashSet<File>();
+  
   public ConversionParams(ConversionContext context) {
     myContext = context;
     myGlobalLibrariesModifiableModel = ApplicationLibraryTable.getApplicationTable().getModifiableModel();
@@ -125,6 +132,39 @@ public class ConversionParams {
       state.getIgnoredFacets().addAll(myFacetsToIgnore);
       XmlSerializer.serializeInto(state, invalidFacetManager);
     }
+  }
+
+  public boolean libraryExists(final String libraryName, final String libraryLevel) throws CannotConvertException {
+    if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(libraryLevel)) {
+      return myGlobalLibrariesModifiableModel.getLibraryByName(libraryName) != null;
+    }
+    else {
+      return myContext.findProjectLibrarySettings(libraryName) != null;
+    }
+  }
+
+  public void changeLibraryTypeToFlex(final String libraryName, final String libraryLevel) throws CannotConvertException {
+    if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(libraryLevel)) {
+      final Library library = myGlobalLibrariesModifiableModel.getLibraryByName(libraryName);
+      final LibraryEx.ModifiableModelEx model = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
+      model.setType(FlexLibraryType.getInstance());
+      model.setProperties(FlexLibraryType.getInstance().createDefaultProperties());
+      ApplicationManager.getApplication().runWriteAction(new Runnable() {
+        public void run() {
+          model.commit();
+        }
+      });
+    }
+    else {
+      final ProjectLibrarySettings settings = myContext.findProjectLibrarySettings(libraryName);
+      assert settings != null;
+      settings.getLibraryElement().setAttribute(LibraryImpl.LIBRARY_TYPE_ATTR, FlexLibraryType.FLEX_LIBRARY.getKindId());
+      myAffectedFiles.add(settings.getFile());
+    }
+  }
+
+  public Collection<File> getAffectedFiles() {
+    return myAffectedFiles;
   }
 
   @Nullable

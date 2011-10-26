@@ -1,2 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<state />
+<state>
+  <library name="SwiftSuspenders" type="flex">
+    <CLASSES>
+      <root url="jar://$TEST_SDK_HOME$/SwiftSuspenders-v1.6.0.swc!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+  <library name="Lib2">
+    <CLASSES>
+      <root url="jar://$TEST_SDK_HOME$/Lib2.swc!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</state>
+
