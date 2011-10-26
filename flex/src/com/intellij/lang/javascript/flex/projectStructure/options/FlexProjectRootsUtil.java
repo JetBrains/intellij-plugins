@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 public class FlexProjectRootsUtil {
 
   public static boolean dependsOnLibrary(@NotNull FlexIdeBuildConfiguration bc, @NotNull final Library library, final boolean transitive) {
-    final String libraryLevel = library.getTable().getTableLevel();
+    final String libraryLevel = library.getTable() != null ? library.getTable().getTableLevel() : null;
     if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(libraryLevel) || LibraryTablesRegistrar.PROJECT_LEVEL.equals(libraryLevel)) {
       return !ContainerUtil.process(bc.getDependencies().getEntries(), new Processor<DependencyEntry>() {
         @Override
