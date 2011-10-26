@@ -92,7 +92,7 @@ public class LibraryCollector {
           if (orderEntry instanceof LibraryOrderEntry) {
             com.intellij.openapi.roots.libraries.Library library = ((LibraryOrderEntry)orderEntry).getLibrary();
             if (library == null || !(((LibraryEx)library).getType() instanceof FlexLibraryType) ||
-                !FlexProjectRootsUtil.dependsOnModuleLibrary(bc, library, false)) {
+                !FlexProjectRootsUtil.dependsOnLibrary(bc, library, false)) {
               return null;
             }
           }

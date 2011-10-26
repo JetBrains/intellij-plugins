@@ -11,6 +11,7 @@ import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableImplUtil;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -21,29 +22,47 @@ import org.jetbrains.annotations.Nullable;
  */
 public class FlexProjectRootsUtil {
 
-  public static boolean dependsOnModuleLibrary(@NotNull FlexIdeBuildConfiguration bc, @NotNull Library library, final boolean transitive) {
-    final String libraryId = getLibraryId(library);
-    return libraryId != null && !ContainerUtil.process(bc.getDependencies().getEntries(), new Processor<DependencyEntry>() {
-      @Override
-      public boolean process(DependencyEntry dependencyEntry) {
-        if (transitive && dependencyEntry.getDependencyType().getLinkageType() != LinkageType.Include) {
-          return true;
+  public static boolean dependsOnLibrary(@NotNull FlexIdeBuildConfiguration bc, @NotNull final Library library, final boolean transitive) {
+    final String libraryLevel = library.getTable().getTableLevel();
+    if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(libraryLevel) || LibraryTablesRegistrar.PROJECT_LEVEL.equals(libraryLevel)) {
+      return !ContainerUtil.process(bc.getDependencies().getEntries(), new Processor<DependencyEntry>() {
+        @Override
+        public boolean process(DependencyEntry dependencyEntry) {
+          if (transitive && dependencyEntry.getDependencyType().getLinkageType() != LinkageType.Include) {
+            return true;
+          }
+          if (!(dependencyEntry instanceof SharedLibraryEntry)) {
+            return true;
+          }
+          return !((SharedLibraryEntry)dependencyEntry).getLibraryName().equals(library.getName()) ||
+                 !((SharedLibraryEntry)dependencyEntry).getLibraryLevel().equals(libraryLevel);
         }
-        if (!(dependencyEntry instanceof ModuleLibraryEntry)) {
-          return true;
+      });
+    }
+    else {
+      final String libraryId = getLibraryId(library);
+      return libraryId != null && !ContainerUtil.process(bc.getDependencies().getEntries(), new Processor<DependencyEntry>() {
+        @Override
+        public boolean process(DependencyEntry dependencyEntry) {
+          if (transitive && dependencyEntry.getDependencyType().getLinkageType() != LinkageType.Include) {
+            return true;
+          }
+          if (!(dependencyEntry instanceof ModuleLibraryEntry)) {
+            return true;
+          }
+          return !((ModuleLibraryEntry)dependencyEntry).getLibraryId().equals(libraryId);
         }
-        return !((ModuleLibraryEntry)dependencyEntry).getLibraryId().equals(libraryId);
-      }
-    });
+      });
+    }
   }
 
-  public static boolean dependOnModuleLibrary(Iterable<FlexIdeBuildConfiguration> bcs,
-                                              @NotNull final Library library,
-                                              final boolean transitive) {
+  public static boolean dependOnLibrary(Iterable<FlexIdeBuildConfiguration> bcs,
+                                        @NotNull final Library library,
+                                        final boolean transitive) {
     return !ContainerUtil.process(bcs, new Processor<FlexIdeBuildConfiguration>() {
       @Override
       public boolean process(FlexIdeBuildConfiguration configuration) {
-        return !dependsOnModuleLibrary(configuration, library, transitive);
+        return !dependsOnLibrary(configuration, library, transitive);
       }
     });
   }
