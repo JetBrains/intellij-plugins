@@ -16,6 +16,7 @@
 package com.intellij.lang.ognl.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,10 +24,15 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class OgnlConditionalExpression extends OgnlElement {
+public class OgnlConditionalExpression extends OgnlExpressionBase {
 
   public OgnlConditionalExpression(@NotNull final ASTNode node) {
     super(node);
+  }
+
+  @Override
+  public PsiType getType() {
+    return getThen().getType();
   }
 
   @NotNull
