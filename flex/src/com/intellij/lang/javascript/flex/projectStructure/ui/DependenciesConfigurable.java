@@ -237,7 +237,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         if (bcName.equals(bcEntry.getBcName())) return true;
       }
       if (!dependencyType.isEqual(entry.getDependencyType())) return true;
-      
+
       return false;
     }
 
@@ -323,7 +323,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         return true;
       }
       if (!dependencyType.isEqual(entry.getDependencyType())) return true;
-      
+
       return false;
     }
 
@@ -1398,7 +1398,22 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
 
     public void run() {
-      final ChooseLibrariesDialog d = new ChooseLibrariesDialog();
+      final Collection<Library> usedLibraries = new HashSet<Library>();
+      List<MyTableItem> items = myTable.getItems();
+      for (MyTableItem item : items) {
+        if (item instanceof SharedLibraryItem) {
+          FlexLibraryConfigurable libraryConfigurable = ((SharedLibraryItem)item).configurable;
+          if (libraryConfigurable != null) {
+            usedLibraries.add(libraryConfigurable.getEditableObject());
+          }
+        }
+      }
+
+      ChooseLibrariesDialog d = new ChooseLibrariesDialog(new Condition<Library>() {
+        public boolean value(final Library library) {
+          return !usedLibraries.contains(library);
+        }
+      });
       d.show();
       if (!d.isOK()) return;
 
@@ -1476,8 +1491,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   private class ChooseLibrariesDialog extends ChooseLibrariesFromTablesDialog {
-    public ChooseLibrariesDialog() {
+    private final Condition<Library> myFilter;
+
+    public ChooseLibrariesDialog(Condition<Library> filter) {
       super(myMainPanel, "Choose Libraries", myProject, false);
+      myFilter = filter;
       init();
     }
 
@@ -1485,7 +1503,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     protected Library[] getLibraries(@NotNull final LibraryTable table) {
       final List<Library> filtered = ContainerUtil.filter(super.getLibraries(table), new Condition<Library>() {
         public boolean value(final Library library) {
-          if (!FlexProjectRootsUtil.isFlexLibrary(library)) return false;
+          if (!FlexProjectRootsUtil.isFlexLibrary(library) || !myFilter.value(library)) return false;
           return true;
         }
       });
