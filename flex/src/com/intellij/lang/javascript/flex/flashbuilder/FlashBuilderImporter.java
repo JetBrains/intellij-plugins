@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleBuilder;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension;
+import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -137,7 +137,7 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
     }
 
     final FlexProjectConfigurationEditor currentFlexEditor =
-      PlatformUtils.isFlexIde() ? FlexIdeModuleStructureExtension.getInstance().getConfigurator().getConfigEditor() : null;
+      PlatformUtils.isFlexIde() ? FlexIdeBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor() : null;
 
     final boolean needToCommitFlexEditor = PlatformUtils.isFlexIde() && currentFlexEditor == null;
     final LibraryTableBase.ModifiableModelEx globalLibrariesModifiableModel;

@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexId
 import com.intellij.lang.javascript.flex.projectStructure.ui.CompositeConfigurable;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
@@ -26,17 +25,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
+public class FlexIdeBuildConfigurationsExtension extends ModuleStructureExtension {
 
   final FlexIdeBCConfigurator myConfigurator;
   private static final Icon ICON = IconLoader.getIcon("buildConfig.png");
 
-  public FlexIdeModuleStructureExtension() {
+  public FlexIdeBuildConfigurationsExtension() {
     myConfigurator = new FlexIdeBCConfigurator();
   }
 
-  public static FlexIdeModuleStructureExtension getInstance() {
-    return ModuleStructureExtension.EP_NAME.findExtension(FlexIdeModuleStructureExtension.class);
+  public static FlexIdeBuildConfigurationsExtension getInstance() {
+    return ModuleStructureExtension.EP_NAME.findExtension(FlexIdeBuildConfigurationsExtension.class);
   }
 
   public FlexIdeBCConfigurator getConfigurator() {
@@ -108,9 +107,10 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
   }
 
   public Collection<AnAction> createAddActions(final NullableComputable<MasterDetailsComponent.MyNode> selectedNodeRetriever,
-                                               final Runnable treeNodeNameUpdater) {
+                                               final Runnable treeNodeNameUpdater,
+                                               final Project project,
+                                               final MasterDetailsComponent.MyNode root) {
     final Collection<AnAction> actions = new ArrayList<AnAction>(2);
-    actions.add(new Separator());
     actions.add(new DumbAwareAction("Build Configuration", "Create Build Configuration", ICON) {
       public void update(final AnActionEvent e) {
         e.getPresentation().setVisible(getFlexModuleForNode(selectedNodeRetriever.compute()) != null);

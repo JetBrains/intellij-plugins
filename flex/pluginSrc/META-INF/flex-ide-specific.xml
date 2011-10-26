@@ -8,7 +8,9 @@
     <moduleService serviceInterface="com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager"
                    serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl"/>
     <configuration.ModuleStructureExtension
-        implementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension"/>
+        implementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationsExtension"/>
+    <configuration.ModuleStructureExtension
+        implementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeSharedLibrariesExtension"/>
     <configurationType implementation="com.intellij.lang.javascript.flex.run.FlexIdeRunConfigurationType"/>
     <configurationType implementation="com.intellij.lang.javascript.flex.run.RemoteFlashRunConfigurationType"/>
     <library.type implementation="com.intellij.lang.javascript.flex.projectStructure.FlexSdkLibraryType"/>

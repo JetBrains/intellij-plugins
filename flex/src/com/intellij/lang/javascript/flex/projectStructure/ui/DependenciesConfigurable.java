@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryRootsComponentDescriptor;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension;
+import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
@@ -662,7 +662,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
     });
 
-    FlexIdeModuleStructureExtension.getInstance().getConfigurator().addListener(new FlexIdeBCConfigurator.Listener() {
+    FlexIdeBuildConfigurationsExtension.getInstance().getConfigurator().addListener(new FlexIdeBCConfigurator.Listener() {
       @Override
       public void moduleRemoved(Module module) {
         // TODO return if module == this module
@@ -704,7 +704,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     myConfigEditor.addModulesModelChangeListener(new FlexProjectConfigurationEditor.ModulesModelChangeListener() {
       @Override
       public void modulesModelsChanged(Collection<Module> modules) {
-        FlexIdeBCConfigurator configurator = FlexIdeModuleStructureExtension.getInstance().getConfigurator();
+        FlexIdeBCConfigurator configurator = FlexIdeBuildConfigurationsExtension.getInstance().getConfigurator();
         for (Module module : modules) {
           for (CompositeConfigurable configurable : configurator.getBCConfigurables(module)) {
             FlexIdeBCConfigurable flexIdeBCConfigurable = FlexIdeBCConfigurable.unwrap(configurable);
@@ -1015,7 +1015,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         updateSdkEntries(sdkNode, flexSdk);
       }
     }
-    FlexIdeBCConfigurator configurator = FlexIdeModuleStructureExtension.getInstance().getConfigurator();
+    FlexIdeBCConfigurator configurator = FlexIdeBuildConfigurationsExtension.getInstance().getConfigurator();
     for (DependencyEntry entry : myDependencies.getEntries()) {
       MyTableItem item = null;
       if (entry instanceof BuildConfigurationEntry) {
@@ -1154,7 +1154,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
 
       Map<Module, List<FlexIdeBCConfigurable>> treeItems = new HashMap<Module, List<FlexIdeBCConfigurable>>();
-      FlexIdeBCConfigurator configurator = FlexIdeModuleStructureExtension.getInstance().getConfigurator();
+      FlexIdeBCConfigurator configurator = FlexIdeBuildConfigurationsExtension.getInstance().getConfigurator();
       for (Module module : ModuleStructureConfigurable.getInstance(myProject).getModules()) {
         if (ModuleType.get(module) != FlexModuleType.getInstance()) {
           continue;

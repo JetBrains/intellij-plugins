@@ -2,7 +2,7 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ide.DataManager;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension;
+import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.openapi.actionSystem.*;
@@ -195,7 +195,7 @@ public class ChooseActiveBuildConfigurationAction extends ComboBoxAction impleme
       ShowSettingsUtil.getInstance().editConfigurable(myModule.getProject(), c, new Runnable() {
         @Override
         public void run() {
-          Place p = FlexIdeModuleStructureExtension.getInstance().getConfigurator().getPlaceFor(myModule, activeConfiguration);
+          Place p = FlexIdeBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(myModule, activeConfiguration);
           c.navigateTo(p, true);
         }
       });

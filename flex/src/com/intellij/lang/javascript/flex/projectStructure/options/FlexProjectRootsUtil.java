@@ -93,4 +93,9 @@ public class FlexProjectRootsUtil {
     }
     return null;
   }
+
+  public static boolean isFlexLibrary(final Library library) {
+    return ((LibraryEx)library).getType() instanceof FlexLibraryType;
+  }
+
 }

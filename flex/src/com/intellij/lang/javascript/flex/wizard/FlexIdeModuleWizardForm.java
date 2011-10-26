@@ -2,7 +2,7 @@ package com.intellij.lang.javascript.flex.wizard;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension;
+import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
@@ -176,7 +176,7 @@ public class FlexIdeModuleWizardForm {
 
   private void createUIComponents() {
     final FlexProjectConfigurationEditor currentFlexEditor =
-      FlexIdeModuleStructureExtension.getInstance().getConfigurator().getConfigEditor();
+      FlexIdeBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
     myNeedToDisposeFlexEditor = currentFlexEditor == null;
 
     if (currentFlexEditor != null) {

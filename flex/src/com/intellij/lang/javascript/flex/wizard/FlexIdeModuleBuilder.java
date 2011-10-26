@@ -7,7 +7,7 @@ import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension;
+import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
@@ -93,7 +93,7 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
     final LibraryTableBase.ModifiableModelEx globalLibrariesModifiableModel;
 
     final FlexProjectConfigurationEditor currentFlexEditor =
-      FlexIdeModuleStructureExtension.getInstance().getConfigurator().getConfigEditor();
+      FlexIdeBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
     final boolean needToCommitFlexEditor = currentFlexEditor == null;
 
     final FlexProjectConfigurationEditor flexConfigEditor;
