@@ -298,6 +298,10 @@ public class FlexProjectConfigurationEditor implements Disposable {
       Collection<OrderEntry> entriesToRemove = new ArrayList<OrderEntry>();
       for (OrderEntry orderEntry : modifiableModel.getOrderEntries()) {
         if (orderEntry instanceof LibraryOrderEntry) {
+          if (((LibraryOrderEntry)orderEntry).isModuleLevel()) {
+            // module-level libraries order entries are created/deleted along with dependency
+            continue;
+          }
           LibraryEx library = (LibraryEx)((LibraryOrderEntry)orderEntry).getLibrary();
           if (librariesToAdd.containsKey(library)) {
             librariesToAdd.put(library, false); // entry already exists for this library
