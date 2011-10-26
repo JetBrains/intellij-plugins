@@ -424,6 +424,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         if (!libraryName.equals(libraryEntry.getLibraryName())) return true;
         if (!libraryLevel.equals(libraryEntry.getLibraryLevel())) return true;
       }
+
+      if (!dependencyType.isEqual(entry.getDependencyType())) return true;
       return false;
     }
 
