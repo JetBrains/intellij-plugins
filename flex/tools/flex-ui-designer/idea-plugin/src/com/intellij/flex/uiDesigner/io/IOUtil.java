@@ -3,6 +3,9 @@ package com.intellij.flex.uiDesigner.io;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.util.text.CharArrayCharSequence;
 
 import java.io.*;
 import java.net.Socket;
@@ -181,5 +184,19 @@ public final class IOUtil {
     }
 
     return isNegative ? result : -result;
+  }
+
+  public static CharSequence getCharSequence(VirtualFile file) throws IOException {
+    if (file instanceof LightVirtualFile) {
+      return ((LightVirtualFile)file).getContent();
+    }
+
+    final InputStreamReader reader = new InputStreamReader(file.getInputStream(), file.getCharset());
+    try {
+      return new CharArrayCharSequence(FileUtil.loadText(reader, (int)file.getLength()));
+    }
+    finally {
+      reader.close();
+    }
   }
 }

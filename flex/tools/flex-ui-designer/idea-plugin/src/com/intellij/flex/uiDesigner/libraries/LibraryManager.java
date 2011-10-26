@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.ProjectTopics;
+import com.intellij.diagnostic.errordialog.Attachment;
 import com.intellij.flex.uiDesigner.*;
 import com.intellij.flex.uiDesigner.io.InfoList;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
@@ -23,6 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
+import com.intellij.util.ExceptionUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -103,7 +105,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
 
     final Client client;
     try {
-      AccessToken token = ReadAction.start();
+      final AccessToken token = ReadAction.start();
       try {
         libraryCollector.collect(module, new LibraryStyleInfoCollector(project, module, stringWriter, problemsHolder));
       }
@@ -217,7 +219,18 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
                             result.embedItems);
     }
     catch (Throwable e) {
-      throw new InitException(e, "error.sort.libraries");
+      String technicalMessage = "Flex SDK " + flexSdkVersion;
+      final Attachment[] attachments = new Attachment[libraries.size()];
+      try {
+        for (int i = 0, librariesSize = libraries.size(); i < librariesSize; i++) {
+          attachments[i] = new Attachment(libraries.get(i).getCatalogFile());
+        }
+      }
+      catch (Throwable innerE) {
+        technicalMessage += " Cannot collect library catalog files due to " + ExceptionUtil.getThrowableText(innerE);
+      }
+      
+      throw new InitException(e, "error.sort.libraries", attachments, technicalMessage);
     }
   }
 

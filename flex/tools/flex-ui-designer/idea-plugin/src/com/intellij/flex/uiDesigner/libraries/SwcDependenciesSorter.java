@@ -7,16 +7,15 @@ import com.intellij.flex.uiDesigner.abc.AbcNameFilterByNameSet;
 import com.intellij.flex.uiDesigner.abc.AbcNameFilterByNameSetAndStartsWith;
 import com.intellij.flex.uiDesigner.abc.FlexSdkAbcInjector.FrameworkAbcInjector;
 import com.intellij.flex.uiDesigner.abc.FlexSdkAbcInjector.SparkAbcInjector;
+import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.libraries.FlexOverloadedClasses.InjectionClassifier;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.source.parsing.xml.XmlBuilderDriver;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.text.CharArrayCharSequence;
 import com.intellij.util.text.CharArrayUtil;
 import com.intellij.util.text.CharSequenceBackedByArray;
 import gnu.trove.THashMap;
@@ -92,16 +91,6 @@ public class SwcDependenciesSorter {
     return abc.lastModified();
   }
 
-  private static CharSequence getCharSequence(VirtualFile file) throws IOException {
-    final InputStreamReader reader = new InputStreamReader(file.getInputStream(), file.getCharset());
-    try {
-      return new CharArrayCharSequence(FileUtil.loadText(reader, (int)file.getLength()));
-    }
-    finally {
-      reader.close();
-    }
-  }
-
   private List<LibrarySetItem> collectItems(final List<Library> libraries, final boolean isFromSdk) throws IOException {
     final List<LibrarySetItem> unsortedItems = new ArrayList<LibrarySetItem>(libraries.size());
     final THashMap<CharSequence, Definition> definitionMap = new THashMap<CharSequence, Definition>(unsortedItems.size() * 128);
@@ -109,7 +98,7 @@ public class SwcDependenciesSorter {
     for (Library library : libraries) {
       LibrarySetItem filteredLibrary = new LibrarySetItem(library);
       catalogXmlBuilder.setLibrary(filteredLibrary);
-      new XmlBuilderDriver(getCharSequence(library.getCatalogFile())).build(catalogXmlBuilder);
+      new XmlBuilderDriver(IOUtil.getCharSequence(library.getCatalogFile())).build(catalogXmlBuilder);
       if (filteredLibrary.hasDefinitions() || library.hasResourceBundles()) {
         unsortedItems.add(filteredLibrary);
         filteredLibrary.finalizeProcessCatalog();
@@ -134,6 +123,10 @@ public class SwcDependenciesSorter {
 
   public SortResult sort(final List<Library> libraries, final String postfix, final String flexSdkVersion, final boolean isFromSdk) throws IOException {
     useIndexForFindDefinitions = !isFromSdk;
+
+    if (isFromSdk) {
+      throw new RuntimeException("dd");
+    }
 
     final List<LibrarySetItem> unsortedItems = collectItems(libraries, isFromSdk);
     final TLinkedList<LibrarySetItem> queue = new TLinkedList<LibrarySetItem>();

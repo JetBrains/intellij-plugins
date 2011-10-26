@@ -1,6 +1,8 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.ProjectTopics;
+import com.intellij.diagnostic.LogMessageEx;
+import com.intellij.diagnostic.errordialog.Attachment;
 import com.intellij.execution.ExecutionException;
 import com.intellij.facet.FacetManager;
 import com.intellij.flex.uiDesigner.DesignerApplicationUtil.AdlRunConfiguration;
@@ -10,6 +12,7 @@ import com.intellij.flex.uiDesigner.io.ErrorSocketManager;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.io.MessageSocketManager;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
+import com.intellij.flex.uiDesigner.libraries.InitException;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -41,6 +44,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
+import com.intellij.util.ExceptionUtil;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.messages.MessageBusConnection;
@@ -50,8 +54,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static com.intellij.flex.uiDesigner.DesignerApplicationUtil.runAdl;
 
@@ -165,8 +168,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
                 }
               }
               catch (InitException e) {
-                LOG.error(e.getCause());
-                notifyUser(debug, e.getMessage(), module);
+                processInitException(e, module, debug);
               }
             }
 
@@ -178,6 +180,28 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           }
         }
       });
+    }
+  }
+
+  private static void processInitException(InitException e, Module module, boolean debug) {
+    notifyUser(debug, e.getMessage(), module);
+
+    if (e.attachments == null) {
+      LOG.error(e.getCause());
+    }
+    else {
+      final Collection<Attachment> attachments = new ArrayList<Attachment>(e.attachments.length);
+      for (Attachment attachment : e.attachments) {
+        if (attachment != null) {
+          attachments.add(attachment);
+        }
+        else {
+          break;
+        }
+      }
+
+      LOG.error(LogMessageEx.createEvent(e.getMessage(), e.technicalMessage + "\n" + ExceptionUtil.getThrowableText(e), e.getMessage(),
+                                         null, attachments));
     }
   }
 
@@ -465,7 +489,9 @@ public class FlexUIDesignerApplicationManager implements Disposable {
                     adlProcessHandler = null;
 
                     // even 0 is not correct exit code, why adl exited while open socket?
-                    LOG.error(DesignerApplicationUtil.describeAdlExit(exitCode, runConfiguration));
+                    if (!indicator.isCanceled()) {
+                      LOG.error(DesignerApplicationUtil.describeAdlExit(exitCode, runConfiguration));
+                    }
                     adlExitCode = exitCode;
                     if (libraryAndModuleInitialized) {
                       cancel();
@@ -501,7 +527,9 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       semaphore.down();
       semaphore.waitFor();
 
-      openDocument();
+      if (!indicator.isCanceled()) {
+        openDocument();
+      }
 
       // Why in test mode ProgressManager.run() doesn't call onCancel/onSuccess?
       if (isHeadless()) {
@@ -531,8 +559,8 @@ public class FlexUIDesignerApplicationManager implements Disposable {
             unregisteredDocumentReferences = LibraryManager.getInstance().initLibrarySets(module);
           }
           catch (InitException e) {
-            LOG.error(e.getCause());
-            notifyUser(debug, e.getMessage(), module);
+            processInitException(e, module, debug);
+            cancel();
             return;
           }
           catch (Throwable e) {

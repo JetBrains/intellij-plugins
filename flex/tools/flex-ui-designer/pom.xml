@@ -89,7 +89,7 @@
   <repositories>
     <repository>
       <id>project-repo</id>
-      <url>file://${user.dir}/build/repo</url>
+      <url>file://${user.dir}/lib</url>
     </repository>
     <!--<repository>-->
       <!--<id>flyti</id>-->
