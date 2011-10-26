@@ -357,7 +357,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         final LibraryEx library = configurable.getLibraryForPresentation();
         return OrderEntryAppearanceService.getInstance(project).forLibrary(library, false).getText();
       }
-      return "<unknown>";
+      return libraryName;
     }
 
     @Override
