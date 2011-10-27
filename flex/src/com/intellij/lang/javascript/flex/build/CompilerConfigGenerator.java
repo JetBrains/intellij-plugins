@@ -3,20 +3,29 @@ package com.intellij.lang.javascript.flex.build;
 import com.intellij.javascript.flex.FlexApplicationComponent;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.projectStructure.*;
+import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
+import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
+import com.intellij.lang.javascript.flex.projectStructure.ValueSource;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.*;
+import com.intellij.openapi.vfs.JarFileSystem;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformUtils;
 import gnu.trove.THashMap;
@@ -277,26 +286,38 @@ public class CompilerConfigGenerator {
         if (linkageType == LinkageType.LoadInRuntime) continue;
 
         final FlexIdeBuildConfiguration config = ((BuildConfigurationEntry)entry).findBuildConfiguration();
-
         if (config != null) {
           addLib(rootElement, config.getOutputFilePath(), linkageType);
         }
       }
       else if (entry instanceof ModuleLibraryEntry) {
-        final LibraryOrderEntry orderEntry = FlexProjectRootsUtil.findOrderEntry((ModuleLibraryEntry)entry, ModuleRootManager.getInstance(myModule));
-
-        if (orderEntry == null) continue;
-
-        for (VirtualFile libFile : orderEntry.getRootFiles(OrderRootType.CLASSES)) {
-          libFile = FlexCompilerHandler.getRealFile(libFile);
-
-          if (libFile != null && libFile.isDirectory()) {
-            addOption(rootElement, CompilerOptionInfo.SOURCE_PATH_INFO, libFile.getPath());
-          }
-          else if (libFile != null && !libFile.isDirectory() && "swc".equalsIgnoreCase(libFile.getExtension())) {
-            addLib(rootElement, libFile.getPath(), linkageType);
-          }
+        final LibraryOrderEntry orderEntry =
+          FlexProjectRootsUtil.findOrderEntry((ModuleLibraryEntry)entry, ModuleRootManager.getInstance(myModule));
+        if (orderEntry != null) {
+          addLibraryRoots(rootElement, orderEntry.getRootFiles(OrderRootType.CLASSES), linkageType);
         }
+      }
+      else if (entry instanceof SharedLibraryEntry) {
+        final LibraryTable libraryTable = LibraryTablesRegistrar.APPLICATION_LEVEL.equals(((SharedLibraryEntry)entry).getLibraryLevel())
+                                          ? ApplicationLibraryTable.getApplicationTable()
+                                          : ProjectLibraryTable.getInstance(myModule.getProject());
+        final Library library = libraryTable.getLibraryByName(((SharedLibraryEntry)entry).getLibraryName());
+        if (library != null) {
+          addLibraryRoots(rootElement, library.getFiles((OrderRootType.CLASSES)), linkageType);
+        }
+      }
+    }
+  }
+
+  private void addLibraryRoots(final Element rootElement, final VirtualFile[] libClassRoots, final LinkageType linkageType) {
+    for (VirtualFile libFile : libClassRoots) {
+      libFile = FlexCompilerHandler.getRealFile(libFile);
+
+      if (libFile != null && libFile.isDirectory()) {
+        addOption(rootElement, CompilerOptionInfo.SOURCE_PATH_INFO, libFile.getPath());
+      }
+      else if (libFile != null && !libFile.isDirectory() && "swc".equalsIgnoreCase(libFile.getExtension())) {
+        addLib(rootElement, libFile.getPath(), linkageType);
       }
     }
   }
@@ -399,7 +420,8 @@ public class CompilerConfigGenerator {
     else {
       final String pathToMainClassFile = FlexUtils.getPathToMainClassFile(myConfig.getMainClass(), myModule);
       if (pathToMainClassFile.isEmpty() && !ApplicationManager.getApplication().isUnitTestMode()) {
-        throw new IOException(FlexBundle.message("bc.incorrect.main.class", myConfig.getMainClass(), myConfig.getName(), myModule.getName()));
+        throw new IOException(
+          FlexBundle.message("bc.incorrect.main.class", myConfig.getMainClass(), myConfig.getName(), myModule.getName()));
       }
       addOption(rootElement, CompilerOptionInfo.MAIN_CLASS_INFO, pathToMainClassFile);
     }
