@@ -1,82 +1,95 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.google.jstestdriver.idea.execution.settings.ui.ServerConfigurationForm">
-  <grid id="27dc6" binding="myRootComponent" layout-manager="GridBagLayout">
+  <grid id="27dc6" binding="myRootComponent" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="494" height="113"/>
+      <xy x="20" y="20" width="469" height="205"/>
     </constraints>
     <properties/>
     <clientProperties>
       <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithIndent"/>
     </clientProperties>
-    <border type="none" title="Server"/>
+    <border type="none"/>
     <children>
-      <grid id="57463" layout-manager="GridBagLayout">
+      <grid id="f0992" layout-manager="GridBagLayout">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties>
-          <enabled value="true"/>
-        </properties>
-        <border type="none"/>
+        <properties/>
+        <clientProperties>
+          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithIndent"/>
+        </clientProperties>
+        <border type="none" title="Server"/>
         <children>
-          <component id="6b766" class="javax.swing.JTextField" binding="myServerAddress">
+          <grid id="57463" layout-manager="GridBagLayout">
             <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="9"/>
-              </grid>
-              <gridbag weightx="1.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <enabled value="false"/>
-            </properties>
-          </component>
-          <component id="8d5e5" class="javax.swing.JRadioButton" binding="myRunningInIDERadioButton" default-binding="true">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                <preferred-size width="97" height="32"/>
-              </grid>
-              <gridbag weightx="0.0" weighty="1.0"/>
-            </constraints>
-            <properties>
-              <selected value="true"/>
-              <text value="&amp;Running in IDE"/>
-            </properties>
-          </component>
-          <component id="3b872" class="javax.swing.JRadioButton" binding="myAtAddressRadioButton" default-binding="true">
-            <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                <preferred-size width="79" height="9"/>
-              </grid>
+              <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
-              <horizontalAlignment value="2"/>
-              <selected value="false"/>
-              <text value="&amp;At address:"/>
+              <enabled value="true"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="6b766" class="javax.swing.JTextField" binding="myServerAddress">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="9"/>
+                  </grid>
+                  <gridbag weightx="1.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <enabled value="false"/>
+                </properties>
+              </component>
+              <component id="8d5e5" class="javax.swing.JRadioButton" binding="myRunningInIDERadioButton" default-binding="true">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="97" height="32"/>
+                  </grid>
+                  <gridbag weightx="0.0" weighty="1.0"/>
+                </constraints>
+                <properties>
+                  <selected value="true"/>
+                  <text value="&amp;Running in IDE"/>
+                </properties>
+              </component>
+              <component id="3b872" class="javax.swing.JRadioButton" binding="myAtAddressRadioButton" default-binding="true">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="79" height="9"/>
+                  </grid>
+                  <gridbag weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <horizontalAlignment value="2"/>
+                  <selected value="false"/>
+                  <text value="&amp;At address:"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <component id="8ecac" class="javax.swing.JButton" binding="myTestConnectionButton" default-binding="true">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="5" left="0" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="&amp;Test Connection"/>
+            </properties>
+          </component>
+          <component id="d115c" class="javax.swing.JLabel" binding="myTestConnectionResult">
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="5" left="7" bottom="0" right="0" weightx="1.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <horizontalTextPosition value="2"/>
+              <text value=" ResultOfTestConnection"/>
             </properties>
           </component>
         </children>
       </grid>
-      <component id="8ecac" class="javax.swing.JButton" binding="myTestConnectionButton" default-binding="true">
-        <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="5" left="0" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
-        </constraints>
-        <properties>
-          <text value="&amp;Test Connection"/>
-        </properties>
-      </component>
-      <component id="d115c" class="javax.swing.JLabel" binding="myTestConnectionResult">
-        <constraints>
-          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="5" left="7" bottom="0" right="0" weightx="1.0" weighty="0.0"/>
-        </constraints>
-        <properties>
-          <horizontalTextPosition value="2"/>
-          <text value=" ResultOfTestConnection"/>
-        </properties>
-      </component>
     </children>
   </grid>
   <buttonGroups>
