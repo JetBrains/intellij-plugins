@@ -13,6 +13,7 @@ import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
@@ -28,8 +29,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 /**
  * @author ksafonov
@@ -261,5 +260,9 @@ public class FlexSdkPanel implements Disposable {
     if (comboBox.getSelectedItem() == null && comboBox.getModel().getSize() > 0) {
       comboBox.setSelectedItem(comboBox.getModel().getElementAt(0));
     }
+  }
+
+  private void createUIComponents() {
+    myCombo = new ComboboxWithBrowseButton(new ComboBox(10));
   }
 }
