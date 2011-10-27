@@ -10,18 +10,24 @@ public class DocumentFactory implements SerializedDocumentDataProvider, Document
 
   private const objectDeclarationPositionMap:Dictionary = new Dictionary(true);
 
-  public function DocumentFactory(id:int, data:ByteArray, file:VirtualFile, className:String, isApp:Boolean, module:Module) {
+  public function DocumentFactory(id:int, data:ByteArray, file:VirtualFile, className:String, flags:int, module:Module) {
     _id = id;
     _data = data;
     _file = file;
     _className = className;
-    _isApp = isApp;
+    _isApp = flags == 1;
+    _isPureFlash = flags == 2;
     this.module = module;
   }
 
   private var _isApp:Boolean;
   public function get isApp():Boolean {
     return _isApp;
+  }
+
+  private var _isPureFlash:Boolean;
+  public function get isPureFlash():Boolean {
+    return _isPureFlash;
   }
   
   private var _users:Vector.<DocumentFactory>;

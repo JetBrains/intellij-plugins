@@ -4,8 +4,12 @@ import com.intellij.flex.uiDesigner.abc.AssetClassPoolGenerator;
 import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.flex.uiDesigner.libraries.*;
 import com.intellij.flex.uiDesigner.mxml.MxmlWriter;
+import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
+import com.intellij.openapi.application.AccessToken;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
@@ -373,7 +377,7 @@ public class Client implements Closable {
       out.writeShort(factoryId);
 
       ProblemsHolder problemsHolder = new ProblemsHolder();
-      writeDocumentFactory(module, psiFile, problemsHolder);
+      writeDocumentFactory(module, psiFile, problemsHolder, XmlBackedJSClassImpl.getXmlBackedClass(psiFile));
       if (!problemsHolder.isEmpty()) {
         DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
       }
@@ -404,11 +408,11 @@ public class Client implements Closable {
         out.writeShort(id);
         writeVirtualFile(virtualFile, out);
 
-        JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(psiFile);
+        final JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(psiFile);
         assert jsClass != null;
         out.writeAmfUtf(jsClass.getQualifiedName());
 
-        hasError = !writeDocumentFactory(module, psiFile, problemsHolder);
+        hasError = !writeDocumentFactory(module, psiFile, problemsHolder, jsClass);
       }
       catch (Throwable e) {
         LogMessageUtil.processInternalError(e, virtualFile);
@@ -425,9 +429,30 @@ public class Client implements Closable {
     return id;
   }
 
-  private boolean writeDocumentFactory(Module module, XmlFile psiFile, ProblemsHolder problemsHolder)
+  private boolean writeDocumentFactory(Module module, XmlFile psiFile, ProblemsHolder problemsHolder, JSClass jsClass)
     throws IOException {
-    out.write(ModuleInfoUtil.isApplicationDocument(psiFile));
+
+    final AccessToken token = ReadAction.start();
+    final int flags;
+    try {
+      if (JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.SPARK_APPLICATION) ||
+          JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.MX_APPLICATION)) {
+        flags = 1;
+      }
+      else if (JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.FLASH_DISPLAY_OBJECT_CONTAINER) &&
+               !JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.IUI_COMPONENT)) {
+        flags = 2;
+      }
+      else {
+        flags = 0;
+      }
+    }
+    finally {
+      token.finish();
+    }
+
+    out.write(flags);
+
     XmlFile[] unregisteredDocumentReferences = mxmlWriter.write(psiFile, problemsHolder, registeredModules.getInfo(module).assetCounterInfo.demanded);
     return unregisteredDocumentReferences == null || registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder);
   }

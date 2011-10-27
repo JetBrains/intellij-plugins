@@ -4,25 +4,8 @@
     <option name="TARGET_PLAYER_VERSION" value="10.2" />
     <option name="VERSION" value="3" />
   </component>
-  <component name="FlexBuildConfigurationManager" active="common with mx lib">
+  <component name="FlexBuildConfigurationManager" active="dd">
     <configurations>
-      <configuration name="common" target-platform="Desktop" output-file="common.swf" output-folder="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/idea-plugin/testData/out/production/common" skip-build="true">
-        <dependencies target-player="10.2" component-set="SparkOnly">
-          <entries>
-            <entry library-id="08534e73-113c-4c1c-baff-f8d1b243a5ae">
-              <dependency linkage="Merged" />
-            </entry>
-            <entry library-name="test-data-helper" library-level="project">
-              <dependency linkage="Merged" />
-            </entry>
-          </entries>
-          <sdk library-id="bda50fbf-ccd5-43bc-800d-7ba94ad6d273" home-path="/Developer/SDKs/flex_4.5.1" />
-        </dependencies>
-        <compiler-options />
-        <packaging-air-desktop />
-        <packaging-android />
-        <packaging-ios />
-      </configuration>
       <configuration name="GenericMxmlSupport" pure-as="true" main-class="GenericMxmlSupport" output-file="GenericMxmlSupport.swf" output-folder="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/idea-plugin/testData/out/production/common">
         <dependencies target-player="10.2">
           <entries>
@@ -40,30 +23,13 @@
         <packaging-android />
         <packaging-ios />
       </configuration>
-      <configuration name="ss" main-class="GenericMxmlSupport" output-file="GenericMxmlSupport.swf" output-folder="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/idea-plugin/testData/out/production/common">
-        <dependencies target-player="10.2" component-set="SparkOnly" framework-linkage="Merged">
+      <configuration name="dd" target-platform="Desktop" pure-as="true" main-class="GenericMxmlSupport" output-file="GenericMxmlSupport.swf" output-folder="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/idea-plugin/testData/out/production/common">
+        <dependencies>
           <entries>
             <entry library-id="805afa30-1ad0-46c8-9387-cb0760d1c8b3">
               <dependency linkage="Merged" />
             </entry>
             <entry library-id="864c3765-0d40-41d8-97eb-b1f2aa2c4d56">
-              <dependency linkage="Merged" />
-            </entry>
-          </entries>
-          <sdk library-id="bda50fbf-ccd5-43bc-800d-7ba94ad6d273" home-path="/Developer/SDKs/flex_4.5.1" />
-        </dependencies>
-        <compiler-options />
-        <packaging-air-desktop />
-        <packaging-android />
-        <packaging-ios />
-      </configuration>
-      <configuration name="common with mx lib" target-platform="Desktop" output-file="common.swf" output-folder="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/idea-plugin/testData/out/production/common" skip-build="true">
-        <dependencies target-player="10.2">
-          <entries>
-            <entry library-id="08534e73-113c-4c1c-baff-f8d1b243a5ae">
-              <dependency linkage="Merged" />
-            </entry>
-            <entry library-name="test-data-helper" library-level="project">
               <dependency linkage="Merged" />
             </entry>
           </entries>
@@ -84,7 +50,6 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Flex SDK 4.5.1.21328" level="application" />
-    <orderEntry type="library" name="test-data-helper" level="project" />
     <orderEntry type="module-library">
       <library type="flex">
         <properties id="08534e73-113c-4c1c-baff-f8d1b243a5ae" />
@@ -102,7 +67,9 @@
           <root url="jar://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/test-data-helper/target/test-data-helper.swc!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/test-data-helper/src" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">

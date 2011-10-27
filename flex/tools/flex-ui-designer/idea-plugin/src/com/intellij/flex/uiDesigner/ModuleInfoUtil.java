@@ -7,13 +7,12 @@ import com.intellij.flex.uiDesigner.io.StringRegistry.StringWriter;
 import com.intellij.flex.uiDesigner.libraries.Library;
 import com.intellij.flex.uiDesigner.mxml.MxmlUtil;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
+import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.openapi.application.AccessToken;
@@ -42,10 +41,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ModuleInfoUtil {
-  private static final String MX_APPLICATION = "mx.core.Application";
-  private static final String SPARK_APPLICATION = "spark.components.Application";
-
+public final class ModuleInfoUtil {
   public static ModuleInfo createInfo(Module module, AssetCounterInfo assetCounterInfo) {
     final FlexBuildConfiguration flexBuildConfiguration;
     if (ModuleType.get(module) instanceof FlexModuleType) {
@@ -96,18 +92,6 @@ public class ModuleInfoUtil {
     }
   }
 
-  public static boolean isApplicationDocument(XmlFile psiFile) {
-    final AccessToken token = ReadAction.start();
-    try {
-      final JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(psiFile);
-      return jsClass != null && (JSInheritanceUtil.isParentClass(jsClass, SPARK_APPLICATION) ||
-                                 JSInheritanceUtil.isParentClass(jsClass, MX_APPLICATION));
-    }
-    finally {
-      token.finish();
-    }
-  }
-
   private static void collectApplicationLocalStyle(final ModuleInfo moduleInfo, String flexSdkVersion, final ProblemsHolder problemsHolder,
                                                    StringWriter stringWriter, List<XmlFile> unregisteredDocumentReferences,
                                                    final AssetCounter assetCounter) {
@@ -116,14 +100,14 @@ public class ModuleInfoUtil {
 
     final List<JSClass> holders = new ArrayList<JSClass>(2);
     if (flexSdkVersion.charAt(0) > '3') {
-      JSClass clazz = ((JSClass)JSResolveUtil.findClassByQName(SPARK_APPLICATION, moduleWithDependenciesAndLibrariesScope));
+      JSClass clazz = ((JSClass)JSResolveUtil.findClassByQName(FlexCommonTypeNames.SPARK_APPLICATION, moduleWithDependenciesAndLibrariesScope));
       // it is not legal case, but user can use patched/modified Flex SDK
       if (clazz != null) {
         holders.add(clazz);
       }
     }
 
-    JSClass mxApplicationClass = ((JSClass)JSResolveUtil.findClassByQName(MX_APPLICATION, moduleWithDependenciesAndLibrariesScope));
+    JSClass mxApplicationClass = ((JSClass)JSResolveUtil.findClassByQName(FlexCommonTypeNames.MX_APPLICATION, moduleWithDependenciesAndLibrariesScope));
     // if null, mx.swc is not added to module dependencies
     if (mxApplicationClass != null) {
       holders.add(mxApplicationClass);
@@ -191,6 +175,7 @@ public class ModuleInfoUtil {
       return cssWriter.getAssetCounter();
     }
 
+    @Nullable
     public LocalStyleHolder write(XmlTag tag, Module module, VirtualFile userVirtualFile) throws InvalidPropertyException {
       CssFile cssFile = null;
       XmlAttribute source = tag.getAttribute("source");

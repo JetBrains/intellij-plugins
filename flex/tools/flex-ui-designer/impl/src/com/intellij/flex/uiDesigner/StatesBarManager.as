@@ -18,9 +18,9 @@ public class StatesBarManager extends AbstractCollectionViewDataSource implement
     }
   }
 
-  [TestOnly]
+  private static const emptyArray:Array = [];
   public function get states():Array {
-    return _document.uiComponent.states;
+    return _document.documentFactory.isPureFlash ? emptyArray : _document.uiComponent.states;
   }
   
   public function set stateName(value:String):void {

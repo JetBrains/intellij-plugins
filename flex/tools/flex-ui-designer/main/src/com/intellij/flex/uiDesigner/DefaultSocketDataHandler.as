@@ -109,16 +109,16 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
                                    libraryManager.idsToInstancesAndMarkAsUsed(input.readObject()), input.readObject());
     moduleManager.register(module);
   }
-  
+
   private function registerDocumentFactory(input:IDataInput, messageSize:int):void {
     const prevBytesAvailable:int = input.bytesAvailable;
     var module:Module = moduleManager.getById(input.readUnsignedShort());
     var bytes:ByteArray = new ByteArray();
     var documentFactory:DocumentFactory = new DocumentFactory(input.readUnsignedShort(), bytes, VirtualFileImpl.create(input),
-                                                              AmfUtil.readString(input), input.readBoolean(), module);
+                                                              AmfUtil.readString(input), input.readUnsignedByte(), module);
     getDocumentFactoryManager(module).register(documentFactory);
-    
-   stringRegistry.readStringTable(input);
+
+    stringRegistry.readStringTable(input);
     input.readBytes(bytes, 0, messageSize - (prevBytesAvailable - input.bytesAvailable));
   }
   
@@ -127,7 +127,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     var module:Module = moduleManager.getById(input.readUnsignedShort());
     var documentFactory:DocumentFactory = getDocumentFactoryManager(module).get(input.readUnsignedShort());
 
-    input.readBoolean(); // todo isApp update document styleManager
+    input.readUnsignedByte(); // todo isApp update document styleManager
     
     stringRegistry.readStringTable(input);
 

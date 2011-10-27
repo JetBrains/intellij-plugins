@@ -6,6 +6,7 @@ import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import com.intellij.flex.uiDesigner.css.StyleValueResolverImpl;
 import com.intellij.flex.uiDesigner.flex.MainFocusManagerSB;
+import com.intellij.flex.uiDesigner.flex.PureFlashSystemManager;
 import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
@@ -132,8 +133,11 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   private function createAndOpen(documentFactory:DocumentFactory, documentOpened:Function):Boolean {
     var document:Document = new Document(documentFactory);
     var module:Module = documentFactory.module;
-    createStyleManager(document, module);
-    createSystemManager(document, module);
+    if (!documentFactory.isPureFlash) {
+      createStyleManager(document, module);
+    }
+
+    createSystemManager(document, module, documentFactory.isPureFlash);
 
     if (doOpen(documentFactory, document, documentOpened)) {
       documentFactory.document = document;
@@ -163,9 +167,9 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       try {
         // IDEA-72499
         document.systemManager.setStyleManagerForTalentAdobeEngineers(true);
-        var object:Object = documentReader.read(documentFactory.data, documentFactory, document.styleManager);
+        var object:DisplayObject = DisplayObject(documentReader.read(documentFactory.data, documentFactory, document.styleManager));
         document.uiComponent = object;
-        document.systemManager.setUserDocument(DisplayObject(object));
+        document.systemManager.setUserDocument(object);
       }
       finally {
         document.systemManager.setStyleManagerForTalentAdobeEngineers(false);
@@ -174,7 +178,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       documentReader.createDeferredMxContainersChildren(documentFactory.module.context.applicationDomain);
       var viewNavigatorApplicationBaseClass:Class = documentFactory.module.context.viewNavigatorApplicationBaseClass;
       if (viewNavigatorApplicationBaseClass != null && object is viewNavigatorApplicationBaseClass) {
-        var navigator:Object = object.navigator;
+        var navigator:Object = Object(object).navigator;
         if (navigator != null && navigator.activeView != null && !navigator.activeView.isActive) {
           navigator.activeView.setActive(true);
         }
@@ -274,9 +278,9 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     cssReader.finalizeRead();
   }
 
-  private function createSystemManager(document:Document, module:Module):void {
-    var flexModuleFactoryClass:Class = module.getClass("com.intellij.flex.uiDesigner.flex.FlexModuleFactory");
-    var systemManagerClass:Class = module.getClass("com.intellij.flex.uiDesigner.flex.SystemManager");
+  private function createSystemManager(document:Document, module:Module, isPureFlash:Boolean):void {
+    var flexModuleFactoryClass:Class = isPureFlash ? null :  module.getClass("com.intellij.flex.uiDesigner.flex.FlexModuleFactory");
+    var systemManagerClass:Class = isPureFlash ? PureFlashSystemManager : module.getClass("com.intellij.flex.uiDesigner.flex.SystemManager");
     var window:DocumentWindow = module.project.window;
     var systemManager:SystemManagerSB = new systemManagerClass();
     document.systemManager = systemManager;
@@ -284,7 +288,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     if (!systemManager.sharedInitialized) {
       systemManager.initShared(window.stage, module.project, server, UncaughtErrorManager.instance);
     }
-    systemManager.init(new flexModuleFactoryClass(document.styleManager, module.context.applicationDomain), UncaughtErrorManager.instance,
+    systemManager.init(isPureFlash ? null : new flexModuleFactoryClass(document.styleManager, module.context.applicationDomain), UncaughtErrorManager.instance,
                        MainFocusManagerSB(module.project.window.focusManager), document.documentFactory);
     document.container = new DocumentContainer(Sprite(systemManager));
   }

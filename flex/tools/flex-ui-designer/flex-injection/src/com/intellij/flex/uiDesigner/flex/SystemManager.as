@@ -52,7 +52,7 @@ import mx.styles.StyleManager;
 use namespace mx_internal;
 
 // must be IFocusManagerContainer, it is only way how UIComponent can find focusManager (see UIComponent.focusManager)
-public class SystemManager extends Sprite implements ISystemManager, SystemManagerSB, IFocusManagerContainer, IActiveWindowManager {
+public class SystemManager extends AbstractSystemManager implements ISystemManager, SystemManagerSB, IFocusManagerContainer, IActiveWindowManager {
   // link
   ElementUtilImpl;
 
@@ -79,12 +79,6 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
 
   private const implementations:Dictionary = new Dictionary();
   private var mainFocusManager:MainFocusManagerSB;
-
-  // requires only for error reporting
-  private var _documentFactory:Object;
-  public function get documentFactory():Object {
-    return _documentFactory;
-  }
 
   public function get elementUtil():ElementUtil {
     return ElementUtilImpl.instance;
@@ -139,11 +133,12 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     EffectManager.registerEffectTrigger("showEffect", "show");
   }
 
-  public function init(moduleFactory:Object, uiErrorHandler:UiErrorHandler,
+  override public function init(moduleFactory:Object, uiErrorHandler:UiErrorHandler,
                        mainFocusManager:MainFocusManagerSB, documentFactory:Object):void {
+    super.init(moduleFactory, uiErrorHandler, mainFocusManager, documentFactory);
+
     this.mainFocusManager = mainFocusManager;
     this.uiErrorHandler = uiErrorHandler;
-    _documentFactory = documentFactory;
 
     LayoutManager(UIComponentGlobals.layoutManager).waitFrame();
 
@@ -187,11 +182,6 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     UIComponent(visualElementContainer).callLater(function ():void {
       visualElementContainer.removeElement(visualElement);
     });
-  }
-
-  private var _document:DisplayObject;
-  public function get document():Object {
-    return _document;
   }
 
   public function set document(value:Object):void {
@@ -488,18 +478,6 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     TopLevelSystemManagerProxy(SystemManagerGlobals.topLevelSystemManagers[0]).activeSystemManager = null;
   }
 
-  private const _explicitDocumentSize:Rectangle = new Rectangle();
-
-  public function get explicitDocumentSize():Rectangle {
-    return _explicitDocumentSize;
-  }
-
-  public function setActualDocumentSize(w:Number, h:Number):void {
-    // originally set by setLayoutBoundsSize, but the Application without explicit size hangs on Stage and listen to resize - we can not change this behavior without the injection of the byte-code
-    _document.width = w;
-    _document.height = h;
-  }
-
   internal function addingChild(object:DisplayObject):void {
     var uiComponent:IUIComponent = object as IUIComponent;
     if (uiComponent != null) {
@@ -622,10 +600,6 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
 
   public function get topLevelSystemManager():ISystemManager {
     return this;
-  }
-
-  public function getDefinitionByName(name:String):Object {
-    return ApplicationDomain.currentDomain.getDefinition(name);
   }
 
   public function isTopLevel():Boolean {
@@ -815,14 +789,6 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
         map[type].length = 0;
       }
     }
-  }
-
-  public function addRealEventListener(type:String, listener:Function, useCapture:Boolean = false):void {
-    super.addEventListener(type, listener, useCapture);
-  }
-
-  public function removeRealEventListener(type:String, listener:Function):void {
-    super.removeEventListener(type, listener);
   }
 
   flex::v4_5 {

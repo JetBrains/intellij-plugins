@@ -165,7 +165,7 @@ public final class MxmlReader implements DocumentReader {
     context = documentReaderContext;
     moduleContext = ModuleContextEx(context.moduleContext);
     const oldRootObject:Object = rootObject;
-    var object:Object = readMxmlObjectFromClass(stringRegistry.read(input), true);
+    var object:Object = readMxmlObjectFromClass(stringRegistry.read(input), styleManager != null /* pure flash doesn't have styleManager */);
     stateReader.read(this, input, object);
     injectedASReader.read(input, this);
 
