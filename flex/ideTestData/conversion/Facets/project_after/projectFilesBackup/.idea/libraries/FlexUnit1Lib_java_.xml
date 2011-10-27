@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
-  <library name="FlexUnit1Lib(java)" type="flex">
+  <library name="FlexUnit1Lib(java)">
     <CLASSES>
       <root url="jar://$MODULE_DIR$/../lib/FlexUnit1Lib.swc!/" />
     </CLASSES>
@@ -8,4 +7,3 @@
     <SOURCES />
   </library>
 </component>
-

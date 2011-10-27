@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.flex.projectStructure.conversion;
 import com.intellij.conversion.CannotConvertException;
 import com.intellij.conversion.ConversionContext;
 import com.intellij.conversion.ModuleSettings;
-import com.intellij.conversion.ProjectLibrarySettings;
 import com.intellij.facet.FacetManagerImpl;
 import com.intellij.facet.impl.invalid.InvalidFacetManagerImpl;
 import com.intellij.facet.impl.invalid.InvalidFacetType;
@@ -11,11 +10,9 @@ import com.intellij.facet.pointers.FacetPointersManager;
 import com.intellij.ide.impl.convert.JDomConvertingUtil;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
-import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
-import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -36,13 +33,14 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.hash.*;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.*;
+import java.util.HashSet;
 
 /**
  * User: ksafonov
@@ -57,8 +55,9 @@ public class ConversionParams {
   private final LibraryTable.ModifiableModel myGlobalLibrariesModifiableModel;
   private final ConversionContext myContext;
   private final Collection<String> myFacetsToIgnore = new HashSet<String>();
-  private final Collection<File> myAffectedFiles = new HashSet<File>();
-  
+  private Collection<String> myProjectLibrariesNames;
+  private Set<String> myProjectLibrariesToMakeFlex = new HashSet<String>();
+
   public ConversionParams(ConversionContext context) {
     myContext = context;
     myGlobalLibrariesModifiableModel = ApplicationLibraryTable.getApplicationTable().getModifiableModel();
@@ -139,7 +138,7 @@ public class ConversionParams {
       return myGlobalLibrariesModifiableModel.getLibraryByName(libraryName) != null;
     }
     else {
-      return myContext.findProjectLibrarySettings(libraryName) != null;
+      return myProjectLibrariesNames.contains(libraryName);
     }
   }
 
@@ -156,15 +155,16 @@ public class ConversionParams {
       });
     }
     else {
-      final ProjectLibrarySettings settings = myContext.findProjectLibrarySettings(libraryName);
-      assert settings != null;
-      settings.getLibraryElement().setAttribute(LibraryImpl.LIBRARY_TYPE_ATTR, FlexLibraryType.FLEX_LIBRARY.getKindId());
-      myAffectedFiles.add(settings.getFile());
+      myProjectLibrariesToMakeFlex.add(libraryName);
     }
   }
 
-  public Collection<File> getAffectedFiles() {
-    return myAffectedFiles;
+  public void setProjectLibrariesNames(final Collection<String> librariesNames) {
+    myProjectLibrariesNames = librariesNames;
+  }
+
+  public Set<String> getProjectLibrariesToMakeFlex() {
+    return myProjectLibrariesToMakeFlex;
   }
 
   @Nullable

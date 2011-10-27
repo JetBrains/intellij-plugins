@@ -7,7 +7,6 @@ import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Collection;
 
 /**
  * User: ksafonov
@@ -65,7 +64,8 @@ class FlexIdeProjectConverter extends ProjectConverter {
     getParams().apply();
   }
 
-  public Collection<File> getAdditionalAffectedFiles() {
-    return getParams().getAffectedFiles();
+
+  public ConversionProcessor<ProjectLibrariesSettings> createProjectLibrariesConverter() {
+    return new FlexIdeProjectLibrariesConverter(myParams);
   }
 }
