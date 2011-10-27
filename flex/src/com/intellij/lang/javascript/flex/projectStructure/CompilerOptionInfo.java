@@ -358,13 +358,13 @@ public class CompilerOptionInfo {
     final String since = element.getAttributeValue("since");
 
     final String okForAirValue = element.getAttributeValue("okForAir");
-    final boolean okForAir = okForAirValue == null || "false".equals(okForAirValue);
+    final boolean okForAir = okForAirValue == null || "true".equals(okForAirValue);
 
     final String okForPureASValue = element.getAttributeValue("okForPureAS");
-    final boolean okForPureAS = okForPureASValue == null || "false".equals(okForPureASValue);
+    final boolean okForPureAS = okForPureASValue == null || "true".equals(okForPureASValue);
 
     final String okForSWFValue = element.getAttributeValue("okForSWF");
-    final boolean okForSWF = okForSWFValue == null || "false".equals(okForSWFValue);
+    final boolean okForSWF = okForSWFValue == null || "true".equals(okForSWFValue);
 
     final String defaultValue = StringUtil.notNullize(element.getAttributeValue("default"));
 
@@ -387,5 +387,9 @@ public class CompilerOptionInfo {
 
     assert !result.isEmpty() : element.getName();
     return result.toArray(new ListElement[result.size()]);
+  }
+
+  public String toString() {
+    return ID;
   }
 }

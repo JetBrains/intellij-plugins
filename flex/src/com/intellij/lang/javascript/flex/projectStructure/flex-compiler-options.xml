@@ -9,7 +9,7 @@
     <listElement name="locale-element" displayName="Locale" type="Locale"/>
   </option>
 <!--  <option id="runtime-locale" displayName="Create runtime resource bundle for locales" type="RuntimeLocaleList" advanced="true"/> -->
-  <option id="compiler.namespaces.namespace" displayName="Namespaces and manifests" type="List">
+  <option id="compiler.namespaces.namespace" displayName="Namespaces and manifests" type="List" okForPureAS="false">
     <listElement name="uri" displayName="Namespace" type="String" default="http://"/>
     <listElement name="manifest" displayName="Path To Manifest File" type="File" fileExtension="xml"/>
   </option>
