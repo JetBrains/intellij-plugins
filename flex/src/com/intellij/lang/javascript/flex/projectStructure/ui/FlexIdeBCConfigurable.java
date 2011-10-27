@@ -89,7 +89,8 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     final BuildConfigurationNature nature = configuration.getNature();
 
     myDependenciesConfigurable = new DependenciesConfigurable(configuration, module.getProject(), configEditor);
-    myCompilerOptionsConfigurable = new CompilerOptionsConfigurable(module, configuration.getCompilerOptions());
+    myCompilerOptionsConfigurable =
+      new CompilerOptionsConfigurable(module, configuration.getNature(), myDependenciesConfigurable, configuration.getCompilerOptions());
     myAirDesktopPackagingConfigurable = nature.isDesktopPlatform() && nature.isApp()
                                         ? new AirDesktopPackagingConfigurable(module, configuration.getAirDesktopPackagingOptions())
                                         : null;

@@ -2,8 +2,12 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.ValueSource;
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableCompilerOptions;
+import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.module.Module;
@@ -34,6 +38,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -59,6 +65,8 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
   private final Mode myMode;
   private final Module myModule;
+  private final BuildConfigurationNature myNature;
+  private final DependenciesConfigurable myDependenciesConfigurable;
   private final Project myProject;
   private final String myName;
   private final FlexBuildConfigurationManager myBCManager;
@@ -67,16 +75,34 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   private final Map<String, String> myCurrentOptions;
   private boolean myModified;
 
+  private static final String UNKNOWN_SDK_VERSION = "100";
+
   private enum Mode {BC, Module, Project}
 
-  public CompilerOptionsConfigurable(final Module module, final ModifiableCompilerOptions model) {
-    this(Mode.BC, module, module.getProject(), model);
+  public CompilerOptionsConfigurable(final Module module,
+                                     final BuildConfigurationNature nature,
+                                     final DependenciesConfigurable dependenciesConfigurable,
+                                     final ModifiableCompilerOptions model) {
+    this(Mode.BC, module, module.getProject(), nature, dependenciesConfigurable, model);
+
+    dependenciesConfigurable.addSdkChangeListener(new ChangeListener() {
+      public void stateChanged(final ChangeEvent e) {
+        updateTreeTable();
+      }
+    });
   }
 
-  private CompilerOptionsConfigurable(final Mode mode, final Module module, final Project project, final ModifiableCompilerOptions model) {
+  private CompilerOptionsConfigurable(final Mode mode,
+                                      final Module module,
+                                      final Project project,
+                                      final BuildConfigurationNature nature,
+                                      final DependenciesConfigurable dependenciesConfigurable,
+                                      final ModifiableCompilerOptions model) {
     myMode = mode;
     myModule = module;
     myProject = project;
+    myNature = nature;
+    myDependenciesConfigurable = dependenciesConfigurable;
     myName = myMode == Mode.BC
              ? "Compiler Options"
              : myMode == Mode.Module
@@ -107,8 +133,9 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       myProjectDefaultsButton.addActionListener(new ActionListener() {
         public void actionPerformed(final ActionEvent e) {
           ModifiableCompilerOptions compilerOptions = myProjectLevelOptionsHolder.getProjectLevelCompilerOptions();
-          boolean changed = ShowSettingsUtil.getInstance()
-            .editConfigurable(myProject, new CompilerOptionsConfigurable(Mode.Project, null, myProject, compilerOptions));
+          final CompilerOptionsConfigurable configurable =
+            new CompilerOptionsConfigurable(Mode.Project, null, myProject, myNature, myDependenciesConfigurable, compilerOptions);
+          boolean changed = ShowSettingsUtil.getInstance().editConfigurable(myProject, configurable);
           if (changed) {
             updateTreeTable();
           }
@@ -123,8 +150,9 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       myModuleDefaultsButton.addActionListener(new ActionListener() {
         public void actionPerformed(final ActionEvent e) {
           ModifiableCompilerOptions compilerOptions = myBCManager.getModuleLevelCompilerOptions();
-          boolean changed = ShowSettingsUtil.getInstance()
-            .editConfigurable(myProject, new CompilerOptionsConfigurable(Mode.Module, myModule, myProject, compilerOptions));
+          final CompilerOptionsConfigurable configurable =
+            new CompilerOptionsConfigurable(Mode.Module, myModule, myProject, myNature, myDependenciesConfigurable, compilerOptions);
+          boolean changed = ShowSettingsUtil.getInstance().editConfigurable(myProject, configurable);
           if (changed) {
             updateTreeTable();
           }
@@ -487,9 +515,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
     for (final CompilerOptionInfo info : optionInfos) {
       final boolean show = info.isGroup() || // empty group will be hidden later
-                           hasCustomValue(info) ||
-                           ((showAll || !info.ADVANCED) &&
-                            info.isApplicable("4.5.0", TargetPlatform.Web, false, OutputType.Application)); // todo fix arguments
+                           (info.isApplicable(getSdkVersion(), myNature) && (showAll || !info.ADVANCED || hasCustomValue(info)));
 
       DefaultMutableTreeNode node = findChildNodeWithInfo(rootNode, info);
 
@@ -539,7 +565,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       // choose "the most custom" subnode of a group a group source
       ValueSource groupValueSource = ValueSource.GlobalDefault;
       for (final CompilerOptionInfo childInfo : info.getChildOptionInfos()) {
-        if (childInfo.isApplicable("4.5.0", TargetPlatform.Web, false, OutputType.Application)) {  // todo fix arguments
+        if (childInfo.isApplicable(getSdkVersion(), myNature)) {
           final ValueSource childSource = getValueAndSource(childInfo).second;
           if (childSource.ordinal() > groupValueSource.ordinal()) {
             groupValueSource = childSource;
@@ -568,8 +594,12 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       }
     }
 
-    // todo pass live parameters
-    return Pair.create(info.getDefaultValue("4.5", TargetPlatform.Web), ValueSource.GlobalDefault);
+    return Pair.create(info.getDefaultValue(getSdkVersion(), myNature.targetPlatform), ValueSource.GlobalDefault);
+  }
+
+  private String getSdkVersion() {
+    final FlexSdk sdk = myDependenciesConfigurable.getCurrentSdk();
+    return sdk == null ? UNKNOWN_SDK_VERSION : sdk.getFlexVersion();
   }
 
   private class RepeatableValueEditor extends TextFieldWithBrowseButton {

@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
-import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -169,25 +169,10 @@ public class CompilerOptionInfo {
     return TYPE == OptionType.Group;
   }
 
-  public boolean isApplicable(final @NotNull String sdkVersion,
-                              final TargetPlatform targetPlatform,
-                              final boolean pureAS, final OutputType outputType) {
-    if (mySinceVersion != null && StringUtil.compareVersionNumbers(sdkVersion, mySinceVersion) < 0) {
-      return false;
-    }
-
-    if (!myOkForAir && targetPlatform != TargetPlatform.Web) {
-      return false;
-    }
-
-    if (!myOkForPureAS && pureAS) {
-      return false;
-    }
-
-    if (!myOkForSwf && outputType != OutputType.Library) {
-      return false;
-    }
-
+  public boolean isApplicable(final @NotNull String sdkVersion, final BuildConfigurationNature nature) {
+    if (mySinceVersion != null && StringUtil.compareVersionNumbers(sdkVersion, mySinceVersion) < 0) return false;
+    if (!myOkForPureAS && nature.pureAS) return false;
+    if (!myOkForSwf && !nature.isLib()) return false;
     return true;
   }
 

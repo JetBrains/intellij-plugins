@@ -432,7 +432,7 @@ public class CompilerConfigGenerator {
   private void addOption(final Element rootElement,
                          final CompilerOptionInfo info,
                          final String rawValue) {
-    if (!info.isApplicable(mySdkVersion, myConfig.getTargetPlatform(), myConfig.isPureAs(), myConfig.getOutputType())) {
+    if (!info.isApplicable(mySdkVersion, myConfig.getNature())) {
       return;
     }
 

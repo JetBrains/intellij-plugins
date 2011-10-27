@@ -823,6 +823,15 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
     }, myDisposable);
   }
+  
+  @Nullable
+  FlexSdk getCurrentSdk() {
+    return mySdkPanel.getCurrentSdk();
+  }
+  
+  void addSdkChangeListener(final ChangeListener changeListener) {
+    mySdkPanel.addListener(changeListener, myDisposable);
+  }
 
   @Nullable
   private DefaultMutableTreeNode findSdkNode() {
