@@ -6,8 +6,8 @@ import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryRootsComponentDescriptor;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
-import com.intellij.lang.javascript.flex.projectStructure.FlexLibraryConfigurable;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationsExtension;
+import com.intellij.lang.javascript.flex.projectStructure.FlexLibraryConfigurable;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
@@ -42,7 +42,6 @@ import com.intellij.openapi.roots.ui.configuration.libraryEditor.EditExistingLib
 import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesModifiableModel;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
-import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NamedConfigurable;
@@ -1500,6 +1499,17 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       super(myMainPanel, "Choose Libraries", myProject, false);
       myFilter = filter;
       init();
+    }
+
+    public void show() {
+      if (isEmpty()) {
+        Disposer.dispose(getDisposable());
+        dispose();
+        Messages.showInfoMessage(myProject, "No applicable libraries found", "Add Dependency");
+      }
+      else {
+        super.show();
+      }
     }
 
     @NotNull
