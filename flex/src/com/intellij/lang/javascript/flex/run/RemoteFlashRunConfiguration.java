@@ -62,7 +62,7 @@ public class RemoteFlashRunConfiguration extends RunConfigurationBase {
   }
 
   public void checkConfiguration() throws RuntimeConfigurationException {
-    BCBasedRunnerParameters.checkAndGetModuleAndBC(getProject(), myRunnerParameters);
+    myRunnerParameters.checkAndGetModuleAndBC(getProject());
   }
 
   @NotNull

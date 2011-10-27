@@ -1,13 +1,26 @@
 package com.intellij.lang.javascript.flex.run;
 
+import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 
-import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileDebugTransport;
-import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileRunTarget;
-import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.Emulator;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.*;
 
 public class FlexIdeRunnerParameters extends BCBasedRunnerParameters implements Cloneable {
+
+  private boolean myOverrideMainClass = false;
+  private String myOverriddenMainClass = "";
+  private String myOverriddenOutputFileName = "";
 
   private boolean myLaunchUrl = false;
   private @NotNull String myUrl = "http://";
@@ -27,6 +40,30 @@ public class FlexIdeRunnerParameters extends BCBasedRunnerParameters implements 
   private @NotNull AirMobileDebugTransport myDebugTransport = AirMobileDebugTransport.USB;
   private int myUsbDebugPort = MobileAirUtil.DEBUG_PORT_DEFAULT;
   private @NotNull String myEmulatorAdlOptions = "";
+
+  public boolean isOverrideMainClass() {
+    return myOverrideMainClass;
+  }
+
+  public void setOverrideMainClass(final boolean overrideMainClass) {
+    myOverrideMainClass = overrideMainClass;
+  }
+
+  public String getOverriddenMainClass() {
+    return myOverriddenMainClass;
+  }
+
+  public void setOverriddenMainClass(final String overriddenMainClass) {
+    myOverriddenMainClass = overriddenMainClass;
+  }
+
+  public String getOverriddenOutputFileName() {
+    return myOverriddenOutputFileName;
+  }
+
+  public void setOverriddenOutputFileName(final String overriddenOutputFileName) {
+    myOverriddenOutputFileName = overriddenOutputFileName;
+  }
 
   public boolean isLaunchUrl() {
     return myLaunchUrl;
@@ -154,6 +191,99 @@ public class FlexIdeRunnerParameters extends BCBasedRunnerParameters implements 
 
   public void setEmulatorAdlOptions(@NotNull final String emulatorAdlOptions) {
     myEmulatorAdlOptions = emulatorAdlOptions;
+  }
+
+  public void check(final Project project) throws RuntimeConfigurationError {
+    doCheck(super.checkAndGetModuleAndBC(project));
+  }
+
+  public Pair<Module, FlexIdeBuildConfiguration> checkAndGetModuleAndBC(final Project project) throws RuntimeConfigurationError {
+    final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = super.checkAndGetModuleAndBC(project);
+    doCheck(moduleAndBC);
+
+    if (myOverrideMainClass) {
+      final ModifiableFlexIdeBuildConfiguration overriddenBC = Factory.getCopy(moduleAndBC.second);
+      overriddenBC.setMainClass(myOverriddenMainClass);
+      overriddenBC.setOutputFileName(myOverriddenOutputFileName);
+
+      if (overriddenBC.getOutputType() != OutputType.Application) {
+        overriddenBC.setOutputType(OutputType.Application);
+        overriddenBC.setUseHtmlWrapper(false);
+
+        overriddenBC.getDependencies().setFrameworkLinkage(LinkageType.Merged);
+
+        for (ModifiableDependencyEntry entry : overriddenBC.getDependencies().getModifiableEntries()) {
+          if (entry.getDependencyType().getLinkageType() == LinkageType.External) {
+            entry.getDependencyType().setLinkageType(LinkageType.Merged);
+          }
+        }
+
+        overriddenBC.getAirDesktopPackagingOptions().setUseGeneratedDescriptor(true);
+
+        final ModifiableAndroidPackagingOptions androidOptions = overriddenBC.getAndroidPackagingOptions();
+        androidOptions.setEnabled(true);
+        androidOptions.setPackageFileName(FileUtil.getNameWithoutExtension(myOverriddenOutputFileName) + ".apk");
+        androidOptions.setUseGeneratedDescriptor(true);
+        androidOptions.getSigningOptions().setUseTempCertificate(true);
+
+        overriddenBC.getIosPackagingOptions().setEnabled(false); // impossible without extra user input: app id, provisioning, etc.
+      }
+
+      return Pair.create(moduleAndBC.first, ((FlexIdeBuildConfiguration)overriddenBC));
+    }
+
+    return moduleAndBC;
+  }
+
+  private void doCheck(final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC) throws RuntimeConfigurationError {
+    final FlexIdeBuildConfiguration bc = moduleAndBC.second;
+
+    if (myOverrideMainClass) {
+      if (myOverriddenMainClass.isEmpty()) {
+        throw new RuntimeConfigurationError(FlexBundle.message("main.class.not.set"));
+      }
+      // todo check main class presence when it becomes reliable
+      if (myOverriddenOutputFileName.isEmpty()) {
+        throw new RuntimeConfigurationError(FlexBundle.message("output.file.name.not.specified"));
+      }
+      if (!myOverriddenOutputFileName.toLowerCase().endsWith(".swf")) {
+        throw new RuntimeConfigurationError(FlexBundle.message("output.file.must.have.swf.extension"));
+      }
+    }
+    else {
+      if (bc.getOutputType() != OutputType.Application) {
+        throw new RuntimeConfigurationError(FlexBundle.message("bc.does.not.produce.app", getBCName(), getModuleName()));
+      }
+    }
+
+    if (bc.getTargetPlatform() == TargetPlatform.Web) {
+      if (myLaunchUrl) {
+        try {
+          new URL(myUrl);
+        }
+        catch (MalformedURLException e) {
+          throw new RuntimeConfigurationError(FlexBundle.message("flex.run.config.incorrect.url"));
+        }
+
+        if (myLauncherParameters.getLauncherType() == LauncherParameters.LauncherType.Player) {
+          throw new RuntimeConfigurationError(FlexBundle.message("flex.run.config.url.can.not.be.run.with.flash.player"));
+        }
+      }
+
+      if (myLauncherParameters.getLauncherType() == LauncherParameters.LauncherType.Player
+          && bc.getTargetPlatform() == TargetPlatform.Web && bc.isUseHtmlWrapper()) {
+        throw new RuntimeConfigurationError(FlexBundle.message("html.wrapper.can.not.be.run.with.flash.player"));
+      }
+    }
+
+    if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
+      if (bc.getOutputType() == OutputType.Application &&
+          myMobileRunTarget == AirMobileRunTarget.AndroidDevice &&
+          !bc.getAndroidPackagingOptions().isEnabled()) {
+        throw new RuntimeConfigurationError(
+          FlexBundle.message("android.disabled.in.bc", getBCName(), getModuleName()));
+      }
+    }
   }
 
   protected FlexIdeRunnerParameters clone() {

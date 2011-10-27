@@ -174,7 +174,7 @@ public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
 
     final ActionListener outputTypeListener = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        updateOutputFileName();
+        updateOutputFileName(myOutputFileNameTextField, myLibraryOutputTypeRadioButton.isSelected());
         updateMainClassSpecificControls();
         updateResourceFilesSpecificControls();
       }
@@ -347,13 +347,13 @@ public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
     myLocaleTextFieldWithBrowse.setEnabled(myLocaleCheckBox.isEnabled() && myLocaleCheckBox.isSelected());
   }
 
-  private void updateOutputFileName() {
-    boolean isLib = myLibraryOutputTypeRadioButton.isSelected();
-    final String outputFileName = myOutputFileNameTextField.getText();
+  public static void updateOutputFileName(final JTextField textField, final boolean isLib) {
+    final String outputFileName = textField.getText();
     final String lowercase = outputFileName.toLowerCase();
-    if ((isLib && lowercase.endsWith(".swf")) || (!isLib && lowercase.endsWith(".swc"))) {
-      myOutputFileNameTextField.setText(outputFileName.substring(0, outputFileName.length() - ".sw_".length()) + (isLib ? ".swc" : ".swf"));
-    }
+    final String withoutExtension = lowercase.endsWith(".swf") || lowercase.endsWith(".swc")
+                                    ? outputFileName.substring(0, outputFileName.length() - ".sw_".length())
+                                    : outputFileName;
+    textField.setText(withoutExtension + (isLib ? ".swc" : ".swf"));
   }
 
   public void saveData() {
@@ -459,7 +459,8 @@ public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
       myCompilerExtension.inheritCompilerOutputPath(inherit);
       if (!inherit) {
         myCompilerExtension.setCompilerOutputPath(getCompilerOutputUrl(myModuleSpecificOutputPathTextField.getText().trim()));
-        myCompilerExtension.setCompilerOutputPathForTests(getCompilerOutputUrl(myModuleSpecificOutputPathForTestsTextField.getText().trim()));
+        myCompilerExtension
+          .setCompilerOutputPathForTests(getCompilerOutputUrl(myModuleSpecificOutputPathForTestsTextField.getText().trim()));
         myCompilerExtension.setExcludeOutput(myExcludeOutputPathsCheckBox.isSelected());
       }
       myCompilerExtension.commit();

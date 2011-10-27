@@ -1,11 +1,17 @@
 package com.intellij.lang.javascript.flex.run;
 
+import com.intellij.execution.ExecutionBundle;
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
+import com.intellij.lang.javascript.ui.JSClassChooserDialog;
+import com.intellij.openapi.editor.event.DocumentAdapter;
+import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
@@ -14,25 +20,32 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.UIUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
 
 public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfiguration> {
 
   private JPanel myMainPanel;
   private JComboBox myBCsCombo;
+
+  private JCheckBox myOverrideMainClassCheckBox;
+  private JSClassChooserDialog.PublicInheritor myMainClassFilter;
+  private JSReferenceEditor myMainClassComponent;
+  private JLabel myOutputFileNameLabel;
+  private JTextField myOutputFileNameTextField;
 
   private JPanel myLaunchPanel;
   private JRadioButton myBCOutputRadioButton;
@@ -72,7 +85,7 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
   private final Project myProject;
   private FlexIdeBuildConfiguration[] myAllConfigs;
   private boolean mySingleModuleProject;
-  private Map<FlexIdeBuildConfiguration, Module> myBCToModuleMap = new THashMap<FlexIdeBuildConfiguration, Module>();
+  private Map<FlexIdeBuildConfiguration, Module> myBCToModuleMap;
 
   private LauncherParameters myLauncherParameters;
 
@@ -80,27 +93,26 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     myProject = project;
 
     initBCCombo();
+    initMainClassRelatedControls();
     initRadioButtons();
     initLaunchWithTextWithBrowse();
     initMobileControls();
   }
 
   private void initBCCombo() {
-    final Collection<FlexIdeBuildConfiguration> allConfigs = new ArrayList<FlexIdeBuildConfiguration>();
+    myBCToModuleMap = new THashMap<FlexIdeBuildConfiguration, Module>();
 
     final Module[] modules = ModuleManager.getInstance(myProject).getModules();
     mySingleModuleProject = modules.length == 1;
     for (final Module module : modules) {
       if (ModuleType.get(module) instanceof FlexModuleType) {
         for (final FlexIdeBuildConfiguration config : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
-          if (config.getOutputType() == OutputType.Application) {
-            allConfigs.add(config);
-            myBCToModuleMap.put(config, module);
-          }
+          myBCToModuleMap.put(config, module);
         }
       }
     }
-    myAllConfigs = allConfigs.toArray(new FlexIdeBuildConfiguration[allConfigs.size()]);
+
+    myAllConfigs = myBCToModuleMap.keySet().toArray(new FlexIdeBuildConfiguration[myBCToModuleMap.size()]);
 
     myBCsCombo.setRenderer(new ListCellRendererWrapper(myBCsCombo.getRenderer()) {
       @Override
@@ -130,7 +142,57 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
           myBCsCombo.setSelectedItem(selectedItem);
         }
 
+        updateMainClassField();
         updateControls();
+      }
+    });
+  }
+
+  private void updateMainClassField() {
+    final Object selectedItem = myBCsCombo.getSelectedItem();
+    if (selectedItem instanceof FlexIdeBuildConfiguration) {
+      final Module module = myBCToModuleMap.get((FlexIdeBuildConfiguration)selectedItem);
+      myMainClassComponent.setScope(GlobalSearchScope.moduleScope(module));
+      myMainClassFilter.setModule(module);
+      myMainClassComponent.setChooserBlockingMessage(null);
+    }
+    else {
+      myMainClassComponent.setScope(GlobalSearchScope.EMPTY_SCOPE);
+      myMainClassFilter.setModule(null);
+      myMainClassComponent.setChooserBlockingMessage("Build configuration not selected");
+    }
+  }
+
+  private void initMainClassRelatedControls() {
+    myOverrideMainClassCheckBox.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        if (myOverrideMainClassCheckBox.isSelected()) {
+          FlexCompilerSettingsEditor.updateOutputFileName(myOutputFileNameTextField, false);
+        }
+
+        updateControls();
+
+        if (myMainClassComponent.isEnabled()) {
+          IdeFocusManager.getInstance(myProject).requestFocus(myMainClassComponent.getChildComponent(), true);
+        }
+      }
+    });
+
+    myMainClassComponent.addDocumentListener(new DocumentAdapter() {
+      public void documentChanged(final DocumentEvent e) {
+        final String shortName = StringUtil.getShortName(myMainClassComponent.getText().trim());
+        if (!shortName.isEmpty()) {
+          myOutputFileNameTextField.setText(shortName + ".swf");
+        }
+      }
+    });
+
+    myOutputFileNameTextField.getDocument().addDocumentListener(new com.intellij.ui.DocumentAdapter() {
+      protected void textChanged(final javax.swing.event.DocumentEvent e) {
+        final FlexIdeBuildConfiguration bc = getCurrentBC();
+        if (bc != null && bc.getTargetPlatform() == TargetPlatform.Web) {
+          updateBCOutputLabel(bc);
+        }
       }
     });
   }
@@ -145,7 +207,10 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     myURLRadioButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         updateControls();
-        IdeFocusManager.getInstance(myProject).requestFocus(myURLTextField, true);
+
+        if (myURLTextField.isEnabled()) {
+          IdeFocusManager.getInstance(myProject).requestFocus(myURLTextField, true);
+        }
       }
     });
   }
@@ -211,8 +276,17 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
   }
 
   private void updateControls() {
-    final Object item = myBCsCombo.getSelectedItem();
-    final FlexIdeBuildConfiguration config = item instanceof FlexIdeBuildConfiguration ? (FlexIdeBuildConfiguration)item : null;
+    final FlexIdeBuildConfiguration config = getCurrentBC();
+
+    final boolean overrideMainClass = myOverrideMainClassCheckBox.isSelected();
+    myMainClassComponent.setEnabled(overrideMainClass);
+    myOutputFileNameLabel.setEnabled(overrideMainClass);
+    myOutputFileNameTextField.setEnabled(overrideMainClass);
+
+    if (!overrideMainClass && config != null) {
+      myMainClassComponent.setText(config.getMainClass());
+      myOutputFileNameTextField.setText(config.getOutputFileName());
+    }
 
     final boolean web = config != null && config.getTargetPlatform() == TargetPlatform.Web;
     final boolean desktop = config != null && config.getTargetPlatform() == TargetPlatform.Desktop;
@@ -225,12 +299,7 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     myMobileOptionsPanel.setVisible(mobile);
 
     if (web) {
-      String bcOutput = config.getOutputFileName();
-      if (!bcOutput.isEmpty() && config.isUseHtmlWrapper()) {
-        // todo support
-        //bcOutput += " via HTML wrapper";
-      }
-      myBCOutputLabel.setText(bcOutput);
+      updateBCOutputLabel(config);
 
       myURLTextField.setEnabled(myURLRadioButton.isSelected());
 
@@ -250,6 +319,25 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
       }
 
       updateDebugTransportRelatedControls();
+    }
+  }
+
+  @Nullable
+  private FlexIdeBuildConfiguration getCurrentBC() {
+    final Object item = myBCsCombo.getSelectedItem();
+    return item instanceof FlexIdeBuildConfiguration ? (FlexIdeBuildConfiguration)item : null;
+  }
+
+  private void updateBCOutputLabel(final FlexIdeBuildConfiguration bc) {
+    if (bc.getOutputType() == OutputType.Application || myOverrideMainClassCheckBox.isSelected()) {
+      String bcOutput = myOverrideMainClassCheckBox.isSelected() ? myOutputFileNameTextField.getText().trim() : bc.getOutputFileName();
+      if (!bcOutput.isEmpty() && bc.isUseHtmlWrapper()) {
+        bcOutput += " via HTML wrapper";
+      }
+      myBCOutputLabel.setText(bcOutput);
+    }
+    else {
+      myBCOutputLabel.setText("");
     }
   }
 
@@ -280,6 +368,12 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     if (enabled) {
       myUsbDebugPortTextField.setEnabled(myDebugOverUSBRadioButton.isSelected());
     }
+  }
+
+  private void createUIComponents() {
+    myMainClassFilter = new JSClassChooserDialog.PublicInheritor(myProject, FlexCompilerSettingsEditor.SPRITE_CLASS_NAME, null, true);
+    myMainClassComponent = JSReferenceEditor.forClassName("", myProject, null, GlobalSearchScope.EMPTY_SCOPE, null,
+                                                          myMainClassFilter, ExecutionBundle.message("choose.main.class.dialog.title"));
   }
 
 
@@ -314,6 +408,12 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     else {
       myBCsCombo.setModel(new DefaultComboBoxModel(myAllConfigs));
       myBCsCombo.setSelectedItem(config);
+    }
+
+    myOverrideMainClassCheckBox.setSelected(params.isOverrideMainClass());
+    if (params.isOverrideMainClass()) {
+      myMainClassComponent.setText(params.getOverriddenMainClass());
+      myOutputFileNameTextField.setText(params.getOverriddenOutputFileName());
     }
 
     myBCOutputRadioButton.setSelected(!params.isLaunchUrl());
@@ -360,6 +460,11 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
       params.setModuleName(myBCToModuleMap.get(((FlexIdeBuildConfiguration)selectedItem)).getName());
       params.setBCName(((FlexIdeBuildConfiguration)selectedItem).getName());
     }
+
+    final boolean overrideMainClass = myOverrideMainClassCheckBox.isSelected();
+    params.setOverrideMainClass(overrideMainClass);
+    params.setOverriddenMainClass(overrideMainClass ? myMainClassComponent.getText().trim() : "");
+    params.setOverriddenOutputFileName(overrideMainClass ? myOutputFileNameTextField.getText().trim() : "");
 
     params.setLaunchUrl(myURLRadioButton.isSelected());
     params.setUrl(myURLTextField.getText().trim());

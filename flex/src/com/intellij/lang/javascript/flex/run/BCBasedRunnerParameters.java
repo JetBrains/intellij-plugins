@@ -35,6 +35,29 @@ public class BCBasedRunnerParameters implements Cloneable {
     myBCName = BCName;
   }
 
+  public Pair<Module, FlexIdeBuildConfiguration> checkAndGetModuleAndBC(final Project project) throws RuntimeConfigurationError {
+    if (myModuleName.isEmpty() || myBCName.isEmpty()) {
+      throw new RuntimeConfigurationError(FlexBundle.message("bc.not.specified"));
+    }
+
+    final Module module = ModuleManager.getInstance(project).findModuleByName(myModuleName);
+    if (module == null || !(ModuleType.get(module) instanceof FlexModuleType)) {
+      throw new RuntimeConfigurationError(FlexBundle.message("bc.not.specified"));
+    }
+
+    final FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(myBCName);
+    if (bc == null) {
+      throw new RuntimeConfigurationError(FlexBundle.message("module.does.not.contain.bc", myModuleName, myBCName));
+    }
+
+    final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
+    if (sdkEntry == null) {
+      throw new RuntimeConfigurationError(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), module.getName()));
+    }
+
+    return Pair.create(module, bc);
+  }
+
   protected BCBasedRunnerParameters clone() {
     try {
       return (BCBasedRunnerParameters)super.clone();
@@ -59,32 +82,5 @@ public class BCBasedRunnerParameters implements Cloneable {
   public int hashCode() {
     assert false;
     return super.hashCode();
-  }
-
-  public static Pair<Module, FlexIdeBuildConfiguration> checkAndGetModuleAndBC(final Project project, final BCBasedRunnerParameters params)
-    throws RuntimeConfigurationError {
-
-    if (params.getModuleName().isEmpty() || params.getBCName().isEmpty()) {
-      throw new RuntimeConfigurationError(FlexBundle.message("bc.not.specified"));
-    }
-
-    final Module module = ModuleManager.getInstance(project).findModuleByName(params.getModuleName());
-    if (module == null || !(ModuleType.get(module) instanceof FlexModuleType)) {
-      throw new RuntimeConfigurationError(FlexBundle.message("bc.not.specified"));
-    }
-
-    final FlexIdeBuildConfiguration bc =
-      FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(params.getBCName());
-    if (bc == null) {
-      throw new RuntimeConfigurationError(
-        FlexBundle.message("module.does.not.contain.bc", params.getModuleName(), params.getBCName()));
-    }
-
-    final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
-    if (sdkEntry == null) {
-      throw new RuntimeConfigurationError(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), module.getName()));
-    }
-
-    return Pair.create(module, bc);
   }
 }

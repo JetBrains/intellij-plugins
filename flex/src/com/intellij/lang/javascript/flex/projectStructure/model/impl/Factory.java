@@ -25,4 +25,8 @@ public class Factory {
   public static SdkEntry createSdkEntry(@NotNull String libraryId, @NotNull String homePath) {
     return new SdkEntryImpl(libraryId, homePath);
   }
+
+  public static ModifiableFlexIdeBuildConfiguration getCopy(@NotNull FlexIdeBuildConfiguration bc) {
+    return ((FlexIdeBuildConfigurationImpl)bc).getCopy();
+  }
 }

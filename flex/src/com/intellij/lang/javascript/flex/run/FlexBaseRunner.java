@@ -128,13 +128,13 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     try {
       if (runProfile instanceof RemoteFlashRunConfiguration) {
         final BCBasedRunnerParameters params = ((RemoteFlashRunConfiguration)runProfile).getRunnerParameters();
-        final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = BCBasedRunnerParameters.checkAndGetModuleAndBC(project, params);
+        final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(project);
         return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, contentToReuse, environment);
       }
 
       if (runProfile instanceof FlexIdeRunConfiguration) {
         final FlexIdeRunnerParameters params = ((FlexIdeRunConfiguration)runProfile).getRunnerParameters();
-        final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig = FlexIdeRunConfiguration.checkAndGetModuleAndBC(project, params);
+        final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig = params.checkAndGetModuleAndBC(project);
         final Module module = moduleAndConfig.first;
         final FlexIdeBuildConfiguration bc = moduleAndConfig.second;
 

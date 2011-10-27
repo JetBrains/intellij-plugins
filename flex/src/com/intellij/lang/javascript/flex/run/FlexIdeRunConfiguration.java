@@ -7,9 +7,8 @@ import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
-import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -18,7 +17,6 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizable;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
@@ -68,7 +66,7 @@ public class FlexIdeRunConfiguration extends RunConfigurationBase implements Run
   public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
     final FlexIdeBuildConfiguration config;
     try {
-      config = BCBasedRunnerParameters.checkAndGetModuleAndBC(getProject(), myRunnerParameters).second;
+      config = myRunnerParameters.checkAndGetModuleAndBC(getProject()).second;
     }
     catch (RuntimeConfigurationError e) {
       throw new ExecutionException(e.getMessage());
@@ -86,28 +84,7 @@ public class FlexIdeRunConfiguration extends RunConfigurationBase implements Run
   }
 
   public void checkConfiguration() throws RuntimeConfigurationException {
-    checkAndGetModuleAndBC(getProject(), myRunnerParameters);
-  }
-
-  public static Pair<Module, FlexIdeBuildConfiguration> checkAndGetModuleAndBC(final Project project,
-                                                                               final FlexIdeRunnerParameters params) throws RuntimeConfigurationError {
-    final Pair<Module,FlexIdeBuildConfiguration> moduleAndBC = BCBasedRunnerParameters.checkAndGetModuleAndBC(project, params);
-
-    final FlexIdeBuildConfiguration bc = moduleAndBC.second;
-
-    if (bc.getOutputType() != OutputType.Application) {
-      throw new RuntimeConfigurationError(
-        FlexBundle.message("bc.does.not.produce.app", params.getBCName(), params.getModuleName()));
-    }
-
-    if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
-      if (params.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice && !bc.getAndroidPackagingOptions().isEnabled()) {
-        throw new RuntimeConfigurationError(
-          FlexBundle.message("android.disabled.in.bc", params.getBCName(), params.getModuleName()));
-      }
-    }
-
-    return moduleAndBC;
+    myRunnerParameters.check(getProject());
   }
 
   @NotNull
@@ -136,7 +113,7 @@ public class FlexIdeRunConfiguration extends RunConfigurationBase implements Run
     protected OSProcessHandler startProcess() throws ExecutionException {
       final FlexIdeBuildConfiguration config;
       try {
-        config = BCBasedRunnerParameters.checkAndGetModuleAndBC(getProject(), myRunnerParameters).second;
+        config = myRunnerParameters.checkAndGetModuleAndBC(getProject()).second;
       }
       catch (RuntimeConfigurationError e) {
         throw new ExecutionException(e.getMessage());

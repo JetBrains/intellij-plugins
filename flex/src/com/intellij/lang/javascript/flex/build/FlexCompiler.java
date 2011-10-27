@@ -469,7 +469,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
         ApplicationManager.getApplication().runReadAction(new NullableComputable<Pair<Module, FlexIdeBuildConfiguration>>() {
           public Pair<Module, FlexIdeBuildConfiguration> compute() {
             try {
-              return BCBasedRunnerParameters.checkAndGetModuleAndBC(runConfiguration.getProject(), params);
+              return params.checkAndGetModuleAndBC(runConfiguration.getProject());
             }
             catch (RuntimeConfigurationError e) {
               exceptionRef.set(e);
@@ -551,7 +551,6 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
     if (nature.isWebPlatform() && nature.isApp() && config.isUseHtmlWrapper()) {
       if (config.getWrapperTemplatePath().isEmpty()) {
-
         throw new ConfigurationException(FlexBundle.message("html.template.folder.not.set.for.bc.0.of.module.1", config.getName(), moduleName));
       }
       final VirtualFile wrapperTemplateDir = LocalFileSystem.getInstance().findFileByPath(config.getWrapperTemplatePath());
