@@ -75,7 +75,8 @@ public class CompositeConfigurable extends NamedConfigurable {
 
   @Override
   public String getHelpTopic() {
-    return myChildren.get(myTabs.getSelectedIndex()).getHelpTopic();
+    final String helpTopic = myChildren.get(myTabs.getSelectedIndex()).getHelpTopic();
+    return helpTopic != null ? helpTopic : getMainChild().getHelpTopic();
   }
 
   @Override

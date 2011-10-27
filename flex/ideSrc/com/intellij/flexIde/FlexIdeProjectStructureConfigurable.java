@@ -32,4 +32,11 @@ public class FlexIdeProjectStructureConfigurable extends ProjectStructureConfigu
     hideSidePanel();
     return c;
   }
+
+  public String getHelpTopic() {
+    if (getModulesConfig().getSelectedConfugurable() != null) {
+      return super.getHelpTopic();
+    }
+    return "reference.settingsdialog.project.structure";
+  }
 }

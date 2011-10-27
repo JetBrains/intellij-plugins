@@ -101,4 +101,8 @@ public class FlexLibraryConfigurable extends LibraryConfigurable {
   public LibraryEx getLibraryForPresentation() {
     return myLibraryForPresentation;
   }
+
+  public String getHelpTopic() {
+    return "reference.settingsdialog.project.structure.library";
+  }
 }

@@ -179,7 +179,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   }
 
   public String getHelpTopic() {
-    return null;
+    return "Build_Configuration_page";
   }
 
   public JComponent createOptionsPanel() {

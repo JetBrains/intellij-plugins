@@ -34,9 +34,8 @@ public class FlexIdeSharedLibrariesExtension extends ModuleStructureExtension {
     final ProjectStructureConfigurable projectConfig = ProjectStructureConfigurable.getInstance(project);
     {
       MasterDetailsComponent.MyNode globalLibrariesNode = new MasterDetailsComponent.MyNode(
-        new TextConfigurable<Object>(GLOBAL_LIBRARIES, "Global libraries", "Global Libraries",
-                                     "Use global libraries to share code between many projects", PlatformIcons.LIBRARY_ICON,
-                                     PlatformIcons.LIBRARY_ICON));
+        new SharedLibraryParentNodeConfigurable(GLOBAL_LIBRARIES, "Global libraries", "Global Libraries",
+                                     "Use global libraries to share code between many projects"));
       projectConfig.getModulesConfig().addNode(globalLibrariesNode, parent);
 
       LibrariesModifiableModel globalLibrariesModel =
@@ -46,9 +45,8 @@ public class FlexIdeSharedLibrariesExtension extends ModuleStructureExtension {
 
     {
       MasterDetailsComponent.MyNode projectLibrariesNode = new MasterDetailsComponent.MyNode(
-        new TextConfigurable<Object>(PROJECT_LIBRARIES, "Project libraries", "Project Libraries",
-                                     "Use project libraries to share code between modules in the project", PlatformIcons.LIBRARY_ICON,
-                                     PlatformIcons.LIBRARY_ICON));
+        new SharedLibraryParentNodeConfigurable(PROJECT_LIBRARIES, "Project libraries", "Project Libraries",
+                                     "Use project libraries to share code between modules in the project"));
       projectConfig.getModulesConfig().addNode(projectLibrariesNode, parent);
 
       LibrariesModifiableModel projectLibrariesModel =
@@ -183,6 +181,20 @@ public class FlexIdeSharedLibrariesExtension extends ModuleStructureExtension {
   private static class LibraryNode extends MasterDetailsComponent.MyNode {
     public LibraryNode(Library library, StructureConfigurableContext c, final Runnable treeUpdater) {
       super(new FlexLibraryConfigurable(library, c, treeUpdater));
+    }
+  }
+
+  private static class SharedLibraryParentNodeConfigurable extends TextConfigurable<Object> {
+
+    public SharedLibraryParentNodeConfigurable(final Object object,
+                                               final String displayName,
+                                               final String bannerSlogan,
+                                               final String descriptionText) {
+      super(object, displayName, bannerSlogan, descriptionText, PlatformIcons.LIBRARY_ICON, PlatformIcons.LIBRARY_ICON);
+    }
+
+    public String getHelpTopic() {
+      return "reference.settingsdialog.project.structure.library";
     }
   }
 }
