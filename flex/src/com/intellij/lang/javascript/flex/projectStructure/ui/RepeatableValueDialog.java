@@ -60,8 +60,14 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
 
   protected void addObject() {
     final StringBuilder b = new StringBuilder();
+    boolean first = true;
     for (CompilerOptionInfo.ListElement listElement : myInfo.LIST_ELEMENTS) {
-      if (b.length() != 0) b.append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);
+      if (first) {
+        first = false;
+      }
+      else {
+        b.append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);
+      }
       b.append(listElement.DEFAULT_VALUE);
     }
     getCurrentList().add(b);
