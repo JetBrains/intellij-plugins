@@ -163,12 +163,7 @@ public class FlexIdeConversionTest extends PlatformTestCase {
                                             LocalFileSystem.getInstance().refreshAndFindFileByIoFile(tempDir), new VirtualFileFilter() {
       @Override
       public boolean accept(VirtualFile file) {
-        if (file.isDirectory()) {
-          return !file.getName().startsWith("projectFilesBackup");
-        }
-        else {
-          return ArrayUtil.contains(file.getExtension(), extensionsToCheck);
-        }
+        return file.isDirectory() || ArrayUtil.contains(file.getExtension(), extensionsToCheck);
       }
     });
 
