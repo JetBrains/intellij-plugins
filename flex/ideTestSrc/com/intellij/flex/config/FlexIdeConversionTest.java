@@ -107,10 +107,14 @@ public class FlexIdeConversionTest extends PlatformTestCase {
   }
 
   public void testFacets() throws IOException, JDOMException {
-    doTest(getTestName(false));
+    doTest(getTestName(false), true);
   }
 
-  private void doTest(String testName) throws IOException, JDOMException {
+  public void testJavaProject() throws IOException, JDOMException {
+    doTest(getTestName(false), false);
+  }
+
+  private void doTest(String testName, boolean conversionShouldHappen) throws IOException, JDOMException {
     String path = getHomePath() + BASE_PATH + testName;
 
     final File globalBefore = new File(path, "global_before");
@@ -144,6 +148,12 @@ public class FlexIdeConversionTest extends PlatformTestCase {
 
     MyConversionListener l = new MyConversionListener();
     ConversionService.getInstance().convertSilently(tempDir.getAbsolutePath(), l);
+    if (!conversionShouldHappen) {
+      assertTrue(!l.isConversionNeeded());
+      assertTrue(!l.isConverted());
+      return;
+    }
+
     assertTrue(l.isConversionNeeded());
     assertTrue(l.isConverted());
 

@@ -8,21 +8,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * User: ksafonov
  */
-class FlexIdeConverter extends ProjectConverter {
+class FlexIdeProjectConverter extends ProjectConverter {
   private ConversionParams myParams;
   private final ConversionContext myContext;
 
-  FlexIdeConverter(ConversionContext context) {
+  FlexIdeProjectConverter(ConversionContext context) {
     myContext = context;
   }
 
-  @Override
-  public boolean isConversionNeeded() {
+  private boolean isConversionNeeded() {
     for (File file : myContext.getModuleFiles()) {
       try {
         ModuleSettings moduleSettings = myContext.getModuleSettings(file);

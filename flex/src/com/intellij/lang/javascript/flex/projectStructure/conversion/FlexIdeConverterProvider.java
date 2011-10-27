@@ -33,6 +33,6 @@ public class FlexIdeConverterProvider extends ConverterProvider {
   @NotNull
   @Override
   public ProjectConverter createConverter(@NotNull ConversionContext context) {
-    return new FlexIdeConverter(context);
+    return new FlexIdeProjectConverter(context);
   }
 }
