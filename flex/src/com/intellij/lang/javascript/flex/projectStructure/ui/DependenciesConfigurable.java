@@ -57,7 +57,9 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.*;
+import com.intellij.ui.components.editors.JBComboBoxTableCellEditorComponent;
 import com.intellij.ui.navigation.Place;
+import com.intellij.util.Function;
 import com.intellij.util.IconUtil;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
@@ -584,20 +586,20 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   };
 
   private static final AbstractTableCellEditor LINKAGE_TYPE_EDITOR = new AbstractTableCellEditor() {
-    private ComboBox myCombo;
+    private JBComboBoxTableCellEditorComponent myCombo;
 
     public Object getCellEditorValue() {
-      return myCombo.getSelectedItem();
+      return myCombo.getEditorValue();
     }
 
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-      ComboBoxModel model = new CollectionComboBoxModel(Arrays.asList(LinkageType.getSwcLinkageValues()), value);
-      model.setSelectedItem(value);
-      myCombo = new ComboBox(model, table.getColumnModel().getColumn(1).getWidth());
-      myCombo.setRenderer(new ListCellRendererWrapper(myCombo.getRenderer()) {
-        @Override
-        public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
-          setText(((LinkageType)value).getShortText());
+      myCombo = new JBComboBoxTableCellEditorComponent(table);
+      myCombo.setCell(table, row, column);
+      myCombo.setOptions(LinkageType.getSwcLinkageValues());
+      myCombo.setDefaultValue(value);
+      myCombo.setToString(new Function<Object, String>() {
+        public String fun(final Object o) {
+          return ((LinkageType)o).getShortText();
         }
       });
       return myCombo;
