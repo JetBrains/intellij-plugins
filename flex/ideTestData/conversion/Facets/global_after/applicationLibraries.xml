@@ -8,6 +8,13 @@
     <JAVADOC />
     <SOURCES />
   </library>
+  <library name="jslib" type="javaScript">
+    <CLASSES />
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$TEST_SDK_HOME$/1.js" />
+    </SOURCES>
+  </library>
   <library name="Lib2" type="flex">
     <CLASSES>
       <root url="jar://$TEST_SDK_HOME$/Lib2.swc!/" />

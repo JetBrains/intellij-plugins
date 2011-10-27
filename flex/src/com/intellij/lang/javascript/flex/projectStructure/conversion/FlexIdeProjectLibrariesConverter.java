@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.hash.HashSet;
 import org.jdom.Element;
 
 import java.util.Set;
@@ -26,7 +27,15 @@ public class FlexIdeProjectLibrariesConverter extends ConversionProcessor<Projec
   }
 
   public void preProcess(final ProjectLibrariesSettings projectLibrariesSettings) throws CannotConvertException {
-    myParams.setProjectLibrariesNames(ContainerUtil.map2Set(projectLibrariesSettings.getProjectLibraries(), LIB_NAME_MAPPER));
+    Set<String> librariesNames = new HashSet<String>();
+    for (Element element : projectLibrariesSettings.getProjectLibraries()) {
+      if (!FlexIdeModuleConverter.isApplicableLibrary(element)) {
+        // ignore non-flex project library
+        continue;
+      }
+      librariesNames.add(LIB_NAME_MAPPER.fun(element));
+    }
+    myParams.setProjectLibrariesNames(librariesNames);
   }
 
   public void postProcess(final ProjectLibrariesSettings projectLibrariesSettings) throws CannotConvertException {

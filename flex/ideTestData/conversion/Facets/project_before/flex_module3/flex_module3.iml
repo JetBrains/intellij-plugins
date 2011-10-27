@@ -24,6 +24,16 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="jslib" level="application" />
+    <orderEntry type="module-library" exported="" scope="PROVIDED" >
+      <library name="jslib" type="javaScript">
+        <CLASSES />
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/1.js" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>
 

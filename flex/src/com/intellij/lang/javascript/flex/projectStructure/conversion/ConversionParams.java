@@ -135,11 +135,19 @@ public class ConversionParams {
 
   public boolean libraryExists(final String libraryName, final String libraryLevel) throws CannotConvertException {
     if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(libraryLevel)) {
-      return myGlobalLibrariesModifiableModel.getLibraryByName(libraryName) != null;
+      final LibraryEx library = (LibraryEx)myGlobalLibrariesModifiableModel.getLibraryByName(libraryName);
+      return library != null && isApplicableLibrary(library);
     }
-    else {
+    else if (LibraryTablesRegistrar.PROJECT_LEVEL.equals(libraryLevel)) {
       return myProjectLibrariesNames.contains(libraryName);
     }
+    else {
+      return false;
+    }
+  }
+
+  private static boolean isApplicableLibrary(final LibraryEx library) {
+    return library.getType() == null || library.getType() == FlexLibraryType.getInstance();
   }
 
   public void changeLibraryTypeToFlex(final String libraryName, final String libraryLevel) throws CannotConvertException {

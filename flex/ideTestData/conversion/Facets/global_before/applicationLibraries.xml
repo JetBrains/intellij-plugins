@@ -14,5 +14,12 @@
     <JAVADOC />
     <SOURCES />
   </library>
+  <library name="jslib" type="javaScript">
+    <CLASSES />
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$TEST_SDK_HOME$/1.js" />
+    </SOURCES>
+  </library>
 </state>
 
