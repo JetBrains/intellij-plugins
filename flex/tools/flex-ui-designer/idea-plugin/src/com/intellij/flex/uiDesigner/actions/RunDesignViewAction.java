@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner.actions;
 
 import com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager;
-import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
+import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -93,7 +93,6 @@ public class RunDesignViewAction extends DumbAwareAction {
     }
 
     final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document);
-    // TODO check MXML is valid
     if (psiFile == null || !JavaScriptSupportLoader.isFlexMxmFile(psiFile)) {
       return false;
     }
@@ -103,6 +102,6 @@ public class RunDesignViewAction extends DumbAwareAction {
     }
 
     JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)psiFile);
-    return jsClass != null && JSInheritanceUtil.isParentClass(jsClass, ClassBackedElementDescriptor.UI_COMPONENT_BASE_INTERFACE);
+    return jsClass != null && JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.IUI_COMPONENT);
   }
 }

@@ -8,6 +8,7 @@ import com.intellij.flex.uiDesigner.io.ObjectIntHashMap;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.css.FlexCssPropertyDescriptor;
+import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;

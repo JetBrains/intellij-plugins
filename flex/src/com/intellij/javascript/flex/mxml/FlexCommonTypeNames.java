@@ -1,4 +1,4 @@
-package com.intellij.flex.uiDesigner.mxml;
+package com.intellij.javascript.flex.mxml;
 
 public interface FlexCommonTypeNames {
   String IFACTORY = "mx.core.IFactory";
@@ -7,4 +7,5 @@ public interface FlexCommonTypeNames {
   String VIEW_STACK = "mx.container.ViewStack";
   String INAVIGATOR_CONTENT = "mx.core.INavigatorContent";
   String CLASS_FACTORY = "mx.core.ClassFactory";
+  String IUI_COMPONENT = "mx.core.IUIComponent";
 }

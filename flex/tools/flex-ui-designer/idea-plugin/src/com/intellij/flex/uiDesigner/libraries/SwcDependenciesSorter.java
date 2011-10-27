@@ -124,10 +124,6 @@ public class SwcDependenciesSorter {
   public SortResult sort(final List<Library> libraries, final String postfix, final String flexSdkVersion, final boolean isFromSdk) throws IOException {
     useIndexForFindDefinitions = !isFromSdk;
 
-    if (isFromSdk) {
-      throw new RuntimeException("dd");
-    }
-
     final List<LibrarySetItem> unsortedItems = collectItems(libraries, isFromSdk);
     final TLinkedList<LibrarySetItem> queue = new TLinkedList<LibrarySetItem>();
     AbcFilter filter = null;

@@ -7,6 +7,7 @@ import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.FlexMxmlLanguageAttributeNames;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.FlexReferenceContributor;
+import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.mxml.FlexNameAlias;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.LanguageNamesValidation;
@@ -98,11 +99,9 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   private boolean defaultPropertyDescriptorInitialized;
   private boolean isContainerClass;
   private boolean isContainerClassInitialized;
-  private static final String CONTAINER_CLASS_NAME_1 = "mx.core.IContainer";
   private static final String CONTAINER_CLASS_NAME_2 = "mx.core.IVisualElementContainer";
   @NonNls
   static final String IFACTORY_SHORT_CLASS_NAME = "IFactory";
-  public static final String UI_COMPONENT_BASE_INTERFACE = "mx.core.IUIComponent";
   private static final String PRIMITIVE_GRAPHIC_ELEMENT_BASE_CLASS = "spark.primitives.supportClasses.GraphicElement";
 
   ClassBackedElementDescriptor(String name, String _classname, CodeContext _context, Project _project) {
@@ -177,7 +176,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     boolean includeProperties = (parentDescriptor == this) && !isComponentTag;
 
     if (isComponentTag) {
-      ContainerUtil.addAll(resultList, getElementDescriptorsInheritedFromGivenType(UI_COMPONENT_BASE_INTERFACE));
+      ContainerUtil.addAll(resultList, getElementDescriptorsInheritedFromGivenType(FlexCommonTypeNames.IUI_COMPONENT));
       ContainerUtil.addAll(resultList, getElementDescriptorsInheritedFromGivenType(PRIMITIVE_GRAPHIC_ELEMENT_BASE_CLASS));
     }
     else if (parentDescriptor.getDefaultPropertyDescriptor() != null && parentDescriptor.defaultPropertyDescriptor.getType() != null) {
@@ -232,7 +231,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       }
       else {
         final PsiElement declaration = descriptor.getDeclaration();
-        descriptor.isContainerClass = JSResolveUtil.isAssignableType(CONTAINER_CLASS_NAME_1, descriptor.className, declaration) ||
+        descriptor.isContainerClass = JSResolveUtil.isAssignableType(FlexCommonTypeNames.ICONTAINER, descriptor.className, declaration) ||
                                       JSResolveUtil.isAssignableType(CONTAINER_CLASS_NAME_2, descriptor.className, declaration);
       }
       descriptor.isContainerClassInitialized = true;
@@ -278,7 +277,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     final XmlElementDescriptor parentDescriptor = contextTag.getDescriptor();
 
     if (MxmlLanguageTagsUtil.isComponentTag(contextTag)) {
-      final XmlElementDescriptor checkedDescriptor = checkValidDescriptorAccordingToType(UI_COMPONENT_BASE_INTERFACE, descriptor);
+      final XmlElementDescriptor checkedDescriptor = checkValidDescriptorAccordingToType(FlexCommonTypeNames.IUI_COMPONENT, descriptor);
       return checkedDescriptor != null ? checkedDescriptor
                                        : checkValidDescriptorAccordingToType(PRIMITIVE_GRAPHIC_ELEMENT_BASE_CLASS, descriptor);
     }
@@ -296,7 +295,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       return checkValidDescriptorAccordingToType(getDefaultPropertyType(), descriptor);
     }
     else if (needToCheckThatChildIsUiComponent(contextTag, parentDescriptor, descriptor)) {
-      return checkValidDescriptorAccordingToType(UI_COMPONENT_BASE_INTERFACE, descriptor);
+      return checkValidDescriptorAccordingToType(FlexCommonTypeNames.IUI_COMPONENT, descriptor);
     }
 
     // Ideally all not-null results should be returned in if's above and the last statement should be 'return null'.
