@@ -7,7 +7,6 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,7 +25,7 @@ public class SwfFileViewProviderFactory implements FileViewProviderFactory {
     }
     
     @Override
-    protected PsiFile createFile(Project project, VirtualFile vFile, FileType fileType) {
+    protected PsiFile createFile(@NotNull Project project, @NotNull VirtualFile vFile, @NotNull FileType fileType) {
       return new CompiledJSFile(this);
     }
 
