@@ -35,7 +35,7 @@ import java.util.List;
 
 @SuppressWarnings("MethodMayBeStatic")
 public class LibraryManager extends EntityListManager<VirtualFile, Library> {
-  private static final String ABC_FILTER_VERSION = "15";
+  private static final String ABC_FILTER_VERSION = "16";
   private static final String ABC_FILTER_VERSION_VALUE_NAME = "fud_abcFilterVersion";
   private static final char NAME_POSTFIX = '@';
 

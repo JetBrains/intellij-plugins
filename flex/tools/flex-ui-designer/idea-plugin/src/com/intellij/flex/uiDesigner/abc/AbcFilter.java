@@ -30,15 +30,15 @@ public class AbcFilter extends SwfTranscoder {
   private String inputFileParentName;
 
   private TIntObjectHashMap<TagPositionInfo> exportAssets;
-  private int sL = -1;
+  private int symbolsClassTagLengthWithoutUselessMainClass = -1;
   private int sA;
   private int sB;
 
-  public AbcFilter(String flexSdkVersion) {
+  public AbcFilter(@Nullable String flexSdkVersion) {
     this(flexSdkVersion, false);
   }
 
-  public AbcFilter(String flexSdkVersion, boolean onlyAbcAsTag) {
+  public AbcFilter(@Nullable String flexSdkVersion, boolean onlyAbcAsTag) {
     this.flexSdkVersion = flexSdkVersion;
     this.onlyAbcAsTag = onlyAbcAsTag;
   }
@@ -56,6 +56,10 @@ public class AbcFilter extends SwfTranscoder {
   public void filter(VirtualFile in, File out, @Nullable AbcNameFilter abcNameFilter) throws IOException {
     inputFileParentName = in.getParent().getNameWithoutExtension();
     filter(in.getInputStream(), in.getLength(), out, abcNameFilter);
+
+    if (exportAssets != null && !exportAssets.isEmpty()) {
+      exportAssets.clear();
+    }
   }
 
   private void filter(InputStream inputStream, long inputLength, File outFile, @Nullable AbcNameFilter abcNameFilter) throws IOException {
@@ -92,12 +96,12 @@ public class AbcFilter extends SwfTranscoder {
     channel.write(buffer);
   }
 
-  private void filterTags(AbcNameFilter abcNameFilter) throws IOException {
+  private void filterTags(final AbcNameFilter abcNameFilter) throws IOException {
     lastWrittenPosition = 0;
 
     while (buffer.position() < buffer.limit()) {
-      int tagCodeAndLength = buffer.getShort();
-      int type = tagCodeAndLength >> 6;
+      final int tagCodeAndLength = buffer.getShort();
+      final int type = tagCodeAndLength >> 6;
       int length = tagCodeAndLength & 0x3F;
       if (length == 63) {
         length = buffer.getInt();
@@ -191,17 +195,17 @@ public class AbcFilter extends SwfTranscoder {
     }
   }
   
-  private void processSymbolClass(int length) throws IOException {
+  private void processSymbolClass(final int length) throws IOException {
     final int tagStartPosition = buffer.position();
     writeDataBeforeTag(length);
     buffer.position(tagStartPosition);
     int numSymbols = analyzeClassAssociatedWithMainTimeline(length);
-    final boolean hasClassAssociatedWithMainTimeLine = sL != -1;
+    final boolean hasClassAssociatedWithMainTimeLine = symbolsClassTagLengthWithoutUselessMainClass != -1;
     mergeDoAbc(true, hasClassAssociatedWithMainTimeLine);
 
     lastWrittenPosition = tagStartPosition - (length < 63 ? 2 : 6);
     buffer.position(lastWrittenPosition);
-    boolean hasExportsAssets = exportAssets != null && !exportAssets.isEmpty();
+    final boolean hasExportsAssets = exportAssets != null && !exportAssets.isEmpty();
     if (hasClassAssociatedWithMainTimeLine || hasExportsAssets) {
       if (hasExportsAssets) {
         numSymbols += exportAssets.size();
@@ -211,7 +215,16 @@ public class AbcFilter extends SwfTranscoder {
         lastWrittenPosition = tagStartPosition + length;
       }
       else {
-        encodeTagHeader(TagTypes.SymbolClass, sL);
+        int finalSymbolClassTagLength = symbolsClassTagLengthWithoutUselessMainClass;
+        if (hasExportsAssets) {
+          final TIntObjectIterator<TagPositionInfo> iterator = exportAssets.iterator();
+          for (int i = exportAssets.size(); i-- > 0; ) {
+            iterator.advance();
+            finalSymbolClassTagLength += iterator.value().length();
+          }
+        }
+        
+        encodeTagHeader(TagTypes.SymbolClass, finalSymbolClassTagLength);
         buffer.putShort((short)numSymbols);
         buffer.position(lastWrittenPosition);
         buffer.limit(sA);
@@ -219,7 +232,7 @@ public class AbcFilter extends SwfTranscoder {
         lastWrittenPosition = sB;
         buffer.limit(buffer.capacity());
 
-        if (exportAssets != null) {
+        if (hasExportsAssets) {
           final TIntObjectIterator<TagPositionInfo> iterator = exportAssets.iterator();
           for (int i = exportAssets.size(); i-- > 0; ) {
             iterator.advance();
@@ -230,14 +243,46 @@ public class AbcFilter extends SwfTranscoder {
           }
 
           exportAssets.clear();
+          buffer.limit(buffer.capacity());
         }
       }
 
-      sL = -1;
+      symbolsClassTagLengthWithoutUselessMainClass = -1;
     }
 
     decoders.clear();
     buffer.position(tagStartPosition + length);
+  }
+
+  private int analyzeClassAssociatedWithMainTimeline(final int length) throws IOException {
+    int numSymbols = buffer.getShort();
+    if (numSymbols == 0) {
+      symbolsClassTagLengthWithoutUselessMainClass = -1;
+      sA = 0;
+      sB = 0;
+      return 0;
+    }
+
+    for (int i = 0; i < numSymbols; i++) {
+      int id = buffer.getShort();
+      final int position = buffer.position();
+      if (id == 0) {
+        readAbcName(position);
+        numSymbols--;
+        symbolsClassTagLengthWithoutUselessMainClass = length - (transientNameString.length() + 1 + 2);
+        sA = position - 2;
+        sB = position + transientNameString.length() + 1;
+        return numSymbols;
+      }
+      else {
+        if (exportAssets != null && !exportAssets.isEmpty()) {
+          exportAssets.remove(id);
+        }
+        buffer.position(position + skipAbcName(position) + 1);
+      }
+    }
+
+    return numSymbols;
   }
 
   protected void doAbc2(int length) throws IOException {
@@ -309,30 +354,6 @@ public class AbcFilter extends SwfTranscoder {
     }
   }
 
-  private int analyzeClassAssociatedWithMainTimeline(int tagLength) throws IOException {
-    int numSymbols = buffer.getShort();
-    for (int i = 0; i < numSymbols; i++) {
-      int id = buffer.getShort();
-      final int position = buffer.position();
-      if (id == 0) {
-        readAbcName(position);
-        numSymbols--;
-        sL = tagLength - (transientNameString.length() + 1 + 2);
-        sA = position - 2;
-        sB = position + transientNameString.length() + 1;
-        return numSymbols;
-      }
-      else {
-        if (exportAssets != null && !exportAssets.isEmpty()) {
-          exportAssets.remove(id);
-        }
-        buffer.position(position + skipAbcName(position) + 1);
-      }
-    }
-    
-    return numSymbols;
-  }
-  
   private void readAbcName(final int start) {
     int end = start;
     byte[] array = buffer.array();

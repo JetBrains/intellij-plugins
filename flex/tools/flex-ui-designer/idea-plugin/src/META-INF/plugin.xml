@@ -11,7 +11,7 @@
   <depends optional="false">com.intellij.properties</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <applicationService serviceInterface="com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager" serviceImplementation="com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager"/>
+    <applicationService serviceInterface="com.intellij.flex.uiDesigner.DesignerApplicationManager" serviceImplementation="com.intellij.flex.uiDesigner.DesignerApplicationManager"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.SocketInputHandler" serviceImplementation="com.intellij.flex.uiDesigner.SocketInputHandlerImpl"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.io.StringRegistry" serviceImplementation="com.intellij.flex.uiDesigner.io.StringRegistry"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.EmbedImageManager" serviceImplementation="com.intellij.flex.uiDesigner.EmbedImageManager"/>

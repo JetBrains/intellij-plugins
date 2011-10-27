@@ -442,7 +442,7 @@ public class Client implements Closable {
           LibraryManager.getInstance().initLibrarySets(module, problemsHolder);
         }
         catch (InitException e) {
-          FlexUIDesignerApplicationManager.LOG.error(e.getCause());
+          LogMessageUtil.LOG.error(e.getCause());
           // todo unclear error message (module will not be specified in this error message (but must be))
           problemsHolder.add(e.getMessage());
         }

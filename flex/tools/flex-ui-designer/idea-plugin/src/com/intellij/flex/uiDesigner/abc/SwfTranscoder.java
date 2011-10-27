@@ -93,8 +93,11 @@ abstract class SwfTranscoder extends AbcEncoder {
       this.start = start;
       this.end = end;
     }
+    
+    int length() {
+      return end - start;
+    }
   }
-
 
   protected int skipAbcName(final int start) {
     int end = start;

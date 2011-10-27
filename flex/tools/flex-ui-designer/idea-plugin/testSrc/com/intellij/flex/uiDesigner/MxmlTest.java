@@ -84,7 +84,7 @@ public class MxmlTest extends MxmlTestBase {
   }
 
   private static String m(String... messages) {
-    StringBuilder builder = StringBuilderSpinAllocator.alloc();
+    final StringBuilder builder = StringBuilderSpinAllocator.alloc();
     try {
       builder.append("<b>Flex UI Designer</b><ul>");
       for (String message : messages) {
@@ -143,7 +143,7 @@ public class MxmlTest extends MxmlTestBase {
       else if (name.startsWith("Aux")) {
         auxFiles.add(parent.getPath() + "/" + name);
       }
-      else if (name.endsWith(".mxml") && !name.startsWith("T.") && !name.startsWith("TestApp.") && !name.startsWith("Constructor.")) {
+      else if (name.endsWith(".mxml") && !name.startsWith("T.") && !name.startsWith("TestApp.") && !name.startsWith("GenericMxmlSupport.")) {
         files.add(parent.getPath() + "/" + name);
       }
 

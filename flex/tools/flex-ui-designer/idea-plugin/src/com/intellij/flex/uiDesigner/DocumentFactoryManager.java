@@ -86,7 +86,7 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
     
     if (flexUIDesignerApplicationManagerConnection == null) {
       flexUIDesignerApplicationManagerConnection = messageBus.connect();
-      flexUIDesignerApplicationManagerConnection.subscribe(FlexUIDesignerApplicationManager.MESSAGE_TOPIC, new FlexUIDesignerApplicationListener() {
+      flexUIDesignerApplicationManagerConnection.subscribe(DesignerApplicationManager.MESSAGE_TOPIC, new DesignerApplicationListener() {
         @Override
         public void initialDocumentOpened() {
         }
@@ -125,8 +125,8 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
         return;
       }
       
-      FlexUIDesignerApplicationManager flexUIDesignerApplicationManager = FlexUIDesignerApplicationManager.getInstance();
-      if (flexUIDesignerApplicationManager.isDocumentOpening()) {
+      DesignerApplicationManager designerApplicationManager = DesignerApplicationManager.getInstance();
+      if (designerApplicationManager.isDocumentOpening()) {
         return;
       }
 
@@ -145,7 +145,7 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
         return;
       }
 
-      flexUIDesignerApplicationManager.updateDocumentFactory(info.getId(), module, psiFile);
+      designerApplicationManager.updateDocumentFactory(info.getId(), module, psiFile);
     }
   }
 

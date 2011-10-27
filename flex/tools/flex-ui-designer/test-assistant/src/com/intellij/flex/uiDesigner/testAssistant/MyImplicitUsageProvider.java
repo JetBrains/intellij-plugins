@@ -12,7 +12,9 @@ import com.intellij.psi.PsiElement;
 
 import java.io.File;
 
-public class MyImplicitUsageProvider implements ImplicitUsageProvider {
+class MyImplicitUsageProvider implements ImplicitUsageProvider {
+  private static final String RELATIVE_TEST_DATA_PATH = "idea-plugin/testData/src";
+
   @Override
   public boolean isImplicitUsage(PsiElement element) {
     if (!(element instanceof JSFunction)) {
@@ -29,7 +31,7 @@ public class MyImplicitUsageProvider implements ImplicitUsageProvider {
     }
 
     final JSClass clazz = (JSClass)method.getParent();
-    if (!JSInheritanceUtil.isParentClass(clazz, "com.intellij.flex.uiDesigner.plugins.test.TestCase")) {
+    if (!JSInheritanceUtil.isParentClass(clazz, "com.intellij.flex.uiDesigner.TestCase")) {
       return false;
     }
 
@@ -43,9 +45,9 @@ public class MyImplicitUsageProvider implements ImplicitUsageProvider {
       return false;
     }
 
-    File testSourcePath = new File(projectBaseDir.getPath(), "idea-plugin/testData/src");
+    File testSourcePath = new File(projectBaseDir.getPath(), RELATIVE_TEST_DATA_PATH);
     if (!testSourcePath.exists()) {
-      testSourcePath = new File(projectBaseDir.getPath(), "flex/tools/flex-ui-designer/idea-plugin/testData");
+      testSourcePath = new File(projectBaseDir.getPath(), "flex/tools/flex-ui-designer/" + RELATIVE_TEST_DATA_PATH);
       assert testSourcePath.exists();
     }
 

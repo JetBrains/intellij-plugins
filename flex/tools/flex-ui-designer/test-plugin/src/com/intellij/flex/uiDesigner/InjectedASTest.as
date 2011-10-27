@@ -16,7 +16,7 @@ import org.hamcrest.object.QualifiedName;
 import org.hamcrest.object.equalTo;
 import org.hamcrest.object.hasProperties;
 
-[Test(dir="mxml/injectedAS")]
+[Test(dir="common/injectedAS")]
 public class InjectedASTest extends BaseTestCase {
   private static function mouseDown(target:Object):void {
     IEventDispatcher(target).dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN));

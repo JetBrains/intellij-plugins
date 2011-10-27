@@ -41,7 +41,7 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   }
 
   protected static VirtualFile getVFile(String path) {
-    VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(path.charAt(0) == '/' ? path : (doGetTestDataPath() + '/' + path));
+    VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(path.charAt(0) == '/' ? path : (testDataPath() + '/' + path));
     assertNotNull(vFile);
     return vFile;
   }

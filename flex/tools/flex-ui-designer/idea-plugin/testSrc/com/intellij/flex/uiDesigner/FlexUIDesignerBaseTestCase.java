@@ -3,15 +3,15 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.lang.javascript.JSTestUtils;
 
-abstract class FlexUIDesignerBaseTestCase extends CodeInsightTestCase {
+public abstract class FlexUIDesignerBaseTestCase extends CodeInsightTestCase {
   private static String testDataPath;
 
   @Override
-    protected boolean isRunInWriteAction() {
-      return false;
-    }
+  protected boolean isRunInWriteAction() {
+    return false;
+  }
 
-  protected static String doGetTestDataPath() {
+  public static String testDataPath() {
     if (testDataPath == null) {
       testDataPath = DebugPathManager.getFudHome() + "/idea-plugin/testData";
     }
@@ -24,12 +24,12 @@ abstract class FlexUIDesignerBaseTestCase extends CodeInsightTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return doGetTestDataPath();
+    return testDataPath();
   }
 
   @Override
   protected void setUpJdk() {
     JSTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(),
-        DebugPathManager.getIdeaHome() + "/plugins/JavaScriptLanguage/testData/flex_highlighting/MockGumboSdk", false);
+                             DebugPathManager.getIdeaHome() + "/plugins/JavaScriptLanguage/testData/flex_highlighting/MockGumboSdk", false);
   }
 }

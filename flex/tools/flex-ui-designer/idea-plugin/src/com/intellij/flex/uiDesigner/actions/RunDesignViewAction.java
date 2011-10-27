@@ -1,7 +1,6 @@
 package com.intellij.flex.uiDesigner.actions;
 
-import com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager;
-import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
+import com.intellij.flex.uiDesigner.DesignerApplicationManager;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -24,6 +23,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.psi.xml.XmlTag;
 
 public class RunDesignViewAction extends DumbAwareAction {
   @Override
@@ -42,8 +42,8 @@ public class RunDesignViewAction extends DumbAwareAction {
 
     FileDocumentManager.getInstance().saveAllDocuments();
     // saveAllDocuments may cause open this document
-    if (!FlexUIDesignerApplicationManager.getInstance().isDocumentOpening()) {
-      FlexUIDesignerApplicationManager.getInstance().openDocument(module, psiFile, isDebug());
+    if (!DesignerApplicationManager.getInstance().isDocumentOpening()) {
+      DesignerApplicationManager.getInstance().openDocument(module, psiFile, isDebug());
     }
   }
 
@@ -53,7 +53,7 @@ public class RunDesignViewAction extends DumbAwareAction {
 
   public void update(final AnActionEvent event) {
     final boolean popupPlace = ActionPlaces.isPopupPlace(event.getPlace());
-    final boolean enabled = isEnabled(event.getDataContext(), popupPlace) &&!FlexUIDesignerApplicationManager.getInstance().isDocumentOpening();
+    final boolean enabled = isEnabled(event.getDataContext(), popupPlace) && !DesignerApplicationManager.getInstance().isDocumentOpening();
     if (popupPlace) {
       event.getPresentation().setVisible(enabled);
     }
@@ -100,8 +100,12 @@ public class RunDesignViewAction extends DumbAwareAction {
     if (file == null || !ProjectRootManager.getInstance(project).getFileIndex().isInSourceContent(file)) {
       return false;
     }
+    final XmlTag rootTag = ((XmlFile)psiFile).getRootTag();
+    if (rootTag == null || rootTag.getPrefixByNamespace(JavaScriptSupportLoader.MXML_URI3) == null) {
+      return false;
+    }
 
-    JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)psiFile);
-    return jsClass != null && JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.IUI_COMPONENT);
+    final JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(rootTag);
+    return jsClass != null && JSInheritanceUtil.isParentClass(jsClass, "flash.display.DisplayObjectContainer");
   }
 }

@@ -20,22 +20,26 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 class TestDesignerApplicationManager {
   private static TestDesignerApplicationManager instance;
+  private static boolean serviceImplementationChanged;
 
   private final ProcessHandler adlProcessHandler;
 
-  private final Socket socket;
-  private final THashMap<String, LibrarySet> sdkLibrarySetCache = new THashMap<String, LibrarySet>();
-
+  private Socket socket;
+  private final Map<String, LibrarySet> sdkLibrarySetCache = new THashMap<String, LibrarySet>();
   public final TestSocketInputHandler socketInputHandler;
 
-  private TestDesignerApplicationManager() throws IOException {
+  private TestDesignerApplicationManager() throws IOException, ExecutionException, InterruptedException, TimeoutException {
     LibraryManager.getInstance().setAppDir(DesignerApplicationUtil.APP_DIR);
 
     final DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration = DesignerApplicationUtil.createTestAdlRunConfiguration();
-
     adlRunConfiguration.arguments = new ArrayList<String>();
 
     final ServerSocket serverSocket = new ServerSocket(0, 1);
@@ -45,7 +49,7 @@ class TestDesignerApplicationManager {
     DesignerApplicationUtil.addTestPlugin(adlRunConfiguration.arguments);
     DesignerApplicationUtil.copyAppFiles();
 
-    adlProcessHandler = DesignerApplicationUtil.runAdl(adlRunConfiguration, DebugPathManager.getFudHome() + "/" +
+    adlProcessHandler = DesignerApplicationUtil.runAdl(adlRunConfiguration, DebugPathManager.getFudHome() + '/' +
                                                                             DesignerApplicationUtil.DESCRIPTOR_XML_DEV_PATH,
                                                        DesignerApplicationUtil.APP_DIR.getPath(), new Consumer<Integer>() {
       @Override
@@ -62,20 +66,28 @@ class TestDesignerApplicationManager {
       }
     });
 
-    socket = serverSocket.accept();
-
     ShutDownTracker.getInstance().registerShutdownTask(new Runnable() {
       @Override
       public void run() {
+        if (socket != null) {
+          try {
+            socket.close();
+          }
+          catch (IOException e) {
+            e.printStackTrace();
+          }
+        }
         adlProcessHandler.destroyProcess();
-        try {
-          socket.close();
-        }
-        catch (IOException e) {
-          e.printStackTrace();
-        }
       }
     });
+
+    ApplicationManager.getApplication().executeOnPooledThread(new Callable<Void>() {
+      @Override
+      public Void call() throws Exception {
+        socket = serverSocket.accept();
+        return null;
+      }
+    }).get(Boolean.valueOf(System.getProperty("fud.test.debug")) ? 8000 : 30, TimeUnit.SECONDS); // we can want to debug our flash app before socket accept
 
     changeServiceImplementation();
     Client.getInstance().setOut(socket.getOutputStream());
@@ -90,7 +102,6 @@ class TestDesignerApplicationManager {
     picoContainer.registerComponentImplementation(key.getName(), implementation);
   }
 
-  private static boolean serviceImplementationChanged;
   public static void changeServiceImplementation() {
     if (serviceImplementationChanged) {
       return;
@@ -115,7 +126,8 @@ class TestDesignerApplicationManager {
     return unregistedDocumentReferences;
   }
 
-  public static TestDesignerApplicationManager getInstance() throws IOException {
+  public static TestDesignerApplicationManager getInstance() throws IOException, ExecutionException, InterruptedException,
+                                                                    TimeoutException {
     if (instance == null) {
       instance = new TestDesignerApplicationManager();
     }

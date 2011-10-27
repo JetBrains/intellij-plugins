@@ -286,7 +286,7 @@ final class DesignerApplicationUtil {
       public void processStarted(final RunContentDescriptor descriptor) {
         final ProcessHandler processHandler = descriptor.getProcessHandler();
         assert processHandler != null;
-        if (FlexUIDesignerApplicationManager.getInstance().disposeOnApplicationClosed(new Disposable() {
+        if (DesignerApplicationManager.getInstance().disposeOnApplicationClosed(new Disposable() {
           @Override
           public void dispose() {
             final Project project = module.getProject();

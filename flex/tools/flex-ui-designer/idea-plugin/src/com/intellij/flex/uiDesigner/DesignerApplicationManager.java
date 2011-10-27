@@ -25,7 +25,6 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.help.HelpManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -57,13 +56,12 @@ import java.io.IOException;
 import java.util.*;
 
 import static com.intellij.flex.uiDesigner.DesignerApplicationUtil.runAdl;
+import static com.intellij.flex.uiDesigner.LogMessageUtil.LOG;
 
-public class FlexUIDesignerApplicationManager implements Disposable {
-  public static final Topic<FlexUIDesignerApplicationListener> MESSAGE_TOPIC =
-    new Topic<FlexUIDesignerApplicationListener>("Flex UI Designer Application open and close events",
-                                                 FlexUIDesignerApplicationListener.class);
-
-  public static final Logger LOG = Logger.getInstance(FlexUIDesignerApplicationManager.class.getName());
+public class DesignerApplicationManager implements Disposable {
+  public static final Topic<DesignerApplicationListener> MESSAGE_TOPIC =
+    new Topic<DesignerApplicationListener>("Flex UI Designer Application open and close events",
+                                                 DesignerApplicationListener.class);
 
   private MyOSProcessHandler adlProcessHandler;
 
@@ -83,8 +81,8 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     return documentOpening;
   }
 
-  public static FlexUIDesignerApplicationManager getInstance() {
-    return ServiceManager.getService(FlexUIDesignerApplicationManager.class);
+  public static DesignerApplicationManager getInstance() {
+    return ServiceManager.getService(DesignerApplicationManager.class);
   }
 
   public boolean disposeOnApplicationClosed(Disposable disposable) {
@@ -314,7 +312,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       }
 
       notifyAboutAppClosed();
-      Disposer.dispose(FlexUIDesignerApplicationManager.this);
+      Disposer.dispose(DesignerApplicationManager.this);
     }
   }
 
@@ -407,7 +405,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         if (!client.flush()) {
           cancel();
         }
-        indicator.setText(FlexUIDesignerBundle.message("load.libraries"));
+        indicator.setText(FlexUIDesignerBundle.message("loading.libraries"));
         semaphore.waitFor();
       }
       else {
@@ -421,9 +419,9 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       this.indicator = indicator;
       AdlRunConfiguration adlRunConfiguration;
       try {
-        indicator.setText(FlexUIDesignerBundle.message("copy.app.files"));
+        indicator.setText(FlexUIDesignerBundle.message("copying.app.files"));
         DesignerApplicationUtil.copyAppFiles();
-
+        indicator.setText(FlexUIDesignerBundle.message("finding.suitable.air.runtime"));
         adlRunConfiguration = DesignerApplicationUtil.findSuitableFlexSdk();
         if (adlRunConfiguration == null) {
           String message = FlexUIDesignerBundle.message(
@@ -468,7 +466,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         adlRunConfiguration.arguments = arguments;
       }
       catch (Throwable e) {
-        LOG.error(e);
+        LogMessageUtil.LOG.error(e);
         return;
       }
 
@@ -602,7 +600,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       semaphore.up();
 
       try {
-        Disposer.dispose(FlexUIDesignerApplicationManager.this);
+        Disposer.dispose(DesignerApplicationManager.this);
       }
       finally {
         documentOpening = false;

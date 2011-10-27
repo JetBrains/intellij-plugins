@@ -41,7 +41,7 @@ public class AppTest extends AppTestBase {
     info.semaphore.down();
     assert connection == null;
     connection = ApplicationManager.getApplication().getMessageBus().connect();
-    connection.subscribe(FlexUIDesignerApplicationManager.MESSAGE_TOPIC, new FlexUIDesignerApplicationListener() {
+    connection.subscribe(DesignerApplicationManager.MESSAGE_TOPIC, new DesignerApplicationListener() {
       @Override
       public void initialDocumentOpened() {
         info.semaphore.up();
@@ -52,7 +52,7 @@ public class AppTest extends AppTestBase {
       }
     });
 
-    FlexUIDesignerApplicationManager.getInstance().openDocument(myModule, (XmlFile)myFile, false);
+    DesignerApplicationManager.getInstance().openDocument(myModule, (XmlFile)myFile, false);
     await();
     return newParent;
   }
@@ -75,7 +75,7 @@ public class AppTest extends AppTestBase {
   public void testCloseAndOpenProject() throws Exception {
     open("injectedAS/Transitions.mxml");
 
-    FlexUIDesignerApplicationManager designerAppManager = FlexUIDesignerApplicationManager.getInstance();
+    DesignerApplicationManager designerAppManager = DesignerApplicationManager.getInstance();
     designerAppManager.projectManagerListener.projectClosed(myProject);
 
     callClientAssert("close");
@@ -97,7 +97,7 @@ public class AppTest extends AppTestBase {
 
     PsiDocumentManager.getInstance(myProject).commitAllDocuments();
 
-    final FlexUIDesignerApplicationManager designerApplicationManager = FlexUIDesignerApplicationManager.getInstance();
+    final DesignerApplicationManager designerApplicationManager = DesignerApplicationManager.getInstance();
     designerApplicationManager.openDocument(myModule, (XmlFile)myFile, false);
     while (designerApplicationManager.isDocumentOpening()) {
       Thread.sleep(8); // todo event about document opened
@@ -109,7 +109,7 @@ public class AppTest extends AppTestBase {
   @Override
   protected void tearDown() throws Exception {
     try {
-      FlexUIDesignerApplicationManager.getInstance().dispose();
+      DesignerApplicationManager.getInstance().dispose();
 
       StringRegistry.getInstance().reset();
 

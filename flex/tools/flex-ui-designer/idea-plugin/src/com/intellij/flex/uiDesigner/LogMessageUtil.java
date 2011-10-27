@@ -2,13 +2,15 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.diagnostic.LogMessageEx;
 import com.intellij.diagnostic.errordialog.Attachment;
-import com.intellij.flex.uiDesigner.libraries.InitException;
 import com.intellij.openapi.diagnostic.IdeaLoggingEvent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ExceptionUtil;
 import org.jetbrains.annotations.Nullable;
 
 public final class LogMessageUtil {
+  public static final Logger LOG = Logger.getInstance(DesignerApplicationManager.class.getName());
+
   public static StringBuilder appendLineNumber(StringBuilder builder, ProblemDescriptor problemDescriptor) {
     return builder.append(" (line: ").append(problemDescriptor.getLineNumber()).append(')');
   }
@@ -45,7 +47,7 @@ public final class LogMessageUtil {
   }
 
   public static void processInternalError(Throwable e, @Nullable VirtualFile mxmlFile) {
-    FlexUIDesignerApplicationManager.LOG.error(createEvent(e, mxmlFile));
+    LOG.error(createEvent(e, mxmlFile));
   }
 
   public static void processInternalError(Throwable e) {

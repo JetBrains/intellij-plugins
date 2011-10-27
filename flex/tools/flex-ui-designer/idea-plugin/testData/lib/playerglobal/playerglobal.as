@@ -6,6 +6,11 @@ public final class String {
 public final class Number {
   native public function Number(value:* = 0):*;
 }
+
+public final class Date {
+  native public function Date(year:* = null, month:* = null, date:* = null, hours:* = null, minutes:* = null, seconds:* = null,
+                              ms:* = null):*;
+}
 }
 
 package flash.display {

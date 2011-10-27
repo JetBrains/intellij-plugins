@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
@@ -14,6 +15,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 abstract class MxmlTestBase extends AppTestBase {
+  private static int TIMEOUT = Boolean.valueOf(System.getProperty("fud.test.debug")) ? 8000 : 8;
+
   protected static final String SPARK_COMPONENTS_FILE = "SparkComponents.mxml";
   
   protected TestClient client;
@@ -132,7 +135,7 @@ abstract class MxmlTestBase extends AppTestBase {
     VirtualFile[] testVFiles = configureByFiles(useRawProjectRoot() ? getVFile(getRawProjectRoot()) : null, originalVFiles).getChildren();
     for (int childrenLength = testVFiles.length, i = childrenLength - auxiliaryBorder; i < childrenLength; i++) {
       final VirtualFile file = testVFiles[i];
-      if (!file.getName().endsWith(".mxml")) {
+      if (!file.getName().endsWith(JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT)) {
         continue;
       }
       
@@ -145,8 +148,7 @@ abstract class MxmlTestBase extends AppTestBase {
           tester.test(file, xmlFile, originalVFile);
           return null;
         }
-      }).get(8888, TimeUnit.SECONDS);
-      //}).get(8, TimeUnit.SECONDS);
+      }).get(TIMEOUT, TimeUnit.SECONDS);
     }
   }
 

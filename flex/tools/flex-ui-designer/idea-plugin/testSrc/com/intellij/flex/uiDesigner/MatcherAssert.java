@@ -35,6 +35,10 @@ public final class MatcherAssert {
     assertThat(actual, new IsEqual<Integer>(expected));
   }
 
+  public static void assertThat(long actual, int expected) {
+    assertThat((int)actual, new IsEqual<Integer>(expected));
+  }
+
   public static void assertThat(String actual, String expected) {
     assertThat(actual, new IsEqual<String>(expected));
   }

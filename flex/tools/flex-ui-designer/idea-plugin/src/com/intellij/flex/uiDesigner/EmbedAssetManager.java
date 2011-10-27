@@ -17,7 +17,7 @@ abstract class EmbedAssetManager<I extends EmbedAssetInfo> implements Disposable
   protected EmbedAssetManager() {
     final Application application = ApplicationManager.getApplication();
     final MessageBus messageBus = application.getMessageBus();
-    messageBus.connect(this).subscribe(FlexUIDesignerApplicationManager.MESSAGE_TOPIC, new FlexUIDesignerApplicationListener() {
+    messageBus.connect(this).subscribe(DesignerApplicationManager.MESSAGE_TOPIC, new DesignerApplicationListener() {
       @Override
       public void initialDocumentOpened() {
       }

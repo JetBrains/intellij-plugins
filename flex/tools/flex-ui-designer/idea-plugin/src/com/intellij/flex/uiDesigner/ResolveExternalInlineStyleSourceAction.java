@@ -105,7 +105,7 @@ public class ResolveExternalInlineStyleSourceAction implements Runnable {
         AmfOutputStream out = client.getOut();
 
         PsiElement psiElement = (PsiElement)target;
-//        ClientFileManager clientFileManager = FlexUIDesignerApplicationManager.getInstance().getClientFileManager();
+//        ClientFileManager clientFileManager = DesignerApplicationManager.getInstance().getClientFileManager();
         //noinspection ConstantConditions
 //        out.writeInt(clientFileManager.add(psiElement.getContainingFile().getVirtualFile()));
 

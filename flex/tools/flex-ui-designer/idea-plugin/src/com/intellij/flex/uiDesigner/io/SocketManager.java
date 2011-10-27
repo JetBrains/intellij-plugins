@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.io;
 
-import com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager;
+import com.intellij.flex.uiDesigner.DesignerApplicationManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -18,7 +18,7 @@ abstract class SocketManager implements Runnable, Disposable {
   protected Socket socket;
 
   public int listen() throws IOException {
-    FlexUIDesignerApplicationManager.getInstance().disposeOnApplicationClosed(this);
+    DesignerApplicationManager.getInstance().disposeOnApplicationClosed(this);
 
     serverSocket = new ServerSocket(0, 1);
     ApplicationManager.getApplication().executeOnPooledThread(this);

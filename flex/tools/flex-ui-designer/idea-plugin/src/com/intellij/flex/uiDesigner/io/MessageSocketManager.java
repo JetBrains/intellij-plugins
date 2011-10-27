@@ -1,8 +1,8 @@
 package com.intellij.flex.uiDesigner.io;
 
 import com.intellij.flex.uiDesigner.Client;
-import com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager;
-import com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager.FirstOpenDocumentTask;
+import com.intellij.flex.uiDesigner.DesignerApplicationManager;
+import com.intellij.flex.uiDesigner.DesignerApplicationManager.FirstOpenDocumentTask;
 import com.intellij.flex.uiDesigner.SocketInputHandler;
 
 import java.io.File;
@@ -11,7 +11,7 @@ import java.io.OutputStream;
 import java.net.SocketException;
 
 public class MessageSocketManager extends SocketManager {
-  private FlexUIDesignerApplicationManager.FirstOpenDocumentTask pendingTask;
+  private DesignerApplicationManager.FirstOpenDocumentTask pendingTask;
   private final File appDir;
 
   public MessageSocketManager(FirstOpenDocumentTask pendingTask, File appDir) {
