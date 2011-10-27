@@ -63,6 +63,9 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
         .showCustomOption(ECMA4CodeStyleSettings.class, "SPACE_AFTER_DOTS_IN_REST_PARAMETER",
                           "After '...' in rest parameter",
                           CodeStyleSettingsCustomizable.SPACES_OTHER);
+      consumer.showCustomOption(JSCodeStyleSettings.class, "SPACE_BEFORE_FUNCTION_LEFT_PARENTH",
+                                JSBundle.message("space.before.function.left.parenth"),
+                                CodeStyleSettingsCustomizable.SPACES_BEFORE_PARENTHESES);
     }
     else if (settingsType == SettingsType.BLANK_LINES_SETTINGS) {
       List<String> blankLinesOptions = new ArrayList<String>();
