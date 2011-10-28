@@ -15,16 +15,19 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileRunTarget;
 
-public class FlexIdeRunConfiguration extends RunConfigurationBase implements RunProfileWithCompileBeforeLaunchOption {
+public class FlexIdeRunConfiguration extends RunConfigurationBase
+  implements RunProfileWithCompileBeforeLaunchOption, LocatableConfiguration {
 
   private FlexIdeRunnerParameters myRunnerParameters = new FlexIdeRunnerParameters();
 
@@ -101,6 +104,18 @@ public class FlexIdeRunConfiguration extends RunConfigurationBase implements Run
     else {
       return Module.EMPTY_ARRAY;
     }
+  }
+
+  public boolean isGeneratedName() {
+    return Comparing.equal(getName(), suggestedName());
+  }
+
+  public String suggestedName() {
+    return suggestName(myRunnerParameters);
+  }
+
+  public static String suggestName(final FlexIdeRunnerParameters params) {
+    return params.isOverrideMainClass() ? StringUtil.getShortName(params.getOverriddenMainClass()) : params.getBCName();
   }
 
   private class AirRunState extends CommandLineState {
