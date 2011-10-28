@@ -10,7 +10,7 @@ includeTool << Jps
 def product = "Astella"
 
 requireProperty("buildNumber", requireProperty("build.number", snapshot))
-setProperty("buildName", "${product}-${buildNumber}")
+setProperty("buildName", "${product}-EAP-${buildNumber}")
 setProperty("product", "${product}")
 requireProperty("launchProperties", "")
 
