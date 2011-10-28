@@ -271,6 +271,7 @@
 <!ATTLIST Ignore
   description CDATA #IMPLIED
 >
+<!ELEMENT Abstract EMPTY>
 <!ELEMENT Test EMPTY>
 <!ATTLIST Test
   expects CDATA "Error"
