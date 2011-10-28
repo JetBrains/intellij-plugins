@@ -57,7 +57,6 @@ public class OgnlLiveTemplatesTest extends LightCodeInsightFixtureTestCase {
     myFixture.configureByText(OgnlTestUtils.DUMMY_OGNL_FILE_NAME, before);
     expandLiveTemplate();
     myFixture.checkResult(after);
-
   }
 
   private void expandLiveTemplate() {
