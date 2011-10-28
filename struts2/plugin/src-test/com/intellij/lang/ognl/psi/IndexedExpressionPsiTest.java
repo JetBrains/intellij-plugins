@@ -29,6 +29,8 @@ public class IndexedExpressionPsiTest extends PsiTestCase {
 
   public void testIdentifierSimpleIntegerIndex() {
     final OgnlIndexedExpression indexedExpression = parse("identifier[0]");
+    assertEquals(PsiType.INT, indexedExpression.getType());
+
     final OgnlExpression expression = indexedExpression.getExpression();
     assertElementType(OgnlElementTypes.INTEGER_LITERAL, expression);
     assertEquals(PsiType.INT, expression.getType());
