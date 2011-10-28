@@ -97,6 +97,7 @@ public class OgnlElementTypes {
   };
 
   public static final OgnlElementType STRING_LITERAL = new OgnlElementType("StringLiteral") {
+    @Override
     public PsiElement createPsiElement(final ASTNode node) {
       return new OgnlStringLiteral(node);
     }
@@ -106,11 +107,11 @@ public class OgnlElementTypes {
     @Override
     public PsiElement createPsiElement(final ASTNode node) {
       return new OgnlExpressionBase(node) {
+
         @Override
         public PsiType getType() {
           return PsiType.NULL;
         }
-
       };
     }
   };
@@ -154,6 +155,7 @@ public class OgnlElementTypes {
     @Override
     public PsiElement createPsiElement(final ASTNode node) {
       return new OgnlExpressionBase(node) {
+
         @Override
         public PsiType getType() {
           return JavaPsiFacade.getInstance(getProject()).getElementFactory()
@@ -190,6 +192,7 @@ public class OgnlElementTypes {
     @Override
     public PsiElement createPsiElement(final ASTNode node) {
       return new OgnlExpressionBase(node) {
+
         @Override
         public PsiType getType() {
           return JavaPsiFacade.getInstance(getProject()).getElementFactory()
