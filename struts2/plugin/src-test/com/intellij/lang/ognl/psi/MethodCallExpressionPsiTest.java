@@ -27,6 +27,7 @@ public class MethodCallExpressionPsiTest extends PsiTestCase {
   public void testMethodCallNoParams() {
     final OgnlMethodCallExpression methodCallExpression = parse("methodName()");
     assertEquals(0, methodCallExpression.getParameterCount());
+    assertNull(methodCallExpression.getType());
   }
 
   public void testMethodCallOneParameter() {
