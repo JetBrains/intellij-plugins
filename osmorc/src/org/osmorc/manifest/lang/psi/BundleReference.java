@@ -45,7 +45,7 @@ public class BundleReference extends PsiReferenceBase<HeaderValuePart> implement
 
     @Nullable
     public PsiElement resolve() {
-        BundleManifest bundleManifest = _bundleManager.getBundleManifest(unwrap(getCanonicalText()));
+        BundleManifest bundleManifest = _bundleManager.getManifestBySymbolicName(unwrap(getCanonicalText()));
         return bundleManifest != null ? bundleManifest.getManifestFile() : null;
     }
 

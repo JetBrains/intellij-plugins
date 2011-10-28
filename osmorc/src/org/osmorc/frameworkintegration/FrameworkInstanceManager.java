@@ -33,6 +33,7 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
+@Deprecated
 public interface FrameworkInstanceManager
 {
   /**

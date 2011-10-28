@@ -29,17 +29,10 @@ import com.intellij.facet.Facet;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.FacetManagerAdapter;
 import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.application.Result;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.roots.LibraryOrderEntry;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.OrderEntry;
-import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -105,14 +98,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
   }
 
   public void projectOpened() {
-    myApplication.invokeLater(new Runnable() {
-      public void run() {
-        if (!disposed && OsmorcFacet.hasOsmorcFacet(myModule)) {
-          buildManuallyEditedManifestIndex();
-          updateModuleDependencyIndex();
-        }
-      }
-    });
+   // the project component will rebuild indices
   }
 
   public void projectClosed() {
@@ -120,46 +106,6 @@ public class OsmorcModuleComponent implements ModuleComponent {
   }
 
   public void moduleAdded() {
-  }
-
-  private void updateModuleDependencyIndex() {
-    myApplication.invokeLater(new Runnable() {
-      public void run() {
-        // Fix for EA-23251
-        if ( myModule.isDisposed() ) {
-          return;
-        }
-        ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-        if (indicator != null) {
-          indicator.setText("Updating OSGi dependency index for module '" + myModule.getName() + "'");
-        }
-        ModifiableRootModel model = new ReadAction<ModifiableRootModel>() {
-          protected void run(Result<ModifiableRootModel> result) throws Throwable {
-            ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
-            result.setResult(model);
-          }
-        }.execute().getResultObject();
-
-        OrderEntry[] entries = model.getOrderEntries();
-        try {
-          for (int i = 0, entriesLength = entries.length; i < entriesLength; i++) {
-            if (indicator != null) {
-              indicator.setFraction(i / entriesLength);
-            }
-            OrderEntry entry = entries[i];
-            if (entry instanceof LibraryOrderEntry) {
-              final Library library = ((LibraryOrderEntry)entry).getLibrary();
-              if (library != null) {
-                myBundleManager.addOrUpdateBundle(library);
-              }
-            }
-          }
-        }
-        finally {
-          model.dispose();
-        }
-      }
-    });
   }
 
   /**
@@ -176,7 +122,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
             indicator.setIndeterminate(true);
             indicator.setText("Updating manifest indices.");
           }
-          myBundleManager.addOrUpdateBundle(myModule);
+          myBundleManager.reindex(myModule);
         }
       });
     }

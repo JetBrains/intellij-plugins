@@ -37,224 +37,230 @@ import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 class ManifestParser implements PsiParser {
+  private boolean currentHeaderIsSimpleHeader;
+  private final HeaderParserRepository headerParserRepository;
+  private PsiBuilder.Marker headerValuePartMarker;
+  private PsiBuilder.Marker sectionMarker;
+  private PsiBuilder.Marker headerMarker;
+  private PsiBuilder.Marker clauseMarker;
+  private PsiBuilder.Marker assignmentMarker;
+  private IElementType assignmentMarkerType;
 
-    ManifestParser(@NotNull final HeaderParserRepository headerParserRepository) {
-        this.headerParserRepository = headerParserRepository;
+  @SuppressWarnings({"UseOfArchaicSystemPropertyAccessors"})
+  private static final boolean DEBUG_MODE = Boolean.getBoolean("Osmorc.debug");
+
+  ManifestParser(@NotNull final HeaderParserRepository headerParserRepository) {
+    this.headerParserRepository = headerParserRepository;
+  }
+
+  @NotNull
+  public ASTNode parse(IElementType root, PsiBuilder builder) {
+    builder.setDebugMode(DEBUG_MODE /*|| ApplicationManager.getApplication().isUnitTestMode()*/);
+    final PsiBuilder.Marker rootMarker = builder.mark();
+
+    while (!builder.eof()) {
+      parse(builder);
+    }
+    closeAll();
+
+    rootMarker.done(root);
+    return builder.getTreeBuilt();
+  }
+
+  private void closeAll() {
+    closeHeaderValuePart();
+    closeAssignmentMarker();
+    closeClause();
+    closeHeader();
+    closeSection();
+  }
+
+  protected void parse(PsiBuilder builder) {
+    if (sectionMarker == null) {
+      sectionMarker = builder.mark();
     }
 
-    @NotNull
-    public ASTNode parse(IElementType root, PsiBuilder builder) {
-        builder.setDebugMode(DEBUG_MODE /*|| ApplicationManager.getApplication().isUnitTestMode()*/);
-        final PsiBuilder.Marker rootMarker = builder.mark();
-
-        while (!builder.eof()) {
-            parse(builder);
-        }
-        closeAll();
-
-        rootMarker.done(root);
-        return builder.getTreeBuilt();
+    final IElementType tokenType = builder.getTokenType();
+    if (tokenType == ManifestTokenType.HEADER_NAME) {
+      parseHeaderName(builder);
     }
-
-    private void closeAll() {
-        closeHeaderValuePart();
-        closeAssignmentMarker();
-        closeClause();
-        closeHeader();
-        closeSection();
+    else if (tokenType == ManifestTokenType.SECTION_END) {
+      closeAll();
+      builder.advanceLexer();
     }
-
-    protected void parse(PsiBuilder builder) {
-        if (sectionMarker == null) {
-            sectionMarker = builder.mark();
-        }
-
-        final IElementType tokenType = builder.getTokenType();
-        if (tokenType == ManifestTokenType.HEADER_NAME) {
-            parseHeaderName(builder);
-        } else if (tokenType == ManifestTokenType.SECTION_END) {
-            closeAll();
-            builder.advanceLexer();
-        } else if (tokenType == ManifestTokenType.SIGNIFICANT_SPACE ||
-                   tokenType == TokenType.BAD_CHARACTER ||
-                   tokenType == ManifestTokenType.NEWLINE) {
-            builder.advanceLexer();
-        } else if (currentHeaderIsSimpleHeader) {
-            parseSimpleHeaderValue(builder);
-        } else {
-            parseComplexHeaderValue(builder);
-        }
+    else if (tokenType == ManifestTokenType.SIGNIFICANT_SPACE ||
+             tokenType == TokenType.BAD_CHARACTER ||
+             tokenType == ManifestTokenType.NEWLINE) {
+      builder.advanceLexer();
     }
+    else if (currentHeaderIsSimpleHeader) {
+      parseSimpleHeaderValue(builder);
+    }
+    else {
+      parseComplexHeaderValue(builder);
+    }
+  }
 
-    private void parseSimpleHeaderValue(PsiBuilder builder) {
+  private void parseSimpleHeaderValue(PsiBuilder builder) {
+    clauseMarker = builder.mark();
+    headerValuePartMarker = builder.mark();
+    while (!builder.eof() &&
+           builder.getTokenType() != ManifestTokenType.SECTION_END &&
+           builder.getTokenType() != ManifestTokenType.HEADER_NAME) {
+      builder.advanceLexer();
+    }
+    closeHeaderValuePart();
+    closeClause();
+    closeHeader();
+  }
+
+  private void parseComplexHeaderValue(PsiBuilder builder) {
+    while (!builder.eof() &&
+           builder.getTokenType() != ManifestTokenType.SECTION_END &&
+           builder.getTokenType() != ManifestTokenType.HEADER_NAME) {
+      if (clauseMarker == null) {
         clauseMarker = builder.mark();
+      }
+      if (headerValuePartMarker == null) {
         headerValuePartMarker = builder.mark();
-        while (!builder.eof() &&
-                builder.getTokenType() != ManifestTokenType.SECTION_END &&
-                builder.getTokenType() != ManifestTokenType.HEADER_NAME) {
-            builder.advanceLexer();
-        }
-        closeHeaderValuePart();
-        closeClause();
-        closeHeader();
-    }
-
-    private void parseComplexHeaderValue(PsiBuilder builder) {
-        while (!builder.eof() &&
-                builder.getTokenType() != ManifestTokenType.SECTION_END &&
-                builder.getTokenType() != ManifestTokenType.HEADER_NAME) {
-            if (clauseMarker == null) {
-                clauseMarker = builder.mark();
-            }
-            if (headerValuePartMarker == null) {
-                headerValuePartMarker = builder.mark();
-            }
-            boolean lexerAdvanced = parseQuotedString(builder) ||
-                            parseClause(builder) ||
-                            parseParameter(builder) ||
-                            parseDirective(builder) ||
-                            parseAttribute(builder);
-            if (!lexerAdvanced) {
-                builder.advanceLexer();
-            }
-        }
-
-        closeHeaderValuePart();
-        closeAssignmentMarker();
-        closeClause();
-        closeHeader();
-    }
-
-    private boolean parseQuotedString(PsiBuilder builder) {
-        if (builder.getTokenType() == ManifestTokenType.QUOTE) {
-            do {
-                builder.advanceLexer();
-            } while (!builder.eof() &&
-                    builder.getTokenType() != ManifestTokenType.QUOTE &&
-                    builder.getTokenType() != ManifestTokenType.SECTION_END &&
-                    builder.getTokenType() != ManifestTokenType.HEADER_NAME);
-            if (builder.getTokenType() == ManifestTokenType.QUOTE) {
-                builder.advanceLexer();
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private boolean parseClause(PsiBuilder builder) {
-        if (builder.getTokenType() == ManifestTokenType.COMMA) {
-            closeHeaderValuePart();
-            closeAssignmentMarker();
-            closeClause();
-            builder.advanceLexer();
-            return true;
-        }
-        return false;
-    }
-
-    private boolean parseParameter(PsiBuilder builder) {
-        if (builder.getTokenType() == ManifestTokenType.SEMICOLON) {
-            closeHeaderValuePart();
-            closeAssignmentMarker();
-            builder.advanceLexer();
-            return true;
-        }
-        return false;
-    }
-
-    private boolean parseDirective(PsiBuilder builder) {
-        if (builder.getTokenType() == ManifestTokenType.COLON && assignmentMarkerType == null) {
-            assignmentMarker = headerValuePartMarker.precede();
-            assignmentMarkerType = ManifestElementTypes.DIRECTIVE;
-            closeHeaderValuePart();
-            builder.advanceLexer();
-            if (builder.getTokenType() == ManifestTokenType.NEWLINE) {
-                builder.advanceLexer();
-                if (builder.getTokenType() == ManifestTokenType.SIGNIFICANT_SPACE) {
-                    builder.advanceLexer();
-                }
-            }
-            if (builder.getTokenType() == ManifestTokenType.EQUALS) {
-                builder.advanceLexer();
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private boolean parseAttribute(PsiBuilder builder) {
-        if (builder.getTokenType() == ManifestTokenType.EQUALS && assignmentMarkerType == null) {
-            assignmentMarker = headerValuePartMarker.precede();
-            assignmentMarkerType = ManifestElementTypes.ATTRIBUTE;
-            closeHeaderValuePart();
-            builder.advanceLexer();
-            return true;
-        }
-        return false;
-    }
-
-    private void parseHeaderName(PsiBuilder builder) {
-        closeHeader();
-        headerMarker = builder.mark();
-        currentHeaderName = builder.getTokenText();
-
-        HeaderParser headerParser = headerParserRepository.getHeaderParser(currentHeaderName);
-        currentHeaderIsSimpleHeader = headerParser == null || headerParser.isSimpleHeader();
-
+      }
+      boolean lexerAdvanced = parseQuotedString(builder) ||
+                              parseClause(builder) ||
+                              parseParameter(builder) ||
+                              parseDirective(builder) ||
+                              parseAttribute(builder);
+      if (!lexerAdvanced) {
         builder.advanceLexer();
+      }
+    }
 
-        while (!builder.eof() && builder.getTokenType() != ManifestTokenType.COLON && builder.getTokenType() != ManifestTokenType.NEWLINE) {
-            builder.advanceLexer();
-        }
+    closeHeaderValuePart();
+    closeAssignmentMarker();
+    closeClause();
+    closeHeader();
+  }
 
+  @SuppressWarnings({"MethodMayBeStatic"})
+  private boolean parseQuotedString(PsiBuilder builder) {
+    if (builder.getTokenType() == ManifestTokenType.QUOTE) {
+      do {
         builder.advanceLexer();
+      }
+      while (!builder.eof() &&
+             builder.getTokenType() != ManifestTokenType.QUOTE &&
+             builder.getTokenType() != ManifestTokenType.SECTION_END &&
+             builder.getTokenType() != ManifestTokenType.HEADER_NAME);
+      if (builder.getTokenType() == ManifestTokenType.QUOTE) {
+        builder.advanceLexer();
+      }
+      return true;
     }
+    return false;
+  }
 
-    private void closeHeader() {
-        if (headerMarker != null) {
-            headerMarker.done(ManifestElementTypes.HEADER);
-            headerMarker = null;
+  private boolean parseClause(PsiBuilder builder) {
+    if (builder.getTokenType() == ManifestTokenType.COMMA) {
+      closeHeaderValuePart();
+      closeAssignmentMarker();
+      closeClause();
+      builder.advanceLexer();
+      return true;
+    }
+    return false;
+  }
+
+  private boolean parseParameter(PsiBuilder builder) {
+    if (builder.getTokenType() == ManifestTokenType.SEMICOLON) {
+      closeHeaderValuePart();
+      closeAssignmentMarker();
+      builder.advanceLexer();
+      return true;
+    }
+    return false;
+  }
+
+  private boolean parseDirective(PsiBuilder builder) {
+    if (builder.getTokenType() == ManifestTokenType.COLON && assignmentMarkerType == null) {
+      assignmentMarker = headerValuePartMarker.precede();
+      assignmentMarkerType = ManifestElementTypes.DIRECTIVE;
+      closeHeaderValuePart();
+      builder.advanceLexer();
+      if (builder.getTokenType() == ManifestTokenType.NEWLINE) {
+        builder.advanceLexer();
+        if (builder.getTokenType() == ManifestTokenType.SIGNIFICANT_SPACE) {
+          builder.advanceLexer();
         }
+      }
+      if (builder.getTokenType() == ManifestTokenType.EQUALS) {
+        builder.advanceLexer();
+      }
+      return true;
+    }
+    return false;
+  }
+
+  private boolean parseAttribute(PsiBuilder builder) {
+    if (builder.getTokenType() == ManifestTokenType.EQUALS && assignmentMarkerType == null) {
+      assignmentMarker = headerValuePartMarker.precede();
+      assignmentMarkerType = ManifestElementTypes.ATTRIBUTE;
+      closeHeaderValuePart();
+      builder.advanceLexer();
+      return true;
+    }
+    return false;
+  }
+
+  private void parseHeaderName(PsiBuilder builder) {
+    closeHeader();
+    headerMarker = builder.mark();
+    String currentHeaderName = builder.getTokenText();
+
+    HeaderParser headerParser = headerParserRepository.getHeaderParser(currentHeaderName);
+    currentHeaderIsSimpleHeader = headerParser == null || headerParser.isSimpleHeader();
+
+    builder.advanceLexer();
+
+    while (!builder.eof() && builder.getTokenType() != ManifestTokenType.COLON && builder.getTokenType() != ManifestTokenType.NEWLINE) {
+      builder.advanceLexer();
     }
 
-    private void closeClause() {
-        if (clauseMarker != null) {
-            clauseMarker.done(ManifestElementTypes.CLAUSE);
-            clauseMarker = null;
-        }
+    builder.advanceLexer();
+  }
+
+  private void closeHeader() {
+    if (headerMarker != null) {
+      headerMarker.done(ManifestElementTypes.HEADER);
+      headerMarker = null;
     }
+  }
 
-    private void closeSection() {
-        if (sectionMarker != null) {
-            sectionMarker.done(ManifestElementTypes.SECTION);
-            sectionMarker = null;
-        }
+  private void closeClause() {
+    if (clauseMarker != null) {
+      clauseMarker.done(ManifestElementTypes.CLAUSE);
+      clauseMarker = null;
     }
+  }
 
-    private void closeAssignmentMarker() {
-        if (assignmentMarker != null) {
-            assignmentMarker.done(assignmentMarkerType);
-            assignmentMarker = null;
-            assignmentMarkerType = null;
-        }
+  private void closeSection() {
+    if (sectionMarker != null) {
+      sectionMarker.done(ManifestElementTypes.SECTION);
+      sectionMarker = null;
     }
+  }
 
-    private void closeHeaderValuePart() {
-        if (headerValuePartMarker != null) {
-            headerValuePartMarker.done(ManifestElementTypes.HEADER_VALUE_PART);
-            headerValuePartMarker = null;
-        }
+  private void closeAssignmentMarker() {
+    if (assignmentMarker != null) {
+      assignmentMarker.done(assignmentMarkerType);
+      assignmentMarker = null;
+      assignmentMarkerType = null;
     }
+  }
 
-    private String currentHeaderName;
-    private boolean currentHeaderIsSimpleHeader;
-    private final HeaderParserRepository headerParserRepository;
-    private PsiBuilder.Marker headerValuePartMarker;
-    private PsiBuilder.Marker sectionMarker;
-    private PsiBuilder.Marker headerMarker;
-    private PsiBuilder.Marker clauseMarker;
-    private PsiBuilder.Marker assignmentMarker;
-    private IElementType assignmentMarkerType;
-
-    private static final boolean DEBUG_MODE = Boolean.getBoolean("Osmorc.debug");
+  private void closeHeaderValuePart() {
+    if (headerValuePartMarker != null) {
+      headerValuePartMarker.done(ManifestElementTypes.HEADER_VALUE_PART);
+      headerValuePartMarker = null;
+    }
+  }
 }
+

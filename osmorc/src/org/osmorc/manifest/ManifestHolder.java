@@ -24,14 +24,34 @@
  */
 package org.osmorc.manifest;
 
-/**
- * Author: Robert F. Beeger (robert@beeger.net)
- */
-public interface ManifestHolder
-{
-  BundleManifest getBundleManifest();
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.libraries.Library;
+import org.jetbrains.annotations.Nullable;
 
+/**
+ * A manifest holder holds a bundle manifest and the object ({@link Project} or
+ * {@link Library}) that this manifest belongs to.
+ *
+ * @author Robert F. Beeger (robert@beeger.net)
+ * @author Jan Thomae (janthomae@janthomae.de)
+ */
+public interface ManifestHolder {
+  /**
+   * Returns the bundle manifest.
+   * @return the bundle manifest or null if the bound object is no OSGi bundle.
+   */
+  @Nullable
+  BundleManifest getBundleManifest() throws ManifestHolderDisposedException;
+
+  /**
+   * The object that this manifest belongs to.
+   * @return the bound object
+   */
+  Object getBoundObject() throws ManifestHolderDisposedException;
+
+  @Deprecated
   long getBundleID();
 
+  @Deprecated
   void setBundleID(long bundleID);
 }

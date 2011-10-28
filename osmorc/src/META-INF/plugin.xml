@@ -127,7 +127,8 @@
                        serviceImplementation="org.osmorc.manifest.impl.ModuleManifestHolderImpl"/>
         <moduleService serviceInterface="org.osmorc.AdditionalJARContentsWatcherManager"
                        serviceImplementation="org.osmorc.impl.AdditionalJARContentsWatcherManagerImpl"/>
-
+        <moduleService serviceInterface="org.osmorc.ModuleDependencySynchronizer"
+                       serviceImplementation="org.osmorc.ModuleDependencySynchronizer"/>
         <!-- Project services -->
         <!-- Project settings and editors -->
         <projectService serviceInterface="org.osmorc.settings.ProjectSettings"
@@ -135,7 +136,7 @@
 
         <!-- Other project services -->
         <projectService serviceInterface="org.osmorc.BundleManager"
-                        serviceImplementation="org.osmorc.impl.BundleManagerImpl"/>
+                        serviceImplementation="org.osmorc.impl.MyBundleManager"/>
         <projectService serviceInterface="org.osmorc.manifest.ManifestHolderRegistry"
                         serviceImplementation="org.osmorc.manifest.impl.ManifestHolderRegistryImpl"/>
         <projectService serviceInterface="org.osmorc.frameworkintegration.FrameworkInstanceModuleManager"
@@ -177,6 +178,7 @@
 <!--        <programRunner implementation="org.osmorc.run.OsgiDebuggerRunner"/> -->
         <projectConfigurable instance="org.osmorc.settings.ProjectSettingsEditor"/>
         <applicationConfigurable instance="org.osmorc.settings.ApplicationSettingsEditor"/>
+      <editorNotificationProvider implementation="org.osmorc.ManifestChangeWatcher"/>
     </extensions>
 
 

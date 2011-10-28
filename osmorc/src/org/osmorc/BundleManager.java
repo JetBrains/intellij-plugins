@@ -25,25 +25,72 @@
 
 package org.osmorc;
 
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.libraries.Library;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.manifest.BundleManifest;
 
+import java.util.Set;
+
 /**
- * The bundle manager allows for queries over the bundles which are known in the current project.
+ * The bundle manager allows for queries over the bundles which are known in the current project. It allows queries over
+ * IDEA's project structures (like Module and Library) and internally maps them to OSGi structures (bundles). It exists per project.
  *
  * @author Robert F. Beeger (robert@beeger.net)
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
 public interface BundleManager {
 
+  /**
+   * Returns the manifest for the given symbolic name. If multiple bundles with that name are known, it will return the manifest of
+   * an arbitrarily chosen bundle.
+   *
+   * @param bundleSymbolicName the bundle symbolic name.
+   * @return the manifest or null if no bundle with that symbolic name is known.
+   */
   @Nullable
-  BundleManifest getBundleManifest(String bundleSymbolicName);
+  BundleManifest getManifestBySymbolicName(String bundleSymbolicName);
 
+  /**
+   * Returns the manifest for a given object.
+   *
+   * @param object the object (a {@link Module} or {@link Library}
+   * @return the manifest or null if no manifest for the given object is known.
+   */
   @Nullable
-  BundleManifest getBundleManifest(@NotNull Object bundle);
+  BundleManifest getManifestByObject(@NotNull Object object);
 
-  void addOrUpdateBundle(@NotNull Object bundle);
+  /**
+   * Adds the given module and it's dependencies to the list of known bundles.If it exists, it's entries are updated.
+   *
+   * @param module the module to be added
+   */
+  void reindex(@NotNull Module module);
 
-  boolean reloadFrameworkInstanceLibraries(boolean onlyIfFrameworkInstanceSelectionChanged);
+  /**
+   * Does a complete project reindex. Cleans all data from the bundle manager and replaces it with the data from the given project instance.
+   *
+   * @param project
+   */
+  void reindex(@NotNull Project project);
+
+  /**
+   * Resolves all dependencies of the given module, by analyzing the package import statements. Returns a list of {@link Module} and {@link Library} objects.
+   *
+   * @param module the module to resolve the dependencies for
+   * @return a list of dependencies.
+   */
+  @NotNull
+  Set<Object> resolveDependenciesOf(@NotNull Module module);
+
+  /**
+   * Checks if the given dependency is re-exported by the given module. This is only the case, if the module has a Require-Bundle-Header
+   * that requires the given dependency and the visibility directive of this requirement is set to "reexport".
+   * @param dependency the dependency. (a Module or a Library)
+   * @param module the module
+   * @return true if the module reexports the dependency.
+   */
+  boolean isReExported(@NotNull Object dependency, @NotNull Module module);
 }

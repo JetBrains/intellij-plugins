@@ -27,17 +27,24 @@ package org.osmorc.manifest;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 /**
+ * The ManifestHolderRegistry keeps track of manifest holders and provides manifest holders for modules and libraries.
+ *
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public interface ManifestHolderRegistry {
-    ManifestHolder getManifestHolder(@NotNull Object bundle);
+  /**
+   *  @return  the manifest holder for the given object.
+   */
+  @NotNull
+  ManifestHolder getManifestHolder(@NotNull Object bundle);
 
-    List<Long> getLibraryBundleIDs();
 
-    void clearLibraryManifestHolders();
+  /**
+   * Clears the internal cache of manifest holders.
+   */
+  void clearLibraryManifestHolders();
 
+  @Deprecated
   boolean isEmpty();
 }

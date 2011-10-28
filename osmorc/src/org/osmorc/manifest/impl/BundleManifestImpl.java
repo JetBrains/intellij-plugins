@@ -24,181 +24,214 @@
  */
 package org.osmorc.manifest.impl;
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiPackage;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.util.PsiTreeUtil;
+import org.apache.felix.framework.util.manifestparser.Capability;
+import org.apache.felix.framework.util.manifestparser.ManifestParser;
+import org.apache.felix.framework.util.manifestparser.R4Attribute;
+import org.apache.felix.framework.util.manifestparser.R4Directive;
+import org.apache.felix.moduleloader.ICapability;
+import org.apache.felix.moduleloader.IRequirement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osmorc.manifest.BundleManifest;
 import org.osmorc.manifest.lang.psi.Clause;
+import org.osmorc.manifest.lang.psi.Directive;
 import org.osmorc.manifest.lang.psi.Header;
-import org.osmorc.manifest.lang.psi.HeaderValuePart;
 import org.osmorc.manifest.lang.psi.ManifestFile;
 import org.osmorc.valueobject.Version;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+
+import static org.osgi.framework.Constants.*;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
+ * @author Jan Thom&auml; (janthomae@janthomae.de)
  */
 public class BundleManifestImpl implements BundleManifest {
-    public BundleManifestImpl(PsiFile manifestFile) {
-        _manifestFile = manifestFile;
+  @NotNull
+  private final ManifestFile myManifestFile;
+
+  /**
+   * Ctor.
+   *
+   * @param manifestFile the manifest file to work on.
+   */
+  public BundleManifestImpl(@NotNull ManifestFile manifestFile) {
+    myManifestFile = manifestFile;
+  }
+
+  @NotNull
+  public ManifestFile getManifestFile() {
+    return myManifestFile;
+  }
+
+  @NotNull
+  public Version getBundleVersion() {
+    Version headerValue = (Version)getHeaderValue(BUNDLE_VERSION);
+    if (headerValue == null) {
+      headerValue = new Version(0, 0, 0, null);
+    }
+    return headerValue;
+  }
+
+  @Nullable
+  public String getBundleSymbolicName() {
+    return (String)getHeaderValue(BUNDLE_SYMBOLICNAME);
+  }
+
+  @Nullable
+  public String getBundleActivator() {
+    return (String)getHeaderValue(BUNDLE_ACTIVATOR);
+  }
+
+  public boolean exportsPackage(@NotNull String packageSpec) {
+    Header header = myManifestFile.getHeaderByName(EXPORT_PACKAGE);
+    if (header == null) {
+      return false;
     }
 
-    public PsiFile getManifestFile() {
-        return _manifestFile;
+    List<ICapability> capabilities = new ArrayList<ICapability>();
+    Clause[] clauses = header.getClauses();
+    for (Clause clause : clauses) {
+      try {
+        capabilities.addAll(Arrays.asList(ManifestParser.parseExportHeader(clause.getText())));
+      }
+      catch (Exception e) {
+        // unparseable header
+        return false;
+      }
     }
 
-    public Version getBundleVersion() {
-        return (Version) getHeaderValue(BUNDLE_VERSION);
+    IRequirement[] requirements;
+    try {
+      requirements = ManifestParser.parseImportHeader(packageSpec);
+    }
+    catch (Exception e) {
+      // unparseable header
+      return false;
     }
 
-    public String getBundleSymbolicName() {
-        return (String) getHeaderValue(BUNDLE_SYMBOLIC_NAME);
-    }
-
-    public String getBundleActivator() {
-        return (String) getHeaderValue(BUNDLE_ACTIVATOR);
-    }
-
-    public List<String> getExportPackage() {
-        return getAllPaths(EXPORT_PACKAGE);
-    }
-
-    public List<PsiPackage> getImportPackage() {
-        List<PsiReference> allPathReferences = getAllPathReferences(IMPORT_PACKAGE);
-        List<PsiPackage> importedPackages = new ArrayList<PsiPackage>();
-
-        for (PsiReference pathReference : allPathReferences) {
-            PsiPackage psiPackage = (PsiPackage) pathReference.resolve();
-            if (psiPackage != null) {
-                importedPackages.add(psiPackage);
-            }
+    for (IRequirement requirement : requirements) {
+      boolean satisfied = false;
+      for (ICapability capability : capabilities) {
+        if (requirement.isSatisfied(capability)) {
+          satisfied = true;
+          break;
         }
-
-        return importedPackages;
+      }
+      if (!satisfied) {
+        // at least one requirement is not satisfied by any of the capabilities in this bundle
+        return false;
+      }
     }
 
-    public List<Module> getRequireBundle() {
-        List<PsiReference> allPathReferences = getAllPathReferences(REQUIRE_BUNDLE);
-        List<Module> requiredBundles = new ArrayList<Module>();
+    // all requiremets are satisfied
+    return true;
+  }
 
-        for (PsiReference pathReference : allPathReferences) {
-            ManifestFile manifestFile = (ManifestFile) pathReference.resolve();
-            if (manifestFile != null) {
-                requiredBundles.add(ModuleUtil.findModuleForPsiElement(manifestFile));
-            }
+  @NotNull
+  @Override
+  public List<String> getImports() {
+    Header header = myManifestFile.getHeaderByName(IMPORT_PACKAGE);
+    if (header == null) {
+      return Collections.emptyList();
+    }
+    Clause[] clauses = header.getClauses();
+    List<String> result = new ArrayList<String>(clauses.length);
+    for (Clause clause : clauses) {
+      result.add(clause.getText().trim());
+    }
+    return result;
+  }
+
+  @Override
+  @NotNull
+  public List<String> getRequiredBundles() {
+    Header header = myManifestFile.getHeaderByName(REQUIRE_BUNDLE);
+    if (header == null) {
+      return Collections.emptyList();
+    }
+    Clause[] clauses = header.getClauses();
+    List<String> result = new ArrayList<String>(clauses.length);
+    for (Clause clause : clauses) {
+      result.add(clause.getText().trim());
+    }
+    return result;
+  }
+
+
+  @Override
+  public boolean isRequiredBundle(@NotNull String bundleSpec) {
+
+    IRequirement[] requirements;
+    try {
+      requirements = ManifestParser.parseRequireBundleHeader(bundleSpec);
+    }
+    catch (Exception e) {
+      // invalid require spec
+      return false;
+    }
+
+    // build a capability for this
+
+    String symbolicName = getBundleSymbolicName();
+    if (symbolicName == null) {
+      return false;
+    }
+    Version version = getBundleVersion();
+
+    ICapability moduleCapability = new Capability(ICapability.MODULE_NAMESPACE,
+                                                  new R4Directive[]{new R4Directive(BUNDLE_SYMBOLICNAME, symbolicName)}, new R4Attribute[]{
+      new R4Attribute(BUNDLE_SYMBOLICNAME_ATTRIBUTE, symbolicName, false),
+      new R4Attribute(BUNDLE_VERSION_ATTRIBUTE,
+                      new org.osgi.framework.Version(version.getMajor(), version.getMinor(), version.getMicro(), version.getQualifier()),
+                      false)
+    });
+
+
+    for (IRequirement requirement : requirements) {
+      if (!requirement.isSatisfied(moduleCapability)) {
+        return false;
+      }
+    }
+    // all requirements are satisfied
+    return true;
+  }
+
+  @Override
+  public boolean reExportsBundle(@NotNull BundleManifest otherBundle) {
+    Header header = myManifestFile.getHeaderByName(REQUIRE_BUNDLE);
+    if (header == null) {
+      return false;
+    }
+    Clause[] clauses = header.getClauses();
+    for (Clause clause : clauses) {
+      String requireSpec = clause.getText();
+      // first check if the clause is set to re-export, if not, we can skip the more expensive checks
+      Directive directiveByName = clause.getDirectiveByName(VISIBILITY_DIRECTIVE);
+      if (directiveByName == null) {
+        continue; // skip to the next require
+      }
+      if (VISIBILITY_REEXPORT.equals(directiveByName.getValue())) {
+        // ok it's a re-export. Now check if the bundle would satisfy the dependency
+        if (otherBundle.isRequiredBundle(requireSpec)) {
+          return true;
         }
-
-        return requiredBundles;
+      }
     }
+    return false;
+  }
 
-    public boolean exportsPackage(@NotNull String aPackage) {
-        return getExportPackage().contains(aPackage);
+
+  @Nullable
+  private Object getHeaderValue(@NotNull String headerName) {
+    Header header = myManifestFile.getHeaderByName(headerName);
+    if (header != null) {
+      return header.getSimpleConvertedValue();
     }
-
-    private List<String> getAllPaths(@NotNull String headerName) {
-        List<String> result = new ArrayList<String>();
-        Header header = findHeader(headerName);
-        if (header != null) {
-            Collection<Clause> clauses = findAllChildrenOfType(header, Clause.class);
-            for (Clause clause : clauses) {
-                Collection<HeaderValuePart> headerValues = findAllChildrenOfType(clause, HeaderValuePart.class);
-                for (HeaderValuePart headerValue : headerValues) {
-                    String value = headerValue.getUnwrappedText();
-                    if (!result.contains(value)) {
-                        result.add(value);
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
-
-    private List<PsiReference> getAllPathReferences(@NotNull String headerName) {
-        List<PsiReference> result = new ArrayList<PsiReference>();
-        Header header = findHeader(headerName);
-        if (header != null) {
-            Collection<Clause> clauses = findAllChildrenOfType(header, Clause.class);
-            for (Clause clause : clauses) {
-                Collection<HeaderValuePart> headerValues = findAllChildrenOfType(clause, HeaderValuePart.class);
-                for (HeaderValuePart headerValue : headerValues) {
-                    PsiReference value = headerValue.getReference();
-                    if (!result.contains(value)) {
-                        result.add(value);
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
-
-    private Object getHeaderValue(@NotNull String headerName) {
-        Header header = findHeader(headerName);
-        HeaderValuePart value = null;
-        if (header != null) {
-
-            Clause clause = PsiTreeUtil.getChildOfType(header, Clause.class);
-            if (clause != null) {
-
-                value = PsiTreeUtil.getChildOfType(clause, HeaderValuePart.class);
-            }
-        }
-
-        return value != null ? value.getConvertedValue() : null;
-    }
-
-    private Header findHeader(@NotNull String headerName) {
-
-        Header header = PsiTreeUtil.getChildOfType(_manifestFile.getFirstChild(), Header.class);
-        while (header != null && !headerName.equalsIgnoreCase(header.getName())) {
-            header = PsiTreeUtil.getNextSiblingOfType(header, Header.class);
-        }
-        return header;
-    }
-
-    private <T extends PsiElement> List<T> findAllChildrenOfType(
-            @NotNull PsiElement element, @NotNull Class<T> elementClass) {
-        List<T> result = new ArrayList<T>();
-
-        T currentElement = PsiTreeUtil.getChildOfType(element, elementClass);
-        while (currentElement != null) {
-            result.add(currentElement);
-            currentElement = PsiTreeUtil.getNextSiblingOfType(currentElement, elementClass);
-        }
-        return result;
-    }
-
-
-    private static final String REQUIRE_BUNDLE = "Require-Bundle";
-    private static final String IMPORT_PACKAGE = "Import-Package";
-    private static final String EXPORT_PACKAGE = "Export-Package";
-    private static final String BUNDLE_SYMBOLIC_NAME = "Bundle-SymbolicName";
-    private static final String BUNDLE_VERSION = "Bundle-Version";
-    private static final String BUNDLE_ACTIVATION_POLICY = "Bundle-ActivationPolicy";
-    private static final String BUNDLE_ACTIVATOR = "Bundle-Activator";
-    private static final String BUNDLE_CATEGORY = "Bundle-Category";
-    private static final String BUNDLE_CLASSPATH = "Bundle-ClassPath";
-    private static final String BUNDLE_CONTACT_ADDRESS = "Bundle-ContactAddress";
-    private static final String BUNDLE_COPYRIGHT = "Bundle-Copyright";
-    private static final String BUNDLE_DESCRIPTION = "Bundle-Description";
-    private static final String BUNDLE_DOC_URL = "Bundle-DocURL";
-    private static final String BUNDLE_LOCALIZATION = "Bundle-Localization";
-    private static final String BUNDLE_MANIFEST_VERSION = "Bundle-ManifestVersion";
-    private static final String BUNDLE_NAME = "Bundle-Name";
-    private static final String BUNDLE_NATIVE_CODE = "Bundle-NativeCode";
-    private static final String BUNDLE_REQUIRED_EXECUTION_ENVIRONMENT = "Bundle-RequiredExecutionEnvironment";
-    private static final String BUNDLE_UPDATE_LOCATION = "Bundle-UpdateLocation";
-    private static final String BUNDLE_VENDOR = "Bundle-Vendor";
-    private static final String DYNAMIC_IMPORT_PACKAGE = "DynamicImport-Package";
-    private static final String FRAGMENT_HOST = "Fragment-Host";
-    private final PsiFile _manifestFile;
+    return null;
+  }
 }

@@ -27,106 +27,82 @@ package org.osmorc.manifest.impl;
 
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.manifest.BundleManifest;
+import org.osmorc.manifest.ManifestHolderDisposedException;
+import org.osmorc.manifest.lang.psi.ManifestFile;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ModuleManifestHolderImpl extends AbstractManifestHolderImpl {
-    public ModuleManifestHolderImpl(Module module,
-                                    Application application) {
-        this.module = module;
-        this.application = application;
+
+  private final Module myModule;
+  private final Application myApplication;
+  private BundleManifest myBundleManifest;
+
+  public ModuleManifestHolderImpl(Module module,
+                                  Application application) {
+    this.myModule = module;
+    this.myApplication = application;
+  }
+
+  @Nullable 
+  public BundleManifest getBundleManifest() throws ManifestHolderDisposedException{
+    if ( myModule.isDisposed() ) {
+      throw new ManifestHolderDisposedException();
+    }
+    final VirtualFile cachedFile = myBundleManifest != null ? myBundleManifest.getManifestFile().getVirtualFile() : null;
+    final VirtualFile fileFromSettings = getManifestFile();
+    if (myBundleManifest != null &&
+        (cachedFile == null || fileFromSettings == null || !cachedFile.getPath().equals(fileFromSettings.getPath()))) {
+      myBundleManifest = null; // manifest file changed, we need to start from scratch.
     }
 
-    @Nullable
-    public BundleManifest getBundleManifest() {
-        final VirtualFile cachedFile = bundleManifest != null ? bundleManifest.getManifestFile().getVirtualFile() : null;
-        final VirtualFile fileFromSettings = getManifestFile();
-        if (bundleManifest != null && (cachedFile == null || fileFromSettings == null || !cachedFile.getPath().equals(fileFromSettings.getPath()))) {
-            bundleManifest = null; // manifest file changed, we need to start from scratch.
-        }
-
-        // only try to load the manifest if we have an osmorc facet for that module
-        if (bundleManifest == null && OsmorcFacet.hasOsmorcFacet(module)) {
-            OsmorcFacet facet = OsmorcFacet.getInstance(module);
-            // and only if this manifest is manually edited
-            if (facet.getConfiguration().isManifestManuallyEdited()) {
-                bundleManifest = loadManifest();
-            }
-        }
-        return bundleManifest;
+    // only try to load the manifest if we have an osmorc facet for that module
+    OsmorcFacet facet = OsmorcFacet.getInstance(myModule);
+    if (myBundleManifest == null && facet != null ) {
+      // and only if this manifest is manually edited
+      if (facet.getConfiguration().isManifestManuallyEdited()) {
+        myBundleManifest = loadManifest();
+      }
     }
+    return myBundleManifest;
+  }
 
-    private BundleManifest loadManifest() {
-        final VirtualFile manifestFile = getManifestFile();
-        if (manifestFile != null) {
-            return application.runReadAction(new Computable<BundleManifest>() {
-                public BundleManifest compute() {
-                    PsiFile psiFile = PsiManager.getInstance(module.getProject()).findFile(manifestFile);
-                    if (psiFile == null) {
-                        // IDEADEV-40349 removed all messageboxes
-                        return null;
-                    }
-                    return new BundleManifestImpl(psiFile);
-                }
-            });
-        }
-        return null;
-    }
-
-
-    private
-    @Nullable
-    VirtualFile getManifestFile() {
-        String path = getManifestPath();
-
-        // if it is not set, just return null
-        if (StringUtil.isEmpty(path)) {
+  private BundleManifest loadManifest() {
+    final VirtualFile manifestFile = getManifestFile();
+    if (manifestFile != null) {
+      return myApplication.runReadAction(new Computable<BundleManifest>() {
+        public BundleManifest compute() {
+          PsiFile psiFile = PsiManager.getInstance(myModule.getProject()).findFile(manifestFile);
+          if (psiFile == null) {
+            // IDEADEV-40349 removed all messageboxes
             return null;
+          }
+          return new BundleManifestImpl((ManifestFile)psiFile);
         }
-
-        VirtualFile[] contentRoots = getContentRoots();
-        for (VirtualFile contentRoot : contentRoots) {
-            VirtualFile manifestFile = contentRoot.findFileByRelativePath(path);
-            if (manifestFile != null) {
-                return manifestFile;
-            }
-        }
-
-        return null;
+      });
     }
-
-    private @Nullable String getManifestPath() {
-        // get relative path from the configuration
-        OsmorcFacet facet = OsmorcFacet.getInstance(module);
-        if (facet == null) return null;
-        String path = facet.getManifestLocation();
-        path = path.replace('\\', '/');
-        //IDEADEV-40357 allow any file name
-
-//        if (!path.endsWith("/")) {
-//            path = path + "/";
-//        }
-//        path = path + "MANIFEST.MF";
-        return path;
-    }
-
-    private VirtualFile[] getContentRoots() {
-        ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
-        return moduleRootManager.getContentRoots();
-    }
+    return null;
+  }
 
 
-    private final Module module;
-    private final Application application;
-    private BundleManifest bundleManifest;
+  private
+  @Nullable
+  VirtualFile getManifestFile() {
+    OsmorcFacet facet = OsmorcFacet.getInstance(myModule);
+    return facet != null ? facet.getManifestFile() : null;
+  }
+
+
+  @Override
+  public Object getBoundObject() {
+    return myModule;
+  }
 }

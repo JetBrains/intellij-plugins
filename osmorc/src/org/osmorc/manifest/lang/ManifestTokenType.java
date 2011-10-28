@@ -43,6 +43,10 @@ public final class ManifestTokenType extends IElementType {
     public static final ManifestTokenType QUOTE = new ManifestTokenType("QUOTE_TOKEN");
     public static final ManifestTokenType HEADER_VALUE_PART = new ManifestTokenType("HEADER_VALUE_PART_TOKEN");
     public static final ManifestTokenType SIGNIFICANT_SPACE = new ManifestTokenType("SIGNIFICANT_SPACE_TOKEN");
+    public static final ManifestTokenType OPENING_PARENTHESIS_TOKEN = new ManifestTokenType("OPENING_PARENTHESIS_TOKEN");
+    public static final ManifestTokenType CLOSING_PARENTHESIS_TOKEN = new ManifestTokenType("CLOSING_PARENTHESIS_TOKEN");
+    public static final ManifestTokenType OPENING_BRACKET_TOKEN = new ManifestTokenType("OPENING_BRACKET_TOKEN");
+    public static final ManifestTokenType CLOSING_BRACKET_TOKEN = new ManifestTokenType("CLOSING_BRACKET_TOKEN");
 
     private ManifestTokenType(@NotNull @NonNls String debugName) {
         super(debugName, ManifestFileTypeFactory.MANIFEST.getLanguage());

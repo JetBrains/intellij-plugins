@@ -25,21 +25,47 @@
 
 package org.osmorc.manifest.lang.psi.impl;
 
-import org.osmorc.manifest.lang.psi.Clause;
-import org.osmorc.manifest.lang.psi.stub.ClauseStub;
-import org.jetbrains.annotations.NotNull;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.NotNull;
+import org.osmorc.manifest.lang.psi.Clause;
+import org.osmorc.manifest.lang.psi.Directive;
+import org.osmorc.manifest.lang.psi.HeaderValuePart;
+import org.osmorc.manifest.lang.psi.stub.ClauseStub;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ClauseImpl extends ManifestElementBase<ClauseStub>  implements Clause {
-    public ClauseImpl(ClauseStub stub, @NotNull IStubElementType nodeType) {
-        super(stub, nodeType);
-    }
+public class ClauseImpl extends ManifestElementBase<ClauseStub> implements Clause {
+  public ClauseImpl(ClauseStub stub, @NotNull IStubElementType nodeType) {
+    super(stub, nodeType);
+  }
 
-    public ClauseImpl(ASTNode node) {
-        super(node);
+  public ClauseImpl(ASTNode node) {
+    super(node);
+  }
+
+  @Override
+  public HeaderValuePart getValue() {
+    return findChildByClass(HeaderValuePart.class);
+  }
+
+  @NotNull
+  @Override
+  public Directive[] getDirectives() {
+    return findChildrenByClass(Directive.class);
+  }
+
+  @Override
+  public Directive getDirectiveByName(@NotNull String name) {
+    Directive childOfType = PsiTreeUtil.findChildOfType(this, Directive.class);
+    while (childOfType != null) {
+      if (name.equals(childOfType.getName())) {
+        return childOfType;
+      }
+      childOfType = PsiTreeUtil.getNextSiblingOfType(childOfType, Directive.class);
     }
+    return null;
+  }
 }

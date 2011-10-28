@@ -27,25 +27,49 @@ package org.osmorc.manifest.lang.psi.impl;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.ManifestFileTypeFactory;
+import org.osmorc.manifest.lang.psi.Header;
 import org.osmorc.manifest.lang.psi.ManifestFile;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ManifestFileImpl extends PsiFileBase implements ManifestFile {
-    public ManifestFileImpl(FileViewProvider viewProvider) {
-        super(viewProvider, ManifestFileTypeFactory.MANIFEST.getLanguage());
-    }
+  private static final Header[] EMPTY_ARRAY = new Header[0];
 
-    @NotNull
-    public FileType getFileType() {
-        return ManifestFileTypeFactory.MANIFEST;
-    }
+  public ManifestFileImpl(FileViewProvider viewProvider) {
+    super(viewProvider, ManifestFileTypeFactory.MANIFEST.getLanguage());
+  }
 
-    @Override
-    public String toString() {
-        return "ManifestFile:" + getName();
+  @NotNull
+  public FileType getFileType() {
+    return ManifestFileTypeFactory.MANIFEST;
+  }
+
+  @Override
+  public String toString() {
+    return "ManifestFile:" + getName();
+  }
+
+  @NotNull
+  @Override
+  public Header[] getHeaders() {
+    Header[] childrenOfType = PsiTreeUtil.getChildrenOfType(getFirstChild(), Header.class);
+    return childrenOfType == null ? EMPTY_ARRAY : childrenOfType;
+  }
+
+  @Override
+  public Header getHeaderByName(@NotNull String name) {
+
+    Header childOfType = PsiTreeUtil.findChildOfType(getFirstChild(), Header.class);
+    while (childOfType != null) {
+      if (name.equals(childOfType.getName())) {
+        return childOfType;
+      }
+      childOfType = PsiTreeUtil.getNextSiblingOfType(childOfType, Header.class);
     }
+    return null;
+  }
 }

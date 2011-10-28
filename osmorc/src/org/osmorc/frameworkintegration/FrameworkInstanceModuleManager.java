@@ -26,7 +26,6 @@
 package org.osmorc.frameworkintegration;
 
 import com.intellij.openapi.application.Application;
-import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.StdModuleTypes;
@@ -39,7 +38,6 @@ import org.jetbrains.annotations.Nullable;
 import org.osmorc.facet.OsmorcFacetUtil;
 import org.osmorc.settings.ProjectSettings;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -47,6 +45,7 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
+@Deprecated
 public class FrameworkInstanceModuleManager {
     public FrameworkInstanceModuleManager(LibraryHandler libraryHandler, ProjectSettings projectSettings,
                                           Application application, Project project,
@@ -60,30 +59,30 @@ public class FrameworkInstanceModuleManager {
     }
 
     public void updateFrameworkInstanceModule() {
-        if (projectSettings.isCreateFrameworkInstanceModule() && isExistsAtLeastOneOsmorcFacetInProject()) {
-            ensureFrameworkInstanceModuleExists();
-            updateModuleLibraries(projectSettings.getFrameworkInstanceName());
-        } else {
-            final Module module = getFrameworkInstanceModule();
-            if (module != null) {
-                application.runWriteAction(new Runnable() {
-                    public void run() {
-                        try {
-                            final VirtualFile file = module.getModuleFile();
-                            final ModifiableModuleModel moduleModel = moduleManager.getModifiableModel();
-                            moduleModel.disposeModule(module);
-                            moduleModel.commit();
-                            if (file != null && file.exists()) {
-                                file.delete(this);
-                            }
-                        }
-                        catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                });
-            }
-        }
+      //  if (projectSettings.isCreateFrameworkInstanceModule() && isExistsAtLeastOneOsmorcFacetInProject()) {
+      //      ensureFrameworkInstanceModuleExists();
+      //      updateModuleLibraries(projectSettings.getFrameworkInstanceName());
+      //  } else {
+      //      final Module module = getFrameworkInstanceModule();
+      //      if (module != null) {
+      //          application.runWriteAction(new Runnable() {
+      //              public void run() {
+      //                  try {
+      //                      final VirtualFile file = module.getModuleFile();
+      //                      final ModifiableModuleModel moduleModel = moduleManager.getModifiableModel();
+      //                      moduleModel.disposeModule(module);
+      //                      moduleModel.commit();
+      //                      if (file != null && file.exists()) {
+      //                          file.delete(this);
+      //                      }
+      //                  }
+      //                  catch (IOException e) {
+      //                      throw new RuntimeException(e);
+      //                  }
+      //              }
+      //          });
+      //      }
+      //  }
     }
 
     private boolean isExistsAtLeastOneOsmorcFacetInProject() {

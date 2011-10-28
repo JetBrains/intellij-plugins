@@ -36,162 +36,176 @@ import java.util.Map;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ManifestLexer extends LexerBase {
-    public ManifestLexer() {
-    }
 
-    public void start(CharSequence buffer, int startOffset, int endOffset, int initialState) {
-        this.buffer = buffer;
-        this.endOffset = endOffset;
-        currentState = initialState;
+  private CharSequence myBuffer;
+  private int myEndOffset;
+  private int myTokenStart;
+  private int myTokenEnd;
+  private int myCurrentState;
+  private IElementType myTokenType;
 
-        tokenStart = startOffset;
-        parseNextToken();
-    }
+  private static final int INITIAL_STATE = 0;
+  private static final int WAITING_FOR_HEADER_ASSIGNMENT_STATE = 1;
+  private static final int WAITING_FOR_HEADER_ASSIGNMENT_AFTER_BAD_CHARACTER_STATE = 2;
+  private static final int WAITING_FOR_SPACE_AFTER_HEADER_NAME_STATE = 3;
 
-    public void advance() {
-        tokenStart = tokenEnd;
-        parseNextToken();
-    }
+  private static final Map<Character, IElementType> SPECIAL_CHARACTERS_TOKEN_MAPPING;
 
-    public int getState() {
-        return currentState;
-    }
+  static {
+    SPECIAL_CHARACTERS_TOKEN_MAPPING = new HashMap<Character, IElementType>();
+    SPECIAL_CHARACTERS_TOKEN_MAPPING.put(':', ManifestTokenType.COLON);
+    SPECIAL_CHARACTERS_TOKEN_MAPPING.put(';', ManifestTokenType.SEMICOLON);
+    SPECIAL_CHARACTERS_TOKEN_MAPPING.put(',', ManifestTokenType.COMMA);
+    SPECIAL_CHARACTERS_TOKEN_MAPPING.put('=', ManifestTokenType.EQUALS);
+    SPECIAL_CHARACTERS_TOKEN_MAPPING.put('(', ManifestTokenType.OPENING_PARENTHESIS_TOKEN);
+    SPECIAL_CHARACTERS_TOKEN_MAPPING.put(')', ManifestTokenType.CLOSING_PARENTHESIS_TOKEN);
+    SPECIAL_CHARACTERS_TOKEN_MAPPING.put('[', ManifestTokenType.OPENING_BRACKET_TOKEN);
+    SPECIAL_CHARACTERS_TOKEN_MAPPING.put(']', ManifestTokenType.CLOSING_BRACKET_TOKEN);
+    SPECIAL_CHARACTERS_TOKEN_MAPPING.put('\"', ManifestTokenType.QUOTE);
+  }
 
-    @Nullable
-    public IElementType getTokenType() {
-        return tokenType;
-    }
+  public ManifestLexer() {
+  }
 
-    public int getTokenStart() {
-        return tokenStart;
-    }
+  public void start(CharSequence buffer, int startOffset, int endOffset, int initialState) {
+    this.myBuffer = buffer;
+    this.myEndOffset = endOffset;
+    myCurrentState = initialState;
 
-    public int getTokenEnd() {
-        return tokenEnd;
-    }
+    myTokenStart = startOffset;
+    parseNextToken();
+  }
 
-    public int getBufferEnd() {
-        return endOffset;
-    }
+  public void advance() {
+    myTokenStart = myTokenEnd;
+    parseNextToken();
+  }
 
-    public CharSequence getBufferSequence() {
-        return buffer;
-    }
+  public int getState() {
+    return myCurrentState;
+  }
 
-    private void parseNextToken() {
-        if (tokenStart < endOffset) {
-            if (isNewline(tokenStart)) {
-                tokenType = isLineStart(tokenStart) ? ManifestTokenType.SECTION_END : ManifestTokenType.NEWLINE;
-                tokenEnd = tokenStart + 1;
-                currentState = INITIAL_STATE;
-            } else if (currentState == WAITING_FOR_HEADER_ASSIGNMENT_STATE ||
-                    currentState == WAITING_FOR_HEADER_ASSIGNMENT_AFTER_BAD_CHARACTER_STATE) {
-                if (isColon(tokenStart)) {
-                    tokenType = ManifestTokenType.COLON;
-                    currentState = WAITING_FOR_SPACE_AFTER_HEADER_NAME_STATE;
-                } else {
-                    tokenType = TokenType.BAD_CHARACTER;
-                    currentState = WAITING_FOR_HEADER_ASSIGNMENT_AFTER_BAD_CHARACTER_STATE;
-                }
-                tokenEnd = tokenStart + 1;
-            } else if (currentState == WAITING_FOR_SPACE_AFTER_HEADER_NAME_STATE) {
-                if (isSpace(tokenStart)) {
-                    tokenType = ManifestTokenType.SIGNIFICANT_SPACE;
-                } else {
-                    tokenType = TokenType.BAD_CHARACTER;
-                }
-                currentState = INITIAL_STATE;
-                tokenEnd = tokenStart + 1;
-            } else if (isHeaderStart(tokenStart)) {
-                if (isAlphaNum(tokenStart)) {
-                    tokenEnd = tokenStart + 1;
-                    while (tokenEnd < endOffset && isHeaderChar(tokenEnd)) {
-                        tokenEnd++;
-                    }
-                }
-                tokenType = ManifestTokenType.HEADER_NAME;
-                currentState = WAITING_FOR_HEADER_ASSIGNMENT_STATE;
-            } else if (isContinuationStart(tokenStart)) {
-                tokenType = ManifestTokenType.SIGNIFICANT_SPACE;
-                tokenEnd = tokenStart + 1;
-                currentState = INITIAL_STATE;
-            } else if (isSpecialCharacter(tokenStart)) {
-                tokenType = getTokenTypeForSpecialCharacter(tokenStart);
-                tokenEnd = tokenStart + 1;
-                currentState = INITIAL_STATE;
-            } else {
-                tokenEnd = tokenStart;
-                while (tokenEnd < endOffset && !isSpecialCharacter(tokenEnd) && !isNewline(tokenEnd)) {
-                    tokenEnd++;
-                }
-                tokenType = ManifestTokenType.HEADER_VALUE_PART;
-            }
-        } else {
-            tokenType = null;
-            tokenEnd = tokenStart;
+  @Nullable
+  public IElementType getTokenType() {
+    return myTokenType;
+  }
+
+  public int getTokenStart() {
+    return myTokenStart;
+  }
+
+  public int getTokenEnd() {
+    return myTokenEnd;
+  }
+
+  public int getBufferEnd() {
+    return myEndOffset;
+  }
+
+  public CharSequence getBufferSequence() {
+    return myBuffer;
+  }
+
+  private void parseNextToken() {
+    if (myTokenStart < myEndOffset) {
+      if (isNewline(myTokenStart)) {
+        myTokenType = isLineStart(myTokenStart) ? ManifestTokenType.SECTION_END : ManifestTokenType.NEWLINE;
+        myTokenEnd = myTokenStart + 1;
+        myCurrentState = INITIAL_STATE;
+      }
+      else if (myCurrentState == WAITING_FOR_HEADER_ASSIGNMENT_STATE ||
+               myCurrentState == WAITING_FOR_HEADER_ASSIGNMENT_AFTER_BAD_CHARACTER_STATE) {
+        if (isColon(myTokenStart)) {
+          myTokenType = ManifestTokenType.COLON;
+          myCurrentState = WAITING_FOR_SPACE_AFTER_HEADER_NAME_STATE;
         }
+        else {
+          myTokenType = TokenType.BAD_CHARACTER;
+          myCurrentState = WAITING_FOR_HEADER_ASSIGNMENT_AFTER_BAD_CHARACTER_STATE;
+        }
+        myTokenEnd = myTokenStart + 1;
+      }
+      else if (myCurrentState == WAITING_FOR_SPACE_AFTER_HEADER_NAME_STATE) {
+        if (isSpace(myTokenStart)) {
+          myTokenType = ManifestTokenType.SIGNIFICANT_SPACE;
+        }
+        else {
+          myTokenType = TokenType.BAD_CHARACTER;
+        }
+        myCurrentState = INITIAL_STATE;
+        myTokenEnd = myTokenStart + 1;
+      }
+      else if (isHeaderStart(myTokenStart)) {
+        if (isAlphaNum(myTokenStart)) {
+          myTokenEnd = myTokenStart + 1;
+          while (myTokenEnd < myEndOffset && isHeaderChar(myTokenEnd)) {
+            myTokenEnd++;
+          }
+        }
+        myTokenType = ManifestTokenType.HEADER_NAME;
+        myCurrentState = WAITING_FOR_HEADER_ASSIGNMENT_STATE;
+      }
+      else if (isContinuationStart(myTokenStart)) {
+        myTokenType = ManifestTokenType.SIGNIFICANT_SPACE;
+        myTokenEnd = myTokenStart + 1;
+        myCurrentState = INITIAL_STATE;
+      }
+      else if (isSpecialCharacter(myTokenStart)) {
+        myTokenType = getTokenTypeForSpecialCharacter(myTokenStart);
+        myTokenEnd = myTokenStart + 1;
+        myCurrentState = INITIAL_STATE;
+      }
+      else {
+        myTokenEnd = myTokenStart;
+        while (myTokenEnd < myEndOffset && !isSpecialCharacter(myTokenEnd) && !isNewline(myTokenEnd)) {
+          myTokenEnd++;
+        }
+        myTokenType = ManifestTokenType.HEADER_VALUE_PART;
+      }
     }
-
-    private boolean isNewline(int position) {
-        return '\n' == buffer.charAt(position);
+    else {
+      myTokenType = null;
+      myTokenEnd = myTokenStart;
     }
+  }
 
-    private boolean isHeaderStart(int position) {
-        return isLineStart(position) && !Character.isWhitespace(buffer.charAt(position));
-    }
+  private boolean isNewline(int position) {
+    return '\n' == myBuffer.charAt(position);
+  }
 
-    private boolean isAlphaNum(int position) {
-        return Character.isLetterOrDigit(buffer.charAt(position));
-    }
+  private boolean isHeaderStart(int position) {
+    return isLineStart(position) && !Character.isWhitespace(myBuffer.charAt(position));
+  }
 
-    private boolean isHeaderChar(int position) {
-        return isAlphaNum(position) || buffer.charAt(position) == '-' || buffer.charAt(position) == '_';
-    }
+  private boolean isAlphaNum(int position) {
+    return Character.isLetterOrDigit(myBuffer.charAt(position));
+  }
 
-    private boolean isContinuationStart(int position) {
-        return isLineStart(position) && !isHeaderStart(position);
-    }
+  private boolean isHeaderChar(int position) {
+    return isAlphaNum(position) || myBuffer.charAt(position) == '-' || myBuffer.charAt(position) == '_';
+  }
 
-    private boolean isLineStart(int position) {
-        return (position == 0 || isNewline(position - 1));
-    }
+  private boolean isContinuationStart(int position) {
+    return isLineStart(position) && !isHeaderStart(position);
+  }
 
-    private boolean isSpace(int position) {
-        return buffer.charAt(position) == ' ';
-    }
+  private boolean isLineStart(int position) {
+    return (position == 0 || isNewline(position - 1));
+  }
 
-    private boolean isColon(int position) {
-        return buffer.charAt(position) == ':';
-    }
+  private boolean isSpace(int position) {
+    return myBuffer.charAt(position) == ' ';
+  }
 
-    private boolean isSpecialCharacter(int position) {
-        return SPECIAL_CHARACTERS_TOKEN_MAPPING.get(buffer.charAt(position)) != null;
-    }
+  private boolean isColon(int position) {
+    return myBuffer.charAt(position) == ':';
+  }
 
-    private IElementType getTokenTypeForSpecialCharacter(int position) {
-        return SPECIAL_CHARACTERS_TOKEN_MAPPING.get(buffer.charAt(position));
-    }
+  private boolean isSpecialCharacter(int position) {
+    return SPECIAL_CHARACTERS_TOKEN_MAPPING.get(myBuffer.charAt(position)) != null;
+  }
 
-    private CharSequence buffer;
-    private int endOffset;
-    private int tokenStart;
-    private int tokenEnd;
-    private int currentState;
-    private IElementType tokenType;
-
-    private static final int INITIAL_STATE = 0;
-    private static final int WAITING_FOR_HEADER_ASSIGNMENT_STATE = 1;
-    private static final int WAITING_FOR_HEADER_ASSIGNMENT_AFTER_BAD_CHARACTER_STATE = 2;
-    private static final int WAITING_FOR_SPACE_AFTER_HEADER_NAME_STATE = 3;
-
-    private static final Map<Character, IElementType> SPECIAL_CHARACTERS_TOKEN_MAPPING;
-
-    static {
-        SPECIAL_CHARACTERS_TOKEN_MAPPING = new HashMap<Character, IElementType>();
-        SPECIAL_CHARACTERS_TOKEN_MAPPING.put(':', ManifestTokenType.COLON);
-        SPECIAL_CHARACTERS_TOKEN_MAPPING.put(';', ManifestTokenType.SEMICOLON);
-        SPECIAL_CHARACTERS_TOKEN_MAPPING.put(',', ManifestTokenType.COMMA);
-        SPECIAL_CHARACTERS_TOKEN_MAPPING.put('=', ManifestTokenType.EQUALS);
-        SPECIAL_CHARACTERS_TOKEN_MAPPING.put('\"', ManifestTokenType.QUOTE);
-}
+  private IElementType getTokenTypeForSpecialCharacter(int position) {
+    return SPECIAL_CHARACTERS_TOKEN_MAPPING.get(myBuffer.charAt(position));
+  }
 }

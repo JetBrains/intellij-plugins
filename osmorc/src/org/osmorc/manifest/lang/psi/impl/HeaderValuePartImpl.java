@@ -55,6 +55,7 @@ public class HeaderValuePartImpl extends ManifestElementBase<HeaderValuePartStub
     }
 
 
+    @NotNull
     public String getUnwrappedText() {
         String result;
         HeaderValuePartStub stub = getStub();

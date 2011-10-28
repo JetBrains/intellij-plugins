@@ -64,7 +64,7 @@ class ReportingBuilder extends Builder
       OsmorcFacetConfiguration configuration = facet.getConfiguration();
       if (configuration.isManifestManuallyEdited()) {
         BundleManager bundleManager = ServiceManager.getService(module.getProject(), BundleManager.class);
-        BundleManifest bundleManifest = bundleManager.getBundleManifest(module);
+        BundleManifest bundleManifest = bundleManager.getManifestByObject(module);
         if (bundleManifest != null) {
             PsiFile manifestFile = bundleManifest.getManifestFile();
           VirtualFile virtualFile = manifestFile.getVirtualFile();

@@ -259,7 +259,7 @@ public class BundleCompiler implements PackagingCompiler {
         } else {
             boolean manifestExists = false;
             BundleManager bundleManager = ServiceManager.getService(module.getProject(), BundleManager.class);
-            BundleManifest bundleManifest = bundleManager.getBundleManifest(module);
+            BundleManifest bundleManifest = bundleManager.getManifestByObject(module);
             if (bundleManifest != null) {
                 PsiFile manifestFile = bundleManifest.getManifestFile();
                 if (manifestFile != null) {

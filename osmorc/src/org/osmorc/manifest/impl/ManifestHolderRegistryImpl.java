@@ -32,9 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.ManifestHolder;
 import org.osmorc.manifest.ManifestHolderRegistry;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,6 +44,7 @@ public final class ManifestHolderRegistryImpl implements ManifestHolderRegistry 
         libraryManifestHolders = new HashMap<Library, ManifestHolder>();
     }
 
+    @NotNull
     public ManifestHolder getManifestHolder(@NotNull Object bundle) {
         if (bundle instanceof Module) {
             return getModuleManifestHolder((Module) bundle);
@@ -56,10 +55,12 @@ public final class ManifestHolderRegistryImpl implements ManifestHolderRegistry 
                 "The bundle is neither a Module nor a Library. It is of type " + bundle.getClass().getName());
     }
 
+  @NotNull
     private ManifestHolder getModuleManifestHolder(@NotNull Module module) {
         return ModuleServiceManager.getService(module, ManifestHolder.class);
     }
 
+  @NotNull
     private ManifestHolder getLibraryManifestHolder(@NotNull Library library) {
         ManifestHolder result = libraryManifestHolders.get(library);
         if (result == null) {
@@ -70,17 +71,7 @@ public final class ManifestHolderRegistryImpl implements ManifestHolderRegistry 
         return result;
     }
 
-    public List<Long> getLibraryBundleIDs() {
-        List<Long> ids = new ArrayList<Long>();
-
-        for (ManifestHolder manifestHolder : libraryManifestHolders.values()) {
-            ids.add(manifestHolder.getBundleID());
-        }
-
-        return ids;
-    }
-
-    public void clearLibraryManifestHolders() {
+  public void clearLibraryManifestHolders() {
         libraryManifestHolders.clear();
     }
 

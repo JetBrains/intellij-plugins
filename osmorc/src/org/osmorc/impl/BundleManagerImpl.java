@@ -30,7 +30,6 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.roots.libraries.Library;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.BundleManager;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkIntegrator;
 import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
@@ -46,7 +45,7 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class BundleManagerImpl implements BundleManager {
+public class BundleManagerImpl  {
 
   private final ModuleManager myModuleManager;
   private final ManifestHolderRegistry myManifestHolderRegistry;
@@ -71,7 +70,7 @@ public class BundleManagerImpl implements BundleManager {
   private Object findBundle(String bundleSymbolicName) {
     Module[] modules = myModuleManager.getModules();
     for (Module module : modules) {
-      BundleManifest bundleManifest = getBundleManifest(module);
+      BundleManifest bundleManifest = getManifestByObject(module);
       if (bundleManifest != null && bundleSymbolicName.equals(bundleManifest.getBundleSymbolicName())) {
         return module;
       }
@@ -79,7 +78,7 @@ public class BundleManagerImpl implements BundleManager {
 
     List<Library> libraries = getFrameworkInstanceLibraries();
     for (Library library : libraries) {
-      BundleManifest bundleManifest = getBundleManifest(library);
+      BundleManifest bundleManifest = getManifestByObject(library);
       if (bundleManifest != null && bundleSymbolicName.equals(bundleManifest.getBundleSymbolicName())) {
         return library;
       }
@@ -88,27 +87,28 @@ public class BundleManagerImpl implements BundleManager {
     return null;
   }
 
+
   @Nullable
-  public BundleManifest getBundleManifest(String bundleSymbolicName) {
+  public BundleManifest getManifestBySymbolicName(String bundleSymbolicName) {
     Object bundle = findBundle(bundleSymbolicName);
 
     if (bundle != null) {
-      return getBundleManifest(bundle);
+      return getManifestByObject(bundle);
     }
     return null;
   }
 
-  public BundleManifest getBundleManifest(@NotNull Object bundle) {
-    return getManifestHolder(bundle).getBundleManifest();
+  public BundleManifest getManifestByObject(@NotNull Object bundle) {
+    return null; //getManifestHolder(bundle).getBundleManifest();
   }
 
-  public void addOrUpdateBundle(@NotNull Object bundle) {
+  public void reindex(@NotNull Object bundle) {
     createInitialState();
     addOrUpdateBundleInternal(bundle);
   }
 
   private void addOrUpdateBundleInternal(Object bundle) {
-    BundleManifest bundleManifest = getBundleManifest(bundle);
+    BundleManifest bundleManifest = getManifestByObject(bundle);
     if (bundleManifest != null) {
       ManifestHolder manifestHolder = getManifestHolder(bundle);
       if (manifestHolder.getBundleID() == -1) {
@@ -117,7 +117,7 @@ public class BundleManagerImpl implements BundleManager {
     }
   }
 
-  public boolean reloadFrameworkInstanceLibraries(boolean onlyIfFrameworkInstanceSelectionChanged) {
+  public boolean reindex(boolean onlyIfFrameworkInstanceSelectionChanged) {
     String frameworkInstanceName = myProjectSettings.getFrameworkInstanceName();
     if (!onlyIfFrameworkInstanceSelectionChanged ||
         (frameworkInstanceName != null && !frameworkInstanceName.equals(_currentFrameworkInstanceName))) {

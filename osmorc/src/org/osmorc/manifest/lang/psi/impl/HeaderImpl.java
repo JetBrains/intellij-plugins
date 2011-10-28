@@ -31,7 +31,9 @@ import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.ManifestTokenType;
+import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.lang.psi.Header;
+import org.osmorc.manifest.lang.psi.HeaderValuePart;
 import org.osmorc.manifest.lang.psi.ManifestToken;
 import org.osmorc.manifest.lang.psi.stub.HeaderStub;
 
@@ -75,4 +77,22 @@ public class HeaderImpl extends ManifestElementBase<HeaderStub> implements Heade
     public ManifestToken getColonToken() {
         return (ManifestToken) getNode().findChildByType(ManifestTokenType.COLON);
     }
+
+  @Override
+  @NotNull
+  public Clause[] getClauses() {
+     return findChildrenByClass(Clause.class);
+  }
+
+  @Override
+  public Object getSimpleConvertedValue() {
+    Clause clause = findChildByClass(Clause.class);
+    if ( clause != null ) {
+      HeaderValuePart value = clause.getValue();
+      if (value != null) {
+        return value.getConvertedValue();
+      }
+    }
+    return null;
+  }
 }

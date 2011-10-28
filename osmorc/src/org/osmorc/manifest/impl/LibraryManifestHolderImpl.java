@@ -34,61 +34,64 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import org.jetbrains.annotations.Nullable;
 import org.osmorc.manifest.BundleManifest;
+import org.osmorc.manifest.ManifestHolderDisposedException;
+import org.osmorc.manifest.lang.psi.ManifestFile;
 
 /**
  * Author: Robert F. Beeger (robert@beeger.net)
  */
-public class LibraryManifestHolderImpl extends AbstractManifestHolderImpl
-{
-  public LibraryManifestHolderImpl(Library library, Project project)
-  {
-    _library = library;
-    _project = project;
+public class LibraryManifestHolderImpl extends AbstractManifestHolderImpl {
+
+  private BundleManifest myBundleManifest;
+  private final Library myLibrary;
+  private final Project myProject;
+
+  public LibraryManifestHolderImpl(Library library, Project project) {
+    myLibrary = library;
+    myProject = project;
   }
 
-  public BundleManifest getBundleManifest()
-  {
-    if (_bundleManifest == null)
-    {
-      // FIX for EA-23586
-      if ( _library instanceof LibraryEx && ((LibraryEx)_library).isDisposed() ) {
-        return _bundleManifest;
-      }
-      VirtualFile[] classRoots = _library.getFiles(OrderRootType.CLASSES);
-      for (VirtualFile classRoot : classRoots)
-      {
+  @Nullable
+  public BundleManifest getBundleManifest() throws ManifestHolderDisposedException {
+    // FIX for EA-23586
+    if (myLibrary instanceof LibraryEx && ((LibraryEx)myLibrary).isDisposed() || myProject.isDisposed()) {
+      throw new ManifestHolderDisposedException();
+    }
+    
+    if (myBundleManifest == null) {
+
+      VirtualFile[] classRoots = myLibrary.getFiles(OrderRootType.CLASSES);
+      for (VirtualFile classRoot : classRoots) {
         VirtualFile classDir;
-        if (classRoot.isDirectory())
-        {
+        if (classRoot.isDirectory()) {
           classDir = classRoot;
         }
-        else
-        {
+        else {
           classDir = JarFileSystem.getInstance().getJarRootForLocalFile(classRoot);
         }
 
-        if (classDir != null)
-        {
+        if (classDir != null) {
           final VirtualFile manifestFile = classDir.findFileByRelativePath("META-INF/MANIFEST.MF");
-          if (manifestFile != null)
-          {
+          if (manifestFile != null) {
             PsiFile psiFile = new ReadAction<PsiFile>() {
               @Override
               protected void run(Result<PsiFile> psiFileResult) throws Throwable {
-                psiFileResult.setResult(PsiManager.getInstance(_project).findFile(manifestFile));
+                psiFileResult.setResult(PsiManager.getInstance(myProject).findFile(manifestFile));
               }
-
             }.execute().getResultObject();
-            _bundleManifest = new BundleManifestImpl(psiFile);
+            myBundleManifest = new BundleManifestImpl((ManifestFile)psiFile);
           }
         }
       }
     }
-    return _bundleManifest;
+    return myBundleManifest;
   }
 
-  private BundleManifest _bundleManifest;
-  private final Library _library;
-  private final Project _project;
+
+  @Override
+  public Object getBoundObject() {
+    return myLibrary;
+  }
 }

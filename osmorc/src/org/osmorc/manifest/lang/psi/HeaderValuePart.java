@@ -27,6 +27,8 @@ package org.osmorc.manifest.lang.psi;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osmorc.manifest.lang.psi.stub.HeaderValuePartStub;
 
 /**
@@ -39,12 +41,20 @@ import org.osmorc.manifest.lang.psi.stub.HeaderValuePartStub;
  */
 public interface HeaderValuePart extends PsiElement, StubBasedPsiElement<HeaderValuePartStub> {
 
-    /**
-     * The text of a header value part can be broken into several parts. This method returns the unwrapped text without
-     * the newlines and without the extra continuation spaces.
-     * @return The unwrapped text.
-     */
-    String getUnwrappedText();
+  /**
+   * The text of a header value part can be broken into several parts. This method returns the unwrapped text without
+   * the newlines and without the extra continuation spaces.
+   *
+   * @return The unwrapped text.
+   */
+  @NotNull
+  String getUnwrappedText();
 
-    Object getConvertedValue();
+  /**
+   * Returns the converted value of this header (.e.g if the header represents a version statement, this will return a {@link org.osmorc.valueobject.Version} object.
+   *
+   * @return the converted value. or null if no conversion for this header value could be found.
+   */
+  @Nullable
+  Object getConvertedValue();
 }

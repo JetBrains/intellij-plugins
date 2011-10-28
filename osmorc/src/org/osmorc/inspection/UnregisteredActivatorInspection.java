@@ -106,7 +106,7 @@ public class UnregisteredActivatorInspection extends LocalInspectionTool {
                                     assert activatorName != null;
                                     holder.registerProblem(psiClass.getNameIdentifier(), "Bundle activator is not registered in manifest.",
                                             ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new RegisterActivatorInManifestQuickfix(
-                                                    activatorName, bundleManager.getBundleManifest(module).getManifestFile()));
+                                                    activatorName, bundleManager.getManifestByObject(module).getManifestFile()));
                                 }
                             } else {
                                 // automagically, so look it up in the configuration
@@ -126,7 +126,7 @@ public class UnregisteredActivatorInspection extends LocalInspectionTool {
     }
 
     private boolean isActivatorRegistered(BundleManager manager, Object bundle, String activatorName) {
-        BundleManifest manifest = manager.getBundleManifest(bundle);
+        BundleManifest manifest = manager.getManifestByObject(bundle);
         if (manifest != null) {
             String manifestActivator = manifest.getBundleActivator();
             return manifestActivator != null && manifestActivator.equals(activatorName);

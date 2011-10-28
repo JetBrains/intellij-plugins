@@ -26,13 +26,28 @@ package org.osmorc.manifest.lang.psi;
 
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.StubBasedPsiElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osmorc.manifest.lang.psi.stub.HeaderStub;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public interface Header extends PsiNamedElement, StubBasedPsiElement<HeaderStub>
-{
-    ManifestToken getNameToken();
-    ManifestToken getColonToken();
+public interface Header extends PsiNamedElement, StubBasedPsiElement<HeaderStub> {
+  ManifestToken getNameToken();
+
+  ManifestToken getColonToken();
+
+  /**
+   * @return a list of clauses which describe the values of this header.
+   */
+  @NotNull
+  Clause[] getClauses();
+
+  /**
+   * Returns the converted value of the first clause of this header. This is useful for simple headers that contain one value only.
+   * @return the converted value or null if the value could not be converted or this header has no value.
+   */
+  @Nullable
+  Object getSimpleConvertedValue();
 }

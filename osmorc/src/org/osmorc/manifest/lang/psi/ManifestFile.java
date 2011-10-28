@@ -26,9 +26,26 @@
 package org.osmorc.manifest.lang.psi;
 
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public interface ManifestFile extends PsiFile {
+
+  /**
+   * Returns all headers in this file.
+   * @return the headers.
+   */
+  @NotNull
+  Header[] getHeaders();
+
+  /**
+   * Returns the header with the given name
+   * @param name the name
+   * @return the header or null if no such header exists.
+   */
+  @Nullable
+  Header getHeaderByName(@NotNull String name);
 }
