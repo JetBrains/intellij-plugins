@@ -19,7 +19,7 @@ import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.codeInsight.template.impl.actions.ListTemplatesAction;
-import com.intellij.lang.ognl.OgnlTestUtils;
+import com.intellij.lang.ognl.OgnlFileType;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
@@ -28,20 +28,6 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
  * @author Yann C&eacute;bron
  */
 public class OgnlLiveTemplatesTest extends LightCodeInsightFixtureTestCase {
-
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-
-    OgnlTestUtils.installOgnlFileType();
-  }
-
-  @Override
-  protected void tearDown() throws Exception {
-    OgnlTestUtils.removeOgnlFileType();
-
-    super.tearDown();
-  }
 
   public void testIn() {
     doTest("a in<caret>",
@@ -54,7 +40,7 @@ public class OgnlLiveTemplatesTest extends LightCodeInsightFixtureTestCase {
   }
 
   private void doTest(final String before, final String after) {
-    myFixture.configureByText(OgnlTestUtils.DUMMY_OGNL_FILE_NAME, before);
+    myFixture.configureByText(OgnlFileType.INSTANCE, before);
     expandLiveTemplate();
     myFixture.checkResult(after);
   }
