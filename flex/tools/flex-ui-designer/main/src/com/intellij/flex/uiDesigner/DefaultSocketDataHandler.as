@@ -127,6 +127,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     var module:Module = moduleManager.getById(input.readUnsignedShort());
     var documentFactory:DocumentFactory = getDocumentFactoryManager(module).get(input.readUnsignedShort());
 
+    AmfUtil.readString(input);
     input.readUnsignedByte(); // todo isApp update document styleManager
     
     stringRegistry.readStringTable(input);

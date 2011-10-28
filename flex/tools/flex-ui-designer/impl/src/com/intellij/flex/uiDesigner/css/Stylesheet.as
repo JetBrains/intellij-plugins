@@ -77,6 +77,10 @@ public final class Stylesheet {
             declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, null, null);
             break;
 
+          case CssPropertyType.NAN:
+            declarations[i] = CssDeclarationImpl.create2(CssPropertyType.NUMBER, name, textOffset, null, NaN);
+            break;
+
           case AmfExtendedTypes.SWF:
             CssEmbedSwfDeclaration(declarations[i] = CssEmbedSwfDeclaration.create2(name, textOffset, input));
             break;

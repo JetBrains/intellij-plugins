@@ -213,8 +213,18 @@ public class CssWriter {
   private void writePropertyValue(CssTermList value, FlexStyleIndexInfo info) throws InvalidPropertyException {
     final String type = info.getType();
     //noinspection ConstantConditions
-    final ASTNode node = value.getFirstChild().getFirstChild().getNode();
+    final PsiElement element = value.getFirstChild().getFirstChild();
+    assert element != null;
+    final ASTNode node = element.getNode();
     assert type != null;
+    // http://juick.com/develar/1599332
+    if (node.getElementType() == CssElementTypes.CSS_FUNCTION || type.equals(AsCommonTypeNames.CLASS)) {
+      // Class, brokenImageSkin: Embed(source="Assets.swf",symbol="__brokenImage"); or brokenImageBorderSkin: ClassReference("mx.skins.halo.BrokenImageBorderSkin");
+      // or ClassReference(null);
+      writeFunctionValue((CssFunction)element, info);
+      return;
+    }
+
     if (type.equals(JSCommonTypeNames.UINT_TYPE_NAME)) {
       final String format = info.getFormat();
       assert format != null;
@@ -240,22 +250,10 @@ public class CssWriter {
       writeNumberValue(node, false);
     }
     else if (type.equals(JSCommonTypeNames.STRING_CLASS_NAME)) {
-      // special case: ClassReference(null);
-      if (node.getElementType() == CssElementTypes.CSS_FUNCTION) {
-        propertyOut.write(Amf3Types.NULL);
-      }
-      else {
-        writeStringValue(node, info);
-      }
+      writeStringValue(node, info);
     }
     else if (type.equals(JSCommonTypeNames.BOOLEAN_CLASS_NAME)) {
       writeBooleanValue(node);
-    }
-    else if (type.equals(AsCommonTypeNames.CLASS)) {
-      // Class, brokenImageSkin: Embed(source="Assets.swf",symbol="__brokenImage"); or brokenImageBorderSkin: ClassReference("mx.skins.halo.BrokenImageBorderSkin");
-      // or ClassReference(null);
-      //noinspection ConstantConditions
-      writeFunctionValue((CssFunction)value.getFirstChild().getFirstChild(), info);
     }
     else if (type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME) || type.equals(JSCommonTypeNames.ANY_TYPE)) {
       writeUndefinedPropertyValue(value);
@@ -380,6 +378,11 @@ public class CssWriter {
       else {
         propertyOut.writeAmfUInt(IOUtil.parseInt(chars, 1, false, 16));
       }
+      return;
+    }
+    else if (elementType == CssElementTypes.CSS_IDENT) {
+      assert StringUtil.equals(node.getChars(), "NaN");
+      propertyOut.writeAmfDouble(Double.NaN);
       return;
     }
     else {

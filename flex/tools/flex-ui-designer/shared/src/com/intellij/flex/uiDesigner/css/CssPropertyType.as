@@ -9,6 +9,7 @@ public final class CssPropertyType {
   public static const CLASS_REFERENCE:int = 4;
   public static const EMBED:int = 5;
   public static const NULL:int = 1;
+  public static const NAN:int = 12;
 
   public static const BOOL:int = 8;
   public static const STRING:int = 6;

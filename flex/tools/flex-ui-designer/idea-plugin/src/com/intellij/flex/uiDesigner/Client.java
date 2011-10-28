@@ -376,8 +376,8 @@ public class Client implements Closable {
       writeId(module);
       out.writeShort(factoryId);
 
-      ProblemsHolder problemsHolder = new ProblemsHolder();
-      writeDocumentFactory(module, psiFile, problemsHolder, XmlBackedJSClassImpl.getXmlBackedClass(psiFile));
+      final ProblemsHolder problemsHolder = new ProblemsHolder();
+      writeDocumentFactory(module, psiFile, problemsHolder);
       if (!problemsHolder.isEmpty()) {
         DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
       }
@@ -407,12 +407,7 @@ public class Client implements Closable {
         writeId(module);
         out.writeShort(id);
         writeVirtualFile(virtualFile, out);
-
-        final JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(psiFile);
-        assert jsClass != null;
-        out.writeAmfUtf(jsClass.getQualifiedName());
-
-        hasError = !writeDocumentFactory(module, psiFile, problemsHolder, jsClass);
+        hasError = !writeDocumentFactory(module, psiFile, problemsHolder);
       }
       catch (Throwable e) {
         LogMessageUtil.processInternalError(e, virtualFile);
@@ -429,12 +424,15 @@ public class Client implements Closable {
     return id;
   }
 
-  private boolean writeDocumentFactory(Module module, XmlFile psiFile, ProblemsHolder problemsHolder, JSClass jsClass)
+  private boolean writeDocumentFactory(Module module, XmlFile psiFile, ProblemsHolder problemsHolder)
     throws IOException {
-
     final AccessToken token = ReadAction.start();
     final int flags;
     try {
+      final JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(psiFile);
+      assert jsClass != null;
+      out.writeAmfUtf(jsClass.getQualifiedName());
+      
       if (JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.SPARK_APPLICATION) ||
           JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.MX_APPLICATION)) {
         flags = 1;

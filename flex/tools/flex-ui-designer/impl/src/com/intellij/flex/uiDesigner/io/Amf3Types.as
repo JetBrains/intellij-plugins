@@ -9,7 +9,7 @@ public final class Amf3Types {
   public static const NULL:int = 1;
   public static const ARRAY:int = 9;
   public static const OBJECT:int = 10;
-  public static const BYTE_ARRAY:int = 12;
+
   public static const VECTOR_OBJECT:int = 16;
 }
 }
