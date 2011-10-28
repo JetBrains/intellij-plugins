@@ -115,7 +115,10 @@ public class FlexIdeRunConfiguration extends RunConfigurationBase
   }
 
   public static String suggestName(final FlexIdeRunnerParameters params) {
-    return params.isOverrideMainClass() ? StringUtil.getShortName(params.getOverriddenMainClass()) : params.getBCName();
+    return params.isOverrideMainClass() ? StringUtil.getShortName(params.getOverriddenMainClass())
+                                        : params.getBCName().equals(params.getModuleName())
+                                          ? params.getBCName()
+                                          : (params.getBCName() + " (" + params.getModuleName() + ")");
   }
 
   private class AirRunState extends CommandLineState {

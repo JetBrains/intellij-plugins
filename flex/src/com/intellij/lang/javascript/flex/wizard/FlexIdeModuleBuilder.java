@@ -238,17 +238,16 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
       }
     }
 
-    final String suggestedName = bcName.equals(module.getName()) ? bcName : (bcName + " (" + module.getName() + ")");
-    final String name = getUniqueName(suggestedName, existingConfigurations);
-    final RunnerAndConfigurationSettings settings = runManager.createConfiguration(name, FlexIdeRunConfigurationType.getFactory());
-    settings.setTemporary(false);
-    runManager.addConfiguration(settings, false);
-    runManager.setActiveConfiguration(settings);
-
+    final RunnerAndConfigurationSettings settings = runManager.createConfiguration("", FlexIdeRunConfigurationType.getFactory());
     final FlexIdeRunConfiguration runConfiguration = (FlexIdeRunConfiguration)settings.getConfiguration();
     final FlexIdeRunnerParameters params = runConfiguration.getRunnerParameters();
     params.setModuleName(module.getName());
     params.setBCName(bcName);
+
+    settings.setName(getUniqueName(FlexIdeRunConfiguration.suggestName(params), existingConfigurations));
+    settings.setTemporary(false);
+    runManager.addConfiguration(settings, false);
+    runManager.setActiveConfiguration(settings);
   }
 
   private static String getUniqueName(final String suggestedName, final RunConfiguration[] existingConfigurations) {
