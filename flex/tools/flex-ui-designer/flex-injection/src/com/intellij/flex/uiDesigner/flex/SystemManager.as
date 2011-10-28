@@ -133,6 +133,10 @@ public class SystemManager extends AbstractSystemManager implements ISystemManag
     EffectManager.registerEffectTrigger("showEffect", "show");
   }
 
+  public function getDefinitionByName(name:String):Object {
+    return ApplicationDomain.currentDomain.getDefinition(name);
+  }
+
   override public function init(moduleFactory:Object, uiErrorHandler:UiErrorHandler,
                        mainFocusManager:MainFocusManagerSB, documentFactory:Object):void {
     super.init(moduleFactory, uiErrorHandler, mainFocusManager, documentFactory);

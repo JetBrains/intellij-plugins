@@ -4,6 +4,7 @@ import com.intellij.flex.uiDesigner.UiErrorHandler;
 
 import flash.display.DisplayObject;
 import flash.display.Stage;
+import flash.system.ApplicationDomain;
 
 public class PureFlashSystemManager extends AbstractSystemManager implements SystemManagerSB {
   public function get elementUtil():ElementUtil {
@@ -12,6 +13,10 @@ public class PureFlashSystemManager extends AbstractSystemManager implements Sys
 
   public function get sharedInitialized():Boolean {
     return true;
+  }
+
+  public function getDefinitionByName(name:String):Object {
+    return ApplicationDomain.currentDomain.getDefinition(name);
   }
 
   public function initShared(stage:Stage, project:Object, resourceBundleProvider:ResourceBundleProvider,

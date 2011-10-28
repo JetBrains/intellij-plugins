@@ -35,10 +35,6 @@ public class AbstractSystemManager extends Sprite {
     _document.height = h;
   }
 
-  public function getDefinitionByName(name:String):Object {
-    return ApplicationDomain.currentDomain.getDefinition(name);
-  }
-
   public function addRealEventListener(type:String, listener:Function, useCapture:Boolean = false):void {
     super.addEventListener(type, listener, useCapture);
   }
