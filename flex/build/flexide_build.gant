@@ -10,8 +10,9 @@ includeTool << Jps
 def product = "Astella"
 
 requireProperty("buildNumber", requireProperty("build.number", snapshot))
-setProperty("buildName", "${product}-EAP-${buildNumber}")
 setProperty("product", "${product}")
+setProperty("buildPrefix", "${product}-EAP-")
+setProperty("buildName", "${buildPrefix}${buildNumber}")
 requireProperty("launchProperties", "")
 
 
@@ -298,7 +299,7 @@ private def buildNsis() {
     installer.nsis_installer([paths.distAll, paths.distWin],
                              "$home/flex/build/strings.nsi",
                              "$home/flex/build/paths.nsi",
-                             "${product}-", false, true, system_selector)
+                             "${buildPrefix}", false, true, system_selector)
     ant.available(file: "${paths.artifacts}/${buildName}.exe", property: "nsis.exists");
     ant.fail(unless: "nsis.exists", message: "${buildName} NSIS EXE was not built. File ${paths.artifacts}/${buildName}.exe wasn't found.")
     reportArtifact("${buildName}.exe")
