@@ -95,9 +95,8 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
       public void run() {
         new Task.Backgroundable(myProject, "Updating OSGi indices", false) {
           @Override
-          public void run
-            (@NotNull ProgressIndicator
-               indicator) {
+          public void run(@NotNull ProgressIndicator indicator) {
+            if (myProject.isDisposed()) return;
             indicator.setIndeterminate(true);
             // TODO Remove FrameworkInstance stuff
             indicator.setText("Refreshing framework instance");
