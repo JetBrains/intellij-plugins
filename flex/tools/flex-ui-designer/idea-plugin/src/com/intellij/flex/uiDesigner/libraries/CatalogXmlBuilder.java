@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.io.IOUtil;
-import com.intellij.flex.uiDesigner.libraries.SwcDependenciesSorter.FlexLibsNames;
+import com.intellij.flex.uiDesigner.libraries.LibrarySorter.FlexLibsNames;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.impl.source.parsing.xml.XmlBuilder;
 import gnu.trove.THashSet;

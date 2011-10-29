@@ -5,7 +5,7 @@ import com.intellij.diagnostic.errordialog.Attachment;
 import com.intellij.flex.uiDesigner.*;
 import com.intellij.flex.uiDesigner.io.InfoList;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
-import com.intellij.flex.uiDesigner.libraries.SwcDependenciesSorter.SortResult;
+import com.intellij.flex.uiDesigner.libraries.LibrarySorter.SortResult;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.notification.Notification;
@@ -71,7 +71,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     indicator.setText(FlexUIDesignerBundle.message("delete.old.libraries"));
 
     for (String path : appDir.list()) {
-      if (path.endsWith(SwcDependenciesSorter.SWF_EXTENSION) && path.indexOf(NAME_POSTFIX) != -1) {
+      if (path.endsWith(LibrarySorter.SWF_EXTENSION) && path.indexOf(NAME_POSTFIX) != -1) {
         //noinspection ResultOfMethodCallIgnored
         new File(appDir, path).delete();
       }
@@ -214,7 +214,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
       Module module, final boolean isFromSdk)
     throws InitException {
     try {
-      final SortResult result = new SwcDependenciesSorter(appDir, module).sort(libraries, id, flexSdkVersion, isFromSdk);
+      final SortResult result = new LibrarySorter(appDir, module).sort(libraries, id, flexSdkVersion, isFromSdk);
       return new LibrarySet(id, parent, ApplicationDomainCreationPolicy.ONE, result.items, result.resourceBundleOnlyitems,
                             result.embedItems);
     }

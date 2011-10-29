@@ -30,9 +30,9 @@ import java.net.URLConnection;
 import java.util.*;
 
 import static com.intellij.flex.uiDesigner.libraries.Definition.UnresolvedState;
-import static com.intellij.flex.uiDesigner.libraries.SwcDependenciesSorter.FlexLibsNames.*;
+import static com.intellij.flex.uiDesigner.libraries.LibrarySorter.FlexLibsNames.*;
 
-public class SwcDependenciesSorter {
+public class LibrarySorter {
   static final String SWF_EXTENSION = ".swf";
 
   private final File appDir;
@@ -74,7 +74,7 @@ public class SwcDependenciesSorter {
     BAD_FLEX_CLASSES.put(AIRFRAMEWORK, set);
   }
 
-  public SwcDependenciesSorter(@NotNull File appDir, @NotNull Module module) {
+  public LibrarySorter(@NotNull File appDir, @NotNull Module module) {
     this.appDir = appDir;
     this.module = module;
   }
@@ -321,7 +321,7 @@ public class SwcDependenciesSorter {
             }
 
             if (dependencyLibrary.parents.contains(library)) {
-              throw new Error();
+              throw new IllegalStateException(library + " cannot depends on " + dependencyLibrary + ", because " +  dependencyLibrary + " has " + library + " as parent");
             }
             library.parents.add(dependencyLibrary);
           }

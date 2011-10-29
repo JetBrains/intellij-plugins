@@ -12,8 +12,8 @@ import java.util.Map;
 
 public class Library extends Info<VirtualFile> {
   public static final String DEFAULTS_CSS = "defaults.css";
-  private static final String CATALOG = "catalog.xml";
-  public static final String SWF = "library.swf";
+  static final String CATALOG = "catalog.xml";
+  static final String SWF = "library.swf";
 
   public byte[] inheritingStyles;
   public byte[] defaultsStyle;

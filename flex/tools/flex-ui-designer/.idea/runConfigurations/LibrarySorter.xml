@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="SwcDependenciesSorter" type="Application" factoryName="Application">
+  <configuration default="false" name="LibrarySorter" type="Application" factoryName="Application">
     <extension name="coverage" enabled="false" merge="false" />
-    <option name="MAIN_CLASS_NAME" value="com.intellij.flex.uiDesigner.libraries.SwcDependenciesSorter" />
+    <option name="MAIN_CLASS_NAME" value="com.intellij.flex.uiDesigner.libraries.LibrarySorter" />
     <option name="VM_PARAMETERS" value="-ea" />
     <option name="PROGRAM_PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />

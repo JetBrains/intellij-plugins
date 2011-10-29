@@ -8,7 +8,9 @@ import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
+import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 
 import java.io.File;
@@ -16,7 +18,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Flex(version="4.5")
-public class SwcDependenciesSorterTest extends MxmlTestBase {
+public class LibrarySorterTest extends MxmlTestBase {
   @Override
   protected String generateSdkName(String version, boolean air) {
     return getName();
@@ -46,7 +48,7 @@ public class SwcDependenciesSorterTest extends MxmlTestBase {
     Disposer.register(myModule, new Disposable() {
       @Override
       public void dispose() {
-        AccessToken token = WriteAction.start();
+        final AccessToken token = WriteAction.start();
         try {
           ProjectJdkTable.getInstance().removeJdk(sdk);
         }
@@ -55,6 +57,17 @@ public class SwcDependenciesSorterTest extends MxmlTestBase {
         }
       }
     });
+  }
+
+  @Override
+  protected void modifyModule(ModifiableRootModel model, VirtualFile rootDir) {
+    super.modifyModule(model, rootDir);
+
+    if (getName().equals("testOverlappingContent")) {
+      final String path = "/Users/develar/Downloads/project/";
+      addLibrary(model, path + "flexunit-4.1.0-8-flex_4.1.0.16076.swc");
+      addLibrary(model, path + "FlexUnit1Lib.swc");
+    }
   }
 
   @Override
@@ -87,6 +100,11 @@ public class SwcDependenciesSorterTest extends MxmlTestBase {
   }
 
   public void testIgnoreSwcWithoutLibraryFile() throws Exception {
+    testFile(SPARK_COMPONENTS_FILE);
+  }
+
+  // AS-235
+  public void testOverlappingContent() throws Exception {
     testFile(SPARK_COMPONENTS_FILE);
   }
 
