@@ -17,13 +17,13 @@ public class ElementManager extends EventDispatcher implements Injectable {
   public function set element(value:Object):void {
     if (value != element) {
       if (_element != null) {
-        _document.systemManager.elementUtil.getDisplayObject(_element).removeEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
+        _document.displayManager.elementUtil.getDisplayObject(_element).removeEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
       }
       
       _element = value;
       
       if (_element != null) {
-        _document.systemManager.elementUtil.getDisplayObject(_element).addEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
+        _document.displayManager.elementUtil.getDisplayObject(_element).addEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
       }
       
       dispatchEvent(new Event("elementChanged"));
@@ -37,15 +37,15 @@ public class ElementManager extends EventDispatcher implements Injectable {
     }
 
     if (_document != null) {
-      _document.systemManager.removeRealEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
-      _document.systemManager.removeRealEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+      _document.displayManager.removeRealEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
+      _document.displayManager.removeRealEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
     }
 
     _document = value;
 
     if (_document != null) {
-      _document.systemManager.addRealEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
-      _document.systemManager.addRealEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+      _document.displayManager.addRealEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
+      _document.displayManager.addRealEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
     }
     else {
       element = null;
@@ -66,11 +66,11 @@ public class ElementManager extends EventDispatcher implements Injectable {
   }
 
   private function findComponent(event:MouseEvent):Object {
-    return _document.systemManager.elementUtil.getObjectUnderPoint(_document.systemManager.stage, event.stageX, event.stageY);
+    return _document.displayManager.elementUtil.getObjectUnderPoint(_document.displayManager.stage, event.stageX, event.stageY);
   }
 
   public function fillBreadcrumbs(element:Object, source:Vector.<String>):int {
-    return _document.systemManager.elementUtil.fillBreadcrumbs(element, source);
+    return _document.displayManager.elementUtil.fillBreadcrumbs(element, source);
   }
 
   private function removedFromStageHandler(event:Event):void {

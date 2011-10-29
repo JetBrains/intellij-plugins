@@ -2,11 +2,10 @@ package com.intellij.flex.uiDesigner {
 import cocoa.View;
 
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
-import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
 
-public class Document { 
+public class Document {
   public var uiComponent:Object;
-  public var systemManager:SystemManagerSB;
+  public var displayManager:DocumentDisplayManager;
   public var container:View;
   
   public function Document(documentFactory:DocumentFactory) {

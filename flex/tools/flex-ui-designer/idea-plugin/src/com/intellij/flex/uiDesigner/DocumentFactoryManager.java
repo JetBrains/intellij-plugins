@@ -26,7 +26,7 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
   private final InfoList<VirtualFile, DocumentInfo> files = new InfoList<VirtualFile, DocumentInfo>();
   
   private MyFileDocumentManagerListener fileDocumentManagerListener;
-  private MessageBusConnection flexUIDesignerApplicationManagerConnection;
+  private MessageBusConnection designerApplicationManagerConnection;
 
   private boolean isSubscribed;
 
@@ -65,8 +65,8 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
 
   @Override
   public void disposeComponent() {
-    if (flexUIDesignerApplicationManagerConnection != null) {
-      flexUIDesignerApplicationManagerConnection.disconnect();
+    if (designerApplicationManagerConnection != null) {
+      designerApplicationManagerConnection.disconnect();
       // unsubscribed in applicationClosed
       if (fileDocumentManagerListener.connection != null) {
         fileDocumentManagerListener.unsubscribe();
@@ -84,9 +84,9 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
     MessageBus messageBus = ApplicationManager.getApplication().getMessageBus();
     fileDocumentManagerListener.subscribe(messageBus);
     
-    if (flexUIDesignerApplicationManagerConnection == null) {
-      flexUIDesignerApplicationManagerConnection = messageBus.connect();
-      flexUIDesignerApplicationManagerConnection.subscribe(DesignerApplicationManager.MESSAGE_TOPIC, new DesignerApplicationListener() {
+    if (designerApplicationManagerConnection == null) {
+      designerApplicationManagerConnection = messageBus.connect();
+      designerApplicationManagerConnection.subscribe(DesignerApplicationManager.MESSAGE_TOPIC, new DesignerApplicationListener() {
         @Override
         public void initialDocumentOpened() {
         }
@@ -115,33 +115,33 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
 
     @Override
     public void beforeDocumentSaving(Document document) {
-      VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+      final VirtualFile file = FileDocumentManager.getInstance().getFile(document);
       if (file == null) {
         return;
       }
       
-      DocumentInfo info = files.getNullableInfo(file);
+      final DocumentInfo info = files.getNullableInfo(file);
       if (info == null) {
         return;
       }
       
-      DesignerApplicationManager designerApplicationManager = DesignerApplicationManager.getInstance();
+      final DesignerApplicationManager designerApplicationManager = DesignerApplicationManager.getInstance();
       if (designerApplicationManager.isDocumentOpening()) {
         return;
       }
 
-      Module module = ModuleUtil.findModuleForFile(file, myProject);
+      if (info.documentModificationStamp == document.getModificationStamp()) {
+        info.documentModificationStamp = -1;
+        return;
+      }
+
+      final Module module = ModuleUtil.findModuleForFile(file, myProject);
       if (module == null) {
         return;
       }
 
-      XmlFile psiFile = (XmlFile)PsiDocumentManager.getInstance(myProject).getPsiFile(document);
+      final XmlFile psiFile = (XmlFile)PsiDocumentManager.getInstance(myProject).getPsiFile(document);
       if (psiFile == null) {
-        return;
-      }
-
-      if (info.psiModificationStamp == psiFile.getModificationStamp()) {
-        info.psiModificationStamp = -1;
         return;
       }
 
@@ -183,7 +183,7 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
   }
 
   public  static class DocumentInfo extends Info<VirtualFile> {
-    public long psiModificationStamp;
+    public long documentModificationStamp;
     
     public DocumentInfo(@NotNull VirtualFile element) {
       super(element);

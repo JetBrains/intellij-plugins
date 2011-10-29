@@ -2,10 +2,9 @@ package com.intellij.flex.uiDesigner.ui.tools {
 import cocoa.LayoutlessContainer;
 
 import com.intellij.flex.uiDesigner.Document;
-import com.intellij.flex.uiDesigner.flex.ElementUtil;
+import com.intellij.flex.uiDesigner.ElementInfoProvider;
 
 import flash.events.Event;
-
 import flash.geom.Point;
 
 import mx.core.ILayoutElement;
@@ -22,7 +21,7 @@ public class ElementToolContainer extends LayoutlessContainer implements Injecta
     mouseEnabled = false;
   }
 
-  private var elementUtil:ElementUtil;
+  private var elementUtil:ElementInfoProvider;
   private var layoutManager:Object;
 
   //noinspection JSUnusedGlobalSymbols
@@ -32,8 +31,8 @@ public class ElementToolContainer extends LayoutlessContainer implements Injecta
       layoutManager = null;
     }
     else {
-      elementUtil = value.systemManager.elementUtil;
-      layoutManager = value.systemManager.layoutManager;
+      elementUtil = value.displayManager.elementUtil;
+      layoutManager = value.displayManager.layoutManager;
     }
   }
   

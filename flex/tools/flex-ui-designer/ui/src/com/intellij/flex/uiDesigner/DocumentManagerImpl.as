@@ -5,9 +5,8 @@ import com.intellij.flex.uiDesigner.css.CssReader;
 import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import com.intellij.flex.uiDesigner.css.StyleValueResolverImpl;
+import com.intellij.flex.uiDesigner.flex.FlashDocumentDisplayManager;
 import com.intellij.flex.uiDesigner.flex.MainFocusManagerSB;
-import com.intellij.flex.uiDesigner.flex.PureFlashSystemManager;
-import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 import com.intellij.flex.uiDesigner.libraries.LibrarySetItem;
@@ -137,7 +136,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       createStyleManager(document, module);
     }
 
-    createSystemManager(document, module, documentFactory.isPureFlash);
+    createDocumentDisplayManager(document, module, documentFactory.isPureFlash);
 
     if (doOpen(documentFactory, document, documentOpened)) {
       documentFactory.document = document;
@@ -166,13 +165,13 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     try {
       try {
         // IDEA-72499
-        document.systemManager.setStyleManagerForTalentAdobeEngineers(true);
+        document.displayManager.setStyleManagerForTalentAdobeEngineers(true);
         var object:DisplayObject = DisplayObject(documentReader.read(documentFactory.data, documentFactory, document.styleManager));
         document.uiComponent = object;
-        document.systemManager.setUserDocument(object);
+        document.displayManager.setUserDocument(object);
       }
       finally {
-        document.systemManager.setStyleManagerForTalentAdobeEngineers(false);
+        document.displayManager.setStyleManagerForTalentAdobeEngineers(false);
       }
       
       documentReader.createDeferredMxContainersChildren(documentFactory.module.context.applicationDomain);
@@ -189,6 +188,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       return false;
     }
 
+    document.module.project.window.activate();
     return true;
   }
 
@@ -278,12 +278,12 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     cssReader.finalizeRead();
   }
 
-  private function createSystemManager(document:Document, module:Module, isPureFlash:Boolean):void {
+  private function createDocumentDisplayManager(document:Document, module:Module, isPureFlash:Boolean):void {
     var flexModuleFactoryClass:Class = isPureFlash ? null :  module.getClass("com.intellij.flex.uiDesigner.flex.FlexModuleFactory");
-    var systemManagerClass:Class = isPureFlash ? PureFlashSystemManager : module.getClass("com.intellij.flex.uiDesigner.flex.SystemManager");
+    var systemManagerClass:Class = isPureFlash ? FlashDocumentDisplayManager : module.getClass("com.intellij.flex.uiDesigner.flex.SystemManager");
     var window:DocumentWindow = module.project.window;
-    var systemManager:SystemManagerSB = new systemManagerClass();
-    document.systemManager = systemManager;
+    var systemManager:DocumentDisplayManager = new systemManagerClass();
+    document.displayManager = systemManager;
 
     if (!systemManager.sharedInitialized) {
       systemManager.initShared(window.stage, module.project, server, UncaughtErrorManager.instance);

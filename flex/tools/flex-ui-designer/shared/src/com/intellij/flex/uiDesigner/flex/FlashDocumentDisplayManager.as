@@ -1,4 +1,6 @@
 package com.intellij.flex.uiDesigner.flex {
+import com.intellij.flex.uiDesigner.DocumentDisplayManager;
+import com.intellij.flex.uiDesigner.ElementInfoProvider;
 import com.intellij.flex.uiDesigner.ResourceBundleProvider;
 import com.intellij.flex.uiDesigner.UiErrorHandler;
 
@@ -6,9 +8,9 @@ import flash.display.DisplayObject;
 import flash.display.Stage;
 import flash.system.ApplicationDomain;
 
-public class PureFlashSystemManager extends AbstractSystemManager implements SystemManagerSB {
-  public function get elementUtil():ElementUtil {
-    return ElementUtilImpl.instance;
+public class FlashDocumentDisplayManager extends AbstractDocumentDisplayManager implements DocumentDisplayManager {
+  public function get elementUtil():ElementInfoProvider {
+    return FlashElementInfoProvider.instance;
   }
 
   public function get sharedInitialized():Boolean {
@@ -78,21 +80,21 @@ public class PureFlashSystemManager extends AbstractSystemManager implements Sys
 }
 }
 
-import com.intellij.flex.uiDesigner.flex.ElementUtil;
-import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
+import com.intellij.flex.uiDesigner.DocumentDisplayManager;
+import com.intellij.flex.uiDesigner.ElementInfoProvider;
 
 import flash.display.DisplayObject;
 import flash.display.Stage;
 import flash.geom.Point;
 import flash.utils.getQualifiedClassName;
 
-final class ElementUtilImpl implements ElementUtil {
+final class FlashElementInfoProvider implements ElementInfoProvider {
   private static const sharedPoint:Point = new Point();
 
-  private static var _instance:ElementUtilImpl;
-  internal static function get instance():ElementUtil {
+  private static var _instance:FlashElementInfoProvider;
+  internal static function get instance():ElementInfoProvider {
     if (_instance == null) {
-      _instance = new ElementUtilImpl();
+      _instance = new FlashElementInfoProvider();
     }
     return _instance;
   }
@@ -115,7 +117,7 @@ final class ElementUtilImpl implements ElementUtil {
       var qualifiedClassName:String = getQualifiedClassName(element);
       source[count++] = qualifiedClassName.substr(qualifiedClassName.lastIndexOf("::") + 2);
     }
-    while (!((element = element.parent) is SystemManagerSB));
+    while (!((element = element.parent) is DocumentDisplayManager));
 
     return count;
   }

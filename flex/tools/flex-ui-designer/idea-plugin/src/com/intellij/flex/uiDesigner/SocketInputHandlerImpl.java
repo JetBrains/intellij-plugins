@@ -215,7 +215,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     final XmlTag rootTag = psiFile.getRootTag();
     assert rootTag != null;
     final int offset = reader.readInt() - rootTag.getStartOffsetInParent();
-
+    final Document document = FileDocumentManager.getInstance().getDocument(info.getElement());
     final String name = reader.readUTF();
     final String value;
     switch (reader.read()) {
@@ -248,10 +248,11 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
-        AccessToken token = WriteAction.start();
+        final AccessToken token = WriteAction.start();
         try {
           tag.setAttribute(name, value);
-          info.psiModificationStamp = psiFile.getModificationStamp();
+          assert document != null;
+          info.documentModificationStamp = document.getModificationStamp();
         }
         finally {
           token.finish();

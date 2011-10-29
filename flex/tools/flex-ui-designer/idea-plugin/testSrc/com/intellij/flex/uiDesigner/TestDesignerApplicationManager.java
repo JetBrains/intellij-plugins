@@ -22,9 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 class TestDesignerApplicationManager {
   private static TestDesignerApplicationManager instance;
@@ -36,7 +34,7 @@ class TestDesignerApplicationManager {
   private final Map<String, LibrarySet> sdkLibrarySetCache = new THashMap<String, LibrarySet>();
   public final TestSocketInputHandler socketInputHandler;
 
-  private TestDesignerApplicationManager() throws IOException, ExecutionException, InterruptedException, TimeoutException {
+  private TestDesignerApplicationManager() throws Exception {
     LibraryManager.getInstance().setAppDir(DesignerApplicationUtil.APP_DIR);
 
     final DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration = DesignerApplicationUtil.createTestAdlRunConfiguration();
@@ -81,13 +79,21 @@ class TestDesignerApplicationManager {
       }
     });
 
-    ApplicationManager.getApplication().executeOnPooledThread(new Callable<Void>() {
+    final Callable<Void> action = new Callable<Void>() {
       @Override
-      public Void call() throws Exception {
+      public Void call() throws IOException {
         socket = serverSocket.accept();
         return null;
       }
-    }).get(Boolean.valueOf(System.getProperty("fud.test.debug")) ? 8000 : 30, TimeUnit.SECONDS); // we can want to debug our flash app before socket accept
+    };
+
+    // we can want to debug our flash app before socket accept
+    if (Boolean.valueOf(System.getProperty("fud.test.debug"))) {
+      action.call();
+    }
+    else {
+      ApplicationManager.getApplication().executeOnPooledThread(action).get(30, TimeUnit.SECONDS);
+    }
 
     changeServiceImplementation();
     Client.getInstance().setOut(socket.getOutputStream());
@@ -126,8 +132,7 @@ class TestDesignerApplicationManager {
     return unregistedDocumentReferences;
   }
 
-  public static TestDesignerApplicationManager getInstance() throws IOException, ExecutionException, InterruptedException,
-                                                                    TimeoutException {
+  public static TestDesignerApplicationManager getInstance() throws Exception {
     if (instance == null) {
       instance = new TestDesignerApplicationManager();
     }

@@ -10,7 +10,7 @@ import flash.events.NativeWindowBoundsEvent;
 import org.jetbrains.actionSystem.DataManager;
 
 public class ProjectManager {
-  private const items:Vector.<Project> = new Vector.<Project>(2);
+  private const openProjects:Vector.<Project> = new Vector.<Project>(2);
 
   private var libraryManager:LibraryManager;
   private var moduleManager:ModuleManager;
@@ -29,14 +29,14 @@ public class ProjectManager {
 
   public function open(project:Project, window:DocumentWindow):void {
     var id:int = project.id;
-    if (id >= items.length) {
-      items.length = Math.max(items.length, id) + 2;
+    if (id >= openProjects.length) {
+      openProjects.length = Math.max(openProjects.length, id) + 2;
     }
     else {
-      assert(items[id] == null);
+      assert(openProjects[id] == null);
     }
 
-    items[id] = project;
+    openProjects[id] = project;
 
     addNativeWindowListeners(window);
     window.title = project.name;
@@ -58,7 +58,7 @@ public class ProjectManager {
   }
   
   public function close(id:int):void {
-    var project:Project = items[id];
+    var project:Project = openProjects[id];
     assert(project != null);
 
     DataManager.instance.unregisterDataContext(project.window.stage);
@@ -71,22 +71,13 @@ public class ProjectManager {
   }
 
   public function getById(id:int):Project {
-    return items[id];
-  }
-  
-  private var _project:Project;
-  public function get project():Project {
-    return _project;
-  }
-  // todo select project window
-  public function set project(project:Project):void {
-    _project = project;
+    return openProjects[id];
   }
 
   private function resizeOrMoveHandler(event:Event):void {
     var window:DocumentWindow = DocumentWindow(event.target);
-    for (var i:int = 0, n:int = items.length; i < n; i++) {
-      var project:Project = items[i];
+    for (var i:int = 0, n:int = openProjects.length; i < n; i++) {
+      var project:Project = openProjects[i];
       if (project.window == window) {
         Server.instance.saveProjectWindowBounds(project, window.bounds);
         return;
@@ -100,8 +91,8 @@ public class ProjectManager {
     }
 
     var window:DocumentWindow = DocumentWindow(event.target);
-    for (var i:int = 0, n:int = items.length; i < n; i++) {
-      var project:Project = items[i];
+    for (var i:int = 0, n:int = openProjects.length; i < n; i++) {
+      var project:Project = openProjects[i];
       if (project.window == window) {
         removeNativeWindowListeners(window);
         DataManager.instance.unregisterDataContext(window.stage);
@@ -115,22 +106,22 @@ public class ProjectManager {
   }
 
   private function closeProject2(id:int, project:Project):void {
-    items[id] = null;
+    openProjects[id] = null;
 
-    if (_project == project) {
-      this.project = getLastProject();
-    }
+    // todo select last project
+    //getLastProject();
 
     moduleManager.remove(project, function (module:Module):void {
       libraryManager.remove(module.librarySets);
     });
   }
 
+  //noinspection JSUnusedLocalSymbols
   private function getLastProject():Project {
     var project:Project;
-    var n:int = items.length;
+    var n:int = openProjects.length;
     while (n > 0) {
-      if ((project = items[--n]) != null) {
+      if ((project = openProjects[--n]) != null) {
         break;
       }
     }
@@ -146,23 +137,24 @@ import com.intellij.flex.uiDesigner.PlatformDataKeys;
 import com.intellij.flex.uiDesigner.Project;
 
 import org.jetbrains.actionSystem.DataContext;
+import org.jetbrains.actionSystem.DataKey;
 
-class ProjectDataContext implements DataContext {
+final class ProjectDataContext implements DataContext {
   private var project:Project;
 
   public function ProjectDataContext(project:Project) {
     this.project = project;
   }
 
-  public function getData(dataId:String):Object {
-    switch (dataId) {
-      case PlatformDataKeys.PROJECT.name:
+  public function getData(dataKey:DataKey):Object {
+    switch (dataKey) {
+      case PlatformDataKeys.PROJECT:
         return project;
 
-      case PlatformDataKeys.DOCUMENT.name:
+      case PlatformDataKeys.DOCUMENT:
         return DocumentManager(project.getComponent(DocumentManager)).document;
 
-      case PlatformDataKeys.ELEMENT.name:
+      case PlatformDataKeys.ELEMENT:
         return ElementManager(project.getComponent(ElementManager)).element;
 
       default:

@@ -7,8 +7,7 @@ import avmplus.INCLUDE_TRAITS;
 import avmplus.USE_ITRAITS;
 import avmplus.describe;
 
-import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
-
+import flash.desktop.NativeApplication;
 import flash.display.NativeWindow;
 import flash.events.Event;
 import flash.events.IEventDispatcher;
@@ -19,6 +18,8 @@ import flash.utils.Dictionary;
 import flash.utils.IDataInput;
 import flash.utils.Timer;
 import flash.utils.getQualifiedClassName;
+
+import org.jetbrains.actionSystem.DataManager;
 
 internal class TestSocketDataHandler implements SocketDataHandler {
   public static const CLASS:int = 1;
@@ -75,8 +76,11 @@ internal class TestSocketDataHandler implements SocketDataHandler {
     var method:String = data.readUTFBytes(methodNameSize);
     var clazz:Class = c[data.readByte()];
 
+    var window:NativeWindow = NativeWindow(NativeApplication.nativeApplication.openedWindows[0]);
+    var project:Project = PlatformDataKeys.PROJECT.getData(DataManager.instance.getDataContext(window.stage));
+
     if (clazz == UITest && method == "getStageOffset") {
-      getStageOffset(projectManager);
+      getStageOffset(window);
       return;
     }
 
@@ -86,7 +90,7 @@ internal class TestSocketDataHandler implements SocketDataHandler {
       describeCache[clazz] = methodInfo;
     }
     var testAnnotation:TestAnnotation = methodInfo[method] || TestAnnotation.DEFAULT;
-    var documentManager:DocumentManager = projectManager.project == null ? null : DocumentManager(projectManager.project.getComponent(DocumentManager));
+    var documentManager:DocumentManager = project == null ? null : DocumentManager(project.getComponent(DocumentManager));
     const testDocumentFilename:String = (testAnnotation.document == null ? method : testAnnotation.document) + ".mxml";
     if (!testAnnotation.nullableDocument && documentManager != null &&
         (documentManager.document == null || documentManager.document.documentFactory.file.name != testDocumentFilename)) {
@@ -103,7 +107,7 @@ internal class TestSocketDataHandler implements SocketDataHandler {
   private function testOnSystemManagerReady(documentManager:DocumentManager, clazz:Class, method:String, testAnnotation:TestAnnotation):void {
     // todo investigate, is it a problem for real code
     // (components in user document can call systemManager.addEventListener, but our systemManager requires stage at this moment)?
-    var systemManager:SystemManagerSB = testAnnotation.nullableDocument ? null : documentManager.document.systemManager;
+    var systemManager:DocumentDisplayManager = testAnnotation.nullableDocument ? null : documentManager.document.displayManager;
     if (systemManager != null && systemManager.stage == null) {
       systemManager.addRealEventListener(Event.ADDED_TO_STAGE, function(event:Event):void {
         IEventDispatcher(event.currentTarget).removeEventListener(event.type, arguments.callee);
@@ -118,7 +122,12 @@ internal class TestSocketDataHandler implements SocketDataHandler {
   private function test(clazz:Class, method:String, testAnnotation:TestAnnotation):void {
     trace("execute test " + method);
     var test:TestCase = new clazz();
-    test.init(projectManager, _socket);
+
+    var openedWindows:Array = NativeApplication.nativeApplication.openedWindows;
+    var window:NativeWindow = openedWindows.length > 0 ? NativeWindow(openedWindows[0]) : null;
+    var project:Project = window == null ? null : PlatformDataKeys.PROJECT.getData(DataManager.instance.getDataContext(window.stage));
+
+    test.init(project, _socket);
     test.setUp();
 
     if (testAnnotation.async) {
@@ -137,8 +146,7 @@ internal class TestSocketDataHandler implements SocketDataHandler {
     }
   }
 
-  private function getStageOffset(projectManager:ProjectManager):void {
-    var window:NativeWindow = projectManager.project.window;
+  private function getStageOffset(window:NativeWindow):void {
     var point:Point = window.globalToScreen(new Point(0, 0));
     _socket.writeByte(TestServerMethod.custom);
 

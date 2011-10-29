@@ -145,7 +145,7 @@ final class DesignerApplicationUtil {
   }
 
   @Nullable
-  public static AdlRunConfiguration findSuitableFlexSdk() throws IOException {
+  public static AdlRunConfiguration createAdlRunConfiguration() throws IOException {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       return createTestAdlRunConfiguration();
     }
@@ -319,7 +319,7 @@ final class DesignerApplicationUtil {
   public static MyOSProcessHandler runAdl(AdlRunConfiguration runConfiguration, String descriptor, @Nullable String root, final @Nullable Consumer<Integer> adlExitHandler) throws IOException {
     ensureExecutable(runConfiguration.adlPath);
 
-    List<String> command = new ArrayList<String>();
+    final List<String> command = new ArrayList<String>();
     command.add(runConfiguration.adlPath);
     if (runConfiguration.runtime != null) {
       command.add("-runtime");

@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner.mxml {
+import com.intellij.flex.uiDesigner.DocumentDisplayManager;
 import com.intellij.flex.uiDesigner.DocumentFactory;
 import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.DocumentReader;
@@ -19,7 +20,6 @@ import com.intellij.flex.uiDesigner.css.InlineCssRuleset;
 import com.intellij.flex.uiDesigner.css.StyleDeclarationProxy;
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContext;
-import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.AmfExtendedTypes;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
@@ -547,7 +547,7 @@ public final class MxmlReader implements DocumentReader {
   private static function mxContainerPreinitializeHandler(event:Event):void {
     var container:DisplayObjectContainer = DisplayObjectContainer(event.target);
     container.removeEventListener("preinitialize", mxContainerPreinitializeHandler);
-    var sm:SystemManagerSB = SystemManagerSB(Object(container).systemManager);
+    var sm:DocumentDisplayManager = DocumentDisplayManager(Object(container).systemManager);
     var mxNs:Namespace = Namespace(sm.getDefinitionByName("mx.core.mx_internal"));
     createMxContainerChildren(container, new QName(mxNs, "createdComponents"), new QName(mxNs, "numChildrenCreated"),
       Class(sm.getDefinitionByName(FLEX_EVENT_CLASS_NAME)), Class(sm.getDefinitionByName("mx.containers.ControlBar")),

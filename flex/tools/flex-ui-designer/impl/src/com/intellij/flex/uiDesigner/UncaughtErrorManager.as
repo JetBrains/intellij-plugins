@@ -1,8 +1,6 @@
 package com.intellij.flex.uiDesigner {
 import cocoa.util.StringUtil;
 
-import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
-
 import flash.display.LoaderInfo;
 import flash.events.ErrorEvent;
 import flash.events.UncaughtErrorEvent;
@@ -63,8 +61,8 @@ public class UncaughtErrorManager implements UiErrorHandler {
     if (object != null) {
       try {
         while (true) {
-          if (object is SystemManagerSB) {
-            documentFactory = DocumentFactory(SystemManagerSB(object).documentFactory);
+          if (object is DocumentDisplayManager) {
+            documentFactory = DocumentFactory(DocumentDisplayManager(object).documentFactory);
             break;
           }
           else if ((object = object.parent) == null) {

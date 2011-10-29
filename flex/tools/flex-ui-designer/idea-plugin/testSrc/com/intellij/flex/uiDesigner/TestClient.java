@@ -12,8 +12,7 @@ class TestClient extends Client {
 
   // MxmlTest on idea side splitted as MxmlTest, StatesTest and InjectedAsTest on client side.
   public void test(String filename, String parentFilename) throws IOException {
-    char c = parentFilename.charAt(0);
-    test(filename, charToTestId(c, parentFilename.length()));
+    test(filename, charToTestId(parentFilename.charAt(0), parentFilename.length()));
   }
   
   private static int charToTestId(char c, int l) {
@@ -34,7 +33,7 @@ class TestClient extends Client {
   }
 
   public static void test(Client client, String filename, int c) throws IOException {
-    // method only and only after openDocument and shouldn't be any calls between
+    // method called only and only after openDocument and shouldn't be any calls between
     // in non-tests the same agreement, except must be flush after openDocument always
     client.blockOut.end();
 

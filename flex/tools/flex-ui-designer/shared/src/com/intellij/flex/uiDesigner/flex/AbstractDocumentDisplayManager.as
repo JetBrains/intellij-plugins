@@ -4,10 +4,9 @@ import com.intellij.flex.uiDesigner.UiErrorHandler;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Rectangle;
-import flash.system.ApplicationDomain;
 
 [Abstract]
-public class AbstractSystemManager extends Sprite {
+public class AbstractDocumentDisplayManager extends Sprite {
   protected var _document:DisplayObject;
   public function get document():Object {
     return _document;

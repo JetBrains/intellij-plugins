@@ -18,7 +18,7 @@ public class AppTest extends BaseTestCase {
   
   [Test(async, nullableDocument)]
   public function close():void {
-    assertThat(projectManager.project, nullValue());
+    assertThat(project, nullValue());
     
     var openedWindows:Array = NativeApplication.nativeApplication.openedWindows;
     // it can not have time to be closed

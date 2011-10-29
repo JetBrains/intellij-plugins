@@ -31,8 +31,8 @@ public class DocumentFactoryManager {
   public function unregister(document:Document):void {
     var factory:DocumentFactory = document.documentFactory;
     factory.document = null;
-    if (document.systemManager != null) {
-      document.systemManager.removeEventHandlers();
+    if (document.displayManager != null) {
+      document.displayManager.removeEventHandlers();
     }
 
     var deleted:Vector.<int> = new Vector.<int>();

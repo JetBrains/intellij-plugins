@@ -2,7 +2,7 @@ package com.intellij.flex.uiDesigner {
 import flash.desktop.NativeApplication;
 import flash.display.NativeWindow;
 
-import org.flyti.plexus.PlexusManager;
+import org.jetbrains.actionSystem.DataManager;
 
 public final class ProjectUtil {
   public static function getProjectForActiveWindow():Project {
@@ -14,7 +14,7 @@ public final class ProjectUtil {
       }
     }
 
-    return ProjectManager(PlexusManager.instance.container.lookup(ProjectManager)).project;
+    return PlatformDataKeys.PROJECT.getData(DataManager.instance.getDataContext(activeWindow.stage));
   }
 }
 }

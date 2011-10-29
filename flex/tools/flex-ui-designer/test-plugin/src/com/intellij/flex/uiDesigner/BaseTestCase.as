@@ -11,7 +11,7 @@ internal class BaseTestCase implements TestCase {
   protected static const B:String = "B";
 
   protected var documentManager:DocumentManager;
-  protected var projectManager:ProjectManager;
+  protected var project:Project;
 
   protected var stateManager:StatesBarManager;
 
@@ -24,18 +24,18 @@ internal class BaseTestCase implements TestCase {
     _asyncSuccessHandler = value;
   }
   
-  public function init(projectManager:ProjectManager, socket:Socket):void {
-    this.projectManager = projectManager;
+  public function init(project:Project, socket:Socket):void {
+    this.project = project;
   }
   
   public function setUp():void {
-    if (projectManager.project != null) {
-      documentManager = DocumentManager(projectManager.project.getComponent(DocumentManager));
+    if (project != null) {
+      documentManager = DocumentManager(project.getComponent(DocumentManager));
       if (documentManager.document != null) {
         _app = documentManager.document.uiComponent;
       }
 
-      stateManager = StatesBarManager(projectManager.project.getComponent(StatesBarManager));
+      stateManager = StatesBarManager(project.getComponent(StatesBarManager));
     }
   }
 

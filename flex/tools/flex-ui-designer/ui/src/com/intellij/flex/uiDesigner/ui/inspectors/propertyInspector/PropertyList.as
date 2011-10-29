@@ -10,7 +10,6 @@ import cocoa.text.TextFormat;
 import com.intellij.flex.uiDesigner.ui.inspectors.AbstractTitledBlockItemRenderer;
 
 import flash.display.DisplayObject;
-import flash.filesystem.File;
 
 public class PropertyList extends AbstractTitledBlockItemRenderer {
   private const tableView:TableView = new TableView();
@@ -52,9 +51,7 @@ public class PropertyList extends AbstractTitledBlockItemRenderer {
     skin.y = border.layoutHeight;
     addChild(skin);
 
-    if (File.applicationDirectory.resolvePath("enableEditing").exists) {
-      new PropertyTableInteractor(tableView, valueRendererManager);
-    }
+    new PropertyTableInteractor(tableView, valueRendererManager);
   }
 
   override protected function measure():void {

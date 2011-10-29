@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner.ui {
 import cocoa.AbstractView;
 
-import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
+import com.intellij.flex.uiDesigner.DocumentDisplayManager;
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;
@@ -25,16 +25,16 @@ public class DocumentContainer extends AbstractView {
     _documentSysteManager.x = 16;
     _documentSysteManager.y = 16;
     addDisplayObject(_documentSysteManager);
-    SystemManagerSB(_documentSysteManager).added();
+    DocumentDisplayManager(_documentSysteManager).added();
   }
 
   override protected function updateDisplayList(w:Number, h:Number):void {
-    var documentSize:Rectangle = SystemManagerSB(_documentSysteManager).explicitDocumentSize;
+    var documentSize:Rectangle = DocumentDisplayManager(_documentSysteManager).explicitDocumentSize;
     const padding:Number = 15 + 1;
     const totalPadding:Number = padding * 2;
     var actualDocumentWidth:Number = isNaN(documentSize.width) ? w - totalPadding : documentSize.width;
     var actualDocumentHeight:Number = isNaN(documentSize.height) ? h - totalPadding : documentSize.height;
-    SystemManagerSB(_documentSysteManager).setActualDocumentSize(actualDocumentWidth, actualDocumentHeight);
+    DocumentDisplayManager(_documentSysteManager).setActualDocumentSize(actualDocumentWidth, actualDocumentHeight);
 
     var g:Graphics = graphics;
     g.clear();

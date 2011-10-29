@@ -1,4 +1,7 @@
 package com.intellij.flex.uiDesigner.flex {
+import com.intellij.flex.uiDesigner.DocumentDisplayManager;
+import com.intellij.flex.uiDesigner.ElementInfoProvider;
+
 import flash.display.BlendMode;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -20,15 +23,15 @@ import spark.primitives.supportClasses.GraphicElement;
 
 use namespace mx_internal;
 
-internal final class ElementUtilImpl implements ElementUtil {
+internal final class FlexElementInfoProvider implements ElementInfoProvider {
   private static const sharedPoint:Point = new Point();
   private static const MX_CORE_UITEXTFIELD:String = "mx.core.UITextField";
   private static const SKINNABLE_CONTAINER:String = "spark.components.SkinnableContainer";
 
-  private static var _instance:ElementUtilImpl;
-  internal static function get instance():ElementUtil {
+  private static var _instance:FlexElementInfoProvider;
+  internal static function get instance():ElementInfoProvider {
     if (_instance == null) {
-      _instance = new ElementUtilImpl();
+      _instance = new FlexElementInfoProvider();
     }
     return _instance;
   }
@@ -93,7 +96,7 @@ internal final class ElementUtilImpl implements ElementUtil {
     if (object != null && currentDomain.hasDefinition("mx.controls.scrollClasses.ScrollBar")) {
       if (object.parent is Class(currentDomain.getDefinition("mx.controls.scrollClasses.ScrollBar"))) {
         var p:DisplayObjectContainer = object.parent.parent;
-        return p is SystemManagerSB ? object.parent : p;
+        return p is DocumentDisplayManager ? object.parent : p;
       }
     }
 
@@ -127,7 +130,7 @@ internal final class ElementUtilImpl implements ElementUtil {
 
   // IDEA-71968, Skin as root document
   private static function documentIsSkin(object:Object):Boolean {
-    return object is Skin && !(Skin(object).parent is SystemManagerSB);
+    return object is Skin && !(Skin(object).parent is DocumentDisplayManager);
   }
 
   // see Panel title="One" in MouseSelectionTest. click on panel title — select panel, but click on panel content element Label — select this Label
@@ -152,7 +155,7 @@ internal final class ElementUtilImpl implements ElementUtil {
       var qualifiedClassName:String = getQualifiedClassName(element);
       source[count++] = qualifiedClassName.substr(qualifiedClassName.lastIndexOf("::") + 2);
     }
-    while (!((element = element.parent) is SystemManagerSB));
+    while (!((element = element.parent) is DocumentDisplayManager));
 
     return count;
   }

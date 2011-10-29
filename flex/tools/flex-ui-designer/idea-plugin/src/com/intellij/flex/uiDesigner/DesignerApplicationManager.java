@@ -52,6 +52,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -422,7 +423,7 @@ public class DesignerApplicationManager implements Disposable {
         indicator.setText(FlexUIDesignerBundle.message("copying.app.files"));
         DesignerApplicationUtil.copyAppFiles();
         indicator.setText(FlexUIDesignerBundle.message("finding.suitable.air.runtime"));
-        adlRunConfiguration = DesignerApplicationUtil.findSuitableFlexSdk();
+        adlRunConfiguration = DesignerApplicationUtil.createAdlRunConfiguration();
         if (adlRunConfiguration == null) {
           String message = FlexUIDesignerBundle.message(
               SystemInfo.isLinux ? "no.sdk.to.launch.designer.linux" : "no.sdk.to.launch.designer");
@@ -480,7 +481,7 @@ public class DesignerApplicationManager implements Disposable {
           }
           
           try {
-            adlProcessHandler = runAdl(runConfiguration, DesignerApplicationUtil.APP_DIR.getPath() + "/" + DesignerApplicationUtil.DESCRIPTOR_XML,
+            adlProcessHandler = runAdl(runConfiguration, DesignerApplicationUtil.APP_DIR.getPath() + File.separatorChar + DesignerApplicationUtil.DESCRIPTOR_XML,
                 new Consumer<Integer>() {
                   @Override
                   public void consume(Integer exitCode) {

@@ -58,10 +58,10 @@ public class ProjectView extends AbstractComponent implements Injectable {
 
   private static function editorTabSelectionChanged(oldItem:DocumentPaneItem, newItem:DocumentPaneItem):void {
     if (oldItem != null) {
-      oldItem.document.systemManager.deactivated();
+      oldItem.document.displayManager.deactivated();
     }
     if (newItem != null) {
-      newItem.document.systemManager.activated();
+      newItem.document.displayManager.activated();
     }
   }
 

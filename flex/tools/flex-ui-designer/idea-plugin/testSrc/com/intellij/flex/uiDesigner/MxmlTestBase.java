@@ -15,7 +15,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 abstract class MxmlTestBase extends AppTestBase {
-  private static int TIMEOUT = Boolean.valueOf(System.getProperty("fud.test.debug")) ? 8000 : 8;
+  private static int TIMEOUT = Boolean.valueOf(System.getProperty("fud.test.debug")) ? 0 : 8;
 
   protected static final String SPARK_COMPONENTS_FILE = "SparkComponents.mxml";
   
@@ -130,7 +130,7 @@ abstract class MxmlTestBase extends AppTestBase {
     
     testFiles(tester, 1, originalVFiles);
   }
-  
+
   protected void testFiles(final Tester tester, final int auxiliaryBorder, final VirtualFile... originalVFiles) throws Exception {
     VirtualFile[] testVFiles = configureByFiles(useRawProjectRoot() ? getVFile(getRawProjectRoot()) : null, originalVFiles).getChildren();
     for (int childrenLength = testVFiles.length, i = childrenLength - auxiliaryBorder; i < childrenLength; i++) {
@@ -142,13 +142,21 @@ abstract class MxmlTestBase extends AppTestBase {
       final VirtualFile originalVFile = originalVFiles[childrenLength - i - 1];
       final XmlFile xmlFile = (XmlFile) myPsiManager.findFile(file);
       assert xmlFile != null;
-      ApplicationManager.getApplication().executeOnPooledThread(new Callable<Void>() {
+
+      final Callable<Void> action = new Callable<Void>() {
         @Override
         public Void call() throws Exception {
           tester.test(file, xmlFile, originalVFile);
           return null;
         }
-      }).get(TIMEOUT, TimeUnit.SECONDS);
+      };
+
+      if (TIMEOUT == 0) {
+        action.call();
+      }
+      else {
+        ApplicationManager.getApplication().executeOnPooledThread(action).get(TIMEOUT, TimeUnit.SECONDS);
+      }
     }
   }
 

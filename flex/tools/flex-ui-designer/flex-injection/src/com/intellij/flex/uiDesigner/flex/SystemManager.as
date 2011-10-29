@@ -1,4 +1,6 @@
 package com.intellij.flex.uiDesigner.flex {
+import com.intellij.flex.uiDesigner.DocumentDisplayManager;
+import com.intellij.flex.uiDesigner.ElementInfoProvider;
 import com.intellij.flex.uiDesigner.ResourceBundleProvider;
 import com.intellij.flex.uiDesigner.UiErrorHandler;
 
@@ -52,10 +54,7 @@ import mx.styles.StyleManager;
 use namespace mx_internal;
 
 // must be IFocusManagerContainer, it is only way how UIComponent can find focusManager (see UIComponent.focusManager)
-public class SystemManager extends AbstractSystemManager implements ISystemManager, SystemManagerSB, IFocusManagerContainer, IActiveWindowManager {
-  // link
-  ElementUtilImpl;
-
+public class SystemManager extends AbstractDocumentDisplayManager implements ISystemManager, DocumentDisplayManager, IFocusManagerContainer, IActiveWindowManager {
   private static const INITIALIZE_ERROR_EVENT_TYPE:String = "initializeError";
 
   private static const skippedEvents:Dictionary = new Dictionary();
@@ -80,8 +79,8 @@ public class SystemManager extends AbstractSystemManager implements ISystemManag
   private const implementations:Dictionary = new Dictionary();
   private var mainFocusManager:MainFocusManagerSB;
 
-  public function get elementUtil():ElementUtil {
-    return ElementUtilImpl.instance;
+  public function get elementUtil():ElementInfoProvider {
+    return FlexElementInfoProvider.instance;
   }
 
   public function get sharedInitialized():Boolean {
