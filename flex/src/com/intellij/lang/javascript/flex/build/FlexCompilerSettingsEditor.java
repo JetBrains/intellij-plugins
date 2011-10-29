@@ -374,7 +374,7 @@ public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
   }
 
   public String getHelpTopic() {
-    return "reference.settings.modules.flex";
+    return "reference.settings.modules.facet.flex.settings";
   }
 
   public JComponent createComponent() {
