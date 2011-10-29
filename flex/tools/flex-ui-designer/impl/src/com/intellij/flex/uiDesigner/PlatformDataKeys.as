@@ -1,13 +1,13 @@
 package com.intellij.flex.uiDesigner {
 public final class PlatformDataKeys {
-  ProjectDataKey;
-
   public static var PROJECT:ProjectDataKey;
-  public static var DOCUMENT:DocumentDataKey = null;
-  public static var ELEMENT:ElementDataKey = null;
+  public static var DOCUMENT:DocumentDataKey;
+  public static var ELEMENT:ElementDataKey;
 
-  public static function burnInHellAdobe():void {
+  internal static function burnInHellAdobe():void {
     PROJECT = new ProjectDataKey();
+    DOCUMENT = new DocumentDataKey();
+    ELEMENT = new ElementDataKey();
   }
 }
 

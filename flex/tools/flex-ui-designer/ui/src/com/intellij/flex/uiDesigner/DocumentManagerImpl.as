@@ -188,7 +188,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       return false;
     }
 
-    document.module.project.window.activate();
+    NativeApplication.nativeApplication.activate(document.module.project.window);
     return true;
   }
 

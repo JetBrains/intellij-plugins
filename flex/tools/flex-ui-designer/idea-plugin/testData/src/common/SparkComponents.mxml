@@ -10,7 +10,7 @@
 
   <HGroup gap="33">
     <VGroup>
-      <Button label="Hello"/>
+      <Button label="Hello" toolTip="aevwrevwergv"/>
       <Button label="Go" enabled="false">
         <fontSize>30</fontSize>
       </Button>

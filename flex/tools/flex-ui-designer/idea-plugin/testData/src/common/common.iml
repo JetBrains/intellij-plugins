@@ -4,7 +4,7 @@
     <option name="TARGET_PLAYER_VERSION" value="10.2" />
     <option name="VERSION" value="3" />
   </component>
-  <component name="FlexBuildConfigurationManager" active="dd">
+  <component name="FlexBuildConfigurationManager" active="common">
     <configurations>
       <configuration name="GenericMxmlSupport" pure-as="true" main-class="GenericMxmlSupport" output-file="GenericMxmlSupport.swf" output-folder="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/idea-plugin/testData/out/production/common">
         <dependencies target-player="10.2">
@@ -23,16 +23,8 @@
         <packaging-android />
         <packaging-ios />
       </configuration>
-      <configuration name="dd" target-platform="Desktop" pure-as="true" main-class="GenericMxmlSupport" output-file="GenericMxmlSupport.swf" output-folder="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/idea-plugin/testData/out/production/common">
-        <dependencies>
-          <entries>
-            <entry library-id="805afa30-1ad0-46c8-9387-cb0760d1c8b3">
-              <dependency linkage="Merged" />
-            </entry>
-            <entry library-id="864c3765-0d40-41d8-97eb-b1f2aa2c4d56">
-              <dependency linkage="Merged" />
-            </entry>
-          </entries>
+      <configuration name="common" target-platform="Desktop" output-file="common.swf" output-folder="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/idea-plugin/testData/out/production/common">
+        <dependencies target-player="10.2" component-set="SparkOnly">
           <sdk library-id="bda50fbf-ccd5-43bc-800d-7ba94ad6d273" home-path="/Developer/SDKs/flex_4.5.1" />
         </dependencies>
         <compiler-options />
