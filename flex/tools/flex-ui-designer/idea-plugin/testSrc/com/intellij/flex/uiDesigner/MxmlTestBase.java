@@ -178,7 +178,7 @@ abstract class MxmlTestBase extends AppTestBase {
       String documentName = file.getNameWithoutExtension();
       System.out.print(documentName + '\n');
       client.openDocument(myModule, xmlFile);
-      client.test(documentName, originalFile.getParent().getName());
+      client.test(myModule, documentName, originalFile.getParent().getName());
       socketInputHandler.setExpectedErrorMessage(expectedErrorForDocument(documentName));
       socketInputHandler.process();
       passedCounter++;

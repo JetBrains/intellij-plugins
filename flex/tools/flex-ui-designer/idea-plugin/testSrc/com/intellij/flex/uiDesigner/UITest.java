@@ -44,7 +44,7 @@ public class UITest extends MxmlTestBase {
     if (roboflest == null) {
       roboflest = new Roboflest();
       reader = socketInputHandler.getReader();
-      client.test("getStageOffset", UI_TEST_CLASS_ID);
+      client.test(myModule, "getStageOffset", UI_TEST_CLASS_ID);
       socketInputHandler.process(new TestSocketInputHandler.CustomMessageHandler() {
         @Override
         public void process() throws IOException {
@@ -62,7 +62,7 @@ public class UITest extends MxmlTestBase {
   }
 
   private void assertClient(String methodName) throws IOException {
-    client.test(methodName, UI_TEST_CLASS_ID);
+    client.test(myModule, methodName, UI_TEST_CLASS_ID);
     socketInputHandler.process();
   }
 

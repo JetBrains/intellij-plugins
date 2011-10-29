@@ -4,7 +4,7 @@
     ]]></fx:Script>
 
   <Component role="{TestSocketDataHandler}">
-    <Requirement role="{ProjectManager}"/>
+    <Requirement role="{ModuleManager}"/>
   </Component>
   <Component role="{LibraryManager}" implementation="{TestLibraryManager}"/>
   <Component role="{UncaughtErrorManager}" implementation="{TestUncaughtErrorManager}"/>

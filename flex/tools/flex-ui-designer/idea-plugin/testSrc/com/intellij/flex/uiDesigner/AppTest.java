@@ -64,7 +64,7 @@ public class AppTest extends AppTestBase {
   
   private void callClientAssert(String methodName) throws IOException, InterruptedException {
     info.semaphore.down();
-    TestClient.test(Client.getInstance(), methodName, APP_TEST_CLASS_ID);
+    TestClient.test(Client.getInstance(), methodName.equals("close") ? null : myModule, methodName, APP_TEST_CLASS_ID);
     await();
     if (info.fail.get()) {
       fail();

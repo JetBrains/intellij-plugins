@@ -7,7 +7,6 @@ import avmplus.INCLUDE_TRAITS;
 import avmplus.USE_ITRAITS;
 import avmplus.describe;
 
-import flash.desktop.NativeApplication;
 import flash.display.NativeWindow;
 import flash.events.Event;
 import flash.events.IEventDispatcher;
@@ -19,19 +18,17 @@ import flash.utils.IDataInput;
 import flash.utils.Timer;
 import flash.utils.getQualifiedClassName;
 
-import org.jetbrains.actionSystem.DataManager;
-
 internal class TestSocketDataHandler implements SocketDataHandler {
   public static const CLASS:int = 1;
   
   private static const c:Vector.<Class> = new <Class>[CommonTest, StatesTest, InjectedASTest, AppTest, StyleTest, UITest, MxTest, MobileTest];
   private const describeCache:Dictionary = new Dictionary();
 
-  private var projectManager:ProjectManager;
+  private var moduleManager:ModuleManager;
   private var timeoutTimer:Timer;
 
-  public function TestSocketDataHandler(projectManager:ProjectManager) {
-    this.projectManager = projectManager;
+  public function TestSocketDataHandler(moduleManager:ModuleManager) {
+    this.moduleManager = moduleManager;
   }
   
   private var _socket:Socket;
@@ -72,15 +69,16 @@ internal class TestSocketDataHandler implements SocketDataHandler {
     return methodInfo;
   }
 
-  public function handleSockedData(messageSize:int, methodNameSize:int, data:IDataInput):void {
-    var method:String = data.readUTFBytes(methodNameSize);
-    var clazz:Class = c[data.readByte()];
+  public function handleSockedData(messageSize:int, methodNameSize:int, input:IDataInput):void {
+    const method:String = input.readUTFBytes(methodNameSize);
+    var moduleId:int = input.readShort();
+    const module:Module = moduleId == -1 ? null : moduleManager.getById(moduleId);
+    const clazz:Class = c[input.readByte()];
 
-    var window:NativeWindow = NativeWindow(NativeApplication.nativeApplication.openedWindows[0]);
-    var project:Project = PlatformDataKeys.PROJECT.getData(DataManager.instance.getDataContext(window.stage));
+    const project:Project = module == null ? null : module.project;
 
     if (clazz == UITest && method == "getStageOffset") {
-      getStageOffset(window);
+      getStageOffset(project.window);
       return;
     }
 
@@ -96,37 +94,31 @@ internal class TestSocketDataHandler implements SocketDataHandler {
         (documentManager.document == null || documentManager.document.documentFactory.file.name != testDocumentFilename)) {
       trace("wait document");
       documentManager.documentChanged.addOnce(function():void {
-        testOnSystemManagerReady(documentManager, clazz, method, testAnnotation);
+        testOnDocumentDisplayManagerReady(project, documentManager, clazz, method, testAnnotation);
       });
     }
     else {
-      testOnSystemManagerReady(documentManager, clazz, method, testAnnotation);
+      testOnDocumentDisplayManagerReady(project, documentManager, clazz, method, testAnnotation);
     }
   }
 
-  private function testOnSystemManagerReady(documentManager:DocumentManager, clazz:Class, method:String, testAnnotation:TestAnnotation):void {
-    // todo investigate, is it a problem for real code
-    // (components in user document can call systemManager.addEventListener, but our systemManager requires stage at this moment)?
-    var systemManager:DocumentDisplayManager = testAnnotation.nullableDocument ? null : documentManager.document.displayManager;
-    if (systemManager != null && systemManager.stage == null) {
-      systemManager.addRealEventListener(Event.ADDED_TO_STAGE, function(event:Event):void {
+  private function testOnDocumentDisplayManagerReady(project:Project, documentManager:DocumentManager, clazz:Class, method:String,
+                                                     testAnnotation:TestAnnotation):void {
+    var documentDisplayManager:DocumentDisplayManager = testAnnotation.nullableDocument ? null : documentManager.document.displayManager;
+    if (documentDisplayManager != null && documentDisplayManager.stage == null) {
+      documentDisplayManager.addRealEventListener(Event.ADDED_TO_STAGE, function(event:Event):void {
         IEventDispatcher(event.currentTarget).removeEventListener(event.type, arguments.callee);
-        test(clazz, method, testAnnotation);
+        test(project, clazz, method, testAnnotation);
       });
     }
     else {
-      test(clazz, method, testAnnotation);
+      test(project, clazz, method, testAnnotation);
     }
   }
   
-  private function test(clazz:Class, method:String, testAnnotation:TestAnnotation):void {
+  private function test(project:Project, clazz:Class, method:String, testAnnotation:TestAnnotation):void {
     trace("execute test " + method);
     var test:TestCase = new clazz();
-
-    var openedWindows:Array = NativeApplication.nativeApplication.openedWindows;
-    var window:NativeWindow = openedWindows.length > 0 ? NativeWindow(openedWindows[0]) : null;
-    var project:Project = window == null ? null : PlatformDataKeys.PROJECT.getData(DataManager.instance.getDataContext(window.stage));
-
     test.init(project, _socket);
     test.setUp();
 

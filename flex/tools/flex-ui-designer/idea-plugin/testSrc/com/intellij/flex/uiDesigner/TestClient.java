@@ -1,5 +1,8 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.openapi.module.Module;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.IOException;
 
 class TestClient extends Client {
@@ -11,8 +14,8 @@ class TestClient extends Client {
   private static final int STYLE_TEST_CLASS_ID = 4;
 
   // MxmlTest on idea side splitted as MxmlTest, StatesTest and InjectedAsTest on client side.
-  public void test(String filename, String parentFilename) throws IOException {
-    test(filename, charToTestId(parentFilename.charAt(0), parentFilename.length()));
+  public void test(Module module, String filename, String parentFilename) throws IOException {
+    test(module, filename, charToTestId(parentFilename.charAt(0), parentFilename.length()));
   }
   
   private static int charToTestId(char c, int l) {
@@ -28,17 +31,23 @@ class TestClient extends Client {
     }
   }
   
-  public void test(String filename, int c) throws IOException {
-    test(this, filename, c);
+  public void test(Module module, String filename, int classId) throws IOException {
+    test(this, module, filename, classId);
   }
 
-  public static void test(Client client, String filename, int c) throws IOException {
+  public static void test(Client client, @Nullable Module module, String filename, int c) throws IOException {
     // method called only and only after openDocument and shouldn't be any calls between
     // in non-tests the same agreement, except must be flush after openDocument always
     client.blockOut.end();
 
     client.out.write(1);
     client.out.writeAmfUtf(filename, false);
+    if (module != null) {
+      client.writeId(module, client.out);
+    }
+    else {
+      client.out.writeShort(-1);
+    }
     client.out.write(c);
 
     client.flush();
