@@ -4,7 +4,7 @@
     <option name="TARGET_PLAYER_VERSION" value="10.2" />
     <option name="VERSION" value="3" />
   </component>
-  <component name="FlexBuildConfigurationManager" active="common">
+  <component name="FlexBuildConfigurationManager" active="GenericMxmlSupport">
     <configurations>
       <configuration name="GenericMxmlSupport" pure-as="true" main-class="GenericMxmlSupport" output-file="GenericMxmlSupport.swf" output-folder="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/idea-plugin/testData/out/production/common">
         <dependencies target-player="10.2">
