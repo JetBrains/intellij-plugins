@@ -228,6 +228,7 @@
     <lang.braceMatcher language="OGNL"
                        implementationClass="com.intellij.lang.ognl.highlight.OgnlBraceMatcher"/>
     <quoteHandler fileType="OGNL" className="com.intellij.lang.ognl.highlight.OgnlQuoteHandler"/>
+    <typedHandler implementation="com.intellij.lang.ognl.OgnlTypedHandler"/>
     <completion.contributor language="OGNL"
                             implementationClass="com.intellij.lang.ognl.completion.OgnlKeywordCompletionContributor"/>
 
