@@ -92,6 +92,7 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
 
         descriptors.put(uri, reference);
       }
+      assert !module.getProject().isDisposed() : module.getProject() + " already disposed";
       return reference.getValue(module);
     }
     return null;
