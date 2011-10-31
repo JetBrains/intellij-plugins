@@ -16,10 +16,7 @@
 package com.intellij.lang.ognl.completion;
 
 import com.intellij.codeInsight.completion.LightCompletionTestCase;
-import com.intellij.lang.ognl.OgnlFileType;
-import com.intellij.lang.ognl.OgnlLanguage;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.lang.ognl.OgnlTestUtils;
 
 import java.util.Arrays;
 
@@ -34,35 +31,20 @@ abstract class OgnlCompletionTestCase extends LightCompletionTestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    associateOgnlFileType(false);
+    OgnlTestUtils.installOgnlFileType();
   }
 
   @Override
   protected void tearDown() throws Exception {
-    associateOgnlFileType(true);
+    OgnlTestUtils.removeOgnlFileType();
 
     super.tearDown();
   }
 
-  private static void associateOgnlFileType(final boolean remove) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        if (remove) {
-          FileTypeManager.getInstance().removeAssociatedExtension(OgnlFileType.INSTANCE,
-                                                                  OgnlFileType.INSTANCE.getDefaultExtension());
-          return;
-        }
-        FileTypeManager.getInstance().associateExtension(OgnlFileType.INSTANCE,
-                                                         OgnlFileType.INSTANCE.getDefaultExtension());
-      }
-    });
-  }
-
   protected void doTest(final String ognlExpression,
                         final String... expectedCompletionItems) throws Throwable {
-    configureFromFileText("test." + OgnlFileType.INSTANCE.getDefaultExtension(),
-                          OgnlLanguage.EXPRESSION_PREFIX + ognlExpression + OgnlLanguage.EXPRESSION_SUFFIX);
+    configureFromFileText(OgnlTestUtils.DUMMY_OGNL_FILE_NAME,
+                          OgnlTestUtils.createExpression(ognlExpression));
     complete();
 
     Arrays.sort(expectedCompletionItems);

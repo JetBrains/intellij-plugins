@@ -41,6 +41,8 @@ public class OgnlParserDefinition implements ParserDefinition {
 
   private static final IFileElementType OGNL_FILE = new IFileElementType(OgnlLanguage.INSTANCE);
 
+  private static final TokenSet WHITE_SPACE_TOKENS = TokenSet.create(TokenType.WHITE_SPACE);
+
   @NotNull
   @Override
   public Lexer createLexer(final Project project) {
@@ -60,7 +62,7 @@ public class OgnlParserDefinition implements ParserDefinition {
   @NotNull
   @Override
   public TokenSet getWhitespaceTokens() {
-    return TokenSet.create(TokenType.WHITE_SPACE);
+    return WHITE_SPACE_TOKENS;
   }
 
   @NotNull

@@ -17,6 +17,7 @@ package com.intellij.lang.ognl.psi;
 
 import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.parsing.OgnlElementTypes;
+import com.intellij.psi.PsiType;
 import org.intellij.lang.annotations.Language;
 
 /**
@@ -32,7 +33,8 @@ public class ConditionalExpressionPsiTest extends PsiTestCase {
     final OgnlExpression condition = expression.getCondition();
     assertEquals("true", condition.getText());
     assertElementType(OgnlElementTypes.BOOLEAN_LITERAL, condition);
-
+    assertEquals(PsiType.INT, expression.getType());
+    
     final OgnlExpression thenExpression = expression.getThen();
     assertEquals(0, thenExpression.getConstantValue());
     assertElementType(OgnlElementTypes.INTEGER_LITERAL, thenExpression);

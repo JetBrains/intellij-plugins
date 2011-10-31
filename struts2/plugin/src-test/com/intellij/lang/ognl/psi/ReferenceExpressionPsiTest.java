@@ -29,6 +29,7 @@ public class ReferenceExpressionPsiTest extends PsiTestCase {
   public void testSimpleReference() {
     final OgnlReferenceExpression expression = parse("exp");
     assertEquals("exp", expression.getPresentation().getPresentableText());
+    assertNull(expression.getType());
 
     final PsiReference reference = expression.getReference();
     assertNotNull(reference);

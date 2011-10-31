@@ -17,6 +17,7 @@ package com.intellij.lang.ognl.psi;
 
 import com.intellij.lang.ognl.OgnlFile;
 import com.intellij.lang.ognl.OgnlLanguage;
+import com.intellij.lang.ognl.OgnlTestUtils;
 import com.intellij.lang.ognl.parsing.OgnlElementType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
@@ -43,7 +44,7 @@ public abstract class PsiTestCase extends LightPlatformTestCase {
   protected PsiElement[] parseExpressions(@Language(value = OgnlLanguage.ID,
                                                     prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                                     suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String text) {
-    final OgnlFile ognlFile = createFile(OgnlLanguage.EXPRESSION_PREFIX + text + OgnlLanguage.EXPRESSION_SUFFIX);
+    final OgnlFile ognlFile = createFile(OgnlTestUtils.createExpression(text));
     assertNotNull(ognlFile);
 
     final PsiElement firstChild = ognlFile.getFirstChild();
