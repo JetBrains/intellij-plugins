@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 import com.intellij.flex.uiDesigner.libraries.LibrarySetItem;
+import com.intellij.flex.uiDesigner.libraries.LibrarySorter.FlexLibsNames;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.WriteAction;
@@ -9,6 +10,7 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
@@ -26,6 +28,7 @@ public class LibrarySorterTest extends MxmlTestBase {
 
   @Override
   protected void modifySdk(final Sdk sdk, SdkModificator sdkModificator) {
+    Condition<String> condition = null;
     // must be added before super (i. e. before framework.swc)
     if (getName().equals("testDelete")) {
       addLibrary(sdkModificator, "flash-integration_4.1.swc");
@@ -33,8 +36,16 @@ public class LibrarySorterTest extends MxmlTestBase {
     else if (getName().equals("testIgnoreSwcWithoutLibraryFile")) {
       addLibrary(sdkModificator, "swcWithoutLibrarySwf.swc");
     }
-    
-    super.modifySdk(sdk, sdkModificator);
+    else if (getName().equals("testMoveFlexSdkLibToSdkLibsIfNot")) {
+      condition = new Condition<String>() {
+        @Override
+        public boolean value(String name) {
+          return !name.startsWith(FlexLibsNames.FRAMEWORK);
+        }
+      };
+    }
+
+    super.modifySdk(sdk, sdkModificator, condition);
 
     if (getName().equals("testDeleteIfAllDefitionsHaveUnresolvedDependencies")) {
       addLibrary(sdkModificator, "spark_dmv_4.5.swc");
@@ -68,6 +79,11 @@ public class LibrarySorterTest extends MxmlTestBase {
       addLibrary(model, path + "flexunit-4.1.0-8-flex_4.1.0.16076.swc");
       addLibrary(model, path + "FlexUnit1Lib.swc");
     }
+    else if (getName().equals("testMoveFlexSdkLibToSdkLibsIfNot")) {
+      addLibrary(model, flexSdkRootPath + "/framework.swc");
+      addLibrary(model, "MinimalComps_0_9_10.swc");
+      addLibrary(model, getFudHome() + "/test-data-helper/target/test-data-helper.swc");
+    }
   }
 
   @Override
@@ -93,6 +109,10 @@ public class LibrarySorterTest extends MxmlTestBase {
   @Flex(version="4.1")
   public void _TODO_testDelete() throws Exception {
     testFile(SPARK_COMPONENTS_FILE);
+  }
+
+  public void testMoveFlexSdkLibToSdkLibsIfNot() throws Exception {
+    testFile("GenericMxmlSupport.mxml");
   }
 
   public void testResolveToClassWithBiggestTimestamp() throws Exception {

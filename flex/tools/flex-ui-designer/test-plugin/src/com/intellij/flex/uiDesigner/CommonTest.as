@@ -24,6 +24,10 @@ public class CommonTest extends BaseTestCase {
     assertThat(app, m);
   }
 
+  public function GenericMxmlSupport():void {
+
+  }
+
   public function Embed():void {
     validateUI(); // force swf get
     var bitmapData:BitmapData = app.getElementAt(0).getElementAt(0).source.data;

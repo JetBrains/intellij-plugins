@@ -44,7 +44,7 @@ class LibraryCollector {
   final Consumer<Library> initializer;
   private final Project project;
 
-  // wait AS-200
+  // AS-200
   private final Set<VirtualFile> uniqueGuard = new THashSet<VirtualFile>();
 
   private final LibraryManager libraryManager;

@@ -56,7 +56,7 @@ public class LibrarySorter {
 
   private static final Map<String,Set<CharSequence>> BAD_FLEX_CLASSES = new THashMap<String, Set<CharSequence>>();
   
-  static interface FlexLibsNames {
+  public static interface FlexLibsNames {
     String AIRSPARK = "airspark";
     String SPARK = "spark";
     String FRAMEWORK = "framework";

@@ -16,13 +16,16 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import junit.framework.AssertionFailedError;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -90,12 +93,16 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   }
   
   protected void modifySdk(Sdk sdk, SdkModificator sdkModificator) {
+    modifySdk(sdk, sdkModificator, null);
+  }
+
+  protected void modifySdk(Sdk sdk, SdkModificator sdkModificator, @Nullable Condition<String> filter) {
     sdkModificator.addRoot(getVFile("lib/playerglobal"), OrderRootType.CLASSES);
-    
+
     String[] list = new File(flexSdkRootPath).list();
     Arrays.sort(list);
     for (String name : list) {
-      if (name.endsWith(".swc")) {
+      if (name.endsWith(".swc") && (filter == null || filter.value(name))) {
         addLibrary(sdkModificator, flexSdkRootPath + "/" + name);
       }
     }
