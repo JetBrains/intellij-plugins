@@ -18,17 +18,18 @@ public class JSUmlDndProvider implements DiagramDnDProvider<Object> {
     return false;
   }
 
-  public Object wrapToModelObject(Object o, Project project) {
+  public Object[] wrapToModelObject(Object o, Project project) {
+    Object result = null;
     if (o instanceof PsiDirectory) {
-      return com.intellij.lang.javascript.uml.JSVfsResolver.getQualifiedNameStatic(o);
+      result = com.intellij.lang.javascript.uml.JSVfsResolver.getQualifiedNameStatic(o);
     }
     else if (o instanceof JSFile) {
-      return JSPsiImplUtils.findQualifiedElement((JSFile)o);
+      result = JSPsiImplUtils.findQualifiedElement((JSFile)o);
     }
     else if (o instanceof XmlFile) {
-      return XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)o);
+      result = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)o);
     }
-    return null;
+    return result == null ? null : new Object[]{result};
   }
 
 }
