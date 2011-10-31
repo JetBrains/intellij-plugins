@@ -25,10 +25,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.CachedValue;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.psi.util.*;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
@@ -42,21 +39,24 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
  * @author Maxim.Mossienko
  */
 public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
-  private static final Key<Map<String, CachedValue<XmlFile>>> DESCRIPTORS_MAP_IN_MODULE = Key.create("FLEX_DESCRIPTORS_MAP_IN_MODULE");
-  private static Pattern prefixPattern = Pattern.compile("[a-z_][a-z_0-9]*");
+  private static final Pattern prefixPattern = Pattern.compile("[a-z_][a-z_0-9]*");
 
   @Nullable
   public XmlFile getSchema(@NotNull @NonNls final String url, final Module module, @NotNull final PsiFile baseFile) {
     return url.length() > 0 && JavaScriptSupportLoader.isFlexMxmFile(baseFile) ? getFakeSchemaReference(url, module) : null;
   }
 
+  private static final Key<Map<String, ParameterizedCachedValue<XmlFile, Module>>> DESCRIPTORS_MAP_IN_MODULE = Key.create("FLEX_DESCRIPTORS_MAP_IN_MODULE");
   @Nullable
   private static synchronized XmlFile getFakeSchemaReference(final String uri, @Nullable final Module module) {
     if (module == null) {
@@ -68,30 +68,31 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
     if ((FlexUtils.isFlexModuleOrContainsFlexFacet(module) || (sdk != null && sdk.getSdkType() instanceof IFlexSdkType)) ||
         !CodeContext.isStdNamespace(uri)) {
 
-      Map<String, CachedValue<XmlFile>> descriptors = module.getUserData(DESCRIPTORS_MAP_IN_MODULE);
+      Map<String, ParameterizedCachedValue<XmlFile, Module>> descriptors = module.getUserData(DESCRIPTORS_MAP_IN_MODULE);
       if (descriptors == null) {
-        descriptors = new THashMap<String, CachedValue<XmlFile>>();
+        descriptors = new THashMap<String, ParameterizedCachedValue<XmlFile, Module>>();
         module.putUserData(DESCRIPTORS_MAP_IN_MODULE, descriptors);
       }
 
-      CachedValue<XmlFile> reference = descriptors.get(uri);
+      ParameterizedCachedValue<XmlFile, Module> reference = descriptors.get(uri);
       if (reference == null) {
-        reference = CachedValuesManager.getManager(module.getProject()).createCachedValue(new CachedValueProvider<XmlFile>() {
-          final URL resource = FlexSchemaHandler.class.getResource("z.xsd");
-          final VirtualFile fileByURL = VfsUtil.findFileByURL(resource);
+        reference = CachedValuesManager.getManager(module.getProject()).createParameterizedCachedValue(new ParameterizedCachedValueProvider<XmlFile, Module>() {
+          @Override
+          public CachedValueProvider.Result<XmlFile> compute(Module module) {
+            final URL resource = FlexSchemaHandler.class.getResource("z.xsd");
+            final VirtualFile fileByURL = VfsUtil.findFileByURL(resource);
 
-          public Result<XmlFile> compute() {
-            XmlFile result = (XmlFile)PsiManager.getInstance(module.getProject()).findFile(fileByURL).copy();
-            result.putUserData(FlexMxmlNSDescriptor.NS_KEY, uri);
-            result.putUserData(FlexMxmlNSDescriptor.MODULE_KEY, module);
+              XmlFile result = (XmlFile)PsiManager.getInstance(module.getProject()).findFile(fileByURL).copy();
+              result.putUserData(FlexMxmlNSDescriptor.NS_KEY, uri);
+              result.putUserData(FlexMxmlNSDescriptor.MODULE_KEY, module);
 
-            return new Result<XmlFile>(result, PsiModificationTracker.MODIFICATION_COUNT);
-          }
+              return new CachedValueProvider.Result<XmlFile>(result, PsiModificationTracker.MODIFICATION_COUNT);
+            }
         }, false);
 
         descriptors.put(uri, reference);
       }
-      return reference.getValue();
+      return reference.getValue(module);
     }
     return null;
   }
