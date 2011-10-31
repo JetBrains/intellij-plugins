@@ -99,6 +99,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   private JComboBox myTargetPlayerCombo;
   private JLabel myComponentSetLabel;
   private JComboBox myComponentSetCombo;
+  private JLabel myFrameworkLinkageLabel;
   private JComboBox myFrameworkLinkageCombo;
   private JPanel myTablePanel;
   private final EditableTreeTable<MyTableItem> myTable;
@@ -605,7 +606,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
   };
 
-  private static final ColumnInfo<MyTableItem, LinkageType> DEPENDENCY_TYPE_COLUMN = new ColumnInfo<MyTableItem, LinkageType>("Type") {
+  private static final ColumnInfo<MyTableItem, LinkageType> DEPENDENCY_TYPE_COLUMN = new ColumnInfo<MyTableItem, LinkageType>("Linkage") {
 
     @Override
     public LinkageType valueOf(MyTableItem item) {
@@ -651,6 +652,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     myTargetPlayerLabel.setVisible(myNature.isWebPlatform());
     myTargetPlayerCombo.setVisible(myNature.isWebPlatform());
+
+    myFrameworkLinkageLabel.setVisible(!myNature.pureAS);
+    myFrameworkLinkageCombo.setVisible(!myNature.pureAS);
 
     mySdkPanel.addListener(new ChangeListener() {
       public void stateChanged(final ChangeEvent e) {
@@ -823,12 +827,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
     }, myDisposable);
   }
-  
+
   @Nullable
   FlexSdk getCurrentSdk() {
     return mySdkPanel.getCurrentSdk();
   }
-  
+
   void addSdkChangeListener(final ChangeListener changeListener) {
     mySdkPanel.addListener(changeListener, myDisposable);
   }

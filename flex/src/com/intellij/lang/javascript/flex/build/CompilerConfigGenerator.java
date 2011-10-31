@@ -129,8 +129,7 @@ public class CompilerConfigGenerator {
    */
   private void handleOptionsWithSpecialValues(final Element rootElement) {
     for (final CompilerOptionInfo info : CompilerOptionInfo.getOptionsWithSpecialValues()) {
-      final Pair<String, ValueSource> valueAndSource =
-        getValueAndSource(info);
+      final Pair<String, ValueSource> valueAndSource = getValueAndSource(info);
       if (valueAndSource.second == ValueSource.GlobalDefault && !valueAndSource.first.isEmpty()) {
         // do not add empty preloader or theme to Web/Desktop, but add not-empty for Mobile projects
         addOption(rootElement, info, valueAndSource.first);

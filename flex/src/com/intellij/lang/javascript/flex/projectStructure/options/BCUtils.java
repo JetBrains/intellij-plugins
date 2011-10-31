@@ -24,10 +24,10 @@ import java.util.Collection;
  */
 public class BCUtils {
 
-  private static LinkageType[] LIB_LINKAGES = {LinkageType.Default, LinkageType.Merged, LinkageType.External};
+  private static LinkageType[] FLEX_LIB_LINKAGES = {LinkageType.Default, LinkageType.Merged, LinkageType.External};
   private static LinkageType[] FLEX_MOBILE_APP_LINKAGES = {LinkageType.Default};
   private static LinkageType[] FLEX_WEB_OR_DESKTOP_APP_LINKAGES = {LinkageType.Default, LinkageType.Merged, LinkageType.RSL};
-  private static LinkageType[] AS_APP_LINKAGES = {LinkageType.Default};
+  private static LinkageType[] AS_LINKAGES = {LinkageType.Default};
 
   private static Logger LOG = Logger.getInstance(BCUtils.class);
 
@@ -40,30 +40,23 @@ public class BCUtils {
   }
 
   public static LinkageType[] getSuitableFrameworkLinkages(BuildConfigurationNature nature) {
-    if (nature.isLib()) {
-      return LIB_LINKAGES;
-    }
-    else if (nature.pureAS) {
-      return AS_APP_LINKAGES;
-    }
-    else {
-      return nature.isMobilePlatform() ? FLEX_MOBILE_APP_LINKAGES : FLEX_WEB_OR_DESKTOP_APP_LINKAGES;
-    }
+    return nature.pureAS
+           ? AS_LINKAGES
+           : nature.isLib()
+             ? FLEX_LIB_LINKAGES
+             : nature.isMobilePlatform()
+               ? FLEX_MOBILE_APP_LINKAGES
+               : FLEX_WEB_OR_DESKTOP_APP_LINKAGES;
   }
 
   public static LinkageType getDefaultFrameworkLinkage(BuildConfigurationNature nature) {
-    if (nature.isLib()) {
-      return LinkageType.External;
-    }
-    else if (nature.pureAS) {
-      return LinkageType.Merged;
-    }
-    else if (nature.isWebPlatform()) {
-      return LinkageType.RSL; // Web Flex App
-    }
-    else {
-      return LinkageType.Merged; // AIR Flex App (Desktop or Mobile)
-    }
+    return nature.isLib()
+           ? LinkageType.External
+           : nature.pureAS
+             ? LinkageType.Merged
+             : nature.isWebPlatform()
+               ? LinkageType.RSL // Web Flex App
+               : LinkageType.Merged; // AIR Flex App (Desktop or Mobile)
   }
 
   /**
@@ -99,6 +92,8 @@ public class BCUtils {
       return null;
     }
 
+    final LinkageType linkageType;
+
     final int lastSlashIndex = path.lastIndexOf('/');
     if (lastSlashIndex <= 0 || lastSlashIndex == path.length() - 1) {
       LOG.error("Unexpected Flex SDK root: " + path);
@@ -107,23 +102,24 @@ public class BCUtils {
     final String folderPath = path.substring(0, lastSlashIndex);
 
     if (folderPath.endsWith("/frameworks/libs")) {
-      return getLibraryFromLibsFolderLinkage(bcNature, componentSet, swcName);
+      linkageType = getLibraryFromLibsFolderLinkage(bcNature, componentSet, swcName);
+    }
+    else if (folderPath.endsWith("/frameworks/libs/air")) {
+      linkageType = getAirLibraryLinkage(bcNature, componentSet, swcName);
+    }
+    else if (folderPath.endsWith("/frameworks/libs/mobile")) {
+      linkageType = getMobileLibraryLinkage(bcNature, swcName);
+    }
+    else if (folderPath.endsWith("/frameworks/libs/mx")) {
+      linkageType = getMxLibraryLinkage(bcNature, componentSet, swcName);
+    }
+    else {
+      LOG.error("Unknown Flex SDK root: " + path);
+      linkageType = LinkageType.Merged;
     }
 
-    if (folderPath.endsWith("/frameworks/libs/air")) {
-      return getAirLibraryLinkage(bcNature, componentSet, swcName);
-    }
-
-    if (folderPath.endsWith("/frameworks/libs/mobile")) {
-      return getMobileLibraryLinkage(bcNature, swcName);
-    }
-
-    if (folderPath.endsWith("/frameworks/libs/mx")) {
-      return getMxLibraryLinkage(bcNature, componentSet, swcName);
-    }
-
-    LOG.error("Unknown Flex SDK root: " + path);
-    return LinkageType.Merged;
+    // our difference from FB is that in case of library _ALL_ SWCs from SDK are external by default (except *global.swc)
+    return bcNature.isLib() && linkageType != null ? LinkageType.Default : linkageType;
   }
 
   @Nullable

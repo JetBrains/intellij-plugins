@@ -22,7 +22,7 @@
           <text value="C&amp;omponent set:"/>
         </properties>
       </component>
-      <component id="92a5c" class="javax.swing.JLabel">
+      <component id="92a5c" class="javax.swing.JLabel" binding="myFrameworkLinkageLabel">
         <constraints>
           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -33,9 +33,7 @@
       </component>
       <component id="b6bb2" class="javax.swing.JComboBox" binding="myComponentSetCombo">
         <constraints>
-          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="96" height="24"/>
-          </grid>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <model/>
@@ -87,7 +85,9 @@
       </component>
       <component id="a2f1a" class="javax.swing.JComboBox" binding="myTargetPlayerCombo" default-binding="true">
         <constraints>
-          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="100" height="-1"/>
+          </grid>
         </constraints>
         <properties>
           <model/>

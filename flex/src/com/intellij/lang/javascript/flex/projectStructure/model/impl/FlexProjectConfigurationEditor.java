@@ -33,6 +33,7 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesModifiab
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -214,6 +215,11 @@ public class FlexProjectConfigurationEditor implements Disposable {
     if (configuration.getTargetPlatform() != TargetPlatform.Web || configuration.getOutputType() != OutputType.Application) {
       configuration.setUseHtmlWrapper(defaultConfiguration.isUseHtmlWrapper());
       configuration.setWrapperTemplatePath(defaultConfiguration.getWrapperTemplatePath());
+    }
+
+    if (!ArrayUtil.contains(configuration.getDependencies().getFrameworkLinkage(),
+                            BCUtils.getSuitableFrameworkLinkages(configuration.getNature()))) {
+      configuration.getDependencies().setFrameworkLinkage(defaultConfiguration.getDependencies().getFrameworkLinkage());
     }
 
     if (configuration.getTargetPlatform() != TargetPlatform.Web) {
