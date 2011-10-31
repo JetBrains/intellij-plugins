@@ -205,6 +205,8 @@ public class FlexIdeRunnerParameters extends BCBasedRunnerParameters implements 
       final ModifiableFlexIdeBuildConfiguration overriddenBC = Factory.getCopy(moduleAndBC.second);
       overriddenBC.setMainClass(myOverriddenMainClass);
       overriddenBC.setOutputFileName(myOverriddenOutputFileName);
+      overriddenBC.getAndroidPackagingOptions().setPackageFileName(FileUtil.getNameWithoutExtension(myOverriddenOutputFileName) + ".apk");
+      overriddenBC.getIosPackagingOptions().setPackageFileName(FileUtil.getNameWithoutExtension(myOverriddenOutputFileName) + ".ipa");
 
       if (overriddenBC.getOutputType() != OutputType.Application) {
         overriddenBC.setOutputType(OutputType.Application);
@@ -222,7 +224,6 @@ public class FlexIdeRunnerParameters extends BCBasedRunnerParameters implements 
 
         final ModifiableAndroidPackagingOptions androidOptions = overriddenBC.getAndroidPackagingOptions();
         androidOptions.setEnabled(true);
-        androidOptions.setPackageFileName(FileUtil.getNameWithoutExtension(myOverriddenOutputFileName) + ".apk");
         androidOptions.setUseGeneratedDescriptor(true);
         androidOptions.getSigningOptions().setUseTempCertificate(true);
 
