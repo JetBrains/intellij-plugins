@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.model.jam.convention;
 
-import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiPackage;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
@@ -60,8 +59,7 @@ public class JamParentPackageTest extends JamConventionTestBase<JavaModuleFixtur
     createStrutsFileSet(STRUTS_XML);
 
     myFixture.configureByFile("/src/jam/package-info.java");
-    final PsiPackage myPackage = JavaPsiFacade.getInstance(myProject).findPackage("jam");
-    assertNotNull(myPackage);
+    final PsiPackage myPackage = myFixture.findPackage("jam");
 
     final JamParentPackage jamElement = JamParentPackage.META_PACKAGE.getJamElement(myPackage);
     assertNotNull(jamElement);
