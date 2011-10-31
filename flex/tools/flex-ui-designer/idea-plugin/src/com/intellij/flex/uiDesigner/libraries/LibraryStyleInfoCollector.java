@@ -18,7 +18,7 @@ import gnu.trove.THashSet;
 
 import java.util.Set;
 
-public class LibraryStyleInfoCollector implements Consumer<Library> {
+class LibraryStyleInfoCollector implements Consumer<Library> {
   private final Project project;
   private final Module module;
 

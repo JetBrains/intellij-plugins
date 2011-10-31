@@ -4,7 +4,7 @@ import com.intellij.flex.uiDesigner.UiErrorHandler;
 import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.events.EventDispatcher;
-import flash.utils.getDefinitionByName;
+import flash.system.ApplicationDomain;
 
 import mx.core.UIComponentGlobals;
 import mx.core.mx_internal;
@@ -40,15 +40,23 @@ public class LayoutManager extends EventDispatcher implements ILayoutManager {
 
   private var currentObject:ILayoutManagerClient;
 
-  private var fteTextFieldClass:Object;
+  private var fteTextFieldClass:Class;
 
   public function LayoutManager(displayDispatcher:DisplayObject, uiErrorHandler:UiErrorHandler):void {
     this.displayDispatcher = displayDispatcher;
     this.uiErrorHandler = uiErrorHandler;
 
-    fteTextFieldClass = getDefinitionByName("mx.core.FTETextField") as Class;
-    if (fteTextFieldClass != null) {
-      fteTextFieldClass.staticHandlersAdded = true;
+    var applicationDomain:ApplicationDomain = ApplicationDomain.currentDomain;
+    if (applicationDomain.hasDefinition("mx.core.FTETextField")) {
+      fteTextFieldClass = applicationDomain.getDefinition("mx.core.FTETextField") as Class;
+      if (fteTextFieldClass != null) {
+        if ("staticHandlersAdded" in fteTextFieldClass) {
+          fteTextFieldClass.staticHandlersAdded = true;
+        }
+        else {
+          fteTextFieldClass = null;
+        }
+      }
     }
   }
 
@@ -419,7 +427,7 @@ public class LayoutManager extends EventDispatcher implements ILayoutManager {
       doPhasedInstantiation();
 
       if (fteTextFieldClass != null) {
-        fteTextFieldClass.staticRenderHandler(null);
+        fteTextFieldClass["staticRenderHandler"](null);
       }
 
       if (phasedInstantiationDone != null) {

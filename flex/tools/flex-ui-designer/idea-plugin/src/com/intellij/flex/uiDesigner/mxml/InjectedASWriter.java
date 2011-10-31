@@ -71,14 +71,7 @@ class InjectedASWriter implements ValueReferenceResolver {
 
   public ValueWriter processProperty(PsiElement host, String name, @Nullable String type, boolean isStyle, @NotNull MxmlObjectReferenceProvider mxmlObjectReferenceProvider)
     throws InvalidPropertyException {
-    final InjectedPsiVisitor visitor;
-    if (JSCommonTypeNames.ARRAY_CLASS_NAME.equals(type)) {
-      visitor = new InjectedPsiVisitor(host, JSCommonTypeNames.ARRAY_CLASS_NAME, problemsHolder);
-    }
-    else {
-      visitor = new InjectedPsiVisitor(host, type, problemsHolder);
-    }
-
+    final InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, type, problemsHolder);
     InjectedLanguageUtil.enumerate(host, visitor);
 
     //noinspection ThrowableResultOfMethodCallIgnored

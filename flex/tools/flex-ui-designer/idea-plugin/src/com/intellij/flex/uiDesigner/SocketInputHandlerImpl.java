@@ -349,7 +349,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
     AccessToken token = ReadAction.start();
     try {
-      PropertiesFile resourceBundleFile;
+      final PropertiesFile resourceBundleFile;
       if (projectInfo == null) {
         // project may be closed, but client is not closed yet (AppTest#testCloseAndOpenProject)
         LOG.warn("Skip getResourceBundle(" + locale + ", " + bundleName + ") due to cannot find project with id " + projectId);

@@ -32,8 +32,6 @@ import static com.intellij.flex.uiDesigner.mxml.MxmlWriter.LOG;
 import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PropertyKind.*;
 
 class PropertyProcessor implements ValueWriter {
-  
-
   enum PropertyKind {
     ARRAY, VECTOR, COMPLEX, COMPLEX_STYLE, PRIMITIVE, PRIMITIVE_STYLE, IGNORE;
 
@@ -135,6 +133,10 @@ class PropertyProcessor implements ValueWriter {
       if (valueWriter != null) {
         return valueWriter;
       }
+    }
+
+    if (typeName.equals(FlexAnnotationNames.EVENT)) {
+      return null;
     }
 
     return this;

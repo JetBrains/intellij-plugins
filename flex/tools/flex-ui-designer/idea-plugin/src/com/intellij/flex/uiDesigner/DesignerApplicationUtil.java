@@ -60,7 +60,7 @@ final class DesignerApplicationUtil {
   public static final String DESCRIPTOR_XML = "descriptor.xml";
   public static final String DESCRIPTOR_XML_DEV_PATH = "main/resources/" + DESCRIPTOR_XML;
   private static final String CHECK_DESCRIPTOR_XML = "check-descriptor.xml";
-  public static final File APP_DIR = new File(PathManager.getSystemPath(), "flexUIDesigner");
+  public static final File APP_DIR = new File(PathManager.getSystemPath(), "flashUIDesigner");
   static final String CHECK_DESCRIPTOR_PATH = APP_DIR + File.separator + CHECK_DESCRIPTOR_XML;
 
   private DesignerApplicationUtil() {

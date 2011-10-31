@@ -69,10 +69,8 @@ class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor 
     assert places.get(0).host == host;
     JSFile jsFile = (JSFile)injectedPsi;
     JSSourceElement[] statements = jsFile.getStatements();
-    if (statements.length == 0) {
-      if ((valueWriter = checkCompilerDirective(jsFile)) != null) {
-        return;
-      }
+    if (statements.length == 0 && (valueWriter = checkCompilerDirective(jsFile)) != null) {
+      return;
     }
 
     assert statements.length == 1;
