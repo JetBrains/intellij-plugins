@@ -42,6 +42,7 @@ import com.intellij.testFramework.fixtures.*;
 import org.easymock.classextension.EasyMock;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.osmorc.SwingRunner;
@@ -59,9 +60,12 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
+ * @deprecated
  */
 @SuppressWarnings({"ConstantConditions"})
 @RunWith(SwingRunner.class)
+@Deprecated
+@Ignore("Framework instance is deprecated and will be removed this week.")
 public class FrameworkInstanceModuleManagerTest {
     private Module module;
     private TempDirTestFixture myTempDirFixture;
