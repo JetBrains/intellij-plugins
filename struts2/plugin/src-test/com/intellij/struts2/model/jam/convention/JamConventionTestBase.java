@@ -79,7 +79,7 @@ abstract class JamConventionTestBase<T extends JavaModuleFixtureBuilder> extends
   @NotNull
   protected <Jam extends JamElement> Jam getClassJam(final String clazzName,
                                                      final JamClassMeta<Jam> meta) throws Exception {
-    myFixture.configureByFile(SOURCE_PATH + "/" + StringUtil.replace(clazzName, ".", "/") + ".java");
+    myFixture.configureByFile(SOURCE_DIR + "/" + StringUtil.replace(clazzName, ".", "/") + ".java");
 
     final PsiClass myClass = myFixture.findClass(clazzName);
 
