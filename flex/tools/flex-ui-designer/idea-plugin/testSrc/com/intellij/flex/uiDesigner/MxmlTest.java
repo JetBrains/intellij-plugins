@@ -33,7 +33,7 @@ public class MxmlTest extends MxmlTestBase {
     }
   }
 
-  public void testMobile() throws Exception {
+  public void _testMobile() throws Exception {
     testFile("../mobile/SparkView.mxml");
   }
 

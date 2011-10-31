@@ -197,10 +197,10 @@ public class MxmlWriter {
           // skip
           LOG.warn("Skip " + descriptor.getName() + " in " + parent.getText() + " due to IDEA-73453");
         }
-        else if (descriptor.getTypeName().equals(FlexAnnotationNames.EVENT) ||
-                 descriptor.getTypeName().equals(FlexAnnotationNames.BINDABLE)) {
-          // skip
-        }
+        //else if (descriptor.getTypeName().equals(FlexAnnotationNames.EVENT) ||
+        //         descriptor.getTypeName().equals(FlexAnnotationNames.BINDABLE)) {
+        //  // skip
+        //}
         else if (hasStates && stateWriter.checkStateSpecificPropertyValue(this, propertyProcessor, attribute,
                                                                           valueProviderFactory.create(attribute),
                                                                           descriptor, context, tagAttributeProcessContext.getEffectiveObjectReferenceProvider(context))) {

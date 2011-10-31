@@ -70,6 +70,10 @@ public class LayoutManager extends EventDispatcher implements ILayoutManager {
 
   // // librarySet.applicationDomain.getDefinition("mx.core.UIComponentGlobals").layoutManager = null is not working
   public static function prepareToDie():void {
+    if (UIComponentGlobals.layoutManager == null) {
+      return;
+    }
+
     LayoutManager(UIComponentGlobals.layoutManager).doPrepareToDie();
     UIComponentGlobals.layoutManager = null;
   }

@@ -142,7 +142,6 @@ public final class ModuleContextImpl implements ModuleContextEx {
     return applicationDomain.hasDefinition(fqn) ? Class(applicationDomain.getDefinition(fqn)) : null;
   }
 
-
   public function getClass(fqn:String):Class {
     return Class(applicationDomain.getDefinition(fqn));
   }

@@ -169,6 +169,13 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
         var object:DisplayObject = DisplayObject(documentReader.read(documentFactory.data, documentFactory, document.styleManager));
         document.uiComponent = object;
         document.displayManager.setUserDocument(object);
+
+        if (documentFactory.isPureFlash) {
+          var v:Class = documentFactory.module.context.getClassIfExists("org.papervision3d.view.AbstractView");
+          if (v != null && object is v) {
+            object["startRendering"]();
+          }
+        }
       }
       finally {
         document.displayManager.setStyleManagerForTalentAdobeEngineers(false);

@@ -135,10 +135,6 @@ class PropertyProcessor implements ValueWriter {
       }
     }
 
-    if (typeName.equals(FlexAnnotationNames.EVENT)) {
-      return null;
-    }
-
     return this;
   }
 

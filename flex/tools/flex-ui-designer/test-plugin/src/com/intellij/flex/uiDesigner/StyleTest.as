@@ -20,6 +20,16 @@ import org.hamcrest.object.strictlyEqualTo;
 public class StyleTest extends BaseTestCase {
   public function emptyForCheckLibrariesCssDefaults():void {
     var librarySets:Vector.<LibrarySet> = documentManager.document.module.librarySets;
+
+    //var ll:Vector.<LibrarySetItem> = librarySets[0].items;
+    //if (ll.length != 10) {
+    //  var s:String = "";
+    //  for each (var l:LibrarySetItem in ll) {
+    //    s += l.file.presentableUrl + "\n";
+    //  }
+    //  throw new Error(s);
+    //}
+    
     assertThat(librarySets, [{items: arrayWithSize(10)}]);
     assertThat(librarySets, arrayWithSize(1));
     var library:LibrarySetItem;
