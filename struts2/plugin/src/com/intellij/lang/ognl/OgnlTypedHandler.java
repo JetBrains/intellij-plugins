@@ -34,6 +34,10 @@ public class OgnlTypedHandler extends TypedHandlerDelegate {
 
   @Override
   public Result charTyped(final char c, final Project project, final Editor editor, @NotNull final PsiFile file) {
+    if (c != '{') {
+      return Result.CONTINUE;
+    }
+
     if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) {
       return Result.CONTINUE;
     }
@@ -42,17 +46,20 @@ public class OgnlTypedHandler extends TypedHandlerDelegate {
       PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
       final int offset = editor.getCaretModel().getOffset();
       final PsiElement elementAtCursor = InjectedLanguageUtil.findElementAtNoCommit(file, offset);
+      if (elementAtCursor == null) {
+        return Result.CONTINUE;
+      }
 
       if (elementAtCursor.getLanguage() != OgnlLanguage.INSTANCE) {
         return Result.CONTINUE;
       }
     }
 
-    if (handleExpressionPrefix(c, editor)) {
+    if (handleExpressionPrefix(editor)) {
       return Result.STOP;
     }
 
-    if (handleOpeningBrace(c, editor)) {
+    if (handleOpeningBrace(editor)) {
       return Result.STOP;
     }
 
@@ -62,15 +69,10 @@ public class OgnlTypedHandler extends TypedHandlerDelegate {
   /**
    * Autocomplete "%{" to "%{}".
    *
-   * @param c      Typed character.
    * @param editor Current editor.
    * @return {@code true} if handled.
    */
-  private boolean handleExpressionPrefix(final char c, final Editor editor) {
-    if (c != '{') {
-      return false;
-    }
-
+  private boolean handleExpressionPrefix(final Editor editor) {
     final int offset = editor.getCaretModel().getOffset();
     final CharSequence before = editor.getDocument().getCharsSequence().subSequence(offset - 2, offset);
     if (!OgnlLanguage.EXPRESSION_PREFIX.equals(before.toString())) {
@@ -84,16 +86,11 @@ public class OgnlTypedHandler extends TypedHandlerDelegate {
   /**
    * Autocomplete "{" to "{}".
    *
-   * @param c      Typed character.
    * @param editor Current editor.
    * @return {@code true} if handled.
    */
 
-  private boolean handleOpeningBrace(final char c, final Editor editor) {
-    if (c != '{') {
-      return false;
-    }
-
+  private boolean handleOpeningBrace(final Editor editor) {
     editor.getDocument().insertString(editor.getCaretModel().getOffset(), "}");
     return true;
   }
