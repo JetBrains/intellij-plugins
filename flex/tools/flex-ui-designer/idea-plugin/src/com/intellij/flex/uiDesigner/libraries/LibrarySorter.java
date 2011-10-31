@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.source.parsing.xml.XmlBuilderDriver;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -35,6 +36,17 @@ import static com.intellij.flex.uiDesigner.libraries.LibrarySorter.FlexLibsNames
 public class LibrarySorter {
   static final String SWF_EXTENSION = ".swf";
 
+  @SuppressWarnings("unchecked")
+  final static Pair<String, String>[] FLEX_LIBS_PATTERNS = new Pair[]{
+    new Pair<String, String>(FlexLibsNames.FRAMEWORK, "FrameworkClasses"),
+    new Pair<String, String>(FlexLibsNames.AIRFRAMEWORK, "AIRFrameworkClasses"),
+    new Pair<String, String>(FlexLibsNames.SPARK, "SparkClasses"),
+    new Pair<String, String>(FlexLibsNames.AIRSPARK, "AIRSparkClasses"),
+
+    new Pair<String, String>(FlexLibsNames.MX, "MxClasses"),
+    new Pair<String, String>(FlexLibsNames.RPC, "RPCClasses"),
+    new Pair<String, String>(FlexLibsNames.MOBILECOMPONENTS, "MobileComponentsClasses")};
+
   private final File appDir;
   private final Module module;
 
@@ -49,29 +61,25 @@ public class LibrarySorter {
     String SPARK = "spark";
     String FRAMEWORK = "framework";
     String AIRFRAMEWORK = "airframework";
+    String MX = "mx";
+    String RPC = "rpc";
+    String MOBILECOMPONENTS = "mobilecomponents";
   }
 
   static {
-    THashSet<CharSequence> set = createSet(FlexOverloadedClasses.AIR_SPARK_CLASSES.size() + 1);
-    set.add("AIRSparkClasses");
-    set.addAll(FlexOverloadedClasses.AIR_SPARK_CLASSES);
-    BAD_FLEX_CLASSES.put(AIRSPARK, set);
+    Set<CharSequence> set;
+    for (Pair<String, String> pair : LibrarySorter.FLEX_LIBS_PATTERNS) {
+      if (pair.first.equals(FlexLibsNames.AIRSPARK)) {
+        set = createSet(FlexOverloadedClasses.AIR_SPARK_CLASSES.size() + 1);
+        set.addAll(FlexOverloadedClasses.AIR_SPARK_CLASSES);
+      }
+      else {
+        set = createSet(1);
+      }
 
-    set = createSet(1);
-    set.add("MobileComponentsClasses");
-    BAD_FLEX_CLASSES.put("mobilecomponents", set);
-
-    set = createSet(1);
-    set.add("RPCClasses");
-    BAD_FLEX_CLASSES.put("rpc", set);
-
-    set = createSet(1);
-    set.add("MxClasses");
-    BAD_FLEX_CLASSES.put("mx", set);
-
-    set = createSet(1);
-    set.add("AIRFrameworkClasses");
-    BAD_FLEX_CLASSES.put(AIRFRAMEWORK, set);
+      set.add(pair.second);
+      BAD_FLEX_CLASSES.put(pair.first, set);
+    }
   }
 
   public LibrarySorter(@NotNull File appDir, @NotNull Module module) {

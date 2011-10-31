@@ -104,7 +104,7 @@ public class LibrarySorterTest extends MxmlTestBase {
   }
 
   // AS-235
-  public void testOverlappingContent() throws Exception {
+  public void _testOverlappingContent() throws Exception {
     testFile(SPARK_COMPONENTS_FILE);
   }
 
