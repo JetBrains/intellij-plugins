@@ -231,7 +231,7 @@ target('default': "Build artifacts") {
             system_selector: system_selector,
             paths.distMac)
 
-  ant.echo(message: buildName, file: "$paths.sandbox/layout/build.txt")
+  ant.echo(message: "${product}${buildNumber}", file: "$paths.sandbox/layout/build.txt")
 
   buildSit()
   buildDmg()
@@ -379,9 +379,9 @@ String appInfoFile() {
   return "$home/out/flex-ide/classes/production/flex-ide/idea/FlexApplicationInfo.xml"
 }
 
-void wireBuildDate(String buildName) {
+void wireBuildDate(String buildNumber) {
   if (!dryRun) {
-    ant.replace(token: "__BUILD_NUMBER__", value: buildName, file: appInfoFile())
+    ant.replace(token: "__BUILD_NUMBER__", value: buildNumber, file: appInfoFile())
     ant.replace(token: "__BUILD_DATE__", value: DSTAMP, file: appInfoFile())
   }
 }
