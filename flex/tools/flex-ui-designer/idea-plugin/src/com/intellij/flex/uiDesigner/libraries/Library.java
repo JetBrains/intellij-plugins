@@ -5,7 +5,6 @@ import com.intellij.flex.uiDesigner.io.Info;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -25,7 +24,7 @@ public class Library extends Info<VirtualFile> {
   // en_US => {"layout", "components"}
   public final Map<String,THashSet<String>> resourceBundles = new THashMap<String,THashSet<String>>();
 
-  public Library(@Nullable String name, String relativePath, VirtualFile file) {
+  Library(String name, String relativePath, VirtualFile file) {
     super(file);
 
     this.name = name;
@@ -41,23 +40,21 @@ public class Library extends Info<VirtualFile> {
     return element.findChild(DEFAULTS_CSS);
   }
 
-  @NotNull
   public VirtualFile getCatalogFile() {
-    VirtualFile child = element.findChild(CATALOG);
-    assert child != null;
-    return child;
+    return getCatalogFile(element);
   }
 
-  @NotNull
   public VirtualFile getSwfFile() {
     return getSwfFile(element);
   }
 
-  @NotNull
+  @Nullable
   public static VirtualFile getSwfFile(VirtualFile swcFile) {
-    VirtualFile child = swcFile.findChild(SWF);
-    assert child != null;
-    return child;
+    return swcFile.findChild(SWF);
+  }
+
+  public static VirtualFile getCatalogFile(VirtualFile swcFile) {
+    return swcFile.findChild(CATALOG);
   }
 
   public String getPath() {

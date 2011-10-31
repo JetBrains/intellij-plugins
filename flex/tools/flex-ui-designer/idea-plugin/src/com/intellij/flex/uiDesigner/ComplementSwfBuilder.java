@@ -35,13 +35,17 @@ public final class ComplementSwfBuilder {
   }
 
   private static void build(String rootPath, String flexVersion, InjectionClassifier classifier, boolean buildComplement) throws IOException {
-    final AbcNameFilter sparkInclusionNameFilter = new AbcNameFilterStartsWith("com.intellij.flex.uiDesigner.flex", true);
+    final AbcNameFilter sparkInclusionNameFilter = new AbcNameFilterStartsWith("com.intellij.flex.uiDesigner.flex", true) {
+      @Override
+      public boolean accept(CharSequence name) {
+        return super.accept(name) && !StringUtil.equals(name, "com.intellij.flex.uiDesigner.flex:SpriteLoaderAsset");
+      }
+    };
 
     final Collection<CharSequence> commonDefinitions = new ArrayList<CharSequence>(1);
     commonDefinitions.add("com.intellij.flex.uiDesigner:SpecialClassForAdobeEngineers");
 
     final AbcNameFilter air4InclusionNameFilter = new AbcNameFilterByNameSet(FlexOverloadedClasses.AIR_SPARK_CLASSES, true);
-    // SpriteLoaderAsset must be loaded with framework.swc, because _s000 located in framework.swc
     File source = getSourceFile(rootPath, flexVersion);
 
     final AbcNameFilter abcNameFilter;
@@ -50,8 +54,7 @@ public final class ComplementSwfBuilder {
                                                               new String[]{"mx.", "spark."}) {
         @Override
         public boolean accept(CharSequence name) {
-          return StringUtil.equals(name, "com.intellij.flex.uiDesigner.flex:SpriteLoaderAsset") ||
-                 StringUtil.equals(name, FlexOverloadedClasses.STYLE_PROTO_CHAIN) ||
+          return StringUtil.equals(name, FlexOverloadedClasses.STYLE_PROTO_CHAIN) ||
                  FlexOverloadedClasses.MX_CLASSES.contains(name) ||
                  (super.accept(name) && !sparkInclusionNameFilter.accept(name) &&
                   !air4InclusionNameFilter.accept(name));

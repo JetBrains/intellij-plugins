@@ -99,15 +99,16 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
                                    @Nullable LibrarySet librarySet)
       throws InitException {
     final Project project = module.getProject();
-    final LibraryCollector libraryCollector = new LibraryCollector(this);
     final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter(16384);
     stringWriter.startChange();
+    final LibraryCollector libraryCollector = new LibraryCollector(this, new LibraryStyleInfoCollector(project, module, stringWriter,
+                                                                                                       problemsHolder), project);
 
     final Client client;
     try {
       final AccessToken token = ReadAction.start();
       try {
-        libraryCollector.collect(module, new LibraryStyleInfoCollector(project, module, stringWriter, problemsHolder));
+        libraryCollector.collect(module);
       }
       finally {
         token.finish();

@@ -193,7 +193,16 @@ public final class IOUtil {
 
     final InputStreamReader reader = new InputStreamReader(file.getInputStream(), file.getCharset());
     try {
-      return new CharArrayCharSequence(FileUtil.loadText(reader, (int)file.getLength()));
+      char[] chars = new char[(int)file.getLength()];
+      int count = 0;
+      while (count < chars.length) {
+        int n = reader.read(chars, count, chars.length - count);
+        if (n <= 0) {
+          break;
+        }
+        count += n;
+      }
+      return new CharArrayCharSequence(chars, 0, count);
     }
     finally {
       reader.close();
