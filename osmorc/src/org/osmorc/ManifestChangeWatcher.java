@@ -49,7 +49,7 @@ public class ManifestChangeWatcher implements EditorNotifications.Provider<Manif
         for (VFileEvent event : events) { // get changed files
           VirtualFile virtualFile = event.getFile();
 
-          if (virtualFile != null) {
+          if (virtualFile != null && virtualFile.isValid()) {
             // find out if the file belongs to an osmorc facet
             final PsiFile psiFile = PsiManager.getInstance(myProject).findFile(virtualFile);
             if (psiFile instanceof ManifestFile) {
