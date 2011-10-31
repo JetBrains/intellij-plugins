@@ -39,6 +39,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
@@ -55,17 +56,18 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
   private boolean myModified;
   @SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"}) private ProjectSettings mySettings;
   private UserActivityWatcher myWatcher;
-  private JPanel mainPanel;
-  @SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"}) private JComboBox frameworkInstance;
-  private JCheckBox createFrameworkInstanceModule;
-  private JComboBox defaultManifestFileLocation;
-  private TextFieldWithBrowseButton bundleOutputPath;
-  private JButton applyToAllButton;
+  private JPanel myMainPanel;
+  @SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"}) private JComboBox myFrameworkInstance;
+  private JCheckBox myCreateFrameworkInstanceModule;
+  private JComboBox myDefaultManifestFileLocation;
+  private TextFieldWithBrowseButton myBundleOutputPath;
+  private JButton myApplyToAllButton;
+  private JComboBox mySynchronizationType;
   private Project myProject;
 
   public ProjectSettingsEditorComponent(Project project) {
     myProject = project;
-    frameworkInstance.setRenderer(new FrameworkInstanceCellRenderer(frameworkInstance.getRenderer()) {
+    myFrameworkInstance.setRenderer(new FrameworkInstanceCellRenderer(myFrameworkInstance.getRenderer()) {
       @Override
       protected boolean isInstanceDefined(FrameworkInstanceDefinition instance) {
         List<FrameworkInstanceDefinition> instanceDefinitions = ApplicationSettings.getInstance().getFrameworkInstanceDefinitions();
@@ -78,23 +80,23 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
       }
     });
     myWatcher = new UserActivityWatcher();
-    myWatcher.register(mainPanel);
+    myWatcher.register(myMainPanel);
     myWatcher.addUserActivityListener(new UserActivityListener() {
       public void stateChanged() {
         myModified = true;
       }
     });
 
-    defaultManifestFileLocation.setEditable(true);
-    defaultManifestFileLocation.addItem("META-INF");
+    myDefaultManifestFileLocation.setEditable(true);
+    myDefaultManifestFileLocation.addItem("META-INF");
 
-    bundleOutputPath.addActionListener(new ActionListener() {
+    myBundleOutputPath.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         onOutputPathSelect();
       }
     });
 
-    applyToAllButton.addActionListener(new ActionListener() {
+    myApplyToAllButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
         onApplyToAllClick();
@@ -104,14 +106,14 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
   }
 
   private void onOutputPathSelect() {
-    VirtualFile preselect = LocalFileSystem.getInstance().findFileByPath(bundleOutputPath.getText());
+    VirtualFile preselect = LocalFileSystem.getInstance().findFileByPath(myBundleOutputPath.getText());
     if (preselect == null) {
       preselect = myProject.getBaseDir();
     }
     VirtualFile virtualFile =
       FileChooser.chooseFile(myProject, FileChooserDescriptorFactory.createSingleFolderDescriptor(), preselect);
     if (virtualFile != null) {
-      bundleOutputPath.setText(virtualFile.getPath());
+      myBundleOutputPath.setText(virtualFile.getPath());
     }
   }
 
@@ -145,22 +147,25 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
 
 
   public void applyTo(ProjectSettings settings) {
-    settings.setCreateFrameworkInstanceModule(createFrameworkInstanceModule.isSelected());
-    final String fileLocation = (String)defaultManifestFileLocation.getSelectedItem();
+    settings.setCreateFrameworkInstanceModule(myCreateFrameworkInstanceModule.isSelected());
+    final String fileLocation = (String)myDefaultManifestFileLocation.getSelectedItem();
     if (fileLocation != null) {
       settings.setDefaultManifestFileLocation(fileLocation);
     }
-    final FrameworkInstanceDefinition instanceDefinition = (FrameworkInstanceDefinition)this.frameworkInstance.getSelectedItem();
+    final FrameworkInstanceDefinition instanceDefinition = (FrameworkInstanceDefinition)this.myFrameworkInstance.getSelectedItem();
     if (instanceDefinition != null) {
       settings.setFrameworkInstanceName(instanceDefinition.getName());
     }
 
-    if (bundleOutputPath.getText() != null && !"".equals(bundleOutputPath.getText().trim())) {
-      settings.setBundlesOutputPath(bundleOutputPath.getText());
+    if (myBundleOutputPath.getText() != null && !"".equals(myBundleOutputPath.getText().trim())) {
+      settings.setBundlesOutputPath(myBundleOutputPath.getText());
     }
     else {
       settings.setBundlesOutputPath(null);
     }
+
+    SynchronizationItem selectedItem = (SynchronizationItem)mySynchronizationType.getSelectedItem();
+    settings.setManifestSynchronizationType(selectedItem.getType());
     myModified = false;
   }
 
@@ -170,20 +175,21 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
   }
 
   public JPanel getMainPanel() {
-    return mainPanel;
+    return myMainPanel;
   }
 
   public void resetTo(ProjectSettings settings) {
     mySettings = settings;
     refreshFrameworkInstanceCombobox();
-    defaultManifestFileLocation.setSelectedItem(mySettings.getDefaultManifestFileLocation());
-    createFrameworkInstanceModule.setSelected(mySettings.isCreateFrameworkInstanceModule());
+    refreshSynchronizationCombobox();
+    myDefaultManifestFileLocation.setSelectedItem(mySettings.getDefaultManifestFileLocation());
+    myCreateFrameworkInstanceModule.setSelected(mySettings.isCreateFrameworkInstanceModule());
     String bundlesPath = mySettings.getBundlesOutputPath();
     if (bundlesPath != null) {
-      bundleOutputPath.setText(bundlesPath);
+      myBundleOutputPath.setText(bundlesPath);
     }
     else {
-      bundleOutputPath.setText(ProjectSettings.getDefaultBundlesOutputPath(myProject));
+      myBundleOutputPath.setText(ProjectSettings.getDefaultBundlesOutputPath(myProject));
     }
     myModified = false;
   }
@@ -191,13 +197,14 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
   private synchronized void refreshFrameworkInstanceCombobox() {
     if (mySettings == null) return;
 
-    frameworkInstance.removeAllItems();
+    myFrameworkInstance.removeAllItems();
+
     List<FrameworkInstanceDefinition> instanceDefinitions = ApplicationSettings.getInstance().getFrameworkInstanceDefinitions();
     final String frameworkInstanceName = mySettings.getFrameworkInstanceName();
 
     FrameworkInstanceDefinition projectFrameworkInstance = null;
     for (FrameworkInstanceDefinition instanceDefinition : instanceDefinitions) {
-      frameworkInstance.addItem(instanceDefinition);
+      myFrameworkInstance.addItem(instanceDefinition);
       if (instanceDefinition.getName().equals(frameworkInstanceName)) {
         projectFrameworkInstance = instanceDefinition;
       }
@@ -208,9 +215,23 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
       projectFrameworkInstance = new FrameworkInstanceDefinition();
       projectFrameworkInstance.setName(frameworkInstanceName);
       projectFrameworkInstance.setDefined(false);
-      frameworkInstance.addItem(projectFrameworkInstance);
+      myFrameworkInstance.addItem(projectFrameworkInstance);
     }
-    frameworkInstance.setSelectedItem(projectFrameworkInstance);
+    myFrameworkInstance.setSelectedItem(projectFrameworkInstance);
+
+  }
+
+  private synchronized void refreshSynchronizationCombobox() {
+    if ( mySettings == null) return;
+    mySynchronizationType.removeAllItems();
+
+    for (ProjectSettings.ManifestSynchronizationType type : ProjectSettings.ManifestSynchronizationType.values()) {
+      SynchronizationItem item =  new SynchronizationItem(type);
+      mySynchronizationType.addItem(item);
+      if ( type == mySettings.getManifestSynchronizationType() ) {
+        mySynchronizationType.setSelectedItem(item);
+      }
+    }
   }
 
   public boolean isModified() {
@@ -224,6 +245,34 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
   }
 
   private void createUIComponents() {
-    defaultManifestFileLocation = new ComboBox();
+    myDefaultManifestFileLocation = new ComboBox();
+  }
+
+  private static class SynchronizationItem {
+    private ProjectSettings.ManifestSynchronizationType myType;
+
+    public SynchronizationItem(@NotNull ProjectSettings.ManifestSynchronizationType type) {
+      myType = type;
+    }
+
+    public ProjectSettings.ManifestSynchronizationType getType() {
+      return myType;
+    }
+
+
+    @Override
+    public String toString() {
+      switch (myType) {
+        case AutomaticallySynchronize:
+          return "Automatically synchronize dependencies";
+        case ManuallySynchronize:
+          return "Show notification bar and manually synchronize dependencies";
+        case DoNotSynchronize:
+          return "Do not synchronize dependencies";
+      }
+
+      // should not happen
+      return myType.toString();
+    }
   }
 }

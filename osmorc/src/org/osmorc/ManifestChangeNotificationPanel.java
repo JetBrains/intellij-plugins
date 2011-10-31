@@ -1,13 +1,11 @@
 package org.osmorc;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.Task;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import com.intellij.ui.LightColors;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.settings.ProjectSettings;
 
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -29,21 +27,19 @@ public class ManifestChangeNotificationPanel extends EditorNotificationPanel {
         myNeedsResync.set(false);
         EditorNotifications.getInstance(modifiedFile.getProject()).updateAllNotifications();
 
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            new Task.Backgroundable(modifiedFile.getProject(), "Processing manifest change", false) {
-              @Override
-              public void run(@NotNull ProgressIndicator indicator) {
-                indicator.setText("Synchronizing dependencies.");
-                indicator.setIndeterminate(true);
-                // sync the dependencies of ALL modules
-                ModuleDependencySynchronizer.resynchronizeAll(modifiedFile.getProject());
-              }
-            }.queue();
-          }
-        });
+        ManifestChangeWatcher.resynchronizeDependencies(modifiedFile);
+      }
+    });
 
+
+    createActionLabel("Enable Automatic Synchronization", new Runnable() {
+      @Override
+      public void run() {
+        myNeedsResync.set(false);
+        EditorNotifications.getInstance(modifiedFile.getProject()).updateAllNotifications();
+        ProjectSettings ps =  ProjectSettings.getInstance(modifiedFile.getProject());
+        ps.setManifestSynchronizationType(ProjectSettings.ManifestSynchronizationType.AutomaticallySynchronize);
+        ManifestChangeWatcher.resynchronizeDependencies(modifiedFile);
       }
     });
 
