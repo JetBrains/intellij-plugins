@@ -22,6 +22,7 @@ public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
   @NonNls static final String CREATE_MODULE_HELP_ID = "reference.dialogs.new.project.fromScratch.flex";
   private static final Icon NODE_ICON_OPEN = IconLoader.getIcon("/nodes/ModuleOpen.png");
   private static final Icon NODE_ICON_CLOSED = IconLoader.getIcon("/nodes/ModuleClosed.png");
+  private static final Icon WIZARD_ICON = IconLoader.getIcon("/addmodulewizard.png");
 
   public FlexModuleType() {
     super(MODULE_TYPE_ID);
@@ -35,7 +36,7 @@ public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
                                               final FlexModuleBuilder moduleBuilder,
                                               final ModulesProvider modulesProvider) {
     final ModuleWizardStep chooseSourceFolder = ProjectWizardStepFactory.getInstance()
-      .createSourcePathsStep(wizardContext, moduleBuilder, null, "reference.dialogs.new.project.fromScratch.source");
+      .createSourcePathsStep(wizardContext, moduleBuilder, WIZARD_ICON, "reference.dialogs.new.project.fromScratch.source");
     final ModuleWizardStep createBuildAndSimpleCodeStep = new SetupFlexModuleWizardStep(moduleBuilder, wizardContext);
     return new ModuleWizardStep[]{chooseSourceFolder, createBuildAndSimpleCodeStep};
   }
