@@ -17,7 +17,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -55,11 +54,6 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
 
   public int add(@NotNull Library library) {
     return list.add(library);
-  }
-
-  public boolean isSdkRegistered(Sdk sdk, Module module) {
-    ProjectInfo info = Client.getInstance().getRegisteredProjects().getNullableInfo(module.getProject());
-    return info != null && info.getSdk() == sdk;
   }
 
   public void garbageCollection(ProgressIndicator indicator) {
@@ -141,7 +135,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
         client.registerLibrarySet(librarySet);
       }
 
-      info = new ProjectInfo(project, librarySet, libraryCollector.getFlexSdk());
+      info = new ProjectInfo(project, librarySet);
       registeredProjects.add(info);
       client.openProject(project);
     }
@@ -237,17 +231,14 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
 
   // created library will be register later, in Client.registerLibrarySet, so, we expect that createOriginalLibrary never called with duplicated virtualFile, i.e.
   // sdkLibraries doesn't contain duplicated virtualFiles and externalLibraries too (http://youtrack.jetbrains.net/issue/AS-200)
-  Library createOriginalLibrary(@NotNull final VirtualFile virtualFile, @NotNull final VirtualFile jarFile,
+  Library createOriginalLibrary(@NotNull final VirtualFile virtualFile, @NotNull final VirtualFile jarFile, final String artifactId,
                                 @NotNull final Consumer<Library> initializer) {
     final Library info = list.getNullableInfo(jarFile);
     if (info != null) {
       return info;
     }
 
-    // todo for flexmojos we must use artifactId (because file name contains version and classifier)
-    final String nameWithoutExtension = virtualFile.getNameWithoutExtension();
-    Library library = new Library(nameWithoutExtension,
-                                  nameWithoutExtension + NAME_POSTFIX + Integer.toHexString(virtualFile.getPath().hashCode()), jarFile);
+    Library library = new Library(artifactId, NAME_POSTFIX + Integer.toHexString(virtualFile.getPath().hashCode()), jarFile);
     initializer.consume(library);
     return library;
   }
