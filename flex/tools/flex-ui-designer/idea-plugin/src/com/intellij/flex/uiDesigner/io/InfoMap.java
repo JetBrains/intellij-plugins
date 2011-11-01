@@ -8,17 +8,17 @@ import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class InfoList<E,I extends Info<E>> {
+public class InfoMap<E,I extends Info<E>> {
   private final TIntArrayList freeIndices = new TIntArrayList();
   private final MyHashMap<E,I> elements;
   private final boolean infoIsDisposable;
   private int counter;
 
-  public InfoList() {
+  public InfoMap() {
     this(false);
   }
 
-  public InfoList(boolean infoIsDisposable) {
+  public InfoMap(boolean infoIsDisposable) {
     elements = new MyHashMap<E, I>();
     this.infoIsDisposable = infoIsDisposable;
   }

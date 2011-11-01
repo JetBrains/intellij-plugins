@@ -171,8 +171,8 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
         document.displayManager.setUserDocument(object);
 
         if (documentFactory.isPureFlash) {
-          var v:Class = documentFactory.module.context.getClassIfExists("org.papervision3d.view.AbstractView");
-          if (v != null && object is v) {
+          var pv3dViewClass:Class = documentFactory.module.context.getClassIfExists("org.papervision3d.view.AbstractView");
+          if (pv3dViewClass != null && object is pv3dViewClass) {
             object["startRendering"]();
           }
         }

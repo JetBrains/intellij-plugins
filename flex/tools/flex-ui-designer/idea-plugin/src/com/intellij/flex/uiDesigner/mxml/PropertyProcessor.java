@@ -248,7 +248,7 @@ class PropertyProcessor implements ValueWriter {
     }
   }
 
-  // tagLocalName is null, if parent is list item (i.e. not as property value, but as array item)
+  // tagLocalName is null, if parent is map item (i.e. not as property value, but as array item)
   private int writeFxModelTagIfContainsXmlText(XmlTag parent, @Nullable String tagLocalName,
                                                    ModelObjectReferenceProvider objectReferenceProvider) {
     for (XmlTagChild child : parent.getValue().getChildren()) {

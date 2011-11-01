@@ -114,7 +114,7 @@ class StateWriter {
     else {
       if (states.contains(state)) {
         // IDEA-73547
-        MxmlWriter.LOG.warn("State " + state + " already added to list for " + name);
+        MxmlWriter.LOG.warn("State " + state + " already added to map for " + name);
       }
       else {
         states.add(state);

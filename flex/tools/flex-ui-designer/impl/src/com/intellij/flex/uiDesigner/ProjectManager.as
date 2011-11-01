@@ -108,9 +108,6 @@ public class ProjectManager {
   private function closeProject2(id:int, project:Project):void {
     openProjects[id] = null;
 
-    // todo select last project
-    //getLastProject();
-
     moduleManager.remove(project, function (module:Module):void {
       libraryManager.remove(module.librarySets);
     });

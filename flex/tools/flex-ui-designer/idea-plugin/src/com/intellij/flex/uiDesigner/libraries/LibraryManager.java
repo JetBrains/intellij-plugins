@@ -3,7 +3,7 @@ package com.intellij.flex.uiDesigner.libraries;
 import com.intellij.ProjectTopics;
 import com.intellij.diagnostic.errordialog.Attachment;
 import com.intellij.flex.uiDesigner.*;
-import com.intellij.flex.uiDesigner.io.InfoList;
+import com.intellij.flex.uiDesigner.io.InfoMap;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.LibrarySorter.SortResult;
 import com.intellij.ide.util.PropertiesComponent;
@@ -33,15 +33,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("MethodMayBeStatic")
-public class LibraryManager extends EntityListManager<VirtualFile, Library> {
+public class LibraryManager {
   private static final String ABC_FILTER_VERSION = "16";
   private static final String ABC_FILTER_VERSION_VALUE_NAME = "fud_abcFilterVersion";
   private static final char NAME_POSTFIX = '@';
 
   private File appDir;
 
+  private final InfoMap<VirtualFile, Library> libraries = new InfoMap<VirtualFile, Library>();
+  //private final List<VirtualFile, LibrarySet> librarySets = new InfoMap<VirtualFile, LibrarySet>();
+
   public static LibraryManager getInstance() {
     return ServiceManager.getService(LibraryManager.class);
+  }
+
+  public void reset() {
+    libraries.clear();
   }
 
   public void setAppDir(@NotNull File appDir) {
@@ -49,11 +56,11 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
   }
 
   public boolean isRegistered(@NotNull Library library) {
-    return list.contains(library);
+    return libraries.contains(library);
   }
 
   public int add(@NotNull Library library) {
-    return list.add(library);
+    return libraries.add(library);
   }
 
   public void garbageCollection(ProgressIndicator indicator) {
@@ -121,7 +128,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
       throw new InitException(e, "error.collect.libraries");
     }
 
-    final InfoList<Project, ProjectInfo> registeredProjects = client.getRegisteredProjects();
+    final InfoMap<Project, ProjectInfo> registeredProjects = client.getRegisteredProjects();
     final String projectLocationHash = project.getLocationHash();
     ProjectInfo info = registeredProjects.getNullableInfo(project);
     final boolean isNewProject = info == null;
@@ -233,7 +240,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
   // sdkLibraries doesn't contain duplicated virtualFiles and externalLibraries too (http://youtrack.jetbrains.net/issue/AS-200)
   Library createOriginalLibrary(@NotNull final VirtualFile virtualFile, @NotNull final VirtualFile jarFile, final String artifactId,
                                 @NotNull final Consumer<Library> initializer) {
-    final Library info = list.getNullableInfo(jarFile);
+    final Library info = libraries.getNullableInfo(jarFile);
     if (info != null) {
       return info;
     }

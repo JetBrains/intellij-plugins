@@ -96,7 +96,7 @@ public class SystemManager extends AbstractDocumentDisplayManager implements ISy
 
     Singleton.registerClass(LAYOUT_MANAGER_FQN, LayoutManager);
     var layoutManager:LayoutManager = LayoutManager(UIComponentGlobals.layoutManager);
-    layoutManager = new LayoutManager(stage.getChildAt(0), uiErrorHandler);
+    layoutManager = new LayoutManager(uiErrorHandler);
     UIComponentGlobals.layoutManager = layoutManager;
 
     new ResourceManager(project, resourceBundleProvider);
@@ -104,7 +104,6 @@ public class SystemManager extends AbstractDocumentDisplayManager implements ISy
 
     Singleton.registerClass(POP_UP_MANAGER_FQN, PopUpManagerImpl);
     Singleton.registerClass(TOOL_TIP_MANAGER_FQN, ToolTipManager);
-    //Singleton.registerClass("mx.styles::IStyleManager2", RootStyleManager);
     Singleton.registerClass("mx.resources::IResourceManager", ResourceManager);
     Singleton.registerClass("mx.managers::ICursorManager", CursorManager);
     Singleton.registerClass("mx.managers::IDragManager", DragManagerImpl);

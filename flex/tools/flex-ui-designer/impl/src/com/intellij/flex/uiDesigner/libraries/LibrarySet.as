@@ -18,6 +18,15 @@ public final class LibrarySet {
     _parent = parent;
   }
 
+  internal var usageCounter:int;
+
+  public function registerUsage():void {
+    usageCounter++;
+    if (parent != null) {
+      parent.registerUsage();
+    }
+  }
+
   private var _loadSize:int;
   public function get loadSize():int {
     return _loadSize;

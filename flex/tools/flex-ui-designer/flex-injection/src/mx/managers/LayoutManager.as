@@ -5,6 +5,7 @@ import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.system.ApplicationDomain;
+import flash.utils.getDefinitionByName;
 
 import mx.core.UIComponentGlobals;
 import mx.core.mx_internal;
@@ -42,8 +43,8 @@ public class LayoutManager extends EventDispatcher implements ILayoutManager {
 
   private var fteTextFieldClass:Class;
 
-  public function LayoutManager(displayDispatcher:DisplayObject, uiErrorHandler:UiErrorHandler):void {
-    this.displayDispatcher = displayDispatcher;
+  public function LayoutManager(uiErrorHandler:UiErrorHandler):void {
+    this.displayDispatcher = getDefinitionByName("com.intellij.flex.uiDesigner.MainLoader").displayDispatcher;
     this.uiErrorHandler = uiErrorHandler;
 
     var applicationDomain:ApplicationDomain = ApplicationDomain.currentDomain;
@@ -66,36 +67,6 @@ public class LayoutManager extends EventDispatcher implements ILayoutManager {
 
   public function waitFrame():void {
     waitedAFrame = false;
-  }
-
-  // // librarySet.applicationDomain.getDefinition("mx.core.UIComponentGlobals").layoutManager = null is not working
-  public static function prepareToDie():void {
-    if (UIComponentGlobals.layoutManager == null) {
-      return;
-    }
-
-    LayoutManager(UIComponentGlobals.layoutManager).doPrepareToDie();
-    UIComponentGlobals.layoutManager = null;
-  }
-
-  private function doPrepareToDie():void {
-    if (listenersAttached) {
-      if (!waitedAFrame) {
-        displayDispatcher.removeEventListener(Event.ENTER_FRAME, waitAFrame);
-      }
-      else {
-        removeListeners();
-      }
-      listenersAttached = true;
-    }
-
-    invalidatePropertiesFlag = false;
-    invalidateClientPropertiesFlag = false;
-    invalidateSizeFlag = false;
-    invalidateDisplayListFlag = false;
-
-    currentObject = null;
-    displayDispatcher = null;
   }
 
   //noinspection JSUnusedGlobalSymbols

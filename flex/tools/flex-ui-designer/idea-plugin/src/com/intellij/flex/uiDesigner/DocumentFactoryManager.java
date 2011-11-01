@@ -2,7 +2,7 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.AppTopics;
 import com.intellij.flex.uiDesigner.io.Info;
-import com.intellij.flex.uiDesigner.io.InfoList;
+import com.intellij.flex.uiDesigner.io.InfoMap;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.editor.Document;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class DocumentFactoryManager extends AbstractProjectComponent {
-  private final InfoList<VirtualFile, DocumentInfo> files = new InfoList<VirtualFile, DocumentInfo>();
+  private final InfoMap<VirtualFile, DocumentInfo> files = new InfoMap<VirtualFile, DocumentInfo>();
   
   private MyFileDocumentManagerListener fileDocumentManagerListener;
   private MessageBusConnection designerApplicationManagerConnection;

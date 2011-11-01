@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner {
 import flash.desktop.NativeApplication;
 import flash.display.Bitmap;
+import flash.display.DisplayObject;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.Sprite;
@@ -24,6 +25,8 @@ public class MainLoader extends Sprite {
 
   [Embed(source="/icon32x32.png")]
   private static const icon32:Class;
+
+  public static var displayDispatcher:DisplayObject;
 
   public function MainLoader() {
     var application:NativeApplication = NativeApplication.nativeApplication;
@@ -52,8 +55,9 @@ public class MainLoader extends Sprite {
   }
 
   private static function loadCompleteHandler(event:Event):void {
-    var loader:Loader = LoaderInfo(event.currentTarget).loader;
-    loader.contentLoaderInfo.applicationDomain.getDefinition("com.intellij.flex.uiDesigner.libraries.QueueLoader")["rootDomain"] = ApplicationDomain.currentDomain;
+    var loaderInfo:LoaderInfo = LoaderInfo(event.currentTarget);
+    displayDispatcher = loaderInfo.content;
+    loaderInfo.applicationDomain.getDefinition("com.intellij.flex.uiDesigner.libraries.QueueLoader")["rootDomain"] = ApplicationDomain.currentDomain;
   }
 
   //noinspection JSMethodCanBeStatic

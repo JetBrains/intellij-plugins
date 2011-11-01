@@ -32,8 +32,8 @@ public class Client implements Closable {
 
   private final MxmlWriter mxmlWriter = new MxmlWriter(out);
 
-  private final InfoList<Module, ModuleInfo> registeredModules = new InfoList<Module, ModuleInfo>(true);
-  private final InfoList<Project, ProjectInfo> registeredProjects = new InfoList<Project, ProjectInfo>();
+  private final InfoMap<Module, ModuleInfo> registeredModules = new InfoMap<Module, ModuleInfo>(true);
+  private final InfoMap<Project, ProjectInfo> registeredProjects = new InfoMap<Project, ProjectInfo>();
 
   public static Client getInstance() {
     return ServiceManager.getService(Client.class);
@@ -51,7 +51,7 @@ public class Client implements Closable {
     return registeredModules.contains(module);
   }
 
-  public InfoList<Project, ProjectInfo> getRegisteredProjects() {
+  public InfoMap<Project, ProjectInfo> getRegisteredProjects() {
     return registeredProjects;
   }
 

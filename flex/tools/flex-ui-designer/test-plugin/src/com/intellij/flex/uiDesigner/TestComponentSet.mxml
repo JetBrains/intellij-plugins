@@ -1,11 +1,9 @@
 <ComponentSet xmlns="plexus" xmlns:fx="http://ns.adobe.com/mxml/2009">
   <fx:Script><![CDATA[
-    import com.intellij.flex.uiDesigner.libraries.LibraryManager;
     ]]></fx:Script>
 
   <Component role="{TestSocketDataHandler}">
     <Requirement role="{ModuleManager}"/>
   </Component>
-  <Component role="{LibraryManager}" implementation="{TestLibraryManager}"/>
   <Component role="{UncaughtErrorManager}" implementation="{TestUncaughtErrorManager}"/>
 </ComponentSet>

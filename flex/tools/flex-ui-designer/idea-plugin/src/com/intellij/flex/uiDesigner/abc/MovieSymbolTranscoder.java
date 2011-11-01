@@ -216,7 +216,7 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
       objectId = buffer.getShort(buffer.position() + 2);
     }
 
-    // swf spec: "CharacterId is used only when a new character is being added. If a character that is already on the display list is being modified, the CharacterId field is absent."
+    // swf spec: "CharacterId is used only when a new character is being added. If a character that is already on the display map is being modified, the CharacterId field is absent."
     // but in any case we check and use flag referredObject.used — swf may be invalid (but this problem is not encountered yet, develar 05.08.11)
     if (objectId != -1) {
       final PlacedObject referredObject = placedObjects.get(objectId);

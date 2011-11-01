@@ -12,6 +12,10 @@ public final class ModuleContextImpl implements ModuleContextEx {
   public function ModuleContextImpl(librarySets:Vector.<LibrarySet>, project:Project) {
     _librarySets = librarySets;
     _project = project;
+
+    for each (var librarySet:LibrarySet in _librarySets) {
+      librarySet.registerUsage();
+    }
   }
 
   private var _swfAssetContainerClassPool:AssetContainerClassPool;
