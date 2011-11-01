@@ -231,7 +231,7 @@ target('default': "Build artifacts") {
             system_selector: system_selector,
             paths.distMac)
 
-  ant.echo(message: "${product}${buildNumber}", file: "$paths.sandbox/layout/build.txt")
+  ant.echo(message: "${product}-${buildNumber}", file: "$paths.sandbox/layout/build.txt")
 
   buildSit()
   buildDmg()
