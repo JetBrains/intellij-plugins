@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,6 @@
 package com.intellij.struts2.model.constant;
 
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.struts2.StrutsConstants;
@@ -29,7 +28,8 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsConstantManagerWithStrutsPluginXmlTest extends StrutsConstantManagerTestCase<JavaModuleFixtureBuilder> {
+public class StrutsConstantManagerWithStrutsPluginXmlTest
+    extends StrutsConstantManagerTestCase<JavaModuleFixtureBuilder> {
 
   @NotNull
   @Override
@@ -47,9 +47,10 @@ public class StrutsConstantManagerWithStrutsPluginXmlTest extends StrutsConstant
     createStrutsFileSet(STRUTS_XML,
                         STRUTS2_SPRING_PLUGIN_JAR + "!/struts-plugin.xml");
 
-    final PsiClass springObjectFactoryClass = JavaPsiFacade.getInstance(myProject)
-        .findClass(StrutsConstants.SPRING_OBJECT_FACTORY_CLASS,
-                   GlobalSearchScope.moduleWithLibrariesScope(myModule));
+    final PsiClass springObjectFactoryClass =
+        myFixture.getJavaFacade()
+                 .findClass(StrutsConstants.SPRING_OBJECT_FACTORY_CLASS,
+                            GlobalSearchScope.moduleWithLibrariesScope(myModule));
     assertNotNull(springObjectFactoryClass);
 
     final VirtualFile dummyFile = myFixture.findFileInTempDir(STRUTS_XML);

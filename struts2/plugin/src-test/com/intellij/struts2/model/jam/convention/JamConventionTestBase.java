@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,9 +18,7 @@ package com.intellij.struts2.model.jam.convention;
 import com.intellij.jam.JamElement;
 import com.intellij.jam.reflect.JamClassMeta;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.struts2.BasicHighlightingTestCase;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NonNls;
@@ -83,9 +81,7 @@ abstract class JamConventionTestBase<T extends JavaModuleFixtureBuilder> extends
                                                      final JamClassMeta<Jam> meta) throws Exception {
     myFixture.configureByFile(SOURCE_PATH + "/" + StringUtil.replace(clazzName, ".", "/") + ".java");
 
-    final PsiClass myClass = JavaPsiFacade.getInstance(myProject)
-                                          .findClass(clazzName, GlobalSearchScope.moduleScope(myModule));
-    assertNotNull("could not find class '" + clazzName + "'", myClass);
+    final PsiClass myClass = myFixture.findClass(clazzName);
 
     final Jam jam = meta.getJamElement(myClass);
     assertNotNull("JAM was null for " + meta + " in '" + clazzName + "'", jam);

@@ -47,7 +47,7 @@ import java.util.Set;
  */
 public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuilder> extends BasicStrutsTestCase {
 
-  protected CodeInsightTestFixture myFixture;
+  protected JavaCodeInsightTestFixture myFixture;
   protected ModuleFixture myModuleTestFixture;
   protected Project myProject;
   protected Module myModule;
@@ -133,7 +133,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
 
     final TestFixtureBuilder<IdeaProjectTestFixture> projectBuilder = JavaTestFixtureFactory.createFixtureBuilder();
     final T moduleBuilder = projectBuilder.addModule(getModuleFixtureBuilderClass());
-    myFixture = IdeaTestFixtureFactory.getFixtureFactory().createCodeInsightFixture(projectBuilder.getFixture());
+    myFixture = JavaTestFixtureFactory.getFixtureFactory().createCodeInsightFixture(projectBuilder.getFixture());
 
     myFixture.setTestDataPath(getTestDataPath());
 
