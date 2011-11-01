@@ -16,6 +16,7 @@ import com.intellij.util.Alarm;
 import com.intellij.util.messages.MessageBus;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
+import org.osmorc.manifest.ManifestFileTypeFactory;
 import org.osmorc.manifest.lang.psi.ManifestFile;
 import org.osmorc.settings.ProjectSettings;
 
@@ -49,7 +50,7 @@ public class ManifestChangeWatcher implements EditorNotifications.Provider<Manif
         for (VFileEvent event : events) { // get changed files
           VirtualFile virtualFile = event.getFile();
 
-          if (virtualFile != null && virtualFile.isValid()) {
+          if (virtualFile != null && virtualFile.isValid() && virtualFile.getFileType() == ManifestFileTypeFactory.MANIFEST) {
             // find out if the file belongs to an osmorc facet
             final PsiFile psiFile = PsiManager.getInstance(myProject).findFile(virtualFile);
             if (psiFile instanceof ManifestFile) {
