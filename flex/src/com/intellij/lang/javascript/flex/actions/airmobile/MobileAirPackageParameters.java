@@ -26,7 +26,8 @@ public class MobileAirPackageParameters extends AirInstallerParametersBase
   public enum AndroidPackageType {
     DebugOverNetwork("debug over network"),
     DebugOverUSB("debug over USB"),
-    NoDebug("no debug");
+    NoDebug("no debug"),
+    NoDebugCaptiveRuntime("no debug, captive runtime");
 
     AndroidPackageType(final String presentableName) {
       this.myPresentableName = presentableName;

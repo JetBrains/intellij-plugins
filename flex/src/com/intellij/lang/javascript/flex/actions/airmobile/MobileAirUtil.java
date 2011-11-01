@@ -175,7 +175,14 @@ public class MobileAirUtil {
     String errorMessageStart = null;
     String requiredVersion = null;
 
-    if (parameters.MOBILE_PLATFORM == MobilePlatform.iOS
+    if (parameters.MOBILE_PLATFORM == MobilePlatform.Android &&
+        (parameters.ANDROID_PACKAGE_TYPE == MobileAirPackageParameters.AndroidPackageType.NoDebugCaptiveRuntime)) {
+      if (StringUtil.compareVersionNumbers(adtVersion, "3.0") < 0) {
+        requiredVersion = "3.0";
+        errorMessageStart = FlexBundle.message("air.android.captive.packaging.requires.3.0");
+      }
+    }
+    else if (parameters.MOBILE_PLATFORM == MobilePlatform.iOS
         && (parameters.IOS_PACKAGE_TYPE == IOSPackageType.DebugOverNetwork || parameters.IOS_PACKAGE_TYPE == IOSPackageType.Test)
         && parameters.FAST_PACKAGING) {
       if (StringUtil.compareVersionNumbers(adtVersion, "2.7") < 0) {
@@ -291,6 +298,9 @@ public class MobileAirUtil {
                 break;
               case NoDebug:
                 command.add("apk");
+                break;
+              case NoDebugCaptiveRuntime:
+                command.add("apk-captive-runtime");
                 break;
             }
             break;
