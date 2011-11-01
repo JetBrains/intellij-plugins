@@ -549,6 +549,10 @@ public class FlexCompiler implements SourceProcessingCompiler {
       throw new ConfigurationException(FlexBundle.message("output.file.name.not.set.for.bc.0.of.module.1", config.getName(), moduleName));
     }
 
+    if (config.getOutputFolder().isEmpty()) {
+      throw new ConfigurationException(FlexBundle.message("output.folder.not.set.for.bc.0.of.module.1", config.getName(), moduleName));
+    }
+
     if (nature.isWebPlatform() && nature.isApp() && config.isUseHtmlWrapper()) {
       if (config.getWrapperTemplatePath().isEmpty()) {
         throw new ConfigurationException(FlexBundle.message("html.template.folder.not.set.for.bc.0.of.module.1", config.getName(), moduleName));
