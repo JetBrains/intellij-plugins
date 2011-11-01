@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
+import com.intellij.ui.TableUtil;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.JBTable;
 
@@ -75,6 +76,7 @@ public abstract class AddRemoveTableRowsDialog<T> extends DialogWrapper {
     });
     d.setRemoveAction(new AnActionButtonRunnable() {
       public void run(AnActionButton anActionButton) {
+        TableUtil.stopEditing(myTable);
         final int[] selectedRows = myTable.getSelectedRows();
         Arrays.sort(selectedRows);
         for (int i = selectedRows.length - 1; i >= 0; i--) {
