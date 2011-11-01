@@ -567,6 +567,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
                                                    int column) {
       Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
       ((JLabel)component).setText(((LinkageType)value).getShortText());
+      ((JLabel)component).setHorizontalAlignment(SwingConstants.CENTER);
       return component;
     }
   };
@@ -635,7 +636,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     @Override
     public int getWidth(JTable table) {
-      return 100;
+      return new JLabel(LinkageType.External.getShortText()).getPreferredSize().width + 20;
     }
   };
 
@@ -672,12 +673,15 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
     });
 
-    final LinkageType defaultLinkage = BCUtils.getDefaultFrameworkLinkage(myNature);
     myFrameworkLinkageCombo
       .setRenderer(new ListCellRendererWrapper<LinkageType>(myFrameworkLinkageCombo.getRenderer()) {
         public void customize(JList list, LinkageType value, int index, boolean selected, boolean hasFocus) {
           if (value == LinkageType.Default) {
-            setText(MessageFormat.format("Default ({0})", defaultLinkage.getLongText()));
+            final FlexSdk sdk = mySdkPanel.getCurrentSdk();
+            final String sdkVersion = sdk != null ? sdk.getFlexVersion() : null;
+            setText(sdkVersion == null
+                    ? "Default"
+                    : MessageFormat.format("Default ({0})", BCUtils.getDefaultFrameworkLinkage(sdkVersion, myNature).getLongText()));
           }
           else {
             setText(value.getLongText());
@@ -1246,7 +1250,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       if (linkageType == LinkageType.Default) {
         linkageType = (LinkageType)myFrameworkLinkageCombo.getSelectedItem();
         if (linkageType == LinkageType.Default) {
-          linkageType = BCUtils.getDefaultFrameworkLinkage(myNature);
+          linkageType = BCUtils.getDefaultFrameworkLinkage(sdk.getFlexVersion(), myNature);
         }
       }
 

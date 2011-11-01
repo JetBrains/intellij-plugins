@@ -202,7 +202,7 @@ public class CompilerConfigGenerator {
       if (linkageType == null) continue;
       // resolve default
       if (linkageType == LinkageType.Default) linkageType = myConfig.getDependencies().getFrameworkLinkage();
-      if (linkageType == LinkageType.Default) linkageType = BCUtils.getDefaultFrameworkLinkage(myConfig.getNature());
+      if (linkageType == LinkageType.Default) linkageType = BCUtils.getDefaultFrameworkLinkage(mySdkVersion, myConfig.getNature());
 
       final CompilerOptionInfo info = linkageType == LinkageType.Merged ? CompilerOptionInfo.LIBRARY_PATH_INFO :
                                       linkageType == LinkageType.RSL ? CompilerOptionInfo.LIBRARY_PATH_INFO :

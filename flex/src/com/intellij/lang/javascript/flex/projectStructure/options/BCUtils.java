@@ -8,6 +8,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -49,14 +50,17 @@ public class BCUtils {
                : FLEX_WEB_OR_DESKTOP_APP_LINKAGES;
   }
 
-  public static LinkageType getDefaultFrameworkLinkage(BuildConfigurationNature nature) {
+  public static LinkageType getDefaultFrameworkLinkage(final String sdkVersion,
+                                                       final BuildConfigurationNature nature) {
     return nature.isLib()
            ? LinkageType.External
            : nature.pureAS
              ? LinkageType.Merged
              : nature.isWebPlatform()
-               ? LinkageType.RSL // Web Flex App
-               : LinkageType.Merged; // AIR Flex App (Desktop or Mobile)
+               ? StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0 // Web Flex App
+                 ? LinkageType.RSL      // Flex 4
+                 : LinkageType.Merged   // Flex 3
+               : LinkageType.Merged;  // AIR Flex App (Desktop or Mobile)
   }
 
   /**
