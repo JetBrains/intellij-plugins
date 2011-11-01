@@ -165,7 +165,7 @@ public class FilesToPackageForm {
     });
     d.setRemoveAction(new AnActionButtonRunnable() {
       public void run(AnActionButton anActionButton) {
-        //TableUtil.stopEditing(myFilesToPackageTable);
+        TableUtil.stopEditing(myFilesToPackageTable);
         final int[] selectedRows = myFilesToPackageTable.getSelectedRows();
         Arrays.sort(selectedRows);
         for (int i = selectedRows.length - 1; i >= 0; i--) {
