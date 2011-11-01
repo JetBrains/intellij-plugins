@@ -54,7 +54,7 @@ public class FlexIdeRunConfigurationProducer extends RuntimeConfigurationProduce
         params.setOverriddenOutputFileName(jsClass.getName() + ".swf");
       }
 
-      runConfig.setName(FlexIdeRunConfiguration.suggestName(params));
+      runConfig.setName(params.suggestUniqueName(context.getRunManager().getConfigurations(FlexIdeRunConfigurationType.getInstance())));
       return settings;
     }
 

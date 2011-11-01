@@ -32,7 +32,6 @@ import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -244,28 +243,10 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
     params.setModuleName(module.getName());
     params.setBCName(bcName);
 
-    settings.setName(getUniqueName(FlexIdeRunConfiguration.suggestName(params), existingConfigurations));
+    settings.setName(params.suggestUniqueName(existingConfigurations));
     settings.setTemporary(false);
     runManager.addConfiguration(settings, false);
     runManager.setActiveConfiguration(settings);
-  }
-
-  private static String getUniqueName(final String suggestedName, final RunConfiguration[] existingConfigurations) {
-    final String[] used = new String[existingConfigurations.length];
-    for (int i = 0; i < existingConfigurations.length; i++) {
-      used[i] = existingConfigurations[i].getName();
-    }
-    
-    if (ArrayUtil.contains(suggestedName, used)) {
-      int i = 1;
-      String name;
-      while (ArrayUtil.contains((name = suggestedName + " (" + i + ")"), used)) {
-        i++;
-      }
-      return name;
-    }
-    
-    return suggestedName;
   }
 
   @Nullable

@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.run;
 
+import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
@@ -9,6 +10,8 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.MalformedURLException;
@@ -19,8 +22,8 @@ import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.*;
 public class FlexIdeRunnerParameters extends BCBasedRunnerParameters implements Cloneable {
 
   private boolean myOverrideMainClass = false;
-  private String myOverriddenMainClass = "";
-  private String myOverriddenOutputFileName = "";
+  private @NotNull String myOverriddenMainClass = "";
+  private @NotNull String myOverriddenOutputFileName = "";
 
   private boolean myLaunchUrl = false;
   private @NotNull String myUrl = "http://";
@@ -49,19 +52,21 @@ public class FlexIdeRunnerParameters extends BCBasedRunnerParameters implements 
     myOverrideMainClass = overrideMainClass;
   }
 
+  @NotNull
   public String getOverriddenMainClass() {
     return myOverriddenMainClass;
   }
 
-  public void setOverriddenMainClass(final String overriddenMainClass) {
+  public void setOverriddenMainClass(@NotNull final String overriddenMainClass) {
     myOverriddenMainClass = overriddenMainClass;
   }
 
+  @NotNull
   public String getOverriddenOutputFileName() {
     return myOverriddenOutputFileName;
   }
 
-  public void setOverriddenOutputFileName(final String overriddenOutputFileName) {
+  public void setOverriddenOutputFileName(@NotNull final String overriddenOutputFileName) {
     myOverriddenOutputFileName = overriddenOutputFileName;
   }
 
@@ -287,6 +292,33 @@ public class FlexIdeRunnerParameters extends BCBasedRunnerParameters implements 
     }
   }
 
+  public String suggestName() {
+    return myOverrideMainClass ? StringUtil.getShortName(myOverriddenMainClass)
+                               : getBCName().equals(getModuleName())
+                                 ? getBCName()
+                                 : (getBCName() + " (" + getModuleName() + ")");
+  }
+
+  public String suggestUniqueName(final RunConfiguration[] existingConfigurations) {
+    final String suggestedName = suggestName();
+
+    final String[] used = new String[existingConfigurations.length];
+    for (int i = 0; i < existingConfigurations.length; i++) {
+      used[i] = existingConfigurations[i].getName();
+    }
+
+    if (ArrayUtil.contains(suggestedName, used)) {
+      int i = 1;
+      String name;
+      while (ArrayUtil.contains((name = suggestedName + " (" + i + ")"), used)) {
+        i++;
+      }
+      return name;
+    }
+
+    return suggestedName;
+  }
+
   protected FlexIdeRunnerParameters clone() {
     final FlexIdeRunnerParameters clone = (FlexIdeRunnerParameters)super.clone();
     clone.myLauncherParameters = myLauncherParameters.clone();
@@ -294,16 +326,16 @@ public class FlexIdeRunnerParameters extends BCBasedRunnerParameters implements 
   }
 
   public boolean equals(final Object o) {
-    if (!super.equals(o)) return false;
-
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
 
     final FlexIdeRunnerParameters that = (FlexIdeRunnerParameters)o;
 
     if (myFullScreenHeight != that.myFullScreenHeight) return false;
     if (myFullScreenWidth != that.myFullScreenWidth) return false;
     if (myLaunchUrl != that.myLaunchUrl) return false;
+    if (myOverrideMainClass != that.myOverrideMainClass) return false;
     if (myRunTrusted != that.myRunTrusted) return false;
     if (myScreenHeight != that.myScreenHeight) return false;
     if (myScreenWidth != that.myScreenWidth) return false;
@@ -315,6 +347,8 @@ public class FlexIdeRunnerParameters extends BCBasedRunnerParameters implements 
     if (!myEmulatorAdlOptions.equals(that.myEmulatorAdlOptions)) return false;
     if (!myLauncherParameters.equals(that.myLauncherParameters)) return false;
     if (myMobileRunTarget != that.myMobileRunTarget) return false;
+    if (!myOverriddenMainClass.equals(that.myOverriddenMainClass)) return false;
+    if (!myOverriddenOutputFileName.equals(that.myOverriddenOutputFileName)) return false;
     if (!myUrl.equals(that.myUrl)) return false;
 
     return true;

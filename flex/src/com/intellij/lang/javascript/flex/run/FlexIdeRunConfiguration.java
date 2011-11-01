@@ -19,7 +19,6 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -111,14 +110,7 @@ public class FlexIdeRunConfiguration extends RunConfigurationBase
   }
 
   public String suggestedName() {
-    return suggestName(myRunnerParameters);
-  }
-
-  public static String suggestName(final FlexIdeRunnerParameters params) {
-    return params.isOverrideMainClass() ? StringUtil.getShortName(params.getOverriddenMainClass())
-                                        : params.getBCName().equals(params.getModuleName())
-                                          ? params.getBCName()
-                                          : (params.getBCName() + " (" + params.getModuleName() + ")");
+    return myRunnerParameters.suggestName();
   }
 
   private class AirRunState extends CommandLineState {
