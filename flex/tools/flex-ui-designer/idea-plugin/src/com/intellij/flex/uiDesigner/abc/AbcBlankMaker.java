@@ -55,7 +55,7 @@ final class AbcBlankMaker {
 
   private static void d() throws IOException {
     final long time = System.currentTimeMillis();
-    new AbcFilter("4.1").filter(new File("/Users/develar/library.swf"), new File("/Users/develar/l.swf"), null);
+    new AbcFilter(null).filter(new File("/Developer/SDKs/flex_4.5.1/frameworks/libs/frameworkUnpacked/library.swf"), new File("/Users/develar/l.swf"), null);
     System.out.print("\n");
     System.out.print(System.currentTimeMillis() - time);
   }

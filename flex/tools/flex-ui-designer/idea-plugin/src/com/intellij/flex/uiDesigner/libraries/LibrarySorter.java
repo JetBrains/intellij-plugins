@@ -21,7 +21,6 @@ import com.intellij.util.text.CharArrayUtil;
 import com.intellij.util.text.CharSequenceBackedByArray;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
-import gnu.trove.TLinkedList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
@@ -132,19 +131,19 @@ public class LibrarySorter {
   public SortResult sort(final List<Library> libraries, final String flexSdkVersion, final boolean isFromSdk) throws IOException {
     useIndexForFindDefinitions = !isFromSdk;
 
+    ArrayList<LibrarySetItem> resourceBundleOnlyItems = null;
+
     final List<LibrarySetItem> unsortedItems = collectItems(libraries, isFromSdk);
-    final TLinkedList<LibrarySetItem> queue = new TLinkedList<LibrarySetItem>();
     AbcFilter filter = null;
     for (LibrarySetItem item : unsortedItems) {
       if (!item.hasDefinitions()) {
         if (item.library.hasResourceBundles()) {
-          queue.add(item);
+          if (resourceBundleOnlyItems == null) {
+            resourceBundleOnlyItems = new ArrayList<LibrarySetItem>();
+          }
+          resourceBundleOnlyItems.add(item);
         }
         continue;
-      }
-
-      if (item.inDegree == 0) {
-        queue.add(item);
       }
 
       Collection<CharSequence> filteredDefinitions = null;
@@ -202,43 +201,43 @@ public class LibrarySorter {
 
     final ArrayList<LibrarySetEmbedItem> embedItems = isFromSdk ? new ArrayList<LibrarySetEmbedItem>(2) : null;
     final ArrayList<LibrarySetItem> items = new ArrayList<LibrarySetItem>(unsortedItems.size());
-    ArrayList<LibrarySetItem> resourceBundleOnlyitems = null;
-    while (!queue.isEmpty()) {
-      LibrarySetItem item = queue.removeFirst();
-      assert item.hasDefinitions() || item.library.hasResourceBundles();
-      if (item.library.hasResourceBundles() && !item.hasDefinitions()) {
-        if (resourceBundleOnlyitems == null) {
-          resourceBundleOnlyitems = new ArrayList<LibrarySetItem>();
-        }
-        resourceBundleOnlyitems.add(item);
-      }
-      else {
-        items.add(item);
-      }
 
-      if (isFromSdk && item.library.defaultsStyle != null) {
-        final String name = item.library.getName();
-        String complementName = null;
-        if (name.equals(SPARK)) {
-          complementName = "flex" + flexSdkVersion;
-        }
-        else if (name.equals(AIRSPARK)) {
-          complementName = "air4";
-        }
-
-        if (complementName != null) {
-          embedItems.add(new LibrarySetEmbedItem(complementName, item));
-        }
-      }
-
-      for (LibrarySetItem successor : item.successors) {
-        if (--successor.inDegree == 0) {
-          queue.add(successor);
-        }
-      }
-    }
+    //while (!queue.isEmpty()) {
+    //  LibrarySetItem item = queue.removeFirst();
+    //  assert item.hasDefinitions() || item.library.hasResourceBundles();
+    //  if (item.library.hasResourceBundles() && !item.hasDefinitions()) {
+    //    if (resourceBundleOnlyItems == null) {
+    //      resourceBundleOnlyItems = new ArrayList<LibrarySetItem>();
+    //    }
+    //    resourceBundleOnlyItems.add(item);
+    //  }
+    //  else {
+    //    items.add(item);
+    //  }
+    //
+    //  if (isFromSdk && item.library.defaultsStyle != null) {
+    //    final String name = item.library.getName();
+    //    String complementName = null;
+    //    if (name.equals(SPARK)) {
+    //      complementName = "flex" + flexSdkVersion;
+    //    }
+    //    else if (name.equals(AIRSPARK)) {
+    //      complementName = "air4";
+    //    }
+    //
+    //    if (complementName != null) {
+    //      embedItems.add(new LibrarySetEmbedItem(complementName, item));
+    //    }
+    //  }
+    //
+    //  for (LibrarySetItem successor : item.successors) {
+    //    if (--successor.inDegree == 0) {
+    //      queue.add(successor);
+    //    }
+    //  }
+    //}
     
-    return new SortResult(items, embedItems, resourceBundleOnlyitems);
+    return new SortResult(items, embedItems, resourceBundleOnlyItems);
   }
 
   private File createSwfOutFile(Library library) {
@@ -333,6 +332,7 @@ public class LibrarySorter {
       }
     }
   }
+
 
   @SuppressWarnings({"UnusedDeclaration"})
   @TestOnly

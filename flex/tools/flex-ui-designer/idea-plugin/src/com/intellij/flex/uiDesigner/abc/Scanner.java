@@ -1,5 +1,7 @@
 package com.intellij.flex.uiDesigner.abc;
 
+import com.intellij.util.ArrayUtil;
+
 import static com.intellij.flex.uiDesigner.abc.ActionBlockConstants.*;
 
 final class Scanner {
@@ -99,6 +101,10 @@ final class Scanner {
 
   public static int[] scanMethods(DataBuffer in) {
     int size = in.readU32();
+    if (size == 0) {
+      return ArrayUtil.EMPTY_INT_ARRAY;
+    }
+
     int[] positions = new int[size];
 
     for (int i = 0; i < size; i++) {
@@ -126,6 +132,10 @@ final class Scanner {
 
   public static int[] scanMetadata(DataBuffer in) {
     int size = in.readU32();
+    if (size == 0) {
+      return ArrayUtil.EMPTY_INT_ARRAY;
+    }
+
     int[] positions = new int[size];
 
     for (int i = 0; i < size; i++) {
@@ -137,42 +147,12 @@ final class Scanner {
     return positions;
   }
 
-  public static int[] scanInstances(DataBuffer in, int size) throws DecoderException {
-    int[] positions = new int[size];
-
-    for (int i = 0; i < size; i++) {
-      positions[i] = in.position();
-
-      in.skipEntries(2); //name & super index
-      int flags = in.readU8();
-
-      if ((flags & CLASS_FLAG_protected) != 0) {
-        in.readU32();//protected namespace
-      }
-
-      in.skipEntries(in.readU32());
-      in.readU32(); //init index
-
-      scanTraits(in);
-    }
-
-    return positions;
-  }
-
-  public static int[] scanClasses(DataBuffer in, int size) throws DecoderException {
-    int[] positions = new int[size];
-
-    for (int i = 0; i < size; i++) {
-      positions[i] = in.position();
-      in.readU32();
-      scanTraits(in);
-    }
-
-    return positions;
-  }
-
   public static int[] scanScripts(DataBuffer in) throws DecoderException {
     int size = in.readU32();
+    if (size == 0) {
+      return ArrayUtil.EMPTY_INT_ARRAY;
+    }
+
     int[] positions = new int[size];
 
     for (int i = 0; i < size; i++) {
@@ -186,6 +166,10 @@ final class Scanner {
 
   public static int[] scanMethodBodies(DataBuffer in) throws DecoderException {
     int size = in.readU32();
+    if (size == 0) {
+      return ArrayUtil.EMPTY_INT_ARRAY;
+    }
+
     int[] positions = new int[size];
 
     for (int i = 0; i < size; i++) {
@@ -207,15 +191,13 @@ final class Scanner {
     in.skipEntries(in.readU32() * 5);
   }
 
-  private static void scanTraits(DataBuffer in) throws DecoderException {
-    long count = in.readU32();
+  static void scanTraits(DataBuffer in) throws DecoderException {
+    int count = in.readU32();
 
-    for (long i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++) {
       in.readU32();
       int kind = in.readU8();
-      int tag = kind & 0x0f;
-
-      switch (tag) {
+      switch (kind & 0x0f) {
         case TRAIT_Var:
         case TRAIT_Const: {
           in.skipEntries(2);

@@ -107,8 +107,8 @@ class DataBuffer {
     }
   }
 
-  public void seek(int pos) {
-    this.position = pos;
+  public void seek(int newPosition) {
+    position = newPosition;
   }
 
   public boolean same(DataBuffer b, int start1, int end1, int start2, int end2) {

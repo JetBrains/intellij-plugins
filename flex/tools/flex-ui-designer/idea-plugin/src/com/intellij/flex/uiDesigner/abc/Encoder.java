@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.abc;
 
+import com.intellij.flex.uiDesigner.abc.Decoder.Opcodes;
 import com.intellij.flex.uiDesigner.io.AbstractByteArrayOutputStream;
 import com.intellij.flex.uiDesigner.io.IntIntHashMap;
 import gnu.trove.TIntArrayList;
@@ -17,6 +18,8 @@ import static com.intellij.flex.uiDesigner.abc.Decoder.MethodCodeDecoding;
 class Encoder {
   private final TIntArrayList tempMetadataList = new TIntArrayList(8);
 
+  final Opcodes opcodeDecoder = new Opcodes();
+
   protected IndexHistory history;
 
   private int majorVersion, minorVersion;
@@ -27,6 +30,7 @@ class Encoder {
 
   protected DataBuffer2 methodInfo;
   private MetadataInfoByteArray metadataInfo;
+  private DataBuffer2 instanceInfo;
   private DataBuffer2 classInfo;
   private DataBuffer2 scriptInfo;
   protected DataBuffer2 methodBodies;
@@ -39,7 +43,7 @@ class Encoder {
     this(46, 16);
   }
 
-  public Encoder(int majorVersion, int minorVersion) {
+  private Encoder(int majorVersion, int minorVersion) {
     this.majorVersion = majorVersion;
     this.minorVersion = minorVersion;
 
@@ -91,6 +95,7 @@ class Encoder {
     metadataInfo = new MetadataInfoByteArray(sizes, total);
 
     estimatedSize = 0;
+    int classEstimatedSize = 0;
     total = 0;
     sizes = new int[decoders.size()];
     for (int i = 0, size = sizes.length; i < size; i++) {
@@ -99,12 +104,14 @@ class Encoder {
         continue;
       }
 
-      estimatedSize += decoder.classInfo.estimatedSize;
+      estimatedSize += decoder.classInfo.instanceEstimatedSize;
+      classEstimatedSize += decoder.classInfo.classEstimatedSize;
       sizes[i] = decoder.classInfo.size();
       total += sizes[i];
     }
-    classInfo = new DataBuffer2(estimatedSize, sizes);
-    classInfo.writeU32(total);
+    instanceInfo = new DataBuffer2(estimatedSize, sizes);
+    classInfo = new DataBuffer2(classEstimatedSize, sizes);
+    instanceInfo.writeU32(total);
 
     estimatedSize = 0;
     total = 0;
@@ -175,6 +182,7 @@ class Encoder {
     channel.write(buffer);
     buffer.clear();
 
+    instanceInfo.writeTo(channel);
     classInfo.writeTo(channel);
     scriptInfo.writeTo(channel);
     methodBodies.writeTo(channel);
@@ -217,6 +225,7 @@ class Encoder {
     channel.write(buffer);
     buffer.clear();
 
+    instanceInfo.writeTo(channel);
     classInfo.writeTo(channel);
     scriptInfo.writeTo(channel);
     methodBodies.writeTo(channel);
@@ -347,28 +356,28 @@ class Encoder {
     instanceStarting(name, in);
     in.seek(originalPos);
 
-    classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
-    classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, in.readU32()));
+    instanceInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
+    instanceInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, in.readU32()));
 
     int flags = in.readU8();
-    classInfo.writeU8(flags);
+    instanceInfo.writeU8(flags);
     if ((flags & CLASS_FLAG_protected) != 0) {
-      classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.NS, in.readU32()));
+      instanceInfo.writeU32(history.getIndex(poolIndex, IndexHistory.NS, in.readU32()));
     }
 
     final int interfaceCount = in.readU32();
-    classInfo.writeU32(interfaceCount);
+    instanceInfo.writeU32(interfaceCount);
     if (interfaceCount > 0) {
       for (int j = 0; j < interfaceCount; j++) {
-        classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, in.readU32()));
+        instanceInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, in.readU32()));
       }
     }
 
     final int oldIInit = in.readU32();
-    classInfo.writeU32(methodInfo.getIndex(poolIndex, oldIInit));
+    instanceInfo.writeU32(methodInfo.getIndex(poolIndex, oldIInit));
     instanceEnding(oldIInit);
 
-    currentBuffer = classInfo;
+    currentBuffer = instanceInfo;
   }
 
   protected void instanceEnding(int oldIInit) {
@@ -435,9 +444,7 @@ class Encoder {
       exceptions.writeU32(opcodes.getOffset(end));
       exceptions.writeU32(opcodes.getOffset(target));
       exceptions.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, type));
-      if (minorVersion != 15) {
-        exceptions.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
-      }
+      exceptions.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
     }
   }
 

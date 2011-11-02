@@ -5,7 +5,7 @@ import com.intellij.flex.uiDesigner.io.AbstractByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
+import java.util.List;
 
 final class SwfUtil {
   // FWS, Version 11
@@ -51,99 +51,33 @@ final class SwfUtil {
     out.write(SWF_FOOTER);
   }
 
-  public static Encoder mergeDoAbc(ArrayList<Decoder> decoders) throws IOException {
+  public static Encoder mergeDoAbc(List<Decoder> decoders) throws IOException {
     final Encoder encoder = new Encoder();
     encoder.configure(decoders, null);
     mergeDoAbc(decoders, encoder);
     return encoder;
   }
 
-  public static void mergeDoAbc(ArrayList<Decoder> decoders, Encoder encoder) throws IOException {
-    final int abcSize = decoders.size();
-    encoder.enablePeepHole();
+  public static void mergeDoAbc(List<Decoder> decoders, Encoder encoder) throws IOException {
+    //final long time = System.currentTimeMillis();
 
-    Decoder decoder;
-    // decode methodInfo...
-    for (int i = 0; i < abcSize; i++) {
-      decoder = decoders.get(i);
+    encoder.enablePeepHole();
+    for (int i = 0, n = decoders.size(); i < n; i++) {
+      Decoder decoder = decoders.get(i);
       if (decoder == null) {
         continue;
       }
 
       encoder.useConstantPool(i);
-      Decoder.MethodInfo methodInfo = decoder.methodInfo;
-      for (int j = 0, infoSize = methodInfo.size(); j < infoSize; j++) {
-        methodInfo.decode(j, encoder);
-      }
+      decoder.methodInfo.decodeAll(encoder, decoder.in);
+      decoder.metadataInfo.decodeAll(encoder, decoder.in);
+      decoder.classInfo.decodeInstances(encoder, decoder.in);
+      decoder.classInfo.decodeClasses(encoder, decoder.in);
+      decoder.scriptInfo.decodeAll(encoder, decoder.in);
+      decoder.methodBodies.decodeAll(encoder, decoder.in);
     }
 
-    // decode metadataInfo...
-    for (int j = 0; j < abcSize; j++) {
-      decoder = decoders.get(j);
-      if (decoder == null) {
-        continue;
-      }
-
-      encoder.useConstantPool(j);
-      Decoder.MetaDataInfo metadataInfo = decoder.metadataInfo;
-      for (int k = 0, infoSize = metadataInfo.size(); k < infoSize; k++) {
-        metadataInfo.decode(k, encoder);
-      }
-    }
-
-    // decode classInfo...
-    for (int j = 0; j < abcSize; j++) {
-      decoder = decoders.get(j);
-      if (decoder == null) {
-        continue;
-      }
-
-      encoder.useConstantPool(j);
-      Decoder.ClassInfo classInfo = decoder.classInfo;
-      for (int k = 0, infoSize = classInfo.size(); k < infoSize; k++) {
-        classInfo.decodeInstance(k, encoder);
-      }
-    }
-
-    for (int j = 0; j < abcSize; j++) {
-      decoder = decoders.get(j);
-      if (decoder == null) {
-        continue;
-      }
-
-      encoder.useConstantPool(j);
-      Decoder.ClassInfo classInfo = decoder.classInfo;
-      for (int k = 0, infoSize = classInfo.size(); k < infoSize; k++) {
-        classInfo.decodeClass(k, encoder);
-      }
-    }
-
-    // decode scripts...
-    for (int j = 0; j < abcSize; j++) {
-      decoder = decoders.get(j);
-      if (decoder == null) {
-        continue;
-      }
-
-      encoder.useConstantPool(j);
-      Decoder.ScriptInfo scriptInfo = decoder.scriptInfo;
-      for (int k = 0, scriptSize = scriptInfo.size(); k < scriptSize; k++) {
-        scriptInfo.decode(k, encoder);
-      }
-    }
-
-    // decode method bodies...
-    for (int j = 0; j < abcSize; j++) {
-      decoder = decoders.get(j);
-      if (decoder == null) {
-        continue;
-      }
-
-      encoder.useConstantPool(j);
-      Decoder.MethodBodies methodBodies = decoder.methodBodies;
-      for (int k = 0, bodySize = methodBodies.size(); k < bodySize; k++) {
-        methodBodies.decode(k, 2, encoder);
-      }
-    }
+    //System.out.print("\nmerge: ");
+    //System.out.print(System.currentTimeMillis() - time);
   }
 }

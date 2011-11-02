@@ -1,7 +1,6 @@
 package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.io.IOUtil;
-import com.intellij.flex.uiDesigner.libraries.LibrarySorter.FlexLibsNames;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.impl.source.parsing.xml.XmlBuilder;
 import gnu.trove.THashSet;
@@ -95,10 +94,7 @@ class CatalogXmlBuilder implements XmlBuilder {
         }
         else {
           definition.time = IOUtil.parsePositiveLong(mod);
-          // todo see http://confluence.jetbrains.net/display/IDEA/Topological+sort+External+Dependencies+and+filter+unresolved+definitions last note
-          //if (definition.time > oldDefinition.getTime()) {
-          final String libName = library.library.getName();
-          if (libName.equals(FlexLibsNames.FRAMEWORK) || libName.equals(FlexLibsNames.SPARK)) {
+          if (definition.time > oldDefinition.getTime()) {
             oldDefinition.markAsUnresolved(value);
           }
           else {

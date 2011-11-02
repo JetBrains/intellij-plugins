@@ -3,7 +3,6 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.flex.uiDesigner.libraries.InitException;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
-import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
@@ -12,7 +11,6 @@ import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.ShutDownTracker;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
-import gnu.trove.THashMap;
 import org.picocontainer.MutablePicoContainer;
 
 import java.io.IOException;
@@ -20,7 +18,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -31,7 +28,6 @@ class TestDesignerApplicationManager {
   private final ProcessHandler adlProcessHandler;
 
   private Socket socket;
-  private final Map<String, LibrarySet> sdkLibrarySetCache = new THashMap<String, LibrarySet>();
   public final TestSocketInputHandler socketInputHandler;
 
   private TestDesignerApplicationManager() throws Exception {
@@ -120,15 +116,10 @@ class TestDesignerApplicationManager {
     serviceImplementationChanged = true;
   }
 
-  public XmlFile[] initLibrarySets(Module module, boolean requireLocalStyleHolder, String sdkName) throws IOException, InitException {
-    LibrarySet sdkLibrarySet = sdkLibrarySetCache.get(sdkName);
+  public XmlFile[] initLibrarySets(Module module, boolean requireLocalStyleHolder) throws IOException, InitException {
     final ProblemsHolder problemsHolder = new ProblemsHolder();
-    XmlFile[] unregistedDocumentReferences = LibraryManager.getInstance().initLibrarySets(module, requireLocalStyleHolder, problemsHolder, sdkLibrarySet);
+    XmlFile[] unregistedDocumentReferences = LibraryManager.getInstance().initLibrarySets(module, requireLocalStyleHolder, problemsHolder);
     assert problemsHolder.isEmpty();
-    if (sdkLibrarySet == null) {
-      sdkLibrarySetCache.put(sdkName, Client.getInstance().getRegisteredProjects().getInfo(module.getProject()).getFlexLibrarySet());
-    }
-
     return unregistedDocumentReferences;
   }
 

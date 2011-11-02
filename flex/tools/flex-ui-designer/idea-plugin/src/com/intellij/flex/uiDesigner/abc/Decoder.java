@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.abc;
 
+import com.intellij.util.ArrayUtil;
 import gnu.trove.TIntHashSet;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,9 +13,8 @@ final class Decoder {
   public final ClassInfo classInfo;
   public final ScriptInfo scriptInfo;
   public final MethodBodies methodBodies;
-  public final Opcodes opcodes;
 
-  private final DataBuffer in;
+  final DataBuffer in;
 
   public final char[] name;
 
@@ -33,7 +33,6 @@ final class Decoder {
     classInfo = new ClassInfo(in);
     scriptInfo = new ScriptInfo(in);
     methodBodies = new MethodBodies(in);
-    opcodes = new Opcodes(in);
 
     this.in = in;
   }
@@ -43,18 +42,16 @@ final class Decoder {
   }
 
   private abstract static class Info {
-    final DataBuffer in;
     final int estimatedSize;
     protected final int[] positions;
 
     Info(DataBuffer in) throws DecoderException {
       int pos = in.position();
-      this.in = in;
-      positions = scan();
+      positions = scan(in);
       estimatedSize = in.position() - pos;
     }
 
-    abstract protected int[] scan() throws DecoderException;
+    abstract protected int[] scan(DataBuffer in) throws DecoderException;
 
     public int size() {
       return positions.length;
@@ -67,15 +64,17 @@ final class Decoder {
     }
 
     @Override
-    protected int[] scan() {
+    protected int[] scan(DataBuffer in) {
       return Scanner.scanMethods(in);
     }
 
-    public void decode(int index, Encoder visitor) throws DecoderException {
-      int originalPos = in.position();
-      in.seek(positions[index]);
-      visitor.methodInfo(in);
-      in.seek(originalPos);
+    public void decodeAll(Encoder visitor, DataBuffer in) throws DecoderException {
+      for (int position : positions) {
+        int originalPos = in.position();
+        in.seek(position);
+        visitor.methodInfo(in);
+        in.seek(originalPos);
+      }
     }
   }
 
@@ -85,150 +84,182 @@ final class Decoder {
     }
 
     @Override
-    protected int[] scan() {
+    protected int[] scan(DataBuffer in) {
       return Scanner.scanMetadata(in);
     }
 
-    public void decode(int index, Encoder visitor) throws DecoderException {
-      int pos = positions[index];
-      int originalPos = in.position();
-      in.seek(pos);
-      visitor.metadataInfo(index, in.readU32(), in.readU32(), in);
-      in.seek(originalPos);
+    public void decodeAll(Encoder visitor, DataBuffer in) throws DecoderException {
+      for (int index = 0, n = positions.length; index < n; index++) {
+        int originalPos = in.position();
+        in.seek(positions[index]);
+        visitor.metadataInfo(index, in.readU32(), in.readU32(), in);
+        in.seek(originalPos);
+      }
     }
   }
 
   public static final class ClassInfo {
-    final DataBuffer in;
-    final int estimatedSize;
-    private final int[] classPositions;
-    private final int[] instancePositions;
-    private final Traits classTraits;
-    private final Traits instanceTraits;
+    final int instanceEstimatedSize;
+    final int classEstimatedSize;
+    // first half — instance, second half — class
+    private final int[] positions;
 
-    ClassInfo(DataBuffer in) throws DecoderException {
-      this.in = in;
-      int pos = in.position();
-      int size = in.readU32();
-      instancePositions = Scanner.scanInstances(in, size);
-      instanceTraits = new Traits(in);
-      classPositions = Scanner.scanClasses(in, size);
-      classTraits = new Traits(in);
-      estimatedSize = in.position() - pos;
+    ClassInfo(final DataBuffer in) throws DecoderException {
+      int position = in.position();
+      final int size = in.readU32();
+      if (size == 0) {
+        positions = ArrayUtil.EMPTY_INT_ARRAY;
+        instanceEstimatedSize = in.position() - position;
+        classEstimatedSize = 0;
+      }
+      else {
+        positions = new int[size * 2];
+
+        scanInstances(in, size, positions);
+        instanceEstimatedSize = in.position() - position;
+
+        position = in.position();
+        scanClasses(in, size, positions);
+        classEstimatedSize = in.position() - position;
+      }
+    }
+
+    private static void scanInstances(DataBuffer in, int size, int[] positions) throws DecoderException {
+      for (int i = 0; i < size; i++) {
+        positions[i] = in.position();
+
+        in.skipEntries(2); //name & super index
+        int flags = in.readU8();
+
+        if ((flags & CLASS_FLAG_protected) != 0) {
+          in.readU32();//protected namespace
+        }
+
+        in.skipEntries(in.readU32());
+        in.readU32(); //init index
+
+        Scanner.scanTraits(in);
+      }
+    }
+
+    private static void scanClasses(DataBuffer in, int size, int[] positions) throws DecoderException {
+      for (int i = 0; i < size; i++) {
+        positions[i + size] = in.position();
+        in.readU32();
+        Scanner.scanTraits(in);
+      }
     }
 
     public int size() {
-      return classPositions.length;
+      return positions.length / 2;
     }
 
-    public void decodeInstance(int index, Encoder visitor) throws DecoderException {
-      int pos = instancePositions[index];
-      int originalPos = in.position();
-      in.seek(pos);
-      visitor.startInstance(in);
-      instanceTraits.decode(visitor);
-      visitor.endInstance();
+    public void decodeInstances(Encoder visitor, DataBuffer in) throws DecoderException {
+      for (int i = 0, n = size(); i < n; i++) {
+        int originalPos = in.position();
+        in.seek(positions[i]);
+        visitor.startInstance(in);
+        decodeTraits(visitor, in);
+        visitor.endInstance();
 
-      in.seek(originalPos);
+        in.seek(originalPos);
+      }
     }
 
-    public void decodeClass(int index, Encoder visitor) throws DecoderException {
-      int pos = classPositions[index];
-      int originalPos = in.position();
-      in.seek(pos);
+    public void decodeClasses(Encoder visitor, DataBuffer in) throws DecoderException {
+      for (int i = size(), n = positions.length; i < n; i++) {
+        int originalPos = in.position();
+        in.seek(positions[i]);
 
-      int cinit = in.readU32();
-      visitor.startClass(cinit, index, in);
-      classTraits.decode(visitor);
-      visitor.endClass();
+        visitor.startClass(in.readU32(), i, in);
+        decodeTraits(visitor, in);
+        visitor.endClass();
 
-      in.seek(originalPos);
+        in.seek(originalPos);
+      }
     }
   }
 
   public static final class ScriptInfo extends Info {
-    private final Traits traits;
-
     ScriptInfo(DataBuffer in) throws DecoderException {
       super(in);
-      traits = new Traits(in);
     }
 
     @Override
-    protected int[] scan() throws DecoderException {
+    protected int[] scan(DataBuffer in) throws DecoderException {
       return Scanner.scanScripts(in);
     }
 
-    public void decode(int index, Encoder visitor) throws DecoderException {
-      int pos = positions[index];
-      int originalPos = in.position();
-      in.seek(pos);
+    public void decodeAll(Encoder visitor, DataBuffer in) throws DecoderException {
+      for (int position : positions) {
+        int originalPos = in.position();
+        in.seek(position);
 
-      visitor.startScript(in.readU32());
-      traits.decode(visitor);
-      visitor.endScript();
+        visitor.startScript(in.readU32());
+        decodeTraits(visitor, in);
+        visitor.endScript();
 
-      in.seek(originalPos);
+        in.seek(originalPos);
+      }
     }
   }
 
-  public final class MethodBodies extends Info {
-    private final Traits traits;
-
+  public static final class MethodBodies extends Info {
     MethodBodies(DataBuffer in) throws DecoderException {
       super(in);
-      traits = new Traits(in);
     }
 
     @Override
-    protected int[] scan() throws DecoderException {
+    protected int[] scan(DataBuffer in) throws DecoderException {
       return Scanner.scanMethodBodies(in);
     }
 
-    public void decode(int index, int opcodePass, Encoder visitor) throws DecoderException {
-      int pos = positions[index];
-      int originalPos = in.position();
-      in.seek(pos);
+    public void decodeAll(Encoder visitor, DataBuffer in) throws DecoderException {
+      final Opcodes opcodes = visitor.opcodeDecoder;
+      for (int position : positions) {
+        int originalPos = in.position();
+        in.seek(position);
 
-      int methodInfo = in.readU32();
-      int maxStack = in.readU32();
-      int maxRegs = in.readU32();
-      int scopeDepth = in.readU32();
-      int maxScope = in.readU32();
+        int methodInfo = in.readU32();
+        int maxStack = in.readU32();
+        int maxRegs = in.readU32();
+        int scopeDepth = in.readU32();
+        int maxScope = in.readU32();
 
-      int codeLength = in.readU32();
-      int codeStart = in.position();
-      in.skip(codeLength);
+        int codeLength = in.readU32();
+        int codeStart = in.position();
+        in.skip(codeLength);
 
-      final int behaviour = visitor.startMethodBody(methodInfo, maxStack, maxRegs, scopeDepth, maxScope);
-      if (behaviour == MethodCodeDecoding.STOP) {
-        skipExceptions(in.readU32());
-        int traitCount = in.readU32();
-        assert traitCount == 0;
+        final int behaviour = visitor.startMethodBody(methodInfo, maxStack, maxRegs, scopeDepth, maxScope);
+        if (behaviour == MethodCodeDecoding.STOP) {
+          skipExceptions(in.readU32(), in);
+          int traitCount = in.readU32();
+          assert traitCount == 0;
+          in.seek(originalPos);
+          return;
+        }
+
+        int exPos = in.position();
+        for (int i = 0; i < 2; i++) {
+          opcodes.reset();
+          in.seek(exPos);
+          int exCount = in.readU32();
+          visitor.startExceptions(exCount);
+
+          decodeExceptions(in, codeStart, visitor, exCount);
+          opcodes.decode(codeStart, codeLength, visitor, behaviour == MethodCodeDecoding.STOP_AFTER_CONSTRUCT_SUPER, in);
+
+          visitor.endOpcodes();
+          visitor.endExceptions();
+        }
+        decodeTraits(visitor, in);
+        visitor.endMethodBody();
+
         in.seek(originalPos);
-        return;
       }
-
-      int exPos = in.position();
-      for (int i = 0; i < opcodePass; i++) {
-        opcodes.reset();
-        in.seek(exPos);
-        int exCount = in.readU32();
-        visitor.startExceptions(exCount);
-
-        decodeExceptions(in, codeStart, visitor, exCount);
-        opcodes.decode(codeStart, codeLength, visitor, behaviour == MethodCodeDecoding.STOP_AFTER_CONSTRUCT_SUPER);
-
-        visitor.endOpcodes();
-        visitor.endExceptions();
-      }
-      traits.decode(visitor);
-      visitor.endMethodBody();
-
-      in.seek(originalPos);
     }
 
-    private void skipExceptions(int exCount) {
+    private static void skipExceptions(int exCount, DataBuffer in) {
       for (int i = 0; i < exCount; i++) {
         in.readU32();
         in.readU32();
@@ -238,7 +269,8 @@ final class Decoder {
       }
     }
 
-    private void decodeExceptions(DataBuffer in, int codeStart, Encoder visitor, int exCount) {
+    private static void decodeExceptions(DataBuffer in, int codeStart, Encoder visitor, int exCount) {
+      final Opcodes opcodes = visitor.opcodeDecoder;
       for (int i = 0; i < exCount; i++) {
         int start = codeStart + in.readU32();
         int end = codeStart + in.readU32();
@@ -256,76 +288,57 @@ final class Decoder {
     }
   }
 
-  private static class Traits {
-    Traits(DataBuffer in) {
-      this.in = in;
-    }
+  private static void decodeTraits(Encoder visitor, DataBuffer in) throws DecoderException {
+    int count = in.readU32();
+    visitor.traitCount(count);
 
-    final DataBuffer in;
+    for (int i = 0; i < count; i++) {
+      int name = in.readU32();
+      int kind = in.readU8();
+      int valueId;
 
-    void decode(Encoder visitor) throws DecoderException {
-      int count = in.readU32();
-      visitor.traitCount(count);
+      switch (kind & 0x0f) {
+        case TRAIT_Var:
+        case TRAIT_Const:
+          visitor.slotTrait(kind, name, in.readU32(), in.readU32(), (valueId = in.readU32()), valueId != 0 ? in.readU8() : 0,
+                            decodeTraitsMetadata(kind, in), in);
+          break;
+        case TRAIT_Method:
+        case TRAIT_Getter:
+        case TRAIT_Setter:
+          visitor.methodTrait(kind, name, in.readU32(), in.readU32(), decodeTraitsMetadata(kind, in), in);
+          break;
+        case TRAIT_Class:
+          visitor.classTrait(kind, name, in.readU32(), in.readU32(), decodeTraitsMetadata(kind, in));
+          break;
+        case TRAIT_Function:
+          visitor.functionTrait(kind, name, in.readU32(), in.readU32(), decodeTraitsMetadata(kind, in));
+          break;
 
-      for (int i = 0; i < count; i++) {
-        int name = in.readU32();
-        int kind = in.readU8();
-        int slotID;
-        int typeID;
-        int valueID;
-        int value_kind = 0;
-
-        switch (kind & 0x0f) {
-          case TRAIT_Var:
-          case TRAIT_Const:
-            slotID = in.readU32();
-            typeID = in.readU32();
-            valueID = in.readU32();
-            if (valueID != 0) {
-              value_kind = in.readU8();
-            }
-            visitor.slotTrait(kind, name, slotID, typeID, valueID, value_kind, decodeMetaData(kind), in);
-            break;
-          case TRAIT_Method:
-          case TRAIT_Getter:
-          case TRAIT_Setter:
-            visitor.methodTrait(kind, name, in.readU32(), in.readU32(), decodeMetaData(kind), in);
-            break;
-          case TRAIT_Class:
-            visitor.classTrait(kind, name, in.readU32(), in.readU32(), decodeMetaData(kind));
-            break;
-          case TRAIT_Function:
-            visitor.functionTrait(kind, name, in.readU32(), in.readU32(), decodeMetaData(kind));
-            break;
-        }
+        default:
+          throw new DecoderException("Unknown trait kind " + kind);
       }
-    }
-
-    @Nullable
-    private int[] decodeMetaData(int kind) {
-      int[] md = null;
-      if (((kind >> 4) & TRAIT_FLAG_metadata) != 0) {
-        int length = in.readU32();
-        if (length > 0) {
-          md = new int[length];
-          for (int i = 0; i < length; i++) {
-            md[i] = in.readU32();
-          }
-        }
-      }
-
-      return md;
     }
   }
 
-  @SuppressWarnings({"deprecation"})
-  private static class Opcodes {
-    public Opcodes(DataBuffer in) {
-      this.in = in;
+  @Nullable
+  private static int[] decodeTraitsMetadata(int kind, DataBuffer in) {
+    int[] md = null;
+    if (((kind >> 4) & TRAIT_FLAG_metadata) != 0) {
+      int length = in.readU32();
+      if (length > 0) {
+        md = new int[length];
+        for (int i = 0; i < length; i++) {
+          md[i] = in.readU32();
+        }
+      }
     }
 
-    final DataBuffer in;
+    return md;
+  }
 
+  @SuppressWarnings({"deprecation"})
+  static class Opcodes {
     private TIntHashSet targetSet;
     private boolean targetSetExists;
 
@@ -344,12 +357,14 @@ final class Decoder {
       }
     }
 
-    public void decode(int start, int length, Encoder v, boolean stopAfterConstructSuper) throws DecoderException {
+    @SuppressWarnings("ConstantConditions")
+    public void decode(int start, int length, Encoder v, boolean stopAfterConstructSuper, DataBuffer in) throws DecoderException {
       int originalPos = in.position();
       in.seek(start);
 
       int end = start + length;
-      w : while (in.position() < end) {
+      w:
+      while (in.position() < end) {
         int pos = in.position();
         int opcode = in.readU8();
 
@@ -451,11 +466,7 @@ final class Decoder {
             v.OP_bkptline();
             continue;
           case OP_debug: {
-            int di_local = in.readU8(); // DI_LOCAL
-            int index = in.readU32(); // constant pool index...
-            int slot = in.readU8();
-            int linenum = in.readU32();
-            v.OP_debug(di_local, index, slot, linenum);
+            v.OP_debug(in.readU8(), in.readU32(), in.readU8(), in.readU32());
             continue;
           }
           case OP_debugfile:

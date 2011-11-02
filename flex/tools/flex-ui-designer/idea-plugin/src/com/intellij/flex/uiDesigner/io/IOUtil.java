@@ -164,7 +164,7 @@ public final class IOUtil {
       int digit = (c <= '9') ? c - '0'
                              : ((c <= 'Z') && (c >= 'A')) ? c - 'A' + 10
                                                           : ((c <= 'z') && (c >= 'a')) ? c - 'a' + 10 : -1;
-      if ((digit >= 0) && (digit < radix)) {
+      if (digit >= 0 && digit < radix) {
         long newResult = result * radix - digit;
         if (newResult > result) {
           throw new NumberFormatException("Overflow parsing " + value.subSequence(start, end));
@@ -176,7 +176,7 @@ public final class IOUtil {
       }
     }
     // Requires one valid digit character and checks for opposite overflow.
-    if ((result == 0) && ((end == 0) || (value.charAt(i - 1) != '0'))) {
+    if (result == 0 && (end == 0 || (value.charAt(i - 1) != '0'))) {
       throw new NumberFormatException("Invalid integer representation for " + value.subSequence(start, end));
     }
     if ((result == Long.MIN_VALUE) && !isNegative) {

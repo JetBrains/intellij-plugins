@@ -225,7 +225,7 @@ public class LibraryManager {
     throws InitException {
     try {
       final int id = librarySetIdPool.allocate();
-      final SortResult result = new LibrarySorter(appDir, module).sort(libraries, id, flexSdkVersion, isFromSdk);
+      final SortResult result = new LibrarySorter(appDir, module).sort(libraries, flexSdkVersion, isFromSdk);
       final LibrarySet librarySet = new LibrarySet(id, parent, ApplicationDomainCreationPolicy.ONE, result.items,
                                                    result.resourceBundleOnlyitems,
                                                    result.embedItems);

@@ -45,7 +45,7 @@ abstract class MxmlTestBase extends AppTestBase {
     socketInputHandler = testApplicationManager.socketInputHandler;
     client = (TestClient)Client.getInstance();
 
-    assertAfterInitLibrarySets(testApplicationManager.initLibrarySets(myModule, isRequireLocalStyleHolder(), sdk.getName()));
+    assertAfterInitLibrarySets(testApplicationManager.initLibrarySets(myModule, isRequireLocalStyleHolder()));
   }
 
   protected void assertAfterInitLibrarySets(XmlFile[] unregisteredDocumentReferences) throws IOException {
