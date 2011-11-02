@@ -6,6 +6,7 @@ import com.intellij.ide.util.projectWizard.EmptyModuleBuilder;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
+import org.jetbrains.annotations.Nullable;
 
 public class CreateFlexModuleFromScratchMode extends CreateFromScratchMode {
 
@@ -13,7 +14,7 @@ public class CreateFlexModuleFromScratchMode extends CreateFromScratchMode {
   private ModuleBuilder myFlexIdeModuleBuilder;
   private ModuleBuilder myEmptyModuleBuilder;
 
-  protected StepSequence createSteps(final WizardContext context, final ModulesProvider modulesProvider) {
+  protected StepSequence createSteps(final WizardContext context, @Nullable final ModulesProvider modulesProvider) {
     final StepSequence sequence = new StepSequence();
     myCreateFlexModuleStep = new CreateFlexModuleStep(context, sequence, this);
     sequence.addCommonStep(myCreateFlexModuleStep);

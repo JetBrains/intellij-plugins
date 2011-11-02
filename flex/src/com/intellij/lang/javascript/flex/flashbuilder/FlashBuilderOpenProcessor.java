@@ -3,17 +3,14 @@ package com.intellij.lang.javascript.flex.flashbuilder;
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.projectImport.ProjectOpenProcessorBase;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 
-public class FlashBuilderOpenProcessor extends ProjectOpenProcessorBase {
+public class FlashBuilderOpenProcessor extends ProjectOpenProcessorBase<FlashBuilderImporter> {
 
-  public FlashBuilderOpenProcessor(final FlashBuilderImporter builder) {
+  public FlashBuilderOpenProcessor(@NotNull final FlashBuilderImporter builder) {
     super(builder);
-  }
-
-  public FlashBuilderImporter getBuilder() {
-    return (FlashBuilderImporter)super.getBuilder();
   }
 
   public String[] getSupportedExtensions() {
