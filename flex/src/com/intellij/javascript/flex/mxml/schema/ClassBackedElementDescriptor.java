@@ -438,6 +438,10 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       }
     }
 
+    if (_context != null && MxmlLanguageTagsUtil.isComponentTag(_context.getParentTag())) {
+      descriptors.add(new AnnotationBackedDescriptorImpl(IMPLEMENTS_ATTR_NAME, this, true, null, null, null));
+    }
+
     if (_context != null && _context.getParent() instanceof XmlDocument) {
       final AnnotationBackedDescriptor idDescriptor = myDescriptors.get(FlexMxmlLanguageAttributeNames.ID);
       if (idDescriptor != null) {
@@ -1157,8 +1161,11 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     }
 
     if (descriptor == null) {
-      if (IMPLEMENTS_ATTR_NAME.equals(attributeName) && context != null && context.getParent() instanceof XmlDocument) {
-        descriptor = new AnnotationBackedDescriptorImpl(IMPLEMENTS_ATTR_NAME, this, true, null, null, null);
+      if (IMPLEMENTS_ATTR_NAME.equals(attributeName) && context != null) {
+        final PsiElement parent = context.getParent();
+        if (parent instanceof XmlDocument || (parent instanceof XmlTag && MxmlLanguageTagsUtil.isComponentTag((XmlTag)parent))) {
+          descriptor = new AnnotationBackedDescriptorImpl(IMPLEMENTS_ATTR_NAME, this, true, null, null, null);
+        }
       }
       else if (XmlBackedJSClassImpl.CLASS_NAME_ATTRIBUTE_NAME.equals(attributeName) && MxmlLanguageTagsUtil.isComponentTag(context)) {
         descriptor = new ClassNameAttributeDescriptor(this);
