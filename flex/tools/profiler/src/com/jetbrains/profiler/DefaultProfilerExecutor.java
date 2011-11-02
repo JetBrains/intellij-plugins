@@ -51,7 +51,7 @@ public class DefaultProfilerExecutor extends Executor {
 
   @Override
   public String getDescription() {
-    return "Profiles ActionScript application"; // TODO: profiler description
+    return "Profile ActionScript application"; // TODO: profiler description
   }
 
   @NotNull
