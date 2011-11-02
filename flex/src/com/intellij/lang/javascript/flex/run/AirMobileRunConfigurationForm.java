@@ -107,7 +107,7 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
     initWhatToLaunchControls();
 
     myExistingPackageTextWithBrowse
-      .addBrowseFolderListener("AIR Mobile Package", null, myProject, new FileChooserDescriptor(true, false, false, false, false, false) {
+      .addBrowseFolderListener("AIR Mobile Package", null, myProject, new FileChooserDescriptor(true, false, true, true, false, false) {
         @Override
         public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
           return super.isFileVisible(file, showHiddenFiles) && (file.isDirectory() || "apk".equalsIgnoreCase(file.getExtension()));
