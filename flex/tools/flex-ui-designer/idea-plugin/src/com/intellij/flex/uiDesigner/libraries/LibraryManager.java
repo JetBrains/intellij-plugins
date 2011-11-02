@@ -3,9 +3,9 @@ package com.intellij.flex.uiDesigner.libraries;
 import com.intellij.ProjectTopics;
 import com.intellij.diagnostic.errordialog.Attachment;
 import com.intellij.flex.uiDesigner.*;
+import com.intellij.flex.uiDesigner.css.CssWriter;
 import com.intellij.flex.uiDesigner.io.IdPool;
 import com.intellij.flex.uiDesigner.io.InfoMap;
-import com.intellij.flex.uiDesigner.io.ObjectIntHashMap;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.LibrarySorter.SortResult;
 import com.intellij.ide.util.PropertiesComponent;
@@ -29,12 +29,12 @@ import com.intellij.util.ExceptionUtil;
 import com.intellij.util.StringBuilderSpinAllocator;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
-import gnu.trove.TIntArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -93,24 +93,12 @@ public class LibraryManager {
 
   public XmlFile[] initLibrarySets(@NotNull final Module module) throws InitException {
     final ProblemsHolder problemsHolder = new ProblemsHolder();
-    XmlFile[] unregisteredDocumentReferences = initLibrarySets(module, true, problemsHolder, null);
+    XmlFile[] unregisteredDocumentReferences = initLibrarySets(module, true, problemsHolder);
     if (!problemsHolder.isEmpty()) {
       DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
     }
 
     return unregisteredDocumentReferences;
-  }
-  
-  private LibrarySet getOrCreateLibrarySet(List<Library> libraries, String flexSdkVersion, Module module) throws InitException {
-    final String key = createKey(libraries);
-    LibrarySet librarySet = librarySets.get(key);
-    if (librarySet != null) {
-      return librarySet;
-    }
-    
-    librarySet = createLibrarySet(librarySetIdPool.allocate(), null, libraries, flexSdkVersion, module, true);
-    librarySets.put(key, librarySet);
-    return librarySet;
   }
 
   public XmlFile[] initLibrarySets(@NotNull final Module module, boolean collectLocalStyleHolders, ProblemsHolder problemsHolder)
@@ -118,8 +106,8 @@ public class LibraryManager {
     final Project project = module.getProject();
     final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter(16384);
     stringWriter.startChange();
-    final LibraryCollector libraryCollector = new LibraryCollector(this, new LibraryStyleInfoCollector(project, module, stringWriter,
-                                                                                                       problemsHolder), project);
+    final AssetCounter assetCounter = new AssetCounter();
+    final LibraryCollector libraryCollector = new LibraryCollector(this, new LibraryStyleInfoCollector(new CssWriter(stringWriter, problemsHolder, assetCounter), module, stringWriter), project);
 
     final Client client;
     try {
@@ -145,64 +133,39 @@ public class LibraryManager {
     }
 
     assert !libraryCollector.sdkLibraries.isEmpty();
-    final String key = createKey(libraryCollector.sdkLibraries);
-    FlexLibrarySet flexLibrarySet = (FlexLibrarySet)librarySets.get(key);
-    if (flexLibrarySet == null) {
-      flexLibrarySet = (FlexLibrarySet)createLibrarySet(null, libraryCollector.sdkLibraries, libraryCollector.getFlexSdkVersion(), module, true);
-      librarySets.put(key, flexLibrarySet);
-      flexLibrarySet.assetCounterInfo.demanded.append(libraryCollector.sdkLibraries);
-    }
-    final AssetCounterInfo assetCounterInfo = flexLibrarySet.assetCounterInfo;
-
+    FlexLibrarySet flexLibrarySet = getOrCreateFlexLibrarySet(module, libraryCollector);
     final InfoMap<Project, ProjectInfo> registeredProjects = client.getRegisteredProjects();
-    final String projectLocationHash = project.getLocationHash();
     ProjectInfo info = registeredProjects.getNullableInfo(project);
     final boolean isNewProject = info == null;
-
     if (isNewProject) {
-      info = new ProjectInfo(project, librarySet);
+      info = new ProjectInfo(project);
       registeredProjects.add(info);
       client.openProject(project);
     }
-    else {
-      // different flex sdk version for module
-      if (libraryCollector.sdkLibraries != null) {
-        librarySet = createLibrarySet(Integer.toHexString(module.getName().hashCode()) + "_fdk", null, libraryCollector.sdkLibraries,
-                                      libraryCollector.getFlexSdkVersion(), module, true);
-        assetCounterInfo = new AssetCounterInfo(libraryCollector.sdkLibraries);
-        client.registerLibrarySet(librarySet);
-      }
-      else {
-        assetCounterInfo = info.assetCounterInfo;
-      }
-    }
 
+    LibrarySet librarySet;
     if (libraryCollector.externalLibraries.isEmpty()) {
-      if (!isNewProject && librarySet == null) {
-        librarySet = info.getLibrarySet();
-      }
-    }
-    else if (isNewProject) {
-      librarySet = createLibrarySet(projectLocationHash, librarySet, libraryCollector.externalLibraries,
-                                    libraryCollector.getFlexSdkVersion(), module, false);
-      assetCounterInfo.demanded.append(libraryCollector.externalLibraries);
-      client.registerLibrarySet(librarySet);
-      info.setLibrarySet(librarySet);
+      librarySet = null;
     }
     else {
-      // todo merge existing libraries and new. create new custom external library set for myModule,
-      // if we have different version of the artifact
-      throw new UnsupportedOperationException("merge existing libraries and new");
+      final String key = createKey(libraryCollector.externalLibraries);
+      librarySet = librarySets.get(key);
+      if (librarySet == null) {
+        createAndRegisterLibrarySet(flexLibrarySet, libraryCollector.sdkLibraries, libraryCollector.getFlexSdkVersion(), module, false);
+        librarySets.put(key, flexLibrarySet);
+      }
     }
 
-    final ModuleInfo moduleInfo = ModuleInfoUtil.createInfo(module, assetCounterInfo);
+    final ModuleInfo moduleInfo = new ModuleInfo(module, flexLibrarySet,
+                                                 Collections.singletonList(librarySet == null ? flexLibrarySet : librarySet),
+                                                 ModuleInfoUtil.isApp(module));
     final List<XmlFile> unregisteredDocumentReferences = new ArrayList<XmlFile>();
     if (collectLocalStyleHolders) {
       // client.registerModule finalize it
       stringWriter.startChange();
       try {
         ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter, problemsHolder,
-                                                unregisteredDocumentReferences, assetCounterInfo.demanded);
+                                                unregisteredDocumentReferences, assetCounter);
       }
       catch (Throwable e) {
         stringWriter.rollbackChange();
@@ -210,8 +173,10 @@ public class LibraryManager {
       }
     }
 
-    client.registerModule(project, moduleInfo, new String[]{librarySet.getId()}, stringWriter);
-    client.fillAssetClassPoolIfNeed(module);
+    client.registerModule(project, moduleInfo, stringWriter);
+
+    flexLibrarySet.assetCounterInfo.demanded.append(assetCounter);
+    client.fillAssetClassPoolIfNeed(flexLibrarySet);
 
     module.getMessageBus().connect(moduleInfo).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
       @Override
@@ -229,6 +194,17 @@ public class LibraryManager {
     return unregisteredDocumentReferences.isEmpty() ? null : unregisteredDocumentReferences.toArray(new XmlFile[unregisteredDocumentReferences.size()]);
   }
 
+  private FlexLibrarySet getOrCreateFlexLibrarySet(Module module, LibraryCollector libraryCollector) throws InitException {
+    final String key = createKey(libraryCollector.sdkLibraries);
+    FlexLibrarySet flexLibrarySet = (FlexLibrarySet)librarySets.get(key);
+    if (flexLibrarySet == null) {
+      flexLibrarySet = (FlexLibrarySet)createAndRegisterLibrarySet(null, libraryCollector.sdkLibraries,
+                                                                   libraryCollector.getFlexSdkVersion(), module, true);
+      librarySets.put(key, flexLibrarySet);
+    }
+    return flexLibrarySet;
+  }
+
   private String createKey(List<Library> sdkLibraries) {
     final StringBuilder stringBuilder = StringBuilderSpinAllocator.alloc();
     try {
@@ -244,13 +220,17 @@ public class LibraryManager {
   }
 
   @NotNull
-  private LibrarySet createLibrarySet(@Nullable LibrarySet parent, List<Library> libraries, String flexSdkVersion, Module module, final boolean isFromSdk)
+  private LibrarySet createAndRegisterLibrarySet(@Nullable LibrarySet parent, List<Library> libraries, String flexSdkVersion, Module module,
+                                                 final boolean isFromSdk)
     throws InitException {
     try {
       final int id = librarySetIdPool.allocate();
       final SortResult result = new LibrarySorter(appDir, module).sort(libraries, id, flexSdkVersion, isFromSdk);
-      return new LibrarySet(id, parent, ApplicationDomainCreationPolicy.ONE, result.items, result.resourceBundleOnlyitems,
-                            result.embedItems);
+      final LibrarySet librarySet = new LibrarySet(id, parent, ApplicationDomainCreationPolicy.ONE, result.items,
+                                                   result.resourceBundleOnlyitems,
+                                                   result.embedItems);
+      Client.getInstance().registerLibrarySet(librarySet);
+      return librarySet;
     }
     catch (Throwable e) {
       String technicalMessage = "Flex SDK " + flexSdkVersion;
@@ -284,29 +264,31 @@ public class LibraryManager {
 
   @SuppressWarnings("MethodMayBeStatic")
   @Nullable
-  public PropertiesFile getResourceBundleFile(String locale, String bundleName, ProjectInfo projectInfo) {
-    LibrarySet librarySet = projectInfo.getLibrarySet();
-    PropertiesFile propertiesFile;
-    do {
-      for (LibrarySetItem item : librarySet.getItems()) {
-        Library library = item.library;
-        if (library.hasResourceBundles() && (propertiesFile = getResourceBundleFile(locale, bundleName, library, projectInfo)) != null) {
-          return propertiesFile;
+  public PropertiesFile getResourceBundleFile(String locale, String bundleName, ModuleInfo moduleInfo) {
+    for (LibrarySet librarySet : moduleInfo.getLibrarySets()) {
+      do {
+        PropertiesFile propertiesFile;
+        final Project project = moduleInfo.getElement().getProject();
+        for (LibrarySetItem item : librarySet.getItems()) {
+          Library library = item.library;
+          if (library.hasResourceBundles() && (propertiesFile = getResourceBundleFile(locale, bundleName, library, project)) != null) {
+            return propertiesFile;
+          }
         }
-      }
 
-      for (LibrarySetItem item : librarySet.getResourceBundleOnlyItems()) {
-        if ((propertiesFile = getResourceBundleFile(locale, bundleName, item.library, projectInfo)) != null) {
-          return propertiesFile;
+        for (LibrarySetItem item : librarySet.getResourceBundleOnlyItems()) {
+          if ((propertiesFile = getResourceBundleFile(locale, bundleName, item.library, project)) != null) {
+            return propertiesFile;
+          }
         }
       }
+      while ((librarySet = librarySet.getParent()) != null);
     }
-    while ((librarySet = librarySet.getParent()) != null);
 
     return null;
   }
 
-  private static PropertiesFile getResourceBundleFile(String locale, String bundleName, Library library, ProjectInfo projectInfo) {
+  private static PropertiesFile getResourceBundleFile(String locale, String bundleName, Library library, Project project) {
     final THashSet<String> bundles = library.resourceBundles.get(locale);
     if (!bundles.contains(bundleName)) {
       return null;
@@ -316,7 +298,6 @@ public class LibraryManager {
     VirtualFile virtualFile = library.getFile().findChild("locale").findChild(locale)
         .findChild(bundleName + CatalogXmlBuilder.PROPERTIES_EXTENSION);
     //noinspection ConstantConditions
-    return (PropertiesFile)PsiDocumentManager.getInstance(projectInfo.getElement())
-        .getPsiFile(FileDocumentManager.getInstance().getDocument(virtualFile));
+    return (PropertiesFile)PsiDocumentManager.getInstance(project).getPsiFile(FileDocumentManager.getInstance().getDocument(virtualFile));
   }
 }

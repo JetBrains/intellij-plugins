@@ -1,14 +1,12 @@
 package com.intellij.flex.uiDesigner.libraries;
 
-import com.intellij.flex.uiDesigner.ProblemsHolder;
 import com.intellij.flex.uiDesigner.css.CssWriter;
 import com.intellij.flex.uiDesigner.io.ByteArrayOutputStreamEx;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
-import com.intellij.flex.uiDesigner.io.StringRegistry;
+import com.intellij.flex.uiDesigner.io.StringRegistry.StringWriter;
 import com.intellij.javascript.flex.css.FlexStyleIndex;
 import com.intellij.javascript.flex.css.FlexStyleIndexInfo;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Consumer;
@@ -19,18 +17,16 @@ import gnu.trove.THashSet;
 import java.util.Set;
 
 class LibraryStyleInfoCollector implements Consumer<Library> {
-  private final Project project;
   private final Module module;
 
   private final PrimitiveAmfOutputStream bytes = new PrimitiveAmfOutputStream(new ByteArrayOutputStreamEx(128));
   private final CssWriter cssWriter;
-  private final StringRegistry.StringWriter stringWriter;
+  private final StringWriter stringWriter;
 
-  public LibraryStyleInfoCollector(Project project, Module module, StringRegistry.StringWriter stringWriter, ProblemsHolder problemsHolder) {
-    this.project = project;
+  public LibraryStyleInfoCollector(CssWriter cssWriter, Module module, StringWriter stringWriter) {
     this.module = module;
+    this.cssWriter = cssWriter;
     this.stringWriter = stringWriter;
-    cssWriter = new CssWriter(this.stringWriter, problemsHolder);
   }
 
   private byte[] collectInherited(final VirtualFile jarFile) {
@@ -38,7 +34,7 @@ class LibraryStyleInfoCollector implements Consumer<Library> {
 
     final VirtualFile libraryFile = Library.getSwfFile(jarFile);
     final FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
-    final GlobalSearchScope searchScope = GlobalSearchScope.fileScope(project, libraryFile);
+    final GlobalSearchScope searchScope = GlobalSearchScope.fileScope(module.getProject(), libraryFile);
     final THashSet<String> uniqueGuard = new THashSet<String>();
     fileBasedIndex.processAllKeys(FlexStyleIndex.INDEX_ID, new Processor<String>() {
       @Override
@@ -60,7 +56,7 @@ class LibraryStyleInfoCollector implements Consumer<Library> {
 
         return true;
       }
-    }, project);
+    }, module.getProject());
 
     if (uniqueGuard.size() == 0) {
       return null;
@@ -83,7 +79,6 @@ class LibraryStyleInfoCollector implements Consumer<Library> {
     VirtualFile defaultsCssVirtualFile = library.getDefaultsCssFile();
     if (defaultsCssVirtualFile != null) {
       library.defaultsStyle = cssWriter.write(defaultsCssVirtualFile, module);
-      library.assetCounter = cssWriter.getAssetCounter();
     }
   }
 }

@@ -129,7 +129,7 @@ public class LibrarySorter {
     return unsortedItems;
   }
 
-  public SortResult sort(final List<Library> libraries, final String postfix, final String flexSdkVersion, final boolean isFromSdk) throws IOException {
+  public SortResult sort(final List<Library> libraries, final String flexSdkVersion, final boolean isFromSdk) throws IOException {
     useIndexForFindDefinitions = !isFromSdk;
 
     final List<LibrarySetItem> unsortedItems = collectItems(libraries, isFromSdk);
@@ -187,12 +187,8 @@ public class LibrarySorter {
         filteredDefinitions = item.filteredDefinitions;
       }
 
-      if (item.filtered && DebugPathManager.IS_DEV) {
-        printCollection(item, postfix);
-      }
-
       final VirtualFile swfFile = item.library.getSwfFile();
-      final File modifiedSwf = item.filtered ? createSwfOutFile(item.library, postfix) : createSwfOutFile(item.library);
+      final File modifiedSwf = createSwfOutFile(item.library);
       final long timeStamp = swfFile.getTimeStamp();
       if (timeStamp != modifiedSwf.lastModified()) {
         if (filter == null) {

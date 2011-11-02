@@ -20,7 +20,6 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ActionCallback;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -341,50 +340,24 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   private void getResourceBundle() throws IOException {
     initResultFile();
     
-    final int projectId = readEntityId();
+    final int moduleId = readEntityId();
     final String locale = reader.readUTF();
     final String bundleName = reader.readUTF();
 
-    final ProjectInfo projectInfo = Client.getInstance().getRegisteredProjects().getNullableInfo(projectId);
-
-    AccessToken token = ReadAction.start();
+    final ModuleInfo moduleInfo = Client.getInstance().getRegisteredModules().getNullableInfo(moduleId);
+    final AccessToken token = ReadAction.start();
     try {
       final PropertiesFile resourceBundleFile;
-      if (projectInfo == null) {
+      if (moduleInfo == null) {
         // project may be closed, but client is not closed yet (AppTest#testCloseAndOpenProject)
-        LOG.warn("Skip getResourceBundle(" + locale + ", " + bundleName + ") due to cannot find project with id " + projectId);
+        LOG.warn("Skip getResourceBundle(" + locale + ", " + bundleName + ") due to cannot find project with id " + moduleId);
         resourceBundleFile = null;
       }
       else {
-        resourceBundleFile = LibraryManager.getInstance().getResourceBundleFile(locale, bundleName, projectInfo);
+        resourceBundleFile = LibraryManager.getInstance().getResourceBundleFile(locale, bundleName, moduleInfo);
       }
 
-      FileOutputStream fileOut = null;
-      // IDEA-71568
-      if (SystemInfo.isWindows) {
-        for (int i = 0; i < 2; i++) {
-          try {
-            fileOut = new FileOutputStream(resultFile);
-            break;
-          }
-          catch (FileNotFoundException e) {
-            try {
-              Thread.sleep(10);
-            }
-            catch (InterruptedException ignored) {
-            }
-          }
-        }
-
-        if (fileOut == null) {
-          LOG.error("fileOut null due to FileNotFoundException");
-          return;
-        }
-      }
-      else {
-        fileOut = new FileOutputStream(resultFile);
-      }
-
+      final FileOutputStream fileOut = new FileOutputStream(resultFile);
       try {
         if (resourceBundleFile == null) {
           fileOut.write(Amf3Types.NULL);

@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner.io;
 
-import java.io.IOException;
 import java.util.Collection;
 
 public class AmfOutputStream extends PrimitiveAmfOutputStream {
@@ -34,7 +33,7 @@ public class AmfOutputStream extends PrimitiveAmfOutputStream {
    * @param array of int
    * @throws java.io.IOException if an I/O error occurs or if array length out of range (29-bit number)
    */
-  public void write(int[] array) throws IOException {
+  public void write(int[] array) {
     write(Amf3Types.VECTOR_INT);
     writeUInt29((array.length << 1) | 1);
     write(true);

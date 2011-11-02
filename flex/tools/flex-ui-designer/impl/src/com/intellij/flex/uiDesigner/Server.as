@@ -223,7 +223,13 @@ public class Server implements ResourceBundleProvider {
   }
 
   public function getResourceBundle(locale:String, bundleName:String):Dictionary {
-    var project:Object = ProjectUtil.getProjectForActiveWindow();
+    var project:Project = ProjectUtil.getProjectForActiveWindow();
+    var document:Document = DocumentManager(project.getComponent(DocumentManager)).document;
+    if (document == null) {
+      UncaughtErrorManager.instance.logWarning("Cannot find resource bundle " + bundleName + " for locale " + locale + " due to null document");
+      return null;
+    }
+    var module:Module = document.module;
 
     var resultReadyFile:File;
     var result:Dictionary;
@@ -231,7 +237,7 @@ public class Server implements ResourceBundleProvider {
       const resultReadyFilename:String = generateResultReadyFilename();
       socket.writeByte(ServerMethod.GET_RESOURCE_BUNDLE);
       socket.writeUTF(resultReadyFilename);
-      writeProjectId(Project(project));
+      writeModuleId(module);
       socket.writeUTF(locale);
       socket.writeUTF(bundleName);
       socket.flush();

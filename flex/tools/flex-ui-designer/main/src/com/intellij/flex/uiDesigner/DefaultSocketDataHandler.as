@@ -3,6 +3,7 @@ import cocoa.DocumentWindow;
 
 import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
+import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 import com.intellij.flex.uiDesigner.ui.ProjectEventMap;
@@ -87,11 +88,11 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
 
   private function fillAssetClassPool(input:IDataInput, messageSize:int, isSwf:Boolean):void {
     const prevBytesAvailable:int = input.bytesAvailable;
-    var context:ModuleContextEx = moduleManager.getById(input.readUnsignedShort()).context;
+    var librarySet:FlexLibrarySet = FlexLibrarySet(libraryManager.getById(input.readUnsignedShort()));
     const classCount:int = input.readUnsignedShort();
     var swfData:ByteArray = new ByteArray();
     input.readBytes(swfData, 0, messageSize - (prevBytesAvailable - input.bytesAvailable));
-    (isSwf ? context.swfAssetContainerClassPool : context.imageAssetContainerClassPool).fill(classCount, swfData, context, libraryManager);
+    (isSwf ? librarySet.swfAssetContainerClassPool : librarySet.imageAssetContainerClassPool).fill(classCount, swfData, librarySet, libraryManager);
   }
 
   private function openProject(input:IDataInput):void {

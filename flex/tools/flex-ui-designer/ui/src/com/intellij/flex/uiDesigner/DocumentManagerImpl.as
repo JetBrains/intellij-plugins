@@ -5,7 +5,6 @@ import com.intellij.flex.uiDesigner.css.CssReader;
 import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import com.intellij.flex.uiDesigner.css.StyleValueResolverImpl;
-import com.intellij.flex.uiDesigner.flex.FlashDocumentDisplayManager;
 import com.intellij.flex.uiDesigner.flex.MainFocusManagerSB;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
@@ -115,7 +114,6 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
 
   private function doOpenAfterResolveLibraries(documentFactory:DocumentFactory, documentOpened:Function):void {
     var module:Module = documentFactory.module;
-    module.context.librariesResolved = true;
     if (createAndOpen(documentFactory, documentOpened) && !ApplicationManager.instance.unitTestMode) {
       if (NativeWindow.supportsNotification) {
         module.project.window.notifyUser(NotificationType.INFORMATIONAL);

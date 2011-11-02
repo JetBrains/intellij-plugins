@@ -4,7 +4,7 @@ import com.intellij.flex.uiDesigner.io.AmfUtil;
 import flash.system.ApplicationDomain;
 import flash.utils.IDataInput;
 
-public final class LibrarySet {
+public class LibrarySet {
   /**
    * Application Domain contains all class definitions
    * If ApplicationDomainCreationPolicy.MULTIPLE, then applicationDomain equals application domain of last library in set
@@ -19,6 +19,10 @@ public final class LibrarySet {
   }
 
   internal var usageCounter:int;
+
+  public function get isLoaded():Boolean {
+    return applicationDomain != null;
+  }
 
   public function registerUsage():void {
     usageCounter++;

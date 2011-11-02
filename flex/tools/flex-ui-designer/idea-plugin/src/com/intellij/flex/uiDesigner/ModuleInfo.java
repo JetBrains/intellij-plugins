@@ -3,6 +3,8 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.flex.uiDesigner.io.AmfOutputStream;
 import com.intellij.flex.uiDesigner.io.AmfOutputable;
 import com.intellij.flex.uiDesigner.io.Info;
+import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
+import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -13,14 +15,19 @@ import java.util.List;
 
 public class ModuleInfo extends Info<Module> implements Disposable {
   private List<LocalStyleHolder> localStyleHolders;
-
-  public final AssetCounterInfo assetCounterInfo;
+  private final List<LibrarySet> librarySets;
   private final boolean app;
+  public final FlexLibrarySet flexLibrarySet;
 
-  ModuleInfo(Module module, AssetCounterInfo assetCounterInfo, boolean isApp) {
+  public ModuleInfo(Module module, FlexLibrarySet flexLibrarySet, List<LibrarySet> librarySets, boolean isApp) {
     super(module);
-    this.assetCounterInfo = assetCounterInfo;
+    this.flexLibrarySet = flexLibrarySet;
+    this.librarySets = librarySets;
     app = isApp;
+  }
+
+  public List<LibrarySet> getLibrarySets() {
+    return librarySets;
   }
 
   public boolean isApp() {
@@ -31,7 +38,8 @@ public class ModuleInfo extends Info<Module> implements Disposable {
     return element;
   }
 
-  public @Nullable List<LocalStyleHolder> getLocalStyleHolders() {
+  @Nullable
+  public List<LocalStyleHolder> getLocalStyleHolders() {
     return localStyleHolders;
   }
 

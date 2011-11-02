@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.css;
 
+import com.intellij.flex.uiDesigner.AssetCounter;
 import com.intellij.flex.uiDesigner.InjectionUtil;
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.ProblemsHolder;
@@ -16,8 +17,8 @@ public class LocalCssWriter extends CssWriter {
   private final List<XmlFile> unregisteredDocumentReferences;
 
   public LocalCssWriter(StringRegistry.StringWriter stringWriter, ProblemsHolder problemsHolder,
-                        List<XmlFile> unregisteredDocumentReferences) {
-    super(stringWriter, problemsHolder);
+                        List<XmlFile> unregisteredDocumentReferences, AssetCounter assetCounter) {
+    super(stringWriter, problemsHolder, assetCounter);
     this.unregisteredDocumentReferences = unregisteredDocumentReferences;
   }
 

@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner {
 import cocoa.util.StringUtil;
 
+import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 
@@ -65,11 +66,10 @@ public class AssetContainerClassPool {
     return className;
   }
 
-  public function fill(classCount:int, swfData:ByteArray, context:ModuleContextEx,
-                       libraryManager:LibraryManager):void {
-    if (libraryManager != null && !context.librariesResolved) {
+  public function fill(classCount:int, swfData:ByteArray, librarySet:FlexLibrarySet, libraryManager:LibraryManager):void {
+    if (libraryManager != null && !librarySet.isLoaded) {
       _filling++;
-      libraryManager.resolve(context.librarySets, fillAfterResolveLibraries, context, classCount, swfData);
+      libraryManager.resolve(new <LibrarySet>[librarySet], fillAfterResolveLibraries, classCount, swfData, librarySet);
       return;
     }
 
@@ -86,9 +86,8 @@ public class AssetContainerClassPool {
     loader.loadBytes(swfData, LoaderContentParentAdobePleaseDoNextStep.create(flexLibrarySet.applicationDomain));
   }
 
-  private function fillAfterResolveLibraries(context:ModuleContextEx, classCount:int, swfData:ByteArray):void {
-    context.librariesResolved = true;
-    fill(classCount, swfData, context, null);
+  private function fillAfterResolveLibraries(classCount:int, swfData:ByteArray, librarySet:FlexLibrarySet):void {
+    fill(classCount, swfData, librarySet, null);
   }
 
   private function loadInitHandler(event:Event):void {

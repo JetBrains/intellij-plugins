@@ -55,6 +55,10 @@ public class Client implements Closable {
     return registeredProjects;
   }
 
+  public InfoMap<Module, ModuleInfo> getRegisteredModules() {
+    return registeredModules;
+  }
+
   @NotNull
   public Module getModule(int id) {
     return registeredModules.getElement(id);
@@ -174,14 +178,14 @@ public class Client implements Closable {
     boolean hasError = true;
     try {
       beginMessage(ClientMethod.registerLibrarySet);
-      out.writeAmfUtf(librarySet.getId());
+      out.writeUInt29(librarySet.getId());
 
       LibrarySet parent = librarySet.getParent();
       if (parent == null) {
         out.write(0);
       }
       else {
-        out.writeAmfUtf(parent.getId());
+        out.writeUInt29(parent.getId());
       }
 
       out.write(librarySet.getApplicationDomainCreationPolicy());
@@ -246,7 +250,7 @@ public class Client implements Closable {
     }
   }
 
-  public void registerModule(Project project, ModuleInfo moduleInfo, String[] librarySetIds, StringRegistry.StringWriter stringWriter) {
+  public void registerModule(Project project, ModuleInfo moduleInfo, StringRegistry.StringWriter stringWriter) {
     boolean hasError = true;
     try {
       beginMessage(ClientMethod.registerModule);
@@ -255,7 +259,14 @@ public class Client implements Closable {
       out.writeShort(registeredModules.add(moduleInfo));
       writeId(project);
       out.write(moduleInfo.isApp());
-      out.write(librarySetIds);
+
+      out.write(Amf3Types.VECTOR_INT);
+      out.writeUInt29((moduleInfo.getLibrarySets().size() << 1) | 1);
+      out.write(true);
+      for (LibrarySet librarySet : moduleInfo.getLibrarySets()) {
+        out.writeInt(librarySet.getId());
+      }
+
       out.write(moduleInfo.getLocalStyleHolders(), "lsh", true);
       hasError = false;
     }
@@ -290,7 +301,7 @@ public class Client implements Closable {
       return false;
     }
 
-    fillAssetClassPoolIfNeed(module);
+    fillAssetClassPoolIfNeed(registeredModules.getInfo(module).flexLibrarySet);
 
     if (!problemsHolder.isEmpty()) {
       DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
@@ -304,33 +315,32 @@ public class Client implements Closable {
     return true;
   }
 
-  public void fillAssetClassPoolIfNeed(Module module) {
-    final AssetCounterInfo assetCounter = registeredModules.getInfo(module).assetCounterInfo;
-    int diff = assetCounter.demanded.imageCount - assetCounter.allocated.imageCount;
+  public void fillAssetClassPoolIfNeed(FlexLibrarySet librarySet) {
+    final AssetCounterInfo assetCounterInfo = librarySet.assetCounterInfo;
+    int diff = assetCounterInfo.demanded.imageCount - assetCounterInfo.allocated.imageCount;
     if (diff > 0) {
       // reduce number of call fill asset class pool
       diff *= 2;
-      fillAssetClassPool(module, diff, ClientMethod.fillImageClassPool);
-      assetCounter.allocated.imageCount += diff;
+      fillAssetClassPool(librarySet, diff, ClientMethod.fillImageClassPool);
+      assetCounterInfo.allocated.imageCount += diff;
     }
 
-    diff = assetCounter.demanded.swfCount - assetCounter.allocated.swfCount;
+    diff = assetCounterInfo.demanded.swfCount - assetCounterInfo.allocated.swfCount;
     if (diff > 0) {
       // reduce number of call fill asset class pool
       diff *= 2;
-      fillAssetClassPool(module, diff, ClientMethod.fillSwfClassPool);
-      assetCounter.allocated.swfCount += diff;
+      fillAssetClassPool(librarySet, diff, ClientMethod.fillSwfClassPool);
+      assetCounterInfo.allocated.swfCount += diff;
     }
   }
 
-  private void fillAssetClassPool(Module module, int classCount, ClientMethod method) {
+  private void fillAssetClassPool(FlexLibrarySet flexLibrarySet, int classCount, ClientMethod method) {
     boolean hasError = true;
     try {
       beginMessage(method);
-      writeId(module);
+      writeId(flexLibrarySet.getId());
       out.writeShort(classCount);
-      final AssetCounterInfo assetCounterInfo = registeredModules.getInfo(module).assetCounterInfo;
-      AssetClassPoolGenerator.generate(method, classCount, assetCounterInfo.allocated, blockOut);
+      AssetClassPoolGenerator.generate(method, classCount, flexLibrarySet.assetCounterInfo.allocated, blockOut);
       hasError = false;
     }
     catch (Throwable e) {
@@ -452,7 +462,7 @@ public class Client implements Closable {
 
     out.write(flags);
 
-    XmlFile[] unregisteredDocumentReferences = mxmlWriter.write(psiFile, problemsHolder, registeredModules.getInfo(module).assetCounterInfo.demanded);
+    XmlFile[] unregisteredDocumentReferences = mxmlWriter.write(psiFile, problemsHolder, registeredModules.getInfo(module).flexLibrarySet.assetCounterInfo.demanded);
     return unregisteredDocumentReferences == null || registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder);
   }
 
@@ -463,7 +473,7 @@ public class Client implements Closable {
       Module documentModule = ModuleUtil.findModuleForFile(virtualFile, file.getProject());
       if (module != documentModule && !isModuleRegistered(module)) {
         try {
-          LibraryManager.getInstance().initLibrarySets(module, problemsHolder);
+          LibraryManager.getInstance().initLibrarySets(module, true, problemsHolder);
         }
         catch (InitException e) {
           LogMessageUtil.LOG.error(e.getCause());

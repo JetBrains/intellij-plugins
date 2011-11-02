@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner.libraries;
 
-import com.intellij.flex.uiDesigner.AssetCounter;
 import com.intellij.flex.uiDesigner.io.Info;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashMap;
@@ -16,7 +15,6 @@ public class Library extends Info<VirtualFile> {
 
   public byte[] inheritingStyles;
   public byte[] defaultsStyle;
-  public AssetCounter assetCounter;
 
   private final String path;
   private final String name;

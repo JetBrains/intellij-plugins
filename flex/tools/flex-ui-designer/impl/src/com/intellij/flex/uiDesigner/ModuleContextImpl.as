@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner {
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
+import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 
 import flash.system.ApplicationDomain;
@@ -18,30 +19,27 @@ public final class ModuleContextImpl implements ModuleContextEx {
     }
   }
 
-  private var _swfAssetContainerClassPool:AssetContainerClassPool;
   public function get swfAssetContainerClassPool():AssetContainerClassPool {
-    if (_swfAssetContainerClassPool == null) {
-      _swfAssetContainerClassPool = new AssetContainerClassPool("_s", _librarySets[0]);
-    }
-    return _swfAssetContainerClassPool;
+    return FlexLibrarySet(_librarySets[0]).swfAssetContainerClassPool;
   }
 
-  private var _imageAssetContainerClassPool:AssetContainerClassPool;
   public function get imageAssetContainerClassPool():AssetContainerClassPool {
-    if (_imageAssetContainerClassPool == null) {
-      _imageAssetContainerClassPool = new AssetContainerClassPool("_b", _librarySets[0]);
-    }
-    return _imageAssetContainerClassPool;
+    return FlexLibrarySet(_librarySets[0]).imageAssetContainerClassPool;
   }
 
   private var _librariesResolved:Boolean;
   public function get librariesResolved():Boolean {
-    return _librariesResolved;
-  }
+    if (!_librariesResolved) {
+      for each (var librarySet:LibrarySet in librarySets) {
+        if (!librarySet.isLoaded) {
+          return false;
+        }
+      }
 
-  public function set librariesResolved(value:Boolean):void {
-    _librariesResolved = value;
-    _applicationDomain = _librarySets[_librarySets.length - 1].applicationDomain;
+      _librariesResolved = true;
+      _applicationDomain = _librarySets[_librarySets.length - 1].applicationDomain;
+    }
+    return _librariesResolved;
   }
 
   public function getDocumentFactory(id:int):Object {
@@ -112,6 +110,7 @@ public final class ModuleContextImpl implements ModuleContextEx {
   }
 
   private var hasViewNavigatorApplicationBaseClass:int = -1;
+  //noinspection JSFieldCanBeLocal
   private var _viewNavigatorApplicationBaseClass:Class;
   public function get viewNavigatorApplicationBaseClass():Class {
     if (hasViewNavigatorApplicationBaseClass == -1) {

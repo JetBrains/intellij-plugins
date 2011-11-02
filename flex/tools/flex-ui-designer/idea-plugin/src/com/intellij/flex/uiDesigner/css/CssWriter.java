@@ -40,19 +40,13 @@ public class CssWriter {
   private final CustomVectorWriter declarationVectorWriter = new CustomVectorWriter();
 
   protected final StringRegistry.StringWriter stringWriter;
-
   private ProblemsHolder problemsHolder;
+  private final AssetCounter assetCounter;
 
-  private AssetCounter assetCounter;
-
-  public CssWriter(StringRegistry.StringWriter stringWriter, ProblemsHolder problemsHolder) {
+  public CssWriter(StringRegistry.StringWriter stringWriter, ProblemsHolder problemsHolder, AssetCounter assetCounter) {
     this.stringWriter = stringWriter;
     this.problemsHolder = problemsHolder;
-  }
-
-  @Nullable
-  public AssetCounter getAssetCounter() {
-    return assetCounter;
+    this.assetCounter = assetCounter;
   }
 
   public byte[] write(VirtualFile file, Module module) {
@@ -79,8 +73,6 @@ public class CssWriter {
   }
 
   private byte[] write(CssFile cssFile, Document document, Module module) {
-    assetCounter = null;
-
     rulesetVectorWriter.prepareIteration();
 
     CssStylesheet stylesheet = cssFile.getStylesheet();
@@ -593,10 +585,6 @@ public class CssWriter {
 
     if (source == null) {
       throw new InvalidPropertyException(cssFunction, FlexUIDesignerBundle.message("error.embed.source.not.specified", cssFunction.getText()));
-    }
-
-    if (assetCounter == null) {
-      assetCounter = new AssetCounter();
     }
 
     final int fileId;

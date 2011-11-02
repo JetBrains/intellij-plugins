@@ -7,7 +7,6 @@ public interface ModuleContextEx extends ModuleContext {
   function get project():Project;
 
   function get librariesResolved():Boolean;
-  function set librariesResolved(value:Boolean):void;
 
   function get imageAssetContainerClassPool():AssetContainerClassPool;
 

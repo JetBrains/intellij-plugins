@@ -41,7 +41,7 @@ public class LibraryManager implements LibrarySetLoadProgressListener {
     loader.load(librarySet);
   }
 
-  public function getById(id:String):LibrarySet {
+  public function getById(id:int):LibrarySet {
     return idMap[id];
   }
 
@@ -67,6 +67,7 @@ public class LibraryManager implements LibrarySetLoadProgressListener {
 
   protected function removeLibrarySet(librarySet:LibrarySet):void {
     loader.stop(librarySet);
+    librarySet.applicationDomain = null;
     delete idMap[librarySet.id];
   }
 
@@ -74,7 +75,7 @@ public class LibraryManager implements LibrarySetLoadProgressListener {
     var queue:LoaderQueue;
     for each (var librarySet:LibrarySet in librarySets) {
       do {
-        if (librarySet.applicationDomain == null) {
+        if (!librarySet.isLoaded) {
           if (queue == null) {
             queue = new LoaderQueue(readyHandler, readyHandlerArguments);
           }

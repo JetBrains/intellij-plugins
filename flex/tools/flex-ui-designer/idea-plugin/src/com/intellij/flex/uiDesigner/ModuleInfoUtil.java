@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.facet.FacetManager;
 import com.intellij.flex.uiDesigner.css.LocalCssWriter;
-import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.io.StringRegistry.StringWriter;
 import com.intellij.flex.uiDesigner.libraries.Library;
 import com.intellij.flex.uiDesigner.mxml.MxmlUtil;
@@ -12,6 +11,7 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.search.JSClassSearch;
@@ -32,6 +32,7 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.PlatformUtils;
 import com.intellij.util.Processor;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
@@ -42,25 +43,30 @@ import java.util.Collection;
 import java.util.List;
 
 public final class ModuleInfoUtil {
-  public static ModuleInfo createInfo(Module module, AssetCounterInfo assetCounterInfo) {
-    final FlexBuildConfiguration flexBuildConfiguration;
-    if (ModuleType.get(module) instanceof FlexModuleType) {
-      flexBuildConfiguration = FlexBuildConfiguration.getInstance(module);
+  public static boolean isApp(Module module) {
+    if (PlatformUtils.isFlexIde()) {
+      return FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration().getNature().isApp();
     }
     else {
-      final Collection<FlexFacet> flexFacets = FacetManager.getInstance(module).getFacetsByType(FlexFacet.ID);
-      assert !flexFacets.isEmpty();
-      flexBuildConfiguration = FlexBuildConfiguration.getInstance(flexFacets.iterator().next());
-    }
+      final FlexBuildConfiguration flexBuildConfiguration;
+      if (ModuleType.get(module) instanceof FlexModuleType) {
+        flexBuildConfiguration = FlexBuildConfiguration.getInstance(module);
+      }
+      else {
+        final Collection<FlexFacet> flexFacets = FacetManager.getInstance(module).getFacetsByType(FlexFacet.ID);
+        assert !flexFacets.isEmpty();
+        flexBuildConfiguration = FlexBuildConfiguration.getInstance(flexFacets.iterator().next());
+      }
 
-    return new ModuleInfo(module, assetCounterInfo, FlexBuildConfiguration.APPLICATION.equals(flexBuildConfiguration.OUTPUT_TYPE));
+      return FlexBuildConfiguration.APPLICATION.equals(flexBuildConfiguration.OUTPUT_TYPE);
+    }
   }
 
   public static void collectLocalStyleHolders(final ModuleInfo moduleInfo, final String flexSdkVersion,
                                               final StringWriter stringWriter, final ProblemsHolder problemsHolder,
                                               List<XmlFile> unregisteredDocumentReferences, AssetCounter assetCounter) {
     final Module module = moduleInfo.getModule();
-    AccessToken token = ReadAction.start();
+    final AccessToken token = ReadAction.start();
     try {
       if (moduleInfo.isApp()) {
         collectApplicationLocalStyle(moduleInfo, flexSdkVersion, problemsHolder, stringWriter, unregisteredDocumentReferences,
@@ -86,9 +92,8 @@ public final class ModuleInfoUtil {
     }
 
     if (defaultsCss != null) {
-      final LocalCssWriter cssWriter = new LocalCssWriter(stringWriter, problemsHolder, unregisteredDocumentReferences);
+      final LocalCssWriter cssWriter = new LocalCssWriter(stringWriter, problemsHolder, unregisteredDocumentReferences, assetCounter);
       moduleInfo.addLocalStyleHolder(new LocalStyleHolder(defaultsCss, cssWriter.write(defaultsCss, module)));
-      assetCounter.append(cssWriter.getAssetCounter());
     }
   }
 
@@ -117,7 +122,7 @@ public final class ModuleInfoUtil {
       return;
     }
 
-    final StyleTagWriter localStyleWriter = new StyleTagWriter(stringWriter, problemsHolder, unregisteredDocumentReferences);
+    final StyleTagWriter localStyleWriter = new StyleTagWriter(new LocalCssWriter(stringWriter, problemsHolder, unregisteredDocumentReferences, assetCounter));
     final Processor<JSClass> processor = new Processor<JSClass>() {
       @Override
       public boolean process(JSClass jsClass) {
@@ -157,22 +162,14 @@ public final class ModuleInfoUtil {
     for (JSClass holder : holders) {
       JSClassSearch.searchClassInheritors(new JSClassSearch.SearchParameters(holder, true, moduleScope)).forEach(processor);
     }
-
-    assetCounter.append(localStyleWriter.getRequiredAssetsInfo());
   }
 
   private static class StyleTagWriter {
     private final LocalCssWriter cssWriter;
     private final THashMap<VirtualFile, ExternalLocalStyleHolder> externalLocalStyleHolders = new THashMap<VirtualFile, ExternalLocalStyleHolder>();
 
-    public StyleTagWriter(StringRegistry.StringWriter stringWriter, ProblemsHolder problemsHolder,
-                          List<XmlFile> unregisteredDocumentReferences) {
-      cssWriter = new LocalCssWriter(stringWriter, problemsHolder, unregisteredDocumentReferences);
-    }
-
-    @Nullable
-    public AssetCounter getRequiredAssetsInfo() {
-      return cssWriter.getAssetCounter();
+    StyleTagWriter(LocalCssWriter localCssWriter) {
+      cssWriter = localCssWriter;
     }
 
     @Nullable
