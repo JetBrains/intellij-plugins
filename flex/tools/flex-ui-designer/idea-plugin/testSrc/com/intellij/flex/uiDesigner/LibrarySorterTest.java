@@ -98,7 +98,7 @@ public class LibrarySorterTest extends MxmlTestBase {
   }
 
   private List<LibrarySetItem> myLibraries() {
-    return client.getRegisteredProjects().getInfo(myProject).getSdkLibrarySet().getItems();
+    return client.getRegisteredProjects().getInfo(myProject).getFlexLibrarySet().getItems();
   }
 
   public void testDeleteIfAllDefitionsHaveUnresolvedDependencies() throws Exception {
@@ -132,7 +132,7 @@ public class LibrarySorterTest extends MxmlTestBase {
   protected void tearDown() throws Exception {
     try {
       if (appDir != null && appDir.exists()) {
-        LibrarySet sdkLibrarySet = client.getRegisteredProjects().getInfo(myProject).getSdkLibrarySet();
+        LibrarySet sdkLibrarySet = client.getRegisteredProjects().getInfo(myProject).getFlexLibrarySet();
         for (LibrarySetItem item : myLibraries()) {
           //noinspection ResultOfMethodCallIgnored
           new File(appDir, item.library.getPath() + (item.filtered ? "_" + sdkLibrarySet.getId() + ".swf" : ".swf")).delete();

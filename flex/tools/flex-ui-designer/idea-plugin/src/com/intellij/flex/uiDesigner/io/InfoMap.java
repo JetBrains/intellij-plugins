@@ -3,16 +3,14 @@ package com.intellij.flex.uiDesigner.io;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import gnu.trove.THashMap;
-import gnu.trove.TIntArrayList;
 import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class InfoMap<E,I extends Info<E>> {
-  private final TIntArrayList freeIndices = new TIntArrayList();
+  private final IdPool idPool = new IdPool();
   private final MyHashMap<E,I> elements;
   private final boolean infoIsDisposable;
-  private int counter;
 
   public InfoMap() {
     this(false);
@@ -29,7 +27,7 @@ public class InfoMap<E,I extends Info<E>> {
       if (infoIsDisposable) {
         Disposer.dispose((Disposable)_values[index]);
       }
-      freeIndices.add(((Info)_values[index]).getId());
+      idPool.dispose(((Info)_values[index]).getId());
       super.removeAt(index);
     }
   }
@@ -37,7 +35,7 @@ public class InfoMap<E,I extends Info<E>> {
   public int add(@NotNull I info) {
     assert info.getId() == -1;
 
-    info.id = freeIndices.isEmpty() ? counter++ : freeIndices.remove(freeIndices.size() - 1);
+    info.id = idPool.allocate();
 
     elements.put(info.element, info);
     return info.id;
@@ -117,7 +115,6 @@ public class InfoMap<E,I extends Info<E>> {
     }
 
     elements.clear();
-    counter = 0;
-    freeIndices.resetQuick();
+    idPool.clear();
   }
 }

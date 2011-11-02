@@ -56,7 +56,7 @@ public class LibrarySorter {
 
   private static final Map<String,Set<CharSequence>> BAD_FLEX_CLASSES = new THashMap<String, Set<CharSequence>>();
   
-  public static interface FlexLibsNames {
+  public interface FlexLibsNames {
     String AIRSPARK = "airspark";
     String SPARK = "spark";
     String FRAMEWORK = "framework";
@@ -68,7 +68,7 @@ public class LibrarySorter {
 
   static {
     Set<CharSequence> set;
-    for (Pair<String, String> pair : LibrarySorter.FLEX_LIBS_PATTERNS) {
+    for (Pair<String, String> pair :   FLEX_LIBS_PATTERNS) {
       if (pair.first.equals(FlexLibsNames.AIRSPARK)) {
         set = createSet(FlexOverloadedClasses.AIR_SPARK_CLASSES.size() + 1);
         set.addAll(FlexOverloadedClasses.AIR_SPARK_CLASSES);

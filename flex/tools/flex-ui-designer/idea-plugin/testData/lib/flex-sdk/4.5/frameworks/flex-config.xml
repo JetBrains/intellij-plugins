@@ -324,7 +324,7 @@
    <!-- remove-unused-rsls: remove RSLs that are not being used by the application-->
    <remove-unused-rsls>true</remove-unused-rsls>
 
-   <!-- A map of runtime shared library URLs to be loaded before applications start. -->
+   <!-- A list of runtime shared library URLs to be loaded before applications start. -->
    <!-- not set -->
    <!--
    <runtime-shared-libraries>
@@ -446,7 +446,7 @@
       <language>EN</language>
    </metadata>
 
-   <!-- licenses: specifies a map of product and serial number pairs. -->
+   <!-- licenses: specifies a list of product and serial number pairs. -->
    <!-- not set -->
    <!--
    <licenses>

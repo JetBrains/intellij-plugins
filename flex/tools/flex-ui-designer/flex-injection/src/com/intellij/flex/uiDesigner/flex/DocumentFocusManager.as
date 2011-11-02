@@ -28,7 +28,7 @@ import mx.utils.OnDemandEventDispatcher;
 public class DocumentFocusManager extends OnDemandEventDispatcher implements IFocusManager, DocumentFocusManagerSB {
   private static const FROM_INDEX_UNSPECIFIED:int = -2;
 
-  private var systemManager:SystemManager;
+  private var systemManager:FlexDocumentDisplayManager;
   private var lastFocus:IFocusManagerComponent;
   private var calculateCandidates:Boolean = true;
 
@@ -36,7 +36,7 @@ public class DocumentFocusManager extends OnDemandEventDispatcher implements IFo
   private var focusableObjects:Vector.<IFocusManagerComponent>;
   private var focusableCandidates:Vector.<IFocusManagerComponent>;
 
-  public function DocumentFocusManager(systemManager:SystemManager) {
+  public function DocumentFocusManager(systemManager:FlexDocumentDisplayManager) {
     this.systemManager = systemManager;
   }
 

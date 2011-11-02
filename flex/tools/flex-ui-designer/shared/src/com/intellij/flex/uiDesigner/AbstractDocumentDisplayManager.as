@@ -1,5 +1,5 @@
-package com.intellij.flex.uiDesigner.flex {
-import com.intellij.flex.uiDesigner.UiErrorHandler;
+package com.intellij.flex.uiDesigner {
+import com.intellij.flex.uiDesigner.flex.MainFocusManagerSB;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;

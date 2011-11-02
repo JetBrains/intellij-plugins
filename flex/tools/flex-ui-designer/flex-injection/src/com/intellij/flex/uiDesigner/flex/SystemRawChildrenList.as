@@ -5,9 +5,9 @@ import flash.geom.Point;
 import mx.core.IChildList;
 
 internal final class SystemRawChildrenList implements IChildList {
-  private var owner:SystemManager;
+  private var owner:FlexDocumentDisplayManager;
 
-  public function SystemRawChildrenList(owner:SystemManager) {
+  public function SystemRawChildrenList(owner:FlexDocumentDisplayManager) {
     super();
 
     this.owner = owner;

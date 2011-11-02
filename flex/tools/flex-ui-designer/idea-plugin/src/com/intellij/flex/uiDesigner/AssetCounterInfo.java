@@ -11,4 +11,7 @@ public final class AssetCounterInfo {
   public AssetCounterInfo(List<Library> libraries) {
     demanded.append(libraries);
   }
+
+  public AssetCounterInfo() {
+  }
 }

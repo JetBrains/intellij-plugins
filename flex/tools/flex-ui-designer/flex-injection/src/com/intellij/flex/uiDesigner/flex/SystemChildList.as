@@ -5,13 +5,13 @@ import flash.geom.Point;
 import mx.core.IChildList;
 
 public class SystemChildList implements IChildList {
-  public function SystemChildList(owner:SystemManager, lowerBoundReference:String, upperBoundReference:String) {
+  public function SystemChildList(owner:FlexDocumentDisplayManager, lowerBoundReference:String, upperBoundReference:String) {
     this.owner = owner;
     this.lowerBoundReference = lowerBoundReference;
     this.upperBoundReference = upperBoundReference;
   }
 
-	private var owner:SystemManager;
+	private var owner:FlexDocumentDisplayManager;
 
 	private var lowerBoundReference:String;
 	private var upperBoundReference:String;

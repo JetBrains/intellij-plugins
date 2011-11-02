@@ -54,29 +54,16 @@ import mx.styles.StyleManager;
 use namespace mx_internal;
 
 // must be IFocusManagerContainer, it is only way how UIComponent can find focusManager (see UIComponent.focusManager)
-public class SystemManager extends AbstractDocumentDisplayManager implements ISystemManager, DocumentDisplayManager, IFocusManagerContainer, IActiveWindowManager {
-  private static const INITIALIZE_ERROR_EVENT_TYPE:String = "initializeError";
-
-  private static const skippedEvents:Dictionary = new Dictionary();
-  skippedEvents.cursorManagerRequest = true;
-  skippedEvents.dragManagerRequest = true;
-  skippedEvents.initManagerRequest = true;
-  skippedEvents.systemManagerRequest = true;
-  skippedEvents.tooltipManagerRequest = true;
-  
+public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase implements ISystemManager, DocumentDisplayManager, IFocusManagerContainer, IActiveWindowManager {
   // offset due: 0 child of system manager is application
   internal static const OFFSET:int = 1;
 
-  private static const LAYOUT_MANAGER_FQN:String = "mx.managers::ILayoutManager";
-  private static const POP_UP_MANAGER_FQN:String = "mx.managers::IPopUpManager";
-  private static const TOOL_TIP_MANAGER_FQN:String = "mx.managers::IToolTipManager2";
   internal static const SYSTEM_MANAGER_CHILD_MANAGER:String = "mx.managers::ISystemManagerChildManager";
 
   private var flexModuleFactory:FlexModuleFactory;
 
   private var uiErrorHandler:UiErrorHandler;
 
-  private const implementations:Dictionary = new Dictionary();
   private var mainFocusManager:MainFocusManagerSB;
 
   public function get elementUtil():ElementInfoProvider {
@@ -99,7 +86,7 @@ public class SystemManager extends AbstractDocumentDisplayManager implements ISy
     layoutManager = new LayoutManager(uiErrorHandler);
     UIComponentGlobals.layoutManager = layoutManager;
 
-    new ResourceManager(project, resourceBundleProvider);
+    new ResourceManager(resourceBundleProvider);
     ModuleManagerGlobals.managerSingleton = new ModuleManager();
 
     Singleton.registerClass(POP_UP_MANAGER_FQN, PopUpManagerImpl);
@@ -546,16 +533,8 @@ public class SystemManager extends AbstractDocumentDisplayManager implements ISy
     return flexModuleFactory.create(params);
   }
 
-  public function getImplementation(interfaceName:String):Object {
-    return implementations[interfaceName];
-  }
-
   public function info():Object {
     return null;
-  }
-
-  public function registerImplementation(interfaceName:String, impl:Object):void {
-    throw new Error("");
   }
 
   public function get embeddedFontList():Object {
@@ -569,17 +548,6 @@ public class SystemManager extends AbstractDocumentDisplayManager implements ISy
   public function set focusPane(value:Sprite):void {
   }
 
-  public function get isProxy():Boolean {
-    return true; // so, UIComponent will "keep the existing proxy", see UIComponent#get systemManager
-  }
-
-  public function get numModalWindows():int {
-    return 0;
-  }
-
-  public function set numModalWindows(value:int):void {
-  }
-
   private var _rawChildren:SystemRawChildrenList;
   public function get rawChildren():IChildList {
     if (_rawChildren == null) {
@@ -587,17 +555,6 @@ public class SystemManager extends AbstractDocumentDisplayManager implements ISy
     }
     
     return _rawChildren;
-  }
-
-  private var _screen:Rectangle;
-  public function get screen():Rectangle {
-    if (_screen == null) {
-      _screen = new Rectangle();
-    }
-
-    _screen.width = super.parent.width;
-    _screen.height = super.parent.height;
-    return _screen;
   }
 
   public function get topLevelSystemManager():ISystemManager {
@@ -665,9 +622,6 @@ public class SystemManager extends AbstractDocumentDisplayManager implements ISy
   //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
   public function notifyStyleChangeInChildren(styleProp:String, recursive:Boolean):void {
   }
-
-  private var proxiedListeners:Dictionary;
-  private var proxiedListenersInCapture:Dictionary;
 
   override public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0,
                                             useWeakReference:Boolean = false):void {

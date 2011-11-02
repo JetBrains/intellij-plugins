@@ -126,7 +126,7 @@ class TestDesignerApplicationManager {
     XmlFile[] unregistedDocumentReferences = LibraryManager.getInstance().initLibrarySets(module, requireLocalStyleHolder, problemsHolder, sdkLibrarySet);
     assert problemsHolder.isEmpty();
     if (sdkLibrarySet == null) {
-      sdkLibrarySetCache.put(sdkName, Client.getInstance().getRegisteredProjects().getInfo(module.getProject()).getSdkLibrarySet());
+      sdkLibrarySetCache.put(sdkName, Client.getInstance().getRegisteredProjects().getInfo(module.getProject()).getFlexLibrarySet());
     }
 
     return unregistedDocumentReferences;

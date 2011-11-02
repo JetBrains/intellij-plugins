@@ -27,7 +27,7 @@ public class ToolTipManager extends ToolTipManagerImpl {
   }
 
   private static function getGlobalBounds(obj:DisplayObject, parent:DisplayObject, mirror:Boolean):Rectangle {
-    var offset:Point = SystemManager(IUIComponent(obj).systemManager).localToGlobal(new Point(0, 0));
+    var offset:Point = FlexDocumentDisplayManager(IUIComponent(obj).systemManager).localToGlobal(new Point(0, 0));
     var upperLeft:Point = obj.localToGlobal(new Point(0, 0));
     // If the layout has been mirrored, then the 0,0 is the uppper right corner; compensate here
     if (mirror) {

@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class LibrarySet {
-  private final String id;
+  private final int id;
   private final LibrarySet parent;
   private final ApplicationDomainCreationPolicy applicationDomainCreationPolicy;
 
@@ -14,7 +14,7 @@ public class LibrarySet {
   private final List<LibrarySetItem> resourceBundleOnlyItems;
   private final List<LibrarySetEmbedItem> embedItems;
 
-  public LibrarySet(String id, @Nullable LibrarySet parent, ApplicationDomainCreationPolicy applicationDomainCreationPolicy, List<LibrarySetItem> items, List<LibrarySetItem> resourceBundleOnlyItems, List<LibrarySetEmbedItem> embedItems) {
+  public LibrarySet(int id, @Nullable LibrarySet parent, ApplicationDomainCreationPolicy applicationDomainCreationPolicy, List<LibrarySetItem> items, List<LibrarySetItem> resourceBundleOnlyItems, List<LibrarySetEmbedItem> embedItems) {
     this.id = id;
     this.parent = parent;
 
@@ -24,7 +24,7 @@ public class LibrarySet {
     this.embedItems = embedItems == null ? Collections.<LibrarySetEmbedItem>emptyList() : embedItems;
   }
 
-  public String getId() {
+  public int getId() {
     return id;
   }
 

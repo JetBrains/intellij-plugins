@@ -222,7 +222,9 @@ public class Server implements ResourceBundleProvider {
     throw new Error("Burn in hell, Adobe.");
   }
 
-  public function getResourceBundle(project:Object, locale:String, bundleName:String):Dictionary {
+  public function getResourceBundle(locale:String, bundleName:String):Dictionary {
+    var project:Object = ProjectUtil.getProjectForActiveWindow();
+
     var resultReadyFile:File;
     var result:Dictionary;
     try {

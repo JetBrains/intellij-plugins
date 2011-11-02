@@ -3,7 +3,9 @@ package com.intellij.flex.uiDesigner.libraries;
 import com.intellij.ProjectTopics;
 import com.intellij.diagnostic.errordialog.Attachment;
 import com.intellij.flex.uiDesigner.*;
+import com.intellij.flex.uiDesigner.io.IdPool;
 import com.intellij.flex.uiDesigner.io.InfoMap;
+import com.intellij.flex.uiDesigner.io.ObjectIntHashMap;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.LibrarySorter.SortResult;
 import com.intellij.ide.util.PropertiesComponent;
@@ -24,13 +26,17 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.ExceptionUtil;
+import com.intellij.util.StringBuilderSpinAllocator;
+import gnu.trove.THashMap;
 import gnu.trove.THashSet;
+import gnu.trove.TIntArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("MethodMayBeStatic")
 public class LibraryManager {
@@ -42,6 +48,10 @@ public class LibraryManager {
 
   private final InfoMap<VirtualFile, Library> libraries = new InfoMap<VirtualFile, Library>();
   //private final List<VirtualFile, LibrarySet> librarySets = new InfoMap<VirtualFile, LibrarySet>();
+
+  private final Map<String, LibrarySet> librarySets = new THashMap<String, LibrarySet>();
+
+  private final IdPool librarySetIdPool = new IdPool();
 
   public static LibraryManager getInstance() {
     return ServiceManager.getService(LibraryManager.class);
@@ -90,14 +100,20 @@ public class LibraryManager {
 
     return unregisteredDocumentReferences;
   }
-
-  public XmlFile[] initLibrarySets(@NotNull final Module module, @NotNull ProblemsHolder problemsHolder) throws InitException {
-    return initLibrarySets(module, true, problemsHolder, null);
+  
+  private LibrarySet getOrCreateLibrarySet(List<Library> libraries, String flexSdkVersion, Module module) throws InitException {
+    final String key = createKey(libraries);
+    LibrarySet librarySet = librarySets.get(key);
+    if (librarySet != null) {
+      return librarySet;
+    }
+    
+    librarySet = createLibrarySet(librarySetIdPool.allocate(), null, libraries, flexSdkVersion, module, true);
+    librarySets.put(key, librarySet);
+    return librarySet;
   }
 
-  // librarySet for test only
-  public XmlFile[] initLibrarySets(@NotNull final Module module, boolean collectLocalStyleHolders, ProblemsHolder problemsHolder,
-                                   @Nullable LibrarySet librarySet)
+  public XmlFile[] initLibrarySets(@NotNull final Module module, boolean collectLocalStyleHolders, ProblemsHolder problemsHolder)
       throws InitException {
     final Project project = module.getProject();
     final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter(16384);
@@ -128,20 +144,22 @@ public class LibraryManager {
       throw new InitException(e, "error.collect.libraries");
     }
 
+    assert !libraryCollector.sdkLibraries.isEmpty();
+    final String key = createKey(libraryCollector.sdkLibraries);
+    FlexLibrarySet flexLibrarySet = (FlexLibrarySet)librarySets.get(key);
+    if (flexLibrarySet == null) {
+      flexLibrarySet = (FlexLibrarySet)createLibrarySet(null, libraryCollector.sdkLibraries, libraryCollector.getFlexSdkVersion(), module, true);
+      librarySets.put(key, flexLibrarySet);
+      flexLibrarySet.assetCounterInfo.demanded.append(libraryCollector.sdkLibraries);
+    }
+    final AssetCounterInfo assetCounterInfo = flexLibrarySet.assetCounterInfo;
+
     final InfoMap<Project, ProjectInfo> registeredProjects = client.getRegisteredProjects();
     final String projectLocationHash = project.getLocationHash();
     ProjectInfo info = registeredProjects.getNullableInfo(project);
     final boolean isNewProject = info == null;
 
-    final AssetCounterInfo assetCounterInfo;
     if (isNewProject) {
-      assetCounterInfo = new AssetCounterInfo(libraryCollector.sdkLibraries);
-      if (librarySet == null) {
-        librarySet = createLibrarySet(projectLocationHash + "_fdk", null, libraryCollector.sdkLibraries,
-                                      libraryCollector.getFlexSdkVersion(), module, true);
-        client.registerLibrarySet(librarySet);
-      }
-
       info = new ProjectInfo(project, librarySet);
       registeredProjects.add(info);
       client.openProject(project);
@@ -211,11 +229,25 @@ public class LibraryManager {
     return unregisteredDocumentReferences.isEmpty() ? null : unregisteredDocumentReferences.toArray(new XmlFile[unregisteredDocumentReferences.size()]);
   }
 
+  private String createKey(List<Library> sdkLibraries) {
+    final StringBuilder stringBuilder = StringBuilderSpinAllocator.alloc();
+    try {
+      for (Library sdkLibrary : sdkLibraries) {
+        stringBuilder.append(sdkLibrary.getFile().getPath());
+      }
+
+      return stringBuilder.toString();
+    }
+    finally {
+      StringBuilderSpinAllocator.dispose(stringBuilder);
+    }
+  }
+
   @NotNull
-  private LibrarySet createLibrarySet(String id, @Nullable LibrarySet parent, List<Library> libraries, String flexSdkVersion,
-      Module module, final boolean isFromSdk)
+  private LibrarySet createLibrarySet(@Nullable LibrarySet parent, List<Library> libraries, String flexSdkVersion, Module module, final boolean isFromSdk)
     throws InitException {
     try {
+      final int id = librarySetIdPool.allocate();
       final SortResult result = new LibrarySorter(appDir, module).sort(libraries, id, flexSdkVersion, isFromSdk);
       return new LibrarySet(id, parent, ApplicationDomainCreationPolicy.ONE, result.items, result.resourceBundleOnlyitems,
                             result.embedItems);
@@ -245,7 +277,7 @@ public class LibraryManager {
       return info;
     }
 
-    Library library = new Library(artifactId, NAME_POSTFIX + Integer.toHexString(virtualFile.getPath().hashCode()), jarFile);
+    Library library = new Library(artifactId, artifactId + NAME_POSTFIX + Integer.toHexString(virtualFile.getPath().hashCode()), jarFile);
     initializer.consume(library);
     return library;
   }

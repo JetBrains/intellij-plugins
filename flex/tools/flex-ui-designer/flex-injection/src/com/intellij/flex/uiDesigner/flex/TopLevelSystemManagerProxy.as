@@ -14,7 +14,7 @@ import mx.managers.ISystemManager;
 
 // see mx/managers/DragManagerImpl.as sm = SystemManagerGlobals.topLevelSystemManagers[0];
 internal class TopLevelSystemManagerProxy extends BaseFlexModuleFactoryImpl implements ISystemManager {
-  internal var activeSystemManager:SystemManager;
+  internal var activeSystemManager:FlexDocumentDisplayManager;
 
   public function get cursorChildren():IChildList {
     return activeSystemManager.cursorChildren;

@@ -16,11 +16,9 @@ public class ResourceManager extends EventDispatcher implements IResourceManager
 
   private var resourceBundleProvider:ResourceBundleProvider;
   private const localeMap:Object = new Dictionary();
-  private var project:Object;
 
-  function ResourceManager(project:Object, resourceBundleProvider:ResourceBundleProvider) {
+  function ResourceManager(resourceBundleProvider:ResourceBundleProvider) {
     instance = this;
-    this.project = project;
     this.resourceBundleProvider = resourceBundleProvider;
   }
 
@@ -88,7 +86,7 @@ public class ResourceManager extends EventDispatcher implements IResourceManager
     }
 
     if (bundle == null) {
-      var resourceBundleContent:Dictionary = resourceBundleProvider.getResourceBundle(project, locale, bundleName);
+      var resourceBundleContent:Dictionary = resourceBundleProvider.getResourceBundle(locale, bundleName);
       if (resourceBundleContent == null) {
         trace("Cannot find resource bundle " + bundleName + " for locale " + locale);
       }
