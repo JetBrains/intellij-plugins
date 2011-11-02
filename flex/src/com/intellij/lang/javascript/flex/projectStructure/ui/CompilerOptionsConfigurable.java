@@ -594,7 +594,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       }
     }
 
-    return Pair.create(info.getDefaultValue(getSdkVersion(), myNature.targetPlatform), ValueSource.GlobalDefault);
+    return Pair.create(info.getDefaultValue(getSdkVersion(), myNature), ValueSource.GlobalDefault);
   }
 
   private String getSdkVersion() {

@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.JDOMUtil;
@@ -193,26 +192,24 @@ public class CompilerOptionInfo {
     return info;
   }
 
-  public String getDefaultValue(final String sdkVersion, final TargetPlatform targetPlatform) {
+  public String getDefaultValue(final String sdkVersion, final BuildConfigurationNature nature) {
     assert !isGroup() : DISPLAY_NAME;
 
     if (SPECIAL_DEFAULT_VALUE.equals(myDefaultValue)) {
       if ("compiler.accessible".equals(ID)) {
-        return targetPlatform == TargetPlatform.Mobile
-               ? "false"
-               : StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0 ? "true" : "false";
+        return nature.isMobilePlatform() ? "false"
+                                         : StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0 ? "true" : "false";
       }
       else if ("compiler.locale".equals(ID)) {
         return "en_US";
       }
       else if ("compiler.preloader".equals(ID)) {
-        return targetPlatform == TargetPlatform.Mobile ? "spark.preloaders.SplashScreen" : "";
+        return nature.isMobilePlatform() ? "spark.preloaders.SplashScreen" : "";
       }
       else if ("compiler.theme".equals(ID)) {
-        if (targetPlatform != TargetPlatform.Desktop && StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0) {
-          return targetPlatform == TargetPlatform.Mobile
-                 ? "${FLEX_SDK}/frameworks/themes/Mobile/mobile.swc"
-                 : "${FLEX_SDK}/frameworks/themes/Spark/spark.css";
+        if (!nature.pureAS && !nature.isDesktopPlatform() && StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0) {
+          return nature.isMobilePlatform() ? "${FLEX_SDK}/frameworks/themes/Mobile/mobile.swc"
+                                           : "${FLEX_SDK}/frameworks/themes/Spark/spark.css";
         }
         return "";
       }

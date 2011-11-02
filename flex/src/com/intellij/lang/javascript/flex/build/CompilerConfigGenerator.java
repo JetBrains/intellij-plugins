@@ -130,8 +130,9 @@ public class CompilerConfigGenerator {
   private void handleOptionsWithSpecialValues(final Element rootElement) {
     for (final CompilerOptionInfo info : CompilerOptionInfo.getOptionsWithSpecialValues()) {
       final Pair<String, ValueSource> valueAndSource = getValueAndSource(info);
-      if (valueAndSource.second == ValueSource.GlobalDefault && !valueAndSource.first.isEmpty()) {
-        // do not add empty preloader or theme to Web/Desktop, but add not-empty for Mobile projects
+      final boolean themeForPureAS = myConfig.isPureAs() && "compiler.theme".equals(info.ID);
+      if (valueAndSource.second == ValueSource.GlobalDefault && (!valueAndSource.first.isEmpty() || themeForPureAS)) {
+        // do not add empty preloader or to Web/Desktop, let compiler take default itself (mx.preloaders.SparkDownloadProgressBar when -compatibility-version >= 4.0 and mx.preloaders.DownloadProgressBar when -compatibility-version < 4.0)
         addOption(rootElement, info, valueAndSource.first);
       }
     }
@@ -515,6 +516,6 @@ public class CompilerConfigGenerator {
     final String projectLevelValue = myProjectLevelCompilerOptions.getOption(info.ID);
     if (projectLevelValue != null) return Pair.create(projectLevelValue, ValueSource.ProjectDefault);
 
-    return Pair.create(info.getDefaultValue(mySdkVersion, myConfig.getTargetPlatform()), ValueSource.GlobalDefault);
+    return Pair.create(info.getDefaultValue(mySdkVersion, myConfig.getNature()), ValueSource.GlobalDefault);
   }
 }
