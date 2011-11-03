@@ -10,6 +10,10 @@ final class Scanner {
 
   public static int[] scanIntConstants(DataBuffer in) {
     int size = in.readU32();
+    if (size == 0) {
+      return ArrayUtil.EMPTY_INT_ARRAY;
+    }
+
     int[] positions = new int[size];
     for (int i = 1; i < size; i++) {
       positions[i] = in.position();
@@ -20,6 +24,10 @@ final class Scanner {
 
   public static int[] scanDoubleConstants(DataBuffer in) {
     int size = in.readU32();
+    if (size == 0) {
+      return ArrayUtil.EMPTY_INT_ARRAY;
+    }
+
     int[] positions = new int[size];
     for (int i = 1; i < size; i++) {
       positions[i] = in.position();
@@ -30,6 +38,10 @@ final class Scanner {
 
   public static int[] scanStrConstants(DataBuffer in) {
     int size = in.readU32();
+    if (size == 0) {
+      return ArrayUtil.EMPTY_INT_ARRAY;
+    }
+
     int[] positions = new int[size];
     for (int i = 1; i < size; i++) {
       positions[i] = in.position();
@@ -41,6 +53,10 @@ final class Scanner {
 
   public static int[] scanNsConstants(DataBuffer in) {
     int size = in.readU32();
+    if (size == 0) {
+      return ArrayUtil.EMPTY_INT_ARRAY;
+    }
+
     int[] positions = new int[size];
     for (int i = 1; i < size; i++) {
       positions[i] = in.position();
@@ -52,6 +68,10 @@ final class Scanner {
 
   public static int[] scanNsSetConstants(DataBuffer in) {
     int size = in.readU32();
+    if (size == 0) {
+      return ArrayUtil.EMPTY_INT_ARRAY;
+    }
+
     int[] positions = new int[size];
     for (int i = 1; i < size; i++) {
       positions[i] = in.position();
@@ -62,6 +82,10 @@ final class Scanner {
 
   public static int[] scanMultinameConstants(DataBuffer in) throws DecoderException {
     int size = in.readU32();
+    if (size == 0) {
+      return ArrayUtil.EMPTY_INT_ARRAY;
+    }
+
     int[] positions = new int[size];
     for (int i = 1; i < size; i++) {
       positions[i] = in.position();
@@ -192,9 +216,8 @@ final class Scanner {
   }
 
   static void scanTraits(DataBuffer in) throws DecoderException {
-    int count = in.readU32();
-
-    for (int i = 0; i < count; i++) {
+    int size = in.readU32();
+    for (int i = 0; i < size; i++) {
       in.readU32();
       int kind = in.readU8();
       switch (kind & 0x0f) {

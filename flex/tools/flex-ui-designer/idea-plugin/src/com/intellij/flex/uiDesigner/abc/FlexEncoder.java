@@ -246,7 +246,7 @@ class FlexEncoder extends Encoder {
     }
     else {
       if (bytes == EMPTY_METHOD_BODY) {
-        methodBodies.writeU32(this.methodInfo.getIndex(poolIndex, methodInfo));
+        methodBodies.writeU32(this.methodInfo.getIndex(methodInfo));
         methodBodies.write(bytes);
         return MethodCodeDecoding.STOP;
       }

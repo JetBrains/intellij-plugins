@@ -70,10 +70,8 @@ final class Decoder {
 
     public void decodeAll(Encoder visitor, DataBuffer in) throws DecoderException {
       for (int position : positions) {
-        int originalPos = in.position();
         in.seek(position);
         visitor.methodInfo(in);
-        in.seek(originalPos);
       }
     }
   }
@@ -90,10 +88,8 @@ final class Decoder {
 
     public void decodeAll(Encoder visitor, DataBuffer in) throws DecoderException {
       for (int index = 0, n = positions.length; index < n; index++) {
-        int originalPos = in.position();
         in.seek(positions[index]);
         visitor.metadataInfo(index, in.readU32(), in.readU32(), in);
-        in.seek(originalPos);
       }
     }
   }
@@ -156,26 +152,20 @@ final class Decoder {
 
     public void decodeInstances(Encoder visitor, DataBuffer in) throws DecoderException {
       for (int i = 0, n = size(); i < n; i++) {
-        int originalPos = in.position();
         in.seek(positions[i]);
         visitor.startInstance(in);
         decodeTraits(visitor, in);
         visitor.endInstance();
-
-        in.seek(originalPos);
       }
     }
 
     public void decodeClasses(Encoder visitor, DataBuffer in) throws DecoderException {
       for (int i = size(), n = positions.length; i < n; i++) {
-        int originalPos = in.position();
         in.seek(positions[i]);
 
         visitor.startClass(in.readU32(), i, in);
         decodeTraits(visitor, in);
         visitor.endClass();
-
-        in.seek(originalPos);
       }
     }
   }
@@ -192,14 +182,11 @@ final class Decoder {
 
     public void decodeAll(Encoder visitor, DataBuffer in) throws DecoderException {
       for (int position : positions) {
-        int originalPos = in.position();
         in.seek(position);
 
         visitor.startScript(in.readU32());
         decodeTraits(visitor, in);
         visitor.endScript();
-
-        in.seek(originalPos);
       }
     }
   }
@@ -217,7 +204,6 @@ final class Decoder {
     public void decodeAll(Encoder visitor, DataBuffer in) throws DecoderException {
       final Opcodes opcodes = visitor.opcodeDecoder;
       for (int position : positions) {
-        int originalPos = in.position();
         in.seek(position);
 
         int methodInfo = in.readU32();
@@ -235,7 +221,6 @@ final class Decoder {
           skipExceptions(in.readU32(), in);
           int traitCount = in.readU32();
           assert traitCount == 0;
-          in.seek(originalPos);
           return;
         }
 
@@ -254,8 +239,6 @@ final class Decoder {
         }
         decodeTraits(visitor, in);
         visitor.endMethodBody();
-
-        in.seek(originalPos);
       }
     }
 
@@ -667,8 +650,7 @@ final class Decoder {
             continue;
           }
           case OP_subtract_p: {
-            int param = in.readU32();
-            v.OP_subtract_p(param);
+            v.OP_subtract_p(in.readU32());
             continue;
           }
           case OP_subtract_i: {
@@ -680,8 +662,7 @@ final class Decoder {
             continue;
           }
           case OP_multiply_p: {
-            int param = in.readU32();
-            v.OP_multiply_p(param);
+            v.OP_multiply_p(in.readU32());
             continue;
           }
           case OP_multiply_i: {

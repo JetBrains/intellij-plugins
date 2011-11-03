@@ -35,8 +35,7 @@ final class IndexHistory {
     int size = 0;
     int preferredSize = 0;
     int[] poolPartLengths = new int[7];
-    for (int i = 0, length = decoders.size(); i < length; i++) {
-      Decoder decoder = decoders.get(i);
+    for (Decoder decoder : decoders) {
       if (decoder == null) {
         continue;
       }

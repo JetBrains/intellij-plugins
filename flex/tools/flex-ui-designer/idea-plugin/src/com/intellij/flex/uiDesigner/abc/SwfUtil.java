@@ -59,7 +59,7 @@ final class SwfUtil {
   }
 
   public static void mergeDoAbc(List<Decoder> decoders, Encoder encoder) throws IOException {
-    //final long time = System.currentTimeMillis();
+    final long time = System.currentTimeMillis();
 
     encoder.enablePeepHole();
     for (int i = 0, n = decoders.size(); i < n; i++) {
@@ -75,9 +75,12 @@ final class SwfUtil {
       decoder.classInfo.decodeClasses(encoder, decoder.in);
       decoder.scriptInfo.decodeAll(encoder, decoder.in);
       decoder.methodBodies.decodeAll(encoder, decoder.in);
+
+      encoder.endDecoder(decoder);
     }
 
-    //System.out.print("\nmerge: ");
-    //System.out.print(System.currentTimeMillis() - time);
+    final long l = System.currentTimeMillis() - time;
+    System.out.print("\nmerge: ");
+    System.out.print(l);
   }
 }

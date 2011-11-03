@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner.abc;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 
 class WritableDataBuffer extends DataBuffer {

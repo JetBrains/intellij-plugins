@@ -22,7 +22,6 @@ class PoolPart {
 
   int store(DataBuffer data, int start, int end) {
     ByteArray a = createByteArray();
-    a.clear();
     a.data = data;
     a.start = start;
     a.end = end;

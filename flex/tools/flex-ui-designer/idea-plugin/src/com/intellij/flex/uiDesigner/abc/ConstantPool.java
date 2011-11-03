@@ -191,7 +191,6 @@ final class MultinameByteArray extends ByteArray {
   int constKind = 0, index1 = 1, index2 = 1;
 
   void init() {
-    int originalPos = data.position();
     data.seek(start);
     constKind = data.readU8();
 
@@ -244,8 +243,6 @@ final class MultinameByteArray extends ByteArray {
       default:
         assert false; // can't possibly happen...
     }
-
-    data.seek(originalPos);
   }
 
   void clear() {

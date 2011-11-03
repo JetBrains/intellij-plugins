@@ -64,8 +64,9 @@ class Encoder {
 
   public void configure(List<Decoder> decoders, @Nullable AbcFilter.TransientString excludedName) {
     int estimatedSize = 0, total = 0;
-    int[] sizes = new int[decoders.size()];
-    for (int i = 0, size = sizes.length; i < size; i++) {
+
+    final int n = decoders.size();
+    for (int i = 0; i < n; i++) {
       Decoder decoder = decoders.get(i);
       if (excludedName != null && decoder.name != null && excludedName.same(decoder.name)) {
         decoders.set(i, null);
@@ -73,76 +74,61 @@ class Encoder {
       }
 
       estimatedSize += decoder.methodInfo.estimatedSize;
-      sizes[i] = decoder.methodInfo.size();
-      total += sizes[i];
+      total += decoder.methodInfo.size();
     }
-    methodInfo = new DataBuffer2(estimatedSize, sizes);
+    methodInfo = new DataBuffer2(estimatedSize);
     methodInfo.writeU32(total);
 
-    estimatedSize = 0;
     total = 0;
-    sizes = new int[decoders.size()];
-    for (int i = 0, size = sizes.length; i < size; i++) {
-      Decoder decoder = decoders.get(i);
+    for (Decoder decoder : decoders) {
       if (decoder == null) {
         continue;
       }
 
-      estimatedSize += decoder.metadataInfo.estimatedSize;
-      sizes[i] = decoder.metadataInfo.size();
-      total += sizes[i];
+      total += decoder.metadataInfo.size();
     }
-    metadataInfo = new MetadataInfoByteArray(sizes, total);
+    metadataInfo = new MetadataInfoByteArray(total);
 
     estimatedSize = 0;
     int classEstimatedSize = 0;
     total = 0;
-    sizes = new int[decoders.size()];
-    for (int i = 0, size = sizes.length; i < size; i++) {
-      Decoder decoder = decoders.get(i);
+    for (Decoder decoder : decoders) {
       if (decoder == null) {
         continue;
       }
 
       estimatedSize += decoder.classInfo.instanceEstimatedSize;
       classEstimatedSize += decoder.classInfo.classEstimatedSize;
-      sizes[i] = decoder.classInfo.size();
-      total += sizes[i];
+      total += decoder.classInfo.size();
     }
-    instanceInfo = new DataBuffer2(estimatedSize, sizes);
-    classInfo = new DataBuffer2(classEstimatedSize, sizes);
+    instanceInfo = new DataBuffer2(estimatedSize);
+    classInfo = new DataBuffer2(classEstimatedSize);
     instanceInfo.writeU32(total);
 
     estimatedSize = 0;
     total = 0;
-    sizes = new int[decoders.size()];
-    for (int i = 0, size = sizes.length; i < size; i++) {
-      Decoder decoder = decoders.get(i);
+    for (Decoder decoder : decoders) {
       if (decoder == null) {
         continue;
       }
 
       estimatedSize += decoder.scriptInfo.estimatedSize;
-      sizes[i] = decoder.scriptInfo.size();
-      total += sizes[i];
+      total += decoder.scriptInfo.size();
     }
-    scriptInfo = new DataBuffer2(estimatedSize, sizes);
+    scriptInfo = new DataBuffer2(estimatedSize);
     scriptInfo.writeU32(total);
 
     estimatedSize = 0;
     total = 0;
-    sizes = new int[decoders.size()];
-    for (int i = 0, size = sizes.length; i < size; i++) {
-      Decoder decoder = decoders.get(i);
+    for (Decoder decoder : decoders) {
       if (decoder == null) {
         continue;
       }
 
       estimatedSize += decoder.methodBodies.estimatedSize;
-      sizes[i] = decoder.methodBodies.size();
-      total += sizes[i];
+      total += decoder.methodBodies.size();
     }
-    methodBodies = new DataBuffer2(estimatedSize, sizes);
+    methodBodies = new DataBuffer2(estimatedSize);
     methodBodies.writeU32(total);
 
     opcodes = new DataBuffer3(decoders, 4096);
@@ -156,6 +142,15 @@ class Encoder {
 
   public void useConstantPool(int index) {
     poolIndex = index;
+  }
+
+  public void endDecoder(Decoder decoder) {
+    methodInfo.processedSize += decoder.methodInfo.size();
+    metadataInfo.processedSize += decoder.metadataInfo.size();
+    instanceInfo.processedSize += decoder.classInfo.size();
+    classInfo.processedSize += decoder.classInfo.size();
+    scriptInfo.processedSize += decoder.scriptInfo.size();
+    methodBodies.processedSize += decoder.methodBodies.size();
   }
 
   public ByteBuffer writeDoAbc(final AbstractByteArrayOutputStream channel) throws IOException {
@@ -343,7 +338,7 @@ class Encoder {
       }
     }
 
-    metadataInfo.addData(poolIndex, index, buffer);
+    metadataInfo.addData(index, buffer);
   }
 
   protected void instanceStarting(int name, DataBuffer in) {
@@ -374,7 +369,7 @@ class Encoder {
     }
 
     final int oldIInit = in.readU32();
-    instanceInfo.writeU32(methodInfo.getIndex(poolIndex, oldIInit));
+    instanceInfo.writeU32(methodInfo.getIndex(oldIInit));
     instanceEnding(oldIInit);
 
     currentBuffer = instanceInfo;
@@ -388,7 +383,7 @@ class Encoder {
   }
 
   public void startClass(int cinit, int index, DataBuffer in) {
-    classInfo.writeU32(methodInfo.getIndex(poolIndex, cinit));
+    classInfo.writeU32(methodInfo.getIndex(cinit));
 
     currentBuffer = classInfo;
   }
@@ -398,7 +393,7 @@ class Encoder {
   }
 
   public void startScript(int initID) {
-    scriptInfo.writeU32(methodInfo.getIndex(poolIndex, initID));
+    scriptInfo.writeU32(methodInfo.getIndex(initID));
 
     currentBuffer = scriptInfo;
   }
@@ -408,7 +403,7 @@ class Encoder {
   }
 
   public int startMethodBody(int methodInfo, int maxStack, int maxRegs, int scopeDepth, int maxScope) {
-    methodBodies.writeU32(this.methodInfo.getIndex(poolIndex, methodInfo));
+    methodBodies.writeU32(this.methodInfo.getIndex(methodInfo));
 
     methodBodies.writeU32(maxStack);
     methodBodies.writeU32(maxRegs);
@@ -484,7 +479,7 @@ class Encoder {
     tempMetadataList.resetQuick();
 
     for (int aMetadata : metadata) {
-      int new_index = metadataInfo.getIndex(poolIndex, aMetadata);
+      int new_index = metadataInfo.getIndex(aMetadata);
       if (new_index != -1) {
         tempMetadataList.add(new_index);
       }
@@ -576,7 +571,7 @@ class Encoder {
     currentBuffer.writeU8(trait_kind);
 
     currentBuffer.writeU32(dispId);
-    currentBuffer.writeU32(this.methodInfo.getIndex(poolIndex, methodInfo));
+    currentBuffer.writeU32(this.methodInfo.getIndex(methodInfo));
 
     encodeMetaData(new_metadata);
   }
@@ -594,7 +589,7 @@ class Encoder {
     currentBuffer.writeU8(kind);
 
     currentBuffer.writeU32(slotId);
-    currentBuffer.writeU32(classInfo.getIndex(poolIndex, classInfoIndex));
+    currentBuffer.writeU32(classInfo.getIndex(classInfoIndex));
 
     encodeMetaData(newMetadata);
   }
@@ -608,7 +603,7 @@ class Encoder {
     currentBuffer.writeU8(kind);
 
     currentBuffer.writeU32(slotId);
-    currentBuffer.writeU32(this.methodInfo.getIndex(poolIndex, methodInfo));
+    currentBuffer.writeU32(this.methodInfo.getIndex(methodInfo));
 
     encodeMetaData(newMetadata);
   }
@@ -1670,21 +1665,21 @@ class Encoder {
   public void OP_newfunction(int id) {
     if (opcodePass == 1) {
       beginop(OP_newfunction);
-      opcodes.writeU32(methodInfo.getIndex(poolIndex, id));
+      opcodes.writeU32(methodInfo.getIndex(id));
     }
   }
 
   public void OP_newclass(int id) {
     if (opcodePass == 1) {
       beginop(OP_newclass);
-      opcodes.writeU32(classInfo.getIndex(poolIndex, id));
+      opcodes.writeU32(classInfo.getIndex(id));
     }
   }
 
   public void OP_callstatic(int id, int argc) {
     if (opcodePass == 1) {
       beginop(OP_callstatic);
-      opcodes.writeU32(methodInfo.getIndex(poolIndex, id));
+      opcodes.writeU32(methodInfo.getIndex(id));
       opcodes.writeU32(argc);
     }
   }
@@ -1692,7 +1687,7 @@ class Encoder {
   public void OP_callmethod(int id, int argc) {
     if (opcodePass == 1) {
       beginop(OP_callmethod);
-      opcodes.writeU32(methodInfo.getIndex(poolIndex, id));
+      opcodes.writeU32(methodInfo.getIndex(id));
       opcodes.writeU32(argc);
     }
   }
@@ -2258,37 +2253,31 @@ class Encoder {
 
   private static class MetadataInfoByteArray extends PoolPart {
     private int size = 0;
-    private final int[] sizes;
+    private int processedSize;
     private final IntIntHashMap indexes;
 
-    MetadataInfoByteArray(int[] sizes, int total) {
+    MetadataInfoByteArray(int total) {
       super(total + 1);
-      this.sizes = sizes;
       indexes = new IntIntHashMap(total);
     }
 
-    int addData(int poolIndex, int oldIndex, WritableDataBuffer data) {
+    int addData(int oldIndex, WritableDataBuffer data) {
       int index = contains(data, 0, data.size());
       if (index == -1) {
         index = store(data, 0, data.size());
         size += data.size();
       }
       // ByteArrayPool is 1 based, we want zero based for metadataInfos
-      indexes.put(calcIndex(poolIndex, oldIndex), index - 1);
+      indexes.put(calcIndex(oldIndex), index - 1);
       return index;
     }
 
-    private int calcIndex(int poolIndex, int oldIndex) {
-      int newIndex = 0;
-      for (int i = 0; i < poolIndex; i++) {
-        newIndex += sizes[i];
-      }
-      newIndex += oldIndex;
-      return newIndex;
+    private int calcIndex(int oldIndex) {
+      return processedSize + oldIndex;
     }
 
-    int getIndex(int poolIndex, int oldIndex) {
-      return indexes.get(calcIndex(poolIndex, oldIndex));
+    int getIndex(int oldIndex) {
+      return indexes.get(calcIndex(oldIndex));
     }
 
     int size() {
@@ -2301,19 +2290,14 @@ class Encoder {
   }
 
   protected static class DataBuffer2 extends WritableDataBuffer {
-    private final int[] sizes;
+    private int processedSize;
 
-    DataBuffer2(int estimatedSize, int[] sizes) {
+    DataBuffer2(int estimatedSize) {
       super(estimatedSize);
-      this.sizes = sizes;
     }
 
-    int getIndex(int poolIndex, int oldIndex) {
-      int newIndex = 0;
-      for (int i = 0; i < poolIndex; i++) {
-        newIndex += sizes[i];
-      }
-      return newIndex + oldIndex;
+    int getIndex(int oldIndex) {
+      return processedSize + oldIndex;
     }
   }
 
@@ -2350,21 +2334,20 @@ class Encoder {
     }
 
     void updateOffset(int oldOffsetPos, int oldPos, int oldTarget) {
-      Integer i = offsets.get(oldTarget);
-      Integer p = offsets.get(oldPos);
-      Integer s = offsets.get(oldOffsetPos);
-
-      if (i != null && p != null && s != null) {
+      int i = offsets.get(oldTarget);
+      int p = offsets.get(oldPos);
+      int s = offsets.get(oldOffsetPos);
+      if (i != -1 && p != -1 && s != -1) {
         writeS24(s, i - p);
       }
       else {
-        if (i == null) {
+        if (i == -1) {
           System.out.println("updateOffset2: can't match i " + oldTarget + " with a new offset");
         }
-        if (p == null) {
+        if (p == -1) {
           System.out.println("updateOffset2: can't match p " + oldPos + " with a new offset");
         }
-        if (s == null) {
+        if (s == -1) {
           System.out.println("updateOffset2: can't match s " + oldOffsetPos + " with a new offset");
         }
         System.out.println(offsets);
