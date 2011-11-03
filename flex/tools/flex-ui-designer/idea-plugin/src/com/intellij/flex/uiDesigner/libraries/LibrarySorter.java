@@ -67,7 +67,7 @@ public class LibrarySorter {
 
   static {
     Set<CharSequence> set;
-    for (Pair<String, String> pair :   FLEX_LIBS_PATTERNS) {
+    for (Pair<String, String> pair : FLEX_LIBS_PATTERNS) {
       if (pair.first.equals(FlexLibsNames.AIRSPARK)) {
         set = createSet(FlexOverloadedClasses.AIR_SPARK_CLASSES.size() + 1);
         set.addAll(FlexOverloadedClasses.AIR_SPARK_CLASSES);
@@ -98,9 +98,9 @@ public class LibrarySorter {
     return abc.lastModified();
   }
 
-  private List<LibrarySetItem> collectItems(final List<Library> libraries, final boolean isFromSdk) throws IOException {
+  private List<LibrarySetItem> collectItems(final List<Library> libraries, final boolean isFromSdk,
+                                            THashMap<CharSequence, Definition> definitionMap) throws IOException {
     final List<LibrarySetItem> unsortedItems = new ArrayList<LibrarySetItem>(libraries.size());
-    final THashMap<CharSequence, Definition> definitionMap = new THashMap<CharSequence, Definition>(unsortedItems.size() * 128);
     final CatalogXmlBuilder catalogXmlBuilder = new CatalogXmlBuilder(definitionMap);
     for (Library library : libraries) {
       LibrarySetItem filteredLibrary = new LibrarySetItem(library);
@@ -133,8 +133,10 @@ public class LibrarySorter {
 
     ArrayList<LibrarySetItem> resourceBundleOnlyItems = null;
 
-    final List<LibrarySetItem> unsortedItems = collectItems(libraries, isFromSdk);
-    AbcFilter filter = null;
+    final THashMap<CharSequence, Definition> definitionMap = new THashMap<CharSequence, Definition>(libraries.size() * 128);
+    final List<LibrarySetItem> unsortedItems = collectItems(libraries, isFromSdk, definitionMap);
+
+    AbcMerger abcMerger = new AbcMerger(definitionMap, flexSdkVersion);
     for (LibrarySetItem item : unsortedItems) {
       if (!item.hasDefinitions()) {
         if (item.library.hasResourceBundles()) {
@@ -145,6 +147,9 @@ public class LibrarySorter {
         }
         continue;
       }
+
+      abcMerger.process(item.library);
+
 
       Collection<CharSequence> filteredDefinitions = null;
       item.filtered = item.hasUnresolvedDefinitions();

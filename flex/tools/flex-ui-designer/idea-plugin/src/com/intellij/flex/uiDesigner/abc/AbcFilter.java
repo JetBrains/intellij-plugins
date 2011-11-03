@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.abc;
 
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.TIntObjectHashMap;
@@ -43,7 +44,7 @@ public class AbcFilter extends SwfTranscoder {
     this.onlyAbcAsTag = onlyAbcAsTag;
   }
 
-  public void filter(File in, File out, @Nullable AbcNameFilter abcNameFilter) throws IOException {
+  public void filter(File in, File out, @Nullable Condition<CharSequence> abcNameFilter) throws IOException {
     inputFileParentName = in.getParentFile().getName();
     int index = inputFileParentName.lastIndexOf('.');
     if (index > 0) {
@@ -53,7 +54,7 @@ public class AbcFilter extends SwfTranscoder {
     filter(new FileInputStream(in), in.length(), out, abcNameFilter);
   }
 
-  public void filter(VirtualFile in, File out, @Nullable AbcNameFilter abcNameFilter) throws IOException {
+  public void filter(VirtualFile in, File out, @Nullable Condition<CharSequence> abcNameFilter) throws IOException {
     inputFileParentName = in.getParent().getNameWithoutExtension();
     filter(in.getInputStream(), in.getLength(), out, abcNameFilter);
 
@@ -62,7 +63,7 @@ public class AbcFilter extends SwfTranscoder {
     }
   }
 
-  private void filter(InputStream inputStream, long inputLength, File outFile, @Nullable AbcNameFilter abcNameFilter) throws IOException {
+  private void filter(InputStream inputStream, long inputLength, File outFile, @Nullable Condition<CharSequence> abcNameFilter) throws IOException {
     final boolean onlyABC = outFile.getPath().endsWith(".abc");
     final FileOutputStream outputStream = transcode(inputStream, inputLength, outFile);
     channel = outputStream.getChannel();
@@ -96,7 +97,7 @@ public class AbcFilter extends SwfTranscoder {
     channel.write(buffer);
   }
 
-  private void filterTags(final AbcNameFilter abcNameFilter) throws IOException {
+  private void filterTags(final Condition<CharSequence> abcNameFilter) throws IOException {
     lastWrittenPosition = 0;
 
     while (buffer.position() < buffer.limit()) {
@@ -150,7 +151,7 @@ public class AbcFilter extends SwfTranscoder {
 
         case TagTypes.DoABC2:
           readAbcName(buffer.position() + 4);
-          if (abcNameFilter != null && !abcNameFilter.accept(transientNameString)) {
+          if (abcNameFilter != null && !abcNameFilter.value(transientNameString)) {
             skipTag(length);
           }
           else {
@@ -323,7 +324,7 @@ public class AbcFilter extends SwfTranscoder {
     buffer.position(lastWrittenPosition);
   }
 
-  private void filterAbcTags(AbcNameFilter abcNameFilter) throws IOException {
+  private void filterAbcTags(Condition<CharSequence> abcNameFilter) throws IOException {
     while (true) {
       int tagCodeAndLength = buffer.getShort();
       int type = tagCodeAndLength >> 6;
@@ -339,7 +340,7 @@ public class AbcFilter extends SwfTranscoder {
 
         case TagTypes.DoABC2:
           readAbcName(buffer.position() + 4);
-          if (abcNameFilter.accept(transientNameString)) {
+          if (abcNameFilter.value(transientNameString)) {
             final int off = 4 + transientNameString.length() + 1;
             buffer.position(buffer.position() + off);
             final int abcLength = length - off;

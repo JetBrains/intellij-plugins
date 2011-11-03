@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner.abc;
 
 import com.intellij.flex.uiDesigner.Client;
 import com.intellij.flex.uiDesigner.io.ByteArrayOutputStreamEx;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 
@@ -61,9 +62,9 @@ final class AbcBlankMaker {
   }
 
   private static void t() throws IOException {
-    new AbcFilter(null).filter(new File("/Users/develar/Library/Caches/IntelliJIdea10/plugins-sandbox/system/flexUIDesigner/framework.59cfca2cTEST-OUTTTTTT.swf"), new File("abc-blank-maker/src/b/u.swf"), new AbcNameFilter() {
+    new AbcFilter(null).filter(new File("/Users/develar/Library/Caches/IntelliJIdea10/plugins-sandbox/system/flexUIDesigner/framework.59cfca2cTEST-OUTTTTTT.swf"), new File("abc-blank-maker/src/b/u.swf"), new Condition<CharSequence>() {
       @Override
-      public boolean accept(CharSequence name) {
+      public boolean value(CharSequence name) {
         return !StringUtil.startsWith(name, "_");
       }
     });

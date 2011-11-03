@@ -17,13 +17,13 @@ public class AbcNameFilterByNameSetAndStartsWith extends AbcNameFilterByNameSet 
   }
 
   @Override
-  public boolean accept(CharSequence name) {
+  public boolean value(CharSequence name) {
     if (inclusion) {
-      if (super.accept(name)) {
+      if (super.value(name)) {
         return true;
       }
     }
-    else if (!super.accept(name)) {
+    else if (!super.value(name)) {
       return false;
     }
 

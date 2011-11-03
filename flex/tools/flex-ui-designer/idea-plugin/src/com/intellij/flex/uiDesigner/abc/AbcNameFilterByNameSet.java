@@ -1,8 +1,10 @@
 package com.intellij.flex.uiDesigner.abc;
 
+import com.intellij.openapi.util.Condition;
+
 import java.util.Collection;
 
-public class AbcNameFilterByNameSet implements AbcNameFilter {
+public class AbcNameFilterByNameSet implements Condition<CharSequence> {
   private final Collection<CharSequence> definitions;
   protected final boolean inclusion;
 
@@ -16,7 +18,7 @@ public class AbcNameFilterByNameSet implements AbcNameFilter {
   }
 
   @Override
-  public boolean accept(CharSequence name) {
+  public boolean value(CharSequence name) {
     return definitions.contains(name) == inclusion;
   }
 }

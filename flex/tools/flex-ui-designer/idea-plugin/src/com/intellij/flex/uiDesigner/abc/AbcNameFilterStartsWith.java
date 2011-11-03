@@ -1,8 +1,9 @@
 package com.intellij.flex.uiDesigner.abc;
 
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 
-public class AbcNameFilterStartsWith implements AbcNameFilter {
+public class AbcNameFilterStartsWith implements Condition<CharSequence> {
   private final boolean inclusion;
   private final String startsWith;
 
@@ -12,7 +13,7 @@ public class AbcNameFilterStartsWith implements AbcNameFilter {
   }
 
   @Override
-  public boolean accept(CharSequence name) {
+  public boolean value(CharSequence name) {
     if (StringUtil.startsWith(name, startsWith)) {
       return inclusion;
     }

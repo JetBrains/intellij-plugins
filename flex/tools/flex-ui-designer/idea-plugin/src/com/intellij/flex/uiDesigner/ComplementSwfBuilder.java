@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.flex.uiDesigner.abc.*;
 import com.intellij.flex.uiDesigner.libraries.FlexOverloadedClasses;
 import com.intellij.flex.uiDesigner.libraries.FlexOverloadedClasses.InjectionClassifier;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 
 import java.io.File;
@@ -35,29 +36,29 @@ public final class ComplementSwfBuilder {
   }
 
   private static void build(String rootPath, String flexVersion, InjectionClassifier classifier, boolean buildComplement) throws IOException {
-    final AbcNameFilter sparkInclusionNameFilter = new AbcNameFilterStartsWith("com.intellij.flex.uiDesigner.flex", true) {
+    final Condition<CharSequence> sparkInclusionNameFilter = new AbcNameFilterStartsWith("com.intellij.flex.uiDesigner.flex", true) {
       @Override
-      public boolean accept(CharSequence name) {
-        return super.accept(name) && !StringUtil.equals(name, "com.intellij.flex.uiDesigner.flex:SpriteLoaderAsset");
+      public boolean value(CharSequence name) {
+        return super.value(name) && !StringUtil.equals(name, "com.intellij.flex.uiDesigner.flex:SpriteLoaderAsset");
       }
     };
 
     final Collection<CharSequence> commonDefinitions = new ArrayList<CharSequence>(1);
     commonDefinitions.add("com.intellij.flex.uiDesigner:SpecialClassForAdobeEngineers");
 
-    final AbcNameFilter air4InclusionNameFilter = new AbcNameFilterByNameSet(FlexOverloadedClasses.AIR_SPARK_CLASSES, true);
+    final Condition<CharSequence> air4InclusionNameFilter = new AbcNameFilterByNameSet(FlexOverloadedClasses.AIR_SPARK_CLASSES, true);
     File source = getSourceFile(rootPath, flexVersion);
 
-    final AbcNameFilter abcNameFilter;
+    final Condition<CharSequence> abcNameFilter;
     if (classifier == InjectionClassifier.framework) {
       abcNameFilter = new AbcNameFilterByNameSetAndStartsWith(commonDefinitions,
                                                               new String[]{"mx.", "spark."}) {
         @Override
-        public boolean accept(CharSequence name) {
+        public boolean value(CharSequence name) {
           return StringUtil.equals(name, FlexOverloadedClasses.STYLE_PROTO_CHAIN) ||
                  FlexOverloadedClasses.MX_CLASSES.contains(name) ||
-                 (super.accept(name) && !sparkInclusionNameFilter.accept(name) &&
-                  !air4InclusionNameFilter.accept(name));
+                 (super.value(name) && !sparkInclusionNameFilter.value(name) &&
+                  !air4InclusionNameFilter.value(name));
         }
       };
     }

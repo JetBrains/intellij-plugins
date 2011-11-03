@@ -1,8 +1,9 @@
 package com.intellij.flex.uiDesigner.abc;
 
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 
-public final class AbcNameFilterByEquals implements AbcNameFilter {
+public final class AbcNameFilterByEquals implements Condition<CharSequence> {
   private final String equals;
 
   public AbcNameFilterByEquals(String equals) {
@@ -10,7 +11,7 @@ public final class AbcNameFilterByEquals implements AbcNameFilter {
   }
 
   @Override
-  public boolean accept(CharSequence name) {
+  public boolean value(CharSequence name) {
     return StringUtil.equals(name, equals);
   }
 }
