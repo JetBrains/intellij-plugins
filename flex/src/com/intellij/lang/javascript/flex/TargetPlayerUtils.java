@@ -21,6 +21,7 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureCo
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -346,8 +347,15 @@ public class TargetPlayerUtils {
     }
 
     if (targetPlayer == null) {
+      // take maximum
       targetPlayer = targetPlayers.length > 0 ? targetPlayers[0] : "";
+      for (int i = 1; i < targetPlayers.length; i++) {
+        if (StringUtil.compareVersionNumbers(targetPlayers[i], targetPlayer) > 0) {
+          targetPlayer = targetPlayers[i];
+        }
+      }
     }
+
     return targetPlayer;
   }
 
