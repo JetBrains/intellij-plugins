@@ -1,8 +1,6 @@
 package com.intellij.flex.uiDesigner.libraries;
 
-import com.intellij.flex.uiDesigner.abc.AbcFilter;
-import com.intellij.flex.uiDesigner.abc.SwfUtil;
-import com.intellij.flex.uiDesigner.abc.TagTypes;
+import com.intellij.flex.uiDesigner.abc.*;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.TIntObjectIterator;
 import org.jetbrains.annotations.Nullable;
@@ -12,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.List;
 import java.util.Map;
 
 class AbcMerger extends AbcFilter {
@@ -23,6 +22,7 @@ class AbcMerger extends AbcFilter {
   private ByteBuffer symbolClassBuffer;
   private int totalNumSymbols;
 
+  private int co;
 
   public AbcMerger(Map<CharSequence, Definition> definitionMap, @Nullable String flexSdkVersion, File outFile)
     throws IOException {
@@ -44,7 +44,12 @@ class AbcMerger extends AbcFilter {
     processTags(null);
   }
 
-  public void end() throws IOException {
+  public void end(List<Decoder> decoders, String flexSdkVersion) throws IOException {
+    final Encoder encoder = flexSdkVersion != null ? new FlexEncoder("test", flexSdkVersion) : new Encoder();
+    encoder.configure(decoders, null);
+    SwfUtil.mergeDoAbc(decoders, encoder);
+    encoder.writeDoAbc(channel, true);
+
     // write symbolClass
     buffer.clear();
     symbolClassBuffer.flip();
@@ -69,10 +74,10 @@ class AbcMerger extends AbcFilter {
   protected void processFileAttributes(int length) throws IOException {
     if (fileAttributesProcessed) {
       skipTag(length);
-      fileAttributesProcessed = true;
     }
     else {
       super.processFileAttributes(length);
+      fileAttributesProcessed = true;
     }
   }
 
@@ -87,9 +92,6 @@ class AbcMerger extends AbcFilter {
   }
 
   protected void doAbc2(int length) throws IOException {
-    final int off = 4 + transientNameString.length() + 1;
-    buffer.position(buffer.position() + off);
-
     final Definition definition = definitionMap.get(transientNameString);
     definition.doAbcData = createBufferWrapper(length);
   }
@@ -134,6 +136,7 @@ class AbcMerger extends AbcFilter {
       buffer.limit(sA);
       symbolClassBuffer.put(buffer);
 
+      buffer.limit(buffer.capacity());
       buffer.position(sB);
       buffer.limit(tagStartPosition + length);
       symbolClassBuffer.put(buffer);

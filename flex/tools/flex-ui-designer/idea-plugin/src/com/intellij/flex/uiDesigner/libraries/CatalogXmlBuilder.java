@@ -1,142 +1,119 @@
 package com.intellij.flex.uiDesigner.libraries;
 
-import com.intellij.flex.uiDesigner.io.IOUtil;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.impl.source.parsing.xml.XmlBuilder;
+import com.intellij.util.xml.NanoXmlUtil.IXMLBuilderAdapter;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Map;
 
-class CatalogXmlBuilder implements XmlBuilder {
+class CatalogXmlBuilder extends IXMLBuilderAdapter {
   static final String PROPERTIES_EXTENSION = ".properties";
   private static final int PROPERTIES_EXTENSION_LENGTH = PROPERTIES_EXTENSION.length();
   private static final String LOCALE_PREFIX = "locale/";
   private static final int LOCALE_PREFIX_LENGTH = LOCALE_PREFIX.length();
 
+  private boolean defProcessing;
   private boolean processDependencies;
-  private boolean processFiles;
+  private boolean filesProcessing;
   private boolean collectResourceBundles;
 
   private Definition definition;
-  private final ArrayList<CharSequence> dependencies = new ArrayList<CharSequence>();
-  private CharSequence mod;
+  private final ArrayList<String> dependencies = new ArrayList<String>();
+  private String mod;
 
   private LibrarySetItem library;
   private final Map<CharSequence, Definition> definitionMap;
+  private final Condition<String> isExternal;
 
-  public CatalogXmlBuilder(final Map<CharSequence, Definition> definitionMap) {
+  public CatalogXmlBuilder(Map<CharSequence, Definition> definitionMap, Condition<String> isExternal) {
     this.definitionMap = definitionMap;
+    this.isExternal = isExternal;
   }
 
   public void setLibrary(LibrarySetItem item) {
-    this.library = item;
+    library = item;
     collectResourceBundles = item.library.resourceBundles.isEmpty();
   }
 
   @Override
-  public void doctype(@Nullable CharSequence publicId, @Nullable CharSequence systemId, int startOffset, int endOffset) {
-  }
-
-  @Override
-  public ProcessingOrder startTag(CharSequence localName, String namespace, int startoffset, int endoffset, int headerEndOffset) {
-    if (localName.equals("script")) {
-      return ProcessingOrder.TAGS_AND_ATTRIBUTES;
-    }
-    else if (localName.equals("def")) {
-      definition = new Definition(library);
-      return ProcessingOrder.TAGS_AND_ATTRIBUTES;
-    }
-    else if (definition != null) {
-      return ProcessingOrder.TAGS_AND_ATTRIBUTES;
-    }
-    else if (collectResourceBundles && localName.equals("file")) {
-      processFiles = true;
-      return ProcessingOrder.TAGS_AND_ATTRIBUTES;
+  public void startElement(String name, String nsPrefix, String nsURI, String systemID, int lineNr) throws Exception {
+    if (name.equals("def")) {
+      defProcessing = true;
+      definition = null;
     }
     else {
-      return ProcessingOrder.TAGS;
+      defProcessing = false;
+      if (collectResourceBundles && name.equals("file")) {
+        filesProcessing = true;
+      }
     }
   }
 
   @Override
-  public void endTag(CharSequence localName, String namespace, int startoffset, int endoffset) {
-    if (processDependencies && localName.equals("script")) {
-      if (!dependencies.isEmpty()) {
-        definition.dependencies = dependencies.toArray(new CharSequence[dependencies.size()]);
-        dependencies.clear();
+  public void endElement(String name, String nsPrefix, String nsURI) throws Exception {
+    if (processDependencies && name.equals("script")) {
+      if (dependencies.isEmpty()) {
+        definition.unresolvedState = Definition.UnresolvedState.NO;
       }
       else {
-        definition.hasUnresolvedDependencies = Definition.UnresolvedState.NO;
+        definition.dependencies = dependencies.toArray(new String[dependencies.size()]);
+        dependencies.clear();
       }
       definition = null;
       processDependencies = false;
+      defProcessing = false;
     }
   }
 
   @Override
-  public void attribute(CharSequence name, CharSequence value, int startoffset, int endoffset) {
+  public void addAttribute(String name, String nsPrefix, String nsURI, String value, String type) throws Exception {
     if (name.equals("mod")) {
       mod = value;
     }
     else if (processDependencies) {
-      if (name.equals("id") &&
-          !(StringUtil.startsWith(value, "flash.") || value.charAt(0) == '_' || !StringUtil.contains(value, 1, value.length() - 1, ':'))) {
+      if (name.equals("id") && !isExternal.value(value)) {
         dependencies.add(value);
       }
     }
-    else if (definition != null) {
-      if (value.charAt(0) != '_') {
-        Definition oldDefinition = definitionMap.get(value);
-        if (oldDefinition == null) {
-          definition.setTimeAsCharSequence(mod);
+    else if (defProcessing) {
+      Definition oldDefinition = definitionMap.get(value);
+      long time = -1;
+      if (oldDefinition != null) {
+        time = Long.parseLong(mod);
+        if (time > oldDefinition.getTime()) {
+          oldDefinition.markAsUnresolved();
         }
         else {
-          definition.time = IOUtil.parsePositiveLong(mod);
-          if (definition.time > oldDefinition.getTime()) {
-            oldDefinition.markAsUnresolved(value);
-          }
-          else {
-            definition = null;
-            // filter library, remove definition abc bytecode from lib swf
-            library.filteredDefinitions.add(value);
-            return;
-          }
+          return;
         }
+      }
 
-        definitionMap.put(value, definition);
-        library.definitionCounter++;
-        processDependencies = true;
+      definition = new Definition(library);
+      if (time == -1) {
+        definition.setTimeAsString(mod);
       }
       else {
-        definition = null;
+        definition.time = time;
       }
+
+      definitionMap.put(value, definition);
+      library.definitionCounter++;
+      processDependencies = true;
     }
-    else if (processFiles && name.equals("path")) {
-      if (StringUtil.startsWith(value, LOCALE_PREFIX) && StringUtil.endsWith(value, PROPERTIES_EXTENSION)) {
+    else if (filesProcessing && name.equals("path")) {
+      if (value.startsWith(LOCALE_PREFIX) && value.endsWith(PROPERTIES_EXTENSION)) {
         final int vlength = value.length();
         final int secondSlashPosition = StringUtil.lastIndexOf(value, '/', LOCALE_PREFIX_LENGTH + 2, vlength - PROPERTIES_EXTENSION_LENGTH - 1);
-        final String locale = value.subSequence(LOCALE_PREFIX_LENGTH, secondSlashPosition).toString();
+        final String locale = value.substring(LOCALE_PREFIX_LENGTH, secondSlashPosition);
         THashSet<String> bundles = library.library.resourceBundles.get(locale);
         if (bundles == null) {
           bundles = new THashSet<String>();
           library.library.resourceBundles.put(locale, bundles);
         }
-        bundles.add(value.subSequence(secondSlashPosition + 1, vlength - PROPERTIES_EXTENSION_LENGTH).toString());
+        bundles.add(value.substring(secondSlashPosition + 1, vlength - PROPERTIES_EXTENSION_LENGTH));
       }
     }
-  }
-
-  @Override
-  public void textElement(CharSequence display, CharSequence physical, int startoffset, int endoffset) {
-  }
-
-  @Override
-  public void entityRef(CharSequence ref, int startOffset, int endOffset) {
-  }
-
-  @Override
-  public void error(String message, int startOffset, int endOffset) {
   }
 }

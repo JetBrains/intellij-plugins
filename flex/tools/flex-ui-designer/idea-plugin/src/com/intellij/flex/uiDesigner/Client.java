@@ -189,7 +189,7 @@ public class Client implements Closable {
       for (LibrarySetItem item : items) {
         final Library library = item.library;
         final boolean registered = libraryManager.isRegistered(library);
-        int flags = item.filtered ? 1 : 0;
+        int flags = 0;
         if (registered) {
           flags |= 2;
         }

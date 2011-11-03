@@ -9,7 +9,7 @@ public class FlexLibrarySet extends LibrarySet {
   public final AssetCounterInfo assetCounterInfo = new AssetCounterInfo();
 
   public FlexLibrarySet(int id, @Nullable LibrarySet parent, ApplicationDomainCreationPolicy applicationDomainCreationPolicy,
-                        List<LibrarySetItem> items, List<LibrarySetItem> resourceBundleOnlyItems, List<LibrarySetEmbedItem> embedItems) {
-    super(id, parent, applicationDomainCreationPolicy, items, resourceBundleOnlyItems, embedItems);
+                        List<LibrarySetItem> items, List<LibrarySetItem> resourceBundleOnlyItems) {
+    super(id, parent, applicationDomainCreationPolicy, items, resourceBundleOnlyItems);
   }
 }

@@ -31,6 +31,7 @@ import com.intellij.util.Function;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ class LibraryCollector {
 
   final List<Library> externalLibraries = new ArrayList<Library>();
   final List<Library> sdkLibraries = new ArrayList<Library>();
+  private VirtualFile globalLibrary;
 
   final Consumer<Library> initializer;
   private final Project project;
@@ -66,6 +68,11 @@ class LibraryCollector {
     return flexSdkVersion;
   }
 
+  @NotNull
+  public VirtualFile getGlobalLibrary() {
+    return globalLibrary;
+  }
+
   private static boolean isAutomationOrUselessLibrary(String name) {
     return name.startsWith("qtp") || name.startsWith("automation")
            || name.equals("flex.swc") /* flex.swc is only aggregation library */
@@ -76,15 +83,21 @@ class LibraryCollector {
            || name.equals("flash-integration.swc") || name.equals("authoringsupport.swc");
   }
 
-  private static boolean isGlobalLibrary(String name) {
-    return name.startsWith("airglobal") || name.startsWith("playerglobal");
+  private boolean isGlobalLibrary(String name, VirtualFile jarFile) {
+    final boolean isAirglobal = name.equals("airglobal.swc");
+    final boolean isGlobal = isAirglobal || name.equals("playerglobal.swc");
+    // flexmojos project may has playerglobal and airglobal simultaneous
+    if (isGlobal && (globalLibrary == null || isAirglobal)) {
+      globalLibrary = Library.getCatalogFile(jarFile);
+    }
+    return isGlobal;
   }
 
   @Nullable
   private VirtualFile getRealFileIfValidSwc(final VirtualFile jarFile) {
     if (jarFile.getFileSystem() instanceof JarFileSystem) {
       VirtualFile file = JarFileSystem.getInstance().getVirtualFileForJar(jarFile);
-      if (file != null && !file.isDirectory() && file.getName().endsWith(DOT_SWC) && !isGlobalLibrary(file.getName()) &&
+      if (file != null && !file.isDirectory() && file.getName().endsWith(DOT_SWC) && !isGlobalLibrary(file.getName(), jarFile) &&
           isSwfAndCatalogExists(jarFile) && uniqueGuard.add(file)) {
         return file;
       }

@@ -15,7 +15,7 @@ import static com.intellij.flex.uiDesigner.abc.ActionBlockConstants.*;
 import static com.intellij.flex.uiDesigner.abc.Decoder.MethodCodeDecoding;
 
 @SuppressWarnings({"deprecation"})
-class Encoder {
+public class Encoder {
   private final TIntArrayList tempMetadataList = new TIntArrayList(8);
 
   final Opcodes opcodeDecoder = new Opcodes();

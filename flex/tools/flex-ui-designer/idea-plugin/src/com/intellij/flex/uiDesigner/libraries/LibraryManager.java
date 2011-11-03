@@ -3,7 +3,9 @@ package com.intellij.flex.uiDesigner.libraries;
 import com.intellij.ProjectTopics;
 import com.intellij.diagnostic.errordialog.Attachment;
 import com.intellij.flex.uiDesigner.*;
+import com.intellij.flex.uiDesigner.abc.AbcFilter;
 import com.intellij.flex.uiDesigner.css.CssWriter;
+import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.io.IdPool;
 import com.intellij.flex.uiDesigner.io.InfoMap;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
@@ -20,22 +22,22 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.StringBuilderSpinAllocator;
+import com.intellij.util.xml.NanoXmlUtil.IXMLBuilderAdapter;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 
 @SuppressWarnings("MethodMayBeStatic")
 public class LibraryManager {
@@ -51,8 +53,8 @@ public class LibraryManager {
   //private final List<VirtualFile, LibrarySet> librarySets = new InfoMap<VirtualFile, LibrarySet>();
 
   private final Map<String, LibrarySet> librarySets = new THashMap<String, LibrarySet>();
-
   private final IdPool librarySetIdPool = new IdPool();
+  private final Map<VirtualFile, Set<CharSequence>> globalDefinitionsMap = new THashMap<VirtualFile, Set<CharSequence>>();
 
   public static LibraryManager getInstance() {
     return ServiceManager.getService(LibraryManager.class);
@@ -60,6 +62,8 @@ public class LibraryManager {
 
   public void reset() {
     libraries.clear();
+    librarySetIdPool.clear();
+    globalDefinitionsMap.clear();
   }
 
   public void setAppDir(@NotNull File appDir) {
@@ -152,7 +156,7 @@ public class LibraryManager {
       final String key = createKey(libraryCollector.externalLibraries);
       librarySet = librarySets.get(key);
       if (librarySet == null) {
-        createAndRegisterLibrarySet(flexLibrarySet, libraryCollector.sdkLibraries, libraryCollector.getFlexSdkVersion(), module, false);
+        createAndRegisterLibrarySet(flexLibrarySet, libraryCollector.sdkLibraries, libraryCollector.getFlexSdkVersion(), module, false, null);
         librarySets.put(key, flexLibrarySet);
       }
     }
@@ -199,11 +203,62 @@ public class LibraryManager {
     final String key = createKey(libraryCollector.sdkLibraries);
     FlexLibrarySet flexLibrarySet = (FlexLibrarySet)librarySets.get(key);
     if (flexLibrarySet == null) {
+      final Set<CharSequence> globalDefinitions = getGlobalDefinitions(libraryCollector.getGlobalLibrary());
       flexLibrarySet = (FlexLibrarySet)createAndRegisterLibrarySet(null, libraryCollector.sdkLibraries,
-                                                                   libraryCollector.getFlexSdkVersion(), module, true);
+                                                                   libraryCollector.getFlexSdkVersion(), module, true, new Condition<String>() {
+        @Override
+        public boolean value(String name) {
+          return globalDefinitions.contains(name);
+        }
+      });
       librarySets.put(key, flexLibrarySet);
     }
     return flexLibrarySet;
+  }
+
+  private Set<CharSequence> getGlobalDefinitions(VirtualFile file) throws InitException {
+    Set<CharSequence> globalDefinitions = globalDefinitionsMap.get(file);
+    if (globalDefinitions == null) {
+      try {
+        globalDefinitions = getDefinitions(file);
+      }
+      catch (IOException e) {
+        throw new InitException(e, "error.sort.libraries");
+      }
+    }
+    
+    globalDefinitionsMap.put(file, globalDefinitions);
+    return globalDefinitions;
+  }
+
+  private static Set<CharSequence> getDefinitions(VirtualFile file) throws IOException {
+    final THashSet<CharSequence> set = new THashSet<CharSequence>(512, AbcFilter.HASHING_STRATEGY);
+    IOUtil.parseXml(file, new IXMLBuilderAdapter() {
+      private boolean processingDef;
+
+      @Override
+      public void startElement(String name, String nsPrefix, String nsURI, String systemID, int lineNr) throws Exception {
+        if (name.equals("def")) {
+          processingDef = true;
+        }
+      }
+
+      @Override
+      public void endElement(String name, String nsPrefix, String nsURI) throws Exception {
+        if (name.equals("def")) {
+          processingDef = false;
+        }
+      }
+
+      @Override
+      public void addAttribute(String name, String nsPrefix, String nsURI, String value, String type) throws Exception {
+        if (processingDef && name.equals("id")) {
+          set.add(value);
+        }
+      }
+    });
+
+    return set;
   }
 
   private String createKey(List<Library> sdkLibraries) {
@@ -222,11 +277,11 @@ public class LibraryManager {
 
   @NotNull
   private LibrarySet createAndRegisterLibrarySet(@Nullable LibrarySet parent, List<Library> libraries, String flexSdkVersion, Module module,
-                                                 final boolean isFromSdk)
+                                                 final boolean isFromSdk, Condition<String> isExternal)
     throws InitException {
     try {
       final int id = librarySetIdPool.allocate();
-      final SortResult result = new LibrarySorter(module).sort(libraries, flexSdkVersion, isFromSdk, new File(appDir, id + SWF_EXTENSION));
+      final SortResult result = new LibrarySorter(module).sort(libraries, flexSdkVersion, isFromSdk, new File(appDir, id + SWF_EXTENSION), isExternal);
       final LibrarySet librarySet = new LibrarySet(id, parent, ApplicationDomainCreationPolicy.ONE, result.items, result.resourceBundleOnlyitems);
       Client.getInstance().registerLibrarySet(librarySet);
       return librarySet;

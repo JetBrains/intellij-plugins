@@ -2,7 +2,7 @@ package com.intellij.flex.uiDesigner.libraries {
 import com.intellij.flex.uiDesigner.AssetContainerClassPool;
 
 public class FlexLibrarySet extends LibrarySet {
-  public function FlexLibrarySet(id:String, parent:LibrarySet) {
+  public function FlexLibrarySet(id:int, parent:LibrarySet) {
     super(id, parent);
   }
 

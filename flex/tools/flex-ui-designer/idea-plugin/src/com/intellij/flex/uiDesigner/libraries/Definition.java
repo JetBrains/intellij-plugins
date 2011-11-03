@@ -1,28 +1,27 @@
 package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.abc.BufferWrapper;
-import com.intellij.flex.uiDesigner.io.IOUtil;
 import org.jetbrains.annotations.NotNull;
 
 class Definition {
   private final LibrarySetItem library;
 
-  public CharSequence[] dependencies;
-  public int hasUnresolvedDependencies = UnresolvedState.UNKNOWN;
+  public String[] dependencies;
+  public int unresolvedState = UnresolvedState.UNKNOWN;
 
-  private CharSequence timeAsCharSequence;
+  private String timeAsString;
   public long time = -1;
 
   public BufferWrapper doAbcData;
 
-  public void setTimeAsCharSequence(CharSequence timeAsCharSequence) {
-    this.timeAsCharSequence = timeAsCharSequence;
+  public void setTimeAsString(String value) {
+    timeAsString = value;
   }
 
   @SuppressWarnings("UnusedDeclaration")
   public long getTime() {
     if (time == -1) {
-      time = IOUtil.parsePositiveLong(timeAsCharSequence);
+      time = Long.parseLong(timeAsString);
     }
 
     return time;
@@ -37,8 +36,7 @@ class Definition {
     return library;
   }
 
-  public void markAsUnresolved(CharSequence name) {
-    library.filteredDefinitions.add(name);
+  public void markAsUnresolved() {
     library.definitionCounter--;
   }
 

@@ -20,7 +20,7 @@ public class Library extends Info<VirtualFile> {
   private final String name;
 
   // en_US => {"layout", "components"}
-  public final Map<String,THashSet<String>> resourceBundles = new THashMap<String,THashSet<String>>();
+  public final Map<String, THashSet<String>> resourceBundles = new THashMap<String, THashSet<String>>();
 
   Library(String name, String relativePath, VirtualFile file) {
     super(file);

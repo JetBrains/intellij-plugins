@@ -5,7 +5,7 @@ import gnu.trove.TIntObjectHashMap;
 import static com.intellij.flex.uiDesigner.abc.ActionBlockConstants.*;
 import static com.intellij.flex.uiDesigner.abc.Decoder.MethodCodeDecoding;
 
-class FlexEncoder extends Encoder {
+public class FlexEncoder extends Encoder {
   private static final String MX_CORE = "mx.core";
   private static final String SPARK_COMPONENTS = "spark.components";
   private static final String SPARK_COMPONENTS_SUPPORT_CLASSES = "spark.components.supportClasses";

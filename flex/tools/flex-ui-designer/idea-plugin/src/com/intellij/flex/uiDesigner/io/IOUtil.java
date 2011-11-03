@@ -6,6 +6,9 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.text.CharArrayCharSequence;
+import com.intellij.util.text.CharSequenceReader;
+import com.intellij.util.xml.NanoXmlUtil;
+import net.n3.nanoxml.IXMLBuilder;
 
 import java.io.*;
 import java.net.Socket;
@@ -151,10 +154,6 @@ public final class IOUtil {
     return isNegative ? result : -result;
   }
 
-  public static long parsePositiveLong(final CharSequence value) {
-    return parseLong(value, 0, false, 10);
-  }
-
   public static long parseLong(final CharSequence value, final int start, final boolean isNegative, final int radix) {
     final int end = value.length();
     long result = 0; // Accumulates negatively (avoid MIN_VALUE overflow).
@@ -187,8 +186,13 @@ public final class IOUtil {
   }
 
   public static CharSequence getCharSequence(VirtualFile file) throws IOException {
+    return (CharSequence)getCharSequenceOrReader(file, false);
+  }
+
+  private static Object getCharSequenceOrReader(VirtualFile file, boolean returnReader) throws IOException {
     if (file instanceof LightVirtualFile) {
-      return ((LightVirtualFile)file).getContent();
+      final CharSequence content = ((LightVirtualFile)file).getContent();
+      return returnReader ? new CharSequenceReader(content) : content;
     }
 
     final InputStreamReader reader = new InputStreamReader(file.getInputStream(), file.getCharset());
@@ -202,10 +206,14 @@ public final class IOUtil {
         }
         count += n;
       }
-      return new CharArrayCharSequence(chars, 0, count);
+      return returnReader ? new CharArrayReader(chars, 0, count) : new CharArrayCharSequence(chars, 0, count);
     }
     finally {
       reader.close();
     }
+  }
+
+  public static void parseXml(VirtualFile file, IXMLBuilder builder) throws IOException {
+    NanoXmlUtil.parse((Reader)getCharSequenceOrReader(file, true), builder);
   }
 }

@@ -135,7 +135,7 @@ public class LibrarySorterTest extends MxmlTestBase {
         LibrarySet sdkLibrarySet = client.getRegisteredModules().getInfo(myModule).flexLibrarySet;
         for (LibrarySetItem item : myLibraries()) {
           //noinspection ResultOfMethodCallIgnored
-          new File(appDir, item.library.getPath() + (item.filtered ? "_" + sdkLibrarySet.getId() + ".swf" : ".swf")).delete();
+          new File(appDir, item.library.getPath() + ".swf").delete();
         }
       }
     }

@@ -141,6 +141,7 @@ public class AbcFilter extends SwfTranscoder {
 
         case TagTypes.DoABC2:
           readAbcName(buffer.position() + 4);
+          //System.out.print("\n" + transientNameString.toString() + " \n");
           if (abcNameFilter != null && !abcNameFilter.value(transientNameString)) {
             skipTag(length);
           }
@@ -152,6 +153,9 @@ public class AbcFilter extends SwfTranscoder {
             buffer.position(lastWrittenPosition);
           }
           continue;
+
+          default:
+            buffer.position(buffer.position() + length);
       }
     }
   }

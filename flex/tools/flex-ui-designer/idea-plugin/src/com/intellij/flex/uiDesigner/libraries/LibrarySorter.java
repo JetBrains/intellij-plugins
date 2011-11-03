@@ -3,14 +3,14 @@ package com.intellij.flex.uiDesigner.libraries;
 import com.intellij.flex.uiDesigner.ComplementSwfBuilder;
 import com.intellij.flex.uiDesigner.DebugPathManager;
 import com.intellij.flex.uiDesigner.abc.AbcFilter;
+import com.intellij.flex.uiDesigner.abc.Decoder;
+import com.intellij.flex.uiDesigner.abc.DecoderException;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.libraries.FlexOverloadedClasses.InjectionClassifier;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.impl.source.parsing.xml.XmlBuilderDriver;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.text.CharArrayUtil;
 import com.intellij.util.text.CharSequenceBackedByArray;
@@ -92,16 +92,15 @@ public class LibrarySorter {
   }
 
   private List<LibrarySetItem> collectItems(final List<Library> libraries, final boolean isFromSdk,
-                                            THashMap<CharSequence, Definition> definitionMap) throws IOException {
+                                            Map<CharSequence, Definition> definitionMap, Condition<String> isExternal) throws IOException {
     final List<LibrarySetItem> unsortedItems = new ArrayList<LibrarySetItem>(libraries.size());
-    final CatalogXmlBuilder catalogXmlBuilder = new CatalogXmlBuilder(definitionMap);
+    final CatalogXmlBuilder catalogXmlBuilder = new CatalogXmlBuilder(definitionMap, isExternal);
     for (Library library : libraries) {
       LibrarySetItem filteredLibrary = new LibrarySetItem(library);
       catalogXmlBuilder.setLibrary(filteredLibrary);
-      new XmlBuilderDriver(IOUtil.getCharSequence(library.getCatalogFile())).build(catalogXmlBuilder);
+      IOUtil.parseXml(library.getCatalogFile(), catalogXmlBuilder);
       if (filteredLibrary.hasDefinitions() || library.hasResourceBundles()) {
         unsortedItems.add(filteredLibrary);
-        filteredLibrary.finalizeProcessCatalog();
       }
     }
 
@@ -121,15 +120,17 @@ public class LibrarySorter {
     return unsortedItems;
   }
 
-  public SortResult sort(final List<Library> libraries, final String flexSdkVersion, final boolean isFromSdk, File outFile) throws IOException {
+  public SortResult sort(final List<Library> libraries, final String flexSdkVersion, final boolean isFromSdk, File outFile,
+                         Condition<String> isExternal) throws IOException {
     useIndexForFindDefinitions = !isFromSdk;
 
     ArrayList<LibrarySetItem> resourceBundleOnlyItems = null;
 
-    final THashMap<CharSequence, Definition> definitionMap = new THashMap<CharSequence, Definition>(libraries.size() * 128);
-    final List<LibrarySetItem> unsortedItems = collectItems(libraries, isFromSdk, definitionMap);
+    final Map<CharSequence, Definition> definitionMap = new THashMap<CharSequence, Definition>(libraries.size() * 128, AbcFilter.HASHING_STRATEGY);
+    final List<LibrarySetItem> unsortedItems = collectItems(libraries, isFromSdk, definitionMap, isExternal);
 
     AbcMerger abcMerger = new AbcMerger(definitionMap, flexSdkVersion, outFile);
+    final ArrayList<LibrarySetItem> items = new ArrayList<LibrarySetItem>(unsortedItems.size());
     for (LibrarySetItem item : unsortedItems) {
       if (!item.hasDefinitions()) {
         if (item.library.hasResourceBundles()) {
@@ -141,76 +142,33 @@ public class LibrarySorter {
         continue;
       }
 
+      items.add(item);
+      System.out.print("\n" + item.library.getName() + " \n");
       abcMerger.process(item.library);
     }
 
+    final List<Decoder> decoders = new ArrayList<Decoder>(definitionMap.size());
     for (Entry<CharSequence, Definition> entry : definitionMap.entrySet()) {
       final Definition definition = entry.getValue();
-      if (definition.dependencies != null && (definition.hasUnresolvedDependencies == UnresolvedState.NO ||
-                                              (definition.hasUnresolvedDependencies == UnresolvedState.UNKNOWN &&
-                                               !hasUnresolvedDependencies(definition, entry.getKey(), definitionMap)))) {
-        final LibrarySetItem library = definition.getLibrary();
-        for (CharSequence dependencyId : definition.dependencies) {
-          if (dependencyId == null) {
-            continue;
-          }
+      if (definition.doAbcData == null) {
+        continue;
+      }
 
-          final LibrarySetItem dependencyLibrary = definitionMap.get(dependencyId).getLibrary();
-          if (library != dependencyLibrary) {
-            if (dependencyLibrary.successors.add(library)) {
-              library.inDegree++;
-            }
-
-            if (dependencyLibrary.parents.contains(library)) {
-              throw new IllegalStateException(
-                library + " cannot depends on " + dependencyLibrary + ", because " + dependencyLibrary + " has " + library + " as parent");
-            }
-            library.parents.add(dependencyLibrary);
-          }
-        }
+      if (definition.dependencies != null && (definition.unresolvedState == UnresolvedState.NO ||
+                                              (definition.unresolvedState == UnresolvedState.UNKNOWN &&
+                                               processDependencies(decoders, definition, definitionMap)))) {
+        decoders.add(new Decoder(definition.doAbcData));
+        definition.doAbcData = null;
       }
     }
 
-    abcMerger.end();
-
-    final ArrayList<LibrarySetItem> items = new ArrayList<LibrarySetItem>(unsortedItems.size());
-
-    
+    abcMerger.end(decoders, flexSdkVersion);
     return new SortResult(items, resourceBundleOnlyItems);
   }
 
   private static THashSet<CharSequence> createSet(int size) {
     return new THashSet<CharSequence>(size, AbcFilter.HASHING_STRATEGY);
   }
-
-  private void analyzeDefinitions(THashMap<CharSequence, Definition> definitionMap) {
-    for (Entry<CharSequence, Definition> entry : definitionMap.entrySet()) {
-      final Definition definition = entry.getValue();
-      if (definition.dependencies != null && (definition.hasUnresolvedDependencies == UnresolvedState.NO ||
-                                              (definition.hasUnresolvedDependencies == UnresolvedState.UNKNOWN &&
-                                               !hasUnresolvedDependencies(definition, entry.getKey(), definitionMap)))) {
-        final LibrarySetItem library = definition.getLibrary();
-        for (CharSequence dependencyId : definition.dependencies) {
-          if (dependencyId == null) {
-            continue;
-          }
-
-          final LibrarySetItem dependencyLibrary = definitionMap.get(dependencyId).getLibrary();
-          if (library != dependencyLibrary) {
-            if (dependencyLibrary.successors.add(library)) {
-              library.inDegree++;
-            }
-
-            if (dependencyLibrary.parents.contains(library)) {
-              throw new IllegalStateException(library + " cannot depends on " + dependencyLibrary + ", because " +  dependencyLibrary + " has " + library + " as parent");
-            }
-            library.parents.add(dependencyLibrary);
-          }
-        }
-      }
-    }
-  }
-
 
   @SuppressWarnings({"UnusedDeclaration"})
   @TestOnly
@@ -225,14 +183,14 @@ public class LibrarySorter {
     return definitions;
   }
 
-  private boolean hasUnresolvedDependencies(Definition definition, CharSequence definitionName,
-                                            THashMap<CharSequence, Definition> definitionMap) {
+  private boolean processDependencies(List<Decoder> decoders, Definition definition,
+                                      Map<CharSequence, Definition> definitionMap) throws DecoderException {
     // set before to prevent stack overflow for crossed dependencies
-    definition.hasUnresolvedDependencies = UnresolvedState.NO;
+    definition.unresolvedState = UnresolvedState.NO;
 
-    final CharSequence[] dependencies = definition.dependencies;
+    final String[] dependencies = definition.dependencies;
     for (int i = 0, dependenciesLength = dependencies.length; i < dependenciesLength; i++) {
-      final CharSequence dependencyId = dependencies[i];
+      final String dependencyId = dependencies[i];
       final Definition dependency = definitionMap.get(dependencyId);
       if (dependency == null && useIndexForFindDefinitions) {
         final int length = dependencyId.length();
@@ -244,13 +202,7 @@ public class LibrarySorter {
           fqnBuffer = new char[length];
         }
 
-        if (dependencyId instanceof CharSequenceBackedByArray) {
-          ((CharSequenceBackedByArray)dependencyId).getChars(fqnBuffer, 0);
-        }
-        else {
-          ((String)dependencyId).getChars(0, length, fqnBuffer, 0);
-        }
-
+        dependencyId.getChars(0, length, fqnBuffer, 0);
         fqnBuffer[CharArrayUtil.lastIndexOf(fqnBuffer, ':', 1, length - 1)] = '.';
         if (JSResolveUtil.findClassByQName(new String(fqnBuffer, 0, length), definitionSearchScope) != null) {
           dependencies[i] = null;
@@ -258,16 +210,20 @@ public class LibrarySorter {
         }
       }
 
-      if (dependency == null || dependency.hasUnresolvedDependencies == UnresolvedState.YES ||
-          (dependency.hasUnresolvedDependencies == UnresolvedState.UNKNOWN &&
-           hasUnresolvedDependencies(dependency, dependencyId, definitionMap))) {
-        definition.markAsUnresolved(definitionName);
-        definition.hasUnresolvedDependencies = UnresolvedState.YES;
-        return true;
+      if (dependency == null || dependency.unresolvedState == UnresolvedState.YES ||
+          (dependency.unresolvedState == UnresolvedState.UNKNOWN &&
+           !processDependencies(decoders, dependency, definitionMap))) {
+        definition.markAsUnresolved();
+        definition.unresolvedState = UnresolvedState.YES;
+        return false;
       }
+
+      assert dependency.doAbcData != null;
+      decoders.add(new Decoder(dependency.doAbcData));
+      dependency.doAbcData = null;
     }
 
-    return false;
+    return true;
   }
 
   public static class SortResult {
