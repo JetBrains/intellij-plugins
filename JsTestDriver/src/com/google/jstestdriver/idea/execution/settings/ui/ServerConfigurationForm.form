@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="myRootComponent" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="469" height="205"/>
+      <xy x="20" y="20" width="327" height="117"/>
     </constraints>
     <properties/>
     <clientProperties>
@@ -19,7 +19,7 @@
         <clientProperties>
           <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithIndent"/>
         </clientProperties>
-        <border type="none" title="Server"/>
+        <border type="etched" title="Server"/>
         <children>
           <grid id="57463" layout-manager="GridBagLayout">
             <constraints>
@@ -64,7 +64,7 @@
                 <properties>
                   <horizontalAlignment value="2"/>
                   <selected value="false"/>
-                  <text value="&amp;At address:"/>
+                  <text value="&amp;At address: "/>
                 </properties>
               </component>
             </children>

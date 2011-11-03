@@ -4,9 +4,10 @@ import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 
 import javax.swing.*;
 
+import com.intellij.ui.PanelWithAnchor;
 import org.jetbrains.annotations.NotNull;
 
-interface RunSettingsSection {
+interface RunSettingsSection extends PanelWithAnchor {
 
   void resetFrom(JstdRunSettings runSettings);
 

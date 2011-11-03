@@ -6,7 +6,9 @@ import com.google.jstestdriver.idea.util.SwingUtils;
 import com.google.jstestdriver.idea.util.TextChangeListener;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.ui.components.JBLabel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,10 +17,13 @@ class JsFileRunSettingsSection extends AbstractRunSettingsSection {
 
   private final TextFieldWithBrowseButton myJsFileTextFieldWithBrowseButton;
   private final OptionalConfigRunSettingsSection myOptionalConfigRunSettingsSection;
+  private final JBLabel myLabel;
 
   JsFileRunSettingsSection() {
     myJsFileTextFieldWithBrowseButton = new TextFieldWithBrowseButton();
     myOptionalConfigRunSettingsSection = new OptionalConfigRunSettingsSection(this);
+    myLabel = new JBLabel("JS test file:");
+    setAnchor(myLabel);
   }
 
   @Override
@@ -42,8 +47,7 @@ class JsFileRunSettingsSection extends AbstractRunSettingsSection {
   public JComponent createComponent(@NotNull CreationContext creationContext) {
     JPanel panel = new JPanel(new GridBagLayout());
 
-    JLabel label = new JLabel("JavaScript test file:");
-    label.setDisplayedMnemonic('J');
+    myLabel.setDisplayedMnemonic('J');
     {
       GridBagConstraints c = new GridBagConstraints(
           0, 0,
@@ -55,7 +59,7 @@ class JsFileRunSettingsSection extends AbstractRunSettingsSection {
           0, 0
       );
 
-      panel.add(label, c);
+      panel.add(myLabel, c);
     }
 
     {
@@ -75,7 +79,7 @@ class JsFileRunSettingsSection extends AbstractRunSettingsSection {
           FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor()
       );
       panel.add(myJsFileTextFieldWithBrowseButton, c);
-      label.setLabelFor(myJsFileTextFieldWithBrowseButton);
+      myLabel.setLabelFor(myJsFileTextFieldWithBrowseButton);
     }
 
     int nextRow = 2;
@@ -115,4 +119,9 @@ class JsFileRunSettingsSection extends AbstractRunSettingsSection {
     return null;
   }
 
+  @Override
+  public void setAnchor(@Nullable JComponent anchor) {
+    super.setAnchor(anchor);
+    myLabel.setAnchor(anchor);
+  }
 }
