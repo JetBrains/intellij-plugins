@@ -25,13 +25,13 @@ import java.util.List;
 public class JSChangeSignatureDetector implements LanguageChangeSignatureDetector {
 
   @Override
-  public ChangeInfo createCurrentChangeSignature(@NotNull PsiElement element, @Nullable ChangeInfo changeInfo) {
+  public ChangeInfo createInitialChangeInfo(@NotNull PsiElement element) {
     JSFunction method = PsiTreeUtil.getParentOfType(element, JSFunction.class, false);
     if (method == null || !isInsideMethodSignature(element, method)) {
       return null;
     }
     if (PsiTreeUtil.hasErrorElements(method.getParameterList())) {
-      return changeInfo;
+      return null;
     }
     return new JSChangeInfo(method);
   }
@@ -55,7 +55,7 @@ public class JSChangeSignatureDetector implements LanguageChangeSignatureDetecto
   }
 
   @Override
-  public boolean accept(ChangeInfo changeInfo, @NotNull final String oldText, boolean silently) {
+  public boolean performChange(ChangeInfo changeInfo, ChangeInfo initialChangeInfo, @NotNull final String oldText, boolean silently) {
     final JSChangeInfo jsChangeInfo = (JSChangeInfo)changeInfo;
     JSMethodDescriptor descriptor = new JSMethodDescriptor(jsChangeInfo.getMethod(), false) {
       @Override
@@ -113,7 +113,7 @@ public class JSChangeSignatureDetector implements LanguageChangeSignatureDetecto
   }
 
   @Override
-  public boolean isChangeSignatureAvailable(PsiElement element, ChangeInfo currentInfo) {
+  public boolean isChangeSignatureAvailableOnElement(PsiElement element, ChangeInfo currentInfo) {
     if (currentInfo instanceof JSChangeInfo) {
       return element.getNode().getElementType() == JSTokenTypes.IDENTIFIER &&
              Comparing.equal(currentInfo.getMethod(), element.getParent().getParent());
@@ -157,5 +157,20 @@ public class JSChangeSignatureDetector implements LanguageChangeSignatureDetecto
   @Override
   public boolean ignoreChanges(PsiElement element) {
     return false;  //To change body of implemented methods use File | Settings | File Templates.
+  }
+
+  @Override
+  public TextRange getHighlightingRange(ChangeInfo changeInfo) {
+    return null;  //To change body of implemented methods use File | Settings | File Templates.
+  }
+
+  @Override
+  public String extractSignature(PsiElement child, @NotNull ChangeInfo initialChangeInfo) {
+    return null;  //To change body of implemented methods use File | Settings | File Templates.
+  }
+
+  @Override
+  public ChangeInfo createNextChangeInfo(String signature, @NotNull ChangeInfo currentInfo, String initialName) {
+    return null;  //To change body of implemented methods use File | Settings | File Templates.
   }
 }
