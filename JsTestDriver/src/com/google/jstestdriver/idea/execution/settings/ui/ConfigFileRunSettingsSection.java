@@ -5,6 +5,7 @@ import com.google.jstestdriver.idea.util.ObjectUtils;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,22 +40,23 @@ class ConfigFileRunSettingsSection extends AbstractRunSettingsSection {
           0, 0,
           1, 1,
           0.0, 0.0,
-          GridBagConstraints.LINE_START,
+          GridBagConstraints.WEST,
           GridBagConstraints.NONE,
-          new Insets(4, 0, UISettingsUtil.TEXT_LABEL_BOTTOM_SPACING, 0),
+          new Insets(UIUtil.DEFAULT_VGAP, 0, 0, UIUtil.DEFAULT_HGAP),
           0, 0
       );
       myLabel.setDisplayedMnemonic('C');
+      myLabel.setLabelFor(myConfigFileTextFieldWithBrowseButton);
       panel.add(myLabel, c);
     }
     {
       GridBagConstraints c = new GridBagConstraints(
           1, 0,
           1, 1,
-          1.0, 1.0,
-          GridBagConstraints.FIRST_LINE_START,
+          1.0, 0.0,
+          GridBagConstraints.WEST,
           GridBagConstraints.HORIZONTAL,
-          new Insets(0, 0, 0, 0),
+          new Insets(UIUtil.DEFAULT_VGAP, 0, 0, 0),
           0, 0
       );
       myConfigFileTextFieldWithBrowseButton = new TextFieldWithBrowseButton();
@@ -66,7 +68,18 @@ class ConfigFileRunSettingsSection extends AbstractRunSettingsSection {
       );
       panel.add(myConfigFileTextFieldWithBrowseButton, c);
     }
-    myLabel.setLabelFor(myConfigFileTextFieldWithBrowseButton);
+    {
+      GridBagConstraints c = new GridBagConstraints(
+          0, 1,
+          2, 1,
+          1.0, 1.0,
+          GridBagConstraints.WEST,
+          GridBagConstraints.BOTH,
+          new Insets(0, 0, 0, 0),
+          0, 0
+      );
+      panel.add(new JPanel(), c);
+    }
     return panel;
   }
 

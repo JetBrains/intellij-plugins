@@ -43,7 +43,6 @@ public class GeneratedConfigTypeComponent extends JPanel {
 
   public JComponent createComponent(final Project project, final JsFileRunSettingsSection jsFileRunSettingsSection) {
     Box box = Box.createHorizontalBox();
-    box.add(Box.createRigidArea(new Dimension(5, 0)));
     box.add(new JLabel("JavaScript test file dependencies will be detected automatically."));
     box.add(Box.createRigidArea(new Dimension(5, 0)));
     final JButton saveAsButton = new JButton("Save As...");

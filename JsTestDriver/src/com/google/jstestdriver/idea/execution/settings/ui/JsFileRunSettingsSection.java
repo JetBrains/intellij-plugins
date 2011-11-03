@@ -7,6 +7,7 @@ import com.google.jstestdriver.idea.util.TextChangeListener;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +23,7 @@ class JsFileRunSettingsSection extends AbstractRunSettingsSection {
   JsFileRunSettingsSection() {
     myJsFileTextFieldWithBrowseButton = new TextFieldWithBrowseButton();
     myOptionalConfigRunSettingsSection = new OptionalConfigRunSettingsSection(this);
+
     myLabel = new JBLabel("JS test file:");
     setAnchor(myLabel);
   }
@@ -53,9 +55,9 @@ class JsFileRunSettingsSection extends AbstractRunSettingsSection {
           0, 0,
           1, 1,
           0.0, 0.0,
-          GridBagConstraints.LINE_START,
-          GridBagConstraints.HORIZONTAL,
-          new Insets(4, 0, UISettingsUtil.TEXT_LABEL_BOTTOM_SPACING, 0),
+          GridBagConstraints.WEST,
+          GridBagConstraints.NONE,
+          new Insets(UIUtil.DEFAULT_VGAP, 0, 0, UIUtil.DEFAULT_HGAP),
           0, 0
       );
 
@@ -64,12 +66,12 @@ class JsFileRunSettingsSection extends AbstractRunSettingsSection {
 
     {
       GridBagConstraints c = new GridBagConstraints(
-          0, 1,
+          1, 0,
           1, 1,
           1.0, 0.0,
-          GridBagConstraints.FIRST_LINE_START,
+          GridBagConstraints.WEST,
           GridBagConstraints.HORIZONTAL,
-          new Insets(0, 0, 0, 0),
+          new Insets(UIUtil.DEFAULT_VGAP, 0, 0, 0),
           0, 0
       );
       myJsFileTextFieldWithBrowseButton.addBrowseFolderListener(
@@ -82,20 +84,20 @@ class JsFileRunSettingsSection extends AbstractRunSettingsSection {
       myLabel.setLabelFor(myJsFileTextFieldWithBrowseButton);
     }
 
-    int nextRow = 2;
+    int nextRow = 1;
     {
       GridBagConstraints c = new GridBagConstraints(
           0, nextRow,
-          1, 1,
+          2, 1,
           1.0, 0.0,
-          GridBagConstraints.FIRST_LINE_START,
+          GridBagConstraints.WEST,
           GridBagConstraints.HORIZONTAL,
           new Insets(0, 0, 0, 0),
           0, 0
       );
-      JComponent additionalComponent = getAdditionalComponent();
-      if (additionalComponent != null) {
-        panel.add(additionalComponent, c);
+      JComponent additionalComponent1 = getAdditionalComponent();
+      if (additionalComponent1 != null) {
+        panel.add(additionalComponent1, c);
         nextRow++;
       }
     }
@@ -103,15 +105,30 @@ class JsFileRunSettingsSection extends AbstractRunSettingsSection {
     {
       GridBagConstraints c = new GridBagConstraints(
           0, nextRow,
-          1, 1,
-          1.0, 1.0,
-          GridBagConstraints.FIRST_LINE_START,
+          2, 1,
+          1.0, 0.0,
+          GridBagConstraints.WEST,
           GridBagConstraints.HORIZONTAL,
-          new Insets(UISettingsUtil.TEXT_LABEL_TOP_SPACING, 0, UISettingsUtil.TEXT_LABEL_BOTTOM_SPACING, 0),
+          new Insets(0, 0, 0, 0),
+          0, 0
+      );
+      panel.add(myOptionalConfigRunSettingsSection.getComponent(creationContext), c);
+      nextRow++;
+    }
+
+    {
+      GridBagConstraints c = new GridBagConstraints(
+          0, nextRow,
+          2, 1,
+          1.0, 1.0,
+          GridBagConstraints.WEST,
+          GridBagConstraints.BOTH,
+          new Insets(0, 0, 0, 0),
           0, 0
       );
       panel.add(myOptionalConfigRunSettingsSection.getComponent(creationContext), c);
     }
+
     return panel;
   }
 

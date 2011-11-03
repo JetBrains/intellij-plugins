@@ -17,14 +17,12 @@ import org.jetbrains.annotations.Nullable;
 /**
  * All methods should be executed on EDT.
  */
-class OneOfRunSettingsSection<T extends IdProvider & RunSettingsSectionProvider> extends AbstractRunSettingsSection implements
-                                                                                                                    PanelWithAnchor{
+class OneOfRunSettingsSection<T extends IdProvider & RunSettingsSectionProvider> extends AbstractRunSettingsSection {
 
   private T mySelectedKey;
   private JPanel myCardPanel;
   private final Collection<T> myRunSettingsSectionProviders;
   private Map<String, RunSettingsSection> mySectionByIdMap = Maps.newHashMap();
-  private JComponent myAnchor;
 
   public OneOfRunSettingsSection(Collection<T> runSettingsSectionProviders) {
     myRunSettingsSectionProviders = runSettingsSectionProviders;
@@ -79,12 +77,12 @@ class OneOfRunSettingsSection<T extends IdProvider & RunSettingsSectionProvider>
 
   @Override
   public JComponent getAnchor() {
-    return myAnchor;
+    return getSelectedRunSettingsSection().getAnchor();
   }
 
   @Override
   public void setAnchor(@Nullable JComponent anchor) {
-    this.myAnchor = anchor;
+    super.setAnchor(anchor);
     getSelectedRunSettingsSection().setAnchor(anchor);
   }
 }
