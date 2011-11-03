@@ -346,17 +346,22 @@ public class TargetPlayerUtils {
       }
     }
 
-    if (targetPlayer == null) {
-      // take maximum
-      targetPlayer = targetPlayers.length > 0 ? targetPlayers[0] : "";
-      for (int i = 1; i < targetPlayers.length; i++) {
-        if (StringUtil.compareVersionNumbers(targetPlayers[i], targetPlayer) > 0) {
-          targetPlayer = targetPlayers[i];
-        }
+    return targetPlayer != null ? targetPlayer : getMaximumVersion(targetPlayers);
+  }
+
+  public static String getMaximumTargetPlayer(final String sdkHome) {
+    return getMaximumVersion(getTargetPlayers(sdkHome));
+  }
+
+  @NotNull
+  private static String getMaximumVersion(final String[] versions) {
+    String version = versions.length > 0 ? versions[0] : "";
+    for (int i = 1; i < versions.length; i++) {
+      if (StringUtil.compareVersionNumbers(versions[i], version) > 0) {
+        version = versions[i];
       }
     }
-
-    return targetPlayer;
+    return version;
   }
 
   private static String[] getTargetPlayers(final String sdkHome) {

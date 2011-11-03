@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.build;
 import com.intellij.javascript.flex.FlexApplicationComponent;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.TargetPlayerUtils;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
@@ -112,15 +113,20 @@ public class CompilerConfigGenerator {
   }
 
   private void addMandatoryOptions(final Element rootElement) {
-    if (myConfig.getTargetPlatform() == TargetPlatform.Web) {
-      // todo uncomment in xml and do not add as standard option
-      //final String revision = getValueAndSource(CompilerOptionInfo.getOptionInfo("target-player-revision")).first;
-      final String revision = "0";
-      final String targetPlayer = myConfig.getDependencies().getTargetPlayer() + "." + revision;
-      addOption(rootElement, CompilerOptionInfo.TARGET_PLAYER_INFO, targetPlayer);
-    }
-    else if (myConfig.getTargetPlatform() == TargetPlatform.Mobile) {
-      addOption(rootElement, CompilerOptionInfo.MOBILE_INFO, "true");
+    switch (myConfig.getTargetPlatform()) {
+      case Web:
+        // todo uncomment in xml and do not add as standard option
+        //final String revision = getValueAndSource(CompilerOptionInfo.getOptionInfo("target-player-revision")).first;
+        final String revision = "0";
+        final String targetPlayer = myConfig.getDependencies().getTargetPlayer() + "." + revision;
+        addOption(rootElement, CompilerOptionInfo.TARGET_PLAYER_INFO, targetPlayer);
+        break;
+      case Mobile:
+        addOption(rootElement, CompilerOptionInfo.MOBILE_INFO, "true");
+        // no break here!
+      case Desktop:
+        addOption(rootElement, CompilerOptionInfo.TARGET_PLAYER_INFO, TargetPlayerUtils.getMaximumTargetPlayer(mySdkHome));
+        break;
     }
   }
 
@@ -132,7 +138,7 @@ public class CompilerConfigGenerator {
       final Pair<String, ValueSource> valueAndSource = getValueAndSource(info);
       final boolean themeForPureAS = myConfig.isPureAs() && "compiler.theme".equals(info.ID);
       if (valueAndSource.second == ValueSource.GlobalDefault && (!valueAndSource.first.isEmpty() || themeForPureAS)) {
-        // do not add empty preloader or to Web/Desktop, let compiler take default itself (mx.preloaders.SparkDownloadProgressBar when -compatibility-version >= 4.0 and mx.preloaders.DownloadProgressBar when -compatibility-version < 4.0)
+        // do not add empty preloader to Web/Desktop, let compiler take default itself (mx.preloaders.SparkDownloadProgressBar when -compatibility-version >= 4.0 and mx.preloaders.DownloadProgressBar when -compatibility-version < 4.0)
         addOption(rootElement, info, valueAndSource.first);
       }
     }
