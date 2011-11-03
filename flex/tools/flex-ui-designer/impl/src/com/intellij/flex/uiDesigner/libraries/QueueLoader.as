@@ -88,14 +88,8 @@ public class QueueLoader {
     item.loadState = LoadState.LOADING;
     var loader:MyLoader = createLoadder(item);
     // *** Adobe http://juick.com/develar/896344  http://juick.com/develar/896278
-    if (item is LibrarySetEmbedItem) {
-      //trace("load: @" + library.path);
-      loader.load(new URLRequest("app:/complement-" + item.path + ".swf"), loaderContext);
-    }
-    else {
-      //trace("load: " + urlRequest.url);
-      loader.load(new URLRequest("app:/" + item.path + (item.filtered ? "_" + librarySet.id + ".swf" : ".swf")), loaderContext);
-    }
+    //trace("load: " + urlRequest.url);
+    loader.load(new URLRequest("app:/" + item.path + (item.filtered ? "_" + librarySet.id + ".swf" : ".swf")), loaderContext);
   }
 
   private function loadCompleteHandler(event:Event):void {

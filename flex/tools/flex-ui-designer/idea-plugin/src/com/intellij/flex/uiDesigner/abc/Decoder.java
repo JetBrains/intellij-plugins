@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.flex.uiDesigner.abc.ActionBlockConstants.*;
 
-final class Decoder {
+public final class Decoder {
   public final ConstantPool constantPool;
   public final MethodInfo methodInfo;
   public final MetaDataInfo metadataInfo;

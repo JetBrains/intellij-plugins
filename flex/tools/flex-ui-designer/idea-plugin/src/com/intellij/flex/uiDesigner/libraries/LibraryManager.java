@@ -8,7 +8,6 @@ import com.intellij.flex.uiDesigner.io.IdPool;
 import com.intellij.flex.uiDesigner.io.InfoMap;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.LibrarySorter.SortResult;
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -40,8 +39,10 @@ import java.util.Map;
 
 @SuppressWarnings("MethodMayBeStatic")
 public class LibraryManager {
-  private static final String ABC_FILTER_VERSION = "16";
-  private static final String ABC_FILTER_VERSION_VALUE_NAME = "fud_abcFilterVersion";
+  private static final String SWF_EXTENSION = ".swf";
+
+  //private static final String ABC_FILTER_VERSION = "16";
+  //private static final String ABC_FILTER_VERSION_VALUE_NAME = "fud_abcFilterVersion";
   private static final char NAME_POSTFIX = '@';
 
   private File appDir;
@@ -73,22 +74,22 @@ public class LibraryManager {
     return libraries.add(library);
   }
 
-  public void garbageCollection(ProgressIndicator indicator) {
-    PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
-    if (ABC_FILTER_VERSION.equals(propertiesComponent.getValue(ABC_FILTER_VERSION_VALUE_NAME))) {
-      return;
-    }
-
-    indicator.setText(FlexUIDesignerBundle.message("delete.old.libraries"));
-
-    for (String path : appDir.list()) {
-      if (path.endsWith(LibrarySorter.SWF_EXTENSION) && path.indexOf(NAME_POSTFIX) != -1) {
-        //noinspection ResultOfMethodCallIgnored
-        new File(appDir, path).delete();
-      }
-    }
-
-    propertiesComponent.setValue(ABC_FILTER_VERSION_VALUE_NAME, ABC_FILTER_VERSION);
+  public void garbageCollection(@SuppressWarnings("UnusedParameters") ProgressIndicator indicator) {
+    //PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
+    //if (ABC_FILTER_VERSION.equals(propertiesComponent.getValue(ABC_FILTER_VERSION_VALUE_NAME))) {
+    //  return;
+    //}
+    //
+    //indicator.setText(FlexUIDesignerBundle.message("delete.old.libraries"));
+    //
+    //for (String path : appDir.list()) {
+    //  if (path.endsWith(SWF_EXTENSION) && path.indexOf(NAME_POSTFIX) != -1) {
+    //    //noinspection ResultOfMethodCallIgnored
+    //    new File(appDir, path).delete();
+    //  }
+    //}
+    //
+    //propertiesComponent.setValue(ABC_FILTER_VERSION_VALUE_NAME, ABC_FILTER_VERSION);
   }
 
   public XmlFile[] initLibrarySets(@NotNull final Module module) throws InitException {
@@ -225,10 +226,8 @@ public class LibraryManager {
     throws InitException {
     try {
       final int id = librarySetIdPool.allocate();
-      final SortResult result = new LibrarySorter(appDir, module).sort(libraries, flexSdkVersion, isFromSdk);
-      final LibrarySet librarySet = new LibrarySet(id, parent, ApplicationDomainCreationPolicy.ONE, result.items,
-                                                   result.resourceBundleOnlyitems,
-                                                   result.embedItems);
+      final SortResult result = new LibrarySorter(module).sort(libraries, flexSdkVersion, isFromSdk, new File(appDir, id + SWF_EXTENSION));
+      final LibrarySet librarySet = new LibrarySet(id, parent, ApplicationDomainCreationPolicy.ONE, result.items, result.resourceBundleOnlyitems);
       Client.getInstance().registerLibrarySet(librarySet);
       return librarySet;
     }

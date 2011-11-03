@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.libraries;
 
+import com.intellij.flex.uiDesigner.abc.BufferWrapper;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,6 +12,8 @@ class Definition {
 
   private CharSequence timeAsCharSequence;
   public long time = -1;
+
+  public BufferWrapper doAbcData;
 
   public void setTimeAsCharSequence(CharSequence timeAsCharSequence) {
     this.timeAsCharSequence = timeAsCharSequence;

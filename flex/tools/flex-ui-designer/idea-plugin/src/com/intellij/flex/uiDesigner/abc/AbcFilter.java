@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner.abc;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.text.CharArrayUtil;
 import gnu.trove.TIntObjectHashMap;
 import gnu.trove.TIntObjectIterator;
 import gnu.trove.TObjectHashingStrategy;
@@ -20,9 +21,9 @@ import java.util.ArrayList;
 public class AbcFilter extends SwfTranscoder {
   public static final TObjectHashingStrategy<CharSequence> HASHING_STRATEGY = new HashingStrategy();
 
-  private FileChannel channel;
+  protected FileChannel channel;
   protected final TransientString transientNameString = new TransientString();
-  private int lastWrittenPosition;
+  protected int lastWrittenPosition;
   
   protected final ArrayList<Decoder> decoders = new ArrayList<Decoder>();
 
@@ -30,10 +31,10 @@ public class AbcFilter extends SwfTranscoder {
   private final boolean onlyAbcAsTag;
   private String inputFileParentName;
 
-  private TIntObjectHashMap<TagPositionInfo> exportAssets;
-  private int symbolsClassTagLengthWithoutUselessMainClass = -1;
-  private int sA;
-  private int sB;
+  protected TIntObjectHashMap<TagPositionInfo> exportAssets;
+  protected int symbolsClassTagLengthWithoutUselessMainClass = -1;
+  protected int sA;
+  protected int sB;
 
   public AbcFilter(@Nullable String flexSdkVersion) {
     this(flexSdkVersion, false);
@@ -65,14 +66,14 @@ public class AbcFilter extends SwfTranscoder {
 
   private void filter(InputStream inputStream, long inputLength, File outFile, @Nullable Condition<CharSequence> abcNameFilter) throws IOException {
     final boolean onlyABC = outFile.getPath().endsWith(".abc");
-    final FileOutputStream outputStream = transcode(inputStream, inputLength, outFile);
-    channel = outputStream.getChannel();
+    final FileOutputStream out = transcode(inputStream, inputLength, outFile);
+    channel = out.getChannel();
     if (!onlyABC) {
       channel.position(PARTIAL_HEADER_LENGTH);
     }
     try {
       if (!onlyABC) {
-        filterTags(abcNameFilter);
+        processTags(abcNameFilter);
         writeHeader();
       }
       else {
@@ -81,14 +82,13 @@ public class AbcFilter extends SwfTranscoder {
     }
     finally {
       channel = null;
-      outputStream.flush();
-      outputStream.close();
+      out.close();
 
       decoders.clear();
     }
   }
 
-  private void writeHeader() throws IOException {
+  protected void writeHeader() throws IOException {
     final int length = (int)channel.position();
     channel.position(0);
     buffer.clear();
@@ -97,7 +97,7 @@ public class AbcFilter extends SwfTranscoder {
     channel.write(buffer);
   }
 
-  private void filterTags(final Condition<CharSequence> abcNameFilter) throws IOException {
+  protected void processTags(@Nullable final Condition<CharSequence> abcNameFilter) throws IOException {
     lastWrittenPosition = 0;
 
     while (buffer.position() < buffer.limit()) {
@@ -110,22 +110,12 @@ public class AbcFilter extends SwfTranscoder {
 
       switch (type) {
         case TagTypes.End:
-          buffer.position(lastWrittenPosition);
-          channel.write(buffer);
+          processEnd(length);
           return;
 
         case TagTypes.ShowFrame:
-          if (decoders.isEmpty()) {
-            break;
-          }
-          else {
-            final int limit = buffer.position();
-            writeDataBeforeTag(length);
-            mergeDoAbc(true, false);
-            lastWrittenPosition = limit - 2;
-            buffer.position(limit + length);
-            continue;
-          }
+          processShowFrame(length);
+          continue;
 
         case TagTypes.SymbolClass:
           processSymbolClass(length);
@@ -136,8 +126,8 @@ public class AbcFilter extends SwfTranscoder {
           continue;
 
         case TagTypes.FileAttributes:
-          buffer.put(buffer.position(), (byte)104); // HasMetadata = false
-          break;
+          processFileAttributes(length);
+          continue;
 
         case TagTypes.EnableDebugger:
         case TagTypes.EnableDebugger2:
@@ -163,9 +153,30 @@ public class AbcFilter extends SwfTranscoder {
           }
           continue;
       }
+    }
+  }
 
+  protected void processShowFrame(int length) throws IOException {
+    if (decoders.isEmpty()) {
       buffer.position(buffer.position() + length);
     }
+    else {
+      final int limit = buffer.position();
+      writeDataBeforeTag(length);
+      mergeDoAbc(true, false);
+      lastWrittenPosition = limit - 2;
+      buffer.position(limit + length);
+    }
+  }
+
+  protected void processEnd(int length) throws IOException {
+    buffer.position(lastWrittenPosition);
+    channel.write(buffer);
+  }
+
+  protected void processFileAttributes(int length) throws IOException {
+    buffer.put(buffer.position(), (byte)104); // HasMetadata = false
+    buffer.position(buffer.position() + length);
   }
 
   private void processExportAssets(int length) throws IOException {
@@ -196,7 +207,7 @@ public class AbcFilter extends SwfTranscoder {
     }
   }
   
-  private void processSymbolClass(final int length) throws IOException {
+  protected void processSymbolClass(final int length) throws IOException {
     final int tagStartPosition = buffer.position();
     writeDataBeforeTag(length);
     buffer.position(tagStartPosition);
@@ -255,7 +266,7 @@ public class AbcFilter extends SwfTranscoder {
     buffer.position(tagStartPosition + length);
   }
 
-  private int analyzeClassAssociatedWithMainTimeline(final int length) throws IOException {
+  protected int analyzeClassAssociatedWithMainTimeline(final int length) throws IOException {
     int numSymbols = buffer.getShort();
     if (numSymbols == 0) {
       symbolsClassTagLengthWithoutUselessMainClass = -1;
@@ -287,10 +298,12 @@ public class AbcFilter extends SwfTranscoder {
   }
 
   protected void doAbc2(int length) throws IOException {
+    decoders.add(new Decoder(createBufferWrapper(length), transientNameString.charAt(0) == '_' ? transientNameString.cloneChars() : null));
+  }
+
+  protected BufferWrapper createBufferWrapper(int length) {
     final int off = 4 + transientNameString.length() + 1;
-    buffer.position(buffer.position() + off);
-    decoders.add(
-      new Decoder(new BufferWrapper(buffer, length - off), transientNameString.charAt(0) == '_' ? transientNameString.cloneChars() : null));
+    return new BufferWrapper(buffer.array(), buffer.position() + off, length - off);
   }
 
   private void mergeDoAbc(boolean asTag, boolean hasClassAssociatedWithMainTimeLine) throws IOException {
@@ -300,7 +313,7 @@ public class AbcFilter extends SwfTranscoder {
     encoder.writeDoAbc(channel, asTag);
   }
 
-  private boolean writeDataBeforeTag(int tagLength) throws IOException {
+  protected boolean writeDataBeforeTag(int tagLength) throws IOException {
     int tagHeaderLength = tagLength < 63 ? 2 : 6;
     int newLimit = buffer.position() - tagHeaderLength;
     if (newLimit == lastWrittenPosition) {
@@ -318,7 +331,7 @@ public class AbcFilter extends SwfTranscoder {
     return true;
   }
 
-  private void skipTag(int tagLength) throws IOException {
+  protected void skipTag(int tagLength) throws IOException {
     writeDataBeforeTag(tagLength);
 
     buffer.position(lastWrittenPosition);
@@ -341,11 +354,7 @@ public class AbcFilter extends SwfTranscoder {
         case TagTypes.DoABC2:
           readAbcName(buffer.position() + 4);
           if (abcNameFilter.value(transientNameString)) {
-            final int off = 4 + transientNameString.length() + 1;
-            buffer.position(buffer.position() + off);
-            final int abcLength = length - off;
-            decoders.add(new Decoder(new BufferWrapper(buffer, abcLength), null));
-            buffer.position(buffer.position() + abcLength);
+            decoders.add(new Decoder(createBufferWrapper(length)));
             continue;
           }
 
@@ -360,7 +369,8 @@ public class AbcFilter extends SwfTranscoder {
     byte[] array = buffer.array();
     int lastSlashPosition = -1;
     byte c;
-    char[] chars = transientNameString.chars;
+    @SuppressWarnings("MismatchedReadAndWriteOfArray")
+    final char[] chars = transientNameString.chars;
     int index = 0;
     while ((c = array[end++]) != 0) {
       switch (c) {
@@ -421,16 +431,7 @@ public class AbcFilter extends SwfTranscoder {
     }
 
     public boolean same(char[] name) {
-      if (length != name.length) {
-        return false;
-      }
-
-      for (int i = 0; i < length; i++) {
-        if (chars[i] != name[i]) {
-          return false;
-        }
-      }
-      return true;
+      return CharArrayUtil.equals(chars, 0, chars.length, name, 0, name.length);
     }
 
     @Override
@@ -440,12 +441,10 @@ public class AbcFilter extends SwfTranscoder {
 
     @Override
     public int hashCode() {
-      int h = hash;
-      int len = length;
-      if (h == 0 && len > 0) {
-        hash = h = StringUtil.stringHashCode(chars, 0, len);
+      if (hash == 0 && length > 0) {
+        hash = StringUtil.stringHashCode(chars, 0, length);
       }
-      return h;
+      return hash;
     }
   }
 

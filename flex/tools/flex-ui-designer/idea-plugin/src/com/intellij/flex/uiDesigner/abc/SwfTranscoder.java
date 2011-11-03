@@ -22,6 +22,12 @@ abstract class SwfTranscoder extends AbcEncoder {
   private final byte[] partialHeader = new byte[PARTIAL_HEADER_LENGTH];
 
   protected FileOutputStream transcode(InputStream inputStream, long inputLength, File outFile) throws IOException {
+    transcode(inputStream, inputLength);
+    return new FileOutputStream(outFile);
+  }
+
+  // inputStream will be closed
+  protected void transcode(InputStream inputStream, long inputLength) throws IOException {
     final int uncompressedBodyLength;
     final boolean compressed;
     byte[] data;
@@ -31,7 +37,7 @@ abstract class SwfTranscoder extends AbcEncoder {
       uncompressedBodyLength = (partialHeader[4] & 0xFF | (partialHeader[5] & 0xFF) << 8 |
                                 (partialHeader[6] & 0xFF) << 16 | partialHeader[7] << 24) - PARTIAL_HEADER_LENGTH;
       compressed = partialHeader[0] == 0x43;
-      data = FileUtil.loadBytes(inputStream, compressed ? ((int)inputLength - PARTIAL_HEADER_LENGTH) : uncompressedBodyLength);
+      data = FileUtil.loadBytes(inputStream, compressed ? (int)inputLength - PARTIAL_HEADER_LENGTH : uncompressedBodyLength);
     }
     finally {
       inputStream.close();
@@ -55,11 +61,9 @@ abstract class SwfTranscoder extends AbcEncoder {
       }
     }
 
-    buffer = ByteBuffer.wrap(data);
-    buffer.order(ByteOrder.LITTLE_ENDIAN);
+    buffer = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN);
 
     readFrameSizeFrameRateAndFrameCount(data[0]);
-    return new FileOutputStream(outFile);
   }
 
   protected void readFrameSizeFrameRateAndFrameCount(byte b) throws IOException {
@@ -78,9 +82,9 @@ abstract class SwfTranscoder extends AbcEncoder {
 
     // fileLength int as little endian
     partialHeader[4] = (byte)(0xff & fileLength);
-    partialHeader[5] = (byte)(0xff & (fileLength >> 8));
-    partialHeader[6] = (byte)(0xff & (fileLength >> 16));
-    partialHeader[7] = (byte)(0xff & (fileLength >> 24));
+    partialHeader[5] = (byte)(0xff & fileLength >> 8);
+    partialHeader[6] = (byte)(0xff & fileLength >> 16);
+    partialHeader[7] = (byte)(0xff & fileLength >> 24);
 
     out.write(partialHeader);
   }
@@ -94,7 +98,7 @@ abstract class SwfTranscoder extends AbcEncoder {
       this.end = end;
     }
     
-    int length() {
+    public int length() {
       return end - start;
     }
   }

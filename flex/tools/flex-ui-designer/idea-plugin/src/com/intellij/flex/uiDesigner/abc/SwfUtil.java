@@ -7,7 +7,7 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-final class SwfUtil {
+public final class SwfUtil {
   // FWS, Version 11
   private static final byte[] SWF_HEADER_P1 = {0x46, 0x57, 0x53, 0x0b};
   private static final byte[] SWF_HEADER_P2 = {0x78, 0x00, 0x03, (byte)0xe8, 0x00, 0x00, 0x0b, (byte)0xb8, 0x00,
@@ -49,6 +49,10 @@ final class SwfUtil {
 
   public static void footer(OutputStream out) throws IOException {
     out.write(SWF_FOOTER);
+  }
+
+  public static void footer(ByteBuffer byteBuffer) throws IOException {
+    byteBuffer.put(SWF_FOOTER);
   }
 
   public static Encoder mergeDoAbc(List<Decoder> decoders) throws IOException {

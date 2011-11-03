@@ -169,7 +169,7 @@ public class Client implements Closable {
 
   public void registerLibrarySet(LibrarySet librarySet) {
     final List<LibrarySetItem> items = librarySet.getItems();
-    // contains only  resource bundles
+    // contains only resource bundles
     // todo write test for it
     if (items.isEmpty()) {
       return;
@@ -181,12 +181,7 @@ public class Client implements Closable {
       out.writeUInt29(librarySet.getId());
 
       LibrarySet parent = librarySet.getParent();
-      if (parent == null) {
-        out.write(0);
-      }
-      else {
-        out.writeUInt29(parent.getId());
-      }
+      out.writeShort(parent == null ? -1 : parent.getId());
 
       out.write(librarySet.getApplicationDomainCreationPolicy());
       out.write(items.size());
@@ -201,7 +196,7 @@ public class Client implements Closable {
         out.write(flags);
 
         if (registered) {
-          out.writeShort(library.getId());
+          out.writeUInt29(library.getId());
         }
         else {
           out.writeShort(libraryManager.add(library));
@@ -226,12 +221,6 @@ public class Client implements Closable {
         }
 
         writeParents(items, item);
-      }
-
-      out.write(librarySet.getEmbedItems().size());
-      for (LibrarySetEmbedItem item : librarySet.getEmbedItems()) {
-        out.write(items.indexOf(item.parent));
-        out.writeAmfUtf(item.path);
       }
 
       hasError = false;

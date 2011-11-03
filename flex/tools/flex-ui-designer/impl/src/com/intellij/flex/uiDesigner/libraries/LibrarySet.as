@@ -13,7 +13,7 @@ public class LibrarySet {
 
   private static const libraries:Vector.<Library> = new Vector.<Library>(16);
 
-  public function LibrarySet(id:String, parent:LibrarySet) {
+  public function LibrarySet(id:int, parent:LibrarySet) {
     _id = id;
     _parent = parent;
   }
@@ -36,8 +36,8 @@ public class LibrarySet {
     return _loadSize;
   }
 
-  private var _id:String;
-  public function get id():String {
+  private var _id:int;
+  public function get id():int {
     return _id;
   }
 
@@ -63,7 +63,7 @@ public class LibrarySet {
     _items = new Vector.<LibrarySetItem>(n, true);
     for (var i:int = 0; i < n; i++) {
       const flags:int = input.readByte();
-      var libraryId:int = input.readUnsignedShort();
+      var libraryId:int = AmfUtil.readUInt29(input);
       var library:Library;
       if ((flags & 2) != 0) {
         library = libraries[libraryId];
@@ -86,12 +86,6 @@ public class LibrarySet {
       }
 
       _items[i] = item;
-    }
-
-    n = input.readUnsignedByte();
-    _loadSize += n;
-    while (n-- > 0) {
-      new LibrarySetEmbedItem(_items[input.readUnsignedByte()], AmfUtil.readString(input));
     }
   }
 

@@ -181,10 +181,9 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
   }
 
   private function registerLibrarySet(data:IDataInput):void {
-    const id:String = data.readUTFBytes(AmfUtil.readUInt29(data));
-
-    var n:int = AmfUtil.readUInt29(data);
-    var librarySet:LibrarySet = new LibrarySet(id, n == 0 ? null : libraryManager.getById(data.readUTFBytes(n)));
+    const id:int = AmfUtil.readUInt29(data);
+    var parentId:int = data.readShort();
+    var librarySet:LibrarySet = new LibrarySet(id, parentId == -1 ? null : libraryManager.getById(parentId));
     librarySet.readExternal(data);
     libraryManager.register(librarySet);
   }

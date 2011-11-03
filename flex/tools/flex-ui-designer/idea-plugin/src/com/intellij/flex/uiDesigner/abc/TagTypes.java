@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.abc;
 
-interface TagTypes {
+public interface TagTypes {
   int End = 0;
   int DefineBitsJPEG2 = 21;
   int SymbolClass = 76;
