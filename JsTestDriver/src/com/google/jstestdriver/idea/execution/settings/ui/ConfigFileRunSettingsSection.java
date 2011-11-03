@@ -4,7 +4,9 @@ import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.util.ObjectUtils;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.ui.components.JBLabel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +14,11 @@ import java.awt.*;
 class ConfigFileRunSettingsSection extends AbstractRunSettingsSection {
 
   private TextFieldWithBrowseButton myConfigFileTextFieldWithBrowseButton;
+  private final JBLabel myLabel = new JBLabel("Configuration file:");
+
+  ConfigFileRunSettingsSection() {
+    setAnchor(myLabel);
+  }
 
   @Override
   public void resetFrom(JstdRunSettings runSettings) {
@@ -27,7 +34,6 @@ class ConfigFileRunSettingsSection extends AbstractRunSettingsSection {
   @Override
   public JComponent createComponent(@NotNull CreationContext creationContext) {
     JPanel panel = new JPanel(new GridBagLayout());
-    JLabel label = new JLabel("Configuration file:");
     {
       GridBagConstraints c = new GridBagConstraints(
           0, 0,
@@ -38,12 +44,12 @@ class ConfigFileRunSettingsSection extends AbstractRunSettingsSection {
           new Insets(4, 0, UISettingsUtil.TEXT_LABEL_BOTTOM_SPACING, 0),
           0, 0
       );
-      label.setDisplayedMnemonic('C');
-      panel.add(label, c);
+      myLabel.setDisplayedMnemonic('C');
+      panel.add(myLabel, c);
     }
     {
       GridBagConstraints c = new GridBagConstraints(
-          0, 1,
+          1, 0,
           1, 1,
           1.0, 1.0,
           GridBagConstraints.FIRST_LINE_START,
@@ -60,7 +66,13 @@ class ConfigFileRunSettingsSection extends AbstractRunSettingsSection {
       );
       panel.add(myConfigFileTextFieldWithBrowseButton, c);
     }
-    label.setLabelFor(myConfigFileTextFieldWithBrowseButton);
+    myLabel.setLabelFor(myConfigFileTextFieldWithBrowseButton);
     return panel;
+  }
+
+  @Override
+  public void setAnchor(@Nullable JComponent anchor) {
+    super.setAnchor(anchor);
+    myLabel.setAnchor(anchor);
   }
 }

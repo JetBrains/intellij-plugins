@@ -3,6 +3,7 @@ package com.google.jstestdriver.idea.execution.settings.ui;
 import javax.swing.JComponent;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * All methods should be called on EDT.
@@ -10,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 abstract class AbstractRunSettingsSection implements RunSettingsSection {
 
   private JComponent myComponent;
+  protected JComponent myAnchor;
 
   @NotNull
   @Override
@@ -23,4 +25,13 @@ abstract class AbstractRunSettingsSection implements RunSettingsSection {
   @NotNull
   protected abstract JComponent createComponent(@NotNull CreationContext creationContext);
 
+  @Override
+  public JComponent getAnchor() {
+    return myAnchor;
+  }
+
+  @Override
+  public void setAnchor(@Nullable JComponent anchor) {
+    this.myAnchor = anchor;
+  }
 }

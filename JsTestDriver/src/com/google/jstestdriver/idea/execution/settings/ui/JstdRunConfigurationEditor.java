@@ -7,7 +7,10 @@ import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.ui.PanelWithAnchor;
+import com.intellij.ui.components.JBLabel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -50,12 +53,14 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
   protected void disposeEditor() {
   }
 
-  private static class RootSection extends AbstractRunSettingsSection {
+  private static class RootSection extends AbstractRunSettingsSection implements PanelWithAnchor {
 
     private JComboBox myTestTypeComboBox;
     private OneOfRunSettingsSection<TestTypeListItem> myTestTypeContentRunSettingsSection;
     private ServerConfigurationForm myServerConfigurationForm = new ServerConfigurationForm();
     private Map<TestType, TestTypeListItem> myListItemByTestTypeMap;
+    private JComponent myAnchor;
+    private final JBLabel myLabel = new JBLabel("Test:");
 
     @NotNull
     @Override
@@ -71,7 +76,7 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
             new Insets(0, 0, 0, 5),
             0, 0
         );
-        panel.add(new JLabel("Test:"), c);
+        panel.add(myLabel, c);
       }
       TestTypeListItem[] testTypeListItems = createTestTypeListItems();
       {
@@ -95,7 +100,7 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
             0.0, 0.0,
             GridBagConstraints.LINE_START,
             GridBagConstraints.HORIZONTAL,
-            new Insets(5, 5, 5, 5),
+            new Insets(0, 0, 0, 0),
             0, 0
         );
         myTestTypeContentRunSettingsSection = new OneOfRunSettingsSection<TestTypeListItem>(Arrays.asList(testTypeListItems));
@@ -177,10 +182,23 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
         comboBoxModel.setSelectedItem(testTypeListItem);
       }
       myTestTypeContentRunSettingsSection.select(testTypeListItem);
+      setAnchor(myTestTypeContentRunSettingsSection.getAnchor());
     }
 
     private TestType getSelectedTestType() {
       return ((TestTypeListItem) myTestTypeComboBox.getSelectedItem()).getTestType();
+    }
+
+    @Override
+    public JComponent getAnchor() {
+      return myAnchor;
+    }
+
+    @Override
+    public void setAnchor(@Nullable JComponent anchor) {
+      this.myAnchor = anchor;
+      myTestTypeContentRunSettingsSection.setAnchor(anchor);
+      myLabel.setAnchor(anchor);
     }
   }
 }

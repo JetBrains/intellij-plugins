@@ -2,7 +2,9 @@ package com.google.jstestdriver.idea.execution.settings.ui;
 
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.util.ObjectUtils;
+import com.intellij.ui.components.JBLabel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,11 +18,13 @@ class TestMethodRunSettingsSection extends AbstractRunSettingsSection {
   @Override
   protected JComponent createComponent(@NotNull CreationContext creationContext) {
     myTestCaseRunSettingsSection = new TestCaseRunSettingsSection() {
+
+      private final JBLabel myLabel = new JBLabel("Method:");
+
       @Override
       protected JComponent getTestCaseAdditionalComponent() {
         JPanel panel = new JPanel(new GridBagLayout());
-        JLabel label = new JLabel("Method:");
-        label.setDisplayedMnemonic('M');
+        myLabel.setDisplayedMnemonic('M');
         {
           GridBagConstraints c = new GridBagConstraints(
               0, 0,
@@ -31,7 +35,7 @@ class TestMethodRunSettingsSection extends AbstractRunSettingsSection {
               new Insets(UISettingsUtil.TEXT_LABEL_TOP_SPACING, 0, UISettingsUtil.TEXT_LABEL_BOTTOM_SPACING, 0),
               0, 0
           );
-          panel.add(label, c);
+          panel.add(myLabel, c);
         }
         {
           GridBagConstraints c = new GridBagConstraints(
@@ -45,9 +49,15 @@ class TestMethodRunSettingsSection extends AbstractRunSettingsSection {
           );
           myTestNameTextField = new JTextField();
           panel.add(myTestNameTextField, c);
-          label.setLabelFor(myTestNameTextField);
+          myLabel.setLabelFor(myTestNameTextField);
         }
         return panel;
+      }
+
+      @Override
+      public void setAnchor(@Nullable JComponent anchor) {
+        super.setAnchor(anchor);
+        myLabel.setAnchor(anchor);
       }
     };
     return myTestCaseRunSettingsSection.getComponent(creationContext);
