@@ -27,7 +27,8 @@ import org.jetbrains.annotations.NonNls;
  *
  * @author Yann C&eacute;bron
  */
-public abstract class BasicValidationHighlightingTestCase<T extends JavaModuleFixtureBuilder> extends BasicHighlightingTestCase<T> {
+abstract class BasicValidationHighlightingTestCase<T extends JavaModuleFixtureBuilder>
+    extends BasicHighlightingTestCase<T> {
 
   @Override
   protected LocalInspectionTool[] getHighlightingInspections() {
@@ -52,8 +53,8 @@ public abstract class BasicValidationHighlightingTestCase<T extends JavaModuleFi
    * @param expectedItems         Expected completion variants.
    * @throws Throwable On any errors.
    */
-  protected void performCompletionVariantTest(@NonNls final String validationXmlFileName, @NonNls final String... expectedItems)
-      throws Throwable {
+  protected void performCompletionVariantTest(@NonNls final String validationXmlFileName,
+                                              @NonNls final String... expectedItems) throws Throwable {
     myFixture.testCompletionVariants(validationXmlFileName, expectedItems);
   }
 
