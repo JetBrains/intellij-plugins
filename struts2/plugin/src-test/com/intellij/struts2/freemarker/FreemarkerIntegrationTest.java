@@ -49,6 +49,7 @@ public class FreemarkerIntegrationTest extends BasicHighlightingTestCase<JavaMod
 
   @HasJavaSources
   public void testStrutsActionToplevel() throws Throwable {
+    myFixture.copyFileToProject("src/MyTestAction.java");
     createStrutsFileSet("StrutsActionToplevel-struts.xml");
     myFixture.testHighlighting(true, false, false, "StrutsActionToplevel.ftl");
   }

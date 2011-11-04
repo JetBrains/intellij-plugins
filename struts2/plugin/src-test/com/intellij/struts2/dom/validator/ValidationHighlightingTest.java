@@ -31,6 +31,13 @@ public class ValidationHighlightingTest extends BasicValidationHighlightingTestC
     return "validationXmlHighlighting";
   }
 
+  @Override
+  protected void configureModule(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
+    super.configureModule(moduleBuilder);
+
+    installSrcHack();
+  }
+
   @HasJavaSources
   public void testValidationSimple() throws Throwable {
     myFixture.copyFileToProject("src/com/MyAction.java");

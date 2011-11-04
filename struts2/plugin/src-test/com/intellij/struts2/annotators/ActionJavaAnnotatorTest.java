@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.BasicHighlightingTestCase;
+import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -29,12 +30,12 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase {
+public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase<JavaModuleFixtureBuilder> {
 
   private final Function<PsiElement, String> ACTION_NAME_RESOLVE = new Function<PsiElement, String>() {
     @Override
     public String fun(final PsiElement psiElement) {
-      return ((XmlTag)psiElement).getAttributeValue("name");
+      return ((XmlTag) psiElement).getAttributeValue("name");
     }
   };
 
@@ -42,6 +43,13 @@ public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase {
   @NotNull
   protected String getTestDataLocation() {
     return "/gutterJava/actionClass";
+  }
+
+  @Override
+  protected void configureModule(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
+    super.configureModule(moduleBuilder);
+
+    installSrcHack();
   }
 
   /**
@@ -84,7 +92,7 @@ public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase {
     checkGutterTargetElements("/src/com/MyValidationAction.java", new Function<PsiElement, String>() {
       @Override
       public String fun(final PsiElement psiElement) {
-        return ((PsiFile)psiElement).getName();
+        return ((PsiFile) psiElement).getName();
       }
     }, "MyValidationAction-validation.xml");
   }

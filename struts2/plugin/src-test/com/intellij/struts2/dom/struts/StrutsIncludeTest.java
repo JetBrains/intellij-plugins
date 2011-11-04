@@ -32,8 +32,10 @@ public class StrutsIncludeTest extends BasicStrutsHighlightingTestCase<JavaModul
     return "strutsXmlInclude";
   }
 
+  // TODO fix setup
   @Override
   protected void configureModule(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
+    super.configureModule(moduleBuilder);
     final String path = myFixture.getTempDirPath();
     moduleBuilder.addContentRoot(path);
     new File(path + SOURCE_PATH).mkdir();

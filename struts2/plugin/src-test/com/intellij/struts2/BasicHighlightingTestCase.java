@@ -161,19 +161,21 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
 
   protected void configureModule(final T moduleBuilder) throws Exception {
     moduleBuilder.addContentRoot(myFixture.getTempDirPath());
-    moduleBuilder.addContentRoot(getTestDataPath());
 
     if (hasJavaSources()) {
-      final String path = myFixture.getTempDirPath();
-      new File(path + SOURCE_PATH).mkdir(); // ?? necessary
-
-      moduleBuilder.addContentRoot(getTestDataPath() + SOURCE_PATH);
+      moduleBuilder.addContentRoot(myFixture.getTestDataPath());
       moduleBuilder.addSourceRoot(SOURCE_DIR);
     }
 
     if (usesStrutsLibrary()) {
       addStrutsJars(moduleBuilder);
     }
+  }
+
+  // TODO stupid hack needed for some tests
+  protected final void installSrcHack() {
+    final String path = myFixture.getTempDirPath();
+    new File(path + SOURCE_PATH).mkdir();
   }
 
   /**
