@@ -16,6 +16,8 @@ import com.intellij.util.text.CharArrayUtil;
 import com.intellij.util.text.CharSequenceBackedByArray;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
+import gnu.trove.TObjectObjectProcedure;
+import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
@@ -126,7 +128,7 @@ public class LibrarySorter {
 
     ArrayList<LibrarySetItem> resourceBundleOnlyItems = null;
 
-    final Map<CharSequence, Definition> definitionMap = new THashMap<CharSequence, Definition>(libraries.size() * 128, AbcFilter.HASHING_STRATEGY);
+    final THashMap<CharSequence, Definition> definitionMap = new THashMap<CharSequence, Definition>(libraries.size() * 128, AbcFilter.HASHING_STRATEGY);
     final List<LibrarySetItem> unsortedItems = collectItems(libraries, isFromSdk, definitionMap, isExternal);
 
     AbcMerger abcMerger = new AbcMerger(definitionMap, flexSdkVersion, outFile);
@@ -143,24 +145,25 @@ public class LibrarySorter {
       }
 
       items.add(item);
-      System.out.print("\n" + item.library.getName() + " \n");
       abcMerger.process(item.library);
     }
 
     final List<Decoder> decoders = new ArrayList<Decoder>(definitionMap.size());
-    for (Entry<CharSequence, Definition> entry : definitionMap.entrySet()) {
-      final Definition definition = entry.getValue();
-      if (definition.doAbcData == null) {
-        continue;
+    definitionMap.forEachValue(new TObjectProcedure<Definition>() {
+      @Override
+      public boolean execute(Definition definition) {
+        if (definition.doAbcData != null && definition.dependencies != null && (definition.unresolvedState == UnresolvedState.NO ||
+                                                                                (definition.unresolvedState == UnresolvedState.UNKNOWN &&
+                                                                                 processDependencies(decoders, definition, definitionMap)))) {
+          // dependecies may be cyclic, see charts.swc from Flex SDK 4.5.1 (mx.charts.chartClasses:DataTransform and mx.charts.chartClasses:IChartElement)
+          if (definition.doAbcData != null) {
+            decoders.add(new Decoder(definition.doAbcData));
+            definition.doAbcData = null;
+          }
+        }
+        return true;
       }
-
-      if (definition.dependencies != null && (definition.unresolvedState == UnresolvedState.NO ||
-                                              (definition.unresolvedState == UnresolvedState.UNKNOWN &&
-                                               processDependencies(decoders, definition, definitionMap)))) {
-        decoders.add(new Decoder(definition.doAbcData));
-        definition.doAbcData = null;
-      }
-    }
+    });
 
     abcMerger.end(decoders, flexSdkVersion);
     return new SortResult(items, resourceBundleOnlyItems);
@@ -218,9 +221,10 @@ public class LibrarySorter {
         return false;
       }
 
-      assert dependency.doAbcData != null;
-      decoders.add(new Decoder(dependency.doAbcData));
-      dependency.doAbcData = null;
+      if (dependency.doAbcData != null) {
+        decoders.add(new Decoder(dependency.doAbcData));
+        dependency.doAbcData = null;
+      }
     }
 
     return true;

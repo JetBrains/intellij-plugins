@@ -73,11 +73,6 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   }
 
   @Override
-  public DataOutputStream getErrorOut() {
-    return errorOut;
-  }
-
-  @Override
   public void setErrorOut(OutputStream out) {
     errorOut = new DataOutputStream(new BufferedOutputStream(out));
   }

@@ -8,8 +8,8 @@ import java.util.List;
 public class FlexLibrarySet extends LibrarySet {
   public final AssetCounterInfo assetCounterInfo = new AssetCounterInfo();
 
-  public FlexLibrarySet(int id, @Nullable LibrarySet parent, ApplicationDomainCreationPolicy applicationDomainCreationPolicy,
+  public FlexLibrarySet(int id, @Nullable LibrarySet parent,
                         List<LibrarySetItem> items, List<LibrarySetItem> resourceBundleOnlyItems) {
-    super(id, parent, applicationDomainCreationPolicy, items, resourceBundleOnlyItems);
+    super(id, parent, items, resourceBundleOnlyItems);
   }
 }

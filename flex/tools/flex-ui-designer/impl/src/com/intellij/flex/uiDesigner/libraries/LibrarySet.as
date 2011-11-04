@@ -31,11 +31,6 @@ public class LibrarySet {
     }
   }
 
-  private var _loadSize:int;
-  public function get loadSize():int {
-    return _loadSize;
-  }
-
   private var _id:int;
   public function get id():int {
     return _id;
@@ -46,21 +41,14 @@ public class LibrarySet {
     return _parent;
   }
 
-  private var _applicationDomainCreationPolicy:ApplicationDomainCreationPolicy;
-  public function get applicationDomainCreationPolicy():ApplicationDomainCreationPolicy {
-    return _applicationDomainCreationPolicy;
-  }
-
-  private var _items:Vector.<LibrarySetItem>;
-  public function get items():Vector.<LibrarySetItem> {
+  private var _items:Vector.<Library>;
+  public function get items():Vector.<Library> {
     return _items;
   }
 
   public function readExternal(input:IDataInput):void {
-    _applicationDomainCreationPolicy = ApplicationDomainCreationPolicy.enumSet[input.readByte()];
     var n:int = input.readUnsignedByte();
-    _loadSize = n;
-    _items = new Vector.<LibrarySetItem>(n, true);
+    _items = new Vector.<Library>(n, true);
     for (var i:int = 0; i < n; i++) {
       const flags:int = input.readByte();
       var libraryId:int = AmfUtil.readUInt29(input);
@@ -77,29 +65,8 @@ public class LibrarySet {
         library.readExternal(input);
       }
 
-      var parents:Vector.<LibrarySetItem> = readParents(input);
-      var item:LibrarySetFileItem = new LibrarySetFileItem(library, parents, (flags & 1) != 0);
-      if (parents != null) {
-        for each (var parent:LibrarySetItem in parents) {
-          parent.addSuccessor(item);
-        }
-      }
-
-      _items[i] = item;
+      _items[i] = library;
     }
-  }
-
-  private function readParents(input:IDataInput):Vector.<LibrarySetItem> {
-    var n:int = input.readUnsignedByte();
-    if (n == 0) {
-      return null;
-    }
-
-    var parents:Vector.<LibrarySetItem> = new Vector.<LibrarySetItem>(n, true);
-    for (var i:int = 0; i < n; i++) {
-      parents[i] = _items[input.readUnsignedByte()];
-    }
-    return parents;
   }
 }
 }

@@ -4,7 +4,6 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.flex.uiDesigner.libraries.InitException;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
@@ -94,7 +93,7 @@ class TestDesignerApplicationManager {
     changeServiceImplementation();
     Client.getInstance().setOut(socket.getOutputStream());
 
-    socketInputHandler = (TestSocketInputHandler)ServiceManager.getService(SocketInputHandler.class);
+    socketInputHandler = (TestSocketInputHandler)SocketInputHandler.getInstance();
     socketInputHandler.init(socket.getInputStream(), DesignerApplicationUtil.APP_DIR);
   }
 

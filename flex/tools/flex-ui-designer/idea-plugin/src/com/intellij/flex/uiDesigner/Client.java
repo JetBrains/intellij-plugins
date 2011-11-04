@@ -183,7 +183,6 @@ public class Client implements Closable {
       LibrarySet parent = librarySet.getParent();
       out.writeShort(parent == null ? -1 : parent.getId());
 
-      out.write(librarySet.getApplicationDomainCreationPolicy());
       out.write(items.size());
       final LibraryManager libraryManager = LibraryManager.getInstance();
       for (LibrarySetItem item : items) {
@@ -219,23 +218,12 @@ public class Client implements Closable {
             out.write(library.defaultsStyle);
           }
         }
-
-        writeParents(items, item);
       }
 
       hasError = false;
     }
     finally {
       finalizeMessage(hasError);
-    }
-  }
-
-  private void writeParents(List<LibrarySetItem> items, LibrarySetItem item) {
-    out.write(item.parents.size());
-    if (!item.parents.isEmpty()) {
-      for (LibrarySetItem parent : item.parents) {
-        out.write(items.indexOf(parent));
-      }
     }
   }
 

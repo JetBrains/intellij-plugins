@@ -18,11 +18,11 @@ public final class Decoder {
 
   public final char[] name;
 
-  public Decoder(DataBuffer in) throws DecoderException {
+  public Decoder(DataBuffer in) {
     this(in, null);
   }
 
-  public Decoder(DataBuffer in, @Nullable char[] name) throws DecoderException {
+  public Decoder(DataBuffer in, @Nullable char[] name) {
     in.skip(4);
     this.name = name;
 

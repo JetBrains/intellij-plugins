@@ -69,11 +69,11 @@ class CatalogXmlBuilder extends IXMLBuilderAdapter {
 
   @Override
   public void addAttribute(String name, String nsPrefix, String nsURI, String value, String type) throws Exception {
-    if (name.equals("mod")) {
+    if (name.charAt(0) == 'm') {
       mod = value;
     }
     else if (processDependencies) {
-      if (name.equals("id") && !isExternal.value(value)) {
+      if (name.charAt(0) == 'i' && !isExternal.value(value)) {
         dependencies.add(value);
       }
     }

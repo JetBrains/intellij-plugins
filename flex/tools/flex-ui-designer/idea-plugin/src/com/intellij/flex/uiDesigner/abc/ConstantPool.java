@@ -14,7 +14,7 @@ class ConstantPool {
 
   int totalSize;
 
-  public ConstantPool(DataBuffer in) throws DecoderException {
+  public ConstantPool(DataBuffer in) {
     this.in = in;
 
     for (int i = 0; i < 7; i++) {

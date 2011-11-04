@@ -3,8 +3,8 @@ import com.intellij.flex.uiDesigner.css.CssClassCondition;
 import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.css.CssPseudoCondition;
 import com.intellij.flex.uiDesigner.css.CssRuleset;
+import com.intellij.flex.uiDesigner.libraries.Library;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
-import com.intellij.flex.uiDesigner.libraries.LibrarySetItem;
 
 import flash.text.engine.FontPosture;
 
@@ -32,8 +32,8 @@ public class StyleTest extends BaseTestCase {
     
     assertThat(librarySets, [{items: arrayWithSize(10)}]);
     assertThat(librarySets, arrayWithSize(1));
-    var library:LibrarySetItem;
-    for each (var l:LibrarySetItem in librarySets[0].items) {
+    var library:Library;
+    for each (var l:Library in librarySets[0].items) {
       if (l.path.indexOf("spark@") != -1) {
         library = l;
         break;
@@ -71,7 +71,7 @@ public class StyleTest extends BaseTestCase {
     assertThat(rulesets[29], {selectors: [{subject: "spark.components.supportClasses.SkinnableTextBase", conditions: [allOf(instanceOf(CssPseudoCondition), {value: "disabledWithPrompt"})], ancestor: null}]});
   }
 
-  private static function checkFrameworkDefaultsCss(library:LibrarySetItem):void {
+  private static function checkFrameworkDefaultsCss(library:Library):void {
     var rulesets:Vector.<CssRuleset> = library.defaultsStyle.rulesets;
     assertThat(rulesets.length, 7);
     assertThat(rulesets[0].declarations[59], {name: "highlightAlphas", type: CssPropertyType.ARRAY, value: [0.3, 0]});

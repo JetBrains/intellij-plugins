@@ -13,8 +13,6 @@ public abstract class SocketInputHandler implements Closable {
 
   public abstract void read(@NotNull InputStream inputStream, @NotNull File appDir) throws IOException;
 
-  public abstract DataOutputStream getErrorOut();
-
   public abstract void setErrorOut(OutputStream outputStream);
 
   public static SocketInputHandler getInstance() {

@@ -80,7 +80,7 @@ final class Scanner {
     return positions;
   }
 
-  public static int[] scanMultinameConstants(DataBuffer in) throws DecoderException {
+  public static int[] scanMultinameConstants(DataBuffer in) {
     int size = in.readU32();
     if (size == 0) {
       return ArrayUtil.EMPTY_INT_ARRAY;

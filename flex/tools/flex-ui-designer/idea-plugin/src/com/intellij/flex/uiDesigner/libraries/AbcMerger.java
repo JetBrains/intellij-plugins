@@ -115,7 +115,7 @@ class AbcMerger extends AbcFilter {
     if (numSymbols != 0) {
       totalNumSymbols += numSymbols;
 
-      int finalSymbolClassTagLength = symbolsClassTagLengthWithoutUselessMainClass;
+      int finalSymbolClassTagLength = hasClassAssociatedWithMainTimeLine ? symbolsClassTagLengthWithoutUselessMainClass : length;
       if (hasExportsAssets) {
         final TIntObjectIterator<TagPositionInfo> iterator = exportAssets.iterator();
         for (int i = exportAssets.size(); i-- > 0; ) {
@@ -132,12 +132,14 @@ class AbcMerger extends AbcFilter {
         symbolClassBuffer = ByteBuffer.allocate(Math.max(newSize, symbolClassBuffer.capacity() * 2)).put(symbolClassBuffer);
       }
 
-      buffer.position(tagStartPosition - (length < 63 ? 2 : 6));
-      buffer.limit(sA);
-      symbolClassBuffer.put(buffer);
+      buffer.position(tagStartPosition);
+      if (hasClassAssociatedWithMainTimeLine) {
+        buffer.limit(sA);
+        symbolClassBuffer.put(buffer);
 
-      buffer.limit(buffer.capacity());
-      buffer.position(sB);
+        buffer.limit(buffer.capacity());
+        buffer.position(sB);
+      }
       buffer.limit(tagStartPosition + length);
       symbolClassBuffer.put(buffer);
       buffer.limit(buffer.capacity());

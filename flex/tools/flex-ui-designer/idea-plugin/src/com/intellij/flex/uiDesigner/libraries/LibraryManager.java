@@ -282,7 +282,7 @@ public class LibraryManager {
     try {
       final int id = librarySetIdPool.allocate();
       final SortResult result = new LibrarySorter(module).sort(libraries, flexSdkVersion, isFromSdk, new File(appDir, id + SWF_EXTENSION), isExternal);
-      final LibrarySet librarySet = new LibrarySet(id, parent, ApplicationDomainCreationPolicy.ONE, result.items, result.resourceBundleOnlyitems);
+      final LibrarySet librarySet = new LibrarySet(id, parent, result.items, result.resourceBundleOnlyitems);
       Client.getInstance().registerLibrarySet(librarySet);
       return librarySet;
     }
