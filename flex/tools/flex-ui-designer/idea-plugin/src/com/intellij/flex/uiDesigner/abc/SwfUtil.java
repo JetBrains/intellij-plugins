@@ -5,6 +5,7 @@ import com.intellij.flex.uiDesigner.io.AbstractByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.List;
 
 public final class SwfUtil {
@@ -17,7 +18,7 @@ public final class SwfUtil {
       0x08, 0x00, 0x00, 0x00};
 
   private static final byte[] SWF_FOOTER = {0x40, 0x00, 0x00, 0x00};
-  
+
   public static int getWrapLength() {
     return getWrapHeaderLength() + SWF_FOOTER.length;
   }
@@ -36,6 +37,15 @@ public final class SwfUtil {
     buffer.putInt(0, length);
     out.write(buffer.array(), 0, 4);
     out.write(SWF_HEADER_P2);
+  }
+
+  public static void header(FileChannel channel, ByteBuffer buffer) throws IOException {
+    buffer.clear();
+    buffer.put(SWF_HEADER_P1);
+    buffer.putInt((int)channel.position());
+    buffer.put(SWF_HEADER_P2);
+    buffer.flip();
+    channel.write(buffer, 0);
   }
 
   public static void header(int length, AbstractByteArrayOutputStream out, ByteBuffer buffer, int position) throws IOException {

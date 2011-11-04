@@ -35,8 +35,8 @@ public class EmbedImageManager extends EmbedAssetManager<ImageAssetInfo> {
 class ImageAssetInfo extends EmbedAssetInfo {
   public final String mimeType;
 
-  public ImageAssetInfo(VirtualFile file, @Nullable String symbolName, int id) {
+  public ImageAssetInfo(VirtualFile file, @Nullable String mimeType, int id) {
     super(file, id);
-    this.mimeType = symbolName;
+    this.mimeType = mimeType;
   }
 }

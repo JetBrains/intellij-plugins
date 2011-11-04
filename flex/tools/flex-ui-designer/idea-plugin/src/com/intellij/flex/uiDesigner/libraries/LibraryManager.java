@@ -61,6 +61,7 @@ public class LibraryManager {
   }
 
   public void reset() {
+    librarySets.clear();
     libraries.clear();
     librarySetIdPool.clear();
     globalDefinitionsMap.clear();

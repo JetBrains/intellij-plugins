@@ -182,8 +182,10 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
 
   private function registerLibrarySet(data:IDataInput):void {
     const id:int = AmfUtil.readUInt29(data);
+    const isFlexLibrarySet:Boolean = data.readBoolean();
     var parentId:int = data.readShort();
-    var librarySet:LibrarySet = new LibrarySet(id, parentId == -1 ? null : libraryManager.getById(parentId));
+    var parent:LibrarySet = parentId == -1 ? null : libraryManager.getById(parentId);
+    var librarySet:LibrarySet = isFlexLibrarySet ? new FlexLibrarySet(id, parent) : new LibrarySet(id, parent);
     librarySet.readExternal(data);
     libraryManager.register(librarySet);
   }

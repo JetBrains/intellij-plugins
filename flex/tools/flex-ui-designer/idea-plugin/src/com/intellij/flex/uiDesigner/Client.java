@@ -179,6 +179,7 @@ public class Client implements Closable {
     try {
       beginMessage(ClientMethod.registerLibrarySet);
       out.writeUInt29(librarySet.getId());
+      out.write(librarySet instanceof FlexLibrarySet);
 
       LibrarySet parent = librarySet.getParent();
       out.writeShort(parent == null ? -1 : parent.getId());

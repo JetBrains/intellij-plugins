@@ -3,6 +3,10 @@ package com.intellij.flex.uiDesigner.abc;
 public interface TagTypes {
   int End = 0;
   int DefineBitsJPEG2 = 21;
+  int DefineBitsJPEG3 = 35;
+  int DefineBitsJPEG4 = 90;
+  int DefineBitsLossless = 20;
+  int DefineBitsLossless2 = 36;
   int SymbolClass = 76;
   int FileAttributes = 69;
   int ExportAssets = 56;
@@ -31,4 +35,7 @@ public interface TagTypes {
 
   int DoAction = 12;
   int DoInitAction = 59;
+
+  int DefineScalingGrid = 78;
+  int DefineBits = 6;
 }

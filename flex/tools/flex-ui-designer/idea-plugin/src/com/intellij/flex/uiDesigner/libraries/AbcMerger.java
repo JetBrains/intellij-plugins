@@ -13,35 +13,39 @@ import java.nio.ByteOrder;
 import java.util.List;
 import java.util.Map;
 
-class AbcMerger extends AbcFilter {
+class AbcMerger extends AbcTranscoder {
   private final Map<CharSequence, Definition> definitionMap;
   private final FileOutputStream out;
-
-  private boolean fileAttributesProcessed;
 
   private ByteBuffer symbolClassBuffer;
   private int totalNumSymbols;
 
-  private int co;
-
   public AbcMerger(Map<CharSequence, Definition> definitionMap, @Nullable String flexSdkVersion, File outFile)
     throws IOException {
-    super(flexSdkVersion);
     this.definitionMap = definitionMap;
 
     out = new FileOutputStream(outFile);
     channel = out.getChannel();
-    channel.position(PARTIAL_HEADER_LENGTH);
+    channel.position(SwfUtil.getWrapHeaderLength());
   }
 
   //public void merge(List<LibrarySetItem> items, Condition<LibrarySetItem> condition) {
   //
   //}
 
+  @Override
+  protected void readFrameSizeFrameRateAndFrameCount(byte b) throws IOException {
+    super.readFrameSizeFrameRateAndFrameCount(b);
+    lastWrittenPosition = buffer.position();
+  }
+
   public void process(Library library) throws IOException {
     final VirtualFile file = library.getSwfFile();
     transcode(file.getInputStream(), file.getLength());
     processTags(null);
+
+    out.flush();
+    channel.force(true);
   }
 
   public void end(List<Decoder> decoders, String flexSdkVersion) throws IOException {
@@ -65,20 +69,31 @@ class AbcMerger extends AbcFilter {
     buffer.flip();
     channel.write(buffer);
 
-    writeHeader();
-
+    SwfUtil.header(channel, buffer);
+    out.flush();
     out.close();
+    channel = null;
   }
 
   @Override
-  protected void processFileAttributes(int length) throws IOException {
-    if (fileAttributesProcessed) {
-      skipTag(length);
+  protected int processTag(int type, int length) throws IOException {
+    if (super.processTag(type, length) == 1 || type == TagTypes.FileAttributes || type == TagTypes.ShowFrame) {
+      return 1;
     }
-    else {
-      super.processFileAttributes(length);
-      fileAttributesProcessed = true;
+
+    switch (type) {
+      case TagTypes.DefineBitsLossless2:
+      case TagTypes.DefineBitsLossless:
+      case TagTypes.PlaceObject:
+      case TagTypes.DefineScalingGrid:
+      case TagTypes.DefineBitsJPEG2:
+      case TagTypes.DefineBitsJPEG3:
+      case TagTypes.DefineBitsJPEG4:
+      case TagTypes.DefineBits:
+
     }
+
+    return 1;
   }
 
   @Override
@@ -86,14 +101,14 @@ class AbcMerger extends AbcFilter {
     skipTag(length);
   }
 
-  @Override
-  protected void processShowFrame(int length) throws IOException {
-    skipTag(length);
-  }
-
   protected void doAbc2(int length) throws IOException {
     final Definition definition = definitionMap.get(transientNameString);
     definition.doAbcData = createBufferWrapper(length);
+  }
+
+  @Override
+  protected void storeExportAsset(int id, int start, int end) {
+
   }
 
   protected void processSymbolClass(final int length) throws IOException {

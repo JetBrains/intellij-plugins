@@ -108,7 +108,7 @@ final class IndexHistory {
   }
 
   public int getIndexWithSpecifiedNsRaw(int poolIndex, int index, int actuaNsRaw) {
-    return map[getMapIndex(poolIndex, IndexHistory.MULTINAME, index)] = decodeOnDemand(poolIndex, IndexHistory.MULTINAME, index, -1, actuaNsRaw);
+    return map[getMapIndex(poolIndex, MULTINAME, index)] = decodeOnDemand(poolIndex, MULTINAME, index, -1, actuaNsRaw);
   }
 
   public int getIndex(int poolIndex, int kind, int index) {
@@ -128,20 +128,14 @@ final class IndexHistory {
   }
 
   public ByteBuffer createBuffer(PoolPart metadataInfo) {
-    int bufferSize = 0;
+    int bufferSize = metadataInfo.totalBytes;
     for (PoolPart poolPart : poolParts) {
       if (poolPart != null && poolPart.totalBytes > bufferSize) {
         bufferSize = poolPart.totalBytes;
       }
     }
 
-    if (metadataInfo.totalBytes > bufferSize) {
-      bufferSize = metadataInfo.totalBytes;
-    }
-
-    final ByteBuffer buffer = ByteBuffer.wrap(new byte[bufferSize + 5 /*u32*/]);
-    buffer.order(ByteOrder.LITTLE_ENDIAN);
-    return buffer;
+    return ByteBuffer.wrap(new byte[bufferSize + 5 /*u32*/]).order(ByteOrder.LITTLE_ENDIAN);
   }
 
   public void writeTo(WritableByteChannel channel, ByteBuffer buffer) throws IOException {
