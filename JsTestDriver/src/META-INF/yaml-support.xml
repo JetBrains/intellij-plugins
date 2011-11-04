@@ -1,4 +1,3 @@
-<!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
 <!--
  * Copyright 2009 Google Inc.
  *
@@ -14,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
 -->
-<idea-plugin>
+<idea-plugin version="2" xmlns="http://plugins.intellij.net/plugin.dtd">
   <extensions defaultExtensionNs="com.intellij">
     <fileTypeFactory implementation="com.google.jstestdriver.idea.config.JstdConfigFileLoader"/>
     <completion.contributor language="yaml" implementationClass="com.google.jstestdriver.idea.config.JstdConfigFileCompletionContributor"/>

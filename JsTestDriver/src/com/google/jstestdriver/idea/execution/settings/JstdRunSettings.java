@@ -1,7 +1,9 @@
 package com.google.jstestdriver.idea.execution.settings;
 
+import net.jcip.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;
 
+@Immutable
 public class JstdRunSettings {
 
   private final TestType myTestType;

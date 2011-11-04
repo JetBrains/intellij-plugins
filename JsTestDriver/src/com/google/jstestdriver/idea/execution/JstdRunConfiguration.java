@@ -19,6 +19,7 @@ import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettingsSerializationUtils;
 import com.google.jstestdriver.idea.execution.settings.TestType;
 import com.google.jstestdriver.idea.execution.settings.ui.JstdRunConfigurationEditor;
+import com.google.jstestdriver.idea.util.ProjectRootUtils;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
@@ -33,6 +34,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
@@ -56,13 +58,13 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
     return new JstdRunConfigurationEditor(getProject());
   }
 
-  @SuppressWarnings({"deprecation"})
+  @SuppressWarnings({"deprecation", "UnnecessaryFullyQualifiedName"})
   @Override
   public com.intellij.openapi.util.JDOMExternalizable createRunnerSettings(ConfigurationInfoProvider provider) {
     return null;
   }
 
-  @SuppressWarnings({"deprecation", "RawUseOfParameterizedType"})
+  @SuppressWarnings({"deprecation", "UnnecessaryFullyQualifiedName"})
   @Override
   public SettingsEditor<com.intellij.openapi.util.JDOMExternalizable> getRunnerSettingsEditor(ProgramRunner runner) {
     return null;
@@ -115,35 +117,34 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
   }
 
   @Override
+  @NotNull
   public String suggestedName() {
     if (myRunSettings != null) {
       TestType testType = myRunSettings.getTestType();
       if (testType == TestType.ALL_CONFIGS_IN_DIRECTORY) {
         String directoryPath = myRunSettings.getDirectory();
-        File directory = new File(directoryPath);
-        if (!directoryPath.isEmpty() && directory.isDirectory()) {
-          return "All in " + directory.getName();
+        String rootRelativePath = ProjectRootUtils.getRootRelativePath(getProject(), directoryPath);
+        if (rootRelativePath == null) {
+          rootRelativePath = directoryPath;
         }
+        return "All in " + rootRelativePath;
       } else if (testType == TestType.CONFIG_FILE) {
         File file = new File(myRunSettings.getConfigFile());
-        if (file.isFile()) {
-          return file.getName();
-        }
+        return file.getName();
       } else if (testType == TestType.JS_FILE) {
         File file = new File(myRunSettings.getJsFilePath());
-        if (file.isFile()) {
-          return file.getName();
-        }
+        return file.getName();
       } else if (testType == TestType.TEST_CASE) {
         return myRunSettings.getTestCaseName();
       } else if (testType == TestType.TEST_METHOD) {
         return myRunSettings.getTestCaseName() + "." + myRunSettings.getTestMethodName();
       }
     }
-    return "Unknown";
+    return "Unnamed";
   }
 
   @Override
+  @Nullable
   public RefactoringElementListener getRefactoringElementListener(PsiElement element) {
     JstdRunConfigurationRefactoringHandler refactoringHandler = new JstdRunConfigurationRefactoringHandler(this);
     return refactoringHandler.getRefactoringElementListener(element);

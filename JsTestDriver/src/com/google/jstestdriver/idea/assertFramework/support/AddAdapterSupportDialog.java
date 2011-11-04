@@ -19,7 +19,6 @@ public class AddAdapterSupportDialog extends DialogWrapper {
   private JPanel myDirectoryTypeContent;
   private JRadioButton myDefaultRadioButton;
   private JRadioButton myCustomRadioButton;
-  private JPanel myLibraryNameDefinitionPanel;
   private JTextField myNewLibraryNameTextField;
   private JPanel myTestsRunPanel;
   private JPanel myCodeAssistancePanel;
@@ -40,7 +39,7 @@ public class AddAdapterSupportDialog extends DialogWrapper {
       project, myDirectoryTypeContent, assertionFrameworkName, myDefaultRadioButton, myCustomRadioButton
     );
     myNewLibraryCreationManager = NewLibraryCreationManager.install(
-      project, myLibraryNameDefinitionPanel, myNewLibraryNameTextField, assertionFrameworkName
+      project, myNewLibraryNameTextField, assertionFrameworkName
     );
     myDirectoryTypeManager.addChangeListener(myNewLibraryCreationManager);
     myDirectoryTypeManager.init();

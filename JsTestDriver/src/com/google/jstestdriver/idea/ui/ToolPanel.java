@@ -188,7 +188,7 @@ public class ToolPanel extends JPanel implements ServerListener {
 
     public JsTestDriverServer create(int port, int sslPort, JstdTestCaseStore testCaseStore) {
       return new JsTestDriverServerImpl(port, sslPort, testCaseStore, myCapturedBrowsers, myTimeout,
-          myHandlerPathPrefix, myServerListeners, Collections.<FileInfoScheme>emptySet(), ExecutionType.INTERACTIVE);
+          myHandlerPathPrefix, myServerListeners, Collections.<FileInfoScheme>emptySet(), ExecutionType.INTERACTIVE, false);
     }
   }
 
