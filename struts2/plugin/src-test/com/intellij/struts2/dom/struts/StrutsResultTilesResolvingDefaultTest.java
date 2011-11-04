@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,9 +37,9 @@ public class StrutsResultTilesResolvingDefaultTest extends BasicStrutsHighlighti
     return WebModuleFixtureBuilder.class;
   }
 
+
   @Override
-  protected void configureModule(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
-    super.configureModule(moduleBuilder);
+  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
     moduleBuilder.addSourceRoot(myFixture.getTempDirPath());
     moduleBuilder.setWebXml(myFixture.getTempDirPath() + "/WEB-INF/web.xml");
     moduleBuilder.addWebRoot(getTestDataPath(), "/");

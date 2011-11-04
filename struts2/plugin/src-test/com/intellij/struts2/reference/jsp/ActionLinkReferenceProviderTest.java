@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,9 +40,7 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
   }
 
   @Override
-  protected void configureModule(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
-    super.configureModule(moduleBuilder);
-
+  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
     moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp", "/");
     moduleBuilder.setWebXml(myFixture.getTempDirPath() + "/WEB-INF/web.xml");
   }
@@ -50,7 +48,12 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
   public void testActionLinkHighlightingJsp() throws Throwable {
     myFixture.enableInspections(new HtmlUnknownTargetInspection());
     createStrutsFileSet("struts-actionLink.xml");
-    myFixture.testHighlighting(true, false, false, "/jsp/actionLink-highlighting.jsp", "/WEB-INF/web.xml", "jsp/index.jsp");
+    myFixture.testHighlighting(true,
+                               false,
+                               false,
+                               "/jsp/actionLink-highlighting.jsp",
+                               "/WEB-INF/web.xml",
+                               "jsp/index.jsp");
   }
 
   // TODO no reference, no highlighting..
@@ -77,7 +80,7 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
     myFixture.testCompletionVariants("/jsp/actionLink-completionvariants-no-namespace.jsp",
                                      "actionLink-completionvariants-no-namespace.jsp",
                                      "rootActionLink.action"
-    );
+                                    );
   }
 
   public void testActionLinkReferences() throws Throwable {

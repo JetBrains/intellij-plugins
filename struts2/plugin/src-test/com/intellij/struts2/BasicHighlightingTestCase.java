@@ -107,25 +107,16 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   }
 
   /**
-   * Return true if test uses JAVA sources.
+   * Performs additional configuration.
    *
-   * @return {@code true} if test annotated with {@link HasJavaSources}.
+   * @param moduleBuilder Instance.
+   * @throws Exception On errors.
    */
-  protected boolean hasJavaSources() {
-    return annotatedWith(HasJavaSources.class);
-  }
-
-  /**
-   * Returns true if test uses Struts JARs.
-   *
-   * @return true, false if test annotated with {@link HasJavaSources}.
-   */
-  protected boolean usesStrutsLibrary() {
-    return !annotatedWith(SkipStrutsLibrary.class);
+  protected void customizeSetup(final T moduleBuilder) throws Exception {
   }
 
   @Override
-  protected void setUp() throws Exception {
+  protected final void setUp() throws Exception {
     super.setUp();
 
     // little hack..
@@ -138,6 +129,8 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     myFixture.setTestDataPath(getTestDataPath());
 
     configureModule(moduleBuilder);
+    customizeSetup(moduleBuilder);
+
     myFixture.enableInspections(getHighlightingInspections());
 
     myFixture.setUp();
@@ -159,7 +152,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     super.tearDown();
   }
 
-  protected void configureModule(final T moduleBuilder) throws Exception {
+  private void configureModule(final T moduleBuilder) throws Exception {
     moduleBuilder.addContentRoot(myFixture.getTempDirPath());
 
     if (hasJavaSources()) {
@@ -179,12 +172,30 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   }
 
   /**
+   * Return true if test uses JAVA sources.
+   *
+   * @return {@code true} if test annotated with {@link HasJavaSources}.
+   */
+  private boolean hasJavaSources() {
+    return annotatedWith(HasJavaSources.class);
+  }
+
+  /**
+   * Returns true if test uses Struts JARs.
+   *
+   * @return true, false if test annotated with {@link HasJavaSources}.
+   */
+  private boolean usesStrutsLibrary() {
+    return !annotatedWith(SkipStrutsLibrary.class);
+  }
+
+  /**
    * Adds the S2 jars.
    *
    * @param moduleBuilder Current module builder.
    * @throws Exception On internal errors.
    */
-  protected final void addStrutsJars(final T moduleBuilder) throws Exception {
+  private void addStrutsJars(final T moduleBuilder) throws Exception {
     addLibrary(moduleBuilder, "struts2",
                "struts2-core-" + STRUTS2_VERSION + ".jar",
                "freemarker-2.3.16.jar",

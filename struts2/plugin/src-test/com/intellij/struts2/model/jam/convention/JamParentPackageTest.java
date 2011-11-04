@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,6 +33,7 @@ public class JamParentPackageTest extends JamConventionTestBase<JavaModuleFixtur
     return "parentPackage";
   }
 
+  @HasJavaSources
   @SkipStrutsLibrary
   public void testCompletionAction() throws Exception {
     createStrutsFileSet(STRUTS_XML);
@@ -40,6 +41,7 @@ public class JamParentPackageTest extends JamConventionTestBase<JavaModuleFixtur
                                      "myPackage", "myPackage2");
   }
 
+  @HasJavaSources
   @SkipStrutsLibrary
   public void testCompletionPackageInfo() throws Exception {
     createStrutsFileSet(STRUTS_XML);
@@ -47,6 +49,7 @@ public class JamParentPackageTest extends JamConventionTestBase<JavaModuleFixtur
                                      "myPackage", "myPackage2");
   }
 
+  @HasJavaSources
   @SkipStrutsLibrary
   public void testResolveAction() throws Exception {
     createStrutsFileSet(STRUTS_XML);
@@ -54,6 +57,7 @@ public class JamParentPackageTest extends JamConventionTestBase<JavaModuleFixtur
     checkResolve(jamParentPackage);
   }
 
+  @HasJavaSources
   @SkipStrutsLibrary
   public void testResolveJamPackageInfo() throws Exception {
     createStrutsFileSet(STRUTS_XML);

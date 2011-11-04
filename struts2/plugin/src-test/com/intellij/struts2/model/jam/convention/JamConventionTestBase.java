@@ -37,11 +37,6 @@ abstract class JamConventionTestBase<T extends JavaModuleFixtureBuilder> extends
     return "model/jam/convention/" + getTestDataFolder();
   }
 
-  @Override
-  protected boolean hasJavaSources() {
-    return true;
-  }
-
   /**
    * Returns the test data folder name located relative to {@code model/jam/convention}.
    *
@@ -51,20 +46,9 @@ abstract class JamConventionTestBase<T extends JavaModuleFixtureBuilder> extends
   @NotNull
   protected abstract String getTestDataFolder();
 
-  /**
-   * Perform additional configuration.
-   *
-   * @param moduleBuilder Instance.
-   * @throws Exception On errors.
-   */
-  protected void postConfigureModule(final T moduleBuilder) throws Exception {
-  }
-
   @Override
-  protected void configureModule(final T moduleBuilder) throws Exception {
-    super.configureModule(moduleBuilder);
+  protected void customizeSetup(final T moduleBuilder) throws Exception {
     addLibrary(moduleBuilder, "struts2-convention-plugin", "struts2-convention-plugin-2.2.1.jar");
-    postConfigureModule(moduleBuilder);
   }
 
   /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,8 +34,7 @@ public class StrutsIncludeTest extends BasicStrutsHighlightingTestCase<JavaModul
 
   // TODO fix setup
   @Override
-  protected void configureModule(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
-    super.configureModule(moduleBuilder);
+  protected void customizeSetup(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
     final String path = myFixture.getTempDirPath();
     moduleBuilder.addContentRoot(path);
     new File(path + SOURCE_PATH).mkdir();

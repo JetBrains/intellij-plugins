@@ -38,8 +38,7 @@ public class ActionPropertyReferenceProviderTest extends BasicHighlightingTestCa
   }
 
   @Override
-  protected void configureModule(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
-    super.configureModule(moduleBuilder);
+  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
     moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp", "/");
   }
 

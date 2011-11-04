@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,13 +39,15 @@ public class JamResultPathTest extends JamConventionTestBase<WebModuleFixtureBui
   }
 
   @Override
-  protected void postConfigureModule(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
+  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
+    super.customizeSetup(moduleBuilder);
     moduleBuilder.addWebRoot(myFixture.getTempDirPath(), "/");
   }
 
   /**
    * "property" variants from struts.properties.
    */
+  @HasJavaSources
   @SkipStrutsLibrary
   public void testCompletionActionProperty() throws Exception {
     myFixture.testCompletionVariants("/src/testcompletion/ActionProperty.java",
@@ -55,6 +57,7 @@ public class JamResultPathTest extends JamConventionTestBase<WebModuleFixtureBui
   /**
    * "property" resolving to key in struts.properties.
    */
+  @HasJavaSources
   @SkipStrutsLibrary
   public void testResolveActionProperty() throws Exception {
     final JamResultPath jamResultPath = getClassJam("jam.ActionProperty", JamResultPath.META_CLASS);
@@ -66,6 +69,7 @@ public class JamResultPathTest extends JamConventionTestBase<WebModuleFixtureBui
   /**
    * "value" resolving to web-dir.
    */
+  @HasJavaSources
   @SkipStrutsLibrary
   public void testResolveActionValue() throws Exception {
     myFixture.configureByFile("/WEB-INF/customContent/test.jsp");

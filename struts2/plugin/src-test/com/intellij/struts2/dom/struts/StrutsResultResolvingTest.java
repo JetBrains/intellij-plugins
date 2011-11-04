@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,11 +37,10 @@ public class StrutsResultResolvingTest extends BasicStrutsHighlightingTestCase<W
   }
 
   @Override
-  protected void configureModule(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
-    super.configureModule(moduleBuilder);
-    moduleBuilder.addSourceRoot(myFixture.getTempDirPath());
+  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
     moduleBuilder.addWebRoot(getTestDataPath() + "/jsp/", "/");
     moduleBuilder.addWebRoot(getTestDataPath() + "/jsp2/", "/2ndWebRoot/");
+    moduleBuilder.addSourceRoot(myFixture.getTempDirPath()); // TODO
   }
 
   /**
