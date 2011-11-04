@@ -168,7 +168,7 @@ public class Client implements Closable {
   }
 
   public void registerLibrarySet(LibrarySet librarySet) {
-    final List<LibrarySetItem> items = librarySet.getItems();
+    final List<Library> items = librarySet.getLibraries();
     // contains only resource bundles
     // todo write test for it
     if (items.isEmpty()) {
@@ -185,20 +185,15 @@ public class Client implements Closable {
 
       out.write(items.size());
       final LibraryManager libraryManager = LibraryManager.getInstance();
-      for (LibrarySetItem item : items) {
-        final Library library = item.library;
+      for (Library library : items) {
         final boolean registered = libraryManager.isRegistered(library);
-        int flags = 0;
-        if (registered) {
-          flags |= 2;
-        }
-        out.write(flags);
+        out.write(registered);
 
         if (registered) {
           out.writeUInt29(library.getId());
         }
         else {
-          out.writeShort(libraryManager.add(library));
+          out.writeUInt29(libraryManager.add(library));
 
           out.writeAmfUtf(library.getPath());
           writeVirtualFile(library.getFile(), out);

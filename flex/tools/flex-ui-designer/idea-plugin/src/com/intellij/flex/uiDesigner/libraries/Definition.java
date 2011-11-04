@@ -7,7 +7,7 @@ class Definition {
   private final LibrarySetItem library;
 
   public String[] dependencies;
-  public int unresolvedState = UnresolvedState.UNKNOWN;
+  public int resolved = ResolvedState.UNKNOWN;
 
   private String timeAsString;
   public long time = -1;
@@ -40,7 +40,7 @@ class Definition {
     library.definitionCounter--;
   }
 
-  static interface UnresolvedState {
+  static interface ResolvedState {
     int UNKNOWN = 0;
     int YES = 1;
     int NO = -1;

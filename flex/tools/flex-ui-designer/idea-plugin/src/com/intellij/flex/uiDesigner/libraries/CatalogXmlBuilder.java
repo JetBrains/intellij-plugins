@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.libraries;
 
+import com.intellij.flex.uiDesigner.libraries.Definition.ResolvedState;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xml.NanoXmlUtil.IXMLBuilderAdapter;
@@ -55,7 +56,7 @@ class CatalogXmlBuilder extends IXMLBuilderAdapter {
   public void endElement(String name, String nsPrefix, String nsURI) throws Exception {
     if (processDependencies && name.equals("script")) {
       if (dependencies.isEmpty()) {
-        definition.unresolvedState = Definition.UnresolvedState.NO;
+        definition.resolved = ResolvedState.YES;
       }
       else {
         definition.dependencies = dependencies.toArray(new String[dependencies.size()]);

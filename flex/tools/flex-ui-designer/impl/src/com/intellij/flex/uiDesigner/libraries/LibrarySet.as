@@ -50,10 +50,10 @@ public class LibrarySet {
     var n:int = input.readUnsignedByte();
     _items = new Vector.<Library>(n, true);
     for (var i:int = 0; i < n; i++) {
-      const flags:int = input.readByte();
+      const registered:Boolean = input.readBoolean()
       var libraryId:int = AmfUtil.readUInt29(input);
       var library:Library;
-      if ((flags & 2) != 0) {
+      if (registered) {
         library = libraries[libraryId];
       }
       else {

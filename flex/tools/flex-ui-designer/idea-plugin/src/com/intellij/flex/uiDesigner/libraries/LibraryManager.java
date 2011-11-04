@@ -9,6 +9,7 @@ import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.io.IdPool;
 import com.intellij.flex.uiDesigner.io.InfoMap;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
+import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet.ContainsCondition;
 import com.intellij.flex.uiDesigner.libraries.LibrarySorter.SortResult;
 import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.notification.Notification;
@@ -50,7 +51,6 @@ public class LibraryManager {
   private File appDir;
 
   private final InfoMap<VirtualFile, Library> libraries = new InfoMap<VirtualFile, Library>();
-  //private final List<VirtualFile, LibrarySet> librarySets = new InfoMap<VirtualFile, LibrarySet>();
 
   private final Map<String, LibrarySet> librarySets = new THashMap<String, LibrarySet>();
   private final IdPool librarySetIdPool = new IdPool();
@@ -156,7 +156,10 @@ public class LibraryManager {
       final String key = createKey(libraryCollector.externalLibraries);
       librarySet = librarySets.get(key);
       if (librarySet == null) {
-        createAndRegisterLibrarySet(flexLibrarySet, libraryCollector.sdkLibraries, libraryCollector.getFlexSdkVersion(), module, false, null);
+        final int id = librarySetIdPool.allocate();
+        final SortResult sortResult = sortLibraries(id, libraryCollector.externalLibraries, libraryCollector.getFlexSdkVersion(), module,
+                                                    false, flexLibrarySet.contains);
+        librarySet = new LibrarySet(id, flexLibrarySet, sortResult.items, sortResult.resourceBundleOnlyItems);
         librarySets.put(key, flexLibrarySet);
       }
     }
@@ -204,15 +207,20 @@ public class LibraryManager {
     FlexLibrarySet flexLibrarySet = (FlexLibrarySet)librarySets.get(key);
     if (flexLibrarySet == null) {
       final Set<CharSequence> globalDefinitions = getGlobalDefinitions(libraryCollector.getGlobalLibrary());
-      flexLibrarySet = (FlexLibrarySet)createAndRegisterLibrarySet(null, libraryCollector.sdkLibraries,
-                                                                   libraryCollector.getFlexSdkVersion(), module, true, new Condition<String>() {
-        @Override
-        public boolean value(String name) {
-          return globalDefinitions.contains(name);
-        }
-      });
+      final int id = librarySetIdPool.allocate();
+      final SortResult sortResult = sortLibraries(id, libraryCollector.sdkLibraries, libraryCollector.getFlexSdkVersion(), module, true,
+                                                  new Condition<String>() {
+                                                    @Override
+                                                    public boolean value(String name) {
+                                                      return globalDefinitions.contains(name);
+                                                    }
+                                                  });
+
+      flexLibrarySet = new FlexLibrarySet(id, null, sortResult.items, sortResult.resourceBundleOnlyItems, new ContainsCondition(globalDefinitions, sortResult.definitionMap));
+      Client.getInstance().registerLibrarySet(flexLibrarySet);
       librarySets.put(key, flexLibrarySet);
     }
+
     return flexLibrarySet;
   }
 
@@ -265,7 +273,7 @@ public class LibraryManager {
     final StringBuilder stringBuilder = StringBuilderSpinAllocator.alloc();
     try {
       for (Library sdkLibrary : sdkLibraries) {
-        stringBuilder.append(sdkLibrary.getFile().getPath());
+        stringBuilder.append(sdkLibrary.getFile().getPath()).append(':');
       }
 
       return stringBuilder.toString();
@@ -276,15 +284,11 @@ public class LibraryManager {
   }
 
   @NotNull
-  private LibrarySet createAndRegisterLibrarySet(@Nullable LibrarySet parent, List<Library> libraries, String flexSdkVersion, Module module,
-                                                 final boolean isFromSdk, Condition<String> isExternal)
+  private SortResult sortLibraries(int librarySetId, List<Library> libraries, String flexSdkVersion, Module module, final boolean isFromSdk,
+                                   Condition<String> isExternal)
     throws InitException {
     try {
-      final int id = librarySetIdPool.allocate();
-      final SortResult result = new LibrarySorter(module).sort(libraries, flexSdkVersion, isFromSdk, new File(appDir, id + SWF_EXTENSION), isExternal);
-      final LibrarySet librarySet = new LibrarySet(id, parent, result.items, result.resourceBundleOnlyitems);
-      Client.getInstance().registerLibrarySet(librarySet);
-      return librarySet;
+      return new LibrarySorter(module).sort(libraries, flexSdkVersion, isFromSdk, new File(appDir, librarySetId + SWF_EXTENSION), isExternal);
     }
     catch (Throwable e) {
       String technicalMessage = "Flex SDK " + flexSdkVersion;
@@ -297,7 +301,7 @@ public class LibraryManager {
       catch (Throwable innerE) {
         technicalMessage += " Cannot collect library catalog files due to " + ExceptionUtil.getThrowableText(innerE);
       }
-      
+
       throw new InitException(e, "error.sort.libraries", attachments, technicalMessage);
     }
   }
@@ -323,15 +327,14 @@ public class LibraryManager {
       do {
         PropertiesFile propertiesFile;
         final Project project = moduleInfo.getElement().getProject();
-        for (LibrarySetItem item : librarySet.getItems()) {
-          Library library = item.library;
+        for (Library library : librarySet.getLibraries()) {
           if (library.hasResourceBundles() && (propertiesFile = getResourceBundleFile(locale, bundleName, library, project)) != null) {
             return propertiesFile;
           }
         }
 
-        for (LibrarySetItem item : librarySet.getResourceBundleOnlyItems()) {
-          if ((propertiesFile = getResourceBundleFile(locale, bundleName, item.library, project)) != null) {
+        for (Library library : librarySet.getResourceLibrariesOnly()) {
+          if ((propertiesFile = getResourceBundleFile(locale, bundleName, library, project)) != null) {
             return propertiesFile;
           }
         }

@@ -45,7 +45,7 @@ public class LibraryManager implements LibrarySetLoadProgressListener {
     return idMap[id];
   }
 
-  public function idsToInstancesAndMarkAsUsed(ids:Vector.<String>):Vector.<LibrarySet> {
+  public function idsToInstancesAndMarkAsUsed(ids:Vector.<int>):Vector.<LibrarySet> {
     var librarySets:Vector.<LibrarySet> = new Vector.<LibrarySet>(ids.length, true);
     for (var i:int = 0, n:int = ids.length; i < n; i++) {
       librarySets[i] = idMap[ids[i]];

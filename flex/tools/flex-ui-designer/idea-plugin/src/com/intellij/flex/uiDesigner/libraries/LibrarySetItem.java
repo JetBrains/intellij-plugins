@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.libraries;
 
-public final class LibrarySetItem {
+final class LibrarySetItem {
   int definitionCounter;
 
   public final Library library;

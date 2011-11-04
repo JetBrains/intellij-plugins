@@ -9,15 +9,15 @@ public class LibrarySet {
   private final int id;
   private final LibrarySet parent;
 
-  private final List<LibrarySetItem> items;
-  private final List<LibrarySetItem> resourceBundleOnlyItems;
+  private final List<Library> items;
+  private final List<Library> resourceBundleOnlyItems;
 
-  public LibrarySet(int id, @Nullable LibrarySet parent, List<LibrarySetItem> items, List<LibrarySetItem> resourceBundleOnlyItems) {
+  public LibrarySet(int id, @Nullable LibrarySet parent, List<Library> items, List<Library> resourceBundleOnlyItems) {
     this.id = id;
     this.parent = parent;
 
     this.items = items;
-    this.resourceBundleOnlyItems = resourceBundleOnlyItems == null ? Collections.<LibrarySetItem>emptyList() : resourceBundleOnlyItems;
+    this.resourceBundleOnlyItems = resourceBundleOnlyItems == null ? Collections.<Library>emptyList() : resourceBundleOnlyItems;
   }
 
   public int getId() {
@@ -29,11 +29,11 @@ public class LibrarySet {
     return parent;
   }
 
-  public List<LibrarySetItem> getItems() {
+  public List<Library> getLibraries() {
     return items;
   }
 
-  public List<LibrarySetItem> getResourceBundleOnlyItems() {
+  public List<Library> getResourceLibrariesOnly() {
     return resourceBundleOnlyItems;
   }
 }
