@@ -109,7 +109,7 @@
               <text value="To gain reference resolving, basic code completion and navigation extracted adapter&#10;source files should be linked up to the project.&#10;This will be done automatically if these files are located under one of project source&#10;roots otherwise JavaScript library of these files is created."/>
             </properties>
           </component>
-          <grid id="1b654" binding="myLibraryNameDefinitionPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="1b654" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>

@@ -42,20 +42,21 @@ class AllInDirectoryRunSettingsSection extends AbstractRunSettingsSection {
           0, 0,
           1, 1,
           0.0, 0.0,
-          GridBagConstraints.LINE_START,
+          GridBagConstraints.WEST,
           GridBagConstraints.NONE,
-          new Insets(UIUtil.DEFAULT_VGAP, 0, 0, 0),
+          new Insets(UIUtil.DEFAULT_VGAP, 0, 0, UIUtil.DEFAULT_HGAP),
           0, 0
       );
       myLabel.setDisplayedMnemonic('D');
+      myLabel.setLabelFor(myDirectoryTextFieldWithBrowseButton);
       panel.add(myLabel, c);
     }
     {
       GridBagConstraints c = new GridBagConstraints(
           1, 0,
           1, 1,
-          1.0, 1.0,
-          GridBagConstraints.FIRST_LINE_START,
+          1.0, 0.0,
+          GridBagConstraints.WEST,
           GridBagConstraints.HORIZONTAL,
           new Insets(UIUtil.DEFAULT_VGAP, 0, 0, 0),
           0, 0
@@ -69,7 +70,18 @@ class AllInDirectoryRunSettingsSection extends AbstractRunSettingsSection {
       );
       panel.add(myDirectoryTextFieldWithBrowseButton, c);
     }
-    myLabel.setLabelFor(myDirectoryTextFieldWithBrowseButton);
+    {
+      GridBagConstraints c = new GridBagConstraints(
+          0, 1,
+          2, 1,
+          1.0, 1.0,
+          GridBagConstraints.WEST,
+          GridBagConstraints.BOTH,
+          new Insets(0, 0, 0, 0),
+          0, 0
+      );
+      panel.add(new JPanel(), c);
+    }
     return panel;
   }
 

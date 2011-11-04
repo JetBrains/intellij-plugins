@@ -22,7 +22,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.spring.SpringManager;
-import com.intellij.spring.SpringModel;
+import com.intellij.spring.contexts.model.SpringModel;
 import com.intellij.spring.facet.SpringFacet;
 import com.intellij.spring.model.xml.beans.SpringBeanPointer;
 import com.intellij.struts2.StrutsBundle;
@@ -107,7 +107,7 @@ public class ExtendableClassConverterSpringContributor
         return null;
       }
 
-      final SpringBeanPointer springBean = springModel.findBean(beanName);
+      final SpringBeanPointer springBean = springModel.findBeanByName(beanName);
       if (springBean == null) {
         return null;
       }
@@ -128,7 +128,7 @@ public class ExtendableClassConverterSpringContributor
       if (subClass != null) {
         list = springModel.findBeansByPsiClassWithInheritance(subClass.getQualifiedName());
       } else {
-        list = springModel.getAllCommonBeans(true);
+        list = springModel.getAllCommonBeans();
       }
 
       final List variants = new ArrayList(list.size());

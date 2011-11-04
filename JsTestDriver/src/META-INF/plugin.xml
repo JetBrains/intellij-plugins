@@ -1,4 +1,3 @@
-<!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
 <!--
  * Copyright 2009 Google Inc.
  *
@@ -14,10 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
 -->
-<idea-plugin>
+<idea-plugin version="2" xmlns="http://plugins.intellij.net/plugin.dtd" url="http://confluence.jetbrains.net/display/WI/JsTestDriver+IntelliJ+plugin">
   <name>JSTestDriver Plugin</name>
-  <description>Execute JavaScript unit tests using JsTestDriver</description>
-  <version>1.3.9</version>
+  <description>Execute JavaScript unit tests using JsTestDriver-1.3.3d</description>
+  <version>1.3.10</version>
   <vendor url="http://code.google.com/p/js-test-driver/"
           email="js-test-driver@googlegroups.com">Google; JetBrains</vendor>
   <idea-version since-build="106.0" until-build="111.0"/>
@@ -44,6 +43,15 @@
 
   <change-notes>
     <![CDATA[
+<h4>Version 1.3.10, ? November 2011 (build on JsTestDriver-1.3.3d)</h4>
+<ul>
+  <li>Bug fixes:
+    <ul>
+      <li><a href="http://youtrack.jetbrains.net/issue/WI-7911">WI-7911</a> Configuration file validation has been improved (now comments are accepted and TAB characters are highlighted as errors).</li>
+    </ul>
+  </li>
+</ul>
+
 <h4>Version 1.3.9, 10 October 2011 (build on JsTestDriver-1.3.3c)</h4>
 <ul>
   <li>Bug fixes:
@@ -59,7 +67,7 @@
   </li>
 </ul>
 
-<h4>Version 1.3.8, 6 October 2011 (build on JsTestDriver v1.3.3b)</h4>
+<h4>Version 1.3.8, 6 October 2011 (build on JsTestDriver-1.3.3b)</h4>
 <ul>
   <li>New features:
     <ul>
@@ -74,7 +82,7 @@
   </li>
 </ul>
 
-<h4>Version 1.3.7, 4 October 2011 (build on JsTestDriver v1.3.3b)</h4>
+<h4>Version 1.3.7, 4 October 2011 (build on JsTestDriver-1.3.3b)</h4>
 <ul>
   <li>Usability bugfix:
     <ul>
@@ -83,7 +91,7 @@
   </li>
 </ul>
 
-<h4>Version 1.3.6, 28 September 2011 (build on JsTestDriver v1.3.2):</h4>
+<h4>Version 1.3.6, 28 September 2011 (build on JsTestDriver-1.3.2):</h4>
 <ul>
   <li>Bug fixes:
     <ul>
@@ -109,7 +117,7 @@
   </li>
 </ul>
 
-<h4>Version 1.3.5, 20 June 2011 (build on JsTestDriver v1.3.2):</h4>
+<h4>Version 1.3.5, 20 June 2011 (build on JsTestDriver-1.3.2):</h4>
 <ul>
   <li>Bug fixes:
     <ul>
@@ -127,7 +135,7 @@
   </li>
 </ul>
 
-<h4>Version 1.3.4, 1 June 2011 (build on JsTestDriver v1.3.2):</h4>
+<h4>Version 1.3.4, 1 June 2011 (build on JsTestDriver-1.3.2):</h4>
 <ul>
   <li>Bug fixes:
     <ul>
@@ -138,7 +146,7 @@
   </li>
 </ul>
 
-<h4>Version 1.3.3.1, 1 June 2011 (build on JsTestDriver v1.3.2):</h4>
+<h4>Version 1.3.3.1, 1 June 2011 (build on JsTestDriver-1.3.2):</h4>
 <ul>
   <li>Bug fixes:
     <ul>
@@ -148,7 +156,7 @@
   </li>
 </ul>
 
-<h4>Version 1.3.3, 30 May 2011 (build on JsTestDriver v1.3.2):</h4>
+<h4>Version 1.3.3, 30 May 2011 (build on JsTestDriver-1.3.2):</h4>
 <ul>
   <li>Bug fixes:
     <ul>
@@ -169,7 +177,7 @@
   </li>
 </ul>
 
-<h4>Version 1.3.2, 7 May 2011 (build on JsTestDriver v1.3.2):</h4>
+<h4>Version 1.3.2, 7 May 2011 (build on JsTestDriver-1.3.2):</h4>
 <ul>
   <li>Bug fixes:
     <ul>
@@ -179,12 +187,12 @@
   </li>
 </ul>
 
-<h4>Version 1.3.1.1, 4 May 2011 (build on JsTestDriver v1.3.2):</h4>
+<h4>Version 1.3.1.1, 4 May 2011 (build on JsTestDriver-1.3.2):</h4>
 <ul>
   <li>Support IDEA v10.5, WebStorm v2.1, PhpStorm v2.1, PyCharm v1.5</li>
 </ul>
 
-<h4>Version 1.3.1, 3 May 2011 (build on JsTestDriver v1.3.2):</h4>
+<h4>Version 1.3.1, 3 May 2011 (build on JsTestDriver-1.3.2):</h4>
 <ul>
   <li>Bug fixes:
     <ul>
@@ -200,7 +208,7 @@
   </li>
 </ul>
 
-<h4>Version 1.3, 22 April 2011 (build on JsTestDriver v1.3.2):</h4>
+<h4>Version 1.3, 22 April 2011 (build on JsTestDriver-1.3.2):</h4>
 <ul>
   <li>Bug fixes:
     <ul>

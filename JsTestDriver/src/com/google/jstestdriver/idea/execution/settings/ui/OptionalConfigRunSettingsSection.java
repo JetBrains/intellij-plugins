@@ -5,6 +5,7 @@ import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.util.ObjectUtils;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -51,9 +52,9 @@ class OptionalConfigRunSettingsSection extends AbstractRunSettingsSection {
           0, 0,
           1, 1,
           0.0, 0.0,
-          GridBagConstraints.LINE_START,
+          GridBagConstraints.WEST,
           GridBagConstraints.NONE,
-          new Insets(2, 0, UISettingsUtil.TEXT_LABEL_BOTTOM_SPACING, 0),
+          new Insets(UIUtil.DEFAULT_VGAP, 0, 0, UIUtil.DEFAULT_HGAP),
           0, 0
       );
       JLabel txtLabel = new JLabel("JsTestDriver configuration file:");
@@ -64,11 +65,11 @@ class OptionalConfigRunSettingsSection extends AbstractRunSettingsSection {
     {
       GridBagConstraints c = new GridBagConstraints(
           0, 1,
-          configTypeItems.size() + 2, 1,
-          1.0, 1.0,
-          GridBagConstraints.FIRST_LINE_START,
+          configTypeItems.size() + 1, 1,
+          1.0, 0.0,
+          GridBagConstraints.WEST,
           GridBagConstraints.HORIZONTAL,
-          new Insets(0, 0, 0, 0),
+          new Insets(UIUtil.DEFAULT_VGAP, 0, 0, 0),
           0, 0
       );
 
@@ -91,9 +92,9 @@ class OptionalConfigRunSettingsSection extends AbstractRunSettingsSection {
           myButtonGroup.getButtonCount() + 1, 0,
           1, 1,
           0.0, 0.0,
-          GridBagConstraints.PAGE_START,
+          GridBagConstraints.WEST,
           GridBagConstraints.NONE,
-          new Insets(0, 0, 0, 0),
+          new Insets(UIUtil.DEFAULT_VGAP, 0, 0, UIUtil.DEFAULT_HGAP),
           0, 0
       );
       myButtonGroup.add(radioButton);
@@ -101,19 +102,6 @@ class OptionalConfigRunSettingsSection extends AbstractRunSettingsSection {
     }
 
     select(JstdConfigType.GENERATED);
-
-    {
-      GridBagConstraints c = new GridBagConstraints(
-          configTypeItems.size() + 1, 0,
-          1, 1,
-          1.0, 0.0,
-          GridBagConstraints.CENTER,
-          GridBagConstraints.HORIZONTAL,
-          new Insets(0, 0, 0, 0),
-          0, 0
-      );
-      panel.add(new JPanel(), c);
-    }
 
     return panel;
   }

@@ -18,7 +18,7 @@ public class VfsUtils {
       public List<VirtualFile> compute() {
         List<VirtualFile> virtualFiles = Lists.newArrayList();
         for (String resourceName : resourceNames) {
-          VirtualFile virtualFile = findVirtualFile(markerClass, resourceName);
+          VirtualFile virtualFile = findVirtualFileByResourceName(markerClass, resourceName);
           virtualFiles.add(virtualFile);
         }
         return virtualFiles;
@@ -26,7 +26,7 @@ public class VfsUtils {
     });
   }
 
-  private static VirtualFile findVirtualFile(Class<?> markerClazz, String resourceName) {
+  private static VirtualFile findVirtualFileByResourceName(Class<?> markerClazz, String resourceName) {
     VirtualFile file = VfsUtil.findFileByURL(markerClazz.getResource(resourceName));
     if (file == null) {
       throw new RuntimeException("Can't find virtual file for '" + resourceName + "', class " + markerClazz);

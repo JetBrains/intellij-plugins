@@ -9,6 +9,7 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.PanelWithAnchor;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,13 +54,12 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
   protected void disposeEditor() {
   }
 
-  private static class RootSection extends AbstractRunSettingsSection implements PanelWithAnchor {
+  private static class RootSection extends AbstractRunSettingsSection {
 
     private JComboBox myTestTypeComboBox;
     private OneOfRunSettingsSection<TestTypeListItem> myTestTypeContentRunSettingsSection;
     private ServerConfigurationForm myServerConfigurationForm = new ServerConfigurationForm();
     private Map<TestType, TestTypeListItem> myListItemByTestTypeMap;
-    private JComponent myAnchor;
     private final JBLabel myLabel = new JBLabel("Test:");
 
     @NotNull
@@ -71,9 +71,9 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
             0, 0,
             1, 1,
             0.0, 0.0,
-            GridBagConstraints.LINE_START,
+            GridBagConstraints.WEST,
             GridBagConstraints.NONE,
-            new Insets(0, 0, 0, 5),
+            new Insets(0, 0, 0, UIUtil.DEFAULT_HGAP),
             0, 0
         );
         panel.add(myLabel, c);
@@ -83,8 +83,8 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
         GridBagConstraints c = new GridBagConstraints(
             1, 0,
             1, 1,
-            1.0, 0.0,
-            GridBagConstraints.LINE_START,
+            0.0, 0.0,
+            GridBagConstraints.WEST,
             GridBagConstraints.NONE,
             new Insets(0, 0, 0, 0),
             0, 0
@@ -97,8 +97,8 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
         GridBagConstraints c = new GridBagConstraints(
             0, 1,
             2, 1,
-            0.0, 0.0,
-            GridBagConstraints.LINE_START,
+            1.0, 0.0,
+            GridBagConstraints.WEST,
             GridBagConstraints.HORIZONTAL,
             new Insets(0, 0, 0, 0),
             0, 0
@@ -110,14 +110,16 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
         GridBagConstraints c = new GridBagConstraints(
             0, 2,
             2, 1,
-            0.0, 0.0,
-            GridBagConstraints.FIRST_LINE_START,
+            1.0, 0.0,
+            GridBagConstraints.WEST,
             GridBagConstraints.HORIZONTAL,
             new Insets(0, 0, 0, 0),
             0, 0
         );
         panel.add(myServerConfigurationForm.getComponent(creationContext), c);
       }
+
+      setAnchor(myTestTypeContentRunSettingsSection.getAnchor());
 
       return panel;
     }
@@ -190,13 +192,8 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
     }
 
     @Override
-    public JComponent getAnchor() {
-      return myAnchor;
-    }
-
-    @Override
     public void setAnchor(@Nullable JComponent anchor) {
-      this.myAnchor = anchor;
+      super.setAnchor(anchor);
       myTestTypeContentRunSettingsSection.setAnchor(anchor);
       myLabel.setAnchor(anchor);
     }

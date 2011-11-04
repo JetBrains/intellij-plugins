@@ -17,7 +17,7 @@ package com.intellij.struts2.model.constant;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiClass;
 import com.intellij.spring.SpringManager;
-import com.intellij.spring.SpringModel;
+import com.intellij.spring.contexts.model.SpringModel;
 import com.intellij.spring.model.xml.beans.SpringBeanPointer;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.util.xml.ConvertContext;
@@ -51,7 +51,7 @@ public class ConstantValueConverterSpringClassContributor implements ConstantVal
       return null;
     }
 
-    final SpringBeanPointer springBeanPointer = springModel.findBean(s);
+    final SpringBeanPointer springBeanPointer = springModel.findBeanByName(s);
     if (springBeanPointer == null) {
       return null;
     }
