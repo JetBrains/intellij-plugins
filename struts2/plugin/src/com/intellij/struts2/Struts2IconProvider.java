@@ -52,14 +52,18 @@ public class Struts2IconProvider extends IconProvider implements DumbAware {
     }
 
     // no icons when no facet present
-    final StrutsFacet strutsFacet = StrutsFacet.getInstance(element);
+    final Module module = ModuleUtil.findModuleForPsiElement(element);
+    if (module == null) {
+      return null;
+    }
+
+    final StrutsFacet strutsFacet = StrutsFacet.getInstance(module);
     if (strutsFacet == null) {
       return null;
     }
 
     // handle JAVA classes --> overlay icon
-    final PsiClass psiClass = (PsiClass) element;
-    final Module module = ModuleUtil.findModuleForPsiElement(psiClass);
+    final PsiClass psiClass = (PsiClass)element;
     final StrutsModel strutsModel = StrutsManager.getInstance(psiClass.getProject()).getCombinedModel(module);
     if (strutsModel == null ||
         !strutsModel.isActionClass(psiClass)) {
@@ -72,5 +76,4 @@ public class Struts2IconProvider extends IconProvider implements DumbAware {
     layeredIcon.setIcon(StrutsIcons.ACTION_SMALL, 1, 0, StrutsIcons.OVERLAY_Y_OFFSET);
     return layeredIcon;
   }
-
 }
