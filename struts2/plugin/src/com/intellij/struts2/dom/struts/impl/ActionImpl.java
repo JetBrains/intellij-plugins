@@ -37,6 +37,7 @@ import java.util.List;
 @SuppressWarnings({"AbstractClassNeverImplemented"})
 public abstract class ActionImpl implements Action {
 
+  @Nullable
   private String getNameValue() {
     return getName().getStringValue();
   }

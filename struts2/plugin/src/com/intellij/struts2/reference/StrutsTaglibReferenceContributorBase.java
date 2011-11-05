@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -79,7 +79,7 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
   /**
    * "ID" self reference for validation.
    */
-  public static final PsiReferenceProvider ID_REFERENCE_PROVIDER = new PsiReferenceProvider() {
+  protected static final PsiReferenceProvider ID_REFERENCE_PROVIDER = new PsiReferenceProvider() {
     @NotNull
     @Override
     public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement,

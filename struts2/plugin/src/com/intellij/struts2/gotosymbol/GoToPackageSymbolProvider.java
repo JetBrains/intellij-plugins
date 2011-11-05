@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,6 +24,7 @@ import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.util.Function;
+import com.intellij.util.NullableFunction;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.model.gotosymbol.GoToSymbolProvider;
 import org.jetbrains.annotations.NotNull;
@@ -38,11 +39,12 @@ import java.util.Set;
  */
 public class GoToPackageSymbolProvider extends GoToSymbolProvider {
 
-  private static final Function<StrutsPackage, String> STRUTSPACKAGE_NAME_FUNCTION = new Function<StrutsPackage, String>() {
-    public String fun(final StrutsPackage strutsPackage) {
-      return strutsPackage.getName().getStringValue();
-    }
-  };
+  private static final Function<StrutsPackage, String> STRUTS_PACKAGE_NAME_FUNCTION =
+      new NullableFunction<StrutsPackage, String>() {
+        public String fun(final StrutsPackage strutsPackage) {
+          return strutsPackage.getName().getStringValue();
+        }
+      };
 
   protected boolean acceptModule(final Module module) {
     return StrutsFacet.getInstance(module) != null;
@@ -54,7 +56,8 @@ public class GoToPackageSymbolProvider extends GoToSymbolProvider {
       return;
     }
 
-    final Set<String> packageNames = ContainerUtil.map2Set(strutsModel.getStrutsPackages(), STRUTSPACKAGE_NAME_FUNCTION);
+    final Set<String> packageNames = ContainerUtil.map2Set(strutsModel.getStrutsPackages(),
+                                                           STRUTS_PACKAGE_NAME_FUNCTION);
     result.addAll(packageNames);
   }
 

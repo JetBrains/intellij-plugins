@@ -23,6 +23,7 @@ import com.intellij.lang.pratt.TokenParser;
 import com.intellij.patterns.IElementTypePattern;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.lang.ognl.psi.OgnlTokenTypes.*;
 import static com.intellij.lang.pratt.PathPattern.path;
@@ -34,15 +35,15 @@ import static com.intellij.patterns.PlatformPatterns.elementType;
  */
 public class OgnlParser extends PrattParser {
 
-  public static final int INITIAL_LEVEL = 0;
-  public static final int EXPR_LEVEL = INITIAL_LEVEL + 10;
-  public static final int EXPR_BIT_LEVEL = EXPR_LEVEL + 10;
-  public static final int COMP_LEVEL = EXPR_BIT_LEVEL + 10;
-  public static final int EQ_LEVEL = COMP_LEVEL + 10;
-  public static final int EQ_COMP_LEVEL = EQ_LEVEL + 10;
-  public static final int NUMBERS_LEVEL = EQ_COMP_LEVEL + 10;
-  public static final int UNARY_LEVEL = NUMBERS_LEVEL + 20;
-  public static final int ATOM_LEVEL = UNARY_LEVEL + 20;
+  private static final int INITIAL_LEVEL = 0;
+  private static final int EXPR_LEVEL = INITIAL_LEVEL + 10;
+  private static final int EXPR_BIT_LEVEL = EXPR_LEVEL + 10;
+  private static final int COMP_LEVEL = EXPR_BIT_LEVEL + 10;
+  private static final int EQ_LEVEL = COMP_LEVEL + 10;
+  private static final int EQ_COMP_LEVEL = EQ_LEVEL + 10;
+  private static final int NUMBERS_LEVEL = EQ_COMP_LEVEL + 10;
+  private static final int UNARY_LEVEL = NUMBERS_LEVEL + 20;
+  private static final int ATOM_LEVEL = UNARY_LEVEL + 20;
 
   private static final IElementTypePattern IDENTIFIER_PATTERN = elementType().or(OgnlElementTypes.REFERENCE_EXPRESSION,
                                                                                  OgnlElementTypes.VARIABLE_EXPRESSION);
@@ -374,6 +375,7 @@ public class OgnlParser extends PrattParser {
     return TokenParser.infix(priority, type, "Expression expected");
   }
 
+  @Nullable
   public static IElementType parseExpression(final PrattBuilder builder) {
     return builder.createChildBuilder(EXPR_LEVEL, "Expression expected").parse();
   }

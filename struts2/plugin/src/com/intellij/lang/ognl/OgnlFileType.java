@@ -15,8 +15,8 @@
 
 package com.intellij.lang.ognl;
 
+import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.struts2.StrutsIcons;
@@ -37,7 +37,7 @@ public class OgnlFileType extends LanguageFileType {
     @Override
     protected LayeredIcon compute() {
       final LayeredIcon icon = new LayeredIcon(2);
-      icon.setIcon(StdFileTypes.PLAIN_TEXT.getIcon(), 0);
+      icon.setIcon(FileTypes.PLAIN_TEXT.getIcon(), 0);
       icon.setIcon(StrutsIcons.ACTION_SMALL, 1, 0, 6);
       return icon;
     }

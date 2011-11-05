@@ -26,7 +26,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PackageScope;
-import com.intellij.psi.util.PsiUtil;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.validator.config.ValidatorConfig;
 import com.intellij.struts2.dom.validator.config.ValidatorsConfig;
@@ -177,7 +177,7 @@ public class ValidatorManagerImpl extends ValidatorManager {
       return null;
     }
 
-    final VirtualFile file = PsiUtil.getVirtualFile(emailValidatorClass);
+    final VirtualFile file = PsiUtilCore.getVirtualFile(emailValidatorClass);
     if (file == null ||
         file.getFileSystem() != JarFileSystem.getInstance()) {
       return null;

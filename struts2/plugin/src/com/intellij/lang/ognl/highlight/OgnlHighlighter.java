@@ -26,6 +26,7 @@ import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.StringEscapesTokenTypes;
+import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
@@ -101,7 +102,7 @@ public class OgnlHighlighter extends SyntaxHighlighterBase {
     keys1 = new HashMap<IElementType, TextAttributesKey>();
 
     // single characters
-    keys1.put(OgnlTokenTypes.BAD_CHARACTER, BAD_CHARACTER);
+    keys1.put(TokenType.BAD_CHARACTER, BAD_CHARACTER);
 
     // EXPR_HOLDER
     keys1.put(OgnlTokenTypes.EXPRESSION_START, EXPRESSION);

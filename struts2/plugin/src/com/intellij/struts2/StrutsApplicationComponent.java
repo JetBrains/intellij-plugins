@@ -23,7 +23,6 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
-import com.intellij.util.Function;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.xml.ElementPresentationManager;
 import org.jetbrains.annotations.NonNls;
@@ -45,7 +44,7 @@ public class StrutsApplicationComponent implements ApplicationComponent {
 
   public void initComponent() {
     // TODO remove, this should not be needed --> DOM unique name highlighting not working
-    ElementPresentationManager.registerNameProvider(new Function<Object, String>() {
+    ElementPresentationManager.registerNameProvider(new NullableFunction<Object, String>() {
       @Override
       public String fun(final Object o) {
         if (o instanceof Result) {

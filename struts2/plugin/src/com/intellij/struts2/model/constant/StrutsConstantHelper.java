@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,8 +18,8 @@ package com.intellij.struts2.model.constant;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.AtomicNotNullLazyValue;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.NullableComputable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.CachedValue;
@@ -77,7 +77,7 @@ public class StrutsConstantHelper {
                 @Override
                 protected List<String> compute() {
                   final List<String> extensions =
-                      ApplicationManager.getApplication().runReadAction(new Computable<List<String>>() {
+                      ApplicationManager.getApplication().runReadAction(new NullableComputable<List<String>>() {
                         public List<String> compute() {
                           return StrutsConstantManager.getInstance(project)
                                                       .getConvertedValue(psiFile,
