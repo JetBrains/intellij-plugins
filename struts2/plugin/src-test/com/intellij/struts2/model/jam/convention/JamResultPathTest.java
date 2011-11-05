@@ -39,7 +39,7 @@ public class JamResultPathTest extends JamConventionTestBase<WebModuleFixtureBui
   }
 
   @Override
-  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
+  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) {
     super.customizeSetup(moduleBuilder);
     moduleBuilder.addWebRoot(myFixture.getTempDirPath(), "/");
   }

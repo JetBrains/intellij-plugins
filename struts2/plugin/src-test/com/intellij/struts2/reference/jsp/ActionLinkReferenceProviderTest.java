@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.intellij.struts2.reference.jsp;
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTargetInspection;
@@ -40,7 +41,7 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
   }
 
   @Override
-  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
+  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) {
     moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp", "/");
     moduleBuilder.setWebXml(myFixture.getTempDirPath() + "/WEB-INF/web.xml");
   }
@@ -97,7 +98,7 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
    * @param actionName Name of the Action to resolve to.
    * @throws Throwable On errors.
    */
-  private void checkActionReference(@NonNls final String filename, @NonNls final String actionName) throws Throwable {
+  private void checkActionReference(@NonNls final String filename, @NonNls final String actionName) {
     final PsiReference psiReference = myFixture.getReferenceAtCaretPositionWithAssertion(filename);
     final PsiElement psiElement = psiReference.resolve();
     assertNotNull("no resolve element " + actionName, psiElement);

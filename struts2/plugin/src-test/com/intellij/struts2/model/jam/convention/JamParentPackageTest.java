@@ -70,7 +70,7 @@ public class JamParentPackageTest extends JamConventionTestBase<JavaModuleFixtur
     checkResolve(jamElement);
   }
 
-  private void checkResolve(@NotNull final JamParentPackage jamParentPackage) {
+  private static void checkResolve(@NotNull final JamParentPackage jamParentPackage) {
     final StrutsPackage strutsPackage = jamParentPackage.getValue().getValue();
     assertNotNull(strutsPackage);
     assertEquals("myPackage", strutsPackage.getName().getStringValue());

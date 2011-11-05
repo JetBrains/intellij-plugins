@@ -41,7 +41,7 @@ abstract class BasicValidationHighlightingTestCase<T extends JavaModuleFixtureBu
    * @param validationXmlFileName Filename of validation.xml to check.
    * @throws Throwable On any errors.
    */
-  protected void performHighlightingTest(@NonNls final String validationXmlFileName) throws Throwable {
+  protected void performHighlightingTest(@NonNls final String validationXmlFileName) {
     final long duration = myFixture.testHighlighting(true, false, false, validationXmlFileName);
     //System.out.println(validationXmlFileName + " = " + duration);
   }
@@ -54,7 +54,7 @@ abstract class BasicValidationHighlightingTestCase<T extends JavaModuleFixtureBu
    * @throws Throwable On any errors.
    */
   protected void performCompletionVariantTest(@NonNls final String validationXmlFileName,
-                                              @NonNls final String... expectedItems) throws Throwable {
+                                              @NonNls final String... expectedItems) {
     myFixture.testCompletionVariants(validationXmlFileName, expectedItems);
   }
 

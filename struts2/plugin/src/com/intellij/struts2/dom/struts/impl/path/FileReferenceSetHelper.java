@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,6 +42,9 @@ import java.util.List;
  * @author Yann C&eacute;bron
  */
 public class FileReferenceSetHelper {
+
+  private FileReferenceSetHelper() {
+  }
 
   /**
    * Creates a new FileReferenceSet allowing references only to (web-)directories and given FileType.
@@ -92,29 +95,29 @@ public class FileReferenceSetHelper {
                                                                final FileReferenceSet set) {
     final WebDirectoryUtil directoryUtil = WebDirectoryUtil.getWebDirectoryUtil(psiElement.getProject());
     set.addCustomization(
-      FileReferenceSet.DEFAULT_PATH_EVALUATOR_OPTION,
-      new Function<PsiFile, Collection<PsiFileSystemItem>>() {
-        public Collection<PsiFileSystemItem> fun(final PsiFile file) {
-          final List<PsiFileSystemItem> basePathRoots = new ArrayList<PsiFileSystemItem>();
+        FileReferenceSet.DEFAULT_PATH_EVALUATOR_OPTION,
+        new Function<PsiFile, Collection<PsiFileSystemItem>>() {
+          public Collection<PsiFileSystemItem> fun(final PsiFile file) {
+            final List<PsiFileSystemItem> basePathRoots = new ArrayList<PsiFileSystemItem>();
 
-          // 1. add all configured web root mappings
-          final List<WebRoot> webRoots = webFacet.getWebRoots(true);
-          for (final WebRoot webRoot : webRoots) {
-            final String webRootPath = webRoot.getRelativePath();
-            final WebDirectoryElement webRootBase =
-              directoryUtil.findWebDirectoryElementByPath(webRootPath, webFacet);
-            ContainerUtil.addIfNotNull(webRootBase, basePathRoots);
+            // 1. add all configured web root mappings
+            final List<WebRoot> webRoots = webFacet.getWebRoots(true);
+            for (final WebRoot webRoot : webRoots) {
+              final String webRootPath = webRoot.getRelativePath();
+              final WebDirectoryElement webRootBase =
+                  directoryUtil.findWebDirectoryElementByPath(webRootPath, webFacet);
+              ContainerUtil.addIfNotNull(webRootBase, basePathRoots);
+            }
+
+            // 2. add parent <package> "namespace" as result prefix directory path if not ROOT
+            if (!Comparing.equal(namespace, StrutsPackage.DEFAULT_NAMESPACE)) {
+              final WebDirectoryElement packageBase =
+                  directoryUtil.findWebDirectoryElementByPath(namespace, webFacet);
+              ContainerUtil.addIfNotNull(packageBase, basePathRoots);
+            }
+
+            return basePathRoots;
           }
-
-          // 2. add parent <package> "namespace" as result prefix directory path if not ROOT
-          if (!Comparing.equal(namespace, StrutsPackage.DEFAULT_NAMESPACE)) {
-            final WebDirectoryElement packageBase =
-              directoryUtil.findWebDirectoryElementByPath(namespace, webFacet);
-            ContainerUtil.addIfNotNull(packageBase, basePathRoots);
-          }
-
-          return basePathRoots;
-        }
-      });
+        });
   }
 }

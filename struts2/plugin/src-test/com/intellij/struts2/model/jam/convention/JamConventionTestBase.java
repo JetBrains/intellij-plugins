@@ -47,7 +47,7 @@ abstract class JamConventionTestBase<T extends JavaModuleFixtureBuilder> extends
   protected abstract String getTestDataFolder();
 
   @Override
-  protected void customizeSetup(final T moduleBuilder) throws Exception {
+  protected void customizeSetup(final T moduleBuilder) {
     addLibrary(moduleBuilder, "struts2-convention-plugin", "struts2-convention-plugin-2.2.1.jar");
   }
 
@@ -62,7 +62,7 @@ abstract class JamConventionTestBase<T extends JavaModuleFixtureBuilder> extends
    */
   @NotNull
   protected <Jam extends JamElement> Jam getClassJam(final String clazzName,
-                                                     final JamClassMeta<Jam> meta) throws Exception {
+                                                     final JamClassMeta<Jam> meta) {
     myFixture.configureByFile(SOURCE_DIR + "/" + StringUtil.replace(clazzName, ".", "/") + ".java");
 
     final PsiClass myClass = myFixture.findClass(clazzName);

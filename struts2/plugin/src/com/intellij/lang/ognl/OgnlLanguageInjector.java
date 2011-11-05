@@ -74,7 +74,7 @@ public class OgnlLanguageInjector {
       final int length = (closingBraceIdx != -1 ? closingBraceIdx + 1 : textLength) - startOffset;
       final TextRange range = TextRange.from(startOffset, length);
       registrar.addPlace(null, null, element, range);
-      startOffset = startOffset + length;
+      startOffset += length;
     }
 
     registrar.doneInjecting();

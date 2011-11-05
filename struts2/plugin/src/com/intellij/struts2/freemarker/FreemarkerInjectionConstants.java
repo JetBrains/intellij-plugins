@@ -29,6 +29,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class FreemarkerInjectionConstants {
 
+  private FreemarkerInjectionConstants() {
+  }
+
   public static final PatternCondition<FtlMacro> TAGLIB_PREFIX = new PatternCondition<FtlMacro>("S2 taglib prefix") {
     @Override
     public boolean accepts(@NotNull final FtlMacro ftlMacro, final ProcessingContext processingContext) {

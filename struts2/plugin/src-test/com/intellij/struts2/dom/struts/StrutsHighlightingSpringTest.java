@@ -106,7 +106,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
    * @param variants Original variants.
    * @return Remaining (Spring Bean) variants.
    */
-  private List<String> filterSpringBeanCompletionVariants(final List<String> variants) {
+  private static List<String> filterSpringBeanCompletionVariants(final List<String> variants) {
     return ContainerUtil.findAll(variants, new Condition<String>() {
       @Override
       public boolean value(final String s) {
@@ -117,7 +117,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
 
   // stuff below is Spring related ===============================================
 
-  protected void createSpringFileSet(final String... springXmlPaths) throws Throwable {
+  protected void createSpringFileSet(final String... springXmlPaths) {
     final SpringFacet springFacet = createSpringFacet();
 
     final SpringFacetConfiguration configuration = springFacet.getConfiguration();

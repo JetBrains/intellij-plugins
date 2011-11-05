@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -134,9 +134,8 @@ public class Struts2TilesModelProvider implements TilesModelProvider {
       final List<Listener> listenerList = webApp.getListeners();
       for (final Listener listener : listenerList) {
         final PsiClass listenerClass = listener.getListenerClass().getValue();
-        if (strutsTilesListenerClass.equals(listenerClass)) {
-          consumer.consume(tilesFileSet);
-        } else if (Comparing.equal(tilesListenerClass, listenerClass)) {
+        if (strutsTilesListenerClass.equals(listenerClass) ||
+            Comparing.equal(tilesListenerClass, listenerClass)) {
           consumer.consume(tilesFileSet);
         }
       }

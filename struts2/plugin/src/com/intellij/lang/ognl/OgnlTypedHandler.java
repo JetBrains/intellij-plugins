@@ -89,7 +89,6 @@ public class OgnlTypedHandler extends TypedHandlerDelegate {
    * @param editor Current editor.
    * @return {@code true} if handled.
    */
-
   private boolean handleOpeningBrace(final Editor editor) {
     editor.getDocument().insertString(editor.getCaretModel().getOffset(), "}");
     return true;

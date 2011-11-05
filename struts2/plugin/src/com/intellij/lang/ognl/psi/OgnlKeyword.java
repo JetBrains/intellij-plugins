@@ -22,6 +22,9 @@ package com.intellij.lang.ognl.psi;
  */
 public final class OgnlKeyword {
 
+  private OgnlKeyword() {
+  }
+
   public static final String SHL = "shl";
   public static final String SHR = "shr";
   public static final String USHR = "ushr";

@@ -77,7 +77,7 @@ public class Struts2GlobalVariableProvider extends VtlGlobalVariableProvider {
 
   private static class MyVtlVariable extends FakePsiElement implements VtlVariable {
 
-    private PsiType myType;
+    private final PsiType myType;
     private final String name;
     private final PsiElement parent;
 

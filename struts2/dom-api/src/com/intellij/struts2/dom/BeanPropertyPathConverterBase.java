@@ -55,8 +55,11 @@ public abstract class BeanPropertyPathConverterBase extends Converter<List<BeanP
       return null;
     }
 
-    final GenericAttributeValue<List<BeanProperty>> value = (GenericAttributeValue<List<BeanProperty>>) convertContext.getInvocationElement();
+    @SuppressWarnings("unchecked")
+    final GenericAttributeValue<List<BeanProperty>> value =
+        (GenericAttributeValue<List<BeanProperty>>) convertContext.getInvocationElement();
     // always BeanPropertyPathReference
+
     final PsiReference[] references = createReferences(value, value.getXmlAttributeValue(), convertContext);
     final ArrayList<BeanProperty> list = new ArrayList<BeanProperty>(references.length);
     for (final PsiReference reference : references) {
@@ -76,7 +79,7 @@ public abstract class BeanPropertyPathConverterBase extends Converter<List<BeanP
    * @return Parent element or <code>null</code> if none found (should not happen in valid XML).
    */
   @Nullable
-  protected DomElement findEnclosingTag(final ConvertContext context) {
+  protected static DomElement findEnclosingTag(final ConvertContext context) {
     final DomElement current = context.getInvocationElement();
     final DomElement parent = current.getParent();
     return parent != null ? parent.getParent() : null;

@@ -26,7 +26,8 @@ import org.jetbrains.annotations.NonNls;
  *
  * @author Yann C&eacute;bron
  */
-public abstract class BasicStrutsHighlightingTestCase<T extends JavaModuleFixtureBuilder> extends BasicHighlightingTestCase<T> {
+public abstract class BasicStrutsHighlightingTestCase<T extends JavaModuleFixtureBuilder>
+    extends BasicHighlightingTestCase<T> {
 
   @Override
   protected LocalInspectionTool[] getHighlightingInspections() {
@@ -39,7 +40,7 @@ public abstract class BasicStrutsHighlightingTestCase<T extends JavaModuleFixtur
    * @param strutsXmlFileNames Filename(s) of struts.xml to check.
    * @throws Throwable On any errors.
    */
-  protected void performHighlightingTest(@NonNls final String... strutsXmlFileNames) throws Throwable {
+  protected void performHighlightingTest(@NonNls final String... strutsXmlFileNames) {
     createStrutsFileSet(strutsXmlFileNames);
     final long duration = myFixture.testHighlighting(true, false, false, strutsXmlFileNames);
 //    System.out.println(strutsXmlFileNames[0] + " = " + duration);
@@ -53,7 +54,7 @@ public abstract class BasicStrutsHighlightingTestCase<T extends JavaModuleFixtur
    * @throws Throwable On any errors.
    */
   protected void performCompletionVariantTest(@NonNls final String strutsXmlFileName,
-                                              @NonNls final String... expectedItems) throws Throwable {
+                                              @NonNls final String... expectedItems) {
     createStrutsFileSet(strutsXmlFileName);
     myFixture.testCompletionVariants(strutsXmlFileName, expectedItems);
   }

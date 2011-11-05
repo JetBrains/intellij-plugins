@@ -86,10 +86,10 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
 
     final List<XmlFile> files = ValidatorManager.getInstance(psiElement.getProject()).findValidationFilesFor(clazz);
     return files.isEmpty() ||
-        files.size() != getActionsForClazz(project, clazz, module).size();
+           files.size() != getActionsForClazz(project, clazz, module).size();
   }
 
-  private List<Action> getActionsForClazz(final Project project, final PsiClass clazz, final Module module) {
+  private static List<Action> getActionsForClazz(final Project project, final PsiClass clazz, final Module module) {
     final StrutsModel model = StrutsManager.getInstance(project).getCombinedModel(module);
     if (model == null) {
       return Collections.emptyList();
@@ -145,10 +145,15 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
     createValidationXml(project, actionClass, filteredActions.get(0).getName().getStringValue());
   }
 
-  private void createValidationXml(final Project project, final PsiClass actionClass, @Nullable final String path) {
+  private static void createValidationXml(final Project project,
+                                          final PsiClass actionClass,
+                                          @Nullable final String path) {
     final PsiManager manager = PsiManager.getInstance(project);
+    final String actionClassQualifiedName = actionClass.getQualifiedName();
+    assert actionClassQualifiedName != null;
+
     final PackageWrapper targetPackage =
-        new PackageWrapper(manager, StringUtil.getPackageName(actionClass.getQualifiedName()));
+        new PackageWrapper(manager, StringUtil.getPackageName(actionClassQualifiedName));
 
     final Module module = ModuleUtil.findModuleForPsiElement(actionClass);
     final VirtualFile[] sourceRoots = ModuleRootManager.getInstance(module).getSourceRoots(false);

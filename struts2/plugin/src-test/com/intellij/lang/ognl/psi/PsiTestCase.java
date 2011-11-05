@@ -54,12 +54,12 @@ public abstract class PsiTestCase extends LightPlatformTestCase {
     return firstChild.getChildren();
   }
 
-  protected void assertElementType(final OgnlElementType expectedType,
-                                   final OgnlExpression expression) {
+  protected static void assertElementType(final OgnlElementType expectedType,
+                                          final OgnlExpression expression) {
     assertEquals(expectedType, expression.getNode().getElementType());
   }
 
-  private OgnlFile createFile(final String text) throws IncorrectOperationException {
+  private static OgnlFile createFile(final String text) throws IncorrectOperationException {
     return (OgnlFile) PsiFileFactory.getInstance(getProject())
                                     .createFileFromText("test.ognl", OgnlLanguage.INSTANCE, text);
   }

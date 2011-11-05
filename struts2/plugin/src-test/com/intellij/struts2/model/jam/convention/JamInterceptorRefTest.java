@@ -48,7 +48,8 @@ public class JamInterceptorRefTest extends JamConventionTestBase<JavaModuleFixtu
     checkResolve(jamInterceptorRef, "myCustomInterceptor");
   }
 
-  private void checkResolve(@NotNull final JamInterceptorRef jamInterceptorRef, @NotNull final String interceptorName) {
+  private static void checkResolve(@NotNull final JamInterceptorRef jamInterceptorRef,
+                                   @NotNull final String interceptorName) {
     final InterceptorOrStackBase interceptorOrStackBase = jamInterceptorRef.getValue().getValue();
     assertNotNull(interceptorOrStackBase);
     assertEquals(interceptorName, interceptorOrStackBase.getName().getStringValue());

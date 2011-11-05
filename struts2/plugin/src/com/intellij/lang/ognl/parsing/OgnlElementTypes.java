@@ -29,6 +29,9 @@ import java.math.BigInteger;
  */
 public class OgnlElementTypes {
 
+  private OgnlElementTypes() {
+  }
+
   // %{ ... }
   public static final OgnlElementType EXPRESSION_HOLDER = new OgnlElementType("EXPRESSION_HOLDER");
 

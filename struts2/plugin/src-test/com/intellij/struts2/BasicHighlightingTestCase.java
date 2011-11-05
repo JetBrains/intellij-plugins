@@ -195,7 +195,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
    * @param moduleBuilder Current module builder.
    * @throws Exception On internal errors.
    */
-  private void addStrutsJars(final T moduleBuilder) throws Exception {
+  private void addStrutsJars(final T moduleBuilder) {
     addLibrary(moduleBuilder, "struts2",
                "struts2-core-" + STRUTS2_VERSION + ".jar",
                "freemarker-2.3.16.jar",

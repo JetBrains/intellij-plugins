@@ -36,6 +36,9 @@ import static junit.framework.Assert.assertNotNull;
  */
 class AnnotatorTestUtils {
 
+  private AnnotatorTestUtils() {
+  }
+
   /**
    * Verifies the navigation targets' names of the gutter icon match.
    *

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,7 +49,6 @@ public class StrutsFilesTree extends CheckboxTreeBase {
       return o1.getName().compareTo(o2.getName());
     }
   };
-
 
   public StrutsFilesTree() {
     super(new CheckboxTreeCellRendererBase() {
@@ -162,8 +161,6 @@ public class StrutsFilesTree extends CheckboxTreeBase {
   }
 
   public void updateFileSet(final StrutsFileSet fileSet) {
-
-    final boolean[] result = new boolean[]{false};
     final Set<VirtualFile> configured = new HashSet<VirtualFile>();
     TreeUtil.traverse((TreeNode) getModel().getRoot(), new TreeUtil.Traverse() {
       public boolean accept(final Object node) {
@@ -180,7 +177,6 @@ public class StrutsFilesTree extends CheckboxTreeBase {
         }
         if (virtualFile != null) {
           if (!fileSet.hasFile(virtualFile)) {
-            result[0] = true;
             fileSet.addFile(virtualFile);
           }
           configured.add(virtualFile);
@@ -193,7 +189,6 @@ public class StrutsFilesTree extends CheckboxTreeBase {
       final VirtualFilePointer pointer = i.next();
       final VirtualFile file = pointer.getFile();
       if (file == null || !configured.contains(file)) {
-        result[0] = true;
         i.remove();
       }
     }

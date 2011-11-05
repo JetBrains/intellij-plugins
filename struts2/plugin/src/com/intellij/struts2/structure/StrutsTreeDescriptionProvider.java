@@ -26,6 +26,7 @@ import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Returns additional "location" description for certain Struts elements.
@@ -49,6 +50,7 @@ public class StrutsTreeDescriptionProvider implements ElementDescriptionProvider
     return getElementDescription(domElement);
   }
 
+  @Nullable
   private String getElementDescription(@NotNull final DomElement domElement) {
     if (domElement instanceof StrutsPackage) {
       return ((StrutsPackage) domElement).searchNamespace();

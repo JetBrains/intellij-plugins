@@ -317,7 +317,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
         presentationData.setTooltip(StrutsBundle.message("facet.fileset.nofiles.attached"));
       } else {
         presentationData.addText(name, getPlainAttributes());
-        presentationData.setLocationString("" + fileSet.getFiles().size());
+        presentationData.setLocationString(Integer.toString(fileSet.getFiles().size()));
       }
     }
 

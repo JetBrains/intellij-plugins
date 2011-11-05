@@ -65,43 +65,43 @@ public class GoToSymbolProviderTest extends LightCodeInsightFixtureTestCase {
 
   public void testGotoAction() throws Exception {
     runGotoTest("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
-                    "\n" +
-                    "<!DOCTYPE struts PUBLIC\n" +
-                    "    \"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN\"\n" +
-                    "    \"http://struts.apache.org/dtds/struts-2.0.dtd\">\n" +
-                    "\n" +
-                    "<struts>\n" +
-                    "\n" +
-                    "  <package name=\"testPackage\" namespace=\"/Test\">\n" +
-                    "    <action name=\"test1\"/>\n" +
-                    "    <action name=\"test2\"/>\n" +
-                    "    <action name=\"test3\"/>\n" +
-                    "  </package>\n" +
-                    "\n" +
-                    "</struts>",
+                "\n" +
+                "<!DOCTYPE struts PUBLIC\n" +
+                "    \"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN\"\n" +
+                "    \"http://struts.apache.org/dtds/struts-2.0.dtd\">\n" +
+                "\n" +
+                "<struts>\n" +
+                "\n" +
+                "  <package name=\"testPackage\" namespace=\"/Test\">\n" +
+                "    <action name=\"test1\"/>\n" +
+                "    <action name=\"test2\"/>\n" +
+                "    <action name=\"test3\"/>\n" +
+                "  </package>\n" +
+                "\n" +
+                "</struts>",
                 "test1", "test2", "test3");
   }
 
   public void testGotoPackage() throws Exception {
     runGotoTest("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
-                    "\n" +
-                    "<!DOCTYPE struts PUBLIC\n" +
-                    "    \"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN\"\n" +
-                    "    \"http://struts.apache.org/dtds/struts-2.0.dtd\">\n" +
-                    "\n" +
-                    "<struts>\n" +
-                    "\n" +
-                    "  <package name=\"testPackage1\" namespace=\"/Test\">\n" +
-                    "  </package>\n" +
-                    "  <package name=\"testPackage2\" namespace=\"/Test2\">\n" +
-                    "  </package>\n" +
-                    "\n" +
-                    "</struts>",
+                "\n" +
+                "<!DOCTYPE struts PUBLIC\n" +
+                "    \"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN\"\n" +
+                "    \"http://struts.apache.org/dtds/struts-2.0.dtd\">\n" +
+                "\n" +
+                "<struts>\n" +
+                "\n" +
+                "  <package name=\"testPackage1\" namespace=\"/Test\">\n" +
+                "  </package>\n" +
+                "  <package name=\"testPackage2\" namespace=\"/Test2\">\n" +
+                "  </package>\n" +
+                "\n" +
+                "</struts>",
                 "testPackage1", "testPackage2");
   }
 
   private void runGotoTest(final String strutsXmlContent,
-                           final String... expectedSymbols) throws Exception {
+                           final String... expectedSymbols) {
     final PsiFile file = myFixture.configureByText(getTestName(true) + "-struts.xml", strutsXmlContent);
 
     final StrutsFacetConfiguration configuration = myFacet.getConfiguration();

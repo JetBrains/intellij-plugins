@@ -32,7 +32,7 @@ public class OgnlFileType extends LanguageFileType {
 
   public static final OgnlFileType INSTANCE = new OgnlFileType();
 
-  private static NotNullLazyValue<LayeredIcon> ICON = new AtomicNotNullLazyValue<LayeredIcon>() {
+  private static final NotNullLazyValue<LayeredIcon> ICON = new AtomicNotNullLazyValue<LayeredIcon>() {
     @NotNull
     @Override
     protected LayeredIcon compute() {
