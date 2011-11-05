@@ -20,6 +20,7 @@ import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.jsp.impl.TldDescriptor;
 import com.intellij.lang.jsp.JspFileViewProvider;
+import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Comparing;
@@ -139,6 +140,7 @@ public class JspActionAnnotator implements LineMarkerProvider {
     // resolve to action method should be exactly 1
     final NavigationGutterIconBuilder<PsiElement> gutterIconBuilder =
         NavigationGutterIconBuilder.create(StrutsIcons.ACTION_CLASS).
+            setAlignment(GutterIconRenderer.Alignment.LEFT).
             setTooltipText(StrutsBundle.message("annotators.jsp.goto.action.method")).
             setEmptyPopupText(StrutsBundle.message("annotators.jsp.goto.action.method.notfound")).
             setTargets(new NotNullLazyValue<Collection<? extends PsiElement>>() {

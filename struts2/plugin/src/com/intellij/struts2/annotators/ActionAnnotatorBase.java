@@ -19,6 +19,7 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.navigation.GotoRelatedItem;
+import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.paths.PathReference;
@@ -155,6 +156,7 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
     final NavigationGutterIconBuilder<DomElement> gutterIconBuilder =
         NavigationGutterIconBuilder.create(StrutsIcons.ACTION, NavigationGutterIconBuilder.DEFAULT_DOM_CONVERTOR,
                                            NavigationGutterIconBuilder.DOM_GOTO_RELATED_ITEM_PROVIDER)
+                                   .setAlignment(GutterIconRenderer.Alignment.LEFT)
                                    .setPopupTitle(StrutsBundle.message("annotators.action.goto.declaration"))
                                    .setTargets(actions)
                                    .setTooltipTitle(tooltip)
@@ -197,6 +199,7 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
       final NavigationGutterIconBuilder<PathReference> gutterIconBuilder =
           NavigationGutterIconBuilder.create(StrutsIcons.RESULT, PATH_REFERENCE_CONVERTER,
                                              PATH_REFERENCE_GOTO_RELATED_ITEM_PROVIDER)
+                                     .setAlignment(GutterIconRenderer.Alignment.LEFT)
                                      .setPopupTitle(StrutsBundle.message("annotators.action.goto.result"))
                                      .setTargets(entries.getValue())
                                      .setTooltipTitle(StrutsBundle.message("annotators.action.goto.result.tooltip"));
@@ -222,6 +225,7 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
 
     final NavigationGutterIconBuilder<PsiElement> validatorBuilder =
         NavigationGutterIconBuilder.create(StrutsIcons.VALIDATION_CONFIG_FILE)
+                                   .setAlignment(GutterIconRenderer.Alignment.LEFT)
                                    .setTargets(files)
                                    .setPopupTitle(StrutsBundle.message("annotators.action.goto.validation"))
                                    .setTooltipTitle(StrutsBundle.message("annotators.action.goto.validation.tooltip"));
