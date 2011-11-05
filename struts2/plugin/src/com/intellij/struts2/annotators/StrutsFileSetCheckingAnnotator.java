@@ -66,8 +66,13 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
       return;
     }
 
+    final Module module = ModuleUtil.findModuleForPsiElement(psiElement);
+    if (module == null) {
+      return;
+    }
+
     // do not run when facet not enabled
-    if (StrutsFacet.getInstance(psiElement) == null) {
+    if (StrutsFacet.getInstance(module) == null) {
       return;
     }
 
@@ -76,11 +81,6 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
 
     final StrutsManager strutsManager = StrutsManager.getInstance(project);
     if (!strutsManager.isStruts2ConfigFile(xmlFile)) {
-      return;
-    }
-
-    final Module module = ModuleUtil.findModuleForPsiElement(xmlFile);
-    if (module == null) {
       return;
     }
 
@@ -95,10 +95,11 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
     }
 
     final boolean fileSetAvailable = allConfigFileSets.size() != 0;
-    final Annotation annotation = holder.createWarningAnnotation(
-            xmlFile,
-            fileSetAvailable ? StrutsBundle.message("annotators.fileset.file.not.registered") :
-            StrutsBundle.message("annotators.fileset.no.file.sets"));
+    final Annotation annotation =
+        holder.createWarningAnnotation(xmlFile,
+                                       fileSetAvailable ?
+                                           StrutsBundle.message("annotators.fileset.file.not.registered") :
+                                           StrutsBundle.message("annotators.fileset.no.file.sets"));
     annotation.setFileLevelAnnotation(true);
 
     if (fileSetAvailable) {
@@ -163,28 +164,30 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
 
       final Set<StrutsFileSet> strutsFileSets = strutsFacet.getConfiguration().getFileSets();
       final BaseListPopupStep<StrutsFileSet> step =
-              new BaseListPopupStep<StrutsFileSet>(StrutsBundle.message("annotators.fileset.fix.choose.fileset"),
-                                                   new ArrayList<StrutsFileSet>(strutsFileSets)) {
+          new BaseListPopupStep<StrutsFileSet>(StrutsBundle.message("annotators.fileset.fix.choose.fileset"),
+                                               new ArrayList<StrutsFileSet>(strutsFileSets)) {
 
-                public Icon getIconFor(final StrutsFileSet aValue) {
-                  return StrutsIcons.STRUTS_CONFIG_FILE;
+            public Icon getIconFor(final StrutsFileSet aValue) {
+              return StrutsIcons.STRUTS_CONFIG_FILE;
+            }
+
+            public PopupStep onChosen(final StrutsFileSet selectedValue, final boolean finalChoice) {
+              selectedValue.addFile(file.getVirtualFile());
+              ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                public void run() {
+                  ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.getInstance(), false, true);
                 }
+              });
 
-                public PopupStep onChosen(final StrutsFileSet selectedValue, final boolean finalChoice) {
-                  selectedValue.addFile(file.getVirtualFile());
-                  ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                    public void run() {
-                      ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.getInstance(), false, true);
-                    }
-                  });
+              // re-highlight (remove annotation)
+              DaemonCodeAnalyzer.getInstance(project).restart();
 
-                  // re-highlight (remove annotation)
-                  DaemonCodeAnalyzer.getInstance(project).restart();
-
-                  return super.onChosen(selectedValue, finalChoice);
-                }
-              };
-      JBPopupFactory.getInstance().createListPopup(step).showInBestPositionFor(DataManager.getInstance().getDataContext(editor.getComponent()));
+              return super.onChosen(selectedValue, finalChoice);
+            }
+          };
+      JBPopupFactory.getInstance()
+                    .createListPopup(step)
+                    .showInBestPositionFor(DataManager.getInstance().getDataContext(editor.getComponent()));
     }
   }
 

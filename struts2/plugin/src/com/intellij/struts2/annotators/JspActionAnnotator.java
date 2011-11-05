@@ -20,6 +20,7 @@ import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.jsp.impl.TldDescriptor;
 import com.intellij.lang.jsp.JspFileViewProvider;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
@@ -85,14 +86,19 @@ public class JspActionAnnotator implements LineMarkerProvider {
     }
   }
 
-  private void annotate(@NotNull final PsiElement element,
-                        @NotNull final Collection<LineMarkerInfo> lineMarkerInfos) {
+  private static void annotate(@NotNull final PsiElement element,
+                               @NotNull final Collection<LineMarkerInfo> lineMarkerInfos) {
     if (!(element instanceof XmlTag)) {
       return;
     }
 
     // short exit when Struts 2 facet not present
-    if (StrutsFacet.getInstance(element) == null) {
+    final Module module = ModuleUtil.findModuleForPsiElement(element);
+    if (module == null) {
+      return;
+    }
+
+    if (StrutsFacet.getInstance(module) == null) {
       return;
     }
 
@@ -113,14 +119,13 @@ public class JspActionAnnotator implements LineMarkerProvider {
 
     // special case for <action>
     final String actionPath = Comparing.equal(tagName, ACTION_ATTRIBUTE_NAME) ?
-                              xmlTag.getAttributeValue("name") :
-                              xmlTag.getAttributeValue(ACTION_ATTRIBUTE_NAME);
+        xmlTag.getAttributeValue("name") :
+        xmlTag.getAttributeValue(ACTION_ATTRIBUTE_NAME);
     if (actionPath == null) {
       return;
     }
 
-    final StrutsModel strutsModel = StrutsManager.getInstance(element.getProject())
-      .getCombinedModel(ModuleUtil.findModuleForPsiElement(element));
+    final StrutsModel strutsModel = StrutsManager.getInstance(element.getProject()).getCombinedModel(module);
     if (strutsModel == null) {
       return;
     }
@@ -133,15 +138,15 @@ public class JspActionAnnotator implements LineMarkerProvider {
 
     // resolve to action method should be exactly 1
     final NavigationGutterIconBuilder<PsiElement> gutterIconBuilder =
-      NavigationGutterIconBuilder.create(StrutsIcons.ACTION_CLASS).
-      setTooltipText(StrutsBundle.message("annotators.jsp.goto.action.method")).
-      setEmptyPopupText(StrutsBundle.message("annotators.jsp.goto.action.method.notfound")).
-      setTargets(new NotNullLazyValue<Collection<? extends PsiElement>>() {
-        @NotNull
-        protected Collection<PsiMethod> compute() {
-          return ContainerUtil.mapNotNull(actions, ACTION_METHOD_FUNCTION);
-        }
-      });
+        NavigationGutterIconBuilder.create(StrutsIcons.ACTION_CLASS).
+            setTooltipText(StrutsBundle.message("annotators.jsp.goto.action.method")).
+            setEmptyPopupText(StrutsBundle.message("annotators.jsp.goto.action.method.notfound")).
+            setTargets(new NotNullLazyValue<Collection<? extends PsiElement>>() {
+              @NotNull
+              protected Collection<PsiMethod> compute() {
+                return ContainerUtil.mapNotNull(actions, ACTION_METHOD_FUNCTION);
+              }
+            });
 
     lineMarkerInfos.add(gutterIconBuilder.createLineMarkerInfo(xmlTag));
   }
