@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner.abc;
 
 public interface TagTypes {
   int End = 0;
+  int DefineBinaryData = 87;
   int DefineBitsJPEG2 = 21;
   int DefineBitsJPEG3 = 35;
   int DefineBitsJPEG4 = 90;

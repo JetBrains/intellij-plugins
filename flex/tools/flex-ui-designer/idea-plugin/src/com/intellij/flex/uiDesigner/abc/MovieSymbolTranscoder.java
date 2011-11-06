@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.intellij.flex.uiDesigner.abc.MovieSymbolTranscoder.PlaceObjectFlags.*;
+import static com.intellij.flex.uiDesigner.abc.PlaceObjectFlags.*;
 
 public class MovieSymbolTranscoder extends MovieTranscoder {
   private int fileLength;
@@ -363,16 +363,6 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
     }
 
     return -1;
-  }
-
-  interface PlaceObjectFlags {
-    static int HAS_CLIP_ACTION = 1 << 7;
-    static int HAS_CHARACTER = 1 << 1;
-    static int HAS_MATRIX = 1 << 2;
-    static int HAS_COLOR_TRANSFORM = 1 << 3;
-    static int HAS_RATIO = 1 << 4;
-    static int HAS_NAME = 1 << 5;
-    static int HAS_CLIP_DEPTH = 1 << 6;
   }
 
   private static class PlacedObject {

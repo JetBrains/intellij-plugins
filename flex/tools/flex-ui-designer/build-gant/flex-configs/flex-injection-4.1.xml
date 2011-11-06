@@ -107,7 +107,7 @@
 		<symbol>com.intellij.flex.uiDesigner.flex.FlexModuleFactory</symbol>
 		<symbol>com.intellij.flex.uiDesigner.css.CssReaderImpl</symbol>
 		<symbol>com.intellij.flex.uiDesigner.flex.ModuleManager</symbol>
-		<symbol>com.intellij.flex.uiDesigner.flex.SystemManager</symbol>
+		<symbol>com.intellij.flex.uiDesigner.flex.FlexDocumentDisplayManager</symbol>
 		<symbol>com.intellij.flex.uiDesigner.flex.states.AddItems</symbol>
 		<symbol>com.intellij.flex.uiDesigner.flex.states.SetProperty</symbol>
 		<symbol>com.intellij.flex.uiDesigner.flex.states.SetStyle</symbol>

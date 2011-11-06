@@ -2,14 +2,15 @@ package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.abc.*;
 import com.intellij.openapi.vfs.VirtualFile;
-import gnu.trove.TIntObjectIterator;
+import gnu.trove.TIntObjectHashMap;
+import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,10 +18,12 @@ class AbcMerger extends AbcTranscoder {
   private final Map<CharSequence, Definition> definitionMap;
   private final FileOutputStream out;
 
-  private ByteBuffer symbolClassBuffer;
-  private int totalNumSymbols;
+  // old id to new
+  private final TIntObjectHashMap<SymbolInfo> currentSymbolsInfo = new TIntObjectHashMap<SymbolInfo>();
+  private final ArrayList<SymbolInfo> symbols = new ArrayList<SymbolInfo>();
+  private int symbolCounter;
 
-  public AbcMerger(Map<CharSequence, Definition> definitionMap, @Nullable String flexSdkVersion, File outFile)
+  public AbcMerger(Map<CharSequence, Definition> definitionMap, @SuppressWarnings("UnusedParameters") @Nullable String flexSdkVersion, File outFile)
     throws IOException {
     this.definitionMap = definitionMap;
 
@@ -44,8 +47,23 @@ class AbcMerger extends AbcTranscoder {
     transcode(file.getInputStream(), file.getLength());
     processTags(null);
 
-    out.flush();
-    channel.force(true);
+    if (!currentSymbolsInfo.isEmpty()) {
+      symbols.ensureCapacity(symbols.size() + currentSymbolsInfo.size());
+      currentSymbolsInfo.forEachValue(new TObjectProcedure<SymbolInfo>() {
+        @Override
+        public boolean execute(SymbolInfo info) {
+          assert info.start != -1;
+          assert info.end != -2;
+          symbols.add(info);
+          return true;
+        }
+      });
+
+      currentSymbolsInfo.clear();
+    }
+
+    //out.flush();
+    //channel.force(true);
   }
 
   public void end(List<Decoder> decoders, String flexSdkVersion) throws IOException {
@@ -54,14 +72,35 @@ class AbcMerger extends AbcTranscoder {
     SwfUtil.mergeDoAbc(decoders, encoder);
     encoder.writeDoAbc(channel, true);
 
-    // write symbolClass
+    int length = 0;
+    for (SymbolInfo info : symbols) {
+      length += 2 + (info.end - info.start);
+    }
+
     buffer.clear();
-    symbolClassBuffer.flip();
-    encodeTagHeader(TagTypes.SymbolClass, symbolClassBuffer.limit() + 2 /* numSymbols */);
-    buffer.putShort((short)totalNumSymbols);
+    encodeTagHeader(TagTypes.SymbolClass, length + 2);
+    buffer.putShort((short)symbols.size());
     buffer.flip();
     channel.write(buffer);
-    channel.write(symbolClassBuffer);
+
+    for (SymbolInfo info : symbols) {
+      final ByteBuffer b = info.buffer;
+      final int start = info.start - 2;
+      b.putShort(start, (short)info.newId);
+      b.position(start);
+      b.limit(info.end);
+      channel.write(b);
+      b.limit(b.capacity());
+    }
+
+    // write symbolClass
+    //buffer.clear();
+    //symbolClassBuffer.flip();
+    //encodeTagHeader(TagTypes.SymbolClass, symbolClassBuffer.limit() + 2 /* numSymbols */);
+    //buffer.putShort((short)totalNumSymbols);
+    //buffer.flip();
+    //channel.write(buffer);
+    //channel.write(symbolClassBuffer);
 
     // write footer — ShowFrame and End
     buffer.clear();
@@ -81,7 +120,15 @@ class AbcMerger extends AbcTranscoder {
       return 1;
     }
 
+    int characterIdPosition = -1;
+
     switch (type) {
+      case TagTypes.DefineSprite:
+      case TagTypes.DefineShape:
+      case TagTypes.DefineShape2:
+      case TagTypes.DefineShape3:
+      case TagTypes.DefineShape4:
+      case TagTypes.DefineBinaryData:
       case TagTypes.DefineBitsLossless2:
       case TagTypes.DefineBitsLossless:
       case TagTypes.PlaceObject:
@@ -90,10 +137,40 @@ class AbcMerger extends AbcTranscoder {
       case TagTypes.DefineBitsJPEG3:
       case TagTypes.DefineBitsJPEG4:
       case TagTypes.DefineBits:
+        // character id after header
+        characterIdPosition = buffer.position();
+        break;
 
+      case TagTypes.PlaceObject2:
+        if ((buffer.get(buffer.position()) & PlaceObjectFlags.HAS_CHARACTER) != 0) {
+          characterIdPosition = buffer.position() + 2;
+        }
+        break;
+
+      case TagTypes.PlaceObject3:
+        throw new IOException("PlaceObject3 are not supported");
     }
 
-    return 1;
+    if (characterIdPosition != -1) {
+      final int oldId = buffer.getShort(characterIdPosition);
+      SymbolInfo info = currentSymbolsInfo.get(oldId);
+      // swf may be invalid
+      if (info == null) {
+        info = new SymbolInfo(++symbolCounter, buffer);
+        currentSymbolsInfo.put(oldId, info);
+      }
+      else {
+        throw new IllegalStateException("ff");
+      }
+
+      buffer.putShort(characterIdPosition, (short)info.newId);
+    }
+
+    return 0;
+  }
+
+  @Override
+  protected void ensureExportAssetsStorageCreated(int numSymbols) {
   }
 
   @Override
@@ -107,76 +184,38 @@ class AbcMerger extends AbcTranscoder {
   }
 
   @Override
-  protected void storeExportAsset(int id, int start, int end) {
+  protected void storeExportAsset(int id, int start, int end, boolean mainNameRead) {
+    if (id == 0) {
+      if (mainNameRead) {
+        Definition removed = definitionMap.remove(transientNameString);
+        assert removed != null;
+      }
+      return;
+    }
 
+    SymbolInfo info = currentSymbolsInfo.get(id);
+    if (info == null) {
+      throw new IllegalStateException("ff");
+    }
+    else {
+      info.start = start;
+      info.end = end;
+    }
   }
 
   protected void processSymbolClass(final int length) throws IOException {
-    final int tagStartPosition = buffer.position();
-    writeDataBeforeTag(length);
-    buffer.position(tagStartPosition);
-    int numSymbols = analyzeClassAssociatedWithMainTimeline(length);
-    final boolean hasClassAssociatedWithMainTimeLine = symbolsClassTagLengthWithoutUselessMainClass != -1;
-    if (hasClassAssociatedWithMainTimeLine) {
-      final Definition removed = definitionMap.remove(transientNameString);
-      assert removed != null;
+    processExportAssets(length, true);
+  }
+
+  private static class SymbolInfo {
+    public int start = -1;
+    public int end = -1;
+    public final int newId;
+    public final ByteBuffer buffer;
+
+    private SymbolInfo(int newId, ByteBuffer buffer) {
+      this.newId = newId;
+      this.buffer = buffer;
     }
-
-    final boolean hasExportsAssets = exportAssets != null && !exportAssets.isEmpty();
-    if (hasExportsAssets) {
-      numSymbols += exportAssets.size();
-    }
-
-    if (numSymbols != 0) {
-      totalNumSymbols += numSymbols;
-
-      int finalSymbolClassTagLength = hasClassAssociatedWithMainTimeLine ? symbolsClassTagLengthWithoutUselessMainClass : length;
-      if (hasExportsAssets) {
-        final TIntObjectIterator<TagPositionInfo> iterator = exportAssets.iterator();
-        for (int i = exportAssets.size(); i-- > 0; ) {
-          iterator.advance();
-          finalSymbolClassTagLength += iterator.value().length();
-        }
-      }
-
-      if (symbolClassBuffer == null) {
-        symbolClassBuffer = ByteBuffer.allocate(Math.max(finalSymbolClassTagLength, 8192)).order(ByteOrder.LITTLE_ENDIAN);
-      }
-      else if (finalSymbolClassTagLength > symbolClassBuffer.remaining()) {
-        int newSize = symbolClassBuffer.capacity() + finalSymbolClassTagLength;
-        symbolClassBuffer = ByteBuffer.allocate(Math.max(newSize, symbolClassBuffer.capacity() * 2)).put(symbolClassBuffer);
-      }
-
-      buffer.position(tagStartPosition);
-      if (hasClassAssociatedWithMainTimeLine) {
-        buffer.limit(sA);
-        symbolClassBuffer.put(buffer);
-
-        buffer.limit(buffer.capacity());
-        buffer.position(sB);
-      }
-      buffer.limit(tagStartPosition + length);
-      symbolClassBuffer.put(buffer);
-      buffer.limit(buffer.capacity());
-
-      if (hasExportsAssets) {
-        final TIntObjectIterator<TagPositionInfo> iterator = exportAssets.iterator();
-        for (int i = exportAssets.size(); i-- > 0; ) {
-          iterator.advance();
-          TagPositionInfo exportAsset = iterator.value();
-          buffer.position(exportAsset.start);
-          buffer.limit(exportAsset.end);
-          symbolClassBuffer.put(buffer);
-        }
-
-        exportAssets.clear();
-        buffer.limit(buffer.capacity());
-      }
-    }
-
-    symbolsClassTagLengthWithoutUselessMainClass = -1;
-
-    lastWrittenPosition = tagStartPosition + length;
-    buffer.position(lastWrittenPosition);
   }
 }

@@ -87,15 +87,21 @@ public class AbcFilter extends AbcTranscoder {
     buffer.flip();
     channel.write(buffer);
   }
-  
+
   @Override
   protected int processTag(int type, int length) throws IOException {
-    if (type == TagTypes.ShowFrame) {
-      processShowFrame(length);
-      return -1;
-    }
+    switch (type) {
+      case TagTypes.ShowFrame:
+        processShowFrame(length);
+        return -1;
 
-    return super.processTag(type, length);
+      case TagTypes.FileAttributes:
+        processFileAttributes(length);
+        return -1;
+
+      default:
+        return super.processTag(type, length);
+    }
   }
 
   private void processShowFrame(int length) throws IOException {
@@ -116,7 +122,7 @@ public class AbcFilter extends AbcTranscoder {
     channel.write(buffer);
   }
 
-  protected void processFileAttributes(int length) throws IOException {
+  private void processFileAttributes(int length) throws IOException {
     buffer.put(buffer.position(), (byte)104); // HasMetadata = false
     buffer.position(buffer.position() + length);
   }
@@ -132,7 +138,12 @@ public class AbcFilter extends AbcTranscoder {
   }
 
   @Override
-  protected void storeExportAsset(int id, int start, int end) {
+  protected void storeExportAsset(int id, int start, int end, boolean mainNameRead) {
+    if (id == 0) {
+      return;
+    }
+
+    // -2 — include id length (short)
     exportAssets.put(id, new TagPositionInfo(start - 2, end));
   }
 

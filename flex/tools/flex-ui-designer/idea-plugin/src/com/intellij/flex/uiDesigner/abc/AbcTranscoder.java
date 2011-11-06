@@ -50,11 +50,7 @@ abstract public class AbcTranscoder extends SwfTranscoder {
           continue;
 
         case TagTypes.ExportAssets:
-          processExportAssets(length);
-          continue;
-
-        case TagTypes.FileAttributes:
-          processFileAttributes(length);
+          processExportAssets(length, false);
           continue;
 
         default:
@@ -68,8 +64,6 @@ abstract public class AbcTranscoder extends SwfTranscoder {
       }
     }
   }
-
-  protected abstract void processFileAttributes(int length) throws IOException;
 
   protected abstract void processSymbolClass(int length) throws IOException;
 
@@ -93,7 +87,7 @@ abstract public class AbcTranscoder extends SwfTranscoder {
     }
   }
 
-  protected void processExportAssets(int length) throws IOException {
+  protected void processExportAssets(int length, boolean readMainSymbolName) throws IOException {
     final int bodyPosition = buffer.position();
     writeDataBeforeTag(length);
     buffer.position(bodyPosition);
@@ -108,16 +102,24 @@ abstract public class AbcTranscoder extends SwfTranscoder {
     for (int i = 0; i < numSymbols; i++) {
       int id = buffer.getShort();
       int start = buffer.position();
-      int end = start + skipAbcName(start) + 1;
-      if (id != 0) {
-        storeExportAsset(id, start, end);
+
+      final int nameLength;
+      if (readMainSymbolName && id == 0) {
+        readAbcName(start);
+        nameLength = transientNameString.length;
       }
+      else {
+        nameLength = skipAbcName(start);
+      }
+
+      int end = start + nameLength + 1;
+      storeExportAsset(id, start, end, readMainSymbolName);
       buffer.position(end);
     }
   }
 
   protected abstract void ensureExportAssetsStorageCreated(int numSymbols);
-  protected abstract void storeExportAsset(int id, int start, int end);
+  protected abstract void storeExportAsset(int id, int start, int end, boolean mainNameRead);
 
   protected BufferWrapper createBufferWrapper(int length) {
     final int off = 4 + transientNameString.length() + 1;
