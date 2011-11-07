@@ -9,15 +9,13 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.yaml.psi.YAMLCompoundValue;
-import org.jetbrains.yaml.psi.YAMLDocument;
-import org.jetbrains.yaml.psi.YAMLKeyValue;
-import org.jetbrains.yaml.psi.YAMLSequence;
+import org.jetbrains.yaml.psi.*;
 
 import java.util.List;
 
@@ -113,33 +111,33 @@ public class JstdConfigFileReferenceContributor extends PsiReferenceContributor 
 
   private static class MyPsiReference implements PsiReference {
 
-    private final PsiElementFragment<YAMLKeyValue> myYamlDocumentFragment;
+    private PsiElementFragment<YAMLKeyValue> myYamlKeyValueFragment;
     private final BasePathInfo myBasePathInfo;
     private final String myRelativePath;
 
-    private MyPsiReference(@NotNull PsiElementFragment<YAMLKeyValue> yamlDocumentFragment,
+    private MyPsiReference(@NotNull PsiElementFragment<YAMLKeyValue> yamlKeyValueFragment,
                            @NotNull BasePathInfo basePathInfo,
                            @NotNull String relativePath) {
-      myYamlDocumentFragment = yamlDocumentFragment;
+      myYamlKeyValueFragment = yamlKeyValueFragment;
       myBasePathInfo = basePathInfo;
       myRelativePath = relativePath;
     }
 
     @Override
     public PsiElement getElement() {
-      return myYamlDocumentFragment.getElement();
+      return myYamlKeyValueFragment.getElement();
     }
 
     @Override
     public TextRange getRangeInElement() {
-      return myYamlDocumentFragment.getTextRangeInElement();
+      return myYamlKeyValueFragment.getTextRangeInElement();
     }
 
     @Override
     public PsiElement resolve() {
       VirtualFile targetVirtualFile = myBasePathInfo.findFile(myRelativePath);
       if (targetVirtualFile != null && targetVirtualFile.isValid()) {
-        Project project = myYamlDocumentFragment.getElement().getProject();
+        Project project = myYamlKeyValueFragment.getElement().getProject();
         PsiManager psiManager = PsiManager.getInstance(project);
         if (targetVirtualFile.isDirectory()) {
           PsiDirectory targetPsiDirectory = psiManager.findDirectory(targetVirtualFile);
@@ -159,17 +157,54 @@ public class JstdConfigFileReferenceContributor extends PsiReferenceContributor 
     @NotNull
     @Override
     public String getCanonicalText() {
-      return myYamlDocumentFragment.getText();
+      return myYamlKeyValueFragment.getText();
     }
 
     @Override
-    public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-      throw new IncorrectOperationException();
+    public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
+      TextRange fileNameTextRange = findFileNameTextRagne();
+      YAMLKeyValue oldKeyValue = myYamlKeyValueFragment.getElement();
+      String newKeyValueText = fileNameTextRange.replace(oldKeyValue.getText(), newElementName);
+      YAMLKeyValue newKeyValue = createTempKeyValue(newKeyValueText);
+      if (newKeyValue != null) {
+        return oldKeyValue.replace(newKeyValue);
+      }
+      return null;
+    }
+
+    @NotNull
+    private TextRange findFileNameTextRagne() {
+      TextRange lastComponentTextRange = calcLastComponentTextRange(myYamlKeyValueFragment.getText());
+      TextRange oldPathRange = myYamlKeyValueFragment.getTextRangeInElement();
+      return oldPathRange.cutOut(lastComponentTextRange);
+    }
+
+    @NotNull
+    private static TextRange calcLastComponentTextRange(@NotNull String path) {
+      final int i1 = path.lastIndexOf(JstdConfigFileUtils.UNIX_PATH_SEPARATOR);
+      final int i2 = path.lastIndexOf(JstdConfigFileUtils.WINDOWS_PATH_SEPARATOR);
+      int resInd = i1;
+      if (resInd == -1) {
+        resInd = i2;
+      } else if (i2 != -1) {
+        resInd = Math.max(resInd, i2);
+      }
+      if (resInd != -1) {
+        return new TextRange(resInd + 1, path.length());
+      }
+      return TextRange.allOf(path);
+    }
+
+    @Nullable
+    private YAMLKeyValue createTempKeyValue(@NotNull String keyValueText) {
+      Project project = myYamlKeyValueFragment.getElement().getProject();
+      PsiFile psiFile = PsiFileFactory.getInstance(project).createFileFromText("temp", JstdConfigFileType.INSTANCE, keyValueText);
+      return PsiTreeUtil.findChildOfType(psiFile, YAMLKeyValue.class);
     }
 
     @Override
     public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
-      throw new IncorrectOperationException();
+      return myYamlKeyValueFragment.getElement();
     }
 
     @Override
