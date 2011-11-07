@@ -10,9 +10,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 class AbcMerger extends AbcTranscoder {
   private final Map<CharSequence, Definition> definitionMap;
@@ -52,9 +50,13 @@ class AbcMerger extends AbcTranscoder {
       currentSymbolsInfo.forEachValue(new TObjectProcedure<SymbolInfo>() {
         @Override
         public boolean execute(SymbolInfo info) {
-          assert info.start != -1;
-          assert info.end != -2;
-          symbols.add(info);
+          // not all objects with character id are exported
+          if (info.start == -1) {
+            assert info.end == -1;
+          }
+          else {
+            symbols.add(info);
+          }
           return true;
         }
       });
@@ -77,11 +79,19 @@ class AbcMerger extends AbcTranscoder {
       length += 2 + (info.end - info.start);
     }
 
+    Collections.sort(symbols, new Comparator<SymbolInfo>() {
+      @Override
+      public int compare(SymbolInfo o1, SymbolInfo o2) {
+        return o1.newId - o2.newId;
+      }
+    });
+
     buffer.clear();
     encodeTagHeader(TagTypes.SymbolClass, length + 2);
     buffer.putShort((short)symbols.size());
     buffer.flip();
     channel.write(buffer);
+    buffer.clear();
 
     for (SymbolInfo info : symbols) {
       final ByteBuffer b = info.buffer;
@@ -152,21 +162,61 @@ class AbcMerger extends AbcTranscoder {
     }
 
     if (characterIdPosition != -1) {
-      final int oldId = buffer.getShort(characterIdPosition);
-      SymbolInfo info = currentSymbolsInfo.get(oldId);
-      // swf may be invalid
-      if (info == null) {
-        info = new SymbolInfo(++symbolCounter, buffer);
-        currentSymbolsInfo.put(oldId, info);
-      }
-      else {
-        throw new IllegalStateException("ff");
-      }
+      changeCharacterId(characterIdPosition);
 
-      buffer.putShort(characterIdPosition, (short)info.newId);
+      if (type == TagTypes.DefineSprite) {
+        processDefineSprite(length);
+      }
     }
 
     return 0;
+  }
+
+  private void changeCharacterId(int characterIdPosition) {
+    final int oldId = buffer.getShort(characterIdPosition);
+    SymbolInfo info = currentSymbolsInfo.get(oldId);
+    // swf may be invalid
+    if (info == null) {
+      info = new SymbolInfo(++symbolCounter, buffer);
+      currentSymbolsInfo.put(oldId, info);
+    }
+
+    buffer.putShort(characterIdPosition, (short)info.newId);
+  }
+
+  private void processDefineSprite(int spriteTagLength) throws IOException {
+    buffer.mark();
+    buffer.position(buffer.position() + 4);
+    final int endPosition = buffer.position() + spriteTagLength;
+    while (true) {
+      final int tagCodeAndLength = buffer.getShort();
+      final int type = tagCodeAndLength >> 6;
+      int length = tagCodeAndLength & 0x3F;
+      if (length == 63) {
+        length = buffer.getInt();
+      }
+
+      final int start = buffer.position();
+      switch (type) {
+        case TagTypes.PlaceObject3:
+          throw new IOException("PlaceObject3 are not supported");
+
+        case TagTypes.PlaceObject:
+        case TagTypes.PlaceObject2:
+          changeCharacterId(start);
+          break;
+      }
+
+      final int newPosition = start + length;
+      if (newPosition < endPosition) {
+        buffer.position(newPosition);
+      }
+      else {
+        break;
+      }
+    }
+
+    buffer.reset();
   }
 
   @Override
