@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,6 +17,7 @@ package com.intellij.struts2.dom.struts.impl;
 
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Ref;
+import com.intellij.struts2.dom.ConverterUtil;
 import com.intellij.struts2.dom.struts.strutspackage.InterceptorOrStackBase;
 import com.intellij.struts2.dom.struts.strutspackage.InterceptorRefResolveConverter;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
@@ -25,7 +26,6 @@ import com.intellij.util.Processor;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
-import com.intellij.util.xml.DomUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,8 +49,8 @@ public class InterceptorRefResolveConverterImpl extends InterceptorRefResolveCon
         return false;
       }
     };
-    final StrutsPackageHierarchyWalker walker = new StrutsPackageHierarchyWalker(getCurrentStrutsPackage(context),
-                                                                                 processor);
+    final StrutsPackageHierarchyWalker walker =
+        new StrutsPackageHierarchyWalker(ConverterUtil.getCurrentStrutsPackage(context), processor);
     walker.walkUp();
 
     return results;
@@ -81,8 +81,8 @@ public class InterceptorRefResolveConverterImpl extends InterceptorRefResolveCon
         return false;
       }
     };
-    final StrutsPackageHierarchyWalker walker = new StrutsPackageHierarchyWalker(getCurrentStrutsPackage(context),
-                                                                                 processor);
+    final StrutsPackageHierarchyWalker walker =
+        new StrutsPackageHierarchyWalker(ConverterUtil.getCurrentStrutsPackage(context), processor);
     walker.walkUp();
 
     return resolveResult.get();
@@ -90,14 +90,6 @@ public class InterceptorRefResolveConverterImpl extends InterceptorRefResolveCon
 
   private static List<InterceptorOrStackBase> getAllInterceptors(final StrutsPackage strutsPackage) {
     return ContainerUtil.concat(strutsPackage.getInterceptors(), strutsPackage.getInterceptorStacks());
-  }
-
-  private static StrutsPackage getCurrentStrutsPackage(final ConvertContext context) {
-    final StrutsPackage strutsPackage = DomUtil.getParentOfType(context.getInvocationElement(),
-                                                                StrutsPackage.class,
-                                                                true);
-    assert strutsPackage != null : context.getInvocationElement();
-    return strutsPackage;
   }
 
 }

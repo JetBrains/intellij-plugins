@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,7 +18,10 @@ package com.intellij.struts2.dom;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
+import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.xml.ConvertContext;
+import com.intellij.util.xml.DomUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Pattern;
@@ -62,6 +65,21 @@ public final class ConverterUtil {
     }
 
     return StrutsManager.getInstance(context.getFile().getProject()).getCombinedModel(context.getModule());
+  }
+
+  /**
+   * Returns the current (parent) {@code <package>} element.
+   *
+   * @param context Invoking context.
+   * @return Parent package.
+   */
+  @NotNull
+  public static StrutsPackage getCurrentStrutsPackage(final ConvertContext context) {
+    final StrutsPackage strutsPackage = DomUtil.getParentOfType(context.getInvocationElement(),
+                                                                StrutsPackage.class,
+                                                                true);
+    assert strutsPackage != null : context.getInvocationElement();
+    return strutsPackage;
   }
 
   /**

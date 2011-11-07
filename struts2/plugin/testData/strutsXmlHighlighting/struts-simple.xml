@@ -26,7 +26,7 @@
   <!-- BEAN =================================================================================================== -->
 
   <bean class="MyClass"/>
-  <bean class="<error>INVALID_VALUE</error>"/>
+  <bean class="<error descr="Cannot resolve class 'INVALID_VALUE'">INVALID_VALUE</error>"/>
 
   <bean class="<error descr="Interface not allowed">MyInterface</error>"/>
 
@@ -42,15 +42,15 @@
 
   <bean class="MyClass" static="false"/>
   <bean class="MyClass" static="true"/>
-  <bean class="MyClass" static="<error>INVALID_VALUE</error>"/>
+  <bean class="MyClass" static="<error descr="Cannot resolve symbol INVALID_VALUE">INVALID_VALUE</error>"/>
 
   <bean class="MyClass" optional="false"/>
   <bean class="MyClass" optional="true"/>
-  <bean class="MyClass" optional="<error>INVALID_VALUE</error>"/>
+  <bean class="MyClass" optional="<error descr="Cannot resolve symbol INVALID_VALUE">INVALID_VALUE</error>"/>
 
   <bean class="MyClass" name="myBean"/>
-  <bean class="MyClass" name=<error>""</error>/>
-  <bean class="MyClass" name="<error> </error>"/>
+  <bean class="MyClass" name=<error descr="Value must not be empty">""</error>/>
+  <bean class="MyClass" name="<error descr="Value must not be empty"> </error>"/>
 
   <!-- TODO must be unique within same "type"-elements -->
   <bean class="MyClass" name="DUPLICATED_NAME"/>
@@ -61,24 +61,24 @@
 
   <!-- "name" -->
   <package name="validName"/>
-  <package name=<error>""</error>/>
-  <package name="<error> </error>"/>
-  <package name="<error>DUPLICATED_NAME</error>"/>
-  <package name="<error>DUPLICATED_NAME</error>"/>
+  <package name=<error descr="Value must not be empty">""</error>/>
+  <package name="<error descr="Value must not be empty"> </error>"/>
+  <package name="<error descr="Struts Package with such name already exists">DUPLICATED_NAME</error>"/>
+  <package name="<error descr="Struts Package with such name already exists">DUPLICATED_NAME</error>"/>
 
   <!-- "namespace" -->
-  <package name="emptyName" namespace=<error>""</error>/>
-  <package name="emptyName2" namespace="<error> </error>"/>
+  <package name="emptyName" namespace=<error descr="Value must not be empty"><error descr="Namespace must start with '/'">""</error></error>/>
+  <package name="emptyName2" namespace="<error descr="Value must not be empty"><error descr="Namespace must start with '/'"> </error></error>"/>
   <package name="doesNotStartWithSlash" namespace="<error descr="Namespace must start with '/'">INVALID_VALUE</error>"/>
 
   <!-- "abstract" -->
   <package name="validName3" abstract="true"/>
   <package name="validName3_1" abstract="false"/>
-  <package name="validName3_2" abstract="<error>INVALID_VALUE</error>"/>
+  <package name="validName3_2" abstract="<error descr="Cannot resolve symbol INVALID_VALUE">INVALID_VALUE</error>"/>
 
   <!-- "extends" -->
   <package name="extendingPackage" extends="validName3"/>
-  <package name="extendingPackageExtendsInvalid" extends="<error>INVALID_VALUE</error>"/>
+  <package name="extendingPackageExtendsInvalid" extends="<error descr="Cannot resolve package 'INVALID_VALUE'">INVALID_VALUE</error>"/>
 
 
   <!-- DEFAULT-ACTION-REF  ====================================================================================== -->
@@ -105,7 +105,7 @@
   </package>
 
   <package name="defaultInterceptorRefError">
-    <default-interceptor-ref name="<error>INVALID_VALUE</error>"/>
+    <default-interceptor-ref name="<error descr="Cannot resolve interceptor-stack 'INVALID_VALUE'">INVALID_VALUE</error>"/>
   </package>
   
   <package name="defaultInterceptorRefExtends" extends="defaultInterceptorRef">
@@ -117,10 +117,10 @@
   <!-- "name" -->
   <package name="action1">
     <action name="validName"/>
-    <action name=<error>""</error>/>
-    <action name="<error> </error>"/>
-    <action name="<error>DUPLICATED_NAME</error>"/>
-    <action name="<error>DUPLICATED_NAME</error>"/>
+    <action name=<error descr="Value must not be empty">""</error>/>
+    <action name="<error descr="Value must not be empty"> </error>"/>
+    <action name="<error descr="Struts Action with such name already exists">DUPLICATED_NAME</error>"/>
+    <action name="<error descr="Struts Action with such name already exists">DUPLICATED_NAME</error>"/>
   </package>
 
   <!-- "class" -->
@@ -128,7 +128,7 @@
     <action name="validName" class="MyClass"/>
     <action name="validWildcard*" class="My{0}WildcardClass"/>
     <action name="validNameButNoWildcard" class="<error descr="Cannot resolve class 'My{0}WildcardClass'">My{0}WildcardClass</error>"/>
-    <action name="unknownClass" class="<error>INVALID_VALUE</error>"/>
+    <action name="unknownClass" class="<error descr="Cannot resolve class 'INVALID_VALUE'">INVALID_VALUE</error>"/>
     <action name="interfaceNotAllowed" class='<error descr="Interface not allowed">MyInterface</error>'/>
     <action name="abstractClassNotAllowed" class='<error descr="Abstract class is not allowed">MyAbstractClass</error>'/>
   </package>
@@ -140,11 +140,11 @@
     <action name="actionMethodGetterButNoField" class="MyClass" method="getValidActionMethodNoUnderlyingField"/>
     <action name="actionMethodReturnResult" class="MyClass" method="validActionMethodResult"/>
 
-    <action name="nonExistingActionMethod" class="MyClass" method="<error>INVALID_VALUE</error>"/>
+    <action name="nonExistingActionMethod" class="MyClass" method="<error descr="Cannot resolve action-method 'INVALID_VALUE'">INVALID_VALUE</error>"/>
     <action name="invalidActionMethodDueToWrongReturnType" class="MyClass"
-            method="<error>invalidActionMethodDueToWrongReturnType</error>"/>
+            method="<error descr="Cannot resolve action-method 'invalidActionMethodDueToWrongReturnType'">invalidActionMethodDueToWrongReturnType</error>"/>
     <action name="invalidActionMethodIsSimplePropertyGetter" class="MyClass"
-            method="<error>getMyField</error>"/>
+            method="<error descr="Cannot resolve action-method 'getMyField'">getMyField</error>"/>
   </package>
 
 
@@ -159,18 +159,18 @@
     <!-- "name" -->
     <action name="testResultNames">
       <!-- default name = success, cannot have two -->
-      <<error>result</error>>testResultNames.action</result>
-      <<error>result</error>>testResultNames.action</result>
+      <<error descr="Result with such name already exists">result</error>>testResultNames.action</result>
+      <<error descr="Result with such name already exists">result</error>>testResultNames.action</result>
 
-      <result name="<error>DUPLICATED_NAME</error>">testResultNames.action</result>
-      <result name="<error>DUPLICATED_NAME</error>">testResultNames.action</result>
+      <result name="<error descr="Result with such name already exists">DUPLICATED_NAME</error>">testResultNames.action</result>
+      <result name="<error descr="Result with such name already exists">DUPLICATED_NAME</error>">testResultNames.action</result>
     </action>
 
     <!-- "type" -->
     <action name="testResultTypeAttribute">
       <result name="validEmptyResultType">testResultNames.action</result>
       <result name="validResultType" type="dispatcher">testResultNames.action</result>
-      <result name="invalidResultType" type="<error>INVALID_VALUE</error>">testResultNames.action</result>
+      <result name="invalidResultType" type="<error descr="Cannot resolve result-type 'INVALID_VALUE'">INVALID_VALUE</error>">testResultNames.action</result>
     </action>
 
   </package>
@@ -183,19 +183,30 @@
 
       <!-- "class" -->
       <result-type name="validSubClass" class="org.apache.struts2.dispatcher.ServletDispatcherResult"/>
-      <result-type name="invalidSubClass" class="<error>MyClass</error>"/>
+      <result-type name="invalidSubClass" class="<error descr="'MyClass' is not assignable to 'com.opensymphony.xwork2.Result'">MyClass</error>"/>
 
       <!-- "name" -->
       <!-- must be non-empty -->
-      <result-type name=<error>""</error> class="org.apache.struts2.dispatcher.ServletDispatcherResult"/>
+      <result-type name=<error descr="Value must not be empty">""</error> class="org.apache.struts2.dispatcher.ServletDispatcherResult"/>
 
-      <result-type name="<error>DUPLICATED_NAME</error>" class="org.apache.struts2.dispatcher.ServletDispatcherResult"/>
-      <result-type name="<error>DUPLICATED_NAME</error>" class="org.apache.struts2.dispatcher.ServletDispatcherResult"/>
+      <result-type name="<error descr="Result Type with such name already exists">DUPLICATED_NAME</error>" class="org.apache.struts2.dispatcher.ServletDispatcherResult"/>
+      <result-type name="<error descr="Result Type with such name already exists">DUPLICATED_NAME</error>" class="org.apache.struts2.dispatcher.ServletDispatcherResult"/>
 
       <!-- default TODO only one "true" per package allowed -->
       <result-type name="validDefaultValue_true" class="org.apache.struts2.dispatcher.ServletDispatcherResult" default="true"/>
       <result-type name="validDefaultValue_false" class="org.apache.struts2.dispatcher.ServletDispatcherResult" default="false"/>
     </result-types>
+
+  </package>
+
+  <!-- access <result-type> inherited via "extends" -->
+  <package name="extendResultType" extends="testResultType">
+
+    <action name="testExtends">
+      <result name="result1" type="validSubClass"/>
+
+      <result name="result2" type="<error descr="Cannot resolve result-type 'INVALID_VALUE'">INVALID_VALUE</error>"/>
+    </action>
 
   </package>
 

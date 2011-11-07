@@ -23,6 +23,7 @@
 
   <package name="actionChainTest" namespace="/actionChainTest">
     <result-types>
+      <!-- inherited by all other packages in this file -->
       <result-type name="chain" class="com.opensymphony.xwork2.ActionChainResult"/>
     </result-types>
 
@@ -46,7 +47,7 @@
   </package>
 
 
-  <package name="actionChainTest2" namespace="/actionChainTest2">
+  <package name="actionChainTest2" namespace="/actionChainTest2" extends="actionChainTest">
 
     <action name="anotherAction"/>
 
@@ -62,7 +63,7 @@
   </package>
 
 
-  <package name="wildcardActionChainTest" namespace="/actionChainTestWildcards">
+  <package name="wildcardActionChainTest" namespace="/actionChainTestWildcards" extends="actionChainTest">
 
     <action name="wildcardPath*">
       <result name="wildcard" type="chain">wildcardPath</result>
