@@ -2,76 +2,37 @@ package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.ComplementSwfBuilder;
 import com.intellij.flex.uiDesigner.DebugPathManager;
-import com.intellij.flex.uiDesigner.abc.AbcFilter;
-import com.intellij.flex.uiDesigner.abc.Decoder;
-import com.intellij.flex.uiDesigner.abc.DecoderException;
+import com.intellij.flex.uiDesigner.abc.*;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.libraries.FlexOverloadedClasses.InjectionClassifier;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Pass;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.text.CharArrayUtil;
 import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import static com.intellij.flex.uiDesigner.libraries.Definition.ResolvedState;
-import static com.intellij.flex.uiDesigner.libraries.LibrarySorter.FlexLibsNames.*;
 
 public class LibrarySorter {
-  @SuppressWarnings("unchecked")
-  final static Pair<String, String>[] FLEX_LIBS_PATTERNS = new Pair[]{
-    new Pair<String, String>(FRAMEWORK, "FrameworkClasses"),
-    new Pair<String, String>(AIRFRAMEWORK, "AIRFrameworkClasses"),
-    new Pair<String, String>(SPARK, "SparkClasses"),
-    new Pair<String, String>(AIRSPARK, "AIRSparkClasses"),
-
-    new Pair<String, String>(MX, "MxClasses"),
-    new Pair<String, String>(RPC, "RPCClasses"),
-    new Pair<String, String>(MOBILECOMPONENTS, "MobileComponentsClasses")};
-
   private final Module module;
 
   private GlobalSearchScope definitionSearchScope;
   private boolean useIndexForFindDefinitions;
   private char[] fqnBuffer;
-
-  private static final Map<String,Set<CharSequence>> BAD_FLEX_CLASSES = new THashMap<String, Set<CharSequence>>();
-  
-  public interface FlexLibsNames {
-    String AIRSPARK = "airspark";
-    String SPARK = "spark";
-    String FRAMEWORK = "framework";
-    String AIRFRAMEWORK = "airframework";
-    String MX = "mx";
-    String RPC = "rpc";
-    String MOBILECOMPONENTS = "mobilecomponents";
-  }
-
-  static {
-    Set<CharSequence> set;
-    for (Pair<String, String> pair : FLEX_LIBS_PATTERNS) {
-      if (pair.first.equals(AIRSPARK)) {
-        set = createSet(FlexOverloadedClasses.AIR_SPARK_CLASSES.size() + 1);
-        set.addAll(FlexOverloadedClasses.AIR_SPARK_CLASSES);
-      }
-      else {
-        set = createSet(1);
-      }
-
-      set.add(pair.second);
-      BAD_FLEX_CLASSES.put(pair.first, set);
-    }
-  }
 
   public LibrarySorter(@NotNull Module module) {
     this.module = module;
@@ -105,54 +66,66 @@ public class LibrarySorter {
     return items;
   }
 
-  public SortResult sort(final List<Library> libraries, final String flexSdkVersion, final boolean isFromSdk, File outFile,
-                         Condition<String> isExternal) throws IOException {
+  public SortResult sort(final List<Library> libraries, final boolean isFromSdk, File outFile,
+                         Condition<String> isExternal, @Nullable Pass<Map<CharSequence, Definition>> definitionMapPostProcessor) throws IOException {
     useIndexForFindDefinitions = !isFromSdk;
 
     ArrayList<Library> resourceBundleOnlyItems = null;
 
     final THashMap<CharSequence, Definition> definitionMap = new THashMap<CharSequence, Definition>(libraries.size() * 128, AbcFilter.HASHING_STRATEGY);
     final List<LibrarySetItem> unsortedItems = collectItems(libraries, definitionMap, isExternal);
-    final AbcMerger abcMerger = new AbcMerger(definitionMap, flexSdkVersion, outFile);
-    final ArrayList<Library> items = new ArrayList<Library>(unsortedItems.size());
-    for (LibrarySetItem item : unsortedItems) {
-      if (!item.hasDefinitions()) {
-        if (item.library.hasResourceBundles()) {
-          if (resourceBundleOnlyItems == null) {
-            resourceBundleOnlyItems = new ArrayList<Library>();
+    final AbcMerger abcMerger = new AbcMerger(definitionMap, outFile);
+    try {
+      final ArrayList<Library> items = new ArrayList<Library>(unsortedItems.size());
+      for (LibrarySetItem item : unsortedItems) {
+        if (!item.hasDefinitions()) {
+          if (item.library.hasResourceBundles()) {
+            if (resourceBundleOnlyItems == null) {
+              resourceBundleOnlyItems = new ArrayList<Library>();
+            }
+            resourceBundleOnlyItems.add(item.library);
           }
-          resourceBundleOnlyItems.add(item.library);
+          continue;
         }
-        continue;
+
+        items.add(item.library);
+        abcMerger.process(item.library);
+      }
+      
+      if (definitionMapPostProcessor != null) {
+        definitionMapPostProcessor.pass(definitionMap);
       }
 
-      items.add(item.library);
-      abcMerger.process(item.library);
+      final List<Decoder> decoders = new ArrayList<Decoder>(definitionMap.size());
+      definitionMap.forEachValue(new TObjectProcedure<Definition>() {
+        @Override
+        public boolean execute(Definition definition) {
+          final BufferWrapper abcData = definition.doAbcData;
+          if (abcData == null) {
+            return true;
+          }
+
+          // dependencies may be cyclic, see charts.swc from Flex SDK 4.5.1 (mx.charts.chartClasses:DataTransform and mx.charts.chartClasses:IChartElement)
+          // but we must write definition _only_ after it's dependencies (any way, even if it is important only if dep type is inheritance)
+          definition.doAbcData = null;
+          if (definition.dependencies != null && (definition.resolved == ResolvedState.YES ||
+                                                  (definition.resolved == ResolvedState.UNKNOWN &&
+                                                   processDependencies(decoders, definition, definitionMap)))) {
+              decoders.add(new Decoder(abcData));
+          }
+
+          return true;
+        }
+      });
+
+      final Encoder encoder = new Encoder();
+      //final Encoder encoder = flexSdkVersion != null ? new FlexEncoder("test", flexSdkVersion) : new Encoder();
+      abcMerger.end(decoders, encoder);
+      return new SortResult(definitionMap, items, resourceBundleOnlyItems);
     }
-
-    final List<Decoder> decoders = new ArrayList<Decoder>(definitionMap.size());
-    definitionMap.forEachValue(new TObjectProcedure<Definition>() {
-      @Override
-      public boolean execute(Definition definition) {
-        if (definition.doAbcData != null && definition.dependencies != null && (definition.resolved == ResolvedState.YES ||
-                                                                                (definition.resolved == ResolvedState.UNKNOWN &&
-                                                                                 processDependencies(decoders, definition, definitionMap)))) {
-          // dependecies may be cyclic, see charts.swc from Flex SDK 4.5.1 (mx.charts.chartClasses:DataTransform and mx.charts.chartClasses:IChartElement)
-          if (definition.doAbcData != null) {
-            decoders.add(new Decoder(definition.doAbcData));
-            definition.doAbcData = null;
-          }
-        }
-        return true;
-      }
-    });
-
-    abcMerger.end(decoders, flexSdkVersion);
-    return new SortResult(definitionMap, items, resourceBundleOnlyItems);
-  }
-
-  private static THashSet<CharSequence> createSet(int size) {
-    return new THashSet<CharSequence>(size, AbcFilter.HASHING_STRATEGY);
+    finally {
+      abcMerger.close();
+    }
   }
 
   @SuppressWarnings({"UnusedDeclaration"})
@@ -195,6 +168,15 @@ public class LibrarySorter {
         }
       }
 
+      final BufferWrapper depAbcData;
+      if (dependency == null) {
+        depAbcData = null;
+      }
+      else {
+        depAbcData = dependency.doAbcData;
+        dependency.doAbcData = null;
+      }
+
       if (dependency == null || dependency.resolved == ResolvedState.NO ||
           (dependency.resolved == ResolvedState.UNKNOWN && !processDependencies(decoders, dependency, definitionMap))) {
         definition.markAsUnresolved();
@@ -202,8 +184,8 @@ public class LibrarySorter {
         return false;
       }
 
-      if (dependency.doAbcData != null) {
-        decoders.add(new Decoder(dependency.doAbcData));
+      if (depAbcData != null) {
+        decoders.add(new Decoder(depAbcData));
         dependency.doAbcData = null;
       }
     }

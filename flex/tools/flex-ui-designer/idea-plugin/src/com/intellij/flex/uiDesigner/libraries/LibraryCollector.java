@@ -186,7 +186,7 @@ class LibraryCollector {
     }
 
     final String name = file.getName();
-    for (Pair<String, String> pair : LibrarySorter.FLEX_LIBS_PATTERNS) {
+    for (Pair<String, String> pair : FlexLibraryDefinitionsPostProcessor.FLEX_LIBS_PATTERNS) {
       if (name.startsWith(pair.first)) {
         return libraryContains(pair.second, jarFile);
       }

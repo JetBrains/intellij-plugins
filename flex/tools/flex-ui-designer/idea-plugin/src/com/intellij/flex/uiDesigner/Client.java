@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Client implements Closable {
@@ -168,11 +169,11 @@ public class Client implements Closable {
   }
 
   public void registerLibrarySet(LibrarySet librarySet) {
-    final List<Library> items = librarySet.getLibraries();
-    // contains only resource bundles
-    // todo write test for it
-    if (items.isEmpty()) {
-      return;
+    final List<Library> styleOwners = new ArrayList<Library>();
+    for (Library library : librarySet.getLibraries()) {
+      if (library.inheritingStyles != null || library.defaultsStyle != null) {
+        styleOwners.add(library);
+      }
     }
 
     boolean hasError = true;
@@ -184,9 +185,9 @@ public class Client implements Closable {
       LibrarySet parent = librarySet.getParent();
       out.writeShort(parent == null ? -1 : parent.getId());
 
-      out.write(items.size());
+      out.write(styleOwners.size());
       final LibraryManager libraryManager = LibraryManager.getInstance();
-      for (Library library : items) {
+      for (Library library : styleOwners) {
         final boolean registered = libraryManager.isRegistered(library);
         out.write(registered);
 

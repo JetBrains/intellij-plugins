@@ -14,6 +14,8 @@ class Definition {
 
   public BufferWrapper doAbcData;
 
+  public String name;
+
   public void setTimeAsString(String value) {
     timeAsString = value;
   }

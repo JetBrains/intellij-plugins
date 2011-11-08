@@ -4,7 +4,6 @@ import com.intellij.flex.uiDesigner.abc.*;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.TIntObjectHashMap;
 import gnu.trove.TObjectProcedure;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,9 +19,9 @@ class AbcMerger extends AbcTranscoder {
   private final TIntObjectHashMap<SymbolInfo> currentSymbolsInfo = new TIntObjectHashMap<SymbolInfo>();
   private final ArrayList<SymbolInfo> symbols = new ArrayList<SymbolInfo>();
   private int symbolCounter;
+  private Library library;
 
-  public AbcMerger(Map<CharSequence, Definition> definitionMap, @SuppressWarnings("UnusedParameters") @Nullable String flexSdkVersion, File outFile)
-    throws IOException {
+  public AbcMerger(Map<CharSequence, Definition> definitionMap, File outFile) throws IOException {
     this.definitionMap = definitionMap;
 
     out = new FileOutputStream(outFile);
@@ -41,9 +40,12 @@ class AbcMerger extends AbcTranscoder {
   }
 
   public void process(Library library) throws IOException {
-    final VirtualFile file = library.getSwfFile();
+    this.library = library;
+
+    VirtualFile file = library.getSwfFile();
     transcode(file.getInputStream(), file.getLength());
     processTags(null);
+    this.library = null;
 
     if (!currentSymbolsInfo.isEmpty()) {
       symbols.ensureCapacity(symbols.size() + currentSymbolsInfo.size());
@@ -63,13 +65,9 @@ class AbcMerger extends AbcTranscoder {
 
       currentSymbolsInfo.clear();
     }
-
-    //out.flush();
-    //channel.force(true);
   }
 
-  public void end(List<Decoder> decoders, String flexSdkVersion) throws IOException {
-    final Encoder encoder = flexSdkVersion != null ? new FlexEncoder("test", flexSdkVersion) : new Encoder();
+  public void end(List<Decoder> decoders, Encoder encoder) throws IOException {
     encoder.configure(decoders, null);
     SwfUtil.mergeDoAbc(decoders, encoder);
     encoder.writeDoAbc(channel, true);
@@ -103,15 +101,6 @@ class AbcMerger extends AbcTranscoder {
       b.limit(b.capacity());
     }
 
-    // write symbolClass
-    //buffer.clear();
-    //symbolClassBuffer.flip();
-    //encodeTagHeader(TagTypes.SymbolClass, symbolClassBuffer.limit() + 2 /* numSymbols */);
-    //buffer.putShort((short)totalNumSymbols);
-    //buffer.flip();
-    //channel.write(buffer);
-    //channel.write(symbolClassBuffer);
-
     // write footer — ShowFrame and End
     buffer.clear();
     SwfUtil.footer(buffer);
@@ -119,8 +108,13 @@ class AbcMerger extends AbcTranscoder {
     channel.write(buffer);
 
     SwfUtil.header(channel, buffer);
-    out.flush();
-    out.close();
+
+  }
+
+  public void close() throws IOException {
+    if (out != null) {
+      out.close();
+    }
     channel = null;
   }
 
@@ -230,7 +224,10 @@ class AbcMerger extends AbcTranscoder {
 
   protected void doAbc2(int length) throws IOException {
     final Definition definition = definitionMap.get(transientNameString);
-    definition.doAbcData = createBufferWrapper(length);
+    // may be overloaded (i.e. new definition with high timestamp exists)
+    if (definition.getLibrary().library == library) {
+      definition.doAbcData = createBufferWrapper(length);
+    }
   }
 
   @Override

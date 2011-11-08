@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.flex.uiDesigner.libraries.FlexLibsNames;
 import com.intellij.flex.uiDesigner.libraries.Library;
-import com.intellij.flex.uiDesigner.libraries.LibrarySorter.FlexLibsNames;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.WriteAction;
