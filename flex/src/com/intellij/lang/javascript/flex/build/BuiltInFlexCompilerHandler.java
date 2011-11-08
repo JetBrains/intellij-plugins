@@ -94,14 +94,8 @@ public class BuiltInFlexCompilerHandler {
                                     final CompileContext context) throws IOException {
     final StringBuilder classpath = new StringBuilder();
 
-    if (!StringUtil.isEmpty(sdkVersion) &&
-        StringUtil.compareVersionNumbers(sdkVersion, "3.2") >= 0 &&
-        StringUtil.compareVersionNumbers(sdkVersion, "4") < 0) {
-
-      classpath.append(FlexUtils.getPathToBundledJar("idea-flex-compiler-fix.jar"));
-      classpath.append(File.pathSeparatorChar);
-    }
-
+    classpath.append(FlexUtils.getPathToBundledJar("idea-flex-compiler-fix.jar"));
+    classpath.append(File.pathSeparatorChar);
     classpath.append(FlexUtils.getPathToBundledJar("flex-compiler.jar"));
 
     if (data == null) {

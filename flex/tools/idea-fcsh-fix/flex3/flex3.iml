@@ -9,24 +9,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="common" />
     <orderEntry type="module" module-name="launcher" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$FLEX_SDK_3.2$/lib/mxmlc.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$FLEX_SDK_3.2$/lib/swfutils.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="Flex SDK 3.2" level="project" />
   </component>
 </module>
 

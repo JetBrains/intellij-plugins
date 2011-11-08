@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Flex SDK 3.2">
+    <CLASSES>
+      <root url="jar://$FLEX_SDK_3.2$/lib/swfutils.jar!/" />
+      <root url="jar://$FLEX_SDK_3.2$/lib/mxmlc.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

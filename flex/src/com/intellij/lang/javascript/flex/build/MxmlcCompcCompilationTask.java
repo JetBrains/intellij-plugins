@@ -40,8 +40,9 @@ public class MxmlcCompcCompilationTask extends FlexCompilationTask {
     final boolean swf = myOldConfig != null
                         ? myOldConfig.OUTPUT_TYPE.equals(FlexBuildConfiguration.APPLICATION)
                         : myFlexIdeConfig.getOutputType() != OutputType.Library;
-    // todo take correct SDK from myFlexIdeConfig.DEPENDENCIES...
-    final Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(myModule);
+    final Sdk sdk = myOldConfig != null
+                    ? FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(myModule)
+                    : FlexUtils.createFlexSdkWrapper(myFlexIdeConfig);
 
     final List<String> compilerCommand = FlexCompilationUtils.getMxmlcCompcCommand(myModule.getProject(), sdk, swf);
 

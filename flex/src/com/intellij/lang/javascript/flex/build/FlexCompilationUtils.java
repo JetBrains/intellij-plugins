@@ -195,28 +195,18 @@ public class FlexCompilationUtils {
   }
 
   static List<String> getMxmlcCompcCommand(final Project project, final Sdk flexSdk, final boolean isApp) {
-    final String sdkVersion = flexSdk.getVersionString();
     final List<String> command = new ArrayList<String>();
 
     final String className =
       isApp ? (FlexSdkUtils.isFlex4Sdk(flexSdk) ? "flex2.tools.Mxmlc" : "flex2.tools.Compiler") : "flex2.tools.Compc";
 
-
-    if (!StringUtil.isEmpty(sdkVersion) &&
-        StringUtil.compareVersionNumbers(sdkVersion, "3.2") >= 0 &&
-        StringUtil.compareVersionNumbers(sdkVersion, "4") < 0) {
-
-      String additionalClasspath = FileUtil.toSystemDependentName(FlexUtils.getPathToBundledJar("idea-flex-compiler-fix.jar"));
-      if (!(flexSdk.getSdkType() instanceof FlexmojosSdkType)) {
-        additionalClasspath += File.pathSeparator + FileUtil.toSystemDependentName(flexSdk.getHomePath() + "/lib/compc.jar");
-      }
-
-      command.addAll(FlexSdkUtils.getCommandLineForSdkTool(project, flexSdk, additionalClasspath, className, null));
+    String additionalClasspath = FileUtil.toSystemDependentName(FlexUtils.getPathToBundledJar("idea-flex-compiler-fix.jar"));
+    if (!(flexSdk.getSdkType() instanceof FlexmojosSdkType)) {
+      additionalClasspath += File.pathSeparator + FileUtil.toSystemDependentName(flexSdk.getHomePath() + "/lib/compc.jar");
     }
-    else {
-      command
-        .addAll(FlexSdkUtils.getCommandLineForSdkTool(project, flexSdk, null, className, isApp ? "mxmlc.jar" : "compc.jar"));
-    }
+
+    command.addAll(FlexSdkUtils.getCommandLineForSdkTool(project, flexSdk, additionalClasspath, className, null));
+
     return command;
   }
 

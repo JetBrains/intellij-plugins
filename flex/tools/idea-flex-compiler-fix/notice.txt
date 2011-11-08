@@ -1,2 +1,3 @@
-Original source file can be found at:
+Original source files can be found at:
 svn://opensource.adobe.com/svn/opensource/flex/sdk/tags/3.2.0.3958/modules/compiler/src/java/flex2/compiler/API.java (revision 2721)
+svn://opensource.adobe.com/svn/opensource/flex/sdk/tags/3.2.0.3958/modules/compiler/src/java/flex2/compiler/config/FileConfigurator.java (revision 2001)
