@@ -18,7 +18,6 @@
       <artifactId>framework</artifactId>
       <type>swc</type>
       <version>4.1.0.16076</version>
-      <scope>merged</scope>
     </dependency>
   </dependencies>
 
@@ -36,7 +35,6 @@
           </dependency>
         </dependencies>
         <configuration>
-          <iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking>true</iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking>
           <defines combine.children="append">
             <property>
               <name>flex::v4_1</name>

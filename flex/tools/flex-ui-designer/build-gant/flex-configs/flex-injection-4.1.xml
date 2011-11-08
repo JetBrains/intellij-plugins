@@ -11,6 +11,10 @@
 			<value>true</value>
 		</define>
 		<external-library-path>
+			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.1.0.16076/framework-4.1.0.16076.swc</path-element>
+			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576.swc</path-element>
+			<path-element>@@repo@@/com/adobe/flex/framework/airspark/4.5.2.21576/airspark-4.5.2.21576.swc</path-element>
+			<path-element>@@repo@@/com/adobe/flex/framework/airframework/4.5.2.21576/airframework-4.5.2.21576.swc</path-element>
 			<path-element>@@target@@/shared-1.0-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/2.6/airglobal.swc</path-element>
 		</external-library-path>
@@ -19,12 +23,7 @@
 			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
 		</fonts>
 		<include-libraries/>
-		<library-path>
-			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.1.0.16076/framework-4.1.0.16076.swc</path-element>
-			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576.swc</path-element>
-			<path-element>@@repo@@/com/adobe/flex/framework/airspark/4.5.2.21576/airspark-4.5.2.21576.swc</path-element>
-			<path-element>@@repo@@/com/adobe/flex/framework/airframework/4.5.2.21576/airframework-4.5.2.21576.swc</path-element>
-		</library-path>
+		<library-path/>
 		<locale/>
 		<namespaces>
 			<namespace>
@@ -51,87 +50,52 @@
 		<use-resource-bundle-metadata>false</use-resource-bundle-metadata>
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
-	<externs>
-		<symbol>spark.components.Application</symbol>
-		<symbol>spark.components.Group</symbol>
-		<symbol>spark.components.Button</symbol>
-		<symbol>spark.components.supportClassesButtonBase</symbol>
-		<symbol>mx.controls.FlexNativeMenu</symbol>
-		<symbol>spark.components.supportClasses.TextBase</symbol>
-		<symbol>spark.components.windowClasses.TitleBar</symbol>
-		<symbol>mx.effects.EffectManager</symbol>
-		<symbol>mx.binding.BindingManager</symbol>
-		<symbol>mx.states.AddItems</symbol>
-		<symbol>mx.states.SetProperty</symbol>
-		<symbol>mx.states.SetStyle</symbol>
-		<symbol>mx.states.State</symbol>
-		<symbol>mx.core.IWindow</symbol>
-		<symbol>mx.styles.CSSStyleDeclaration</symbol>
-		<symbol>mx.styles.CSSSelector</symbol>
-		<symbol>mx.styles.IStyleManager2</symbol>
-		<symbol>mx.styles.IStyleManager</symbol>
-		<symbol>mx.styles.IStyleClient</symbol>
-		<symbol>mx.styles.ISimpleStyleClient</symbol>
-		<symbol>mx.styles.IAdvancedStyleClient</symbol>
-		<symbol>mx.managers.ToolTipManager</symbol>
-		<symbol>mx.managers.ToolTipManagerImpl</symbol>
-		<symbol>mx.managers.DragManagerImpl</symbol>
-		<symbol>mx.managers.systemClasses.ActiveWindowManager</symbol>
-		<symbol>mx.core.IUIComponent</symbol>
-		<symbol>mx.core.UIComponent</symbol>
-		<symbol>mx.resources.IResourceManager</symbol>
-		<symbol>mx.managers.FocusManager</symbol>
-		<symbol>mx.managers.PopUpManagerImpl</symbol>
-		<symbol>mx.core.mx_internal</symbol>
-		<symbol>mx.core.IVisualElement</symbol>
-		<symbol>mx.managers.ISystemManager</symbol>
-		<symbol>mx.managers.IFocusManager</symbol>
-		<symbol>mx.managers.IFocusManagerContainer</symbol>
-		<symbol>mx.managers.ILayoutManagerClient</symbol>
-		<symbol>mx.managers.SystemManager</symbol>
-		<symbol>mx.managers.SystemManagerGlobals</symbol>
-		<symbol>mx.managers.ILayoutManager</symbol>
-		<symbol>mx.core.IChildList</symbol>
-		<symbol>mx.core.IUITextField</symbol>
-		<symbol>mx.core.IFlexDisplayObject</symbol>
-		<symbol>mx.core.IFlexModule</symbol>
-		<symbol>mx.core.IInvalidating</symbol>
-		<symbol>mx.core.UIComponentGlobals</symbol>
-		<symbol>mx.core.IFlexModuleFactory</symbol>
-		<symbol>mx.core.Singleton</symbol>
-	</externs>
-	<includes>
-		<symbol>com.intellij.flex.uiDesigner.flex.DeferredInstanceFromArray</symbol>
-		<symbol>com.intellij.flex.uiDesigner.flex.FlexDocumentFactory</symbol>
-		<symbol>com.intellij.flex.uiDesigner.flex.SpriteLoaderAsset</symbol>
-		<symbol>com.intellij.flex.uiDesigner.flex.FlexModuleFactory</symbol>
-		<symbol>com.intellij.flex.uiDesigner.css.CssReaderImpl</symbol>
-		<symbol>com.intellij.flex.uiDesigner.flex.ModuleManager</symbol>
-		<symbol>com.intellij.flex.uiDesigner.flex.FlexDocumentDisplayManager</symbol>
-		<symbol>com.intellij.flex.uiDesigner.flex.states.AddItems</symbol>
-		<symbol>com.intellij.flex.uiDesigner.flex.states.SetProperty</symbol>
-		<symbol>com.intellij.flex.uiDesigner.flex.states.SetStyle</symbol>
-		<symbol>com.intellij.flex.uiDesigner.flex.states.State</symbol>
-		<symbol>com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromBytes</symbol>
-		<symbol>com.intellij.flex.uiDesigner.flex.states.StaticInstanceReferenceInDeferredParentInstance</symbol>
-		<symbol>com.intellij.flex.uiDesigner.flex.states.PermanentArrayOfDeferredInstanceFromBytes</symbol>
-		<symbol>com.intellij.flex.uiDesigner.flex.states.TransientArrayOfDeferredInstanceFromBytes</symbol>
-		<symbol>com.intellij.flex.uiDesigner.css.ChildStyleManager</symbol>
-		<symbol>mx.styles.StyleProtoChain</symbol>
-		<symbol>mx.styles.StyleManager</symbol>
-		<symbol>mx.managers.LayoutManager</symbol>
-		<symbol>mx.managers.CursorManager</symbol>
-		<symbol>mx.resources.ResourceManager</symbol>
-		<symbol>spark.components.WindowedApplication</symbol>
-		<symbol>spark.components.Window</symbol>
-	</includes>
+	<include-classes>
+		<class>spark.components.supportClasses.SkinnableComponent</class>
+		<class>spark.components.WindowedApplication</class>
+		<class>spark.components.Window</class>
+		<class>mx.styles.StyleProtoChain</class>
+		<class>mx.styles.StyleManager</class>
+		<class>mx.managers.LayoutManager</class>
+		<class>mx.managers.CursorManager</class>
+		<class>mx.resources.ResourceManager</class>
+		<class>com.intellij.flex.uiDesigner.css.AbstractCssStyleDeclaration</class>
+		<class>com.intellij.flex.uiDesigner.css.AbstractStyleManager</class>
+		<class>com.intellij.flex.uiDesigner.css.ChildStyleManager</class>
+		<class>com.intellij.flex.uiDesigner.css.CssReaderImpl</class>
+		<class>com.intellij.flex.uiDesigner.css.InlineCssStyleDeclaration</class>
+		<class>com.intellij.flex.uiDesigner.css.MergedCssStyleDeclaration</class>
+		<class>com.intellij.flex.uiDesigner.css.RootStyleManager</class>
+		<class>com.intellij.flex.uiDesigner.css.RuntimeCssStyleDeclaration</class>
+		<class>com.intellij.flex.uiDesigner.flex.BaseFlexModuleFactoryImpl</class>
+		<class>com.intellij.flex.uiDesigner.flex.BrowserManagerImpl</class>
+		<class>com.intellij.flex.uiDesigner.flex.DeferredInstanceFromArray</class>
+		<class>com.intellij.flex.uiDesigner.flex.DocumentFocusManager</class>
+		<class>com.intellij.flex.uiDesigner.flex.FlexDocumentDisplayManager</class>
+		<class>com.intellij.flex.uiDesigner.flex.FlexDocumentFactory</class>
+		<class>com.intellij.flex.uiDesigner.flex.FlexElementInfoProvider</class>
+		<class>com.intellij.flex.uiDesigner.flex.FlexModuleFactory</class>
+		<class>com.intellij.flex.uiDesigner.flex.HistoryManagerImpl</class>
+		<class>com.intellij.flex.uiDesigner.flex.ModuleManager</class>
+		<class>com.intellij.flex.uiDesigner.flex.SpriteLoaderAsset</class>
+		<class>com.intellij.flex.uiDesigner.flex.states.AddItems</class>
+		<class>com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromBytes</class>
+		<class>com.intellij.flex.uiDesigner.flex.states.PermanentArrayOfDeferredInstanceFromBytes</class>
+		<class>com.intellij.flex.uiDesigner.flex.states.SetProperty</class>
+		<class>com.intellij.flex.uiDesigner.flex.states.SetStyle</class>
+		<class>com.intellij.flex.uiDesigner.flex.states.State</class>
+		<class>com.intellij.flex.uiDesigner.flex.states.StaticInstanceReferenceInDeferredParentInstance</class>
+		<class>com.intellij.flex.uiDesigner.flex.states.TransientArrayOfDeferredInstanceFromBytes</class>
+		<class>com.intellij.flex.uiDesigner.flex.SystemChildList</class>
+		<class>com.intellij.flex.uiDesigner.flex.SystemRawChildrenList</class>
+		<class>com.intellij.flex.uiDesigner.flex.ToolTipManager</class>
+		<class>com.intellij.flex.uiDesigner.flex.TopLevelSystemManagerProxy</class>
+		<class>com.intellij.flex.uiDesigner.SpecialClassForAdobeEngineers</class>
+	</include-classes>
 	<metadata>
 		<title>flex-injection-4.1</title>
 	</metadata>
-	<output>@@target@@/flex-injection-4.1-1.0-SNAPSHOT.swf</output>
+	<output>@@target@@/flex-injection-4.1.swc</output>
 	<target-player>10.2</target-player>
 	<tools-locale>en_US</tools-locale>
-	<file-specs>
-		<path-element>@@baseDir@@/src/com/intellij/flex/uiDesigner/SpecialClassForAdobeEngineers.as</path-element>
-	</file-specs>
 </flex-config>

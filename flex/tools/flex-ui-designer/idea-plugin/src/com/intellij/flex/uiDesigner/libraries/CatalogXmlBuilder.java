@@ -5,6 +5,8 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xml.NanoXmlUtil.IXMLBuilderAdapter;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -26,6 +28,7 @@ class CatalogXmlBuilder extends IXMLBuilderAdapter {
   private String mod;
   private String dep;
 
+  @Nullable
   private LibrarySetItem library;
   private final Map<CharSequence, Definition> definitionMap;
   private final Condition<String> isExternal;
@@ -35,7 +38,7 @@ class CatalogXmlBuilder extends IXMLBuilderAdapter {
     this.isExternal = isExternal;
   }
 
-  public void setLibrary(LibrarySetItem item) {
+  public void setLibrary(@NotNull LibrarySetItem item) {
     library = item;
     collectResourceBundles = item.library.resourceBundles.isEmpty();
   }
@@ -92,11 +95,14 @@ class CatalogXmlBuilder extends IXMLBuilderAdapter {
       }
     }
     else if (defProcessing) {
+      if (isExternal.value(value)) {
+        return;
+      }
+
       Definition oldDefinition = definitionMap.get(value);
       long time = -1;
       if (oldDefinition != null) {
-        time = Long.parseLong(mod);
-        if (time > oldDefinition.getTime()) {
+        if (library == null || (time = Long.parseLong(mod)) > oldDefinition.getTime()) {
           oldDefinition.markAsUnresolved();
         }
         else {
@@ -114,7 +120,9 @@ class CatalogXmlBuilder extends IXMLBuilderAdapter {
       }
 
       definitionMap.put(value, definition);
-      library.definitionCounter++;
+      if (library != null) {
+        library.definitionCounter++;
+      }
       dependenciesProcessing = true;
     }
     else if (filesProcessing && name.equals("path")) {
@@ -122,6 +130,7 @@ class CatalogXmlBuilder extends IXMLBuilderAdapter {
         final int vlength = value.length();
         final int secondSlashPosition = StringUtil.lastIndexOf(value, '/', LOCALE_PREFIX_LENGTH + 2, vlength - PROPERTIES_EXTENSION_LENGTH - 1);
         final String locale = value.substring(LOCALE_PREFIX_LENGTH, secondSlashPosition);
+        @SuppressWarnings("ConstantConditions")
         THashSet<String> bundles = library.library.resourceBundles.get(locale);
         if (bundles == null) {
           bundles = new THashSet<String>();

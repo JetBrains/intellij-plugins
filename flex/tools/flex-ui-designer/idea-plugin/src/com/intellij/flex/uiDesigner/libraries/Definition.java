@@ -1,7 +1,6 @@
 package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.abc.BufferWrapper;
-import org.jetbrains.annotations.NotNull;
 
 class Definition {
   private final LibrarySetItem library;
@@ -37,13 +36,14 @@ class Definition {
     this.library = library;
   }
 
-  @NotNull
   public LibrarySetItem getLibrary() {
     return library;
   }
 
   public void markAsUnresolved() {
-    library.definitionCounter--;
+    if (library != null) {
+      library.definitionCounter--;
+    }
   }
 
   static interface ResolvedState {

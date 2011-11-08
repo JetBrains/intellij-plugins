@@ -47,8 +47,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 final class DesignerApplicationUtil {
-  private static final String[] COMPLEMENTS = {"flex4.1", "flex4.5", "air4"};
-
   @NonNls private static final Pattern INFO_PLIST_VERSION_PATTERN =
     Pattern.compile("<key>CFBundleVersion</key>\\s*<string>(.*)</string>");
 
@@ -98,10 +96,6 @@ final class DesignerApplicationUtil {
       for (Pair<String, String> file : files) {
         IOUtil.saveStream(new URL("file://" + home + "/" + file.second), new File(APP_DIR, file.first));
       }
-      for (String complement : COMPLEMENTS) {
-        final String name = complementFilename(complement);
-        IOUtil.saveStream(new URL("file://" + home + "/flex-injection/target/" + name), new File(APP_DIR, name));
-      }
     }
     else {
       final ClassLoader classLoader = DesignerApplicationUtil.class.getClassLoader();
@@ -109,15 +103,7 @@ final class DesignerApplicationUtil {
       for (Pair<String, String> file : files) {
         IOUtil.saveStream(classLoader.getResource(file.first), new File(APP_DIR, file.first));
       }
-      for (String complement : COMPLEMENTS) {
-        final String name = complementFilename(complement);
-        IOUtil.saveStream(classLoader.getResource(name), new File(APP_DIR, name));
-      }
     }
-  }
-
-  private static String complementFilename(String classifier) {
-    return "complement-" + classifier + ".swf";
   }
 
   public static AdlRunConfiguration createTestAdlRunConfiguration() {

@@ -210,15 +210,16 @@ public class LibraryManager {
     if (flexLibrarySet == null) {
       final Set<CharSequence> globalDefinitions = getGlobalDefinitions(libraryCollector.getGlobalLibrary());
       final int id = librarySetIdPool.allocate();
+      Condition<String> globalContains = new Condition<String>() {
+        @Override
+        public boolean value(String name) {
+          return globalDefinitions.contains(name);
+        }
+      };
       final SortResult sortResult = sortLibraries(
-        new LibrarySorter(new FlexDefinitionProcessor(), new FlexDefinitionMapPostProcessor(libraryCollector.getFlexSdkVersion())), id, libraryCollector.sdkLibraries,
+        new LibrarySorter(new FlexDefinitionProcessor(), new FlexDefinitionMapProcessor(libraryCollector.getFlexSdkVersion(), globalContains)), id, libraryCollector.sdkLibraries,
         libraryCollector.getFlexSdkVersion(),
-        new Condition<String>() {
-          @Override
-          public boolean value(String name) {
-            return globalDefinitions.contains(name);
-          }
-        });
+        globalContains);
 
       flexLibrarySet = new FlexLibrarySet(id, null, sortResult.items, sortResult.resourceBundleOnlyItems, new ContainsCondition(globalDefinitions, sortResult.definitionMap));
       Client.getInstance().registerLibrarySet(flexLibrarySet);

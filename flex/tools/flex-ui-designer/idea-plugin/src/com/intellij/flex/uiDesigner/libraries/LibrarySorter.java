@@ -26,15 +26,15 @@ public class LibrarySorter {
   @Nullable
   private final DefinitionProcessor definitionProcessor;
   @Nullable
-  private final Pass<THashMap<CharSequence, Definition>> definitionMapPostProcessor;
+  private final DefinitionMapProcessor definitionMapProcessor;
 
   public LibrarySorter() {
     this(null, null);
   }
 
-  public LibrarySorter(@Nullable DefinitionProcessor definitionProcessor, @Nullable Pass<THashMap<CharSequence, Definition>> definitionMapPostProcessor) {
+  public LibrarySorter(@Nullable DefinitionProcessor definitionProcessor, @Nullable DefinitionMapProcessor definitionMapProcessor) {
     this.definitionProcessor = definitionProcessor;
-    this.definitionMapPostProcessor = definitionMapPostProcessor;
+    this.definitionMapProcessor = definitionMapProcessor;
   }
 
   private static List<LibrarySetItem> collectItems(final List<Library> libraries, Map<CharSequence, Definition> definitionMap,
@@ -76,8 +76,8 @@ public class LibrarySorter {
         abcMerger.process(item.library);
       }
       
-      if (definitionMapPostProcessor != null) {
-        definitionMapPostProcessor.pass(definitionMap);
+      if (definitionMapProcessor != null) {
+        definitionMapProcessor.process(definitionMap, abcMerger);
       }
 
       final List<Decoder> decoders = new ArrayList<Decoder>(definitionMap.size());

@@ -748,7 +748,7 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
   }
 
   flex::v4_5 {
-    include 'baseFlexModuleFactoryImpl45.as';
+    include '../../../../../../baseFlexModuleFactoryImpl45.as';
   }
 
   private var _focusManager:DocumentFocusManager;

@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.io;
 
+import com.google.common.base.Charsets;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -14,6 +15,7 @@ import java.io.*;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
 
 public final class IOUtil {
   private static final Logger LOG = Logger.getInstance(IOUtil.class.getName());
@@ -195,9 +197,13 @@ public final class IOUtil {
       return returnReader ? new CharSequenceReader(content) : content;
     }
 
-    final InputStreamReader reader = new InputStreamReader(file.getInputStream(), file.getCharset());
+    return getCharSequenceOrReader(file.getInputStream(), (int)file.getLength(), file.getCharset(), returnReader);
+  }
+
+  private static Object getCharSequenceOrReader(InputStream inputStream, int length, Charset charset, boolean returnReader) throws IOException {
+    final InputStreamReader reader = new InputStreamReader(inputStream, charset);
     try {
-      char[] chars = new char[(int)file.getLength()];
+      char[] chars = new char[length];
       int count = 0;
       while (count < chars.length) {
         int n = reader.read(chars, count, chars.length - count);
@@ -211,6 +217,14 @@ public final class IOUtil {
     finally {
       reader.close();
     }
+  }
+
+  public static CharArrayReader getCharArrayReader(InputStream inputStream, int length) throws IOException {
+    return (CharArrayReader)getCharSequenceOrReader(inputStream, length, Charsets.UTF_8, true);
+  }
+
+  public static void parseXml(InputStream inputStream, int length, IXMLBuilder builder) throws IOException {
+    NanoXmlUtil.parse(getCharArrayReader(inputStream, length), builder);
   }
 
   public static void parseXml(VirtualFile file, IXMLBuilder builder) throws IOException {

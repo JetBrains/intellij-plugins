@@ -67,6 +67,6 @@ public final class ComplementSwfBuilder {
   }
 
   public static String generateInjectionName(String flexSdkVersion) {
-    return "flex-" + flexSdkVersion + "-injection.abc";
+    return "flex-injection-" + flexSdkVersion + ".swc";
   }
 }

@@ -47,91 +47,40 @@
   </dependencies>
 
   <build>
+    <finalName>${project.artifactId}</finalName>
     <plugins>
       <plugin>
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
         <configuration>
+          <iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking>true</iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking>
           <useResourceBundleMetadata>false</useResourceBundleMetadata>
           <useDefaultLocale>false</useDefaultLocale>
-          <!--<includes>-->
-            <!--<include>com.intellij.flex.uiDesigner.flex.DeferredInstanceFromArray</include>-->
-            <!--<include>com.intellij.flex.uiDesigner.flex.FlexDocumentFactory</include>-->
-            <!--<include>com.intellij.flex.uiDesigner.flex.SpriteLoaderAsset</include>-->
+          <includeClasses>
+            <scan>
+              <includes>
+                <include>com.intellij.**.*</include>
+              </includes>
+              <!-- it is not working, flex compiler include these classes in any way -->
+              <excludes>
+                <exclude>mx.styles.FtyleProtoChain</exclude>
+                <exclude>spark.components.supportClasses.FkinnableComponent</exclude>
+              </excludes>
+            </scan>
 
-            <!--<include>com.intellij.flex.uiDesigner.flex.FlexModuleFactory</include>-->
-            <!--<include>com.intellij.flex.uiDesigner.css.CssReaderImpl</include>-->
-            <!--<include>com.intellij.flex.uiDesigner.flex.ModuleManager</include>-->
-            <!--<include>com.intellij.flex.uiDesigner.flex.FlexDocumentDisplayManager</include>-->
-            <!--<include>com.intellij.flex.uiDesigner.flex.states.AddItems</include>-->
-            <!--<include>com.intellij.flex.uiDesigner.flex.states.SetProperty</include>-->
-            <!--<include>com.intellij.flex.uiDesigner.flex.states.SetStyle</include>-->
-            <!--<include>com.intellij.flex.uiDesigner.flex.states.State</include>-->
-            <!--<include>com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromBytes</include>-->
-            <!--<include>com.intellij.flex.uiDesigner.flex.states.StaticInstanceReferenceInDeferredParentInstance</include>-->
-            <!--<include>com.intellij.flex.uiDesigner.flex.states.PermanentArrayOfDeferredInstanceFromBytes</include>-->
-            <!--<include>com.intellij.flex.uiDesigner.flex.states.TransientArrayOfDeferredInstanceFromBytes</include>-->
-            <!---->
-            <!--<include>com.intellij.flex.uiDesigner.css.ChildStyleManager</include>-->
-            <!---->
-            <!--<include>mx.styles.StyleProtoChain</include>-->
-            <!--<include>mx.styles.StyleManager</include>-->
-            <!--<include>mx.managers.LayoutManager</include>-->
-            <!--<include>mx.managers.CursorManager</include>-->
-            <!--<include>mx.resources.ResourceManager</include>-->
+            <include>spark.components.supportClasses.SkinnableComponent</include>
 
-            <!--<include>spark.components.WindowedApplication</include>-->
-            <!--<include>spark.components.Window</include>-->
-          <!--</includes>-->
-          <!--<externs>-->
-            <!--<symbol>spark.components.Application</symbol>-->
-            <!--<symbol>spark.components.Group</symbol>-->
-            <!--<symbol>spark.components.Button</symbol>-->
-            <!--<symbol>spark.components.supportClassesButtonBase</symbol>-->
-            <!--<symbol>mx.controls.FlexNativeMenu</symbol>-->
-            <!--<symbol>spark.components.supportClasses.TextBase</symbol>-->
-            <!--<symbol>spark.components.windowClasses.TitleBar</symbol>-->
-            <!--<symbol>mx.effects.EffectManager</symbol>-->
-            <!--<symbol>mx.binding.BindingManager</symbol>-->
-            <!--<symbol>mx.states.AddItems</symbol>-->
-            <!--<symbol>mx.states.SetProperty</symbol>-->
-            <!--<symbol>mx.states.SetStyle</symbol>-->
-            <!--<symbol>mx.states.State</symbol>-->
-            <!--<symbol>mx.core.IWindow</symbol>-->
-            <!--<symbol>mx.styles.CSSStyleDeclaration</symbol>-->
-            <!--<symbol>mx.styles.CSSSelector</symbol>-->
-            <!--<symbol>mx.styles.IStyleManager2</symbol>-->
-            <!--<symbol>mx.styles.IStyleManager</symbol>-->
-            <!--<symbol>mx.styles.IStyleClient</symbol>-->
-            <!--<symbol>mx.styles.ISimpleStyleClient</symbol>-->
-            <!--<symbol>mx.styles.IAdvancedStyleClient</symbol>-->
-            <!--<symbol>mx.managers.ToolTipManager</symbol>-->
-            <!--<symbol>mx.managers.ToolTipManagerImpl</symbol>-->
-            <!--<symbol>mx.managers.DragManagerImpl</symbol>-->
-            <!--<symbol>mx.managers.systemClasses.ActiveWindowManager</symbol>-->
-            <!--<symbol>mx.core.IUIComponent</symbol>-->
-            <!--<symbol>mx.core.UIComponent</symbol>-->
-            <!--<symbol>mx.resources.IResourceManager</symbol>-->
-            <!--<symbol>mx.managers.FocusManager</symbol>-->
-            <!--<symbol>mx.managers.PopUpManagerImpl</symbol>-->
-            <!--<symbol>mx.core.mx_internal</symbol>-->
-            <!--<symbol>mx.core.IVisualElement</symbol>-->
-            <!--<symbol>mx.managers.ISystemManager</symbol>-->
-            <!--<symbol>mx.managers.IFocusManager</symbol>-->
-            <!--<symbol>mx.managers.IFocusManagerContainer</symbol>-->
-            <!--<symbol>mx.managers.ILayoutManagerClient</symbol>-->
-            <!--<symbol>mx.managers.SystemManager</symbol>-->
-            <!--<symbol>mx.managers.SystemManagerGlobals</symbol>-->
-            <!--<symbol>mx.managers.ILayoutManager</symbol>-->
-            <!--<symbol>mx.core.IChildList</symbol>-->
-            <!--<symbol>mx.core.IUITextField</symbol>-->
-            <!--<symbol>mx.core.IFlexDisplayObject</symbol>-->
-            <!--<symbol>mx.core.IFlexModule</symbol>-->
-            <!--<symbol>mx.core.IInvalidating</symbol>-->
-            <!--<symbol>mx.core.UIComponentGlobals</symbol>-->
-            <!--<symbol>mx.core.IFlexModuleFactory</symbol>-->
-            <!--<symbol>mx.core.Singleton</symbol>-->
-          <!--</externs>-->
+            <include>spark.components.WindowedApplication</include>
+            <include>spark.components.Window</include>
+
+            <include>mx.styles.StyleProtoChain</include>
+            <include>mx.styles.StyleManager</include>
+
+            <include>mx.managers.LayoutManager</include>
+            <include>mx.managers.CursorManager</include>
+
+            <include>mx.resources.ResourceManager</include>
+          </includeClasses>
         </configuration>
       </plugin>
     </plugins>

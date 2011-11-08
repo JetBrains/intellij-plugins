@@ -1,7 +1,5 @@
 package com.intellij.flex.uiDesigner.libraries;
 
-import com.intellij.openapi.util.Pass;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 

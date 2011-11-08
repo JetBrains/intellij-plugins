@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.*;
 
@@ -20,6 +21,8 @@ class AbcMerger extends AbcTranscoder {
   private final TIntObjectHashMap<SymbolInfo> currentSymbolsInfo = new TIntObjectHashMap<SymbolInfo>();
   private final ArrayList<SymbolInfo> symbols = new ArrayList<SymbolInfo>();
   private int symbolCounter;
+
+  @Nullable
   private Library library;
 
   @Nullable
@@ -34,10 +37,6 @@ class AbcMerger extends AbcTranscoder {
     channel.position(SwfUtil.getWrapHeaderLength());
   }
 
-  //public void merge(List<LibrarySetItem> items, Condition<LibrarySetItem> condition) {
-  //
-  //}
-
   @Override
   protected void readFrameSizeFrameRateAndFrameCount(byte b) throws IOException {
     super.readFrameSizeFrameRateAndFrameCount(b);
@@ -48,9 +47,13 @@ class AbcMerger extends AbcTranscoder {
     this.library = library;
 
     VirtualFile file = library.getSwfFile();
-    transcode(file.getInputStream(), file.getLength());
+    process(file.getInputStream(), (int)file.getLength());
+  }
+
+  public void process(InputStream in, int length) throws IOException {
+    transcode(in, length);
     processTags(null);
-    this.library = null;
+    library = null;
 
     if (!currentSymbolsInfo.isEmpty()) {
       symbols.ensureCapacity(symbols.size() + currentSymbolsInfo.size());
@@ -230,7 +233,7 @@ class AbcMerger extends AbcTranscoder {
   protected void doAbc2(int length) throws IOException {
     final Definition definition = definitionMap.get(transientNameString);
     // may be overloaded (i.e. new definition with high timestamp exists)
-    if (definition.getLibrary().library == library) {
+    if (definition != null && (definition.getLibrary() == null || definition.getLibrary().library == library)) {
       definition.doAbcData = createBufferWrapper(length);
       if (definitionProcessor != null) {
         definitionProcessor.process(transientNameString, buffer);
