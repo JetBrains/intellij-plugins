@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>flex-injection-4.5</artifactId>
-  <packaging>swf</packaging>
+  <packaging>swc</packaging>
   
   <dependencies>
     <dependency>
@@ -48,71 +48,71 @@
           </defines>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.3.2</version>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <finalName>complementSwfBuilder</finalName>
-          <includes>
-            <class>**/com/intellij/flex/uiDesigner/**</class>
-          </includes>
-          <classesDirectory>${project.basedir}/../out/production/idea-plugin</classesDirectory>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.2.1</version>
-        <dependencies>
-           <dependency>
-             <groupId>com.intellij.flex.uiDesigner</groupId>
-             <artifactId>flex-injection-4.5</artifactId>
-             <version>1.0-SNAPSHOT</version>
-             <scope>system</scope>
-             <systemPath>${project.build.directory}/complementSwfBuilder.jar</systemPath>
-           </dependency>
-           <dependency>
-             <groupId>com.intellij</groupId>
-             <artifactId>utils</artifactId>
-             <version>1.0</version>
-             <scope>system</scope>
-             <systemPath>${env.DEV_IDEA_HOME}/out/deploy/lib/util.jar</systemPath>
-           </dependency>
-           <dependency>
-             <groupId>com.intellij</groupId>
-             <artifactId>trove4j</artifactId>
-             <version>1.0</version>
-             <scope>system</scope>
-             <systemPath>${env.DEV_IDEA_HOME}/out/deploy/lib/trove4j.jar</systemPath>
-           </dependency>
-         </dependencies>
-        <executions>
-          <execution>
-            <id>build-dump</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>java</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <includeProjectDependencies>false</includeProjectDependencies>
-          <includePluginDependencies>true</includePluginDependencies>
-          <mainClass>com.intellij.flex.uiDesigner.ComplementSwfBuilder</mainClass>
-          <arguments>
-            <argument>${project.build.directory}</argument>
-          </arguments>
-        </configuration>
-      </plugin>
+      <!--<plugin>-->
+        <!--<groupId>org.apache.maven.plugins</groupId>-->
+        <!--<artifactId>maven-jar-plugin</artifactId>-->
+        <!--<version>2.3.2</version>-->
+        <!--<executions>-->
+          <!--<execution>-->
+            <!--<phase>validate</phase>-->
+            <!--<goals>-->
+              <!--<goal>jar</goal>-->
+            <!--</goals>-->
+          <!--</execution>-->
+        <!--</executions>-->
+        <!--<configuration>-->
+          <!--<finalName>complementSwfBuilder</finalName>-->
+          <!--<includes>-->
+            <!--<class>**/com/intellij/flex/uiDesigner/**</class>-->
+          <!--</includes>-->
+          <!--<classesDirectory>${project.basedir}/../out/production/idea-plugin</classesDirectory>-->
+        <!--</configuration>-->
+      <!--</plugin>-->
+      <!--<plugin>-->
+        <!--<groupId>org.codehaus.mojo</groupId>-->
+        <!--<artifactId>exec-maven-plugin</artifactId>-->
+        <!--<version>1.2.1</version>-->
+        <!--<dependencies>-->
+           <!--<dependency>-->
+             <!--<groupId>com.intellij.flex.uiDesigner</groupId>-->
+             <!--<artifactId>flex-injection-4.5</artifactId>-->
+             <!--<version>1.0-SNAPSHOT</version>-->
+             <!--<scope>system</scope>-->
+             <!--<systemPath>${project.build.directory}/complementSwfBuilder.jar</systemPath>-->
+           <!--</dependency>-->
+           <!--<dependency>-->
+             <!--<groupId>com.intellij</groupId>-->
+             <!--<artifactId>utils</artifactId>-->
+             <!--<version>1.0</version>-->
+             <!--<scope>system</scope>-->
+             <!--<systemPath>${env.DEV_IDEA_HOME}/out/deploy/lib/util.jar</systemPath>-->
+           <!--</dependency>-->
+           <!--<dependency>-->
+             <!--<groupId>com.intellij</groupId>-->
+             <!--<artifactId>trove4j</artifactId>-->
+             <!--<version>1.0</version>-->
+             <!--<scope>system</scope>-->
+             <!--<systemPath>${env.DEV_IDEA_HOME}/out/deploy/lib/trove4j.jar</systemPath>-->
+           <!--</dependency>-->
+         <!--</dependencies>-->
+        <!--<executions>-->
+          <!--<execution>-->
+            <!--<id>build-dump</id>-->
+            <!--<phase>compile</phase>-->
+            <!--<goals>-->
+              <!--<goal>java</goal>-->
+            <!--</goals>-->
+          <!--</execution>-->
+        <!--</executions>-->
+        <!--<configuration>-->
+          <!--<includeProjectDependencies>false</includeProjectDependencies>-->
+          <!--<includePluginDependencies>true</includePluginDependencies>-->
+          <!--<mainClass>com.intellij.flex.uiDesigner.ComplementSwfBuilder</mainClass>-->
+          <!--<arguments>-->
+            <!--<argument>${project.build.directory}</argument>-->
+          <!--</arguments>-->
+        <!--</configuration>-->
+      <!--</plugin>-->
     </plugins>
   </build>
 </project>

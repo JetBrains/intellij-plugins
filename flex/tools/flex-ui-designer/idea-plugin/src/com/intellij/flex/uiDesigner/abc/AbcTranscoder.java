@@ -150,7 +150,7 @@ abstract public class AbcTranscoder extends SwfTranscoder {
     buffer.position(lastWrittenPosition);
   }
 
-  private void readAbcName(final int start) {
+  protected void readAbcName(final int start) {
     int end = start;
     byte[] array = buffer.array();
     int lastSlashPosition = -1;

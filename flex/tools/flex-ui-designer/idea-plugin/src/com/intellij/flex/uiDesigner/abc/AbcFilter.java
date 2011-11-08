@@ -278,42 +278,11 @@ public class AbcFilter extends AbcTranscoder {
           readAbcName(buffer.position() + 4);
           if (abcNameFilter.value(transientNameString)) {
             decoders.add(new Decoder(createBufferWrapper(length)));
-            continue;
           }
 
         default:
           buffer.position(buffer.position() + length);
       }
     }
-  }
-
-  private void readAbcName(final int start) {
-    int end = start;
-    byte[] array = buffer.array();
-    int lastSlashPosition = -1;
-    byte c;
-    @SuppressWarnings("MismatchedReadAndWriteOfArray")
-    final char[] chars = transientNameString.chars;
-    int index = 0;
-    while ((c = array[end++]) != 0) {
-      switch (c) {
-        case '/':
-          lastSlashPosition = index;
-          chars[index] = '.';
-          break;
-
-        default:
-          chars[index] = (char)c;
-      }
-
-      index++;
-    }
-
-    if (lastSlashPosition != -1) {
-      chars[lastSlashPosition] = ':';
-    }
-
-    transientNameString.hash = 0;
-    transientNameString.length = index;
   }
 }

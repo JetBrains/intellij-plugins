@@ -428,8 +428,8 @@ public class Encoder {
       opcodePass = 2;
     }
     else if (opcodePass == 2) {
-      methodBodies.writeU32(opcodes.size());
-      methodBodies.write(opcodes);
+      methodBodies.writeU32(opcodes.getSize());
+      methodBodies.writeTo(opcodes);
     }
   }
 
@@ -454,7 +454,7 @@ public class Encoder {
       exPass++;
     }
     else if (exPass == 2) {
-      methodBodies.write(exceptions);
+      methodBodies.writeTo(exceptions);
     }
   }
 
@@ -621,7 +621,7 @@ public class Encoder {
   }
 
   void beginop(int opcode) {
-    window[head] = opcodes.size();
+    window[head] = opcodes.getSize();
     head = (head + 1) & (W - 1);
     if (window_size < 8) {
       ++window_size;
@@ -633,7 +633,7 @@ public class Encoder {
     if (peepHole) {
       if (i <= window_size) {
         int ip = window[(head - i) & (W - 1)];
-        if (ip < opcodes.size()) {
+        if (ip < opcodes.getSize()) {
           return opcodes.readU8(ip);
         }
       }
@@ -646,7 +646,7 @@ public class Encoder {
 
     if (i <= window_size) {
       int ip = window[(head - i) & (W - 1)];
-      if (ip < opcodes.size()) {
+      if (ip < opcodes.getSize()) {
         opcodes.writeU8(ip, opcode);
       }
     }
@@ -671,7 +671,7 @@ public class Encoder {
   void rewind(int i) {
     int to = (head - i) & (W - 1);
     int ip = window[to];
-    int end = opcodes.size();
+    int end = opcodes.getSize();
     opcodes.delete(end - ip);
     head = to;
     window_size -= i;
@@ -2262,10 +2262,10 @@ public class Encoder {
     }
 
     int addData(int oldIndex, WritableDataBuffer data) {
-      int index = contains(data, 0, data.size());
+      int index = contains(data, 0, data.getSize());
       if (index == -1) {
-        index = store(data, 0, data.size());
-        size += data.size();
+        index = store(data, 0, data.getSize());
+        size += data.getSize();
       }
       // ByteArrayPool is 1 based, we want zero based for metadataInfos
       indexes.put(calcIndex(oldIndex), index - 1);
@@ -2312,7 +2312,7 @@ public class Encoder {
     }
 
     void mapOffsets(int offset) {
-      offsets.put(offset, size());
+      offsets.put(offset, getSize());
     }
 
     int getOffset(int offset) {

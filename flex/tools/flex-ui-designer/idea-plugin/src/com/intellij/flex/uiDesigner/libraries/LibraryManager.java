@@ -24,7 +24,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Pass;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.xml.XmlFile;
@@ -141,7 +140,7 @@ public class LibraryManager {
     }
 
     assert !libraryCollector.sdkLibraries.isEmpty();
-    FlexLibrarySet flexLibrarySet = getOrCreateFlexLibrarySet(module, libraryCollector);
+    FlexLibrarySet flexLibrarySet = getOrCreateFlexLibrarySet(libraryCollector);
     final InfoMap<Project, ProjectInfo> registeredProjects = client.getRegisteredProjects();
     ProjectInfo info = registeredProjects.getNullableInfo(project);
     final boolean isNewProject = info == null;
@@ -160,8 +159,8 @@ public class LibraryManager {
       librarySet = librarySets.get(key);
       if (librarySet == null) {
         final int id = librarySetIdPool.allocate();
-        final SortResult sortResult = sortLibraries(id, libraryCollector.externalLibraries, libraryCollector.getFlexSdkVersion(), module,
-                                                    false, flexLibrarySet.contains, null);
+        final SortResult sortResult = sortLibraries(new LibrarySorter(), id, libraryCollector.externalLibraries, libraryCollector.getFlexSdkVersion(),
+                                                    flexLibrarySet.contains);
         librarySet = new LibrarySet(id, flexLibrarySet, sortResult.items, sortResult.resourceBundleOnlyItems);
         librarySets.put(key, flexLibrarySet);
       }
@@ -205,19 +204,21 @@ public class LibraryManager {
     return unregisteredDocumentReferences.isEmpty() ? null : unregisteredDocumentReferences.toArray(new XmlFile[unregisteredDocumentReferences.size()]);
   }
 
-  private FlexLibrarySet getOrCreateFlexLibrarySet(Module module, LibraryCollector libraryCollector) throws InitException {
+  private FlexLibrarySet getOrCreateFlexLibrarySet(LibraryCollector libraryCollector) throws InitException {
     final String key = createKey(libraryCollector.sdkLibraries);
     FlexLibrarySet flexLibrarySet = (FlexLibrarySet)librarySets.get(key);
     if (flexLibrarySet == null) {
       final Set<CharSequence> globalDefinitions = getGlobalDefinitions(libraryCollector.getGlobalLibrary());
       final int id = librarySetIdPool.allocate();
-      final SortResult sortResult = sortLibraries(id, libraryCollector.sdkLibraries, libraryCollector.getFlexSdkVersion(), module, true,
-                                                  new Condition<String>() {
-                                                    @Override
-                                                    public boolean value(String name) {
-                                                      return globalDefinitions.contains(name);
-                                                    }
-                                                  }, new FlexLibraryDefinitionsPostProcessor());
+      final SortResult sortResult = sortLibraries(
+        new LibrarySorter(new FlexDefinitionProcessor(), new FlexDefinitionMapPostProcessor(libraryCollector.getFlexSdkVersion())), id, libraryCollector.sdkLibraries,
+        libraryCollector.getFlexSdkVersion(),
+        new Condition<String>() {
+          @Override
+          public boolean value(String name) {
+            return globalDefinitions.contains(name);
+          }
+        });
 
       flexLibrarySet = new FlexLibrarySet(id, null, sortResult.items, sortResult.resourceBundleOnlyItems, new ContainsCondition(globalDefinitions, sortResult.definitionMap));
       Client.getInstance().registerLibrarySet(flexLibrarySet);
@@ -287,11 +288,11 @@ public class LibraryManager {
   }
 
   @NotNull
-  private SortResult sortLibraries(int librarySetId, List<Library> libraries, String flexSdkVersion, Module module, final boolean isFromSdk,
-                                   Condition<String> isExternal, @Nullable Pass<Map<CharSequence, Definition>> definitionMapPostProcessor)
+  private SortResult sortLibraries(LibrarySorter librarySorter, int librarySetId, List<Library> libraries, String flexSdkVersion,
+                                   Condition<String> isExternal)
     throws InitException {
     try {
-      return new LibrarySorter().sort(libraries, isFromSdk, new File(appDir, librarySetId + SWF_EXTENSION), isExternal, definitionMapPostProcessor);
+      return librarySorter.sort(libraries, new File(appDir, librarySetId + SWF_EXTENSION), isExternal);
     }
     catch (Throwable e) {
       String technicalMessage = "Flex SDK " + flexSdkVersion;

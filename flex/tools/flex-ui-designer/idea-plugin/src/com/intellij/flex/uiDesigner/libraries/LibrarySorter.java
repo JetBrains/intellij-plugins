@@ -1,20 +1,14 @@
 package com.intellij.flex.uiDesigner.libraries;
 
-import com.intellij.flex.uiDesigner.ComplementSwfBuilder;
-import com.intellij.flex.uiDesigner.DebugPathManager;
 import com.intellij.flex.uiDesigner.abc.AbcFilter;
 import com.intellij.flex.uiDesigner.abc.Decoder;
 import com.intellij.flex.uiDesigner.abc.DecoderException;
 import com.intellij.flex.uiDesigner.abc.Encoder;
 import com.intellij.flex.uiDesigner.io.IOUtil;
-import com.intellij.flex.uiDesigner.libraries.FlexOverloadedClasses.InjectionClassifier;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pass;
-import com.intellij.psi.search.GlobalSearchScope;
 import gnu.trove.THashMap;
 import gnu.trove.TObjectProcedure;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
@@ -29,16 +23,18 @@ import java.util.Map.Entry;
 import static com.intellij.flex.uiDesigner.libraries.Definition.ResolvedState;
 
 public class LibrarySorter {
-  private static long createInjectionAbc(String flexSdkVersion, InjectionClassifier classifier, boolean force) throws IOException {
-    final String rootPath = DebugPathManager.getFudHome() + "/flex-injection/target";
-    File abcSource = ComplementSwfBuilder.getSourceFile(rootPath, flexSdkVersion);
-    File abc = ComplementSwfBuilder.createAbcFile(rootPath, flexSdkVersion, classifier);
-    if (!force && abcSource.lastModified() < abc.lastModified()) {
-      return abc.lastModified();
-    }
+  @Nullable
+  private final DefinitionProcessor definitionProcessor;
+  @Nullable
+  private final Pass<THashMap<CharSequence, Definition>> definitionMapPostProcessor;
 
-    ComplementSwfBuilder.build(rootPath, flexSdkVersion, classifier);
-    return abc.lastModified();
+  public LibrarySorter() {
+    this(null, null);
+  }
+
+  public LibrarySorter(@Nullable DefinitionProcessor definitionProcessor, @Nullable Pass<THashMap<CharSequence, Definition>> definitionMapPostProcessor) {
+    this.definitionProcessor = definitionProcessor;
+    this.definitionMapPostProcessor = definitionMapPostProcessor;
   }
 
   private static List<LibrarySetItem> collectItems(final List<Library> libraries, Map<CharSequence, Definition> definitionMap,
@@ -57,13 +53,12 @@ public class LibrarySorter {
     return items;
   }
 
-  public SortResult sort(final List<Library> libraries, final boolean isFromSdk, File outFile,
-                         Condition<String> isExternal, @Nullable Pass<Map<CharSequence, Definition>> definitionMapPostProcessor) throws IOException {
+  public SortResult sort(final List<Library> libraries, File outFile, Condition<String> isExternal) throws IOException {
     ArrayList<Library> resourceBundleOnlyItems = null;
 
     final THashMap<CharSequence, Definition> definitionMap = new THashMap<CharSequence, Definition>(libraries.size() * 128, AbcFilter.HASHING_STRATEGY);
     final List<LibrarySetItem> unsortedItems = collectItems(libraries, definitionMap, isExternal);
-    final AbcMerger abcMerger = new AbcMerger(definitionMap, outFile);
+    final AbcMerger abcMerger = new AbcMerger(definitionMap, outFile, definitionProcessor);
     try {
       final ArrayList<Library> items = new ArrayList<Library>(unsortedItems.size());
       for (LibrarySetItem item : unsortedItems) {

@@ -4,6 +4,7 @@ import com.intellij.flex.uiDesigner.abc.*;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.TIntObjectHashMap;
 import gnu.trove.TObjectProcedure;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,8 +22,12 @@ class AbcMerger extends AbcTranscoder {
   private int symbolCounter;
   private Library library;
 
-  public AbcMerger(Map<CharSequence, Definition> definitionMap, File outFile) throws IOException {
+  @Nullable
+  private DefinitionProcessor definitionProcessor;
+
+  public AbcMerger(Map<CharSequence, Definition> definitionMap, File outFile, @Nullable DefinitionProcessor definitionProcessor) throws IOException {
     this.definitionMap = definitionMap;
+    this.definitionProcessor = definitionProcessor;
 
     out = new FileOutputStream(outFile);
     channel = out.getChannel();
@@ -227,6 +232,9 @@ class AbcMerger extends AbcTranscoder {
     // may be overloaded (i.e. new definition with high timestamp exists)
     if (definition.getLibrary().library == library) {
       definition.doAbcData = createBufferWrapper(length);
+      if (definitionProcessor != null) {
+        definitionProcessor.process(transientNameString, buffer);
+      }
     }
   }
 

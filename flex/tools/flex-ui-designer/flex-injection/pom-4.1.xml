@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>flex-injection-4.1</artifactId>
-  <packaging>swf</packaging>
+  <packaging>swc</packaging>
   
   <dependencies>
     <dependency>

@@ -1,15 +1,15 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.abc.*;
+import com.intellij.flex.uiDesigner.abc.AbcExtractor;
+import com.intellij.flex.uiDesigner.abc.AbcNameFilterByNameSetAndStartsWith;
+import com.intellij.flex.uiDesigner.abc.BufferWrapper;
 import com.intellij.flex.uiDesigner.libraries.FlexOverloadedClasses;
-import com.intellij.flex.uiDesigner.libraries.FlexOverloadedClasses.InjectionClassifier;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public final class ComplementSwfBuilder {
   private ComplementSwfBuilder() {
@@ -18,59 +18,43 @@ public final class ComplementSwfBuilder {
   public static void main(String[] args) throws IOException {
     if (args.length == 1) {
       // build all
-      build(args[0], "4.1", InjectionClassifier.framework);
-      build(args[0], "4.1", InjectionClassifier.spark, false);
-      build(args[0], "4.5", InjectionClassifier.framework);
-      build(args[0], "4.5", InjectionClassifier.spark, false);
+      build(args[0], "4.1");
+      build(args[0], "4.5");
     }
-    else if (args.length == 3) {
-      build(args[0], args[1], InjectionClassifier.valueOf(args[1]));
+    else if (args.length == 2) {
+      build(args[0], args[1]);
     }
     else {
-      throw new IllegalArgumentException("Usage: ComplementSwfBuilder <folder> [<flexVersion> <classifier>]");
+      throw new IllegalArgumentException("Usage: ComplementSwfBuilder <folder> [<flexVersion>]");
     }
   }
 
-  public static void build(String rootPath, String flexVersion, InjectionClassifier classifier) throws IOException {
-    build(rootPath, flexVersion, classifier, true);
-  }
-
-  private static void build(String rootPath, String flexVersion, InjectionClassifier classifier, boolean buildComplement) throws IOException {
-    final Condition<CharSequence> sparkInclusionNameFilter = new AbcNameFilterStartsWith("com.intellij.flex.uiDesigner.flex", true) {
-      @Override
-      public boolean value(CharSequence name) {
-        return super.value(name) && !StringUtil.equals(name, "com.intellij.flex.uiDesigner.flex:SpriteLoaderAsset");
-      }
-    };
-
+  private static void build(String rootPath, String flexVersion) throws IOException {
     final Collection<CharSequence> commonDefinitions = new ArrayList<CharSequence>(1);
     commonDefinitions.add("com.intellij.flex.uiDesigner:SpecialClassForAdobeEngineers");
 
-    final Condition<CharSequence> air4InclusionNameFilter = new AbcNameFilterByNameSet(FlexOverloadedClasses.AIR_SPARK_CLASSES, true);
-    File source = getSourceFile(rootPath, flexVersion);
-
-    final Condition<CharSequence> abcNameFilter;
-    if (classifier == InjectionClassifier.framework) {
-      abcNameFilter = new AbcNameFilterByNameSetAndStartsWith(commonDefinitions,
-                                                              new String[]{"mx.", "spark."}) {
+    List<BufferWrapper> list = new AbcExtractor().extract(getSourceFile(rootPath, flexVersion),
+      new AbcNameFilterByNameSetAndStartsWith(commonDefinitions, new String[]{"mx.", "spark."}) {
         @Override
         public boolean value(CharSequence name) {
           return StringUtil.equals(name, FlexOverloadedClasses.STYLE_PROTO_CHAIN) ||
+                 StringUtil.equals(name, FlexOverloadedClasses.SKINNABLE_COMPONENT) ||
                  FlexOverloadedClasses.MX_CLASSES.contains(name) ||
-                 (super.value(name) && !sparkInclusionNameFilter.value(name) &&
-                  !air4InclusionNameFilter.value(name));
+                 FlexOverloadedClasses.AIR_SPARK_CLASSES.contains(name) ||
+                 super.value(name);
         }
-      };
-    }
-    else {
-      abcNameFilter = new AbcNameFilterByEquals(FlexOverloadedClasses.SKINNABLE_COMPONENT);
-    }
+      });
 
-    new AbcFilter(null).filter(source, createAbcFile(rootPath, flexVersion, classifier), abcNameFilter);
-
-    if (buildComplement) {
-      new AbcFilter(null).filter(source, new File(rootPath + "/complement-flex" + flexVersion + ".swf"), sparkInclusionNameFilter);
-      new AbcFilter(null).filter(source, new File(rootPath + "/complement-air4.swf"), air4InclusionNameFilter);
+    DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(createAbcFile(rootPath, flexVersion))));
+    try {
+      out.writeShort(list.size());
+      for (BufferWrapper buffer : list) {
+        out.writeInt(buffer.getSize());
+        buffer.writeTo(out);
+      }
+    }
+    finally {
+      out.close();
     }
   }
 
@@ -78,11 +62,11 @@ public final class ComplementSwfBuilder {
     return new File(folder, "flex-injection-" + flexVersion + "-1.0-SNAPSHOT.swf");
   }
 
-  public static File createAbcFile(String folder, String flexVersion, InjectionClassifier classifier) {
-    return new File(folder, generateInjectionName(flexVersion, classifier));
+  public static File createAbcFile(String directory, String flexVersion) {
+    return new File(directory, generateInjectionName(flexVersion));
   }
 
-  public static String generateInjectionName(String flexSdkVersion, InjectionClassifier classifier) {
-    return classifier + "-injection-" + flexSdkVersion + ".abc";
+  public static String generateInjectionName(String flexSdkVersion) {
+    return "flex-" + flexSdkVersion + "-injection.abc";
   }
 }

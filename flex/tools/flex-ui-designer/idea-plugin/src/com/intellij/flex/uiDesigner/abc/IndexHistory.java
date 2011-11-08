@@ -176,7 +176,7 @@ final class IndexHistory {
       final int pos = positions[j];
       final int originalPos = dataIn.position();
       dataIn.seek(pos);
-      start = in_ns.size();
+      start = in_ns.getSize();
       switch (in_ns.copyU8(dataIn)) {
         case CONSTANT_PrivateNamespace:
           if (disableDebuggingInfo) {
@@ -196,14 +196,14 @@ final class IndexHistory {
           assert false;
       }
       dataIn.seek(originalPos);
-      end = in_ns.size();
+      end = in_ns.getSize();
       dataIn = in_ns;
     }
     else if (kind == NS_SET) {
       int pos = positions[j];
       int originalPos = dataIn.position();
       dataIn.seek(pos);
-      start = in_ns_set.size();
+      start = in_ns_set.getSize();
 
       int count = dataIn.readU32();
       in_ns_set.writeU32(count);
@@ -212,14 +212,14 @@ final class IndexHistory {
       }
 
       dataIn.seek(originalPos);
-      end = in_ns_set.size();
+      end = in_ns_set.getSize();
       dataIn = in_ns_set;
     }
     else if (kind == MULTINAME) {
       int pos = positions[j];
       int originalPos = dataIn.position();
       dataIn.seek(pos);
-      start = in_multiname.size();
+      start = in_multiname.getSize();
       int constKind = dataIn.readU8();
       if (!(constKind == CONSTANT_TypeName)) {
         in_multiname.writeU8(constKind);
@@ -266,7 +266,7 @@ final class IndexHistory {
           for (int i = 0; i < count; i++) {
             newParams[i] = getIndex(poolIndex, MULTINAME, dataIn.readU32());
           }
-          start = in_multiname.size();
+          start = in_multiname.getSize();
           in_multiname.writeU8(constKind);
           in_multiname.writeU32(newNameIndex);
           in_multiname.writeU32(count);
@@ -281,7 +281,7 @@ final class IndexHistory {
       }
 
       dataIn.seek(originalPos);
-      end = in_multiname.size();
+      end = in_multiname.getSize();
       dataIn = in_multiname;
     }
 

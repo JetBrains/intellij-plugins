@@ -3,6 +3,8 @@ package com.intellij.flex.uiDesigner.abc;
 import com.google.common.base.Charsets;
 import org.jetbrains.annotations.TestOnly;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 class DataBuffer {
@@ -28,6 +30,10 @@ class DataBuffer {
 
   public int position() {
     return position;
+  }
+
+  public int getSize() {
+    return size;
   }
 
   public int readU8() {
@@ -92,6 +98,7 @@ class DataBuffer {
     return Double.longBitsToDouble(first & 0xFFFFFFFFL | second << 32);
   }
 
+  @SuppressWarnings("UnusedDeclaration")
   @TestOnly
   public String readString(int length) {
     return new String(data, offset + position, length, Charsets.UTF_8);
@@ -139,5 +146,9 @@ class DataBuffer {
 
   public final void writeTo(ByteBuffer buffer, int start, int end) {
     buffer.put(data, offset + start, end - start);
+  }
+
+  public final void writeTo(OutputStream out) throws IOException {
+    out.write(data, offset, size);
   }
 }

@@ -1,5 +1,7 @@
 package com.intellij.flex.uiDesigner.abc;
 
+import com.intellij.flex.uiDesigner.io.AbstractByteArrayOutputStream;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
@@ -16,13 +18,13 @@ class WritableDataBuffer extends DataBuffer {
     channel.write(ByteBuffer.wrap(data, offset, size));
   }
 
+  public void writeTo(AbstractByteArrayOutputStream channel) throws IOException {
+    channel.write(ByteBuffer.wrap(data, offset, size));
+  }
+
   public void clear() {
     position = 0;
     size = 0;
-  }
-
-  public int size() {
-    return size;
   }
 
   public void delete(int count) {
@@ -37,15 +39,15 @@ class WritableDataBuffer extends DataBuffer {
     }
   }
 
-  public void write(DataBuffer b) {
-    write(b.data, b.size);
+  public void writeTo(DataBuffer b) {
+    writeTo(b.data, b.size);
   }
 
-  public void write(byte[] bytes) {
-    write(bytes, bytes.length);
+  public void writeTo(byte[] bytes) {
+    writeTo(bytes, bytes.length);
   }
 
-  public void write(byte[] bytes, int length) {
+  public void writeTo(byte[] bytes, int length) {
     resize(length);
     System.arraycopy(bytes, 0, data, size, length);
     size += length;

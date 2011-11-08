@@ -14,10 +14,6 @@ public final class FlexOverloadedClasses {
 
   public static final String SPARK_WINDOW = "spark.components:Window";
 
-  public enum InjectionClassifier {
-    framework, spark
-  }
-
   static {
     AIR_SPARK_CLASSES.add(SPARK_WINDOW);
     AIR_SPARK_CLASSES.add("spark.components:WindowedApplication");
