@@ -32,8 +32,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.patterns.PlatformPatterns.virtualFile;
-import static com.intellij.patterns.StandardPatterns.or;
-import static com.intellij.patterns.StandardPatterns.string;
+import static com.intellij.patterns.StandardPatterns.*;
 import static com.intellij.patterns.XmlPatterns.xmlAttributeValue;
 import static com.intellij.patterns.XmlPatterns.xmlTag;
 
@@ -49,26 +48,41 @@ public class TaglibOgnlInjector implements MultiHostInjector {
                         virtualFile().ofType(StdFileTypes.JSPX)))
       .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
                                                  StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI,
-                                                 StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI));
+                                                 StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI))
+      .withLocalName(not(string().oneOf(StrutsConstants.TAGLIB_STRUTS_UI_CSS_ATTRIBUTES))); // do not mix with CSS
 
-  // OGNL expression patterns
-  private static final ElementPattern<XmlAttributeValue> OGNL_OCCURRENCE_PATTERN =
-      STRUTS_TAG_ATTRIBUTE
-          .withTextLengthLongerThan(OgnlLanguage.EXPRESSION_PREFIX.length())
-          .withValue(string().contains(OgnlLanguage.EXPRESSION_PREFIX));
+  // generic attribute containing "%{" (multiple occurrences possible)
+  private static final ElementPattern<XmlAttributeValue> OGNL_OCCURRENCE_PATTERN = xmlAttributeValue()
+      .withTextLengthLongerThan(OgnlLanguage.EXPRESSION_PREFIX.length())
+      .withValue(string().contains(OgnlLanguage.EXPRESSION_PREFIX));
 
-  // OGNL list expression pattern
-  private static final ElementPattern<XmlAttributeValue> OGNL_LIST_ELEMENT_PATTERN =
-      STRUTS_TAG_ATTRIBUTE
-          .withTextLengthLongerThan(OgnlLanguage.EXPRESSION_PREFIX.length())
-          .withValue(string().startsWith("{"));
+  // attributes always containing expression _without_ prefix
+  // <s:iterator> "value"
+  private static final ElementPattern<XmlAttributeValue> OGNL_WITHOUT_PREFIX_PATTERN = xmlAttributeValue()
+      .withLocalName("value")
+      .withSuperParent(2, xmlTag().withLocalName("iterator"));
+
+  // list expression "{....}"
+  private static final ElementPattern<XmlAttributeValue> OGNL_LIST_ELEMENT_PATTERN = xmlAttributeValue()
+      .withTextLengthLongerThan(OgnlLanguage.EXPRESSION_PREFIX.length())
+      .withValue(string().startsWith("{"));
 
   @Override
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar multiHostRegistrar,
                                    @NotNull final PsiElement psiElement) {
+
+    if (!STRUTS_TAG_ATTRIBUTE.accepts(psiElement)) {
+      return;
+    }
+
     if (OGNL_OCCURRENCE_PATTERN.accepts(psiElement)) {
       OgnlLanguageInjector.injectOccurrences(multiHostRegistrar,
                                              (PsiLanguageInjectionHost) psiElement);
+      return;
+    }
+
+    if (OGNL_WITHOUT_PREFIX_PATTERN.accepts(psiElement)) {
+      OgnlLanguageInjector.injectElementWithPrefixSuffix(multiHostRegistrar, (PsiLanguageInjectionHost) psiElement);
       return;
     }
 

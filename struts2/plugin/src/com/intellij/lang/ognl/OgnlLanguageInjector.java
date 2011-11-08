@@ -29,15 +29,29 @@ public class OgnlLanguageInjector {
   private final MultiHostRegistrar registrar;
   private final PsiLanguageInjectionHost element;
 
+  private boolean addPrefixSuffix;
+
   private OgnlLanguageInjector(final MultiHostRegistrar registrar,
                                final PsiLanguageInjectionHost element) {
     this.registrar = registrar;
     this.element = element;
   }
 
+  public OgnlLanguageInjector addPrefixSuffix() {
+    this.addPrefixSuffix = true;
+    return this;
+  }
+
   public static void injectElement(final MultiHostRegistrar registrar,
                                    final PsiLanguageInjectionHost element) {
     new OgnlLanguageInjector(registrar, element).injectWholeXmlAttributeValue();
+  }
+
+  public static void injectElementWithPrefixSuffix(final MultiHostRegistrar registrar,
+                                                   final PsiLanguageInjectionHost element) {
+    new OgnlLanguageInjector(registrar, element)
+        .addPrefixSuffix()
+        .injectWholeXmlAttributeValue();
   }
 
   public static void injectOccurrences(final MultiHostRegistrar registrar,
@@ -48,7 +62,10 @@ public class OgnlLanguageInjector {
   private void injectWholeXmlAttributeValue() {
     final TextRange range = new TextRange(1, element.getTextLength() - 1);
     registrar.startInjecting(OgnlLanguage.INSTANCE)
-             .addPlace(null, null, element, range)
+             .addPlace(addPrefixSuffix ? OgnlLanguage.EXPRESSION_PREFIX : null,
+                       addPrefixSuffix ? OgnlLanguage.EXPRESSION_SUFFIX : null,
+                       element,
+                       range)
              .doneInjecting();
   }
 
