@@ -23,6 +23,8 @@ public final class Decoder {
   }
 
   public Decoder(DataBuffer in, @Nullable char[] name) {
+    assert in.position() == 0;
+
     in.skip(4);
     this.name = name;
 

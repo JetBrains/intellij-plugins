@@ -6,7 +6,11 @@ import org.jetbrains.annotations.NotNull;
 class Definition {
   private final LibrarySetItem library;
 
+  // if has only one dependency
+  public String dependency;
+  // if has > 1
   public String[] dependencies;
+
   public int resolved = ResolvedState.UNKNOWN;
 
   private String timeAsString;
@@ -14,7 +18,7 @@ class Definition {
 
   public BufferWrapper doAbcData;
 
-  public String name;
+  //public String name;
 
   public void setTimeAsString(String value) {
     timeAsString = value;

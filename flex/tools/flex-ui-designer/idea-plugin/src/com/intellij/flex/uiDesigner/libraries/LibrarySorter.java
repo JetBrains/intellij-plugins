@@ -2,15 +2,16 @@ package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.ComplementSwfBuilder;
 import com.intellij.flex.uiDesigner.DebugPathManager;
-import com.intellij.flex.uiDesigner.abc.*;
+import com.intellij.flex.uiDesigner.abc.AbcFilter;
+import com.intellij.flex.uiDesigner.abc.Decoder;
+import com.intellij.flex.uiDesigner.abc.DecoderException;
+import com.intellij.flex.uiDesigner.abc.Encoder;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.libraries.FlexOverloadedClasses.InjectionClassifier;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pass;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.text.CharArrayUtil;
 import gnu.trove.THashMap;
 import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.NotNull;
@@ -28,16 +29,6 @@ import java.util.Map.Entry;
 import static com.intellij.flex.uiDesigner.libraries.Definition.ResolvedState;
 
 public class LibrarySorter {
-  private final Module module;
-
-  private GlobalSearchScope definitionSearchScope;
-  private boolean useIndexForFindDefinitions;
-  private char[] fqnBuffer;
-
-  public LibrarySorter(@NotNull Module module) {
-    this.module = module;
-  }
-
   private static long createInjectionAbc(String flexSdkVersion, InjectionClassifier classifier, boolean force) throws IOException {
     final String rootPath = DebugPathManager.getFudHome() + "/flex-injection/target";
     File abcSource = ComplementSwfBuilder.getSourceFile(rootPath, flexSdkVersion);
@@ -68,8 +59,6 @@ public class LibrarySorter {
 
   public SortResult sort(final List<Library> libraries, final boolean isFromSdk, File outFile,
                          Condition<String> isExternal, @Nullable Pass<Map<CharSequence, Definition>> definitionMapPostProcessor) throws IOException {
-    useIndexForFindDefinitions = !isFromSdk;
-
     ArrayList<Library> resourceBundleOnlyItems = null;
 
     final THashMap<CharSequence, Definition> definitionMap = new THashMap<CharSequence, Definition>(libraries.size() * 128, AbcFilter.HASHING_STRATEGY);
@@ -97,21 +86,15 @@ public class LibrarySorter {
       }
 
       final List<Decoder> decoders = new ArrayList<Decoder>(definitionMap.size());
+      final String[] singleStringArray = new String[1];
       definitionMap.forEachValue(new TObjectProcedure<Definition>() {
         @Override
         public boolean execute(Definition definition) {
-          final BufferWrapper abcData = definition.doAbcData;
-          if (abcData == null) {
-            return true;
-          }
-
-          // dependencies may be cyclic, see charts.swc from Flex SDK 4.5.1 (mx.charts.chartClasses:DataTransform and mx.charts.chartClasses:IChartElement)
-          // but we must write definition _only_ after it's dependencies (any way, even if it is important only if dep type is inheritance)
-          definition.doAbcData = null;
-          if (definition.dependencies != null && (definition.resolved == ResolvedState.YES ||
-                                                  (definition.resolved == ResolvedState.UNKNOWN &&
-                                                   processDependencies(decoders, definition, definitionMap)))) {
-              decoders.add(new Decoder(abcData));
+          if (definition.doAbcData != null &&
+              (definition.resolved == ResolvedState.YES || (definition.resolved == ResolvedState.UNKNOWN &&
+                                                            processDependencies(decoders, definition, definitionMap, singleStringArray)))) {
+            decoders.add(new Decoder(definition.doAbcData));
+            definition.doAbcData = null;
           }
 
           return true;
@@ -141,51 +124,31 @@ public class LibrarySorter {
     return definitions;
   }
 
-  private boolean processDependencies(List<Decoder> decoders, Definition definition,
-                                      Map<CharSequence, Definition> definitionMap) throws DecoderException {
+  private static boolean processDependencies(List<Decoder> decoders, Definition definition,
+                                             Map<CharSequence, Definition> definitionMap, String[] singleStringArray) throws DecoderException {
     // set before to prevent stack overflow for crossed dependencies
     definition.resolved = ResolvedState.YES;
 
-    final String[] dependencies = definition.dependencies;
-    for (int i = 0, dependenciesLength = dependencies.length; i < dependenciesLength; i++) {
-      final String dependencyId = dependencies[i];
+    final String[] dependencies;
+    if (definition.dependency == null) {
+      dependencies = definition.dependencies;
+    }
+    else {
+      dependencies = singleStringArray;
+      dependencies[0] = definition.dependency;
+    }
+
+    for (String dependencyId : dependencies) {
       final Definition dependency = definitionMap.get(dependencyId);
-      if (dependency == null && useIndexForFindDefinitions) {
-        final int length = dependencyId.length();
-        if (definitionSearchScope == null) {
-          definitionSearchScope = module.getModuleWithDependenciesAndLibrariesScope(false);
-          fqnBuffer = new char[Math.max(length, 512)];
-        }
-        else if (fqnBuffer.length < length) {
-          fqnBuffer = new char[length];
-        }
-
-        dependencyId.getChars(0, length, fqnBuffer, 0);
-        fqnBuffer[CharArrayUtil.lastIndexOf(fqnBuffer, ':', 1, length - 1)] = '.';
-        if (JSResolveUtil.findClassByQName(new String(fqnBuffer, 0, length), definitionSearchScope) != null) {
-          dependencies[i] = null;
-          continue;
-        }
-      }
-
-      final BufferWrapper depAbcData;
-      if (dependency == null) {
-        depAbcData = null;
-      }
-      else {
-        depAbcData = dependency.doAbcData;
-        dependency.doAbcData = null;
-      }
-
       if (dependency == null || dependency.resolved == ResolvedState.NO ||
-          (dependency.resolved == ResolvedState.UNKNOWN && !processDependencies(decoders, dependency, definitionMap))) {
+          (dependency.resolved == ResolvedState.UNKNOWN && !processDependencies(decoders, dependency, definitionMap, singleStringArray))) {
         definition.markAsUnresolved();
         definition.resolved = ResolvedState.NO;
         return false;
       }
 
-      if (depAbcData != null) {
-        decoders.add(new Decoder(depAbcData));
+      if (dependency.doAbcData != null) {
+        decoders.add(new Decoder(dependency.doAbcData));
         dependency.doAbcData = null;
       }
     }

@@ -44,6 +44,7 @@ import java.util.*;
 @SuppressWarnings("MethodMayBeStatic")
 public class LibraryManager {
   private static final String SWF_EXTENSION = ".swf";
+  static final String PROPERTIES_EXTENSION = ".properties";
 
   //private static final String ABC_FILTER_VERSION = "16";
   //private static final String ABC_FILTER_VERSION_VALUE_NAME = "fud_abcFilterVersion";
@@ -290,7 +291,7 @@ public class LibraryManager {
                                    Condition<String> isExternal, @Nullable Pass<Map<CharSequence, Definition>> definitionMapPostProcessor)
     throws InitException {
     try {
-      return new LibrarySorter(module).sort(libraries, isFromSdk, new File(appDir, librarySetId + SWF_EXTENSION), isExternal, definitionMapPostProcessor);
+      return new LibrarySorter().sort(libraries, isFromSdk, new File(appDir, librarySetId + SWF_EXTENSION), isExternal, definitionMapPostProcessor);
     }
     catch (Throwable e) {
       String technicalMessage = "Flex SDK " + flexSdkVersion;
@@ -354,9 +355,8 @@ public class LibraryManager {
     }
 
     //noinspection ConstantConditions
-    VirtualFile virtualFile = library.getFile().findChild("locale").findChild(locale)
-        .findChild(bundleName + CatalogXmlBuilder.PROPERTIES_EXTENSION);
+    VirtualFile file = library.getFile().findChild("locale").findChild(locale).findChild(bundleName + PROPERTIES_EXTENSION);
     //noinspection ConstantConditions
-    return (PropertiesFile)PsiDocumentManager.getInstance(project).getPsiFile(FileDocumentManager.getInstance().getDocument(virtualFile));
+    return (PropertiesFile)PsiDocumentManager.getInstance(project).getPsiFile(FileDocumentManager.getInstance().getDocument(file));
   }
 }
