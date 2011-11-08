@@ -44,28 +44,28 @@ import static com.intellij.patterns.XmlPatterns.xmlTag;
  */
 public class TaglibJavaScriptInjector implements MultiHostInjector {
 
-  // everything with "onXXX"
-  private static final ElementPattern<XmlAttributeValue> JS_ELEMENT_PATTERN =
+  private static final ElementPattern<XmlAttributeValue> JS_ATTRIBUTE_PATTERN =
       xmlAttributeValue()
           .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
                             virtualFile().ofType(StdFileTypes.JSPX)))
           .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
-                                                     StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI))
+                                                     StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI,
+                                                     StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI))
+          .withLocalName(not(string().oneOf(StrutsConstants.TAGLIB_STRUTS_UI_CSS_ATTRIBUTES))); // do not mix with CSS
+
+  // everything with "onXXX"
+  private static final ElementPattern<XmlAttributeValue> JS_TAGLIB_PATTERN =
+      xmlAttributeValue()
           .withLocalName(
               StandardPatterns.and(
                   string().longerThan(5), // shortest "onXXX" attribute name: 6 characters
                   or(string().startsWith("on"),
                      string().startsWith("doubleOn")),  // **TransferSelect-tags
-                  not(string().endsWith("Topics"))))    // exclude jQuery-plugin "onXXXTopics"
-      ;
+                  not(string().endsWith("Topics"))));   // exclude jQuery-plugin "onXXXTopics"
 
   // struts2-jQuery taglib "pseudo" JS-highlighting
   private static final ElementPattern<XmlAttributeValue> JS_JQUERY_PATTERN =
       xmlAttributeValue()
-          .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
-                            virtualFile().ofType(StdFileTypes.JSPX)))
-          .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI,
-                                                     StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI))
           .withLocalName("effectOptions",
                          // dialog
                          "buttons",
@@ -80,7 +80,11 @@ public class TaglibJavaScriptInjector implements MultiHostInjector {
                          "disabledTabs");
 
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement host) {
-    if (JS_ELEMENT_PATTERN.accepts(host)) {
+    if (!JS_ATTRIBUTE_PATTERN.accepts(host)) {
+      return;
+    }
+
+    if (JS_TAGLIB_PATTERN.accepts(host)) {
       JSLanguageInjector.injectJSIntoAttributeValue(registrar, (XmlAttributeValue) host, false);
       return;
     }
