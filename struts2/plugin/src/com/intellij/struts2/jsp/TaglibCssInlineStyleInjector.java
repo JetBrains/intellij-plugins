@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.jsp;
 
+import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.openapi.fileTypes.StdFileTypes;
@@ -22,7 +23,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.psi.css.CssFileType;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.struts2.StrutsConstants;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +54,7 @@ public class TaglibCssInlineStyleInjector implements MultiHostInjector {
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement context) {
     if (CSS_ELEMENT_PATTERN.accepts(context)) {
       final TextRange range = new TextRange(1, context.getTextLength() - 1);
-      registrar.startInjecting(CssFileType.INSTANCE.getLanguage())
+      registrar.startInjecting(CSSLanguage.INSTANCE)
                .addPlace("inline.style {", "}", (PsiLanguageInjectionHost) context, range)
                .doneInjecting();
     }
