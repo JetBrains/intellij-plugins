@@ -240,8 +240,6 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     };
     myDebugOverNetworkRadioButton.addActionListener(debugTransportListener);
     myDebugOverUSBRadioButton.addActionListener(debugTransportListener);
-
-    myEmulatorAdlOptionsEditor.setDialogCaption("AIR Debug Launcher Options");
   }
 
   private void initEmulatorRelatedControls() {
