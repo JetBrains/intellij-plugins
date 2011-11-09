@@ -37,6 +37,10 @@ class AbcMerger extends AbcTranscoder {
     channel.position(SwfUtil.getWrapHeaderLength());
   }
 
+  public void setDefinitionProcessor(@Nullable DefinitionProcessor definitionProcessor) {
+    this.definitionProcessor = definitionProcessor;
+  }
+
   @Override
   protected void readFrameSizeFrameRateAndFrameCount(byte b) throws IOException {
     super.readFrameSizeFrameRateAndFrameCount(b);
@@ -236,7 +240,7 @@ class AbcMerger extends AbcTranscoder {
     if (definition != null && (definition.getLibrary() == null || definition.getLibrary().library == library)) {
       definition.doAbcData = createBufferWrapper(length);
       if (definitionProcessor != null) {
-        definitionProcessor.process(transientNameString, buffer);
+        definitionProcessor.process(transientNameString, buffer, definition, definitionMap);
       }
     }
   }

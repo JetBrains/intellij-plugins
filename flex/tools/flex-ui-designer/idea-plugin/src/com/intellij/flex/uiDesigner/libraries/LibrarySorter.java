@@ -140,6 +140,7 @@ public class LibrarySorter {
       if (dependency == null || dependency.resolved == ResolvedState.NO ||
           (dependency.resolved == ResolvedState.UNKNOWN && !processDependencies(decoders, dependency, definitionMap, singleStringArray))) {
         definition.markAsUnresolved();
+        System.out.print("Mark " + definition.name + " as unresolved due to missed " + dependencyId + "\n");
         definition.resolved = ResolvedState.NO;
         return false;
       }

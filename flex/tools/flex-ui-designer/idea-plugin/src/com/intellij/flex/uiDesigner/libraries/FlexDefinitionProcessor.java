@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
+import java.util.Map;
 
 public class FlexDefinitionProcessor implements DefinitionProcessor {
   private static final String STYLE_PROTO_CHAIN = "mx.styles:StyleProtoChain";
@@ -18,13 +19,23 @@ public class FlexDefinitionProcessor implements DefinitionProcessor {
   private static final char OVERLOADED_AND_BACKED_CLASS_MARK = 'F';
 
   @Override
-  public void process(CharSequence name, ByteBuffer buffer) throws IOException {
+  public void process(CharSequence name, ByteBuffer buffer, Definition definition, Map<CharSequence, Definition> definitionMap) throws IOException {
     if (StringUtil.equals(name, STYLE_PROTO_CHAIN)) {
       changeAbcName(STYLE_PROTO_CHAIN, buffer);
+      flipDefinition(definition, definitionMap, STYLE_PROTO_CHAIN);
     }
     else if (StringUtil.equals(name, SKINNABLE_COMPONENT)) {
       changeAbcName(SKINNABLE_COMPONENT, buffer);
+      flipDefinition(definition, definitionMap, SKINNABLE_COMPONENT);
     }
+  }
+
+  private static void flipDefinition(Definition definition, Map<CharSequence, Definition> definitionMap, String name) {
+    // don't remove old entry from map, it may be requred before we inject
+    int i = name.indexOf(':');
+    String newName = name.substring(0, i + 1) + OVERLOADED_AND_BACKED_CLASS_MARK + name.substring(i + 2);
+    definitionMap.put(newName, definition);
+    definition.name = newName;
   }
 
   private static void changeAbcName(final String name, ByteBuffer buffer) throws IOException {

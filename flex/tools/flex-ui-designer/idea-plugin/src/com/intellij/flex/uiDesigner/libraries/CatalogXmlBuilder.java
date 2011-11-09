@@ -102,6 +102,7 @@ class CatalogXmlBuilder extends IXMLBuilderAdapter {
     }
     else if (defProcessing) {
       if (skipDefinition.value(value)) {
+        System.out.print(value + " skipped\n");
         return;
       }
 
@@ -117,6 +118,7 @@ class CatalogXmlBuilder extends IXMLBuilderAdapter {
       }
 
       definition = new Definition(library);
+      definition.name = value;
       //definition.name = value;
       if (time == -1) {
         definition.setTimeAsString(mod);

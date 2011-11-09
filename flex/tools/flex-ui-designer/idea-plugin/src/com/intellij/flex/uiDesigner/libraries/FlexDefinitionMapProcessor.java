@@ -33,7 +33,9 @@ class FlexDefinitionMapProcessor implements DefinitionMapProcessor {
 
     new Pair<String, String>(MX, "MxClasses"),
     new Pair<String, String>(RPC, "RPCClasses"),
-    new Pair<String, String>(MOBILECOMPONENTS, "MobileComponentsClasses")};
+    new Pair<String, String>(MOBILECOMPONENTS, "MobileComponentsClasses"),
+    new Pair<String, String>("charts", "ChartsClasses"),
+    new Pair<String, String>("sparkskins", "SparkSkinsClasses")};
 
   @Override
   public void process(THashMap<CharSequence, Definition> definitionMap, AbcMerger abcMerger) throws IOException {
@@ -41,6 +43,7 @@ class FlexDefinitionMapProcessor implements DefinitionMapProcessor {
       definitionMap.remove(pair.second);
     }
 
+    abcMerger.setDefinitionProcessor(null);
     inject(definitionMap, abcMerger);
   }
 
