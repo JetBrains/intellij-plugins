@@ -47,8 +47,8 @@ public class FlexResolveHelper implements JSResolveHelper {
         if (rootForFile == null) return true;
         
         if (expectedPackage.equals(VfsUtilCore.getRelativePath(file.getParent(), rootForFile, '.'))) {
-          final JSClass clazz =
-            XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)manager.findFile(file));
+          PsiFile psiFile = manager.findFile(file);
+          final JSClass clazz = psiFile instanceof XmlFile ? XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)psiFile):null;
           if (clazz != null) {
             result.set(clazz);
             return false;
