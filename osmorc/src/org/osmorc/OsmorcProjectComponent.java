@@ -154,6 +154,7 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
         new Task.Backgroundable(myProject, "Synchronizing OSGi module dependencies", false) {
           @Override
           public void run(@NotNull ProgressIndicator indicator) {
+            if (myProject.isDisposed()) return;
             Module[] modules = ModuleManager.getInstance(myProject).getModules();
             for (Module module : modules) {
               if (OsmorcFacet.hasOsmorcFacet(module)) {
