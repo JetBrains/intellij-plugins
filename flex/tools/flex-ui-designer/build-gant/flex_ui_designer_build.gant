@@ -64,8 +64,6 @@ private def doExecute(home, sandbox, targetFolder) {
     }
   };
 
-  invokeAbcBuilder(sandbox)
-
   buildAssets()
 
   swfDescriptors.each {
@@ -78,7 +76,7 @@ private def doExecute(home, sandbox, targetFolder) {
   ant.copy(file: "$flexBuildHome/../main/resources/descriptor.xml", todir: "$targetFolder")
   ant.copy(file: "$flexBuildHome/../main/resources/check-descriptor.xml", todir: "$targetFolder")
   ant.copy(todir: "$targetFolder") {
-    fileset(dir: "$flexSandbox", includes: "**/*injection-*.abc,complement-*.swf")
+    fileset(dir: "$flexSandbox", includes: "**/*injection-*.abc")
   }
 }
 
@@ -95,18 +93,6 @@ private def buildAssets() {
     arg(value: "$flexBuildHome/../plaf/aqua/resources/assets.yml") // descriptor
     arg(value: "$flexSandbox/assets") // output file
     arg(value: "$flexBuildHome/../plaf/aqua/resources") // sources
-  }
-}
-
-private def invokeAbcBuilder(sandbox) {
-  ant.java(className: "com.intellij.flex.uiDesigner.ComplementSwfBuilder", fork: "true", failOnError: "true") {
-    classpath {
-      pathelement(path: "$flexSandbox")
-      pathelement(path: "$sandbox/classes/production/flex-ui-designer")
-      pathelement(path: "$sandbox/classes/production/util")
-      pathelement(path: "$home/community/lib/trove4j.jar")
-    }
-    arg(value: "$flexSandbox") // folder
   }
 }
 

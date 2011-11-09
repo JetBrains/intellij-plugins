@@ -3,9 +3,7 @@ package com.intellij.flex.uiDesigner.libraries;
 import com.intellij.ProjectTopics;
 import com.intellij.diagnostic.errordialog.Attachment;
 import com.intellij.flex.uiDesigner.*;
-import com.intellij.flex.uiDesigner.abc.AbcFilter;
 import com.intellij.flex.uiDesigner.css.CssWriter;
-import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.io.IdPool;
 import com.intellij.flex.uiDesigner.io.InfoMap;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
@@ -30,7 +28,6 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.StringBuilderSpinAllocator;
-import com.intellij.util.xml.NanoXmlUtil.IXMLBuilderAdapter;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -233,7 +230,7 @@ public class LibraryManager {
     Set<CharSequence> globalDefinitions = globalDefinitionsMap.get(file);
     if (globalDefinitions == null) {
       try {
-        globalDefinitions = getDefinitions(file);
+        globalDefinitions = LibrarySorter.getDefinitions(file);
       }
       catch (IOException e) {
         throw new InitException(e, "error.sort.libraries");
@@ -242,36 +239,6 @@ public class LibraryManager {
     
     globalDefinitionsMap.put(file, globalDefinitions);
     return globalDefinitions;
-  }
-
-  private static Set<CharSequence> getDefinitions(VirtualFile file) throws IOException {
-    final THashSet<CharSequence> set = new THashSet<CharSequence>(512, AbcFilter.HASHING_STRATEGY);
-    IOUtil.parseXml(file, new IXMLBuilderAdapter() {
-      private boolean processingDef;
-
-      @Override
-      public void startElement(String name, String nsPrefix, String nsURI, String systemID, int lineNr) throws Exception {
-        if (name.equals("def")) {
-          processingDef = true;
-        }
-      }
-
-      @Override
-      public void endElement(String name, String nsPrefix, String nsURI) throws Exception {
-        if (name.equals("def")) {
-          processingDef = false;
-        }
-      }
-
-      @Override
-      public void addAttribute(String name, String nsPrefix, String nsURI, String value, String type) throws Exception {
-        if (processingDef && name.equals("id")) {
-          set.add(value);
-        }
-      }
-    });
-
-    return set;
   }
 
   private String createKey(List<Library> sdkLibraries) {

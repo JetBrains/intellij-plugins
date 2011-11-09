@@ -12,15 +12,18 @@ import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
 
 public class FlexDefinitionProcessor implements DefinitionProcessor {
+  private static final String STYLE_PROTO_CHAIN = "mx.styles:StyleProtoChain";
+  private static final String SKINNABLE_COMPONENT = "spark.components.supportClasses:SkinnableComponent";
+
   private static final char OVERLOADED_AND_BACKED_CLASS_MARK = 'F';
 
   @Override
   public void process(CharSequence name, ByteBuffer buffer) throws IOException {
-    if (StringUtil.equals(name, FlexOverloadedClasses.STYLE_PROTO_CHAIN)) {
-      changeAbcName(FlexOverloadedClasses.STYLE_PROTO_CHAIN, buffer);
+    if (StringUtil.equals(name, STYLE_PROTO_CHAIN)) {
+      changeAbcName(STYLE_PROTO_CHAIN, buffer);
     }
-    else if (StringUtil.equals(name, FlexOverloadedClasses.SKINNABLE_COMPONENT)) {
-      changeAbcName(FlexOverloadedClasses.SKINNABLE_COMPONENT, buffer);
+    else if (StringUtil.equals(name, SKINNABLE_COMPONENT)) {
+      changeAbcName(SKINNABLE_COMPONENT, buffer);
     }
   }
 

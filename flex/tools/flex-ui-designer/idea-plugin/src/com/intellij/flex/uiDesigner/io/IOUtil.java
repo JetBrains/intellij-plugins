@@ -26,7 +26,7 @@ public final class IOUtil {
   public static byte[] getResourceBytes(String name) throws IOException {
     InputStream classDefinition = IOUtil.class.getClassLoader().getResourceAsStream(name);
     try {
-      return FileUtil.loadBytes(classDefinition);
+      return FileUtil.adaptiveLoadBytes(classDefinition);
     }
     finally {
       classDefinition.close();
@@ -187,10 +187,6 @@ public final class IOUtil {
     return isNegative ? result : -result;
   }
 
-  public static CharSequence getCharSequence(VirtualFile file) throws IOException {
-    return (CharSequence)getCharSequenceOrReader(file, false);
-  }
-
   private static Object getCharSequenceOrReader(VirtualFile file, boolean returnReader) throws IOException {
     if (file instanceof LightVirtualFile) {
       final CharSequence content = ((LightVirtualFile)file).getContent();
@@ -221,10 +217,6 @@ public final class IOUtil {
 
   public static CharArrayReader getCharArrayReader(InputStream inputStream, int length) throws IOException {
     return (CharArrayReader)getCharSequenceOrReader(inputStream, length, Charsets.UTF_8, true);
-  }
-
-  public static void parseXml(InputStream inputStream, int length, IXMLBuilder builder) throws IOException {
-    NanoXmlUtil.parse(getCharArrayReader(inputStream, length), builder);
   }
 
   public static void parseXml(VirtualFile file, IXMLBuilder builder) throws IOException {

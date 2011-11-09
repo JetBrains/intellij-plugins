@@ -285,7 +285,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
 
   private function createDocumentDisplayManager(document:Document, module:Module, isPureFlash:Boolean):void {
     var flexModuleFactoryClass:Class = isPureFlash ? null :  module.getClass("com.intellij.flex.uiDesigner.flex.FlexModuleFactory");
-    var systemManagerClass:Class = isPureFlash ? FlashDocumentDisplayManager : module.getClass("com.intellij.flex.uiDesigner.flex.SystemManager");
+    var systemManagerClass:Class = isPureFlash ? FlashDocumentDisplayManager : module.getClass("com.intellij.flex.uiDesigner.flex.FlexDocumentDisplayManager");
     var window:DocumentWindow = module.project.window;
     var systemManager:DocumentDisplayManager = new systemManagerClass();
     document.displayManager = systemManager;

@@ -31,11 +31,17 @@ class CatalogXmlBuilder extends IXMLBuilderAdapter {
   @Nullable
   private LibrarySetItem library;
   private final Map<CharSequence, Definition> definitionMap;
-  private final Condition<String> isExternal;
+  private final Condition<String> skipDependency;
+  private final Condition<String> skipDefinition;
 
-  public CatalogXmlBuilder(Map<CharSequence, Definition> definitionMap, Condition<String> isExternal) {
+  CatalogXmlBuilder(Map<CharSequence, Definition> definitionMap, Condition<String> skipDependency, Condition<String> skipDefinition) {
     this.definitionMap = definitionMap;
-    this.isExternal = isExternal;
+    this.skipDependency = skipDependency;
+    this.skipDefinition = skipDefinition;
+  }
+
+  CatalogXmlBuilder(Map<CharSequence, Definition> definitionMap, Condition<String> skip) {
+    this(definitionMap, skip, skip);
   }
 
   public void setLibrary(@NotNull LibrarySetItem item) {
@@ -90,12 +96,12 @@ class CatalogXmlBuilder extends IXMLBuilderAdapter {
       if (name.charAt(0) == 'i') {
         dep = value;
       }
-      else if (name.charAt(0) == 't' && (value.charAt(0) == 'i' || value.charAt(0) == 'n') && !isExternal.value(dep)) {
+      else if (name.charAt(0) == 't' && (value.charAt(0) == 'i' || value.charAt(0) == 'n') && !skipDependency.value(dep)) {
         dependencies.add(dep); 
       }
     }
     else if (defProcessing) {
-      if (isExternal.value(value)) {
+      if (skipDefinition.value(value)) {
         return;
       }
 

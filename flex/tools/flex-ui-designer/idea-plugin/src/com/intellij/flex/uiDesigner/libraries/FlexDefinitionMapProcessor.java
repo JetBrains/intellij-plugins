@@ -1,7 +1,6 @@
 package com.intellij.flex.uiDesigner.libraries;
 
 import com.google.common.base.Charsets;
-import com.intellij.flex.uiDesigner.ComplementSwfBuilder;
 import com.intellij.flex.uiDesigner.DebugPathManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
@@ -10,6 +9,7 @@ import com.intellij.util.xml.NanoXmlUtil;
 import gnu.trove.THashMap;
 
 import java.io.*;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -19,18 +19,9 @@ class FlexDefinitionMapProcessor implements DefinitionMapProcessor {
   private final String version;
   private final Condition<String> globalContains;
 
-  private final Condition<String> isExternal;
-
   FlexDefinitionMapProcessor(String version, Condition<String> globalContains) {
     this.version = version;
     this.globalContains = globalContains;
-
-    isExternal = new Condition<String>() {
-      @Override
-      public boolean value(String name) {
-        return FlexDefinitionMapProcessor.this.globalContains.value(name) || name.equals("mx.styles:FtyleProtoChain") || name.equals("spark.components.supportClasses:FkinnableComponent");
-      }
-    };
   }
 
   @SuppressWarnings("unchecked")
@@ -45,38 +36,47 @@ class FlexDefinitionMapProcessor implements DefinitionMapProcessor {
     new Pair<String, String>(MOBILECOMPONENTS, "MobileComponentsClasses")};
 
   @Override
-  public void process(THashMap<CharSequence, Definition> definitionMap, AbcMerger abcMerger) {
+  public void process(THashMap<CharSequence, Definition> definitionMap, AbcMerger abcMerger) throws IOException {
     for (Pair<String, String> pair : FLEX_LIBS_PATTERNS) {
       definitionMap.remove(pair.second);
     }
 
-    try {
-      inject(definitionMap, abcMerger);
-    }
-    catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    inject(definitionMap, abcMerger);
+  }
+
+  public static File createAbcFile(String directory, String flexVersion) {
+    return new File(directory, generateInjectionName(flexVersion));
+  }
+
+  public static String generateInjectionName(String flexSdkVersion) {
+    return "flex-injection-" + flexSdkVersion + ".swc";
   }
 
   private void inject(THashMap<CharSequence, Definition> definitionMap, AbcMerger abcMerger) throws IOException {
     final MyZipInputStream zipIn;
     if (DebugPathManager.IS_DEV) {
-      zipIn = new MyZipInputStream(new FileInputStream(ComplementSwfBuilder.createAbcFile(DebugPathManager.getFudHome() + "/flex-injection/target", version)));
+      zipIn = new MyZipInputStream(new FileInputStream(createAbcFile(DebugPathManager.getFudHome() + "/flex-injection/target", version)));
     }
     else {
-      zipIn = new MyZipInputStream(getClass().getClassLoader().getResource(ComplementSwfBuilder.generateInjectionName(version)).openStream());
+      zipIn = new MyZipInputStream(getClass().getClassLoader().getResource(generateInjectionName(version)).openStream());
     }
 
-    Reader catalogReader = null;
+    MyCharArrayReader catalogReader = null;
     ByteArrayInputStream swfIn = null;
     try {
       ZipEntry entry;
       while ((entry = zipIn.getNextEntry()) != null) {
         if (entry.getName().equals("catalog.xml")) {
-          catalogReader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(FileUtil.loadBytes(zipIn)), Charsets.UTF_8));
+          final InputStreamReader reader = new InputStreamReader(zipIn, Charsets.UTF_8);
+          try {
+            catalogReader = new MyCharArrayReader(FileUtil.adaptiveLoadText(reader));
+          }
+          finally {
+            reader.close();
+          }
         }
         else if (entry.getName().equals("library.swf")) {
-          swfIn = new ByteArrayInputStream(FileUtil.loadBytes(zipIn));
+          swfIn = new ByteArrayInputStream(FileUtil.adaptiveLoadBytes(zipIn));
         }
       }
     }
@@ -87,7 +87,21 @@ class FlexDefinitionMapProcessor implements DefinitionMapProcessor {
 
     assert catalogReader != null;
     assert swfIn != null;
-    NanoXmlUtil.parse(catalogReader, new CatalogXmlBuilder(definitionMap, isExternal));
+
+    final Set<CharSequence> ownDefinitions = LibrarySorter.getDefinitions(catalogReader);
+    NanoXmlUtil.parse(catalogReader, new CatalogXmlBuilder(definitionMap, new Condition<String>() {
+      @Override
+      public boolean value(String name) {
+        return globalContains.value(name) || (name.startsWith("com.intellij.") && !ownDefinitions.contains(name));
+      }
+    }, new Condition<String>() {
+      @Override
+      public boolean value(String name) {
+        return globalContains.value(name) || name.equals("mx.styles:FtyleProtoChain") ||
+               name.equals("spark.components.supportClasses:FkinnableComponent");
+      }
+    }
+    ));
     abcMerger.process(swfIn, swfIn.available());
   }
 
@@ -103,6 +117,17 @@ class FlexDefinitionMapProcessor implements DefinitionMapProcessor {
       if (!ignoreClose) {
         super.close();
       }
+    }
+  }
+
+  private static class MyCharArrayReader extends CharArrayReader {
+    public MyCharArrayReader(char[] buf) {
+      super(buf);
+    }
+
+    @Override
+    public void close() {
+      pos = 0;
     }
   }
 }
