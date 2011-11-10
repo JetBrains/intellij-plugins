@@ -591,10 +591,13 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                                              Executor executor)
     throws ExecutionException {
     final FlexUnitRunConfiguration runConfiguration = (FlexUnitRunConfiguration)env.getRunProfile();
+    final FlexStackTraceFilter stackTraceFilter = new FlexStackTraceFilter(project);
     final FlexUnitConsoleProperties consoleProps = new FlexUnitConsoleProperties(runConfiguration, executor);
+    consoleProps.addStackTraceFilter(stackTraceFilter);
+
     final BaseTestsOutputConsoleView consoleView = SMTestRunnerConnectionUtil
       .createAndAttachConsole("FlexUnit", processHandler, consoleProps, env.getRunnerSettings(), env.getConfigurationSettings());
-    consoleView.addMessageFilter(new FlexStackTraceFilter(project));
+    consoleView.addMessageFilter(stackTraceFilter);
     Disposer.register(project, consoleView);
     return consoleView;
   }
