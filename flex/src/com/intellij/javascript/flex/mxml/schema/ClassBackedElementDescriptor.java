@@ -810,6 +810,14 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       }
     }
 
+    final PsiElement declaration = getDeclaration();
+    final JSFunction constructor = declaration instanceof JSClass ? ((JSClass)declaration).getConstructor() : null;
+    final JSParameter[] parameters = constructor == null ? null : constructor.getParameters();
+    if (parameters != null && parameters.length > 0 && !parameters[0].isOptional() && !parameters[0].isRest()) {
+      host.addMessage(tag, JSBundle.message("class.0.does.not.have.default.constructor", ((JSClass)declaration).getQualifiedName()),
+                      Validator.ValidationHost.ErrorType.ERROR);
+    }
+
     if (tag.getParent() instanceof XmlDocument) {
       final JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)tag.getContainingFile());
       final JSReferenceList list = jsClass.getImplementsList();
