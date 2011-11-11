@@ -41,6 +41,7 @@ class DesignerApplication extends ComponentManagerImpl implements AreaInstance, 
     }
     finally {
       if (processHandler != null) {
+        processHandler.adlExitHandler = null;
         processHandler.destroyProcess();
         processHandler = null;
       }

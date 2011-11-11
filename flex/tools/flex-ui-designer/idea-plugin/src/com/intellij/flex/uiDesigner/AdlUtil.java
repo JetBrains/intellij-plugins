@@ -286,7 +286,6 @@ final class AdlUtil {
     private void callExitHandler(int exitCode) {
       if (adlExitHandler != null) {
         adlExitHandler.consume(exitCode);
-
         adlExitHandler = null;
       }
     }
