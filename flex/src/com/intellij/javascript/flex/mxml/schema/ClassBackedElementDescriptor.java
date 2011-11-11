@@ -973,6 +973,10 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     if (!defaultPropertyDescriptorInitialized) {
       PsiElement element = predefined ? null : JSResolveUtil.unwrapProxy(getDeclaration());
 
+      if (element instanceof XmlFile) {
+        element = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)element);
+      }
+
       if (element instanceof JSClass) {
         JSClass jsClass = (JSClass)element;
         do {
