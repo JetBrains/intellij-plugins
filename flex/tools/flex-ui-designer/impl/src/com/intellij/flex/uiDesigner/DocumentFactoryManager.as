@@ -1,4 +1,7 @@
 package com.intellij.flex.uiDesigner {
+import org.flyti.plexus.PlexusManager;
+import org.jetbrains.EntityLists;
+
 public class DocumentFactoryManager {
   private const factories:Vector.<DocumentFactory> = new Vector.<DocumentFactory>();
   
@@ -8,8 +11,8 @@ public class DocumentFactoryManager {
     this.server = server;
   }
 
-  public static function getInstance(project:Project):DocumentFactoryManager {
-    return DocumentFactoryManager(project.getComponent(DocumentFactoryManager));
+  public static function getInstance():DocumentFactoryManager {
+    return DocumentFactoryManager(PlexusManager.instance.container.lookup(DocumentFactoryManager));
   }
 
   public function get(id:int):DocumentFactory {
@@ -23,9 +26,7 @@ public class DocumentFactoryManager {
   }
 
   public function register(factory:DocumentFactory):void {
-    var id:int = factory.id;
-    assert(id == factories.length || (id < factories.length && factories[id] == null));
-    factories[id] = factory;
+    EntityLists.add(factories, factory);
   }
   
   public function unregister(document:Document):void {
@@ -44,11 +45,11 @@ public class DocumentFactoryManager {
     for each (var deletedIndex:int in deleted) {
       factories[deletedIndex] = null;
     }
-    
-    server.unregisterDocumentFactories(factory.module, deleted);
+
+    server.unregisterDocumentFactories(factory.module.project, deleted);
   }
 
-  private function unregister2(factory:DocumentFactory, deleted:Vector.<int>):int {
+  private function unregister2(factory:DocumentFactory, unregistered:Vector.<int>):int {
     if (factory.hasUsers) {
       return -1;
     }
@@ -62,13 +63,13 @@ public class DocumentFactoryManager {
       }
       else if (f != null) {
         if (f.deleteUser(factory) && f.document == null) {
-          unregister2(f, deleted);
+          unregister2(f, unregistered);
         }
       }
     }
 
     assert(id != -1);
-    deleted[deleted.length] = id;
+    unregistered[unregistered.length] = id;
     return id;
   }
 
@@ -89,6 +90,15 @@ public class DocumentFactoryManager {
     var elementAddress:ElementAddress = findElementAddress(object, document);
     if (elementAddress != null) {
       server.openDocument(elementAddress.factory.module, elementAddress.factory, elementAddress.offset);
+    }
+  }
+
+  public function unregisterBelongToProject(project:Project):void {
+    for (var i:int = 0, n:int = factories.length; i < n; i++) {
+      var documentFactory:DocumentFactory = factories[i];
+      if (documentFactory != null && documentFactory.module.project == project) {
+        factories[i] = null;
+      }
     }
   }
 }

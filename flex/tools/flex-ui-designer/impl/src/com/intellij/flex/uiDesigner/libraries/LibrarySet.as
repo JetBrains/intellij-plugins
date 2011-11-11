@@ -4,7 +4,9 @@ import com.intellij.flex.uiDesigner.io.AmfUtil;
 import flash.system.ApplicationDomain;
 import flash.utils.IDataInput;
 
-public class LibrarySet {
+import org.jetbrains.Identifiable;
+
+public class LibrarySet implements Identifiable {
   /**
    * Application Domain contains all class definitions
    * If ApplicationDomainCreationPolicy.MULTIPLE, then applicationDomain equals application domain of last library in set

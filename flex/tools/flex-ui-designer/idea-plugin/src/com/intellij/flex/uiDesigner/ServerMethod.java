@@ -11,6 +11,7 @@ interface ServerMethod {
   int LOG_WARNING = 14;
 
   int UNREGISTER_DOCUMENT_FACTORIES = 4;
+  int UNREGISTER_LIBRARY_SETS = 15;
 
   int CLOSE_PROJECT = 5;
   int SAVE_PROJECT_WINDOW_BOUNDS = 6;

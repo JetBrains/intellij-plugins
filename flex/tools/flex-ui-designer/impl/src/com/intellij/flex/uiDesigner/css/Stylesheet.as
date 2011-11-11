@@ -104,7 +104,7 @@ public final class Stylesheet {
 
   private static function readSkinClass(textOffset:int, input:IDataInput, project:Project):CssDeclaration {
     const id:int = AmfUtil.readUInt29(input);
-    var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance(project).get(id);
+    var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance().get(id);
     var moduleContext:ModuleContextEx = documentFactory.module.context;
     var factory:Object = moduleContext.getDocumentFactory(id);
     if (factory == null) {

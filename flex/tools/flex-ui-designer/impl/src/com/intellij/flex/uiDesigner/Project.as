@@ -3,8 +3,9 @@ import cocoa.DocumentWindow;
 
 import org.flyti.plexus.LocalEventMap;
 import org.flyti.plexus.PlexusContainer;
+import org.jetbrains.Identifiable;
 
-public class Project {
+public class Project implements Identifiable {
   public var name:String;
   public var window:DocumentWindow;
 

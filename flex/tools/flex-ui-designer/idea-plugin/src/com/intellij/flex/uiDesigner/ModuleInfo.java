@@ -17,17 +17,20 @@ public class ModuleInfo extends Info<Module> implements Disposable {
   private List<LocalStyleHolder> localStyleHolders;
   private final List<LibrarySet> librarySets;
   private final boolean app;
-  public final FlexLibrarySet flexLibrarySet;
 
-  public ModuleInfo(Module module, FlexLibrarySet flexLibrarySet, List<LibrarySet> librarySets, boolean isApp) {
+  public ModuleInfo(Module module, List<LibrarySet> librarySets, boolean isApp) {
     super(module);
-    this.flexLibrarySet = flexLibrarySet;
     this.librarySets = librarySets;
     app = isApp;
   }
 
   public List<LibrarySet> getLibrarySets() {
     return librarySets;
+  }
+
+  public FlexLibrarySet getFlexLibrarySet() {
+    LibrarySet librarySet = librarySets.get(0);
+    return librarySet instanceof FlexLibrarySet ? (FlexLibrarySet)librarySet : null;
   }
 
   public boolean isApp() {

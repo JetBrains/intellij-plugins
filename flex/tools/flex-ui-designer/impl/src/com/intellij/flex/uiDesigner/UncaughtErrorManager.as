@@ -76,8 +76,7 @@ public class UncaughtErrorManager implements UiErrorHandler {
     }
 
     if (documentFactory != null) {
-      sendMessage2(Capabilities.isDebugger ? buildErrorMessage(error) : error.message, userMessage, documentFactory.module.project.id,
-                   documentFactory.id);
+      sendMessage2(Capabilities.isDebugger ? buildErrorMessage(error) : error.message, userMessage, documentFactory.id);
     }
     else {
       sendMessage(Capabilities.isDebugger ? buildErrorMessage(error) : error.message, userMessage);
@@ -85,13 +84,11 @@ public class UncaughtErrorManager implements UiErrorHandler {
   }
 
   public function readDocumentErrorHandler(error:Error, documentFactory:DocumentFactory):void {
-    sendMessage2(Capabilities.isDebugger ? buildErrorMessage(error) : error.message, null, documentFactory.module.project.id,
-                 documentFactory.id);
+    sendMessage2(Capabilities.isDebugger ? buildErrorMessage(error) : error.message, null, documentFactory.id);
   }
 
   protected function sendMessage(message:String, userMessage:String = null, project:Project = null):void {
     var documentFactoryId:int = -1;
-    var projectId:int = -1;
     try {
       if (project == null) {
         project = ProjectUtil.getProjectForActiveWindow();
@@ -99,7 +96,6 @@ public class UncaughtErrorManager implements UiErrorHandler {
       if (project != null) {
         var document:Document = DocumentManager(project.getComponent(DocumentManager)).document;
         if (document != null) {
-          projectId = project.id;
           documentFactoryId = document.documentFactory.id;
         }
       }
@@ -107,10 +103,10 @@ public class UncaughtErrorManager implements UiErrorHandler {
     catch (ignored:Error) {
     }
 
-    sendMessage2(message, userMessage, projectId, documentFactoryId);
+    sendMessage2(message, userMessage, documentFactoryId);
   }
 
-  protected function sendMessage2(message:String, userMessage:String, projectId:int, documentFactoryId:int):void {
+  protected function sendMessage2(message:String, userMessage:String, documentFactoryId:int):void {
     socket.writeByte(ServerMethod.SHOW_ERROR);
 
     socket.writeUTF(userMessage == null ? "" : userMessage);
@@ -119,7 +115,6 @@ public class UncaughtErrorManager implements UiErrorHandler {
     socket.writeBoolean(documentFactoryId != -1);
 
     if (documentFactoryId != -1) {
-      socket.writeShort(projectId);
       socket.writeShort(documentFactoryId);
     }
 
@@ -130,10 +125,6 @@ public class UncaughtErrorManager implements UiErrorHandler {
     socket.writeByte(ServerMethod.LOG_WARNING);
     socket.writeUTF(message);
     socket.flush();
-  }
-
-  public function logWarning2(e:Error):void {
-    logWarning(Capabilities.isDebugger ? buildErrorMessage(e) : e.message);
   }
 
   public function logWarning3(message:String, cause:Error):void {

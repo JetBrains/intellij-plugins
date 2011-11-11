@@ -49,7 +49,7 @@ public final class InjectionUtil {
     VirtualFile virtualFile = psiFile.getVirtualFile();
     assert virtualFile != null;
     if (isSupportedProjectComponentFile(virtualFile, psiFile, qualifiedClassName)) {
-      return DocumentFactoryManager.getInstance(psiFile.getProject()).getId(virtualFile, (XmlFile)psiFile, unregisteredDocumentFactories);
+      return DocumentFactoryManager.getInstance().getId(virtualFile, (XmlFile)psiFile, unregisteredDocumentFactories);
     }
     else {
       return -1;
@@ -62,7 +62,7 @@ public final class InjectionUtil {
       VirtualFile virtualFile = psiFile.getVirtualFile();
       assert virtualFile != null;
       if (isSupportedProjectComponentFile(virtualFile, psiFile, jsClass.getQualifiedName())) {
-        return DocumentFactoryManager.getInstance(psiFile.getProject()).getId(virtualFile, (XmlFile)psiFile, unregisteredDocumentFactories);
+        return DocumentFactoryManager.getInstance().getId(virtualFile, (XmlFile)psiFile, unregisteredDocumentFactories);
       }
       else {
         return -1;

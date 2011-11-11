@@ -6,6 +6,7 @@ import com.intellij.flex.uiDesigner.*;
 import com.intellij.flex.uiDesigner.css.CssWriter;
 import com.intellij.flex.uiDesigner.io.IdPool;
 import com.intellij.flex.uiDesigner.io.InfoMap;
+import com.intellij.flex.uiDesigner.io.RetainCondition;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet.ContainsCondition;
 import com.intellij.flex.uiDesigner.libraries.LibrarySorter.SortResult;
@@ -43,15 +44,19 @@ public class LibraryManager {
 
   //private static final String ABC_FILTER_VERSION = "16";
   //private static final String ABC_FILTER_VERSION_VALUE_NAME = "fud_abcFilterVersion";
-  private static final char NAME_POSTFIX = '@';
 
   private File appDir;
 
   private final InfoMap<VirtualFile, Library> libraries = new InfoMap<VirtualFile, Library>();
 
-  private final Map<String, LibrarySet> librarySets = new THashMap<String, LibrarySet>();
+  private final THashMap<String, LibrarySet> librarySets = new THashMap<String, LibrarySet>();
   private final IdPool librarySetIdPool = new IdPool();
   private final Map<VirtualFile, Set<CharSequence>> globalDefinitionsMap = new THashMap<VirtualFile, Set<CharSequence>>();
+
+  public void unregister(final int[] ids) {
+    librarySets.retainEntries(new RetainCondition<String, LibrarySet>(ids));
+    librarySetIdPool.dispose(ids);
+  }
 
   public static LibraryManager getInstance() {
     return DesignerApplicationManager.getService(LibraryManager.class);
@@ -104,11 +109,10 @@ public class LibraryManager {
     }
 
     assert !libraryCollector.sdkLibraries.isEmpty();
-    FlexLibrarySet flexLibrarySet = getOrCreateFlexLibrarySet(libraryCollector);
+    final FlexLibrarySet flexLibrarySet = getOrCreateFlexLibrarySet(libraryCollector);
     final InfoMap<Project, ProjectInfo> registeredProjects = client.getRegisteredProjects();
     ProjectInfo info = registeredProjects.getNullableInfo(project);
-    final boolean isNewProject = info == null;
-    if (isNewProject) {
+    if (info == null) {
       info = new ProjectInfo(project);
       registeredProjects.add(info);
       client.openProject(project);
@@ -130,9 +134,8 @@ public class LibraryManager {
       }
     }
 
-    final ModuleInfo moduleInfo = new ModuleInfo(module, flexLibrarySet,
-                                                 Collections.singletonList(librarySet == null ? flexLibrarySet : librarySet),
-                                                 ModuleInfoUtil.isApp(module));
+    final ModuleInfo moduleInfo = new ModuleInfo(module,
+      Collections.singletonList(librarySet == null ? flexLibrarySet : librarySet), ModuleInfoUtil.isApp(module));
     final List<XmlFile> unregisteredDocumentReferences = new ArrayList<XmlFile>();
     if (collectLocalStyleHolders) {
       // client.registerModule finalize it
@@ -247,14 +250,14 @@ public class LibraryManager {
 
   // created library will be register later, in Client.registerLibrarySet, so, we expect that createOriginalLibrary never called with duplicated virtualFile, i.e.
   // sdkLibraries doesn't contain duplicated virtualFiles and externalLibraries too (http://youtrack.jetbrains.net/issue/AS-200)
-  Library createOriginalLibrary(@NotNull final VirtualFile virtualFile, @NotNull final VirtualFile jarFile, final String artifactId,
+  Library createOriginalLibrary(@NotNull final VirtualFile jarFile, final String artifactId,
                                 @NotNull final Consumer<Library> initializer) {
     final Library info = libraries.getNullableInfo(jarFile);
     if (info != null) {
       return info;
     }
 
-    Library library = new Library(artifactId, artifactId + NAME_POSTFIX + Integer.toHexString(virtualFile.getPath().hashCode()), jarFile);
+    Library library = new Library(artifactId, jarFile);
     initializer.consume(library);
     return library;
   }

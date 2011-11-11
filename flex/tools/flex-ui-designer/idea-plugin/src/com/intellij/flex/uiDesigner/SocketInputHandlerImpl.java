@@ -144,7 +144,11 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
         break;
 
       case ServerMethod.UNREGISTER_DOCUMENT_FACTORIES:
-        unregisterDocumentFactories();
+        DocumentFactoryManager.getInstance().unregister(reader.readIntArray());
+        break;
+
+      case ServerMethod.UNREGISTER_LIBRARY_SETS:
+        LibraryManager.getInstance().unregister(reader.readIntArray());
         break;
 
       case ServerMethod.SHOW_ERROR:
@@ -196,8 +200,8 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   }
 
   private void setProperty() throws IOException {
-    Project project = readProject();
-    final DocumentFactoryManager.DocumentInfo info = DocumentFactoryManager.getInstance(project).getInfo(reader.readUnsignedShort());
+    final Project project = readProject();
+    final DocumentFactoryManager.DocumentInfo info = DocumentFactoryManager.getInstance().getInfo(reader.readUnsignedShort());
     final XmlFile psiFile = virtualFileToXmlFile(project, info.getElement());
     final XmlTag rootTag = psiFile.getRootTag();
     assert rootTag != null;
@@ -283,7 +287,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
   private void openDocument() throws IOException {
     Project project = readProject();
-    navigateToFile(new OpenFileDescriptor(project, DocumentFactoryManager.getInstance(project).getFile(reader.readUnsignedShort()),
+    navigateToFile(new OpenFileDescriptor(project, DocumentFactoryManager.getInstance().getFile(reader.readUnsignedShort()),
       reader.readInt()));
   }
 
@@ -354,7 +358,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
         final AmfOutputStream out = new AmfOutputStream(new ByteArrayOutputStreamEx(4 * 1024));
         // todo Embed, ClassReference, but idea doesn't support it too
-        List<IProperty> properties = resourceBundleFile.getProperties();
+        final List<IProperty> properties = resourceBundleFile.getProperties();
         out.write(Amf3Types.DICTIONARY);
         out.writeUInt29((properties.size() << 1) | 1);
         out.write(0);
@@ -455,8 +459,8 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     final String technicalMessage = reader.readUTF();
     final VirtualFile file;
     if (reader.readBoolean()) {
-      Project project = readProject();
-      file = DocumentFactoryManager.getInstance(project).getFile(reader.readUnsignedShort());
+      readProject();
+      file = DocumentFactoryManager.getInstance().getFile(reader.readUnsignedShort());
     }
     else {
       file = null;
@@ -482,10 +486,6 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
   private int readEntityId() throws IOException {
     return reader.readUnsignedShort();
-  }
-
-  private void unregisterDocumentFactories() throws IOException {
-    DocumentFactoryManager.getInstance(readProject()).unregister(reader.readIntArray());
   }
 
   @Override

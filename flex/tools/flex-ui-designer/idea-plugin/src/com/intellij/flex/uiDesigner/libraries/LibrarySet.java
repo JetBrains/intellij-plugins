@@ -1,11 +1,12 @@
 package com.intellij.flex.uiDesigner.libraries;
 
+import com.intellij.flex.uiDesigner.io.Identifiable;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
 
-public class LibrarySet {
+public class LibrarySet implements Identifiable {
   private final int id;
   private final LibrarySet parent;
 

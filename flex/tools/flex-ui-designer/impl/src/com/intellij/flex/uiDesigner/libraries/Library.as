@@ -9,11 +9,6 @@ import flash.utils.Dictionary;
 import flash.utils.IDataInput;
 
 public class Library {
-  private var _path:String;
-  public function get path():String {
-    return _path;
-  }
-  
   private var _file:VirtualFile;
   public function get file():VirtualFile {
     return _file;
@@ -30,7 +25,6 @@ public class Library {
   }
 
   public function readExternal(input:IDataInput):void {
-    _path = AmfUtil.readString(input);
     _file = VirtualFileImpl.create(input);
 
     var n:int = input.readUnsignedShort();

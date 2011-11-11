@@ -119,7 +119,7 @@ public class Client {
   }
 
   public void unregisterProject(final Project project) {
-    DocumentFactoryManager.getInstance(project).reset();
+    DocumentFactoryManager.getInstance().unregister(project);
     
     registeredProjects.remove(project);
     if (registeredProjects.isEmpty()) {
@@ -180,8 +180,6 @@ public class Client {
         }
         else {
           out.writeUInt29(libraryManager.add(library));
-
-          out.writeAmfUtf(library.getPath());
           writeVirtualFile(library.getFile(), out);
 
           if (library.inheritingStyles == null) {
@@ -245,7 +243,7 @@ public class Client {
    * final, full open document — responsible for handle problemsHolder and assetCounter — you must not do it
    */
   public boolean openDocument(Module module, XmlFile psiFile, boolean notifyOpened, ProblemsHolder problemsHolder) {
-    final DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance(module.getProject());
+    final DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance();
     final VirtualFile virtualFile = psiFile.getVirtualFile();
     final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
     assert virtualFile != null;
@@ -259,7 +257,10 @@ public class Client {
       return false;
     }
 
-    fillAssetClassPoolIfNeed(registeredModules.getInfo(module).flexLibrarySet);
+    FlexLibrarySet flexLibrarySet = registeredModules.getInfo(module).getFlexLibrarySet();
+    if (flexLibrarySet != null) {
+      fillAssetClassPoolIfNeed(flexLibrarySet);
+    }
 
     if (!problemsHolder.isEmpty()) {
       DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
@@ -342,7 +343,6 @@ public class Client {
   public boolean updateDocumentFactory(int factoryId, Module module, XmlFile psiFile) {
     try {
       beginMessage(ClientMethod.updateDocumentFactory);
-      writeId(module);
       out.writeShort(factoryId);
 
       final ProblemsHolder problemsHolder = new ProblemsHolder();
@@ -366,7 +366,7 @@ public class Client {
 
   private int registerDocumentFactoryIfNeed(Module module, XmlFile psiFile, VirtualFile virtualFile, boolean force,
                                             ProblemsHolder problemsHolder) {
-    final DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance(module.getProject());
+    final DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance();
     final boolean registered = !force && documentFactoryManager.isRegistered(virtualFile);
     final int id = documentFactoryManager.getId(virtualFile);
     if (!registered) {
@@ -420,7 +420,7 @@ public class Client {
 
     out.write(flags);
 
-    XmlFile[] unregisteredDocumentReferences = mxmlWriter.write(psiFile, problemsHolder, registeredModules.getInfo(module).flexLibrarySet.assetCounterInfo.demanded);
+    XmlFile[] unregisteredDocumentReferences = mxmlWriter.write(psiFile, problemsHolder, registeredModules.getInfo(module).getFlexLibrarySet().assetCounterInfo.demanded);
     return unregisteredDocumentReferences == null || registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder);
   }
 

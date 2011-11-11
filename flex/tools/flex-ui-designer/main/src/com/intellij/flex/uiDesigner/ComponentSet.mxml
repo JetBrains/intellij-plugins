@@ -8,10 +8,9 @@
     import org.jetbrains.actionSystem.DataManager;
     import org.jetbrains.actionSystem.DataManagerImpl;
     ]]></fx:Script>
-  
+
   <Component role="{ApplicationManager}"/>
   <Component role="{LibraryManager}"/>
-  <Component role="{BitmapDataManager}"/>
   <Component role="{EmbedSwfManager}">
     <Requirement role="{Server}"/>
   </Component>
@@ -30,23 +29,26 @@
     <Requirement role="{EmbedImageManager}"/>
     <Requirement role="{EmbedSwfManager}"/>
   </Component>
-	<Component role="{SocketManager}" implementation="{SocketManagerImpl}"/>
+  <Component role="{SocketManager}" implementation="{SocketManagerImpl}"/>
   <Component role="{DefaultSocketDataHandler}">
-		<Requirement role="{LibraryManager}"/>
-		<Requirement role="{ProjectManager}"/>
-		<Requirement role="{ModuleManager}"/>
-		<Requirement role="{StringRegistry}"/>
-	</Component>
+    <Requirement role="{LibraryManager}"/>
+    <Requirement role="{ProjectManager}"/>
+    <Requirement role="{ModuleManager}"/>
+    <Requirement role="{StringRegistry}"/>
+  </Component>
   <Component role="{UncaughtErrorManager}">
-		<Requirement role="{SocketManager}"/>
-	</Component>
+    <Requirement role="{SocketManager}"/>
+  </Component>
   <Component role="{Server}">
-		<Requirement role="{SocketManager}"/>
-	</Component>
+    <Requirement role="{SocketManager}"/>
+  </Component>
 
   <Component role="{Modifier}">
     <Requirement role="{SocketManager}"/>
   </Component>
 
   <Component role="{DataManager}" implementation="{DataManagerImpl}"/>
+  <Component role="{DocumentFactoryManager}">
+    <Requirement role="{Server}"/>
+  </Component>
 </ComponentSet>

@@ -7,10 +7,12 @@ import flash.desktop.NativeApplication;
 import flash.events.Event;
 import flash.events.NativeWindowBoundsEvent;
 
+import org.jetbrains.EntityLists;
+
 import org.jetbrains.actionSystem.DataManager;
 
 public class ProjectManager {
-  private const openProjects:Vector.<Project> = new Vector.<Project>(2);
+  private const openProjects:Vector.<Project> = new Vector.<Project>();
 
   private var libraryManager:LibraryManager;
   private var moduleManager:ModuleManager;
@@ -28,15 +30,7 @@ public class ProjectManager {
   }
 
   public function open(project:Project, window:DocumentWindow):void {
-    var id:int = project.id;
-    if (id >= openProjects.length) {
-      openProjects.length = Math.max(openProjects.length, id) + 2;
-    }
-    else {
-      assert(openProjects[id] == null);
-    }
-
-    openProjects[id] = project;
+    EntityLists.add(openProjects, project);
 
     addNativeWindowListeners(window);
     window.title = project.name;
@@ -108,8 +102,10 @@ public class ProjectManager {
   private function closeProject2(id:int, project:Project):void {
     openProjects[id] = null;
 
-    moduleManager.remove(project, function (module:Module):void {
-      libraryManager.remove(module.librarySets);
+    DocumentFactoryManager.getInstance().unregisterBelongToProject(project);
+
+    moduleManager.unregister(project, function (module:Module):void {
+      libraryManager.unregister(module.librarySets);
     });
   }
 

@@ -96,7 +96,7 @@ public class LibrarySorterTest extends MxmlTestBase {
   }
 
   private List<Library> myLibraries() {
-    return client.getRegisteredModules().getInfo(myModule).flexLibrarySet.getLibraries();
+    return client.getRegisteredModules().getInfo(myModule).getFlexLibrarySet().getLibraries();
   }
 
   public void testDeleteIfAllDefitionsHaveUnresolvedDependencies() throws Exception {

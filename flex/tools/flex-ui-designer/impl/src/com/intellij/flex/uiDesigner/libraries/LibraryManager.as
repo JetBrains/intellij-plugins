@@ -1,10 +1,13 @@
 package com.intellij.flex.uiDesigner.libraries {
+import com.intellij.flex.uiDesigner.Server;
 import com.intellij.flex.uiDesigner.UncaughtErrorManager;
 
 import flash.utils.Dictionary;
 
+import org.jetbrains.EntityLists;
+
 public class LibraryManager implements LibrarySetLoadProgressListener {
-  private const idMap:Dictionary = new Dictionary();
+  private const librarySets:Vector.<LibrarySet> = new Vector.<LibrarySet>();
 
   private var loader:QueueLoader;
 
@@ -35,40 +38,47 @@ public class LibraryManager implements LibrarySetLoadProgressListener {
   }
 
   public function register(librarySet:LibrarySet):void {
-    assert(!(librarySet.id in idMap));
-    idMap[librarySet.id] = librarySet;
-
+    EntityLists.add(librarySets, librarySet);
     loader.load(librarySet);
   }
 
   public function getById(id:int):LibrarySet {
-    return idMap[id];
+    return librarySets[id];
   }
 
-  public function idsToInstancesAndMarkAsUsed(ids:Vector.<int>):Vector.<LibrarySet> {
-    var librarySets:Vector.<LibrarySet> = new Vector.<LibrarySet>(ids.length, true);
+  public function idsToInstances(ids:Vector.<int>):Vector.<LibrarySet> {
+    var result:Vector.<LibrarySet> = new Vector.<LibrarySet>(ids.length, true);
     for (var i:int = 0, n:int = ids.length; i < n; i++) {
-      librarySets[i] = idMap[ids[i]];
+      result[i] = librarySets[ids[i]];
     }
-    return librarySets;
+    return result;
   }
   
-  public function remove(librarySets:Vector.<LibrarySet>):void {
+  public function unregister(librarySets:Vector.<LibrarySet>):void {
+    var unregistered:Vector.<int>;
     for each (var librarySet:LibrarySet in librarySets) {
       do {
         librarySet.usageCounter--;
-        if (librarySet.usageCounter < 1) {
-          removeLibrarySet(librarySet);
+        if (librarySet.usageCounter == 0) {
+          unregisterLibrarySet(librarySet);
+          if (unregistered == null) {
+            unregistered = new Vector.<int>();
+          }
+          unregistered[unregistered.length] = librarySet.id;
         }
       }
       while ((librarySet = librarySet.parent) != null);
     }
+
+    if (unregistered != null) {
+      Server.instance.unregisterLibrarySets(unregistered);
+    }
   }
 
-  protected function removeLibrarySet(librarySet:LibrarySet):void {
+  protected function unregisterLibrarySet(librarySet:LibrarySet):void {
     loader.stop(librarySet);
     librarySet.applicationDomain = null;
-    delete idMap[librarySet.id];
+    librarySets[librarySet.id] = null;
   }
 
   public function resolve(librarySets:Vector.<LibrarySet>, readyHandler:Function, ...readyHandlerArguments):void {

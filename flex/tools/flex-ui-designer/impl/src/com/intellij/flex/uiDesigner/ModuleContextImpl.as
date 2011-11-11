@@ -37,8 +37,8 @@ public final class ModuleContextImpl implements ModuleContextEx {
       }
 
       _librariesResolved = true;
-      _applicationDomain = _librarySets[_librarySets.length - 1].applicationDomain;
     }
+
     return _librariesResolved;
   }
 
@@ -79,6 +79,10 @@ public final class ModuleContextImpl implements ModuleContextEx {
 
   private var _applicationDomain:ApplicationDomain;
   public function get applicationDomain():ApplicationDomain {
+    if (_applicationDomain == null && librariesResolved) {
+      _applicationDomain = _librarySets[_librarySets.length - 1].applicationDomain;
+    }
+
     return _applicationDomain;
   }
   

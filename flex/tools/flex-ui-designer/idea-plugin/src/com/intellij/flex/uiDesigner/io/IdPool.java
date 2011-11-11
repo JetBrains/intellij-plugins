@@ -10,6 +10,10 @@ public class IdPool {
     freeIndices.add(id);
   }
 
+  public void dispose(int[] ids) {
+    freeIndices.add(ids);
+  }
+
   public int allocate() {
     return freeIndices.isEmpty() ? counter++ : freeIndices.remove(freeIndices.size() - 1);
   }

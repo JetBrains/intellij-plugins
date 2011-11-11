@@ -266,7 +266,7 @@ class LibraryCollector {
       artifactId = file.getNameWithoutExtension();
     }
     
-    list.add(libraryManager.createOriginalLibrary(file, jarFile, artifactId, initializer));
+    list.add(libraryManager.createOriginalLibrary(jarFile, artifactId, initializer));
   }
 
   // IDEA-74117

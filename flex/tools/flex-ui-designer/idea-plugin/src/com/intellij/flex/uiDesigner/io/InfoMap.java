@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner.io;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashMap;
 import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
@@ -47,6 +48,10 @@ public class InfoMap<E,I extends Info<E>> {
 
   public boolean isEmpty() {
     return elements.isEmpty();
+  }
+
+  public void remove(int[] ids) {
+    elements.retainEntries(new RetainCondition<E, I>(ids));
   }
 
   public void remove(TObjectObjectProcedure<E, I> filter) {

@@ -11,12 +11,6 @@
   <depends optional="false">com.intellij.flex</depends>
   <depends optional="false">com.intellij.properties</depends>
 
-  <project-components>
-    <component>
-      <implementation-class>com.intellij.flex.uiDesigner.DocumentFactoryManager</implementation-class>
-    </component>
-  </project-components>
-
   <extensionPoints>
     <extensionPoint name="service" beanClass="com.intellij.openapi.components.ServiceDescriptor"/>
   </extensionPoints>
@@ -35,6 +29,7 @@
     <service serviceInterface="com.intellij.flex.uiDesigner.EmbedSwfManager" serviceImplementation="com.intellij.flex.uiDesigner.EmbedSwfManager"/>
     <service serviceInterface="com.intellij.flex.uiDesigner.SocketInputHandler" serviceImplementation="com.intellij.flex.uiDesigner.SocketInputHandlerImpl"/>
     <service serviceInterface="com.intellij.flex.uiDesigner.Client" serviceImplementation="com.intellij.flex.uiDesigner.Client"/>
+    <service serviceInterface="com.intellij.flex.uiDesigner.DocumentFactoryManager" serviceImplementation="com.intellij.flex.uiDesigner.DocumentFactoryManager"/>
   </extensions>
 
   <actions>

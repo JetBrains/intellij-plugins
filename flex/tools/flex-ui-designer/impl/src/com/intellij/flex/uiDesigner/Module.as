@@ -3,7 +3,9 @@ import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 
-public final class Module {
+import org.jetbrains.Identifiable;
+
+public final class Module implements Identifiable {
   public function Module(id:int, project:Project, isApp:Boolean, librarySets:Vector.<LibrarySet>, localStyleHolders:Vector.<LocalStyleHolder>) {
     _isApp = isApp;
     _localStyleHolders = localStyleHolders;

@@ -24,9 +24,6 @@
     <Component role="{ElementTreeBarManager}">
       <Requirement role="{ElementManager}"/>
     </Component>
-    <Component role="{DocumentFactoryManager}">
-      <Requirement role="{Server}"/>
-    </Component>
     <Component role="{DocumentManager}" implementation="{DocumentManagerImpl}">
       <Requirement role="{LibraryManager}"/>
       <Requirement role="{DocumentReader}"/>

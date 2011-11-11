@@ -89,10 +89,16 @@ public class Server implements ResourceBundleProvider {
     socket.flush();
   }
 
-  public function unregisterDocumentFactories(module:Module, deleted:Vector.<int>):void {
+  public function unregisterLibrarySets(unregistered:Vector.<int>):void {
+    socket.writeByte(ServerMethod.UNREGISTER_LIBRARY_SETS);
+    socket.writeObject(unregistered);
+    socket.flush();
+  }
+
+  public function unregisterDocumentFactories(project:Project, unregistered:Vector.<int>):void {
     socket.writeByte(ServerMethod.UNREGISTER_DOCUMENT_FACTORIES);
-    writeProjectId(module.project);
-    socket.writeObject(deleted);
+    writeProjectId(project);
+    socket.writeObject(unregistered);
     socket.flush();
   }
 

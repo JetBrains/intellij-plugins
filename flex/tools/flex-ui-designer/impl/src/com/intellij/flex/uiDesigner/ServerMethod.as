@@ -10,6 +10,7 @@ public final class ServerMethod {
   public static const LOG_WARNING:int = 14;
 
   public static const UNREGISTER_DOCUMENT_FACTORIES:int = 4;
+  public static const UNREGISTER_LIBRARY_SETS:int = 15;
 
   public static const CLOSE_PROJECT:int = 5;
   public static const SAVE_PROJECT_WINDOW_BOUNDS:int = 6;

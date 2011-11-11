@@ -3,7 +3,6 @@ import com.intellij.flex.uiDesigner.Document;
 import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.ElementAddress;
 import com.intellij.flex.uiDesigner.PlatformDataKeys;
-import com.intellij.flex.uiDesigner.Project;
 import com.intellij.flex.uiDesigner.ServerMethod;
 import com.intellij.flex.uiDesigner.SocketManager;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
@@ -20,10 +19,9 @@ public class Modifier {
   }
 
   public function applyBoolean(description:Object, value:Boolean, dataContext:DataContext):void {
-    var project:Project = PlatformDataKeys.PROJECT.getData(dataContext);
     var document:Document = PlatformDataKeys.DOCUMENT.getData(dataContext);
     var element:Object = PlatformDataKeys.ELEMENT.getData(dataContext);
-    var elementAddress:ElementAddress = DocumentFactoryManager.getInstance(project).findElementAddress(element, document);
+    var elementAddress:ElementAddress = DocumentFactoryManager.getInstance().findElementAddress(element, document);
     if (elementAddress == null) {
       return;
     }
@@ -43,10 +41,9 @@ public class Modifier {
   }
 
   public function applyString(description:Object, value:String, dataContext:DataContext):void {
-    var project:Project = PlatformDataKeys.PROJECT.getData(dataContext);
     var document:Document = PlatformDataKeys.DOCUMENT.getData(dataContext);
     var element:Object = PlatformDataKeys.ELEMENT.getData(dataContext);
-    var elementAddress:ElementAddress = DocumentFactoryManager.getInstance(project).findElementAddress(element, document);
+    var elementAddress:ElementAddress = DocumentFactoryManager.getInstance().findElementAddress(element, document);
     if (elementAddress == null) {
       return;
     }

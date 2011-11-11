@@ -107,7 +107,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
   private function registerModule(input:IDataInput):void {
     stringRegistry.readStringTable(input);
     var module:Module = new Module(input.readUnsignedShort(), projectManager.getById(input.readUnsignedShort()), input.readBoolean(),
-                                   libraryManager.idsToInstancesAndMarkAsUsed(input.readObject()), input.readObject());
+                                   libraryManager.idsToInstances(input.readObject()), input.readObject());
     moduleManager.register(module);
   }
 
@@ -117,7 +117,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     var bytes:ByteArray = new ByteArray();
     var documentFactory:DocumentFactory = new DocumentFactory(input.readUnsignedShort(), bytes, VirtualFileImpl.create(input),
                                                               AmfUtil.readString(input), input.readUnsignedByte(), module);
-    getDocumentFactoryManager(module).register(documentFactory);
+    getDocumentFactoryManager().register(documentFactory);
 
     stringRegistry.readStringTable(input);
     input.readBytes(bytes, 0, messageSize - (prevBytesAvailable - input.bytesAvailable));
@@ -125,8 +125,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
   
   private function updateDocumentFactory(input:IDataInput, messageSize:int):void {
     const prevBytesAvailable:int = input.bytesAvailable;
-    var module:Module = moduleManager.getById(input.readUnsignedShort());
-    var documentFactory:DocumentFactory = getDocumentFactoryManager(module).get(input.readUnsignedShort());
+    var documentFactory:DocumentFactory = getDocumentFactoryManager().get(input.readUnsignedShort());
 
     AmfUtil.readString(input);
     input.readUnsignedByte(); // todo isApp update document styleManager
@@ -139,9 +138,9 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     bytes.length = length;
     input.readBytes(bytes, 0, length);
   }
-  
-  private static function getDocumentFactoryManager(module:Module):DocumentFactoryManager {
-    return DocumentFactoryManager.getInstance(module.project);
+
+  private static function getDocumentFactoryManager():DocumentFactoryManager {
+    return DocumentFactoryManager.getInstance();
   }
   
   private static function getDocumentManager(module:Module):DocumentManager {
@@ -150,7 +149,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
 
   private function openDocument(input:IDataInput):void {
     var module:Module = moduleManager.getById(input.readUnsignedShort());
-    var documentFactory:DocumentFactory = getDocumentFactoryManager(module).get(input.readUnsignedShort());
+    var documentFactory:DocumentFactory = getDocumentFactoryManager().get(input.readUnsignedShort());
 
     var documentOpened:Function;
     if (input.readBoolean()) {
@@ -162,7 +161,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
   
   private function updateDocuments(input:IDataInput):void {
     var module:Module = moduleManager.getById(input.readUnsignedShort());
-    var documentFactory:DocumentFactory = getDocumentFactoryManager(module).get(input.readUnsignedShort());
+    var documentFactory:DocumentFactory = getDocumentFactoryManager().get(input.readUnsignedShort());
     var documentManager:DocumentManager = getDocumentManager(module);
     // not set projectManager.project — current project is not changed (opposite to openDocument)
     openDocumentsForFactory(documentFactory, documentManager);

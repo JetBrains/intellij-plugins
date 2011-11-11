@@ -2,7 +2,9 @@ package com.intellij.flex.uiDesigner {
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
-public class DocumentFactory implements SerializedDocumentDataProvider, DocumentReaderContext {
+import org.jetbrains.Identifiable;
+
+public class DocumentFactory implements SerializedDocumentDataProvider, DocumentReaderContext, Identifiable {
   public var module:Module;
   
   // not subdocument, only Document as tab in our UI

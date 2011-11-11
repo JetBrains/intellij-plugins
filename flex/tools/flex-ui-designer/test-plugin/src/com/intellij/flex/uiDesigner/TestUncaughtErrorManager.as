@@ -31,7 +31,7 @@ public class TestUncaughtErrorManager extends UncaughtErrorManager {
     socket.flush();
   }
 
-  override protected function sendMessage2(message:String, userMessage:String, projectId:int, documentFactoryId:int):void {
+  override protected function sendMessage2(message:String, userMessage:String, documentFactoryId:int):void {
     sendMessage(message, userMessage);
   }
 }

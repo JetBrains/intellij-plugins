@@ -4,127 +4,60 @@ import com.intellij.AppTopics;
 import com.intellij.flex.uiDesigner.io.Info;
 import com.intellij.flex.uiDesigner.io.InfoMap;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileDocumentManagerAdapter;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.util.messages.MessageBus;
-import com.intellij.util.messages.MessageBusConnection;
 import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class DocumentFactoryManager extends AbstractProjectComponent {
+public class DocumentFactoryManager {
   private final InfoMap<VirtualFile, DocumentInfo> files = new InfoMap<VirtualFile, DocumentInfo>();
-  
-  private MyFileDocumentManagerListener fileDocumentManagerListener;
-  private MessageBusConnection designerApplicationManagerConnection;
 
-  private boolean isSubscribed;
-
-  public DocumentFactoryManager(Project project) {
-    super(project);
+  public DocumentFactoryManager() {
+    ApplicationManager.getApplication().getMessageBus().connect(DesignerApplicationManager.getInstance().getApplication()).subscribe(
+      AppTopics.FILE_DOCUMENT_SYNC, new MyFileDocumentManagerListener());
   }
 
-  public void reset() {
-    if (files.isEmpty()) {
-      return;
-    }
-    
-    files.clear();
-    fileDocumentManagerListener.unsubscribe();
-    isSubscribed = false;
+  public static DocumentFactoryManager getInstance() {
+    return DesignerApplicationManager.getService(DocumentFactoryManager.class);
   }
 
   public void unregister(final int[] ids) {
-    files.remove(new TObjectObjectProcedure<VirtualFile, DocumentInfo>() {
-      //@Override
-      public boolean execute(VirtualFile key, DocumentInfo value) {
-        for (int id : ids) {
-          if (value.getId() == id) {
-            return false;
-          }
-        }
+    files.remove(ids);
+  }
 
-        return true;
+  public void unregister(final Project project) {
+    files.remove(new TObjectObjectProcedure<VirtualFile, DocumentInfo>() {
+      @Override
+      public boolean execute(VirtualFile file, DocumentInfo documentInfo) {
+        return ProjectUtil.guessProjectForFile(file) != project;
       }
     });
   }
 
-  public static DocumentFactoryManager getInstance(@NotNull Project project) {
-    return project.getComponent(DocumentFactoryManager.class);
-  }
-
-  @Override
-  public void disposeComponent() {
-    if (designerApplicationManagerConnection != null) {
-      designerApplicationManagerConnection.disconnect();
-      // unsubscribed in applicationClosed
-      if (fileDocumentManagerListener.connection != null) {
-        fileDocumentManagerListener.unsubscribe();
-      }
-    }
-  }
-
-  private void listenChages() {
-    assert !isSubscribed;
-    isSubscribed = true;
-    if (fileDocumentManagerListener == null) {
-      fileDocumentManagerListener = new MyFileDocumentManagerListener();
-    }
-    
-    MessageBus messageBus = ApplicationManager.getApplication().getMessageBus();
-    fileDocumentManagerListener.subscribe(messageBus);
-    
-    if (designerApplicationManagerConnection == null) {
-      designerApplicationManagerConnection = messageBus.connect();
-      //designerApplicationManagerConnection.subscribe(DesignerApplicationManager.MESSAGE_TOPIC, new DesignerApplicationListener() {
-      //  @Override
-      //  public void initialDocumentOpened() {
-      //  }
-      //
-      //  @Override
-      //  public void applicationClosed() {
-      //    reset();
-      //  }
-      //});
-    }
-  }
-    
   private class MyFileDocumentManagerListener extends FileDocumentManagerAdapter {
-    private MessageBusConnection connection;
-
-    public void subscribe(MessageBus messageBus) {
-      assert connection == null;
-      connection = messageBus.connect();
-      connection.subscribe(AppTopics.FILE_DOCUMENT_SYNC, this);
-    }
-    
-    public void unsubscribe() {
-      connection.disconnect();
-      connection = null;
-    }
-
     @Override
     public void beforeDocumentSaving(Document document) {
       final VirtualFile file = FileDocumentManager.getInstance().getFile(document);
       if (file == null) {
         return;
       }
-      
+
       final DocumentInfo info = files.getNullableInfo(file);
       if (info == null) {
         return;
       }
-      
+
       final DesignerApplicationManager designerApplicationManager = DesignerApplicationManager.getInstance();
       if (designerApplicationManager.isDocumentOpening()) {
         return;
@@ -135,12 +68,17 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
         return;
       }
 
-      final Module module = ModuleUtil.findModuleForFile(file, myProject);
+      final Project project = ProjectUtil.guessProjectForFile(file);
+      if (project == null) {
+        return;
+      }
+
+      final Module module = ModuleUtil.findModuleForFile(file, project);
       if (module == null) {
         return;
       }
 
-      final XmlFile psiFile = (XmlFile)PsiDocumentManager.getInstance(myProject).getPsiFile(document);
+      final XmlFile psiFile = (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(document);
       if (psiFile == null) {
         return;
       }
@@ -163,10 +101,6 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
       return info.getId();
     }
 
-    if (!isSubscribed) {
-      listenChages();
-    }
-
     if (unregisteredDocumentFactories != null) {
       unregisteredDocumentFactories.add(psiFile);
     }
@@ -182,7 +116,7 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
     return files.getInfo(id);
   }
 
-  public  static class DocumentInfo extends Info<VirtualFile> {
+  public static class DocumentInfo extends Info<VirtualFile> {
     public long documentModificationStamp;
     
     public DocumentInfo(@NotNull VirtualFile element) {

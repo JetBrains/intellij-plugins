@@ -16,17 +16,15 @@ public class Library extends Info<VirtualFile> {
   public byte[] inheritingStyles;
   public byte[] defaultsStyle;
 
-  private final String path;
   private final String name;
 
   // en_US => {"layout", "components"}
   public final Map<String, THashSet<String>> resourceBundles = new THashMap<String, THashSet<String>>();
 
-  Library(String name, String relativePath, VirtualFile file) {
+  Library(String name, VirtualFile file) {
     super(file);
 
     this.name = name;
-    path = relativePath;
   }
 
   public boolean hasResourceBundles() {
@@ -53,10 +51,6 @@ public class Library extends Info<VirtualFile> {
 
   public static VirtualFile getCatalogFile(VirtualFile swcFile) {
     return swcFile.findChild(CATALOG);
-  }
-
-  public String getPath() {
-    return path;
   }
 
   public String getName() {
