@@ -15,11 +15,6 @@ class TransactionableStringIntHashMap extends ObjectIntHashMap<String> {
     this.valueOffset = valueOffset;
   }
 
-  TransactionableStringIntHashMap() {
-    super();
-    valueOffset = 0;
-  }
-
   public void startTransaction() {
     lastCommitedTableSize = size();
   }

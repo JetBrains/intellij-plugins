@@ -41,7 +41,7 @@ abstract class MxmlTestBase extends AppTestBase {
   protected final void runAdl() throws Exception {
     TestDesignerApplicationManager testApplicationManager = TestDesignerApplicationManager.getInstance();
 
-    appDir = DesignerApplicationUtil.APP_DIR;
+    appDir = DesignerApplicationLauncher.APP_DIR;
     socketInputHandler = testApplicationManager.socketInputHandler;
     client = (TestClient)Client.getInstance();
 

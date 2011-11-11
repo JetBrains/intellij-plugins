@@ -49,8 +49,6 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   private File resultFile;
   private File appDir;
 
-  private DataOutputStream errorOut;
-
   private final MessageBus messageBus;
 
   public SocketInputHandlerImpl() {
@@ -70,11 +68,6 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   public void read(@NotNull InputStream inputStream, @NotNull File appDir) throws IOException {
     init(inputStream, appDir);
     process();
-  }
-
-  @Override
-  public void setErrorOut(OutputStream out) {
-    errorOut = new DataOutputStream(new BufferedOutputStream(out));
   }
 
   public void process() throws IOException {
@@ -496,12 +489,13 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   }
 
   @Override
-  public void close() throws IOException {
+  public void dispose() {
     if (reader != null) {
-      reader.close();
-    }
-    if (errorOut != null) {
-      errorOut.close();
+      try {
+        reader.close();
+      }
+      catch (IOException ignored) {
+      }
     }
   }
 

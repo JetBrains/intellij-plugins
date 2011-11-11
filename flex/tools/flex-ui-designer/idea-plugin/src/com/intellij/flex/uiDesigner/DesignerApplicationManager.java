@@ -1,17 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.ProjectTopics;
-import com.intellij.diagnostic.LogMessageEx;
-import com.intellij.diagnostic.errordialog.Attachment;
-import com.intellij.execution.ExecutionException;
 import com.intellij.facet.FacetManager;
-import com.intellij.flex.uiDesigner.DesignerApplicationUtil.AdlRunConfiguration;
-import com.intellij.flex.uiDesigner.DesignerApplicationUtil.AdlRunTask;
-import com.intellij.flex.uiDesigner.DesignerApplicationUtil.MyOSProcessHandler;
-import com.intellij.flex.uiDesigner.io.ErrorSocketManager;
-import com.intellij.flex.uiDesigner.io.IOUtil;
-import com.intellij.flex.uiDesigner.io.MessageSocketManager;
-import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.InitException;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.lang.javascript.flex.FlexFacet;
@@ -24,58 +13,82 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.ServiceDescriptor;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.components.impl.ServiceManagerImpl;
+import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.help.HelpManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task;
-import com.intellij.openapi.project.ModuleAdapter;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.ui.ProjectJdksEditor;
-import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
-import com.intellij.util.ExceptionUtil;
-import com.intellij.util.PlatformUtils;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.messages.MessageBusConnection;
-import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
 
-import static com.intellij.flex.uiDesigner.DesignerApplicationUtil.runAdl;
 import static com.intellij.flex.uiDesigner.LogMessageUtil.LOG;
 
-public class DesignerApplicationManager implements Disposable {
-  public static final Topic<DesignerApplicationListener> MESSAGE_TOPIC =
-    new Topic<DesignerApplicationListener>("Flex UI Designer Application open and close events",
-                                                 DesignerApplicationListener.class);
-
-  private MyOSProcessHandler adlProcessHandler;
-
-  ProjectManagerListener projectManagerListener;
+public class DesignerApplicationManager extends ServiceManagerImpl implements Disposable {
+  private static final ExtensionPointName<ServiceDescriptor> SERVICES =
+    new ExtensionPointName<ServiceDescriptor>("com.intellij.flex.uiDesigner.service");
 
   private boolean documentOpening;
+  private DesignerApplication application;
 
-  private Disposable appParentDisposable;
+  public static <T> T getService(@NotNull Class<T> serviceClass) {
+    //noinspection unchecked
+    return (T)getInstance().application.getPicoContainer().getComponentInstance(serviceClass.getName());
+  }
 
-  private static class ParentDisposable implements Disposable {
-    @Override
-    public void dispose() {
+  public DesignerApplicationManager() {
+    super(true);
+  }
+
+  public DesignerApplication getApplication() {
+    return application;
+  }
+
+  void disposeApplication() {
+    LOG.assertTrue(application != null);
+    final DesignerApplication disposedApp = application;
+    application = null;
+
+    final Application ideaApp = ApplicationManager.getApplication();
+    Runnable runnable = new Runnable() {
+      @Override
+      public void run() {
+        Disposer.dispose(disposedApp);
+      }
+    };
+
+    if (ideaApp.isDispatchThread()) {
+      runnable.run();
     }
+    else {
+      ideaApp.invokeLater(runnable, new Condition() {
+        @Override
+        public boolean value(Object o) {
+          return ideaApp.isDisposed();
+        }
+      });
+    }
+  }
+
+  void setApplication(DesignerApplication application) {
+    LOG.assertTrue(this.application == null);
+    Disposer.register(this, application);
+    installEP(SERVICES, application);
+    this.application = application;
   }
 
   public boolean isDocumentOpening() {
@@ -86,31 +99,8 @@ public class DesignerApplicationManager implements Disposable {
     return ServiceManager.getService(DesignerApplicationManager.class);
   }
 
-  public boolean disposeOnApplicationClosed(Disposable disposable) {
-    if (appParentDisposable == null) {
-      Disposer.dispose(disposable);
-      return false;
-    }
-    else {
-      Disposer.register(appParentDisposable, disposable);
-      return true;
-    }
-  }
-
   @Override
   public void dispose() {
-    try {
-      IOUtil.close(Client.getInstance());
-    }
-    finally {
-      destroyAdlProcess();
-    }
-  }
-
-  private void destroyAdlProcess() {
-    if (adlProcessHandler != null) {
-      adlProcessHandler.destroyProcess();
-    }
   }
 
   private static boolean checkFlexSdkVersion(final String version) {
@@ -149,7 +139,7 @@ public class DesignerApplicationManager implements Disposable {
     documentOpening = true;
 
     if (appClosed) {
-      ProgressManager.getInstance().run(new FirstOpenDocumentTask(psiFile, module, debug));
+      ProgressManager.getInstance().run(new DesignerApplicationLauncher(module, debug, new FirstOpenDocumentTask(psiFile)));
     }
     else {
       ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
@@ -160,14 +150,14 @@ public class DesignerApplicationManager implements Disposable {
             final ProblemsHolder problemsHolder = new ProblemsHolder();
             if (!client.isModuleRegistered(module)) {
               try {
-                final XmlFile[] unregisteredDocumentReferences = LibraryManager.getInstance().initLibrarySets(module);
+                final XmlFile[] unregisteredDocumentReferences = LibraryManager.getInstance().initLibrarySets(module, true, problemsHolder);
                 if (unregisteredDocumentReferences != null &&
                     !client.registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder)) {
                   return;
                 }
               }
               catch (InitException e) {
-                processInitException(e, module, debug);
+                DesignerApplicationLauncher.processInitException(e, module, debug);
               }
             }
 
@@ -182,30 +172,8 @@ public class DesignerApplicationManager implements Disposable {
     }
   }
 
-  private static void processInitException(InitException e, Module module, boolean debug) {
-    notifyUser(debug, e.getMessage(), module);
-
-    if (e.attachments == null) {
-      LOG.error(e.getCause());
-    }
-    else {
-      final Collection<Attachment> attachments = new ArrayList<Attachment>(e.attachments.length);
-      for (Attachment attachment : e.attachments) {
-        if (attachment != null) {
-          attachments.add(attachment);
-        }
-        else {
-          break;
-        }
-      }
-
-      LOG.error(LogMessageEx.createEvent(e.getMessage(), e.technicalMessage + "\n" + ExceptionUtil.getThrowableText(e), e.getMessage(),
-                                         null, attachments));
-    }
-  }
-
   private boolean isAppClosed() {
-    return adlProcessHandler == null;
+    return application == null;
   }
 
   private static void reportInvalidFlexSdk(final Module module, boolean debug, @Nullable Sdk sdk) {
@@ -255,34 +223,17 @@ public class DesignerApplicationManager implements Disposable {
         }
       }
     });
-
   }
 
-  private void attachApplicationLevelListeners() {
-    projectManagerListener = new MyProjectManagerListener();
-    Application application = ApplicationManager.getApplication();
-    ProjectManager.getInstance().addProjectManagerListener(projectManagerListener, application);
-
-    application.getMessageBus().connect(application).subscribe(ProjectTopics.MODULES,
-        new ModuleAdapter() {
-          @Override
-          public void moduleRemoved(Project project, Module module) {
-            if (!isAppClosed() || Client.getInstance().isModuleRegistered(module)) {
-              Client.getInstance().unregisterModule(module);
-            }
-          }
-        });
-  }
-
-  private static String getOpenActionTitle(boolean debug) {
+  public static String getOpenActionTitle(boolean debug) {
     return FlexUIDesignerBundle.message(debug ? "action.FlexUIDesigner.DebugDesignView.text" : "action.FlexUIDesigner.RunDesignView.text");
   }
 
-  private static void notifyUser(boolean debug, @NotNull String text, @NotNull Module module) {
+  public static void notifyUser(boolean debug, @NotNull String text, @NotNull Module module) {
     notifyUser(debug, text, module.getProject(), null);
   }
 
-  private static void notifyUser(boolean debug, @NotNull String text, @NotNull Project project, @Nullable final Consumer<String> handler) {
+  static void notifyUser(boolean debug, @NotNull String text, @NotNull Project project, @Nullable final Consumer<String> handler) {
     Notification notification = new Notification(FlexUIDesignerBundle.message("plugin.name"), getOpenActionTitle(debug), text,
         NotificationType.ERROR, handler == null ? null : new NotificationListener() {
       @Override
@@ -304,86 +255,34 @@ public class DesignerApplicationManager implements Disposable {
     notification.notify(project);
   }
 
-  private class AdlExitHandler implements Consumer<Integer> {
-    @Override
-    public void consume(Integer exitCode) {
-      adlProcessHandler = null;
-      if (exitCode != 0) {
-        LOG.error("ADL exited with error code " + exitCode);
-      }
-
-      notifyAboutAppClosed();
-      Disposer.dispose(DesignerApplicationManager.this);
-    }
-  }
-
-  private void notifyAboutAppClosed() {
-    try {
-      Application application = ApplicationManager.getApplication();
-      if (!application.isDisposed()) {
-        application.getMessageBus().syncPublisher(MESSAGE_TOPIC).applicationClosed();
-      }
-    }
-    finally {
-      if (appParentDisposable != null) {
-        disposeAppParentDisposable();
-      }
-    }
-  }
-
-  private void disposeAppParentDisposable() {
-    Disposer.dispose(appParentDisposable);
-    appParentDisposable = null;
-  }
-
-  public class FirstOpenDocumentTask extends Task.Backgroundable {
-    private final Module module;
+  private class FirstOpenDocumentTask implements DesignerApplicationLauncher.PostTask {
     private final XmlFile psiFile;
-    private final boolean debug;
 
-    private boolean libraryAndModuleInitialized;
-    private boolean clientOpened;
-    private int adlExitCode = -1;
-
-    private final Semaphore semaphore = new Semaphore();
-    private ProgressIndicator indicator;
-    
-    private XmlFile[] unregisteredDocumentReferences;
-
-    public FirstOpenDocumentTask(@NotNull final XmlFile psiFile, final @NotNull Module module, final boolean debug) {
-      super(module.getProject(), getOpenActionTitle(debug));
-
-      this.module = module;
+    public FirstOpenDocumentTask(@NotNull final XmlFile psiFile) {
       this.psiFile = psiFile;
-      this.debug = debug;
     }
 
-    public void clientOpened() {
-      clientOpened = true;
-      checkCanceled();
-      if (libraryAndModuleInitialized) {
-        semaphore.up();
-      }
+    public void end() {
+      documentOpening = false;
     }
 
-    public void clientSocketNotAccepted() {
-      cancel();
-    }
-
-    private void openDocument() {
+    @Override
+    public boolean run(XmlFile[] unregisteredDocumentReferences, ProgressIndicator indicator, ProblemsHolder problemsHolder) {
       indicator.setText(FlexUIDesignerBundle.message("open.document"));
       Client client = Client.getInstance();
       if (!client.flush()) {
-        cancel();
+        return false;
       }
 
-      final ProblemsHolder problemsHolder = new ProblemsHolder();
-      if (unregisteredDocumentReferences != null &&
-          !client.registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder)) {
-        return;
+      final Module module = ModuleUtil.findModuleForPsiElement(psiFile);
+      if (unregisteredDocumentReferences != null && !client.registerDocumentReferences(unregisteredDocumentReferences, module,
+        problemsHolder)) {
+        return false;
       }
 
-      final MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(appParentDisposable);
+      final Semaphore semaphore = new Semaphore();
+      final MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(
+        DesignerApplicationManager.getInstance().getApplication());
       connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentOpenedListener() {
         @Override
         public void documentOpened() {
@@ -404,7 +303,7 @@ public class DesignerApplicationManager implements Disposable {
       semaphore.down();
       if (client.openDocument(module, psiFile, true, problemsHolder)) {
         if (!client.flush()) {
-          cancel();
+          return false;
         }
         indicator.setText(FlexUIDesignerBundle.message("loading.libraries"));
         semaphore.waitFor();
@@ -413,234 +312,8 @@ public class DesignerApplicationManager implements Disposable {
         semaphore.up();
         connection.disconnect();
       }
-    }
 
-    @Override
-    public void run(@NotNull final ProgressIndicator indicator) {
-      this.indicator = indicator;
-      AdlRunConfiguration adlRunConfiguration;
-      try {
-        indicator.setText(FlexUIDesignerBundle.message("copying.app.files"));
-        DesignerApplicationUtil.copyAppFiles();
-        indicator.setText(FlexUIDesignerBundle.message("finding.suitable.air.runtime"));
-        adlRunConfiguration = DesignerApplicationUtil.createAdlRunConfiguration();
-        if (adlRunConfiguration == null) {
-          String message = FlexUIDesignerBundle.message(
-              SystemInfo.isLinux ? "no.sdk.to.launch.designer.linux" : "no.sdk.to.launch.designer");
-          notifyUser(debug, message, module.getProject(), new Consumer<String>() {
-            @Override
-            public void consume(String id) {
-              if ("edit".equals(id)) {
-                // TODO wrap this in ProjectSettingsService?
-                if (PlatformUtils.isFlexIde()) {
-                  if (ProjectSettingsService.getInstance(myProject).canOpenModuleDependenciesSettings()) {
-                    ProjectSettingsService.getInstance(myProject).openModuleDependenciesSettings(module, null);
-                  }
-                }
-                else {
-                  new ProjectJdksEditor(null, module.getProject(), WindowManager.getInstance().suggestParentWindow(module.getProject()))
-                    .show();
-                }
-              }
-              else {
-                LOG.error("unexpected id: " + id);
-              }
-            }
-          });
-          indicator.cancel();
-          return;
-        }
-
-        indicator.checkCanceled();
-
-        runInitializeLibrariesAndModuleThread();
-
-        appParentDisposable = new ParentDisposable();
-
-        final List<String> arguments = new ArrayList<String>();
-        arguments.add(String.valueOf(new MessageSocketManager(this, DesignerApplicationUtil.APP_DIR).listen()));
-        arguments.add(String.valueOf(new ErrorSocketManager().listen()));
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
-          DesignerApplicationUtil.addTestPlugin(arguments);
-        }
-
-        adlRunConfiguration.arguments = arguments;
-      }
-      catch (Throwable e) {
-        LogMessageUtil.LOG.error(e);
-        return;
-      }
-
-      final AdlRunTask task = new AdlRunTask(adlRunConfiguration) {
-        @Override
-        public void run() {
-          checkCanceled();
-
-          if (projectManagerListener == null) {
-            attachApplicationLevelListeners();
-          }
-          
-          try {
-            adlProcessHandler = runAdl(runConfiguration, DesignerApplicationUtil.APP_DIR.getPath() + File.separatorChar + DesignerApplicationUtil.DESCRIPTOR_XML,
-                new Consumer<Integer>() {
-                  @Override
-                  public void consume(Integer exitCode) {
-                    adlProcessHandler = null;
-
-                    // even 0 is not correct exit code, why adl exited while open socket?
-                    if (!indicator.isCanceled()) {
-                      LOG.error(DesignerApplicationUtil.describeAdlExit(exitCode, runConfiguration));
-                    }
-                    adlExitCode = exitCode;
-                    if (libraryAndModuleInitialized) {
-                      cancel();
-                    }
-                  }
-                });
-          }
-          catch (IOException e) {
-            LOG.error(e);
-            cancel();
-          }
-        }
-      };
-
-      if (debug) {
-        adlRunConfiguration.debug = true;
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            try {
-              DesignerApplicationUtil.runDebugger(module, task);
-            }
-            catch (ExecutionException e) {
-              LOG.error(e);
-            }
-          }
-        });
-      }
-      else {
-        task.run();
-      }
-
-      semaphore.down();
-      semaphore.waitFor();
-
-      if (!indicator.isCanceled()) {
-        openDocument();
-      }
-
-      // Why in test mode ProgressManager.run() doesn't call onCancel/onSuccess?
-      if (isHeadless()) {
-        if (indicator.isCanceled()) {
-          onCancel();
-        }
-        else {
-          onSuccess();
-        }
-      }
-    }
-
-    private void runInitializeLibrariesAndModuleThread() {
-      LibraryManager.getInstance().setAppDir(DesignerApplicationUtil.APP_DIR);
-
-      ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-        @Override
-        public void run() {
-          LibraryManager.getInstance().garbageCollection(indicator);
-          checkCanceled();
-
-          try {
-            if (!StringRegistry.getInstance().isEmpty()) {
-              Client.getInstance().initStringRegistry();
-            }
-            indicator.setText(FlexUIDesignerBundle.message("collect.libraries"));
-            unregisteredDocumentReferences = LibraryManager.getInstance().initLibrarySets(module);
-          }
-          catch (InitException e) {
-            processInitException(e, module, debug);
-            cancel();
-            return;
-          }
-          catch (Throwable e) {
-            LOG.error(e);
-            cancel();
-            return;
-          }
-
-          libraryAndModuleInitialized = true;
-          checkCanceled();
-          if (clientOpened) {
-            semaphore.up();
-          }
-          else if (adlExitCode != -1) {
-            cancel();
-          }
-        }
-      });
-    }
-
-    private void checkCanceled() {
-      if (indicator.isCanceled()) {
-        semaphore.up();
-        indicator.checkCanceled();
-      }
-    }
-
-    private void cancel() {
-      indicator.cancel();
-      semaphore.up();
-
-      if (adlExitCode != -1) {
-        notifyUser(debug, FlexUIDesignerBundle.message("cannot.launch.designer", adlExitCode), module);
-      }
-    }
-
-    @Override
-    public void onCancel() {
-      semaphore.up();
-
-      try {
-        Disposer.dispose(DesignerApplicationManager.this);
-      }
-      finally {
-        documentOpening = false;
-        notifyAboutAppClosed();
-      }
-    }
-
-    @Override
-    public void onSuccess() {
-      documentOpening = false;
-      adlProcessHandler.adlExitHandler = new AdlExitHandler();
-      ApplicationManager.getApplication().getMessageBus().syncPublisher(MESSAGE_TOPIC).initialDocumentOpened();
-    }
-  }
-
-  private class MyProjectManagerListener implements ProjectManagerListener {
-    @Override
-    public void projectOpened(Project project) {
-    }
-
-    @Override
-    public boolean canCloseProject(Project project) {
       return true;
-    }
-
-    @Override
-    public void projectClosed(Project project) {
-      if (isAppClosed()) {
-        return;
-      }
-
-      Client client = Client.getInstance();
-      if (client.getRegisteredProjects().contains(project)) {
-        client.closeProject(project);
-      }
-    }
-
-    @Override
-    public void projectClosing(Project project) {
     }
   }
 }

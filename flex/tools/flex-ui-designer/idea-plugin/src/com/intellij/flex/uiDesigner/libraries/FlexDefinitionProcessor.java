@@ -35,7 +35,7 @@ public class FlexDefinitionProcessor implements DefinitionProcessor {
     int i = name.indexOf(':');
     String newName = name.substring(0, i + 1) + OVERLOADED_AND_BACKED_CLASS_MARK + name.substring(i + 2);
     definitionMap.put(newName, definition);
-    definition.name = newName;
+    //definition.name = newName;
   }
 
   private static void changeAbcName(final String name, ByteBuffer buffer) throws IOException {

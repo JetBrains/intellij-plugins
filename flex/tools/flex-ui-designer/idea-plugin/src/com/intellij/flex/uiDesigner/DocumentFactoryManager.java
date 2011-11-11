@@ -86,16 +86,16 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
     
     if (designerApplicationManagerConnection == null) {
       designerApplicationManagerConnection = messageBus.connect();
-      designerApplicationManagerConnection.subscribe(DesignerApplicationManager.MESSAGE_TOPIC, new DesignerApplicationListener() {
-        @Override
-        public void initialDocumentOpened() {
-        }
-
-        @Override
-        public void applicationClosed() {
-          reset();
-        }
-      });
+      //designerApplicationManagerConnection.subscribe(DesignerApplicationManager.MESSAGE_TOPIC, new DesignerApplicationListener() {
+      //  @Override
+      //  public void initialDocumentOpened() {
+      //  }
+      //
+      //  @Override
+      //  public void applicationClosed() {
+      //    reset();
+      //  }
+      //});
     }
   }
     

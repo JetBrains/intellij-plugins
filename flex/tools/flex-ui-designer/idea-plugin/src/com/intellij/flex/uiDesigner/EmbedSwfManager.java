@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class EmbedSwfManager extends EmbedAssetManager<SwfAssetInfo> {
   public static EmbedSwfManager getInstance() {
-    return ServiceManager.getService(EmbedSwfManager.class);
+    return DesignerApplicationManager.getService(EmbedSwfManager.class);
   }
 
   public int add(@NotNull VirtualFile file, @Nullable String symbolName, @NotNull AssetCounter assetCounter) {

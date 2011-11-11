@@ -34,7 +34,6 @@ public class Main extends MainWindowedApplication {
   private var loadedPluginCounter:int;
 
   private var port:int;
-  private var errorPort:int;
 
   config::fdbWorkaround {
     // Burn in hell, Adobe
@@ -87,8 +86,8 @@ public class Main extends MainWindowedApplication {
 
     var deferredConnect:Boolean;
     var arguments:Array = event.arguments;
-    if (arguments.length > 2) {
-      for (var i:int = 2; i < arguments.length; i += 2) {
+    if (arguments.length > 1) {
+      for (var i:int = 1; i < arguments.length; i += 2) {
         var key:String = arguments[i];
         var value:String = arguments[i + 1];
         switch (key) {
@@ -104,7 +103,6 @@ public class Main extends MainWindowedApplication {
     }
 
     port = arguments[0];
-    errorPort = arguments[1];
     if (!deferredConnect) {
       connect();
     }
@@ -117,7 +115,7 @@ public class Main extends MainWindowedApplication {
 
     var socketManager:SocketManager = SocketManager(container.lookup(SocketManager));
     socketManager.addSocketDataHandler(0, SocketDataHandler(container.lookup(DefaultSocketDataHandler)));
-    socketManager.connect("localhost", port, errorPort);
+    socketManager.connect("localhost", port, 0);
 
     UncaughtErrorManager.instance.listen(parent.loaderInfo);
     // hello, it is flash. we must listen our loaderInfo.uncaughtErrorEvents for errors in plugin swf (as example, our test plugin)

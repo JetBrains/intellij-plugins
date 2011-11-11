@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.ShutDownTracker;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.util.Consumer;
 import org.picocontainer.MutablePicoContainer;
 
 import java.io.IOException;
@@ -24,40 +23,40 @@ class TestDesignerApplicationManager {
   private static TestDesignerApplicationManager instance;
   private static boolean serviceImplementationChanged;
 
-  private final ProcessHandler adlProcessHandler;
+  private ProcessHandler adlProcessHandler;
 
   private Socket socket;
   public final TestSocketInputHandler socketInputHandler;
 
   private TestDesignerApplicationManager() throws Exception {
-    LibraryManager.getInstance().setAppDir(DesignerApplicationUtil.APP_DIR);
+    //new DesignerApplicationLauncher()
 
-    final DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration = DesignerApplicationUtil.createTestAdlRunConfiguration();
+    final AdlUtil.AdlRunConfiguration adlRunConfiguration = AdlUtil.createTestAdlRunConfiguration();
     adlRunConfiguration.arguments = new ArrayList<String>();
 
     final ServerSocket serverSocket = new ServerSocket(0, 1);
     adlRunConfiguration.arguments.add(String.valueOf(serverSocket.getLocalPort()));
     adlRunConfiguration.arguments.add(String.valueOf(0));
 
-    DesignerApplicationUtil.addTestPlugin(adlRunConfiguration.arguments);
-    DesignerApplicationUtil.copyAppFiles();
+    AdlUtil.addTestPlugin(adlRunConfiguration.arguments);
+    //AdlUtil.copyAppFiles();
 
-    adlProcessHandler = DesignerApplicationUtil.runAdl(adlRunConfiguration, DebugPathManager.getFudHome() + '/' +
-                                                                            DesignerApplicationUtil.DESCRIPTOR_XML_DEV_PATH,
-                                                       DesignerApplicationUtil.APP_DIR.getPath(), new Consumer<Integer>() {
-      @Override
-      public void consume(Integer exitCode) {
-        if (exitCode != 0) {
-          try {
-            serverSocket.close();
-          }
-          catch (IOException ignored) {
-          }
-
-          throw new AssertionError(DesignerApplicationUtil.describeAdlExit(exitCode, adlRunConfiguration));
-        }
-      }
-    });
+    //adlProcessHandler = AdlUtil.runAdl(adlRunConfiguration, DebugPathManager.getFudHome() + '/' +
+    //                                                                        AdlUtil.DESCRIPTOR_XML_DEV_PATH,
+    //                                                   AdlUtil.APP_DIR.getPath(), new Consumer<Integer>() {
+    //  @Override
+    //  public void consume(Integer exitCode) {
+    //    if (exitCode != 0) {
+    //      try {
+    //        serverSocket.close();
+    //      }
+    //      catch (IOException ignored) {
+    //      }
+    //
+    //      throw new AssertionError(AdlUtil.describeAdlExit(exitCode, adlRunConfiguration));
+    //    }
+    //  }
+    //});
 
     ShutDownTracker.getInstance().registerShutdownTask(new Runnable() {
       @Override
@@ -94,7 +93,7 @@ class TestDesignerApplicationManager {
     Client.getInstance().setOut(socket.getOutputStream());
 
     socketInputHandler = (TestSocketInputHandler)SocketInputHandler.getInstance();
-    socketInputHandler.init(socket.getInputStream(), DesignerApplicationUtil.APP_DIR);
+    //socketInputHandler.init(socket.getInputStream(), AdlUtil./APP_DIR);
   }
 
   static void changeServiceImplementation(Class key, Class implementation) {

@@ -14,7 +14,6 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -55,14 +54,7 @@ public class LibraryManager {
   private final Map<VirtualFile, Set<CharSequence>> globalDefinitionsMap = new THashMap<VirtualFile, Set<CharSequence>>();
 
   public static LibraryManager getInstance() {
-    return ServiceManager.getService(LibraryManager.class);
-  }
-
-  public void reset() {
-    librarySets.clear();
-    libraries.clear();
-    librarySetIdPool.clear();
-    globalDefinitionsMap.clear();
+    return DesignerApplicationManager.getService(LibraryManager.class);
   }
 
   public void setAppDir(@NotNull File appDir) {
@@ -78,31 +70,6 @@ public class LibraryManager {
   }
 
   public void garbageCollection(@SuppressWarnings("UnusedParameters") ProgressIndicator indicator) {
-    //PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
-    //if (ABC_FILTER_VERSION.equals(propertiesComponent.getValue(ABC_FILTER_VERSION_VALUE_NAME))) {
-    //  return;
-    //}
-    //
-    //indicator.setText(FlexUIDesignerBundle.message("delete.old.libraries"));
-    //
-    //for (String path : appDir.list()) {
-    //  if (path.endsWith(SWF_EXTENSION) && path.indexOf(NAME_POSTFIX) != -1) {
-    //    //noinspection ResultOfMethodCallIgnored
-    //    new File(appDir, path).delete();
-    //  }
-    //}
-    //
-    //propertiesComponent.setValue(ABC_FILTER_VERSION_VALUE_NAME, ABC_FILTER_VERSION);
-  }
-
-  public XmlFile[] initLibrarySets(@NotNull final Module module) throws InitException {
-    final ProblemsHolder problemsHolder = new ProblemsHolder();
-    XmlFile[] unregisteredDocumentReferences = initLibrarySets(module, true, problemsHolder);
-    if (!problemsHolder.isEmpty()) {
-      DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
-    }
-
-    return unregisteredDocumentReferences;
   }
 
   public XmlFile[] initLibrarySets(@NotNull final Module module, boolean collectLocalStyleHolders, ProblemsHolder problemsHolder)

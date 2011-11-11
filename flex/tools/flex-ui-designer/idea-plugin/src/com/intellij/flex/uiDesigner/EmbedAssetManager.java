@@ -1,33 +1,14 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.messages.MessageBus;
 import gnu.trove.TIntArrayList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
-abstract class EmbedAssetManager<I extends EmbedAssetInfo> implements Disposable {
+abstract class EmbedAssetManager<I extends EmbedAssetInfo> {
   private final TIntArrayList freeIndices = new TIntArrayList();
   protected final ArrayList<I> assets = new ArrayList<I>();
-
-  protected EmbedAssetManager() {
-    final Application application = ApplicationManager.getApplication();
-    final MessageBus messageBus = application.getMessageBus();
-    messageBus.connect(this).subscribe(DesignerApplicationManager.MESSAGE_TOPIC, new DesignerApplicationListener() {
-      @Override
-      public void initialDocumentOpened() {
-      }
-
-      @Override
-      public void applicationClosed() {
-        reset();
-      }
-    });
-  }
 
   protected int allocateId() {
     return freeIndices.isEmpty() ? assets.size() : freeIndices.remove(freeIndices.size() - 1);
@@ -49,16 +30,6 @@ abstract class EmbedAssetManager<I extends EmbedAssetInfo> implements Disposable
 
   public I getInfo(int id) {
     return assets.get(id);
-  }
-
-  public void reset() {
-    assets.clear();
-    freeIndices.resetQuick();
-  }
-
-  @Override
-  public void dispose() {
-    // implements Disposable for messageBus.connect
   }
 }
 

@@ -11,7 +11,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -27,7 +26,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Client implements Closable {
+public class Client {
   protected final BlockDataOutputStream blockOut = new BlockDataOutputStream();
   protected final AmfOutputStream out = new AmfOutputStream(blockOut);
 
@@ -37,7 +36,7 @@ public class Client implements Closable {
   private final InfoMap<Project, ProjectInfo> registeredProjects = new InfoMap<Project, ProjectInfo>();
 
   public static Client getInstance() {
-    return ServiceManager.getService(Client.class);
+    return DesignerApplicationManager.getService(Client.class);
   }
 
   public AmfOutputStream getOut() {
@@ -80,21 +79,6 @@ public class Client implements Closable {
     }
 
     return false;
-  }
-
-  @Override
-  // synchronized due to out, otherwise may be NPE at out.closeWithoutFlush() (meaningful primary for tests)
-  public synchronized void close() throws IOException {
-    out.reset();
-
-    registeredModules.clear();
-    registeredProjects.clear();
-
-    mxmlWriter.reset();
-
-    LibraryManager.getInstance().reset();
-
-    out.closeWithoutFlush();
   }
 
   private void beginMessage(ClientMethod method) {
@@ -475,7 +459,7 @@ public class Client implements Closable {
   }
 
   public void initStringRegistry() throws IOException {
-    StringRegistry stringRegistry = ServiceManager.getService(StringRegistry.class);
+    StringRegistry stringRegistry = StringRegistry.getInstance();
     beginMessage(ClientMethod.initStringRegistry);
     out.write(stringRegistry.toArray());
 

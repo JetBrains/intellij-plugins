@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class EmbedImageManager extends EmbedAssetManager<ImageAssetInfo> {
   public static EmbedImageManager getInstance() {
-    return ServiceManager.getService(EmbedImageManager.class);
+    return DesignerApplicationManager.getService(EmbedImageManager.class);
   }
 
   public int add(@NotNull VirtualFile file, @Nullable String mimeType, @NotNull AssetCounter assetCounter) {

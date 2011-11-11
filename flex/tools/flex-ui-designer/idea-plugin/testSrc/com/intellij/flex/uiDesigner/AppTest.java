@@ -1,11 +1,9 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.io.StringRegistry;
-import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.Ref;
@@ -31,7 +29,7 @@ public class AppTest extends AppTestBase {
 
     TestDesignerApplicationManager.changeServiceImplementation(Client.class, TestClient.class);
     TestDesignerApplicationManager.changeServiceImplementation(SocketInputHandler.class, MySocketInputHandler.class);
-    final MySocketInputHandler socketInputHandler = (MySocketInputHandler)ServiceManager.getService(SocketInputHandler.class);
+    final MySocketInputHandler socketInputHandler = (MySocketInputHandler)SocketInputHandler.getInstance();
     socketInputHandler.info = info;
   }
   
@@ -41,16 +39,16 @@ public class AppTest extends AppTestBase {
     info.semaphore.down();
     assert connection == null;
     connection = ApplicationManager.getApplication().getMessageBus().connect();
-    connection.subscribe(DesignerApplicationManager.MESSAGE_TOPIC, new DesignerApplicationListener() {
-      @Override
-      public void initialDocumentOpened() {
-        info.semaphore.up();
-      }
-
-      @Override
-      public void applicationClosed() {
-      }
-    });
+    //connection.subscribe(DesignerApplicationManager.MESSAGE_TOPIC, new DesignerApplicationListener() {
+    //  @Override
+    //  public void initialDocumentOpened() {
+    //    info.semaphore.up();
+    //  }
+    //
+    //  @Override
+    //  public void applicationClosed() {
+    //  }
+    //});
 
     DesignerApplicationManager.getInstance().openDocument(myModule, (XmlFile)myFile, false);
     await();
@@ -76,7 +74,7 @@ public class AppTest extends AppTestBase {
     open("injectedAS/Transitions.mxml");
 
     DesignerApplicationManager designerAppManager = DesignerApplicationManager.getInstance();
-    designerAppManager.projectManagerListener.projectClosed(myProject);
+    //designerAppManager.projectManagerListener.projectClosed(myProject);
 
     callClientAssert("close");
   }
@@ -112,8 +110,6 @@ public class AppTest extends AppTestBase {
       DesignerApplicationManager.getInstance().dispose();
 
       StringRegistry.getInstance().reset();
-
-      LibraryManager.getInstance().reset();
 
       if (connection != null) {
         connection.disconnect();

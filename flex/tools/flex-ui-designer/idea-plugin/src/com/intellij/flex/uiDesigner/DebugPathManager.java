@@ -46,4 +46,8 @@ public final class DebugPathManager {
   public static String getFudHome() {
     return fudHome;
   }
+
+  public static String getTestDataPath() {
+    return fudHome + "/idea-plugin/testData";
+  }
 }

@@ -1,7 +1,8 @@
 <idea-plugin version="2">
   <name>Flex UI Designer</name>
   <description>Provides editing support for Flex UI (currently, only view)</description>
-  <version>0.6.4.1</version>
+  <id>com.intellij.flex.uiDesigner</id>
+  <version>0.6.5</version>
   <vendor url="http://www.jetbrains.com" logo="/general/ijLogo.png">JetBrains</vendor>
   <idea-version since-build="110.187"/>
 
@@ -10,24 +11,31 @@
   <depends optional="false">com.intellij.flex</depends>
   <depends optional="false">com.intellij.properties</depends>
 
-  <extensions defaultExtensionNs="com.intellij">
-    <applicationService serviceInterface="com.intellij.flex.uiDesigner.DesignerApplicationManager" serviceImplementation="com.intellij.flex.uiDesigner.DesignerApplicationManager"/>
-    <applicationService serviceInterface="com.intellij.flex.uiDesigner.SocketInputHandler" serviceImplementation="com.intellij.flex.uiDesigner.SocketInputHandlerImpl"/>
-    <applicationService serviceInterface="com.intellij.flex.uiDesigner.io.StringRegistry" serviceImplementation="com.intellij.flex.uiDesigner.io.StringRegistry"/>
-    <applicationService serviceInterface="com.intellij.flex.uiDesigner.EmbedImageManager" serviceImplementation="com.intellij.flex.uiDesigner.EmbedImageManager"/>
-    <applicationService serviceInterface="com.intellij.flex.uiDesigner.EmbedSwfManager" serviceImplementation="com.intellij.flex.uiDesigner.EmbedSwfManager"/>
-    <applicationService serviceInterface="com.intellij.flex.uiDesigner.DocumentProblemManager" serviceImplementation="com.intellij.flex.uiDesigner.DocumentProblemManager"/>
-    <applicationService serviceInterface="com.intellij.flex.uiDesigner.libraries.LibraryManager" serviceImplementation="com.intellij.flex.uiDesigner.libraries.LibraryManager"/>
-    <applicationService serviceInterface="com.intellij.flex.uiDesigner.Client" serviceImplementation="com.intellij.flex.uiDesigner.Client"/>
-
-    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
-  </extensions>
-  
   <project-components>
     <component>
       <implementation-class>com.intellij.flex.uiDesigner.DocumentFactoryManager</implementation-class>
     </component>
   </project-components>
+
+  <extensionPoints>
+    <extensionPoint name="service" beanClass="com.intellij.openapi.components.ServiceDescriptor"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceInterface="com.intellij.flex.uiDesigner.DesignerApplicationManager" serviceImplementation="com.intellij.flex.uiDesigner.DesignerApplicationManager"/>
+    <applicationService serviceInterface="com.intellij.flex.uiDesigner.io.StringRegistry" serviceImplementation="com.intellij.flex.uiDesigner.io.StringRegistry"/>
+    <applicationService serviceInterface="com.intellij.flex.uiDesigner.DocumentProblemManager" serviceImplementation="com.intellij.flex.uiDesigner.DocumentProblemManager"/>
+
+    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij.flex.uiDesigner">
+    <service serviceInterface="com.intellij.flex.uiDesigner.libraries.LibraryManager" serviceImplementation="com.intellij.flex.uiDesigner.libraries.LibraryManager"/>
+    <service serviceInterface="com.intellij.flex.uiDesigner.EmbedImageManager" serviceImplementation="com.intellij.flex.uiDesigner.EmbedImageManager"/>
+    <service serviceInterface="com.intellij.flex.uiDesigner.EmbedSwfManager" serviceImplementation="com.intellij.flex.uiDesigner.EmbedSwfManager"/>
+    <service serviceInterface="com.intellij.flex.uiDesigner.SocketInputHandler" serviceImplementation="com.intellij.flex.uiDesigner.SocketInputHandlerImpl"/>
+    <service serviceInterface="com.intellij.flex.uiDesigner.Client" serviceImplementation="com.intellij.flex.uiDesigner.Client"/>
+  </extensions>
 
   <actions>
     <group id="FlexUIDesigner.MainToolbarActions">

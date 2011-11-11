@@ -215,6 +215,10 @@ public final class IOUtil {
     }
   }
 
+  public static CharSequence getCharSequence(File file) throws IOException {
+    return (CharSequence)getCharSequenceOrReader(new FileInputStream(file), (int)file.length(), Charsets.UTF_8, false);
+  }
+
   public static CharArrayReader getCharArrayReader(InputStream inputStream, int length) throws IOException {
     return (CharArrayReader)getCharSequenceOrReader(inputStream, length, Charsets.UTF_8, true);
   }

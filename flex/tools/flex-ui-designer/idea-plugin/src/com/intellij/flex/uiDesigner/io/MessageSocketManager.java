@@ -1,8 +1,7 @@
 package com.intellij.flex.uiDesigner.io;
 
 import com.intellij.flex.uiDesigner.Client;
-import com.intellij.flex.uiDesigner.DesignerApplicationManager;
-import com.intellij.flex.uiDesigner.DesignerApplicationManager.FirstOpenDocumentTask;
+import com.intellij.flex.uiDesigner.DesignerApplicationLauncher;
 import com.intellij.flex.uiDesigner.SocketInputHandler;
 
 import java.io.File;
@@ -11,10 +10,10 @@ import java.io.OutputStream;
 import java.net.SocketException;
 
 public class MessageSocketManager extends SocketManager {
-  private DesignerApplicationManager.FirstOpenDocumentTask pendingTask;
+  private DesignerApplicationLauncher pendingTask;
   private final File appDir;
 
-  public MessageSocketManager(FirstOpenDocumentTask pendingTask, File appDir) {
+  public MessageSocketManager(DesignerApplicationLauncher pendingTask, File appDir) {
     this.pendingTask = pendingTask;
     this.appDir = appDir;
   }
@@ -42,16 +41,12 @@ public class MessageSocketManager extends SocketManager {
       if (!(e instanceof SocketException && socket.isClosed())) {
         LOG.error(e);
       }
-      // todo restore socket
     }
   }
 
   @Override
   public void dispose() {
-    if (serverSocket == null) {
-      IOUtil.close(SocketInputHandler.getInstance());
-    }
-    else {
+    if (serverSocket != null) {
       pendingTask = null;
     }
 
