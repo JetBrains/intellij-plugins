@@ -130,13 +130,11 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
 
   @Nullable
   private PsiMethod resolveProperty(@NotNull final PsiClass psiClass, final String propertyName) {
-    final PsiMethod method;
-    if (referenceSet.isSupportsReadOnlyProperties()) {
+    PsiMethod method = isLast() ?
+        PropertyUtil.findPropertySetter(psiClass, propertyName, false, true) :
+        PropertyUtil.findPropertyGetter(psiClass, propertyName, false, true);
+    if (method == null && referenceSet.isSupportsReadOnlyProperties()) {
       method = PropertyUtil.findPropertyGetter(psiClass, propertyName, false, true);
-    } else {
-      method = isLast() ?
-          PropertyUtil.findPropertySetter(psiClass, propertyName, false, true) :
-          PropertyUtil.findPropertyGetter(psiClass, propertyName, false, true);
     }
     return method == null || !method.hasModifierProperty(PsiModifier.PUBLIC) ? null : method;
   }

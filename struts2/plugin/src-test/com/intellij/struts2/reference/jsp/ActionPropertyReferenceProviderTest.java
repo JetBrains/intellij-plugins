@@ -61,7 +61,7 @@ public class ActionPropertyReferenceProviderTest extends BasicHighlightingTestCa
     myFixture.copyFileToProject("src/MyAction.java");
     createStrutsFileSet("struts-actionproperty.xml");
     myFixture.testCompletionVariants("/jsp/actionproperty-forminput-completionvariants.jsp",
-                                     "myBooleanField", "myField", "readonlyList", "user");
+                                     "myBooleanField", "myField", "mySetterOnlyField", "readonlyList", "user");
   }
 
   @HasJavaSources
@@ -69,6 +69,6 @@ public class ActionPropertyReferenceProviderTest extends BasicHighlightingTestCa
     myFixture.copyFileToProject("src/MyAction.java");
     createStrutsFileSet("struts-actionproperty.xml");
     myFixture.testCompletionVariants("/jsp/actionproperty-forminput-readonly-completionvariants.jsp",
-                                     "myField", "myBooleanField", "readonlyList", "user");
+                                     "myField", "myBooleanField", "mySetterOnlyField", "readonlyList", "user");
   }
 }
