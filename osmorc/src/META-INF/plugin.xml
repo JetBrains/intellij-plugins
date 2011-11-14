@@ -169,8 +169,8 @@
                        level="ERROR" implementationClass="org.osmorc.inspection.MissingFinalNewlineInspection"/>
       <localInspection shortName="osmorcClassInDefaultPackage" displayName="Class is in default package" groupName="OSGi"
                        enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.ClassInDefaultPackageInspection"/>
-      <localInspection shortName="osmorcClassUnavailable" displayName="Class not available" groupName="OSGi"
-                       enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.ClassUnavailableInspection"/>
+      <!--<localInspection shortName="osmorcClassUnavailable" displayName="Class not available" groupName="OSGi"-->
+                       <!--enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.ClassUnavailableInspection"/>-->
 
       <facetType implementation="org.osmorc.facet.OsmorcFacetType"/>
         <framework.detector implementation="org.osmorc.facet.OsmorcFrameworkDetector"/>
