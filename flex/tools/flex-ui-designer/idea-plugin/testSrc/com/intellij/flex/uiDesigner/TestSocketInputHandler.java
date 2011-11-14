@@ -44,7 +44,11 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
 
   @Override
   protected boolean processCommand(int command) throws IOException {
-    if (isFileBased(command) || command == ServerMethod.SAVE_PROJECT_WINDOW_BOUNDS || command == ServerMethod.DOCUMENT_OPENED || command == ServerMethod.UNREGISTER_LIBRARY_SETS || command == ServerMethod.LOG_WARNING) {
+    if (isFileBased(command) ||
+      command == ServerMethod.SAVE_PROJECT_WINDOW_BOUNDS ||
+      command == ServerMethod.DOCUMENT_OPENED ||
+      command == ServerMethod.UNREGISTER_LIBRARY_SETS ||
+      command == ServerMethod.LOG_WARNING) {
       return super.processCommand(command);
     }
 

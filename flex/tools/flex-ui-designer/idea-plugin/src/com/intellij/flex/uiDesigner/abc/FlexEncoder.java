@@ -40,11 +40,11 @@ public class FlexEncoder extends Encoder {
   private int findPublicNamespace(DataBuffer in) {
     final int originalPosition = in.position();
     try {
-      int[] positions = history.getRawPartPoolPositions(poolIndex, IndexHistory.NS);
+      int[] positions = history.getRawPartPoolPositions(IndexHistory.NS);
       for (int i = 0, positionsLength = positions.length; i < positionsLength; i++) {
         in.seek(positions[i]);
         if (in.readU8() == CONSTANT_PackageNamespace) {
-          in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[in.readU32()]);
+          in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[in.readU32()]);
           // magic, I don't know, cannot find info in AVM spec
           // but ns with kind CONSTANT_PackageNamespace is public and ns with empty name is current public in current class
           if (in.readU32() == 0) {
@@ -85,18 +85,18 @@ public class FlexEncoder extends Encoder {
 
   private boolean changeAccessModifier(int name, DataBuffer in) {
     final int originalPosition = in.position();
-    in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.MULTINAME)[name]);
+    in.seek(history.getRawPartPoolPositions(IndexHistory.MULTINAME)[name]);
     int constKind = in.readU8();
     assert constKind == CONSTANT_Qname || constKind == CONSTANT_QnameA;
     int ns = in.readU32();
     int localName = in.readU32();
-    in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.NS)[ns]);
+    in.seek(history.getRawPartPoolPositions(IndexHistory.NS)[ns]);
     int nsKind = in.readU8();
     if (nsKind == CONSTANT_PrivateNamespace) {
-      in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
+      in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[localName]);
       int stringLength = in.readU32();
       if (modifyAccessModifier != null && compare(in, stringLength, modifyAccessModifier)) {
-        currentBuffer.writeU32(history.getIndexWithSpecifiedNsRaw(poolIndex, name, findPublicNamespace(in)));
+        currentBuffer.writeU32(history.getIndexWithSpecifiedNsRaw(name, findPublicNamespace(in)));
         modifyAccessModifier = null;
         in.seek(originalPosition);
         return true;
@@ -112,24 +112,24 @@ public class FlexEncoder extends Encoder {
     if (((skipInitialize || skipPanelAddChild) && kind == TRAIT_Method && ((trait_kind >> 4) & TRAIT_FLAG_Override) != 0) ||
         (skipColorCorrection && kind == TRAIT_Setter)) {
       final int originalPosition = in.position();
-      in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.MULTINAME)[name]);
+      in.seek(history.getRawPartPoolPositions(IndexHistory.MULTINAME)[name]);
 
       int constKind = in.readU8();
       assert constKind == CONSTANT_Qname || constKind == CONSTANT_QnameA;
       int ns = in.readU32();
       int localName = in.readU32();
 
-      in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.NS)[ns]);
+      in.seek(history.getRawPartPoolPositions(IndexHistory.NS)[ns]);
       int nsKind = in.readU8();
       if (nsKind == CONSTANT_PackageNamespace) {
-        in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
+        in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[localName]);
         int stringLength = in.readU32();
         if (skipInitialize && compare(in, stringLength, "initialize")) {
           in.seek(originalPosition);
           return;
         }
         else if (skipColorCorrection && compare(in, stringLength, "colorCorrection")) {
-          history.getModifiedMethodBodies(poolIndex).put(methodInfo, EMPTY_METHOD_BODY);
+          history.getModifiedMethodBodies(decoderIndex).put(methodInfo, EMPTY_METHOD_BODY);
         }
         else if (skipPanelAddChild && compare(in, stringLength, "addChildAt")) {
           in.seek(originalPosition);
@@ -146,24 +146,24 @@ public class FlexEncoder extends Encoder {
 
   @Override
   protected void instanceStarting(final int name, final DataBuffer in) {
-    in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.MULTINAME)[name]);
+    in.seek(history.getRawPartPoolPositions(IndexHistory.MULTINAME)[name]);
 
     final int constKind = in.readU8();
     assert constKind == CONSTANT_Qname || constKind == CONSTANT_QnameA;
     final int ns = in.readU32();
     final int localName = in.readU32();
 
-    in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.NS)[ns]);
+    in.seek(history.getRawPartPoolPositions(IndexHistory.NS)[ns]);
     int nsKind = in.readU8();
     if (nsKind != CONSTANT_PackageNamespace) {
       return;
     }
 
-    in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[in.readU32()]);
+    in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[in.readU32()]);
     final int packageLength = in.readU32();
     boolean mxCore = false;
     if (compare(in, packageLength, SPARK_COMPONENTS) || (mxCore = compare(in, packageLength, MX_CORE))) {
-      in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
+      in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[localName]);
       int stringLength = in.readU32();
       skipInitialize = compare(in, stringLength, APPLICATION);
       if (mxCore) {
@@ -187,11 +187,11 @@ public class FlexEncoder extends Encoder {
     }
     else if (isFlex45) {
       if (compare(in, packageLength, SPARK_COMPONENTS_SUPPORT_CLASSES)) {
-        in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
+        in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[localName]);
         skipInitialize = compare(in, VIEW_NAVIGATOR_APPLICATION_BASE);
       }
       else if (compare(in, packageLength, "mx.containers")) {
-        in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
+        in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[localName]);
         skipPanelAddChild = compare(in, "Panel");
         modifyAccessModifier = "setControlBar";
       }
@@ -214,7 +214,7 @@ public class FlexEncoder extends Encoder {
   @Override
   protected void instanceEnding(int oldIInit) {
     if (modifyConstructor) {
-      history.getModifiedMethodBodies(poolIndex).put(oldIInit, MODIFY_INIT_METHOD_BODY_MARKER);
+      history.getModifiedMethodBodies(decoderIndex).put(oldIInit, MODIFY_INIT_METHOD_BODY_MARKER);
     }
   }
 
@@ -239,7 +239,7 @@ public class FlexEncoder extends Encoder {
 
   @Override
   public int startMethodBody(int methodInfo, int maxStack, int maxRegs, int scopeDepth, int maxScope) {
-    TIntObjectHashMap<byte[]> modifiedMethodBodies = history.getModifiedMethodBodies(poolIndex);
+    TIntObjectHashMap<byte[]> modifiedMethodBodies = history.getModifiedMethodBodies(decoderIndex);
     byte[] bytes = modifiedMethodBodies == null ? null : modifiedMethodBodies.get(methodInfo);
     if (bytes == null) {
       return super.startMethodBody(methodInfo, maxStack, maxRegs, scopeDepth, maxScope);
@@ -298,13 +298,13 @@ public class FlexEncoder extends Encoder {
 
   @Override
   protected void writeDebugFile(DataBuffer in, int oldIndex) {
-    int insertionIndex = history.getMapIndex(poolIndex, IndexHistory.STRING, oldIndex);
+    int insertionIndex = history.getMapIndex(IndexHistory.STRING, oldIndex);
     int newIndex = history.getNewIndex(insertionIndex);
     if (newIndex == 0) {
       // E:\dev\hero_private\frameworks\projects\framework\src => _
       // but for included file (include "someFile.as") another format — just 'debugfile "C:\Vellum\branches\v2\2.0\dev\output\openSource\textLayout\src\flashx\textLayout\formats\TextLayoutFormatInc.as' — we don't support it yet
       int originalPosition = in.position();
-      int start = history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[oldIndex];
+      int start = history.getRawPartPoolPositions(IndexHistory.STRING)[oldIndex];
       in.seek(start);
       int stringLength = in.readU32();
       //char[] s = new char[n];
@@ -347,7 +347,7 @@ public class FlexEncoder extends Encoder {
       }
       in.seek(originalPosition);
 
-      newIndex = history.getIndex(poolIndex, IndexHistory.STRING, oldIndex, insertionIndex, actualStart);
+      newIndex = history.getIndex(IndexHistory.STRING, oldIndex, insertionIndex, actualStart);
     }
 
     opcodes.writeU32(newIndex);

@@ -82,7 +82,7 @@ public final class SwfUtil {
         continue;
       }
 
-      encoder.useConstantPool(i);
+      encoder.useDecoder(i, decoder.constantPool);
       decoder.methodInfo.decodeAll(encoder, decoder.in);
       decoder.metadataInfo.decodeAll(encoder, decoder.in);
       decoder.classInfo.decodeInstances(encoder, decoder.in);

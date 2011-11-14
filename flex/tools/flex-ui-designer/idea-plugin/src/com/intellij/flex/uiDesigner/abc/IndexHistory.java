@@ -30,6 +30,8 @@ final class IndexHistory {
   // since the name for private namespaces is not important
   private boolean disableDebuggingInfo = false;
 
+  ConstantPool constantPool;
+
   IndexHistory(List<Decoder> decoders) {
     this.decoders = decoders;
     int size = 0;
@@ -86,8 +88,8 @@ final class IndexHistory {
     disableDebuggingInfo = true;
   }
 
-  public int[] getRawPartPoolPositions(int poolIndex, int kind) {
-    return decoders.get(poolIndex).constantPool.positions[kind];
+  public int[] getRawPartPoolPositions(int kind) {
+    return constantPool.positions[kind];
   }
 
   public TIntObjectHashMap<byte[]> getModifiedMethodBodies(int poolIndex) {
@@ -103,23 +105,23 @@ final class IndexHistory {
     return map[insertionIndex];
   }
 
-  public int getIndex(int poolIndex, int kind, int index, int insertionIndex, int actualStart) {
-    return map[insertionIndex] = decodeOnDemand(poolIndex, kind, index, actualStart, -1);
+  public int getIndex(int kind, int index, int insertionIndex, int actualStart) {
+    return map[insertionIndex] = decodeOnDemand(kind, index, actualStart, -1);
   }
 
-  public int getIndexWithSpecifiedNsRaw(int poolIndex, int index, int actuaNsRaw) {
-    return map[getMapIndex(poolIndex, MULTINAME, index)] = decodeOnDemand(poolIndex, MULTINAME, index, -1, actuaNsRaw);
+  public int getIndexWithSpecifiedNsRaw(int index, int actuaNsRaw) {
+    return map[getMapIndex(MULTINAME, index)] = decodeOnDemand(MULTINAME, index, -1, actuaNsRaw);
   }
 
-  public int getIndex(int poolIndex, int kind, int index) {
+  public int getIndex(int kind, int index) {
     if (index == 0) {
       return 0;
     }
     else {
-      int mapIndex = getMapIndex(poolIndex, kind, index);
+      int mapIndex = getMapIndex(kind, index);
       int newIndex = getNewIndex(mapIndex);
       if (newIndex == 0) {
-        return map[mapIndex] = decodeOnDemand(poolIndex, kind, index, -1, -1);
+        return map[mapIndex] = decodeOnDemand(kind, index, -1, -1);
       }
       else {
         return newIndex;
@@ -153,23 +155,23 @@ final class IndexHistory {
     }
   }
 
-  public int getMapIndex(final int poolIndex, final int kind, final int oldIndex) {
-    ConstantPool pool = decoders.get(poolIndex).constantPool;
-    int index = pool.totalSize;
+  public int getMapIndex(final int kind, final int oldIndex) {
+    int index = constantPool.totalSize;
     for (int i = kind + 1; i < 7; i++) {
-      int length = pool.positions[i].length;
-      index += length == 0 ? 0 : (length - 1);
+      int length = constantPool.positions[i].length;
+      if (length != 0) {
+        index += length - 1;
+      }
     }
 
     return index + oldIndex - 1;
   }
 
-  private int decodeOnDemand(final int poolIndex, final int kind, final int j, final int actualStart, final int actuaNsRaw) {
-    final ConstantPool pool = decoders.get(poolIndex).constantPool;
+  private int decodeOnDemand(final int kind, final int j, final int actualStart, final int actuaNsRaw) {
     final PoolPart poolPart = poolParts[kind];
-    final int[] positions = pool.positions[kind];
-    final int endPos = pool.ends[kind];
-    DataBuffer dataIn = pool.in;
+    final int[] positions = constantPool.positions[kind];
+    final int endPos = constantPool.ends[kind];
+    DataBuffer dataIn = constantPool.in;
     int start = actualStart == -1 ? positions[j] : actualStart;
     int end = (j != positions.length - 1) ? positions[j + 1] : endPos;
     if (kind == NS) {
@@ -190,7 +192,7 @@ final class IndexHistory {
         case CONSTANT_ProtectedNamespace:
         case CONSTANT_ExplicitNamespace:
         case CONSTANT_StaticProtectedNs:
-          in_ns.writeU32(getIndex(poolIndex, STRING, dataIn.readU32()));
+          in_ns.writeU32(getIndex(STRING, dataIn.readU32()));
           break;
         default:
           assert false;
@@ -208,7 +210,7 @@ final class IndexHistory {
       int count = dataIn.readU32();
       in_ns_set.writeU32(count);
       for (int k = 0; k < count; k++) {
-        in_ns_set.writeU32(getIndex(poolIndex, NS, dataIn.readU32()));
+        in_ns_set.writeU32(getIndex(NS, dataIn.readU32()));
       }
 
       dataIn.seek(originalPos);
@@ -236,19 +238,19 @@ final class IndexHistory {
           else {
             ns = dataIn.readU32();
           }
-          in_multiname.writeU32(getIndex(poolIndex, NS, ns));
-          in_multiname.writeU32(getIndex(poolIndex, STRING, dataIn.readU32()));
+          in_multiname.writeU32(getIndex(NS, ns));
+          in_multiname.writeU32(getIndex(STRING, dataIn.readU32()));
           break;
         }
         case CONSTANT_Multiname:
         case CONSTANT_MultinameA: {
-          in_multiname.writeU32(getIndex(poolIndex, STRING, dataIn.readU32()));
-          in_multiname.writeU32(getIndex(poolIndex, NS_SET, dataIn.readU32()));
+          in_multiname.writeU32(getIndex(STRING, dataIn.readU32()));
+          in_multiname.writeU32(getIndex(NS_SET, dataIn.readU32()));
           break;
         }
         case CONSTANT_RTQname:
         case CONSTANT_RTQnameA: {
-          in_multiname.writeU32(getIndex(poolIndex, STRING, dataIn.readU32()));
+          in_multiname.writeU32(getIndex(STRING, dataIn.readU32()));
           break;
         }
         case CONSTANT_RTQnameL:
@@ -256,15 +258,15 @@ final class IndexHistory {
           break;
         case CONSTANT_MultinameL:
         case CONSTANT_MultinameLA: {
-          in_multiname.writeU32(getIndex(poolIndex, NS_SET, dataIn.readU32()));
+          in_multiname.writeU32(getIndex(NS_SET, dataIn.readU32()));
           break;
         }
         case CONSTANT_TypeName: {
-          int newNameIndex = getIndex(poolIndex, MULTINAME, dataIn.readU32());
+          int newNameIndex = getIndex(MULTINAME, dataIn.readU32());
           final int count = dataIn.readU32();
           final int[] newParams = new int[count];
           for (int i = 0; i < count; i++) {
-            newParams[i] = getIndex(poolIndex, MULTINAME, dataIn.readU32());
+            newParams[i] = getIndex(MULTINAME, dataIn.readU32());
           }
           start = in_multiname.getSize();
           in_multiname.writeU8(constKind);
