@@ -37,76 +37,6 @@ public class FlexEncoder extends Encoder {
     inputFilename.getBytes(0, inputFilename.length(), debugBasepath, 1);
   }
 
-  private int findPublicNamespace(DataBuffer in) {
-    final int originalPosition = in.position();
-    try {
-      int[] positions = history.getRawPartPoolPositions(IndexHistory.NS);
-      for (int i = 0, positionsLength = positions.length; i < positionsLength; i++) {
-        in.seek(positions[i]);
-        if (in.readU8() == CONSTANT_PackageNamespace) {
-          in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[in.readU32()]);
-          // magic, I don't know, cannot find info in AVM spec
-          // but ns with kind CONSTANT_PackageNamespace is public and ns with empty name is current public in current class
-          if (in.readU32() == 0) {
-            return i;
-          }
-        }
-      }
-
-      throw new IllegalArgumentException();
-    }
-    finally {
-      in.seek(originalPosition);
-    }
-  }
-
-  @Override
-  // new String(in.data, in.position + in.offset, stringLength)
-  protected void writeSlotTraitName(int name, int trait_kind, DataBuffer in) {
-    if (modifyAccessModifier != null && ((trait_kind & 0x0f) == TRAIT_Var)) {
-      if (changeAccessModifier(name, in)) {
-        return;
-      }
-    }
-
-    super.writeSlotTraitName(name, trait_kind, in);
-  }
-
-  @Override
-  protected void writeMethodTraitName(int name, int trait_kind, DataBuffer in) {
-    if (modifyAccessModifier != null && (trait_kind & 0x0f) == TRAIT_Method && ((trait_kind >> 4) & TRAIT_FLAG_Override) == 0) {
-      if (changeAccessModifier(name, in)) {
-        return;
-      }
-    }
-
-    super.writeMethodTraitName(name, trait_kind, in);
-  }
-
-  private boolean changeAccessModifier(int name, DataBuffer in) {
-    final int originalPosition = in.position();
-    in.seek(history.getRawPartPoolPositions(IndexHistory.MULTINAME)[name]);
-    int constKind = in.readU8();
-    assert constKind == CONSTANT_Qname || constKind == CONSTANT_QnameA;
-    int ns = in.readU32();
-    int localName = in.readU32();
-    in.seek(history.getRawPartPoolPositions(IndexHistory.NS)[ns]);
-    int nsKind = in.readU8();
-    if (nsKind == CONSTANT_PrivateNamespace) {
-      in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[localName]);
-      int stringLength = in.readU32();
-      if (modifyAccessModifier != null && compare(in, stringLength, modifyAccessModifier)) {
-        currentBuffer.writeU32(history.getIndexWithSpecifiedNsRaw(name, findPublicNamespace(in)));
-        modifyAccessModifier = null;
-        in.seek(originalPosition);
-        return true;
-      }
-    }
-
-    in.seek(originalPosition);
-    return false;
-  }
-
   public void methodTrait(int trait_kind, int name, int dispId, int methodInfo, int[] metadata, DataBuffer in) {
     final int kind = trait_kind & 0x0f;
     if (((skipInitialize || skipPanelAddChild) && kind == TRAIT_Method && ((trait_kind >> 4) & TRAIT_FLAG_Override) != 0) ||
@@ -189,11 +119,6 @@ public class FlexEncoder extends Encoder {
       if (compare(in, packageLength, SPARK_COMPONENTS_SUPPORT_CLASSES)) {
         in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[localName]);
         skipInitialize = compare(in, VIEW_NAVIGATOR_APPLICATION_BASE);
-      }
-      else if (compare(in, packageLength, "mx.containers")) {
-        in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[localName]);
-        skipPanelAddChild = compare(in, "Panel");
-        modifyAccessModifier = "setControlBar";
       }
     }
   }

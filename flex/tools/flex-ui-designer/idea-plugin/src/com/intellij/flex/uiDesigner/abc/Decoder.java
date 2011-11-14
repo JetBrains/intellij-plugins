@@ -17,12 +17,23 @@ public final class Decoder {
   final DataBuffer in;
 
   public final char[] name;
+  @Nullable
+  public final AbcModifier abcModifier;
 
   public Decoder(DataBuffer in) {
-    this(in, null);
+    this(in, null, null);
   }
 
+  public Decoder(DataBuffer in, AbcModifier abcModifier) {
+    this(in, null, abcModifier);
+  }
+  
   public Decoder(DataBuffer in, @Nullable char[] name) {
+    this(in, name, null);
+  }
+
+  public Decoder(DataBuffer in, @Nullable char[] name, @Nullable AbcModifier abcModifier) {
+    this.abcModifier = abcModifier;
     assert in.position() == 0;
 
     in.skip(4);

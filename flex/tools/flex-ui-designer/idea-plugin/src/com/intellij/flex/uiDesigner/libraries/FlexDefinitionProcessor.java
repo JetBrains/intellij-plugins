@@ -1,7 +1,8 @@
 package com.intellij.flex.uiDesigner.libraries;
 
 import com.google.common.base.Charsets;
-import com.intellij.flex.uiDesigner.abc.AbcUtil;
+import com.intellij.flex.uiDesigner.abc.*;
+import com.intellij.javascript.flex.mxml.FlexNameAlias;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.text.CharArrayUtil;
 
@@ -27,6 +28,9 @@ public class FlexDefinitionProcessor implements DefinitionProcessor {
     else if (StringUtil.equals(name, SKINNABLE_COMPONENT)) {
       changeAbcName(SKINNABLE_COMPONENT, buffer);
       flipDefinition(definition, definitionMap, SKINNABLE_COMPONENT);
+    }
+    else if (StringUtil.equals(name, "mx.containers:Panel")) {
+      definition.doAbcData.abcModifier = new MethodAccessModifier("setControlBar");
     }
   }
 
@@ -85,6 +89,44 @@ public class FlexDefinitionProcessor implements DefinitionProcessor {
       buffer.reset();
       charsetEncoder.encode(charBuffer, buffer, true);
       charsetEncoder.reset();
+    }
+  }
+
+  private static class MethodAccessModifier extends AbcModifierBase {
+    private final String fieldName;
+
+    private MethodAccessModifier(String fieldName) {
+      this.fieldName = fieldName;
+    }
+
+    @Override
+    public boolean writeMethodTraitName(int name, int traitKind, DataBuffer in, Encoder encoder) {
+      if (isNotOverridenMethod(traitKind)) {
+        if (encoder.changeAccessModifier(fieldName, name, in)) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+  }
+
+  private static class VarAccessModifier extends AbcModifierBase {
+    private final String fieldName;
+
+    private VarAccessModifier(String fieldName) {
+      this.fieldName = fieldName;
+    }
+
+    @Override
+    public boolean writeSlotTraitName(int name, int traitKind, DataBuffer in, Encoder encoder) {
+      if (isVar(traitKind)) {
+        if (encoder.changeAccessModifier(fieldName, name, in)) {
+          return true;
+        }
+      }
+
+      return false;
     }
   }
 }

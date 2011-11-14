@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
-class DataBuffer {
+public class DataBuffer {
   protected final int offset;
 
   protected byte[] data;

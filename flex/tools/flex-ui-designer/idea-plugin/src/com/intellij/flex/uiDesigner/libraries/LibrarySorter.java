@@ -90,7 +90,7 @@ public class LibrarySorter {
           if (definition.doAbcData != null &&
               (definition.resolved == ResolvedState.YES || (definition.resolved == ResolvedState.UNKNOWN &&
                                                             processDependencies(decoders, definition, definitionMap, singleStringArray)))) {
-            decoders.add(new Decoder(definition.doAbcData));
+            decoders.add(new Decoder(definition.doAbcData, definition.doAbcData.abcModifier));
             definition.doAbcData = null;
           }
 

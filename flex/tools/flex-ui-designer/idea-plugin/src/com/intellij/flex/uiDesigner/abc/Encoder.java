@@ -39,6 +39,8 @@ public class Encoder {
 
   protected WritableDataBuffer currentBuffer;
 
+  private AbcModifier abcModifier;
+
   public Encoder() {
     this(46, 16);
   }
@@ -139,9 +141,10 @@ public class Encoder {
     }
   }
 
-  public void useDecoder(int index, ConstantPool constantPool) {
+  public void useDecoder(int index, Decoder decoder) {
     decoderIndex = index;
-    history.constantPool = constantPool;
+    history.constantPool = decoder.constantPool;
+    abcModifier = decoder.abcModifier;
   }
 
   public void endDecoder(Decoder decoder) {
@@ -487,24 +490,23 @@ public class Encoder {
     return tempMetadataList.isEmpty() ? null : tempMetadataList;
   }
 
-  protected void writeSlotTraitName(int name, int trait_kind, DataBuffer in) {
-    currentBuffer.writeU32(history.getIndex(IndexHistory.MULTINAME, name));
-  }
-
-  public void slotTrait(int trait_kind, int name, int slotId, int type, int value, int value_kind, int[] metadata, DataBuffer in) throws DecoderException {
-    writeSlotTraitName(name, trait_kind, in);
-    TIntArrayList newMetadata = trimMetadata(metadata);
-    if (((trait_kind >> 4) & TRAIT_FLAG_metadata) != 0 && newMetadata == null) {
-      trait_kind = trait_kind & ~(TRAIT_FLAG_metadata << 4);
+  public void slotTrait(int traitKind, int name, int slotId, int type, int value, int valueKind, int[] metadata, DataBuffer in) throws DecoderException {
+    if (abcModifier == null || !abcModifier.writeSlotTraitName(name, traitKind, in, this)) {
+      currentBuffer.writeU32(history.getIndex(IndexHistory.MULTINAME, name));
     }
-    currentBuffer.writeU8(trait_kind);
+
+    TIntArrayList newMetadata = trimMetadata(metadata);
+    if (((traitKind >> 4) & TRAIT_FLAG_metadata) != 0 && newMetadata == null) {
+      traitKind = traitKind & ~(TRAIT_FLAG_metadata << 4);
+    }
+    currentBuffer.writeU8(traitKind);
 
     currentBuffer.writeU32(slotId);
     currentBuffer.writeU32(history.getIndex(IndexHistory.MULTINAME, type));
 
     int kind = -1;
 
-    switch (value_kind) {
+    switch (valueKind) {
       case CONSTANT_Utf8:
         kind = IndexHistory.STRING;
         break;
@@ -539,7 +541,7 @@ public class Encoder {
     }
 
     int newIndex;
-    switch (value_kind) {
+    switch (valueKind) {
       case 0:
       case CONSTANT_False:
       case CONSTANT_True:
@@ -548,7 +550,7 @@ public class Encoder {
         break;
       default: {
         if (kind == -1) {
-          throw new DecoderException("writing slotTrait: don't know what constant type it is... " + value_kind + "," + value);
+          throw new DecoderException("writing slotTrait: don't know what constant type it is... " + valueKind + "," + value);
         }
         newIndex = history.getIndex(kind, value);
       }
@@ -556,28 +558,93 @@ public class Encoder {
 
     currentBuffer.writeU32(newIndex);
     if (value != 0) {
-      currentBuffer.writeU8(value_kind);
+      currentBuffer.writeU8(valueKind);
     }
 
     encodeMetaData(newMetadata);
   }
 
-  public void methodTrait(int trait_kind, int name, int dispId, int methodInfo, int[] metadata, DataBuffer in) {
-    writeMethodTraitName(name, trait_kind, in);
-    TIntArrayList new_metadata = trimMetadata(metadata);
-    if (((trait_kind >> 4) & TRAIT_FLAG_metadata) != 0 && new_metadata == null) {
-      trait_kind = trait_kind & ~(TRAIT_FLAG_metadata << 4);
+  public boolean changeAccessModifier(String accessModifier, int name, DataBuffer in) {
+    final int originalPosition = in.position();
+    in.seek(history.getRawPartPoolPositions(IndexHistory.MULTINAME)[name]);
+    int constKind = in.readU8();
+    assert constKind == CONSTANT_Qname || constKind == CONSTANT_QnameA;
+    int ns = in.readU32();
+    int localName = in.readU32();
+    in.seek(history.getRawPartPoolPositions(IndexHistory.NS)[ns]);
+    int nsKind = in.readU8();
+    if (nsKind == CONSTANT_PrivateNamespace) {
+      in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[localName]);
+      int stringLength = in.readU32();
+      if (compare(in, stringLength, accessModifier)) {
+        currentBuffer.writeU32(history.getIndexWithSpecifiedNsRaw(name, findPublicNamespace(in)));
+        in.seek(originalPosition);
+        return true;
+      }
     }
-    currentBuffer.writeU8(trait_kind);
+
+    in.seek(originalPosition);
+    return false;
+  }
+
+  private int findPublicNamespace(DataBuffer in) {
+    final int originalPosition = in.position();
+    try {
+      int[] positions = history.getRawPartPoolPositions(IndexHistory.NS);
+      for (int i = 0, positionsLength = positions.length; i < positionsLength; i++) {
+        in.seek(positions[i]);
+        if (in.readU8() == CONSTANT_PackageNamespace) {
+          in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[in.readU32()]);
+          // magic, I don't know, cannot find info in AVM spec
+          // but ns with kind CONSTANT_PackageNamespace is public and ns with empty name is current public in current class
+          if (in.readU32() == 0) {
+            return i;
+          }
+        }
+      }
+
+      throw new IllegalArgumentException();
+    }
+    finally {
+      in.seek(originalPosition);
+    }
+  }
+
+  @SuppressWarnings("UnusedDeclaration")
+  private static boolean compare(final DataBuffer in, final String s) {
+    return compare(in, in.readU32(), s);
+  }
+
+  private static boolean compare(final DataBuffer in, final int stringLength, final String s) {
+    if (stringLength != s.length()) {
+      return false;
+    }
+
+    final int offset = in.position + in.offset;
+    for (int j = stringLength - 1; j > -1; j--) {
+      if ((char)in.data[offset + j] != s.charAt(j)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  public void methodTrait(int traitKind, int name, int dispId, int methodInfo, int[] metadata, DataBuffer in) {
+    if (abcModifier == null || !abcModifier.writeMethodTraitName(name, traitKind, in, this)) {
+      currentBuffer.writeU32(history.getIndex(IndexHistory.MULTINAME, name));
+    }
+
+    TIntArrayList new_metadata = trimMetadata(metadata);
+    if (((traitKind >> 4) & TRAIT_FLAG_metadata) != 0 && new_metadata == null) {
+      traitKind = traitKind & ~(TRAIT_FLAG_metadata << 4);
+    }
+    currentBuffer.writeU8(traitKind);
 
     currentBuffer.writeU32(dispId);
     currentBuffer.writeU32(this.methodInfo.getIndex(methodInfo));
 
     encodeMetaData(new_metadata);
-  }
-
-  protected void writeMethodTraitName(int name, int trait_kind, DataBuffer in) {
-    currentBuffer.writeU32(history.getIndex(IndexHistory.MULTINAME, name));
   }
 
   public void classTrait(int kind, int name, int slotId, int classInfoIndex, int[] metadata) {
