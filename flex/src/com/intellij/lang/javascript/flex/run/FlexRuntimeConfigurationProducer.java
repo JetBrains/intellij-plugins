@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -171,7 +172,7 @@ public class FlexRuntimeConfigurationProducer extends RuntimeConfigurationProduc
       JSResolveUtil.findClassByQName(FlexCompilerSettingsEditor.SPRITE_CLASS_NAME, GlobalSearchScope.moduleWithLibrariesScope(module)));
     if (!(spriteClass instanceof JSClass)) return false;
 
-    final boolean isSpriteInheritor = JSResolveUtil.checkClassHasParentOfAnotherOne(jsClass, (JSClass)spriteClass, null);
+    final boolean isSpriteInheritor = JSInheritanceUtil.isParentClass(jsClass, (JSClass)spriteClass);
 
     if (allowWindowedApplicationInheritors) {
       return isSpriteInheritor;
@@ -183,12 +184,9 @@ public class FlexRuntimeConfigurationProducer extends RuntimeConfigurationProduc
         .unwrapProxy(JSResolveUtil.findClassByQName(WINDOWED_APPLICATION_CLASS_NAME_2, GlobalSearchScope.moduleWithLibrariesScope(module)));
 
       final boolean isWindowedApplicationInheritor = windowedApplicationClass1 instanceof JSClass &&
-                                                     JSResolveUtil
-                                                       .checkClassHasParentOfAnotherOne(jsClass, (JSClass)windowedApplicationClass1,
-                                                                                        null) ||
+                                                     JSInheritanceUtil.isParentClass(jsClass, (JSClass)windowedApplicationClass1) ||
                                                      windowedApplicationClass2 instanceof JSClass &&
-                                                     JSResolveUtil
-                                                       .checkClassHasParentOfAnotherOne(jsClass, (JSClass)windowedApplicationClass2, null);
+                                                     JSInheritanceUtil.isParentClass(jsClass, (JSClass)windowedApplicationClass2);
 
       return isSpriteInheritor && !isWindowedApplicationInheritor;
     }

@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.ui.JSClassChooserDialog;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
@@ -197,7 +198,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
   public static boolean isEventClass(final JSClass jsClass) {
     final PsiElement eventClass = JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName(EVENT_BASE_CLASS_FQN, jsClass));
     if (!(eventClass instanceof JSClass)) return false;
-    if (JSResolveUtil.checkClassHasParentOfAnotherOne(jsClass, (JSClass)eventClass, null)) {
+    if (JSInheritanceUtil.isParentClass(jsClass, (JSClass)eventClass)) {
       return true;
     }
     return false;

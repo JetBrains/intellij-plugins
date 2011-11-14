@@ -23,6 +23,7 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSImportHandlingUtil;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.validation.JSAnnotatingVisitor;
 import com.intellij.lang.refactoring.NamesValidator;
@@ -933,8 +934,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       for (final XmlElementDescriptor descriptor : context.getAllDescriptors()) {
         if (descriptor instanceof ClassBackedElementDescriptor && !((ClassBackedElementDescriptor)descriptor).predefined) {
           final PsiElement decl = descriptor.getDeclaration();
-          if (decl instanceof JSClass &&
-              (decl.isEquivalentTo(jsClass) || JSResolveUtil.checkClassHasParentOfAnotherOne((JSClass)decl, jsClass, null))) {
+          if (decl instanceof JSClass && JSInheritanceUtil.isParentClass((JSClass)decl, jsClass, false)) {
             result.add(descriptor);
           }
         }

@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
@@ -117,7 +118,7 @@ public class JavaScriptGenerateAccessorHandler extends BaseJSGenerateHandler {
   public static boolean isEventDispatcher(final JSClass jsClass) {
     final PsiElement eventClass = JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName("flash.events.IEventDispatcher", jsClass));
     if (!(eventClass instanceof JSClass)) return false;
-    if (JSResolveUtil.checkClassHasParentOfAnotherOne(jsClass, (JSClass)eventClass, null)) {
+    if (JSInheritanceUtil.isParentClass(jsClass, (JSClass)eventClass)) {
       return true;
     }
     return false;

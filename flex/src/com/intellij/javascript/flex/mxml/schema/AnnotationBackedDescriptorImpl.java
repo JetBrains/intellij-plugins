@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.refactoring.NamesValidator;
@@ -630,8 +631,8 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     final PsiElement iStyleClient = JSResolveUtil.findClassByQName(I_STYLE_CLIENT_CLASS, attributeOrTag);
 
     if (!(declaration instanceof JSClass) || !(iStyleClient instanceof JSClass)
-        || !JSResolveUtil.checkClassHasParentOfAnotherOne((JSClass)JSResolveUtil.unwrapProxy(declaration),
-                                                          (JSClass)JSResolveUtil.unwrapProxy(iStyleClient), null)) {
+        || !JSInheritanceUtil.isParentClass((JSClass)JSResolveUtil.unwrapProxy(declaration),
+                                                              (JSClass)JSResolveUtil.unwrapProxy(iStyleClient))) {
       return FlexBundle.message("clear.directive.IStyleClient.error");
     }
     return null;

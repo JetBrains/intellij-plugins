@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.validation.ValidateTypesUtil;
 import com.intellij.openapi.diagnostic.Logger;
@@ -96,19 +97,19 @@ public class FlexUnitSupport {
   }
 
   public boolean isFlexUnit1Subclass(JSClass clazz) {
-    return JSResolveUtil.checkClassHasParentOfAnotherOne(clazz, flexUnit1TestClass, null);
+    return JSInheritanceUtil.isParentClass(clazz, flexUnit1TestClass);
   }
 
   public boolean isFlexUnit1SuiteSubclass(JSClass clazz) {
-    return JSResolveUtil.checkClassHasParentOfAnotherOne(clazz, flexUnit1TestSuite, null);
+    return JSInheritanceUtil.isParentClass(clazz, flexUnit1TestSuite);
   }
 
   public boolean isFlunitSubclass(JSClass clazz) {
-    return flunitTestClass != null && JSResolveUtil.checkClassHasParentOfAnotherOne(clazz, flunitTestClass, null);
+    return flunitTestClass != null && JSInheritanceUtil.isParentClass(clazz, flunitTestClass);
   }
 
   public boolean isFlunitSuiteSubclass(JSClass clazz) {
-    return JSResolveUtil.checkClassHasParentOfAnotherOne(clazz, flunitTestSuite, null);
+    return flunitTestSuite != null && JSInheritanceUtil.isParentClass(clazz, flunitTestSuite);
   }
 
   public boolean isPotentialTestClass(@NotNull JSClass clazz) {
