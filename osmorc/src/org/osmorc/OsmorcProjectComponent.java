@@ -24,39 +24,44 @@
  */
 package org.osmorc;
 
+import com.intellij.ProjectTopics;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ProjectComponent;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiTreeChangeEvent;
+import com.intellij.openapi.roots.ModuleRootEvent;
+import com.intellij.openapi.roots.ModuleRootListener;
+import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.facet.OsmorcFacet;
-import org.osmorc.frameworkintegration.FrameworkInstanceModuleManager;
-import org.osmorc.manifest.lang.psi.ManifestFile;
+import org.osmorc.frameworkintegration.FrameworkInstanceLibraryManager;
+import org.osmorc.settings.ApplicationSettings;
 import org.osmorc.settings.ProjectSettings;
 
 /**
+ * A project level component which enables some listeners to keep data in sync when the project opens or it's settings change.
+ *
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings.ProjectSettingsListener {
+public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings.ProjectSettingsListener,
+                                               ApplicationSettings.ApplicationSettingsListener {
   private final BundleManager myBundleManager;
+  private ApplicationSettings myApplicationSettings;
   private final ProjectSettings myProjectSettings;
   private final Project myProject;
-  private final FrameworkInstanceModuleManager myFrameworkInstanceModuleManager;
+  private final FrameworkInstanceLibraryManager myFrameworkInstanceLibraryManager;
+  private Alarm myAlarm;
 
-  public OsmorcProjectComponent(BundleManager bundleManager,
+  public OsmorcProjectComponent(BundleManager bundleManager, ApplicationSettings applicationSettings,
                                 ProjectSettings projectSettings,
                                 Project project,
-                                FrameworkInstanceModuleManager frameworkInstanceModuleManager) {
+                                FrameworkInstanceLibraryManager frameworkInstanceLibraryManager) {
     this.myBundleManager = bundleManager;
+    myApplicationSettings = applicationSettings;
     this.myProjectSettings = projectSettings;
     this.myProject = project;
-    this.myFrameworkInstanceModuleManager = frameworkInstanceModuleManager;
+    this.myFrameworkInstanceLibraryManager = frameworkInstanceLibraryManager;
+    myAlarm = new Alarm(Alarm.ThreadToUse.OWN_THREAD, myProject);
   }
 
   @NotNull
@@ -65,31 +70,49 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
   }
 
   public void initComponent() {
-    //PsiManager.getInstance(myProject).addPsiTreeChangeListener(new PsiTreeChangeAdapter() {
-    //  public void childrenChanged(PsiTreeChangeEvent event) {
-    //    processChange(event);
-    //  }
-    //
-    //  public void childAdded(PsiTreeChangeEvent event) {
-    //    processChange(event);
-    //  }
-    //
-    //  public void childRemoved(PsiTreeChangeEvent event) {
-    //    processChange(event);
-    //  }
-    //
-    //  public void childReplaced(PsiTreeChangeEvent event) {
-    //    processChange(event);
-    //  }
-    //});
     myProjectSettings.addProjectSettingsListener(this);
+    myApplicationSettings.addApplicationSettingsListener(this);
+    myProject.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new MyModuleRootListener());
   }
 
   public void disposeComponent() {
     myProjectSettings.removeProjectSettingsListener(this);
+    myApplicationSettings.removeApplicationSettingsListener(this);
   }
 
   public void projectOpened() {
+    refreshFrameworkInstanceLibrary();
+    rebuildOSGiIndices();
+  }
+
+  public void projectClosed() {
+  }
+
+
+  public void projectSettingsChanged() {
+    refreshFrameworkInstanceLibrary();
+  }
+
+
+  @Override
+  public void frameworkInstancesChanged() {
+    refreshFrameworkInstanceLibrary();
+  }
+
+  /**
+   * Refreshes the framework instance library. This will automatically trigger an index rebuild, as the project roots change..
+   */
+  private void refreshFrameworkInstanceLibrary() {
+    ApplicationManager.getApplication().invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        myFrameworkInstanceLibraryManager.updateFrameworkInstanceLibraries();
+      }
+    });
+  }
+
+
+  private void rebuildOSGiIndices() {
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
@@ -98,75 +121,34 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
           public void run(@NotNull ProgressIndicator indicator) {
             if (myProject.isDisposed()) return;
             indicator.setIndeterminate(true);
-            // TODO Remove FrameworkInstance stuff
-            indicator.setText("Refreshing framework instance");
-            myFrameworkInstanceModuleManager.updateFrameworkInstanceModule();
-
             indicator.setText("Updating OSGi indices");
-            myBundleManager.reindex(myProject);
-
-            syncAllModuleDependencies();
+            myBundleManager.reindexAll();
           }
         }.queue();
       }
     });
   }
 
-  public void projectClosed() {
-  }
 
+  private class MyModuleRootListener implements ModuleRootListener {
+    @Override
+    public void beforeRootsChange(ModuleRootEvent event) {
 
-  /**
-   * Processes changes in the project tree.
-   *
-   * @param event the change event.
-   */
-  private void processChange(final PsiTreeChangeEvent event) {
-    final PsiFile file = event.getFile();
-    if (!(file instanceof ManifestFile)) return;
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        new Task.Backgroundable(myProject, "Processing manifest change", false) {
+    }
+
+    @Override
+    public void rootsChanged(ModuleRootEvent event) {
+      if (!event.isCausedByFileTypesChange()) {
+        myAlarm.cancelAllRequests();
+        myAlarm.addRequest(new Runnable() {
           @Override
-          public void run(@NotNull ProgressIndicator indicator) {
-            indicator.setText("Updating OSGi indices");
-            indicator.setIndeterminate(true);
-            Module moduleOfChangedManifest = ModuleUtil.findModuleForPsiElement(file);
-            if (moduleOfChangedManifest != null) {
-              myBundleManager.reindex(moduleOfChangedManifest);
-              // sync the dependencies of ALL modules
-              syncAllModuleDependencies();
-            }
+          public void run() {
+            rebuildOSGiIndices();
           }
-        }.queue();
+        }, 500);
       }
-    });
+    }
   }
 
-  /**
-   * Synchronizes the OSGi dependencies of all modules.
-   */
-  private void syncAllModuleDependencies() {
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        new Task.Backgroundable(myProject, "Synchronizing OSGi module dependencies", false) {
-          @Override
-          public void run(@NotNull ProgressIndicator indicator) {
-            if (myProject.isDisposed()) return;
-            Module[] modules = ModuleManager.getInstance(myProject).getModules();
-            for (Module module : modules) {
-              if (OsmorcFacet.hasOsmorcFacet(module)) {
-                ModuleDependencySynchronizer.getInstance(module).syncDependenciesFromManifest();
-              }
-            }
-          }
-        }.queue();
-      }
-    });
-  }
 
-  public void projectSettingsChanged() {
-  }
 }

@@ -34,10 +34,14 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.manifest.BundleManifest;
+import org.osmorc.manifest.ManifestHolder;
 import org.osmorc.manifest.ManifestHolderDisposedException;
 import org.osmorc.manifest.lang.psi.ManifestFile;
+
+import java.util.*;
 
 /**
  * Author: Robert F. Beeger (robert@beeger.net)
@@ -47,51 +51,121 @@ public class LibraryManifestHolderImpl extends AbstractManifestHolderImpl {
   private BundleManifest myBundleManifest;
   private final Library myLibrary;
   private final Project myProject;
+  private String myPath;
 
-  public LibraryManifestHolderImpl(Library library, Project project) {
+  private LibraryManifestHolderImpl(Library library, Project project, String rootPath) {
     myLibrary = library;
     myProject = project;
+    myPath = rootPath;
   }
 
   @Nullable
   public BundleManifest getBundleManifest() throws ManifestHolderDisposedException {
     // FIX for EA-23586
-    if (myLibrary instanceof LibraryEx && ((LibraryEx)myLibrary).isDisposed() || myProject.isDisposed()) {
+    if (isDisposed()) {
       throw new ManifestHolderDisposedException();
     }
-    
+
     if (myBundleManifest == null) {
 
       VirtualFile[] classRoots = myLibrary.getFiles(OrderRootType.CLASSES);
       for (VirtualFile classRoot : classRoots) {
-        VirtualFile classDir;
-        if (classRoot.isDirectory()) {
-          classDir = classRoot;
-        }
-        else {
-          classDir = JarFileSystem.getInstance().getJarRootForLocalFile(classRoot);
-        }
-
-        if (classDir != null) {
-          final VirtualFile manifestFile = classDir.findFileByRelativePath("META-INF/MANIFEST.MF");
-          if (manifestFile != null) {
-            PsiFile psiFile = new ReadAction<PsiFile>() {
-              @Override
-              protected void run(Result<PsiFile> psiFileResult) throws Throwable {
-                psiFileResult.setResult(PsiManager.getInstance(myProject).findFile(manifestFile));
-              }
-            }.execute().getResultObject();
-            myBundleManifest = new BundleManifestImpl((ManifestFile)psiFile);
+        if (classRoot.getUrl().equals(myPath)) {
+          VirtualFile classDir;
+          if (classRoot.isDirectory()) {
+            classDir = classRoot;
           }
+          else {
+            classDir = JarFileSystem.getInstance().getJarRootForLocalFile(classRoot);
+          }
+
+          if (classDir != null) {
+            final VirtualFile manifestFile = classDir.findFileByRelativePath("META-INF/MANIFEST.MF");
+            if (manifestFile != null) {
+              PsiFile psiFile = new ReadAction<PsiFile>() {
+                @Override
+                protected void run(Result<PsiFile> psiFileResult) throws Throwable {
+                  psiFileResult.setResult(PsiManager.getInstance(myProject).findFile(manifestFile));
+                }
+              }.execute().getResultObject();
+              myBundleManifest = new BundleManifestImpl((ManifestFile)psiFile);
+            }
+          }
+          break; // we're done here.
         }
       }
     }
     return myBundleManifest;
   }
 
+  public boolean isDisposed() {
+    return (myLibrary instanceof LibraryEx && ((LibraryEx)myLibrary).isDisposed()) || myProject.isDisposed();
+  }
+
+  /**
+   * Creats manifest holders of the given library and project
+   *
+   * @param library the library
+   * @param project the prorject
+   * @return the manifest holders
+   */
+  @NotNull
+  protected static synchronized Collection<ManifestHolder> createForLibrary(@NotNull Library library, @NotNull Project project) {
+    cleanupHolderCache();
+    List<ManifestHolder> result = new ArrayList<ManifestHolder>();
+    VirtualFile[] classRoots = library.getFiles(OrderRootType.CLASSES);
+    for (VirtualFile classRoot : classRoots) {
+      String jarFileUrl = classRoot.getUrl();
+      ManifestHolder cachedHolder = myHolderCache.get(jarFileUrl);
+      if (cachedHolder != null) {
+        result.add(cachedHolder);
+        continue;
+      }
+      VirtualFile classDir;
+      if (classRoot.isDirectory()) {
+        classDir = classRoot;
+      }
+      else {
+        classDir = JarFileSystem.getInstance().getJarRootForLocalFile(classRoot);
+      }
+
+      if (classDir != null) {
+        final VirtualFile manifestFile = classDir.findFileByRelativePath("META-INF/MANIFEST.MF");
+        if (manifestFile != null) {
+          // potential bundle
+          LibraryManifestHolderImpl newHolder = new LibraryManifestHolderImpl(library, project, jarFileUrl);
+          myHolderCache.put(jarFileUrl, newHolder);
+          result.add(newHolder);
+        }
+      }
+    }
+    return result;
+  }
+
+
+  /**
+   * Removes disposed holders from the holder cache.
+   */
+  private static void cleanupHolderCache() {
+
+    for (Iterator<Map.Entry<String, ManifestHolder>> iterator = myHolderCache.entrySet().iterator(); iterator.hasNext(); ) {
+      Map.Entry<String, ManifestHolder> entry = iterator.next();
+      if (entry.getValue().isDisposed()) {
+        iterator.remove();
+      }
+    }
+  }
+
+  /**
+   * Cache for generated manifest holders. This is to make sure we don't create two manifest holders for the same jar file.
+   */
+  private static Map<String, ManifestHolder> myHolderCache = new HashMap<String, ManifestHolder>();
 
   @Override
-  public Object getBoundObject() {
+  public Object getBoundObject() throws ManifestHolderDisposedException {
+    if (isDisposed()) {
+      throw new ManifestHolderDisposedException();
+    }
     return myLibrary;
   }
 }

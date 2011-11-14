@@ -25,18 +25,19 @@
 package org.osmorc;
 
 import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleServiceManager;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
-import org.osmorc.facet.OsmorcFacetUtil;
-import org.osmorc.frameworkintegration.LibraryHandler;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,7 +57,6 @@ public class ModuleDependencySynchronizer {
 
   private final ModuleRootManager myModuleRootManager;
   private final Application myApplication;
-  private final LibraryHandler myLibraryHandler;
   private final BundleManager myBundleManager;
   private final Module myModule;
 
@@ -67,7 +67,7 @@ public class ModuleDependencySynchronizer {
    * @return the ModuleDependencySynchronizer for the given module
    */
   @NotNull
-  public static ModuleDependencySynchronizer getInstance(@NotNull Module module) {
+  private static ModuleDependencySynchronizer getInstance(@NotNull Module module) {
     return ModuleServiceManager.getService(module, ModuleDependencySynchronizer.class);
   }
 
@@ -78,12 +78,24 @@ public class ModuleDependencySynchronizer {
    *
    * @param project the project the project that should be synchronized.
    */
-  public static void resynchronizeAll(@NotNull Project project) {
-    ModuleManager instance = ModuleManager.getInstance(project);
-    Module[] modules = instance.getModules();
-    for (Module module : modules) {
-      getInstance(module).syncDependenciesFromManifest();
-    }
+  public static void resynchronizeAll(@NotNull final Project project) {
+      ApplicationManager.getApplication().invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        new Task.Backgroundable(project, "Synchronizing OSGi dependencies", false) {
+          @Override
+          public void run(@NotNull ProgressIndicator indicator) {
+            indicator.setIndeterminate(true);
+            // sync the dependencies of ALL modules
+            ModuleManager instance = ModuleManager.getInstance(project);
+            Module[] modules = instance.getModules();
+            for (Module module : modules) {
+              getInstance(module).syncDependenciesFromManifest();
+            }
+          }
+        }.queue();
+      }
+    });
   }
 
   /**
@@ -93,16 +105,12 @@ public class ModuleDependencySynchronizer {
    * @param bundleManager     the bundle manager
    * @param moduleRootManager the rootManager for the wrapped module
    * @param application       the application
-   * @param libraryHandler    the library handler
-   * @param osmorcFacetUtil   the osmorc facet util.
    */
   public ModuleDependencySynchronizer(BundleManager bundleManager, ModuleRootManager moduleRootManager,
-                                      Application application, LibraryHandler libraryHandler,
-                                      OsmorcFacetUtil osmorcFacetUtil) {
+                                      Application application) {
     this.myBundleManager = bundleManager;
     this.myModuleRootManager = moduleRootManager;
     this.myApplication = application;
-    this.myLibraryHandler = libraryHandler;
     myModule = this.myModuleRootManager.getModule();
   }
 

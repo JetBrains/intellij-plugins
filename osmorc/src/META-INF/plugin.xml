@@ -139,8 +139,8 @@
                         serviceImplementation="org.osmorc.impl.MyBundleManager"/>
         <projectService serviceInterface="org.osmorc.manifest.ManifestHolderRegistry"
                         serviceImplementation="org.osmorc.manifest.impl.ManifestHolderRegistryImpl"/>
-        <projectService serviceInterface="org.osmorc.frameworkintegration.FrameworkInstanceModuleManager"
-                        serviceImplementation="org.osmorc.frameworkintegration.FrameworkInstanceModuleManager"/>
+        <projectService serviceInterface="org.osmorc.frameworkintegration.FrameworkInstanceLibraryManager"
+                        serviceImplementation="org.osmorc.frameworkintegration.FrameworkInstanceLibraryManager"/>
 
         <!-- IDEA extensions -->
         <colorSettingsPage implementation="org.osmorc.manifest.lang.ManifestColorsAndFontsPage"/>
@@ -169,6 +169,8 @@
                        level="ERROR" implementationClass="org.osmorc.inspection.MissingFinalNewlineInspection"/>
       <localInspection shortName="osmorcClassInDefaultPackage" displayName="Class is in default package" groupName="OSGi"
                        enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.ClassInDefaultPackageInspection"/>
+      <localInspection shortName="osmorcClassUnavailable" displayName="Class not available" groupName="OSGi"
+                       enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.ClassUnavailableInspection"/>
 
       <facetType implementation="org.osmorc.facet.OsmorcFacetType"/>
         <framework.detector implementation="org.osmorc.facet.OsmorcFrameworkDetector"/>
@@ -179,6 +181,7 @@
         <projectConfigurable instance="org.osmorc.settings.ProjectSettingsEditor"/>
         <applicationConfigurable instance="org.osmorc.settings.ApplicationSettingsEditor"/>
       <editorNotificationProvider implementation="org.osmorc.ManifestChangeWatcher"/>
+      <editorNotificationProvider implementation="org.osmorc.BundleModificationWatcher"/>
     </extensions>
 
 

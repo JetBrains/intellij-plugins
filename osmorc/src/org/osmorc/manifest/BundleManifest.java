@@ -112,4 +112,17 @@ public interface BundleManifest {
    * @return true, if this bundle re-exports the given bundle, false otherwise.
    */
   boolean reExportsBundle(@NotNull BundleManifest otherBundle);
+
+  /**
+   * Returns true if this manifest represents a fragment bundle.
+   * @return true if the manifest represents a fragement bundle, false otherwise..
+   */
+  boolean isFragmentBundle();
+
+  /**
+   * Checks, if this bundle would be a potential fragment host for the given fragment bundle.
+   * @param fragmentBundle the fragment bundle
+   * @return
+   */
+  boolean isFragmentHostFor(@NotNull BundleManifest fragmentBundle);
 }

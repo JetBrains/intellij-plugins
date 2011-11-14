@@ -30,14 +30,12 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.DocumentAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.facet.OsmorcFacet;
-import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
-import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
-import org.osmorc.frameworkintegration.LibraryHandler;
+import org.osmorc.frameworkintegration.*;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.make.BundleCompiler;
 
@@ -120,7 +118,7 @@ public class BundleSelector extends JDialog {
     private void createList() {
         allAvailableBundles.clear();
 
-        HashSet<SelectedBundle> hs = new HashSet<SelectedBundle>();
+        final HashSet<SelectedBundle> hs = new HashSet<SelectedBundle>();
         // add all the modules
         Module[] modules = ModuleManager.getInstance(project).getModules();
         for (Module module : modules) {
@@ -134,14 +132,15 @@ public class BundleSelector extends JDialog {
         }
         // add all framework bundles, if there are some.
         if (usedFramework != null) {
-            LibraryHandler libraryHandler = ServiceManager.getService(LibraryHandler.class);
-
-            List<Library> libs = libraryHandler.getLibraries(usedFramework.getName());
-
-            for (Library lib : libs) {
-                String[] urls = lib.getUrls(OrderRootType.CLASSES);
-                for (String url : urls) {
-                    url = BundleCompiler.convertJarUrlToFileUrl(url);
+          FrameworkIntegratorRegistry registry = ServiceManager.getService(FrameworkIntegratorRegistry.class);
+          FrameworkIntegrator integrator = registry.findIntegratorByInstanceDefinition(usedFramework);
+          integrator.getFrameworkInstanceManager().collectLibraries(usedFramework, new JarFileLibraryCollector() {
+            @Override
+            protected void collectFrameworkJars(@NotNull Collection<VirtualFile> jarFiles,
+                                                @NotNull FrameworkInstanceLibrarySourceFinder sourceFinder) {
+              for (VirtualFile jarFile : jarFiles) {
+                String url = jarFile.getUrl();
+                 url = BundleCompiler.convertJarUrlToFileUrl(url);
                     url = BundleCompiler.fixFileURL(url);
                     String bundleName = CachingBundleInfoProvider.getBundleSymbolicName(url);
                     if (bundleName != null) {
@@ -150,8 +149,12 @@ public class BundleSelector extends JDialog {
                                 new SelectedBundle(bundleName + " - " + bundleVersion, url, SelectedBundle.BundleType.FrameworkBundle);
                         hs.add(b);
                     }
-                }
+              }
             }
+          });
+
+
+
             // all the libraries that are bundles already (doesnt make much sense to start bundlified libs as they have no activator).
             final String[] urls = OrderEnumerator.orderEntries(project).withoutSdk().withoutModuleSourceEntries()
               .satisfying(BundleCompiler.NOT_FRAMEWORK_LIBRARY_CONDITION).classes().getUrls();

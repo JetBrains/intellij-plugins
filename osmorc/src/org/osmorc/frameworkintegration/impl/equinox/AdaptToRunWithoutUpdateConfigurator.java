@@ -27,16 +27,14 @@ package org.osmorc.frameworkintegration.impl.equinox;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.*;
 import org.osmorc.make.BundleCompiler;
 import org.osmorc.run.ui.SelectedBundle;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -52,7 +50,7 @@ class AdaptToRunWithoutUpdateConfigurator  extends BundleSelectionAction {
 
     public void actionPerformed(AnActionEvent e) {
 
-        Collection<SelectedBundle> currentlySelectedBundles = new ArrayList<SelectedBundle>(getContext().getCurrentlySelectedBundles()); 
+        final Collection<SelectedBundle> currentlySelectedBundles = new ArrayList<SelectedBundle>(getContext().getCurrentlySelectedBundles());
         for (SelectedBundle selectedBundle : currentlySelectedBundles) {
             if (selectedBundle.getBundleType() == SelectedBundle.BundleType.FrameworkBundle) {
                 String url = selectedBundle.getBundleUrl();
@@ -66,25 +64,27 @@ class AdaptToRunWithoutUpdateConfigurator  extends BundleSelectionAction {
             }
         }
 
-        SelectedBundle prototypeBundle = null;
         FrameworkInstanceDefinition instance = getContext().getUsedFrameworkInstance();
         FrameworkIntegratorRegistry registry = ServiceManager.getService(FrameworkIntegratorRegistry.class);
         assert instance != null;
         FrameworkIntegrator frameworkIntegrator = registry.findIntegratorByInstanceDefinition(instance);
-        List<Library> libraries = frameworkIntegrator.getFrameworkInstanceManager().getLibraries(instance);
-        for (Library library : libraries) {
-            String[] urls = library.getUrls(OrderRootType.CLASSES);
-            for (String url : urls) {
-                if (!url.contains(ORG_ECLIPSE_UPDATE_CONFIGURATOR_URL) && !url.contains(ORG_ECLIPSE_OSGI_URL)) {
-                    prototypeBundle = createSelectedFrameworkBundle(prototypeBundle, url);
-                    if (prototypeBundle != null && !currentlySelectedBundles.contains(prototypeBundle)) {
-                        adaptBundle(prototypeBundle);
-                        getContext().addBundle(prototypeBundle);
-                        prototypeBundle = null;
-                    }
-                }
+      frameworkIntegrator.getFrameworkInstanceManager().collectLibraries(instance, new JarFileLibraryCollector() {
+        @Override
+        protected void collectFrameworkJars(@NotNull Collection<VirtualFile> jarFiles, @NotNull FrameworkInstanceLibrarySourceFinder sourceFinder) {
+          SelectedBundle prototypeBundle = null;
+          for (VirtualFile jarFile : jarFiles) {
+            String url = jarFile.getUrl();
+            if (!url.contains(ORG_ECLIPSE_UPDATE_CONFIGURATOR_URL) && !url.contains(ORG_ECLIPSE_OSGI_URL)) {
+              prototypeBundle = createSelectedFrameworkBundle(prototypeBundle, url);
+              if (prototypeBundle != null && !currentlySelectedBundles.contains(prototypeBundle)) {
+                adaptBundle(prototypeBundle);
+                getContext().addBundle(prototypeBundle);
+                prototypeBundle = null;
+              }
             }
+          }
         }
+      });
     }
 
     private SelectedBundle createSelectedFrameworkBundle(final SelectedBundle prototypeBundle, final String url) {

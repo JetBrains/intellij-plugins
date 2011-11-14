@@ -37,7 +37,9 @@ public class BundleManifestTest extends LightIdeaTestCase {
   private static final String Manifest7 =
     "Bundle-SymbolicName: foo.bam\nBundle-Version: 1.0.0\nExport-Package: foo.bam.baz;version= 1.0.0,foo.bam.bam;version= 2.1.1\nRequire-Bundle: foo.bar;bundle-version=\"(2.0.0, 2.5.0]\";visibility:=reexport";
 
-
+  private static final String Manifest8 =
+    "Bundle-SymbolicName: foo.bam\nBundle-Version: 1.0.0\nExport-Package: foo.bam.baz;version= 1.0.0,foo.bam.bam;version= 2.1.1\nFragment-Host: foo.bar;bundle-version=\"(2.0.0, 2.5.0]\"";
+  
   @Test
   public void testExportsPackage() {
     PsiFile lightFile = createLightFile("MANIFEST.MF", Manifest1);
@@ -128,5 +130,24 @@ public class BundleManifestTest extends LightIdeaTestCase {
 
     assertThat(requestorManifest1.reExportsBundle(providerManifest), is(false));
     assertThat(requestorManifest2.reExportsBundle(providerManifest), is(true));
+  }
+
+
+  @Test
+  public void testFragmenBundles() {
+    PsiFile potentialHost1File = createLightFile("MANIFEST.MF", Manifest1);
+    BundleManifestImpl potentialHost1 = new BundleManifestImpl((ManifestFile)potentialHost1File);
+
+    PsiFile potentialHost2File = createLightFile("MANIFEST2.MF", Manifest2);
+    BundleManifestImpl potentialHost2 = new BundleManifestImpl((ManifestFile)potentialHost2File);
+
+    PsiFile fragmenFile = createLightFile("MANIFEST8.MF", Manifest8);
+    BundleManifestImpl fragment = new BundleManifestImpl((ManifestFile)fragmenFile);
+
+    assertThat(fragment.isFragmentBundle(), is(true));
+    assertThat(potentialHost1.isFragmentBundle(), is(false));
+    assertThat(potentialHost2.isFragmentBundle(), is(false));
+    assertThat(potentialHost1.isFragmentHostFor(fragment), is(false));
+    assertThat(potentialHost2.isFragmentHostFor(fragment), is(true));
   }
 }

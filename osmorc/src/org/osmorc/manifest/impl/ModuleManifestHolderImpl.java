@@ -54,7 +54,7 @@ public class ModuleManifestHolderImpl extends AbstractManifestHolderImpl {
 
   @Nullable 
   public BundleManifest getBundleManifest() throws ManifestHolderDisposedException{
-    if ( myModule.isDisposed() ) {
+    if (isDisposed()) {
       throw new ManifestHolderDisposedException();
     }
     final VirtualFile cachedFile = myBundleManifest != null ? myBundleManifest.getManifestFile().getVirtualFile() : null;
@@ -73,6 +73,10 @@ public class ModuleManifestHolderImpl extends AbstractManifestHolderImpl {
       }
     }
     return myBundleManifest;
+  }
+
+  public boolean isDisposed() {
+    return myModule.isDisposed();
   }
 
   private BundleManifest loadManifest() {
@@ -102,7 +106,10 @@ public class ModuleManifestHolderImpl extends AbstractManifestHolderImpl {
 
 
   @Override
-  public Object getBoundObject() {
+  public Object getBoundObject() throws ManifestHolderDisposedException {
+    if ( isDisposed() ) {
+      throw new ManifestHolderDisposedException();
+    }
     return myModule;
   }
 }

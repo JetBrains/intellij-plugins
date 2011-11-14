@@ -68,4 +68,10 @@ public class ClauseImpl extends ManifestElementBase<ClauseStub> implements Claus
     }
     return null;
   }
+
+  @Override
+  public String getClauseText() {
+    String text  =getText();
+    return text.replaceAll("(?s)\\s*\n\\s*", "").trim();
+  }
 }

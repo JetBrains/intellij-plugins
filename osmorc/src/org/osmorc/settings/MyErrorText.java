@@ -27,6 +27,7 @@ package org.osmorc.settings;
 
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -41,35 +42,50 @@ import java.awt.*;
  */
 public class MyErrorText extends JPanel {
 
-    public void setError(String text) {
-        if (text == null) {
-            myLabel.setText("");
-            myLabel.setIcon(null);
-            setBorder(null);
-            myPrefSize = null;
-        }
-        else {
-            myLabel.setText((new StringBuilder()).append("<html><body><font color=red><left>").append(text)
-                    .append("</left></b></font></body></html>").toString());
-            myLabel.setIcon(IconLoader.getIcon("/actions/lightning.png"));
-            myLabel.setBorder(new EmptyBorder(2, 2, 0, 0));
-            myPrefSize = myLabel.getPreferredSize();
-        }
-        revalidate();
+  public void setStatus(@Nullable String text) {
+    if (text == null) {
+      myLabel.setText("");
+      myLabel.setIcon(null);
+      setBorder(null);
+      myPrefSize = null;
     }
-
-    public Dimension getPreferredSize() {
-        return myPrefSize != null ? myPrefSize : super.getPreferredSize();
+    else {
+      myLabel.setText(text);
+      myLabel.setBorder(new EmptyBorder(2, 2, 0, 0));
+      myPrefSize = myLabel.getPreferredSize();
     }
+    revalidate();
+  }
 
-    private final JLabel myLabel = new JLabel();
-    private Dimension myPrefSize;
-
-    public MyErrorText() {
-        myLabel.setVerticalAlignment(JLabel.TOP);
-        setLayout(new BorderLayout());
-        setBorder(null);
-        UIUtil.removeQuaquaVisualMarginsIn(this);
-        add(myLabel, "Center");
+  public void setError(@Nullable String text) {
+    if (text == null) {
+      myLabel.setText("");
+      myLabel.setIcon(null);
+      setBorder(null);
+      myPrefSize = null;
     }
+    else {
+      myLabel.setText((new StringBuilder()).append("<html><body><font color=red><left>").append(text)
+                        .append("</left></b></font></body></html>").toString());
+      myLabel.setIcon(IconLoader.getIcon("/actions/lightning.png"));
+      myLabel.setBorder(new EmptyBorder(2, 2, 0, 0));
+      myPrefSize = myLabel.getPreferredSize();
+    }
+    revalidate();
+  }
+
+  public Dimension getPreferredSize() {
+    return myPrefSize != null ? myPrefSize : super.getPreferredSize();
+  }
+
+  private final JLabel myLabel = new JLabel();
+  private Dimension myPrefSize;
+
+  public MyErrorText() {
+    myLabel.setVerticalAlignment(SwingConstants.TOP);
+    setLayout(new BorderLayout());
+    setBorder(null);
+    UIUtil.removeQuaquaVisualMarginsIn(this);
+    add(myLabel, "Center");
+  }
 }

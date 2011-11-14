@@ -25,38 +25,16 @@
 package org.osmorc.frameworkintegration;
 
 import com.intellij.openapi.roots.LibraryOrderEntry;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
+ *
+ *
  */
+@Deprecated
 public interface LibraryHandler
 {
-  void startLibraryChanges();
-
-  void commitLibraryChanges();
-
-  void endLibraryChanges();
-
-  boolean hasLibraryChanges();
-
-  boolean isChangingLibraries();
-
-  void createLibrariesFromBundles(
-      @NotNull VirtualFile bundleFolder,
-      @NotNull String instanceName, @NotNull FrameworkInstanceLibrarySourceFinder sourceFinder);
-
-  List<Library> getLibraries(@NotNull String instanceName);
-
-  boolean isFrameworkInstanceLibrary(@NotNull Library library);
 
   boolean isFrameworkInstanceLibrary(@NotNull LibraryOrderEntry libraryOrderEntry);
-
-  void deleteLibraries(String instanceName);
-
-  String getShortLibraryName(String instanceName, Library library);
 }

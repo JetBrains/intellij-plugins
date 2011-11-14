@@ -26,114 +26,96 @@
 package org.osmorc.frameworkintegration.impl.concierge;
 
 import com.intellij.openapi.application.Application;
-import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.frameworkintegration.AbstractFrameworkInstanceManager;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
-import org.osmorc.frameworkintegration.FrameworkInstanceManager;
+import org.osmorc.frameworkintegration.FrameworkLibraryCollector;
 import org.osmorc.frameworkintegration.LibraryHandler;
 import org.osmorc.i18n.OsmorcBundle;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * @author <a href="mailto:al@chilibi.org">Alain Greppin</a>
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ConciergeFrameworkInstanceManager implements FrameworkInstanceManager
-{
+public class ConciergeFrameworkInstanceManager extends AbstractFrameworkInstanceManager {
+  private static final Logger LOG = Logger.getInstance("#org.osmorc.frameworkintegration.impl.concierge.ConciergeFrameworkInstanceManager");
+
+  private final LibraryHandler myLibraryHandler;
+  private final Application myApplication;
+
+
   public ConciergeFrameworkInstanceManager(LibraryHandler libraryHandler, LocalFileSystem fileSystem,
-                                           Application application)
-  {
-    _libraryHandler = libraryHandler;
-    _fileSystem = fileSystem;
-    _application = application;
+                                           Application application) {
+    super(fileSystem);
+    myLibraryHandler = libraryHandler;
+    myApplication = application;
   }
 
-  public void createLibraries(final FrameworkInstanceDefinition frameworkInstanceDefinition)
-  {
-    final VirtualFile installFolder = _fileSystem.findFileByPath(frameworkInstanceDefinition.getBaseFolder());
+  @Override
+  public void collectLibraries(@NotNull final FrameworkInstanceDefinition frameworkInstanceDefinition,
+                               @NotNull final FrameworkLibraryCollector collector) {
 
-    if (installFolder == null)
-    {
-      throw new RuntimeException("The folder " + frameworkInstanceDefinition.getBaseFolder() + " does not exist.");
+    final VirtualFile installFolder = getLocalFileSystem().findFileByPath(frameworkInstanceDefinition.getBaseFolder());
+
+    final ArrayList<VirtualFile> directoriesToAdd = new ArrayList<VirtualFile>();
+
+    if (installFolder == null) {
+      LOG.warn("The folder " + frameworkInstanceDefinition.getBaseFolder() + " does not exist.");
+      return;
     }
-    if (!installFolder.isDirectory())
-    {
-      throw new RuntimeException(frameworkInstanceDefinition.getBaseFolder() + " is not a folder");
+    if (!installFolder.isDirectory()) {
+      LOG.warn(frameworkInstanceDefinition.getBaseFolder() + " is not a folder");
+      return;
     }
 
-    _application.runWriteAction(new Runnable()
-    {
-      public void run()
-      {
+    directoriesToAdd.add(installFolder);
+
+    VirtualFile bundlesFolder = installFolder.findChild("bundles");
+    if (bundlesFolder != null) {
+      if (!bundlesFolder.isDirectory()) {
+        LOG.warn(bundlesFolder.getPath() + " is not a folder");
+      }
+      else {
+        directoriesToAdd.add(bundlesFolder);
+      }
+    }
+
+    myApplication.runWriteAction(new Runnable() {
+      public void run() {
         installFolder.refresh(false, true);
 
         ConciergeSourceFinder sourceFinder = new ConciergeSourceFinder(installFolder);
-
-        _libraryHandler.startLibraryChanges();
-        _libraryHandler.createLibrariesFromBundles(installFolder, frameworkInstanceDefinition.getName(), sourceFinder);
-
-        VirtualFile bundlesFolder = installFolder.findChild("bundles");
-        if (bundlesFolder != null)
-        {
-          if (!bundlesFolder.isDirectory())
-          {
-            throw new RuntimeException(bundlesFolder.getPath() + " is not a folder");
-          }
-          _libraryHandler
-              .createLibrariesFromBundles(bundlesFolder, frameworkInstanceDefinition.getName(), sourceFinder);
-        }
-        _libraryHandler.commitLibraryChanges();
-      }
-    });
-
-  }
-
-  public void removeLibraries(final FrameworkInstanceDefinition frameworkInstanceDefinition)
-  {
-    _application.runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        _libraryHandler.startLibraryChanges();
-        _libraryHandler.deleteLibraries(frameworkInstanceDefinition.getName());
-        _libraryHandler.commitLibraryChanges();
+          collector.collectFrameworkLibraries(sourceFinder, directoriesToAdd);
       }
     });
   }
 
-  public List<Library> getLibraries(FrameworkInstanceDefinition frameworkInstanceDefinition)
-  {
-    return _libraryHandler.getLibraries(frameworkInstanceDefinition.getName());
-  }
-
-  public String checkValidity(@NotNull FrameworkInstanceDefinition frameworkInstanceDefinition)
-  {
-    if (frameworkInstanceDefinition.getName() == null || frameworkInstanceDefinition.getName().trim().length() == 0)
-    {
+  public String checkValidity(@NotNull FrameworkInstanceDefinition frameworkInstanceDefinition) {
+    if (frameworkInstanceDefinition.getName() == null || frameworkInstanceDefinition.getName().trim().length() == 0) {
       return "A name for the framework instance needs to be given.";
     }
 
-    VirtualFile installFolder = _fileSystem.findFileByPath(frameworkInstanceDefinition.getBaseFolder());
+    if (frameworkInstanceDefinition.isDownloadedByPaxRunner()) {
+      return checkDownloadedFolderStructure(frameworkInstanceDefinition);
+    }
 
-    if (installFolder == null || !installFolder.isDirectory())
-    {
+    VirtualFile installFolder = getLocalFileSystem().findFileByPath(frameworkInstanceDefinition.getBaseFolder());
+
+    if (installFolder == null || !installFolder.isDirectory()) {
       return OsmorcBundle
-          .getTranslation("concierge.folder.does.not.exist", frameworkInstanceDefinition.getBaseFolder());
+        .getTranslation("concierge.folder.does.not.exist", frameworkInstanceDefinition.getBaseFolder());
     }
 
     VirtualFile bundlesFolder = installFolder.findChild("bundles");
-    if (bundlesFolder == null || !bundlesFolder.isDirectory())
-    {
+    if (bundlesFolder == null || !bundlesFolder.isDirectory()) {
       return OsmorcBundle.getTranslation("concierge.folder.bundles.missing", installFolder.getPath());
     }
 
     return null;
   }
-
-  private final LibraryHandler _libraryHandler;
-  private final LocalFileSystem _fileSystem;
-  private final Application _application;
 }

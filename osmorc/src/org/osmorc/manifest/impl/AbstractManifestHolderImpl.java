@@ -32,15 +32,5 @@ import org.osmorc.manifest.ManifestHolder;
  */
 public abstract class AbstractManifestHolderImpl implements ManifestHolder
 {
-  public long getBundleID()
-  {
-    return _bundleID;
-  }
 
-  public void setBundleID(long bundleID)
-  {
-    _bundleID = bundleID;
-  }
-
-  private long _bundleID = -1;
 }

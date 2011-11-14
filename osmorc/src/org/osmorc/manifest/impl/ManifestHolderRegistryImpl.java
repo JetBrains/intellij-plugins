@@ -32,55 +32,29 @@ import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.ManifestHolder;
 import org.osmorc.manifest.ManifestHolderRegistry;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public final class ManifestHolderRegistryImpl implements ManifestHolderRegistry {
+  private final Project myProject;
+
     public ManifestHolderRegistryImpl(Project project) {
-        this.project = project;
-        libraryManifestHolders = new HashMap<Library, ManifestHolder>();
-    }
-
-    @NotNull
-    public ManifestHolder getManifestHolder(@NotNull Object bundle) {
-        if (bundle instanceof Module) {
-            return getModuleManifestHolder((Module) bundle);
-        } else if (bundle instanceof Library) {
-            return getLibraryManifestHolder((Library) bundle);
-        }
-        throw new RuntimeException(
-                "The bundle is neither a Module nor a Library. It is of type " + bundle.getClass().getName());
+        this.myProject = project;
     }
 
   @NotNull
-    private ManifestHolder getModuleManifestHolder(@NotNull Module module) {
-        return ModuleServiceManager.getService(module, ManifestHolder.class);
-    }
-
-  @NotNull
-    private ManifestHolder getLibraryManifestHolder(@NotNull Library library) {
-        ManifestHolder result = libraryManifestHolders.get(library);
-        if (result == null) {
-            result = new LibraryManifestHolderImpl(library, project);
-            libraryManifestHolders.put(library, result);
-        }
-
-        return result;
-    }
-
-  public void clearLibraryManifestHolders() {
-        libraryManifestHolders.clear();
-    }
-
   @Override
-  public boolean isEmpty() {
-    return libraryManifestHolders.isEmpty();
+  public ManifestHolder getManifestHolder(@NotNull Module module) {
+    return ModuleServiceManager.getService(module, ManifestHolder.class);
   }
 
 
-  private final Project project;
-    private final Map<Library, ManifestHolder> libraryManifestHolders;
+
+  @NotNull
+  @Override
+  public Collection<ManifestHolder> getManifestHolders(@NotNull Library library) {
+    return LibraryManifestHolderImpl.createForLibrary(library, myProject);
+  }
 }

@@ -49,9 +49,10 @@ public interface ManifestHolder {
    */
   Object getBoundObject() throws ManifestHolderDisposedException;
 
-  @Deprecated
-  long getBundleID();
 
-  @Deprecated
-  void setBundleID(long bundleID);
+  /**
+   * Returns the information if this holder is disposed and should not be used.
+   * @return true if the holder is disposed, false otherwise.
+   */
+  boolean isDisposed();
 }

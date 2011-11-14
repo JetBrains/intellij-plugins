@@ -24,31 +24,27 @@
  */
 package org.osmorc.frameworkintegration;
 
-import com.intellij.openapi.roots.libraries.Library;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-@Deprecated
-public interface FrameworkInstanceManager
-{
+public interface FrameworkInstanceManager {
+
   /**
-   * Create the libraries for a newly created framework instance.
-   *
-   * @param frameworkInstanceDefinition the definition of the framework instance.
+   * Collects a all libraries of the given framework instance definition and calls the framework library collector with the results.
+   * @param collector
    */
-  void createLibraries(final FrameworkInstanceDefinition frameworkInstanceDefinition);
+  void collectLibraries(@NotNull FrameworkInstanceDefinition frameworkInstanceDefinition,
+                        @NotNull FrameworkLibraryCollector collector);
 
-  void removeLibraries(final FrameworkInstanceDefinition frameworkInstanceDefinition);
-
-  List<Library> getLibraries(final FrameworkInstanceDefinition frameworkInstanceDefinition);
-
+  /**
+   * Checks if the given framework instance definition is valid.
+   *
+   * @param frameworkInstanceDefinition the instance definition.
+   * @return null, if the instance definition is valid, an error message otherwise.
+   */
   @Nullable
   String checkValidity(@NotNull final FrameworkInstanceDefinition frameworkInstanceDefinition);
-
-
 }

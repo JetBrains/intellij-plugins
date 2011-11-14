@@ -54,6 +54,8 @@ import java.util.regex.Pattern;
 public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProperties> extends AbstractFrameworkRunner<P>
   implements ExternalVMFrameworkRunner {
   private static final String PaxRunnerLib = "pax-runner.jar";
+  public static final String PaxRunnerMainClass = "org.ops4j.pax.runner.Run";
+
 
   protected AbstractPaxBasedFrameworkRunner() {
   }
@@ -62,6 +64,10 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
   @NotNull
   @Override
   public final List<VirtualFile> getFrameworkStarterLibraries() {
+    return getPaxLibraries();
+  }
+
+  public  static List<VirtualFile> getPaxLibraries() {
     // pax does it's own magic, so the only lib we need, is the pax lib.
     // XXX: ask anton if there is some better way to do this..
     @SuppressWarnings({"ConstantConditions"}) final String paxLib =
@@ -200,7 +206,7 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
   @NotNull
   @NonNls
   public final String getMainClass() {
-    return "org.ops4j.pax.runner.Run";
+    return PaxRunnerMainClass;
   }
 
 

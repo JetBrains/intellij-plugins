@@ -97,7 +97,7 @@ public class BundleManifestImpl implements BundleManifest {
     Clause[] clauses = header.getClauses();
     for (Clause clause : clauses) {
       try {
-        capabilities.addAll(Arrays.asList(ManifestParser.parseExportHeader(clause.getText())));
+        capabilities.addAll(Arrays.asList(ManifestParser.parseExportHeader(clause.getClauseText())));
       }
       catch (Exception e) {
         // unparseable header
@@ -142,7 +142,7 @@ public class BundleManifestImpl implements BundleManifest {
     Clause[] clauses = header.getClauses();
     List<String> result = new ArrayList<String>(clauses.length);
     for (Clause clause : clauses) {
-      result.add(clause.getText().trim());
+      result.add(clause.getClauseText());
     }
     return result;
   }
@@ -157,7 +157,7 @@ public class BundleManifestImpl implements BundleManifest {
     Clause[] clauses = header.getClauses();
     List<String> result = new ArrayList<String>(clauses.length);
     for (Clause clause : clauses) {
-      result.add(clause.getText().trim());
+      result.add(clause.getClauseText());
     }
     return result;
   }
@@ -209,7 +209,7 @@ public class BundleManifestImpl implements BundleManifest {
     }
     Clause[] clauses = header.getClauses();
     for (Clause clause : clauses) {
-      String requireSpec = clause.getText();
+      String requireSpec = clause.getClauseText();
       // first check if the clause is set to re-export, if not, we can skip the more expensive checks
       Directive directiveByName = clause.getDirectiveByName(VISIBILITY_DIRECTIVE);
       if (directiveByName == null) {
@@ -225,6 +225,29 @@ public class BundleManifestImpl implements BundleManifest {
     return false;
   }
 
+  @Override
+  public boolean isFragmentBundle() {
+    Header header = myManifestFile.getHeaderByName(FRAGMENT_HOST);
+    return header != null;
+  }
+
+
+  @Override
+  public boolean isFragmentHostFor(@NotNull BundleManifest fragmentBundle) {
+    Header header = fragmentBundle.getManifestFile().getHeaderByName(FRAGMENT_HOST);
+    if ( header == null ) {
+      return false;
+    }
+
+    Clause[] clauses = header.getClauses();
+    if ( clauses.length != 1 ) { // bundle should have exactly one clause
+      return false;
+    }
+    Clause clause = clauses[0];
+    String hostSpec = clause.getClauseText();
+    // they follow the same semantics so i think it is safe to reuse this method here. We do not handle extension bundles at all.
+    return isRequiredBundle(hostSpec);
+  }
 
   @Nullable
   private Object getHeaderValue(@NotNull String headerName) {

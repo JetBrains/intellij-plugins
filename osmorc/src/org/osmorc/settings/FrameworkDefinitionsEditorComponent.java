@@ -204,33 +204,8 @@ public class FrameworkDefinitionsEditorComponent {
       definitions.add((FrameworkInstanceDefinition)frameworkInstances.getModel().getElementAt(i));
     }
 
-    updateLibraries(settings.getFrameworkInstanceDefinitions(), definitions);
-
     settings.setFrameworkInstanceDefinitions(definitions);
     myModified = false;
-  }
-
-  private void updateLibraries(List<FrameworkInstanceDefinition> oldDefinitions, ArrayList<FrameworkInstanceDefinition> newDefinitions) {
-    for (FrameworkInstanceDefinition oldDefinition : oldDefinitions) {
-      if (!newDefinitions.contains(oldDefinition)) {
-        // it was removed
-        final FrameworkInstanceManager frameworkInstanceManager = getFrameworkInstanceManager(oldDefinition);
-        if (frameworkInstanceManager != null) {
-          frameworkInstanceManager.removeLibraries(oldDefinition);
-        }
-      }
-    }
-
-    for (FrameworkInstanceDefinition newDefinition : newDefinitions) {
-      if (!oldDefinitions.contains(newDefinition)) {
-        // it was added
-        final FrameworkInstanceManager frameworkInstanceManager = getFrameworkInstanceManager(newDefinition);
-        if (frameworkInstanceManager != null) {
-          frameworkInstanceManager.createLibraries(newDefinition);
-        }
-      }
-    }
-
   }
 
   public JPanel getMainPanel() {

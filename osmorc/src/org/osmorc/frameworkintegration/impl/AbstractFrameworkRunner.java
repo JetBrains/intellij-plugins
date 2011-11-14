@@ -30,8 +30,6 @@ import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -43,6 +41,7 @@ import org.osmorc.run.ui.SelectedBundle;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -76,15 +75,17 @@ public abstract class AbstractFrameworkRunner<P extends PropertiesWrapper> imple
 
   /**
    * Returns the start level of the framework. If the run configuration is set to automatic, this will determine the greatest start level
-   *  of the given bundles. Otherwise the start level from the run configuration is returned.
+   * of the given bundles. Otherwise the start level from the run configuration is returned.
+   *
    * @param bundlesToStart the list of bundles to be examined.
    * @return the framework start level.
    */
   protected int getFrameworkStartLevel(SelectedBundle[] bundlesToStart) {
-    if ( myRunConfiguration.isAutoStartLevel() ) {
+    if (myRunConfiguration.isAutoStartLevel()) {
       int sl = 0;
       for (SelectedBundle selectedBundle : bundlesToStart) {
-        int selectedBundleStartLevel = selectedBundle.isDefaultStartLevel() ? myRunConfiguration.getDefaultStartLevel() : selectedBundle.getStartLevel();
+        int selectedBundleStartLevel =
+          selectedBundle.isDefaultStartLevel() ? myRunConfiguration.getDefaultStartLevel() : selectedBundle.getStartLevel();
         sl = Math.max(selectedBundleStartLevel, sl);
       }
       return sl;
@@ -103,6 +104,7 @@ public abstract class AbstractFrameworkRunner<P extends PropertiesWrapper> imple
 
   /**
    * Returns the debug port. Use {@link #isDebugRun()} to check if this is a debug run.
+   *
    * @return the debug port that is in use, or -1 if this is not a debug run.
    */
   @NotNull
@@ -160,23 +162,29 @@ public abstract class AbstractFrameworkRunner<P extends PropertiesWrapper> imple
 
   @NotNull
   public List<VirtualFile> getFrameworkStarterLibraries() {
-    List<VirtualFile> result = new ArrayList<VirtualFile>();
+    final List<VirtualFile> result = new ArrayList<VirtualFile>();
 
     FrameworkInstanceDefinition definition = getRunConfiguration().getInstanceToUse();
     FrameworkIntegratorRegistry registry = ServiceManager.getService(getProject(), FrameworkIntegratorRegistry.class);
-    FrameworkIntegrator integrator = registry.findIntegratorByInstanceDefinition(definition);
-    FrameworkInstanceManager frameworkInstanceManager = integrator.getFrameworkInstanceManager();
+    if (definition != null) {
+      FrameworkIntegrator integrator = registry.findIntegratorByInstanceDefinition(definition);
+      if (integrator != null) {
+        FrameworkInstanceManager frameworkInstanceManager = integrator.getFrameworkInstanceManager();
+        final Pattern starterClasspathPattern = getFrameworkStarterClasspathPattern();
 
-    List<Library> libs = frameworkInstanceManager.getLibraries(definition);
-
-    final Pattern starterClasspathPattern = getFrameworkStarterClasspathPattern();
-    for (Library lib : libs) {
-      for (VirtualFile virtualFile : lib.getFiles(OrderRootType.CLASSES)) {
-        if (starterClasspathPattern == null || starterClasspathPattern.matcher(virtualFile.getName()).matches()) {
-          result.add(virtualFile);
-        }
+        frameworkInstanceManager.collectLibraries(definition, new JarFileLibraryCollector() {
+          @Override
+          protected void collectFrameworkJars(@NotNull Collection<VirtualFile> jarFiles, @NotNull FrameworkInstanceLibrarySourceFinder sourceFinder) {
+            for (VirtualFile virtualFile : jarFiles) {
+              if (starterClasspathPattern == null || starterClasspathPattern.matcher(virtualFile.getName()).matches()) {
+                result.add(virtualFile);
+              }
+            }
+          }
+        });
       }
     }
+
     return result;
   }
 

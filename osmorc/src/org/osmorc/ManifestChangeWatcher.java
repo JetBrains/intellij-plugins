@@ -1,8 +1,5 @@
 package org.osmorc;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -70,7 +67,7 @@ public class ManifestChangeWatcher implements EditorNotifications.Provider<Manif
                     if ( settings.getManifestSynchronizationType() == ProjectSettings.ManifestSynchronizationType.AutomaticallySynchronize ) {
                       myNeedsResync.set(false);
                       EditorNotifications.getInstance(myProject).updateAllNotifications();
-                     resynchronizeDependencies(psiFile);
+                      ModuleDependencySynchronizer.resynchronizeAll(psiFile.getProject());
                     }
                   }
                 }, 250);
@@ -114,26 +111,5 @@ public class ManifestChangeWatcher implements EditorNotifications.Provider<Manif
     }
 
     return new ManifestChangeNotificationPanel(psiFile, myNeedsResync);
-  }
-
-  /**
-   * Triggers a resynchronization of all dependencies of all bundles with manually edited manifests.
-   * @param modifiedFile
-   */
-  static void resynchronizeDependencies(final PsiFile modifiedFile) {
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        new Task.Backgroundable(modifiedFile.getProject(), "Processing manifest change", false) {
-          @Override
-          public void run(@NotNull ProgressIndicator indicator) {
-            indicator.setText("Synchronizing dependencies.");
-            indicator.setIndeterminate(true);
-            // sync the dependencies of ALL modules
-            ModuleDependencySynchronizer.resynchronizeAll(modifiedFile.getProject());
-          }
-        }.queue();
-      }
-    });
   }
 }

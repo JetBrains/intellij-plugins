@@ -27,7 +27,6 @@ package org.osmorc.frameworkintegration;
 
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -47,6 +46,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.osmorc.SwingRunner;
 import org.osmorc.facet.OsmorcFacetUtil;
+import org.osmorc.settings.ApplicationSettings;
 import org.osmorc.settings.ProjectSettings;
 
 import java.util.ArrayList;
@@ -64,9 +64,8 @@ import static org.junit.Assert.assertTrue;
  */
 @SuppressWarnings({"ConstantConditions"})
 @RunWith(SwingRunner.class)
-@Deprecated
-@Ignore("Framework instance is deprecated and will be removed this week.")
-public class FrameworkInstanceModuleManagerTest {
+@Ignore 
+public class FrameworkInstanceLibraryManagerTest {
     private Module module;
     private TempDirTestFixture myTempDirFixture;
     private OsmorcFacetUtil osmorcFacetUtil;
@@ -89,9 +88,9 @@ public class FrameworkInstanceModuleManagerTest {
 
         Application application = ApplicationManager.getApplication();
         projectSettings = new ProjectSettings();
-        testObject = new FrameworkInstanceModuleManager(ServiceManager.getService(LibraryHandler.class), projectSettings,
+        myTestObject = new FrameworkInstanceLibraryManager(ApplicationSettings.getInstance(),projectSettings,
                 application, fixture.getProject(),
-                ModuleManager.getInstance(fixture.getProject()), osmorcFacetUtil);
+                ModuleManager.getInstance(fixture.getProject()));
         project = fixture.getProject();
         module = fixture.getModule();
         application.runWriteAction(new Runnable() {
@@ -122,22 +121,22 @@ public class FrameworkInstanceModuleManagerTest {
 
         projectSettings.setCreateFrameworkInstanceModule(true);
         projectSettings.setFrameworkInstanceName("an Instance");
-        testObject.updateFrameworkInstanceModule();
+        myTestObject.updateFrameworkInstanceLibraries();
         Module module = ModuleManager.getInstance(project)
-                .findModuleByName(FrameworkInstanceModuleManager.FRAMEWORK_INSTANCE_MODULE_NAME);
+                .findModuleByName(FrameworkInstanceLibraryManager.OsmorcControlledLibrariesPrefix);
         OrderEntry[] orderEntries = ModuleRootManager.getInstance(module).getOrderEntries();
         assertContainsOnlyGivenLibraries(orderEntries, libraryA1, libraryA2);
 
         projectSettings.setFrameworkInstanceName("another Instance");
-        testObject.updateFrameworkInstanceModule();
+        myTestObject.updateFrameworkInstanceLibraries();
         orderEntries = ModuleRootManager.getInstance(module).getOrderEntries();
         assertContainsOnlyGivenLibraries(orderEntries, libraryB1, libraryB2, libraryB3);
 
         projectSettings.setCreateFrameworkInstanceModule(false);
         projectSettings.setFrameworkInstanceName("an Instance");
-        testObject.updateFrameworkInstanceModule();
+        myTestObject.updateFrameworkInstanceLibraries();
         module = ModuleManager.getInstance(project)
-                .findModuleByName(FrameworkInstanceModuleManager.FRAMEWORK_INSTANCE_MODULE_NAME);
+                .findModuleByName(FrameworkInstanceLibraryManager.OsmorcControlledLibrariesPrefix);
         assertThat(module, nullValue());
 
         verify(osmorcFacetUtil);
@@ -151,9 +150,9 @@ public class FrameworkInstanceModuleManagerTest {
 
         projectSettings.setCreateFrameworkInstanceModule(true);
         projectSettings.setFrameworkInstanceName("an Instance");
-        testObject.updateFrameworkInstanceModule();
+        myTestObject.updateFrameworkInstanceLibraries();
         Module module = ModuleManager.getInstance(project)
-                .findModuleByName(FrameworkInstanceModuleManager.FRAMEWORK_INSTANCE_MODULE_NAME);
+                .findModuleByName(FrameworkInstanceLibraryManager.OsmorcControlledLibrariesPrefix);
         assertThat(module, nullValue());
 
         verify(osmorcFacetUtil);
@@ -168,14 +167,14 @@ public class FrameworkInstanceModuleManagerTest {
 
         projectSettings.setCreateFrameworkInstanceModule(true);
         projectSettings.setFrameworkInstanceName("an Instance");
-        testObject.updateFrameworkInstanceModule();
+        myTestObject.updateFrameworkInstanceLibraries();
         module = ModuleManager.getInstance(project)
-                .findModuleByName(FrameworkInstanceModuleManager.FRAMEWORK_INSTANCE_MODULE_NAME);
+                .findModuleByName(FrameworkInstanceLibraryManager.OsmorcControlledLibrariesPrefix);
         assertThat(module, notNullValue());
 
-        testObject.updateFrameworkInstanceModule();
+        myTestObject.updateFrameworkInstanceLibraries();
         Module module = ModuleManager.getInstance(project)
-                .findModuleByName(FrameworkInstanceModuleManager.FRAMEWORK_INSTANCE_MODULE_NAME);
+                .findModuleByName(FrameworkInstanceLibraryManager.OsmorcControlledLibrariesPrefix);
         assertThat(module, nullValue());
 
         verify(osmorcFacetUtil);
@@ -196,7 +195,7 @@ public class FrameworkInstanceModuleManagerTest {
     }
 
     private IdeaProjectTestFixture fixture;
-    private FrameworkInstanceModuleManager testObject;
+    private FrameworkInstanceLibraryManager myTestObject;
     private Project project;
 
     private Library libraryA1;
