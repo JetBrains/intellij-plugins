@@ -59,7 +59,12 @@ public class ExtendableClassConverterSpringContributor
    * @return true if yes.
    */
   public boolean isSuitable(@NotNull final ConvertContext convertContext) {
-    if (SpringFacet.getInstance(convertContext.getModule()) == null) {
+    final Module module = convertContext.getModule();
+    if (module == null) {
+      return false;
+    }
+
+    if (SpringFacet.getInstance(module) == null) {
       return false;
     }
 
