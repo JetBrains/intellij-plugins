@@ -8,7 +8,6 @@ import flash.events.Event;
 import flash.events.NativeWindowBoundsEvent;
 
 import org.jetbrains.EntityLists;
-
 import org.jetbrains.actionSystem.DataManager;
 
 public class ProjectManager {

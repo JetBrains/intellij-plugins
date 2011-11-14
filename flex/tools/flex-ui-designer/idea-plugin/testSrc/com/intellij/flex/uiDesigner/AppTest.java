@@ -27,8 +27,8 @@ public class AppTest extends AppTestBase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    TestDesignerApplicationManager.changeServiceImplementation(Client.class, TestClient.class);
-    TestDesignerApplicationManager.changeServiceImplementation(SocketInputHandler.class, MySocketInputHandler.class);
+    //TestDesignerApplicationManager.changeServiceImplementation(Client.class, TestClient.class);
+    //TestDesignerApplicationManager.changeServiceImplementation(SocketInputHandler.class, MySocketInputHandler.class);
     final MySocketInputHandler socketInputHandler = (MySocketInputHandler)SocketInputHandler.getInstance();
     socketInputHandler.info = info;
   }

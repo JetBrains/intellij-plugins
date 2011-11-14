@@ -13,7 +13,6 @@ import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -50,8 +49,6 @@ import static com.intellij.flex.uiDesigner.AdlUtil.*;
 public class DesignerApplicationLauncher extends Task.Backgroundable {
   private static final Logger LOG = Logger.getInstance(DesignerApplicationLauncher.class.getName());
 
-  public static final File APP_DIR = new File(PathManager.getSystemPath(), "flashUIDesigner");
-
   private static final String DESIGNER_SWF = "designer.swf";
   private static final String DESCRIPTOR_XML = "descriptor.xml";
   private static final String DESCRIPTOR_XML_DEV_PATH = "main/resources/" + DESCRIPTOR_XML;
@@ -67,7 +64,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
 
   private final ProblemsHolder problemsHolder = new ProblemsHolder();
 
-  public DesignerApplicationLauncher(final @NotNull Module module, final boolean debug, PostTask postTask) {
+  public DesignerApplicationLauncher(@NotNull final Module module, final boolean debug, @NotNull final PostTask postTask) {
     super(module.getProject(), DesignerApplicationManager.getOpenActionTitle(debug));
 
     this.module = module;
@@ -87,16 +84,45 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
   public void run(@NotNull final ProgressIndicator indicator) {
     this.indicator = indicator;
 
+    try {
+      Throwable error = null;
+      try {
+        doRun(indicator);
+      }
+      catch (Throwable e) {
+        error = e;
+      }
+
+      if (error != null || indicator.isCanceled()) {
+        if (!DesignerApplicationManager.getInstance().isApplicationClosed()) {
+          DesignerApplicationManager.getInstance().disposeApplication();
+        }
+
+        if (initializeThread != null) {
+          initializeThread.cancel(true);
+          initializeThread = null;
+        }
+
+        semaphore.up();
+      }
+
+      if (error != null) {
+        LOG.error(error);
+      }
+    }
+    finally {
+      postTask.end();
+    }
+  }
+
+  private void doRun(@NotNull final ProgressIndicator indicator)
+    throws IOException, java.util.concurrent.ExecutionException, InterruptedException {
     final List<AdlRunConfiguration> adlRunConfigurations;
     indicator.setText(FlexUIDesignerBundle.message("copying.app.files"));
-    try {
-      copyAppFiles();
-      indicator.setText(FlexUIDesignerBundle.message("finding.suitable.air.runtime"));
-      adlRunConfigurations = getSuitableAdlRunConfigurations();
-    }
-    catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+
+    copyAppFiles();
+    indicator.setText(FlexUIDesignerBundle.message("finding.suitable.air.runtime"));
+    adlRunConfigurations = getSuitableAdlRunConfigurations();
 
     if (adlRunConfigurations.isEmpty()) {
       notifyNoSuitableSdkToLaunch();
@@ -112,16 +138,13 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
       runAndWaitDebugger();
     }
 
-    final List<String> arguments = new ArrayList<String>();
-    try {
-      MessageSocketManager messageSocketManager = new MessageSocketManager(this, APP_DIR);
-      Disposer.register(DesignerApplicationManager.getInstance().getApplication(), messageSocketManager);
-      arguments.add(Integer.toString(messageSocketManager.listen()));
-    }
-    catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    indicator.checkCanceled();
 
+    MessageSocketManager messageSocketManager = new MessageSocketManager(this, DesignerApplicationManager.APP_DIR);
+    Disposer.register(DesignerApplicationManager.getInstance().getApplication(), messageSocketManager);
+
+    final List<String> arguments = new ArrayList<String>();
+    arguments.add(Integer.toString(messageSocketManager.listen()));
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       arguments.add("-p");
       arguments.add(DebugPathManager.getFudHome() + "/test-plugin/target/test-1.0-SNAPSHOT.swf");
@@ -132,7 +155,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
       final Ref<Boolean> found = new Ref<Boolean>(true);
       adlRunConfiguration.arguments = arguments;
       try {
-        adlProcessHandler = runAdl(adlRunConfiguration, APP_DIR.getPath() + File.separatorChar + DESCRIPTOR_XML,
+        adlProcessHandler = runAdl(adlRunConfiguration, DesignerApplicationManager.APP_DIR.getPath() + File.separatorChar + DESCRIPTOR_XML,
           new Consumer<Integer>() {
             @Override
             public void consume(Integer exitCode) {
@@ -161,35 +184,24 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
         continue;
       }
 
-      if (indicator.isCanceled()) {
-        return;
-      }
+      indicator.checkCanceled();
+
       if (found.get()) {
         break;
       }
     }
     
-    final XmlFile[] xmlFiles;
-    try {
-      xmlFiles = initializeThread.get();
-    }
-    catch (InterruptedException e) {
-     throw new RuntimeException(e);
-    }
-    catch (java.util.concurrent.ExecutionException e) {
-      throw new RuntimeException(e);
-    }
-
-    if (indicator.isCanceled()) {
-      return;
-    }
+    final XmlFile[] xmlFiles = initializeThread.get();
+    indicator.checkCanceled();
 
     final DesignerApplication application = DesignerApplicationManager.getInstance().getApplication();
     assert adlProcessHandler != null && application != null;
     application.setProcessHandler(adlProcessHandler);
     attachProjectAndModuleListeners(application);
 
-    postTask.run(xmlFiles, indicator, problemsHolder);
+    if (!postTask.run(xmlFiles, indicator, problemsHolder)) {
+      indicator.cancel();
+    }
   }
 
   private static void attachProjectAndModuleListeners(DesignerApplication designerApplication) {
@@ -331,20 +343,20 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
       final String homePath = DebugPathManager.getFudHome();
       final File home = new File(homePath);
       for (Pair<String, String> file : files) {
-        IOUtil.saveStream(new URL("file://" + home + "/" + file.second), new File(APP_DIR, file.first));
+        IOUtil.saveStream(new URL("file://" + home + "/" + file.second), new File(DesignerApplicationManager.APP_DIR, file.first));
       }
     }
     else {
       final ClassLoader classLoader = DesignerApplicationLauncher.class.getClassLoader();
       //noinspection unchecked
       for (Pair<String, String> file : files) {
-        IOUtil.saveStream(classLoader.getResource(file.first), new File(APP_DIR, file.first));
+        IOUtil.saveStream(classLoader.getResource(file.first), new File(DesignerApplicationManager.APP_DIR, file.first));
       }
     }
   }
 
   private void runInitializeLibrariesAndModuleThread() {
-    LibraryManager.getInstance().setAppDir(APP_DIR);
+    LibraryManager.getInstance().setAppDir(DesignerApplicationManager.APP_DIR);
     initializeThread = ApplicationManager.getApplication().executeOnPooledThread(new Callable<XmlFile[]>() {
       @Override
       public XmlFile[] call() {
@@ -392,30 +404,6 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
       LOG.error(LogMessageEx.createEvent(e.getMessage(), e.technicalMessage + "\n" + ExceptionUtil.getThrowableText(e), e.getMessage(),
         null, attachments));
     }
-  }
-
-  @Override
-  public void onCancel() {
-    try {
-      postTask.end();
-
-      DesignerApplicationManager.getInstance().disposeApplication();
-
-      if (initializeThread != null) {
-        initializeThread.cancel(true);
-        initializeThread = null;
-      }
-
-      semaphore.up();
-    }
-    finally {
-      postTask.end();
-    }
-  }
-
-  @Override
-  public void onSuccess() {
-    postTask.end();
   }
 
   interface PostTask {

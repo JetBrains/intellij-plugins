@@ -1,13 +1,19 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.components.ServiceDescriptor;
+import com.intellij.openapi.extensions.ExtensionPoint;
+import com.intellij.openapi.progress.EmptyProgressIndicator;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
+import org.picocontainer.MutablePicoContainer;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +24,7 @@ abstract class MxmlTestBase extends AppTestBase {
   private static int TIMEOUT = Boolean.valueOf(System.getProperty("fud.test.debug")) ? 0 : 8;
 
   protected static final String SPARK_COMPONENTS_FILE = "SparkComponents.mxml";
-  
+
   protected TestClient client;
   protected TestSocketInputHandler socketInputHandler;
   
@@ -38,20 +44,69 @@ abstract class MxmlTestBase extends AppTestBase {
     return TestDesignerApplicationManager.getLastProblems();
   }
 
-  protected final void runAdl() throws Exception {
-    TestDesignerApplicationManager testApplicationManager = TestDesignerApplicationManager.getInstance();
-
-    appDir = DesignerApplicationLauncher.APP_DIR;
-    socketInputHandler = testApplicationManager.socketInputHandler;
-    client = (TestClient)Client.getInstance();
-
-    assertAfterInitLibrarySets(testApplicationManager.initLibrarySets(myModule, isRequireLocalStyleHolder()));
-  }
-
   protected void assertAfterInitLibrarySets(XmlFile[] unregisteredDocumentReferences) throws IOException {
   }
 
   protected void modifyModule(ModifiableRootModel model, VirtualFile rootDir) {
+  }
+
+  static void changeServiceImplementation(Class key, Class implementation) {
+    MutablePicoContainer picoContainer = (MutablePicoContainer)ApplicationManager.getApplication().getPicoContainer();
+    picoContainer.unregisterComponent(key.getName());
+    picoContainer.registerComponentImplementation(key.getName(), implementation);
+  }
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+
+    if (DesignerApplicationManager.getInstance().isApplicationClosed()) {
+      final ExtensionPoint<ServiceDescriptor> extensionPoint = DesignerApplicationManager.getExtensionPoint();
+      ServiceDescriptor[] extensions = extensionPoint.getExtensions();
+      for (ServiceDescriptor extension : extensions) {
+        if (extension.serviceInterface.equals(SocketInputHandler.class.getName())) {
+          extension.serviceImplementation = TestSocketInputHandler.class.getName();
+        }
+        else if (extension.serviceInterface.equals(Client.class.getName())) {
+          extension.serviceImplementation = TestClient.class.getName();
+        }
+      }
+
+      changeServiceImplementation(DocumentProblemManager.class, TestDesignerApplicationManager.MyDocumentProblemManager.class);
+
+      new DesignerApplicationLauncher(myModule, false, new DesignerApplicationLauncher.PostTask() {
+        @Override
+        public boolean run(XmlFile[] unregisteredDocumentReferences, ProgressIndicator indicator, ProblemsHolder problemsHolder) {
+          assertTrue(problemsHolder.isEmpty());
+
+          Client.getInstance().flush();
+
+          try {
+            assertAfterInitLibrarySets(unregisteredDocumentReferences);
+          }
+          catch (IOException e) {
+            throw new AssertionError(e);
+          }
+
+          return true;
+        }
+
+        @Override
+        public void end() {
+        }
+      }).run(new EmptyProgressIndicator());
+    }
+    else {
+      final ProblemsHolder problemsHolder = new ProblemsHolder();
+      XmlFile[] unregistedDocumentReferences = LibraryManager.getInstance().initLibrarySets(myModule, isRequireLocalStyleHolder(),
+        problemsHolder);
+      assertTrue(problemsHolder.isEmpty());
+      assertAfterInitLibrarySets(unregistedDocumentReferences);
+    }
+
+    appDir = DesignerApplicationManager.APP_DIR;
+    socketInputHandler = (TestSocketInputHandler)SocketInputHandler.getInstance();
+    client = (TestClient)Client.getInstance();
   }
 
   /**
@@ -96,7 +151,6 @@ abstract class MxmlTestBase extends AppTestBase {
       token.finish();
     }
 
-    runAdl();
     return toDir;
   }
 

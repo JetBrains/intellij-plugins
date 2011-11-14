@@ -59,7 +59,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     reader = new Reader(new BufferedInputStream(inputStream));
   }
 
-  public void init(@NotNull InputStream inputStream, @NotNull File appDir) {    
+  protected void init(@NotNull InputStream inputStream, @NotNull File appDir) {
     createReader(inputStream);
     this.appDir = appDir;
   }
@@ -501,7 +501,55 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
   static class Reader extends DataInputStream {
     Reader(InputStream in) {
-      super(in);
+      //super(in);
+      super(new InputStreamDumper(in));
+    }
+
+    static class InputStreamDumper extends InputStream {
+      final FileOutputStream fileOut;
+      private InputStream in;
+
+      InputStreamDumper(InputStream in) {
+        this.in = in;
+
+        try {
+          fileOut = new FileOutputStream(new File("/Users/develar/clientOut"));
+        }
+        catch (FileNotFoundException e) {
+          throw new RuntimeException(e);
+        }
+      }
+
+      @Override
+      public void close() throws IOException {
+        super.close();
+        fileOut.close();
+      }
+
+      @Override
+      public int read() throws IOException {
+        int read = in.read();
+        fileOut.write(read);
+        return read;
+      }
+
+      @Override
+      public int read(byte[] b) throws IOException {
+        byte[] bytes = new byte[b.length];
+        int length = super.read(bytes);
+        fileOut.write(bytes, 0, length);
+        System.arraycopy(bytes, 0, b, 0, length);
+        return length;
+      }
+
+      @Override
+      public int read(byte[] b, int off, int len) throws IOException {
+        byte[] bytes = new byte[len];
+        int length = super.read(bytes, off, len);
+        fileOut.write(bytes, 0, length);
+        System.arraycopy(bytes, 0, b, off, length);
+        return length;
+      }
     }
 
     public int[] readIntArray() throws IOException {

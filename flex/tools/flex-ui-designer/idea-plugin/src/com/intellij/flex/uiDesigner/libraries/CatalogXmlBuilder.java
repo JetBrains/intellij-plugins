@@ -102,7 +102,7 @@ class CatalogXmlBuilder extends IXMLBuilderAdapter {
     }
     else if (defProcessing) {
       if (skipDefinition.value(value)) {
-        System.out.print(value + " skipped\n");
+        //System.out.print(value + " skipped\n");
         return;
       }
 

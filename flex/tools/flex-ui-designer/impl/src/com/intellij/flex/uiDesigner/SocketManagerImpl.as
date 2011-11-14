@@ -63,7 +63,7 @@ public class SocketManagerImpl implements SocketManager {
   }
 
   private static function socketCloseHandler(event:Event):void {
-    trace("idea close connection, so, exit");
+    trace("flash ui designer server close connection, so, exit");
     // IDEA-73550
     NativeApplication.nativeApplication.exit(57323);
   }

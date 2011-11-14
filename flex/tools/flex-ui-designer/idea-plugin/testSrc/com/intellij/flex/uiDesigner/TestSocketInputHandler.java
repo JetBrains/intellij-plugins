@@ -1,6 +1,10 @@
 package com.intellij.flex.uiDesigner;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 class TestSocketInputHandler extends SocketInputHandlerImpl {
   private String expectedError;
@@ -24,6 +28,12 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
     expectedError = message;
   }
 
+  @Override
+  public void read(@NotNull InputStream inputStream, @NotNull File appDir) throws IOException {
+    init(inputStream, appDir);
+    // skip process
+  }
+
   public void process(MessageHandler customMessageHandler) throws IOException {
     this.customMessageHandler = customMessageHandler;
     process();
@@ -34,7 +44,7 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
 
   @Override
   protected boolean processCommand(int command) throws IOException {
-    if (isFileBased(command) || command == ServerMethod.SAVE_PROJECT_WINDOW_BOUNDS || command == ServerMethod.DOCUMENT_OPENED) {
+    if (isFileBased(command) || command == ServerMethod.SAVE_PROJECT_WINDOW_BOUNDS || command == ServerMethod.DOCUMENT_OPENED || command == ServerMethod.UNREGISTER_LIBRARY_SETS || command == ServerMethod.LOG_WARNING) {
       return super.processCommand(command);
     }
 
@@ -63,10 +73,6 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
         else {
           throw new IOException(message);
         }
-        
-      case ServerMethod.LOG_WARNING:
-        LOG.warn(reader.readUTF());
-        break;
 
       default:
         if (customMessageHandler != null && customMessageHandler.getExpectedCommand() == command) {

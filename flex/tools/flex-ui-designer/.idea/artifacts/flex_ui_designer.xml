@@ -7,7 +7,6 @@
         <element id="file-copy" path="$PROJECT_DIR$/idea-plugin/META-INF/plugin.xml" />
       </element>
       <element id="file-copy" path="$PROJECT_DIR$/main-loader/target/main-loader-1.0-SNAPSHOT.swf" output-file-name="designer.swf" />
-      <element id="file-copy" path="$PROJECT_DIR$/main/resources/check-descriptor.xml" />
       <element id="file-copy" path="$PROJECT_DIR$/main/resources/descriptor.xml" />
       <element id="file-copy" path="$PROJECT_DIR$/flex-injection/target/flex-injection-4.1.swc" />
       <element id="file-copy" path="$PROJECT_DIR$/flex-injection/target/flex-injection-4.5.swc" />

@@ -13,10 +13,13 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.components.ServiceDescriptor;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.impl.ServiceManagerImpl;
+import com.intellij.openapi.extensions.ExtensionPoint;
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.help.HelpManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -33,14 +36,18 @@ import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 import javax.swing.event.HyperlinkEvent;
+
+import java.io.File;
 
 import static com.intellij.flex.uiDesigner.LogMessageUtil.LOG;
 
 public class DesignerApplicationManager extends ServiceManagerImpl implements Disposable {
   private static final ExtensionPointName<ServiceDescriptor> SERVICES =
     new ExtensionPointName<ServiceDescriptor>("com.intellij.flex.uiDesigner.service");
+  public static final File APP_DIR = new File(PathManager.getSystemPath(), "flashUIDesigner");
 
   private boolean documentOpening;
   private DesignerApplication application;
@@ -56,6 +63,11 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
 
   public DesignerApplication getApplication() {
     return application;
+  }
+
+  @TestOnly
+  static ExtensionPoint<ServiceDescriptor> getExtensionPoint() {
+    return Extensions.getArea(null).getExtensionPoint(SERVICES);
   }
 
   void disposeApplication() {
@@ -127,7 +139,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
   public void openDocument(@NotNull final Module module, @NotNull final XmlFile psiFile, final boolean debug) {
     LOG.assertTrue(!documentOpening);
 
-    final boolean appClosed = isAppClosed();
+    final boolean appClosed = isApplicationClosed();
     if (appClosed || !Client.getInstance().isModuleRegistered(module)) {
       Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
       if (sdk == null || !checkFlexSdkVersion(sdk.getVersionString())) {
@@ -172,7 +184,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
     }
   }
 
-  private boolean isAppClosed() {
+  public boolean isApplicationClosed() {
     return application == null;
   }
 
@@ -203,7 +215,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
 
   public void updateDocumentFactory(final int factoryId, @NotNull final Module module, @NotNull final XmlFile psiFile) {
     LOG.assertTrue(!documentOpening);
-    if (isAppClosed()) {
+    if (isApplicationClosed()) {
       return;
     }
 
