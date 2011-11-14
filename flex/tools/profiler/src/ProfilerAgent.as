@@ -38,7 +38,7 @@ public class ProfilerAgent extends Sprite {
   private var cpuSamplingStarted:Boolean;
 
   private static const ALL_COMPLETE_TYPE:String = "allComplete";
-  private var startedTime:Number;
+  private var lastSampleTime:Number;
 
   public function ProfilerAgent() {
 //    socket.timeout = 1000; // Flex 3 does not have timeout for socket
@@ -76,8 +76,6 @@ public class ProfilerAgent extends Sprite {
       trace(e);
       return;
     }
-
-    startedTime = new Date().getTime();
   }
 
   private function onEnterFrame(event:Event):void {
@@ -86,7 +84,10 @@ public class ProfilerAgent extends Sprite {
     for each(var s:Sample in getSamples()) {
       if (s == null) continue; // observed for player 10.1 COMPILE::PLAYER10_1 ?
 
-      if (isProfilerAgentSample(s)) continue;
+      if (isProfilerAgentSample(s)) {
+        lastSampleTime = s.time;
+        continue;
+      }
 
       if (s is NewObjectSample) {
         var nos:NewObjectSample = NewObjectSample(s);
@@ -112,7 +113,7 @@ public class ProfilerAgent extends Sprite {
         var lastSampleToCheck:Sample = lastCPUSample;
         lastCPUSample = s;
         var stackFrameCount:uint = (s.stack == null) ? 0:s.stack.length;
-        socket.writeUTF("s\x00" + (s.time - startedTime) + " " + s.stack.length );
+        socket.writeUTF("s\x00" + (s.time - lastSampleTime) + " " + s.stack.length );
 
         var matchedCount:int = 0;
         var key:String;
@@ -133,6 +134,7 @@ public class ProfilerAgent extends Sprite {
         }
         if (matchedCount != 0) socket.writeUTF("u>:" + matchedCount);
       }
+      lastSampleTime = s.time;
     }
 
     if (connected && cpuSamplingStarted) {

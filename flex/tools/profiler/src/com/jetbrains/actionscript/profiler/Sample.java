@@ -9,10 +9,10 @@ import java.util.List;
  */
 public class Sample {
   public final String[] frames;
-  public final long timestamp;
+  public final long duration;
 
-  public Sample(long timestamp, String[] frames) {
-    this.timestamp = timestamp;
+  public Sample(long duration, String[] frames) {
+    this.duration = duration;
     this.frames = frames;
   }
 }

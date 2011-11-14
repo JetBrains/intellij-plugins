@@ -7,14 +7,16 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.util.Alarm;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
+import com.jetbrains.actionscript.profiler.calltree.CallTree;
 import com.jetbrains.profiler.ProfileView;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,10 +55,10 @@ public class ActionScriptProfileView extends ProfileView {
   private ScopeChooserCombo filterScope;
   private JLabel scopeLabel;
   private final ProfilingManager myProfilingManager;
-  public static Key<ProfilingManager> ourProfilingManagerKey = Key.create("profiler.manager.key");
+  public static final Key<ProfilingManager> ourProfilingManagerKey = Key.create("profiler.manager.key");
   private boolean myEOFReached;
-  static final int MEMORY_TAB_INDEX = 2;
-  static final int CPU_HOTSPOTS_TAB_INDEX = 1;
+  private static final int MEMORY_TAB_INDEX = 2;
+  private static final int CPU_HOTSPOTS_TAB_INDEX = 1;
   private Alarm myAlarm;
 
   private void createUIComponents() {
@@ -92,18 +94,15 @@ public class ActionScriptProfileView extends ProfileView {
 
         myAlarm.addRequest(new Runnable() {
           public void run() {
-            final DefaultTreeModel treeModel = new DefaultTreeModel(
-              new DefaultMutableTreeNode()
-            );
-            myTraces.setModel(treeModel);
+            final DefaultTreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode());
+            String[] frames = new String[]{mergedCallNode.frame};
+            final Pair<Map<String, Long>, Map<String, Long>> countMaps = mergedCallNode.callTree.getCalleesTimeMaps(frames);
+            final Map<String, Long> countMap = countMaps.getFirst();
+            final Map<String, Long> selfCountMap = countMaps.getSecond();
 
-            treeModel.setRoot(new MergedCallNode(
-              fixUserObjectStringForNode(lastPathComponent),
-              mergedCallNode.countMap,
-              mergedCallNode.profile,
-              treeModel,
-              false
-            ));
+            fillTreeModelRoot(treeModel, mergedCallNode.callTree, countMap, selfCountMap, false, frames);
+
+            myTraces.setModel(treeModel);
           }
         }, 500);
       }
@@ -142,10 +141,10 @@ public class ActionScriptProfileView extends ProfileView {
     private final Set<Sample> profile = new LinkedHashSet<Sample>();
     private final Map<Integer, CreateObjectSample> objects = new HashMap<Integer, CreateObjectSample>();
     private int allocated;
-    private Map<Integer, Set<Integer>> references = new LinkedHashMap<Integer, Set<Integer>>(50);
+    private final Map<Integer, Set<Integer>> references = new LinkedHashMap<Integer, Set<Integer>>(50);
   }
 
-  private ProfileData data = new ProfileData();
+  private final ProfileData data = new ProfileData();
 
   public ActionScriptProfileView(VirtualFile file, Project project) {
     super(file, project);
@@ -334,7 +333,7 @@ public class ActionScriptProfileView extends ProfileView {
             reportProblem(ex);
           }
         }
-      });      
+      });
     }
 
     myStartCpuButton.addActionListener(new ActionListener() {
@@ -438,7 +437,7 @@ public class ActionScriptProfileView extends ProfileView {
           }
 
           switchToState(State.SIMPLE_WORKING);
-          
+
           if (ex instanceof EOFException) {
             myEOFReached = true;
             myStatus.setText("Profiler agent disconnected" + (agentVersionMismatch ? " , agent version is different":""));
@@ -567,13 +566,13 @@ public class ActionScriptProfileView extends ProfileView {
     }
   }
 
-  private int calcSize(Set<CreateObjectSample> samples) {
+  private static int calcSize(Set<CreateObjectSample> samples) {
     int total = 0;
     for (CreateObjectSample c : samples) total += c.size;
     return total;
   }
 
-  private int percent(int total, ProfileData data) {
+  private static int percent(int total, ProfileData data) {
     if (data.allocated == 0) return 0;
     return (int)(((long)total * 100) / data.allocated);
   }
@@ -598,7 +597,7 @@ public class ActionScriptProfileView extends ProfileView {
         int index = 0;
         for (final String s : traces) {
           final Set<T> stackFrameSampleSet = data.get(s);
-          model.insertNodeInto(new MergedPathNode(s, stackFrameSampleSet, model, innermostFirst, level, classifier), root, index++);
+          model.insertNodeInto(new MergedPathNode<T>(s, stackFrameSampleSet, model, innermostFirst, level, classifier), root, index++);
         }
       }
 
@@ -629,61 +628,48 @@ public class ActionScriptProfileView extends ProfileView {
   }
 
   private <T extends Sample> void buildSamples2(final DefaultTreeModel model, final Set<T> profile) {
-    final Map<String, Integer> countMap = new THashMap<String, Integer>();
     final boolean skipSystemStuff = myFilterSystemStuff.isSelected();
+    CallTree callTree = new CallTree();
+    for(T sample : profile) {
+      callTree.addFrames(sample.frames, sample.duration, skipSystemStuff);
+    }
 
-    processSamples(profile, new GroupHandler<T, String>() {
-      int level;
+    final Pair<Map<String, Long>, Map<String, Long>> countMaps = callTree.getTimeMaps();
+    final Map<String, Long> countMap = countMaps.getFirst();
+    final Map<String, Long> selfCountMap = countMaps.getSecond();
 
-      public void process(Map<String, Set<T>> data) {
-        if (data.size() == 0) return;
-        for (String s : data.keySet()) {
-          if (skipSystemStuff && s.startsWith("[")) continue;
-          String path = stripCallDelims(s);
-          final Integer integer = countMap.get(path);
-          int d = data.get(s).size();
-          countMap.put(path, integer != null ? integer + d : d);
-        }
-        ++level;
-        processSamples(profile, this);
-        --level;
-      }
-
-      public String getCategory(T sample) {
-        if (level >= sample.frames.length) return null;
-        return sample.frames[level];
-      }
-    });
-
-    List<String> traces = new ArrayList<String>(countMap.keySet());
-    Collections.sort(traces, new Comparator<String>() {
-      public int compare(String o1, String o2) {
-        return countMap.get(o2) - countMap.get(o1);
-      }
-    });
-
+    fillTreeModelRoot(model, callTree, countMap, selfCountMap, true);
+  }
+  
+  private <T extends Sample> void fillTreeModelRoot(DefaultTreeModel model,
+                                                      CallTree callTree,
+                                                      final Map<String, Long> countMap,
+                                                      final Map<String, Long> selfCountMap,
+                                                      boolean backTrace) {
+    fillTreeModelRoot(model, callTree, countMap, selfCountMap, backTrace, ArrayUtil.EMPTY_STRING_ARRAY);
+  }
+  
+  private <T extends Sample> void fillTreeModelRoot(DefaultTreeModel model,
+                                                    CallTree callTree,
+                                                    final Map<String, Long> countMap,
+                                                    final Map<String, Long> selfCountMap,
+                                                    boolean backTrace,
+                                                    String[] frames) {
     final MutableTreeNode root = (MutableTreeNode) model.getRoot();
-    int index = 0;
+
 
     final SearchScope _selectedScope = filterScope.getSelectedScope();
     GlobalSearchScope scope = _selectedScope instanceof GlobalSearchScope ?
       (GlobalSearchScope) _selectedScope:GlobalSearchScope.allScope(getProject());
 
-    for (final String s : traces) {
+    int index = 0;
+    for (final String s : countMap.keySet()) {
       SampleLocationResolver.LocationInfo l = SampleLocationResolver.buildMethodInfo(s);
       final PsiElement classByQName = JSResolveUtil.findClassByQName(l.clazz, scope);
-      if (classByQName == null) continue;
-      model.insertNodeInto(new MergedCallNode<T>(s, countMap, profile, model, true), root, index++);
+      boolean isAnonymous = "Function".equals(l.clazz) && "<anonymous>".equals(l.name);
+      if (classByQName == null && !isAnonymous) continue;
+      model.insertNodeInto(new MergedCallNode<T>(s, callTree, frames, countMap.get(s), selfCountMap.get(s), model, backTrace), root, index++);
     }
-  }
-
-  private static String stripCallDelims(String s) {
-    final int endIndex = s.indexOf('(');
-    return endIndex != -1 ? s.substring(0, endIndex) : s;
-  }
-
-  private static boolean referencesFrame(String _s, String s) {
-    return _s.startsWith(s) && s.length() < _s.length() && _s.charAt(s.length()) == '(';
   }
 
   private void resetCpuUsageData() {
@@ -730,7 +716,7 @@ public class ActionScriptProfileView extends ProfileView {
     private final DefaultTreeModel model;
     private final boolean innermostFirst;
     private final int level;
-    private Function<Set<T>, Integer> classifier;
+    private final Function<Set<T>, Integer> classifier;
 
     public MergedPathNode(String s, Set<T> stackFrameSampleSet, DefaultTreeModel model, boolean innermostFirst,
                           int level, Function<Set<T>, Integer> classifier) {
@@ -766,83 +752,52 @@ public class ActionScriptProfileView extends ProfileView {
   }
 
   private class MergedCallNode<T extends Sample> extends LazyNode {
+    private final CallTree callTree;
+    private final String[] callFrames;
     private final String frame;
-    private final Set<T> profile;
-    private final Map<String, Integer> countMap;
-    private boolean callers;
+    private final boolean backTrace;
     private final DefaultTreeModel model;
 
-    public MergedCallNode(String frame, Map<String, Integer> _countMap, Set<T> profile,
-                          DefaultTreeModel model, boolean callers) {
-      countMap = _countMap;
-      this.callers = callers;
-      setUserObject(frame + " " + countMap.get(frame));
+    public MergedCallNode(String frame, 
+                          CallTree callTree,
+                          String[] callFrames, 
+                          long cumulativeTime,
+                          long selfTime,
+                          DefaultTreeModel model, 
+                          boolean backTrace) {
+      setUserObject(frame + " " + (cumulativeTime/1000) + " " + (selfTime/1000));
       this.frame = frame;
-      this.profile = profile;
+      this.callTree = callTree;
+      this.callFrames = callFrames;
       this.model = model;
+      this.backTrace = backTrace;
     }
 
     @Override
     protected void doLoadChildren() {
-      processSamples(profile, new GroupHandler<T, String>() {
-        public void process(Map<String, Set<T>> data) {
-          processSamples(data.get(data.keySet().iterator().next()), new GroupHandler<T, String>() {
-            public void process(final Map<String, Set<T>> data) {
-              List<String> traces = new ArrayList<String>(data.keySet());
-              Collections.sort(traces, new Comparator<String>() {
-                public int compare(String o1, String o2) {
-                  return data.get(o2).size() - data.get(o1).size();
-                }
-              });
+      String[] frames = Arrays.copyOf(callFrames, callFrames.length + 1);
+      frames[frames.length - 1] = frame;
 
-              int index = 0;
-              for (String i : traces) {
-                model.insertNodeInto(
-                  new MergedCallNode<T>(
-                    stripCallDelims(i),
-                    countMap,
-                    data.get(i),
-                    model,
-                    callers
-                  ),
-                  MergedCallNode.this,
-                  index++
-                );
-              }
-            }
+      Pair<Map<String, Long>, Map<String, Long>> countMaps;
+      if(backTrace){
+        countMaps = callTree.getCallersTimeMaps(frames);
+      } else {
+        countMaps = callTree.getCalleesTimeMaps(ArrayUtil.reverseArray(frames));
+      }
+      final Map<String, Long> countMap = countMaps.getFirst();
+      final Map<String, Long> selfCountMap = countMaps.getSecond();
 
-            final boolean skipSystemStuff = myFilterSystemStuff.isSelected();
-
-            public String getCategory(T sample) {
-              final String[] frames = sample.frames;
-              for (int i = frames.length - 1; i >= 0; --i) {
-                if (referencesFrame(frames[i], frame)) {
-                  String nextFrame;
-                  if (callers) {
-                    nextFrame = i + 1 < frames.length ? frames[i + 1]:null;
-                  } else {
-                    nextFrame = i > 0 ? frames[i - 1]:null;
-                  }
-                  if (nextFrame != null) {
-                    if (!skipSystemStuff || !nextFrame.startsWith("[")) return nextFrame;
-                  }
-                  break;
-                }
-              }
-              return null;
-            }
-          });
-        }
-
-        public String getCategory(T sample) {
-          for (String _s : sample.frames) {
-            if (referencesFrame(_s, frame)) {
-              return _s;
-            }
-          }
-          return null;
-        }
-      });
+      final SearchScope _selectedScope = filterScope.getSelectedScope();
+      GlobalSearchScope scope = _selectedScope instanceof GlobalSearchScope ?
+        (GlobalSearchScope) _selectedScope:GlobalSearchScope.allScope(getProject());
+      int index = 0;
+      for (final String s : countMap.keySet()) {
+        SampleLocationResolver.LocationInfo l = SampleLocationResolver.buildMethodInfo(s);
+        final PsiElement classByQName = JSResolveUtil.findClassByQName(l.clazz, scope);
+        boolean isAnonymous = "Function".equals(l.clazz) && "<anonymous>".equals(l.name);
+        if (classByQName == null && !isAnonymous) continue;
+        model.insertNodeInto(new MergedCallNode<T>(s, callTree, frames, countMap.get(s), selfCountMap.get(s), model, backTrace), this, index++);
+      }
     }
   }
 

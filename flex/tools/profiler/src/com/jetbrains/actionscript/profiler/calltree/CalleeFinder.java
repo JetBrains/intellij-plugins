@@ -1,0 +1,38 @@
+package com.jetbrains.actionscript.profiler.calltree;
+
+import java.util.ArrayList;
+import java.util.List;
+
+class CalleeFinder {
+  private CalleeFinder() {
+  }
+
+  /*
+  * Find nodes with <code>frameName == frames[0]</code>. Node's call stack contains all <code>frames</code> in order.
+  */
+  static List<CallTreeNode> findCallsByFrameName(CallTreeNode root, String[] frames) {
+    ArrayList<CallTreeNode> result = new ArrayList<CallTreeNode>();
+    for (CallTreeNode call : root.getChildren()) {
+      fillCallsByFrameName(call, frames, frames.length - 1, result);
+    }
+    return result;
+  }
+
+  private static void fillCallsByFrameName(CallTreeNode node,
+                                           String[] frames,
+                                           int index,
+                                           List<CallTreeNode> result) {
+    if (index == 0 && frames[0].equals(node.getFrameName())) {
+      result.addAll(node.getChildren());
+      return;
+    }
+    boolean currentNodeMatch = frames[index].equals(node.getFrameName());
+    for (CallTreeNode child : node.getChildren()) {
+      fillCallsByFrameName(child, frames, currentNodeMatch ? index - 1 : frames.length - 1, result);
+      if (currentNodeMatch && child.getFrameName().equals(frames[frames.length - 1])) {
+        //may starts here
+        fillCallsByFrameName(child, frames, frames.length - 1, result);
+      }
+    }
+  }
+}

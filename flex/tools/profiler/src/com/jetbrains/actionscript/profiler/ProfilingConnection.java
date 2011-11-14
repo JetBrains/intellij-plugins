@@ -271,7 +271,7 @@ public class ProfilingConnection {
 
     private final ProfilerDataConsumer mySampleProcessor;
 
-    private long stamp = -1;
+    private long sampleDuration = -1;
     private int frameIndex;
 
     private final Map<String,String> dictionary = new HashMap<String, String>(1000);
@@ -299,7 +299,7 @@ public class ProfilingConnection {
 
         if (cpuSample) {
           i = output.indexOf(' ', INDEX);
-          stamp = Long.parseLong(output.substring(INDEX, i));
+          sampleDuration = Long.parseLong(output.substring(INDEX, i));
           i+=2;
         }
 
@@ -357,7 +357,7 @@ public class ProfilingConnection {
           final int size = Integer.parseInt(specialArgs.substring(endIndex2 + 1));
 
           sample = new CreateObjectSample(
-            stamp,
+            sampleDuration,
             frames,
             id,
             className,
@@ -374,14 +374,14 @@ public class ProfilingConnection {
           String type = endIndex2 != specialArgs.length() ? specialArgs.substring(endIndex2 + 1):null;
           if (type != null) {
             type = getClassName(type);
-            mySampleProcessor.process(new CreateObjectSample(stamp, ArrayUtil.EMPTY_STRING_ARRAY, id, type, -size));
+            mySampleProcessor.process(new CreateObjectSample(sampleDuration, ArrayUtil.EMPTY_STRING_ARRAY, id, type, -size));
           } else {
-            mySampleProcessor.process(new DeleteObjectSample(stamp, frames, id, size));
+            mySampleProcessor.process(new DeleteObjectSample(sampleDuration, frames, id, size));
           }
           return ProcessingResult.FINISHED;
         } else {
           ++cpuSamples;
-          sample = new Sample(stamp, frames);
+          sample = new Sample(sampleDuration, frames);
           lastCpuSample = sample;
         }
         mySampleProcessor.process(sample);

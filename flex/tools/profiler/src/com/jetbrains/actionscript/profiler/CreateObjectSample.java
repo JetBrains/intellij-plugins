@@ -10,8 +10,8 @@ public class CreateObjectSample extends Sample {
   public final String className;
   public final int size;
 
-  public CreateObjectSample(long timestamp, String[] frames, int id, String className, int size) {
-    super(timestamp, frames);
+  public CreateObjectSample(long duration, String[] frames, int id, String className, int size) {
+    super(duration, frames);
     this.id = id;
     this.className = className;
     this.size = size;

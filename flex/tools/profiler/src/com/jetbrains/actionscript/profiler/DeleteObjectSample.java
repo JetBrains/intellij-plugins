@@ -9,8 +9,8 @@ public class DeleteObjectSample extends Sample {
   public final int id;
   public final int size;
 
-  public DeleteObjectSample(long timestamp, String[] frames, int id, int size) {
-    super(timestamp, frames);
+  public DeleteObjectSample(long duration, String[] frames, int id, int size) {
+    super(duration, frames);
     this.id = id;
     this.size = size;
   }

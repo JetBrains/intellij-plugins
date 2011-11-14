@@ -1,0 +1,7 @@
+<root>
+    <foo count="20">
+        <bar count="9"/>
+        <bar count="8"/>
+    </foo>
+    <bar count="7"/>
+</root>

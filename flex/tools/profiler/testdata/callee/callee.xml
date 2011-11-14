@@ -1,0 +1,18 @@
+<root frames="baz">
+    <foo count="15">
+        <bar count="5">
+            <foo count="3">
+                <bar count="1"/>
+                <bar count="1"/>
+            </foo>
+            <bar count="1"/>
+        </bar>
+        <baz count="5">
+            <foo count="3">
+                <bar count="1"/>
+                <foo count="1"/>
+            </foo>
+            <bar count="1"/>
+        </baz>
+    </foo>
+</root>

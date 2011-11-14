@@ -1,0 +1,39 @@
+package com.jetbrains.actionscript.profiler.calltree;
+
+import com.intellij.openapi.util.Pair;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlTag;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
+
+public class CallTreeCallerTest extends CallTreeTest {
+  @Override
+  protected String getBasePath() {
+    return super.getBasePath() + File.separator + "caller";
+  }
+
+  @Override
+  protected Pair<Map<String, Long>, Map<String, Long>> getMaps(CallTree callTree, XmlTag rootTag) {
+    XmlAttribute framesAttribute = rootTag.getAttribute("frames");
+    assertNotNull("No frames attribute", framesAttribute);
+    return callTree.getCallersTimeMaps(framesAttribute.getValue().split(","));
+  }
+
+  public void testSimple() throws IOException {
+    doTest("simple_caller.xml", "simple_caller_results.xml");
+  }
+
+  public void testCaller() throws IOException {
+    doTest("caller.xml", "caller_results.xml");
+  }
+
+  public void testCaller2() throws IOException {
+    doTest("caller2.xml", "caller2_results.xml");
+  }
+
+  public void testCaller3() throws IOException {
+    doTest("caller3.xml", "caller3_results.xml");
+  }
+}
