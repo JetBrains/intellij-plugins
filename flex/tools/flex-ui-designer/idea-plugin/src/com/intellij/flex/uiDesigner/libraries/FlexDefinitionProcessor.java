@@ -206,7 +206,7 @@ public class FlexDefinitionProcessor implements DefinitionProcessor {
   }
 
   private static class VarAccessModifier extends AbcModifierBase {
-    private final String fieldName;
+    private String fieldName;
 
     private VarAccessModifier(String fieldName) {
       this.fieldName = fieldName;
@@ -214,7 +214,14 @@ public class FlexDefinitionProcessor implements DefinitionProcessor {
 
     @Override
     public boolean slotTraitName(int name, int traitKind, DataBuffer in, Encoder encoder) {
-      return isVar(traitKind) && encoder.changeAccessModifier(fieldName, name, in);
+      if (fieldName != null && isVar(traitKind)) {
+        if (encoder.changeAccessModifier(fieldName, name, in)) {
+          fieldName = null;
+          return true;
+        }
+      }
+      
+      return false;
     }
   }
 }

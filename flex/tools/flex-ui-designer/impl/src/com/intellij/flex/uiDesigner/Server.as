@@ -228,14 +228,21 @@ public class Server implements ResourceBundleProvider {
     throw new Error("Burn in hell, Adobe.");
   }
 
+  public var moduleForGetResourceBundle:Module;
+
   public function getResourceBundle(locale:String, bundleName:String):Dictionary {
     var project:Project = ProjectUtil.getProjectForActiveWindow();
-    var document:Document = DocumentManager(project.getComponent(DocumentManager)).document;
-    if (document == null) {
-      UncaughtErrorManager.instance.logWarning("Cannot find resource bundle " + bundleName + " for locale " + locale + " due to null document");
-      return null;
+    var module:Module = moduleForGetResourceBundle;
+    if (module == null) {
+      var document:Document = DocumentManager(project.getComponent(DocumentManager)).document;
+      if (document == null) {
+        UncaughtErrorManager.instance.logWarning("Cannot find resource bundle " + bundleName + " for locale " + locale +
+                                                 " due to null document");
+        return null;
+      }
+
+      module = document.module;
     }
-    var module:Module = document.module;
 
     var resultReadyFile:File;
     var result:Dictionary;

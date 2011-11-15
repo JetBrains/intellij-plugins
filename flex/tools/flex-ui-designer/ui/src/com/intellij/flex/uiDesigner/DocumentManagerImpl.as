@@ -162,6 +162,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
 
     try {
       try {
+        server.moduleForGetResourceBundle = documentFactory.module;
         // IDEA-72499
         document.displayManager.setStyleManagerForTalentAdobeEngineers(true);
         var object:DisplayObject = DisplayObject(documentReader.read(documentFactory.data, documentFactory, document.styleManager));
@@ -176,6 +177,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
         }
       }
       finally {
+        server.moduleForGetResourceBundle = null;
         document.displayManager.setStyleManagerForTalentAdobeEngineers(false);
       }
       
