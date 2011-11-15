@@ -20,11 +20,11 @@ public final class ModuleContextImpl implements ModuleContextEx {
   }
 
   public function get swfAssetContainerClassPool():AssetContainerClassPool {
-    return FlexLibrarySet(_librarySets[0]).swfAssetContainerClassPool;
+    return FlexLibrarySet(_librarySets[0] is FlexLibrarySet ? _librarySets[0] : _librarySets[0].parent).swfAssetContainerClassPool;
   }
 
   public function get imageAssetContainerClassPool():AssetContainerClassPool {
-    return FlexLibrarySet(_librarySets[0]).imageAssetContainerClassPool;
+    return FlexLibrarySet(_librarySets[0] is FlexLibrarySet ? _librarySets[0] : _librarySets[0].parent).imageAssetContainerClassPool;
   }
 
   private var _librariesResolved:Boolean;

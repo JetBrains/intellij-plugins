@@ -130,7 +130,7 @@ public class LibraryManager {
         final SortResult sortResult = sortLibraries(new LibrarySorter(), id, libraryCollector.externalLibraries, libraryCollector.getFlexSdkVersion(),
                                                     flexLibrarySet.contains);
         librarySet = new LibrarySet(id, flexLibrarySet, sortResult.items, sortResult.resourceBundleOnlyItems);
-        librarySets.put(key, flexLibrarySet);
+        registerLibrarySet(key, librarySet);
       }
     }
 
@@ -190,11 +190,15 @@ public class LibraryManager {
         globalContains);
 
       flexLibrarySet = new FlexLibrarySet(id, null, sortResult.items, sortResult.resourceBundleOnlyItems, new ContainsCondition(globalDefinitions, sortResult.definitionMap));
-      Client.getInstance().registerLibrarySet(flexLibrarySet);
-      librarySets.put(key, flexLibrarySet);
+      registerLibrarySet(key, flexLibrarySet);
     }
 
     return flexLibrarySet;
+  }
+
+  private void registerLibrarySet(String key, LibrarySet librarySet) {
+    Client.getInstance().registerLibrarySet(librarySet);
+    librarySets.put(key, librarySet);
   }
 
   private Set<CharSequence> getGlobalDefinitions(VirtualFile file) throws InitException {

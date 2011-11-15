@@ -12,6 +12,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.xml.XmlFile;
 import org.picocontainer.MutablePicoContainer;
 
@@ -56,10 +57,7 @@ abstract class MxmlTestBase extends AppTestBase {
     picoContainer.registerComponentImplementation(key.getName(), implementation);
   }
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-
+  private void launchAndInitializeApplication() throws Exception {
     if (DesignerApplicationManager.getInstance().isApplicationClosed()) {
       final ExtensionPoint<ServiceDescriptor> extensionPoint = DesignerApplicationManager.getExtensionPoint();
       ServiceDescriptor[] extensions = extensionPoint.getExtensions();
@@ -118,10 +116,12 @@ abstract class MxmlTestBase extends AppTestBase {
     myFile = null;
     myEditor = null;
 
-    final File toDirIO = createTempDirectory();
-    final VirtualFile toDir = getVirtualFile(toDirIO);
+    final VirtualFile toDir = VirtualFileManager.getInstance().findFileByUrl("temp:///");
+    assert toDir != null;
+    System.out.print("\ntemp dir l: " + toDir.getChildren().length);
+    toDir.refresh(false, false);
 
-    AccessToken token = WriteAction.start();
+    final AccessToken token = WriteAction.start();
     try {
       final ModuleRootManager rootManager = ModuleRootManager.getInstance(myModule);
       final ModifiableRootModel rootModel = rootManager.getModifiableModel();
@@ -135,14 +135,13 @@ abstract class MxmlTestBase extends AppTestBase {
           copyFilesFillingEditorInfos(rawProjectRoot, toDir, vFile.getPath().substring(rawRootPathLength));
         }
         else {
-          copyFilesFillingEditorInfos(vFile.getParent(), toDir, vFile.getName());
+          copyFiles(vFile.getParent(), toDir, vFile.getName());
         }
       }
 
       rootModel.addContentEntry(toDir).addSourceFolder(toDir, false);
       modifyModule(rootModel, toDir);
       doCommitModel(rootModel);
-      sourceRootAdded(toDir);
     }
     catch (IOException e) {
       LOG.error(e);
@@ -151,7 +150,21 @@ abstract class MxmlTestBase extends AppTestBase {
       token.finish();
     }
 
+    launchAndInitializeApplication();
+
     return toDir;
+  }
+
+  private static void copyFiles(final VirtualFile fromDir, final VirtualFile toDir, final String... relativePaths) throws IOException {
+    for (String relativePath : relativePaths) {
+      if (relativePath.startsWith("/")) {
+        relativePath = relativePath.substring(1);
+      }
+      final VirtualFile fromFile = fromDir.findFileByRelativePath(relativePath);
+      assertNotNull(fromDir.getPath() + "/" + relativePath, fromFile);
+      VirtualFile toFile = toDir.createChildData(null, relativePath);
+      toFile.setBinaryContent(fromFile.contentsToByteArray());
+    }
   }
 
   protected void testFiles(final int auxiliaryBorder, final VirtualFile[] originalVFiles) throws Exception {

@@ -30,7 +30,7 @@ public class ModuleInfo extends Info<Module> implements Disposable {
 
   public FlexLibrarySet getFlexLibrarySet() {
     LibrarySet librarySet = librarySets.get(0);
-    return librarySet instanceof FlexLibrarySet ? (FlexLibrarySet)librarySet : null;
+    return librarySet instanceof FlexLibrarySet ? (FlexLibrarySet)librarySet : (FlexLibrarySet)librarySet.getParent();
   }
 
   public boolean isApp() {
