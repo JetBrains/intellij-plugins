@@ -360,7 +360,7 @@ public class FlexCompilationUtils {
     }
   }
 
-  private static String fixApplicationId(final String appId) {
+  public static String fixApplicationId(final String appId) {
     StringBuilder builder = new StringBuilder();
     for (int i = 0; i < appId.length(); i++) {
       final char ch = appId.charAt(i);

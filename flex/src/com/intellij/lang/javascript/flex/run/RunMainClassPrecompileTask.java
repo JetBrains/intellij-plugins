@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airdescriptor.AirDescriptorParameters;
 import com.intellij.lang.javascript.flex.actions.airdescriptor.CreateAirDescriptorAction;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilerHandler;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
@@ -84,7 +85,7 @@ public class RunMainClassPrecompileTask implements CompileTask {
 
     if (params instanceof AirRunnerParameters) {
       final String airVersion = FlexSdkUtils.getAirVersion(FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module));
-      final String applicationId = buildConfig.MAIN_CLASS;
+      final String applicationId = FlexCompilationUtils.fixApplicationId(buildConfig.MAIN_CLASS);
       final String applicationFileName = mainClassShortName;
       final String applicationName = mainClassShortName;
       final String applicationTitle = mainClassShortName;

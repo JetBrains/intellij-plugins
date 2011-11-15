@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.flex.actions.htmlwrapper.CreateHtmlWrapperAc
 import com.intellij.lang.javascript.flex.actions.htmlwrapper.CreateHtmlWrapperDialog;
 import com.intellij.lang.javascript.flex.actions.htmlwrapper.HTMLWrapperParameters;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
 import com.intellij.lang.javascript.flex.run.*;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
@@ -177,8 +178,8 @@ public class FlexModuleBuilder extends ModuleBuilder implements SourcePathsBuild
     try {
       final String name = FileUtil.getNameWithoutExtension(config.OUTPUT_FILE_NAME);
       CreateAirDescriptorAction.createAirDescriptor(
-        new AirDescriptorParameters(myAirDescriptorFileName, airDescriptorFolderPath, FlexSdkUtils.getAirVersion(mySdk), name, name, name,
-                                    "0.0", config.OUTPUT_FILE_NAME, name, 400, 300,
+        new AirDescriptorParameters(myAirDescriptorFileName, airDescriptorFolderPath, FlexSdkUtils.getAirVersion(mySdk),
+                                    FlexCompilationUtils.fixApplicationId(name), name, name, "0.0", config.OUTPUT_FILE_NAME, name, 400, 300,
                                     mySdk != null && mySdk.getSdkType() instanceof AirMobileSdkType));
     }
     catch (IOException e) {
