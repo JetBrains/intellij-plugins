@@ -33,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.AbstractFrameworkInstanceManager;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkLibraryCollector;
-import org.osmorc.frameworkintegration.LibraryHandler;
 import org.osmorc.i18n.OsmorcBundle;
 
 import java.util.ArrayList;
@@ -44,13 +43,10 @@ import java.util.ArrayList;
 public class KnopflerfishFrameworkInstanceManager extends AbstractFrameworkInstanceManager {
   private static final Logger LOG =
     Logger.getInstance("#org.osmorc.frameworkintegration.impl.knopflerfish.KnopflerfishFrameworkInstanceManager");
-  private final LibraryHandler myLibraryHandler;
   private final Application myApplication;
 
-  public KnopflerfishFrameworkInstanceManager(LibraryHandler libraryHandler, LocalFileSystem fileSystem,
-                                              Application application) {
+  public KnopflerfishFrameworkInstanceManager(LocalFileSystem fileSystem, Application application) {
     super(fileSystem);
-    myLibraryHandler = libraryHandler;
     myApplication = application;
   }
 

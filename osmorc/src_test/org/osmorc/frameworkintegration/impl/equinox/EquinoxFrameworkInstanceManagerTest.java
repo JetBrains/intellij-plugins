@@ -38,7 +38,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.osmorc.SwingRunner;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
-import org.osmorc.frameworkintegration.impl.LibraryHandlerImpl;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,7 +65,7 @@ public class EquinoxFrameworkInstanceManagerTest {
         root = ModuleRootManager.getInstance(fixture.getModule()).getContentRoots()[0];
         fileSystem = createMock(LocalFileSystem.class);
         testObject =
-                new EquinoxFrameworkInstanceManager(new LibraryHandlerImpl(), fileSystem, ApplicationManager.getApplication());
+                new EquinoxFrameworkInstanceManager(fileSystem, ApplicationManager.getApplication());
         instanceDefinition = new FrameworkInstanceDefinition();
         instanceDefinition.setBaseFolder(new File(root.getPath(), "eclipse").getAbsolutePath());
         instanceDefinition.setName("test");

@@ -33,7 +33,6 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryUtil;
 import com.intellij.psi.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
@@ -221,7 +220,6 @@ public class ClassUnavailableInspection extends LocalInspectionTool {
     //
     //final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(usingModule.getProject()).getFileIndex();
     //final List<OrderEntry> entriesForFile = projectFileIndex.getOrderEntriesForFile(directory.getVirtualFile());
-    //LibraryHandler libraryHandler = ServiceManager.getService(LibraryHandler.class);
     //
     //// check all orderentries which link to the specified directory (package)
     //for (OrderEntry orderEntry : entriesForFile) {

@@ -30,10 +30,12 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -72,6 +74,16 @@ public class FrameworkInstanceLibraryManager {
     this.myModuleManager = moduleManager;
   }
 
+  /**
+   * Tests, if the given library order entry represents a framework instance library (as controlled by this manager).
+   * @param libraryOrderEntry the order entry
+   * @return true if the given entry is a framework instance library, false otherwise.
+   */
+  public static boolean isFrameworkInstanceLibrary(@NotNull LibraryOrderEntry libraryOrderEntry) {
+    String libraryName = libraryOrderEntry.getLibraryName();
+    return libraryName != null && libraryName.startsWith(OsmorcControlledLibrariesPrefix) &&
+           LibraryTablesRegistrar.PROJECT_LEVEL.equals(libraryOrderEntry.getLibraryLevel());
+  }
 
   /**
    * Updates the framework instance library, so it resembles the project settings. If it's enabled and set in the project settings,
@@ -134,6 +146,7 @@ public class FrameworkInstanceLibraryManager {
 
   /**
    * Deletes all old Osmorc controlled project library entries and creates new ones for the given framework instance.
+   *
    * @param instanceName the instance
    */
   private void rebuildLibraryEntries(@Nullable final String instanceName) {

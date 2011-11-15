@@ -19,13 +19,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * A project component that watches changes to the bundle structure (e.g. libraries / modules added) displays a notification bar offering to resynchronize dependencies.
  */
-public class BundleModificationWatcher implements EditorNotifications.Provider<BundleChangeNotificationPanel> {
+public class BundleIndexModificationWatcher implements EditorNotifications.Provider<BundleChangeNotificationPanel> {
 
   private static final Key<BundleChangeNotificationPanel> KEY = Key.create("BundleChangeNotificationPanelKey");
   private Project myProject;
   private AtomicBoolean myNeedsResync = new AtomicBoolean(false);
 
-  public BundleModificationWatcher(@NotNull Project project, @NotNull MessageBus messageBus) {
+  public BundleIndexModificationWatcher(@NotNull Project project, @NotNull MessageBus messageBus) {
     myProject = project;
     final Alarm myAlarm = new Alarm(Alarm.ThreadToUse.OWN_THREAD, myProject);
 

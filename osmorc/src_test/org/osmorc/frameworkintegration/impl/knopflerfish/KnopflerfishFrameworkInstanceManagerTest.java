@@ -38,7 +38,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.osmorc.SwingRunner;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
-import org.osmorc.frameworkintegration.impl.LibraryHandlerImpl;
 import org.osmorc.i18n.OsmorcBundle;
 
 import java.io.File;
@@ -65,7 +64,7 @@ public class KnopflerfishFrameworkInstanceManagerTest {
         fixture.setUp();
         root = ModuleRootManager.getInstance(fixture.getModule()).getContentRoots()[0];
         fileSystem = createMock(LocalFileSystem.class);
-        testObject = new KnopflerfishFrameworkInstanceManager(new LibraryHandlerImpl(), fileSystem,
+        testObject = new KnopflerfishFrameworkInstanceManager(fileSystem,
                 ApplicationManager.getApplication());
         instanceDefinition = new FrameworkInstanceDefinition();
         instanceDefinition.setBaseFolder(new File(root.getPath(), "knopflerfish").getAbsolutePath());

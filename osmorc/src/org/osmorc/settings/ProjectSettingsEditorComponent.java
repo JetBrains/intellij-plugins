@@ -40,6 +40,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.ModuleDependencySynchronizer;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
@@ -63,6 +64,7 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
   private TextFieldWithBrowseButton myBundleOutputPath;
   private JButton myApplyToAllButton;
   private JComboBox mySynchronizationType;
+  private JButton mySynchronizeNowButton;
   private Project myProject;
 
   public ProjectSettingsEditorComponent(Project project) {
@@ -100,6 +102,13 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
       @Override
       public void actionPerformed(ActionEvent e) {
         onApplyToAllClick();
+      }
+    });
+
+    mySynchronizeNowButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        ModuleDependencySynchronizer.resynchronizeAll(myProject);
       }
     });
     ApplicationSettings.getInstance().addApplicationSettingsListener(this);

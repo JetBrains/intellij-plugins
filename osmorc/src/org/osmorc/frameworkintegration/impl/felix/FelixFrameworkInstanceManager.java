@@ -33,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.AbstractFrameworkInstanceManager;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkLibraryCollector;
-import org.osmorc.frameworkintegration.LibraryHandler;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -43,7 +42,6 @@ import java.util.ArrayList;
  */
 public class FelixFrameworkInstanceManager extends AbstractFrameworkInstanceManager {
   private static final Logger LOG = Logger.getInstance("#org.osmorc.frameworkintegration.impl.felix.FelixFrameworkInstanceManager");
-  private final LibraryHandler myLibraryHandler;
   private final Application myApplication;
   private final FelixSourceFinder myFelixsourcefinder;
   protected static final String FOLDER_DOES_NOT_EXIST =
@@ -53,10 +51,8 @@ public class FelixFrameworkInstanceManager extends AbstractFrameworkInstanceMana
   protected static final String NO_BUNDLE_FOLDER =
     "The base folder <strong>{0}</strong> does not contain a folder <strong>bundle</strong>. The bundle folder in a Felix installation contains additional bundles of the Felix framework.";
 
-  public FelixFrameworkInstanceManager(LibraryHandler libraryHandler, LocalFileSystem fileSystem,
-                                       Application application) {
+  public FelixFrameworkInstanceManager(LocalFileSystem fileSystem, Application application) {
     super(fileSystem);
-    myLibraryHandler = libraryHandler;
     myApplication = application;
     myFelixsourcefinder = new FelixSourceFinder();
   }

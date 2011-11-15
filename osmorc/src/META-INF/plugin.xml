@@ -81,8 +81,6 @@
         <!-- Framework integration -->
         <applicationService serviceInterface="org.osmorc.frameworkintegration.FrameworkIntegratorRegistry"
                             serviceImplementation="org.osmorc.frameworkintegration.FrameworkIntegratorRegistry"/>
-        <applicationService serviceInterface="org.osmorc.frameworkintegration.LibraryHandler"
-                            serviceImplementation="org.osmorc.frameworkintegration.impl.LibraryHandlerImpl"/>
         <applicationService
                 serviceInterface="org.osmorc.frameworkintegration.impl.equinox.EquinoxFrameworkInstanceManager"
                 serviceImplementation="org.osmorc.frameworkintegration.impl.equinox.EquinoxFrameworkInstanceManager"/>
@@ -181,7 +179,7 @@
         <projectConfigurable instance="org.osmorc.settings.ProjectSettingsEditor"/>
         <applicationConfigurable instance="org.osmorc.settings.ApplicationSettingsEditor"/>
       <editorNotificationProvider implementation="org.osmorc.ManifestChangeWatcher"/>
-      <editorNotificationProvider implementation="org.osmorc.BundleModificationWatcher"/>
+      <editorNotificationProvider implementation="org.osmorc.BundleIndexModificationWatcher"/>
     </extensions>
 
 

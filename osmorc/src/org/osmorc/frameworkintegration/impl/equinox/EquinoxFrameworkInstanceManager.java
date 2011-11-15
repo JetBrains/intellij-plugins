@@ -34,7 +34,6 @@ import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.AbstractFrameworkInstanceManager;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkLibraryCollector;
-import org.osmorc.frameworkintegration.LibraryHandler;
 
 import java.text.MessageFormat;
 import java.util.Collections;
@@ -44,7 +43,6 @@ import java.util.Collections;
  */
 public class EquinoxFrameworkInstanceManager extends AbstractFrameworkInstanceManager {
   private static final Logger LOG = Logger.getInstance("#org.osmorc.frameworkintegration.impl.equinox.EquinoxFrameworkInstanceManager");
-  private final LibraryHandler myLibraryHandler;
   private final Application myApplication;
   private final EquinoxSourceFinder myEquinoxSourceFinder;
   protected static final String FOLDER_DOES_NOT_EXIST =
@@ -55,10 +53,8 @@ public class EquinoxFrameworkInstanceManager extends AbstractFrameworkInstanceMa
     " JARs of your Equinox installation.";
 
 
-  public EquinoxFrameworkInstanceManager(LibraryHandler libraryHandler, LocalFileSystem fileSystem,
-                                         Application application) {
+  public EquinoxFrameworkInstanceManager(LocalFileSystem fileSystem, Application application) {
     super(fileSystem);
-    this.myLibraryHandler = libraryHandler;
     this.myApplication = application;
     myEquinoxSourceFinder = new EquinoxSourceFinder();
   }

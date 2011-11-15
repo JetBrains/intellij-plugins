@@ -100,13 +100,20 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
   }
 
   /**
-   * Refreshes the framework instance library. This will automatically trigger an index rebuild, as the project roots change..
+   * Refreshes the framework instance library.
    */
   private void refreshFrameworkInstanceLibrary() {
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
         myFrameworkInstanceLibraryManager.updateFrameworkInstanceLibraries();
+        myAlarm.cancelAllRequests();
+        myAlarm.addRequest(new Runnable() {
+          @Override
+          public void run() {
+            rebuildOSGiIndices();
+          }
+        }, 500);
       }
     });
   }
@@ -149,6 +156,4 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
       }
     }
   }
-
-
 }
