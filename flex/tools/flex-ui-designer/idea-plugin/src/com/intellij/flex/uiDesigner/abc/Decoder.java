@@ -27,7 +27,7 @@ public final class Decoder {
   public Decoder(DataBuffer in, AbcModifier abcModifier) {
     this(in, null, abcModifier);
   }
-  
+
   public Decoder(DataBuffer in, @Nullable char[] name) {
     this(in, name, null);
   }
@@ -176,7 +176,7 @@ public final class Decoder {
       for (int i = size(), n = positions.length; i < n; i++) {
         in.seek(positions[i]);
 
-        visitor.startClass(in.readU32(), i, in);
+        visitor.startClass(in.readU32());
         decodeTraits(visitor, in);
         visitor.endClass();
       }
@@ -292,7 +292,6 @@ public final class Decoder {
       int name = in.readU32();
       int kind = in.readU8();
       int valueId;
-
       switch (kind & 0x0f) {
         case TRAIT_Var:
         case TRAIT_Const:

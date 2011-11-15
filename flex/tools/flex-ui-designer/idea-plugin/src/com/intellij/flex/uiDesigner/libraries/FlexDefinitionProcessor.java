@@ -1,10 +1,13 @@
 package com.intellij.flex.uiDesigner.libraries;
 
 import com.google.common.base.Charsets;
-import com.intellij.flex.uiDesigner.abc.*;
-import com.intellij.javascript.flex.mxml.FlexNameAlias;
+import com.intellij.flex.uiDesigner.abc.AbcModifierBase;
+import com.intellij.flex.uiDesigner.abc.AbcUtil;
+import com.intellij.flex.uiDesigner.abc.DataBuffer;
+import com.intellij.flex.uiDesigner.abc.Encoder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.text.CharArrayUtil;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -16,8 +19,16 @@ import java.util.Map;
 public class FlexDefinitionProcessor implements DefinitionProcessor {
   private static final String STYLE_PROTO_CHAIN = "mx.styles:StyleProtoChain";
   private static final String SKINNABLE_COMPONENT = "spark.components.supportClasses:SkinnableComponent";
+  private static final String MX_CORE = "mx.core:";
+  private static final String SPARK_COMPONENTS = "spark.components:";
 
   private static final char OVERLOADED_AND_BACKED_CLASS_MARK = 'F';
+
+  private final boolean vGreaterOrEquals4_5;
+
+  public FlexDefinitionProcessor(String version) {
+    vGreaterOrEquals4_5 = StringUtil.compareVersionNumbers(version, "4.5") >= 0;
+  }
 
   @Override
   public void process(CharSequence name, ByteBuffer buffer, Definition definition, Map<CharSequence, Definition> definitionMap) throws IOException {
@@ -30,8 +41,67 @@ public class FlexDefinitionProcessor implements DefinitionProcessor {
       flipDefinition(definition, definitionMap, SKINNABLE_COMPONENT);
     }
     else if (StringUtil.equals(name, "mx.containers:Panel")) {
-      definition.doAbcData.abcModifier = new MethodAccessModifier("setControlBar");
+      definition.doAbcData.abcModifier = new MethodAccessModifier("setControlBar", "addChildAt", null);
     }
+    else {
+      final boolean mxCore = StringUtil.startsWith(name, MX_CORE);
+      if (mxCore) {
+        if (equals(name, MX_CORE.length(), "UIComponent")) {
+          definition.doAbcData.abcModifier = new VarAccessModifier("deferredSetStyles");
+        }
+        else if (vGreaterOrEquals4_5 && equals(name, MX_CORE.length(), "FTETextField")) {
+          definition.doAbcData.abcModifier = new VarAccessModifier("staticHandlersAdded");
+        }
+      }
+
+      if (definition.doAbcData.abcModifier != null) {
+        return;
+      }
+
+      boolean skipInitialize = false;
+      boolean modifyConstructor = false;
+      boolean skipColorCorrection = false;
+      if (mxCore || StringUtil.startsWith(name, SPARK_COMPONENTS)) {
+        final int localNameOffset = mxCore ? MX_CORE.length() : SPARK_COMPONENTS.length();
+        skipInitialize = equals(name, localNameOffset, "Application");
+        if (mxCore) {
+          if (skipInitialize) {
+            modifyConstructor = true;
+          }
+        }
+        else {
+          skipColorCorrection = skipInitialize && vGreaterOrEquals4_5;
+          modifyConstructor = skipInitialize ||
+                              equals(name, localNameOffset, "ViewNavigatorApplicationBase") ||
+                              equals(name, localNameOffset, "TabbedViewNavigatorApplication");
+          // AS-66
+          if (!skipInitialize && vGreaterOrEquals4_5) {
+            skipInitialize = equals(name, localNameOffset, "View");
+          }
+        }
+      }
+      else if (vGreaterOrEquals4_5 && StringUtil.equals(name, "spark.components.supportClasses:ViewNavigatorApplicationBase")) {
+        skipInitialize = true;
+      }
+
+      if (skipInitialize || modifyConstructor) {
+        definition.doAbcData.abcModifier = new MethodAccessModifier(null, skipInitialize ? "initialize" : null, skipColorCorrection ? "colorCorrection" : null);
+      }
+    }
+  }
+
+  private static boolean equals(CharSequence s1, int s1Offset, CharSequence s2) {
+    if ((s1.length() - s1Offset) != s2.length()) {
+      return false;
+    }
+
+    for (int i = 0; i < s2.length(); i++) {
+      if (s1.charAt(i + s1Offset) != s2.charAt(i)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   private static void flipDefinition(Definition definition, Map<CharSequence, Definition> definitionMap, String name) {
@@ -93,19 +163,43 @@ public class FlexDefinitionProcessor implements DefinitionProcessor {
   }
 
   private static class MethodAccessModifier extends AbcModifierBase {
-    private final String fieldName;
+    private String changeAccessModifier;
+    private String skipMethod;
+    private String skipSetter;
 
-    private MethodAccessModifier(String fieldName) {
-      this.fieldName = fieldName;
+    private MethodAccessModifier(@Nullable String changeAccessModifier, @Nullable String skipMethod, @Nullable String skipSetter) {
+      this.changeAccessModifier = changeAccessModifier;
+      this.skipMethod = skipMethod;
+      this.skipSetter = skipSetter;
     }
 
     @Override
-    public boolean writeMethodTraitName(int name, int traitKind, DataBuffer in, Encoder encoder) {
-      if (isNotOverridenMethod(traitKind)) {
-        if (encoder.changeAccessModifier(fieldName, name, in)) {
+    public int methodTraitDelta() {
+      return skipMethod != null ? -1 : 0;
+    }
+
+    @Override
+    public boolean methodTraitName(int name, int traitKind, DataBuffer in, Encoder encoder) {
+      if (changeAccessModifier != null && isNotOverridenMethod(traitKind) && encoder.changeAccessModifier(changeAccessModifier, name, in)) {
+        changeAccessModifier = null;
+        return true;
+      }
+
+      return false;
+    }
+
+    @Override
+    public boolean methodTrait(int traitKind, int name, DataBuffer in, Encoder encoder) {
+      if (skipMethod != null && isOverridenMethod(traitKind)) {
+        if (encoder.skipMethod(skipMethod, name, in)) {
+          skipMethod = null;
           return true;
         }
       }
+      //else if (skipSetter != null && isSetter(traitKind) && encoder.skipMethod(skipSetter, name, in)) {
+      //  skipSetter = null;
+      //  return true;
+      //}
 
       return false;
     }
@@ -119,14 +213,8 @@ public class FlexDefinitionProcessor implements DefinitionProcessor {
     }
 
     @Override
-    public boolean writeSlotTraitName(int name, int traitKind, DataBuffer in, Encoder encoder) {
-      if (isVar(traitKind)) {
-        if (encoder.changeAccessModifier(fieldName, name, in)) {
-          return true;
-        }
-      }
-
-      return false;
+    public boolean slotTraitName(int name, int traitKind, DataBuffer in, Encoder encoder) {
+      return isVar(traitKind) && encoder.changeAccessModifier(fieldName, name, in);
     }
   }
 }

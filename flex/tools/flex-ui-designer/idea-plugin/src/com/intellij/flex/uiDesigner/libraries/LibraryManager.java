@@ -184,7 +184,8 @@ public class LibraryManager {
         }
       };
       final SortResult sortResult = sortLibraries(
-        new LibrarySorter(new FlexDefinitionProcessor(), new FlexDefinitionMapProcessor(libraryCollector.getFlexSdkVersion(), globalContains)), id, libraryCollector.sdkLibraries,
+        new LibrarySorter(new FlexDefinitionProcessor(libraryCollector.getFlexSdkVersion()), new FlexDefinitionMapProcessor(
+          libraryCollector.getFlexSdkVersion(), globalContains)), id, libraryCollector.sdkLibraries,
         libraryCollector.getFlexSdkVersion(),
         globalContains);
 

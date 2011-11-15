@@ -10,7 +10,6 @@ public class FlexEncoder extends Encoder {
   private static final String SPARK_COMPONENTS = "spark.components";
   private static final String SPARK_COMPONENTS_SUPPORT_CLASSES = "spark.components.supportClasses";
   private static final String APPLICATION = "Application";
-  private static final String UI_COMPONENT = "UIComponent";
   private static final String VIEW_NAVIGATOR_APPLICATION = "ViewNavigatorApplication";
   private static final String TABBED_VIEW_NAVIGATOR_APPLICATION = "TabbedViewNavigatorApplication";
   private static final String VIEW_NAVIGATOR_APPLICATION_BASE = "ViewNavigatorApplicationBase";
@@ -23,8 +22,6 @@ public class FlexEncoder extends Encoder {
   // IDEA-72935
   private boolean skipPanelAddChild;
   private boolean modifyConstructor;
-
-  private String modifyAccessModifier;
 
   private final byte[] debugBasepath;
   private final boolean isFlex45;
@@ -100,9 +97,6 @@ public class FlexEncoder extends Encoder {
         if (skipInitialize) {
           modifyConstructor = skipInitialize;
         }
-        else if (compare(in, stringLength, UI_COMPONENT)) {
-          modifyAccessModifier = "deferredSetStyles";
-        }
       }
       else {
         skipColorCorrection = skipInitialize;
@@ -121,19 +115,6 @@ public class FlexEncoder extends Encoder {
         skipInitialize = compare(in, VIEW_NAVIGATOR_APPLICATION_BASE);
       }
     }
-  }
-
-  @Override
-  public void startClass(int cinit, int index, DataBuffer in) {
-    super.startClass(cinit, index, in);
-    // class traits in scripts — after class_info (class_info contains traits_info), so, we cannot check class name
-    modifyAccessModifier = "staticHandlersAdded";
-  }
-
-  @Override
-  public void endClass() {
-    super.endClass();
-    modifyAccessModifier = null;
   }
 
   @Override
@@ -196,7 +177,6 @@ public class FlexEncoder extends Encoder {
     modifyConstructor = false;
     skipColorCorrection = false;
     skipPanelAddChild = false;
-    modifyAccessModifier = null;
   }
 
   @SuppressWarnings("UnusedDeclaration")

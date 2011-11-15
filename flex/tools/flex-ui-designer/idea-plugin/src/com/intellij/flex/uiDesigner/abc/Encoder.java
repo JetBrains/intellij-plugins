@@ -63,7 +63,7 @@ public class Encoder {
     history.disableDebugging();
   }
 
-  public void configure(List<Decoder> decoders, @Nullable AbcFilter.TransientString excludedName) {
+  public void configure(List<Decoder> decoders, @Nullable AbcTranscoder.TransientString excludedName) {
     int estimatedSize = 0, total = 0;
 
     final int n = decoders.size();
@@ -385,7 +385,7 @@ public class Encoder {
     currentBuffer = null;
   }
 
-  public void startClass(int cinit, int index, DataBuffer in) {
+  public void startClass(int cinit) {
     classInfo.writeU32(methodInfo.getIndex(cinit));
 
     currentBuffer = classInfo;
@@ -462,6 +462,11 @@ public class Encoder {
   }
 
   public void traitCount(int traitCount) {
+    if (abcModifier != null && currentBuffer == instanceInfo) {
+      traitCount += abcModifier.methodTraitDelta();
+      assert traitCount >= 0;
+    }
+
     currentBuffer.writeU32(traitCount);
   }
 
@@ -491,7 +496,7 @@ public class Encoder {
   }
 
   public void slotTrait(int traitKind, int name, int slotId, int type, int value, int valueKind, int[] metadata, DataBuffer in) throws DecoderException {
-    if (abcModifier == null || !abcModifier.writeSlotTraitName(name, traitKind, in, this)) {
+    if (abcModifier == null || !abcModifier.slotTraitName(name, traitKind, in, this)) {
       currentBuffer.writeU32(history.getIndex(IndexHistory.MULTINAME, name));
     }
 
@@ -564,7 +569,7 @@ public class Encoder {
     encodeMetaData(newMetadata);
   }
 
-  public boolean changeAccessModifier(String accessModifier, int name, DataBuffer in) {
+  public boolean changeAccessModifier(String fieldName, int name, DataBuffer in) {
     final int originalPosition = in.position();
     in.seek(history.getRawPartPoolPositions(IndexHistory.MULTINAME)[name]);
     int constKind = in.readU8();
@@ -575,9 +580,31 @@ public class Encoder {
     int nsKind = in.readU8();
     if (nsKind == CONSTANT_PrivateNamespace) {
       in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[localName]);
-      int stringLength = in.readU32();
-      if (compare(in, stringLength, accessModifier)) {
+      if (compare(in, fieldName)) {
         currentBuffer.writeU32(history.getIndexWithSpecifiedNsRaw(name, findPublicNamespace(in)));
+        in.seek(originalPosition);
+        return true;
+      }
+    }
+
+    in.seek(originalPosition);
+    return false;
+  }
+
+  public boolean skipMethod(String name, int nameIndex, DataBuffer in) {
+    final int originalPosition = in.position();
+    in.seek(history.getRawPartPoolPositions(IndexHistory.MULTINAME)[nameIndex]);
+
+    int constKind = in.readU8();
+    assert constKind == CONSTANT_Qname || constKind == CONSTANT_QnameA;
+    int ns = in.readU32();
+    int localName = in.readU32();
+
+    in.seek(history.getRawPartPoolPositions(IndexHistory.NS)[ns]);
+    int nsKind = in.readU8();
+    if (nsKind == CONSTANT_PackageNamespace) {
+      in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[localName]);
+      if (compare(in, name)) {
         in.seek(originalPosition);
         return true;
       }
@@ -610,7 +637,6 @@ public class Encoder {
     }
   }
 
-  @SuppressWarnings("UnusedDeclaration")
   private static boolean compare(final DataBuffer in, final String s) {
     return compare(in, in.readU32(), s);
   }
@@ -622,7 +648,7 @@ public class Encoder {
 
     final int offset = in.position + in.offset;
     for (int j = stringLength - 1; j > -1; j--) {
-      if ((char)in.data[offset + j] != s.charAt(j)) {
+      if (in.data[offset + j] != s.charAt(j)) {
         return false;
       }
     }
@@ -631,7 +657,11 @@ public class Encoder {
   }
 
   public void methodTrait(int traitKind, int name, int dispId, int methodInfo, int[] metadata, DataBuffer in) {
-    if (abcModifier == null || !abcModifier.writeMethodTraitName(name, traitKind, in, this)) {
+    if (abcModifier != null && abcModifier.methodTrait(traitKind, name, in, this)) {
+      return;
+    }
+
+    if (abcModifier == null || !abcModifier.methodTraitName(name, traitKind, in, this)) {
       currentBuffer.writeU32(history.getIndex(IndexHistory.MULTINAME, name));
     }
 
@@ -677,32 +707,30 @@ public class Encoder {
 
   static final int W = 8;
   int[] window = new int[W];
-  int window_size = 0;
+  int windowSize = 0;
   int head = 0;
 
   void clearWindow() {
     for (int i = 0; i < W; i++) {
       window[i] = 0;
     }
-    window_size = 0;
+    windowSize = 0;
   }
 
   void beginop(int opcode) {
     window[head] = opcodes.getSize();
     head = (head + 1) & (W - 1);
-    if (window_size < 8) {
-      ++window_size;
+    if (windowSize < 8) {
+      ++windowSize;
     }
     opcodes.writeU8(opcode);
   }
 
   int opat(int i) {
-    if (peepHole) {
-      if (i <= window_size) {
-        int ip = window[(head - i) & (W - 1)];
-        if (ip < opcodes.getSize()) {
-          return opcodes.readU8(ip);
-        }
+    if (peepHole && i <= windowSize) {
+      int ip = window[(head - i) & (W - 1)];
+      if (ip < opcodes.getSize()) {
+        return opcodes.readU8(ip);
       }
     }
     return 0;
@@ -711,7 +739,7 @@ public class Encoder {
   void setOpcodeAt(int i, int opcode) {
     assert peepHole;
 
-    if (i <= window_size) {
+    if (i <= windowSize) {
       int ip = window[(head - i) & (W - 1)];
       if (ip < opcodes.getSize()) {
         opcodes.writeU8(ip, opcode);
@@ -720,28 +748,18 @@ public class Encoder {
   }
 
   int readByteAt(int i) {
-    if (i <= window_size) {
-      int ip = 1 + window[(head - i) & (W - 1)];
-      return (byte)opcodes.readU8(ip);
-    }
-    return 0;
+    return i <= windowSize ? (byte)opcodes.readU8(1 + window[(head - i) & (W - 1)]) : 0;
   }
 
   int readIntAt(int i) {
-    if (i <= window_size) {
-      int ip = 1 + window[(head - i) & (W - 1)];
-      return opcodes.readU32(ip);
-    }
-    return 0;
+    return i <= windowSize ? opcodes.readU32(1 + window[(head - i) & (W - 1)]) : 0;
   }
 
   void rewind(int i) {
     int to = (head - i) & (W - 1);
-    int ip = window[to];
-    int end = opcodes.getSize();
-    opcodes.delete(end - ip);
+    opcodes.delete(opcodes.getSize() - window[to]);
     head = to;
-    window_size -= i;
+    windowSize -= i;
   }
 
   public void target(int oldPos) {
@@ -759,7 +777,6 @@ public class Encoder {
 
   public void OP_returnvalue() {
     if (opcodePass == 1) {
-
       if (opat(1) == OP_coerce_a) {
         rewind(1);
       }
@@ -808,28 +825,24 @@ public class Encoder {
   }
 
   public void OP_debug(int di_local, int index, int slot, int linenum) {
-    if (opcodePass == 1) {
-      if (!disableDebugging) {
-        beginop(OP_debug);
-        opcodes.writeU8(di_local);
-        opcodes.writeU32(history.getIndex(IndexHistory.STRING, index));
-        opcodes.writeU8(slot);
-        opcodes.writeU32(linenum);
-      }
+    if (opcodePass == 1 && !disableDebugging) {
+      beginop(OP_debug);
+      opcodes.writeU8(di_local);
+      opcodes.writeU32(history.getIndex(IndexHistory.STRING, index));
+      opcodes.writeU8(slot);
+      opcodes.writeU32(linenum);
     }
   }
 
   public void OP_debugfile(DataBuffer in) {
     int index = in.readU32();
-    if (opcodePass == 1) {
-      if (!disableDebugging) {
-        beginop(OP_debugfile);
-        if (index == 0) {
-          opcodes.writeU32(0);
-        }
-        else {
-          writeDebugFile(in, index);
-        }
+    if (opcodePass == 1 && !disableDebugging) {
+      beginop(OP_debugfile);
+      if (index == 0) {
+        opcodes.writeU32(0);
+      }
+      else {
+        writeDebugFile(in, index);
       }
     }
   }
@@ -1021,7 +1034,6 @@ public class Encoder {
       opcodes.writeU32(param);
     }
   }
-
 
   public void OP_convert_b() {
     if (opcodePass == 1) {

@@ -1,12 +1,11 @@
 package com.intellij.flex.uiDesigner.libraries;
 
-import com.intellij.flex.uiDesigner.abc.AbcFilter;
+import com.intellij.flex.uiDesigner.abc.AbcTranscoder;
 import com.intellij.flex.uiDesigner.abc.Decoder;
 import com.intellij.flex.uiDesigner.abc.DecoderException;
 import com.intellij.flex.uiDesigner.abc.Encoder;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Pass;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xml.NanoXmlUtil;
 import com.intellij.util.xml.NanoXmlUtil.IXMLBuilderAdapter;
@@ -58,7 +57,7 @@ public class LibrarySorter {
   public SortResult sort(final List<Library> libraries, File outFile, Condition<String> isExternal) throws IOException {
     ArrayList<Library> resourceBundleOnlyItems = null;
 
-    final THashMap<CharSequence, Definition> definitionMap = new THashMap<CharSequence, Definition>(libraries.size() * 128, AbcFilter.HASHING_STRATEGY);
+    final THashMap<CharSequence, Definition> definitionMap = new THashMap<CharSequence, Definition>(libraries.size() * 128, AbcTranscoder.HASHING_STRATEGY);
     final List<LibrarySetItem> unsortedItems = collectItems(libraries, definitionMap, isExternal);
     final AbcMerger abcMerger = new AbcMerger(definitionMap, outFile, definitionProcessor);
     try {
@@ -90,8 +89,7 @@ public class LibrarySorter {
           if (definition.doAbcData != null &&
               (definition.resolved == ResolvedState.YES || (definition.resolved == ResolvedState.UNKNOWN &&
                                                             processDependencies(decoders, definition, definitionMap, singleStringArray)))) {
-            decoders.add(new Decoder(definition.doAbcData, definition.doAbcData.abcModifier));
-            definition.doAbcData = null;
+            decoders.add(createDecoder(definition));
           }
 
           return true;
@@ -106,6 +104,12 @@ public class LibrarySorter {
     finally {
       abcMerger.close();
     }
+  }
+
+  private static Decoder createDecoder(Definition definition) {
+    final Decoder decoder = new Decoder(definition.doAbcData, definition.doAbcData.abcModifier);
+    definition.doAbcData = null;
+    return decoder;
   }
 
   @SuppressWarnings({"UnusedDeclaration"})
@@ -146,8 +150,7 @@ public class LibrarySorter {
       }
 
       if (dependency.doAbcData != null) {
-        decoders.add(new Decoder(dependency.doAbcData));
-        dependency.doAbcData = null;
+        decoders.add(createDecoder(dependency));
       }
     }
 
@@ -159,7 +162,7 @@ public class LibrarySorter {
   }
 
   public static Set<CharSequence> getDefinitions(Reader reader) throws IOException {
-    final THashSet<CharSequence> set = new THashSet<CharSequence>(512, AbcFilter.HASHING_STRATEGY);
+    final THashSet<CharSequence> set = new THashSet<CharSequence>(512, AbcTranscoder.HASHING_STRATEGY);
     NanoXmlUtil.parse(reader, new IXMLBuilderAdapter() {
       private boolean processingDef;
 

@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.AssetCounterInfo;
-import com.intellij.flex.uiDesigner.abc.AbcFilter;
+import com.intellij.flex.uiDesigner.abc.AbcTranscoder;
 import com.intellij.openapi.util.Condition;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -26,7 +26,7 @@ public class FlexLibrarySet extends LibrarySet {
 
     public ContainsCondition(Set<CharSequence> globalDefinitions, THashMap<CharSequence, Definition> definitionMap) {
       this.globalDefinitions = globalDefinitions;
-      ownDefinitions = new THashSet<CharSequence>(definitionMap.size(), AbcFilter.HASHING_STRATEGY);
+      ownDefinitions = new THashSet<CharSequence>(definitionMap.size(), AbcTranscoder.HASHING_STRATEGY);
       ownDefinitions.addAll(definitionMap.keySet());
     }
 
