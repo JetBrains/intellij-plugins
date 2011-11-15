@@ -29,7 +29,7 @@ public class FlashBuilderSdkFinder {
   private boolean myInitialized = false;
 
   private final Project myProject;
-  private final String myInitiallySelectedDirPath;
+  private final String myInitiallySelectedPath;
   private final Collection<FlashBuilderProject> myFlashBuilderProjects;
 
   private String myWorkspacePath;
@@ -55,11 +55,11 @@ public class FlashBuilderSdkFinder {
 
   public FlashBuilderSdkFinder(final Project project,
                                final FlexProjectConfigurationEditor flexConfigEditor,
-                               final String initiallySelectedDirPath,
+                               final String initiallySelectedPath,
                                final Collection<FlashBuilderProject> flashBuilderProjects) {
     myProject = project;
     myFlexConfigEditor = flexConfigEditor;
-    myInitiallySelectedDirPath = initiallySelectedDirPath;
+    myInitiallySelectedPath = initiallySelectedPath;
     myFlashBuilderProjects = flashBuilderProjects;
   }
 
@@ -175,7 +175,7 @@ public class FlashBuilderSdkFinder {
 
   @Nullable
   private String findWorkspacePath() {
-    String workspacePath = guessWorkspacePath(myInitiallySelectedDirPath);
+    String workspacePath = guessWorkspacePath(myInitiallySelectedPath);
     if (workspacePath == null) {
       for (FlashBuilderProject flashBuilderProject : myFlashBuilderProjects) {
         workspacePath = guessWorkspacePath(flashBuilderProject.getProjectRootPath());
@@ -296,6 +296,11 @@ public class FlashBuilderSdkFinder {
   @Nullable
   private static String guessWorkspacePath(final String selectedPath) {
     VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(selectedPath);
+
+    if (dir != null && !dir.isDirectory()) {
+      dir = dir.getParent();
+    }
+
     while (dir != null) {
       if (FlashBuilderProjectFinder.isFlashBuilderWorkspace(dir)) {
         return dir.getPath();

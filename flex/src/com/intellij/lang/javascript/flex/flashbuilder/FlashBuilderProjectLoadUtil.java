@@ -9,6 +9,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.PathUtil;
+import gnu.trove.THashMap;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -19,16 +21,22 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 
 public class FlashBuilderProjectLoadUtil {
 
   private static final String PROJECT_NAME_TAG = "<projectDescription><name>";
   private static final String ACTION_SCRIPT_PROPERTIES_TAG = "actionScriptProperties";
+  private static final String FXP_PROPERTIES_TAG = "fxpProperties";
   private static final String COMPILER_TAG = "compiler";
+  private static final String SWC_TAG = "swc";
   private static final String SOURCE_FOLDER_PATH_ATTR = "sourceFolderPath";
   private static final String COMPILER_SOURCE_PATH_TAG = "compilerSourcePath";
+  private static final String LINKED_TAG = "linked";
   private static final String COMPILER_SOURCE_PATH_ENTRY_TAG = "compilerSourcePathEntry";
   private static final String PATH_ATTR = "path";
+  private static final String LOCATION_ATTR = "location";
   private static final String OUTPUT_FOLDER_LOCATION_ATTR = "outputFolderLocation";
   private static final String OUTPUT_FOLDER_PATH_ATTR = "outputFolderPath";
   private static final String MAIN_APP_PATH_ATTR = "mainApplicationPath";
@@ -78,7 +86,7 @@ public class FlashBuilderProjectLoadUtil {
   }
 
   @NotNull
-  static String getProjectName(final String dotProjectFilePath) {
+  static String readProjectName(final String dotProjectFilePath) {
     FileInputStream fis = null;
     try {
       //noinspection IOResourceOpenedButNotSafelyClosed
@@ -98,28 +106,30 @@ public class FlashBuilderProjectLoadUtil {
         catch (IOException e) {/*ignore*/}
       }
     }
-    return FlexBundle.message("unnamed");
+    return PathUtil.getFileName(PathUtil.getParentPath(dotProjectFilePath));
   }
 
-  public static Collection<FlashBuilderProject> loadProjects(final Collection<String> dotProjectFilePaths) {
+  public static Collection<FlashBuilderProject> loadProjects(final Collection<String> dotProjectFilePaths, final boolean isFxp) {
     final Collection<FlashBuilderProject> flashBuilderProjects = new ArrayList<FlashBuilderProject>(dotProjectFilePaths.size());
     for (final String dotProjectFilePath : dotProjectFilePaths) {
       final VirtualFile dotProjectFile = LocalFileSystem.getInstance().findFileByPath(dotProjectFilePath);
       if (dotProjectFile != null) {
-        flashBuilderProjects.add(loadProject(dotProjectFile));
+        flashBuilderProjects.add(loadProject(dotProjectFile, isFxp));
       }
     }
     return flashBuilderProjects;
   }
 
-  public static FlashBuilderProject loadProject(final VirtualFile dotProjectFile) {
+  public static FlashBuilderProject loadProject(final VirtualFile dotProjectFile, final boolean isFxp) {
     final FlashBuilderProject project = new FlashBuilderProject();
 
     loadProjectNameAndLinkedResources(project, dotProjectFile);
     loadOutputType(project, dotProjectFile);
     loadProjectRoot(project, dotProjectFile);
 
-    loadInfoFromDotActionScriptPropertiesFile(project, dotProjectFile);
+    final Map<String, String> pathReplacementMap =
+      isFxp ? loadMapFromDotFxpPropertiesFile(dotProjectFile) : Collections.<String, String>emptyMap();
+    loadInfoFromDotActionScriptPropertiesFile(project, dotProjectFile, pathReplacementMap);
     loadInfoFromDotFlexLibPropertiesFile(project, dotProjectFile);
 
     return project;
@@ -154,7 +164,40 @@ public class FlashBuilderProjectLoadUtil {
     catch (IOException e) {/*ignore*/}
   }
 
-  private static void loadInfoFromDotActionScriptPropertiesFile(final FlashBuilderProject project, final VirtualFile dotProjectFile) {
+  private static Map<String, String> loadMapFromDotFxpPropertiesFile(final VirtualFile dotProjectFile) {
+    final Map<String, String> result = new THashMap<String, String>();
+
+    final VirtualFile dir = dotProjectFile.getParent();
+    assert dir != null;
+    final VirtualFile dotFxpPropertiesFile = dir.findChild(FlashBuilderImporter.DOT_FXP_PROPERTIES);
+    if (dotFxpPropertiesFile != null) {
+      try {
+        final Document document = JDOMUtil.loadDocument(dotFxpPropertiesFile.getInputStream());
+        final Element fxpPropertiesElement = document.getRootElement();
+        if (fxpPropertiesElement == null || !FXP_PROPERTIES_TAG.equals(fxpPropertiesElement.getName())) return Collections.emptyMap();
+
+        final Element swcElement = fxpPropertiesElement.getChild(SWC_TAG);
+        if (swcElement != null) {
+          //noinspection unchecked
+          for (final Element linkedElement : ((Iterable<Element>)swcElement.getChildren(LINKED_TAG))) {
+            final String location = linkedElement.getAttributeValue(LOCATION_ATTR);
+            final String path = linkedElement.getAttributeValue(PATH_ATTR);
+            if (!StringUtil.isEmptyOrSpaces(location) && !StringUtil.isEmptyOrSpaces(path)) {
+              result.put(location, path);
+            }
+          }
+        }
+      }
+      catch (JDOMException e) {/*ignore*/}
+      catch (IOException e) {/*ignore*/}
+    }
+
+    return result;
+  }
+
+  private static void loadInfoFromDotActionScriptPropertiesFile(final FlashBuilderProject project,
+                                                                final VirtualFile dotProjectFile,
+                                                                final Map<String, String> pathReplacementMap) {
     final VirtualFile dir = dotProjectFile.getParent();
     assert dir != null;
     final VirtualFile dotActionScriptPropertiesFile = dir.findChild(FlashBuilderImporter.DOT_ACTION_SCRIPT_PROPERTIES);
@@ -172,7 +215,7 @@ public class FlashBuilderProjectLoadUtil {
           loadOutputFolderPath(project, compilerElement);
           loadTargetPlayerVersion(project, compilerElement);
           loadAdditionalCompilerArguments(project, compilerElement);
-          loadDependenciesAndCheckIfSdkUsed(project, compilerElement);
+          loadDependenciesAndCheckIfSdkUsed(project, compilerElement, pathReplacementMap);
           if (project.isSdkUsed()) {
             loadSdkName(project, compilerElement);
           }
@@ -327,7 +370,9 @@ public class FlashBuilderProjectLoadUtil {
     }
   }
 
-  private static void loadDependenciesAndCheckIfSdkUsed(final FlashBuilderProject project, final Element compilerElement) {
+  private static void loadDependenciesAndCheckIfSdkUsed(final FlashBuilderProject project,
+                                                        final Element compilerElement,
+                                                        final Map<String, String> pathReplacementMap) {
     //noinspection unchecked
     for (final Element libraryPathElement : ((Iterable<Element>)compilerElement.getChildren(LIBRARY_PATH_TAG))) {
       //noinspection unchecked
@@ -344,7 +389,9 @@ public class FlashBuilderProjectLoadUtil {
               // TODO: parse sources
               final Collection<String> librarySourcePaths = new ArrayList<String>();
 
-              project.addLibraryPathAndSources(FileUtil.toSystemIndependentName(libraryPath), librarySourcePaths);
+              final String replacedPath = pathReplacementMap.get(libraryPath);
+              project.addLibraryPathAndSources(FileUtil.toSystemIndependentName(replacedPath != null ? replacedPath : libraryPath),
+                                               librarySourcePaths);
             }
           }
         }

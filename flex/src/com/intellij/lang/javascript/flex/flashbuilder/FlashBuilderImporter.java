@@ -21,21 +21,32 @@ import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
 import com.intellij.projectImport.ProjectImportBuilder;
+import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformUtils;
+import com.intellij.util.io.ZipUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 
 import javax.swing.*;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.*;
 
 public class FlashBuilderImporter extends ProjectImportBuilder<String> {
 
   public static final String DOT_PROJECT = ".project";
+  public static final String DOT_FXP = ".fxp";
+  public static final String DOT_FXPL = ".fxpl";
   public static final String DOT_ACTION_SCRIPT_PROPERTIES = ".actionScriptProperties";
+  public static final String DOT_FXP_PROPERTIES = ".fxpProperties";
   public static final String DOT_FLEX_PROPERTIES = ".flexProperties";
   public static final String DOT_FLEX_LIB_PROPERTIES = ".flexLibProperties";
 
@@ -44,9 +55,11 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
   private Parameters myParameters;
 
   public static class Parameters {
-    public String initiallySelectedDirPath;
+    private String myInitiallySelectedPath = "";
     private List<String> myFlashBuilderProjectFilePaths = Collections.emptyList();
-    private boolean myOpenProjectSettingsAfter;
+    private String myFxpExtractPath = "";
+    private boolean myExtractToSubfolder = false;
+    private boolean myOpenProjectSettingsAfter = false;
   }
 
   public Parameters getParameters() {
@@ -81,6 +94,22 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
     getParameters().myOpenProjectSettingsAfter = openProjectSettingsAfter;
   }
 
+  public boolean isExtractToSubfolder() {
+    return getParameters().myExtractToSubfolder;
+  }
+
+  public void setExtractToSubfolder(boolean extractToSubfolder) {
+    getParameters().myExtractToSubfolder = extractToSubfolder;
+  }
+
+  public String getFxpExtractPath() {
+    return getParameters().myFxpExtractPath;
+  }
+
+  public void setFxpExtractPath(String fxpExtractPath) {
+    getParameters().myFxpExtractPath = fxpExtractPath;
+  }
+
   public List<String> getList() {
     return getParameters().myFlashBuilderProjectFilePaths;
   }
@@ -89,15 +118,38 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
     getParameters().myFlashBuilderProjectFilePaths = flashBuilderProjectFiles;
   }
 
-  void setInitiallySelectedDirPath(final String dirPath) {
-    getParameters().initiallySelectedDirPath = dirPath;
+  void setInitiallySelectedPath(final String dirPath) {
+    getParameters().myInitiallySelectedPath = dirPath;
+  }
+
+  String getInitiallySelectedPath() {
+    return getParameters().myInitiallySelectedPath;
   }
 
   public String getSuggestedProjectName() {
-    if (getParameters().myFlashBuilderProjectFilePaths.size() == 1) {
-      return FlashBuilderProjectLoadUtil.getProjectName(getParameters().myFlashBuilderProjectFilePaths.get(0));
+    final String path = getInitiallySelectedPath();
+    VirtualFile file = path.isEmpty() ? null : LocalFileSystem.getInstance().findFileByPath(path);
+
+    if (file == null) {
+      return PathUtil.getFileName(path);
     }
-    return FlexBundle.message("unnamed");
+
+    if (FlashBuilderProjectFinder.isArchivedFBProject(path)) {
+      return file.getNameWithoutExtension();
+    }
+
+    if (file.isDirectory()) {
+      final VirtualFile dotProjectFile = file.findChild(DOT_PROJECT);
+      if (dotProjectFile != null && FlashBuilderProjectFinder.isFlashBuilderProject(dotProjectFile)) {
+        file = dotProjectFile;
+      }
+    }
+
+    if (DOT_PROJECT.equalsIgnoreCase(file.getName())) {
+      return FlashBuilderProjectLoadUtil.readProjectName(file.getPath());
+    }
+
+    return PathUtil.getFileName(path);
   }
 
   public List<Module> commit(final Project project,
@@ -107,7 +159,11 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
     FlexModuleBuilder.setupResourceFilePatterns(project);
 
     final ModifiableModuleModel moduleModel = model != null ? model : ModuleManager.getInstance(project).getModifiableModel();
-    final Collection<FlashBuilderProject> flashBuilderProjects = FlashBuilderProjectLoadUtil.loadProjects(getList());
+
+    final List<String> paths = getList();
+    final boolean isFxp = paths.size() == 1 && FlashBuilderProjectFinder.isArchivedFBProject(paths.get(0));
+    final List<String> dotProjectPaths = getDotProjectPaths(project);
+    final Collection<FlashBuilderProject> flashBuilderProjects = FlashBuilderProjectLoadUtil.loadProjects(dotProjectPaths, isFxp);
 
     final ModuleType moduleType = PlatformUtils.isFlexIde() ? FlexModuleType.getInstance() : StdModuleTypes.JAVA;
 
@@ -159,7 +215,7 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
     }
 
     final FlashBuilderSdkFinder sdkFinder =
-      new FlashBuilderSdkFinder(project, flexConfigEditor, getParameters().initiallySelectedDirPath, flashBuilderProjects);
+      new FlashBuilderSdkFinder(project, flexConfigEditor, getParameters().myInitiallySelectedPath, flashBuilderProjects);
 
     final FlashBuilderModuleImporter flashBuilderModuleImporter =
       new FlashBuilderModuleImporter(project, flexConfigEditor, flashBuilderProjects, sdkFinder);
@@ -191,6 +247,67 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
     });
 
     return new ArrayList<Module>(moduleToModifiableModelMap.keySet());
+  }
+
+  private List<String> getDotProjectPaths(final Project project) {
+    final boolean creatingNewProject = !isUpdate();
+    final List<String> paths = getList();
+
+    if (paths.size() == 1 && FlashBuilderProjectFinder.isArchivedFBProject(paths.get(0))) {
+      final List<String> dotProjectFiles = new ArrayList<String>();
+      final boolean multipleProjects = FlashBuilderProjectFinder.isMultiProjectFxp(paths.get(0));
+
+      final String basePath = creatingNewProject ? project.getLocation() : getFxpExtractPath();
+      assert basePath != null;
+      final String fxpExtractDir = multipleProjects || isExtractToSubfolder()
+                                   ? basePath + "/" + FileUtil.getNameWithoutExtension(PathUtil.getFileName(paths.get(0)))
+                                   : basePath;
+
+      try {
+        final File outputDir = new File(fxpExtractDir);
+        ZipUtil.extract(new File(paths.get(0)), outputDir, null);
+        dotProjectFiles.add(fxpExtractDir + "/" + DOT_PROJECT);
+
+        extractNestedFxpAndAppendProjects(outputDir, dotProjectFiles);
+
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+          public void run() {
+            for (String dotProjectFile : dotProjectFiles) {
+              final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(PathUtil.getParentPath(dotProjectFile));
+              if (file != null) {
+                file.refresh(false, true);
+              }
+            }
+          }
+        });
+      }
+      catch (IOException e) {
+        Messages.showErrorDialog(project, FlexBundle.message("failed.to.extract.project", e.getMessage()),
+                                 FlexBundle.message("open.project.0", PathUtil.getFileName(paths.get(0))));
+        return Collections.emptyList();
+      }
+
+      return dotProjectFiles;
+    }
+
+    return paths;
+  }
+
+  private static void extractNestedFxpAndAppendProjects(final File dir, final List<String> dotProjectFiles) throws IOException {
+    final FilenameFilter filter = new FilenameFilter() {
+      public boolean accept(final File dir, final String name) {
+        final String lowercased = name.toLowerCase();
+        return lowercased.endsWith(DOT_FXP) || lowercased.endsWith(DOT_FXPL);
+      }
+    };
+
+    for (File file : dir.listFiles(filter)) {
+      final File extractDir = new File(file.getParentFile().getParentFile(), FileUtil.getNameWithoutExtension(file.getName()));
+      ZipUtil.extract(file, extractDir, null);
+      dotProjectFiles.add(extractDir + "/" + DOT_PROJECT);
+
+      extractNestedFxpAndAppendProjects(extractDir, dotProjectFiles);
+    }
   }
 
   private static String makeUnique(final String name, final Set<String> moduleNames) {

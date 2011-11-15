@@ -512,7 +512,7 @@ public class FlashBuilderModuleImporter {
       }
     }
 
-    return FileUtil.isAbsolute(path) ? path : project.getProjectRootPath() + '/' + path;
+    return FileUtil.isAbsolute(path) ? path : project.getProjectRootPath() + (slashIndex == 0 ? "" : "/") + path;
   }
 
   private void initPathVariables() {

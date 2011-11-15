@@ -1,10 +1,12 @@
 package com.intellij.lang.javascript.flex.flashbuilder;
 
+import com.intellij.CommonBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
@@ -12,7 +14,10 @@ import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class FlashBuilderProjectFinder {
 
@@ -159,5 +164,65 @@ public class FlashBuilderProjectFinder {
 
   static boolean isFlashBuilderInstallationDir(final VirtualFile file) {
     return file.isDirectory() && VfsUtil.findRelativeFile(SDKS_RELATIVE_PATH, file) != null;
+  }
+
+  static boolean isArchivedFBProject(final String path) {
+    final String extension = FileUtil.getExtension(path);
+    return "fxp".equals(extension) || "fxpl".equals(extension);
+  }
+
+  static void checkFxpFile(final String fxpFilePath) throws ConfigurationException {
+    _isMultiProjectFxp(fxpFilePath);
+  }
+
+  static boolean isMultiProjectFxp(final String fxpFilePath) {
+    try {
+      return _isMultiProjectFxp(fxpFilePath);
+    }
+    catch (ConfigurationException e) {
+      return false;
+    }
+  }
+
+  private static boolean _isMultiProjectFxp(final String fxpFilePath) throws ConfigurationException {
+    boolean containsDotProjectFile = false;
+    boolean containsDotActionScriptFile = false;
+    boolean containsNestedProjects = false;
+
+    ZipFile zipFile = null;
+    try {
+      zipFile = new ZipFile(fxpFilePath);
+
+      final Enumeration<? extends ZipEntry> entries = zipFile.entries();
+      while (entries.hasMoreElements()) {
+        final String entryName = entries.nextElement().getName();
+
+        if (FlashBuilderImporter.DOT_PROJECT.equals(entryName)) containsDotProjectFile = true;
+        if (FlashBuilderImporter.DOT_ACTION_SCRIPT_PROPERTIES.equals(entryName)) containsDotActionScriptFile = true;
+
+        if (entryName.endsWith(FlashBuilderImporter.DOT_FXP) || entryName.endsWith(FlashBuilderImporter.DOT_FXPL)) {
+          containsNestedProjects = true;
+        }
+
+        if (containsDotProjectFile && containsDotActionScriptFile && containsNestedProjects) break;
+      }
+
+      if (!containsDotProjectFile || !containsDotActionScriptFile) {
+        throw new ConfigurationException(FlexBundle.message("does.not.contain.flash.builder.projects"), CommonBundle.getErrorTitle());
+      }
+
+      return containsNestedProjects;
+    }
+    catch (IOException e) {
+      throw new ConfigurationException(FlexBundle.message("does.not.contain.flash.builder.projects"), CommonBundle.getErrorTitle());
+    }
+    finally {
+      if (zipFile != null) {
+        try {
+          zipFile.close();
+        }
+        catch (IOException ignore) {/*ignore*/}
+      }
+    }
   }
 }

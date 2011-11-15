@@ -15,12 +15,12 @@ public class FlashBuilderImportProvider extends ProjectImportProvider {
   public ModuleWizardStep[] createSteps(final WizardContext context) {
     final ProjectWizardStepFactory stepFactory = ProjectWizardStepFactory.getInstance();
     if (PlatformUtils.isFlexIde()) {
-      return new ModuleWizardStep[]{new SelectDirWithFlashBuilderProjectsStep(context), new SelectFlashBuilderImportedProjectsStep(context),
-        stepFactory.createNameAndLocationStep(context)};
+      return new ModuleWizardStep[]{new SelectDirWithFlashBuilderProjectsStep(context),
+        new SelectFlashBuilderImportedProjectsStep(context)};
     }
     else {
       return new ModuleWizardStep[]{new SelectDirWithFlashBuilderProjectsStep(context), new SelectFlashBuilderImportedProjectsStep(context),
-        stepFactory.createProjectJdkStep(context), stepFactory.createNameAndLocationStep(context)};
+        stepFactory.createProjectJdkStep(context)};
     }
   }
 }
