@@ -33,8 +33,8 @@ public class OgnlSpellcheckingStrategy extends SpellcheckingStrategy {
   @Override
   public Tokenizer getTokenizer(final PsiElement element) {
     final IElementType elementType = element.getNode().getElementType();
-    if (OgnlTokenTypes.TEXT.contains(elementType) ||
-        elementType == OgnlTokenTypes.IDENTIFIER) {
+    if (elementType == OgnlTokenTypes.IDENTIFIER ||
+        OgnlTokenTypes.TEXT.contains(elementType)) {
       return TEXT_TOKENIZER;
     }
 
