@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.run;
 
+import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
@@ -14,11 +15,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class RemoteFlashRunConfiguration extends RunConfigurationBase {
+public class RemoteFlashRunConfiguration extends RunConfigurationBase implements LocatableConfiguration {
+
+  private static final String DEFAULT_NAME = "Remote debug";
 
   private BCBasedRunnerParameters myRunnerParameters = new BCBasedRunnerParameters();
 
@@ -79,5 +83,14 @@ public class RemoteFlashRunConfiguration extends RunConfigurationBase {
     else {
       return Module.EMPTY_ARRAY;
     }
+  }
+
+  public boolean isGeneratedName() {
+    return getName().startsWith(ExecutionBundle.message("run.configuration.unnamed.name.prefix")) || getName().equals(suggestedName());
+  }
+
+  public String suggestedName() {
+    final String bcName = myRunnerParameters.getBCName();
+    return StringUtil.isEmptyOrSpaces(bcName) ? DEFAULT_NAME : (DEFAULT_NAME + " (" + bcName + ")");
   }
 }
