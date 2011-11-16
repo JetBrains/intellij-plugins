@@ -14,9 +14,8 @@ public class FlexLibrarySet extends LibrarySet {
   public final AssetCounterInfo assetCounterInfo = new AssetCounterInfo();
   final ContainsCondition contains;
 
-  public FlexLibrarySet(int id, @Nullable LibrarySet parent,
-                        List<Library> items, List<Library> resourceBundleOnlyItems, ContainsCondition contains) {
-    super(id, parent, items, resourceBundleOnlyItems);
+  public FlexLibrarySet(int id, @Nullable LibrarySet parent, List<Library> items, ContainsCondition contains) {
+    super(id, parent, items);
     this.contains = contains;
   }
 

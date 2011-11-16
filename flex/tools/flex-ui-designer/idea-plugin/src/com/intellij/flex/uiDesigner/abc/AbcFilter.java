@@ -17,30 +17,21 @@ public class AbcFilter extends AbcTranscoder {
   protected final ArrayList<Decoder> decoders = new ArrayList<Decoder>();
 
   private final boolean onlyAbcAsTag;
-  private String inputFileParentName;
 
   protected TIntObjectHashMap<TagPositionInfo> exportAssets;
   protected int symbolsClassTagLengthWithoutUselessMainClass = -1;
   protected int sA;
   protected int sB;
-  private final String flexSdkVersion;
 
-  public AbcFilter(@Nullable String flexSdkVersion) {
-    this(flexSdkVersion, false);
+  public AbcFilter() {
+    this(false);
   }
 
-  public AbcFilter(@Nullable String flexSdkVersion, boolean onlyAbcAsTag) {
-    this.flexSdkVersion = flexSdkVersion;
+  public AbcFilter(boolean onlyAbcAsTag) {
     this.onlyAbcAsTag = onlyAbcAsTag;
   }
 
   public void filter(File in, File out, @Nullable Condition<CharSequence> abcNameFilter) throws IOException {
-    inputFileParentName = in.getParentFile().getName();
-    int index = inputFileParentName.lastIndexOf('.');
-    if (index > 0) {
-      inputFileParentName = inputFileParentName.substring(0, index);
-    }
-
     filter(new FileInputStream(in), in.length(), out, abcNameFilter);
   }
 
@@ -248,7 +239,7 @@ public class AbcFilter extends AbcTranscoder {
   }
 
   private void mergeDoAbc(boolean asTag, boolean hasClassAssociatedWithMainTimeLine) throws IOException {
-    final Encoder encoder = flexSdkVersion != null ? new FlexEncoder(inputFileParentName) : new Encoder();
+    final Encoder encoder = new Encoder();
     encoder.configure(decoders, hasClassAssociatedWithMainTimeLine ? transientNameString : null);
     SwfUtil.mergeDoAbc(decoders, encoder);
     encoder.writeDoAbc(channel, asTag);

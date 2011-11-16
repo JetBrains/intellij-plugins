@@ -55,8 +55,6 @@ public class LibrarySorter {
   }
 
   public SortResult sort(final List<Library> libraries, File outFile, Condition<String> isExternal) throws IOException {
-    ArrayList<Library> resourceBundleOnlyItems = null;
-
     final THashMap<CharSequence, Definition> definitionMap = new THashMap<CharSequence, Definition>(libraries.size() * 128, AbcTranscoder.HASHING_STRATEGY);
     final List<LibrarySetItem> unsortedItems = collectItems(libraries, definitionMap, isExternal);
     final AbcMerger abcMerger = new AbcMerger(definitionMap, outFile, definitionProcessor);
@@ -65,10 +63,7 @@ public class LibrarySorter {
       for (LibrarySetItem item : unsortedItems) {
         if (!item.hasDefinitions()) {
           if (item.library.hasResourceBundles()) {
-            if (resourceBundleOnlyItems == null) {
-              resourceBundleOnlyItems = new ArrayList<Library>();
-            }
-            resourceBundleOnlyItems.add(item.library);
+            items.add(item.library);
           }
           continue;
         }
@@ -97,9 +92,8 @@ public class LibrarySorter {
       });
 
       final Encoder encoder = new Encoder();
-      //final Encoder encoder = flexSdkVersion != null ? new FlexEncoder("test", flexSdkVersion) : new Encoder();
       abcMerger.end(decoders, encoder);
-      return new SortResult(definitionMap, items, resourceBundleOnlyItems);
+      return new SortResult(definitionMap, items);
     }
     finally {
       abcMerger.close();
@@ -194,13 +188,10 @@ public class LibrarySorter {
   static class SortResult {
     final THashMap<CharSequence, Definition> definitionMap;
     final List<Library> items;
-    final List<Library> resourceBundleOnlyItems;
 
-    private SortResult(THashMap<CharSequence, Definition> definitionMap, List<Library> items,
-                       List<Library> resourceBundleOnlyItems) {
+    private SortResult(THashMap<CharSequence, Definition> definitionMap, List<Library> items) {
       this.definitionMap = definitionMap;
       this.items = items;
-      this.resourceBundleOnlyItems = resourceBundleOnlyItems;
     }
   }
 }

@@ -42,19 +42,19 @@ final class AbcBlankMaker {
   }
 
   private static void makeBlanks() throws IOException {
-    final AbcFilter abcTagExtractor = new AbcFilter(null, false);
+    final AbcFilter abcTagExtractor = new AbcFilter(false);
     final File in = new File("abc-blank-maker/src/o/library.swf");
     abcTagExtractor.filter(in, new File("idea-plugin/resources/BitmapAsset.abc"), new AbcNameFilterByEquals("_b000"));
     abcTagExtractor.filter(in, new File("idea-plugin/resources/SpriteAsset.abc"), new AbcNameFilterByEquals("_s000"));
     // must be encoded as tag
-    final AbcFilter abcFilter = new AbcFilter(null, true);
+    final AbcFilter abcFilter = new AbcFilter(true);
     abcFilter.filter(in, new File("idea-plugin/resources/SSymbolOwnClass.abc"), new AbcNameFilterByEquals("SSymbolOwnClass"));
     abcFilter.filter(in, new File("idea-plugin/resources/MSymbolOwnClass.abc"), new AbcNameFilterByEquals("MSymbolOwnClass"));
   }
 
   private static void d() throws IOException {
     final long time = System.currentTimeMillis();
-    new AbcFilter(null).filter(new File("/Developer/SDKs/flex_4.5.1/frameworks/libs/frameworkUnpacked/library.swf"), new File("/Users/develar/l.swf"), null);
+    new AbcFilter().filter(new File("/Developer/SDKs/flex_4.5.1/frameworks/libs/frameworkUnpacked/library.swf"), new File("/Users/develar/l.swf"), null);
     System.out.print("\n");
     System.out.print(System.currentTimeMillis() - time);
   }

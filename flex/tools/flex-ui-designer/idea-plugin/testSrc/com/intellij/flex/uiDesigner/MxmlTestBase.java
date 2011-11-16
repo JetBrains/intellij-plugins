@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
@@ -11,6 +12,7 @@ import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.xml.XmlFile;
@@ -112,39 +114,52 @@ abstract class MxmlTestBase extends AppTestBase {
    * we don't need "FileUtil.copyDir(projectRoot, toDirIO);"
    * also, skip openEditorsAndActivateLast
    */
-  protected VirtualFile configureByFiles(final VirtualFile rawProjectRoot, final VirtualFile... vFiles) throws Exception {
+  protected VirtualFile[] configureByFiles(final VirtualFile rawProjectRoot, final VirtualFile... vFiles) throws Exception {
     myFile = null;
     myEditor = null;
 
-    final VirtualFile toDir = VirtualFileManager.getInstance().findFileByUrl("temp:///");
-    assert toDir != null;
-    System.out.print("\ntemp dir l: " + toDir.getChildren().length);
-    toDir.refresh(false, false);
-
+    final VirtualFile toDir;
     final AccessToken token = WriteAction.start();
+    final VirtualFile[] files = new VirtualFile[vFiles.length];
     try {
+
+      final VirtualFile dummyRoot = VirtualFileManager.getInstance().findFileByUrl("temp:///");
+      //noinspection ConstantConditions
+      dummyRoot.refresh(false, false);
+      toDir = dummyRoot.createChildDirectory(this, "s");
+      assert toDir != null;
+      //System.out.print("\ntemp dir l: " + toDir.getChildren().length);
+
       final ModuleRootManager rootManager = ModuleRootManager.getInstance(myModule);
       final ModifiableRootModel rootModel = rootManager.getModifiableModel();
 
       final boolean rootSpecified = rawProjectRoot != null;
       final int rawRootPathLength = rootSpecified ? rawProjectRoot.getPath().length() : -1;
       // auxiliary files should be copied first
-      for (int i = vFiles.length - 1; i >= 0; i--) {
-        VirtualFile vFile = vFiles[i];
-        if (rootSpecified) {
-          copyFilesFillingEditorInfos(rawProjectRoot, toDir, vFile.getPath().substring(rawRootPathLength));
+      if (rootSpecified) {
+        for (int i = vFiles.length - 1; i >= 0; i--) {
+          copyFilesFillingEditorInfos(rawProjectRoot, toDir, vFiles[i].getPath().substring(rawRootPathLength));
         }
-        else {
-          copyFiles(vFile.getParent(), toDir, vFile.getName());
-        }
+      }
+      else {
+        copyFiles(vFiles, toDir, files);
       }
 
       rootModel.addContentEntry(toDir).addSourceFolder(toDir, false);
       modifyModule(rootModel, toDir);
       doCommitModel(rootModel);
-    }
-    catch (IOException e) {
-      LOG.error(e);
+
+      Disposer.register(myModule, new Disposable() {
+        @Override
+        public void dispose() {
+          try {
+            toDir.delete(this);
+          }
+          catch (IOException e) {
+            throw new RuntimeException(e);
+          }
+        }
+      });
     }
     finally {
       token.finish();
@@ -152,18 +167,16 @@ abstract class MxmlTestBase extends AppTestBase {
 
     launchAndInitializeApplication();
 
-    return toDir;
+    return files;
   }
 
-  private static void copyFiles(final VirtualFile fromDir, final VirtualFile toDir, final String... relativePaths) throws IOException {
-    for (String relativePath : relativePaths) {
-      if (relativePath.startsWith("/")) {
-        relativePath = relativePath.substring(1);
-      }
-      final VirtualFile fromFile = fromDir.findFileByRelativePath(relativePath);
-      assertNotNull(fromDir.getPath() + "/" + relativePath, fromFile);
-      VirtualFile toFile = toDir.createChildData(null, relativePath);
+  private static void copyFiles(final VirtualFile[] fromFiles, final VirtualFile toDir, final VirtualFile[] toFiles) throws IOException {
+    int toFileIndex = 0;
+    for (int i = fromFiles.length - 1; i >= 0; i--) {
+      final VirtualFile fromFile = fromFiles[i];
+      VirtualFile toFile = toDir.createChildData(null, fromFile.getName());
       toFile.setBinaryContent(fromFile.contentsToByteArray());
+      toFiles[toFileIndex++] = toFile;
     }
   }
 
@@ -199,7 +212,7 @@ abstract class MxmlTestBase extends AppTestBase {
   }
 
   protected void testFiles(final Tester tester, final int auxiliaryBorder, final VirtualFile... originalVFiles) throws Exception {
-    VirtualFile[] testVFiles = configureByFiles(useRawProjectRoot() ? getVFile(getRawProjectRoot()) : null, originalVFiles).getChildren();
+    VirtualFile[] testVFiles = configureByFiles(useRawProjectRoot() ? getVFile(getRawProjectRoot()) : null, originalVFiles);
     for (int childrenLength = testVFiles.length, i = childrenLength - auxiliaryBorder; i < childrenLength; i++) {
       final VirtualFile file = testVFiles[i];
       if (!file.getName().endsWith(JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT)) {

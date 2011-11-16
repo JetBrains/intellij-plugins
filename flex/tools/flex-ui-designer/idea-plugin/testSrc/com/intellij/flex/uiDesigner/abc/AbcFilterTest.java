@@ -17,7 +17,7 @@ public class AbcFilterTest {
   @Before
   public void setUp() throws Exception {
     out = File.createTempFile("abc_", ".swf");
-    filter = new AbcFilter(null);
+    filter = new AbcFilter();
   }
 
   @After

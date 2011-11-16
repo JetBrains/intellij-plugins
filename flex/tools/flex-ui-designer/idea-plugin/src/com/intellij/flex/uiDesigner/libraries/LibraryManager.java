@@ -129,7 +129,7 @@ public class LibraryManager {
         final int id = librarySetIdPool.allocate();
         final SortResult sortResult = sortLibraries(new LibrarySorter(), id, libraryCollector.externalLibraries, libraryCollector.getFlexSdkVersion(),
                                                     flexLibrarySet.contains);
-        librarySet = new LibrarySet(id, flexLibrarySet, sortResult.items, sortResult.resourceBundleOnlyItems);
+        librarySet = new LibrarySet(id, flexLibrarySet, sortResult.items);
         registerLibrarySet(key, librarySet);
       }
     }
@@ -189,7 +189,7 @@ public class LibraryManager {
         libraryCollector.getFlexSdkVersion(),
         globalContains);
 
-      flexLibrarySet = new FlexLibrarySet(id, null, sortResult.items, sortResult.resourceBundleOnlyItems, new ContainsCondition(globalDefinitions, sortResult.definitionMap));
+      flexLibrarySet = new FlexLibrarySet(id, null, sortResult.items, new ContainsCondition(globalDefinitions, sortResult.definitionMap));
       registerLibrarySet(key, flexLibrarySet);
     }
 
@@ -276,12 +276,6 @@ public class LibraryManager {
         final Project project = moduleInfo.getElement().getProject();
         for (Library library : librarySet.getLibraries()) {
           if (library.hasResourceBundles() && (propertiesFile = getResourceBundleFile(locale, bundleName, library, project)) != null) {
-            return propertiesFile;
-          }
-        }
-
-        for (Library library : librarySet.getResourceLibrariesOnly()) {
-          if ((propertiesFile = getResourceBundleFile(locale, bundleName, library, project)) != null) {
             return propertiesFile;
           }
         }
