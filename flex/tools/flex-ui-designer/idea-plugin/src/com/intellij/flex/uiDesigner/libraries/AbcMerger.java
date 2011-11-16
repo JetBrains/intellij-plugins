@@ -172,8 +172,7 @@ class AbcMerger extends AbcTranscoder {
         break;
 
       case TagTypes.PlaceObject2:
-        if ((buffer.get(buffer.position()) & PlaceObjectFlags.HAS_CHARACTER) != 0) {
-          updateReferenceById(buffer.position() + 2);
+        if (updatePlaceObject2Reference()) {
           return 0;
         }
         break;
@@ -197,6 +196,15 @@ class AbcMerger extends AbcTranscoder {
     }
 
     return 0;
+  }
+
+  private boolean updatePlaceObject2Reference() {
+    if ((buffer.get(buffer.position()) & PlaceObjectFlags.HAS_CHARACTER) != 0) {
+      updateReferenceById(buffer.position() + 3);
+      return true;
+    }
+
+    return false;
   }
 
   private void updateReferenceById(int idPosition) {
@@ -241,8 +249,11 @@ class AbcMerger extends AbcTranscoder {
           throw new IOException("PlaceObject3 are not supported");
 
         case TagTypes.PlaceObject:
-        case TagTypes.PlaceObject2:
           updateReferenceById(start);
+          break;
+
+        case TagTypes.PlaceObject2:
+          updatePlaceObject2Reference();
           break;
       }
 
