@@ -257,7 +257,7 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
       final List<String> dotProjectFiles = new ArrayList<String>();
       final boolean multipleProjects = FlashBuilderProjectFinder.isMultiProjectFxp(paths.get(0));
 
-      final String basePath = creatingNewProject ? project.getLocation() : getFxpExtractPath();
+      final String basePath = creatingNewProject ? project.getBaseDir().getPath() : getFxpExtractPath();
       assert basePath != null;
       final String fxpExtractDir = multipleProjects || isExtractToSubfolder()
                                    ? basePath + "/" + FileUtil.getNameWithoutExtension(PathUtil.getFileName(paths.get(0)))
