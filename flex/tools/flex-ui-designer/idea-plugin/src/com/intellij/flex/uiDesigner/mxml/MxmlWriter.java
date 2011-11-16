@@ -71,7 +71,7 @@ public class MxmlWriter {
 
       writer.beginMessage();
 
-      AccessToken token = ReadAction.start();
+      final AccessToken token = ReadAction.start();
       try {
         XmlTag rootTag = psiFile.getRootTag();
         assert rootTag != null;
