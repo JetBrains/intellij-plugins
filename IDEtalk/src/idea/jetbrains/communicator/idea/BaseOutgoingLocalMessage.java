@@ -17,7 +17,7 @@ package jetbrains.communicator.idea;
 
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;
-import com.intellij.util.ui.SameColor;
+import com.intellij.ui.Gray;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,7 +34,7 @@ public abstract class BaseOutgoingLocalMessage extends BaseLocalMessage {
 
   protected ConsoleViewContentType getTextAttributes() {
     return new ConsoleViewContentType("SelfText",
-        new TextAttributes(new SameColor(100), Color.white, Color.white, null, Font.PLAIN)) {
+        new TextAttributes(Gray._100, Color.white, Color.white, null, Font.PLAIN)) {
     };
   }
 
