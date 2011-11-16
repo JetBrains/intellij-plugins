@@ -67,11 +67,11 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
       }
 
       public Icon getOpenIcon(final VirtualFile file) {
-        return isFBProjectFileOrArchive(file) ? getBuilder().getIcon() : super.getOpenIcon(file);
+        return !file.isDirectory() && isFBProjectFileOrArchive(file) ? getBuilder().getIcon() : super.getOpenIcon(file);
       }
 
       public Icon getClosedIcon(final VirtualFile file) {
-        return isFBProjectFileOrArchive(file) ? getBuilder().getIcon() : super.getClosedIcon(file);
+        return !file.isDirectory() && isFBProjectFileOrArchive(file) ? getBuilder().getIcon() : super.getClosedIcon(file);
       }
     };
 
