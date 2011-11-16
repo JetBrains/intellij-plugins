@@ -252,16 +252,16 @@ public class GeneratorServer {
 
     request.setOffline(args[3].equals("t")).setUpdateSnapshots(false).setCacheNotFound(true).setCacheTransferError(true);
 
+    plexusContainer.lookup(MavenExecutionRequestPopulator.class).populateFromSettings(request, createSettings(request));
+    
+    // IDEA-76662
+    final List<String> activeProfiles = request.getActiveProfiles();
     int profilesLength = in.readShort();
     if (profilesLength > 0) {
-      List<String> activeProfiles = new ArrayList<String>(profilesLength);
       while (profilesLength-- > 0) {
         activeProfiles.add(in.readUTF());
       }
-      request.setActiveProfiles(activeProfiles);
     }
-
-    plexusContainer.lookup(MavenExecutionRequestPopulator.class).populateFromSettings(request, createSettings(request));
 
     request.setWorkspaceReader(new WorkspaceReaderImpl(in, this));
     return request;
