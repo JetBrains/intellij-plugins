@@ -885,8 +885,65 @@ public class Encoder {
     }
   }
 
+  private static final byte[] debugBasepath = {'$'};
+
   protected void writeDebugFile(DataBuffer in, int oldIndex) {
-    opcodes.writeU32(history.getIndex(IndexHistory.STRING, oldIndex));
+    //opcodes.writeU32(history.getIndex(IndexHistory.STRING, oldIndex));
+
+    int insertionIndex = history.getMapIndex(IndexHistory.STRING, oldIndex);
+    int newIndex = history.getNewIndex(insertionIndex);
+    if (newIndex == 0) {
+      // E:\dev\hero_private\frameworks\projects\framework\src => _
+      // but for included file (include "someFile.as") another format — just 'debugfile "C:\Vellum\branches\v2\2.0\dev\output\openSource\textLayout\src\flashx\textLayout\formats\TextLayoutFormatInc.as' — we don't support it yet
+      final int originalPosition = in.position();
+      final int start = history.getRawPartPoolPositions(IndexHistory.STRING)[oldIndex];
+      in.seek(start);
+      int stringLength = in.readU32();
+      //char[] s = new char[n];
+      //for (int j = 0; j < n; j++) {
+      //  s[j] = (char)in.data[in.position + in.offset + j];
+      //}
+      //String file = new String(s);
+
+      byte[] data = in.data;
+      int c;
+      int actualStart = -1;
+      for (int i = 0; i < stringLength; i++) {
+        c = data[in.position + in.offset + i];
+        if (c > 127) {
+          break; // supports only ASCII
+        }
+
+        if (c == ';') {
+          if (i < debugBasepath.length) {
+            // may be, our injected classes todo is it actual?
+            break;
+          }
+          actualStart = in.position + i - debugBasepath.length;
+          final int p = in.offset + actualStart;
+          data[p] = '$';
+          //System.arraycopy(debugBasepath, 0, data, p, debugBasepath.length);
+
+          stringLength = stringLength - i + debugBasepath.length;
+          if (stringLength < 128) {
+            actualStart--;
+            data[p - 1] = (byte)stringLength;
+          }
+          else {
+            actualStart -= 2;
+            data[p - 2] = (byte)((stringLength & 0x7F) | 0x80);
+            data[p - 1] = (byte)((stringLength >> 7) & 0x7F);
+          }
+          break;
+        }
+      }
+      in.seek(originalPosition);
+
+      newIndex = history.getIndex(IndexHistory.STRING, oldIndex, insertionIndex, actualStart);
+    }
+
+    opcodes.writeU32(newIndex);
+
   }
 
   public void OP_jump(int offset, int pos) {
