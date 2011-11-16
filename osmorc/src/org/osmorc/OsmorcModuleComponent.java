@@ -38,7 +38,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetType;
-import org.osmorc.frameworkintegration.FrameworkInstanceModuleManager;
+import org.osmorc.frameworkintegration.FrameworkInstanceLibraryManager;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -47,19 +47,19 @@ public class OsmorcModuleComponent implements ModuleComponent {
   private MessageBusConnection connection;
   private final Module myModule;
   private final BundleManager myBundleManager;
-  private final FrameworkInstanceModuleManager myFrameworkInstanceModuleManager;
+  private final FrameworkInstanceLibraryManager myFrameworkInstanceLibraryManager;
   private final AdditionalJARContentsWatcherManager myAdditionalJARContentsWatcherManager;
   private final Application myApplication;
   private boolean disposed;
 
   public OsmorcModuleComponent(Module module,
                                BundleManager bundleManager,
-                               FrameworkInstanceModuleManager frameworkInstanceModuleManager,
+                               FrameworkInstanceLibraryManager frameworkInstanceLibraryManager,
                                AdditionalJARContentsWatcherManager additionalJARContentsWatcherManager,
                                Application application) {
     this.myModule = module;
     myBundleManager = bundleManager;
-    this.myFrameworkInstanceModuleManager = frameworkInstanceModuleManager;
+    this.myFrameworkInstanceLibraryManager = frameworkInstanceLibraryManager;
     this.myAdditionalJARContentsWatcherManager = additionalJARContentsWatcherManager;
     this.myApplication = application;
     disposed = false;
@@ -77,11 +77,6 @@ public class OsmorcModuleComponent implements ModuleComponent {
     connection.subscribe(FacetManager.FACETS_TOPIC, new FacetManagerAdapter() {
       public void facetAdded(@NotNull Facet facet) {
         handleFacetChange(facet);
-      }
-
-      @Override
-      public void facetRemoved(@NotNull Facet facet) {
-        myFrameworkInstanceModuleManager.updateFrameworkInstanceModule();
       }
 
       public void facetConfigurationChanged(@NotNull Facet facet) {
@@ -131,7 +126,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
   private void handleFacetChange(Facet facet) {
     if (!disposed && facet.getTypeId() == OsmorcFacetType.ID) {
       if (facet.getModule().getProject().isInitialized()) {
-        myFrameworkInstanceModuleManager.updateFrameworkInstanceModule();
+        // reindex the module itself
         buildManuallyEditedManifestIndex();
       }
       myAdditionalJARContentsWatcherManager.updateWatcherSetup();

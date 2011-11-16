@@ -25,19 +25,18 @@
 
 package org.osmorc.frameworkintegration.impl.equinox;
 
-import org.osmorc.frameworkintegration.*;
-import org.osmorc.run.ui.SelectedBundle;
-import org.osmorc.make.BundleCompiler;
-import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.osmorc.frameworkintegration.*;
+import org.osmorc.make.BundleCompiler;
+import org.osmorc.run.ui.SelectedBundle;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -54,7 +53,7 @@ class AdaptToRunWithUpdateConfiguratorAction extends BundleSelectionAction {
 
     public void actionPerformed(AnActionEvent e) {
 
-        List<String> necessaryFrameworkBundleURLs = new ArrayList<String>();
+        final List<String> necessaryFrameworkBundleURLs = new ArrayList<String>();
         necessaryFrameworkBundleURLs.add(ORG_ECLIPSE_EQUINOX_COMMON_URL);
         necessaryFrameworkBundleURLs.add(ORG_ECLIPSE_UPDATE_CONFIGURATOR_URL);
         necessaryFrameworkBundleURLs.add(ORG_ECLIPSE_CORE_RUNTIME_URL);
@@ -86,22 +85,25 @@ class AdaptToRunWithUpdateConfiguratorAction extends BundleSelectionAction {
             FrameworkIntegratorRegistry registry = ServiceManager.getService(FrameworkIntegratorRegistry.class);
             assert instance != null;
             FrameworkIntegrator frameworkIntegrator = registry.findIntegratorByInstanceDefinition(instance);
-            List<Library> libraries = frameworkIntegrator.getFrameworkInstanceManager().getLibraries(instance);
-            for (Library library : libraries) {
-                String[] urls = library.getUrls(OrderRootType.CLASSES);
-                for (String url : urls) {
-                    for (Iterator<String> iterator = necessaryFrameworkBundleURLs.iterator(); iterator.hasNext();) {
-                        String necessaryFrameworkBundleURL = iterator.next();
-                        if (url.contains(necessaryFrameworkBundleURL)) {
-                            SelectedBundle bundle = createSelectedFrameworkBundle(url);
-                            adaptBundle(bundle);
-                            iterator.remove();
-                            getContext().addBundle(bundle);
-                            break;
-                        }
+          frameworkIntegrator.getFrameworkInstanceManager().collectLibraries(instance, new JarFileLibraryCollector() {
+            @Override
+            protected void collectFrameworkJars(@NotNull Collection<VirtualFile> jarFiles,
+                                                @NotNull FrameworkInstanceLibrarySourceFinder sourceFinder) {
+              for (VirtualFile jarFile : jarFiles) {
+                String url = jarFile.getUrl();
+                for (Iterator<String> iterator = necessaryFrameworkBundleURLs.iterator(); iterator.hasNext();) {
+                    String necessaryFrameworkBundleURL = iterator.next();
+                    if (url.contains(necessaryFrameworkBundleURL)) {
+                        SelectedBundle bundle = createSelectedFrameworkBundle(url);
+                        adaptBundle(bundle);
+                        iterator.remove();
+                        getContext().addBundle(bundle);
+                        break;
                     }
                 }
+              }
             }
+          });
         }
     }
 

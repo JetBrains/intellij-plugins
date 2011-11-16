@@ -9,6 +9,11 @@ import org.jetbrains.annotations.NotNull;
  * @version $Id:$
  */
 public class AvailabilityCheckResult {
+  /**
+   * Static result for OK checks, to avoid creating lots of objects.
+   */
+  public static final AvailabilityCheckResult OK = new AvailabilityCheckResult();
+  
   private final ResultType myResult;
   private final String myDescription;
 

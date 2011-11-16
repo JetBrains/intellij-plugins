@@ -26,12 +26,12 @@
 package org.osmorc;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.Library;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.manifest.BundleManifest;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -72,12 +72,12 @@ public interface BundleManager {
   /**
    * Does a complete project reindex. Cleans all data from the bundle manager and replaces it with the data from the given project instance.
    *
-   * @param project
    */
-  void reindex(@NotNull Project project);
+  void reindexAll();
 
   /**
-   * Resolves all dependencies of the given module, by analyzing the package import statements. Returns a list of {@link Module} and {@link Library} objects.
+   * Resolves all dependencies of the given module, by analyzing the package import, require-bundle and fragment hosts statements.
+   * Returns a list of {@link Module} and {@link Library} objects.¡
    *
    * @param module the module to resolve the dependencies for
    * @return a list of dependencies.
@@ -88,9 +88,24 @@ public interface BundleManager {
   /**
    * Checks if the given dependency is re-exported by the given module. This is only the case, if the module has a Require-Bundle-Header
    * that requires the given dependency and the visibility directive of this requirement is set to "reexport".
+   *
    * @param dependency the dependency. (a Module or a Library)
-   * @param module the module
+   * @param module     the module
    * @return true if the module reexports the dependency.
    */
   boolean isReExported(@NotNull Object dependency, @NotNull Module module);
+
+  /**
+   * Checks if the given host module/library is a fragment host of the given fragment module/library
+   * @param host the host bundle
+   * @param fragment the fragment bundle
+   * @return
+   */
+  boolean isFragmentHost(@NotNull Object host, @NotNull Object fragment);
+
+  /**
+   * Adds the given libraries to the bundle index.
+   * @param libraries
+   */
+  void reindex(@NotNull Collection<Library> libraries);
 }

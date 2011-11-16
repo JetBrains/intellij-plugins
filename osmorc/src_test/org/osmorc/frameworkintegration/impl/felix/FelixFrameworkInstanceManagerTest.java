@@ -38,7 +38,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.osmorc.SwingRunner;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
-import org.osmorc.frameworkintegration.impl.LibraryHandlerImpl;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,7 +65,7 @@ public class FelixFrameworkInstanceManagerTest {
         root = ModuleRootManager.getInstance(fixture.getModule()).getContentRoots()[0];
         fileSystem = createMock(LocalFileSystem.class);
         testObject =
-                new FelixFrameworkInstanceManager(new LibraryHandlerImpl(), fileSystem, ApplicationManager.getApplication());
+                new FelixFrameworkInstanceManager(fileSystem, ApplicationManager.getApplication());
         instanceDefinition = new FrameworkInstanceDefinition();
         instanceDefinition.setBaseFolder(new File(root.getPath(), "felix").getAbsolutePath());
         instanceDefinition.setName("test");

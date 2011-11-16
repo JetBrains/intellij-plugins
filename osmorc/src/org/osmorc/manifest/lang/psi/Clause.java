@@ -57,4 +57,10 @@ public interface Clause extends PsiElement, StubBasedPsiElement<ClauseStub> {
    */
   @Nullable
   Directive getDirectiveByName(@NotNull String name);
+
+  /**
+   * Same as {@link #getText()} but filters out line breaks and trims whitespace around it.
+   * @return
+   */
+  String getClauseText();
 }

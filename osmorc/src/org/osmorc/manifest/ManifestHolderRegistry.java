@@ -25,7 +25,11 @@
 
 package org.osmorc.manifest;
 
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.roots.libraries.Library;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
 
 /**
  * The ManifestHolderRegistry keeps track of manifest holders and provides manifest holders for modules and libraries.
@@ -34,17 +38,16 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface ManifestHolderRegistry {
   /**
-   *  @return  the manifest holder for the given object.
+   *  @return  the manifest holder for the given module.
    */
   @NotNull
-  ManifestHolder getManifestHolder(@NotNull Object bundle);
-
+  ManifestHolder getManifestHolder(@NotNull Module module);
 
   /**
-   * Clears the internal cache of manifest holders.
+   * The manifest holders for the given library. As a library may contain one or more bundles, this will return one holder for each bundle
+   * @param library the library
+   * @return a collection fo manifest holders one for each bundle of the library.
    */
-  void clearLibraryManifestHolders();
-
-  @Deprecated
-  boolean isEmpty();
+  @NotNull
+  Collection<ManifestHolder> getManifestHolders(@NotNull Library library);
 }

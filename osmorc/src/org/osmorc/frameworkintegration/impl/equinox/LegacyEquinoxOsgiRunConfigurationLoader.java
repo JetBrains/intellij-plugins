@@ -29,8 +29,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.facet.OsmorcFacet;
@@ -42,6 +41,7 @@ import org.osmorc.run.ui.SelectedBundle;
 import org.osmorc.settings.ApplicationSettings;
 import org.osmorc.settings.ProjectSettings;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -83,36 +83,43 @@ public class LegacyEquinoxOsgiRunConfigurationLoader implements LegacyOsgiRunCon
         }
     }
 
-    private void addFrameworkBundle(List<SelectedBundle> bundlesToDeploy, @NotNull FrameworkInstanceDefinition frameworkInstanceDefinition) {
+    private void addFrameworkBundle(final List<SelectedBundle> bundlesToDeploy, @NotNull FrameworkInstanceDefinition frameworkInstanceDefinition) {
+      FrameworkIntegratorRegistry registry = ServiceManager.getService(FrameworkIntegratorRegistry.class);
+      FrameworkIntegrator frameworkIntegrator = registry.findIntegratorByInstanceDefinition(frameworkInstanceDefinition);
+      FrameworkInstanceManager frameworkInstanceManager = frameworkIntegrator.getFrameworkInstanceManager();
 
-        List<Library> libraries = getFrameworkLibraries(frameworkInstanceDefinition);
-        for (Library library : libraries) {
-            String[] urls = library.getUrls(OrderRootType.CLASSES);
-            for (String url : urls) {
-                if (url.contains("org.eclipse.equinox.common_")) {
-                    SelectedBundle bundle = createSelectedFrameworkBundle(url);
-                    if (bundle != null) {
-                        bundle.setStartLevel(2);
-                        bundle.setStartAfterInstallation(true);
-                        bundlesToDeploy.add(bundle);
-                    }
-                } else if (url.contains("org.eclipse.update.configurator_")) {
-                    SelectedBundle bundle = createSelectedFrameworkBundle(url);
-                    if (bundle != null) {
-                        bundle.setStartLevel(3);
-                        bundle.setStartAfterInstallation(true);
-                        bundlesToDeploy.add(bundle);
-                    }
-                } else if (url.contains("org.eclipse.core.runtime_")) {
-                    SelectedBundle bundle = createSelectedFrameworkBundle(url);
-                    if (bundle != null) {
-                        bundle.setStartLevel(4);
-                        bundle.setStartAfterInstallation(true);
-                        bundlesToDeploy.add(bundle);
-                    }
-                }
+      frameworkInstanceManager.collectLibraries(frameworkInstanceDefinition, new JarFileLibraryCollector() {
+        @Override
+        protected void collectFrameworkJars(@NotNull Collection<VirtualFile> jarFiles, @NotNull FrameworkInstanceLibrarySourceFinder sourceFinder) {
+          for (VirtualFile jarFile : jarFiles) {
+            String url = jarFile.getUrl();
+            if (url.contains("org.eclipse.equinox.common_")) {
+              SelectedBundle bundle = createSelectedFrameworkBundle(url);
+              if (bundle != null) {
+                bundle.setStartLevel(2);
+                bundle.setStartAfterInstallation(true);
+                bundlesToDeploy.add(bundle);
+              }
             }
+            else if (url.contains("org.eclipse.update.configurator_")) {
+              SelectedBundle bundle = createSelectedFrameworkBundle(url);
+              if (bundle != null) {
+                bundle.setStartLevel(3);
+                bundle.setStartAfterInstallation(true);
+                bundlesToDeploy.add(bundle);
+              }
+            }
+            else if (url.contains("org.eclipse.core.runtime_")) {
+              SelectedBundle bundle = createSelectedFrameworkBundle(url);
+              if (bundle != null) {
+                bundle.setStartLevel(4);
+                bundle.setStartAfterInstallation(true);
+                bundlesToDeploy.add(bundle);
+              }
+            }
+          }
         }
+      });
     }
 
     @Nullable
@@ -127,14 +134,4 @@ public class LegacyEquinoxOsgiRunConfigurationLoader implements LegacyOsgiRunCon
         }
         return bundle;
     }
-
-    private List<Library> getFrameworkLibraries(@NotNull FrameworkInstanceDefinition frameworkInstance) {
-        FrameworkIntegratorRegistry registry = ServiceManager.getService(FrameworkIntegratorRegistry.class);
-        FrameworkIntegrator frameworkIntegrator = registry.findIntegratorByInstanceDefinition(frameworkInstance);
-        FrameworkInstanceManager frameworkInstanceManager = frameworkIntegrator.getFrameworkInstanceManager();
-
-        return frameworkInstanceManager.getLibraries(frameworkInstance);
-    }
-
-
 }

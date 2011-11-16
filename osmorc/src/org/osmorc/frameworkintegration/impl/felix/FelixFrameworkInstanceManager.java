@@ -26,129 +26,110 @@
 package org.osmorc.frameworkintegration.impl.felix;
 
 import com.intellij.openapi.application.Application;
-import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.frameworkintegration.AbstractFrameworkInstanceManager;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
-import org.osmorc.frameworkintegration.FrameworkInstanceManager;
-import org.osmorc.frameworkintegration.LibraryHandler;
+import org.osmorc.frameworkintegration.FrameworkLibraryCollector;
 
 import java.text.MessageFormat;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class FelixFrameworkInstanceManager implements FrameworkInstanceManager
-{
-  public FelixFrameworkInstanceManager(LibraryHandler libraryHandler, LocalFileSystem fileSystem,
-                                       Application application)
-  {
-    _libraryHandler = libraryHandler;
-    _fileSystem = fileSystem;
-    _application = application;
-    _felixSourceFinder = new FelixSourceFinder();
+public class FelixFrameworkInstanceManager extends AbstractFrameworkInstanceManager {
+  private static final Logger LOG = Logger.getInstance("#org.osmorc.frameworkintegration.impl.felix.FelixFrameworkInstanceManager");
+  private final Application myApplication;
+  private final FelixSourceFinder myFelixsourcefinder;
+  protected static final String FOLDER_DOES_NOT_EXIST =
+    "The folder <strong>{0}</strong> does not exist or is not a folder. Please choose an existing Felix installation folder. It should contain the folders \"bin\" and \"bundle\"";
+  protected static final String NO_BIN_FOLDER =
+    "The base folder <strong>{0}</strong> does not contain a folder <strong>bin</strong>. The bin folder in a Felix installation contains the core bundle.";
+  protected static final String NO_BUNDLE_FOLDER =
+    "The base folder <strong>{0}</strong> does not contain a folder <strong>bundle</strong>. The bundle folder in a Felix installation contains additional bundles of the Felix framework.";
+
+  public FelixFrameworkInstanceManager(LocalFileSystem fileSystem, Application application) {
+    super(fileSystem);
+    myApplication = application;
+    myFelixsourcefinder = new FelixSourceFinder();
   }
 
 
-  public void createLibraries(final FrameworkInstanceDefinition frameworkInstanceDefinition)
-  {
-    final VirtualFile installFolder = _fileSystem.findFileByPath(frameworkInstanceDefinition.getBaseFolder());
+  @Override
+  public void collectLibraries(@NotNull FrameworkInstanceDefinition frameworkInstanceDefinition,
+                               @NotNull final FrameworkLibraryCollector collector) {
+    final VirtualFile installFolder = getLocalFileSystem().findFileByPath(frameworkInstanceDefinition.getBaseFolder());
 
-    if (installFolder == null)
-    {
-      throw new RuntimeException("The folder " + frameworkInstanceDefinition.getBaseFolder() + " does not exist.");
+    final ArrayList<VirtualFile> directoriesToAdd = new ArrayList<VirtualFile>();
+    if (installFolder == null) {
+      LOG.warn("The folder " + frameworkInstanceDefinition.getBaseFolder() + " does not exist.");
+      return;
     }
-    if (!installFolder.isDirectory())
-    {
-      throw new RuntimeException(frameworkInstanceDefinition.getBaseFolder() + " is not a folder");
+    if (!installFolder.isDirectory()) {
+      LOG.warn(frameworkInstanceDefinition.getBaseFolder() + " is not a folder");
+      return;
     }
 
-    _application.runWriteAction(new Runnable()
-    {
-      public void run()
-      {
+    directoriesToAdd.add(installFolder);
+
+    VirtualFile binFolder = installFolder.findChild("bin");
+    if (binFolder != null) {
+      if (!binFolder.isDirectory()) {
+        LOG.warn("The Felix bin-Folder is not a directory.");
+      }
+      else {
+        directoriesToAdd.add(binFolder);
+      }
+    }
+
+    VirtualFile bundleFolder = installFolder.findChild("bundle");
+    if (bundleFolder != null) {
+      if (!bundleFolder.isDirectory()) {
+        LOG.warn("The Felix bundle-folder is not a directory");
+      }
+      else {
+        directoriesToAdd.add(bundleFolder);
+      }
+    }
+
+
+    myApplication.runWriteAction(new Runnable() {
+      public void run() {
         installFolder.refresh(false, true);
-
-        _libraryHandler.startLibraryChanges();
-        VirtualFile binFolder = installFolder.findChild("bin");
-        if (binFolder != null)
-        {
-          _libraryHandler
-              .createLibrariesFromBundles(binFolder, frameworkInstanceDefinition.getName(), _felixSourceFinder);
-        }
-        VirtualFile bundleFolder = installFolder.findChild("bundle");
-        if (bundleFolder != null)
-        {
-          _libraryHandler
-              .createLibrariesFromBundles(bundleFolder, frameworkInstanceDefinition.getName(), _felixSourceFinder);
-        }
-        _libraryHandler.commitLibraryChanges();
-        _libraryHandler.endLibraryChanges();
+        collector.collectFrameworkLibraries(myFelixsourcefinder, directoriesToAdd);
       }
     });
   }
 
-  public void removeLibraries(final FrameworkInstanceDefinition frameworkInstanceDefinition)
-  {
-    _application.runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        _libraryHandler.startLibraryChanges();
-        _libraryHandler.deleteLibraries(frameworkInstanceDefinition.getName());
-        _libraryHandler.commitLibraryChanges();
-      }
-    });
-  }
+  public String checkValidity(@NotNull FrameworkInstanceDefinition frameworkInstanceDefinition) {
 
-  public List<Library> getLibraries(FrameworkInstanceDefinition frameworkInstanceDefinition)
-  {
-    return _libraryHandler.getLibraries(frameworkInstanceDefinition.getName());
-  }
-
-  public String checkValidity(@NotNull FrameworkInstanceDefinition frameworkInstanceDefinition)
-  {
-
-    if (frameworkInstanceDefinition.getName() == null || frameworkInstanceDefinition.getName().trim().length() == 0)
-    {
+    if (frameworkInstanceDefinition.getName() == null || frameworkInstanceDefinition.getName().trim().length() == 0) {
       return "A name for the framework instance needs to be given.";
     }
 
-    VirtualFile installFolder = _fileSystem.findFileByPath(frameworkInstanceDefinition.getBaseFolder());
+    if (frameworkInstanceDefinition.isDownloadedByPaxRunner()) {
+      return checkDownloadedFolderStructure(frameworkInstanceDefinition);
+    }
 
-    if (installFolder == null || !installFolder.isDirectory())
-    {
+    VirtualFile installFolder = getLocalFileSystem().findFileByPath(frameworkInstanceDefinition.getBaseFolder());
+
+    if (installFolder == null || !installFolder.isDirectory()) {
       return MessageFormat.format(FOLDER_DOES_NOT_EXIST, frameworkInstanceDefinition.getBaseFolder());
     }
 
     VirtualFile binFolder = installFolder.findChild("bin");
-    if (binFolder == null || !binFolder.isDirectory())
-    {
+    if (binFolder == null || !binFolder.isDirectory()) {
       return MessageFormat.format(NO_BIN_FOLDER, frameworkInstanceDefinition.getBaseFolder());
     }
 
     VirtualFile bundleFolder = installFolder.findChild("bundle");
-    if (bundleFolder == null || !bundleFolder.isDirectory())
-    {
+    if (bundleFolder == null || !bundleFolder.isDirectory()) {
       return MessageFormat.format(NO_BUNDLE_FOLDER, frameworkInstanceDefinition.getBaseFolder());
     }
 
     return null;
   }
-
-  private final LibraryHandler _libraryHandler;
-  private final LocalFileSystem _fileSystem;
-  private final Application _application;
-  private final FelixSourceFinder _felixSourceFinder;
-  protected static final String FOLDER_DOES_NOT_EXIST =
-      "The folder <strong>{0}</strong> does not exist or is not a folder. Please choose an existing Felix installation folder. It should contain the folders \"bin\" and \"bundle\""
-      ;
-  protected static final String NO_BIN_FOLDER =
-      "The base folder <strong>{0}</strong> does not contain a folder <strong>bin</strong>. The bin folder in a Felix installation contains the core bundle."
-      ;
-  protected static final String NO_BUNDLE_FOLDER =
-      "The base folder <strong>{0}</strong> does not contain a folder <strong>bundle</strong>. The bundle folder in a Felix installation contains additional bundles of the Felix framework."
-      ;
 }

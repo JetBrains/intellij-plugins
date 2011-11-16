@@ -89,6 +89,11 @@ public class BundleCacheTest extends LightIdeaTestCase {
       public Object getBoundObject() {
         return null;
       }
+
+      @Override
+      public boolean isDisposed() {
+        return false;
+      }
     };
   }
 }

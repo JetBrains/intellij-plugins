@@ -26,146 +26,115 @@
 package org.osmorc.frameworkintegration.impl.knopflerfish;
 
 import com.intellij.openapi.application.Application;
-import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.frameworkintegration.AbstractFrameworkInstanceManager;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
-import org.osmorc.frameworkintegration.FrameworkInstanceManager;
-import org.osmorc.frameworkintegration.LibraryHandler;
+import org.osmorc.frameworkintegration.FrameworkLibraryCollector;
 import org.osmorc.i18n.OsmorcBundle;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class KnopflerfishFrameworkInstanceManager implements FrameworkInstanceManager
-{
-  public KnopflerfishFrameworkInstanceManager(LibraryHandler libraryHandler, LocalFileSystem fileSystem,
-                                              Application application)
-  {
-    _libraryHandler = libraryHandler;
-    _fileSystem = fileSystem;
-    _application = application;
+public class KnopflerfishFrameworkInstanceManager extends AbstractFrameworkInstanceManager {
+  private static final Logger LOG =
+    Logger.getInstance("#org.osmorc.frameworkintegration.impl.knopflerfish.KnopflerfishFrameworkInstanceManager");
+  private final Application myApplication;
+
+  public KnopflerfishFrameworkInstanceManager(LocalFileSystem fileSystem, Application application) {
+    super(fileSystem);
+    myApplication = application;
   }
 
-  public void createLibraries(final FrameworkInstanceDefinition frameworkInstanceDefinition)
-  {
-    VirtualFile installFolder = _fileSystem.findFileByPath(frameworkInstanceDefinition.getBaseFolder());
+  @Override
+  public void collectLibraries(@NotNull final FrameworkInstanceDefinition frameworkInstanceDefinition,
+                               @NotNull final FrameworkLibraryCollector collector) {
+    VirtualFile installFolder = getLocalFileSystem().findFileByPath(frameworkInstanceDefinition.getBaseFolder());
 
-    if (installFolder == null)
-    {
-      throw new RuntimeException("The folder " + frameworkInstanceDefinition.getBaseFolder() + " does not exist.");
+    if (installFolder == null) {
+      LOG.warn("The folder " + frameworkInstanceDefinition.getBaseFolder() + " does not exist.");
+      return;
     }
-    if (!installFolder.isDirectory())
-    {
-      throw new RuntimeException(frameworkInstanceDefinition.getBaseFolder() + " is not a folder");
+    if (!installFolder.isDirectory()) {
+      LOG.warn(frameworkInstanceDefinition.getBaseFolder() + " is not a folder");
+      return;
     }
 
     VirtualFile knopflerfishOrgFolder = installFolder.findChild("knopflerfish.org");
-    if (knopflerfishOrgFolder == null)
-    {
-      throw new RuntimeException(installFolder.getPath() + " does not contain a folder \"knopflerfish.org\"");
+    if (knopflerfishOrgFolder == null || !knopflerfishOrgFolder.isDirectory()) {
+      LOG.warn(installFolder.getPath() + " does not contain a folder \"knopflerfish.org\"");
+      return;
     }
 
     final VirtualFile osgiFolder = knopflerfishOrgFolder.findChild("osgi");
-    if (osgiFolder == null)
-    {
-      throw new RuntimeException(knopflerfishOrgFolder.getPath() + " does not contain a folder \"osgi\"");
+    if (osgiFolder == null) {
+      LOG.warn(knopflerfishOrgFolder.getPath() + " does not contain a folder \"osgi\"");
+      return;
     }
 
 
-    _application.runWriteAction(new Runnable()
-    {
-      public void run()
-      {
+    myApplication.runWriteAction(new Runnable() {
+      public void run() {
         osgiFolder.refresh(false, true);
 
         KnopflerfishSourceFinder sourceFinder = new KnopflerfishSourceFinder(osgiFolder);
 
-        _libraryHandler.startLibraryChanges();
-        _libraryHandler.createLibrariesFromBundles(osgiFolder, frameworkInstanceDefinition.getName(), sourceFinder);
-
+        ArrayList<VirtualFile> directoriesToAdd = new ArrayList<VirtualFile>();
         VirtualFile jarsFolder = osgiFolder.findChild("jars");
-        if (jarsFolder != null)
-        {
-          if (!jarsFolder.isDirectory())
-          {
-            throw new RuntimeException(jarsFolder.getPath() + " is not a folder");
+        if (jarsFolder != null) {
+          if (!jarsFolder.isDirectory()) {
+            LOG.warn(jarsFolder.getPath() + " is not a folder");
+            return;
           }
           VirtualFile[] files = jarsFolder.getChildren();
-          for (VirtualFile file : files)
-          {
-            if (file.isDirectory())
-            {
-              _libraryHandler.createLibrariesFromBundles(file, frameworkInstanceDefinition.getName(), sourceFinder);
+          for (VirtualFile file : files) {
+            if (file.isDirectory()) {
+              directoriesToAdd.add(file);
             }
           }
         }
-        _libraryHandler.commitLibraryChanges();
-      }
-    });
 
-  }
-
-  public void removeLibraries(final FrameworkInstanceDefinition frameworkInstanceDefinition)
-  {
-    _application.runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        _libraryHandler.startLibraryChanges();
-        _libraryHandler.deleteLibraries(frameworkInstanceDefinition.getName());
-        _libraryHandler.commitLibraryChanges();
+        collector.collectFrameworkLibraries(sourceFinder, directoriesToAdd);
       }
     });
   }
 
-  public List<Library> getLibraries(FrameworkInstanceDefinition frameworkInstanceDefinition)
-  {
-    return _libraryHandler.getLibraries(frameworkInstanceDefinition.getName());
-  }
-
-  public String checkValidity(@NotNull FrameworkInstanceDefinition frameworkInstanceDefinition)
-  {
-    if (frameworkInstanceDefinition.getName() == null || frameworkInstanceDefinition.getName().trim().length() == 0)
-    {
+  public String checkValidity(@NotNull FrameworkInstanceDefinition frameworkInstanceDefinition) {
+    if (frameworkInstanceDefinition.getName() == null || frameworkInstanceDefinition.getName().trim().length() == 0) {
       return "A name for the framework instance needs to be given.";
     }
 
-    VirtualFile installFolder = _fileSystem.findFileByPath(frameworkInstanceDefinition.getBaseFolder());
+    if (frameworkInstanceDefinition.isDownloadedByPaxRunner()) {
+      return checkDownloadedFolderStructure(frameworkInstanceDefinition);
+    }
 
-    if (installFolder == null || !installFolder.isDirectory())
-    {
+    VirtualFile installFolder = getLocalFileSystem().findFileByPath(frameworkInstanceDefinition.getBaseFolder());
+
+    if (installFolder == null || !installFolder.isDirectory()) {
       return OsmorcBundle
-          .getTranslation("knopflerfish.folder.does.not.exist", frameworkInstanceDefinition.getBaseFolder());
+        .getTranslation("knopflerfish.folder.does.not.exist", frameworkInstanceDefinition.getBaseFolder());
     }
 
     VirtualFile knopflerfishOrgFolder = installFolder.findChild("knopflerfish.org");
-    if (knopflerfishOrgFolder == null || !knopflerfishOrgFolder.isDirectory())
-    {
+    if (knopflerfishOrgFolder == null || !knopflerfishOrgFolder.isDirectory()) {
       return OsmorcBundle
-          .getTranslation("knopflerfish.folder.knopflerfish.org.missing", frameworkInstanceDefinition.getBaseFolder());
+        .getTranslation("knopflerfish.folder.knopflerfish.org.missing", frameworkInstanceDefinition.getBaseFolder());
     }
 
     VirtualFile osgiFolder = knopflerfishOrgFolder.findChild("osgi");
-    if (osgiFolder == null || !osgiFolder.isDirectory())
-    {
+    if (osgiFolder == null || !osgiFolder.isDirectory()) {
       return OsmorcBundle.getTranslation("knopflerfish.folder.osgi.missing", knopflerfishOrgFolder.getPath());
     }
 
     VirtualFile jarsFolder = osgiFolder.findChild("jars");
-    if (jarsFolder == null || !jarsFolder.isDirectory())
-    {
+    if (jarsFolder == null || !jarsFolder.isDirectory()) {
       return OsmorcBundle.getTranslation("knopflerfish.folder.jars.missing", osgiFolder.getPath());
     }
 
     return null;
   }
-
-
-  private final LibraryHandler _libraryHandler;
-  private final LocalFileSystem _fileSystem;
-  private final Application _application;
 }

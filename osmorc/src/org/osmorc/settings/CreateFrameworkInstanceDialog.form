@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.osmorc.settings.CreateFrameworkInstanceDialog">
-  <grid id="cbd77" binding="_mainPanel" layout-manager="GridLayoutManager" row-count="5" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="cbd77" binding="myMainPanel" layout-manager="GridLayoutManager" row-count="10" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="10" left="10" bottom="10" right="10"/>
     <constraints>
-      <xy x="46" y="54" width="600" height="240"/>
+      <xy x="46" y="54" width="600" height="480"/>
     </constraints>
     <properties>
-      <minimumSize width="600" height="220"/>
-      <preferredSize width="400" height="146"/>
+      <minimumSize width="600" height="400"/>
+      <preferredSize width="600" height="400"/>
     </properties>
     <border type="none"/>
     <children>
@@ -29,9 +29,9 @@
           <text value="&amp;Type" noi18n="true"/>
         </properties>
       </component>
-      <component id="2d8a2" class="javax.swing.JLabel">
+      <component id="2d8a2" class="javax.swing.JLabel" binding="myBaseFolderLabel">
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
             <preferred-size width="71" height="11"/>
           </grid>
         </constraints>
@@ -39,23 +39,23 @@
           <text value="&amp;Base Folder" noi18n="true"/>
         </properties>
       </component>
-      <component id="81edb" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="_baseFolderChooser">
+      <component id="81edb" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myBaseFolderChooser">
         <constraints>
-          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+          <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="42" height="11"/>
           </grid>
         </constraints>
         <properties/>
       </component>
-      <component id="eec86" class="javax.swing.JComboBox" binding="_integratorComboBox">
+      <component id="eec86" class="javax.swing.JComboBox" binding="myIntegratorComboBox">
         <constraints>
-          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
       </component>
-      <component id="49465" class="javax.swing.JTextField" binding="_nameTextField">
+      <component id="49465" class="javax.swing.JTextField" binding="myNameTextField">
         <constraints>
-          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
@@ -66,7 +66,7 @@
       <grid id="fc213" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="9" column="0" row-span="1" col-span="3" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <clientProperties>
@@ -74,7 +74,7 @@
         </clientProperties>
         <border type="none" title="Status"/>
         <children>
-          <grid id="b2a6b" binding="_errorText" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="b2a6b" binding="myErrorText" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -95,12 +95,83 @@
       </component>
       <component id="22362" class="javax.swing.JTextField" binding="myVersionField">
         <constraints>
-          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="2" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
         <properties/>
       </component>
+      <component id="d6d04" class="javax.swing.JRadioButton" binding="myUseLocallyInstalledFrameworkRadioButton" default-binding="true">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <selected value="true"/>
+          <text value="Use Locally installed framework"/>
+        </properties>
+      </component>
+      <component id="f64f6" class="javax.swing.JRadioButton" binding="myDownloadAFrameworkWithRadioButton" default-binding="true">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Download a framework with Pax Runner"/>
+        </properties>
+      </component>
+      <component id="97f95" class="javax.swing.JLabel" binding="myFolderLabel">
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Folder"/>
+        </properties>
+      </component>
+      <component id="f6a8c" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myTargetFolder">
+        <constraints>
+          <grid row="6" column="1" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="42" height="11"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="e0bfb" class="javax.swing.JLabel" binding="myProfilesLabel">
+        <constraints>
+          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Profiles"/>
+        </properties>
+      </component>
+      <component id="a6134" class="javax.swing.JComboBox" binding="myComboBox1" default-binding="true">
+        <constraints>
+          <grid row="7" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <editable value="true"/>
+        </properties>
+      </component>
+      <component id="c99a1" class="javax.swing.JCheckBox" binding="myClearFolderBeforeDowloadCheckBox" default-binding="true">
+        <constraints>
+          <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="2" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Delete folder contents before download"/>
+        </properties>
+      </component>
+      <component id="3c382" class="javax.swing.JButton" binding="myDownloadButton" default-binding="true">
+        <constraints>
+          <grid row="8" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Download"/>
+        </properties>
+      </component>
     </children>
   </grid>
+  <buttonGroups>
+    <group name="myButtonGroup1">
+      <member id="d6d04"/>
+      <member id="f64f6"/>
+    </group>
+  </buttonGroups>
 </form>

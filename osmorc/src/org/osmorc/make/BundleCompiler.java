@@ -48,7 +48,7 @@ import org.osmorc.BundleManager;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
-import org.osmorc.frameworkintegration.LibraryHandler;
+import org.osmorc.frameworkintegration.FrameworkInstanceLibraryManager;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.manifest.BundleManifest;
 
@@ -70,7 +70,8 @@ public class BundleCompiler implements PackagingCompiler {
     public static final Condition<OrderEntry> NOT_FRAMEWORK_LIBRARY_CONDITION = new Condition<OrderEntry>() {
         @Override
         public boolean value(OrderEntry entry) {
-            return !(entry instanceof LibraryOrderEntry) || !ServiceManager.getService(LibraryHandler.class).isFrameworkInstanceLibrary((LibraryOrderEntry) entry);
+            return !(entry instanceof LibraryOrderEntry) || !FrameworkInstanceLibraryManager.isFrameworkInstanceLibrary(
+              (LibraryOrderEntry)entry);
         }
     };
 

@@ -10,9 +10,7 @@ import org.osmorc.manifest.BundleManifest;
 import org.osmorc.manifest.ManifestHolder;
 import org.osmorc.manifest.ManifestHolderDisposedException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The bundle cache holds information about all bundles within the project.
@@ -20,7 +18,6 @@ import java.util.Set;
 public class BundleCache {
 
   private Set<ManifestHolder> myManifestHolders;
-  private boolean myIsUnclean;
 
   public BundleCache() {
     myManifestHolders = new HashSet<ManifestHolder>();
@@ -39,83 +36,114 @@ public class BundleCache {
   }
 
   /**
-   * Updates the cache with the given manifest holder. Also performs a cleanup of stale entries
+   * Updates the cache with the given manifest holder.
    *
    * @param holder the holder
+   * @return true, if the holder was added to the cache, false if the holder was already known.
    */
-  public void updateWith(@NotNull final ManifestHolder holder) {
-    new WriteAction() {
+  public boolean updateWith(@NotNull final ManifestHolder holder) {
+    return new WriteAction<Boolean>() {
       @Override
-      protected void run(Result result) throws Throwable {
+      protected void run(Result<Boolean> result) throws Throwable {
         if (!myManifestHolders.contains(holder)) {
           myManifestHolders.add(holder);
+          result.setResult(true);
         }
-        cleanup();
+        else {
+          result.setResult(false);
+        }
       }
-    }.execute();
+    }.execute().getResultObject();
   }
 
   /**
-   * Marks the cache as being unclean (containing stale entries).
+   * Removes all stale holders from the cache.
+   *
+   * @return true if there were stale entries, false if nothing changed.
    */
-  public void markUnclean() {
-    myIsUnclean = true;
-  }
-
-  /**
-   * Removes all stale holders from the cache. This will do nothing if the cache has not been marked as unclean.
-   */
-  public void cleanup() {
-    if (myIsUnclean) {
-      new WriteAction() {
-        @Override
-        protected void run(Result result) throws Throwable {
-          Set<ManifestHolder> toDispose = new HashSet<ManifestHolder>();
-          for (ManifestHolder manifestHolder : myManifestHolders) {
-            try {
-              manifestHolder.getBundleManifest();
-            }
-            catch (ManifestHolderDisposedException e) {
-              toDispose.add(manifestHolder);
-            }
+  public boolean cleanup() {
+    return new WriteAction<Boolean>() {
+      @Override
+      protected void run(Result<Boolean> result) throws Throwable {
+        result.setResult(false);
+        for (Iterator<ManifestHolder> iterator = myManifestHolders.iterator(); iterator.hasNext(); ) {
+          ManifestHolder manifestHolder = iterator.next();
+          if (manifestHolder.isDisposed()) {
+            iterator.remove();
+            result.setResult(true);
           }
-          myManifestHolders.removeAll(toDispose);
-          myIsUnclean = false;
         }
-      }.execute();
-    }
+      }
+    }.execute().getResultObject();
   }
 
   /**
-   * Returns the manifest holder which is the best match for  the given package specification
+   * Returns all manifest holders which provide the given package via export-package.
    *
    * @param packageSpec the package specification (may include version ranges)
-   * @return
+   * @return set of matching manifest holders.
    */
-  @Nullable
-  public ManifestHolder whoProvidesBest(@NotNull final String packageSpec) {
-    return new ReadAction<ManifestHolder>() {
+  @NotNull
+  public Set<ManifestHolder> whoProvides(@NotNull final String packageSpec) {
+    return new ReadAction<Set<ManifestHolder>>() {
       @Override
-      protected void run(Result<ManifestHolder> manifestHolderResult) throws Throwable {
+      protected void run(Result<Set<ManifestHolder>> manifestHolderResult) throws Throwable {
+        Set<ManifestHolder> result = new HashSet<ManifestHolder>();
         for (ManifestHolder manifestHolder : myManifestHolders) {
           BundleManifest bundleManifest;
           try {
             bundleManifest = manifestHolder.getBundleManifest();
           }
-          catch (ManifestHolderDisposedException e) {
+          catch (ManifestHolderDisposedException ignore) {
             // ok this thing is gone
-            markUnclean();
             continue;
           }
           if (bundleManifest != null) {
             if (bundleManifest.exportsPackage(packageSpec)) {
-              manifestHolderResult.setResult(manifestHolder);
-              return;
+              result.add(manifestHolder);
             }
           }
         }
+        manifestHolderResult.setResult(result);
       }
     }.execute().getResultObject();
+  }
+
+  /**
+   * Gets all known fragment hosts for the given fragment.
+   *
+   * @param fragment the fragment
+   * @return a set of fragment hosts. returns an empty set if no hosts could be found or if the given manifest holder does not represent a fragment bundle.
+   */
+  @NotNull
+  public Set<ManifestHolder> getFragmentHosts(@NotNull ManifestHolder fragment) {
+    try {
+      BundleManifest fragmentManifest = fragment.getBundleManifest();
+      // if its not a fragment or has no manifest, we can short cut here
+      if (fragmentManifest == null || !fragmentManifest.isFragmentBundle()) {
+        return Collections.emptySet();
+      }
+
+      Set<ManifestHolder> result = new HashSet<ManifestHolder>();
+      for (ManifestHolder manifestHolder : myManifestHolders) {
+        try {
+          BundleManifest potentialHostManifest = manifestHolder.getBundleManifest();
+          if (potentialHostManifest == null) {
+            continue;
+          }
+          if (potentialHostManifest.isFragmentHostFor(fragmentManifest)) {
+            result.add(manifestHolder);
+          }
+        }
+        catch (ManifestHolderDisposedException ignore) {
+          // ignore.
+        }
+      }
+      return result;
+    }
+    catch (ManifestHolderDisposedException ignore) {
+      return Collections.emptySet();
+    }
   }
 
   /**
@@ -131,13 +159,11 @@ public class BundleCache {
       protected void run(Result<List<ManifestHolder>> listResult) throws Throwable {
         List<ManifestHolder> result = new ArrayList<ManifestHolder>();
         for (ManifestHolder manifestHolder : myManifestHolders) {
-          BundleManifest bundleManifest = null;
+          BundleManifest bundleManifest;
           try {
             bundleManifest = manifestHolder.getBundleManifest();
           }
-          catch (ManifestHolderDisposedException e) {
-            // this thing is gone
-            markUnclean();
+          catch (ManifestHolderDisposedException ignore) {
             continue;
           }
           if (bundleManifest != null) {
@@ -164,13 +190,12 @@ public class BundleCache {
       @Override
       protected void run(Result<ManifestHolder> result) throws Throwable {
         for (ManifestHolder manifestHolder : myManifestHolders) {
-          BundleManifest bundleManifest = null;
+          BundleManifest bundleManifest;
           try {
             bundleManifest = manifestHolder.getBundleManifest();
           }
-          catch (ManifestHolderDisposedException e) {
+          catch (ManifestHolderDisposedException ignore) {
             // this thing is gone
-            markUnclean();
             continue;
           }
           if (bundleManifest != null) {
@@ -196,7 +221,14 @@ public class BundleCache {
       @Override
       protected void run(Result<ManifestHolder> manifestHolderResult) throws Throwable {
         for (ManifestHolder manifestHolder : myManifestHolders) {
-          if (manifestHolder.getBoundObject().equals(bundle)) {
+          Object boundObject;
+          try {
+            boundObject = manifestHolder.getBoundObject();
+          }
+          catch (ManifestHolderDisposedException ignore) {
+            continue;
+          }
+          if (boundObject.equals(bundle)) {
             manifestHolderResult.setResult(manifestHolder);
             return;
           }
