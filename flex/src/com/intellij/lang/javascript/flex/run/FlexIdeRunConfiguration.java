@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.run;
 
+import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
@@ -106,7 +107,7 @@ public class FlexIdeRunConfiguration extends RunConfigurationBase
   }
 
   public boolean isGeneratedName() {
-    return Comparing.equal(getName(), suggestedName());
+    return getName().startsWith(ExecutionBundle.message("run.configuration.unnamed.name.prefix")) || Comparing.equal(getName(), suggestedName());
   }
 
   public String suggestedName() {
