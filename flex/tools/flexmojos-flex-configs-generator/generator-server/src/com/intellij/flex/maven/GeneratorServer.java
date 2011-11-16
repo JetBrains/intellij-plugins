@@ -82,7 +82,7 @@ public class GeneratorServer {
     maven = new Maven(plexusContainer, session);
     
     final List<String> generators = new ArrayList<String>(2);
-    final URL generatorJarPath = new URL("file://" + in.readUTF());
+    final URL generatorJarPath = new File(in.readUTF()).toURI().toURL();
     generators.add(in.readUTF());
 
     final int projectsCount = in.readUnsignedShort();
@@ -283,12 +283,4 @@ public class GeneratorServer {
       container.lookup(LocalRepositoryManagerFactory.class, "simple")));
     return container;
   }
-
-  //private static <T> void setImplementation(PlexusContainer container, Class<T> componentClass, Class<? extends T> implementationClass) {
-  //  final ComponentDescriptor<?> componentDescriptor = container.getComponentDescriptor(componentClass.getName(), "default");
-  //  final ComponentRequirement requirement = new ComponentRequirement();
-  //  requirement.setFieldName("");
-  //  componentDescriptor.addRequirement(requirement);
-  //  componentDescriptor.setImplementation(implementationClass.getName());
-  //}
 }

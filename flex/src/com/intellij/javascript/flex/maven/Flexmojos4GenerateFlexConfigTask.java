@@ -14,8 +14,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathsList;
@@ -73,7 +73,6 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
     }
     catch (ExecutionException e) {
       showWarning(e.getMessage(), project);
-      LOG.error(e);
     }
 
     if (process == null) {
@@ -311,7 +310,10 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
   }
 
   private static void configureMavenClassPath(MavenGeneralSettings mavenGeneralSettings, PathsList classPath) throws ExecutionException {
-    classPath.add(FlexUtils.getPathToBundledJar("flexmojos-flex-configs-generator-server.jar"));
+    String pathToBundledJar = FlexUtils.getPathToBundledJar("flexmojos-flex-configs-generator-server.jar");
+    LOG.info("Generating flex configs pathToBundledJar: " + pathToBundledJar);
+    LOG.assertTrue(!StringUtil.isEmpty(pathToBundledJar));
+    classPath.add(pathToBundledJar);
 
     final String mavenHome = MavenExternalParameters.resolveMavenHome(mavenGeneralSettings) + File.separator;
     final String libDirPath = mavenHome + "lib";
