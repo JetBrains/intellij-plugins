@@ -158,6 +158,7 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
                              final ModifiableArtifactModel artifactModel) {
     FlexModuleBuilder.setupResourceFilePatterns(project);
 
+    final boolean needToCommitModuleModel = model == null;
     final ModifiableModuleModel moduleModel = model != null ? model : ModuleManager.getInstance(project).getModifiableModel();
 
     final List<String> paths = getList();
@@ -242,7 +243,14 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
         }
 
         final Collection<ModifiableRootModel> rootModels = moduleToModifiableModelMap.values();
-        ProjectRootManager.getInstance(project).multiCommit(moduleModel, rootModels.toArray(new ModifiableRootModel[rootModels.size()]));
+        if (needToCommitModuleModel) {
+          ProjectRootManager.getInstance(project).multiCommit(moduleModel, rootModels.toArray(new ModifiableRootModel[rootModels.size()]));
+        }
+        else {
+          for (ModifiableRootModel rootModel : rootModels) {
+            rootModel.commit();
+          }
+        }
       }
     });
 
