@@ -41,7 +41,7 @@ public class FlexDefinitionProcessor implements DefinitionProcessor {
       flipDefinition(definition, definitionMap, SKINNABLE_COMPONENT);
     }
     else if (StringUtil.equals(name, "mx.containers:Panel")) {
-      definition.doAbcData.abcModifier = new MethodAccessModifier("setControlBar", "addChildAt", null);
+      definition.doAbcData.abcModifier = new MethodAccessModifier("setControlBar", "addChildAt", null, false);
     }
     else {
       final boolean mxCore = StringUtil.startsWith(name, MX_CORE);
@@ -85,7 +85,7 @@ public class FlexDefinitionProcessor implements DefinitionProcessor {
       }
 
       if (skipInitialize || modifyConstructor) {
-        definition.doAbcData.abcModifier = new MethodAccessModifier(null, skipInitialize ? "initialize" : null, skipColorCorrection ? "colorCorrection" : null);
+        definition.doAbcData.abcModifier = new MethodAccessModifier(null, skipInitialize ? "initialize" : null, skipColorCorrection ? "colorCorrection" : null, modifyConstructor);
       }
     }
   }
@@ -166,11 +166,16 @@ public class FlexDefinitionProcessor implements DefinitionProcessor {
     private String changeAccessModifier;
     private String skipMethod;
     private String skipSetter;
+    private boolean modifyConstructor;
 
-    private MethodAccessModifier(@Nullable String changeAccessModifier, @Nullable String skipMethod, @Nullable String skipSetter) {
+    private MethodAccessModifier(@Nullable String changeAccessModifier,
+                                 @Nullable String skipMethod,
+                                 @Nullable String skipSetter,
+                                 boolean modifyConstructor) {
       this.changeAccessModifier = changeAccessModifier;
       this.skipMethod = skipMethod;
       this.skipSetter = skipSetter;
+      this.modifyConstructor = modifyConstructor;
     }
 
     @Override
@@ -203,6 +208,16 @@ public class FlexDefinitionProcessor implements DefinitionProcessor {
       }
 
       return false;
+    }
+
+    @Override
+    public boolean isModifyConstructor() {
+      if (!modifyConstructor) {
+        return false;
+      }
+
+      modifyConstructor = false;
+      return true;
     }
   }
 
