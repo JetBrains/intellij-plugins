@@ -4,6 +4,8 @@ import com.intellij.flex.uiDesigner.UncaughtErrorManager;
 
 import flash.utils.Dictionary;
 
+import org.jetbrains.ApplicationManager;
+
 import org.jetbrains.EntityLists;
 
 public class LibraryManager implements LibrarySetLoadProgressListener {
@@ -59,7 +61,7 @@ public class LibraryManager implements LibrarySetLoadProgressListener {
     for each (var librarySet:LibrarySet in librarySets) {
       do {
         librarySet.usageCounter--;
-        if (librarySet.usageCounter == 0) {
+        if (librarySet.usageCounter == 0 && !ApplicationManager.instance.unitTestMode) {
           unregisterLibrarySet(librarySet);
           if (unregistered == null) {
             unregistered = new Vector.<int>();

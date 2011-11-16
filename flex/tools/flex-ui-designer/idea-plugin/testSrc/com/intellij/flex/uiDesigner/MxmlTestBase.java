@@ -2,27 +2,18 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.components.ServiceDescriptor;
 import com.intellij.openapi.extensions.ExtensionPoint;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
 import org.picocontainer.MutablePicoContainer;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -79,7 +70,8 @@ abstract class MxmlTestBase extends AppTestBase {
         public boolean run(XmlFile[] unregisteredDocumentReferences, ProgressIndicator indicator, ProblemsHolder problemsHolder) {
           assertTrue(problemsHolder.isEmpty());
 
-          Client.getInstance().flush();
+          client = (TestClient)Client.getInstance();
+          client.flush();
 
           try {
             assertAfterInitLibrarySets(unregisteredDocumentReferences);
@@ -97,6 +89,7 @@ abstract class MxmlTestBase extends AppTestBase {
       }).run(new EmptyProgressIndicator());
     }
     else {
+      client = (TestClient)Client.getInstance();
       final ProblemsHolder problemsHolder = new ProblemsHolder();
       XmlFile[] unregistedDocumentReferences = LibraryManager.getInstance().initLibrarySets(myModule, isRequireLocalStyleHolder(),
         problemsHolder);
@@ -106,7 +99,6 @@ abstract class MxmlTestBase extends AppTestBase {
 
     appDir = DesignerApplicationManager.APP_DIR;
     socketInputHandler = (TestSocketInputHandler)SocketInputHandler.getInstance();
-    client = (TestClient)Client.getInstance();
   }
 
   protected VirtualFile[] configureByFiles(final VirtualFile rawProjectRoot, final VirtualFile... vFiles) throws Exception {

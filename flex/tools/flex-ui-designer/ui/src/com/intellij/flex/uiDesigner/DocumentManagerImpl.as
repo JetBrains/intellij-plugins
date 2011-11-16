@@ -80,17 +80,19 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
 
   public function open(documentFactory:DocumentFactory, documentOpened:Function = null):void {
     var context:ModuleContextEx = documentFactory.module.context;
-    if (context.imageAssetContainerClassPool.filling) {
-      context.imageAssetContainerClassPool.filled.addOnce(function():void {
-        open(documentFactory, documentOpened);
-      });
-      return;
-    }
-    if (context.swfAssetContainerClassPool.filling) {
-      context.swfAssetContainerClassPool.filled.addOnce(function():void {
-        open(documentFactory, documentOpened);
-      });
-      return;
+    if (!documentFactory.isPureFlash) {
+      if (context.imageAssetContainerClassPool.filling) {
+        context.imageAssetContainerClassPool.filled.addOnce(function ():void {
+          open(documentFactory, documentOpened);
+        });
+        return;
+      }
+      if (context.swfAssetContainerClassPool.filling) {
+        context.swfAssetContainerClassPool.filled.addOnce(function ():void {
+          open(documentFactory, documentOpened);
+        });
+        return;
+      }
     }
 
     if (documentFactory.document == null) {

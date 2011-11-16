@@ -39,6 +39,8 @@ class FlexDefinitionMapProcessor implements DefinitionMapProcessor {
       definitionMap.remove(pair.second);
     }
 
+    definitionMap.remove("SparkDmvClasses");
+
     abcMerger.setDefinitionProcessor(null);
     inject(definitionMap, abcMerger);
   }

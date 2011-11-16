@@ -255,14 +255,13 @@ public class LibraryManager {
 
   // created library will be register later, in Client.registerLibrarySet, so, we expect that createOriginalLibrary never called with duplicated virtualFile, i.e.
   // sdkLibraries doesn't contain duplicated virtualFiles and externalLibraries too (http://youtrack.jetbrains.net/issue/AS-200)
-  Library createOriginalLibrary(@NotNull final VirtualFile jarFile, final String artifactId,
-                                @NotNull final Consumer<Library> initializer) {
+  Library createOriginalLibrary(@NotNull final VirtualFile jarFile, @NotNull final Consumer<Library> initializer) {
     final Library info = libraries.getNullableInfo(jarFile);
     if (info != null) {
       return info;
     }
 
-    Library library = new Library(artifactId, jarFile);
+    Library library = new Library(jarFile);
     initializer.consume(library);
     return library;
   }

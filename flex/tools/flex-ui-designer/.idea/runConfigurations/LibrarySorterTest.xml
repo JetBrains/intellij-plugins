@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="LibrarySorterTest specified" type="JUnit" factoryName="JUnit">
+  <configuration default="false" name="LibrarySorterTest" type="JUnit" factoryName="JUnit">
     <extension name="coverage" enabled="false" merge="false" />
     <module name="idea-plugin" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -7,8 +7,8 @@
     <option name="PACKAGE_NAME" value="com.intellij.flex.uiDesigner" />
     <option name="MAIN_CLASS_NAME" value="com.intellij.flex.uiDesigner.LibrarySorterTest" />
     <option name="METHOD_NAME" value="testOverlappingContent" />
-    <option name="TEST_OBJECT" value="method" />
-    <option name="VM_PARAMETERS" value="-Xmx768m -XX:MaxPermSize=512m -ea" />
+    <option name="TEST_OBJECT" value="class" />
+    <option name="VM_PARAMETERS" value="-Xmx768m -XX:MaxPermSize=512m -ea -Dfud.test.debug=true" />
     <option name="PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
     <option name="ENV_VARIABLES" />
@@ -19,12 +19,9 @@
     <envs />
     <patterns />
     <RunnerSettings RunnerId="Debug">
-      <option name="DEBUG_PORT" value="51103" />
+      <option name="DEBUG_PORT" value="" />
       <option name="TRANSPORT" value="0" />
       <option name="LOCAL" value="true" />
-    </RunnerSettings>
-    <RunnerSettings RunnerId="Profile ">
-      <option name="myExternalizedOptions" value="&#10;additional-options2=onexit\=snapshot&#10;" />
     </RunnerSettings>
     <RunnerSettings RunnerId="Run" />
     <ConfigurationWrapper RunnerId="Debug" />
