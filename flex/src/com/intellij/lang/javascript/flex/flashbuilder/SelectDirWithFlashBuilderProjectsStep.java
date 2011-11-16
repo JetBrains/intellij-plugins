@@ -4,6 +4,7 @@ import com.intellij.CommonBundle;
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.ui.LabeledComponent;
@@ -39,10 +40,14 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
     setupInitialPathComponent();
 
     myFxpExtractPathComponent.setVisible(false);
+    myFxpExtractPathComponent.getComponent()
+      .addBrowseFolderListener(null, null, context.getProject(), FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
     final boolean creatingNewProject = context.isCreatingNewProject();
     myProjectNameComponent.setVisible(creatingNewProject);
     myProjectLocationComponent.setVisible(creatingNewProject);
+    myProjectLocationComponent.getComponent()
+      .addBrowseFolderListener(null, null, context.getProject(), FileChooserDescriptorFactory.createSingleFolderDescriptor());
     myProjectFormatPanel.getPanel().setVisible(creatingNewProject);
 
     myMultiProjectNote.setVisible(false);
