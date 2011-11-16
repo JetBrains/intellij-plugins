@@ -19,6 +19,8 @@ public class ShareableFlexConfigGenerator extends IdeaConfigurator {
 
   public ShareableFlexConfigGenerator(MavenSession session, File outputDirectory) {
     super(session, new File("build-gant/flex-configs"));
+    //noinspection ResultOfMethodCallIgnored
+    this.outputDirectory.mkdirs();
   }
 
   @Override
