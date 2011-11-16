@@ -5,7 +5,7 @@ public interface AbcModifier {
 
   boolean slotTraitName(int name, int traitKind, DataBuffer in, Encoder encoder);
 
-  boolean methodTrait(int traitKind, int name, DataBuffer in, Encoder encoder);
+  boolean methodTrait(int traitKind, int name, DataBuffer in, int methodInfo, Encoder encoder);
 
   int methodTraitDelta();
 }

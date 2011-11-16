@@ -4,6 +4,7 @@ import com.intellij.flex.uiDesigner.abc.Decoder.Opcodes;
 import com.intellij.flex.uiDesigner.io.AbstractByteArrayOutputStream;
 import com.intellij.flex.uiDesigner.io.IntIntHashMap;
 import gnu.trove.TIntArrayList;
+import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -344,17 +345,8 @@ public class Encoder {
     metadataInfo.addData(index, buffer);
   }
 
-  protected void instanceStarting(int name, DataBuffer in) {
-
-  }
-
   public void startInstance(DataBuffer in) {
-    final int name = in.readU32();
-    final int originalPos = in.position();
-    instanceStarting(name, in);
-    in.seek(originalPos);
-
-    instanceInfo.writeU32(history.getIndex(IndexHistory.MULTINAME, name));
+    instanceInfo.writeU32(history.getIndex(IndexHistory.MULTINAME, in.readU32()));
     instanceInfo.writeU32(history.getIndex(IndexHistory.MULTINAME, in.readU32()));
 
     int flags = in.readU8();
@@ -405,8 +397,27 @@ public class Encoder {
     currentBuffer = null;
   }
 
-  public int startMethodBody(int methodInfo, int maxStack, int maxRegs, int scopeDepth, int maxScope) {
-    methodBodies.writeU32(this.methodInfo.getIndex(methodInfo));
+  public int startMethodBody(int methodInfoIndex, int maxStack, int maxRegs, int scopeDepth, int maxScope) {
+    TIntObjectHashMap<byte[]> modifiedMethodBodies = history.constantPool.modifiedMethodBodies == null ? null : history.getModifiedMethodBodies();
+    byte[] bytes = modifiedMethodBodies == null ? null : modifiedMethodBodies.get(methodInfoIndex);
+    final int result;
+    if (bytes != null) {
+      if (bytes == EMPTY_METHOD_BODY) {
+        methodBodies.writeU32(methodInfo.getIndex(methodInfoIndex));
+        methodBodies.writeTo(bytes);
+        return MethodCodeDecoding.STOP;
+      }
+      else {
+        // we cannot change iinit to empty body, because iinit may contains some default value for complex instance properties,
+        // so, we allow all code before constructsuper opcode.
+        result = MethodCodeDecoding.STOP_AFTER_CONSTRUCT_SUPER;
+      }
+    }
+    else {
+      result = MethodCodeDecoding.CONTINUE;
+    }
+
+    methodBodies.writeU32(methodInfo.getIndex(methodInfoIndex));
 
     methodBodies.writeU32(maxStack);
     methodBodies.writeU32(maxRegs);
@@ -417,7 +428,7 @@ public class Encoder {
     opcodePass = 1;
     exPass = 1;
 
-    return MethodCodeDecoding.CONTINUE;
+    return result;
   }
 
   public void endMethodBody() {
@@ -473,7 +484,7 @@ public class Encoder {
   private void encodeMetaData(TIntArrayList metadata) {
     if (metadata != null) {
       currentBuffer.writeU32(metadata.size());
-      for (int i = 0, length = metadata.size(); i < length; i++) {
+      for (int i = 0, n = metadata.size(); i < n; i++) {
         currentBuffer.writeU32(metadata.getQuick(i));
       }
     }
@@ -487,9 +498,9 @@ public class Encoder {
     tempMetadataList.resetQuick();
 
     for (int aMetadata : metadata) {
-      int new_index = metadataInfo.getIndex(aMetadata);
-      if (new_index != -1) {
-        tempMetadataList.add(new_index);
+      int newIndex = metadataInfo.getIndex(aMetadata);
+      if (newIndex != -1) {
+        tempMetadataList.add(newIndex);
       }
     }
     return tempMetadataList.isEmpty() ? null : tempMetadataList;
@@ -614,6 +625,32 @@ public class Encoder {
     return false;
   }
 
+  private final static byte[] EMPTY_METHOD_BODY = {0x01, 0x02, 0x04, 0x05, 0x03, (byte)0xd0, 0x30, 0x47, 0x00, 0x00};
+
+  public boolean clearMethodBody(String name, int nameIndex, DataBuffer in, int methodInfo) {
+    final int originalPosition = in.position();
+    in.seek(history.getRawPartPoolPositions(IndexHistory.MULTINAME)[nameIndex]);
+
+    int constKind = in.readU8();
+    assert constKind == CONSTANT_Qname || constKind == CONSTANT_QnameA;
+    int ns = in.readU32();
+    int localName = in.readU32();
+
+    in.seek(history.getRawPartPoolPositions(IndexHistory.NS)[ns]);
+    int nsKind = in.readU8();
+    if (nsKind == CONSTANT_PackageNamespace) {
+      in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[localName]);
+      if (compare(in, name)) {
+        history.getModifiedMethodBodies().put(methodInfo, EMPTY_METHOD_BODY);
+        in.seek(originalPosition);
+        return true;
+      }
+    }
+
+    in.seek(originalPosition);
+    return false;
+  }
+
   private int findPublicNamespace(DataBuffer in) {
     final int originalPosition = in.position();
     try {
@@ -656,8 +693,8 @@ public class Encoder {
     return true;
   }
 
-  public void methodTrait(int traitKind, int name, int dispId, int methodInfo, int[] metadata, DataBuffer in) {
-    if (abcModifier != null && abcModifier.methodTrait(traitKind, name, in, this)) {
+  public void methodTrait(int traitKind, int name, int dispId, int methodInfoIndex, int[] metadata, DataBuffer in) {
+    if (abcModifier != null && abcModifier.methodTrait(traitKind, name, in, methodInfoIndex, this)) {
       return;
     }
 
@@ -665,16 +702,16 @@ public class Encoder {
       currentBuffer.writeU32(history.getIndex(IndexHistory.MULTINAME, name));
     }
 
-    TIntArrayList new_metadata = trimMetadata(metadata);
-    if (((traitKind >> 4) & TRAIT_FLAG_metadata) != 0 && new_metadata == null) {
+    TIntArrayList newMetadata = trimMetadata(metadata);
+    if (((traitKind >> 4) & TRAIT_FLAG_metadata) != 0 && newMetadata == null) {
       traitKind = traitKind & ~(TRAIT_FLAG_metadata << 4);
     }
     currentBuffer.writeU8(traitKind);
 
     currentBuffer.writeU32(dispId);
-    currentBuffer.writeU32(this.methodInfo.getIndex(methodInfo));
+    currentBuffer.writeU32(methodInfo.getIndex(methodInfoIndex));
 
-    encodeMetaData(new_metadata);
+    encodeMetaData(newMetadata);
   }
 
   public void classTrait(int kind, int name, int slotId, int classInfoIndex, int[] metadata) {

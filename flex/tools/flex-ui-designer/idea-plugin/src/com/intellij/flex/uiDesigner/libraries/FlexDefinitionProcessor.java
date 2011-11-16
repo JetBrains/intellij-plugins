@@ -189,17 +189,18 @@ public class FlexDefinitionProcessor implements DefinitionProcessor {
     }
 
     @Override
-    public boolean methodTrait(int traitKind, int name, DataBuffer in, Encoder encoder) {
+    public boolean methodTrait(int traitKind, int name, DataBuffer in, int methodInfo, Encoder encoder) {
       if (skipMethod != null && isOverridenMethod(traitKind)) {
         if (encoder.skipMethod(skipMethod, name, in)) {
           skipMethod = null;
           return true;
         }
       }
-      //else if (skipSetter != null && isSetter(traitKind) && encoder.skipMethod(skipSetter, name, in)) {
-      //  skipSetter = null;
-      //  return true;
-      //}
+      else if (skipSetter != null && isSetter(traitKind) && encoder.clearMethodBody(skipSetter, name, in, methodInfo)) {
+        skipSetter = null;
+        // false, clearMethodBody just put it to map for deferred processing
+        return false;
+      }
 
       return false;
     }

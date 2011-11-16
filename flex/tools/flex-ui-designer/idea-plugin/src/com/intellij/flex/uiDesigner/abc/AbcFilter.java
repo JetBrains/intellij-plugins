@@ -248,7 +248,7 @@ public class AbcFilter extends AbcTranscoder {
   }
 
   private void mergeDoAbc(boolean asTag, boolean hasClassAssociatedWithMainTimeLine) throws IOException {
-    final Encoder encoder = flexSdkVersion != null ? new FlexEncoder(inputFileParentName, flexSdkVersion) : new Encoder();
+    final Encoder encoder = flexSdkVersion != null ? new FlexEncoder(inputFileParentName) : new Encoder();
     encoder.configure(decoders, hasClassAssociatedWithMainTimeLine ? transientNameString : null);
     SwfUtil.mergeDoAbc(decoders, encoder);
     encoder.writeDoAbc(channel, asTag);

@@ -20,7 +20,7 @@ public abstract class AbcModifierBase implements AbcModifier {
   }
 
   @Override
-  public boolean methodTrait(int traitKind, int name, DataBuffer in, Encoder encoder) {
+  public boolean methodTrait(int traitKind, int name, DataBuffer in, int methodInfo, Encoder encoder) {
     return false;
   }
 

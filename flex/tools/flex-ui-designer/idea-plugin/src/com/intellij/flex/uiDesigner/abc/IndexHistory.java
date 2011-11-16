@@ -92,8 +92,8 @@ final class IndexHistory {
     return constantPool.positions[kind];
   }
 
-  public TIntObjectHashMap<byte[]> getModifiedMethodBodies(int poolIndex) {
-    final ConstantPool pool = decoders.get(poolIndex).constantPool;
+  public TIntObjectHashMap<byte[]> getModifiedMethodBodies() {
+    final ConstantPool pool = constantPool;
     if (pool.modifiedMethodBodies == null) {
       pool.modifiedMethodBodies = new TIntObjectHashMap<byte[]>();
     }

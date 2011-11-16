@@ -234,7 +234,7 @@ public final class Decoder {
           skipExceptions(in.readU32(), in);
           int traitCount = in.readU32();
           assert traitCount == 0;
-          return;
+          continue;
         }
 
         int exPos = in.position();
