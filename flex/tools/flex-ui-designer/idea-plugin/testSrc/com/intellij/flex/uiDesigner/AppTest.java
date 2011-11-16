@@ -27,14 +27,12 @@ public class AppTest extends AppTestBase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    //TestDesignerApplicationManager.changeServiceImplementation(Client.class, TestClient.class);
-    //TestDesignerApplicationManager.changeServiceImplementation(SocketInputHandler.class, MySocketInputHandler.class);
     final MySocketInputHandler socketInputHandler = (MySocketInputHandler)SocketInputHandler.getInstance();
     socketInputHandler.info = info;
   }
   
-  private VirtualFile open(String relativeFile) throws IOException, InterruptedException {
-    VirtualFile newParent = configureByFiles(null, getVFile(getTestPath() + "/" + relativeFile));
+  private VirtualFile open(String relativeFile) throws Exception {
+    VirtualFile file = configureByFile(getVFile(getTestPath() + "/" + relativeFile));
 
     info.semaphore.down();
     assert connection == null;
@@ -50,9 +48,10 @@ public class AppTest extends AppTestBase {
     //  }
     //});
 
-    DesignerApplicationManager.getInstance().openDocument(myModule, (XmlFile)myFile, false);
+    DesignerApplicationManager.getInstance().openDocument(myModule, (XmlFile)file, false);
     await();
-    return newParent;
+
+    return file;
   }
   
   private void await() throws InterruptedException {
@@ -80,10 +79,9 @@ public class AppTest extends AppTestBase {
   }
 
   public void testUpdateDocumentOnIdeaAutoSave() throws Exception {
-    VirtualFile newParent = open("states/SetProperty.mxml");
-    
-    VirtualFile virtualFile = newParent.getChildren()[0];
-    final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
+    VirtualFile file = open("states/SetProperty.mxml");
+
+    final Document document = FileDocumentManager.getInstance().getDocument(file);
     AccessToken token = WriteAction.start();
     try {
       assert document != null;
@@ -96,7 +94,7 @@ public class AppTest extends AppTestBase {
     PsiDocumentManager.getInstance(myProject).commitAllDocuments();
 
     final DesignerApplicationManager designerApplicationManager = DesignerApplicationManager.getInstance();
-    designerApplicationManager.openDocument(myModule, (XmlFile)myFile, false);
+    designerApplicationManager.openDocument(myModule, (XmlFile)file, false);
     while (designerApplicationManager.isDocumentOpening()) {
       Thread.sleep(8); // todo event about document opened
     }

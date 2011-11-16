@@ -11,7 +11,6 @@ import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.flex.uiDesigner.DebugPathManager;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.debug.FlexDebugProcess;
-import com.intellij.lang.javascript.flex.run.FlexIdeRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunnerParameters;
 import com.intellij.openapi.module.Module;

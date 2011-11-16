@@ -15,11 +15,14 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
 import org.picocontainer.MutablePicoContainer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -48,9 +51,6 @@ abstract class MxmlTestBase extends AppTestBase {
   }
 
   protected void assertAfterInitLibrarySets(XmlFile[] unregisteredDocumentReferences) throws IOException {
-  }
-
-  protected void modifyModule(ModifiableRootModel model, VirtualFile rootDir) {
   }
 
   static void changeServiceImplementation(Class key, Class implementation) {
@@ -109,75 +109,10 @@ abstract class MxmlTestBase extends AppTestBase {
     client = (TestClient)Client.getInstance();
   }
 
-  /**
-   * standard impl in CodeInsightTestCase is not suitable for us — in case of not null rawProjectRoot (we need test file in package),
-   * we don't need "FileUtil.copyDir(projectRoot, toDirIO);"
-   * also, skip openEditorsAndActivateLast
-   */
   protected VirtualFile[] configureByFiles(final VirtualFile rawProjectRoot, final VirtualFile... vFiles) throws Exception {
-    myFile = null;
-    myEditor = null;
-
-    final VirtualFile toDir;
-    final AccessToken token = WriteAction.start();
-    final VirtualFile[] files = new VirtualFile[vFiles.length];
-    try {
-
-      final VirtualFile dummyRoot = VirtualFileManager.getInstance().findFileByUrl("temp:///");
-      //noinspection ConstantConditions
-      dummyRoot.refresh(false, false);
-      toDir = dummyRoot.createChildDirectory(this, "s");
-      assert toDir != null;
-      //System.out.print("\ntemp dir l: " + toDir.getChildren().length);
-
-      final ModuleRootManager rootManager = ModuleRootManager.getInstance(myModule);
-      final ModifiableRootModel rootModel = rootManager.getModifiableModel();
-
-      final boolean rootSpecified = rawProjectRoot != null;
-      final int rawRootPathLength = rootSpecified ? rawProjectRoot.getPath().length() : -1;
-      // auxiliary files should be copied first
-      if (rootSpecified) {
-        for (int i = vFiles.length - 1; i >= 0; i--) {
-          copyFilesFillingEditorInfos(rawProjectRoot, toDir, vFiles[i].getPath().substring(rawRootPathLength));
-        }
-      }
-      else {
-        copyFiles(vFiles, toDir, files);
-      }
-
-      rootModel.addContentEntry(toDir).addSourceFolder(toDir, false);
-      modifyModule(rootModel, toDir);
-      doCommitModel(rootModel);
-
-      Disposer.register(myModule, new Disposable() {
-        @Override
-        public void dispose() {
-          try {
-            toDir.delete(this);
-          }
-          catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-        }
-      });
-    }
-    finally {
-      token.finish();
-    }
-
+    final VirtualFile[] files = super.configureByFiles(rawProjectRoot, vFiles);
     launchAndInitializeApplication();
-
     return files;
-  }
-
-  private static void copyFiles(final VirtualFile[] fromFiles, final VirtualFile toDir, final VirtualFile[] toFiles) throws IOException {
-    int toFileIndex = 0;
-    for (int i = fromFiles.length - 1; i >= 0; i--) {
-      final VirtualFile fromFile = fromFiles[i];
-      VirtualFile toFile = toDir.createChildData(null, fromFile.getName());
-      toFile.setBinaryContent(fromFile.contentsToByteArray());
-      toFiles[toFileIndex++] = toFile;
-    }
   }
 
   protected void testFiles(final int auxiliaryBorder, final VirtualFile[] originalVFiles) throws Exception {
@@ -213,6 +148,7 @@ abstract class MxmlTestBase extends AppTestBase {
 
   protected void testFiles(final Tester tester, final int auxiliaryBorder, final VirtualFile... originalVFiles) throws Exception {
     VirtualFile[] testVFiles = configureByFiles(useRawProjectRoot() ? getVFile(getRawProjectRoot()) : null, originalVFiles);
+    final PsiManager psiManager = PsiManager.getInstance(myProject);
     for (int childrenLength = testVFiles.length, i = childrenLength - auxiliaryBorder; i < childrenLength; i++) {
       final VirtualFile file = testVFiles[i];
       if (!file.getName().endsWith(JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT)) {
@@ -220,7 +156,7 @@ abstract class MxmlTestBase extends AppTestBase {
       }
       
       final VirtualFile originalVFile = originalVFiles[childrenLength - i - 1];
-      final XmlFile xmlFile = (XmlFile) myPsiManager.findFile(file);
+      final XmlFile xmlFile =  (XmlFile)psiManager.findFile(file);
       assert xmlFile != null;
 
       final Callable<Void> action = new Callable<Void>() {

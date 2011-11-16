@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
@@ -17,15 +18,17 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import junit.framework.AssertionFailedError;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.FileFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,12 +44,6 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   
   protected final String getTestPath() {
     return getTestDataPath() + "/src/" + getSourceBasePath();
-  }
-
-  protected static VirtualFile getVFile(String path) {
-    VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(path.charAt(0) == '/' ? path : (testDataPath() + '/' + path));
-    assertNotNull(vFile);
-    return vFile;
   }
 
   @Override

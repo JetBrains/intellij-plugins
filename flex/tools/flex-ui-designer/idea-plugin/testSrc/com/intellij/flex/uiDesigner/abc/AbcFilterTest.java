@@ -12,7 +12,7 @@ import java.io.IOException;
 public class AbcFilterTest {
   private File out;
   private AbcFilter filter;
-  private static final File TEST_LIB_DIR = new File(FlexUIDesignerBaseTestCase.testDataPath(), "abcTestLib");
+  private static final File TEST_LIB_DIR = new File(FlexUIDesignerBaseTestCase.getTestDataPath(), "abcTestLib");
 
   @Before
   public void setUp() throws Exception {
