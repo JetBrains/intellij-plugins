@@ -15,7 +15,7 @@ public class AbcFilterTest {
   private static final File TEST_LIB_DIR = new File(FlexUIDesignerBaseTestCase.getTestDataPath(), "abcTestLib");
 
   @Before
-  public void setUp() throws Exception {
+  public void runBeforeEveryTest() throws Exception {
     out = File.createTempFile("abc_", ".swf");
     filter = new AbcFilter();
   }
@@ -34,6 +34,12 @@ public class AbcFilterTest {
 
   @Test
   public void replaceExportsToSymbolClass() throws IOException {
+    filter.filter(new File(TEST_LIB_DIR, "MinimalComps_0_9_10.swf"), out, null);
+    assertThat(out.length(), 257126);
+  }
+
+  @Test
+  public void merge() throws IOException {
     filter.filter(new File(TEST_LIB_DIR, "MinimalComps_0_9_10.swf"), out, null);
     assertThat(out.length(), 257126);
   }

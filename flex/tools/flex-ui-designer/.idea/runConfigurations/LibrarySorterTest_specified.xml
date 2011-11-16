@@ -6,7 +6,7 @@
     <option name="ALTERNATIVE_JRE_PATH" value="" />
     <option name="PACKAGE_NAME" value="com.intellij.flex.uiDesigner" />
     <option name="MAIN_CLASS_NAME" value="com.intellij.flex.uiDesigner.LibrarySorterTest" />
-    <option name="METHOD_NAME" value="testResolveToClassWithBiggestTimestamp" />
+    <option name="METHOD_NAME" value="testMoveFlexSdkLibToSdkLibsIfNot" />
     <option name="TEST_OBJECT" value="method" />
     <option name="VM_PARAMETERS" value="-Xmx768m -XX:MaxPermSize=512m -ea" />
     <option name="PARAMETERS" value="" />

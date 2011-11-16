@@ -1,19 +1,19 @@
 package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.abc.*;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.TIntObjectHashMap;
 import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.*;
 
 class AbcMerger extends AbcTranscoder {
+  private static final Logger LOG = Logger.getInstance(AbcMerger.class.getName());
+
   private final Map<CharSequence, Definition> definitionMap;
   private final FileOutputStream out;
 
@@ -52,6 +52,10 @@ class AbcMerger extends AbcTranscoder {
 
     VirtualFile file = library.getSwfFile();
     process(file.getInputStream(), (int)file.getLength());
+  }
+
+  public void process(InputStream in) throws IOException {
+    process(in, in.available());
   }
 
   public void process(InputStream in, int length) throws IOException {
@@ -137,31 +141,48 @@ class AbcMerger extends AbcTranscoder {
     }
 
     int characterIdPosition = -1;
-
     switch (type) {
+      case TagTypes.DefineScalingGrid:
       case TagTypes.DefineSprite:
+
       case TagTypes.DefineShape:
       case TagTypes.DefineShape2:
       case TagTypes.DefineShape3:
       case TagTypes.DefineShape4:
+
       case TagTypes.DefineBinaryData:
       case TagTypes.DefineBitsLossless2:
       case TagTypes.DefineBitsLossless:
-      case TagTypes.PlaceObject:
-      case TagTypes.DefineScalingGrid:
+
       case TagTypes.DefineBitsJPEG2:
       case TagTypes.DefineBitsJPEG3:
       case TagTypes.DefineBitsJPEG4:
+
       case TagTypes.DefineBits:
+
+      case TagTypes.PlaceObject:
+
+      case TagTypes.DefineFont:
+      case TagTypes.DefineFont2:
+      case TagTypes.DefineFont3:
+      case TagTypes.DefineText:
+      case TagTypes.DefineEditText:
         // character id after header
         characterIdPosition = buffer.position();
         break;
 
       case TagTypes.PlaceObject2:
         if ((buffer.get(buffer.position()) & PlaceObjectFlags.HAS_CHARACTER) != 0) {
-          characterIdPosition = buffer.position() + 2;
+          updateReferenceById(buffer.position() + 2);
+          return 0;
         }
         break;
+
+      case TagTypes.DefineFontName:
+      case TagTypes.DefineFontAlignZones:
+      case TagTypes.DefineFontInfo:
+        updateReferenceById(buffer.position());
+        return 0;
 
       case TagTypes.PlaceObject3:
         throw new IOException("PlaceObject3 are not supported");
@@ -178,8 +199,20 @@ class AbcMerger extends AbcTranscoder {
     return 0;
   }
 
-  private void changeCharacterId(int characterIdPosition) {
-    final int oldId = buffer.getShort(characterIdPosition);
+  private void updateReferenceById(int idPosition) {
+    final int oldId = buffer.getShort(idPosition);
+    SymbolInfo info = currentSymbolsInfo.get(oldId);
+    // swf may be invalid
+    if (info != null) {
+      buffer.putShort(idPosition, (short)info.newId);
+    }
+    else {
+      LOG.warn("swf invalid, cannot update reference " + oldId + " due to object with this id is not defined yet");
+    }
+  }
+
+  private void changeCharacterId(int idPosition) {
+    final int oldId = buffer.getShort(idPosition);
     SymbolInfo info = currentSymbolsInfo.get(oldId);
     // swf may be invalid
     if (info == null) {
@@ -187,7 +220,7 @@ class AbcMerger extends AbcTranscoder {
       currentSymbolsInfo.put(oldId, info);
     }
 
-    buffer.putShort(characterIdPosition, (short)info.newId);
+    buffer.putShort(idPosition, (short)info.newId);
   }
 
   private void processDefineSprite(int spriteTagLength) throws IOException {
@@ -209,7 +242,7 @@ class AbcMerger extends AbcTranscoder {
 
         case TagTypes.PlaceObject:
         case TagTypes.PlaceObject2:
-          changeCharacterId(start);
+          updateReferenceById(start);
           break;
       }
 

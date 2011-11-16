@@ -205,7 +205,7 @@ public class LibraryManager {
     Set<CharSequence> globalDefinitions = globalDefinitionsMap.get(file);
     if (globalDefinitions == null) {
       try {
-        globalDefinitions = LibrarySorter.getDefinitions(file);
+        globalDefinitions = LibraryUtil.getDefinitions(file);
       }
       catch (IOException e) {
         throw new InitException(e, "error.sort.libraries");

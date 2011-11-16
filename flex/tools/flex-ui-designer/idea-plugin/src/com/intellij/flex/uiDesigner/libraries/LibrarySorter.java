@@ -6,19 +6,17 @@ import com.intellij.flex.uiDesigner.abc.DecoderException;
 import com.intellij.flex.uiDesigner.abc.Encoder;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.xml.NanoXmlUtil;
-import com.intellij.util.xml.NanoXmlUtil.IXMLBuilderAdapter;
 import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import static com.intellij.flex.uiDesigner.libraries.Definition.ResolvedState;
@@ -149,40 +147,6 @@ public class LibrarySorter {
     }
 
     return true;
-  }
-
-  public static Set<CharSequence> getDefinitions(VirtualFile file) throws IOException {
-    return getDefinitions(IOUtil.getCharArrayReader(file.getInputStream(), (int)file.getLength()));
-  }
-
-  public static Set<CharSequence> getDefinitions(Reader reader) throws IOException {
-    final THashSet<CharSequence> set = new THashSet<CharSequence>(512, AbcTranscoder.HASHING_STRATEGY);
-    NanoXmlUtil.parse(reader, new IXMLBuilderAdapter() {
-      private boolean processingDef;
-
-      @Override
-      public void startElement(String name, String nsPrefix, String nsURI, String systemID, int lineNr) throws Exception {
-        if (name.equals("def")) {
-          processingDef = true;
-        }
-      }
-
-      @Override
-      public void endElement(String name, String nsPrefix, String nsURI) throws Exception {
-        if (name.equals("def")) {
-          processingDef = false;
-        }
-      }
-
-      @Override
-      public void addAttribute(String name, String nsPrefix, String nsURI, String value, String type) throws Exception {
-        if (processingDef && name.equals("id")) {
-          set.add(value);
-        }
-      }
-    });
-
-    return set;
   }
 
   static class SortResult {

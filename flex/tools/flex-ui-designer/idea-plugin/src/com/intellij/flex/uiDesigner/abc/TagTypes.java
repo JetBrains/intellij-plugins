@@ -39,4 +39,14 @@ public interface TagTypes {
 
   int DefineScalingGrid = 78;
   int DefineBits = 6;
+  int DefineText = 11;
+  int DefineEditText = 37;
+
+  int DefineFont = 10;
+  int DefineFont2 = 48;
+  int DefineFont3 = 75;
+
+  int DefineFontName = 88;
+  int DefineFontAlignZones = 73;
+  int DefineFontInfo = 13;
 }
