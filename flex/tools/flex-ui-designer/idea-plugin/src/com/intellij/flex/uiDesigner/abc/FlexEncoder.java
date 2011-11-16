@@ -1,10 +1,6 @@
 package com.intellij.flex.uiDesigner.abc;
 
 public class FlexEncoder extends Encoder {
-  private final static byte[] MODIFY_INIT_METHOD_BODY_MARKER = {};
-
-  private boolean modifyConstructor;
-
   private final byte[] debugBasepath;
 
   public FlexEncoder(String inputFilename) {
@@ -12,21 +8,6 @@ public class FlexEncoder extends Encoder {
     debugBasepath[0] = '$';
     //noinspection deprecation
     inputFilename.getBytes(0, inputFilename.length(), debugBasepath, 1);
-  }
-
-
-
-  @Override
-  protected void instanceEnding(int oldIInit) {
-    if (modifyConstructor) {
-      history.getModifiedMethodBodies().put(oldIInit, MODIFY_INIT_METHOD_BODY_MARKER);
-    }
-  }
-
-  @Override
-  public void endInstance() {
-    super.endInstance();
-    modifyConstructor = false;
   }
 
   @SuppressWarnings("UnusedDeclaration")

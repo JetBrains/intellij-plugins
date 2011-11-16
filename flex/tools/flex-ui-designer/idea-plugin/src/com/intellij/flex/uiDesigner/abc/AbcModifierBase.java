@@ -38,4 +38,9 @@ public abstract class AbcModifierBase implements AbcModifier {
   public int methodTraitDelta() {
     return 0;
   }
+
+  @Override
+  public boolean isModifyConstructor() {
+    return false;
+  }
 }

@@ -17,6 +17,9 @@ import static com.intellij.flex.uiDesigner.abc.Decoder.MethodCodeDecoding;
 
 @SuppressWarnings({"deprecation"})
 public class Encoder {
+  private final static byte[] EMPTY_METHOD_BODY = {0x01, 0x02, 0x04, 0x05, 0x03, (byte)0xd0, 0x30, 0x47, 0x00, 0x00};
+  private final static byte[] MODIFY_INIT_METHOD_BODY_MARKER = {};
+
   private final TIntArrayList tempMetadataList = new TIntArrayList(8);
 
   final Opcodes opcodeDecoder = new Opcodes();
@@ -365,12 +368,12 @@ public class Encoder {
 
     final int oldIInit = in.readU32();
     instanceInfo.writeU32(methodInfo.getIndex(oldIInit));
-    instanceEnding(oldIInit);
+
+    if (abcModifier != null && abcModifier.isModifyConstructor()) {
+      history.getModifiedMethodBodies().put(oldIInit, MODIFY_INIT_METHOD_BODY_MARKER);
+    }
 
     currentBuffer = instanceInfo;
-  }
-
-  protected void instanceEnding(int oldIInit) {
   }
 
   public void endInstance() {
@@ -624,8 +627,6 @@ public class Encoder {
     in.seek(originalPosition);
     return false;
   }
-
-  private final static byte[] EMPTY_METHOD_BODY = {0x01, 0x02, 0x04, 0x05, 0x03, (byte)0xd0, 0x30, 0x47, 0x00, 0x00};
 
   public boolean clearMethodBody(String name, int nameIndex, DataBuffer in, int methodInfo) {
     final int originalPosition = in.position();

@@ -19,7 +19,6 @@ final class IndexHistory {
   public static final int NS_SET = 5;
   public static final int MULTINAME = 6;
 
-  private final List<Decoder> decoders;
   private final int[] map;
 
   private final PoolPart[] poolParts = new PoolPart[7];
@@ -33,7 +32,6 @@ final class IndexHistory {
   ConstantPool constantPool;
 
   IndexHistory(List<Decoder> decoders) {
-    this.decoders = decoders;
     int size = 0;
     int preferredSize = 0;
     int[] poolPartLengths = new int[7];
@@ -92,13 +90,10 @@ final class IndexHistory {
     return constantPool.positions[kind];
   }
 
-  public TIntObjectHashMap<byte[]> getModifiedMethodBodies() {
-    final ConstantPool pool = constantPool;
-    if (pool.modifiedMethodBodies == null) {
-      pool.modifiedMethodBodies = new TIntObjectHashMap<byte[]>();
-    }
-
-    return pool.modifiedMethodBodies;
+  TIntObjectHashMap<byte[]> getModifiedMethodBodies() {
+    return constantPool.modifiedMethodBodies == null
+           ? (constantPool.modifiedMethodBodies = new TIntObjectHashMap<byte[]>())
+           : constantPool.modifiedMethodBodies;
   }
 
   public int getNewIndex(int insertionIndex) {
