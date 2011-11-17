@@ -106,7 +106,7 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
-        if (myProject.isDisposed()) return;
+        if (!myProject.isOpen()) return;
         myFrameworkInstanceLibraryManager.updateFrameworkInstanceLibraries();
         myAlarm.cancelAllRequests();
         myAlarm.addRequest(new Runnable() {
@@ -127,7 +127,7 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
         new Task.Backgroundable(myProject, "Updating OSGi indices", false) {
           @Override
           public void run(@NotNull ProgressIndicator indicator) {
-            if (myProject.isDisposed()) return;
+            if (!myProject.isOpen()) return;
             indicator.setIndeterminate(true);
             indicator.setText("Updating OSGi indices");
             myBundleManager.reindexAll();
