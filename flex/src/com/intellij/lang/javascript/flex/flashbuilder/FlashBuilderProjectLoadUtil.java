@@ -109,18 +109,18 @@ public class FlashBuilderProjectLoadUtil {
     return PathUtil.getFileName(PathUtil.getParentPath(dotProjectFilePath));
   }
 
-  public static Collection<FlashBuilderProject> loadProjects(final Collection<String> dotProjectFilePaths, final boolean isFxp) {
+  public static Collection<FlashBuilderProject> loadProjects(final Collection<String> dotProjectFilePaths, final boolean isArchive) {
     final Collection<FlashBuilderProject> flashBuilderProjects = new ArrayList<FlashBuilderProject>(dotProjectFilePaths.size());
     for (final String dotProjectFilePath : dotProjectFilePaths) {
       final VirtualFile dotProjectFile = LocalFileSystem.getInstance().findFileByPath(dotProjectFilePath);
       if (dotProjectFile != null) {
-        flashBuilderProjects.add(loadProject(dotProjectFile, isFxp));
+        flashBuilderProjects.add(loadProject(dotProjectFile, isArchive));
       }
     }
     return flashBuilderProjects;
   }
 
-  public static FlashBuilderProject loadProject(final VirtualFile dotProjectFile, final boolean isFxp) {
+  public static FlashBuilderProject loadProject(final VirtualFile dotProjectFile, final boolean isArchive) {
     final FlashBuilderProject project = new FlashBuilderProject();
 
     loadProjectNameAndLinkedResources(project, dotProjectFile);
@@ -128,7 +128,7 @@ public class FlashBuilderProjectLoadUtil {
     loadProjectRoot(project, dotProjectFile);
 
     final Map<String, String> pathReplacementMap =
-      isFxp ? loadMapFromDotFxpPropertiesFile(dotProjectFile) : Collections.<String, String>emptyMap();
+      isArchive ? loadMapFromDotFxpPropertiesFile(dotProjectFile) : Collections.<String, String>emptyMap();
     loadInfoFromDotActionScriptPropertiesFile(project, dotProjectFile, pathReplacementMap);
     loadInfoFromDotFlexLibPropertiesFile(project, dotProjectFile);
 
