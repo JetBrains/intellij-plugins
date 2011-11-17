@@ -18,7 +18,6 @@ package com.intellij.struts2;
 import com.intellij.ide.IconProvider;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.PsiClassImplUtil;
@@ -36,7 +35,7 @@ import javax.swing.*;
  *
  * @author Yann C&eacute;bron
  */
-public class Struts2IconProvider extends IconProvider implements DumbAware {
+public class Struts2IconProvider extends IconProvider {
 
   @Nullable
   public Icon getIcon(@NotNull final PsiElement element, final int flags) {
