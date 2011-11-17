@@ -587,6 +587,10 @@ public class FlexProjectConfigurationEditor implements Disposable {
     return getEditor(dependencies).myModule;
   }
 
+  public ModifiableRootModel getModifiableRootModel(final Module module) {
+    return myProvider.getModuleModifiableModel(module);
+  }
+
   public LibraryTableBase.ModifiableModelEx getLibraryModel(ModifiableDependencies dependencies) {
     assertAlive();
     ModifiableRootModel modifiableModel = myProvider.getModuleModifiableModel(getEditor(dependencies).myModule);

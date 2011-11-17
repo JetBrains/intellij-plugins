@@ -173,6 +173,9 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
     final Map<Module, ModifiableRootModel> moduleToModifiableModelMap = new THashMap<Module, ModifiableRootModel>();
     final Set<String> moduleNames = new THashSet<String>(flashBuilderProjects.size());
 
+    final FlexProjectConfigurationEditor currentFlexEditor =
+      PlatformUtils.isFlexIde() ? FlexIdeBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor() : null;
+
     for (FlashBuilderProject flashBuilderProject : flashBuilderProjects) {
       final String moduleName = makeUnique(flashBuilderProject.getName(), moduleNames);
       moduleNames.add(moduleName);
@@ -188,31 +191,46 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
       }
 
       final Module module = moduleModel.newModule(moduleFilePath, moduleType);
-      final ModifiableRootModel rootModel = ModuleRootManager.getInstance(module).getModifiableModel();
+      final ModifiableRootModel rootModel;
+      if (PlatformUtils.isFlexIde() && currentFlexEditor != null) {
+        rootModel = currentFlexEditor.getModifiableRootModel(module);
+      }
+      else {
+        rootModel = ModuleRootManager.getInstance(module).getModifiableModel();
+      }
 
       flashBuilderProjectToModifiableModelMap.put(flashBuilderProject, rootModel);
       moduleToModifiableModelMap.put(module, rootModel);
     }
 
-    final FlexProjectConfigurationEditor currentFlexEditor =
-      PlatformUtils.isFlexIde() ? FlexIdeBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor() : null;
 
-    final boolean needToCommitFlexEditor = PlatformUtils.isFlexIde() && currentFlexEditor == null;
     final LibraryTableBase.ModifiableModelEx globalLibrariesModifiableModel;
     final FlexProjectConfigurationEditor flexConfigEditor;
+    final boolean needToCommitFlexEditor;
+    final boolean needToCommitRootModels;
 
     if (!PlatformUtils.isFlexIde()) {
       globalLibrariesModifiableModel = null;
       flexConfigEditor = null;
+      needToCommitFlexEditor = false;
+      needToCommitRootModels = true;
     }
     else if (currentFlexEditor != null) {
       globalLibrariesModifiableModel = null;
       flexConfigEditor = currentFlexEditor;
+      needToCommitFlexEditor = false;
+      needToCommitRootModels = false;
     }
     else {
       globalLibrariesModifiableModel =
         (LibraryTableBase.ModifiableModelEx)ApplicationLibraryTable.getApplicationTable().getModifiableModel();
       flexConfigEditor = createFlexConfigEditor(project, moduleToModifiableModelMap, globalLibrariesModifiableModel);
+      needToCommitFlexEditor = true;
+      needToCommitRootModels = true;
+    }
+
+    if (needToCommitModuleModel) {
+      assert needToCommitRootModels;
     }
 
     final FlashBuilderSdkFinder sdkFinder =
@@ -246,7 +264,7 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
         if (needToCommitModuleModel) {
           ProjectRootManager.getInstance(project).multiCommit(moduleModel, rootModels.toArray(new ModifiableRootModel[rootModels.size()]));
         }
-        else {
+        else if (needToCommitRootModels) {
           for (ModifiableRootModel rootModel : rootModels) {
             rootModel.commit();
           }
