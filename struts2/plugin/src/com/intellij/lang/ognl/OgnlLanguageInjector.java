@@ -88,7 +88,7 @@ public class OgnlLanguageInjector {
                                                startOffset + OgnlLanguage.EXPRESSION_PREFIX.length());
       final int searchClosingBraceIdx = nextStartOffset != -1 ? nextStartOffset : textLength;
       final int closingBraceIdx = text.lastIndexOf(OgnlLanguage.EXPRESSION_SUFFIX, searchClosingBraceIdx);
-      final int length = (closingBraceIdx != -1 ? closingBraceIdx + 1 : textLength) - startOffset;
+      final int length = (closingBraceIdx != -1 && closingBraceIdx > nextStartOffset ? closingBraceIdx + 1 : textLength) - startOffset;
       final TextRange range = TextRange.from(startOffset, length);
       registrar.addPlace(null, null, element, range);
       startOffset += length;
