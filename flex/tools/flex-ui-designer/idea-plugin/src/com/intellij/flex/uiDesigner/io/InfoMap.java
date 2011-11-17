@@ -2,13 +2,13 @@ package com.intellij.flex.uiDesigner.io;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashMap;
 import gnu.trove.TObjectObjectProcedure;
+import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class InfoMap<E,I extends Info<E>> {
+public class InfoMap<E,I extends Info<E>> implements Disposable {
   private final IdPool idPool = new IdPool();
   private final MyHashMap<E,I> elements;
   private final boolean infoIsDisposable;
@@ -20,6 +20,19 @@ public class InfoMap<E,I extends Info<E>> {
   public InfoMap(boolean infoIsDisposable) {
     elements = new MyHashMap<E, I>();
     this.infoIsDisposable = infoIsDisposable;
+  }
+
+  @Override
+  public void dispose() {
+    if (infoIsDisposable) {
+      elements.forEachValue(new TObjectProcedure<I>() {
+        @Override
+        public boolean execute(I info) {
+          ((Disposable)info).dispose();
+          return true;
+        }
+      });
+    }
   }
 
   private class MyHashMap<K, V> extends THashMap<K, V> {

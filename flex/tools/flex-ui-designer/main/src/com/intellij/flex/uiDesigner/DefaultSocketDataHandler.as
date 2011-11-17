@@ -14,6 +14,7 @@ import flash.net.Socket;
 import flash.net.registerClassAlias;
 import flash.utils.ByteArray;
 import flash.utils.IDataInput;
+import flash.utils.describeType;
 
 registerClassAlias("lsh", LocalStyleHolder);
 
@@ -191,6 +192,20 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
 
   public function pendingReadIsAllowable(method:int):Boolean {
     return false; // was for openDocument, but now (after implement factory concept) it is read immediately (sync read)
+  }
+
+  private static var methodIdToName:Vector.<String>;
+
+  public function describeMethod(methodId:int):String {
+    if (methodIdToName == null) {
+      var names:XMLList = describeType(ClientMethod).constant.@name;
+      methodIdToName = new Vector.<String>(names.length(), true);
+      for each (var name:String in names) {
+        methodIdToName[ClientMethod[name]] = name;
+      }
+    }
+
+    return methodIdToName[methodId];
   }
 }
 }

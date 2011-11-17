@@ -113,7 +113,6 @@ public class UncaughtErrorManager implements UiErrorHandler {
     socket.writeUTF(message);
 
     socket.writeBoolean(documentFactoryId != -1);
-
     if (documentFactoryId != -1) {
       socket.writeShort(documentFactoryId);
     }

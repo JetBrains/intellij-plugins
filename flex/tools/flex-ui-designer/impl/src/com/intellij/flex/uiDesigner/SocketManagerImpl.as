@@ -1,4 +1,6 @@
 package com.intellij.flex.uiDesigner {
+import avmplus.describe;
+
 import flash.desktop.NativeApplication;
 import flash.events.Event;
 import flash.events.ProgressEvent;
@@ -6,6 +8,8 @@ import flash.net.Socket;
 import flash.net.registerClassAlias;
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
+
+import spark.effects.CallAction;
 
 registerClassAlias("s", String);
 
@@ -124,10 +128,11 @@ public class SocketManagerImpl implements SocketManager {
       if (handler != null) {
         var position:int = socket.bytesAvailable + 1 /* method class size */;
         const method:int = socket.readByte();
-        trace(clientMethodClass + ":" + method);
+        var methodDescription:String = handler.describeMethod(method);
+        trace(methodDescription);
         handler.handleSockedData(messageSize - 2, method, socket);
         messageId = uint.MAX_VALUE;
-        trace(clientMethodClass + ":" + method + " processed");
+        trace(methodDescription + " processed");
         if (messageSize != (position - socket.bytesAvailable)) {
           if (handler.pendingReadIsAllowable(method)) {
             unreadSocketRemainder = socket.bytesAvailable;

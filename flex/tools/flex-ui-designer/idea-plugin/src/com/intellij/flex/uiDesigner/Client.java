@@ -9,6 +9,7 @@ import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.RangeMarker;
@@ -28,7 +29,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Client {
+public class Client implements Disposable {
   protected final BlockDataOutputStream blockOut = new BlockDataOutputStream();
   protected final AmfOutputStream out = new AmfOutputStream(blockOut);
 
@@ -67,6 +68,11 @@ public class Client {
   @NotNull
   public Project getProject(int id) {
     return registeredProjects.getElement(id);
+  }
+
+  @Override
+  public void dispose() {
+    registeredModules.dispose();
   }
 
   public boolean flush() {

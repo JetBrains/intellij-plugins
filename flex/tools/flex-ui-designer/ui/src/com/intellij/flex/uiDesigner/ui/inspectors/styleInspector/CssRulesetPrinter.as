@@ -192,9 +192,7 @@ public class CssRulesetPrinter {
       return CssPropertyType.NUMBER;
     }
     else if (value is Array) {
-      var a:Array = value as Array;
       return CssPropertyType.ARRAY;
-      //return a.length > 0 && a[0] is String ? CssPropertyType.ARRAY_OF_STRING : CssPropertyType.ARRAY_OF_NUMBER;
     }
     else if (value is _module.getClass("mx.effects.IEffect")) {
       return CssPropertyType.EFFECT;

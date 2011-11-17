@@ -11,5 +11,7 @@ public interface SocketDataHandler {
   function set socket(socket:Socket):void;
 
   function pendingReadIsAllowable(method:int):Boolean;
+
+  function describeMethod(methodId:int):String;
 }
 }

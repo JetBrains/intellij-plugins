@@ -231,10 +231,9 @@ public class Server implements ResourceBundleProvider {
   public var moduleForGetResourceBundle:Module;
 
   public function getResourceBundle(locale:String, bundleName:String):Dictionary {
-    var project:Project = ProjectUtil.getProjectForActiveWindow();
     var module:Module = moduleForGetResourceBundle;
     if (module == null) {
-      var document:Document = DocumentManager(project.getComponent(DocumentManager)).document;
+      var document:Document = DocumentManager(ProjectUtil.getProjectForActiveWindow().getComponent(DocumentManager)).document;
       if (document == null) {
         UncaughtErrorManager.instance.logWarning("Cannot find resource bundle " + bundleName + " for locale " + locale +
                                                  " due to null document");
@@ -270,10 +269,10 @@ public class Server implements ResourceBundleProvider {
       }
     }
     catch (e:Error) {
-      UncaughtErrorManager.instance.handleError(e, Project(project));
+      UncaughtErrorManager.instance.handleError(e);
     }
     finally {
-      postCheckSyncMessaging(resultReadyFile, project);
+      postCheckSyncMessaging(resultReadyFile, null);
     }
 
     if (result == null) {

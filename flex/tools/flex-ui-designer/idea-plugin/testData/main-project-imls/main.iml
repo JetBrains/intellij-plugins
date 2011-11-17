@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="Flex" version="4">
+  <component name="Flex.Build.Configuration">
+    <option name="VERSION" value="3" />
+  </component>
+  <component name="FlexBuildConfigurationManager" active="main">
+    <configurations>
+      <configuration name="main">
+        <dependencies target-player="10.2" />
+        <compiler-options />
+        <packaging-air-desktop />
+        <packaging-android />
+        <packaging-ios />
+      </configuration>
+    </configurations>
+    <compiler-options />
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/main">
+      <sourceFolder url="file://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/main/src" isTestSource="false" />
+      <sourceFolder url="file://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/main/resources" isTestSource="false" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
+

@@ -459,7 +459,6 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     final String technicalMessage = reader.readUTF();
     final VirtualFile file;
     if (reader.readBoolean()) {
-      readProject();
       file = DocumentFactoryManager.getInstance().getFile(reader.readUnsignedShort());
     }
     else {
