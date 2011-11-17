@@ -43,8 +43,8 @@ public class OgnlFormattingTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testWithinParentheses() {
-    doTest("( 1+2  )",
-           "(1+2)");
+    doTest("( a  )",
+           "(a)");
   }
 
   public void testWithinBraces() {
@@ -55,6 +55,46 @@ public class OgnlFormattingTest extends LightCodeInsightFixtureTestCase {
   public void testWithinBrackets() {
     doTest("id[ 5 ]",
            "id[5]");
+  }
+
+  public void testAdditionOperations() {
+    doTest("1+2-3",
+           "1 + 2 - 3");
+  }
+
+  public void testMultiplicationOperations() {
+    doTest("1*2/3%4",
+           "1 * 2 / 3 % 4");
+  }
+
+  public void testUnaryOperations() {
+    doTest("{+ 1, - 2, ! 3, ~ 4}",
+           "{+1, -2, !3, ~4}");
+  }
+  
+  public void testEqualityOperations() {
+    doTest("1==2!=3",
+           "1 == 2 != 3");
+  }
+
+  public void testRelationalOperations() {
+    doTest("1>2<3>=4<=5",
+           "1 > 2 < 3 >= 4 <= 5");
+  }
+
+  public void testLogicalOperations() {
+    doTest("1||2&&3",
+           "1 || 2 && 3");
+  }
+
+  public void testShiftOperations() {
+    doTest("1>>2<<3>>>4",
+           "1 >> 2 << 3 >>> 4");
+  }
+
+  public void testBitwiseOperations() {
+    doTest("1|2&3^4",
+           "1 | 2 & 3 ^ 4");
   }
 
   private void doTest(final String before,

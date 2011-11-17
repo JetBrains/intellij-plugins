@@ -85,6 +85,7 @@ public class OgnlTokenTypes implements TokenType {
   public static final OgnlTokenType SHIFT_LEFT = new OgnlTokenType("SHIFT_LEFT");
   public static final OgnlTokenType SHIFT_RIGHT = new OgnlTokenType("SHIFT_RIGHT");
   public static final OgnlTokenType SHIFT_RIGHT_LOGICAL = new OgnlTokenType("SHIFT_RIGHT_LOGICAL");
+  public static final TokenSet SHIFT_OPS = TokenSet.create(SHIFT_LEFT, SHIFT_RIGHT, SHIFT_RIGHT_LOGICAL);
 
   // simple tokens
   public static final OgnlTokenType DOT = new OgnlTokenType("DOT");
@@ -99,38 +100,43 @@ public class OgnlTokenTypes implements TokenType {
   public static final OgnlTokenType DOLLAR = new OgnlTokenType("DOLLAR");
 
   // math
-  public static final OgnlTokenType MULTIPLY = new OgnlTokenType("MULTIPLY");
-  public static final OgnlTokenType DIVISION = new OgnlTokenType("DIVISION");
   public static final OgnlTokenType PLUS = new OgnlTokenType("PLUS");
   public static final OgnlTokenType MINUS = new OgnlTokenType("MINUS");
+  public static final TokenSet ADDITION_OPS = TokenSet.create(PLUS, MINUS);
+
+  public static final OgnlTokenType MULTIPLY = new OgnlTokenType("MULTIPLY");
+  public static final OgnlTokenType DIVISION = new OgnlTokenType("DIVISION");
   public static final OgnlTokenType MODULO = new OgnlTokenType("MODULO");
+  public static final TokenSet MULTIPLICATION_OPS = TokenSet.create(MULTIPLY, DIVISION, MODULO);
 
   // comparison
   public static final OgnlTokenType EQUAL = new OgnlTokenType("EQUAL");
   public static final OgnlTokenType NOT_EQUAL = new OgnlTokenType("NOT_EQUAL");
+  public static final TokenSet EQUALITY_OPS = TokenSet.create(EQUAL, NOT_EQUAL);
 
   public static final OgnlTokenType LESS = new OgnlTokenType("LESS");
   public static final OgnlTokenType GREATER = new OgnlTokenType("GREATER");
   public static final OgnlTokenType LESS_EQUAL = new OgnlTokenType("LESS_EQUAL");
   public static final OgnlTokenType GREATER_EQUAL = new OgnlTokenType("GREATER_EQUAL");
+  public static final TokenSet RELATIONAL_OPS = TokenSet.create(LESS, GREATER, LESS_EQUAL, GREATER_EQUAL);
 
   // boolean ops
   public static final OgnlTokenType OR = new OgnlTokenType("OR");
   public static final OgnlTokenType XOR = new OgnlTokenType("XOR");
   public static final OgnlTokenType AND = new OgnlTokenType("AND");
+  public static final TokenSet BITWISE_OPS = TokenSet.create(AND, OR, XOR);
 
   // logical ops
   public static final OgnlTokenType AND_AND = new OgnlTokenType("AND_AND");
   public static final OgnlTokenType OR_OR = new OgnlTokenType("OR_OR");
+  public static final TokenSet LOGICAL_OPS = TokenSet.create(AND_AND, OR_OR);
 
   public static final OgnlTokenType NOT = new OgnlTokenType("NOT");
+  public static final TokenSet UNARY_OPS = TokenSet.create(PLUS, MINUS, NEGATE, NOT);
 
-  public static final TokenSet OPERATION_SIGNS = TokenSet.create(
-      QUESTION, EQ,
-      MULTIPLY, DIVISION, PLUS, MINUS, MODULO,
-      NEGATE, EQUAL, NOT_EQUAL, LESS, GREATER, LESS_EQUAL, GREATER_EQUAL,
-      OR, XOR, AND, NOT, AND_AND, OR_OR,
-      SHIFT_LEFT, SHIFT_RIGHT, SHIFT_RIGHT_LOGICAL);
+  public static final TokenSet OPERATION_SIGNS = TokenSet.orSet(
+      SHIFT_OPS, ADDITION_OPS, MULTIPLICATION_OPS, EQUALITY_OPS, RELATIONAL_OPS, BITWISE_OPS, LOGICAL_OPS, UNARY_OPS,
+      TokenSet.create(QUESTION));
 
   public static final TokenSet OPERATION_KEYWORDS = TokenSet.create(
       NOT_KEYWORD, NOT_IN_KEYWORD, IN_KEYWORD, INSTANCEOF_KEYWORD,

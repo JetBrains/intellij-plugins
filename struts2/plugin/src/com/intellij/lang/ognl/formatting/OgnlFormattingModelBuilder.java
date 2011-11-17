@@ -26,6 +26,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.lang.ognl.parsing.OgnlElementTypes.BINARY_EXPRESSION;
 import static com.intellij.lang.ognl.psi.OgnlTokenTypes.*;
 
 /**
@@ -65,7 +66,18 @@ public class OgnlFormattingModelBuilder implements FormattingModelBuilder {
 
         .withinPair(LPARENTH, RPARENTH).spaceIf(settings.SPACE_WITHIN_PARENTHESES)
         .withinPair(LBRACE, RBRACE).spaceIf(settings.SPACE_WITHIN_BRACES)
-        .withinPair(LBRACKET, RBRACKET).spaceIf(settings.SPACE_WITHIN_BRACKETS);
+        .withinPair(LBRACKET, RBRACKET).spaceIf(settings.SPACE_WITHIN_BRACKETS)
+
+        .aroundInside(ADDITION_OPS, BINARY_EXPRESSION).spaceIf(settings.SPACE_AROUND_ADDITIVE_OPERATORS)
+        .aroundInside(MULTIPLICATION_OPS, BINARY_EXPRESSION).spaceIf(settings.SPACE_AROUND_MULTIPLICATIVE_OPERATORS)
+
+        .around(UNARY_OPS).spaceIf(settings.SPACE_AROUND_UNARY_OPERATOR)
+        .around(EQUALITY_OPS).spaceIf(settings.SPACE_AROUND_EQUALITY_OPERATORS)
+        .around(RELATIONAL_OPS).spaceIf(settings.SPACE_AROUND_RELATIONAL_OPERATORS)
+
+        .around(LOGICAL_OPS).spaceIf(settings.SPACE_AROUND_LOGICAL_OPERATORS)
+        .around(SHIFT_OPS).spaceIf(settings.SPACE_AROUND_SHIFT_OPERATORS)
+        .around(BITWISE_OPS).spaceIf(settings.SPACE_AROUND_BITWISE_OPERATORS);
   }
 
 }
