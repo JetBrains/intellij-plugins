@@ -5,6 +5,7 @@ import com.intellij.flex.uiDesigner.io.Info;
 import com.intellij.flex.uiDesigner.io.InfoMap;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileDocumentManagerAdapter;
 import com.intellij.openapi.module.Module;
@@ -96,16 +97,22 @@ public class DocumentFactoryManager {
   }
   
   public int getId(VirtualFile virtualFile, @Nullable XmlFile psiFile, @Nullable List<XmlFile> unregisteredDocumentFactories) {
+    return get(virtualFile, psiFile, unregisteredDocumentFactories).getId();
+  }
+
+  public DocumentInfo get(VirtualFile virtualFile, @Nullable XmlFile psiFile, @Nullable List<XmlFile> unregisteredDocumentFactories) {
     DocumentInfo info = files.getNullableInfo(virtualFile);
     if (info != null) {
-      return info.getId();
+      return info;
     }
 
     if (unregisteredDocumentFactories != null) {
       unregisteredDocumentFactories.add(psiFile);
     }
 
-    return files.add(new DocumentInfo(virtualFile));
+    info = new DocumentInfo(virtualFile);
+    files.add(info);
+    return info;
   }
 
   public @NotNull VirtualFile getFile(int id) {
@@ -118,9 +125,18 @@ public class DocumentFactoryManager {
 
   public static class DocumentInfo extends Info<VirtualFile> {
     public long documentModificationStamp;
+    private List<RangeMarker> rangeMarkers;
+
+    public RangeMarker getRangeMarker(int id) {
+      return rangeMarkers.get(id);
+    }
     
     public DocumentInfo(@NotNull VirtualFile element) {
       super(element);
+    }
+
+    public void setRangeMarkers(List<RangeMarker> rangeMarkers) {
+      this.rangeMarkers = rangeMarkers;
     }
   }
 }

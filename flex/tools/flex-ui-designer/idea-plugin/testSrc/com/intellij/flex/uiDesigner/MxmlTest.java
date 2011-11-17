@@ -6,12 +6,12 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.StringBuilderSpinAllocator;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 
 import static com.intellij.flex.uiDesigner.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.emptyArray;
 
 @Flex(version="4.5")
 public class MxmlTest extends MxmlTestBase {
@@ -39,26 +39,21 @@ public class MxmlTest extends MxmlTestBase {
 
   public void test45() throws Exception {
     final String testFile = System.getProperty("testFile");
-    final Pair<String[], String[]> pair = getTestFiles();
-    final String[] files;
+    final Pair<VirtualFile[], VirtualFile[]> pair = getTestFiles();
+    final VirtualFile[] files;
     if (testFile == null) {
       files = pair.getFirst();
     }
     else {
-      files = new String[]{getTestPath() + "/" + testFile + ".mxml"};
+      files = new VirtualFile[]{getVFile(getTestPath() + "/" + testFile + ".mxml")};
     }
 
-    final String[] auxFiles = pair.getSecond();
+    final VirtualFile[] auxFiles = pair.getSecond();
     final int auxFilesCount = auxFiles == null ? 0 : auxFiles.length;
     final VirtualFile[] vFiles = new VirtualFile[files.length + auxFilesCount];
-    for (int i = 0; i < files.length; i++) {
-      vFiles[i] = getVFile(files[i]);
-    }
-
+    System.arraycopy(files, 0, vFiles, 0, files.length);
     if (auxFiles != null) {
-      for (int i = files.length, j = 0; j < auxFiles.length;) {
-        vFiles[i++] = getVFile(auxFiles[j++]);
-      }
+      System.arraycopy(auxFiles, 0, vFiles, files.length, auxFiles.length);
     }
 
     testFiles(vFiles.length - auxFilesCount, vFiles);
@@ -119,38 +114,48 @@ public class MxmlTest extends MxmlTestBase {
     return null;
   }
 
-  private Pair<String[],String[]> getTestFiles() {
-    ArrayList<String> files = new ArrayList<String>(64);
-    ArrayList<String> auxFiles = new ArrayList<String>(8);
+  private Pair<VirtualFile[], VirtualFile[]> getTestFiles() {
+    ArrayList<VirtualFile> files = new ArrayList<VirtualFile>(128);
+    ArrayList<VirtualFile> auxFiles = new ArrayList<VirtualFile>(8);
     
-    collectMxmlFiles(files, auxFiles, new File(getTestPath()));
-    collectMxmlFiles(files, auxFiles, new File(getTestDataPath() + "/src/mx"));
+    collectMxmlFiles(files, auxFiles, getVFile(getTestPath()));
+    collectMxmlFiles(files, auxFiles, getVFile((getTestDataPath() + "/src/mx")));
 
-    String[] list = files.toArray(new String[files.size()]);
-    String[] auxList = auxFiles.toArray(new String[auxFiles.size()]);
     
-    Arrays.sort(list);
-    Arrays.sort(auxList);
+
+    VirtualFile[] list = files.toArray(new VirtualFile[files.size()]);
+    VirtualFile[] auxList = auxFiles.toArray(new VirtualFile[auxFiles.size()]);
+
+    final VirtualFileComparator virtualFileComparator = new VirtualFileComparator();
+    Arrays.sort(list, virtualFileComparator);
+    Arrays.sort(auxList, virtualFileComparator);
     
-    return new Pair<String[], String[]>(list, auxList);
+    return new Pair<VirtualFile[], VirtualFile[]>(list, auxList);
   }
 
-  private static void collectMxmlFiles(ArrayList<String> files, ArrayList<String> auxFiles, File parent) {
-    for (String name : parent.list()) {
+  private static void collectMxmlFiles(ArrayList<VirtualFile> files, ArrayList<VirtualFile> auxFiles, VirtualFile parent) {
+    for (VirtualFile file : parent.getChildren()) {
+      final String name = file.getName();
       if (name.charAt(0) == '.') {
         // skip
       }
       else if (name.startsWith("Aux")) {
-        auxFiles.add(parent.getPath() + "/" + name);
+        auxFiles.add(file);
       }
       else if (name.endsWith(".mxml") && !name.startsWith("T.") && !name.startsWith("TestApp.") && !name.startsWith("GenericMxmlSupport.")) {
-        files.add(parent.getPath() + "/" + name);
+        files.add(file);
       }
 
-      File file = new File(parent, name);
       if (file.isDirectory()) {
         collectMxmlFiles(files, auxFiles, file);
       }
+    }
+  }
+
+  private static class VirtualFileComparator implements Comparator<VirtualFile> {
+    @Override
+    public int compare(VirtualFile o1, VirtualFile o2) {
+      return o1.getPath().compareTo(o2.getPath());
     }
   }
 }

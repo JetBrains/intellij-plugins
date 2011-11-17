@@ -17,7 +17,11 @@ import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.RangeMarker;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.*;
 import com.intellij.xml.XmlAttributeDescriptor;
@@ -28,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.PropertyKey;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PropertyKind;
@@ -40,36 +45,36 @@ public class MxmlWriter {
   private final BaseWriter writer;
   private StateWriter stateWriter;
   private final InjectedASWriter injectedASWriter;
+  private final PropertyProcessor propertyProcessor;
 
   private boolean hasStates;
-  private final PropertyProcessor propertyProcessor;
-  private boolean requireCallResetAfterMessage;
 
-  final MxmlObjectReferenceProviderImpl tagAttributeProcessContext;
+  private final MxmlObjectReferenceProviderImpl tagAttributeProcessContext;
 
-  ProblemsHolder problemsHolder;
+  final ProblemsHolder problemsHolder;
 
-  ValueProviderFactory valueProviderFactory = new ValueProviderFactory();
+  final ValueProviderFactory valueProviderFactory = new ValueProviderFactory();
+  private final List<RangeMarker> rangeMarkers = new ArrayList<RangeMarker>();
 
-  public MxmlWriter(PrimitiveAmfOutputStream out) {
+  Document document;
+
+  public MxmlWriter(PrimitiveAmfOutputStream out, ProblemsHolder problemsHolder, AssetCounter assetCounter) {
     this.out = out;
-    writer = new BaseWriter(out);
-    injectedASWriter = new InjectedASWriter(writer);
+    this.problemsHolder = problemsHolder;
+
+    writer = new BaseWriter(out, assetCounter);
+    injectedASWriter = new InjectedASWriter(writer, problemsHolder);
     propertyProcessor = new PropertyProcessor(injectedASWriter, writer, this);
     tagAttributeProcessContext = new MxmlObjectReferenceProviderImpl(writer);
   }
 
-  public XmlFile[] write(@NotNull final XmlFile psiFile, @NotNull final ProblemsHolder problemsHolder,
-                         @NotNull final AssetCounter assetCounter) throws IOException {
+  public Pair<List<XmlFile>, List<RangeMarker>> write(XmlFile psiFile) throws IOException {
     try {
-      valueProviderFactory = new ValueProviderFactory();
-      this.problemsHolder = problemsHolder;
-      problemsHolder.setCurrentFile(psiFile.getVirtualFile());
-      injectedASWriter.setProblemsHolder(problemsHolder);
-      writer.assetCounter = assetCounter;
-      requireCallResetAfterMessage = true;
+      final VirtualFile virtualFile = psiFile.getVirtualFile();
+      assert virtualFile != null;
+      problemsHolder.setCurrentFile(virtualFile);
 
-      writer.beginMessage();
+      document = FileDocumentManager.getInstance().getDocument(virtualFile);
 
       final AccessToken token = ReadAction.start();
       try {
@@ -97,38 +102,12 @@ public class MxmlWriter {
       injectedASWriter.write();
       writer.endMessage();
       List<XmlFile> unregisteredDocumentReferences = propertyProcessor.getUnregisteredDocumentFactories();
-      return unregisteredDocumentReferences.isEmpty()
-             ? null
-             : unregisteredDocumentReferences.toArray(new XmlFile[unregisteredDocumentReferences.size()]);
+      return new Pair<List<XmlFile>, List<RangeMarker>>(unregisteredDocumentReferences, rangeMarkers);
     }
     finally {
-      valueProviderFactory = null;
       problemsHolder.setCurrentFile(null);
-      this.problemsHolder = null;
-      writer.assetCounter = null;
-      injectedASWriter.setProblemsHolder(null);
-      requireCallResetAfterMessage = false;
-      resetAfterMessage();
+      writer.resetAfterMessage();
     }
-  }
-
-  public void reset() {
-    if (requireCallResetAfterMessage) {
-      resetAfterMessage();
-    }
-
-    writer.reset();
-    if (stateWriter != null) {
-      stateWriter.reset();
-    }
-
-    injectedASWriter.reset();
-  }
-
-  private void resetAfterMessage() {
-    tagAttributeProcessContext.reference = null;
-    writer.resetAfterMessage();
-    propertyProcessor.reset();
   }
 
   private boolean processElements(final XmlTag parent, final @Nullable Context parentContext, final boolean allowIncludeInExludeFrom,
@@ -142,8 +121,9 @@ public class MxmlWriter {
     // we keep current index and insert at the specified position
     final int dataRangeIndex = writer.getBlockOut().getNextMarkerIndex();
 
-    out.writeUInt29(writer.P_FUD_POSITION);
-    out.writeUInt29(parent.getTextOffset());
+    out.writeUInt29(writer.P_FUD_RANGE_ID);
+    out.writeUInt29(rangeMarkers.size());
+    rangeMarkers.add(document.createRangeMarker(parent.getTextOffset(), parent.getTextOffset() + parent.getTextLength()));
 
     for (final XmlAttribute attribute : parent.getAttributes()) {
       XmlAttributeDescriptor attributeDescriptor = attribute.getDescriptor();
@@ -223,7 +203,7 @@ public class MxmlWriter {
     }
     else {
       assert context == null;
-      context = writer.createStaticContext(parentContext, referencePosition, tagAttributeProcessContext.reference);
+      context = writer.createStaticContext(parentContext, referencePosition);
     }
 
     tagAttributeProcessContext.reference = null;
@@ -506,7 +486,7 @@ public class MxmlWriter {
       context = stateWriter.createContextForStaticBackSibling(allowIncludeInExludeFrom, referencePosition, parentContext, null);
     }
     else {
-      context = writer.createStaticContext(parentContext, referencePosition, null);
+      context = writer.createStaticContext(parentContext, referencePosition);
     }
 
     final XmlAttribute idAttribute = tag.getAttribute("id");
@@ -675,7 +655,6 @@ public class MxmlWriter {
   }
 
   private void defineInlineCssRuleset(@NotNull PsiElement element) {
-    Document document = MxmlUtil.getDocument(element);
     int textOffset = element.getTextOffset();
     out.writeUInt29(document.getLineNumber(textOffset) + 1);
     out.writeUInt29(textOffset);

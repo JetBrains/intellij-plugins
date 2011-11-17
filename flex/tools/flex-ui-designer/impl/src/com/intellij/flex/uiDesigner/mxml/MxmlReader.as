@@ -210,7 +210,7 @@ public final class MxmlReader implements DocumentReader {
     var reference:int = input.readUnsignedShort();
     var propertyName:String = stringRegistry.read(input);
     var object:Object;
-    var objectDeclarationTextOffset:int;
+    var objectDeclarationRangeMarkerId:int;
 
     object = new clazz();
     if (setDocument) {
@@ -218,22 +218,22 @@ public final class MxmlReader implements DocumentReader {
       object.document = object;
       rootObject = object;
     }
-    if (propertyName == "$fud_position") {
-      objectDeclarationTextOffset = AmfUtil.readUInt29(input);
-      context.registerObjectDeclarationPosition(object, objectDeclarationTextOffset);
+    if (propertyName == "$fud_r") {
+      objectDeclarationRangeMarkerId = AmfUtil.readUInt29(input);
+      context.registerObjectDeclarationRangeMarkerId(object, objectDeclarationRangeMarkerId);
       propertyName = stringRegistry.read(input);
     }
 
-    return initObject(object, reference, propertyName, objectDeclarationTextOffset);
+    return initObject(object, reference, propertyName, objectDeclarationRangeMarkerId);
   }
 
   private function readObjectFromFactory(object:Object):Object {
     const reference:int = input.readUnsignedShort();
     var propertyName:String = stringRegistry.read(input);
     var objectDeclarationTextOffset:int;
-    if (propertyName == "$fud_position") {
+    if (propertyName == "$fud_r") {
       objectDeclarationTextOffset = AmfUtil.readUInt29(input);
-      context.registerObjectDeclarationPosition(object, objectDeclarationTextOffset);
+      context.registerObjectDeclarationRangeMarkerId(object, objectDeclarationTextOffset);
       propertyName = stringRegistry.read(input);
     }
 

@@ -1,11 +1,11 @@
 package com.intellij.flex.uiDesigner {
 public final class ElementAddress {
   public var factory:DocumentFactory;
-  public var offset:int;
+  public var id:int;
 
-  public function ElementAddress(factory:DocumentFactory, offset:int) {
+  public function ElementAddress(factory:DocumentFactory, id:int) {
     this.factory = factory;
-    this.offset = offset;
+    this.id = id;
   }
 }
 }

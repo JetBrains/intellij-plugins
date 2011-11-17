@@ -26,7 +26,7 @@ class InjectedASWriter implements ValueReferenceResolver {
   private final List<Binding> bindingItems = new ArrayList<Binding>();
   private final BaseWriter writer;
 
-  private ProblemsHolder problemsHolder;
+  private final ProblemsHolder problemsHolder;
 
   private ByteRange declarationsRange;
 
@@ -39,11 +39,8 @@ class InjectedASWriter implements ValueReferenceResolver {
     }
   };
 
-  public InjectedASWriter(BaseWriter writer) {
+  public InjectedASWriter(BaseWriter writer, ProblemsHolder problemsHolder) {
     this.writer = writer;
-  }
-
-  void setProblemsHolder(@Nullable ProblemsHolder problemsHolder) {
     this.problemsHolder = problemsHolder;
   }
 
@@ -119,8 +116,6 @@ class InjectedASWriter implements ValueReferenceResolver {
     finally {
       token.finish();
     }
-
-    reset();
   }
 
   private void writeDeclarations() {
@@ -160,13 +155,6 @@ class InjectedASWriter implements ValueReferenceResolver {
     }
 
     out.putShort(size, bindingSizePosition);
-  }
-
-  public void reset() {
-    bindingItems.clear();
-
-    idReferenceMap.clear();
-    variableReferenceMap.clear();
   }
 
   void putMxmlObjectReference(@NotNull String explicitId, @NotNull MxmlObjectReference mxmlObjectReference) {

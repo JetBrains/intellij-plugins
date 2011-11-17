@@ -3,14 +3,10 @@ package com.intellij.flex.uiDesigner.mxml;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.xml.*;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
@@ -18,12 +14,6 @@ import java.util.regex.Pattern;
 
 public final class MxmlUtil {
   private static final Pattern FLEX_SDK_ABSTRACT_CLASSES = Pattern.compile("^(mx|spark)\\.(.*)?Base$");
-
-  static Document getDocument(@NotNull PsiElement element) {
-    VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
-    assert virtualFile != null;
-    return FileDocumentManager.getInstance().getDocument(virtualFile);
-  }
 
   // about id http://opensource.adobe.com/wiki/display/flexsdk/id+property+in+MXML+2009
   static boolean isIdLanguageIdAttribute(XmlAttribute attribute) {

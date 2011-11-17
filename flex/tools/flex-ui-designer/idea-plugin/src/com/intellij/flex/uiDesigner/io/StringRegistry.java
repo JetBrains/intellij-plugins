@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner.io;
 
 import com.intellij.openapi.components.ServiceManager;
-import gnu.trove.TObjectIntIterator;
+import gnu.trove.TObjectIntProcedure;
 import org.jetbrains.annotations.Nullable;
 
 public class StringRegistry {
@@ -42,14 +42,15 @@ public class StringRegistry {
   }
   
   public String[] toArray() {
-    int size = table.size();
-    TObjectIntIterator<String> iterator = table.iterator();
-    String[] strings = new String[size];
-    for (int i = size; i-- > 0; ) {
-      iterator.advance();
-      strings[iterator.value() - 1] = iterator.key();
-    }
-    
+    final String[] strings = new String[table.size()];
+    table.forEachEntry(new TObjectIntProcedure<String>() {
+      @Override
+      public boolean execute(String v, int id) {
+        strings[id - 1] = v;
+        return true;
+      }
+    });
+
     return strings;
   }
 

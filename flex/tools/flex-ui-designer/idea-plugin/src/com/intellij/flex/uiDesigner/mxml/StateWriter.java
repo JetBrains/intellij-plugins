@@ -310,7 +310,7 @@ class StateWriter {
       return parentContext.getBackSibling();
     }
     else {
-      return writer.createStaticContext(parentContext, referencePosition, mxmlObjectReference);
+      return writer.createStaticContext(parentContext, referencePosition);
     }
   }
 

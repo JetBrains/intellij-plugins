@@ -10,7 +10,7 @@ public class DocumentFactory implements SerializedDocumentDataProvider, Document
   // not subdocument, only Document as tab in our UI
   public var document:Document;
 
-  private const objectDeclarationPositionMap:Dictionary = new Dictionary(true);
+  private const objectToRangeMarkerId:Dictionary = new Dictionary(true);
 
   public function DocumentFactory(id:int, data:ByteArray, file:VirtualFile, className:String, flags:int, module:Module) {
     _id = id;
@@ -84,12 +84,12 @@ public class DocumentFactory implements SerializedDocumentDataProvider, Document
     return _users != null && _users.length > 0;
   }
 
-  public function registerObjectDeclarationPosition(object:Object, textOffset:int):void {
-    objectDeclarationPositionMap[object] = textOffset;
+  public function registerObjectDeclarationRangeMarkerId(object:Object, id:int):void {
+    objectToRangeMarkerId[object] = id;
   }
 
-  public function getObjectDeclarationPosition(object:Object):int {
-    var r:* = objectDeclarationPositionMap[object];
+  public function getObjectDeclarationRangeMarkerId(object:Object):int {
+    var r:* = objectToRangeMarkerId[object];
     if (r === undefined) {
       return -1;
     }

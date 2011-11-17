@@ -41,6 +41,7 @@ import org.jetbrains.annotations.TestOnly;
 import javax.swing.event.HyperlinkEvent;
 
 import java.io.File;
+import java.util.List;
 
 import static com.intellij.flex.uiDesigner.LogMessageUtil.LOG;
 
@@ -162,7 +163,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
             final ProblemsHolder problemsHolder = new ProblemsHolder();
             if (!client.isModuleRegistered(module)) {
               try {
-                final XmlFile[] unregisteredDocumentReferences = LibraryManager.getInstance().initLibrarySets(module, true, problemsHolder);
+                final List<XmlFile> unregisteredDocumentReferences = LibraryManager.getInstance().initLibrarySets(module, true, problemsHolder);
                 if (unregisteredDocumentReferences != null &&
                     !client.registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder)) {
                   return;
@@ -279,7 +280,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
     }
 
     @Override
-    public boolean run(XmlFile[] unregisteredDocumentReferences, ProgressIndicator indicator, ProblemsHolder problemsHolder) {
+    public boolean run(List<XmlFile> unregisteredDocumentReferences, ProgressIndicator indicator, ProblemsHolder problemsHolder) {
       indicator.setText(FlexUIDesignerBundle.message("open.document"));
       Client client = Client.getInstance();
       if (!client.flush()) {

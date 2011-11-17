@@ -77,7 +77,7 @@ public class LibraryManager {
   public void garbageCollection(@SuppressWarnings("UnusedParameters") ProgressIndicator indicator) {
   }
 
-  public XmlFile[] initLibrarySets(@NotNull final Module module, boolean collectLocalStyleHolders, ProblemsHolder problemsHolder)
+  public List<XmlFile> initLibrarySets(@NotNull final Module module, boolean collectLocalStyleHolders, ProblemsHolder problemsHolder)
       throws InitException {
     final Project project = module.getProject();
     final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter(16384);
@@ -168,7 +168,7 @@ public class LibraryManager {
       }
     });
 
-    return unregisteredDocumentReferences.isEmpty() ? null : unregisteredDocumentReferences.toArray(new XmlFile[unregisteredDocumentReferences.size()]);
+    return unregisteredDocumentReferences;
   }
 
   private FlexLibrarySet getOrCreateFlexLibrarySet(LibraryCollector libraryCollector) throws InitException {

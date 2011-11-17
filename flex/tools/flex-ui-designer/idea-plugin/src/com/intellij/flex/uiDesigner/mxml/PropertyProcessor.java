@@ -61,6 +61,7 @@ class PropertyProcessor implements ValueWriter {
     this.mxmlWriter = mxmlWriter;
   }
 
+  @NotNull
   public List<XmlFile> getUnregisteredDocumentFactories() {
     return unregisteredDocumentFactories;
   }
@@ -184,14 +185,6 @@ class PropertyProcessor implements ValueWriter {
 
   private int getProjectComponentFactoryId(JSClass jsClass) throws InvalidPropertyException {
     return InjectionUtil.getProjectComponentFactoryId(jsClass, unregisteredDocumentFactories);
-  }
-
-  public void reset() {
-    classFactoryMap.clear();
-    if (unregisteredDocumentFactories != null && !unregisteredDocumentFactories.isEmpty()) {
-      unregisteredDocumentFactories.clear();
-    }
-    isEffect = false;
   }
 
   boolean processFxModel(XmlTag tag) {
@@ -343,7 +336,7 @@ class PropertyProcessor implements ValueWriter {
       // see valArr in EmbedSwfAndImageFromCss
       out.write(AmfExtendedTypes.MXML_ARRAY);
       mxmlWriter.processTagChildren(tag, mxmlWriter.processIdAttributeOfFxTag(tag, parentContext, allowIncludeInExludeFrom), parentContext,
-                                    false, PropertyKind.ARRAY, false);
+                                    false, ARRAY, false);
       return true;
     }
     else if (CodeContext.AS3_VEC_VECTOR_QUALIFIED_NAME.equals(type)) {

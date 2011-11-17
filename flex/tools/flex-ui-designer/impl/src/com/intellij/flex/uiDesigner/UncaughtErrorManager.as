@@ -122,6 +122,8 @@ public class UncaughtErrorManager implements UiErrorHandler {
   }
 
   public function logWarning(message:String):void {
+    trace("logWarning: " + message);
+
     socket.writeByte(ServerMethod.LOG_WARNING);
     socket.writeUTF(message);
     socket.flush();

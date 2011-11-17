@@ -14,6 +14,7 @@ import org.picocontainer.MutablePicoContainer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -41,7 +42,7 @@ abstract class MxmlTestBase extends AppTestBase {
     return TestDesignerApplicationManager.getLastProblems();
   }
 
-  protected void assertAfterInitLibrarySets(XmlFile[] unregisteredDocumentReferences) throws IOException {
+  protected void assertAfterInitLibrarySets(List<XmlFile> unregisteredDocumentReferences) throws IOException {
   }
 
   static void changeServiceImplementation(Class key, Class implementation) {
@@ -67,7 +68,7 @@ abstract class MxmlTestBase extends AppTestBase {
 
       new DesignerApplicationLauncher(myModule, false, new DesignerApplicationLauncher.PostTask() {
         @Override
-        public boolean run(XmlFile[] unregisteredDocumentReferences, ProgressIndicator indicator, ProblemsHolder problemsHolder) {
+        public boolean run(List<XmlFile> unregisteredDocumentReferences, ProgressIndicator indicator, ProblemsHolder problemsHolder) {
           assertTrue(problemsHolder.isEmpty());
 
           client = (TestClient)Client.getInstance();
@@ -91,8 +92,7 @@ abstract class MxmlTestBase extends AppTestBase {
     else {
       client = (TestClient)Client.getInstance();
       final ProblemsHolder problemsHolder = new ProblemsHolder();
-      XmlFile[] unregistedDocumentReferences = LibraryManager.getInstance().initLibrarySets(myModule, isRequireLocalStyleHolder(),
-        problemsHolder);
+      List<XmlFile> unregistedDocumentReferences = LibraryManager.getInstance().initLibrarySets(myModule, isRequireLocalStyleHolder(), problemsHolder);
       assertTrue(problemsHolder.isEmpty());
       assertAfterInitLibrarySets(unregistedDocumentReferences);
     }

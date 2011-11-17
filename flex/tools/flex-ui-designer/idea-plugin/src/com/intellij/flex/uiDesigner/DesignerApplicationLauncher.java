@@ -58,7 +58,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
 
   private boolean debug;
   private final PostTask postTask;
-  private Future<XmlFile[]> initializeThread;
+  private Future<List<XmlFile>> initializeThread;
 
   private final Semaphore semaphore = new Semaphore();
 
@@ -191,7 +191,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
       }
     }
     
-    final XmlFile[] xmlFiles = initializeThread.get();
+    final List<XmlFile> xmlFiles = initializeThread.get();
     indicator.checkCanceled();
 
     final DesignerApplication application = DesignerApplicationManager.getInstance().getApplication();
@@ -357,9 +357,9 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
 
   private void runInitializeLibrariesAndModuleThread() {
     LibraryManager.getInstance().setAppDir(DesignerApplicationManager.APP_DIR);
-    initializeThread = ApplicationManager.getApplication().executeOnPooledThread(new Callable<XmlFile[]>() {
+    initializeThread = ApplicationManager.getApplication().executeOnPooledThread(new Callable<List<XmlFile>>() {
       @Override
-      public XmlFile[] call() {
+      public List<XmlFile> call() {
         LibraryManager.getInstance().garbageCollection(indicator);
         indicator.checkCanceled();
 
@@ -407,7 +407,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
   }
 
   interface PostTask {
-    public boolean run(XmlFile[] unregisteredDocumentReferences, ProgressIndicator indicator, ProblemsHolder problemsHolder);
+    public boolean run(List<XmlFile> unregisteredDocumentReferences, ProgressIndicator indicator, ProblemsHolder problemsHolder);
 
     void end();
   }

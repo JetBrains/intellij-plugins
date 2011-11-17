@@ -15,12 +15,12 @@ import java.io.IOException;
 final class BaseWriter {
   private static final int EMPTY_CLASS_OR_PROPERTY_NAME = 0;
   
-  int ARRAY = -1;
-  int P_FUD_POSITION = -1;
+  final int ARRAY;
+  final int P_FUD_RANGE_ID;
 
   private final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
 
-  private int startPosition;
+  private final int startPosition;
 
   private final BlockDataOutputStream blockOut;
   private final PrimitiveAmfOutputStream out;
@@ -28,11 +28,20 @@ final class BaseWriter {
   private final Scope rootScope = new Scope();
   private int preallocatedId = -1;
 
-  AssetCounter assetCounter;
+  private final AssetCounter assetCounter;
 
-  public BaseWriter(PrimitiveAmfOutputStream out) {
+  public BaseWriter(PrimitiveAmfOutputStream out, AssetCounter assetCounter) {
     this.out = out;
     blockOut = out.getBlockOut();
+    this.assetCounter = assetCounter;
+
+    stringWriter.startChange();
+
+    ARRAY = getNameReference("array");
+    P_FUD_RANGE_ID = getNameReference("$fud_r");
+
+    assert blockOut.getNextMarkerIndex() == 0;
+    startPosition = out.size();
   }
 
   public AssetCounter getAssetCounter() {
@@ -73,7 +82,7 @@ final class BaseWriter {
     preallocatedId = -1;
   }
 
-  public StaticObjectContext createStaticContext(@Nullable Context parentContext, int referencePosition, @Nullable MxmlObjectReference reference) {
+  public StaticObjectContext createStaticContext(@Nullable Context parentContext, int referencePosition) {
     if (parentContext == null || parentContext.getBackSibling() == null) {
       return new StaticObjectContext(referencePosition, out, preallocatedId, rootScope);
     }
@@ -86,20 +95,7 @@ final class BaseWriter {
     return new DynamicObjectContext(preallocatedId, rootScope, mxmlObjectReference);
   }
 
-  public void reset() {
-    resetAfterMessage();
-
-    ARRAY = -1;
-    P_FUD_POSITION = -1;
-  }
-
-  private void initNames() {
-    ARRAY = getNameReference("array");
-    P_FUD_POSITION = getNameReference("$fud_position");
-  }
-
   public void resetAfterMessage() {
-    rootScope.referenceCounter = 0;
     stringWriter.finishChange();
   }
 
@@ -109,16 +105,6 @@ final class BaseWriter {
 
   public void endObject() {
     out.write(EMPTY_CLASS_OR_PROPERTY_NAME);
-  }
-
-  public void beginMessage() {
-    stringWriter.startChange();
-    if (ARRAY == -1) {
-      initNames();
-    }
-
-    assert blockOut.getNextMarkerIndex() == 0;
-    startPosition = out.size();
   }
 
   public int allocateAbsoluteStaticObjectId() {

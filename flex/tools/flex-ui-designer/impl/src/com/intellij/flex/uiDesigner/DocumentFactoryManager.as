@@ -76,20 +76,20 @@ public class DocumentFactoryManager {
   //noinspection JSMethodCanBeStatic
   public function findElementAddress(object:Object, document:Document):ElementAddress {
     var factory:DocumentFactory = document.documentFactory;
-    var textOffset:int = factory.getObjectDeclarationPosition(object);
-    if (textOffset == -1) {
-      trace("Can't find document for object");
+    var id:int = factory.getObjectDeclarationRangeMarkerId(object);
+    if (id == -1) {
+      UncaughtErrorManager.instance.logWarning("Can't find document for object " + object + " in document " + document.file.presentableUrl);
       return null;
     }
     else {
-      return new ElementAddress(factory, textOffset);
+      return new ElementAddress(factory, id);
     }
   }
 
   public function jumpToObjectDeclaration(object:Object, document:Document):void {
     var elementAddress:ElementAddress = findElementAddress(object, document);
     if (elementAddress != null) {
-      server.openDocument(elementAddress.factory.module, elementAddress.factory, elementAddress.offset);
+      server.openDocument(elementAddress.factory.module, elementAddress.factory, elementAddress.id);
     }
   }
 

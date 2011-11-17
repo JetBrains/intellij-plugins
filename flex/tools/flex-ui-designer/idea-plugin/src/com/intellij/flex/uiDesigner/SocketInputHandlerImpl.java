@@ -205,7 +205,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     final XmlFile psiFile = virtualFileToXmlFile(project, info.getElement());
     final XmlTag rootTag = psiFile.getRootTag();
     assert rootTag != null;
-    final int offset = reader.readInt() - rootTag.getStartOffsetInParent();
+    final int offset = info.getRangeMarker(reader.readInt()).getStartOffset() - rootTag.getStartOffsetInParent();
     final Document document = FileDocumentManager.getInstance().getDocument(info.getElement());
     final String name = reader.readUTF();
     final String value;
@@ -227,7 +227,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     }
 
     final XmlTag tag;
-    AccessToken token = ReadAction.start();
+    final AccessToken token = ReadAction.start();
     try {
       tag = PsiTreeUtil.getParentOfType(rootTag.findElementAt(offset), XmlTag.class);
       assert tag != null;
@@ -287,8 +287,8 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
   private void openDocument() throws IOException {
     Project project = readProject();
-    navigateToFile(new OpenFileDescriptor(project, DocumentFactoryManager.getInstance().getFile(reader.readUnsignedShort()),
-      reader.readInt()));
+    DocumentFactoryManager.DocumentInfo info = DocumentFactoryManager.getInstance().getInfo(reader.readUnsignedShort());
+    navigateToFile(new OpenFileDescriptor(project, info.getElement(), info.getRangeMarker(reader.readInt()).getStartOffset()));
   }
 
   private static void navigateToFile(final OpenFileDescriptor openFileDescriptor) {

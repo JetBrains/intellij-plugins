@@ -68,11 +68,11 @@
   </Group>
   
   <HGroup>
-    <Label text="Label 3" color="#ccaacc"/>
-    <TextInput width="#64"/>
+    <Label text="eeeeeeeeeeeeeeeeeeee" color="#ccaacc"/>
+    <TextInput width="#64" name="TextInpddddut49" selectionHighlighting="whenFocused" useHandCursor="true" validationSubField="" toolTip="wfewfwerwef"/>
   </HGroup>
   <HGroup>
-    <Label text="Label 4" color="0x999900"/>
+    <Label text="Label erferferf4" color="0x999900"/>
     <TextInput width="0x64"/>
   </HGroup>
   <HGroup>

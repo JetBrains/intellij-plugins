@@ -48,8 +48,8 @@ public final class FlexDocumentFactory implements IFactory, ClassReference, Skin
     return context.readerContext.moduleContext;
   }
 
-  public function registerObjectDeclarationPosition(object:Object, textOffset:int):void {
-    context.readerContext.registerObjectDeclarationPosition(object, textOffset);
+  public function registerObjectDeclarationRangeMarkerId(object:Object, textOffset:int):void {
+    context.readerContext.registerObjectDeclarationRangeMarkerId(object, textOffset);
   }
 
   public function registerObjectWithId(id:String, object:Object):void {

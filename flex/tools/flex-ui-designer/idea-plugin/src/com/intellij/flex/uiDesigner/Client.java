@@ -11,10 +11,12 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.ArrayUtil;
@@ -29,8 +31,6 @@ import java.util.List;
 public class Client {
   protected final BlockDataOutputStream blockOut = new BlockDataOutputStream();
   protected final AmfOutputStream out = new AmfOutputStream(blockOut);
-
-  private final MxmlWriter mxmlWriter = new MxmlWriter(out);
 
   private final InfoMap<Module, ModuleInfo> registeredModules = new InfoMap<Module, ModuleInfo>(true);
   private final InfoMap<Project, ProjectInfo> registeredProjects = new InfoMap<Project, ProjectInfo>();
@@ -346,7 +346,7 @@ public class Client {
       out.writeShort(factoryId);
 
       final ProblemsHolder problemsHolder = new ProblemsHolder();
-      writeDocumentFactory(module, psiFile, problemsHolder);
+      writeDocumentFactory(DocumentFactoryManager.getInstance().getInfo(factoryId), module, psiFile, problemsHolder);
       if (!problemsHolder.isEmpty()) {
         DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
       }
@@ -368,15 +368,15 @@ public class Client {
                                             ProblemsHolder problemsHolder) {
     final DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance();
     final boolean registered = !force && documentFactoryManager.isRegistered(virtualFile);
-    final int id = documentFactoryManager.getId(virtualFile);
+    final DocumentFactoryManager.DocumentInfo documentInfo = documentFactoryManager.get(virtualFile, null, null);
     if (!registered) {
       boolean hasError = true;
       try {
         beginMessage(ClientMethod.registerDocumentFactory);
         writeId(module);
-        out.writeShort(id);
+        out.writeShort(documentInfo.getId());
         writeVirtualFile(virtualFile, out);
-        hasError = !writeDocumentFactory(module, psiFile, problemsHolder);
+        hasError = !writeDocumentFactory(documentInfo, module, psiFile, problemsHolder);
       }
       catch (Throwable e) {
         LogMessageUtil.processInternalError(e, virtualFile);
@@ -390,10 +390,13 @@ public class Client {
       }
     }
 
-    return id;
+    return documentInfo.getId();
   }
 
-  private boolean writeDocumentFactory(Module module, XmlFile psiFile, ProblemsHolder problemsHolder)
+  private boolean writeDocumentFactory(DocumentFactoryManager.DocumentInfo documentInfo,
+                                       Module module,
+                                       XmlFile psiFile,
+                                       ProblemsHolder problemsHolder)
     throws IOException {
     final AccessToken token = ReadAction.start();
     final int flags;
@@ -420,11 +423,13 @@ public class Client {
 
     out.write(flags);
 
-    XmlFile[] unregisteredDocumentReferences = mxmlWriter.write(psiFile, problemsHolder, registeredModules.getInfo(module).getFlexLibrarySet().assetCounterInfo.demanded);
-    return unregisteredDocumentReferences == null || registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder);
+    Pair<List<XmlFile>, List<RangeMarker>> result =
+      new MxmlWriter(out, problemsHolder, registeredModules.getInfo(module).getFlexLibrarySet().assetCounterInfo.demanded).write(psiFile);
+    documentInfo.setRangeMarkers(result.second);
+    return result.first.isEmpty() || registerDocumentReferences(result.first, module, problemsHolder);
   }
 
-  public boolean registerDocumentReferences(XmlFile[] files, Module module, ProblemsHolder problemsHolder) {
+  public boolean registerDocumentReferences(List<XmlFile> files, Module module, ProblemsHolder problemsHolder) {
     for (XmlFile file : files) {
       VirtualFile virtualFile = file.getVirtualFile();
       assert virtualFile != null;

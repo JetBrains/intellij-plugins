@@ -6,6 +6,7 @@ import com.intellij.psi.xml.XmlFile;
 import org.jetbrains.annotations.NonNls;
 
 import java.io.IOException;
+import java.util.List;
 
 @Flex(version="4.5")
 public class StyleTest extends MxmlTestBase {
@@ -19,7 +20,7 @@ public class StyleTest extends MxmlTestBase {
   }
 
   @Override
-  protected void assertAfterInitLibrarySets(XmlFile[] unregisteredDocumentReferences) throws IOException {
+  protected void assertAfterInitLibrarySets(List<XmlFile> unregisteredDocumentReferences) throws IOException {
     super.assertAfterInitLibrarySets(unregisteredDocumentReferences);
 
     if (getName().equals("testStyleTag")) {

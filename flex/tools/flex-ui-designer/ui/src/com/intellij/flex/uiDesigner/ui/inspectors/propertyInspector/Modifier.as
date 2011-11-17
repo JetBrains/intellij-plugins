@@ -33,7 +33,7 @@ public class Modifier {
     socket.writeByte(ServerMethod.SET_PROPERTY);
     socket.writeShort(document.module.project.id);
     socket.writeShort(elementAddress.factory.id);
-    socket.writeInt(elementAddress.offset);
+    socket.writeInt(elementAddress.id);
 
     socket.writeUTF(propertyName);
     socket.writeByte(value ? Amf3Types.TRUE : Amf3Types.FALSE);
@@ -55,7 +55,7 @@ public class Modifier {
     socket.writeByte(ServerMethod.SET_PROPERTY);
     socket.writeShort(document.module.project.id);
     socket.writeShort(elementAddress.factory.id);
-    socket.writeInt(elementAddress.offset);
+    socket.writeInt(elementAddress.id);
 
     socket.writeUTF(propertyName);
     socket.writeByte(Amf3Types.STRING);
