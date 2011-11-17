@@ -85,11 +85,14 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
   }
 
   @Override
-  public void resolve(MavenProject project, NativeMavenProjectHolder nativeMavenProject, MavenEmbedderWrapper embedder)
+  public void resolve(Project project,
+                      MavenProject mavenProject,
+                      NativeMavenProjectHolder nativeMavenProject,
+                      MavenEmbedderWrapper embedder)
     throws MavenProcessCanceledException {
-    MavenPlugin plugin = project.findPlugin(myPluginGroupID, myPluginArtifactID);
+    MavenPlugin plugin = mavenProject.findPlugin(myPluginGroupID, myPluginArtifactID);
     if (plugin != null && (plugin.getVersion() == null || plugin.getVersion().charAt(0) < 4)) {
-      embedder.resolvePlugin(plugin, project.getRemoteRepositories(), nativeMavenProject, true);
+      embedder.resolvePlugin(plugin, mavenProject.getRemoteRepositories(), nativeMavenProject, true);
     }
   }
 
