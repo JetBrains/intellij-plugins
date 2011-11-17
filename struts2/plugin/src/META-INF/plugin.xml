@@ -225,6 +225,9 @@
     <!-- OGNL Language -->
     <lang.parserDefinition language="OGNL"
                            implementationClass="com.intellij.lang.ognl.OgnlParserDefinition"/>
+    <lang.formatter language="OGNL"
+                    implementationClass="com.intellij.lang.ognl.formatting.OgnlFormattingModelBuilder"/>
+
     <lang.braceMatcher language="OGNL"
                        implementationClass="com.intellij.lang.ognl.highlight.OgnlBraceMatcher"/>
     <quoteHandler fileType="OGNL" className="com.intellij.lang.ognl.highlight.OgnlQuoteHandler"/>
