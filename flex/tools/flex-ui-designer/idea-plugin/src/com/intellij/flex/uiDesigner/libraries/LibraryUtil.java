@@ -30,7 +30,7 @@ final class LibraryUtil {
     try {
       ZipEntry entry;
       while ((entry = zipIn.getNextEntry()) != null) {
-        if (entry.getName().equals("catalog.xml")) {
+        if (catalogReader == null && entry.getName().equals("catalog.xml")) {
           final InputStreamReader reader = new InputStreamReader(zipIn, Charsets.UTF_8);
           try {
             catalogReader = new MyCharArrayReader(FileUtil.adaptiveLoadText(reader));
@@ -39,8 +39,12 @@ final class LibraryUtil {
             reader.close();
           }
         }
-        else if (entry.getName().equals("library.swf")) {
+        else if (swfIn == null && entry.getName().equals("library.swf")) {
           swfIn = new ByteArrayInputStream(FileUtil.adaptiveLoadBytes(zipIn));
+         }
+
+        if (catalogReader != null && swfIn != null) {
+          break;
         }
       }
     }
