@@ -18,6 +18,7 @@ package com.intellij.struts2.jsp;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiElement;
@@ -40,7 +41,7 @@ import static com.intellij.patterns.XmlPatterns.xmlTag;
  *
  * @author Yann C&eacute;bron
  */
-public class TaglibCssInlineStyleInjector implements MultiHostInjector {
+public class TaglibCssInlineStyleInjector implements MultiHostInjector, DumbAware {
 
   private static final ElementPattern<XmlAttributeValue> CSS_ELEMENT_PATTERN =
       xmlAttributeValue()

@@ -20,6 +20,7 @@ import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.OgnlLanguageInjector;
 import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.XmlAttributeValuePattern;
 import com.intellij.psi.PsiElement;
@@ -41,7 +42,7 @@ import static com.intellij.patterns.XmlPatterns.xmlTag;
  *
  * @author Yann C&eacute;bron
  */
-public class TaglibOgnlInjector implements MultiHostInjector {
+public class TaglibOgnlInjector implements MultiHostInjector, DumbAware {
 
   private static final XmlAttributeValuePattern STRUTS_TAG_ATTRIBUTE = xmlAttributeValue()
       .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),

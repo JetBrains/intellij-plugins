@@ -20,6 +20,7 @@ import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.javascript.JSLanguageInjector;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.StandardPatterns;
@@ -42,7 +43,7 @@ import static com.intellij.patterns.XmlPatterns.xmlTag;
  *
  * @author Yann C&eacute;bron
  */
-public class TaglibJavaScriptInjector implements MultiHostInjector {
+public class TaglibJavaScriptInjector implements MultiHostInjector, DumbAware {
 
   private static final ElementPattern<XmlAttributeValue> JS_ATTRIBUTE_PATTERN =
       xmlAttributeValue()
