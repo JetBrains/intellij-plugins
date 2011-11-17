@@ -6,8 +6,6 @@ import com.intellij.flex.uiDesigner.io.ByteRange;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSVariable;
-import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlElement;
@@ -108,14 +106,7 @@ class InjectedASWriter implements ValueReferenceResolver {
 
   public void write() {
     writeDeclarations();
-    // AS-294
-    final AccessToken token = ReadAction.start();
-    try {
-      writeBinding(writer.getOut());
-    }
-    finally {
-      token.finish();
-    }
+    writeBinding(writer.getOut());
   }
 
   private void writeDeclarations() {

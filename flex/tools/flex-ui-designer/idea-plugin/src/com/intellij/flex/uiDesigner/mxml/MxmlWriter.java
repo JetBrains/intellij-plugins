@@ -69,6 +69,7 @@ public class MxmlWriter {
   }
 
   public Pair<List<XmlFile>, List<RangeMarker>> write(XmlFile psiFile) throws IOException {
+    final AccessToken token = ReadAction.start();
     try {
       final VirtualFile virtualFile = psiFile.getVirtualFile();
       assert virtualFile != null;
@@ -76,18 +77,12 @@ public class MxmlWriter {
 
       document = FileDocumentManager.getInstance().getDocument(virtualFile);
 
-      final AccessToken token = ReadAction.start();
-      try {
-        XmlTag rootTag = psiFile.getRootTag();
-        assert rootTag != null;
-        ClassBackedElementDescriptor rootTagDescriptor = (ClassBackedElementDescriptor)rootTag.getDescriptor();
-        assert rootTagDescriptor != null;
-        writer.mxmlObjectHeader(rootTagDescriptor.getQualifiedName());
-        processElements(rootTag, null, false, -1, out.size() - 2);
-      }
-      finally {
-        token.finish();
-      }
+      XmlTag rootTag = psiFile.getRootTag();
+      assert rootTag != null;
+      ClassBackedElementDescriptor rootTagDescriptor = (ClassBackedElementDescriptor)rootTag.getDescriptor();
+      assert rootTagDescriptor != null;
+      writer.mxmlObjectHeader(rootTagDescriptor.getQualifiedName());
+      processElements(rootTag, null, false, -1, out.size() - 2);
 
       writer.endObject();
 
@@ -101,10 +96,10 @@ public class MxmlWriter {
 
       injectedASWriter.write();
       writer.endMessage();
-      List<XmlFile> unregisteredDocumentReferences = propertyProcessor.getUnregisteredDocumentFactories();
-      return new Pair<List<XmlFile>, List<RangeMarker>>(unregisteredDocumentReferences, rangeMarkers);
+      return new Pair<List<XmlFile>, List<RangeMarker>>(propertyProcessor.getUnregisteredDocumentFactories(), rangeMarkers);
     }
     finally {
+      token.finish();
       problemsHolder.setCurrentFile(null);
       writer.resetAfterMessage();
     }

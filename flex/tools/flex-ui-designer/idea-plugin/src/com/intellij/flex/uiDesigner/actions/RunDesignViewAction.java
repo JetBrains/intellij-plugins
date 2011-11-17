@@ -108,6 +108,6 @@ public class RunDesignViewAction extends DumbAwareAction {
     }
 
     final JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(rootTag);
-    return jsClass != null && (MxmlUtil.isFlashDisplayContainerClass(jsClass) || JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.IUI_COMPONENT));
+    return jsClass != null && JSInheritanceUtil.isParentClass(jsClass, "flash.display.DisplayObjectContainer");
   }
 }

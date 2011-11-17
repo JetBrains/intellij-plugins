@@ -4,7 +4,7 @@
     <root id="archive" name="flex-ui-designer.jar">
       <element id="module-output" name="idea-plugin" />
       <element id="directory" name="META-INF">
-        <element id="file-copy" path="$PROJECT_DIR$/idea-plugin/META-INF/plugin.xml" />
+        <element id="file-copy" path="$PROJECT_DIR$/idea-plugin/src/META-INF/plugin.xml" />
       </element>
       <element id="file-copy" path="$PROJECT_DIR$/main-loader/target/main-loader-1.0-SNAPSHOT.swf" output-file-name="designer.swf" />
       <element id="file-copy" path="$PROJECT_DIR$/main/resources/descriptor.xml" />

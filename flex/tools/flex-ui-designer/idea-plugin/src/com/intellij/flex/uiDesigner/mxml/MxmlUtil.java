@@ -2,14 +2,11 @@ package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.xml.*;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
 import java.util.regex.Pattern;
 
 public final class MxmlUtil {
@@ -48,30 +45,5 @@ public final class MxmlUtil {
 
   public static boolean isAbstract(ClassBackedElementDescriptor classBackedDescriptor) {
     return FLEX_SDK_ABSTRACT_CLASSES.matcher(classBackedDescriptor.getQualifiedName()).matches();
-  }
-  
-  public static boolean isFlashDisplayContainerClass (JSClass jsClass) {
-    return checkClassHasParentOfAnotherOne(jsClass, "flash.display.Sprite", null);
-  }
-
-  private static boolean checkClassHasParentOfAnotherOne(final JSClass aClass, final String parent, @Nullable Set<JSClass> visited) {
-    if (visited != null && visited.contains(aClass)) {
-      return false;
-    }
-
-    for (JSClass superClazz : aClass.getSupers()) {
-      if (superClazz.getQualifiedName().equals(parent)) {
-        return true;
-      }
-
-      if (visited == null) {
-        visited = new THashSet<JSClass>();
-      }
-      visited.add(aClass);
-      if (checkClassHasParentOfAnotherOne(superClazz, parent, visited)) {
-        return true;
-      }
-    }
-    return false;
   }
 }
