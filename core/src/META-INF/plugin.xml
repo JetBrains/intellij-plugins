@@ -74,6 +74,10 @@
     <moduleService serviceImplementation="com.intellij.tapestry.intellij.TapestryModuleSupportLoader"/>
   </extensions>
 
+  <extensions defaultExtensionNs="org.intellij.intelliLang">
+    <injectionConfig config="META-INF/languageInjections.xml"/>
+  </extensions>
+
   <actions>
     <action class="com.intellij.tapestry.intellij.actions.navigation.ClassTemplateNavigation"
             id="ClassTemplateNavigation" text="Class &lt;-&gt; Template Navigation"
