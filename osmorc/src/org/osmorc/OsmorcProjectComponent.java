@@ -106,6 +106,7 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
+        if (myProject.isDisposed()) return;
         myFrameworkInstanceLibraryManager.updateFrameworkInstanceLibraries();
         myAlarm.cancelAllRequests();
         myAlarm.addRequest(new Runnable() {
