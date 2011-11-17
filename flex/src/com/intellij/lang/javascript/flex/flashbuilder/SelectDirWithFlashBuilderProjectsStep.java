@@ -28,7 +28,7 @@ import java.util.List;
 public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardStep {
   private JPanel myMainPanel;
   private LabeledComponent<TextFieldWithBrowseButton> myInitialPathComponent;
-  private LabeledComponent<TextFieldWithBrowseButton> myFxpExtractPathComponent;
+  private LabeledComponent<TextFieldWithBrowseButton> myExtractPathComponent;
   private LabeledComponent<JTextField> myProjectNameComponent;
   private LabeledComponent<TextFieldWithBrowseButton> myProjectLocationComponent;
   private JLabel myMultiProjectNote;
@@ -39,8 +39,8 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
     super(context);
     setupInitialPathComponent();
 
-    myFxpExtractPathComponent.setVisible(false);
-    myFxpExtractPathComponent.getComponent()
+    myExtractPathComponent.setVisible(false);
+    myExtractPathComponent.getComponent()
       .addBrowseFolderListener(null, null, context.getProject(), FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
     final boolean creatingNewProject = context.isCreatingNewProject();
@@ -63,15 +63,25 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
 
     final FileChooserDescriptor descriptor = new FileChooserDescriptor(true, true, true, true, false, false) {
       public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
-        return (super.isFileVisible(file, showHiddenFiles) && (file.isDirectory() || isFBProjectFileOrArchive(file)));
+        return (super.isFileVisible(file, showHiddenFiles) &&
+                (file.isDirectory() || FlashBuilderProjectFinder.isFlashBuilderProject(file)) ||
+                FlashBuilderProjectFinder.hasArchiveExtension(file.getPath()));
       }
 
       public Icon getOpenIcon(final VirtualFile file) {
-        return !file.isDirectory() && isFBProjectFileOrArchive(file) ? getBuilder().getIcon() : super.getOpenIcon(file);
+        // do not use Flash Builder specific icon for zip
+        return !file.isDirectory() &&
+               (FlashBuilderProjectFinder.hasFxpExtension(file.getPath()) || FlashBuilderProjectFinder.isFlashBuilderProject(file))
+               ? getBuilder().getIcon()
+               : super.getOpenIcon(file);
       }
 
       public Icon getClosedIcon(final VirtualFile file) {
-        return !file.isDirectory() && isFBProjectFileOrArchive(file) ? getBuilder().getIcon() : super.getClosedIcon(file);
+        // do not use Flash Builder specific icon for zip
+        return !file.isDirectory() &&
+               (FlashBuilderProjectFinder.hasFxpExtension(file.getPath()) || FlashBuilderProjectFinder.isFlashBuilderProject(file))
+               ? getBuilder().getIcon()
+               : super.getOpenIcon(file);
       }
     };
 
@@ -86,15 +96,15 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
 
     final VirtualFile file = path.isEmpty() ? null : LocalFileSystem.getInstance().findFileByPath(path);
 
-    final boolean isFxp = file != null && !file.isDirectory() && FlashBuilderProjectFinder.isArchivedFBProject(file.getPath());
-    final boolean multiProjectFxp = isFxp && FlashBuilderProjectFinder.isMultiProjectFxp(file.getPath());
+    final boolean isArchive = file != null && !file.isDirectory() && FlashBuilderProjectFinder.hasArchiveExtension(file.getPath());
+    final boolean multiProjectArchive = isArchive && FlashBuilderProjectFinder.isMultiProjectArchive(file.getPath());
 
     if (getWizardContext().isCreatingNewProject()) {
       if (file != null) {
         final String suggestedProjectName = ((FlashBuilderImporter)getBuilder()).getSuggestedProjectName();
         myProjectNameComponent.getComponent().setText(suggestedProjectName);
 
-        if (isFxp) {
+        if (isArchive) {
           myProjectLocationComponent.setText(FlexBundle.message("project.location"));
           final String pDir = FileUtil.toSystemDependentName(getWizardContext().getProjectFileDirectory() + "/" + suggestedProjectName);
           myProjectLocationComponent.getComponent().setText(pDir);
@@ -106,30 +116,27 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
         }
       }
 
-      myMultiProjectNote.setVisible(isFxp && multiProjectFxp);
-      myCreateSubfolderCheckBox.setVisible(isFxp && !multiProjectFxp);
+      myMultiProjectNote.setVisible(isArchive && multiProjectArchive);
+      myCreateSubfolderCheckBox.setVisible(isArchive && !multiProjectArchive);
       myCreateSubfolderCheckBox
         .setText(FlexBundle.message("extract.single.to.subfolder.0", file == null ? "" : file.getNameWithoutExtension()));
     }
     else {
-      myFxpExtractPathComponent.setVisible(isFxp);
-      if (isFxp) {
-        myFxpExtractPathComponent.setText(multiProjectFxp ? FlexBundle.message("folder.to.unzip.several.FB.projects")
-                                                          : FlexBundle.message("folder.to.unzip.one.FB.project"));
-        final String extractPath = multiProjectFxp ? getWizardContext().getProject().getLocation()
-                                                   : getWizardContext().getProject().getLocation() + "/" + file.getNameWithoutExtension();
-        myFxpExtractPathComponent.getComponent().setText(FileUtil.toSystemDependentName(extractPath));
+      myExtractPathComponent.setVisible(isArchive);
+      if (isArchive) {
+        myExtractPathComponent.setText(multiProjectArchive ? FlexBundle.message("folder.to.unzip.several.FB.projects")
+                                                           : FlexBundle.message("folder.to.unzip.one.FB.project"));
+        final String extractPath = multiProjectArchive ? getWizardContext().getProject().getLocation()
+                                                       : getWizardContext().getProject().getLocation() +
+                                                         "/" +
+                                                         file.getNameWithoutExtension();
+        myExtractPathComponent.getComponent().setText(FileUtil.toSystemDependentName(extractPath));
       }
     }
   }
 
   private void createUIComponents() {
     myProjectFormatPanel = new ProjectFormatPanel();
-  }
-
-  private static boolean isFBProjectFileOrArchive(final VirtualFile file) {
-    return FlashBuilderProjectFinder.isArchivedFBProject(file.getPath()) ||
-           FlashBuilderProjectFinder.isFlashBuilderProject(file);
   }
 
   public JComponent getComponent() {
@@ -149,7 +156,7 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
   public void updateDataModel() {
     final FlashBuilderImporter builder = (FlashBuilderImporter)getBuilder();
     builder.setExtractToSubfolder(myCreateSubfolderCheckBox.isSelected());
-    builder.setFxpExtractPath(FileUtil.toSystemIndependentName(myFxpExtractPathComponent.getComponent().getText().trim()));
+    builder.setExtractPath(FileUtil.toSystemIndependentName(myExtractPathComponent.getComponent().getText().trim()));
 
     getWizardContext().setProjectName(myProjectNameComponent.getComponent().getText().trim());
     getWizardContext()
@@ -184,11 +191,11 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
       return ok && checkProjectNameAndPath();
     }
     else {
-      if (FlashBuilderProjectFinder.isArchivedFBProject(file.getPath())) {
-        FlashBuilderProjectFinder.checkFxpFile(file.getPath());
+      if (FlashBuilderProjectFinder.hasArchiveExtension(file.getPath())) {
+        FlashBuilderProjectFinder.checkArchiveContainsFBProject(file.getPath());
         final File dir = new File(getWizardContext().isCreatingNewProject()
                                   ? myProjectLocationComponent.getComponent().getText().trim()
-                                  : myFxpExtractPathComponent.getComponent().getText().trim());
+                                  : myExtractPathComponent.getComponent().getText().trim());
         if (dir.isDirectory() && dir.list().length > 0) {
           final String title = StringUtil.capitalizeWords(
             ProjectBundle.message("project.new.wizard.import.title", getWizardContext().getPresentationName()), true);

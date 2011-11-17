@@ -60,7 +60,7 @@
           <text resource-bundle="com/intellij/lang/javascript/flex/FlexBundle" key="extract.single.to.subfolder.0"/>
         </properties>
       </component>
-      <component id="70980" class="com.intellij.openapi.ui.LabeledComponent" binding="myFxpExtractPathComponent">
+      <component id="70980" class="com.intellij.openapi.ui.LabeledComponent" binding="myExtractPathComponent">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>

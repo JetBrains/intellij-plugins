@@ -22,7 +22,7 @@ public class SelectFlashBuilderImportedProjectsStep extends SelectImportedProjec
   }
 
   public boolean isStepVisible() {
-    // no need in this step if one fxp file or one FB project was explicitly selected
+    // no need in this step if one archive file or one FB project was explicitly selected
     final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(((FlashBuilderImporter)getBuilder()).getInitiallySelectedPath());
 
     if (file != null) {
@@ -31,7 +31,7 @@ public class SelectFlashBuilderImportedProjectsStep extends SelectImportedProjec
           return false;
         }
       }
-      else if (FlashBuilderProjectFinder.isFlashBuilderProject(file) || FlashBuilderProjectFinder.isArchivedFBProject(file.getPath())) {
+      else if (FlashBuilderProjectFinder.isFlashBuilderProject(file) || FlashBuilderProjectFinder.hasArchiveExtension(file.getPath())) {
         return false;
       }
     }

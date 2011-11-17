@@ -6,7 +6,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
@@ -166,32 +165,38 @@ public class FlashBuilderProjectFinder {
     return file.isDirectory() && VfsUtil.findRelativeFile(SDKS_RELATIVE_PATH, file) != null;
   }
 
-  static boolean isArchivedFBProject(final String path) {
-    final String extension = FileUtil.getExtension(path);
-    return "fxp".equals(extension) || "fxpl".equals(extension);
+  static boolean hasArchiveExtension(final String path) {
+    return path.endsWith(FlashBuilderImporter.DOT_FXP) ||
+           path.endsWith(FlashBuilderImporter.DOT_FXPL) ||
+           path.endsWith(FlashBuilderImporter.DOT_ZIP);
   }
 
-  static void checkFxpFile(final String fxpFilePath) throws ConfigurationException {
-    _isMultiProjectFxp(fxpFilePath);
+  static boolean hasFxpExtension(final String path) {
+    final String lowercased = path.toLowerCase();
+    return lowercased.endsWith(FlashBuilderImporter.DOT_FXP) || lowercased.endsWith(FlashBuilderImporter.DOT_FXPL);
   }
 
-  static boolean isMultiProjectFxp(final String fxpFilePath) {
+  static void checkArchiveContainsFBProject(final String archiveFilePath) throws ConfigurationException {
+    _isMultiProjectArchive(archiveFilePath);
+  }
+
+  static boolean isMultiProjectArchive(final String archiveFilePath) {
     try {
-      return _isMultiProjectFxp(fxpFilePath);
+      return _isMultiProjectArchive(archiveFilePath);
     }
     catch (ConfigurationException e) {
       return false;
     }
   }
 
-  private static boolean _isMultiProjectFxp(final String fxpFilePath) throws ConfigurationException {
+  private static boolean _isMultiProjectArchive(final String archiveFilePath) throws ConfigurationException {
     boolean containsDotProjectFile = false;
     boolean containsDotActionScriptFile = false;
     boolean containsNestedProjects = false;
 
     ZipFile zipFile = null;
     try {
-      zipFile = new ZipFile(fxpFilePath);
+      zipFile = new ZipFile(archiveFilePath);
 
       final Enumeration<? extends ZipEntry> entries = zipFile.entries();
       while (entries.hasMoreElements()) {
