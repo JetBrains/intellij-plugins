@@ -53,8 +53,7 @@ public class TaglibOgnlInjector implements MultiHostInjector {
 
   // generic attribute containing "%{" (multiple occurrences possible)
   private static final ElementPattern<XmlAttributeValue> OGNL_OCCURRENCE_PATTERN = xmlAttributeValue()
-      .withTextLengthLongerThan(OgnlLanguage.EXPRESSION_PREFIX.length())
-      .withValue(string().contains(OgnlLanguage.EXPRESSION_PREFIX));
+      .withValue(string().longerThan(OgnlLanguage.EXPRESSION_PREFIX.length()).contains(OgnlLanguage.EXPRESSION_PREFIX));
 
   // attributes always containing expression _without_ prefix
   // <s:iterator> "value"
@@ -64,7 +63,6 @@ public class TaglibOgnlInjector implements MultiHostInjector {
 
   // list expression "{....}"
   private static final ElementPattern<XmlAttributeValue> OGNL_LIST_ELEMENT_PATTERN = xmlAttributeValue()
-      .withTextLengthLongerThan(OgnlLanguage.EXPRESSION_PREFIX.length())
       .withValue(string().startsWith("{"));
 
   @Override
