@@ -119,7 +119,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
           }
           myBundleManager.reindex(myModule);
         }
-      });
+      }, myModule.getDisposed());
     }
   }
 

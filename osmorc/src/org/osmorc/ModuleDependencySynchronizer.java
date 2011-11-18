@@ -95,7 +95,7 @@ public class ModuleDependencySynchronizer {
           }
         }.queue();
       }
-    });
+    },project.getDisposed());
   }
 
   /**

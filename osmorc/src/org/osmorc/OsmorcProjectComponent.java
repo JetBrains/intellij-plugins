@@ -116,7 +116,7 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
           }
         }, 500);
       }
-    });
+    }, myProject.getDisposed());
   }
 
 
@@ -134,7 +134,7 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
           }
         }.queue();
       }
-    });
+    }, myProject.getDisposed());
   }
 
 
