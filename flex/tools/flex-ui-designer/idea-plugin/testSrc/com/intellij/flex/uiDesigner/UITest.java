@@ -127,7 +127,7 @@ public class UITest extends MxmlTestBase {
     interact(getTestName(true), asserts);
   }
   
-  private void interact(String scriptName, final Assert... asserts) throws Exception {
+  private static void interact(String scriptName, final Assert... asserts) throws Exception {
     roboflest.test(new File(getTestDataPath() + "/roboflest/" + scriptName + ".txt"), asserts);
   }
 
@@ -141,10 +141,11 @@ public class UITest extends MxmlTestBase {
     }
 
     @Override
-    public final void test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception {
+    public final boolean test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception {
       init(xmlFile);
       test(file);
       assertNotAvailable();
+      return true;
     }
 
     private void test(final VirtualFile file) throws Exception {

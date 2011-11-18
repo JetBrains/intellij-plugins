@@ -3,11 +3,13 @@ import com.intellij.flex.uiDesigner.DocumentReader;
 import com.intellij.flex.uiDesigner.DocumentReaderContext;
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 
-public final class DeferredInstanceFromBytesContext {
-  public function DeferredInstanceFromBytesContext(readerContext:DocumentReaderContext, reader:DocumentReader, styleManager:StyleManagerEx) {
+import flash.errors.IllegalOperationError;
+
+[Abstract]
+public class DeferredInstanceFromBytesContext {
+  public function DeferredInstanceFromBytesContext(readerContext:DocumentReaderContext, styleManager:StyleManagerEx) {
     _readerContext = readerContext;
-    _reader = reader;
-    this._styleManager = styleManager;
+    _styleManager = styleManager;
   }
 
   private var _readerContext:DocumentReaderContext;
@@ -15,9 +17,8 @@ public final class DeferredInstanceFromBytesContext {
     return _readerContext;
   }
 
-  private var _reader:DocumentReader;
-  public function get reader():DocumentReader {
-    return _reader;
+  public function createReader():DocumentReader {
+    throw new IllegalOperationError("abstract");
   }
 
   private var _styleManager:StyleManagerEx;

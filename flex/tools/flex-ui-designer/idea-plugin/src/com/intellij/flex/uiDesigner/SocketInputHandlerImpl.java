@@ -500,8 +500,8 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
   static class Reader extends DataInputStream {
     Reader(InputStream in) {
-      super(in);
-      //super(new InputStreamDumper(in));
+      //super(in);
+      super(new InputStreamDumper(in));
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -513,7 +513,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
         this.in = in;
 
         try {
-          fileOut = new FileOutputStream(new File("/Users/develar/clientOut"));
+          fileOut = new FileOutputStream(new File( "/Users/develar/clientOut"));
         }
         catch (FileNotFoundException e) {
           throw new RuntimeException(e);

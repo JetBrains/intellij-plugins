@@ -1,11 +1,9 @@
 package com.intellij.flex.uiDesigner.css {
 import com.intellij.flex.uiDesigner.DocumentFactory;
 import com.intellij.flex.uiDesigner.DocumentFactoryManager;
-import com.intellij.flex.uiDesigner.DocumentReader;
 import com.intellij.flex.uiDesigner.ModuleContextEx;
-import com.intellij.flex.uiDesigner.Project;
 import com.intellij.flex.uiDesigner.StringRegistry;
-import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContext;
+import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContextImpl;
 import com.intellij.flex.uiDesigner.io.AmfExtendedTypes;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
@@ -25,13 +23,13 @@ public final class Stylesheet {
     return _rulesets;
   }
 
-  public function read(input:IDataInput, project:Project):void {
+  public function read(input:IDataInput):void {
     var stringRegistry:StringRegistry = StringRegistry.instance;
     var n:int = AmfUtil.readUInt29(input);
     if (n > 0) {
       _rulesets = new Vector.<CssRuleset>(n, true);
       for (var i:int = 0; i < n; i++) {
-        readRuleset(_rulesets[i] = CssRuleset.create(AmfUtil.readUInt29(input), AmfUtil.readUInt29(input)), input, stringRegistry, project);
+        readRuleset(_rulesets[i] = CssRuleset.create(AmfUtil.readUInt29(input), AmfUtil.readUInt29(input)), input, stringRegistry);
       }
     }
     
@@ -44,7 +42,7 @@ public final class Stylesheet {
     }
   }
 
-  private static function readRuleset(ruleset:CssRuleset, input:IDataInput, stringRegistry:StringRegistry, project:Project):void {
+  private static function readRuleset(ruleset:CssRuleset, input:IDataInput, stringRegistry:StringRegistry):void {
     var i:int;
     const selectorsLength:int = input.readByte();
     var selectors:Vector.<CssSelector> = new Vector.<CssSelector>(selectorsLength, true);
@@ -90,7 +88,7 @@ public final class Stylesheet {
             break;
 
           case AmfExtendedTypes.DOCUMENT_FACTORY_REFERENCE:
-            declarations[i] = readSkinClass(textOffset, input, project);
+            declarations[i] = readSkinClass(textOffset, input);
             break;
 
           default:
@@ -102,14 +100,14 @@ public final class Stylesheet {
     }
   }
 
-  private static function readSkinClass(textOffset:int, input:IDataInput, project:Project):CssDeclaration {
+  private static function readSkinClass(textOffset:int, input:IDataInput):CssDeclaration {
     const id:int = AmfUtil.readUInt29(input);
     var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance().get(id);
     var moduleContext:ModuleContextEx = documentFactory.module.context;
     var factory:Object = moduleContext.getDocumentFactory(id);
     if (factory == null) {
-      factory = new moduleContext.documentFactoryClass(documentFactory,
-          new DeferredInstanceFromBytesContext(documentFactory, DocumentReader(project.getComponent(DocumentReader)), moduleContext.styleManager));
+      factory = new moduleContext.documentFactoryClass(documentFactory, new DeferredInstanceFromBytesContextImpl(documentFactory,
+                                                                                                                 moduleContext.styleManager));
       moduleContext.putDocumentFactory(id, factory);
     }
 

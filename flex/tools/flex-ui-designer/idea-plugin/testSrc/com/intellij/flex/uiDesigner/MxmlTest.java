@@ -46,18 +46,10 @@ public class MxmlTest extends MxmlTestBase {
       files = pair.getFirst();
     }
     else {
-      files = new VirtualFile[]{getVFile(getTestPath() + "/" + testFile + ".mxml")};
+      files = new VirtualFile[]{getSource(testFile + ".mxml")};
     }
 
-    final VirtualFile[] auxFiles = pair.getSecond();
-    final int auxFilesCount = auxFiles == null ? 0 : auxFiles.length;
-    final VirtualFile[] vFiles = new VirtualFile[files.length + auxFilesCount];
-    System.arraycopy(files, 0, vFiles, 0, files.length);
-    if (auxFiles != null) {
-      System.arraycopy(auxFiles, 0, vFiles, files.length, auxFiles.length);
-    }
-
-    testFiles(vFiles.length - auxFilesCount, vFiles);
+    testFiles(files, pair.getSecond());
     
     String[] problems = getLastProblems();
     if (testFile != null) {
@@ -119,7 +111,7 @@ public class MxmlTest extends MxmlTestBase {
     final ArrayList<VirtualFile> files = new ArrayList<VirtualFile>(128);
     final ArrayList<VirtualFile> auxFiles = new ArrayList<VirtualFile>(8);
     
-    collectMxmlFiles(files, auxFiles, getVFile(getTestPath()));
+    collectMxmlFiles(files, auxFiles, getTestDir());
     collectMxmlFiles(files, auxFiles, getVFile((getTestDataPath() + "/src/mx")));
 
     final VirtualFile[] list = files.toArray(new VirtualFile[files.size()]);
@@ -141,7 +133,11 @@ public class MxmlTest extends MxmlTestBase {
       else if (name.startsWith("Aux")) {
         auxFiles.add(file);
       }
-      else if (name.endsWith(JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT) && !name.startsWith("T.") && !name.startsWith("TestApp.") && !name.startsWith("GenericMxmlSupport.")) {
+      else if (name.endsWith(JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT) &&
+               !name.startsWith("T.") &&
+               !name.startsWith("TestApp.") &&
+               !name.startsWith("ProjectMxmlComponentAsParentWithDefaultProperty.") &&
+               !name.startsWith("GenericMxmlSupport.")) {
         files.add(file);
       }
 

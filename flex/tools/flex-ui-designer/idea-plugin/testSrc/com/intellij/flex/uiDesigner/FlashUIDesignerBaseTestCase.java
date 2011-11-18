@@ -1,12 +1,10 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.lang.javascript.JSTestUtils;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -19,6 +17,7 @@ import java.util.List;
 
 public abstract class FlashUIDesignerBaseTestCase extends ModuleTestCase {
   private static String testDataPath;
+  private VirtualFile sourceDir;
 
   @Override
   protected boolean isRunInWriteAction() {
@@ -53,7 +52,7 @@ public abstract class FlashUIDesignerBaseTestCase extends ModuleTestCase {
   }
 
   protected VirtualFile configureByFile(final VirtualFile vFile) throws Exception {
-    return configureByFiles(null, vFile)[0];
+    return configureByFiles(null, new VirtualFile[]{vFile}, null)[0];
   }
 
   /**
@@ -61,75 +60,81 @@ public abstract class FlashUIDesignerBaseTestCase extends ModuleTestCase {
    * we don't need "FileUtil.copyDir(projectRoot, toDirIO);"
    * also, skip openEditorsAndActivateLast
    */
-  protected VirtualFile[] configureByFiles(@Nullable final VirtualFile rawProjectRoot, final VirtualFile... vFiles) throws Exception {
-    final VirtualFile toDir;
+  protected VirtualFile[] configureByFiles(@Nullable VirtualFile rawProjectRoot, VirtualFile[] files, @Nullable VirtualFile[] auxiliaryFiles) throws Exception {
     final AccessToken token = WriteAction.start();
-    final VirtualFile[] files = new VirtualFile[vFiles.length];
+    final VirtualFile[] toFiles;
     try {
-
       final VirtualFile dummyRoot = VirtualFileManager.getInstance().findFileByUrl("temp:///");
       //noinspection ConstantConditions
       dummyRoot.refresh(false, false);
-      toDir = dummyRoot.createChildDirectory(this, "s");
-      assert toDir != null;
+      sourceDir = dummyRoot.createChildDirectory(this, "s");
+      assert sourceDir != null;
       //System.out.print("\ntemp dir l: " + toDir.getChildren().length);
 
       final ModuleRootManager rootManager = ModuleRootManager.getInstance(myModule);
       final ModifiableRootModel rootModel = rootManager.getModifiableModel();
 
+      toFiles = copyFiles(files, sourceDir, rawProjectRoot);
+      if (auxiliaryFiles != null) {
+        copyFiles(auxiliaryFiles, sourceDir, rawProjectRoot);
+      }
 
-      // auxiliary files should be copied first
-      copyFiles(vFiles, toDir, files, rawProjectRoot);
-
-      rootModel.addContentEntry(toDir).addSourceFolder(toDir, false);
-      modifyModule(rootModel, toDir);
+      rootModel.addContentEntry(sourceDir).addSourceFolder(sourceDir, false);
+      modifyModule(rootModel, sourceDir);
       rootModel.commit();
-
-      Disposer.register(myModule, new Disposable() {
-        @Override
-        public void dispose() {
-          try {
-            toDir.delete(this);
-          }
-          catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-        }
-      });
     }
     finally {
       token.finish();
     }
+    return toFiles;
+  }
 
-    return files;
+  @Override
+  protected void tearDown() throws Exception {
+    try {
+      super.tearDown();
+    }
+    finally {
+      if (sourceDir != null) {
+        final AccessToken token = WriteAction.start();
+        try {
+          sourceDir.delete(null);
+        }
+        finally {
+          token.finish();
+        }
+      }
+    }
   }
 
   protected void modifyModule(ModifiableRootModel model, VirtualFile rootDir) {
   }
 
-  private static void copyFiles(final VirtualFile[] fromFiles,
-                                final VirtualFile toDir,
-                                final VirtualFile[] toFiles,
-                                VirtualFile rawProjectRoot) throws IOException {
+  private static VirtualFile[] copyFiles(final VirtualFile[] fromFiles, final VirtualFile toDir, VirtualFile rawProjectRoot) throws IOException {
+    final VirtualFile[] toFiles = new VirtualFile[fromFiles.length];
     final boolean rootSpecified = rawProjectRoot != null;
-    int toFileIndex = 0;
-    for (int i = fromFiles.length - 1; i >= 0; i--) {
-      final VirtualFile fromFile = fromFiles[i];
+    for (int i = 0, n = fromFiles.length; i < n; i++) {
+      VirtualFile fromFile = fromFiles[i];
       VirtualFile toP = toDir;
       if (rootSpecified) {
         final List<String> fromParents = new ArrayList<String>(4);
-        VirtualFile fromP;
-        while ((fromP = fromFile.getParent()) != rawProjectRoot) {
-          fromParents.add(fromP.getName());
-        }
+        VirtualFile fromP = fromFile.getParent();
+        if (fromP != rawProjectRoot) {
+          do {
+            fromParents.add(fromP.getName());
+          }
+          while ((fromP = fromP.getParent()) != rawProjectRoot);
 
-        for (int j = fromParents.size() - 1; j >= 0; j--) {
-          toP = toP.createChildDirectory(null, fromParents.get(i));
+          for (int j = fromParents.size() - 1; j >= 0; j--) {
+            toP = toP.createChildDirectory(null, fromParents.get(j));
+          }
         }
       }
       final VirtualFile toFile = toP.createChildData(null, fromFile.getName());
       toFile.setBinaryContent(fromFile.contentsToByteArray());
-      toFiles[toFileIndex++] = toFile;
+      toFiles[i] = toFile;
     }
+
+    return toFiles;
   }
 }

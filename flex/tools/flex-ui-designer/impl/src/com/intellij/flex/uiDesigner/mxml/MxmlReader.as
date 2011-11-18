@@ -1,5 +1,4 @@
 package com.intellij.flex.uiDesigner.mxml {
-import com.intellij.flex.uiDesigner.DocumentDisplayManager;
 import com.intellij.flex.uiDesigner.DocumentFactory;
 import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.DocumentReader;
@@ -17,49 +16,39 @@ import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.css.CssRuleset;
 import com.intellij.flex.uiDesigner.css.CssSkinClassDeclaration;
 import com.intellij.flex.uiDesigner.css.InlineCssRuleset;
-import com.intellij.flex.uiDesigner.css.StyleDeclarationProxy;
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContext;
+import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContextImpl;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.AmfExtendedTypes;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
-import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
-import flash.events.Event;
-import flash.system.ApplicationDomain;
 import flash.utils.ByteArray;
 import flash.utils.IDataInput;
 import flash.utils.Proxy;
 
-public final class MxmlReader implements DocumentReader {
-  private static const FLEX_EVENT_CLASS_NAME:String = "mx.events.FlexEvent";
-
-  private var input:IDataInput;
+public class MxmlReader implements DocumentReader {
+  protected var input:IDataInput;
   
   internal var stringRegistry:StringRegistry;
-  private var embedImageManager:EmbedImageManager;
-  private var embedSwfManager:EmbedSwfManager;
 
   private const stateReader:StateReader = new StateReader();
   //noinspection JSFieldCanBeLocal
   private const injectedASReader:InjectedASReader = new InjectedASReader();
 
-  private var moduleContext:ModuleContextEx;
+  protected var moduleContext:ModuleContextEx;
   internal var context:DocumentReaderContext;
   private var styleManager:StyleManagerEx;
 
-  private var deferredMxContainers:Vector.<DisplayObjectContainer>;
   internal var objectTable:Vector.<Object>;
   
   internal var factoryContext:DeferredInstanceFromBytesContext;
 
   private var rootObject:Object;
 
-  public function MxmlReader(stringRegistry:StringRegistry, embedImageManager:EmbedImageManager, embedSwfManager:EmbedSwfManager) {
-    this.stringRegistry = stringRegistry;
-    this.embedImageManager = embedImageManager;
-    this.embedSwfManager = embedSwfManager;
+  public function MxmlReader() {
+    stringRegistry = StringRegistry.instance;
   }
 
   private const deferredSetStyleProxyPool:Vector.<DeferredSetStyleProxy> = new Vector.<DeferredSetStyleProxy>();
@@ -79,9 +68,7 @@ public final class MxmlReader implements DocumentReader {
 
   public function readDeferredInstanceFromBytes(input:IDataInput, factoryContext:DeferredInstanceFromBytesContext):Object {
     this.input = input;
-
     var objectTableSize:int = readObjectTableSize();
-
     context = factoryContext.readerContext;
     moduleContext = ModuleContextEx(context.moduleContext);
 
@@ -101,10 +88,6 @@ public final class MxmlReader implements DocumentReader {
 
     assert(this.factoryContext == null && objectTableSize == (objectTable == null ? 0 : objectTable.length));
 
-    context = null;
-    moduleContext = null;
-    this.input = null;
-
     if (input is ByteArray) {
       assert(input.bytesAvailable == 0);
       ByteArray(input).position = 0;
@@ -121,77 +104,35 @@ public final class MxmlReader implements DocumentReader {
   //   <Label text.A="A" text.B="B"/>
   // </VGroup>
   public function getObjectTableForDeferredInstanceFromBytes():Vector.<Object> {
-    if (objectTable != null && objectTable.length != 0) {
-      var o:Vector.<Object> = objectTable;
-      objectTable = null;
-      return o;
-    }
-    else {
-      return null;
-    }
+    return objectTable;
   }
 
   private function readObjectTableSize():int {
     var objectTableSize:int = AmfUtil.readUInt29(input);
     if (objectTableSize != 0) {
-      if (objectTable == null) {
-        objectTable = new Vector.<Object>(objectTableSize, true);
-      }
-      else {
-        objectTable.length = objectTableSize;
-        objectTable.fixed = true;
-      }
+      objectTable = new Vector.<Object>(objectTableSize, true);
     }
     
     return objectTableSize;
   }
 
-  public function read(input:IDataInput, documentReaderContext:DocumentReaderContext, styleManager:StyleManagerEx, restorePrevContextAfterRead:Boolean = false):Object {
-    const oldStyleManager:StyleManagerEx = this.styleManager;
+  public function read(input:IDataInput, documentReaderContext:DocumentReaderContext, styleManager:StyleManagerEx):Object {
     this.styleManager = styleManager;
-
-    const oldInput:IDataInput = this.input;
     this.input = input;
-
-    var oldObjectTable:Vector.<Object>;
-    if (restorePrevContextAfterRead) {
-      oldObjectTable = objectTable;
-      objectTable = null;
-    }
-    
-    const objectTableSize:int = readObjectTableSize();
-
-    const oldContext:DocumentReaderContext = this.context;
+    readObjectTableSize();
     context = documentReaderContext;
     moduleContext = ModuleContextEx(context.moduleContext);
-    const oldRootObject:Object = rootObject;
     var object:Object = readMxmlObjectFromClass(stringRegistry.read(input), styleManager != null /* pure flash doesn't have styleManager */);
+
     stateReader.read(this, input, object);
     injectedASReader.read(input, this);
 
-    context = oldContext;
-    moduleContext = oldContext == null ? null : ModuleContextEx(oldContext.moduleContext);
-
-    if (restorePrevContextAfterRead) {
-      objectTable = oldObjectTable;
-    }
-    else if (objectTableSize != 0) {
-      objectTable.fixed = false;
-      objectTable.length = 0;
-    }
-
-    var t:DeferredInstanceFromBytesContext = factoryContext;
-    factoryContext = null;
-    stateReader.reset(t, styleManager);
-
-    rootObject = oldRootObject;
+    stateReader.reset(factoryContext);
 
     if (input is ByteArray) {
       assert(input.bytesAvailable == 0);
       ByteArray(input).position = 0;
     }
-    this.input = oldInput;
-    this.styleManager = oldStyleManager;
 
     return object;
   }
@@ -238,6 +179,10 @@ public final class MxmlReader implements DocumentReader {
     }
 
     return initObject(object, reference, propertyName, objectDeclarationTextOffset);
+  }
+
+  protected function registerEffect(propertyName:String, object:Object):void {
+
   }
 
   private function initObject(object:Object, reference:int, propertyName:String, objectDeclarationTextOffset:int):Object {
@@ -300,7 +245,7 @@ public final class MxmlReader implements DocumentReader {
           cssDeclarations.push(cssDeclaration);
           propertyHolder = cssDeclaration;
           if ((flags & StyleFlags.EFFECT) != 0) {
-            moduleContext.effectManagerClass[new QName(getMxNs(), "setStyle")](propertyName, object);
+            registerEffect(propertyName, object);
           }
           propertyName = "value";
           break;
@@ -407,13 +352,13 @@ public final class MxmlReader implements DocumentReader {
           break;
 
         case AmfExtendedTypes.IMAGE:
-          propertyHolder[propertyName] = embedImageManager.get(AmfUtil.readUInt29(input), moduleContext.imageAssetContainerClassPool,
-                                                               moduleContext.project);
+          propertyHolder[propertyName] = EmbedImageManager(moduleContext.project.getComponent(EmbedImageManager)).
+                  get(AmfUtil.readUInt29(input), moduleContext.imageAssetContainerClassPool, moduleContext.project);
           break;
 
         case AmfExtendedTypes.SWF:
-          propertyHolder[propertyName] = embedSwfManager.get(AmfUtil.readUInt29(input), moduleContext.swfAssetContainerClassPool,
-                                                             moduleContext.project);
+          propertyHolder[propertyName] = EmbedSwfManager(moduleContext.project.getComponent(EmbedSwfManager)).
+                  get(AmfUtil.readUInt29(input), moduleContext.swfAssetContainerClassPool, moduleContext.project);
           if (cssDeclaration != null) {
             cssDeclaration.type = CssPropertyType.EMBED;
           }
@@ -486,7 +431,7 @@ public final class MxmlReader implements DocumentReader {
     var factory:Object = moduleContext.getDocumentFactory(id);
     if (factory == null) {
       var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance().get2(id, DocumentFactory(context));
-      factory = new moduleContext.documentFactoryClass(documentFactory, new DeferredInstanceFromBytesContext(documentFactory, this, styleManager));
+      factory = new moduleContext.documentFactoryClass(documentFactory, new DeferredInstanceFromBytesContextImpl(documentFactory, styleManager));
       moduleContext.putDocumentFactory(id, factory);
     }
 
@@ -495,85 +440,13 @@ public final class MxmlReader implements DocumentReader {
 
   private function getOrCreateFactoryContext():DeferredInstanceFromBytesContext {
     if (factoryContext == null) {
-      factoryContext = new DeferredInstanceFromBytesContext(context, this, styleManager);
+      factoryContext = new DeferredInstanceFromBytesContextImpl(context, styleManager);
     }
     
     return factoryContext;
   }
 
-  private function getMxNs():Namespace {
-    return Namespace(moduleContext.applicationDomain.getDefinition("mx.core.mx_internal"));
-  }
-
-  private function readChildrenMxContainer(container:DisplayObjectContainer):void {
-    const length:int = input.readUnsignedShort();
-    var array:Array = new Array(length);
-    var mxNs:Namespace = getMxNs();
-    container[new QName(mxNs, "setActualCreationPolicies")]("none");
-    container[new QName(mxNs, "createdComponents")] = array;
-    if (deferredMxContainers == null) {
-      deferredMxContainers = new Vector.<DisplayObjectContainer>();
-    }
-    deferredMxContainers.push(container);
-
-    readArrayOrVector(array, length);
-  }
-
-  public function createDeferredMxContainersChildren(systemManager:ApplicationDomain):void {
-    if (deferredMxContainers == null || deferredMxContainers.length == 0) {
-      return;
-    }
-
-    var mxNs:Namespace = Namespace(systemManager.getDefinition("mx.core.mx_internal"));
-    var createdComponentsQName:QName = new QName(mxNs, "createdComponents");
-    var numChildrenCreatedQName:QName = new QName(mxNs, "numChildrenCreated");
-    var flexEventClass:Class = Class(systemManager.getDefinition(FLEX_EVENT_CLASS_NAME));
-    var controlBarClass:Class = Class(systemManager.getDefinition("mx.containers.ControlBar"));
-    var panelClass:Class = Class(systemManager.getDefinition("mx.containers.Panel"));
-    for each (var container:DisplayObjectContainer in deferredMxContainers) {
-      // initialized equals false, because processedDescriptors equals false, so, we check inheritingStyles (if is StyleDeclarationProxy, so, already "initialized")
-      if (container["inheritingStyles"] is StyleDeclarationProxy) {
-        createMxContainerChildren(container, createdComponentsQName, numChildrenCreatedQName, flexEventClass, controlBarClass, container is panelClass);
-      }
-      else {
-        container.addEventListener("preinitialize", mxContainerPreinitializeHandler);
-      }
-    }
-
-    deferredMxContainers.length = 0;
-  }
-  
-  private static function mxContainerPreinitializeHandler(event:Event):void {
-    var container:DisplayObjectContainer = DisplayObjectContainer(event.target);
-    container.removeEventListener("preinitialize", mxContainerPreinitializeHandler);
-    var sm:DocumentDisplayManager = DocumentDisplayManager(Object(container).systemManager);
-    var mxNs:Namespace = Namespace(sm.getDefinitionByName("mx.core.mx_internal"));
-    createMxContainerChildren(container, new QName(mxNs, "createdComponents"), new QName(mxNs, "numChildrenCreated"),
-      Class(sm.getDefinitionByName(FLEX_EVENT_CLASS_NAME)), Class(sm.getDefinitionByName("mx.containers.ControlBar")),
-      container is Class(sm.getDefinitionByName("mx.containers.Panel")));
-  }
-
-  private static function createMxContainerChildren(container:DisplayObjectContainer, createdComponentsQName:QName,
-                                                    numChildrenCreatedQName:QName, flexEventClass:Class, controlBarClass:Class, isPanel:Boolean):void {
-    var chidlren:Array = container[createdComponentsQName];
-    for (var i:int = 0, n:int = chidlren.length == 1 ? 1 : chidlren.length - 1; i < n; i++) {
-      container.addChild(chidlren[i]);
-    }
-
-    if (chidlren.length > 1) {
-      var lastChild:DisplayObject = chidlren[i];
-      if (isPanel && lastChild is controlBarClass) {
-        container["rawChildren"].addChild(lastChild);
-        container["setControlBar"](lastChild);
-      }
-      else {
-        container.addChild(lastChild);
-      }
-    }
-    
-    container["processedDescriptors"] = true;
-    container[numChildrenCreatedQName] = chidlren.length;
-    container.dispatchEvent(new flexEventClass("contentCreationComplete"));
+  protected function readChildrenMxContainer(container:DisplayObjectContainer):void {
   }
 
   internal function readArray():Object {
@@ -852,7 +725,7 @@ import flash.utils.flash_proxy;
 final class PropertyClassifier {
   public static const PROPERTY:int = 0;
   public static const STYLE:int = 1;
-  
+
   public static const ID:int = 2;
 
   public static const MX_CONTAINER_CHILDREN:int = 4;

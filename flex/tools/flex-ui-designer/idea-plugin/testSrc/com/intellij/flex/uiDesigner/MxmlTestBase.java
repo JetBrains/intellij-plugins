@@ -10,6 +10,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
+import org.jetbrains.annotations.Nullable;
 import org.picocontainer.MutablePicoContainer;
 
 import java.io.File;
@@ -29,8 +30,8 @@ abstract class MxmlTestBase extends AppTestBase {
   private int passedCounter;
   protected File appDir;
   
-  protected String getRawProjectRoot() throws NoSuchMethodException {
-    return useRawProjectRoot() ? getTestPath() : null;
+  protected VirtualFile getRawProjectRoot() throws NoSuchMethodException {
+    return useRawProjectRoot() ? getTestDir() : null;
   }
   
   private boolean useRawProjectRoot() throws NoSuchMethodException {
@@ -101,61 +102,69 @@ abstract class MxmlTestBase extends AppTestBase {
     socketInputHandler = (TestSocketInputHandler)SocketInputHandler.getInstance();
   }
 
-  protected VirtualFile[] configureByFiles(final VirtualFile rawProjectRoot, final VirtualFile... vFiles) throws Exception {
-    final VirtualFile[] files = super.configureByFiles(rawProjectRoot, vFiles);
+  protected VirtualFile[] configureByFiles(@Nullable VirtualFile rawProjectRoot, VirtualFile[] files, @Nullable VirtualFile[] auxiliaryFiles) throws Exception {
+    final VirtualFile[] sourceFiles = super.configureByFiles(rawProjectRoot, files, auxiliaryFiles);
     launchAndInitializeApplication();
-    return files;
+    return sourceFiles;
   }
 
-  protected void testFiles(final int auxiliaryBorder, final VirtualFile[] originalVFiles) throws Exception {
-    testFiles(new MyTester(), auxiliaryBorder, originalVFiles);
+  protected void testFiles(VirtualFile[] files, VirtualFile[] auxiliaryFiles) throws Exception {
+    testFiles(new MyTester(), files, auxiliaryFiles);
   }
   
-  protected void testFiles(String[] files, String... auxiliaryFiles) throws Exception {
-    VirtualFile[] originalVFiles = new VirtualFile[files.length + auxiliaryFiles.length];
+  protected void testFiles(String[] paths, String... auxiliaryPaths) throws Exception {
+    final VirtualFile[] files = new VirtualFile[paths.length];
+    final VirtualFile[] auxiliaryFiles = auxiliaryPaths.length > 0 ? new VirtualFile[auxiliaryPaths.length] : null;
     int i = 0;
-    for (String file : files) {
-      originalVFiles[i++] = getVFile(getTestPath() + "/" + file);
+    for (String file : paths) {
+      files[i++] = getSource(file);
     }
-    int auxiliaryBorder = i;
-    for (String file : auxiliaryFiles) {
-      originalVFiles[i++] = getVFile(getTestPath() + "/" + file);
+    i = 0;
+    for (String file : auxiliaryPaths) {
+      //noinspection ConstantConditions
+      auxiliaryFiles[i++] = getSource(file);
     }
     
-    testFiles(new MyTester(), auxiliaryBorder, originalVFiles);
+    testFiles(new MyTester(), files, auxiliaryFiles);
   }
   
   protected void testFile(String... originalVFilePath) throws Exception {
     testFile(new MyTester(), originalVFilePath);
   }
   
-  protected void testFile(Tester tester, String... originalPaths) throws Exception {
-    VirtualFile[] originalVFiles = new VirtualFile[originalPaths.length];
-    for (int i = 0, originalPathsLength = originalPaths.length; i < originalPathsLength; i++) {
-      originalVFiles[i] = getVFile(getTestPath() + "/" + originalPaths[i]);
+  protected void testFile(Tester tester, String... paths) throws Exception {
+    final VirtualFile[] files = new VirtualFile[1];
+    final VirtualFile[] auxiliaryFiles = paths.length > 1 ? new VirtualFile[paths.length - 1] : null;
+    for (int i = 0; i < paths.length; i++) {
+      if (i == 0) {
+        files[i] = getSource(paths[i]);
+      }
+      else {
+        //noinspection ConstantConditions
+        auxiliaryFiles[i - 1] = getSource(paths[i]);
+      }
     }
-    
-    testFiles(tester, 1, originalVFiles);
+
+    testFiles(tester, files, auxiliaryFiles);
   }
 
-  protected void testFiles(final Tester tester, final int auxiliaryBorder, final VirtualFile... originalVFiles) throws Exception {
-    VirtualFile[] testVFiles = configureByFiles(useRawProjectRoot() ? getVFile(getRawProjectRoot()) : null, originalVFiles);
+  protected void testFiles(final Tester tester, VirtualFile[] files, VirtualFile[] auxiliaryFiles) throws Exception {
+    VirtualFile[] testFiles = configureByFiles(getRawProjectRoot(), files, auxiliaryFiles);
     final PsiManager psiManager = PsiManager.getInstance(myProject);
-    for (int childrenLength = testVFiles.length, i = childrenLength - auxiliaryBorder; i < childrenLength; i++) {
-      final VirtualFile file = testVFiles[i];
+    for (int i = 0, n = testFiles.length; i < n; i++) {
+      final VirtualFile file = testFiles[i];
       if (!file.getName().endsWith(JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT)) {
         continue;
       }
-      
-      final VirtualFile originalVFile = originalVFiles[childrenLength - i - 1];
-      final XmlFile xmlFile =  (XmlFile)psiManager.findFile(file);
+
+      final VirtualFile originalVFile = files[i];
+      final XmlFile xmlFile = (XmlFile)psiManager.findFile(file);
       assert xmlFile != null;
 
-      final Callable<Void> action = new Callable<Void>() {
+      final Callable<Boolean> action = new Callable<Boolean>() {
         @Override
-        public Void call() throws Exception {
-          tester.test(file, xmlFile, originalVFile);
-          return null;
+        public Boolean call() throws Exception {
+          return tester.test(file, xmlFile, originalVFile);
         }
       };
 
@@ -172,24 +181,34 @@ abstract class MxmlTestBase extends AppTestBase {
   protected void tearDown() throws Exception {
     System.out.print("\npassed " + passedCounter + " tests.\n");
 
-    try {
-      client.closeProject(myProject);
-    }
-    finally {
-      super.tearDown();
+    if (client != null) {
+      try {
+        client.closeProject(myProject);
+      }
+      finally {
+        super.tearDown();
+      }
     }
   }
 
   private class MyTester implements Tester {
     @Override
-    public void test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception {
+    public boolean test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception {
       String documentName = file.getNameWithoutExtension();
       System.out.print(documentName + '\n');
       client.openDocument(myModule, xmlFile);
       client.test(myModule, documentName, originalFile.getParent().getName());
       socketInputHandler.setExpectedErrorMessage(expectedErrorForDocument(documentName));
-      socketInputHandler.process();
+      try {
+        socketInputHandler.process();
+      }
+      catch (IOException e) {
+        LOG.error(e);
+        return false;
+      }
+
       passedCounter++;
+      return true;
     }
   }
 
@@ -199,5 +218,5 @@ abstract class MxmlTestBase extends AppTestBase {
 }
 
 interface Tester {
-  void test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception;
+  boolean test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception;
 }

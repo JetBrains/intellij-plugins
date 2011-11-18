@@ -268,7 +268,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
     notification.notify(project);
   }
 
-  private class FirstOpenDocumentTask implements DesignerApplicationLauncher.PostTask {
+  private static class FirstOpenDocumentTask implements DesignerApplicationLauncher.PostTask {
     private final XmlFile psiFile;
 
     public FirstOpenDocumentTask(@NotNull final XmlFile psiFile) {
@@ -276,7 +276,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
     }
 
     public void end() {
-      documentOpening = false;
+      DesignerApplicationManager.getInstance().documentOpening = false;
     }
 
     @Override

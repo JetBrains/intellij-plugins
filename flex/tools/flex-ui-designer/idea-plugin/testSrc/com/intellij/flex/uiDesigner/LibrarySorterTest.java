@@ -38,7 +38,7 @@ public class LibrarySorterTest extends MxmlTestBase {
       };
     }
 
-    super.modifySdk(sdk, sdkModificator, condition);
+    super.modifySdk(sdkModificator, condition);
 
     if (getName().equals("testResolveToClassWithBiggestTimestamp")) {
       final String path = getTestDataPath() + "/ResolveToClassWithBiggestTimestamp/bin/";

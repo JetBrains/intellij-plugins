@@ -6,7 +6,6 @@
     import com.intellij.flex.uiDesigner.DocumentFactoryManager;
     import com.intellij.flex.uiDesigner.DocumentManager;
     import com.intellij.flex.uiDesigner.DocumentManagerImpl;
-    import com.intellij.flex.uiDesigner.DocumentReader;
     import com.intellij.flex.uiDesigner.ElementManager;
     import com.intellij.flex.uiDesigner.Server;
     import com.intellij.flex.uiDesigner.StatesBarManager;
@@ -26,7 +25,6 @@
     </Component>
     <Component role="{DocumentManager}" implementation="{DocumentManagerImpl}">
       <Requirement role="{LibraryManager}"/>
-      <Requirement role="{DocumentReader}"/>
       <Requirement role="{Server}"/>
     </Component>
     <Component role="{ElementToolManager}"/>

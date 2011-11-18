@@ -38,7 +38,7 @@ public class Library {
 
     if (input.readBoolean()) {
       _defaultsStyle = new Stylesheet();
-      _defaultsStyle.read(input, null);
+      _defaultsStyle.read(input);
     }
   }
 }

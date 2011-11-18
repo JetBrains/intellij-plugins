@@ -19,6 +19,7 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.JarFileSystem;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import junit.framework.AssertionFailedError;
 import org.jetbrains.annotations.Nullable;
@@ -39,6 +40,19 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
   
   protected final String getTestPath() {
     return getTestDataPath() + "/src/" + getSourceBasePath();
+  }
+  
+  private VirtualFile testDir;
+  protected final VirtualFile getTestDir() {
+    if (testDir == null) {
+      testDir = LocalFileSystem.getInstance().findFileByPath(getTestPath());
+    }
+
+    return testDir;
+  }
+  
+  protected final VirtualFile getSource(String relativePath) {
+    return getTestDir().findFileByRelativePath(relativePath);
   }
 
   @Override
@@ -85,10 +99,10 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
   }
   
   protected void modifySdk(Sdk sdk, SdkModificator sdkModificator) {
-    modifySdk(sdk, sdkModificator, null);
+    modifySdk(sdkModificator, null);
   }
 
-  protected void modifySdk(Sdk sdk, SdkModificator sdkModificator, @Nullable Condition<String> filter) {
+  protected void modifySdk(SdkModificator sdkModificator, @Nullable Condition<String> filter) {
     sdkModificator.addRoot(getVFile("lib/playerglobal"), OrderRootType.CLASSES);
 
     String[] list = new File(flexSdkRootPath).list();

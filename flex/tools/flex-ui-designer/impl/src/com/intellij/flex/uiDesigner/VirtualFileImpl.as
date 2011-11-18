@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner {
 import com.intellij.flex.uiDesigner.css.Stylesheet;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
-import flash.filesystem.File;
 import flash.utils.Dictionary;
 import flash.utils.IDataInput;
 
@@ -29,22 +28,17 @@ public final class VirtualFileImpl implements VirtualFile {
   private var _name:String;
   public function get name():String {
     if (_name == null) {
-      var index:int = url.lastIndexOf("/");
-      if (index < 0) {
-        _name = url;
-      }
-      else {
-        _name = url.substring(index + 1);
-      }
+      const index:int = _presentableUrl.lastIndexOf("/");
+      _name = index < 0 ? _presentableUrl : _presentableUrl.substring(index + 1);
     }
 
     return _name;
   }
 
   public function createChild(name:String):VirtualFile {
-    const newUrl:String = url.charCodeAt(url.length - 1) == 47 ? (url + name) : (url + "/" + name);
+    const newUrl:String = _url.charCodeAt(_url.length - 1) == 47 ? (_url + name) : (_url + "/" + name);
     var file:VirtualFileImpl = map[newUrl];
-    return file == null ? createNew(newUrl, presentableUrl + File.separator + name) : file;
+    return file == null ? createNew(newUrl, _presentableUrl + "/" + name) : file;
   }
 
   public static function create(input:IDataInput):VirtualFile {
@@ -57,9 +51,7 @@ public final class VirtualFileImpl implements VirtualFile {
   }
 
   private static function createNew(url:String, presentableUrl:String):VirtualFileImpl {
-    var file:VirtualFileImpl = new VirtualFileImpl(url, presentableUrl);
-    map[url] = file;
-    return file;
+    return (map[url] = new VirtualFileImpl(url, presentableUrl));
   }
 }
 }

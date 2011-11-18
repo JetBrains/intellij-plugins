@@ -24,7 +24,7 @@ public final class FlexDocumentFactory implements IFactory, ClassReference, Skin
 
   public function newInstance():* {
     // why restore oldInput/oldContext? See CustomMxmlComponentAsChild — we read child document factory before finish read initial document
-    return context.reader.read(source.data, this, context.styleManager, true);
+    return context.createReader().read(source.data, this, context.styleManager);
   }
 
   public function findSkinParts(host:SkinHost, skinParts:Object):void {

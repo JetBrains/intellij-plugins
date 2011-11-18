@@ -15,7 +15,7 @@ import org.hamcrest.object.instanceOf;
 import org.hamcrest.object.strictlyEqualTo;
 import org.hamcrest.text.containsString;
 
-[Test(dir="mxml/states")]
+[Test(dir="common/states")]
 public class StatesTest extends BaseTestCase {
   private static const DEFAULT:String = "default";
   

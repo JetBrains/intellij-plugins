@@ -27,7 +27,7 @@ public class LocalStyleHolder implements IExternalizable {
   public function getStylesheet(project:Project):Stylesheet {
     if (_stylesheet == null) {
       _stylesheet = new Stylesheet();
-      _stylesheet.read(data, project);
+      _stylesheet.read(data);
       _file.stylesheet = _stylesheet;
       data = null;
     }

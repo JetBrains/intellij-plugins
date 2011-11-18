@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="Flex" version="4">
   <component name="Flex.Build.Configuration">
+    <option name="TARGET_PLAYER_VERSION" value="10.2.0" />
     <option name="VERSION" value="3" />
   </component>
   <component name="FlexBuildConfigurationManager" active="main">
     <configurations>
       <configuration name="main">
-        <dependencies target-player="10.2" />
+        <dependencies target-player="10.2">
+          <sdk library-id="bda50fbf-ccd5-43bc-800d-7ba94ad6d273" home-path="/Developer/SDKs/flex_4.5.1" />
+        </dependencies>
         <compiler-options />
         <packaging-air-desktop />
         <packaging-android />

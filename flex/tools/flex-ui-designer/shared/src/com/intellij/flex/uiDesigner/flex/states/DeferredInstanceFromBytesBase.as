@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner.flex.states {
+import com.intellij.flex.uiDesigner.DocumentReader;
 import com.intellij.flex.uiDesigner.flex.BindingTarget;
 import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContext;
 
@@ -24,8 +25,9 @@ public class DeferredInstanceFromBytesBase implements InstanceProvider {
       try {
         // IDEA-72499
         styleManagerSingleton.tempStyleManagerForTalentAdobeEngineers = context.styleManager;
-        instance = context.reader.readDeferredInstanceFromBytes(bytes, context);
-        objectTable = context.reader.getObjectTableForDeferredInstanceFromBytes();
+        var reader:DocumentReader = context.createReader();
+        instance = reader.readDeferredInstanceFromBytes(bytes, context);
+        objectTable = reader.getObjectTableForDeferredInstanceFromBytes();
         
         executeBindinds();
       }

@@ -62,6 +62,7 @@ public class DocumentFactoryManager {
         id = i;
       }
       else if (f != null && f.deleteUser(factory) && f.document == null) {
+        // deleteUser will return true even if f has another users, but don't worry – we check f.hasUsers in unregister2
         unregister2(f, unregistered);
       }
     }

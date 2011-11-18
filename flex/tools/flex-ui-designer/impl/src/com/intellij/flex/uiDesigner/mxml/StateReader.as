@@ -1,5 +1,4 @@
 package com.intellij.flex.uiDesigner.mxml {
-import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContext;
 import com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromBytesBase;
 import com.intellij.flex.uiDesigner.io.AmfExtendedTypes;
@@ -18,11 +17,9 @@ internal final class StateReader {
     }
    
     var states:Array = new Array(size);
-    var stateClass:Class = reader.context.moduleContext.getClass("com.intellij.flex.uiDesigner.flex.states.State");
+    var stateClass:Class = reader.context.moduleContext.getClass("mx.states.State");
     for (var i:int = 0; i < size; i++) {
-      var state:Object = reader.readSimpleObject(new stateClass());
-      state.context = reader.factoryContext;
-      states[i] = state;
+      states[i] = reader.readSimpleObject(new stateClass());
     }
 
     // may be explicitly specified (<local:DynamicParentWithDeepBackSibling currentState="A" currentState.A="B"/>)
@@ -80,8 +77,7 @@ internal final class StateReader {
     }
   }
 
-  public function reset(byteFactoryContext:DeferredInstanceFromBytesContext,
-                        styleManager:StyleManagerEx):void {
+  public function reset(byteFactoryContext:DeferredInstanceFromBytesContext):void {
     if (deferredInstancesForImmediateCreation != null && deferredInstancesForImmediateCreation.length != 0) {
       for each (var deferredInstanceFromBytesBase:DeferredInstanceFromBytesBase in deferredInstancesForImmediateCreation) {
         deferredInstanceFromBytesBase.create(byteFactoryContext);

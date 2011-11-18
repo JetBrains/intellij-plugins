@@ -30,17 +30,17 @@ public class StyleTest extends BaseTestCase {
     //  throw new Error(s);
     //}
     
-    assertThat(librarySets, [{items: arrayWithSize(10)}]);
+    assertThat(librarySets, [{items: arrayWithSize(6)}]);
     assertThat(librarySets, arrayWithSize(1));
     var library:Library;
     for each (var l:Library in librarySets[0].items) {
-      //if (l.path.indexOf("spark@") != -1) {
-      //  library = l;
-      //  break;
-      //}
-      //else if (l.path.indexOf("framework@") == 0) {
-      //  checkFrameworkDefaultsCss(l);
-      //}
+      if (l.file.name.indexOf("spark") == 0 && l.inheritingStyles != null) {
+        library = l;
+        break;
+      }
+      else if (l.file.name.indexOf("framework") == 0 && l.inheritingStyles != null) {
+        checkFrameworkDefaultsCss(l);
+      }
     }
     
     var inherited:Array = "listStylePosition,lineHeight,direction,fontSize,symbolColor,lineThrough,rollOverColor,leadingModel,typographicCase,trackingRight,chromeColor,cffHinting,paragraphEndIndent,unfocusedTextSelectionColor,paragraphSpaceAfter,contentBackgroundAlpha,justificationRule,wordSpacing,textIndent,textShadowAlpha,fontFamily,paragraphSpaceBefore,listAutoPadding,listStyleType,fontStyle,downColor,alternatingItemColors,touchDelay,textAlpha,focusColor,fontWeight,inactiveTextSelectionColor,trackingLeft,whiteSpaceCollapse,alignmentBaseline,kerning,accentColor,dominantBaseline,tabStops,contentBackgroundColor,ligatureLevel,selectionColor,textRotation,textShadowColor,textJustify,digitCase,textDecoration,fontLookup,blockProgression,breakOpportunity,justificationStyle,clearFloats,leading,color,firstBaselineOffset,letterSpacing,paragraphStartIndent,textAlign,baselineShift,digitWidth,textAlignLast,renderingMode,locale,focusedTextSelectionColor,caretColor".split(",");    

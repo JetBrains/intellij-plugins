@@ -32,7 +32,7 @@ public class AppTest extends AppTestBase {
   }
   
   private VirtualFile open(String relativeFile) throws Exception {
-    VirtualFile file = configureByFile(getVFile(getTestPath() + "/" + relativeFile));
+    VirtualFile file = configureByFile(getSource(relativeFile));
 
     info.semaphore.down();
     assert connection == null;

@@ -9,6 +9,8 @@ import com.intellij.flex.uiDesigner.flex.MainFocusManagerSB;
 import com.intellij.flex.uiDesigner.libraries.Library;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
+import com.intellij.flex.uiDesigner.mxml.FlexMxmlReader;
+import com.intellij.flex.uiDesigner.mxml.MxmlReader;
 import com.intellij.flex.uiDesigner.ui.DocumentContainer;
 import com.intellij.flex.uiDesigner.ui.ProjectView;
 
@@ -29,12 +31,10 @@ import org.osflash.signals.Signal;
 public class DocumentManagerImpl extends EventDispatcher implements DocumentManager {
   private var libraryManager:LibraryManager;
 
-  private var documentReader:DocumentReader;
   private var server:Server;
 
-  public function DocumentManagerImpl(libraryManager:LibraryManager, documentReader:DocumentReader, server:Server) {
+  public function DocumentManagerImpl(libraryManager:LibraryManager, server:Server) {
     this.libraryManager = libraryManager;
-    this.documentReader = documentReader;
     this.server = server;
   }
 
@@ -162,6 +162,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       }
     }
 
+    var documentReader:DocumentReader = documentFactory.isPureFlash ? new MxmlReader() : new FlexMxmlReader();
     try {
       server.moduleForGetResourceBundle = documentFactory.module;
       // IDEA-72499
@@ -177,8 +178,6 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
         }
       }
       else {
-        documentReader.createDeferredMxContainersChildren(documentFactory.module.context.applicationDomain);
-
         var viewNavigatorApplicationBaseClass:Class = documentFactory.module.context.viewNavigatorApplicationBaseClass;
         if (viewNavigatorApplicationBaseClass != null && object is viewNavigatorApplicationBaseClass) {
           var navigator:Object = Object(object).navigator;
@@ -197,7 +196,9 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       document.displayManager.setStyleManagerForTalentAdobeEngineers(false);
     }
 
-    NativeApplication.nativeApplication.activate(document.module.project.window);
+    if (!ApplicationManager.instance.unitTestMode) {
+      NativeApplication.nativeApplication.activate(document.module.project.window);
+    }
     return true;
   }
 
