@@ -36,6 +36,7 @@ import com.intellij.util.ExceptionUtil;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.concurrency.Semaphore;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -118,10 +119,10 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
   private void doRun(@NotNull final ProgressIndicator indicator)
     throws IOException, java.util.concurrent.ExecutionException, InterruptedException {
     final List<AdlRunConfiguration> adlRunConfigurations;
-    indicator.setText(FlexUIDesignerBundle.message("copying.app.files"));
+    indicator.setText(FlashUIDesignerBundle.message("copying.app.files"));
 
     copyAppFiles();
-    indicator.setText(FlexUIDesignerBundle.message("finding.suitable.air.runtime"));
+    indicator.setText(FlashUIDesignerBundle.message("finding.suitable.air.runtime"));
     adlRunConfigurations = getSuitableAdlRunConfigurations();
 
     if (adlRunConfigurations.isEmpty()) {
@@ -252,7 +253,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
   }
 
   private void notifyNoSuitableSdkToLaunch() {
-    String message = FlexUIDesignerBundle.message(SystemInfo.isLinux ? "no.sdk.to.launch.designer.linux" : "no.sdk.to.launch.designer");
+    String message = FlashUIDesignerBundle.message(SystemInfo.isLinux ? "no.sdk.to.launch.designer.linux" : "no.sdk.to.launch.designer");
     DesignerApplicationManager.notifyUser(debug, message, module.getProject(), new Consumer<String>() {
       @Override
       public void consume(String id) {
@@ -358,6 +359,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
   private void runInitializeLibrariesAndModuleThread() {
     LibraryManager.getInstance().setAppDir(DesignerApplicationManager.APP_DIR);
     initializeThread = ApplicationManager.getApplication().executeOnPooledThread(new Callable<List<XmlFile>>() {
+      @Nullable
       @Override
       public List<XmlFile> call() {
         LibraryManager.getInstance().garbageCollection(indicator);
@@ -367,10 +369,11 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
           if (!StringRegistry.getInstance().isEmpty()) {
             Client.getInstance().initStringRegistry();
           }
-          indicator.setText(FlexUIDesignerBundle.message("collect.libraries"));
+          indicator.setText(FlashUIDesignerBundle.message("collect.libraries"));
           return LibraryManager.getInstance().initLibrarySets(module, true, problemsHolder);
         }
         catch (Throwable e) {
+          //noinspection InstanceofCatchParameter
           if (e instanceof InitException) {
             processInitException((InitException)e, module, debug);
           }
@@ -407,7 +410,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
   }
 
   interface PostTask {
-    public boolean run(List<XmlFile> unregisteredDocumentReferences, ProgressIndicator indicator, ProblemsHolder problemsHolder);
+    boolean run(List<XmlFile> unregisteredDocumentReferences, ProgressIndicator indicator, ProblemsHolder problemsHolder);
 
     void end();
   }

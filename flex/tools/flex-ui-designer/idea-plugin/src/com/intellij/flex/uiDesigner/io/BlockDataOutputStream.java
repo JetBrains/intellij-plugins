@@ -17,6 +17,15 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream impleme
 
   private int messageCounter;
 
+  public BlockDataOutputStream() {
+    this(64 * 1024);
+  }
+
+  public BlockDataOutputStream(int size) {
+    super(size);
+    count = SERVICE_DATA_SIZE;
+  }
+
   public void setOut(@NotNull OutputStream out) {
     String debugFilename = System.getProperty("fud.socket.dump");
     DebugOutput debugOut;
@@ -44,15 +53,6 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream impleme
     lastBlockBegin = 0;
     markers.clear();
     out = null;
-  }
-
-  public BlockDataOutputStream() {
-    this(64 * 1024);
-  }
-
-  public BlockDataOutputStream(int size) {
-    super(size);
-    count = SERVICE_DATA_SIZE;
   }
 
   private void writeHeader() {

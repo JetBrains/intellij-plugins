@@ -38,6 +38,7 @@ public class MessageSocketManager extends SocketManager {
       SocketInputHandler.getInstance().read(socket.getInputStream(), appDir);
     }
     catch (IOException e) {
+      //noinspection InstanceofCatchParameter
       if (!(e instanceof SocketException && socket.isClosed())) {
         LOG.error(e);
       }

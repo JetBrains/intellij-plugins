@@ -60,7 +60,7 @@ final class AbcBlankMaker {
   }
 
   private static void t() throws IOException {
-    //new AbcFilter(null).filter(new File("/Users/develar/Library/Caches/IntelliJIdea10/plugins-sandbox/system/flexUIDesigner/framework.59cfca2cTEST-OUTTTTTT.swf"), new File("abc-blank-maker/src/b/u.swf"), new Condition<CharSequence>() {
+    //new AbcFilter(null).filter(new File("/Users/develar/Library/Caches/IntelliJIdea10/plugins-sandbox/system/flashUIDesigner/framework.59cfca2cTEST-OUTTTTTT.swf"), new File("abc-blank-maker/src/b/u.swf"), new Condition<CharSequence>() {
     //  @Override
     //  public boolean value(CharSequence name) {
     //    return !StringUtil.startsWith(name, "_");

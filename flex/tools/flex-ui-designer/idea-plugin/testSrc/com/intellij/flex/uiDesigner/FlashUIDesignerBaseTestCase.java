@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class FlexUIDesignerBaseTestCase extends ModuleTestCase {
+public abstract class FlashUIDesignerBaseTestCase extends ModuleTestCase {
   private static String testDataPath;
 
   @Override

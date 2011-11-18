@@ -584,7 +584,8 @@ public class CssWriter {
     }
 
     if (source == null) {
-      throw new InvalidPropertyException(cssFunction, FlexUIDesignerBundle.message("error.embed.source.not.specified", cssFunction.getText()));
+      throw new InvalidPropertyException(cssFunction, FlashUIDesignerBundle
+        .message("error.embed.source.not.specified", cssFunction.getText()));
     }
 
     final int fileId;
@@ -596,7 +597,7 @@ public class CssWriter {
       fileId = EmbedImageManager.getInstance().add(source, mimeType, assetCounter);
     }
     else {
-      throw new InvalidPropertyException(cssFunction, FlexUIDesignerBundle.message("unsupported.embed.asset.type", cssFunction.getText()));
+      throw new InvalidPropertyException(cssFunction, FlashUIDesignerBundle.message("unsupported.embed.asset.type", cssFunction.getText()));
     }
 
     propertyOut.write(isSwf ? AmfExtendedTypes.SWF : AmfExtendedTypes.IMAGE);

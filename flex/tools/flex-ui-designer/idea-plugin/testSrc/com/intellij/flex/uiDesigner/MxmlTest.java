@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.Pair;
@@ -115,16 +116,14 @@ public class MxmlTest extends MxmlTestBase {
   }
 
   private Pair<VirtualFile[], VirtualFile[]> getTestFiles() {
-    ArrayList<VirtualFile> files = new ArrayList<VirtualFile>(128);
-    ArrayList<VirtualFile> auxFiles = new ArrayList<VirtualFile>(8);
+    final ArrayList<VirtualFile> files = new ArrayList<VirtualFile>(128);
+    final ArrayList<VirtualFile> auxFiles = new ArrayList<VirtualFile>(8);
     
     collectMxmlFiles(files, auxFiles, getVFile(getTestPath()));
     collectMxmlFiles(files, auxFiles, getVFile((getTestDataPath() + "/src/mx")));
 
-    
-
-    VirtualFile[] list = files.toArray(new VirtualFile[files.size()]);
-    VirtualFile[] auxList = auxFiles.toArray(new VirtualFile[auxFiles.size()]);
+    final VirtualFile[] list = files.toArray(new VirtualFile[files.size()]);
+    final VirtualFile[] auxList = auxFiles.toArray(new VirtualFile[auxFiles.size()]);
 
     final VirtualFileComparator virtualFileComparator = new VirtualFileComparator();
     Arrays.sort(list, virtualFileComparator);
@@ -142,7 +141,7 @@ public class MxmlTest extends MxmlTestBase {
       else if (name.startsWith("Aux")) {
         auxFiles.add(file);
       }
-      else if (name.endsWith(".mxml") && !name.startsWith("T.") && !name.startsWith("TestApp.") && !name.startsWith("GenericMxmlSupport.")) {
+      else if (name.endsWith(JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT) && !name.startsWith("T.") && !name.startsWith("TestApp.") && !name.startsWith("GenericMxmlSupport.")) {
         files.add(file);
       }
 

@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-import com.intellij.flex.uiDesigner.FlexUIDesignerBundle;
+import com.intellij.flex.uiDesigner.FlashUIDesignerBundle;
 import com.intellij.flex.uiDesigner.InjectionUtil;
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.ProblemsHolder;
@@ -145,7 +145,7 @@ class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor 
       }
       else {
         if (!StringUtil.isEmpty(attributeName)) {
-          problemsHolder.add(host, FlexUIDesignerBundle.message("unsupported.compiler.directive", host.getText()));
+          problemsHolder.add(host, FlashUIDesignerBundle.message("unsupported.compiler.directive", host.getText()));
         }
         return InjectedASWriter.IGNORE;
       }
@@ -218,7 +218,7 @@ class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor 
     }
 
     if (source == null) {
-      problemsHolder.add(host, FlexUIDesignerBundle.message("error.embed.source.not.specified", host.getText()));
+      problemsHolder.add(host, FlashUIDesignerBundle.message("error.embed.source.not.specified", host.getText()));
       return InjectedASWriter.IGNORE;
     }
 
@@ -234,7 +234,7 @@ class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor 
         return new ImageValueWriter(source, mimeType);
       }
       else {
-        problemsHolder.add(host, FlexUIDesignerBundle.message("unsupported.embed.asset.type", host.getText()));
+        problemsHolder.add(host, FlashUIDesignerBundle.message("unsupported.embed.asset.type", host.getText()));
         return InjectedASWriter.IGNORE;
       }
     }

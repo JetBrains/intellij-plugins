@@ -195,10 +195,10 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
     String moduleOrFacetName = FlexUtils.getPresentableName(module, flexFacet);
     String message;
     if (sdk == null) {
-      message = FlexUIDesignerBundle.message("module.sdk.is.not.specified", moduleOrFacetName);
+      message = FlashUIDesignerBundle.message("module.sdk.is.not.specified", moduleOrFacetName);
     }
     else {
-      message = FlexUIDesignerBundle.message("module.sdk.is.not.compatible", sdk.getVersionString(), moduleOrFacetName);
+      message = FlashUIDesignerBundle.message("module.sdk.is.not.compatible", sdk.getVersionString(), moduleOrFacetName);
     }
 
     notifyUser(debug, message, module.getProject(), new Consumer<String>() {
@@ -239,7 +239,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
   }
 
   public static String getOpenActionTitle(boolean debug) {
-    return FlexUIDesignerBundle.message(debug ? "action.FlexUIDesigner.DebugDesignView.text" : "action.FlexUIDesigner.RunDesignView.text");
+    return FlashUIDesignerBundle.message(debug ? "action.FlashUIDesigner.DebugDesignView.text" : "action.FlashUIDesigner.RunDesignView.text");
   }
 
   public static void notifyUser(boolean debug, @NotNull String text, @NotNull Module module) {
@@ -247,7 +247,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
   }
 
   static void notifyUser(boolean debug, @NotNull String text, @NotNull Project project, @Nullable final Consumer<String> handler) {
-    Notification notification = new Notification(FlexUIDesignerBundle.message("plugin.name"), getOpenActionTitle(debug), text,
+    Notification notification = new Notification(FlashUIDesignerBundle.message("plugin.name"), getOpenActionTitle(debug), text,
         NotificationType.ERROR, handler == null ? null : new NotificationListener() {
       @Override
       public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
@@ -281,7 +281,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
 
     @Override
     public boolean run(List<XmlFile> unregisteredDocumentReferences, ProgressIndicator indicator, ProblemsHolder problemsHolder) {
-      indicator.setText(FlexUIDesignerBundle.message("open.document"));
+      indicator.setText(FlashUIDesignerBundle.message("open.document"));
       Client client = Client.getInstance();
       if (!client.flush()) {
         return false;
@@ -318,7 +318,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
         if (!client.flush()) {
           return false;
         }
-        indicator.setText(FlexUIDesignerBundle.message("loading.libraries"));
+        indicator.setText(FlashUIDesignerBundle.message("loading.libraries"));
         semaphore.waitFor();
       }
       else {

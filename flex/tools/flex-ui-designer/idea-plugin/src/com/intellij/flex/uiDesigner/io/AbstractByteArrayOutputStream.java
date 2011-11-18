@@ -10,7 +10,7 @@ public abstract class AbstractByteArrayOutputStream extends OutputStream impleme
   private static final int MAX_BUFFER_SIZE = 2 * 1024 * 1024;
   
   protected int count;
-  protected byte buffer[];
+  protected byte[] buffer;
 
   public AbstractByteArrayOutputStream(int size) {
     buffer = new byte[size];
@@ -69,7 +69,7 @@ public abstract class AbstractByteArrayOutputStream extends OutputStream impleme
   }
 
   @Override
-  public void write(byte b[], int offset, int length) {
+  public void write(byte[] b, int offset, int length) {
     int newCount = count + length;
     if (newCount > buffer.length) {
       enlargeBuffer(Math.max(buffer.length << 1, newCount));

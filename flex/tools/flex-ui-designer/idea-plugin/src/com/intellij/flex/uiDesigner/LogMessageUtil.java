@@ -17,14 +17,14 @@ public final class LogMessageUtil {
   
   public static String createMxmlTitle(@Nullable VirtualFile file) {
     return file == null
-           ? FlexUIDesignerBundle.message("problem.opening.mxml.document")
-           : FlexUIDesignerBundle.message("problem.opening.0", file.getName());
+           ? FlashUIDesignerBundle.message("problem.opening.mxml.document")
+           : FlashUIDesignerBundle.message("problem.opening.0", file.getName());
   }
 
   public static String createBaloonText(@Nullable VirtualFile file) {
     return file == null
-           ? FlexUIDesignerBundle.message("problem.opening.mxml.document")
-           : FlexUIDesignerBundle.message("problem.opening.balloon.text", file.getName());
+           ? FlashUIDesignerBundle.message("problem.opening.mxml.document")
+           : FlashUIDesignerBundle.message("problem.opening.balloon.text", file.getName());
   }
 
   @Nullable

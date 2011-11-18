@@ -11,9 +11,9 @@ public class InvalidPropertyException extends Exception {
     return psiElement;
   }
 
-  public InvalidPropertyException(PsiElement psiElement, @PropertyKey(resourceBundle = FlexUIDesignerBundle.BUNDLE) String key,
+  public InvalidPropertyException(PsiElement psiElement, @PropertyKey(resourceBundle = FlashUIDesignerBundle.BUNDLE) String key,
                                   Object... params) {
-    super(FlexUIDesignerBundle.message(key, params));
+    super(FlashUIDesignerBundle.message(key, params));
     this.psiElement = psiElement;
   }
 
@@ -22,11 +22,11 @@ public class InvalidPropertyException extends Exception {
     this.psiElement = psiElement;
   }
 
-  public InvalidPropertyException(@PropertyKey(resourceBundle = FlexUIDesignerBundle.BUNDLE) String key, Object... params) {
-    super(FlexUIDesignerBundle.message(key, params));
+  public InvalidPropertyException(@PropertyKey(resourceBundle = FlashUIDesignerBundle.BUNDLE) String key, Object... params) {
+    super(FlashUIDesignerBundle.message(key, params));
   }
 
-  public InvalidPropertyException(@NotNull Throwable e, @PropertyKey(resourceBundle = FlexUIDesignerBundle.BUNDLE) String key, Object... params) {
-    super(FlexUIDesignerBundle.message(key, params), e);
+  public InvalidPropertyException(@NotNull Throwable e, @PropertyKey(resourceBundle = FlashUIDesignerBundle.BUNDLE) String key, Object... params) {
+    super(FlashUIDesignerBundle.message(key, params), e);
   }
 }

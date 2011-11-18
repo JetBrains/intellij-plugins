@@ -162,7 +162,7 @@ public class LibraryManager {
 
       @Override
       public void rootsChanged(ModuleRootEvent event) {
-        new Notification(FlexUIDesignerBundle.message("plugin.name"), FlexUIDesignerBundle.message("plugin.name"),
+        new Notification(FlashUIDesignerBundle.message("plugin.name"), FlashUIDesignerBundle.message("plugin.name"),
             "Please reopen your project to update on library changes.",
             NotificationType.WARNING).notify(project);
       }

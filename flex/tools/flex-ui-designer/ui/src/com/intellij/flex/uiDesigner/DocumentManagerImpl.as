@@ -163,38 +163,38 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     }
 
     try {
-      try {
-        server.moduleForGetResourceBundle = documentFactory.module;
-        // IDEA-72499
-        document.displayManager.setStyleManagerForTalentAdobeEngineers(true);
-        var object:DisplayObject = DisplayObject(documentReader.read(documentFactory.data, documentFactory, document.styleManager));
-        document.uiComponent = object;
-        document.displayManager.setUserDocument(object);
+      server.moduleForGetResourceBundle = documentFactory.module;
+      // IDEA-72499
+      document.displayManager.setStyleManagerForTalentAdobeEngineers(true);
+      var object:DisplayObject = DisplayObject(documentReader.read(documentFactory.data, documentFactory, document.styleManager));
+      document.uiComponent = object;
+      document.displayManager.setUserDocument(object);
 
-        if (documentFactory.isPureFlash) {
-          var pv3dViewClass:Class = documentFactory.module.context.getClassIfExists("org.papervision3d.view.AbstractView");
-          if (pv3dViewClass != null && object is pv3dViewClass) {
-            object["startRendering"]();
-          }
+      if (documentFactory.isPureFlash) {
+        var pv3dViewClass:Class = documentFactory.module.context.getClassIfExists("org.papervision3d.view.AbstractView");
+        if (pv3dViewClass != null && object is pv3dViewClass) {
+          object["startRendering"]();
         }
       }
-      finally {
-        server.moduleForGetResourceBundle = null;
-        document.displayManager.setStyleManagerForTalentAdobeEngineers(false);
-      }
-      
-      documentReader.createDeferredMxContainersChildren(documentFactory.module.context.applicationDomain);
-      var viewNavigatorApplicationBaseClass:Class = documentFactory.module.context.viewNavigatorApplicationBaseClass;
-      if (viewNavigatorApplicationBaseClass != null && object is viewNavigatorApplicationBaseClass) {
-        var navigator:Object = Object(object).navigator;
-        if (navigator != null && navigator.activeView != null && !navigator.activeView.isActive) {
-          navigator.activeView.setActive(true);
+      else {
+        documentReader.createDeferredMxContainersChildren(documentFactory.module.context.applicationDomain);
+
+        var viewNavigatorApplicationBaseClass:Class = documentFactory.module.context.viewNavigatorApplicationBaseClass;
+        if (viewNavigatorApplicationBaseClass != null && object is viewNavigatorApplicationBaseClass) {
+          var navigator:Object = Object(object).navigator;
+          if (navigator != null && navigator.activeView != null && !navigator.activeView.isActive) {
+            navigator.activeView.setActive(true);
+          }
         }
       }
     }
     catch (e:Error) {
       UncaughtErrorManager.instance.readDocumentErrorHandler(e, documentFactory);
       return false;
+    }
+    finally {
+      server.moduleForGetResourceBundle = null;
+      document.displayManager.setStyleManagerForTalentAdobeEngineers(false);
     }
 
     NativeApplication.nativeApplication.activate(document.module.project.window);

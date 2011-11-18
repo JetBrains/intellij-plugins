@@ -534,8 +534,8 @@ public class MxmlWriter {
            JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.VIEW_STACK);
   }
 
-  private void addProblem(XmlElement xmlElement, @PropertyKey(resourceBundle = FlexUIDesignerBundle.BUNDLE) String key, Object... params) {
-    problemsHolder.add(xmlElement, FlexUIDesignerBundle.message(key, params));
+  private void addProblem(XmlElement xmlElement, @PropertyKey(resourceBundle = FlashUIDesignerBundle.BUNDLE) String key, Object... params) {
+    problemsHolder.add(xmlElement, FlashUIDesignerBundle.message(key, params));
   }
 
   // descriptor will be null if child is XmlText

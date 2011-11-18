@@ -12,6 +12,15 @@
         <packaging-android />
         <packaging-ios />
       </configuration>
+      <configuration name="fd" target-platform="Desktop">
+        <dependencies target-player="10.2">
+          <sdk library-id="bda50fbf-ccd5-43bc-800d-7ba94ad6d273" home-path="/Developer/SDKs/flex_4.5.1" />
+        </dependencies>
+        <compiler-options />
+        <packaging-air-desktop />
+        <packaging-android />
+        <packaging-ios />
+      </configuration>
     </configurations>
     <compiler-options />
   </component>
@@ -22,6 +31,7 @@
       <sourceFolder url="file://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/main/resources" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Flex SDK 4.5.1.21328" level="application" />
   </component>
 </module>
 

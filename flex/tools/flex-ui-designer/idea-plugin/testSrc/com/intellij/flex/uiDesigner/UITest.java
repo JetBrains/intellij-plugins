@@ -98,17 +98,17 @@ public class UITest extends MxmlTestBase {
 
   public void testCloseDocument() throws Exception {
     testFile(new MyTester("closeDocument", new UIMessageHandler(ServerMethod.UNREGISTER_DOCUMENT_FACTORIES) {
-        @Override
-        public void process() throws IOException {
-          assertMyProject();
-          assertThat(reader.readIntArray(), 0);
+      @Override
+      public void process() throws IOException {
+        assertMyProject();
+        assertThat(reader.readIntArray(), 0);
 
-          assertNotAvailable();
+        assertNotAvailable();
 
-          assertClient();
-        }
-      }) {
-      }, "Embed.mxml");
+        assertClient();
+      }
+    }) {
+    }, "Embed.mxml");
   }
 
   protected static void assertNotAvailable() throws IOException {

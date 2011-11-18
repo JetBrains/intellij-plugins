@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
+abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
   protected String flexSdkRootPath;
   protected Sdk sdk;
   protected final List<Pair<VirtualFile, VirtualFile>> libs = new ArrayList<Pair<VirtualFile, VirtualFile>>();

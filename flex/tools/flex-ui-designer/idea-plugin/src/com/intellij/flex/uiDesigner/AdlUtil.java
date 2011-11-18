@@ -110,12 +110,12 @@ final class AdlUtil {
       if (ourFlexRunConfigurationType == null) {
         ourFlexRunConfigurationType = new FlexRunConfigurationType();
       }
-      settings = runManager.createConfiguration("FlexUIDesigner", ourFlexRunConfigurationType.getConfigurationFactories()[0]);
+      settings = runManager.createConfiguration("FlashUIDesigner", ourFlexRunConfigurationType.getConfigurationFactories()[0]);
       ((FlexRunConfiguration)settings.getConfiguration()).getRunnerParameters().setRunMode(
         FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer);
     }
     else {
-      settings = runManager.createConfiguration("FlexUIDesigner", FlexRunConfigurationType.getFactory());
+      settings = runManager.createConfiguration("FlashUIDesigner", FlexRunConfigurationType.getFactory());
       ((FlexRunConfiguration)settings.getConfiguration()).getRunnerParameters().setRunMode(
         FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer);
     }

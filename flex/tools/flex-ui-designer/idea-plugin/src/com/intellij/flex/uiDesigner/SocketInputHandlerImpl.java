@@ -390,7 +390,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
       ImageUtil.write(assetInfo.file, assetInfo.mimeType, fileOut);
     }
     catch (IOException e) {
-      final String userMessage = FlexUIDesignerBundle.message("problem.opening.0", assetInfo.file.getName());
+      final String userMessage = FlashUIDesignerBundle.message("problem.opening.0", assetInfo.file.getName());
       LOG.error(LogMessageUtil.createEvent(userMessage, ExceptionUtil.getThrowableText(e), assetInfo.file));
       fileOut.getChannel().truncate(0);
     }
@@ -428,7 +428,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
       byteOut.writeTo(fileOut);
     }
     catch (IOException e) {
-      final String userMessage = FlexUIDesignerBundle.message("problem.opening.0", assetInfo.file.getName());
+      final String userMessage = FlashUIDesignerBundle.message("problem.opening.0", assetInfo.file.getName());
       LOG.error(LogMessageUtil.createEvent(userMessage, ExceptionUtil.getThrowableText(e), assetInfo.file));
       fileOut.getChannel().truncate(0);
     }

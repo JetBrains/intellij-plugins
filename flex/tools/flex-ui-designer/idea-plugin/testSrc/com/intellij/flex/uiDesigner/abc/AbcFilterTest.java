@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.abc;
 
-import com.intellij.flex.uiDesigner.FlexUIDesignerBaseTestCase;
+import com.intellij.flex.uiDesigner.FlashUIDesignerBaseTestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +12,7 @@ import java.io.IOException;
 public class AbcFilterTest {
   private File out;
   private AbcFilter filter;
-  private static final File TEST_LIB_DIR = new File(FlexUIDesignerBaseTestCase.getTestDataPath(), "abcTestLib");
+  private static final File TEST_LIB_DIR = new File(FlashUIDesignerBaseTestCase.getTestDataPath(), "abcTestLib");
 
   @Before
   public void runBeforeEveryTest() throws Exception {

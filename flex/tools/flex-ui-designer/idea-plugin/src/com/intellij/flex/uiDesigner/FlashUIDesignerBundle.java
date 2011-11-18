@@ -8,13 +8,13 @@ import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.util.ResourceBundle;
 
-public final class FlexUIDesignerBundle {
+public final class FlashUIDesignerBundle {
   private static Reference<ResourceBundle> ourBundle;
 
   @NonNls
-  public static final String BUNDLE = "messages.FlexUIDesignerBundle";
+  public static final String BUNDLE = "messages.FlashUIDesignerBundle";
 
-  private FlexUIDesignerBundle() {
+  private FlashUIDesignerBundle() {
   }
 
   public static String message(@PropertyKey(resourceBundle = BUNDLE) String key, Object... params) {

@@ -69,7 +69,7 @@ abstract class MxmlTestBase extends AppTestBase {
       new DesignerApplicationLauncher(myModule, false, new DesignerApplicationLauncher.PostTask() {
         @Override
         public boolean run(List<XmlFile> unregisteredDocumentReferences, ProgressIndicator indicator, ProblemsHolder problemsHolder) {
-          assertTrue(problemsHolder.isEmpty());
+          assertTrue(DocumentProblemManager.getInstance().toString(problemsHolder.getProblems()), problemsHolder.isEmpty());
 
           client = (TestClient)Client.getInstance();
           client.flush();

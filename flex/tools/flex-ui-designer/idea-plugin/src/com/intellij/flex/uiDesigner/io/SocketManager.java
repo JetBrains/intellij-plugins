@@ -31,6 +31,7 @@ abstract class SocketManager implements Runnable, Disposable {
       serverSocket.close();
       setOut(socket.getOutputStream());
       serverSocket = null;
+      clientSocketAccepted();
     }
     catch (IOException e) {
       // if null, so, already disposed (exception thrown by accept)
@@ -40,10 +41,7 @@ abstract class SocketManager implements Runnable, Disposable {
         socket = null;
         clientSocketNotAccepted();
       }
-      return;
     }
-
-    clientSocketAccepted();
   }
 
   protected void clientSocketAccepted() {

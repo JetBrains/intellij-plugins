@@ -242,7 +242,8 @@ abstract public class AbcTranscoder extends SwfTranscoder {
 
     @Override
     public boolean equals(CharSequence o1, CharSequence o2) {
-      return o2.equals(o1); // must be o2.equals(o1) because o1 is String (cannot equals) and o2 is TransientString
+      // must be o2.equals(o1) because o1 is String (cannot equals) and o2 is TransientString or com.intellij.util.text.CharSequenceBackedByArray
+      return o1 instanceof String ? o2.equals(o1) : o1.equals(o2);
     }
   }
 }

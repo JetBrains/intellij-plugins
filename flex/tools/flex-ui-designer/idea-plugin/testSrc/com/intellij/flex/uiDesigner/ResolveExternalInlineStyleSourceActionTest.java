@@ -7,7 +7,7 @@ import gnu.trove.THashMap;
 
 import java.util.Map;
 
-public class ResolveExternalInlineStyleSourceActionTest extends FlexUIDesignerBaseTestCase {
+public class ResolveExternalInlineStyleSourceActionTest extends FlashUIDesignerBaseTestCase {
   private static final String BASE_PATH = "/resolveExternalInlineStyle";
 
   protected Runnable myAfterCommitRunnable = null;

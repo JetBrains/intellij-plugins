@@ -1,12 +1,12 @@
 <idea-plugin version="2">
-  <name>Flex UI Designer</name>
-  <description>Provides editing support for Flex UI (currently, only view)</description>
+  <name>Flash UI Designer</name>
+  <description>Provides editing support for Flex or Flash UI</description>
   <id>com.intellij.flex.uiDesigner</id>
   <version>0.6.5</version>
   <vendor url="http://www.jetbrains.com" logo="/general/ijLogo.png">JetBrains</vendor>
   <idea-version since-build="110.187"/>
 
-  <resource-bundle>messages.FlexUIDesignerBundle</resource-bundle>
+  <resource-bundle>messages.FlashUIDesignerBundle</resource-bundle>
 
   <depends optional="false">com.intellij.flex</depends>
   <depends optional="false">com.intellij.properties</depends>
@@ -33,19 +33,19 @@
   </extensions>
 
   <actions>
-    <group id="FlexUIDesigner.MainToolbarActions">
+    <group id="FlashUIDesigner.MainToolbarActions">
       <separator/>
-      <action id="FlexUIDesigner.RunDesignView" class="com.intellij.flex.uiDesigner.actions.RunDesignViewAction" icon="/images/ui-designer.png">
+      <action id="FlashUIDesigner.RunDesignView" class="com.intellij.flex.uiDesigner.actions.RunDesignViewAction" icon="/images/ui-designer.png">
         <!--<keyboard-shortcut first-keystroke="meta i" keymap="Mac OS X"/>-->
       </action>
-      <action id="FlexUIDesigner.DebugDesignView" class="com.intellij.flex.uiDesigner.actions.DebugDesignViewAction" icon="/images/preview-debug.png">
+      <action id="FlashUIDesigner.DebugDesignView" class="com.intellij.flex.uiDesigner.actions.DebugDesignViewAction" icon="/images/preview-debug.png">
         <!--<keyboard-shortcut first-keystroke="meta shift i" keymap="Mac OS X"/>-->
       </action>
       <add-to-group anchor="before" group-id="MainToolBar" relative-to-action="HelpTopics"/>
     </group>
 
-    <group id="FlexUIDesigner.ContextMenuActions">
-      <reference ref="FlexUIDesigner.RunDesignView"/>
+    <group id="FlashUIDesigner.ContextMenuActions">
+      <reference ref="FlashUIDesigner.RunDesignView"/>
       <add-to-group anchor="last" group-id="RunContextPopupGroup"/>
     </group>
   </actions>

@@ -69,7 +69,7 @@ public class AppTest extends AppTestBase {
     info.fail.set(false);
   }
 
-  public void testCloseAndOpenProject() throws Exception {
+  public void _testCloseAndOpenProject() throws Exception {
     open("injectedAS/Transitions.mxml");
 
     DesignerApplicationManager designerAppManager = DesignerApplicationManager.getInstance();
@@ -78,7 +78,7 @@ public class AppTest extends AppTestBase {
     callClientAssert("close");
   }
 
-  public void testUpdateDocumentOnIdeaAutoSave() throws Exception {
+  public void _testUpdateDocumentOnIdeaAutoSave() throws Exception {
     VirtualFile file = open("states/SetProperty.mxml");
 
     final Document document = FileDocumentManager.getInstance().getDocument(file);

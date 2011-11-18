@@ -401,15 +401,14 @@ public class Client implements Disposable {
   private boolean writeDocumentFactory(DocumentFactoryManager.DocumentInfo documentInfo,
                                        Module module,
                                        XmlFile psiFile,
-                                       ProblemsHolder problemsHolder)
-    throws IOException {
+                                       ProblemsHolder problemsHolder) throws IOException {
     final AccessToken token = ReadAction.start();
     final int flags;
     try {
       final JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(psiFile);
       assert jsClass != null;
       out.writeAmfUtf(jsClass.getQualifiedName());
-      
+
       if (JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.SPARK_APPLICATION) ||
           JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.MX_APPLICATION)) {
         flags = 1;

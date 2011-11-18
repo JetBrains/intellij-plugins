@@ -46,7 +46,6 @@
       }
       else {
         module = value.module;
-        userDocument = value;
       }
 
       userDocument = value;

@@ -19,7 +19,6 @@ public class ProblemsHolder {
   private final List<ProblemDescriptor> problems = new ArrayList<ProblemDescriptor>();
 
   private VirtualFile currentFile;
-  private boolean handled;
 
   public boolean isEmpty() {
     return problems.isEmpty();
@@ -37,15 +36,9 @@ public class ProblemsHolder {
     this.currentFile = currentFile;
   }
 
-  public ProblemDescriptor[] getResultList() {
+  public List<ProblemDescriptor> getProblems() {
     LOG.assertTrue(currentFile == null);
-    LOG.assertTrue(!handled);
-    handled = true;
-    return problems.toArray(new ProblemDescriptor[problems.size()]);
-  }
-
-  public void clear() {
-    problems.clear();
+    return problems;
   }
 
   public void add(InvalidPropertyException e) {
@@ -63,12 +56,14 @@ public class ProblemsHolder {
       error = e.getMessage();
       final String prefix = "For input string: \"";
       if (error.startsWith(prefix)) {
-        error = FlexUIDesignerBundle.message("error.write.property.numeric.value",
-          error.substring(prefix.length(), error.charAt(error.length() - 1) == '"' ? error.length() - 1 : error.length()), propertyName);
+        error = FlashUIDesignerBundle.message("error.write.property.numeric.value",
+                                              error.substring(prefix.length(), error.charAt(error.length() - 1) == '"'
+                                                                               ? error.length() - 1
+                                                                               : error.length()), propertyName);
       }
     }
     else {
-      error = FlexUIDesignerBundle.message("error.write.property", propertyName);
+      error = FlashUIDesignerBundle.message("error.write.property", propertyName);
     }
 
     final ProblemDescriptor problemDescriptor = new ProblemDescriptor(error, currentFile, getLineNumber(element));
