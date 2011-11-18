@@ -27,6 +27,4 @@ public final class AmfExtendedTypes {
 
   public static int TRANSIENT_ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES = 56;
   public static int PERMANENT_ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES = 57;
-
-  public static int ASSIGN_REFERENCE_ID = 59;
 }

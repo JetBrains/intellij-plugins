@@ -46,6 +46,12 @@ public final class ModuleContextImpl implements ModuleContextEx {
     return documentFactories != null && documentFactories.length > id ? documentFactories[id] : null;
   }
 
+  public function removeDocumentFactory(id:int):void {
+    if (documentFactories != null && id < documentFactories.length) {
+      documentFactories[id] = null;
+    }
+  }
+
   public function putDocumentFactory(id:int, documentFactory:Object):void {
     var requiredLength:int = id + 1;
     if (documentFactories == null) {

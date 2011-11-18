@@ -61,15 +61,17 @@ public class DocumentFactoryManager {
       if (f == factory) {
         id = i;
       }
-      else if (f != null) {
-        if (f.deleteUser(factory) && f.document == null) {
-          unregister2(f, unregistered);
-        }
+      else if (f != null && f.deleteUser(factory) && f.document == null) {
+        unregister2(f, unregistered);
       }
     }
 
     assert(id != -1);
     unregistered[unregistered.length] = id;
+
+    // clear module context document flex factory pool
+    factory.module.context.removeDocumentFactory(id);
+
     return id;
   }
 

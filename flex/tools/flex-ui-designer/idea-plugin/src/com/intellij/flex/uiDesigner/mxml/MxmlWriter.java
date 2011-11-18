@@ -439,20 +439,20 @@ public class MxmlWriter {
     }
 
     final int childDataPosition = out.size();
-    if (projectComponentFactoryId != -1) {
+    if (projectComponentFactoryId == -1) {
+      if (isListItem) {
+        out.write(Amf3Types.OBJECT);
+      }
+
+      writer.classOrPropertyName(descriptor.getQualifiedName());
+    }
+    else {
       if (!isListItem) {
         // replace Amf3Types.OBJECT to AmfExtendedTypes.DOCUMENT_REFERENCE
         writer.getBlockOut().setPosition(writer.getBlockOut().size() - 1);
       }
 
       writer.documentReference(projectComponentFactoryId);
-    }
-    else {
-      if (isListItem) {
-        out.write(Amf3Types.OBJECT);
-      }
-
-      writer.classOrPropertyName(descriptor.getQualifiedName());
     }
 
     return processElements(tag, parentContext, allowIncludeInExludeFrom, childDataPosition, out.allocateClearShort());
