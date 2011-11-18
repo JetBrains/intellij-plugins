@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.flashbuilder;
 
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
@@ -11,65 +12,96 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.JDOMUtil;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PlatformUtils;
+import gnu.trove.THashSet;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
 public class FlashBuilderSdkFinder {
 
+  static String DEFAULT_SDK_NAME = ""; // used as default name in FB project files
+
   private boolean myInitialized = false;
 
   private final Project myProject;
   private final String myInitiallySelectedPath;
-  private final Collection<FlashBuilderProject> myFlashBuilderProjects;
+  private final List<FlashBuilderProject> myAllProjects;
 
   private String myWorkspacePath;
-  private WhereToLookForSdkInfo myWhereToLookForSdkInfo;
   private Map<String, String> mySdkNameToRootPath = new HashMap<String, String>();
-  private Collection<VirtualFile> mySdkRootsFromFBInstallation = new ArrayList<VirtualFile>();
   private Sdk mySdk;
   private String mySdkHome;
+  private boolean myDialogWasShown = false;
 
   private static final String FLEX_SDK_PROPERTY = "com.adobe.flexbuilder.project.flex_sdks";
   private static final String SDKS_ELEMENT = "sdks";
+  private static final String SDKS_FOLDER = "sdks";
   private static final String SDK_ELEMENT = "sdk";
   private static final String DEFAULT_SDK_ATTR = "defaultSDK";
   private static final String SDK_NAME_ATTR = "name";
   private static final String SDK_LOCATION_ATTR = "location";
 
-  private static final String COMMON_SDK_NAME_BEGINNING = "Flex ";
   private FlexProjectConfigurationEditor myFlexConfigEditor;
-
-  private enum WhereToLookForSdkInfo {
-    InWorkspace, InFBInstallationDir, UseIdeaSdk
-  }
 
   public FlashBuilderSdkFinder(final Project project,
                                final FlexProjectConfigurationEditor flexConfigEditor,
                                final String initiallySelectedPath,
-                               final Collection<FlashBuilderProject> flashBuilderProjects) {
+                               final List<FlashBuilderProject> allProjects) {
     myProject = project;
     myFlexConfigEditor = flexConfigEditor;
     myInitiallySelectedPath = initiallySelectedPath;
-    myFlashBuilderProjects = flashBuilderProjects;
+    myAllProjects = allProjects;
   }
 
   @Nullable
-  public String getWorkspacePath () {
-    return  myInitialized ? myWorkspacePath : findWorkspacePath();
+  public String getWorkspacePath() {
+    return myInitialized ? myWorkspacePath : findWorkspacePath();
   }
 
   @Nullable
-  public String findSdkHome(final FlashBuilderProject flashBuilderProject) {
+  private String findWorkspacePath() {
+    final Collection<VirtualFile> checked = new THashSet<VirtualFile>();
+    String wsPath = guessWorkspacePath(myInitiallySelectedPath, checked);
+    if (wsPath == null) {
+      for (FlashBuilderProject fbProject : myAllProjects) {
+        wsPath = guessWorkspacePath(fbProject.getProjectRootPath(), checked);
+        if (wsPath != null) return wsPath;
+      }
+    }
+    return wsPath;
+  }
+
+  @Nullable
+  private static String guessWorkspacePath(String path, final Collection<VirtualFile> checked) {
+    VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(path);
+    if (dir != null && !dir.isDirectory()) {
+      dir = dir.getParent();
+    }
+
+    while (dir != null) {
+      if (checked.contains(dir)) return null;
+      if (FlashBuilderProjectFinder.isFlashBuilderWorkspace(dir)) return dir.getPath();
+      dir = dir.getParent();
+    }
+    return null;
+  }
+
+  @Nullable
+  public String findSdkHome(final FlashBuilderProject fbProject) {
     assert PlatformUtils.isFlexIde();
 
     if (!myInitialized) {
@@ -77,20 +109,26 @@ public class FlashBuilderSdkFinder {
       myInitialized = true;
     }
 
-    switch (myWhereToLookForSdkInfo) {
-      case InWorkspace:
-        return mySdkNameToRootPath.get(flashBuilderProject.getSdkName());
-      case InFBInstallationDir:
-        return findMostSuitableSdkInInstallation(flashBuilderProject);
-      case UseIdeaSdk:
-        return mySdkHome;
-    }
+    final String sdkHome = mySdkNameToRootPath.get(fbProject.getSdkName());
+    if (sdkHome != null) return sdkHome;
 
-    return null;
+    if (myDialogWasShown) return mySdkHome;
+
+    final FlashBuilderSdkDialog dialog = new FlashBuilderSdkDialog(myProject, myFlexConfigEditor, myAllProjects.size());
+    if (!ApplicationManager.getApplication().isUnitTestMode()) {
+      dialog.show();
+    }
+    else {
+      dialog.close(DialogWrapper.OK_EXIT_CODE);
+    }
+    myDialogWasShown = true;
+    mySdkHome = dialog.isOK() ? dialog.getSdkHome() : null;
+
+    return mySdkHome;
   }
 
   @Nullable
-  public Sdk findSdk(final FlashBuilderProject flashBuilderProject) {
+  public Sdk findSdk(final FlashBuilderProject fbProject) {
     assert !PlatformUtils.isFlexIde();
 
     if (!myInitialized) {
@@ -98,141 +136,133 @@ public class FlashBuilderSdkFinder {
       myInitialized = true;
     }
 
-    switch (myWhereToLookForSdkInfo) {
-      case InWorkspace:
-        final String sdkRootPath = mySdkNameToRootPath.get(flashBuilderProject.getSdkName());
-        return createOrGetSdk(sdkRootPath, flashBuilderProject.getProjectType());
-      case InFBInstallationDir:
-        return createOrGetSdk(findMostSuitableSdkInInstallation(flashBuilderProject), flashBuilderProject.getProjectType());
-      case UseIdeaSdk:
-        return mySdk;
+    final String sdkHome = mySdkNameToRootPath.get(fbProject.getSdkName());
+    if (sdkHome != null) return createOrGetSdk(sdkHome, fbProject.getProjectType());
+
+    if (myDialogWasShown) return mySdk;
+
+    final FlashBuilderSdkDialog dialog = new FlashBuilderSdkDialog(myProject, myFlexConfigEditor, myAllProjects.size());
+    if (!ApplicationManager.getApplication().isUnitTestMode()) {
+      dialog.show();
     }
-
-    return null;
-  }
-
-  @Nullable
-  private String findMostSuitableSdkInInstallation(final FlashBuilderProject flashBuilderProject) {
-    final String sdkName = flashBuilderProject.getSdkName();
-
-    if ("".equals(sdkName) && !mySdkRootsFromFBInstallation.isEmpty()) {
-      // sdk roots are usually called with version string, i.e. '3.4.1' or '4.0.0'
-      VirtualFile latestSdkRoot = mySdkRootsFromFBInstallation.iterator().next();
-      for (VirtualFile nextSdkRoot : mySdkRootsFromFBInstallation) {
-        if (StringUtil.compareVersionNumbers(nextSdkRoot.getName(), latestSdkRoot.getName()) > 0) {
-          latestSdkRoot = nextSdkRoot;
-        }
-      }
-      return latestSdkRoot.getPath();
+    else {
+      dialog.close(DialogWrapper.OK_EXIT_CODE);
     }
-
-    if (sdkName.startsWith(COMMON_SDK_NAME_BEGINNING)) {
-      final String sdkVersion = sdkName.substring(COMMON_SDK_NAME_BEGINNING.length());
-      for (VirtualFile sdkRoot : mySdkRootsFromFBInstallation) {
-        if (sdkRoot.getName().startsWith(sdkVersion)) {
-          return sdkRoot.getPath();
-        }
-      }
-    }
-
-    return mySdkRootsFromFBInstallation.isEmpty() ? null : mySdkRootsFromFBInstallation.iterator().next().getPath();
+    myDialogWasShown = true;
+    mySdk = dialog.isOK() ? dialog.getSdk() : null;
+    return mySdk;
   }
 
   private void initialize() {
+    // first look for SDKs in installation, then in workspace. Some can be overwritten by workspace-specific ones.
+    if (!ApplicationManager.getApplication().isUnitTestMode()) {
+      initializeSdksFromFBInstallation();
+    }
+
     myWorkspacePath = findWorkspacePath();
     if (myWorkspacePath != null) {
-      initializeForWorkspace(myWorkspacePath);
+      initSdksConfiguredInWorkspace(myWorkspacePath);
     }
-    else {
-      final FlashBuilderSdkDialog dialog = new FlashBuilderSdkDialog(myProject, myFlexConfigEditor, true);
-      if (!ApplicationManager.getApplication().isUnitTestMode()) {
-        dialog.show();
-      }
-      else {
-        dialog.close(DialogWrapper.OK_EXIT_CODE);
-      }
-      if (dialog.isOK()) {
-        if (dialog.isUseIdeaSdkSelected()) {
-          myWhereToLookForSdkInfo = WhereToLookForSdkInfo.UseIdeaSdk;
-          if (PlatformUtils.isFlexIde()) {
-            mySdkHome = dialog.getSdkHome();
-          }
-          else {
-            mySdk = dialog.getSdk();
-          }
+  }
+
+  private void initializeSdksFromFBInstallation() {
+    final String installationPath = findFBInstallationPath();
+    if (installationPath == null) return;
+    final File sdksDir = new File(installationPath, SDKS_FOLDER);
+    if (!sdksDir.isDirectory()) return;
+
+    String maxVersion = "0";
+    for (File sdkDir : sdksDir.listFiles()) {
+      if (!sdkDir.isDirectory()) continue;
+      final File descriptionFile = new File(sdkDir, "flex-sdk-description.xml");
+      if (!descriptionFile.isFile()) return;
+
+      final String nameElement = "<flex-sdk-description><name>";
+      final String versionElement = "<flex-sdk-description><version>";
+      FileInputStream is = null;
+      try {
+        //noinspection IOResourceOpenedButNotSafelyClosed
+        is = new FileInputStream(descriptionFile);
+        final Map<String, List<String>> info = FlexUtils.findXMLElements(is, Arrays.asList(nameElement, versionElement));
+
+        final List<String> nameInfo = info.get(nameElement);
+        if (nameInfo.isEmpty()) continue;
+
+        mySdkNameToRootPath.put(nameInfo.get(0), sdkDir.getPath());
+
+        final List<String> versionInfo = info.get(versionElement);
+        if (versionInfo.isEmpty()) continue;
+
+        final String version = versionInfo.get(0);
+        if (StringUtil.compareVersionNumbers(version, maxVersion) > 0) {
+          maxVersion = version;
+          mySdkNameToRootPath.put(DEFAULT_SDK_NAME, sdkDir.getPath());
         }
-        else {
-          myWorkspacePath = dialog.getWorkspacePath();
-          initializeForWorkspace(myWorkspacePath);
-        }
       }
-      else {
-        myWhereToLookForSdkInfo = WhereToLookForSdkInfo.UseIdeaSdk;
-        mySdk = null;
+      catch (IOException ignore) {/**/}
+      finally {
+        if (is != null) {
+          try {
+            is.close();
+          }
+          catch (IOException ignore) {/**/}
+        }
       }
     }
   }
 
   @Nullable
-  private String findWorkspacePath() {
-    String workspacePath = guessWorkspacePath(myInitiallySelectedPath);
-    if (workspacePath == null) {
-      for (FlashBuilderProject flashBuilderProject : myFlashBuilderProjects) {
-        workspacePath = guessWorkspacePath(flashBuilderProject.getProjectRootPath());
-        if (workspacePath != null) {
-          break;
-        }
+  private static String findFBInstallationPath() {
+    final String programsPath = SystemInfo.isMac ? "/Applications" : SystemInfo.isWindows ? System.getenv("ProgramFiles") : null;
+    final File programsDir = programsPath == null ? null : new File(programsPath);
+    if (programsDir == null || !programsDir.isDirectory()) return null;
+
+    final List<File> fbDirs = new ArrayList<File>();
+    final FileFilter filter = new FileFilter() {
+      public boolean accept(final File dir) {
+        final String name = dir.getName();
+        return dir.isDirectory() && (name.contains("Flash") || name.contains("Flex")) && name.contains("Builder")
+               && new File(dir, SDKS_FOLDER).isDirectory();
+      }
+    };
+    Collections.addAll(fbDirs, programsDir.listFiles(filter));
+    final File adobeDir = new File(programsDir, "Adobe");
+    if (adobeDir.isDirectory()) {
+      Collections.addAll(fbDirs, adobeDir.listFiles(filter));
+    }
+
+    if (fbDirs.size() == 0) return null;
+    if (fbDirs.size() == 1) return fbDirs.get(0).getPath();
+
+    // check the most recent
+    Pair<String, String> pathAndVersion = null;
+    for (File fbDir : fbDirs) {
+      final String version = guessFBVersion(fbDir.getName());
+      if (pathAndVersion == null || StringUtil.compareVersionNumbers(version, pathAndVersion.second) > 0) {
+        pathAndVersion = Pair.create(fbDir.getPath(), version);
       }
     }
-    return workspacePath;
+
+    assert pathAndVersion != null;
+    return pathAndVersion.first;
   }
 
-  private void initializeForWorkspace(final String workspacePath) {
-    if (!initializeSdksConfiguredInWorkspace(workspacePath)) {
-      final FlashBuilderSdkDialog dialog = new FlashBuilderSdkDialog(myProject, myFlexConfigEditor, false);
-      if (!ApplicationManager.getApplication().isUnitTestMode()) {
-        dialog.show();
+  private static String guessFBVersion(final String fbInstallFolderName) {
+    final StringBuilder b = new StringBuilder();
+    for (int i = fbInstallFolderName.length() - 1; i >= 0; i--) {
+      final char ch = fbInstallFolderName.charAt(i);
+      if ('.' == ch || Character.isDigit(ch)) {
+        b.insert(0, ch);
       }
       else {
-        dialog.close(DialogWrapper.OK_EXIT_CODE);
-      }
-      if (dialog.isOK()) {
-        if (dialog.isUseIdeaSdkSelected()) {
-          myWhereToLookForSdkInfo = WhereToLookForSdkInfo.UseIdeaSdk;
-          if (PlatformUtils.isFlexIde()) {
-            mySdkHome = dialog.getSdkHome();
-          }
-          else {
-            mySdk = dialog.getSdk();
-          }
-        }
-        else {
-          initializeForFBInstallationDir(dialog.getFBInstallationPath());
-        }
-      }
-      else {
-        myWhereToLookForSdkInfo = WhereToLookForSdkInfo.UseIdeaSdk;
-        mySdk = null;
+        break;
       }
     }
+    return b.toString();
   }
 
-  private void initializeForFBInstallationDir(final String fbInstallationPath) {
-    myWhereToLookForSdkInfo = WhereToLookForSdkInfo.InFBInstallationDir;
-
-    final VirtualFile sdksDir =
-      LocalFileSystem.getInstance().findFileByPath(fbInstallationPath + FlashBuilderProjectFinder.SDKS_RELATIVE_PATH);
-    if (sdksDir != null) {
-      for (VirtualFile potentialSdkRoot : sdksDir.getChildren()) {
-        if (FlexSdkUtils.isFlexOrAirSdkRoot(potentialSdkRoot)) {
-          mySdkRootsFromFBInstallation.add(potentialSdkRoot);
-        }
-      }
-    }
-  }
-
-  private boolean initializeSdksConfiguredInWorkspace(final String flashBuilderWorkspacePath) {
-    final Document sdkInfoDocument = loadSdkInfoDocument(flashBuilderWorkspacePath);
+  private boolean initSdksConfiguredInWorkspace(final String fbWorkspacePath) {
+    final Document sdkInfoDocument = loadSdkInfoDocument(fbWorkspacePath);
     if (sdkInfoDocument == null) {
       return false;
     }
@@ -248,8 +278,7 @@ public class FlashBuilderSdkFinder {
 
       if (sdkLocationAttr != null) {
         if (defaultSdkAttr != null && defaultSdkAttr.getValue().equalsIgnoreCase("true")) {
-          // empty string means default sdk
-          mySdkNameToRootPath.put("", sdkLocationAttr.getValue());
+          mySdkNameToRootPath.put(DEFAULT_SDK_NAME, sdkLocationAttr.getValue());
         }
 
         if (sdkNameAttr != null) {
@@ -258,7 +287,6 @@ public class FlashBuilderSdkFinder {
       }
     }
 
-    myWhereToLookForSdkInfo = WhereToLookForSdkInfo.InWorkspace;
     return true;
   }
 
@@ -292,22 +320,4 @@ public class FlashBuilderSdkFinder {
                               : (SdkType)FlexSdkType.getInstance();
     return FlexSdkUtils.createOrGetSdk(sdkType, sdkHomePath);
   }
-
-  @Nullable
-  private static String guessWorkspacePath(final String selectedPath) {
-    VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(selectedPath);
-
-    if (dir != null && !dir.isDirectory()) {
-      dir = dir.getParent();
-    }
-
-    while (dir != null) {
-      if (FlashBuilderProjectFinder.isFlashBuilderWorkspace(dir)) {
-        return dir.getPath();
-      }
-      dir = dir.getParent();
-    }
-    return null;
-  }
-
 }

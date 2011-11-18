@@ -165,7 +165,7 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
     final List<String> paths = getList();
     final boolean isArchive = paths.size() == 1 && FlashBuilderProjectFinder.hasArchiveExtension(paths.get(0));
     final List<String> dotProjectPaths = getDotProjectPaths(project);
-    final Collection<FlashBuilderProject> flashBuilderProjects = FlashBuilderProjectLoadUtil.loadProjects(dotProjectPaths, isArchive);
+    final List<FlashBuilderProject> flashBuilderProjects = FlashBuilderProjectLoadUtil.loadProjects(dotProjectPaths, isArchive);
 
     final ModuleType moduleType = PlatformUtils.isFlexIde() ? FlexModuleType.getInstance() : StdModuleTypes.JAVA;
 

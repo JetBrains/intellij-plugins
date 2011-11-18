@@ -161,10 +161,6 @@ public class FlashBuilderProjectFinder {
     }
   }
 
-  static boolean isFlashBuilderInstallationDir(final VirtualFile file) {
-    return file.isDirectory() && VfsUtil.findRelativeFile(SDKS_RELATIVE_PATH, file) != null;
-  }
-
   static boolean hasArchiveExtension(final String path) {
     return path.endsWith(FlashBuilderImporter.DOT_FXP) ||
            path.endsWith(FlashBuilderImporter.DOT_FXPL) ||

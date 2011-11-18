@@ -19,10 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 public class FlashBuilderProjectLoadUtil {
 
@@ -109,8 +106,8 @@ public class FlashBuilderProjectLoadUtil {
     return PathUtil.getFileName(PathUtil.getParentPath(dotProjectFilePath));
   }
 
-  public static Collection<FlashBuilderProject> loadProjects(final Collection<String> dotProjectFilePaths, final boolean isArchive) {
-    final Collection<FlashBuilderProject> flashBuilderProjects = new ArrayList<FlashBuilderProject>(dotProjectFilePaths.size());
+  public static List<FlashBuilderProject> loadProjects(final Collection<String> dotProjectFilePaths, final boolean isArchive) {
+    final List<FlashBuilderProject> flashBuilderProjects = new ArrayList<FlashBuilderProject>(dotProjectFilePaths.size());
     for (final String dotProjectFilePath : dotProjectFilePaths) {
       final VirtualFile dotProjectFile = LocalFileSystem.getInstance().findFileByPath(dotProjectFilePath);
       if (dotProjectFile != null) {

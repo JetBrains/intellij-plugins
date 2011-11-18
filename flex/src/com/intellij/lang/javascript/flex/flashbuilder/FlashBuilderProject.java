@@ -20,7 +20,7 @@ public class FlashBuilderProject {
   private Collection<String> mySourcePaths = new ArrayList<String>();
   private String myOutputFolderPath = "";
   private boolean mySdkUsed;
-  private String mySdkName = "";
+  private String mySdkName = FlashBuilderSdkFinder.DEFAULT_SDK_NAME;
   private String myCompilerOutputType = FlexBuildConfiguration.APPLICATION;
   private ProjectType myProjectType;
   private String myMainAppClassName = "";
