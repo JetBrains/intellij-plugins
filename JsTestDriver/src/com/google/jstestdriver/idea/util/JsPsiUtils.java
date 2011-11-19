@@ -300,15 +300,15 @@ public class JsPsiUtils {
     return StringUtil.stripQuotesAroundValue(testMethodNameDeclaration.getText());
   }
 
-  public static boolean isElementOfType(@NotNull PsiElement psiElement, @NotNull IElementType type) {
+  public static boolean isElementOfType(@Nullable PsiElement psiElement, @NotNull IElementType type) {
     if (psiElement instanceof ASTNode) {
-      ASTNode node = (ASTNode) psiElement;
+      ASTNode node = (ASTNode)psiElement;
       return node.getElementType() == type;
     }
     return false;
   }
 
-  public static boolean isElementOfType(@NotNull PsiElement psiElement,
+  public static boolean isElementOfType(@Nullable PsiElement psiElement,
                                         @NotNull IElementType type1,
                                         @NotNull IElementType type2) {
     if (psiElement instanceof ASTNode) {
@@ -319,7 +319,7 @@ public class JsPsiUtils {
     return false;
   }
 
-  public static boolean isElementOfType(@NotNull PsiElement psiElement,
+  public static boolean isElementOfType(@Nullable PsiElement psiElement,
                                         @NotNull IElementType type1,
                                         @NotNull IElementType type2,
                                         @NotNull IElementType type3) {
@@ -327,6 +327,19 @@ public class JsPsiUtils {
       ASTNode node = (ASTNode)psiElement;
       IElementType type = node.getElementType();
       return type == type1 || type == type2 || type == type3;
+    }
+    return false;
+  }
+
+  public static boolean isElementOfType(@Nullable PsiElement psiElement,
+                                        @NotNull IElementType type1,
+                                        @NotNull IElementType type2,
+                                        @NotNull IElementType type3,
+                                        @NotNull IElementType type4) {
+    if (psiElement instanceof ASTNode) {
+      ASTNode node = (ASTNode)psiElement;
+      IElementType type = node.getElementType();
+      return type == type1 || type == type2 || type == type3 || type == type4;
     }
     return false;
   }

@@ -30,6 +30,7 @@
   <depends optional="true" config-file="javascript-support.xml">JavaScript</depends>
 
   <extensions defaultExtensionNs="com.intellij">
+    <fileTypeFactory implementation="com.google.jstestdriver.idea.config.JstdConfigFileLoader"/>
     <configurationType implementation="com.google.jstestdriver.idea.execution.JstdConfigurationType"/>
     <programRunner implementation="com.google.jstestdriver.idea.execution.JstdClientRunner"/>
     <configurationProducer implementation="com.google.jstestdriver.idea.execution.JstdRuntimeConfigurationProducer"/>
@@ -47,7 +48,15 @@
 <ul>
   <li>Bug fixes:
     <ul>
-      <li><a href="http://youtrack.jetbrains.net/issue/WI-7911">WI-7911</a> Configuration file validation has been improved (now comments are accepted and TAB characters are highlighted as errors).</li>
+      <li>Configuration file support:
+        <ul>
+          <li>JavaScript files referenced by configuration file can be normally renamed and moved.</li>
+          <li><a href="http://youtrack.jetbrains.net/issue/WI-7911" style="text-decoration: line-through">WI-7911</a>
+            Comments are accepted, tab characters are rejected
+          </li>
+          <li>File references from 'load', 'test', 'exclude' and 'serve' sections can have no indent.</li>
+        </ul>
+      </li>
     </ul>
   </li>
 </ul>

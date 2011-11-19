@@ -130,39 +130,70 @@ public class JstdConfigFileAnnotator implements Annotator {
       holder.createErrorAnnotation(value, "File sequence should start with a dash symbol");
       return;
     }
-    PsiElement firstIndentElement = compoundValue.getPrevSibling();
-    if (firstIndentElement == null || !JsPsiUtils.isElementOfType(firstIndentElement, YAMLTokenTypes.INDENT)) {
-      int offset = compoundValue.getTextRange().getStartOffset();
-      holder.createErrorAnnotation(TextRange.create(offset, offset), "Indent was expected here");
-      return;
-    }
-    final String firstIndent = StringUtil.notNullize(firstIndentElement.getText());
+    final String firstIndent = toIndentString(compoundValue.getPrevSibling());
     compoundValue.acceptChildren(new PsiElementVisitor() {
       @Override
       public void visitElement(PsiElement element) {
         final YAMLSequence sequence = CastUtils.tryCast(element, YAMLSequence.class);
         if (sequence != null) {
-          annotateFileSequence(sequence, holder, basePath);
+          annotateFileSequence(sequence, holder, basePath, firstIndent);
           return;
         }
-        boolean indentType = JsPsiUtils.isElementOfType(element, YAMLTokenTypes.INDENT);
-        boolean whitespaceType = JsPsiUtils.isElementOfType(element, YAMLTokenTypes.EOL, YAMLTokenTypes.WHITESPACE);
-        boolean comment = JsPsiUtils.isElementOfType(element, YAMLTokenTypes.COMMENT);
-        if (indentType || whitespaceType || comment) {
-          if (indentType && !firstIndent.equals(element.getText())) {
-            holder.createErrorAnnotation(element, "All indents should be equal-sized");
-          }
-        }
-        else {
+        boolean accepted = JsPsiUtils.isElementOfType(
+          element,
+          YAMLTokenTypes.EOL, YAMLTokenTypes.WHITESPACE, YAMLTokenTypes.COMMENT, YAMLTokenTypes.INDENT
+        );
+        if (!accepted) {
           holder.createErrorAnnotation(element, "YAML sequence was expected here");
         }
       }
     });
   }
 
+  private static void checkSequenceIndent(@NotNull YAMLSequence sequence,
+                                          @NotNull AnnotationHolder holder,
+                                          @NotNull String expectedIndent) {
+    PsiElement prevSibling = sequence.getPrevSibling();
+    if (prevSibling != null) {
+      String indent = toIndentString(prevSibling);
+      if (!expectedIndent.equals(indent)) {
+        PsiElement errorElement = sequence;
+        if (JsPsiUtils.isElementOfType(prevSibling, YAMLTokenTypes.INDENT)) {
+          errorElement = prevSibling;
+        } else {
+          PsiElement firstElement = sequence.getFirstChild();
+          if (firstElement != null && JsPsiUtils.isElementOfType(firstElement, YAMLTokenTypes.SEQUENCE_MARKER)) {
+            errorElement = firstElement;
+          }
+        }
+        holder.createErrorAnnotation(errorElement, "All indents should be equal-sized");
+      }
+    }
+  }
+
+  @NotNull
+  private static String toIndentString(@Nullable PsiElement indentElement) {
+    if (indentElement != null && JsPsiUtils.isElementOfType(indentElement, YAMLTokenTypes.INDENT)) {
+      return StringUtil.notNullize(indentElement.getText());
+    }
+    return "";
+  }
+
   private static void annotateFileSequence(@NotNull YAMLSequence sequence,
-                                           @NotNull AnnotationHolder holder,
-                                           @Nullable VirtualFile basePath) {
+                                           @NotNull final AnnotationHolder holder,
+                                           @Nullable final VirtualFile basePath,
+                                           @NotNull final String expectedIndent) {
+    checkSequenceIndent(sequence, holder, expectedIndent);
+    sequence.acceptChildren(new PsiElementVisitor() {
+      @Override
+      public void visitElement(PsiElement element) {
+        if (element instanceof YAMLSequence) {
+          YAMLSequence childSequence = (YAMLSequence) element;
+          annotateFileSequence(childSequence, holder, basePath, expectedIndent);
+        }
+        super.visitElement(element);
+      }
+    });
     if (!isOneLineText(sequence)) {
       holder.createErrorAnnotation(sequence, "Unexpected multiline path");
       return;
