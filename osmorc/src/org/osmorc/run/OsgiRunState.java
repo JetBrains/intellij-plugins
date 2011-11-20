@@ -70,7 +70,7 @@ import java.util.*;
  * @author Robert F. Beeger (robert@beeger.net)
  * @version $Id$
  */
-public class OsgiRunState extends JavaCommandLineState  {
+public class OsgiRunState extends JavaCommandLineState {
   private final OsgiRunConfiguration runConfiguration;
   private final Project project;
   private final Sdk jdkForRun;
@@ -148,7 +148,8 @@ public class OsgiRunState extends JavaCommandLineState  {
     // get the bundles to be run.
     SelectedBundle[] bundles = getSelectedBundles();
     if (bundles == null) {
-      throw new CantRunException("One or more modules seem to be missing their OSGi facets or you have modules in your run configuration that no longer exist. Please re-add the OSGi facets or clean the run configuration and try again.");
+      throw new CantRunException(
+        "One or more modules seem to be missing their OSGi facets or you have modules in your run configuration that no longer exist. Please re-add the OSGi facets or clean the run configuration and try again.");
     }
 
     // setup the commandline parameters
@@ -165,17 +166,17 @@ public class OsgiRunState extends JavaCommandLineState  {
   /**
    * Here we got the magic. All libs are turned into bundles sorted and returned.
    *
-   * @return the sorted list of all bundles to start.
+   * @return the sorted list of all bundles to start or null if the selected bundles cannot be collected for some reason.
    */
   @Nullable
   private SelectedBundle[] getSelectedBundles() {
 
     if (_selectedBundles == null) {
       ProgressManager.getInstance().run(new Task.Modal(project, "Preparing bundles...", false) {
-        
+
         public void run(@NotNull ProgressIndicator progressIndicator) {
           progressIndicator.setIndeterminate(false);
-          HashSet<SelectedBundle> selectedBundles = new HashSet<SelectedBundle>();
+          final HashSet<SelectedBundle> selectedBundles = new HashSet<SelectedBundle>();
           // the bundles are module names, by now we try to find jar files in the output directory which we can then install
           ModuleManager moduleManager = ModuleManager.getInstance(project);
           int bundleCount = runConfiguration.getBundlesToDeploy().size();
@@ -186,26 +187,21 @@ public class OsgiRunState extends JavaCommandLineState  {
               // use the output jar name if it is a module
               try {
                 final Module module = moduleManager.findModuleByName(selectedBundle.getName());
+                if (module == null) {
+                  showErrorMessage("Module '" + selectedBundle.getName() + "' does no longer exist. Please check your run configuration.");
+                  _selectedBundles = null;
+                  return;
+                }
+
                 if (!OsmorcFacet.hasOsmorcFacet(module)) {
                   // actually this should not happen, but it seemed to happen once, so we check this here.
-                  try {
-                    SwingUtilities.invokeAndWait(new Runnable() {
-                      public void run() {
-                        Messages.showErrorDialog("Module '" +
-                                                 selectedBundle.getName() +
-                                                 "' has no OSGi facet, but should have. Please re-add the OSGi facet to this module.",
-                                                 "Error");
-                      }
-                    });
-                  }
-                  catch (Exception e) {
-                    // it's ok.
-                  }
+                  showErrorMessage("Module '" + selectedBundle.getName() +
+                                   "' has no OSGi facet, but should have. Please re-add the OSGi facet to this module.");
                   _selectedBundles = null;
                   return;
                 }
                 selectedBundle.setBundleUrl(new URL("file", "/", BundleCompiler.getJarFileName(module)).toString());
-                // add all the dependencies of the bundle
+                // add all the library dependencies of the bundle
                 String[] depUrls = BundleCompiler.bundlifyLibraries(module, progressIndicator, DummyCompileContext.getInstance());
                 for (String depUrl : depUrls) {
                   SelectedBundle dependency = new SelectedBundle("Dependency", depUrl, SelectedBundle.BundleType.PlainLibrary);
@@ -245,6 +241,21 @@ public class OsgiRunState extends JavaCommandLineState  {
       });
     }
     return _selectedBundles;
+  }
+
+  private static void showErrorMessage(final String message) {
+    try {
+
+      SwingUtilities.invokeAndWait(new Runnable() {
+        @Override
+        public void run() {
+          Messages.showErrorDialog(message, "Error");
+        }
+      });
+    }
+    catch (Exception ignore) {
+      //ok
+    }
   }
 
   @NotNull

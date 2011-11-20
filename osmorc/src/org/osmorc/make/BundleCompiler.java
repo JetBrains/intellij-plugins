@@ -454,7 +454,7 @@ public class BundleCompiler implements PackagingCompiler {
     }
 
     /**
-     * Bundlifies all libraries that belong to the given module and that are not bundles. The bundles are cached, so if
+     * Bundlifies all libraries that belong to the given module and that are not bundles and that are not modules. The bundles are cached, so if
      * the source library does not change, it will not be bundlified again.
      *
      * @param module         the module whose libraries are to be bundled.
@@ -466,7 +466,7 @@ public class BundleCompiler implements PackagingCompiler {
                                              @NotNull CompileContext compileContext) {
         ArrayList<String> result = new ArrayList<String>();
 
-        final String[] urls = OrderEnumerator.orderEntries(module).withoutSdk().withoutModuleSourceEntries()
+        final String[] urls = OrderEnumerator.orderEntries(module).withoutSdk().withoutModuleSourceEntries().withoutDepModules()
           .satisfying(NOT_FRAMEWORK_LIBRARY_CONDITION).recursively().exportedOnly().classes().getUrls();
 
         BndWrapper wrapper = new BndWrapper();
