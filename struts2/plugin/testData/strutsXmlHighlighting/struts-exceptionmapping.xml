@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <!--
-  ~ Copyright 2010 The authors
+  ~ Copyright 2011 The authors
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
@@ -66,6 +66,24 @@
   </package>
 
 
+  <!-- action refers to global result -->
+  <package name="actionWithGlobalResult" namespace="/actionWithGlobalResult">
+  
+    <result-types>
+      <result-type name="dispatcher" class="org.apache.struts2.dispatcher.ServletDispatcherResult" default="true"/>
+    </result-types>
+
+    <global-results>
+      <result name="global">TestGlobalResultMapping.action</result>
+    </global-results>
+
+    <action name="TestGlobalResultMapping">
+      <exception-mapping exception="MyException" result="global"/>
+    </action>
+  
+  </package>
+
+
   <!-- global/local mixed, check non-interference -->
   <package name="globalAndLocalExceptionMappingTest" namespace="/globalAndLocalExceptionMappingTest">
 
@@ -82,7 +100,7 @@
     </global-exception-mappings>
 
     <action name="TestExceptionMapping">
-      <exception-mapping exception="MyException" result="<error descr="Cannot resolve action-result 'global1'">global1</error>"/>
+      <exception-mapping exception="MyException" result="global1"/>
       <result name="exceptionResult">TestExceptionMapping.action</result>
     </action>
   </package>
