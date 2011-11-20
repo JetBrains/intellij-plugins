@@ -34,7 +34,6 @@ public class ParamNameConverterImpl extends ParamNameConverter {
 
   @Override
   protected PsiClass findBeanPropertyClass(@NotNull final DomElement domElement) {
-    assert domElement instanceof ParamsElement : "parent not ParamsElement: " + domElement;
     return ((ParamsElement) domElement).getParamsClass();
   }
 
