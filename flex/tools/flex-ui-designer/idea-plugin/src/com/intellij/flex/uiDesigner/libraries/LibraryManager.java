@@ -10,6 +10,7 @@ import com.intellij.flex.uiDesigner.io.RetainCondition;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet.ContainsCondition;
 import com.intellij.flex.uiDesigner.libraries.LibrarySorter.SortResult;
+import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
 import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -77,7 +78,9 @@ public class LibraryManager {
   public void garbageCollection(@SuppressWarnings("UnusedParameters") ProgressIndicator indicator) {
   }
 
-  public List<XmlFile> initLibrarySets(@NotNull final Module module, boolean collectLocalStyleHolders, ProblemsHolder problemsHolder)
+  public ProjectDocumentReferenceCounter initLibrarySets(@NotNull final Module module,
+                                                         boolean collectLocalStyleHolders,
+                                                         ProblemsHolder problemsHolder)
       throws InitException {
     final Project project = module.getProject();
     final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter(16384);
@@ -136,13 +139,13 @@ public class LibraryManager {
 
     final ModuleInfo moduleInfo = new ModuleInfo(module,
       Collections.singletonList(librarySet == null ? flexLibrarySet : librarySet), ModuleInfoUtil.isApp(module));
-    final List<XmlFile> unregisteredDocumentReferences = new ArrayList<XmlFile>();
+    final ProjectDocumentReferenceCounter projectDocumentReferenceCounter = new ProjectDocumentReferenceCounter();
     if (collectLocalStyleHolders) {
       // client.registerModule finalize it
       stringWriter.startChange();
       try {
         ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter, problemsHolder,
-                                                unregisteredDocumentReferences, assetCounter);
+                                                projectDocumentReferenceCounter, assetCounter);
       }
       catch (Throwable e) {
         stringWriter.rollbackChange();
@@ -168,7 +171,7 @@ public class LibraryManager {
       }
     });
 
-    return unregisteredDocumentReferences;
+    return projectDocumentReferenceCounter;
   }
 
   private FlexLibrarySet getOrCreateFlexLibrarySet(LibraryCollector libraryCollector) throws InitException {

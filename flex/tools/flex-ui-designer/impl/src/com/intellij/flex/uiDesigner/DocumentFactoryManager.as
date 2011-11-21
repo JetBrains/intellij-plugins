@@ -18,12 +18,6 @@ public class DocumentFactoryManager {
   public function get(id:int):DocumentFactory {
     return factories[id];
   }
-  
-  public function get2(id:int, requestor:DocumentFactory):DocumentFactory {
-    var documentFactory:DocumentFactory = factories[id];
-    documentFactory.addUser(requestor);
-    return documentFactory;
-  }
 
   public function register(factory:DocumentFactory):void {
     EntityLists.add(factories, factory);
@@ -36,44 +30,45 @@ public class DocumentFactoryManager {
       document.displayManager.removeEventHandlers();
     }
 
-    var deleted:Vector.<int> = new Vector.<int>();
-    var id:int = unregister2(factory, deleted);
-    if (id == -1) {
+    if (isReferenced(factory.id)) {
       return;
     }
 
-    for each (var deletedIndex:int in deleted) {
-      factories[deletedIndex] = null;
-    }
-
-    server.unregisterDocumentFactories(deleted);
+    var unregistered:Vector.<int> = new Vector.<int>();
+    unregister2(factory, unregistered);
+    server.unregisterDocumentFactories(unregistered);
   }
 
-  private function unregister2(factory:DocumentFactory, unregistered:Vector.<int>):int {
-    if (factory.hasUsers) {
-      return -1;
-    }
-
-    var id:int;
-    // find factories, required only for this factory — we need delete them
-    for (var i:int = 0, n:int = factories.length; i < n; i++) {
-      var f:DocumentFactory = factories[i];
-      if (f == factory) {
-        id = i;
-      }
-      else if (f != null && f.deleteUser(factory) && f.document == null) {
-        // deleteUser will return true even if f has another users, but don't worry – we check f.hasUsers in unregister2
-        unregister2(f, unregistered);
+  private function isReferenced(id:int):Boolean {
+    for each (var otherFactory:DocumentFactory in factories) {
+      if (otherFactory != null && otherFactory.isReferencedTo(id)) {
+        // has other references, so, we don't unregister it
+        return true;
       }
     }
 
-    assert(id != -1);
-    unregistered[unregistered.length] = id;
+    return false;
+  }
+
+  private function unregister2(factory:DocumentFactory, unregistered:Vector.<int>):void {
+    unregistered[unregistered.length] = factory.id;
+    factories[factory.id] = null;
 
     // clear module context document flex factory pool
-    factory.module.context.removeDocumentFactory(id);
+    factory.module.context.removeDocumentFactory(factory.id);
 
-    return id;
+    var documentReferences:Vector.<int> = factory.documentReferences;
+    if (documentReferences == null || documentReferences.length == 0) {
+      return;
+    }
+
+    // find factories, required only for this factory — we need delete them
+    for each (var id:int in documentReferences) {
+      var referenceFactory:DocumentFactory = factories.length > id ? factories[id] : null;
+      if (referenceFactory != null && referenceFactory.document == null && !isReferenced(id)) {
+        unregister2(referenceFactory, unregistered);
+      }
+    }
   }
 
   //noinspection JSMethodCanBeStatic

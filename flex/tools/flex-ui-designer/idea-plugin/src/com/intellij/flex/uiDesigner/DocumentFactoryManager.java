@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.AppTopics;
 import com.intellij.flex.uiDesigner.io.Info;
 import com.intellij.flex.uiDesigner.io.InfoMap;
+import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.RangeMarker;
@@ -96,22 +97,26 @@ public class DocumentFactoryManager {
     return getId(virtualFile, null, null);
   }
   
-  public int getId(VirtualFile virtualFile, @Nullable XmlFile psiFile, @Nullable List<XmlFile> unregisteredDocumentFactories) {
-    return get(virtualFile, psiFile, unregisteredDocumentFactories).getId();
+  public int getId(VirtualFile virtualFile, @Nullable XmlFile psiFile, @Nullable ProjectDocumentReferenceCounter referenceCounter) {
+    return get(virtualFile, psiFile, referenceCounter).getId();
   }
 
-  public DocumentInfo get(VirtualFile virtualFile, @Nullable XmlFile psiFile, @Nullable List<XmlFile> unregisteredDocumentFactories) {
+  public DocumentInfo get(VirtualFile virtualFile, @Nullable XmlFile psiFile, @Nullable ProjectDocumentReferenceCounter referenceCounter) {
     DocumentInfo info = files.getNullableInfo(virtualFile);
     if (info != null) {
+      if (referenceCounter != null) {
+        referenceCounter.registered(info.getId());
+      }
       return info;
-    }
-
-    if (unregisteredDocumentFactories != null) {
-      unregisteredDocumentFactories.add(psiFile);
     }
 
     info = new DocumentInfo(virtualFile);
     files.add(info);
+
+    if (referenceCounter != null) {
+      referenceCounter.unregistered(info.getId(), psiFile);
+    }
+
     return info;
   }
 

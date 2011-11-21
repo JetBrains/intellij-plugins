@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSFileReference;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -16,8 +17,6 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public final class InjectionUtil {
   public static boolean isSwf(VirtualFile source, String mimeType) {
@@ -41,7 +40,7 @@ public final class InjectionUtil {
     return false;
   }
 
-  public static int getProjectComponentFactoryId(String qualifiedClassName, PsiElement element, List<XmlFile> unregisteredDocumentFactories)
+  public static int getProjectComponentFactoryId(String qualifiedClassName, PsiElement element, ProjectDocumentReferenceCounter referenceCounter)
       throws InvalidPropertyException {
     // MxmlBackedElementDescriptor returns declaration as MxmlFile, but ClassBackedElementDescriptor returns as JSClass
     element = JSResolveUtil.unwrapProxy(element);
@@ -49,20 +48,20 @@ public final class InjectionUtil {
     VirtualFile virtualFile = psiFile.getVirtualFile();
     assert virtualFile != null;
     if (checkSupportedProjectComponentFile(virtualFile, psiFile, qualifiedClassName)) {
-      return DocumentFactoryManager.getInstance().getId(virtualFile, (XmlFile)psiFile, unregisteredDocumentFactories);
+      return DocumentFactoryManager.getInstance().getId(virtualFile, (XmlFile)psiFile, referenceCounter);
     }
     else {
       return -1;
     }
   }
 
-  public static int getProjectComponentFactoryId(JSClass jsClass, List<XmlFile> unregisteredDocumentFactories)
+  public static int getProjectComponentFactoryId(JSClass jsClass, ProjectDocumentReferenceCounter referenceCounter)
         throws InvalidPropertyException {
       PsiFile psiFile = jsClass.getContainingFile();
       VirtualFile virtualFile = psiFile.getVirtualFile();
       assert virtualFile != null;
       if (checkSupportedProjectComponentFile(virtualFile, psiFile, jsClass.getQualifiedName())) {
-        return DocumentFactoryManager.getInstance().getId(virtualFile, (XmlFile)psiFile, unregisteredDocumentFactories);
+        return DocumentFactoryManager.getInstance().getId(virtualFile, (XmlFile)psiFile, referenceCounter);
       }
       else {
         return -1;

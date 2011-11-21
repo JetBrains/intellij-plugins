@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.facet.FacetManager;
 import com.intellij.flex.uiDesigner.libraries.InitException;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
+import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -39,9 +40,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import javax.swing.event.HyperlinkEvent;
-
 import java.io.File;
-import java.util.List;
 
 import static com.intellij.flex.uiDesigner.LogMessageUtil.LOG;
 
@@ -163,9 +162,10 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
             final ProblemsHolder problemsHolder = new ProblemsHolder();
             if (!client.isModuleRegistered(module)) {
               try {
-                final List<XmlFile> unregisteredDocumentReferences = LibraryManager.getInstance().initLibrarySets(module, true, problemsHolder);
-                if (unregisteredDocumentReferences != null &&
-                    !client.registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder)) {
+                final ProjectDocumentReferenceCounter
+                  projectDocumentReferenceCounter = LibraryManager.getInstance().initLibrarySets(module, true, problemsHolder);
+                if (projectDocumentReferenceCounter != null &&
+                    !client.registerDocumentReferences(projectDocumentReferenceCounter.unregistered, module, problemsHolder)) {
                   return;
                 }
               }
@@ -280,7 +280,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
     }
 
     @Override
-    public boolean run(List<XmlFile> unregisteredDocumentReferences, ProgressIndicator indicator, ProblemsHolder problemsHolder) {
+    public boolean run(ProjectDocumentReferenceCounter projectDocumentReferenceCounter, ProgressIndicator indicator, ProblemsHolder problemsHolder) {
       indicator.setText(FlashUIDesignerBundle.message("open.document"));
       Client client = Client.getInstance();
       if (!client.flush()) {
@@ -288,8 +288,8 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
       }
 
       final Module module = ModuleUtil.findModuleForPsiElement(psiFile);
-      if (unregisteredDocumentReferences != null &&
-          !client.registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder)) {
+      if (projectDocumentReferenceCounter != null &&
+          !client.registerDocumentReferences(projectDocumentReferenceCounter.unregistered, module, problemsHolder)) {
         return false;
       }
 

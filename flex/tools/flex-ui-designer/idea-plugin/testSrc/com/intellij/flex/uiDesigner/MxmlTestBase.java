@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
+import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceDescriptor;
@@ -69,14 +70,14 @@ abstract class MxmlTestBase extends AppTestBase {
 
       new DesignerApplicationLauncher(myModule, false, new DesignerApplicationLauncher.PostTask() {
         @Override
-        public boolean run(List<XmlFile> unregisteredDocumentReferences, ProgressIndicator indicator, ProblemsHolder problemsHolder) {
+        public boolean run(ProjectDocumentReferenceCounter projectDocumentReferenceCounter, ProgressIndicator indicator, ProblemsHolder problemsHolder) {
           assertTrue(DocumentProblemManager.getInstance().toString(problemsHolder.getProblems()), problemsHolder.isEmpty());
 
           client = (TestClient)Client.getInstance();
           client.flush();
 
           try {
-            assertAfterInitLibrarySets(unregisteredDocumentReferences);
+            assertAfterInitLibrarySets(projectDocumentReferenceCounter.unregistered);
           }
           catch (IOException e) {
             throw new AssertionError(e);
@@ -93,9 +94,10 @@ abstract class MxmlTestBase extends AppTestBase {
     else {
       client = (TestClient)Client.getInstance();
       final ProblemsHolder problemsHolder = new ProblemsHolder();
-      List<XmlFile> unregistedDocumentReferences = LibraryManager.getInstance().initLibrarySets(myModule, isRequireLocalStyleHolder(), problemsHolder);
+      ProjectDocumentReferenceCounter
+        projectDocumentReferenceCounter = LibraryManager.getInstance().initLibrarySets(myModule, isRequireLocalStyleHolder(), problemsHolder);
       assertTrue(problemsHolder.isEmpty());
-      assertAfterInitLibrarySets(unregistedDocumentReferences);
+      assertAfterInitLibrarySets(projectDocumentReferenceCounter.unregistered);
     }
 
     appDir = DesignerApplicationManager.APP_DIR;

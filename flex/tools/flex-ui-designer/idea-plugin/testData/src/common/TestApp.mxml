@@ -1,3 +1,33 @@
-<Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark" xmlns:l="*">
-  <l:ProjectMxmlComponentAsParentWithDefaultProperty/>
-</Application>
+<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark"
+       width="188" height="154" color="#6D8DC8" contentBackgroundAlpha="0.0" xmlns:l="*"
+       contentBackgroundColor="#000000" layoutDirection="ltr" rollOverColor="#FFFFFF">
+  <layout>
+    <BasicLayout/>
+  </layout>
+
+  <fx:Script>
+    <![CDATA[
+    protected function plusButton_clickHandler(event:MouseEvent):void {
+      //EmbedSounds.play('click');
+    }
+
+    protected function minusButton_clickHandler(event:MouseEvent):void {
+      //EmbedSounds.play('click');
+    }
+
+    protected function mapButton_clickHandler(event:MouseEvent):void {
+      //EmbedSounds.play('click');
+    }
+
+    protected function mouseDownHandler(event:MouseEvent):void {
+      //PlayerShipController.instance(this).preventMouseEvent = true;
+      //event.stopImmediatePropagation();
+    }
+    ]]>
+  </fx:Script>
+
+  <fx:Declarations>
+    <!-- Разместить невизуальные элементы (например, службы или объекты значений) -->
+  </fx:Declarations>
+  <l:ProjectMxmlComponentAsChild/>
+</Group>

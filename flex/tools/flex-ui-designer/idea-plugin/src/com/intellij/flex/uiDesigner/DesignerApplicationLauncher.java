@@ -9,6 +9,7 @@ import com.intellij.flex.uiDesigner.io.MessageSocketManager;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.InitException;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
+import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.Application;
@@ -61,7 +62,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
 
   private boolean debug;
   private final PostTask postTask;
-  private Future<List<XmlFile>> initializeThread;
+  private Future<ProjectDocumentReferenceCounter> initializeThread;
 
   private final Semaphore semaphore = new Semaphore();
 
@@ -195,7 +196,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
       }
     }
     
-    final List<XmlFile> xmlFiles = initializeThread.get(60, TimeUnit.SECONDS);
+    final ProjectDocumentReferenceCounter projectDocumentReferenceCounter = initializeThread.get(60, TimeUnit.SECONDS);
     indicator.checkCanceled();
 
     final DesignerApplication application = DesignerApplicationManager.getInstance().getApplication();
@@ -203,7 +204,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
     application.setProcessHandler(adlProcessHandler);
     attachProjectAndModuleListeners(application);
 
-    if (!postTask.run(xmlFiles, indicator, problemsHolder)) {
+    if (!postTask.run(projectDocumentReferenceCounter, indicator, problemsHolder)) {
       indicator.cancel();
     }
   }
@@ -361,10 +362,10 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
 
   private void runInitializeLibrariesAndModuleThread() {
     LibraryManager.getInstance().setAppDir(DesignerApplicationManager.APP_DIR);
-    initializeThread = ApplicationManager.getApplication().executeOnPooledThread(new Callable<List<XmlFile>>() {
+    initializeThread = ApplicationManager.getApplication().executeOnPooledThread(new Callable<ProjectDocumentReferenceCounter>() {
       @Nullable
       @Override
-      public List<XmlFile> call() {
+      public ProjectDocumentReferenceCounter call() {
         LibraryManager.getInstance().garbageCollection(indicator);
         indicator.checkCanceled();
 
@@ -413,7 +414,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
   }
 
   interface PostTask {
-    boolean run(List<XmlFile> unregisteredDocumentReferences, ProgressIndicator indicator, ProblemsHolder problemsHolder);
+    boolean run(ProjectDocumentReferenceCounter projectDocumentReferenceCounter, ProgressIndicator indicator, ProblemsHolder problemsHolder);
 
     void end();
   }

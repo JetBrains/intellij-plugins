@@ -3,6 +3,8 @@ import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 
 import flash.system.ApplicationDomain;
 
+import org.jetbrains.Identifiable;
+
 public interface ModuleContext {
   function get applicationDomain():ApplicationDomain;
 

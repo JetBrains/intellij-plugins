@@ -418,7 +418,7 @@ public class MxmlReader implements DocumentReader {
     var id:int = AmfUtil.readUInt29(input);
     var factory:Object = moduleContext.getDocumentFactory(id);
     if (factory == null) {
-      var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance().get2(id, DocumentFactory(context));
+      var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance().get(id);
       factory = new moduleContext.documentFactoryClass(documentFactory, new DeferredInstanceFromBytesContextImpl(documentFactory, styleManager));
       moduleContext.putDocumentFactory(id, factory);
     }

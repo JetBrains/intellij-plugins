@@ -22,6 +22,19 @@ public class DocumentFactory implements SerializedDocumentDataProvider, Document
     this.module = module;
   }
 
+  private var _documentReferences:Vector.<int>;
+  public function get documentReferences():Vector.<int> {
+    return _documentReferences;
+  }
+
+  public function set documentReferences(value:Vector.<int>):void {
+    _documentReferences = value;
+  }
+
+  public function isReferencedTo(id:int):Boolean {
+    return documentReferences != null && documentReferences.indexOf(id) != -1;
+  }
+
   private var _isApp:Boolean;
   public function get isApp():Boolean {
     return _isApp;
@@ -30,30 +43,6 @@ public class DocumentFactory implements SerializedDocumentDataProvider, Document
   private var _isPureFlash:Boolean;
   public function get isPureFlash():Boolean {
     return _isPureFlash;
-  }
-  
-  private var _users:Vector.<DocumentFactory>;
-  public function get users():Vector.<DocumentFactory> {
-    return _users;
-  }
-  
-  public function addUser(user:DocumentFactory):void {
-    if (_users == null) {
-      _users = new Vector.<DocumentFactory>();
-    }
-    
-    _users[_users.length] = user;
-  }
-
-  public function deleteUser(user:DocumentFactory):Boolean {
-    var index:int = _users == null ? -1 : _users.indexOf(user);
-    if (index == -1) {
-      return false;
-    }
-    else {
-      _users.splice(index, 1);
-      return true;
-    }
   }
 
   private var _id:int;
@@ -78,10 +67,6 @@ public class DocumentFactory implements SerializedDocumentDataProvider, Document
 
   public function get moduleContext():ModuleContext {
     return module.context;
-  }
-
-  public function get hasUsers():Boolean {
-    return _users != null && _users.length > 0;
   }
 
   public function registerObjectDeclarationRangeMarkerId(object:Object, id:int):void {

@@ -155,7 +155,7 @@ public class CommonTest extends BaseTestCase {
   }
 
   public function ProjectMxmlComponentAsChild():void {
-    assertThat(app, [allOf({name: "IDEA-73453"}, [{text: "Label in child custom mxml component"}])]);
+    assertThat(app, [allOf({name: "IDEA-73453"}, [l("Label in child custom mxml component")])]);
   }
 
   public function FxVector():void {
@@ -202,6 +202,10 @@ public class CommonTest extends BaseTestCase {
 
   public function ProjectMxmlComponentAsParentWithDefaultProperty():void {
     assertThat(app, [l("h")]);
+  }
+
+  public function ProjectComponentAsGrandChild():void {
+    assertThat(app, [l("Label in child custom mxml component")]);
   }
 }
 }
