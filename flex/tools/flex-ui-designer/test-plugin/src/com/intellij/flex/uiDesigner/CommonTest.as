@@ -199,5 +199,9 @@ public class CommonTest extends BaseTestCase {
       {}
     ]);
   }
+
+  public function ProjectMxmlComponentAsParentWithDefaultProperty():void {
+    assertThat(app, [l("h")]);
+  }
 }
 }

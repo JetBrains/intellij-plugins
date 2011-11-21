@@ -288,8 +288,8 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
       }
 
       final Module module = ModuleUtil.findModuleForPsiElement(psiFile);
-      if (unregisteredDocumentReferences != null && !client.registerDocumentReferences(unregisteredDocumentReferences, module,
-        problemsHolder)) {
+      if (unregisteredDocumentReferences != null &&
+          !client.registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder)) {
         return false;
       }
 

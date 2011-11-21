@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.io.AmfOutputStream;
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
@@ -12,7 +11,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.pom.Navigatable;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.meta.PsiPresentableMetaData;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlAttribute;
@@ -94,27 +92,6 @@ public class ResolveExternalInlineStyleSourceAction implements Runnable {
     else {
       target.navigate(true);
       ProjectUtil.focusProjectWindow(project, true);
-
-      if (true) {
-        return;
-      }
-
-      try {
-        Client client = Client.getInstance();
-        client.qualifyExternalInlineStyleSource();
-        AmfOutputStream out = client.getOut();
-
-        PsiElement psiElement = (PsiElement)target;
-//        ClientFileManager clientFileManager = DesignerApplicationManager.getInstance().getClientFileManager();
-        //noinspection ConstantConditions
-//        out.writeInt(clientFileManager.add(psiElement.getContainingFile().getVirtualFile()));
-
-
-        out.flush();
-      }
-      catch (IOException e) {
-        LOG.error(e);
-      }
     }
   }
 

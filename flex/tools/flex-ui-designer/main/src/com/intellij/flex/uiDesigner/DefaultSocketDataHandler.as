@@ -221,10 +221,8 @@ final class ClientMethod {
   public static const openDocument:int = 6;
   public static const updateDocuments:int = 7;
 
-  //noinspection JSUnusedGlobalSymbols
-  public static const qualifyExternalInlineStyleSource:int = 8;
-  public static const initStringRegistry:int = 9;
-  public static const updateStringRegistry:int = 10;
-  public static const fillImageClassPool:int = 11;
-  public static const fillSwfClassPool:int = 12;
+  public static const initStringRegistry:int = 8;
+  public static const updateStringRegistry:int = 9;
+  public static const fillImageClassPool:int = 10;
+  public static const fillSwfClassPool:int = 11;
 }

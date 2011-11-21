@@ -39,10 +39,6 @@ public class Client implements Disposable {
     return DesignerApplicationManager.getService(Client.class);
   }
 
-  public AmfOutputStream getOut() {
-    return out;
-  }
-
   public void setOut(OutputStream out) {
     blockOut.setOut(out);
   }
@@ -428,6 +424,10 @@ public class Client implements Disposable {
 
     Pair<List<XmlFile>, List<RangeMarker>> result =
       new MxmlWriter(out, problemsHolder, registeredModules.getInfo(module).getFlexLibrarySet().assetCounterInfo.demanded).write(psiFile);
+    if (result == null) {
+      return false;
+    }
+
     documentInfo.setRangeMarkers(result.second);
     return result.first.isEmpty() || registerDocumentReferences(result.first, module, problemsHolder);
   }
@@ -455,10 +455,6 @@ public class Client implements Disposable {
     }
 
     return true;
-  }
-
-  public void qualifyExternalInlineStyleSource() {
-    beginMessage(ClientMethod.qualifyExternalInlineStyleSource);
   }
 
   public static void writeVirtualFile(VirtualFile file, PrimitiveAmfOutputStream out) {
@@ -492,7 +488,7 @@ public class Client implements Disposable {
 
   public static enum ClientMethod {
     openProject, closeProject, registerLibrarySet, registerModule, registerDocumentFactory, updateDocumentFactory, openDocument, updateDocuments,
-    qualifyExternalInlineStyleSource, initStringRegistry, updateStringRegistry, fillImageClassPool, fillSwfClassPool;
+    initStringRegistry, updateStringRegistry, fillImageClassPool, fillSwfClassPool;
     
     public static final int METHOD_CLASS = 0;
   }

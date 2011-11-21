@@ -46,7 +46,7 @@ public class DocumentFactoryManager {
       factories[deletedIndex] = null;
     }
 
-    server.unregisterDocumentFactories(factory.module.project, deleted);
+    server.unregisterDocumentFactories(deleted);
   }
 
   private function unregister2(factory:DocumentFactory, unregistered:Vector.<int>):int {

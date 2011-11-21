@@ -18,9 +18,9 @@ abstract class SocketManager implements Runnable, Disposable {
 
   public int listen() throws IOException {
     serverSocket = new ServerSocket(0, 1);
-    ApplicationManager.getApplication().executeOnPooledThread(this);
     int port = serverSocket.getLocalPort();
     assert port != -1;
+    ApplicationManager.getApplication().executeOnPooledThread(this);
     return port;
   }
 
@@ -56,6 +56,7 @@ abstract class SocketManager implements Runnable, Disposable {
   public void dispose() {
     if (serverSocket == null) {
       IOUtil.close(socket);
+      socket = null;
     }
     else {
       try {

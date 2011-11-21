@@ -39,7 +39,7 @@ public class MessageSocketManager extends SocketManager {
     }
     catch (IOException e) {
       //noinspection InstanceofCatchParameter
-      if (!(e instanceof SocketException && socket.isClosed())) {
+      if (socket != null && !(e instanceof SocketException && socket.isClosed())) {
         LOG.error(e);
       }
     }

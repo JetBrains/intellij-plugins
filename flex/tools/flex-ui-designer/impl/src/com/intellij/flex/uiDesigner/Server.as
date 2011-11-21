@@ -95,9 +95,8 @@ public class Server implements ResourceBundleProvider {
     socket.flush();
   }
 
-  public function unregisterDocumentFactories(project:Project, unregistered:Vector.<int>):void {
+  public function unregisterDocumentFactories(unregistered:Vector.<int>):void {
     socket.writeByte(ServerMethod.UNREGISTER_DOCUMENT_FACTORIES);
-    writeProjectId(project);
     socket.writeObject(unregistered);
     socket.flush();
   }

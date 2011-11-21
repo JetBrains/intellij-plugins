@@ -57,17 +57,19 @@ public class MxmlTest extends MxmlTestBase {
     }
     else {
       assertThat(problems,
+                 m("spark.components.supportClasses.TrackBase is abstract class (line: 3)"),
+                 m("Default property not found for Rect (line: 2)"),
+                 m("Invalid class value (line: 6)", "Invalid class value (line: 11)"),
+                 m("Unsupported embed asset type \"@Embed(source='/jazz.mp3')\" (line: 3)"),
+                 m("Invalid color name invalidcolorname (line: 2)", "Invalid integer value (line: 3)", "Invalid number value (line: 4)"),
+                 m("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-72175\">Inline components are not supported</a> (line: 9)"),
+                 m("Support only MXML-based component AuxActionScriptProjectComponent"),
+                 m("Unresolved variable or type unresolvedData (line: 10)"),
                  m("Initializer for Group cannot be represented in text (line: 2)",
                    "Initializer for Container cannot be represented in text (line: 5)",
-                   "Children of Accordion must be mx.core.INavigatorContent (line: 8)"),
-                 m("Unresolved variable or type unresolvedData (line: 10)"),
-                 m("Support only MXML-based component AuxActionScriptProjectComponent"),
-                 m("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-72175\">Inline components are not supported</a> (line: 9)"),
-                 m("Invalid color name invalidcolorname (line: 2)", "Invalid integer value (line: 3)", "Invalid number value (line: 4)"),
-                 m("Unsupported embed asset type \"@Embed(source='/jazz.mp3')\" (line: 3)"),
-                 m("Invalid class value (line: 6)", "Invalid class value (line: 11)"),
-                 m("Default property not found for Rect (line: 2)"),
-                 m("spark.components.supportClasses.TrackBase is abstract class (line: 3)"));
+                   "Children of Accordion must be mx.core.INavigatorContent (line: 8)")
+
+      );
     }
   }
 
@@ -136,7 +138,7 @@ public class MxmlTest extends MxmlTestBase {
       else if (name.endsWith(JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT) &&
                !name.startsWith("T.") &&
                !name.startsWith("TestApp.") &&
-               !name.startsWith("ProjectMxmlComponentAsParentWithDefaultProperty.") &&
+               //!name.startsWith("ProjectMxmlComponentAsParentWithDefaultProperty.") &&
                !name.startsWith("GenericMxmlSupport.")) {
         files.add(file);
       }

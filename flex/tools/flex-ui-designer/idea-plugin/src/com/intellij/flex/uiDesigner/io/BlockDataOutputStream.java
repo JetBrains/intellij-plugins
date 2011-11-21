@@ -30,9 +30,8 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream impleme
     String debugFilename = System.getProperty("fud.socket.dump");
     DebugOutput debugOut;
     if (debugFilename != null) {
-      File debugFile = new File(debugFilename);
       try {
-        debugOut = new DebugOutput(out, debugFile);
+        debugOut = new DebugOutput(out, new File(debugFilename));
       }
       catch (FileNotFoundException e) {
         throw new RuntimeException(e);

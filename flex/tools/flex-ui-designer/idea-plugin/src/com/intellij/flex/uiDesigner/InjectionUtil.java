@@ -48,7 +48,7 @@ public final class InjectionUtil {
     PsiFile psiFile = element.getContainingFile();
     VirtualFile virtualFile = psiFile.getVirtualFile();
     assert virtualFile != null;
-    if (isSupportedProjectComponentFile(virtualFile, psiFile, qualifiedClassName)) {
+    if (checkSupportedProjectComponentFile(virtualFile, psiFile, qualifiedClassName)) {
       return DocumentFactoryManager.getInstance().getId(virtualFile, (XmlFile)psiFile, unregisteredDocumentFactories);
     }
     else {
@@ -61,7 +61,7 @@ public final class InjectionUtil {
       PsiFile psiFile = jsClass.getContainingFile();
       VirtualFile virtualFile = psiFile.getVirtualFile();
       assert virtualFile != null;
-      if (isSupportedProjectComponentFile(virtualFile, psiFile, jsClass.getQualifiedName())) {
+      if (checkSupportedProjectComponentFile(virtualFile, psiFile, jsClass.getQualifiedName())) {
         return DocumentFactoryManager.getInstance().getId(virtualFile, (XmlFile)psiFile, unregisteredDocumentFactories);
       }
       else {
@@ -69,7 +69,7 @@ public final class InjectionUtil {
       }
     }
 
-  private static boolean isSupportedProjectComponentFile(VirtualFile virtualFile, PsiFile psiFile, String qualifiedClassName)
+  private static boolean checkSupportedProjectComponentFile(VirtualFile virtualFile, PsiFile psiFile, String qualifiedClassName)
       throws InvalidPropertyException {
     boolean inSourceContent = ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex().isInSourceContent(virtualFile);
     if (psiFile instanceof XmlFile) {
@@ -88,7 +88,7 @@ public final class InjectionUtil {
     PsiFile psiFile = jsClass.getContainingFile();
     VirtualFile virtualFile = psiFile.getVirtualFile();
     assert virtualFile != null;
-    return isSupportedProjectComponentFile(virtualFile, psiFile, jsClass.getQualifiedName());
+    return checkSupportedProjectComponentFile(virtualFile, psiFile, jsClass.getQualifiedName());
   }
 
   @Nullable

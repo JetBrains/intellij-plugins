@@ -85,17 +85,6 @@ public final class IOUtil {
     bytes[offset] = (byte)(v & 0xFF);
   }
 
-  public static void close(Closable closable) {
-    if (closable != null) {
-      try {
-        closable.close();
-      }
-      catch (IOException e) {
-        LOG.error(e);
-      }
-    }
-  }
-
   public static void close(Socket socket) {
     if (socket != null) {
       try {

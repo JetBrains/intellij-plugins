@@ -44,6 +44,8 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static com.intellij.flex.uiDesigner.AdlUtil.*;
 
@@ -74,6 +76,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
   }
 
   public void clientOpened() {
+    LOG.info("clientOpened");
     semaphore.up();
   }
 
@@ -117,7 +120,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
   }
 
   private void doRun(@NotNull final ProgressIndicator indicator)
-    throws IOException, java.util.concurrent.ExecutionException, InterruptedException {
+    throws IOException, java.util.concurrent.ExecutionException, InterruptedException, TimeoutException {
     final List<AdlRunConfiguration> adlRunConfigurations;
     indicator.setText(FlashUIDesignerBundle.message("copying.app.files"));
 
@@ -192,7 +195,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
       }
     }
     
-    final List<XmlFile> xmlFiles = initializeThread.get();
+    final List<XmlFile> xmlFiles = initializeThread.get(60, TimeUnit.SECONDS);
     indicator.checkCanceled();
 
     final DesignerApplication application = DesignerApplicationManager.getInstance().getApplication();

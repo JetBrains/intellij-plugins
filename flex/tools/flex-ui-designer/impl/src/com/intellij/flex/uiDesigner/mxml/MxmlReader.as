@@ -66,27 +66,14 @@ public class MxmlReader implements DocumentReader {
     return deferredSetStyleProxy;
   }
 
-  public function readDeferredInstanceFromBytes(input:IDataInput, factoryContext:DeferredInstanceFromBytesContext):Object {
+  public function read(input:IDataInput, context:DocumentReaderContext, styleManager:StyleManagerEx):Object {
+    this.styleManager = styleManager;
     this.input = input;
-    var objectTableSize:int = readObjectTableSize();
-    context = factoryContext.readerContext;
-    moduleContext = ModuleContextEx(context.moduleContext);
-
-    var object:Object;
-    switch (input.readByte()) {
-      case Amf3Types.OBJECT:
-        object = readMxmlObjectFromClass(stringRegistry.read(input));
-        break;
-
-      case AmfExtendedTypes.DOCUMENT_REFERENCE:
-        object = readObjectFromFactory(readDocumentFactory().newInstance());
-        break;
-
-      default:
-        throw new ArgumentError("unknown property type");
-    }
-
-    assert(this.factoryContext == null && objectTableSize == (objectTable == null ? 0 : objectTable.length));
+    // pureFlash doesn't have styleManager
+    var object:Object = doRead(context, styleManager != null);
+    stateReader.read(this, input, object);
+    injectedASReader.read(input, this);
+    stateReader.reset(factoryContext);
 
     if (input is ByteArray) {
       assert(input.bytesAvailable == 0);
@@ -96,7 +83,46 @@ public class MxmlReader implements DocumentReader {
     return object;
   }
 
-  // must be call after readDeferredInstanceFromBytes(). read() — for not DeferredInstanceFromBytes document factory — objectTable will be cleared after read automatically,
+  public function readDeferredInstanceFromBytes(input:IDataInput, factoryContext:DeferredInstanceFromBytesContext):Object {
+    this.input = input;
+    var object:Object = doRead(factoryContext.readerContext);
+    assert(this.factoryContext == null);
+    if (input is ByteArray) {
+      assert(input.bytesAvailable == 0);
+      ByteArray(input).position = 0;
+    }
+    return object;
+  }
+
+  private function doRead(context:DocumentReaderContext, setDocument:Boolean = false):Object {
+    this.context = context;
+    moduleContext = ModuleContextEx(context.moduleContext);
+    readObjectTableSize();
+
+    var object:Object;
+    switch (input.readByte()) {
+      case Amf3Types.OBJECT:
+        object = new (moduleContext.getClass(stringRegistry.readNotNull(input)))();
+        break;
+
+      case AmfExtendedTypes.DOCUMENT_REFERENCE:
+        object = readDocumentFactory().newInstance();
+        break;
+
+      default:
+        throw new ArgumentError("unknown property type");
+    }
+
+    if (setDocument) {
+      // perfomance, early set document, avoid recursive set later (see UIComponent.document setter)
+      object.document = object;
+      rootObject = object;
+    }
+
+    return readObjectProperties(object);
+  }
+
+  // must be called after readDeferredInstanceFromBytes().
   // readDeferredInstanceFromBytes() — for DeferredInstanceFromBytes — if we have static objects in our deferred parent,
   // we may need refer to it — as example, DESTINATION for other dynamic (i. e., included/excluded from some state) parent child (AFTER, as example)
   // or state-specific properties:
@@ -115,27 +141,6 @@ public class MxmlReader implements DocumentReader {
     
     return objectTableSize;
   }
-
-  public function read(input:IDataInput, documentReaderContext:DocumentReaderContext, styleManager:StyleManagerEx):Object {
-    this.styleManager = styleManager;
-    this.input = input;
-    readObjectTableSize();
-    context = documentReaderContext;
-    moduleContext = ModuleContextEx(context.moduleContext);
-    var object:Object = readMxmlObjectFromClass(stringRegistry.read(input), styleManager != null /* pure flash doesn't have styleManager */);
-
-    stateReader.read(this, input, object);
-    injectedASReader.read(input, this);
-
-    stateReader.reset(factoryContext);
-
-    if (input is ByteArray) {
-      assert(input.bytesAvailable == 0);
-      ByteArray(input).position = 0;
-    }
-
-    return object;
-  }
   
   internal function readObjectReference():Object {
     var o:Object;
@@ -146,19 +151,15 @@ public class MxmlReader implements DocumentReader {
     return o;
   }
 
-  internal function readMxmlObjectFromClass(className:String, setDocument:Boolean = false):Object {
+  internal function readMxmlObjectFromClass(className:String):Object {
     var clazz:Class = moduleContext.getClass(className);
-    var reference:int = input.readUnsignedShort();
-    var propertyName:String = stringRegistry.read(input);
-    var object:Object;
-    var objectDeclarationRangeMarkerId:int;
+    return readObjectProperties(new clazz());
+  }
 
-    object = new clazz();
-    if (setDocument) {
-      // perfomance, early set document, avoid recursive set later (see UIComponent.document setter)
-      object.document = object;
-      rootObject = object;
-    }
+  private function readObjectProperties(object:Object):Object {
+    const reference:int = input.readUnsignedShort();
+    var propertyName:String = stringRegistry.read(input);
+    var objectDeclarationRangeMarkerId:int;
     if (propertyName == "$fud_r") {
       objectDeclarationRangeMarkerId = AmfUtil.readUInt29(input);
       context.registerObjectDeclarationRangeMarkerId(object, objectDeclarationRangeMarkerId);
@@ -166,19 +167,6 @@ public class MxmlReader implements DocumentReader {
     }
 
     return initObject(object, reference, propertyName, objectDeclarationRangeMarkerId);
-  }
-
-  private function readObjectFromFactory(object:Object):Object {
-    const reference:int = input.readUnsignedShort();
-    var propertyName:String = stringRegistry.read(input);
-    var objectDeclarationTextOffset:int;
-    if (propertyName == "$fud_r") {
-      objectDeclarationTextOffset = AmfUtil.readUInt29(input);
-      context.registerObjectDeclarationRangeMarkerId(object, objectDeclarationTextOffset);
-      propertyName = stringRegistry.read(input);
-    }
-
-    return initObject(object, reference, propertyName, objectDeclarationTextOffset);
   }
 
   protected function registerEffect(propertyName:String, object:Object):void {
@@ -545,7 +533,7 @@ public class MxmlReader implements DocumentReader {
         return readObjectReference();
 
       case AmfExtendedTypes.DOCUMENT_REFERENCE:
-        return readObjectFromFactory(readDocumentFactory().newInstance());
+        return readObjectProperties(readDocumentFactory().newInstance());
 
       case ExpressionMessageTypes.VARIABLE_REFERENCE:
         return injectedASReader.readVariableReference(input, this);

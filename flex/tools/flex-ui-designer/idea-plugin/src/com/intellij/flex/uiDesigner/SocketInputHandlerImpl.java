@@ -500,8 +500,8 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
   static class Reader extends DataInputStream {
     Reader(InputStream in) {
-      //super(in);
-      super(new InputStreamDumper(in));
+      super(in);
+      //super(new InputStreamDumper(in));
     }
 
     @SuppressWarnings("UnusedDeclaration")

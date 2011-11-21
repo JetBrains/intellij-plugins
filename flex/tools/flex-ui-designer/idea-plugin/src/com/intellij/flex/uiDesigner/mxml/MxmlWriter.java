@@ -68,6 +68,7 @@ public class MxmlWriter {
     tagAttributeProcessContext = new MxmlObjectReferenceProviderImpl(writer);
   }
 
+  @Nullable
   public Pair<List<XmlFile>, List<RangeMarker>> write(XmlFile psiFile) throws IOException {
     final AccessToken token = ReadAction.start();
     try {
@@ -81,7 +82,27 @@ public class MxmlWriter {
       assert rootTag != null;
       ClassBackedElementDescriptor rootTagDescriptor = (ClassBackedElementDescriptor)rootTag.getDescriptor();
       assert rootTagDescriptor != null;
-      writer.mxmlObjectHeader(rootTagDescriptor.getQualifiedName());
+
+      final int projectComponentFactoryId;
+      try {
+        projectComponentFactoryId = InjectionUtil.getProjectComponentFactoryId(rootTagDescriptor.getQualifiedName(),
+                                                                               rootTagDescriptor.getDeclaration(),
+                                                                               propertyProcessor.getUnregisteredDocumentFactories());
+      }
+      catch (InvalidPropertyException e) {
+        problemsHolder.add(e);
+        return null;
+      }
+
+      if (projectComponentFactoryId == -1) {
+        out.write(Amf3Types.OBJECT);
+        writer.mxmlObjectHeader(rootTagDescriptor.getQualifiedName());
+      }
+      else {
+        writer.documentReference(projectComponentFactoryId);
+        out.allocateClearShort();
+      }
+
       processElements(rootTag, null, false, -1, out.size() - 2);
 
       writer.endObject();
