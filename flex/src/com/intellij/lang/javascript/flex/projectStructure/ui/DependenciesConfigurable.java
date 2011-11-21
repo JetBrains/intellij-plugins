@@ -268,7 +268,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         Library library = orderEntry.getLibrary();
         if (library != null) {
           boolean hasInvalidRoots = !((LibraryEx)library).getInvalidRootUrls(OrderRootType.CLASSES).isEmpty();
-          return OrderEntryAppearanceService.getInstance(project).forLibrary(library, hasInvalidRoots).getText();
+          return OrderEntryAppearanceService.getInstance().forLibrary(project, library, hasInvalidRoots).getText();
         }
       }
       return "<unknown>";
@@ -357,7 +357,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     public String getText() {
       if (configurable != null) {
         final LibraryEx library = configurable.getLibraryForPresentation();
-        return OrderEntryAppearanceService.getInstance(project).forLibrary(library, false).getText();
+        return OrderEntryAppearanceService.getInstance().forLibrary(project, library, false).getText();
       }
       return libraryName;
     }
