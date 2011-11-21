@@ -119,7 +119,7 @@ public class FlashBuilderSdkFinder {
       dialog.show();
     }
     else {
-      dialog.close(DialogWrapper.OK_EXIT_CODE);
+      dialog.close(DialogWrapper.CANCEL_EXIT_CODE);
     }
     myDialogWasShown = true;
     mySdkHome = dialog.isOK() ? dialog.getSdkHome() : null;
@@ -146,7 +146,7 @@ public class FlashBuilderSdkFinder {
       dialog.show();
     }
     else {
-      dialog.close(DialogWrapper.OK_EXIT_CODE);
+      dialog.close(DialogWrapper.CANCEL_EXIT_CODE);
     }
     myDialogWasShown = true;
     mySdk = dialog.isOK() ? dialog.getSdk() : null;

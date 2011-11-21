@@ -189,19 +189,19 @@ public class FlashBuilderModuleImporter {
       }
     });
 
-    if (flashBuilderProject.isSdkUsed()) {
-      mainFacet.getFlexConfiguration().setFlexSdk(mySdkFinder.findSdk(flashBuilderProject), rootModel);
+    if (flexSdk != null) {
+      mainFacet.getFlexConfiguration().setFlexSdk(flexSdk, rootModel);
     }
   }
 
   private void setupOtherAppsAndModulesFacets(final ModifiableRootModel rootModel,
                                               final ModifiableFacetModel facetModel,
-                                              final FlashBuilderProject flashBuilderProject, final Sdk flexSdk) {
+                                              final FlashBuilderProject flashBuilderProject,
+                                              final Sdk flexSdk) {
     int appNumber = 2;
     for (final String className : flashBuilderProject.getApplicationClassNames()) {
       final FlexFacet appFacet = createFlexFacet(rootModel.getModule(), facetModel, suggestAppFacetName(flashBuilderProject, appNumber++));
-      setupAppConfig(rootModel, FlexBuildConfiguration.getInstance(appFacet), flashBuilderProject, flexSdk, className,
-                     null);
+      setupAppConfig(rootModel, FlexBuildConfiguration.getInstance(appFacet), flashBuilderProject, flexSdk, className, null);
     }
 
     int moduleNumber = 1;
