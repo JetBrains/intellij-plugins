@@ -83,7 +83,6 @@
 		<class>com.intellij.flex.uiDesigner.flex.states.PermanentArrayOfDeferredInstanceFromBytes</class>
 		<class>com.intellij.flex.uiDesigner.flex.states.SetProperty</class>
 		<class>com.intellij.flex.uiDesigner.flex.states.SetStyle</class>
-		<class>com.intellij.flex.uiDesigner.flex.states.State</class>
 		<class>com.intellij.flex.uiDesigner.flex.states.StaticInstanceReferenceInDeferredParentInstance</class>
 		<class>com.intellij.flex.uiDesigner.flex.states.TransientArrayOfDeferredInstanceFromBytes</class>
 		<class>com.intellij.flex.uiDesigner.flex.SystemChildList</class>
