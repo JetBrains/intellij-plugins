@@ -10,9 +10,9 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -92,7 +92,7 @@ public class CreateHtmlWrapperForm {
     myModuleComboBox.setModel(new DefaultComboBoxModel(new Module[]{module}));
     myFlexSdkComboWithBrowse.setSelectedSdkRaw(flexSdk.getName());
     updateSdkAndSubsequentControls();
-    myHtmlWrapperFileLocationTextWithBrowse.setText(htmlWrapperFileLocation);
+    myHtmlWrapperFileLocationTextWithBrowse.setText(FileUtil.toSystemDependentName(htmlWrapperFileLocation));
     fireStateChanged();
   }
 
@@ -135,9 +135,13 @@ public class CreateHtmlWrapperForm {
     }
 
     // HTML wrapper file location
-    final String htmlWrapperLocationPath = myHtmlWrapperFileLocationTextWithBrowse.getText();
-    final VirtualFile htmlWrapperFileLocation = LocalFileSystem.getInstance().refreshAndFindFileByPath(htmlWrapperLocationPath);
-    if (htmlWrapperLocationPath.trim().length() == 0 || htmlWrapperFileLocation == null) {
+    final String htmlWrapperLocationPath = myHtmlWrapperFileLocationTextWithBrowse.getText().trim();
+    if (htmlWrapperLocationPath.isEmpty()) {
+      myCurrentErrorMessage = "Choose folder to place generated HTML wrapper";
+      return null;
+    }
+    final VirtualFile htmlWrapperFileLocation = LocalFileSystem.getInstance().findFileByPath(htmlWrapperLocationPath);
+    if (htmlWrapperFileLocation == null) {
       myCurrentErrorMessage = "Choose existing directory for HTML wrapper";
       return null;
     }
@@ -256,17 +260,8 @@ public class CreateHtmlWrapperForm {
   }
 
   private void setupHtmlWrapperFileLocationTextField(final Project project) {
-    myHtmlWrapperFileLocationTextWithBrowse.addBrowseFolderListener("Choose location for HTML wrapper", "", project,
-                                                                    FileChooserDescriptorFactory.createSingleFolderDescriptor(),
-                                                                    new TextComponentAccessor<JTextField>() {
-                                                                      public String getText(final JTextField textField) {
-                                                                        return textField.getText();
-                                                                      }
-
-                                                                      public void setText(final JTextField textField, final String text) {
-                                                                        textField.setText(text.replace('\\', '/'));
-                                                                      }
-                                                                    });
+    myHtmlWrapperFileLocationTextWithBrowse.addBrowseFolderListener("Choose folder to place generated HTML wrapper", null, project,
+                                                                    FileChooserDescriptorFactory.createSingleFolderDescriptor());
     myHtmlWrapperFileLocationTextWithBrowse.getTextField().getDocument().addDocumentListener(documentListener);
   }
 
@@ -338,12 +333,12 @@ public class CreateHtmlWrapperForm {
     // suggest HTML wrapper file location
     final VirtualFile[] srcRoots = ModuleRootManager.getInstance(module).getSourceRoots();
     if (srcRoots.length > 0) {
-      myHtmlWrapperFileLocationTextWithBrowse.setText(srcRoots[0].getPath());
+      myHtmlWrapperFileLocationTextWithBrowse.setText(FileUtil.toSystemDependentName(srcRoots[0].getPath()));
     }
     else {
       final VirtualFile moduleFile = module.getModuleFile();
       if (moduleFile != null) {
-        myHtmlWrapperFileLocationTextWithBrowse.setText(moduleFile.getParent().getPath());
+        myHtmlWrapperFileLocationTextWithBrowse.setText(FileUtil.toSystemDependentName(moduleFile.getParent().getPath()));
       }
     }
 
