@@ -14,6 +14,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -188,7 +189,7 @@ public class FlashBuilderSdkFinder {
         final List<String> nameInfo = info.get(nameElement);
         if (nameInfo.isEmpty()) continue;
 
-        mySdkNameToRootPath.put(nameInfo.get(0), sdkDir.getPath());
+        mySdkNameToRootPath.put(nameInfo.get(0), FileUtil.toSystemIndependentName(sdkDir.getPath()));
 
         final List<String> versionInfo = info.get(versionElement);
         if (versionInfo.isEmpty()) continue;
@@ -196,7 +197,7 @@ public class FlashBuilderSdkFinder {
         final String version = versionInfo.get(0);
         if (StringUtil.compareVersionNumbers(version, maxVersion) > 0) {
           maxVersion = version;
-          mySdkNameToRootPath.put(DEFAULT_SDK_NAME, sdkDir.getPath());
+          mySdkNameToRootPath.put(DEFAULT_SDK_NAME, FileUtil.toSystemIndependentName(sdkDir.getPath()));
         }
       }
       catch (IOException ignore) {/**/}
@@ -278,11 +279,11 @@ public class FlashBuilderSdkFinder {
 
       if (sdkLocationAttr != null) {
         if (defaultSdkAttr != null && defaultSdkAttr.getValue().equalsIgnoreCase("true")) {
-          mySdkNameToRootPath.put(DEFAULT_SDK_NAME, sdkLocationAttr.getValue());
+          mySdkNameToRootPath.put(DEFAULT_SDK_NAME, FileUtil.toSystemIndependentName(sdkLocationAttr.getValue()));
         }
 
         if (sdkNameAttr != null) {
-          mySdkNameToRootPath.put(sdkNameAttr.getValue(), sdkLocationAttr.getValue());
+          mySdkNameToRootPath.put(sdkNameAttr.getValue(), FileUtil.toSystemIndependentName(sdkLocationAttr.getValue()));
         }
       }
     }

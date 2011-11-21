@@ -324,13 +324,15 @@ public class FlexSdkUtils {
   }
 
   @Nullable
-  public static Sdk createOrGetSdk(final SdkType sdkType, final String sdkHomePath) {
-    if (sdkHomePath == null || LocalFileSystem.getInstance().refreshAndFindFileByPath(sdkHomePath) == null) {
+  public static Sdk createOrGetSdk(final SdkType sdkType, final String path) {
+    if (path == null || LocalFileSystem.getInstance().findFileByPath(path) == null) {
       return null;
     }
+    final String sdkHomePath = FileUtil.toSystemIndependentName(path);
     final ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
     for (final Sdk flexSdk : projectJdkTable.getSdksOfType(sdkType)) {
-      if (sdkHomePath.replace('\\', '/').equals(flexSdk.getHomePath().replace('\\', '/'))) {
+      final String existingHome = flexSdk.getHomePath();
+      if (existingHome != null && sdkHomePath.equals(FileUtil.toSystemIndependentName(existingHome))) {
         if (sdkType instanceof FlexmojosSdkType) {
           final SdkAdditionalData data = flexSdk.getSdkAdditionalData();
           if (data == null || ((FlexmojosSdkAdditionalData)data).getFlexCompilerClasspath().isEmpty()) {
