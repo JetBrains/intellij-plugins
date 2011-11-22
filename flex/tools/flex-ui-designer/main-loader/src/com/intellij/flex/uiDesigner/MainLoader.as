@@ -18,13 +18,13 @@ public class MainLoader extends Sprite {
   private static var appClass:Class;
 
   [Embed(source="/icon256x256.png")]
-  private static const icon256:Class;
+  private static var icon256:Class;
 
   [Embed(source="/icon128x128.png")]
-  private static const icon128:Class;
+  private static var icon128:Class;
 
   [Embed(source="/icon32x32.png")]
-  private static const icon32:Class;
+  private static var icon32:Class;
 
   public static var displayDispatcher:DisplayObject;
 
@@ -34,7 +34,11 @@ public class MainLoader extends Sprite {
     if (NativeApplication.supportsDockIcon) {
       application.icon.bitmaps = [Bitmap(new icon128()).bitmapData, Bitmap(new icon256()).bitmapData, Bitmap(new icon32()).bitmapData];
     }
-    
+
+    icon128 = null;
+    icon256 = null;
+    icon32 = null;
+
     config::useRoboflest {
       roboflest();
       setInterval(debugTickler, 10000);

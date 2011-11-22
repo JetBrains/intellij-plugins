@@ -71,12 +71,12 @@ public class AppTest extends AppTestBase {
     }
 
     info.semaphore.down();
-    client.test(myModule, relativePath, Tests.INFORM_DOCUMENT_OPENED);
+    client.test(myModule, "SetProperty", Tests.INFORM_DOCUMENT_OPENED);
     socketInputHandler.setCustomMessageHandler(new MyCustomMessageHandler());
 
     PsiDocumentManager.getInstance(myProject).commitAllDocuments();
     DesignerApplicationManager.getInstance().openDocument(myModule, Tests.virtualToPsi(myProject, file), false);
-     await();
+    await();
     callClientAssert(getTestName(false));
   }
 

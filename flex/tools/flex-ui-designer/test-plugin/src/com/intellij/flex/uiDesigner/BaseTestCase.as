@@ -28,11 +28,11 @@ internal class BaseTestCase implements TestCase {
 
   private var dataContext:DataContext;
 
-  protected final function document():Document {
+  protected final function get document():Document {
     return PlatformDataKeys.DOCUMENT.getData(dataContext);
   }
 
-  protected final function project():Project {
+  protected final function get project():Project {
     return PlatformDataKeys.PROJECT.getData(dataContext);
   }
 

@@ -10,7 +10,6 @@ import avmplus.describe;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
 import flash.desktop.NativeApplication;
-
 import flash.display.NativeWindow;
 import flash.events.Event;
 import flash.events.IEventDispatcher;
@@ -132,7 +131,15 @@ internal class TestSocketDataHandler implements SocketDataHandler {
       });
     }
     else {
-      testOnDocumentDisplayManagerReady(testTask);
+      if (testTask is InformTask) {
+        // if document already opened, but InformTask, so, java side waits inform about document update
+        documentManager.documentUpdated.addOnce(function ():void {
+          testOnDocumentDisplayManagerReady(testTask);
+        });
+      }
+      else {
+        testOnDocumentDisplayManagerReady(testTask);
+      }
     }
   }
 
@@ -158,7 +165,7 @@ internal class TestSocketDataHandler implements SocketDataHandler {
   private function test(project:Project, clazz:Class, method:String, testAnnotation:TestAnnotation):void {
     trace("execute test " + method);
     var test:TestCase = new clazz();
-    test.init(DataManager.instance.getDataContext(project.window.stage), _socket);
+    test.init(project == null ? new EmptyDataContext() : DataManager.instance.getDataContext(project.window.stage), _socket);
     test.setUp();
 
     if (testAnnotation.async) {
@@ -225,6 +232,9 @@ import com.intellij.flex.uiDesigner.Project;
 
 import flash.net.Socket;
 
+import org.jetbrains.actionSystem.DataContext;
+import org.jetbrains.actionSystem.DataKey;
+
 class TestTask {
   internal var project:Project;
   internal var documentManager:DocumentManager;
@@ -246,7 +256,7 @@ class TestTask {
   }
 }
 
-class InformTask extends TestTask {
+final class InformTask extends TestTask {
   private var socket:Socket;
 
   public function InformTask(socket:Socket) {
@@ -271,4 +281,10 @@ final class TestServerMethod {
   public static const success:int = 100;
   public static const fail:int = 101;
   public static const custom:int = 102;
+}
+
+final class EmptyDataContext implements DataContext {
+  public function getData(dataKey:DataKey):Object {
+    return null;
+  }
 }
