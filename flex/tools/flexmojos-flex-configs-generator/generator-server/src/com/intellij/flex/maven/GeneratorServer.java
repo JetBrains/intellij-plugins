@@ -33,12 +33,12 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -146,12 +146,12 @@ public class GeneratorServer {
           Class configuratorClass = flexmojosPluginRealm.loadClass(generators.get(0));
           FlexConfigGenerator configurator = (FlexConfigGenerator)configuratorClass.getConstructor(MavenSession.class, File.class)
                                                                                    .newInstance(session, generatorOutputDirectory);
-          configurator.preGenerate(project, getClassifier(mojo), flexmojosGeneratorMojoExecution);
+          configurator.preGenerate(project, Flexmojos.getClassifier(mojo), flexmojosGeneratorMojoExecution);
           if ("swc".equals(project.getPackaging())) {
             configurator.generate(mojo);
           }
           else {
-            configurator.generate(mojo, getSourceFileForSwf(mojo));
+            configurator.generate(mojo, Flexmojos.getSourceFileForSwf(mojo));
           }
           return configurator.postGenerate(project);
         //}
@@ -170,24 +170,17 @@ public class GeneratorServer {
       }
     }
   }
-  
-  private File getSourceFileForSwf(Mojo mojo)
-    throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
-    Method getSourceFileMethod = mojo.getClass().getDeclaredMethod("getSourceFile");
-    getSourceFileMethod.setAccessible(true);
-    return (File)getSourceFileMethod.invoke(mojo);
-  }  
-  
-  private String getClassifier(Mojo mojo)
-    throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
-    Method getSourceFileMethod = mojo.getClass().getMethod("getClassifier");
-    getSourceFileMethod.setAccessible(true);
-    return (String)getSourceFileMethod.invoke(mojo);
-  }  
 
-  
-  public File getOutputFile(File pomFile) throws Exception {
-    final MavenProject project = maven.readProject(pomFile);
+
+  //private String getClassifier(Mojo mojo)
+  //  throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
+  //  Method getSourceFileMethod = mojo.getClass().getMethod("getClassifier");
+  //  getSourceFileMethod.setAccessible(true);
+  //  return (String)getSourceFileMethod.invoke(mojo);
+  //}
+
+  public void resolveOutputs(WorkspaceReaderImpl.ArtifactData data) throws Exception {
+    final MavenProject project = maven.readProject(data.file);
     final MavenProject oldProject = session.getCurrentProject();
     final String compileGoal = "compile-" + project.getPackaging();
     MojoExecution flexmojosMojoExecution = null;
@@ -201,15 +194,30 @@ public class GeneratorServer {
       }
 
       if (flexmojosMojoExecution == null) {
-        return null;
+        return;
       }
 
       // getPluginRealm creates plugin realm and populates pluginDescriptor.classRealm field
       maven.getPluginRealm(flexmojosMojoExecution);
 
-      final Mojo mojo = mavenPluginManager.getConfiguredMojo(Mojo.class, session, flexmojosMojoExecution);
+      Mojo mojo = mavenPluginManager.getConfiguredMojo(Mojo.class, session, flexmojosMojoExecution);
       try {
-        return new File((String)mojo.getClass().getMethod("getOutput").invoke(mojo));
+        data.outputFile = new File(Flexmojos.getOutput(mojo));
+        String[] localesRuntime = (String[])Flexmojos.invokePublicMethod(mojo, "getLocalesRuntime");
+        if (localesRuntime != null && localesRuntime.length > 0) {
+          final Class<?> superclass = mojo.getClass().getSuperclass();
+          mojo = (Mojo)Flexmojos.invokePublicMethod(mojo, "clone");
+          
+          final Method m = superclass.getDeclaredMethod("configureResourceBundle", String.class, superclass);
+          m.setAccessible(true);
+          String firstLocale = localesRuntime[0];
+          m.invoke(mojo, firstLocale, mojo);
+
+          //noinspection unchecked
+          ((Map)Flexmojos.invokePublicMethod(mojo, "getCache")).put("getProjectType", "rb.swc");
+
+          data.localeOutputFilepathPattern = Flexmojos.getOutput(mojo).replace(firstLocale, "{_locale_}");
+        }
       }
       finally {
         plexusContainer.release(mojo);

@@ -54,19 +54,25 @@ class WorkspaceReaderImpl implements WorkspaceReader {
       data.file = new File(data.filePath);
     }
 
-    if (!artifact.getExtension().equals(POM_EXTENSION)) {
-      if (!(artifact.getExtension().equals("swc") || artifact.getExtension().equals("swf"))) {
-        throw new IllegalStateException("Found artifact must be flash artifact (swc or swf)");
+    final String ext = artifact.getExtension();
+    if (!ext.equals(POM_EXTENSION)) {
+      boolean isResourceBundle = false;
+      if (!(ext.equals("swc") || (isResourceBundle = ext.equals("rb.swc")) || ext.equals("swf"))) {
+        throw new IllegalStateException("Found artifact must be flash artifact (swc or swf): " + artifact);
       }
 
       if (data.outputFile == null) {
         try {
-          data.outputFile = generatorServer.getOutputFile(data.file);
+          generatorServer.resolveOutputs(data);
         }
         catch (Exception e) {
           generatorServer.getLogger().warn("Error while resolve output file for " + artifact.toString(), e);
           return null;
         }
+      }
+
+      if (isResourceBundle && artifact.getClassifier() != null) {
+        return new File(data.localeOutputFilepathPattern.replace("{_locale_}", artifact.getClassifier()));
       }
 
       return data.outputFile;
@@ -116,12 +122,13 @@ class WorkspaceReaderImpl implements WorkspaceReader {
     }
   }
 
-  private static class ArtifactData {
+  static class ArtifactData {
     public final ArtifactKey key;
     private final String filePath;
 
-    private File file;
-    private File outputFile;
+    File file;
+    File outputFile;
+    String localeOutputFilepathPattern;
 
     private ArtifactData(ArtifactKey key, String filePath) {
       this.filePath = filePath;
