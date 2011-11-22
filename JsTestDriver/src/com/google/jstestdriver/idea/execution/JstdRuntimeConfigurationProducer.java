@@ -3,6 +3,7 @@ package com.google.jstestdriver.idea.execution;
 import com.google.jstestdriver.idea.assertFramework.JstdRunElement;
 import com.google.jstestdriver.idea.assertFramework.TestFileStructureManager;
 import com.google.jstestdriver.idea.assertFramework.TestFileStructurePack;
+import com.google.jstestdriver.idea.config.JstdConfigFileLoader;
 import com.google.jstestdriver.idea.config.JstdConfigFileUtils;
 import com.google.jstestdriver.idea.execution.settings.JstdConfigType;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
@@ -16,7 +17,7 @@ import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -25,10 +26,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.List;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProducer {
+
+  private static final Logger LOG = Logger.getInstance(JstdRuntimeConfigurationProducer.class);
 
   private static final JstdRunSettingsProvider[] RUN_SETTINGS_PROVIDERS = {
       new JstdDirectoryRunSettingsProvider(),
@@ -48,16 +51,40 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
     return mySourceElement;
   }
 
+  private static void takenTime(String name, long startTimeNano, int beforeAcceptCalls, String... args) {
+    long endTimeNano = System.nanoTime();
+    int afterAcceptCalls = JstdConfigFileLoader.ourAcceptCount.get();
+    String message = String.format("[JsTD] Time taken by '" + name + "': %.2f ms, FileNameMatcher.acceptCalls: %d, FileNameMatcher.totalAcceptCalls: %d, extra args: %s\n",
+      (endTimeNano - startTimeNano) / 1000000.0,
+      afterAcceptCalls - beforeAcceptCalls,
+      afterAcceptCalls,
+      Arrays.toString(args)
+    );
+    LOG.info(message);
+  }
+
+  private static void printCreateConfigurationByElementTime(long startTimeMillis, int beforeAcceptCalls, String... args) {
+    takenTime("createConfigurationByElement", startTimeMillis, beforeAcceptCalls, args);
+  }
+
+  private static void printFindExistingByElementTime(long startTimeMillis, int beforeAcceptCalls, String... args) {
+    takenTime("findExistingByElement", startTimeMillis, beforeAcceptCalls, args);
+  }
+
   @Override
   protected RunnerAndConfigurationSettings createConfigurationByElement(Location location, ConfigurationContext context) {
+    long startTimeNano = System.nanoTime();
+    int beforeAcceptCalls = JstdConfigFileLoader.ourAcceptCount.get();
     @SuppressWarnings({"unchecked"})
     RunSettingsContext runSettingsContext = buildRunSettingsContext(location);
     if (runSettingsContext == null) {
+      printCreateConfigurationByElementTime(startTimeNano, beforeAcceptCalls, "1");
       return null;
     }
 
     final RunnerAndConfigurationSettings runnerSettings = cloneTemplateConfiguration(location.getProject(), context);
     if (!(runnerSettings.getConfiguration() instanceof JstdRunConfiguration)) {
+      printCreateConfigurationByElementTime(startTimeNano, beforeAcceptCalls, "2");
       return null;
     }
     JstdRunConfiguration runConfiguration = (JstdRunConfiguration) runnerSettings.getConfiguration();
@@ -66,6 +93,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
 
     mySourceElement = runSettingsContext.psiElement;
     runnerSettings.setName(runConfiguration.suggestedName());
+    printCreateConfigurationByElementTime(startTimeNano, beforeAcceptCalls, "3");
     return runnerSettings;
   }
 
@@ -74,8 +102,11 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
   protected RunnerAndConfigurationSettings findExistingByElement(final Location location,
                                                                  @NotNull final RunnerAndConfigurationSettings[] existingConfigurations,
                                                                  ConfigurationContext context) {
+    long startTimeNano = System.nanoTime();
+    int beforeAcceptCalls = JstdConfigFileLoader.ourAcceptCount.get();
     RunSettingsContext runSettingsContext = buildRunSettingsContext(location);
     if (runSettingsContext == null) {
+      printFindExistingByElementTime(startTimeNano, beforeAcceptCalls, "1");
       return null;
     }
     final JstdRunSettings runSettingsPattern = runSettingsContext.runSettings;
@@ -130,6 +161,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
         }
       }
     }
+    printFindExistingByElementTime(startTimeNano, beforeAcceptCalls, "2");
     return bestRaCSettings;
   }
 
@@ -245,8 +277,8 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
       }
       PsiDirectory psiDirectory = (PsiDirectory) psiElement;
       VirtualFile directory = psiDirectory.getVirtualFile();
-      List<VirtualFile> jstdConfigs = JstdClientCommandLineBuilder.INSTANCE.collectJstdConfigFilesInDirectory(directory, psiDirectory.getProject());
-      if (jstdConfigs.isEmpty()) {
+      boolean jstdConfigs = JstdClientCommandLineBuilder.areJstdConfigFilesInDirectory(psiDirectory.getProject(), directory);
+      if (!jstdConfigs) {
         return null;
       }
       JstdRunSettings.Builder builder = new JstdRunSettings.Builder();

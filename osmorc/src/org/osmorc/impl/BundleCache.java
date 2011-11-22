@@ -1,8 +1,5 @@
 package org.osmorc.impl;
 
-import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.application.Result;
-import com.intellij.openapi.application.WriteAction;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,14 +7,17 @@ import org.osmorc.manifest.BundleManifest;
 import org.osmorc.manifest.ManifestHolder;
 import org.osmorc.manifest.ManifestHolderDisposedException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The bundle cache holds information about all bundles within the project.
  */
 public class BundleCache {
 
-  private Set<ManifestHolder> myManifestHolders;
+  private volatile Set<ManifestHolder> myManifestHolders;
 
   public BundleCache() {
     myManifestHolders = new HashSet<ManifestHolder>();
@@ -26,13 +26,8 @@ public class BundleCache {
   /**
    * Clears the bundle cache.
    */
-  public void clear() {
-    new WriteAction() {
-      @Override
-      protected void run(Result result) throws Throwable {
-        myManifestHolders.clear();
-      }
-    }.execute();
+  public synchronized void clear() {
+    myManifestHolders = new HashSet<ManifestHolder>();
   }
 
   /**
@@ -41,19 +36,17 @@ public class BundleCache {
    * @param holder the holder
    * @return true, if the holder was added to the cache, false if the holder was already known.
    */
-  public boolean updateWith(@NotNull final ManifestHolder holder) {
-    return new WriteAction<Boolean>() {
-      @Override
-      protected void run(Result<Boolean> result) throws Throwable {
-        if (!myManifestHolders.contains(holder)) {
-          myManifestHolders.add(holder);
-          result.setResult(true);
-        }
-        else {
-          result.setResult(false);
-        }
-      }
-    }.execute().getResultObject();
+  public synchronized boolean updateWith(@NotNull final ManifestHolder holder) {
+    if (!myManifestHolders.contains(holder)) {
+      // copy on write
+      HashSet<ManifestHolder> copy = new HashSet<ManifestHolder>(myManifestHolders);
+      copy.add(holder);
+      myManifestHolders = copy;
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 
   /**
@@ -61,20 +54,22 @@ public class BundleCache {
    *
    * @return true if there were stale entries, false if nothing changed.
    */
-  public boolean cleanup() {
-    return new WriteAction<Boolean>() {
-      @Override
-      protected void run(Result<Boolean> result) throws Throwable {
-        result.setResult(false);
-        for (Iterator<ManifestHolder> iterator = myManifestHolders.iterator(); iterator.hasNext(); ) {
-          ManifestHolder manifestHolder = iterator.next();
-          if (manifestHolder.isDisposed()) {
-            iterator.remove();
-            result.setResult(true);
-          }
-        }
+  public synchronized boolean cleanup() {
+    Set<ManifestHolder> toRemove = new HashSet<ManifestHolder>();
+    for (ManifestHolder manifestHolder : myManifestHolders) {
+      if (manifestHolder.isDisposed()) {
+        toRemove.add(manifestHolder);
       }
-    }.execute().getResultObject();
+    }
+    if (toRemove.isEmpty()) {
+      return false;
+    }
+
+    // copy on write
+    HashSet<ManifestHolder> copy = new HashSet<ManifestHolder>(myManifestHolders);
+    copy.removeAll(toRemove);
+    myManifestHolders = copy;
+    return true;
   }
 
   /**
@@ -85,28 +80,23 @@ public class BundleCache {
    */
   @NotNull
   public Set<ManifestHolder> whoProvides(@NotNull final String packageSpec) {
-    return new ReadAction<Set<ManifestHolder>>() {
-      @Override
-      protected void run(Result<Set<ManifestHolder>> manifestHolderResult) throws Throwable {
-        Set<ManifestHolder> result = new HashSet<ManifestHolder>();
-        for (ManifestHolder manifestHolder : myManifestHolders) {
-          BundleManifest bundleManifest;
-          try {
-            bundleManifest = manifestHolder.getBundleManifest();
-          }
-          catch (ManifestHolderDisposedException ignore) {
-            // ok this thing is gone
-            continue;
-          }
-          if (bundleManifest != null) {
-            if (bundleManifest.exportsPackage(packageSpec)) {
-              result.add(manifestHolder);
-            }
-          }
-        }
-        manifestHolderResult.setResult(result);
+    Set<ManifestHolder> result = new HashSet<ManifestHolder>();
+    for (ManifestHolder manifestHolder : myManifestHolders) {
+      BundleManifest bundleManifest;
+      try {
+        bundleManifest = manifestHolder.getBundleManifest();
       }
-    }.execute().getResultObject();
+      catch (ManifestHolderDisposedException ignore) {
+        // ok this thing is gone
+        continue;
+      }
+      if (bundleManifest != null) {
+        if (bundleManifest.exportsPackage(packageSpec)) {
+          result.add(manifestHolder);
+        }
+      }
+    }
+    return result;
   }
 
   /**
@@ -154,27 +144,22 @@ public class BundleCache {
    */
   @NotNull
   public List<ManifestHolder> whoIs(@NotNull final String bundleSymbolicName) {
-    return new ReadAction<List<ManifestHolder>>() {
-      @Override
-      protected void run(Result<List<ManifestHolder>> listResult) throws Throwable {
-        List<ManifestHolder> result = new ArrayList<ManifestHolder>();
-        for (ManifestHolder manifestHolder : myManifestHolders) {
-          BundleManifest bundleManifest;
-          try {
-            bundleManifest = manifestHolder.getBundleManifest();
-          }
-          catch (ManifestHolderDisposedException ignore) {
-            continue;
-          }
-          if (bundleManifest != null) {
-            if (bundleSymbolicName.equals(bundleManifest.getBundleSymbolicName())) {
-              result.add(manifestHolder);
-            }
-          }
-        }
-        listResult.setResult(result);
+    List<ManifestHolder> result = new ArrayList<ManifestHolder>();
+    for (ManifestHolder manifestHolder : myManifestHolders) {
+      BundleManifest bundleManifest;
+      try {
+        bundleManifest = manifestHolder.getBundleManifest();
       }
-    }.execute().getResultObject();
+      catch (ManifestHolderDisposedException ignore) {
+        continue;
+      }
+      if (bundleManifest != null) {
+        if (bundleSymbolicName.equals(bundleManifest.getBundleSymbolicName())) {
+          result.add(manifestHolder);
+        }
+      }
+    }
+    return result;
   }
 
 
@@ -186,27 +171,22 @@ public class BundleCache {
    */
   @Nullable
   public ManifestHolder whoIsRequiredBundle(@NotNull final String requiredBundleSpec) {
-    return new ReadAction<ManifestHolder>() {
-      @Override
-      protected void run(Result<ManifestHolder> result) throws Throwable {
-        for (ManifestHolder manifestHolder : myManifestHolders) {
-          BundleManifest bundleManifest;
-          try {
-            bundleManifest = manifestHolder.getBundleManifest();
-          }
-          catch (ManifestHolderDisposedException ignore) {
-            // this thing is gone
-            continue;
-          }
-          if (bundleManifest != null) {
-            if (bundleManifest.isRequiredBundle(requiredBundleSpec)) {
-              result.setResult(manifestHolder);
-              return;
-            }
-          }
+    for (ManifestHolder manifestHolder : myManifestHolders) {
+      BundleManifest bundleManifest;
+      try {
+        bundleManifest = manifestHolder.getBundleManifest();
+      }
+      catch (ManifestHolderDisposedException ignore) {
+        // this thing is gone
+        continue;
+      }
+      if (bundleManifest != null) {
+        if (bundleManifest.isRequiredBundle(requiredBundleSpec)) {
+          return manifestHolder;
         }
       }
-    }.execute().getResultObject();
+    }
+    return null;
   }
 
   /**
@@ -217,23 +197,18 @@ public class BundleCache {
    */
   @Nullable
   public ManifestHolder getManifestHolder(@NotNull final Object bundle) {
-    return new ReadAction<ManifestHolder>() {
-      @Override
-      protected void run(Result<ManifestHolder> manifestHolderResult) throws Throwable {
-        for (ManifestHolder manifestHolder : myManifestHolders) {
-          Object boundObject;
-          try {
-            boundObject = manifestHolder.getBoundObject();
-          }
-          catch (ManifestHolderDisposedException ignore) {
-            continue;
-          }
-          if (boundObject.equals(bundle)) {
-            manifestHolderResult.setResult(manifestHolder);
-            return;
-          }
-        }
+    for (ManifestHolder manifestHolder : myManifestHolders) {
+      Object boundObject;
+      try {
+        boundObject = manifestHolder.getBoundObject();
       }
-    }.execute().getResultObject();
+      catch (ManifestHolderDisposedException ignore) {
+        continue;
+      }
+      if (boundObject.equals(bundle)) {
+        return manifestHolder;
+      }
+    }
+    return null;
   }
 }
