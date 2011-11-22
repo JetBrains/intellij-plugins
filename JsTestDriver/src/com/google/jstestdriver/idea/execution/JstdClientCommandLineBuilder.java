@@ -9,7 +9,6 @@ import com.google.common.collect.Sets;
 import com.google.jstestdriver.JsTestDriverServer;
 import com.google.jstestdriver.idea.TestRunner;
 import com.google.jstestdriver.idea.config.JstdConfigFileType;
-import com.google.jstestdriver.idea.config.JstdConfigFileUtils;
 import com.google.jstestdriver.idea.execution.generator.JstdConfigGenerator;
 import com.google.jstestdriver.idea.execution.settings.JstdConfigType;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
@@ -22,6 +21,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.impl.ModuleImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -29,6 +29,7 @@ import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopes;
 import com.intellij.util.PathUtil;
+import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -116,7 +117,7 @@ class JstdClientCommandLineBuilder {
     if (testType == TestType.ALL_CONFIGS_IN_DIRECTORY) {
       VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByIoFile(new File(runSettings.getDirectory()));
       if (virtualFile != null) {
-        res = collectJstdConfigFilesInDirectory(virtualFile, project);
+        res = collectJstdConfigFilesInDirectory(project, virtualFile);
       }
     } else {
       File configFile = extractConfigFile(project, runSettings);
@@ -143,16 +144,42 @@ class JstdClientCommandLineBuilder {
   }
 
   @NotNull
-  public List<VirtualFile> collectJstdConfigFilesInDirectory(@Nullable VirtualFile directory, @NotNull Project project) {
-    if (directory != null) {
-      final Module module = ProjectRootManager.getInstance(project).getFileIndex().getModuleForFile(directory);
-      if (module != null) {
-        final GlobalSearchScope scope = ((ModuleImpl)module).getCachedScope(CONTENT | MODULES).intersectWith(
-          GlobalSearchScopes.directoryScope(project, directory, true));
-        return new ArrayList<VirtualFile>(FileTypeIndex.getFiles(JstdConfigFileType.INSTANCE, scope));
-      }
+  public static List<VirtualFile> collectJstdConfigFilesInDirectory(@NotNull Project project,
+                                                                    @NotNull VirtualFile directory) {
+    GlobalSearchScope directorySearchScope = buildDirectorySearchScrope(project, directory);
+    if (directorySearchScope == null) {
+      return Collections.emptyList();
     }
-    return Collections.emptyList();
+    Collection<VirtualFile> configs = FileTypeIndex.getFiles(JstdConfigFileType.INSTANCE, directorySearchScope);
+    return Lists.newArrayList(configs);
+  }
+
+  @Nullable
+  private static GlobalSearchScope buildDirectorySearchScrope(@NotNull Project project,
+                                                              @NotNull VirtualFile directory) {
+    final Module module = ProjectRootManager.getInstance(project).getFileIndex().getModuleForFile(directory);
+    if (module == null) {
+      return null;
+    }
+    GlobalSearchScope directorySearchScope = GlobalSearchScopes.directoryScope(project, directory, true);
+    return ((ModuleImpl)module).getCachedScope(CONTENT | MODULES).intersectWith(directorySearchScope);
+  }
+
+  public static boolean areJstdConfigFilesInDirectory(@NotNull Project project, @NotNull VirtualFile directory) {
+    GlobalSearchScope directorySearchScope = buildDirectorySearchScrope(project, directory);
+    if (directorySearchScope == null) {
+      return false;
+    }
+    FileBasedIndex index = FileBasedIndex.getInstance();
+    final Ref<Boolean> jstdConfigFound = Ref.create(false);
+    index.processValues(FileTypeIndex.NAME, JstdConfigFileType.INSTANCE, null, new FileBasedIndex.ValueProcessor<Void>() {
+      @Override
+      public boolean process(final VirtualFile file, final Void value) {
+        jstdConfigFound.set(true);
+        return false;
+      }
+    }, directorySearchScope);
+    return jstdConfigFound.get();
   }
 
   private String buildClasspath() {

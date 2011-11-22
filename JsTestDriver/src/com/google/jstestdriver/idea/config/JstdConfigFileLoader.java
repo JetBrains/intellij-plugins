@@ -16,6 +16,7 @@
 package com.google.jstestdriver.idea.config;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.intellij.openapi.fileTypes.ExtensionFileNameMatcher;
@@ -27,14 +28,17 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class JstdConfigFileLoader extends FileTypeFactory {
+
+  public static final AtomicInteger ourAcceptCount = new AtomicInteger(0);
 
   @Override
   public void createFileTypes(@NotNull FileTypeConsumer consumer) {
     JstdConfigFileType jstdConfigFileType = JstdConfigFileType.INSTANCE;
     FileNameMatcher[] matchers = new FileNameMatcher[] {
-      new ExtensionFileNameMatcher(jstdConfigFileType.getDefaultExtension()),
+      new MyExtensionFileNameMatcher(jstdConfigFileType.getDefaultExtension()),
       new CustomFileNameMatcher()
     };
     consumer.consume(jstdConfigFileType, matchers);
@@ -47,8 +51,8 @@ public class JstdConfigFileLoader extends FileTypeFactory {
    */
   private static class CustomFileNameMatcher implements FileNameMatcher {
 
-    private static final ImmutableSet<String> SUITABLE_FILE_NAMES_WITHOUT_EXTENSION;
-    private static final ImmutableSet<String> EXTRA_FILE_EXTENSIONS;
+    private static final ImmutableSet<String> FILE_NAMES_WITHOUT_EXTENSION;
+    private static final ImmutableSet<String> FILE_EXTENSIONS;
 
     static {
       Function<String, String> lower = new Function<String, String>() {
@@ -57,10 +61,10 @@ public class JstdConfigFileLoader extends FileTypeFactory {
           return s.toLowerCase();
         }
       };
-      SUITABLE_FILE_NAMES_WITHOUT_EXTENSION = ImmutableSet.copyOf(Iterables.transform(Arrays.asList(
+      FILE_NAMES_WITHOUT_EXTENSION = ImmutableSet.copyOf(Iterables.transform(Arrays.asList(
         "jsTestDriver", "js-test-driver", "js_test_driver", "jstd"
       ), lower));
-      EXTRA_FILE_EXTENSIONS = ImmutableSet.copyOf(Iterables.transform(Arrays.asList(
+      FILE_EXTENSIONS = ImmutableSet.copyOf(Iterables.transform(Arrays.asList(
           "conf", "yml", "yaml"
       ), lower));
     }
@@ -68,8 +72,9 @@ public class JstdConfigFileLoader extends FileTypeFactory {
 
     @Override
     public boolean accept(@NonNls @NotNull String fileName) {
+      ourAcceptCount.incrementAndGet();
       String extension = FileUtil.getExtension(fileName);
-      if (EXTRA_FILE_EXTENSIONS.contains(extension)) {
+      if (FILE_EXTENSIONS.contains(extension)) {
         String fileNameWithoutExtention = FileUtil.getNameWithoutExtension(fileName);
         if (isSuitableNameWithoutExtension(fileNameWithoutExtention)) {
           return true;
@@ -81,18 +86,32 @@ public class JstdConfigFileLoader extends FileTypeFactory {
     @NotNull
     @Override
     public String getPresentableString() {
-      return "(jsTestDriver|js-test-driver|js_test_driver|jstd).(conf|yml|yaml)";
+      Joiner joiner = Joiner.on("|");
+      return "(" + joiner.join(FILE_NAMES_WITHOUT_EXTENSION) + ").(" + joiner.join(FILE_EXTENSIONS) + ")";
     }
 
     private static boolean isSuitableNameWithoutExtension(@NotNull String fileNameWithoutExtension) {
       String lowerCased = fileNameWithoutExtension.toLowerCase();
-      for (String prefix : SUITABLE_FILE_NAMES_WITHOUT_EXTENSION) {
+      for (String prefix : FILE_NAMES_WITHOUT_EXTENSION) {
         if (lowerCased.startsWith(prefix)) {
           return true;
         }
       }
       return false;
     }
+  }
+
+  private static class MyExtensionFileNameMatcher extends ExtensionFileNameMatcher {
+
+    public MyExtensionFileNameMatcher(@NotNull @NonNls String extension) {
+      super(extension);
+    }
+
+    public boolean accept(@NotNull @NonNls String fileName) {
+      ourAcceptCount.incrementAndGet();
+      return super.accept(fileName);
+    }
+
   }
 
 }
