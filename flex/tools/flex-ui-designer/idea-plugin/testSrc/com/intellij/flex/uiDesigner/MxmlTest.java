@@ -42,14 +42,23 @@ public class MxmlTest extends MxmlTestBase {
     final String testFile = System.getProperty("testFile");
     final Pair<VirtualFile[], VirtualFile[]> pair = getTestFiles();
     final VirtualFile[] files;
+    VirtualFile[] auxiliaryFiles = pair.getSecond();
     if (testFile == null) {
       files = pair.getFirst();
     }
     else {
-      files = new VirtualFile[]{getSource(testFile + ".mxml")};
+      String[] strings = testFile.split(",");
+      files = new VirtualFile[]{getSource(strings[0] + ".mxml")};
+      if (strings.length > 1) {
+        auxiliaryFiles = new VirtualFile[auxiliaryFiles.length + strings.length - 1];
+        System.arraycopy(pair.getSecond(), 0, auxiliaryFiles, 0, pair.getSecond().length);
+        for (int i = 1, j = pair.getSecond().length, n = strings.length; i < n; i++) {
+          auxiliaryFiles[j++] = getSource(strings[i] + ".mxml");
+        }
+      }
     }
 
-    testFiles(files, pair.getSecond());
+    testFiles(files, auxiliaryFiles);
     
     String[] problems = getLastProblems();
     if (testFile != null) {

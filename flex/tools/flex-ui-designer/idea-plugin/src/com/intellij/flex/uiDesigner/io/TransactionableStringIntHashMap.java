@@ -23,8 +23,8 @@ class TransactionableStringIntHashMap extends ObjectIntHashMap<String> {
     if (lastCommitedTableSize != size()) {
       final int maxValue = lastCommitedTableSize + valueOffset;
       final int size = size();
-      TObjectIntIterator<String> iterator = iterator();
-      String[] newStrings = new String[size - lastCommitedTableSize];
+      final TObjectIntIterator<String> iterator = iterator();
+      final String[] newStrings = new String[size - lastCommitedTableSize];
       int newStringIndex = 0;
       for (int i = size; i-- > 0; ) {
         iterator.advance();

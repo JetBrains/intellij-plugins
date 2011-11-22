@@ -1,11 +1,14 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.openapi.module.Module;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
 class TestClient extends Client {
+  private static final int CLASS = 1;
+  
   private static final int COMMON_TEST_CLASS_ID = 0;
   private static final int MX_TEST_CLASS_ID = 6;
   private static final int MOBILE_TEST_CLASS_ID = 7;
@@ -30,26 +33,34 @@ class TestClient extends Client {
         return c == 'A' || l == 3 ? STYLE_TEST_CLASS_ID : COMMON_TEST_CLASS_ID;
     }
   }
-  
-  public void test(Module module, String filename, int classId) throws IOException {
-    test(this, module, filename, classId);
-  }
 
-  public static void test(Client client, @Nullable Module module, String filename, int c) throws IOException {
+  public void test(@NotNull Module module, int specialClassId) throws IOException {
+    assert specialClassId >= 120;
+
+    blockOut.end();
+
+    out.write(CLASS);
+    out.write(specialClassId);
+    writeId(module, out);
+
+    flush();
+  }
+  
+  public void test(@Nullable Module module, String filename, int classId) throws IOException {
     // method called only and only after openDocument and shouldn't be any calls between
     // in non-tests the same agreement, except must be flush after openDocument always
-    client.blockOut.end();
+    blockOut.end();
 
-    client.out.write(1);
-    client.out.writeAmfUtf(filename, false);
+    out.write(CLASS);
+    out.write(classId);
     if (module != null) {
-      client.writeId(module, client.out);
+      writeId(module, out);
     }
     else {
-      client.out.writeShort(-1);
+      out.writeShort(-1);
     }
-    client.out.write(c);
+    out.writeAmfUtf(filename, false);
 
-    client.flush();
+    flush();
   }
 }

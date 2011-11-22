@@ -26,8 +26,8 @@ public class DocumentFactoryManager {
   private final InfoMap<VirtualFile, DocumentInfo> files = new InfoMap<VirtualFile, DocumentInfo>();
 
   public DocumentFactoryManager() {
-    ApplicationManager.getApplication().getMessageBus().connect(DesignerApplicationManager.getInstance().getApplication()).subscribe(
-      AppTopics.FILE_DOCUMENT_SYNC, new MyFileDocumentManagerListener());
+    ApplicationManager.getApplication().getMessageBus().connect(DesignerApplicationManager.getApplication())
+      .subscribe(AppTopics.FILE_DOCUMENT_SYNC, new MyFileDocumentManagerListener());
   }
 
   public static DocumentFactoryManager getInstance() {

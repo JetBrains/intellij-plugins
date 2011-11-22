@@ -11,7 +11,6 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
@@ -44,7 +43,7 @@ import java.io.File;
 
 import static com.intellij.flex.uiDesigner.LogMessageUtil.LOG;
 
-public class DesignerApplicationManager extends ServiceManagerImpl implements Disposable {
+public class DesignerApplicationManager extends ServiceManagerImpl {
   private static final ExtensionPointName<ServiceDescriptor> SERVICES =
     new ExtensionPointName<ServiceDescriptor>("com.intellij.flex.uiDesigner.service");
   public static final File APP_DIR = new File(PathManager.getSystemPath(), "flashUIDesigner");
@@ -61,8 +60,12 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
     super(true);
   }
 
-  public DesignerApplication getApplication() {
-    return application;
+  public static DesignerApplicationManager getInstance() {
+    return ServiceManager.getService(DesignerApplicationManager.class);
+  }
+
+  public static DesignerApplication getApplication() {
+    return getInstance().application;
   }
 
   @TestOnly
@@ -98,21 +101,13 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
 
   void setApplication(DesignerApplication application) {
     LOG.assertTrue(this.application == null);
-    Disposer.register(this, application);
+    Disposer.register(ApplicationManager.getApplication(), application);
     installEP(SERVICES, application);
     this.application = application;
   }
 
   public boolean isDocumentOpening() {
     return documentOpening;
-  }
-
-  public static DesignerApplicationManager getInstance() {
-    return ServiceManager.getService(DesignerApplicationManager.class);
-  }
-
-  @Override
-  public void dispose() {
   }
 
   private static boolean checkFlexSdkVersion(final String version) {
@@ -294,8 +289,8 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
       }
 
       final Semaphore semaphore = new Semaphore();
-      final MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(
-        DesignerApplicationManager.getInstance().getApplication());
+      final MessageBusConnection connection =
+        ApplicationManager.getApplication().getMessageBus().connect(DesignerApplicationManager.getApplication());
       connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentOpenedListener() {
         @Override
         public void documentOpened() {

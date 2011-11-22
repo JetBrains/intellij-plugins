@@ -132,7 +132,7 @@ final class AdlUtil {
       public void processStarted(final RunContentDescriptor descriptor) {
         final ProcessHandler processHandler = descriptor.getProcessHandler();
         assert processHandler != null;
-        DesignerApplication application = DesignerApplicationManager.getInstance().getApplication();
+        DesignerApplication application = DesignerApplicationManager.getApplication();
         if (application != null) {
           Disposer.register(application, new Disposable() {
             @Override

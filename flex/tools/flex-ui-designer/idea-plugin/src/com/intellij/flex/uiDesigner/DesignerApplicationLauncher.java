@@ -31,7 +31,6 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.WindowManager;
-import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.PlatformUtils;
@@ -146,7 +145,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
     indicator.checkCanceled();
 
     MessageSocketManager messageSocketManager = new MessageSocketManager(this, DesignerApplicationManager.APP_DIR);
-    Disposer.register(DesignerApplicationManager.getInstance().getApplication(), messageSocketManager);
+    Disposer.register(DesignerApplicationManager.getApplication(), messageSocketManager);
 
     final List<String> arguments = new ArrayList<String>();
     arguments.add(Integer.toString(messageSocketManager.listen()));
@@ -199,7 +198,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
     final ProjectDocumentReferenceCounter projectDocumentReferenceCounter = initializeThread.get(60, TimeUnit.SECONDS);
     indicator.checkCanceled();
 
-    final DesignerApplication application = DesignerApplicationManager.getInstance().getApplication();
+    final DesignerApplication application = DesignerApplicationManager.getApplication();
     assert adlProcessHandler != null && application != null;
     application.setProcessHandler(adlProcessHandler);
     attachProjectAndModuleListeners(application);

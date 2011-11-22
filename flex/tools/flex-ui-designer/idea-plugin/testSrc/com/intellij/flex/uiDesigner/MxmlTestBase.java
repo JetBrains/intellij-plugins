@@ -1,22 +1,12 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.libraries.LibraryManager;
-import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceDescriptor;
-import com.intellij.openapi.extensions.ExtensionPoint;
-import com.intellij.openapi.progress.EmptyProgressIndicator;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
-import org.jetbrains.annotations.Nullable;
-import org.picocontainer.MutablePicoContainer;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -25,12 +15,14 @@ abstract class MxmlTestBase extends AppTestBase {
 
   protected static final String SPARK_COMPONENTS_FILE = "SparkComponents.mxml";
 
-  protected TestClient client;
-  protected TestSocketInputHandler socketInputHandler;
-  
   private int passedCounter;
-  protected File appDir;
-  
+
+  @Override
+  protected void changeServicesImplementation() {
+    Tests.changeDesignerServicesImplementation();
+    Tests.changeServiceImplementation(DocumentProblemManager.class, TestDesignerApplicationManager.MyDocumentProblemManager.class);
+  }
+
   protected VirtualFile getRawProjectRoot() throws NoSuchMethodException {
     return useRawProjectRoot() ? getTestDir() : null;
   }
@@ -42,72 +34,6 @@ abstract class MxmlTestBase extends AppTestBase {
 
   protected static String[] getLastProblems() {
     return TestDesignerApplicationManager.getLastProblems();
-  }
-
-  protected void assertAfterInitLibrarySets(List<XmlFile> unregisteredDocumentReferences) throws IOException {
-  }
-
-  static void changeServiceImplementation(Class key, Class implementation) {
-    MutablePicoContainer picoContainer = (MutablePicoContainer)ApplicationManager.getApplication().getPicoContainer();
-    picoContainer.unregisterComponent(key.getName());
-    picoContainer.registerComponentImplementation(key.getName(), implementation);
-  }
-
-  private void launchAndInitializeApplication() throws Exception {
-    if (DesignerApplicationManager.getInstance().isApplicationClosed()) {
-      final ExtensionPoint<ServiceDescriptor> extensionPoint = DesignerApplicationManager.getExtensionPoint();
-      ServiceDescriptor[] extensions = extensionPoint.getExtensions();
-      for (ServiceDescriptor extension : extensions) {
-        if (extension.serviceInterface.equals(SocketInputHandler.class.getName())) {
-          extension.serviceImplementation = TestSocketInputHandler.class.getName();
-        }
-        else if (extension.serviceInterface.equals(Client.class.getName())) {
-          extension.serviceImplementation = TestClient.class.getName();
-        }
-      }
-
-      changeServiceImplementation(DocumentProblemManager.class, TestDesignerApplicationManager.MyDocumentProblemManager.class);
-
-      new DesignerApplicationLauncher(myModule, false, new DesignerApplicationLauncher.PostTask() {
-        @Override
-        public boolean run(ProjectDocumentReferenceCounter projectDocumentReferenceCounter, ProgressIndicator indicator, ProblemsHolder problemsHolder) {
-          assertTrue(DocumentProblemManager.getInstance().toString(problemsHolder.getProblems()), problemsHolder.isEmpty());
-
-          client = (TestClient)Client.getInstance();
-          client.flush();
-
-          try {
-            assertAfterInitLibrarySets(projectDocumentReferenceCounter.unregistered);
-          }
-          catch (IOException e) {
-            throw new AssertionError(e);
-          }
-
-          return true;
-        }
-
-        @Override
-        public void end() {
-        }
-      }).run(new EmptyProgressIndicator());
-    }
-    else {
-      client = (TestClient)Client.getInstance();
-      final ProblemsHolder problemsHolder = new ProblemsHolder();
-      ProjectDocumentReferenceCounter
-        projectDocumentReferenceCounter = LibraryManager.getInstance().initLibrarySets(myModule, isRequireLocalStyleHolder(), problemsHolder);
-      assertTrue(problemsHolder.isEmpty());
-      assertAfterInitLibrarySets(projectDocumentReferenceCounter.unregistered);
-    }
-
-    appDir = DesignerApplicationManager.APP_DIR;
-    socketInputHandler = (TestSocketInputHandler)SocketInputHandler.getInstance();
-  }
-
-  protected VirtualFile[] configureByFiles(@Nullable VirtualFile rawProjectRoot, VirtualFile[] files, @Nullable VirtualFile[] auxiliaryFiles) throws Exception {
-    final VirtualFile[] sourceFiles = super.configureByFiles(rawProjectRoot, files, auxiliaryFiles);
-    launchAndInitializeApplication();
-    return sourceFiles;
   }
 
   protected void testFiles(VirtualFile[] files, VirtualFile[] auxiliaryFiles) throws Exception {
@@ -182,15 +108,7 @@ abstract class MxmlTestBase extends AppTestBase {
   @Override
   protected void tearDown() throws Exception {
     System.out.print("\npassed " + passedCounter + " tests.\n");
-
-    if (client != null) {
-      try {
-        client.closeProject(myProject);
-      }
-      finally {
-        super.tearDown();
-      }
-    }
+    super.tearDown();
   }
 
   private class MyTester implements Tester {
