@@ -13,14 +13,6 @@
           <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
-      <component id="49895" class="javax.swing.JComboBox" binding="myBCsCombo">
-        <constraints>
-          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
-            <minimum-size width="150" height="-1"/>
-          </grid>
-        </constraints>
-        <properties/>
-      </component>
       <hspacer id="384b6">
         <constraints>
           <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -424,9 +416,14 @@
         </constraints>
         <properties>
           <font style="1"/>
-          <labelFor value="49895"/>
           <text value="Build &amp;configuration:"/>
         </properties>
+      </component>
+      <component id="8a68a" class="com.intellij.lang.javascript.flex.run.BCCombo" binding="myBCCombo" custom-create="true" default-binding="true">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
       </component>
     </children>
   </grid>
