@@ -46,24 +46,22 @@
 
   <change-notes>
     <![CDATA[
-<h4>Version 1.3.10, ? November 2011 (build on JsTestDriver-1.3.3d)</h4>
+<h4>Version 1.3.10, 23 November 2011 (build on JsTestDriver-1.3.3d)</h4>
 <ul>
-  <li>Bug fixes:
+  <li>Configuration file support bug fixes:
     <ul>
-      <li>Configuration file support:
-        <ul>
-          <li>JavaScript files referenced by configuration file can be normally renamed and moved.</li>
-          <li><a href="http://youtrack.jetbrains.net/issue/WI-7911" style="text-decoration: line-through">WI-7911</a>
-            Comments are accepted, tab characters are rejected
-          </li>
-          <li>File references from 'load', 'test', 'exclude' and 'serve' sections can have no indent.</li>
-        </ul>
+      <li>Now JavaScript files referenced by configuration file can be normally renamed and moved.</li>
+      <li><a href="http://youtrack.jetbrains.net/issue/WI-7911" style="text-decoration: line-through">WI-7911</a>
+        Now comments are accepted and tab characters are rejected
       </li>
-      <li>Performance of search for JsTD configs inside a directory has been significantly improved. So right-click on a directory has become more responsive.</li>
-      <li>Support for JsTD config editing in PyCharm.</li>
-      <li><a href="http://code.google.com/p/js-test-driver/issues/detail?id=185" style="text-decoration: line-through">issue 185</a> JSTestDriver instance is not shared across windows and raises IDE Fatal Error.</li>
+      <li>File references from 'load', 'test', 'exclude' and 'serve' sections may have no indent.</li>
     </ul>
   </li>
+  <li>Performance of search for JsTD configs inside a directory has been significantly improved. So right-click on a directory has become more responsive.</li>
+  <li>Support for JsTD config editing in PyCharm.</li>
+  <li><a href="http://code.google.com/p/js-test-driver/issues/detail?id=185" style="text-decoration: line-through">issue 185</a> JSTestDriver instance is not shared across windows and raises IDE Fatal Error.</li>
+  <li>Message is shown if it is impossible to launch JsTestDriver server from UI (for example port is already bound).</li>
+  <li>Run Configuration UI for 'All configuration files in directory' has been improved: all matched configuration files are shown for selected directory.</li>
 </ul>
 
 <h4>Version 1.3.9, 10 October 2011 (build on JsTestDriver-1.3.3c)</h4>

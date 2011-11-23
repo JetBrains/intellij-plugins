@@ -44,7 +44,7 @@ import static com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScop
 import static com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope.MODULES;
 import static java.io.File.pathSeparator;
 
-class JstdClientCommandLineBuilder {
+public class JstdClientCommandLineBuilder {
 
   private static final Logger log = Logger.getInstance(TestRunnerState.class.getCanonicalName());
 
