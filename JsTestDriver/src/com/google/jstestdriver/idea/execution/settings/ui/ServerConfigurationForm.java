@@ -113,7 +113,7 @@ class ServerConfigurationForm extends AbstractRunSettingsSection {
   }
 
   @Override
-  public void resetFrom(JstdRunSettings runSettings) {
+  public void resetFrom(@NotNull JstdRunSettings runSettings) {
     selectServerType(runSettings.getServerType());
     if (runSettings.isExternalServerType()) {
       myServerAddress.setText(runSettings.getServerAddress());
@@ -121,7 +121,7 @@ class ServerConfigurationForm extends AbstractRunSettingsSection {
   }
 
   @Override
-  public void applyTo(JstdRunSettings.Builder runSettingsBuilder) {
+  public void applyTo(@NotNull JstdRunSettings.Builder runSettingsBuilder) {
     if (myAtAddressRadioButton.isSelected()) {
       runSettingsBuilder.setServerType(ServerType.EXTERNAL);
       runSettingsBuilder.setServerAddress(ObjectUtils.notNull(myServerAddress.getText(), ""));

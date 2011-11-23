@@ -35,7 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class GeneratedConfigTypeComponent extends JPanel {
+class GeneratedConfigTypeComponent extends JPanel {
 
   public static final GeneratedConfigTypeComponent INSTANCE = new GeneratedConfigTypeComponent();
 

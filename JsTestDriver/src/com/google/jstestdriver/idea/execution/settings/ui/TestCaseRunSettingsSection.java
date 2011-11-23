@@ -66,13 +66,13 @@ class TestCaseRunSettingsSection extends JsFileRunSettingsSection {
   }
 
   @Override
-  public void resetFrom(JstdRunSettings runSettings) {
+  public void resetFrom(@NotNull JstdRunSettings runSettings) {
     super.resetFrom(runSettings);
     myTestCaseNameTextField.setText(runSettings.getTestCaseName());
   }
 
   @Override
-  public void applyTo(JstdRunSettings.Builder runSettingsBuilder) {
+  public void applyTo(@NotNull JstdRunSettings.Builder runSettingsBuilder) {
     super.applyTo(runSettingsBuilder);
     runSettingsBuilder.setTestCaseName(ObjectUtils.notNull(myTestCaseNameTextField.getText(), ""));
   }

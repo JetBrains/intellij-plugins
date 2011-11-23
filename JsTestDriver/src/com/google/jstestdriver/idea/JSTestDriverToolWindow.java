@@ -34,6 +34,7 @@ import com.intellij.ui.content.ContentFactory.SERVICE;
  */
 public class JSTestDriverToolWindow implements ProjectComponent {
   private Project project;
+  private ToolPanel myToolPanel;
 
   public static final String TOOL_WINDOW_ID = "JsTestDriver Server";
 
@@ -42,12 +43,11 @@ public class JSTestDriverToolWindow implements ProjectComponent {
   }
 
   public void projectOpened() {
-    initToolWindow();
+    registerToolWindow();
   }
 
   public void projectClosed() {
     unregisterToolWindow();
-    //TODO: Shut down the server
   }
 
   public void initComponent() {
@@ -63,19 +63,21 @@ public class JSTestDriverToolWindow implements ProjectComponent {
     return "SimpleToolWindow.SimpleToolWindowPlugin";
   }
 
-  private void initToolWindow() {
+  private void registerToolWindow() {
     ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
 
     ToolWindow myToolWindow =
         toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, false, ToolWindowAnchor.BOTTOM);
 
     ContentFactory contentFactory = SERVICE.getInstance();
-    Content content = contentFactory.createContent(new ToolPanel(), "", false);
+    myToolPanel = new ToolPanel();
+    Content content = contentFactory.createContent(myToolPanel, "", false);
     myToolWindow.getContentManager().addContent(content);
     myToolWindow.setIcon(PluginResources.getJstdSmallIcon());
   }
 
   private void unregisterToolWindow() {
+    myToolPanel.onDispose();
     ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
     toolWindowManager.unregisterToolWindow(TOOL_WINDOW_ID);
   }

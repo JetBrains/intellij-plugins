@@ -29,13 +29,13 @@ class OptionalConfigRunSettingsSection extends AbstractRunSettingsSection {
   }
 
   @Override
-  public void resetFrom(JstdRunSettings runSettings) {
+  public void resetFrom(@NotNull JstdRunSettings runSettings) {
     select(runSettings.getConfigType());
     myContentSection.resetFrom(runSettings);
   }
 
   @Override
-  public void applyTo(JstdRunSettings.Builder runSettingsBuilder) {
+  public void applyTo(@NotNull JstdRunSettings.Builder runSettingsBuilder) {
     String actionCommand = myButtonGroup.getSelection().getActionCommand();
     JstdConfigType configType = JstdConfigType.valueOf(actionCommand);
     select(configType);
@@ -129,11 +129,11 @@ class OptionalConfigRunSettingsSection extends AbstractRunSettingsSection {
               }
 
               @Override
-              public void resetFrom(JstdRunSettings runSettings) {
+              public void resetFrom(@NotNull JstdRunSettings runSettings) {
               }
 
               @Override
-              public void applyTo(JstdRunSettings.Builder runSettingsBuilder) {
+              public void applyTo(@NotNull JstdRunSettings.Builder runSettingsBuilder) {
               }
             };
           }
@@ -175,12 +175,12 @@ class OptionalConfigRunSettingsSection extends AbstractRunSettingsSection {
               }
 
               @Override
-              public void resetFrom(JstdRunSettings runSettings) {
+              public void resetFrom(@NotNull JstdRunSettings runSettings) {
                 myConfigFilePath.setText(runSettings.getConfigFile());
               }
 
               @Override
-              public void applyTo(JstdRunSettings.Builder runSettingsBuilder) {
+              public void applyTo(@NotNull JstdRunSettings.Builder runSettingsBuilder) {
                 runSettingsBuilder.setConfigFile(ObjectUtils.notNull(myConfigFilePath.getText(), ""));
               }
             };

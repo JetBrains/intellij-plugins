@@ -24,12 +24,12 @@ class AllInDirectoryRunSettingsSection extends AbstractRunSettingsSection {
   }
 
   @Override
-  public void resetFrom(JstdRunSettings runSettings) {
+  public void resetFrom(@NotNull JstdRunSettings runSettings) {
     myDirectoryTextFieldWithBrowseButton.setText(runSettings.getDirectory());
   }
 
   @Override
-  public void applyTo(JstdRunSettings.Builder runSettingsBuilder) {
+  public void applyTo(@NotNull JstdRunSettings.Builder runSettingsBuilder) {
     runSettingsBuilder.setDirectory(ObjectUtils.notNull(myDirectoryTextFieldWithBrowseButton.getText(), ""));
   }
 

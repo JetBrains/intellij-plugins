@@ -51,10 +51,10 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
     return mySourceElement;
   }
 
-  private static void takenTime(String name, long startTimeNano, int beforeAcceptCalls, String... args) {
+  private static void logTakenTime(String actionName, long startTimeNano, int beforeAcceptCalls, String... args) {
     long endTimeNano = System.nanoTime();
     int afterAcceptCalls = JstdConfigFileLoader.ourAcceptCount.get();
-    String message = String.format("[JsTD] Time taken by '" + name + "': %.2f ms, FileNameMatcher.acceptCalls: %d, FileNameMatcher.totalAcceptCalls: %d, extra args: %s\n",
+    String message = String.format("[JsTD] Time taken by '" + actionName + "': %.2f ms, FileNameMatcher.acceptCalls: %d, FileNameMatcher.totalAcceptCalls: %d, extra args: %s\n",
       (endTimeNano - startTimeNano) / 1000000.0,
       afterAcceptCalls - beforeAcceptCalls,
       afterAcceptCalls,
@@ -63,12 +63,12 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
     LOG.info(message);
   }
 
-  private static void printCreateConfigurationByElementTime(long startTimeMillis, int beforeAcceptCalls, String... args) {
-    takenTime("createConfigurationByElement", startTimeMillis, beforeAcceptCalls, args);
+  private static void logDoneCreateConfigurationByElement(long startTimeNano, int beforeAcceptCalls, String... args) {
+    logTakenTime("createConfigurationByElement", startTimeNano, beforeAcceptCalls, args);
   }
 
-  private static void printFindExistingByElementTime(long startTimeMillis, int beforeAcceptCalls, String... args) {
-    takenTime("findExistingByElement", startTimeMillis, beforeAcceptCalls, args);
+  private static void logDoneFindExistingByElement(long startTimeNano, int beforeAcceptCalls, String... args) {
+    logTakenTime("findExistingByElement", startTimeNano, beforeAcceptCalls, args);
   }
 
   @Override
@@ -78,13 +78,13 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
     @SuppressWarnings({"unchecked"})
     RunSettingsContext runSettingsContext = buildRunSettingsContext(location);
     if (runSettingsContext == null) {
-      printCreateConfigurationByElementTime(startTimeNano, beforeAcceptCalls, "1");
+      logDoneCreateConfigurationByElement(startTimeNano, beforeAcceptCalls, "1");
       return null;
     }
 
     final RunnerAndConfigurationSettings runnerSettings = cloneTemplateConfiguration(location.getProject(), context);
     if (!(runnerSettings.getConfiguration() instanceof JstdRunConfiguration)) {
-      printCreateConfigurationByElementTime(startTimeNano, beforeAcceptCalls, "2");
+      logDoneCreateConfigurationByElement(startTimeNano, beforeAcceptCalls, "2");
       return null;
     }
     JstdRunConfiguration runConfiguration = (JstdRunConfiguration) runnerSettings.getConfiguration();
@@ -93,7 +93,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
 
     mySourceElement = runSettingsContext.psiElement;
     runnerSettings.setName(runConfiguration.suggestedName());
-    printCreateConfigurationByElementTime(startTimeNano, beforeAcceptCalls, "3");
+    logDoneCreateConfigurationByElement(startTimeNano, beforeAcceptCalls, "3");
     return runnerSettings;
   }
 
@@ -106,7 +106,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
     int beforeAcceptCalls = JstdConfigFileLoader.ourAcceptCount.get();
     RunSettingsContext runSettingsContext = buildRunSettingsContext(location);
     if (runSettingsContext == null) {
-      printFindExistingByElementTime(startTimeNano, beforeAcceptCalls, "1");
+      logDoneFindExistingByElement(startTimeNano, beforeAcceptCalls, "1");
       return null;
     }
     final JstdRunSettings runSettingsPattern = runSettingsContext.runSettings;
@@ -161,7 +161,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
         }
       }
     }
-    printFindExistingByElementTime(startTimeNano, beforeAcceptCalls, "2");
+    logDoneFindExistingByElement(startTimeNano, beforeAcceptCalls, "2");
     return bestRaCSettings;
   }
 

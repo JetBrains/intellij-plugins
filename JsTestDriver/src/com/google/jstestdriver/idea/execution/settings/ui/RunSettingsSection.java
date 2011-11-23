@@ -9,9 +9,9 @@ import org.jetbrains.annotations.NotNull;
 
 interface RunSettingsSection extends PanelWithAnchor {
 
-  void resetFrom(JstdRunSettings runSettings);
+  void resetFrom(@NotNull JstdRunSettings runSettings);
 
-  void applyTo(JstdRunSettings.Builder runSettingsBuilder);
+  void applyTo(@NotNull JstdRunSettings.Builder runSettingsBuilder);
 
   @NotNull
   JComponent getComponent(@NotNull CreationContext creationContext);

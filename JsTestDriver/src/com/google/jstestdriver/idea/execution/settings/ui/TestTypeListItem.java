@@ -10,7 +10,7 @@ class TestTypeListItem implements IdProvider, RunSettingsSectionProvider {
   private final String myDisplayName;
   private final RunSettingsSection myRunSettingsSection;
 
-  TestTypeListItem(TestType testType, String displayName, RunSettingsSection runSettingsSection) {
+  TestTypeListItem(@NotNull TestType testType, @NotNull String displayName, @NotNull RunSettingsSection runSettingsSection) {
     myTestType = testType;
     myDisplayName = displayName;
     myRunSettingsSection = runSettingsSection;

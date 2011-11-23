@@ -69,13 +69,13 @@ class TestMethodRunSettingsSection extends TestCaseRunSettingsSection {
   }
 
   @Override
-  public void resetFrom(JstdRunSettings runSettings) {
+  public void resetFrom(@NotNull JstdRunSettings runSettings) {
     super.resetFrom(runSettings);
     myTestNameTextField.setText(runSettings.getTestMethodName());
   }
 
   @Override
-  public void applyTo(JstdRunSettings.Builder runSettingsBuilder) {
+  public void applyTo(@NotNull JstdRunSettings.Builder runSettingsBuilder) {
     super.applyTo(runSettingsBuilder);
     runSettingsBuilder.setTestMethodName(ObjectUtils.notNull(myTestNameTextField.getText(), ""));
   }

@@ -22,20 +22,20 @@ class OneOfRunSettingsSection<T extends IdProvider & RunSettingsSectionProvider>
   private T mySelectedKey;
   private JPanel myCardPanel;
   private final Collection<T> myRunSettingsSectionProviders;
-  private Map<String, RunSettingsSection> mySectionByIdMap = Maps.newHashMap();
+  private final Map<String, RunSettingsSection> mySectionByIdMap = Maps.newHashMap();
 
-  public OneOfRunSettingsSection(Collection<T> runSettingsSectionProviders) {
+  public OneOfRunSettingsSection(@NotNull Collection<T> runSettingsSectionProviders) {
     myRunSettingsSectionProviders = runSettingsSectionProviders;
   }
 
   @Override
-  public void resetFrom(JstdRunSettings runSettings) {
+  public void resetFrom(@NotNull JstdRunSettings runSettings) {
     RunSettingsSection runSettingsSection = getSelectedRunSettingsSection();
     runSettingsSection.resetFrom(runSettings);
   }
 
   @Override
-  public void applyTo(JstdRunSettings.Builder runSettingsBuilder) {
+  public void applyTo(@NotNull JstdRunSettings.Builder runSettingsBuilder) {
     RunSettingsSection runSettingsSection = getSelectedRunSettingsSection();
     runSettingsSection.applyTo(runSettingsBuilder);
   }
@@ -54,7 +54,7 @@ class OneOfRunSettingsSection<T extends IdProvider & RunSettingsSectionProvider>
     if (iterator.hasNext()) {
       select(iterator.next());
     } else {
-      throw new RuntimeException("No child items found");
+      throw new RuntimeException("No child items were found");
     }
     return myCardPanel;
   }

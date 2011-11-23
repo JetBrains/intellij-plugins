@@ -32,36 +32,52 @@ import com.google.jstestdriver.model.NullPathPrefix;
 import com.google.jstestdriver.server.JstdTestCaseStore;
 import com.google.jstestdriver.util.NullStopWatch;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.util.Collections;
-import java.util.Set;
-
-import static java.text.MessageFormat.format;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)
  */
-public class ToolPanel extends JPanel implements ServerListener {
+public class ToolPanel extends JPanel {
 
   // TODO - make configurable
   public static int serverPort = 9876;
+  private static ServerStartupAction myServerStartupAction;
+  private static ServerState myState = new ServerState();
 
-  private final StatusBar myStatusBar;
-  private final CapturedBrowsersPanel myCapturedBrowsersPanel;
-  private ServerStartupAction myServerStartupAction;
-  private final JTextField myCaptureUrl;
-  private JButton myStartServerButton;
-  private JButton myStopServerButton;
+  private List<ServerListener> myServerListeners;
 
   public ToolPanel() {
-    myStatusBar = new StatusBar(MessageBundle.getBundle());
-    myCapturedBrowsersPanel = new CapturedBrowsersPanel();
-    myCaptureUrl = createCaptureUrl();
+    final StatusBar statusBar = new StatusBar(MessageBundle.getBundle());
+    final CapturedBrowsersPanel capturedBrowsersPanel = new CapturedBrowsersPanel();
+    final JTextField captureUrl = createCaptureUrl();
+
+    final JButton startServerButton = new JButton(new ServerStartAction());
+    final JButton stopServerButton = new JButton(new ServerStopAction());
+    LocalManager localManager = new LocalManager(startServerButton, stopServerButton, captureUrl);
+
+    myServerListeners = Arrays.asList(statusBar, capturedBrowsersPanel, localManager);
+    for (ServerListener serverListener : myServerListeners) {
+      if (myState.isServerRunning()) {
+        serverListener.serverStarted();
+        for (BrowserInfo browserInfo : myState.getCapturedBrowsers()) {
+          serverListener.browserCaptured(browserInfo);
+        }
+      } else {
+        serverListener.serverStopped();
+      }
+      myState.addServerListener(serverListener);
+    }
 
     setBackground(UIUtil.getTreeTextBackground());
     setLayout(new BorderLayout());
@@ -69,20 +85,18 @@ public class ToolPanel extends JPanel implements ServerListener {
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
       add(new JPanel() {{
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        add(myStatusBar);
-        myStartServerButton = new JButton(new ServerStartAction());
-        add(myStartServerButton);
-        myStopServerButton = new JButton(new ServerStopAction());
-        add(myStopServerButton);
-        myStopServerButton.setEnabled(false);
+        add(statusBar);
+        add(startServerButton);
+        add(stopServerButton);
       }});
       add(new JPanel() {{
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         add(new JLabel(PluginResources.getCaptureUrlMessage()));
-        add(myCaptureUrl);
+        add(captureUrl);
       }});
-      add(myCapturedBrowsersPanel);
+      add(capturedBrowsersPanel);
     }}, BorderLayout.NORTH);
+
   }
 
   private static JTextField createCaptureUrl() {
@@ -112,60 +126,48 @@ public class ToolPanel extends JPanel implements ServerListener {
     return textField;
   }
 
-  @Override
-  public void serverStarted() {
-    serverStatusChanged(true);
+
+  public void onDispose() {
+    for (ServerListener serverListener : myServerListeners) {
+      myState.removeServerListener(serverListener);
+    }
   }
 
-  @Override
-  public void serverStopped() {
-    serverStatusChanged(false);
-  }
-
-  private void serverStatusChanged(final boolean started) {
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        myStartServerButton.setEnabled(!started);
-        myStopServerButton.setEnabled(started);
-      }
-    });
-  }
-
-  @Override
-  public void browserCaptured(BrowserInfo info) {}
-
-  @Override
-  public void browserPanicked(BrowserInfo info) {}
-
-  private class ServerStartAction extends AbstractAction {
+  private static class ServerStartAction extends AbstractAction {
 
     ServerStartAction() {
       super("", PluginResources.getServerStartIcon());
       putValue(SHORT_DESCRIPTION, "Start a local server");
     }
 
-    public void actionPerformed(ActionEvent e) {
-      CapturedBrowsers browsers = new CapturedBrowsers(new BrowserIdStrategy(new TimeImpl()));
-
+    public void actionPerformed(ActionEvent event) {
       FileLoader fileLoader = new ProcessingFileLoader(
           new SimpleFileReader(),
           Collections.<FileLoadPostProcessor>singleton(new InlineHtmlProcessor(new HtmlDocParser(), new HtmlDocLexer())),
           new File("."),
           new NullStopWatch()
       );
+      CapturedBrowsers browsers = new CapturedBrowsers(new BrowserIdStrategy(new TimeImpl()));
       JsTestDriverServer.Factory factory = new DefaultServerFactory(
           browsers,
           SlaveBrowser.TIMEOUT,
           new NullPathPrefix(),
-          Sets.<ServerListener>newHashSet(ToolPanel.this, myStatusBar, myCapturedBrowsersPanel)
+          Sets.<ServerListener>newHashSet(myState)
       );
-      myServerStartupAction = new ServerStartupAction(serverPort, -1, new JstdTestCaseStore(),
-                                                      false, fileLoader, factory);
-      myServerStartupAction.run(null);
-
-      final String serverUrl = format("http://{0}:{1,number,###}/capture", InfoPanel.getHostName(), serverPort);
-      myCaptureUrl.setText(serverUrl);
+      ServerStartupAction serverStartupAction = new ServerStartupAction(
+          serverPort,
+          -1,
+          new JstdTestCaseStore(),
+          false,
+          fileLoader,
+          factory
+      );
+      try {
+        serverStartupAction.run(null);
+        myServerStartupAction = serverStartupAction;
+      } catch (Exception ex) {
+        Messages.showErrorDialog("Can't start JsTestDriver server on port " + serverPort + ".\nMake sure the port is free.", "JsTestDriver server launching");
+      }
     }
   }
 
@@ -192,15 +194,120 @@ public class ToolPanel extends JPanel implements ServerListener {
     }
   }
 
-  private class ServerStopAction extends AbstractAction {
+  private static class ServerStopAction extends AbstractAction {
+
     ServerStopAction() {
       super("", PluginResources.getServerStopIcon());
       putValue(SHORT_DESCRIPTION, "Stop the local server");
     }
+
     public void actionPerformed(ActionEvent e) {
-      if (myServerStartupAction != null) {
-        new ServerShutdownAction(myServerStartupAction).run(null);
+      ServerStartupAction serverStartupAction = myServerStartupAction;
+      if (serverStartupAction != null) {
+        new ServerShutdownAction(serverStartupAction).run(null);
+        myServerStartupAction = null;
       }
+    }
+  }
+
+  private static class LocalManager implements ServerListener {
+
+    private final JButton myStartServerButton;
+    private final JButton myStopServerButton;
+    private final JTextField myCaptureUrl;
+
+    private LocalManager(JButton startServerButton, JButton stopServerButton, JTextField captureUrl) {
+      myStartServerButton = startServerButton;
+      myStopServerButton = stopServerButton;
+      myCaptureUrl = captureUrl;
+    }
+
+    @Override
+    public void serverStarted() {
+      serverStatusChanged(true);
+    }
+
+    @Override
+    public void serverStopped() {
+      serverStatusChanged(false);
+    }
+
+    private void serverStatusChanged(final boolean started) {
+      ApplicationManager.getApplication().invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          myStartServerButton.setEnabled(!started);
+          myStopServerButton.setEnabled(started);
+          if (started) {
+            String serverUrl = MessageFormat.format("http://{0}:{1,number,###}/capture",
+                                                    InfoPanel.getHostName(), serverPort);
+            myCaptureUrl.setText(serverUrl);
+          } else {
+            myCaptureUrl.setText("");
+          }
+        }
+      });
+    }
+
+    @Override
+    public void browserCaptured(BrowserInfo info) {}
+
+    @Override
+    public void browserPanicked(BrowserInfo info) {}
+  }
+
+  private static class ServerState implements ServerListener {
+
+    private volatile boolean myServerRunning = false;
+    private final Map<String, BrowserInfo> myCapturedBrowsers = new ConcurrentHashMap<String, BrowserInfo>();
+    private final Map<ServerListener, Object> myServerListeners = new IdentityHashMap<ServerListener, Object>();
+
+    @Override
+    public void serverStarted() {
+      myServerRunning = true;
+      for (ServerListener serverListener : myServerListeners.keySet()) {
+        serverListener.serverStarted();
+      }
+    }
+
+    @Override
+    public void serverStopped() {
+      myServerRunning = false;
+      for (ServerListener serverListener : myServerListeners.keySet()) {
+        serverListener.serverStopped();
+      }
+    }
+
+    @Override
+    public void browserCaptured(BrowserInfo info) {
+      myCapturedBrowsers.put(info.getName(), info);
+      for (ServerListener serverListener : myServerListeners.keySet()) {
+        serverListener.browserCaptured(info);
+      }
+    }
+
+    @Override
+    public void browserPanicked(BrowserInfo info) {
+      myCapturedBrowsers.remove(info.getName());
+      for (ServerListener serverListener : myServerListeners.keySet()) {
+        serverListener.browserPanicked(info);
+      }
+    }
+
+    public boolean isServerRunning() {
+      return myServerRunning;
+    }
+
+    public Collection<BrowserInfo> getCapturedBrowsers() {
+      return myCapturedBrowsers.values();
+    }
+
+    public void addServerListener(@NotNull ServerListener serverListener) {
+      myServerListeners.put(serverListener, true);
+    }
+
+    public void removeServerListener(@NotNull ServerListener serverListener) {
+      myServerListeners.remove(serverListener);
     }
   }
 }

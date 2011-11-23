@@ -29,13 +29,13 @@ class JsFileRunSettingsSection extends AbstractRunSettingsSection {
   }
 
   @Override
-  public void resetFrom(JstdRunSettings runSettings) {
+  public void resetFrom(@NotNull JstdRunSettings runSettings) {
     myOptionalConfigRunSettingsSection.resetFrom(runSettings);
     myJsFileTextFieldWithBrowseButton.setText(runSettings.getJsFilePath());
   }
 
   @Override
-  public void applyTo(JstdRunSettings.Builder runSettingsBuilder) {
+  public void applyTo(@NotNull JstdRunSettings.Builder runSettingsBuilder) {
     myOptionalConfigRunSettingsSection.applyTo(runSettingsBuilder);
     runSettingsBuilder.setJSFilePath(ObjectUtils.notNull(myJsFileTextFieldWithBrowseButton.getText(), ""));
   }
