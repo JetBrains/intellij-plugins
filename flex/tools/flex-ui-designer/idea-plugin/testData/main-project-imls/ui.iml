@@ -8,6 +8,11 @@
     <configurations>
       <configuration name="ui" target-platform="Desktop" output-type="Library" output-file="ui.swc" output-folder="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/idea-plugin/testData/out/production/ui">
         <dependencies target-player="10.2" component-set="SparkOnly">
+          <entries>
+            <entry library-name="cocoa" library-level="project">
+              <dependency linkage="Merged" />
+            </entry>
+          </entries>
           <sdk library-id="e8ff1736-f7b6-45b9-ba10-d7fc48867eda" home-path="$MODULE_DIR$/../../../../../../../flex" />
         </dependencies>
         <compiler-options />
@@ -25,6 +30,7 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Flex SDK 4.5.2.21576" level="application" />
+    <orderEntry type="library" name="cocoa" level="project" />
   </component>
 </module>
 

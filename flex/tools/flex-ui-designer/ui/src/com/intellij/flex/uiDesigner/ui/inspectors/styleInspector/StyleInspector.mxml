@@ -38,9 +38,8 @@
       _rulesetPrinter = value;
     }
 
-    private var module:Module;
-
     public function set document(value:Document):void {
+      var module:Module;
       if (value == null) {
         module = null;
       }

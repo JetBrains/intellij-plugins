@@ -80,13 +80,13 @@ public class LibraryManager {
 
   public ProjectDocumentReferenceCounter initLibrarySets(@NotNull final Module module,
                                                          boolean collectLocalStyleHolders,
-                                                         ProblemsHolder problemsHolder)
-      throws InitException {
+                                                         ProblemsHolder problemsHolder) throws InitException {
     final Project project = module.getProject();
     final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter(16384);
     stringWriter.startChange();
     final AssetCounter assetCounter = new AssetCounter();
-    final LibraryCollector libraryCollector = new LibraryCollector(this, new LibraryStyleInfoCollector(new CssWriter(stringWriter, problemsHolder, assetCounter), module, stringWriter), project);
+    final LibraryCollector libraryCollector = new LibraryCollector(this, new LibraryStyleInfoCollector(new CssWriter(stringWriter,
+      problemsHolder, assetCounter), module, stringWriter), project);
 
     final Client client;
     try {
@@ -130,8 +130,8 @@ public class LibraryManager {
       librarySet = librarySets.get(key);
       if (librarySet == null) {
         final int id = librarySetIdPool.allocate();
-        final SortResult sortResult = sortLibraries(new LibrarySorter(), id, libraryCollector.externalLibraries, libraryCollector.getFlexSdkVersion(),
-                                                    flexLibrarySet.contains);
+        final SortResult sortResult = sortLibraries(new LibrarySorter(), id, libraryCollector.externalLibraries,
+          libraryCollector.getFlexSdkVersion(), flexLibrarySet.contains);
         librarySet = new LibrarySet(id, flexLibrarySet, sortResult.items);
         registerLibrarySet(key, librarySet);
       }
@@ -145,7 +145,7 @@ public class LibraryManager {
       stringWriter.startChange();
       try {
         ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter, problemsHolder,
-                                                projectDocumentReferenceCounter, assetCounter);
+          projectDocumentReferenceCounter, assetCounter);
       }
       catch (Throwable e) {
         stringWriter.rollbackChange();
@@ -166,8 +166,8 @@ public class LibraryManager {
       @Override
       public void rootsChanged(ModuleRootEvent event) {
         new Notification(FlashUIDesignerBundle.message("plugin.name"), FlashUIDesignerBundle.message("plugin.name"),
-            "Please reopen your project to update on library changes.",
-            NotificationType.WARNING).notify(project);
+          "Please reopen your project to update on library changes.",
+          NotificationType.WARNING).notify(project);
       }
     });
 

@@ -6,7 +6,7 @@ import cocoa.bar.SingleSelectionBar;
 import cocoa.layout.ListHorizontalLayout;
 import cocoa.renderer.InteractiveBorderRendererManager;
 import cocoa.renderer.TextRendererManager;
-import cocoa.util.FileUtil;
+import cocoa.util.Files;
 
 import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.css.Stylesheet;
@@ -70,7 +70,7 @@ public class Main extends MainWindowedApplication {
   private static function uncaughtErrorHandler(event:UncaughtErrorEvent):void {
     var stackTrace:String = event.error.getStackTrace();
     trace(stackTrace);
-    FileUtil.writeString(File.applicationDirectory.nativePath + "/startup-error.txt", stackTrace);
+    Files.writeString(File.applicationDirectory.nativePath + "/startup-error.txt", stackTrace);
 
     event.preventDefault();
     event.stopImmediatePropagation();
@@ -127,7 +127,7 @@ public class Main extends MainWindowedApplication {
     loadedPluginCounter++;
     var loader:Loader = new Loader();
     loader.contentLoaderInfo.addEventListener(Event.INIT, loadInitHandler);
-    loader.loadBytes(FileUtil.readBytes(path), LoaderContentParentAdobePleaseDoNextStep.create());
+    loader.loadBytes(Files.readBytes(path), LoaderContentParentAdobePleaseDoNextStep.create());
   }
 
   private function loadInitHandler(event:Event):void {
