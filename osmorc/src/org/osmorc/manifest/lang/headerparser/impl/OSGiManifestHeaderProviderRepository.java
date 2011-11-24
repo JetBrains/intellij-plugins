@@ -76,6 +76,7 @@ public class OSGiManifestHeaderProviderRepository implements HeaderParserProvide
         headerProviders.add(new HeaderParserProviderImpl("DynamicImport-Package", simpleHeaderParser));
         headerProviders.add(new HeaderParserProviderImpl("Export-Service", simpleHeaderParser));
         headerProviders.add(new HeaderParserProviderImpl("Import-Service", simpleHeaderParser));
+        headerProviders.add(new HeaderParserProviderImpl("Service-Component", simpleHeaderParser));
     }
 
     @NotNull
