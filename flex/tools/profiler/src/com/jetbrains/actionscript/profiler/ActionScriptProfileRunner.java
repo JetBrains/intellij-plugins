@@ -11,8 +11,12 @@ import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.run.*;
+import com.intellij.lang.javascript.flex.run.FlashPlayerTrustUtil;
+import com.intellij.lang.javascript.flex.run.FlexIdeRunConfiguration;
+import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
+import com.intellij.lang.javascript.flex.run.FlexRunner;
 import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -23,6 +27,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.SystemProperties;
+import com.jetbrains.actionscript.profiler.model.ProfilingManager;
 import com.jetbrains.profiler.DefaultProfilerExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,6 +43,7 @@ import java.net.URL;
  * Time: 13:32:04
  */
 public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings> {
+  private static final Logger LOG = Logger.getInstance(ActionScriptProfileRunner.class.getName());
   public static final String PROFILE = "Profile";
   private static final String PRELOAD_SWF_OPTION = "PreloadSwf";
   private final FlexRunner myFlexRunner = new FlexRunner();
@@ -125,7 +131,9 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
       }
     }
 
-    initProfilingAgent(module, profileSettings.getHost(), profileSettings.getPort());
+    if (!initProfilingAgent(module, profileSettings.getHost(), profileSettings.getPort())) {
+      return;
+    }
 
     VirtualFile virtualFile = new LightVirtualFile(s, "");
     virtualFile.putUserData(
@@ -136,7 +144,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
     openFileDescriptor.navigate(true);
   }
 
-  public static void initProfilingAgent(Module module, String host, int port) {
+  public static boolean initProfilingAgent(Module module, String host, int port) {
     try {
       String agentName = detectSuitableAgentNameForSdkUsedToLaunch(module);
 
@@ -162,9 +170,11 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
       pathToAgent +="?port=" + port + "&host=" + host;
       FlashPlayerTrustUtil.updateTrustedStatus(module.getProject(), true, false, pathToAgent);
       begFlashPlayerToPreloadProfilerSwf(pathToAgent);
-    } catch (Exception ex) {
-      ex.printStackTrace();
+    } catch (IOException e) {
+      LOG.warn(e);
+      return false;
     }
+    return true;
   }
 
   private static String transformEncodedSymbols(URL url) throws MalformedURLException {
@@ -193,7 +203,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
   private static void begFlashPlayerToPreloadProfilerSwf(final String pathToAgent) throws IOException {
     processMmCfg(new ProfilerPathMmCfgFixer() {
       public String additionalOptions(String lineEnd) {
-        Logging.log("Added profiler swf reference to mm.cfg");
+        LOG.debug("Added profiler swf reference to mm.cfg");
         return PRELOAD_SWF_OPTION+"="+pathToAgent;
       }
     });
@@ -208,13 +218,14 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
 
     try {
       processMmCfg(new ProfilerPathMmCfgFixer() {
+        @Nullable
         public String additionalOptions(String lineEnd) {
-          Logging.log("Removed profiler swf reference from mm.cfg");
+          LOG.debug("Removed profiler swf reference from mm.cfg");
           return null;
         }
       });
     } catch (IOException e) {
-      Logging.log(e);
+      LOG.error(e);
     }
   }
 
@@ -225,6 +236,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
   }
 
   static abstract class ProfilerPathMmCfgFixer implements MmCfgFixer {
+    @Nullable
     public String processOption(String option, String value, String line) {
       if (!PRELOAD_SWF_OPTION.equals(option)) return line;
       return null;

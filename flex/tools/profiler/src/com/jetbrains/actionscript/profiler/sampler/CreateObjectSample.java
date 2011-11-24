@@ -1,4 +1,4 @@
-package com.jetbrains.actionscript.profiler;
+package com.jetbrains.actionscript.profiler.sampler;
 
 /**
  * User: Maxim

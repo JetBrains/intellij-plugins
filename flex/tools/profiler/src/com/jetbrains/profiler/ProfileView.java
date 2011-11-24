@@ -9,9 +9,9 @@ import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -101,7 +101,6 @@ public abstract class ProfileView extends UserDataHolderBase implements FileEdit
   }
 
   public static void invokeOnEdt(Runnable runnable) {
-    if (SwingUtilities.isEventDispatchThread()) runnable.run();
-    else SwingUtilities.invokeLater(runnable);
+    UIUtil.invokeLaterIfNeeded(runnable);
   }
 }

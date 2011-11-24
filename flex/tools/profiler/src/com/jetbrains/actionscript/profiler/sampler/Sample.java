@@ -1,6 +1,4 @@
-package com.jetbrains.actionscript.profiler;
-
-import java.util.List;
+package com.jetbrains.actionscript.profiler.sampler;
 
 /**
  * User: Maxim

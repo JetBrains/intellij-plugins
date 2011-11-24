@@ -1,6 +1,7 @@
 package com.jetbrains.actionscript.profiler;
 
 import com.intellij.openapi.application.ApplicationInfo;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ProjectRootManager;
 
@@ -11,6 +12,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
  * Time: 14:23
  */
 public abstract class IdeaFacade {
+  private static final Logger LOG = Logger.getInstance(IdeaFacade.class.getName());
   private static IdeaFacade instance;
 
   public static IdeaFacade getInstance() {
@@ -26,7 +28,7 @@ public abstract class IdeaFacade {
       try {
         instance = (IdeaFacade) Class.forName("com.jetbrains.actionscript.profiler."+className).newInstance();
       } catch (Exception e) {
-        e.printStackTrace();
+        LOG.warn(e);
       }
     }
     return instance;

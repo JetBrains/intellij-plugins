@@ -29,4 +29,9 @@
     <profiler.SnapshotProvider implementation="com.jetbrains.actionscript.profiler.ActionScriptProfileProvider"/>
     <programRunner implementation="com.jetbrains.actionscript.profiler.ActionScriptProfileRunner"/>
   </extensions>
+  <actions>
+    <group id="ProfilerViewMenu" popup="true">
+      <reference id="EditSource"/>
+    </group>
+  </actions>
 </idea-plugin>

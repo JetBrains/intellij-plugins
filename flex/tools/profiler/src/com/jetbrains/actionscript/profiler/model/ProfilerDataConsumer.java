@@ -1,4 +1,6 @@
-package com.jetbrains.actionscript.profiler;
+package com.jetbrains.actionscript.profiler.model;
+
+import com.jetbrains.actionscript.profiler.sampler.Sample;
 
 /**
 * Created by IntelliJ IDEA.
@@ -7,7 +9,7 @@ package com.jetbrains.actionscript.profiler;
 * Time: 10:26 PM
 * To change this template use File | Settings | File Templates.
 */
-interface ProfilerDataConsumer {
+public interface ProfilerDataConsumer {
   void process(Sample sample);
   void referenced(int pid, int id);
 }

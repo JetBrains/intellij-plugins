@@ -1,7 +1,7 @@
-package com.jetbrains.actionscript.profiler;
+package com.jetbrains.actionscript.profiler.model;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.util.Processor;
+import com.intellij.openapi.diagnostic.Logger;
 
 import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -12,6 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Time: 23:38:08
  */
 public class ProfilingManager {
+  private static final Logger LOG = Logger.getInstance(ProfilingManager.class.getName());
   private int myPort;
   private ProfilingConnection myConnection;
 
@@ -31,7 +32,7 @@ public class ProfilingManager {
     });
   }
 
-  void initializeProfiling(final ProfilerDataConsumer sampleProcessor, final Callback ioExceptionProcessor) {
+  public void initializeProfiling(final ProfilerDataConsumer sampleProcessor, final Callback ioExceptionProcessor) {
     myAsyncExecutionQueue.offer(new Runnable() {
       public void run() {
         myConnection = new ProfilingConnection(myPort, sampleProcessor, ioExceptionProcessor);
@@ -40,7 +41,7 @@ public class ProfilingManager {
     });
   }
 
-  interface Callback extends ProfilingConnection.Callback {
+  public interface Callback extends ProfilingConnection.Callback {
   }
 
   public void stopCpuProfiling(final Callback finished) {
@@ -95,7 +96,7 @@ public class ProfilingManager {
     try {
       myConnection.dispose();
     } catch (IOException ex) {
-      ex.printStackTrace(); // TODO:
+      LOG.warn(ex);
     }
   }
 }

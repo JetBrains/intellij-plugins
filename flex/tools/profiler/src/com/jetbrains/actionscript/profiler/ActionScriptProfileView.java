@@ -1,31 +1,58 @@
 package com.jetbrains.actionscript.profiler;
 
 import com.intellij.ide.util.scopeChooser.ScopeChooserCombo;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.openapi.actionSystem.ActionPlaces;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
+import com.intellij.pom.Navigatable;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
+import com.intellij.psi.search.scope.ProjectFilesScope;
+import com.intellij.ui.PopupHandler;
+import com.intellij.ui.SpeedSearchBase;
+import com.intellij.ui.TreeTableSpeedSearch;
 import com.intellij.util.Alarm;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
+import com.intellij.util.ui.tree.TreeUtil;
+import com.jetbrains.actionscript.profiler.base.LazyNode;
+import com.jetbrains.actionscript.profiler.base.NavigatableDataProducer;
+import com.jetbrains.actionscript.profiler.base.NavigatableTree;
 import com.jetbrains.actionscript.profiler.calltree.CallTree;
+import com.jetbrains.actionscript.profiler.calltreetable.CallTreeTable;
+import com.jetbrains.actionscript.profiler.calltreetable.MergedCallNode;
+import com.jetbrains.actionscript.profiler.model.AgentVersionMismatchProblem;
+import com.jetbrains.actionscript.profiler.model.ProfilerDataConsumer;
+import com.jetbrains.actionscript.profiler.model.ProfilingManager;
+import com.jetbrains.actionscript.profiler.sampler.CreateObjectSample;
+import com.jetbrains.actionscript.profiler.sampler.DeleteObjectSample;
+import com.jetbrains.actionscript.profiler.sampler.Sample;
+import com.jetbrains.actionscript.profiler.sampler.SampleLocationResolver;
+import com.jetbrains.actionscript.profiler.util.JTreeUtil;
+import com.jetbrains.actionscript.profiler.util.LocationResolverUtil;
+import com.jetbrains.actionscript.profiler.vo.CallInfo;
 import com.jetbrains.profiler.ProfileView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.table.TableColumn;
 import javax.swing.tree.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.*;
@@ -38,20 +65,23 @@ import java.util.List;
  * Time: 13:52:59
  */
 public class ActionScriptProfileView extends ProfileView {
+  private static final Logger LOG = Logger.getInstance(ActionScriptProfileView.class.getName());
+  private static final int MS_COLUMN_WIDTH = 140;
+  public static final String PROFILER_ACTION_GROUP_ID = "ProfilerViewMenu";
   private JPanel myPanel;
-  private JTree mySamplesTree;
+  private NavigatableTree mySamplesTree;
   private JButton myStartCpuButton;
   private JButton myStopCpuButton;
 
-  private JTree myMemoryTree;
-  private JTree myReachableFromTree;
+  private NavigatableTree myMemoryTree;
+  private NavigatableTree myReachableFromTree;
   private JButton myDoGcButton;
   private JLabel myStatus;
   private JButton myCaptureSnapshot;
   private JTabbedPane myTabbedPane;
-  private JTree myHotSpotsTree;
+  private CallTreeTable myHotSpotsTreeTable;
   private JCheckBox myFilterSystemStuff;
-  private JTree myTraces;
+  private CallTreeTable myTracesTreeTable;
   private ScopeChooserCombo filterScope;
   private JLabel scopeLabel;
   private final ProfilingManager myProfilingManager;
@@ -61,54 +91,59 @@ public class ActionScriptProfileView extends ProfileView {
   private static final int CPU_HOTSPOTS_TAB_INDEX = 1;
   private Alarm myAlarm;
 
+  private final Function<List<String>, List<String>> scopeMatcher = new Function<List<String>, List<String>>() {
+    @Override
+    public List<String> fun(List<String> traces) {
+      final GlobalSearchScope scope = getCurrentScope();
+
+      return LocationResolverUtil.filterByScope(traces, scope);
+    }
+  };
+
+  private GlobalSearchScope getCurrentScope() {
+    final SearchScope _selectedScope = filterScope.getSelectedScope();
+    return _selectedScope instanceof GlobalSearchScope ?
+      (GlobalSearchScope) _selectedScope:GlobalSearchScope.allScope(getProject());
+  }
+
   private void createUIComponents() {
-    myHotSpotsTree = new JTree() { // TODO: real speed search
-      @Override
-      public String convertValueToText(Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-        if (value instanceof MergedCallNode) {
-          final SampleLocationResolver.LocationInfo locationInfo = SampleLocationResolver.buildMethodInfo(fixUserObjectStringForNode(value));
-          return locationInfo.name != null? locationInfo.name:locationInfo.clazz;
-        }
-        return super.convertValueToText(value, selected, expanded, leaf, row, hasFocus);
-      }
-    };
-    myHotSpotsTree.setCellRenderer(new DefaultTreeCellRenderer() {
-      @Override
-      public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-        if (value instanceof MergedCallNode) {
-          value = ((MergedCallNode) value).getUserObject();
-        }
-        return super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-      }
-    });
+    createHotSpotsTreeTable();
 
     myAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
 
-    myHotSpotsTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
-      public void valueChanged(TreeSelectionEvent e) {
-        final TreePath path = e.getPath();
+    filterScope = new ScopeChooserCombo(getProject(), true, false, ProjectFilesScope.NAME);
+  }
+
+  private void createHotSpotsTreeTable() {
+    myHotSpotsTreeTable = new CallTreeTable();
+
+    myHotSpotsTreeTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent e) {
+        final TreePath path = myHotSpotsTreeTable.getTree().getSelectionPath();
+        if (path == null) return;
         final Object lastPathComponent = path.getLastPathComponent();
         myAlarm.cancelAllRequests();
         if (!(lastPathComponent instanceof MergedCallNode)) return;
-        final MergedCallNode mergedCallNode = (MergedCallNode) lastPathComponent;
+        final MergedCallNode mergedCallNode = (MergedCallNode)lastPathComponent;
 
         myAlarm.addRequest(new Runnable() {
           public void run() {
-            final DefaultTreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode());
-            String[] frames = new String[]{mergedCallNode.frame};
-            final Pair<Map<String, Long>, Map<String, Long>> countMaps = mergedCallNode.callTree.getCalleesTimeMaps(frames);
+            String[] frames = new String[]{mergedCallNode.getFrame()};
+            final Pair<Map<String, Long>, Map<String, Long>> countMaps = mergedCallNode.getCallTree().getCalleesTimeMaps(frames);
             final Map<String, Long> countMap = countMaps.getFirst();
             final Map<String, Long> selfCountMap = countMaps.getSecond();
 
-            fillTreeModelRoot(treeModel, mergedCallNode.callTree, countMap, selfCountMap, false, frames);
+            DefaultMutableTreeNode tracesRoot = (DefaultMutableTreeNode)myTracesTreeTable.getSortableTreeTableModel().getRoot();
+            JTreeUtil.removeChildren(tracesRoot, myTracesTreeTable.getSortableTreeTableModel());
+            fillTreeModelRoot(tracesRoot, mergedCallNode.getCallTree(), countMap, selfCountMap, false, frames);
 
-            myTraces.setModel(treeModel);
+            TreeUtil.expand(myTracesTreeTable.getTree(), 1);
+
+            myTracesTreeTable.reload();
           }
         }, 500);
       }
     });
-
-    filterScope = new ScopeChooserCombo(getProject(), true, false, "Project Files");
   }
 
   enum State {
@@ -153,9 +188,55 @@ public class ActionScriptProfileView extends ProfileView {
 
     myMemoryTree.setRootVisible(false);
     mySamplesTree.setRootVisible(false);
-    myHotSpotsTree.setRootVisible(false);
+    myHotSpotsTreeTable.setRootVisible(false);
     myReachableFromTree.setRootVisible(false);
-    myTraces.setRootVisible(false);
+    myTracesTreeTable.setRootVisible(false);
+
+    setColumnWidth(myHotSpotsTreeTable.getColumnModel().getColumn(1), MS_COLUMN_WIDTH);
+    setColumnWidth(myHotSpotsTreeTable.getColumnModel().getColumn(2), MS_COLUMN_WIDTH);
+    setColumnWidth(myTracesTreeTable.getColumnModel().getColumn(1), MS_COLUMN_WIDTH);
+    setColumnWidth(myTracesTreeTable.getColumnModel().getColumn(2), MS_COLUMN_WIDTH);
+
+    new TreeTableSpeedSearch(myHotSpotsTreeTable).setComparator(new SpeedSearchBase.SpeedSearchComparator(false));
+    new TreeTableSpeedSearch(myTracesTreeTable).setComparator(new SpeedSearchBase.SpeedSearchComparator(false));
+
+    PopupHandler.installPopupHandler(myHotSpotsTreeTable, PROFILER_ACTION_GROUP_ID, ActionPlaces.UNKNOWN);
+    PopupHandler.installPopupHandler(myTracesTreeTable, PROFILER_ACTION_GROUP_ID, ActionPlaces.UNKNOWN);
+    PopupHandler.installPopupHandler(myMemoryTree, PROFILER_ACTION_GROUP_ID, ActionPlaces.UNKNOWN);
+    PopupHandler.installPopupHandler(myReachableFromTree, PROFILER_ACTION_GROUP_ID, ActionPlaces.UNKNOWN);
+    PopupHandler.installPopupHandler(mySamplesTree, PROFILER_ACTION_GROUP_ID, ActionPlaces.UNKNOWN);
+
+    myHotSpotsTreeTable.getTree().setCellRenderer(new DefaultTreeCellRenderer(){
+      @Override
+      public Component getTreeCellRendererComponent(JTree tree,
+                                                    Object value,
+                                                    boolean sel,
+                                                    boolean expanded,
+                                                    boolean leaf,
+                                                    int row,
+                                                    boolean hasFocus) {
+        setOpenIcon(ProfilerIcons.CALLER_ARROW);
+        setClosedIcon(ProfilerIcons.CALLER_ARROW);
+        setLeafIcon(ProfilerIcons.CALLER_LEAF_ARROW);
+        return super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, false);
+      }
+    });
+
+    myTracesTreeTable.getTree().setCellRenderer(new DefaultTreeCellRenderer(){
+      @Override
+      public Component getTreeCellRendererComponent(JTree tree,
+                                                    Object value,
+                                                    boolean sel,
+                                                    boolean expanded,
+                                                    boolean leaf,
+                                                    int row,
+                                                    boolean hasFocus) {
+        setOpenIcon(ProfilerIcons.CALLEE_ARROW);
+        setClosedIcon(ProfilerIcons.CALLEE_ARROW);
+        setLeafIcon(ProfilerIcons.CALLEE_LEAF_ARROW);
+        return super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, false);
+      }
+    });
 
     scopeLabel.setLabelFor(filterScope.getComboBox());
 
@@ -163,7 +244,8 @@ public class ActionScriptProfileView extends ProfileView {
 
     myFilterSystemStuff.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
-        buildSamples2((DefaultTreeModel) myHotSpotsTree.getModel(), data.profile);
+        buildPerformanceSamples(myHotSpotsTreeTable.getSortableTreeTableModel(), data.profile);
+        TreeUtil.expand(myHotSpotsTreeTable.getTree(), 1);
       }
     });
 
@@ -173,46 +255,12 @@ public class ActionScriptProfileView extends ProfileView {
         myAlarm.cancelAllRequests();
         myAlarm.addRequest(new Runnable() {
           public void run() {
-            buildSamples2((DefaultTreeModel) myHotSpotsTree.getModel(), data.profile);
+            buildPerformanceSamples(myHotSpotsTreeTable.getSortableTreeTableModel(), data.profile);
+            TreeUtil.expand(myHotSpotsTreeTable.getTree(), 1);
           }
         }, 100);
       }
     });
-
-    final KeyListener k = new KeyAdapter() {
-      @Override
-      public void keyPressed(KeyEvent e) {
-        final int code = e.getKeyCode();
-        if (code != KeyEvent.VK_ENTER && code != KeyEvent.VK_F4) return;
-        Object source = e.getSource();
-        if (source instanceof JTree) {
-          JTree j = ((JTree) source);
-          final TreePath pathForLocation = j.getSelectionPath();
-
-          navigateToPath(pathForLocation);
-        }
-      }
-    };
-
-    final MouseListener m = new MouseAdapter() {
-      @Override
-      public void mousePressed(MouseEvent e) {
-        if (!e.isControlDown()) return;
-        Object source = e.getSource();
-        if (source instanceof JTree) {
-          JTree j = ((JTree) source);
-          final TreePath pathForLocation = j.getPathForLocation(e.getX(), e.getY());
-
-          navigateToPath(pathForLocation);
-        }
-      }
-    };
-
-    JTree [] treesToInstallNavigation = {myMemoryTree, mySamplesTree, myHotSpotsTree, myTraces, myReachableFromTree};
-    for(JTree tree:treesToInstallNavigation) {
-      tree.addKeyListener(k);
-      tree.addMouseListener(m);
-    }
 
     myMemoryTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
       public void valueChanged(TreeSelectionEvent e) {
@@ -399,22 +447,13 @@ public class ActionScriptProfileView extends ProfileView {
     });
   }
 
-  private void navigateToPath(TreePath pathForLocation) {
-    if (pathForLocation != null) {
-      final Object lastPathComponent = pathForLocation.getLastPathComponent();
-
-      if (lastPathComponent instanceof MergedPathNode ||
-          lastPathComponent instanceof MergedCallNode
-         ) {
-        new SampleLocationResolver(fixUserObjectStringForNode(lastPathComponent), getProject()).navigate();
-      } else if (lastPathComponent instanceof BackRefNode) {
-        CreateObjectSample objectSample = ((BackRefNode) lastPathComponent).getObjectSample();
-        new SampleLocationResolver(objectSample.frames[0],getProject()).navigate();
-      }
-    }
+  private static void setColumnWidth(TableColumn column, int newSize) {
+    column.setMinWidth(newSize);
+    column.setWidth(newSize);
+    column.setMaxWidth(newSize);
   }
 
-  private String fixUserObjectStringForNode(Object lastPathComponent) {
+  private static String fixUserObjectStringForNode(Object lastPathComponent) {
     String path = lastPathComponent.toString();
     if (path.endsWith("%") || lastPathComponent instanceof MergedCallNode) {
       path = path.substring(0, path.lastIndexOf(' ')); // skip % // TODO
@@ -424,7 +463,7 @@ public class ActionScriptProfileView extends ProfileView {
 
   private void reportProblem(final IOException ex) {
     if (ex != null) {
-      if (!(ex instanceof EOFException) && !myEOFReached) Logging.log(ex);
+      if (!(ex instanceof EOFException) && !myEOFReached) LOG.error(ex);
 
       Runnable runnable = new Runnable() {
         public void run() {
@@ -497,7 +536,7 @@ public class ActionScriptProfileView extends ProfileView {
   private void resetDependents(boolean b) {
     mySamplesTree.setEnabled(b);
     myMemoryTree.setEnabled(b);
-    myHotSpotsTree.setEnabled(b);
+    myHotSpotsTreeTable.setEnabled(b);
   }
 
   private void dumpCurrentData(final ProfileData data) {
@@ -507,8 +546,9 @@ public class ActionScriptProfileView extends ProfileView {
         return (samples.size() * 100) / data.profile.size();
       }
     };
-    buildSamples((DefaultTreeModel) treeModel, (DefaultMutableTreeNode) treeModel.getRoot(), false, data.profile, 0, sizeFunction);
-    buildSamples2((DefaultTreeModel) myHotSpotsTree.getModel(), data.profile);
+    buildSamples((DefaultTreeModel) treeModel, (DefaultMutableTreeNode) treeModel.getRoot(), false, data.profile, 0, sizeFunction, getCurrentScope());
+    buildPerformanceSamples(myHotSpotsTreeTable.getSortableTreeTableModel(), data.profile);
+    TreeUtil.expand(myHotSpotsTreeTable.getTree(), 1);
   }
 
   private void dumpMemory(final ProfileData data) {
@@ -558,7 +598,7 @@ public class ActionScriptProfileView extends ProfileView {
       DefaultMutableTreeNode classNode = new LazyNode() {
         @Override
         protected void doLoadChildren() {
-          buildSamples(memoryModel, this, true, s, 0, function);
+          buildSamples(memoryModel, this, true, s, 0, function, getCurrentScope());
         }
       };
       classNode.setUserObject(userObject);
@@ -583,7 +623,7 @@ public class ActionScriptProfileView extends ProfileView {
   }
 
   private static <T extends Sample> void buildSamples(final DefaultTreeModel model, final DefaultMutableTreeNode root, final boolean innermostFirst,
-                            Set<T> sampleSet, final int level, final Function<Set<T>, Integer> classifier) {
+                            Set<T> sampleSet, final int level, final Function<Set<T>, Integer> classifier, final GlobalSearchScope scope) {
     processSamples(sampleSet, new GroupHandler<T, String>() {
       public void process(final Map<String, Set<T>> data) {
         List<String> traces = new ArrayList<String>(data.keySet());
@@ -597,7 +637,7 @@ public class ActionScriptProfileView extends ProfileView {
         int index = 0;
         for (final String s : traces) {
           final Set<T> stackFrameSampleSet = data.get(s);
-          model.insertNodeInto(new MergedPathNode<T>(s, stackFrameSampleSet, model, innermostFirst, level, classifier), root, index++);
+          model.insertNodeInto(new MergedPathNode<T>(s, stackFrameSampleSet, model, innermostFirst, level, classifier, scope), root, index++);
         }
       }
 
@@ -627,7 +667,7 @@ public class ActionScriptProfileView extends ProfileView {
     dataHandler.process(stackFrame);
   }
 
-  private <T extends Sample> void buildSamples2(final DefaultTreeModel model, final Set<T> profile) {
+  private <T extends Sample> void buildPerformanceSamples(final DefaultTreeModel treeModel, final Set<T> profile) {
     final boolean skipSystemStuff = myFilterSystemStuff.isSelected();
     CallTree callTree = new CallTree();
     for(T sample : profile) {
@@ -638,44 +678,32 @@ public class ActionScriptProfileView extends ProfileView {
     final Map<String, Long> countMap = countMaps.getFirst();
     final Map<String, Long> selfCountMap = countMaps.getSecond();
 
-    fillTreeModelRoot(model, callTree, countMap, selfCountMap, true);
+    DefaultMutableTreeNode tracesRoot = (DefaultMutableTreeNode)treeModel.getRoot();
+    JTreeUtil.removeChildren(tracesRoot, treeModel);
+    fillTreeModelRoot(tracesRoot, callTree, countMap, selfCountMap, true, ArrayUtil.EMPTY_STRING_ARRAY);
+    treeModel.reload();
   }
-  
-  private <T extends Sample> void fillTreeModelRoot(DefaultTreeModel model,
-                                                      CallTree callTree,
-                                                      final Map<String, Long> countMap,
-                                                      final Map<String, Long> selfCountMap,
-                                                      boolean backTrace) {
-    fillTreeModelRoot(model, callTree, countMap, selfCountMap, backTrace, ArrayUtil.EMPTY_STRING_ARRAY);
-  }
-  
-  private <T extends Sample> void fillTreeModelRoot(DefaultTreeModel model,
+
+  private <T extends Sample> void fillTreeModelRoot(TreeNode node,
                                                     CallTree callTree,
                                                     final Map<String, Long> countMap,
                                                     final Map<String, Long> selfCountMap,
                                                     boolean backTrace,
                                                     String[] frames) {
-    final MutableTreeNode root = (MutableTreeNode) model.getRoot();
+    final MutableTreeNode root = (MutableTreeNode) node;
+    List<String> traces = scopeMatcher.fun(new ArrayList<String>(countMap.keySet()));
 
-
-    final SearchScope _selectedScope = filterScope.getSelectedScope();
-    GlobalSearchScope scope = _selectedScope instanceof GlobalSearchScope ?
-      (GlobalSearchScope) _selectedScope:GlobalSearchScope.allScope(getProject());
-
+    GlobalSearchScope scope = getCurrentScope();
     int index = 0;
-    for (final String s : countMap.keySet()) {
-      SampleLocationResolver.LocationInfo l = SampleLocationResolver.buildMethodInfo(s);
-      final PsiElement classByQName = JSResolveUtil.findClassByQName(l.clazz, scope);
-      boolean isAnonymous = "Function".equals(l.clazz) && "<anonymous>".equals(l.name);
-      if (classByQName == null && !isAnonymous) continue;
-      model.insertNodeInto(new MergedCallNode<T>(s, callTree, frames, countMap.get(s), selfCountMap.get(s), model, backTrace), root, index++);
+    for (final String s : traces) {
+      root.insert(new MergedCallNode<T>(new CallInfo(s, countMap.get(s), selfCountMap.get(s)), callTree, frames, backTrace, scope), index++);
     }
   }
 
   private void resetCpuUsageData() {
+    myHotSpotsTreeTable.removeAll();
+    myTracesTreeTable.removeAll();
     mySamplesTree.setModel(new DefaultTreeModel(new DefaultMutableTreeNode(), true));
-    myHotSpotsTree.setModel(new DefaultTreeModel(new DefaultMutableTreeNode(), true));
-    myTraces.setModel(new DefaultTreeModel(new DefaultMutableTreeNode(), true));
 
     Iterator<Sample> i = data.profile.iterator();
     while(i.hasNext()) {
@@ -711,16 +739,21 @@ public class ActionScriptProfileView extends ProfileView {
     return null;
   }
 
-  private static class MergedPathNode<T extends Sample> extends LazyNode {
+  private static class MergedPathNode<T extends Sample> extends LazyNode implements NavigatableDataProducer{
     private final Set<T> stackFrameSampleSet;
     private final DefaultTreeModel model;
     private final boolean innermostFirst;
     private final int level;
+    private final String trace;
+    private final GlobalSearchScope scope;
     private final Function<Set<T>, Integer> classifier;
+    private SampleLocationResolver samplLocationResolver;
 
     public MergedPathNode(String s, Set<T> stackFrameSampleSet, DefaultTreeModel model, boolean innermostFirst,
-                          int level, Function<Set<T>, Integer> classifier) {
+                          int level, Function<Set<T>, Integer> classifier, GlobalSearchScope scope) {
       setUserObject(s + " " + classifier.fun(stackFrameSampleSet) + "%");
+      trace = s;
+      this.scope = scope;
       this.stackFrameSampleSet = stackFrameSampleSet;
       this.model = model;
       this.innermostFirst = innermostFirst;
@@ -730,7 +763,15 @@ public class ActionScriptProfileView extends ProfileView {
 
     @Override
     protected void doLoadChildren() {
-      buildSamples(model, this, innermostFirst, stackFrameSampleSet, level + 1, classifier);
+      buildSamples(model, this, innermostFirst, stackFrameSampleSet, level + 1, classifier, scope);
+    }
+
+    @Override
+    public Navigatable getNavigatableData() {
+      if (samplLocationResolver == null) {
+        samplLocationResolver = new SampleLocationResolver(trace, scope);
+      }
+      return samplLocationResolver;
     }
   }
 
@@ -751,68 +792,22 @@ public class ActionScriptProfileView extends ProfileView {
     }
   }
 
-  private class MergedCallNode<T extends Sample> extends LazyNode {
-    private final CallTree callTree;
-    private final String[] callFrames;
-    private final String frame;
-    private final boolean backTrace;
-    private final DefaultTreeModel model;
-
-    public MergedCallNode(String frame, 
-                          CallTree callTree,
-                          String[] callFrames, 
-                          long cumulativeTime,
-                          long selfTime,
-                          DefaultTreeModel model, 
-                          boolean backTrace) {
-      setUserObject(frame + " " + (cumulativeTime/1000) + " " + (selfTime/1000));
-      this.frame = frame;
-      this.callTree = callTree;
-      this.callFrames = callFrames;
-      this.model = model;
-      this.backTrace = backTrace;
-    }
-
-    @Override
-    protected void doLoadChildren() {
-      String[] frames = Arrays.copyOf(callFrames, callFrames.length + 1);
-      frames[frames.length - 1] = frame;
-
-      Pair<Map<String, Long>, Map<String, Long>> countMaps;
-      if(backTrace){
-        countMaps = callTree.getCallersTimeMaps(frames);
-      } else {
-        countMaps = callTree.getCalleesTimeMaps(ArrayUtil.reverseArray(frames));
-      }
-      final Map<String, Long> countMap = countMaps.getFirst();
-      final Map<String, Long> selfCountMap = countMaps.getSecond();
-
-      final SearchScope _selectedScope = filterScope.getSelectedScope();
-      GlobalSearchScope scope = _selectedScope instanceof GlobalSearchScope ?
-        (GlobalSearchScope) _selectedScope:GlobalSearchScope.allScope(getProject());
-      int index = 0;
-      for (final String s : countMap.keySet()) {
-        SampleLocationResolver.LocationInfo l = SampleLocationResolver.buildMethodInfo(s);
-        final PsiElement classByQName = JSResolveUtil.findClassByQName(l.clazz, scope);
-        boolean isAnonymous = "Function".equals(l.clazz) && "<anonymous>".equals(l.name);
-        if (classByQName == null && !isAnonymous) continue;
-        model.insertNodeInto(new MergedCallNode<T>(s, callTree, frames, countMap.get(s), selfCountMap.get(s), model, backTrace), this, index++);
-      }
-    }
-  }
-
   private static String someShortLocationHint(CreateObjectSample s) {
+    if (s.frames == null || s.frames.length == 0) {
+      return "";
+    }
     String frame = s.frames[0];
     String locationHint = " (" + (frame.length() < 50 ? frame : frame.substring(0, 50) + "...") + ")";
-    if (Logging.is_debug) {
+    if (LOG.isDebugEnabled()) {
       locationHint += " #" + s.id;
     }
     return locationHint;
   }
 
-  private class BackRefNode extends LazyNode {
+  private class BackRefNode extends LazyNode implements NavigatableDataProducer {
     private final CreateObjectSample s;
     private final DefaultTreeModel treeModel;
+    private SampleLocationResolver sampleLocationResolver;
 
     public BackRefNode(CreateObjectSample s, DefaultTreeModel treeModel) {
       this(s, treeModel, s.className + " " + s.size +" bytes "+ someShortLocationHint(s));
@@ -838,6 +833,14 @@ public class ActionScriptProfileView extends ProfileView {
 
     public CreateObjectSample getObjectSample() {
       return s;
+    }
+
+    @Override
+    public Navigatable getNavigatableData() {
+      if (sampleLocationResolver == null) {
+        sampleLocationResolver = new SampleLocationResolver(getObjectSample().frames[0], ActionScriptProfileView.this.getCurrentScope());
+      }
+      return sampleLocationResolver;
     }
   }
 }

@@ -1,13 +1,20 @@
-package com.jetbrains.actionscript.profiler;
+package com.jetbrains.actionscript.profiler.model;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.ArrayUtil;
+import com.jetbrains.actionscript.profiler.sampler.CreateObjectSample;
+import com.jetbrains.actionscript.profiler.sampler.DeleteObjectSample;
+import com.jetbrains.actionscript.profiler.sampler.Sample;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * User: Maxim
@@ -15,6 +22,7 @@ import java.util.*;
  * Time: 23:38:08
  */
 public class ProfilingConnection {
+  private static final Logger LOG = Logger.getInstance(ProfilingConnection.class.getName());
   private ServerSocket myServerSocket;
   private ServerSocket myPolicyServerSocket;
   private OutputStream myOutputStream;
@@ -90,7 +98,7 @@ public class ProfilingConnection {
       if (abortedWaitingForConnection) {
         ex = new EOFException("aborted wait for connection");
       } else {
-        Logging.log(ex);
+        LOG.warn(ex);
       }
       myIoHandler.finished(null, ex);
       return;
@@ -98,7 +106,7 @@ public class ProfilingConnection {
 
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       public void run() {
-        ByteArrayOutputStream out = Logging.doStat ? new ByteArrayOutputStream():null;
+        ByteArrayOutputStream out = LOG.isDebugEnabled() ? new ByteArrayOutputStream():null;
         int bytesRead = 0;
         try {
           while(true) {
@@ -121,14 +129,14 @@ public class ProfilingConnection {
                 if (processingResult == PacketProcessor.ProcessingResult.FINISHED) myCurrentPacketProcessor = null;
                 if (processingResult == PacketProcessor.ProcessingResult.STOP) return;
               } else {
-                Logging.log("No processing:"+x);
+                LOG.warn("No processing:" + x);
               }
             } catch (Exception e) {
-              Logging.log(e);
+              LOG.error(e);
             }
           }
         } catch (IOException ex) {
-          Logging.log("Bytes read:"+bytesRead);
+          LOG.debug("Bytes read:" + bytesRead);
           myIoHandler.finished(null, ex);
           if (ex instanceof EOFException) {
             if (out != null) {
@@ -137,14 +145,14 @@ public class ProfilingConnection {
                 fileOutputStream.write(out.toByteArray());
                 fileOutputStream.close();
               } catch (IOException e) {
-                Logging.log(e);
+                LOG.warn(e);
               }
             }
             return;
           }
-          Logging.log(ex);
+          LOG.error(ex);
         } catch (Throwable t) {
-          Logging.log(t);
+          LOG.error(t);
         }
       }
     });
@@ -159,12 +167,12 @@ public class ProfilingConnection {
             final Socket socket = myPolicyServerSocket.accept();
             final OutputStream outputStream = socket.getOutputStream();
             outputStream.write(policyFileRequestAnswer(myPort).getBytes());
-            Logging.log("policy served from 843");
+            LOG.debug("policy served from 843");
             outputStream.close();
           }
         } catch (IOException e) {
           if(e instanceof SocketException && myAbortingSocketConnection) return;
-          if (myPolicyServerSocket != null) Logging.log(e); // myPolicyServerSocket == null is bind failed
+          if (myPolicyServerSocket != null) LOG.error(e); // myPolicyServerSocket == null is bind failed
         }
       }
     });
@@ -181,7 +189,7 @@ public class ProfilingConnection {
   }
 
   interface Callback {
-    void finished(String data, IOException ex);
+    void finished(@Nullable String data, IOException ex);
   }
 
   final LinkedList<Callback> callbacks = new LinkedList<Callback>();
@@ -246,7 +254,7 @@ public class ProfilingConnection {
     ProcessingResult process(String output) throws IOException {
       String s = policyFileRequestAnswer(myPort);
       synchronized (myOutputStream) {
-        Logging.log("policy served");     // TODO merge with FlexUnit code
+        LOG.debug("policy served");     // TODO merge with FlexUnit code
         myOutputStream.write(s.getBytes());
         myOutputStream.flush();
         connect();
@@ -338,7 +346,7 @@ public class ProfilingConnection {
         return maybeFinishSample();
       }
 
-      Logging.log("Unexpected:"+output);
+      LOG.warn("Unexpected:" + output);
 
       return ProcessingResult.FINISHED;
     }
@@ -403,8 +411,8 @@ public class ProfilingConnection {
 
     void startingPacket(String output) {
       if (output.startsWith(BATCH_MARKER)) {
-        if (Logging.doStat) {
-          Logging.stat(output + "," + System.currentTimeMillis() + ","+cpuSamples + "," + memorySamples);
+        if (LOG.isDebugEnabled()) {
+          LOG.debug(output + "," + System.currentTimeMillis() + "," + cpuSamples + "," + memorySamples);
         }
         memorySamples = 0;
         cpuSamples = 0;        
@@ -446,7 +454,7 @@ public class ProfilingConnection {
     @Override
     ProcessingResult process(String output) throws IOException {
       if (Integer.parseInt(output.substring(output.lastIndexOf(' ') + 1)) != ourAgentVersion) {
-        Logging.log("Version mismatch");
+        LOG.warn("Version mismatch");
         myIoHandler.finished(null, new AgentVersionMismatchProblem());
         myOutputStream.close();
         myInputStream.close();
@@ -455,7 +463,7 @@ public class ProfilingConnection {
     }
   }
 
-  private class SampleInfoProcessor extends PacketProcessor {
+  private static class SampleInfoProcessor extends PacketProcessor {
     public static final String COMMAND_MARKER = "si\0";
     private ProfilerDataConsumer myDataConsumer;
 

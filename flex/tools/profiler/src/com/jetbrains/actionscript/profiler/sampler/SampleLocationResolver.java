@@ -1,16 +1,17 @@
-package com.jetbrains.actionscript.profiler;
+package com.jetbrains.actionscript.profiler.sampler;
 
+import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
@@ -20,15 +21,15 @@ import java.io.File;
  * Date: 15.11.10
  * Time: 10:06
  */
-public class SampleLocationResolver {
+public class SampleLocationResolver implements Navigatable {
   private static final int UNKNOWN_LINE = -1;
-  private VirtualFile resolvedFile;
+  private @Nullable VirtualFile resolvedFile;
   private int resolvedLine = UNKNOWN_LINE;
-  private PsiElement resolvedElement;
-  private Project project;
+  private @Nullable PsiElement resolvedElement;
+  private final GlobalSearchScope scope;
 
-  SampleLocationResolver(String path, Project project) {
-    this.project = project;
+  public SampleLocationResolver(String path, GlobalSearchScope scope) {
+    this.scope = scope;
     String s = path;
     boolean resolved = false;
     int line = UNKNOWN_LINE;
@@ -58,7 +59,7 @@ public class SampleLocationResolver {
         if (className.length() > 0) className += ".";
         className += filename.substring(0, filename.indexOf('.'));
 
-        PsiElement element = JSResolveUtil.findClassByQName(className, GlobalSearchScope.allScope(project));
+        PsiElement element = JSResolveUtil.findClassByQName(className, scope);
         if (element != null) element = element.getNavigationElement();
         if (element != null && element.isWritable()) {
           relativeFile = element.getContainingFile().getVirtualFile();
@@ -77,22 +78,25 @@ public class SampleLocationResolver {
     if (!resolved) { // resolve via qname package::Class/((get|set) )?method name()
       LocationInfo locationInfo = buildMethodInfo(path);
 
-      PsiElement element = JSResolveUtil.findClassByQName(locationInfo.clazz, GlobalSearchScope.allScope(project));
-      if (element != null) element = element.getNavigationElement();
-
-      if (element instanceof JSClass) {
-        final JSClass aClass = (JSClass) element;
-        final JSFunction fun = locationInfo.kind != null ?
-          aClass.findFunctionByNameAndKind(locationInfo.name, locationInfo.kind) :
-          aClass.findFunctionByName(locationInfo.name);
-        if (fun != null) element = fun;
+      PsiElement element = JSResolveUtil.findClassByQName(locationInfo.clazz, scope);
+      if (element instanceof XmlBackedJSClassImpl) {
+        final PsiElement candidateElement = locationInfo.findFunctionOrField((XmlBackedJSClassImpl)element);
+        if (candidateElement != null) element = candidateElement;
+      }
+      else {
+        if (element != null) element = element.getNavigationElement();
+        if (element instanceof JSClass) {
+          final PsiElement candidateElement = locationInfo.findFunctionOrField((JSClass)element);
+          if (candidateElement != null) element = candidateElement;
+        }
       }
 
       if (element instanceof Navigatable) {
         if (line != UNKNOWN_LINE) {
           this.resolvedLine = line;
           resolvedFile = element.getContainingFile().getVirtualFile();
-        } else {
+        }
+        else {
           resolvedElement = element;
         }
       }
@@ -101,7 +105,27 @@ public class SampleLocationResolver {
 
   private final static String[] suffixes = {"$", "$cinit()"};
 
-  static LocationInfo buildMethodInfo(String s) {
+  @Override
+  public void navigate(boolean requestFocus) {
+    if (resolvedElement != null) {
+      ((Navigatable)resolvedElement).navigate(true);
+    }
+    else if (resolvedFile != null) {
+      new OpenFileDescriptor(scope.getProject(), resolvedFile, resolvedLine, 0).navigate(true);
+    }
+  }
+
+  @Override
+  public boolean canNavigate() {
+    return canNavigateToSource();
+  }
+
+  @Override
+  public boolean canNavigateToSource() {
+    return resolvedElement != null || resolvedFile != null;
+  }
+
+  public static LocationInfo buildMethodInfo(String s) {
     int i = s.indexOf('[');
     if (i != -1) s = s.substring(0, i);
     final int packageEnd = s.indexOf("::");
@@ -109,7 +133,7 @@ public class SampleLocationResolver {
     String qName = methodNameStart != -1 ? s.substring(0, methodNameStart) : s;
     qName = StringUtil.replace(qName, "::", ".");
 
-    for(String suffix:suffixes) {
+    for (String suffix : suffixes) {
       if (qName.endsWith(suffix)) {
         qName = qName.substring(0, qName.length() - suffix.length());
         break;
@@ -134,7 +158,9 @@ public class SampleLocationResolver {
 
       if (possibleGetSet != -1) {
         String getOrSet = s.substring(oldMethodStart, possibleGetSet);
-        if ("get".equals(getOrSet)) kind = JSFunction.FunctionKind.GETTER;
+        if ("get".equals(getOrSet)) {
+          kind = JSFunction.FunctionKind.GETTER;
+        }
         else if ("set".equals(getOrSet)) kind = JSFunction.FunctionKind.SETTER;
       }
 
@@ -147,7 +173,7 @@ public class SampleLocationResolver {
     return new LocationInfo(qName, null, null, null);
   }
 
-  static class LocationInfo {
+  public static class LocationInfo {
     final String clazz;
     final String name;
     final JSFunction.FunctionKind kind;
@@ -159,12 +185,30 @@ public class SampleLocationResolver {
       kind = _kind;
       namespace = _namespace;
     }
-  }
 
-  void navigate() {
-    if (resolvedElement != null) ((Navigatable)resolvedElement).navigate(true);
-    else if (resolvedFile != null) {
-      new OpenFileDescriptor(project, resolvedFile, resolvedLine, 0).navigate(true);
+    public String getClazz() {
+      return clazz;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    @Nullable
+    public PsiElement findFunctionOrField(JSClass clazz) {
+      PsiElement result = kind != null ? clazz.findFunctionByNameAndKind(name, kind) : clazz.findFunctionByName(name);
+      if (result == null && (kind == JSFunction.FunctionKind.GETTER || kind == JSFunction.FunctionKind.SETTER)) {
+        //generated getter/setter in case of binding
+        result = clazz.findFieldByName(name);
+      }
+      if (result == null && name != null && name.startsWith("__")) {
+        //generated handler
+        int i = name.lastIndexOf('_');
+        if (i > 2) {
+          result = clazz.findFieldByName(name.substring(2, i));
+        }
+      }
+      return result;
     }
   }
 }

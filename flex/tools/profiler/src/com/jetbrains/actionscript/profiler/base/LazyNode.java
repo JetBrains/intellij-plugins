@@ -1,4 +1,4 @@
-package com.jetbrains.actionscript.profiler;
+package com.jetbrains.actionscript.profiler.base;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;

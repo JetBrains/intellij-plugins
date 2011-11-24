@@ -79,7 +79,7 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="71197" class="javax.swing.JTree" binding="mySamplesTree">
+                  <component id="71197" class="com.jetbrains.actionscript.profiler.base.NavigatableTree" binding="mySamplesTree">
                     <constraints/>
                     <properties/>
                   </component>
@@ -115,7 +115,7 @@
                     <properties/>
                     <border type="none"/>
                     <children>
-                      <component id="37260" class="javax.swing.JTree" binding="myHotSpotsTree" custom-create="true">
+                      <component id="37260" class="com.jetbrains.actionscript.profiler.calltreetable.CallTreeTable" binding="myHotSpotsTreeTable" custom-create="true">
                         <constraints/>
                         <properties/>
                       </component>
@@ -128,7 +128,7 @@
                     <properties/>
                     <border type="none"/>
                     <children>
-                      <component id="93eb" class="javax.swing.JTree" binding="myTraces">
+                      <component id="93eb" class="com.jetbrains.actionscript.profiler.calltreetable.CallTreeTable" binding="myTracesTreeTable">
                         <constraints/>
                         <properties/>
                       </component>
@@ -205,7 +205,7 @@
                     <properties/>
                     <border type="none"/>
                     <children>
-                      <component id="a0bd" class="javax.swing.JTree" binding="myMemoryTree">
+                      <component id="a0bd" class="com.jetbrains.actionscript.profiler.base.NavigatableTree" binding="myMemoryTree">
                         <constraints/>
                         <properties/>
                       </component>
@@ -226,7 +226,7 @@
                         <properties/>
                         <border type="none"/>
                         <children>
-                          <component id="c5429" class="javax.swing.JTree" binding="myReachableFromTree">
+                          <component id="c5429" class="com.jetbrains.actionscript.profiler.base.NavigatableTree" binding="myReachableFromTree">
                             <constraints/>
                             <properties/>
                           </component>
