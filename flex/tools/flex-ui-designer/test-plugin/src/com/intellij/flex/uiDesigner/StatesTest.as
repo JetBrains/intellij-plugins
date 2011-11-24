@@ -40,7 +40,7 @@ public class StatesTest extends BaseTestCase {
   private var _states:Array;
   private function get states():Array {
     if (_states == null) {
-      _states = documentManager.document.uiComponent.states;
+      _states = document.uiComponent.states;
     }
     
     return _states;
@@ -95,21 +95,21 @@ public class StatesTest extends BaseTestCase {
   }
   
   public function TwoStatesWithParentByExplicitIdWithBackSiblingByExplicitId():void {
-    var states:Array = documentManager.document.uiComponent.states;
+    var states:Array = document.uiComponent.states;
     assertTwoStates(states);
 
     assertTwoStatesWithForm("loginForm", "username");
   }
   
   public function TwoStatesWithParentWithBackSiblingByExplicitId():void {
-    var states:Array = documentManager.document.uiComponent.states;
+    var states:Array = document.uiComponent.states;
     assertTwoStates(states);
 
     assertTwoStatesWithForm(null, "username");
   }
   
   public function TwoStatesWithParentWithBackSibling():void {
-    var states:Array = documentManager.document.uiComponent.states;
+    var states:Array = document.uiComponent.states;
     assertTwoStates(states);
 
     assertTwoStatesWithForm(null, null);

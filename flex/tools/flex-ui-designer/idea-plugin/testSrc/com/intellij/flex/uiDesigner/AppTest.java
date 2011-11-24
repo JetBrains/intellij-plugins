@@ -2,16 +2,14 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.concurrency.Semaphore;
-import com.intellij.util.messages.MessageBusConnection;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -20,40 +18,25 @@ import java.net.SocketException;
 public class AppTest extends AppTestBase {
   private static final int APP_TEST_CLASS_ID = 3;
 
-  private MessageBusConnection connection;
   private final Info info = new Info();
 
   @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-
-    final MySocketInputHandler socketInputHandler = (MySocketInputHandler)SocketInputHandler.getInstance();
-    socketInputHandler.info = info;
+  protected void changeServicesImplementation() {
+    Tests.changeDesignerServiceImplementation(SocketInputHandler.class, MySocketInputHandler.class);
+    Tests.changeDesignerServiceImplementation(Client.class, TestClient.class);
   }
   
   private VirtualFile open(String relativeFile) throws Exception {
     VirtualFile file = configureByFile(getSource(relativeFile));
-
-    info.semaphore.down();
-    assert connection == null;
-    connection = ApplicationManager.getApplication().getMessageBus().connect();
-    //connection.subscribe(DesignerApplicationManager.MESSAGE_TOPIC, new DesignerApplicationListener() {
-    //  @Override
-    //  public void initialDocumentOpened() {
-    //    info.semaphore.up();
-    //  }
-    //
-    //  @Override
-    //  public void applicationClosed() {
-    //  }
-    //});
-
-    DesignerApplicationManager.getInstance().openDocument(myModule, (XmlFile)file, false);
-    await();
-
+    openAndWait(file, relativeFile);
     return file;
   }
-  
+
+  @Override
+  protected void applicationLaunchedAndInitialized() {
+    ((MySocketInputHandler)SocketInputHandler.getInstance()).info = info;
+  }
+
   private void await() throws InterruptedException {
     //assertTrue(info.semaphore.waitForUnsafe());
     info.semaphore.waitForUnsafe();
@@ -61,7 +44,7 @@ public class AppTest extends AppTestBase {
   
   private void callClientAssert(String methodName) throws IOException, InterruptedException {
     info.semaphore.down();
-    TestClient.test(Client.getInstance(), methodName.equals("close") ? null : myModule, methodName, APP_TEST_CLASS_ID);
+    client.test(methodName.equals("close") ? null : myModule, methodName, APP_TEST_CLASS_ID);
     await();
     if (info.fail.get()) {
       fail();
@@ -69,57 +52,67 @@ public class AppTest extends AppTestBase {
     info.fail.set(false);
   }
 
-  public void _testCloseAndOpenProject() throws Exception {
+  public void testCloseAndOpenProject() throws Exception {
     open("injectedAS/Transitions.mxml");
-
-    DesignerApplicationManager designerAppManager = DesignerApplicationManager.getInstance();
-    //designerAppManager.projectManagerListener.projectClosed(myProject);
-
-    callClientAssert("close");
   }
 
-  public void _testUpdateDocumentOnIdeaAutoSave() throws Exception {
-    VirtualFile file = open("states/SetProperty.mxml");
+  public void testUpdateDocumentOnIdeaAutoSave() throws Exception {
+    final String relativePath = "states/SetProperty.mxml";
+    final VirtualFile file = open(relativePath);
 
     final Document document = FileDocumentManager.getInstance().getDocument(file);
-    AccessToken token = WriteAction.start();
+    assert document != null;
+    final AccessToken token = WriteAction.start();
     try {
-      assert document != null;
       document.insertString(254, "A");
     }
     finally {
       token.finish();
     }
 
-    PsiDocumentManager.getInstance(myProject).commitAllDocuments();
+    info.semaphore.down();
+    client.test(myModule, "SetProperty", Tests.INFORM_DOCUMENT_OPENED);
+    socketInputHandler.setCustomMessageHandler(new MyCustomMessageHandler());
 
-    final DesignerApplicationManager designerApplicationManager = DesignerApplicationManager.getInstance();
-    designerApplicationManager.openDocument(myModule, (XmlFile)file, false);
-    while (designerApplicationManager.isDocumentOpening()) {
-      Thread.sleep(8); // todo event about document opened
-    }
-    
+    PsiDocumentManager.getInstance(myProject).commitAllDocuments();
+    DesignerApplicationManager.getInstance().openDocument(myModule, Tests.virtualToPsi(myProject, file), false);
+    await();
     callClientAssert(getTestName(false));
+  }
+
+  private void openAndWait(VirtualFile file, @Nullable String relativePath) throws InterruptedException, IOException {
+    info.semaphore.down();
+
+    if (relativePath != null) {
+      client.test(myModule, relativePath, Tests.INFORM_DOCUMENT_OPENED);
+    }
+    socketInputHandler.setCustomMessageHandler(new MyCustomMessageHandler());
+
+    DesignerApplicationManager.getInstance().openDocument(myModule, Tests.virtualToPsi(myProject, file), false);
+    await();
   }
   
   @Override
   protected void tearDown() throws Exception {
     try {
-      DesignerApplicationManager.getInstance().dispose();
-
-      StringRegistry.getInstance().reset();
-
-      if (connection != null) {
-        connection.disconnect();
+      super.tearDown();
+      if (getName().equals("testCloseAndOpenProject")) {
+        callClientAssert("close");
       }
     }
     finally {
-      super.tearDown();
+      DesignerApplicationManager.getInstance().disposeApplication();
+      StringRegistry.getInstance().reset();
     }
   }
 
   private static class MySocketInputHandler extends TestSocketInputHandler {
     private Info info;
+
+    @Override
+    protected boolean processOnRead() {
+      return true;
+    }
 
     @Override
     protected boolean processCommand(int command) throws IOException {
@@ -147,5 +140,12 @@ public class AppTest extends AppTestBase {
   private static class Info {
     private final Semaphore semaphore = new Semaphore();
     private final Ref<Boolean> fail = new Ref<Boolean>(false);
+  }
+
+  private class MyCustomMessageHandler extends TestSocketInputHandler.CustomMessageHandler {
+    @Override
+    public void process() throws IOException {
+      info.semaphore.up();
+    }
   }
 }

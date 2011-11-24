@@ -1,5 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.flex.uiDesigner.libraries.LibraryManager;
+import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
@@ -8,6 +10,8 @@ import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.progress.EmptyProgressIndicator;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
@@ -21,15 +25,20 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.xml.XmlFile;
 import junit.framework.AssertionFailedError;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
+  protected TestClient client;
+  protected TestSocketInputHandler socketInputHandler;
+
   protected String flexSdkRootPath;
   protected Sdk sdk;
   protected final List<Pair<VirtualFile, VirtualFile>> libs = new ArrayList<Pair<VirtualFile, VirtualFile>>();
@@ -38,14 +47,10 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
     return "common";
   }
   
-  protected final String getTestPath() {
-    return getTestDataPath() + "/src/" + getSourceBasePath();
-  }
-  
   private VirtualFile testDir;
   protected final VirtualFile getTestDir() {
     if (testDir == null) {
-      testDir = LocalFileSystem.getInstance().findFileByPath(getTestPath());
+      testDir = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + "/src/" + getSourceBasePath());
     }
 
     return testDir;
@@ -67,7 +72,7 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
   }
   
   private void doSetupFlexSdk(final Module module, final String flexSdkRootPath, final boolean air, final String sdkVersion) {
-    AccessToken token = WriteAction.start();
+    final AccessToken token = WriteAction.start();
     try {
       final String sdkName = generateSdkName(sdkVersion, air);
       sdk = ProjectJdkTable.getInstance().findJdk(sdkName);
@@ -165,6 +170,78 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
     }
     catch (NoSuchMethodException e) {
       throw new AssertionFailedError(e.getMessage());
+    }
+  }
+
+  protected void assertAfterInitLibrarySets(List<XmlFile> unregisteredDocumentReferences) throws IOException {
+  }
+
+  protected VirtualFile[] configureByFiles(@Nullable VirtualFile rawProjectRoot,
+                                           VirtualFile[] files,
+                                           @Nullable VirtualFile[] auxiliaryFiles) throws Exception {
+    final VirtualFile[] sourceFiles = super.configureByFiles(rawProjectRoot, files, auxiliaryFiles);
+    launchAndInitializeApplication();
+    return sourceFiles;
+  }
+
+  private void launchAndInitializeApplication() throws Exception {
+    if (DesignerApplicationManager.getInstance().isApplicationClosed()) {
+      changeServicesImplementation();
+
+      new DesignerApplicationLauncher(myModule, false, new DesignerApplicationLauncher.PostTask() {
+        @Override
+        public boolean run(ProjectDocumentReferenceCounter projectDocumentReferenceCounter,
+                           ProgressIndicator indicator,
+                           ProblemsHolder problemsHolder) {
+          assertTrue(DocumentProblemManager.getInstance().toString(problemsHolder.getProblems()), problemsHolder.isEmpty());
+
+          client = (TestClient)Client.getInstance();
+          client.flush();
+
+          try {
+            assertAfterInitLibrarySets(projectDocumentReferenceCounter.unregistered);
+          }
+          catch (IOException e) {
+            throw new AssertionError(e);
+          }
+
+          return true;
+        }
+
+        @Override
+        public void end() {
+        }
+      }).run(new EmptyProgressIndicator());
+    }
+    else {
+      client = (TestClient)Client.getInstance();
+      final ProblemsHolder problemsHolder = new ProblemsHolder();
+      ProjectDocumentReferenceCounter
+        projectDocumentReferenceCounter =
+        LibraryManager.getInstance().initLibrarySets(myModule, isRequireLocalStyleHolder(), problemsHolder);
+      assertTrue(problemsHolder.isEmpty());
+      assertAfterInitLibrarySets(projectDocumentReferenceCounter.unregistered);
+    }
+
+    socketInputHandler = (TestSocketInputHandler)SocketInputHandler.getInstance();
+    applicationLaunchedAndInitialized();
+  }
+
+  protected abstract void changeServicesImplementation();
+
+  protected void applicationLaunchedAndInitialized() {
+
+  }
+
+  @Override
+  protected void tearDown() throws Exception {
+    if (client != null) {
+      try {
+        client.closeProject(myProject);
+      }
+      finally {
+        super.tearDown();
+      }
     }
   }
 }

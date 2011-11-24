@@ -12,7 +12,7 @@
       super.createChildren();
 
       var editorTabViewContentInsets:Insets = TabViewSkin(editorTabView.skin).contentInsets;
-      editorToolbar.skin.move(editorTabViewContentInsets.left, 28 + 25 /* tab title bar */);
+      editorToolbar.skin.move(editorTabViewContentInsets.left, 25 /* tab title bar */);
     }
 
     override protected function measure():void {
@@ -20,8 +20,9 @@
     }
 
     override protected function updateDisplayList(w:Number, h:Number):void {
-      var topToolbarHeight:Number = 28;
-      toolbar.skin.setActualSize(w, topToolbarHeight);
+      //var topToolbarHeight:Number = 28;
+      var topToolbarHeight:Number = 0;
+      //toolbar.skin.setActualSize(w, topToolbarHeight);
 
       var editorTabViewUI:IUIComponent = editorTabView.skin;
 
@@ -46,7 +47,7 @@
     }
     ]]></fx:Script>
 
-  <Toolbar id="toolbar" height="28"/>
+  <!--<Toolbar id="toolbar" height="28"/>-->
   <TabView id="editorTabView" lafSubkey="ProjectView"/>
   <Toolbar id="editorToolbar" height="25" lafSubkey="Editor" small="true">
     <layout>

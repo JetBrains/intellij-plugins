@@ -44,7 +44,7 @@ public class UITest extends MxmlTestBase {
     if (roboflest == null) {
       roboflest = new Roboflest();
       reader = socketInputHandler.getReader();
-      client.test(myModule, "getStageOffset", UI_TEST_CLASS_ID);
+      client.test(myModule, Tests.GET_STAGE_OFFSET);
       socketInputHandler.process(new TestSocketInputHandler.CustomMessageHandler() {
         @Override
         public void process() throws IOException {
@@ -100,11 +100,8 @@ public class UITest extends MxmlTestBase {
     testFile(new MyTester("closeDocument", new UIMessageHandler(ServerMethod.UNREGISTER_DOCUMENT_FACTORIES) {
       @Override
       public void process() throws IOException {
-        assertMyProject();
-        assertThat(reader.readIntArray(), 0);
-
+        assertThat(reader.readIntArray(), DocumentFactoryManager.getInstance().getId(file));
         assertNotAvailable();
-
         assertClient();
       }
     }) {

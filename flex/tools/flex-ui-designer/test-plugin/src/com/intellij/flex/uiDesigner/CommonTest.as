@@ -76,7 +76,7 @@ public class CommonTest extends BaseTestCase {
   }
   
   public function ItemRendererAndMixDefaultExplicitContent():void {
-    var buttonBarButtonClass:Class = documentManager.document.module.context.getClass("spark.components.ButtonBarButton");
+    var buttonBarButtonClass:Class = document.module.context.getClass("spark.components.ButtonBarButton");
     var m:Object = {itemRenderer: {generator: buttonBarButtonClass}};
     assertThat(app, [{}, {itemRenderer: {className: "AuxProjectMxmlItemRenderer"}}, m, m]);
   }
@@ -132,8 +132,8 @@ public class CommonTest extends BaseTestCase {
 
   [Test(nullableDocument)]
   public function RuntimeErrorInMxmlRead():void {
-    if (documentManager.document != null) {
-      assertThat(documentManager.document.file.name, not("RuntimeErrorInMxmlRead.mxml"));
+    if (document != null) {
+      assertThat(document.file.name, not("RuntimeErrorInMxmlRead.mxml"));
     }
   }
 
@@ -155,7 +155,7 @@ public class CommonTest extends BaseTestCase {
   }
 
   public function ProjectMxmlComponentAsChild():void {
-    assertThat(app, [allOf({name: "IDEA-73453"}, [{text: "Label in child custom mxml component"}])]);
+    assertThat(app, [allOf({name: "IDEA-73453"}, [l("Label in child custom mxml component")])]);
   }
 
   public function FxVector():void {
@@ -202,6 +202,10 @@ public class CommonTest extends BaseTestCase {
 
   public function ProjectMxmlComponentAsParentWithDefaultProperty():void {
     assertThat(app, [l("h")]);
+  }
+
+  public function ProjectComponentAsGrandChild():void {
+    assertThat(app, [[[l("Label in child custom mxml component")]]]);
   }
 }
 }

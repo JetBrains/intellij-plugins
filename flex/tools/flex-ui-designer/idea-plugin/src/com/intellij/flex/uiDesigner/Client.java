@@ -4,6 +4,7 @@ import com.intellij.flex.uiDesigner.abc.AssetClassPoolGenerator;
 import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.flex.uiDesigner.libraries.*;
 import com.intellij.flex.uiDesigner.mxml.MxmlWriter;
+import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -422,14 +423,14 @@ public class Client implements Disposable {
 
     out.write(flags);
 
-    Pair<List<XmlFile>, List<RangeMarker>> result =
+    Pair<ProjectDocumentReferenceCounter, List<RangeMarker>> result =
       new MxmlWriter(out, problemsHolder, registeredModules.getInfo(module).getFlexLibrarySet().assetCounterInfo.demanded).write(psiFile);
     if (result == null) {
       return false;
     }
 
     documentInfo.setRangeMarkers(result.second);
-    return result.first.isEmpty() || registerDocumentReferences(result.first, module, problemsHolder);
+    return result.first.unregistered.isEmpty() || registerDocumentReferences(result.first.unregistered, module, problemsHolder);
   }
 
   public boolean registerDocumentReferences(List<XmlFile> files, Module module, ProblemsHolder problemsHolder) {

@@ -1,5 +1,8 @@
 package com.intellij.flex.uiDesigner.io;
 
+import gnu.trove.TIntArrayList;
+import gnu.trove.TIntProcedure;
+
 import java.util.Collection;
 
 public class AmfOutputStream extends PrimitiveAmfOutputStream {
@@ -40,6 +43,19 @@ public class AmfOutputStream extends PrimitiveAmfOutputStream {
     for (int i : array) {
       writeInt(i);
     }
+  }
+
+  public void write(TIntArrayList array) {
+    write(Amf3Types.VECTOR_INT);
+    writeUInt29((array.size() << 1) | 1);
+    write(true);
+    array.forEach(new TIntProcedure() {
+      @Override
+      public boolean execute(int value) {
+        writeInt(value);
+        return true;
+      }
+    });
   }
 
   /**

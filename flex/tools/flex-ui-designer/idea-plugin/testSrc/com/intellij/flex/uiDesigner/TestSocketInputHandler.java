@@ -2,9 +2,7 @@ package com.intellij.flex.uiDesigner;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 class TestSocketInputHandler extends SocketInputHandlerImpl {
   private String expectedError;
@@ -29,12 +27,18 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
   }
 
   @Override
-  public void read(@NotNull InputStream inputStream, @NotNull File appDir) throws IOException {
-    init(inputStream, appDir);
-    // skip process
+  protected boolean processOnRead() {
+    return false;
+  }
+
+  public void setCustomMessageHandler(@NotNull MessageHandler customMessageHandler) {
+    assert this.customMessageHandler == null;
+    this.customMessageHandler = customMessageHandler;
   }
 
   public void process(MessageHandler customMessageHandler) throws IOException {
+    assert !processOnRead();
+
     this.customMessageHandler = customMessageHandler;
     process();
     if (this.customMessageHandler != null) {

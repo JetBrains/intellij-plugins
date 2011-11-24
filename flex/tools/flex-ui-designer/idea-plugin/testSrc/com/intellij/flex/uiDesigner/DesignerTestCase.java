@@ -26,14 +26,12 @@ public class DesignerTestCase extends LightPlatformTestCase {
     return FlexModuleType.getInstance();
   }
 
-  //@Override
-  //protected Sdk getProjectJDK() {
-  //  final String flexVersion = getFlexVersion();
-  //  return getOrCeateFlexSdk(DebugPathManager.getTestDataPath() + "/lib/flex-sdk/" + flexVersion, true,
-  //    flexVersion + "." + (flexVersion.equals("4.1") ? "16076" : "20967"));
-  //}
-
-
+  @Override
+  protected Sdk getProjectJDK() {
+    final String flexVersion = getFlexVersion();
+    return getOrCeateFlexSdk(DebugPathManager.getTestDataPath() + "/lib/flex-sdk/" + flexVersion, true,
+      flexVersion + "." + (flexVersion.equals("4.1") ? "16076" : "20967"));
+  }
 
   public void testF() {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {

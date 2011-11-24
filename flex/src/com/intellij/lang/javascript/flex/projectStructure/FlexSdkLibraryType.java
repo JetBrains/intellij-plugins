@@ -4,13 +4,18 @@ import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FilteringLibraryRootsComponentDescriptor;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.libraries.LibraryType;
+import com.intellij.openapi.roots.libraries.LibraryTypeService;
+import com.intellij.openapi.roots.libraries.NewLibraryConfiguration;
 import com.intellij.openapi.roots.libraries.ui.LibraryEditorComponent;
 import com.intellij.openapi.roots.libraries.ui.LibraryPropertiesEditor;
 import com.intellij.openapi.roots.libraries.ui.LibraryRootsComponentDescriptor;
 import com.intellij.openapi.roots.ui.configuration.FacetsProvider;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -27,6 +32,13 @@ public class FlexSdkLibraryType extends LibraryType<FlexSdkProperties> {
   @Override
   public String getCreateActionName() {
     return "Flex SDK";
+  }
+
+  @Override
+  public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent,
+                                                  @Nullable VirtualFile contextDirectory,
+                                                  @NotNull Project project) {
+    return LibraryTypeService.getInstance().createLibraryFromFiles(createLibraryRootsComponentDescriptor(), parentComponent, contextDirectory, this, project);
   }
 
   @NotNull
@@ -56,6 +68,7 @@ public class FlexSdkLibraryType extends LibraryType<FlexSdkProperties> {
   }
 
   @Override
+  @NotNull
   public LibraryRootsComponentDescriptor createLibraryRootsComponentDescriptor() {
     return new FilteringLibraryRootsComponentDescriptor(
       FlexLibraryType.getInstance().createLibraryRootsComponentDescriptor(), FlexSdk.EDITABLE_ROOT_TYPES);

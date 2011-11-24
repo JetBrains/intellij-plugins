@@ -251,7 +251,7 @@ public class Encoder {
     }
 
     int nativeName = in.readU32();
-    methodInfo.writeU32((disableDebugging) ? 0 : history.getIndex(IndexHistory.STRING, nativeName));
+    methodInfo.writeU32(disableDebugging ? 0 : history.getIndex(IndexHistory.STRING, nativeName));
 
     int flags = in.readU8();
     if (disableDebugging) {

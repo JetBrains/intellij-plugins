@@ -103,6 +103,8 @@
     <gotoSymbolContributor implementation="com.intellij.javascript.flex.mxml.FlexXmlBackedSymbolContributor"/>
     <annotator language="XML" implementationClass="com.intellij.javascript.flex.mxml.FlexMxmlColorAnnotator"/>
 
+    <internalFileTemplate name="ActionScript Class"/>
+    <internalFileTemplate name="ActionScript Interface"/>
     <internalFileTemplate name="Mxml Component (Flex 3)"/>
     <internalFileTemplate name="Mxml Component (Flex 4)"/>
     <liveTemplateContext implementation="com.intellij.lang.javascript.ActionScriptCodeContextType"/>

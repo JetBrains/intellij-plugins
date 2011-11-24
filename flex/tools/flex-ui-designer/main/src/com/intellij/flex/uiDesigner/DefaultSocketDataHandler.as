@@ -118,6 +118,10 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     var bytes:ByteArray = new ByteArray();
     var documentFactory:DocumentFactory = new DocumentFactory(input.readUnsignedShort(), bytes, VirtualFileImpl.create(input),
                                                               AmfUtil.readString(input), input.readUnsignedByte(), module);
+
+    if (input.readBoolean()) {
+      documentFactory.documentReferences = input.readObject();
+    }
     getDocumentFactoryManager().register(documentFactory);
 
     stringRegistry.readStringTable(input);
@@ -127,9 +131,12 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
   private function updateDocumentFactory(input:IDataInput, messageSize:int):void {
     const prevBytesAvailable:int = input.bytesAvailable;
     var documentFactory:DocumentFactory = getDocumentFactoryManager().get(input.readUnsignedShort());
-
     AmfUtil.readString(input);
     input.readUnsignedByte(); // todo isApp update document styleManager
+
+    if (input.readBoolean()) {
+      documentFactory.documentReferences = input.readObject();
+    }
     
     stringRegistry.readStringTable(input);
 
@@ -162,20 +169,22 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
   
   private function updateDocuments(input:IDataInput):void {
     var module:Module = moduleManager.getById(input.readUnsignedShort());
-    var documentFactory:DocumentFactory = getDocumentFactoryManager().get(input.readUnsignedShort());
+    var documentFactoryManager:DocumentFactoryManager = getDocumentFactoryManager();
+    var documentFactory:DocumentFactory = documentFactoryManager.get(input.readUnsignedShort());
     var documentManager:DocumentManager = getDocumentManager(module);
     // not set projectManager.project — current project is not changed (opposite to openDocument)
-    openDocumentsForFactory(documentFactory, documentManager);
+    openDocumentsForFactory(documentFactory, documentManager, documentFactoryManager);
   }
 
-  private static function openDocumentsForFactory(documentFactory:DocumentFactory, documentManager:DocumentManager):void {
+  private static function openDocumentsForFactory(documentFactory:DocumentFactory, documentManager:DocumentManager,
+                                                  documentFactoryManager:DocumentFactoryManager):void {
     if (documentFactory.document != null) {
       documentManager.open(documentFactory);
     }
 
-    if (documentFactory.users != null) {
-      for each (var user:DocumentFactory in documentFactory.users) {
-        openDocumentsForFactory(user, documentManager);
+    if (documentFactory.documentReferences != null) {
+      for each (var id:int in documentFactory.documentReferences) {
+        openDocumentsForFactory(documentFactoryManager.get(id), documentManager, documentFactoryManager);
       }
     }
   }

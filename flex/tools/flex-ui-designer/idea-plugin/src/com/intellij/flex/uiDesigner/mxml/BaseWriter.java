@@ -115,8 +115,30 @@ final class BaseWriter {
     return context == null ? preallocateIdIfNeed() : context.getOrAllocateId();
   }
 
-  public void endMessage() throws IOException {
-    blockOut.beginWritePrepended(stringWriter.size() + IOUtil.uint29SizeOf(rootScope.referenceCounter), startPosition);
+  public void endMessage(ProjectDocumentReferenceCounter projectDocumentReferenceCounter) throws IOException {
+    final int documentReferenceSize;
+    if (projectDocumentReferenceCounter.total.isEmpty()) {
+      documentReferenceSize = 1;
+    }
+    else {
+      documentReferenceSize = 1 + 1 +
+                              IOUtil.uint29SizeOf((projectDocumentReferenceCounter.total.size() << 1) | 1) +
+                              1 +
+                              projectDocumentReferenceCounter.total.size() * 4;
+    }
+    
+    blockOut.beginWritePrepended(documentReferenceSize + stringWriter.size() + IOUtil.uint29SizeOf(rootScope.referenceCounter), startPosition);
+
+    if (projectDocumentReferenceCounter.total.isEmpty()) {
+      blockOut.writePrepended(false);
+    }
+    else {
+      blockOut.writePrepended(true);
+      ByteArrayOutputStreamEx bo = new ByteArrayOutputStreamEx(documentReferenceSize - 1);
+      new AmfOutputStream(bo).write(projectDocumentReferenceCounter.total);
+      blockOut.writePrepended(bo);
+    }
+
     blockOut.writePrepended(stringWriter.getCounter(), stringWriter.getByteArrayOut());
     blockOut.writePrepended(rootScope.referenceCounter);
     blockOut.endWritePrepended(startPosition);

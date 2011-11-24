@@ -5,6 +5,7 @@ import com.intellij.flex.uiDesigner.css.LocalCssWriter;
 import com.intellij.flex.uiDesigner.io.StringRegistry.StringWriter;
 import com.intellij.flex.uiDesigner.libraries.Library;
 import com.intellij.flex.uiDesigner.mxml.MxmlUtil;
+import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -64,16 +65,16 @@ public final class ModuleInfoUtil {
 
   public static void collectLocalStyleHolders(final ModuleInfo moduleInfo, final String flexSdkVersion,
                                               final StringWriter stringWriter, final ProblemsHolder problemsHolder,
-                                              List<XmlFile> unregisteredDocumentReferences, AssetCounter assetCounter) {
+                                              ProjectDocumentReferenceCounter projectDocumentReferenceCounter, AssetCounter assetCounter) {
     final Module module = moduleInfo.getModule();
     final AccessToken token = ReadAction.start();
     try {
       if (moduleInfo.isApp()) {
-        collectApplicationLocalStyle(moduleInfo, flexSdkVersion, problemsHolder, stringWriter, unregisteredDocumentReferences,
+        collectApplicationLocalStyle(moduleInfo, flexSdkVersion, problemsHolder, stringWriter, projectDocumentReferenceCounter,
                                      assetCounter);
       }
       else {
-        collectLibraryLocalStyle(module, moduleInfo, stringWriter, problemsHolder, unregisteredDocumentReferences, assetCounter);
+        collectLibraryLocalStyle(module, moduleInfo, stringWriter, problemsHolder, projectDocumentReferenceCounter, assetCounter);
       }
     }
     finally {
@@ -81,8 +82,11 @@ public final class ModuleInfoUtil {
     }
   }
 
-  private static void collectLibraryLocalStyle(Module module, ModuleInfo moduleInfo, StringWriter stringWriter,
-                                               ProblemsHolder problemsHolder, List<XmlFile> unregisteredDocumentReferences,
+  private static void collectLibraryLocalStyle(Module module,
+                                               ModuleInfo moduleInfo,
+                                               StringWriter stringWriter,
+                                               ProblemsHolder problemsHolder,
+                                               ProjectDocumentReferenceCounter unregisteredDocumentReferences,
                                                AssetCounter assetCounter) {
     VirtualFile defaultsCss = null;
     for (VirtualFile sourceRoot : ModuleRootManager.getInstance(moduleInfo.getModule()).getSourceRoots(false)) {
@@ -98,7 +102,7 @@ public final class ModuleInfoUtil {
   }
 
   private static void collectApplicationLocalStyle(final ModuleInfo moduleInfo, String flexSdkVersion, final ProblemsHolder problemsHolder,
-                                                   StringWriter stringWriter, List<XmlFile> unregisteredDocumentReferences,
+                                                   StringWriter stringWriter, ProjectDocumentReferenceCounter projectDocumentReferenceCounter,
                                                    final AssetCounter assetCounter) {
     final GlobalSearchScope moduleWithDependenciesAndLibrariesScope =
         moduleInfo.getModule().getModuleWithDependenciesAndLibrariesScope(false);
@@ -122,7 +126,7 @@ public final class ModuleInfoUtil {
       return;
     }
 
-    final StyleTagWriter localStyleWriter = new StyleTagWriter(new LocalCssWriter(stringWriter, problemsHolder, unregisteredDocumentReferences, assetCounter));
+    final StyleTagWriter localStyleWriter = new StyleTagWriter(new LocalCssWriter(stringWriter, problemsHolder, projectDocumentReferenceCounter, assetCounter));
     final Processor<JSClass> processor = new Processor<JSClass>() {
       @Override
       public boolean process(JSClass jsClass) {

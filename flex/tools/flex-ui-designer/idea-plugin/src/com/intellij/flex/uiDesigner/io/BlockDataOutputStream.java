@@ -99,6 +99,14 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream impleme
     out.write(buffer, 0, insertPosition);
   }
 
+  public void writePrepended(ByteArrayOutputStreamEx byteArrayOutput) throws IOException {
+    byteArrayOutput.writeTo(out);
+  }
+
+  public void writePrepended(boolean value) throws IOException {
+    out.write(value ? 1 : 0);
+  }
+
   public void writePrepended(int counter, ByteArrayOutputStreamEx byteArrayOutput) throws IOException {
     writePrepended(counter);
     if (counter > 0) {

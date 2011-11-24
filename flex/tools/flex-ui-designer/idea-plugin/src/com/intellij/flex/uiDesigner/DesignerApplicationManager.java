@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.facet.FacetManager;
 import com.intellij.flex.uiDesigner.libraries.InitException;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
+import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -10,7 +11,6 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
@@ -39,13 +39,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import javax.swing.event.HyperlinkEvent;
-
 import java.io.File;
-import java.util.List;
 
 import static com.intellij.flex.uiDesigner.LogMessageUtil.LOG;
 
-public class DesignerApplicationManager extends ServiceManagerImpl implements Disposable {
+public class DesignerApplicationManager extends ServiceManagerImpl {
   private static final ExtensionPointName<ServiceDescriptor> SERVICES =
     new ExtensionPointName<ServiceDescriptor>("com.intellij.flex.uiDesigner.service");
   public static final File APP_DIR = new File(PathManager.getSystemPath(), "flashUIDesigner");
@@ -62,8 +60,12 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
     super(true);
   }
 
-  public DesignerApplication getApplication() {
-    return application;
+  public static DesignerApplicationManager getInstance() {
+    return ServiceManager.getService(DesignerApplicationManager.class);
+  }
+
+  public static DesignerApplication getApplication() {
+    return getInstance().application;
   }
 
   @TestOnly
@@ -99,21 +101,13 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
 
   void setApplication(DesignerApplication application) {
     LOG.assertTrue(this.application == null);
-    Disposer.register(this, application);
+    Disposer.register(ApplicationManager.getApplication(), application);
     installEP(SERVICES, application);
     this.application = application;
   }
 
   public boolean isDocumentOpening() {
     return documentOpening;
-  }
-
-  public static DesignerApplicationManager getInstance() {
-    return ServiceManager.getService(DesignerApplicationManager.class);
-  }
-
-  @Override
-  public void dispose() {
   }
 
   private static boolean checkFlexSdkVersion(final String version) {
@@ -163,9 +157,10 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
             final ProblemsHolder problemsHolder = new ProblemsHolder();
             if (!client.isModuleRegistered(module)) {
               try {
-                final List<XmlFile> unregisteredDocumentReferences = LibraryManager.getInstance().initLibrarySets(module, true, problemsHolder);
-                if (unregisteredDocumentReferences != null &&
-                    !client.registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder)) {
+                final ProjectDocumentReferenceCounter
+                  projectDocumentReferenceCounter = LibraryManager.getInstance().initLibrarySets(module, true, problemsHolder);
+                if (projectDocumentReferenceCounter != null &&
+                    !client.registerDocumentReferences(projectDocumentReferenceCounter.unregistered, module, problemsHolder)) {
                   return;
                 }
               }
@@ -280,7 +275,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
     }
 
     @Override
-    public boolean run(List<XmlFile> unregisteredDocumentReferences, ProgressIndicator indicator, ProblemsHolder problemsHolder) {
+    public boolean run(ProjectDocumentReferenceCounter projectDocumentReferenceCounter, ProgressIndicator indicator, ProblemsHolder problemsHolder) {
       indicator.setText(FlashUIDesignerBundle.message("open.document"));
       Client client = Client.getInstance();
       if (!client.flush()) {
@@ -288,14 +283,14 @@ public class DesignerApplicationManager extends ServiceManagerImpl implements Di
       }
 
       final Module module = ModuleUtil.findModuleForPsiElement(psiFile);
-      if (unregisteredDocumentReferences != null &&
-          !client.registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder)) {
+      if (projectDocumentReferenceCounter != null &&
+          !client.registerDocumentReferences(projectDocumentReferenceCounter.unregistered, module, problemsHolder)) {
         return false;
       }
 
       final Semaphore semaphore = new Semaphore();
-      final MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(
-        DesignerApplicationManager.getInstance().getApplication());
+      final MessageBusConnection connection =
+        ApplicationManager.getApplication().getMessageBus().connect(DesignerApplicationManager.getApplication());
       connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentOpenedListener() {
         @Override
         public void documentOpened() {

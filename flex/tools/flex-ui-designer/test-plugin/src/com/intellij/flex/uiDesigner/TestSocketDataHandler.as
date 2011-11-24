@@ -7,6 +7,9 @@ import avmplus.INCLUDE_TRAITS;
 import avmplus.USE_ITRAITS;
 import avmplus.describe;
 
+import com.intellij.flex.uiDesigner.io.AmfUtil;
+
+import flash.desktop.NativeApplication;
 import flash.display.NativeWindow;
 import flash.events.Event;
 import flash.events.IEventDispatcher;
@@ -18,8 +21,13 @@ import flash.utils.IDataInput;
 import flash.utils.Timer;
 import flash.utils.getQualifiedClassName;
 
+import org.jetbrains.actionSystem.DataManager;
+
 internal class TestSocketDataHandler implements SocketDataHandler {
   public static const CLASS:int = 1;
+
+  private static const GET_STAGE_OFFSET:int = 120;
+  private static const INFORM_DOCUMENT_OPENED:int = 121;
   
   private static const c:Vector.<Class> = new <Class>[CommonTest, StatesTest, InjectedASTest, AppTest, StyleTest, UITest, MxTest, MobileTest];
   private const describeCache:Dictionary = new Dictionary();
@@ -69,57 +77,95 @@ internal class TestSocketDataHandler implements SocketDataHandler {
     return methodInfo;
   }
 
-  public function handleSockedData(messageSize:int, methodNameSize:int, input:IDataInput):void {
-    const method:String = input.readUTFBytes(methodNameSize);
-    var moduleId:int = input.readShort();
+  public function handleSockedData(messageSize:int, classId:int, input:IDataInput):void {
+    const moduleId:int = input.readShort();
     const module:Module = moduleId == -1 ? null : moduleManager.getById(moduleId);
-    const clazz:Class = c[input.readByte()];
-
     const project:Project = module == null ? null : module.project;
+    var testTask:TestTask;
+    var clazz:Class;
 
-    if (clazz == UITest && method == "getStageOffset") {
-      getStageOffset(project.window);
-      return;
+    switch (classId) {
+      case GET_STAGE_OFFSET:
+        getStageOffset(project.window);
+        return;
+
+      case INFORM_DOCUMENT_OPENED:
+        testTask = new InformTask(_socket);
+        break;
+
+      default:
+        clazz = c[classId];
+        break;
     }
 
-    var methodInfo:Dictionary = describeCache[clazz];
-    if (methodInfo == null) {
-      methodInfo = collectTestAnnotation(clazz);
-      describeCache[clazz] = methodInfo;
+    const method:String = AmfUtil.readString(input);
+
+    var methodInfo:Dictionary;
+    var testAnnotation:TestAnnotation;
+    if (clazz != null) {
+      methodInfo = describeCache[clazz];
+      if (methodInfo == null) {
+        methodInfo = collectTestAnnotation(clazz);
+        describeCache[clazz] = methodInfo;
+      }
+
+      testAnnotation = methodInfo[method] || TestAnnotation.DEFAULT;
     }
-    var testAnnotation:TestAnnotation = methodInfo[method] || TestAnnotation.DEFAULT;
+    else {
+      testAnnotation = TestAnnotation.DEFAULT;
+    }
+
     var documentManager:DocumentManager = project == null ? null : DocumentManager(project.getComponent(DocumentManager));
     const testDocumentFilename:String = (testAnnotation.document == null ? method : testAnnotation.document) + ".mxml";
+
+    if (testTask == null) {
+      testTask = new TestTask();
+    }
+    testTask.init(project, documentManager, clazz, method, testAnnotation);
+
     if (!testAnnotation.nullableDocument && documentManager != null &&
         (documentManager.document == null || documentManager.document.documentFactory.file.name != testDocumentFilename)) {
       trace("wait document");
       documentManager.documentChanged.addOnce(function():void {
-        testOnDocumentDisplayManagerReady(project, documentManager, clazz, method, testAnnotation);
+        testOnDocumentDisplayManagerReady(testTask);
       });
     }
     else {
-      testOnDocumentDisplayManagerReady(project, documentManager, clazz, method, testAnnotation);
+      if (testTask is InformTask) {
+        // if document already opened, but InformTask, so, java side waits inform about document update
+        documentManager.documentUpdated.addOnce(function ():void {
+          testOnDocumentDisplayManagerReady(testTask);
+        });
+      }
+      else {
+        testOnDocumentDisplayManagerReady(testTask);
+      }
     }
   }
 
-  private function testOnDocumentDisplayManagerReady(project:Project, documentManager:DocumentManager, clazz:Class, method:String,
-                                                     testAnnotation:TestAnnotation):void {
-    var documentDisplayManager:DocumentDisplayManager = testAnnotation.nullableDocument ? null : documentManager.document.displayManager;
+  private function testOnDocumentDisplayManagerReady(testTask:TestTask):void {
+    var documentDisplayManager:DocumentDisplayManager = testTask.testAnnotation.nullableDocument ? null : testTask.documentManager.document.displayManager;
     if (documentDisplayManager != null && documentDisplayManager.stage == null) {
       documentDisplayManager.addRealEventListener(Event.ADDED_TO_STAGE, function(event:Event):void {
         IEventDispatcher(event.currentTarget).removeEventListener(event.type, arguments.callee);
-        test(project, clazz, method, testAnnotation);
+        test2(testTask);
       });
     }
     else {
-      test(project, clazz, method, testAnnotation);
+      test2(testTask);
+    }
+  }
+
+  private function test2(testTask:TestTask):void {
+    if (testTask.run()) {
+      test(testTask.project, testTask.clazz, testTask.method, testTask.testAnnotation);
     }
   }
   
   private function test(project:Project, clazz:Class, method:String, testAnnotation:TestAnnotation):void {
     trace("execute test " + method);
     var test:TestCase = new clazz();
-    test.init(project, _socket);
+    test.init(project == null ? new EmptyDataContext() : DataManager.instance.getDataContext(project.window.stage), _socket);
     test.setUp();
 
     if (testAnnotation.async) {
@@ -139,11 +185,15 @@ internal class TestSocketDataHandler implements SocketDataHandler {
   }
 
   private function getStageOffset(window:NativeWindow):void {
+    // it is not required for window.globalToScreen, but our java side requires active front window (for java.awt.Robot)
+    NativeApplication.nativeApplication.activate(window);
+
     var point:Point = window.globalToScreen(new Point(0, 0));
     _socket.writeByte(TestServerMethod.custom);
 
     _socket.writeShort(point.x);
     _socket.writeShort(point.y);
+    _socket.flush();
   }
   
   private function success():void {
@@ -177,6 +227,48 @@ internal class TestSocketDataHandler implements SocketDataHandler {
 }
 }
 
+import com.intellij.flex.uiDesigner.DocumentManager;
+import com.intellij.flex.uiDesigner.Project;
+
+import flash.net.Socket;
+
+import org.jetbrains.actionSystem.DataContext;
+import org.jetbrains.actionSystem.DataKey;
+
+class TestTask {
+  internal var project:Project;
+  internal var documentManager:DocumentManager;
+  internal var clazz:Class;
+  internal var method:String;
+  internal var testAnnotation:TestAnnotation;
+
+  public function init(project:Project, documentManager:DocumentManager, clazz:Class, method:String, testAnnotation:TestAnnotation):void {
+    this.project = project;
+    this.documentManager = documentManager;
+    this.clazz = clazz;
+    this.method = method;
+    this.testAnnotation = testAnnotation;
+  }
+
+  // return — call TestSocketDataHandler.test or not
+  public function run():Boolean {
+    return true;
+  }
+}
+
+final class InformTask extends TestTask {
+  private var socket:Socket;
+
+  public function InformTask(socket:Socket) {
+    this.socket = socket;
+  }
+
+  override public function run():Boolean {
+    socket.writeByte(TestServerMethod.custom);
+    return false;
+  }
+}
+
 class TestAnnotation {
   public static const DEFAULT:TestAnnotation = new TestAnnotation();
 
@@ -189,4 +281,10 @@ final class TestServerMethod {
   public static const success:int = 100;
   public static const fail:int = 101;
   public static const custom:int = 102;
+}
+
+final class EmptyDataContext implements DataContext {
+  public function getData(dataKey:DataKey):Object {
+    return null;
+  }
 }

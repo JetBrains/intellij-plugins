@@ -25,9 +25,6 @@ import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.intellij.flex.uiDesigner.mxml.MxmlWriter.LOG;
 import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PropertyKind.*;
 
@@ -53,17 +50,11 @@ class PropertyProcessor implements ValueWriter {
   private boolean isStyle;
 
   private final ObjectIntHashMap<String> classFactoryMap = new ObjectIntHashMap<String>();
-  private final List<XmlFile> unregisteredDocumentFactories = new ArrayList<XmlFile>();
 
   PropertyProcessor(InjectedASWriter injectedASWriter, BaseWriter writer, MxmlWriter mxmlWriter) {
     this.injectedASWriter = injectedASWriter;
     this.writer = writer;
     this.mxmlWriter = mxmlWriter;
-  }
-
-  @NotNull
-  public List<XmlFile> getUnregisteredDocumentFactories() {
-    return unregisteredDocumentFactories;
   }
 
   public String getName() {
@@ -184,7 +175,7 @@ class PropertyProcessor implements ValueWriter {
   }
 
   private int getProjectComponentFactoryId(JSClass jsClass) throws InvalidPropertyException {
-    return InjectionUtil.getProjectComponentFactoryId(jsClass, unregisteredDocumentFactories);
+    return InjectionUtil.getProjectComponentFactoryId(jsClass, mxmlWriter.projectDocumentReferenceCounter);
   }
 
   boolean processFxModel(XmlTag tag) {

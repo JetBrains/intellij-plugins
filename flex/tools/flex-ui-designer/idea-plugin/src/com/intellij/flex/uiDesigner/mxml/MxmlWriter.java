@@ -56,6 +56,8 @@ public class MxmlWriter {
   final ValueProviderFactory valueProviderFactory = new ValueProviderFactory();
   private final List<RangeMarker> rangeMarkers = new ArrayList<RangeMarker>();
 
+  final ProjectDocumentReferenceCounter projectDocumentReferenceCounter = new ProjectDocumentReferenceCounter();
+
   Document document;
 
   public MxmlWriter(PrimitiveAmfOutputStream out, ProblemsHolder problemsHolder, AssetCounter assetCounter) {
@@ -69,7 +71,7 @@ public class MxmlWriter {
   }
 
   @Nullable
-  public Pair<List<XmlFile>, List<RangeMarker>> write(XmlFile psiFile) throws IOException {
+  public Pair<ProjectDocumentReferenceCounter, List<RangeMarker>> write(XmlFile psiFile) throws IOException {
     final AccessToken token = ReadAction.start();
     try {
       final VirtualFile virtualFile = psiFile.getVirtualFile();
@@ -87,7 +89,7 @@ public class MxmlWriter {
       try {
         projectComponentFactoryId = InjectionUtil.getProjectComponentFactoryId(rootTagDescriptor.getQualifiedName(),
                                                                                rootTagDescriptor.getDeclaration(),
-                                                                               propertyProcessor.getUnregisteredDocumentFactories());
+                                                                               projectDocumentReferenceCounter);
       }
       catch (InvalidPropertyException e) {
         problemsHolder.add(e);
@@ -116,8 +118,8 @@ public class MxmlWriter {
       }
 
       injectedASWriter.write();
-      writer.endMessage();
-      return new Pair<List<XmlFile>, List<RangeMarker>>(propertyProcessor.getUnregisteredDocumentFactories(), rangeMarkers);
+      writer.endMessage(projectDocumentReferenceCounter);
+      return new Pair<ProjectDocumentReferenceCounter, List<RangeMarker>>(projectDocumentReferenceCounter, rangeMarkers);
     }
     finally {
       token.finish();
@@ -452,7 +454,7 @@ public class MxmlWriter {
     final int projectComponentFactoryId;
     try {
       projectComponentFactoryId = InjectionUtil.getProjectComponentFactoryId(descriptor.getQualifiedName(), descriptor.getDeclaration(),
-                                                                             propertyProcessor.getUnregisteredDocumentFactories());
+                                                                             projectDocumentReferenceCounter);
     }
     catch (InvalidPropertyException e) {
       problemsHolder.add(e);

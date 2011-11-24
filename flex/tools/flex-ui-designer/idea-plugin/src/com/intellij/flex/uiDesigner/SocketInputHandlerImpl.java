@@ -67,7 +67,13 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   @Override
   public void read(@NotNull InputStream inputStream, @NotNull File appDir) throws IOException {
     init(inputStream, appDir);
-    process();
+    if (processOnRead()) {
+      process();
+    }
+  }
+
+  protected boolean processOnRead() {
+    return true;
   }
 
   public void process() throws IOException {
@@ -187,7 +193,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
     assert document != null;
     final XmlFile psiFile;
-    AccessToken token = ReadAction.start();
+    final AccessToken token = ReadAction.start();
     try {
       psiFile = (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(document);
       assert psiFile != null;
