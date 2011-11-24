@@ -1378,6 +1378,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       Module module = myConfigEditor.getModule(myDependencies);
       List<? extends FlexLibraryType> libraryTypes = Collections.singletonList(new FlexLibraryType() {
         @Override
+        @NotNull
         public LibraryRootsComponentDescriptor createLibraryRootsComponentDescriptor() {
           return new FlexLibraryRootsComponentDescriptor() {
             @NotNull
