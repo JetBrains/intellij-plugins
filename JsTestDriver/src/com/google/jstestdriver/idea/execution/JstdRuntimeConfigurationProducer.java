@@ -3,7 +3,6 @@ package com.google.jstestdriver.idea.execution;
 import com.google.jstestdriver.idea.assertFramework.JstdRunElement;
 import com.google.jstestdriver.idea.assertFramework.TestFileStructureManager;
 import com.google.jstestdriver.idea.assertFramework.TestFileStructurePack;
-import com.google.jstestdriver.idea.config.JstdConfigFileLoader;
 import com.google.jstestdriver.idea.config.JstdConfigFileUtils;
 import com.google.jstestdriver.idea.execution.settings.JstdConfigType;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
@@ -51,40 +50,36 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
     return mySourceElement;
   }
 
-  private static void logTakenTime(String actionName, long startTimeNano, int beforeAcceptCalls, String... args) {
+  private static void logTakenTime(String actionName, long startTimeNano, String... args) {
     long endTimeNano = System.nanoTime();
-    int afterAcceptCalls = JstdConfigFileLoader.ourAcceptCount.get();
-    String message = String.format("[JsTD] Time taken by '" + actionName + "': %.2f ms, FileNameMatcher.acceptCalls: %d, FileNameMatcher.totalAcceptCalls: %d, extra args: %s\n",
+    String message = String.format("[JsTD] Time taken by '" + actionName + "': %.2f ms, extra args: %s\n",
       (endTimeNano - startTimeNano) / 1000000.0,
-      afterAcceptCalls - beforeAcceptCalls,
-      afterAcceptCalls,
       Arrays.toString(args)
     );
     LOG.info(message);
   }
 
-  private static void logDoneCreateConfigurationByElement(long startTimeNano, int beforeAcceptCalls, String... args) {
-    logTakenTime("createConfigurationByElement", startTimeNano, beforeAcceptCalls, args);
+  private static void logDoneCreateConfigurationByElement(long startTimeNano, String... args) {
+    logTakenTime("createConfigurationByElement", startTimeNano, args);
   }
 
-  private static void logDoneFindExistingByElement(long startTimeNano, int beforeAcceptCalls, String... args) {
-    logTakenTime("findExistingByElement", startTimeNano, beforeAcceptCalls, args);
+  private static void logDoneFindExistingByElement(long startTimeNano, String... args) {
+    logTakenTime("findExistingByElement", startTimeNano, args);
   }
 
   @Override
   protected RunnerAndConfigurationSettings createConfigurationByElement(Location location, ConfigurationContext context) {
     long startTimeNano = System.nanoTime();
-    int beforeAcceptCalls = JstdConfigFileLoader.ourAcceptCount.get();
     @SuppressWarnings({"unchecked"})
     RunSettingsContext runSettingsContext = buildRunSettingsContext(location);
     if (runSettingsContext == null) {
-      logDoneCreateConfigurationByElement(startTimeNano, beforeAcceptCalls, "1");
+      logDoneCreateConfigurationByElement(startTimeNano, "1");
       return null;
     }
 
     final RunnerAndConfigurationSettings runnerSettings = cloneTemplateConfiguration(location.getProject(), context);
     if (!(runnerSettings.getConfiguration() instanceof JstdRunConfiguration)) {
-      logDoneCreateConfigurationByElement(startTimeNano, beforeAcceptCalls, "2");
+      logDoneCreateConfigurationByElement(startTimeNano, "2");
       return null;
     }
     JstdRunConfiguration runConfiguration = (JstdRunConfiguration) runnerSettings.getConfiguration();
@@ -93,7 +88,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
 
     mySourceElement = runSettingsContext.psiElement;
     runnerSettings.setName(runConfiguration.suggestedName());
-    logDoneCreateConfigurationByElement(startTimeNano, beforeAcceptCalls, "3");
+    logDoneCreateConfigurationByElement(startTimeNano, "3");
     return runnerSettings;
   }
 
@@ -103,10 +98,9 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
                                                                  @NotNull final RunnerAndConfigurationSettings[] existingConfigurations,
                                                                  ConfigurationContext context) {
     long startTimeNano = System.nanoTime();
-    int beforeAcceptCalls = JstdConfigFileLoader.ourAcceptCount.get();
     RunSettingsContext runSettingsContext = buildRunSettingsContext(location);
     if (runSettingsContext == null) {
-      logDoneFindExistingByElement(startTimeNano, beforeAcceptCalls, "1");
+      logDoneFindExistingByElement(startTimeNano, "1");
       return null;
     }
     final JstdRunSettings runSettingsPattern = runSettingsContext.runSettings;
@@ -161,7 +155,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
         }
       }
     }
-    logDoneFindExistingByElement(startTimeNano, beforeAcceptCalls, "2");
+    logDoneFindExistingByElement(startTimeNano, "2");
     return bestRaCSettings;
   }
 
