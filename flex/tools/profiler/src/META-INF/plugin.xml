@@ -28,6 +28,7 @@
 
     <profiler.SnapshotProvider implementation="com.jetbrains.actionscript.profiler.ActionScriptProfileProvider"/>
     <programRunner implementation="com.jetbrains.actionscript.profiler.ActionScriptProfileRunner"/>
+    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
   </extensions>
   <actions>
     <group id="ProfilerViewMenu" popup="true">
