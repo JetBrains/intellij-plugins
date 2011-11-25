@@ -1,5 +1,6 @@
 package org.osmorc.settings;
 
+import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import org.jetbrains.annotations.Nls;
@@ -11,7 +12,7 @@ import javax.swing.*;
  * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
-public class LibraryBundlingEditor implements SearchableConfigurable {
+public class LibraryBundlingEditor implements SearchableConfigurable, Configurable.NoScroll {
   private LibraryBundlingEditorComponent myComponent;
 
   public LibraryBundlingEditor() {
