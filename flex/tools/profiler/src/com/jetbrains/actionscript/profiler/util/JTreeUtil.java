@@ -1,10 +1,43 @@
 package com.jetbrains.actionscript.profiler.util;
 
+import com.intellij.util.ui.tree.TreeUtil;
+
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreeNode;
+import java.util.Comparator;
+import java.util.List;
 
 public class JTreeUtil {
   private JTreeUtil() {
+  }
+
+  public static boolean isSorted(TreeModel model, Comparator<TreeNode> comparator) {
+    return isSorted((TreeNode)model.getRoot(), comparator);
+  }
+
+  private static boolean isSorted(TreeNode root, Comparator<TreeNode> comparator) {
+    List<TreeNode> children = TreeUtil.childrenToArray(root);
+    if (!isSorted(children, comparator)) {
+      return false;
+    }
+    boolean result = true;
+    for (TreeNode child : children) {
+      result = result && isSorted(child, comparator);
+    }
+    return result;
+  }
+
+  private static boolean isSorted(List<TreeNode> nodes, Comparator<TreeNode> comparator) {
+    TreeNode prev = null;
+    for (TreeNode node : nodes) {
+      if (prev != null && comparator.compare(prev, node) == 1) {
+        return false;
+      }
+      prev = node;
+    }
+    return true;
   }
 
   public static void removeChildren(DefaultMutableTreeNode root, DefaultTreeModel model) {

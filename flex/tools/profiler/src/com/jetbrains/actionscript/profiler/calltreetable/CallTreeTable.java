@@ -6,7 +6,6 @@ import com.intellij.pom.Navigatable;
 import com.intellij.ui.treeStructure.treetable.TreeTable;
 import com.intellij.ui.treeStructure.treetable.TreeTableModel;
 import com.intellij.util.ui.ColumnInfo;
-import com.intellij.util.ui.tree.TreeUtil;
 import com.jetbrains.actionscript.profiler.base.NavigatableDataProducer;
 import com.jetbrains.actionscript.profiler.util.MathUtil;
 import com.jetbrains.actionscript.profiler.vo.CallInfo;
@@ -14,14 +13,10 @@ import org.jetbrains.annotations.NonNls;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
-import javax.swing.event.RowSorterEvent;
-import javax.swing.event.RowSorterListener;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.util.Comparator;
-import java.util.List;
 
 public class CallTreeTable extends TreeTable implements DataProvider {
   private static final int DEFAULT_ROW_HEIGHT = 20;
@@ -45,17 +40,6 @@ public class CallTreeTable extends TreeTable implements DataProvider {
     }
 
     setRowSorter(rowSorter);
-
-    rowSorter.addRowSorterListener(new RowSorterListener() {
-      @Override
-      public void sorterChanged(RowSorterEvent e) {
-        final List<TreePath> paths = TreeUtil.collectExpandedPaths(getTree());
-        reload();
-        repaint();
-        getTableHeader().repaint();
-        TreeUtil.restoreExpandedPaths(getTree(), paths);
-      }
-    });
 
     setRowHeight(DEFAULT_ROW_HEIGHT);
   }

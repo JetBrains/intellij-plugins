@@ -136,10 +136,9 @@ public class ActionScriptProfileView extends ProfileView {
             DefaultMutableTreeNode tracesRoot = (DefaultMutableTreeNode)myTracesTreeTable.getSortableTreeTableModel().getRoot();
             JTreeUtil.removeChildren(tracesRoot, myTracesTreeTable.getSortableTreeTableModel());
             fillTreeModelRoot(tracesRoot, mergedCallNode.getCallTree(), countMap, selfCountMap, false, frames);
+            myTracesTreeTable.reload();
 
             TreeUtil.expand(myTracesTreeTable.getTree(), 1);
-
-            myTracesTreeTable.reload();
           }
         }, 500);
       }
@@ -546,9 +545,23 @@ public class ActionScriptProfileView extends ProfileView {
         return (samples.size() * 100) / data.profile.size();
       }
     };
+
+    myHotSpotsTreeTable.getTree().clearSelection();
+    myHotSpotsTreeTable.clearSelection();
+
     buildSamples((DefaultTreeModel) treeModel, (DefaultMutableTreeNode) treeModel.getRoot(), false, data.profile, 0, sizeFunction, getCurrentScope());
     buildPerformanceSamples(myHotSpotsTreeTable.getSortableTreeTableModel(), data.profile);
     TreeUtil.expand(myHotSpotsTreeTable.getTree(), 1);
+
+    DefaultMutableTreeNode tracesRoot = (DefaultMutableTreeNode)myTracesTreeTable.getSortableTreeTableModel().getRoot();
+    tracesRoot.removeAllChildren();
+    myTracesTreeTable.reload();
+
+    List sortKeys = myHotSpotsTreeTable.getRowSorter().getSortKeys();
+    if(sortKeys == null || sortKeys.size() == 0){
+      myHotSpotsTreeTable.getRowSorter().toggleSortOrder(0);
+    }
+
   }
 
   private void dumpMemory(final ProfileData data) {

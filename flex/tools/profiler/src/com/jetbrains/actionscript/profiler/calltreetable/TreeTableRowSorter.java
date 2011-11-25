@@ -1,29 +1,25 @@
 package com.jetbrains.actionscript.profiler.calltreetable;
 
-import com.intellij.ui.treeStructure.treetable.TreeTable;
 import com.intellij.util.ui.tree.TreeUtil;
+import com.jetbrains.actionscript.profiler.util.JTreeUtil;
 
 import javax.swing.*;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 public class TreeTableRowSorter extends TableRowSorter {
-  private final TreeTable table;
+  private final CallTreeTable table;
   private List<? extends SortKey> sortKeys = new ArrayList<SortKey>();
 
   public TreeTableRowSorter(CallTreeTable table) {
     super(table.getModel());
     this.table = table;
-  }
-
-  @Override
-  public void sort() {
-    //do nothing
   }
 
   @Override
@@ -37,13 +33,17 @@ public class TreeTableRowSorter extends TableRowSorter {
       return;
     }
     this.sortKeys = sortKeys;
-    if (sortKeys.size() > 0 && sortKeys.get(0) instanceof SortKey) {
-      setSortKey((SortKey)sortKeys.get(0));
-      fireSortOrderChanged();
+    sort();
+  }
+
+  @Override
+  public void sort() {
+    if (sortKeys.size() > 0) {
+      sortOnKey(sortKeys.get(0));
     }
   }
 
-  private void setSortKey(SortKey key) {
+  private void sortOnKey(SortKey key) {
     if (key.getSortOrder() == SortOrder.UNSORTED) {
       return;
     }
@@ -56,10 +56,17 @@ public class TreeTableRowSorter extends TableRowSorter {
       return;
     }
 
-    final Comparator<DefaultMutableTreeNode> comparator =
-      new ComparatorWrapper<DefaultMutableTreeNode>(getComparator(modelIndex), key.getSortOrder() == SortOrder.ASCENDING);
+    final Comparator<TreeNode> comparator =
+      new ComparatorWrapper<TreeNode>(getComparator(modelIndex), key.getSortOrder() == SortOrder.ASCENDING);
 
+    if (JTreeUtil.isSorted(table.getTableModel(), comparator)) {
+      return;
+    }
     TreeUtil.sort((DefaultTreeModel)table.getTableModel(), comparator);
+
+    final List<TreePath> paths = TreeUtil.collectExpandedPaths(table.getTree());
+    table.reload();
+    TreeUtil.restoreExpandedPaths(table.getTree(), paths);
   }
 
   private static class ComparatorWrapper<T> implements Comparator<T> {
