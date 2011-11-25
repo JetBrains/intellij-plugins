@@ -126,10 +126,9 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
       if (isArchive) {
         myExtractPathComponent.setText(multiProjectArchive ? FlexBundle.message("folder.to.unzip.several.FB.projects")
                                                            : FlexBundle.message("folder.to.unzip.one.FB.project"));
-        final String extractPath = multiProjectArchive ? getWizardContext().getProject().getLocation()
-                                                       : getWizardContext().getProject().getLocation() +
-                                                         "/" +
-                                                         file.getNameWithoutExtension();
+        final String extractPath = multiProjectArchive ? getWizardContext().getProject().getBaseDir().getPath()
+                                                       : getWizardContext().getProject().getBaseDir().getPath()
+                                                         + "/" + file.getNameWithoutExtension();
         myExtractPathComponent.getComponent().setText(FileUtil.toSystemDependentName(extractPath));
       }
     }
