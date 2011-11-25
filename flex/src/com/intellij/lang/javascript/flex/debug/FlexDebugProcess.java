@@ -7,13 +7,12 @@ import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.ide.IdeBundle;
+import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.idea.LoggerFactory;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
-import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
-import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
-import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
+import com.intellij.lang.javascript.flex.flexunit.*;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
@@ -185,9 +184,6 @@ public class FlexDebugProcess extends XDebugProcess {
     myBreakpointsHandler = new FlexBreakpointsHandler(this);
     mySdkLocation = FileUtil.toSystemIndependentName(sdkHome);
 
-    myPolicyFileConnection = null;
-    myFlexUnitConnection = null;
-
     final List<String> fdbLaunchCommand = FlexSdkUtils
       .getCommandLineForSdkTool(session.getProject(), sdkHome, null, getFdbClasspath(), "flex.tools.debugger.cli.DebugCLI", null);
 
@@ -229,6 +225,14 @@ public class FlexDebugProcess extends XDebugProcess {
           }
       }
     }
+    else if (params instanceof NewFlexUnitRunnerParameters) {
+      connectToRunningFlashPlayerMode = false;
+      final FlexUnitCommonParameters flexUnitParams = (FlexUnitCommonParameters)params;
+      openFlexUnitConnections(flexUnitParams.getSocketPolicyPort(), flexUnitParams.getPort());
+      final LauncherParameters launcherParams =
+        new LauncherParameters(LauncherParameters.LauncherType.OSDefault, BrowsersConfiguration.BrowserFamily.FIREFOX, "");
+      sendCommand(new LaunchBrowserCommand(config.getOutputFilePath(), launcherParams));
+    }
     else {
       connectToRunningFlashPlayerMode = true;
       sendCommand(new StartDebuggingCommand());
@@ -253,10 +257,6 @@ public class FlexDebugProcess extends XDebugProcess {
     if (flexRunnerParameters instanceof FlexUnitRunnerParameters) {
       final FlexUnitRunnerParameters flexUnitParams = (FlexUnitRunnerParameters)flexRunnerParameters;
       openFlexUnitConnections(flexUnitParams.getSocketPolicyPort(), flexUnitParams.getPort());
-    }
-    else {
-      myPolicyFileConnection = null;
-      myFlexUnitConnection = null;
     }
 
     final List<String> fdbLaunchCommand =

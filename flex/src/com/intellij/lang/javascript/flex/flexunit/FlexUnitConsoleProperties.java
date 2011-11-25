@@ -9,4 +9,9 @@ public class FlexUnitConsoleProperties extends SMTRunnerConsoleProperties {
     super(new RuntimeConfigurationProducer.DelegatingRuntimeConfiguration<FlexUnitRunConfiguration>(config),
           "FlexUnit", executor);
   }
+
+  public FlexUnitConsoleProperties(final NewFlexUnitRunConfiguration config, Executor executor) {
+    super(new RuntimeConfigurationProducer.DelegatingRuntimeConfiguration<NewFlexUnitRunConfiguration>(config),
+          "FlexUnit", executor);
+  }
 }

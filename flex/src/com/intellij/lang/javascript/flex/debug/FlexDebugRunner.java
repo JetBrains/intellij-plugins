@@ -4,6 +4,7 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ExecutionConsole;
@@ -12,7 +13,10 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitCommonParameters;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
+import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunConfiguration;
+import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.run.*;
@@ -48,12 +52,29 @@ public class FlexDebugRunner extends FlexBaseRunner {
     return DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) &&
            (profile instanceof FlexRunConfiguration ||
             profile instanceof FlexIdeRunConfiguration ||
+            profile instanceof NewFlexUnitRunConfiguration ||
             profile instanceof RemoteFlashRunConfiguration);
   }
 
   @NotNull
   public String getRunnerId() {
     return "FlexDebugRunner";
+  }
+
+  protected RunContentDescriptor launchFlexUnit(final Project project,
+                                                final Executor executor,
+                                                final RunContentDescriptor contentToReuse,
+                                                final ExecutionEnvironment env,
+                                                final FlexUnitCommonParameters params,
+                                                final LauncherParameters launcherParams,
+                                                final String swfFilePath) throws ExecutionException {
+    try {
+      final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = ((NewFlexUnitRunnerParameters)params).checkAndGetModuleAndBC(project);
+      return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, (NewFlexUnitRunnerParameters)params, executor, contentToReuse, env);
+    }
+    catch (RuntimeConfigurationError e) {
+      throw new ExecutionException(e.getMessage());
+    }
   }
 
   protected RunContentDescriptor launchFlexIdeConfig(final Module module,
@@ -82,7 +103,7 @@ public class FlexDebugRunner extends FlexBaseRunner {
       }
     }
 
-   return launchDebugProcess(module, config, params, contentToReuse, env);
+    return launchDebugProcess(module, config, params, executor, contentToReuse, env);
   }
 
   protected RunContentDescriptor doLaunch(final Project project,

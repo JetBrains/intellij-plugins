@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.JSVariable;
@@ -66,14 +67,23 @@ public class FlexUnitSupport {
     return support != null ? Pair.create(module, support) : null;
   }
 
+  // todo remove module param and fix scope
+  @Nullable
+  public static FlexUnitSupport getSupport(@Nullable FlexIdeBuildConfiguration bc, final Module module) {
+    if (bc == null) return null;
+
+    return getSupport(GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module));
+  }
+
   @Nullable
   public static FlexUnitSupport getSupport(@Nullable Module module) {
     if (module == null) return null;
-
     if (!FlexUtils.isFlexModuleOrContainsFlexFacet(module) || FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module) == null) return null;
 
-    final GlobalSearchScope searchScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
+    return getSupport(GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module));
+  }
 
+  private static FlexUnitSupport getSupport(final GlobalSearchScope searchScope) {
     PsiElement flexUnit1TestClass = JSResolveUtil.findClassByQName(FLEX_UNIT_1_TESTCASE_CLASS, searchScope);
 
     if (!(flexUnit1TestClass instanceof JSClass)) return null;

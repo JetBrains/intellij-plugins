@@ -18,9 +18,7 @@ import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
-import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
-import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
-import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
+import com.intellij.lang.javascript.flex.flexunit.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -149,38 +147,8 @@ public class FlexRunner extends FlexBaseRunner {
     switch (flexRunnerParameters.getRunMode()) {
       case HtmlOrSwfFile:
         if (flexRunnerParameters instanceof FlexUnitRunnerParameters) {
-          final SwfPolicyFileConnection policyFileConnection = new SwfPolicyFileConnection();
-          final FlexUnitRunnerParameters params = (FlexUnitRunnerParameters)flexRunnerParameters;
-          policyFileConnection.open(params.getSocketPolicyPort());
-
-          final FlexUnitConnection flexUnitConnection = new FlexUnitConnection();
-          flexUnitConnection.open(params.getPort());
-          final ProcessHandler processHandler = new DefaultDebugProcessHandler() {
-            @Override
-            protected void destroyProcessImpl() {
-              flexUnitConnection.write("Finish");
-              flexUnitConnection.close();
-
-              policyFileConnection.close();
-              super.destroyProcessImpl();
-            }
-
-            @Override
-            public boolean detachIsDefault() {
-              return false;
-            }
-          };
-
-          final ExecutionConsole console = createFlexUnitRunnerConsole(project, env, processHandler, executor);
-          flexUnitConnection.addListener(new FlexUnitListener(processHandler));
-
-          launchWithSelectedApplication(flexRunnerParameters.getHtmlOrSwfFilePath(), launcherParams);
-
-          final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor);
-          contentBuilder.setExecutionResult(new DefaultExecutionResult(console, processHandler));
-          contentBuilder.setEnvironment(env);
-          Disposer.register(project, contentBuilder);
-          return contentBuilder.showRunContent(contentToReuse);
+          return launchFlexUnit(project, executor, contentToReuse, env, (FlexUnitCommonParameters)flexRunnerParameters, launcherParams,
+                                flexRunnerParameters.getHtmlOrSwfFilePath());
         }
 
         launchWithSelectedApplication(flexRunnerParameters.getHtmlOrSwfFilePath(), launcherParams);
@@ -196,6 +164,46 @@ public class FlexRunner extends FlexBaseRunner {
         assert false;
     }
     return null;
+  }
+
+  protected RunContentDescriptor launchFlexUnit(final Project project,
+                                                final Executor executor,
+                                                final RunContentDescriptor contentToReuse,
+                                                final ExecutionEnvironment env,
+                                                final FlexUnitCommonParameters params,
+                                                final LauncherParameters launcherParams,
+                                                final String swfFilePath) throws ExecutionException {
+    final SwfPolicyFileConnection policyFileConnection = new SwfPolicyFileConnection();
+    policyFileConnection.open(params.getSocketPolicyPort());
+
+    final FlexUnitConnection flexUnitConnection = new FlexUnitConnection();
+    flexUnitConnection.open(params.getPort());
+    final ProcessHandler processHandler = new DefaultDebugProcessHandler() {
+      @Override
+      protected void destroyProcessImpl() {
+        flexUnitConnection.write("Finish");
+        flexUnitConnection.close();
+
+        policyFileConnection.close();
+        super.destroyProcessImpl();
+      }
+
+      @Override
+      public boolean detachIsDefault() {
+        return false;
+      }
+    };
+
+    final ExecutionConsole console = createFlexUnitRunnerConsole(project, env, processHandler, executor);
+    flexUnitConnection.addListener(new FlexUnitListener(processHandler));
+
+    launchWithSelectedApplication(swfFilePath, launcherParams);
+
+    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor);
+    contentBuilder.setExecutionResult(new DefaultExecutionResult(console, processHandler));
+    contentBuilder.setEnvironment(env);
+    Disposer.register(project, contentBuilder);
+    return contentBuilder.showRunContent(contentToReuse);
   }
 
   @Nullable
@@ -249,6 +257,7 @@ public class FlexRunner extends FlexBaseRunner {
   public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {
     return DefaultRunExecutor.EXECUTOR_ID.equals(executorId) &&
            (profile instanceof FlexIdeRunConfiguration ||
+            profile instanceof NewFlexUnitRunConfiguration ||
             (profile instanceof FlexRunConfiguration &&
              ((FlexRunConfiguration)profile).getRunnerParameters().getRunMode() !=
              FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer));

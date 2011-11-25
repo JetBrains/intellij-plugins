@@ -4,6 +4,7 @@ import com.intellij.javascript.flex.FlexApplicationComponent;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.TargetPlayerUtils;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
@@ -47,6 +48,7 @@ public class CompilerConfigGenerator {
 
   private final Module myModule;
   private final FlexIdeBuildConfiguration myConfig;
+  private final boolean myFlexUnit;
   private final String mySdkHome;
   private final String mySdkVersion;
   private final String[] mySdkRootUrls;
@@ -62,6 +64,7 @@ public class CompilerConfigGenerator {
                                   final @NotNull CompilerOptions projectLevelCompilerOptions) {
     myModule = module;
     myConfig = config;
+    myFlexUnit = myConfig.getMainClass().equals(FlexUnitPrecompileTask.getFlexUnitLauncherName(myModule.getName()));
     mySdkHome = sdkHome;
     mySdkVersion = sdkVersion;
     mySdkRootUrls = sdkRootUrls;
@@ -352,7 +355,7 @@ public class CompilerConfigGenerator {
     final Set<String> sourcePathsWithLocaleToken = new THashSet<String>(); // Set - to avoid duplication of paths like "locale/{locale}"
     final List<String> sourcePathsWithoutLocaleToken = new LinkedList<String>();
 
-    for (final VirtualFile sourceRoot : ModuleRootManager.getInstance(myModule).getSourceRoots(false)) {
+    for (final VirtualFile sourceRoot : ModuleRootManager.getInstance(myModule).getSourceRoots(myFlexUnit)) {
       if (locales.contains(sourceRoot.getName())) {
         sourcePathsWithLocaleToken.add(sourceRoot.getParent().getPath() + "/" + FlexCompilerHandler.LOCALE_TOKEN);
       }
@@ -424,7 +427,9 @@ public class CompilerConfigGenerator {
       }
     }
     else {
-      final String pathToMainClassFile = FlexUtils.getPathToMainClassFile(myConfig.getMainClass(), myModule);
+      final String pathToMainClassFile = myFlexUnit ? FlexUtils.getPathToFlexUnitTempDirectory() + "/" + myConfig.getMainClass()
+                                                      + FlexUnitPrecompileTask.DOT_FLEX_UNIT_LAUNCHER_EXTENSION
+                                                    : FlexUtils.getPathToMainClassFile(myConfig.getMainClass(), myModule);
       if (pathToMainClassFile.isEmpty() && !ApplicationManager.getApplication().isUnitTestMode()) {
         throw new IOException(
           FlexBundle.message("bc.incorrect.main.class", myConfig.getMainClass(), myConfig.getName(), myModule.getName()));

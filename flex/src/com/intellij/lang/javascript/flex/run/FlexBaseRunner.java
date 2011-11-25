@@ -27,14 +27,13 @@ import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectSettingsFactory;
 import com.intellij.lang.javascript.flex.debug.FlexDebugProcess;
 import com.intellij.lang.javascript.flex.debug.FlexDebugRunner;
-import com.intellij.lang.javascript.flex.flexunit.FlexUnitConsoleProperties;
-import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
-import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
+import com.intellij.lang.javascript.flex.flexunit.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -129,7 +128,23 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       if (runProfile instanceof RemoteFlashRunConfiguration) {
         final BCBasedRunnerParameters params = ((RemoteFlashRunConfiguration)runProfile).getRunnerParameters();
         final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(project);
-        return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, contentToReuse, environment);
+        return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, executor, contentToReuse, environment);
+      }
+
+      if (runProfile instanceof NewFlexUnitRunConfiguration) {
+        final NewFlexUnitRunnerParameters params = ((NewFlexUnitRunConfiguration)runProfile).getRunnerParameters();
+        final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig = params.checkAndGetModuleAndBC(project);
+        final Module module = moduleAndConfig.first;
+        final FlexIdeBuildConfiguration bc = moduleAndConfig.second;
+        try {
+          final String canonicalPath = new File(bc.getOutputFilePath()).getCanonicalPath();
+          FlashPlayerTrustUtil.updateTrustedStatus(module.getProject(), true, false, canonicalPath);
+        }
+        catch (IOException e) {/**/}
+
+        final LauncherParameters launcherParams =
+          new LauncherParameters(LauncherParameters.LauncherType.OSDefault, BrowsersConfiguration.BrowserFamily.FIREFOX, "");
+        return launchFlexUnit(project, executor, contentToReuse, environment, params, launcherParams, bc.getOutputFilePath());
       }
 
       if (runProfile instanceof FlexIdeRunConfiguration) {
@@ -186,6 +201,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   protected RunContentDescriptor launchDebugProcess(final Module module,
                                                     final FlexIdeBuildConfiguration bc,
                                                     final BCBasedRunnerParameters params,
+                                                    final Executor executor,
                                                     final RunContentDescriptor contentToReuse,
                                                     final ExecutionEnvironment env) throws ExecutionException {
     final XDebugSession debugSession =
@@ -193,6 +209,21 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         @NotNull
         public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
           try {
+            if (params instanceof NewFlexUnitRunnerParameters) {
+              return new FlexDebugProcess(session, bc, params) {
+                @NotNull
+                @Override
+                public ExecutionConsole createConsole() {
+                  try {
+                    return createFlexUnitRunnerConsole(session.getProject(), env, getProcessHandler(), executor);
+                  }
+                  catch (ExecutionException e) {
+                    Logger.getInstance(FlexBaseRunner.class.getName()).error(e);
+                  }
+                  return super.createConsole();
+                }
+              }; 
+            }
             return new FlexDebugProcess(session, bc, params);
           }
           catch (IOException e) {
@@ -203,6 +234,14 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
     return debugSession.getRunContentDescriptor();
   }
+
+  protected abstract RunContentDescriptor launchFlexUnit(final Project project,
+                                                         final Executor executor,
+                                                         final RunContentDescriptor contentToReuse,
+                                                         final ExecutionEnvironment env,
+                                                         final FlexUnitCommonParameters params,
+                                                         final LauncherParameters launcherParams,
+                                                         final String swfFilePath) throws ExecutionException;
 
   @Nullable
   protected abstract RunContentDescriptor launchFlexIdeConfig(final Module module,
@@ -588,11 +627,12 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   public static ExecutionConsole createFlexUnitRunnerConsole(Project project,
                                                              ExecutionEnvironment env,
                                                              ProcessHandler processHandler,
-                                                             Executor executor)
-    throws ExecutionException {
-    final FlexUnitRunConfiguration runConfiguration = (FlexUnitRunConfiguration)env.getRunProfile();
+                                                             Executor executor) throws ExecutionException {
+    final RunProfile runConfiguration = env.getRunProfile();
     final FlexStackTraceFilter stackTraceFilter = new FlexStackTraceFilter(project);
-    final FlexUnitConsoleProperties consoleProps = new FlexUnitConsoleProperties(runConfiguration, executor);
+    final FlexUnitConsoleProperties consoleProps = runConfiguration instanceof FlexUnitRunConfiguration
+                                                   ? new FlexUnitConsoleProperties((FlexUnitRunConfiguration)runConfiguration, executor)
+                                                   : new FlexUnitConsoleProperties(((NewFlexUnitRunConfiguration)runConfiguration), executor);
     consoleProps.addStackTraceFilter(stackTraceFilter);
 
     final BaseTestsOutputConsoleView consoleView = SMTestRunnerConnectionUtil

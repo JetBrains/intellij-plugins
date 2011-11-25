@@ -3,11 +3,9 @@
     <configurationType implementation="com.intellij.lang.javascript.flex.run.FlexRunConfigurationType"/>
     <configurationType implementation="com.intellij.lang.javascript.flex.run.AirRunConfigurationType"/>
     <configurationType implementation="com.intellij.lang.javascript.flex.run.AirMobileRunConfigurationType"/>
-    <configurationType implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfigurationType"/>
     <configurationProducer implementation="com.intellij.lang.javascript.flex.run.FlexRuntimeConfigurationProducer"/>
     <configurationProducer implementation="com.intellij.lang.javascript.flex.run.AirRuntimeConfigurationProducer"/>
     <configurationProducer implementation="com.intellij.lang.javascript.flex.run.AirMobileRuntimeConfigurationProducer"/>
-    <configurationProducer implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitRuntimeConfigurationProducer"/>
 
     <moduleConfigurationEditorProvider implementation="com.intellij.lang.javascript.flex.FlexModuleConfigurationEditorProvider"/>
 
