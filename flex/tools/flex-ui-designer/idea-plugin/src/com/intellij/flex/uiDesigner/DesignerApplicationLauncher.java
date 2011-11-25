@@ -10,7 +10,6 @@ import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.InitException;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
-import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -284,8 +283,8 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
     }
 
     final List<Sdk> sdks = new ArrayList<Sdk>();
-    for (Sdk sdk : FlexSdkUtils.getAllFlexSdks()) {
-      if (sdk.getSdkType() instanceof IFlexSdkType && StringUtil.compareVersionNumbers(sdk.getVersionString(), "4.5") >= 0) {
+    for (Sdk sdk : PlatformUtils.isFlexIde() ? FlexSdkUtils.getAllFlexSdks() : FlexSdkUtils.getAllFlexRelatedSdks()) {
+      if (StringUtil.compareVersionNumbers(sdk.getVersionString(), "4.5") >= 0) {
         sdks.add(sdk);
       }
     }
