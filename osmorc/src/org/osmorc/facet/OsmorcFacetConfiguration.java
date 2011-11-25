@@ -53,6 +53,9 @@ import java.util.regex.Pattern;
 /**
  * The facet configuration of an osmorc facet.
  *
+ * XXX: refactor this class so it uses an enum for determining which manifest source is chosen (bnd,bundlor,manual,automatic).
+ * Avoids invalid states and makes it easier to call from the outside without having a lot of  boolean setters.
+ *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @author Robert F. Beeger (robert@beeger.net)
  */
@@ -216,10 +219,10 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   /**
    * Convenience getter.
    *
-   * @return true, if the manifest is edited manually, false if osmorc creates it on build
+   * @return true, if the manifest is edited manually, false if osmorc creates it on build using facet settings, preconfigured bnd file or bundlor file
    */
   public boolean isManifestManuallyEdited() {
-    return !myOsmorcControlsManifest;
+    return !myOsmorcControlsManifest && !myUseBndFile && !myUseBundlorFile;
   }
 
   public void setOsmorcControlsManifest(boolean osmorcControlsManifest) {
