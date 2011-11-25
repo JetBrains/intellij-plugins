@@ -21,7 +21,7 @@ public class FlexCompilerProjectSettingsFactory implements CompilerSettingsFacto
     return new FlexCompilerProjectConfigurable(project);
   }
 
-  private static class FlexCompilerProjectConfigurable implements SearchableConfigurable {
+  private static class FlexCompilerProjectConfigurable implements SearchableConfigurable, Configurable.NoScroll {
 
     private JPanel myMainPanel;
     private JRadioButton myBuiltInCompilerRadioButton;
