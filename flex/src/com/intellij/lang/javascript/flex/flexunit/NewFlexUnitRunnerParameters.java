@@ -10,6 +10,7 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NotNull;
@@ -201,34 +202,7 @@ public class NewFlexUnitRunnerParameters extends BCBasedRunnerParameters impleme
       throw new RuntimeConfigurationError(FlexBundle.message("flexunit.not.found.for.bc", bc.getName()));
     }
 
-    // todo check further
-    /*final GlobalSearchScope scope = ;
-    switch (params.getScope()) {
-      case Class:
-        getClassToTest(params.getClassName(), scope, support, true);
-        break;
-
-      case Method:
-        final JSClass classToTest = getClassToTest(params.getClassName(), scope, support, false);
-        if (StringUtil.isEmpty(params.getMethodName())) {
-          throw new RuntimeConfigurationError(FlexBundle.message("no.test.method.specified"));
-        }
-
-        final JSFunction methodToTest = classToTest.findFunctionByNameAndKind(params.getMethodName(), JSFunction.FunctionKind.SIMPLE);
-
-        if (methodToTest == null || !support.isTestMethod(methodToTest)) {
-          throw new RuntimeConfigurationError(FlexBundle.message("method.not.valid", params.getMethodName()));
-        }
-        break;
-
-      case Package:
-        if (!JSUtils.packageExists(params.getPackageName(), scope)) {
-          throw new RuntimeConfigurationError(FlexBundle.message("package.not.valid", params.getPackageName()));
-        }
-        break;
-
-      default:
-        assert false : "Unknown scope: " + params.getScope();
-    }*/
+    // todo fix scope
+    FlexUnitRunConfiguration.checkCommonParams(this, support, GlobalSearchScope.moduleScope(moduleAndBC.first));
   }
 }

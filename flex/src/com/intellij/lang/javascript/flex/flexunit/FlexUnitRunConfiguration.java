@@ -70,27 +70,34 @@ public class FlexUnitRunConfiguration extends AirRunConfiguration {
     final FlexUnitRunnerParameters params = getRunnerParameters();
     final Pair<Module, FlexUnitSupport> flexUnitInfo = getFlexUnitSupport(getProject(), params.getModuleName());
 
-    final GlobalSearchScope moduleScope = GlobalSearchScope.moduleScope(flexUnitInfo.first);
+    checkCommonParams(params, flexUnitInfo.second, GlobalSearchScope.moduleScope(flexUnitInfo.first));
+
+    checkDebuggerSdk(params);
+  }
+
+  public static void checkCommonParams(final FlexUnitCommonParameters params,
+                                       final FlexUnitSupport support,
+                                       final GlobalSearchScope searchScope) throws RuntimeConfigurationError {
     switch (params.getScope()) {
       case Class:
-        getClassToTest(params.getClassName(), moduleScope, flexUnitInfo.second, true);
+        getClassToTest(params.getClassName(), searchScope, support, true);
         break;
 
       case Method:
-        final JSClass classToTest = getClassToTest(params.getClassName(), moduleScope, flexUnitInfo.second, false);
+        final JSClass classToTest = getClassToTest(params.getClassName(), searchScope, support, false);
         if (StringUtil.isEmpty(params.getMethodName())) {
           throw new RuntimeConfigurationError(FlexBundle.message("no.test.method.specified"));
         }
 
         final JSFunction methodToTest = classToTest.findFunctionByNameAndKind(params.getMethodName(), JSFunction.FunctionKind.SIMPLE);
 
-        if (methodToTest == null || !flexUnitInfo.second.isTestMethod(methodToTest)) {
+        if (methodToTest == null || !support.isTestMethod(methodToTest)) {
           throw new RuntimeConfigurationError(FlexBundle.message("method.not.valid", params.getMethodName()));
         }
         break;
 
       case Package:
-        if (!JSUtils.packageExists(params.getPackageName(), moduleScope)) {
+        if (!JSUtils.packageExists(params.getPackageName(), searchScope)) {
           throw new RuntimeConfigurationError(FlexBundle.message("package.not.valid", params.getPackageName()));
         }
         break;
@@ -98,8 +105,6 @@ public class FlexUnitRunConfiguration extends AirRunConfiguration {
       default:
         assert false : "Unknown scope: " + params.getScope();
     }
-
-    checkDebuggerSdk(params);
   }
 
   private static JSClass getClassToTest(String className,
