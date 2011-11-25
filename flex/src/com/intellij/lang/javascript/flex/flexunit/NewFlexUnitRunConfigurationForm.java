@@ -1,0 +1,114 @@
+package com.intellij.lang.javascript.flex.flexunit;
+
+import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.run.BCCombo;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.options.SettingsEditor;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.ThrowableComputable;
+import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.ui.EnumComboBoxModel;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class NewFlexUnitRunConfigurationForm extends SettingsEditor<NewFlexUnitRunConfiguration> {
+  private JPanel myMainPanel;
+
+  private BCCombo myBCCombo;
+  private WhatToTestForm myWhatToTestForm;
+
+  private JCheckBox myShowLogCheckBox;
+  private JComboBox myLogLevelCombo;
+
+  private final Project myProject;
+
+  public NewFlexUnitRunConfigurationForm(final Project project) {
+    myProject = project;
+
+    myBCCombo.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        myWhatToTestForm.updateOnBCChange(myBCCombo.getBC(), myBCCombo.getModule());
+      }
+    });
+
+    myShowLogCheckBox.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        if (myShowLogCheckBox.isSelected()) {
+          myLogLevelCombo.setEnabled(true);
+          if (myLogLevelCombo.getSelectedItem() == null) {
+            myLogLevelCombo.setSelectedItem(FlexUnitCommonParameters.OutputLogLevel.values()[0]);
+          }
+          IdeFocusManager.getInstance(project).requestFocus(myLogLevelCombo, false);
+        }
+        else {
+          myLogLevelCombo.setEnabled(false);
+        }
+      }
+    });
+
+    myLogLevelCombo.setModel(new EnumComboBoxModel<FlexUnitCommonParameters.OutputLogLevel>(FlexUnitCommonParameters.OutputLogLevel.class));
+  }
+
+  @NotNull
+  protected JComponent createEditor() {
+    return myMainPanel;
+  }
+
+  protected void resetEditorFrom(final NewFlexUnitRunConfiguration config) {
+    final NewFlexUnitRunnerParameters params = config.getRunnerParameters();
+
+    myBCCombo.resetFrom(params);
+    myWhatToTestForm.resetFrom(params);
+
+    myShowLogCheckBox.setSelected(params.getOutputLogLevel() != null);
+    myLogLevelCombo.setEnabled(params.getOutputLogLevel() != null);
+    myLogLevelCombo.setSelectedItem(params.getOutputLogLevel() == null ? null : params.getOutputLogLevel());
+  }
+
+  protected void applyEditorTo(final NewFlexUnitRunConfiguration config) throws ConfigurationException {
+    final NewFlexUnitRunnerParameters params = config.getRunnerParameters();
+
+    myBCCombo.applyTo(params);
+    myWhatToTestForm.applyTo(params);
+
+    final FlexUnitCommonParameters.OutputLogLevel logLevel = myShowLogCheckBox.isSelected()
+                                                             ? (FlexUnitRunnerParameters.OutputLogLevel)myLogLevelCombo.getSelectedItem()
+                                                             : null;
+    params.setOutputLogLevel(logLevel);
+  }
+
+  protected void disposeEditor() {
+    myBCCombo.dispose();
+    myWhatToTestForm.dispose();
+  }
+
+  private void createUIComponents() {
+    myBCCombo = new BCCombo(myProject);
+    myWhatToTestForm = new WhatToTestForm(myProject,
+                                          new ThrowableComputable<Module, RuntimeConfigurationError>() {
+                                            public Module compute() throws RuntimeConfigurationError {
+                                              final Module module = myBCCombo.getModule();
+                                              if (module != null) return module;
+                                              throw new RuntimeConfigurationError(FlexBundle.message("bc.not.specified"));
+                                            }
+                                          },
+                                          new ThrowableComputable<FlexUnitSupport, RuntimeConfigurationError>() {
+                                            public FlexUnitSupport compute() throws RuntimeConfigurationError {
+                                              final FlexIdeBuildConfiguration bc = myBCCombo.getBC();
+                                              if (bc == null) throw new RuntimeConfigurationError(FlexBundle.message("bc.not.specified"));
+                                              final FlexUnitSupport support = FlexUnitSupport.getSupport(bc, myBCCombo.getModule());
+                                              if (support != null) return support;
+
+                                              throw new RuntimeConfigurationError(
+                                                FlexBundle.message("flexunit.not.found.for.bc", bc.getName()));
+                                            }
+                                          }
+    );
+  }
+}

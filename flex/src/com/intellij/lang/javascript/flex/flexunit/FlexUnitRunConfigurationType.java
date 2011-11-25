@@ -6,6 +6,7 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.util.PlatformUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -19,7 +20,9 @@ public class FlexUnitRunConfigurationType implements ConfigurationType {
   public FlexUnitRunConfigurationType() {
     myFactory = new ConfigurationFactory(this) {
       public RunConfiguration createTemplateConfiguration(Project project) {
-        return new FlexUnitRunConfiguration(project, this, "");
+        return PlatformUtils.isFlexIde()
+               ? new NewFlexUnitRunConfiguration(project, this, "")
+               : new FlexUnitRunConfiguration(project, this, "");
       }
     };
   }

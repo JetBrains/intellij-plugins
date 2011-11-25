@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -9,6 +10,8 @@ import com.intellij.lang.javascript.flex.actions.airdescriptor.AirDescriptorPara
 import com.intellij.lang.javascript.flex.actions.airdescriptor.CreateAirDescriptorAction;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.build.FlexCompilerHandler;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.run.FlexRunnerParameters;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.index.JSPackageIndex;
@@ -47,7 +50,8 @@ import java.util.Set;
 public class FlexUnitPrecompileTask implements CompileTask {
 
   private static final String FLEX_UNIT_LAUNCHER_BASE = "____FlexUnitLauncherBase.mxml";
-  private static final String FLEX_UNIT_LAUNCHER_MXML = "____FlexUnitLauncher.mxml";
+  private static final String FLEX_UNIT_LAUNCHER = "____FlexUnitLauncher";
+  public static final String DOT_FLEX_UNIT_LAUNCHER_EXTENSION = ".mxml";
   private static final String FLEX_UNIT_LOG_TARGET = "____FlexUnitTestListener.as";
 
   public static final Key<Collection<String>> FILES_TO_DELETE = Key.create("FlexUnitPrecompileTask.filesToRemove");
@@ -65,7 +69,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
 
   public boolean execute(CompileContext context) {
     final RunConfiguration runConfiguration = CompileStepBeforeRun.getRunConfiguration(context.getCompileScope());
-    if (!(runConfiguration instanceof FlexUnitRunConfiguration)) {
+    if (!(runConfiguration instanceof FlexUnitRunConfiguration) && !(runConfiguration instanceof NewFlexUnitRunConfiguration)) {
       return true;
     }
 
@@ -118,26 +122,51 @@ public class FlexUnitPrecompileTask implements CompileTask {
       return false;
     }
 
-    final FlexUnitRunnerParameters params = ((FlexUnitRunConfiguration)runConfiguration).getRunnerParameters();
+    final FlexUnitCommonParameters params = runConfiguration instanceof FlexUnitRunConfiguration
+                                            ? ((FlexUnitRunConfiguration)runConfiguration).getRunnerParameters()
+                                            : ((NewFlexUnitRunConfiguration)runConfiguration).getRunnerParameters();
     params.setPort(flexUnitPort);
     params.setSocketPolicyPort(socketPolicyPort);
 
-    final Pair<Module, FlexUnitSupport> supportForModule =
-      ApplicationManager.getApplication().runReadAction(new NullableComputable<Pair<Module, FlexUnitSupport>>() {
-        public Pair<Module, FlexUnitSupport> compute() {
-          if (DumbService.getInstance(myProject).isDumb()) return null;
-          Module module = ModuleManager.getInstance(myProject).findModuleByName(params.getModuleName());
-          FlexUnitSupport flexUnitSupport = FlexUnitSupport.getSupport(module);
-          return Pair.create(module, flexUnitSupport);
-        }
-      });
+    final Ref<Module> moduleRef = new Ref<Module>();
+    final Ref<FlexIdeBuildConfiguration> bcRef = new Ref<FlexIdeBuildConfiguration>();
+    final Ref<FlexUnitSupport> supportRef = new Ref<FlexUnitSupport>();
 
-    if (supportForModule == null) {
+    ApplicationManager.getApplication().runReadAction(new Runnable() {
+      public void run() {
+        if (DumbService.getInstance(myProject).isDumb()) return;
+
+        if (params instanceof NewFlexUnitRunnerParameters) {
+          try {
+            final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC =
+              ((NewFlexUnitRunnerParameters)params).checkAndGetModuleAndBC(myProject);
+            moduleRef.set(moduleAndBC.first);
+            bcRef.set(moduleAndBC.second);
+            supportRef.set(FlexUnitSupport.getSupport(moduleAndBC.second, moduleAndBC.first));
+          }
+          catch (RuntimeConfigurationError e) {
+            // already checked above, can't happen
+            throw new RuntimeException(e);
+          }
+        }
+        else {
+          final Module module = ModuleManager.getInstance(myProject).findModuleByName(params.getModuleName());
+          moduleRef.set(module);
+          supportRef.set(FlexUnitSupport.getSupport(module));
+        }
+      }
+    });
+
+    final Module module = moduleRef.get();
+    final FlexIdeBuildConfiguration bc = bcRef.get();
+    final FlexUnitSupport support = supportRef.get();
+
+    if (support == null) {
       context.addMessage(CompilerMessageCategory.ERROR, FlexBundle.message("dumb.mode.flex.unit.warning"), null, -1, -1);
       return false;
     }
 
-    final GlobalSearchScope moduleScope = GlobalSearchScope.moduleScope(supportForModule.first);
+    final GlobalSearchScope moduleScope = GlobalSearchScope.moduleScope(module);
 
     StringBuilder imports = new StringBuilder();
     StringBuilder code = new StringBuilder();
@@ -152,9 +181,9 @@ public class FlexUnitPrecompileTask implements CompileTask {
             if (DumbService.getInstance(myProject).isDumb()) return null;
             Set<String> result = new THashSet<String>();
             final JSClass clazz = (JSClass)JSResolveUtil.findClassByQName(params.getClassName(), moduleScope);
-            collectCustomRunners(result, clazz, supportForModule.second, null);
-            isFlexUnit1Suite.set(supportForModule.second.isFlexUnit1SuiteSubclass(clazz));
-            isSuite.set(supportForModule.second.isSuite(clazz));
+            collectCustomRunners(result, clazz, support, null);
+            isFlexUnit1Suite.set(support.isFlexUnit1SuiteSubclass(clazz));
+            isSuite.set(support.isSuite(clazz));
             return result;
           }
         });
@@ -164,7 +193,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
           return false;
         }
         // FlexUnit4 can't run FlexUnit1 TestSuite subclasses, fallback to FlexUnit1 runner
-        flexUnit4 = supportForModule.second.flexUnit4Present && !isFlexUnit1Suite.get();
+        flexUnit4 = support.flexUnit4Present && !isFlexUnit1Suite.get();
         generateImportCode(imports, params.getClassName(), customRunners);
         generateTestClassCode(code, params.getClassName(), flexUnit4, customRunners, isSuite.get());
       }
@@ -176,7 +205,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
             if (DumbService.getInstance(myProject).isDumb()) return null;
             Set<String> result = new THashSet<String>();
             final JSClass clazz = (JSClass)JSResolveUtil.findClassByQName(params.getClassName(), moduleScope);
-            collectCustomRunners(result, clazz, supportForModule.second, null);
+            collectCustomRunners(result, clazz, support, null);
             return result;
           }
         });
@@ -185,7 +214,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
           return false;
         }
 
-        flexUnit4 = supportForModule.second.flexUnit4Present;
+        flexUnit4 = support.flexUnit4Present;
         generateImportCode(imports, params.getClassName(), customRunners);
         generateTestMethodCode(code, params.getClassName(), params.getMethodName(), flexUnit4, customRunners);
       }
@@ -203,9 +232,9 @@ public class FlexUnitPrecompileTask implements CompileTask {
                   public boolean process(String qualifiedName, JSPackageIndexInfo.Kind kind, boolean isPublic) {
                     if (kind == JSPackageIndexInfo.Kind.CLASS) {
                       PsiElement clazz = JSResolveUtil.findClassByQName(qualifiedName, moduleScope);
-                      if (clazz instanceof JSClass && supportForModule.second.isTestClass((JSClass)clazz, false)) {
+                      if (clazz instanceof JSClass && support.isTestClass((JSClass)clazz, false)) {
                         Set<String> customRunners = new THashSet<String>();
-                        collectCustomRunners(customRunners, (JSClass)clazz, supportForModule.second, null);
+                        collectCustomRunners(customRunners, (JSClass)clazz, support, null);
                         result.add(Pair.create(((JSClass)clazz).getQualifiedName(), customRunners));
                       }
                     }
@@ -227,7 +256,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
           return false;
         }
 
-        flexUnit4 = supportForModule.second.flexUnit4Present;
+        flexUnit4 = support.flexUnit4Present;
         for (Pair<String, Set<String>> classAndRunner : classes) {
           generateImportCode(imports, classAndRunner.first, classAndRunner.second);
           generateTestClassCode(code, classAndRunner.first, flexUnit4, classAndRunner.second, false);
@@ -239,12 +268,12 @@ public class FlexUnitPrecompileTask implements CompileTask {
         assert false : "Unknown scope: " + params.getScope();
     }
 
-    String prefix = supportForModule.first.getName().replaceAll("[^\\p{Alnum}]", "_") +
+    String prefix = module.getName().replaceAll("[^\\p{Alnum}]", "_") +
                     "_" +
                     SystemProperties.getUserName().toLowerCase().replaceAll("[^\\p{Alnum}]", "_");
 
     final String launcherBaseFileName = prefix + FLEX_UNIT_LAUNCHER_BASE;
-    final String launcherFileName = prefix + FLEX_UNIT_LAUNCHER_MXML;
+    final String launcherFileName = getFlexUnitLauncherName(module.getName()) + DOT_FLEX_UNIT_LAUNCHER_EXTENSION;
     final String logTargetFileName = prefix + FLEX_UNIT_LOG_TARGET;
 
     String launcherText;
@@ -260,7 +289,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
       return false;
     }
 
-    final boolean airDependent = FlexSdkUtils.hasDependencyOnAir(supportForModule.first);
+    final boolean airDependent = bc != null ? bc.getTargetPlatform() == TargetPlatform.Desktop : FlexSdkUtils.hasDependencyOnAir(module);
     if (airDependent) {
       generateImportCode(imports, "flash.desktop.NativeApplication");
     }
@@ -270,13 +299,14 @@ public class FlexUnitPrecompileTask implements CompileTask {
     launcherText = launcherText.replace("/*port*/", String.valueOf(flexUnitPort));
     launcherText = launcherText.replace("/*socketPolicyPort*/", String.valueOf(socketPolicyPort));
     launcherText = launcherText.replace("/*base*/", FileUtil.getNameWithoutExtension(launcherBaseFileName));
-    launcherText = launcherText.replace("/*module*/", supportForModule.first.getName());
+    launcherText = launcherText.replace("/*module*/", module.getName());
     launcherText =
       launcherText.replace("/*closeApp*/", airDependent ? "NativeApplication.nativeApplication.exit(0)" : "fscommand(\"quit\")");
     launcherText = launcherText.replace("/*logTargetClass*/", FileUtil.getNameWithoutExtension(logTargetFileName));
-    launcherText = launcherText.replace("/*logEnabled*/", params.getOutputLogLevel() != null ? "true" : "false");
-    launcherText = launcherText.replace("/*logLevel*/", params.getOutputLogLevel() != null
-                                                        ? params.getOutputLogLevel().getFlexConstant()
+    final FlexUnitCommonParameters.OutputLogLevel logLevel = params.getOutputLogLevel();
+    launcherText = launcherText.replace("/*logEnabled*/", logLevel != null ? "true" : "false");
+    launcherText = launcherText.replace("/*logLevel*/", logLevel != null
+                                                        ? logLevel.getFlexConstant()
                                                         : FlexUnitRunnerParameters.OutputLogLevel.values()[0].getFlexConstant());
 
     logTargetText = logTargetText.replace("/*className*/", FileUtil.getNameWithoutExtension(logTargetFileName));
@@ -324,64 +354,73 @@ public class FlexUnitPrecompileTask implements CompileTask {
 
     context.putUserData(FILES_TO_DELETE, filesToDelete);
 
-    final FlexBuildConfiguration originalConfig =
-      FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(supportForModule.first).iterator().next();
+    if (params instanceof FlexUnitRunnerParameters) {
+      final FlexUnitRunnerParameters oldParams = (FlexUnitRunnerParameters)params;
+      final FlexBuildConfiguration originalConfig = FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(module).iterator().next();
 
-    final FlexBuildConfiguration buildConfig = originalConfig.clone();
+      final FlexBuildConfiguration buildConfig = originalConfig.clone();
 
-    buildConfig.setType(FlexBuildConfiguration.Type.FlexUnit);
-    buildConfig.MAIN_CLASS = launcherFileName.substring(0, launcherFileName.length() - ".mxml".length());
-    buildConfig.DO_BUILD = true;
-    buildConfig.OUTPUT_TYPE = FlexBuildConfiguration.APPLICATION;
-    // '_' symbol is a sort of a marker that it is autogenerated swf file name
-    buildConfig.OUTPUT_FILE_NAME = "_flexunit.swf";
+      buildConfig.setType(FlexBuildConfiguration.Type.FlexUnit);
+      buildConfig.MAIN_CLASS = launcherFileName.substring(0, launcherFileName.length() - ".mxml".length());
+      buildConfig.DO_BUILD = true;
+      buildConfig.OUTPUT_TYPE = FlexBuildConfiguration.APPLICATION;
+      // '_' symbol is a sort of a marker that it is autogenerated swf file name
+      buildConfig.OUTPUT_FILE_NAME = "_flexunit.swf";
 
-    context.putUserData(FlexCompilerHandler.OVERRIDE_BUILD_CONFIG, buildConfig);
+      context.putUserData(FlexCompilerHandler.OVERRIDE_BUILD_CONFIG, buildConfig);
 
-    if (airDependent) {
-      params.setRunAsAir(true);
-      String airVersion = FlexSdkUtils.getAirVersion(FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(supportForModule.first));
-      String applicationId = "flexunit.test.application";
-      final String descriptorFileName = "_" + supportForModule.first.getName() + "-air-flexunit.xml";
-      final String descriptorFolderPath = buildConfig.getCompileOutputPathForTests();
-      final AirDescriptorParameters descriptorParams =
-        new AirDescriptorParameters(descriptorFileName, descriptorFolderPath, airVersion, applicationId, applicationId, applicationId,
-                                    "0.0", buildConfig.OUTPUT_FILE_NAME, FlexBundle.message("flexunit.test.runner.caption"), 500, 400,
-                                    false);
-      final Ref<IOException> createDescriptorError = new Ref<IOException>();
-      Runnable createDescriptorRunnable = new Runnable() {
-        public void run() {
-          try {
-            CreateAirDescriptorAction.createAirDescriptor(descriptorParams);
+      if (airDependent) {
+        oldParams.setRunAsAir(true);
+        String airVersion = FlexSdkUtils.getAirVersion(FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module));
+        String applicationId = "flexunit.test.application";
+        final String descriptorFileName = "_" + module.getName() + "-air-flexunit.xml";
+        final String descriptorFolderPath = buildConfig.getCompileOutputPathForTests();
+        final AirDescriptorParameters descriptorParams =
+          new AirDescriptorParameters(descriptorFileName, descriptorFolderPath, airVersion, applicationId, applicationId, applicationId,
+                                      "0.0", buildConfig.OUTPUT_FILE_NAME, FlexBundle.message("flexunit.test.runner.caption"), 500, 400,
+                                      false);
+        final Ref<IOException> createDescriptorError = new Ref<IOException>();
+        Runnable createDescriptorRunnable = new Runnable() {
+          public void run() {
+            try {
+              CreateAirDescriptorAction.createAirDescriptor(descriptorParams);
+            }
+            catch (IOException e) {
+              createDescriptorError.set(e);
+            }
           }
-          catch (IOException e) {
-            createDescriptorError.set(e);
-          }
+        };
+
+        if (ApplicationManager.getApplication().isDispatchThread()) {
+          createDescriptorRunnable.run();
         }
-      };
+        else {
+          ProgressIndicator pi = ProgressManager.getInstance().getProgressIndicator();
+          ApplicationManager.getApplication()
+            .invokeAndWait(createDescriptorRunnable, pi != null ? pi.getModalityState() : ModalityState.NON_MODAL);
+        }
+        if (!createDescriptorError.isNull()) {
+          context.addMessage(CompilerMessageCategory.ERROR, createDescriptorError.get().getMessage(), null, -1, -1);
+          return false;
+        }
 
-      if (ApplicationManager.getApplication().isDispatchThread()) {
-        createDescriptorRunnable.run();
+        oldParams.setAirDescriptorPath(descriptorFolderPath + "/" + descriptorFileName);
+        oldParams.setAirRootDirPath(descriptorFolderPath);
       }
       else {
-        ProgressIndicator pi = ProgressManager.getInstance().getProgressIndicator();
-        ApplicationManager.getApplication()
-          .invokeAndWait(createDescriptorRunnable, pi != null ? pi.getModalityState() : ModalityState.NON_MODAL);
+        oldParams.setRunAsAir(false);
+        oldParams.setRunMode(FlexRunnerParameters.RunMode.HtmlOrSwfFile);
+        oldParams.setHtmlOrSwfFilePath(buildConfig.getCompileOutputPathForTests() + "/" + buildConfig.OUTPUT_FILE_NAME);
       }
-      if (!createDescriptorError.isNull()) {
-        context.addMessage(CompilerMessageCategory.ERROR, createDescriptorError.get().getMessage(), null, -1, -1);
-        return false;
-      }
+    }
 
-      params.setAirDescriptorPath(descriptorFolderPath + "/" + descriptorFileName);
-      params.setAirRootDirPath(descriptorFolderPath);
-    }
-    else {
-      params.setRunAsAir(false);
-      params.setRunMode(FlexRunnerParameters.RunMode.HtmlOrSwfFile);
-      params.setHtmlOrSwfFilePath(buildConfig.getCompileOutputPathForTests() + "/" + buildConfig.OUTPUT_FILE_NAME);
-    }
     return true;
+  }
+
+  public static String getFlexUnitLauncherName(final String moduleName) {
+    return moduleName.replaceAll("[^\\p{Alnum}]", "_") + "_" +
+           SystemProperties.getUserName().toLowerCase().replaceAll("[^\\p{Alnum}]", "_") +
+           FLEX_UNIT_LAUNCHER;
   }
 
   private static void collectCustomRunners(Set<String> result,
@@ -455,5 +494,4 @@ public class FlexUnitPrecompileTask implements CompileTask {
       code.append("var __ref_").append(className.replace(".", "_")).append("_").append(i++).append("_ : ").append(qname).append(";\n");
     }
   }
-
 }

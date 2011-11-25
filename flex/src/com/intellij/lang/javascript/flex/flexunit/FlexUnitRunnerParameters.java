@@ -7,25 +7,7 @@ import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class FlexUnitRunnerParameters extends AirRunnerParameters {
-
-  public enum Scope {
-    Method, Class, Package
-  }
-
-  public enum OutputLogLevel {
-    Fatal("FATAL"), Error("ERROR"), Warn("WARN"), Info("INFO"), Debug("DEBUG"), All("ALL");
-
-    private final String myFlexConstant;
-
-    OutputLogLevel(String flexConstant) {
-      myFlexConstant = flexConstant;
-    }
-
-    public String getFlexConstant() {
-      return myFlexConstant;
-    }
-  }
+public class FlexUnitRunnerParameters extends AirRunnerParameters implements FlexUnitCommonParameters {
 
   private boolean myRunAsAir;
 
@@ -111,7 +93,7 @@ public class FlexUnitRunnerParameters extends AirRunnerParameters {
     myMethodName = methodName;
   }
 
-  @Attribute("port")
+  @Transient
   public int getPort() {
     return myPort;
   }
@@ -120,7 +102,7 @@ public class FlexUnitRunnerParameters extends AirRunnerParameters {
     myPort = port;
   }
 
-  @Attribute("socket_policy_port")
+  @Transient
   public int getSocketPolicyPort() {
     return mySocketPolicyPort;
   }
