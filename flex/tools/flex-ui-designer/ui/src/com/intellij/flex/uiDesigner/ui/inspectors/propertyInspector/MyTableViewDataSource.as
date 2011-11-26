@@ -13,7 +13,7 @@ import cocoa.tableView.TableViewDataSource;
 
 import flash.utils.Dictionary;
 
-internal class MyTableViewDataSource extends AbstractCollectionViewDataSource implements TableViewDataSource {
+public class MyTableViewDataSource extends AbstractCollectionViewDataSource implements TableViewDataSource {
   private static const excludedProperties:Dictionary = new Dictionary();
   excludedProperties["transitions"] = true;
   excludedProperties["activeEffects"] = true;

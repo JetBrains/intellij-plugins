@@ -11,7 +11,7 @@ import com.intellij.flex.uiDesigner.ui.inspectors.AbstractTitledBlockItemRendere
 
 import flash.display.DisplayObject;
 
-public class PropertyList {
+public class PropertyList extends AbstractTitledBlockItemRenderer {
   private const tableView:TableView = new TableView();
   private var source:MyTableViewDataSource;
 
@@ -34,6 +34,9 @@ public class PropertyList {
   override protected function createChildren():void {
     super.createChildren();
 
+    laf = LookAndFeelUtil.find(parent);
+    labelHelper.text = "Other";
+
     var dataSource:MyTableViewDataSource = new MyTableViewDataSource();
     tableView.dataSource = source = dataSource;
     tableView.minRowCount = 3;
@@ -52,7 +55,7 @@ public class PropertyList {
   }
 
   override protected function measure():void {
-    measuredHeight = tableView.skin.getExplicitOrMeasuredHeight();
+    measuredHeight = border.layoutHeight + tableView.skin.getExplicitOrMeasuredHeight();
   }
 
   override protected function commitProperties():void {

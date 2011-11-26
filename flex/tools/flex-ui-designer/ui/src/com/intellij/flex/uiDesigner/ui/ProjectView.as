@@ -102,15 +102,15 @@ import cocoa.pane.PaneItem;
 import com.intellij.flex.uiDesigner.Document;
 
 final class DocumentPaneItem extends PaneItem {
-  public function DocumentPaneItem(document:Document) {
-    _document = document;
-    view = document.container;
-
-    super(null, null);
-  }
-
   private var _document:Document;
   public function get document():Document {
     return _document;
+  }
+  
+  public function DocumentPaneItem(document:Document) {
+    _document = document;
+    view = document.container;
+    
+    super(null, null);
   }
 }

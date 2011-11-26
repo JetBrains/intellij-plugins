@@ -155,7 +155,8 @@ public class ValueRendererManager extends TextRendererManager {
       }
 
       line = textLineRendererFactory.create(textLineContainer, text, w, customElementFormat);
-      layoutTextLine(line, x, y, h);
+      line.x = x + textInsets.left;
+      line.y = (y + h) - textInsets.bottom;
     }
 
     if (newEntry == null) {
