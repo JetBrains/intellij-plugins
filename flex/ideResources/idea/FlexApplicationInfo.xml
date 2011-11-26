@@ -11,8 +11,7 @@
 
   <welcome-screen caption-url="/artwork/flexideWelcomeCaption.png" slogan-url="/artwork/flexideDevelopSlogan.png"/>
  
-  <!--<update-urls check="http://www.jetbrains.com/updates/updates.xml"-->
-               <!--patches="http://download.jetbrains.com/idea/"/>-->
+  <update-urls check="http://www.jetbrains.com/updates/updates.xml" patches="http://download.jetbrains.com/astella/"/>
 
   <feedback eap-url="http://www.jetbrains.com/feedback/feedback.jsp?product=Astella&amp;build=$BUILD&amp;timezone=$TIMEZONE&amp;eval=$EVAL"
             release-url="http://www.jetbrains.com/feedback/feedback.jsp?product=Astella&amp;build=$BUILD&amp;timezone=$TIMEZONE&amp;eval=$EVAL"/>

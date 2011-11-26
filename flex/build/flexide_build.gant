@@ -8,11 +8,13 @@ includeTargets << new File("${guessHome(this)}/build/scripts/libLicenses.gant")
 includeTool << Jps
 
 def product = "Astella"
+def productCode = "AS"
 
 requireProperty("buildNumber", requireProperty("build.number", snapshot))
 setProperty("product", "${product}")
 setProperty("buildPrefix", "${product}-EAP-")
 setProperty("buildName", "${buildPrefix}${buildNumber}")
+setProperty("productCode", "$productCode")
 requireProperty("launchProperties", "")
 
 
@@ -218,7 +220,7 @@ target('default': "Build artifacts") {
     pair -> ant.echo(file: "$paths.sandbox/astella.exe.vmoptions", append: "true", message: "-D${pair["key"]}=${pair["value"]}\r\n")
   }
 
-  wireBuildDate(buildNumber)
+  wireBuildDate("${productCode}-${buildNumber}")
   LayoutInfo layoutInfo = layoutFull(paths.distAll, usedJars)
   generateLicensesTable("$paths.artifacts/third-party-libraries.txt", layoutInfo.usedModules);
 
@@ -231,7 +233,7 @@ target('default': "Build artifacts") {
             system_selector: system_selector,
             paths.distMac)
 
-  ant.echo(message: "${product}-${buildNumber}", file: "$paths.sandbox/layout/build.txt")
+  ant.echo(message: "${productCode}-${buildNumber}", file: "$paths.sandbox/layout/build.txt")
 
   buildSit()
   buildDmg()
