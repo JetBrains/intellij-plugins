@@ -153,7 +153,6 @@ public class JspActionAnnotator implements LineMarkerProvider {
     lineMarkerInfos.add(gutterIconBuilder.createLineMarkerInfo(xmlTag));
   }
 
-  // TODO cache in JspFile's UserData?
   @Nullable
   private static String getUITaglibPrefix(final XmlTag xmlTag) {
     final PsiFile containingFile = xmlTag.getContainingFile();
