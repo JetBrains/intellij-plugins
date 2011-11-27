@@ -18,19 +18,13 @@ package com.intellij.struts2.annotators;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
-import com.intellij.jsp.impl.TldDescriptor;
-import com.intellij.lang.jsp.JspFileViewProvider;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.jsp.JspFile;
-import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsConstants;
@@ -41,15 +35,12 @@ import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.xml.XmlNSDescriptor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Annotates custom tags with "action" attribute.
@@ -93,17 +84,11 @@ public class JspActionAnnotator implements LineMarkerProvider {
       return;
     }
 
-    // short exit when Struts 2 facet not present
-    final Module module = ModuleUtil.findModuleForPsiElement(element);
-    if (module == null) {
-      return;
-    }
-
-    if (StrutsFacet.getInstance(module) == null) {
-      return;
-    }
-
     final XmlTag xmlTag = (XmlTag) element;
+
+    if (!Comparing.equal(xmlTag.getNamespace(), StrutsConstants.TAGLIB_STRUTS_UI_URI)) {
+      return;
+    }
 
     // any of our tags?
     final String tagName = xmlTag.getLocalName();
@@ -111,10 +96,14 @@ public class JspActionAnnotator implements LineMarkerProvider {
       return;
     }
 
-    // determine Struts 2 taglib prefix
-    final String uiTaglibPrefix = getUITaglibPrefix(xmlTag);
-    if (uiTaglibPrefix == null ||
-        !Comparing.equal(xmlTag.getNamespacePrefix(), uiTaglibPrefix)) {
+
+    // short exit when Struts 2 facet not present
+    final Module module = ModuleUtil.findModuleForPsiElement(element);
+    if (module == null) {
+      return;
+    }
+
+    if (StrutsFacet.getInstance(module) == null) {
       return;
     }
 
@@ -151,38 +140,6 @@ public class JspActionAnnotator implements LineMarkerProvider {
             });
 
     lineMarkerInfos.add(gutterIconBuilder.createLineMarkerInfo(xmlTag));
-  }
-
-  @Nullable
-  private static String getUITaglibPrefix(final XmlTag xmlTag) {
-    final PsiFile containingFile = xmlTag.getContainingFile();
-    if (!(containingFile instanceof JspFile)) {
-      return null;
-    }
-
-    final JspFile jspFile = (JspFile) containingFile;
-    final XmlDocument document = jspFile.getDocument();
-    if (document == null) {
-      return null;
-    }
-
-    final XmlTag rootTag = document.getRootTag();
-    if (rootTag == null) {
-      return null;
-    }
-
-    final Set<String> knownTaglibPrefixes = ((JspFileViewProvider) jspFile.getViewProvider()).getKnownTaglibPrefixes();
-    return ContainerUtil.find(knownTaglibPrefixes, new Condition<String>() {
-      public boolean value(final String s) {
-        final String namespaceByPrefix = rootTag.getNamespaceByPrefix(s);
-        final XmlNSDescriptor descriptor = rootTag.getNSDescriptor(namespaceByPrefix, true);
-        if (descriptor instanceof TldDescriptor) {
-          final String uri = ((TldDescriptor) descriptor).getUri(); // URI is optional in TLD!
-          return Comparing.equal(uri, StrutsConstants.TAGLIB_STRUTS_UI_URI);
-        }
-        return false;
-      }
-    });
   }
 
 }
