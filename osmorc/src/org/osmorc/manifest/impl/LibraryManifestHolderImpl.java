@@ -99,7 +99,11 @@ public class LibraryManifestHolderImpl extends AbstractManifestHolderImpl {
   }
 
   public boolean isDisposed() {
-    return (myLibrary instanceof LibraryEx && ((LibraryEx)myLibrary).isDisposed()) || myProject.isDisposed();
+    return isLibraryDisposed(myLibrary)  || myProject.isDisposed();
+  }
+
+  private static boolean isLibraryDisposed(Library library) {
+    return (library instanceof LibraryEx && ((LibraryEx)library).isDisposed());
   }
 
   /**
@@ -113,6 +117,9 @@ public class LibraryManifestHolderImpl extends AbstractManifestHolderImpl {
   protected static synchronized Collection<ManifestHolder> createForLibrary(@NotNull Library library, @NotNull Project project) {
     cleanupHolderCache();
     List<ManifestHolder> result = new ArrayList<ManifestHolder>();
+    if ( isLibraryDisposed(library) || project.isDisposed()  ) {
+      return result;
+    }
     VirtualFile[] classRoots = library.getFiles(OrderRootType.CLASSES);
     for (VirtualFile classRoot : classRoots) {
       String jarFileUrl = classRoot.getUrl();
