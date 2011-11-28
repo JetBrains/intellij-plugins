@@ -37,7 +37,9 @@ public class MyBundleManager implements BundleManager {
   }
 
   private void notifyListenersOfBundleIndexChange() {
-    myProject.getMessageBus().syncPublisher(BUNDLE_INDEX_CHANGE_TOPIC).bundlesChanged();
+    if (!myProject.isDisposed()) {
+      myProject.getMessageBus().syncPublisher(BUNDLE_INDEX_CHANGE_TOPIC).bundlesChanged();
+    }
   }
 
   @Override
