@@ -5,6 +5,7 @@ import com.intellij.openapi.fileTypes.BinaryFileDecompiler;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -23,7 +24,7 @@ public class SwfFileDecompiler implements BinaryFileDecompiler {
       return FlexImporter.buildInterfaceFromStream(file.getInputStream());
     }
     catch (IOException ex) {
-      throw new RuntimeException(ex);
+      return ArrayUtil.EMPTY_CHAR_SEQUENCE;
     }
   }
 
