@@ -228,6 +228,10 @@ target('default': "Build artifacts") {
   //scramble()
 
   layoutWin(paths.distWin)
+  if (isEap()) {
+    binding.setVariable("common_vmoptions",
+                        "$common_vmoptions -XX:+HeapDumpOnOutOfMemoryError -agentlib:yjpagent=disablej2ee,disablecounts,disablealloc,sessionname=astella")
+  }
   layoutMac(buildName: buildName,
             version: "1.0",
             system_selector: system_selector,
