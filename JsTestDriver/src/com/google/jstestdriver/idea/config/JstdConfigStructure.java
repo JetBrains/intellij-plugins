@@ -31,7 +31,8 @@ public class JstdConfigStructure {
   private final Set<File> myLoadFiles;
   private final Set<File> myTestFiles;
 
-  private JstdConfigStructure(@NotNull File jstdConfigFile, @NotNull File basePath,
+  private JstdConfigStructure(@NotNull File jstdConfigFile,
+                              @NotNull File basePath,
                               @NotNull Collection<File> loadFiles,
                               @NotNull Collection<File> testFiles) {
     myJstdConfigFile = jstdConfigFile;
@@ -47,7 +48,7 @@ public class JstdConfigStructure {
       try {
         canonicalFiles.add(file.getCanonicalFile());
       } catch (IOException e) {
-        LOG.warn(e);
+        LOG.warn("Can't find canonical file for '" + file.getAbsolutePath() + "'... Just skipping.", e);
       }
     }
     return canonicalFiles;
@@ -105,7 +106,9 @@ public class JstdConfigStructure {
     List<File> files = Lists.newArrayList();
     for (FileInfo fileInfo : fileInfos) {
       File file = fileInfo.toFile(null);
-      files.add(file);
+      if (file.isFile()) {
+        files.add(file);
+      }
     }
     return files;
   }
