@@ -5,6 +5,7 @@ import com.google.jstestdriver.idea.assertFramework.jasmine.JasmineFileStructure
 import com.google.jstestdriver.idea.assertFramework.jstd.JstdTestFileStructureBuilder;
 import com.google.jstestdriver.idea.assertFramework.qunit.QUnitFileStructureBuilder;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
@@ -17,6 +18,8 @@ import java.util.List;
  * @author Sergey Simonchik
  */
 public class TestFileStructureProviderImpl implements TestFileStructureManager.Provider {
+
+  private static final Logger LOG = Logger.getInstance(TestFileStructureProviderImpl.class);
 
   private static final Key<CachedValue<TestFileStructurePack>> TEST_FILE_STRUCTURE_REGISTRY_KEY = Key.create(
     TestFileStructurePack.class.getName()
@@ -35,15 +38,17 @@ public class TestFileStructureProviderImpl implements TestFileStructureManager.P
                                               new CachedValueProvider<TestFileStructurePack>() {
           @Override
           public Result<TestFileStructurePack> compute() {
-            long startTime = System.currentTimeMillis();
+            long startTimeNano = System.nanoTime();
             List<AbstractTestFileStructure> fileStructures = Lists.newArrayList();
             for (AbstractTestFileStructureBuilder builder : myBuilders) {
               AbstractTestFileStructure testFileStructure = builder.buildTestFileStructure(jsFile);
               fileStructures.add(testFileStructure);
             }
-            long endTime = System.currentTimeMillis();
-            System.out.println("Creating TestFileStructurePack for " + jsFile.getName() + " takes "
-                               + (endTime - startTime) + " ms");
+            long endTimeNano = System.nanoTime();
+            String message = String.format("JsTestDriver: Creating TestFileStructurePack for %s takes %.2f ms",
+                                           jsFile.getName(),
+                                           (endTimeNano - startTimeNano) / 1000000.0);
+            LOG.info(message);
             return Result.create(new TestFileStructurePack(fileStructures), jsFile);
           }
         }, false);
