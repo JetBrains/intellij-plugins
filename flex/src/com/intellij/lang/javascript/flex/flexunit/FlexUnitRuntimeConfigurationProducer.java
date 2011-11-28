@@ -56,7 +56,7 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
 
     for (final RunnerAndConfigurationSettings configuration : existingConfigurations) {
       final RunConfiguration runConfiguration = configuration.getConfiguration();
-      final FlexUnitCommonParameters params = configuration instanceof FlexUnitRunConfiguration
+      final FlexUnitCommonParameters params = runConfiguration instanceof FlexUnitRunConfiguration
                                               ? ((FlexUnitRunConfiguration)runConfiguration).getRunnerParameters()
                                               : ((NewFlexUnitRunConfiguration)runConfiguration).getRunnerParameters();
       if (params.getModuleName().equals(fakeParams.getModuleName())
