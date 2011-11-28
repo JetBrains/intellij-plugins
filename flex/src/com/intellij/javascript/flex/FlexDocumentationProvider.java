@@ -17,13 +17,11 @@ import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -76,6 +74,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
   private static final Pattern ourLinebreakAfterCode =
     Pattern.compile("([^ \t\r\n>][ \t]*)([\r\n]+[ \t]*?<code>)", Pattern.CASE_INSENSITIVE);
   private static final String ourInsertBr = "$1<br>$2";
+  private static final String DISPLAY_NAME_MARKER = "$$$$DISPLAY_NAME$$$$";
   private final Pattern ourDetailHeaderTable =
     Pattern.compile("<table .*?class=\"classHeaderTable\".*?>.*?</table>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
   private static final Pattern ourClassHeaderTable =
@@ -159,6 +158,19 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
       }
 
       @Override
+      public String getExternalDocInfoForElement(final String docURL, final PsiElement element) throws Exception {
+        String result = super.getExternalDocInfoForElement(docURL, element);
+        if (StringUtil.isNotEmpty(result)) {
+          result = result.replace(DISPLAY_NAME_MARKER, ApplicationManager.getApplication().runReadAction(new Computable<CharSequence>() {
+            public CharSequence compute() {
+              return getDisplayName(element);
+            }
+          }));
+        }
+        return result;
+      }
+
+      @Override
       protected void doBuildFromStream(String surl, Reader reader, StringBuffer result) throws IOException {
         String input = StreamUtil.readTextFrom(reader);
 
@@ -218,8 +230,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
         text = ourDetailHeaderTable.matcher(text).replaceAll("");
         text = ourClassHeaderTable.matcher(text).replaceAll("");
 
-        String displayName = getDisplayName(elementToShowDoc);
-        result.append(HTML).append("<PRE><b>").append(displayName);
+        result.append(HTML).append("<PRE><b>").append(DISPLAY_NAME_MARKER);
         result.append("</b></PRE>");
         result.append(prettyPrint(text));
 
