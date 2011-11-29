@@ -26,6 +26,7 @@
     <orderEntry type="module" module-name="css-api" />
     <orderEntry type="module" module-name="idea-ui" />
     <orderEntry type="module" module-name="maven" />
+    <orderEntry type="module" module-name="ant" />
   </component>
 </module>
 
