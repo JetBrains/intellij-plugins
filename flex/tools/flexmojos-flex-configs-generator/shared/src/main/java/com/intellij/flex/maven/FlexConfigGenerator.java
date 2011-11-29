@@ -1,7 +1,6 @@
 package com.intellij.flex.maven;
 
 import org.apache.maven.plugin.Mojo;
-import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
@@ -12,7 +11,7 @@ public interface FlexConfigGenerator {
 
   void generate(Mojo configuration) throws Exception;
 
-  void preGenerate(MavenProject project, String classifier, MojoExecution flexmojosGeneratorMojoExecution) throws IOException;
+  void preGenerate(MavenProject project, String classifier, AdditionalSourcePathProvider additionalSourcePathProvider) throws IOException;
 
   String postGenerate(MavenProject project) throws IOException;
 }

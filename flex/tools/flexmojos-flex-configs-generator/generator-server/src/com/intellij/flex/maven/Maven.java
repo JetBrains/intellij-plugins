@@ -3,6 +3,7 @@ package com.intellij.flex.maven;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.lifecycle.internal.LifecycleExecutionPlanCalculator;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginExecution;
 import org.apache.maven.model.building.ModelBuildingRequest;
 import org.apache.maven.plugin.*;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
@@ -16,6 +17,7 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 final class Maven {
@@ -79,13 +81,14 @@ final class Maven {
 
   public MojoExecution createMojoExecution(Plugin plugin, String goal, MavenProject project) throws Exception {
     MojoDescriptor mojoDescriptor = pluginManager.getMojoDescriptor(plugin, goal, project.getRemotePluginRepositories(), session.getRepositorySession());
-    MojoExecution mojoExecution = new MojoExecution(mojoDescriptor, "default-cli", MojoExecution.Source.CLI);
+    List<PluginExecution> executions = plugin.getExecutions();
+    MojoExecution mojoExecution = new MojoExecution(mojoDescriptor, executions.isEmpty() ? null : executions.get(executions.size() - 1).getId(), MojoExecution.Source.CLI);
     plexusContainer.lookup(LifecycleExecutionPlanCalculator.class).setupMojoExecution(session, project, mojoExecution);
     return mojoExecution;
   }
 
   @SuppressWarnings("UnusedParameters")
-  public synchronized void releaseMojoExecution(String goal, MojoExecution mojoExecution) throws Exception {
+  public synchronized void releaseMojoExecution(MojoExecution mojoExecution) throws Exception {
   }
 
   public ClassRealm getPluginRealm(MojoExecution mojoExecution) throws PluginManagerException, PluginResolutionException {

@@ -1,10 +1,10 @@
 package com.intellij.flex.maven;
 
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.project.MavenProject;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
 public class ShareableFlexConfigGenerator extends IdeaConfigurator {
   private static final String TARGET_WITH_FRONT_SLASH = "/target";
@@ -24,8 +24,8 @@ public class ShareableFlexConfigGenerator extends IdeaConfigurator {
   }
 
   @Override
-  public void preGenerate(MavenProject project, String classifier, MojoExecution flexmojosGeneratorMojoExecution) throws IOException {
-    super.preGenerate(project, classifier, flexmojosGeneratorMojoExecution);
+  public void preGenerate(MavenProject project, String classifier, AdditionalSourcePathProvider additionalSourcePathProvider) throws IOException {
+    super.preGenerate(project, classifier, additionalSourcePathProvider);
 
     baseDir = project.getBasedir().getPath();
 

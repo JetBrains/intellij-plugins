@@ -3,13 +3,8 @@ package com.intellij.flex.maven;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.Mojo;
-import org.apache.maven.plugin.MojoExecution;
-import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
-import org.codehaus.plexus.configuration.PlexusConfiguration;
-import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 import org.sonatype.flexmojos.compiler.*;
 
 import java.io.File;
@@ -31,8 +26,8 @@ public class IdeaConfigurator implements FlexConfigGenerator {
   private Build build;
 
   private String classifier;
-  private MojoExecution flexmojosGeneratorMojoExecution;
-  private ExpressionEvaluator flexmojosGeneratorExpressionEvaluator;
+
+  private AdditionalSourcePathProvider additionalSourcePathsProvider;
 
   protected final File outputDirectory;
   @SuppressWarnings("StaticNonFinalField")
@@ -63,9 +58,9 @@ public class IdeaConfigurator implements FlexConfigGenerator {
   }
 
   @Override
-  public void preGenerate(MavenProject project, String classifier, MojoExecution flexmojosGeneratorMojoExecution) throws IOException {
+  public void preGenerate(MavenProject project, String classifier, AdditionalSourcePathProvider additionalSourcePathProvider) throws IOException {
     this.classifier = classifier;
-    this.flexmojosGeneratorMojoExecution = flexmojosGeneratorMojoExecution;
+    this.additionalSourcePathsProvider = additionalSourcePathProvider;
     build = project.getBuild();
   }
 
@@ -221,7 +216,7 @@ public class IdeaConfigurator implements FlexConfigGenerator {
 
         out.append(indent).append('<').append(name);
 
-        // fucking adobe, ability to compile pure AS3 project without fucking themes — node must be present, but empty (relevant only for "theme", but we are ready for adobe surprises)
+        // ability to compile pure AS3 project without themes — node must be present, but empty (relevant only for "theme", but we are ready for adobe surprises)
         if (values.length == 0) {
           out.append("/>");
         }
@@ -233,12 +228,18 @@ public class IdeaConfigurator implements FlexConfigGenerator {
             childTagName = PATH_ELEMENT;
           }
 
-          for (Object v : values) {
-            writeTag(indent, childTagName, v.toString(), name);
-          }
-
           if (name.equals(SOURCE_PATH) && "compiler".equals(configurationName)) {
-            addGeneratedSources((File[])values, indent);
+            processSourcePaths((File[])values, indent);
+          }
+          else {
+            for (Object v : values) {
+              if (v == null) {
+                System.out.print('\n' + childTagName + " child value for " + name + " is null\n");
+              }
+              if (v != null) {
+                writeTag(indent, childTagName, v.toString(), name);
+              }
+            }
           }
 
           out.append(indent).append("</").append(name).append('>');
@@ -256,68 +257,24 @@ public class IdeaConfigurator implements FlexConfigGenerator {
     }
   }
 
-  private void addGeneratedSources(File[] existing, String indent) throws IOException {
-    final List<File> existingList;
-    if (flexmojosGeneratorMojoExecution == null) {
-      existingList = Arrays.asList(existing);
-    }
-    else {
-      existingList = new ArrayList<File>();
-      Collections.addAll(existingList, existing);
-
-      PlexusConfiguration configuration = new XmlPlexusConfiguration(flexmojosGeneratorMojoExecution.getConfiguration());
-      writeGeneratedSource(configuration, "baseOutputDirectory", existingList, indent);
-      writeGeneratedSource(configuration, "outputDirectory", existingList, indent);
+  private void processSourcePaths(File[] existing, String indent) throws IOException, ExpressionEvaluationException {
+    final List<File> paths = additionalSourcePathsProvider == null ? Arrays.asList(existing) : additionalSourcePathsProvider.merge(existing, session);
+    for (File file : paths) {
+      writeSourcePath(file, indent);
     }
 
     File generatedSources = new File(build.getDirectory(), "/generated-sources");
-    if (!generatedSources.isDirectory()) {
-      return;
-    }
-
-    for (File file : generatedSources.listFiles()) {
-      writeGeneratedSource(file, existingList, indent);
-    }
-  }
-
-  private void writeGeneratedSource(PlexusConfiguration parentConfiguration, String parameterName, List<File> existingList, String indent)
-    throws IOException {
-    final PlexusConfiguration configuration = parentConfiguration.getChild(parameterName);
-    if (configuration == null) {
-      return;
-    }
-    
-    String filepath = configuration.getValue();
-    if (filepath == null) {
-      final String defaultValue = configuration.getAttribute("default-value");
-      if (defaultValue == null) {
-        return;
-      }
-
-      if (flexmojosGeneratorExpressionEvaluator == null) {
-        flexmojosGeneratorExpressionEvaluator = new PluginParameterExpressionEvaluator(session, flexmojosGeneratorMojoExecution);
-      }
-      
-      try {
-        filepath = (String)flexmojosGeneratorExpressionEvaluator.evaluate(defaultValue);
-      }
-      catch (ExpressionEvaluationException e) {
-        throw new RuntimeException(e);
-      }
-    }
-
-    if (filepath != null) {
-      File file = new File(filepath);
-      if (!existingList.contains(file)) {
-        writeTag(indent, PATH_ELEMENT, file.getAbsolutePath(), SOURCE_PATH);
+    if (generatedSources.isDirectory()) {
+      for (File file : generatedSources.listFiles()) {
+        if (file.isDirectory() && !file.isHidden() && !paths.contains(file)) {
+          writeSourcePath(file, indent);
+        }
       }
     }
   }
-    
-  private void writeGeneratedSource(File file, List<File> existingList, String indent) throws IOException {
-    if (file.isDirectory() && !file.isHidden() && !existingList.contains(file)) {
-      writeTag(indent, PATH_ELEMENT, file.getAbsolutePath(), SOURCE_PATH);
-    }
+
+  private void writeSourcePath(File file, String indent) throws IOException {
+    writeTag(indent, PATH_ELEMENT, file.getAbsolutePath(), SOURCE_PATH);
   }
 
   protected void processValue(String value, String name) throws IOException {

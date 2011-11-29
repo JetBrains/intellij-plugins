@@ -118,21 +118,27 @@ public class GeneratorServer {
     session.setCurrentProject(project);
 
     MojoExecution flexmojosMojoExecution = null;
-    MojoExecution flexmojosGeneratorMojoExecution = null;
-    final String compileGoal = "compile-" + project.getPackaging();
+    final List<MojoExecution> sourceProviderMojoExecutions = new ArrayList<MojoExecution>(2);
     try {
+      boolean flexmojosGeneratorFound = false;
+      boolean buildHelperFound = false;
       for (Plugin plugin : project.getBuildPlugins()) {
         if (plugin.getGroupId().equals("org.sonatype.flexmojos")) {
           if (flexmojosMojoExecution == null && plugin.getArtifactId().equals("flexmojos-maven-plugin")) {
-            flexmojosMojoExecution = maven.createMojoExecution(plugin, compileGoal, project);
+            flexmojosMojoExecution = maven.createMojoExecution(plugin, "compile-" + project.getPackaging(), project);
           }
-          else if (flexmojosGeneratorMojoExecution == null && plugin.getArtifactId().equals("flexmojos-generator-mojo")) {
-            flexmojosGeneratorMojoExecution = maven.createMojoExecution(plugin, "generate", project);
+          else if (!flexmojosGeneratorFound && plugin.getArtifactId().equals("flexmojos-generator-mojo")) {
+            sourceProviderMojoExecutions.add(maven.createMojoExecution(plugin, "generate", project));
+            flexmojosGeneratorFound = true;
           }
+        }
+        else if (!buildHelperFound && plugin.getArtifactId().equals("build-helper-maven-plugin") && plugin.getGroupId().equals("org.codehaus.mojo")) {
+          sourceProviderMojoExecutions.add(maven.createMojoExecution(plugin, "add-source", project));
+          buildHelperFound = true;
+        }
 
-          if (flexmojosMojoExecution != null && flexmojosGeneratorMojoExecution != null) {
-            break;
-          }
+        if (flexmojosMojoExecution != null && sourceProviderMojoExecutions.size() == 2) {
+          break;
         }
       }
 
@@ -140,13 +146,13 @@ public class GeneratorServer {
       final ClassRealm flexmojosPluginRealm = maven.getPluginRealm(flexmojosMojoExecution);
       flexmojosPluginRealm.addURL(generatorJarPath);
 
+      final AdditionalSourcePathProvider additionalSourcePathProvider = sourceProviderMojoExecutions.isEmpty() ? null : new AdditionalSourcePathProvider(sourceProviderMojoExecutions);
       final Mojo mojo = mavenPluginManager.getConfiguredMojo(Mojo.class, session, flexmojosMojoExecution);
       try {
         //for (String configuratorClassName : generators) {
           Class configuratorClass = flexmojosPluginRealm.loadClass(generators.get(0));
-          FlexConfigGenerator configurator = (FlexConfigGenerator)configuratorClass.getConstructor(MavenSession.class, File.class)
-                                                                                   .newInstance(session, generatorOutputDirectory);
-          configurator.preGenerate(project, Flexmojos.getClassifier(mojo), flexmojosGeneratorMojoExecution);
+          FlexConfigGenerator configurator = (FlexConfigGenerator)configuratorClass.getConstructor(MavenSession.class, File.class).newInstance(session, generatorOutputDirectory);
+          configurator.preGenerate(project, Flexmojos.getClassifier(mojo), additionalSourcePathProvider);
           if ("swc".equals(project.getPackaging())) {
             configurator.generate(mojo);
           }
@@ -163,10 +169,10 @@ public class GeneratorServer {
     finally {
       session.setCurrentProject(null);
       if (flexmojosMojoExecution != null) {
-        maven.releaseMojoExecution(compileGoal, flexmojosMojoExecution);
+        maven.releaseMojoExecution(flexmojosMojoExecution);
       }
-      if (flexmojosGeneratorMojoExecution != null) {
-        maven.releaseMojoExecution("generate", flexmojosGeneratorMojoExecution);
+      for (MojoExecution sourceProviderMojoExecution : sourceProviderMojoExecutions) {
+        maven.releaseMojoExecution(sourceProviderMojoExecution);
       }
     }
   }
@@ -182,13 +188,12 @@ public class GeneratorServer {
   public void resolveOutputs(WorkspaceReaderImpl.ArtifactData data) throws Exception {
     final MavenProject project = maven.readProject(data.file);
     final MavenProject oldProject = session.getCurrentProject();
-    final String compileGoal = "compile-" + project.getPackaging();
     MojoExecution flexmojosMojoExecution = null;
     try {
       session.setCurrentProject(project);
       for (Plugin plugin : project.getBuildPlugins()) {
         if (plugin.getGroupId().equals("org.sonatype.flexmojos") && plugin.getArtifactId().equals("flexmojos-maven-plugin")) {
-          flexmojosMojoExecution = maven.createMojoExecution(plugin, compileGoal, project);
+          flexmojosMojoExecution = maven.createMojoExecution(plugin, "compile-" + project.getPackaging(), project);
           break;
         }
       }
@@ -226,7 +231,7 @@ public class GeneratorServer {
     finally {
       session.setCurrentProject(oldProject);
       if (flexmojosMojoExecution != null) {
-        maven.releaseMojoExecution(compileGoal, flexmojosMojoExecution);
+        maven.releaseMojoExecution(flexmojosMojoExecution);
       }
     }
   }

@@ -154,7 +154,7 @@ public class IdeaConfigurationMojo extends AbstractMojo {
       for (String configuratorClassName : configurators) {
         Class configuratorClass = flexmojosPluginRealm.loadClass(configuratorClassName);
         FlexConfigGenerator configurator = (FlexConfigGenerator)configuratorClass.getConstructor(MavenSession.class, File.class).newInstance(session, null);
-        configurator.preGenerate(project, getClassifier(mojo), flexmojosGeneratorMojoExecution);
+        configurator.preGenerate(project, getClassifier(mojo), flexmojosGeneratorMojoExecution, buildHelperMojoExecution);
         if ("swc".equals(project.getPackaging())) {
           configurator.generate(mojo);
         }
