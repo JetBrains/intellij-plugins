@@ -10,6 +10,7 @@ import com.jetbrains.actionscript.profiler.base.NavigatableDataProducer;
 import com.jetbrains.actionscript.profiler.util.MathUtil;
 import com.jetbrains.actionscript.profiler.vo.CallInfo;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -60,6 +61,7 @@ public class CallTreeTable extends TreeTable implements DataProvider {
   }
 
   @Override
+  @Nullable
   public Object getData(@NonNls String dataId) {
     if (PlatformDataKeys.NAVIGATABLE.is(dataId)) {
       return getSelectedNavigableItem();
@@ -67,15 +69,16 @@ public class CallTreeTable extends TreeTable implements DataProvider {
     return null;
   }
 
+  @Nullable
   private Navigatable getSelectedNavigableItem() {
     int row = getSelectedRow();
-    int column = getSelectedColumn();
-    Object value = getValueAt(row, column);
-    if (value instanceof Navigatable) {
-      return (Navigatable)value;
+    if (row == -1) {
+      return null;
     }
+    int column = Math.max(0, getSelectedColumn());
+    Object value = getValueAt(row, column);
     if (value instanceof NavigatableDataProducer) {
-      return ((NavigatableDataProducer)value).getNavigatableData();
+      return ((NavigatableDataProducer)value).getNavigatable();
     }
     return null;
   }

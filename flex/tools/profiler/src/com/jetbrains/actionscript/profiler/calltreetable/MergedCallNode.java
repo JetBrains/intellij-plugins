@@ -86,7 +86,7 @@ public class MergedCallNode<T extends Sample> extends LazyNode implements Naviga
   }
 
   @Override
-  public Navigatable getNavigatableData() {
+  public Navigatable getNavigatable() {
     if (sampleLocationResolver == null) {
       sampleLocationResolver = new SampleLocationResolver(getFrame(), scope);
     }

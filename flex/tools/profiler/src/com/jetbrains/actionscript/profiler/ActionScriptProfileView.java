@@ -780,7 +780,7 @@ public class ActionScriptProfileView extends ProfileView {
     }
 
     @Override
-    public Navigatable getNavigatableData() {
+    public Navigatable getNavigatable() {
       if (samplLocationResolver == null) {
         samplLocationResolver = new SampleLocationResolver(trace, scope);
       }
@@ -849,7 +849,7 @@ public class ActionScriptProfileView extends ProfileView {
     }
 
     @Override
-    public Navigatable getNavigatableData() {
+    public Navigatable getNavigatable() {
       if (sampleLocationResolver == null) {
         sampleLocationResolver = new SampleLocationResolver(getObjectSample().frames[0], ActionScriptProfileView.this.getCurrentScope());
       }
