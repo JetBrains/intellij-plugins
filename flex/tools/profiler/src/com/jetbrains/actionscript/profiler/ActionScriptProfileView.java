@@ -119,12 +119,10 @@ public class ActionScriptProfileView extends ProfileView {
 
     myHotSpotsTreeTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
-        final TreePath path = myHotSpotsTreeTable.getTree().getSelectionPath();
-        if (path == null) return;
-        final Object lastPathComponent = path.getLastPathComponent();
+        final Object node = myHotSpotsTreeTable.getSelectedValue();
+        if (!(node instanceof MergedCallNode)) return;
         myAlarm.cancelAllRequests();
-        if (!(lastPathComponent instanceof MergedCallNode)) return;
-        final MergedCallNode mergedCallNode = (MergedCallNode)lastPathComponent;
+        final MergedCallNode mergedCallNode = (MergedCallNode)node;
 
         myAlarm.addRequest(new Runnable() {
           public void run() {
@@ -546,7 +544,6 @@ public class ActionScriptProfileView extends ProfileView {
       }
     };
 
-    myHotSpotsTreeTable.getTree().clearSelection();
     myHotSpotsTreeTable.clearSelection();
 
     buildSamples((DefaultTreeModel) treeModel, (DefaultMutableTreeNode) treeModel.getRoot(), false, data.profile, 0, sizeFunction, getCurrentScope());

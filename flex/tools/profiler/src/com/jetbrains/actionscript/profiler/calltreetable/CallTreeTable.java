@@ -71,16 +71,21 @@ public class CallTreeTable extends TreeTable implements DataProvider {
 
   @Nullable
   private Navigatable getSelectedNavigableItem() {
-    int row = getSelectedRow();
-    if (row == -1) {
-      return null;
-    }
-    int column = Math.max(0, getSelectedColumn());
-    Object value = getValueAt(row, column);
+    Object value = getSelectedValue();
     if (value instanceof NavigatableDataProducer) {
       return ((NavigatableDataProducer)value).getNavigatable();
     }
     return null;
+  }
+
+  @Nullable
+  public Object getSelectedValue() {
+    int row = getSelectedRow();
+    if (row < 0 || row >= getRowCount()) {
+      return null;
+    }
+    int column = Math.max(0, getSelectedColumn());
+    return getValueAt(row, column);
   }
 
   private static ColumnInfo[] getHotSpotsColumns() {

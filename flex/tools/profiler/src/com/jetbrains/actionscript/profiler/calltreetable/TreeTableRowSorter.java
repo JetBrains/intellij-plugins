@@ -59,10 +59,10 @@ public class TreeTableRowSorter extends TableRowSorter {
     final Comparator<TreeNode> comparator =
       new ComparatorWrapper<TreeNode>(getComparator(modelIndex), key.getSortOrder() == SortOrder.ASCENDING);
 
-    if (JTreeUtil.isSorted(table.getTableModel(), comparator)) {
+    final List<TreePath> paths = TreeUtil.collectExpandedPaths(table.getTree());
+    if (JTreeUtil.isSorted(paths, comparator)) {
       return;
     }
-    final List<TreePath> paths = TreeUtil.collectExpandedPaths(table.getTree());
 
     for (TreePath path : paths) {
       Object node = path.getLastPathComponent();
