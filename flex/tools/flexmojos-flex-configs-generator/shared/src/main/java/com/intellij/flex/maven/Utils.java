@@ -28,6 +28,7 @@ public final class Utils {
     CHILD_TAG_NAME_MAP.put("extensions", "extension");
     CHILD_TAG_NAME_MAP.put("include-resource-bundles", "bundle");
     CHILD_TAG_NAME_MAP.put("theme", "filename");
+    CHILD_TAG_NAME_MAP.put("defaults-css-files", "filename");
   }
 
   public static void copyFile(File fromFile, File toFile) throws IOException {
