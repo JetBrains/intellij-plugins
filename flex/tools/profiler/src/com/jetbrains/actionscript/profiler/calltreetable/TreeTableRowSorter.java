@@ -6,7 +6,7 @@ import com.jetbrains.actionscript.profiler.util.JTreeUtil;
 import javax.swing.*;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
-import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.util.ArrayList;
@@ -62,9 +62,15 @@ public class TreeTableRowSorter extends TableRowSorter {
     if (JTreeUtil.isSorted(table.getTableModel(), comparator)) {
       return;
     }
-    TreeUtil.sort((DefaultTreeModel)table.getTableModel(), comparator);
-
     final List<TreePath> paths = TreeUtil.collectExpandedPaths(table.getTree());
+
+    for (TreePath path : paths) {
+      Object node = path.getLastPathComponent();
+      if (node instanceof DefaultMutableTreeNode) {
+        JTreeUtil.sortChildren((DefaultMutableTreeNode)node, comparator);
+      }
+    }
+
     table.reload();
     TreeUtil.restoreExpandedPaths(table.getTree(), paths);
   }

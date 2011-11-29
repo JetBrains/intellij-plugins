@@ -6,6 +6,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -38,6 +39,13 @@ public class JTreeUtil {
       prev = node;
     }
     return true;
+  }
+
+  public static void sortChildren(final DefaultMutableTreeNode node, final Comparator comparator) {
+    final List<TreeNode> children = TreeUtil.childrenToArray(node);
+    Collections.sort(children, comparator);
+    node.removeAllChildren();
+    TreeUtil.addChildrenTo(node, children);
   }
 
   public static void removeChildren(DefaultMutableTreeNode root, DefaultTreeModel model) {
