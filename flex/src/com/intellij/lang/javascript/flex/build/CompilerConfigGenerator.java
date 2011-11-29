@@ -447,7 +447,7 @@ public class CompilerConfigGenerator {
       return;
     }
 
-    final String value = StringUtil.escapeXml(FlexUtils.replacePathMacros(rawValue, myModule, mySdkHome));
+    final String value = FlexUtils.replacePathMacros(rawValue, myModule, mySdkHome);
 
     final List<String> elementNames = StringUtil.split(info.ID, ".");
     Element parentElement = rootElement;

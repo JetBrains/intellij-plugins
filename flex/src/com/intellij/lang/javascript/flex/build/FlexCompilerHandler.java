@@ -747,12 +747,9 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
       final String cssDirPath = lastSlashIndex > 0 ? cssFilePath.substring(0, lastSlashIndex) : null;
       if (cssDirPath != null) {
         // folder that contains css file must be source folder and must be first in source-path list, otherwise stupid compiler says that css file must have package corresponding its path
-        configTextBuilder
-          .append("\n  <compiler>")
-          .append("\n    <source-path append=\"true\">")
-          .append("\n      <path-element>").append(cssDirPath).append("</path-element>")
-          .append("\n    </source-path>")
-          .append("\n  </compiler>");
+        configTextBuilder.append("\n  <compiler>").append("\n    <source-path append=\"true\">");
+        addTag(configTextBuilder, "path-element", cssDirPath, "\n      ");
+        configTextBuilder.append("\n    </source-path>").append("\n  </compiler>");
       }
     }
 
@@ -760,16 +757,15 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
         !StringUtil.isEmpty(config.TARGET_PLAYER_VERSION) &&
         sdk != null &&
         TargetPlayerUtils.isTargetPlayerApplicable(sdk)) {
-      configTextBuilder.append("\n  <target-player>").append(config.TARGET_PLAYER_VERSION).append("</target-player>");
+      addTag(configTextBuilder, "target-player", config.TARGET_PLAYER_VERSION);
     }
 
     final boolean debug = FlexBuildConfiguration.APPLICATION.equals(config.OUTPUT_TYPE)
                           ? FlexCompilerProjectConfiguration.getInstance(module.getProject()).SWF_DEBUG_ENABLED
                           : FlexCompilerProjectConfiguration.getInstance(module.getProject()).SWC_DEBUG_ENABLED;
 
-    configTextBuilder
-      .append("\n  <compiler>")
-      .append("\n    <debug>").append(String.valueOf(debug)).append("</debug>");
+    configTextBuilder.append("\n  <compiler>");
+    addTag(configTextBuilder, "debug", String.valueOf(debug), "\n    ");
 
     final List<String> locales = new LinkedList<String>();
 
@@ -794,8 +790,8 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     }
 
     if (!customConfigFileUsed && !StringUtil.isEmpty(config.PATH_TO_SERVICES_CONFIG_XML)) {
-      configTextBuilder.append("\n    <services>").append(config.PATH_TO_SERVICES_CONFIG_XML).append("</services>");
-      configTextBuilder.append("\n    <context-root>").append(config.CONTEXT_ROOT).append("</context-root>");
+      addTag(configTextBuilder, "services", config.PATH_TO_SERVICES_CONFIG_XML, "\n    ");
+      addTag(configTextBuilder, "context-root", config.CONTEXT_ROOT, "\n    ");
     }
 
     configTextBuilder.append("\n  </compiler>");
@@ -806,7 +802,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
 
     if (FlexBuildConfiguration.APPLICATION.equals(config.OUTPUT_TYPE)) {
       configTextBuilder.append("\n  <file-specs>");
-      final String fileSpec = cssFilePath == null ? XmlUtil.escape(FlexUtils.getPathToMainClassFile(config)) : cssFilePath;
+      final String fileSpec = cssFilePath == null ? FlexUtils.getPathToMainClassFile(config) : cssFilePath;
       addTag(configTextBuilder, "path-element", fileSpec, "\n    ");
       configTextBuilder.append("\n  </file-specs>");
     } else {
@@ -855,14 +851,14 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
 
       configTextBuilder.append("\n  <include-classes>");
       for (final String className : classesToInclude) {
-        addTag(configTextBuilder, "class", XmlUtil.escape(className), "\n    ");
+        addTag(configTextBuilder, "class", className, "\n    ");
       }
       configTextBuilder.append("\n  </include-classes>");
 
       for (final Pair<String, String> fileInfo : filesToInclude) {
         configTextBuilder.append("\n  <include-file>");
-        addTag(configTextBuilder, "name", XmlUtil.escape(fileInfo.first), "\n    ");
-        addTag(configTextBuilder, "path", XmlUtil.escape(fileInfo.second), "\n    ");
+        addTag(configTextBuilder, "name", fileInfo.first, "\n    ");
+        addTag(configTextBuilder, "path", fileInfo.second, "\n    ");
         configTextBuilder.append("\n  </include-file>");
       }
     }
@@ -1035,8 +1031,8 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
       configTextBuilder.append("\n    <namespaces>");
       for (final FlexBuildConfiguration.NamespaceAndManifestFileInfo info : namespaceAndManifestFileInfoList) {
         configTextBuilder.append("\n      <namespace append=\"true\">");
-        addTag(configTextBuilder, "uri", XmlUtil.escape(info.NAMESPACE), "\n        ");
-        addTag(configTextBuilder, "manifest", XmlUtil.escape(info.MANIFEST_FILE_PATH), "\n        ");
+        addTag(configTextBuilder, "uri", info.NAMESPACE, "\n        ");
+        addTag(configTextBuilder, "manifest", info.MANIFEST_FILE_PATH, "\n        ");
         configTextBuilder.append("\n      </namespace>");
       }
       configTextBuilder.append("\n    </namespaces>");
@@ -1071,7 +1067,10 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
   }
 
   private static void addTag(final StringBuilder configTextBuilder, @NonNls final String tagName, @NonNls final String tagValue, @NonNls String delimiter) {
-    configTextBuilder.append(delimiter).append("<").append(tagName).append(">").append(tagValue).append("</").append(tagName).append(">");
+    configTextBuilder.append(delimiter)
+      .append("<").append(tagName).append(">")
+      .append(StringUtil.escapeXml(tagValue))
+      .append("</").append(tagName).append(">");
   }
 
   @Nullable
