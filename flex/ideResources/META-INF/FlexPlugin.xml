@@ -65,7 +65,6 @@
     <directoryIndexExcludePolicy implementation="com.intellij.openapi.roots.impl.ExcludeCompilerOutputPolicy"/>
 
     <patternDialectProvider implementation="com.intellij.packageDependencies.ui.PackagePatternProvider" id="package" order="before file" />
-    <scopeDescriptorProvider implementation="com.intellij.ide.util.scopeChooser.HierarchyScopeDescriptorProvider"/>
 
     <projectService serviceInterface="com.intellij.ide.todo.nodes.TodoTreeHelper"
                     serviceImplementation="com.intellij.ide.todo.nodes.TodoJavaTreeHelper"/>
