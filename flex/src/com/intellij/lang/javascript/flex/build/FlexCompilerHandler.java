@@ -43,7 +43,6 @@ import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.text.StringTokenizer;
-import com.intellij.xml.util.XmlUtil;
 import gnu.trove.THashMap;
 import gnu.trove.TObjectIntHashMap;
 import gnu.trove.TObjectIntProcedure;
