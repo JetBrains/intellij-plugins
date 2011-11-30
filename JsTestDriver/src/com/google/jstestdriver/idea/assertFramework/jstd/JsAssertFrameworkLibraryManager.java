@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.library.JSLibraryManager;
 import com.intellij.lang.javascript.library.JSLibraryMappings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.scripting.ScriptingLibraryModel;
 import com.intellij.openapi.util.Computable;
@@ -17,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class JsAssertFrameworkLibraryManager {
+
+  private static final Logger LOG = Logger.getInstance(JsAssertFrameworkLibraryManager.class);
 
   public static final String LIBRARY_NAME = "JsTestDriver Assertion Framework";
 
@@ -36,7 +39,7 @@ public class JsAssertFrameworkLibraryManager {
           libraryManager.removeLibrary(scriptingLibraryModel);
           mappings.disassociate(rootForAssociation, LIBRARY_NAME);
           libraryManager.commitChanges();
-          System.out.println("Removing '" + LIBRARY_NAME + "' library and disassociating it from " + rootForAssociation);
+          LOG.info("Removing '" + LIBRARY_NAME + "' library and disassociating it from " + rootForAssociation);
         }
         VirtualFile[] arrayVirtualFiles = getAdditionalSourceFiles();
         scriptingLibraryModel = libraryManager.createLibrary(
@@ -47,23 +50,18 @@ public class JsAssertFrameworkLibraryManager {
         );
         libraryManager.commitChanges();
         mappings.associate(rootForAssociation, LIBRARY_NAME);
-        System.out.println("Library '" + LIBRARY_NAME + "' has been associated to " + rootForAssociation);
+        LOG.info("Library '" + LIBRARY_NAME + "' has been associated with " + rootForAssociation);
         return scriptingLibraryModel;
       }
     });
   }
 
   @NotNull
-  public static VirtualFile[] getAdditionalSourceFiles() {
-    List<VirtualFile> files = getAdditionalSourceFilesAsList();
+  private static VirtualFile[] getAdditionalSourceFiles() {
+    List<VirtualFile> files = VfsUtils.findVirtualFilesByResourceNames(
+      JstdDefaultAssertionFrameworkSrcMarker.class,
+      new String[]{"Asserts.js", "TestCase.js"}
+    );
     return VfsUtil.toVirtualFileArray(files);
   }
-
-  @NotNull
-  public static List<VirtualFile> getAdditionalSourceFilesAsList() {
-    return VfsUtils.findVirtualFilesByResourceNames(JstdDefaultAssertionFrameworkSrcMarker.class, new String[] {
-          "Asserts.js", "TestCase.js"
-        });
-  }
-
 }

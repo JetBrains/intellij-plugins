@@ -57,7 +57,9 @@ class ExtractDirectoryTypeManager {
       @Override
       public JPanel get() {
         JPanel defaultDirectoryTypePanel = new JPanel(new BorderLayout());
-        defaultDirectoryTypePanel.add(new JLabel(myDefaultDir.getPath()), BorderLayout.WEST);
+        JTextField textField = new JTextField(myDefaultDir.getPath());
+        textField.setEditable(false);
+        defaultDirectoryTypePanel.add(textField, BorderLayout.CENTER);
         return defaultDirectoryTypePanel;
       }
     });

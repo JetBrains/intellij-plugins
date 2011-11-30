@@ -108,7 +108,7 @@ class NewLibraryCreationManager implements ExtractDirectoryTypeManager.ChangeLis
         myScriptingLibraryManager.commitChanges();
         success = true;
         ScriptingLibraryMappings libraryMappings = ServiceManager.getService(myProject, JSLibraryMappings.class);
-        libraryMappings.setMapping(myProject.getBaseDir(), libraryModel);
+        libraryMappings.associate(myProject.getBaseDir(), libraryModel.getName());
       }
     } catch (Exception ignore) {
     }
