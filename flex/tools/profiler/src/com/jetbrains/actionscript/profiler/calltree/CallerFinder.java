@@ -1,8 +1,9 @@
 package com.jetbrains.actionscript.profiler.calltree;
 
-import gnu.trove.THashMap;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 class CallerFinder {
   private CallerFinder() {
@@ -20,63 +21,45 @@ class CallerFinder {
   * Method return only <code>foo</code>.
   */
   static List<CallTreeNode> findCallsByFrames(CallTreeNode root, String[] frames) {
-    ArrayList<CallTreeNode> calls = new ArrayList<CallTreeNode>();
+    List<CallTreeNode> calls = new ArrayList<CallTreeNode>();
     if (frames.length == 0) {
       return calls;
     }
-    Map<String, LinkedList<CallTreeNode>> callsByName = new THashMap<String, LinkedList<CallTreeNode>>();
     for (CallTreeNode node : root.getChildren()) {
-      fillCallsByFrames(node, callsByName, frames, new ParentCallInfo(frames.length - 1, null, 0));
+      fillCallsByFrames(node, calls, frames, new ArrayList<String>());
     }
-    //need unique, but in order
-    Set<CallTreeNode> added = new LinkedHashSet<CallTreeNode>();
-    for (LinkedList<CallTreeNode> callsForName : callsByName.values()) {
-      added.addAll(callsForName);
-    }
-    return new ArrayList<CallTreeNode>(added);
+    return calls;
   }
 
   private static void fillCallsByFrames(CallTreeNode currentNode,
-                                        Map<String, LinkedList<CallTreeNode>> calls,
+                                        List<CallTreeNode> result,
                                         String[] frames,
-                                        ParentCallInfo parentInfo) {
+                                        List<String> callChainAddedFrames) {
     //we need only the nearest node to the root
-    int currentSizeBefore = 0;
-    if (calls.containsKey(currentNode.getFrameName())) {
-      currentSizeBefore = calls.get(currentNode.getFrameName()).size();
+    //we have <code>callChainAddedFrames<code>
+    boolean needAdd = !callChainAddedFrames.contains(currentNode.getFrameName()) && isMatchingFrames(currentNode, frames);
+    if (needAdd) {
+      result.add(currentNode);
+      callChainAddedFrames.add(currentNode.getFrameName());
     }
 
     for (CallTreeNode childCall : currentNode.getChildren()) {
-      if (childCall.getFrameName().equals(frames[frames.length - 1])) {
-        //call sequence may starts here
-        fillCallsByFrames(childCall, calls, frames, new ParentCallInfo(frames.length - 1, currentNode, currentSizeBefore));
-      }
-      else {
-        //otherwise parent in null
-        fillCallsByFrames(childCall, calls, frames, new ParentCallInfo(frames.length - 1, null, 0));
-      }
+      fillCallsByFrames(childCall, result, frames, callChainAddedFrames);
+    }
+    if (needAdd) {
+      //pop
+      callChainAddedFrames.remove(callChainAddedFrames.size() - 1);
+    }
+  }
 
-      if (parentInfo.getIndex() > 0 && currentNode.getFrameName().equals(frames[parentInfo.getIndex()])) {
-        //match parent's expectations
-        fillCallsByFrames(childCall, calls, frames,
-                          new ParentCallInfo(parentInfo.getIndex() - 1, parentInfo.getNode(), parentInfo.getSnapshotSizeOfCalls()));
+  private static boolean isMatchingFrames(@NotNull CallTreeNode node, String[] frames) {
+    CallTreeNode currentNode = node;
+    for (int i = frames.length - 1; i >= 0; --i) {
+      currentNode = currentNode.findChildByName(frames[i]);
+      if (currentNode == null) {
+        return false;
       }
     }
-
-    //before out we try to add new calls.
-    if (parentInfo.getIndex() == 0 && currentNode.getFrameName().equals(frames[parentInfo.getIndex()]) && parentInfo.getNode() != null) {
-      String callerName = parentInfo.getNode().getFrameName();
-      LinkedList<CallTreeNode> callerCalls = calls.get(callerName);
-      if (callerCalls == null) {
-        callerCalls = new LinkedList<CallTreeNode>();
-        calls.put(callerName, callerCalls);
-      }
-      //remove calls that were added in subcalls.
-      //cause of that we get only the nearest node to the root
-      while (callerCalls.size() > parentInfo.getSnapshotSizeOfCalls()) {
-        callerCalls.removeLast();
-      }
-      callerCalls.add(parentInfo.getNode());
-    }
+    return true;
   }
 }

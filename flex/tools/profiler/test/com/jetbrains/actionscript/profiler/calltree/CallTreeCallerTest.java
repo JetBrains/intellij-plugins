@@ -36,4 +36,12 @@ public class CallTreeCallerTest extends CallTreeTest {
   public void testCaller3() throws IOException {
     doTest("caller3.xml", "caller3_results.xml");
   }
+
+  public void testCaller4() throws IOException {
+    doTest("caller4.xml", "caller4_results.xml");
+  }
+
+  public void testCallerRec() throws IOException {
+    doTest("caller_rec.xml", "caller_rec_results.xml");
+  }
 }

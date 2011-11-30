@@ -51,7 +51,7 @@ class CallTreeNode {
   }
 
   @Nullable
-  private CallTreeNode findChildByName(String frame) {
+  public CallTreeNode findChildByName(String frame) {
     return children.get(frame);
   }
 
