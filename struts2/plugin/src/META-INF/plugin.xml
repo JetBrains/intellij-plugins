@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<idea-plugin url="http://confluence.jetbrains.net/display/CONTEST/Struts2Plugin" version="2">
+<idea-plugin url="http://confluence.jetbrains.net/display/CONTEST/Struts+2+Plugin+for+IntelliJ+IDEA" version="2">
   <id>com.intellij.struts2</id>
   <name>Struts 2</name>
   <description>Provides full integration of Apache Struts 2.</description>
