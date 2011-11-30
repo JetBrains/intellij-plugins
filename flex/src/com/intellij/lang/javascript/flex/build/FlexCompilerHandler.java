@@ -506,12 +506,17 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
 
   private void launchFcshIfNeeded(final CompileContext context, final Sdk flexSdk) throws IOException {
     if (!processIsAlive() || myRequestedQuit) {
-      String classpath = FlexUtils.getPathToBundledJar("idea-fcsh-fix.jar");
+      final StringBuilder classpath = new StringBuilder();
+
+      classpath.append(FlexUtils.getPathToBundledJar("idea-flex-compiler-fix.jar"));
+      classpath.append(File.pathSeparatorChar);
+      classpath.append(FlexUtils.getPathToBundledJar("idea-fcsh-fix.jar"));
+
       if (!(flexSdk.getSdkType() instanceof FlexmojosSdkType)) {
-        classpath += File.pathSeparator + FileUtil.toSystemDependentName(flexSdk.getHomePath() + "/lib/fcsh.jar");
+        classpath.append(File.pathSeparator).append(FileUtil.toSystemDependentName(flexSdk.getHomePath() + "/lib/fcsh.jar"));
       }
       final List<String> cmdLineParams =
-        FlexSdkUtils.getCommandLineForSdkTool(myProject, flexSdk, classpath, "com.intellij.flex.FcshLauncher", null);
+        FlexSdkUtils.getCommandLineForSdkTool(myProject, flexSdk, classpath.toString(), "com.intellij.flex.FcshLauncher", null);
       context.addMessage(CompilerMessageCategory.INFORMATION, StringUtil.join(cmdLineParams, " "), null, -1, -1);
 
       final ProcessBuilder builder = new ProcessBuilder(cmdLineParams);

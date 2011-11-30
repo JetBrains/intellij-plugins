@@ -89,10 +89,10 @@ public class FcshLauncher {
         if (flexSdkVersion.startsWith("3")) {
             return findClass("com.intellij.flex.SimpleShellWithFix");
         } else if (flexSdkVersion.startsWith("4")) {
-            if (flexSdkVersion.startsWith("4.5")) {
-                return getFcshWithFixClass(flexSdkVersion, "com.intellij.flex.Fcsh45WithFix", FLEX_45_SDK_BUILDS_THAT_HAVE_FIX);
-            } else {
+            if (flexSdkVersion.startsWith("4.0") || flexSdkVersion.startsWith("4.1")) {
                 return getFcshWithFixClass(flexSdkVersion, "com.intellij.flex.Fcsh4WithFix", FLEX_4_SDK_BUILDS_THAT_HAVE_FIX);
+            } else if (flexSdkVersion.startsWith("4.5") || flexSdkVersion.startsWith("4.6")) {
+                return getFcshWithFixClass(flexSdkVersion, "com.intellij.flex.Fcsh45WithFix", FLEX_45_SDK_BUILDS_THAT_HAVE_FIX);
             }
         }
         return null;
