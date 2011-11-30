@@ -98,8 +98,9 @@ public class FlexDebugProcess extends XDebugProcess {
   private final MyFdbOutputReader reader;
   private Alarm myOutputAlarm;
 
+  protected final String myAppSdkHome;
+  private final String myDebuggerSdkHome;
   private final String myDebuggerVersion;
-  protected final String mySdkLocation;
 
   @NonNls static final String RESOLVED_BREAKPOINT_MARKER = "Resolved breakpoint ";
   @NonNls static final String BREAKPOINT_MARKER = "Breakpoint ";
@@ -180,9 +181,10 @@ public class FlexDebugProcess extends XDebugProcess {
     final String sdkHome = sdkEntry.getHomePath();
 
     final Library sdk = sdkEntry.findLibrary();
+    myAppSdkHome = FileUtil.toSystemIndependentName(sdkHome);
+    myDebuggerSdkHome = myAppSdkHome;
     myDebuggerVersion = StringUtil.notNullize(sdk != null ? FlexSdk.getFlexVersion(sdk) : null, "unknown");
     myBreakpointsHandler = new FlexBreakpointsHandler(this);
-    mySdkLocation = FileUtil.toSystemIndependentName(sdkHome);
 
     final List<String> fdbLaunchCommand = FlexSdkUtils
       .getCommandLineForSdkTool(session.getProject(), sdkHome, null, getFdbClasspath(), "flex.tools.debugger.cli.DebugCLI", null);
@@ -250,9 +252,10 @@ public class FlexDebugProcess extends XDebugProcess {
 
     final Sdk debuggerSdk = getDebuggerSdk(flexRunnerParameters, flexSdk);
 
+    myAppSdkHome = FileUtil.toSystemIndependentName(flexSdk.getHomePath());
+    myDebuggerSdkHome = debuggerSdk.getHomePath();
     myDebuggerVersion = StringUtil.notNullize(debuggerSdk.getVersionString(), "unknown");
     myBreakpointsHandler = new FlexBreakpointsHandler(this);
-    mySdkLocation = FileUtil.toSystemIndependentName(flexSdk.getHomePath());
 
     if (flexRunnerParameters instanceof FlexUnitRunnerParameters) {
       final FlexUnitRunnerParameters flexUnitParams = (FlexUnitRunnerParameters)flexRunnerParameters;
@@ -288,16 +291,18 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   private String getFdbClasspath() {
-    String classpath = mySdkLocation + "/lib/fdb.jar";
+    String classpath = myDebuggerSdkHome + "/lib/fdb.jar";
 
     if (isDebuggerFromSdk3()) {
       classpath = FlexUtils.getPathToBundledJar("idea-fdb-3-fix.jar") + File.pathSeparator + classpath;
     }
     else if (isDebuggerFromSdk4()) {
-      if (myDebuggerVersion.contains("14159") || myDebuggerVersion.contains("16076")) {
+      if (StringUtil.compareVersionNumbers(myDebuggerVersion, "4.0") >= 0 &&
+          StringUtil.compareVersionNumbers(myDebuggerVersion, "4.1.1") < 0) {
         classpath = FlexUtils.getPathToBundledJar("idea-fdb-4.0.0.14159-fix.jar") + File.pathSeparator + classpath;
       }
-      else if (myDebuggerVersion.contains("20967") || myDebuggerVersion.contains("21328")) {
+      else if (StringUtil.compareVersionNumbers(myDebuggerVersion, "4.5") >= 0 &&
+               StringUtil.compareVersionNumbers(myDebuggerVersion, "4.6.1") < 0) {
         classpath = FlexUtils.getPathToBundledJar("idea-fdb-4.5.0.20967-fix.jar") + File.pathSeparator + classpath;
       }
     }
@@ -769,7 +774,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
       int markerIndex = fullPath.indexOf("/frameworks/projects/");
       if (markerIndex != -1 && fullPath.indexOf("/src/", markerIndex) > 0) {
-        fullPath = mySdkLocation + fullPath.substring(markerIndex);
+        fullPath = myAppSdkHome + fullPath.substring(markerIndex);
       }
 
       String shortName = line.substring(commaPos + 2);

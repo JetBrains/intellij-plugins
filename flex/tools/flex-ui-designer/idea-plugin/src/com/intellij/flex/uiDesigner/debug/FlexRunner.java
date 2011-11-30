@@ -132,7 +132,7 @@ public class FlexRunner extends GenericProgramRunner {
               if (isBackSlash) {
                 firstSlashIndex = line.indexOf('\\');
               }
-              builder.append(mySdkLocation).append("/frameworks/projects/").append(line, spaceIndex + 2, firstSlashIndex).append("/src/");
+              builder.append(myAppSdkHome).append("/frameworks/projects/").append(line, spaceIndex + 2, firstSlashIndex).append("/src/");
               if (isBackSlash) {
                 builder.append(line.substring(firstSlashIndex + 1, commaPos).replace('\\', '/'));
               }
