@@ -179,7 +179,7 @@ public class FlexCompiler implements MessageSender {
       if ("0".equals(SDK_MINOR_VERSION) || "1".equals(SDK_MINOR_VERSION) || ("5".equals(SDK_MINOR_VERSION) && buildVersion < 19786)) {
         return mxmlc ? new Flex4MxmlcHandler() : new Flex4CompcHandler();
       }
-      else if ("5".equals(SDK_MINOR_VERSION)) {
+      else if ("5".equals(SDK_MINOR_VERSION) || "6".equals(SDK_MINOR_VERSION)) {
         return mxmlc ? new Flex45MxmlcHandler() : new Flex45CompcHandler();
       }
     }
