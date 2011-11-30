@@ -43,7 +43,7 @@ public class AddAdapterSupportDialog extends DialogWrapper {
     );
     myDirectoryTypeManager.addChangeListener(myNewLibraryCreationManager);
     myDirectoryTypeManager.init();
-    init();
+    super.init();
   }
 
   private String getAssertFrameworkAdapterName() {
