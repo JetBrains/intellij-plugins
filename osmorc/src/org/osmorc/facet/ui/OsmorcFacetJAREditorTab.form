@@ -1,75 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.osmorc.facet.ui.OsmorcFacetJAREditorTab">
-  <grid id="bbf5b" binding="myRoot" layout-manager="FormLayout">
-    <rowspec value="center:p:noGrow"/>
-    <rowspec value="center:p:noGrow"/>
-    <rowspec value="top:3dlu:noGrow"/>
-    <rowspec value="center:max(d;4px):noGrow"/>
-    <rowspec value="top:3dlu:noGrow"/>
-    <rowspec value="center:max(d;4px):noGrow"/>
-    <rowspec value="top:3dlu:noGrow"/>
-    <rowspec value="center:max(d;4px):noGrow"/>
-    <rowspec value="top:3dlu:noGrow"/>
-    <rowspec value="center:max(d;4px):noGrow"/>
-    <rowspec value="top:3dlu:noGrow"/>
-    <rowspec value="center:max(d;4px):noGrow"/>
-    <rowspec value="top:3dlu:noGrow"/>
-    <rowspec value="center:max(d;4px):noGrow"/>
-    <rowspec value="center:p:noGrow"/>
-    <rowspec value="top:6dlu:noGrow"/>
-    <rowspec value="center:p:noGrow"/>
-    <rowspec value="top:4dlu:noGrow"/>
-    <rowspec value="center:p:noGrow"/>
-    <rowspec value="top:4dlu:noGrow"/>
-    <rowspec value="center:p:noGrow"/>
-    <rowspec value="top:4dlu:noGrow"/>
-    <rowspec value="center:p:noGrow"/>
-    <rowspec value="top:5dlu:noGrow"/>
-    <rowspec value="center:d:grow"/>
-    <rowspec value="top:8dlu:noGrow"/>
-    <rowspec value="center:max(p;4px):noGrow"/>
-    <colspec value="fill:p:noGrow"/>
-    <colspec value="left:4dlu:noGrow"/>
-    <colspec value="fill:max(p;4px):grow"/>
-    <colspec value="left:4dlu:noGrow"/>
-    <colspec value="fill:max(p;4px):noGrow"/>
-    <rowgroup>
-      <member index="19"/>
-      <member index="21"/>
-      <member index="23"/>
-    </rowgroup>
+  <grid id="bbf5b" binding="myRoot" layout-manager="GridLayoutManager" row-count="9" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="825" height="447"/>
+      <xy x="20" y="20" width="503" height="405"/>
     </constraints>
     <properties/>
-    <border type="empty">
+    <border type="none">
       <size top="4" left="4" bottom="4" right="4"/>
       <color color="-16777216"/>
     </border>
     <children>
-      <grid id="e8153" layout-manager="FormLayout">
-        <colspec value="left:d:grow(2.0)"/>
-        <constraints>
-          <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <forms/>
-        </constraints>
-        <properties/>
-        <border type="none"/>
-        <children/>
-      </grid>
-      <component id="98433" class="javax.swing.JLabel" binding="myFileIgnorePatternLabel">
-        <constraints>
-          <grid row="26" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
-        </constraints>
-        <properties>
-          <text value="File Ignore Pattern (regex):"/>
-        </properties>
-      </component>
       <component id="78a8a" class="javax.swing.JLabel">
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Jar filename:"/>
@@ -77,35 +21,23 @@
       </component>
       <component id="d6235" class="javax.swing.JCheckBox" binding="myAlwaysRebuildBundleJARCheckBox" default-binding="true">
         <constraints>
-          <grid row="14" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
+          <grid row="6" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Always rebuild bundle JAR"/>
         </properties>
       </component>
-      <grid id="2e26f" binding="myIgnoreFilePatternPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
-        <constraints>
-          <grid row="26" column="2" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <forms defaultalign-horz="false"/>
-        </constraints>
-        <properties/>
-        <border type="none"/>
-        <children/>
-      </grid>
       <component id="ca0f8" class="javax.swing.JTextField" binding="myJarFileTextField" default-binding="true">
         <constraints>
-          <grid row="1" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
-          <forms defaultalign-horz="false"/>
         </constraints>
         <properties/>
       </component>
       <component id="de9e4" class="javax.swing.JLabel">
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Jar output path:"/>
@@ -113,8 +45,7 @@
       </component>
       <component id="ad914" class="javax.swing.JRadioButton" binding="myPlaceInCompilerOutputPathRadioButton" default-binding="true">
         <constraints>
-          <grid row="3" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Place in module's output path"/>
@@ -122,8 +53,7 @@
       </component>
       <component id="9016" class="javax.swing.JRadioButton" binding="myPlaceInProjectWideRadioButton" default-binding="true">
         <constraints>
-          <grid row="5" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Place in project-wide OSGi bundle output path"/>
@@ -131,43 +61,28 @@
       </component>
       <component id="f3f8" class="javax.swing.JRadioButton" binding="myPlaceInThisPathRadioButton" default-binding="true">
         <constraints>
-          <grid row="7" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Place in this path"/>
+          <text value="Place in this path:"/>
         </properties>
       </component>
       <component id="33cce" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myJarOutputPathChooser">
         <constraints>
-          <grid row="9" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-          <forms defaultalign-horz="false"/>
+          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="3" use-parent-layout="false"/>
         </constraints>
         <properties/>
       </component>
       <component id="d2943" class="org.osmorc.settings.MyErrorText" binding="myErrorText">
         <constraints>
-          <grid row="11" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
+          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
       </component>
-      <grid id="17691" binding="myAdditionalJarContentsPanel" layout-manager="FormLayout">
-        <rowspec value="center:p:noGrow"/>
-        <rowspec value="top:4dlu:noGrow"/>
-        <rowspec value="center:p:noGrow"/>
-        <rowspec value="top:4dlu:noGrow"/>
-        <rowspec value="center:p:noGrow"/>
-        <rowspec value="top:5dlu:noGrow"/>
-        <rowspec value="center:d:grow"/>
-        <colspec value="fill:p:noGrow"/>
-        <colspec value="left:4dlu:noGrow"/>
-        <colspec value="fill:max(p;4px):grow"/>
-        <colspec value="left:4dlu:noGrow"/>
-        <colspec value="fill:max(p;4px):noGrow"/>
+      <grid id="17691" binding="myAdditionalJarContentsPanel" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="16" column="0" row-span="9" col-span="5" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <forms/>
+          <grid row="7" column="0" row-span="1" col-span="2" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <clientProperties>
@@ -177,8 +92,7 @@
         <children>
           <scrollpane id="5798f" class="com.intellij.ui.components.JBScrollPane">
             <constraints>
-              <grid row="0" column="0" row-span="7" col-span="3" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <forms defaultalign-horz="false" defaultalign-vert="false"/>
+              <grid row="0" column="0" row-span="4" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
             <border type="none"/>
@@ -193,8 +107,7 @@
           </scrollpane>
           <component id="6ff8a" class="javax.swing.JButton" binding="myAddButton" default-binding="true">
             <constraints>
-              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <forms/>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Add..."/>
@@ -202,8 +115,7 @@
           </component>
           <component id="904a" class="javax.swing.JButton" binding="myRemoveButton" default-binding="true">
             <constraints>
-              <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <forms/>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Remove"/>
@@ -211,13 +123,43 @@
           </component>
           <component id="ce595" class="javax.swing.JButton" binding="myEditButton" default-binding="true">
             <constraints>
-              <grid row="4" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <forms/>
+              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Edit..."/>
             </properties>
           </component>
+          <vspacer id="353fc">
+            <constraints>
+              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
+        </children>
+      </grid>
+      <grid id="c02f5" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="8" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="98433" class="javax.swing.JLabel" binding="myFileIgnorePatternLabel">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="File Ignore Pattern (regex):"/>
+            </properties>
+          </component>
+          <grid id="2e26f" binding="myIgnoreFilePatternPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children/>
+          </grid>
         </children>
       </grid>
     </children>
