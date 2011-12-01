@@ -214,7 +214,7 @@ public class CompilerOptionInfo {
         return "";
       }
       else if ("swf-version".equals(ID)) {
-        return "11";
+        return StringUtil.compareVersionNumbers(sdkVersion, "4.6") >= 0 ? "14" : "11";
       }
       else if ("compiler.fonts.managers".equals(ID)) {
         return sdkVersion != null && StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0
