@@ -72,7 +72,7 @@ public class FacetEditor extends FacetEditorTab {
 
     private void createUIComponents() {
         _descriptionPanel = new JPanel(new VerticalFlowLayout());
-        _descriptionPanel.add(new JLabel("Tapestry is an open-source framework for creating dynamic, robust, highly scalable web applications in Java."));
+        _descriptionPanel.add(new JLabel("<html>Tapestry is an open-source framework for creating dynamic, robust, highly scalable web applications in Java.</html>"));
 
         HyperlinkLabel hyperlinkLabel = new HyperlinkLabel("More about Tapestry");
         hyperlinkLabel.setHyperlinkTarget("http://tapestry.apache.org");
