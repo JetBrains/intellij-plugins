@@ -1,37 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.osmorc.facet.ui.OsmorcFacetGeneralEditorTab">
-  <grid id="bbf5b" binding="_root" layout-manager="FormLayout">
-    <rowspec value="center:p:noGrow"/>
-    <rowspec value="top:3dlu:noGrow"/>
-    <rowspec value="center:max(d;4px):noGrow"/>
-    <rowspec value="top:3dlu:noGrow"/>
-    <rowspec value="center:max(d;4px):noGrow"/>
-    <rowspec value="top:p:noGrow"/>
-    <rowspec value="center:max(d;4px):noGrow"/>
-    <rowspec value="top:3dlu:noGrow"/>
-    <rowspec value="center:max(d;4px):noGrow"/>
-    <rowspec value="top:3dlu:noGrow"/>
-    <rowspec value="center:max(d;4px):noGrow"/>
-    <rowspec value="top:3dlu:noGrow"/>
-    <rowspec value="center:max(d;4px):noGrow"/>
-    <rowspec value="top:3dlu:noGrow"/>
-    <rowspec value="center:max(d;4px):noGrow"/>
-    <colspec value="fill:d:noGrow"/>
-    <colspec value="left:4dlu:noGrow"/>
-    <colspec value="fill:max(d;4px):grow"/>
+  <grid id="bbf5b" binding="_root" layout-manager="GridLayoutManager" row-count="9" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="825" height="912"/>
+      <xy x="20" y="20" width="593" height="490"/>
     </constraints>
     <properties/>
-    <border type="empty">
+    <border type="none">
       <size top="4" left="4" bottom="4" right="4"/>
       <color color="-16777216"/>
     </border>
     <children>
       <component id="5eac9" class="javax.swing.JLabel">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Bundle creation"/>
@@ -39,8 +21,7 @@
       </component>
       <component id="6837c" class="javax.swing.JRadioButton" binding="_controlledByOsmorcRadioButton" default-binding="true">
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Create manifest using facet settings and bundle using facet configuration"/>
@@ -48,33 +29,16 @@
       </component>
       <component id="9f11" class="javax.swing.JRadioButton" binding="_useBndFileRadioButton" default-binding="true">
         <constraints>
-          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Create using bnd and ignore facet configuration"/>
         </properties>
       </component>
-      <component id="51bd0" class="javax.swing.JRadioButton" binding="_manuallyEditedRadioButton" default-binding="true">
+      <grid id="d87a3" binding="_manifestPanel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
-        </constraints>
-        <properties>
-          <selected value="true"/>
-          <text value="Use existing manifest and bundle using facet configuration"/>
-        </properties>
-      </component>
-      <grid id="d87a3" binding="_manifestPanel" layout-manager="FormLayout">
-        <rowspec value="center:max(d;4px):noGrow"/>
-        <rowspec value="top:3dlu:noGrow"/>
-        <rowspec value="center:max(d;4px):noGrow"/>
-        <rowspec value="top:3dlu:noGrow"/>
-        <rowspec value="center:max(d;4px):noGrow"/>
-        <colspec value="fill:d:grow"/>
-        <constraints>
-          <grid row="5" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <forms/>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="3" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <clientProperties>
@@ -85,21 +49,16 @@
           <component id="70cf9" class="javax.swing.JRadioButton" binding="_useProjectDefaultManifestFileLocation">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <forms/>
             </constraints>
             <properties>
               <selected value="true"/>
               <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="faceteditor.manifestfilelocation.useprojectdefault"/>
             </properties>
           </component>
-          <grid id="e8153" layout-manager="FormLayout">
-            <rowspec value="center:d:grow"/>
-            <colspec value="left:34px:noGrow"/>
-            <colspec value="fill:max(d;4px):noGrow"/>
-            <colspec value="left:d:grow(2.0)"/>
+          <grid id="e8153" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <forms/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
             <border type="none"/>
@@ -107,17 +66,15 @@
               <component id="ba183" class="javax.swing.JRadioButton" binding="_useModuleSpecificManifestFileLocation">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms defaultalign-horz="false"/>
                 </constraints>
                 <properties>
                   <horizontalAlignment value="10"/>
-                  <text value=""/>
+                  <text value="Custom:"/>
                 </properties>
               </component>
               <component id="c3c4b" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="_manifestFileChooser">
                 <constraints>
-                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                  <forms defaultalign-horz="false"/>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <enabled value="false"/>
@@ -128,8 +85,7 @@
           <grid id="89127" binding="_warningPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <forms/>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
             <border type="none"/>
@@ -152,25 +108,20 @@
           </grid>
         </children>
       </grid>
-      <grid id="c756d" binding="_bndPanel" layout-manager="FormLayout">
-        <rowspec value="center:d:grow"/>
-        <rowspec value="top:3dlu:noGrow"/>
-        <rowspec value="center:max(d;4px):noGrow"/>
-        <colspec value="fill:d:grow"/>
+      <grid id="c756d" binding="_bndPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="8" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <forms/>
+          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="3" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <clientProperties>
-          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithIndent"/>
+          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithoutIndent"/>
         </clientProperties>
         <border type="none" title="Bnd file location"/>
         <children>
           <component id="8cb2f" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="_bndFile">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-              <forms/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
           </component>
@@ -178,37 +129,45 @@
       </grid>
       <component id="b9f29" class="javax.swing.JRadioButton" binding="_useBundlorFileRadioButton">
         <constraints>
-          <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
+          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Create using Bundlor and ignore facet configuration"/>
         </properties>
       </component>
-      <grid id="66303" binding="_bundlorPanel" layout-manager="FormLayout">
-        <rowspec value="center:d:grow"/>
-        <rowspec value="top:3dlu:noGrow"/>
-        <rowspec value="center:max(d;4px):noGrow"/>
-        <colspec value="fill:d:grow"/>
+      <grid id="66303" binding="_bundlorPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="12" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <forms/>
+          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="3" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <clientProperties>
-          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithIndent"/>
+          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithoutIndent"/>
         </clientProperties>
         <border type="none" title="Bundlor file location"/>
         <children>
           <component id="f2475" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="_bundlorFile">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-              <forms/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
           </component>
         </children>
       </grid>
+      <component id="51bd0" class="javax.swing.JRadioButton" binding="_manuallyEditedRadioButton" default-binding="true">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <selected value="true"/>
+          <text value="Use existing manifest and bundle using facet configuration"/>
+        </properties>
+      </component>
+      <vspacer id="ea011">
+        <constraints>
+          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </vspacer>
     </children>
   </grid>
   <buttonGroups>
