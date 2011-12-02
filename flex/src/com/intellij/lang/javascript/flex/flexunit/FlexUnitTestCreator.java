@@ -23,12 +23,12 @@ import static com.intellij.lang.javascript.psi.JSFunction.FunctionKind;
 
 public class FlexUnitTestCreator implements TestCreator {
   public boolean isAvailable(final Project project, final Editor editor, final PsiFile file) {
-    return true;
+    return FlexUnitTestFinder.findContextClass(file) != null;
   }
 
   public void createTest(final Project project, final Editor editor, final PsiFile file) {
-    final PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
-    final JSClass jsClass = FlexUnitTestFinder.findContextClass(element);
+    final JSClass jsClass = FlexUnitTestFinder.findContextClass(file);
+    if (jsClass == null) return;
 
     final String testClassName;
     final String packageName;

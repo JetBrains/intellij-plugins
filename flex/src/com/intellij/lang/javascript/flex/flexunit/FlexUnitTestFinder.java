@@ -20,6 +20,7 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.testIntegration.TestFinder;
 import com.intellij.testIntegration.TestFinderHelper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,16 +29,18 @@ import java.util.List;
 
 public class FlexUnitTestFinder implements TestFinder {
 
+  @Nullable
   public JSClass findSourceElement(@NotNull final PsiElement element) {
     return findContextClass(element);
   }
 
-  static JSClass findContextClass(final PsiElement element) {
+  @Nullable
+  static JSClass findContextClass(final @NotNull PsiElement element) {
     if (FlexUnitSupport.getModuleAndSupport(element) == null) {
       return null;
     }
 
-    PsiFile psiFile = PsiTreeUtil.getParentOfType(element, PsiFile.class);
+    PsiFile psiFile = PsiTreeUtil.getParentOfType(element, PsiFile.class, false);
     if (psiFile instanceof JSFile) {
       final PsiElement context = psiFile.getContext();
       if (context != null) {
