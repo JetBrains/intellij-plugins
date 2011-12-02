@@ -30,6 +30,7 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.lang.ASTNode;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.Attribute;
 import org.osmorc.manifest.lang.psi.impl.AttributeImpl;
 import org.osmorc.manifest.lang.psi.stub.AttributeStub;
@@ -46,7 +47,7 @@ public class AttributeElementType extends AbstractManifestStubElementType<Attrib
     }
 
     @Override
-    public Attribute createPsi(AttributeStub stub) {
+    public Attribute createPsi(@NotNull AttributeStub stub) {
         return new AttributeImpl(stub, this);
     }
 
@@ -56,7 +57,7 @@ public class AttributeElementType extends AbstractManifestStubElementType<Attrib
     }
 
     @Override
-    public AttributeStub createStub(Attribute psi, StubElement parentStub) {
+    public AttributeStub createStub(@NotNull Attribute psi, StubElement parentStub) {
         return new AttributeStubImpl(parentStub, psi.getName(), psi.getValue());
     }
 

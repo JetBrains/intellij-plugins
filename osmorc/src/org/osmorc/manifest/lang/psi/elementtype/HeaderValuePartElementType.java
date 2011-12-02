@@ -30,6 +30,7 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.lang.ASTNode;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
 import org.osmorc.manifest.lang.psi.impl.HeaderValuePartImpl;
 import org.osmorc.manifest.lang.psi.stub.HeaderValuePartStub;
@@ -46,7 +47,7 @@ public class HeaderValuePartElementType extends AbstractManifestStubElementType<
     }
 
     @Override
-    public HeaderValuePart createPsi(HeaderValuePartStub stub) {
+    public HeaderValuePart createPsi(@NotNull HeaderValuePartStub stub) {
         return new HeaderValuePartImpl(stub, this);
     }
 
@@ -56,7 +57,7 @@ public class HeaderValuePartElementType extends AbstractManifestStubElementType<
     }
 
     @Override
-    public HeaderValuePartStub createStub(HeaderValuePart psi, StubElement parentStub) {
+    public HeaderValuePartStub createStub(@NotNull HeaderValuePart psi, StubElement parentStub) {
         return new HeaderValuePartStubImpl(parentStub, psi.getUnwrappedText());
     }
 

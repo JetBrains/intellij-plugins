@@ -30,6 +30,7 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.lang.ASTNode;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.Directive;
 import org.osmorc.manifest.lang.psi.impl.DirectiveImpl;
 import org.osmorc.manifest.lang.psi.stub.DirectiveStub;
@@ -46,7 +47,7 @@ public class DirectiveElementType extends AbstractManifestStubElementType<Direct
     }
 
     @Override
-    public Directive createPsi(DirectiveStub stub) {
+    public Directive createPsi(@NotNull DirectiveStub stub) {
         return new DirectiveImpl(stub, this);
     }
 
@@ -56,7 +57,7 @@ public class DirectiveElementType extends AbstractManifestStubElementType<Direct
     }
 
     @Override
-    public DirectiveStub createStub(Directive psi, StubElement parentStub) {
+    public DirectiveStub createStub(@NotNull Directive psi, StubElement parentStub) {
         return new DirectiveStubImpl(parentStub, psi.getName(), psi.getValue());
     }
 

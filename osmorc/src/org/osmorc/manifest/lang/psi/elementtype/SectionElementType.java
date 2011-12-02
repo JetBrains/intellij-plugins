@@ -30,6 +30,7 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.lang.ASTNode;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.Section;
 import org.osmorc.manifest.lang.psi.impl.SectionImpl;
 import org.osmorc.manifest.lang.psi.stub.SectionStub;
@@ -47,7 +48,7 @@ public class SectionElementType extends AbstractManifestStubElementType<SectionS
 
 
     @Override
-    public Section createPsi(SectionStub stub) {
+    public Section createPsi(@NotNull SectionStub stub) {
         return new SectionImpl(stub, this);
     }
 
@@ -57,7 +58,7 @@ public class SectionElementType extends AbstractManifestStubElementType<SectionS
     }
 
     @Override
-    public SectionStub createStub(Section psi, StubElement parentStub) {
+    public SectionStub createStub(@NotNull Section psi, StubElement parentStub) {
         return new SectionStubImpl(parentStub);
     }
 

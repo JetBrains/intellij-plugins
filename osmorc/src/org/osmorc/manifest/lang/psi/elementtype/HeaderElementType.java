@@ -27,6 +27,7 @@ package org.osmorc.manifest.lang.psi.elementtype;
 
 import com.intellij.psi.stubs.*;
 import com.intellij.lang.ASTNode;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.stub.HeaderStub;
 import org.osmorc.manifest.lang.psi.stub.impl.HeaderStubImpl;
 import org.osmorc.manifest.lang.psi.impl.HeaderImpl;
@@ -44,7 +45,7 @@ public class HeaderElementType extends AbstractManifestStubElementType<HeaderStu
 
 
     @Override
-    public Header createPsi(HeaderStub stub) {
+    public Header createPsi(@NotNull HeaderStub stub) {
         return new HeaderImpl(stub, this);
     }
 
@@ -54,7 +55,7 @@ public class HeaderElementType extends AbstractManifestStubElementType<HeaderStu
     }
 
     @Override
-    public HeaderStub createStub(Header psi, StubElement parentStub) {
+    public HeaderStub createStub(@NotNull Header psi, StubElement parentStub) {
         return new HeaderStubImpl(parentStub, psi.getName());
     }
 

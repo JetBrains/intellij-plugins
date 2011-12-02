@@ -47,7 +47,7 @@ public class ClauseElementType extends AbstractManifestStubElementType<ClauseStu
     }
 
     @Override
-    public Clause createPsi(ClauseStub stub) {
+    public Clause createPsi(@NotNull ClauseStub stub) {
         return new ClauseImpl(stub, this);
     }
 
@@ -57,7 +57,7 @@ public class ClauseElementType extends AbstractManifestStubElementType<ClauseStu
     }
 
     @Override
-    public ClauseStub createStub(Clause psi, StubElement parentStub) {
+    public ClauseStub createStub(@NotNull Clause psi, StubElement parentStub) {
         return new ClauseStubImpl(parentStub);
     }
 
