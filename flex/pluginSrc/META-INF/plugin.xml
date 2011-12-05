@@ -12,6 +12,7 @@
   <depends optional="true" config-file="ant-support.xml">AntSupport</depends>
   <depends optional="true" config-file="flex-ide-specific.xml">com.intellij.modules.flexide</depends>
   <depends optional="true" config-file="idea-specific.xml">com.intellij.modules.java</depends>
+  <depends optional="true" config-file="mxml-copyright.xml">com.intellij.copyright</depends>
 
   <xi:include href="/META-INF/flex-common.xml" xpointer="xpointer(/idea-plugin/*)"/>
 </idea-plugin>

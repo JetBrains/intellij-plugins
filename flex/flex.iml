@@ -27,6 +27,7 @@
     <orderEntry type="module" module-name="idea-ui" />
     <orderEntry type="module" module-name="maven" />
     <orderEntry type="module" module-name="ant" />
+    <orderEntry type="module" module-name="copyright" />
   </component>
 </module>
 

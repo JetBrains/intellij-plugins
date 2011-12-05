@@ -1,0 +1,5 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij.copyright">
+    <updater filetype="MXML" implementationClass="com.intellij.javascript.flex.mxml.copyright.UpdateMxmlCopyrightsProvider"/>
+  </extensions>
+</idea-plugin>
