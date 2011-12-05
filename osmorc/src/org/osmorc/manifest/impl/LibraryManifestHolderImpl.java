@@ -51,7 +51,7 @@ public class LibraryManifestHolderImpl extends AbstractManifestHolderImpl {
   private BundleManifest myBundleManifest;
   private final Library myLibrary;
   private final Project myProject;
-  private String myPath;
+  private final String myPath;
 
   private LibraryManifestHolderImpl(Library library, Project project, String rootPath) {
     myLibrary = library;
@@ -102,8 +102,18 @@ public class LibraryManifestHolderImpl extends AbstractManifestHolderImpl {
     return isLibraryDisposed(myLibrary)  || myProject.isDisposed();
   }
 
+
+  public static void clearCacheFor(@NotNull Project project) {
+    for (Iterator<Map.Entry<String, LibraryManifestHolderImpl>> iterator = myHolderCache.entrySet().iterator(); iterator.hasNext(); ) {
+      Map.Entry<String, LibraryManifestHolderImpl> entry = iterator.next();
+      if (entry.getValue().myProject == project) {
+        iterator.remove();
+      }
+    }
+  }
+
   private static boolean isLibraryDisposed(Library library) {
-    return (library instanceof LibraryEx && ((LibraryEx)library).isDisposed());
+    return library instanceof LibraryEx && ((LibraryEx)library).isDisposed();
   }
 
   /**
@@ -154,9 +164,8 @@ public class LibraryManifestHolderImpl extends AbstractManifestHolderImpl {
    * Removes disposed holders from the holder cache.
    */
   private static void cleanupHolderCache() {
-
-    for (Iterator<Map.Entry<String, ManifestHolder>> iterator = myHolderCache.entrySet().iterator(); iterator.hasNext(); ) {
-      Map.Entry<String, ManifestHolder> entry = iterator.next();
+    for (Iterator<Map.Entry<String,LibraryManifestHolderImpl>> iterator = myHolderCache.entrySet().iterator(); iterator.hasNext(); ) {
+      Map.Entry<String, LibraryManifestHolderImpl> entry = iterator.next();
       if (entry.getValue().isDisposed()) {
         iterator.remove();
       }
@@ -166,7 +175,7 @@ public class LibraryManifestHolderImpl extends AbstractManifestHolderImpl {
   /**
    * Cache for generated manifest holders. This is to make sure we don't create two manifest holders for the same jar file.
    */
-  private static Map<String, ManifestHolder> myHolderCache = new HashMap<String, ManifestHolder>();
+  private static final Map<String, LibraryManifestHolderImpl> myHolderCache = new HashMap<String, LibraryManifestHolderImpl>();
 
   @Override
   public Object getBoundObject() throws ManifestHolderDisposedException {

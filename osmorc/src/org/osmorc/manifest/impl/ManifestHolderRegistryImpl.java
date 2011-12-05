@@ -24,10 +24,12 @@
  */
 package org.osmorc.manifest.impl;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.ManifestHolder;
 import org.osmorc.manifest.ManifestHolderRegistry;
@@ -41,7 +43,13 @@ public final class ManifestHolderRegistryImpl implements ManifestHolderRegistry 
   private final Project myProject;
 
     public ManifestHolderRegistryImpl(Project project) {
-        this.myProject = project;
+      myProject = project;
+      Disposer.register(project, new Disposable() {
+        @Override
+        public void dispose() {
+          LibraryManifestHolderImpl.clearCacheFor(myProject);
+        }
+      });
     }
 
   @NotNull
