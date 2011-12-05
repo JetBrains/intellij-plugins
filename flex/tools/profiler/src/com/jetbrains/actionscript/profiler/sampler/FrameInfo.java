@@ -192,11 +192,15 @@ public class FrameInfo implements Comparable<FrameInfo> {
     if (tmp != 0) return tmp;
     if (kind != null) {
       tmp = kind.compareTo(o.getKind());
-      if (tmp != 0) return tmp;
+    }
+    if (!isAnonymous()) {
+      return tmp;
     }
     tmp = StringUtil.compare(getPackageName(), o.getPackageName(), false);
     if (tmp != 0) return tmp;
-    return StringUtil.compare(getFileName(), o.getFileName(), false);
+    tmp = StringUtil.compare(getFileName(), o.getFileName(), false);
+    if (tmp != 0) return tmp;
+    return fileLine - o.getFileLine();
   }
 
   @Nullable
