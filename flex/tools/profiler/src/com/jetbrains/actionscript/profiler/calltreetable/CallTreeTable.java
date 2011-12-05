@@ -136,7 +136,7 @@ public class CallTreeTable extends TreeTable implements DataProvider {
   private static class FrameNameComparator extends AbstractTreeNodeComparator {
     @Override
     public int compareInfo(CallInfo a, CallInfo b) {
-      return a.getFrameName().compareTo(b.getFrameName());
+      return a.getFrameInfo().compareTo(b.getFrameInfo());
     }
   }
 

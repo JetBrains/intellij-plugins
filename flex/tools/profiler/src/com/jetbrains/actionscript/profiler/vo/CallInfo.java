@@ -1,18 +1,21 @@
 package com.jetbrains.actionscript.profiler.vo;
 
-public class CallInfo {
-  private final String frameName;
+import com.jetbrains.actionscript.profiler.base.FrameInfoProducer;
+import com.jetbrains.actionscript.profiler.sampler.FrameInfo;
+
+public class CallInfo implements FrameInfoProducer {
+  private final FrameInfo frameInfo;
   private final long cumulativeTime;
   private final long selfTime;
 
-  public CallInfo(String frameName, long cumulativeTime, long selfTime) {
-    this.frameName = frameName;
+  public CallInfo(FrameInfo frameInfo, long cumulativeTime, long selfTime) {
+    this.frameInfo = frameInfo;
     this.cumulativeTime = cumulativeTime;
     this.selfTime = selfTime;
   }
 
-  public String getFrameName() {
-    return frameName;
+  public FrameInfo getFrameInfo() {
+    return frameInfo;
   }
 
   public long getCumulativeTime() {
@@ -25,6 +28,6 @@ public class CallInfo {
 
   @Override
   public String toString() {
-    return getFrameName();
+    return getFrameInfo().toString();
   }
 }

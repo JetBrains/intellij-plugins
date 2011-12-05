@@ -7,6 +7,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.jetbrains.actionscript.profiler.sampler.FrameInfo;
+import com.jetbrains.actionscript.profiler.sampler.FrameUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -25,28 +27,30 @@ abstract public class CallTreeTest extends LightCodeInsightFixtureTestCase {
 
   private void doTest(@NotNull XmlFile xmlFile, @NotNull XmlFile resultsXmlFile) {
     final CallTree callTree = CallTreeUtil.getCallTreeFromXmlFile(xmlFile.getRootTag());
-    final Pair<Map<String, Long>, Map<String, Long>> maps = getMaps(callTree, xmlFile.getRootTag());
+    final Pair<Map<FrameInfo, Long>, Map<FrameInfo, Long>> maps = getMaps(callTree, xmlFile.getRootTag());
     checkResults(resultsXmlFile, maps.getFirst(), maps.getSecond());
   }
 
-  protected Pair<Map<String, Long>, Map<String, Long>> getMaps(CallTree callTree, XmlTag rootTag) {
+  protected Pair<Map<FrameInfo, Long>, Map<FrameInfo, Long>> getMaps(CallTree callTree, XmlTag rootTag) {
     return callTree.getTimeMaps();
   }
 
-  private static void checkResults(XmlFile resultsXmlFile, Map<String, Long> countMap, Map<String, Long> selfTimeMap) {
+  private static void checkResults(XmlFile resultsXmlFile, Map<FrameInfo, Long> countMap, Map<FrameInfo, Long> selfTimeMap) {
     final XmlTag rootTag = resultsXmlFile.getRootTag();
+    assertNotNull(rootTag);
     checkResults(rootTag.getSubTags(), countMap, selfTimeMap);
   }
 
-  private static void checkResults(XmlTag[] subTags, Map<String, Long> countMap, Map<String, Long> selfTimeMap) {
+  private static void checkResults(XmlTag[] subTags, Map<FrameInfo, Long> countMap, Map<FrameInfo, Long> selfTimeMap) {
     assertEquals("different sizes", subTags.length, countMap.size());
     assertEquals("different sizes", subTags.length, selfTimeMap.size());
     for (XmlTag xmlTag : subTags) {
       String name = xmlTag.getName();
       Long count = Long.parseLong(xmlTag.getAttributeValue("count"));
       Long selftime = Long.parseLong(xmlTag.getAttributeValue("selftime"));
-      assertEquals("bad count for " + name, count, countMap.get(name));
-      assertEquals("bad selftime for " + name, selftime, selfTimeMap.get(name));
+      FrameInfo frameInfo = FrameUtil.getFrameInfo(name);
+      assertEquals("bad count for " + name, count, countMap.get(frameInfo));
+      assertEquals("bad selftime for " + name, selftime, selfTimeMap.get(frameInfo));
     }
   }
 

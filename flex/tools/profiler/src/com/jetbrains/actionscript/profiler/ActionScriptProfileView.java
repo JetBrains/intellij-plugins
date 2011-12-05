@@ -16,9 +16,9 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.scope.ProjectFilesScope;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.SpeedSearchBase;
+import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.ui.TreeTableSpeedSearch;
 import com.intellij.util.Alarm;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.ui.tree.TreeUtil;
 import com.jetbrains.actionscript.profiler.base.LazyNode;
@@ -28,12 +28,11 @@ import com.jetbrains.actionscript.profiler.calltree.CallTree;
 import com.jetbrains.actionscript.profiler.calltreetable.CallTreeTable;
 import com.jetbrains.actionscript.profiler.calltreetable.MergedCallNode;
 import com.jetbrains.actionscript.profiler.model.AgentVersionMismatchProblem;
+import com.jetbrains.actionscript.profiler.model.ProfileData;
 import com.jetbrains.actionscript.profiler.model.ProfilerDataConsumer;
 import com.jetbrains.actionscript.profiler.model.ProfilingManager;
-import com.jetbrains.actionscript.profiler.sampler.CreateObjectSample;
-import com.jetbrains.actionscript.profiler.sampler.DeleteObjectSample;
-import com.jetbrains.actionscript.profiler.sampler.Sample;
-import com.jetbrains.actionscript.profiler.sampler.SampleLocationResolver;
+import com.jetbrains.actionscript.profiler.render.FrameInfoCelleRenderer;
+import com.jetbrains.actionscript.profiler.sampler.*;
 import com.jetbrains.actionscript.profiler.util.JTreeUtil;
 import com.jetbrains.actionscript.profiler.util.LocationResolverUtil;
 import com.jetbrains.actionscript.profiler.vo.CallInfo;
@@ -48,7 +47,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.TableColumn;
 import javax.swing.tree.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -56,7 +54,6 @@ import java.awt.event.ItemListener;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.*;
-import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -91,9 +88,9 @@ public class ActionScriptProfileView extends ProfileView {
   private static final int CPU_HOTSPOTS_TAB_INDEX = 1;
   private Alarm myAlarm;
 
-  private final Function<List<String>, List<String>> scopeMatcher = new Function<List<String>, List<String>>() {
+  private final Function<List<FrameInfo>, List<FrameInfo>> scopeMatcher = new Function<List<FrameInfo>, List<FrameInfo>>() {
     @Override
-    public List<String> fun(List<String> traces) {
+    public List<FrameInfo> fun(List<FrameInfo> traces) {
       final GlobalSearchScope scope = getCurrentScope();
 
       return LocationResolverUtil.filterByScope(traces, scope);
@@ -126,10 +123,10 @@ public class ActionScriptProfileView extends ProfileView {
 
         myAlarm.addRequest(new Runnable() {
           public void run() {
-            String[] frames = new String[]{mergedCallNode.getFrame()};
-            final Pair<Map<String, Long>, Map<String, Long>> countMaps = mergedCallNode.getCallTree().getCalleesTimeMaps(frames);
-            final Map<String, Long> countMap = countMaps.getFirst();
-            final Map<String, Long> selfCountMap = countMaps.getSecond();
+            FrameInfo[] frames = new FrameInfo[]{mergedCallNode.getFrameInfo()};
+            final Pair<Map<FrameInfo, Long>, Map<FrameInfo, Long>> countMaps = mergedCallNode.getCallTree().getCalleesTimeMaps(frames);
+            final Map<FrameInfo, Long> countMap = countMaps.getFirst();
+            final Map<FrameInfo, Long> selfCountMap = countMaps.getSecond();
 
             DefaultMutableTreeNode tracesRoot = (DefaultMutableTreeNode)myTracesTreeTable.getSortableTreeTableModel().getRoot();
             JTreeUtil.removeChildren(tracesRoot, myTracesTreeTable.getSortableTreeTableModel());
@@ -169,13 +166,6 @@ public class ActionScriptProfileView extends ProfileView {
     }
   }
 
-  static class ProfileData {
-    private final Set<Sample> profile = new LinkedHashSet<Sample>();
-    private final Map<Integer, CreateObjectSample> objects = new HashMap<Integer, CreateObjectSample>();
-    private int allocated;
-    private final Map<Integer, Set<Integer>> references = new LinkedHashMap<Integer, Set<Integer>>(50);
-  }
-
   private final ProfileData data = new ProfileData();
 
   public ActionScriptProfileView(VirtualFile file, Project project) {
@@ -183,11 +173,12 @@ public class ActionScriptProfileView extends ProfileView {
 
     myProfilingManager = file.getUserData(ourProfilingManagerKey);
 
+    myHotSpotsTreeTable.setRootVisible(false);
+    myTracesTreeTable.setRootVisible(false);
+
     myMemoryTree.setRootVisible(false);
     mySamplesTree.setRootVisible(false);
-    myHotSpotsTreeTable.setRootVisible(false);
     myReachableFromTree.setRootVisible(false);
-    myTracesTreeTable.setRootVisible(false);
 
     setColumnWidth(myHotSpotsTreeTable.getColumnModel().getColumn(1), MS_COLUMN_WIDTH);
     setColumnWidth(myHotSpotsTreeTable.getColumnModel().getColumn(2), MS_COLUMN_WIDTH);
@@ -197,41 +188,92 @@ public class ActionScriptProfileView extends ProfileView {
     new TreeTableSpeedSearch(myHotSpotsTreeTable).setComparator(new SpeedSearchBase.SpeedSearchComparator(false));
     new TreeTableSpeedSearch(myTracesTreeTable).setComparator(new SpeedSearchBase.SpeedSearchComparator(false));
 
+    new TreeSpeedSearch(myMemoryTree).setComparator(new SpeedSearchBase.SpeedSearchComparator(false));
+    new TreeSpeedSearch(mySamplesTree).setComparator(new SpeedSearchBase.SpeedSearchComparator(false));
+    new TreeSpeedSearch(myReachableFromTree).setComparator(new SpeedSearchBase.SpeedSearchComparator(false));
+
     PopupHandler.installPopupHandler(myHotSpotsTreeTable, PROFILER_ACTION_GROUP_ID, ActionPlaces.UNKNOWN);
     PopupHandler.installPopupHandler(myTracesTreeTable, PROFILER_ACTION_GROUP_ID, ActionPlaces.UNKNOWN);
     PopupHandler.installPopupHandler(myMemoryTree, PROFILER_ACTION_GROUP_ID, ActionPlaces.UNKNOWN);
     PopupHandler.installPopupHandler(myReachableFromTree, PROFILER_ACTION_GROUP_ID, ActionPlaces.UNKNOWN);
     PopupHandler.installPopupHandler(mySamplesTree, PROFILER_ACTION_GROUP_ID, ActionPlaces.UNKNOWN);
 
-    myHotSpotsTreeTable.getTree().setCellRenderer(new DefaultTreeCellRenderer(){
+    myHotSpotsTreeTable.getTree().setCellRenderer(new FrameInfoCelleRenderer() {
+
       @Override
-      public Component getTreeCellRendererComponent(JTree tree,
-                                                    Object value,
-                                                    boolean sel,
-                                                    boolean expanded,
-                                                    boolean leaf,
-                                                    int row,
-                                                    boolean hasFocus) {
+      public void customizeCellRenderer(JTree tree,
+                                        Object value,
+                                        boolean selected,
+                                        boolean expanded,
+                                        boolean leaf,
+                                        int row,
+                                        boolean hasFocus) {
+        setPaintFocusBorder(false);
         setOpenIcon(ProfilerIcons.CALLER_ARROW);
         setClosedIcon(ProfilerIcons.CALLER_ARROW);
         setLeafIcon(ProfilerIcons.CALLER_LEAF_ARROW);
-        return super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, false);
+        super.customizeCellRenderer(tree, value, selected, expanded, leaf, row, false);
       }
     });
 
-    myTracesTreeTable.getTree().setCellRenderer(new DefaultTreeCellRenderer(){
+    myTracesTreeTable.getTree().setCellRenderer(new FrameInfoCelleRenderer() {
       @Override
-      public Component getTreeCellRendererComponent(JTree tree,
-                                                    Object value,
-                                                    boolean sel,
-                                                    boolean expanded,
-                                                    boolean leaf,
-                                                    int row,
-                                                    boolean hasFocus) {
+      public void customizeCellRenderer(JTree tree,
+                                        Object value,
+                                        boolean selected,
+                                        boolean expanded,
+                                        boolean leaf,
+                                        int row,
+                                        boolean hasFocus) {
+        setPaintFocusBorder(false);
         setOpenIcon(ProfilerIcons.CALLEE_ARROW);
         setClosedIcon(ProfilerIcons.CALLEE_ARROW);
         setLeafIcon(ProfilerIcons.CALLEE_LEAF_ARROW);
-        return super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, false);
+        super.customizeCellRenderer(tree, value, selected, expanded, leaf, row, false);
+      }
+    });
+
+    TreeCellRenderer classCellRenderer = new FrameInfoCelleRenderer() {
+      @Override
+      public void customizeCellRenderer(JTree tree,
+                                        Object value,
+                                        boolean selected,
+                                        boolean expanded,
+                                        boolean leaf,
+                                        int row,
+                                        boolean hasFocus) {
+        setPaintFocusBorder(false);
+        Icon icon = ProfilerIcons.CLASS;
+        if (value instanceof MergedPathNode) {
+          icon = ProfilerIcons.METHOD;
+        }
+        setOpenIcon(icon);
+        setClosedIcon(icon);
+        setLeafIcon(icon);
+        super.customizeCellRenderer(tree, value, selected, expanded, leaf, row, false);
+      }
+    };
+
+    myMemoryTree.setCellRenderer(classCellRenderer);
+    myReachableFromTree.setCellRenderer(classCellRenderer);
+
+    mySamplesTree.setCellRenderer(new FrameInfoCelleRenderer() {
+      @Override
+      public void customizeCellRenderer(JTree tree,
+                                        Object value,
+                                        boolean selected,
+                                        boolean expanded,
+                                        boolean leaf,
+                                        int row,
+                                        boolean hasFocus) {
+        setPaintFocusBorder(false);
+        setOpenIcon(ProfilerIcons.METHOD);
+        setClosedIcon(ProfilerIcons.METHOD);
+        setLeafIcon(ProfilerIcons.METHOD);
+        super.customizeCellRenderer(tree, value, selected, expanded, leaf, row, false);
+        if(value instanceof MergedPathNode){
+          append(" " + ((MergedPathNode)value).getPercents() + "%");
+        }
       }
     });
 
@@ -241,7 +283,7 @@ public class ActionScriptProfileView extends ProfileView {
 
     myFilterSystemStuff.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
-        buildPerformanceSamples(myHotSpotsTreeTable.getSortableTreeTableModel(), data.profile);
+        buildPerformanceSamples(myHotSpotsTreeTable.getSortableTreeTableModel(), data.getProfile());
         TreeUtil.expand(myHotSpotsTreeTable.getTree(), 1);
       }
     });
@@ -252,7 +294,7 @@ public class ActionScriptProfileView extends ProfileView {
         myAlarm.cancelAllRequests();
         myAlarm.addRequest(new Runnable() {
           public void run() {
-            buildPerformanceSamples(myHotSpotsTreeTable.getSortableTreeTableModel(), data.profile);
+            buildPerformanceSamples(myHotSpotsTreeTable.getSortableTreeTableModel(), data.getProfile());
             TreeUtil.expand(myHotSpotsTreeTable.getTree(), 1);
           }
         }, 100);
@@ -279,7 +321,7 @@ public class ActionScriptProfileView extends ProfileView {
               protected void doLoadChildren() {
                 int index = 0;
                 List<CreateObjectSample> samples = new ArrayList<CreateObjectSample>();
-                for(final CreateObjectSample s:data.objects.values()) {
+                for(final CreateObjectSample s:data.getCreateObjectSamples()) {
                   if (finalQName.equals(s.className)) {
                     samples.add(s);
                   }
@@ -333,13 +375,13 @@ public class ActionScriptProfileView extends ProfileView {
         public void process(Sample sample) {
           if (sample instanceof CreateObjectSample) {
             final CreateObjectSample createObjectSample = (CreateObjectSample) sample;
-            data.allocated += createObjectSample.size;
-            data.objects.put(createObjectSample.id, createObjectSample);
+            data.incAllocated(createObjectSample.size);
+            data.putNewObject(createObjectSample.id, createObjectSample);
             return;
           } else if (sample instanceof DeleteObjectSample) {
             DeleteObjectSample deleteObjectSample = (DeleteObjectSample) sample;
 
-            final CreateObjectSample objectSample = data.objects.remove(deleteObjectSample.id);
+            final CreateObjectSample objectSample = data.removeObject(deleteObjectSample.id);
             int size = deleteObjectSample.size;
             if (objectSample != null) { // already collected items
               if (size != objectSample.size) {
@@ -347,19 +389,19 @@ public class ActionScriptProfileView extends ProfileView {
               }
             }
 
-            data.allocated -= size;
+            data.decAllocated(size);
 
             return;
           }
 
-          data.profile.add(sample);
+          data.addPerformanceSample(sample);
         }
 
         public void referenced(int pid, int id) {
-          Set<Integer> integers = data.references.get(pid);
+          Set<Integer> integers = data.getReferences().get(pid);
           if (integers == null) {
             integers = new LinkedHashSet<Integer>(3);
-            data.references.put(pid, integers);
+            data.getReferences().put(pid, integers);
           }
           integers.add(id);
         }
@@ -540,14 +582,14 @@ public class ActionScriptProfileView extends ProfileView {
     TreeModel treeModel = mySamplesTree.getModel();
     final Function<Set<Sample>, Integer> sizeFunction = new Function<Set<Sample>, Integer>() {
       public Integer fun(Set<Sample> samples) {
-        return (samples.size() * 100) / data.profile.size();
+        return (samples.size() * 100) / data.getPerformanceInfoSize();
       }
     };
 
     myHotSpotsTreeTable.clearSelection();
 
-    buildSamples((DefaultTreeModel) treeModel, (DefaultMutableTreeNode) treeModel.getRoot(), false, data.profile, 0, sizeFunction, getCurrentScope());
-    buildPerformanceSamples(myHotSpotsTreeTable.getSortableTreeTableModel(), data.profile);
+    buildSamples((DefaultTreeModel) treeModel, (DefaultMutableTreeNode) treeModel.getRoot(), false, data.getProfile(), 0, sizeFunction, getCurrentScope());
+    buildPerformanceSamples(myHotSpotsTreeTable.getSortableTreeTableModel(), data.getProfile());
     TreeUtil.expand(myHotSpotsTreeTable.getTree(), 1);
 
     DefaultMutableTreeNode tracesRoot = (DefaultMutableTreeNode)myTracesTreeTable.getSortableTreeTableModel().getRoot();
@@ -565,7 +607,7 @@ public class ActionScriptProfileView extends ProfileView {
     final Map<String, Set<CreateObjectSample>> objectsByClasses = new HashMap<String, Set<CreateObjectSample>>();
 
     final ArrayList<Set<CreateObjectSample>> list = new ArrayList<Set<CreateObjectSample>>();
-    for(CreateObjectSample x:data.objects.values()) {
+    for(CreateObjectSample x : data.getCreateObjectSamples()) {
       Set<CreateObjectSample> createObjectSamples = objectsByClasses.get(x.className);
       if (createObjectSamples == null) {
         createObjectSamples = new HashSet<CreateObjectSample>();
@@ -623,8 +665,8 @@ public class ActionScriptProfileView extends ProfileView {
   }
 
   private static int percent(int total, ProfileData data) {
-    if (data.allocated == 0) return 0;
-    return (int)(((long)total * 100) / data.allocated);
+    if (data.getAllocated() == 0) return 0;
+    return (int)(((long)total * 100) / data.getAllocated());
   }
 
   interface GroupHandler<T extends Sample, K> {
@@ -647,14 +689,14 @@ public class ActionScriptProfileView extends ProfileView {
         int index = 0;
         for (final String s : traces) {
           final Set<T> stackFrameSampleSet = data.get(s);
-          model.insertNodeInto(new MergedPathNode<T>(s, stackFrameSampleSet, model, innermostFirst, level, classifier, scope), root, index++);
+          model.insertNodeInto(new MergedPathNode<T>(stackFrameSampleSet, model, innermostFirst, level, classifier, scope), root, index++);
         }
       }
 
       public String getCategory(T sample) {
         int i = innermostFirst ? level : sample.frames.length - 1 - level;
         if (i < 0 || i >= sample.frames.length) return null;
-        return sample.frames[i];
+        return sample.frames[i].toString();
       }
     });
   }
@@ -684,28 +726,28 @@ public class ActionScriptProfileView extends ProfileView {
       callTree.addFrames(sample.frames, sample.duration, skipSystemStuff);
     }
 
-    final Pair<Map<String, Long>, Map<String, Long>> countMaps = callTree.getTimeMaps();
-    final Map<String, Long> countMap = countMaps.getFirst();
-    final Map<String, Long> selfCountMap = countMaps.getSecond();
+    final Pair<Map<FrameInfo, Long>, Map<FrameInfo, Long>> countMaps = callTree.getTimeMaps();
+    final Map<FrameInfo, Long> countMap = countMaps.getFirst();
+    final Map<FrameInfo, Long> selfCountMap = countMaps.getSecond();
 
     DefaultMutableTreeNode tracesRoot = (DefaultMutableTreeNode)treeModel.getRoot();
     JTreeUtil.removeChildren(tracesRoot, treeModel);
-    fillTreeModelRoot(tracesRoot, callTree, countMap, selfCountMap, true, ArrayUtil.EMPTY_STRING_ARRAY);
+    fillTreeModelRoot(tracesRoot, callTree, countMap, selfCountMap, true, new FrameInfo[0]);
     treeModel.reload();
   }
 
   private <T extends Sample> void fillTreeModelRoot(TreeNode node,
                                                     CallTree callTree,
-                                                    final Map<String, Long> countMap,
-                                                    final Map<String, Long> selfCountMap,
+                                                    final Map<FrameInfo, Long> countMap,
+                                                    final Map<FrameInfo, Long> selfCountMap,
                                                     boolean backTrace,
-                                                    String[] frames) {
+                                                    FrameInfo[] frames) {
     final MutableTreeNode root = (MutableTreeNode) node;
-    List<String> traces = scopeMatcher.fun(new ArrayList<String>(countMap.keySet()));
+    List<FrameInfo> traces = scopeMatcher.fun(new ArrayList<FrameInfo>(countMap.keySet()));
 
     GlobalSearchScope scope = getCurrentScope();
     int index = 0;
-    for (final String s : traces) {
+    for (final FrameInfo s : traces) {
       root.insert(new MergedCallNode<T>(new CallInfo(s, countMap.get(s), selfCountMap.get(s)), callTree, frames, backTrace, scope), index++);
     }
   }
@@ -715,29 +757,13 @@ public class ActionScriptProfileView extends ProfileView {
     myTracesTreeTable.removeAll();
     mySamplesTree.setModel(new DefaultTreeModel(new DefaultMutableTreeNode(), true));
 
-    Iterator<Sample> i = data.profile.iterator();
-    while(i.hasNext()) {
-      Sample next = i.next();
-      if (!(next instanceof CreateObjectSample) && !(next instanceof DeleteObjectSample)) {
-        i.remove();
-      }
-    }
+    data.clearPerformance();
   }
 
   private void resetMemoryData() {
     myMemoryTree.setModel(new DefaultTreeModel(new DefaultMutableTreeNode(), true));
     myReachableFromTree.setModel(new DefaultTreeModel(new DefaultMutableTreeNode(), true));
-    data.allocated = 0;
-    data.objects.clear();
-    data.references.clear();
-
-    Iterator<Sample> i = data.profile.iterator();
-    while(i.hasNext()) {
-      Sample next = i.next();
-      if (next instanceof CreateObjectSample || next instanceof DeleteObjectSample) {
-        i.remove();
-      }
-    }
+    data.clearMemory();
   }
 
   @NotNull
@@ -754,21 +780,34 @@ public class ActionScriptProfileView extends ProfileView {
     private final DefaultTreeModel model;
     private final boolean innermostFirst;
     private final int level;
-    private final String trace;
+    private final int percents;
+    private final FrameInfo frameInfo;
     private final GlobalSearchScope scope;
     private final Function<Set<T>, Integer> classifier;
     private SampleLocationResolver samplLocationResolver;
 
-    public MergedPathNode(String s, Set<T> stackFrameSampleSet, DefaultTreeModel model, boolean innermostFirst,
+    public MergedPathNode(Set<T> stackFrameSampleSet, DefaultTreeModel model, boolean innermostFirst,
                           int level, Function<Set<T>, Integer> classifier, GlobalSearchScope scope) {
-      setUserObject(s + " " + classifier.fun(stackFrameSampleSet) + "%");
-      trace = s;
+      Iterator<T> iterator = stackFrameSampleSet.iterator();
+      if(iterator.hasNext()){
+        frameInfo = iterator.next().frames[level];
+        setUserObject(frameInfo);
+      } else {
+        frameInfo = null;
+      }
+
       this.scope = scope;
       this.stackFrameSampleSet = stackFrameSampleSet;
       this.model = model;
       this.innermostFirst = innermostFirst;
       this.level = level;
       this.classifier = classifier;
+
+      percents = classifier.fun(stackFrameSampleSet);
+    }
+    
+    public int getPercents(){
+      return percents;
     }
 
     @Override
@@ -779,7 +818,7 @@ public class ActionScriptProfileView extends ProfileView {
     @Override
     public Navigatable getNavigatable() {
       if (samplLocationResolver == null) {
-        samplLocationResolver = new SampleLocationResolver(trace, scope);
+        samplLocationResolver = new SampleLocationResolver(frameInfo, scope);
       }
       return samplLocationResolver;
     }
@@ -806,7 +845,7 @@ public class ActionScriptProfileView extends ProfileView {
     if (s.frames == null || s.frames.length == 0) {
       return "";
     }
-    String frame = s.frames[0];
+    String frame = s.frames[0].toString();
     String locationHint = " (" + (frame.length() < 50 ? frame : frame.substring(0, 50) + "...") + ")";
     if (LOG.isDebugEnabled()) {
       locationHint += " #" + s.id;
@@ -833,9 +872,9 @@ public class ActionScriptProfileView extends ProfileView {
     @Override
     protected void doLoadChildren() {
       int index = 0;
-      for(Map.Entry<Integer, Set<Integer>> e : data.references.entrySet()) {
+      for(Map.Entry<Integer, Set<Integer>> e : data.getReferenceIds()) {
         if (e.getValue().contains(s.id)) {
-          CreateObjectSample s2 = data.objects.get(e.getKey());
+          CreateObjectSample s2 = data.getObjects().get(e.getKey());
           treeModel.insertNodeInto(new BackRefNode(s2, treeModel, s2.className + someShortLocationHint(s2)), this, index++);
         }
       }
@@ -848,7 +887,8 @@ public class ActionScriptProfileView extends ProfileView {
     @Override
     public Navigatable getNavigatable() {
       if (sampleLocationResolver == null) {
-        sampleLocationResolver = new SampleLocationResolver(getObjectSample().frames[0], ActionScriptProfileView.this.getCurrentScope());
+        FrameInfo frameInfo = getObjectSample().frames[0];
+        sampleLocationResolver = new SampleLocationResolver(frameInfo, ActionScriptProfileView.this.getCurrentScope());
       }
       return sampleLocationResolver;
     }

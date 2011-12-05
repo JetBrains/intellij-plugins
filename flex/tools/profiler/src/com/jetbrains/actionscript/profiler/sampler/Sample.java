@@ -6,10 +6,10 @@ package com.jetbrains.actionscript.profiler.sampler;
  * Time: 19:54:24
  */
 public class Sample {
-  public final String[] frames;
+  public final FrameInfo[] frames;
   public final long duration;
 
-  public Sample(long duration, String[] frames) {
+  public Sample(long duration, FrameInfo[] frames) {
     this.duration = duration;
     this.frames = frames;
   }

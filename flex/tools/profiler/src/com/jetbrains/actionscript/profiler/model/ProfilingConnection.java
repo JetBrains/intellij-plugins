@@ -2,10 +2,7 @@ package com.jetbrains.actionscript.profiler.model;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.util.ArrayUtil;
-import com.jetbrains.actionscript.profiler.sampler.CreateObjectSample;
-import com.jetbrains.actionscript.profiler.sampler.DeleteObjectSample;
-import com.jetbrains.actionscript.profiler.sampler.Sample;
+import com.jetbrains.actionscript.profiler.sampler.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
@@ -284,7 +281,7 @@ public class ProfilingConnection {
 
     private final Map<String,String> dictionary = new HashMap<String, String>(1000);
     private final Map<String,String> typeDictionary = new HashMap<String, String>(1000);
-    private String[] frames;
+    private FrameInfo[] frames;
     private String type;
     private String specialArgs;
     static final int INDEX = SAMPLE_MARKER.length();
@@ -292,6 +289,7 @@ public class ProfilingConnection {
     private int memorySamples;
     private Sample lastCpuSample;
     private Sample lastCreateObjectSample;
+    private final FrameInfoBuilder frameInfoBuilder = new FrameInfoBuilder();
 
     public BatchSamplesProcessor(ProfilerDataConsumer sampleProcessor) {
       this.mySampleProcessor = sampleProcessor;
@@ -316,7 +314,7 @@ public class ProfilingConnection {
             output.startsWith(DELETE_OBJECT_SAMPLE_MARKER)) {
           int i2 = output.indexOf(' ', i);
           int frameCount = Integer.parseInt(output.substring(i - 1, i2 != -1 ? i2:output.length()));
-          frames = frameCount > 0 ? new String[frameCount]: ArrayUtil.EMPTY_STRING_ARRAY;
+          frames = frameCount > 0 ? new FrameInfo[frameCount]: FrameInfo.EMPTY_FRAME_INFO_ARRAY;
           frameIndex = 0;
           type = output;
           specialArgs = i2 != -1 ? output.substring(i2 + 1):"";
@@ -341,7 +339,7 @@ public class ProfilingConnection {
             dictionary.put("" + (dictionary.size() + 1), output);
           }
 
-          frames[frameIndex++] = output;
+          frames[frameIndex++] = frameInfoBuilder.buildInstance(output);
         }
         return maybeFinishSample();
       }
@@ -382,7 +380,7 @@ public class ProfilingConnection {
           String type = endIndex2 != specialArgs.length() ? specialArgs.substring(endIndex2 + 1):null;
           if (type != null) {
             type = getClassName(type);
-            mySampleProcessor.process(new CreateObjectSample(sampleDuration, ArrayUtil.EMPTY_STRING_ARRAY, id, type, -size));
+            mySampleProcessor.process(new CreateObjectSample(sampleDuration, FrameInfo.EMPTY_FRAME_INFO_ARRAY, id, type, -size));
           } else {
             mySampleProcessor.process(new DeleteObjectSample(sampleDuration, frames, id, size));
           }

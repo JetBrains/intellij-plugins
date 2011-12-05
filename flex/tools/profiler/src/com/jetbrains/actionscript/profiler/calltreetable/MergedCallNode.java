@@ -4,9 +4,11 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.ArrayUtil;
+import com.jetbrains.actionscript.profiler.base.FrameInfoProducer;
 import com.jetbrains.actionscript.profiler.base.LazyNode;
 import com.jetbrains.actionscript.profiler.base.NavigatableDataProducer;
 import com.jetbrains.actionscript.profiler.calltree.CallTree;
+import com.jetbrains.actionscript.profiler.sampler.FrameInfo;
 import com.jetbrains.actionscript.profiler.sampler.Sample;
 import com.jetbrains.actionscript.profiler.sampler.SampleLocationResolver;
 import com.jetbrains.actionscript.profiler.util.LocationResolverUtil;
@@ -18,16 +20,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class MergedCallNode<T extends Sample> extends LazyNode implements NavigatableDataProducer {
+public class MergedCallNode<T extends Sample> extends LazyNode implements NavigatableDataProducer, FrameInfoProducer {
   private final CallTree callTree;
-  private final String[] callFrames;
+  private final FrameInfo[] callFrames;
   private final boolean backTrace;
   private final GlobalSearchScope scope;
   private SampleLocationResolver sampleLocationResolver;
 
   public MergedCallNode(CallInfo callInfo,
                         CallTree callTree,
-                        String[] callFrames,
+                        FrameInfo[] callFrames,
                         boolean backTrace,
                         GlobalSearchScope scope) {
     setUserObject(callInfo);
@@ -49,29 +51,30 @@ public class MergedCallNode<T extends Sample> extends LazyNode implements Naviga
     return null;
   }
 
-  public String getFrame() {
+  @Nullable
+  public FrameInfo getFrameInfo() {
     final CallInfo callInfo = getCallInfo();
-    return callInfo != null ? callInfo.getFrameName() : "";
+    return callInfo != null ? callInfo.getFrameInfo() : null;
   }
 
   @Override
   protected void doLoadChildren() {
-    String[] frames = Arrays.copyOf(callFrames, callFrames.length + 1);
-    frames[frames.length - 1] = getFrame();
+    FrameInfo[] frames = Arrays.copyOf(callFrames, callFrames.length + 1);
+    frames[frames.length - 1] = getFrameInfo();
 
-    Pair<Map<String, Long>, Map<String, Long>> countMaps;
+    Pair<Map<FrameInfo, Long>, Map<FrameInfo, Long>> countMaps;
     if (backTrace) {
       countMaps = callTree.getCallersTimeMaps(frames);
     }
     else {
       countMaps = callTree.getCalleesTimeMaps(ArrayUtil.reverseArray(frames));
     }
-    final Map<String, Long> countMap = countMaps.getFirst();
-    final Map<String, Long> selfCountMap = countMaps.getSecond();
+    final Map<FrameInfo, Long> countMap = countMaps.getFirst();
+    final Map<FrameInfo, Long> selfCountMap = countMaps.getSecond();
 
-    List<String> traces = LocationResolverUtil.filterByScope(countMap.keySet(), scope);
+    List<FrameInfo> traces = LocationResolverUtil.filterByScope(countMap.keySet(), scope);
     ArrayList<CallInfo> callInfos = new ArrayList<CallInfo>();
-    for (final String t : traces) {
+    for (final FrameInfo t : traces) {
       callInfos.add(new CallInfo(t, countMap.get(t), selfCountMap.get(t)));
     }
 
@@ -82,13 +85,14 @@ public class MergedCallNode<T extends Sample> extends LazyNode implements Naviga
 
   @Override
   public String toString() {
-    return getFrame();
+    FrameInfo frameInfo = getFrameInfo();
+    return frameInfo != null ? frameInfo.toString() : "";
   }
 
   @Override
   public Navigatable getNavigatable() {
     if (sampleLocationResolver == null) {
-      sampleLocationResolver = new SampleLocationResolver(getFrame(), scope);
+      sampleLocationResolver = new SampleLocationResolver(getFrameInfo(), scope);
     }
     return sampleLocationResolver;
   }

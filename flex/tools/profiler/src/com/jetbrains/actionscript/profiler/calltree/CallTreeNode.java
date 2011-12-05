@@ -1,32 +1,29 @@
 package com.jetbrains.actionscript.profiler.calltree;
 
+import com.jetbrains.actionscript.profiler.base.FrameInfoProducer;
+import com.jetbrains.actionscript.profiler.sampler.FrameInfo;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class CallTreeNode {
-  private final String frameName;
+class CallTreeNode implements FrameInfoProducer {
+  private final FrameInfo frameInfo;
   private long duration;
-  private final THashMap<String, CallTreeNode> children = new THashMap<String, CallTreeNode>();
-
-  private static String stripCallDelims(String s) {
-    final int endIndex = s.indexOf('(');
-    return endIndex != -1 ? s.substring(0, endIndex) : s;
-  }
+  private final THashMap<FrameInfo, CallTreeNode> children = new THashMap<FrameInfo, CallTreeNode>();
 
   public CallTreeNode() {
-    frameName = null;
+    frameInfo = null;
   }
 
-  public CallTreeNode(String frame, long duration) {
-    frameName = frame;
+  public CallTreeNode(FrameInfo frameInfo, long duration) {
+    this.frameInfo = frameInfo;
     this.duration = duration;
   }
 
-  public String getFrameName() {
-    return frameName;
+  public FrameInfo getFrameInfo() {
+    return frameInfo;
   }
 
   public long getCumulativeTiming() {
@@ -34,7 +31,7 @@ class CallTreeNode {
   }
 
   void addChildRecursive(CallTreeNode newChildNode) {
-    CallTreeNode child = findChildByName(newChildNode.getFrameName());
+    CallTreeNode child = findChildByName(newChildNode.getFrameInfo());
     if (child != null) {
       child.duration += newChildNode.getCumulativeTiming();
       for (CallTreeNode node : newChildNode.getChildren()) {
@@ -47,11 +44,11 @@ class CallTreeNode {
   }
 
   private void addChild(CallTreeNode newChildNode) {
-    children.put(newChildNode.getFrameName(), newChildNode);
+    children.put(newChildNode.getFrameInfo(), newChildNode);
   }
 
   @Nullable
-  public CallTreeNode findChildByName(String frame) {
+  public CallTreeNode findChildByName(FrameInfo frame) {
     return children.get(frame);
   }
 
@@ -79,13 +76,12 @@ class CallTreeNode {
 
   @Override
   public String toString() {
-    return frameName + " (" + children.size() + ")";
+    return frameInfo.toString() + " (" + children.size() + ")";
   }
 
-  public void addChildren(List<String> reversedFrames, long duration) {
+  public void addChildren(List<FrameInfo> reversedFrames, long duration) {
     CallTreeNode node = this;
-    for (String frame : reversedFrames) {
-      frame = stripCallDelims(frame);
+    for (FrameInfo frame : reversedFrames) {
       CallTreeNode child = node.findChildByName(frame);
       if (child == null) {
         child = new CallTreeNode(frame, 0);

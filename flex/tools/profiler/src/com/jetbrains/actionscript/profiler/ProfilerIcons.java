@@ -9,4 +9,6 @@ public interface ProfilerIcons {
   Icon CALLER_LEAF_ARROW = IconLoader.getIcon("/icons/callerLeafArrow.png");
   Icon CALLEE_ARROW = IconLoader.getIcon("/icons/calleeArrow.png");
   Icon CALLEE_LEAF_ARROW = IconLoader.getIcon("/icons/calleeLeafArrow.png");
+  Icon CLASS = IconLoader.getIcon("/nodes/class.png");
+  Icon METHOD = IconLoader.getIcon("/nodes/method.png");
 }
