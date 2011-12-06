@@ -103,13 +103,12 @@ public class ProfilingConnection {
 
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       public void run() {
-        ByteArrayOutputStream out = LOG.isDebugEnabled() ? new ByteArrayOutputStream():null;
         int bytesRead = 0;
         try {
           while(true) {
             String x = myInputStream.readUTF();
             if (x == null) break;
-            if (out != null) out.write(x.getBytes());
+            LOG.debug(x);
             bytesRead += x.length();
             try {
               if (myCurrentPacketProcessor == null) {
@@ -132,23 +131,12 @@ public class ProfilingConnection {
               LOG.error(e);
             }
           }
-        } catch (IOException ex) {
+        }
+        catch (IOException ex) {
           LOG.debug("Bytes read:" + bytesRead);
           myIoHandler.finished(null, ex);
-          if (ex instanceof EOFException) {
-            if (out != null) {
-              try {
-                final FileOutputStream fileOutputStream = new FileOutputStream("c:\\trace");
-                fileOutputStream.write(out.toByteArray());
-                fileOutputStream.close();
-              } catch (IOException e) {
-                LOG.warn(e);
-              }
-            }
-            return;
-          }
-          LOG.error(ex);
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
           LOG.error(t);
         }
       }

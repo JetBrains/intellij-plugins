@@ -1,9 +1,8 @@
 package com.jetbrains.actionscript.profiler;
 
 import com.intellij.ide.util.scopeChooser.ScopeChooserCombo;
-import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -53,6 +52,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.EOFException;
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.*;
 
 /**
@@ -62,6 +62,7 @@ import java.util.*;
  * Time: 13:52:59
  */
 public class ActionScriptProfileView extends ProfileView {
+  public static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("Action Script Profiler");
   private static final Logger LOG = Logger.getInstance(ActionScriptProfileView.class.getName());
   private static final int MS_COLUMN_WIDTH = 140;
   public static final String PROFILER_ACTION_GROUP_ID = "ProfilerViewMenu";
@@ -100,7 +101,7 @@ public class ActionScriptProfileView extends ProfileView {
   private GlobalSearchScope getCurrentScope() {
     final SearchScope _selectedScope = filterScope.getSelectedScope();
     return _selectedScope instanceof GlobalSearchScope ?
-      (GlobalSearchScope) _selectedScope:GlobalSearchScope.allScope(getProject());
+      (GlobalSearchScope) _selectedScope : GlobalSearchScope.allScope(getProject());
   }
 
   private void createUIComponents() {
@@ -502,8 +503,6 @@ public class ActionScriptProfileView extends ProfileView {
 
   private void reportProblem(final IOException ex) {
     if (ex != null) {
-      if (!(ex instanceof EOFException) && !myEOFReached) LOG.error(ex);
-
       Runnable runnable = new Runnable() {
         public void run() {
           if (myEOFReached) return;
@@ -522,7 +521,15 @@ public class ActionScriptProfileView extends ProfileView {
             return;
           }
 
-          Notifications.Bus.notify(new Notification("ASProfiler", "IOProblem", ex.getLocalizedMessage(), NotificationType.ERROR));
+          if (ex instanceof SocketException) {
+            myEOFReached = true;
+            myStatus.setText("Unexpected loss of connection");
+            final String message = "Unexpected loss of connection with Profiler Agent:<br/>" + ex.getLocalizedMessage();
+            NOTIFICATION_GROUP.createNotification(message, NotificationType.WARNING).notify(getProject());
+            return;
+          }
+
+          NOTIFICATION_GROUP.createNotification("Connection error:<br/>" + ex.getLocalizedMessage(), NotificationType.ERROR).notify(getProject());
         }
       };
 
