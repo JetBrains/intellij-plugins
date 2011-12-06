@@ -72,7 +72,7 @@
     <path id="osmorc.module.classpath">
         <path refid="${module.jdk.classpath.osmorc}"/>
         <pathelement location="${module.osmorc.basedir}/lib/org.eclipse.osgi.jar"/>
-        <pathelement location="${module.osmorc.basedir}/lib/bnd-${bnd.version}.jar"/>
+        <pathelement location="${module.osmorc.basedir}/lib/biz.aQute.bndlib.jar"/>
         <pathelement location="${module.osmorc.basedir}/lib/binding-2.0.6.jar"/>
         <pathelement location="${module.osmorc.basedir}/lib/com.springsource.bundlor-1.0.0.RELEASE.jar"/>
         <pathelement location="${module.osmorc.basedir}/lib/com.springsource.bundlor.ant-1.0.0.RELEASE.jar"/>
