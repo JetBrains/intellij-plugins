@@ -57,6 +57,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
     myTargetPackage = targetPackage;
   }
 
+  @NotNull
   @Override
   protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo[] usages) {
     return new FlexMoveClassUsageViewDescriptor();

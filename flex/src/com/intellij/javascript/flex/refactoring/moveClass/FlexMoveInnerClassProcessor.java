@@ -74,6 +74,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
     myMoveCallback = moveCallback;
   }
 
+  @NotNull
   @Override
   protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo[] usages) {
     return new FlexMoveInnerClassUsageViewDescriptor();
