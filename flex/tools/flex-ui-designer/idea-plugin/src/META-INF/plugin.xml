@@ -2,7 +2,7 @@
   <name>Flex UI Designer</name>
   <description>Provides editing support for Flex or Flash UI</description>
   <id>com.intellij.flex.uiDesigner</id>
-  <version>0.6.6</version>
+  <version>0.6.8</version>
   <vendor url="http://www.jetbrains.com" logo="/general/ijLogo.png">JetBrains</vendor>
   <idea-version since-build="110.187"/>
 
