@@ -55,6 +55,7 @@ class FlexValue extends XValue {
   private static final String VECTOR_PREFIX = "__AS3__.vec::";
 
   private static final String VECTOR = "Vector";
+  private static final String GENERIC_VECTOR_PREFIX = "Vector.<";
   private static final String[] COLLECTIONS_WITH_DIRECT_CONTENT = {
     "Array",
     VECTOR,
@@ -152,26 +153,26 @@ class FlexValue extends XValue {
   public void computePresentation(@NotNull XValueNode node, @NotNull XValuePlace place) {
     final boolean isObject = myResult.contains(OBJECT_MARKER);
     String val = myResult;
-    String type = null;
+    String typeFromFlexValueResult = null;
     String additionalInfo = null;
 
     if (isObject) {
       final Pair<String, String> typeAndAdditionalInfo = getTypeAndAdditionalInfo(myResult);
-      type = typeAndAdditionalInfo.first;
+      typeFromFlexValueResult = typeAndAdditionalInfo.first;
       additionalInfo = typeAndAdditionalInfo.second;
 
-      if (type != null) {
+      if (typeFromFlexValueResult != null) {
         val = "[".concat(getObjectId(myResult, myResult.indexOf(OBJECT_MARKER), OBJECT_MARKER)).concat("]");
       }
     }
 
-    if ((XML_TYPE.equals(type) || XMLLIST_TYPE.equals(type)) && myExpression.indexOf('=') == -1) {
+    if ((XML_TYPE.equals(typeFromFlexValueResult) || XMLLIST_TYPE.equals(typeFromFlexValueResult)) && myExpression.indexOf('=') == -1) {
       if (myDebugProcess.isDebuggerFromSdk4()) {
-        scheduleToXmlStringCalculation(node, type);
+        scheduleToXmlStringCalculation(node, typeFromFlexValueResult);
         // return; no return - show default presentation until toXmlString calculated
       }
       else if (myDebugProcess.isDebuggerFromSdk3()) {
-        if (XMLLIST_TYPE.equals(type)) {
+        if (XMLLIST_TYPE.equals(typeFromFlexValueResult)) {
           setXmlListPresentation(node, val, this);
           return;
         }
@@ -182,29 +183,29 @@ class FlexValue extends XValue {
       }
     }
 
-    final String fqn = getFqn(type);
-    if (isCollection(fqn)) {
-      if (VECTOR.equals(fqn)) {
-        scheduleVectorPresentation(node);
+    final String type = getType(typeFromFlexValueResult);
+    if (type != null && isCollection(type)) {
+      if (type.equals(VECTOR) || type.startsWith(GENERIC_VECTOR_PREFIX)) {
+        scheduleVectorPresentation(node, typeFromFlexValueResult);
       }
       else {
-        scheduleCollectionSizePresentation(node, type, "");
+        scheduleCollectionSizePresentation(node, typeFromFlexValueResult, "");
       }
     }
 
     val = setFullValueEvaluatorIfNeeded(node, val, false);
-    node.setPresentation(getIcon(), type, val, isObject);
+    node.setPresentation(getIcon(), typeFromFlexValueResult, val, isObject);
   }
 
   private static boolean isCollectionWithDirectContent(final String fqn) {
     return fqn != null && ArrayUtil.contains(fqn, COLLECTIONS_WITH_DIRECT_CONTENT);
   }
 
-  private static boolean isCollection(final String fqn) {
-    return fqn != null && ArrayUtil.contains(fqn, COLLECTION_CLASSES);
+  private static boolean isCollection(final @NotNull String type) {
+    return isGenericVector(type) || ArrayUtil.contains(type, COLLECTION_CLASSES);
   }
 
-  private void scheduleVectorPresentation(final XValueNode node) {
+  private void scheduleVectorPresentation(final XValueNode node, final String type) {
     final FlexStackFrame.EvaluateCommand command =
       myFlexStackFrame.new EvaluateCommand(myExpression + ".fixed", new XDebuggerEvaluator.XEvaluationCallback() {
 
@@ -212,8 +213,8 @@ class FlexValue extends XValue {
           if (!node.isObsolete()) {
             final String resultText = ((FlexValue)result).myResult;
             final String prefix = ("true".equals(resultText) || "false".equals(resultText)) ? "fixed = " + resultText : "";
-            node.setPresentation(getIcon(), VECTOR, prefix, true);
-            scheduleCollectionSizePresentation(node, VECTOR, prefix);
+            node.setPresentation(getIcon(), type, prefix, true);
+            scheduleCollectionSizePresentation(node, type, prefix);
           }
         }
 
@@ -379,7 +380,7 @@ class FlexValue extends XValue {
     final int i = myResult.indexOf(OBJECT_MARKER);
     if (i == -1) super.computeChildren(node);
 
-    final String type = getTypeAndAdditionalInfo(myResult).first;
+    final String typeFromFlexValueResult = getTypeAndAdditionalInfo(myResult).first;
 
     final FlexStackFrame.EvaluateCommand
       command = myFlexStackFrame.new EvaluateCommand(referenceObjectBase(i, OBJECT_MARKER), null) {
@@ -399,7 +400,8 @@ class FlexValue extends XValue {
             final JSClass jsClass = mySourcePosition == null
                                     ? null
                                     : findJSClass(project,
-                                                  ModuleUtil.findModuleForFile(mySourcePosition.getFile(), project), type);
+                                                  ModuleUtil.findModuleForFile(mySourcePosition.getFile(), project),
+                                                  typeFromFlexValueResult);
             return jsClass == null ? null : NodeClassInfo.getNodeClassInfo(jsClass);
           }
         });
@@ -432,7 +434,8 @@ class FlexValue extends XValue {
           }
           // either parameter of static function from scopechain or a field. Static functions from scopechain look like following:
           // // [Object 52571545, class='Main$/staticFunction']
-          final ValueType valueType = type != null && type.indexOf('/') > -1 ? ValueType.Parameter : ValueType.Field;
+          final ValueType valueType =
+            typeFromFlexValueResult != null && typeFromFlexValueResult.indexOf('/') > -1 ? ValueType.Parameter : ValueType.Field;
           final FlexValue flexValue =
             new FlexValue(myFlexStackFrame, myDebugProcess, mySourcePosition, fieldName, evaluatedPath, result, FlexValue.this.myResult,
                           valueType);
@@ -501,8 +504,9 @@ class FlexValue extends XValue {
       }
     }
     else if (myValueType == ValueType.Field && myParentResult != null) {
-      final String type = getTypeAndAdditionalInfo(myParentResult).first;
-      final JSClass jsClass = findJSClass(project, ModuleUtil.findModuleForFile(mySourcePosition.getFile(), project), type);
+      final String typeFromFlexValueResult = getTypeAndAdditionalInfo(myParentResult).first;
+      final JSClass jsClass =
+        findJSClass(project, ModuleUtil.findModuleForFile(mySourcePosition.getFile(), project), typeFromFlexValueResult);
 
       if (jsClass != null) {
         result = calcSourcePosition(JSInheritanceUtil.findMember(myName, jsClass, true, JSFunction.FunctionKind.GETTER, true));
@@ -725,34 +729,42 @@ class FlexValue extends XValue {
 
   /**
    * Returned result can contain extra <b>$</b> after real class FQN in case of static context. For example <code>pack.Main$</code>
+   * Also it may contain vector type, e.g. <code>Vector.&lt;int&gt;</code>
    */
   @Nullable
-  private static String getFqn(final String typeFromFlexValueResult) {
+  private static String getType(final String typeFromFlexValueResult) {
     if (typeFromFlexValueResult != null && !typeFromFlexValueResult.contains("/")) {
-      final int index = typeFromFlexValueResult.indexOf(".<"); // Vector.<int>
-      return (index > 0 ? typeFromFlexValueResult.substring(0, index) : typeFromFlexValueResult).replace("::", ".");
+      return typeFromFlexValueResult.replace("::", ".");
     }
     return null;
   }
 
+  private static boolean isGenericVector(final String type) {
+    return type.startsWith(GENERIC_VECTOR_PREFIX);
+  }
+
   @Nullable
   private static JSClass findJSClass(final Project project, final @Nullable Module module, final String typeFromFlexValueResult) {
-    final String fqn = getFqn(typeFromFlexValueResult);
-    if (fqn != null) {
-      final JavaScriptIndex jsIndex = JavaScriptIndex.getInstance(project);
-      PsiElement jsClass = JSResolveUtil.findClassByQName(fqn, jsIndex, module);
+    String type = getType(typeFromFlexValueResult);
+    if (type != null) {
+      if (isGenericVector(type)) {
+        type = VECTOR;
+      }
 
-      if (!(jsClass instanceof JSClass) && fqn.endsWith("$")) { // fdb adds '$' to class name in case of static context
-        jsClass = JSResolveUtil.findClassByQName(fqn.substring(0, fqn.length() - 1), jsIndex, module);
+      final JavaScriptIndex jsIndex = JavaScriptIndex.getInstance(project);
+      PsiElement jsClass = JSResolveUtil.findClassByQName(type, jsIndex, module);
+
+      if (!(jsClass instanceof JSClass) && type.endsWith("$")) { // fdb adds '$' to class name in case of static context
+        jsClass = JSResolveUtil.findClassByQName(type.substring(0, type.length() - 1), jsIndex, module);
       }
 
       if (!(jsClass instanceof JSClass) && module != null) {
         // probably this class came from dynamically loaded module that is not in moduleWithDependenciesAndLibrariesScope(module)
         final GlobalSearchScope scope = ProjectScope.getAllScope(project);
-        jsClass = JSResolveUtil.findClassByQName(fqn, scope);
+        jsClass = JSResolveUtil.findClassByQName(type, scope);
 
-        if (!(jsClass instanceof JSClass) && fqn.endsWith("$")) {
-          jsClass = JSResolveUtil.findClassByQName(fqn.substring(0, fqn.length() - 1), scope);
+        if (!(jsClass instanceof JSClass) && type.endsWith("$")) {
+          jsClass = JSResolveUtil.findClassByQName(type.substring(0, type.length() - 1), scope);
         }
       }
 
