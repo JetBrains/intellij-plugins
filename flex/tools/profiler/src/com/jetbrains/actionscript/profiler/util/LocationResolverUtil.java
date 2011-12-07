@@ -20,10 +20,11 @@ public class LocationResolverUtil {
     return ContainerUtil.filter(traces, new Condition<FrameInfo>() {
       @Override
       public boolean value(FrameInfo frameInfo) {
-        if(frameInfo.isAnonymous()){
-          return JSResolveUtil.findClassByQName(frameInfo.getQNameByFile(), scope) != null;
+        final String qName = frameInfo.isAnonymous() ? frameInfo.getQNameByFile() : frameInfo.getQName();
+        if (qName == null) {
+          return false;
         }
-        return JSResolveUtil.findClassByQName(frameInfo.getQName(), scope) != null;
+        return JSResolveUtil.findClassByQName(qName, scope) != null;
       }
     });
   }
