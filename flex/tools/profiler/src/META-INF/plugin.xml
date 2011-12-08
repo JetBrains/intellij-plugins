@@ -1,21 +1,27 @@
 <idea-plugin version="2">
   <name>ActionScript Profiler</name>
   <description>The plugin allows you to profile your ActionScript and Flex applications by showing CPU sampling and memory snapshot information.</description>
-  <version>0.2.4</version>
+  <version>0.2.6</version>
   <vendor>JetBrains</vendor>
-  <idea-version since-build="93.13"/>
+  <idea-version since-build="112.1"/>
   <depends>com.intellij.modules.ultimate</depends>
   <depends>com.intellij.flex</depends>
 
   <change-notes>
-    In 0.2.4
-    Profile Air applications. Proper handling of Windows 7 / Vista. &lt;br&gt;
-    In 0.2.3
-    Added view for live class instances with reachability information (let's start leak hunting). &lt;br&gt;
-    In 0.2.2
-    Show plain list for invoked functions. Fixed bug with no snapshotting second time&lt;br&gt;
-    In 0.2.1
-    Capture memory snapshot implemented, added "Do GC" button.
+    <![CDATA[
+        In 0.2.6<br/>
+        ...
+        In 0.2.5<br/>
+        Various usability improvements and fixes.<br/>
+        In 0.2.4<br/>
+        Profile Air applications. Proper handling of Windows 7 / Vista.<br/>
+        In 0.2.3<br/>
+        Added view for live class instances with reachability information (let's start leak hunting).<br/>
+        In 0.2.2<br/>
+        Show plain list for invoked functions. Fixed bug with no snapshotting second time.<br/>
+        In 0.2.1<br/>
+        Capture memory snapshot implemented, added "Do GC" button.
+    ]]>
   </change-notes>
   <extensionPoints>
     <extensionPoint interface="com.jetbrains.profiler.ProfilerSnapshotProvider" qualifiedName="com.intellij.profiler.SnapshotProvider"/>
