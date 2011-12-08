@@ -110,7 +110,9 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
           _documentUpdated.dispatch();
         }
       }
-      document.container.invalidateDisplayList();
+
+      //!!!
+      //document.container.invalidate();
     }
   }
 

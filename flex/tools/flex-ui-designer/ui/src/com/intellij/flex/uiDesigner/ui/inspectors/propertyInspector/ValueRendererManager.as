@@ -1,9 +1,6 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector {
 import cocoa.CheckBox;
-import cocoa.DocumentWindow;
-import cocoa.Focusable;
 import cocoa.Insets;
-import cocoa.TextInput;
 import cocoa.plaf.ButtonSkinInteraction;
 import cocoa.plaf.LookAndFeel;
 import cocoa.plaf.Skin;
@@ -13,7 +10,6 @@ import cocoa.renderer.TextLineAndDisplayObjectEntry;
 import cocoa.renderer.TextLineAndDisplayObjectEntryFactory;
 import cocoa.renderer.TextLineEntry;
 import cocoa.renderer.TextRendererManager;
-import cocoa.text.EditableTextView;
 import cocoa.text.TextFormat;
 import cocoa.ui;
 import cocoa.util.StringUtil;
@@ -183,25 +179,20 @@ public class ValueRendererManager extends TextRendererManager {
     var checkbox:CheckBox = e.checkbox;
     var skin:Skin = checkbox.skin;
     if (skin == null) {
-      skin = checkbox.createView(laf);
-      ButtonSkinInteraction(skin).deletegateInteraction();
-      skin.validateNow();
-      skin.setActualSize(skin.getExplicitOrMeasuredWidth(), skin.getExplicitOrMeasuredHeight());
-    }
-
-    skin.enabled = editable;
-
-    var displayObject:DisplayObject = DisplayObject(skin);
-    if (displayObject.parent != _container) {
-      _container.addChild(displayObject);
+      ButtonSkinInteraction(skin).delegateInteraction();
+      checkbox.setSize(checkbox.getPreferredWidth(), checkbox.getPreferredHeight());
+      checkbox.addToSuperview(_container, laf, null);
     }
     else {
-      skin.invalidateDisplayList();
+      var displayObject:DisplayObject = DisplayObject(skin);
+      if (displayObject.parent == null) {
+        _container.addChild(displayObject);
+      }
     }
 
-    displayObject.x = x + 3;
-    displayObject.y = y + 1;
-
+    checkbox.enabled = editable;
+    checkbox.setLocation(x + 3, y + 1);
+    checkbox.validate();
     return e;
   }
 
@@ -211,25 +202,26 @@ public class ValueRendererManager extends TextRendererManager {
       return null;
     }
 
-    var textInput:TextInput = new TextInput();
-    textInput.text = myDataSource.object[description.name];
-    var skin:Skin = textInput.createView(laf);
-
-    var displayObject:DisplayObject = DisplayObject(skin);
-    displayObject.x = entry.line.x - textInsets.left;
-    displayObject.width = w;
-
-    _container.addChild(displayObject);
-    _container.mouseChildren = true;
-    skin.validateNow();
-    var textInputHeight:Number = skin.getExplicitOrMeasuredHeight();
-    skin.setActualSize(skin.getExplicitOrMeasuredWidth(), textInputHeight);
-
-    displayObject.y = ((entry.line.y + textInsets.bottom) - h) - Math.round((textInputHeight - h) / 2);
-
-    var textField:EditableTextView = textInput.textDisplay;
-    DocumentWindow(_container.stage.nativeWindow).focusManager.setFocus(Focusable(skin));
-    return textField;
+    //var textInput:TextInput = new TextInput();
+    //textInput.text = myDataSource.object[description.name];
+    //var skin:Skin = textInput.createView(laf);
+    //
+    //var displayObject:DisplayObject = DisplayObject(skin);
+    //displayObject.x = entry.line.x - textInsets.left;
+    //displayObject.width = w;
+    //
+    //_container.addChild(displayObject);
+    //_container.mouseChildren = true;
+    //skin.validateNow();
+    //var textInputHeight:Number = skin.getExplicitOrMeasuredHeight();
+    //skin.setActualSize(skin.getExplicitOrMeasuredWidth(), textInputHeight);
+    //
+    //displayObject.y = ((entry.line.y + textInsets.bottom) - h) - Math.round((textInputHeight - h) / 2);
+    //
+    //var textField:EditableTextView = textInput.textDisplay;
+    //DocumentWindow(_container.stage.nativeWindow).focusManager.setFocus(Focusable(skin));
+    //return textField;
+    return null;
   }
 
   public function closeEditor(editor:InteractiveObject):void {

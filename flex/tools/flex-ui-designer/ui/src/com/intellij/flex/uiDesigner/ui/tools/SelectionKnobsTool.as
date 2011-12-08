@@ -11,7 +11,7 @@ public class SelectionKnobsTool implements Tool, ElementLayoutChangeListener {
   public function attach(element:Object, toolContainer:ElementToolContainer):void {
     if (selectionKnobs == null) {
       selectionKnobs = new Sprite();
-      toolContainer.addDisplayObject(selectionKnobs);
+      toolContainer.addChild(selectionKnobs);
       for (var i:int = 0; i < 8; i++) {
         selectionKnobs.addChild(new viewSelectionKnobClass());
       }

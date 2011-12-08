@@ -1,0 +1,73 @@
+<Container xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="cocoa" xmlns:tools="com.intellij.flex.uiDesigner.ui.tools.*">
+  <fx:Script><![CDATA[
+    import cocoa.ContentView;
+    import cocoa.pane.PaneItem;
+    import cocoa.pane.PaneViewDataSource;
+    import cocoa.plaf.LookAndFeel;
+
+    import com.intellij.flex.uiDesigner.Document;
+    import com.intellij.flex.uiDesigner.DocumentFactoryManager;
+
+    [ResourceBundle("Designer")]
+
+    private const editorTabsSource:Vector.<PaneItem> = new Vector.<PaneItem>();
+    private const editorPanes:PaneViewDataSource = new PaneViewDataSource(editorTabsSource);
+
+    override public function addToSuperview(displayObjectContainer:DisplayObjectContainer, laf:LookAndFeel, superview:ContentView = null):void {
+      editorTabView.dataSource = editorPanes;
+      editorTabView.selectionChanged.add(editorTabSelectionChanged);
+
+      editorPanes.itemRemoved.add(editorPaneRemoved);
+
+      super.addToSuperview(displayObjectContainer, laf, superview);
+    }
+
+    public function addDocument(document:Document):void {
+      var paneItem:DocumentPaneItem = new DocumentPaneItem(document);
+      paneItem.localizedTitle = document.file.name.substring(0, document.file.name.lastIndexOf("."));
+
+      editorPanes.addItem(paneItem);
+    }
+
+    private static function editorTabSelectionChanged(oldItem:DocumentPaneItem, newItem:DocumentPaneItem):void {
+      if (oldItem != null) {
+        oldItem.document.displayManager.deactivated();
+      }
+      if (newItem != null) {
+        newItem.document.displayManager.activated();
+      }
+    }
+
+    public function selectEditorTab(document:Document):void {
+      var index:int = -1;
+      for (var i:int = 0; i < editorTabsSource.length; i++) {
+        if (DocumentPaneItem(editorTabsSource[i]).document == document) {
+          index = i;
+          break;
+        }
+      }
+
+      if (index != -1) {
+        editorTabView.selectedIndex = index;
+      }
+    }
+
+    //noinspection JSUnusedLocalSymbols
+    private static function editorPaneRemoved(item:DocumentPaneItem, index:int):void {
+      DocumentFactoryManager.getInstance().unregister(item.document);
+    }
+    ]]></fx:Script>
+
+  <layout>
+    <MigLayout>
+      <columnConstraints>[fill][fill][][fill][fill]</columnConstraints>
+      <rowConstraints>[fill][][fill]</rowConstraints>
+    </MigLayout>
+  </layout>
+  <TabView id="editorTabView" lafSubkey="ProjectView" c="cell 2 0, grow, id editorTabView"/>
+  <Toolbar id="editorToolbar" lafSubkey="Editor" small="true" c="cell 2 0, h 25, pos editorTabView.x editorTabView.y">
+    <SegmentedControl id="statesBar"/>
+    <SegmentedControl id="elementTreeBar" lafKey="ElementTreeBar"/>
+  </Toolbar>
+  <tools:ElementToolContainer id="elementToolContainer" c="external"/>
+</Container>

@@ -1,5 +1,5 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.styleInspector {
-import cocoa.AbstractView;
+import cocoa.SpriteBackedView;
 import cocoa.plaf.Skin;
 
 import com.intellij.flex.uiDesigner.css.CssRuleset;
@@ -8,7 +8,7 @@ import mx.core.IDataRenderer;
 
 import org.tinytlf.layout.TinytlfSprite;
 
-public class TextBlockRenderer extends AbstractView implements IDataRenderer {
+public class TextBlockRenderer extends SpriteBackedView implements IDataRenderer {
   private static const TEXT_TOP:Number = 5;
   
   private var textEngine:FlexTextEngine;

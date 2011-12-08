@@ -30,7 +30,7 @@ public class IdeaAquaLookAndFeel extends IdeaLookAndFeel {
 
     data["small.arrows"] = smallArrowsClass;
     data["small.arrows.disabled"] = smallDisabledArrowsClass;
-    data["StatusBar.f"] = new TextFormat(new ElementFormat(fontDescription, 12, 0xfbfbfb));
+    data["StatusText.f"] = new TextFormat(new ElementFormat(fontDescription, 12, 0xfbfbfb));
   }
 }
 }

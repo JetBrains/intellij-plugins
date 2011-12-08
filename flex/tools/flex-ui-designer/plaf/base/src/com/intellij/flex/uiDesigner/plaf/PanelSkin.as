@@ -1,25 +1,19 @@
 package com.intellij.flex.uiDesigner.plaf {
 import cocoa.Border;
-import cocoa.Component;
-import cocoa.IconButton;
 import cocoa.LabelHelper;
 import cocoa.Panel;
+import cocoa.SkinnableView;
 import cocoa.Toolbar;
 import cocoa.View;
-import cocoa.plaf.LookAndFeel;
 import cocoa.plaf.LookAndFeelProvider;
 import cocoa.plaf.TextFormatId;
 import cocoa.plaf.WindowSkin;
 import cocoa.plaf.aqua.AquaLookAndFeel;
-import cocoa.plaf.basic.AbstractSkin;
+import cocoa.plaf.basic.ContentViewableSkin;
 
-import flash.display.DisplayObject;
 import flash.display.Graphics;
 
-import spark.components.supportClasses.GroupBase;
-import spark.layouts.VerticalLayout;
-
-public class PanelSkin extends AbstractSkin implements WindowSkin {
+public class PanelSkin extends ContentViewableSkin implements WindowSkin {
   private var labelHelper:LabelHelper;
 
   private var titleBorder:Border;
@@ -48,34 +42,27 @@ public class PanelSkin extends AbstractSkin implements WindowSkin {
     _contentView = value;
   }
 
-  override public function attach(component:Component, laf:LookAndFeel):void {
-    var panelLaF:LookAndFeel = AquaLookAndFeel(laf).createPanelLookAndFeel();
-    LookAndFeelProvider(component).laf = panelLaF;
-    super.attach(component, panelLaF);
+  override public function attach(component:SkinnableView):void {
+    LookAndFeelProvider(component).laf = AquaLookAndFeel(superview.laf).createPanelLookAndFeel();
+    super.attach(component);
   }
 
-  override protected function createChildren():void {
-    super.createChildren();
+  override protected function doInit():void {
+    super.doInit();
 
     titleBorder = getBorder("title.b");
     contentBorder = getBorder("b");
 
-    if (_toolbar != null) {
-      var toolbarSkin:DisplayObject = DisplayObject(_toolbar.createView(laf));
-      toolbarSkin.height = 20;
-      toolbarSkin.x = 8;
-      toolbarSkin.y = 20;
-      addChild(toolbarSkin);
-    }
+    //if (_toolbar != null) {
+    //  var toolbarSkin:DisplayObject = DisplayObject(_toolbar.createView(laf));
+    //  toolbarSkin.height = 20;
+    //  toolbarSkin.x = 8;
+    //  toolbarSkin.y = 20;
+    //  addChild(toolbarSkin);
+    //}
 
-    _contentView.x = contentBorder.contentInsets.left;
-    _contentView.y = titleBorder.layoutHeight;
-    if (_contentView is GroupBase && GroupBase(_contentView).layout == null) {
-      var layout:VerticalLayout = new VerticalLayout();
-      layout.gap = 2;
-      GroupBase(_contentView).layout = layout;
-    }
-    addChild(DisplayObject(_contentView));
+    _contentView.addToSuperview(this);
+    _contentView.setLocation(contentBorder.contentInsets.left, titleBorder.layoutHeight);
 
     labelHelper.textFormat = laf.getTextFormat(TextFormatId.SYSTEM_HIGHLIGHTED);
 
@@ -83,28 +70,35 @@ public class PanelSkin extends AbstractSkin implements WindowSkin {
 //    closeSideButton = createControlButton("closeSide", "closeSideButton");
   }
 
-  private function createControlButton(iconKey:String, partKey:String):IconButton {
-    var iconButton:IconButton = new IconButton();
-    iconButton.icon = getIcon(iconKey);
+  //private function createControlButton(iconKey:String, partKey:String):IconButton {
+  //  var iconButton:IconButton = new IconButton();
+  //  iconButton.icon = getIcon(iconKey);
+  //
+  //  var iconSkin:DisplayObject = DisplayObject(iconButton.createView(laf));
+  //  component.uiPartAdded(partKey, iconButton);
+  //
+  //  iconSkin.y = 3;
+  //  iconSkin.width = 17;
+  //  iconSkin.height = 17;
+  //  addChild(iconSkin);
+  //
+  //  return iconButton;
+  //}
 
-    var iconSkin:DisplayObject = DisplayObject(iconButton.createView(laf));
-    component.uiPartAdded(partKey, iconButton);
-
-    iconSkin.y = 3;
-    iconSkin.width = 17;
-    iconSkin.height = 17;
-    addChild(iconSkin);
-
-    return iconButton;
+  override public function getMinimumWidth(hHint:int = -1):int {
+    return _contentView.getMinimumWidth() + contentBorder.contentInsets.width;
   }
 
-  override protected function measure():void {
-    measuredMinWidth = _contentView.minWidth + contentBorder.contentInsets.width;
-    measuredWidth = _contentView.getExplicitOrMeasuredWidth() + contentBorder.contentInsets.width;
+  override public function getMinimumHeight(wHint:int = -1):int {
+    return _contentView.getMaximumHeight() + contentBorder.contentInsets.height;
+  }
 
-    var chromeH:Number = contentBorder.contentInsets.height;
-    measuredMinHeight = _contentView.minHeight + chromeH;
-    measuredHeight = _contentView.getExplicitOrMeasuredHeight() + chromeH;
+  override public function getPreferredWidth(hHint:int = -1):int {
+    return _contentView.getPreferredWidth() + contentBorder.contentInsets.width;
+  }
+
+  override public function getPreferredHeight(wHint:int = -1):int {
+    return _contentView.getPreferredHeight() + contentBorder.contentInsets.height;
   }
 
   // todo find normal way
@@ -112,7 +106,7 @@ public class PanelSkin extends AbstractSkin implements WindowSkin {
     return (parent.width - getBorder("b").contentInsets.width);
   }
 
-  override protected function updateDisplayList(w:Number, h:Number):void {
+  override protected function draw(w:int, h:int):void {
     var g:Graphics = graphics;
     g.clear();
 
@@ -123,7 +117,7 @@ public class PanelSkin extends AbstractSkin implements WindowSkin {
     const empty:Boolean = panel.emptyText != null;
     if (empty) {
       if (statusText == null) {
-        statusText = new StatusText(this, laf.getBorder("StatusText.b"), laf.getTextFormat("StatusBar.f"));
+        statusText = new StatusText(this, superview.laf.getBorder("StatusText.b"), superview.laf.getTextFormat("StatusText.f"));
       }
 
       statusText.show(g, panel.emptyText, contentBorder.contentInsets, w, h);
@@ -142,10 +136,10 @@ public class PanelSkin extends AbstractSkin implements WindowSkin {
 
     var contentWidth:Number = w - contentBorder.contentInsets.width;
     if (_toolbar != null) {
-      _toolbar.skin.setActualSize(contentWidth, 20);
+      _toolbar.setSize(contentWidth, 20);
     }
     if (!empty) {
-      _contentView.setActualSize(contentWidth, h - contentBorder.contentInsets.height);
+      _contentView.setSize(contentWidth, h - contentBorder.contentInsets.height);
     }
 
 //    DisplayObject(minimizeButton.skin).x = w - (17 * 2) - 1 - 3;

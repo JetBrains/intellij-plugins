@@ -1,15 +1,18 @@
 package com.intellij.flex.uiDesigner.ui {
-import cocoa.AbstractView;
+import cocoa.ContentView;
+import cocoa.ControlView;
+import cocoa.plaf.LookAndFeel;
 
 import com.intellij.flex.uiDesigner.DocumentDisplayManager;
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;
+import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.geom.Rectangle;
 
-public class DocumentContainer extends AbstractView {
+public class DocumentContainer extends ControlView {
   [Embed(source="/grid.png")]
   private static var gridClass:Class;
 
@@ -21,14 +24,16 @@ public class DocumentContainer extends AbstractView {
     _documentSysteManager = documentSysteManager;
   }
 
-  override protected function createChildren():void {
+  override public function addToSuperview(displayObjectContainer:DisplayObjectContainer, laf:LookAndFeel, superview:ContentView = null):void {
+    super.addToSuperview(displayObjectContainer, laf, superview);
+
     _documentSysteManager.x = 16;
     _documentSysteManager.y = 16;
-    addDisplayObject(_documentSysteManager);
+    addChild(_documentSysteManager);
     DocumentDisplayManager(_documentSysteManager).added();
   }
 
-  override protected function updateDisplayList(w:Number, h:Number):void {
+  override protected function draw(w:int, h:int):void {
     var documentSize:Rectangle = DocumentDisplayManager(_documentSysteManager).explicitDocumentSize;
     const padding:Number = 15 + 1;
     const totalPadding:Number = padding * 2;

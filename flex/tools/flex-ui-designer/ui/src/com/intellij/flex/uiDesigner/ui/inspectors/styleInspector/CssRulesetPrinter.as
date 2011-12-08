@@ -1,5 +1,5 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.styleInspector {
-import cocoa.text.TextLineUtil;
+import cocoa.text.TextLines;
 import cocoa.util.StringUtil;
 
 import com.intellij.flex.uiDesigner.AssetInfo;
@@ -34,7 +34,7 @@ public class CssRulesetPrinter {
   public function CssRulesetPrinter(interactor:Interactor) {
     _interactor = interactor;
 
-    twoSpacePadding.left = TextLineUtil.measureText("__", CssElementFormat.defaultText).textWidth;
+    twoSpacePadding.left = TextLines.measureText("__", CssElementFormat.defaultText).textWidth;
   }
   
   private var _interactor:Interactor;

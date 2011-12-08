@@ -1,18 +1,18 @@
 package com.intellij.flex.uiDesigner.plaf {
-import cocoa.AbstractView;
-import cocoa.Component;
 import cocoa.Insets;
 import cocoa.ItemMouseSelectionMode;
 import cocoa.PushButton;
 import cocoa.SegmentedControl;
+import cocoa.SkinnableView;
+import cocoa.View;
 import cocoa.plaf.LookAndFeel;
 import cocoa.plaf.TextFormatId;
-import cocoa.renderer.CompositeEntry;
-import cocoa.renderer.CompositeEntryFactory;
 import cocoa.renderer.InteractiveGraphicsRendererManager;
 import cocoa.renderer.LayeringMode;
 import cocoa.renderer.TextLineAndDisplayObjectEntry;
 import cocoa.renderer.TextLineAndDisplayObjectEntryFactory;
+import cocoa.renderer.ViewEntry;
+import cocoa.renderer.ViewEntryFactory;
 
 import flash.display.DisplayObject;
 import flash.display.GradientType;
@@ -24,8 +24,6 @@ import flash.display.IGraphicsData;
 import flash.display.Shape;
 import flash.geom.Matrix;
 import flash.text.engine.TextLine;
-
-import mx.core.IUIComponent;
 
 public class EditorTabBarRendererManager extends InteractiveGraphicsRendererManager {
   private static const sharedMatrix:Matrix = new Matrix();
@@ -39,7 +37,7 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
   private static const inactiveStrokeAndFillData:Vector.<IGraphicsData> = new <IGraphicsData>[inactiveStroke, inactiveFill];
   private static const inactiveStrokeData:Vector.<IGraphicsData> = new <IGraphicsData>[inactiveStroke];
 
-  protected var myFactory:CompositeEntryFactory = new CompositeEntryFactory(1);
+  protected var myFactory:ViewEntryFactory = new ViewEntryFactory();
   private var laf:LookAndFeel;
 
   //noinspection JSUnusedLocalSymbols
@@ -65,11 +63,11 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
   }
 
   override protected function doCreateEntry(line:TextLine, itemIndex:int):TextLineAndDisplayObjectEntry {
-    var entry:CompositeEntry = CompositeEntry(myFactory.create(line));
-    var closeButton:PushButton = PushButton(entry.components[0]);
+    var entry:ViewEntry = ViewEntry(myFactory.create(line));
+    var closeButton:PushButton = PushButton(entry.view);
     if (closeButton == null) {
       closeButton = new PushButton();
-      entry.components[0] = closeButton;
+      entry.view = closeButton;
       closeButton.setAction(closeTab, entry);
       closeButton.lafSubkey = "TabLabel";
     }
@@ -81,8 +79,8 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
     super.addToDisplayList(entry, displayIndex);
 
     var needSetSize:Boolean;
-    var closeButton:Component = CompositeEntry(entry).components[0];
-    var skin:AbstractView = AbstractView(closeButton.skin);
+    var closeButton:SkinnableView = SkinnableView(ViewEntry(entry).view);
+    var skin:View = AbstractView(closeButton.skin);
     if (skin == null) {
       if (!_container.mouseChildren) {
         _container.mouseChildren = true;
@@ -136,8 +134,9 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
   }
 
   override protected function drawEntry(entry:TextLineAndDisplayObjectEntry, itemIndex:int, g:Graphics, w:Number, h:Number, x:Number, y:Number):void {
-    var skin:IUIComponent = CompositeEntry(entry).components[0].skin;
-    skin.x = (x + w) - 2 - 1 - skin.getExplicitOrMeasuredWidth();
+    var view:View = ViewEntry(entry).view;
+    view.setLocation((x + w) - 2 - 1 - view.getPreferredWidth(), view.y);
+    //skin.x = (x + w) - 2 - 1 - skin.getExplicitOrMeasuredWidth();
 
     if (_selectionModel.isItemSelected(itemIndex)) {
       drawSelected(itemIndex, x, w);
