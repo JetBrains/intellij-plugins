@@ -56,6 +56,11 @@ class WorkspaceReaderImpl implements WorkspaceReader {
 
     final String ext = artifact.getExtension();
     if (!ext.equals(POM_EXTENSION)) {
+      // IDEA-78485
+      if ("sources".equals(artifact.getClassifier())) {
+        return data.outputFile;
+      }
+
       boolean isResourceBundle = false;
       if (!(ext.equals("swc") || (isResourceBundle = ext.equals("rb.swc")) || ext.equals("swf"))) {
         throw new IllegalStateException("Found artifact must be flash artifact (swc or swf): " + artifact);
