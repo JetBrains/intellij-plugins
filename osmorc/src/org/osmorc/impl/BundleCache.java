@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.osmorc.manifest.BundleManifest;
 import org.osmorc.manifest.ManifestHolder;
 import org.osmorc.manifest.ManifestHolderDisposedException;
+import org.osmorc.valueobject.Version;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -164,13 +165,15 @@ public class BundleCache {
 
 
   /**
-   * Returns the first manifest holder that confirms to the required-bundle specification
+   * Returns the  manifest holder that confirms to the required-bundle specification. If multiple entities match, the one with the 
+   * highest version is returned.
    *
    * @param requiredBundleSpec the required bundle specificition
    * @return the first matching manifest holder, or null if there is no match
    */
   @Nullable
   public ManifestHolder whoIsRequiredBundle(@NotNull final String requiredBundleSpec) {
+    List<ManifestHolder> candidates = new ArrayList<ManifestHolder>();
     for (ManifestHolder manifestHolder : myManifestHolders) {
       BundleManifest bundleManifest;
       try {
@@ -180,13 +183,63 @@ public class BundleCache {
         // this thing is gone
         continue;
       }
+      
       if (bundleManifest != null) {
         if (bundleManifest.isRequiredBundle(requiredBundleSpec)) {
-          return manifestHolder;
+          candidates.add(manifestHolder);
         }
       }
     }
-    return null;
+    
+    if ( candidates.isEmpty() ) {
+      return null;
+    }
+    
+    if ( candidates.size() == 1 ) {
+      return candidates.iterator().next();
+    }
+
+    ManifestHolder result = null;
+    for (ManifestHolder candidate : candidates) {
+        if ( result == null ) {
+          result = candidate;
+          continue;
+        }
+
+      BundleManifest resultManifest;
+      
+      try {
+        resultManifest = result.getBundleManifest();
+        if ( resultManifest == null ) {
+          // weird but may happen
+          result = candidate; // discard result and replace it with current candidate.
+          continue;
+        }
+      }
+      catch (ManifestHolderDisposedException e) {
+        // ok result is gone, replace it with the candidate
+        result = candidate;
+        continue;
+      }
+      
+      try {
+        BundleManifest bundleManifest = candidate.getBundleManifest();
+        if ( bundleManifest == null ) {
+          // weird, but may happen, discard current candidate and go on with the next one
+          continue;
+        }
+        Version candidateVersion = bundleManifest.getBundleVersion();
+        Version resultVersion = resultManifest.getBundleVersion();
+        if ( resultVersion.compareTo(candidateVersion) < 0 ) { // result version is smaller than candidate version
+          result = candidate; // candidate becomes next result
+        }
+      }
+      catch (ManifestHolderDisposedException e) {
+        // may happen on rare occations in which case we ignore that candidate and keep the old result.
+      }
+    }
+    
+    return result;
   }
 
   /**

@@ -68,10 +68,35 @@ public class BundleCacheTest extends LightIdeaTestCase {
   }
 
   @Test
-  public void testRequiredBundle() throws ManifestHolderDisposedException {
+  public void testRequiredBundleWithVersion() throws ManifestHolderDisposedException {
+    ManifestHolder manifestHolder = myCache.whoIsRequiredBundle("foo.bam;bundle-version=1.2.0");
+    assertThat(manifestHolder, notNullValue());
+    BundleManifest bundleManifest = manifestHolder.getBundleManifest();
+    assertThat(bundleManifest.getBundleSymbolicName(), equalTo("foo.bam"));
+
+    // should pick largest available version
+    assertThat(bundleManifest.getBundleVersion().toString(), equalTo("1.2.3"));
+  }
+
+  @Test
+  public void testRequiredBundleWithVersionRange() throws ManifestHolderDisposedException {
+    ManifestHolder manifestHolder = myCache.whoIsRequiredBundle("foo.bam;bundle-version=\"[1.2.0,1.2.3)\"");
+    assertThat(manifestHolder, notNullValue());
+    BundleManifest bundleManifest = manifestHolder.getBundleManifest();
+    assertThat(bundleManifest.getBundleSymbolicName(), equalTo("foo.bam"));
+    // 1.2.3 is not allowed by version range.
+    assertThat(bundleManifest.getBundleVersion().toString(), equalTo("1.2.0"));
+  }
+
+  @Test
+  public void testRequiredBundleWithoutVersion() throws ManifestHolderDisposedException {
     ManifestHolder manifestHolder = myCache.whoIsRequiredBundle("foo.bam");
     assertThat(manifestHolder, notNullValue());
-    assertThat(manifestHolder.getBundleManifest().getBundleSymbolicName(), equalTo("foo.bam"));
+    BundleManifest bundleManifest = manifestHolder.getBundleManifest();
+    assertThat(bundleManifest.getBundleSymbolicName(), equalTo("foo.bam"));
+
+    // should pick largest available version
+    assertThat(bundleManifest.getBundleVersion().toString(), equalTo("1.2.3"));
   }
 
   @Test
