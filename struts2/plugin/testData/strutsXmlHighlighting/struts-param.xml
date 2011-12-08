@@ -133,6 +133,16 @@
         </interceptor-ref>
       </interceptor-stack>
 
+      <!-- <param> referencing interceptor from stack, IDEA-68134 -->
+      <interceptor-stack name="referencingStack">
+        <interceptor-ref name="testStack">
+          <param name="validation.excludeMethods">someMethodNames</param>
+          <param name="validation.<error descr="Cannot resolve property 'INVALID_VALUE'">INVALID_VALUE</error>"/>
+
+          <param name="<error descr="Cannot resolve interceptor 'INVALID_VALUE' in interceptor-stack 'testStack'">INVALID_VALUE</error>.property"></param>
+        </interceptor-ref>
+      </interceptor-stack>
+
     </interceptors>
 
   </package>

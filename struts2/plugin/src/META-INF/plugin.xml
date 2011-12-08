@@ -53,6 +53,8 @@
                     interface="com.intellij.struts2.dom.struts.impl.path.StrutsResultContributor"/>
     <extensionPoint name="classContributor"
                     interface="com.intellij.struts2.dom.ExtendableClassConverter$ExtendableClassConverterContributor"/>
+    <extensionPoint name="paramNameCustomConverter"
+                    interface="com.intellij.struts2.dom.params.ParamNameConverter$ParamNameCustomConverter"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -159,6 +161,8 @@
     <struts2.resultContributor
         implementation="com.intellij.struts2.dom.struts.impl.path.ActionChainOrRedirectResultContributor"/>
 
+    <struts2.paramNameCustomConverter
+        implementation="com.intellij.struts2.dom.params.custom.InterceptorRefInStackParamNameCustomConverter"/>
 
     <projectService serviceInterface="com.intellij.struts2.model.constant.StrutsConstantManager"
                     serviceImplementation="com.intellij.struts2.model.constant.StrutsConstantManagerImpl"/>

@@ -15,10 +15,12 @@
 
 package com.intellij.struts2.dom.params;
 
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.beanProperties.BeanProperty;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.struts2.reference.common.BeanPropertyPathReferenceSet;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.DomElement;
@@ -44,6 +46,14 @@ public class ParamNameConverterImpl extends ParamNameConverter {
     final DomElement paramsElement = findEnclosingTag(convertContext);
     if (paramsElement == null) {
       return PsiReference.EMPTY_ARRAY;
+    }
+
+    for (ParamNameCustomConverter customConverter : Extensions.getExtensions(EP_NAME)) {
+      final PsiReference[] customReferences = customConverter.getCustomReferences((XmlAttributeValue) psiElement,
+                                                                                  paramsElement);
+      if (customReferences.length > 0) {
+        return customReferences;
+      }
     }
 
     final PsiClass rootPsiClass = findBeanPropertyClass(paramsElement);
