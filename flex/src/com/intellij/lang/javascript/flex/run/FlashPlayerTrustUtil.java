@@ -2,11 +2,8 @@ package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
-import com.intellij.openapi.util.NullableComputable;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -81,7 +78,7 @@ public class FlashPlayerTrustUtil {
                                          final boolean trustedStatus,
                                          final boolean isDebug,
                                          final String... swfPaths) {
-    final VirtualFile ideaCfgFile = getIdeaUserTrustConfigFile(project, isDebug, trustedStatus);
+    final File ideaCfgFile = getIdeaUserTrustConfigFile(project, isDebug, trustedStatus);
     if (ideaCfgFile == null) {
       return;
     }
@@ -97,10 +94,11 @@ public class FlashPlayerTrustUtil {
     }
   }
 
-  private static void fixIdeaCfgFileContentIfNeeded(final @NotNull VirtualFile ideaCfgFile,
+  private static void fixIdeaCfgFileContentIfNeeded(final @NotNull File ideaCfgFile,
                                                     final @NotNull String[] trustedSwfPaths,
                                                     final boolean runTrusted) throws IOException {
-    String content = new String(ideaCfgFile.contentsToByteArray());
+
+    final String content = FileUtil.loadFile(ideaCfgFile);
 
     for (final String trustedSwfPath : trustedSwfPaths) {
       int startIndex = content.indexOf(trustedSwfPath);
@@ -122,8 +120,7 @@ public class FlashPlayerTrustUtil {
             newContent.append(content, endIndex, content.length());
           }
 
-          content = newContent.toString();
-          VfsUtil.saveText(ideaCfgFile, content);
+          FileUtil.writeToFile(ideaCfgFile, newContent.toString());
         }
       }
       else {
@@ -135,8 +132,7 @@ public class FlashPlayerTrustUtil {
           }
           newContent.append(trustedSwfPath);
           newContent.append('\n');
-          content = newContent.toString();
-          VfsUtil.saveText(ideaCfgFile, content);
+          FileUtil.writeToFile(ideaCfgFile, newContent.toString());
         }
       }
     }
@@ -232,38 +228,25 @@ public class FlashPlayerTrustUtil {
   }
 
   @Nullable
-  private static VirtualFile getIdeaUserTrustConfigFile(final Project project, final boolean isDebug, final boolean runTrusted) {
-    final VirtualFile flashPlayerTrustDir = getFlashPlayerTrustDir(project, isDebug, runTrusted);
+  private static File getIdeaUserTrustConfigFile(final Project project, final boolean isDebug, final boolean runTrusted) {
+    final File flashPlayerTrustDir = getFlashPlayerTrustDir(project, isDebug, runTrusted);
     if (flashPlayerTrustDir == null) {
       return null;
     }
 
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      public void run() {
-        flashPlayerTrustDir.refresh(false, true);
-      }
-    });
-
-    VirtualFile ideaTrustedCfgFile = flashPlayerTrustDir.findChild(INTELLIJ_IDEA_CFG);
-    if (ideaTrustedCfgFile == null && runTrusted) {
-      final Ref<IOException> exceptionRef = new Ref<IOException>();
-
-      ideaTrustedCfgFile = ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
-        public VirtualFile compute() {
-          try {
-            return flashPlayerTrustDir.createChildData(FlashPlayerTrustUtil.class, INTELLIJ_IDEA_CFG);
-          }
-          catch (IOException e) {
-            exceptionRef.set(e);
-            return null;
-          }
+    final File ideaTrustedCfgFile = new File(flashPlayerTrustDir, INTELLIJ_IDEA_CFG);
+    if (!ideaTrustedCfgFile.exists() && runTrusted) {
+      try {
+        final boolean ok = ideaTrustedCfgFile.createNewFile();
+        if (!ok) {
+          showWarningBalloonIfNeeded(project, isDebug, runTrusted, FlexBundle
+            .message("error.creating.idea.trust.cfg.file", INTELLIJ_IDEA_CFG, flashPlayerTrustDir.getPath()));
         }
-      });
-
-      if (!exceptionRef.isNull()) {
-        //noinspection ThrowableResultOfMethodCallIgnored
-        showWarningBalloonIfNeeded(project, isDebug, runTrusted, FlexBundle.message("error.creating.idea.trust.cfg.file", INTELLIJ_IDEA_CFG,
-                                                                                    exceptionRef.get().getMessage()));
+      }
+      catch (IOException e) {
+        showWarningBalloonIfNeeded(project, isDebug, runTrusted,
+                                   FlexBundle.message("error.creating.idea.trust.cfg.file", INTELLIJ_IDEA_CFG, e.getMessage()));
+        return null;
       }
     }
 
@@ -271,30 +254,23 @@ public class FlashPlayerTrustUtil {
   }
 
   @Nullable
-  private static VirtualFile getFlashPlayerTrustDir(final Project project, final boolean isDebug, final boolean runTrusted) {
+  private static File getFlashPlayerTrustDir(final Project project, final boolean isDebug, final boolean runTrusted) {
     final String flashPlayerTrustDirRelPath =
       isWindows ? (isWindowsVista || isWindows7 ? WINDOWS_VISTA_AND_7_TRUST_DIR_REL_PATH : WINDOWS_XP_TRUST_DIR_REL_PATH)
                 : isLinux ? LINUX_TRUST_DIR_REL_PATH : MAC_TRUST_DIR_REL_PATH;
-    final String flashPlayerTrustDirPath = SystemProperties.getUserHome() + flashPlayerTrustDirRelPath;
-    final VirtualFile flashPlayerTrustDir = ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
-      public VirtualFile compute() {
-        return LocalFileSystem.getInstance().refreshAndFindFileByPath(flashPlayerTrustDirPath);
-      }
-    });
+    final File flashPlayerTrustDir = new File(SystemProperties.getUserHome() + flashPlayerTrustDirRelPath);
 
-    if (flashPlayerTrustDir == null && runTrusted) {
-      try {
-        return VfsUtil.createDirectories(flashPlayerTrustDirPath);
-      }
-      catch (IOException e) {
-        showWarningBalloonIfNeeded(project, isDebug, runTrusted,
-                                   FlexBundle.message("error.creating.flash.player.trust.folder", e.getMessage()));
+    if (!flashPlayerTrustDir.isDirectory()) {
+      if (flashPlayerTrustDir.isFile()) {
+        showWarningBalloonIfNeeded(project, isDebug, runTrusted, FlexBundle.message("flash.player.trust.folder.does.not.exist"));
         return null;
       }
-    }
-    else if (flashPlayerTrustDir != null && !flashPlayerTrustDir.isDirectory()) {
-      showWarningBalloonIfNeeded(project, isDebug, runTrusted, FlexBundle.message("flash.player.trust.folder.does.not.exist"));
-      return null;
+
+      if (!flashPlayerTrustDir.mkdirs()) {
+        showWarningBalloonIfNeeded(project, isDebug, runTrusted,
+                                   FlexBundle.message("error.creating.flash.player.trust.folder", flashPlayerTrustDir));
+        return null;
+      }
     }
 
     return flashPlayerTrustDir;
