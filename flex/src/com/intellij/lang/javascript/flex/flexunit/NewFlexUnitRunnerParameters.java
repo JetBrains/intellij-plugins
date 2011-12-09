@@ -155,10 +155,9 @@ public class NewFlexUnitRunnerParameters extends BCBasedRunnerParameters impleme
     overriddenBC.setSkipCompile(false);
     overriddenBC.setMainClass(FlexUnitPrecompileTask.getFlexUnitLauncherName(getModuleName()));
     overriddenBC.setOutputFileName("_flexunit.swf");
-    overriddenBC.getAndroidPackagingOptions().setPackageFileName("_flexunit.apk");
-    overriddenBC.getIosPackagingOptions().setPackageFileName("_flexunit.ipa");
+    //overriddenBC.getAndroidPackagingOptions().setPackageFileName("_flexunit.apk");
+    //overriddenBC.getIosPackagingOptions().setPackageFileName("_flexunit.ipa");
 
-    //if (overriddenBC.getOutputType() != OutputType.Application) {
     overriddenBC.setOutputType(OutputType.Application);
     overriddenBC.setUseHtmlWrapper(false);
 
@@ -170,9 +169,9 @@ public class NewFlexUnitRunnerParameters extends BCBasedRunnerParameters impleme
       }
     }
 
-    /*
     overriddenBC.getAirDesktopPackagingOptions().setUseGeneratedDescriptor(true);
 
+    /*
     final ModifiableAndroidPackagingOptions androidOptions = overriddenBC.getAndroidPackagingOptions();
     androidOptions.setEnabled(true);
     androidOptions.setUseGeneratedDescriptor(true);
@@ -180,7 +179,6 @@ public class NewFlexUnitRunnerParameters extends BCBasedRunnerParameters impleme
 
     overriddenBC.getIosPackagingOptions().setEnabled(false); // impossible without extra user input: app id, provisioning, etc.
     */
-    //}
 
     return Pair.create(moduleAndBC.first, ((FlexIdeBuildConfiguration)overriddenBC));
   }
@@ -190,9 +188,6 @@ public class NewFlexUnitRunnerParameters extends BCBasedRunnerParameters impleme
 
     final FlexIdeBuildConfiguration bc = moduleAndBC.second;
 
-    if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
-      throw new RuntimeConfigurationError("FlexUnit tests for Desktop target platform are not supported yet");
-    }
     if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
       throw new RuntimeConfigurationError("FlexUnit tests are not supported on mobile devices");
     }

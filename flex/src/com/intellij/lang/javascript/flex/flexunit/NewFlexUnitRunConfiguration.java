@@ -1,13 +1,17 @@
 package com.intellij.lang.javascript.flex.flexunit;
 
-import com.intellij.execution.ExecutionBundle;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.Executor;
+import com.intellij.execution.*;
 import com.intellij.execution.configurations.*;
+import com.intellij.execution.filters.TextConsoleBuilderFactory;
+import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
+import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
+import com.intellij.lang.javascript.flex.run.FlexIdeRunConfiguration;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
@@ -98,6 +102,30 @@ public class NewFlexUnitRunConfiguration extends RunConfigurationBase
   }
 
   public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
+    final FlexIdeBuildConfiguration bc;
+    try {
+      bc = myRunnerParameters.checkAndGetModuleAndBC(getProject()).second;
+    }
+    catch (RuntimeConfigurationError e) {
+      throw new ExecutionException(e.getMessage());
+    }
+
+    final BuildConfigurationNature nature = bc.getNature();
+    if (nature.isDesktopPlatform()) {
+
+      final FlexIdeRunConfiguration.AirRunState airRunState =
+        new FlexIdeRunConfiguration.AirRunState(getProject(), env, myRunnerParameters) {
+          @Override
+          public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
+            final ProcessHandler processHandler = startProcess();
+            final ExecutionConsole console = FlexBaseRunner.createFlexUnitRunnerConsole(getProject(), env, processHandler, executor);
+            return new DefaultExecutionResult(console, processHandler);
+          }
+        };
+      airRunState.setConsoleBuilder(TextConsoleBuilderFactory.getInstance().createBuilder(getProject()));
+      return airRunState;
+    }
+
     return FlexBaseRunner.EMPTY_RUN_STATE;
   }
 

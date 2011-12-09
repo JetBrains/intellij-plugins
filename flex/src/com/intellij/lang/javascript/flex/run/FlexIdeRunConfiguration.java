@@ -78,7 +78,7 @@ public class FlexIdeRunConfiguration extends RunConfigurationBase
     final BuildConfigurationNature nature = config.getNature();
     if (nature.isDesktopPlatform() ||
         (nature.isMobilePlatform() && myRunnerParameters.getMobileRunTarget() == AirMobileRunTarget.Emulator)) {
-      final AirRunState airRunState = new AirRunState(env);
+      final AirRunState airRunState = new AirRunState(getProject(), env, myRunnerParameters);
       airRunState.setConsoleBuilder(TextConsoleBuilderFactory.getInstance().createBuilder(getProject()));
       return airRunState;
     }
@@ -114,17 +114,22 @@ public class FlexIdeRunConfiguration extends RunConfigurationBase
     return myRunnerParameters.suggestName();
   }
 
-  private class AirRunState extends CommandLineState {
+  public static class AirRunState extends CommandLineState {
 
-    public AirRunState(ExecutionEnvironment env) {
+    private final Project myProject;
+    private final BCBasedRunnerParameters myRunnerParameters;
+
+    public AirRunState(final Project project, ExecutionEnvironment env, final BCBasedRunnerParameters runnerParameters) {
       super(env);
+      myProject = project;
+      myRunnerParameters = runnerParameters;
     }
 
     @NotNull
     protected OSProcessHandler startProcess() throws ExecutionException {
       final FlexIdeBuildConfiguration config;
       try {
-        config = myRunnerParameters.checkAndGetModuleAndBC(getProject()).second;
+        config = myRunnerParameters.checkAndGetModuleAndBC(myProject).second;
       }
       catch (RuntimeConfigurationError e) {
         throw new ExecutionException(e.getMessage());

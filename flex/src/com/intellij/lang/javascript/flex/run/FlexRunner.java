@@ -147,8 +147,8 @@ public class FlexRunner extends FlexBaseRunner {
     switch (flexRunnerParameters.getRunMode()) {
       case HtmlOrSwfFile:
         if (flexRunnerParameters instanceof FlexUnitRunnerParameters) {
-          return launchFlexUnit(project, executor, contentToReuse, env, (FlexUnitCommonParameters)flexRunnerParameters, launcherParams,
-                                flexRunnerParameters.getHtmlOrSwfFilePath());
+          return launchWebFlexUnit(project, executor, contentToReuse, env, (FlexUnitCommonParameters)flexRunnerParameters, launcherParams,
+                                   flexRunnerParameters.getHtmlOrSwfFilePath());
         }
 
         launchWithSelectedApplication(flexRunnerParameters.getHtmlOrSwfFilePath(), launcherParams);
@@ -166,13 +166,13 @@ public class FlexRunner extends FlexBaseRunner {
     return null;
   }
 
-  protected RunContentDescriptor launchFlexUnit(final Project project,
-                                                final Executor executor,
-                                                final RunContentDescriptor contentToReuse,
-                                                final ExecutionEnvironment env,
-                                                final FlexUnitCommonParameters params,
-                                                final LauncherParameters launcherParams,
-                                                final String swfFilePath) throws ExecutionException {
+  protected RunContentDescriptor launchWebFlexUnit(final Project project,
+                                                   final Executor executor,
+                                                   final RunContentDescriptor contentToReuse,
+                                                   final ExecutionEnvironment env,
+                                                   final FlexUnitCommonParameters params,
+                                                   final LauncherParameters launcherParams,
+                                                   final String swfFilePath) throws ExecutionException {
     final SwfPolicyFileConnection policyFileConnection = new SwfPolicyFileConnection();
     policyFileConnection.open(params.getSocketPolicyPort());
 
@@ -207,46 +207,58 @@ public class FlexRunner extends FlexBaseRunner {
   }
 
   @Nullable
+  protected RunContentDescriptor launchAirFlexUnit(final Project project,
+                                                   final Executor executor,
+                                                   final RunProfileState state,
+                                                   final RunContentDescriptor contentToReuse,
+                                                   final ExecutionEnvironment env,
+                                                   final FlexUnitCommonParameters params) throws ExecutionException {
+    final ExecutionResult executionResult;
+    final SwfPolicyFileConnection policyFileConnection = new SwfPolicyFileConnection();
+    policyFileConnection.open(params.getSocketPolicyPort());
+
+    final FlexUnitConnection flexUnitConnection = new FlexUnitConnection();
+    flexUnitConnection.open(params.getPort());
+
+    executionResult = state.execute(executor, this);
+    if (executionResult == null) {
+      flexUnitConnection.close();
+      policyFileConnection.close();
+      return null;
+    }
+    flexUnitConnection.addListener(new FlexUnitListener(executionResult.getProcessHandler()));
+    executionResult.getProcessHandler().addProcessListener(new ProcessAdapter() {
+      @Override
+      public void processWillTerminate(ProcessEvent event, boolean willBeDestroyed) {
+        flexUnitConnection.write("Finish");
+      }
+
+      @Override
+      public void processTerminated(ProcessEvent event) {
+        flexUnitConnection.close();
+        policyFileConnection.close();
+      }
+    });
+
+    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor);
+    contentBuilder.setExecutionResult(executionResult);
+    contentBuilder.setEnvironment(env);
+    return contentBuilder.showRunContent(contentToReuse);
+  }
+
+  @Nullable
   private RunContentDescriptor launchAir(final Project project,
                                          final Executor executor,
                                          final RunProfileState state,
                                          final RunContentDescriptor contentToReuse,
                                          final ExecutionEnvironment env,
                                          final FlexRunnerParameters flexRunnerParameters) throws ExecutionException {
-    final ExecutionResult executionResult;
     if (flexRunnerParameters instanceof FlexUnitRunnerParameters) {
-      final SwfPolicyFileConnection policyFileConnection = new SwfPolicyFileConnection();
-      final FlexUnitRunnerParameters params = (FlexUnitRunnerParameters)flexRunnerParameters;
-      policyFileConnection.open(params.getSocketPolicyPort());
-
-      final FlexUnitConnection flexUnitConnection = new FlexUnitConnection();
-      flexUnitConnection.open(params.getPort());
-
-      executionResult = state.execute(executor, this);
-      if (executionResult == null) {
-        flexUnitConnection.close();
-        policyFileConnection.close();
-        return null;
-      }
-
-      flexUnitConnection.addListener(new FlexUnitListener(executionResult.getProcessHandler()));
-      executionResult.getProcessHandler().addProcessListener(new ProcessAdapter() {
-        @Override
-        public void processWillTerminate(ProcessEvent event, boolean willBeDestroyed) {
-          flexUnitConnection.write("Finish");
-        }
-
-        @Override
-        public void processTerminated(ProcessEvent event) {
-          flexUnitConnection.close();
-          policyFileConnection.close();
-        }
-      });
+      return launchAirFlexUnit(project, executor, state, contentToReuse, env, (FlexUnitCommonParameters)flexRunnerParameters);
     }
-    else {
-      executionResult = state.execute(executor, this);
-      if (executionResult == null) return null;
-    }
+
+    final ExecutionResult executionResult = state.execute(executor, this);
+    if (executionResult == null) return null;
 
     final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor);
     contentBuilder.setExecutionResult(executionResult);

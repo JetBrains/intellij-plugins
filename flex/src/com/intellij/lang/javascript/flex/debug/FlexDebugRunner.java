@@ -61,13 +61,28 @@ public class FlexDebugRunner extends FlexBaseRunner {
     return "FlexDebugRunner";
   }
 
-  protected RunContentDescriptor launchFlexUnit(final Project project,
-                                                final Executor executor,
-                                                final RunContentDescriptor contentToReuse,
-                                                final ExecutionEnvironment env,
-                                                final FlexUnitCommonParameters params,
-                                                final LauncherParameters launcherParams,
-                                                final String swfFilePath) throws ExecutionException {
+  protected RunContentDescriptor launchWebFlexUnit(final Project project,
+                                                   final Executor executor,
+                                                   final RunContentDescriptor contentToReuse,
+                                                   final ExecutionEnvironment env,
+                                                   final FlexUnitCommonParameters params,
+                                                   final LauncherParameters launcherParams,
+                                                   final String swfFilePath) throws ExecutionException {
+    try {
+      final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = ((NewFlexUnitRunnerParameters)params).checkAndGetModuleAndBC(project);
+      return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, (NewFlexUnitRunnerParameters)params, executor, contentToReuse, env);
+    }
+    catch (RuntimeConfigurationError e) {
+      throw new ExecutionException(e.getMessage());
+    }
+  }
+
+  protected RunContentDescriptor launchAirFlexUnit(final Project project,
+                                                   final Executor executor,
+                                                   final RunProfileState state,
+                                                   final RunContentDescriptor contentToReuse,
+                                                   final ExecutionEnvironment env,
+                                                   final FlexUnitCommonParameters params) throws ExecutionException {
     try {
       final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = ((NewFlexUnitRunnerParameters)params).checkAndGetModuleAndBC(project);
       return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, (NewFlexUnitRunnerParameters)params, executor, contentToReuse, env);

@@ -45,7 +45,6 @@ import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.Messages;
@@ -119,16 +118,16 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                            final Executor executor,
                                            final RunProfileState state,
                                            final RunContentDescriptor contentToReuse,
-                                           final ExecutionEnvironment environment) throws ExecutionException {
+                                           final ExecutionEnvironment env) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
 
-    final RunProfile runProfile = environment.getRunProfile();
+    final RunProfile runProfile = env.getRunProfile();
 
     try {
       if (runProfile instanceof RemoteFlashRunConfiguration) {
         final BCBasedRunnerParameters params = ((RemoteFlashRunConfiguration)runProfile).getRunnerParameters();
         final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(project);
-        return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, executor, contentToReuse, environment);
+        return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, executor, contentToReuse, env);
       }
 
       if (runProfile instanceof NewFlexUnitRunConfiguration) {
@@ -136,15 +135,22 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig = params.checkAndGetModuleAndBC(project);
         final Module module = moduleAndConfig.first;
         final FlexIdeBuildConfiguration bc = moduleAndConfig.second;
-        try {
-          final String canonicalPath = new File(bc.getOutputFilePath()).getCanonicalPath();
-          FlashPlayerTrustUtil.updateTrustedStatus(module.getProject(), true, false, canonicalPath);
-        }
-        catch (IOException e) {/**/}
 
-        final LauncherParameters launcherParams =
-          new LauncherParameters(LauncherParameters.LauncherType.OSDefault, BrowsersConfiguration.BrowserFamily.FIREFOX, "");
-        return launchFlexUnit(project, executor, contentToReuse, environment, params, launcherParams, bc.getOutputFilePath());
+        if (bc.getTargetPlatform() == TargetPlatform.Web) {
+          try {
+            final String canonicalPath = new File(bc.getOutputFilePath()).getCanonicalPath();
+            FlashPlayerTrustUtil.updateTrustedStatus(module.getProject(), true, false, canonicalPath);  // todo need option
+          }
+          catch (IOException e) {/**/}
+
+          final LauncherParameters launcherParams =
+            new LauncherParameters(LauncherParameters.LauncherType.OSDefault, BrowsersConfiguration.BrowserFamily.FIREFOX,
+                                   "");  // todo need option
+          return launchWebFlexUnit(project, executor, contentToReuse, env, params, launcherParams, bc.getOutputFilePath());
+        }
+        else {
+          return launchAirFlexUnit(project, executor, state, contentToReuse, env, params);
+        }
       }
 
       if (runProfile instanceof FlexIdeRunConfiguration) {
@@ -161,7 +167,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
           catch (IOException e) {/**/}
         }
 
-        return launchFlexIdeConfig(module, bc, params, executor, state, contentToReuse, environment);
+        return launchFlexIdeConfig(module, bc, params, executor, state, contentToReuse, env);
       }
     }
     catch (RuntimeConfigurationError e) {
@@ -192,7 +198,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
       FlashPlayerTrustUtil.updateTrustedStatus(project, isDebug, flexRunnerParameters);
 
-      return doLaunch(project, executor, state, contentToReuse, environment, flexSdk, flexRunnerParameters);
+      return doLaunch(project, executor, state, contentToReuse, env, flexSdk, flexRunnerParameters);
     }
 
     return null;
@@ -222,7 +228,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                   }
                   return super.createConsole();
                 }
-              }; 
+              };
             }
             return new FlexDebugProcess(session, bc, params);
           }
@@ -235,13 +241,21 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     return debugSession.getRunContentDescriptor();
   }
 
-  protected abstract RunContentDescriptor launchFlexUnit(final Project project,
-                                                         final Executor executor,
-                                                         final RunContentDescriptor contentToReuse,
-                                                         final ExecutionEnvironment env,
-                                                         final FlexUnitCommonParameters params,
-                                                         final LauncherParameters launcherParams,
-                                                         final String swfFilePath) throws ExecutionException;
+  @Nullable
+  protected abstract RunContentDescriptor launchAirFlexUnit(final Project project,
+                                                            final Executor executor,
+                                                            final RunProfileState state,
+                                                            final RunContentDescriptor contentToReuse,
+                                                            final ExecutionEnvironment env,
+                                                            final FlexUnitCommonParameters params) throws ExecutionException;
+
+  protected abstract RunContentDescriptor launchWebFlexUnit(final Project project,
+                                                            final Executor executor,
+                                                            final RunContentDescriptor contentToReuse,
+                                                            final ExecutionEnvironment env,
+                                                            final FlexUnitCommonParameters params,
+                                                            final LauncherParameters launcherParams,
+                                                            final String swfFilePath) throws ExecutionException;
 
   @Nullable
   protected abstract RunContentDescriptor launchFlexIdeConfig(final Module module,
@@ -580,12 +594,6 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                                    final Sdk flexSdk,
                                                    final FlexRunnerParameters flexRunnerParameters) throws ExecutionException;
 
-  public static void processFilesUnderRoots(final Project project, Processor<VirtualFile> leafFileProcessor) {
-    for (VirtualFile root : ProjectRootManager.getInstance(project).getContentRoots()) {
-      if (!processFilesUnderRoot(root, leafFileProcessor)) return;
-    }
-  }
-
   public static boolean processFilesUnderRoot(final VirtualFile root, Processor<VirtualFile> leafFileProcessor) {
     if (root.isDirectory()) {
       for (VirtualFile file : root.getChildren()) {
@@ -632,7 +640,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     final FlexStackTraceFilter stackTraceFilter = new FlexStackTraceFilter(project);
     final FlexUnitConsoleProperties consoleProps = runConfiguration instanceof FlexUnitRunConfiguration
                                                    ? new FlexUnitConsoleProperties((FlexUnitRunConfiguration)runConfiguration, executor)
-                                                   : new FlexUnitConsoleProperties(((NewFlexUnitRunConfiguration)runConfiguration), executor);
+                                                   : new FlexUnitConsoleProperties(((NewFlexUnitRunConfiguration)runConfiguration),
+                                                                                   executor);
     consoleProps.addStackTraceFilter(stackTraceFilter);
 
     final BaseTestsOutputConsoleView consoleView = SMTestRunnerConnectionUtil
@@ -899,58 +908,62 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     }
   }
 
-  public static GeneralCommandLine createAdlCommandLine(final FlexIdeRunnerParameters params, final FlexIdeBuildConfiguration config)
-    throws CantRunException {
-    final SdkEntry sdkEntry = config.getDependencies().getSdkEntry();
+  public static GeneralCommandLine createAdlCommandLine(final BCBasedRunnerParameters params,
+                                                        final FlexIdeBuildConfiguration bc) throws CantRunException {
+    final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
     if (sdkEntry == null) {
-      throw new CantRunException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", config.getName(), params.getModuleName()));
+      throw new CantRunException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), params.getModuleName()));
     }
 
     final GeneralCommandLine commandLine = new GeneralCommandLine();
 
     commandLine.setExePath(FileUtil.toSystemDependentName(sdkEntry.getHomePath() + FlexSdkUtils.ADL_RELATIVE_PATH));
 
-    if (config.getNature().isDesktopPlatform()) {
-      final String adlOptions = params.getAdlOptions();
+    if (bc.getNature().isDesktopPlatform()) {
+      final String adlOptions =
+        params instanceof FlexIdeRunnerParameters ? ((FlexIdeRunnerParameters)params).getAdlOptions() : ""; // todo for FlexUnit
       if (!StringUtil.isEmptyOrSpaces(adlOptions)) {
         commandLine.addParameters(StringUtil.split(adlOptions, " "));
       }
 
-      final AirDesktopPackagingOptions packagingOptions = config.getAirDesktopPackagingOptions();
-      commandLine.addParameter(FileUtil.toSystemDependentName(getAirDescriptorPath(config, packagingOptions)));
-      commandLine.addParameter(FileUtil.toSystemDependentName(config.getOutputFolder()));
-      final String programParameters = params.getAirProgramParameters();
+      final AirDesktopPackagingOptions packagingOptions = bc.getAirDesktopPackagingOptions();
+      commandLine.addParameter(FileUtil.toSystemDependentName(getAirDescriptorPath(bc, packagingOptions)));
+      commandLine.addParameter(FileUtil.toSystemDependentName(bc.getOutputFolder()));
+      final String programParameters =
+        params instanceof FlexIdeRunnerParameters ? ((FlexIdeRunnerParameters)params).getAirProgramParameters() : ""; // todo for FlexUnit
       if (!StringUtil.isEmptyOrSpaces(programParameters)) {
         commandLine.addParameter("--");
         commandLine.addParameters(StringUtil.split(programParameters, " "));
       }
     }
     else {
-      assert config.getNature().isMobilePlatform() : config.getTargetPlatform();
-      assert params.getMobileRunTarget() == AirMobileRunTarget.Emulator : params.getMobileRunTarget();
+      assert params instanceof FlexIdeRunnerParameters;
+      final FlexIdeRunnerParameters flexIdeParams = (FlexIdeRunnerParameters)params;
+      assert bc.getNature().isMobilePlatform() : bc.getTargetPlatform();
+      assert flexIdeParams.getMobileRunTarget() == AirMobileRunTarget.Emulator : flexIdeParams.getMobileRunTarget();
 
       commandLine.addParameter("-profile");
       commandLine.addParameter("mobileDevice");
 
       commandLine.addParameter("-screensize");
-      final String adlAlias = params.getEmulator().adlAlias;
+      final String adlAlias = flexIdeParams.getEmulator().adlAlias;
       if (adlAlias != null) {
         commandLine.addParameter(adlAlias);
       }
       else {
-        commandLine.addParameter(params.getScreenWidth() + "x" + params.getScreenHeight() +
-                                 ":" + params.getFullScreenWidth() + "x" + params.getFullScreenHeight());
+        commandLine.addParameter(flexIdeParams.getScreenWidth() + "x" + flexIdeParams.getScreenHeight() +
+                                 ":" + flexIdeParams.getFullScreenWidth() + "x" + flexIdeParams.getFullScreenHeight());
       }
 
-      final String adlOptions = params.getEmulatorAdlOptions();
+      final String adlOptions = flexIdeParams.getEmulatorAdlOptions();
       if (!StringUtil.isEmptyOrSpaces(adlOptions)) {
         commandLine.addParameters(StringUtil.split(adlOptions, " "));
       }
 
       // todo why android? which to take for emulator should probably be selected in run configuration.
-      final AndroidPackagingOptions packagingOptions = config.getAndroidPackagingOptions();
-      commandLine.addParameter(FileUtil.toSystemDependentName(getAirDescriptorPath(config, packagingOptions)));
-      commandLine.addParameter(FileUtil.toSystemDependentName(config.getOutputFolder()));
+      final AndroidPackagingOptions packagingOptions = bc.getAndroidPackagingOptions();
+      commandLine.addParameter(FileUtil.toSystemDependentName(getAirDescriptorPath(bc, packagingOptions)));
+      commandLine.addParameter(FileUtil.toSystemDependentName(bc.getOutputFolder()));
     }
 
     return commandLine;

@@ -171,12 +171,12 @@ public class FlexDebugProcess extends XDebugProcess {
   private FlexUnitConnection myFlexUnitConnection;
   private SwfPolicyFileConnection myPolicyFileConnection;
 
-  public FlexDebugProcess(final XDebugSession session, final FlexIdeBuildConfiguration config, final BCBasedRunnerParameters params)
+  public FlexDebugProcess(final XDebugSession session, final FlexIdeBuildConfiguration bc, final BCBasedRunnerParameters params)
     throws IOException {
 
     super(session);
 
-    final SdkEntry sdkEntry = config.getDependencies().getSdkEntry();
+    final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
     assert sdkEntry != null; // checked in FlexBaseRunner
     final String sdkHome = sdkEntry.getHomePath();
 
@@ -190,7 +190,7 @@ public class FlexDebugProcess extends XDebugProcess {
       .getCommandLineForSdkTool(session.getProject(), sdkHome, null, getFdbClasspath(), "flex.tools.debugger.cli.DebugCLI", null);
 
     if (params instanceof FlexIdeRunnerParameters &&
-        config.getTargetPlatform() == TargetPlatform.Mobile &&
+        bc.getTargetPlatform() == TargetPlatform.Mobile &&
         ((FlexIdeRunnerParameters)params).getMobileRunTarget() == AirMobileRunTarget.AndroidDevice &&
         ((FlexIdeRunnerParameters)params).getDebugTransport() == AirMobileDebugTransport.USB) {
       fdbLaunchCommand.add("-p");
@@ -203,25 +203,25 @@ public class FlexDebugProcess extends XDebugProcess {
       connectToRunningFlashPlayerMode = false;
       final FlexIdeRunnerParameters appParams = (FlexIdeRunnerParameters)params;
 
-      switch (config.getTargetPlatform()) {
+      switch (bc.getTargetPlatform()) {
         case Web:
           // todo support wrapper
-          final String urlOrPath = appParams.isLaunchUrl() ? appParams.getUrl() : config.getOutputFilePath();
+          final String urlOrPath = appParams.isLaunchUrl() ? appParams.getUrl() : bc.getOutputFilePath();
           sendCommand(new LaunchBrowserCommand(urlOrPath, appParams.getLauncherParameters()));
           break;
         case Desktop:
-          sendAdlStartingCommand(config, appParams);
+          sendAdlStartingCommand(bc, appParams);
           break;
         case Mobile:
           switch (appParams.getMobileRunTarget()) {
             case Emulator:
-              sendAdlStartingCommand(config, appParams);
+              sendAdlStartingCommand(bc, appParams);
               break;
             case AndroidDevice:
               final String appId =
-                FlexBaseRunner.getApplicationId(FlexBaseRunner.getAirDescriptorPath(config, config.getAndroidPackagingOptions()));
+                FlexBaseRunner.getApplicationId(FlexBaseRunner.getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
               sendCommand(appParams.getDebugTransport() == AirMobileDebugTransport.Network
-                          ? new StartAppOnAndroidDeviceCommand(FlexUtils.createFlexSdkWrapper(config), appId)
+                          ? new StartAppOnAndroidDeviceCommand(FlexUtils.createFlexSdkWrapper(bc), appId)
                           : new StartDebuggingCommand());
               break;
           }
@@ -231,9 +231,14 @@ public class FlexDebugProcess extends XDebugProcess {
       connectToRunningFlashPlayerMode = false;
       final FlexUnitCommonParameters flexUnitParams = (FlexUnitCommonParameters)params;
       openFlexUnitConnections(flexUnitParams.getSocketPolicyPort(), flexUnitParams.getPort());
-      final LauncherParameters launcherParams =
-        new LauncherParameters(LauncherParameters.LauncherType.OSDefault, BrowsersConfiguration.BrowserFamily.FIREFOX, "");
-      sendCommand(new LaunchBrowserCommand(config.getOutputFilePath(), launcherParams));
+      if (bc.getTargetPlatform() == TargetPlatform.Web) {
+        final LauncherParameters launcherParams =
+          new LauncherParameters(LauncherParameters.LauncherType.OSDefault, BrowsersConfiguration.BrowserFamily.FIREFOX, ""); // todo option
+        sendCommand(new LaunchBrowserCommand(bc.getOutputFilePath(), launcherParams));
+      }
+      else {
+        sendAdlStartingCommand(bc, params);
+      }
     }
     else {
       connectToRunningFlashPlayerMode = true;
@@ -402,7 +407,7 @@ public class FlexDebugProcess extends XDebugProcess {
     });
   }
 
-  private void sendAdlStartingCommand(final FlexIdeBuildConfiguration config, final FlexIdeRunnerParameters params) throws IOException {
+  private void sendAdlStartingCommand(final FlexIdeBuildConfiguration config, final BCBasedRunnerParameters params) throws IOException {
     try {
       sendCommand(new StartAirAppDebuggingCommand(FlexBaseRunner.createAdlCommandLine(params, config)));
     }
