@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,7 +28,8 @@ import java.util.Arrays;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsConstantManagerWithStrutsPropertiesTest extends StrutsConstantManagerTestCase<JavaModuleFixtureBuilder> {
+public class StrutsConstantManagerWithStrutsPropertiesTest
+    extends StrutsConstantManagerTestCase<JavaModuleFixtureBuilder> {
 
   @NotNull
   @Override
@@ -43,8 +44,8 @@ public class StrutsConstantManagerWithStrutsPropertiesTest extends StrutsConstan
   public void testStrutsProperties() throws Throwable {
     createStrutsFileSet(STRUTS_XML);
 
-    final VirtualFile dummyFile = myFixture.findFileInTempDir(STRUTS_XML);
-    performResolveTest(dummyFile, StrutsCoreConstantContributor.ACTION_EXTENSION, Arrays.asList("foo"));
+    final VirtualFile strutsXmlFile = myFixture.findFileInTempDir(STRUTS_XML);
+    performResolveTest(strutsXmlFile, StrutsCoreConstantContributor.ACTION_EXTENSION, Arrays.asList("foo"));
   }
 
 }
