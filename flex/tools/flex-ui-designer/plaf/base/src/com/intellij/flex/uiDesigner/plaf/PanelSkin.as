@@ -61,7 +61,7 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
     //  addChild(toolbarSkin);
     //}
 
-    _contentView.addToSuperview(this);
+    _contentView.addToSuperview(this, laf, this);
     _contentView.setLocation(contentBorder.contentInsets.left, titleBorder.layoutHeight);
 
     labelHelper.textFormat = laf.getTextFormat(TextFormatId.SYSTEM_HIGHLIGHTED);

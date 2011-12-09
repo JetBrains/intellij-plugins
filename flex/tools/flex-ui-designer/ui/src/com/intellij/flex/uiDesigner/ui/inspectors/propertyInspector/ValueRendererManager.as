@@ -180,8 +180,8 @@ public class ValueRendererManager extends TextRendererManager {
     var skin:Skin = checkbox.skin;
     if (skin == null) {
       ButtonSkinInteraction(skin).delegateInteraction();
-      checkbox.setSize(checkbox.getPreferredWidth(), checkbox.getPreferredHeight());
       checkbox.addToSuperview(_container, laf, null);
+      checkbox.setSize(checkbox.getPreferredWidth(), checkbox.getPreferredHeight());
     }
     else {
       var displayObject:DisplayObject = DisplayObject(skin);

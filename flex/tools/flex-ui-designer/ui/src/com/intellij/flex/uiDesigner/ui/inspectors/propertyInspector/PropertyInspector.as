@@ -4,9 +4,7 @@ import cocoa.Panel;
 import cocoa.layout.ListVerticalLayout;
 import cocoa.pane.PaneItem;
 import cocoa.pane.PaneViewDataSource;
-import cocoa.renderer.EntryFactory;
 import cocoa.renderer.PaneRendererManager;
-import cocoa.renderer.PaneViewBuilderItem;
 
 import com.intellij.flex.uiDesigner.ui.CustomTextFormatId;
 
@@ -14,7 +12,7 @@ public class PropertyInspector extends Panel {
   private var dataSource:PaneViewDataSource;
   private var source:Vector.<PaneItem>;
  
-  private var otherPropertiesPane:PaneViewBuilderItem = new PaneViewBuilderItem(new OtherPropertiesFactory(), "Other");
+  private var otherPropertiesPane:PaneItem;
  
   public function set element(value:Object):void {
     updateData(value);
@@ -27,10 +25,7 @@ public class PropertyInspector extends Panel {
     listView.dataSource = dataSource;
     var layout:ListVerticalLayout = new ListVerticalLayout();
     listView.layout = layout;
-    listView.rendererManager = new PaneRendererManager(laf,
-                                                       laf.getTextFormat(CustomTextFormatId.SIDE_PANE_GROUP_ITEM_LABEL),
-                                                       laf.getBorder("GroupItemRenderer.b"),
-                                                       new <EntryFactory>[otherPropertiesPane.builder]);
+    listView.rendererManager = new PaneRendererManager(laf.getTextFormat(CustomTextFormatId.SIDE_PANE_GROUP_ITEM_LABEL), laf.getBorder("GroupItemRenderer.b"), laf);
  
     //var scrollView:ScrollView = new ScrollView();
     //scrollView.documentView = listView;
@@ -59,14 +54,18 @@ public class PropertyInspector extends Panel {
   }
  
   protected function doUpdateData(element:Object):void {
-    var otherPropertiesFactory:OtherPropertiesFactory = OtherPropertiesFactory(otherPropertiesPane.builder);
+    if (otherPropertiesPane == null) {
+      otherPropertiesPane = new PaneItem(null, null);
+      otherPropertiesPane.localizedTitle = "Other";
+      otherPropertiesPane.viewFactory = new OtherPropertiesFactory();
+    }
 
     source.fixed = false;
     source.length = 1;
     source[0] = otherPropertiesPane;
     source.fixed = true;
 
-    otherPropertiesFactory.dataSource.update(element);
+    OtherPropertiesFactory(otherPropertiesPane.viewFactory).dataSource.update(element);
   }
  
   //noinspection JSMethodCanBeStatic
@@ -86,10 +85,10 @@ public class PropertyInspector extends Panel {
 
 import cocoa.Insets;
 import cocoa.ScrollPolicy;
+import cocoa.View;
 import cocoa.plaf.LookAndFeel;
 import cocoa.plaf.TextFormatId;
-import cocoa.renderer.CompositeEntry;
-import cocoa.renderer.CompositeEntryBuilder;
+import cocoa.renderer.ViewFactory;
 import cocoa.tableView.TableColumn;
 import cocoa.tableView.TableColumnImpl;
 import cocoa.tableView.TableView;
@@ -100,17 +99,15 @@ import com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector.NameRenderer
 import com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector.PropertyTableInteractor;
 import com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector.ValueRendererManager;
 
-import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 
-class OtherPropertiesFactory extends CompositeEntryBuilder {
+class OtherPropertiesFactory implements ViewFactory {
   internal var dataSource:MyTableViewDataSource = new MyTableViewDataSource();
 
-  public function OtherPropertiesFactory() {
-    super(1);
+  public function newInstance():* {
   }
 
-  override protected function doBuild(e:CompositeEntry, laf:LookAndFeel, container:DisplayObjectContainer):void {
+  public function create(laf:LookAndFeel, container:DisplayObjectContainer):View {
     var tableView:TableView = new TableView();
     tableView.verticalScrollPolicy = ScrollPolicy.OFF;
     tableView.dataSource = dataSource;
@@ -121,9 +118,8 @@ class OtherPropertiesFactory extends CompositeEntryBuilder {
     firstColumn.width = 160;
     var valueRendererManager:ValueRendererManager = new ValueRendererManager(laf, textFormat, insets, dataSource);
     tableView.columns = new <TableColumn>[firstColumn, new TableColumnImpl(tableView, null, valueRendererManager)];
-    tableView.addToSuperview(container);
+    tableView.addToSuperview(container, laf, null);
     new PropertyTableInteractor(tableView, valueRendererManager);
-
-    e.components[0] = tableView;
+    return tableView;
   }
 }

@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner.plaf {
 import cocoa.Insets;
 import cocoa.ItemMouseSelectionMode;
 import cocoa.PushButton;
-import cocoa.SegmentedControl;
 import cocoa.SkinnableView;
 import cocoa.View;
 import cocoa.plaf.LookAndFeel;
@@ -78,26 +77,20 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
   override protected function addToDisplayList(entry:TextLineAndDisplayObjectEntry, displayIndex:int):void {
     super.addToDisplayList(entry, displayIndex);
 
-    var needSetSize:Boolean;
     var closeButton:SkinnableView = SkinnableView(ViewEntry(entry).view);
-    var skin:View = AbstractView(closeButton.skin);
+    var skin:View = closeButton.skin;
     if (skin == null) {
-      if (!_container.mouseChildren) {
-        _container.mouseChildren = true;
-        _textLineContainer.mouseChildren = true;
+      closeButton.addToSuperview(_textLineContainer, laf, null);
+      closeButton.setSize(closeButton.getPreferredWidth(), closeButton.getPreferredHeight());
+    }
+    else {
+      var displayObject:DisplayObject = DisplayObject(skin);
+      if (displayObject.parent == null) {
+        _textLineContainer.addChild(displayObject);
       }
-      skin = AbstractView(closeButton.createView(laf));
-      needSetSize = true;
     }
 
-    _textLineContainer.addChild(DisplayObject(skin));
-
-    if (needSetSize) {
-      skin.nestLevel = SegmentedControl(_container).nestLevel + 1;
-      skin.initialize();
-      skin.validateNow();
-      skin.setActualSize(skin.getExplicitOrMeasuredWidth(), skin.getExplicitOrMeasuredHeight());
-    }
+    closeButton.validate();
   }
 
   private function closeTab(entry:TextLineAndDisplayObjectEntry):void {

@@ -11,27 +11,23 @@ internal class EditorTabViewSkin extends AbstractTabViewSkin {
     return CONTENT_INSETS;
   }
   
-  override protected function createChildren():void {
-    super.createChildren();
+  //override protected function createChildren():void {
+  //  super.createChildren();
     
     //_borderShape.addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
     //_borderShape.addEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
 
     //addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
-  }
+  //}
 
   //private function keyDownHandler(event:KeyboardEvent):void {
   //  if (event.keyCode == Keyboard.W && event.controlKey) {
   //    closeTab(itemIndex);
     //}
   //}
-  
-  override protected function measure():void {
-    // skip
-  }
 
-  override protected function updateDisplayList(w:Number, h:Number):void {
-    super.updateDisplayList(w, h);
+  override protected function draw(w:int,h:int):void {
+    super.draw(w, h);
 
     const selectedIndex:int = tabBar.selectedIndex;
     if (selectedIndex != -1) {

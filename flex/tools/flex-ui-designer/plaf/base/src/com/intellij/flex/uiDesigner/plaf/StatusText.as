@@ -2,18 +2,16 @@ package com.intellij.flex.uiDesigner.plaf {
 import cocoa.Border;
 import cocoa.Insets;
 import cocoa.LabelHelper;
-import cocoa.View;
 import cocoa.text.TextFormat;
 
+import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 
 public class StatusText {
-  private var owner:View;
   private var border:Border;
   private var labelHelper:LabelHelper;
 
-  public function StatusText(owner:View, border:Border, textFormat:TextFormat) {
-    this.owner = owner;
+  public function StatusText(owner:DisplayObjectContainer, border:Border, textFormat:TextFormat) {
     this.border = border;
     labelHelper = new LabelHelper(owner, textFormat);
   }

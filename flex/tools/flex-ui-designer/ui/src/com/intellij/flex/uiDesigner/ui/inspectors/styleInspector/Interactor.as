@@ -57,10 +57,10 @@ public class Interactor {
 
   //noinspection JSUnusedGlobalSymbols
   public function set pane(value:StyleInspector):void {
-    value.skin.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);
-    value.skin.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
-    value.skin.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler);
-    value.skin.addEventListener(MouseEvent.ROLL_OUT, mouseRollOutHandler);
+    //value.skin.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);
+    //value.skin.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
+    //value.skin.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler);
+    //value.skin.addEventListener(MouseEvent.ROLL_OUT, mouseRollOutHandler);
   }
 
   //noinspection JSMethodCanBeStatic

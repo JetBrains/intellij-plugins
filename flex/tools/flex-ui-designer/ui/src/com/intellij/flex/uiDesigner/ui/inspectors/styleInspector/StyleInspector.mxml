@@ -24,7 +24,8 @@
     private static const namespaceListRendererFactory:ClassFactory = new ClassFactory(TextBlockRenderer);
     namespaceListRendererFactory.properties = {blockFactory:NamespaceListTextBlockFactory};
 
-    private static const groupItemRendererFactory:ClassFactory = new ClassFactory(GroupItemRenderer);
+    private static const groupItemRendererFactory:ClassFactory = new ClassFactory(null);
+    //private static const groupItemRendererFactory:ClassFactory = new ClassFactory(GroupItemRenderer);
 
     private var _rulesetPrinter:CssRulesetPrinter;
     public function get rulesetPrinter():CssRulesetPrinter {

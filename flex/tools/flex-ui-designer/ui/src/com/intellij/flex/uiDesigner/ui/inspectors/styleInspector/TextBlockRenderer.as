@@ -36,7 +36,7 @@ public class TextBlockRenderer extends SpriteBackedView implements IDataRenderer
     
     var rulesetPrinter:CssRulesetPrinter = StylePaneContext(Skin(parent.parent.parent).component).rulesetPrinter;
     if (textEngine == null) {
-      init(rulesetPrinter.availableWidth - 10, nestLevel + 1);
+      //init(rulesetPrinter.availableWidth - 10, nestLevel + 1);
       if (_blockFactory ==  CssRulesetTextBlockFactory) {
         CssRulesetTextBlockFactory(textEngine.blockFactory).declarationPrinter = rulesetPrinter;
       }
@@ -44,7 +44,7 @@ public class TextBlockRenderer extends SpriteBackedView implements IDataRenderer
       displayContainer.y = TEXT_TOP;
       displayContainer.x = 5;
       
-      addDisplayObject(displayContainer);
+      //addDisplayObject(displayContainer);
     }
     else {
       textEngine.handValidation = true;
@@ -52,8 +52,8 @@ public class TextBlockRenderer extends SpriteBackedView implements IDataRenderer
     }
     
     textEngine.blockFactory.data = _data;
-    invalidateSize();
-    invalidateDisplayList();
+    //invalidateSize();
+    //invalidateDisplayList();
   }
   
   private function get textTotalHeight():Number {
@@ -78,27 +78,27 @@ public class TextBlockRenderer extends SpriteBackedView implements IDataRenderer
     stylePaneContext.rulesetPrinter.interactor.configureTextEngine(textEngine);
   }
   
-  override protected function measure():void {
-    textEngine.handValidation = false;
-    measuredWidth = textContainer.explicitWidth;
-    measuredHeight = textTotalHeight;
-  }
+  //override protected function measure():void {
+  //  textEngine.handValidation = false;
+  //  measuredWidth = textContainer.explicitWidth;
+  //  measuredHeight = textTotalHeight;
+  //}
   
-  override protected function updateDisplayList(w:Number, h:Number):void {
-    if (w == 0) {
-      return;
-    }
-
-    const newW:Number = w - 10;
-    if (textContainer.explicitWidth > newW) {
-      textContainer.explicitWidth = newW;
-      textEngine.render();
-      if (textTotalHeight > h) {
-        measuredHeight = textTotalHeight;
-        invalidateParentSizeAndDisplayList();
-      }
-    }
-  }
+  //override protected function updateDisplayList(w:Number, h:Number):void {
+  //  if (w == 0) {
+  //    return;
+  //  }
+  //
+  //  const newW:Number = w - 10;
+  //  if (textContainer.explicitWidth > newW) {
+  //    textContainer.explicitWidth = newW;
+  //    textEngine.render();
+  //    if (textTotalHeight > h) {
+  //      measuredHeight = textTotalHeight;
+  //      invalidateParentSizeAndDisplayList();
+  //    }
+  //  }
+  //}
 }
 }
 

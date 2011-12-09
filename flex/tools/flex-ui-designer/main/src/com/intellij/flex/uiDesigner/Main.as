@@ -13,7 +13,6 @@ import com.intellij.flex.uiDesigner.css.Stylesheet;
 import com.intellij.flex.uiDesigner.libraries.Library;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.plaf.EditorTabBarRendererManager;
-import com.intellij.flex.uiDesigner.plaf.ProjectViewSkin;
 import com.intellij.flex.uiDesigner.plaf.aqua.IdeaAquaLookAndFeel;
 import com.intellij.flex.uiDesigner.ui.ElementTreeBarManager;
 
@@ -44,7 +43,6 @@ public class Main extends MainWindowedApplication {
     SegmentedControl;
     InteractiveBorderRendererManager;
     TextRendererManager;
-    ProjectViewSkin;
     EditorTabBarRendererManager;
     ListHorizontalLayout;
     SingleSelectionBar;
