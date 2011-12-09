@@ -17,10 +17,8 @@ package com.intellij.struts2.dom.struts.model;
 
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
@@ -67,9 +65,6 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
 
   private final StrutsModelImpl.ActionsForNamespaceCachedValuesProvider actionsCachedValueProvider =
       new ActionsForNamespaceCachedValuesProvider();
-
-  private static final Key<CachedValue<Map<String, List<Action>>>> ACTIONS_FOR_NAMESPACE =
-      Key.create("STRUTS2_ACTIONS_FOR_NAMESPACE");
 
   /**
    * Dummy identifier for "all namespaces".
@@ -145,15 +140,10 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
   }
 
   public List<Action> getActionsForNamespace(@Nullable @NonNls final String namespace) {
-    CachedValue<Map<String, List<Action>>> packageToActionMap = myMergedModel.getUserData(ACTIONS_FOR_NAMESPACE);
-    if (packageToActionMap == null) {
-      packageToActionMap = CachedValuesManager.getManager(myMergedModel.getManager().getProject())
-                                              .createCachedValue(actionsCachedValueProvider, false);
-
-      myMergedModel.putUserData(ACTIONS_FOR_NAMESPACE, packageToActionMap);
-    }
-
-    return packageToActionMap.getValue().get(StringUtil.notNullize(namespace, EMPTY_NAMESPACE));
+    final Map<String, List<Action>> packageToActionMap =
+        CachedValuesManager.getManager(myMergedModel.getManager().getProject())
+                           .getCachedValue(myMergedModel, actionsCachedValueProvider);
+    return packageToActionMap.get(StringUtil.notNullize(namespace, EMPTY_NAMESPACE));
   }
 
   public boolean processActions(final Processor<Action> processor) {
@@ -164,7 +154,9 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
     return true;
   }
 
-  private class ActionsForNamespaceCachedValuesProvider implements CachedValueProvider<Map<String, List<Action>>> {
+
+  private final class ActionsForNamespaceCachedValuesProvider
+      implements CachedValueProvider<Map<String, List<Action>>> {
     public Result<Map<String, List<Action>>> compute() {
       final Map<String, List<Action>> map = new ConcurrentFactoryMap<String, List<Action>>() {
         @Override
