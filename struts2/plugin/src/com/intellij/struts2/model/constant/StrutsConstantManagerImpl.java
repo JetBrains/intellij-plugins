@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -159,13 +159,7 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
     final Module module = ModuleUtil.findModuleForPsiElement(context);
 
     // collect all properties with matching key
-    final List<IProperty> properties =
-        ContainerUtil.findAll(PropertiesUtil.findPropertiesByKey(project, name), new Condition<IProperty>() {
-          public boolean value(final IProperty property) {
-            return Comparing.equal(property.getKey(), name);
-          }
-        });
-
+    final List<IProperty> properties = PropertiesUtil.findPropertiesByKey(project, name);
 
     String value = null;
 
