@@ -141,24 +141,21 @@ public class FlexRunner extends FlexBaseRunner {
                                           final ExecutionEnvironment env,
                                           final Sdk flexSdk,
                                           final FlexRunnerParameters flexRunnerParameters) throws ExecutionException {
-    final LauncherParameters launcherParams = new LauncherParameters(flexRunnerParameters.getLauncherType(),
-                                                                     flexRunnerParameters.getBrowserFamily(),
-                                                                     flexRunnerParameters.getPlayerPath());
     switch (flexRunnerParameters.getRunMode()) {
       case HtmlOrSwfFile:
         if (flexRunnerParameters instanceof FlexUnitRunnerParameters) {
-          return launchWebFlexUnit(project, executor, contentToReuse, env, (FlexUnitCommonParameters)flexRunnerParameters, launcherParams,
+          return launchWebFlexUnit(project, executor, contentToReuse, env, (FlexUnitCommonParameters)flexRunnerParameters,
                                    flexRunnerParameters.getHtmlOrSwfFilePath());
         }
 
-        launchWithSelectedApplication(flexRunnerParameters.getHtmlOrSwfFilePath(), launcherParams);
+        launchWithSelectedApplication(flexRunnerParameters.getHtmlOrSwfFilePath(), flexRunnerParameters.getLauncherParameters());
         return null;
       case Url:
-        launchWithSelectedApplication(flexRunnerParameters.getUrlToLaunch(), launcherParams);
+        launchWithSelectedApplication(flexRunnerParameters.getUrlToLaunch(), flexRunnerParameters.getLauncherParameters());
         return null;
       case MainClass:
         // A sort of hack. HtmlOrSwfFilePath field is disabled in UI for MainClass-based run configuration. But it is set correctly in RunMainClassPrecompileTask.execute()
-        launchWithSelectedApplication(flexRunnerParameters.getHtmlOrSwfFilePath(), launcherParams);
+        launchWithSelectedApplication(flexRunnerParameters.getHtmlOrSwfFilePath(), flexRunnerParameters.getLauncherParameters());
         return null;
       case ConnectToRunningFlashPlayer:
         assert false;
@@ -171,7 +168,6 @@ public class FlexRunner extends FlexBaseRunner {
                                                    final RunContentDescriptor contentToReuse,
                                                    final ExecutionEnvironment env,
                                                    final FlexUnitCommonParameters params,
-                                                   final LauncherParameters launcherParams,
                                                    final String swfFilePath) throws ExecutionException {
     final SwfPolicyFileConnection policyFileConnection = new SwfPolicyFileConnection();
     policyFileConnection.open(params.getSocketPolicyPort());
@@ -197,7 +193,7 @@ public class FlexRunner extends FlexBaseRunner {
     final ExecutionConsole console = createFlexUnitRunnerConsole(project, env, processHandler, executor);
     flexUnitConnection.addListener(new FlexUnitListener(processHandler));
 
-    launchWithSelectedApplication(swfFilePath, launcherParams);
+    launchWithSelectedApplication(swfFilePath, params.getLauncherParameters());
 
     final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor);
     contentBuilder.setExecutionResult(new DefaultExecutionResult(console, processHandler));

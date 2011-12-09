@@ -70,7 +70,7 @@ public class LauncherParameters implements Cloneable {
     myPlayerPath = FileUtil.toSystemIndependentName(playerPath);
   }
 
-  protected LauncherParameters clone() {
+  public LauncherParameters clone() {
     try {
       return (LauncherParameters)super.clone();
     }

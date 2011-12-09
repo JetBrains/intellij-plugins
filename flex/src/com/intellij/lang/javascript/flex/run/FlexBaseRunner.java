@@ -139,14 +139,11 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         if (bc.getTargetPlatform() == TargetPlatform.Web) {
           try {
             final String canonicalPath = new File(bc.getOutputFilePath()).getCanonicalPath();
-            FlashPlayerTrustUtil.updateTrustedStatus(module.getProject(), true, false, canonicalPath);  // todo need option
+            FlashPlayerTrustUtil.updateTrustedStatus(module.getProject(), params.isTrusted(), false, canonicalPath);
           }
           catch (IOException e) {/**/}
 
-          final LauncherParameters launcherParams =
-            new LauncherParameters(LauncherParameters.LauncherType.OSDefault, BrowsersConfiguration.BrowserFamily.FIREFOX,
-                                   "");  // todo need option
-          return launchWebFlexUnit(project, executor, contentToReuse, env, params, launcherParams, bc.getOutputFilePath());
+          return launchWebFlexUnit(project, executor, contentToReuse, env, params, bc.getOutputFilePath());
         }
         else {
           return launchAirFlexUnit(project, executor, state, contentToReuse, env, params);
@@ -254,7 +251,6 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                                             final RunContentDescriptor contentToReuse,
                                                             final ExecutionEnvironment env,
                                                             final FlexUnitCommonParameters params,
-                                                            final LauncherParameters launcherParams,
                                                             final String swfFilePath) throws ExecutionException;
 
   @Nullable
@@ -921,7 +917,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
     if (bc.getNature().isDesktopPlatform()) {
       final String adlOptions =
-        params instanceof FlexIdeRunnerParameters ? ((FlexIdeRunnerParameters)params).getAdlOptions() : ""; // todo for FlexUnit
+        params instanceof FlexIdeRunnerParameters ? ((FlexIdeRunnerParameters)params).getAdlOptions() : "";
       if (!StringUtil.isEmptyOrSpaces(adlOptions)) {
         commandLine.addParameters(StringUtil.split(adlOptions, " "));
       }
@@ -930,7 +926,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       commandLine.addParameter(FileUtil.toSystemDependentName(getAirDescriptorPath(bc, packagingOptions)));
       commandLine.addParameter(FileUtil.toSystemDependentName(bc.getOutputFolder()));
       final String programParameters =
-        params instanceof FlexIdeRunnerParameters ? ((FlexIdeRunnerParameters)params).getAirProgramParameters() : ""; // todo for FlexUnit
+        params instanceof FlexIdeRunnerParameters ? ((FlexIdeRunnerParameters)params).getAirProgramParameters() : "";
       if (!StringUtil.isEmptyOrSpaces(programParameters)) {
         commandLine.addParameter("--");
         commandLine.addParameters(StringUtil.split(programParameters, " "));

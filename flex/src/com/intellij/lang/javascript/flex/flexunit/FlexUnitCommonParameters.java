@@ -1,9 +1,11 @@
 package com.intellij.lang.javascript.flex.flexunit;
 
+import com.intellij.lang.javascript.flex.run.LauncherParameters;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface FlexUnitCommonParameters {
+
   enum Scope {
     Method, Class, Package
   }
@@ -67,4 +69,6 @@ public interface FlexUnitCommonParameters {
   OutputLogLevel getOutputLogLevel();
 
   void setOutputLogLevel(@Nullable OutputLogLevel outputLogLevel);
+
+  LauncherParameters getLauncherParameters();
 }

@@ -3,11 +3,15 @@ package com.intellij.lang.javascript.flex.flexunit;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.run.BCCombo;
+import com.intellij.lang.javascript.flex.run.FlexLauncherDialog;
+import com.intellij.lang.javascript.flex.run.LauncherParameters;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.EnumComboBoxModel;
@@ -25,8 +29,13 @@ public class NewFlexUnitRunConfigurationForm extends SettingsEditor<NewFlexUnitR
 
   private JCheckBox myShowLogCheckBox;
   private JComboBox myLogLevelCombo;
+  private JLabel myLauncherParametersLabel;
+  private TextFieldWithBrowseButton myLauncherParametersTextWithBrowse;
+  private JCheckBox myRunTrustedCheckBox;
 
   private final Project myProject;
+
+  private LauncherParameters myLauncherParameters;
 
   public NewFlexUnitRunConfigurationForm(final Project project) {
     myProject = project;
@@ -34,25 +43,62 @@ public class NewFlexUnitRunConfigurationForm extends SettingsEditor<NewFlexUnitR
     myBCCombo.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         myWhatToTestForm.updateOnBCChange(myBCCombo.getBC(), myBCCombo.getModule());
+        updateControls();
       }
     });
 
+    initLogLevelControls();
+    initLaunchWithTextWithBrowse();
+  }
+
+  private void initLogLevelControls() {
     myShowLogCheckBox.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (myShowLogCheckBox.isSelected()) {
-          myLogLevelCombo.setEnabled(true);
-          if (myLogLevelCombo.getSelectedItem() == null) {
-            myLogLevelCombo.setSelectedItem(FlexUnitCommonParameters.OutputLogLevel.values()[0]);
-          }
-          IdeFocusManager.getInstance(project).requestFocus(myLogLevelCombo, false);
+          IdeFocusManager.getInstance(myProject).requestFocus(myLogLevelCombo, false);
         }
-        else {
-          myLogLevelCombo.setEnabled(false);
-        }
+        updateControls();
       }
     });
 
     myLogLevelCombo.setModel(new EnumComboBoxModel<FlexUnitCommonParameters.OutputLogLevel>(FlexUnitCommonParameters.OutputLogLevel.class));
+  }
+
+  private void initLaunchWithTextWithBrowse() {
+    myLauncherParametersTextWithBrowse.getTextField().setEditable(false);
+    myLauncherParametersTextWithBrowse.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        final FlexLauncherDialog dialog = new FlexLauncherDialog(myProject, myLauncherParameters);
+        dialog.show();
+        if (dialog.isOK()) {
+          myLauncherParameters = dialog.getLauncherParameters();
+          updateControls();
+        }
+      }
+    });
+  }
+
+  private void updateControls() {
+    if (myShowLogCheckBox.isSelected()) {
+      myLogLevelCombo.setEnabled(true);
+      if (myLogLevelCombo.getSelectedItem() == null) {
+        myLogLevelCombo.setSelectedItem(FlexUnitCommonParameters.OutputLogLevel.values()[0]);
+      }
+    }
+    else {
+      myLogLevelCombo.setEnabled(false);
+    }
+
+    final FlexIdeBuildConfiguration bc = myBCCombo.getBC();
+    final boolean webPlatform = bc != null && bc.getTargetPlatform() == TargetPlatform.Web;
+    myLauncherParametersLabel.setVisible(webPlatform);
+    myLauncherParametersTextWithBrowse.setVisible(webPlatform);
+    myRunTrustedCheckBox.setVisible(webPlatform);
+
+    if (webPlatform) {
+      myLauncherParametersTextWithBrowse.getTextField().setText(myLauncherParameters.getPresentableText());
+    }
+
   }
 
   @NotNull
@@ -62,6 +108,7 @@ public class NewFlexUnitRunConfigurationForm extends SettingsEditor<NewFlexUnitR
 
   protected void resetEditorFrom(final NewFlexUnitRunConfiguration config) {
     final NewFlexUnitRunnerParameters params = config.getRunnerParameters();
+    myLauncherParameters = params.getLauncherParameters().clone(); // must be before myBCsCombo.setModel()
 
     myBCCombo.resetFrom(params);
     myWhatToTestForm.resetFrom(params);
@@ -69,6 +116,8 @@ public class NewFlexUnitRunConfigurationForm extends SettingsEditor<NewFlexUnitR
     myShowLogCheckBox.setSelected(params.getOutputLogLevel() != null);
     myLogLevelCombo.setEnabled(params.getOutputLogLevel() != null);
     myLogLevelCombo.setSelectedItem(params.getOutputLogLevel() == null ? null : params.getOutputLogLevel());
+
+    myRunTrustedCheckBox.setSelected(params.isTrusted());
   }
 
   protected void applyEditorTo(final NewFlexUnitRunConfiguration config) throws ConfigurationException {
@@ -81,6 +130,8 @@ public class NewFlexUnitRunConfigurationForm extends SettingsEditor<NewFlexUnitR
                                                              ? (FlexUnitRunnerParameters.OutputLogLevel)myLogLevelCombo.getSelectedItem()
                                                              : null;
     params.setOutputLogLevel(logLevel);
+    params.setLauncherParameters(myLauncherParameters);
+    params.setTrusted(myRunTrustedCheckBox.isSelected());
   }
 
   protected void disposeEditor() {

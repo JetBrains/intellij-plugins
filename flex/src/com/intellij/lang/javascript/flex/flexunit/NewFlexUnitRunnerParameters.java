@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
+import com.intellij.lang.javascript.flex.run.LauncherParameters;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -18,22 +19,21 @@ import org.jetbrains.annotations.Nullable;
 
 public class NewFlexUnitRunnerParameters extends BCBasedRunnerParameters implements FlexUnitCommonParameters {
 
+  private static final Scope DEFAULT_SCOPE = Scope.Class;
+  private static final OutputLogLevel DEFAULT_LEVEL = null;
+
+  private @NotNull Scope myScope = DEFAULT_SCOPE;
+
   private @NotNull String myPackageName = "";
   private @NotNull String myClassName = "";
   private @NotNull String myMethodName = "";
 
-  private static final Scope DEFAULT_SCOPE = Scope.Class;
-
-  private @NotNull Scope myScope = DEFAULT_SCOPE;
+  private @Nullable OutputLogLevel myOutputLogLevel = null;
+  private @NotNull LauncherParameters myLauncherParameters = new LauncherParameters();
+  private boolean myTrusted = true;
 
   private int myPort;
-
   private int mySocketPolicyPort;
-
-  private static final OutputLogLevel DEFAULT_LEVEL = null;
-
-  private @Nullable OutputLogLevel myOutputLogLevel = null;
-  private String myLauncherFileName;
 
   public NewFlexUnitRunnerParameters() {
   }
@@ -138,9 +138,21 @@ public class NewFlexUnitRunnerParameters extends BCBasedRunnerParameters impleme
     myOutputLogLevel = outputLogLevel;
   }
 
-  @Override
-  public NewFlexUnitRunnerParameters clone() {
-    return (NewFlexUnitRunnerParameters)super.clone();
+  @NotNull
+  public LauncherParameters getLauncherParameters() {
+    return myLauncherParameters;
+  }
+
+  public void setLauncherParameters(@NotNull final LauncherParameters launcherParameters) {
+    myLauncherParameters = launcherParameters;
+  }
+
+  public boolean isTrusted() {
+    return myTrusted;
+  }
+
+  public void setTrusted(final boolean trusted) {
+    myTrusted = trusted;
   }
 
   public void check(final Project project) throws RuntimeConfigurationError {
@@ -199,5 +211,30 @@ public class NewFlexUnitRunnerParameters extends BCBasedRunnerParameters impleme
 
     // todo fix scope
     FlexUnitRunConfiguration.checkCommonParams(this, support, GlobalSearchScope.moduleScope(moduleAndBC.first));
+  }
+
+  @Override
+  public NewFlexUnitRunnerParameters clone() {
+    final NewFlexUnitRunnerParameters clone = (NewFlexUnitRunnerParameters)super.clone();
+    clone.myLauncherParameters = myLauncherParameters.clone();
+    return clone;
+  }
+
+  public boolean equals(final Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+
+    final NewFlexUnitRunnerParameters that = (NewFlexUnitRunnerParameters)o;
+
+    if (myTrusted != that.myTrusted) return false;
+    if (!myClassName.equals(that.myClassName)) return false;
+    if (!myLauncherParameters.equals(that.myLauncherParameters)) return false;
+    if (!myMethodName.equals(that.myMethodName)) return false;
+    if (myOutputLogLevel != that.myOutputLogLevel) return false;
+    if (!myPackageName.equals(that.myPackageName)) return false;
+    if (myScope != that.myScope) return false;
+
+    return true;
   }
 }

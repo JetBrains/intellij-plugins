@@ -232,9 +232,7 @@ public class FlexDebugProcess extends XDebugProcess {
       final FlexUnitCommonParameters flexUnitParams = (FlexUnitCommonParameters)params;
       openFlexUnitConnections(flexUnitParams.getSocketPolicyPort(), flexUnitParams.getPort());
       if (bc.getTargetPlatform() == TargetPlatform.Web) {
-        final LauncherParameters launcherParams =
-          new LauncherParameters(LauncherParameters.LauncherType.OSDefault, BrowsersConfiguration.BrowserFamily.FIREFOX, ""); // todo option
-        sendCommand(new LaunchBrowserCommand(bc.getOutputFilePath(), launcherParams));
+        sendCommand(new LaunchBrowserCommand(bc.getOutputFilePath(), flexUnitParams.getLauncherParameters()));
       }
       else {
         sendAdlStartingCommand(bc, params);
@@ -535,10 +533,7 @@ public class FlexDebugProcess extends XDebugProcess {
                            ? flexRunnerParameters.getHtmlOrSwfFilePath()
                            // launch nothing if runMode == FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer
                            : null;
-    final LauncherParameters launcherParameters = new LauncherParameters(flexRunnerParameters.getLauncherType(),
-                                                                         flexRunnerParameters.getBrowserFamily(),
-                                                                         flexRunnerParameters.getPlayerPath());
-    sendCommand(url == null ? new StartDebuggingCommand() : new LaunchBrowserCommand(url, launcherParameters));
+    sendCommand(url == null ? new StartDebuggingCommand() : new LaunchBrowserCommand(url, flexRunnerParameters.getLauncherParameters()));
   }
 
   private static final Set<String> ourAlreadyMadeExecutable = new THashSet<String>();

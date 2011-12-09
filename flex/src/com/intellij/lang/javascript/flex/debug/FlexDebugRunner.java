@@ -66,7 +66,6 @@ public class FlexDebugRunner extends FlexBaseRunner {
                                                    final RunContentDescriptor contentToReuse,
                                                    final ExecutionEnvironment env,
                                                    final FlexUnitCommonParameters params,
-                                                   final LauncherParameters launcherParams,
                                                    final String swfFilePath) throws ExecutionException {
     try {
       final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = ((NewFlexUnitRunnerParameters)params).checkAndGetModuleAndBC(project);

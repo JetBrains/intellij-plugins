@@ -168,6 +168,11 @@ public class FlexRunnerParameters implements Cloneable {
     myPlayerPath = playerPath;
   }
 
+  @Transient
+  public LauncherParameters getLauncherParameters() {
+    return new LauncherParameters(getLauncherType(), getBrowserFamily(), getPlayerPath());
+  }
+
   @Attribute("debugger_sdk")
   @NotNull
   public String getDebuggerSdkRaw() {
