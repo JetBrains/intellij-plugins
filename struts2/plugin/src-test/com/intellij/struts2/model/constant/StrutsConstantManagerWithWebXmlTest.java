@@ -51,8 +51,8 @@ public class StrutsConstantManagerWithWebXmlTest extends StrutsConstantManagerTe
     createStrutsFileSet(STRUTS_XML);
     myFixture.copyFileToProject("/WEB-INF/web.xml");
 
-    final VirtualFile dummyFile = myFixture.findFileInTempDir(STRUTS_XML);
-    performResolveTest(dummyFile, StrutsCoreConstantContributor.ACTION_EXTENSION, Arrays.asList("foo"));
+    final VirtualFile strutsXmlFile = myFixture.findFileInTempDir(STRUTS_XML);
+    performResolveTest(strutsXmlFile, StrutsCoreConstantContributor.ACTION_EXTENSION, Arrays.asList("foo"));
   }
 
 }

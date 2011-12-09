@@ -52,8 +52,8 @@ public class StrutsConstantManagerWithStrutsPluginXmlTest
                             GlobalSearchScope.moduleWithLibrariesScope(myModule));
     assertNotNull(springObjectFactoryClass);
 
-    final VirtualFile dummyFile = myFixture.findFileInTempDir(STRUTS_XML);
-    performResolveTest(dummyFile, StrutsConstantKey.create("struts.objectFactory"), springObjectFactoryClass);
+    final VirtualFile strutsXmlFile = myFixture.findFileInTempDir(STRUTS_XML);
+    performResolveTest(strutsXmlFile, StrutsConstantKey.create("struts.objectFactory"), springObjectFactoryClass);
   }
 
 }

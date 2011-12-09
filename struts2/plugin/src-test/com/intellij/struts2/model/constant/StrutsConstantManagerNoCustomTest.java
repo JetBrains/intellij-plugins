@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,8 +41,8 @@ public class StrutsConstantManagerNoCustomTest extends StrutsConstantManagerTest
   public void testNoCustomConfiguration() throws Throwable {
     createStrutsFileSet(STRUTS_XML);
 
-    final VirtualFile dummyFile = myFixture.findFileInTempDir(STRUTS_XML);
-    performResolveTest(dummyFile, StrutsCoreConstantContributor.ACTION_EXTENSION, Arrays.asList("action"));
+    final VirtualFile strutsXmlFile = myFixture.findFileInTempDir(STRUTS_XML);
+    performResolveTest(strutsXmlFile, StrutsCoreConstantContributor.ACTION_EXTENSION, Arrays.asList("action"));
   }
 
   /**
@@ -55,7 +55,6 @@ public class StrutsConstantManagerNoCustomTest extends StrutsConstantManagerTest
     performResolveTest(dummyFile, StrutsCoreConstantContributor.ACTION_EXTENSION, Arrays.asList("action"));
   }
 
-
   /**
    * Non-existent configuration property.
    */
@@ -63,8 +62,8 @@ public class StrutsConstantManagerNoCustomTest extends StrutsConstantManagerTest
   public void testNoCustomNonExistentConfiguration() throws Throwable {
     createStrutsFileSet(STRUTS_XML);
 
-    final VirtualFile dummyFile = myFixture.findFileInTempDir(STRUTS_XML);
-    performResolveTest(dummyFile, StrutsConstantKey.<Object>create("XXX_NON_EXISTENT_XXX"), null);
+    final VirtualFile strutsXmlFile = myFixture.findFileInTempDir(STRUTS_XML);
+    performResolveTest(strutsXmlFile, StrutsConstantKey.<Object>create("XXX_NON_EXISTENT_XXX"), null);
   }
 
 }
