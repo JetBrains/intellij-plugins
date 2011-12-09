@@ -7,6 +7,7 @@
 
     import com.intellij.flex.uiDesigner.Document;
     import com.intellij.flex.uiDesigner.DocumentFactoryManager;
+    import com.intellij.flex.uiDesigner.DocumentManager;
 
     [ResourceBundle("Designer")]
 
@@ -34,7 +35,9 @@
         oldItem.document.displayManager.deactivated();
       }
       if (newItem != null) {
-        newItem.document.displayManager.activated();
+        var document:Document = newItem.document;
+        document.displayManager.activated();
+        DocumentManager(document.module.project.getComponent(DocumentManager)).document = document;
       }
     }
 

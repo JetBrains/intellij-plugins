@@ -1,13 +1,17 @@
 <component name="libraryTable">
   <library name="cocoa" type="flex">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../../../../../cocoa/appkit/target/cocoa-1.4-SNAPSHOT.swc!/" />
       <root url="jar://$PROJECT_DIR$/../../../../../../cocoa/foundation/target/foundation-1.2.5.swc!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../cocoa/migLayout/core/target/core-4.0.1-SNAPSHOT.swc!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../cocoa/appkit/target/cocoa-2.0-SNAPSHOT.swc!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../plexus/core/target/plexus-1.4-SNAPSHOT.swc!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="file://$PROJECT_DIR$/../../../../../../cocoa/appkit/src/main/flex" />
       <root url="file://$PROJECT_DIR$/../../../../../../cocoa/foundation/src" />
+      <root url="file://$PROJECT_DIR$/../../../../../../cocoa/migLayout/core/src" />
+      <root url="file://$PROJECT_DIR$/../../../../../../cocoa/appkit/src" />
+      <root url="file://$PROJECT_DIR$/../../../../../../plexus/core/src" />
     </SOURCES>
   </library>
 </component>
