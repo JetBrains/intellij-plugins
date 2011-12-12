@@ -4,7 +4,7 @@ import flash.geom.Point;
 
 import mx.core.IChildList;
 
-public class SystemChildList implements IChildList {
+internal class SystemChildList implements IChildList {
   public function SystemChildList(owner:FlexDocumentDisplayManager, lowerBoundReference:String, upperBoundReference:String) {
     this.owner = owner;
     this.lowerBoundReference = lowerBoundReference;

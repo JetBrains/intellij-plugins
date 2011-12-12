@@ -39,7 +39,7 @@ public class StatesBarManager extends AbstractCollectionViewDataSource implement
     }
     
     if (_document == null) {
-      _presentation.visible = true;
+      _presentation.visible = false;
       return;
     }
 
@@ -48,8 +48,8 @@ public class StatesBarManager extends AbstractCollectionViewDataSource implement
 
   private function adjust():void {
     var documentStates:Array = states;
-    _presentation.visible = documentStates.length < 2;
-    if (!_presentation.visible) {
+    _presentation.visible = documentStates.length > 1;
+    if (_presentation.visible) {
       update(documentStates);
       var currentState:Object = _document.uiComponent.currentState;
       _presentation.selectedIndex = (currentState == null || currentState == "") ? 0 : source.indexOf(currentState);
