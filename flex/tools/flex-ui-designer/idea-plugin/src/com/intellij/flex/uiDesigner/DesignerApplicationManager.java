@@ -30,6 +30,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.concurrency.Semaphore;
@@ -288,7 +289,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
         return false;
       }
 
-      final Semaphore semaphore = new Semaphore();
+      final Ref<Boolean> librariesLoaded = new Ref<Boolean>(false);
       final MessageBusConnection connection =
         ApplicationManager.getApplication().getMessageBus().connect(DesignerApplicationManager.getApplication());
       connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentOpenedListener() {
@@ -304,20 +305,27 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
         private void semaphoreUp() {
           connection.disconnect();
-          semaphore.up();
+          librariesLoaded.set(true);
         }
       });
 
-      semaphore.down();
       if (client.openDocument(module, psiFile, true, problemsHolder)) {
         if (!client.flush()) {
           return false;
         }
         indicator.setText(FlashUIDesignerBundle.message("loading.libraries"));
-        semaphore.waitFor();
+        while (!librariesLoaded.get()) {
+          try {
+            Thread.sleep(5);
+          }
+          catch (InterruptedException e) {
+            return false;
+          }
+
+          indicator.checkCanceled();
+        }
       }
       else {
-        semaphore.up();
         connection.disconnect();
       }
 

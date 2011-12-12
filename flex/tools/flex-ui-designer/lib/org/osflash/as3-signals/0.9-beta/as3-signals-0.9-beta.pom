@@ -4,7 +4,5 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.osflash</groupId>
   <artifactId>as3-signals</artifactId>
-  <version>0.8.1</version>
-  <packaging>swc</packaging>
-  <description>POM was created by Sonatype Nexus</description>
+  <version>0.9-beta</version>
 </project>
