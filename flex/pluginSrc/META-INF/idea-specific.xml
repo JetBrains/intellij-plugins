@@ -13,7 +13,9 @@
   </extensions>
 
   <actions>
-    <group id="FlexActionsGroup" popup="true" text="Flex" icon="/com/intellij/lang/javascript/flex/actions/flex_actions_group.png">
+    <group id="FlexActionsGroup" popup="true" text="Flex" icon="/com/intellij/lang/javascript/flex/actions/flex_actions_group.png"
+           class="com.intellij.lang.javascript.flex.actions.FlexActionGroup"
+        >
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </group>
 
