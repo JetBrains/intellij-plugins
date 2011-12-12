@@ -67,10 +67,14 @@
       <rowConstraints>[][grow][]</rowConstraints>
     </MigLayout>
   </layout>
-  <TabView id="editorTabView" lafSubkey="ProjectView" c="cell 2 1, grow, id editorTabView"/>
-  <Toolbar id="editorToolbar" lafSubkey="Editor" small="true" c="cell 2 1, h 25, pos editorTabView.x editorTabView.y editorTabView.x2 null">
-    <SegmentedControl id="statesBar"/>
-    <SegmentedControl id="elementTreeBar" lafKey="ElementTreeBar"/>
-  </Toolbar>
+  <TabView id="editorTabView" lafSubkey="ProjectView" c="cell 2 1, grow, id editorTabView">
+    <toolbar>
+      <Toolbar id="editorToolbar" lafSubkey="Editor" small="true">
+        <SegmentedControl id="statesBar"/>
+        <SegmentedControl id="elementTreeBar" lafKey="ElementTreeBar"/>
+      </Toolbar>
+    </toolbar>
+  </TabView>
+
   <tools:ElementToolContainer id="elementToolContainer" c="external"/>
 </Container>

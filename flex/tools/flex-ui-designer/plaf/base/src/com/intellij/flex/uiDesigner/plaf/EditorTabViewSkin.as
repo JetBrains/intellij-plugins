@@ -4,8 +4,12 @@ import cocoa.ListViewModifiableDataSource;
 import cocoa.plaf.basic.AbstractTabViewSkin;
 import cocoa.tabView.TabView;
 
+import flash.display.Graphics;
+
+import spark.primitives.Graphic;
+
 internal class EditorTabViewSkin extends AbstractTabViewSkin {
-  private static const CONTENT_INSETS:Insets = new Insets(1, 25 /* tab title bar */ + 25 /* editor toolbar (always exists in our case — states bar for example) */, 1, 1);
+  private static const CONTENT_INSETS:Insets = new Insets(0, 27 /* tab title bar */, 1, 0);
   
   override public function get contentInsets():Insets {
     return CONTENT_INSETS;
@@ -26,7 +30,7 @@ internal class EditorTabViewSkin extends AbstractTabViewSkin {
     //}
   //}
 
-  override protected function draw(w:int,h:int):void {
+  override protected function draw(w:int, h:int):void {
     super.draw(w, h);
 
     const selectedIndex:int = tabBar.selectedIndex;

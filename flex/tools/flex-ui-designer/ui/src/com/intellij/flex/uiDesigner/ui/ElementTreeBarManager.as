@@ -23,13 +23,13 @@ public class ElementTreeBarManager extends AbstractCollectionViewDataSource impl
     }
 
     if (value == null) {
-      _presentation.visible = true;
+      _presentation.visible = false;
       return;
     }
 
     update(value);
 
-    _presentation.visible = false;
+    _presentation.visible = true;
   }
 
   private var _presentation:SegmentedControl;

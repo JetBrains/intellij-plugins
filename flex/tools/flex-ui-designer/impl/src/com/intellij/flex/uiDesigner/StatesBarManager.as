@@ -48,8 +48,7 @@ public class StatesBarManager extends AbstractCollectionViewDataSource implement
 
   private function adjust():void {
     var documentStates:Array = states;
-    _presentation.visible = documentStates.length > 1;
-    if (_presentation.visible) {
+    if ((_presentation.visible = documentStates.length > 1)) {
       update(documentStates);
       var currentState:Object = _document.uiComponent.currentState;
       _presentation.selectedIndex = (currentState == null || currentState == "") ? 0 : source.indexOf(currentState);

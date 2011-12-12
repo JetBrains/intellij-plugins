@@ -143,7 +143,7 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
     var g:Graphics = _textLineContainer.graphics;
     g.clear();
 
-    g.lineStyle(1, IdeaLookAndFeel.BORDER_COLOR);
+    g.lineStyle(1, 0xa2a2a2);
     g.beginFill(0xffffff);
 
     const bottomY:Number = _fixedRendererDimension + 0.5;
