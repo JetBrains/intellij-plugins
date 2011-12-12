@@ -946,7 +946,8 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
   @Nullable
   static XmlElementDescriptor checkValidDescriptorAccordingToType(String arrayElementType, XmlElementDescriptor descriptor) {
-    if (descriptor != null) {
+    // no need to check AnnotationBackedDescriptors
+    if (descriptor instanceof ClassBackedElementDescriptor) {
       if (isAdequateType(arrayElementType)) {
         PsiElement declaration = descriptor.getDeclaration();
         if (declaration instanceof XmlFile) {
@@ -1236,7 +1237,10 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   public PsiElement getDeclaration() {
     String className = predefined ? OBJECT_CLASS_NAME :this.className;
     if (className.equals(CodeContext.AS3_VEC_VECTOR_QUALIFIED_NAME)) className = VECTOR_CLASS_NAME;
-    return JSResolveUtil.findClassByQName(className, JavaScriptIndex.getInstance(project), context.module);
+    final PsiElement jsClass = JSResolveUtil.findClassByQName(className, JavaScriptIndex.getInstance(project), context.module);
+    final PsiFile file = jsClass == null ? null : jsClass.getContainingFile();
+    // can be MXML file listed as a component in the manifest file
+    return (file != null && JavaScriptSupportLoader.isMxmlOrFxgFile(file)) ? file : jsClass;
   }
 
   @NonNls
