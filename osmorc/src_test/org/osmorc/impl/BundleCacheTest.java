@@ -8,15 +8,15 @@ import org.junit.Test;
 import org.osmorc.manifest.BundleManifest;
 import org.osmorc.manifest.ManifestHolder;
 import org.osmorc.manifest.ManifestHolderDisposedException;
-import org.osmorc.manifest.impl.AbstractManifestHolderImpl;
-import org.osmorc.manifest.impl.BundleManifestImpl;
 import org.osmorc.manifest.lang.psi.ManifestFile;
+import org.osmorc.testutil.TestManifestHolder;
 
 import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
+import static org.osmorc.testutil.ManifestMaker.*;
 
 /**
  * Test for the bundle cache
@@ -31,19 +31,25 @@ public class BundleCacheTest extends LightIdeaTestCase {
   public void setUp() throws Exception {
     super.setUp();
     myCache = new BundleCache();
-    myCache.updateWith(makeManifestHolder("MANIFEST.MF", "foo.bar", "1.0.0", "foo.bar", "", null));
-    myCache.updateWith(makeManifestHolder("MANIFEST2.MF", "foo.bam", "1.2.0", "foo.bam; version=1.2.0", "foo.bar", null));
-    myCache.updateWith(makeManifestHolder("MANIFEST3.MF", "foo.bam", "1.2.3", "foo.bam; version=1.2.3", "foo.bar", null));
-    myCache.updateWith(
-      makeManifestHolder("MANIFEST4.MF", "foo.baz", "1.2.1", "foo.baz; version=1.2.0", "foo.bar, foo.bam;version=\"[1.2.3,2.0.0)\"", null));
+    myCache.updateWith(makeManifestHolder("MANIFEST.MF", bundleSymbolicName("foo.bar").bundleVersion("1.0.0").exportPackages("foo.bar")
+      .toString()));
 
-    myFragmentHolder =
-      makeManifestHolder("MANIFEST5.MF", "foo.bar.narf", "1.0.1", "foo.bar.narf;version=1.0.1", "foo.bar", "foo.bar");
+    myCache.updateWith(makeManifestHolder("MANIFEST2.MF", bundleSymbolicName("foo.bam").bundleVersion("1.2.0")
+      .exportPackages("foo.bam;version=1.2.0").importPackages("foo.bar").toString()));
+
+    myCache.updateWith(makeManifestHolder("MANIFEST3.MF", bundleSymbolicName("foo.bam").bundleVersion("1.2.3")
+      .exportPackages("foo.bam; version=1.2.3").importPackages("foo.bar").toString()));
+    myCache.updateWith(
+      makeManifestHolder("MANIFEST4.MF", bundleSymbolicName("foo.baz").bundleVersion("1.2.1").exportPackages("foo.baz;version=1.2.0")
+        .importPackages("foo.bar", "foo.bam;version=\"[1.2.3,2.0.0)\"").toString()));
+
+    myFragmentHolder = makeManifestHolder("MANIFEST5.MF", bundleSymbolicName("foo.bar.narf").bundleVersion("1.0.1")
+      .exportPackages("foo.bar.narf;version=1.0.1").importPackages("foo.bar").fragmentHost("foo.bar").toString());
+
     myCache.updateWith(myFragmentHolder);
   }
 
 
-  @Test
   public void testBundleLookupWithMoreThanOneResult() {
     List<ManifestHolder> manifestHolders = myCache.whoIs("foo.bam");
     assertThat(manifestHolders, notNullValue());
@@ -51,7 +57,6 @@ public class BundleCacheTest extends LightIdeaTestCase {
   }
 
 
-  @Test
   public void testSingleBundleLookup() throws ManifestHolderDisposedException {
     List<ManifestHolder> manifestHolders = myCache.whoIs("foo.bar");
     assertThat(manifestHolders, notNullValue());
@@ -59,7 +64,6 @@ public class BundleCacheTest extends LightIdeaTestCase {
     assertThat(manifestHolders.get(0).getBundleManifest().getBundleSymbolicName(), equalTo("foo.bar"));
   }
 
-  @Test
   public void testFragmentHost() throws ManifestHolderDisposedException {
     Set<ManifestHolder> fragmentHosts = myCache.getFragmentHosts(myFragmentHolder);
     assertThat(fragmentHosts, notNullValue());
@@ -67,7 +71,6 @@ public class BundleCacheTest extends LightIdeaTestCase {
     assertThat(fragmentHosts.iterator().next().getBundleManifest().getBundleSymbolicName(), equalTo("foo.bar"));
   }
 
-  @Test
   public void testRequiredBundleWithVersion() throws ManifestHolderDisposedException {
     ManifestHolder manifestHolder = myCache.whoIsRequiredBundle("foo.bam;bundle-version=1.2.0");
     assertThat(manifestHolder, notNullValue());
@@ -78,7 +81,6 @@ public class BundleCacheTest extends LightIdeaTestCase {
     assertThat(bundleManifest.getBundleVersion().toString(), equalTo("1.2.3"));
   }
 
-  @Test
   public void testRequiredBundleWithVersionRange() throws ManifestHolderDisposedException {
     ManifestHolder manifestHolder = myCache.whoIsRequiredBundle("foo.bam;bundle-version=\"[1.2.0,1.2.3)\"");
     assertThat(manifestHolder, notNullValue());
@@ -88,7 +90,6 @@ public class BundleCacheTest extends LightIdeaTestCase {
     assertThat(bundleManifest.getBundleVersion().toString(), equalTo("1.2.0"));
   }
 
-  @Test
   public void testRequiredBundleWithoutVersion() throws ManifestHolderDisposedException {
     ManifestHolder manifestHolder = myCache.whoIsRequiredBundle("foo.bam");
     assertThat(manifestHolder, notNullValue());
@@ -99,13 +100,12 @@ public class BundleCacheTest extends LightIdeaTestCase {
     assertThat(bundleManifest.getBundleVersion().toString(), equalTo("1.2.3"));
   }
 
-  @Test
   public void testConcurrentUpdates() {
     Thread updateThread1 = new Thread(new Runnable() {
       @Override
       public void run() {
         for (int i = 0; i < 1000; i++) {
-          myCache.updateWith(makeManifestHolder("MANIFEST_T1_" + i + ".MF", "foo.bar.t1", "1.0." + i, "", "", null));
+          myCache.updateWith(makeManifestHolder("MANIFEST_T1_" + i + ".MF",  bundleSymbolicName("foo.bar.t1").bundleVersion("1.0."+i).toString()));
         }
         System.out.println("T1 done");
       }
@@ -114,7 +114,7 @@ public class BundleCacheTest extends LightIdeaTestCase {
       @Override
       public void run() {
         for (int i = 0; i < 1000; i++) {
-          myCache.updateWith(makeManifestHolder("MANIFEST_T2_" + i + ".MF", "foo.bar.t2", "1.0." + i, "", "", null));
+          myCache.updateWith(makeManifestHolder("MANIFEST_T2_" + i + ".MF", bundleSymbolicName("foo.bar.t2").bundleVersion("1.0."+i).toString()));
         }
         System.out.println("T2 done");
       }
@@ -157,52 +157,8 @@ public class BundleCacheTest extends LightIdeaTestCase {
     public volatile boolean requestStop = false;
   }
 
-  /**
-   * Creates a manifest holder
-   *
-   * @param manifestName name of the manifest file
-   * @param symbolicName bundle symbolic name
-   * @param version      version
-   * @param exports      export packages
-   * @param imports      import packages.
-   * @return
-   */
-
   @NotNull
-  private static ManifestHolder makeManifestHolder(@NotNull String manifestName,
-                                                   @NotNull String symbolicName,
-                                                   @NotNull String version,
-                                                   @NotNull String exports,
-                                                   @NotNull String imports,
-                                                   @Nullable String fragmentHost) {
-
-    String myManifest = "Bundle-SymbolicName: " + symbolicName + "\n" +
-                        "Bundle-Version: " + version + "\n" +
-                        "Export-Package: " + exports + "\n" +
-                        "Import-Package: " + imports + "\n";
-    if (fragmentHost != null) {
-      myManifest += "Fragment-Host: " + fragmentHost + "\n";
-    }
-
-    final ManifestFile lightFile = (ManifestFile)createLightFile(manifestName, myManifest);
-    return new AbstractManifestHolderImpl() {
-      BundleManifest manifest = new BundleManifestImpl(lightFile);
-
-      @NotNull
-      @Override
-      public BundleManifest getBundleManifest() {
-        return manifest;
-      }
-
-      @Override
-      public Object getBoundObject() {
-        return null;
-      }
-
-      @Override
-      public boolean isDisposed() {
-        return false;
-      }
-    };
+  private static ManifestHolder makeManifestHolder(@NotNull String fileName, @NotNull String manifestContents) {
+    return new TestManifestHolder((ManifestFile)createLightFile(fileName, manifestContents));
   }
 }
