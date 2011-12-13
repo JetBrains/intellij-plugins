@@ -66,8 +66,6 @@ private List platformImplementationModules() {
           "lvcs-impl",
           "images",
           "spellchecker",
-          "yaml",
-          "haml",
           "graph",
           "duplicates",
           //"coverage-impl",
