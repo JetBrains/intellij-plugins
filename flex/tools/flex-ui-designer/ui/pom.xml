@@ -25,6 +25,7 @@
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
         <configuration>
+          <localesSourcePath>${basedir}/locales/{locale}</localesSourcePath>
           <localesCompiled>
             <locale>en_US</locale>
           </localesCompiled>

@@ -62,7 +62,7 @@ public class ValueRendererManager extends TextRendererManager {
     return _dataSource.getObjectValue(itemIndex);
   }
 
-  override protected function createEntry(itemIndex:int, x:Number, y:Number, w:Number, h:Number):TextLineEntry {
+  override protected function createEntry(itemIndex:int, x:Number, y:Number, w:int, h:int):TextLineEntry {
     var description:Object = getDescription(itemIndex);
     var type:String = description.type;
     var object:Object = myDataSource.object;

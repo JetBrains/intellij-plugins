@@ -4,20 +4,10 @@
     import cocoa.pane.PaneItem;
     import cocoa.pane.PaneViewDataSource;
     import cocoa.plaf.LookAndFeel;
-    import cocoa.resources.ResourceMetadata;
-    import cocoa.toolWindow.ToolWindowManager;
 
     import com.intellij.flex.uiDesigner.Document;
     import com.intellij.flex.uiDesigner.DocumentFactoryManager;
     import com.intellij.flex.uiDesigner.DocumentManager;
-    import com.intellij.flex.uiDesigner.PlatformDataKeys;
-    import com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector.PropertyInspector;
-
-    import net.miginfocom.layout.MigConstants;
-
-    import org.jetbrains.actionSystem.DataManager;
-
-    [ResourceBundle("Designer")]
 
     private const editorTabsSource:Vector.<PaneItem> = new Vector.<PaneItem>();
     private const editorPanes:PaneViewDataSource = new PaneViewDataSource(editorTabsSource);
@@ -27,10 +17,6 @@
       editorTabView.selectionChanged.add(editorTabSelectionChanged);
 
       editorPanes.itemRemoved.add(editorPaneRemoved);
-
-      var toolWindowManager:ToolWindowManager = ToolWindowManager(PlatformDataKeys.PROJECT.getData(DataManager.instance.getDataContext(displayObjectContainer.stage)).getComponent(ToolWindowManager));
-      toolWindowManager.container = this;
-      toolWindowManager.registerToolWindow(new PaneItem(new ResourceMetadata("style", "Designer"), new ClassFactory(PropertyInspector)), MigConstants.RIGHT);
 
       super.addToSuperview(displayObjectContainer, laf, superview);
     }

@@ -10,7 +10,7 @@ public class NameRendererManager extends TextRendererManager {
     super(textFormat, textInsets);
   }
 
-  override protected function createTextLine(itemIndex:int, w:Number):TextLine {
+  override protected function createTextLine(itemIndex:int, w:int):TextLine {
     var description:Object = _dataSource.getObjectValue(itemIndex);
     if (!("editable" in description)) {
       prepareDescription(description);

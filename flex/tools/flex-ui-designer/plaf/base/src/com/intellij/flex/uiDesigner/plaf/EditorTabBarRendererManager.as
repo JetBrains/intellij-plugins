@@ -57,7 +57,7 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
     return ItemMouseSelectionMode.DOWN;
   }
 
-  override protected function computeCreatingRendererSize(w:Number, h:Number, line:TextLine):void {
+  override protected function computeCreatingRendererSize(w:int, h:int, line:TextLine):void {
     _lastCreatedRendererDimension = Math.round(line.textWidth) + (1 + 6 + 1 + 2 + 16 + 2);
   }
 
@@ -126,7 +126,7 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
     }
   }
 
-  override protected function drawEntry(entry:TextLineAndDisplayObjectEntry, itemIndex:int, g:Graphics, w:Number, h:Number, x:Number, y:Number):void {
+  override protected function drawEntry(entry:TextLineAndDisplayObjectEntry, itemIndex:int, g:Graphics, w:int, h:int, x:Number, y:Number):void {
     var view:View = ViewEntry(entry).view;
     view.setLocation((x + w) - 2 - 1 - view.getPreferredWidth(), view.y);
     //skin.x = (x + w) - 2 - 1 - skin.getExplicitOrMeasuredWidth();

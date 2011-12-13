@@ -1,5 +1,9 @@
 package com.intellij.flex.uiDesigner {
+import cocoa.ClassFactory;
 import cocoa.DocumentWindow;
+import cocoa.pane.PaneItem;
+import cocoa.resources.ResourceMetadata;
+import cocoa.toolWindow.ToolWindowManager;
 
 import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
@@ -8,6 +12,7 @@ import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 import com.intellij.flex.uiDesigner.ui.ProjectEventMap;
 import com.intellij.flex.uiDesigner.ui.ProjectView;
+import com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector.PropertyInspector;
 
 import flash.geom.Rectangle;
 import flash.net.Socket;
@@ -15,6 +20,8 @@ import flash.net.registerClassAlias;
 import flash.utils.ByteArray;
 import flash.utils.IDataInput;
 import flash.utils.describeType;
+
+import net.miginfocom.layout.MigConstants;
 
 import org.jetbrains.ApplicationManager;
 
@@ -108,6 +115,11 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     projectView.laf = ApplicationManager.instance.laf;
     var documentWindow:DocumentWindow = new DocumentWindow(projectView, new MainFocusManager());
     projectManager.open(project, documentWindow);
+
+    var toolWindowManager:ToolWindowManager = ToolWindowManager(project.getComponent(ToolWindowManager));
+    toolWindowManager.container = projectView;
+    toolWindowManager.registerToolWindow(PaneItem.create("Style", new ClassFactory(PropertyInspector)), MigConstants.RIGHT);
+
     documentWindow.init(project.map, projectWindowBounds);
   }
 
