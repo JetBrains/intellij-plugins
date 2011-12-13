@@ -3,18 +3,19 @@
 		<accessible>false</accessible>
 		<debug>true</debug>
 		<external-library-path>
-			<path-element>@@repo@@/org/flyti/cocoa/aquaLaF/1.4-SNAPSHOT/aquaLaF-1.4-SNAPSHOT.swc</path-element>
-			<path-element>@@repo@@/org/flyti/cocoa/cocoa/1.4-SNAPSHOT/cocoa-1.4-SNAPSHOT.swc</path-element>
+			<path-element>@@repo@@/org/flyti/cocoa/aquaLaF/2.0-SNAPSHOT/aquaLaF-2.0-SNAPSHOT.swc</path-element>
+			<path-element>@@repo@@/org/flyti/cocoa/cocoa/2.0-SNAPSHOT/cocoa-2.0-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/framework-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/flashx/textLayout/2.0.192-de1/textLayout-2.0.192-de1.swc</path-element>
-			<path-element>@@repo@@/org/osflash/as3-signals/0.8.1/as3-signals-0.8.1.swc</path-element>
+			<path-element>@@repo@@/org/osflash/as3-signals/0.9-beta/as3-signals-0.9-beta.swc</path-element>
 			<path-element>@@repo@@/org/flyti/plexus/1.4/plexus-1.4.swc</path-element>
 			<path-element>@@repo@@/org/flyti/collections/1.3.7/collections-1.3.7.swc</path-element>
 			<path-element>@@repo@@/org/flyti/foundation/1.2.5/foundation-1.2.5.swc</path-element>
+			<path-element>@@repo@@/org/jetbrains/migLayout/core/4.0.1-SNAPSHOT/core-4.0.1-SNAPSHOT.swc</path-element>
 			<path-element>@@target@@/ui-1.0-SNAPSHOT.swc</path-element>
 			<path-element>@@target@@/impl-1.0-SNAPSHOT.swc</path-element>
-			<path-element>@@repo@@/org/flyti/cocoa/acocoa/1.4-SNAPSHOT/acocoa-1.4-SNAPSHOT.swc</path-element>
+			<path-element>@@repo@@/org/flyti/cocoa/acocoa/2.0-SNAPSHOT/acocoa-2.0-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airframework/4.5.2.21576/airframework-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airspark/4.5.2.21576/airspark-4.5.2.21576.swc</path-element>
 			<path-element>@@target@@/shared-1.0-SNAPSHOT.swc</path-element>
