@@ -15,6 +15,7 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.ModuleAdapter;
@@ -111,7 +112,8 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
         semaphore.up();
       }
 
-      if (error != null) {
+      // java.lang.Throwable: Do not log ProcessCanceledException
+      if (error != null && !(error instanceof ProcessCanceledException)) {
         LOG.error(error);
       }
     }
