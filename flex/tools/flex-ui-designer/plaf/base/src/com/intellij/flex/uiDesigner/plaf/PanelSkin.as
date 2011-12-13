@@ -103,7 +103,9 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
 
   // todo find normal way
   public function get contentWidth():Number {
-    return (parent.width - getBorder("b").contentInsets.width);
+    // temp hack
+    return (492 - getBorder("b").contentInsets.width);
+    //return (parent.width - getBorder("b").contentInsets.width);
   }
 
   override protected function draw(w:int, h:int):void {

@@ -1,8 +1,8 @@
 package com.intellij.flex.uiDesigner.io;
 
-import com.intellij.flex.uiDesigner.Client;
 import com.intellij.flex.uiDesigner.DesignerApplicationLauncher;
 import com.intellij.flex.uiDesigner.SocketInputHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,8 +19,7 @@ public class MessageSocketManager extends SocketManager {
   }
 
   @Override
-  protected void setOut(OutputStream out) {
-    Client.getInstance().setOut(out);
+  protected void setOut(@NotNull OutputStream out) {
   }
 
   @Override
@@ -30,8 +29,8 @@ public class MessageSocketManager extends SocketManager {
   }
 
   @Override
-  protected void clientSocketAccepted() {
-    pendingTask.clientOpened();
+  protected void clientSocketAccepted(OutputStream outputStream) {
+    pendingTask.clientOpened(outputStream);
     pendingTask = null;
 
     try {

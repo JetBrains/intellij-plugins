@@ -1,15 +1,17 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector {
 import cocoa.ListView;
 import cocoa.Panel;
+import cocoa.ScrollPolicy;
+import cocoa.ScrollView;
 import cocoa.layout.ListVerticalLayout;
 import cocoa.pane.PaneItem;
 import cocoa.pane.PaneViewDataSource;
 import cocoa.renderer.EntryFactory;
 import cocoa.renderer.PaneRendererManager;
 import cocoa.renderer.PaneViewBuilderItem;
-
+ 
 import com.intellij.flex.uiDesigner.ui.CustomTextFormatId;
-
+ 
 public class PropertyInspector extends Panel {
   private var dataSource:PaneViewDataSource;
   private var source:Vector.<PaneItem>;
@@ -26,17 +28,18 @@ public class PropertyInspector extends Panel {
     var listView:ListView = new ListView();
     listView.dataSource = dataSource;
     var layout:ListVerticalLayout = new ListVerticalLayout();
+    layout.dimension = new MyExplicitDimensionProvider(this);
     listView.layout = layout;
     listView.rendererManager = new PaneRendererManager(laf,
                                                        laf.getTextFormat(CustomTextFormatId.SIDE_PANE_GROUP_ITEM_LABEL),
                                                        laf.getBorder("GroupItemRenderer.b"),
                                                        new <EntryFactory>[otherPropertiesPane.builder]);
  
-    //var scrollView:ScrollView = new ScrollView();
-    //scrollView.documentView = listView;
-    //scrollView.horizontalScrollPolicy = ScrollPolicy.OFF;
+    var scrollView:ScrollView = new ScrollView();
+    scrollView.documentView = listView;
+    scrollView.horizontalScrollPolicy = ScrollPolicy.OFF;
  
-    contentView = listView;
+    contentView = scrollView;
  
     super.skinAttached();
   }
@@ -85,7 +88,9 @@ public class PropertyInspector extends Panel {
 }
 
 import cocoa.Insets;
+import cocoa.Panel;
 import cocoa.ScrollPolicy;
+import cocoa.layout.ExplicitDimensionProvider;
 import cocoa.plaf.LookAndFeel;
 import cocoa.plaf.TextFormatId;
 import cocoa.renderer.CompositeEntry;
@@ -102,6 +107,18 @@ import com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector.ValueRendere
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
+
+class MyExplicitDimensionProvider implements ExplicitDimensionProvider {
+  private var panel:Panel;
+
+  public function MyExplicitDimensionProvider(panel:Panel) {
+    this.panel = panel;
+  }
+
+  public function get value():Number {
+    return panel.skin["contentWidth"];
+  }
+}
 
 class OtherPropertiesFactory extends CompositeEntryBuilder {
   internal var dataSource:MyTableViewDataSource = new MyTableViewDataSource();
@@ -121,7 +138,8 @@ class OtherPropertiesFactory extends CompositeEntryBuilder {
     firstColumn.width = 160;
     var valueRendererManager:ValueRendererManager = new ValueRendererManager(laf, textFormat, insets, dataSource);
     tableView.columns = new <TableColumn>[firstColumn, new TableColumnImpl(tableView, null, valueRendererManager)];
-    tableView.addToSuperview(container);
+    tableView.createView(laf);
+    container.addChild(DisplayObject(tableView.createView(laf)));
     new PropertyTableInteractor(tableView, valueRendererManager);
 
     e.components[0] = tableView;

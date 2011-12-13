@@ -4,18 +4,9 @@
     import cocoa.pane.PaneItem;
     import cocoa.pane.PaneViewDataSource;
     import cocoa.plaf.LookAndFeel;
-    import cocoa.resources.ResourceMetadata;
-    import cocoa.toolWindow.ToolWindowManager;
 
     import com.intellij.flex.uiDesigner.Document;
     import com.intellij.flex.uiDesigner.DocumentFactoryManager;
-    import com.intellij.flex.uiDesigner.DocumentManager;
-    import com.intellij.flex.uiDesigner.PlatformDataKeys;
-    import com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector.PropertyInspector;
-
-    import net.miginfocom.layout.MigConstants;
-
-    import org.jetbrains.actionSystem.DataManager;
 
     [ResourceBundle("Designer")]
 
@@ -27,10 +18,6 @@
       editorTabView.selectionChanged.add(editorTabSelectionChanged);
 
       editorPanes.itemRemoved.add(editorPaneRemoved);
-
-      var toolWindowManager:ToolWindowManager = ToolWindowManager(PlatformDataKeys.PROJECT.getData(DataManager.instance.getDataContext(displayObjectContainer.stage)).getComponent(ToolWindowManager));
-      toolWindowManager.container = this;
-      toolWindowManager.registerToolWindow(new PaneItem(new ResourceMetadata("style", "Designer"), new ClassFactory(PropertyInspector)), MigConstants.RIGHT);
 
       super.addToSuperview(displayObjectContainer, laf, superview);
     }
@@ -47,9 +34,7 @@
         oldItem.document.displayManager.deactivated();
       }
       if (newItem != null) {
-        var document:Document = newItem.document;
-        document.displayManager.activated();
-        DocumentManager(document.module.project.getComponent(DocumentManager)).document = document;
+        newItem.document.displayManager.activated();
       }
     }
 
@@ -75,18 +60,14 @@
 
   <layout>
     <MigLayout>
-      <columnConstraints>[grow][grow][grow][grow][grow]</columnConstraints>
-      <rowConstraints>[grow][grow][grow]</rowConstraints>
+      <columnConstraints>[fill][fill][][fill][fill]</columnConstraints>
+      <rowConstraints>[fill][][fill]</rowConstraints>
     </MigLayout>
   </layout>
-  <TabView id="editorTabView" lafSubkey="ProjectView" c="cell 2 1, grow, id editorTabView">
-    <toolbar>
-      <Toolbar id="editorToolbar" lafSubkey="Editor" small="true">
-        <SegmentedControl id="statesBar"/>
-        <SegmentedControl id="elementTreeBar" lafKey="ElementTreeBar"/>
-      </Toolbar>
-    </toolbar>
-  </TabView>
-
+  <TabView id="editorTabView" lafSubkey="ProjectView" c="cell 2 0, grow, id editorTabView"/>
+  <Toolbar id="editorToolbar" lafSubkey="Editor" small="true" c="cell 2 0, h 25, pos editorTabView.x editorTabView.y">
+    <SegmentedControl id="statesBar"/>
+    <SegmentedControl id="elementTreeBar" lafKey="ElementTreeBar"/>
+  </Toolbar>
   <tools:ElementToolContainer id="elementToolContainer" c="external"/>
 </Container>

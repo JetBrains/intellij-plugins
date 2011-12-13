@@ -39,6 +39,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -74,7 +75,8 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
     this.postTask = postTask;
   }
 
-  public void clientOpened() {
+  public void clientOpened(@NotNull OutputStream outputStream) {
+    Client.getInstance().setOut(outputStream);
     LOG.info("clientOpened");
     semaphore.up();
   }
@@ -178,7 +180,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
 
       semaphore.down();
       try {
-        semaphore.waitForUnsafe(15 * 1024);
+        semaphore.waitForUnsafe(30 * 1000);
       }
       catch (InterruptedException e) {
         if (indicator.isCanceled()) {

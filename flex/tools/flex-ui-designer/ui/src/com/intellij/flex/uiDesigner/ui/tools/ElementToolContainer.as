@@ -1,5 +1,5 @@
 package com.intellij.flex.uiDesigner.ui.tools {
-import cocoa.LayoutlessContainer;
+import cocoa.SpriteBackedView;
 
 import com.intellij.flex.uiDesigner.Document;
 import com.intellij.flex.uiDesigner.ElementInfoProvider;
@@ -7,17 +7,14 @@ import com.intellij.flex.uiDesigner.ElementInfoProvider;
 import flash.events.Event;
 import flash.geom.Point;
 
-import mx.core.ILayoutElement;
-
 import org.flyti.plexus.Injectable;
 
-public class ElementToolContainer extends LayoutlessContainer implements Injectable {
+public class ElementToolContainer extends SpriteBackedView implements Injectable {
   private static var sharedPoint:Point = new Point();
 
   private var element:Object;
 
   public function ElementToolContainer() {
-    includeInLayout = false;
     mouseEnabled = false;
   }
 
@@ -86,22 +83,21 @@ public class ElementToolContainer extends LayoutlessContainer implements Injecta
   }
 
   private function updateSize(w:Number, h:Number):void {
-    setActualSize(w, h);
     for each (var elementLayoutChangeListener:ElementLayoutChangeListener in _elementLayoutChangeListeners) {
       elementLayoutChangeListener.sizeHandler(w, h);
     }
   }
 
-  override protected function updateDisplayList(w:Number, h:Number):void {
-    if (element != null) {
-      var n:int = numChildren;
-      while (n-- > 0) {
-        var o:ILayoutElement = getChildAt(n) as ILayoutElement;
-        if (o != null) {
-          o.setLayoutBoundsSize(w, h);
-        }
-      }
-    }
-  }
+  //override protected function draw(w:Number, h:Number):void {
+  //  if (element != null) {
+  //    var n:int = numChildren;
+  //    while (n-- > 0) {
+  //      var o:ILayoutElement = getChildAt(n) as ILayoutElement;
+  //      if (o != null) {
+  //        o.setLayoutBoundsSize(w, h);
+  //      }
+  //    }
+  //  }
+  //}
 }
 }

@@ -39,7 +39,6 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
     data["Panel.b"] = RectangularBorder.create(NaN, 0x999999 /* idea UI 0x929292, but 0x999999 more Aqua UI */, new Insets(1, panelTitleBorderHeight, 1, 1), new FrameInsets(0, panelTitleBorderHeight - 1 /* hide top h line */));
     data["StyleInspector.DataGroup.b"] = RectangularBorder.create(0xffffff);
 
-    data["ProjectView"] = ProjectViewSkin;
     data["ProjectView.TabView"] = EditorTabViewSkin;
     data["ProjectView.TabView.tabBar.layout"] = new ListLayoutFactory(20, 0);
     data["ProjectView.TabView.tabBar.rendererManager"] = new RendererManagerFactory(EditorTabBarRendererManager, this, "ProjectView.TabView.tabBar");

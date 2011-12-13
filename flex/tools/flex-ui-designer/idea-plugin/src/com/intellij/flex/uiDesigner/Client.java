@@ -40,8 +40,8 @@ public class Client implements Disposable {
     return DesignerApplicationManager.getService(Client.class);
   }
 
-  public void setOut(OutputStream out) {
-    blockOut.setOut(out);
+  public void setOut(@NotNull OutputStream socketOut) {
+    blockOut.setOut(socketOut);
   }
 
   public boolean isModuleRegistered(Module module) {
