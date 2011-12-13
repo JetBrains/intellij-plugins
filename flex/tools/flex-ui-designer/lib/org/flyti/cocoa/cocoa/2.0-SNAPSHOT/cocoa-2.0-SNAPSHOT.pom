@@ -67,6 +67,7 @@
                 <include>**.ObjectBackedSkinnableView</include>
                 <include>**.Focusable</include>
                 <include>**.border.*</include>
+                <include>**.ToolWindowManager</include>
                 <include>cocoa.plaf.basic.AbstractSkin</include>
                 <include>cocoa.plaf.basic.AbstractTabViewSkin</include>
                 <include>cocoa.plaf.basic.BoxSkin</include>

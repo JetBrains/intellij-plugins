@@ -1,24 +1,12 @@
 package com.intellij.flex.uiDesigner {
-import cocoa.Container;
-import cocoa.MainWindowedApplication;
-import cocoa.SegmentedControl;
-import cocoa.bar.SingleSelectionBar;
-import cocoa.layout.ListHorizontalLayout;
-import cocoa.renderer.InteractiveBorderRendererManager;
-import cocoa.renderer.TextRendererManager;
-import cocoa.util.FileUtil;
+import cocoa.util.Files;
 
-import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
-import com.intellij.flex.uiDesigner.css.Stylesheet;
-import com.intellij.flex.uiDesigner.libraries.Library;
-import com.intellij.flex.uiDesigner.libraries.LibraryManager;
-import com.intellij.flex.uiDesigner.plaf.EditorTabBarRendererManager;
 import com.intellij.flex.uiDesigner.plaf.aqua.IdeaAquaLookAndFeel;
-import com.intellij.flex.uiDesigner.ui.ElementTreeBarManager;
 
 import flash.desktop.NativeApplication;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
+import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.InvokeEvent;
 import flash.events.UncaughtErrorEvent;
@@ -26,62 +14,47 @@ import flash.filesystem.File;
 
 import org.flyti.plexus.PlexusContainer;
 import org.flyti.plexus.PlexusManager;
+import org.jetbrains.ApplicationManager;
 
-public class Main extends MainWindowedApplication {
+public class Main extends Sprite {
   private var invoked:Boolean;
   // cannot load until all plugins are loaded — plugin can override a component used to.
   private var loadedPluginCounter:int;
-
+ 
   private var port:int;
 
-  config::fdbWorkaround {
-    // Burn in hell, Adobe
-    ElementManager;
-    ElementTreeBarManager;
-    MainFocusManager;
-    DocumentManagerImpl;
-    SegmentedControl;
-    InteractiveBorderRendererManager;
-    TextRendererManager;
-    EditorTabBarRendererManager;
-    ListHorizontalLayout;
-    SingleSelectionBar;
-    Container;
-    SocketManagerImpl;
-    DefaultSocketDataHandler;
-    Stylesheet;
-    Library;
-    LibraryManager;
-    AssetContainerClassPool;
-    LocalStyleHolder;
+  public function Main() {
+    init();
   }
 
-  override protected function initializeMaps():void {
+  private function init():void {
     loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, uncaughtErrorHandler);
-
+ 
     new ComponentSet();
     NativeApplication.nativeApplication.addEventListener(InvokeEvent.INVOKE, invokeHandler);
-
-    laf = new IdeaAquaLookAndFeel();
   }
-
-  private static function uncaughtErrorHandler(event:UncaughtErrorEvent):void {
+ 
+  private function uncaughtErrorHandler(event:UncaughtErrorEvent):void {
     var stackTrace:String = event.error.getStackTrace();
     trace(stackTrace);
-    FileUtil.writeString(File.applicationDirectory.nativePath + "/startup-error.txt", stackTrace);
-
+    Files.writeString(File.applicationDirectory.nativePath + "/startup-error.txt", stackTrace);
+ 
     event.preventDefault();
     event.stopImmediatePropagation();
-  }
 
+    NativeApplication.nativeApplication.removeEventListener(InvokeEvent.INVOKE, invokeHandler);
+  }
+ 
   private function invokeHandler(event:InvokeEvent):void {
     if (invoked) {
       return;
     }
-
+ 
     invoked = true;
     NativeApplication.nativeApplication.removeEventListener(InvokeEvent.INVOKE, invokeHandler);
 
+    ApplicationManager.instance.laf = new IdeaAquaLookAndFeel();
+ 
     var deferredConnect:Boolean;
     var arguments:Array = event.arguments;
     if (arguments.length > 1) {
@@ -93,41 +66,41 @@ public class Main extends MainWindowedApplication {
             deferredConnect = true;
             loadPlugin(value);
             break;
-
+ 
           default:
             throw new ArgumentError("unknown app parameter: " + key);
         }
       }
     }
-
+ 
     port = arguments[0];
     if (!deferredConnect) {
       connect();
     }
   }
-
+ 
   private function connect():void {
     var container:PlexusContainer = PlexusManager.instance.container;
     // cache StringRegistry instance
     StringRegistry(container.lookup(StringRegistry));
-
+ 
     var socketManager:SocketManager = SocketManager(container.lookup(SocketManager));
     socketManager.addSocketDataHandler(0, SocketDataHandler(container.lookup(DefaultSocketDataHandler)));
     socketManager.connect("localhost", port, 0);
-
+ 
     UncaughtErrorManager.instance.listen(parent.loaderInfo);
     // hello, it is flash. we must listen our loaderInfo.uncaughtErrorEvents for errors in plugin swf (as example, our test plugin)
     UncaughtErrorManager.instance.listen(loaderInfo);
     loaderInfo.uncaughtErrorEvents.removeEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, uncaughtErrorHandler);
   }
-
+ 
   private function loadPlugin(path:String):void {
     loadedPluginCounter++;
     var loader:Loader = new Loader();
     loader.contentLoaderInfo.addEventListener(Event.INIT, loadInitHandler);
-    loader.loadBytes(FileUtil.readBytes(path), LoaderContentParentAdobePleaseDoNextStep.create());
+    loader.loadBytes(Files.readBytes(path), LoaderContentParentAdobePleaseDoNextStep.create());
   }
-
+ 
   private function loadInitHandler(event:Event):void {
     var loaderInfo:LoaderInfo = LoaderInfo(event.currentTarget);
     loaderInfo.removeEventListener(event.type, loadInitHandler);

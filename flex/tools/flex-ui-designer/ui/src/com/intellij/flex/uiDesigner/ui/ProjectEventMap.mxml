@@ -1,9 +1,8 @@
 <LocalEventMap xmlns="plexus" xmlns:fx="http://ns.adobe.com/mxml/2009">
   <fx:Script><![CDATA[
     import cocoa.SegmentedControl;
-    import cocoa.tabView.TabView;
+    import cocoa.toolWindow.ToolWindowManager;
 
-    import com.intellij.flex.uiDesigner.DocumentFactoryManager;
     import com.intellij.flex.uiDesigner.DocumentManager;
     import com.intellij.flex.uiDesigner.DocumentManagerImpl;
     import com.intellij.flex.uiDesigner.ElementManager;
@@ -20,6 +19,7 @@
 
   <components>
     <Component role="{ElementManager}"/>
+    <Component role="{ToolWindowManager}"/>
     <Component role="{ElementTreeBarManager}">
       <Requirement role="{ElementManager}"/>
     </Component>
@@ -50,14 +50,6 @@
 
     <Injectors target="{PropertyInspector}">
       <PropertyInjector source="{ElementManager}" sourceKey="element"/>
-    </Injectors>
-
-    <Injectors target="{ProjectView}">
-      <PropertyInjector source="{DocumentFactoryManager}" targetKey="documentFactoryManager"/>
-    </Injectors>
-    
-    <Injectors target="{TabView}" targetId="editorTabView">
-      <PropertyInjector sourceKey="selectedItem.document" target="{DocumentManager}"/>
     </Injectors>
     
     <Injectors target="{ElementToolContainer}">

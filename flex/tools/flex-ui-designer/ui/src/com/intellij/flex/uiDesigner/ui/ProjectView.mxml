@@ -4,10 +4,18 @@
     import cocoa.pane.PaneItem;
     import cocoa.pane.PaneViewDataSource;
     import cocoa.plaf.LookAndFeel;
+    import cocoa.resources.ResourceMetadata;
+    import cocoa.toolWindow.ToolWindowManager;
 
     import com.intellij.flex.uiDesigner.Document;
     import com.intellij.flex.uiDesigner.DocumentFactoryManager;
     import com.intellij.flex.uiDesigner.DocumentManager;
+    import com.intellij.flex.uiDesigner.PlatformDataKeys;
+    import com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector.PropertyInspector;
+
+    import net.miginfocom.layout.MigConstants;
+
+    import org.jetbrains.actionSystem.DataManager;
 
     [ResourceBundle("Designer")]
 
@@ -19,6 +27,10 @@
       editorTabView.selectionChanged.add(editorTabSelectionChanged);
 
       editorPanes.itemRemoved.add(editorPaneRemoved);
+
+      var toolWindowManager:ToolWindowManager = ToolWindowManager(PlatformDataKeys.PROJECT.getData(DataManager.instance.getDataContext(displayObjectContainer.stage)).getComponent(ToolWindowManager));
+      toolWindowManager.container = this;
+      toolWindowManager.registerToolWindow(new PaneItem(new ResourceMetadata("style", "Designer"), new ClassFactory(PropertyInspector)), MigConstants.RIGHT);
 
       super.addToSuperview(displayObjectContainer, laf, superview);
     }
@@ -63,8 +75,8 @@
 
   <layout>
     <MigLayout>
-      <columnConstraints>[25][0][grow][0][25]</columnConstraints>
-      <rowConstraints>[][grow][]</rowConstraints>
+      <columnConstraints>[grow][grow][grow][grow][grow]</columnConstraints>
+      <rowConstraints>[grow][grow][grow]</rowConstraints>
     </MigLayout>
   </layout>
   <TabView id="editorTabView" lafSubkey="ProjectView" c="cell 2 1, grow, id editorTabView">

@@ -16,6 +16,8 @@ import flash.utils.ByteArray;
 import flash.utils.IDataInput;
 import flash.utils.describeType;
 
+import org.jetbrains.ApplicationManager;
+
 registerClassAlias("lsh", LocalStyleHolder);
 
 // SocketDataHandler is extension component (i.e. DefaultSocketDataHandler as role, lookup must be container.lookup(DefaultSocketDataHandler))
@@ -102,7 +104,11 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     if (input.readBoolean()) {
       projectWindowBounds = new Rectangle(input.readUnsignedShort(), input.readUnsignedShort(), input.readUnsignedShort(), input.readUnsignedShort());
     }
-    projectManager.open(project, new DocumentWindow(new ProjectView(), project.map, projectWindowBounds, new MainFocusManager()));
+    var projectView:ProjectView = new ProjectView();
+    projectView.laf = ApplicationManager.instance.laf;
+    var documentWindow:DocumentWindow = new DocumentWindow(projectView, new MainFocusManager());
+    projectManager.open(project, documentWindow);
+    documentWindow.init(project.map, projectWindowBounds);
   }
 
   private function registerModule(input:IDataInput):void {
