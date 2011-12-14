@@ -12,6 +12,7 @@ import com.intellij.idea.LoggerFactory;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
+import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
 import com.intellij.lang.javascript.flex.flexunit.*;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
@@ -205,8 +206,10 @@ public class FlexDebugProcess extends XDebugProcess {
 
       switch (bc.getTargetPlatform()) {
         case Web:
-          // todo support wrapper
-          final String urlOrPath = appParams.isLaunchUrl() ? appParams.getUrl() : bc.getOutputFilePath();
+          final String urlOrPath = appParams.isLaunchUrl() ? appParams.getUrl()
+                                                           : bc.isUseHtmlWrapper()
+                                                             ? bc.getOutputFolder() + "/" + FlexCompilationUtils.getWrapperFileName(bc)
+                                                             : bc.getOutputFilePath();
           sendCommand(new LaunchBrowserCommand(urlOrPath, appParams.getLauncherParameters()));
           break;
         case Desktop:

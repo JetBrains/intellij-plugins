@@ -5,12 +5,16 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.facet.FacetManager;
 import com.intellij.lang.javascript.flex.*;
+import com.intellij.lang.javascript.flex.actions.htmlwrapper.CreateHtmlWrapperAction;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
-import com.intellij.lang.javascript.flex.run.*;
+import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
+import com.intellij.lang.javascript.flex.run.FlexIdeRunConfiguration;
+import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
+import com.intellij.lang.javascript.flex.run.RunMainClassPrecompileTask;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkAdditionalData;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.application.ApplicationManager;
@@ -533,51 +537,70 @@ public class FlexCompiler implements SourceProcessingCompiler {
     }
   }
 
-  private static void validateConfiguration(final String moduleName, final FlexIdeBuildConfiguration config) throws ConfigurationException {
-    assert !config.isSkipCompile();
-    final BuildConfigurationNature nature = config.getNature();
+  private static void validateConfiguration(final String moduleName, final FlexIdeBuildConfiguration bc) throws ConfigurationException {
+    assert !bc.isSkipCompile();
+    final BuildConfigurationNature nature = bc.getNature();
 
-    final SdkEntry sdkEntry = config.getDependencies().getSdkEntry();
+    final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
     final Library sdkLib = sdkEntry == null ? null : sdkEntry.findLibrary();
     if (sdkLib == null) {
-      throw new ConfigurationException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", config.getName(), moduleName));
+      throw new ConfigurationException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
     }
 
-    if (!nature.isLib() && config.getMainClass().isEmpty()) {
-      throw new ConfigurationException(FlexBundle.message("main.class.not.set.for.bc.0.of.module.1", config.getName(), moduleName));
+    if (!nature.isLib() && bc.getMainClass().isEmpty()) {
+      throw new ConfigurationException(FlexBundle.message("main.class.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
       // real main class validation is done later in CompilerConfigGenerator
     }
 
-    if (config.getOutputFileName().isEmpty()) {
-      throw new ConfigurationException(FlexBundle.message("output.file.name.not.set.for.bc.0.of.module.1", config.getName(), moduleName));
+    if (bc.getOutputFileName().isEmpty()) {
+      throw new ConfigurationException(FlexBundle.message("output.file.name.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
     }
 
-    if (config.getOutputFolder().isEmpty()) {
-      throw new ConfigurationException(FlexBundle.message("output.folder.not.set.for.bc.0.of.module.1", config.getName(), moduleName));
+    if (!bc.getOutputFileName().toLowerCase().endsWith(".swf")) {
+      throw new ConfigurationException(FlexBundle.message("output.file.name.must.have.swf.extension.for.bc.0.of.module.1", bc.getName(), moduleName));
     }
 
-    if (nature.isWebPlatform() && nature.isApp() && config.isUseHtmlWrapper()) {
-      if (config.getWrapperTemplatePath().isEmpty()) {
-        throw new ConfigurationException(FlexBundle.message("html.template.folder.not.set.for.bc.0.of.module.1", config.getName(), moduleName));
+    if (bc.getOutputFolder().isEmpty()) {
+      throw new ConfigurationException(FlexBundle.message("output.folder.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
+    }
+
+    if (nature.isWebPlatform() && nature.isApp() && bc.isUseHtmlWrapper()) {
+      if (bc.getWrapperTemplatePath().isEmpty()) {
+        throw new ConfigurationException(FlexBundle.message("html.template.folder.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
       }
-      final VirtualFile wrapperTemplateDir = LocalFileSystem.getInstance().findFileByPath(config.getWrapperTemplatePath());
-      if (wrapperTemplateDir == null || !wrapperTemplateDir.isDirectory()) {
-        throw new ConfigurationException(FlexBundle.message("html.template.folder.not.found.for.bc.0.of.module.1.2", config.getName(), moduleName,config.getWrapperTemplatePath()));
-        // todo check that it contains wrapper template
+      final VirtualFile templateDir = LocalFileSystem.getInstance().findFileByPath(bc.getWrapperTemplatePath());
+      if (templateDir == null || !templateDir.isDirectory()) {
+        throw new ConfigurationException(FlexBundle.message("html.template.folder.not.found.for.bc.0.of.module.1.2",
+                                                            bc.getName(), moduleName, bc.getWrapperTemplatePath()));
+      }
+      final VirtualFile templateFile = templateDir.findChild(CreateHtmlWrapperAction.HTML_WRAPPER_TEMPLATE_FILE_NAME);
+      if (templateFile == null) {
+        throw new ConfigurationException(
+          FlexBundle.message("no.index.template.html.file.bc.0.of.module.1.2", bc.getName(), moduleName, bc.getWrapperTemplatePath()));
+      }
+
+      try {
+        if (!VfsUtil.loadText(templateFile).contains(FlexCompilationUtils.SWF_MACRO)) {
+          throw new ConfigurationException(FlexBundle.message("no.swf.macro.in.template.bc.0.of.module.1.2", bc.getName(), moduleName,
+                                                              FileUtil.toSystemDependentName(templateFile.getPath())));
+        }
+      }
+      catch (IOException e) {
+        throw new ConfigurationException(FlexBundle.message("failed.to.load.file", templateFile.getPath(), e.getMessage()));
       }
     }
 
     if (nature.isMobilePlatform() && nature.isApp()) {
-      if (config.getAndroidPackagingOptions().isEnabled() && config.getAndroidPackagingOptions().getPackageFileName().isEmpty()) {
-        throw new ConfigurationException(FlexBundle.message("android.package.not.set.for.bc.0.of.module.1", config.getName(), moduleName));
+      if (bc.getAndroidPackagingOptions().isEnabled() && bc.getAndroidPackagingOptions().getPackageFileName().isEmpty()) {
+        throw new ConfigurationException(FlexBundle.message("android.package.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
       }
-      if (config.getIosPackagingOptions().isEnabled() && config.getIosPackagingOptions().getPackageFileName().isEmpty()) {
+      if (bc.getIosPackagingOptions().isEnabled() && bc.getIosPackagingOptions().getPackageFileName().isEmpty()) {
         throw new ConfigurationException(
-          FlexBundle.message("ios.package.not.set.for.bc.0.of.module.1", config.getName(), moduleName));
+          FlexBundle.message("ios.package.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
       }
     }
 
-    checkDependencies(moduleName, config);
+    checkDependencies(moduleName, bc);
   }
 
   private static void checkDependencies(final String moduleName, final FlexIdeBuildConfiguration config) throws ConfigurationException {

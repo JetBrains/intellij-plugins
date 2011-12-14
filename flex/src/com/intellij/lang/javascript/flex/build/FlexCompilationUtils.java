@@ -1,9 +1,11 @@
 package com.intellij.lang.javascript.flex.build;
 
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airdescriptor.AirDescriptorParameters;
 import com.intellij.lang.javascript.flex.actions.airdescriptor.CreateAirDescriptorAction;
+import com.intellij.lang.javascript.flex.actions.htmlwrapper.CreateHtmlWrapperAction;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
@@ -42,6 +44,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 public class FlexCompilationUtils {
+
+  public static final String SWF_MACRO = "${swf}";
+  private static final String[] MACROS_TO_REPLACE =
+    {SWF_MACRO, "${title}", "${application}", "${bgcolor}", "${width}", "${height}", "${version_major}", "${version_minor}",
+      "${version_revision}"};
+
   private FlexCompilationUtils() {
   }
 
@@ -293,29 +301,108 @@ public class FlexCompilationUtils {
     }
   }
 
-  public static void performPostCompileActions(final @NotNull FlexIdeBuildConfiguration config) throws FlexCompilerException {
-    switch (config.getTargetPlatform()) {
+  public static void performPostCompileActions(final @NotNull FlexIdeBuildConfiguration bc) throws FlexCompilerException {
+    switch (bc.getTargetPlatform()) {
       case Web:
-        if (config.isUseHtmlWrapper()) {
-          // todo copy to out and replace {swf}
+        if (bc.isUseHtmlWrapper()) {
+          handleHtmlWrapper(bc);
         }
         break;
       case Desktop:
-        handleAirDescriptor(config, config.getAirDesktopPackagingOptions());
+        handleAirDescriptor(bc, bc.getAirDesktopPackagingOptions());
         break;
       case Mobile:
-        if (config.getAndroidPackagingOptions().isEnabled()) {
-          handleAirDescriptor(config, config.getAndroidPackagingOptions());
+        if (bc.getAndroidPackagingOptions().isEnabled()) {
+          handleAirDescriptor(bc, bc.getAndroidPackagingOptions());
         }
-        if (config.getIosPackagingOptions().isEnabled()) {
-          handleAirDescriptor(config, config.getIosPackagingOptions());
+        if (bc.getIosPackagingOptions().isEnabled()) {
+          handleAirDescriptor(bc, bc.getIosPackagingOptions());
         }
         break;
     }
   }
 
-  private static void handleAirDescriptor(final FlexIdeBuildConfiguration config, final AirPackagingOptions packagingOptions)
-    throws FlexCompilerException {
+  private static void handleHtmlWrapper(final FlexIdeBuildConfiguration bc) throws FlexCompilerException {
+    final VirtualFile templateDir = LocalFileSystem.getInstance().findFileByPath(bc.getWrapperTemplatePath());
+    if (templateDir == null || !templateDir.isDirectory()) {
+      throw new FlexCompilerException(FlexBundle.message("html.wrapper.dir.not.found", bc.getWrapperTemplatePath()));
+    }
+    final VirtualFile templateFile = templateDir.findChild(CreateHtmlWrapperAction.HTML_WRAPPER_TEMPLATE_FILE_NAME);
+    if (templateFile == null) {
+      throw new FlexCompilerException(FlexBundle.message("no.index.template.html.file", bc.getWrapperTemplatePath()));
+    }
+
+    final VirtualFile outputDir = LocalFileSystem.getInstance().findFileByPath(bc.getOutputFolder());
+    if (outputDir == null || !outputDir.isDirectory()) {
+      throw new FlexCompilerException(FlexBundle.message("output.folder.does.not.exist", bc.getOutputFolder()));
+    }
+
+    final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
+    ApplicationManager.getApplication().invokeAndWait(new Runnable() {
+      public void run() {
+        exceptionRef.set(ApplicationManager.getApplication().runWriteAction(new NullableComputable<FlexCompilerException>() {
+          public FlexCompilerException compute() {
+            for (VirtualFile file : templateDir.getChildren()) {
+              if (file == templateFile) {
+                final String wrapperText;
+                try {
+                  wrapperText = VfsUtil.loadText(file);
+                }
+                catch (IOException e) {
+                  return new FlexCompilerException(FlexBundle.message("failed.to.load.file", file.getPath(), e.getMessage()));
+                }
+
+                if (!wrapperText.contains(SWF_MACRO)) {
+                  return new FlexCompilerException(FlexBundle.message("no.swf.macro", FileUtil.toSystemDependentName(file.getPath())));
+                }
+
+                final String fixedText = replaceMacros(wrapperText, FileUtil.getNameWithoutExtension(bc.getOutputFileName()),
+                                                       bc.getDependencies().getTargetPlayer());
+                final String wrapperFileName = getWrapperFileName(bc);
+                try {
+                  FlexUtils.addFileWithContent(wrapperFileName, fixedText, outputDir);
+                }
+                catch (IOException e) {
+                  return new FlexCompilerException(
+                    FlexBundle.message("failed.to.create.file", wrapperFileName, outputDir.getPath(), e.getMessage()));
+                }
+              }
+              else {
+                try {
+                  file.copy(this, outputDir, file.getName());
+                }
+                catch (IOException e) {
+                  return new FlexCompilerException(FlexBundle.message("failed.to.copy.file", file.getName(), templateDir.getPath(),
+                                                                      outputDir.getPath(), e.getMessage()));
+                }
+              }
+            }
+            return null;
+          }
+        }));
+      }
+    }, ModalityState.any());
+
+    if (!exceptionRef.isNull()) {
+      throw exceptionRef.get();
+    }
+  }
+
+  private static String replaceMacros(final String wrapperText, final String outputFileName, final String targetPlayer) {
+    final String[] versionParts = targetPlayer.split("[.]");
+    final String major = versionParts.length >= 1 ? versionParts[0] : "0";
+    final String minor = versionParts.length >= 2 ? versionParts[1] : "0";
+    final String revision = versionParts.length >= 3 ? versionParts[2] : "0";
+    final String[] replacement = {outputFileName, outputFileName, outputFileName, "#ffffff", "100%", "100%", major, minor, revision};
+    return StringUtil.replace(wrapperText, MACROS_TO_REPLACE, replacement);
+  }
+
+  public static String getWrapperFileName(final FlexIdeBuildConfiguration bc) {
+    return FileUtil.getNameWithoutExtension(bc.getOutputFileName()) + ".html";
+  }
+
+  private static void handleAirDescriptor(final FlexIdeBuildConfiguration config,
+                                          final AirPackagingOptions packagingOptions) throws FlexCompilerException {
     if (packagingOptions.isUseGeneratedDescriptor()) {
       final boolean android = packagingOptions instanceof AndroidPackagingOptions;
       final String predefinedAppId =
@@ -329,9 +416,8 @@ public class FlexCompilationUtils {
 
   private static void generateAirDescriptor(final FlexIdeBuildConfiguration config,
                                             final String descriptorFileName,
-                                            final boolean addAndroidPermissions, 
-                                            final @Nullable String predefinedAppId)
-    throws FlexCompilerException {
+                                            final boolean addAndroidPermissions,
+                                            final @Nullable String predefinedAppId) throws FlexCompilerException {
     final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
 
     ApplicationManager.getApplication().invokeAndWait(new Runnable() {
@@ -380,7 +466,6 @@ public class FlexCompilationUtils {
 
     final VirtualFile outputFolder = LocalFileSystem.getInstance().findFileByPath(config.getOutputFolder());
     assert outputFolder != null;
-
 
     final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
 

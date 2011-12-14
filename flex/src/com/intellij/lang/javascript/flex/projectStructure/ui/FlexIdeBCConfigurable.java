@@ -17,6 +17,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Condition;
@@ -128,6 +129,12 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myWrapperTemplateTextWithBrowse.addBrowseFolderListener(title, description, module.getProject(),
                                                             FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
+    myCreateHtmlTemplateButton.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        Messages.showInfoMessage("This functionality is not implemented yet", "Create HTML Wrapper Template");
+      }
+    });
+
     myOptimizeForCombo.setModel(new CollectionComboBoxModel(Arrays.asList(""), ""));
     myOptimizeForCombo.setRenderer(new ListCellRendererWrapper(myOptimizeForCombo.getRenderer()) {
       @Override
@@ -200,9 +207,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
       myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Web && myOutputTypeCombo.getSelectedItem() == OutputType.Application);
     myWrapperFolderLabel.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
     myWrapperTemplateTextWithBrowse.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
-
-    // todo support
-    myHtmlWrapperPanel.setVisible(false);
+    myCreateHtmlTemplateButton.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
   }
 
   public String getTreeNodeText() {

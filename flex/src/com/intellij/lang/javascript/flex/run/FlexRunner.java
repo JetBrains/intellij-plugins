@@ -18,6 +18,7 @@ import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
+import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
 import com.intellij.lang.javascript.flex.flexunit.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.openapi.application.ApplicationManager;
@@ -42,16 +43,18 @@ import java.lang.reflect.InvocationTargetException;
 public class FlexRunner extends FlexBaseRunner {
 
   protected RunContentDescriptor launchFlexIdeConfig(final Module module,
-                                                     final FlexIdeBuildConfiguration config,
+                                                     final FlexIdeBuildConfiguration bc,
                                                      final FlexIdeRunnerParameters params,
                                                      final Executor executor,
                                                      final RunProfileState state,
                                                      final RunContentDescriptor contentToReuse,
                                                      final ExecutionEnvironment environment) throws ExecutionException {
-    switch (config.getTargetPlatform()) {
+    switch (bc.getTargetPlatform()) {
       case Web:
-        // todo handle html wrapper!
-        final String urlOrPath = params.isLaunchUrl() ? params.getUrl() : config.getOutputFilePath();
+        final String urlOrPath = params.isLaunchUrl() ? params.getUrl()
+                                                      : bc.isUseHtmlWrapper()
+                                                        ? bc.getOutputFolder() + "/" + FlexCompilationUtils.getWrapperFileName(bc)
+                                                        : bc.getOutputFilePath();
         launchWithSelectedApplication(urlOrPath, params.getLauncherParameters());
         break;
       case Desktop:
@@ -61,9 +64,9 @@ public class FlexRunner extends FlexBaseRunner {
           case Emulator:
             return standardLaunch(module.getProject(), executor, state, contentToReuse, environment);
           case AndroidDevice:
-            final String applicationId = getApplicationId(getAirDescriptorPath(config, config.getAndroidPackagingOptions()));
-            final Sdk sdk = FlexUtils.createFlexSdkWrapper(config);
-            if (packAndInstallToAndroidDevice(module, sdk, createAndroidPackageParams(sdk, config, params, false), applicationId, false)) {
+            final String applicationId = getApplicationId(getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
+            final Sdk sdk = FlexUtils.createFlexSdkWrapper(bc);
+            if (packAndInstallToAndroidDevice(module, sdk, createAndroidPackageParams(sdk, bc, params, false), applicationId, false)) {
               launchOnAndroidDevice(module.getProject(), sdk, applicationId, false);
             }
             return null;
