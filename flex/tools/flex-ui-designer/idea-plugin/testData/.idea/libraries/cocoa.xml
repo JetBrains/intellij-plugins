@@ -2,7 +2,7 @@
   <library name="cocoa" type="flex">
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/org/flyti/foundation/1.2.5/foundation-1.2.5.swc!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/migLayout/core/4.3-SNAPSHOT/core-4.3-SNAPSHOT.swc!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/miglayout/miglayout-core/4.3-SNAPSHOT/miglayout-core-4.3-SNAPSHOT.swc!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/flyti/cocoa/cocoa/2.0-SNAPSHOT/cocoa-2.0-SNAPSHOT.swc!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/flyti/cocoa/acocoa/2.0-SNAPSHOT/acocoa-2.0-SNAPSHOT.swc!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/flyti/plexus/1.4/plexus-1.4.swc!/" />
@@ -10,7 +10,7 @@
     <JAVADOC />
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/org/flyti/foundation/1.2.5/foundation-1.2.5-sources.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/migLayout/core/4.3-SNAPSHOT/core-4.3-SNAPSHOT-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/miglayout/miglayout-core/4.3-SNAPSHOT/miglayout-core-4.3-SNAPSHOT-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/flyti/cocoa/cocoa/2.0-SNAPSHOT/cocoa-2.0-SNAPSHOT-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/flyti/cocoa/acocoa/2.0-SNAPSHOT/acocoa-2.0-SNAPSHOT-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/flyti/plexus/1.4/plexus-1.4-sources.jar!/" />

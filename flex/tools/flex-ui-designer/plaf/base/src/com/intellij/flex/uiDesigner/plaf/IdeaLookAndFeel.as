@@ -25,9 +25,11 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
     super.initialize();
 
     // idea UI bug, so, we use our own insets, 5 instead of 4 px bottom (and 20 px height instead of 19 px) (otherwise, text bottom edge close to border bottom edge)
-    data["ToolWindowManager.tabBar.rendererManager"] = new RendererManagerFactory(InteractiveBorderRendererManager, this, "ToolWindowManager.tabBar");
-    data["ToolWindowManager.tabBar.textLineInsets"] = new TextLineInsets(TextRotation.ROTATE_90, 5, 9, 9);
-    data["ToolWindowManager.tabBar.b"] = new StatefulBorderImpl(new <Border>[RectangularBorder.createRounded(0xf9f5f2, 0x929292, 4), LinearGradientBorder.createHRounded([0xc7c6c4, 0xf5f4f4], 0, 4)]);
+    data["ToolWindowManager.tabBar.rendererManager"] = new RendererManagerFactory(InteractiveBorderRendererManager, this, "ToolWindowManager.tabBar.item");
+    data["ToolWindowManager.tabBar.item.textLineInsets"] = new TextLineInsets(TextRotation.ROTATE_90, 5, 9, 9);
+    data["ToolWindowManager.tabBar.item.b"] = new StatefulBorderImpl(new <Border>[RectangularBorder.create(NaN, 0xb4b4b4), LinearGradientBorder.createHRounded([0xc7c6c4, 0xf5f4f4], 0, 4)]);
+    data["ToolWindowManager.tabBar.b"] = new ToolWindowBarBorder();
+    data["ToolWindowManager.tabBar.layout"] = new ListLayoutFactory(20, 6, false);
 
     data["ElementTreeBar.rendererManager"] = new ElementTreeBarRMF();
     data["ElementTreeBar.interactor"] = data["SegmentedControl.interactor"];
@@ -55,7 +57,11 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
 
 import cocoa.ClassFactory;
 import cocoa.Insets;
+import cocoa.View;
+import cocoa.border.AbstractBorder;
 import cocoa.renderer.InteractiveTextRendererManager;
+
+import flash.display.Graphics;
 
 final class ElementTreeBarRMF extends ClassFactory {
   function ElementTreeBarRMF() {
@@ -74,5 +80,25 @@ class ElementTreeBarRM extends InteractiveTextRendererManager {
 
   override public function getItemIndexAt(x:Number, y:Number):int {
     return 0;
+  }
+}
+
+final class ToolWindowBarBorder extends AbstractBorder {
+  public function ToolWindowBarBorder() {
+    _contentInsets = new Insets(3, 1, 2, 1);
+  }
+
+  override public function draw(g:Graphics, w:Number, h:Number, x:Number = 0, y:Number = 0, view:View = null):void {
+    g.lineStyle(1, 0x999999);
+    g.beginFill(0xe1e1e1);
+    g.moveTo(x, y);
+    g.lineTo(x, y + h);
+    
+    g.lineStyle();
+    g.lineTo(x + w, y + h);
+    g.lineTo(x + w,  y);
+    g.lineTo(x, y);
+
+    g.endFill();
   }
 }

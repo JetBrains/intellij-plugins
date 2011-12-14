@@ -59,12 +59,6 @@
     }
     ]]></fx:Script>
 
-  <layout>
-    <MigLayout>
-      <columnConstraints>[grow][grow][grow][grow][grow]</columnConstraints>
-      <rowConstraints>[grow][grow][grow]</rowConstraints>
-    </MigLayout>
-  </layout>
   <TabView id="editorTabView" lafSubkey="ProjectView" c="cell 2 1, grow, id editorTabView">
     <toolbar>
       <Toolbar id="editorToolbar" lafSubkey="Editor" small="true">
@@ -74,5 +68,5 @@
     </toolbar>
   </TabView>
 
-  <tools:ElementToolContainer id="elementToolContainer" c="external"/>
+  <tools:ElementToolContainer id="elementToolContainer" c="cell 2 1, external"/>
 </Container>

@@ -36,8 +36,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.jetbrains.migLayout</groupId>
-      <artifactId>core</artifactId>
+      <groupId>org.jetbrains.miglayout</groupId>
+      <artifactId>miglayout-core</artifactId>
       <type>swc</type>
       <version>4.3-SNAPSHOT</version>
     </dependency>

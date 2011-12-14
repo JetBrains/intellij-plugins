@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner {
 import cocoa.ClassFactory;
 import cocoa.DocumentWindow;
 import cocoa.pane.PaneItem;
-import cocoa.resources.ResourceMetadata;
 import cocoa.toolWindow.ToolWindowManager;
 
 import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
