@@ -25,8 +25,8 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
     super.initialize();
 
     // idea UI bug, so, we use our own insets, 5 instead of 4 px bottom (and 20 px height instead of 19 px) (otherwise, text bottom edge close to border bottom edge)
-    data["ToolWindowManager.tabBar.rendererManager"] = new RendererManagerFactory(InteractiveBorderRendererManager, this, "ToolWindowManager.tabBar.item");
-    data["ToolWindowManager.tabBar.item.textLineInsets"] = new TextLineInsets(TextRotation.ROTATE_90, 5, 9, 9);
+    data["ToolWindowManager.tabBar.rendererManager"] = new RendererManagerFactory(InteractiveBorderRendererManager, createPanelLookAndFeel(), "ToolWindowManager.tabBar.item");
+    data["ToolWindowManager.tabBar.item.textLineInsets"] = new TextLineInsets(TextRotation.ROTATE_90, 6, 8, 8);
     data["ToolWindowManager.tabBar.item.b"] = new StatefulBorderImpl(new <Border>[RectangularBorder.create(NaN, 0xb4b4b4), LinearGradientBorder.createHRounded([0xc7c6c4, 0xf5f4f4], 0, 4)]);
     data["ToolWindowManager.tabBar.b"] = new ToolWindowBarBorder();
     data["ToolWindowManager.tabBar.layout"] = new ListLayoutFactory(20, 6, false);

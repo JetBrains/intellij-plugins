@@ -5,7 +5,6 @@ import cocoa.Panel;
 import cocoa.SkinnableView;
 import cocoa.Toolbar;
 import cocoa.View;
-import cocoa.plaf.LookAndFeelProvider;
 import cocoa.plaf.TextFormatId;
 import cocoa.plaf.WindowSkin;
 import cocoa.plaf.aqua.AquaLookAndFeel;
@@ -43,7 +42,8 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
   }
 
   override public function attach(component:SkinnableView):void {
-    LookAndFeelProvider(component).laf = AquaLookAndFeel(superview.laf).createPanelLookAndFeel();
+    _laf = AquaLookAndFeel(laf).createPanelLookAndFeel();
+    Panel(component).laf = _laf;
     super.attach(component);
   }
 
