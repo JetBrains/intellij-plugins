@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector {
 import cocoa.ListView;
 import cocoa.Panel;
+import cocoa.View;
 import cocoa.layout.ListVerticalLayout;
 import cocoa.pane.PaneItem;
 import cocoa.pane.PaneViewDataSource;
@@ -9,7 +10,7 @@ import cocoa.renderer.PaneRendererManager;
 import com.intellij.flex.uiDesigner.ui.CustomTextFormatId;
 
 public class PropertyInspector extends Panel {
-  private var dataSource:PaneViewDataSource;
+  private var dataSource:PaneViewDataSource = new PaneViewDataSource((source = new Vector.<PaneItem>()));
   private var source:Vector.<PaneItem>;
  
   private var otherPropertiesPane:PaneItem;
@@ -17,23 +18,26 @@ public class PropertyInspector extends Panel {
   public function set element(value:Object):void {
     updateData(value);
   }
- 
-  override protected function skinAttached():void {
-    dataSource = new PaneViewDataSource((source = new Vector.<PaneItem>()));
- 
+
+  override public function get contentView():View {
+    var contentView:View = super.contentView;
+    if (contentView != null) {
+      return contentView;
+    }
+
     var listView:ListView = new ListView();
     listView.dataSource = dataSource;
+    //noinspection UnnecessaryLocalVariableJS
     var layout:ListVerticalLayout = new ListVerticalLayout();
     listView.layout = layout;
     listView.rendererManager = new PaneRendererManager(laf.getTextFormat(CustomTextFormatId.SIDE_PANE_GROUP_ITEM_LABEL), laf.getBorder("GroupItemRenderer.b"), laf);
- 
+
     //var scrollView:ScrollView = new ScrollView();
     //scrollView.documentView = listView;
     //scrollView.horizontalScrollPolicy = ScrollPolicy.OFF;
- 
-    contentView = listView;
- 
-    super.skinAttached();
+
+    this.contentView = listView;
+    return listView;
   }
  
   protected function updateData(element:Object):void {
@@ -47,10 +51,9 @@ public class PropertyInspector extends Panel {
     }
     else {
       emptyText = null;
+      doUpdateData(element);
+      dataSource.reset.dispatch();
     }
- 
-    doUpdateData(element);
-    dataSource.reset.dispatch();
   }
  
   protected function doUpdateData(element:Object):void {

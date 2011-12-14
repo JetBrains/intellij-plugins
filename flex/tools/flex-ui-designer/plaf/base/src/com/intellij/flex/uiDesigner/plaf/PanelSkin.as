@@ -36,15 +36,10 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
     _toolbar = value;
   }
 
-  private var _contentView:View;
-  public function set contentView(value:View):void {
-    _contentView = value;
-  }
-
-  override public function attach(component:SkinnableView):void {
+  override public function attach(hostComponent:SkinnableView):void {
     _laf = AquaLookAndFeel(laf).createPanelLookAndFeel();
-    Panel(component).laf = _laf;
-    super.attach(component);
+    Panel(hostComponent).laf = _laf;
+    super.attach(hostComponent);
   }
 
   override protected function doInit():void {
@@ -61,8 +56,9 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
     //  addChild(toolbarSkin);
     //}
 
-    _contentView.addToSuperview(this, laf, this);
-    _contentView.setLocation(contentBorder.contentInsets.left, titleBorder.layoutHeight);
+    var contentView:View = Panel(hostComponent).contentView;
+    contentView.addToSuperview(this, laf, this);
+    contentView.setLocation(contentBorder.contentInsets.left, titleBorder.layoutHeight);
 
     labelHelper.textFormat = laf.getTextFormat(TextFormatId.SYSTEM_HIGHLIGHTED);
 
@@ -75,7 +71,7 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
   //  iconButton.icon = getIcon(iconKey);
   //
   //  var iconSkin:DisplayObject = DisplayObject(iconButton.createView(laf));
-  //  component.uiPartAdded(partKey, iconButton);
+  //  hostComponent.uiPartAdded(partKey, iconButton);
   //
   //  iconSkin.y = 3;
   //  iconSkin.width = 17;
@@ -86,19 +82,19 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
   //}
 
   override public function getMinimumWidth(hHint:int = -1):int {
-    return _contentView.getMinimumWidth() + contentBorder.contentInsets.width;
+    return Panel(hostComponent).contentView.getMinimumWidth() + contentBorder.contentInsets.width;
   }
 
   override public function getMinimumHeight(wHint:int = -1):int {
-    return _contentView.getMaximumHeight() + contentBorder.contentInsets.height;
+    return Panel(hostComponent).contentView.getMaximumHeight() + contentBorder.contentInsets.height;
   }
 
   override public function getPreferredWidth(hHint:int = -1):int {
-    return _contentView.getPreferredWidth() + contentBorder.contentInsets.width;
+    return Panel(hostComponent).contentView.getPreferredWidth() + contentBorder.contentInsets.width;
   }
 
   override public function getPreferredHeight(wHint:int = -1):int {
-    return _contentView.getPreferredHeight() + contentBorder.contentInsets.height;
+    return Panel(hostComponent).contentView.getPreferredHeight() + contentBorder.contentInsets.height;
   }
 
   // todo find normal way
@@ -115,7 +111,7 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
     contentBorder.draw(g, w, h);
     g.lineStyle();
 
-    var panel:Panel = Panel(component);
+    var panel:Panel = Panel(hostComponent);
     const empty:Boolean = panel.emptyText != null;
     if (empty) {
       if (statusText == null) {
@@ -128,7 +124,7 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
       statusText.hide();
     }
 
-    _contentView.visible = !empty;
+    Panel(hostComponent).contentView.visible = !empty;
 
     g.lineStyle();
     titleBorder.draw(g, w, titleBorder.layoutHeight);
@@ -141,7 +137,7 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
       _toolbar.setSize(contentWidth, 20);
     }
     if (!empty) {
-      _contentView.setSize(contentWidth, h - contentBorder.contentInsets.height);
+      Panel(hostComponent).contentView.setSize(contentWidth, h - contentBorder.contentInsets.height);
     }
 
 //    DisplayObject(minimizeButton.skin).x = w - (17 * 2) - 1 - 3;
