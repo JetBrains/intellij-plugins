@@ -97,12 +97,11 @@ public class CreateHtmlWrapperForm {
   }
 
   public void suggestToCreateRunConfiguration(final boolean b) {
-    myCreateRunConfigurationCheckBox.setEnabled(b);
     myCreateRunConfigurationCheckBox.setVisible(b);
   }
 
   public boolean isCreateRunConfigurationSelected(){
-    return myCreateRunConfigurationCheckBox.isVisible() && myCreateRunConfigurationCheckBox.isEnabled();
+    return myCreateRunConfigurationCheckBox.isVisible() && myCreateRunConfigurationCheckBox.isSelected();
   }
 
   public JPanel getMainPanel() {
@@ -435,7 +434,7 @@ public class CreateHtmlWrapperForm {
 
   private static boolean doesWrapperNeedFlashPlayerVersion(final VirtualFile htmlWrapperRootDir) {
     if (htmlWrapperRootDir != null && htmlWrapperRootDir.isDirectory()) {
-      final VirtualFile htmlTemplate = htmlWrapperRootDir.findChild("index.template.html");
+      final VirtualFile htmlTemplate = htmlWrapperRootDir.findChild(CreateHtmlWrapperAction.HTML_WRAPPER_TEMPLATE_FILE_NAME);
       if (htmlTemplate != null) {
         try {
           return VfsUtil.loadText(htmlTemplate).indexOf("${" + CreateHtmlWrapperAction.REQUIRED_FLASH_PLAYER_VERSION_MAJOR + "}") != -1;
