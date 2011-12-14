@@ -9,6 +9,7 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.osmorc.BundleManager;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.manifest.BundleManifest;
@@ -63,6 +64,16 @@ public class MyBundleManager implements BundleManager {
   @Override
   public void reindex(@NotNull final Module module) {
     doReindex(module, true);
+  }
+
+  /**
+   * Allows to manually add manifest holders to the bundle manager. This is intended for tests only. Do not use in production code.
+   *
+   * @param manifestHolder the manifest holder to add.
+   */
+  @TestOnly
+  public void addManifestHolder(@NotNull ManifestHolder manifestHolder) {
+    myBundleCache.updateWith(manifestHolder);
   }
 
   /**
@@ -149,8 +160,12 @@ public class MyBundleManager implements BundleManager {
     }
 
     List<String> requiredBundles = manifest.getRequiredBundles();
+    List<ManifestHolder> allRequiredBundles = new ArrayList<ManifestHolder>();
     for (String requiredBundle : requiredBundles) {
-      ManifestHolder manifestHolder = myBundleCache.whoIsRequiredBundle(requiredBundle);
+      resolveRequiredBundle(requiredBundle, allRequiredBundles);
+    }
+
+    for (ManifestHolder manifestHolder : allRequiredBundles) {
       if (manifestHolder != null) {
         try {
           result.add(manifestHolder.getBoundObject());
@@ -174,6 +189,75 @@ public class MyBundleManager implements BundleManager {
       }
     }
     return result;
+  }
+
+  /**
+   * This method fully resolves a Require-Bundle specification including re-exports and possible amendments by fragments. All resolved
+   * dependencies will be added to the <code>resolvedDependencies</code> list.
+   *
+   * @param requireBundleSpec the spec to resolve
+   * @param resolvedDependencies the resolved dependencies.
+   */
+  private void resolveRequiredBundle(@NotNull String requireBundleSpec,
+                                     @NotNull List<ManifestHolder> resolvedDependencies)  {
+
+    // first get the manifest holder of the required bundle
+    ManifestHolder manifestHolder = myBundleCache.whoIsRequiredBundle(requireBundleSpec);
+    
+    if ( manifestHolder == null ) {
+      // unresolvable, may happen if the user misses some dependencies.
+      return;
+    }
+    
+    if ( resolvedDependencies.contains(manifestHolder)) {
+      // we're done here, we already resolved this dependency
+      return;
+    }
+
+    BundleManifest requireBundleManifest;
+    try {
+      requireBundleManifest = manifestHolder.getBundleManifest();
+    }
+    catch (ManifestHolderDisposedException e) {
+      // ok it's gone. Should rarely happen but in this case there is nothing we can do anymore.
+      return;
+    }
+    
+    
+    if (requireBundleManifest != null) {
+      // its kosher, so add it to the result list.
+      resolvedDependencies.add(manifestHolder);
+
+      // now determine additional dependencies
+      List<String> toResolve = new ArrayList<String>();
+      
+      // -  bundles that are re-exported from the 
+      toResolve.addAll(requireBundleManifest.getReExportedBundles());
+      
+      // - bundles that are re-exported from any fragments
+      Set<ManifestHolder> fragments = myBundleCache.getFragmentsForBundle(manifestHolder);
+
+      // we only want the highest version of each fragment, so filter this out:
+      fragments = BundleCache.getCandidatesWithHighestVersions(fragments);
+
+      for (ManifestHolder fragment : fragments) {
+        BundleManifest manifest = null;
+        try {
+          manifest = fragment.getBundleManifest();
+        }
+        catch (ManifestHolderDisposedException e) {
+          // ok it's gone, ignore it.
+        }
+        if ( manifest != null ) {
+          toResolve.addAll(manifest.getReExportedBundles());
+        }
+      }
+
+      // now recursively resolve these dependencies
+      for (String dependencySpec : toResolve) {
+        resolveRequiredBundle(dependencySpec, resolvedDependencies);
+      }
+    }
   }
 
 

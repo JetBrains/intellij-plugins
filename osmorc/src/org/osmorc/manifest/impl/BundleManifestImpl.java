@@ -162,6 +162,23 @@ public class BundleManifestImpl implements BundleManifest {
     return result;
   }
 
+  @NotNull
+  @Override
+  public List<String> getReExportedBundles() {
+    Header header = myManifestFile.getHeaderByName(REQUIRE_BUNDLE);
+    if (header == null) {
+      return Collections.emptyList();
+    }
+    Clause[] clauses = header.getClauses();
+    List<String> result = new ArrayList<String>(clauses.length);
+    for (Clause clause : clauses) {
+      Directive visibilityDirectiveName = clause.getDirectiveByName(VISIBILITY_DIRECTIVE);
+      if (visibilityDirectiveName != null && VISIBILITY_REEXPORT.equals(visibilityDirectiveName.getValue())) {
+        result.add(clause.getClauseText());
+      }
+    }
+    return result;
+  }
 
   @Override
   public boolean isRequiredBundle(@NotNull String bundleSpec) {
