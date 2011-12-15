@@ -73,6 +73,7 @@ public class FlexIdeModuleWizardForm {
     myOutputTypeCombo.addActionListener(listener);
     mySampleAppCheckBox.addActionListener(listener);
     myHtmlWrapperCheckBox.addActionListener(listener);
+    myCheckPlayerVersionCheckBox.addActionListener(listener);
 
     myFlexSdkPanel.addListener(new ChangeListener() {
       public void stateChanged(final ChangeEvent e) {
@@ -121,12 +122,9 @@ public class FlexIdeModuleWizardForm {
     mySampleAppCheckBox.setSelected(true);
     onModuleNameChanged(moduleName);
     myHtmlWrapperCheckBox.setSelected(true);
-
-    // todo support
-    myHtmlWrapperCheckBox.setVisible(false);
-    myEnableHistoryCheckBox.setVisible(false);
-    myCheckPlayerVersionCheckBox.setVisible(false);
-    myExpressInstallCheckBox.setVisible(false);
+    myEnableHistoryCheckBox.setSelected(true);
+    myCheckPlayerVersionCheckBox.setSelected(true);
+    myExpressInstallCheckBox.setSelected(true);
 
     myClassNameChangedByUser = false;
     updateControls();
@@ -149,11 +147,15 @@ public class FlexIdeModuleWizardForm {
       mySampleAppCheckBox.setSelected(mySampleAppCheckBox.isEnabled());
     }
 
+    mySampleAppTextField.setEnabled(mySampleAppCheckBox.isEnabled() && mySampleAppCheckBox.isSelected());
+
     if (createHtmlWrapperWasEnabled != myHtmlWrapperCheckBox.isEnabled()) {
       myHtmlWrapperCheckBox.setSelected(myHtmlWrapperCheckBox.isEnabled());
     }
 
-    mySampleAppTextField.setEnabled(mySampleAppCheckBox.isEnabled() && mySampleAppCheckBox.isSelected());
+    myEnableHistoryCheckBox.setEnabled(myHtmlWrapperCheckBox.isSelected() && web && app);
+    myCheckPlayerVersionCheckBox.setEnabled(myHtmlWrapperCheckBox.isSelected() && web && app);
+    myExpressInstallCheckBox.setEnabled(myHtmlWrapperCheckBox.isSelected() && myCheckPlayerVersionCheckBox.isSelected() && web && app);
   }
 
   public void disposeUIResources() {
@@ -215,7 +217,6 @@ public class FlexIdeModuleWizardForm {
             throw new UnsupportedOperationException();
           }
         }
-
       };
 
       myFlexConfigEditor = new FlexProjectConfigurationEditor(null, provider);
@@ -237,6 +238,8 @@ public class FlexIdeModuleWizardForm {
     moduleBuilder.setCreateSampleApp(mySampleAppCheckBox.isEnabled() && mySampleAppCheckBox.isSelected());
     moduleBuilder.setSampleAppName(mySampleAppTextField.getText().trim());
     moduleBuilder.setCreateHtmlWrapperTemplate(myHtmlWrapperCheckBox.isEnabled() && myHtmlWrapperCheckBox.isSelected());
+    moduleBuilder.setHtmlWrapperTemplateParameters(myEnableHistoryCheckBox.isSelected(), myCheckPlayerVersionCheckBox.isSelected(),
+                                                   myExpressInstallCheckBox.isEnabled() && myExpressInstallCheckBox.isSelected());
   }
 
   public void onModuleNameChanged(final String moduleName) {

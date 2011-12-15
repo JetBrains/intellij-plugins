@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
+import com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog;
 import com.intellij.lang.javascript.flex.run.FlexIdeRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexIdeRunConfigurationType;
 import com.intellij.lang.javascript.flex.run.FlexIdeRunnerParameters;
@@ -46,6 +47,9 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
   private boolean myCreateSampleApp;
   private String mySampleAppName;
   private boolean myCreateHtmlWrapperTemplate;
+  private boolean myEnableHistory;
+  private boolean myCheckPlayerVersion;
+  private boolean myExpressInstall;
 
   public ModuleType getModuleType() {
     return FlexModuleType.getInstance();
@@ -81,6 +85,14 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
 
   public void setCreateHtmlWrapperTemplate(final boolean createHtmlWrapperTemplate) {
     myCreateHtmlWrapperTemplate = createHtmlWrapperTemplate;
+  }
+
+  public void setHtmlWrapperTemplateParameters(final boolean enableHistory,
+                                               final boolean checkPlayerVersion,
+                                               final boolean expressInstall) {
+    myEnableHistory = enableHistory;
+    myCheckPlayerVersion = checkPlayerVersion;
+    myExpressInstall = expressInstall;
   }
 
   public void setupRootModel(final ModifiableRootModel modifiableRootModel) throws ConfigurationException {
@@ -125,6 +137,15 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
       }
       catch (IOException ex) {
         throw new ConfigurationException(ex.getMessage());
+      }
+    }
+
+    if (myCreateHtmlWrapperTemplate) {
+      final String path = VfsUtil.urlToPath(contentEntry.getUrl()) + "/" + CreateHtmlWrapperTemplateDialog.HTML_TEMPLATE_FOLDER_NAME;
+      if (CreateHtmlWrapperTemplateDialog.createHtmlWrapperTemplate(module.getProject(), myFlexSdk, path,
+                                                                    myEnableHistory, myCheckPlayerVersion, myExpressInstall)) {
+        bc.setUseHtmlWrapper(true);
+        bc.setWrapperTemplatePath(path);
       }
     }
 
@@ -246,7 +267,7 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
     settings.setName(params.suggestUniqueName(existingConfigurations));
     settings.setTemporary(false);
     runManager.addConfiguration(settings, false);
-    runManager.setActiveConfiguration(settings);
+    runManager.setSelectedConfiguration(settings);
   }
 
   @Nullable

@@ -95,32 +95,42 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
   }
 
   protected void doOKAction() {
-    final VirtualFile folder = createFolderIfMissing(myProject, myWrapperFolderComponent.getComponent().getText().trim());
-    if (folder != null &&
-        checkIfEmpty(myProject, folder) &&
-        createWrapper(myProject, folder, mySdk, myEnableHistoryCheckBox.isSelected(), myCheckPlayerVersionCheckBox.isSelected(),
-                      myExpressInstallCheckBox.isSelected())) {
+    if (createHtmlWrapperTemplate(myProject, mySdk, myWrapperFolderComponent.getComponent().getText().trim(),
+                                  myEnableHistoryCheckBox.isSelected(), myCheckPlayerVersionCheckBox.isSelected(),
+                                  myExpressInstallCheckBox.isEnabled() && myExpressInstallCheckBox.isSelected())) {
       super.doOKAction();
     }
   }
 
+  public static boolean createHtmlWrapperTemplate(final Project project,
+                                                  final FlexSdk sdk,
+                                                  final String templateFolderPath,
+                                                  final boolean enableHistory,
+                                                  final boolean checkPlayerVersion,
+                                                  final boolean expressInstall) {
+    final VirtualFile folder = createFolderIfMissing(project, templateFolderPath);
+    return folder != null &&
+           checkIfEmpty(project, folder) &&
+           doCreateWrapper(project, sdk, folder, enableHistory, checkPlayerVersion, expressInstall);
+  }
+
   @Nullable
-  private static VirtualFile createFolderIfMissing(final Project project, final String path) {
-    VirtualFile folder = LocalFileSystem.getInstance().findFileByPath(path);
+  private static VirtualFile createFolderIfMissing(final Project project, final String folderPath) {
+    VirtualFile folder = LocalFileSystem.getInstance().findFileByPath(folderPath);
     if (folder == null) {
       try {
-        folder = VfsUtil.createDirectories(path);
+        folder = VfsUtil.createDirectories(folderPath);
       }
       catch (IOException e) {
-        Messages.showErrorDialog(project, FlexBundle.message("failed.to.create.folder", path, e.getMessage()), TITLE);
+        Messages.showErrorDialog(project, FlexBundle.message("failed.to.create.folder", folderPath, e.getMessage()), TITLE);
       }
     }
 
     if (folder == null) {
-      Messages.showErrorDialog(project, FlexBundle.message("failed.to.create.folder", path, "unknown error"), TITLE);
+      Messages.showErrorDialog(project, FlexBundle.message("failed.to.create.folder", folderPath, "unknown error"), TITLE);
     }
     else if (!folder.isDirectory()) {
-      Messages.showErrorDialog(project, FlexBundle.message("selected.path.not.folder", path), TITLE);
+      Messages.showErrorDialog(project, FlexBundle.message("selected.path.not.folder", folderPath), TITLE);
       return null;
     }
 
@@ -167,12 +177,12 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
     return true;
   }
 
-  public static boolean createWrapper(final Project project,
-                                      final VirtualFile folder,
-                                      final FlexSdk sdk,
-                                      final boolean enableHistory,
-                                      final boolean checkPlayerVersion,
-                                      final boolean expressInstall) {
+  private static boolean doCreateWrapper(final Project project,
+                                         final FlexSdk sdk,
+                                         final VirtualFile folder,
+                                         final boolean enableHistory,
+                                         final boolean checkPlayerVersion,
+                                         final boolean expressInstall) {
     final String wrapperName;
     if (sdk.getFlexVersion().startsWith("3.")) {
       final String prefix = checkPlayerVersion

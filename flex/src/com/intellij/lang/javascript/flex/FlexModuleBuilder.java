@@ -15,7 +15,6 @@ import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
 import com.intellij.lang.javascript.flex.run.*;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -164,7 +163,7 @@ public class FlexModuleBuilder extends ModuleBuilder implements SourcePathsBuild
     final RunnerAndConfigurationSettings settings = runManager.createConfiguration("", FlexRunConfigurationType.getFactory());
     settings.setTemporary(false);
     runManager.addConfiguration(settings, false);
-    runManager.setActiveConfiguration(settings);
+    runManager.setSelectedConfiguration(settings);
 
     final FlexRunConfiguration runConfiguration = (FlexRunConfiguration)settings.getConfiguration();
     final FlexRunnerParameters runnerParameters = runConfiguration.getRunnerParameters();
@@ -203,7 +202,7 @@ public class FlexModuleBuilder extends ModuleBuilder implements SourcePathsBuild
                                                                                          : AirRunConfigurationType.getFactory());
       settings.setTemporary(false);
       runManager.addConfiguration(settings, false);
-      runManager.setActiveConfiguration(settings);
+      runManager.setSelectedConfiguration(settings);
 
       final AirRunConfiguration runConfiguration = (AirRunConfiguration)settings.getConfiguration();
       final AirRunnerParameters runnerParameters = runConfiguration.getRunnerParameters();
