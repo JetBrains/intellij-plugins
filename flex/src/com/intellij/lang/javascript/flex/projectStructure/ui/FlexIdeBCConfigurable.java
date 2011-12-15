@@ -2,7 +2,9 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.ide.ui.ListCellRendererWrapper;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
+import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
@@ -62,7 +64,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   private JCheckBox myUseHTMLWrapperCheckBox;
   private JLabel myWrapperFolderLabel;
   private TextFieldWithBrowseButton myWrapperTemplateTextWithBrowse;
-  private JButton myCreateHtmlTemplateButton;
+  private JButton myCreateHtmlWrapperTemplateButton;
 
   private JCheckBox mySkipCompilationCheckBox;
 
@@ -129,9 +131,21 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myWrapperTemplateTextWithBrowse.addBrowseFolderListener(title, description, module.getProject(),
                                                             FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
-    myCreateHtmlTemplateButton.addActionListener(new ActionListener() {
+    myCreateHtmlWrapperTemplateButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
-        Messages.showInfoMessage("This functionality is not implemented yet", "Create HTML Wrapper Template");
+        final FlexSdk sdk = myDependenciesConfigurable.getCurrentSdk();
+        if (sdk == null) {
+          Messages.showInfoMessage(myModule.getProject(), FlexBundle.message("sdk.needed.to.create.wrapper"),
+                                   CreateHtmlWrapperTemplateDialog.TITLE);
+        }
+        else {
+          final CreateHtmlWrapperTemplateDialog dialog =
+            new CreateHtmlWrapperTemplateDialog(module, sdk, myWrapperTemplateTextWithBrowse.getText().trim());
+          dialog.show();
+          if (dialog.isOK()) {
+            myWrapperTemplateTextWithBrowse.setText(dialog.getWrapperFolderPath());
+          }
+        }
       }
     });
 
@@ -207,7 +221,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
       myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Web && myOutputTypeCombo.getSelectedItem() == OutputType.Application);
     myWrapperFolderLabel.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
     myWrapperTemplateTextWithBrowse.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
-    myCreateHtmlTemplateButton.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
+    myCreateHtmlWrapperTemplateButton.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
   }
 
   public String getTreeNodeText() {

@@ -43,12 +43,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import static com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog.*;
+
 public class FlexCompilationUtils {
 
   public static final String SWF_MACRO = "${swf}";
+
   private static final String[] MACROS_TO_REPLACE =
-    {SWF_MACRO, "${title}", "${application}", "${bgcolor}", "${width}", "${height}", "${version_major}", "${version_minor}",
-      "${version_revision}"};
+    {SWF_MACRO, "${title}", "${application}", "${bgcolor}", "${width}", "${height}", VERSION_MAJOR_MACRO, VERSION_MINOR_MACRO,
+      VERSION_REVISION_MACRO};
 
   private FlexCompilationUtils() {
   }
