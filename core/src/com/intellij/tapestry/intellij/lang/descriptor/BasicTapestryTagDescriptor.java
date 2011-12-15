@@ -66,6 +66,11 @@ public abstract class BasicTapestryTagDescriptor implements XmlElementDescriptor
     return CONTENT_TYPE_ANY;
   }
 
+  @Override
+  public String getDefaultValue() {
+    return null;
+  }
+
   public PsiElement getDeclaration() {
     return null;
   }

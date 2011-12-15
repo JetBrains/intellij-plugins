@@ -93,6 +93,11 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
     return myHtmlDelegate.getContentType();
   }
 
+  @Override
+  public String getDefaultValue() {
+    return null;
+  }
+
   public PsiElement getDeclaration() {
     if (myComponent != null) return ((IntellijJavaClassType)myComponent.getElementClass()).getPsiClass();
     return myHtmlDelegate.getDeclaration();
