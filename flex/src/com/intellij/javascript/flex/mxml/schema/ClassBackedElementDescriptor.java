@@ -1233,6 +1233,11 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     return CONTENT_TYPE_UNKNOWN;
   }
 
+  @Override
+  public String getDefaultValue() {
+    return null;
+  }
+
   @Nullable
   public PsiElement getDeclaration() {
     String className = predefined ? OBJECT_CLASS_NAME :this.className;
