@@ -27,6 +27,7 @@ public class FlashBuilderProject {
   private Collection<String> myApplicationClassNames = new ArrayList<String>();
   private String myTargetPlayerVersion;
   private String myAdditionalCompilerOptions = "";
+  private boolean myUseHtmlWrapper = false;
   private Map<String, Collection<String>> myLibraryPathsAndSources = new THashMap<String, Collection<String>>();
   private Collection<Pair<String, String>> myNamespacesAndManifestPaths = new ArrayList<Pair<String, String>>(1);
   private Collection<Pair<String, String>> myModules = new ArrayList<Pair<String, String>>();
@@ -153,6 +154,14 @@ public class FlashBuilderProject {
 
   public void setAdditionalCompilerOptions(final String additionalCompilerOptions) {
     myAdditionalCompilerOptions = additionalCompilerOptions;
+  }
+
+  public boolean isUseHtmlWrapper() {
+    return myUseHtmlWrapper;
+  }
+
+  public void setUseHtmlWrapper(final boolean useHtmlWrapper) {
+    myUseHtmlWrapper = useHtmlWrapper;
   }
 
   public Collection<String> getLibraryPaths() {

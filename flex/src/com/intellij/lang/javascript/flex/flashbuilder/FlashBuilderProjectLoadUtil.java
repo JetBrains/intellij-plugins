@@ -39,6 +39,7 @@ public class FlashBuilderProjectLoadUtil {
   private static final String MAIN_APP_PATH_ATTR = "mainApplicationPath";
   private static final String TARGET_PLAYER_VERSION_ATTR = "targetPlayerVersion";
   private static final String ADDITIONAL_COMPILER_ARGUMENTS_ATTR = "additionalCompilerArguments";
+  private static final String HTML_GENERATE_ATTR = "htmlGenerate";
   private static final String LIBRARY_PATH_TAG = "libraryPath";
   private static final String LIBRARY_PATH_ENTRY_TAG = "libraryPathEntry";
   private static final String LIBRARY_KIND_ATTR = "kind";
@@ -212,6 +213,7 @@ public class FlashBuilderProjectLoadUtil {
           loadOutputFolderPath(project, compilerElement);
           loadTargetPlayerVersion(project, compilerElement);
           loadAdditionalCompilerArguments(project, compilerElement);
+          project.setUseHtmlWrapper("true".equals(compilerElement.getAttributeValue(HTML_GENERATE_ATTR)));
           loadDependenciesAndCheckIfSdkUsed(project, compilerElement, pathReplacementMap);
           if (project.isSdkUsed()) {
             loadSdkName(project, compilerElement);

@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
+import com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog;
 import com.intellij.lang.javascript.flex.wizard.FlexIdeModuleBuilder;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathMacros;
@@ -109,6 +110,11 @@ public class FlashBuilderModuleImporter {
       final String mainClass = fbProject.getMainAppClassName();
       mainBC.setMainClass(mainClass);
       mainBC.setOutputFileName(StringUtil.getShortName(mainClass) + ".swf");
+
+      if (targetPlatform == TargetPlatform.Web && fbProject.isUseHtmlWrapper()) {
+        mainBC.setUseHtmlWrapper(true);
+        mainBC.setWrapperTemplatePath(fbProject.getProjectRootPath() + "/" + CreateHtmlWrapperTemplateDialog.HTML_TEMPLATE_FOLDER_NAME);
+      }
     }
     else {
       mainBC.setOutputFileName(fbProject.getName() + ".swc");
