@@ -11,3 +11,16 @@ borders:
   type: Scale3EdgeH
   frameInsets: {bottom: -1}
   contentInsets: {left: 17, right: 17, bottom: 9}
+
+- key: EditorTab.selected
+  type: Scale3EdgeH
+  # draw 1px top line as -1 — if there are no any components above, so, line must be invisible
+  frameInsets: {top: -1}
+- key: EditorTab.unselected
+  type: Scale3EdgeH
+  # draw 1px top line as -1 — if there are no any components above, so, line must be invisible
+  frameInsets: {top: -1}
+- key: ProjectView.TabView.tabBar.b
+  type: Scale1
+  # draw 1px top line as -1 — if there are no any components above, so, line must be invisible
+  frameInsets: {top: -1}

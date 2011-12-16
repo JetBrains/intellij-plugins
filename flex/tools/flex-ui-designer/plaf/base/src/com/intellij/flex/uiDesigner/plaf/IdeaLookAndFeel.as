@@ -20,7 +20,10 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
    * see com.intellij.util.ui.UIUtil
    */
   public static const BORDER_COLOR:int = 0xc0c0c0;
-  
+  // color from wbpro, it is better than idea (because idea is more dark) (I think)
+  // also, idea edtor toolbar (open any image — editor toolbar is toolbar where image size is shown) background color is 0xeeeeee, but we unified it (as wbpro looks like)
+  private static const DESIGNER_AREA_OUTER_BACKGROUND_COLOR:int = 0xe9e9e9;
+
   override protected function initialize():void {
     super.initialize();
 
@@ -43,7 +46,7 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
     data["StyleInspector.DataGroup.b"] = RectangularBorder.create(0xffffff);
 
     data["ProjectView.TabView"] = EditorTabViewSkin;
-    data["ProjectView.TabView.tabBar.layout"] = new ListLayoutFactory(20, 0);
+    data["ProjectView.TabView.tabBar.layout"] = new ListLayoutFactory(26, 0);
     data["ProjectView.TabView.tabBar.rendererManager"] = new RendererManagerFactory(EditorTabBarRendererManager, this, "ProjectView.TabView.tabBar");
     data["ProjectView.TabView.tabBar.placement"] = Placement.PAGE_START_LINE_START;
     data["ProjectView.TabView.tabBar.interactor"] = data["TabView.tabBar.interactor"];
@@ -51,7 +54,8 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
     data["Toolbar.b"] = null;
 
     data["Editor.Toolbar"] = data["Toolbar"];
-    data["Editor.Toolbar.b"] = RectangularBorder.create(0xeeeeee);
+    data["designerAreaOuterBackgroundColor"] = DESIGNER_AREA_OUTER_BACKGROUND_COLOR;
+    data["Editor.Toolbar.b"] = RectangularBorder.create(DESIGNER_AREA_OUTER_BACKGROUND_COLOR);
   }
 }
 }

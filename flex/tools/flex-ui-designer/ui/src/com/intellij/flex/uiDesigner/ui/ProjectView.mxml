@@ -59,7 +59,7 @@
     }
     ]]></fx:Script>
 
-  <TabView id="editorTabView" lafSubkey="ProjectView" c="cell 2 1, grow, id editorTabView">
+  <TabView id="editorTabView" lafSubkey="ProjectView" c="cell 2 2, grow, id editorTabView">
     <toolbar>
       <Toolbar id="editorToolbar" lafSubkey="Editor" small="true">
         <SegmentedControl id="statesBar"/>
@@ -68,5 +68,5 @@
     </toolbar>
   </TabView>
 
-  <tools:ElementToolContainer id="elementToolContainer" c="cell 2 1, external"/>
+  <tools:ElementToolContainer id="elementToolContainer" c="cell 2 2, external"/>
 </Container>

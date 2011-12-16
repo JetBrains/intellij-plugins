@@ -64,10 +64,6 @@
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
 	<include-file>
-		<name>/grid.png</name>
-		<path>@@baseDir@@/resources/grid.png</path>
-	</include-file>
-	<include-file>
 		<name>/viewSelectionKnob.png</name>
 		<path>@@baseDir@@/resources/viewSelectionKnob.png</path>
 	</include-file>
