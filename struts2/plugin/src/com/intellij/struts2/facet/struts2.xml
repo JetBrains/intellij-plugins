@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <artifacts>
-  <artifact version="2.2.3.1">
-    <item name="struts2-core.jar" version="2.2.3.1"
-          url="http://repo1.maven.org/maven2/org/apache/struts/struts2-core/2.2.3.1/struts2-core-2.2.3.1.jar">
+  <artifact version="2.3.1">
+    <item name="struts2-core.jar" version="2.3.1"
+          url="http://repo1.maven.org/maven2/org/apache/struts/struts2-core/2.3.1/struts2-core-2.3.1.jar">
       <required-class fqn="org.apache.struts2.StrutsConstants"/>
     </item>
-    <item name="freemarker.jar" version="2.3.16"
-          url="http://repo1.maven.org/maven2/org/freemarker/freemarker/2.3.16/freemarker-2.3.16.jar">
+    <item name="freemarker.jar" version="2.3.18"
+          url="http://repo1.maven.org/maven2/org/freemarker/freemarker/2.3.18/freemarker-2.3.18.jar">
       <required-class fqn="freemarker.core.TemplateElement"/>
     </item>
-    <item name="xwork-core.jar" version="2.2.3.1"
-          url="http://repo1.maven.org/maven2/org/apache/struts/xwork/xwork-core/2.2.3.1/xwork-core-2.2.3.1.jar">
+    <item name="xwork-core.jar" version="2.3.1"
+          url="http://repo1.maven.org/maven2/org/apache/struts/xwork/xwork-core/2.3.1/xwork-core-2.3.1.jar">
       <required-class fqn="com.opensymphony.xwork2.XWorkException"/>
     </item>
-    <item name="ognl.jar" version="3.0.1"
-          url="http://repo1.maven.org/maven2/ognl/ognl/3.0.1/ognl-3.0.1.jar">
+    <item name="ognl.jar" version="3.0.3"
+          url="http://repo1.maven.org/maven2/ognl/ognl/3.0.3/ognl-3.0.3.jar">
       <required-class fqn="ognl.Ognl"/>
     </item>
     <item name="commons-fileupload.jar" version="1.2.2"
@@ -29,16 +29,16 @@
           url="http://repo1.maven.org/maven2/commons-io/commons-io/2.0.1/commons-io-2.0.1.jar">
       <required-class fqn="org.apache.commons.io.FileUtils"/>
     </item>
-    <item name="asm.jar" version="3.1"
-          url="http://repo1.maven.org/maven2/asm/asm/3.1/asm-3.1.jar">
+    <item name="asm.jar" version="3.3"
+          url="http://repo1.maven.org/maven2/asm/asm/3.3/asm-3.3.jar">
       <required-class fqn="org.objectweb.asm.Type"/>
     </item>
-    <item name="asm-commons.jar" version="3.1"
-          url="http://repo1.maven.org/maven2/asm/asm-commons/3.1/asm-commons-3.1.jar">
+    <item name="asm-commons.jar" version="3.3"
+          url="http://repo1.maven.org/maven2/asm/asm-commons/3.3/asm-commons-3.3.jar">
       <required-class fqn="org.objectweb.asm.commons.Method"/>
     </item>
-    <item name="asm-tree.jar" version="3.1"
-          url="http://repo1.maven.org/maven2/asm/asm-tree/3.1/asm-tree-3.1.jar">
+    <item name="asm-tree.jar" version="3.3"
+          url="http://repo1.maven.org/maven2/asm/asm-tree/3.3/asm-tree-3.3.jar">
       <required-class fqn="org.objectweb.asm.tree.ClassNode"/>
     </item>
     <item name="javassist.jar" version="3.11.0.GA"
