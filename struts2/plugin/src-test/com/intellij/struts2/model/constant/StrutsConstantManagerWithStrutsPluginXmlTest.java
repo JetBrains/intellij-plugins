@@ -44,7 +44,7 @@ public class StrutsConstantManagerWithStrutsPluginXmlTest
 
   public void testSpringPluginXml() throws Throwable {
     createStrutsFileSet(STRUTS_XML,
-                        STRUTS2_SPRING_PLUGIN_JAR + "!/struts-plugin.xml");
+                        LIB_PATH + STRUTS2_SPRING_PLUGIN_JAR + "!/struts-plugin.xml");
 
     final PsiClass springObjectFactoryClass =
         myFixture.getJavaFacade()

@@ -65,6 +65,9 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   protected static final String SOURCE_PATH = "/" + SOURCE_DIR;
 
   @NonNls
+  protected static final String LIB_PATH = "/lib/";
+
+  @NonNls
   protected static final String STRUTS_XML = "struts.xml";
 
   @NonNls
@@ -204,7 +207,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   }
 
   protected void addLibrary(final T moduleBuilder, @NonNls final String libraryName, @NonNls final String... jarPaths) {
-    moduleBuilder.addLibraryJars(libraryName, testDataRootPath, jarPaths);
+    moduleBuilder.addLibraryJars(libraryName, testDataRootPath + LIB_PATH, jarPaths);
   }
 
   public static StrutsFacet createFacet(final Module module) {
