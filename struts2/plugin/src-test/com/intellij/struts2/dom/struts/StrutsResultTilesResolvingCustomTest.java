@@ -29,7 +29,7 @@ public class StrutsResultTilesResolvingCustomTest extends BasicStrutsHighlightin
   @Override
   @NotNull
   protected String getTestDataLocation() {
-    return "strutsXmlResultTilesCustom";
+    return "strutsXml/resultTilesCustom";
   }
 
   @Override

@@ -32,7 +32,7 @@ public class StrutsCompletionTest extends BasicStrutsHighlightingTestCase<JavaMo
   @Override
   @NotNull
   protected String getTestDataLocation() {
-    return "strutsXmlCompletion";
+    return "strutsXml/completion";
   }
 
   @SkipStrutsLibrary

@@ -28,7 +28,7 @@ public class StrutsResultResolvingTest extends BasicStrutsHighlightingTestCase<W
   @Override
   @NotNull
   protected String getTestDataLocation() {
-    return "strutsXmlResult";
+    return "strutsXml/result";
   }
 
   @Override

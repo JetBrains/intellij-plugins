@@ -27,7 +27,7 @@ public class ResultActionPropertyTest extends BasicStrutsHighlightingTestCase<Ja
   @NotNull
   @Override
   protected String getTestDataLocation() {
-    return "reference/struts/resultActionProperty";
+    return "strutsXml/resultActionProperty";
   }
 
   @HasJavaSources

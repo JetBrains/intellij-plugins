@@ -46,7 +46,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
   @Override
   @NotNull
   protected String getTestDataLocation() {
-    return "strutsXmlHighlightingSpring";
+    return "strutsXml/spring";
   }
 
   @Override

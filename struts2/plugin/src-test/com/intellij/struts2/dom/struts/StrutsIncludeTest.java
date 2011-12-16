@@ -29,7 +29,7 @@ public class StrutsIncludeTest extends BasicStrutsHighlightingTestCase<JavaModul
   @Override
   @NotNull
   protected String getTestDataLocation() {
-    return "strutsXmlInclude";
+    return "strutsXml/include";
   }
 
   // TODO fix setup

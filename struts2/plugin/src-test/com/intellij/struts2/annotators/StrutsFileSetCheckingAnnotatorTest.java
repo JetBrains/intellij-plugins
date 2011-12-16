@@ -30,7 +30,7 @@ public class StrutsFileSetCheckingAnnotatorTest extends BasicHighlightingTestCas
   @Override
   @NotNull
   protected String getTestDataLocation() {
-    return "strutsXmlHighlighting";
+    return "strutsXml/highlighting";
   }
 
   @SkipStrutsLibrary

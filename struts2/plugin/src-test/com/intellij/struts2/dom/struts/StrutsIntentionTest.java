@@ -31,7 +31,7 @@ public class StrutsIntentionTest extends BasicStrutsHighlightingTestCase<JavaMod
   @Override
   @NotNull
   protected String getTestDataLocation() {
-    return "strutsXmlIntentions";
+    return "strutsXml/intentions";
   }
 
   /**

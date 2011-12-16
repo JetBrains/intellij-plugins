@@ -28,7 +28,7 @@ public class StrutsHighlightingTest extends BasicStrutsHighlightingTestCase<Java
   @Override
   @NotNull
   protected String getTestDataLocation() {
-    return "strutsXmlHighlighting";
+    return "strutsXml/highlighting";
   }
 
   @HasJavaSources
