@@ -10,6 +10,7 @@ datetimepicker
 enctype
 fielderror
 fieldexpression
+fileupload
 freemarker
 inputtransferselect
 javassist
