@@ -12,6 +12,7 @@ fielderror
 fieldexpression
 freemarker
 inputtransferselect
+javassist
 labelposition
 multipart
 ognl
