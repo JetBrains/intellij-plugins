@@ -26,7 +26,7 @@ abstract class BasicValidationCompletionTestCase extends BasicValidationHighligh
   @NotNull
   @Override
   protected final String getTestDataLocation() {
-    return "validationXmlCompletion/" + getTestDataDirectory();
+    return "validationXml/completion/" + getTestDataDirectory();
   }
 
   protected abstract String getTestDataDirectory();

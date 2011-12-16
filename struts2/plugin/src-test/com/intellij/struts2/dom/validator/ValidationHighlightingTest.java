@@ -28,7 +28,7 @@ public class ValidationHighlightingTest extends BasicValidationHighlightingTestC
   @Override
   @NotNull
   protected String getTestDataLocation() {
-    return "validationXmlHighlighting";
+    return "validationXml/highlighting";
   }
 
   @Override
