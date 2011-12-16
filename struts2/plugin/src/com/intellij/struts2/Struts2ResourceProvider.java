@@ -1,17 +1,16 @@
 /*
- * Copyright 2000-2009 JetBrains s.r.o.
+ * Copyright 2011 The authors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.intellij.struts2;
@@ -51,14 +50,30 @@ public class Struts2ResourceProvider implements StandardResourceProvider {
     addDTDResource(StrutsConstants.VALIDATOR_1_00_DTD_URI,
                    StrutsConstants.VALIDATOR_1_00_DTD_ID,
                    "xwork-validator-1.0.dtd", registrar);
+    addDTDResource(StrutsConstants.VALIDATOR_1_00_STRUTS_DTD_URI,
+                   StrutsConstants.VALIDATOR_1_00_STRUTS_DTD_ID,
+                   "xwork-validator-struts-1.0.dtd", registrar);
 
     addDTDResource(StrutsConstants.VALIDATOR_1_02_DTD_URI,
                    StrutsConstants.VALIDATOR_1_02_DTD_ID,
                    "xwork-validator-1.0.2.dtd", registrar);
+    addDTDResource(StrutsConstants.VALIDATOR_1_02_STRUTS_DTD_URI,
+                   StrutsConstants.VALIDATOR_1_02_STRUTS_DTD_ID,
+                   "xwork-validator-struts-1.0.2.dtd", registrar);
+
+    addDTDResource(StrutsConstants.VALIDATOR_1_03_DTD_URI,
+                   StrutsConstants.VALIDATOR_1_03_DTD_ID,
+                   "xwork-validator-1.0.3.dtd", registrar);
 
     addDTDResource(StrutsConstants.VALIDATOR_CONFIG_DTD_URI,
                    StrutsConstants.VALIDATOR_CONFIG_DTD_ID,
                    "xwork-validator-config-1.0.dtd", registrar);
+    addDTDResource(StrutsConstants.VALIDATOR_CONFIG_STRUTS_DTD_URI,
+                   StrutsConstants.VALIDATOR_CONFIG_STRUTS_DTD_ID,
+                   "xwork-validator-config-struts-1.0.dtd", registrar);
+    addDTDResource(StrutsConstants.VALIDATOR_DEFINITION_DTD_URI,
+                   StrutsConstants.VALIDATOR_DEFINITION_DTD_ID,
+                   "xwork-validator-definition-1.0.dtd", registrar);
   }
 
   /**

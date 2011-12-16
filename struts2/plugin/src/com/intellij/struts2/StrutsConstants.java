@@ -109,28 +109,58 @@ public final class StrutsConstants {
   public static final String VALIDATOR_1_00_DTD_URI = "http://www.opensymphony.com/xwork/xwork-validator-1.0.dtd";
   @NonNls
   public static final String VALIDATOR_1_00_DTD_ID = "-//OpenSymphony Group//XWork Validator 1.0//EN";
+  @NonNls
+  public static final String VALIDATOR_1_00_STRUTS_DTD_URI = "http://struts.apache.org/dtds/xwork-validator-1.0.dtd";
+  @NonNls
+  public static final String VALIDATOR_1_00_STRUTS_DTD_ID = "-//Apache Struts//XWork Validator 1.0//EN";
 
   @NonNls
   public static final String VALIDATOR_1_02_DTD_URI = "http://www.opensymphony.com/xwork/xwork-validator-1.0.2.dtd";
   @NonNls
   public static final String VALIDATOR_1_02_DTD_ID = "-//OpenSymphony Group//XWork Validator 1.0.2//EN";
+  @NonNls
+  public static final String VALIDATOR_1_02_STRUTS_DTD_URI = "http://struts.apache.org/dtds/xwork-validator-1.0.2.dtd";
+  @NonNls
+  public static final String VALIDATOR_1_02_STRUTS_DTD_ID = "-//Apache Struts//XWork Validator 1.0.2//EN";
+
+  @NonNls
+  public static final String VALIDATOR_1_03_DTD_URI = "http://struts.apache.org/dtds/xwork-validator-1.0.3.dtd";
+  @NonNls
+  public static final String VALIDATOR_1_03_DTD_ID = "-//Apache Struts//XWork Validator 1.0.3//EN";
 
   /**
    * All XXX-validation.xml DTD-IDs/URIs.
    */
   @NonNls
   public static final String[] VALIDATOR_DTDS = {
-      VALIDATOR_1_00_DTD_URI,
-      VALIDATOR_1_00_DTD_ID,
-      VALIDATOR_1_02_DTD_URI,
-      VALIDATOR_1_02_DTD_ID
+      VALIDATOR_1_00_DTD_URI, VALIDATOR_1_00_DTD_ID,
+      VALIDATOR_1_00_STRUTS_DTD_URI, VALIDATOR_1_00_STRUTS_DTD_ID,
+      VALIDATOR_1_02_DTD_URI, VALIDATOR_1_02_DTD_ID,
+      VALIDATOR_1_02_STRUTS_DTD_URI, VALIDATOR_1_02_STRUTS_DTD_ID,
+      VALIDATOR_1_03_DTD_URI, VALIDATOR_1_03_DTD_ID
   };
 
   @NonNls
   public static final String VALIDATOR_CONFIG_DTD_URI = "http://www.opensymphony.com/xwork/xwork-validator-config-1.0.dtd";
   @NonNls
   public static final String VALIDATOR_CONFIG_DTD_ID = "-//OpenSymphony Group//XWork Validator Config 1.0//EN";
+  @NonNls
+  public static final String VALIDATOR_CONFIG_STRUTS_DTD_URI = "http://struts.apache.org/dtds/xwork-validator-config-1.0.dtd";
+  @NonNls
+  public static final String VALIDATOR_CONFIG_STRUTS_DTD_ID = "-//Apache Struts//XWork Validator Config 1.0//EN";
 
+
+  @NonNls
+  public static final String VALIDATOR_DEFINITION_DTD_URI = "http://struts.apache.org/dtds/xwork-validator-definition-1.0.dtd";
+  @NonNls
+  public static final String VALIDATOR_DEFINITION_DTD_ID = "-//Apache Struts//XWork Validator Definition 1.0//EN";
+
+  @NonNls
+  public static final String[] VALIDATOR_CONFIG_DTDS = {
+      VALIDATOR_CONFIG_DTD_URI, VALIDATOR_CONFIG_DTD_ID,
+      VALIDATOR_CONFIG_STRUTS_DTD_URI, VALIDATOR_CONFIG_STRUTS_DTD_ID,
+      VALIDATOR_DEFINITION_DTD_URI, VALIDATOR_DEFINITION_DTD_ID
+  };
 
   /**
    * Struts UI taglib URI.

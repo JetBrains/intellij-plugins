@@ -36,8 +36,7 @@ public class ValidatorConfigDomFileDescription extends DomFileDescription<Valida
 
   protected void initializeFileDescription() {
     registerNamespacePolicy(StrutsDomConstants.VALIDATOR_CONFIG_NAMESPACE_KEY,
-                            StrutsConstants.VALIDATOR_CONFIG_DTD_URI,
-                            StrutsConstants.VALIDATOR_CONFIG_DTD_ID);
+                            StrutsConstants.VALIDATOR_CONFIG_DTDS);
   }
 
   @Override

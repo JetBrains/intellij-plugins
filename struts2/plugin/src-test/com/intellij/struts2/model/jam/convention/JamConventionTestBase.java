@@ -48,7 +48,7 @@ abstract class JamConventionTestBase<T extends JavaModuleFixtureBuilder> extends
 
   @Override
   protected void customizeSetup(final T moduleBuilder) {
-    addLibrary(moduleBuilder, "struts2-convention-plugin", "struts2-convention-plugin-2.2.1.jar");
+    addLibrary(moduleBuilder, "struts2-convention-plugin", "struts2-convention-plugin-" + STRUTS2_VERSION + ".jar");
   }
 
   /**
