@@ -42,6 +42,8 @@
     <orderEntry type="module" module-name="htmltools" scope="TEST" />
     <orderEntry type="module" module-name="velocity" />
     <orderEntry type="module" module-name="spellchecker" />
+    <orderEntry type="module" module-name="uml" scope="TEST" />
+    <orderEntry type="module" module-name="IntelliLang-js" scope="TEST" />
   </component>
   <component name="copyright">
     <Base>
