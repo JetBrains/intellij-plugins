@@ -52,8 +52,8 @@
     <orderEntry type="library" name="Maven: flashx:textLayout:swc:2.0.192-de1" level="project" />
     <orderEntry type="library" name="Maven: org.osflash:as3-signals:swc:0.9-beta" level="project" />
     <orderEntry type="library" name="Maven: org.flyti:plexus:swc:1.4" level="project" />
-    <orderEntry type="library" name="Maven: org.flyti:collections:swc:1.3.7" level="project" />
-    <orderEntry type="library" name="Maven: org.flyti:foundation:swc:1.2.5" level="project" />
+    <orderEntry type="library" name="Maven: org.flyti:collections:swc:1.3.8" level="project" />
+    <orderEntry type="library" name="Maven: org.flyti:foundation:swc:1.2.7" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.miglayout:miglayout-core:swc:4.3-SNAPSHOT" level="project" />
     <orderEntry type="module" module-name="ui" />
     <orderEntry type="module" module-name="impl" />

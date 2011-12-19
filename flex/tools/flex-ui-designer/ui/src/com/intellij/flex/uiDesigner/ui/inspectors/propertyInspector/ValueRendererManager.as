@@ -12,7 +12,7 @@ import cocoa.renderer.TextLineEntry;
 import cocoa.renderer.TextRendererManager;
 import cocoa.text.TextFormat;
 import cocoa.ui;
-import cocoa.util.StringUtil;
+import cocoa.util.Strings;
 
 import com.intellij.flex.uiDesigner.ui.CssElementFormat;
 
@@ -138,7 +138,7 @@ public class ValueRendererManager extends TextRendererManager {
               text = v.toString();
             }
             else {
-              text = StringUtil.startsWith(type, "__AS3__.vec::Vector.<") ? "<>[…]" : "{…}";
+              text = Strings.startsWith(type, "__AS3__.vec::Vector.<") ? "<>[…]" : "{…}";
             }
           }
       }

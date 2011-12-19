@@ -1,5 +1,5 @@
 package com.intellij.flex.uiDesigner {
-import cocoa.util.StringUtil;
+import cocoa.util.Strings;
 
 import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
@@ -60,7 +60,7 @@ public class AssetContainerClassPool {
     var className:String = namePrefix;
     var padding:int = 3 - classIndex.length;
     if (padding > 0) {
-      className += StringUtil.repeat("0", padding);
+      className += Strings.repeat("0", padding);
     }
     className += classIndex;
     return className;

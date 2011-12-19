@@ -157,7 +157,7 @@ public class FlexRunner extends GenericProgramRunner {
           final int beginIndex = "/Users/develar/workspace/cocoa/".length() + spaceIndex + 1;
           final int endIndex = line.indexOf('/', beginIndex + 2);
           String libName = line.substring(beginIndex, endIndex);
-          fullPath = "/Users/develar/.m2/repository/org/flyti/cocoa/" + libName + "/1.4-SNAPSHOT/" + libName + "-1.4-SNAPSHOT-sources.jar!" + line.substring(endIndex + "src/main/flex".length() + 1, commaPos);
+          fullPath = "/Users/develar/.m2/repository/org/flyti/cocoa/" + libName + "/2.0-SNAPSHOT/" + libName + "-2.0-SNAPSHOT-sources.jar!" + line.substring(endIndex + "src/main/flex".length() + 1, commaPos);
         }
         else if (line.indexOf("FtyleProtoChain.as", spaceIndex) != -1) {
           fullPath = "/Developer/SDKs/flex_4.5.1/frameworks/projects/framework/src/mx/styles/StyleProtoChain.as";

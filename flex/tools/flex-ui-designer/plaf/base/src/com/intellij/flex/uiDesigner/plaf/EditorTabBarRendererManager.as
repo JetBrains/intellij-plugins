@@ -99,8 +99,8 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
 
   override protected function drawEntry(entry:TextLineAndDisplayObjectEntry, itemIndex:int, g:Graphics, w:int, h:int, x:Number, y:Number):void {
     var view:View = ViewEntry(entry).view;
-    view.setLocation((x + w) - 2 - 1 - view.getPreferredWidth(), view.y);
-    //skin.x = (x + w) - 2 - 1 - skin.getExplicitOrMeasuredWidth();
+    // idea use 4 px right inset, but we use 2, because we don't have icon tab (right part of tab looks very empty without icon in left part)
+    view.setLocation((x + w) - 2 - 1 - view.actualWidth, 4);
     drawBackground(g, w, x, _selectionModel.isItemSelected(itemIndex));
   }
 

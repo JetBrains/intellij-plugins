@@ -82,7 +82,7 @@ private def doExecute(home, sandbox, targetFolder) {
 private def buildAssets() {
   ant.java(className: "org.flyti.assetBuilder.AssetBuilderMojo", fork: "true", failOnError: "true") {
     classpath {
-      pathelement(path: "$flexBuildHome/libs/asset-builder-maven-plugin-1.4-SNAPSHOT.jar")
+      pathelement(path: "$flexBuildHome/libs/asset-builder-maven-plugin-2.0-SNAPSHOT.jar")
       pathelement(path: "$flexBuildHome/libs/snakeyaml-1.8-s2.jar")
       pathelement(path: "$flexBuildHome/libs/plexus-utils-2.0.6.jar")
       pathelement(path: "$flexBuildHome/libs/jai-core-1.1.3.jar")

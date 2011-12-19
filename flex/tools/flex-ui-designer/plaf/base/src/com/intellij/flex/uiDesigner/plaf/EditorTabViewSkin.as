@@ -5,7 +5,7 @@ import cocoa.plaf.basic.AbstractTabViewSkin;
 import cocoa.tabView.TabView;
 
 internal class EditorTabViewSkin extends AbstractTabViewSkin {
-  private static const CONTENT_INSETS:Insets = new Insets(0, 26 /* tab title bar */, 1, 0);
+  private static const CONTENT_INSETS:Insets = new Insets(0, 26 /* tab title bar */, 0, 0);
   
   override public function get contentInsets():Insets {
     return CONTENT_INSETS;

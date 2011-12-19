@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.styleInspector {
 import cocoa.text.TextLines;
-import cocoa.util.StringUtil;
+import cocoa.util.Strings;
 
 import com.intellij.flex.uiDesigner.AssetInfo;
 import com.intellij.flex.uiDesigner.Module;
@@ -102,7 +102,7 @@ public class CssRulesetPrinter {
     
     var url:String = ruleset.file.url;
     var name:String = ruleset.file.name;
-    if (StringUtil.startsWith(url, "jar://")) {
+    if (Strings.startsWith(url, "jar://")) {
       var end:int = url.lastIndexOf("!/");
       name = "[" + url.substring(url.lastIndexOf("/", end - 4) + 1, end) + "] " + name;
     }
@@ -346,7 +346,7 @@ public class CssRulesetPrinter {
 
   private static function intColorToHex(color:uint):String {
     var s:String = color.toString(16);
-    return "#" + s + StringUtil.repeat("0", 6 - s.length);
+    return "#" + s + Strings.repeat("0", 6 - s.length);
   }
 
   private static function printClassReference(contentIndex:int, name:String):Vector.<ContentElement> {

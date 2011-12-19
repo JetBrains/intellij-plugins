@@ -1,5 +1,5 @@
 package com.intellij.flex.uiDesigner {
-import cocoa.util.StringUtil;
+import cocoa.util.Strings;
 
 import flash.display.LoaderInfo;
 import flash.events.ErrorEvent;
@@ -44,7 +44,7 @@ public class UncaughtErrorManager implements UiErrorHandler {
 
   protected function buildErrorMessage(error:Error):String {
     var message:String = error.getStackTrace();
-    if (StringUtil.startsWith(message, "Error: assert failed")) {
+    if (Strings.startsWith(message, "Error: assert failed")) {
       return message.substr(message.indexOf("\n", 22) + 1);
     }
     else {

@@ -36,10 +36,10 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
     _toolbar = value;
   }
 
-  override public function attach(hostComponent:SkinnableView):void {
+  override public function attach(component:SkinnableView):void {
     _laf = AquaLookAndFeel(laf).createPanelLookAndFeel();
-    Panel(hostComponent).laf = _laf;
-    super.attach(hostComponent);
+    Panel(component).laf = _laf;
+    super.attach(component);
   }
 
   override protected function doInit():void {
@@ -56,7 +56,7 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
     //  addChild(toolbarSkin);
     //}
 
-    var contentView:View = Panel(hostComponent).contentView;
+    var contentView:View = Panel(component).contentView;
     contentView.addToSuperview(this, laf, this);
     contentView.setLocation(contentBorder.contentInsets.left, titleBorder.layoutHeight);
 
@@ -82,19 +82,19 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
   //}
 
   override public function getMinimumWidth(hHint:int = -1):int {
-    return Panel(hostComponent).contentView.getMinimumWidth() + contentBorder.contentInsets.width;
+    return Panel(component).contentView.getMinimumWidth() + contentBorder.contentInsets.width;
   }
 
   override public function getMinimumHeight(wHint:int = -1):int {
-    return Panel(hostComponent).contentView.getMaximumHeight() + contentBorder.contentInsets.height;
+    return Panel(component).contentView.getMaximumHeight() + contentBorder.contentInsets.height;
   }
 
   override public function getPreferredWidth(hHint:int = -1):int {
-    return Panel(hostComponent).contentView.getPreferredWidth() + contentBorder.contentInsets.width;
+    return Panel(component).contentView.getPreferredWidth() + contentBorder.contentInsets.width;
   }
 
   override public function getPreferredHeight(wHint:int = -1):int {
-    return Panel(hostComponent).contentView.getPreferredHeight() + contentBorder.contentInsets.height;
+    return Panel(component).contentView.getPreferredHeight() + contentBorder.contentInsets.height;
   }
 
   // todo find normal way
@@ -111,7 +111,7 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
     contentBorder.draw(g, w, h);
     g.lineStyle();
 
-    var panel:Panel = Panel(hostComponent);
+    var panel:Panel = Panel(component);
     const empty:Boolean = panel.emptyText != null;
     if (empty) {
       if (statusText == null) {
@@ -124,7 +124,7 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
       statusText.hide();
     }
 
-    Panel(hostComponent).contentView.visible = !empty;
+    Panel(component).contentView.visible = !empty;
 
     g.lineStyle();
     titleBorder.draw(g, w, titleBorder.layoutHeight);
@@ -137,7 +137,7 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
       _toolbar.setSize(contentWidth, 20);
     }
     if (!empty) {
-      Panel(hostComponent).contentView.setSize(contentWidth, h - contentBorder.contentInsets.height);
+      Panel(component).contentView.setSize(contentWidth, h - contentBorder.contentInsets.height);
     }
 
 //    DisplayObject(minimizeButton.skin).x = w - (17 * 2) - 1 - 3;
