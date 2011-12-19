@@ -106,7 +106,7 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
 
   private function drawBackground(g:Graphics, w:Number, x:Number, selected:Boolean):void {
     var border:Border = laf.getBorder(selected ? "EditorTab.selected" : "EditorTab.unselected");
-    border.draw(g, w, _fixedRendererDimension, x);
+    border.draw(g, w, _fixedRendererDimension);
   }
 
   public function clearSelected():void {

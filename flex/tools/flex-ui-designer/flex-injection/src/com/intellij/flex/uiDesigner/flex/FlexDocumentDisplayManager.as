@@ -82,9 +82,7 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
     SystemManagerGlobals.bootstrapLoaderInfoURL = "app:/_Main.swf";
 
     Singleton.registerClass(LAYOUT_MANAGER_FQN, LayoutManager);
-    var layoutManager:LayoutManager = LayoutManager(UIComponentGlobals.layoutManager);
-    layoutManager = new LayoutManager(uiErrorHandler);
-    UIComponentGlobals.layoutManager = layoutManager;
+    UIComponentGlobals.layoutManager = new LayoutManager(uiErrorHandler);
 
     new ResourceManager(resourceBundleProvider);
     ModuleManagerGlobals.managerSingleton = new ModuleManager();
@@ -422,8 +420,8 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
 
     if (object is IUIComponent) {
       var documentUI:IUIComponent = IUIComponent(_document);
-      _explicitDocumentSize.width = documentUI.explicitWidth;
-      _explicitDocumentSize.height = documentUI.explicitHeight;
+      _preferredDocumentWidth = initialExplicitDimension(documentUI.explicitWidth);
+      _preferredDocumentHeight = initialExplicitDimension(documentUI.explicitHeight);
     }
 
     try {
@@ -645,7 +643,6 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
       }
 
       const rawType:String = getRawEventType(type);
-
       var listeners:Vector.<Function> = map[rawType];
       if (listeners == null) {
         listeners = new Vector.<Function>();
