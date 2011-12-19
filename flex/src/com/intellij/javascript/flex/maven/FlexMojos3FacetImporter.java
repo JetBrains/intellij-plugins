@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.importing.MavenModifiableModelsProvider;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
+import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenConstants;
 import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.model.MavenPlugin;
@@ -48,6 +49,11 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
   private static final String FLEXMOJOS_ARTIFACT_ID = "flexmojos-maven-plugin";
   private static final String FLEX_COMPILER_GROUP_ID = "com.adobe.flex";
   private static final String FLEX_COMPILER_ARTIFACT_ID = "compiler";
+
+  private static final String FLEX_FRAMEWORK_GROUP_ID = "com.adobe.flex.framework";
+  private static final String FLEX_FRAMEWORK_ARTIFACT_ID = "flex-framework";
+  private static final String AIR_FRAMEWORK_ARTIFACT_ID = "air-framework";
+
   private static final String RESOURCE_MODULE_FACET_PREFIX = "Resource module-";
   private static final String MX_MODULE_FACET_PREFIX = "Flex module ";  // here 'module' means Flex class inherited from mx.modules.Module
 
@@ -246,7 +252,7 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
 
     final MavenPlugin flexmojosPlugin = getFlexmojosPlugin(project);
     final MavenId flexCompilerId =
-      new MavenId(FLEX_COMPILER_GROUP_ID, FLEX_COMPILER_ARTIFACT_ID, getFlexCompilerPomVersion(flexmojosPlugin));
+      new MavenId(FLEX_COMPILER_GROUP_ID, FLEX_COMPILER_ARTIFACT_ID, getFlexCompilerPomVersion(flexmojosPlugin, project));
 
     final String path = getArtifactFilePath(project, flexCompilerId, MavenConstants.TYPE_POM);
     final Sdk flexSdk = FlexSdkUtils.createOrGetSdk(FlexmojosSdkType.getInstance(), path);
@@ -357,15 +363,29 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
     return FileUtil.toSystemIndependentName(MavenArtifactUtil.getArtifactFile(mavenProject.getLocalRepository(), mavenId, type).getPath());
   }
 
-  private static String getFlexCompilerPomVersion(final @NotNull MavenPlugin flexmojosPlugin) {
+  private static String getFlexCompilerPomVersion(final @NotNull MavenPlugin flexmojosPlugin, final @NotNull MavenProject mavenProject) {
     for (final MavenId mavenId : flexmojosPlugin.getDependencies()) {
       if (FLEX_COMPILER_GROUP_ID.equals(mavenId.getGroupId()) && FLEX_COMPILER_ARTIFACT_ID.equals(mavenId.getArtifactId())) {
         return mavenId.getVersion();
       }
     }
+
+    for (final MavenArtifact mavenArtifact : mavenProject.getDependencies()) {
+      if (FLEX_FRAMEWORK_GROUP_ID.equals(mavenArtifact.getGroupId()) &&
+          (FLEX_FRAMEWORK_ARTIFACT_ID.equals(mavenArtifact.getArtifactId()) ||
+           AIR_FRAMEWORK_ARTIFACT_ID.equals(mavenArtifact.getArtifactId()))) {
+        return mavenArtifact.getVersion();
+      }
+    }
+
     // TODO: correct flexmojos-maven-plugin resolving and taking version from 'flex.sdk.version' property value is rather expensive, so currently version is hardcoded
     final String pluginVersion = flexmojosPlugin.getVersion();
-    return (pluginVersion != null && pluginVersion.startsWith("4.")) ? "4.5.0.18623" : "3.2.0.3958";
+    if (pluginVersion != null && pluginVersion.startsWith("4.")) {
+      return StringUtil.compareVersionNumbers(pluginVersion, "4.1") >= 0 ? "4.5.1.21328" : "4.5.0.18623";
+    }
+    else {
+      return "3.2.0.3958";
+    }
   }
 
   @Override
