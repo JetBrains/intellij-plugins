@@ -8,7 +8,6 @@ import com.intellij.flex.uiDesigner.DocumentDisplayManager;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.Sprite;
-import flash.geom.Rectangle;
 
 public class DocumentContainer extends ControlView {
   private var designerAreaOuterBackgroundColor:int;
@@ -54,12 +53,12 @@ public class DocumentContainer extends ControlView {
     addChild(documentSystemManager);
     DocumentDisplayManager(documentSystemManager).added();
 
-    var documentSize:Rectangle = DocumentDisplayManager(documentSystemManager).explicitDocumentSize;
-    if (!isNaN(documentSize.width)) {
-      canvasWidth = documentSize.width;
+    var documentSize:DocumentDisplayManager = DocumentDisplayManager(documentSystemManager);
+    if (documentSize.preferredDocumentWidth != -1) {
+      canvasWidth = documentSize.preferredDocumentWidth;
     }
-    if (!isNaN(documentSize.height)) {
-      canvasHeight = documentSize.height;
+    if (documentSize.preferredDocumentHeight != -1) {
+      canvasHeight = documentSize.preferredDocumentHeight;
     }
   }
 

@@ -8,8 +8,10 @@ import flash.geom.Rectangle;
 public interface DocumentDisplayManager {
   function setUserDocument(object:DisplayObject):void;
 
-  function get explicitDocumentSize():Rectangle;
-  function setActualDocumentSize(w:Number, h:Number):void;
+  function get preferredDocumentWidth():int;
+  function get preferredDocumentHeight():int;
+
+  function setActualDocumentSize(w:int, h:int):void;
   
   function getDefinitionByName(name:String):Object;
 

@@ -27,10 +27,6 @@ public class FlashDocumentDisplayManager extends AbstractDocumentDisplayManager 
     super.init(moduleFactory, uiErrorHandler, mainFocusManager, documentFactory);
   }
 
-  private static function initialExplicitDimension(dimension:Number):Number {
-    return dimension == 0 || dimension != dimension ? NaN : dimension;
-  }
-
   public function setUserDocument(object:DisplayObject):void {
     removeEventHandlers();
 
@@ -40,8 +36,8 @@ public class FlashDocumentDisplayManager extends AbstractDocumentDisplayManager 
 
     _document = object;
 
-    _explicitDocumentSize.width = initialExplicitDimension(object.width);
-    _explicitDocumentSize.height = initialExplicitDimension(object.height);
+    _preferredDocumentWidth = initialExplicitDimension(object.width);
+    _preferredDocumentHeight = initialExplicitDimension(object.height);
 
     try {
       addChildAt(object, 0);

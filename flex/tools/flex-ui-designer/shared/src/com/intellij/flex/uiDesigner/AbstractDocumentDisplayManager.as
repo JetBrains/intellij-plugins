@@ -3,7 +3,6 @@ import com.intellij.flex.uiDesigner.flex.MainFocusManagerSB;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
-import flash.geom.Rectangle;
 
 [Abstract]
 public class AbstractDocumentDisplayManager extends Sprite {
@@ -23,12 +22,22 @@ public class AbstractDocumentDisplayManager extends Sprite {
     _documentFactory = documentFactory;
   }
 
-  protected const _explicitDocumentSize:Rectangle = new Rectangle();
-  public function get explicitDocumentSize():Rectangle {
-    return _explicitDocumentSize;
+  protected var _preferredDocumentWidth:int = -1;
+  protected var _preferredDocumentHeight:int = -1;
+
+  public function get preferredDocumentWidth():int {
+    return _preferredDocumentWidth;
   }
 
-  public function setActualDocumentSize(w:Number, h:Number):void {
+  public function get preferredDocumentHeight():int {
+    return _preferredDocumentHeight;
+  }
+
+  protected static function initialExplicitDimension(dimension:Number):int {
+    return dimension == 0 || dimension != dimension ? -1 : dimension;
+  }
+
+  public function setActualDocumentSize(w:int, h:int):void {
     // originally set by setLayoutBoundsSize, but the Application without explicit size hangs on Stage and listen to resize - we can not change this behavior without the injection of the byte-code
     _document.width = w;
     _document.height = h;
