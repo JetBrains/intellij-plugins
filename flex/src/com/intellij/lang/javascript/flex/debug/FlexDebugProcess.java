@@ -91,6 +91,7 @@ import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.Ai
 public class FlexDebugProcess extends XDebugProcess {
   private static final String TRACE_MARKER = "[trace] ";
   public static final String DEBUGGER_GROUP_ID = "Debugger";
+  private static final String SRC_PATH_ELEMENT = "/src/";
 
   private boolean debugSessionInitialized;
   private final Process fdbProcess;
@@ -776,7 +777,7 @@ public class FlexDebugProcess extends XDebugProcess {
       String fullPath = line.substring(spaceIndex + 1, commaPos).replace(File.separatorChar, '/');
 
       int markerIndex = fullPath.indexOf("/frameworks/projects/");
-      if (markerIndex != -1 && fullPath.indexOf("/src/", markerIndex) > 0) {
+      if (markerIndex != -1 && fullPath.indexOf(SRC_PATH_ELEMENT, markerIndex) > 0) {
         fullPath = myAppSdkHome + fullPath.substring(markerIndex);
       }
 
@@ -829,9 +830,17 @@ public class FlexDebugProcess extends XDebugProcess {
       ensureFilePathToIdMapIsUpToDate();
       List<String> value = myFilePathToIdMap.getKeysByValue(id);
       if (value != null && value.size() > 0) {
-        VirtualFile file = doFindFileByPath(value.get(0));
+        final String path = value.get(0);
+        final VirtualFile file = doFindFileByPath(path);
         if (file != null) return file;
+
         log("Cannot find file " + fileName + " by id " + id);
+        if (packageName == null) {
+          final int srcIndex = path.indexOf(SRC_PATH_ELEMENT);
+          if (srcIndex > 0) {
+            packageName = StringUtil.getPackageName(path.substring(srcIndex + SRC_PATH_ELEMENT.length()), '/').replace('/', '.');
+          }
+        }
       }
     }
 
