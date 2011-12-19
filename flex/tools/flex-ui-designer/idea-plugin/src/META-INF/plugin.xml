@@ -1,23 +1,52 @@
 <idea-plugin version="2">
-  <name>Plugin name here</name>
-  <description>short description of the plugin</description>
-  <version>1.0</version>
-  <vendor>YourCompany</vendor>
-  <idea-version since-build="8000"/>
+  <name>Flash UI Designer</name>
+  <description>Provides editing support for Flex or Flash UI</description>
+  <id>com.intellij.flex.uiDesigner</id>
+  <version>0.6.8</version>
+  <vendor url="http://www.jetbrains.com" logo="/general/ijLogo.png">JetBrains</vendor>
+  <idea-version since-build="110.187"/>
 
-  <application-components>
-    <!-- Add your application components here -->
-  </application-components>
+  <resource-bundle>messages.FlashUIDesignerBundle</resource-bundle>
 
-  <project-components>
-    <!-- Add your project components here -->
-  </project-components>
+  <depends optional="false">com.intellij.flex</depends>
+  <depends optional="false">com.intellij.properties</depends>
 
-  <actions>
-    <!-- Add your actions here -->
-  </actions>
+  <extensionPoints>
+    <extensionPoint name="service" beanClass="com.intellij.openapi.components.ServiceDescriptor"/>
+  </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-    <!-- Add your extensions here -->
+    <applicationService serviceInterface="com.intellij.flex.uiDesigner.DesignerApplicationManager" serviceImplementation="com.intellij.flex.uiDesigner.DesignerApplicationManager"/>
+    <applicationService serviceInterface="com.intellij.flex.uiDesigner.io.StringRegistry" serviceImplementation="com.intellij.flex.uiDesigner.io.StringRegistry"/>
+    <applicationService serviceInterface="com.intellij.flex.uiDesigner.DocumentProblemManager" serviceImplementation="com.intellij.flex.uiDesigner.DocumentProblemManager"/>
+
+    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
   </extensions>
+
+  <extensions defaultExtensionNs="com.intellij.flex.uiDesigner">
+    <service serviceInterface="com.intellij.flex.uiDesigner.libraries.LibraryManager" serviceImplementation="com.intellij.flex.uiDesigner.libraries.LibraryManager"/>
+    <service serviceInterface="com.intellij.flex.uiDesigner.EmbedImageManager" serviceImplementation="com.intellij.flex.uiDesigner.EmbedImageManager"/>
+    <service serviceInterface="com.intellij.flex.uiDesigner.EmbedSwfManager" serviceImplementation="com.intellij.flex.uiDesigner.EmbedSwfManager"/>
+    <service serviceInterface="com.intellij.flex.uiDesigner.SocketInputHandler" serviceImplementation="com.intellij.flex.uiDesigner.SocketInputHandlerImpl"/>
+    <service serviceInterface="com.intellij.flex.uiDesigner.Client" serviceImplementation="com.intellij.flex.uiDesigner.Client"/>
+    <service serviceInterface="com.intellij.flex.uiDesigner.DocumentFactoryManager" serviceImplementation="com.intellij.flex.uiDesigner.DocumentFactoryManager"/>
+  </extensions>
+
+  <actions>
+    <group id="FlashUIDesigner.MainToolbarActions">
+      <separator/>
+      <action id="FlashUIDesigner.RunDesignView" class="com.intellij.flex.uiDesigner.actions.RunDesignViewAction" icon="/images/ui-designer.png">
+        <!--<keyboard-shortcut first-keystroke="meta i" keymap="Mac OS X"/>-->
+      </action>
+      <action id="FlashUIDesigner.DebugDesignView" class="com.intellij.flex.uiDesigner.actions.DebugDesignViewAction" icon="/images/preview-debug.png">
+        <!--<keyboard-shortcut first-keystroke="meta shift i" keymap="Mac OS X"/>-->
+      </action>
+      <add-to-group anchor="before" group-id="MainToolBar" relative-to-action="HelpTopics"/>
+    </group>
+
+    <group id="FlashUIDesigner.ContextMenuActions">
+      <reference ref="FlashUIDesigner.RunDesignView"/>
+      <add-to-group anchor="last" group-id="RunContextPopupGroup"/>
+    </group>
+  </actions>
 </idea-plugin>
