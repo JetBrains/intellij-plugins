@@ -556,8 +556,12 @@ public class FlexCompiler implements SourceProcessingCompiler {
       throw new ConfigurationException(FlexBundle.message("output.file.name.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
     }
 
-    if (!bc.getOutputFileName().toLowerCase().endsWith(".swf")) {
-      throw new ConfigurationException(FlexBundle.message("output.file.name.must.have.swf.extension.for.bc.0.of.module.1", bc.getName(), moduleName));
+    if (!nature.isLib() && !bc.getOutputFileName().toLowerCase().endsWith(".swf")) {
+      throw new ConfigurationException(FlexBundle.message("output.file.name.must.have.2.extension.for.bc.0.of.module.1", bc.getName(), moduleName, "swf"));
+    }
+
+    if (nature.isLib() && !bc.getOutputFileName().toLowerCase().endsWith(".swc")) {
+      throw new ConfigurationException(FlexBundle.message("output.file.name.must.have.2.extension.for.bc.0.of.module.1", bc.getName(), moduleName, "swc"));
     }
 
     if (bc.getOutputFolder().isEmpty()) {
