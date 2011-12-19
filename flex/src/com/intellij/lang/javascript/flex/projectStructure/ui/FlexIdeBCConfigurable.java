@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.ui.JSClassChooserDialog;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
@@ -25,10 +26,12 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -139,8 +142,17 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
                                    CreateHtmlWrapperTemplateDialog.TITLE);
         }
         else {
-          final CreateHtmlWrapperTemplateDialog dialog =
-            new CreateHtmlWrapperTemplateDialog(module, sdk, myWrapperTemplateTextWithBrowse.getText().trim());
+          String path = myWrapperTemplateTextWithBrowse.getText().trim();
+          if (path.isEmpty()) {
+            final String[] contentRootUrls = ModuleRootManager.getInstance(module).getContentRootUrls();
+            if (contentRootUrls.length > 0) {
+              path = VfsUtil.urlToPath(contentRootUrls[0]) + "/" + CreateHtmlWrapperTemplateDialog.HTML_TEMPLATE_FOLDER_NAME;
+            }
+            else {
+              path = PathUtil.getParentPath(module.getModuleFilePath()) + "/" + CreateHtmlWrapperTemplateDialog.HTML_TEMPLATE_FOLDER_NAME;
+            }
+          }
+          final CreateHtmlWrapperTemplateDialog dialog = new CreateHtmlWrapperTemplateDialog(module, sdk, path);
           dialog.show();
           if (dialog.isOK()) {
             myWrapperTemplateTextWithBrowse.setText(dialog.getWrapperFolderPath());
