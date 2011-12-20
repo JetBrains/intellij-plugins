@@ -24,12 +24,14 @@
  */
 package org.osmorc.manifest.impl;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -122,7 +124,7 @@ public class LibraryManifestHolderImpl extends AbstractManifestHolderImpl {
     }
     VirtualFile[] classRoots = library.getFiles(OrderRootType.CLASSES);
     for (VirtualFile classRoot : classRoots) {
-      String jarFileUrl = classRoot.getUrl();
+      final String jarFileUrl = classRoot.getUrl();
       ManifestHolder cachedHolder = myHolderCache.get(jarFileUrl);
       if (cachedHolder != null) {
         result.add(cachedHolder);
@@ -142,6 +144,12 @@ public class LibraryManifestHolderImpl extends AbstractManifestHolderImpl {
           // potential bundle
           LibraryManifestHolderImpl newHolder = new LibraryManifestHolderImpl(library, project, jarFileUrl);
           myHolderCache.put(jarFileUrl, newHolder);
+          Disposer.register(project, new Disposable() {
+            @Override
+            public void dispose() {
+              myHolderCache.remove(jarFileUrl);
+            }
+          });
           result.add(newHolder);
         }
       }
