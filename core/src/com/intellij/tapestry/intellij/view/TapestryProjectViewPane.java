@@ -133,7 +133,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
       defaultactiongroup.remove(action);
     }
 
-    defaultactiongroup.add(new StartInBasePackageAction() {
+    defaultactiongroup.addAction(new StartInBasePackageAction() {
 
       public boolean isSelected(AnActionEvent e) {
         return myFromBasePackage;
@@ -144,9 +144,9 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
 
         updateFromRoot(false);
       }
-    });
+    }).setAsSecondary(true);
 
-    defaultactiongroup.add(new GroupElementFilesToggleAction() {
+    defaultactiongroup.addAction(new GroupElementFilesToggleAction() {
 
       public boolean isSelected(AnActionEvent e) {
         return myGroupElementFiles;
@@ -157,9 +157,9 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
 
         updateFromRoot(false);
       }
-    });
+    }).setAsSecondary(true);
 
-    defaultactiongroup.add(new ShowLibrariesTogleAction() {
+    defaultactiongroup.addAction(new ShowLibrariesTogleAction() {
       public boolean isSelected(AnActionEvent e) {
         return myShowLibraries;
       }
@@ -169,7 +169,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
 
         updateFromRoot(false);
       }
-    });
+    }).setAsSecondary(true);
     defaultactiongroup.add(new CollapseAllAction(myTree));
   }//addToolbarActions
 
