@@ -48,6 +48,9 @@ public class JsAssertFrameworkLibraryManager {
           VirtualFile.EMPTY_ARRAY,
           ArrayUtil.EMPTY_STRING_ARRAY
         );
+        if (scriptingLibraryModel == null) {
+          throw new RuntimeException("ScriptingLibraryModel is null!");
+        }
         libraryManager.commitChanges();
         mappings.associate(rootForAssociation, LIBRARY_NAME);
         LOG.info("Library '" + LIBRARY_NAME + "' has been associated with " + rootForAssociation);
