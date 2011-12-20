@@ -95,7 +95,7 @@ public class ActionPropertyReferenceProvider extends PsiReferenceProvider {
   }
 
   @NonNls
-  private static final String[] TAGS_WITH_ACTION_ATTRIBUTE = new String[]{"action", "form", "reset", "submit", "url"};
+  private static final String[] TAGS_WITH_ACTION_ATTRIBUTE = new String[]{"a", "action", "form", "reset", "submit", "url"};
 
   @Nullable
   private static XmlTag findEnclosingTag(@NotNull final XmlTag xmlTag,

@@ -24,6 +24,9 @@
   <s:param name="<error>INVALID_VALUE</error>"/>
 </s:action>
 
+<s:a action="myAction">
+  <s:param name="myField"/>
+</s:a>
 
 <s:action name="%{dynamicUrl}">
   <s:param name="INVALID_VALUE_WONT_BE_HIGHLIGHTED"/>

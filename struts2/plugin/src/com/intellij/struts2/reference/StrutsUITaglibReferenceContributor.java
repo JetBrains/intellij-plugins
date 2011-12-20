@@ -129,7 +129,7 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
     // elements with "action"
     registerTags(ACTION_REFERENCE_PROVIDER,
                  "action", registrar,
-                 "form", "reset", "submit", "url");
+                 "a", "form", "reset", "submit", "url");
 
     registerTags(ACTION_REFERENCE_PROVIDER,
                  "name", registrar,
@@ -143,7 +143,7 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
     // elements with "namespace"
     registerTags(new NamespaceReferenceProvider(),
                  "namespace", registrar,
-                 "action", "form", "url");
+                 "a", "action", "form", "url");
 
     // CSS classes
     registerTags(CSS_CLASS_PROVIDER,
