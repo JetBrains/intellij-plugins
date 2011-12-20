@@ -15,71 +15,31 @@
  */
 package com.google.jstestdriver.idea;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.google.jstestdriver.idea.ui.ToolPanel;
-import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowAnchor;
-import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
-import com.intellij.ui.content.ContentFactory;
-import com.intellij.ui.content.ContentFactory.SERVICE;
+import com.intellij.ui.content.ContentManager;
 
 /**
- * Top-level plugin component, registered in the plugin.xml. This provides a popout tool window
- * to control the JSTestDriver server and see results from JSTestDriver test executions.
- * @author alexeagle@google.com (Alex Eagle)
+ * @author Konstantin Bulenkov
  */
-public class JSTestDriverToolWindow implements ProjectComponent {
-  private Project project;
-  private ToolPanel myToolPanel;
+public class JSTestDriverToolWindow implements ToolWindowFactory {
+  @Override
+  public void createToolWindowContent(Project project, ToolWindow toolWindow) {
+    toolWindow.setAvailable(true, null);
+    toolWindow.setToHideOnEmptyContent(true);
 
-  public static final String TOOL_WINDOW_ID = "JsTestDriver Server";
+    final ContentManager contentManager = toolWindow.getContentManager();
+    ToolPanel component = new ToolPanel();
+    final Content content = contentManager.getFactory().createContent(component, null, false);
+    content.setDisposer(project);
+    content.setCloseable(false);
 
-  public JSTestDriverToolWindow(Project project) {
-    this.project = project;
+    content.setPreferredFocusableComponent(component.getPrefferedFocusedComponent());
+    contentManager.addContent(content);
+
+    contentManager.setSelectedContent(content, true);
   }
-
-  public void projectOpened() {
-    registerToolWindow();
-  }
-
-  public void projectClosed() {
-    unregisterToolWindow();
-  }
-
-  public void initComponent() {
-    // empty
-  }
-
-  public void disposeComponent() {
-    // empty
-  }
-
-  @NotNull
-  public String getComponentName() {
-    return "SimpleToolWindow.SimpleToolWindowPlugin";
-  }
-
-  private void registerToolWindow() {
-    ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-
-    ToolWindow myToolWindow =
-        toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, false, ToolWindowAnchor.BOTTOM);
-
-    ContentFactory contentFactory = SERVICE.getInstance();
-    myToolPanel = new ToolPanel();
-    Content content = contentFactory.createContent(myToolPanel, "", false);
-    myToolWindow.getContentManager().addContent(content);
-    myToolWindow.setIcon(PluginResources.getJstdSmallIcon());
-  }
-
-  private void unregisterToolWindow() {
-    myToolPanel.onDispose();
-    ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-    toolWindowManager.unregisterToolWindow(TOOL_WINDOW_ID);
-  }
-
 }
