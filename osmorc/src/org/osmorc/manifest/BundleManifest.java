@@ -125,4 +125,12 @@ public interface BundleManifest {
    * @return
    */
   boolean isFragmentHostFor(@NotNull BundleManifest fragmentBundle);
+
+
+  /**
+   * A list of bundle specs which are re-exported by this bundle. It is the complement of {@link #reExportsBundle(BundleManifest)}.
+   * @return  a list of exported bundles. If no bundles are re-exported the list is empty.
+   */
+  @NotNull
+  List<String> getReExportedBundles();
 }
