@@ -44,12 +44,6 @@ public final class ManifestHolderRegistryImpl implements ManifestHolderRegistry 
 
     public ManifestHolderRegistryImpl(Project project) {
       myProject = project;
-      Disposer.register(project, new Disposable() {
-        @Override
-        public void dispose() {
-          LibraryManifestHolderImpl.clearCacheFor(myProject);
-        }
-      });
     }
 
   @NotNull

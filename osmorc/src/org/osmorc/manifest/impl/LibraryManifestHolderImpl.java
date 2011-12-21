@@ -24,12 +24,14 @@
  */
 package org.osmorc.manifest.impl;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -103,15 +105,6 @@ public class LibraryManifestHolderImpl extends AbstractManifestHolderImpl {
   }
 
 
-  public static void clearCacheFor(@NotNull Project project) {
-    for (Iterator<Map.Entry<String, LibraryManifestHolderImpl>> iterator = myHolderCache.entrySet().iterator(); iterator.hasNext(); ) {
-      Map.Entry<String, LibraryManifestHolderImpl> entry = iterator.next();
-      if (entry.getValue().myProject == project) {
-        iterator.remove();
-      }
-    }
-  }
-
   private static boolean isLibraryDisposed(Library library) {
     return library instanceof LibraryEx && ((LibraryEx)library).isDisposed();
   }
@@ -150,7 +143,24 @@ public class LibraryManifestHolderImpl extends AbstractManifestHolderImpl {
         final VirtualFile manifestFile = classDir.findFileByRelativePath("META-INF/MANIFEST.MF");
         if (manifestFile != null) {
           // potential bundle
-          LibraryManifestHolderImpl newHolder = new LibraryManifestHolderImpl(library, project, jarFileUrl);
+          final LibraryManifestHolderImpl newHolder = new LibraryManifestHolderImpl(library, project, jarFileUrl);
+          
+          // kill reference to the project when it is being disposed. (project leak fix by Alexey Kudravtsev)
+          Disposer.register(project, new Disposable() {
+            @Override
+            public void dispose() {
+              synchronized (LibraryManifestHolderImpl.class) {  // make sure there is no concurrent access to the holder cache.
+                for (Iterator<LibraryManifestHolderImpl> iterator = myHolderCache.values().iterator(); iterator.hasNext(); ) {
+                  LibraryManifestHolderImpl holder = iterator.next();
+                  if ( holder == newHolder ) {
+                    iterator.remove();
+                    break;
+                  }
+                }
+              }
+            }
+          });
+          
           myHolderCache.put(jarFileUrl, newHolder);
           result.add(newHolder);
         }
