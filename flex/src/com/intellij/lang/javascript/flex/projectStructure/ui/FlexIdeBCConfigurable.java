@@ -155,7 +155,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
           final CreateHtmlWrapperTemplateDialog dialog = new CreateHtmlWrapperTemplateDialog(module, sdk, path);
           dialog.show();
           if (dialog.isOK()) {
-            myWrapperTemplateTextWithBrowse.setText(dialog.getWrapperFolderPath());
+            myWrapperTemplateTextWithBrowse.setText(FileUtil.toSystemDependentName(dialog.getWrapperFolderPath()));
           }
         }
       }

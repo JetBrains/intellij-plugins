@@ -70,7 +70,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
 
   private void setInitialPath(final Module module, final String initialPath) {
     if (initialPath != null) {
-      myWrapperFolderComponent.getComponent().setText(initialPath);
+      myWrapperFolderComponent.getComponent().setText(FileUtil.toSystemDependentName(initialPath));
     }
     else {
       final String[] contentRootUrls = ModuleRootManager.getInstance(module).getContentRootUrls();
@@ -91,11 +91,11 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
   }
 
   public String getWrapperFolderPath() {
-    return myWrapperFolderComponent.getComponent().getText().trim();
+    return FileUtil.toSystemIndependentName(myWrapperFolderComponent.getComponent().getText().trim());
   }
 
   protected void doOKAction() {
-    if (createHtmlWrapperTemplate(myProject, mySdk, myWrapperFolderComponent.getComponent().getText().trim(),
+    if (createHtmlWrapperTemplate(myProject, mySdk, getWrapperFolderPath(),
                                   myEnableHistoryCheckBox.isSelected(), myCheckPlayerVersionCheckBox.isSelected(),
                                   myExpressInstallCheckBox.isEnabled() && myExpressInstallCheckBox.isSelected())) {
       super.doOKAction();
@@ -122,7 +122,9 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
         folder = VfsUtil.createDirectories(folderPath);
       }
       catch (IOException e) {
-        Messages.showErrorDialog(project, FlexBundle.message("failed.to.create.folder", folderPath, e.getMessage()), TITLE);
+        Messages.showErrorDialog(project,
+                                 FlexBundle.message("failed.to.create.folder", FileUtil.toSystemDependentName(folderPath), e.getMessage()),
+                                 TITLE);
       }
     }
 
@@ -130,7 +132,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
       Messages.showErrorDialog(project, FlexBundle.message("failed.to.create.folder", folderPath, "unknown error"), TITLE);
     }
     else if (!folder.isDirectory()) {
-      Messages.showErrorDialog(project, FlexBundle.message("selected.path.not.folder", folderPath), TITLE);
+      Messages.showErrorDialog(project, FlexBundle.message("selected.path.not.folder", FileUtil.toSystemDependentName(folderPath)), TITLE);
       return null;
     }
 
