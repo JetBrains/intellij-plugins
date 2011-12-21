@@ -30,6 +30,7 @@ public class FlexIdeProjectStructureConfigurable extends ProjectStructureConfigu
   public JComponent createComponent() {
     JComponent c = super.createComponent();
     hideSidePanel();
+    hideErrorsComponent();
     return c;
   }
 
