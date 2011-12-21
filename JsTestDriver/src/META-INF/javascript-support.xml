@@ -40,17 +40,17 @@
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <localInspection shortName="JsTestDriverDefaultAssertionFrameworkSupport" displayName="Add JsTestDriver assertion framework support"
+    <localInspection shortName="JstdAssertionFrameworkSupport" displayName="Add JsTestDriver assertion framework support"
                      groupBundle="com.intellij.lang.javascript.JavaScriptBundle" groupKey="js.inspection.group.name" enabledByDefault="true"
                      level="ERROR"
-                     implementationClass="com.google.jstestdriver.idea.assertFramework.jstd.JstdDefaultAssertionFrameworkSupportInspection"/>
-    <localInspection shortName="QUnitAssertionFrameworkAdapterSupportForJsTestDriver" groupBundle="com.intellij.lang.javascript.JavaScriptBundle"
+                     implementationClass="com.google.jstestdriver.idea.assertFramework.jstd.JstdAssertionFrameworkSupportInspection"/>
+    <localInspection shortName="QUnitAdapterSupport" groupBundle="com.intellij.lang.javascript.JavaScriptBundle"
                      displayName="Add QUnit adapter support for JsTestDriver" groupKey="js.inspection.group.name" enabledByDefault="true"
-                     level="ERROR" implementationClass="com.google.jstestdriver.idea.assertFramework.qunit.QUnitAdapterSupportProvider"/>
-    <localInspection shortName="JasmineAssertionFrameworkAdapterSupportForJsTestDriver"
+                     level="ERROR" implementationClass="com.google.jstestdriver.idea.assertFramework.qunit.QUnitAdapterSupportInspection"/>
+    <localInspection shortName="JasmineAdapterSupport"
                      displayName="Add Jasmine adapter support for JsTestDriver" groupKey="js.inspection.group.name" enabledByDefault="true"
                      level="ERROR" groupBundle="com.intellij.lang.javascript.JavaScriptBundle"
-                     implementationClass="com.google.jstestdriver.idea.assertFramework.jasmine.JasmineAdapterSupportProvider"/>
+                     implementationClass="com.google.jstestdriver.idea.assertFramework.jasmine.JasmineAdapterSupportInspection"/>
 
     <applicationService serviceImplementation="com.google.jstestdriver.idea.assertFramework.TestFileStructureProviderImpl"/>
 

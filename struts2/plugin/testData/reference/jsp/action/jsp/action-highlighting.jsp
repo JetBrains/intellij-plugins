@@ -2,6 +2,7 @@
 
 <%-- valid --%>
 <s:url action="namespace1Action"/>
+<s:a action="namespace1Action"/>
 <s:url action="namespace2Action"/>
 <s:url action="namespace1Action" namespace="/namespace1"/>
 <s:url action="namespace2Action" namespace="/namespace2"/>
@@ -24,6 +25,7 @@
 <%-- invalid --%>
 <s:url action="<error></error>"/>
 <s:url action="<error>INVALID_VALUE</error>"/>
+<s:a action="<error>INVALID_VALUE</error>"/>
 <s:url action="<error>namespace2Action</error>" namespace="/namespace1"/>
 
 <s:url action="bangAction!<error>INVALID_VALUE</error>" namespace="/bang"/>

@@ -54,13 +54,14 @@ public class ToolPanel extends JPanel {
   public static int serverPort = 9876;
   private static ServerStartupAction myServerStartupAction;
   private static ServerState myState = new ServerState();
+  final JTextField captureUrl;
 
   private List<ServerListener> myServerListeners;
 
   public ToolPanel() {
     final StatusBar statusBar = new StatusBar(MessageBundle.getBundle());
     final CapturedBrowsersPanel capturedBrowsersPanel = new CapturedBrowsersPanel();
-    final JTextField captureUrl = createCaptureUrl();
+    captureUrl = createCaptureUrl();
 
     final JButton startServerButton = new JButton(new ServerStartAction());
     final JButton stopServerButton = new JButton(new ServerStopAction());
@@ -97,6 +98,10 @@ public class ToolPanel extends JPanel {
       add(capturedBrowsersPanel);
     }}, BorderLayout.NORTH);
 
+  }
+
+  public JComponent getPrefferedFocusedComponent() {
+    return captureUrl;
   }
 
   private static JTextField createCaptureUrl() {
