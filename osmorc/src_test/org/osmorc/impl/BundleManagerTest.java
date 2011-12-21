@@ -1,6 +1,12 @@
 package org.osmorc.impl;
 
 
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
+import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.testFramework.LightIdeaTestCase;
 import org.hamcrest.CoreMatchers;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +23,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.osmorc.testutil.ManifestMaker.bundleSymbolicName;
 
@@ -26,6 +33,8 @@ import static org.osmorc.testutil.ManifestMaker.bundleSymbolicName;
 public class BundleManagerTest extends LightIdeaTestCase {
 
   private MyBundleManager myBundleManager;
+  private Library myFakeJarLibrary;
+  public static final String FAKE_JAR_NAME = "fakeJar-1.0.0.jar";
 
   public void setUp() throws Exception {
     super.setUp();
@@ -62,8 +71,37 @@ public class BundleManagerTest extends LightIdeaTestCase {
     myBundleManager.addManifestHolder(makeHolder("Manifest8.MF", bundleSymbolicName("org.eclipse.fragment.fragment").bundleVersion("1.0.0")
       .requireBundle("org.eclipse.ui;bundle-version=\"[3.3.0,4.0.0)\";visibility:=reexport")
       .fragmentHost("org.eclipse.fragment.host").toString(), "org.eclipse.fragment.fragment.old"));
+
+
+    // create a project level  library which contains a fake jar for bundle-classpath resolution.
+    // since this doesn't necessarily need to be an OSGI-fied library it's not added to the bundle manager explicitly
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        LibraryTable.ModifiableModel projectLibraryModel = ProjectLibraryTable.getInstance(getProject()).getModifiableModel();
+        myFakeJarLibrary = projectLibraryModel.createLibrary("fakeJar");
+        Library.ModifiableModel libraryModel = myFakeJarLibrary.getModifiableModel();
+        libraryModel.addRoot("file:///foo/bar/" + FAKE_JAR_NAME, OrderRootType.CLASSES);
+        libraryModel.commit();
+        projectLibraryModel.commit();
+      }
+    });
   }
 
+
+  @Override
+  protected void tearDown() throws Exception {
+    super.tearDown();
+    // make sure we don't have duplicate project level libraries.
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        LibraryTable.ModifiableModel projectLibraryModel = ProjectLibraryTable.getInstance(getProject()).getModifiableModel();
+        projectLibraryModel.removeLibrary(myFakeJarLibrary);
+        projectLibraryModel.commit();
+      }
+    });
+  }
 
   /**
    * Tests resolving a require-bundle dependency which has visibility:=reexport set.
@@ -127,13 +165,30 @@ public class BundleManagerTest extends LightIdeaTestCase {
   }
 
   /**
-   * Tests resolving recursive requires with fragments and circular dependencies (the whole enchilada)
+   * Tests resolving the bundle classpath.
+   */
+  public void testResolveBundleClassPath() {
+    myBundleManager.addManifestHolder(
+      makeHolder("MyManifest.MF",
+                 bundleSymbolicName("foo.bar").bundleVersion("1.0.0").bundleClassPath("/narf/troz/" + FAKE_JAR_NAME).toString(),
+                 getModule()));
+
+    Set<Object> objects = myBundleManager.resolveDependenciesOf(getModule());
+    assertThat(objects, notNullValue());
+    assertThat(objects.contains(myFakeJarLibrary), is(true));
+    // should be exactly one entry.
+    assertThat(objects.size(), is(1));
+  }
+
+
+  /**
+   * Tests resolving recursive requires with fragments and circular dependencies, bundle-classpath, etc. (the whole enchilada)
    */
   public void testResolveTheWholeEnchilada() throws ExecutionException, InterruptedException {
     myBundleManager.addManifestHolder(
       makeHolder("MyManifest.MF",
-                 bundleSymbolicName("foo.bar").bundleVersion("1.0.0").requireBundle("org.eclipse.fragment.host").toString(),
-                 getModule()));
+                 bundleSymbolicName("foo.bar").bundleVersion("1.0.0").requireBundle("org.eclipse.fragment.host")
+                   .bundleClassPath(FAKE_JAR_NAME).toString(), getModule()));
 
     // may run into infinite loop, so run it in a future task
     FutureTask<Set<Object>> bt = new FutureTask<Set<Object>>(new Callable<Set<Object>>() {
@@ -170,7 +225,8 @@ public class BundleManagerTest extends LightIdeaTestCase {
       assertThat(objects.contains("org.eclipse.circular.two"), is(true));
       assertThat(objects.contains("org.eclipse.ui.workbench"), is(true));
       assertThat(objects.contains("org.eclipse.core.expressions"), is(true));
-      assertThat(objects.size(), is(5)); // no more, no less
+      assertThat(objects.contains(myFakeJarLibrary), is(true));
+      assertThat(objects.size(), is(6)); // no more, no less
     }
   }
 

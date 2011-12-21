@@ -1,5 +1,7 @@
 package org.osmorc.impl;
 
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -198,7 +200,6 @@ public class BundleCache {
     return result;
   }
 
-
   /**
    * Returns the  manifest holder that confirms to the required-bundle specification. If multiple entities match, the one with the
    * highest version is returned.
@@ -228,6 +229,8 @@ public class BundleCache {
 
     return getCandidateWithHighestVersion(candidates);
   }
+
+ 
 
   /**
    * Helper function which takes a collection of manifest holders, creates sets of manifest holders that have the same bundle symbolic name

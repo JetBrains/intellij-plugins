@@ -248,6 +248,21 @@ public class BundleManifestImpl implements BundleManifest {
     return header != null;
   }
 
+  @NotNull
+  public List<String> getBundleClassPathEntries() {
+    Header header = myManifestFile.getHeaderByName(BUNDLE_CLASSPATH);
+    if (header == null) {
+      return Collections.emptyList();
+    }
+    Clause[] clauses = header.getClauses();
+    List<String> result = new ArrayList<String>(clauses.length);
+    for (Clause clause : clauses) {
+      result.add(clause.getClauseText());
+    }
+
+    return result;
+  }
+
 
   @Override
   public boolean isFragmentHostFor(@NotNull BundleManifest fragmentBundle) {

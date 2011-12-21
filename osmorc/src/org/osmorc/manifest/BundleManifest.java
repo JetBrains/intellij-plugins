@@ -98,6 +98,13 @@ public interface BundleManifest {
   List<String> getRequiredBundles();
 
   /**
+   * Returns a list of entries in the BundleClasspath header.
+   * @return a list of entries. If the header does not exist, or does not have entries, returns an empty list.
+   */
+  @NotNull
+  List<String> getBundleClassPathEntries();
+
+  /**
    * Checks if this bundle could satisfy the given require-bundle specification.
    *
    * @param bundleSpec the bundle specification as in the "Require-Bundle" header.

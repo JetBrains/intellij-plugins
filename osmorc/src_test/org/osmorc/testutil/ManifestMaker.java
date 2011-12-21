@@ -29,6 +29,16 @@ public class ManifestMaker {
   }
 
   /**
+   * Adds the given entries to the Bundle-Classpath header. Can be called multiple times.
+   *
+   * @param entries the entries to be added
+   * @return this manifest maker.
+   */
+  public ManifestMaker bundleClassPath(String... entries) {
+    return addHeaderValues(Constants.BUNDLE_CLASSPATH, entries);
+  }
+
+  /**
    * Sets the bundle version
    *
    * @param version the version of this bundle.
@@ -111,6 +121,7 @@ public class ManifestMaker {
 
   /**
    * Creates the manifest from the currently known headers.
+   *
    * @return
    */
   @Override
@@ -123,7 +134,7 @@ public class ManifestMaker {
       for (Iterator<String> iterator = values.iterator(); iterator.hasNext(); ) {
         String value = iterator.next();
         builder.append(value);
-        if ( iterator.hasNext() ) {
+        if (iterator.hasNext()) {
           builder.append(",");
         }
       }

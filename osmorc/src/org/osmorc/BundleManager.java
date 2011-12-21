@@ -76,8 +76,8 @@ public interface BundleManager {
   void reindexAll();
 
   /**
-   * Resolves all dependencies of the given module, by analyzing the package import, require-bundle and fragment hosts statements.
-   * Returns a list of {@link Module} and {@link Library} objects.¡
+   * Resolves all dependencies of the given module, by analyzing the package import, require-bundle, bundle-classpath and fragment hosts
+   * headers. Returns a list of {@link Module} and {@link Library} objects.
    *
    * @param module the module to resolve the dependencies for
    * @return a list of dependencies.

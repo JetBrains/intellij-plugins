@@ -4,6 +4,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.util.messages.Topic;
@@ -18,6 +19,8 @@ import org.osmorc.manifest.ManifestHolderDisposedException;
 import org.osmorc.manifest.ManifestHolderRegistry;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Re-implementation of the bundle manager.
@@ -30,6 +33,10 @@ public class MyBundleManager implements BundleManager {
   private ManifestHolderRegistry myManifestHolderRegistry;
   private Project myProject;
 
+  /**
+   * Pattern which finds the jar filename in a path pattern from a Bundle-ClassPath header.
+   */
+  private static final Pattern JarPathPattern = Pattern.compile("(.*/)?([^/]+.jar)");
 
   public MyBundleManager(ManifestHolderRegistry manifestHolderRegistry, Project project) {
     myManifestHolderRegistry = manifestHolderRegistry;
@@ -138,56 +145,52 @@ public class MyBundleManager implements BundleManager {
 
   @Override
   @NotNull
-  public Set<Object> resolveDependenciesOf(@NotNull Module module) {
+  public Set<Object> resolveDependenciesOf(@NotNull final Module module) {
     BundleManifest manifest = getManifestByObject(module);
     if (manifest == null) {
       return Collections.emptySet();
     }
 
-    Set<Object> result = new HashSet<Object>();
+    // set of all manifest holders that are dependencies
+    Set<ManifestHolder> dependencyHolders = new HashSet<ManifestHolder>();
+
+    // resolve Import-Package
     List<String> imports = manifest.getImports();
     for (String anImport : imports) {
-      Set<ManifestHolder> manifestHolders = myBundleCache.whoProvides(anImport);
-      for (ManifestHolder manifestHolder : manifestHolders) {
-        try {
-          Object boundObject = manifestHolder.getBoundObject();
-          result.add(boundObject);
-        }
-        catch (ManifestHolderDisposedException ignore) {
-          // ignore it
-        }
-      }
+      dependencyHolders.addAll(myBundleCache.whoProvides(anImport));
     }
 
+    // Resolve Require-Bundle
     List<String> requiredBundles = manifest.getRequiredBundles();
     List<ManifestHolder> allRequiredBundles = new ArrayList<ManifestHolder>();
     for (String requiredBundle : requiredBundles) {
       resolveRequiredBundle(requiredBundle, allRequiredBundles);
     }
-
-    for (ManifestHolder manifestHolder : allRequiredBundles) {
-      if (manifestHolder != null) {
-        try {
-          result.add(manifestHolder.getBoundObject());
-        }
-        catch (ManifestHolderDisposedException ignore) {
-          // ok, ignore it then.
-        }
-      }
-    }
-
+    dependencyHolders.addAll(allRequiredBundles);
+    
+    
+    // Resolve Fragment-Hosts
     ManifestHolder manifestHolder = myBundleCache.getManifestHolder(module);
     if (manifestHolder != null) {
-      Set<ManifestHolder> fragmentHosts = myBundleCache.getFragmentHosts(manifestHolder);
-      for (ManifestHolder fragmentHost : fragmentHosts) {
-        try {
-          result.add(fragmentHost.getBoundObject());
-        }
-        catch (ManifestHolderDisposedException ignore) {
-          // ok ignore it.
-        }
+      dependencyHolders.addAll(myBundleCache.getFragmentHosts(manifestHolder));
+    }
+
+    // finally extract result objects from holders.
+    Set<Object> result = new HashSet<Object>();
+    for (ManifestHolder holder : dependencyHolders) {
+      try {
+        result.add(holder.getBoundObject());
+      }
+      catch (ManifestHolderDisposedException e) {
+        // ignore it, holder is gone.
       }
     }
+
+    // Resolve Bundle-ClassPath (this might contain non-osgi-bundles so we have to work on the library level here)
+    List<String> entries = manifest.getBundleClassPathEntries();
+    result.addAll(resolveBundleClassPath(entries));
+
+    
     return result;
   }
 
@@ -195,21 +198,21 @@ public class MyBundleManager implements BundleManager {
    * This method fully resolves a Require-Bundle specification including re-exports and possible amendments by fragments. All resolved
    * dependencies will be added to the <code>resolvedDependencies</code> list.
    *
-   * @param requireBundleSpec the spec to resolve
+   * @param requireBundleSpec    the spec to resolve
    * @param resolvedDependencies the resolved dependencies.
    */
   private void resolveRequiredBundle(@NotNull String requireBundleSpec,
-                                     @NotNull List<ManifestHolder> resolvedDependencies)  {
+                                     @NotNull List<ManifestHolder> resolvedDependencies) {
 
     // first get the manifest holder of the required bundle
     ManifestHolder manifestHolder = myBundleCache.whoIsRequiredBundle(requireBundleSpec);
-    
-    if ( manifestHolder == null ) {
+
+    if (manifestHolder == null) {
       // unresolvable, may happen if the user misses some dependencies.
       return;
     }
-    
-    if ( resolvedDependencies.contains(manifestHolder)) {
+
+    if (resolvedDependencies.contains(manifestHolder)) {
       // we're done here, we already resolved this dependency
       return;
     }
@@ -222,18 +225,18 @@ public class MyBundleManager implements BundleManager {
       // ok it's gone. Should rarely happen but in this case there is nothing we can do anymore.
       return;
     }
-    
-    
+
+
     if (requireBundleManifest != null) {
       // its kosher, so add it to the result list.
       resolvedDependencies.add(manifestHolder);
 
       // now determine additional dependencies
       List<String> toResolve = new ArrayList<String>();
-      
-      // -  bundles that are re-exported from the 
+
+      // -  bundles that are re-exported from the current dependency
       toResolve.addAll(requireBundleManifest.getReExportedBundles());
-      
+
       // - bundles that are re-exported from any fragments
       Set<ManifestHolder> fragments = myBundleCache.getFragmentsForBundle(manifestHolder);
 
@@ -248,7 +251,7 @@ public class MyBundleManager implements BundleManager {
         catch (ManifestHolderDisposedException e) {
           // ok it's gone, ignore it.
         }
-        if ( manifest != null ) {
+        if (manifest != null) {
           toResolve.addAll(manifest.getReExportedBundles());
         }
       }
@@ -260,6 +263,34 @@ public class MyBundleManager implements BundleManager {
     }
   }
 
+  /**
+   * Resolves the given bundle classpath entries.
+   *
+   * @param classPathEntries
+   * @return a set of libraries that are dependencies according to the given classpath entries. Returns an empty set if no libraries
+   *         could be found.
+   */
+  private Set<Library> resolveBundleClassPath(@NotNull Collection<String> classPathEntries) {
+    Library[] libraries = ProjectLibraryTable.getInstance(myProject).getLibraries();
+    
+    Set<Library> result = new HashSet<Library>();
+    for (String entry : classPathEntries) {
+      Matcher matcher = JarPathPattern.matcher(entry);
+      if (matcher.matches()) {
+        String jarName = matcher.group(2);
+        for (Library library : libraries) {
+          String[] urls = library.getUrls(OrderRootType.CLASSES);
+          for (String url : urls) {
+            if ( url.endsWith(jarName) ) {
+              result.add(library);
+              break;
+            }
+          }
+        }
+      }
+    }
+    return result;
+  }
 
   /**
    * Returns a list of objects (a Module or a Library) which represent the bundle with the given bundle symbolic name. Most of the time there
@@ -271,7 +302,7 @@ public class MyBundleManager implements BundleManager {
    * @return the object representing
    */
   @NotNull
-  public List<Object> whoIs(@NotNull String bundleSymbolicName) {
+  private List<Object> whoIs(@NotNull String bundleSymbolicName) {
     List<ManifestHolder> holders = myBundleCache.whoIs(bundleSymbolicName);
     if (holders.isEmpty()) {
       return Collections.emptyList();
@@ -310,7 +341,7 @@ public class MyBundleManager implements BundleManager {
         return manifestHolder.getBundleManifest();
       }
       catch (ManifestHolderDisposedException ignore) {
-        // in that case the objec was already disposed.
+        // in that case the object was already disposed.
         return null;
       }
     }
