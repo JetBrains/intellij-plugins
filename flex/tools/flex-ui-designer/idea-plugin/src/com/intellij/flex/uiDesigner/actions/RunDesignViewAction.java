@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.actions;
 
 import com.intellij.flex.uiDesigner.DesignerApplicationManager;
+import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -43,6 +44,7 @@ public class RunDesignViewAction extends DumbAwareAction {
     FileDocumentManager.getInstance().saveAllDocuments();
     // saveAllDocuments may cause open this document
     if (!DesignerApplicationManager.getInstance().isDocumentOpening()) {
+      UsageTrigger.trigger("FlexUiDesigner");
       DesignerApplicationManager.getInstance().openDocument(module, psiFile, isDebug());
     }
   }
