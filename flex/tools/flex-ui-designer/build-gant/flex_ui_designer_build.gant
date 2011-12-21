@@ -57,25 +57,33 @@ private def doExecute(home, sandbox, targetFolder) {
     fileset(dir: "$flexBuildHome/../lib")
   }
 
-  List<SwfDescriptor> swfDescriptors = includeFile("$flexBuildHome/flex_ui_designer_swfs_build.gant").getList();
-  swfDescriptors.each {
-    if (it.config.startsWith("flex-injection-") || it.config.equals("shared.xml")) {
-      buildFlex(it.config, it.basedir, flexBuildHome, flexSandbox, it.isSwc)
-    }
-  };
+  // develar dec 21, 2011
+  // temp for astella eap
+  ant.copy(file: "$home/flex/tools/flex-ui-designer/_astella_eap_/designer.swf", tofile: "$targetFolder/designer.swf")
 
-  buildAssets()
+  //List<SwfDescriptor> swfDescriptors = includeFile("$flexBuildHome/flex_ui_designer_swfs_build.gant").getList();
+  //swfDescriptors.each {
+  //  if (it.config.startsWith("flex-injection-") || it.config.equals("shared.xml")) {
+  //    buildFlex(it.config, it.basedir, flexBuildHome, flexSandbox, it.isSwc)
+  //  }
+  //};
+  //
+  //buildAssets()
+  //
+  //swfDescriptors.each {
+  //  if (!it.config.startsWith("flex-injection-") && !it.config.equals("shared.xml")) {
+  //    buildFlex(it.config, it.basedir, flexBuildHome, flexSandbox, it.isSwc);
+  //  }
+  //};
 
-  swfDescriptors.each {
-    if (!it.config.startsWith("flex-injection-") && !it.config.equals("shared.xml")) {
-      buildFlex(it.config, it.basedir, flexBuildHome, flexSandbox, it.isSwc);
-    }
-  };
-
-  ant.copy(file: "$flexSandbox/main-loader-1.0-SNAPSHOT.swf", tofile: "$targetFolder/designer.swf")
+  //ant.copy(file: "$flexSandbox/main-loader-1.0-SNAPSHOT.swf", tofile: "$targetFolder/designer.swf")
   ant.copy(file: "$flexBuildHome/../main/resources/descriptor.xml", todir: "$targetFolder")
   ant.copy(todir: "$targetFolder") {
     fileset(dir: "$flexSandbox", includes: "**/*injection-*.swc")
+  }
+
+  ant.copy(todir: "$targetFolder", overwrite: "true") {
+    fileset(dir: "$home/flex/tools/flex-ui-designer/_astella_eap_", includes: "**/*injection-*.swc")
   }
 }
 
