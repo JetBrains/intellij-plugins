@@ -1,22 +1,23 @@
 package com.google.jstestdriver.idea.assertFramework.support;
 
-import com.google.inject.Provider;
 import com.google.jstestdriver.idea.util.CastUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import java.util.Collections;
 import java.util.List;
 
 public class AddAdapterSupportDialog extends DialogWrapper {
 
   private final String myAssertFrameworkName;
-  private final Provider<List<VirtualFile>> myAdapterSourceFilesProvider;
-  private JPanel myContent;
+  private final List<VirtualFile> myAdapterSourceFiles;
 
+  private JPanel myContent;
   private JPanel myDirectoryTypeContent;
   private JRadioButton myDefaultRadioButton;
   private JRadioButton myCustomRadioButton;
@@ -24,26 +25,25 @@ public class AddAdapterSupportDialog extends DialogWrapper {
   private JPanel myTestsRunPanel;
   private JPanel myCodeAssistancePanel;
 
-  private final ExtractDirectoryTypeManager myDirectoryTypeManager;
-  private final NewLibraryCreationManager myNewLibraryCreationManager;
+  private final ExtractedSourceLocationController myExtractedSourceLocationController;
+  private final LibraryCreationController myLibraryCreationController;
 
   public AddAdapterSupportDialog(@NotNull Project project,
                                  @NotNull String assertionFrameworkName,
-                                 @NotNull Provider<List<VirtualFile>> adapterSourceFilesProvider) {
+                                 @NotNull List<VirtualFile> adapterSourceFiles) {
     super(project);
     myAssertFrameworkName = assertionFrameworkName;
-    myAdapterSourceFilesProvider = adapterSourceFilesProvider;
+    myAdapterSourceFiles = adapterSourceFiles;
 
     setModal(true);
     updateAssertionFrameworkSpecificDescriptions();
-    myDirectoryTypeManager = ExtractDirectoryTypeManager.install(
-      project, myDirectoryTypeContent, assertionFrameworkName, myDefaultRadioButton, myCustomRadioButton
+    myLibraryCreationController = LibraryCreationController.install(
+      project, myNewLibraryNameTextField, assertionFrameworkName, adapterSourceFiles
     );
-    myNewLibraryCreationManager = NewLibraryCreationManager.install(
-      project, myNewLibraryNameTextField, assertionFrameworkName
+    myExtractedSourceLocationController = ExtractedSourceLocationController.install(
+      project, myDirectoryTypeContent, assertionFrameworkName, myDefaultRadioButton,
+      myCustomRadioButton, Collections.singletonList(myLibraryCreationController)
     );
-    myDirectoryTypeManager.addChangeListener(myNewLibraryCreationManager);
-    myDirectoryTypeManager.init();
     super.init();
   }
 
@@ -73,21 +73,21 @@ public class AddAdapterSupportDialog extends DialogWrapper {
   }
 
   @Override
+  @Nullable
   protected ValidationInfo doValidate() {
-    ValidationInfo validationInfo = myDirectoryTypeManager.validate();
+    ValidationInfo validationInfo = myExtractedSourceLocationController.validate();
     if (validationInfo != null) {
       return validationInfo;
     }
-    validationInfo = myNewLibraryCreationManager.validate();
+    validationInfo = myLibraryCreationController.validate();
     return validationInfo;
   }
 
   @Override
   protected void doOKAction() {
-    List<VirtualFile> bundledSourceFiles = myAdapterSourceFilesProvider.get();
-    List<VirtualFile> extractedVirtualFiles = myDirectoryTypeManager.extractAdapterFiles(bundledSourceFiles);
+    List<VirtualFile> extractedVirtualFiles = myExtractedSourceLocationController.extractAdapterFiles(myAdapterSourceFiles);
     if (extractedVirtualFiles != null) {
-      myNewLibraryCreationManager.installCodeAssistance(extractedVirtualFiles);
+      myLibraryCreationController.installCodeAssistance(extractedVirtualFiles);
     }
     super.doOKAction();
   }

@@ -3,6 +3,7 @@ package com.google.jstestdriver.idea.util;
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JSTokenTypes;
+import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
@@ -367,4 +368,29 @@ public class JsPsiUtils {
     }
     return PsiDocumentManager.getInstance(element.getProject()).getDocument(psiFile);
   }
+
+  public static boolean isResolvedToFunction(@NotNull PsiPolyVariantReference psiPolyVariantReference) {
+    ResolveResult[] resolveResults = psiPolyVariantReference.multiResolve(false);
+    for (ResolveResult resolveResult : resolveResults) {
+      boolean resolvedCorrectly = isResolvedToFunction(resolveResult);
+      if (resolvedCorrectly) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private static boolean isResolvedToFunction(@NotNull ResolveResult resolveResult) {
+    PsiElement resolvedElement = resolveResult.getElement();
+    if (resolvedElement == null || !resolveResult.isValidResult()) {
+      return false;
+    }
+    if (resolvedElement instanceof JSNamedElementProxy) {
+      JSNamedElementProxy proxy = (JSNamedElementProxy) resolvedElement;
+      PsiElement element = proxy.getElement();
+      return element != null && !(element instanceof PsiComment);
+    }
+    return !(resolvedElement instanceof PsiComment);
+  }
+
 }
