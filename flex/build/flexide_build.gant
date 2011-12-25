@@ -208,7 +208,8 @@ target('default': "Build artifacts") {
   def flex_profiler_build_script = includeFile("$home/flex/tools/profiler/build-gant/flex_profiler_build.gant")
   flex_profiler_build_script.execute("$home", "$paths.sandbox", "$home/out/flex-ide/classes/production/flex-profiler")
 
-  usedJars.add("$home/community/lib/looks-2.2.2.jar")
+  usedJars.add("$home/community/lib/jgoodies-common-1.2.1.jar")
+  usedJars.add("$home/community/lib/jgoodies-looks-2.4.2.jar")
 
   buildSearchableOptions()
 
