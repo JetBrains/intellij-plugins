@@ -1,5 +1,6 @@
 package com.google.jstestdriver.idea.assertFramework.support;
 
+import com.google.inject.Provider;
 import com.google.jstestdriver.idea.util.CastUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -13,7 +14,7 @@ import java.util.List;
 public class AddAdapterSupportDialog extends DialogWrapper {
 
   private final String myAssertFrameworkName;
-  private List<VirtualFile> myAdapterSourceFiles;
+  private final Provider<List<VirtualFile>> myAdapterSourceFilesProvider;
   private JPanel myContent;
 
   private JPanel myDirectoryTypeContent;
@@ -28,10 +29,10 @@ public class AddAdapterSupportDialog extends DialogWrapper {
 
   public AddAdapterSupportDialog(@NotNull Project project,
                                  @NotNull String assertionFrameworkName,
-                                 @NotNull List<VirtualFile> adapterSourceFiles) {
+                                 @NotNull Provider<List<VirtualFile>> adapterSourceFilesProvider) {
     super(project);
     myAssertFrameworkName = assertionFrameworkName;
-    myAdapterSourceFiles = adapterSourceFiles;
+    myAdapterSourceFilesProvider = adapterSourceFilesProvider;
 
     setModal(true);
     updateAssertionFrameworkSpecificDescriptions();
@@ -83,7 +84,8 @@ public class AddAdapterSupportDialog extends DialogWrapper {
 
   @Override
   protected void doOKAction() {
-    List<VirtualFile> extractedVirtualFiles = myDirectoryTypeManager.extractAdapterFiles(myAdapterSourceFiles);
+    List<VirtualFile> bundledSourceFiles = myAdapterSourceFilesProvider.get();
+    List<VirtualFile> extractedVirtualFiles = myDirectoryTypeManager.extractAdapterFiles(bundledSourceFiles);
     if (extractedVirtualFiles != null) {
       myNewLibraryCreationManager.installCodeAssistance(extractedVirtualFiles);
     }
