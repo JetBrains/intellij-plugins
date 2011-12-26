@@ -16,7 +16,7 @@
 <idea-plugin version="2" xmlns="http://plugins.intellij.net/plugin.dtd" url="http://confluence.jetbrains.net/display/WI/JsTestDriver+IntelliJ+plugin">
   <name>JSTestDriver Plugin</name>
   <description>Execute JavaScript unit tests using JsTestDriver</description>
-  <version>1.3.11</version>
+  <version>1.3.12</version>
   <vendor logo="/com/google/jstestdriver/idea/ui/JsTestDriver.png"
           url="http://code.google.com/p/js-test-driver/"
           email="js-test-driver@googlegroups.com">Google; JetBrains</vendor>
@@ -42,6 +42,17 @@
 
   <change-notes>
     <![CDATA[
+<h4>Version 1.3.12, 2011 December 26 (build on JsTestDriver-1.3.3d)</h4>
+<ul>
+  <li><a href="http://youtrack.jetbrains.net/issue/WI-8721" style="text-decoration: line-through">WI-8721</a>
+    Attempting to install the jasmine js test driver plugin gives errors.
+  </li>
+  <li><a href="http://youtrack.jetbrains.net/issue/WI-8673" style="text-decoration: line-through">WI-8673</a>
+    jstestdriver.console is not resolved
+  </li>
+  <li>ToolWindow memory leak is fixed.</li>
+</ul>
+
 <h4>Version 1.3.11, 28 November 2011 (build on JsTestDriver-1.3.3d)</h4>
 <ul>
   <li>idea-vesion/@until-build has been advanced.</li>
