@@ -29,6 +29,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.util.Consumer;
@@ -78,7 +79,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
 
   public void clientOpened(@NotNull OutputStream outputStream) {
     Client.getInstance().setOut(outputStream);
-    LOG.info("clientOpened");
+    LOG.info("Client opened");
     semaphore.up();
   }
 
@@ -92,6 +93,13 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
 
     try {
       Throwable error = null;
+
+      File startupErrorFile = new File(DesignerApplicationManager.APP_DIR, "startup-error.txt");
+      if (startupErrorFile.exists()) {
+        //noinspection ResultOfMethodCallIgnored
+        startupErrorFile.delete();
+      }
+
       try {
         doRun(indicator);
       }
@@ -158,8 +166,9 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
     }
 
     AdlProcessHandler adlProcessHandler = null;
+    final Ref<Boolean> found = new Ref<Boolean>(true);
     for (final AdlRunConfiguration adlRunConfiguration : adlRunConfigurations) {
-      final Ref<Boolean> found = new Ref<Boolean>(true);
+      found.set(true);
       adlRunConfiguration.arguments = arguments;
       try {
         adlProcessHandler = runAdl(adlRunConfiguration, DesignerApplicationManager.APP_DIR.getPath() + File.separatorChar + DESCRIPTOR_XML,
@@ -182,12 +191,20 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
 
       semaphore.down();
       try {
-        semaphore.waitForUnsafe(30 * 1000);
+        if (!semaphore.waitForUnsafe(60 * 1000)) {
+          found.set(false);
+          LOG.warn("Client not opened in 60 seconds");
+          if (checkStartupError()) {
+            return;
+          }
+        }
       }
       catch (InterruptedException e) {
         if (indicator.isCanceled()) {
           return;
         }
+        
+        LOG.warn(e);
         continue;
       }
 
@@ -196,6 +213,13 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
       if (found.get()) {
         break;
       }
+    }
+
+    if (!found.get()) {
+      if (!checkStartupError()) {
+        notifyNoSuitableSdkToLaunch();
+      }
+      return;
     }
     
     final ProjectDocumentReferenceCounter projectDocumentReferenceCounter = initializeThread.get(60, TimeUnit.SECONDS);
@@ -209,6 +233,19 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
     if (!postTask.run(projectDocumentReferenceCounter, indicator, problemsHolder)) {
       indicator.cancel();
     }
+  }
+
+  private static boolean checkStartupError() throws IOException {
+    final File startupErrorFile = new File(DesignerApplicationManager.APP_DIR, "startup-error.txt");
+    if (!startupErrorFile.exists()) {
+      return false;
+    }
+
+    LOG.error(FileUtil.loadFile(startupErrorFile));
+    //noinspection ResultOfMethodCallIgnored
+    startupErrorFile.delete();
+
+    return true;
   }
 
   private static void attachProjectAndModuleListeners(DesignerApplication designerApplication) {

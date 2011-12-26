@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.plaf {
 import cocoa.Insets;
-import cocoa.ListViewModifiableDataSource;
+import cocoa.ListViewMutableDataSource;
+import cocoa.Toolbar;
 import cocoa.plaf.basic.AbstractTabViewSkin;
 import cocoa.tabView.TabView;
 
@@ -27,11 +28,15 @@ internal class EditorTabViewSkin extends AbstractTabViewSkin {
   //}
 
   internal function closeTab(itemIndex:int):void {
-    ListViewModifiableDataSource(TabView(component).dataSource).removeItemAt(itemIndex);
+    ListViewMutableDataSource(TabView(component).dataSource).removeItemAt(itemIndex);
   }
 
   internal function getSelectedIndex():int {
     return tabBar.selectedIndex;
+  }
+
+  override protected function getToolbarHeight(toolbar:Toolbar):int {
+    return 20;
   }
 
   override public function hide():void {

@@ -16,10 +16,6 @@ import flash.text.engine.TextRotation;
 
 [Abstract]
 public class IdeaLookAndFeel extends AquaLookAndFeel {
-  /**
-   * see com.intellij.util.ui.UIUtil
-   */
-  public static const BORDER_COLOR:int = 0xc0c0c0;
   // color from wbpro, it is better than idea (because idea is more dark) (I think)
   // also, idea edtor toolbar (open any image — editor toolbar is toolbar where image size is shown) background color is 0xeeeeee, but we unified it (as wbpro looks like)
   private static const DESIGNER_AREA_OUTER_BACKGROUND_COLOR:int = 0xe9e9e9;
@@ -28,7 +24,7 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
     super.initialize();
 
     // idea UI bug, so, we use our own insets, 5 instead of 4 px bottom (and 20 px height instead of 19 px) (otherwise, text bottom edge close to border bottom edge)
-    data["ToolWindowManager.tabBar.rendererManager"] = new RendererManagerFactory(InteractiveBorderRendererManager, createPanelLookAndFeel(), "ToolWindowManager.tabBar.item");
+    data["ToolWindowManager.tabBar.rendererManager"] = new RendererManagerFactory(InteractiveBorderRendererManager, "ToolWindowManager.tabBar.item", createPanelLookAndFeel());
     data["ToolWindowManager.tabBar.item.textLineInsets"] = new TextLineInsets(TextRotation.ROTATE_90, 6, 8, 8);
     // todo selected border must be the same as idea 11
     data["ToolWindowManager.tabBar.item.b"] = new StatefulBorderImpl(new <Border>[RectangularBorder.create(NaN, 0xb4b4b4), RectangularBorder.create(0xc6c6c6, 0x777777)]);
@@ -37,7 +33,7 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
 
     data["ElementTreeBar.rendererManager"] = new ElementTreeBarRMF();
     data["ElementTreeBar.interactor"] = data["SegmentedControl.interactor"];
-    data["ElementTreeBar.layout"] = new ListLayoutFactory(20, 5);
+    data["small.ElementTreeBar.layout"] = new ListLayoutFactory(17, 5);
 
     data["Panel"] = PanelSkin;
     const panelTitleBorderHeight:Number = 16;
@@ -47,7 +43,7 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
 
     data["ProjectView.TabView"] = EditorTabViewSkin;
     data["ProjectView.TabView.tabBar.layout"] = new ListLayoutFactory(26, 0);
-    data["ProjectView.TabView.tabBar.rendererManager"] = new RendererManagerFactory(EditorTabBarRendererManager, this, "ProjectView.TabView.tabBar");
+    data["ProjectView.TabView.tabBar.rendererManager"] = new RendererManagerFactory(EditorTabBarRendererManager, "ProjectView.TabView.tabBar");
     data["ProjectView.TabView.tabBar.placement"] = Placement.PAGE_START_LINE_START;
     data["ProjectView.TabView.tabBar.interactor"] = data["TabView.tabBar.interactor"];
 
