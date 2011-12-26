@@ -1,6 +1,8 @@
 package com.intellij.flex.uiDesigner.actions;
 
+import com.intellij.flex.uiDesigner.DebugPathManager;
 import com.intellij.flex.uiDesigner.DesignerApplicationManager;
+import com.intellij.flex.uiDesigner.LogMessageUtil;
 import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
@@ -25,6 +27,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.PlatformUtils;
 
 public class RunDesignViewAction extends DumbAwareAction {
   @Override
@@ -44,7 +47,24 @@ public class RunDesignViewAction extends DumbAwareAction {
     FileDocumentManager.getInstance().saveAllDocuments();
     // saveAllDocuments may cause open this document
     if (!DesignerApplicationManager.getInstance().isDocumentOpening()) {
-      UsageTrigger.trigger("FlexUiDesigner");
+      if (!DebugPathManager.IS_DEV) {
+        final String featureName = "FlexUiDesigner";
+        if (PlatformUtils.isFlexIde()) {
+          UsageTrigger.trigger(featureName);
+        }
+        else {
+          // todo don't use reflection after idea 11.0.1 release
+          try {
+            Class.forName("com.intellij.internal.statistic.UsageTrigger").getDeclaredMethod("trigger", String.class).invoke(null, featureName);
+          }
+          catch (ClassNotFoundException ignored) {
+          }
+          catch (Exception e) {
+            LogMessageUtil.LOG.warn(e);
+          }
+        }
+      }
+
       DesignerApplicationManager.getInstance().openDocument(module, psiFile, isDebug());
     }
   }
