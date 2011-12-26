@@ -36,13 +36,9 @@
     <configurationType implementation="com.google.jstestdriver.idea.execution.JstdConfigurationType"/>
     <programRunner implementation="com.google.jstestdriver.idea.execution.JstdClientRunner"/>
     <configurationProducer implementation="com.google.jstestdriver.idea.execution.JstdRuntimeConfigurationProducer"/>
+    <toolWindow id="JsTestDriver Server" anchor="bottom" icon="/com/google/jstestdriver/idea/ui/JsTestDriver.png"
+                factoryClass="com.google.jstestdriver.idea.JSTestDriverToolWindow" canCloseContents="false"/>
   </extensions>
-
-  <project-components>
-    <component>
-      <implementation-class>com.google.jstestdriver.idea.JSTestDriverToolWindow</implementation-class>
-    </component>
-  </project-components>
 
   <change-notes>
     <![CDATA[
