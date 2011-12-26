@@ -1,6 +1,7 @@
 package com.google.jstestdriver.idea.assertFramework.support;
 
 import com.google.jstestdriver.idea.util.CastUtils;
+import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.google.jstestdriver.idea.util.ObjectUtils;
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.LocalInspectionToolSession;
@@ -33,7 +34,7 @@ public abstract class AbstractMethodBasedInspection extends JSInspection {
           JSExpression[] arguments = ObjectUtils.notNull(jsArgumentList.getArguments(), JSExpression.EMPTY_ARRAY);
           boolean suitableSymbol = isSuitableMethod(methodExpression.getReferencedName(), arguments);
           if (suitableSymbol) {
-            boolean resolved = JsSupportUtils.isResolvedToFunction(methodExpression);
+            boolean resolved = JsPsiUtils.isResolvedToFunction(methodExpression);
             if (!resolved) {
               holder.registerProblem(
                 methodExpression,

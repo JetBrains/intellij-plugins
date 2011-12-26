@@ -1,18 +1,24 @@
 package com.google.jstestdriver.idea.assertFramework.jstd;
 
+import com.google.jstestdriver.idea.assertFramework.jstd.jsSrc.JstdDefaultAssertionFrameworkSrcMarker;
 import com.google.jstestdriver.idea.assertFramework.support.AbstractMethodBasedInspection;
+import com.google.jstestdriver.idea.assertFramework.support.JsLibraryHelper;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
+import com.google.jstestdriver.idea.util.VfsUtils;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.scripting.ScriptingLibraryModel;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.FileContentUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBasedInspection {
 
@@ -59,13 +65,33 @@ public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBased
 
     @Override
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+      installLibrary(project);
       PsiElement psiElement = descriptor.getPsiElement();
-      final ScriptingLibraryModel scriptingLibraryModel = JsAssertFrameworkLibraryManager.createScriptingLibraryModelAndAssociateIt(
-        project, project.getBaseDir()
+      VirtualFile virtualFile = psiElement.getContainingFile().getVirtualFile();
+      FileContentUtil.reparseFiles(project, Arrays.asList(virtualFile), true);
+    }
+
+    private static void installLibrary(@NotNull Project project) {
+      List<VirtualFile> sources = VfsUtils.findVirtualFilesByResourceNames(
+        JstdDefaultAssertionFrameworkSrcMarker.class,
+        new String[]{"Asserts.js", "TestCase.js"}
       );
-      FileContentUtil.reparseFiles(project, Arrays.asList(psiElement.getContainingFile().getVirtualFile()), true);
-      if (scriptingLibraryModel == null) {
-        LOG.warn("Unable to create library '" + JsAssertFrameworkLibraryManager.LIBRARY_NAME + "'");
+      JsLibraryHelper libraryHelper = new JsLibraryHelper(project);
+      String libraryName = "JsTestDriver Assertion Framework";
+      ScriptingLibraryModel libraryModel = libraryHelper.createJsLibrary(libraryName, sources);
+      String dialogTitle = "Adding JsTestDriver assertion framework support";
+      if (libraryModel == null) {
+        Messages.showErrorDialog("Unable to create '" + libraryName + "' JavaScript library", dialogTitle);
+        return;
+      }
+      VirtualFile projectRootDir = project.getBaseDir();
+      if (projectRootDir == null) {
+        LOG.error("Project baseDir is null!");
+        return;
+      }
+      boolean associated = libraryHelper.associateLibraryWithDir(libraryModel, projectRootDir);
+      if (!associated) {
+        Messages.showErrorDialog("Unable to associate '" + libraryName + "' JavaScript library with project", dialogTitle);
       }
     }
   }
