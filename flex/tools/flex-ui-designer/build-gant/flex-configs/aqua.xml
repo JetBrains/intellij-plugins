@@ -75,6 +75,10 @@
 		<path>@@baseDir@@/resources/GroupItemRenderer.png</path>
 	</include-file>
 	<include-file>
+		<name>/Panel.title.b.png</name>
+		<path>@@baseDir@@/resources/Panel.title.b.png</path>
+	</include-file>
+	<include-file>
 		<name>/popup.arrows.small.disabled.png</name>
 		<path>@@baseDir@@/resources/popup.arrows.small.disabled.png</path>
 	</include-file>

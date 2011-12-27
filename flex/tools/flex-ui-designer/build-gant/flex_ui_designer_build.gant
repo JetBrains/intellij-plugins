@@ -45,7 +45,6 @@ class SwfDescriptor {
   }
 }
 
-
 private def doExecute(home, sandbox, targetFolder) {
   flexBuildHome = "$home/flex/tools/flex-ui-designer/build-gant";
   flexSandbox = "$sandbox/ui-designer"
@@ -59,43 +58,42 @@ private def doExecute(home, sandbox, targetFolder) {
 
   // develar dec 21, 2011
   // temp for astella eap
-  ant.copy(file: "$home/flex/tools/flex-ui-designer/_astella_eap_/designer.swf", tofile: "$targetFolder/designer.swf")
+  //ant.copy(file: "$home/flex/tools/flex-ui-designer/_astella_eap_/designer.swf", tofile: "$targetFolder/designer.swf")
 
-  //List<SwfDescriptor> swfDescriptors = includeFile("$flexBuildHome/flex_ui_designer_swfs_build.gant").getList();
-  //swfDescriptors.each {
-  //  if (it.config.startsWith("flex-injection-") || it.config.equals("shared.xml")) {
-  //    buildFlex(it.config, it.basedir, flexBuildHome, flexSandbox, it.isSwc)
-  //  }
-  //};
-  //
-  //buildAssets()
-  //
-  //swfDescriptors.each {
-  //  if (!it.config.startsWith("flex-injection-") && !it.config.equals("shared.xml")) {
-  //    buildFlex(it.config, it.basedir, flexBuildHome, flexSandbox, it.isSwc);
-  //  }
-  //};
+  List<SwfDescriptor> swfDescriptors = includeFile("$flexBuildHome/flex_ui_designer_swfs_build.gant").getList();
+  swfDescriptors.each {
+    if (it.config.startsWith("flex-injection-") || it.config.equals("shared.xml")) {
+      buildFlex(it.config, it.basedir, flexBuildHome, flexSandbox, it.isSwc)
+    }
+  };
 
-  //ant.copy(file: "$flexSandbox/main-loader-1.0-SNAPSHOT.swf", tofile: "$targetFolder/designer.swf")
+  buildAssets()
+
+  swfDescriptors.each {
+    if (!it.config.startsWith("flex-injection-") && !it.config.equals("shared.xml")) {
+      buildFlex(it.config, it.basedir, flexBuildHome, flexSandbox, it.isSwc);
+    }
+  };
+
+  ant.copy(file: "$flexSandbox/main-loader-1.0-SNAPSHOT.swf", tofile: "$targetFolder/designer.swf")
   ant.copy(file: "$flexBuildHome/../main/resources/descriptor.xml", todir: "$targetFolder")
   ant.copy(todir: "$targetFolder") {
     fileset(dir: "$flexSandbox", includes: "**/*injection-*.swc")
   }
 
-  ant.copy(todir: "$targetFolder", overwrite: "true") {
-    fileset(dir: "$home/flex/tools/flex-ui-designer/_astella_eap_", includes: "**/*injection-*.swc")
-  }
+  //ant.copy(todir: "$targetFolder", overwrite: "true") {
+  //  fileset(dir: "$home/flex/tools/flex-ui-designer/_astella_eap_", includes: "**/*injection-*.swc")
+  //}
 }
 
 private def buildAssets() {
-  ant.java(className: "org.flyti.assetBuilder.AssetBuilderMojo", fork: "true", failOnError: "true") {
+  ant.java(className: "org.flyti.assetBuilder.AssetBuilder", fork: "true", failOnError: "true") {
     classpath {
       pathelement(path: "$flexBuildHome/libs/asset-builder-maven-plugin-2.0-SNAPSHOT.jar")
-      pathelement(path: "$flexBuildHome/libs/snakeyaml-1.8-s2.jar")
-      pathelement(path: "$flexBuildHome/libs/plexus-utils-2.0.6.jar")
+      pathelement(path: "$flexBuildHome/libs/snakeyaml-1.9.jar")
+      pathelement(path: "$flexBuildHome/libs/plexus-utils-2.0.7.jar")
       pathelement(path: "$flexBuildHome/libs/jai-core-1.1.3.jar")
       pathelement(path: "$flexBuildHome/libs/jai-codec-1.1.3.jar")
-      pathelement(path: "$home/community/plugins/maven/maven2-server-impl/lib/maven-2.2.1-uber.jar")
     }
     arg(value: "$flexBuildHome/../plaf/aqua/resources/assets.yml") // descriptor
     arg(value: "$flexSandbox/assets") // output file

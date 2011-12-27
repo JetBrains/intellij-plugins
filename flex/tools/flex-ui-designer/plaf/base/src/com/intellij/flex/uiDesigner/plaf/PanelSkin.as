@@ -46,7 +46,7 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
     super.doInit();
 
     titleBorder = getBorder("title.b");
-    contentBorder = getBorder("b");
+    contentBorder = getBorder();
 
     //if (_toolbar != null) {
     //  var toolbarSkin:DisplayObject = DisplayObject(_toolbar.createView(laf));
@@ -60,7 +60,7 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
     contentView.addToSuperview(this, laf, this);
     contentView.setLocation(contentBorder.contentInsets.left, titleBorder.layoutHeight);
 
-    labelHelper.textFormat = laf.getTextFormat(TextFormatId.SYSTEM_HIGHLIGHTED);
+    labelHelper.textFormat = laf.getTextFormat(TextFormatId.SMALL_SYSTEM);
 
 //    minimizeButton = createControlButton("minimize", "minimizeButton");
 //    closeSideButton = createControlButton("closeSide", "closeSideButton");
@@ -97,11 +97,8 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
     return Panel(component).contentView.getPreferredHeight() + contentBorder.contentInsets.height;
   }
 
-  // todo find normal way
-  public function get contentWidth():Number {
-    // temp hack
-    return (492 - getBorder("b").contentInsets.width);
-    //return (parent.width - getBorder("b").contentInsets.width);
+  override protected function subviewsValidate():void {
+    Panel(component).contentView.validate();
   }
 
   override protected function draw(w:int, h:int):void {
@@ -124,20 +121,22 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
       statusText.hide();
     }
 
-    Panel(component).contentView.visible = !empty;
+    panel.contentView.visible = !empty;
 
     g.lineStyle();
-    titleBorder.draw(g, w, titleBorder.layoutHeight);
+    titleBorder.draw(g, w - 1, NaN, 1);
 
     labelHelper.validate();
-    labelHelper.move(3, 13);
+    labelHelper.move(7, 15);
 
     var contentWidth:Number = w - contentBorder.contentInsets.width;
     if (_toolbar != null) {
       _toolbar.setSize(contentWidth, 20);
+      _toolbar.validate();
     }
     if (!empty) {
-      Panel(component).contentView.setSize(contentWidth, h - contentBorder.contentInsets.height);
+      panel.contentView.setSize(contentWidth, h - contentBorder.contentInsets.height);
+      panel.contentView.validate();
     }
 
 //    DisplayObject(minimizeButton.skin).x = w - (17 * 2) - 1 - 3;

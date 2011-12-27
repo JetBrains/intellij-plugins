@@ -36,9 +36,8 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
     data["small.ElementTreeBar.layout"] = new ListLayoutFactory(17, 5);
 
     data["Panel"] = PanelSkin;
-    const panelTitleBorderHeight:Number = 16;
-    data["Panel.title.b"] = LinearGradientBorder.createVWithFixedHeight(panelTitleBorderHeight, [0xa7c5fc, 0x7d95c0]);
-    data["Panel.b"] = RectangularBorder.create(NaN, 0x999999 /* idea UI 0x929292, but 0x999999 more Aqua UI */, new Insets(1, panelTitleBorderHeight, 1, 1), new FrameInsets(0, panelTitleBorderHeight - 1 /* hide top h line */));
+    const panelTitleBorderHeight:Number = Border(data["Panel.title.b"]).layoutHeight;
+    data["Panel.b"] = new PanelBorder(new Insets(1, panelTitleBorderHeight, 1, 1));
     data["StyleInspector.DataGroup.b"] = RectangularBorder.create(0xffffff);
 
     data["ProjectView.TabView"] = EditorTabViewSkin;
@@ -71,6 +70,18 @@ final class ElementTreeBarRMF extends ClassFactory {
 
   override public function newInstance():* {
     return new ElementTreeBarRM(new Insets(2, 0, 0, 3));
+  }
+}
+
+class PanelBorder extends AbstractBorder {
+  public function PanelBorder(contentInsets:Insets) {
+    _contentInsets = contentInsets;
+  }
+
+  override public function draw(g:Graphics, w:Number, h:Number, x:Number = 0, y:Number = 0, view:View = null):void {
+    g.lineStyle(1, 0x999999);
+    g.moveTo(x, y);
+    g.lineTo(x, y + h);
   }
 }
 

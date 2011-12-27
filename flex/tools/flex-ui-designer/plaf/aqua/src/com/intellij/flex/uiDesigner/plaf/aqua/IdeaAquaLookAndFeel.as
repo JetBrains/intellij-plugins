@@ -20,10 +20,10 @@ public class IdeaAquaLookAndFeel extends IdeaLookAndFeel {
   private static const SIDE_PANE_GROUP_ITEM_LABEL_FONT:TextFormat = new TextFormat(new ElementFormat(fontBoldDescription, 11, 0x38393b));
 
   override protected function initialize():void {
-    super.initialize();
-    
     LookAndFeelUtil.initAssets(data, assetsDataClass);
     assetsDataClass = null;
+
+    super.initialize();
     
     data[CustomTextFormatId.SIDE_PANE_GROUP_ITEM_LABEL] = SIDE_PANE_GROUP_ITEM_LABEL_FONT;
     data["TabLabel.PushButton"] = PBS;

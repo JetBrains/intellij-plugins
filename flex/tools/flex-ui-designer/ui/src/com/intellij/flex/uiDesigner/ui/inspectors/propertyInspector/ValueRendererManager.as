@@ -179,8 +179,8 @@ public class ValueRendererManager extends TextRendererManager {
     var checkbox:CheckBox = e.checkbox;
     var skin:Skin = checkbox.skin;
     if (skin == null) {
-      ButtonSkinInteraction(skin).delegateInteraction();
       checkbox.addToSuperview(_container, laf, null);
+      ButtonSkinInteraction(checkbox.skin).delegateInteraction();
       checkbox.setSize(checkbox.getPreferredWidth(), checkbox.getPreferredHeight());
     }
     else {
