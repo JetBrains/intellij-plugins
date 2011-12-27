@@ -133,7 +133,7 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
 
     configureMavenClassPath(mavenGeneralSettings, params.getClassPath());
     
-    final File userVmP = new File(System.getProperty("user.home"), "fcg-vmp");
+    final File userVmP = new File(SystemProperties.getUserHome(), "fcg-vmp");
     if (userVmP.exists()) {
       params.getVMParametersList().addParametersString(FileUtil.loadFile(userVmP));
     }

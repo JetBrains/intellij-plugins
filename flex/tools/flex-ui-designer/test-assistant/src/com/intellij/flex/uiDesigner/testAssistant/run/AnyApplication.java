@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.JDOMExternalizable;
+import com.intellij.util.SystemProperties;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -89,10 +90,10 @@ public class AnyApplication implements ConfigurationType {
           final JavaParameters params = new JavaParameters();
           params.setJdk(JavaAwareProjectJdkTableImpl.getInstanceEx().getInternalJdk());
           params.setMainClass("com.intellij.idea.Main");
-          params.setWorkingDirectory(System.getProperty("user.home") + "/Documents/idea/bin/");
+          params.setWorkingDirectory(SystemProperties.getUserHome() + "/Documents/idea/bin/");
 
           try {
-            final BufferedReader reader = new BufferedReader(new FileReader(new File(System.getProperty("user.home") + "/astella.run")));
+            final BufferedReader reader = new BufferedReader(new FileReader(new File(SystemProperties.getUserHome() + "/astella.run")));
             try {
               params.getVMParametersList().addParametersString(reader.readLine());
               reader.readLine();
