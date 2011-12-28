@@ -406,7 +406,7 @@ public class CodeContext {
       descriptor = null;
     }
 
-    if (descriptor == null) descriptor = myNameToDescriptorsMap.get(qname);
+    if (descriptor == null && !name.equals(qname)) descriptor = myNameToDescriptorsMap.get(qname);
 
     return descriptor;
   }
