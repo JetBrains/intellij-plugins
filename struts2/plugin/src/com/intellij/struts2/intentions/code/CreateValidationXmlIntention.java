@@ -186,7 +186,7 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
     }
   }
 
-  private List<Action> getActionsWithoutValidation(final PsiClass actionClass) {
+  private static List<Action> getActionsWithoutValidation(final PsiClass actionClass) {
     final Project project = actionClass.getProject();
     final List<Action> actions = getActionsForClazz(project,
                                                     actionClass,

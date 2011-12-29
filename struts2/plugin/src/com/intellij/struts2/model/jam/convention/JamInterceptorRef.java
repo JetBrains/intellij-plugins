@@ -133,7 +133,7 @@ public abstract class JamInterceptorRef extends CommonModelElement.PsiBase imple
     return getOwner();
   }
 
-  public PomTarget getPomTarget() {
+  private PomTarget getPomTarget() {
     return new JamPomTarget(this, getValue());
   }
 

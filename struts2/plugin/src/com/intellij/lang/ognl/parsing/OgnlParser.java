@@ -376,7 +376,7 @@ public class OgnlParser extends PrattParser {
   }
 
   @Nullable
-  public static IElementType parseExpression(final PrattBuilder builder) {
+  private static IElementType parseExpression(final PrattBuilder builder) {
     return builder.createChildBuilder(EXPR_LEVEL, "Expression expected").parse();
   }
 
