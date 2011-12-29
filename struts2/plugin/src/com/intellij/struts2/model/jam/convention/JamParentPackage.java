@@ -119,7 +119,8 @@ public abstract class JamParentPackage extends CommonModelElement.PsiBase implem
   public abstract PsiModifierListOwner getOwner();
 
   @JamPsiValidity
-  public abstract boolean isPsiValid();
+  @Override
+  public abstract boolean isValid();
 
   @NotNull
   @Override

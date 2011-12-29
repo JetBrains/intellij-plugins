@@ -124,7 +124,8 @@ public abstract class JamInterceptorRef extends CommonModelElement.PsiBase imple
   public abstract PsiMember getOwner();
 
   @JamPsiValidity
-  public abstract boolean isPsiValid();
+  @Override
+  public abstract boolean isValid();
 
   @NotNull
   @Override
