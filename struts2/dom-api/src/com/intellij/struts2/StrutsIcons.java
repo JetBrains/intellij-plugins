@@ -36,7 +36,7 @@ public final class StrutsIcons {
   // "static" icons (DOM)
 
   public static final String ACTION_PATH = ICON_BASE_PATH + "action.png";
-  public static final String ACTION_SMALL_PATH = ICON_BASE_PATH + "action_small.png";
+  private static final String ACTION_SMALL_PATH = ICON_BASE_PATH + "action_small.png";
 
   public static final String INCLUDE_PATH = ICON_BASE_PATH + "import1.png";
 

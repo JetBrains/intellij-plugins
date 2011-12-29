@@ -37,6 +37,7 @@ import java.util.List;
  */
 public class AllowedMethodsConverter extends DelimitedListConverter<String> {
 
+  @SuppressWarnings("UnusedDeclaration")
   public AllowedMethodsConverter() {
     super(",");
   }

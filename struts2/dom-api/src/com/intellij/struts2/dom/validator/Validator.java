@@ -26,6 +26,7 @@ import com.intellij.util.xml.*;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings("UnusedDeclaration")
 @Namespace(StrutsDomConstants.VALIDATOR_NAMESPACE_KEY)
 public interface Validator extends ParamsElement {
 

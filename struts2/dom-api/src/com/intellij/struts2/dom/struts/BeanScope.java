@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NonNls;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings("UnusedDeclaration")
 public enum BeanScope implements NamedEnum {
 
   _default("default"),

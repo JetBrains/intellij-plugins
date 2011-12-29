@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings("EmptyMethod")
 public interface HasResultType {
 
   GenericAttributeValue<String> getName();

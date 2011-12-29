@@ -24,6 +24,7 @@ import com.intellij.util.xml.*;
 /**
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings("UnusedDeclaration")
 @Presentation(typeName = "Exception Mapping", provider = Struts2PresentationProvider.class)
 public interface ExceptionMapping extends DomElement /* ParamsElement TODO ??! */ {
 

@@ -25,6 +25,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings("UnusedDeclaration")
 public interface UnknownHandlerStack extends DomElement {
 
   @SubTagList(value = "unknown-handler-ref")

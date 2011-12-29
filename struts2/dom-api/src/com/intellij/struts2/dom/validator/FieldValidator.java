@@ -28,6 +28,7 @@ import com.intellij.util.xml.*;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings("UnusedDeclaration")
 @Namespace(StrutsDomConstants.VALIDATOR_NAMESPACE_KEY)
 @Presentation(typeName = "Field Validator",
               icon = "/resources/icons/validation.png",

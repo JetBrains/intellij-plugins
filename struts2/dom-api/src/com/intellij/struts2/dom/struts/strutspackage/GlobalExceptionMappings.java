@@ -25,6 +25,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings("UnusedDeclaration")
 public interface GlobalExceptionMappings extends DomElement {
 
   @NotNull
