@@ -32,7 +32,7 @@ public class ValidationHighlightingTest extends BasicValidationHighlightingTestC
   }
 
   @Override
-  protected void customizeSetup(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
+  protected void customizeSetup(final JavaModuleFixtureBuilder moduleBuilder) {
     installSrcHack();
   }
 

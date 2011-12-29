@@ -39,7 +39,7 @@ public class StrutsResultTilesResolvingDefaultTest extends BasicStrutsHighlighti
 
 
   @Override
-  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
+  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) {
     moduleBuilder.addSourceRoot(myFixture.getTempDirPath());
     moduleBuilder.setWebXml(myFixture.getTempDirPath() + "/WEB-INF/web.xml");
     moduleBuilder.addWebRoot(getTestDataPath(), "/");

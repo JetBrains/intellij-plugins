@@ -43,7 +43,7 @@ public class JspActionAnnotatorTest extends BasicHighlightingTestCase<WebModuleF
   }
 
   @Override
-  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
+  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) {
     moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp/", "/");
   }
 

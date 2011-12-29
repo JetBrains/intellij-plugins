@@ -112,10 +112,11 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   /**
    * Performs additional configuration.
    *
+   *
    * @param moduleBuilder Instance.
    * @throws Exception On errors.
    */
-  protected void customizeSetup(final T moduleBuilder) throws Exception {
+  protected void customizeSetup(final T moduleBuilder) {
   }
 
   @Override
@@ -155,7 +156,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     super.tearDown();
   }
 
-  private void configureModule(final T moduleBuilder) throws Exception {
+  private void configureModule(final T moduleBuilder) {
     moduleBuilder.addContentRoot(myFixture.getTempDirPath());
 
     if (hasJavaSources()) {

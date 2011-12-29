@@ -38,7 +38,7 @@ public class NamespaceReferenceProviderTest extends BasicHighlightingTestCase<We
   }
 
   @Override
-  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
+  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) {
     moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp", "/");
   }
 

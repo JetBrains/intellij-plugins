@@ -52,7 +52,7 @@ public class WebXmlConstantTest extends BasicHighlightingTestCase<WebModuleFixtu
   }
 
   @Override
-  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
+  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) {
     moduleBuilder.addWebRoot(myFixture.getTempDirPath(), "/");
     moduleBuilder.setWebXml(myFixture.getTempDirPath() + "/WEB-INF/web.xml");
   }

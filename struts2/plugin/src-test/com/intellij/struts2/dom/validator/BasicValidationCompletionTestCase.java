@@ -32,7 +32,7 @@ abstract class BasicValidationCompletionTestCase extends BasicValidationHighligh
   protected abstract String getTestDataDirectory();
 
   @Override
-  protected void customizeSetup(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
+  protected void customizeSetup(final JavaModuleFixtureBuilder moduleBuilder) {
     installSrcHack();
   }
 

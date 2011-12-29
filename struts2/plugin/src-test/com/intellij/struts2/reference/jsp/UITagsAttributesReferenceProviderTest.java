@@ -45,7 +45,7 @@ public class UITagsAttributesReferenceProviderTest extends BasicHighlightingTest
   }
 
   @Override
-  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
+  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) {
     moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp", "/");
   }
 
