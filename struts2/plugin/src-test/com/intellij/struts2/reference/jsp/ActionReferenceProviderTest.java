@@ -67,4 +67,11 @@ public class ActionReferenceProviderTest extends BasicHighlightingTestCase<WebMo
                                      "myWildCard*");
   }
 
+  @HasJavaSources
+  public void testActionCompletionVariantsMethod() throws Throwable {
+    createStrutsFileSet("struts-action.xml");
+    myFixture.testCompletionVariants("/jsp/action-completionvariants_method.jsp",
+                                     "methodA", "methodB");
+  }
+
 }

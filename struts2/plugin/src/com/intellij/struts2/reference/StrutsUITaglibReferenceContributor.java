@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,6 +17,7 @@ package com.intellij.struts2.reference;
 
 import com.intellij.psi.PsiReferenceRegistrar;
 import com.intellij.struts2.StrutsConstants;
+import com.intellij.struts2.reference.jsp.ActionMethodReferenceProvider;
 import com.intellij.struts2.reference.jsp.NamespaceReferenceProvider;
 import com.intellij.struts2.reference.jsp.ThemeReferenceProvider;
 import org.jetbrains.annotations.NonNls;
@@ -134,6 +135,10 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
     registerTags(ACTION_REFERENCE_PROVIDER,
                  "name", registrar,
                  "action");
+
+    registerTags(new ActionMethodReferenceProvider(),
+                 "method", registrar,
+                 "a", "reset", "submit", "url");
 
     // elements with "value" (relative path)
     registerTags(RELATIVE_PATH_PROVIDER,
