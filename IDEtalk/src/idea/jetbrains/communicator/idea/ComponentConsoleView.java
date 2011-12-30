@@ -23,6 +23,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.ui.PlaceProvider;
 import com.intellij.ui.components.labels.LinkLabel;
 import com.intellij.ui.components.labels.LinkListener;
 import jetbrains.communicator.core.users.User;
@@ -36,7 +37,7 @@ import java.awt.event.MouseEvent;
 /**
  * @author Kir
  */
-class ComponentConsoleView implements ConsoleView {
+class ComponentConsoleView implements ConsoleView, PlaceProvider<String> {
   public static final int MAX_LENGTH = 200;
   private final JPanel myPanel = new JPanel();
   private int myLength;
