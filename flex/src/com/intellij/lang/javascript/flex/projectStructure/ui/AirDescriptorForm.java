@@ -23,8 +23,11 @@ public class AirDescriptorForm {
 
   private JRadioButton myCustomDescriptorRadioButton;
   private TextFieldWithBrowseButton myCustomDescriptorTextWithBrowse;
+  private JButton myCreateDescriptorButton;
 
-  public AirDescriptorForm(final Project project, final boolean showApplicationIdField) {
+  public AirDescriptorForm(final Project project,
+                           final Runnable descriptorCreator,
+                           final boolean showApplicationIdField) {
     myApplicationIdLabel.setVisible(showApplicationIdField);
     myApplicationIdTextField.setVisible(showApplicationIdField);
 
@@ -41,13 +44,20 @@ public class AirDescriptorForm {
     myCustomDescriptorRadioButton.addActionListener(listener);
 
     myCustomDescriptorTextWithBrowse.addBrowseFolderListener(null, null, project, FlexUtils.createFileChooserDescriptor("xml"));
+
+    myCreateDescriptorButton.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        descriptorCreator.run();
+      }
+    });
   }
 
   void updateControls() {
-    myApplicationIdLabel.setEnabled(myGeneratedDescriptorRadioButton.isEnabled() && myGeneratedDescriptorRadioButton.isSelected());
-    myApplicationIdTextField.setEnabled(myGeneratedDescriptorRadioButton.isEnabled() && myGeneratedDescriptorRadioButton.isSelected());
+    myApplicationIdLabel.setEnabled(myGeneratedDescriptorRadioButton.isSelected());
+    myApplicationIdTextField.setEnabled(myGeneratedDescriptorRadioButton.isSelected());
 
-    myCustomDescriptorTextWithBrowse.setEnabled(myCustomDescriptorRadioButton.isEnabled() && myCustomDescriptorRadioButton.isSelected());
+    myCustomDescriptorTextWithBrowse.setEnabled(myCustomDescriptorRadioButton.isSelected());
+    myCreateDescriptorButton.setEnabled(myCustomDescriptorRadioButton.isSelected());
   }
 
   public void resetFrom(final AirPackagingOptions packagingOptions) {
@@ -79,5 +89,11 @@ public class AirDescriptorForm {
       ((ModifiableIosPackagingOptions)model).setApplicationId(myApplicationIdTextField.getText().trim());
     }
     model.setCustomDescriptorPath(FileUtil.toSystemIndependentName(myCustomDescriptorTextWithBrowse.getText().trim()));
+  }
+
+  public void setUseCustomDescriptor(final String descriptorPath) {
+    myCustomDescriptorRadioButton.setSelected(true);
+    myCustomDescriptorTextWithBrowse.setText(FileUtil.toSystemDependentName(descriptorPath));
+    updateControls();
   }
 }

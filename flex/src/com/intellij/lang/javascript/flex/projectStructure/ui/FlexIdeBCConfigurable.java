@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
@@ -10,28 +11,28 @@ import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.ui.JSClassChooserDialog;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.DocumentAdapter;
-import com.intellij.util.PathUtil;
+import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -97,14 +98,52 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myDependenciesConfigurable = new DependenciesConfigurable(configuration, module.getProject(), configEditor);
     myCompilerOptionsConfigurable =
       new CompilerOptionsConfigurable(module, configuration.getNature(), myDependenciesConfigurable, configuration.getCompilerOptions());
+
+    final Computable<String> mainClassComputable = new Computable<String>() {
+      public String compute() {
+        return myMainClassComponent.getText().trim();
+      }
+    };
+    final Computable<String> airVersionComputable = new Computable<String>() {
+      public String compute() {
+        final FlexSdk sdk = myDependenciesConfigurable.getCurrentSdk();
+        return sdk == null ? "" : FlexSdkUtils.getAirVersion(sdk.getFlexVersion());
+      }
+    };
+    final Computable<Boolean> androidEnabledComputable = new Computable<Boolean>() {
+      public Boolean compute() {
+        return myAndroidPackagingConfigurable != null && myAndroidPackagingConfigurable.isPackagingEnabled();
+      }
+    };
+    final Computable<Boolean> iosEnabledComputable = new Computable<Boolean>() {
+      public Boolean compute() {
+        return myIOSPackagingConfigurable != null && myIOSPackagingConfigurable.isPackagingEnabled();
+      }
+    };
+    final Consumer<String> createdDescriptorConsumer = new Consumer<String>() {
+      // called only for mobile projects if generated descriptor contains both Android and iOS 
+      public void consume(final String descriptorPath) {
+        assert myAndroidPackagingConfigurable != null && myIOSPackagingConfigurable != null;
+        myAndroidPackagingConfigurable.setUseCustomDescriptor(descriptorPath);
+        myIOSPackagingConfigurable.setUseCustomDescriptor(descriptorPath);
+      }
+    };
+
     myAirDesktopPackagingConfigurable = nature.isDesktopPlatform() && nature.isApp()
-                                        ? new AirDesktopPackagingConfigurable(module, configuration.getAirDesktopPackagingOptions())
+                                        ? new AirDesktopPackagingConfigurable(module, configuration.getAirDesktopPackagingOptions(),
+                                                                              mainClassComputable, airVersionComputable,
+                                                                              androidEnabledComputable, iosEnabledComputable,
+                                                                              createdDescriptorConsumer)
                                         : null;
     myAndroidPackagingConfigurable = nature.isMobilePlatform() && nature.isApp()
-                                     ? new AndroidPackagingConfigurable(module, configuration.getAndroidPackagingOptions())
+                                     ? new AndroidPackagingConfigurable(module, configuration.getAndroidPackagingOptions(),
+                                                                        mainClassComputable, airVersionComputable, androidEnabledComputable,
+                                                                        iosEnabledComputable, createdDescriptorConsumer)
                                      : null;
     myIOSPackagingConfigurable = nature.isMobilePlatform() && nature.isApp()
-                                 ? new IOSPackagingConfigurable(module, configuration.getIosPackagingOptions())
+                                 ? new IOSPackagingConfigurable(module, configuration.getIosPackagingOptions(), mainClassComputable,
+                                                                airVersionComputable, androidEnabledComputable, iosEnabledComputable,
+                                                                createdDescriptorConsumer)
                                  : null;
 
     myNameField.getDocument().addDocumentListener(new DocumentAdapter() {
@@ -144,13 +183,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
         else {
           String path = myWrapperTemplateTextWithBrowse.getText().trim();
           if (path.isEmpty()) {
-            final String[] contentRootUrls = ModuleRootManager.getInstance(module).getContentRootUrls();
-            if (contentRootUrls.length > 0) {
-              path = VfsUtil.urlToPath(contentRootUrls[0]) + "/" + CreateHtmlWrapperTemplateDialog.HTML_TEMPLATE_FOLDER_NAME;
-            }
-            else {
-              path = PathUtil.getParentPath(module.getModuleFilePath()) + "/" + CreateHtmlWrapperTemplateDialog.HTML_TEMPLATE_FOLDER_NAME;
-            }
+            path = FlexUtils.getContentOrModuleFolderPath(module) + "/" + CreateHtmlWrapperTemplateDialog.HTML_TEMPLATE_FOLDER_NAME;
           }
           final CreateHtmlWrapperTemplateDialog dialog = new CreateHtmlWrapperTemplateDialog(module, sdk, path);
           dialog.show();

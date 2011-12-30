@@ -25,7 +25,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.*;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
@@ -33,6 +33,7 @@ import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -155,7 +156,7 @@ public class FlexUtils {
         suffix = "_ViewNavigator";
       }
       else if (isFlex4) {
-       suffix = "_Spark";
+        suffix = "_Spark";
       }
     }
 
@@ -726,5 +727,45 @@ public class FlexUtils {
     }
 
     return true;
+  }
+
+  public static String getContentOrModuleFolderPath(final Module module) {
+    final String[] contentRootUrls = ModuleRootManager.getInstance(module).getContentRootUrls();
+    return contentRootUrls.length > 0 ? VfsUtil.urlToPath(contentRootUrls[0]) : PathUtil.getParentPath(module.getModuleFilePath());
+  }
+
+  @Nullable
+  public static VirtualFile createDirIfMissing(final Project project,
+                                               final boolean interactive,
+                                               final String folderPath,
+                                               final String errorMessageTitle) {
+    VirtualFile folder = LocalFileSystem.getInstance().findFileByPath(folderPath);
+    if (folder == null) {
+      try {
+        folder = VfsUtil.createDirectories(folderPath);
+      }
+      catch (IOException e) {
+        if (interactive) {
+          Messages.showErrorDialog(project,
+                                   FlexBundle.message("failed.to.create.folder", FileUtil.toSystemDependentName(folderPath), e.getMessage()),
+                                   errorMessageTitle);
+        }
+        return null;
+      }
+    }
+
+    if (folder == null) {
+      if (interactive) {
+        Messages.showErrorDialog(project, FlexBundle.message("failed.to.create.folder", folderPath, "unknown error"), errorMessageTitle);
+      }
+      return null;
+    }
+    else if (!folder.isDirectory()) {
+      Messages.showErrorDialog(project, FlexBundle.message("selected.path.not.folder", FileUtil.toSystemDependentName(folderPath)),
+                               errorMessageTitle);
+      return null;
+    }
+
+    return folder;
   }
 }

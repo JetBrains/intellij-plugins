@@ -1,14 +1,18 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.FilesToPackageForm;
 import com.intellij.lang.javascript.flex.actions.SigningOptionsForm;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.EmptyRunnable;
+import com.intellij.util.Consumer;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
@@ -31,9 +35,26 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
   private final boolean isAndroid;
   private final boolean isIOS;
 
-  public AirPackagingConfigurableBase(final Module module, final T model) {
+  private final Computable<String> myMainClassComputable;
+  private final Computable<String> myAirVersionComputable;
+  private final Computable<Boolean> myAndroidEnabledComputable;
+  private final Computable<Boolean> myIOSEnabledComputable;
+  private final Consumer<String> myCreatedDescriptorConsumer;
+
+  public AirPackagingConfigurableBase(final Module module,
+                                      final T model,
+                                      final Computable<String> mainClassComputable,
+                                      final Computable<String> airVersionComputable,
+                                      final Computable<Boolean> androidEnabledComputable,
+                                      final Computable<Boolean> iosEnabledComputable,
+                                      final Consumer<String> createdDescriptorConsumer) {
     myModule = module;
     myModel = model;
+    myMainClassComputable = mainClassComputable;
+    myAirVersionComputable = airVersionComputable;
+    myAndroidEnabledComputable = androidEnabledComputable;
+    myIOSEnabledComputable = iosEnabledComputable;
+    myCreatedDescriptorConsumer = createdDescriptorConsumer;
 
     isAndroid = model instanceof ModifiableAndroidPackagingOptions;
     isIOS = model instanceof ModifiableIosPackagingOptions;
@@ -46,7 +67,7 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
   }
 
   private void updateControls() {
-    final boolean enabled = !myEnabledCheckBox.isVisible() || myEnabledCheckBox.isSelected();
+    final boolean enabled = isPackagingEnabled();
     UIUtil.setEnabled(myMainPanel, enabled, true);
     myEnabledCheckBox.setEnabled(true);
     myAirDescriptorForm.updateControls();
@@ -120,7 +141,36 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
   }
 
   private void createUIComponents() {
-    myAirDescriptorForm = new AirDescriptorForm(myModule.getProject(), isIOS);
+    final Runnable descriptorCreator = new Runnable() {
+      public void run() {
+        final String folderPath = FlexUtils.getContentOrModuleFolderPath(myModule);
+        final String mainClass = myMainClassComputable.compute();
+        final String airVersion = myAirVersionComputable.compute();
+        final boolean androidEnabled = myAndroidEnabledComputable.compute();
+        final boolean iosEnabled = myIOSEnabledComputable.compute();
+
+        final CreateAirDescriptorTemplateDialog dialog =
+          new CreateAirDescriptorTemplateDialog(myModule.getProject(), folderPath, mainClass, airVersion, androidEnabled, iosEnabled);
+
+        dialog.show();
+
+        if (dialog.isOK()) {
+          final String descriptorPath = dialog.getDescriptorPath();
+          setUseCustomDescriptor(descriptorPath);
+
+          if (androidEnabled && iosEnabled && dialog.isBothAndroidAndIosSelected()) {
+            final int choice =
+              Messages.showYesNoDialog(myModule.getProject(), FlexBundle.message("use.same.descriptor.for.android.and.ios"),
+                                       CreateAirDescriptorTemplateDialog.TITLE, Messages.getQuestionIcon());
+            if (choice == Messages.YES) {
+              myCreatedDescriptorConsumer.consume(descriptorPath);
+            }
+          }
+        }
+      }
+    };
+
+    myAirDescriptorForm = new AirDescriptorForm(myModule.getProject(), descriptorCreator, isIOS);
     myFilesToPackageForm = new FilesToPackageForm(myModule.getProject());
 
     mySigningOptionsForm = new SigningOptionsForm(myModule.getProject(), new Computable.PredefinedValueComputable<Module>(myModule),
@@ -128,5 +178,13 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
     mySigningOptionsForm.setUseTempCertificateCheckBoxVisible(!isIOS);
     mySigningOptionsForm.setProvisioningProfileApplicable(isIOS);
     mySigningOptionsForm.setCreateCertificateButtonApplicable(false);
+  }
+
+  public void setUseCustomDescriptor(final String descriptorPath) {
+    myAirDescriptorForm.setUseCustomDescriptor(descriptorPath);
+  }
+
+  public boolean isPackagingEnabled() {
+    return !myEnabledCheckBox.isVisible() || myEnabledCheckBox.isSelected();
   }
 }
