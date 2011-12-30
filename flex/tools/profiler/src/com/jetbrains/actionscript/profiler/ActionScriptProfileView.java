@@ -13,10 +13,7 @@ import com.intellij.pom.Navigatable;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.scope.ProjectFilesScope;
-import com.intellij.ui.PopupHandler;
-import com.intellij.ui.SpeedSearchBase;
-import com.intellij.ui.TreeSpeedSearch;
-import com.intellij.ui.TreeTableSpeedSearch;
+import com.intellij.ui.*;
 import com.intellij.util.Alarm;
 import com.intellij.util.Function;
 import com.intellij.util.ui.tree.TreeUtil;
@@ -186,12 +183,12 @@ public class ActionScriptProfileView extends ProfileView {
     setColumnWidth(myTracesTreeTable.getColumnModel().getColumn(1), MS_COLUMN_WIDTH);
     setColumnWidth(myTracesTreeTable.getColumnModel().getColumn(2), MS_COLUMN_WIDTH);
 
-    new TreeTableSpeedSearch(myHotSpotsTreeTable).setComparator(new SpeedSearchBase.SpeedSearchComparator(false));
-    new TreeTableSpeedSearch(myTracesTreeTable).setComparator(new SpeedSearchBase.SpeedSearchComparator(false));
+    new TreeTableSpeedSearch(myHotSpotsTreeTable).setComparator(new SpeedSearchComparator(false));
+    new TreeTableSpeedSearch(myTracesTreeTable).setComparator(new SpeedSearchComparator(false));
 
-    new TreeSpeedSearch(myMemoryTree).setComparator(new SpeedSearchBase.SpeedSearchComparator(false));
-    new TreeSpeedSearch(mySamplesTree).setComparator(new SpeedSearchBase.SpeedSearchComparator(false));
-    new TreeSpeedSearch(myReachableFromTree).setComparator(new SpeedSearchBase.SpeedSearchComparator(false));
+    new TreeSpeedSearch(myMemoryTree).setComparator(new SpeedSearchComparator(false));
+    new TreeSpeedSearch(mySamplesTree).setComparator(new SpeedSearchComparator(false));
+    new TreeSpeedSearch(myReachableFromTree).setComparator(new SpeedSearchComparator(false));
 
     PopupHandler.installPopupHandler(myHotSpotsTreeTable, PROFILER_ACTION_GROUP_ID, ActionPlaces.UNKNOWN);
     PopupHandler.installPopupHandler(myTracesTreeTable, PROFILER_ACTION_GROUP_ID, ActionPlaces.UNKNOWN);

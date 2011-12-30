@@ -70,7 +70,7 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
         Object lastPathComponent = o.getLastPathComponent();
         return getText((DefaultMutableTreeNode)lastPathComponent);
       }
-    }, true).setComparator(new SpeedSearchBase.SpeedSearchComparator(false));
+    }, true).setComparator(new SpeedSearchComparator(false));
     TreeUIHelper.getInstance().installTreeSpeedSearch(myTree);
     myTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
     myTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {

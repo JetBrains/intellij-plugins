@@ -249,7 +249,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
         final Object userObject = ((DefaultMutableTreeNode)o.getLastPathComponent()).getUserObject();
         return userObject instanceof CompilerOptionInfo ? ((CompilerOptionInfo)userObject).DISPLAY_NAME : "";
       }
-    }).setComparator(new SpeedSearchBase.SpeedSearchComparator(false));
+    }).setComparator(new SpeedSearchComparator(false));
 
     return treeTable;
   }
