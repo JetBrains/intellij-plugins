@@ -131,7 +131,7 @@ public class JspActionAnnotator implements LineMarkerProvider {
         NavigationGutterIconBuilder.create(StrutsIcons.ACTION_CLASS).
             setAlignment(GutterIconRenderer.Alignment.LEFT).
             setTooltipText(StrutsBundle.message("annotators.jsp.goto.action.method")).
-            setEmptyPopupText(StrutsBundle.message("annotators.jsp.goto.action.method.notfound")).
+            setEmptyPopupText(StrutsBundle.message("annotators.jsp.goto.action.method.not.found")).
             setTargets(new NotNullLazyValue<Collection<? extends PsiElement>>() {
               @NotNull
               protected Collection<PsiMethod> compute() {

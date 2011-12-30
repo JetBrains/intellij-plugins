@@ -87,13 +87,13 @@ class StructureViewTreeModel extends XmlStructureViewTreeModel implements Struct
 
       @NotNull
       public ActionPresentation getPresentation() {
-        return new ActionPresentationData(StrutsBundle.message("structureview.filter.params"),
-                                          StrutsBundle.message("structureview.filter.params"), StrutsIcons.PARAM);
+        return new ActionPresentationData(StrutsBundle.message("structure.view.filter.params"),
+                                          StrutsBundle.message("structure.view.filter.params"), StrutsIcons.PARAM);
       }
 
       @NotNull
       public String getName() {
-        return StrutsBundle.message("structureview.filter.params");
+        return StrutsBundle.message("structure.view.filter.params");
       }
     }};
   }

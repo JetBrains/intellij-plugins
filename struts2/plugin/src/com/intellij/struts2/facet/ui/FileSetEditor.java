@@ -58,7 +58,7 @@ public class FileSetEditor extends DialogWrapper {
 
     super(parent, true);
 
-    setTitle(StrutsBundle.message("facet.fileseteditor.title"));
+    setTitle(StrutsBundle.message("facet.fileset.editor.title"));
     myOriginalSet = fileSet;
     myFileSet = new StrutsFileSet(fileSet);
 

@@ -85,7 +85,7 @@ class Struts2ModelInspectionVisitor implements DomElementVisitor {
     final String namespace = strutsPackage.getNamespace().getStringValue();
     if (namespace != null && !StringUtil.startsWithChar(namespace, '/')) {
       holder.createProblem(strutsPackage.getNamespace(),
-                           StrutsBundle.message("dom.strutspackage.must.start.with.slash"));
+                           StrutsBundle.message("dom.highlighting.struts.package.must.start.with.slash"));
     }
   }
 

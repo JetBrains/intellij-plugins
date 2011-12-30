@@ -114,7 +114,7 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
 
         @NotNull
         public String getFamilyName() {
-          return StrutsBundle.message("intentions.familyname");
+          return StrutsBundle.message("intentions.family.name");
         }
 
         public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile psiFile) {
@@ -149,7 +149,7 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
 
     @NotNull
     public String getFamilyName() {
-      return StrutsBundle.message("intentions.familyname");
+      return StrutsBundle.message("intentions.family.name");
     }
 
     public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file) {

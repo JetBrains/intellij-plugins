@@ -143,7 +143,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       public void actionPerformed(final ActionEvent e) {
         final StrutsFileSet fileSet =
             new StrutsFileSet(StrutsFileSet.getUniqueId(myBuffer),
-                              StrutsFileSet.getUniqueName(StrutsBundle.message("facet.fileset.myfileset"), myBuffer),
+                              StrutsFileSet.getUniqueName(StrutsBundle.message("facet.fileset.my.fileset"), myBuffer),
                               originalConfiguration) {
               public boolean isNew() {
                 return true;
@@ -254,9 +254,9 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
         }
 
         final int result = Messages.showYesNoDialog(myPanel,
-                                                    StrutsBundle.message("facet.fileset.removefileset.question",
+                                                    StrutsBundle.message("facet.fileset.remove.fileset.question",
                                                                          fileSet.getName()),
-                                                    StrutsBundle.message("facet.fileset.removefileset.title"),
+                                                    StrutsBundle.message("facet.fileset.remove.fileset.title"),
                                                     Messages.getQuestionIcon());
         if (result == DialogWrapper.OK_EXIT_CODE) {
           if (fileSet.isAutodetected()) {
@@ -335,7 +335,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
 
       if (fileSet.getFiles().isEmpty()) {
         presentationData.addText(name, getErrorAttributes());
-        presentationData.setTooltip(StrutsBundle.message("facet.fileset.nofiles.attached"));
+        presentationData.setTooltip(StrutsBundle.message("facet.fileset.no.files.attached"));
       } else {
         presentationData.addText(name, getPlainAttributes());
         presentationData.setLocationString(Integer.toString(fileSet.getFiles().size()));
@@ -381,7 +381,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       if (file != null) {
         renderFile(file, getPlainAttributes(), null);
       } else {
-        renderFile(file, getErrorAttributes(), StrutsBundle.message("facet.fileset.filenotfound"));
+        renderFile(file, getErrorAttributes(), StrutsBundle.message("facet.fileset.file.not.found"));
       }
     }
 
