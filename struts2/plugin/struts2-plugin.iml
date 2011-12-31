@@ -15,7 +15,6 @@
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="dom-openapi" />
     <orderEntry type="module" module-name="lang-impl" />
-    <orderEntry type="module" module-name="idea" />
     <orderEntry type="module" module-name="CSS" />
     <orderEntry type="module" module-name="xml" />
     <orderEntry type="module" module-name="dom-impl" />
@@ -44,6 +43,9 @@
     <orderEntry type="module" module-name="spellchecker" />
     <orderEntry type="module" module-name="uml" scope="TEST" />
     <orderEntry type="module" module-name="IntelliLang-js" scope="TEST" />
+    <orderEntry type="module" module-name="java-impl" />
+    <orderEntry type="module" module-name="jsp-openapi" />
+    <orderEntry type="module" module-name="jsp-spi" />
   </component>
   <component name="copyright">
     <Base>
