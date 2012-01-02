@@ -10,6 +10,11 @@
 <s:url action="myWildCard" namespace="/wildcard"/>
 <s:url action="myWildCardAnythingGoesHere" namespace="/wildcard"/>
 
+<%-- "method" --%>
+<s:url action="bangAction" namespace="/bang" method="methodB"/>
+<s:url action="bangAction" namespace="/bang" method="<error>INVALID_VALUE</error>"/>
+
+
 <%-- bang-notation --%>
 <s:url action="bangAction!methodA" namespace="/bang"/>
 <s:url action="bangAction!methodB" namespace="/bang"/>

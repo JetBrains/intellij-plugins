@@ -17,6 +17,7 @@ package com.intellij.struts2.facet.ui;
 
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
+import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
@@ -30,6 +31,8 @@ import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.facet.StrutsFacetConfiguration;
+import com.intellij.ui.HyperlinkAdapter;
+import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.treeStructure.*;
 import com.intellij.util.ArrayUtil;
@@ -38,9 +41,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -57,6 +62,8 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
 
   // GUI components -----------------------
   private JPanel myPanel;
+  private JPanel headerPanel;
+
   private SimpleTree myTree;
   private JButton myAddSetButton;
   private JButton myRemoveButton;
@@ -98,6 +105,20 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     module = facetEditorContext.getModule();
     myConfigsSearcher = new StrutsConfigsSearcher(module);
 
+
+    final HyperlinkLabel linkLabel = new HyperlinkLabel("Open Struts 2 plugin documentation…");
+    linkLabel.addHyperlinkListener(new HyperlinkAdapter() {
+      @Override
+      protected void hyperlinkActivated(final HyperlinkEvent e) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          BrowserUtil.launchBrowser("http://confluence.jetbrains.net/pages/viewpage.action?pageId=35367");
+        }
+      }
+    });
+    
+    headerPanel.setLayout(new BorderLayout());
+    headerPanel.add(linkLabel);
+
     // init tree
     final SimpleTreeStructure structure = new SimpleTreeStructure() {
       public Object getRootElement() {
@@ -122,7 +143,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       public void actionPerformed(final ActionEvent e) {
         final StrutsFileSet fileSet =
             new StrutsFileSet(StrutsFileSet.getUniqueId(myBuffer),
-                              StrutsFileSet.getUniqueName(StrutsBundle.message("facet.fileset.myfileset"), myBuffer),
+                              StrutsFileSet.getUniqueName(StrutsBundle.message("facet.fileset.my.fileset"), myBuffer),
                               originalConfiguration) {
               public boolean isNew() {
                 return true;
@@ -233,9 +254,9 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
         }
 
         final int result = Messages.showYesNoDialog(myPanel,
-                                                    StrutsBundle.message("facet.fileset.removefileset.question",
+                                                    StrutsBundle.message("facet.fileset.remove.fileset.question",
                                                                          fileSet.getName()),
-                                                    StrutsBundle.message("facet.fileset.removefileset.title"),
+                                                    StrutsBundle.message("facet.fileset.remove.fileset.title"),
                                                     Messages.getQuestionIcon());
         if (result == DialogWrapper.OK_EXIT_CODE) {
           if (fileSet.isAutodetected()) {
@@ -314,7 +335,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
 
       if (fileSet.getFiles().isEmpty()) {
         presentationData.addText(name, getErrorAttributes());
-        presentationData.setTooltip(StrutsBundle.message("facet.fileset.nofiles.attached"));
+        presentationData.setTooltip(StrutsBundle.message("facet.fileset.no.files.attached"));
       } else {
         presentationData.addText(name, getPlainAttributes());
         presentationData.setLocationString(Integer.toString(fileSet.getFiles().size()));
@@ -360,7 +381,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       if (file != null) {
         renderFile(file, getPlainAttributes(), null);
       } else {
-        renderFile(file, getErrorAttributes(), StrutsBundle.message("facet.fileset.filenotfound"));
+        renderFile(file, getErrorAttributes(), StrutsBundle.message("facet.fileset.file.not.found"));
       }
     }
 

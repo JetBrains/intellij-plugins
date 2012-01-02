@@ -157,7 +157,8 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
   public abstract PsiModifierListOwner getOwner();
 
   @JamPsiValidity
-  public abstract boolean isPsiValid();
+  @Override
+  public abstract boolean isValid();
 
   @NotNull
   @Override

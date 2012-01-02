@@ -2,8 +2,6 @@ package com.google.jstestdriver.idea.assertFramework.support;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
-import com.google.jstestdriver.idea.util.SwingUtils;
-import com.google.jstestdriver.idea.util.TextChangeListener;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -17,23 +15,26 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.DocumentAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 /*
  * All operations should be executed on EDT.
  */
-class ExtractDirectoryTypeManager {
+public class ExtractedSourceLocationController {
 
-  private static final Logger LOG = Logger.getInstance(ExtractDirectoryTypeManager.class);
+  private static final Logger LOG = Logger.getInstance(ExtractedSourceLocationController.class);
 
   private final Project myProject;
   private final JPanel myDirectoryTypeContent;
@@ -43,9 +44,9 @@ class ExtractDirectoryTypeManager {
   private TextFieldWithBrowseButton myCustomDirectoryTextFieldWithBrowseButton;
   private DirectoryType mySelectedDirectoryType;
 
-  private ExtractDirectoryTypeManager(@NotNull Project project,
-                                      @NotNull JPanel directoryTypeContent,
-                                      @NotNull String assertionFrameworkName) {
+  private ExtractedSourceLocationController(@NotNull Project project,
+                                            @NotNull JPanel directoryTypeContent,
+                                            @NotNull String assertionFrameworkName) {
     myProject = project;
     myDirectoryTypeContent = directoryTypeContent;
     myAssertionFrameworkName = assertionFrameworkName;
@@ -75,15 +76,12 @@ class ExtractDirectoryTypeManager {
         myCustomDirectoryTextFieldWithBrowseButton.addBrowseFolderListener(
           title, description, myProject, fileChooserDescriptor
         );
-        SwingUtils.addTextChangeListener(
-          myCustomDirectoryTextFieldWithBrowseButton.getTextField(),
-          new TextChangeListener() {
-            @Override
-            public void textChanged(String oldText, @NotNull String newText) {
-              fireExtractDirectoryChanged();
-            }
+        myCustomDirectoryTextFieldWithBrowseButton.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+          @Override
+          protected void textChanged(DocumentEvent e) {
+            fireExtractDirectoryChanged();
           }
-        );
+        });
 
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(myCustomDirectoryTextFieldWithBrowseButton, BorderLayout.NORTH);
@@ -96,8 +94,7 @@ class ExtractDirectoryTypeManager {
 
   private void addContentForType(JRadioButton radioButton,
                                  DirectoryType directoryType,
-                                 Supplier<JPanel> producer
-  ) {
+                                 Supplier<JPanel> producer) {
     JPanel panel = producer.get();
     if (panel == null) {
       throw new RuntimeException("Child panel is null!");
@@ -106,18 +103,23 @@ class ExtractDirectoryTypeManager {
     radioButton.addActionListener(new SelectDirectoryTypeActionListener(directoryType));
   }
 
-  public static ExtractDirectoryTypeManager install(
+  public static ExtractedSourceLocationController install(
       @NotNull Project project,
       @NotNull JPanel directoryTypeContent,
       @NotNull String assertionFrameworkName,
       @NotNull JRadioButton defaultRadioButton,
-      @NotNull JRadioButton customRadioButton
+      @NotNull JRadioButton customRadioButton,
+      @NotNull Collection<? extends ChangeListener> changeListeners
   ) {
-    ExtractDirectoryTypeManager directoryTypeManager = new ExtractDirectoryTypeManager(
+    ExtractedSourceLocationController locationController = new ExtractedSourceLocationController(
       project, directoryTypeContent, assertionFrameworkName
     );
-    directoryTypeManager.populate(defaultRadioButton, customRadioButton);
-    return directoryTypeManager;
+    locationController.populate(defaultRadioButton, customRadioButton);
+    for (ChangeListener listener : changeListeners) {
+      locationController.addChangeListener(listener);
+    }
+    locationController.selectDirectoryType(DirectoryType.DEFAULT);
+    return locationController;
   }
 
   public void addChangeListener(ChangeListener changeListener) {
@@ -131,6 +133,7 @@ class ExtractDirectoryTypeManager {
     return new File(myCustomDirectoryTextFieldWithBrowseButton.getText());
   }
 
+  @Nullable
   public DialogWrapper.ValidationInfo validate() {
     if (mySelectedDirectoryType == DirectoryType.DEFAULT) {
       return null;
@@ -143,7 +146,7 @@ class ExtractDirectoryTypeManager {
     return null;
   }
 
-  private void selectDirectoryType(DirectoryType directoryType) {
+  private void selectDirectoryType(@NotNull DirectoryType directoryType) {
     CardLayout cardLayout = (CardLayout) myDirectoryTypeContent.getLayout();
     cardLayout.show(myDirectoryTypeContent, directoryType.name());
     mySelectedDirectoryType = directoryType;
@@ -163,9 +166,10 @@ class ExtractDirectoryTypeManager {
    * @return extracted file list or null if extraction was failed
    */
   @Nullable
-  public List<VirtualFile> extractAdapterFiles(final List<VirtualFile> bundledAdapterFiles) {
+  public List<VirtualFile> extractAdapterFiles(@NotNull final List<VirtualFile> bundledAdapterFiles) {
     return ApplicationManager.getApplication().runWriteAction(new Computable<List<VirtualFile>>() {
       @Override
+      @Nullable
       public List<VirtualFile> compute() {
         try {
           VirtualFile extractDir = getOrCreateExtractDirVirtualFile();
@@ -207,10 +211,6 @@ class ExtractDirectoryTypeManager {
       }
     }
     return copiedFiles;
-  }
-
-  public void init() {
-    selectDirectoryType(DirectoryType.DEFAULT);
   }
 
   private static File getDefaultDir(String assertionFrameworkName) {

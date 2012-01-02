@@ -46,7 +46,7 @@ public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase<JavaModul
   }
 
   @Override
-  protected void customizeSetup(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
+  protected void customizeSetup(final JavaModuleFixtureBuilder moduleBuilder) {
     installSrcHack();
   }
 

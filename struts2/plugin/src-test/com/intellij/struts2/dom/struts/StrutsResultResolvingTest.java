@@ -37,7 +37,7 @@ public class StrutsResultResolvingTest extends BasicStrutsHighlightingTestCase<W
   }
 
   @Override
-  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
+  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) {
     moduleBuilder.addWebRoot(getTestDataPath() + "/jsp/", "/");
     moduleBuilder.addWebRoot(getTestDataPath() + "/jsp2/", "/2ndWebRoot/");
     moduleBuilder.addSourceRoot(myFixture.getTempDirPath()); // TODO

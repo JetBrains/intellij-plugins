@@ -53,7 +53,7 @@ import java.util.*;
 abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
 
   private static final DomElementListCellRenderer ACTION_RENDERER =
-      new DomElementListCellRenderer<Action>(StrutsBundle.message("annotators.action.noname")) {
+      new DomElementListCellRenderer<Action>(StrutsBundle.message("annotators.action.no.name")) {
         @NotNull
         @NonNls
         public String getAdditionalLocation(final Action action) {

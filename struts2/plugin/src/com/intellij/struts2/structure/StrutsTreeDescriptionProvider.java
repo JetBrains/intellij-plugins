@@ -51,7 +51,7 @@ public class StrutsTreeDescriptionProvider implements ElementDescriptionProvider
   }
 
   @Nullable
-  private String getElementDescription(@NotNull final DomElement domElement) {
+  private static String getElementDescription(@NotNull final DomElement domElement) {
     if (domElement instanceof StrutsPackage) {
       return ((StrutsPackage) domElement).searchNamespace();
     }

@@ -46,7 +46,7 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
 
   protected static final PsiReferenceProvider CSS_CLASS_PROVIDER = new CssInHtmlClassOrIdReferenceProvider();
 
-  protected static final PsiReferenceProvider BOOLEAN_VALUE_REFERENCE_PROVIDER =
+  private static final PsiReferenceProvider BOOLEAN_VALUE_REFERENCE_PROVIDER =
       new StaticStringValuesReferenceProvider(false, "false", "true");
 
   protected static final PsiReferenceProvider ACTION_REFERENCE_PROVIDER = new ActionReferenceProvider();

@@ -51,7 +51,7 @@ class AddAdapterSupportQuickFix implements LocalQuickFix {
         AddAdapterSupportDialog dialog = new AddAdapterSupportDialog(
           project,
           myAssertionFrameworkName,
-          myAdapterSourceFilesProvider
+          myAdapterSourceFilesProvider.get()
         );
         final AsyncResult<Boolean> result = dialog.showAndGetOk();
         final VirtualFile virtualFile = psiFile.getVirtualFile();

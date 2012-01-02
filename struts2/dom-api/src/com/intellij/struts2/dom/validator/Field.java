@@ -29,6 +29,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings("UnusedDeclaration")
 @Namespace(StrutsDomConstants.VALIDATOR_NAMESPACE_KEY)
 @Presentation(typeName = "Field",
               icon = "/nodes/field.png",

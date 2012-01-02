@@ -31,6 +31,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings("UnusedDeclaration")
 @Namespace(StrutsDomConstants.VALIDATOR_NAMESPACE_KEY)
 @Presentation(provider = Struts2ValidationPresentationProvider.class)
 public interface Validators extends DomElement {

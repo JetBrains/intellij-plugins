@@ -35,6 +35,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings("UnusedDeclaration")
 @Presentation(typeName = "Struts Action", icon = StrutsIcons.ACTION_PATH)
 public interface Action extends ParamsElement {
 

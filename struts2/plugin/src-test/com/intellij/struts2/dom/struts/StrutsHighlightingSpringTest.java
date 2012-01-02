@@ -50,7 +50,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
   }
 
   @Override
-  protected void customizeSetup(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
+  protected void customizeSetup(final JavaModuleFixtureBuilder moduleBuilder) {
     addLibrary(moduleBuilder, "spring", "spring.jar");
     addLibrary(moduleBuilder, "struts2-spring-plugin", STRUTS2_SPRING_PLUGIN_JAR);
   }

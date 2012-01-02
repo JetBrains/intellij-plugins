@@ -38,7 +38,7 @@ public class StrutsConstantManagerWithStrutsPluginXmlTest
   }
 
   @Override
-  protected void customizeSetup(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
+  protected void customizeSetup(final JavaModuleFixtureBuilder moduleBuilder) {
     addLibrary(moduleBuilder, "struts2-spring-plugin", STRUTS2_SPRING_PLUGIN_JAR);
   }
 

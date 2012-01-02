@@ -38,7 +38,7 @@ public class ActionReferenceProviderTest extends BasicHighlightingTestCase<WebMo
   }
 
   @Override
-  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
+  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) {
     moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp", "/");
   }
 
@@ -65,6 +65,13 @@ public class ActionReferenceProviderTest extends BasicHighlightingTestCase<WebMo
     createStrutsFileSet("struts-action.xml");
     myFixture.testCompletionVariants("/jsp/action-completionvariants_namespace.jsp",
                                      "myWildCard*");
+  }
+
+  @HasJavaSources
+  public void testActionCompletionVariantsMethod() throws Throwable {
+    createStrutsFileSet("struts-action.xml");
+    myFixture.testCompletionVariants("/jsp/action-completionvariants_method.jsp",
+                                     "methodA", "methodB");
   }
 
 }
