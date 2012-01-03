@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2012 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,18 +16,20 @@
 package com.intellij.struts2.facet.ui;
 
 import com.intellij.facet.Facet;
-import com.intellij.facet.frameworks.LibrariesDownloadAssistant;
-import com.intellij.facet.frameworks.beans.Artifact;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.facet.ui.libraries.FacetLibrariesValidator;
 import com.intellij.facet.ui.libraries.LibraryInfo;
+import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.openapi.module.Module;
 import com.intellij.struts2.StrutsBundle;
+import com.intellij.struts2.facet.Struts2LibraryType;
 import com.intellij.struts2.facet.StrutsFacetConfiguration;
 import com.intellij.struts2.facet.StrutsFacetLibrariesValidatorDescription;
-import com.intellij.struts2.facet.StrutsFrameworkSupportProvider;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformIcons;
+import com.intellij.util.download.DownloadableFileSetDescription;
+import com.intellij.util.download.DownloadableFileSetVersions;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 /**
  * Struts2 facet tab "Features".
@@ -58,15 +61,6 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
 
     disablePropertiesKeys.setSelected(originalConfiguration.isPropertiesKeysDisabled());
 
-    versionComboBox.addActionListener(new ActionListener() {
-      public void actionPerformed(final ActionEvent e) {
-        final Artifact version = getSelectedVersion();
-        if (version != null) {
-          validator.setRequiredLibraries(getRequiredLibraries());
-          validator.setDescription(new StrutsFacetLibrariesValidatorDescription(version.getVersion()));
-        }
-      }
-    });
     final Module module = editorContext.getModule();
     final String version = StrutsVersionDetector.detectStrutsVersion(module);
     if (version != null) {
@@ -76,28 +70,56 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
       return;
     }
 
-    final Artifact[] versions = LibrariesDownloadAssistant.getVersions(StrutsFrameworkSupportProvider.getLibrariesUrl());
-    versionComboBox.setModel(new DefaultComboBoxModel(versions));
-    if (versions.length > 0) {
-      final Artifact item = versions[0];
-      versionComboBox.getModel().setSelectedItem(item);
-      validator.setRequiredLibraries(getRequiredLibraries());
-      validator.setDescription(new StrutsFacetLibrariesValidatorDescription(item.getVersion()));
-    }
+    setupVersionComboBox();
   }
 
+  private void setupVersionComboBox() {
+    versionComboBox.setRenderer(new ListCellRendererWrapper<DownloadableFileSetDescription>(versionComboBox) {
+      @Override
+      public void customize(final JList list,
+                            final DownloadableFileSetDescription value,
+                            final int index,
+                            final boolean selected,
+                            final boolean hasFocus) {
+        setText(value.getVersionString());
+      }
+    });
+    versionComboBox.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        final DownloadableFileSetDescription version = getSelectedVersion();
+        assert version != null;
+        validator.setRequiredLibraries(getRequiredLibraries());
+        validator.setDescription(new StrutsFacetLibrariesValidatorDescription(version.getVersionString()));
+      }
+    });
+
+    final DownloadableFileSetVersions<DownloadableFileSetDescription> fileSetVersions = Struts2LibraryType.getVersions();
+    fileSetVersions.fetchVersions(new DownloadableFileSetVersions.FileSetVersionsCallback<DownloadableFileSetDescription>() {
+      @Override
+      public void onSuccess(@NotNull final List<? extends DownloadableFileSetDescription> versions) {
+        versionComboBox.setModel(new DefaultComboBoxModel(ArrayUtil.toObjectArray(versions)));
+        versionComboBox.setSelectedIndex(0);
+
+        validator.setRequiredLibraries(getRequiredLibraries());
+        validator.setDescription(new StrutsFacetLibrariesValidatorDescription(versions.get(0).getVersionString()));
+      }
+    });
+  }
 
   @Nullable
-  private Artifact getSelectedVersion() {
+  private DownloadableFileSetDescription getSelectedVersion() {
     final Object version = versionComboBox.getModel().getSelectedItem();
-    return version instanceof Artifact ? (Artifact) version : null;
+    return version instanceof DownloadableFileSetDescription ? (DownloadableFileSetDescription) version : null;
   }
 
   @Nullable
   private LibraryInfo[] getRequiredLibraries() {
-    final Artifact version = getSelectedVersion();
+    final DownloadableFileSetDescription version = getSelectedVersion();
+    if (version == null) {
+      return null;
+    }
 
-    return version == null ? null : LibrariesDownloadAssistant.getLibraryInfos(version);
+    return Struts2LibraryType.getLibraryInfo(version);
   }
 
   public void onFacetInitialized(@NotNull final Facet facet) {
