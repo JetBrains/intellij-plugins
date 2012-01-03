@@ -25,10 +25,7 @@
 
 package org.osmorc.make;
 
-import com.intellij.openapi.actionSystem.ActionGroup;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -47,33 +44,48 @@ import java.util.List;
  * @version $Id:$
  */
 public class ViewGeneratedManifestGroup extends ActionGroup {
-    private static final AnAction[] EMPTY_ACTIONS_LIST = new AnAction[0];
+  private static final AnAction[] EMPTY_ACTIONS_LIST = new AnAction[0];
 
-    @NotNull
-    @Override
-    public AnAction[] getChildren(@Nullable AnActionEvent e) {
-        if (e == null) return EMPTY_ACTIONS_LIST;
-        @Nullable Project project = PlatformDataKeys.PROJECT.getData(e.getDataContext());
-        if (project == null) {
-            return EMPTY_ACTIONS_LIST;
+  @Override
+  public void update(AnActionEvent e) {
+    // IDEA-79063 only show this when there are actually osmorc facets available.
+    boolean enabled = false;
+    Project project = PlatformDataKeys.PROJECT.getData(e.getDataContext());
+    if (project != null) {
+      for (Module m : ModuleManager.getInstance(project).getModules()) {
+        if (OsmorcFacet.hasOsmorcFacet(m)) {
+          enabled = true;
+          break;
         }
-
-        final List<AnAction> actions = new ArrayList<AnAction>();
-        final Module[] modules = ModuleManager.getInstance(project).getModules();
-        for (Module module : modules) {
-            if (OsmorcFacet.hasOsmorcFacet(module)) {
-                OsmorcFacet facet = OsmorcFacet.getInstance(module);
-                if (facet == null) continue;
-                String jarFile = facet.getConfiguration().getJarFileLocation();
-                File theFile = new File(jarFile);
-//                if (theFile.exists()) {
-                String fileName = "[" + module.getName() + "] " + jarFile.substring(jarFile.lastIndexOf('/') + 1);
-                ViewManifestAction action = new ViewManifestAction(fileName, jarFile);
-                actions.add(action);
-//                }
-            }
-        }
-        return actions.toArray(new AnAction[actions.size()]);
-
+      }
     }
+    e.getPresentation().setVisible(enabled);
+  }
+
+  @NotNull
+  @Override
+  public AnAction[] getChildren(@Nullable AnActionEvent e) {
+    if (e == null) return EMPTY_ACTIONS_LIST;
+    @Nullable Project project = PlatformDataKeys.PROJECT.getData(e.getDataContext());
+    if (project == null) {
+      return EMPTY_ACTIONS_LIST;
+    }
+
+    final List<AnAction> actions = new ArrayList<AnAction>();
+    final Module[] modules = ModuleManager.getInstance(project).getModules();
+    for (Module module : modules) {
+      if (OsmorcFacet.hasOsmorcFacet(module)) {
+        OsmorcFacet facet = OsmorcFacet.getInstance(module);
+        if (facet == null) continue;
+        String jarFile = facet.getConfiguration().getJarFileLocation();
+        File theFile = new File(jarFile);
+//                if (theFile.exists()) {
+        String fileName = "[" + module.getName() + "] " + jarFile.substring(jarFile.lastIndexOf('/') + 1);
+        ViewManifestAction action = new ViewManifestAction(fileName, jarFile);
+        actions.add(action);
+//                }
+      }
+    }
+    return actions.toArray(new AnAction[actions.size()]);
+  }
 }
