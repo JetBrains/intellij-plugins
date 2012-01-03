@@ -47,7 +47,7 @@ public class Struts2LibraryType extends DownloadableLibraryTypeBase {
   }
 
   public static DownloadableFileSetVersions<DownloadableFileSetDescription> getVersions() {
-    return DownloadableFileService.getInstance().createFileSetVersions(GROUP_ID, getLibrariesUrl());
+    return DownloadableFileService.getInstance().createFileSetVersions(null, getLibrariesUrl());
   }
 
   public static LibraryInfo[] getLibraryInfo(@NotNull final DownloadableFileSetDescription version) {
