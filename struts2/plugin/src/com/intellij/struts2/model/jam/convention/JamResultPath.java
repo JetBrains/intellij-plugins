@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2012 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -150,7 +150,7 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
     new JamClassMeta<JamResultPath>(JamResultPath.class).addAnnotation(RESULT_PATH_META);
 
   public static final JamPackageMeta<JamResultPath> META_PACKAGE =
-    new JamPackageMeta<JamResultPath>(null, JamResultPath.class)
+    new JamPackageMeta<JamResultPath>(JamResultPath.class)
       .addAnnotation(RESULT_PATH_META);
 
   @JamPsiConnector
