@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2012 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,12 +15,15 @@
 
 package com.intellij.struts2.facet;
 
-import com.intellij.facet.frameworks.LibrariesDownloadAssistant;
-import com.intellij.facet.frameworks.beans.Artifact;
 import com.intellij.facet.ui.FacetBasedFrameworkSupportProvider;
+import com.intellij.framework.library.DownloadableLibraryService;
+import com.intellij.framework.library.FrameworkSupportWithLibrary;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
+import com.intellij.ide.util.frameworkSupport.FrameworkSupportConfigurableBase;
+import com.intellij.ide.util.frameworkSupport.FrameworkSupportModel;
+import com.intellij.ide.util.frameworkSupport.FrameworkSupportProviderBase;
 import com.intellij.ide.util.frameworkSupport.FrameworkVersion;
 import com.intellij.javaee.model.xml.web.Filter;
 import com.intellij.javaee.model.xml.web.FilterMapping;
@@ -36,6 +39,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
+import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -47,15 +51,19 @@ import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.StrutsFileTemplateGroupDescriptorFactory;
 import com.intellij.struts2.facet.ui.StrutsConfigsSearcher;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
+import com.intellij.struts2.facet.ui.StrutsVersionDetector;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.text.VersionComparatorUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
-import java.net.URL;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * "Add Framework" support.
@@ -66,7 +74,7 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
 
   private static final Logger LOG = Logger.getInstance("#com.intellij.struts2.facet.StrutsFrameworkSupportProvider");
 
-  protected StrutsFrameworkSupportProvider() {
+  public StrutsFrameworkSupportProvider() {
     super(StrutsFacetType.getInstance());
   }
 
@@ -75,13 +83,9 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
   }
 
   @NotNull
-  public List<FrameworkVersion> getVersions() {
-    final List<FrameworkVersion> result = new ArrayList<FrameworkVersion>();
-    for (final Artifact version : LibrariesDownloadAssistant.getVersions(getLibrariesUrl())) {
-      final String name = version.getVersion();
-      result.add(new FrameworkVersion(name, "struts2-" + name, LibrariesDownloadAssistant.getLibraryInfos(version)));
-    }
-    return result;
+  @Override
+  public FrameworkSupportConfigurableBase createConfigurable(@NotNull final FrameworkSupportModel model) {
+    return new Struts2FrameworkSupportConfigurable(this, model, getVersions(), getVersionLabelText());
   }
 
   protected void setupConfiguration(final StrutsFacet strutsFacet,
@@ -106,14 +110,15 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
           return;
         }
 
-        String template = StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_0_XML;
-        final boolean is2_1orNewer = VersionComparatorUtil.compare(version.getVersionName(), "2.1") > 0;
+        final String versionName = StrutsVersionDetector.detectStrutsVersion(module);
 
-        final boolean is2_3orNewer = VersionComparatorUtil.compare(version.getVersionName(), "2.3") > 0;
+        String template = StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_0_XML;
+        final boolean is2_1orNewer = VersionComparatorUtil.compare(versionName, "2.1") > 0;
+        final boolean is2_3orNewer = VersionComparatorUtil.compare(versionName, "2.3") > 0;
         if (is2_3orNewer) {
           template = StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_3_XML;
         } else if (is2_1orNewer) {
-          final boolean is2_1_7X = VersionComparatorUtil.compare(version.getVersionName(), "2.1.7") > 0;
+          final boolean is2_1_7X = VersionComparatorUtil.compare(versionName, "2.1.7") > 0;
           template = is2_1_7X ?
               StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_1_7_XML :
               StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_1_XML;
@@ -193,7 +198,26 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
     });
   }
 
-  public static URL getLibrariesUrl() {
-    return StrutsFrameworkSupportProvider.class.getResource("struts2.xml");
+  private static class Struts2FrameworkSupportConfigurable extends FrameworkSupportConfigurableBase
+      implements FrameworkSupportWithLibrary {
+
+    private Struts2FrameworkSupportConfigurable(FrameworkSupportProviderBase frameworkSupportProvider,
+                                                FrameworkSupportModel model,
+                                                @NotNull List<FrameworkVersion> versions,
+                                                @Nullable String versionLabelText) {
+      super(frameworkSupportProvider, model, versions, versionLabelText);
+    }
+
+    @NotNull
+    @Override
+    public CustomLibraryDescription createLibraryDescription() {
+      return DownloadableLibraryService.getInstance().createDescriptionForType(Struts2LibraryType.class);
+    }
+
+    @Override
+    public boolean isLibraryOnly() {
+      return false;
+    }
   }
+
 }

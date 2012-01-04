@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2012 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,6 +22,7 @@ import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.struts2.facet.Struts2LibraryType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,7 +66,7 @@ public class StrutsVersionDetector {
 
   @Nullable
   private static ZipFile getStrutsJar(final Module module) throws IOException {
-    final GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false);
+    final GlobalSearchScope scope = GlobalSearchScope.moduleRuntimeScope(module, false);
     final JavaPsiFacade psiManager = JavaPsiFacade.getInstance(module.getProject());
 
     final VirtualFile virtualFile = getStrutsClass(scope, psiManager);
@@ -78,7 +79,7 @@ public class StrutsVersionDetector {
 
   @Nullable
   private static VirtualFile getStrutsClass(final GlobalSearchScope scope, final JavaPsiFacade psiManager) {
-    final PsiClass psiClass = psiManager.findClass("org.apache.struts2.StrutsConstants", scope);
+    final PsiClass psiClass = psiManager.findClass(Struts2LibraryType.STRUTS_VERSION_CLASS, scope);
     if (psiClass == null) {
       return null;
     }

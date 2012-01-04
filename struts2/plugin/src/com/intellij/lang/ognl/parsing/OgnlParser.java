@@ -267,7 +267,7 @@ public class OgnlParser extends PrattParser {
       public IElementType parseFurther(final PrattBuilder builder) {
         parseExpression(builder);
 
-        if (builder.assertToken(COMMA, "sequence expected")) {
+        if (builder.assertToken(COMMA, "Sequence expected")) {
 
           do {
             parseExpression(builder);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2012 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,6 +38,7 @@ import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.jsp.WebDirectoryElement;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ElementPresentationManager;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,6 +53,7 @@ import java.util.Collections;
 @SuppressWarnings({"AbstractClassNeverImplemented"})
 public abstract class JamResultPath extends CommonModelElement.PsiBase implements JamElement {
 
+  @NonNls
   public static final String ANNOTATION_NAME = "org.apache.struts2.convention.annotation.ResultPath";
 
   /**
@@ -96,9 +98,9 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
     @NotNull
     @Override
     protected LookupElement createLookupElementFor(@NotNull final IProperty target) {
-      return LookupElementBuilder.create((PsiNamedElement)target.getPsiElement())
-        .setIcon(ElementPresentationManager.getIcon(target))
-        .setTailText("=" + target.getValue(), true);
+      return LookupElementBuilder.create((PsiNamedElement) target.getPsiElement())
+                                 .setIcon(ElementPresentationManager.getIcon(target))
+                                 .setTailText("=" + target.getValue(), true);
     }
   };
 
@@ -136,22 +138,22 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
   };
 
   private static final JamStringAttributeMeta.Single<WebDirectoryElement> VALUE_ATTRIBUTE =
-    JamAttributeMeta.singleString("value", VALUE_CONVERTER);
+      JamAttributeMeta.singleString("value", VALUE_CONVERTER);
 
   private static final JamStringAttributeMeta.Single<IProperty> PROPERTY_ATTRIBUTE =
-    JamAttributeMeta.singleString("property", PROPERTY_CONVERTER);
+      JamAttributeMeta.singleString("property", PROPERTY_CONVERTER);
 
   private static final JamAnnotationMeta RESULT_PATH_META =
-    new JamAnnotationMeta(ANNOTATION_NAME)
-      .addAttribute(VALUE_ATTRIBUTE)
-      .addAttribute(PROPERTY_ATTRIBUTE);
+      new JamAnnotationMeta(ANNOTATION_NAME)
+          .addAttribute(VALUE_ATTRIBUTE)
+          .addAttribute(PROPERTY_ATTRIBUTE);
 
   public static final JamClassMeta<JamResultPath> META_CLASS =
-    new JamClassMeta<JamResultPath>(JamResultPath.class).addAnnotation(RESULT_PATH_META);
+      new JamClassMeta<JamResultPath>(JamResultPath.class).addAnnotation(RESULT_PATH_META);
 
   public static final JamPackageMeta<JamResultPath> META_PACKAGE =
-    new JamPackageMeta<JamResultPath>(null, JamResultPath.class)
-      .addAnnotation(RESULT_PATH_META);
+      new JamPackageMeta<JamResultPath>(JamResultPath.class)
+          .addAnnotation(RESULT_PATH_META);
 
   @JamPsiConnector
   public abstract PsiModifierListOwner getOwner();

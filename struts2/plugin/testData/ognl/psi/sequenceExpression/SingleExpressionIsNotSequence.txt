@@ -3,6 +3,6 @@ OgnlFile:SingleExpressionIsNotSequence.ognl
     PsiElement({)('{')
     IntegerLiteral
       PsiElement(INTEGER_LITERAL)('1')
-    PsiErrorElement:sequence expected
+    PsiErrorElement:Sequence expected
       <empty list>
     PsiElement(})('}')
