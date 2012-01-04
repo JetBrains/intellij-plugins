@@ -29,6 +29,7 @@ import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPackage;
 import com.intellij.struts2.dom.struts.strutspackage.InterceptorOrStackBase;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -39,6 +40,7 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings({"AbstractClassNeverImplemented"})
 public abstract class JamDefaultInterceptorRef extends CommonModelElement.PsiBase implements JamElement {
 
+  @NonNls
   public static final String ANNOTATION_NAME = "org.apache.struts2.convention.annotation.DefaultInterceptorRef";
 
   private static final JamConverter<InterceptorOrStackBase> VALUE_CONVERTER =
