@@ -259,8 +259,7 @@ public class BundleCompiler implements PackagingCompiler {
             }
         }
 
-        if (!configuration.isOsmorcControlsManifest() ||
-                (configuration.isOsmorcControlsManifest() && !configuration.isUseBndFile() && !configuration.isUseBundlorFile())) {
+        if (configuration.isManifestManuallyEdited() || configuration.isOsmorcControlsManifest() ) {
             // in this case we manually add all the classpaths as resources
             StringBuilder pathBuilder = new StringBuilder();
             // add all the classpaths to include resources, so stuff from the project gets copied over.

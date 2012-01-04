@@ -28,6 +28,7 @@ import com.intellij.facet.FacetConfiguration;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.facet.ui.FacetValidatorsManager;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.diagnostic.Log;
 import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.roots.CompilerModuleExtension;
@@ -38,6 +39,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.Constants;
+import org.osmorc.OsmorcProjectComponent;
 import org.osmorc.facet.ui.OsmorcFacetGeneralEditorTab;
 import org.osmorc.facet.ui.OsmorcFacetJAREditorTab;
 import org.osmorc.facet.ui.OsmorcFacetManifestGenerationEditorTab;
@@ -52,9 +54,7 @@ import java.util.regex.Pattern;
 
 /**
  * The facet configuration of an osmorc facet.
- *
- * XXX: refactor this class so it uses an enum for determining which manifest source is chosen (bnd,bundlor,manual,automatic).
- * Avoids invalid states and makes it easier to call from the outside without having a lot of  boolean setters.
+ * <p/>
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @author Robert F. Beeger (robert@beeger.net)
@@ -62,10 +62,6 @@ import java.util.regex.Pattern;
 public class OsmorcFacetConfiguration implements FacetConfiguration {
 
   private OsmorcFacet myFacet;
-  // Important: This setting must be true by default otherwise you get some dialog when importing from
-  // maven metamodel asking if the manifest file should be created.
-  // XXX: this should probably be fixed in the "facetAdded" method in ModuleManifestHolderImpl or ModuleDependencySynchronizer
-  private boolean myOsmorcControlsManifest = true;
   private String myManifestLocation;
   private String myJarFileLocation;
   private String myBundleSymbolicName;
@@ -74,22 +70,22 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   private String myAdditionalProperties;
   private List<Pair<String, String>> myAdditionalJARContents;
   private boolean myUseProjectDefaultManifestFileLocation = true;
-  private boolean myUseBndFile;
   private String myBndFileLocation;
-  private boolean myUseBundlorFile;
   private String myBundlorFileLocation;
   private String myIgnoreFilePattern;
   private boolean myAlwaysRebuildBundleJAR;
   private OutputPathType myOutputPathType;
+  private ManifestGenerationMode myManifestGenerationMode = ManifestGenerationMode.OsmorcControlled;
 
   // constants
+  private static final String MANIFEST_GENERATION_MODE = "manifestGenerationMode";
   private static final String OSMORC_CONTROLS_MANIFEST = "osmorcControlsManifest";
   private static final String USE_BND_FILE = "useBndFile";
   private static final String BND_FILE_LOCATION = "bndFileLocation";
   private static final String USE_BUNDLOR_FILE = "useBundlorFile";
   private static final String BUNDLOR_FILE_LOCATION = "bundlorFileLocation";
   private static final String MANIFEST_LOCATION = "manifestLocation";
-  private static final String JARFILE_LOCATION = "jarfileLocation";
+  private static final String JAR_FILE_LOCATION = "jarfileLocation";
   private static final String BUNDLE_ACTIVATOR = "bundleActivator";
   private static final String BUNDLE_SYMBOLIC_NAME = "bundleSymbolicName";
   private static final String BUNDLE_VERSION = "bundleVersion";
@@ -110,24 +106,48 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   }
 
   public void readExternal(Element element) throws InvalidDataException {
-    setOsmorcControlsManifest(Boolean.parseBoolean(element.getAttributeValue(OSMORC_CONTROLS_MANIFEST, "true")));
-    setUseBndFile(Boolean.parseBoolean(element.getAttributeValue(USE_BND_FILE, "false")));
+    if (element.getAttributeValue(MANIFEST_GENERATION_MODE) == null) {
+        // the new attribute is not there, so we got an old file, to be converted.
+      // legacy files containing boolean values
+      boolean osmorcControlsManifest = Boolean.parseBoolean(element.getAttributeValue(OSMORC_CONTROLS_MANIFEST, "true"));
+      boolean useBndFile = Boolean.parseBoolean(element.getAttributeValue(USE_BND_FILE, "false"));
+      boolean useBundlorFile = Boolean.parseBoolean(element.getAttributeValue(USE_BUNDLOR_FILE, "false"));
+
+      // default is that osmorc controls the manifest, so set this in case the config file has been manually edited or is otherwise invalid
+      setManifestGenerationMode(ManifestGenerationMode.OsmorcControlled);
+
+      if (osmorcControlsManifest && !useBndFile && !useBundlorFile) {
+        setManifestGenerationMode(ManifestGenerationMode.OsmorcControlled);
+      }
+      else if (!osmorcControlsManifest && useBndFile && !useBundlorFile) {
+        setManifestGenerationMode(ManifestGenerationMode.Bnd);
+      }
+      else if (!osmorcControlsManifest && !useBndFile && useBundlorFile) {
+        setManifestGenerationMode(ManifestGenerationMode.Bundlor);
+      }
+      else if (!osmorcControlsManifest && !useBndFile && !useBundlorFile) {
+        setManifestGenerationMode(ManifestGenerationMode.Manually);
+      }
+      else {
+        OsmorcProjectComponent.IMPORTANT_ERROR_NOTIFICATION.createNotification("The configuration for OSGi facet '" +
+                                                                               myFacet.getModule().getName() +
+                                                                               "' is invalid and has been reset. Please check your facet settings!",
+                                                                               NotificationType.WARNING).notify(myFacet.getModule().getProject());
+      }
+    } else {
+      // attribute it there, read it.
+      String manifestGenerationModeName = element.getAttributeValue(MANIFEST_GENERATION_MODE, ManifestGenerationMode.OsmorcControlled.name());
+      ManifestGenerationMode manifestGenerationMode = ManifestGenerationMode.valueOf(manifestGenerationModeName);
+      setManifestGenerationMode(manifestGenerationMode);
+    }
     setBndFileLocation(element.getAttributeValue(BND_FILE_LOCATION));
-    setUseBundlorFile(Boolean.parseBoolean(element.getAttributeValue(USE_BUNDLOR_FILE, "false")));
     setBundlorFileLocation(element.getAttributeValue(BUNDLOR_FILE_LOCATION));
     setManifestLocation(element.getAttributeValue(MANIFEST_LOCATION));
-
-    // IDEADEV-40357 backwards compatibility
-    //if ( !"".equals(getManifestLocation()) && !getManifestLocation().contains("/") && !getManifestLocation().toUpperCase().contains(".MF") ) {
-    //     its an old directory setting.fix it by appending MANIFEST.MF
-    //setManifestLocation(getManifestLocation()+"/MANIFEST.MF");
-    //}
-    //This actually is not a good idea if someone is using a manifest named different than manifest.mf... so  i comment it out.
 
     String outputPathTypeName = element.getAttributeValue(OUTPUT_PATH_TYPE, OutputPathType.SpecificOutputPath.name());
     OutputPathType outputPathType = OutputPathType.valueOf(outputPathTypeName);
 
-    setJarFileLocation(element.getAttributeValue(JARFILE_LOCATION), outputPathType);
+    setJarFileLocation(element.getAttributeValue(JAR_FILE_LOCATION), outputPathType);
     setBundleActivator(element.getAttributeValue(BUNDLE_ACTIVATOR));
     setBundleSymbolicName(element.getAttributeValue(BUNDLE_SYMBOLIC_NAME));
     setBundleVersion(element.getAttributeValue(BUNDLE_VERSION));
@@ -169,13 +189,11 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   }
 
   public void writeExternal(Element element) throws WriteExternalException {
-    element.setAttribute(OSMORC_CONTROLS_MANIFEST, String.valueOf(isOsmorcControlsManifest()));
+    element.setAttribute(MANIFEST_GENERATION_MODE, getManifestGenerationMode().name());
     element.setAttribute(MANIFEST_LOCATION, getManifestLocation());
-    element.setAttribute(JARFILE_LOCATION, myJarFileLocation != null ? myJarFileLocation : "");
+    element.setAttribute(JAR_FILE_LOCATION, myJarFileLocation != null ? myJarFileLocation : "");
     element.setAttribute(OUTPUT_PATH_TYPE, getOutputPathType().name());
-    element.setAttribute(USE_BND_FILE, String.valueOf(isUseBndFile()));
     element.setAttribute(BND_FILE_LOCATION, getBndFileLocation());
-    element.setAttribute(USE_BUNDLOR_FILE, String.valueOf(isUseBundlorFile()));
     element.setAttribute(BUNDLOR_FILE_LOCATION, getBundlorFileLocation());
     element.setAttribute(BUNDLE_ACTIVATOR, getBundleActivator());
     element.setAttribute(BUNDLE_SYMBOLIC_NAME, getBundleSymbolicName());
@@ -210,23 +228,74 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   }
 
   /**
-   * @return true if Osmorc controls the manifest, false if is edited manually
+   * Returns the manifest generation mode.
+   *
+   * @return the manifest generation mode.
    */
-  public boolean isOsmorcControlsManifest() {
-    return myOsmorcControlsManifest;
+  public ManifestGenerationMode getManifestGenerationMode() {
+    return myManifestGenerationMode;
+  }
+
+
+  public void setManifestGenerationMode(@NotNull ManifestGenerationMode manifestGenerationMode) {
+    myManifestGenerationMode = manifestGenerationMode;
   }
 
   /**
-   * Convenience getter.
-   *
-   * @return true, if the manifest is edited manually, false if osmorc creates it on build using facet settings, preconfigured bnd file or bundlor file
+   * Convenience-getter. Shortcut for
+   * <pre>
+   *   getManifestGenerationMode() == ManifestGenerationMode.OsmorcControlled
+   * </pre>
+   * @return true if Osmorc controls the manifest, false if is edited manually, created by bundlor or created by bnd
    */
-  public boolean isManifestManuallyEdited() {
-    return !myOsmorcControlsManifest && !myUseBndFile && !myUseBundlorFile;
+  public boolean isOsmorcControlsManifest() {
+    return getManifestGenerationMode() == ManifestGenerationMode.OsmorcControlled;
   }
 
+  /**
+   * Convenience getter. Shortcut for
+   * <pre>
+   *   getManifestGenerationMode() == ManifestGenerationMode.Manually
+   * </pre>
+   *
+   * @return true, if the manifest is edited manually, false if osmorc creates it on build using facet settings, pre-configured bnd file or bundlor file
+   */
+  public boolean isManifestManuallyEdited() {
+    return getManifestGenerationMode() == ManifestGenerationMode.Manually;
+  }
+
+  /**
+   * Convenience getter. Shortcut for
+   * <pre>
+   *   getManifestGenerationMode() == ManifestGenerationMode.Bundlor
+   * </pre>
+   *
+   * @return true, if the manifest created by bundlor, false if osmorc creates it on build using facet settings, pre-configured bnd file or manually edited
+   */
+  public boolean isUseBundlorFile() {
+    return getManifestGenerationMode() == ManifestGenerationMode.Bundlor;
+  }
+
+
+  /**
+   * Convenience getter. Shortcut for
+   * <pre>
+   *   getManifestGenerationMode() == ManifestGenerationMode.Bnd
+   * </pre>
+   *
+   * @return true, if the manifest created by bnd, false if osmorc creates it on build using facet settings, pre-configured bundlor file or manually edited
+   */
+  public boolean isUseBndFile() {
+    return getManifestGenerationMode() == ManifestGenerationMode.Bnd;
+  }
+
+  /**
+   * @param osmorcControlsManifest
+   * @deprecated use {@link #setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode)}
+   */
+  @Deprecated
   public void setOsmorcControlsManifest(boolean osmorcControlsManifest) {
-    this.myOsmorcControlsManifest = osmorcControlsManifest;
+    setManifestGenerationMode(osmorcControlsManifest ? ManifestGenerationMode.OsmorcControlled : ManifestGenerationMode.Manually);
   }
 
   /**
@@ -277,6 +346,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
 
   /**
    * Returns the file name of the jar file.
+   *
    * @return the file name of the jar file.
    */
   @NotNull
@@ -306,7 +376,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
    */
   @NotNull
   public String getJarFilePath() {
-    if ( myOutputPathType == null ) {
+    if (myOutputPathType == null) {
       return "";
     }
     switch (myOutputPathType) {
@@ -316,7 +386,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
         String completeOutputPath = getJarFileLocation();
         File f = new File(completeOutputPath);
         String parent = f.getParent();
-        if ( parent == null ) {
+        if (parent == null) {
           return "";
         }
         return parent;
@@ -327,9 +397,8 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   }
 
 
-
   /**
-   * Sethes the location of the jar file
+   * Sets the location of the jar file
    *
    * @param jarFileLocation the path to the jar file. If the output path type is {@link OutputPathType#SpecificOutputPath} this needs to
    *                        be a full path otherwise it needs to be just the jar's name.
@@ -404,11 +473,11 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
 
   /**
    * Returns all additional properties as a map.Changes to this map will not change the facet configuration. If you want
-   * to change additional properties use the {@link #importAdditionalProperties(java.util.Map, boolean)} method to reimport the
+   * to change additional properties use the {@link #importAdditionalProperties(Map, boolean)} method to re-import the
    * map once you have changed it. The returned map is ordered and will return entries in the same order as they have been specified in the
    * settings dialog.
    *
-   * @return the additional properties as a Map for convenciene.
+   * @return the additional properties as a Map for convenience.
    */
   @NotNull
   public Map<String, String> getAdditionalPropertiesAsMap() {
@@ -425,7 +494,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
 
     Set<String> propNames = p.stringPropertyNames();
     for (String propName : propNames) {
-      result.put(propName,  p.getProperty(propName));
+      result.put(propName, p.getProperty(propName));
     }
 
     return result;
@@ -449,7 +518,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     StringBuilder builder = new StringBuilder();
     for (String key : existing.keySet()) {
       String value = existing.get(key);
-      value  = value.replace("\n", "\\\n");
+      value = value.replace("\n", "\\\n");
       builder.append(key).append(": ").append(value).append("\n");
     }
     setAdditionalProperties(builder.toString());
@@ -463,13 +532,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     return myUseProjectDefaultManifestFileLocation;
   }
 
-  public boolean isUseBndFile() {
-    return myUseBndFile;
-  }
 
-  public void setUseBndFile(boolean useBndFile) {
-    myUseBndFile = useBndFile;
-  }
 
   @NotNull
   public String getBndFileLocation() {
@@ -481,13 +544,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   }
 
 
-  public boolean isUseBundlorFile() {
-    return myUseBundlorFile;
-  }
-
-  public void setUseBundlorFile(boolean _useBundlorFile) {
-    this.myUseBundlorFile = _useBundlorFile;
-  }
+  
 
   @NotNull
   public String getBundlorFileLocation() {
@@ -551,9 +608,43 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     myFacet = facet;
   }
 
+  /**
+   * The type of output path, where to put the resulting jar.
+   */
   public enum OutputPathType {
+    /**
+     * Use the default compiler output path.
+     */
     CompilerOutputPath,
+    /**
+     * Use the OSGi output path specified in the facet settings.
+     */
     OsgiOutputPath,
+    /**
+     * Use a specific output path for this facet.
+     */
     SpecificOutputPath
+  }
+
+  /**
+   * How is the manifest generated.
+   */
+  public enum ManifestGenerationMode {
+    /**
+     * No generation at all. All is manual.
+     */
+    Manually,
+    /**
+     * Osmorc will generate it using facet settings.
+     */
+    OsmorcControlled,
+    /**
+     * Bnd will generate it using a bnd file.
+     */
+    Bnd,
+    /**
+     * Bundlor will generate it, using a bundlor file.
+     */
+    Bundlor
   }
 }

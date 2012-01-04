@@ -151,9 +151,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
 
           if (IncludeExistingManifest.equals(name)) {
             conf.setManifestLocation(value);
-            conf.setOsmorcControlsManifest(false);
-            conf.setUseBndFile(false);
-            conf.setUseBundlorFile(false);
+            conf.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.Manually);
             conf.setUseProjectDefaultManifestFileLocation(false);
             useExistingManifest = true;
           }
@@ -161,9 +159,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
 
         if (!useExistingManifest) {
           conf.setManifestLocation("");
-          conf.setOsmorcControlsManifest(true);
-          conf.setUseBndFile(false);
-          conf.setUseBundlorFile(false);
+          conf.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled);
           conf.setUseProjectDefaultManifestFileLocation(true);
         }
 

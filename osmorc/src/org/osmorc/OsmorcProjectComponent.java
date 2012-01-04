@@ -25,6 +25,8 @@
 package org.osmorc;
 
 import com.intellij.ProjectTopics;
+import com.intellij.notification.NotificationDisplayType;
+import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -45,6 +47,9 @@ import org.osmorc.settings.ProjectSettings;
  */
 public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings.ProjectSettingsListener,
                                                ApplicationSettings.ApplicationSettingsListener {
+  
+  public static final NotificationGroup IMPORTANT_ERROR_NOTIFICATION = new NotificationGroup("OSGi important errors", NotificationDisplayType.STICKY_BALLOON, true);
+  
   private final BundleManager myBundleManager;
   private ApplicationSettings myApplicationSettings;
   private final ProjectSettings myProjectSettings;

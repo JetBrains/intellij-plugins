@@ -44,7 +44,7 @@ public class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcF
   @Override
   protected OsmorcFacetConfiguration createConfiguration(Collection<VirtualFile> files) {
     OsmorcFacetConfiguration osmorcFacetConfiguration = getFacetType().createDefaultConfiguration();
-    osmorcFacetConfiguration.setOsmorcControlsManifest(false);
+    osmorcFacetConfiguration.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.Manually);
     osmorcFacetConfiguration.setManifestLocation(ContainerUtil.getFirstItem(files).getPath());
     osmorcFacetConfiguration.setUseProjectDefaultManifestFileLocation(false);
     return osmorcFacetConfiguration;
@@ -72,7 +72,7 @@ public class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcF
     if (manifestFileName.endsWith("template.mf")) { // this is a bundlor manifest template, so make the facet do bundlor
       osmorcFacetConfiguration.setManifestLocation("");
       osmorcFacetConfiguration.setBundlorFileLocation(manifestFileName);
-      osmorcFacetConfiguration.setUseBundlorFile(true);
+      osmorcFacetConfiguration.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.Bundlor);
     }
   }
 

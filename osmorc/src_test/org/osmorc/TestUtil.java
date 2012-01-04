@@ -50,6 +50,7 @@ import com.intellij.util.io.ZipUtil;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
+import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.facet.OsmorcFacetType;
 
 import java.io.File;
@@ -58,6 +59,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.osmorc.facet.OsmorcFacetConfiguration.ManifestGenerationMode.*;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -127,7 +130,7 @@ public class TestUtil {
                     final OsmorcFacet facet = new OsmorcFacet(module);
                     facet.getConfiguration().setUseProjectDefaultManifestFileLocation(false);
                     facet.getConfiguration().setManifestLocation("META-INF/MANIFEST.MF");
-                    facet.getConfiguration().setOsmorcControlsManifest(false);
+                    facet.getConfiguration().setManifestGenerationMode(Manually);
                     modifiableFacetModel.addFacet(facet);
                     modifiableFacetModel.commit();
                 }
@@ -147,9 +150,9 @@ public class TestUtil {
                 final OsmorcFacet facet = new OsmorcFacet(module);
                 facet.getConfiguration().setUseProjectDefaultManifestFileLocation(false);
                 facet.getConfiguration().setManifestLocation("META-INF/MANIFEST.MF");
-                facet.getConfiguration().setOsmorcControlsManifest(isManifestGenerated);
-                modifiableFacetModel.addFacet(facet);
-                modifiableFacetModel.commit();
+                facet.getConfiguration().setManifestGenerationMode(isManifestGenerated ? OsmorcControlled : Manually);
+              modifiableFacetModel.addFacet(facet);
+              modifiableFacetModel.commit();
             }
         });
     }

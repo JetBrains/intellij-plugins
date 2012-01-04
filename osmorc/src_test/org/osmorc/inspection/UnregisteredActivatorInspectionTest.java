@@ -117,7 +117,7 @@ public class UnregisteredActivatorInspectionTest {
         final OsmorcFacetConfiguration configuration = OsmorcFacet.getInstance(psiFile).getConfiguration();
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             public void run() {
-                configuration.setOsmorcControlsManifest(true);
+                configuration.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled);
                 configuration.setBundleActivator("");
             }
         });
@@ -156,7 +156,7 @@ public class UnregisteredActivatorInspectionTest {
         final OsmorcFacetConfiguration configuration = OsmorcFacet.getInstance(psiFile).getConfiguration();
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             public void run() {
-                configuration.setOsmorcControlsManifest(true);
+                configuration.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled);
                 configuration.setBundleActivator("t1.Activator");
             }
         });
