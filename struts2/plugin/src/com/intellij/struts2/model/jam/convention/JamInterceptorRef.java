@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2012 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,33 +15,22 @@
 
 package com.intellij.struts2.model.jam.convention;
 
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.jam.*;
+import com.intellij.jam.JamConverter;
+import com.intellij.jam.JamElement;
+import com.intellij.jam.JamPomTarget;
+import com.intellij.jam.JamStringAttributeElement;
 import com.intellij.jam.annotations.JamPsiConnector;
 import com.intellij.jam.annotations.JamPsiValidity;
 import com.intellij.jam.reflect.*;
 import com.intellij.javaee.model.common.CommonModelElement;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.pom.PomTarget;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMember;
-import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.InterceptorOrStackBase;
-import com.intellij.struts2.model.jam.StrutsJamUtils;
 import com.intellij.util.Consumer;
 import com.intellij.util.PairConsumer;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.xml.DomUtil;
-import com.intellij.util.xml.ElementPresentationManager;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * {@code org.apache.struts2.convention.annotation.InterceptorRef(s)}.
@@ -54,47 +43,8 @@ public abstract class JamInterceptorRef extends CommonModelElement.PsiBase imple
   public static final String ANNOTATION_NAME = "org.apache.struts2.convention.annotation.InterceptorRef";
   public static final String ANNOTATION_NAME_LIST = "org.apache.struts2.convention.annotation.InterceptorRefs";
 
-  private static final JamConverter<InterceptorOrStackBase> VALUE_CONVERTER =
-    new JamSimpleReferenceConverter<InterceptorOrStackBase>() {
+  private static final JamConverter<InterceptorOrStackBase> VALUE_CONVERTER = new InterceptorJamReferenceConverter();
 
-      @Override
-      public InterceptorOrStackBase fromString(@Nullable final String s, final JamStringAttributeElement<InterceptorOrStackBase> context) {
-        if (s == null) {
-          return null;
-        }
-
-        final StrutsModel strutsModel = StrutsJamUtils.getStrutsModel(context);
-        if (strutsModel == null) {
-          return null;
-        }
-
-        return ContainerUtil.find(strutsModel.getAllInterceptorsAndStacks(), new Condition<InterceptorOrStackBase>() {
-          public boolean value(final InterceptorOrStackBase interceptorOrStackBase) {
-            return Comparing.strEqual(s, interceptorOrStackBase.getName().getStringValue());
-          }
-        });
-      }
-
-      @Override
-      public Collection<InterceptorOrStackBase> getVariants(final JamStringAttributeElement<InterceptorOrStackBase> context) {
-        final StrutsModel strutsModel = StrutsJamUtils.getStrutsModel(context);
-        if (strutsModel == null) {
-          return Collections.emptyList();
-        }
-
-        return strutsModel.getAllInterceptorsAndStacks();
-      }
-
-      @NotNull
-      @Override
-      protected LookupElement createLookupElementFor(@NotNull final InterceptorOrStackBase target) {
-        return LookupElementBuilder.create(StringUtil.notNullize(target.getName().getStringValue()))
-          .setIcon(ElementPresentationManager.getIcon(target))
-          .setTypeText(DomUtil.getFile(target).getName());
-      }
-    };
-
-  
   private static final JamStringAttributeMeta.Single<InterceptorOrStackBase> VALUE_ATTRIBUTE =
     JamAttributeMeta.singleString(PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME, VALUE_CONVERTER);
 
