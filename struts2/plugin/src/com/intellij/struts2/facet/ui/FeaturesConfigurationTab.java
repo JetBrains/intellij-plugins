@@ -97,11 +97,16 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
     fileSetVersions.fetchVersions(new DownloadableFileSetVersions.FileSetVersionsCallback<DownloadableFileSetDescription>() {
       @Override
       public void onSuccess(@NotNull final List<? extends DownloadableFileSetDescription> versions) {
-        versionComboBox.setModel(new DefaultComboBoxModel(ArrayUtil.toObjectArray(versions)));
-        versionComboBox.setSelectedIndex(0);
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            versionComboBox.setModel(new DefaultComboBoxModel(ArrayUtil.toObjectArray(versions)));
+            versionComboBox.setSelectedIndex(0);
 
-        validator.setRequiredLibraries(getRequiredLibraries());
-        validator.setDescription(new StrutsFacetLibrariesValidatorDescription(versions.get(0).getVersionString()));
+            validator.setRequiredLibraries(getRequiredLibraries());
+            validator.setDescription(new StrutsFacetLibrariesValidatorDescription(versions.get(0).getVersionString()));
+          }
+        });
       }
     });
   }
