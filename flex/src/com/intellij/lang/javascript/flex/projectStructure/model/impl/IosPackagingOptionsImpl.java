@@ -24,7 +24,6 @@ class IosPackagingOptionsImpl extends AirPackagingOptionsBase implements Modifia
     final State state = new State();
     state.ENABLED = isEnabled();
     state.USE_GENERATED_DESCRIPTOR = isUseGeneratedDescriptor();
-    state.APPLICATION_ID = getApplicationId();
     state.CUSTOM_DESCRIPTOR_PATH = getCustomDescriptorPath();
     state.PACKAGE_FILE_NAME = getPackageFileName();
     state.FILES_TO_PACKAGE = getFilesToPackage();
@@ -35,7 +34,6 @@ class IosPackagingOptionsImpl extends AirPackagingOptionsBase implements Modifia
   public void loadState(@NotNull State state) {
     setEnabled(state.ENABLED);
     setUseGeneratedDescriptor(state.USE_GENERATED_DESCRIPTOR);
-    setApplicationId(state.APPLICATION_ID);
     setCustomDescriptorPath(state.CUSTOM_DESCRIPTOR_PATH);
     setPackageFileName(state.PACKAGE_FILE_NAME);
     setFilesToPackage(state.FILES_TO_PACKAGE);
@@ -48,8 +46,6 @@ class IosPackagingOptionsImpl extends AirPackagingOptionsBase implements Modifia
     public boolean ENABLED = false;
     @Attribute("use-generated-descriptor")
     public boolean USE_GENERATED_DESCRIPTOR = true;
-    @Attribute("application-id")
-    public String APPLICATION_ID = "";
     @Attribute("custom-descriptor-path")
     public String CUSTOM_DESCRIPTOR_PATH = "";
     @Attribute("package-file-name")

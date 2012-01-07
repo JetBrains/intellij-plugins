@@ -35,15 +35,6 @@ class AirPackagingOptionsBase {
   }
 
   @NotNull
-  public String getApplicationId() {
-    return myApplicationId;
-  }
-
-  public void setApplicationId(@NotNull final String applicationId) {
-    myApplicationId = applicationId;
-  }
-
-  @NotNull
   public String getCustomDescriptorPath() {
     return myCustomDescriptorPath;
   }

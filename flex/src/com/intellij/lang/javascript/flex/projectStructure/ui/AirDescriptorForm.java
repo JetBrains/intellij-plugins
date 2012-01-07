@@ -2,9 +2,7 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.IosPackagingOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableAirPackagingOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableIosPackagingOptions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
@@ -16,21 +14,12 @@ import java.awt.event.ActionListener;
 
 public class AirDescriptorForm {
   private JPanel myMainPanel; // required for form reuse
-
   private JRadioButton myGeneratedDescriptorRadioButton;
-  private JLabel myApplicationIdLabel;
-  private JTextField myApplicationIdTextField;
-
   private JRadioButton myCustomDescriptorRadioButton;
   private TextFieldWithBrowseButton myCustomDescriptorTextWithBrowse;
   private JButton myCreateDescriptorButton;
 
-  public AirDescriptorForm(final Project project,
-                           final Runnable descriptorCreator,
-                           final boolean showApplicationIdField) {
-    myApplicationIdLabel.setVisible(showApplicationIdField);
-    myApplicationIdTextField.setVisible(showApplicationIdField);
-
+  public AirDescriptorForm(final Project project, final Runnable descriptorCreator) {
     final ActionListener listener = new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         updateControls();
@@ -53,9 +42,6 @@ public class AirDescriptorForm {
   }
 
   void updateControls() {
-    myApplicationIdLabel.setEnabled(myGeneratedDescriptorRadioButton.isSelected());
-    myApplicationIdTextField.setEnabled(myGeneratedDescriptorRadioButton.isSelected());
-
     myCustomDescriptorTextWithBrowse.setEnabled(myCustomDescriptorRadioButton.isSelected());
     myCreateDescriptorButton.setEnabled(myCustomDescriptorRadioButton.isSelected());
   }
@@ -63,18 +49,11 @@ public class AirDescriptorForm {
   public void resetFrom(final AirPackagingOptions packagingOptions) {
     myGeneratedDescriptorRadioButton.setSelected(packagingOptions.isUseGeneratedDescriptor());
     myCustomDescriptorRadioButton.setSelected(!packagingOptions.isUseGeneratedDescriptor());
-    if (packagingOptions instanceof IosPackagingOptions) {
-      myApplicationIdTextField.setText(((IosPackagingOptions)packagingOptions).getApplicationId());
-    }
     myCustomDescriptorTextWithBrowse.setText(FileUtil.toSystemDependentName(packagingOptions.getCustomDescriptorPath()));
   }
 
   public boolean isModified(final ModifiableAirPackagingOptions packagingOptions) {
     if (packagingOptions.isUseGeneratedDescriptor() != myGeneratedDescriptorRadioButton.isSelected()) return true;
-    if (packagingOptions instanceof ModifiableIosPackagingOptions
-        && !((ModifiableIosPackagingOptions)packagingOptions).getApplicationId().equals(myApplicationIdTextField.getText())) {
-      return true;
-    }
     if (!packagingOptions.getCustomDescriptorPath().equals(
       FileUtil.toSystemIndependentName(myCustomDescriptorTextWithBrowse.getText().trim()))) {
       return true;
@@ -85,9 +64,6 @@ public class AirDescriptorForm {
 
   public void applyTo(final ModifiableAirPackagingOptions model) {
     model.setUseGeneratedDescriptor(myGeneratedDescriptorRadioButton.isSelected());
-    if (model instanceof ModifiableIosPackagingOptions) {
-      ((ModifiableIosPackagingOptions)model).setApplicationId(myApplicationIdTextField.getText().trim());
-    }
     model.setCustomDescriptorPath(FileUtil.toSystemIndependentName(myCustomDescriptorTextWithBrowse.getText().trim()));
   }
 

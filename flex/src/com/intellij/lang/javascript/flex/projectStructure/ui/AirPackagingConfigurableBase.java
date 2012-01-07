@@ -170,7 +170,7 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
       }
     };
 
-    myAirDescriptorForm = new AirDescriptorForm(myModule.getProject(), descriptorCreator, isIOS);
+    myAirDescriptorForm = new AirDescriptorForm(myModule.getProject(), descriptorCreator);
     myFilesToPackageForm = new FilesToPackageForm(myModule.getProject());
 
     mySigningOptionsForm = new SigningOptionsForm(myModule.getProject(), new Computable.PredefinedValueComputable<Module>(myModule),
