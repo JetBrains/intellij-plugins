@@ -33,6 +33,10 @@
     </description>
     <change-notes>
         <![CDATA[
+         <ul>
+            <li> Fixed an issue preventing bnd-based projects from being packaged correctly.</li>
+        </ul>
+
                 ]]>
     </change-notes>
     <version>1.4.1</version>
