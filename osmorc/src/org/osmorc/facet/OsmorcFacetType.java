@@ -210,7 +210,7 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
           if (manifestFileName.endsWith("template.mf")) { // this is a bundlor manifest template, so make the facet do bundlor
             osmorcFacetConfiguration.setManifestLocation("");
             osmorcFacetConfiguration.setBundlorFileLocation(manifestFileName);
-            osmorcFacetConfiguration.setUseBundlorFile(true);
+            osmorcFacetConfiguration.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.Bundlor);
           }
         }
       };

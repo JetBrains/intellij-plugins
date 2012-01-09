@@ -101,7 +101,7 @@ public class AddFacetTest {
                 ModifiableFacetModel modifiableFacetModel =
                         FacetManager.getInstance(fixture.getModule()).createModifiableModel();
                 OsmorcFacet facet = new OsmorcFacet(fixture.getModule());
-                facet.getConfiguration().setOsmorcControlsManifest(false);
+                facet.getConfiguration().setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.Manually);
                 modifiableFacetModel.addFacet(facet);
                 modifiableFacetModel.commit();
             }

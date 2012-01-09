@@ -216,11 +216,14 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
     public void apply() {
         OsmorcFacetConfiguration configuration =
                 (OsmorcFacetConfiguration) _editorContext.getFacet().getConfiguration();
-        configuration.setOsmorcControlsManifest(_controlledByOsmorcRadioButton.isSelected());
+        configuration.setManifestGenerationMode(
+          _controlledByOsmorcRadioButton.isSelected() ? OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled :
+          _useBndFileRadioButton.isSelected() ? OsmorcFacetConfiguration.ManifestGenerationMode.Bnd :
+          _useBundlorFileRadioButton.isSelected() ? OsmorcFacetConfiguration.ManifestGenerationMode.Bundlor :
+          OsmorcFacetConfiguration.ManifestGenerationMode.Manually);
+
         configuration.setManifestLocation(_manifestFileChooser.getText());
         configuration.setUseProjectDefaultManifestFileLocation(_useProjectDefaultManifestFileLocation.isSelected());
-        configuration.setUseBndFile(_useBndFileRadioButton.isSelected());
-        configuration.setUseBundlorFile(_useBundlorFileRadioButton.isSelected());
         String bndFileLocation = _bndFile.getText();
         bndFileLocation = bndFileLocation.replace('\\', '/');
         configuration.setBndFileLocation(bndFileLocation);

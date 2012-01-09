@@ -24,6 +24,7 @@
  */
 package org.osmorc;
 
+import com.intellij.notification.NotificationDisplayType;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ProjectComponent;

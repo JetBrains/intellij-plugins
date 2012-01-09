@@ -129,7 +129,7 @@ public class ActivatorRenamingTest {
         final OsmorcFacetConfiguration configuration = OsmorcFacet.getInstance(activatorClassFile).getConfiguration();
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             public void run() {
-                configuration.setOsmorcControlsManifest(true);
+                configuration.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled);
                 configuration.setBundleActivator("t1.Activator");
             }
         });
@@ -156,7 +156,7 @@ public class ActivatorRenamingTest {
         final OsmorcFacetConfiguration configuration = OsmorcFacet.getInstance(activatorClassFile).getConfiguration();
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             public void run() {
-                configuration.setOsmorcControlsManifest(true);
+                configuration.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled);
                 configuration.setBundleActivator("t1.Activator");
             }
         });
