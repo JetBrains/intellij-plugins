@@ -121,7 +121,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
       if (osmorcControlsManifest && !useBndFile && !useBundlorFile) {
         setManifestGenerationMode(ManifestGenerationMode.OsmorcControlled);
       }
-      else if (!osmorcControlsManifest && useBndFile && !useBundlorFile) {
+      else if (!osmorcControlsManifest && useBndFile && !useBundlorFile || ( /* migrate workaround which is fixed with this fix */ osmorcControlsManifest && useBndFile && !useBundlorFile) ) {
         setManifestGenerationMode(ManifestGenerationMode.Bnd);
       }
       else if (!osmorcControlsManifest && !useBndFile && useBundlorFile) {
@@ -132,9 +132,8 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
       }
       else {
         Notifications.Bus.notify(new Notification("Osmorc Important Error", "Invalid facet configuration",
-                                                  "The configuration for OSGi facet '" + myFacet.getModule().getName() +
-                                                  "' is invalid and has been reset. Please check your facet settings!",
-                                                  NotificationType.WARNING), myFacet.getModule().getProject());
+                                                  "The configuration for at least one OSGi facet is invalid and has been reset. Please check your facet settings!",
+                                                  NotificationType.WARNING));
       }
     } else {
       // attribute it there, read it.
