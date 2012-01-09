@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2012 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,8 +17,10 @@ package com.intellij.struts2.model.jam.convention;
 
 import com.intellij.jam.JamElement;
 import com.intellij.jam.reflect.JamClassMeta;
+import com.intellij.jam.reflect.JamPackageMeta;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiPackage;
 import com.intellij.struts2.BasicHighlightingTestCase;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NonNls;
@@ -58,7 +60,6 @@ abstract class JamConventionTestBase<T extends JavaModuleFixtureBuilder> extends
    * @param meta      JAM-Meta.
    * @param <Jam>     JAM-Type.
    * @return JAM.
-   * @throws Exception On errors.
    */
   @NotNull
   protected <Jam extends JamElement> Jam getClassJam(final String clazzName,
@@ -69,6 +70,26 @@ abstract class JamConventionTestBase<T extends JavaModuleFixtureBuilder> extends
 
     final Jam jam = meta.getJamElement(myClass);
     assertNotNull("JAM was null for " + meta + " in '" + clazzName + "'", jam);
+    return jam;
+  }
+
+  /**
+   * Gets the JAM-element for the given package.
+   *
+   * @param packageName FQN of package.
+   * @param meta        JAM-Meta.
+   * @param <Jam>       JAM-Type.
+   * @return JAM.
+   */
+  @NotNull
+  protected <Jam extends JamElement> Jam getPackageJam(final String packageName,
+                                                       final JamPackageMeta<Jam> meta) {
+    myFixture.configureByFile(SOURCE_DIR + "/" + StringUtil.replace(packageName, ".", "/") + "/package-info.java");
+
+    final PsiPackage myPackage = myFixture.findPackage(packageName);
+
+    final Jam jam = meta.getJamElement(myPackage);
+    assertNotNull("JAM was null for " + meta + " in '" + packageName + "'", jam);
     return jam;
   }
 

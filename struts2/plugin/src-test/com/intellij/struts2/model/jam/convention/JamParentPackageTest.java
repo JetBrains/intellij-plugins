@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2012 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.model.jam.convention;
 
-import com.intellij.psi.PsiPackage;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -62,11 +61,7 @@ public class JamParentPackageTest extends JamConventionTestBase<JavaModuleFixtur
   public void testResolveJamPackageInfo() throws Exception {
     createStrutsFileSet(STRUTS_XML);
 
-    myFixture.configureByFile("/src/jam/package-info.java");
-    final PsiPackage myPackage = myFixture.findPackage("jam");
-
-    final JamParentPackage jamElement = JamParentPackage.META_PACKAGE.getJamElement(myPackage);
-    assertNotNull(jamElement);
+    final JamParentPackage jamElement = getPackageJam("jam", JamParentPackage.META_PACKAGE);
     checkResolve(jamElement);
   }
 

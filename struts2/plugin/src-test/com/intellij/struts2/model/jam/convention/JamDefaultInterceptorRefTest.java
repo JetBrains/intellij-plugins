@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.model.jam.convention;
 
-import com.intellij.psi.PsiPackage;
 import com.intellij.struts2.dom.struts.strutspackage.InterceptorOrStackBase;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -48,11 +47,7 @@ public class JamDefaultInterceptorRefTest extends JamConventionTestBase<JavaModu
   public void testResolve() throws Exception {
     createStrutsFileSet(STRUTS_XML);
 
-    myFixture.configureByFile("/src/jam/package-info.java");
-    final PsiPackage myPackage = myFixture.findPackage("jam");
-
-    final JamDefaultInterceptorRef jamElement = JamDefaultInterceptorRef.META_PACKAGE.getJamElement(myPackage);
-    assertNotNull(jamElement);
+    final JamDefaultInterceptorRef jamElement = getPackageJam("jam", JamDefaultInterceptorRef.META_PACKAGE);
     checkResolve(jamElement, "myCustomInterceptor");
   }
 
