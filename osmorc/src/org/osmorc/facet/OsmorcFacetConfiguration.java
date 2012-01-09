@@ -121,7 +121,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
       if (osmorcControlsManifest && !useBndFile && !useBundlorFile) {
         setManifestGenerationMode(ManifestGenerationMode.OsmorcControlled);
       }
-      else if (!osmorcControlsManifest && useBndFile && !useBundlorFile || ( /* migrate workaround which is fixed with this fix */ osmorcControlsManifest && useBndFile && !useBundlorFile) ) {
+      else if ((!osmorcControlsManifest && useBndFile && !useBundlorFile) || ( /* migrate workaround which is fixed with this fix */ osmorcControlsManifest && useBndFile && !useBundlorFile) ) {
         setManifestGenerationMode(ManifestGenerationMode.Bnd);
       }
       else if (!osmorcControlsManifest && !useBndFile && useBundlorFile) {
