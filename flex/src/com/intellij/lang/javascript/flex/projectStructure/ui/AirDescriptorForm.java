@@ -42,8 +42,8 @@ public class AirDescriptorForm {
   }
 
   void updateControls() {
-    myCustomDescriptorTextWithBrowse.setEnabled(myCustomDescriptorRadioButton.isSelected());
-    myCreateDescriptorButton.setEnabled(myCustomDescriptorRadioButton.isSelected());
+    myCustomDescriptorTextWithBrowse.setEnabled(myCustomDescriptorRadioButton.isEnabled() && myCustomDescriptorRadioButton.isSelected());
+    myCreateDescriptorButton.setEnabled(myCustomDescriptorRadioButton.isEnabled() && myCustomDescriptorRadioButton.isSelected());
   }
 
   public void resetFrom(final AirPackagingOptions packagingOptions) {
