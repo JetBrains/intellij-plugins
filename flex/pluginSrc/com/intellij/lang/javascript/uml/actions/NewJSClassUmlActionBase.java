@@ -65,7 +65,7 @@ public abstract class NewJSClassUmlActionBase extends DiagramCreateNewElementAct
   protected abstract JSClass getClass(PsiFile file, PreparationData data);
 
   @Override
-  public Object createElement(DiagramDataModel<Object> objectUmlDataModel, PreparationData data) {
+  public Object createElement(DiagramDataModel<Object> objectUmlDataModel, PreparationData data, AnActionEvent event) {
     try {
       PsiFile file = (PsiFile)CreateClassOrInterfaceAction.createClass(StringUtil.getShortName(data.classQName),
                                                                        StringUtil.getPackageName(data.classQName),

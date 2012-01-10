@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.uml.actions;
 import com.intellij.diagram.DiagramBuilder;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.diagram.actions.DiagramCreateNewNodeElementAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 
 import javax.swing.*;
 
@@ -20,7 +21,7 @@ public abstract class NewJSMemberActionBase extends DiagramCreateNewNodeElementA
   }
 
   @Override
-  public void execute(DiagramBuilder builder, Runnable run) {
+  public void execute(DiagramBuilder builder, Runnable run, AnActionEvent e) {
     run.run();
   }
 }
