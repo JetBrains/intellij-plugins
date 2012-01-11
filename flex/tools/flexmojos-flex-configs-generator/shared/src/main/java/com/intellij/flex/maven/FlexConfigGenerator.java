@@ -11,7 +11,7 @@ public interface FlexConfigGenerator {
 
   void generate(Mojo configuration) throws Exception;
 
-  void preGenerate(MavenProject project, String classifier, AdditionalSourcePathProvider additionalSourcePathProvider) throws IOException;
+  void preGenerate(MavenProject project, String classifier) throws IOException;
 
   String postGenerate(MavenProject project) throws IOException;
 }

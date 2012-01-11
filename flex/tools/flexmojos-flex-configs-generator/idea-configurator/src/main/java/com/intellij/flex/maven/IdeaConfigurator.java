@@ -4,7 +4,6 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.sonatype.flexmojos.compiler.*;
 
 import java.io.File;
@@ -16,7 +15,6 @@ import java.util.*;
 public class IdeaConfigurator implements FlexConfigGenerator {
   protected static final String PATH_ELEMENT = "path-element";
   protected static final String FILE_SPECS = "file-specs";
-  private static final String SOURCE_PATH = "source-path";
   protected static final String LOCAL_FONTS_SNAPSHOT = "local-fonts-snapshot";
   private static final String FONTS_SER = "fonts.ser";
 
@@ -26,8 +24,6 @@ public class IdeaConfigurator implements FlexConfigGenerator {
   private Build build;
 
   private String classifier;
-
-  private AdditionalSourcePathProvider additionalSourcePathsProvider;
 
   protected final File outputDirectory;
   @SuppressWarnings("StaticNonFinalField")
@@ -58,9 +54,8 @@ public class IdeaConfigurator implements FlexConfigGenerator {
   }
 
   @Override
-  public void preGenerate(MavenProject project, String classifier, AdditionalSourcePathProvider additionalSourcePathProvider) throws IOException {
+  public void preGenerate(MavenProject project, String classifier) throws IOException {
     this.classifier = classifier;
-    this.additionalSourcePathsProvider = additionalSourcePathProvider;
     build = project.getBuild();
   }
 
@@ -228,17 +223,12 @@ public class IdeaConfigurator implements FlexConfigGenerator {
             childTagName = PATH_ELEMENT;
           }
 
-          if (name.equals(SOURCE_PATH) && "compiler".equals(configurationName)) {
-            processSourcePaths((File[])values, indent);
-          }
-          else {
-            for (Object v : values) {
-              if (v == null) {
-                System.out.print('\n' + childTagName + " child value for " + name + " is null\n");
-              }
-              if (v != null) {
-                writeTag(indent, childTagName, v.toString(), name);
-              }
+          for (Object v : values) {
+            if (v == null) {
+              System.out.print('\n' + childTagName + " child value for " + name + " is null\n");
+            }
+            if (v != null) {
+              writeTag(indent, childTagName, v.toString(), name);
             }
           }
 
@@ -255,26 +245,6 @@ public class IdeaConfigurator implements FlexConfigGenerator {
     if (parentTagWritten && configurationName != null) {
       out.append(indent, 0, indent.length() - 1).append("</").append(configurationName).append('>');
     }
-  }
-
-  private void processSourcePaths(File[] existing, String indent) throws IOException, ExpressionEvaluationException {
-    final List<File> paths = additionalSourcePathsProvider == null ? Arrays.asList(existing) : additionalSourcePathsProvider.merge(existing, session);
-    for (File file : paths) {
-      writeSourcePath(file, indent);
-    }
-
-    File generatedSources = new File(build.getDirectory(), "/generated-sources");
-    if (generatedSources.isDirectory()) {
-      for (File file : generatedSources.listFiles()) {
-        if (file.isDirectory() && !file.isHidden() && !paths.contains(file)) {
-          writeSourcePath(file, indent);
-        }
-      }
-    }
-  }
-
-  private void writeSourcePath(File file, String indent) throws IOException {
-    writeTag(indent, PATH_ELEMENT, file.getAbsolutePath(), SOURCE_PATH);
   }
 
   protected void processValue(String value, String name) throws IOException {

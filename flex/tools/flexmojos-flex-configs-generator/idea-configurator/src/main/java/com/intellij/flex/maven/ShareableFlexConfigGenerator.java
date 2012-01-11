@@ -24,8 +24,8 @@ public class ShareableFlexConfigGenerator extends IdeaConfigurator {
   }
 
   @Override
-  public void preGenerate(MavenProject project, String classifier, AdditionalSourcePathProvider additionalSourcePathProvider) throws IOException {
-    super.preGenerate(project, classifier, additionalSourcePathProvider);
+  public void preGenerate(MavenProject project, String classifier) throws IOException {
+    super.preGenerate(project, classifier);
 
     baseDir = project.getBasedir().getPath();
 

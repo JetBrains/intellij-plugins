@@ -10,6 +10,7 @@ import org.apache.maven.plugin.MavenPluginManager;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.properties.internal.EnvironmentUtils;
 import org.apache.maven.repository.RepositorySystem;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
@@ -35,10 +36,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -118,7 +116,6 @@ public class GeneratorServer {
     session.setCurrentProject(project);
 
     MojoExecution flexmojosMojoExecution = null;
-    final List<MojoExecution> sourceProviderMojoExecutions = new ArrayList<MojoExecution>(2);
     try {
       boolean flexmojosGeneratorFound = false;
       boolean buildHelperFound = false;
@@ -128,39 +125,38 @@ public class GeneratorServer {
             flexmojosMojoExecution = maven.createMojoExecution(plugin, "compile-" + project.getPackaging(), project);
           }
           else if (!flexmojosGeneratorFound && plugin.getArtifactId().equals("flexmojos-generator-mojo")) {
-            sourceProviderMojoExecutions.add(maven.createMojoExecution(plugin, "generate", project));
+            AdditionalSourceRootUtil.addByGeneratorMojo(maven.createMojoExecution(plugin, "generate", project), session, project, getLogger());
             flexmojosGeneratorFound = true;
           }
         }
         else if (!buildHelperFound && plugin.getArtifactId().equals("build-helper-maven-plugin") && plugin.getGroupId().equals("org.codehaus.mojo")) {
-          sourceProviderMojoExecutions.add(maven.createMojoExecution(plugin, "add-source", project));
+          AdditionalSourceRootUtil.addByBuildHelper(maven.createMojoExecution(plugin, "add-source", project), session, project, getLogger());
           buildHelperFound = true;
         }
 
-        if (flexmojosMojoExecution != null && sourceProviderMojoExecutions.size() == 2) {
+        if (flexmojosMojoExecution != null && flexmojosGeneratorFound && buildHelperFound) {
           break;
         }
       }
+
+      AdditionalSourceRootUtil.addByUnknownGeneratorMojo(project);
 
       assert flexmojosMojoExecution != null;
       final ClassRealm flexmojosPluginRealm = maven.getPluginRealm(flexmojosMojoExecution);
       flexmojosPluginRealm.addURL(generatorJarPath);
 
-      final AdditionalSourcePathProvider additionalSourcePathProvider = sourceProviderMojoExecutions.isEmpty() ? null : new AdditionalSourcePathProvider(sourceProviderMojoExecutions);
       final Mojo mojo = mavenPluginManager.getConfiguredMojo(Mojo.class, session, flexmojosMojoExecution);
       try {
-        //for (String configuratorClassName : generators) {
-          Class configuratorClass = flexmojosPluginRealm.loadClass(generators.get(0));
-          FlexConfigGenerator configurator = (FlexConfigGenerator)configuratorClass.getConstructor(MavenSession.class, File.class).newInstance(session, generatorOutputDirectory);
-          configurator.preGenerate(project, Flexmojos.getClassifier(mojo), additionalSourcePathProvider);
-          if ("swc".equals(project.getPackaging())) {
-            configurator.generate(mojo);
-          }
-          else {
-            configurator.generate(mojo, Flexmojos.getSourceFileForSwf(mojo));
-          }
-          return configurator.postGenerate(project);
-        //}
+        Class configuratorClass = flexmojosPluginRealm.loadClass(generators.get(0));
+        FlexConfigGenerator configurator = (FlexConfigGenerator)configuratorClass.getConstructor(MavenSession.class, File.class).newInstance(session, generatorOutputDirectory);
+        configurator.preGenerate(project, Flexmojos.getClassifier(mojo));
+        if ("swc".equals(project.getPackaging())) {
+          configurator.generate(mojo);
+        }
+        else {
+          configurator.generate(mojo, Flexmojos.getSourceFileForSwf(mojo));
+        }
+        return configurator.postGenerate(project);
       }
       finally {
         plexusContainer.release(mojo);
@@ -171,19 +167,8 @@ public class GeneratorServer {
       if (flexmojosMojoExecution != null) {
         maven.releaseMojoExecution(flexmojosMojoExecution);
       }
-      for (MojoExecution sourceProviderMojoExecution : sourceProviderMojoExecutions) {
-        maven.releaseMojoExecution(sourceProviderMojoExecution);
-      }
     }
   }
-
-
-  //private String getClassifier(Mojo mojo)
-  //  throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
-  //  Method getSourceFileMethod = mojo.getClass().getMethod("getClassifier");
-  //  getSourceFileMethod.setAccessible(true);
-  //  return (String)getSourceFileMethod.invoke(mojo);
-  //}
 
   public void resolveOutputs(WorkspaceReaderImpl.ArtifactData data) throws Exception {
     final MavenProject project = maven.readProject(data.file);
@@ -261,7 +246,11 @@ public class GeneratorServer {
       request.setUserSettingsFile(new File(args[1]));
     }
     request.setLocalRepository(plexusContainer.lookup(RepositorySystem.class).createLocalRepository(new File(args[2])));
-    request.setSystemProperties(System.getProperties());
+
+    Properties systemProperties = new Properties();
+    EnvironmentUtils.addEnvVars(systemProperties);
+    systemProperties.putAll(System.getProperties());
+    request.setSystemProperties(systemProperties);
 
     request.setOffline(args[3].equals("t")).setUpdateSnapshots(false).setCacheNotFound(true).setCacheTransferError(true);
 
@@ -288,7 +277,7 @@ public class GeneratorServer {
     return plexusContainer.lookup(SettingsBuilder.class).build(request).getEffectiveSettings();
   }
 
-  private DefaultPlexusContainer createPlexusContainer() throws PlexusContainerException, ComponentLookupException {
+  private static DefaultPlexusContainer createPlexusContainer() throws PlexusContainerException, ComponentLookupException {
     final DefaultPlexusContainer container = new DefaultPlexusContainer(new DefaultContainerConfiguration().setClassWorld(new ClassWorld("plexus.core", Thread.currentThread().getContextClassLoader())).setName("maven").setAutoWiring(true));
 
     // tracked impl is not suitable for us (our list of remote repo may be not equals — we don't want think about it)

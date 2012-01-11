@@ -5,8 +5,13 @@ import org.apache.maven.lifecycle.internal.LifecycleExecutionPlanCalculator;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
 import org.apache.maven.model.building.ModelBuildingRequest;
-import org.apache.maven.plugin.*;
+import org.apache.maven.plugin.BuildPluginManager;
+import org.apache.maven.plugin.MojoExecution;
+import org.apache.maven.plugin.PluginManagerException;
+import org.apache.maven.plugin.PluginResolutionException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
+import org.apache.maven.plugin.version.DefaultPluginVersionRequest;
+import org.apache.maven.plugin.version.PluginVersionResolver;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
@@ -80,6 +85,10 @@ final class Maven {
   }
 
   public MojoExecution createMojoExecution(Plugin plugin, String goal, MavenProject project) throws Exception {
+    if (plugin.getVersion() == null) {
+      plugin.setVersion(plexusContainer.lookup(PluginVersionResolver.class).resolve(new DefaultPluginVersionRequest(plugin, session)).getVersion());
+    }
+
     MojoDescriptor mojoDescriptor = pluginManager.getMojoDescriptor(plugin, goal, project.getRemotePluginRepositories(), session.getRepositorySession());
     List<PluginExecution> executions = plugin.getExecutions();
     MojoExecution mojoExecution = new MojoExecution(mojoDescriptor, executions.isEmpty() ? null : executions.get(executions.size() - 1).getId(), MojoExecution.Source.CLI);
