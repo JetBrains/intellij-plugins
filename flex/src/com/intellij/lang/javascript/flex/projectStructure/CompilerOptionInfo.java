@@ -92,6 +92,21 @@ public class CompilerOptionInfo {
   public static final CompilerOptionInfo OUTPUT_PATH_INFO =
     new CompilerOptionInfo("output", "fake", OptionType.String, null, null, false, null, true, true, true, "");
 
+  public static final CompilerOptionInfo ACCESSIBLE_INFO =
+    new CompilerOptionInfo("compiler.accessible", "fake", OptionType.Boolean, null, null, false, null, true, true, true, "");
+  public static final CompilerOptionInfo PRELOADER_INFO =
+    new CompilerOptionInfo("compiler.preloader", "fake", OptionType.String, null, null, false, "4.5", true, true, true, "");
+  public static final CompilerOptionInfo WARN_NO_CONSTRUCTOR_INFO =
+    new CompilerOptionInfo("compiler.warn-no-constructor", "fake", OptionType.Boolean, null, null, false, null, true, true, true, "");
+  public static final CompilerOptionInfo FONT_MANAGERS_INFO =
+    new CompilerOptionInfo("compiler.fonts.managers", "fake", OptionType.List, null,
+                           new ListElement[]{new ListElement("manager-class")},
+                           false, null, true, true, true, "");
+  public static final CompilerOptionInfo SWF_VERSION_INFO =
+    new CompilerOptionInfo("swf-version", "fake", OptionType.String, null, null, false, "4.5", true, true, true, "");
+  public static final CompilerOptionInfo STATIC_RSLS_INFO =
+    new CompilerOptionInfo("static-link-runtime-shared-libraries", "fake", OptionType.Boolean, null, null, false, null, true, true, true,
+                           "");
 
   public final String ID;
   public final String DISPLAY_NAME;
@@ -191,7 +206,7 @@ public class CompilerOptionInfo {
     assert info != null : id;
     return info;
   }
-  
+
   public static boolean idExists(final String id) {
     ensureLoaded();
     return ourIdToInfoMap.get(id) != null;
@@ -201,15 +216,8 @@ public class CompilerOptionInfo {
     assert !isGroup() : DISPLAY_NAME;
 
     if (SPECIAL_DEFAULT_VALUE.equals(myDefaultValue)) {
-      if ("compiler.accessible".equals(ID)) {
-        return nature.isMobilePlatform() ? "false"
-                                         : StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0 ? "true" : "false";
-      }
-      else if ("compiler.locale".equals(ID)) {
+      if ("compiler.locale".equals(ID)) {
         return "en_US";
-      }
-      else if ("compiler.preloader".equals(ID)) {
-        return nature.isMobilePlatform() ? "spark.preloaders.SplashScreen" : "";
       }
       else if ("compiler.theme".equals(ID)) {
         if (!nature.pureAS && !nature.isDesktopPlatform() && StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0) {
@@ -217,6 +225,14 @@ public class CompilerOptionInfo {
                                            : "${FLEX_SDK}/frameworks/themes/Spark/spark.css";
         }
         return "";
+      }
+      /*
+      else if ("compiler.accessible".equals(ID)) {
+        return nature.isMobilePlatform() ? "false"
+                                         : StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0 ? "true" : "false";
+      }
+      else if ("compiler.preloader".equals(ID)) {
+        return nature.isMobilePlatform() ? "spark.preloaders.SplashScreen" : "";
       }
       else if ("swf-version".equals(ID)) {
         return StringUtil.compareVersionNumbers(sdkVersion, "4.6") >= 0 ? "14" : "11";
@@ -238,6 +254,7 @@ public class CompilerOptionInfo {
       else if ("compiler.warn-no-constructor".equals(ID)) {
         return "false";
       }
+      */
 
       assert false : ID;
     }

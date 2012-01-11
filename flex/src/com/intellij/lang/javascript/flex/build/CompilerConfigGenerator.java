@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.ValueSource;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
+import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -116,21 +117,57 @@ public class CompilerConfigGenerator {
   }
 
   private void addMandatoryOptions(final Element rootElement) {
-    switch (myConfig.getTargetPlatform()) {
-      case Web:
-        // todo uncomment in xml and do not add as standard option
-        //final String revision = getValueAndSource(CompilerOptionInfo.getOptionInfo("target-player-revision")).first;
-        final String revision = "0";
-        final String targetPlayer = myConfig.getDependencies().getTargetPlayer() + "." + revision;
-        addOption(rootElement, CompilerOptionInfo.TARGET_PLAYER_INFO, targetPlayer);
-        break;
-      case Mobile:
-        addOption(rootElement, CompilerOptionInfo.MOBILE_INFO, "true");
-        // no break here!
-      case Desktop:
-        addOption(rootElement, CompilerOptionInfo.TARGET_PLAYER_INFO, TargetPlayerUtils.getMaximumTargetPlayer(mySdkHome));
-        break;
+    final BuildConfigurationNature nature = myConfig.getNature();
+
+    final String targetPlayer = nature.isWebPlatform()
+                                ? myConfig.getDependencies().getTargetPlayer()
+                                : TargetPlayerUtils.getMaximumTargetPlayer(mySdkHome);
+    addOption(rootElement, CompilerOptionInfo.TARGET_PLAYER_INFO, targetPlayer);
+
+    if (StringUtil.compareVersionNumbers(mySdkVersion, "4.5") >= 0) {
+      final String swfVersion = nature.isWebPlatform() ? getSwfVersionForTargetPlayer(targetPlayer) : getSwfVersionForSdk(mySdkVersion);
+      addOption(rootElement, CompilerOptionInfo.SWF_VERSION_INFO, swfVersion);
     }
+
+    if (nature.isMobilePlatform()) {
+      addOption(rootElement, CompilerOptionInfo.MOBILE_INFO, "true");
+      addOption(rootElement, CompilerOptionInfo.PRELOADER_INFO, "spark.preloaders.SplashScreen");
+    }
+
+
+    final String accessible = nature.isMobilePlatform() ? "false"
+                                                        : StringUtil.compareVersionNumbers(mySdkVersion, "4") >= 0 ? "true" : "false";
+    addOption(rootElement, CompilerOptionInfo.ACCESSIBLE_INFO, accessible);
+
+    final String fontManagers = StringUtil.compareVersionNumbers(mySdkVersion, "4") >= 0
+                                ? "flash.fonts.JREFontManager" + CompilerOptionInfo.LIST_ENTRIES_SEPARATOR +
+                                  "flash.fonts.BatikFontManager" + CompilerOptionInfo.LIST_ENTRIES_SEPARATOR +
+                                  "flash.fonts.AFEFontManager" + CompilerOptionInfo.LIST_ENTRIES_SEPARATOR +
+                                  "flash.fonts.CFFFontManager"
+
+                                : "flash.fonts.JREFontManager" + CompilerOptionInfo.LIST_ENTRIES_SEPARATOR +
+                                  "flash.fonts.AFEFontManager" + CompilerOptionInfo.LIST_ENTRIES_SEPARATOR +
+                                  "flash.fonts.BatikFontManager";
+    addOption(rootElement, CompilerOptionInfo.FONT_MANAGERS_INFO, fontManagers);
+
+    addOption(rootElement, CompilerOptionInfo.STATIC_RSLS_INFO, "false");
+    addOption(rootElement, CompilerOptionInfo.WARN_NO_CONSTRUCTOR_INFO, "false");
+  }
+
+  private static String getSwfVersionForTargetPlayer(final String targetPlayer) {
+    if (StringUtil.compareVersionNumbers(targetPlayer, "11.1") >= 0) return "14";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "11") >= 0) return "13";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "10.3") >= 0) return "12";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "10.2") >= 0) return "11";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "10.1") >= 0) return "10";
+    return "9";
+  }
+
+  private static String getSwfVersionForSdk(final String sdkVersion) {
+    if (StringUtil.compareVersionNumbers(sdkVersion, "4.6") >= 0) return "14";
+    if (StringUtil.compareVersionNumbers(sdkVersion, "4.5") >= 0) return "11";
+    assert false;
+    return null;
   }
 
   /**
