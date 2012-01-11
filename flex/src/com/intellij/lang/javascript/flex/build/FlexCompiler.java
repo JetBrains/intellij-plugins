@@ -557,11 +557,13 @@ public class FlexCompiler implements SourceProcessingCompiler {
     }
 
     if (!nature.isLib() && !bc.getOutputFileName().toLowerCase().endsWith(".swf")) {
-      throw new ConfigurationException(FlexBundle.message("output.file.name.must.have.2.extension.for.bc.0.of.module.1", bc.getName(), moduleName, "swf"));
+      throw new ConfigurationException(
+        FlexBundle.message("output.file.name.must.have.2.extension.for.bc.0.of.module.1", bc.getName(), moduleName, "swf"));
     }
 
     if (nature.isLib() && !bc.getOutputFileName().toLowerCase().endsWith(".swc")) {
-      throw new ConfigurationException(FlexBundle.message("output.file.name.must.have.2.extension.for.bc.0.of.module.1", bc.getName(), moduleName, "swc"));
+      throw new ConfigurationException(
+        FlexBundle.message("output.file.name.must.have.2.extension.for.bc.0.of.module.1", bc.getName(), moduleName, "swc"));
     }
 
     if (bc.getOutputFolder().isEmpty()) {
@@ -591,6 +593,15 @@ public class FlexCompiler implements SourceProcessingCompiler {
       }
       catch (IOException e) {
         throw new ConfigurationException(FlexBundle.message("failed.to.load.file", templateFile.getPath(), e.getMessage()));
+      }
+    }
+
+    final String additionalConfigFilePath = bc.getCompilerOptions().getAdditionalConfigFilePath();
+    if (!additionalConfigFilePath.isEmpty()) {
+      final VirtualFile additionalConfigFile = LocalFileSystem.getInstance().findFileByPath(additionalConfigFilePath);
+      if (additionalConfigFile == null || additionalConfigFile.isDirectory()) {
+        throw new ConfigurationException(
+          FlexBundle.message("additional.config.file.not.found", additionalConfigFilePath, bc.getName(), moduleName));
       }
     }
 

@@ -1,17 +1,19 @@
 package com.intellij.lang.javascript.flex.build;
 
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public abstract class FlexCompilationTask {
@@ -77,7 +79,22 @@ public abstract class FlexCompilationTask {
       return FlexCompilationUtils.getConfigFiles(myOldConfig, myModule, myFlexFacet, null);
     }
     else {
-      return Collections.singletonList(CompilerConfigGenerator.getOrCreateConfigFile(myModule, myFlexIdeConfig));
+      assert myFlexIdeConfig != null;
+
+      final ArrayList<VirtualFile> configFiles = new ArrayList<VirtualFile>(2);
+      configFiles.add(CompilerConfigGenerator.getOrCreateConfigFile(myModule, myFlexIdeConfig));
+
+      final String additionalConfigFilePath = myFlexIdeConfig.getCompilerOptions().getAdditionalConfigFilePath();
+      if (!additionalConfigFilePath.isEmpty()) {
+        final VirtualFile additionalConfigFile = LocalFileSystem.getInstance().findFileByPath(additionalConfigFilePath);
+        if (additionalConfigFile == null) {
+          throw new IOException(FlexBundle.message("additional.config.file.not.found", additionalConfigFilePath, myFlexIdeConfig.getName(),
+                                                   myModule.getName()));
+        }
+        configFiles.add(additionalConfigFile);
+      }
+
+      return configFiles;
     }
   }
 

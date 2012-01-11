@@ -191,6 +191,11 @@ public class CompilerOptionInfo {
     assert info != null : id;
     return info;
   }
+  
+  public static boolean idExists(final String id) {
+    ensureLoaded();
+    return ourIdToInfoMap.get(id) != null;
+  }
 
   public String getDefaultValue(final String sdkVersion, final BuildConfigurationNature nature) {
     assert !isGroup() : DISPLAY_NAME;

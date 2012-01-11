@@ -200,11 +200,25 @@ public class FlexCompilationUtils {
     return command;
   }
 
-  static List<String> buildCommand(final List<String> compilerCommand, final List<VirtualFile> configFiles) {
+  static List<String> buildCommand(final List<String> compilerCommand,
+                                   final List<VirtualFile> configFiles,
+                                   final Module module,
+                                   final FlexIdeBuildConfiguration bc) {
     final List<String> command = new ArrayList<String>(compilerCommand);
     for (VirtualFile configFile : configFiles) {
       command.add("-load-config=" + configFile.getPath());
     }
+
+    final String additionalOptions = bc.getCompilerOptions().getAdditionalOptions();
+    if (!StringUtil.isEmpty(additionalOptions)) {
+      final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
+      assert sdkEntry != null;
+      // TODO handle -option="path with spaces"
+      for (final String s : StringUtil.split(additionalOptions, " ")) {
+        command.add(FlexUtils.replacePathMacros(s, module, sdkEntry.getHomePath()));
+      }
+    }
+
     return command;
   }
 

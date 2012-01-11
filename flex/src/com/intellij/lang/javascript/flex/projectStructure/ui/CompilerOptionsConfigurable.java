@@ -1,5 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
@@ -18,6 +20,7 @@ import com.intellij.openapi.ui.ComponentWithBrowseButton;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.*;
@@ -62,6 +65,9 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   private JLabel myInheritModuleDefaultsLegend;
   private JButton myProjectDefaultsButton;
   private JButton myModuleDefaultsButton;
+  private JPanel myAdditionalPanel;
+  private TextFieldWithBrowseButton myConfigFileTextWithBrowse;
+  private RawCommandLineEditor myAdditionalOptionsField;
 
   private final Mode myMode;
   private final Module myModule;
@@ -122,7 +128,14 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     myInheritModuleDefaultsLegend.setVisible(myMode == Mode.BC);
     myInheritProjectDefaultsLegend.setVisible(myMode == Mode.BC || myMode == Mode.Module);
 
+    myAdditionalPanel.setVisible(myMode == Mode.BC);
+    myConfigFileTextWithBrowse.addBrowseFolderListener(null, null, project, FlexUtils.createFileChooserDescriptor("xml"));
+    myAdditionalOptionsField.setDialogCaption(FlexBundle.message("additional.compiler.options.title"));
+
     initButtons();
+
+    myShowAllOptionsCheckBox.setSelected(true);
+    myShowAllOptionsCheckBox.setVisible(false);
   }
 
   private void initButtons() {
@@ -192,7 +205,12 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   }
 
   public boolean isModified() {
-    return myModified;
+    if (myModified) return true;
+    if (!myModel.getAdditionalConfigFilePath().equals(FileUtil.toSystemIndependentName(myConfigFileTextWithBrowse.getText().trim()))) {
+      return true;
+    }
+    if (!myModel.getAdditionalOptions().equals(myAdditionalOptionsField.getText().trim())) return true;
+    return false;
   }
 
   public void apply() throws ConfigurationException {
@@ -205,6 +223,9 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     if (compilerOptions == myModel) {
       myModified = false;
     }
+
+    compilerOptions.setAdditionalConfigFilePath(FileUtil.toSystemIndependentName(myConfigFileTextWithBrowse.getText().trim()));
+    compilerOptions.setAdditionalOptions(myAdditionalOptionsField.getText().trim());
   }
 
   public void reset() {
@@ -212,6 +233,9 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     myCurrentOptions.putAll(myModel.getAllOptions());
     myModified = false;
     updateTreeTable();
+
+    myConfigFileTextWithBrowse.setText(FileUtil.toSystemDependentName(myModel.getAdditionalConfigFilePath()));
+    myAdditionalOptionsField.setText(myModel.getAdditionalOptions());
   }
 
   public void disposeUIResources() {

@@ -48,7 +48,7 @@ public class MxmlcCompcCompilationTask extends FlexCompilationTask {
 
     final List<String> command = myOldConfig != null
                                  ? FlexCompilationUtils.buildCommand(compilerCommand, getConfigFiles(), myModule, myOldConfig)
-                                 : FlexCompilationUtils.buildCommand(compilerCommand, getConfigFiles());
+                                 : FlexCompilationUtils.buildCommand(compilerCommand, getConfigFiles(), myModule, myFlexIdeConfig);
     final ProcessBuilder processBuilder = new ProcessBuilder(command);
     processBuilder.redirectErrorStream(true);
     processBuilder.directory(new File(FlexUtils.getFlexCompilerWorkDirPath(myModule.getProject(), null)));

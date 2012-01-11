@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
+import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableCompilerOptions;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
@@ -19,6 +20,8 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions {
   private final boolean myResetHighlightingOnCommit;
 
   private final Map<String, String> myOptions = new THashMap<String, String>();
+  private @NotNull String myAdditionalConfigFilePath = "";
+  private @NotNull String myAdditionalOptions = "";
 
   CompilerOptionsImpl() {
     this(null, false);
@@ -53,6 +56,24 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions {
     }
   }
 
+  public void setAdditionalConfigFilePath(@NotNull final String path) {
+    myAdditionalConfigFilePath = path;
+  }
+
+  @NotNull
+  public String getAdditionalConfigFilePath() {
+    return myAdditionalConfigFilePath;
+  }
+
+  public void setAdditionalOptions(@NotNull final String options) {
+    myAdditionalOptions = options;
+  }
+
+  @NotNull
+  public String getAdditionalOptions() {
+    return myAdditionalOptions;
+  }
+
   public CompilerOptionsImpl getCopy() {
     CompilerOptionsImpl copy = new CompilerOptionsImpl();
     applyTo(copy);
@@ -61,21 +82,34 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions {
 
   void applyTo(ModifiableCompilerOptions copy) {
     copy.setAllOptions(myOptions);
+    copy.setAdditionalConfigFilePath(myAdditionalConfigFilePath);
+    copy.setAdditionalOptions(myAdditionalOptions);
   }
 
   public State getState() {
     State state = new State();
     state.options.putAll(myOptions);
+    state.additionalConfigFilePath = myAdditionalConfigFilePath;
+    state.additionalOptions = myAdditionalOptions;
     return state;
   }
 
   public void loadState(State state) {
     myOptions.clear();
-    myOptions.putAll(state.options);
+    // filter out options that are not known in current IDEA version
+    for (Map.Entry<String, String> entry : state.options.entrySet()) {
+      if (CompilerOptionInfo.idExists(entry.getKey())) {
+        myOptions.putAll(state.options);
+      }
+    }
+    myAdditionalConfigFilePath = state.additionalConfigFilePath;
+    myAdditionalOptions = state.additionalOptions;
   }
 
   public boolean isEqual(CompilerOptionsImpl other) {
-    return myOptions.equals(other.myOptions);
+    return myOptions.equals(other.myOptions) &&
+           myAdditionalConfigFilePath.equals(other.myAdditionalConfigFilePath) &&
+           myAdditionalOptions.equals(other.myAdditionalOptions);
   }
 
   @Tag("compiler-options")
@@ -83,5 +117,7 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions {
     @Property(surroundWithTag = false)
     @MapAnnotation(surroundKeyWithTag = false, surroundValueWithTag = false)
     public Map<String, String> options = new THashMap<String, String>();
+    public String additionalConfigFilePath = "";
+    public String additionalOptions = "";
   }
 }

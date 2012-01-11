@@ -10,4 +10,10 @@ public interface CompilerOptions {
   String getOption(@NotNull String name);
 
   Map<String, String> getAllOptions();
+
+  @NotNull
+  String getAdditionalConfigFilePath();
+
+  @NotNull
+  String getAdditionalOptions();
 }

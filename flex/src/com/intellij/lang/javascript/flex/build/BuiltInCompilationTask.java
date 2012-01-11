@@ -59,7 +59,7 @@ public class BuiltInCompilationTask extends FlexCompilationTask {
       assert myFlexIdeConfig != null;
       final boolean swf = myFlexIdeConfig.getOutputType() != OutputType.Library;
       final List<String> compilerCommand = Collections.singletonList(swf ? "mxmlc" : "compc");
-      return FlexCompilationUtils.buildCommand(compilerCommand, getConfigFiles());
+      return FlexCompilationUtils.buildCommand(compilerCommand, getConfigFiles(), myModule, myFlexIdeConfig);
     }
   }
 
