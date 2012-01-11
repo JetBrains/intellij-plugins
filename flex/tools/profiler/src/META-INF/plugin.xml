@@ -1,6 +1,9 @@
 <idea-plugin version="2">
   <name>ActionScript Profiler</name>
-  <description>The plugin allows you to profile your ActionScript and Flex applications by showing CPU sampling and memory snapshot information.</description>
+  <description><![CDATA[The plugin allows you to profile your Flash and Flex applications.<br>
+  CPU profiling: self and cumulative execution time, caller and callee hierarchy, sorting, navigation to source code and scope filtering.<br/>
+  Memory profiling<br/>
+  Please find more details on <a href="http://confluence.jetbrains.net/display/IDEADEV/Profiling+Flash+and+Flex+Applications">plugin wiki page</a>.]]></description>
   <version>0.2.6</version>
   <vendor>JetBrains</vendor>
   <idea-version since-build="112.1"/>
