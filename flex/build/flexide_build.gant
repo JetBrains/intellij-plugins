@@ -3,7 +3,8 @@ import org.jetbrains.jps.LayoutInfo
 import org.jetbrains.jps.Module
 import static org.jetbrains.jps.idea.IdeaProjectLoader.guessHome
 
-includeTargets << new File("${guessHome(this)}/community/build/scripts/utils.gant")
+includeTargets << new File("${guessHome(this as Script)}/community/build/scripts/utils.gant")
+includeTargets << new File("${guessHome(this)}/build/scripts/ultimate_utils.gant")
 includeTargets << new File("${guessHome(this)}/build/scripts/libLicenses.gant")
 includeTool << Jps
 
@@ -22,7 +23,6 @@ requireProperty("launchProperties", "")
 ant.xmlproperty(file: "$home/flex/ideResources/idea/FlexApplicationInfo.xml", collapseAttributes: "true")
 
 setProperty("system_selector", "Astella${p("component.version.major")}0")
-
 setProperty("ch", "$home/community")
 setProperty("dryRun", false)
 setProperty("jdk16", guessJdk())
@@ -93,7 +93,7 @@ class Paths {
   final distAll
   final distWin
   final distMac
-  final distLinux
+  final distUnix
   final artifacts
   final ideaSystem
   final ideaConfig
@@ -103,19 +103,17 @@ class Paths {
     distAll = "$sandbox/layout"
     distWin = "$sandbox/win"
     distMac = "$sandbox/mac"
-    distLinux = "$sandbox/linux"
+    distUnix = "$sandbox/linux"
+    artifacts = "$sandbox/artifacts"
 
     ideaSystem = "$sandbox/system"
     ideaConfig = "$sandbox/config"
-
-    artifacts = "$sandbox/artifacts"
   }
 }
 
 setProperty("paths", new Paths(home))
 
 target('default': "Build artifacts") {
-
   def modules = [
           "flex-ide", "resources", "colorSchemes", platformApiModules(), platformImplementationModules(), pluginFilter
   ].flatten()
@@ -131,10 +129,8 @@ target('default': "Build artifacts") {
 
   if (!dryRun && !dontClean) {
     project.stage("cleanup")
-
-    def sandbox = paths.sandbox
-    ant.delete(dir: sandbox)
-    ant.mkdir(dir: sandbox)
+    forceDelete(paths.sandbox)
+    ant.mkdir(dir: paths.sandbox)
   }
 
   ant.tstamp() {
@@ -164,7 +160,6 @@ target('default': "Build artifacts") {
 
   if (!dryRun) {
     zipSources(home, paths.artifacts)
-    reportArtifact("sources.zip")
   }
 
   def usedJars = new HashSet();
@@ -211,46 +206,51 @@ target('default': "Build artifacts") {
   usedJars.add("$home/community/lib/jgoodies-common-1.2.1.jar")
   usedJars.add("$home/community/lib/jgoodies-looks-2.4.2.jar")
 
-  buildSearchableOptions()
+  buildSearchableOptions("$paths.sandbox/searchableoptions", ["$home/build/idea.license"], {
+    pathelement(location: "$ch/lib/junit.jar")
+    project["flex-ide"].runtimeClasspath().each {
+      pathelement(location: it)
+    }
+  }, "-Didea.platform.prefix=Flex -Didea.no.jre.check=true")
 
-  ant.copy(file: "$home/flex/build/flexide.exe.vmoptions", tofile: "$paths.sandbox/astella.exe.vmoptions")
+  String vmOptions = common_vmoptions
+  processLaunchProperties() { pair -> vmOptions += " -D${pair["key"]}=${pair["value"]}" }
+  binding.setVariable("common_vmoptions", "$vmOptions".trim())
 
-  processLaunchProperties() {
-    pair -> ant.echo(file: "$paths.sandbox/astella.exe.vmoptions", append: "true", message: "-D${pair["key"]}=${pair["value"]}\r\n")
-  }
-
-  wireBuildDate("${productCode}-${buildNumber}")
+  wireBuildDate("${productCode}-${buildNumber}", appInfoFile())
   LayoutInfo layoutInfo = layoutFull(paths.distAll, usedJars)
   generateLicensesTable("$paths.artifacts/third-party-libraries.txt", layoutInfo.usedModules);
 
   // TODO let's turn scrambling off for now
   //scramble()
 
-  layoutWin(paths.distWin)
-  if (isEap()) {
-    binding.setVariable("common_vmoptions",
-                        "$common_vmoptions -XX:+HeapDumpOnOutOfMemoryError -agentlib:yjpagent=disablej2ee,disablecounts,disablealloc,sessionname=astella")
-  }
-  layoutMac(buildName: buildName,
-            version: "1.0",
-            system_selector: system_selector,
-            paths.distMac)
+  ant.echo(message: "${productCode}-${buildNumber}", file: "$paths.distAll/build.txt")
 
-  ant.echo(message: "${productCode}-${buildNumber}", file: "$paths.sandbox/layout/build.txt")
+  Map args = [
+          fullName: "Astella",
+          buildNumber: buildName,
+          system_selector: system_selector,
+          ide_jvm_args: "-Didea.platform.prefix=Flex -Didea.no.jre.check=true"]
 
-  buildSit()
-  buildDmg()
+  layoutWin(args, paths.distWin)
+  layoutMac(args, paths.distMac)
+  layoutUnix(args, paths.distUnix)
 
-  layoutLinux(paths.distLinux)
-  buildTarGz()
+  String macAppRoot = isEap() ? "${buildName}.app" : "${product}-${p("component.version.major")}.${p("component.version.minor")}.app"
+  buildMacZip(macAppRoot, "${paths.artifacts}/${buildName}.sit", [paths.distAll, paths.distMac])
+  buildDmg("${product}", "$home/flex/ideResources/artwork/fiDmgBg.png", ["build.code": buildName])
 
-  buildExe()
-  buildWinZip()
+  String tarRoot = isEap() ? "${buildName}" : "${product}-${p("component.version.major")}.${p("component.version.minor")}"
+  buildTarGz(tarRoot, "$paths.artifacts/${buildName}.tar", [paths.distAll, paths.distUnix])
 
-  buildNsis()
+  buildExe("$home/python/build/flex-ide.exe4j", system_selector)
+  buildWinZip("$paths.artifacts/${buildName}.zip", [paths.distAll, paths.distWin])
+  buildNSIS([paths.distAll, paths.distWin],
+            "$home/flex/build/strings.nsi", "$home/flex/build/paths.nsi",
+            "${buildPrefix}", false, true, system_selector, true)
 }
 
-private def processLaunchProperties(Closure processor) {
+private processLaunchProperties(Closure processor) {
   if (launchProperties != "") {
     launchProperties.tokenize(";").each {
       tokens = it.tokenize("=");
@@ -259,117 +259,14 @@ private def processLaunchProperties(Closure processor) {
   }
 }
 
-private def buildWinZip() {
-  ant.zip(zipfile: "$paths.artifacts/${buildName}.zip") {
-    fileset(dir: paths.distAll)
-    fileset(dir: paths.distWin)
-  }
-  reportArtifact("${buildName}.zip")
-}
-
-private def buildSit() {
-  project.stage("sit")
-  def root = isEap() ? "${buildName}.app" : "${product}-${p("component.version.major")}.${p("component.version.minor")}.app"
-
-  ant.zip(zipfile: "${paths.artifacts}/${buildName}.sit") {
-    tarfileset(dir: paths.distAll, prefix: root)
-    tarfileset(dir: paths.distMac, prefix: root) {
-      exclude(name: "bin/*.sh")
-      exclude(name: "bin/idea.properties")
-      exclude(name: "Contents/MacOS/idea")
-    }
-    tarfileset(dir: paths.distMac, filemode: "755", prefix: root) {
-      include(name: "bin/*.sh")
-      include(name: "Contents/MacOS/idea")
-    }
-  }
-  reportArtifact("${buildName}.sit")
-}
-
-private def buildDmg() {
-  project.stage("dmg")
-  ant.copy(file: "${paths.artifacts}/${buildName}.sit", tofile: "${paths.artifacts}/${product}${buildNumber}.sit") // to comply with buildDmg.xml naming
-  executeExternalAnt("file.name": "${product}", "dmg.image.name": "$home/flex/ideResources/artwork/fiDmgBg.png", "$home/build/buildDmg.xml")
-
-  ant.delete(file: "${paths.artifacts}/${product}${buildNumber}.sit")
-  ant.move(file: "${paths.artifacts}/${product}${buildNumber}.dmg", tofile: "${paths.artifacts}/${buildName}.dmg")
-  reportArtifact("${buildName}.dmg")
-}
-
-
-private def buildNsis() {
-  if (!isMac()) {
-    project.stage("nsis")
-    def installer = includeFile("$home/build/scripts/nsis_installer.gant")
-    installer.nsis_installer([paths.distAll, paths.distWin],
-                             "$home/flex/build/strings.nsi",
-                             "$home/flex/build/paths.nsi",
-                             "${buildPrefix}", false, true, system_selector, true)
-    ant.available(file: "${paths.artifacts}/${buildName}.exe", property: "nsis.exists");
-    ant.fail(unless: "nsis.exists", message: "${buildName} NSIS EXE was not built. File ${paths.artifacts}/${buildName}.exe wasn't found.")
-    reportArtifact("${buildName}.exe")
-  }
-  else {
-    project.warning("Building nsis .exe distribution skipped")
-  }
-}
-
-def buildSearchableOptions() {
-  project.stage("searchable options")
-  def dest_dir = "$paths.sandbox/searchableoptions"
-  ant.mkdir(dir: "${dest_dir}/search")
-  ant.copy(file: "$home/build/idea.license", todir: paths.ideaSystem)
-  //ant.copy(file: "$home/build/rubymine.license", todir: paths.ideaSystem)
-  ant.java(classname: "com.intellij.idea.Main", fork: "true") {
-    jvmarg(line: "-ea -Xmx250m -Didea.home.path=$home -Didea.system.path=${paths.ideaSystem} -Didea.config.path=${paths.ideaConfig} -Didea.platform.prefix=Flex -Didea.no.jre.check=true")
-    jvmarg(value: "-Xbootclasspath/a:${boot.output}")
-    arg(line: "traverseUI ${dest_dir}/search/searchableOptions.xml")
-
-    classpath() {
-      pathelement(location: "$ch/lib/junit.jar")
-      project["flex-ide"].runtimeClasspath().each {
-        pathelement(location: it)
-      }
-      pathelement(location: "${jdkHome}/lib/tools.jar")
-    }
-  }
-  ant.available(file: "${dest_dir}/search/searchableOptions.xml", property: "searchableoptions.exists");
-  ant.fail(unless: "searchableoptions.exists", message: "${product} searchable options were not built.")
-}
-
-def zkmScramble(String script, String dir, String jarName) {
-  ant.java(classname: "ZKM", fork: "true", failonerror: "true") {
-    jvmarg(value: "-Xmx1100m")
-    arg(value: "-v")
-    arg(value: script)
-    classpath {
-      fileset(dir: dir) {
-        include(name: "*.jar")
-        exclude(name: jarName)
-      }
-
-      fileset(dir: "$home/lib") {
-        include(name: "*.jar")
-      }
-
-      pathelement(location: "$home/build/lib/ZKM.jar")
-    }
-  }
-
-  ant.delete(file: "$dir/${jarName}.BACKUP", failonerror: "false")
-}
-
-def scramble() {
-  ant.copy(file: "$home/build/conf/script.zkm.stub", tofile: "$paths.sandbox/script.zkm", overwrite: "true") {
-    filterset(begintoken: "__", endtoken: "__") {
-      filter(token: "CLASSES", value: "\"${paths.distAll}/lib/flexide.jar\"")
-      filter(token: "SCRAMBLED_CLASSES", value: "${paths.distAll}/")
-      filter(token: "INCREMENTAL", value: "")
-    }
-  }
+private scramble() {
+  copyAndPatchFile("$home/build/conf/script.zkm.stub", "${paths.sandbox}/script.zkm",
+                   ["CLASSES": "\"${paths.distAll}/lib/flexide.jar\"", "SCRAMBLED_CLASSES": paths.distAll, "INCREMENTAL": ""])
   ant.mkdir(dir: "$paths.artifacts/flexide.unscrambled")
   ant.copy(file: "$paths.distAll/lib/flexide.jar", todir: "$paths.artifacts/flexide.unscrambled")
+
   zkmScramble("$paths.sandbox/script.zkm", "$paths.distAll/lib", "flexide.jar")
+
   ant.move(file: "$paths.distAll/flexide.jar", todir: "$paths.distAll/lib")
   ant.zip(destfile: "$paths.artifacts/logs.zip") {
     fileset(file: "ChangeLog.txt")
@@ -380,102 +277,18 @@ def scramble() {
   ant.delete(file: "ZKM_log.txt")
 }
 
-String appInfoFile() {
+private String appInfoFile() {
   return "$home/out/flex-ide/classes/production/flex-ide/idea/FlexApplicationInfo.xml"
 }
 
-void wireBuildDate(String buildNumber) {
-  if (!dryRun) {
-    ant.replace(token: "__BUILD_NUMBER__", value: buildNumber, file: appInfoFile())
-    ant.replace(token: "__BUILD_DATE__", value: DSTAMP, file: appInfoFile())
-  }
-}
-
-def buildExe() {
-  if (!isMac()) {
-    ant.mkdir(dir: paths.distWin)
-    executeExternalAnt(
-            "config.file": "$home/flex/build/flex-ide.exe4j",
-            "output.file": "astella.exe",
-            "system_selector" : system_selector,
-            "$home/build/buildLauncher.xml")
-  }
-  else {
-    project.warning("Building .exe executable skipped")
-  }
-}
-
-def layoutLinux(String target) {
-  layout(target) {
-    dir("bin") {
-      renamedFile("$paths.sandbox/astella.exe.vmoptions", "astella.vmoptions")
-
-      fileset(dir: "$home/flex/build") {
-        include(name: "idea.properties")
-      }
-
-      renamedFile("$home/flex/build/flexide.sh", "astella.sh")
-      renamedFile("$home/flex/ideResources/artwork/flexide.png", "astella.png")
-
-      fileset(dir: "$home/community/bin") {
-        include(name: "log.xml")
-      }
-      fileset(dir: "$home/community/bin/nix") {
-        include(name: "inspect*.sh")
-      }
-    }
-    dir("help") {
-      fileset(dir: "$home/flex/keymap") {
-        include(name: "ReferenceCard.pdf")
-      }
-      fileset(dir: "$home/out/help") {
-        include(name: "help.jar")
-      }
-    }
-  }
-
-  patchPropertiesFile(target)
-
-  ant.replace(file: "$target/bin/astella.sh") {
-    replacefilter(token: "@@isEap@@", value: isEap())
-    replacefilter(token: "@@system_selector@@", value: system_selector)
-  }
-  ant.fixcrlf(srcDir: "$target/bin", excludes: "*.png", eol: "unix")
-}
-
-def buildTarGz() {
-  project.stage("tar.gz")
-  def tarRoot = isEap() ? "${buildName}" : "${product}-${p("component.version.major")}.${p("component.version.minor")}"
-  def tarPath = "$paths.artifacts/${buildName}.tar"
-  ant.tar(tarfile: tarPath) {
-    tarfileset(dir: paths.distAll, prefix: tarRoot)
-    tarfileset(dir: "$home/bin", prefix: "$tarRoot/bin") {
-      include(name: "libyjpagent*.so")
-    }
-    tarfileset(dir: "$home/community/bin/linux", prefix: "$tarRoot/bin") {
-      exclude(name: "libbreakgen*")
-      exclude(name: "fsnotifier*")
-    }
-    tarfileset(dir: "$home/community/bin/linux", filemode: "755", prefix: "$tarRoot/bin") {
-      include(name: "fsnotifier*")
-    }
-    tarfileset(dir: "$paths.distLinux", filemode: "755", prefix: "$tarRoot") {
-      include(name: "bin/*.sh")
-    }
-    tarfileset(dir: "$paths.distLinux", prefix: "$tarRoot") {
-      exclude(name: "bin/*.sh")
-    }
-  }
-
-  ant.gzip(src: tarPath, zipfile: "${tarPath}.gz")
-  ant.delete(file: tarPath)
-  reportArtifact("${buildName}.tar.gz")
-}
-
-def layoutFull(String target, Set usedJars) {
+private layoutFull(String target, Set usedJars) {
   def implementationModules = [platformImplementationModules(), "flex-ide"].flatten()
 
   def result = layout(target) {
+    dir("bin") {
+      fileset(file: "$home/community/bin/log.xml")
+    }
+
     dir("lib") {
       jar("util.jar") { module("util") }
 
@@ -564,15 +377,9 @@ def layoutFull(String target, Set usedJars) {
       }
     }
 
-    //dir("help") {
-    //  fileset(dir: "$home/ruby/help") {
-    //    include(name: "*.pdf")
-    //  }
-    //}
-
-  dir("license") {
+    dir("license") {
       renamedFile("$home/flex/license/FlexIDE_license.txt", "Astella_license.txt")
-  }
+    }
 
     def layouts = includeFile("$home/build/scripts/layouts.gant")
     println("layout plugins\n\n")
@@ -599,38 +406,22 @@ private def resources(List<String> modules) {
   }
 }
 
-def layoutMac(Map args, String target) {
+private layoutMac(Map _args, String target) {
   layout(target) {
     dir("bin") {
       fileset(dir: "$home/bin", includes: "*.jnilib")
-
-      fileset(dir: "$home/community/bin") {
-        include(name: "log.xml")
-      }
-
-      fileset(dir: "$home/flex/build") {
-        include(name: "idea.properties")
-      }
     }
+
     dir("help") {
-      fileset(dir: "$home/flex/keymap") {
-        include(name: "ReferenceCardForMac.pdf")
-      }
-      renamedFile("$home/out/help/help_mac.jar", "help.jar")
+      fileset(file: "$home/flex/keymap/ReferenceCardForMac.pdf")
     }
   }
 
-  patchPropertiesFile(target)
-
-  ant.fixcrlf(srcDir: "$target/bin", includes: "*.sh", eol: "unix")
-
-  args["buildNumber"] = buildNumber
-  args["executable"] = "astella"
-  args["icns"] = "$home/flex/ideResources/artwork/flexide.icns"
-  args["bundle_name"] = "Astella"
-  args["bundleIdentifier"] = "com.jetbrains.flexide"
-  args["platform_prefix"] = "Flex"
-  args["idea.properties.path"] = "$target/bin/idea.properties"
+  Map args = new HashMap(_args)
+  args.icns = "$home/flex/ideResources/artwork/flexide.icns"
+  args.bundleIdentifier = "com.jetbrains.flexide"
+  args.platform_prefix = "Flex"
+  args."idea.properties.path" = "$home/flex/build/idea.properties"
 
   Map launchProps = new HashMap()
   processLaunchProperties() {
@@ -641,94 +432,55 @@ def layoutMac(Map args, String target) {
   }
 
   layoutMacApp(target, "$home/community", args)
+
+  ant.copy(file: "${home}/out/help/help_mac.jar", tofile: "$target/help/help.jar", failonerror: "false")
 }
 
-def layoutWin(String target) {
+private layoutWin(Map args, String target) {
   layout(target) {
     dir("bin") {
-      fileset(dir: "$home/bin") {
-        include(name: "yjpagent.dll")
-      }
       fileset(dir: "$home/community/bin/win") {
         exclude(name: "breakgen*")
-        exclude(name: "idea.bat")
       }
-      fileset(dir: "$home/flex/build") {
-        include(name: "idea.properties")
-      }
-      renamedFile("$home/flex/build/flexide.bat", "astella.bat")
-
-      fileset(file: "$paths.sandbox/astella.exe.vmoptions")
-
-      fileset(dir: "$home/community/bin") {
-        include(name: "log.xml")
-      }
+      fileset(file: "$home/bin/yjpagent.dll")
+      fileset(file: "$home/flex/build/idea.properties")
     }
+
     dir("help") {
-      fileset(dir: "$home/flex/keymap") {
-        include(name: "ReferenceCard.pdf")
-      }
-      fileset(dir: "$home/out/help") {
-        include(name: "help.jar")
-      }
+      fileset(file: "$home/flex/keymap/ReferenceCard.pdf")
     }
   }
 
   patchPropertiesFile(target)
 
-  ant.replace(file: "$target/bin/astella.bat") {
-    replacefilter(token: "@@system_selector@@", value: system_selector)
-  }
+  winScripts(target, "$home/community", "astella.bat", args)
+  winVMOptions(target, system_selector, "astella.exe")
 
-  ant.fixcrlf(srcDir: "$target/bin", excludes: "*.dll *.exe", eol: "dos")
+  ant.copy(file: "${home}/out/help/help.jar", todir: "$target/help", failonerror: "false")
 }
 
-def set(Map args, String key, Object value) {
-  if (!args.containsKey(key)) {
-    args[key] = value
-  }
-}
-
-def executeExternalAnt(Map args, String file) {
-  set(args, "build.number", buildNumber)
-  set(args, "project.home", home)
-  set(args, "artifacts.path", paths.artifacts)
-  set(args, "dist.win", paths.distWin)
-  //set(args, "dist.all", paths.distAll)
-
-  //set(args, "dist.all.15", paths.distAll15)
-  //set(args, "dist.all.16", paths.distAll16)
-  set(args, "sandbox.path", "$paths.sandbox/sandbox")
-  set(args, "component.version.major", getProperty("component.version.major"))
-  set(args, "component.version.minor", "\"" + getProperty("component.version.minor") + "\"")
-
-  ant.java(failonerror: "true", classname: "org.apache.tools.ant.Main", fork: "true") {
-    args.each { String key, String value ->
-      jvmarg(line: "-D$key=$value")
+private layoutUnix(Map args, String target) {
+  layout(target) {
+    dir("bin") {
+      fileset(dir: "$home/community/bin/linux") {
+        exclude(name: "libbreakgen*")
+      }
+      fileset(dir: "$home/bin") {
+        include(name: "*.so")
+      }
+      fileset(file: "$home/flex/build/idea.properties")
+      renamedFile("$home/flex/ideResources/artwork/flexide.png", "astella.png")
     }
 
-    jvmarg(line: "-Xmx250m")
-
-    classpath {
-      fileset(dir: "$home/build/lib") {
-        include(name: "commons-net-1.4.1.jar")
-        include(name: "jsch-0.1.43.jar")
-      }
-
-      fileset(dir: "$ch/lib/ant/lib") {
-        include(name: "*.jar")
-      }
-
-      fileset(file: "$jdk16/lib/tools.jar")
-      fileset(file: "$ch/lib/oromatcher.jar")
+    dir("help") {
+      fileset(file: "$home/flex/keymap/ReferenceCard.pdf")
     }
-
-    arg(value: "-f")
-    arg(value: file)
   }
-}
 
-def reportArtifact(fileMask) {
-  // Force TC to show artifact on-the-fly
-  ant.echo(message: "##teamcity[publishArtifacts '$paths.artifacts/${fileMask}']")
+  patchPropertiesFile(target)
+
+  unixScripts(target, "$home/community", "astella.sh", args)
+  unixVMOptions(target, "astella")
+
+  ant.copy(file: "${home}/out/help/help.jar", todir: "$target/help", failonerror: "false")
 }

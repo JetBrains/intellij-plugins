@@ -1,6 +1,0 @@
--Xms32m
--Xmx512m
--XX:MaxPermSize=150m
--ea
--agentlib:yjpagent=disablej2ee,disablecounts,disablealloc,sessionname=astella
--Didea.platform.prefix=Flex
