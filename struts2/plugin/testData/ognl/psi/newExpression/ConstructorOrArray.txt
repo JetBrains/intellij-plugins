@@ -1,0 +1,7 @@
+OgnlFile:ConstructorOrArray.ognl
+  PsiElement(NEW_KEYWORD)('new')
+  PsiWhiteSpace(' ')
+  ReferenceExpression
+    PsiElement(IDENTIFIER)('Integer')
+  PsiErrorElement:Constructor or array expected
+    <empty list>

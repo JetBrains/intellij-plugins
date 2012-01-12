@@ -1,0 +1,9 @@
+OgnlFile:MissingArrayExpression.ognl
+  NewExpression
+    PsiElement(NEW_KEYWORD)('new')
+    PsiWhiteSpace(' ')
+    ReferenceExpression
+      PsiElement(IDENTIFIER)('int')
+    PsiElement([)('[')
+    PsiErrorElement:Expression expected
+      <empty list>

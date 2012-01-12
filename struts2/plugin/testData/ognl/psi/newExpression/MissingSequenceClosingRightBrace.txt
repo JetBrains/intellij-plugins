@@ -1,0 +1,21 @@
+OgnlFile:MissingSequenceClosingRightBrace.ognl
+  NewExpression
+    PsiElement(NEW_KEYWORD)('new')
+    PsiWhiteSpace(' ')
+    ReferenceExpression
+      PsiElement(IDENTIFIER)('int')
+    PsiElement([)('[')
+    PsiElement(])(']')
+    PsiWhiteSpace(' ')
+    SequenceExpression
+      SequenceExpression
+        PsiElement({)('{')
+        PsiWhiteSpace(' ')
+        IntegerLiteral
+          PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        IntegerLiteral
+          PsiElement(INTEGER_LITERAL)('2')
+        PsiErrorElement:'}' expected
+          <empty list>

@@ -92,6 +92,13 @@ public class OgnlElementTypes {
     }
   };
 
+  public static final OgnlElementType NEW_EXPRESSION = new OgnlElementType("NewExpression") {
+    @Override
+    public PsiElement createPsiElement(final ASTNode node) {
+      return new OgnlNewExpression(node);
+    }
+  };
+
   public static final OgnlElementType UNARY_EXPRESSION = new OgnlElementType("UnaryExpression") {
     @Override
     public PsiElement createPsiElement(final ASTNode node) {

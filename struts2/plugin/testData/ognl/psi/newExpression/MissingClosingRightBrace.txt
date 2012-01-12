@@ -1,0 +1,11 @@
+OgnlFile:MissingClosingRightBrace.ognl
+  NewExpression
+    PsiElement(NEW_KEYWORD)('new')
+    PsiWhiteSpace(' ')
+    ReferenceExpression
+      PsiElement(IDENTIFIER)('int')
+    PsiElement([)('[')
+    IntegerLiteral
+      PsiElement(INTEGER_LITERAL)('1')
+    PsiErrorElement:']' expected
+      <empty list>

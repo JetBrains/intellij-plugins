@@ -16,10 +16,7 @@
 package com.intellij.lang.ognl.parsing;
 
 import com.intellij.lang.ognl.psi.OgnlTokenTypes;
-import com.intellij.lang.pratt.PrattBuilder;
-import com.intellij.lang.pratt.PrattParser;
-import com.intellij.lang.pratt.ReducingParser;
-import com.intellij.lang.pratt.TokenParser;
+import com.intellij.lang.pratt.*;
 import com.intellij.patterns.IElementTypePattern;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
@@ -302,7 +299,53 @@ public class OgnlParser extends PrattParser {
                    path().left(),
                    expression(EXPR_LEVEL, OgnlElementTypes.BINARY_EXPRESSION));
 
-    // TODO new
+    // "new TypeName(p1,p2)", "new TypeName[]" + opt. "{el1,el2}"
+    registerParser(NEW_KEYWORD,
+                   EXPR_LEVEL + 1,
+                   path().up(),
+                   new ReducingParser() {
+                     @Override
+                     public IElementType parseFurther(final PrattBuilder builder) {
+                       final MutableMarker mark = builder.mark();
+                       builder.assertToken(IDENTIFIER, "Type expected"); // TODO support ClassReference "a.b.Class"
+                       mark.finish(OgnlElementTypes.REFERENCE_EXPRESSION);
+
+                       if (builder.checkToken(LPARENTH)) {
+                         if (builder.checkToken(RPARENTH)) {
+                           return OgnlElementTypes.NEW_EXPRESSION;
+                         }
+
+                         parseExpression(builder);
+                         while (builder.checkToken(COMMA)) {
+                           parseExpression(builder);
+                         }
+
+                         builder.assertToken(RPARENTH, "')' expected");
+                         return OgnlElementTypes.NEW_EXPRESSION;
+                       }
+
+                       if (builder.checkToken(LBRACKET)) {
+                         if (builder.checkToken(RBRACKET)) {
+
+                           // Optional: sequence
+                           if (builder.getTokenType() == LBRACE) {
+                             final MutableMarker sequenceMarker = builder.mark();
+                             parseExpression(builder);
+                             sequenceMarker.finish(OgnlElementTypes.SEQUENCE_EXPRESSION);
+                           }
+
+                           return OgnlElementTypes.NEW_EXPRESSION;
+                         }
+
+                         parseExpression(builder);   // [<X>]
+                         builder.assertToken(RBRACKET, "']' expected");
+                         return OgnlElementTypes.NEW_EXPRESSION;
+                       }
+
+                       builder.error("Constructor or array expected");
+                       return null;
+                     }
+                   });
 
     // instanceof
     registerParser(INSTANCEOF_KEYWORD,

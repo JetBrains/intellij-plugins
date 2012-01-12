@@ -1,0 +1,9 @@
+OgnlFile:MissingParameter.ognl
+  NewExpression
+    PsiElement(NEW_KEYWORD)('new')
+    PsiWhiteSpace(' ')
+    ReferenceExpression
+      PsiElement(IDENTIFIER)('Integer')
+    PsiElement(()('(')
+    PsiErrorElement:Expression expected
+      <empty list>

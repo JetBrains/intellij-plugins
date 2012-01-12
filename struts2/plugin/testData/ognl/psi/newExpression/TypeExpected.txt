@@ -1,0 +1,5 @@
+OgnlFile:TypeExpected.ognl
+  PsiElement(NEW_KEYWORD)('new')
+  ReferenceExpression
+    PsiErrorElement:Type expected
+      <empty list>
