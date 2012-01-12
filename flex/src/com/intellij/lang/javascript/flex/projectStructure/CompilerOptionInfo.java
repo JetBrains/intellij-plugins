@@ -46,7 +46,7 @@ public class CompilerOptionInfo {
   private static final Logger LOG = Logger.getInstance(CompilerOptionInfo.class.getName());
 
   private static volatile CompilerOptionInfo[] ourRootInfos;
-  private static final Map<String, CompilerOptionInfo> ourIdToInfoMap = new THashMap<String, CompilerOptionInfo>(150);
+  private static final Map<String, CompilerOptionInfo> ourIdToInfoMap = new THashMap<String, CompilerOptionInfo>(50);
   private static final Collection<CompilerOptionInfo> ourOptionsWithSpecialValues = new LinkedList<CompilerOptionInfo>();
 
   public static final CompilerOptionInfo DEBUG_INFO =
@@ -148,12 +148,6 @@ public class CompilerOptionInfo {
     myDefaultValue = defaultValue;
 
     myChildOptionInfos = null;
-
-    if (SPECIAL_DEFAULT_VALUE.equals(myDefaultValue)) {
-      ourOptionsWithSpecialValues.add(this);
-    }
-
-    ourIdToInfoMap.put(ID, this);
   }
 
   private CompilerOptionInfo(final @NotNull String groupDisplayName,
@@ -372,8 +366,16 @@ public class CompilerOptionInfo {
 
     final String defaultValue = StringUtil.notNullize(element.getAttributeValue("default"));
 
-    return new CompilerOptionInfo(id, displayName, type, fileExtension, listElements, advanced, since, okForAir, okForPureAS, okForSWF,
-                                  defaultValue);
+    final CompilerOptionInfo info = new CompilerOptionInfo(id, displayName, type, fileExtension, listElements, advanced, since, okForAir,
+                                                           okForPureAS, okForSWF, defaultValue);
+
+    if (SPECIAL_DEFAULT_VALUE.equals(defaultValue)) {
+      ourOptionsWithSpecialValues.add(info);
+    }
+
+    ourIdToInfoMap.put(id, info);
+
+    return info;
   }
 
   private static ListElement[] readListElements(final Element element) {

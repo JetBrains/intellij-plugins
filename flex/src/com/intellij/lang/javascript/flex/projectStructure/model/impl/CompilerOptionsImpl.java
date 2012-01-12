@@ -99,7 +99,7 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions {
     // filter out options that are not known in current IDEA version
     for (Map.Entry<String, String> entry : state.options.entrySet()) {
       if (CompilerOptionInfo.idExists(entry.getKey())) {
-        myOptions.putAll(state.options);
+        myOptions.put(entry.getKey(), entry.getValue());
       }
     }
     myAdditionalConfigFilePath = state.additionalConfigFilePath;
