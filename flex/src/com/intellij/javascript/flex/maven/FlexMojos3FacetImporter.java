@@ -381,7 +381,9 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
     // TODO: correct flexmojos-maven-plugin resolving and taking version from 'flex.sdk.version' property value is rather expensive, so currently version is hardcoded
     final String pluginVersion = flexmojosPlugin.getVersion();
     if (pluginVersion != null && pluginVersion.startsWith("4.")) {
-      return StringUtil.compareVersionNumbers(pluginVersion, "4.1") >= 0 ? "4.5.1.21328" : "4.5.0.18623";
+      return pluginVersion.startsWith("4.0-RC") || StringUtil.compareVersionNumbers(pluginVersion, "4.1") >= 0
+             ? "4.5.1.21328"
+             : "4.5.0.18623";
     }
     else {
       return "3.2.0.3958";
