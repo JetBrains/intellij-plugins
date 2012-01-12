@@ -166,8 +166,15 @@ public class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> 
       newBuildConfiguration.setOutputFileName(oldConfiguration.OUTPUT_FILE_NAME);
       newBuildConfiguration.setSkipCompile(!oldConfiguration.DO_BUILD);
 
+      if (oldConfiguration.USE_CUSTOM_CONFIG_FILE) {
+        final String customConfigFilePath = PathUtil.getCanonicalPath(module.expandPath(oldConfiguration.CUSTOM_CONFIG_FILE));
+        newBuildConfiguration.getCompilerOptions().setAdditionalConfigFilePath(customConfigFilePath);
+      }
+      // todo may be parse options, replace "-a b" to "-a=b", may be move some options to dedicated fields
+      newBuildConfiguration.getCompilerOptions().setAdditionalOptions(oldConfiguration.ADDITIONAL_COMPILER_OPTIONS);
+
       final Map<String, String> options = new THashMap<String, String>(newBuildConfiguration.getCompilerOptions().getAllOptions());
-      
+
       if (oldConfiguration.USE_LOCALE_SETTINGS) {
         options.put("compiler.locale", oldConfiguration.LOCALE.replace(',', CompilerOptionInfo.LIST_ENTRIES_SEPARATOR));
       }
