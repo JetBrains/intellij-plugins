@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2012 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -242,7 +242,7 @@ public class OgnlParser extends PrattParser {
       @NotNull
       public IElementType parseFurther(@NotNull final PrattBuilder builder) {
         parseExpression(builder);
-        builder.assertToken(RPARENTH, "')' expected");
+        assertClosingParenthesis(builder);
         return OgnlElementTypes.PARENTHESIZED_EXPRESSION;
       }
     });
@@ -253,7 +253,7 @@ public class OgnlParser extends PrattParser {
                      @Override
                      public IElementType parseFurther(final PrattBuilder builder) {
                        parseExpression(builder);
-                       builder.assertToken(RBRACKET, "']' expected");
+                       assertClosingBracket(builder);
                        return OgnlElementTypes.INDEXED_EXPRESSION;
                      }
                    });
@@ -271,7 +271,7 @@ public class OgnlParser extends PrattParser {
           } while (builder.checkToken(COMMA));
 
         }
-        builder.assertToken(RBRACE, "'}' expected");
+        assertClosingCurlyBracket(builder);
         return OgnlElementTypes.SEQUENCE_EXPRESSION;
       }
     });
@@ -320,7 +320,7 @@ public class OgnlParser extends PrattParser {
                            parseExpression(builder);
                          }
 
-                         builder.assertToken(RPARENTH, "')' expected");
+                         assertClosingParenthesis(builder);
                          return OgnlElementTypes.NEW_EXPRESSION;
                        }
 
@@ -338,7 +338,7 @@ public class OgnlParser extends PrattParser {
                          }
 
                          parseExpression(builder);   // [<X>]
-                         builder.assertToken(RBRACKET, "']' expected");
+                         assertClosingBracket(builder);
                          return OgnlElementTypes.NEW_EXPRESSION;
                        }
 
@@ -367,7 +367,7 @@ public class OgnlParser extends PrattParser {
                            parseExpression(builder);
                          }
 
-                         builder.assertToken(RPARENTH, "')' expected");
+                         assertClosingParenthesis(builder);
                        }
                        return OgnlElementTypes.METHOD_CALL_EXPRESSION;
                      }
@@ -414,13 +414,25 @@ public class OgnlParser extends PrattParser {
 
   }
 
-  private static TokenParser expression(final int priority, final OgnlElementType type) {
-    return TokenParser.infix(priority, type, "Expression expected");
-  }
-
   @Nullable
   private static IElementType parseExpression(final PrattBuilder builder) {
     return builder.createChildBuilder(EXPR_LEVEL, "Expression expected").parse();
+  }
+
+  private static void assertClosingParenthesis(final PrattBuilder builder) {
+    builder.assertToken(RPARENTH, "')' expected");
+  }
+
+  private static void assertClosingBracket(final PrattBuilder builder) {
+    builder.assertToken(RBRACKET, "']' expected");
+  }
+
+  private static boolean assertClosingCurlyBracket(final PrattBuilder builder) {
+    return builder.assertToken(RBRACE, "'}' expected");
+  }
+
+  private static TokenParser expression(final int priority, final OgnlElementType type) {
+    return TokenParser.infix(priority, type, "Expression expected");
   }
 
 }
