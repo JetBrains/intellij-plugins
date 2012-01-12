@@ -139,6 +139,8 @@ public class FlashBuilderModuleImporter {
     // todo dependencies.setFrameworkLinkage();
 
     setupDependencies(mainBC, fbProject);
+    // todo parse options, replace "-a b" to "-a=b", move some to dedicated fields
+    mainBC.getCompilerOptions().setAdditionalOptions(fbProject.getAdditionalCompilerOptions());
 
     if (mainBC.getOutputType() == OutputType.Application) {
       FlexIdeModuleBuilder.createRunConfiguration(rootModel.getModule(), mainBC.getName());
