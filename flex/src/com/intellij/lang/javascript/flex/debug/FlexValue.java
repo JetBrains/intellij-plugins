@@ -591,8 +591,15 @@ class FlexValue extends XValue {
 
     XValueChildrenList inheritedNodeSingletonList = XValueChildrenList.EMPTY;
     if (inheritedStaticFields.size() + inheritedStaticProperties.size() + inheritedFields.size() + inheritedProperties.size() > 0) {
-      inheritedNodeSingletonList = getWrappingSingletonList("Inherited members", inheritedStaticFields, inheritedStaticProperties,
-                                                            inheritedFields, inheritedProperties);
+      if (inheritedStaticFields.size() + inheritedStaticProperties.size() > 0) {
+        final XValueChildrenList inheritedStatics =
+          getWrappingSingletonList("Static members", inheritedStaticFields, inheritedStaticProperties);
+        inheritedNodeSingletonList = getWrappingSingletonList("Inherited members", inheritedStatics, inheritedFields, inheritedProperties);
+      }
+      else {
+        inheritedNodeSingletonList = getWrappingSingletonList("Inherited members", inheritedStaticFields, inheritedStaticProperties,
+                                                              inheritedFields, inheritedProperties);
+      }
     }
 
     if (nodeClassInfo != null && isCollectionWithDirectContent(nodeClassInfo.myFqn)) {
@@ -603,8 +610,9 @@ class FlexValue extends XValue {
     }
     else {
       node.addChildren(inheritedNodeSingletonList, false);
-      node.addChildren(ownStaticFields, false);
-      node.addChildren(ownStaticProperties, false);
+      if (ownStaticFields.size() + ownStaticProperties.size() > 0) {
+        node.addChildren(getWrappingSingletonList("Static members", ownStaticFields, ownStaticProperties), false);
+      }
       node.addChildren(ownFields, false);
       node.addChildren(ownProperties, false);
     }
