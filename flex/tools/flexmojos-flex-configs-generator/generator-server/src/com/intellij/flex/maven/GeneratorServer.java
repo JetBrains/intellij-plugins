@@ -89,13 +89,19 @@ public class GeneratorServer {
     try {
       for (int i = 0; i < projectsCount; i++) {
         final String pathname = in.readUTF();
+        final String projectId = Integer.toString(i);
         executorService.submit(new Runnable() {
           @Override
           public void run() {
             try {
-              final String configFilePath = generate(pathname, generators, generatorJarPath);
+              final MavenProject project = maven.readProject(new File(pathname));
+              final String configFilePath = generate(project, generators, generatorJarPath);
               synchronized (System.out) {
-                System.out.append("\n[fcg] generated: ").append(pathname).append(':').append(configFilePath).append("[/fcg]").flush();
+                System.out.append("\n[fcg] generated: ").append(projectId).append(':').append(configFilePath);
+                for (String sourceRoot : project.getCompileSourceRoots()) {
+                  System.out.append('|').append(sourceRoot);
+                }
+                System.out.append("[/fcg]").flush();
               }
             }
             catch (Throwable e) {
@@ -111,8 +117,7 @@ public class GeneratorServer {
     }
   }
 
-  private String generate(final String pathname, final List<String> generators, final URL generatorJarPath) throws Exception {
-    final MavenProject project = maven.readProject(new File(pathname));
+  private String generate(final MavenProject project, final List<String> generators, final URL generatorJarPath) throws Exception {
     session.setCurrentProject(project);
 
     MojoExecution flexmojosMojoExecution = null;

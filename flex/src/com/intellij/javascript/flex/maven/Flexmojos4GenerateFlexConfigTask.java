@@ -21,30 +21,38 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathsList;
 import com.intellij.util.StringBuilderSpinAllocator;
 import com.intellij.util.SystemProperties;
+import gnu.trove.THashMap;
+import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.idea.maven.execution.MavenExternalParameters;
+import org.jetbrains.idea.maven.importing.MavenDefaultModifiableModelsProvider;
+import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
 import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.project.*;
 import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
 import org.jetbrains.idea.maven.utils.MavenProgressIndicator;
+import org.jetbrains.idea.maven.utils.MavenUtil;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.jetbrains.idea.maven.utils.MavenLog.LOG;
 
 class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
-  private static final Pattern RESULT_PATTERN = Pattern.compile("^\\[fcg\\] generated: (.*):(.*)\\[/fcg\\]$", Pattern.MULTILINE);
+  private static final Pattern RESULT_PATTERN = Pattern.compile("^\\[fcg\\] generated: (\\d+):([^|]+)\\|(.+)\\[/fcg\\]$", Pattern.MULTILINE);
   private static final Pattern MAVEN_ERROR_PATTERN = Pattern.compile("^\\[ERROR\\] (.*)$", Pattern.MULTILINE);
 
   private DataOutputStream out;
 
   private Process process;
   private MavenProgressIndicator indicator;
-  private List<MavenProject> projects = new ArrayList<MavenProject>();
+  private final List<MavenProject> projects = new ArrayList<MavenProject>();
+
+  private RefreshConfigFiles postTask;
 
   public Flexmojos4GenerateFlexConfigTask(MavenProjectsTree tree) {
     //noinspection NullableProblems
@@ -95,6 +103,10 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
       }
     }
 
+    if (postTask != null) {
+      MavenUtil.invokeAndWait(project, postTask);
+    }
+
     final long duration = System.currentTimeMillis() - start;
     LOG.info("Generating flex configs took " + duration + " ms: " + duration / 60000 + " min " + (duration % 60000) / 1000 + "sec");
   }
@@ -106,12 +118,10 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
       out.writeUTF(pendingProject.getFile().getPath());
     }
     out.flush();
-
-    projects = null;
   }
 
   void submit(MavenProject mavenProject) {
-    assert out == null;
+    assert out == null && !projects.contains(mavenProject);
     projects.add(mavenProject);
   }
 
@@ -171,14 +181,15 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
       int exitCode = -1;
       @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
       final InputStreamReader reader = new InputStreamReader(process.getInputStream());
-      final List<String> filesForRefresh = new ArrayList<String>();
+      final List<String> filesForRefresh = new ArrayList<String>(projects.size());
+      final THashMap<MavenProject, List<String>> sourceRoots = new THashMap<MavenProject, List<String>>(projects.size());
       try {
         stringBuilder = StringBuilderSpinAllocator.alloc();
-        char[] buf = new char[64];
+        char[] buf = new char[128];
         int read;
         final Matcher matcher = RESULT_PATTERN.matcher(stringBuilder);
+        int startForResultParse = 0;
         while ((read = reader.read(buf, 0, buf.length)) >= 0) {
-          final int startForResultParse = stringBuilder.length();
           stringBuilder.append(buf, 0, read);
 
           if (indicator.isCanceled()) {
@@ -186,8 +197,18 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
           }
 
           if (matcher.find(startForResultParse)) {
-            indicator.setText2(matcher.group(1));
+            MavenProject mavenProject = projects.get(Integer.parseInt(matcher.group(1)));
+            indicator.setText2(mavenProject.getDisplayName());
             filesForRefresh.add(matcher.group(2));
+
+            StringTokenizer tokenizer = new StringTokenizer(matcher.group(3), "|");
+            List<String> moduleSourcesRoots = new ArrayList<String>();
+            while (tokenizer.hasMoreTokens()) {
+              moduleSourcesRoots.add(tokenizer.nextToken());
+            }
+
+            sourceRoots.put(mavenProject, moduleSourcesRoots);
+            startForResultParse = stringBuilder.length();
           }
         }
 
@@ -233,36 +254,55 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
           }
         }
 
-        ApplicationManager.getApplication()
-          .invokeLater(new RefreshConfigFiles(filesForRefresh, FlexMojos4FacetImporter.getCompilerConfigsDir(project)));
+        if (!filesForRefresh.isEmpty()) {
+          postTask = new RefreshConfigFiles(filesForRefresh, sourceRoots, project);
+        }
       }
     }
   }
 
   private final static class RefreshConfigFiles implements Runnable {
     private final List<String> filesForRefresh;
-    private final String compilerConfigsDir;
+    private final THashMap<MavenProject, List<String>> sourceRoots;
+    private final Project project;
 
-    public RefreshConfigFiles(List<String> filesForRefresh, String compilerConfigsDir) {
+    public RefreshConfigFiles(List<String> filesForRefresh, THashMap<MavenProject, List<String>> sourceRoots, Project project) {
       this.filesForRefresh = filesForRefresh;
-      this.compilerConfigsDir = compilerConfigsDir;
+      this.sourceRoots = sourceRoots;
+      this.project = project;
     }
 
     public void run() {
-      AccessToken token = WriteAction.start();
+      final AccessToken token = WriteAction.start();
       try {
         // need to refresh externally created file
-        final VirtualFile p = LocalFileSystem.getInstance().refreshAndFindFileByPath(compilerConfigsDir);
+        final VirtualFile p = LocalFileSystem.getInstance().refreshAndFindFileByPath(FlexMojos4FacetImporter.getCompilerConfigsDir(project));
         if (p == null) {
           return;
         }
 
+        final List<VirtualFile> virtualFiles = new ArrayList<VirtualFile>(filesForRefresh.size());
         for (String path : filesForRefresh) {
           final VirtualFile file = p.findChild(path);
           if (file != null) {
-            file.refresh(false, false);
+            virtualFiles.add(file);
           }
         }
+        LocalFileSystem.getInstance().refreshFiles(virtualFiles);
+
+        final MavenProjectsManager mavenProjectsManager = MavenProjectsManager.getInstance(project);
+        sourceRoots.forEachEntry(new TObjectObjectProcedure<MavenProject, List<String>>() {
+          @Override
+          public boolean execute(MavenProject mavenProject, List<String> sourceRoots) {
+            MavenDefaultModifiableModelsProvider provider = new MavenDefaultModifiableModelsProvider(project);
+            MavenRootModelAdapter a = new MavenRootModelAdapter(mavenProject, mavenProjectsManager.findModule(mavenProject), provider);
+            for (String sourceRoot : sourceRoots) {
+              a.addSourceFolder(sourceRoot, false);
+            }
+            provider.commit();
+            return true;
+          }
+        });
       }
       finally {
         token.finish();
