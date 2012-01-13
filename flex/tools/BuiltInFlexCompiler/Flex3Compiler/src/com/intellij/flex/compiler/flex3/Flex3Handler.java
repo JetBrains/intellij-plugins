@@ -44,7 +44,16 @@ public abstract class Flex3Handler extends SdkSpecificHandler {
   static void setupConfiguration(final Builder builder, final Configuration configuration) {
     final flex2.tools.oem.Configuration oemConfig = builder.getDefaultConfiguration();
     populateDefaults(oemConfig, (ToolsConfiguration)configuration);
+
+    final StringBuilder defaultsCssFiles = new StringBuilder();
+    for (Object file : configuration.getCompilerConfiguration().getDefaultsCssFiles()) {
+      // getDefaultsCssFiles() returns files in right-to-left precedence, but we must pass args in left-to-right precedence
+      if (defaultsCssFiles.length() > 0) defaultsCssFiles.insert(0, ',');
+      defaultsCssFiles.insert(0, ((VirtualFile)file).getName());
+    }
+
     final String[] extras = {
+      "-defaults-css-files=" + defaultsCssFiles.toString(),
       "-load-config=" // "-load-config=" MUST BE THE LAST option passed via oemConfig.setConfiguration()
     };
     ((OEMConfiguration)oemConfig).setConfiguration(extras);

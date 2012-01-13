@@ -32,11 +32,11 @@
   <!--<option id="compiler.actionscript-file-encoding" displayName="ActionScript file encoding" type="String" advanced="true"/>-->
   <!--<option id="compiler.as3" displayName="ActionScript 3 object model" type="Boolean" advanced="true" default="true"/>-->
   <!--<option id="compiler.compress" displayName="Compress" type="Boolean" advanced="true" since="4.5" default="true"/>-->
-  <group displayName="Style">
+  <group displayName="Styles and Themes">
+    <option id="compiler.defaults-css-url" displayName="Default CSS URL" type="File" advanced="true"/>
     <option id="compiler.defaults-css-files" displayName="Default CSS files" type="List" advanced="true">
       <listElement name="filename" displayName="Path To CSS File" type="File" fileExtension="css"/>
     </option>
-    <option id="compiler.defaults-css-url" displayName="Default CSS URL" type="String" advanced="true"/>
     <option id="compiler.theme" displayName="Theme" type="List" advanced="true" default="SPECIAL">
       <listElement name="filename" displayName="CSS Or SWC Theme File" type="File"/>
     </option>
