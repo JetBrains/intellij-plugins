@@ -178,14 +178,12 @@ public class TestRunner {
   }
 
   public static void main(String[] args) throws Exception {
-//    System.out.println(Arrays.toString(args));
     LogManager.getLogManager().readConfiguration(RunnerMode.QUIET.getLogConfig());
 
     Map<ParameterKey, String> paramMap = parseParams(args);
     Settings settings = Settings.build(paramMap);
-
     ObjectOutput testResultProtocolMessageOutput = fetchSocketObjectOutput(settings.getPort());
-    if (!validateServer(testResultProtocolMessageOutput, paramMap)) {
+    if (!validateServer(testResultProtocolMessageOutput, settings)) {
       return;
     }
     try {
@@ -203,24 +201,22 @@ public class TestRunner {
     }
   }
 
-  static boolean validateServer(ObjectOutput testResultProtocolMessageOutput, Map<ParameterKey, String> paramMap) throws IOException {
-    String serverUrl = paramMap.get(ParameterKey.SERVER_URL);
-    if (serverUrl != null && !serverUrl.isEmpty()) {
-      JstdServerFetchResult fetchResult = JstdServerUtils.syncFetchServerInfo(serverUrl);
-      String message = null;
-      if (fetchResult.isError()) {
-        message = "Could not connect to a JsTestDriver server running at " + serverUrl + "\n" +
-              "Check that the server is running.";
-      } else if (fetchResult.getServerInfo().getCapturedBrowsers().isEmpty()) {
-        message = "No captured browsers found.\n" +
-            "To capture browser open '" + serverUrl + "' in browser.";
-      }
-      if (message != null) {
-        testResultProtocolMessageOutput.writeObject(new JstdTestRunnerFailure(JstdTestRunnerFailure.FailureType.WHOLE_TEST_RUNNER, message, null));
-        return false;
-      }
+  static boolean validateServer(ObjectOutput testResultProtocolMessageOutput, Settings settings) throws IOException {
+    String serverUrl = settings.getServerUrl();
+    JstdServerFetchResult fetchResult = JstdServerUtils.syncFetchServerInfo(serverUrl);
+    String message = null;
+    if (fetchResult.isError()) {
+      message = "Could not connect to a JsTestDriver server running at " + serverUrl + "\n" +
+                "Check that the server is running.";
+    } else if (fetchResult.getServerInfo().getCapturedBrowsers().isEmpty()) {
+      message = "No captured browsers found.\n" +
+                "To capture browser open '" + serverUrl + "' in browser.";
     }
-    return true;
+    if (message == null) {
+      return true;
+    }
+    testResultProtocolMessageOutput.writeObject(new JstdTestRunnerFailure(JstdTestRunnerFailure.FailureType.WHOLE_TEST_RUNNER, message, null));
+    return false;
   }
 
   private static Map<ParameterKey, String> parseParams(String[] args) {
@@ -295,7 +291,8 @@ public class TestRunner {
     private final String myTestCaseName;
     private final String myTestMethodName;
 
-    private Settings(int port, String serverUrl, List<File> configFiles, String testCaseName, String testMethodName) {
+    private Settings(int port, @NotNull String serverUrl, @NotNull List<File> configFiles,
+                     @NotNull String testCaseName, @NotNull String testMethodName) {
       myPort = port;
       myServerUrl = serverUrl;
       myConfigFiles = configFiles;
@@ -312,14 +309,17 @@ public class TestRunner {
       return myServerUrl;
     }
 
+    @NotNull
     public List<File> getConfigFiles() {
       return myConfigFiles;
     }
 
+    @NotNull
     public String getTestCaseName() {
       return myTestCaseName;
     }
 
+    @NotNull
     public String getTestMethodName() {
       return myTestMethodName;
     }
@@ -332,9 +332,9 @@ public class TestRunner {
         throw new RuntimeException("server_url parameter must be specified");
       }
       String configFilesStr = ObjectUtils.notNull(parameters.get(ParameterKey.CONFIG_FILE), "");
-      String[] pathes = configFilesStr.split(Pattern.quote(","));
+      String[] paths = configFilesStr.split(Pattern.quote(","));
       List<File> configFiles = Lists.newArrayList();
-      for (String urlEncodedPath : pathes) {
+      for (String urlEncodedPath : paths) {
         try {
           String path = URLDecoder.decode(urlEncodedPath, "UTF-8");
           File file = new File(path);
