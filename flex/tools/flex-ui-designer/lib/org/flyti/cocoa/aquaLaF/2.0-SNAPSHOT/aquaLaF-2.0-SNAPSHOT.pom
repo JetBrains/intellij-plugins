@@ -45,7 +45,6 @@
                 <class>cocoa.plaf.aqua.IconPosition</class>
                 <!--<class>cocoa.plaf.aqua.MenuItemBorder</class>-->
                 <!--<class>cocoa.plaf.aqua.MenuItemRenderer</class>-->
-                <!--<class>cocoa.plaf.aqua.MiniScrollBarSkin</class>-->
                 <!--<class>cocoa.plaf.aqua.NumericStepperSkin</class>-->
                 <!--<class>cocoa.plaf.aqua.NumericStepperTextInputBorder</class>-->
                 <!--<class>cocoa.plaf.aqua.PopUpMenuInteractor</class>-->
@@ -69,18 +68,19 @@
         <artifactId>asset-builder-maven-plugin</artifactId>
 				<version>2.0-SNAPSHOT</version>
 				<executions>
-          <execution>
-						<goals>
-							<goal>generate</goal>
-            </goals>
-            <configuration>
-              <inputs>
-                <input>resources/assets.png</input>
-                <input>resources</input>
-              </inputs>
-              <output>${project.build.directory}/assets</output>
-            </configuration>
-          </execution>
+          <!--<execution>-->
+						<!--<goals>-->
+							<!--<goal>generate</goal>-->
+            <!--</goals>-->
+            <!--<configuration>-->
+              <!--<inputs>-->
+                <!--<input>resources/assets.png</input>-->
+                <!--<input>resources</input>-->
+                <!--<input>/Users/develar/test/artFiles</input>-->
+              <!--</inputs>-->
+              <!--<output>resources/borders2.bin</output>-->
+            <!--</configuration>-->
+          <!--</execution>-->
           <execution>
             <id>extra</id>
 						<goals>

@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner {
+import cocoa.DocumentWindow;
 import cocoa.util.Files;
 
 import com.intellij.flex.uiDesigner.plaf.aqua.IdeaAquaLookAndFeel;
@@ -12,6 +13,8 @@ import flash.events.InvokeEvent;
 import flash.events.UncaughtErrorEvent;
 import flash.filesystem.File;
 
+import net.miginfocom.layout.Grid;
+
 import org.flyti.plexus.PlexusContainer;
 import org.flyti.plexus.PlexusManager;
 import org.jetbrains.ApplicationManager;
@@ -22,6 +25,10 @@ public class Main extends Sprite {
   private var loadedPluginCounter:int;
  
   private var port:int;
+
+  // Burn in Hell, Adobe
+  DocumentWindow;
+  Grid;
 
   public function Main() {
     init();

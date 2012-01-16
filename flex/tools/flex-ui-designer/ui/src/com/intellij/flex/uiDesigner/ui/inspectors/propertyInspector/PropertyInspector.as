@@ -1,6 +1,8 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector {
 import cocoa.ListView;
 import cocoa.Panel;
+import cocoa.ScrollPolicy;
+import cocoa.ScrollView;
 import cocoa.View;
 import cocoa.layout.ListVerticalLayout;
 import cocoa.pane.PaneItem;
@@ -32,12 +34,12 @@ public class PropertyInspector extends Panel {
     listView.layout = layout;
     listView.rendererManager = new PaneRendererManager(laf.getTextFormat(CustomTextFormatId.SIDE_PANE_GROUP_ITEM_LABEL), laf.getBorder("GroupItemRenderer.b"), laf);
 
-    //var scrollView:ScrollView = new ScrollView();
-    //scrollView.documentView = listView;
-    //scrollView.horizontalScrollPolicy = ScrollPolicy.OFF;
+    var scrollView:ScrollView = new ScrollView();
+    scrollView.documentView = listView;
+    scrollView.horizontalScrollPolicy = ScrollPolicy.OFF;
 
-    this.contentView = listView;
-    return listView;
+    this.contentView = scrollView;
+    return scrollView;
   }
  
   protected function updateData(element:Object):void {
@@ -118,7 +120,7 @@ class OtherPropertiesFactory implements ViewFactory {
     var insets:Insets = new Insets(2, NaN, NaN, 3);
     var textFormat:TextFormat = laf.getTextFormat(TextFormatId.SMALL_SYSTEM);
     var firstColumn:TableColumn = new TableColumnImpl(tableView, "name", new NameRendererManager(textFormat, insets));
-    firstColumn.width = 160;
+    firstColumn.preferredWidth = 160;
     var valueRendererManager:ValueRendererManager = new ValueRendererManager(laf, textFormat, insets, dataSource);
     tableView.columns = new <TableColumn>[firstColumn, new TableColumnImpl(tableView, null, valueRendererManager)];
     tableView.addToSuperview(container, laf, null);

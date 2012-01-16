@@ -1,9 +1,7 @@
 package com.intellij.flex.uiDesigner.plaf {
 import cocoa.Border;
-import cocoa.FrameInsets;
 import cocoa.Insets;
 import cocoa.TextLineInsets;
-import cocoa.border.LinearGradientBorder;
 import cocoa.border.RectangularBorder;
 import cocoa.border.StatefulBorderImpl;
 import cocoa.layout.ListLayoutFactory;
@@ -78,7 +76,7 @@ class PanelBorder extends AbstractBorder {
     _contentInsets = contentInsets;
   }
 
-  override public function draw(g:Graphics, w:Number, h:Number, x:Number = 0, y:Number = 0, view:View = null):void {
+  override public function draw(g:Graphics, w:Number = NaN, h:Number = NaN, x:Number = 0, y:Number = 0, view:View = null):void {
     g.lineStyle(1, 0x999999);
     g.moveTo(x, y);
     g.lineTo(x, y + h);
@@ -100,7 +98,7 @@ final class ToolWindowBarBorder extends AbstractBorder {
     _contentInsets = new Insets(3, 1, 2, 1);
   }
 
-  override public function draw(g:Graphics, w:Number, h:Number, x:Number = 0, y:Number = 0, view:View = null):void {
+  override public function draw(g:Graphics, w:Number = NaN, h:Number = NaN, x:Number = 0, y:Number = 0, view:View = null):void {
     g.lineStyle(1, 0x999999);
     g.beginFill(0xe1e1e1);
     g.moveTo(x, y);

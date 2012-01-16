@@ -86,7 +86,7 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
   }
 
   override public function getMinimumHeight(wHint:int = -1):int {
-    return Panel(component).contentView.getMaximumHeight() + contentBorder.contentInsets.height;
+    return Panel(component).contentView.getMinimumHeight() + contentBorder.contentInsets.height;
   }
 
   override public function getPreferredWidth(hHint:int = -1):int {
