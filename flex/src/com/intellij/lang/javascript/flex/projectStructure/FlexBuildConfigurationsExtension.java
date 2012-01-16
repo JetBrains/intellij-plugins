@@ -25,17 +25,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class FlexIdeBuildConfigurationsExtension extends ModuleStructureExtension {
+public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
 
   final FlexIdeBCConfigurator myConfigurator;
   private static final Icon ICON = IconLoader.getIcon("buildConfig.png");
 
-  public FlexIdeBuildConfigurationsExtension() {
+  public FlexBuildConfigurationsExtension() {
     myConfigurator = new FlexIdeBCConfigurator();
   }
 
-  public static FlexIdeBuildConfigurationsExtension getInstance() {
-    return ModuleStructureExtension.EP_NAME.findExtension(FlexIdeBuildConfigurationsExtension.class);
+  public static FlexBuildConfigurationsExtension getInstance() {
+    return ModuleStructureExtension.EP_NAME.findExtension(FlexBuildConfigurationsExtension.class);
   }
 
   public FlexIdeBCConfigurator getConfigurator() {

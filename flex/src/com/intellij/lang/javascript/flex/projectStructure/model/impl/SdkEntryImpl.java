@@ -1,14 +1,10 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
-import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
-import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.openapi.components.StateStorageException;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
-import com.intellij.openapi.roots.impl.libraries.LibraryEx;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
+import com.intellij.openapi.projectRoots.ProjectJdkTable;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
@@ -29,27 +25,17 @@ import java.util.Map;
  * @author ksafonov
  */
 class SdkEntryImpl implements SdkEntry {
-  private static Logger LOG = Logger.getInstance(SdkEntryImpl.class.getName());
 
   @NotNull
-  private final String myLibraryId;
-
-  @NotNull
-  private final String myHomePath;
+  private final String myName;
 
   private final LinkedHashMap<String, DependencyTypeImpl> myDependencyTypes = new LinkedHashMap<String, DependencyTypeImpl>();
 
   public SdkEntryImpl(State state) {
-    myLibraryId = state.LIBRARY_ID;
-    if (StringUtil.isEmpty(myLibraryId)) {
-      throw new StateStorageException("library id is empty");
+    myName = state.NAME;
+    if (StringUtil.isEmpty(myName)) {
+      throw new StateStorageException("SDK name is empty");
     }
-
-    myHomePath = state.HOME_PAtH;
-    if (StringUtil.isEmpty(myHomePath)) {
-      throw new StateStorageException("home path is empty");
-    }
-
     for (EntryState entryState : state.DEPENDENCY_TYPES) {
       DependencyTypeImpl dependencyType = new DependencyTypeImpl();
       dependencyType.loadState(entryState.TYPE);
@@ -57,13 +43,12 @@ class SdkEntryImpl implements SdkEntry {
     }
   }
 
-  public SdkEntryImpl(@NotNull String libraryId, String homePath) {
-    myLibraryId = libraryId;
-    myHomePath = homePath;
+  public SdkEntryImpl(@NotNull String name) {
+    myName = name;
   }
 
   public SdkEntryImpl getCopy() {
-    SdkEntryImpl copy = new SdkEntryImpl(myLibraryId, myHomePath);
+    SdkEntryImpl copy = new SdkEntryImpl(myName);
     applyTo(copy);
     return copy;
   }
@@ -74,8 +59,7 @@ class SdkEntryImpl implements SdkEntry {
   }
 
   public boolean isEqual(@NotNull SdkEntryImpl that) {
-    if (!myLibraryId.equals(that.myLibraryId)) return false;
-    if (!myHomePath.equals(that.myHomePath)) return false;
+    if (!myName.equals(that.myName)) return false;
     Iterator<String> i1 = myDependencyTypes.keySet().iterator();
     Iterator<String> i2 = that.myDependencyTypes.keySet().iterator();
     while (i1.hasNext() && i2.hasNext()) {
@@ -90,39 +74,24 @@ class SdkEntryImpl implements SdkEntry {
 
   @Override
   @NotNull
-  public String getLibraryId() {
-    return myLibraryId;
-  }
-
-  @Override
-  @NotNull
-  public String getHomePath() {
-    return myHomePath;
+  public String getName() {
+    return myName;
   }
 
   @Override
   @Nullable
-  public LibraryEx findLibrary() {
-    return findLibrary(ApplicationLibraryTable.getApplicationTable().getLibraries());
-  }
-
-  public LibraryEx findLibrary(Library[] libraries) {
-    Library result = ContainerUtil.find(libraries, new Condition<Library>() {
-      @Override
-      public boolean value(Library library) {
-        return FlexSdk.isFlexSdk(library) && FlexProjectRootsUtil.getSdkLibraryId(library).equals(myLibraryId);
+  public Sdk findSdk() {
+    final FlexSdkType2 sdkType = FlexSdkType2.getInstance();
+    return ContainerUtil.find(ProjectJdkTable.getInstance().getAllJdks(), new Condition<Sdk>() {
+      public boolean value(final Sdk sdk) {
+        return sdkType == sdk.getSdkType() && myName.equals(sdk.getName());
       }
     });
-    if (result != null) {
-      LOG.assertTrue(myHomePath.equals(FlexSdk.getHomePath(result)), "Unexpected home path");
-    }
-    return (LibraryEx)result;
   }
 
   public State getState() {
     State state = new State();
-    state.LIBRARY_ID = myLibraryId;
-    state.HOME_PAtH = myHomePath;
+    state.NAME = myName;
     for (Map.Entry<String, DependencyTypeImpl> entry : myDependencyTypes.entrySet()) {
       EntryState entryState = new EntryState();
       entryState.URL = entry.getKey();
@@ -135,11 +104,8 @@ class SdkEntryImpl implements SdkEntry {
   @Tag("sdk")
   public static class State {
 
-    @Attribute("library-id")
-    public String LIBRARY_ID;
-
-    @Attribute("home-path")
-    public String HOME_PAtH;
+    @Attribute("name")
+    public String NAME;
 
     @Tag("dependencies")
     public List<EntryState> DEPENDENCY_TYPES = new ArrayList<EntryState>();

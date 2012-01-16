@@ -8,23 +8,23 @@ import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
-import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.projectStructure.ui.AddBuildConfigurationDialog;
 import com.intellij.lang.javascript.flex.projectStructure.ui.CompositeConfigurable;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
-import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
@@ -86,6 +86,10 @@ public class FlexIdeBCConfigurator {
         public LibraryTableBase.ModifiableModelEx getLibrariesModifiableModel(final String level) {
           return ProjectStructureConfigurable.getInstance(project).getContext().createModifiableModelProvider(level).getModifiableModel();
         }
+
+        public Sdk[] getAllSdks() {
+          return FlexProjectConfigurationEditor.getEditableFlexSdks(project);
+        }
       });
     }
 
@@ -128,7 +132,9 @@ public class FlexIdeBCConfigurator {
     for (final ModifiableFlexIdeBuildConfiguration configuration : configurations) {
       CompositeConfigurable configurable = myConfigurablesMap.get(configuration);
       if (configurable == null) {
-        configurable = new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, myConfigEditor).wrapInTabs();
+        final ProjectSdksModel sdksModel =
+          ProjectStructureConfigurable.getInstance(myConfigEditor.getProject()).getProjectJdksModel();
+        configurable = new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, myConfigEditor, sdksModel).wrapInTabs();
         myConfigurablesMap.put(configuration, configurable);
       }
       configurables.add(configurable);
@@ -219,7 +225,7 @@ public class FlexIdeBCConfigurator {
     configuration.setOutputFolder(someExistingConfig.getOutputFolder());
 
     final SdkEntry sdkEntry = someExistingConfig.getDependencies().getSdkEntry();
-    final SdkEntry newSdkEntry = sdkEntry == null ? findAnySdk() : Factory.createSdkEntry(sdkEntry.getLibraryId(), sdkEntry.getHomePath());
+    final SdkEntry newSdkEntry = sdkEntry == null ? findAnySdk() : Factory.createSdkEntry(sdkEntry.getName());
     configuration.getDependencies().setSdkEntry(newSdkEntry);
 
     createConfigurableNode(configuration, module, treeNodeNameUpdater);
@@ -227,9 +233,8 @@ public class FlexIdeBCConfigurator {
 
   @Nullable
   private SdkEntry findAnySdk() {
-    Library[] libraries = myConfigEditor.getSdksLibraries();
-    return libraries.length > 0
-           ? Factory.createSdkEntry(FlexProjectRootsUtil.getSdkLibraryId(libraries[0]), FlexSdk.getHomePath(libraries[0])) : null;
+    Sdk[] sdks = myConfigEditor.getFlexSdks();
+    return sdks.length > 0 ? Factory.createSdkEntry(sdks[0].getName()) : null;
   }
 
   public void copy(final CompositeConfigurable configurable, final Runnable treeNodeNameUpdater) {
@@ -272,8 +277,10 @@ public class FlexIdeBCConfigurator {
   }
 
   private void createConfigurableNode(ModifiableFlexIdeBuildConfiguration configuration, Module module, Runnable treeNodeNameUpdater) {
+    final ProjectSdksModel sdksModel =
+      ProjectStructureConfigurable.getInstance(myConfigEditor.getProject()).getProjectJdksModel();
     final FlexIdeBCConfigurable configurable =
-      new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, myConfigEditor);
+      new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, myConfigEditor, sdksModel);
 
     CompositeConfigurable wrapped = configurable.wrapInTabs();
     myConfigurablesMap.put(configuration, wrapped);

@@ -3,11 +3,11 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.htmlwrapper.CreateHtmlWrapperAction;
-import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.LabeledComponent;
@@ -45,9 +45,9 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
   private JCheckBox myExpressInstallCheckBox;
 
   private final Project myProject;
-  private final @NotNull FlexSdk mySdk;
+  private final @NotNull Sdk mySdk;
 
-  public CreateHtmlWrapperTemplateDialog(final Module module, final @NotNull FlexSdk sdk, final @Nullable String initialPath) {
+  public CreateHtmlWrapperTemplateDialog(final Module module, final @NotNull Sdk sdk, final @Nullable String initialPath) {
     super(module.getProject());
 
     myProject = module.getProject();
@@ -103,7 +103,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
   }
 
   public static boolean createHtmlWrapperTemplate(final Project project,
-                                                  final FlexSdk sdk,
+                                                  final Sdk sdk,
                                                   final String templateFolderPath,
                                                   final boolean enableHistory,
                                                   final boolean checkPlayerVersion,
@@ -155,13 +155,13 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
   }
 
   private static boolean doCreateWrapper(final Project project,
-                                         final FlexSdk sdk,
+                                         final Sdk sdk,
                                          final VirtualFile folder,
                                          final boolean enableHistory,
                                          final boolean checkPlayerVersion,
                                          final boolean expressInstall) {
     final String wrapperName;
-    if (sdk.getFlexVersion().startsWith("3.")) {
+    if (sdk.getVersionString().startsWith("3.")) {
       final String prefix = checkPlayerVersion
                             ? expressInstall ? "express-installation"
                                              : "client-side-detection"

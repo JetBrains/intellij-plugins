@@ -6,10 +6,9 @@ import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryRootsComponentDescriptor;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
+import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexLibraryConfigurable;
-import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexLibraryIdGenerator;
@@ -17,7 +16,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProject
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.module.Module;
@@ -25,6 +24,8 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectBundle;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkModel;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
@@ -36,12 +37,14 @@ import com.intellij.openapi.roots.libraries.LibraryType;
 import com.intellij.openapi.roots.libraries.ui.LibraryRootsComponentDescriptor;
 import com.intellij.openapi.roots.libraries.ui.RootDetector;
 import com.intellij.openapi.roots.ui.OrderEntryAppearanceService;
+import com.intellij.openapi.roots.ui.configuration.JdkComboBox;
 import com.intellij.openapi.roots.ui.configuration.LibraryTableModifiableModelProvider;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.classpath.CreateModuleLibraryChooser;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.EditExistingLibraryDialog;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesModifiableModel;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.Messages;
@@ -53,6 +56,7 @@ import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -60,9 +64,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.*;
 import com.intellij.ui.components.editors.JBComboBoxTableCellEditorComponent;
 import com.intellij.ui.navigation.Place;
-import com.intellij.util.Function;
-import com.intellij.util.IconUtil;
-import com.intellij.util.PlatformIcons;
+import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FilteringIterator;
 import com.intellij.util.containers.HashMap;
@@ -85,10 +87,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
@@ -97,7 +96,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   private static final Icon MISSING_BC_ICON = null;
 
   private JPanel myMainPanel;
-  private FlexSdkPanel mySdkPanel;
+  private JdkComboBox mySdkCombo;
   private JLabel myTargetPlayerLabel;
   private JComboBox myTargetPlayerCombo;
   private JLabel myTargetPlayerWarning;
@@ -107,17 +106,23 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   private JComboBox myFrameworkLinkageCombo;
   private JLabel myWarning;
   private JPanel myTablePanel;
-
+  private JButton myNewButton;
+  private JButton myEditButton;
+  private JLabel mySdkLabel;
   private final EditableTreeTable<MyTableItem> myTable;
 
   private final Project myProject;
-  private final FlexProjectConfigurationEditor myConfigEditor;
-  private final BuildConfigurationNature myNature;
   private final ModifiableDependencies myDependencies;
   private AddItemPopupAction[] myPopupActions;
   private final AnActionButton myEditAction;
   private final AnActionButton myRemoveButton;
   private final Disposable myDisposable;
+  private final BuildConfigurationNature myNature;
+
+  private final FlexProjectConfigurationEditor myConfigEditor;
+  private final ProjectSdksModel mySkdsModel;
+  private boolean myFreeze;
+  private final EventDispatcher<ChangeListener> mySdkChangeDispatcher;
 
   private abstract static class MyTableItem {
     public abstract String getText();
@@ -441,20 +446,20 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   private static class SdkItem extends MyTableItem {
-    private final FlexSdk mySdk;
+    private final Sdk mySdk;
 
-    public SdkItem(FlexSdk sdk) {
+    public SdkItem(Sdk sdk) {
       mySdk = sdk;
     }
 
     @Override
     public String getText() {
-      return MessageFormat.format("Flex SDK {0}", mySdk.getFlexVersion());
+      return MessageFormat.format("Flex SDK {0}", mySdk.getVersionString());
     }
 
     @Override
     public Icon getIcon() {
-      return FlexSdkType.getInstance().getIcon();
+      return FlexSdkType2.getInstance().getIcon();
     }
 
     @Override
@@ -646,14 +651,51 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
   public DependenciesConfigurable(final ModifiableFlexIdeBuildConfiguration bc,
                                   Project project,
-                                  @NotNull FlexProjectConfigurationEditor configEditor) {
+                                  @NotNull FlexProjectConfigurationEditor configEditor,
+                                  final ProjectSdksModel sdksModel) {
+    mySkdsModel = sdksModel;
     myConfigEditor = configEditor;
     myDependencies = bc.getDependencies();
     myProject = project;
     myNature = bc.getNature();
 
+    mySdkChangeDispatcher = EventDispatcher.create(ChangeListener.class);
     myDisposable = Disposer.newDisposable();
-    Disposer.register(myDisposable, mySdkPanel);
+
+    final SdkModel.Listener listener = new SdkModel.Listener() {
+      public void sdkAdded(final Sdk sdk) {
+        rebuildSdksModel();
+      }
+
+      public void beforeSdkRemove(final Sdk sdk) {
+        rebuildSdksModel();
+      }
+
+      public void sdkChanged(final Sdk sdk, final String previousName) {
+        rebuildSdksModel();
+      }
+
+      public void sdkHomeSelected(final Sdk sdk, final String newSdkHome) {
+        rebuildSdksModel();
+      }
+    };
+    sdksModel.addListener(listener);
+    Disposer.register(myDisposable, new Disposable() {
+      public void dispose() {
+        sdksModel.removeListener(listener);
+      }
+    });
+
+    mySdkCombo.setSetupButton(myNewButton, myProject, sdksModel, new JdkComboBox.NoneJdkComboBoxItem(), null,
+                              FlexBundle.message("set.up.sdk.title"));
+    mySdkCombo.setEditButton(myEditButton, myProject, new NullableComputable<Sdk>() {
+      @Nullable
+      public Sdk compute() {
+        return mySdkCombo.getSelectedJdk();
+      }
+    });
+
+    mySdkLabel.setLabelFor(mySdkCombo);
 
     myTargetPlayerLabel.setVisible(myNature.isWebPlatform());
     myTargetPlayerCombo.setVisible(myNature.isWebPlatform());
@@ -661,14 +703,22 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     myFrameworkLinkageLabel.setVisible(!myNature.pureAS);
     myFrameworkLinkageCombo.setVisible(!myNature.pureAS);
 
-    mySdkPanel.addListener(new ChangeListener() {
-      public void stateChanged(final ChangeEvent e) {
-        BCUtils.updateAvailableTargetPlayers(mySdkPanel, myTargetPlayerCombo);
+    mySdkCombo.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        if (myFreeze) {
+          return;
+        }
+        Sdk sdk = mySdkCombo.getSelectedJdk();
+        if (sdk != null && sdk.getSdkType() != FlexSdkType2.getInstance()) {
+          sdk = null; // TODO remove this when SDK filters out non-Flex items
+        }
+        BCUtils.updateAvailableTargetPlayers(sdk, myTargetPlayerCombo);
         updateComponentSetCombo();
-        updateSdkTableItem(mySdkPanel.getCurrentSdk());
+        updateSdkTableItem(sdk);
         myTable.refresh();
+        mySdkChangeDispatcher.getMulticaster().stateChanged(new ChangeEvent(this));
       }
-    }, myDisposable);
+    });
 
     myComponentSetCombo.setModel(new DefaultComboBoxModel(ComponentSet.values()));
     myComponentSetCombo.setRenderer(new ListCellRendererWrapper<ComponentSet>(myComponentSetCombo.getRenderer()) {
@@ -681,8 +731,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       .setRenderer(new ListCellRendererWrapper<LinkageType>(myFrameworkLinkageCombo.getRenderer()) {
         public void customize(JList list, LinkageType value, int index, boolean selected, boolean hasFocus) {
           if (value == LinkageType.Default) {
-            final FlexSdk sdk = mySdkPanel.getCurrentSdk();
-            final String sdkVersion = sdk != null ? sdk.getFlexVersion() : null;
+            final Sdk sdk = mySdkCombo.getSelectedJdk();
+            final String sdkVersion = sdk != null ? sdk.getVersionString() : null;
             setText(sdkVersion == null
                     ? "Default"
                     : MessageFormat.format("Default ({0})", BCUtils.getDefaultFrameworkLinkage(sdkVersion, myNature).getLongText()));
@@ -699,7 +749,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       @Override
       public void itemStateChanged(ItemEvent e) {
         DefaultMutableTreeNode sdkNode = findSdkNode();
-        FlexSdk currentSdk = mySdkPanel.getCurrentSdk();
+        Sdk currentSdk = mySdkCombo.getSelectedJdk();
         if (sdkNode != null && currentSdk != null) {
           updateSdkEntries(sdkNode, currentSdk);
           myTable.refresh();
@@ -784,7 +834,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
     });
 
-    FlexIdeBuildConfigurationsExtension.getInstance().getConfigurator().addListener(new FlexIdeBCConfigurator.Listener() {
+    FlexBuildConfigurationsExtension.getInstance().getConfigurator().addListener(new FlexIdeBCConfigurator.Listener() {
       @Override
       public void moduleRemoved(Module module) {
         // TODO return if module == this module
@@ -826,7 +876,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     myConfigEditor.addModulesModelChangeListener(new FlexProjectConfigurationEditor.ModulesModelChangeListener() {
       @Override
       public void modulesModelsChanged(Collection<Module> modules) {
-        FlexIdeBCConfigurator configurator = FlexIdeBuildConfigurationsExtension.getInstance().getConfigurator();
+        FlexIdeBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
         for (Module module : modules) {
           for (CompositeConfigurable configurable : configurator.getBCConfigurables(module)) {
             FlexIdeBCConfigurable flexIdeBCConfigurable = FlexIdeBCConfigurable.unwrap(configurable);
@@ -839,13 +889,26 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }, myDisposable);
   }
 
+  private void rebuildSdksModel() {
+    final Sdk sdk = mySdkCombo.getSelectedJdk();
+    myFreeze = true;
+    try {
+      mySdkCombo.reloadModel(new JdkComboBox.NoneJdkComboBoxItem(), myProject);
+    }
+    finally {
+      myFreeze = false;
+    }
+    mySdkCombo.setSelectedJdk(sdk);
+    mySdkChangeDispatcher.getMulticaster().stateChanged(new ChangeEvent(this));
+  }
+
   @Nullable
-  FlexSdk getCurrentSdk() {
-    return mySdkPanel.getCurrentSdk();
+  Sdk getCurrentSdk() {
+    return mySdkCombo.getSelectedJdk();
   }
 
   void addSdkChangeListener(final ChangeListener changeListener) {
-    mySdkPanel.addListener(changeListener, myDisposable);
+    mySdkChangeDispatcher.addListener(changeListener);
   }
 
   @Nullable
@@ -1047,13 +1110,14 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   public boolean isModified() {
-    String currentSdkId = mySdkPanel.getCurrentSdkId();
+    final JdkComboBox.JdkComboBoxItem selectedItem = mySdkCombo.getSelectedItem();
+    String currentSdkName = selectedItem.getSdkName();
     SdkEntry sdkEntry = myDependencies.getSdkEntry();
-    if (currentSdkId != null) {
+    if (currentSdkName != null) {
       if (sdkEntry == null) {
-        return mySdkPanel.getCurrentSdk() != null;
+        return mySdkCombo.getSelectedJdk() != null;
       }
-      else if (!currentSdkId.equals(sdkEntry.getLibraryId())) {
+      else if (!currentSdkName.equals(sdkEntry.getName())) {
         return true;
       }
     }
@@ -1106,9 +1170,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
     myConfigEditor.setEntries(dependencies, newEntries);
 
-    FlexSdk currentSdk = mySdkPanel.getCurrentSdk();
+    Sdk currentSdk = mySdkCombo.getSelectedJdk();
     if (currentSdk != null) {
-      SdkEntry sdkEntry = Factory.createSdkEntry(currentSdk.getLibraryId(), currentSdk.getHomePath());
+      SdkEntry sdkEntry = Factory.createSdkEntry(currentSdk.getName());
       dependencies.setSdkEntry(sdkEntry);
     }
     else {
@@ -1118,10 +1182,28 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
   public void reset() {
     SdkEntry sdkEntry = myDependencies.getSdkEntry();
-    mySdkPanel.reset();
-    mySdkPanel.setCurrentSdk(sdkEntry);
+    myFreeze = true;
+    try {
+      mySdkCombo.reloadModel(new JdkComboBox.NoneJdkComboBoxItem(), myProject);
+    }
+    finally {
+      myFreeze = false;
+    }
 
-    BCUtils.updateAvailableTargetPlayers(mySdkPanel, myTargetPlayerCombo);
+    if (sdkEntry != null) {
+      final Sdk sdk = mySkdsModel.findSdk(sdkEntry.getName());
+      if (sdk != null) {
+        mySdkCombo.setSelectedJdk(sdk);
+      }
+      else {
+        mySdkCombo.setInvalidJdk(sdkEntry.getName());
+      }
+    }
+    else {
+      mySdkCombo.setSelectedJdk(null);
+    }
+
+    BCUtils.updateAvailableTargetPlayers(mySdkCombo.getSelectedJdk(), myTargetPlayerCombo);
     myTargetPlayerCombo.setSelectedItem(myDependencies.getTargetPlayer());
     overriddenTargetPlayerChanged(null); // no warning initially
 
@@ -1140,14 +1222,14 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     root.removeAllChildren();
 
     if (sdkEntry != null) {
-      FlexSdk flexSdk = myConfigEditor.findSdk(sdkEntry.getLibraryId());
+      Sdk flexSdk = myConfigEditor.findSdk(sdkEntry.getName());
       if (flexSdk != null) {
         DefaultMutableTreeNode sdkNode = new DefaultMutableTreeNode(new SdkItem(flexSdk), true);
         myTable.getRoot().insert(sdkNode, 0);
         updateSdkEntries(sdkNode, flexSdk);
       }
     }
-    FlexIdeBCConfigurator configurator = FlexIdeBuildConfigurationsExtension.getInstance().getConfigurator();
+    FlexIdeBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
     for (DependencyEntry entry : myDependencies.getEntries()) {
       MyTableItem item = null;
       if (entry instanceof BuildConfigurationEntry) {
@@ -1221,16 +1303,16 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   private void updateComponentSetCombo() {
-    final FlexSdk sdkEntry = mySdkPanel.getCurrentSdk();
+    final Sdk sdkEntry = mySdkCombo.getSelectedJdk();
     final boolean visible = sdkEntry != null &&
-                            StringUtil.compareVersionNumbers(sdkEntry.getFlexVersion(), "4") >= 0 &&
+                            StringUtil.compareVersionNumbers(sdkEntry.getVersionString(), "4") >= 0 &&
                             !myNature.isMobilePlatform() &&
                             !myNature.pureAS;
     myComponentSetLabel.setVisible(visible);
     myComponentSetCombo.setVisible(visible);
     if (visible) {
       final Object selectedItem = myComponentSetCombo.getSelectedItem();
-      final ComponentSet[] values = StringUtil.compareVersionNumbers(sdkEntry.getFlexVersion(), "4.5") >= 0
+      final ComponentSet[] values = StringUtil.compareVersionNumbers(sdkEntry.getVersionString(), "4.5") >= 0
                                     ? ComponentSet.values()
                                     : new ComponentSet[]{ComponentSet.SparkAndMx, ComponentSet.MxOnly};
       myComponentSetCombo.setModel(new DefaultComboBoxModel(values));
@@ -1238,7 +1320,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
   }
 
-  private void updateSdkTableItem(@Nullable FlexSdk sdk) {
+  private void updateSdkTableItem(@Nullable Sdk sdk) {
     DefaultMutableTreeNode sdkNode = findSdkNode();
     if (sdk != null) {
       SdkItem sdkItem = new SdkItem(sdk);
@@ -1256,12 +1338,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
   }
 
-  private void updateSdkEntries(DefaultMutableTreeNode sdkNode, FlexSdk sdk) {
+  private void updateSdkEntries(DefaultMutableTreeNode sdkNode, Sdk sdk) {
     sdkNode.removeAllChildren();
     ComponentSet componentSet = (ComponentSet)myComponentSetCombo.getSelectedItem();
     String targetPlayer = (String)myTargetPlayerCombo.getSelectedItem();
 
-    for (String url : sdk.getRoots(OrderRootType.CLASSES)) {
+    for (String url : sdk.getRootProvider().getUrls(OrderRootType.CLASSES)) {
       url = VirtualFileManager.extractPath(StringUtil.trimEnd(url, JarFileSystem.JAR_SEPARATOR));
       LinkageType linkageType = BCUtils.getSdkEntryLinkageType(url, myNature, targetPlayer, componentSet);
       if (linkageType == null) {
@@ -1272,7 +1354,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       if (linkageType == LinkageType.Default) {
         linkageType = (LinkageType)myFrameworkLinkageCombo.getSelectedItem();
         if (linkageType == LinkageType.Default) {
-          linkageType = BCUtils.getDefaultFrameworkLinkage(sdk.getFlexVersion(), myNature);
+          linkageType = BCUtils.getDefaultFrameworkLinkage(sdk.getVersionString(), myNature);
         }
       }
 
@@ -1286,7 +1368,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   private void createUIComponents() {
-    mySdkPanel = new FlexSdkPanel(myConfigEditor);
+    mySdkCombo = new JdkComboBox(mySkdsModel);
   }
 
   private void initPopupActions() {
@@ -1319,7 +1401,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
 
       Map<Module, List<FlexIdeBCConfigurable>> treeItems = new HashMap<Module, List<FlexIdeBCConfigurable>>();
-      FlexIdeBCConfigurator configurator = FlexIdeBuildConfigurationsExtension.getInstance().getConfigurator();
+      FlexIdeBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
       for (Module module : ModuleStructureConfigurable.getInstance(myProject).getModules()) {
         if (ModuleType.get(module) != FlexModuleType.getInstance()) {
           continue;

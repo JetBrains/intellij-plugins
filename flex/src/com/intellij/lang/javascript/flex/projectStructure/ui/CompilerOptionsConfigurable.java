@@ -4,7 +4,6 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
-import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.ValueSource;
 import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptionsListener;
@@ -18,6 +17,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.ComponentWithBrowseButton;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -706,8 +706,8 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   }
 
   private String getSdkVersion() {
-    final FlexSdk sdk = myDependenciesConfigurable.getCurrentSdk();
-    return sdk == null ? UNKNOWN_SDK_VERSION : sdk.getFlexVersion();
+    final Sdk sdk = myDependenciesConfigurable.getCurrentSdk();
+    return sdk == null ? UNKNOWN_SDK_VERSION : sdk.getVersionString();
   }
 
   private class RepeatableValueEditor extends TextFieldWithBrowseButton {

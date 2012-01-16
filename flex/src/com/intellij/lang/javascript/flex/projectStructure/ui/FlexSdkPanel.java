@@ -9,13 +9,13 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProject
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.util.Consumer;
@@ -58,27 +58,27 @@ public class FlexSdkPanel implements Disposable {
       }
     }, this);
 
-    myCombo.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        SdkConfigurationUtil.selectSdkHome(FlexIdeUtils.getSdkType(), new Consumer<String>() {
-          @Override
-          public void consume(String homePath) {
-            FlexSdk sdk = myConfigEditor.findOrCreateSdk(homePath);// will update the model through listener
-            setCurrentSdk(Factory.createSdkEntry(sdk.getLibraryId(), sdk.getHomePath()));
-            myEventDispatcher.getMulticaster().stateChanged(new ChangeEvent(FlexSdkPanel.this));
-          }
-        });
-      }
-    });
+    //myCombo.addActionListener(new ActionListener() {
+    //  @Override
+    //  public void actionPerformed(ActionEvent e) {
+    //    SdkConfigurationUtil.selectSdkHome(FlexIdeUtils.getSdkType(), new Consumer<String>() {
+    //      @Override
+    //      public void consume(String homePath) {
+    //        FlexSdk sdk = myConfigEditor.findOrCreateSdk(homePath);// will update the model through listener
+    //        setCurrentSdk(Factory.createSdkEntry(sdk.(), sdk.getHomePath()));
+    //        myEventDispatcher.getMulticaster().stateChanged(new ChangeEvent(FlexSdkPanel.this));
+    //      }
+    //    });
+    //  }
+    //});
 
     myCombo.getChildComponent().addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         Object selectedItem = myCombo.getComboBox().getSelectedItem();
-        myConfigEditor.setSdkLibraryUsed(FlexSdkPanel.this, selectedItem instanceof LibraryEx ? (LibraryEx)selectedItem : null);
-        if (myMute) {
-          return;
-        }
+        //myConfigEditor.setSdkLibraryUsed(FlexSdkPanel.this, selectedItem instanceof LibraryEx ? (LibraryEx)selectedItem : null);
+        //if (myMute) {
+        //  return;
+        //}
         comboItemChanged();
       }
     });
@@ -87,7 +87,7 @@ public class FlexSdkPanel implements Disposable {
       @Override
       public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
         if (value != null) {
-          String homePath = value instanceof Library ? FlexSdk.getHomePath((Library)value) : ((Pair<String, String>)value).second;
+          String homePath = value instanceof Sdk ? ((Sdk)value).getName() : (String)value;
           setText(FileUtil.toSystemDependentName(homePath));
         }
         else {
@@ -119,11 +119,11 @@ public class FlexSdkPanel implements Disposable {
 
   private void updateControls() {
     Object selection = myCombo.getComboBox().getSelectedItem();
-    if (selection instanceof Library) {
+    if (selection instanceof Sdk) {
       myEditButton.setEnabled(true);
       myInfoLabel.setVisible(false);
     }
-    else if (selection instanceof Pair) {
+    else if (selection instanceof String) {
       myEditButton.setEnabled(false);
       myInfoLabel.setVisible(true);
       myInfoLabel.setText("Unknown Flex SDK");
@@ -136,23 +136,23 @@ public class FlexSdkPanel implements Disposable {
   }
 
   private void rebuildComboModel() {
-    LibraryEx matchingLibrary = null;
+    Sdk matchingSdk = null;
     myMute = true;
     try {
       Object selection = myCombo.getComboBox().getSelectedItem();
-      LibraryEx[] libraries = myConfigEditor.getSdksLibraries();
-      DefaultComboBoxModel model = new DefaultComboBoxModel(libraries);
+      Sdk[] sdks = myConfigEditor.getFlexSdks();
+      DefaultComboBoxModel model = new DefaultComboBoxModel(sdks);
       myCombo.getComboBox().setModel(model);
-      if (selection instanceof Pair) {
-        final String homePath = ((Pair<String, String>)selection).second;
-        matchingLibrary = ContainerUtil.find(libraries, new Condition<LibraryEx>() {
+      if (selection instanceof String) {
+        final String name = (String)selection;
+        matchingSdk = ContainerUtil.find(sdks, new Condition<Sdk>() {
           @Override
-          public boolean value(LibraryEx library) {
-            return FlexSdk.getHomePath(library).equals(homePath);
+          public boolean value(Sdk sdk) {
+            return name.equals(sdk.getName());
           }
         });
-        if (matchingLibrary != null) {
-          selection = matchingLibrary; // if one has added matching SDK, switch to it (configurable will be modified anyway, since SDK was added)
+        if (matchingSdk != null) {
+          selection = matchingSdk; // if one has added matching SDK, switch to it (configurable will be modified anyway, since SDK was added)
         }
       }
       if (selection != null && !(selection instanceof Library)) {
@@ -165,21 +165,13 @@ public class FlexSdkPanel implements Disposable {
     }
 
     comboItemChanged();
-    if (matchingLibrary != null) {
-      myConfigEditor.setSdkLibraryUsed(this, matchingLibrary);
+    if (matchingSdk != null) {
+      //myConfigEditor.setSdkLibraryUsed(this, matchingSdk);
     }
   }
 
   private void editSdk() {
-    FlexSdk currentSdk = getCurrentSdk();
-    if (currentSdk == null) {
-      return;
-    }
-
-    Library library = currentSdk.getLibrary();
-    LibraryEditor libraryEditor = myConfigEditor.getSdkLibraryEditor(library);
-    Project project = myConfigEditor.getProject();
-    new EditFlexSdkDialog(project, libraryEditor, myContentPane).show();
+    throw new UnsupportedOperationException("TODO navigate to SDKs page");
   }
 
   public void addListener(ChangeListener listener, Disposable parentDisposable) {
@@ -190,24 +182,24 @@ public class FlexSdkPanel implements Disposable {
     myMute = true;
     try {
       if (sdkEntry != null) {
-        FlexSdk sdk = myConfigEditor.findSdk(sdkEntry.getLibraryId());
+        Sdk sdk = myConfigEditor.findSdk(sdkEntry.getName());
         if (sdk != null) {
-          myCombo.getComboBox().setSelectedItem(sdk.getLibrary());
+          myCombo.getComboBox().setSelectedItem(sdk);
         }
         else {
           DefaultComboBoxModel model = (DefaultComboBoxModel)myCombo.getComboBox().getModel();
           boolean found = false;
-          Pair<String, String> idAndHome = Pair.create(sdkEntry.getLibraryId(), sdkEntry.getHomePath());
+          String name  = sdkEntry.getName();
           for (int i = 0; i < model.getSize(); i++) {
-            if (model.getElementAt(i).equals(idAndHome)) {
+            if (model.getElementAt(i).equals(name)) {
               found = true;
               break;
             }
           }
           if (!found) {
-            model.addElement(idAndHome);
+            model.addElement(name);
           }
-          myCombo.getComboBox().setSelectedItem(idAndHome);
+          myCombo.getComboBox().setSelectedItem(name);
         }
       }
       updateControls(); // force update
@@ -218,29 +210,26 @@ public class FlexSdkPanel implements Disposable {
   }
 
   @Nullable
-  public FlexSdk getCurrentSdk() {
+  public Sdk getCurrentSdk() {
     Object selectedItem = myCombo.getComboBox().getSelectedItem();
-    if (selectedItem instanceof Library) {
-      return new FlexSdk((Library)selectedItem);
-    }
-    return null;
+    return selectedItem instanceof Sdk ? (Sdk)selectedItem : null;
   }
 
   @Nullable
-  public String getCurrentSdkId() {
+  public String getCurrentSdkName() {
     Object selectedItem = myCombo.getComboBox().getSelectedItem();
     if (selectedItem instanceof Library) {
       return FlexProjectRootsUtil.getSdkLibraryId((Library)selectedItem);
     }
-    else if (selectedItem instanceof Pair) {
-      return ((Pair<String, String>)selectedItem).first;
+    else if (selectedItem instanceof String) {
+      return (String)selectedItem;
     }
     return null;
   }
 
   @Override
   public void dispose() {
-    myConfigEditor.setSdkLibraryUsed(this, null);
+    //myConfigEditor.setSdkLibraryUsed(this, null);
   }
 
   public void reset() {

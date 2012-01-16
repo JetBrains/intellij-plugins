@@ -6,9 +6,8 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationsExtension;
-import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
@@ -18,31 +17,38 @@ import com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTe
 import com.intellij.lang.javascript.flex.run.FlexIdeRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexIdeRunConfigurationType;
 import com.intellij.lang.javascript.flex.run.FlexIdeRunnerParameters;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
+import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
 public class FlexIdeModuleBuilder extends ModuleBuilder {
 
   private TargetPlatform myTargetPlatform = TargetPlatform.Web;
   private boolean isPureActionScript = false;
   private OutputType myOutputType = OutputType.Application;
-  private FlexSdk myFlexSdk;
+  private Sdk myFlexSdk;
   private String myTargetPlayer;
   private boolean myCreateSampleApp;
   private String mySampleAppName;
@@ -67,7 +73,7 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
     myOutputType = outputType;
   }
 
-  public void setFlexSdk(final FlexSdk flexSdk) {
+  public void setFlexSdk(final Sdk flexSdk) {
     myFlexSdk = flexSdk;
   }
 
@@ -105,7 +111,7 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
     final LibraryTableBase.ModifiableModelEx globalLibrariesModifiableModel;
 
     final FlexProjectConfigurationEditor currentFlexEditor =
-      FlexIdeBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
+      FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
     final boolean needToCommitFlexEditor = currentFlexEditor == null;
 
     final FlexProjectConfigurationEditor flexConfigEditor;
@@ -132,7 +138,7 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
 
     if (sourceRoot != null && myCreateSampleApp) {
       try {
-        final boolean flex4 = myFlexSdk.getFlexVersion().startsWith("4");
+        final boolean flex4 = myFlexSdk.getVersionString().startsWith("4");
         FlexUtils.createSampleApp(module.getProject(), sourceRoot, mySampleAppName, myTargetPlatform, flex4);
       }
       catch (IOException ex) {
@@ -183,6 +189,10 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
           else {
             throw new UnsupportedOperationException();
           }
+        }
+
+        public Sdk[] getAllSdks() {
+          return FlexProjectConfigurationEditor.getEditableFlexSdks(module.getProject());
         }
       };
 
@@ -236,7 +246,7 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
     }
     bc.setOutputFolder(VfsUtil.urlToPath(CompilerModuleExtension.getInstance(module).getCompilerOutputUrl()));
 
-    bc.getDependencies().setSdkEntry(Factory.createSdkEntry(myFlexSdk.getLibraryId(), myFlexSdk.getHomePath()));
+    bc.getDependencies().setSdkEntry(Factory.createSdkEntry(myFlexSdk.getName()));
     bc.getDependencies().setTargetPlayer(myTargetPlayer);
 
     if (myTargetPlatform == TargetPlatform.Mobile && myOutputType == OutputType.Application) {

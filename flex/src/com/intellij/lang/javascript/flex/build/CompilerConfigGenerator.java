@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.flex.TargetPlayerUtils;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
-import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.ValueSource;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
@@ -15,6 +14,7 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigura
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
@@ -75,14 +75,15 @@ public class CompilerConfigGenerator {
 
   public static VirtualFile getOrCreateConfigFile(final Module module, final FlexIdeBuildConfiguration config) throws IOException {
     final SdkEntry sdkEntry = config.getDependencies().getSdkEntry();
-    final Library sdkLib = sdkEntry == null ? null : sdkEntry.findLibrary();
-    if (sdkLib == null) {
+    final Sdk sdk = sdkEntry == null ? null : sdkEntry.findSdk();
+    if (sdk == null) {
       throw new IOException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", config.getName(), module.getName()));
     }
 
     final CompilerConfigGenerator generator =
-      new CompilerConfigGenerator(module, config, FlexSdk.getHomePath(sdkLib), FlexSdk.getFlexVersion(sdkLib),
-                                  sdkLib.getUrls(OrderRootType.CLASSES),
+      new CompilerConfigGenerator(module, config, sdk.getHomePath(), sdk.getVersionString(),
+                                  sdk.getRootProvider().
+                                    getUrls(OrderRootType.CLASSES),
                                   FlexBuildConfigurationManager.getInstance(module).getModuleLevelCompilerOptions(),
                                   FlexProjectLevelCompilerOptionsHolder.getInstance(module.getProject())
                                     .getProjectLevelCompilerOptions());

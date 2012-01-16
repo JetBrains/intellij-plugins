@@ -13,6 +13,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
@@ -269,6 +270,10 @@ public class FlexProjectConfigTest extends ModuleTestCase {
         else {
           throw new UnsupportedOperationException();
         }
+      }
+
+      public Sdk[] getAllSdks() {
+        return FlexProjectConfigurationEditor.getPersistedFlexSdks();
       }
     });
   }

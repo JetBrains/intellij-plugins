@@ -1,18 +1,20 @@
 package com.intellij.lang.javascript.flex.wizard;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationsExtension;
-import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexSdkPanel;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.projectRoots.ProjectJdkTable;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
@@ -30,6 +32,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import static com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor.ProjectModifiableModelProvider;
 
@@ -77,7 +80,7 @@ public class FlexIdeModuleWizardForm {
 
     myFlexSdkPanel.addListener(new ChangeListener() {
       public void stateChanged(final ChangeEvent e) {
-        BCUtils.updateAvailableTargetPlayers(myFlexSdkPanel, myTargetPlayerCombo);
+        BCUtils.updateAvailableTargetPlayers(myFlexSdkPanel.getCurrentSdk(), myTargetPlayerCombo);
       }
     }, myDisposable);
 
@@ -179,7 +182,7 @@ public class FlexIdeModuleWizardForm {
 
   private void createUIComponents() {
     final FlexProjectConfigurationEditor currentFlexEditor =
-      FlexIdeBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
+      FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
     myNeedToDisposeFlexEditor = currentFlexEditor == null;
 
     if (currentFlexEditor != null) {
@@ -216,6 +219,10 @@ public class FlexIdeModuleWizardForm {
           else {
             throw new UnsupportedOperationException();
           }
+        }
+
+        public Sdk[] getAllSdks() {
+          return FlexProjectConfigurationEditor.getPersistedFlexSdks();
         }
       };
 
@@ -267,14 +274,14 @@ public class FlexIdeModuleWizardForm {
   }
 
   public boolean validate() throws ConfigurationException {
-    final FlexSdk sdk = myFlexSdkPanel.getCurrentSdk();
+    final Sdk sdk = myFlexSdkPanel.getCurrentSdk();
     if (sdk == null) {
       throw new ConfigurationException("Flex SDK is not set");
     }
 
     if (myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Mobile &&
-        StringUtil.compareVersionNumbers(sdk.getFlexVersion(), "4.5") < 0) {
-      throw new ConfigurationException(FlexBundle.message("sdk.does.not.support.air.mobile", sdk.getFlexVersion()));
+        StringUtil.compareVersionNumbers(sdk.getVersionString(), "4.5") < 0) {
+      throw new ConfigurationException(FlexBundle.message("sdk.does.not.support.air.mobile", sdk.getVersionString()));
     }
 
     if (mySampleAppCheckBox.isSelected()) {

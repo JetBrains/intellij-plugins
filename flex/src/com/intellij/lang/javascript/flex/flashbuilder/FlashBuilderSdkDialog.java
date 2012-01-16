@@ -68,7 +68,7 @@ public class FlashBuilderSdkDialog extends DialogWrapper {
   @Nullable
   public String getSdkHome() {
     assert PlatformUtils.isFlexIde();
-    final FlexSdk sdk = myFlexSdkPanel.getCurrentSdk();
+    final Sdk sdk = myFlexSdkPanel.getCurrentSdk();
     return sdk == null ? null : sdk.getHomePath();
   }
 }

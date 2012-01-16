@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.ActionScriptFileType;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
+import com.intellij.lang.javascript.flex.projectStructure.ui.ActiveBuildConfigurationWidget;
 import com.intellij.lang.javascript.flex.run.RunMainClassPrecompileTask;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
@@ -32,6 +33,8 @@ import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
+import com.intellij.openapi.wm.StatusBar;
+import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -75,6 +78,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
 
   static final String LOCALE_TOKEN = "{locale}";
   public static Key<FlexBuildConfiguration> OVERRIDE_BUILD_CONFIG = Key.create("OVERRIDE_FLEX_BUILD_CONFIG");
+  private ActiveBuildConfigurationWidget myWidget;
 
 
   private static class ModuleOrFacetCompileCache {
@@ -148,6 +152,12 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
         compilerManager.setValidationEnabled(StdModuleTypes.JAVA, false);
       }
     }
+
+    StatusBar statusBar = WindowManager.getInstance().getStatusBar(myProject);
+    if (statusBar != null) {
+      myWidget = new ActiveBuildConfigurationWidget(myProject);
+      statusBar.addWidget(myWidget, ActiveBuildConfigurationWidget.getAnchor());
+    }
   }
 
   public void projectClosed() {
@@ -157,6 +167,12 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     quitCompilerShell();
     myCompilerDependenciesCache.clear();
     deleteTempFlexConfigFiles(myProject.getName());
+    
+    if (myWidget != null) {
+      StatusBar statusBar = WindowManager.getInstance().getStatusBar(myProject);
+      statusBar.removeWidget(myWidget.ID());
+      myWidget = null;
+    }
   }
 
   public void quitCompilerShell() {

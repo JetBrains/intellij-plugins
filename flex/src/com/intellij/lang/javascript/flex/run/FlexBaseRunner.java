@@ -913,7 +913,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
     final GeneralCommandLine commandLine = new GeneralCommandLine();
 
-    commandLine.setExePath(FileUtil.toSystemDependentName(sdkEntry.getHomePath() + FlexSdkUtils.ADL_RELATIVE_PATH));
+    commandLine.setExePath(FileUtil.toSystemDependentName(sdkEntry.findSdk().getHomePath() + FlexSdkUtils.ADL_RELATIVE_PATH));
 
     if (bc.getNature().isDesktopPlatform()) {
       final String adlOptions =

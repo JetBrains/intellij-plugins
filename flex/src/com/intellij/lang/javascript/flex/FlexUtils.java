@@ -236,8 +236,7 @@ public class FlexUtils {
   public static Sdk createFlexSdkWrapper(final FlexIdeBuildConfiguration bc) {
     final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
     if (sdkEntry != null) {
-      final LibraryEx sdkLibrary = sdkEntry.findLibrary();
-      return sdkLibrary != null ? new FlexSdkWrapper(sdkLibrary, bc.getTargetPlatform()) : null;
+      return sdkEntry.findSdk();
     }
 
     return null;

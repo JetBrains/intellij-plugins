@@ -3,20 +3,12 @@
     <renameHandler implementation="com.intellij.javascript.flex.refactoring.FlexDirectoryAsPackageRenameHandler"/>
     <elementDescriptionProvider implementation="com.intellij.javascript.flex.refactoring.FlexPackageImpl$DescriptionProvider"/>
 
-    <projectService serviceInterface="com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder"
-                    serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectLevelCompilerOptionsHolderImpl"/>
-    <moduleService serviceInterface="com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager"
-                   serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl"/>
-    <configuration.ModuleStructureExtension id="FlexBuildConfigurations"
-        implementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationsExtension"/>
     <configuration.ModuleStructureExtension
         implementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeSharedLibrariesExtension" order="before FlexBuildConfigurations"/>
     <configurationType implementation="com.intellij.lang.javascript.flex.run.FlexIdeRunConfigurationType"/>
     <configurationProducer implementation="com.intellij.lang.javascript.flex.run.FlexIdeRunConfigurationProducer"/>
     <configurationType implementation="com.intellij.lang.javascript.flex.run.RemoteFlashRunConfigurationType"/>
     <library.type implementation="com.intellij.lang.javascript.flex.projectStructure.FlexSdkLibraryType"/>
-    <orderEnumerationHandlerFactory
-        implementation="com.intellij.lang.javascript.flex.projectStructure.FlexOrderEnumerationHandler$FactoryImpl"/>
     <moduleConfigurationEditorProvider implementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleConfigurationEditorProvider"/>
     <projectService serviceInterface="com.intellij.openapi.roots.ui.configuration.ProjectSettingsService"
                     serviceImplementation="com.intellij.flexIde.FlexIdeProjectSettingsService"/>
@@ -31,11 +23,5 @@
       <add-to-group group-id="MainToolBar" anchor="last"/>
     </action>
     -->
-    <group id="FlexIdeToolbarGroup">
-      <action id="ChooseActiveBuildConfiguration" description="The selected configuration is used for source files highlighting"
-              class="com.intellij.lang.javascript.flex.projectStructure.ui.ChooseActiveBuildConfigurationAction"/>
-
-      <add-to-group group-id="MainToolBar" relative-to-action="HelpTopics" anchor="before"/>
-    </group>
   </actions>
 </idea-plugin>

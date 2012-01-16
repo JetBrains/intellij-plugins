@@ -88,6 +88,10 @@ public class ConversionParams {
           throw new UnsupportedOperationException();
         }
       }
+
+      public Sdk[] getAllSdks() {
+        return FlexProjectConfigurationEditor.getPersistedFlexSdks();
+      }
     });
   }
 
@@ -195,9 +199,9 @@ public class ConversionParams {
 
   @NotNull
   public FlexSdk getOrCreateFlexIdeSdk(@NotNull final String homePath) {
-    FlexSdk sdk = myEditor.findOrCreateSdk(homePath);
-    myEditor.setSdkLibraryUsed(new Object(), (LibraryEx)sdk.getLibrary());
-    return sdk;
+    //FlexSdk sdk = myEditor.findOrCreateSdk(homePath);
+    //myEditor.setSdkLibraryUsed(new Object(), (LibraryEx)sdk.getLibrary());
+    return null;
   }
 
   /**

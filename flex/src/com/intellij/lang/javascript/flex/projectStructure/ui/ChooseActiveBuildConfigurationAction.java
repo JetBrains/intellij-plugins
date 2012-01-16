@@ -1,12 +1,14 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ide.DataManager;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationsExtension;
+import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -15,8 +17,11 @@ import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.*;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.ui.navigation.Place;
@@ -33,152 +38,80 @@ import java.util.Map;
 /**
  * User: ksafonov
  */
-public class ChooseActiveBuildConfigurationAction extends ComboBoxAction implements DumbAware {
+public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
 
-  private final Map<Project, Module> myLastModules = new HashMap<Project, Module>();
-
-  public ChooseActiveBuildConfigurationAction() {
-    Application application = ApplicationManager.getApplication();
-    application.getMessageBus().connect(application).subscribe(ProjectManager.TOPIC, new ProjectManagerAdapter() {
-      @Override
-      public void projectClosed(Project project) {
-        myLastModules.remove(project);
-      }
-    });
-  }
-
-  @Override
-  public final JComponent createCustomComponent(Presentation presentation) {
-    JPanel p = new JPanel(new GridBagLayout());
-    final JLabel label = new JLabel("Build configuration:");
-    //action description in plugin.xml provides tooltip for combobox, let's set the same tooltip for label
-    label.setToolTipText("The selected configuration is used for source files highlighting");
-    p.add(label, new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 5, 0, 0), 0, 0));
-    p.add(super.createCustomComponent(presentation),
-          new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-    return p;
-  }
-
-  @Nullable
-  private static Module findModule(DataContext dataContext) {
-    Project project = PlatformDataKeys.PROJECT.getData(dataContext);
-    if (project == null) {
-      return null;
-    }
-    VirtualFile file = PlatformDataKeys.VIRTUAL_FILE.getData(dataContext);
-    if (file == null) {
-      return null;
-    }
-    return ModuleUtil.findModuleForFile(file, project);
-  }
-
-  @Override
-  public void update(AnActionEvent e) {
-    super.update(e);
-    Project project = PlatformDataKeys.PROJECT.getData(e.getDataContext());
-    if (project == null) {
-      disable(e);
-      return;
-    }
-
-    Module module = findModule(e.getDataContext());
-    if (module == null) {
-      if (myLastModules.get(project) != null && myLastModules.get(project).isDisposed()) {
-        myLastModules.remove(project);
-      }
-      module = myLastModules.get(project);
-    }
-    if (module == null || FlexModuleType.getInstance() != ModuleType.get(module)) {
-      disable(e);
-      return;
-    }
-
-    myLastModules.put(project, module);
-    e.getPresentation().setEnabled(true);
-    FlexIdeBuildConfiguration activeConfiguration = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
-    if (activeConfiguration != null) {
-      e.getPresentation().setText(activeConfiguration.getName());
-      e.getPresentation().setIcon(activeConfiguration.getIcon());
+  public void update(final AnActionEvent e) {
+    boolean enabled = isEnabled(e.getDataContext());
+    if (ActionPlaces.isPopupPlace(e.getPlace())) {
+      e.getPresentation().setVisible(enabled);
+      e.getPresentation().setEnabled(enabled);
     }
     else {
-      e.getPresentation().setText("(none)");
+      //e.getPresentation().setDescription(FlexBundle.message());
+      e.getPresentation().setVisible(true);
+      e.getPresentation().setEnabled(enabled);
     }
   }
 
-  private static void disable(AnActionEvent e) {
-    e.getPresentation().setEnabled(false);
-    e.getPresentation().setText("(none)");
-    e.getPresentation().setIcon(null);
+  private static boolean isEnabled(final DataContext dataContext) {
+    Module module = LangDataKeys.MODULE.getData(dataContext);
+    return module != null && ModuleType.get(module) == FlexModuleType.getInstance();
   }
 
-  @NotNull
-  @Override
-  protected DefaultActionGroup createPopupActionGroup(JComponent button) {
-    DefaultActionGroup group = new DefaultActionGroup();
-    Project project = findProject(button);
-    if (project == null) {
-      return group;
-    }
-    Module module = myLastModules.get(project);
-    if (module == null) {
-      return group;
-    }
-
-    FlexBuildConfigurationManager bcManager = FlexBuildConfigurationManager.getInstance(module);
-    FlexIdeBuildConfiguration[] buildConfigurations = bcManager.getBuildConfigurations();
-    group.add(new EditBcsAction(module));
-    group.addSeparator();
-    for (FlexIdeBuildConfiguration c : buildConfigurations) {
-      group.add(new BCAction(module, c));
-    }
-    return group;
-  }
-
-  @Nullable
-  private static Project findProject(JComponent button) {
-    Component parent = UIUtil.findUltimateParent(button);
-    return parent instanceof IdeFrame ? ((IdeFrame)parent).getProject() : null;
-  }
-
-  @Override
-  protected ComboBoxButton createComboBoxButton(Presentation presentation) {
-    return new ComboBoxButton(presentation) {
-      @Override
-      protected ListPopup createPopup(Runnable onDispose) {
-        final DataContext popupCreationDataContext = DataManager.getInstance().getDataContext(this);
-
-        ListPopup popup = super.createPopup(onDispose);
-        popup.setDataProvider(new DataProvider() {
-          @Override
-          public Object getData(@NonNls String dataId) {
-            return popupCreationDataContext.getData(dataId);
-          }
-        });
-        return popup;
-      }
-    };
-  }
-
-  private static class BCAction extends DumbAwareAction {
-    private final Module myModule;
-    private final FlexIdeBuildConfiguration myBuildConfiguration;
-
-    public BCAction(Module module, FlexIdeBuildConfiguration buildConfiguration) {
-      myModule = module;
-      myBuildConfiguration = buildConfiguration;
-    }
-
-    @Override
-    public void update(AnActionEvent e) {
-      e.getPresentation().setText(myBuildConfiguration.getName());
-      e.getPresentation().setIcon(myBuildConfiguration.getIcon());
-    }
-
-    @Override
-    public void actionPerformed(AnActionEvent e) {
-      FlexBuildConfigurationManager.getInstance(myModule).setActiveBuildConfiguration(myBuildConfiguration);
+  public void actionPerformed(final AnActionEvent e) {
+    Module module = LangDataKeys.MODULE.getData(e.getDataContext());
+    if (module != null) {
+      createPopup(module).showInBestPositionFor(e.getDataContext());
     }
   }
+
+  public static ListPopup createPopup(@NotNull Module module) {
+    final DefaultActionGroup actionGroup = new DefaultActionGroup();
+    actionGroup.addSeparator("Build Configurations");
+    final FlexBuildConfigurationManager manager = FlexBuildConfigurationManager.getInstance(module);
+    final FlexIdeBuildConfiguration active = manager.getActiveConfiguration();
+    FlexIdeBuildConfiguration[] bcs = manager.getBuildConfigurations();
+    for (final FlexIdeBuildConfiguration bc : bcs) {
+      actionGroup.add(new SelectBcAction(bc, manager));
+    }
+    actionGroup.addSeparator();
+    actionGroup.add(new EditBcsAction(module));
+
+    final DataContext dataContext = SimpleDataContext.getProjectContext(module.getProject());
+    return JBPopupFactory.getInstance()
+      .createActionGroupPopup(FlexBundle.message("choose.build.configuration.popup.title", module.getName()), actionGroup, dataContext,
+                              false, false, true, null, -1, new Condition<AnAction>() {
+        public boolean value(final AnAction anAction) {
+          return anAction instanceof SelectBcAction && ((SelectBcAction)anAction).getBc() == active;
+        }
+      });
+  }
+
+  private static class SelectBcAction extends DumbAwareAction {
+    private final FlexIdeBuildConfiguration myBc;
+
+    private final FlexBuildConfigurationManager myManager;
+
+    public SelectBcAction(final FlexIdeBuildConfiguration bc, final FlexBuildConfigurationManager manager) {
+      super(bc.getName(), getDescription(bc), bc.getIcon());
+      myBc = bc;
+      myManager = manager;
+    }
+
+    private static String getDescription(final FlexIdeBuildConfiguration bc) {
+      return FlexBundle.message("bc.description", bc.getTargetPlatform().getPresentableText(),
+                                StringUtil.decapitalize(bc.getOutputType().getPresentableText()), bc.getName(), bc.isPureAs() ? 1 : 2);
+    }
+
+    public void actionPerformed(final AnActionEvent e) {
+      myManager.setActiveBuildConfiguration(myBc);
+    }
+
+    public FlexIdeBuildConfiguration getBc() {
+      return myBc;
+    }
+  }
+
 
   private static class EditBcsAction extends DumbAwareAction {
     private final Module myModule;
@@ -186,6 +119,10 @@ public class ChooseActiveBuildConfigurationAction extends ComboBoxAction impleme
     public EditBcsAction(Module module) {
       super("Configure project", "Edit Flex build configurations", IconLoader.getIcon("/actions/editSource.png"));
       myModule = module;
+      final AnAction a = ActionManager.getInstance().getAction("ShowProjectStructureSettings");
+      getTemplatePresentation().setText(a.getTemplatePresentation().getText());
+      getTemplatePresentation().setIcon(a.getTemplatePresentation().getIcon());
+      getTemplatePresentation().setDescription(a.getTemplatePresentation().getDescription());
     }
 
     @Override
@@ -195,7 +132,7 @@ public class ChooseActiveBuildConfigurationAction extends ComboBoxAction impleme
       ShowSettingsUtil.getInstance().editConfigurable(myModule.getProject(), c, new Runnable() {
         @Override
         public void run() {
-          Place p = FlexIdeBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(myModule, activeConfiguration);
+          Place p = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(myModule, activeConfiguration);
           c.navigateTo(p, true);
         }
       });

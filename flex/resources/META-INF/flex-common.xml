@@ -26,6 +26,7 @@
     <referenceImporter implementation="com.intellij.lang.javascript.flex.FlexReferenceImporter"/>
     <frameworkSupport implementation="com.intellij.javascript.flex.FlexSupportProvider"/>
     <sdkType implementation="com.intellij.lang.javascript.flex.sdk.FlexSdkType"/>
+    <sdkType implementation="com.intellij.lang.javascript.flex.sdk.FlexSdkType2"/>
     <sdkType implementation="com.intellij.lang.javascript.flex.sdk.AirSdkType"/>
     <sdkType implementation="com.intellij.lang.javascript.flex.sdk.AirMobileSdkType"/>
     <sdkType implementation="com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType"/>
@@ -130,53 +131,63 @@
     <configurationType implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfigurationType"/>
     <configurationProducer implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitRuntimeConfigurationProducer"/>
 
+    <configuration.ModuleStructureExtension id="FlexBuildConfigurations"
+                                            implementation="com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension"/>
+    <moduleService serviceInterface="com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager"
+                   serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl"/>
+    <projectService serviceInterface="com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder"
+                    serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectLevelCompilerOptionsHolderImpl"/>
+    <orderEnumerationHandlerFactory
+        implementation="com.intellij.lang.javascript.flex.projectStructure.FlexOrderEnumerationHandler$FactoryImpl"/>
+    <sdkFinder implementation="com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdk$SdkFinderImpl"/>
+
     <localInspection language="ECMA Script Level 4" shortName="FlexUnitClassInProductSourceInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testclassinproductsource.displayname" groupKey="flexunit.inspections.group"
-                     enabledByDefault="true" level="WARNING" 
+                     enabledByDefault="true" level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitClassInProductSourceInspection"/>
     <localInspection language="ECMA Script Level 4" shortName="FlexUnitClassVisibilityInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testclassvisibility.displayname" groupKey="flexunit.inspections.group" enabledByDefault="true"
-                     level="WARNING" 
+                     level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitClassVisibilityInspection"/>
     <localInspection language="ECMA Script Level 4" shortName="FlexUnitMethodVisibilityInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testmethodvisibility.displayname" groupKey="flexunit.inspections.group"
-                     enabledByDefault="true" level="WARNING" 
+                     enabledByDefault="true" level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitMethodVisibilityInspection"/>
     <localInspection language="ECMA Script Level 4" shortName="FlexUnitMethodIsStaticInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testmethodisstatic.displayname" groupKey="flexunit.inspections.group" enabledByDefault="true"
-                     level="WARNING" 
+                     level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitMethodIsStaticInspection"/>
     <localInspection language="ECMA Script Level 4" shortName="FlexUnitMethodIsPropertyInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testmethodisproperty.displayname" groupKey="flexunit.inspections.group"
-                     enabledByDefault="true" level="WARNING" 
+                     enabledByDefault="true" level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitMethodIsPropertyInspection"/>
     <localInspection language="ECMA Script Level 4" shortName="FlexUnitMethodHasParametersInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testmethodhasparameters.displayname" groupKey="flexunit.inspections.group"
-                     enabledByDefault="true" level="WARNING" 
+                     enabledByDefault="true" level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitMethodHasParametersInspection"/>
     <localInspection language="ECMA Script Level 4" shortName="FlexUnitMethodReturnTypeInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testmethodreturntype.displayname" groupKey="flexunit.inspections.group"
-                     enabledByDefault="true" level="WARNING" 
+                     enabledByDefault="true" level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitMethodReturnTypeInspection"/>
     <localInspection language="ECMA Script Level 4" shortName="FlexUnitMixedAPIInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.mixedapi.displayname" groupKey="flexunit.inspections.group" enabledByDefault="true"
-                     level="WARNING" 
+                     level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitMixedAPIInspection"/>
     <localInspection language="ECMA Script Level 4" shortName="FlexUnitClassWithNoTestsInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testclasswithnotests.displayname" groupKey="flexunit.inspections.group"
-                     enabledByDefault="true" level="WARNING" 
+                     enabledByDefault="true" level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitClassWithNoTestsInspection"/>
     <localInspection language="ECMA Script Level 4" shortName="FlexUnitMethodInSuiteInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testmethodinsuite.displayname" groupKey="flexunit.inspections.group" enabledByDefault="true"
-                     level="WARNING" 
+                     level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitMethodInSuiteInspection"/>
     <localInspection language="ECMA Script Level 4" shortName="FlexUnitEmptySuiteInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.emptysuite.displayname" groupKey="flexunit.inspections.group" enabledByDefault="true"
-                     level="WARNING" 
+                     level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitEmptySuiteInspection"/>
     <localInspection language="ECMA Script Level 4" shortName="FlexUnitSuiteWithNoRunnerInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.suitewithnorunner.displayname" groupKey="flexunit.inspections.group" enabledByDefault="true"
-                     level="WARNING" 
+                     level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitSuiteWithNoRunnerInspection"/>
 
     <intentionAction>
@@ -288,6 +299,10 @@
     </action>
     <action id="Flex.Debugger.FilterSwfLoadUnloadMessages" class="com.intellij.lang.javascript.flex.debug.FilterSwfLoadUnloadMessagesAction"
             text="Filter [SWF] and [UnloadSWF] messages" icon="/ant/filter.png" description="Use this toggle button to choose whether you want [SWF] and [UnloadSWF] messages to be shown in Flex debug console. Note that toggling the button doesn't change current console content, filter is applied only to new messages that will appear.">
+    </action>
+    <action id="ChooseActiveBuildConfiguration" text="Flex Build Configuration..." description="The selected configuration is used for source files highlighting"
+            class="com.intellij.lang.javascript.flex.projectStructure.ui.ChooseActiveBuildConfigurationAction" icon="/com/intellij/lang/javascript/flex/projectStructure/buildConfig.png">
+      <add-to-group group-id="EditorLangPopupMenu" anchor="last"/>
     </action>
   </actions>
 </idea-plugin>

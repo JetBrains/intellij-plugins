@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.actions.htmlwrapper.CreateHtmlWrapperAction;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
@@ -28,7 +27,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkAdditionalData;
-import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
@@ -325,16 +323,16 @@ public class FlexCompiler implements SourceProcessingCompiler {
   @SuppressWarnings("ConstantConditions") // already checked in validateConfiguration()
   @Nullable
   private static Pair<String, String> getSdkHomeAndVersionIfSame(final ProcessingItem[] items) {
-    final Library sdkLib = ((MyProcessingItem)items[0]).myConfig.getDependencies().getSdkEntry().findLibrary();
-    final String sdkHome = FlexSdk.getHomePath(sdkLib);
+    final Sdk sdk = ((MyProcessingItem)items[0]).myConfig.getDependencies().getSdkEntry().findSdk();
+    final String sdkHome = sdk.getHomePath();
 
     for (int i = 1; i < items.length; i++) {
-      if (!sdkHome.equals(((MyProcessingItem)items[i]).myConfig.getDependencies().getSdkEntry().getHomePath())) {
+      if (!sdkHome.equals(((MyProcessingItem)items[i]).myConfig.getDependencies().getSdkEntry().findSdk().getHomePath())) {
         return null;
       }
     }
 
-    return Pair.create(sdkHome, FlexSdk.getFlexVersion(sdkLib));
+    return Pair.create(sdkHome, sdk.getVersionString());
   }
 
   @NotNull
@@ -542,8 +540,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
     final BuildConfigurationNature nature = bc.getNature();
 
     final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
-    final Library sdkLib = sdkEntry == null ? null : sdkEntry.findLibrary();
-    if (sdkLib == null) {
+    final Sdk sdk = sdkEntry == null ? null : sdkEntry.findSdk();
+    if (sdk == null) {
       throw new ConfigurationException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
     }
 

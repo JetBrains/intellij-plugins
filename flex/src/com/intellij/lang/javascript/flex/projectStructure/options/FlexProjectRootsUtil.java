@@ -72,9 +72,8 @@ public class FlexProjectRootsUtil {
     if (sdkEntry == null) {
       return false;
     }
-
-    String id = getSdkLibraryId(library);
-    return id != null && id.equals(sdkEntry.getLibraryId());
+    return false;
+    //return id != null && id.equals(sdkEntry.getLibraryId());
   }
 
   public static boolean dependOnSdk(Iterable<FlexIdeBuildConfiguration> bcs, @NotNull final Library sdk) {

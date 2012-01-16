@@ -129,10 +129,10 @@ public class FlashBuilderModuleImporter {
     }
 
     final ModifiableDependencies dependencies = mainBC.getDependencies();
-    if (sdkHome != null) {
-      final FlexSdk sdk = myFlexConfigEditor.findOrCreateSdk(sdkHome);
-      dependencies.setSdkEntry(Factory.createSdkEntry(sdk.getLibraryId(), sdk.getHomePath()));
-    }
+    //if (sdkHome != null) {
+    //  final FlexSdk sdk = myFlexConfigEditor.findOrCreateSdk(sdkHome);
+    //  dependencies.setSdkEntry(Factory.createSdkEntry(sdk.getLibraryId(), sdk.getHomePath()));
+    //}
 
     dependencies.setTargetPlayer(TargetPlayerUtils.getTargetPlayer(fbProject.getTargetPlayerVersion(), sdkHome));
     // todo dependencies.setComponentSet();

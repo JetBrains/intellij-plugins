@@ -309,10 +309,10 @@ public class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> 
     if (newBuildConfiguration.getTargetPlatform() == TargetPlatform.Web) {
       final SdkEntry sdkEntry = newBuildConfiguration.getDependencies().getSdkEntry();
       if (sdkEntry != null) {
-        final String sdkHome = PathUtil.getCanonicalPath(module.expandPath(sdkEntry.getHomePath()));
-        final String targetPlayer =
-          TargetPlayerUtils.getTargetPlayer(oldConfiguration == null ? null : oldConfiguration.TARGET_PLAYER_VERSION, sdkHome);
-        newBuildConfiguration.getDependencies().setTargetPlayer(targetPlayer);
+        //final String sdkHome = PathUtil.getCanonicalPath(module.expandPath(sdkEntry.getHomePath()));
+        //final String targetPlayer =
+        //  TargetPlayerUtils.getTargetPlayer(oldConfiguration == null ? null : oldConfiguration.TARGET_PLAYER_VERSION, sdkHome);
+        //newBuildConfiguration.getDependencies().setTargetPlayer(targetPlayer);
       }
     }
   }
@@ -388,9 +388,9 @@ public class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> 
     }
 
     FlexSdk sdk = myParams.getOrCreateFlexIdeSdk(homePathAndSubtype.first);
-    SdkEntry sdkEntry = Factory.createSdkEntry(sdk.getLibraryId(), sdk.getHomePath());
+    //SdkEntry sdkEntry = Factory.createSdkEntry(sdk.get());
     // TODO roots dependencies types
-    buildConfiguration.getDependencies().setSdkEntry(sdkEntry);
+    //buildConfiguration.getDependencies().setSdkEntry(sdkEntry);
 
     if (existingSdkLibrariesIds == null || existingSdkLibrariesIds.add(sdk.getLibraryId())) {
       Element orderEntryElement = new Element(OrderEntryFactory.ORDER_ENTRY_ELEMENT_NAME);

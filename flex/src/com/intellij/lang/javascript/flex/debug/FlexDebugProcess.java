@@ -7,14 +7,12 @@ import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.ide.IdeBundle;
-import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.idea.LoggerFactory;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
 import com.intellij.lang.javascript.flex.flexunit.*;
-import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
@@ -34,7 +32,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.util.NullableComputable;
@@ -180,16 +177,15 @@ public class FlexDebugProcess extends XDebugProcess {
 
     final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
     assert sdkEntry != null; // checked in FlexBaseRunner
-    final String sdkHome = sdkEntry.getHomePath();
 
-    final Library sdk = sdkEntry.findLibrary();
-    myAppSdkHome = FileUtil.toSystemIndependentName(sdkHome);
+    final Sdk sdk = sdkEntry.findSdk();
+    myAppSdkHome = sdk != null ? FileUtil.toSystemIndependentName(sdk.getHomePath()) : null;
     myDebuggerSdkHome = myAppSdkHome;
-    myDebuggerVersion = StringUtil.notNullize(sdk != null ? FlexSdk.getFlexVersion(sdk) : null, "unknown");
+    myDebuggerVersion = StringUtil.notNullize(sdk != null ? sdk.getVersionString() : null, "unknown");
     myBreakpointsHandler = new FlexBreakpointsHandler(this);
 
     final List<String> fdbLaunchCommand = FlexSdkUtils
-      .getCommandLineForSdkTool(session.getProject(), sdkHome, null, getFdbClasspath(), "flex.tools.debugger.cli.DebugCLI", null);
+      .getCommandLineForSdkTool(session.getProject(), myAppSdkHome, null, getFdbClasspath(), "flex.tools.debugger.cli.DebugCLI", null);
 
     if (params instanceof FlexIdeRunnerParameters &&
         bc.getTargetPlatform() == TargetPlatform.Mobile &&

@@ -756,6 +756,7 @@ public class FlexSdkUtils {
         return "airmobile-config.xml";
       case Flexmojos:
       default:
+        assert false : sdkType.getSubtype();
         return null;
     }
   }

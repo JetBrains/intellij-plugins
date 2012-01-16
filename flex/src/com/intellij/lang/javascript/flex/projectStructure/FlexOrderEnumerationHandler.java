@@ -5,9 +5,11 @@ import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
@@ -111,8 +113,8 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
       return super.shouldAddDependency(orderEntry, settings);
     }
 
-    if (orderEntry instanceof JdkOrderEntry) {
-      return AddDependencyType.DO_NOT_ADD; // we have our own SDK entry
+    if (orderEntry instanceof JdkOrderEntry || orderEntry instanceof ModuleSourceOrderEntry) {
+      return AddDependencyType.DEFAULT;
     }
 
     Collection<FlexIdeBuildConfiguration> accessibleConfigurations;
@@ -167,40 +169,63 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
   public boolean addCustomRootsForLibrary(@NotNull OrderEntry forOrderEntry,
                                           @NotNull OrderRootType type,
                                           @NotNull Collection<String> urls) {
-    if (type != OrderRootType.CLASSES || !(forOrderEntry instanceof LibraryOrderEntry)) {
+    if (type != OrderRootType.CLASSES || !(forOrderEntry instanceof LibraryOrderEntry) && !(forOrderEntry instanceof JdkOrderEntry)) {
       return false;
     }
 
     if (myActiveConfigurations == null) {
       return false;
     }
-    LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry)forOrderEntry;
-    if (libraryOrderEntry.getLibraryLevel() != LibraryTablesRegistrar.APPLICATION_LEVEL) {
-      return false;
-    }
 
-    Library library = libraryOrderEntry.getLibrary();
-    if (library == null || !FlexSdk.isFlexSdk(library)) {
-      return false;
-    }
-
-    final String[] allUrls = library.getUrls(OrderRootType.CLASSES);
-    Collection<FlexIdeBuildConfiguration> accessibleConfigurations = myActiveConfigurations.get(forOrderEntry.getOwnerModule());
-    final Set<String> allAccessibleUrls = new HashSet<String>();
-    ContainerUtil.process(accessibleConfigurations, new Processor<FlexIdeBuildConfiguration>() {
-      @Override
-      public boolean process(final FlexIdeBuildConfiguration bc) {
-        allAccessibleUrls.addAll(ContainerUtil.filter(allUrls, new Condition<String>() {
-          @Override
-          public boolean value(String s) {
-            s = VirtualFileManager.extractPath(StringUtil.trimEnd(s, JarFileSystem.JAR_SEPARATOR));
-            return BCUtils.getSdkEntryLinkageType(s, bc) != null;
-          }
-        }));
-        return true;
+    if (forOrderEntry instanceof LibraryOrderEntry) {
+      LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry)forOrderEntry;
+      if (libraryOrderEntry.getLibraryLevel() != LibraryTablesRegistrar.APPLICATION_LEVEL) {
+        return false;
       }
-    });
-    urls.addAll(allAccessibleUrls);
-    return true;
+
+      Library library = libraryOrderEntry.getLibrary();
+      if (library == null || !FlexSdk.isFlexSdk(library)) {
+        return false;
+      }
+
+      final String[] allUrls = library.getUrls(OrderRootType.CLASSES);
+      Collection<FlexIdeBuildConfiguration> accessibleConfigurations = myActiveConfigurations.get(forOrderEntry.getOwnerModule());
+      final Set<String> allAccessibleUrls = new HashSet<String>();
+      ContainerUtil.process(accessibleConfigurations, new Processor<FlexIdeBuildConfiguration>() {
+        @Override
+        public boolean process(final FlexIdeBuildConfiguration bc) {
+          allAccessibleUrls.addAll(ContainerUtil.filter(allUrls, new Condition<String>() {
+            @Override
+            public boolean value(String s) {
+              s = VirtualFileManager.extractPath(StringUtil.trimEnd(s, JarFileSystem.JAR_SEPARATOR));
+              return BCUtils.getSdkEntryLinkageType(s, bc) != null;
+            }
+          }));
+          return true;
+        }
+      });
+      urls.addAll(allAccessibleUrls);
+      return true;
+    }
+    else {
+      final FlexIdeBuildConfiguration bc =
+        FlexBuildConfigurationManager.getInstance(forOrderEntry.getOwnerModule()).getActiveConfiguration();
+      final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
+      if (sdkEntry == null) {
+        return false;
+      }
+      final Sdk sdk = sdkEntry.findSdk();
+      if (sdk == null || sdk.getSdkType() != FlexSdkType2.getInstance()) {
+        return false;
+      }
+      urls.addAll(ContainerUtil.filter(sdk.getRootProvider().getUrls(type), new Condition<String>() {
+        @Override
+        public boolean value(String s) {
+          s = VirtualFileManager.extractPath(StringUtil.trimEnd(s, JarFileSystem.JAR_SEPARATOR));
+          return BCUtils.getSdkEntryLinkageType(s, bc) != null;
+        }
+      }));
+      return true;
+    }
   }
 }

@@ -1,11 +1,10 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
-import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
-import com.intellij.lang.javascript.flex.projectStructure.ui.FlexSdkPanel;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -276,8 +275,7 @@ public class BCUtils {
     }
   }
 
-  public static void updateAvailableTargetPlayers(final FlexSdkPanel flexSdkPanel, final JComboBox targetPlayerCombo) {
-    final FlexSdk currentSdk = flexSdkPanel.getCurrentSdk();
+  public static void updateAvailableTargetPlayers(Sdk currentSdk, final JComboBox targetPlayerCombo) {
     final String sdkHome = currentSdk == null ? null : currentSdk.getHomePath();
     final String playerFolderPath = sdkHome == null ? null : sdkHome + "/frameworks/libs/player";
     if (playerFolderPath != null) {

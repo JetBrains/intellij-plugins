@@ -5,7 +5,6 @@ import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
-import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
@@ -22,9 +21,11 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -105,7 +106,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   public FlexIdeBCConfigurable(final Module module,
                                final ModifiableFlexIdeBuildConfiguration bc,
                                final Runnable treeNodeNameUpdater,
-                               final @NotNull FlexProjectConfigurationEditor configEditor) {
+                               @NotNull FlexProjectConfigurationEditor configEditor, final ProjectSdksModel sdksModel) {
     super(false, treeNodeNameUpdater);
     myModule = module;
     myConfiguration = bc;
@@ -114,7 +115,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
     final BuildConfigurationNature nature = bc.getNature();
 
-    myDependenciesConfigurable = new DependenciesConfigurable(bc, module.getProject(), configEditor);
+    myDependenciesConfigurable = new DependenciesConfigurable(bc, module.getProject(), configEditor, sdksModel);
     myCompilerOptionsConfigurable =
       new CompilerOptionsConfigurable(module, bc.getNature(), myDependenciesConfigurable, bc.getCompilerOptions());
 
@@ -135,8 +136,8 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     };
     final Computable<String> airVersionComputable = new Computable<String>() {
       public String compute() {
-        final FlexSdk sdk = myDependenciesConfigurable.getCurrentSdk();
-        return sdk == null ? "" : FlexSdkUtils.getAirVersion(sdk.getFlexVersion());
+        final Sdk sdk = myDependenciesConfigurable.getCurrentSdk();
+        return sdk == null ? "" : FlexSdkUtils.getAirVersion(sdk.getVersionString());
       }
     };
     final Computable<Boolean> androidEnabledComputable = new Computable<Boolean>() {
@@ -204,7 +205,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
     myCreateHtmlWrapperTemplateButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
-        final FlexSdk sdk = myDependenciesConfigurable.getCurrentSdk();
+        final Sdk sdk = myDependenciesConfigurable.getCurrentSdk();
         if (sdk == null) {
           Messages.showInfoMessage(myModule.getProject(), FlexBundle.message("sdk.needed.to.create.wrapper"),
                                    CreateHtmlWrapperTemplateDialog.TITLE);

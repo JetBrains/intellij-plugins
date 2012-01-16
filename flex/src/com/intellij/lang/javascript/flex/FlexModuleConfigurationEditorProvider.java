@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
+import com.intellij.lang.javascript.flex.projectStructure.ui.FlexModuleEditor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleConfigurationEditor;
 import com.intellij.openapi.module.ModuleType;
@@ -17,13 +18,7 @@ public class FlexModuleConfigurationEditorProvider implements ModuleConfiguratio
   public ModuleConfigurationEditor[] createEditors(final ModuleConfigurationState state) {
     final Module module = state.getRootModel().getModule();
     if (ModuleType.get(module) != FlexModuleType.getInstance()) return ModuleConfigurationEditor.EMPTY;
-    return new ModuleConfigurationEditor[] {
-      PeerFactory.getInstance().createModuleConfigurationEditor(
-        module.getName(), state
-      ),
-      DefaultModuleConfigurationEditorFactory.getInstance().createClasspathEditor(state),
-      new FlexCompilerSettingsEditor(state.getRootModel().getModule(),
-                                     state.getRootModel().getModuleExtension(CompilerModuleExtension.class))};
+    return new ModuleConfigurationEditor[]{new FlexModuleEditor(state)};
   }
 
 }
