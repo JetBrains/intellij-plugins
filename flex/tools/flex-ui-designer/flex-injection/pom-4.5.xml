@@ -43,6 +43,10 @@
               <name>flex::v4_5</name>
               <value>true</value>
             </property>
+            <property>
+              <name>flex::v4_6</name>
+              <value>false</value>
+            </property>
           </defines>
         </configuration>
       </plugin>

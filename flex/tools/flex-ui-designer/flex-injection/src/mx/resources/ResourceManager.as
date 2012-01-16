@@ -44,7 +44,7 @@ public class ResourceManager extends EventDispatcher implements IResourceManager
   public function unloadResourceModule(url:String, update:Boolean = true):void {
   }
 
-  flex::v4_5
+  flex::gt_4_1
   public function addResourceBundle(resourceBundle:IResourceBundle, useWeakReference:Boolean = false):void {
   }
 
@@ -165,7 +165,7 @@ public class ResourceManager extends EventDispatcher implements IResourceManager
     return resourceBundle == null ? null : (resourceBundle.content[resourceName] as Class);
   }
 
-  flex::v4_5
+  flex::gt_4_1
   public function installCompiledResourceBundles(applicationDomain:ApplicationDomain, locales:Array, bundleNames:Array,
                                                  useWeakReference:Boolean = false):Array {
     return null;

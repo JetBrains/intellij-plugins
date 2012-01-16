@@ -81,6 +81,17 @@
 
             <include>mx.resources.ResourceManager</include>
           </includeClasses>
+
+          <defines combine.children="append">
+            <property>
+              <name>flex::lt_4_6</name>
+              <value>true</value>
+            </property>
+            <property>
+              <name>flex::gt_4_1</name>
+              <value>true</value>
+            </property>
+          </defines>
         </configuration>
       </plugin>
     </plugins>

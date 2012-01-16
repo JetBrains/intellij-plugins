@@ -50,7 +50,7 @@ public class StyleProtoChain {
     for (var i:int = typeCount - 1; i >= 0; i--) {
       var type:String = types[i];
       if (hasAdvancedSelectors && advancedObject != null) {
-        var decls:Array = styleManager.getStyleDeclarations(type);
+        var decls:Array = styleManager.getStyleDeclarations(type) as Array;
         if (decls != null) {
           classDecls = classDecls.concat(matchStyleDeclarations(decls, advancedObject));
         }

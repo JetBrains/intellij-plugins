@@ -209,7 +209,7 @@ internal class TopLevelSystemManagerProxy extends BaseFlexModuleFactoryImpl impl
     activeSystemManager.registerImplementation(interfaceName, impl);
   }
 
-  flex::v4_5
+  flex::gt_4_1
   public function getVisibleApplicationRect(bounds:Rectangle = null, skipToSandboxRoot:Boolean = false):Rectangle {
     return activeSystemManager.getVisibleApplicationRect(bounds, skipToSandboxRoot);
   }

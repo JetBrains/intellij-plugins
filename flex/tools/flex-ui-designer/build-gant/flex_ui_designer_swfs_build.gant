@@ -3,6 +3,7 @@ def List<SwfDescriptor> getList() {
 		new SwfDescriptor("shared.xml", "shared", true), 
 		new SwfDescriptor("flex-injection-4.1.xml", "flex-injection", true), 
 		new SwfDescriptor("flex-injection-4.5.xml", "flex-injection", true), 
+		new SwfDescriptor("flex-injection-4.6.xml", "flex-injection", true), 
 		new SwfDescriptor("impl.xml", "impl", true), 
 		new SwfDescriptor("ui.xml", "ui", true), 
 		new SwfDescriptor("base.xml", "plaf/base", true), 

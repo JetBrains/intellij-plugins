@@ -579,7 +579,7 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
     return this;
   }
 
-  flex::v4_5
+  flex::gt_4_1
   public function getVisibleApplicationRect(bounds:Rectangle = null, skipToSandboxRoot:Boolean = false):Rectangle {
     return commonGetVisibleApplicationRect(bounds);
   }
@@ -744,7 +744,7 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
     }
   }
 
-  flex::v4_5 {
+  flex::gt_4_1 {
     include '../../../../../../baseFlexModuleFactoryImpl45.as';
   }
 

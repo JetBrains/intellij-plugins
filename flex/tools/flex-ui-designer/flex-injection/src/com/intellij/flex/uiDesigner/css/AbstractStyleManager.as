@@ -64,11 +64,20 @@ internal class AbstractStyleManager {
     return _selectors[selector];
   }
 
-  //noinspection JSUnusedGlobalSymbols
-  public function getStyleDeclarations(subject:String):Array {    
+  flex::v4_6
+  public function getStyleDeclarations(subject:String):Object {
+    return _getStyleDeclarations(subject);
+  }
+
+  flex::lt_4_6
+  public function getStyleDeclarations(subject:String):Array {
+    return _getStyleDeclarations(subject);
+  }
+
+  private function _getStyleDeclarations(subject:String):Array {
     var subjects:Array;
     if (parent != null) {
-      subjects = parent.getStyleDeclarations(subject);
+      subjects = parent.getStyleDeclarations(subject) as Array;
     }
 
     if (subjects == null) {
@@ -343,7 +352,7 @@ internal class AbstractStyleManager {
   }
 
   //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols,JSMethodCanBeStatic
-  flex::v4_5
+  flex::gt_4_1
   public function acceptMediaList(value:String):Boolean {
     return false;
   }
