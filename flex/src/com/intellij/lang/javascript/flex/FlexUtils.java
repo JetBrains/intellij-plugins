@@ -202,31 +202,17 @@ public class FlexUtils {
 
   @Nullable
   public static Sdk getFlexSdkForFlexModuleOrItsFlexFacets(final @NotNull Module module) {
-    if (PlatformUtils.isFlexIde()) {
-      return ModuleType.get(module) instanceof FlexModuleType
-             ? createFlexSdkWrapper(FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration())
-             : null;
-    }
-
-    if (ModuleType.get(module) instanceof FlexModuleType) {
-      final Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
-      if (sdk != null && sdk.getSdkType() instanceof IFlexSdkType) {
-        return sdk;
-      }
-    }
-    else {
-      final FlexFacet flexFacet = FacetManager.getInstance(module).getFacetByType(FlexFacet.ID);
-      if (flexFacet != null) {
-        return flexFacet.getConfiguration().getFlexSdk();
-      }
-    }
-
     // TODO: some tests use not correct configuration: Java module with facet(s), but Flex SDK is configured for module rather than for facets
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       final Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
       if (sdk != null && sdk.getSdkType() instanceof IFlexSdkType) {
         return sdk;
       }
+    }
+    else {
+      return ModuleType.get(module) instanceof FlexModuleType
+             ? createFlexSdkWrapper(FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration())
+             : null;
     }
 
     return null;

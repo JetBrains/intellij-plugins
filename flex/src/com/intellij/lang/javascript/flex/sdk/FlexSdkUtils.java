@@ -10,6 +10,8 @@ import com.intellij.facet.FacetManager;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
+import com.intellij.lang.javascript.flex.projectStructure.model.ComponentSet;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -35,10 +37,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.peer.PeerFactory;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.PlatformUtils;
-import com.intellij.util.Processor;
-import com.intellij.util.SystemProperties;
+import com.intellij.util.*;
 import com.intellij.util.io.ZipUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -776,5 +775,36 @@ public class FlexSdkUtils {
         }
       }
     });
+  }
+
+  /**
+   * @param sdkVersion
+   * @param bc
+   * @param processor  (namespace, relative path with no leading slash)
+   */
+  public static void processStandardNamespaces(String sdkVersion, FlexIdeBuildConfiguration bc, PairConsumer<String, String> processor) {
+    if (bc.isPureAs()) return;
+
+    if (StringUtil.compareVersionNumbers(sdkVersion, "4") < 0) {
+      processor.consume("http://www.adobe.com/2006/mxml", "frameworks/mxml-manifest.xml");
+    }
+    else {
+      processor.consume("http://ns.adobe.com/mxml/2009", "frameworks/mxml-2009-manifest.xml");
+
+      if (bc.getTargetPlatform() == TargetPlatform.Mobile ||
+          bc.getDependencies().getComponentSet() == ComponentSet.SparkAndMx ||
+          bc.getDependencies().getComponentSet() == ComponentSet.SparkOnly) {
+        processor.consume("library://ns.adobe.com/flex/spark", "frameworks/spark-manifest.xml");
+      }
+
+      if (bc.getTargetPlatform() != TargetPlatform.Mobile) {
+        if (bc.getDependencies().getComponentSet() == ComponentSet.SparkAndMx ||
+            bc.getDependencies().getComponentSet() == ComponentSet.MxOnly) {
+          processor.consume("library://ns.adobe.com/flex/mx", "frameworks/mx-manifest.xml");
+        }
+
+        processor.consume("http://www.adobe.com/2006/mxml", "frameworks/mxml-manifest.xml");
+      }
+    }
   }
 }

@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -29,6 +30,7 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.util.PairConsumer;
 import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformUtils;
 import gnu.trove.THashMap;
@@ -186,50 +188,17 @@ public class CompilerConfigGenerator {
   }
 
   private void addNamespaces(final Element rootElement) {
-    if (myConfig.isPureAs()) return;
-
     final StringBuilder namespaceBuilder = new StringBuilder();
-
-    if (StringUtil.compareVersionNumbers(mySdkVersion, "4") < 0) {
-      namespaceBuilder.
-        append("http://www.adobe.com/2006/mxml").
-        append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR).
-        append("${FLEX_SDK}/frameworks/mxml-manifest.xml");
-    }
-    else {
-      namespaceBuilder.
-        append("http://ns.adobe.com/mxml/2009").
-        append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR).
-        append("${FLEX_SDK}/frameworks/mxml-2009-manifest.xml");
-
-      if (myConfig.getTargetPlatform() == TargetPlatform.Mobile ||
-          myConfig.getDependencies().getComponentSet() == ComponentSet.SparkAndMx ||
-          myConfig.getDependencies().getComponentSet() == ComponentSet.SparkOnly) {
-        namespaceBuilder.
-          append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR).
-          append("library://ns.adobe.com/flex/spark").
-          append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR).
-          append("${FLEX_SDK}/frameworks/spark-manifest.xml");
-      }
-
-      if (myConfig.getTargetPlatform() != TargetPlatform.Mobile) {
-        if (myConfig.getDependencies().getComponentSet() == ComponentSet.SparkAndMx ||
-            myConfig.getDependencies().getComponentSet() == ComponentSet.MxOnly) {
-          namespaceBuilder.
-            append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR).
-            append("library://ns.adobe.com/flex/mx").
-            append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR).
-            append("${FLEX_SDK}/frameworks/mx-manifest.xml");
+    FlexSdkUtils.processStandardNamespaces(mySdkVersion, myConfig, new PairConsumer<String, String>() {
+      public void consume(final String namespace, final String relativePath) {
+        if (namespaceBuilder.length() > 0) {
+          namespaceBuilder.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
         }
-
-        namespaceBuilder.
-          append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR).
-          append("http://www.adobe.com/2006/mxml").
-          append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR).
-          append("${FLEX_SDK}/frameworks/mxml-manifest.xml");
+        namespaceBuilder.append(namespace).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR).append("${FLEX_SDK}/").append(relativePath);
       }
-    }
+    });
 
+    if (namespaceBuilder.length() == 0) return;
     final CompilerOptionInfo info = CompilerOptionInfo.getOptionInfo("compiler.namespaces.namespace");
     addOption(rootElement, info, namespaceBuilder.toString());
   }
