@@ -60,55 +60,23 @@ public class FlexCompiler implements SourceProcessingCompiler {
     saveProject(context.getProject());
     final List<ProcessingItem> itemList = new ArrayList<ProcessingItem>();
 
-    if (PlatformUtils.isFlexIde()) {
-      try {
-        for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig : getModulesAndConfigsToCompile(context.getCompileScope())) {
-          itemList.add(new MyProcessingItem(moduleAndConfig.first, moduleAndConfig.second));
-        }
-      }
-      catch (ConfigurationException e) {
-        // can't happen because already validated
-        throw new RuntimeException(e);
-      }
-
-      if (!itemList.isEmpty() && context.isRebuild()) {
-        final FlexCompilerHandler flexCompilerHandler = FlexCompilerHandler.getInstance(context.getProject());
-        flexCompilerHandler.quitCompilerShell();
-        flexCompilerHandler.getCompilerDependenciesCache().clear();
-      }
-
-      return itemList.toArray(new ProcessingItem[itemList.size()]);
-    }
-
-    for (final Module module : context.getCompileScope().getAffectedModules()) {
-      for (final FlexBuildConfiguration config : FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(module)) {
-        if (config.DO_BUILD) {
-          // currently one MyProcessingItem(module) is added if module contains several Flex facets. Better solution could potentially exist.
-          itemList.add(new MyProcessingItem(module));
-          break;
-        }
+    try {
+      for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig : getModulesAndConfigsToCompile(context.getCompileScope())) {
+        itemList.add(new MyProcessingItem(moduleAndConfig.first, moduleAndConfig.second));
       }
     }
+    catch (ConfigurationException e) {
+      // can't happen because already validated
+      throw new RuntimeException(e);
+    }
 
-    final ProcessingItem[] items = itemList.toArray(new ProcessingItem[itemList.size()]);
-    if (items.length > 0 && context.isRebuild()) {
+    if (!itemList.isEmpty() && context.isRebuild()) {
       final FlexCompilerHandler flexCompilerHandler = FlexCompilerHandler.getInstance(context.getProject());
       flexCompilerHandler.quitCompilerShell();
       flexCompilerHandler.getCompilerDependenciesCache().clear();
     }
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
-      public void run() {
-        Arrays.sort(items, new Comparator<ProcessingItem>() {
-          final Comparator<Module> moduleComparator = ModuleManager.getInstance(context.getProject()).moduleDependencyComparator();
 
-          public int compare(final ProcessingItem o1, final ProcessingItem o2) {
-            return moduleComparator.compare(((MyProcessingItem)o1).myModule, ((MyProcessingItem)o2).myModule);
-          }
-        });
-      }
-    });
-
-    return items;
+    return itemList.toArray(new ProcessingItem[itemList.size()]);
   }
 
   private static void saveProject(final Project project) {
@@ -127,108 +95,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
   }
 
   public ProcessingItem[] process(final CompileContext context, final ProcessingItem[] items) {
-    if (PlatformUtils.isFlexIde()) {
       return processFlexIdeConfigs(context, items);
-    }
-
-    final FlexCompilerHandler flexCompilerHandler = FlexCompilerHandler.getInstance(context.getProject());
-    final FlexCompilerProjectConfiguration flexCompilerConfiguration = FlexCompilerProjectConfiguration.getInstance(context.getProject());
-
-    final Collection<Module> modulesToSkip = context.getCompileScope().getUserData(MODULES_TO_SKIP_FLEX_FACET_COMPILATION);
-
-    if (flexCompilerConfiguration.USE_FCSH) {
-      for (ProcessingItem item : items) {
-        try {
-          final Module module = ((MyProcessingItem)item).myModule;
-
-          if (modulesToSkip != null && modulesToSkip.contains(module)) {
-            continue;
-          }
-
-          context.addMessage(CompilerMessageCategory.INFORMATION, FlexBundle.message("using.fcsh"), null, -1, -1);
-
-          flexCompilerHandler.compileFlexModuleOrAllFlexFacets(module, context);
-        }
-        catch (IOException ex) {
-          context.addMessage(CompilerMessageCategory.ERROR, ex.toString(), null, -1, -1);
-        }
-      }
-    }
-    else {
-      final boolean builtIn = flexCompilerConfiguration.USE_BUILT_IN_COMPILER;
-
-      final FlexBuildConfiguration overriddenConfig = context.getUserData(FlexCompilerHandler.OVERRIDE_BUILD_CONFIG);
-
-      final Collection<FlexCompilationTask> compilationTasks = new ArrayList<FlexCompilationTask>();
-      for (ProcessingItem item : items) {
-        final Module module = ((MyProcessingItem)item).myModule;
-
-        if (modulesToSkip != null && modulesToSkip.contains(module)) {
-          continue;
-        }
-
-        if (overriddenConfig != null && module == overriddenConfig.getModule()) {
-          final Pair<Boolean, String> validationResultWithMessage =
-            validateConfiguration(overriddenConfig, module, FlexBundle.message("module.name", module.getName()), false);
-
-          if (!validationResultWithMessage.first) {
-            if (validationResultWithMessage.second != null) {
-              context.addMessage(CompilerMessageCategory.ERROR, validationResultWithMessage.second, null, -1, -1);
-            }
-            return ProcessingItem.EMPTY_ARRAY;
-          }
-          compilationTasks.add(builtIn ? new BuiltInCompilationTask(module, null, overriddenConfig)
-                                       : new MxmlcCompcCompilationTask(module, null, overriddenConfig));
-        }
-        else {
-          if (ModuleType.get(module) instanceof FlexModuleType) {
-            final FlexBuildConfiguration config = FlexBuildConfiguration.getInstance(module);
-            if (config.DO_BUILD) {
-              compilationTasks.add(builtIn ? new BuiltInCompilationTask(module, null, config)
-                                           : new MxmlcCompcCompilationTask(module, null, config));
-            }
-          }
-          else {
-            final Collection<FlexFacet> flexFacets = FacetManager.getInstance(module).getFacetsByType(FlexFacet.ID);
-            for (FlexFacet flexFacet : flexFacets) {
-              final FlexBuildConfiguration config = FlexBuildConfiguration.getInstance(flexFacet);
-              if (config.DO_BUILD) {
-                compilationTasks.add(builtIn ? new BuiltInCompilationTask(module, flexFacet, config)
-                                             : new MxmlcCompcCompilationTask(module, flexFacet, config));
-              }
-            }
-          }
-        }
-        appendCssCompilationTasks(compilationTasks, module, builtIn);
-      }
-
-      if (!compilationTasks.isEmpty()) {
-        context.addMessage(CompilerMessageCategory.INFORMATION,
-                           FlexBundle.message(builtIn ? "using.builtin.compiler" : "using.mxmlc.compc",
-                                              flexCompilerConfiguration.MAX_PARALLEL_COMPILATIONS), null, -1, -1);
-
-        if (builtIn) {
-          try {
-            final Sdk someSdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(compilationTasks.iterator().next().getModule());
-            flexCompilerHandler.getBuiltInFlexCompilerHandler().startCompilerIfNeeded(someSdk, context);
-          }
-          catch (IOException e) {
-            context.addMessage(CompilerMessageCategory.ERROR, e.toString(), null, -1, -1);
-            return ProcessingItem.EMPTY_ARRAY;
-          }
-        }
-
-        new FlexCompilationManager(context, compilationTasks).compile();
-
-        final int activeCompilationsNumber = flexCompilerHandler.getBuiltInFlexCompilerHandler().getActiveCompilationsNumber();
-        if (activeCompilationsNumber != 0) {
-          LOG.error(activeCompilationsNumber + " Flex compilation(s) are not finished!");
-        }
-      }
-    }
-
-    FlexCompilerHandler.deleteTempFlexUnitFiles(context);
-    return items;
   }
 
   private static void appendCssCompilationTasks(final Collection<FlexCompilationTask> compilationTasks,
