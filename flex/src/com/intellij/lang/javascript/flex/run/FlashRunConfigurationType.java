@@ -6,23 +6,22 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class FlexIdeRunConfigurationType implements ConfigurationType {
+public class FlashRunConfigurationType implements ConfigurationType {
 
   private static final Icon ICON = IconLoader.getIcon("flex_ide_run_configuration.png");
-  public static final String TYPE = "FlexIdeRunConfigurationType";
+  public static final String TYPE = "FlashRunConfigurationType";
   public static final String DISPLAY_NAME = "Flash App";
 
   private final ConfigurationFactory myFactory;
 
-  public FlexIdeRunConfigurationType() {
+  public FlashRunConfigurationType() {
     myFactory = new ConfigurationFactory(this) {
       public RunConfiguration createTemplateConfiguration(Project project) {
-        return new FlexIdeRunConfiguration(project, this, "");
+        return new FlashRunConfiguration(project, this, "");
       }
     };
   }
@@ -48,8 +47,8 @@ public class FlexIdeRunConfigurationType implements ConfigurationType {
     return TYPE;
   }
 
-  public static FlexIdeRunConfigurationType getInstance() {
-    return Extensions.findExtension(CONFIGURATION_TYPE_EP, FlexIdeRunConfigurationType.class);
+  public static FlashRunConfigurationType getInstance() {
+    return Extensions.findExtension(CONFIGURATION_TYPE_EP, FlashRunConfigurationType.class);
   }
 
   public static ConfigurationFactory getFactory() {

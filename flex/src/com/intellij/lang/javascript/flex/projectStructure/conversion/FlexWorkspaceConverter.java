@@ -3,7 +3,7 @@ package com.intellij.lang.javascript.flex.projectStructure.conversion;
 import com.intellij.conversion.CannotConvertException;
 import com.intellij.conversion.ConversionProcessor;
 import com.intellij.conversion.WorkspaceSettings;
-import com.intellij.lang.javascript.flex.run.FlexIdeRunConfigurationType;
+import com.intellij.lang.javascript.flex.run.FlashRunConfigurationType;
 import com.intellij.openapi.util.Pair;
 import org.jdom.Element;
 
@@ -45,8 +45,8 @@ public class FlexWorkspaceConverter extends ConversionProcessor<WorkspaceSetting
 
     configurationElement.setAttribute("default", "false");
     configurationElement.setAttribute("name", bcName);
-    configurationElement.setAttribute("type", FlexIdeRunConfigurationType.TYPE);
-    configurationElement.setAttribute("factoryName", FlexIdeRunConfigurationType.DISPLAY_NAME);
+    configurationElement.setAttribute("type", FlashRunConfigurationType.TYPE);
+    configurationElement.setAttribute("factoryName", FlashRunConfigurationType.DISPLAY_NAME);
 
     final Element moduleNameOption = new Element("option");
     moduleNameOption.setAttribute("name", "moduleName");
@@ -60,6 +60,6 @@ public class FlexWorkspaceConverter extends ConversionProcessor<WorkspaceSetting
 
     runManagerComponent.addContent(configurationElement);
 
-    runManagerComponent.setAttribute("selected", FlexIdeRunConfigurationType.DISPLAY_NAME + "." + bcName);
+    runManagerComponent.setAttribute("selected", FlashRunConfigurationType.DISPLAY_NAME + "." + bcName);
   }
 }

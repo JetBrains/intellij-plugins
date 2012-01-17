@@ -5,9 +5,6 @@
 
     <configuration.ModuleStructureExtension
         implementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeSharedLibrariesExtension" order="before FlexBuildConfigurations"/>
-    <configurationType implementation="com.intellij.lang.javascript.flex.run.FlexIdeRunConfigurationType"/>
-    <configurationProducer implementation="com.intellij.lang.javascript.flex.run.FlexIdeRunConfigurationProducer"/>
-    <configurationType implementation="com.intellij.lang.javascript.flex.run.RemoteFlashRunConfigurationType"/>
     <library.type implementation="com.intellij.lang.javascript.flex.projectStructure.FlexSdkLibraryType"/>
     <moduleConfigurationEditorProvider implementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleConfigurationEditorProvider"/>
     <projectService serviceInterface="com.intellij.openapi.roots.ui.configuration.ProjectSettingsService"

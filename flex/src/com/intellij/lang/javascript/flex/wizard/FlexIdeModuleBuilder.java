@@ -14,10 +14,9 @@ import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog;
-import com.intellij.lang.javascript.flex.run.FlexIdeRunConfiguration;
-import com.intellij.lang.javascript.flex.run.FlexIdeRunConfigurationType;
-import com.intellij.lang.javascript.flex.run.FlexIdeRunnerParameters;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
+import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
+import com.intellij.lang.javascript.flex.run.FlashRunConfigurationType;
+import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -30,18 +29,13 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
-import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
 
 public class FlexIdeModuleBuilder extends ModuleBuilder {
 
@@ -259,18 +253,18 @@ public class FlexIdeModuleBuilder extends ModuleBuilder {
   public static void createRunConfiguration(final Module module, final String bcName) {
     final RunManagerEx runManager = RunManagerEx.getInstanceEx(module.getProject());
 
-    final RunConfiguration[] existingConfigurations = runManager.getConfigurations(FlexIdeRunConfigurationType.getInstance());
+    final RunConfiguration[] existingConfigurations = runManager.getConfigurations(FlashRunConfigurationType.getInstance());
     for (RunConfiguration configuration : existingConfigurations) {
-      final FlexIdeRunnerParameters parameters = ((FlexIdeRunConfiguration)configuration).getRunnerParameters();
+      final FlashRunnerParameters parameters = ((FlashRunConfiguration)configuration).getRunnerParameters();
       if (module.getName().equals(parameters.getModuleName()) && bcName.equals(parameters.getBCName())) {
         //already exists
         return;
       }
     }
 
-    final RunnerAndConfigurationSettings settings = runManager.createConfiguration("", FlexIdeRunConfigurationType.getFactory());
-    final FlexIdeRunConfiguration runConfiguration = (FlexIdeRunConfiguration)settings.getConfiguration();
-    final FlexIdeRunnerParameters params = runConfiguration.getRunnerParameters();
+    final RunnerAndConfigurationSettings settings = runManager.createConfiguration("", FlashRunConfigurationType.getFactory());
+    final FlashRunConfiguration runConfiguration = (FlashRunConfiguration)settings.getConfiguration();
+    final FlashRunnerParameters params = runConfiguration.getRunnerParameters();
     params.setModuleName(module.getName());
     params.setBCName(bcName);
 

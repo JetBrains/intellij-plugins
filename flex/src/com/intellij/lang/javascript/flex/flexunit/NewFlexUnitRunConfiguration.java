@@ -10,8 +10,8 @@ import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
+import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
-import com.intellij.lang.javascript.flex.run.FlexIdeRunConfiguration;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
@@ -113,8 +113,8 @@ public class NewFlexUnitRunConfiguration extends RunConfigurationBase
     final BuildConfigurationNature nature = bc.getNature();
     if (nature.isDesktopPlatform()) {
 
-      final FlexIdeRunConfiguration.AirRunState airRunState =
-        new FlexIdeRunConfiguration.AirRunState(getProject(), env, myRunnerParameters) {
+      final FlashRunConfiguration.AirRunState airRunState =
+        new FlashRunConfiguration.AirRunState(getProject(), env, myRunnerParameters) {
           @Override
           public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
             final ProcessHandler processHandler = startProcess();

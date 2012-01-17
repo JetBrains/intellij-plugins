@@ -130,6 +130,9 @@
     <projectStructureDetector implementation="com.intellij.lang.javascript.flex.projectStructure.detection.FlexProjectStructureDetector"/>
     <configurationType implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfigurationType"/>
     <configurationProducer implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitRuntimeConfigurationProducer"/>
+    <configurationType implementation="com.intellij.lang.javascript.flex.run.FlashRunConfigurationType"/>
+    <configurationProducer implementation="com.intellij.lang.javascript.flex.run.FlashRunConfigurationProducer"/>
+    <configurationType implementation="com.intellij.lang.javascript.flex.run.RemoteFlashRunConfigurationType"/>
 
     <configuration.ModuleStructureExtension id="FlexBuildConfigurations"
                                             implementation="com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension"/>
@@ -140,6 +143,7 @@
     <orderEnumerationHandlerFactory
         implementation="com.intellij.lang.javascript.flex.projectStructure.FlexOrderEnumerationHandler$FactoryImpl"/>
     <sdkFinder implementation="com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdk$SdkFinderImpl"/>
+
 
     <localInspection language="ECMA Script Level 4" shortName="FlexUnitClassInProductSourceInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testclassinproductsource.displayname" groupKey="flexunit.inspections.group"

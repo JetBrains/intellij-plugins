@@ -11,7 +11,7 @@ import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
-import com.intellij.lang.javascript.flex.run.FlexIdeRunConfiguration;
+import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
 import com.intellij.lang.javascript.flex.run.RunMainClassPrecompileTask;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkAdditionalData;
@@ -461,11 +461,11 @@ public class FlexCompiler implements SourceProcessingCompiler {
     throws ConfigurationException {
     final RunConfiguration runConfiguration = CompileStepBeforeRun.getRunConfiguration(scope);
 
-    if (runConfiguration instanceof FlexIdeRunConfiguration || runConfiguration instanceof NewFlexUnitRunConfiguration) {
+    if (runConfiguration instanceof FlashRunConfiguration || runConfiguration instanceof NewFlexUnitRunConfiguration) {
       final Collection<Pair<Module, FlexIdeBuildConfiguration>> result = new HashSet<Pair<Module, FlexIdeBuildConfiguration>>();
 
-      final BCBasedRunnerParameters params = runConfiguration instanceof FlexIdeRunConfiguration
-                                             ? ((FlexIdeRunConfiguration)runConfiguration).getRunnerParameters()
+      final BCBasedRunnerParameters params = runConfiguration instanceof FlashRunConfiguration
+                                             ? ((FlashRunConfiguration)runConfiguration).getRunnerParameters()
                                              : ((NewFlexUnitRunConfiguration)runConfiguration).getRunnerParameters();
       final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig;
 

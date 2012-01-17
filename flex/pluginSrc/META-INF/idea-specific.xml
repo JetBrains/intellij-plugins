@@ -1,11 +1,5 @@
 <idea-plugin url="http://www.jetbrains.com/idea">
   <extensions defaultExtensionNs="com.intellij">
-    <configurationType implementation="com.intellij.lang.javascript.flex.run.FlexRunConfigurationType"/>
-    <configurationType implementation="com.intellij.lang.javascript.flex.run.AirRunConfigurationType"/>
-    <configurationType implementation="com.intellij.lang.javascript.flex.run.AirMobileRunConfigurationType"/>
-    <configurationProducer implementation="com.intellij.lang.javascript.flex.run.FlexRuntimeConfigurationProducer"/>
-    <configurationProducer implementation="com.intellij.lang.javascript.flex.run.AirRuntimeConfigurationProducer"/>
-    <configurationProducer implementation="com.intellij.lang.javascript.flex.run.AirMobileRuntimeConfigurationProducer"/>
 
     <moduleConfigurationEditorProvider implementation="com.intellij.lang.javascript.flex.FlexModuleConfigurationEditorProvider"/>
 

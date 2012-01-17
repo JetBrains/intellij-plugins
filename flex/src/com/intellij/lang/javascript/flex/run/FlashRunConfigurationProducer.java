@@ -15,12 +15,12 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class FlexIdeRunConfigurationProducer extends RuntimeConfigurationProducer implements Cloneable {
+public class FlashRunConfigurationProducer extends RuntimeConfigurationProducer implements Cloneable {
 
   private PsiElement mySourceElement;
 
-  public FlexIdeRunConfigurationProducer() {
-    super(FlexIdeRunConfigurationType.getInstance());
+  public FlashRunConfigurationProducer() {
+    super(FlashRunConfigurationType.getInstance());
   }
 
   public PsiElement getSourceElement() {
@@ -36,9 +36,9 @@ public class FlexIdeRunConfigurationProducer extends RuntimeConfigurationProduce
     final JSClass jsClass = FlexRuntimeConfigurationProducer.getJSClass(mySourceElement);
     if (jsClass != null && FlexRuntimeConfigurationProducer.isAcceptedMainClass(jsClass, module, true)) {
       final RunnerAndConfigurationSettings settings =
-        RunManagerEx.getInstanceEx(location.getProject()).createConfiguration("", FlexIdeRunConfigurationType.getFactory());
-      final FlexIdeRunConfiguration runConfig = (FlexIdeRunConfiguration)settings.getConfiguration();
-      final FlexIdeRunnerParameters params = runConfig.getRunnerParameters();
+        RunManagerEx.getInstanceEx(location.getProject()).createConfiguration("", FlashRunConfigurationType.getFactory());
+      final FlashRunConfiguration runConfig = (FlashRunConfiguration)settings.getConfiguration();
+      final FlashRunnerParameters params = runConfig.getRunnerParameters();
 
       params.setModuleName(module.getName());
 
@@ -54,7 +54,7 @@ public class FlexIdeRunConfigurationProducer extends RuntimeConfigurationProduce
         params.setOverriddenOutputFileName(jsClass.getName() + ".swf");
       }
 
-      runConfig.setName(params.suggestUniqueName(context.getRunManager().getConfigurations(FlexIdeRunConfigurationType.getInstance())));
+      runConfig.setName(params.suggestUniqueName(context.getRunManager().getConfigurations(FlashRunConfigurationType.getInstance())));
       return settings;
     }
 
@@ -109,7 +109,7 @@ public class FlexIdeRunConfigurationProducer extends RuntimeConfigurationProduce
     RunnerAndConfigurationSettings basedOnMainClassAndActiveBC = null;
 
     for (final RunnerAndConfigurationSettings runConfig : existing) {
-      final FlexIdeRunnerParameters params = ((FlexIdeRunConfiguration)runConfig.getConfiguration()).getRunnerParameters();
+      final FlashRunnerParameters params = ((FlashRunConfiguration)runConfig.getConfiguration()).getRunnerParameters();
       if (module.getName().equals(params.getModuleName())) {
         final FlexIdeBuildConfiguration bc = manager.findConfigurationByName(params.getBCName());
         if (bc == null) continue;

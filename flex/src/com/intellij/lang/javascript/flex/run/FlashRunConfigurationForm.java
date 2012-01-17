@@ -27,7 +27,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfiguration> {
+public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfiguration> {
 
   private JPanel myMainPanel;
   private BCCombo myBCCombo;
@@ -77,7 +77,7 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
 
   private LauncherParameters myLauncherParameters;
 
-  public FlexIdeRunConfigurationForm(final Project project) {
+  public FlashRunConfigurationForm(final Project project) {
     myProject = project;
 
     initBCCombo();
@@ -321,8 +321,8 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     return myMainPanel;
   }
 
-  protected void resetEditorFrom(final FlexIdeRunConfiguration configuration) {
-    final FlexIdeRunnerParameters params = configuration.getRunnerParameters();
+  protected void resetEditorFrom(final FlashRunConfiguration configuration) {
+    final FlashRunnerParameters params = configuration.getRunnerParameters();
     myLauncherParameters = params.getLauncherParameters().clone(); // must be before myBCsCombo.setModel()
 
     myBCCombo.resetFrom(params);
@@ -363,8 +363,8 @@ public class FlexIdeRunConfigurationForm extends SettingsEditor<FlexIdeRunConfig
     updateControls();
   }
 
-  protected void applyEditorTo(final FlexIdeRunConfiguration configuration) throws ConfigurationException {
-    final FlexIdeRunnerParameters params = configuration.getRunnerParameters();
+  protected void applyEditorTo(final FlashRunConfiguration configuration) throws ConfigurationException {
+    final FlashRunnerParameters params = configuration.getRunnerParameters();
 
     myBCCombo.applyTo(params);
 

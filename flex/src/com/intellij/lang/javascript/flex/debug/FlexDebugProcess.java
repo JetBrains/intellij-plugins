@@ -187,19 +187,19 @@ public class FlexDebugProcess extends XDebugProcess {
     final List<String> fdbLaunchCommand = FlexSdkUtils
       .getCommandLineForSdkTool(session.getProject(), myAppSdkHome, null, getFdbClasspath(), "flex.tools.debugger.cli.DebugCLI", null);
 
-    if (params instanceof FlexIdeRunnerParameters &&
+    if (params instanceof FlashRunnerParameters &&
         bc.getTargetPlatform() == TargetPlatform.Mobile &&
-        ((FlexIdeRunnerParameters)params).getMobileRunTarget() == AirMobileRunTarget.AndroidDevice &&
-        ((FlexIdeRunnerParameters)params).getDebugTransport() == AirMobileDebugTransport.USB) {
+        ((FlashRunnerParameters)params).getMobileRunTarget() == AirMobileRunTarget.AndroidDevice &&
+        ((FlashRunnerParameters)params).getDebugTransport() == AirMobileDebugTransport.USB) {
       fdbLaunchCommand.add("-p");
-      fdbLaunchCommand.add(String.valueOf(((FlexIdeRunnerParameters)params).getUsbDebugPort()));
+      fdbLaunchCommand.add(String.valueOf(((FlashRunnerParameters)params).getUsbDebugPort()));
     }
 
     fdbProcess = launchFdb(fdbLaunchCommand);
 
-    if (params instanceof FlexIdeRunnerParameters) {
+    if (params instanceof FlashRunnerParameters) {
       connectToRunningFlashPlayerMode = false;
-      final FlexIdeRunnerParameters appParams = (FlexIdeRunnerParameters)params;
+      final FlashRunnerParameters appParams = (FlashRunnerParameters)params;
 
       switch (bc.getTargetPlatform()) {
         case Web:

@@ -19,7 +19,7 @@ import java.net.URL;
 
 import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.*;
 
-public class FlexIdeRunnerParameters extends BCBasedRunnerParameters implements Cloneable {
+public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cloneable {
 
   private boolean myOverrideMainClass = false;
   private @NotNull String myOverriddenMainClass = "";
@@ -319,8 +319,8 @@ public class FlexIdeRunnerParameters extends BCBasedRunnerParameters implements 
     return suggestedName;
   }
 
-  protected FlexIdeRunnerParameters clone() {
-    final FlexIdeRunnerParameters clone = (FlexIdeRunnerParameters)super.clone();
+  protected FlashRunnerParameters clone() {
+    final FlashRunnerParameters clone = (FlashRunnerParameters)super.clone();
     clone.myLauncherParameters = myLauncherParameters.clone();
     return clone;
   }
@@ -330,7 +330,7 @@ public class FlexIdeRunnerParameters extends BCBasedRunnerParameters implements 
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
 
-    final FlexIdeRunnerParameters that = (FlexIdeRunnerParameters)o;
+    final FlashRunnerParameters that = (FlashRunnerParameters)o;
 
     if (myFullScreenHeight != that.myFullScreenHeight) return false;
     if (myFullScreenWidth != that.myFullScreenWidth) return false;

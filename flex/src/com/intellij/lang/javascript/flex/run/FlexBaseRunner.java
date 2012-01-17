@@ -150,8 +150,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         }
       }
 
-      if (runProfile instanceof FlexIdeRunConfiguration) {
-        final FlexIdeRunnerParameters params = ((FlexIdeRunConfiguration)runProfile).getRunnerParameters();
+      if (runProfile instanceof FlashRunConfiguration) {
+        final FlashRunnerParameters params = ((FlashRunConfiguration)runProfile).getRunnerParameters();
         final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig = params.checkAndGetModuleAndBC(project);
         final Module module = moduleAndConfig.first;
         final FlexIdeBuildConfiguration bc = moduleAndConfig.second;
@@ -256,7 +256,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   @Nullable
   protected abstract RunContentDescriptor launchFlexIdeConfig(final Module module,
                                                               final FlexIdeBuildConfiguration config,
-                                                              final FlexIdeRunnerParameters params,
+                                                              final FlashRunnerParameters params,
                                                               final Executor executor,
                                                               final RunProfileState state,
                                                               final RunContentDescriptor contentToReuse,
@@ -846,7 +846,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   protected static MobileAirPackageParameters createAndroidPackageParams(final Sdk flexSdk,
                                                                          final FlexIdeBuildConfiguration config,
-                                                                         final FlexIdeRunnerParameters params,
+                                                                         final FlashRunnerParameters params,
                                                                          final boolean isDebug) {
     final List<FilePathAndPathInPackage> files =
       AirInstallerParametersBase.cloneList(config.getAndroidPackagingOptions().getFilesToPackage());
@@ -917,7 +917,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
     if (bc.getNature().isDesktopPlatform()) {
       final String adlOptions =
-        params instanceof FlexIdeRunnerParameters ? ((FlexIdeRunnerParameters)params).getAdlOptions() : "";
+        params instanceof FlashRunnerParameters ? ((FlashRunnerParameters)params).getAdlOptions() : "";
       if (!StringUtil.isEmptyOrSpaces(adlOptions)) {
         commandLine.addParameters(StringUtil.split(adlOptions, " "));
       }
@@ -926,32 +926,32 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       commandLine.addParameter(FileUtil.toSystemDependentName(getAirDescriptorPath(bc, packagingOptions)));
       commandLine.addParameter(FileUtil.toSystemDependentName(bc.getOutputFolder()));
       final String programParameters =
-        params instanceof FlexIdeRunnerParameters ? ((FlexIdeRunnerParameters)params).getAirProgramParameters() : "";
+        params instanceof FlashRunnerParameters ? ((FlashRunnerParameters)params).getAirProgramParameters() : "";
       if (!StringUtil.isEmptyOrSpaces(programParameters)) {
         commandLine.addParameter("--");
         commandLine.addParameters(StringUtil.split(programParameters, " "));
       }
     }
     else {
-      assert params instanceof FlexIdeRunnerParameters;
-      final FlexIdeRunnerParameters flexIdeParams = (FlexIdeRunnerParameters)params;
+      assert params instanceof FlashRunnerParameters;
+      final FlashRunnerParameters flashParams = (FlashRunnerParameters)params;
       assert bc.getNature().isMobilePlatform() : bc.getTargetPlatform();
-      assert flexIdeParams.getMobileRunTarget() == AirMobileRunTarget.Emulator : flexIdeParams.getMobileRunTarget();
+      assert flashParams.getMobileRunTarget() == AirMobileRunTarget.Emulator : flashParams.getMobileRunTarget();
 
       commandLine.addParameter("-profile");
       commandLine.addParameter("mobileDevice");
 
       commandLine.addParameter("-screensize");
-      final String adlAlias = flexIdeParams.getEmulator().adlAlias;
+      final String adlAlias = flashParams.getEmulator().adlAlias;
       if (adlAlias != null) {
         commandLine.addParameter(adlAlias);
       }
       else {
-        commandLine.addParameter(flexIdeParams.getScreenWidth() + "x" + flexIdeParams.getScreenHeight() +
-                                 ":" + flexIdeParams.getFullScreenWidth() + "x" + flexIdeParams.getFullScreenHeight());
+        commandLine.addParameter(flashParams.getScreenWidth() + "x" + flashParams.getScreenHeight() +
+                                 ":" + flashParams.getFullScreenWidth() + "x" + flashParams.getFullScreenHeight());
       }
 
-      final String adlOptions = flexIdeParams.getEmulatorAdlOptions();
+      final String adlOptions = flashParams.getEmulatorAdlOptions();
       if (!StringUtil.isEmptyOrSpaces(adlOptions)) {
         commandLine.addParameters(StringUtil.split(adlOptions, " "));
       }

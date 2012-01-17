@@ -12,7 +12,7 @@ import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.run.FlashPlayerTrustUtil;
-import com.intellij.lang.javascript.flex.run.FlexIdeRunConfiguration;
+import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunner;
 import com.intellij.openapi.actionSystem.*;
@@ -62,7 +62,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
 
   public boolean canRun(@NotNull String executorId, @NotNull RunProfile runProfile) {
     return executorId.equals(DefaultProfilerExecutor.EXECUTOR_ID) &&
-           (runProfile instanceof FlexRunConfiguration || runProfile instanceof FlexIdeRunConfiguration);
+           (runProfile instanceof FlexRunConfiguration || runProfile instanceof FlashRunConfiguration);
   }
 
   public ProfileSettings createConfigurationData(ConfigurationInfoProvider configurationInfoProvider) {
@@ -102,7 +102,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
       started = startProfiling((FlexRunConfiguration)runProfile, (ProfileSettings)runnerSettings.getData());
     }
     else {
-      started = startProfiling((FlexIdeRunConfiguration)runProfile, (ProfileSettings)runnerSettings.getData());
+      started = startProfiling((FlashRunConfiguration)runProfile, (ProfileSettings)runnerSettings.getData());
     }
     if (!started) {
       return;

@@ -51,7 +51,7 @@ public class FlexDebugRunner extends FlexBaseRunner {
   public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {
     return DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) &&
            (profile instanceof FlexRunConfiguration ||
-            profile instanceof FlexIdeRunConfiguration ||
+            profile instanceof FlashRunConfiguration ||
             profile instanceof NewFlexUnitRunConfiguration ||
             profile instanceof RemoteFlashRunConfiguration);
   }
@@ -93,7 +93,7 @@ public class FlexDebugRunner extends FlexBaseRunner {
 
   protected RunContentDescriptor launchFlexIdeConfig(final Module module,
                                                      final FlexIdeBuildConfiguration config,
-                                                     final FlexIdeRunnerParameters params,
+                                                     final FlashRunnerParameters params,
                                                      final Executor executor,
                                                      final RunProfileState state,
                                                      final RunContentDescriptor contentToReuse,

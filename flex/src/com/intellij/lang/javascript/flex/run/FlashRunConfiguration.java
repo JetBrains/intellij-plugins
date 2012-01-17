@@ -26,23 +26,23 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileRunTarget;
 
-public class FlexIdeRunConfiguration extends RunConfigurationBase
+public class FlashRunConfiguration extends RunConfigurationBase
   implements RunProfileWithCompileBeforeLaunchOption, LocatableConfiguration {
 
-  private FlexIdeRunnerParameters myRunnerParameters = new FlexIdeRunnerParameters();
+  private FlashRunnerParameters myRunnerParameters = new FlashRunnerParameters();
 
-  public FlexIdeRunConfiguration(final Project project, final ConfigurationFactory factory, final String name) {
+  public FlashRunConfiguration(final Project project, final ConfigurationFactory factory, final String name) {
     super(project, factory, name);
   }
 
-  public FlexIdeRunConfiguration clone() {
-    final FlexIdeRunConfiguration clone = (FlexIdeRunConfiguration)super.clone();
+  public FlashRunConfiguration clone() {
+    final FlashRunConfiguration clone = (FlashRunConfiguration)super.clone();
     clone.myRunnerParameters = myRunnerParameters.clone();
     return clone;
   }
 
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
-    return new FlexIdeRunConfigurationForm(getProject());
+    return new FlashRunConfigurationForm(getProject());
   }
 
   public JDOMExternalizable createRunnerSettings(final ConfigurationInfoProvider provider) {
@@ -56,7 +56,7 @@ public class FlexIdeRunConfiguration extends RunConfigurationBase
   @Override
   public void readExternal(final Element element) throws InvalidDataException {
     super.readExternal(element);
-    myRunnerParameters = new FlexIdeRunnerParameters();
+    myRunnerParameters = new FlashRunnerParameters();
     XmlSerializer.deserializeInto(myRunnerParameters, element);
   }
 
@@ -91,7 +91,7 @@ public class FlexIdeRunConfiguration extends RunConfigurationBase
   }
 
   @NotNull
-  public FlexIdeRunnerParameters getRunnerParameters() {
+  public FlashRunnerParameters getRunnerParameters() {
     return myRunnerParameters;
   }
 
