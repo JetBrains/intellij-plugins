@@ -57,7 +57,7 @@ public class CreateHtmlWrapperAction extends DumbAwareAction {
 
         if (htmlFile != null) {
           if (dialog.isCreateRunConfigurationSelected() && project != null) {
-            FlexModuleBuilder.createFlexRunConfiguration(project, htmlFile);
+            //FlexModuleBuilder.createFlexRunConfiguration(project, htmlFile);
           }
 
           CreateAirDescriptorAction.NOTIFICATION_GROUP.createNotification("", FlexBundle.message("file.created", htmlFile.getName()),

@@ -1,24 +1,25 @@
 package com.intellij.lang.javascript.flex.wizard;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexModuleBuilder;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
-import com.intellij.lang.javascript.flex.projectStructure.ui.FlexSdkPanel;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -27,12 +28,9 @@ import com.intellij.ui.NonFocusableCheckBox;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
 import static com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor.ProjectModifiableModelProvider;
 
@@ -45,7 +43,6 @@ public class FlexIdeModuleWizardForm {
 
   private JLabel myTargetPlayerLabel;
   private JComboBox myTargetPlayerCombo;
-  private FlexSdkPanel myFlexSdkPanel;
 
   private JCheckBox mySampleAppCheckBox;
   private JTextField mySampleAppTextField;
@@ -53,16 +50,18 @@ public class FlexIdeModuleWizardForm {
   private JCheckBox myEnableHistoryCheckBox;
   private JCheckBox myCheckPlayerVersionCheckBox;
   private JCheckBox myExpressInstallCheckBox;
+  private FlexSdkComboBoxWithBrowseButton mySdkCombo;
+  private JLabel mySdkLabel;
 
   private FlexProjectConfigurationEditor myFlexConfigEditor;
   private LibraryTableBase.ModifiableModelEx myGlobalLibrariesModifiableModel;
 
   private boolean myClassNameChangedByUser;
   private boolean mySettingModuleNameFromCode;
-  private boolean myNeedToDisposeFlexEditor = false;
-  private Disposable myDisposable;
+  private boolean myNeedToDisposeFlexEditor;
 
   public FlexIdeModuleWizardForm() {
+    mySdkLabel.setLabelFor(mySdkCombo.getChildComponent());
     TargetPlatform.initCombo(myTargetPlatformCombo);
     OutputType.initCombo(myOutputTypeCombo);
 
@@ -78,11 +77,11 @@ public class FlexIdeModuleWizardForm {
     myHtmlWrapperCheckBox.addActionListener(listener);
     myCheckPlayerVersionCheckBox.addActionListener(listener);
 
-    myFlexSdkPanel.addListener(new ChangeListener() {
-      public void stateChanged(final ChangeEvent e) {
-        BCUtils.updateAvailableTargetPlayers(myFlexSdkPanel.getCurrentSdk(), myTargetPlayerCombo);
+    mySdkCombo.addComboboxListener(new FlexSdkComboBoxWithBrowseButton.Listener() {
+      public void stateChanged() {
+        BCUtils.updateAvailableTargetPlayers(mySdkCombo.getSelectedSdk(), myTargetPlayerCombo);
       }
-    }, myDisposable);
+    });
 
     myPureActionScriptCheckBox.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
@@ -120,8 +119,7 @@ public class FlexIdeModuleWizardForm {
     myTargetPlayerCombo.setSelectedItem(TargetPlatform.Web);
     myPureActionScriptCheckBox.setSelected(false);
     myOutputTypeCombo.setSelectedItem(OutputType.Application);
-    myFlexSdkPanel.reset();
-    myFlexSdkPanel.setNotNullCurrentSdkIfPossible();
+    BCUtils.updateAvailableTargetPlayers(mySdkCombo.getSelectedSdk(), myTargetPlayerCombo);
     mySampleAppCheckBox.setSelected(true);
     onModuleNameChanged(moduleName);
     myHtmlWrapperCheckBox.setSelected(true);
@@ -172,17 +170,32 @@ public class FlexIdeModuleWizardForm {
     }
 
     if (myNeedToDisposeFlexEditor) {
-      myFlexConfigEditor.dispose();
+      Disposer.dispose(myFlexConfigEditor);
       myFlexConfigEditor = null;
     }
-
-    //myFlexSdkPanel disposed as a child of myDisposable
-    Disposer.dispose(myDisposable);
   }
 
   private void createUIComponents() {
     final FlexProjectConfigurationEditor currentFlexEditor =
       FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
+
+    final Condition<Sdk> condition = new Condition<Sdk>() {
+      public boolean value(final Sdk sdk) {
+        return sdk != null && sdk.getSdkType() == FlexSdkType2.getInstance();
+      }
+    };
+
+    mySdkCombo = new FlexSdkComboBoxWithBrowseButton(condition) {
+      protected Sdk[] getAllSdks() {
+        if (currentFlexEditor != null) {
+          return FlexProjectConfigurationEditor.getEditableFlexSdks(currentFlexEditor.getProject());
+        }
+        else {
+          return super.getAllSdks();
+        }
+      }
+    };
+
     myNeedToDisposeFlexEditor = currentFlexEditor == null;
 
     if (currentFlexEditor != null) {
@@ -228,19 +241,13 @@ public class FlexIdeModuleWizardForm {
 
       myFlexConfigEditor = new FlexProjectConfigurationEditor(null, provider);
     }
-
-    myFlexSdkPanel = new FlexSdkPanel(myFlexConfigEditor);
-    myDisposable = Disposer.newDisposable();
-    Disposer.register(myDisposable, myFlexSdkPanel);
-    myFlexSdkPanel.setSdkLabelVisible(false);
-    myFlexSdkPanel.setEditButtonVisible(false);
   }
 
-  public void applyTo(final FlexIdeModuleBuilder moduleBuilder) {
+  public void applyTo(final FlexModuleBuilder moduleBuilder) {
     moduleBuilder.setTargetPlatform((TargetPlatform)myTargetPlatformCombo.getSelectedItem());
     moduleBuilder.setPureActionScript(myPureActionScriptCheckBox.isSelected());
     moduleBuilder.setOutputType((OutputType)myOutputTypeCombo.getSelectedItem());
-    moduleBuilder.setFlexSdk(myFlexSdkPanel.getCurrentSdk());
+    moduleBuilder.setFlexSdk(mySdkCombo.getSelectedSdk());
     moduleBuilder.setTargetPlayer((String)myTargetPlayerCombo.getSelectedItem());
     moduleBuilder.setCreateSampleApp(mySampleAppCheckBox.isEnabled() && mySampleAppCheckBox.isSelected());
     moduleBuilder.setSampleAppName(mySampleAppTextField.getText().trim());
@@ -274,7 +281,7 @@ public class FlexIdeModuleWizardForm {
   }
 
   public boolean validate() throws ConfigurationException {
-    final Sdk sdk = myFlexSdkPanel.getCurrentSdk();
+    final Sdk sdk = null;//myFlexSdkPanel.getCurrentSdk();
     if (sdk == null) {
       throw new ConfigurationException("Flex SDK is not set");
     }

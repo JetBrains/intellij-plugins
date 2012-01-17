@@ -2,8 +2,6 @@
   <extensions defaultExtensionNs="com.intellij">
 
     <moduleConfigurationEditorProvider implementation="com.intellij.lang.javascript.flex.FlexModuleConfigurationEditorProvider"/>
-
-    <facetType implementation="com.intellij.lang.javascript.flex.FlexFacetType"/>
   </extensions>
 
   <actions>

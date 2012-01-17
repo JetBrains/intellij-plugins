@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
-import com.intellij.ide.util.projectWizard.ProjectWizardStepFactory;
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.openapi.module.ModuleType;
@@ -35,10 +34,7 @@ public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
   public ModuleWizardStep[] createWizardSteps(final WizardContext wizardContext,
                                               final FlexModuleBuilder moduleBuilder,
                                               final ModulesProvider modulesProvider) {
-    final ModuleWizardStep chooseSourceFolder = ProjectWizardStepFactory.getInstance()
-      .createSourcePathsStep(wizardContext, moduleBuilder, WIZARD_ICON, "reference.dialogs.new.project.fromScratch.source");
-    final ModuleWizardStep createBuildAndSimpleCodeStep = new SetupFlexModuleWizardStep(moduleBuilder, wizardContext);
-    return new ModuleWizardStep[]{chooseSourceFolder, createBuildAndSimpleCodeStep};
+    return new ModuleWizardStep[]{new SetupFlexModuleWizardStep(moduleBuilder)};
   }
 
   public String getName() {

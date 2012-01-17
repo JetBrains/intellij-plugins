@@ -4,17 +4,29 @@ import com.intellij.ide.DataManager;
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
+import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkType;
+import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
 import com.intellij.openapi.projectRoots.ui.ProjectJdksEditor;
+import com.intellij.openapi.roots.ui.configuration.ProjectJdksConfigurable;
+import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.JdkListConfigurable;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
+import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.Consumer;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,6 +36,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
@@ -62,7 +75,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
   }
 
   public FlexSdkComboBoxWithBrowseButton(final Condition<Sdk> sdkEvaluator) {
-    this.mySdkEvaluator = sdkEvaluator;
+    mySdkEvaluator = sdkEvaluator;
     rebuildSdkListAndSelectSdk(null); // if SDKs exist first will be selected automatically
 
     final JComboBox sdkCombo = getComboBox();
@@ -117,7 +130,18 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
         if (project == null) {
           project = ProjectManager.getInstance().getDefaultProject();
         }
-        final ProjectJdksEditor editor = new ProjectJdksEditor(null, project, FlexSdkComboBoxWithBrowseButton.this);
+
+        final FlexProjectConfigurationEditor currentFlexEditor =
+          FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
+
+        ProjectSdksModel sdksModel = ProjectStructureConfigurable.getInstance(project).getProjectJdksModel();
+        if (currentFlexEditor != null) {
+          // project structure is open, don't directly commit model
+          sdksModel = new NonCommittingWrapper(sdksModel, JdkListConfigurable.getInstance(project));
+        }
+
+        final ProjectJdksEditor editor =
+          new ProjectJdksEditor(null, FlexSdkComboBoxWithBrowseButton.this, new ProjectJdksConfigurable(project, sdksModel));
         editor.show();
         if (editor.isOK()) {
           final Sdk selectedSdk = editor.getSelectedJdk();
@@ -145,7 +169,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
       sdkList.add(myModuleSdk);
     }
 
-    final Sdk[] sdks = ProjectJdkTable.getInstance().getAllJdks();
+    final Sdk[] sdks = getAllSdks();
     for (final Sdk sdk : sdks) {
       if (mySdkEvaluator.value(sdk)) {
         sdkList.add(sdk);
@@ -164,6 +188,10 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     else {
       getComboBox().setModel(new DefaultComboBoxModel(new Object[]{null}));
     }
+  }
+
+  protected Sdk[] getAllSdks() {
+    return ProjectJdkTable.getInstance().getAllJdks();
   }
 
   public void addComboboxListener(final Listener listener) {
@@ -261,6 +289,97 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
   public void setModuleSdk(final Sdk sdk) {
     if (sdk != myModuleSdk.mySdk) {
       myModuleSdk.mySdk = sdk;
+    }
+  }
+
+  private static class NonCommittingWrapper extends ProjectSdksModel {
+    private final ProjectSdksModel myOriginal;
+    private JdkListConfigurable myConfigurable;
+
+    public NonCommittingWrapper(final ProjectSdksModel original, JdkListConfigurable configurable) {
+      myOriginal = original;
+      myConfigurable = configurable;
+    }
+
+    public void apply() throws ConfigurationException {
+      apply(null);
+    }
+
+    public void apply(@Nullable final MasterDetailsComponent configurable) throws ConfigurationException {
+      myConfigurable.reset(); // just update the view
+    }
+
+    public void reset(@Nullable final Project project) {
+      // ignore
+    }
+
+    public void addListener(final Listener listener) {
+      myOriginal.addListener(listener);
+    }
+
+    public void removeListener(final Listener listener) {
+      myOriginal.removeListener(listener);
+    }
+
+    public Listener getMulticaster() {
+      return myOriginal.getMulticaster();
+    }
+
+    public Sdk[] getSdks() {
+      return myOriginal.getSdks();
+    }
+
+    public Sdk findSdk(final String sdkName) {
+      return myOriginal.findSdk(sdkName);
+    }
+
+    public void disposeUIResources() {
+      // ignore
+    }
+
+    public HashMap<Sdk, Sdk> getProjectSdks() {
+      return myOriginal.getProjectSdks();
+    }
+
+    public boolean isModified() {
+      return myOriginal.isModified();
+    }
+
+    public void removeSdk(final Sdk editableObject) {
+      myOriginal.removeSdk(editableObject);
+    }
+
+    public void createAddActions(final DefaultActionGroup group, final JComponent parent, final Consumer<Sdk> updateTree) {
+      myOriginal.createAddActions(group, parent,
+                             updateTree);
+    }
+
+    public void doAdd(final SdkType type, final Consumer<Sdk> updateTree) {
+      myOriginal.doAdd(type, updateTree);
+    }
+
+    public void addSdk(final Sdk sdk) {
+      myOriginal.addSdk(sdk);
+    }
+
+    public void doAdd(final ProjectJdkImpl newSdk, @Nullable final Consumer<Sdk> updateTree) {
+      myOriginal.doAdd(newSdk, updateTree);
+    }
+
+    public Sdk findSdk(@Nullable final Sdk modelJdk) {
+      return myOriginal.findSdk(modelJdk);
+    }
+
+    public Sdk getProjectSdk() {
+      return myOriginal.getProjectSdk();
+    }
+
+    public void setProjectSdk(final Sdk projectSdk) {
+      myOriginal.setProjectSdk(projectSdk);
+    }
+
+    public boolean isInitialized() {
+      return myOriginal.isInitialized();
     }
   }
 }

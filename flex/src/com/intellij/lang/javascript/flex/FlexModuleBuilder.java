@@ -1,355 +1,302 @@
 package com.intellij.lang.javascript.flex;
 
-import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.execution.RunManagerEx;
 import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
-import com.intellij.ide.util.projectWizard.SourcePathsBuilder;
-import com.intellij.lang.javascript.flex.actions.airdescriptor.AirDescriptorParameters;
-import com.intellij.lang.javascript.flex.actions.airdescriptor.CreateAirDescriptorAction;
-import com.intellij.lang.javascript.flex.actions.htmlwrapper.CreateHtmlWrapperAction;
-import com.intellij.lang.javascript.flex.actions.htmlwrapper.CreateHtmlWrapperDialog;
-import com.intellij.lang.javascript.flex.actions.htmlwrapper.HTMLWrapperParameters;
-import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
-import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
-import com.intellij.lang.javascript.flex.run.*;
-import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
-import com.intellij.lang.javascript.flex.sdk.AirSdkType;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
+import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
+import com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog;
+import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
+import com.intellij.lang.javascript.flex.run.FlashRunConfigurationType;
+import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
+import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
+import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Maxim.Mossienko
- * Date: Dec 2, 2007
- * Time: 12:07:16 AM
- */
-public class FlexModuleBuilder extends ModuleBuilder implements SourcePathsBuilder {
-  private List<Pair<String, String>> mySourcePaths;
-  private Sdk mySdk;
-  private String myTargetPlayerVersion;
+public class FlexModuleBuilder extends ModuleBuilder {
+
+  private TargetPlatform myTargetPlatform = TargetPlatform.Web;
+  private boolean isPureActionScript = false;
+  private OutputType myOutputType = OutputType.Application;
+  private Sdk myFlexSdk;
+  private String myTargetPlayer;
   private boolean myCreateSampleApp;
-  private String mySampleAppFileName;
-  private boolean myCreateCustomCompilerConfig;
-  private String myCustomCompilerConfigFileName;
-  private boolean myCreateHtmlWrapper;
-  private boolean myCreateAirDescriptor;
-  private String myAirDescriptorFileName;
-  private boolean myCreateRunConfiguration;
-  private String myPathToServicesConfigXml;
-  private String myContextRoot;
-  private String myFlexOutputType;
-
-  public void setupRootModel(final ModifiableRootModel modifiableRootModel) throws ConfigurationException {
-    final Module module = modifiableRootModel.getModule();
-    setupResourceFilePatterns(module.getProject());
-
-    if (TargetPlayerUtils.needToChangeSdk(mySdk, myTargetPlayerVersion)) {
-      final Sdk sdk = TargetPlayerUtils.findOrCreateProperSdk(module.getProject(), mySdk, myTargetPlayerVersion);
-      if (sdk != null) {
-        mySdk = sdk;
-      }
-    }
-    modifiableRootModel.setSdk(mySdk);
-
-    final ContentEntry contentEntry = doAddContentEntry(modifiableRootModel);
-    if (contentEntry == null) return;
-    if (mySourcePaths == null) return;
-
-    final FlexBuildConfiguration config = setupFlexBuildConfiguration(module);
-    final VirtualFile sourceRootForFlexSetup = setupSourceRoots(contentEntry);
-
-    if (sourceRootForFlexSetup != null) {
-      try {
-        FlexUtils
-          .setupFlexConfigFileAndSampleCode(module, config, mySdk, myCreateCustomCompilerConfig ? myCustomCompilerConfigFileName : null,
-                                            contentEntry.getFile(), myCreateSampleApp ? mySampleAppFileName : null, sourceRootForFlexSetup);
-      }
-      catch (IOException ex) {
-        throw new ConfigurationException(ex.getMessage());
-      }
-
-      if (myCreateHtmlWrapper) {
-        scheduleHtmlWrapperCreation(module, sourceRootForFlexSetup, myCreateRunConfiguration);
-      }
-      else if (myCreateRunConfiguration) {
-        createRunConfiguration(module, sourceRootForFlexSetup);
-      }
-
-      if (myCreateAirDescriptor) {
-        createAirDescriptor(sourceRootForFlexSetup.getPath(), config);
-      }
-    }
-  }
-
-  private void scheduleHtmlWrapperCreation(final Module module, final VirtualFile sourceRoot, final boolean createRunConfiguration) {
-    ApplicationManager.getApplication().invokeLater(new Runnable() { // should not be in write action
-      boolean runConfigurationCreated = false;
-
-      public void run() {
-        final CreateHtmlWrapperDialog dialog = new CreateHtmlWrapperDialog(module.getProject());
-        dialog.setModuleAndSdkAndWrapperLocation(module, mySdk, sourceRoot.getPath());
-        dialog.suggestToCreateRunConfiguration(false);
-        dialog.show();
-        if (dialog.isOK()) {
-          try {
-            final HTMLWrapperParameters htmlWrapperParameters = dialog.getHTMLWrapperParameters();
-            final VirtualFile htmlFile = CreateHtmlWrapperAction.createHtmlWrapper(htmlWrapperParameters);
-
-            if (createRunConfiguration && htmlFile != null) {
-              createFlexRunConfiguration(module.getProject(), htmlFile);
-              runConfigurationCreated = true;
-            }
-          }
-          catch (IOException ex) {
-            Messages
-              .showErrorDialog(module.getProject(), MessageFormat.format("Failed to create HTML wrapper\n{0}", ex.getMessage()), "Error");
-          }
-        }
-
-        if (myCreateRunConfiguration && !runConfigurationCreated) {
-          createFlexRunConfiguration(module, FlexBuildConfiguration.getInstance(module).OUTPUT_FILE_NAME);
-        }
-      }
-    });
-  }
-
-  public static void createFlexRunConfiguration(final Project project, final VirtualFile htmlWrapperFile) {
-    final Module module = ModuleUtil.findModuleForFile(htmlWrapperFile, project);
-    final VirtualFile sourceRoot =
-      module == null ? null : ProjectRootManager.getInstance(project).getFileIndex().getSourceRootForFile(htmlWrapperFile);
-    if (sourceRoot == null) {
-      createFlexRunConfiguration(project, module, htmlWrapperFile.getPath());
-    }
-    else {
-      createFlexRunConfiguration(module, VfsUtilCore.getRelativePath(htmlWrapperFile, sourceRoot, '/'));
-    }
-  }
-
-  public static void createFlexRunConfiguration(final Module module, final String filePathRelativeToOutputFolder) {
-    final CompilerModuleExtension extension = CompilerModuleExtension.getInstance(module);
-    final String absolutePath =
-      (extension == null ? "" : VfsUtil.urlToPath(extension.getCompilerOutputUrl()) + "/") + filePathRelativeToOutputFolder;
-    createFlexRunConfiguration(module.getProject(), module, absolutePath);
-  }
-
-  public static void createFlexRunConfiguration(final Project project, final @Nullable Module module, final String _absoluteFilePath) {
-    final String absoluteFilePath = FileUtil.toSystemIndependentName(_absoluteFilePath);
-
-    final RunManagerEx runManager = RunManagerEx.getInstanceEx(project);
-    final RunnerAndConfigurationSettings settings = runManager.createConfiguration("", FlexRunConfigurationType.getFactory());
-    settings.setTemporary(false);
-    runManager.addConfiguration(settings, false);
-    runManager.setSelectedConfiguration(settings);
-
-    final FlexRunConfiguration runConfiguration = (FlexRunConfiguration)settings.getConfiguration();
-    final FlexRunnerParameters runnerParameters = runConfiguration.getRunnerParameters();
-    runnerParameters.setModuleName(module == null ? "" : module.getName());
-    runnerParameters.setRunMode(FlexRunnerParameters.RunMode.HtmlOrSwfFile);
-    runnerParameters.setHtmlOrSwfFilePath(absoluteFilePath);
-    settings.setName(runConfiguration.suggestedName());
-  }
-
-  private void createAirDescriptor(final String airDescriptorFolderPath, final FlexBuildConfiguration config)
-    throws ConfigurationException {
-    try {
-      final String name = FileUtil.getNameWithoutExtension(config.OUTPUT_FILE_NAME);
-      CreateAirDescriptorAction.createAirDescriptor(
-        new AirDescriptorParameters(myAirDescriptorFileName, airDescriptorFolderPath, FlexSdkUtils.getAirVersion(mySdk),
-                                    FlexCompilationUtils.fixApplicationId(name), name, name, "0.0", config.OUTPUT_FILE_NAME, name, 400, 300,
-                                    mySdk != null && mySdk.getSdkType() instanceof AirMobileSdkType));
-    }
-    catch (IOException e) {
-      throw new ConfigurationException("Failed to create AIR application descriptor\n" + e.getMessage());
-    }
-  }
-
-  private void createRunConfiguration(final Module module, final VirtualFile sourceRoot) {
-    final FlexBuildConfiguration config = FlexBuildConfiguration.getInstance(module);
-
-    if (mySdk != null && (mySdk.getSdkType() instanceof AirMobileSdkType || mySdk.getSdkType() instanceof AirSdkType)) {
-      final IFlexSdkType.Subtype subtype = ((IFlexSdkType)mySdk.getSdkType()).getSubtype();
-      final RunManagerEx runManager = RunManagerEx.getInstanceEx(module.getProject());
-
-      final CompilerModuleExtension moduleExtension = CompilerModuleExtension.getInstance(module);
-      final String outputDirPath = moduleExtension == null ? "" : VfsUtil.urlToPath(moduleExtension.getCompilerOutputUrl());
-
-      final RunnerAndConfigurationSettings settings = runManager.createConfiguration("", subtype == IFlexSdkType.Subtype.AIRMobile
-                                                                                         ? AirMobileRunConfigurationType.getFactory()
-                                                                                         : AirRunConfigurationType.getFactory());
-      settings.setTemporary(false);
-      runManager.addConfiguration(settings, false);
-      runManager.setSelectedConfiguration(settings);
-
-      final AirRunConfiguration runConfiguration = (AirRunConfiguration)settings.getConfiguration();
-      final AirRunnerParameters runnerParameters = runConfiguration.getRunnerParameters();
-      runnerParameters.setModuleName(module.getName());
-
-      if (myCreateAirDescriptor) {
-        if (runnerParameters instanceof AirMobileRunnerParameters) {
-          final AirMobileRunnerParameters mobileParams = (AirMobileRunnerParameters)runnerParameters;
-          mobileParams.setAirMobileRunMode(AirMobileRunnerParameters.AirMobileRunMode.AppDescriptor);
-          mobileParams.setMobilePackageFileName(FileUtil.getNameWithoutExtension(config.OUTPUT_FILE_NAME) + ".apk");
-        }
-        else {
-          runnerParameters.setAirRunMode(AirRunnerParameters.AirRunMode.AppDescriptor);
-        }
-        runnerParameters.setAirDescriptorPath(sourceRoot.getPath() + "/" + myAirDescriptorFileName);
-        runnerParameters.setAirRootDirPath(outputDirPath);
-      }
-      else {
-        if (runnerParameters instanceof AirMobileRunnerParameters) {
-          final AirMobileRunnerParameters mobileParams = (AirMobileRunnerParameters)runnerParameters;
-          mobileParams.setAirMobileRunMode(AirMobileRunnerParameters.AirMobileRunMode.MainClass);
-          mobileParams.setMobilePackageFileName(StringUtil.getShortName(config.MAIN_CLASS) + ".apk");
-        }
-        else {
-          runnerParameters.setAirRunMode(AirRunnerParameters.AirRunMode.MainClass);
-        }
-        runnerParameters.setMainClassName(config.MAIN_CLASS);
-      }
-
-      settings.setName(runConfiguration.suggestedName());
-    }
-    else {
-      createFlexRunConfiguration(module, config.OUTPUT_FILE_NAME);
-    }
-  }
-
-  @Nullable
-  private VirtualFile setupSourceRoots(final ContentEntry contentEntry) {
-    VirtualFile sourceRootForFlexSetup = null;
-    for (Pair<String, String> p : mySourcePaths) {
-      final VirtualFile sourceRoot = VfsUtil.findRelativeFile(p.first, null);
-      if (sourceRoot != null) {
-        contentEntry.addSourceFolder(sourceRoot, false);
-        if (sourceRootForFlexSetup == null) {
-          sourceRootForFlexSetup = sourceRoot;
-        }
-      }
-    }
-    return sourceRootForFlexSetup;
-  }
-
-  public static void setupResourceFilePatterns(final Project project) {
-    final CompilerConfiguration configuration = CompilerConfiguration.getInstance(project);
-    if (!configuration.isResourceFile("A.js")) configuration.addResourceFilePattern("?*.js");
-    if (!configuration.isResourceFile("A.css")) configuration.addResourceFilePattern("?*.css");
-    if (!configuration.isResourceFile("A.swf")) configuration.addResourceFilePattern("?*.swf");
-  }
-
-  private FlexBuildConfiguration setupFlexBuildConfiguration(final Module module) {
-    final FlexBuildConfiguration config = FlexBuildConfiguration.getInstance(module);
-    config.OUTPUT_FILE_NAME = suggestOutputFileName(module);
-    config.DO_BUILD = true;
-    config.OUTPUT_TYPE = myFlexOutputType;
-    config.TARGET_PLAYER_VERSION = myTargetPlayerVersion;
-    config.PATH_TO_SERVICES_CONFIG_XML = myPathToServicesConfigXml;
-    config.CONTEXT_ROOT = myContextRoot;
-    return config;
-  }
-
-  private String suggestOutputFileName(final Module module) {
-    final String extension = FlexBuildConfiguration.APPLICATION.equals(myFlexOutputType) ? ".swf" : ".swc";
-    if (myCreateSampleApp && mySampleAppFileName.indexOf(".") > 0) {
-      return mySampleAppFileName.substring(0, mySampleAppFileName.indexOf(".")) + extension;
-    }
-    else {
-      return module.getName().replaceAll("[^\\p{Alnum}]", "_") + extension;
-    }
-  }
+  private String mySampleAppName;
+  private boolean myCreateHtmlWrapperTemplate;
+  private boolean myEnableHistory;
+  private boolean myCheckPlayerVersion;
+  private boolean myExpressInstall;
 
   public ModuleType getModuleType() {
     return FlexModuleType.getInstance();
   }
 
-  public List<Pair<String, String>> getSourcePaths() {
-    return mySourcePaths;
+  public void setTargetPlatform(final TargetPlatform targetPlatform) {
+    myTargetPlatform = targetPlatform;
   }
 
-  public void setSourcePaths(final List<Pair<String, String>> sourcePaths) {
-    mySourcePaths = sourcePaths;
+  public void setPureActionScript(final boolean pureActionScript) {
+    isPureActionScript = pureActionScript;
   }
 
-  public void addSourcePath(final Pair<String, String> sourcePathInfo) {
-    if (mySourcePaths == null) {
-      mySourcePaths = new ArrayList<Pair<String, String>>();
-    }
-    mySourcePaths.add(sourcePathInfo);
+  public void setOutputType(final OutputType outputType) {
+    myOutputType = outputType;
   }
 
-  public void setSdk(final Sdk sdk) {
-    mySdk = sdk;
+  public void setFlexSdk(final Sdk flexSdk) {
+    myFlexSdk = flexSdk;
   }
 
-  public void setTargetPlayerVersion(final String playerVersion) {
-    myTargetPlayerVersion = playerVersion;
+  public void setTargetPlayer(final String targetPlayer) {
+    myTargetPlayer = targetPlayer;
   }
 
   public void setCreateSampleApp(final boolean createSampleApp) {
     myCreateSampleApp = createSampleApp;
   }
 
-  public void setSampleAppFileName(final String sampleAppFileName) {
-    mySampleAppFileName = sampleAppFileName;
+  public void setSampleAppName(final String sampleAppName) {
+    mySampleAppName = sampleAppName;
   }
 
-  public void setCreateCustomCompilerConfig(final boolean createCustomCompilerConfig) {
-    myCreateCustomCompilerConfig = createCustomCompilerConfig;
+  public void setCreateHtmlWrapperTemplate(final boolean createHtmlWrapperTemplate) {
+    myCreateHtmlWrapperTemplate = createHtmlWrapperTemplate;
   }
 
-  public void setCustomCompilerConfigFileName(final String createCompilerConfigurationFileName) {
-    myCustomCompilerConfigFileName = createCompilerConfigurationFileName;
+  public void setHtmlWrapperTemplateParameters(final boolean enableHistory,
+                                               final boolean checkPlayerVersion,
+                                               final boolean expressInstall) {
+    myEnableHistory = enableHistory;
+    myCheckPlayerVersion = checkPlayerVersion;
+    myExpressInstall = expressInstall;
   }
 
-  public void setCreateHtmlWrapper(final boolean selected) {
-    myCreateHtmlWrapper = selected;
+  public void setupRootModel(final ModifiableRootModel modifiableRootModel) throws ConfigurationException {
+    final ContentEntry contentEntry = doAddContentEntry(modifiableRootModel);
+    if (contentEntry == null) return;
+
+    final VirtualFile sourceRoot = createSourceRoot(contentEntry);
+
+    final Module module = modifiableRootModel.getModule();
+    final LibraryTableBase.ModifiableModelEx globalLibrariesModifiableModel;
+
+    final FlexProjectConfigurationEditor currentFlexEditor =
+      FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
+    final boolean needToCommitFlexEditor = currentFlexEditor == null;
+
+    final FlexProjectConfigurationEditor flexConfigEditor;
+
+    if (currentFlexEditor != null) {
+      globalLibrariesModifiableModel = null;
+      flexConfigEditor = currentFlexEditor;
+    }
+    else {
+      globalLibrariesModifiableModel =
+        (LibraryTableBase.ModifiableModelEx)ApplicationLibraryTable.getApplicationTable().getModifiableModel();
+      flexConfigEditor = createFlexConfigEditor(modifiableRootModel, globalLibrariesModifiableModel);
+    }
+
+    final ModifiableFlexIdeBuildConfiguration[] configurations = flexConfigEditor.getConfigurations(module);
+    assert configurations.length == 1;
+    final ModifiableFlexIdeBuildConfiguration bc = configurations[0];
+
+    setupBC(module, bc);
+
+    if (bc.getOutputType() == OutputType.Application) {
+      createRunConfiguration(module, bc.getName());
+    }
+
+    if (sourceRoot != null && myCreateSampleApp) {
+      try {
+        final boolean flex4 = myFlexSdk.getVersionString().startsWith("4");
+        FlexUtils.createSampleApp(module.getProject(), sourceRoot, mySampleAppName, myTargetPlatform, flex4);
+      }
+      catch (IOException ex) {
+        throw new ConfigurationException(ex.getMessage());
+      }
+    }
+
+    if (myCreateHtmlWrapperTemplate) {
+      final String path = VfsUtil.urlToPath(contentEntry.getUrl()) + "/" + CreateHtmlWrapperTemplateDialog.HTML_TEMPLATE_FOLDER_NAME;
+      if (CreateHtmlWrapperTemplateDialog.createHtmlWrapperTemplate(module.getProject(), myFlexSdk, path,
+                                                                    myEnableHistory, myCheckPlayerVersion, myExpressInstall)) {
+        bc.setUseHtmlWrapper(true);
+        bc.setWrapperTemplatePath(path);
+      }
+    }
+
+    commitIfNeeded(globalLibrariesModifiableModel, flexConfigEditor, needToCommitFlexEditor);
   }
 
-  public void setCreateAirDescriptor(final boolean createAirDescriptor) {
-    myCreateAirDescriptor = createAirDescriptor;
+  private static FlexProjectConfigurationEditor createFlexConfigEditor(final ModifiableRootModel modifiableRootModel,
+                                                                       final LibraryTableBase.ModifiableModelEx globalLibrariesModifiableModel) {
+    final Module module = modifiableRootModel.getModule();
+
+    final FlexProjectConfigurationEditor.ProjectModifiableModelProvider provider =
+      new FlexProjectConfigurationEditor.ProjectModifiableModelProvider() {
+        public Module[] getModules() {
+          return new Module[]{module};
+        }
+
+        public ModifiableRootModel getModuleModifiableModel(final Module moduleParam) {
+          assert moduleParam == module;
+          return modifiableRootModel;
+        }
+
+        public void addListener(final FlexIdeBCConfigurator.Listener listener,
+                                final Disposable parentDisposable) {
+          // modules and BCs are not removed here
+        }
+
+        public void commitModifiableModels() throws ConfigurationException {
+          // commit will be performed outside of #setupRootModel()
+        }
+
+        public LibraryTableBase.ModifiableModelEx getLibrariesModifiableModel(final String level) {
+          if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(level)) {
+            return globalLibrariesModifiableModel;
+          }
+          else {
+            throw new UnsupportedOperationException();
+          }
+        }
+
+        public Sdk[] getAllSdks() {
+          return FlexProjectConfigurationEditor.getEditableFlexSdks(module.getProject());
+        }
+      };
+
+    return new FlexProjectConfigurationEditor(modifiableRootModel.getProject(), provider);
   }
 
-  public void setAirDescriptorFileName(final String airDescriptorFileName) {
-    myAirDescriptorFileName = airDescriptorFileName;
+  private static void commitIfNeeded(final @Nullable LibraryTableBase.ModifiableModelEx globalLibrariesModifiableModel,
+                                     final FlexProjectConfigurationEditor flexConfigEditor,
+                                     final boolean needToCommitFlexEditor) throws ConfigurationException {
+    if (globalLibrariesModifiableModel != null || needToCommitFlexEditor) {
+      final ConfigurationException exception =
+        ApplicationManager.getApplication().runWriteAction(new NullableComputable<ConfigurationException>() {
+          public ConfigurationException compute() {
+            if (globalLibrariesModifiableModel != null) {
+              globalLibrariesModifiableModel.commit();
+            }
+
+            if (needToCommitFlexEditor) {
+              try {
+                flexConfigEditor.commit();
+              }
+              catch (ConfigurationException e) {
+                return e;
+              }
+            }
+
+            return null;
+          }
+        });
+
+      if (exception != null) {
+        throw exception;
+      }
+    }
   }
 
-  public void setCreateRunConfiguration(boolean createRunConfiguration) {
-    myCreateRunConfiguration = createRunConfiguration;
+  private void setupBC(final Module module, final ModifiableFlexIdeBuildConfiguration bc) {
+    bc.setName(module.getName());
+    bc.setTargetPlatform(myTargetPlatform);
+    bc.setPureAs(isPureActionScript);
+    bc.setOutputType(myOutputType);
+
+    final String className = FileUtil.getNameWithoutExtension(mySampleAppName);
+
+    if (myCreateSampleApp) {
+      bc.setMainClass(className);
+      bc.setOutputFileName(className + (myOutputType == OutputType.Library ? ".swc" : ".swf"));
+    }
+    else {
+      bc.setOutputFileName(module.getName() + (myOutputType == OutputType.Library ? ".swc" : ".swf"));
+    }
+    bc.setOutputFolder(VfsUtil.urlToPath(CompilerModuleExtension.getInstance(module).getCompilerOutputUrl()));
+
+    bc.getDependencies().setSdkEntry(Factory.createSdkEntry(myFlexSdk.getName()));
+    bc.getDependencies().setTargetPlayer(myTargetPlayer);
+
+    if (myTargetPlatform == TargetPlatform.Mobile && myOutputType == OutputType.Application) {
+      bc.getAndroidPackagingOptions().setEnabled(true);
+      bc.getAndroidPackagingOptions().setPackageFileName(className + ".apk");
+      bc.getIosPackagingOptions().setPackageFileName(className + ".ipa");
+    }
   }
 
-  public void setPathToServicesConfigXml(final String pathToServicesConfigXml) {
-    myPathToServicesConfigXml = pathToServicesConfigXml;
+  public static void createRunConfiguration(final Module module, final String bcName) {
+    final RunManagerEx runManager = RunManagerEx.getInstanceEx(module.getProject());
+
+    final RunConfiguration[] existingConfigurations = runManager.getConfigurations(FlashRunConfigurationType.getInstance());
+    for (RunConfiguration configuration : existingConfigurations) {
+      final FlashRunnerParameters parameters = ((FlashRunConfiguration)configuration).getRunnerParameters();
+      if (module.getName().equals(parameters.getModuleName()) && bcName.equals(parameters.getBCName())) {
+        //already exists
+        return;
+      }
+    }
+
+    final RunnerAndConfigurationSettings settings = runManager.createConfiguration("", FlashRunConfigurationType.getFactory());
+    final FlashRunConfiguration runConfiguration = (FlashRunConfiguration)settings.getConfiguration();
+    final FlashRunnerParameters params = runConfiguration.getRunnerParameters();
+    params.setModuleName(module.getName());
+    params.setBCName(bcName);
+
+    settings.setName(params.suggestUniqueName(existingConfigurations));
+    settings.setTemporary(false);
+    runManager.addConfiguration(settings, false);
+    runManager.setSelectedConfiguration(settings);
   }
 
-  public void setContextRoot(final String contextRoot) {
-    myContextRoot = contextRoot;
-  }
+  @Nullable
+  private VirtualFile createSourceRoot(final ContentEntry contentEntry) {
+    final VirtualFile contentRoot = contentEntry.getFile();
+    if (contentRoot == null) return null;
 
-  public void setFlexOutputType(final String flexOutputType) {
-    myFlexOutputType = flexOutputType;
+    VirtualFile sourceRoot = VfsUtil.findRelativeFile(contentRoot, "src");
+
+    if (sourceRoot == null) {
+      sourceRoot = ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
+        public VirtualFile compute() {
+          try {
+            return contentRoot.createChildDirectory(this, "src");
+          }
+          catch (IOException e) {
+            return null;
+          }
+        }
+      });
+    }
+
+    if (sourceRoot != null) {
+      contentEntry.addSourceFolder(sourceRoot, false);
+      return sourceRoot;
+    }
+
+    return null;
   }
 }

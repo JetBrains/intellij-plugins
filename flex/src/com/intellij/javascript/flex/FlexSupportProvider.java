@@ -106,7 +106,7 @@ public class FlexSupportProvider extends FrameworkSupportProvider {
                 FlexUtils
                   .setupFlexConfigFileAndSampleCode(module, config, flexSdk, null, contentRoots[0], mainClassNameRef.get() + ".mxml",
                                                     sourceRoots[0]);
-                FlexModuleBuilder.createFlexRunConfiguration(module, config.OUTPUT_FILE_NAME);
+                //FlexModuleBuilder.createFlexRunConfiguration(module, config.OUTPUT_FILE_NAME);
               }
               catch (IOException ex) {
                 throw new RuntimeException(ex);
