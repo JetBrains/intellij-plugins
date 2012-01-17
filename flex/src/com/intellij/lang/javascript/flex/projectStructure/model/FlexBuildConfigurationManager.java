@@ -18,7 +18,7 @@ public abstract class FlexBuildConfigurationManager {
   public abstract void setActiveBuildConfiguration(FlexIdeBuildConfiguration buildConfiguration);
 
   // TODO should be getModifiableModel()!
-  public abstract ModifiableCompilerOptions getModuleLevelCompilerOptions();
+  public abstract ModuleOrProjectCompilerOptions getModuleLevelCompilerOptions();
 
   @Nullable
   public abstract FlexIdeBuildConfiguration findConfigurationByName(String name);

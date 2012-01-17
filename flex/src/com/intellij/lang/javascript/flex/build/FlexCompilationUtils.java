@@ -6,11 +6,9 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airdescriptor.AirDescriptorParameters;
 import com.intellij.lang.javascript.flex.actions.airdescriptor.CreateAirDescriptorAction;
 import com.intellij.lang.javascript.flex.actions.htmlwrapper.CreateHtmlWrapperAction;
+import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
-import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.AndroidPackagingOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
@@ -209,17 +207,29 @@ public class FlexCompilationUtils {
       command.add("-load-config=" + configFile.getPath());
     }
 
-    final String additionalOptions = bc.getCompilerOptions().getAdditionalOptions();
-    if (!StringUtil.isEmpty(additionalOptions)) {
-      final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
-      assert sdkEntry != null;
-      // TODO handle -option="path with spaces"
-      for (final String s : StringUtil.split(additionalOptions, " ")) {
-        command.add(FlexUtils.replacePathMacros(s, module, sdkEntry.getHomePath()));
-      }
-    }
+    final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
+    assert sdkEntry != null;
+
+    addAdditionalOptions(command, module, sdkEntry.getHomePath(),
+                         FlexProjectLevelCompilerOptionsHolder.getInstance(module.getProject()).getProjectLevelCompilerOptions()
+                           .getAdditionalOptions());
+    addAdditionalOptions(command, module, sdkEntry.getHomePath(),
+                         FlexBuildConfigurationManager.getInstance(module).getModuleLevelCompilerOptions().getAdditionalOptions());
+    addAdditionalOptions(command, module, sdkEntry.getHomePath(), bc.getCompilerOptions().getAdditionalOptions());
 
     return command;
+  }
+
+  private static void addAdditionalOptions(final List<String> command,
+                                           final Module module,
+                                           final String sdkHome,
+                                           final String additionalOptions) {
+    if (!StringUtil.isEmpty(additionalOptions)) {
+      // TODO handle -option="path with spaces"
+      for (final String s : StringUtil.split(additionalOptions, " ")) {
+        command.add(FlexUtils.replacePathMacros(s, module, sdkHome));
+      }
+    }
   }
 
   static List<String> getMxmlcCompcCommand(final Project project, final Sdk flexSdk, final boolean isApp) {

@@ -120,7 +120,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
 
   // TODO should be getModifiableModel()!
   @Override
-  public ModifiableCompilerOptions getModuleLevelCompilerOptions() {
+  public ModuleOrProjectCompilerOptions getModuleLevelCompilerOptions() {
     return myModuleLevelCompilerOptions;
   }
 

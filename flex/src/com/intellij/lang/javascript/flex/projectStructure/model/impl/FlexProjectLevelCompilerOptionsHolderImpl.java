@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableCompilerOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModuleOrProjectCompilerOptions;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -32,7 +32,7 @@ public class FlexProjectLevelCompilerOptionsHolderImpl extends FlexProjectLevelC
   }
 
   @Override
-  public ModifiableCompilerOptions getProjectLevelCompilerOptions() {
+  public ModuleOrProjectCompilerOptions getProjectLevelCompilerOptions() {
     return myModel;
   }
 

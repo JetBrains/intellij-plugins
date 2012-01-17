@@ -7,9 +7,11 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompil
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
 import com.intellij.lang.javascript.flex.projectStructure.ValueSource;
 import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptionsListener;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableCompilerOptions;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.module.Module;
@@ -19,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComponentWithBrowseButton;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -43,6 +46,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -52,22 +56,27 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptions> {
   private JPanel myMainPanel;
+
   private TreeTable myTreeTable;
   private NonFocusableCheckBox myShowAllOptionsCheckBox;
   private JLabel myInheritProjectDefaultsLegend;
   private JLabel myInheritModuleDefaultsLegend;
   private JButton myProjectDefaultsButton;
   private JButton myModuleDefaultsButton;
-  private JPanel myAdditionalPanel;
+
+  private JLabel myConfigFileLabel;
   private TextFieldWithBrowseButton myConfigFileTextWithBrowse;
+  private JLabel myInheritedOptionsLabel;
+  private JTextField myInheritedOptionsField;
+  private JLabel myAdditionalOptionsLabel;
   private RawCommandLineEditor myAdditionalOptionsField;
+  private JLabel myNoteLabel;
 
   private final Mode myMode;
   private final Module myModule;
@@ -80,6 +89,8 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   private final ModifiableCompilerOptions myModel;
   private final Map<String, String> myCurrentOptions;
   private boolean myModified;
+
+  private final Disposable myDisposable = Disposer.newDisposable();
 
   private static final String UNKNOWN_SDK_VERSION = "100";
 
@@ -110,10 +121,10 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     myNature = nature;
     myDependenciesConfigurable = dependenciesConfigurable;
     myName = myMode == Mode.BC
-             ? "Compiler Options"
+             ? FlexBundle.message("compiler.options.title")
              : myMode == Mode.Module
-               ? MessageFormat.format("Default Compiler Options For Module ''{0}''", module.getName())
-               : MessageFormat.format("Default Compiler Options For Project ''{0}''", project.getName());
+               ? FlexBundle.message("default.compiler.options.for.module.title", module.getName())
+               : FlexBundle.message("default.compiler.options.for.project.title", project.getName());
     myBCManager = myMode == Mode.BC ? FlexBuildConfigurationManager.getInstance(module) : null;
     myProjectLevelOptionsHolder = FlexProjectLevelCompilerOptionsHolder.getInstance(project);
     myModel = model;
@@ -128,50 +139,81 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     myInheritModuleDefaultsLegend.setVisible(myMode == Mode.BC);
     myInheritProjectDefaultsLegend.setVisible(myMode == Mode.BC || myMode == Mode.Module);
 
-    myAdditionalPanel.setVisible(myMode == Mode.BC);
-    myConfigFileTextWithBrowse.addBrowseFolderListener(null, null, project, FlexUtils.createFileChooserDescriptor("xml"));
-    myAdditionalOptionsField.setDialogCaption(FlexBundle.message("additional.compiler.options.title"));
+    initButtonsAndAdditionalOptions();
 
-    initButtons();
-
+    // seems we don't need it for small amount of options
     myShowAllOptionsCheckBox.setSelected(true);
     myShowAllOptionsCheckBox.setVisible(false);
   }
 
-  private void initButtons() {
-    if (myMode == Mode.Project) {
-      myProjectDefaultsButton.setVisible(false);
-    }
-    else {
-      myProjectDefaultsButton.addActionListener(new ActionListener() {
-        public void actionPerformed(final ActionEvent e) {
-          ModifiableCompilerOptions compilerOptions = myProjectLevelOptionsHolder.getProjectLevelCompilerOptions();
-          final CompilerOptionsConfigurable configurable =
-            new CompilerOptionsConfigurable(Mode.Project, null, myProject, myNature, myDependenciesConfigurable, compilerOptions);
-          boolean changed = ShowSettingsUtil.getInstance().editConfigurable(myProject, configurable);
-          if (changed) {
-            updateTreeTable();
-          }
+  private void initButtonsAndAdditionalOptions() {
+    if (myMode == Mode.BC || myMode == Mode.Module) {
+      final CompilerOptionsListener optionsListener = new CompilerOptionsListener() {
+        public void optionsInTableChanged() {
+          updateTreeTable();
         }
-      });
+
+        public void additionalOptionsChanged() {
+          updateAdditionalOptionsControls();
+        }
+      };
+
+      if (myMode == Mode.BC) {
+        myBCManager.getModuleLevelCompilerOptions().addOptionsListener(optionsListener, myDisposable);
+      }
+      myProjectLevelOptionsHolder.getProjectLevelCompilerOptions().addOptionsListener(optionsListener, myDisposable);
     }
 
-    if (myMode == Mode.Project || myMode == Mode.Module) {
-      myModuleDefaultsButton.setVisible(false);
-    }
-    else {
-      myModuleDefaultsButton.addActionListener(new ActionListener() {
-        public void actionPerformed(final ActionEvent e) {
-          ModifiableCompilerOptions compilerOptions = myBCManager.getModuleLevelCompilerOptions();
-          final CompilerOptionsConfigurable configurable =
-            new CompilerOptionsConfigurable(Mode.Module, myModule, myProject, myNature, myDependenciesConfigurable, compilerOptions);
-          boolean changed = ShowSettingsUtil.getInstance().editConfigurable(myProject, configurable);
-          if (changed) {
-            updateTreeTable();
-          }
-        }
-      });
-    }
+    final ActionListener projectDefaultsListener = new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        ModifiableCompilerOptions compilerOptions = myProjectLevelOptionsHolder.getProjectLevelCompilerOptions();
+        final CompilerOptionsConfigurable configurable =
+          new CompilerOptionsConfigurable(Mode.Project, null, myProject, myNature, myDependenciesConfigurable, compilerOptions);
+        ShowSettingsUtil.getInstance().editConfigurable(myProject, configurable);
+      }
+    };
+
+    final ActionListener moduleDefaultsListener = new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        ModifiableCompilerOptions compilerOptions = myBCManager.getModuleLevelCompilerOptions();
+        final CompilerOptionsConfigurable configurable =
+          new CompilerOptionsConfigurable(Mode.Module, myModule, myProject, myNature, myDependenciesConfigurable, compilerOptions);
+        ShowSettingsUtil.getInstance().editConfigurable(myProject, configurable);
+      }
+    };
+
+    myConfigFileTextWithBrowse.addBrowseFolderListener(null, null, myProject, FlexUtils.createFileChooserDescriptor("xml"));
+    myConfigFileTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+      protected void textChanged(final DocumentEvent e) {
+        // todo update warnings on other tabs
+        updateAdditionalOptionsControls();
+      }
+    });
+    myConfigFileLabel.setVisible(myMode == Mode.BC);
+    myConfigFileTextWithBrowse.setVisible(myMode == Mode.BC);
+
+    myInheritedOptionsLabel.setVisible(myMode == Mode.BC || myMode == Mode.Module);
+    myInheritedOptionsField.setVisible(myMode == Mode.BC || myMode == Mode.Module);
+
+    final String labelText = myMode == Mode.BC ? "Additional compiler options:"
+                                               : myMode == Mode.Module
+                                                 ? "Default options for module:"
+                                                 : "Default options for project:";
+    myAdditionalOptionsLabel.setText(labelText);
+    myAdditionalOptionsField.setDialogCaption(StringUtil.capitalizeWords(labelText, true));
+    myAdditionalOptionsField.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+      protected void textChanged(final DocumentEvent e) {
+        updateAdditionalOptionsControls();
+      }
+    });
+
+    myNoteLabel.setIcon(UIUtil.getBalloonInformationIcon());
+
+    myProjectDefaultsButton.addActionListener(projectDefaultsListener);
+    myProjectDefaultsButton.setVisible(myMode == Mode.BC || myMode == Mode.Module);
+
+    myModuleDefaultsButton.addActionListener(moduleDefaultsListener);
+    myModuleDefaultsButton.setVisible(myMode == Mode.BC);
   }
 
   @Nls
@@ -236,9 +278,11 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
     myConfigFileTextWithBrowse.setText(FileUtil.toSystemDependentName(myModel.getAdditionalConfigFilePath()));
     myAdditionalOptionsField.setText(myModel.getAdditionalOptions());
+    updateAdditionalOptionsControls();
   }
 
   public void disposeUIResources() {
+    Disposer.dispose(myDisposable);
   }
 
   private void createUIComponents() {
@@ -514,6 +558,22 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       nodeToRefresh = parent;
     }
     ((DefaultTreeModel)tree.getModel()).reload(nodeToRefresh);
+  }
+
+  private void updateAdditionalOptionsControls() {
+    final String projectOptions = myProjectLevelOptionsHolder.getProjectLevelCompilerOptions().getAdditionalOptions();
+    if (myMode == Mode.BC) {
+      myInheritedOptionsField.setText(projectOptions + (projectOptions.isEmpty() ? "" : " ") +
+                                      myBCManager.getModuleLevelCompilerOptions().getAdditionalOptions());
+    }
+    else if (myMode == Mode.Module) {
+      myInheritedOptionsField.setText(projectOptions);
+    }
+
+    myNoteLabel.setVisible(myMode == Mode.BC &&
+                           (!myConfigFileTextWithBrowse.getText().trim().isEmpty() ||
+                            !myInheritedOptionsField.getText().trim().isEmpty() ||
+                            !myAdditionalOptionsField.getText().trim().isEmpty()));
   }
 
   private void updateTreeTable() {

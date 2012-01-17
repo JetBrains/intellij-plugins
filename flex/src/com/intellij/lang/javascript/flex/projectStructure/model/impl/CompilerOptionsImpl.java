@@ -1,9 +1,13 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
+import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptionsListener;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableCompilerOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModuleOrProjectCompilerOptions;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.EventDispatcher;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
@@ -14,10 +18,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.Map;
 
-class CompilerOptionsImpl implements ModifiableCompilerOptions {
+class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectCompilerOptions {
 
   private final Project myProject;
   private final boolean myResetHighlightingOnCommit;
+
+  private final EventDispatcher<CompilerOptionsListener> myDispatcher = EventDispatcher.create(CompilerOptionsListener.class);
 
   private final Map<String, String> myOptions = new THashMap<String, String>();
   private @NotNull String myAdditionalConfigFilePath = "";
@@ -27,9 +33,14 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions {
     this(null, false);
   }
 
+  // todo introduce modifiable model with highlighting reset on commit instead of myResetHighlightingOnCommit, move listeners notification to committing method
   CompilerOptionsImpl(final Project project, final boolean resetHighlightingOnCommit) {
     myProject = project;
     myResetHighlightingOnCommit = resetHighlightingOnCommit;
+  }
+
+  public void addOptionsListener(CompilerOptionsListener listener, Disposable parentDisposable) {
+    myDispatcher.addListener(listener, parentDisposable);
   }
 
   @Override
@@ -47,17 +58,24 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions {
   public void setAllOptions(Map<String, String> newOptions) {
     myOptions.clear();
     myOptions.putAll(newOptions);
+
     if (myResetHighlightingOnCommit) {
       ApplicationManager.getApplication().runWriteAction(new Runnable() {
         public void run() {
           FlexBuildConfigurationManagerImpl.resetHighlighting(myProject);
         }
       });
+      myDispatcher.getMulticaster().optionsInTableChanged();
     }
   }
 
   public void setAdditionalConfigFilePath(@NotNull final String path) {
     myAdditionalConfigFilePath = path;
+
+    if (myResetHighlightingOnCommit) {
+      // module and project level settings don't have config file field
+      assert myAdditionalConfigFilePath.equals(path);
+    }
   }
 
   @NotNull
@@ -67,6 +85,15 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions {
 
   public void setAdditionalOptions(@NotNull final String options) {
     myAdditionalOptions = options;
+
+    if (myResetHighlightingOnCommit) {
+      ApplicationManager.getApplication().runWriteAction(new Runnable() {
+        public void run() {
+          FlexBuildConfigurationManagerImpl.resetHighlighting(myProject);
+        }
+      });
+      myDispatcher.getMulticaster().additionalOptionsChanged();
+    }
   }
 
   @NotNull
