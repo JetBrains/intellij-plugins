@@ -6,7 +6,7 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-final class Flexmojos {
+public final class Flexmojos {
   static String getClassifier(Mojo mojo)
     throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
     return (String)invokePublicMethod(mojo, "getClassifier");
@@ -30,11 +30,4 @@ final class Flexmojos {
     method.setAccessible(true);
     return method.invoke(mojo);
   }
-
-  //static Object invokeField(Mojo mojo, String fieldName)
-  //  throws InvocationTargetException, IllegalAccessException, NoSuchFieldException {
-  //  Field field = mojo.getClass().getDeclaredField(fieldName);
-  //  field.setAccessible(true);
-  //  return field.get(mojo);
-  //}
 }

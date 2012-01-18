@@ -1,10 +1,10 @@
-mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.5.1:generate -o
-mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.5.1:generate -DgenerateNonShareable=false -DgenerateShareable -Prelease -o
-mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.5.1:generate -DgenerateNonShareable=false -DgenerateShareable -PreleaseForTesters -o
+mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.5.2:generate -o
+mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.5.2:generate -DgenerateNonShareable=false -DgenerateShareable -Prelease -o
+mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.5.2:generate -DgenerateNonShareable=false -DgenerateShareable -PreleaseForTesters -o
 
-mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.5.1:generate -o -s build/maven-settings.xml
+mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.5.2:generate -o -s build/maven-settings.xml
 
-mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.5.1:replicate-repo -o -e
+mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.5.2:replicate-repo -o -e
 
 
 mvn compile -Prelease -Dflex.swf.uncompressed=true -o

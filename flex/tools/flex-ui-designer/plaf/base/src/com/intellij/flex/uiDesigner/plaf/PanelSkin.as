@@ -112,7 +112,7 @@ public class PanelSkin extends ContentViewableSkin implements WindowSkin {
     const empty:Boolean = panel.emptyText != null;
     if (empty) {
       if (statusText == null) {
-        statusText = new StatusText(this, superview.laf.getBorder("StatusText.b"), superview.laf.getTextFormat("StatusText.f"));
+        statusText = new StatusText(this, laf.getBorder("StatusText.b"), laf.getTextFormat("StatusText.f"));
       }
 
       statusText.show(g, panel.emptyText, contentBorder.contentInsets, w, h);

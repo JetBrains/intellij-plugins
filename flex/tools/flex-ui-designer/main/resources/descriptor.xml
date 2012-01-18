@@ -1,10 +1,10 @@
 <application xmlns="http://ns.adobe.com/air/application/2.6">
   <id>com.intellij.flex.uiDesigner.designer</id>
-  <versionNumber>0.6.5</versionNumber>
+  <versionNumber>0.6.9</versionNumber>
   <name>Flash UI Designer</name>
   <filename>FlashUIDesigner</filename>
   <description>Provides visual editing support for Flex UI</description>
-  <copyright>Copyright (c) 2000-2011 JetBrains s.r.o.</copyright>
+  <copyright>Copyright (c) 2000-2012 JetBrains s.r.o.</copyright>
   <initialWindow>
     <content>designer.swf</content>
   </initialWindow>

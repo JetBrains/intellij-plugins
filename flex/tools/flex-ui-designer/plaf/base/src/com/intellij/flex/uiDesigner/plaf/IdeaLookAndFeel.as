@@ -49,6 +49,9 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
     data["Editor.Toolbar"] = data["Toolbar"];
     data["designerAreaOuterBackgroundColor"] = DESIGNER_AREA_OUTER_BACKGROUND_COLOR;
     data["Editor.Toolbar.b"] = RectangularBorder.create(DESIGNER_AREA_OUTER_BACKGROUND_COLOR);
+
+    // todo find more normal way to disable border for listview in panel (our inspectors)
+    data["ListView.b"] = null;
   }
 }
 }

@@ -43,8 +43,8 @@
   <injectors>
     <Injectors target="{StyleInspector}">
       <PropertyInjector source="{CssRulesetPrinter}" targetKey="rulesetPrinter"/>
-      <PropertyInjector source="{ElementManager}" sourceKey="element"/>
       <PropertyInjector source="{DocumentManager}" sourceKey="document"/>
+      <PropertyInjector source="{ElementManager}" sourceKey="element"/>
       <PropertyInjector targetKey="pane" target="{Interactor}"/>
     </Injectors>
 

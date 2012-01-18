@@ -12,8 +12,6 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -144,7 +142,7 @@ public class IdeaConfigurationMojo extends AbstractMojo {
                                                                    flexmojosMojoExecution.getMojoDescriptor().getPluginDescriptor());
 
     final ClassLoader classLoader = getClass().getClassLoader();
-    flexmojosPluginRealm.addURL(new URL(session.getLocalRepository().getUrl() + "com/intellij/flex/maven/idea-configurator/1.5.1/idea-configurator-1.5.1.jar"));
+    flexmojosPluginRealm.addURL(new URL(session.getLocalRepository().getUrl() + "com/intellij/flex/maven/idea-configurator/1.5.2/idea-configurator-1.5.2.jar"));
     flexmojosPluginRealm.importFrom(classLoader, "com.intellij.flex.maven.FlexConfigGenerator");
     flexmojosPluginRealm.importFrom(classLoader, "com.intellij.flex.maven.Utils");
     Mojo mojo = null;
@@ -154,12 +152,12 @@ public class IdeaConfigurationMojo extends AbstractMojo {
       for (String configuratorClassName : configurators) {
         Class configuratorClass = flexmojosPluginRealm.loadClass(configuratorClassName);
         FlexConfigGenerator configurator = (FlexConfigGenerator)configuratorClass.getConstructor(MavenSession.class, File.class).newInstance(session, null);
-        configurator.preGenerate(project, getClassifier(mojo), flexmojosGeneratorMojoExecution, buildHelperMojoExecution);
+        configurator.preGenerate(project, Flexmojos.getClassifier(mojo));
         if ("swc".equals(project.getPackaging())) {
           configurator.generate(mojo);
         }
         else {
-          configurator.generate(mojo, getSourceFileForSwf(mojo));
+          configurator.generate(mojo, Flexmojos.getSourceFileForSwf(mojo));
         }
         configurator.postGenerate(project);
       }
@@ -175,20 +173,5 @@ public class IdeaConfigurationMojo extends AbstractMojo {
     MojoExecution mojoExecution = new MojoExecution(mojoDescriptor, "default-cli", MojoExecution.Source.CLI);
     lifeCycleExecutionPlanCalculator.setupMojoExecution(session, project, mojoExecution);
     return mojoExecution;
-  }
-
-
-  private File getSourceFileForSwf(Mojo mojo)
-    throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
-    Method getSourceFileMethod = mojo.getClass().getDeclaredMethod("getSourceFile");
-    getSourceFileMethod.setAccessible(true);
-    return (File)getSourceFileMethod.invoke(mojo);
-  }
-
-  private String getClassifier(Mojo mojo)
-    throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
-    Method getSourceFileMethod = mojo.getClass().getMethod("getClassifier");
-    getSourceFileMethod.setAccessible(true);
-    return (String)getSourceFileMethod.invoke(mojo);
   }
 }

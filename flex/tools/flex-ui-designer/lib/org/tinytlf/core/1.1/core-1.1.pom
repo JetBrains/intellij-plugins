@@ -5,16 +5,17 @@
   <parent>
     <groupId>org.tinytlf</groupId>
     <artifactId>tinytlfAggregator</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1</version>
   </parent>
 
-  <artifactId>layouts</artifactId>
+  <artifactId>core</artifactId>
   <packaging>swc</packaging>
 
   <dependencies>
     <dependency>
       <groupId>org.tinytlf</groupId>
-      <artifactId>core</artifactId>
+      <artifactId>fte-utils</artifactId>
+      <version>1.1</version>
       <type>swc</type>
     </dependency>
   </dependencies>

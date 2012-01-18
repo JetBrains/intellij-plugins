@@ -12,6 +12,7 @@ import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 import com.intellij.flex.uiDesigner.ui.ProjectEventMap;
 import com.intellij.flex.uiDesigner.ui.ProjectView;
 import com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector.PropertyInspector;
+import com.intellij.flex.uiDesigner.ui.inspectors.styleInspector.StyleInspector;
 
 import flash.geom.Rectangle;
 import flash.net.Socket;
@@ -117,6 +118,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
 
     var toolWindowManager:ToolWindowManager = ToolWindowManager(project.getComponent(ToolWindowManager));
     toolWindowManager.container = projectView;
+    toolWindowManager.registerToolWindow(PaneItem.create("Style", new ClassFactory(StyleInspector)), MigConstants.RIGHT);
     toolWindowManager.registerToolWindow(PaneItem.create("Properties", new ClassFactory(PropertyInspector)), MigConstants.RIGHT);
 
     documentWindow.init(project.map, projectWindowBounds);

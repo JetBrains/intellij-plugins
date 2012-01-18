@@ -1,64 +1,28 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector {
 import cocoa.ListView;
-import cocoa.Panel;
-import cocoa.ScrollPolicy;
-import cocoa.ScrollView;
-import cocoa.View;
-import cocoa.layout.ListVerticalLayout;
 import cocoa.pane.PaneItem;
 import cocoa.pane.PaneViewDataSource;
 import cocoa.renderer.PaneRendererManager;
+import cocoa.renderer.RendererManager;
 
 import com.intellij.flex.uiDesigner.ui.CustomTextFormatId;
 
-public class PropertyInspector extends Panel {
-  private var dataSource:PaneViewDataSource = new PaneViewDataSource((source = new Vector.<PaneItem>()));
-  private var source:Vector.<PaneItem>;
- 
+import com.intellij.flex.uiDesigner.ui.inspectors.AbstractInspector;
+
+public class PropertyInspector extends AbstractInspector {
+  protected var source:Vector.<PaneItem>;
+
   private var otherPropertiesPane:PaneItem;
- 
-  public function set element(value:Object):void {
-    updateData(value);
+
+  public function PropertyInspector() {
+    dataSource = new PaneViewDataSource((source = new Vector.<PaneItem>()));
   }
 
-  override public function get contentView():View {
-    var contentView:View = super.contentView;
-    if (contentView != null) {
-      return contentView;
-    }
-
-    var listView:ListView = new ListView();
-    listView.dataSource = dataSource;
-    //noinspection UnnecessaryLocalVariableJS
-    var layout:ListVerticalLayout = new ListVerticalLayout();
-    listView.layout = layout;
-    listView.rendererManager = new PaneRendererManager(laf.getTextFormat(CustomTextFormatId.SIDE_PANE_GROUP_ITEM_LABEL), laf.getBorder("GroupItemRenderer.b"), laf);
-
-    var scrollView:ScrollView = new ScrollView();
-    scrollView.documentView = listView;
-    scrollView.horizontalScrollPolicy = ScrollPolicy.OFF;
-
-    this.contentView = scrollView;
-    return scrollView;
+  override protected function createRendererManager(listView:ListView):RendererManager {
+    return new PaneRendererManager(laf.getTextFormat(CustomTextFormatId.SIDE_PANE_GROUP_ITEM_LABEL), laf.getBorder("GroupItemRenderer.b"), laf, listView);
   }
- 
-  protected function updateData(element:Object):void {
-    if (element == null) {
-      clear();
-      emptyText = "No Selection";
-    }
-    else if (!isApplicable(element)) {
-      clear();
-      emptyText = "Not Applicable";
-    }
-    else {
-      emptyText = null;
-      doUpdateData(element);
-      dataSource.reset.dispatch();
-    }
-  }
- 
-  protected function doUpdateData(element:Object):void {
+
+  override protected function doUpdateData(element:Object):void {
     if (otherPropertiesPane == null) {
       otherPropertiesPane = new PaneItem(null, null);
       otherPropertiesPane.localizedTitle = "Other";
@@ -72,22 +36,18 @@ public class PropertyInspector extends Panel {
 
     OtherPropertiesFactory(otherPropertiesPane.viewFactory).dataSource.update(element);
   }
- 
-  //noinspection JSMethodCanBeStatic
-  protected function isApplicable(element:Object):Boolean {
-    return true;
-  }
- 
-  private function clear():void {
+
+  override protected function clear():void {
     if (dataSource != null) {
       source.fixed = false;
-      dataSource.clear();
+      PaneViewDataSource(dataSource).clear();
       source.fixed = true;
     }
   }
 }
 }
 
+import cocoa.ContentView;
 import cocoa.Insets;
 import cocoa.ScrollPolicy;
 import cocoa.View;
@@ -112,7 +72,7 @@ class OtherPropertiesFactory implements ViewFactory {
   public function newInstance():* {
   }
 
-  public function create(laf:LookAndFeel, container:DisplayObjectContainer):View {
+  public function create(laf:LookAndFeel, container:DisplayObjectContainer, superview:ContentView):View {
     var tableView:TableView = new TableView();
     tableView.verticalScrollPolicy = ScrollPolicy.OFF;
     tableView.dataSource = dataSource;
@@ -123,7 +83,7 @@ class OtherPropertiesFactory implements ViewFactory {
     firstColumn.preferredWidth = 160;
     var valueRendererManager:ValueRendererManager = new ValueRendererManager(laf, textFormat, insets, dataSource);
     tableView.columns = new <TableColumn>[firstColumn, new TableColumnImpl(tableView, null, valueRendererManager)];
-    tableView.addToSuperview(container, laf, null);
+    tableView.addToSuperview(container, laf, superview);
     new PropertyTableInteractor(tableView, valueRendererManager);
     return tableView;
   }

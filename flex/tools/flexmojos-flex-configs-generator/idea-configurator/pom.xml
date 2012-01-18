@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.intellij.flex.maven</groupId>
     <artifactId>idea-flexmojos-aggregator</artifactId>
-    <version>1.5.1</version>
+    <version>1.5.2</version>
   </parent>
 
   <artifactId>idea-configurator</artifactId>
@@ -13,13 +13,13 @@
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-flex-compiler</artifactId>
-      <version>4.0-RC2</version>
+      <version>4.1-beta</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.intellij.flex.maven</groupId>
       <artifactId>shared</artifactId>
-      <version>1.5.1</version>
+      <version>1.5.2</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

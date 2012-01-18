@@ -1,4 +1,6 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.styleInspector {
+import cocoa.util.SharedPoint;
+
 import com.intellij.flex.uiDesigner.ElementManager;
 import com.intellij.flex.uiDesigner.Module;
 import com.intellij.flex.uiDesigner.Server;
@@ -11,8 +13,8 @@ import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.Shape;
+import flash.events.IEventDispatcher;
 import flash.events.MouseEvent;
-import flash.geom.Point;
 import flash.text.engine.ElementFormat;
 import flash.text.engine.FontMetrics;
 import flash.text.engine.TextElement;
@@ -32,7 +34,6 @@ public class Interactor {
   private static const ACTIVE:int = 1;
   
   private static var fakeInteractor:FakeInteractor;
-  private static const sharedPoint:Point = new Point();
   
   private var server:Server;
   
@@ -57,14 +58,15 @@ public class Interactor {
 
   //noinspection JSUnusedGlobalSymbols
   public function set pane(value:StyleInspector):void {
-    //value.skin.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);
-    //value.skin.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
-    //value.skin.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler);
-    //value.skin.addEventListener(MouseEvent.ROLL_OUT, mouseRollOutHandler);
+    var skin:IEventDispatcher = IEventDispatcher(value.skin);
+    skin.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);
+    skin.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
+    skin.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler);
+    skin.addEventListener(MouseEvent.ROLL_OUT, mouseRollOutHandler);
   }
 
   //noinspection JSMethodCanBeStatic
-  public function configureTextEngine(textEngine:FlexTextEngine):void {
+  public function configureTextEngine(textEngine:ITextEngine):void {
     if (fakeInteractor == null) {
       fakeInteractor = new FakeInteractor();
     }
@@ -83,13 +85,11 @@ public class Interactor {
     if (outUpHandlerAdded) {
       return;
     }
-    
-    sharedPoint.x = event.localX;
-    sharedPoint.y = event.localY;
+
     var line:TextLine;
     var container:TinytlfSprite = event.target as TinytlfSprite;
     if (container != null) {
-      var objects:Array = container.getObjectsUnderPoint(sharedPoint);
+      var objects:Array = container.stage.getObjectsUnderPoint(SharedPoint.mouseGlobal(event));
       for (var i:int = 0, n:int = objects.length; i < n; i++) {
         if ((line = objects[i] as TextLine) != null) {
           break;

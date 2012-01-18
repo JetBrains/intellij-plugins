@@ -103,6 +103,7 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
     }
   }
 
+  @SuppressWarnings("ResultOfMethodCallIgnored")
   private void copyProjectArtifacts(File localRepositoryFile, int localRepositoryBasedirLength, MavenProject project) throws MojoExecutionException {
     for (Artifact artifact : project.getArtifacts()) {
       if (copiedArtifacts.contains(artifact)) {
@@ -119,16 +120,31 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
           continue;
         }
 
-        //noinspection ResultOfMethodCallIgnored
         outFile.getParentFile().mkdirs();
 
         Utils.copyFile(artifactFile, outFile);
 
         if (("configs".equals(artifact.getClassifier()) || (artifact.getClassifier() == null && "framework".equals(artifact.getArtifactId()) && artifact.getType().equals("swc"))) && !extractedConfigs.contains(artifact.getVersion())) {
           extractedConfigs.add(artifact.getVersion());
-          final File in = new File(artifactFile.getParentFile(), "configs_zip");
-          FileUtils.copyDirectory(in, new File(outputDirectory, artifactFile.getParent().substring(localRepositoryBasedirLength) + "/configs_zip"));
-          Utils.copyFile(new File(in, "macFonts.ser"), new File(outputDirectory, "fonts.ser"));
+          final File sourceDirectory = new File(artifactFile.getParentFile(), "configs_zip");
+          final File destinationDirectory = new File(outputDirectory, artifactFile.getParent().substring(localRepositoryBasedirLength) + "/configs_zip");
+          destinationDirectory.mkdirs();
+          for (String from : sourceDirectory.list()) {
+            // build.xml — published flex sdk contains unneeded ant file
+            if (from.charAt(0) != '.' && !from.equals("build.xml")) {
+              File fromFile = new File(sourceDirectory, from);
+              File toFile = new File(destinationDirectory, from);
+              if (fromFile.isDirectory()) {
+                toFile.mkdir();
+                copyDirectory(fromFile, toFile);
+              }
+              else {
+                Utils.copyFile(fromFile, toFile);
+              }
+            }
+          }
+
+          Utils.copyFile(new File(sourceDirectory, "macFonts.ser"), new File(outputDirectory, "fonts.ser"));
         }
         else if (artifact.getArtifactId().equals("playerglobal") || artifact.getArtifactId().equals("airglobal")) {
           Utils.copyFile(artifactFile, new File(outputDirectory, artifactFile.getParent().substring(localRepositoryBasedirLength) + "/" + artifact.getArtifactId() + ".swc"));
@@ -148,6 +164,23 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
       }
       catch (IOException e) {
         throw new MojoExecutionException("Cannot copy", e);
+      }
+    }
+  }
+
+  private static void copyDirectory(File sourceDirectory, File destinationDirectory) throws IOException {
+    for (String from : sourceDirectory.list()) {
+      if (from.charAt(0) != '.') {
+        final File fromFile = new File(sourceDirectory, from);
+        final File toFile = new File(destinationDirectory, from);
+        if (fromFile.isDirectory()) {
+          //noinspection ResultOfMethodCallIgnored
+          toFile.mkdir();
+          copyDirectory(fromFile, toFile);
+        }
+        else {
+          Utils.copyFile(fromFile, toFile);
+        }
       }
     }
   }

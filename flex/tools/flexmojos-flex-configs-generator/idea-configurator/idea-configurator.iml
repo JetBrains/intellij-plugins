@@ -99,7 +99,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:xmlParserAPIs:4.5.1.21328" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.hamcrest:hamcrest-library:1.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
-    <orderEntry type="module" module-name="shared" scope="PROVIDED" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.intellij.flex.maven:shared:1.5.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-core:3.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-model:3.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-settings:3.0.3" level="project" />
