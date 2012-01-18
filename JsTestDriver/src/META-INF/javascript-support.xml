@@ -40,14 +40,14 @@
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <localInspection shortName="JstdAssertionFrameworkSupport" displayName="Add JsTestDriver assertion framework support"
+    <localInspection shortName="JstdAssertionFrameworkSupport" groupPath="JavaScript" displayName="Add JsTestDriver assertion framework support"
                      groupBundle="com.intellij.lang.javascript.JavaScriptBundle" groupKey="js.inspection.group.name" enabledByDefault="true"
                      level="ERROR"
                      implementationClass="com.google.jstestdriver.idea.assertFramework.jstd.JstdAssertionFrameworkSupportInspection"/>
-    <localInspection shortName="QUnitAdapterSupport" groupBundle="com.intellij.lang.javascript.JavaScriptBundle"
+    <localInspection shortName="QUnitAdapterSupport" groupPath="JavaScript" groupBundle="com.intellij.lang.javascript.JavaScriptBundle"
                      displayName="Add QUnit adapter support for JsTestDriver" groupKey="js.inspection.group.name" enabledByDefault="true"
                      level="ERROR" implementationClass="com.google.jstestdriver.idea.assertFramework.qunit.QUnitAdapterSupportInspection"/>
-    <localInspection shortName="JasmineAdapterSupport"
+    <localInspection shortName="JasmineAdapterSupport" groupPath="JavaScript"
                      displayName="Add Jasmine adapter support for JsTestDriver" groupKey="js.inspection.group.name" enabledByDefault="true"
                      level="ERROR" groupBundle="com.intellij.lang.javascript.JavaScriptBundle"
                      implementationClass="com.google.jstestdriver.idea.assertFramework.jasmine.JasmineAdapterSupportInspection"/>
