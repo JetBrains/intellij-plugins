@@ -58,6 +58,8 @@ public class FlexSdkUtils {
   static final String THEME_FILE_NAME = "<flex-config><compiler><theme><filename>";
   static final String LOCALE_ELEMENT = "<flex-config><compiler><locale><locale-element>";
   public static final String TARGET_PLAYER_ELEMENT = "<flex-config><target-player>";
+  public static final String FILE_SPEC_ELEMENT = "<flex-config><file-specs><path-element>";
+  public static final String OUTPUT_ELEMENT = "<flex-config><output>";
 
   static final String TARGET_PLAYER_MAJOR_VERSION_TOKEN = "{targetPlayerMajorVersion}";
   static final String TARGET_PLAYER_MINOR_VERSION_TOKEN = "{targetPlayerMinorVersion}";

@@ -56,9 +56,8 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptions> {
   private JPanel myMainPanel;
@@ -90,11 +89,19 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   private final Map<String, String> myCurrentOptions;
   private boolean myModified;
 
+  private Collection<OptionsListener> myListeners = new ArrayList<OptionsListener>();
   private final Disposable myDisposable = Disposer.newDisposable();
 
   private static final String UNKNOWN_SDK_VERSION = "100";
 
   private enum Mode {BC, Module, Project}
+
+  public interface OptionsListener extends EventListener {
+    void configFileChanged(String additionalConfigFilePath);
+
+    void additionalOptionsChanged(String additionalOptions);
+  }
+
 
   public CompilerOptionsConfigurable(final Module module,
                                      final BuildConfigurationNature nature,
@@ -185,8 +192,8 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     myConfigFileTextWithBrowse.addBrowseFolderListener(null, null, myProject, FlexUtils.createFileChooserDescriptor("xml"));
     myConfigFileTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
       protected void textChanged(final DocumentEvent e) {
-        // todo update warnings on other tabs
         updateAdditionalOptionsControls();
+        fireConfigFileChanged();
       }
     });
     myConfigFileLabel.setVisible(myMode == Mode.BC);
@@ -204,6 +211,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     myAdditionalOptionsField.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
       protected void textChanged(final DocumentEvent e) {
         updateAdditionalOptionsControls();
+        fireAdditionalOptionsChanged();
       }
     });
 
@@ -214,6 +222,22 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
     myModuleDefaultsButton.addActionListener(moduleDefaultsListener);
     myModuleDefaultsButton.setVisible(myMode == Mode.BC);
+  }
+
+  public void addAdditionalOptionsListener(final OptionsListener listener) {
+    myListeners.add(listener);
+  }
+
+  private void fireConfigFileChanged() {
+    for (OptionsListener listener : myListeners) {
+      listener.configFileChanged(myConfigFileTextWithBrowse.getText().trim());
+    }
+  }
+
+  private void fireAdditionalOptionsChanged() {
+    for (OptionsListener listener : myListeners) {
+      listener.additionalOptionsChanged(myAdditionalOptionsField.getText().trim());
+    }
   }
 
   @Nls

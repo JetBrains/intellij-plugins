@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ide.ui.ListCellRendererWrapper;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryRootsComponentDescriptor;
@@ -51,6 +52,7 @@ import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -66,6 +68,7 @@ import com.intellij.util.containers.FilteringIterator;
 import com.intellij.util.containers.HashMap;
 import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.ColumnInfo;
+import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.classpath.ChooseLibrariesFromTablesDialog;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -97,23 +100,24 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   private FlexSdkPanel mySdkPanel;
   private JLabel myTargetPlayerLabel;
   private JComboBox myTargetPlayerCombo;
+  private JLabel myTargetPlayerWarning;
   private JLabel myComponentSetLabel;
   private JComboBox myComponentSetCombo;
   private JLabel myFrameworkLinkageLabel;
   private JComboBox myFrameworkLinkageCombo;
+  private JLabel myWarning;
   private JPanel myTablePanel;
+
   private final EditableTreeTable<MyTableItem> myTable;
 
-  private final ModifiableDependencies myDependencies;
   private final Project myProject;
+  private final FlexProjectConfigurationEditor myConfigEditor;
+  private final BuildConfigurationNature myNature;
+  private final ModifiableDependencies myDependencies;
   private AddItemPopupAction[] myPopupActions;
-
-  private final Disposable myDisposable;
   private final AnActionButton myEditAction;
   private final AnActionButton myRemoveButton;
-  private final BuildConfigurationNature myNature;
-
-  private final FlexProjectConfigurationEditor myConfigEditor;
+  private final Disposable myDisposable;
 
   private abstract static class MyTableItem {
     public abstract String getText();
@@ -402,7 +406,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     public ModifiableDependencyEntry apply(final ModifiableDependencies dependencies) {
       ModifiableDependencyEntry entry;
-      if(configurable != null) {
+      if (configurable != null) {
         entry = myConfigEditor.createSharedLibraryEntry(dependencies, configurable.getDisplayName(),
                                                         configurable.getEditableObject().getTable().getTableLevel());
       }
@@ -706,6 +710,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     myTargetPlayerCombo.addItemListener(updateSdkItemsListener);
     myComponentSetCombo.addItemListener(updateSdkItemsListener);
     myFrameworkLinkageCombo.addItemListener(updateSdkItemsListener);
+
+    myTargetPlayerWarning.setIcon(IconLoader.getIcon("smallWarning.png"));
+    myWarning.setIcon(UIUtil.getBalloonWarningIcon());
 
     myTable = new EditableTreeTable<MyTableItem>("", DEPENDENCY_TYPE_COLUMN) {
       @Override
@@ -1116,6 +1123,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     BCUtils.updateAvailableTargetPlayers(mySdkPanel, myTargetPlayerCombo);
     myTargetPlayerCombo.setSelectedItem(myDependencies.getTargetPlayer());
+    overriddenTargetPlayerChanged(null); // no warning initially
 
     updateComponentSetCombo();
     myComponentSetCombo.setSelectedItem(myDependencies.getComponentSet());
@@ -1196,6 +1204,20 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     TreeNode root = (TreeNode)modulesConfig.getTree().getModel().getRoot();
     MasterDetailsComponent.MyNode configurableNode = MasterDetailsComponent.findNodeByObject(root, library);
     return configurableNode != null ? (FlexLibraryConfigurable)configurableNode.getConfigurable() : null;
+  }
+
+  /**
+   * Called when {@link CompilerOptionsConfigurable} is initialized and when path to additional config file is changed
+   *
+   * @param targetPlayer <code>null</code> means that the value is not overridden in additional config file
+   */
+  public void overriddenTargetPlayerChanged(final @Nullable String targetPlayer) {
+    myTargetPlayerWarning.setToolTipText(FlexBundle.message("actual.value.from.config.file.0", targetPlayer));
+    myWarning.setText(FlexBundle.message("overridden.in.config.file", "Target player", targetPlayer));
+
+    final boolean visible = myTargetPlayerCombo.isVisible() && targetPlayer != null;
+    myTargetPlayerWarning.setVisible(visible);
+    myWarning.setVisible(visible);
   }
 
   private void updateComponentSetCombo() {

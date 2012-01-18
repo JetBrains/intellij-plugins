@@ -730,7 +730,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     if (config.getType() != FlexBuildConfiguration.Type.OverriddenMainClass) return false;
 
     try {
-      final String pathElement = FlexUtils.findXMLElement(configFile.getInputStream(), "<flex-config><file-specs><path-element>");
+      final String pathElement = FlexUtils.findXMLElement(configFile.getInputStream(), FlexSdkUtils.FILE_SPEC_ELEMENT);
       return (pathElement == null || !pathElement.equals(FlexUtils.getPathToMainClassFile(config)));
     }
     catch (IOException e) {
