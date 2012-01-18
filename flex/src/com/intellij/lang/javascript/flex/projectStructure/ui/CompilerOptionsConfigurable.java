@@ -238,6 +238,57 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     for (OptionsListener listener : myListeners) {
       listener.additionalOptionsChanged(myAdditionalOptionsField.getText().trim());
     }
+
+    final ActionListener projectDefaultsListener = new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        ModifiableCompilerOptions compilerOptions = myProjectLevelOptionsHolder.getProjectLevelCompilerOptions();
+        final CompilerOptionsConfigurable configurable =
+          new CompilerOptionsConfigurable(Mode.Project, null, myProject, myNature, myDependenciesConfigurable, compilerOptions);
+        ShowSettingsUtil.getInstance().editConfigurable(myProject, configurable);
+      }
+    };
+
+    final ActionListener moduleDefaultsListener = new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        ModifiableCompilerOptions compilerOptions = myBCManager.getModuleLevelCompilerOptions();
+        final CompilerOptionsConfigurable configurable =
+          new CompilerOptionsConfigurable(Mode.Module, myModule, myProject, myNature, myDependenciesConfigurable, compilerOptions);
+        ShowSettingsUtil.getInstance().editConfigurable(myProject, configurable);
+      }
+    };
+
+    myConfigFileTextWithBrowse.addBrowseFolderListener(null, null, myProject, FlexUtils.createFileChooserDescriptor("xml"));
+    myConfigFileTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+      protected void textChanged(final DocumentEvent e) {
+        // todo update warnings on other tabs
+        updateAdditionalOptionsControls();
+      }
+    });
+    myConfigFileLabel.setVisible(myMode == Mode.BC);
+    myConfigFileTextWithBrowse.setVisible(myMode == Mode.BC);
+
+    myInheritedOptionsLabel.setVisible(myMode == Mode.BC || myMode == Mode.Module);
+    myInheritedOptionsField.setVisible(myMode == Mode.BC || myMode == Mode.Module);
+
+    final String labelText = myMode == Mode.BC ? "Additional compiler options:"
+                                               : myMode == Mode.Module
+                                                 ? "Default options for module:"
+                                                 : "Default options for project:";
+    myAdditionalOptionsLabel.setText(labelText);
+    myAdditionalOptionsField.setDialogCaption(StringUtil.capitalizeWords(labelText, true));
+    myAdditionalOptionsField.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+      protected void textChanged(final DocumentEvent e) {
+        updateAdditionalOptionsControls();
+      }
+    });
+
+    myNoteLabel.setIcon(UIUtil.getBalloonInformationIcon());
+
+    myProjectDefaultsButton.addActionListener(projectDefaultsListener);
+    myProjectDefaultsButton.setVisible(myMode == Mode.BC || myMode == Mode.Module);
+
+    myModuleDefaultsButton.addActionListener(moduleDefaultsListener);
+    myModuleDefaultsButton.setVisible(myMode == Mode.BC);
   }
 
   @Nls

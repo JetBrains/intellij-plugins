@@ -206,10 +206,9 @@ public class FlexCompilationUtils {
     }
 
     final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
-    assert sdkEntry != null;
-
-    final Sdk sdk = sdkEntry.findSdk();
+    final Sdk sdk = sdkEntry == null ? null : sdkEntry.findSdk();
     assert sdk != null;
+
     addAdditionalOptions(command, module, sdk.getHomePath(),
                          FlexProjectLevelCompilerOptionsHolder.getInstance(module.getProject()).getProjectLevelCompilerOptions()
                            .getAdditionalOptions());
