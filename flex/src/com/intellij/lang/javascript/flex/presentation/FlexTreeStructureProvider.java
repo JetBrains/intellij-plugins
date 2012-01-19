@@ -9,24 +9,32 @@ import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSElement;
+import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.JSNamedElement;
+import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSNamespaceDeclaration;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSFileImpl;
 import com.intellij.lang.javascript.structureView.JSStructureViewElement;
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.ui.SimpleTextAttributes;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -46,9 +54,14 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
               ((XmlBackedJSClassImpl)parentElement), (XmlFile)parentElement.getContainingFile())
                                                           : new JSStructureViewElement(parentElement);
           StructureViewTreeElement[] structureViewChildren = structureViewElement.getChildren(false);
-          for (StructureViewTreeElement structureViewChild : structureViewChildren) {
-            PsiElement childElement = ((JSStructureViewElement)structureViewChild).getUpToDateElement();
-            result.add(new FlexClassMemberNode((JSElement)childElement, ((ProjectViewNode)parent).getSettings()));
+          for (final StructureViewTreeElement structureViewChild : structureViewChildren) {
+            if (structureViewChild instanceof JSStructureViewElement) {
+              PsiElement childElement = ((JSStructureViewElement)structureViewChild).getUpToDateElement();
+              result.add(new FlexClassMemberNode((JSElement)childElement, ((ProjectViewNode)parent).getSettings()));
+            }
+            else {
+              result.add(new UnknownNode(parentElement.getProject(), structureViewChild, ((ProjectViewNode)parent).getSettings()));
+            }
           }
         }
       }
@@ -170,5 +183,56 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
       return NAMESPACE_VALUE;
     }
     return -1;
+  }
+
+  private static class UnknownNode extends ProjectViewNode<Object> {
+    private final StructureViewTreeElement myElement;
+
+    public UnknownNode(Project project,
+                       final StructureViewTreeElement element, final ViewSettings viewSettings) {
+      super(project, element.getValue(), viewSettings);
+      myElement = element;
+    }
+
+    public boolean contains(@NotNull final VirtualFile file) {
+      return false;
+    }
+
+    @NotNull
+    public Collection<? extends AbstractTreeNode> getChildren() {
+      return Collections.emptyList();
+    }
+
+    protected void update(final PresentationData presentation) {
+      final ItemPresentation p = myElement.getPresentation();
+
+      presentation.setPresentableText(p.getPresentableText());
+      presentation.setOpenIcon(p.getIcon(true));
+      presentation.setClosedIcon(p.getIcon(false));
+      presentation.addText(p.getPresentableText(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      presentation.addText(" ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
+
+      final String location = presentation.getLocationString();
+      if (location != null && location.length() > 0) {
+        presentation.addText(" (" + location + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
+      }
+    }
+
+    public VirtualFile getVirtualFile() {
+      final Object value = getValue();
+      return value instanceof PsiElement ? ((PsiElement)value).getContainingFile().getVirtualFile() : null;
+    }
+
+    public boolean canNavigate() {
+      return myElement.canNavigate();
+    }
+
+    public boolean canNavigateToSource() {
+      return myElement.canNavigateToSource();
+    }
+
+    public void navigate(final boolean requestFocus) {
+      myElement.navigate(requestFocus);
+    }
   }
 }
