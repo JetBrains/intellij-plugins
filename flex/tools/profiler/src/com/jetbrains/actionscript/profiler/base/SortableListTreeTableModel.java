@@ -1,4 +1,4 @@
-package com.jetbrains.actionscript.profiler.calltreetable;
+package com.jetbrains.actionscript.profiler.base;
 
 import com.intellij.ui.treeStructure.treetable.ListTreeTableModel;
 import com.intellij.util.ui.ColumnInfo;

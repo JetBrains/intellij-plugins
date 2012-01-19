@@ -4,6 +4,7 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * User: Maxim
@@ -15,5 +16,7 @@ public interface ProfilerSnapshotProvider {
     ExtensionPointName.create("com.intellij.profiler.SnapshotProvider");
 
   boolean accepts(@NotNull VirtualFile file);
-  @NotNull ProfileView createView(@NotNull VirtualFile file, @NotNull Project project);
+
+  @Nullable
+  ProfileView createView(@NotNull VirtualFile file, @NotNull Project project);
 }

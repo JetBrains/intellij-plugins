@@ -2,62 +2,23 @@ package com.jetbrains.actionscript.profiler.calltreetable;
 
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.project.Project;
 import com.intellij.pom.Navigatable;
-import com.intellij.ui.treeStructure.treetable.TreeTable;
 import com.intellij.ui.treeStructure.treetable.TreeTableModel;
 import com.intellij.util.ui.ColumnInfo;
+import com.jetbrains.actionscript.profiler.ProfilerBundle;
+import com.jetbrains.actionscript.profiler.base.ColoredSortableTreeTable;
 import com.jetbrains.actionscript.profiler.base.NavigatableDataProducer;
-import com.jetbrains.actionscript.profiler.util.MathUtil;
 import com.jetbrains.actionscript.profiler.vo.CallInfo;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import javax.swing.border.MatteBorder;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
-import java.awt.*;
 import java.util.Comparator;
 
-public class CallTreeTable extends TreeTable implements DataProvider {
-  private static final int DEFAULT_ROW_HEIGHT = 20;
-
-  public CallTreeTable() {
-    super(new SortableListTreeTableModel(new DefaultMutableTreeNode(), getHotSpotsColumns()));
-
-    TreeTableRowSorter rowSorter = new TreeTableRowSorter(this);
-
-    for (int i = 0; i < getSortableTreeTableModel().getColumnCount(); ++i) {
-      TableCellRenderer tableCellRenderer = getSortableTreeTableModel().getRenderer(i);
-      if (tableCellRenderer != null) {
-        getColumnModel().getColumn(i).setCellRenderer(tableCellRenderer);
-      }
-
-      Comparator comparator = getSortableTreeTableModel().getComparator(i);
-
-      if (comparator != null) {
-        rowSorter.setComparator(i, comparator);
-      }
-    }
-
-    setRowSorter(rowSorter);
-
-    setRowHeight(DEFAULT_ROW_HEIGHT);
-  }
-
-  @Override
-  public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
-    JComponent jComponent = (JComponent)super.prepareRenderer(renderer, row, column);
-    jComponent.setBorder(new MatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
-    return jComponent;
-  }
-
-  public void reload() {
-    getSortableTreeTableModel().reload();
-  }
-
-  public SortableListTreeTableModel getSortableTreeTableModel() {
-    return (SortableListTreeTableModel)getTableModel();
+public class CallTreeTable extends ColoredSortableTreeTable implements DataProvider {
+  public CallTreeTable(@Nullable Project project) {
+    super(getHotSpotsColumns(), project);
   }
 
   @Override
@@ -143,14 +104,14 @@ public class CallTreeTable extends TreeTable implements DataProvider {
   private static class CumulativeTimeComparator extends AbstractTreeNodeComparator {
     @Override
     public int compareInfo(CallInfo a, CallInfo b) {
-      return MathUtil.sign(b.getCumulativeTime() - a.getCumulativeTime());
+      return (int)Math.signum(b.getCumulativeTime() - a.getCumulativeTime());
     }
   }
 
   private static class SelfTimeComparator extends AbstractTreeNodeComparator {
     @Override
     public int compareInfo(CallInfo a, CallInfo b) {
-      return MathUtil.sign(b.getSelfTime() - a.getSelfTime());
+      return (int)Math.signum(b.getSelfTime() - a.getSelfTime());
     }
   }
 
@@ -185,7 +146,7 @@ public class CallTreeTable extends TreeTable implements DataProvider {
       if (value > 1000) {
         return Long.toString(value / MS_IN_MICROSECOND);
       }
-      return Double.toString(value / (double)MS_IN_MICROSECOND);
+      return ProfilerBundle.message("less.one.ms");
     }
   }
 }

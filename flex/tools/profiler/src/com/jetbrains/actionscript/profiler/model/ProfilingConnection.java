@@ -1,5 +1,7 @@
 package com.jetbrains.actionscript.profiler.model;
 
+import com.intellij.javascript.flex.mxml.schema.CodeContext;
+import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.jetbrains.actionscript.profiler.sampler.*;
@@ -28,7 +30,7 @@ public class ProfilingConnection {
   private final Map<String, PacketProcessor> myInitialString2ProcessorsMap = new HashMap<String, PacketProcessor>();
   private final Callback myIoHandler;
   private final int myPort;
-  private static int ourAgentVersion = 3;
+  private static final int ourAgentVersion = 4;
   private boolean myAbortingSocketConnection;
   private boolean myDisposed;
 
@@ -90,11 +92,13 @@ public class ProfilingConnection {
       myServerSocket.close();
       myServerSocket = null;
       myIoHandler.finished("Connection established", null);
-    } catch (IOException ex) {
+    }
+    catch (IOException ex) {
       final boolean abortedWaitingForConnection = ex instanceof SocketException && myAbortingSocketConnection;
       if (abortedWaitingForConnection) {
         ex = new EOFException("aborted wait for connection");
-      } else {
+      }
+      else {
         LOG.warn(ex);
       }
       myIoHandler.finished(null, ex);
@@ -105,7 +109,7 @@ public class ProfilingConnection {
       public void run() {
         int bytesRead = 0;
         try {
-          while(true) {
+          while (true) {
             String x = myInputStream.readUTF();
             if (x == null) break;
             LOG.debug(x);
@@ -124,10 +128,12 @@ public class ProfilingConnection {
                 PacketProcessor.ProcessingResult processingResult = myCurrentPacketProcessor.process(x);
                 if (processingResult == PacketProcessor.ProcessingResult.FINISHED) myCurrentPacketProcessor = null;
                 if (processingResult == PacketProcessor.ProcessingResult.STOP) return;
-              } else {
+              }
+              else {
                 LOG.warn("No processing:" + x);
               }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
               LOG.error(e);
             }
           }
@@ -148,15 +154,16 @@ public class ProfilingConnection {
       public void run() {
         try {
           myPolicyServerSocket = new ServerSocket(843);
-          while(true) {
+          while (true) {
             final Socket socket = myPolicyServerSocket.accept();
             final OutputStream outputStream = socket.getOutputStream();
             outputStream.write(policyFileRequestAnswer(myPort).getBytes());
             LOG.debug("policy served from 843");
             outputStream.close();
           }
-        } catch (IOException e) {
-          if(e instanceof SocketException && myAbortingSocketConnection) return;
+        }
+        catch (IOException e) {
+          if (e instanceof SocketException && myAbortingSocketConnection) return;
           if (myPolicyServerSocket != null) LOG.error(e); // myPolicyServerSocket == null is bind failed
         }
       }
@@ -167,6 +174,8 @@ public class ProfilingConnection {
   private static final int STOP_CPU_PROFILING = 2;
   private static final int CAPTURE_MEMORY_SNAPSHOT = 3;
   private static final int DO_GC = 4;
+  private static final int START_COLLECTING_LIVE_OBJECTS = 5;
+  private static final int STOP_COLLECTING_LIVE_OBJECTS = 6;
 
   private void clearProfilingState() {
     final PacketProcessor processor = myInitialString2ProcessorsMap.get(BatchSamplesProcessor.BATCH_MARKER);
@@ -174,14 +183,14 @@ public class ProfilingConnection {
   }
 
   interface Callback {
-    void finished(@Nullable String data, IOException ex);
+    void finished(@Nullable String data, @Nullable IOException ex);
   }
 
-  final LinkedList<Callback> callbacks = new LinkedList<Callback>();
+  private final LinkedList<Callback> callbacks = new LinkedList<Callback>();
 
   public void stopCpuProfiling(final Callback callback) throws IOException {
     simpleCommand(new Callback() {
-      public void finished(String data, IOException ex) {
+      public void finished(@Nullable String data, @Nullable IOException ex) {
         callback.finished(data, ex);
         clearProfilingState();
       }
@@ -197,6 +206,9 @@ public class ProfilingConnection {
   }
 
   private void simpleCommand(Callback callback, int startCpuProfiling) throws IOException {
+    if (myDisposed) {
+      return;
+    }
     synchronized (myOutputStream) {
       callbacks.addLast(callback);
       myOutputStream.write(startCpuProfiling);
@@ -208,13 +220,21 @@ public class ProfilingConnection {
     simpleCommand(callback, DO_GC);
   }
 
+  public void startCollectingLiveObjects(ProfilingManager.Callback callback) throws IOException {
+    simpleCommand(callback, START_COLLECTING_LIVE_OBJECTS);
+  }
+
+  public void stopCollectingLiveObjects(ProfilingManager.Callback callback) throws IOException {
+    simpleCommand(callback, STOP_COLLECTING_LIVE_OBJECTS);
+  }
+
   public void dispose() throws IOException {
     if (myDisposed) return;
     myAbortingSocketConnection = true;
     myDisposed = true;
-    if (myServerSocket != null) {
-      myServerSocket.close();
-    }
+    if (myServerSocket != null) myServerSocket.close();
+    if (myOutputStream != null) myOutputStream.close();
+    if (myInputStream != null) myInputStream.close();
     if (myPolicyServerSocket != null) myPolicyServerSocket.close();
   }
 
@@ -223,13 +243,15 @@ public class ProfilingConnection {
       CONTINUE, FINISHED, STOP
     }
 
-    void startingPacket(String output) {}
+    void startingPacket(String output) {
+    }
+
     abstract ProcessingResult process(String output) throws IOException;
   }
 
   class PolicyFileRequestProcessor extends PacketProcessor {
     static final String POLICY_FILE_REQUEST = "<policy-file-request/>\0";
-    private int myPort;
+    private final int myPort;
 
     PolicyFileRequestProcessor(int port) {
       myPort = port;
@@ -250,10 +272,10 @@ public class ProfilingConnection {
 
   private static String policyFileRequestAnswer(int port) {
     return "<?xml version=\"1.0\"?> \n" +
-      "<!DOCTYPE cross-domain-policy SYSTEM \"http://www.adobe.com/xml/dtds/cross-domain-policy.dtd\">\n" +
-      "<cross-domain-policy>\n" +
-      "    <allow-access-from domain=\"*\" to-ports=\"" + port + "\" />\n" +
-      "</cross-domain-policy>\0";
+           "<!DOCTYPE cross-domain-policy SYSTEM \"http://www.adobe.com/xml/dtds/cross-domain-policy.dtd\">\n" +
+           "<cross-domain-policy>\n" +
+           "    <allow-access-from domain=\"*\" to-ports=\"" + port + "\" />\n" +
+           "</cross-domain-policy>\0";
   }
 
   static class BatchSamplesProcessor extends PacketProcessor {
@@ -267,8 +289,8 @@ public class ProfilingConnection {
     private long sampleDuration = -1;
     private int frameIndex;
 
-    private final Map<String,String> dictionary = new HashMap<String, String>(1000);
-    private final Map<String,String> typeDictionary = new HashMap<String, String>(1000);
+    private final Map<String, String> dictionary = new HashMap<String, String>(1000);
+    private final Map<String, String> typeDictionary = new HashMap<String, String>(1000);
     private FrameInfo[] frames;
     private String type;
     private String specialArgs;
@@ -294,18 +316,18 @@ public class ProfilingConnection {
         if (cpuSample) {
           i = output.indexOf(' ', INDEX);
           sampleDuration = Long.parseLong(output.substring(INDEX, i));
-          i+=2;
+          i += 2;
         }
 
         if (cpuSample ||
             output.startsWith(CREATE_OBJECT_SAMPLE_MARKER) ||
             output.startsWith(DELETE_OBJECT_SAMPLE_MARKER)) {
           int i2 = output.indexOf(' ', i);
-          int frameCount = Integer.parseInt(output.substring(i - 1, i2 != -1 ? i2:output.length()));
-          frames = frameCount > 0 ? new FrameInfo[frameCount]: FrameInfo.EMPTY_FRAME_INFO_ARRAY;
+          int frameCount = Integer.parseInt(output.substring(i - 1, i2 != -1 ? i2 : output.length()));
+          frames = frameCount > 0 ? new FrameInfo[frameCount] : FrameInfo.EMPTY_FRAME_INFO_ARRAY;
           frameIndex = 0;
           type = output;
-          specialArgs = i2 != -1 ? output.substring(i2 + 1):"";
+          specialArgs = i2 != -1 ? output.substring(i2 + 1) : "";
 
           return maybeFinishSample();
         }
@@ -316,14 +338,17 @@ public class ProfilingConnection {
         char ch = output.charAt(0);
         if (output.startsWith("u>:")) {
           int count = Integer.parseInt(output.substring(output.indexOf(':') + 1));
-          Sample s = type.startsWith(CREATE_OBJECT_SAMPLE_MARKER) ? lastCreateObjectSample:type.startsWith(SAMPLE_MARKER) ? lastCpuSample:null;
-          for(int i = s.frames.length - count; i < s.frames.length; ++i) {
+          Sample s =
+            type.startsWith(CREATE_OBJECT_SAMPLE_MARKER) ? lastCreateObjectSample : type.startsWith(SAMPLE_MARKER) ? lastCpuSample : null;
+          for (int i = s.frames.length - count; i < s.frames.length; ++i) {
             frames[frameIndex++] = s.frames[i];
           }
-        } else {
+        }
+        else {
           if (Character.isDigit(ch)) {
             output = dictionary.get(output);
-          } else {
+          }
+          else {
             dictionary.put("" + (dictionary.size() + 1), output);
           }
 
@@ -349,7 +374,6 @@ public class ProfilingConnection {
           String className = specialArgs.substring(endIndex + 1, endIndex2);
           className = getClassName(className);
           final int size = Integer.parseInt(specialArgs.substring(endIndex2 + 1));
-
           sample = new CreateObjectSample(
             sampleDuration,
             frames,
@@ -358,22 +382,22 @@ public class ProfilingConnection {
             size
           );
           lastCreateObjectSample = sample;
-        } else if (type.startsWith(DELETE_OBJECT_SAMPLE_MARKER)) {
+        }
+        else if (type.startsWith(DELETE_OBJECT_SAMPLE_MARKER)) {
           ++memorySamples;
           final int endIndex = specialArgs.indexOf(' ');
           int endIndex2 = specialArgs.indexOf(' ', endIndex + 1);
           if (endIndex2 == -1) endIndex2 = specialArgs.length();
           final int id = Integer.parseInt(specialArgs.substring(0, endIndex));
-          final int size = Integer.parseInt(specialArgs.substring(endIndex + 1, endIndex2));
-          String type = endIndex2 != specialArgs.length() ? specialArgs.substring(endIndex2 + 1):null;
+          String type = specialArgs.substring(endIndex + 1, endIndex2);
+          final int size = endIndex2 != specialArgs.length() ? Integer.parseInt(specialArgs.substring(endIndex2 + 1)) : 0;
           if (type != null) {
             type = getClassName(type);
-            mySampleProcessor.process(new CreateObjectSample(sampleDuration, FrameInfo.EMPTY_FRAME_INFO_ARRAY, id, type, -size));
-          } else {
-            mySampleProcessor.process(new DeleteObjectSample(sampleDuration, frames, id, size));
+            mySampleProcessor.process(new DeleteObjectSample(sampleDuration, frames, id, type, size));
           }
           return ProcessingResult.FINISHED;
-        } else {
+        }
+        else {
           ++cpuSamples;
           sample = new Sample(sampleDuration, frames);
           lastCpuSample = sample;
@@ -381,7 +405,8 @@ public class ProfilingConnection {
         mySampleProcessor.process(sample);
         frameIndex = -1;
         return ProcessingResult.FINISHED;
-      } else {
+      }
+      else {
         return ProcessingResult.CONTINUE;
       }
     }
@@ -389,7 +414,12 @@ public class ProfilingConnection {
     private String getClassName(String className) {
       if (Character.isDigit(className.charAt(0))) {
         className = typeDictionary.get(className);
-      } else {
+      }
+      else {
+        className = className.replace("::", ".");
+        if (className.startsWith(CodeContext.AS3_VEC_VECTOR_QUALIFIED_NAME)) {
+          className = JSCommonTypeNames.VECTOR_CLASS_NAME + className.substring(CodeContext.AS3_VEC_VECTOR_QUALIFIED_NAME.length());
+        }
         typeDictionary.put(String.valueOf(typeDictionary.size()), className);
       }
       return className;
@@ -401,7 +431,7 @@ public class ProfilingConnection {
           LOG.debug(output + "," + System.currentTimeMillis() + "," + cpuSamples + "," + memorySamples);
         }
         memorySamples = 0;
-        cpuSamples = 0;        
+        cpuSamples = 0;
       }
 
       frameIndex = -1;
@@ -451,7 +481,7 @@ public class ProfilingConnection {
 
   private static class SampleInfoProcessor extends PacketProcessor {
     public static final String COMMAND_MARKER = "si\0";
-    private ProfilerDataConsumer myDataConsumer;
+    private final ProfilerDataConsumer myDataConsumer;
 
     SampleInfoProcessor(ProfilerDataConsumer dataConsumer) {
       myDataConsumer = dataConsumer;
@@ -468,7 +498,7 @@ public class ProfilingConnection {
       int i = output.indexOf(',');
       int id = Integer.parseInt(output.substring(0, i));
 
-      while( i != -1) {
+      while (i != -1) {
         int nextI = output.indexOf(',', i + 1);
         if (nextI == -1) nextI = output.length();
         int nextId = Integer.parseInt(output.substring(i + 1, nextI));

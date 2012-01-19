@@ -4,6 +4,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.ArrayUtil;
+import com.jetbrains.actionscript.profiler.base.FilePathProducer;
 import com.jetbrains.actionscript.profiler.base.FrameInfoProducer;
 import com.jetbrains.actionscript.profiler.base.LazyNode;
 import com.jetbrains.actionscript.profiler.base.NavigatableDataProducer;
@@ -11,7 +12,7 @@ import com.jetbrains.actionscript.profiler.calltree.CallTree;
 import com.jetbrains.actionscript.profiler.sampler.FrameInfo;
 import com.jetbrains.actionscript.profiler.sampler.Sample;
 import com.jetbrains.actionscript.profiler.sampler.SampleLocationResolver;
-import com.jetbrains.actionscript.profiler.util.LocationResolverUtil;
+import com.jetbrains.actionscript.profiler.util.ResolveUtil;
 import com.jetbrains.actionscript.profiler.vo.CallInfo;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class MergedCallNode<T extends Sample> extends LazyNode implements NavigatableDataProducer, FrameInfoProducer {
+public class MergedCallNode<T extends Sample> extends LazyNode implements NavigatableDataProducer, FrameInfoProducer, FilePathProducer {
   private final CallTree callTree;
   private final FrameInfo[] callFrames;
   private final boolean backTrace;
@@ -72,7 +73,7 @@ public class MergedCallNode<T extends Sample> extends LazyNode implements Naviga
     final Map<FrameInfo, Long> countMap = countMaps.getFirst();
     final Map<FrameInfo, Long> selfCountMap = countMaps.getSecond();
 
-    List<FrameInfo> traces = LocationResolverUtil.filterByScope(countMap.keySet(), scope);
+    List<FrameInfo> traces = ResolveUtil.filterByScope(countMap.keySet(), scope);
     ArrayList<CallInfo> callInfos = new ArrayList<CallInfo>();
     for (final FrameInfo t : traces) {
       callInfos.add(new CallInfo(t, countMap.get(t), selfCountMap.get(t)));
@@ -85,7 +86,7 @@ public class MergedCallNode<T extends Sample> extends LazyNode implements Naviga
 
   @Override
   public String toString() {
-    FrameInfo frameInfo = getFrameInfo();
+    final FrameInfo frameInfo = getFrameInfo();
     return frameInfo != null ? frameInfo.toString() : "";
   }
 
@@ -95,5 +96,12 @@ public class MergedCallNode<T extends Sample> extends LazyNode implements Naviga
       sampleLocationResolver = new SampleLocationResolver(getFrameInfo(), scope);
     }
     return sampleLocationResolver;
+  }
+
+  @Nullable
+  @Override
+  public String getFilePath() {
+    final FrameInfo frameInfo = getFrameInfo();
+    return frameInfo != null ? frameInfo.getFilePath() : null;
   }
 }

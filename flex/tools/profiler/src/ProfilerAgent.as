@@ -35,13 +35,16 @@ public class ProfilerAgent extends Sprite {
   private var id2SampleInfo:Dictionary = new Dictionary();
   private var object2Id:Dictionary = new Dictionary(true);
   private var clsStat:Dictionary = new Dictionary();
+  private var typeDict:Object = {};
+  private var typeDictSize:int = 0;
   private var cpuSamplingStarted:Boolean;
+
+  private var collectingLiveObjects:Boolean = false;
 
   private static const ALL_COMPLETE_TYPE:String = "allComplete";
   private var lastSampleTime:Number;
 
   public function ProfilerAgent() {
-//    socket.timeout = 1000; // Flex 3 does not have timeout for socket
     socket.addEventListener(ProgressEvent.SOCKET_DATA, socketDataHandler);
     socket.addEventListener(Event.CLOSE, closeHandler);
     socket.addEventListener(Event.CONNECT, connectHandler);
@@ -81,6 +84,8 @@ public class ProfilerAgent extends Sprite {
   private function onEnterFrame(event:Event):void {
     pauseSampling();
 
+    var createdIds2Send:Dictionary = new Dictionary();
+
     for each(var s:Sample in getSamples()) {
       if (s == null) continue; // observed for player 10.1 COMPILE::PLAYER10_1 ?
 
@@ -100,8 +105,18 @@ public class ProfilerAgent extends Sprite {
         var object:* = clsStat[nos.type];
         if (object == null) object = 0;
         clsStat[nos.type] = object + 1;
+
+        if (connected) {
+          createdIds2Send[nos.id] = true;
+        }
       } else if (s is DeleteObjectSample) {
         var deletedObjectSample:DeleteObjectSample = DeleteObjectSample(s);
+        var needToSend:Boolean = connected;
+        if (createdIds2Send[deletedObjectSample.id]) {
+          delete createdIds2Send[deletedObjectSample.id];
+          needToSend = false;
+        }
+
         var info:Array = id2SampleInfo[deletedObjectSample.id];
         if (info == null) continue; // skip just collected or not registered
         delete id2SampleInfo[deletedObjectSample.id];
@@ -109,11 +124,19 @@ public class ProfilerAgent extends Sprite {
         var object:* = clsStat[cls];
         if (object == null) object = 0;
         clsStat[cls] = object - 1;
+
+        if (needToSend && collectingLiveObjects) {
+          var encodedType:String = typeDict[info[0]];
+          var stackFrameSize:uint = info[1] == null ? 0 : info[1].length;
+          socket.writeUTF("d\x00" + stackFrameSize + " " + deletedObjectSample.id + " " + encodedType + " " + info[2]);
+          if (stackFrameSize > 0) writeStack(info[1], info[1].length);
+          socket.flush();
+        }
       } else if (cpuSamplingStarted && connected) {
         var lastSampleToCheck:Sample = lastCPUSample;
         lastCPUSample = s;
         var stackFrameCount:uint = (s.stack == null) ? 0:s.stack.length;
-        socket.writeUTF("s\x00" + (s.time - lastSampleTime) + " " + s.stack.length );
+        socket.writeUTF("s\x00" + (s.time - lastSampleTime) + " " + s.stack.length);
 
         var matchedCount:int = 0;
         var key:String;
@@ -137,7 +160,21 @@ public class ProfilerAgent extends Sprite {
       lastSampleTime = s.time;
     }
 
-    if (connected && cpuSamplingStarted) {
+    if (connected && collectingLiveObjects) {
+      for (var sid:Object in createdIds2Send){
+        var info:Array = id2SampleInfo[sid];
+        var encodedType:String = typeDict[info[0]];
+        if (encodedType == null) {
+          typeDict[nos.type] = String(typeDictSize++);
+          encodedType = getQualifiedClassName(info[0]);
+        }
+        var stackFrameSize:uint = info[1] == null ? 0 : info[1].length;
+        socket.writeUTF("c\x00" + stackFrameSize + " " + sid + " " + encodedType + " " + info[2]);
+        if (stackFrameSize > 0) writeStack(info[1], info[1].length);
+      }
+    }
+
+    if (connected) {
       socket.flush();
     }
 
@@ -173,7 +210,7 @@ public class ProfilerAgent extends Sprite {
         * [Date$cinit(),[newclass](),global$init(),ProfilerAgent/allComplete(),[all-complete]()]
         * [flash.events::Event/formatToString(),flash.events::ProgressEvent/toString(),ProfilerAgent/socketDataHandler()]
         */
-        var flag:Boolean = sample.stack[sample.stack.length - 1].name.indexOf("ProfilerAgent") == 0;    
+        var flag:Boolean = sample.stack[sample.stack.length - 1].name.indexOf("ProfilerAgent") == 0;
         flag ||= (sample.stack.length > 1) && (sample.stack[sample.stack.length - 2].name.indexOf("ProfilerAgent") == 0);
         if(flag) return true;
     }
@@ -227,9 +264,11 @@ public class ProfilerAgent extends Sprite {
   private static const CAPTURE_MEMORY_SNAPSHOT:int = 3;
 
   private static const DO_GC:int = 4;
+  private static const START_COLLECTING_LIVE_OBJECTS:int = 5;
+  private static const STOP_COLLECTING_LIVE_OBJECTS:int = 6;
   private static const VERSION_COMMAND_MARKER:String = "v\x00 ";
 
-  private static const VERSION:int = 3;    
+  private static const VERSION:int = 4;
 
   private static const END_COMMAND_MARKER:String = "e\x00 ";
   private static const SI_COMMAND_MARKER:String = "si\x00 ";
@@ -258,7 +297,13 @@ public class ProfilerAgent extends Sprite {
         startSampling();
       }
     } else if (i == CAPTURE_MEMORY_SNAPSHOT) {
+      //TODO
+    } else if (i == STOP_COLLECTING_LIVE_OBJECTS) {
+      collectingLiveObjects = false;
+    } else if (i == START_COLLECTING_LIVE_OBJECTS) {
       pauseSampling();
+
+      collectingLiveObjects = true;
 
       var typeDict:Object = {};
       var typeDictSize:uint = 0;
@@ -282,8 +327,6 @@ public class ProfilerAgent extends Sprite {
           objectCount = 0;
         }
       }
-
-      doReachabilityDump();
 
       socket.writeUTF(END_COMMAND_MARKER + i);
       socket.flush();

@@ -1,5 +1,6 @@
 package com.jetbrains.actionscript.profiler.calltree;
 
+import com.jetbrains.actionscript.profiler.base.FilePathProducer;
 import com.jetbrains.actionscript.profiler.base.FrameInfoProducer;
 import com.jetbrains.actionscript.profiler.sampler.FrameInfo;
 import gnu.trove.THashMap;
@@ -8,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-class CallTreeNode implements FrameInfoProducer {
+class CallTreeNode implements FrameInfoProducer, FilePathProducer {
   private final FrameInfo frameInfo;
   private long duration;
   private final THashMap<FrameInfo, CallTreeNode> children = new THashMap<FrameInfo, CallTreeNode>();
@@ -28,6 +29,12 @@ class CallTreeNode implements FrameInfoProducer {
 
   public long getCumulativeTiming() {
     return duration;
+  }
+
+  public void addChildrenRecursive(List<CallTreeNode> children) {
+    for (CallTreeNode child : children) {
+      addChildRecursive(child);
+    }
   }
 
   void addChildRecursive(CallTreeNode newChildNode) {
@@ -90,5 +97,10 @@ class CallTreeNode implements FrameInfoProducer {
       child.duration += duration;
       node = child;
     }
+  }
+
+  @Override
+  public String getFilePath() {
+    return frameInfo.getFilePath();
   }
 }

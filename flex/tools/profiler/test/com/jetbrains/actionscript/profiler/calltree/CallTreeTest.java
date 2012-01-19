@@ -26,7 +26,7 @@ abstract public class CallTreeTest extends LightCodeInsightFixtureTestCase {
   }
 
   private void doTest(@NotNull XmlFile xmlFile, @NotNull XmlFile resultsXmlFile) {
-    final CallTree callTree = CallTreeUtil.getCallTreeFromXmlFile(xmlFile.getRootTag());
+    final CallTree callTree = CallTreeTestUtil.getCallTreeFromXmlFile(xmlFile.getRootTag());
     final Pair<Map<FrameInfo, Long>, Map<FrameInfo, Long>> maps = getMaps(callTree, xmlFile.getRootTag());
     checkResults(resultsXmlFile, maps.getFirst(), maps.getSecond());
   }

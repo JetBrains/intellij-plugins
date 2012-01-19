@@ -1,4 +1,4 @@
-package com.jetbrains.actionscript.profiler;
+package com.jetbrains.actionscript.profiler.model;
 
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizable;
@@ -12,14 +12,14 @@ import org.jdom.Element;
  * Date: 28.08.2010
  */
 public class ProfileSettings implements JDOMExternalizable {
-  private static int DEFAULT_PORT = 1310;
-  private static String DEFAULT_HOST = "127.0.0.1";
+  private static final int DEFAULT_PORT = 1310;
+  private static final String DEFAULT_HOST = "127.0.0.1";
 
   private String host = DEFAULT_HOST;
   private int port = DEFAULT_PORT;
 
-  static final String PORT_ATTR_NAME = "port";
-  static final String HOST_ATTR_NAME = "host";
+  private static final String PORT_ATTR_NAME = "port";
+  private static final String HOST_ATTR_NAME = "host";
 
   public void readExternal(Element element) throws InvalidDataException {
     setPortFromString(element.getAttributeValue(PORT_ATTR_NAME));
@@ -28,22 +28,28 @@ public class ProfileSettings implements JDOMExternalizable {
 
   public void writeExternal(Element element) throws WriteExternalException {
     if (port != DEFAULT_PORT) element.setAttribute(PORT_ATTR_NAME, String.valueOf(port));
-    if (!DEFAULT_HOST.equals(host)) element.setAttribute(HOST_ATTR_NAME, host);    
+    if (!DEFAULT_HOST.equals(host)) element.setAttribute(HOST_ATTR_NAME, host);
   }
 
-  void setHostFromString(String s) {
-    if (!StringUtil.isEmpty(s)) host = s;
-    else host = DEFAULT_HOST;
+  public void setHostFromString(String s) {
+    if (!StringUtil.isEmpty(s)) {
+      host = s;
+    }
+    else {
+      host = DEFAULT_HOST;
+    }
   }
 
-  void setPortFromString(String s) {
+  public void setPortFromString(String s) {
     if (s != null) {
       try {
         port = Integer.parseInt(s);
-      } catch (NumberFormatException ex) {
+      }
+      catch (NumberFormatException ex) {
         port = DEFAULT_PORT;
       }
-    } else {
+    }
+    else {
       port = DEFAULT_PORT;
     }
   }
@@ -61,7 +67,7 @@ public class ProfileSettings implements JDOMExternalizable {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    ProfileSettings that = (ProfileSettings) o;
+    ProfileSettings that = (ProfileSettings)o;
 
     if (port != that.port) return false;
     if (!host.equals(that.host)) return false;

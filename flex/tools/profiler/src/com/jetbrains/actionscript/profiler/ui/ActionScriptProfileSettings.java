@@ -1,7 +1,8 @@
-package com.jetbrains.actionscript.profiler;
+package com.jetbrains.actionscript.profiler.ui;
 
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
+import com.jetbrains.actionscript.profiler.model.ProfileSettings;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

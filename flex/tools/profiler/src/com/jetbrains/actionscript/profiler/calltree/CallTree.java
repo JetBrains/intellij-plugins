@@ -1,6 +1,7 @@
 package com.jetbrains.actionscript.profiler.calltree;
 
 import com.intellij.openapi.util.Pair;
+import com.intellij.util.ArrayUtil;
 import com.jetbrains.actionscript.profiler.sampler.FrameInfo;
 import gnu.trove.THashSet;
 
@@ -17,14 +18,12 @@ public class CallTree {
     this.root = root;
   }
 
-  public void addFrames(FrameInfo[] frames, long duration, boolean skipSystemStuff) {
-    ArrayList<FrameInfo> filteredFrames = new ArrayList<FrameInfo>();
-    for (int index = frames.length - 1; index >= 0; --index) {
-      if (!(skipSystemStuff && frames[index].isSystem())) {
-        filteredFrames.add(frames[index]);
-      }
-    }
-    root.addChildren(filteredFrames, duration);
+  CallTreeNode getRoot() {
+    return root;
+  }
+
+  public void addFrames(FrameInfo[] frames, long duration) {
+    root.addChildren(Arrays.asList(ArrayUtil.reverseArray(frames)), duration);
   }
 
   /*

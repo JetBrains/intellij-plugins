@@ -43,5 +43,9 @@
     <group id="ProfilerViewMenu" popup="true">
       <reference id="EditSource"/>
     </group>
+    <group id="ProfilerSnapshotMenu" popup="true">
+      <action id="ProfilerSnapshotMenu.Open" class="com.intellij.ide.actions.EditSourceAction" text="Open"
+              description="Open snapshot in editor" use-shortcut-of="EditSource"/>
+    </group>
   </actions>
 </idea-plugin>

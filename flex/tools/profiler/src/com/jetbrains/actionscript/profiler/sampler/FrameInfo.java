@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.jetbrains.actionscript.profiler.base.QNameProducer;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -11,24 +12,24 @@ import java.io.File;
 /**
  * @author: Fedor.Korotkov
  */
-public class FrameInfo implements Comparable<FrameInfo> {
+public class FrameInfo implements Comparable<FrameInfo>, QNameProducer {
   public static final FrameInfo[] EMPTY_FRAME_INFO_ARRAY = new FrameInfo[0];
 
-  int fileLine;
-  final String qName;
+  private int fileLine;
+  private final String qName;
 
   @Nullable
-  final String fileDirectory;
+  private final String fileDirectory;
   @Nullable
-  final String fileName;
+  private final String fileName;
   @Nullable
-  final String packageName;
+  private final String packageName;
   @Nullable
-  final String methodName;
+  private final String methodName;
   @Nullable
-  final JSFunction.FunctionKind kind;
+  private final JSFunction.FunctionKind kind;
   @Nullable
-  final String namespace;
+  private final String namespace;
 
   protected FrameInfo(@Nullable String fileDirectory,
                       @Nullable String fileName,
@@ -46,6 +47,22 @@ public class FrameInfo implements Comparable<FrameInfo> {
     this.methodName = methodName;
     this.kind = kind;
     this.namespace = namespace;
+  }
+
+  @Nullable
+  public String getFilePath() {
+    if (getFileDirectory() == null) {
+      return getFileName();
+    }
+    final StringBuilder pathBuilder = new StringBuilder();
+    pathBuilder.append(getFileDirectory());
+    if(packageName != null){
+      pathBuilder.append(File.separator);
+      pathBuilder.append(packageName.replace('.', File.separatorChar));
+    }
+    pathBuilder.append(File.separator);
+    pathBuilder.append(getFileName());
+    return pathBuilder.toString();
   }
 
   @Nullable
@@ -71,6 +88,7 @@ public class FrameInfo implements Comparable<FrameInfo> {
     return packageName;
   }
 
+  @Override
   public String getQName() {
     return qName;
   }
@@ -99,12 +117,20 @@ public class FrameInfo implements Comparable<FrameInfo> {
   }
 
   public boolean isInnerClass() {
+    return !getClassName().equals(getClassNameByFileName());
+  }
+
+  public String getClassName() {
     String className = getQName();
     int i = className.lastIndexOf('.');
+    if (i != -1 && className.charAt(i + 1) == '<') {
+      final String temp = className.substring(0, i);
+      i = temp.lastIndexOf('.');
+    }
     if (i != -1) {
       className = className.substring(i + 1);
     }
-    return !className.equals(getClassNameByFileName());
+    return className;
   }
 
   public String toSimpleString() {
@@ -114,6 +140,7 @@ public class FrameInfo implements Comparable<FrameInfo> {
   @Override
   public String toString() {
     StringBuilder builder = getBuilderWithBasicInfo();
+    builder.insert(0, getPackageName());
     if (fileName != null) {
       builder.append("[");
       builder.append(fileName);
@@ -126,9 +153,9 @@ public class FrameInfo implements Comparable<FrameInfo> {
 
   private StringBuilder getBuilderWithBasicInfo() {
     StringBuilder builder = new StringBuilder();
-    builder.append(qName);
-    if (qName.length() > 0 && methodName != null) {
-      builder.append("::");
+    builder.append(getClassName());
+    if (getClassName().length() > 0 && methodName != null) {
+      builder.append(".");
     }
     if (kind != null) {
       builder.append(kind == JSFunction.FunctionKind.GETTER ? "get" : "set");
@@ -146,18 +173,15 @@ public class FrameInfo implements Comparable<FrameInfo> {
       return false;
     }
     FrameInfo other = (FrameInfo)obj;
-    boolean result = qName.equals(other.getQName());
-    if (methodName != null) {
-      result = result && methodName.equals(other.getMethodName());
-    }
+    boolean result = getClassName().equals(other.getClassName());
+    result = result && StringUtil.equals(getPackageName(), other.getPackageName());
+    result = result && StringUtil.equals(methodName, other.getMethodName());
     result = result && kind == other.getKind();
-    if(isAnonymous() && other.isAnonymous() && packageName != null){
-      result = result && packageName.equals(other.getPackageName());
+    if (isAnonymous() ^ other.isAnonymous()) {
+      return false;
     }
-    if(isAnonymous() && other.isAnonymous() && fileName != null){
-      result = result && fileName.equals(other.getFileName());
-    }
-    if(isAnonymous() && other.isAnonymous()){
+    else if (isAnonymous() && other.isAnonymous()) {
+      result = result && StringUtil.equals(fileName, other.getFileName());
       result = result && fileLine == other.getFileLine();
     }
     return result;
@@ -165,20 +189,20 @@ public class FrameInfo implements Comparable<FrameInfo> {
 
   @Override
   public int hashCode() {
-    int result = qName.hashCode();
+    int result = getClassName().hashCode();
+    if (packageName != null) {
+      result = 31 * result + packageName.hashCode();
+    }
     if (methodName != null) {
       result = 31 * result + methodName.hashCode();
     }
     if (kind != null) {
       result = 31 * result + kind.hashCode();
     }
-    if (isAnonymous() && packageName != null) {
-      result = 31 * result + packageName.hashCode();
-    }
     if (isAnonymous() && fileName != null) {
-      result = 31 * result  + fileName.hashCode();
+      result = 31 * result + fileName.hashCode();
     }
-    if(isAnonymous()){
+    if (isAnonymous()) {
       result += fileLine;
     }
     return result;
@@ -186,9 +210,11 @@ public class FrameInfo implements Comparable<FrameInfo> {
 
   @Override
   public int compareTo(FrameInfo o) {
-    int tmp = StringUtil.compare(getQName(), o.getQName(), false);
+    int tmp = StringUtil.compare(getClassName(), o.getClassName(), false);
     if (tmp != 0) return tmp;
     tmp = StringUtil.compare(getMethodName(), o.getMethodName(), false);
+    if (tmp != 0) return tmp;
+    tmp = StringUtil.compare(getPackageName(), o.getPackageName(), false);
     if (tmp != 0) return tmp;
     if (kind != null) {
       tmp = kind.compareTo(o.getKind());
@@ -215,17 +241,17 @@ public class FrameInfo implements Comparable<FrameInfo> {
     }
     return result;
   }
-  
+
   @Nullable
   public String getQNameByFile() {
     String qName = getPackageName();
     qName = qName != null ? qName.replace(File.separatorChar, '.') + '.' : "";
     String className = getClassNameByFileName();
-    if(className == null){
+    if (className == null) {
       return null;
     }
     return qName + className;
-  }  
+  }
 
   @Nullable
   public PsiElement findFunctionOrField(JSClass clazz) {

@@ -6,8 +6,8 @@ import com.jetbrains.actionscript.profiler.sampler.FrameUtil;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 
-public class CallTreeUtil {
-  private CallTreeUtil() {
+public class CallTreeTestUtil {
+  private CallTreeTestUtil() {
   }
 
   public static CallTree getCallTreeFromXmlFile(@NotNull XmlTag rootTag) {

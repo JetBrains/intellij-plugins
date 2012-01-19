@@ -2,13 +2,13 @@ package com.jetbrains.actionscript.profiler.sampler;
 
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.jetbrains.actionscript.profiler.util.ResolveUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -29,7 +29,7 @@ public class SampleLocationResolver implements Navigatable {
     this.frameInfo = frameInfo;
     this.scope = scope;
     // resolve via qname package::Class/((get|set) )?method name()
-    PsiElement element = JSResolveUtil.findClassByQName(frameInfo.getQName(), scope);
+    PsiElement element = ResolveUtil.findClassByQName(frameInfo.getQName(), scope);
     if (element instanceof XmlBackedJSClassImpl) {
       final PsiElement candidateElement = frameInfo.findFunctionOrField((XmlBackedJSClassImpl)element);
       if (candidateElement != null) element = candidateElement;
@@ -46,7 +46,7 @@ public class SampleLocationResolver implements Navigatable {
       resolvedElement = element;
     }
 
-    boolean resolved = resolvedFile != null || resolvedElement != null;
+    final boolean resolved = resolvedFile != null || resolvedElement != null;
     if (!resolved && frameInfo.getFileName() != null) {
       // try navigate from debug info [path;package path;file:line] , btw it can be invalid for SDK
       String dir = frameInfo.getFileDirectory();
@@ -66,7 +66,7 @@ public class SampleLocationResolver implements Navigatable {
         if (className.length() > 0) className += ".";
         className += filename.substring(0, filename.indexOf('.'));
 
-        PsiElement classElement = JSResolveUtil.findClassByQName(className, scope);
+        PsiElement classElement = ResolveUtil.findClassByQName(className, scope);
         if (classElement != null) classElement = classElement.getNavigationElement();
         if (classElement != null && classElement.isWritable()) {
           relativeFile = classElement.getContainingFile().getVirtualFile();
@@ -75,7 +75,6 @@ public class SampleLocationResolver implements Navigatable {
 
       if (relativeFile != null) {
         resolvedFile = relativeFile;
-        resolved = true;
       }
     }
   }

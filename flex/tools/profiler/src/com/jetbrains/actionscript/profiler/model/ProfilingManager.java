@@ -13,7 +13,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class ProfilingManager {
   private static final Logger LOG = Logger.getInstance(ProfilingManager.class.getName());
-  private int myPort;
+  private final int myPort;
   private ProfilingConnection myConnection;
 
   private final LinkedBlockingQueue<Runnable> myAsyncExecutionQueue = new LinkedBlockingQueue<Runnable>();
@@ -26,7 +26,8 @@ public class ProfilingManager {
           while (true) {
             myAsyncExecutionQueue.take().run();
           }
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
         }
       }
     });
@@ -43,6 +44,32 @@ public class ProfilingManager {
 
   public interface Callback extends ProfilingConnection.Callback {
   }
+
+  public void startCollectingLiveObjects(final Callback finished) {
+    myAsyncExecutionQueue.offer(new Runnable() {
+      public void run() {
+        try {
+          myConnection.startCollectingLiveObjects(finished);
+        }
+        catch (IOException e) {
+          finished.finished(null, e);
+        }
+      }
+    });
+  }
+
+  public void stopCollectingLiveObjects(final Callback finished) {
+      myAsyncExecutionQueue.offer(new Runnable() {
+        public void run() {
+          try {
+            myConnection.stopCollectingLiveObjects(finished);
+          }
+          catch (IOException e) {
+            finished.finished(null, e);
+          }
+        }
+      });
+    }
 
   public void stopCpuProfiling(final Callback finished) {
     myAsyncExecutionQueue.offer(new Runnable() {
@@ -61,18 +88,6 @@ public class ProfilingManager {
       public void run() {
         try {
           myConnection.startCpuProfiling(finished);
-        } catch (IOException ex) {
-          finished.finished(null, ex);
-        }
-      }
-    });
-  }
-
-  public void captureMemorySnapshot(final Callback finished) {
-    myAsyncExecutionQueue.offer(new Runnable() {
-      public void run() {
-        try {
-          myConnection.captureMemorySnapshot(finished);
         } catch (IOException ex) {
           finished.finished(null, ex);
         }

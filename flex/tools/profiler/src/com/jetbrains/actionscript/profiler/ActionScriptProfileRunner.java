@@ -15,25 +15,31 @@ import com.intellij.lang.javascript.flex.run.FlashPlayerTrustUtil;
 import com.intellij.lang.javascript.flex.run.FlexIdeRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunner;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionPlaces;
+import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.SettingsEditor;
+import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowAnchor;
+import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.ui.content.Content;
+import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.SystemProperties;
-import com.jetbrains.actionscript.profiler.model.ProfilingManager;
+import com.jetbrains.actionscript.profiler.model.ProfileSettings;
+import com.jetbrains.actionscript.profiler.ui.ActionScriptProfileControlPanel;
+import com.jetbrains.actionscript.profiler.ui.ActionScriptProfileSettings;
 import com.jetbrains.profiler.DefaultProfilerExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -44,11 +50,12 @@ import java.net.URL;
  */
 public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings> {
   private static final Logger LOG = Logger.getInstance(ActionScriptProfileRunner.class.getName());
-  public static final String PROFILE = "Profile";
+  private static final String TOOLWINDOW_ID = ProfilerBundle.message("window.name");
+
+  private static final String PROFILE = "Profile";
   private static final String PRELOAD_SWF_OPTION = "PreloadSwf";
   private final FlexRunner myFlexRunner = new FlexRunner();
-  static final char DELIMITER = '=';
-  private static boolean disableProfilerUnloading = false;
+  private static final char DELIMITER = '=';
 
   @NotNull
   public String getRunnerId() {
@@ -64,7 +71,8 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
     return new ProfileSettings();
   }
 
-  public void checkConfiguration(RunnerSettings runnerSettings, ConfigurationPerRunnerSettings configurationPerRunnerSettings) throws RuntimeConfigurationException {
+  public void checkConfiguration(RunnerSettings runnerSettings, ConfigurationPerRunnerSettings configurationPerRunnerSettings)
+    throws RuntimeConfigurationException {
     myFlexRunner.checkConfiguration(runnerSettings, configurationPerRunnerSettings);
   }
 
@@ -106,10 +114,10 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
     myFlexRunner.execute(executorById, executionEnvironment, callback);
   }
 
-  private static boolean startProfiling(RunProfileWithCompileBeforeLaunchOption state, ProfileSettings profileSettings) {
+  private boolean startProfiling(RunProfileWithCompileBeforeLaunchOption state, ProfileSettings profileSettings) {
     Module[] modules = state.getModules();
     if (modules.length > 0) {
-      startProfiling(modules[0], profileSettings);
+      startProfiling(state.getName(), modules[0], profileSettings);
       return true;
     }
     else {
@@ -118,33 +126,53 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
     }
   }
 
-  private static void startProfiling(Module module, ProfileSettings profileSettings) {
-    String s = ActionScriptProfileProvider.ACTIONSCRIPT_SNAPSHOT;
-    FileEditorManager editorManager = FileEditorManager.getInstance(module.getProject());
-    ActionScriptProfileView profileView;
-
-    for(FileEditor fe: editorManager.getAllEditors()) {
-      if (fe instanceof ActionScriptProfileView &&
-        (profileView = (ActionScriptProfileView)fe).getFile().getName().equals(s)) {
-        profileView.disposeNonguiResources();
-        editorManager.closeFile(profileView.getFile());
-      }
-    }
-
+  private void startProfiling(final String runConfigurationName, final Module module, final ProfileSettings profileSettings) {
     if (!initProfilingAgent(module, profileSettings.getHost(), profileSettings.getPort())) {
       return;
     }
 
-    VirtualFile virtualFile = new LightVirtualFile(s, "");
-    virtualFile.putUserData(
-      ActionScriptProfileView.ourProfilingManagerKey,
-      new ProfilingManager(profileSettings.getPort())
-    );
-    OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(module.getProject(), virtualFile);
-    openFileDescriptor.navigate(true);
+    final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(module.getProject());
+    if (toolWindowManager == null) {
+      return;
+    }
+    ApplicationManager.getApplication().invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        ToolWindow toolWindow = toolWindowManager.getToolWindow(TOOLWINDOW_ID);
+        if (toolWindow == null) {
+          toolWindow = toolWindowManager.registerToolWindow(TOOLWINDOW_ID, true, ToolWindowAnchor.BOTTOM, module.getProject(), true);
+          toolWindow.setToHideOnEmptyContent(true);
+        }
+        final ActionScriptProfileControlPanel profileControlPanel = new ActionScriptProfileControlPanel(runConfigurationName, module, profileSettings.getHost(), profileSettings.getPort());
+
+        final SimpleToolWindowPanel toolWindowPanel = new SimpleToolWindowPanel(false, true);
+        toolWindowPanel.setContent(profileControlPanel.getMainPanel());
+
+        ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, profileControlPanel.createProfilerActionGroup(), false);
+        toolbar.setTargetComponent(toolWindowPanel);
+        toolWindowPanel.setToolbar(toolbar.getComponent());
+
+        final Content content = ContentFactory.SERVICE.getInstance().createContent(toolWindowPanel, runConfigurationName, false);
+        toolWindow.getContentManager().addContent(content);
+        toolWindow.getContentManager().setSelectedContent(content);
+        content.setDisposer(profileControlPanel);
+
+        final ToolWindow finalToolWindow = toolWindow;
+        profileControlPanel.setConnectionCallback(new Runnable() {
+          @Override
+          public void run() {
+            finalToolWindow.show(null);
+            removePreloadingOfProfilerSwf();
+          }
+        });
+
+        toolWindow.hide(null);
+        profileControlPanel.startProfiling();
+      }
+    });
   }
 
-  public static boolean initProfilingAgent(Module module, String host, int port) {
+  private static boolean initProfilingAgent(Module module, String host, int port) {
     try {
       String agentName = detectSuitableAgentNameForSdkUsedToLaunch(module);
 
@@ -152,7 +180,8 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
       File agentFile = null;
       if (resource != null) {
         agentFile = new File(transformEncodedSymbols(resource));
-      } else {
+      }
+      else {
         resource = ActionScriptProfileRunner.class.getResource("ActionScriptProfileRunner.class");
         if ("jar".equals(resource.getProtocol())) {
           String filePath = resource.getFile();
@@ -164,24 +193,26 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
         }
       }
 
-      assert agentFile != null && agentFile.exists():"Have not found "+agentName;
+      assert agentFile != null && agentFile.exists() : "Have not found " + agentName;
       String pathToAgent = agentFile.getAbsolutePath();
 
-      pathToAgent +="?port=" + port + "&host=" + host;
+      pathToAgent += "?port=" + port + "&host=" + host;
       FlashPlayerTrustUtil.updateTrustedStatus(module.getProject(), true, false, pathToAgent);
       begFlashPlayerToPreloadProfilerSwf(pathToAgent);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.warn(e);
       return false;
     }
     return true;
   }
 
-  private static String transformEncodedSymbols(URL url) throws MalformedURLException {
+  private static String transformEncodedSymbols(URL url) {
     String filePath;
     try { // care of encoded spaces
       filePath = url.toURI().getSchemeSpecificPart();
-    } catch (URISyntaxException ex) {
+    }
+    catch (URISyntaxException ex) {
       filePath = url.getPath();
     }
     return filePath;
@@ -204,18 +235,12 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
     processMmCfg(new ProfilerPathMmCfgFixer() {
       public String additionalOptions(String lineEnd) {
         LOG.debug("Added profiler swf reference to mm.cfg");
-        return PRELOAD_SWF_OPTION+"="+pathToAgent;
+        return PRELOAD_SWF_OPTION + "=" + pathToAgent;
       }
     });
   }
 
-  public static void setDisableProfilerUnloading(boolean disableProfilerUnloading) {
-    ActionScriptProfileRunner.disableProfilerUnloading = disableProfilerUnloading;
-  }
-
-  static void removePreloadingOfProfilerSwf() {
-    if (disableProfilerUnloading) return;
-
+  private static void removePreloadingOfProfilerSwf() {
     try {
       processMmCfg(new ProfilerPathMmCfgFixer() {
         @Nullable
@@ -224,7 +249,8 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
           return null;
         }
       });
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error(e);
     }
   }
@@ -232,6 +258,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
 
   interface MmCfgFixer {
     String processOption(String option, String value, String line);
+
     String additionalOptions(String lineEnd);
   }
 
@@ -243,16 +270,17 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
     }
   }
 
-  public static void processMmCfg(MmCfgFixer mmCfgFixer) throws IOException {
+  private static void processMmCfg(MmCfgFixer mmCfgFixer) throws IOException {
     StringBuilder mmCfgContent = new StringBuilder();
-    String mmCfgPath = SystemProperties.getUserHome() + "/mm.cfg";
+    String mmCfgPath = SystemProperties.getUserHome() + File.separator + "mm.cfg";
     final File file = new File(mmCfgPath);
     String lineEnd = System.getProperty("line.separator");
 
     if (file.exists()) {
-      final LineNumberReader lineNumberReader = new LineNumberReader(new InputStreamReader(new BufferedInputStream(new FileInputStream(file))));
+      final LineNumberReader lineNumberReader =
+        new LineNumberReader(new InputStreamReader(new BufferedInputStream(new FileInputStream(file))));
 
-      while(true) {
+      while (true) {
         final String s = lineNumberReader.readLine();
         if (s == null) break;
         final int i = s.indexOf(DELIMITER);
@@ -261,7 +289,8 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
           String name = s.substring(0, i);
           final String result = mmCfgFixer.processOption(name, value, s);
           if (result != null) mmCfgContent.append(result).append(lineEnd);
-        } else {
+        }
+        else {
           mmCfgContent.append(s).append(lineEnd); // TODO
         }
       }
@@ -272,5 +301,4 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
 
     FileUtil.writeToFile(file, mmCfgContent.toString().getBytes());
   }
-
 }

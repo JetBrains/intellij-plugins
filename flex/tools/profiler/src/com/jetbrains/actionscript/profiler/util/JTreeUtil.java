@@ -1,8 +1,13 @@
 package com.jetbrains.actionscript.profiler.util;
 
+import com.intellij.ui.treeStructure.treetable.TreeTableModel;
 import com.intellij.util.ui.tree.TreeUtil;
 
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -11,18 +16,18 @@ public class JTreeUtil {
   private JTreeUtil() {
   }
 
-  public static boolean isSorted(List<TreePath> paths, Comparator<TreeNode> comparator) {
+  public static boolean isSorted(List<TreePath> paths, Comparator<TreeNode> comparator, TreeTableModel model) {
     for (TreePath path : paths) {
       Object node = path.getLastPathComponent();
-      if (node instanceof TreeNode && !isSorted((TreeNode)node, comparator)) {
+      if (node instanceof DefaultMutableTreeNode && !isSorted((DefaultMutableTreeNode)node, comparator, model)) {
         return false;
       }
     }
     return true;
   }
 
-  private static boolean isSorted(TreeNode node, Comparator<TreeNode> comparator) {
-    List<TreeNode> children = TreeUtil.childrenToArray(node);
+  private static boolean isSorted(DefaultMutableTreeNode node, Comparator<TreeNode> comparator, TreeTableModel model) {
+    List<TreeNode> children = childrenToArray(node, 0, model.getChildCount(node));
     return isNodesSorted(children, comparator);
   }
 
@@ -37,20 +42,29 @@ public class JTreeUtil {
     return true;
   }
 
-  public static void sortChildren(final DefaultMutableTreeNode node, final Comparator comparator) {
-    final List<TreeNode> children = TreeUtil.childrenToArray(node);
-    Collections.sort(children, comparator);
+  public static void sortChildren(final DefaultMutableTreeNode node, final Comparator comparator, final int maxIndex) {
+    final List<TreeNode> childrenSorted = childrenToArray(node, 0, maxIndex);
+    Collections.sort(childrenSorted, comparator);
+    childrenSorted.addAll(childrenToArray(node, maxIndex, node.getChildCount()));
     node.removeAllChildren();
-    TreeUtil.addChildrenTo(node, children);
+    TreeUtil.addChildrenTo(node, childrenSorted);
+  }
+
+  private static List<TreeNode> childrenToArray(DefaultMutableTreeNode node, int l, int r) {
+    final List<TreeNode> result = new ArrayList<TreeNode>();
+    for (; l < r; ++l) {
+      result.add(node.getChildAt(l));
+    }
+    return result;
   }
 
   public static void removeChildren(DefaultMutableTreeNode root, DefaultTreeModel model) {
     if (root.getChildCount() == 0) {
       return;
     }
-    int[] childIndices = new int[root.getChildCount()];
-    Object[] removedChildren = new Object[root.getChildCount()];
-    for (int i = 0; i < root.getChildCount(); ++i) {
+    int[] childIndices = new int[model.getChildCount(root)];
+    Object[] removedChildren = new Object[model.getChildCount(root)];
+    for (int i = 0; i < removedChildren.length; ++i) {
       childIndices[i] = i;
       removedChildren[i] = root.getChildAt(i);
     }

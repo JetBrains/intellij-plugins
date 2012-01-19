@@ -1,4 +1,4 @@
-package com.jetbrains.actionscript.profiler.calltreetable;
+package com.jetbrains.actionscript.profiler.base;
 
 import com.intellij.util.ui.tree.TreeUtil;
 import com.jetbrains.actionscript.profiler.util.JTreeUtil;
@@ -14,10 +14,10 @@ import java.util.Comparator;
 import java.util.List;
 
 public class TreeTableRowSorter extends TableRowSorter {
-  private final CallTreeTable table;
+  private final BaseSortableTreeTable table;
   private List<? extends SortKey> sortKeys = new ArrayList<SortKey>();
 
-  public TreeTableRowSorter(CallTreeTable table) {
+  public TreeTableRowSorter(BaseSortableTreeTable table) {
     super(table.getModel());
     this.table = table;
   }
@@ -60,15 +60,16 @@ public class TreeTableRowSorter extends TableRowSorter {
       new ComparatorWrapper<TreeNode>(getComparator(modelIndex), key.getSortOrder() == SortOrder.ASCENDING);
 
     final List<TreePath> paths = TreeUtil.collectExpandedPaths(table.getTree());
-    if (JTreeUtil.isSorted(paths, comparator)) {
+    if (JTreeUtil.isSorted(paths, comparator, table.getTableModel())) {
       return;
     }
 
     for (TreePath path : paths) {
       Object node = path.getLastPathComponent();
-      if (node instanceof DefaultMutableTreeNode) {
-        JTreeUtil.sortChildren((DefaultMutableTreeNode)node, comparator);
+      if (!(node instanceof DefaultMutableTreeNode)) {
+        continue;
       }
+      JTreeUtil.sortChildren((DefaultMutableTreeNode)node, comparator, table.getTableModel().getChildCount(node));
     }
 
     table.reload();
