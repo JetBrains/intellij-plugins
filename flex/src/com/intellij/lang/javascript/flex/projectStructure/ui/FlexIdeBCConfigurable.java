@@ -106,7 +106,8 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   public FlexIdeBCConfigurable(final Module module,
                                final ModifiableFlexIdeBuildConfiguration bc,
                                final Runnable treeNodeNameUpdater,
-                               @NotNull FlexProjectConfigurationEditor configEditor, final ProjectSdksModel sdksModel) {
+                               final @NotNull FlexProjectConfigurationEditor configEditor,
+                               final ProjectSdksModel sdksModel) {
     super(false, treeNodeNameUpdater);
     myModule = module;
     myConfiguration = bc;
