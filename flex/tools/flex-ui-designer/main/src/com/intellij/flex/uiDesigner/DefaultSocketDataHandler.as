@@ -118,8 +118,8 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
 
     var toolWindowManager:ToolWindowManager = ToolWindowManager(project.getComponent(ToolWindowManager));
     toolWindowManager.container = projectView;
-    toolWindowManager.registerToolWindow(PaneItem.create("Style", new ClassFactory(StyleInspector)), MigConstants.RIGHT);
-    toolWindowManager.registerToolWindow(PaneItem.create("Properties", new ClassFactory(PropertyInspector)), MigConstants.RIGHT);
+    toolWindowManager.registerToolWindow(PaneItem.create("Style", new ClassFactory(StyleInspector)), MigConstants.RIGHT, true);
+    toolWindowManager.registerToolWindow(PaneItem.create("Properties", new ClassFactory(PropertyInspector)), MigConstants.RIGHT, true);
 
     documentWindow.init(project.map, projectWindowBounds);
   }

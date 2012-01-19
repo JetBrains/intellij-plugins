@@ -6,10 +6,7 @@ import cocoa.ScrollPolicy;
 import cocoa.ScrollView;
 import cocoa.View;
 import cocoa.layout.ListVerticalLayout;
-import cocoa.renderer.PaneRendererManager;
 import cocoa.renderer.RendererManager;
-
-import com.intellij.flex.uiDesigner.ui.CustomTextFormatId;
 
 import flash.errors.IllegalOperationError;
 

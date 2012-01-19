@@ -78,6 +78,7 @@
                 <include>**.ListViewDataSourceImpl</include>
                 <include>**.Container</include>
                 <include>**.View</include>
+                <include>**.FocusManagerImpl</include>
                 <include>**.ObjectBackedSkinnableView</include>
                 <include>**.Focusable</include>
                 <include>**.border.*</include>
@@ -119,7 +120,7 @@
                 <!--<class>**.*?Button</class>-->
                 <class>**.Label</class>
 
-                <!--<class>**.TextInput</class>-->
+                <class>**.TextInput</class>
                 <!--<class>**.TextArea</class>-->
                 <!--<class>**.*TextView</class>-->
                 

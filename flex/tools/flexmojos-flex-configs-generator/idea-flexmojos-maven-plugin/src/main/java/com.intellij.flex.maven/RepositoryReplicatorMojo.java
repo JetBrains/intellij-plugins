@@ -169,6 +169,8 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
   }
 
   private static void copyDirectory(File sourceDirectory, File destinationDirectory) throws IOException {
+    destinationDirectory.setLastModified(sourceDirectory.lastModified());
+
     for (String from : sourceDirectory.list()) {
       if (from.charAt(0) != '.') {
         final File fromFile = new File(sourceDirectory, from);

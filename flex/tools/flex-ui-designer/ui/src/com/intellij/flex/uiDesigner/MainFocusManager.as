@@ -1,35 +1,23 @@
 package com.intellij.flex.uiDesigner {
-import cocoa.AbstractFocusManager;
+import cocoa.DesktopFocusManager;
 import cocoa.FocusManager;
-import cocoa.Focusable;
-import cocoa.SegmentedControl;
 
 import com.intellij.flex.uiDesigner.flex.DocumentFocusManagerSB;
 import com.intellij.flex.uiDesigner.flex.MainFocusManagerSB;
 
-import flash.display.DisplayObject;
-
-import flash.display.DisplayObjectContainer;
-
 import flash.display.InteractiveObject;
 import flash.display.NativeWindow;
-import flash.display.Shape;
 import flash.display.Stage;
 import flash.events.Event;
 import flash.events.MouseEvent;
 
-public class MainFocusManager extends AbstractFocusManager implements FocusManager, MainFocusManagerSB {
+public class MainFocusManager extends DesktopFocusManager implements FocusManager, MainFocusManagerSB {
   override protected function mouseDownHandler(event:MouseEvent):void {
     if (_activeDocumentFocusManager != null && _activeDocumentFocusManager.handleMouseDown(event)) {
       lastFocus = null;
     }
     else {
-      var target:InteractiveObject = InteractiveObject(event.target);
-      var newFocus:Focusable = getTopLevelFocusTarget(target);
-      if (newFocus != lastFocus && newFocus != null) {
-        lastFocus = newFocus;
-        target.stage.focus = newFocus.focusObject;
-      }
+      super.mouseDownHandler(event);
     }
 
     //if (event.altKey) {
