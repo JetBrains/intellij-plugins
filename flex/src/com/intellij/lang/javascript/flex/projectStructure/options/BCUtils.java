@@ -117,7 +117,9 @@ public class BCUtils {
       linkageType = getMxLibraryLinkage(bcNature, componentSet, swcName);
     }
     else {
-      LOG.error("Unknown Flex SDK root: " + path);
+      if (!ApplicationManager.getApplication().isUnitTestMode()) {
+        LOG.error("Unknown Flex SDK root: " + path);
+      }
       linkageType = LinkageType.Merged;
     }
 

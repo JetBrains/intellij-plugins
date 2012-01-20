@@ -40,6 +40,7 @@ import com.intellij.util.EventDispatcher;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.ChangeListener;
@@ -132,11 +133,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
       @Override
       public void buildConfigurationRemoved(FlexIdeBCConfigurable configurable) {
-        assertAlive();
-        Editor editor = (Editor)configurable.getEditableObject();
-        List<Editor> editors = myModule2Editors.get(editor.myModule);
-        boolean contained = editors.remove(editor);
-        LOG.assertTrue(contained);
+        removeConfiguration(configurable.getEditableObject());
       }
     }, this);
 
@@ -146,6 +143,14 @@ public class FlexProjectConfigurationEditor implements Disposable {
       }
       addEditorsForModule(module);
     }
+  }
+
+  public void removeConfiguration(@NotNull final ModifiableFlexIdeBuildConfiguration configuration) {
+    assertAlive();
+    Editor editor = (Editor)configuration;
+    List<Editor> editors = myModule2Editors.get(editor.myModule);
+    boolean contained = editors.remove(editor);
+    LOG.assertTrue(contained);
   }
 
   public void addModulesModelChangeListener(ModulesModelChangeListener listener, Disposable parentDisposable) {
