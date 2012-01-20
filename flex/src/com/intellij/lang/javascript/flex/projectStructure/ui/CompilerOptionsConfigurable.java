@@ -265,8 +265,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   }
 
   public JComponent createOptionsPanel() {
-    TreeUtil.expandAll(myTreeTable.getTree());
-
+    //TreeUtil.expandAll(myTreeTable.getTree());
     return myMainPanel;
   }
 
