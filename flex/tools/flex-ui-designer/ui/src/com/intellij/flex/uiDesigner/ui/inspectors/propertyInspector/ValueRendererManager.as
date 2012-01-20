@@ -1,7 +1,6 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector {
 import cocoa.CheckBox;
 import cocoa.DocumentWindow;
-import cocoa.Focusable;
 import cocoa.Insets;
 import cocoa.TextInput;
 import cocoa.plaf.ButtonSkinInteraction;
@@ -16,7 +15,6 @@ import cocoa.renderer.TextRendererManager;
 import cocoa.text.EditableTextView;
 import cocoa.text.TextFormat;
 import cocoa.ui;
-import cocoa.util.SharedPoint;
 import cocoa.util.Strings;
 
 import com.intellij.flex.uiDesigner.ui.CssElementFormat;
@@ -24,7 +22,6 @@ import com.intellij.flex.uiDesigner.ui.CssElementFormat;
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.display.Sprite;
-import flash.geom.Point;
 import flash.text.engine.ElementFormat;
 import flash.text.engine.TextLine;
 

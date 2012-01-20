@@ -14,6 +14,7 @@ import flash.events.UncaughtErrorEvent;
 import flash.filesystem.File;
 
 import net.miginfocom.layout.Grid;
+import net.miginfocom.layout.UnitValue;
 
 import org.flyti.plexus.PlexusContainer;
 import org.flyti.plexus.PlexusManager;
@@ -29,6 +30,7 @@ public class Main extends Sprite {
   // Burn in Hell, Adobe
   DocumentWindow;
   Grid;
+  UnitValue;
 
   public function Main() {
     init();

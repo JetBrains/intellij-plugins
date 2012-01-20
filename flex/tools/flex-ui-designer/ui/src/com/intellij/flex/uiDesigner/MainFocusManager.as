@@ -1,31 +1,27 @@
 package com.intellij.flex.uiDesigner {
 import cocoa.DesktopFocusManager;
 import cocoa.FocusManager;
-import cocoa.util.SharedPoint;
 
 import com.intellij.flex.uiDesigner.flex.DocumentFocusManagerSB;
 import com.intellij.flex.uiDesigner.flex.MainFocusManagerSB;
-
-import flash.display.DisplayObject;
 
 import flash.display.InteractiveObject;
 import flash.display.NativeWindow;
 import flash.display.Stage;
 import flash.events.Event;
 import flash.events.MouseEvent;
-import flash.geom.Point;
 
 public class MainFocusManager extends DesktopFocusManager implements FocusManager, MainFocusManagerSB {
-  private static var counter:int;
+  //private static var counter:int;
   
   override protected function mouseDownHandler(event:MouseEvent):void {
     if (_activeDocumentFocusManager != null && _activeDocumentFocusManager.handleMouseDown(event)) {
       lastFocus = null;
     }
     else {
-      var objectsUnderPoint:Array = DisplayObject(event.currentTarget).stage.getObjectsUnderPoint(SharedPoint.mouseGlobal(event));
-      counter++;
-      trace(counter);
+      //var objectsUnderPoint:Array = DisplayObject(event.currentTarget).stage.getObjectsUnderPoint(SharedPoint.mouseGlobal(event));
+      //counter++;
+      //trace(counter);
       super.mouseDownHandler(event);
     }
 
