@@ -90,7 +90,7 @@ public class LiveObjectsTreeTable extends ColoredSortableTreeTable implements Da
               return si1.getFrameInfo().compareTo(si2.getFrameInfo());
             }
             int result = si1.getClassName().compareTo(si2.getClassName());
-            if (result != 0) {
+            if (result != 0 || si1.getPackageName() == null || si2.getPackageName() == null) {
               return result;
             }
             return si1.getPackageName().compareTo(si2.getPackageName());

@@ -8,6 +8,7 @@ import javax.swing.border.MatteBorder;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.util.Comparator;
 
 /**
@@ -44,9 +45,19 @@ public class BaseSortableTreeTable extends TreeTable {
     JComponent jComponent = (JComponent)super.prepareRenderer(renderer, row, column);
     jComponent.setBorder(new MatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
 
-    jComponent.setToolTipText(getValueAt(row, column).toString());
-
     return jComponent;
+  }
+
+  @Override
+  public String getToolTipText(MouseEvent event) {
+    final Point p = event.getPoint();
+    final int hitColumnIndex = columnAtPoint(p);
+    final int hitRowIndex = rowAtPoint(p);
+
+    if ((hitColumnIndex != -1) && (hitRowIndex != -1)) {
+      return getValueAt(hitRowIndex, hitColumnIndex).toString();
+    }
+    return getToolTipText();
   }
 
   public void reload() {

@@ -13,8 +13,8 @@ import javax.swing.*;
 abstract public class AbstractInfoCellRenderer extends ColoredTreeCellRenderer {
   @Override
   public void customizeCellRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-    setToolTipText(value.toString());
     customizeCellRenderer(value);
+    setToolTipText(toString());
   }
 
   protected void appendFrameInfo(@NotNull FrameInfo info) {

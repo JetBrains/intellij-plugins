@@ -1,5 +1,6 @@
 package com.jetbrains.actionscript.profiler.livetable;
 
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.jetbrains.actionscript.profiler.base.FilePathProducer;
 import com.jetbrains.actionscript.profiler.base.FrameInfoProducer;
 import com.jetbrains.actionscript.profiler.base.QNameProducer;
@@ -12,13 +13,21 @@ import javax.swing.tree.DefaultMutableTreeNode;
  * @author: Fedor.Korotkov
  */
 public class SizeInfoNode extends DefaultMutableTreeNode implements FrameInfoProducer, FilePathProducer, QNameProducer {
-  private final String qName;
   private final @Nullable FrameInfo frameInfo;
+  private final @Nullable String packageName;
+  private final JSResolveUtil.GenericSignature signature;
   private long size;
   private int count;
 
   public SizeInfoNode(String qName, @Nullable FrameInfo frameInfo, long size, int count) {
-    this.qName = qName;
+    JSResolveUtil.GenericSignature signatureCandidate = JSResolveUtil.extractGenericSignature(qName);
+    if (signatureCandidate == null) {
+      signatureCandidate = new JSResolveUtil.GenericSignature(qName, null);
+    }
+    signature = signatureCandidate;
+
+    final int packageSeparatorIndex = signature.elementType.lastIndexOf('.');
+    packageName = packageSeparatorIndex == -1 ? null : signature.elementType.substring(0, packageSeparatorIndex);
     this.frameInfo = frameInfo;
     this.size = size;
     this.count = count;
@@ -67,28 +76,21 @@ public class SizeInfoNode extends DefaultMutableTreeNode implements FrameInfoPro
     if (frameInfo != null) {
       return frameInfo.getQName();
     }
-    final int genericIndex = qName.indexOf(".<");
-    return genericIndex == -1 ? qName : qName.substring(0, genericIndex);
+    if (packageName != null) {
+      return packageName + "." + signature.elementType;
+    }
+    return signature.elementType;
   }
 
   public String getClassName() {
-    int dotIndex = getPackageClassSeparatorIndex();
-    return dotIndex == -1 ? qName : qName.substring(dotIndex + 1);
+    if (signature.genericType == null) {
+      return signature.elementType;
+    }
+    return signature.elementType + ".<" + signature.genericType + ">";
   }
 
   @Nullable
   public String getPackageName() {
-    int dotIndex = getPackageClassSeparatorIndex();
-    return dotIndex == -1 ? null : qName.substring(0, dotIndex);
-  }
-
-  private int getPackageClassSeparatorIndex() {
-    int dotIndex = qName.lastIndexOf('.');
-    if (dotIndex >= 0 && qName.charAt(dotIndex + 1) == '<') {
-      //generic Vector.<int>
-      final String temp = qName.substring(0, dotIndex);
-      dotIndex = temp.lastIndexOf('.');
-    }
-    return dotIndex;
+    return packageName;
   }
 }

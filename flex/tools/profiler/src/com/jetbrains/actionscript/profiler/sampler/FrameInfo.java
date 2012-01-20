@@ -56,7 +56,7 @@ public class FrameInfo implements Comparable<FrameInfo>, QNameProducer {
     }
     final StringBuilder pathBuilder = new StringBuilder();
     pathBuilder.append(getFileDirectory());
-    if(packageName != null){
+    if (packageName != null) {
       pathBuilder.append(File.separator);
       pathBuilder.append(packageName.replace('.', File.separatorChar));
     }
@@ -140,7 +140,9 @@ public class FrameInfo implements Comparable<FrameInfo>, QNameProducer {
   @Override
   public String toString() {
     StringBuilder builder = getBuilderWithBasicInfo();
-    builder.insert(0, getPackageName());
+    if (getPackageName() != null) {
+      builder.insert(0, getPackageName());
+    }
     if (fileName != null) {
       builder.append("[");
       builder.append(fileName);

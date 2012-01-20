@@ -55,7 +55,7 @@ public class LiveModelController implements ObjectSampleHandler {
     Iterator<SizeInfoNode> iterator = filteredClasses.iterator();
     while (iterator.hasNext()) {
       final SizeInfoNode node = iterator.next();
-      if (scope == null || ResolveUtil.findClassByQName(node.getQName(), scope) != null) {
+      if (scope == null || ResolveUtil.containsInScope(node.getQName(), scope)) {
         root.insert(node, root.getChildCount());
         iterator.remove();
         ++i;
@@ -63,7 +63,7 @@ public class LiveModelController implements ObjectSampleHandler {
     }
     while (i < root.getChildCount()) {
       final SizeInfoNode child = (SizeInfoNode)root.getChildAt(i);
-      if (scope != null && ResolveUtil.findClassByQName(child.getQName(), scope) == null) {
+      if (scope != null && !ResolveUtil.containsInScope(child.getQName(), scope)) {
         root.remove(i);
         filteredClasses.add(child);
       }
@@ -92,7 +92,7 @@ public class LiveModelController implements ObjectSampleHandler {
     final DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
     SizeInfoNode classNode = findChildByValue(root, className);
     if (classNode == null) {
-      classNode = new SizeInfoNode(sample.className, null, 0, 0);
+      classNode = new SizeInfoNode(className, null, 0, 0);
       root.insert(classNode, root.getChildCount());
     }
     classNode.incSize(sample.size);
@@ -138,19 +138,30 @@ public class LiveModelController implements ObjectSampleHandler {
   @Nullable
   private SizeInfoNode findChildByValue(TreeNode root, String name) {
     for (int i = 0; i < root.getChildCount(); ++i) {
-      TreeNode child = root.getChildAt(i);
-      if (child instanceof SizeInfoNode) {
-        if (name.equals(((SizeInfoNode)child).getQName())) {
-          return (SizeInfoNode)child;
-        }
+      final TreeNode child = root.getChildAt(i);
+      if (!(child instanceof SizeInfoNode)) {
+        continue;
+      }
+      final SizeInfoNode sizeInfoNode = (SizeInfoNode)child;
+      if (matchByName(name, sizeInfoNode)) {
+        return (SizeInfoNode)child;
       }
     }
+
+
     for (SizeInfoNode filteredNode : filteredClasses) {
-      if (name.equals(filteredNode.getQName())) {
+      if (matchByName(name, filteredNode)) {
         return filteredNode;
       }
     }
     return null;
+  }
+
+  private static boolean matchByName(String name, SizeInfoNode sizeInfoNode) {
+    if (sizeInfoNode.isMethod()) {
+      return name.equals(sizeInfoNode.getQName());
+    }
+    return name.equals(sizeInfoNode.getUserObject());
   }
 
   @Override

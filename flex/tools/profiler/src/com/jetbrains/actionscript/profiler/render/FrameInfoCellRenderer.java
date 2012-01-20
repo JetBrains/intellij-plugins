@@ -52,14 +52,14 @@ public class FrameInfoCellRenderer extends AbstractInfoCellRenderer {
     }
     appendFrameInfo(frameInfo);
 
-    boolean scoped;
+    boolean inScope;
     if (frameInfo.getFilePath() != null) {
       final VirtualFile vf = VirtualFileManager.getInstance().findFileByUrl(VfsUtil.pathToUrl(frameInfo.getFilePath()));
-      scoped = vf != null && scope.accept(vf);
+      inScope = vf != null && scope.accept(vf);
     }
     else {
-      scoped = ResolveUtil.findClassByQName(frameInfo.getQName(), scope) != null;
+      inScope = ResolveUtil.containsInScope(frameInfo.getQName(), scope);
     }
-    setIcon(scoped ? scopeIcon : nonScopeIcon);
+    setIcon(inScope ? scopeIcon : nonScopeIcon);
   }
 }

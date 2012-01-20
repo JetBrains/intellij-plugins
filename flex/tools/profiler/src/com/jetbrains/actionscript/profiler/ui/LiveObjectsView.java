@@ -91,7 +91,7 @@ public class LiveObjectsView extends ProfileView implements Disposable {
     liveUpdatesCheckBox.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        if(liveUpdatesCheckBox.isSelected()){
+        if (liveUpdatesCheckBox.isSelected()) {
           updateTimer.stop();
           updateTimer.setInitialDelay(0);
           updateTimer.start();
@@ -151,20 +151,14 @@ public class LiveObjectsView extends ProfileView implements Disposable {
 
     liveObjectsTreeTable.getTree().setCellRenderer(new SizeInfoCellRenderer() {
       @Override
-      public void customizeCellRenderer(JTree tree,
-                                        Object value,
-                                        boolean selected,
-                                        boolean expanded,
-                                        boolean leaf,
-                                        int row,
-                                        boolean hasFocus) {
+      public void customizeCellRenderer(Object value) {
         Icon icon = ProfilerIcons.INFORMATION;
         if (value instanceof SizeInfoNode) {
           icon = ((SizeInfoNode)value).isMethod() ? ProfilerIcons.METHOD : ProfilerIcons.CLASS;
         }
         setPaintFocusBorder(false);
         setIcon(icon);
-        super.customizeCellRenderer(tree, value, selected, expanded, leaf, row, false);
+        super.customizeCellRenderer(value);
       }
     });
 
