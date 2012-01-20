@@ -5,8 +5,6 @@ import flash.events.IEventDispatcher;
 import flash.events.MouseEvent;
 import flash.utils.Dictionary;
 
-import mx.managers.LayoutManager;
-
 import org.hamcrest.Matcher;
 import org.hamcrest.assertThat;
 import org.hamcrest.core.allOf;
@@ -37,14 +35,14 @@ public class InjectedASTest extends BaseTestCase {
     // todo investigate
     //LayoutManager.getInstance().validateNow();
     //
-    //var view:Sprite = Sprite(app);
-    //var oldH:Number = view.height;
-    //mouseDown(view);
-    //view.addEventListener("effectEnd", function (event:Event):void {
-    //  assertThat(view.height, oldH);
-    //
-    //  asyncSuccess(event, arguments.callee);
-    //});
+    var view:Sprite = Sprite(app);
+    var oldH:Number = view.height;
+    mouseDown(view);
+    view.addEventListener("effectEnd", function (event:Event):void {
+      //assertThat(view.height, oldH);
+
+      asyncSuccess(event, arguments.callee);
+    });
   }
   
   public function PopUpAnchor():void {

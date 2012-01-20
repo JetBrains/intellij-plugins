@@ -3,13 +3,11 @@ package com.intellij.flex.uiDesigner.css;
 import com.intellij.flex.uiDesigner.*;
 import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.flex.uiDesigner.mxml.AmfExtendedTypes;
-import com.intellij.flex.uiDesigner.mxml.AsCommonTypeNames;
 import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.javascript.flex.css.FlexCssElementDescriptorProvider;
 import com.intellij.javascript.flex.css.FlexCssPropertyDescriptor;
 import com.intellij.javascript.flex.css.FlexStyleIndexInfo;
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -106,12 +104,7 @@ public class CssWriter {
           textOffset = declaration.getTextOffset();
           propertyOut.writeUInt29(documentWindow == null ? textOffset : documentWindow.injectedToHost(textOffset));
 
-          if (propertyDescriptor == null || !(propertyDescriptor instanceof FlexCssPropertyDescriptor)) {
-            writeUndefinedPropertyValue(value);
-          }
-          else {
-            writePropertyValue(value, ((FlexCssPropertyDescriptor)propertyDescriptor).getStyleInfo());
-          }
+          writePropertyValue(value, propertyDescriptor == null || !(propertyDescriptor instanceof FlexCssPropertyDescriptor) ? null : ((FlexCssPropertyDescriptor)propertyDescriptor).getStyleInfo());
           continue;
         }
         catch (RuntimeException e) {
@@ -153,16 +146,15 @@ public class CssWriter {
       PsiElement[] simpleSelectors = selector.getElements();
       out.write(simpleSelectors.length);
 
-      for (int i = 0, simpleSelectorsLength = simpleSelectors.length; i < simpleSelectorsLength; i++) {
-        CssSimpleSelector simpleSelector = (CssSimpleSelector)simpleSelectors[i];
+      for (PsiElement simpleSelector1 : simpleSelectors) {
+        CssSimpleSelector simpleSelector = (CssSimpleSelector)simpleSelector1;
 
         // subject
         if (simpleSelector.isUniversalSelector()) {
           out.write(0);
         }
         else {
-          XmlElementDescriptor typeSelectorDescriptor = FlexCssElementDescriptorProvider.getTypeSelectorDescriptor(simpleSelector, 
-          module);
+          XmlElementDescriptor typeSelectorDescriptor = FlexCssElementDescriptorProvider.getTypeSelectorDescriptor(simpleSelector, module);
           final String subject = simpleSelector.getElementName();
           assert subject != null;
           if (typeSelectorDescriptor == null) {
@@ -202,111 +194,7 @@ public class CssWriter {
     }
   }
 
-  private void writePropertyValue(CssTermList value, FlexStyleIndexInfo info) throws InvalidPropertyException {
-    final String type = info.getType();
-    //noinspection ConstantConditions
-    final PsiElement element = value.getFirstChild().getFirstChild();
-    assert element != null;
-    final ASTNode node = element.getNode();
-    assert type != null;
-    // http://juick.com/develar/1599332
-    if (node.getElementType() == CssElementTypes.CSS_FUNCTION || type.equals(AsCommonTypeNames.CLASS)) {
-      // Class, brokenImageSkin: Embed(source="Assets.swf",symbol="__brokenImage"); or brokenImageBorderSkin: ClassReference("mx.skins.halo.BrokenImageBorderSkin");
-      // or ClassReference(null);
-      writeFunctionValue((CssFunction)element, info);
-      return;
-    }
-
-    if (type.equals(JSCommonTypeNames.UINT_TYPE_NAME)) {
-      final String format = info.getFormat();
-      assert format != null;
-      if (format.equals(FlexCssPropertyDescriptor.COLOR_FORMAT)) {
-        // IDEA-59632
-        if (value.getText().equals("0")) {
-          propertyOut.write(CssPropertyType.NUMBER);
-          propertyOut.writeAmfInt(0);
-        }
-        else {
-          propertyOut.write(CssPropertyType.COLOR_INT);
-          writeColor(value);
-        }
-      }
-      else {
-        writeNumberValue(node, true);
-      }
-    }
-    else if (type.equals(JSCommonTypeNames.INT_TYPE_NAME)) {
-      writeNumberValue(node, true);
-    }
-    else if (type.equals(JSCommonTypeNames.NUMBER_CLASS_NAME)) {
-      writeNumberValue(node, false);
-    }
-    else if (type.equals(JSCommonTypeNames.STRING_CLASS_NAME)) {
-      writeStringValue(node, info);
-    }
-    else if (type.equals(JSCommonTypeNames.BOOLEAN_CLASS_NAME)) {
-      writeBooleanValue(node);
-    }
-    else if (type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME) || type.equals(JSCommonTypeNames.ANY_TYPE)) {
-      writeUndefinedPropertyValue(value);
-    }
-    else if (type.equals(JSCommonTypeNames.ARRAY_CLASS_NAME)) {
-      final String arrayType = info.getArrayType();
-      boolean isInt;
-      if (arrayType == null) {
-        writeUndefinedPropertyValue(value);
-      }
-      else if ((isInt = (arrayType.equals(JSCommonTypeNames.INT_TYPE_NAME) || arrayType.equals(JSCommonTypeNames.UINT_TYPE_NAME))) ||
-               arrayType.equals(JSCommonTypeNames.NUMBER_CLASS_NAME)) {
-        propertyOut.write(CssPropertyType.ARRAY);
-        CssTerm[] terms = PsiTreeUtil.getChildrenOfType(value, CssTerm.class);
-        assert terms != null;
-        declarationVectorWriter.writeArrayValueHeader(terms.length);
-        writeNumberTerms(terms, isInt);
-      }
-      else {
-        LOG.warn("unknown arrayType: " + arrayType + " " + info.getAttributeName());
-        writeUndefinedPropertyValue(value);
-      }
-    }
-    else {
-      LOG.warn("unknown type: " + type + " " + info.getAttributeName());
-      writeUndefinedPropertyValue(value);
-    }
-  }
-
-  private void writeBooleanValue(ASTNode node) {
-    final int amfType;
-    if (node.getElementType() == CssElementTypes.CSS_IDENT) {
-      amfType = node.getChars().charAt(0) == 't' ? Amf3Types.TRUE : Amf3Types.FALSE;
-    }
-    else {
-      assert node.getElementType() == CssElementTypes.CSS_STRING;
-      node = node.getFirstChildNode();
-      // IDEA-72194
-      final CharSequence chars = node.getChars();
-      if (cssStringEquals(chars, "true")) {
-        amfType = Amf3Types.TRUE;
-      }
-      else if (cssStringEquals(chars, "false")) {
-        amfType = Amf3Types.FALSE;
-      }
-      else {
-        propertyOut.write(Amf3Types.STRING);
-        writeCssStringToken(chars);
-        return;
-      }
-    }
-
-    propertyOut.write(CssPropertyType.BOOL);
-    propertyOut.write(amfType);
-  }
-
-  private static boolean cssStringEquals(CharSequence chars, CharSequence value) {
-    return chars.length() == (value.length() + 2) && StringUtil.startsWith(chars, 1, value);
-  }
-
-  private void writeStringValue(ASTNode node, @Nullable final FlexStyleIndexInfo info) {
+  private void writeStringValue(ASTNode node, boolean writeCssTypeMarker, @Nullable final FlexStyleIndexInfo info) {
     final boolean stripQuotes;
     if (node.getElementType() == CssElementTypes.CSS_STRING) {
       stripQuotes = true;
@@ -318,32 +206,43 @@ public class CssWriter {
 
     final CharSequence chars = node.getChars();
     if (info == null || info.getEnumeration() == null) {
-      propertyOut.write(Amf3Types.STRING);
       if (stripQuotes) {
+        if (writeCssTypeMarker) {
+          propertyOut.write(Amf3Types.STRING);
+        }
         writeCssStringToken(chars);
       }
       else {
-        propertyOut.writeAmfUtf(chars);
+        if (StringUtil.equals(chars, "true")) {
+          if (writeCssTypeMarker) {
+            propertyOut.write(CssPropertyType.BOOL);
+          }
+          propertyOut.write(Amf3Types.TRUE);
+        }
+        else if (StringUtil.equals(chars, "false")) {
+          if (writeCssTypeMarker) {
+            propertyOut.write(CssPropertyType.BOOL);
+          }
+          propertyOut.write(Amf3Types.FALSE);
+        }
+        else {
+          if (writeCssTypeMarker) {
+            propertyOut.write(Amf3Types.STRING);
+          }
+          propertyOut.writeAmfUtf(chars);
+        }
       }
     }
     else {
-      propertyOut.write(AmfExtendedTypes.STRING_REFERENCE);
+      if (writeCssTypeMarker) {
+        propertyOut.write(AmfExtendedTypes.STRING_REFERENCE);
+      }
       stringWriter.write(stripQuotes ? chars.subSequence(1, chars.length() - 1).toString() : chars.toString(), propertyOut);
     }
   }
 
   private void writeCssStringToken(CharSequence chars) {
     propertyOut.writeAmfUtf(chars, false, 1, chars.length() - 1);
-  }
-
-  private void writeNumberValue(ASTNode node, final boolean isInt) {
-    // EA-30756
-    if (node.getElementType() == CssElementTypes.CSS_STRING) {
-      writeStringValue(node, null);
-      return;
-    }
-
-    writeNumberValue(node, isInt, true);
   }
 
   // In Flex css number cannot be hex (#ddaabb, allowable only for Color)
@@ -412,7 +311,7 @@ public class CssWriter {
    * 2) developer is too lazy
    * 5
    */
-  private void writeUndefinedPropertyValue(CssTermList value) throws InvalidPropertyException {
+  private void writePropertyValue(CssTermList value, @Nullable FlexStyleIndexInfo info) throws InvalidPropertyException {
     final PsiElement firstChild = value.getFirstChild();
     if (firstChild == null) {
       throw new InvalidPropertyException(value, "error.invalid.value");
@@ -451,26 +350,10 @@ public class CssWriter {
           //noinspection ConstantConditions
           final ASTNode node = child.getFirstChild().getNode();
           if (node.getElementType() == CssElementTypes.CSS_FUNCTION) {
-            writeFunctionValue((CssFunction)node, null);
+            writeFunctionValue((CssFunction)node, info);
           }
           else {
-            String v = value.getText();
-            if (v.charAt(0) == 't') {
-              if (writeCssTypeMarker) {
-                propertyOut.write(CssPropertyType.BOOL);
-              }
-              propertyOut.write(Amf3Types.TRUE);
-            }
-            else if (v.charAt(0) == 'f') {
-              if (writeCssTypeMarker) {
-                propertyOut.write(CssPropertyType.BOOL);
-              }
-              propertyOut.write(Amf3Types.FALSE);
-            }
-            else {
-              propertyOut.write(Amf3Types.STRING);
-              propertyOut.writeAmfUtf(StringUtil.stripQuotesAroundValue(v));
-            }
+            writeStringValue(node, writeCssTypeMarker, info);
           }
         }
         else if (termType == CssTermTypes.NUMBER || termType == CssTermTypes.NEGATIVE_NUMBER || termType == CssTermTypes.LENGTH ||
@@ -499,13 +382,6 @@ public class CssWriter {
       length = (length << 1) | 1;
       assert length < 128;
       propertyOut.putByte(length, lengthPosition);
-    }
-  }
-
-  private void writeNumberTerms(CssTerm[] terms, boolean isInt) {
-    for (CssTerm nTerm : terms) {
-      //noinspection ConstantConditions
-      writeNumberValue(nTerm.getFirstChild().getNode(), isInt, false);
     }
   }
 

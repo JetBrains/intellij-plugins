@@ -74,7 +74,7 @@ public class StyleTest extends MxmlTestBase {
 
   @Flex(requireLocalStyleHolder = true)
   public void testAlwaysCreateChildStyleManagerForAppDocument() throws Exception {
-    testFiles(new String[]{"App1.mxml", "App2.mxml"}, "../css/defaults.css");
+    testFiles(new String[]{"App2.mxml", "App1.mxml"}, "../css/defaults.css");
   }
 
   @Override
