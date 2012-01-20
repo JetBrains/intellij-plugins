@@ -83,6 +83,7 @@ public class FlexSdkWrapper extends UserDataHolderBase implements Sdk, IFlexSdkT
     return mySubtype;
   }
 
+  @NotNull
   @Override
   public Object clone() {
     return super.clone();
