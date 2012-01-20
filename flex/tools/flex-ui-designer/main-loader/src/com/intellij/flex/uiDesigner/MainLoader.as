@@ -41,7 +41,7 @@ public class MainLoader extends Sprite {
 
     config::useRoboflest {
       roboflest();
-      setInterval(debugTickler, 10000);
+      //setInterval(debugTickler, 10000);
     }
 
     var loader:Loader = new Loader();

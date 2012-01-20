@@ -18,18 +18,18 @@
   </transitions>
 
   <Group id="pm" width="100%" height="100%">
-    <Panel id="p1" title="One"
+    <Panel id="p1" title="dOnedOnedOnedOne"
            x="0" y="0"
            x.One="110" y.One="0"
            x.Two="0" y.Two="0"
            width="100" height="100"
            width.One="200" height.One="210"
            width.Two="100" height.Two="100"
-           click="currentState='One'">
-      <Label fontSize="24" text="One"/>
+           click="currentState='One'" name="Panel5">
+      <Label fontSize="24" text=""/>
     </Panel>
 
-    <Panel id="p2" title="Two"
+    <Panel id="p2" title=""
            x="0" y="110"
            x.One="0" y.One="0"
            x.Two="110" y.Two="0"
@@ -57,15 +57,15 @@
 
     </Panel>
 
-    <Panel id="p3" title="Three"
+    <Panel id="p3" title="fvgegetg"
            x="110" y="0"
            x.One="0" y.One="110"
            x.Two="0" y.Two="110"
            width="200" height="210"
            width.One="100" height.One="100"
            width.Two="100" height.Two="100"
-           click="currentState='default'">
-      <Label fontSize="24" text="Three"/>
+           click="currentState='default'" needsSoftKeyboard="false" useHandCursor="true">
+      <Label fontSize="24" text="" accessibilityEnabled="false" cacheAsBitmap="false" enabled="true" visible="true" buttonMode="false"/>
     </Panel>
   </Group>
 </Group>

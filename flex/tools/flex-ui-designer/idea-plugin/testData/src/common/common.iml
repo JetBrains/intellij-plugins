@@ -7,8 +7,8 @@
   <component name="FlexBuildConfigurationManager" active="4.6">
     <configurations>
       <configuration name="player" output-file="player.swf" output-folder="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/idea-plugin/testData/out/production/common">
-        <dependencies target-player="10.2">
-          <sdk library-id="bda50fbf-ccd5-43bc-800d-7ba94ad6d273" home-path="/Developer/SDKs/flex_4.5.1" />
+        <dependencies target-player="11.1">
+          <sdk library-id="682c3b0f-f18c-46d5-a693-a6a50d62aecb" home-path="/Developer/SDKs/flex_4.6.0_WITHOUT_F***_TLF" />
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
@@ -34,7 +34,6 @@
       <sourceFolder url="file://$MODULE_DIR$/states" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Flex SDK 4.5.1.21328" level="application" />
     <orderEntry type="module-library">
       <library type="flex">
         <properties id="08534e73-113c-4c1c-baff-f8d1b243a5ae" />
@@ -67,6 +66,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="Flex SDK 4.6.0.23201" level="application" />
     <orderEntry type="library" name="Flex SDK 4.6.0.22920" level="application" />
   </component>
 </module>

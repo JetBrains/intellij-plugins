@@ -7,6 +7,7 @@ import cocoa.renderer.CheckBoxEntry;
 import cocoa.renderer.TextLineEntry;
 import cocoa.tableView.TableColumn;
 import cocoa.tableView.TableView;
+import cocoa.text.EditableTextView;
 import cocoa.util.SharedPoint;
 
 import com.intellij.flex.uiDesigner.PlatformDataKeys;
@@ -151,8 +152,7 @@ public class PropertyTableInteractor extends TableViewInteractor {
 
   override protected function closeAndCommit():void {
     var entry:TextLineEntry = valueRendererManager.findEntry(openedEditorInfo.rowIndex);
-    //var value:String = EditableTextView(openedEditorInfo.editor).text;
-    var value:String = "";
+    var value:String = EditableTextView(openedEditorInfo.editor).text;
     var tableView:TableView = TableView(tableSkin.component);
     var tableColumn:TableColumn = tableView.columns[openedEditorInfo.columnIndex];
     valueRendererManager.closeEditorAndCommit(openedEditorInfo.editor, value, entry, tableColumn.actualWidth);

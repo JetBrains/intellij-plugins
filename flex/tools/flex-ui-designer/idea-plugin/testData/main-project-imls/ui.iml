@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="Flex" version="4">
   <component name="Flex.Build.Configuration">
-    <option name="TARGET_PLAYER_VERSION" value="10.2" />
+    <option name="TARGET_PLAYER_VERSION" value="11.1" />
     <option name="VERSION" value="3" />
   </component>
   <component name="FlexBuildConfigurationManager" active="ui">
     <configurations>
       <configuration name="ui" target-platform="Desktop" output-type="Library" output-file="ui.swc" output-folder="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/idea-plugin/testData/out/production/ui">
-        <dependencies target-player="10.2" component-set="SparkOnly">
+        <dependencies target-player="11.1" component-set="SparkOnly">
           <entries>
             <entry library-name="cocoa" library-level="project">
               <dependency linkage="Merged" />
             </entry>
           </entries>
-          <sdk library-id="e8ff1736-f7b6-45b9-ba10-d7fc48867eda" home-path="$MODULE_DIR$/../../../../../../../flex" />
+          <sdk library-id="682c3b0f-f18c-46d5-a693-a6a50d62aecb" home-path="/Developer/SDKs/flex_4.6.0_WITHOUT_F***_TLF" />
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
@@ -29,8 +29,8 @@
       <sourceFolder url="file://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/ui/src" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Flex SDK 4.5.2.21576" level="application" />
     <orderEntry type="library" name="cocoa" level="project" />
+    <orderEntry type="library" name="Flex SDK 4.6.0.23201" level="application" />
   </component>
 </module>
 

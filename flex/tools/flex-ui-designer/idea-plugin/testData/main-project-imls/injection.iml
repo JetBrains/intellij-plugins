@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="Flex" version="4">
   <component name="Flex.Build.Configuration">
+    <option name="TARGET_PLAYER_VERSION" value="11.1" />
     <option name="VERSION" value="3" />
   </component>
   <component name="FlexBuildConfigurationManager" active="injection">
     <configurations>
       <configuration name="injection">
-        <dependencies target-player="10.2" />
+        <dependencies target-player="11.1">
+          <sdk library-id="682c3b0f-f18c-46d5-a693-a6a50d62aecb" home-path="/Developer/SDKs/flex_4.6.0_WITHOUT_F***_TLF" />
+        </dependencies>
         <compiler-options />
         <packaging-air-desktop />
         <packaging-android />
@@ -21,6 +24,7 @@
       <sourceFolder url="file://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/flex-injection/src" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Flex SDK 4.6.0.23201" level="application" />
   </component>
 </module>
 
