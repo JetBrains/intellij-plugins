@@ -4,8 +4,6 @@ import cocoa.renderer.TextLineAndDisplayObjectEntry;
 import cocoa.renderer.TextLineAndDisplayObjectEntryFactory;
 import cocoa.renderer.TextLineEntry;
 import cocoa.renderer.TextRendererManager;
-import cocoa.renderer.ViewEntry;
-import cocoa.renderer.ViewEntryFactory;
 import cocoa.text.TextFormat;
 
 import com.intellij.flex.uiDesigner.css.CssRuleset;
@@ -91,7 +89,11 @@ public class StyleRendererManager extends TextRendererManager {
     }
     else {
       textContainer = TextContainer(textEngine.layout.containers[0]);
-      textContainer.explicitWidth = w - 10;
+    }
+
+    var textWidth:int = w - 10;
+    if (textContainer.explicitWidth != textContainer.explicitWidth || textContainer.explicitWidth > textWidth) {
+      textContainer.explicitWidth = textWidth;
     }
 
     if (displayContainer.parent != _container) {
@@ -104,8 +106,8 @@ public class StyleRendererManager extends TextRendererManager {
     textEngine.blockFactory.data = item;
     textEngine.render();
 
-    _lastCreatedRendererDimension = Math.ceil(textContainer.measuredHeight) + 5;
-
+    // tinytlf has some issues with measuredHeight/totalHeight, so, use displayContainer.height
+    _lastCreatedRendererDimension = Math.ceil(displayContainer.height) + 10;
     return e;
   }
 
@@ -147,7 +149,6 @@ import com.intellij.flex.uiDesigner.ui.CssElementFormat;
 import com.intellij.flex.uiDesigner.ui.inspectors.styleInspector.StylePaneContext;
 
 import flash.display.Graphics;
-
 import flash.display.Shape;
 import flash.display.Sprite;
 import flash.errors.IllegalOperationError;
@@ -159,9 +160,7 @@ import flash.text.engine.TextLine;
 
 import org.tinytlf.ITextEngine;
 import org.tinytlf.decor.ITextDecor;
-
 import org.tinytlf.decor.ITextDecoration;
-
 import org.tinytlf.layout.ConstraintTextContainer;
 import org.tinytlf.layout.ITextContainer;
 

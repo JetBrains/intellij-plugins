@@ -10,6 +10,7 @@
       <root url="jar://$MAVEN_REPOSITORY$/org/tinytlf/fte-utils/1.1/fte-utils-1.1.swc!/" />
       <root url="jar://$MAVEN_REPOSITORY$/flashx/textLayout/2.0.192-de1/textLayout-2.0.192-de1.swc!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/flyti/cocoa/aquaLaF/2.0-SNAPSHOT/aquaLaF-2.0-SNAPSHOT.swc!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/tinytlf/layouts/1.1/layouts-1.1.swc!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
@@ -22,6 +23,7 @@
       <root url="jar://$MAVEN_REPOSITORY$/org/tinytlf/fte-utils/1.1/fte-utils-1.1-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/flashx/textLayout/2.0.192-de1/textLayout-2.0.192-de1-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/flyti/cocoa/aquaLaF/2.0-SNAPSHOT/aquaLaF-2.0-SNAPSHOT-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/tinytlf/layouts/1.1/layouts-1.1-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
