@@ -18,7 +18,6 @@ import com.google.jstestdriver.idea.ui.ToolPanel;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.impl.ModuleImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
@@ -40,8 +39,6 @@ import java.net.URLEncoder;
 import java.util.*;
 
 import static com.google.common.collect.Lists.transform;
-import static com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope.CONTENT;
-import static com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope.MODULES;
 import static java.io.File.pathSeparator;
 
 public class JstdClientCommandLineBuilder {
@@ -162,7 +159,7 @@ public class JstdClientCommandLineBuilder {
       return null;
     }
     GlobalSearchScope directorySearchScope = GlobalSearchScopes.directoryScope(project, directory, true);
-    return ((ModuleImpl)module).getCachedScope(CONTENT | MODULES).intersectWith(directorySearchScope);
+    return module.getModuleContentWithDependenciesScope().intersectWith(directorySearchScope);
   }
 
   public static boolean areJstdConfigFilesInDirectory(@NotNull Project project, @NotNull VirtualFile directory) {
