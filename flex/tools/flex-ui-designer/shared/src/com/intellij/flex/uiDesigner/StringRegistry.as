@@ -66,6 +66,13 @@ public final class StringRegistry {
   }
 
   public function readNotNull(input:IDataInput):String {
+    // ability to debug
+    //var i:int = AmfUtil.readUInt29(input);
+    //if (i == 0) {
+    //  var s:int = 0;
+    //  s++;
+    //}
+    //return table[i - 1];
     return table[AmfUtil.readUInt29(input) - 1];
   }
   

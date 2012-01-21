@@ -11,6 +11,7 @@ import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet.ContainsCondition;
 import com.intellij.flex.uiDesigner.libraries.LibrarySorter.SortResult;
 import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -20,6 +21,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.util.Condition;
@@ -28,6 +30,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.ExceptionUtil;
+import com.intellij.util.PlatformUtils;
 import com.intellij.util.StringBuilderSpinAllocator;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -272,10 +275,10 @@ public class LibraryManager {
   @SuppressWarnings("MethodMayBeStatic")
   @Nullable
   public PropertiesFile getResourceBundleFile(String locale, String bundleName, ModuleInfo moduleInfo) {
+    final Project project = moduleInfo.getElement().getProject();
     for (LibrarySet librarySet : moduleInfo.getLibrarySets()) {
       do {
         PropertiesFile propertiesFile;
-        final Project project = moduleInfo.getElement().getProject();
         for (Library library : librarySet.getLibraries()) {
           if (library.hasResourceBundles() && (propertiesFile = getResourceBundleFile(locale, bundleName, library, project)) != null) {
             return propertiesFile;
@@ -283,6 +286,24 @@ public class LibraryManager {
         }
       }
       while ((librarySet = librarySet.getParent()) != null);
+    }
+
+    // AS-273
+    if (PlatformUtils.isFlexIde()) {
+      Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(moduleInfo.getModule());
+      VirtualFile dir = sdk == null ? null : sdk.getHomeDirectory();
+      if (dir != null) {
+        dir = dir.findFileByRelativePath("frameworks/projects");
+      }
+
+      if (dir != null) {
+        for (String libName : new String[]{"framework", "spark", "mx", "airframework", "rpc", "advancedgrids", "charts", "textLayout"}) {
+          VirtualFile file = dir.findFileByRelativePath(libName + "/bundles/" + locale + "/" + bundleName + PROPERTIES_EXTENSION);
+          if (file != null) {
+            return virtualFileToProperties(project, file);
+          }
+        }
+      }
     }
 
     return null;
@@ -297,6 +318,10 @@ public class LibraryManager {
     //noinspection ConstantConditions
     VirtualFile file = library.getFile().findChild("locale").findChild(locale).findChild(bundleName + PROPERTIES_EXTENSION);
     //noinspection ConstantConditions
+    return virtualFileToProperties(project, file);
+  }
+
+  private static PropertiesFile virtualFileToProperties(Project project, VirtualFile file) {
     return (PropertiesFile)PsiDocumentManager.getInstance(project).getPsiFile(FileDocumentManager.getInstance().getDocument(file));
   }
 }
