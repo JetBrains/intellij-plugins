@@ -328,5 +328,11 @@ public class StatesTest extends BaseTestCase {
 
   public function IDEA_73550():void {
   }
+  
+  public function TransformEffectTarget():void {
+    assertThat(app, []);
+    setState("hovered");
+    assertThat(app, [l("aa"), l("bb")]);
+  }
 }
 }

@@ -5,8 +5,13 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.xml.NanoXmlUtil;
 import gnu.trove.THashMap;
+import gnu.trove.THashSet;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.CharArrayReader;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Set;
 
 import static com.intellij.flex.uiDesigner.libraries.FlexLibsNames.*;
@@ -59,7 +64,15 @@ class FlexDefinitionMapProcessor implements DefinitionMapProcessor {
       data = LibraryUtil.openSwc(createAbcFile(DebugPathManager.getFudHome() + "/flex-injection/target", version));
     }
     else {
-      data = LibraryUtil.openSwc(getClass().getClassLoader().getResource(generateInjectionName(version)).openStream());
+      URL resource = getClass().getClassLoader().getResource(generateInjectionName(version));
+      assert resource != null;
+      data = LibraryUtil.openSwc(resource.openStream());
+    }
+    
+    final THashSet<String> overloadedMasked = new THashSet<String>(FlexDefinitionProcessor.OVERLOADED.length);
+    for (String origin : FlexDefinitionProcessor.OVERLOADED) {
+      int index = origin.indexOf(':') + 1;
+      overloadedMasked.add(origin.substring(0, index) + FlexDefinitionProcessor.OVERLOADED_AND_BACKED_CLASS_MARK + origin.substring(index + 1));
     }
 
     final Set<CharSequence> ownDefinitions = LibraryUtil.getDefinitions(data.first);
@@ -71,8 +84,7 @@ class FlexDefinitionMapProcessor implements DefinitionMapProcessor {
     }, new Condition<String>() {
       @Override
       public boolean value(String name) {
-        return globalContains.value(name) || name.equals("mx.styles:FtyleProtoChain") ||
-               name.equals("spark.components.supportClasses:FkinnableComponent");
+        return globalContains.value(name) || overloadedMasked.contains(name);
       }
     }
     ));

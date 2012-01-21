@@ -65,6 +65,7 @@
               <excludes>
                 <exclude>mx.styles.FtyleProtoChain</exclude>
                 <exclude>spark.components.supportClasses.FkinnableComponent</exclude>
+                <exclude>mx.effects.Fffect</exclude>
               </excludes>
             </scan>
 
@@ -75,6 +76,7 @@
 
             <include>mx.styles.StyleProtoChain</include>
             <include>mx.styles.StyleManager</include>
+            <include>mx.effects.Effect</include>
 
             <include>mx.managers.LayoutManager</include>
             <include>mx.managers.CursorManager</include>

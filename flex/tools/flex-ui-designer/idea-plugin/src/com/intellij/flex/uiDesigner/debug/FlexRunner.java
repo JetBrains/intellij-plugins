@@ -134,6 +134,9 @@ public class FlexRunner extends GenericProgramRunner {
           if (line.indexOf("$framework/mx/styles/StyleProtoChain.as", spaceIndex) != -1) {
             fullPath = DebugPathManager.getFudHome() + "/flex-injection/src/main/flex/mx/styles/StyleProtoChain.as";
           }
+          else if (line.indexOf("$framework/mx/effects/Effect.as", spaceIndex) != -1) {
+            fullPath = DebugPathManager.getFudHome() + "/flex-injection/src/main/flex/mx/effects/Effect.as";
+          }
           else {
             int firstSlashIndex = line.indexOf('/');
             StringBuilder builder = StringBuilderSpinAllocator.alloc();
@@ -171,6 +174,9 @@ public class FlexRunner extends GenericProgramRunner {
         }
         else if (line.indexOf("FtyleProtoChain.as", spaceIndex) != -1) {
           fullPath = "/Developer/SDKs/flex_4.5.1/frameworks/projects/framework/src/mx/styles/StyleProtoChain.as";
+        }
+        else if (line.indexOf("Fffect.as", spaceIndex) != -1) {
+          fullPath = "/Developer/SDKs/flex_4.5.1/frameworks/projects/framework/src/mx/effects/Effect.as";
         }
         else {
           fullPath = line.substring(spaceIndex + 1, commaPos).replace(File.separatorChar, '/');

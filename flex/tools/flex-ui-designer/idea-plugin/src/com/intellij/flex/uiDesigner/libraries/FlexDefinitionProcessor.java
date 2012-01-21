@@ -17,12 +17,16 @@ import java.nio.charset.CodingErrorAction;
 import java.util.Map;
 
 class FlexDefinitionProcessor implements DefinitionProcessor {
-  private static final String STYLE_PROTO_CHAIN = "mx.styles:StyleProtoChain";
-  private static final String SKINNABLE_COMPONENT = "spark.components.supportClasses:SkinnableComponent";
   private static final String MX_CORE = "mx.core:";
   private static final String SPARK_COMPONENTS = "spark.components:";
+  
+  static final String[] OVERLOADED = new String[]{
+    "mx.styles:StyleProtoChain",
+    "spark.components.supportClasses:SkinnableComponent",
+    "mx.effects:Effect"
+  };
 
-  private static final char OVERLOADED_AND_BACKED_CLASS_MARK = 'F';
+  static final char OVERLOADED_AND_BACKED_CLASS_MARK = 'F';
 
   private final boolean vGreaterOrEquals4_5;
 
@@ -32,15 +36,15 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
 
   @Override
   public void process(CharSequence name, ByteBuffer buffer, Definition definition, Map<CharSequence, Definition> definitionMap) throws IOException {
-    if (StringUtil.equals(name, STYLE_PROTO_CHAIN)) {
-      changeAbcName(STYLE_PROTO_CHAIN, buffer);
-      flipDefinition(definition, definitionMap, STYLE_PROTO_CHAIN);
+    for (String overloadedClassName : OVERLOADED) {
+      if (StringUtil.equals(name, overloadedClassName)) {
+        changeAbcName(overloadedClassName, buffer);
+        flipDefinition(definition, definitionMap, overloadedClassName);
+        return;
+      }
     }
-    else if (StringUtil.equals(name, SKINNABLE_COMPONENT)) {
-      changeAbcName(SKINNABLE_COMPONENT, buffer);
-      flipDefinition(definition, definitionMap, SKINNABLE_COMPONENT);
-    }
-    else if (StringUtil.equals(name, "mx.containers:Panel")) {
+
+    if (StringUtil.equals(name, "mx.containers:Panel")) {
       definition.doAbcData.abcModifier = new MethodAccessModifier("setControlBar", vGreaterOrEquals4_5 ? "addChildAt" : null, null, false);
     }
     else {
@@ -144,22 +148,35 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
     n = AbcUtil.readU32(buffer);
     final CharsetEncoder charsetEncoder = Charsets.UTF_8.newEncoder().onMalformedInput(CodingErrorAction.REPLACE).onUnmappableCharacter(
       CodingErrorAction.REPLACE);
+    o:
     while (n-- > 1) {
       int l = AbcUtil.readU32(buffer);
       buffer.limit(buffer.position() + l);
       buffer.mark();
       final CharBuffer charBuffer = Charsets.UTF_8.decode(buffer);
       buffer.limit(buffer.capacity());
-      final int index = CharArrayUtil.indexOf(charBuffer, from, 0);
-      if (index == -1) {
-        continue;
-      }
+      int index = 0;
+      do {
+        index = CharArrayUtil.indexOf(charBuffer, from, index);
+        if (index == -1 || (index > 0 && !isSpecialSymbol(charBuffer.get(index - 1)))) {
+          continue o;
+        }
 
-      charBuffer.put(index, OVERLOADED_AND_BACKED_CLASS_MARK);
+        charBuffer.put(index, OVERLOADED_AND_BACKED_CLASS_MARK);
+
+        index += from.length();
+      }
+      while (index < charBuffer.length());
       buffer.reset();
       charsetEncoder.encode(charBuffer, buffer, true);
       charsetEncoder.reset();
     }
+  }
+
+  // E:\dev\4.5.1\frameworks\projects\spark\src;spark\components\supportClasses;SkinnableComponent.as
+  // spark.components.supportClasses:SkinnableComponent/SkinnableComponent
+  private static boolean isSpecialSymbol(char c) {
+    return c == ';' || c == '/' || c == ':';
   }
 
   private static class MethodAccessModifier extends AbcModifierBase {
