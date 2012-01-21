@@ -9,6 +9,7 @@ import org.hamcrest.core.isA;
 import org.hamcrest.core.not;
 import org.hamcrest.object.equalTo;
 import org.hamcrest.object.instanceOf;
+import org.hamcrest.object.nullValue;
 import org.hamcrest.object.strictlyEqualTo;
 
 [Test(dir="common")]
@@ -206,6 +207,10 @@ public class CommonTest extends BaseTestCase {
 
   public function ProjectComponentAsGrandChild():void {
     assertThat(app, [[[l("Label in child custom mxml component")]]]);
+  }
+
+  public function PropertyAsTagWithCommentedValueAsTag():void {
+    assertThat(app, [{bottom: 1, fill: nullValue()}]);
   }
 }
 }

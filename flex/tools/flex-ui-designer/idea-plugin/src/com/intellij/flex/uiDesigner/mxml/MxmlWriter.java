@@ -402,7 +402,13 @@ public class MxmlWriter {
       }
     }
 
-    endList(listKind, validAndStaticChildrenCount, lengthPosition);
+    if (listKind != null) {
+      endList(listKind, validAndStaticChildrenCount, lengthPosition);
+    }
+    else if (!propertiesExpected && validAndStaticChildrenCount == 0) {
+      // PropertyAsTagWithCommentedValueAsTag, replace Amf3Types.OBJECT to Amf3Types.NULL
+      out.putByte(Amf3Types.NULL, out.size() - 1);
+    }
   }
 
   private boolean processPropertyTag(XmlTag tag, AnnotationBackedDescriptor annotationBackedDescriptor, @NotNull Context context,

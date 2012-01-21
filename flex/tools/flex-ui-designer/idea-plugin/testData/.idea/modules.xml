@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/main-project-imls/injection.iml" filepath="$PROJECT_DIR$/main-project-imls/injection.iml" />
       <module fileurl="file://$PROJECT_DIR$/main-project-imls/main.iml" filepath="$PROJECT_DIR$/main-project-imls/main.iml" />
       <module fileurl="file://$PROJECT_DIR$/src/mx/mx.iml" filepath="$PROJECT_DIR$/src/mx/mx.iml" group="test data" />
+      <module fileurl="file://$PROJECT_DIR$/main-project-imls/shared.iml" filepath="$PROJECT_DIR$/main-project-imls/shared.iml" />
       <module fileurl="file://$PROJECT_DIR$/main-project-imls/ui.iml" filepath="$PROJECT_DIR$/main-project-imls/ui.iml" />
     </modules>
   </component>
