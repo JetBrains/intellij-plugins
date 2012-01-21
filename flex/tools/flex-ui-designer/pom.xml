@@ -97,6 +97,16 @@
       <url>http://develar.github.com/flash-mvn-repo/</url>
     </repository>
   </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>project-repo</id>
+      <url>file://${user.dir}/lib</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>flash-mvn-repo</id>
+      <url>http://develar.github.com/flash-mvn-repo/</url>
+    </pluginRepository>
+  </pluginRepositories>
 
   <profiles>
     <profile>
