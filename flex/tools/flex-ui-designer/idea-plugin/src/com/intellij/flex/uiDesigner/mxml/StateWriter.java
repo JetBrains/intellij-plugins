@@ -292,7 +292,7 @@ class StateWriter {
   }
 
   public StaticObjectContext createContextForStaticBackSibling(boolean allowIncludeInExludeFrom, int referencePosition,
-                                                               @Nullable Context parentContext, @Nullable MxmlObjectReference mxmlObjectReference) {
+                                                               @Nullable Context parentContext) {
     assert referencePosition != -1;
     if (allowIncludeInExludeFrom) {
       assert parentContext != null;

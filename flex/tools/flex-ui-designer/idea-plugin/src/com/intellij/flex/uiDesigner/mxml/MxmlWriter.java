@@ -215,7 +215,7 @@ public class MxmlWriter {
 
     if (hasStates) {
       if (context == null) {
-        context = stateWriter.createContextForStaticBackSibling(allowIncludeInExludeFrom, referencePosition, parentContext, tagAttributeProcessContext.reference);
+        context = stateWriter.createContextForStaticBackSibling(allowIncludeInExludeFrom, referencePosition, parentContext);
         stateWriter.finalizeStateSpecificAttributesForStaticContext((StaticObjectContext)context, parentContext, this);
       }
     }
@@ -501,7 +501,7 @@ public class MxmlWriter {
     final StaticObjectContext context;
     final int referencePosition = out.allocateClearShort();
     if (hasStates) {
-      context = stateWriter.createContextForStaticBackSibling(allowIncludeInExludeFrom, referencePosition, parentContext, null);
+      context = stateWriter.createContextForStaticBackSibling(allowIncludeInExludeFrom, referencePosition, parentContext);
     }
     else {
       context = writer.createStaticContext(parentContext, referencePosition);
