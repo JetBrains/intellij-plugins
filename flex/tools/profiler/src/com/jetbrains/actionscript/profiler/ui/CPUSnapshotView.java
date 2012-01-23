@@ -7,7 +7,6 @@ import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.search.EverythingGlobalScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.scope.ProjectFilesScope;
@@ -90,9 +89,6 @@ public class CPUSnapshotView extends ProfileView implements Disposable {
   @Nullable
   private GlobalSearchScope getCurrentScope() {
     final SearchScope _selectedScope = filterScope.getSelectedScope();
-    if (_selectedScope instanceof AllSearchScope) {
-      return null;
-    }
     return _selectedScope instanceof GlobalSearchScope ?
            (GlobalSearchScope)_selectedScope : GlobalSearchScope.allScope(getProject());
   }
@@ -125,7 +121,7 @@ public class CPUSnapshotView extends ProfileView implements Disposable {
 
     final ComboBoxModel model = filterScope.getComboBox().getModel();
     if (model instanceof DefaultComboBoxModel) {
-      ((DefaultComboBoxModel)model).insertElementAt(new ScopeDescriptor(new EverythingGlobalScope(getProject())), 0);
+      ((DefaultComboBoxModel)model).insertElementAt(new ScopeDescriptor(new AllSearchScope(getProject())), 0);
     }
 
     myHotSpotsTreeTable.getTree().setCellRenderer(new FrameInfoCellRenderer(projectScope) {

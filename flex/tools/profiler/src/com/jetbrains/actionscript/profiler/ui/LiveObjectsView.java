@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.EverythingGlobalScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectAndLibrariesScope;
 import com.intellij.psi.search.SearchScope;
@@ -55,6 +54,7 @@ public class LiveObjectsView extends ProfileView implements Disposable {
   private JPanel mainPanel;
   private ScopeChooserCombo filterScope;
   private JLabel scopeLabel;
+  private JLabel myAllocatedMemory;
   private final LiveModelController controller;
   private final ProfilingManager profilingManager;
 
@@ -82,6 +82,8 @@ public class LiveObjectsView extends ProfileView implements Disposable {
         liveObjectsTreeTable.reload();
         TreeUtil.restoreExpandedPaths(liveObjectsTreeTable.getTree(), paths);
         liveObjectsTreeTable.getTree().setSelectionPath(selectionPath);
+
+        myAllocatedMemory.setText(ProfilerBundle.message("allocated.memory.size", controller.getAllocatedMemorySize()));
       }
     });
     updateTimer.setInitialDelay(1000);
@@ -164,7 +166,7 @@ public class LiveObjectsView extends ProfileView implements Disposable {
 
     final ComboBoxModel model = filterScope.getComboBox().getModel();
     if (model instanceof DefaultComboBoxModel) {
-      ((DefaultComboBoxModel)model).insertElementAt(new ScopeDescriptor(new EverythingGlobalScope(getProject())), 0);
+      ((DefaultComboBoxModel)model).insertElementAt(new ScopeDescriptor(new AllSearchScope(getProject())), 0);
     }
   }
 
@@ -172,9 +174,6 @@ public class LiveObjectsView extends ProfileView implements Disposable {
   @Nullable
   private GlobalSearchScope getCurrentScope() {
     final SearchScope _selectedScope = filterScope.getSelectedScope();
-    if (_selectedScope instanceof AllSearchScope) {
-      return null;
-    }
     return _selectedScope instanceof GlobalSearchScope ?
            (GlobalSearchScope)_selectedScope : GlobalSearchScope.allScope(getProject());
   }

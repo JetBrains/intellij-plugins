@@ -63,6 +63,7 @@ public class FrameInfoBuilder {
         packageName = s.substring(i3 + 1, i4);
         filename = s.substring(i4 + 1);
 
+        packageName = packageName.replace('\\', '.').replace('/', '.');
         final int endIndex = filename.indexOf(':');
         line = 0;
         if (endIndex != -1) {
@@ -70,7 +71,7 @@ public class FrameInfoBuilder {
           filename = filename.substring(0, endIndex);
         }
 
-        String className = packageName.replace('\\', '.').replace('/', '.');
+        String className = packageName;
         if (className.length() > 0) className += ".";
         className += filename.substring(0, filename.indexOf('.'));
       }

@@ -1,11 +1,15 @@
 package com.jetbrains.actionscript.profiler.ui;
 
+import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.PopupHandler;
+import com.intellij.util.Alarm;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.jetbrains.actionscript.profiler.ProfilerBundle;
 import com.jetbrains.actionscript.profiler.ProfilerIcons;
@@ -29,8 +33,10 @@ import java.util.Date;
  * @author: Fedor.Korotkov
  */
 public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Disposable {
+  public static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("Action Script Profiler");
   private JPanel mainPanel;
   private NavigatableTree snapshotTree;
+  private JLabel myStatusLabel;
   private final DefaultTreeModel treeModel;
 
   private ProfilingManager profilingManager;
@@ -41,6 +47,9 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
   private final String host;
   private final int port;
   private final String runConfigurationName;
+
+  private final Alarm myAlarm = new Alarm();
+  private static final int MINUTE = 60 * 1000;
 
   public ActionScriptProfileControlPanel(String runConfigurationName, final Module module, String host, int port) {
     this.runConfigurationName = runConfigurationName;
@@ -65,8 +74,17 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
 
   private volatile State currentState = State.NONE;
 
-  void setCurrentState(final State state) {
+  private void setCurrentState(final State state) {
     currentState = state;
+  }
+
+  private void setStatus(final String status) {
+    ApplicationManager.getApplication().invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        myStatusLabel.setText(status);
+      }
+    });
   }
 
   private void setupComponents() {
@@ -111,13 +129,25 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
 
     final LiveObjectsNode liveObjectsNode = new LiveObjectsNode(runConfigurationName, module, profilingManager, liveModelController);
     profilerDataConsumer = new ProfilerDataConsumer(liveModelController);
+
+    setStatus(ProfilerBundle.message("agent.connection.waiting"));
+    myAlarm.cancelAllRequests();
+    myAlarm.addRequest(new Runnable() {
+      @Override
+      public void run() {
+        NOTIFICATION_GROUP.createNotification(ProfilerBundle.message("profiler.connection.timeout"), NotificationType.ERROR).notify(module.getProject());
+      }
+    }, MINUTE);
     profilingManager.initializeProfiling(profilerDataConsumer, new ProfilingManager.Callback() {
       public void finished(@Nullable String data, @Nullable IOException ex) {
         if (data != null && connectionCallback != null) {
+          myAlarm.cancelAllRequests();
+          setStatus(ProfilerBundle.message("agent.connection.open"));
           ApplicationManager.getApplication().invokeLater(connectionCallback);
           setCurrentState(State.NORMAL);
         }
         else if (ex != null) {
+          setStatus(ProfilerBundle.message("agent.connection.close"));
           setCurrentState(State.NONE);
           ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
@@ -139,9 +169,10 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
   @Override
   public void dispose() {
     profilingManager.dispose();
+    Disposer.dispose(myAlarm);
   }
 
-  public ActionGroup createProfilerActionGroup() {
+  public DefaultActionGroup createProfilerActionGroup() {
     return new DefaultActionGroup(
       new ToggleAction(ProfilerBundle.message("start.cpu.profiling"),
                        ProfilerBundle.message("start.cpu.profiling.description"),

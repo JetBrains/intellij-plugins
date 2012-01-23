@@ -19,14 +19,22 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @author: Fedor.Korotkov
  */
 public class LiveModelController implements ObjectSampleHandler {
+  private static final int BYTES_IN_KB = 1000;
+
   private final List<Sample> cache = new LinkedList<Sample>();
   private final ConcurrentLinkedQueue<Sample> queue = new ConcurrentLinkedQueue<Sample>();
 
   private final List<SizeInfoNode> filteredClasses = new ArrayList<SizeInfoNode>();
   private GlobalSearchScope scope;
+  
+  private volatile int allocatedMemorySize = 0;
 
   public void updateScope(GlobalSearchScope scope) {
     this.scope = scope;
+  }
+
+  public int getAllocatedMemorySize() {
+    return allocatedMemorySize / BYTES_IN_KB;
   }
 
   public void apply(SortableListTreeTableModel model) {
@@ -168,6 +176,7 @@ public class LiveModelController implements ObjectSampleHandler {
   public void processCreateSample(CreateObjectSample createObjectSample) {
     if (createObjectSample.className != null) {
       queue.add(createObjectSample);
+      allocatedMemorySize += createObjectSample.size;
     }
   }
 
@@ -175,6 +184,7 @@ public class LiveModelController implements ObjectSampleHandler {
   public void processDeleteSample(DeleteObjectSample deleteObjectSample) {
     if (deleteObjectSample.className != null) {
       queue.add(deleteObjectSample);
+      allocatedMemorySize -= deleteObjectSample.size;
     }
   }
 }

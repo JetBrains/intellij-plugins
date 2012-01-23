@@ -15,21 +15,19 @@ import com.intellij.lang.javascript.flex.run.FlashPlayerTrustUtil;
 import com.intellij.lang.javascript.flex.run.FlexIdeRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunner;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.ActionPlaces;
-import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.ui.content.Content;
-import com.intellij.ui.content.ContentFactory;
+import com.intellij.ui.content.*;
+import com.intellij.ui.content.tabs.TabbedContentAction;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.SystemProperties;
 import com.jetbrains.actionscript.profiler.model.ProfileSettings;
@@ -140,22 +138,37 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
       public void run() {
         ToolWindow toolWindow = toolWindowManager.getToolWindow(TOOLWINDOW_ID);
         if (toolWindow == null) {
-          toolWindow = toolWindowManager.registerToolWindow(TOOLWINDOW_ID, true, ToolWindowAnchor.BOTTOM, module.getProject(), true);
-          toolWindow.setToHideOnEmptyContent(true);
+          toolWindow = toolWindowManager.registerToolWindow(TOOLWINDOW_ID, true, ToolWindowAnchor.BOTTOM, module.getProject());
+          final ContentManager contentManager = toolWindow.getContentManager();
+          contentManager.addContentManagerListener(new ContentManagerAdapter() {
+            @Override
+            public void contentRemoved(ContentManagerEvent event) {
+              super.contentRemoved(event);
+              if(contentManager.getContentCount() == 0){
+                toolWindowManager.unregisterToolWindow(TOOLWINDOW_ID);
+              }
+            }
+          });
         }
         final ActionScriptProfileControlPanel profileControlPanel = new ActionScriptProfileControlPanel(runConfigurationName, module, profileSettings.getHost(), profileSettings.getPort());
 
         final SimpleToolWindowPanel toolWindowPanel = new SimpleToolWindowPanel(false, true);
         toolWindowPanel.setContent(profileControlPanel.getMainPanel());
 
-        ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, profileControlPanel.createProfilerActionGroup(), false);
-        toolbar.setTargetComponent(toolWindowPanel);
-        toolWindowPanel.setToolbar(toolbar.getComponent());
-
         final Content content = ContentFactory.SERVICE.getInstance().createContent(toolWindowPanel, runConfigurationName, false);
         toolWindow.getContentManager().addContent(content);
         toolWindow.getContentManager().setSelectedContent(content);
         content.setDisposer(profileControlPanel);
+
+        final DefaultActionGroup actionGroup = profileControlPanel.createProfilerActionGroup();
+        actionGroup.addSeparator();
+        final AnAction closeTabAction = new TabbedContentAction.CloseAction(content);
+        closeTabAction.getTemplatePresentation().setIcon(IconLoader.getIcon("/actions/cancel.png"));
+        actionGroup.add(closeTabAction);
+
+        ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, actionGroup, false);
+        toolbar.setTargetComponent(toolWindowPanel);
+        toolWindowPanel.setToolbar(toolbar.getComponent());
 
         final ToolWindow finalToolWindow = toolWindow;
         profileControlPanel.setConnectionCallback(new Runnable() {
