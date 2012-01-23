@@ -32,6 +32,7 @@ import com.intellij.openapi.ui.popup.ListPopupStep;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -60,7 +61,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
-public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction {
+public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction implements Iconable {
 
   @NotNull
   @Override
@@ -102,6 +103,11 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
   @Override
   public String getFamilyName() {
     return getText();
+  }
+
+  @Override
+  public Icon getIcon(final int flags) {
+    return StrutsIcons.ACTION;
   }
 
   @Override
@@ -233,5 +239,4 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
 
     return clazz;
   }
-
 }

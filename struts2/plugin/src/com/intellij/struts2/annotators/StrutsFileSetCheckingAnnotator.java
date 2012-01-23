@@ -33,6 +33,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.EmptyRunnable;
+import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -141,7 +142,7 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
   /**
    * Adds the current struts.xml file to an existing file set.
    */
-  private static class AddToFileSetFix extends BaseIntentionAction {
+  private static class AddToFileSetFix extends BaseIntentionAction implements Iconable {
 
     private AddToFileSetFix(final String filename) {
       setText(StrutsBundle.message("annotators.fileset.fix.add.to.fileset", filename));
@@ -150,6 +151,11 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
     @NotNull
     public String getFamilyName() {
       return StrutsBundle.message("intentions.family.name");
+    }
+
+    @Override
+    public Icon getIcon(final int flags) {
+      return StrutsIcons.ACTION;
     }
 
     public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file) {

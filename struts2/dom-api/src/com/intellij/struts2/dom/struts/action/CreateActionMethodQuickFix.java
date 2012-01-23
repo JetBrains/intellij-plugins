@@ -20,21 +20,25 @@ import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Iconable;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
+import com.intellij.struts2.StrutsIcons;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.OpenSourceUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 /**
  * Create action-method.
  *
  * @author Yann C&eacute;bron
  */
-public class CreateActionMethodQuickFix extends LocalQuickFixAndIntentionActionOnPsiElement {
+public class CreateActionMethodQuickFix extends LocalQuickFixAndIntentionActionOnPsiElement implements Iconable {
 
   private static final Logger LOG = Logger.getInstance(CreateActionMethodQuickFix.class.getSimpleName());
 
@@ -54,6 +58,11 @@ public class CreateActionMethodQuickFix extends LocalQuickFixAndIntentionActionO
   @NotNull
   public String getFamilyName() {
     return "Struts 2 Quickfixes";
+  }
+
+  @Override
+  public Icon getIcon(final int flags) {
+    return StrutsIcons.ACTION;
   }
 
   @Override
