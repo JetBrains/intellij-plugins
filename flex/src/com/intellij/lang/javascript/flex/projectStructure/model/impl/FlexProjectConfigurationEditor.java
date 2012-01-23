@@ -2,10 +2,7 @@ package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
-import com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdk;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
-import com.intellij.lang.javascript.flex.projectStructure.FlexSdkLibraryType;
-import com.intellij.lang.javascript.flex.projectStructure.FlexSdkProperties;
+import com.intellij.lang.javascript.flex.projectStructure.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
@@ -143,6 +140,60 @@ public class FlexProjectConfigurationEditor implements Disposable {
       }
       addEditorsForModule(module);
     }
+  }
+
+  /**
+   * Clients are responsible to commit or dispose returned <code>FlexProjectConfigurationEditor</code> as well as passed <code>projectLibrariesModel</code> and <code>globalLibrariesModel</code>.<br><br>
+   * If <code>null</code> is given as <code>projectLibrariesModel</code> or <code>globalLibrariesModel</code> then the client must not set dependency on libraries of respective level.<br><br>
+   * Removing of modules and build configurations is not allowed while returned <code>FlexProjectConfigurationEditor</code> exists.
+   */
+  public static FlexProjectConfigurationEditor createEditor(final Project project,
+                                                            final Map<Module, ModifiableRootModel> moduleToModifiableModel,
+                                                            final @Nullable LibraryTableBase.ModifiableModelEx projectLibrariesModel,
+                                                            final @Nullable LibraryTableBase.ModifiableModelEx globalLibrariesModel) {
+    LOG.assertTrue(FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor() == null,
+                   "Don't create FlexProjectConfigurationEditor when Project Structure dialog is open. Use FlexIdeBCConfigurator.getConfigEditor()");
+
+    final ProjectModifiableModelProvider provider = new ProjectModifiableModelProvider() {
+      public Module[] getModules() {
+        final Set<Module> modules = moduleToModifiableModel.keySet();
+        return modules.toArray(new Module[modules.size()]);
+      }
+
+      public ModifiableRootModel getModuleModifiableModel(final Module module) {
+        final ModifiableRootModel model = moduleToModifiableModel.get(module);
+        LOG.assertTrue(model != null, "No model for module " + module.getName());
+        return model;
+      }
+
+      public void addListener(final FlexIdeBCConfigurator.Listener listener,
+                              final Disposable parentDisposable) {
+        // modules and BCs must not be removed
+      }
+
+      public void commitModifiableModels() throws ConfigurationException {
+        // commit must be performed somewhere else
+      }
+
+      public LibraryTableBase.ModifiableModelEx getLibrariesModifiableModel(final String level) {
+        if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(level)) {
+          LOG.assertTrue(globalLibrariesModel != null);
+          return globalLibrariesModel;
+        }
+        else if (LibraryTablesRegistrar.PROJECT_LEVEL.equals(level)) {
+          LOG.assertTrue(projectLibrariesModel != null);
+          return projectLibrariesModel;
+        }
+        LOG.error("Unexpected argument: " + level);
+        return null;
+      }
+
+      public Sdk[] getAllSdks() {
+        return FlexProjectConfigurationEditor.getPersistedFlexSdks();
+      }
+    };
+
+    return new FlexProjectConfigurationEditor(project, provider);
   }
 
   public void removeConfiguration(@NotNull final ModifiableFlexIdeBuildConfiguration configuration) {
@@ -665,12 +716,12 @@ public class FlexProjectConfigurationEditor implements Disposable {
       }
     });
   }
-  
+
   public static Sdk[] getPersistedFlexSdks() {
     final List<Sdk> result = ProjectJdkTable.getInstance().getSdksOfType(FlexSdkType2.getInstance());
     return result.toArray(new Sdk[result.size()]);
   }
-  
+
   public static Sdk[] getEditableFlexSdks(Project project) {
     final Collection<Sdk> sdks =
       ProjectStructureConfigurable.getInstance(project).getProjectJdksModel().getProjectSdks().values();

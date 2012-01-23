@@ -11,36 +11,25 @@ import com.intellij.ide.impl.convert.JDomConvertingUtil;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
-import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
-import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
-import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
-import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.hash.*;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.HashSet;
 
 /**
  * User: ksafonov
@@ -51,7 +40,6 @@ public class ConversionParams {
 
   private final Collection<Pair<String, String>> myAppModuleAndBCNames = new ArrayList<Pair<String, String>>();
 
-  private final FlexProjectConfigurationEditor myEditor;
   private final LibraryTable.ModifiableModel myGlobalLibrariesModifiableModel;
   private final ConversionContext myContext;
   private final Collection<String> myFacetsToIgnore = new HashSet<String>();
@@ -61,51 +49,9 @@ public class ConversionParams {
   public ConversionParams(ConversionContext context) {
     myContext = context;
     myGlobalLibrariesModifiableModel = ApplicationLibraryTable.getApplicationTable().getModifiableModel();
-    myEditor = new FlexProjectConfigurationEditor(null, new FlexProjectConfigurationEditor.ProjectModifiableModelProvider() {
-      @Override
-      public Module[] getModules() {
-        return new Module[0];
-      }
-
-      @Override
-      public ModifiableRootModel getModuleModifiableModel(Module module) {
-        return null;
-      }
-
-      @Override
-      public void addListener(FlexIdeBCConfigurator.Listener listener, Disposable parentDisposable) {
-      }
-
-      @Override
-      public void commitModifiableModels() throws ConfigurationException {
-      }
-
-      public LibraryTableBase.ModifiableModelEx getLibrariesModifiableModel(final String level) {
-        if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(level)) {
-          return (LibraryTableBase.ModifiableModelEx)myGlobalLibrariesModifiableModel;
-        }
-        else {
-          throw new UnsupportedOperationException();
-        }
-      }
-
-      public Sdk[] getAllSdks() {
-        return FlexProjectConfigurationEditor.getPersistedFlexSdks();
-      }
-    });
   }
 
   private void saveGlobalLibraries() throws CannotConvertException {
-    if (myEditor.isModified()) {
-      try {
-        myEditor.commit();
-      }
-      catch (ConfigurationException e) {
-        throw new CannotConvertException(e.getMessage(), e);
-      }
-    }
-    Disposer.dispose(myEditor);
-
     if (myGlobalLibrariesModifiableModel.isChanged()) {
       ApplicationManager.getApplication().runWriteAction(new Runnable() {
         @Override

@@ -5,21 +5,15 @@ import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.*;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
-import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
-import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
@@ -205,27 +199,22 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
     }
 
 
-    final LibraryTableBase.ModifiableModelEx globalLibrariesModifiableModel;
     final FlexProjectConfigurationEditor flexConfigEditor;
     final boolean needToCommitFlexEditor;
     final boolean needToCommitRootModels;
 
     if (!PlatformUtils.isFlexIde()) {
-      globalLibrariesModifiableModel = null;
       flexConfigEditor = null;
       needToCommitFlexEditor = false;
       needToCommitRootModels = true;
     }
     else if (currentFlexEditor != null) {
-      globalLibrariesModifiableModel = null;
       flexConfigEditor = currentFlexEditor;
       needToCommitFlexEditor = false;
       needToCommitRootModels = false;
     }
     else {
-      globalLibrariesModifiableModel =
-        (LibraryTableBase.ModifiableModelEx)ApplicationLibraryTable.getApplicationTable().getModifiableModel();
-      flexConfigEditor = createFlexConfigEditor(project, moduleToModifiableModelMap, globalLibrariesModifiableModel);
+      flexConfigEditor = FlexProjectConfigurationEditor.createEditor(project, moduleToModifiableModelMap, null, null);
       needToCommitFlexEditor = true;
       needToCommitRootModels = true;
     }
@@ -246,18 +235,12 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
 
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       public void run() {
-        if (PlatformUtils.isFlexIde()) {
-          if (globalLibrariesModifiableModel != null) {
-            globalLibrariesModifiableModel.commit();
+        if (PlatformUtils.isFlexIde() && needToCommitFlexEditor) {
+          try {
+            flexConfigEditor.commit();
           }
-
-          if (needToCommitFlexEditor) {
-            try {
-              flexConfigEditor.commit();
-            }
-            catch (ConfigurationException e) {
-              Logger.getInstance(FlashBuilderImporter.class).error(e);
-            }
+          catch (ConfigurationException e) {
+            Logger.getInstance(FlashBuilderImporter.class).error(e);
           }
         }
 
@@ -344,45 +327,5 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
       uniqueName = name + '(' + i++ + ')';
     }
     return uniqueName;
-  }
-
-  private static FlexProjectConfigurationEditor createFlexConfigEditor(final Project project,
-                                                                       final Map<Module, ModifiableRootModel> moduleToModifiableModelMap,
-                                                                       final LibraryTableBase.ModifiableModelEx globalLibrariesModifiableModel) {
-    final FlexProjectConfigurationEditor.ProjectModifiableModelProvider provider =
-      new FlexProjectConfigurationEditor.ProjectModifiableModelProvider() {
-        public Module[] getModules() {
-          final Set<Module> modules = moduleToModifiableModelMap.keySet();
-          return modules.toArray(new Module[modules.size()]);
-        }
-
-        public ModifiableRootModel getModuleModifiableModel(final Module module) {
-          return moduleToModifiableModelMap.get(module);
-        }
-
-        public void addListener(final FlexIdeBCConfigurator.Listener listener,
-                                final Disposable parentDisposable) {
-          // modules and BCs are not removed here
-        }
-
-        public void commitModifiableModels() throws ConfigurationException {
-          // commit will be performed outside of #setupRootModel()
-        }
-
-        public LibraryTableBase.ModifiableModelEx getLibrariesModifiableModel(final String level) {
-          if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(level)) {
-            return globalLibrariesModifiableModel;
-          }
-          else {
-            throw new UnsupportedOperationException();
-          }
-        }
-
-        public Sdk[] getAllSdks() {
-          return FlexProjectConfigurationEditor.getEditableFlexSdks(project);
-        }
-      };
-
-    return new FlexProjectConfigurationEditor(project, provider);
   }
 }

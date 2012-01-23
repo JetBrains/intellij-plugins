@@ -5,7 +5,6 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
@@ -15,7 +14,6 @@ import com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTe
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationType;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -24,9 +22,6 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
-import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
-import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -34,6 +29,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.Collections;
 
 public class FlexModuleBuilder extends ModuleBuilder {
 
@@ -100,7 +96,6 @@ public class FlexModuleBuilder extends ModuleBuilder {
     final VirtualFile sourceRoot = createSourceRoot(contentEntry);
 
     final Module module = modifiableRootModel.getModule();
-    final LibraryTableBase.ModifiableModelEx globalLibrariesModifiableModel;
 
     final FlexProjectConfigurationEditor currentFlexEditor =
       FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
@@ -108,15 +103,10 @@ public class FlexModuleBuilder extends ModuleBuilder {
 
     final FlexProjectConfigurationEditor flexConfigEditor;
 
-    if (currentFlexEditor != null) {
-      globalLibrariesModifiableModel = null;
-      flexConfigEditor = currentFlexEditor;
-    }
-    else {
-      globalLibrariesModifiableModel =
-        (LibraryTableBase.ModifiableModelEx)ApplicationLibraryTable.getApplicationTable().getModifiableModel();
-      flexConfigEditor = createFlexConfigEditor(modifiableRootModel, globalLibrariesModifiableModel);
-    }
+    flexConfigEditor = currentFlexEditor != null
+                       ? currentFlexEditor
+                       : FlexProjectConfigurationEditor
+                         .createEditor(module.getProject(), Collections.singletonMap(module, modifiableRootModel), null, null);
 
     final ModifiableFlexIdeBuildConfiguration[] configurations = flexConfigEditor.getConfigurations(module);
     assert configurations.length == 1;
@@ -147,68 +137,15 @@ public class FlexModuleBuilder extends ModuleBuilder {
       }
     }
 
-    commitIfNeeded(globalLibrariesModifiableModel, flexConfigEditor, needToCommitFlexEditor);
-  }
-
-  private static FlexProjectConfigurationEditor createFlexConfigEditor(final ModifiableRootModel modifiableRootModel,
-                                                                       final LibraryTableBase.ModifiableModelEx globalLibrariesModifiableModel) {
-    final Module module = modifiableRootModel.getModule();
-
-    final FlexProjectConfigurationEditor.ProjectModifiableModelProvider provider =
-      new FlexProjectConfigurationEditor.ProjectModifiableModelProvider() {
-        public Module[] getModules() {
-          return new Module[]{module};
-        }
-
-        public ModifiableRootModel getModuleModifiableModel(final Module moduleParam) {
-          assert moduleParam == module;
-          return modifiableRootModel;
-        }
-
-        public void addListener(final FlexIdeBCConfigurator.Listener listener,
-                                final Disposable parentDisposable) {
-          // modules and BCs are not removed here
-        }
-
-        public void commitModifiableModels() throws ConfigurationException {
-          // commit will be performed outside of #setupRootModel()
-        }
-
-        public LibraryTableBase.ModifiableModelEx getLibrariesModifiableModel(final String level) {
-          if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(level)) {
-            return globalLibrariesModifiableModel;
-          }
-          else {
-            throw new UnsupportedOperationException();
-          }
-        }
-
-        public Sdk[] getAllSdks() {
-          return FlexProjectConfigurationEditor.getEditableFlexSdks(module.getProject());
-        }
-      };
-
-    return new FlexProjectConfigurationEditor(modifiableRootModel.getProject(), provider);
-  }
-
-  private static void commitIfNeeded(final @Nullable LibraryTableBase.ModifiableModelEx globalLibrariesModifiableModel,
-                                     final FlexProjectConfigurationEditor flexConfigEditor,
-                                     final boolean needToCommitFlexEditor) throws ConfigurationException {
-    if (globalLibrariesModifiableModel != null || needToCommitFlexEditor) {
+    if (needToCommitFlexEditor) {
       final ConfigurationException exception =
         ApplicationManager.getApplication().runWriteAction(new NullableComputable<ConfigurationException>() {
           public ConfigurationException compute() {
-            if (globalLibrariesModifiableModel != null) {
-              globalLibrariesModifiableModel.commit();
+            try {
+              flexConfigEditor.commit();
             }
-
-            if (needToCommitFlexEditor) {
-              try {
-                flexConfigEditor.commit();
-              }
-              catch (ConfigurationException e) {
-                return e;
-              }
+            catch (ConfigurationException e) {
+              return e;
             }
 
             return null;

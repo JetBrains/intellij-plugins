@@ -3,24 +3,15 @@ package com.intellij.lang.javascript.flex.wizard;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleBuilder;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
-import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
-import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
@@ -31,8 +22,6 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import static com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor.ProjectModifiableModelProvider;
 
 public class FlexIdeModuleWizardForm {
 
@@ -53,12 +42,8 @@ public class FlexIdeModuleWizardForm {
   private FlexSdkComboBoxWithBrowseButton mySdkCombo;
   private JLabel mySdkLabel;
 
-  private FlexProjectConfigurationEditor myFlexConfigEditor;
-  private LibraryTableBase.ModifiableModelEx myGlobalLibrariesModifiableModel;
-
   private boolean myClassNameChangedByUser;
   private boolean mySettingModuleNameFromCode;
-  private boolean myNeedToDisposeFlexEditor;
 
   public FlexIdeModuleWizardForm() {
     mySdkLabel.setLabelFor(mySdkCombo.getChildComponent());
@@ -159,22 +144,6 @@ public class FlexIdeModuleWizardForm {
     myExpressInstallCheckBox.setEnabled(myHtmlWrapperCheckBox.isSelected() && myCheckPlayerVersionCheckBox.isSelected() && web && app);
   }
 
-  public void disposeUIResources() {
-    if (myGlobalLibrariesModifiableModel != null) {
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        public void run() {
-          myGlobalLibrariesModifiableModel.commit();
-          myGlobalLibrariesModifiableModel = null;
-        }
-      });
-    }
-
-    if (myNeedToDisposeFlexEditor) {
-      Disposer.dispose(myFlexConfigEditor);
-      myFlexConfigEditor = null;
-    }
-  }
-
   private void createUIComponents() {
     final FlexProjectConfigurationEditor currentFlexEditor =
       FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
@@ -195,52 +164,6 @@ public class FlexIdeModuleWizardForm {
         }
       }
     };
-
-    myNeedToDisposeFlexEditor = currentFlexEditor == null;
-
-    if (currentFlexEditor != null) {
-      myGlobalLibrariesModifiableModel = null;
-      myFlexConfigEditor = currentFlexEditor;
-    }
-    else {
-      final ProjectModifiableModelProvider provider = new ProjectModifiableModelProvider() {
-        public Module[] getModules() {
-          return new Module[0];
-        }
-
-        public ModifiableRootModel getModuleModifiableModel(final Module module) {
-          assert false;
-          return null;
-        }
-
-        public void addListener(final FlexIdeBCConfigurator.Listener listener, final Disposable parentDisposable) {
-          // neither module nor BC are removed here
-        }
-
-        public void commitModifiableModels() throws ConfigurationException {
-          assert false;
-        }
-
-        public LibraryTableBase.ModifiableModelEx getLibrariesModifiableModel(final String level) {
-          if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(level)) {
-            if (myGlobalLibrariesModifiableModel == null) {
-              myGlobalLibrariesModifiableModel =
-                (LibraryTableBase.ModifiableModelEx)ApplicationLibraryTable.getApplicationTable().getModifiableModel();
-            }
-            return myGlobalLibrariesModifiableModel;
-          }
-          else {
-            throw new UnsupportedOperationException();
-          }
-        }
-
-        public Sdk[] getAllSdks() {
-          return FlexProjectConfigurationEditor.getPersistedFlexSdks();
-        }
-      };
-
-      myFlexConfigEditor = new FlexProjectConfigurationEditor(null, provider);
-    }
   }
 
   public void applyTo(final FlexModuleBuilder moduleBuilder) {
