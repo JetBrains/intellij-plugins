@@ -17,6 +17,7 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -27,8 +28,6 @@ import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.xml.XmlFile;
-import com.intellij.util.Consumer;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.StringBuilderSpinAllocator;
@@ -39,7 +38,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @SuppressWarnings("MethodMayBeStatic")
 public class LibraryManager {
@@ -88,8 +90,7 @@ public class LibraryManager {
     final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter(16384);
     stringWriter.startChange();
     final AssetCounter assetCounter = new AssetCounter();
-    final LibraryCollector libraryCollector = new LibraryCollector(this, new LibraryStyleInfoCollector(new CssWriter(stringWriter,
-      problemsHolder, assetCounter), module, stringWriter), project);
+    final LibraryCollector libraryCollector = new LibraryCollector(this, new LibraryStyleInfoCollector(assetCounter, new CssWriter(stringWriter, problemsHolder, assetCounter), module, stringWriter), project);
 
     final Client client;
     try {
@@ -115,7 +116,7 @@ public class LibraryManager {
     }
 
     assert !libraryCollector.sdkLibraries.isEmpty();
-    final FlexLibrarySet flexLibrarySet = getOrCreateFlexLibrarySet(libraryCollector);
+    final FlexLibrarySet flexLibrarySet = getOrCreateFlexLibrarySet(libraryCollector, assetCounter);
     final InfoMap<Project, ProjectInfo> registeredProjects = client.getRegisteredProjects();
     ProjectInfo info = registeredProjects.getNullableInfo(project);
     if (info == null) {
@@ -157,8 +158,6 @@ public class LibraryManager {
     }
 
     client.registerModule(project, moduleInfo, stringWriter);
-
-    flexLibrarySet.assetCounterInfo.demanded.append(assetCounter);
     client.fillAssetClassPoolIfNeed(flexLibrarySet);
 
     module.getMessageBus().connect(moduleInfo).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
@@ -177,7 +176,7 @@ public class LibraryManager {
     return projectDocumentReferenceCounter;
   }
 
-  private FlexLibrarySet getOrCreateFlexLibrarySet(LibraryCollector libraryCollector) throws InitException {
+  private FlexLibrarySet getOrCreateFlexLibrarySet(LibraryCollector libraryCollector, AssetCounter assetCounter) throws InitException {
     final String key = createKey(libraryCollector.sdkLibraries);
     FlexLibrarySet flexLibrarySet = (FlexLibrarySet)librarySets.get(key);
     if (flexLibrarySet == null) {
@@ -195,7 +194,7 @@ public class LibraryManager {
         libraryCollector.getFlexSdkVersion(),
         globalContains);
 
-      flexLibrarySet = new FlexLibrarySet(id, null, sortResult.items, new ContainsCondition(globalDefinitions, sortResult.definitionMap));
+      flexLibrarySet = new FlexLibrarySet(id, null, sortResult.items, new ContainsCondition(globalDefinitions, sortResult.definitionMap), assetCounter);
       registerLibrarySet(key, flexLibrarySet);
     }
 
@@ -261,15 +260,14 @@ public class LibraryManager {
 
   // created library will be register later, in Client.registerLibrarySet, so, we expect that createOriginalLibrary never called with duplicated virtualFile, i.e.
   // sdkLibraries doesn't contain duplicated virtualFiles and externalLibraries too (http://youtrack.jetbrains.net/issue/AS-200)
-  Library createOriginalLibrary(@NotNull final VirtualFile jarFile, @NotNull final Consumer<Library> initializer) {
-    final Library info = libraries.getNullableInfo(jarFile);
-    if (info != null) {
-      return info;
+  Library createOriginalLibrary(@NotNull final VirtualFile jarFile, @NotNull final LibraryStyleInfoCollector processor) {
+    Library info = libraries.getNullableInfo(jarFile);
+    final boolean isNew = info == null;
+    if (isNew) {
+      info = new Library(jarFile);
     }
-
-    Library library = new Library(jarFile);
-    initializer.consume(library);
-    return library;
+    processor.process(info, isNew);
+    return info;
   }
 
   @SuppressWarnings("MethodMayBeStatic")
@@ -322,6 +320,8 @@ public class LibraryManager {
   }
 
   private static PropertiesFile virtualFileToProperties(Project project, VirtualFile file) {
-    return (PropertiesFile)PsiDocumentManager.getInstance(project).getPsiFile(FileDocumentManager.getInstance().getDocument(file));
+    Document document = FileDocumentManager.getInstance().getDocument(file);
+    assert document != null;
+    return (PropertiesFile)PsiDocumentManager.getInstance(project).getPsiFile(document);
   }
 }

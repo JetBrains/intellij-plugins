@@ -27,7 +27,6 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.containers.ContainerUtil;
@@ -46,7 +45,7 @@ class LibraryCollector {
   final List<Library> sdkLibraries = new ArrayList<Library>();
   private VirtualFile globalLibrary;
 
-  final Consumer<Library> initializer;
+  final LibraryStyleInfoCollector initializer;
   private final Project project;
   private String flexmojosFlexSdkRootPath;
 

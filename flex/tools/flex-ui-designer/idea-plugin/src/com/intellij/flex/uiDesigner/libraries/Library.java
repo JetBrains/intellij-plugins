@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.libraries;
 
+import com.intellij.flex.uiDesigner.AssetCounter;
 import com.intellij.flex.uiDesigner.io.Info;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashMap;
@@ -14,7 +15,10 @@ public class Library extends Info<VirtualFile> {
   static final String SWF = "library.swf";
 
   public byte[] inheritingStyles;
+  @Nullable
   public byte[] defaultsStyle;
+  @Nullable
+  public AssetCounter assetCounter;
 
   // en_US => {"layout", "components"}
   public final Map<String, THashSet<String>> resourceBundles = new THashMap<String, THashSet<String>>();

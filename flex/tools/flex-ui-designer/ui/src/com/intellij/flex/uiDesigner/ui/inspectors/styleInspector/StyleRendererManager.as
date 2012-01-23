@@ -91,10 +91,11 @@ public class StyleRendererManager extends TextRendererManager {
       textContainer = TextContainer(textEngine.layout.containers[0]);
     }
 
+    //noinspection UnnecessaryLocalVariableJS
     var textWidth:int = w - 10;
-    if (textContainer.explicitWidth != textContainer.explicitWidth || textContainer.explicitWidth > textWidth) {
+    //if (textContainer.explicitWidth != textContainer.explicitWidth || textContainer.explicitWidth > textWidth) {
       textContainer.explicitWidth = textWidth;
-    }
+    //}
 
     if (displayContainer.parent != _container) {
       _container.addChild(displayContainer);

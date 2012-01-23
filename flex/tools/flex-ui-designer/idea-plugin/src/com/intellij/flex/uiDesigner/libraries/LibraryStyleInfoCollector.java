@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.libraries;
 
+import com.intellij.flex.uiDesigner.AssetCounter;
 import com.intellij.flex.uiDesigner.css.CssWriter;
 import com.intellij.flex.uiDesigner.io.ByteArrayOutputStreamEx;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
@@ -9,7 +10,6 @@ import com.intellij.javascript.flex.css.FlexStyleIndexInfo;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.Consumer;
 import com.intellij.util.Processor;
 import com.intellij.util.indexing.FileBasedIndex;
 import gnu.trove.THashSet;
@@ -18,14 +18,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-class LibraryStyleInfoCollector implements Consumer<Library> {
+class LibraryStyleInfoCollector {
+  private final AssetCounter assetCounter;
   private final Module module;
 
   private final PrimitiveAmfOutputStream bytes = new PrimitiveAmfOutputStream(new ByteArrayOutputStreamEx(128));
   private final CssWriter cssWriter;
   private final StringWriter stringWriter;
 
-  public LibraryStyleInfoCollector(CssWriter cssWriter, Module module, StringWriter stringWriter) {
+  public LibraryStyleInfoCollector(AssetCounter assetCounter, CssWriter cssWriter, Module module, StringWriter stringWriter) {
+    this.assetCounter = assetCounter;
     this.module = module;
     this.cssWriter = cssWriter;
     this.stringWriter = stringWriter;
@@ -75,8 +77,12 @@ class LibraryStyleInfoCollector implements Consumer<Library> {
     }
   }
 
-  @Override
-  public void consume(Library library) {
+  public void process(Library library, boolean isNew) {
+    if (!isNew) {
+      assetCounter.append(library.assetCounter);
+      return;
+    }
+
     try {
       library.inheritingStyles = collectInherited(library.getFile());
     }
@@ -87,6 +93,8 @@ class LibraryStyleInfoCollector implements Consumer<Library> {
     VirtualFile defaultsCssVirtualFile = library.getDefaultsCssFile();
     if (defaultsCssVirtualFile != null) {
       library.defaultsStyle = cssWriter.write(defaultsCssVirtualFile, module);
+      library.assetCounter = new AssetCounter(assetCounter);
+      assetCounter.clear();
     }
   }
 }

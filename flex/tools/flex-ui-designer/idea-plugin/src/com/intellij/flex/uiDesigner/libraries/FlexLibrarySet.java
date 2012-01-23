@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.libraries;
 
+import com.intellij.flex.uiDesigner.AssetCounter;
 import com.intellij.flex.uiDesigner.AssetCounterInfo;
 import com.intellij.flex.uiDesigner.abc.AbcTranscoder;
 import com.intellij.openapi.util.Condition;
@@ -11,12 +12,13 @@ import java.util.List;
 import java.util.Set;
 
 public class FlexLibrarySet extends LibrarySet {
-  public final AssetCounterInfo assetCounterInfo = new AssetCounterInfo();
+  public final AssetCounterInfo assetCounterInfo;
   final ContainsCondition contains;
 
-  public FlexLibrarySet(int id, @Nullable LibrarySet parent, List<Library> items, ContainsCondition contains) {
+  public FlexLibrarySet(int id, @Nullable LibrarySet parent, List<Library> items, ContainsCondition contains, AssetCounter demanded) {
     super(id, parent, items);
     this.contains = contains;
+    assetCounterInfo = new AssetCounterInfo(demanded);
   }
 
   static class ContainsCondition implements Condition<String> {
