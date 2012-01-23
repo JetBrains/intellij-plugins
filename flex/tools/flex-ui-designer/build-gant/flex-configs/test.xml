@@ -16,9 +16,9 @@
 			<path-element>@@repo@@/org/flyti/foundation/1.2.7/foundation-1.2.7.swc</path-element>
 			<path-element>@@repo@@/org/jetbrains/miglayout/miglayout-core/4.3-SNAPSHOT/miglayout-core-4.3-SNAPSHOT.swc</path-element>
 			<path-element>@@target@@/shared-1.0-SNAPSHOT.swc</path-element>
-			<path-element>@@repo@@/org/tinytlf/layouts/1.1/layouts-1.1.swc</path-element>
-			<path-element>@@repo@@/org/tinytlf/core/1.1/core-1.1.swc</path-element>
-			<path-element>@@repo@@/org/tinytlf/fte-utils/1.1/fte-utils-1.1.swc</path-element>
+			<path-element>@@repo@@/org/tinytlf/layouts/1.1.1/layouts-1.1.1.swc</path-element>
+			<path-element>@@repo@@/org/tinytlf/core/1.1.1/core-1.1.1.swc</path-element>
+			<path-element>@@repo@@/org/tinytlf/fte-utils/1.1.1/fte-utils-1.1.1.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/framework-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/2.6/airglobal.swc</path-element>
 		</external-library-path>

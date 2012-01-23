@@ -68,6 +68,7 @@
 		<class>spark.components.Window</class>
 		<class>mx.styles.StyleProtoChain</class>
 		<class>mx.styles.StyleManager</class>
+		<class>mx.effects.Effect</class>
 		<class>mx.managers.LayoutManager</class>
 		<class>mx.managers.CursorManager</class>
 		<class>mx.resources.ResourceManager</class>
