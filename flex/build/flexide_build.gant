@@ -243,7 +243,7 @@ target('default': "Build artifacts") {
   String tarRoot = isEap() ? "${buildName}" : "${product}-${p("component.version.major")}.${p("component.version.minor")}"
   buildTarGz(tarRoot, "$paths.artifacts/${buildName}.tar", [paths.distAll, paths.distUnix])
 
-  buildExe("$home/python/build/flex-ide.exe4j", system_selector)
+  buildExe("$home/flex/build/flex-ide.exe4j", system_selector)
   buildWinZip("$paths.artifacts/${buildName}.zip", [paths.distAll, paths.distWin])
   buildNSIS([paths.distAll, paths.distWin],
             "$home/flex/build/strings.nsi", "$home/flex/build/paths.nsi",
