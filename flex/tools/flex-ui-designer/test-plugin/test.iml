@@ -59,9 +59,9 @@
     <orderEntry type="library" name="Maven: org.flyti:foundation:swc:1.2.7" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.miglayout:miglayout-core:swc:4.3-SNAPSHOT" level="project" />
     <orderEntry type="module" module-name="shared" />
-    <orderEntry type="library" name="Maven: org.tinytlf:layouts:swc:1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.tinytlf:core:swc:1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.tinytlf:fte-utils:swc:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.tinytlf:layouts:swc:1.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.tinytlf:core:swc:1.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.tinytlf:fte-utils:swc:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-as3:swc:1.1.4-SNAPSHOT" level="project" />
   </component>
 </module>

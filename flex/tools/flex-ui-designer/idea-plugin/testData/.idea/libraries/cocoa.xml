@@ -6,11 +6,11 @@
       <root url="jar://$MAVEN_REPOSITORY$/org/flyti/cocoa/cocoa/2.0-SNAPSHOT/cocoa-2.0-SNAPSHOT.swc!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/flyti/cocoa/acocoa/2.0-SNAPSHOT/acocoa-2.0-SNAPSHOT.swc!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/flyti/plexus/1.4/plexus-1.4.swc!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/tinytlf/core/1.1/core-1.1.swc!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/tinytlf/fte-utils/1.1/fte-utils-1.1.swc!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/tinytlf/core/1.1.1/core-1.1.1.swc!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/tinytlf/fte-utils/1.1.1/fte-utils-1.1.1.swc!/" />
       <root url="jar://$MAVEN_REPOSITORY$/flashx/textLayout/2.0.192-de1/textLayout-2.0.192-de1.swc!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/flyti/cocoa/aquaLaF/2.0-SNAPSHOT/aquaLaF-2.0-SNAPSHOT.swc!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/tinytlf/layouts/1.1/layouts-1.1.swc!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/tinytlf/layouts/1.1.1/layouts-1.1.1.swc!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
@@ -19,11 +19,11 @@
       <root url="jar://$MAVEN_REPOSITORY$/org/flyti/cocoa/cocoa/2.0-SNAPSHOT/cocoa-2.0-SNAPSHOT-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/flyti/cocoa/acocoa/2.0-SNAPSHOT/acocoa-2.0-SNAPSHOT-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/flyti/plexus/1.4/plexus-1.4-sources.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/tinytlf/core/1.1/core-1.1-sources.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/tinytlf/fte-utils/1.1/fte-utils-1.1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/tinytlf/core/1.1.1/core-1.1.1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/tinytlf/fte-utils/1.1.1/fte-utils-1.1.1-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/flashx/textLayout/2.0.192-de1/textLayout-2.0.192-de1-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/flyti/cocoa/aquaLaF/2.0-SNAPSHOT/aquaLaF-2.0-SNAPSHOT-sources.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/tinytlf/layouts/1.1/layouts-1.1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/tinytlf/layouts/1.1.1/layouts-1.1.1-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

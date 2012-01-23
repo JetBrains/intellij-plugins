@@ -61,9 +61,9 @@
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:airframework:rb.swc:4.5.2.21576" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:airspark:rb.swc:4.5.2.21576" level="project" />
     <orderEntry type="module" module-name="shared" />
-    <orderEntry type="library" name="Maven: org.tinytlf:layouts:swc:1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.tinytlf:core:swc:1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.tinytlf:fte-utils:swc:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.tinytlf:layouts:swc:1.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.tinytlf:core:swc:1.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.tinytlf:fte-utils:swc:1.1.1" level="project" />
   </component>
 </module>
 

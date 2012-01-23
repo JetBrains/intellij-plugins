@@ -71,7 +71,17 @@ public class StyleRendererManager extends TextRendererManager {
     var displayContainer:TinytlfSprite = TinytlfSprite(e.displayObject);
     var textEngine:ITextEngine = displayContainer.engine;
     var textContainer:TextContainer;
-    if (textEngine == null) {
+
+    var n:int = displayContainer.numChildren;
+    while (n-- > 0) {
+      displayContainer.removeChildAt(n);
+    }
+
+    // tinytlf has some issues with measuredHeight/totalHeight, so, we force update
+    // don't have time to fix magic issue right now
+    //if (textEngine == null) {
+    //noinspection ConstantIfStatementJS
+    if (true) {
       var stage:Stage = NativeApplication.nativeApplication.activeWindow.stage;
       assert(stage != null);
       textEngine = new TextEngine(stage);
@@ -93,9 +103,9 @@ public class StyleRendererManager extends TextRendererManager {
 
     //noinspection UnnecessaryLocalVariableJS
     var textWidth:int = w - 10;
-    //if (textContainer.explicitWidth != textContainer.explicitWidth || textContainer.explicitWidth > textWidth) {
+    if (textContainer.explicitWidth != textContainer.explicitWidth || textContainer.explicitWidth > textWidth) {
       textContainer.explicitWidth = textWidth;
-    //}
+    }
 
     if (displayContainer.parent != _container) {
       _container.addChild(displayContainer);
@@ -107,8 +117,7 @@ public class StyleRendererManager extends TextRendererManager {
     textEngine.blockFactory.data = item;
     textEngine.render();
 
-    // tinytlf has some issues with measuredHeight/totalHeight, so, use displayContainer.height
-    _lastCreatedRendererDimension = Math.ceil(displayContainer.height) + 10;
+    _lastCreatedRendererDimension = Math.ceil(textContainer.measuredHeight) + 10;
     return e;
   }
 

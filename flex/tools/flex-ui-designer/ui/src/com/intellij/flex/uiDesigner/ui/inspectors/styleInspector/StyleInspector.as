@@ -136,7 +136,8 @@ public class StyleInspector extends AbstractInspector implements StylePaneContex
         }
         else {
           var globalItem:StyleDeclarationGroupItem = createGroupItem(null);
-          if (source.indexOf(globalItem) == -1) {
+          var gI:Number = source.indexOf(globalItem);
+          if (gI == -1 || gI < sourceItemCounter) {
             source[allocatedGroupItemIndex] = globalItem;
           }
           else {
