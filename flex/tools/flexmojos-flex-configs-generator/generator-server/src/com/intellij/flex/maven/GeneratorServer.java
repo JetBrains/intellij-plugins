@@ -12,6 +12,7 @@ import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.properties.internal.EnvironmentUtils;
 import org.apache.maven.repository.RepositorySystem;
+import org.apache.maven.rtinfo.RuntimeInformation;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuilder;
@@ -25,6 +26,8 @@ import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.logging.Logger;
 import org.sonatype.aether.RepositorySystemSession;
+import org.sonatype.aether.impl.LocalRepositoryProvider;
+import org.sonatype.aether.impl.internal.DefaultLocalRepositoryProvider;
 import org.sonatype.aether.impl.internal.DefaultRepositorySystem;
 import org.sonatype.aether.repository.RepositoryPolicy;
 import org.sonatype.aether.spi.localrepo.LocalRepositoryManagerFactory;
@@ -34,6 +37,7 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
@@ -73,6 +77,7 @@ public class GeneratorServer {
     in = new DataInputStream(new BufferedInputStream(System.in));
 
     plexusContainer = createPlexusContainer();
+
     logger = plexusContainer.getLoggerManager().getLoggerForComponent(null);
     mavenPluginManager = plexusContainer.lookup(MavenPluginManager.class);
 
@@ -285,9 +290,21 @@ public class GeneratorServer {
   private static DefaultPlexusContainer createPlexusContainer() throws PlexusContainerException, ComponentLookupException {
     final DefaultPlexusContainer container = new DefaultPlexusContainer(new DefaultContainerConfiguration().setClassWorld(new ClassWorld("plexus.core", Thread.currentThread().getContextClassLoader())).setName("maven").setAutoWiring(true));
 
+    final List<LocalRepositoryManagerFactory> factoryList = Collections.singletonList(container.lookup(LocalRepositoryManagerFactory.class, "simple"));
+    final String mavenVersion = container.lookup(RuntimeInformation.class).getMavenVersion();
     // tracked impl is not suitable for us (our list of remote repo may be not equals — we don't want think about it)
-    ((DefaultRepositorySystem)container.lookup(org.sonatype.aether.RepositorySystem.class)).setLocalRepositoryManagerFactories(Collections.singletonList(
-      container.lookup(LocalRepositoryManagerFactory.class, "simple")));
+    if (mavenVersion.length() >= 5 && mavenVersion.charAt(2) == '0' && mavenVersion.charAt(4) < '4') {
+      final DefaultRepositorySystem repositorySystem = (DefaultRepositorySystem)container.lookup(org.sonatype.aether.RepositorySystem.class);
+      try {
+        repositorySystem.getClass().getMethod("setLocalRepositoryManagerFactories").invoke(repositorySystem, factoryList);
+      }
+      catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    else {
+      ((DefaultLocalRepositoryProvider)container.lookup(LocalRepositoryProvider.class)).setLocalRepositoryManagerFactories(factoryList);
+    }
     return container;
   }
 }

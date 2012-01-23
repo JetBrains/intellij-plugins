@@ -13,7 +13,7 @@
   <packaging>pom</packaging>
 
   <properties>
-    <maven.version>3.0.3</maven.version>
+    <maven.version>3.0.4</maven.version>
   </properties>
 
   <modules>
