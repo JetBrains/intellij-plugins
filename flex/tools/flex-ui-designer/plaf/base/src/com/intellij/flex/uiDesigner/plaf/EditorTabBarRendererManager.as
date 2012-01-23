@@ -64,13 +64,16 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
     var closeButton:SkinnableView = SkinnableView(ViewEntry(entry).view);
     var skin:View = closeButton.skin;
     if (skin == null) {
-      closeButton.addToSuperview(_textLineContainer, laf, null);
+      if (!_container.mouseChildren) {
+        _container.mouseChildren = true;
+      }
+      closeButton.addToSuperview(_container, laf, null);
       closeButton.setSize(closeButton.getPreferredWidth(), closeButton.getPreferredHeight());
     }
     else {
       var displayObject:DisplayObject = DisplayObject(skin);
       if (displayObject.parent == null) {
-        _textLineContainer.addChild(displayObject);
+        _container.addChild(displayObject);
       }
     }
 
