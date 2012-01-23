@@ -120,6 +120,8 @@ public class LiveObjectsView extends ProfileView implements Disposable {
       }
     });
 
+    liveObjectsTreeTable.getTree().setShowsRootHandles(true);
+
     profilingManager.startCollectingLiveObjects(new ProfilingManager.Callback() {
       @Override
       public void finished(@Nullable String data, @Nullable IOException ex) {
