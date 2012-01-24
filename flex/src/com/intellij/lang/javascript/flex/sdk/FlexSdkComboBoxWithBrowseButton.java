@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.flex.sdk;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -36,6 +35,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -49,17 +49,15 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     private Sdk mySdk;
   }
 
-  public static final Condition<Sdk> FLEX_RELATED_EXCEPT_FLEXMOJOS = new Condition<Sdk>() {
+  public static final Condition<Sdk> FLEX_SDK = new Condition<Sdk>() {
     public boolean value(final Sdk sdk) {
-      return sdk != null &&
-             sdk.getSdkType() instanceof IFlexSdkType &&
-             ((IFlexSdkType)sdk.getSdkType()).getSubtype() != IFlexSdkType.Subtype.Flexmojos;
+      return sdk != null && sdk.getSdkType() instanceof FlexSdkType2;
     }
   };
 
-  public static final Condition<Sdk> FLEX_RELATED_SDK = new Condition<Sdk>() {
+  public static final Condition<Sdk> FLEX_OR_FLEXMOJOS_SDK = new Condition<Sdk>() {
     public boolean value(final Sdk sdk) {
-      return sdk != null && (sdk.getSdkType() instanceof IFlexSdkType);
+      return sdk != null && (sdk.getSdkType() instanceof FlexSdkType2 || sdk.getSdkType() instanceof FlexmojosSdkType);
     }
   };
 
@@ -71,7 +69,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
   private boolean myShowModuleSdk = false;
 
   public FlexSdkComboBoxWithBrowseButton() {
-    this(FLEX_RELATED_EXCEPT_FLEXMOJOS);
+    this(FLEX_SDK);
   }
 
   public FlexSdkComboBoxWithBrowseButton(final Condition<Sdk> sdkEvaluator) {
@@ -190,8 +188,16 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     }
   }
 
-  protected Sdk[] getAllSdks() {
-    return ProjectJdkTable.getInstance().getAllJdks();
+  private static Sdk[] getAllSdks() {
+    final FlexProjectConfigurationEditor currentEditor = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
+    if (currentEditor == null) {
+      return ProjectJdkTable.getInstance().getAllJdks();
+    }
+    else {
+      final Collection<Sdk> sdks =
+        ProjectStructureConfigurable.getInstance(currentEditor.getProject()).getProjectJdksModel().getProjectSdks().values();
+      return sdks.toArray(new Sdk[sdks.size()]);
+    }
   }
 
   public void addComboboxListener(final Listener listener) {
@@ -350,8 +356,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     }
 
     public void createAddActions(final DefaultActionGroup group, final JComponent parent, final Consumer<Sdk> updateTree) {
-      myOriginal.createAddActions(group, parent,
-                             updateTree);
+      myOriginal.createAddActions(group, parent, updateTree);
     }
 
     public void doAdd(final SdkType type, final Consumer<Sdk> updateTree) {

@@ -8,7 +8,9 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfiguration
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.*;
+import com.intellij.openapi.module.ModifiableModuleModel;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -23,7 +25,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
 import com.intellij.projectImport.ProjectImportBuilder;
 import com.intellij.util.PathUtil;
-import com.intellij.util.PlatformUtils;
 import com.intellij.util.io.ZipUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -153,7 +154,7 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
                              final ModifiableArtifactModel artifactModel) {
     //FlexModuleBuilder.setupResourceFilePatterns(project);
 
-    final boolean needToCommitModuleModel = model == null;
+    final boolean needToCommit = model == null;
     final ModifiableModuleModel moduleModel = model != null ? model : ModuleManager.getInstance(project).getModifiableModel();
 
     final List<String> paths = getList();
@@ -161,15 +162,14 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
     final List<String> dotProjectPaths = getDotProjectPaths(project);
     final List<FlashBuilderProject> flashBuilderProjects = FlashBuilderProjectLoadUtil.loadProjects(dotProjectPaths, isArchive);
 
-    final ModuleType moduleType = PlatformUtils.isFlexIde() ? FlexModuleType.getInstance() : StdModuleTypes.JAVA;
-
     final Map<FlashBuilderProject, ModifiableRootModel> flashBuilderProjectToModifiableModelMap =
       new THashMap<FlashBuilderProject, ModifiableRootModel>();
     final Map<Module, ModifiableRootModel> moduleToModifiableModelMap = new THashMap<Module, ModifiableRootModel>();
     final Set<String> moduleNames = new THashSet<String>(flashBuilderProjects.size());
 
     final FlexProjectConfigurationEditor currentFlexEditor =
-      PlatformUtils.isFlexIde() ? FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor() : null;
+      FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
+    assert needToCommit == (currentFlexEditor == null);
 
     for (FlashBuilderProject flashBuilderProject : flashBuilderProjects) {
       final String moduleName = makeUnique(flashBuilderProject.getName(), moduleNames);
@@ -185,46 +185,22 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
         });
       }
 
-      final Module module = moduleModel.newModule(moduleFilePath, moduleType);
-      final ModifiableRootModel rootModel;
-      if (PlatformUtils.isFlexIde() && currentFlexEditor != null) {
-        rootModel = currentFlexEditor.getModifiableRootModel(module);
-      }
-      else {
-        rootModel = ModuleRootManager.getInstance(module).getModifiableModel();
-      }
+      final Module module = moduleModel.newModule(moduleFilePath, FlexModuleType.getInstance());
+      final ModifiableRootModel rootModel = currentFlexEditor != null
+                                            ? currentFlexEditor.getModifiableRootModel(module)
+                                            : ModuleRootManager.getInstance(module).getModifiableModel();
 
       flashBuilderProjectToModifiableModelMap.put(flashBuilderProject, rootModel);
       moduleToModifiableModelMap.put(module, rootModel);
     }
 
-
-    final FlexProjectConfigurationEditor flexConfigEditor;
-    final boolean needToCommitFlexEditor;
-    final boolean needToCommitRootModels;
-
-    if (!PlatformUtils.isFlexIde()) {
-      flexConfigEditor = null;
-      needToCommitFlexEditor = false;
-      needToCommitRootModels = true;
-    }
-    else if (currentFlexEditor != null) {
-      flexConfigEditor = currentFlexEditor;
-      needToCommitFlexEditor = false;
-      needToCommitRootModels = false;
-    }
-    else {
-      flexConfigEditor = FlexProjectConfigurationEditor.createEditor(project, moduleToModifiableModelMap, null, null);
-      needToCommitFlexEditor = true;
-      needToCommitRootModels = true;
-    }
-
-    if (needToCommitModuleModel) {
-      assert needToCommitRootModels;
-    }
+    final FlexProjectConfigurationEditor flexConfigEditor = currentFlexEditor != null
+                                                            ? currentFlexEditor
+                                                            : FlexProjectConfigurationEditor
+                                                              .createEditor(project, moduleToModifiableModelMap, null, null);
 
     final FlashBuilderSdkFinder sdkFinder =
-      new FlashBuilderSdkFinder(project, flexConfigEditor, getParameters().myInitiallySelectedPath, flashBuilderProjects);
+      new FlashBuilderSdkFinder(project, getParameters().myInitiallySelectedPath, flashBuilderProjects);
 
     final FlashBuilderModuleImporter flashBuilderModuleImporter =
       new FlashBuilderModuleImporter(project, flexConfigEditor, flashBuilderProjects, sdkFinder);
@@ -233,28 +209,23 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
       flashBuilderModuleImporter.setupModule(flashBuilderProjectToModifiableModelMap.get(flashBuilderProject), flashBuilderProject);
     }
 
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      public void run() {
-        if (PlatformUtils.isFlexIde() && needToCommitFlexEditor) {
+    if (needToCommit) {
+      ApplicationManager.getApplication().runWriteAction(new Runnable() {
+        public void run() {
           try {
             flexConfigEditor.commit();
+
+            final ModifiableRootModel[] rootModels =
+              moduleToModifiableModelMap.values().toArray(new ModifiableRootModel[moduleToModifiableModelMap.size()]);
+
+            ProjectRootManager.getInstance(project).multiCommit(moduleModel, rootModels);
           }
           catch (ConfigurationException e) {
             Logger.getInstance(FlashBuilderImporter.class).error(e);
           }
         }
-
-        final Collection<ModifiableRootModel> rootModels = moduleToModifiableModelMap.values();
-        if (needToCommitModuleModel) {
-          ProjectRootManager.getInstance(project).multiCommit(moduleModel, rootModels.toArray(new ModifiableRootModel[rootModels.size()]));
-        }
-        else if (needToCommitRootModels) {
-          for (ModifiableRootModel rootModel : rootModels) {
-            rootModel.commit();
-          }
-        }
-      }
-    });
+      });
+    }
 
     return new ArrayList<Module>(moduleToModifiableModelMap.keySet());
   }

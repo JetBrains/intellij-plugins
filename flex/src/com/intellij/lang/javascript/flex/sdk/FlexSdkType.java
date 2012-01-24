@@ -45,17 +45,13 @@ public class FlexSdkType extends SdkType implements IFlexSdkType {
   }
 
   public String suggestSdkName(final String currentSdkName, final String sdkHome) {
-    return suggestSdkName(sdkHome, this);
-  }
-
-  public static String suggestSdkName(String sdkHome, @Nullable SdkType sdkType) {
     final VirtualFile sdkRoot = LocalFileSystem.getInstance().findFileByPath(sdkHome);
     String name = sdkHome.substring(sdkHome.lastIndexOf('/') + 1);
     if (sdkRoot != null) {
-      final String targetPlayerVersion = TargetPlayerUtils.getTargetPlayerFromConfigXmlFile(sdkRoot, sdkType);
-      if (targetPlayerVersion != null && targetPlayerVersion.length() > 0){
+      final String targetPlayerVersion = TargetPlayerUtils.getTargetPlayerFromConfigXmlFile(sdkRoot, this);
+      if (targetPlayerVersion != null && targetPlayerVersion.length() > 0) {
         final Pair<String, String> majorMinor = TargetPlayerUtils.getPlayerMajorMinorVersion(targetPlayerVersion);
-        name +=" (player " + majorMinor.first + "." + majorMinor.second + ")";
+        name += " (player " + majorMinor.first + "." + majorMinor.second + ")";
       }
     }
     return name;

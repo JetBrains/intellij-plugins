@@ -7,6 +7,7 @@ import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.facet.FacetManager;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
@@ -63,7 +64,8 @@ public class FlexSdkUtils {
   static final String TARGET_PLAYER_MAJOR_VERSION_TOKEN = "{targetPlayerMajorVersion}";
   static final String TARGET_PLAYER_MINOR_VERSION_TOKEN = "{targetPlayerMinorVersion}";
   static final String LOCALE_TOKEN = "{locale}";
-  public static final String ADL_RELATIVE_PATH = File.separatorChar + "bin" + File.separatorChar + "adl" + (SystemInfo.isWindows ? ".exe" : "");
+  public static final String ADL_RELATIVE_PATH =
+    File.separatorChar + "bin" + File.separatorChar + "adl" + (SystemInfo.isWindows ? ".exe" : "");
   static final String AIR_RUNTIME_RELATIVE_PATH =
     File.separatorChar + "runtimes" + File.separatorChar + "air" + File.separatorChar +
     (SystemInfo.isWindows ? "win" : (SystemInfo.isLinux ? "linux" : "mac"));
@@ -88,6 +90,7 @@ public class FlexSdkUtils {
     if (sdkRoot == null || !sdkRoot.isValid()) {
       return;
     }
+    PropertiesComponent.getInstance().setValue(FlexSdkType2.LAST_SELECTED_FLEX_SDK_HOME_KEY, sdkRoot.getPath());
     sdkRoot.refresh(false, true);
 
 
@@ -326,14 +329,13 @@ public class FlexSdkUtils {
 
   @Nullable
   public static Sdk createOrGetSdk(final SdkType sdkType, final String path) {
-    if (path == null || LocalFileSystem.getInstance().findFileByPath(path) == null) {
-      return null;
-    }
-    final String sdkHomePath = FileUtil.toSystemIndependentName(path);
+    // todo work with sdk modifiable model if Project Structure is open!
+    final VirtualFile sdkHome = path == null ? null : LocalFileSystem.getInstance().findFileByPath(path);
+    if (sdkHome == null) return null;
     final ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
     for (final Sdk flexSdk : projectJdkTable.getSdksOfType(sdkType)) {
       final String existingHome = flexSdk.getHomePath();
-      if (existingHome != null && sdkHomePath.equals(FileUtil.toSystemIndependentName(existingHome))) {
+      if (existingHome != null && sdkHome.getPath().equals(FileUtil.toSystemIndependentName(existingHome))) {
         if (sdkType instanceof FlexmojosSdkType) {
           final SdkAdditionalData data = flexSdk.getSdkAdditionalData();
           if (data == null || ((FlexmojosSdkAdditionalData)data).getFlexCompilerClasspath().isEmpty()) {
@@ -343,7 +345,7 @@ public class FlexSdkUtils {
         return flexSdk;
       }
     }
-    return createSdk(sdkType, sdkHomePath);
+    return createSdk(sdkType, sdkHome.getPath());
   }
 
   private static Sdk createSdk(final SdkType sdkType, final @NotNull String sdkHomePath) {

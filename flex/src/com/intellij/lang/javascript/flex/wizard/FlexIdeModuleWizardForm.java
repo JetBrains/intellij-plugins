@@ -2,16 +2,12 @@ package com.intellij.lang.javascript.flex.wizard;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleBuilder;
-import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
-import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
@@ -142,28 +138,6 @@ public class FlexIdeModuleWizardForm {
     myEnableHistoryCheckBox.setEnabled(myHtmlWrapperCheckBox.isSelected() && web && app);
     myCheckPlayerVersionCheckBox.setEnabled(myHtmlWrapperCheckBox.isSelected() && web && app);
     myExpressInstallCheckBox.setEnabled(myHtmlWrapperCheckBox.isSelected() && myCheckPlayerVersionCheckBox.isSelected() && web && app);
-  }
-
-  private void createUIComponents() {
-    final FlexProjectConfigurationEditor currentFlexEditor =
-      FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
-
-    final Condition<Sdk> condition = new Condition<Sdk>() {
-      public boolean value(final Sdk sdk) {
-        return sdk != null && sdk.getSdkType() == FlexSdkType2.getInstance();
-      }
-    };
-
-    mySdkCombo = new FlexSdkComboBoxWithBrowseButton(condition) {
-      protected Sdk[] getAllSdks() {
-        if (currentFlexEditor != null) {
-          return FlexProjectConfigurationEditor.getEditableFlexSdks(currentFlexEditor.getProject());
-        }
-        else {
-          return super.getAllSdks();
-        }
-      }
-    };
   }
 
   public void applyTo(final FlexModuleBuilder moduleBuilder) {

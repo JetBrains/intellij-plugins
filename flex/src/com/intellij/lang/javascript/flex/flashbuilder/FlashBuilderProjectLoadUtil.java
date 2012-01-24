@@ -80,6 +80,7 @@ public class FlashBuilderProjectLoadUtil {
     assert ApplicationManager.getApplication().isUnitTestMode();
     final FlashBuilderProject fbProject = new FlashBuilderProject();
     fbProject.setName(name);
+    fbProject.setCompilerOutputType(FlexBuildConfiguration.LIBRARY);
     return fbProject;
   }
 

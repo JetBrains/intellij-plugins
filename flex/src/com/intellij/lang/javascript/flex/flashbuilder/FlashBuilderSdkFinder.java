@@ -1,15 +1,11 @@
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
-import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
-import com.intellij.lang.javascript.flex.sdk.AirSdkType;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
@@ -18,7 +14,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.PlatformUtils;
 import gnu.trove.THashSet;
 import org.jdom.Attribute;
 import org.jdom.Document;
@@ -45,25 +40,20 @@ public class FlashBuilderSdkFinder {
   private String myWorkspacePath;
   private Map<String, String> mySdkNameToRootPath = new HashMap<String, String>();
   private Sdk mySdk;
-  private String mySdkHome;
   private boolean myDialogWasShown = false;
 
   private static final String FLEX_SDK_PROPERTY = "com.adobe.flexbuilder.project.flex_sdks";
   private static final String SDKS_ELEMENT = "sdks";
-  private static final String SDKS_FOLDER = "sdks";
+  public static final String SDKS_FOLDER = "sdks";
   private static final String SDK_ELEMENT = "sdk";
   private static final String DEFAULT_SDK_ATTR = "defaultSDK";
   private static final String SDK_NAME_ATTR = "name";
   private static final String SDK_LOCATION_ATTR = "location";
 
-  private FlexProjectConfigurationEditor myFlexConfigEditor;
-
   public FlashBuilderSdkFinder(final Project project,
-                               final FlexProjectConfigurationEditor flexConfigEditor,
                                final String initiallySelectedPath,
                                final List<FlashBuilderProject> allProjects) {
     myProject = project;
-    myFlexConfigEditor = flexConfigEditor;
     myInitiallySelectedPath = initiallySelectedPath;
     myAllProjects = allProjects;
   }
@@ -102,47 +92,18 @@ public class FlashBuilderSdkFinder {
   }
 
   @Nullable
-  public String findSdkHome(final FlashBuilderProject fbProject) {
-    assert PlatformUtils.isFlexIde();
-
-    if (!myInitialized) {
-      initialize();
-      myInitialized = true;
-    }
-
-    final String sdkHome = mySdkNameToRootPath.get(fbProject.getSdkName());
-    if (sdkHome != null) return sdkHome;
-
-    if (myDialogWasShown) return mySdkHome;
-
-    final FlashBuilderSdkDialog dialog = new FlashBuilderSdkDialog(myProject, myFlexConfigEditor, myAllProjects.size());
-    if (!ApplicationManager.getApplication().isUnitTestMode()) {
-      dialog.show();
-    }
-    else {
-      dialog.close(DialogWrapper.CANCEL_EXIT_CODE);
-    }
-    myDialogWasShown = true;
-    mySdkHome = dialog.isOK() ? dialog.getSdkHome() : null;
-
-    return mySdkHome;
-  }
-
-  @Nullable
   public Sdk findSdk(final FlashBuilderProject fbProject) {
-    assert !PlatformUtils.isFlexIde();
-
     if (!myInitialized) {
       initialize();
       myInitialized = true;
     }
 
     final String sdkHome = mySdkNameToRootPath.get(fbProject.getSdkName());
-    if (sdkHome != null) return createOrGetSdk(sdkHome, fbProject.getProjectType());
+    if (sdkHome != null) return FlexSdkUtils.createOrGetSdk(FlexSdkType2.getInstance(), sdkHome);
 
     if (myDialogWasShown) return mySdk;
 
-    final FlashBuilderSdkDialog dialog = new FlashBuilderSdkDialog(myProject, myFlexConfigEditor, myAllProjects.size());
+    final FlashBuilderSdkDialog dialog = new FlashBuilderSdkDialog(myProject, myAllProjects.size());
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
       dialog.show();
     }
@@ -213,7 +174,7 @@ public class FlashBuilderSdkFinder {
   }
 
   @Nullable
-  private static String findFBInstallationPath() {
+  public static String findFBInstallationPath() {
     final String programsPath = SystemInfo.isMac ? "/Applications" : SystemInfo.isWindows ? System.getenv("ProgramFiles") : null;
     final File programsDir = programsPath == null ? null : new File(programsPath);
     if (programsDir == null || !programsDir.isDirectory()) return null;
@@ -309,16 +270,5 @@ public class FlashBuilderSdkFinder {
     catch (JDOMException e) {/*ignore*/}
 
     return null;
-  }
-
-  @Nullable
-  private static Sdk createOrGetSdk(final String sdkHomePath, final FlashBuilderProject.ProjectType projectType) {
-    //noinspection RedundantCast
-    final SdkType sdkType = projectType == FlashBuilderProject.ProjectType.AIR
-                            ? (SdkType)AirSdkType.getInstance()
-                            : projectType == FlashBuilderProject.ProjectType.MobileAIR
-                              ? (SdkType)AirMobileSdkType.getInstance()
-                              : (SdkType)FlexSdkType.getInstance();
-    return FlexSdkUtils.createOrGetSdk(sdkType, sdkHomePath);
   }
 }

@@ -1,10 +1,13 @@
 package com.intellij.lang.javascript.flex.sdk;
 
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.flex.FlexFacetType;
+import com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderSdkFinder;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.util.PathUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +17,7 @@ import javax.swing.*;
 public class FlexSdkType2 extends SdkType {
 
   public static final String NAME = "Flex SDK Type (new)";
+  public static final String LAST_SELECTED_FLEX_SDK_HOME_KEY = "last.selected.flex.sdk.home";
 
   public FlexSdkType2() {
     super(NAME);
@@ -21,7 +25,11 @@ public class FlexSdkType2 extends SdkType {
 
   @Nullable
   public String suggestHomePath() {
-    return null; // TODO detect Flash Builder installation? check env variables?
+    final String path = PropertiesComponent.getInstance().getValue(LAST_SELECTED_FLEX_SDK_HOME_KEY);
+    if (path != null) return PathUtil.getParentPath(path);
+
+    final String fbInstallation = FlashBuilderSdkFinder.findFBInstallationPath();
+    return fbInstallation == null ? null : fbInstallation + "/" + FlashBuilderSdkFinder.SDKS_FOLDER;
   }
 
   public boolean isValidSdkHome(final String path) {
@@ -29,7 +37,7 @@ public class FlexSdkType2 extends SdkType {
   }
 
   public String suggestSdkName(final String currentSdkName, final String sdkHome) {
-    return FlexSdkType.suggestSdkName(sdkHome, FlexSdkType.getInstance());
+    return PathUtil.getFileName(sdkHome);
   }
 
   public AdditionalDataConfigurable createAdditionalDataConfigurable(final SdkModel sdkModel, final SdkModificator sdkModificator) {

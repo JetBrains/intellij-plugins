@@ -6,10 +6,7 @@ import com.intellij.openapi.util.Pair;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class FlashBuilderProject {
 
@@ -28,7 +25,7 @@ public class FlashBuilderProject {
   private String myTargetPlayerVersion;
   private String myAdditionalCompilerOptions = "";
   private boolean myUseHtmlWrapper = false;
-  private Map<String, Collection<String>> myLibraryPathsAndSources = new THashMap<String, Collection<String>>();
+  private Map<String, Collection<String>> myLibraryPathsAndSources = new LinkedHashMap<String, Collection<String>>();
   private Collection<Pair<String, String>> myNamespacesAndManifestPaths = new ArrayList<Pair<String, String>>(1);
   private Collection<Pair<String, String>> myModules = new ArrayList<Pair<String, String>>();
   private Collection<String> myCssFilesToCompile = new ArrayList<String>();
