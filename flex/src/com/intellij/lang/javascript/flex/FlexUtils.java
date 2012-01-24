@@ -27,7 +27,6 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
@@ -46,7 +45,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.*;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.PathUtil;
+import com.intellij.util.Processor;
+import com.intellij.util.SystemProperties;
 import com.intellij.util.xml.NanoXmlUtil;
 import com.intellij.util.xml.XmlFileHeader;
 import org.jetbrains.annotations.NonNls;
@@ -202,20 +204,9 @@ public class FlexUtils {
 
   @Nullable
   public static Sdk getFlexSdkForFlexModuleOrItsFlexFacets(final @NotNull Module module) {
-    // TODO: some tests use not correct configuration: Java module with facet(s), but Flex SDK is configured for module rather than for facets
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
-      final Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
-      if (sdk != null && sdk.getSdkType() instanceof IFlexSdkType) {
-        return sdk;
-      }
-    }
-    else {
-      return ModuleType.get(module) instanceof FlexModuleType
-             ? createFlexSdkWrapper(FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration())
-             : null;
-    }
-
-    return null;
+    return ModuleType.get(module) instanceof FlexModuleType
+           ? createFlexSdkWrapper(FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration())
+           : null;
   }
 
   @Nullable
