@@ -210,19 +210,18 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
     }
 
     if (needToCommit) {
+      try {
+        flexConfigEditor.commit();
+      }
+      catch (ConfigurationException e) {
+        Logger.getInstance(FlashBuilderImporter.class).error(e);
+      }
+
       ApplicationManager.getApplication().runWriteAction(new Runnable() {
         public void run() {
-          try {
-            flexConfigEditor.commit();
-
-            final ModifiableRootModel[] rootModels =
-              moduleToModifiableModelMap.values().toArray(new ModifiableRootModel[moduleToModifiableModelMap.size()]);
-
-            ProjectRootManager.getInstance(project).multiCommit(moduleModel, rootModels);
-          }
-          catch (ConfigurationException e) {
-            Logger.getInstance(FlashBuilderImporter.class).error(e);
-          }
+          final ModifiableRootModel[] rootModels =
+            moduleToModifiableModelMap.values().toArray(new ModifiableRootModel[moduleToModifiableModelMap.size()]);
+          ProjectRootManager.getInstance(project).multiCommit(moduleModel, rootModels);
         }
       });
     }

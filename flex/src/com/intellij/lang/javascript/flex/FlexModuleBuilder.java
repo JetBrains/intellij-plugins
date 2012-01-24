@@ -138,23 +138,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
     }
 
     if (needToCommitFlexEditor) {
-      final ConfigurationException exception =
-        ApplicationManager.getApplication().runWriteAction(new NullableComputable<ConfigurationException>() {
-          public ConfigurationException compute() {
-            try {
-              flexConfigEditor.commit();
-            }
-            catch (ConfigurationException e) {
-              return e;
-            }
-
-            return null;
-          }
-        });
-
-      if (exception != null) {
-        throw exception;
-      }
+      flexConfigEditor.commit();
     }
   }
 
