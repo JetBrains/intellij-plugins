@@ -120,9 +120,7 @@ target('default': "Build artifacts") {
 
   loadProject()
 
-  processLaunchProperties() {
-    pair -> project.info("launch property: " + pair["key"] + "=" + pair["value"])
-  }
+  processLaunchProperties() { k, v -> project.info("launch property: ${k}=${v}") }
 
   project.targetFolder = "$paths.sandbox/classes"
   project.dryRun = dryRun
@@ -214,23 +212,23 @@ target('default': "Build artifacts") {
   }, "-Didea.platform.prefix=Flex -Didea.no.jre.check=true")
 
   String vmOptions = common_vmoptions
-  processLaunchProperties() { pair -> vmOptions += " -D${pair["key"]}=${pair["value"]}" }
+  processLaunchProperties() { k, v -> vmOptions += " -D${k}=${v}" }
   binding.setVariable("common_vmoptions", "$vmOptions".trim())
-
-  wireBuildDate("${productCode}-${buildNumber}", appInfoFile())
-  LayoutInfo layoutInfo = layoutFull(paths.distAll, usedJars)
-  generateLicensesTable("$paths.artifacts/third-party-libraries.txt", layoutInfo.usedModules);
-
-  // TODO let's turn scrambling off for now
-  //scramble()
-
-  ant.echo(message: "${productCode}-${buildNumber}", file: "$paths.distAll/build.txt")
 
   Map args = [
           fullName: "Astella",
           buildNumber: buildName,
           system_selector: system_selector,
           ide_jvm_args: "-Didea.platform.prefix=Flex -Didea.no.jre.check=true"]
+
+  wireBuildDate("${productCode}-${buildNumber}", appInfoFile())
+  LayoutInfo layoutInfo = layoutFull(args, paths.distAll, usedJars)
+  generateLicensesTable("$paths.artifacts/third-party-libraries.txt", layoutInfo.usedModules);
+
+  // TODO let's turn scrambling off for now
+  //scramble()
+
+  ant.echo(message: "${productCode}-${buildNumber}", file: "$paths.distAll/build.txt")
 
   layoutWin(args, paths.distWin)
   layoutMac(args, paths.distMac)
@@ -281,12 +279,15 @@ private String appInfoFile() {
   return "$home/out/flex-ide/classes/production/flex-ide/idea/FlexApplicationInfo.xml"
 }
 
-private layoutFull(String target, Set usedJars) {
+private layoutFull(Map args, String target, Set usedJars) {
   def implementationModules = [platformImplementationModules(), "flex-ide"].flatten()
 
   def result = layout(target) {
     dir("bin") {
-      fileset(file: "$home/community/bin/log.xml")
+      fileset(dir: "$home/community/bin") {
+        exclude(name: "appletviewer.policy")
+        include(name: "*.*")
+      }
     }
 
     dir("lib") {
@@ -387,6 +388,8 @@ private layoutFull(String target, Set usedJars) {
     setProperty("buildFlexToolPlugins", true)
     layouts.layoutPlugins()
   }
+  patchPropertiesFile(target, args + [appendices: ["$home/build/conf/ideaJNC.properties"]])
+
   return result
 }
 
@@ -421,12 +424,10 @@ private layoutMac(Map _args, String target) {
   args.icns = "$home/flex/ideResources/artwork/flexide.icns"
   args.bundleIdentifier = "com.jetbrains.flexide"
   args.platform_prefix = "Flex"
-  args."idea.properties.path" = "$home/flex/build/idea.properties"
+  args."idea.properties.path" = "${paths.distAll}/bin/idea.properties"
 
-  Map launchProps = new HashMap()
-  processLaunchProperties() {
-    pair -> launchProps[pair["key"]] = pair["value"]
-  }
+  Map launchProps = ["idea.no.jre.check": true]
+  processLaunchProperties() { k, v -> launchProps[k] = v }
   if (!launchProps.empty) {
     args["idea.properties"] = launchProps
   }
@@ -443,15 +444,12 @@ private layoutWin(Map args, String target) {
         exclude(name: "breakgen*")
       }
       fileset(file: "$home/bin/yjpagent.dll")
-      fileset(file: "$home/flex/build/idea.properties")
     }
 
     dir("help") {
       fileset(file: "$home/flex/keymap/ReferenceCard.pdf")
     }
   }
-
-  patchPropertiesFile(target)
 
   winScripts(target, "$home/community", "astella.bat", args)
   winVMOptions(target, system_selector, "astella.exe")
@@ -468,7 +466,6 @@ private layoutUnix(Map args, String target) {
       fileset(dir: "$home/bin") {
         include(name: "*.so")
       }
-      fileset(file: "$home/flex/build/idea.properties")
       renamedFile("$home/flex/ideResources/artwork/flexide.png", "astella.png")
     }
 
@@ -476,8 +473,6 @@ private layoutUnix(Map args, String target) {
       fileset(file: "$home/flex/keymap/ReferenceCard.pdf")
     }
   }
-
-  patchPropertiesFile(target)
 
   unixScripts(target, "$home/community", "astella.sh", args)
   unixVMOptions(target, "astella")
