@@ -3,17 +3,16 @@ package com.intellij.lang.javascript.flex.build;
 import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
-import com.intellij.facet.FacetManager;
-import com.intellij.lang.javascript.flex.*;
+import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.TargetPlayerUtils;
 import com.intellij.lang.javascript.flex.actions.htmlwrapper.CreateHtmlWrapperAction;
-import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
-import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
-import com.intellij.lang.javascript.flex.run.RunMainClassPrecompileTask;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkAdditionalData;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.application.ApplicationManager;
@@ -21,7 +20,6 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
@@ -35,7 +33,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.PlatformUtils;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -76,6 +73,11 @@ public class FlexCompiler implements SourceProcessingCompiler {
       flexCompilerHandler.getCompilerDependenciesCache().clear();
     }
 
+    if (!itemList.isEmpty() && context.isRebuild()) {
+      final FlexCompilerHandler flexCompilerHandler = FlexCompilerHandler.getInstance(context.getProject());
+      flexCompilerHandler.quitCompilerShell();
+      flexCompilerHandler.getCompilerDependenciesCache().clear();
+    }
     return itemList.toArray(new ProcessingItem[itemList.size()]);
   }
 
@@ -95,38 +97,6 @@ public class FlexCompiler implements SourceProcessingCompiler {
   }
 
   public ProcessingItem[] process(final CompileContext context, final ProcessingItem[] items) {
-      return processFlexIdeConfigs(context, items);
-  }
-
-  private static void appendCssCompilationTasks(final Collection<FlexCompilationTask> compilationTasks,
-                                                final Module module,
-                                                final boolean builtInCompiler) {
-    if (ModuleType.get(module) instanceof FlexModuleType) {
-      final FlexBuildConfiguration config = FlexBuildConfiguration.getInstance(module);
-      if (config.DO_BUILD) {
-        for (String cssFilePath : config.CSS_FILES_LIST) {
-          compilationTasks.add(builtInCompiler
-                               ? new BuiltInCompilationTask.BuiltInCSSCompilationTask(module, null, config, cssFilePath)
-                               : new MxmlcCompcCompilationTask.MxmlcCompcCssCompilationTask(module, null, config, cssFilePath));
-        }
-      }
-    }
-    else {
-      final Collection<FlexFacet> flexFacets = FacetManager.getInstance(module).getFacetsByType(FlexFacet.ID);
-      for (FlexFacet flexFacet : flexFacets) {
-        final FlexBuildConfiguration config = FlexBuildConfiguration.getInstance(flexFacet);
-        if (config.DO_BUILD) {
-          for (String cssFilePath : config.CSS_FILES_LIST) {
-            compilationTasks.add(builtInCompiler
-                                 ? new BuiltInCompilationTask.BuiltInCSSCompilationTask(module, flexFacet, config, cssFilePath)
-                                 : new MxmlcCompcCompilationTask.MxmlcCompcCssCompilationTask(module, flexFacet, config, cssFilePath));
-          }
-        }
-      }
-    }
-  }
-
-  private static ProcessingItem[] processFlexIdeConfigs(final CompileContext context, final ProcessingItem[] items) {
     final FlexCompilerHandler flexCompilerHandler = FlexCompilerHandler.getInstance(context.getProject());
     final FlexCompilerProjectConfiguration flexCompilerConfiguration = FlexCompilerProjectConfiguration.getInstance(context.getProject());
 
@@ -183,6 +153,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
       if (activeCompilationsNumber != 0) {
         LOG.error(activeCompilationsNumber + " Flex compilation(s) are not finished!");
       }
+
+      FlexCompilerHandler.deleteTempFlexUnitFiles(context);
       return items;
     }
   }
@@ -208,81 +180,23 @@ public class FlexCompiler implements SourceProcessingCompiler {
   }
 
   public boolean validateConfiguration(final CompileScope scope) {
-    if (PlatformUtils.isFlexIde()) {
-      try {
-        // todo add quick fixes to ConfigurationException
-        final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndConfigsToCompile = getModulesAndConfigsToCompile(scope);
+    try {
+      // todo add quick fixes to ConfigurationException
+      final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndConfigsToCompile = getModulesAndConfigsToCompile(scope);
 
-        for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig : modulesAndConfigsToCompile) {
-          validateConfiguration(moduleAndConfig.first.getName(), moduleAndConfig.second);
-        }
-
-        checkSimilarOutputFiles(modulesAndConfigsToCompile);
-      }
-      catch (ConfigurationException e) {
-        final String title =
-          ConfigurationException.DEFAULT_TITLE.equals(e.getTitle()) ? FlexBundle.message("project.setup.problem.title") : e.getTitle();
-        Messages.showErrorDialog(e.getMessage(), title);
-        return false;
+      for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig : modulesAndConfigsToCompile) {
+        validateConfiguration(moduleAndConfig.first.getName(), moduleAndConfig.second);
       }
 
-      return true;
+      checkSimilarOutputFiles(modulesAndConfigsToCompile);
+    }
+    catch (ConfigurationException e) {
+      final String title =
+        ConfigurationException.DEFAULT_TITLE.equals(e.getTitle()) ? FlexBundle.message("project.setup.problem.title") : e.getTitle();
+      Messages.showErrorDialog(e.getMessage(), title);
+      return false;
     }
 
-    Module moduleToSkipValidation = null; // will be validated later in FlexUnitPrecompilerTask or RunMainClassPrecompileTask
-    final RunConfiguration runConfiguration = CompileStepBeforeRun.getRunConfiguration(scope);
-    if (runConfiguration instanceof FlexUnitRunConfiguration ||
-        RunMainClassPrecompileTask.isMainClassBasedFlexRunConfiguration(runConfiguration)) {
-      try {
-        moduleToSkipValidation =
-          FlexRunConfiguration.getAndValidateModule(runConfiguration.getProject(),
-                                                    ((FlexRunConfiguration)runConfiguration).getRunnerParameters().getModuleName());
-      }
-      catch (RuntimeConfigurationError e) {/*ignore, error will be reported later*/}
-    }
-
-    for (final Module module : scope.getAffectedModules()) {
-      if (module.equals(moduleToSkipValidation)) {
-        continue;
-      }
-
-      if (ModuleType.get(module) instanceof FlexModuleType) {
-        final Pair<Boolean, String> validationResultWithMessage =
-          validateConfiguration(FlexBuildConfiguration.getInstance(module), module, FlexUtils.getPresentableName(module, null), true);
-        if (!validationResultWithMessage.first) {
-          if (validationResultWithMessage.second != null) {
-            Messages.showErrorDialog(module.getProject(), validationResultWithMessage.second, FlexBundle.message("flex.compiler.problem"));
-          }
-          return false;
-        }
-      }
-      else {
-        final Collection<FlexFacet> flexFacets = FacetManager.getInstance(module).getFacetsByType(FlexFacet.ID);
-        for (final FlexFacet flexFacet : flexFacets) {
-          final Pair<Boolean, String> validationResultWithMessage =
-            validateConfiguration(FlexBuildConfiguration.getInstance(flexFacet), module, FlexUtils.getPresentableName(module, flexFacet),
-                                  true);
-          if (!validationResultWithMessage.first) {
-            if (validationResultWithMessage.second != null) {
-              Messages
-                .showErrorDialog(module.getProject(), validationResultWithMessage.second, FlexBundle.message("flex.compiler.problem"));
-            }
-
-            if (runConfiguration != null && !(runConfiguration instanceof FlexRunConfiguration)) {
-              // if the compilation triggered by 'Make before run' step of some non-Flex run configuration, let it proceed even with misconfigured Flex facet.
-              Collection<Module> modulesToSkip = scope.getUserData(MODULES_TO_SKIP_FLEX_FACET_COMPILATION);
-              if (modulesToSkip == null) {
-                modulesToSkip = new ArrayList<Module>();
-              }
-              modulesToSkip.add(module);
-              scope.putUserData(MODULES_TO_SKIP_FLEX_FACET_COMPILATION, modulesToSkip);
-              return true;
-            }
-            return false;
-          }
-        }
-      }
-    }
     return true;
   }
 
