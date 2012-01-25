@@ -16,7 +16,7 @@
 
 package jetbrains.communicator.util;
 
-import com.intellij.util.ui.Tree;
+import com.intellij.ui.treeStructure.Tree;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
