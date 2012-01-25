@@ -22,7 +22,6 @@ import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.PlatformUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -125,7 +124,7 @@ public class WhatToTestForm {
   }
 
   public void updateOnModuleChange(final String moduleName) {
-    assert !PlatformUtils.isFlexIde();
+    assert false;
     try {
       final Pair<Module, FlexUnitSupport> moduleAndSupport = FlexUnitRunConfiguration.getFlexUnitSupport(myProject, moduleName);
       updateControls(GlobalSearchScope.moduleScope(moduleAndSupport.first), moduleAndSupport.second);
@@ -173,17 +172,12 @@ public class WhatToTestForm {
         assert false : "Unknown scope: " + params.getScope();
     }
 
-    if (params instanceof FlexUnitRunnerParameters) {
-      updateOnModuleChange(((FlexUnitRunnerParameters)params).getModuleName());
+    try {
+      final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = ((NewFlexUnitRunnerParameters)params).checkAndGetModuleAndBC(myProject);
+      updateOnBCChange(moduleAndBC.second, moduleAndBC.first);
     }
-    else {
-      try {
-        final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = ((NewFlexUnitRunnerParameters)params).checkAndGetModuleAndBC(myProject);
-        updateOnBCChange(moduleAndBC.second, moduleAndBC.first);
-      }
-      catch (RuntimeConfigurationError e) {
-        updateOnError(e.getMessage());
-      }
+    catch (RuntimeConfigurationError e) {
+      updateOnError(e.getMessage());
     }
 
     updateOnScopeChange();

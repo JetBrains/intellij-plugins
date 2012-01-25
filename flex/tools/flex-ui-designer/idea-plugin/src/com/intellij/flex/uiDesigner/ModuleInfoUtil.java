@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.facet.FacetManager;
 import com.intellij.flex.uiDesigner.css.LocalCssWriter;
 import com.intellij.flex.uiDesigner.io.StringRegistry.StringWriter;
 import com.intellij.flex.uiDesigner.libraries.Library;
@@ -9,9 +8,6 @@ import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.FlexFacet;
-import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -19,7 +15,6 @@ import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -33,34 +28,17 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.PlatformUtils;
 import com.intellij.util.Processor;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public final class ModuleInfoUtil {
   public static boolean isApp(Module module) {
-    if (PlatformUtils.isFlexIde()) {
-      return FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration().getNature().isApp();
-    }
-    else {
-      final FlexBuildConfiguration flexBuildConfiguration;
-      if (ModuleType.get(module) instanceof FlexModuleType) {
-        flexBuildConfiguration = FlexBuildConfiguration.getInstance(module);
-      }
-      else {
-        final Collection<FlexFacet> flexFacets = FacetManager.getInstance(module).getFacetsByType(FlexFacet.ID);
-        assert !flexFacets.isEmpty();
-        flexBuildConfiguration = FlexBuildConfiguration.getInstance(flexFacets.iterator().next());
-      }
-
-      return FlexBuildConfiguration.APPLICATION.equals(flexBuildConfiguration.OUTPUT_TYPE);
-    }
+    return FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration().getNature().isApp();
   }
 
   public static void collectLocalStyleHolders(final ModuleInfo moduleInfo, final String flexSdkVersion,

@@ -8,9 +8,9 @@ import com.intellij.execution.configurations.*;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
-import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.run.FlashPlayerTrustUtil;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
@@ -28,7 +28,6 @@ import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.*;
 import com.intellij.ui.content.tabs.TabbedContentAction;
-import com.intellij.util.PlatformUtils;
 import com.intellij.util.SystemProperties;
 import com.jetbrains.actionscript.profiler.model.ProfileSettings;
 import com.jetbrains.actionscript.profiler.ui.ActionScriptProfileControlPanel;
@@ -232,15 +231,8 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
   }
 
   private static String detectSuitableAgentNameForSdkUsedToLaunch(Module module) {
-    boolean isPlayer9;
-    if (PlatformUtils.isFlexIde()) {
-      FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
-      isPlayer9 = bc.getDependencies().getTargetPlayer().startsWith("9");
-    }
-    else {
-      FlexBuildConfiguration bc = FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(module).iterator().next();
-      isPlayer9 = bc.TARGET_PLAYER_VERSION.startsWith("9");
-    }
+    FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
+    boolean isPlayer9 = bc.getTargetPlatform() == TargetPlatform.Web && bc.getDependencies().getTargetPlayer().startsWith("9");
     return "profiler_agent" + (isPlayer9 ? "_9" : "_10") + ".swf";
   }
 

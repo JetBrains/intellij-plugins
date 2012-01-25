@@ -14,9 +14,7 @@ import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.flex.uiDesigner.debug.FlexRunner;
 import com.intellij.flex.uiDesigner.io.IOUtil;
-import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
-import com.intellij.lang.javascript.flex.run.FlexRunConfigurationType;
-import com.intellij.lang.javascript.flex.run.FlexRunnerParameters;
+import com.intellij.lang.javascript.flex.run.RemoteFlashRunConfigurationType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -27,7 +25,6 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
-import com.intellij.util.PlatformUtils;
 import com.intellij.util.StringBuilderSpinAllocator;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
@@ -101,24 +98,10 @@ final class AdlUtil {
 
   // http://kb2.adobe.com/cps/407/kb407625.html
 
-  private static FlexRunConfigurationType ourFlexRunConfigurationType;
-
   public static void runDebugger(final Module module, final Runnable postTask) throws ExecutionException {
-    RunManagerEx runManager = RunManagerEx.getInstanceEx(module.getProject());
-    final RunnerAndConfigurationSettings settings;
-    if (PlatformUtils.isFlexIde()) {
-      if (ourFlexRunConfigurationType == null) {
-        ourFlexRunConfigurationType = new FlexRunConfigurationType();
-      }
-      settings = runManager.createConfiguration("FlashUIDesigner", ourFlexRunConfigurationType.getConfigurationFactories()[0]);
-      ((FlexRunConfiguration)settings.getConfiguration()).getRunnerParameters().setRunMode(
-        FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer);
-    }
-    else {
-      settings = runManager.createConfiguration("FlashUIDesigner", FlexRunConfigurationType.getFactory());
-      ((FlexRunConfiguration)settings.getConfiguration()).getRunnerParameters().setRunMode(
-        FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer);
-    }
+    final RunManagerEx runManager = RunManagerEx.getInstanceEx(module.getProject());
+    final RunnerAndConfigurationSettings settings =
+      runManager.createConfiguration("FlashUIDesigner", RemoteFlashRunConfigurationType.getFactory());
 
     final CompileStepBeforeRun.MakeBeforeRunTask runTask =
       runManager.getBeforeRunTask(settings.getConfiguration(), CompileStepBeforeRun.ID);
@@ -200,7 +183,7 @@ final class AdlUtil {
 
   static boolean checkRuntime(String runtimePath) throws IOException {
     return !StringUtil.isEmpty(runtimePath) && new File(runtimePath).isDirectory() &&
-      (!SystemInfo.isMac || checkMacRuntimeVersion(runtimePath));
+           (!SystemInfo.isMac || checkMacRuntimeVersion(runtimePath));
   }
 
   static boolean checkAdl(String adlPath) throws IOException {

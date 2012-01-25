@@ -24,7 +24,6 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerAdapter;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.ui.ProjectJdksEditor;
-import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
@@ -34,7 +33,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.util.Consumer;
 import com.intellij.util.ExceptionUtil;
-import com.intellij.util.PlatformUtils;
 import com.intellij.util.concurrency.Semaphore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -203,7 +201,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
         if (indicator.isCanceled()) {
           return;
         }
-        
+
         LOG.warn(e);
         continue;
       }
@@ -221,7 +219,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
       }
       return;
     }
-    
+
     final ProjectDocumentReferenceCounter projectDocumentReferenceCounter = initializeThread.get(60, TimeUnit.SECONDS);
     indicator.checkCanceled();
 
@@ -301,15 +299,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
       @Override
       public void consume(String id) {
         if ("edit".equals(id)) {
-          // TODO wrap this in ProjectSettingsService?
-          if (PlatformUtils.isFlexIde()) {
-            if (ProjectSettingsService.getInstance(myProject).canOpenModuleDependenciesSettings()) {
-              ProjectSettingsService.getInstance(myProject).openModuleDependenciesSettings(module, null);
-            }
-          }
-          else {
-            new ProjectJdksEditor(null, module.getProject(), WindowManager.getInstance().suggestParentWindow(myProject)).show();
-          }
+          new ProjectJdksEditor(null, module.getProject(), WindowManager.getInstance().suggestParentWindow(myProject)).show();
         }
         else {
           LOG.error("unexpected id: " + id);
