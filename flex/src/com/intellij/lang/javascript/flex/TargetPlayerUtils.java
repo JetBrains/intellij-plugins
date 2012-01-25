@@ -242,7 +242,7 @@ public class TargetPlayerUtils {
     if (sdkRoot == null) {
       return null;
     }
-    for (final Sdk sdk : FlexSdkUtils.getAllFlexSdks()) {
+    for (final Sdk sdk : FlexSdkUtils.getFlexSdks()) {
       if (sdkRoot.equals(sdk.getHomeDirectory()) &&
           ArrayUtil.contains(requiredPlayerglobalSwc, sdk.getRootProvider().getFiles(OrderRootType.CLASSES))) {
         return sdk;

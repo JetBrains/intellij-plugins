@@ -10,10 +10,11 @@ import com.intellij.facet.FacetManager;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
+import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.model.ComponentSet;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.module.Module;
@@ -25,9 +26,6 @@ import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
-import com.intellij.openapi.roots.impl.libraries.LibraryEx;
-import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.ClasspathEditor;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.util.*;
@@ -38,7 +36,11 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.peer.PeerFactory;
-import com.intellij.util.*;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.PairConsumer;
+import com.intellij.util.Processor;
+import com.intellij.util.SystemProperties;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.ZipUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -288,43 +290,6 @@ public class FlexSdkUtils {
     catch (IOException e) {
       return FlexBundle.message("flex.sdk.version.unknown");
     }
-  }
-
-  public static List<Sdk> getAllFlexSdks() {
-    if (PlatformUtils.isFlexIde()) {
-      List<Sdk> result = new ArrayList<Sdk>();
-      for (Library library : ApplicationLibraryTable.getApplicationTable().getLibraries()) {
-        if (FlexSdk.isFlexSdk(library)) {
-          result.add(new FlexSdkWrapper((LibraryEx)library, TargetPlatform.Web));
-        }
-      }
-      return result;
-    }
-
-    return ProjectJdkTable.getInstance().getSdksOfType(FlexSdkType.getInstance());
-  }
-
-  public static List<Sdk> getAllFlexOrAirOrMobileSdks() {
-    List<Sdk> result = new ArrayList<Sdk>();
-    final Sdk[] sdks = ProjectJdkTable.getInstance().getAllJdks();
-    for (Sdk sdk : sdks) {
-      final SdkType sdkType = sdk.getSdkType();
-      if (sdkType instanceof FlexSdkType || sdkType instanceof AirSdkType) {
-        result.add(sdk);
-      }
-    }
-    return result;
-  }
-
-  public static List<Sdk> getAllFlexRelatedSdks() {
-    List<Sdk> result = new ArrayList<Sdk>();
-    final Sdk[] sdks = ProjectJdkTable.getInstance().getAllJdks();
-    for (Sdk sdk : sdks) {
-      if (sdk.getSdkType() instanceof IFlexSdkType) {
-        result.add(sdk);
-      }
-    }
-    return result;
   }
 
   @Nullable
@@ -808,5 +773,33 @@ public class FlexSdkUtils {
         processor.consume("http://www.adobe.com/2006/mxml", "frameworks/mxml-manifest.xml");
       }
     }
+  }
+
+  public static Sdk[] getAllSdks() {
+    final FlexProjectConfigurationEditor currentEditor = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
+    if (currentEditor == null) {
+      return ProjectJdkTable.getInstance().getAllJdks();
+    }
+    else {
+      final Collection<Sdk> sdks =
+        ProjectStructureConfigurable.getInstance(currentEditor.getProject()).getProjectJdksModel().getProjectSdks().values();
+      return sdks.toArray(new Sdk[sdks.size()]);
+    }
+  }
+
+  public static List<Sdk> getFlexAndFlexmojosSdks() {
+    return ContainerUtil.filter(getAllSdks(), new Condition<Sdk>() {
+      public boolean value(final Sdk sdk) {
+        return sdk.getSdkType() instanceof FlexSdkType2 || sdk.getSdkType() instanceof FlexmojosSdkType;
+      }
+    });
+  }
+
+  public static List<Sdk> getFlexSdks() {
+    return ContainerUtil.filter(getAllSdks(), new Condition<Sdk>() {
+      public boolean value(final Sdk sdk) {
+        return sdk.getSdkType() instanceof FlexSdkType2;
+      }
+    });
   }
 }

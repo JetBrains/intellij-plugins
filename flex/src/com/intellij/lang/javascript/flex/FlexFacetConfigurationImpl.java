@@ -233,7 +233,7 @@ public class FlexFacetConfigurationImpl extends FlexFacetConfiguration {
       }
     }
     // if Flex SDK not found yet then take any from configured in IDEA
-    final List<Sdk> flexSdks = FlexSdkUtils.getAllFlexRelatedSdks();
+    final List<Sdk> flexSdks = FlexSdkUtils.getFlexAndFlexmojosSdks();
     if (!flexSdks.isEmpty()) {
       return flexSdks.get(0);
     }
@@ -413,7 +413,7 @@ public class FlexFacetConfigurationImpl extends FlexFacetConfiguration {
       Object initiallySelectedItem = myFlexSdk != null ? myFlexSdk : myFlexSdkName;
       myLastCommittedFlexSdk = myFlexSdk;
       myLastCommittedTargetPlayerVersion = myFlexBuildConfiguration.TARGET_PLAYER_VERSION;
-      final List<Sdk> flexSdks = FlexSdkUtils.getAllFlexRelatedSdks();
+      final List<Sdk> flexSdks = FlexSdkUtils.getFlexAndFlexmojosSdks();
       final List<Object> sdksForCombo = new ArrayList<Object>(flexSdks);
       boolean containsSelectedFlexSdk = false;
       if (myFlexSdk != null) {

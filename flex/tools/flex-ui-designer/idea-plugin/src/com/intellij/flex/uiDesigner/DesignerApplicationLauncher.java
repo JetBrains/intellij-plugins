@@ -324,7 +324,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
     }
 
     final List<Sdk> sdks = new ArrayList<Sdk>();
-    for (Sdk sdk : PlatformUtils.isFlexIde() ? FlexSdkUtils.getAllFlexSdks() : FlexSdkUtils.getAllFlexRelatedSdks()) {
+    for (Sdk sdk : FlexSdkUtils.getFlexAndFlexmojosSdks()) {
       if (StringUtil.compareVersionNumbers(sdk.getVersionString(), "4.5") >= 0) {
         sdks.add(sdk);
       }
