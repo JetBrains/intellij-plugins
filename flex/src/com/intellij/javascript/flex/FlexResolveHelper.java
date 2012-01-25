@@ -1,15 +1,18 @@
 package com.intellij.javascript.flex;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.JSResolveHelper;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -45,7 +48,7 @@ public class FlexResolveHelper implements JSResolveHelper {
       public boolean process(VirtualFile file, Void value) {
         VirtualFile rootForFile = projectFileIndex.getSourceRootForFile(file);
         if (rootForFile == null) return true;
-        
+
         if (expectedPackage.equals(VfsUtilCore.getRelativePath(file.getParent(), rootForFile, '.'))) {
           PsiFile psiFile = manager.findFile(file);
           final JSClass clazz = psiFile instanceof XmlFile ? XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)psiFile):null;
@@ -129,9 +132,11 @@ public class FlexResolveHelper implements JSResolveHelper {
     return place instanceof CssString;
   }
 
-  @Nullable
-  public Sdk getFlexSdk(Module module) {
-    return FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
+  public boolean isDesktopOrMobileTargetPlatformActive(final Module module) {
+    final FlexIdeBuildConfiguration bc = ModuleType.get(module) instanceof FlexModuleType
+                                         ? FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration()
+                                         : null;
+    return bc != null && (bc.getTargetPlatform() == TargetPlatform.Desktop || bc.getTargetPlatform() == TargetPlatform.Mobile);
   }
 
   public static boolean processAllMxmlAndFxgFiles(final GlobalSearchScope scope,
