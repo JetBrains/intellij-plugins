@@ -5,10 +5,7 @@
 		<external-library-path>
 			<path-element>@@target@@/impl-1.0-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/org/flyti/cocoa/acocoa/2.0-SNAPSHOT/acocoa-2.0-SNAPSHOT.swc</path-element>
-			<path-element>@@repo@@/com/adobe/flex/framework/airframework/4.5.2.21576/airframework-4.5.2.21576.swc</path-element>
-			<path-element>@@repo@@/com/adobe/flex/framework/airspark/4.5.2.21576/airspark-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/framework-4.5.2.21576.swc</path-element>
-			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/org/flyti/cocoa/cocoa/2.0-SNAPSHOT/cocoa-2.0-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/flashx/textLayout/2.0.192-de1/textLayout-2.0.192-de1.swc</path-element>
 			<path-element>@@repo@@/org/osflash/as3-signals/0.9-beta/as3-signals-0.9-beta.swc</path-element>
@@ -28,10 +25,7 @@
 		</fonts>
 		<include-libraries/>
 		<library-path>
-			<path-element>@@repo@@/com/adobe/flex/framework/airframework/4.5.2.21576/airframework-4.5.2.21576-en_US.rb.swc</path-element>
-			<path-element>@@repo@@/com/adobe/flex/framework/airspark/4.5.2.21576/airspark-4.5.2.21576-en_US.rb.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/framework-4.5.2.21576-en_US.rb.swc</path-element>
-			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576-en_US.rb.swc</path-element>
 		</library-path>
 		<locale>
 			<locale-element>en_US</locale-element>

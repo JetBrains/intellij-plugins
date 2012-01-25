@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="migLayout" type="flex">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../../../../miglayout-as/core/target/miglayout-core-4.3-SNAPSHOT.swc!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../miglayout-as/flex/target/miglayout-flex-4.3-SNAPSHOT.swc!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../../../../../../miglayout-as/core/src" />
+      <root url="file://$PROJECT_DIR$/../../../../../../miglayout-as/flex/src" />
+    </SOURCES>
+  </library>
+</component>

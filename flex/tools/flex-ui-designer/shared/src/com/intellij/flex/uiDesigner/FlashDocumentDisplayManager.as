@@ -6,8 +6,8 @@ import flash.display.Stage;
 import flash.system.ApplicationDomain;
 
 public class FlashDocumentDisplayManager extends AbstractDocumentDisplayManager implements DocumentDisplayManager {
-  public function get elementUtil():ElementInfoProvider {
-    return FlashElementInfoProvider.instance;
+  public function get componentInfoProvider():ComponentInfoProvider {
+    return FlashComponentInfoProvider.instance;
   }
 
   public function get sharedInitialized():Boolean {
@@ -74,25 +74,25 @@ public class FlashDocumentDisplayManager extends AbstractDocumentDisplayManager 
 }
 
 import com.intellij.flex.uiDesigner.DocumentDisplayManager;
-import com.intellij.flex.uiDesigner.ElementInfoProvider;
+import com.intellij.flex.uiDesigner.ComponentInfoProvider;
 
 import flash.display.DisplayObject;
 import flash.display.Stage;
 import flash.geom.Point;
 import flash.utils.getQualifiedClassName;
 
-final class FlashElementInfoProvider implements ElementInfoProvider {
+final class FlashComponentInfoProvider implements ComponentInfoProvider {
   private static const sharedPoint:Point = new Point();
 
-  private static var _instance:FlashElementInfoProvider;
-  internal static function get instance():ElementInfoProvider {
+  private static var _instance:FlashComponentInfoProvider;
+  internal static function get instance():ComponentInfoProvider {
     if (_instance == null) {
-      _instance = new FlashElementInfoProvider();
+      _instance = new FlashComponentInfoProvider();
     }
     return _instance;
   }
 
-  public function getObjectUnderPoint(stage:Stage, stageX:Number, stageY:Number):Object {
+  public function getComponentUnderPoint(stage:Stage, stageX:Number, stageY:Number):Object {
     sharedPoint.x = stageX;
     sharedPoint.y = stageY;
 

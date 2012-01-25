@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.flex {
 import com.intellij.flex.uiDesigner.DocumentDisplayManager;
-import com.intellij.flex.uiDesigner.ElementInfoProvider;
+import com.intellij.flex.uiDesigner.ComponentInfoProvider;
 import com.intellij.flex.uiDesigner.ResourceBundleProvider;
 import com.intellij.flex.uiDesigner.UiErrorHandler;
 
@@ -66,8 +66,8 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
 
   private var mainFocusManager:MainFocusManagerSB;
 
-  public function get elementUtil():ElementInfoProvider {
-    return FlexElementInfoProvider.instance;
+  public function get componentInfoProvider():ComponentInfoProvider {
+    return FlexComponentInfoProvider.instance;
   }
 
   public function get sharedInitialized():Boolean {

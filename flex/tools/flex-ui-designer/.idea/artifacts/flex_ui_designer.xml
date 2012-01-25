@@ -10,6 +10,7 @@
       <element id="file-copy" path="$PROJECT_DIR$/main/resources/descriptor.xml" />
       <element id="file-copy" path="$PROJECT_DIR$/flex-injection/target/flex-injection-4.1.swc" />
       <element id="file-copy" path="$PROJECT_DIR$/flex-injection/target/flex-injection-4.5.swc" />
+      <element id="file-copy" path="$PROJECT_DIR$/flex-injection/target/flex-injection-4.6.swc" />
     </root>
   </artifact>
 </component>

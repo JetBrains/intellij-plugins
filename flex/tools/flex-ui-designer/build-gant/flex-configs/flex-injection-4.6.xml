@@ -84,9 +84,9 @@
 		<class>com.intellij.flex.uiDesigner.flex.BrowserManagerImpl</class>
 		<class>com.intellij.flex.uiDesigner.flex.DeferredInstanceFromArray</class>
 		<class>com.intellij.flex.uiDesigner.flex.DocumentFocusManager</class>
+		<class>com.intellij.flex.uiDesigner.flex.FlexComponentInfoProvider</class>
 		<class>com.intellij.flex.uiDesigner.flex.FlexDocumentDisplayManager</class>
 		<class>com.intellij.flex.uiDesigner.flex.FlexDocumentFactory</class>
-		<class>com.intellij.flex.uiDesigner.flex.FlexElementInfoProvider</class>
 		<class>com.intellij.flex.uiDesigner.flex.FlexModuleFactory</class>
 		<class>com.intellij.flex.uiDesigner.flex.HistoryManagerImpl</class>
 		<class>com.intellij.flex.uiDesigner.flex.ModuleManager</class>

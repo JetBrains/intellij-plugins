@@ -16,7 +16,12 @@
         <packaging-ios />
       </configuration>
       <configuration name="4.6" output-file="player.swf" output-folder="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/idea-plugin/testData/out/production/common">
-        <dependencies target-player="11.1">
+        <dependencies target-player="11.1" component-set="SparkOnly" framework-linkage="Merged">
+          <entries>
+            <entry library-name="migLayout" library-level="project">
+              <dependency linkage="Merged" />
+            </entry>
+          </entries>
           <sdk library-id="fac07280-905d-4f60-bdd1-6e64458458bf" home-path="/Developer/SDKs/flex_4.6.0" />
         </dependencies>
         <compiler-options />
@@ -68,6 +73,7 @@
     </orderEntry>
     <orderEntry type="library" name="Flex SDK 4.6.0.23201" level="application" />
     <orderEntry type="library" name="Flex SDK 4.6.0.22920" level="application" />
+    <orderEntry type="library" name="migLayout" level="project" />
   </component>
 </module>
 

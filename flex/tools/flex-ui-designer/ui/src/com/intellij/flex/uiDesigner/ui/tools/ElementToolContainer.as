@@ -2,7 +2,7 @@ package com.intellij.flex.uiDesigner.ui.tools {
 import cocoa.SpriteBackedView;
 
 import com.intellij.flex.uiDesigner.Document;
-import com.intellij.flex.uiDesigner.ElementInfoProvider;
+import com.intellij.flex.uiDesigner.ComponentInfoProvider;
 
 import flash.events.Event;
 import flash.geom.Point;
@@ -18,7 +18,7 @@ public class ElementToolContainer extends SpriteBackedView implements Injectable
     mouseEnabled = false;
   }
 
-  private var elementUtil:ElementInfoProvider;
+  private var elementUtil:ComponentInfoProvider;
   private var layoutManager:Object;
 
   //noinspection JSUnusedGlobalSymbols
@@ -28,7 +28,7 @@ public class ElementToolContainer extends SpriteBackedView implements Injectable
       layoutManager = null;
     }
     else {
-      elementUtil = value.displayManager.elementUtil;
+      elementUtil = value.displayManager.componentInfoProvider;
       layoutManager = value.displayManager.layoutManager;
     }
   }

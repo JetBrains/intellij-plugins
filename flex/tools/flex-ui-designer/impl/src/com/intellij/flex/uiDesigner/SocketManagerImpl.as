@@ -1,6 +1,4 @@
 package com.intellij.flex.uiDesigner {
-import avmplus.describe;
-
 import flash.desktop.NativeApplication;
 import flash.events.Event;
 import flash.events.ProgressEvent;
@@ -8,8 +6,6 @@ import flash.net.Socket;
 import flash.net.registerClassAlias;
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
-
-import spark.effects.CallAction;
 
 registerClassAlias("s", String);
 

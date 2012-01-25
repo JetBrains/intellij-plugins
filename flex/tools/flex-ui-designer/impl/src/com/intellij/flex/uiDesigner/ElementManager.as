@@ -17,13 +17,13 @@ public class ElementManager extends EventDispatcher implements Injectable {
   public function set element(value:Object):void {
     if (value != element) {
       if (_element != null) {
-        _document.displayManager.elementUtil.getDisplayObject(_element).removeEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
+        _document.displayManager.componentInfoProvider.getDisplayObject(_element).removeEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
       }
       
       _element = value;
       
       if (_element != null) {
-        _document.displayManager.elementUtil.getDisplayObject(_element).addEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
+        _document.displayManager.componentInfoProvider.getDisplayObject(_element).addEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
       }
       
       dispatchEvent(new Event("elementChanged"));
@@ -66,11 +66,11 @@ public class ElementManager extends EventDispatcher implements Injectable {
   }
 
   private function findComponent(event:MouseEvent):Object {
-    return _document.displayManager.elementUtil.getObjectUnderPoint(_document.displayManager.stage, event.stageX, event.stageY);
+    return _document.displayManager.componentInfoProvider.getComponentUnderPoint(_document.displayManager.stage, event.stageX, event.stageY);
   }
 
   public function fillBreadcrumbs(element:Object, source:Vector.<String>):int {
-    return _document.displayManager.elementUtil.fillBreadcrumbs(element, source);
+    return _document.displayManager.componentInfoProvider.fillBreadcrumbs(element, source);
   }
 
   private function removedFromStageHandler(event:Event):void {

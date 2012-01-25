@@ -49,9 +49,7 @@
     <orderEntry type="module" module-name="base" scope="RUNTIME" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.flyti.cocoa:aquaLaF:swc:2.0-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.flyti.cocoa:cocoa:swc:2.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.framework:spark:swc:4.5.2.21576" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.framework:framework:rb.swc:4.5.2.21576" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.framework:spark:rb.swc:4.5.2.21576" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: flashx:textLayout:swc:2.0.192-de1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.osflash:as3-signals:swc:0.9-beta" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.flyti:plexus:swc:1.4.1" level="project" />
@@ -61,10 +59,6 @@
     <orderEntry type="module" module-name="ui" scope="RUNTIME" />
     <orderEntry type="module" module-name="impl" scope="RUNTIME" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.flyti.cocoa:acocoa:swc:2.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.framework:airframework:swc:4.5.2.21576" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.framework:airspark:swc:4.5.2.21576" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.framework:airframework:rb.swc:4.5.2.21576" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.adobe.flex.framework:airspark:rb.swc:4.5.2.21576" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.tinytlf:layouts:swc:1.1.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.tinytlf:core:swc:1.1.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.tinytlf:fte-utils:swc:1.1.1" level="project" />

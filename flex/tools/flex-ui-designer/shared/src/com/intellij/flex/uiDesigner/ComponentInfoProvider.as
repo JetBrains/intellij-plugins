@@ -3,8 +3,8 @@ import flash.display.DisplayObject;
 import flash.display.Stage;
 import flash.geom.Point;
 
-public interface ElementInfoProvider {
-  function getObjectUnderPoint(stage:Stage, stageX:Number, stageY:Number):Object;
+public interface ComponentInfoProvider {
+  function getComponentUnderPoint(stage:Stage, stageX:Number, stageY:Number):Object;
 
   function fillBreadcrumbs(element:Object, source:Vector.<String>):int;
 

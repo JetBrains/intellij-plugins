@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.flex {
 import com.intellij.flex.uiDesigner.DocumentDisplayManager;
-import com.intellij.flex.uiDesigner.ElementInfoProvider;
+import com.intellij.flex.uiDesigner.ComponentInfoProvider;
 
 import flash.display.BlendMode;
 import flash.display.DisplayObject;
@@ -23,20 +23,20 @@ import spark.primitives.supportClasses.GraphicElement;
 
 use namespace mx_internal;
 
-internal final class FlexElementInfoProvider implements ElementInfoProvider {
+internal final class FlexComponentInfoProvider implements ComponentInfoProvider {
   private static const sharedPoint:Point = new Point();
   private static const MX_CORE_UITEXTFIELD:String = "mx.core.UITextField";
   private static const SKINNABLE_CONTAINER:String = "spark.components.SkinnableContainer";
 
-  private static var _instance:FlexElementInfoProvider;
-  internal static function get instance():ElementInfoProvider {
+  private static var _instance:FlexComponentInfoProvider;
+  internal static function get instance():ComponentInfoProvider {
     if (_instance == null) {
-      _instance = new FlexElementInfoProvider();
+      _instance = new FlexComponentInfoProvider();
     }
     return _instance;
   }
 
-  public function getObjectUnderPoint(stage:Stage, stageX:Number, stageY:Number):Object {
+  public function getComponentUnderPoint(stage:Stage, stageX:Number, stageY:Number):Object {
     sharedPoint.x = stageX;
     sharedPoint.y = stageY;
 
