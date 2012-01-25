@@ -24,7 +24,7 @@ import com.intellij.openapi.util.Key;
 
 import java.util.Collection;
 
-public class FlexFacet extends Facet<FlexFacetConfiguration> implements IFlexFacet {
+public class FlexFacet extends Facet<FlexFacetConfiguration> {
   public static final FacetTypeId<FlexFacet> ID = new FacetTypeId<FlexFacet>("flex");
 
   private static final Key<Boolean> LISTENER_REGISTERED_KEY = Key.create("flex.listener.registered.key");
