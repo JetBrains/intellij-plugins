@@ -29,7 +29,7 @@ public class ElementToolContainer extends SpriteBackedView implements Injectable
     }
     else {
       elementUtil = value.displayManager.componentInfoProvider;
-      layoutManager = value.displayManager.layoutManager;
+      layoutManager = value.displayManager.flexLayoutManager;
     }
   }
   

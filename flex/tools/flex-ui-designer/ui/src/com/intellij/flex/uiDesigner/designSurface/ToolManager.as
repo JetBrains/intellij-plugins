@@ -59,7 +59,7 @@ public class ToolManager implements Injectable {
     }
     
     // after attach all tools — toolContainer call all elementLayoutChangeListeners 
-    _toolContainer.attach(_component);
+    //_toolContainer.attach(_component);
   }
 
   private function deactivateTools():void {
@@ -67,7 +67,7 @@ public class ToolManager implements Injectable {
       tool.detach();
     }
     
-    _toolContainer.detach();
+    //_toolContainer.detach();
   }
 }
 }

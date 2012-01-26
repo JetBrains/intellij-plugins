@@ -1,12 +1,12 @@
 package com.intellij.flex.uiDesigner.designSurface {
-import com.intellij.flex.uiDesigner.ui.tools.*;
-
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
+import flash.geom.Point;
 
 public class SelectionKnobsTool implements Tool, ElementLayoutChangeListener {
-  [Embed(source="/../../../../../../../ui/resources/viewSelectionKnob.png")]
-  private static var viewSelectionKnobClass:Class;
+  //[Embed(source="/../../../../../../../ui/resources/viewSelectionKnob.png")]
+  //private static var viewSelectionKnobClass:Class;
 
   private var selectionKnobs:Sprite;
 
@@ -15,7 +15,7 @@ public class SelectionKnobsTool implements Tool, ElementLayoutChangeListener {
       selectionKnobs = new Sprite();
       toolContainer.addChild(selectionKnobs);
       for (var i:int = 0; i < 8; i++) {
-        selectionKnobs.addChild(new viewSelectionKnobClass());
+        //selectionKnobs.addChild(new viewSelectionKnobClass());
       }
     }
     else {
@@ -51,6 +51,12 @@ public class SelectionKnobsTool implements Tool, ElementLayoutChangeListener {
         knob.x = w - 3;
       }
     }
+  }
+
+  public function activate(displayObjectContainer:DisplayObjectContainer, areaLocations:Vector.<Point>):void {
+  }
+
+  public function deactivate():void {
   }
 }
 }

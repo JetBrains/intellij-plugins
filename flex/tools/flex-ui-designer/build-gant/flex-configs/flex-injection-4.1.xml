@@ -27,6 +27,8 @@
 			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airspark/4.5.2.21576/airspark-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airframework/4.5.2.21576/airframework-4.5.2.21576.swc</path-element>
+			<path-element>@@repo@@/org/jetbrains/miglayout/miglayout-flex/4.3-SNAPSHOT/miglayout-flex-4.3-SNAPSHOT.swc</path-element>
+			<path-element>@@repo@@/org/jetbrains/miglayout/miglayout-core/4.3-SNAPSHOT/miglayout-core-4.3-SNAPSHOT.swc</path-element>
 			<path-element>@@target@@/shared-1.0-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/2.6/airglobal.swc</path-element>
 		</external-library-path>
@@ -80,6 +82,8 @@
 		<class>com.intellij.flex.uiDesigner.css.MergedCssStyleDeclaration</class>
 		<class>com.intellij.flex.uiDesigner.css.RootStyleManager</class>
 		<class>com.intellij.flex.uiDesigner.css.RuntimeCssStyleDeclaration</class>
+		<class>com.intellij.flex.uiDesigner.designSurface.migLayout.MigLayoutGridInfo</class>
+		<class>com.intellij.flex.uiDesigner.designSurface.migLayout.MigLayoutManager</class>
 		<class>com.intellij.flex.uiDesigner.flex.BaseFlexModuleFactoryImpl</class>
 		<class>com.intellij.flex.uiDesigner.flex.BrowserManagerImpl</class>
 		<class>com.intellij.flex.uiDesigner.flex.DeferredInstanceFromArray</class>

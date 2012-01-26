@@ -39,6 +39,11 @@
         <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
+    <option name="activeProfiles">
+      <list>
+        <option value="IDEA-22472" />
+      </list>
+    </option>
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/miglayout/pom.xml" />

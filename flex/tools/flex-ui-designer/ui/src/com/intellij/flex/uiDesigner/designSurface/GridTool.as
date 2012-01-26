@@ -1,6 +1,4 @@
 package com.intellij.flex.uiDesigner.designSurface {
-import com.intellij.flex.uiDesigner.designSurface.geometry.Interval;
-
 import flash.display.DisplayObjectContainer;
 import flash.display.Shape;
 import flash.geom.Point;

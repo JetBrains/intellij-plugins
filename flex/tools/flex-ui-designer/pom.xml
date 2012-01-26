@@ -110,6 +110,20 @@
 
   <profiles>
     <profile>
+      <id>IDEA-22472</id>
+      <modules>
+        <module>shared</module>
+        <module>flex-injection</module>
+        <module>plaf</module>
+        <module>impl</module>
+        <module>ui</module>
+        <module>main</module>
+        <module>main-loader</module>
+        <module>test-plugin</module>
+        <module>test-data-helper</module>
+      </modules>
+    </profile>
+    <profile>
       <id>release</id>
       <properties>
         <config.useRoboflest>false</config.useRoboflest>

@@ -1,3 +1,4 @@
+<!-- DON'T USE THIS FILE. It is ONLY FOR INTELLIJ IDEA due to IDEA-22472 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
@@ -7,9 +8,9 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>flex-injection-parent</artifactId>
-  <packaging>pom</packaging>
-
+  <artifactId>flex-injection</artifactId>
+  <packaging>swc</packaging>
+  <!-- DON'T USE THIS FILE. It is ONLY FOR INTELLIJ IDEA due to IDEA-22472 -->
   <dependencies>
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
@@ -51,7 +52,7 @@
       <scope>external</scope>
     </dependency>
   </dependencies>
-
+  <!-- DON'T USE THIS FILE. It is ONLY FOR INTELLIJ IDEA due to IDEA-22472 -->
   <build>
     <finalName>${project.artifactId}</finalName>
     <plugins>
@@ -62,34 +63,6 @@
           <iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking>true</iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking>
           <useResourceBundleMetadata>false</useResourceBundleMetadata>
           <useDefaultLocale>false</useDefaultLocale>
-          <includeClasses>
-            <scan>
-              <includes>
-                <include>com.intellij.**.*</include>
-              </includes>
-              <!-- it is not working, flex compiler include these classes in any way -->
-              <excludes>
-                <exclude>mx.styles.FtyleProtoChain</exclude>
-                <exclude>spark.components.supportClasses.FkinnableComponent</exclude>
-                <exclude>mx.effects.Fffect</exclude>
-              </excludes>
-            </scan>
-
-            <include>spark.components.supportClasses.SkinnableComponent</include>
-
-            <include>spark.components.WindowedApplication</include>
-            <include>spark.components.Window</include>
-
-            <include>mx.styles.StyleProtoChain</include>
-            <include>mx.styles.StyleManager</include>
-            <include>mx.effects.Effect</include>
-
-            <include>mx.managers.LayoutManager</include>
-            <include>mx.managers.CursorManager</include>
-
-            <include>mx.resources.ResourceManager</include>
-          </includeClasses>
-
           <defines combine.children="append">
             <property>
               <name>flex::lt_4_6</name>
@@ -98,6 +71,22 @@
             <property>
               <name>flex::gt_4_1</name>
               <value>true</value>
+            </property>
+            <property>
+              <name>flex::v4_1</name>
+              <value>false</value>
+            </property>
+            <property>
+              <name>flex::v4_5</name>
+              <value>false</value>
+            </property>
+            <property>
+              <name>flex::v4_6</name>
+              <value>true</value>
+            </property>
+            <property>
+              <name>flex::lt_4_6</name>
+              <value>false</value>
             </property>
           </defines>
         </configuration>

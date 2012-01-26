@@ -3,6 +3,8 @@ import com.intellij.flex.uiDesigner.DocumentDisplayManager;
 import com.intellij.flex.uiDesigner.ComponentInfoProvider;
 import com.intellij.flex.uiDesigner.ResourceBundleProvider;
 import com.intellij.flex.uiDesigner.UiErrorHandler;
+import com.intellij.flex.uiDesigner.designSurface.LayoutManager;
+import com.intellij.flex.uiDesigner.designSurface.migLayout.MigLayoutManager;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -51,6 +53,10 @@ import mx.styles.ISimpleStyleClient;
 import mx.styles.IStyleClient;
 import mx.styles.StyleManager;
 
+import org.jetbrains.migLayout.flex.MigLayout;
+
+import spark.components.supportClasses.GroupBase;
+
 use namespace mx_internal;
 
 // must be IFocusManagerContainer, it is only way how UIComponent can find focusManager (see UIComponent.focusManager)
@@ -81,8 +87,8 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
     SystemManagerGlobals.topLevelSystemManagers[0] = new TopLevelSystemManagerProxy();
     SystemManagerGlobals.bootstrapLoaderInfoURL = "app:/_Main.swf";
 
-    Singleton.registerClass(LAYOUT_MANAGER_FQN, LayoutManager);
-    UIComponentGlobals.layoutManager = new LayoutManager(uiErrorHandler);
+    Singleton.registerClass(LAYOUT_MANAGER_FQN, mx.managers.LayoutManager);
+    UIComponentGlobals.layoutManager = new mx.managers.LayoutManager(uiErrorHandler);
 
     new ResourceManager(resourceBundleProvider);
     ModuleManagerGlobals.managerSingleton = new ModuleManager();
@@ -126,7 +132,7 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
     this.mainFocusManager = mainFocusManager;
     this.uiErrorHandler = uiErrorHandler;
 
-    LayoutManager(UIComponentGlobals.layoutManager).waitFrame();
+    mx.managers.LayoutManager(UIComponentGlobals.layoutManager).waitFrame();
 
     addRealEventListener(INITIALIZE_ERROR_EVENT_TYPE, uiInitializeOrCallLaterErrorHandler);
     addRealEventListener("callLaterError", uiInitializeOrCallLaterErrorHandler);
@@ -768,7 +774,7 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
     return this;
   }
 
-  public function get layoutManager():Object {
+  public function get flexLayoutManager():Object {
     return UIComponentGlobals.layoutManager;
   }
 
@@ -783,6 +789,29 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
   }
 
   public function deactivate(f:Object):void {
+  }
+  
+  private var _layoutManager:com.intellij.flex.uiDesigner.designSurface.LayoutManager;
+
+  public function getLayoutManager():com.intellij.flex.uiDesigner.designSurface.LayoutManager {
+    if (_layoutManager == null) {
+      _layoutManager = createLayoutManager();
+    }
+    return _layoutManager;
+  }
+
+  private function createLayoutManager():com.intellij.flex.uiDesigner.designSurface.LayoutManager {
+    var container:GroupBase = document as GroupBase;
+    if (container == null) {
+      return null;
+    }
+
+    var migLayout:MigLayout = container.layout as MigLayout;
+    if (migLayout == null) {
+      return null;
+    }
+
+    return new MigLayoutManager(migLayout);
   }
 }
 }

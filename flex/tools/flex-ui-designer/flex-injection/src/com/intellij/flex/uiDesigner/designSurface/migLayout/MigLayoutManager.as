@@ -1,10 +1,21 @@
-package com.intellij.flex.uiDesigner.migLayout {
+package com.intellij.flex.uiDesigner.designSurface.migLayout {
 import com.intellij.flex.uiDesigner.designSurface.GridInfo;
-import com.intellij.flex.uiDesigner.designSurface.geometry.Interval;
+import com.intellij.flex.uiDesigner.designSurface.Interval;
+import com.intellij.flex.uiDesigner.designSurface.LayoutManager;
 
 import net.miginfocom.layout.Grid;
+import net.miginfocom.layout.IDEUtil;
 
-public class MigLayoutManager {
+import org.jetbrains.migLayout.flex.MigLayout;
+
+public class MigLayoutManager implements LayoutManager {
+  private var migLayout:MigLayout;
+
+  public function MigLayoutManager(migLayout:MigLayout) {
+    this.migLayout = migLayout;
+
+  }
+
   private var _gridInfo:GridInfo;
   public function get gridInfo():GridInfo {
     if (_gridInfo == null) {
@@ -15,11 +26,16 @@ public class MigLayoutManager {
   }
 
   private function createGridInfo():GridInfo {
-    var columnIntervals:Vector.<Interval> = getIntervalsForOrigins(IDEUtil.getColumnSizes(container), 0);
+    var columnIntervals:Vector.<Interval> = getIntervalsForOrigins(IDEUtil.getColumnSizes(migLayout._ideUtil_grid), 0);
+    var rowIntervals:Vector.<Interval> = getIntervalsForOrigins(IDEUtil.getRowSizes(migLayout._ideUtil_grid), 0);
+    return new MigLayoutGridInfo(columnIntervals, rowIntervals);
   }
 
   private static function getIntervalsForOrigins(sizeData:Vector.<Vector.<int>>, startOffset:int):Vector.<Interval> {
-    assert(sizeData.length != 0);
+    if (sizeData.length == 0) {
+      throw new Error("sizeData cannot be null");
+    }
+
     var intervals:Vector.<Interval> = new Vector.<Interval>();
     var n:int = 0;
     var begin:int = startOffset;

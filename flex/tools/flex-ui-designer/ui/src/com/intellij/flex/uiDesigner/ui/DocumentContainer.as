@@ -5,6 +5,7 @@ import cocoa.plaf.LookAndFeel;
 
 import com.intellij.flex.uiDesigner.DocumentDisplayManager;
 import com.intellij.flex.uiDesigner.DocumentFactory;
+import com.intellij.flex.uiDesigner.designSurface.DesignSurfaceDataKeys;
 import com.intellij.flex.uiDesigner.designSurface.ToolManager;
 
 import flash.display.DisplayObjectContainer;
@@ -14,9 +15,10 @@ import flash.geom.Point;
 
 import org.jetbrains.actionSystem.DataContext;
 import org.jetbrains.actionSystem.DataContextProvider;
+import org.jetbrains.actionSystem.DataKey;
 import org.jetbrains.actionSystem.DataManager;
 
-public class DocumentContainer extends ControlView implements DataContextProvider {
+public class DocumentContainer extends ControlView implements DataContextProvider, DataContext {
   private var designerAreaOuterBackgroundColor:int;
 
   private static const HEADER_SIZE:int = 15;
@@ -32,9 +34,8 @@ public class DocumentContainer extends ControlView implements DataContextProvide
   private var canvasWidth:int = 500;
   private var canvasHeight:int = 400;
 
-  private var _dataContext:DataContext;
   public function get dataContext():DataContext {
-    return _dataContext;
+    return this;
   }
 
   public function DocumentContainer(documentSystemManager:DocumentDisplayManager) {
@@ -60,13 +61,8 @@ public class DocumentContainer extends ControlView implements DataContextProvide
   override public function addToSuperview(displayObjectContainer:DisplayObjectContainer, laf:LookAndFeel, superview:ContentView = null):void {
     super.addToSuperview(displayObjectContainer, laf, superview);
 
-    if (_dataContext == null) {
-      _dataContext = new DocumentContainerDataContext(DataManager.instance.getDataContext(displayObjectContainer));
-    }
-
     designerAreaOuterBackgroundColor = laf.getInt("designerAreaOuterBackgroundColor");
 
-    var displayManager:DocumentDisplayManager = DocumentDisplayManager(documentDisplayManager);
     var toolManager:ToolManager = ToolManager(DocumentFactory(documentDisplayManager.documentFactory).module.project.getComponent(ToolManager));
     if (numChildren > 0 && documentDisplayManager == getChildAt(0)) {
       return;
@@ -79,13 +75,13 @@ public class DocumentContainer extends ControlView implements DataContextProvide
     s.x = CANVAS_INSET;
     s.y = CANVAS_INSET;
     addChild(s);
-    DocumentDisplayManager(documentDisplayManager).added();
+    documentDisplayManager.added();
 
-    if (displayManager.preferredDocumentWidth != -1) {
-      canvasWidth = displayManager.preferredDocumentWidth;
+    if (documentDisplayManager.preferredDocumentWidth != -1) {
+      canvasWidth = documentDisplayManager.preferredDocumentWidth;
     }
-    if (displayManager.preferredDocumentHeight != -1) {
-      canvasHeight = displayManager.preferredDocumentHeight;
+    if (documentDisplayManager.preferredDocumentHeight != -1) {
+      canvasHeight = documentDisplayManager.preferredDocumentHeight;
     }
   }
 
@@ -117,29 +113,15 @@ public class DocumentContainer extends ControlView implements DataContextProvide
     g.drawRect(canvasBackgroundInset, canvasBackgroundInset, w - canvasBackgroundInset, h - canvasBackgroundInset);
     g.endFill();
   }
-}
-}
-
-import com.intellij.flex.uiDesigner.designSurface.DesignSurfaceDataKeys;
-
-import org.jetbrains.actionSystem.DataContext;
-import org.jetbrains.actionSystem.DataKey;
-
-final class DocumentContainerDataContext implements DataContext {
-  private var parentDataContext:DataContext;
-
-  public function DocumentContainerDataContext(parentDataContext:DataContext) {
-    this.parentDataContext = parentDataContext;
-  }
 
   public function getData(dataKey:DataKey):Object {
     switch (dataKey) {
       case DesignSurfaceDataKeys.LAYOUT_MANAGER:
-        return project;
+        return documentDisplayManager.getLayoutManager();
 
       default:
-        return null;
+        return DataManager.instance.getDataContext(parent).getData(dataKey);
     }
-
   }
+}
 }

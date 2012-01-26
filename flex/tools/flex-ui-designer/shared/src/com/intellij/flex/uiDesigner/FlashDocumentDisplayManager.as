@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner {
+import com.intellij.flex.uiDesigner.designSurface.LayoutManager;
 import com.intellij.flex.uiDesigner.flex.MainFocusManagerSB;
 
 import flash.display.DisplayObject;
@@ -67,7 +68,11 @@ public class FlashDocumentDisplayManager extends AbstractDocumentDisplayManager 
   public function removeEventHandlers():void {
   }
 
-  public function get layoutManager():Object {
+  public function get flexLayoutManager():Object {
+    return null;
+  }
+
+  public function getLayoutManager():LayoutManager {
     return null;
   }
 }

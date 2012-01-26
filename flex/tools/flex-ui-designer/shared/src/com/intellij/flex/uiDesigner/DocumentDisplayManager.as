@@ -1,9 +1,9 @@
 package com.intellij.flex.uiDesigner {
+import com.intellij.flex.uiDesigner.designSurface.LayoutManager;
 import com.intellij.flex.uiDesigner.flex.MainFocusManagerSB;
 
 import flash.display.DisplayObject;
 import flash.display.Stage;
-import flash.geom.Rectangle;
 
 public interface DocumentDisplayManager {
   function setUserDocument(object:DisplayObject):void;
@@ -45,6 +45,8 @@ public interface DocumentDisplayManager {
    */
   function get documentFactory():Object;
 
-  function get layoutManager():Object;
+  function get flexLayoutManager():Object;
+
+  function getLayoutManager():LayoutManager;
 }
 }

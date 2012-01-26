@@ -19,7 +19,6 @@ import flash.desktop.NativeApplication;
 import flash.desktop.NotificationType;
 import flash.display.DisplayObject;
 import flash.display.NativeWindow;
-import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.utils.Dictionary;
@@ -303,7 +302,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     }
     systemManager.init(isPureFlash ? null : new flexModuleFactoryClass(document.styleManager, module.context.applicationDomain), UncaughtErrorManager.instance,
                        MainFocusManagerSB(module.project.window.focusManager), document.documentFactory);
-    document.container = new DocumentContainer(Sprite(systemManager));
+    document.container = new DocumentContainer(systemManager);
   }
 }
 }
