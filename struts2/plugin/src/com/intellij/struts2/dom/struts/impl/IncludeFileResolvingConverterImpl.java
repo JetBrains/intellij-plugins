@@ -23,8 +23,8 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FilePathReferenceProvider;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.struts2.dom.ConverterUtil;
 import com.intellij.struts2.dom.struts.IncludeFileResolvingConverter;
-import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.GenericDomValue;
@@ -74,7 +74,12 @@ public class IncludeFileResolvingConverterImpl extends IncludeFileResolvingConve
       return null;
     }
 
-    return isFileAccepted(getModel(context), psiFile) ? super.resolve(psiFile, context) : null;
+    final StrutsModel model = ConverterUtil.getStrutsModel(context);
+    if (model == null) {
+      return null;
+    }
+
+    return isFileAccepted(model, psiFile) ? super.resolve(psiFile, context) : null;
   }
 
   @NotNull
@@ -86,7 +91,7 @@ public class IncludeFileResolvingConverterImpl extends IncludeFileResolvingConve
       return PsiReference.EMPTY_ARRAY;
     }
 
-    final StrutsModel model = getModel(context);
+    final StrutsModel model = ConverterUtil.getStrutsModel(context);
     if (model == null) {
       return PsiReference.EMPTY_ARRAY;
     }
@@ -111,12 +116,7 @@ public class IncludeFileResolvingConverterImpl extends IncludeFileResolvingConve
     return "Cannot resolve file ''" + value + "'' (not in file set of including file?)";
   }
 
-  @Nullable
-  private static StrutsModel getModel(final ConvertContext context) {
-    return StrutsManager.getInstance(context.getProject()).getModelByFile(context.getFile());
-  }
-
-  private static boolean isFileAccepted(final StrutsModel model, @NotNull final PsiFile file) {
+  private static boolean isFileAccepted(@NotNull final StrutsModel model, @NotNull final PsiFile file) {
     if (!(file instanceof XmlFile)) {
       return false;
     }
