@@ -12,8 +12,8 @@ import flash.display.Sprite;
 public class DocumentContainer extends ControlView {
   private var designerAreaOuterBackgroundColor:int;
 
-  private static const FRAME_INSET:int = 15;
-  private static const CANVAS_INSET:int = FRAME_INSET + 1 /* line thickness */ + 20;
+  private static const HEADER_SIZE:int = 15;
+  private static const CANVAS_INSET:int = HEADER_SIZE + 1 /* line thickness */ + 20;
 
   private var documentSystemManager:Sprite;
 
@@ -70,15 +70,15 @@ public class DocumentContainer extends ControlView {
 
     // all insets the same as in idea
 
-    // draw outer 2 rect (horizontal and vertical 15px stripes)
+    // draw horizontal and vertical headers background
     // color from wbpro, it is better than idea (because idea is more dark) (I think)
     g.beginFill(designerAreaOuterBackgroundColor);
     g.lineTo(w, 0);
-    g.lineTo(w, FRAME_INSET);
+    g.lineTo(w, HEADER_SIZE);
     // color from wbpro, it is better than idea (because idea is more dark) (I think)
     g.lineStyle(1, 0x9f9f9f);
-    g.lineTo(FRAME_INSET, FRAME_INSET);
-    g.lineTo(FRAME_INSET, h);
+    g.lineTo(HEADER_SIZE, HEADER_SIZE);
+    g.lineTo(HEADER_SIZE, h);
     g.lineStyle();
     g.lineTo(0, h);
     g.lineTo(0, 0);
@@ -86,13 +86,7 @@ public class DocumentContainer extends ControlView {
 
     // draw inner white rectangle
     g.beginFill(0xffffff);
-    g.drawRect(FRAME_INSET + 1, FRAME_INSET + 1, w - 15, h - 15);
-    g.endFill();
-
-    // draw canvas
-    g.moveTo(CANVAS_INSET, CANVAS_INSET);
-    g.beginFill(0xededed);
-    g.drawRect(CANVAS_INSET, CANVAS_INSET, canvasWidth, canvasHeight);
+    g.drawRect(HEADER_SIZE, HEADER_SIZE, w - HEADER_SIZE, h - HEADER_SIZE);
     g.endFill();
   }
 }

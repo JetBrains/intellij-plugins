@@ -1,6 +1,6 @@
-package com.intellij.flex.uiDesigner.gef {
-import com.intellij.flex.uiDesigner.gef.geometry.Interval;
-import com.intellij.flex.uiDesigner.gef.policy.layout.grid.GridInfo;
+package com.intellij.flex.uiDesigner.designSurface {
+import com.intellij.flex.uiDesigner.designSurface.geometry.Interval;
+import com.intellij.flex.uiDesigner.designSurface.policy.layout.grid.GridInfo;
 
 [Abstract]
 public class GridHelper {

@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.migLayout {
-import com.intellij.flex.uiDesigner.gef.geometry.Interval;
-import com.intellij.flex.uiDesigner.gef.policy.layout.grid.GridInfo;
+import com.intellij.flex.uiDesigner.designSurface.geometry.Interval;
+import com.intellij.flex.uiDesigner.designSurface.policy.layout.grid.GridInfo;
 
 public class MigLayoutGridInfo implements GridInfo {
   public function MigLayoutGridInfo() {

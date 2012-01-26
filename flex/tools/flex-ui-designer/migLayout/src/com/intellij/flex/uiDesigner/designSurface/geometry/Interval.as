@@ -1,4 +1,4 @@
-package com.intellij.flex.uiDesigner.gef.geometry {
+package com.intellij.flex.uiDesigner.designSurface.geometry {
 public class Interval {
   public var begin:int;
   public var length:int;
