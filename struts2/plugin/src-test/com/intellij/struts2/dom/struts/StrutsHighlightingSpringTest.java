@@ -24,6 +24,7 @@ import com.intellij.spring.facet.SpringFacet;
 import com.intellij.spring.facet.SpringFacetConfiguration;
 import com.intellij.spring.facet.SpringFacetType;
 import com.intellij.spring.facet.SpringFileSet;
+import com.intellij.spring.facet.appContextDescriptors.XmlContextDescriptor;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.util.containers.ContainerUtil;
 import junit.framework.Assert;
@@ -122,7 +123,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
 
     final SpringFacetConfiguration configuration = springFacet.getConfiguration();
     final Set<SpringFileSet> list = configuration.getFileSets();
-    @NonNls final SpringFileSet fileSet = new SpringFileSet("", "default", configuration);
+    @NonNls final SpringFileSet fileSet = new XmlContextDescriptor("", "default", configuration);
     list.add(fileSet);
 
     for (final String springXmlPath : springXmlPaths) {
