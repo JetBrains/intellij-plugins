@@ -8,7 +8,7 @@ import flash.events.Event;
 import flash.events.NativeWindowBoundsEvent;
 
 import org.jetbrains.EntityLists;
-import org.jetbrains.actionSystem.DataManager;
+import org.jetbrains.actionSystem.DataContext;
 
 public class ProjectManager {
   private const openProjects:Vector.<Project> = new Vector.<Project>();
@@ -28,14 +28,14 @@ public class ProjectManager {
     applicationExiting = true;
   }
 
-  public function open(project:Project, window:DocumentWindow):void {
+  public function open(project:Project, window:DocumentWindow):DataContext {
     EntityLists.add(openProjects, project);
 
     addNativeWindowListeners(window);
     window.title = project.name;
     project.window = window;
 
-    DataManager.instance.registerDataContext(window.stage, new ProjectDataContext(project));
+    return new ProjectDataContext(project);
   }
 
   protected function addNativeWindowListeners(window:DocumentWindow):void {
@@ -54,7 +54,6 @@ public class ProjectManager {
     var project:Project = openProjects[id];
     assert(project != null);
 
-    DataManager.instance.unregisterDataContext(project.window.stage);
     if (project.window != null) {
       removeNativeWindowListeners(project.window);
       project.window.close();
@@ -88,7 +87,6 @@ public class ProjectManager {
       var project:Project = openProjects[i];
       if (project.window == window) {
         removeNativeWindowListeners(window);
-        DataManager.instance.unregisterDataContext(window.stage);
         closeProject2(i, project);
         Server.instance.closeProject(project);
         return;
@@ -123,8 +121,8 @@ public class ProjectManager {
 }
 }
 
+import com.intellij.flex.uiDesigner.ComponentManager;
 import com.intellij.flex.uiDesigner.DocumentManager;
-import com.intellij.flex.uiDesigner.ElementManager;
 import com.intellij.flex.uiDesigner.PlatformDataKeys;
 import com.intellij.flex.uiDesigner.Project;
 
@@ -146,8 +144,8 @@ final class ProjectDataContext implements DataContext {
       case PlatformDataKeys.DOCUMENT:
         return DocumentManager(project.getComponent(DocumentManager)).document;
 
-      case PlatformDataKeys.ELEMENT:
-        return ElementManager(project.getComponent(ElementManager)).element;
+      case PlatformDataKeys.COMPONENT:
+        return ComponentManager(project.getComponent(ComponentManager)).component;
 
       default:
         return null;

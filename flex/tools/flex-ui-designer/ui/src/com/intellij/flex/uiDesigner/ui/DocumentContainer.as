@@ -4,18 +4,27 @@ import cocoa.ControlView;
 import cocoa.plaf.LookAndFeel;
 
 import com.intellij.flex.uiDesigner.DocumentDisplayManager;
+import com.intellij.flex.uiDesigner.DocumentFactory;
+import com.intellij.flex.uiDesigner.designSurface.ToolManager;
 
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.Sprite;
+import flash.geom.Point;
 
-public class DocumentContainer extends ControlView {
+import org.jetbrains.actionSystem.DataContext;
+import org.jetbrains.actionSystem.DataContextProvider;
+import org.jetbrains.actionSystem.DataManager;
+
+public class DocumentContainer extends ControlView implements DataContextProvider {
   private var designerAreaOuterBackgroundColor:int;
 
   private static const HEADER_SIZE:int = 15;
   private static const CANVAS_INSET:int = HEADER_SIZE + 1 /* line thickness */ + 20;
 
-  private var documentSystemManager:Sprite;
+  private static const AREA_LOCATIONS:Vector.<Point> = new <Point>[new Point(0, HEADER_SIZE + 1), new Point(HEADER_SIZE + 1, 0), new Point(CANVAS_INSET, CANVAS_INSET)];
+
+  private var documentDisplayManager:DocumentDisplayManager;
 
   // min w/h compute by size of default canvas (the same as in idea/wbpro)
   // user can change size of this canvas, but it is not set document size — only canvas
@@ -23,8 +32,13 @@ public class DocumentContainer extends ControlView {
   private var canvasWidth:int = 500;
   private var canvasHeight:int = 400;
 
-  public function DocumentContainer(documentSystemManager:Sprite) {
-    this.documentSystemManager = documentSystemManager;
+  private var _dataContext:DataContext;
+  public function get dataContext():DataContext {
+    return _dataContext;
+  }
+
+  public function DocumentContainer(documentSystemManager:DocumentDisplayManager) {
+    this.documentDisplayManager = documentSystemManager;
   }
 
   override public function getMinimumWidth(hHint:int = -1):int {
@@ -46,24 +60,37 @@ public class DocumentContainer extends ControlView {
   override public function addToSuperview(displayObjectContainer:DisplayObjectContainer, laf:LookAndFeel, superview:ContentView = null):void {
     super.addToSuperview(displayObjectContainer, laf, superview);
 
+    if (_dataContext == null) {
+      _dataContext = new DocumentContainerDataContext(DataManager.instance.getDataContext(displayObjectContainer));
+    }
+
     designerAreaOuterBackgroundColor = laf.getInt("designerAreaOuterBackgroundColor");
 
-    documentSystemManager.x = CANVAS_INSET;
-    documentSystemManager.y = CANVAS_INSET;
-    addChild(documentSystemManager);
-    DocumentDisplayManager(documentSystemManager).added();
-
-    var documentSize:DocumentDisplayManager = DocumentDisplayManager(documentSystemManager);
-    if (documentSize.preferredDocumentWidth != -1) {
-      canvasWidth = documentSize.preferredDocumentWidth;
+    var displayManager:DocumentDisplayManager = DocumentDisplayManager(documentDisplayManager);
+    var toolManager:ToolManager = ToolManager(DocumentFactory(documentDisplayManager.documentFactory).module.project.getComponent(ToolManager));
+    if (numChildren > 0 && documentDisplayManager == getChildAt(0)) {
+      return;
     }
-    if (documentSize.preferredDocumentHeight != -1) {
-      canvasHeight = documentSize.preferredDocumentHeight;
+
+    toolManager.displayObjectContainer = displayObjectContainer;
+    toolManager.areaLocations = AREA_LOCATIONS;
+
+    var s:Sprite = Sprite(documentDisplayManager);
+    s.x = CANVAS_INSET;
+    s.y = CANVAS_INSET;
+    addChild(s);
+    DocumentDisplayManager(documentDisplayManager).added();
+
+    if (displayManager.preferredDocumentWidth != -1) {
+      canvasWidth = displayManager.preferredDocumentWidth;
+    }
+    if (displayManager.preferredDocumentHeight != -1) {
+      canvasHeight = displayManager.preferredDocumentHeight;
     }
   }
 
   override protected function draw(w:int, h:int):void {
-    DocumentDisplayManager(documentSystemManager).setActualDocumentSize(canvasWidth, canvasHeight);
+    DocumentDisplayManager(documentDisplayManager).setActualDocumentSize(canvasWidth, canvasHeight);
 
     var g:Graphics = graphics;
     g.clear();
@@ -86,8 +113,33 @@ public class DocumentContainer extends ControlView {
 
     // draw inner white rectangle
     g.beginFill(0xffffff);
-    g.drawRect(HEADER_SIZE, HEADER_SIZE, w - HEADER_SIZE, h - HEADER_SIZE);
+    const canvasBackgroundInset:int = HEADER_SIZE + 1;
+    g.drawRect(canvasBackgroundInset, canvasBackgroundInset, w - canvasBackgroundInset, h - canvasBackgroundInset);
     g.endFill();
   }
 }
+}
+
+import com.intellij.flex.uiDesigner.designSurface.DesignSurfaceDataKeys;
+
+import org.jetbrains.actionSystem.DataContext;
+import org.jetbrains.actionSystem.DataKey;
+
+final class DocumentContainerDataContext implements DataContext {
+  private var parentDataContext:DataContext;
+
+  public function DocumentContainerDataContext(parentDataContext:DataContext) {
+    this.parentDataContext = parentDataContext;
+  }
+
+  public function getData(dataKey:DataKey):Object {
+    switch (dataKey) {
+      case DesignSurfaceDataKeys.LAYOUT_MANAGER:
+        return project;
+
+      default:
+        return null;
+    }
+
+  }
 }

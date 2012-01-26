@@ -3,7 +3,7 @@ import cocoa.AbstractCollectionViewDataSource;
 import cocoa.ListViewDataSource;
 import cocoa.SegmentedControl;
 
-import com.intellij.flex.uiDesigner.ElementManager;
+import com.intellij.flex.uiDesigner.ComponentManager;
 
 import flash.errors.IllegalOperationError;
 
@@ -11,9 +11,9 @@ import org.flyti.plexus.Injectable;
 
 public class ElementTreeBarManager extends AbstractCollectionViewDataSource implements Injectable, ListViewDataSource {
   private const source:Vector.<String> = new Vector.<String>(8);
-  private var elementManager:ElementManager;
+  private var elementManager:ComponentManager;
 
-  public function ElementTreeBarManager(elementManager:ElementManager) {
+  public function ElementTreeBarManager(elementManager:ComponentManager) {
     this.elementManager = elementManager;
   }
 

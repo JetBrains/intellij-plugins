@@ -114,7 +114,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     var projectView:ProjectView = new ProjectView();
     projectView.laf = ApplicationManager.instance.laf;
     var documentWindow:DocumentWindow = new DocumentWindow(projectView, new MainFocusManager());
-    projectManager.open(project, documentWindow);
+    projectView.dataContext = projectManager.open(project, documentWindow);
 
     var toolWindowManager:ToolWindowManager = ToolWindowManager(project.getComponent(ToolWindowManager));
     toolWindowManager.container = projectView;

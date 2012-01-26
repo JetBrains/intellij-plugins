@@ -20,7 +20,7 @@ public class Modifier {
 
   public function applyBoolean(description:Object, value:Boolean, dataContext:DataContext):void {
     var document:Document = PlatformDataKeys.DOCUMENT.getData(dataContext);
-    var element:Object = PlatformDataKeys.ELEMENT.getData(dataContext);
+    var element:Object = PlatformDataKeys.COMPONENT.getData(dataContext);
     var elementAddress:ElementAddress = DocumentFactoryManager.getInstance().findElementAddress(element, document);
     if (elementAddress == null) {
       return;
@@ -42,7 +42,7 @@ public class Modifier {
 
   public function applyString(description:Object, value:String, dataContext:DataContext):void {
     var document:Document = PlatformDataKeys.DOCUMENT.getData(dataContext);
-    var element:Object = PlatformDataKeys.ELEMENT.getData(dataContext);
+    var element:Object = PlatformDataKeys.COMPONENT.getData(dataContext);
     var elementAddress:ElementAddress = DocumentFactoryManager.getInstance().findElementAddress(element, document);
     if (elementAddress == null) {
       return;

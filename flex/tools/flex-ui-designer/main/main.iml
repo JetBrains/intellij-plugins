@@ -61,6 +61,7 @@
     <orderEntry type="library" name="Maven: org.tinytlf:layouts:swc:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.tinytlf:core:swc:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.tinytlf:fte-utils:swc:1.1.1" level="project" />
+    <orderEntry type="module" module-name="miglayout" />
     <orderEntry type="library" name="Maven: org.flyti.cocoa:cocoa:rb.swc:en_US:2.0-SNAPSHOT" level="project" />
   </component>
 </module>

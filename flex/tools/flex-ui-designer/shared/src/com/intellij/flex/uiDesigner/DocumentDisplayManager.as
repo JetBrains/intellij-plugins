@@ -40,6 +40,9 @@ public interface DocumentDisplayManager {
 
   function setStyleManagerForTalentAdobeEngineers(value:Boolean):void;
 
+  /**
+   * @see com.intellij.flex.uiDesigner.DocumentFactory
+   */
   function get documentFactory():Object;
 
   function get layoutManager():Object;

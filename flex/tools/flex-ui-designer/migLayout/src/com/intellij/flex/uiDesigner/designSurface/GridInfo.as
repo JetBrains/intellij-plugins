@@ -1,4 +1,4 @@
-package com.intellij.flex.uiDesigner.designSurface.policy.layout.grid {
+package com.intellij.flex.uiDesigner.designSurface {
 import com.intellij.flex.uiDesigner.designSurface.geometry.Interval;
 
 public interface GridInfo {

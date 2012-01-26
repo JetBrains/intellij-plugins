@@ -120,8 +120,7 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
     return ApplicationDomain.currentDomain.getDefinition(name);
   }
 
-  override public function init(moduleFactory:Object, uiErrorHandler:UiErrorHandler,
-                       mainFocusManager:MainFocusManagerSB, documentFactory:Object):void {
+  override public function init(moduleFactory:Object, uiErrorHandler:UiErrorHandler, mainFocusManager:MainFocusManagerSB, documentFactory:Object):void {
     super.init(moduleFactory, uiErrorHandler, mainFocusManager, documentFactory);
 
     this.mainFocusManager = mainFocusManager;

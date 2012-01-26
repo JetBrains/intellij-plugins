@@ -1,4 +1,4 @@
-package com.intellij.flex.uiDesigner.ui.tools {
+package com.intellij.flex.uiDesigner.designSurface {
 import cocoa.SpriteBackedView;
 
 import com.intellij.flex.uiDesigner.Document;

@@ -14,12 +14,12 @@ public class DataManager {
     throw new IllegalOperationError();
   }
 
-  public function registerDataContext(component:DisplayObject, dataContext:DataContext):void {
-    throw new IllegalOperationError();
-  }
-
-  public function unregisterDataContext(component:DisplayObject):void {
-    throw new IllegalOperationError();
-  }
+  //public function registerDataContext(component:DisplayObject, dataContext:DataContext):void {
+  //  throw new IllegalOperationError();
+  //}
+  //
+  //public function unregisterDataContext(component:DisplayObject):void {
+  //  throw new IllegalOperationError();
+  //}
 }
 }

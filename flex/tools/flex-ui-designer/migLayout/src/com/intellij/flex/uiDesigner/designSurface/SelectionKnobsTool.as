@@ -1,9 +1,11 @@
-package com.intellij.flex.uiDesigner.ui.tools {
+package com.intellij.flex.uiDesigner.designSurface {
+import com.intellij.flex.uiDesigner.ui.tools.*;
+
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 public class SelectionKnobsTool implements Tool, ElementLayoutChangeListener {
-  [Embed(source="/viewSelectionKnob.png")]
+  [Embed(source="/../../../../../../../ui/resources/viewSelectionKnob.png")]
   private static var viewSelectionKnobClass:Class;
 
   private var selectionKnobs:Sprite;

@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.styleInspector {
 import cocoa.util.SharedPoint;
 
-import com.intellij.flex.uiDesigner.ElementManager;
+import com.intellij.flex.uiDesigner.ComponentManager;
 import com.intellij.flex.uiDesigner.Module;
 import com.intellij.flex.uiDesigner.Server;
 import com.intellij.flex.uiDesigner.VirtualFile;
@@ -41,12 +41,12 @@ public class Interactor {
   private var engine:ITextEngine;
   private var state:int;
   private var prevElementFormat:ElementFormat;
-  private var elementManager:ElementManager;
+  private var elementManager:ComponentManager;
   
   private var outUpHandlerAdded:Boolean;
   private var mouseDownOnElement:Boolean;
 
-  public function Interactor(elementManager:ElementManager, server:Server) {
+  public function Interactor(elementManager:ComponentManager, server:Server) {
     this.elementManager = elementManager;
     this.server = server;
   }
@@ -176,7 +176,7 @@ public class Interactor {
   private function propertyReferenceClickHandler(ruleset:CssRuleset):void {
      if (ruleset.textOffset == CssRuleset.TEXT_OFFSET_UNDEFINED) {
       // case: ButtonBarSkin, middleButton element
-      var uiComponent:Object = elementManager.element;
+      var uiComponent:Object = elementManager.component;
       var documentFQN:String = getQualifiedClassName(uiComponent.document).replace("::", ".");
 
       var elementFqn:String = getQualifiedClassName(uiComponent);

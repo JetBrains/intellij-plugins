@@ -2,12 +2,12 @@ package com.intellij.flex.uiDesigner {
 public final class PlatformDataKeys {
   public static var PROJECT:ProjectDataKey;
   public static var DOCUMENT:DocumentDataKey;
-  public static var ELEMENT:ElementDataKey;
+  public static var COMPONENT:ComponentDataKey;
 
   internal static function burnInHellAdobe():void {
     PROJECT = new ProjectDataKey();
     DOCUMENT = new DocumentDataKey();
-    ELEMENT = new ElementDataKey();
+    COMPONENT = new ComponentDataKey();
   }
 }
 
@@ -32,7 +32,7 @@ final class DocumentDataKey extends DataKey {
   }
 }
 
-final class ElementDataKey extends DataKey {
+final class ComponentDataKey extends DataKey {
   public function getData(dataContext:DataContext):Object {
     return dataContext.getData(this);
   }

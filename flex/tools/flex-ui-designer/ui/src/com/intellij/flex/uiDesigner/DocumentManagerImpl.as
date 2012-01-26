@@ -75,7 +75,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
 
   // IDEA-71781, IDEA-71779
   private function adjustElementSelection():void {
-    ElementManager(_document.module.project.getComponent(ElementManager)).element = null;
+    ComponentManager(_document.module.project.getComponent(ComponentManager)).component = null;
   }
 
   public function open(documentFactory:DocumentFactory, documentOpened:Function = null):void {

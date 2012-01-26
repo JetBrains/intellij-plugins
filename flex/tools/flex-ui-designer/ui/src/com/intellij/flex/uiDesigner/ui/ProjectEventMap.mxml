@@ -3,36 +3,36 @@
     import cocoa.SegmentedControl;
     import cocoa.toolWindow.ToolWindowManager;
 
+    import com.intellij.flex.uiDesigner.ComponentManager;
     import com.intellij.flex.uiDesigner.DocumentManager;
     import com.intellij.flex.uiDesigner.DocumentManagerImpl;
-    import com.intellij.flex.uiDesigner.ElementManager;
     import com.intellij.flex.uiDesigner.Server;
     import com.intellij.flex.uiDesigner.StatesBarManager;
+    import com.intellij.flex.uiDesigner.designSurface.ElementToolContainer;
+    import com.intellij.flex.uiDesigner.designSurface.ToolManager;
     import com.intellij.flex.uiDesigner.libraries.LibraryManager;
     import com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector.PropertyInspector;
     import com.intellij.flex.uiDesigner.ui.inspectors.styleInspector.CssRulesetPrinter;
     import com.intellij.flex.uiDesigner.ui.inspectors.styleInspector.Interactor;
     import com.intellij.flex.uiDesigner.ui.inspectors.styleInspector.StyleInspector;
-    import com.intellij.flex.uiDesigner.ui.tools.ElementToolContainer;
-    import com.intellij.flex.uiDesigner.ui.tools.ElementToolManager;
     ]]></fx:Script>
 
   <components>
-    <Component role="{ElementManager}"/>
+    <Component role="{ComponentManager}"/>
     <Component role="{ToolWindowManager}"/>
     <Component role="{ElementTreeBarManager}">
-      <Requirement role="{ElementManager}"/>
+      <Requirement role="{ComponentManager}"/>
     </Component>
     <Component role="{DocumentManager}" implementation="{DocumentManagerImpl}">
       <Requirement role="{LibraryManager}"/>
       <Requirement role="{Server}"/>
     </Component>
-    <Component role="{ElementToolManager}"/>
+    <Component role="{ToolManager}"/>
     <Component role="{StatesBarManager}">
       <Requirement role="{DocumentManager}"/>
     </Component>
     <Component role="{Interactor}">
-      <Requirement role="{ElementManager}"/>
+      <Requirement role="{ComponentManager}"/>
       <Requirement role="{Server}"/>
     </Component>
     <Component role="{CssRulesetPrinter}">
@@ -44,23 +44,19 @@
     <Injectors target="{StyleInspector}">
       <PropertyInjector source="{CssRulesetPrinter}" targetKey="rulesetPrinter"/>
       <PropertyInjector source="{DocumentManager}" sourceKey="document"/>
-      <PropertyInjector source="{ElementManager}" sourceKey="element"/>
+      <PropertyInjector source="{ComponentManager}" sourceKey="element"/>
       <PropertyInjector targetKey="pane" target="{Interactor}"/>
     </Injectors>
 
     <Injectors target="{PropertyInspector}">
-      <PropertyInjector source="{ElementManager}" sourceKey="element"/>
+      <PropertyInjector source="{ComponentManager}" sourceKey="element"/>
     </Injectors>
     
-    <Injectors target="{ElementToolContainer}">
-      <PropertySetter role="{ElementToolManager}" targetKey="toolContainer"/>
-      <PropertyInjector source="{DocumentManager}" sourceKey="document" targetKey="elementDocument"/>
-    </Injectors>
-    <Injectors target="{ElementToolManager}">
-      <PropertyInjector source="{ElementManager}" sourceKey="element"/>
+    <Injectors target="{ToolManager}">
+      <PropertyInjector source="{ComponentManager}" sourceKey="component"/>
     </Injectors>
     
-    <Injectors target="{ElementManager}">
+    <Injectors target="{ComponentManager}">
       <PropertyInjector source="{DocumentManager}" sourceKey="document"/>
     </Injectors>
     
@@ -74,7 +70,7 @@
       <PropertyInjector source="{DocumentManager}" sourceKey="document"/>
     </Injectors>
     <Injectors target="{ElementTreeBarManager}">
-      <PropertyInjector source="{ElementManager}" sourceKey="element"/>
+      <PropertyInjector source="{ComponentManager}" sourceKey="element"/>
     </Injectors>
   </injectors>
 </LocalEventMap>
