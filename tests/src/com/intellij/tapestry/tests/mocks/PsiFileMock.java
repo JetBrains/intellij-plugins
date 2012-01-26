@@ -1,6 +1,5 @@
 package com.intellij.tapestry.tests.mocks;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.lang.FileASTNode;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageDialect;
@@ -9,7 +8,6 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vcs.FileStatus;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.scope.PsiScopeProcessor;
@@ -69,7 +67,7 @@ public class PsiFileMock implements PsiFile {
     @Override
     @NotNull
     public PsiFile[] getPsiRoots() {
-        return new PsiFile[0];
+        return PsiFile.EMPTY_ARRAY;
     }
 
     @Override
