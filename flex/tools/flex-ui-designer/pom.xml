@@ -62,7 +62,6 @@
 
   <modules>
     <module>shared</module>
-    <module>miglayout</module>
     <module>flex-injection/pom-4.1.xml</module>
     <module>flex-injection/pom-4.5.xml</module>
     <module>flex-injection/pom-4.6.xml</module>
