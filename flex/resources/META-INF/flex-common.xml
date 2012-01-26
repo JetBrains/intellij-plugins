@@ -244,13 +244,6 @@
     </component>
   </project-components>
 
-  <module-components>
-    <component>
-      <implementation-class>com.intellij.lang.javascript.flex.build.FlexBuildConfiguration</implementation-class>
-      <!--<option name="type" value="PLUGIN_MODULE"/>-->
-    </component>
-  </module-components>
-
   <actions>
     <action id="TalkToFdb.Flex.Debug" class="com.intellij.lang.javascript.flex.debug.SendCommandToDebuggerAction"
             text="Send Commands To Flex Debugger">

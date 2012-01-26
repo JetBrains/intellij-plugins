@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -232,17 +233,7 @@ public class FlexBuildConfiguration implements ModuleComponent, PersistentStateC
   }
 
   public static Collection<FlexBuildConfiguration> getConfigForFlexModuleOrItsFlexFacets(final Module module) {
-    final Collection<FlexBuildConfiguration> configurations = new ArrayList<FlexBuildConfiguration>();
-    if (ModuleType.get(module) instanceof FlexModuleType) {
-      configurations.add(getInstance(module));
-    }
-    else {
-      final Collection<FlexFacet> flexFacets = FacetManager.getInstance(module).getFacetsByType(FlexFacet.ID);
-      for (FlexFacet flexFacet : flexFacets) {
-        configurations.add(getInstance(flexFacet));
-      }
-    }
-    return configurations;
+    return Collections.emptyList();
   }
 
   @Transient
