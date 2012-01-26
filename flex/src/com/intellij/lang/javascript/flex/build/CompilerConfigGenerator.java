@@ -314,10 +314,7 @@ public class CompilerConfigGenerator {
         }
       }
       else if (entry instanceof SharedLibraryEntry) {
-        final LibraryTable libraryTable = LibraryTablesRegistrar.APPLICATION_LEVEL.equals(((SharedLibraryEntry)entry).getLibraryLevel())
-                                          ? ApplicationLibraryTable.getApplicationTable()
-                                          : ProjectLibraryTable.getInstance(myModule.getProject());
-        final Library library = libraryTable.getLibraryByName(((SharedLibraryEntry)entry).getLibraryName());
+        final Library library = FlexProjectRootsUtil.findOrderEntry(myModule.getProject(), (SharedLibraryEntry)entry);
         if (library != null) {
           addLibraryRoots(rootElement, library.getFiles((OrderRootType.CLASSES)), linkageType);
         }

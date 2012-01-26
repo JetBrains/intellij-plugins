@@ -1,10 +1,12 @@
 package com.intellij.lang.javascript.flex.build;
 
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.NanoXmlUtil;
 import org.jdom.*;
 
@@ -204,31 +206,30 @@ public class FlexCompilerConfigFileUtil {
     }
   }
 
-  public static Collection<FlexBuildConfiguration.NamespaceAndManifestFileInfo> getNamespaceAndManifestFileInfoFromCustomConfig(final VirtualFile configFile) {
+  public static Collection<Pair<String, String>> getNamespaceAndManifests(final VirtualFile configFile, final boolean onlyIncludedInSwc) {
     if (configFile == null || !configFile.isValid() || configFile.isDirectory()) {
       return Collections.emptyList();
     }
 
-    final Collection<FlexBuildConfiguration.NamespaceAndManifestFileInfo> result =
-      new ArrayList<FlexBuildConfiguration.NamespaceAndManifestFileInfo>();
-
+    // todo cache parsing results
     try {
       final NamespacesXmlBuilder builder = new NamespacesXmlBuilder();
       NanoXmlUtil.parse(configFile.getInputStream(), builder);
 
-      final Collection<String> includedInSwcNamespaces = builder.getIncludedNamespaces();
-
-      for (final Pair<String, String> namespaceAndManifest : builder.getNamespacesAndManifests()) {
-        final FlexBuildConfiguration.NamespaceAndManifestFileInfo info = new FlexBuildConfiguration.NamespaceAndManifestFileInfo();
-        info.NAMESPACE = namespaceAndManifest.first;
-        info.MANIFEST_FILE_PATH = namespaceAndManifest.second;
-        info.INCLUDE_IN_SWC = includedInSwcNamespaces.contains(info.NAMESPACE);
-        result.add(info);
+      if (onlyIncludedInSwc) {
+        final Collection<String> includedInSwcNamespaces = builder.getIncludedNamespaces();
+        return ContainerUtil.filter(builder.getNamespacesAndManifests(), new Condition<Pair<String, String>>() {
+          public boolean value(final Pair<String, String> pair) {
+            return includedInSwcNamespaces.contains(pair.first);
+          }
+        });
       }
+
+      return builder.getNamespacesAndManifests();
     }
     catch (IOException ignored) {
     }
 
-    return result;
+    return Collections.emptyList();
   }
 }

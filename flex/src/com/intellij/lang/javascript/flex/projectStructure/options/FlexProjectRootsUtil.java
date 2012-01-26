@@ -5,12 +5,16 @@ import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexSdkProperties;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModuleRootModel;
 import com.intellij.openapi.roots.OrderEntry;
+import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableImplUtil;
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
@@ -110,6 +114,14 @@ public class FlexProjectRootsUtil {
       }
     }
     return null;
+  }
+
+  @Nullable
+  public static Library findOrderEntry(final Project project, final SharedLibraryEntry entry) {
+    final LibraryTable libraryTable = LibraryTablesRegistrar.APPLICATION_LEVEL.equals(entry.getLibraryLevel())
+                                      ? ApplicationLibraryTable.getApplicationTable()
+                                      : ProjectLibraryTable.getInstance(project);
+    return libraryTable.getLibraryByName((entry).getLibraryName());
   }
 
   public static boolean isFlexLibrary(final Library library) {

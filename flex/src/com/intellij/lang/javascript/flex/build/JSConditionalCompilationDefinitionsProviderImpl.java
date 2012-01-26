@@ -5,7 +5,6 @@ import com.intellij.execution.configurations.CommandLineTokenizer;
 import com.intellij.lang.javascript.JSConditionalCompilationDefinitionsProvider;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
@@ -14,6 +13,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.util.JDOMUtil;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -37,7 +37,8 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
   private static String[] CONDITIONAL_COMPILATION_DEFINITION_OPTION_ALIASES = {"define", "compiler.define"};
 
   private Map<VirtualFile, Long> configFileToTimestamp = new THashMap<VirtualFile, Long>();
-  private Map<VirtualFile, Collection<String>> configFileToConditionalCompilerDefinitions = new THashMap<VirtualFile, Collection<String>>();
+  private Map<VirtualFile, Collection<Pair<String, String>>> configFileToConditionalCompilerDefinitions =
+    new THashMap<VirtualFile, Collection<Pair<String, String>>>();
 
   public boolean containsConstant(final Module module, final String namespace, final String constantName) {
     if (module != null && ModuleType.get(module) instanceof FlexModuleType
@@ -46,9 +47,10 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
       final String searchedName = namespace + "::" + (searchForPrefix ? "" : constantName);
       final Ref<Boolean> result = new Ref<Boolean>(false);
 
-      processConditionalCompilationDefinitions(module, new Processor<String>() {
-        public boolean process(final String name) {
-          if ((searchForPrefix && name.startsWith(searchedName)) || (!searchForPrefix && name.equals(searchedName))) {
+      processConditionalCompilationDefinitions(module, new Processor<Pair<String, String>>() {
+        public boolean process(final Pair<String, String> nameAndValue) {
+          if ((searchForPrefix && nameAndValue.first.startsWith(searchedName)) ||
+              (!searchForPrefix && nameAndValue.first.equals(searchedName))) {
             result.set(true);
             return false;
           }
@@ -67,10 +69,10 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
     if (module != null && ModuleType.get(module) instanceof FlexModuleType && !StringUtil.isEmpty(namespace)) {
       final String beginning = namespace + "::";
 
-      processConditionalCompilationDefinitions(module, new Processor<String>() {
-        public boolean process(final String name) {
-          if (name.startsWith(beginning)) {
-            result.add(name.substring(beginning.length()));
+      processConditionalCompilationDefinitions(module, new Processor<Pair<String, String>>() {
+        public boolean process(final Pair<String, String> nameAndValue) {
+          if (nameAndValue.first.startsWith(beginning)) {
+            result.add(nameAndValue.first.substring(beginning.length()));
           }
           return true;
         }
@@ -84,9 +86,9 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
     final Collection<String> result = new ArrayList<String>();
 
     if (module != null && ModuleType.get(module) instanceof FlexModuleType) {
-      processConditionalCompilationDefinitions(module, new Processor<String>() {
-        public boolean process(final String name) {
-          result.add(name);
+      processConditionalCompilationDefinitions(module, new Processor<Pair<String, String>>() {
+        public boolean process(final Pair<String, String> nameAndValue) {
+          result.add(nameAndValue.first);
           return true;
         }
       });
@@ -95,7 +97,7 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
     return result;
   }
 
-  private void processConditionalCompilationDefinitions(final Module module, final Processor<String> processor) {
+  private void processConditionalCompilationDefinitions(final Module module, final Processor<Pair<String, String>> processor) {
     final FlexBuildConfigurationManager manager = FlexBuildConfigurationManager.getInstance(module);
     final FlexIdeBuildConfiguration bc = manager.getActiveConfiguration();
 
@@ -103,46 +105,18 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
     final ModuleOrProjectCompilerOptions projectLevelOptions =
       FlexProjectLevelCompilerOptionsHolder.getInstance(module.getProject()).getProjectLevelCompilerOptions();
 
-    String rawValue = bc.getCompilerOptions().getOption("compiler.define");
-    if (rawValue == null) rawValue = moduleLevelOptions.getOption("compiler.define");
-    if (rawValue == null) rawValue = projectLevelOptions.getOption("compiler.define");
+    if (!FlexUtils.processCompilerOption(module, bc, "compiler.define", processor)) return;
 
-    if (rawValue != null) {
+    if (!processDefinitionsFromCompilerOptions(projectLevelOptions.getAdditionalOptions(), processor)) return;
+    if (!processDefinitionsFromCompilerOptions(moduleLevelOptions.getAdditionalOptions(), processor)) return;
+    if (!processDefinitionsFromCompilerOptions(bc.getCompilerOptions().getAdditionalOptions(), processor)) return;
 
-      int pos = 0;
-      while (true) {
-        int index = rawValue.indexOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR, pos);
-        if (index == -1) break;
-
-        String token = rawValue.substring(pos, index);
-        final int tabIndex = token.indexOf(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);
-
-        if (tabIndex > 0 && !processor.process(token.substring(0, tabIndex))) return;
-
-        pos = index + 1;
-      }
-
-      final int tabIndex = rawValue.indexOf(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, pos);
-      if (tabIndex > pos) {
-        if (!processor.process(rawValue.substring(pos, tabIndex))) return;
-      }
-    }
-
-    for (String definition : getDefinitionsFromCompilerOptions(projectLevelOptions.getAdditionalOptions())) {
-      if (!processor.process(definition)) return;
-    }
-    for (String definition : getDefinitionsFromCompilerOptions(moduleLevelOptions.getAdditionalOptions())) {
-      if (!processor.process(definition)) return;
-    }
-    for (String definition : getDefinitionsFromCompilerOptions(bc.getCompilerOptions().getAdditionalOptions())) {
-      if (!processor.process(definition)) return;
-    }
-    for (String definition : getDefinitionsFromConfigFile(bc.getCompilerOptions().getAdditionalConfigFilePath())) {
-      if (!processor.process(definition)) return;
+    for (Pair<String, String> nameAndValue : getDefinitionsFromConfigFile(bc.getCompilerOptions().getAdditionalConfigFilePath())) {
+      if (!processor.process(nameAndValue)) return;
     }
   }
 
-  private Collection<String> getDefinitionsFromConfigFile(final String configFilePath) {
+  private Collection<Pair<String, String>> getDefinitionsFromConfigFile(final String configFilePath) {
     if (StringUtil.isEmptyOrSpaces(configFilePath)) return Collections.emptyList();
 
     final VirtualFile configFile = LocalFileSystem.getInstance().findFileByPath(configFilePath);
@@ -161,7 +135,7 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
         final Document document = cachedDocument == null
                                   ? JDOMUtil.loadDocument(configFile.getInputStream())
                                   : JDOMUtil.loadDocument(cachedDocument.getCharsSequence());
-        final Collection<String> result = new ArrayList<String>();
+        final Collection<Pair<String, String>> result = new ArrayList<Pair<String, String>>();
 
         final Element rootElement = document.getRootElement();
         if (rootElement.getName().equals(FLEX_CONFIG)) {
@@ -172,7 +146,7 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
               final String name = defineElement.getChildText(NAME, rootElement.getNamespace());
               final String value = defineElement.getChildText(VALUE, rootElement.getNamespace());
               if (!StringUtil.isEmpty(name) && value != null) {
-                result.add(name);
+                result.add(Pair.create(name, value));
               }
             }
           }
@@ -193,12 +167,9 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
     }
   }
 
-  private static Collection<String> getDefinitionsFromCompilerOptions(final String compilerOptions) {
-    if (StringUtil.isEmpty(compilerOptions)) {
-      return Collections.emptyList();
-    }
-
-    final Collection<String> result = new ArrayList<String>();
+  private static boolean processDefinitionsFromCompilerOptions(final String compilerOptions,
+                                                               final Processor<Pair<String, String>> processor) {
+    if (StringUtil.isEmpty(compilerOptions)) return true;
 
     for (CommandLineTokenizer stringTokenizer = new CommandLineTokenizer(compilerOptions); stringTokenizer.hasMoreTokens(); ) {
       final String token = stringTokenizer.nextToken();
@@ -207,7 +178,7 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
           final String optionValue = token.substring(token.indexOf("=") + 1);
           final int commaIndex = optionValue.indexOf(',');
           if (commaIndex > 0) {
-            result.add(optionValue.substring(0, commaIndex));
+            if (!processor.process(Pair.create(optionValue.substring(0, commaIndex), optionValue.substring(commaIndex + 1)))) return false;
           }
         }
         else if (token.equals("-" + option) && stringTokenizer.countTokens() >= 2) {
@@ -216,12 +187,12 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
           final String value = stringTokenizer.peekNextToken();
           if (FlexUtils.canBeCompilerOptionValue(value)) {
             stringTokenizer.nextToken(); // advance tokenizer position
-            result.add(name);
+            if (!processor.process(Pair.create(name, value))) return false;
           }
         }
       }
     }
 
-    return result;
+    return true;
   }
 }

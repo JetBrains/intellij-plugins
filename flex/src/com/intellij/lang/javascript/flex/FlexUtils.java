@@ -7,6 +7,7 @@ import com.intellij.facet.FacetType;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
+import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
@@ -33,6 +34,7 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureCo
 import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -743,5 +745,37 @@ public class FlexUtils {
     }
 
     return folder;
+  }
+
+  public static boolean processCompilerOption(final Module module, final FlexIdeBuildConfiguration bc, final String option,
+                                              final Processor<Pair<String, String>> processor) {
+    String rawValue = bc.getCompilerOptions().getOption(option);
+    if (rawValue == null) rawValue = FlexBuildConfigurationManager.getInstance(module).getModuleLevelCompilerOptions().getOption(option);
+    if (rawValue == null) {
+      rawValue =
+        FlexProjectLevelCompilerOptionsHolder.getInstance(module.getProject()).getProjectLevelCompilerOptions().getOption(option);
+    }
+
+    if (rawValue == null) return true;
+
+    int pos = 0;
+    while (true) {
+      int index = rawValue.indexOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR, pos);
+      if (index == -1) break;
+
+      String token = rawValue.substring(pos, index);
+      final int tabIndex = token.indexOf(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);
+
+      if (tabIndex > 0 && !processor.process(Pair.create(token.substring(0, tabIndex), token.substring(tabIndex + 1)))) return false;
+
+      pos = index + 1;
+    }
+
+    final int tabIndex = rawValue.indexOf(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, pos);
+    if (tabIndex > pos) {
+      if (!processor.process(Pair.create(rawValue.substring(pos, tabIndex), rawValue.substring(tabIndex + 1)))) return false;
+    }
+
+    return true;
   }
 }
