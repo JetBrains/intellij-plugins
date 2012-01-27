@@ -1,5 +1,7 @@
 package com.intellij.lang.javascript.flex.presentation;
 
+import com.intellij.diagnostic.LogMessageEx;
+import com.intellij.diagnostic.errordialog.Attachment;
 import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.SelectableTreeStructureProvider;
 import com.intellij.ide.projectView.ViewSettings;
@@ -27,6 +29,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.DebugUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -175,7 +178,10 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
       if (e instanceof JSQualifiedNamedElement) {
         String qName = ((JSQualifiedNamedElement)e).getQualifiedName();
         if (qName == null) {
-          LOG.error("Null qname " + e.getClass().getName() + " '" + (e.getParent() != null ? e.getParent().getText() : e.getText()) + "'");
+          final Attachment attachment = e.getParent() != null
+                                        ? new Attachment("Parent element.txt", e.getParent().getText())
+                                        : new Attachment("Element text.txt", e.getText());
+          LOG.error(LogMessageEx.createEvent("Null qname: '" + e.getClass().getName() + "'", DebugUtil.currentStackTrace(), attachment));
           continue;
         }
         elements.add((JSQualifiedNamedElement)e);
