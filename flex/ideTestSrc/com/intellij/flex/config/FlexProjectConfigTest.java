@@ -72,7 +72,7 @@ public class FlexProjectConfigTest extends ModuleTestCase {
     });
 
     OrderEntry libraryEntry = findLibraryEntry(myModule, libraryId);
-    assertNotNull(libraryEntry);
+    assertNull(libraryEntry);
   }
 
   public void testBcDependency() throws ConfigurationException {
