@@ -24,7 +24,6 @@
     <moduleType id="Flex" implementationClass="com.intellij.lang.javascript.flex.FlexModuleType"/>
     <xmlStructureViewBuilderProvider implementation="com.intellij.lang.javascript.flex.presentation.FlexStructureViewProvider"/>
     <referenceImporter implementation="com.intellij.lang.javascript.flex.FlexReferenceImporter"/>
-    <frameworkSupport implementation="com.intellij.javascript.flex.FlexSupportProvider"/>
     <sdkType implementation="com.intellij.lang.javascript.flex.sdk.FlexSdkType"/>
     <sdkType implementation="com.intellij.lang.javascript.flex.sdk.FlexSdkType2"/>
     <sdkType implementation="com.intellij.lang.javascript.flex.sdk.AirSdkType"/>
