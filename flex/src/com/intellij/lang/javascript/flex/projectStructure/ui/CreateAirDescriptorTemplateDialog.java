@@ -2,7 +2,6 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.actions.airdescriptor.CreateAirDescriptorDialog;
 import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -27,14 +26,24 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
+
+  public static final String[] AIR_VERSIONS = {"1.0", "1.1", "1.5", "1.5.1", "1.5.2", "1.5.3", "2.0", "2.5", "2.6", "2.7", "3.0", "3.1"};
+  public static final Pattern VERSION_PATTERN = Pattern.compile("[0-9]{1,3}(\\.[0-9]{1,3}){0,2}");
+
+  public static final int ANDROID_PERMISSION_INTERNET = 1;
+  public static final int ANDROID_PERMISSION_WRITE_EXTERNAL_STORAGE = 2;
+  public static final int ANDROID_PERMISSION_ACCESS_FINE_LOCATION = 4;
+  public static final int ANDROID_PERMISSION_CAMERA = 8;
 
   public static class AirDescriptorOptions {
     private final String AIR_VERSION;
     private final String APP_ID;
     private final String APP_NAME;
     private final String APP_VERSION;
+    private final String SWF_NAME;
     private final boolean MOBILE;
     private final boolean AUTO_ORIENTS;
     private final boolean FULL_SCREEN;
@@ -48,7 +57,17 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     public AirDescriptorOptions(final String airVersion,
                                 final String appId,
                                 final String appName,
+                                final String swfName,
+                                final boolean android) {
+      this(airVersion, appId, appName, "0.0.0", swfName, android, android, android, android, ANDROID_PERMISSION_INTERNET,
+           false, false, false, false);
+    }
+
+    public AirDescriptorOptions(final String airVersion,
+                                final String appId,
+                                final String appName,
                                 final String appVersion,
+                                final String swfName,
                                 final boolean mobile,
                                 final boolean autoOrients,
                                 final boolean fullScreen,
@@ -62,6 +81,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
       APP_ID = appId;
       APP_NAME = appName;
       APP_VERSION = appVersion;
+      SWF_NAME = swfName;
       MOBILE = mobile;
       AUTO_ORIENTS = autoOrients;
       FULL_SCREEN = fullScreen;
@@ -73,11 +93,6 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
       IOS_HIGH_RESOLUTION = iosHighResolution;
     }
   }
-
-  public static final int ANDROID_PERMISSION_INTERNET = 1;
-  public static final int ANDROID_PERMISSION_WRITE_EXTERNAL_STORAGE = 2;
-  public static final int ANDROID_PERMISSION_ACCESS_FINE_LOCATION = 4;
-  public static final int ANDROID_PERMISSION_CAMERA = 8;
 
   private JPanel myMainPanel;
 
@@ -150,7 +165,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     myDescriptorFolderTextWithBrowse
       .addBrowseFolderListener(null, null, myProject, FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
-    myAirVersionCombo.setModel(new DefaultComboBoxModel(CreateAirDescriptorDialog.AIR_VERSIONS));
+    myAirVersionCombo.setModel(new DefaultComboBoxModel(AIR_VERSIONS));
 
     final ActionListener listener = new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
@@ -188,7 +203,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     if (airVersion.isEmpty()) {
       return new ValidationInfo("AIR version is not set", myAirVersionCombo);
     }
-    if (!CreateAirDescriptorDialog.VERSION_PATTERN.matcher(airVersion).matches()) {
+    if (!VERSION_PATTERN.matcher(airVersion).matches()) {
       return new ValidationInfo("Incorrect AIR version", myAirVersionCombo);
     }
 
@@ -209,7 +224,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
       return new ValidationInfo("Application version is not set", myAppVersionTextField);
     }
     if (StringUtil.compareVersionNumbers(airVersion, "2.5") >= 0) {
-      if (!CreateAirDescriptorDialog.VERSION_PATTERN.matcher(appVersion).matches()) {
+      if (!VERSION_PATTERN.matcher(appVersion).matches()) {
         return new ValidationInfo("Application version must have following format: [0-999].[0-999].[0-999]", myAppVersionTextField);
       }
     }
@@ -229,6 +244,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     final String appId = myAppIdTextField.getText().trim();
     final String appName = myAppNameTextField.getText().trim();
     final String appVersion = myAppVersionTextField.getText().trim();
+    final String swfName = "SWF file name is set automatically at compile time";
     final boolean mobile = myMobileOptionsPanel.isVisible();
     final boolean autoOrients = mobile && myAutoOrientCheckBox.isSelected();
     final boolean fullScreen = mobile && myFullScreenCheckBox.isSelected();
@@ -244,8 +260,8 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     final boolean iosHighResolution = mobile && ios && myIOSHighResolutionCheckBox.isSelected();
 
     final AirDescriptorOptions options =
-      new AirDescriptorOptions(airVersion, appId, appName, appVersion, mobile, autoOrients, fullScreen, android, androidPermissions, ios,
-                               iPhone, iPad, iosHighResolution);
+      new AirDescriptorOptions(airVersion, appId, appName, appVersion, swfName, mobile, autoOrients, fullScreen, android,
+                               androidPermissions, ios, iPhone, iPad, iosHighResolution);
 
     if (createAirDescriptorTemplate(myProject, true, getDescriptorPath(), options) != null) {
       super.doOKAction();
@@ -253,20 +269,15 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
   }
 
   @Nullable
-  public static VirtualFile createAirDescriptorTemplate(final Project project,
-                                                        final boolean interactive,
-                                                        final String descriptorPath,
-                                                        final AirDescriptorOptions options) {
+  private static VirtualFile createAirDescriptorTemplate(final Project project,
+                                                         final boolean interactive,
+                                                         final String descriptorPath,
+                                                         final AirDescriptorOptions options) {
     final VirtualFile dir = FlexUtils.createDirIfMissing(project, interactive, PathUtil.getParentPath(descriptorPath), TITLE);
-    return dir == null ? null : doCreateAirDescriptor(project, interactive, dir, PathUtil.getFileName(descriptorPath), options);
-  }
+    if (dir == null) return null;
 
-  @Nullable
-  private static VirtualFile doCreateAirDescriptor(final Project project,
-                                                   final boolean interactive,
-                                                   final VirtualFile dir,
-                                                   final String fileName,
-                                                   final AirDescriptorOptions options) {
+    final String fileName = PathUtil.getFileName(descriptorPath);
+
     final VirtualFile file = dir.findChild(fileName);
     if (file != null) {
       if (file.isDirectory()) {
@@ -285,16 +296,11 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     }
 
     try {
-      // noinspection IOResourceOpenedButNotSafelyClosed
-      final String descriptorText =
-        FileUtil.loadTextAndClose(CreateAirDescriptorTemplateDialog.class.getResourceAsStream("air_descriptor_template.ft"));
-      final String fixedText = replaceMacros(descriptorText, options);
-
       final Ref<VirtualFile> fileRef = new Ref<VirtualFile>();
       final IOException exception = ApplicationManager.getApplication().runWriteAction(new NullableComputable<IOException>() {
         public IOException compute() {
           try {
-            fileRef.set(FlexUtils.addFileWithContent(fileName, fixedText, dir));
+            fileRef.set(FlexUtils.addFileWithContent(fileName, getAirDescriptorText(options), dir));
           }
           catch (IOException e) {
             return e;
@@ -317,6 +323,13 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     }
   }
 
+  public static String getAirDescriptorText(final AirDescriptorOptions options) throws IOException {
+    // noinspection IOResourceOpenedButNotSafelyClosed
+    final String rawText =
+      FileUtil.loadTextAndClose(CreateAirDescriptorTemplateDialog.class.getResourceAsStream("air_descriptor_template.ft"));
+    return replaceMacros(rawText, options);
+  }
+
   private static String replaceMacros(final String descriptorText, final AirDescriptorOptions options) {
     final List<String> macros = new ArrayList<String>();
     final List<String> values = new ArrayList<String>();
@@ -331,6 +344,8 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     addToLists(macros, values, "${version_number_comment_end}", air25OrLater ? "" : "-->");
     addToLists(macros, values, "${version_comment_start}", air25OrLater ? "<!--" : "");
     addToLists(macros, values, "${version_comment_end}", air25OrLater ? "-->" : "");
+
+    addToLists(macros, values, "${swf_name}", options.SWF_NAME);
 
     addToLists(macros, values, "${auto_orients}", options.MOBILE ? String.valueOf(options.AUTO_ORIENTS) : "");
     addToLists(macros, values, "${auto_orients_comment_start}", options.MOBILE ? "" : "<!--");

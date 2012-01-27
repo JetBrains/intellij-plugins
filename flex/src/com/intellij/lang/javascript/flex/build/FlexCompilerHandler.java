@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
 import com.intellij.lang.javascript.flex.projectStructure.ui.ActiveBuildConfigurationWidget;
-import com.intellij.lang.javascript.flex.run.RunMainClassPrecompileTask;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
@@ -24,7 +23,9 @@ import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.StdFileTypes;
-import com.intellij.openapi.module.*;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -146,7 +147,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     CompilerManager compilerManager = CompilerManager.getInstance(myProject);
     if (compilerManager != null) {
       compilerManager.addBeforeTask(new FlexUnitPrecompileTask(myProject));
-      compilerManager.addBeforeTask(new RunMainClassPrecompileTask(myProject));
+      //compilerManager.addBeforeTask(new RunMainClassPrecompileTask(myProject));
       compilerManager.setValidationEnabled(FlexModuleType.getInstance(), false);
       if (PlatformUtils.isFlexIde()) {
         compilerManager.setValidationEnabled(StdModuleTypes.JAVA, false);

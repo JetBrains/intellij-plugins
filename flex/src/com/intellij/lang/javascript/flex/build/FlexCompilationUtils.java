@@ -3,11 +3,10 @@ package com.intellij.lang.javascript.flex.build;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.actions.airdescriptor.AirDescriptorParameters;
-import com.intellij.lang.javascript.flex.actions.airdescriptor.CreateAirDescriptorAction;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
+import com.intellij.lang.javascript.flex.projectStructure.ui.CreateAirDescriptorTemplateDialog;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
@@ -41,6 +40,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import static com.intellij.lang.javascript.flex.projectStructure.ui.CreateAirDescriptorTemplateDialog.AirDescriptorOptions;
 import static com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog.*;
 
 public class FlexCompilationUtils {
@@ -440,34 +440,43 @@ public class FlexCompilationUtils {
     }
   }
 
-  private static void generateAirDescriptor(final FlexIdeBuildConfiguration config,
+  private static void generateAirDescriptor(final FlexIdeBuildConfiguration bc,
                                             final String descriptorFileName,
-                                            final boolean addAndroidPermissions) throws FlexCompilerException {
-    final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
+                                            final boolean android) throws FlexCompilerException {
+    final Ref<IOException> exceptionRef = new Ref<IOException>();
 
     ApplicationManager.getApplication().invokeAndWait(new Runnable() {
       public void run() {
-        try {
-          final SdkEntry sdkEntry = config.getDependencies().getSdkEntry();
-          assert sdkEntry != null;
-          final Sdk sdk = sdkEntry.findSdk();
-          assert sdk != null;
-          final String airVersion = FlexSdkUtils.getAirVersion(sdk.getVersionString());
-          final String fileName = FileUtil.getNameWithoutExtension(config.getOutputFileName());
-          final String appId = fixApplicationId(config.getMainClass());
+        final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
+        final Sdk sdk = sdkEntry == null ? null : sdkEntry.findSdk();
+        assert sdk != null;
+        final VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(bc.getOutputFolder());
+        assert dir != null;
 
-          CreateAirDescriptorAction.createAirDescriptor(
-            new AirDescriptorParameters(descriptorFileName, config.getOutputFolder(), airVersion, appId, fileName, fileName,
-                                        "1.0", config.getOutputFileName(), fileName, 400, 300, addAndroidPermissions));
-        }
-        catch (IOException e) {
-          exceptionRef.set(new FlexCompilerException("Failed to generate AIR descriptor: " + e));
-        }
+        final String airVersion = FlexSdkUtils.getAirVersion(sdk.getVersionString());
+        final String appId = fixApplicationId(bc.getMainClass());
+        final String appName = StringUtil.getShortName(bc.getMainClass());
+
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+          public void run() {
+            try {
+              final AirDescriptorOptions descriptorOptions =
+                new AirDescriptorOptions(airVersion, appId, appName, bc.getOutputFileName(), android);
+              final String descriptorText = CreateAirDescriptorTemplateDialog.getAirDescriptorText(descriptorOptions);
+
+              FlexUtils.addFileWithContent(descriptorFileName, descriptorText, dir);
+            }
+            catch (IOException e) {
+              exceptionRef.set(e);
+            }
+          }
+        });
       }
     }, ModalityState.any());
 
     if (!exceptionRef.isNull()) {
-      throw exceptionRef.get();
+      //noinspection ThrowableResultOfMethodCallIgnored
+      throw new FlexCompilerException("Failed to generate AIR descriptor: " + exceptionRef.get().getMessage());
     }
   }
 

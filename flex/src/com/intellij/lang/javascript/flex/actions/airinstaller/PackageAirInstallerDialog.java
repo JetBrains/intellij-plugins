@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
 import com.intellij.lang.javascript.flex.actions.FilesToPackageForm;
 import com.intellij.lang.javascript.flex.actions.SigningOptionsForm;
-import com.intellij.lang.javascript.flex.actions.airdescriptor.CreateAirDescriptorAction;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -370,7 +369,7 @@ public class PackageAirInstallerDialog extends DialogWrapper implements PanelWit
       final String message = parameters.DO_NOT_SIGN
                              ? MessageFormat.format("Unsigned AIR package created: {0}", parameters.INSTALLER_FILE_NAME)
                              : MessageFormat.format("AIR installation file created: {0}", parameters.INSTALLER_FILE_NAME);
-      CreateAirDescriptorAction.NOTIFICATION_GROUP.createNotification(message, MessageType.INFO).notify(myProject);
+      //CreateAirDescriptorAction.NOTIFICATION_GROUP.createNotification(message, MessageType.INFO).notify(myProject);
     }
 
     return ok;
