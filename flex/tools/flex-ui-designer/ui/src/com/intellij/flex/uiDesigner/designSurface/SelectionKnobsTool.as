@@ -4,6 +4,8 @@ import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 import flash.geom.Point;
 
+import org.jetbrains.actionSystem.DataContext;
+
 public class SelectionKnobsTool implements Tool, ElementLayoutChangeListener {
   //[Embed(source="/../../../../../../../ui/resources/viewSelectionKnob.png")]
   //private static var viewSelectionKnobClass:Class;
@@ -53,7 +55,7 @@ public class SelectionKnobsTool implements Tool, ElementLayoutChangeListener {
     }
   }
 
-  public function activate(displayObjectContainer:DisplayObjectContainer, areaLocations:Vector.<Point>):void {
+  public function activate(displayObjectContainer:DisplayObjectContainer, areaLocations:Vector.<Point>, dataContext:DataContext):void {
   }
 
   public function deactivate():void {

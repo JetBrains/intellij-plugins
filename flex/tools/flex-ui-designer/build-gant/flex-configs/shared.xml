@@ -9,9 +9,11 @@
 		<fonts>
 			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
 		</fonts>
+		<locale/>
 		<source-path append="true">
 			<path-element>@@baseDir@@/src</path-element>
-		</source-path><theme/>
+		</source-path>
+		<theme/>
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
 	<include-sources append="true">

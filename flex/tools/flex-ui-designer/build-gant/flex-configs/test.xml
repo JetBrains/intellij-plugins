@@ -50,7 +50,8 @@
 		</namespaces>
 		<source-path append="true">
 			<path-element>@@baseDir@@/src</path-element>
-		</source-path><theme/>
+		</source-path>
+		<theme/>
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
 	<metadata>

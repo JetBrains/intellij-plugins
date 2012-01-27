@@ -213,8 +213,8 @@ public class IdeaConfigurator implements FlexConfigGenerator {
 
         // ability to compile pure AS3 project without themes — node must be present, but empty (relevant only for "theme")
         if (values.length == 0) {
-          if (name.equals("theme")) {
-            out.append("<theme/>");
+          if (name.equals("theme") || name.equals("locale")) {
+            out.append(indent).append('<').append(name).append("/>");
           }
         }
         else {

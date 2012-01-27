@@ -2,11 +2,10 @@ package com.intellij.flex.uiDesigner.designSurface {
 import flash.display.DisplayObjectContainer;
 import flash.geom.Point;
 
-public interface Tool {
-  function attach(element:Object, toolContainer:ElementToolContainer):void;
-  function detach():void;
+import org.jetbrains.actionSystem.DataContext;
 
-  function activate(displayObjectContainer:DisplayObjectContainer, areaLocations:Vector.<Point>):void;
+public interface Tool {
+  function activate(displayObjectContainer:DisplayObjectContainer, areaLocations:Vector.<Point>, dataContext:DataContext):void;
   function deactivate():void;
 }
 }

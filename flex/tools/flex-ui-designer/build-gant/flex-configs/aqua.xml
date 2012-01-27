@@ -26,6 +26,7 @@
 		<fonts>
 			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
 		</fonts>
+		<locale/>
 		<namespaces>
 			<namespace>
 				<uri>http://ns.adobe.com/mxml/2009</uri>
@@ -48,7 +49,8 @@
 			<path-element>@@baseDir@@/src</path-element>
 			<path-element>@@baseDir@@/resources</path-element>
 			<path-element>@@target@@</path-element>
-		</source-path><theme/>
+		</source-path>
+		<theme/>
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
 	<include-file>

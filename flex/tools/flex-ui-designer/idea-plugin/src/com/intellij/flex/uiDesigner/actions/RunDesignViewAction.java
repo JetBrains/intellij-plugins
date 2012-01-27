@@ -26,6 +26,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import org.jetbrains.annotations.Nullable;
 
 public class RunDesignViewAction extends DumbAwareAction {
   @Override
@@ -68,6 +69,7 @@ public class RunDesignViewAction extends DumbAwareAction {
     }
   }
 
+  @Nullable
   private static Document getDocument(Project project, DataContext dataContext, boolean popupPlace) {
     if (popupPlace) {
       final VirtualFile virtualFile = PlatformDataKeys.VIRTUAL_FILE.getData(dataContext);
@@ -99,6 +101,10 @@ public class RunDesignViewAction extends DumbAwareAction {
     }
 
     final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document);
+    return isSupported(project, psiFile);
+  }
+
+  public static boolean isSupported(Project project, PsiFile psiFile) {
     if (psiFile == null || !JavaScriptSupportLoader.isFlexMxmFile(psiFile)) {
       return false;
     }

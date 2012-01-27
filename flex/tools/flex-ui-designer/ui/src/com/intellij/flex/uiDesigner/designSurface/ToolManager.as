@@ -3,6 +3,8 @@ import flash.display.DisplayObjectContainer;
 import flash.geom.Point;
 
 import org.flyti.plexus.Injectable;
+import org.jetbrains.actionSystem.DataContext;
+import org.jetbrains.actionSystem.DataManager;
 
 public class ToolManager implements Injectable {
   private var tools:Vector.<Tool> = new <Tool>[new GridTool()];
@@ -34,7 +36,6 @@ public class ToolManager implements Injectable {
   //}
 
   private var _component:Object;
-
   public function set component(value:Object):void {
     if (value == _component) {
       return;
@@ -54,8 +55,9 @@ public class ToolManager implements Injectable {
   }
   
   private function activateTools():void {
+    var dataContext:DataContext = DataManager.instance.getDataContext(_displayObjectContainer);
     for each (var tool:Tool in tools) {
-      tool.activate(_displayObjectContainer, _areaLocations);
+      tool.activate(_displayObjectContainer, _areaLocations, dataContext);
     }
     
     // after attach all tools — toolContainer call all elementLayoutChangeListeners 
@@ -64,10 +66,8 @@ public class ToolManager implements Injectable {
 
   private function deactivateTools():void {
     for each (var tool:Tool in tools) {
-      tool.detach();
+      tool.deactivate();
     }
-    
-    //_toolContainer.detach();
   }
 }
 }
