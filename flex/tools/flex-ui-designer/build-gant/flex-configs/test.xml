@@ -2,7 +2,7 @@
 	<compiler>
 		<accessible>false</accessible>
 		<debug>true</debug>
-		<external-library-path>
+		<external-library-path append="true">
 			<path-element>@@target@@/impl-1.0-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/org/flyti/cocoa/acocoa/2.0-SNAPSHOT/acocoa-2.0-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/org/flyti/cocoa/cocoa/2.0-SNAPSHOT/cocoa-2.0-SNAPSHOT.swc</path-element>
@@ -23,8 +23,7 @@
 		<fonts>
 			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
 		</fonts>
-		<include-libraries/>
-		<library-path>
+		<library-path append="true">
 			<path-element>@@repo@@/org/hamcrest/hamcrest-as3/1.1.4-SNAPSHOT/hamcrest-as3-1.1.4-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/framework-4.5.2.21576-en_US.rb.swc</path-element>
 		</library-path>
@@ -49,10 +48,9 @@
 				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/configs_zip/mxml-manifest.xml</manifest>
 			</namespace>
 		</namespaces>
-		<source-path>
+		<source-path append="true">
 			<path-element>@@baseDir@@/src</path-element>
-		</source-path>
-		<theme/>
+		</source-path><theme/>
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
 	<metadata>

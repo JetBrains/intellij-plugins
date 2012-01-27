@@ -209,13 +209,19 @@ public class IdeaConfigurator implements FlexConfigGenerator {
           values = ((Collection<?>)value).toArray();
         }
 
-        out.append(indent).append('<').append(name);
 
-        // ability to compile pure AS3 project without themes — node must be present, but empty (relevant only for "theme", but we are ready for adobe surprises)
+
+        // ability to compile pure AS3 project without themes — node must be present, but empty (relevant only for "theme")
         if (values.length == 0) {
-          out.append("/>");
+          if (name.equals("theme")) {
+            out.append("<theme/>");
+          }
         }
         else {
+          out.append(indent).append('<').append(name);
+          if (Utils.APPENDABLE.contains(name)) {
+            out.append(" append=\"true\"");
+          }
           out.append('>');
 
           String childTagName = Utils.CHILD_TAG_NAME_MAP.get(name);

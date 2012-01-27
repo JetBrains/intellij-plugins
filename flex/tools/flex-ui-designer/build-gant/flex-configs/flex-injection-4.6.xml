@@ -22,7 +22,7 @@
 			<name>flex::v4_6</name>
 			<value>true</value>
 		</define>
-		<external-library-path>
+		<external-library-path append="true">
 			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.6.0.23201/framework-4.6.0.23201.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airspark/4.5.2.21576/airspark-4.5.2.21576.swc</path-element>
@@ -36,9 +36,6 @@
 		<fonts>
 			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
 		</fonts>
-		<include-libraries/>
-		<library-path/>
-		<locale/>
 		<namespaces>
 			<namespace>
 				<uri>http://ns.adobe.com/mxml/2009</uri>
@@ -57,14 +54,13 @@
 				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.6.0.23201/configs_zip/mxml-manifest.xml</manifest>
 			</namespace>
 		</namespaces>
-		<source-path>
+		<source-path append="true">
 			<path-element>@@baseDir@@/src</path-element>
-		</source-path>
-		<theme/>
+		</source-path><theme/>
 		<use-resource-bundle-metadata>false</use-resource-bundle-metadata>
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
-	<include-classes>
+	<include-classes append="true">
 		<class>spark.components.supportClasses.SkinnableComponent</class>
 		<class>spark.components.WindowedApplication</class>
 		<class>spark.components.Window</class>

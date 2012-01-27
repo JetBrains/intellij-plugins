@@ -2,7 +2,7 @@
 	<compiler>
 		<accessible>false</accessible>
 		<debug>true</debug>
-		<external-library-path>
+		<external-library-path append="true">
 			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/framework-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/mx/4.5.2.21576/mx-4.5.2.21576.swc</path-element>
@@ -12,9 +12,6 @@
 		<fonts>
 			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
 		</fonts>
-		<include-libraries/>
-		<library-path/>
-		<locale/>
 		<namespaces>
 			<namespace>
 				<uri>http://ns.adobe.com/mxml/2009</uri>
@@ -37,16 +34,15 @@
 				<manifest>@@configs@@/test-manifest.xml</manifest>
 			</namespace>
 		</namespaces>
-		<source-path>
+		<source-path append="true">
 			<path-element>@@baseDir@@/src</path-element>
-		</source-path>
-		<theme/>
+		</source-path><theme/>
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
-	<include-namespaces>
+	<include-namespaces append="true">
 		<uri>test</uri>
 	</include-namespaces>
-	<include-sources>
+	<include-sources append="true">
 		<path-element>@@baseDir@@/src</path-element>
 	</include-sources>
 	<metadata>

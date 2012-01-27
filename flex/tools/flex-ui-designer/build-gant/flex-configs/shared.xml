@@ -2,23 +2,19 @@
 	<compiler>
 		<accessible>false</accessible>
 		<debug>true</debug>
-		<external-library-path>
+		<external-library-path append="true">
 			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/2.6/airglobal.swc</path-element>
 		</external-library-path>
 		<fixed-literal-vector>true</fixed-literal-vector>
 		<fonts>
 			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
 		</fonts>
-		<include-libraries/>
-		<library-path/>
-		<locale/>
-		<source-path>
+		<source-path append="true">
 			<path-element>@@baseDir@@/src</path-element>
-		</source-path>
-		<theme/>
+		</source-path><theme/>
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
-	<include-sources>
+	<include-sources append="true">
 		<path-element>@@baseDir@@/src</path-element>
 	</include-sources>
 	<metadata>

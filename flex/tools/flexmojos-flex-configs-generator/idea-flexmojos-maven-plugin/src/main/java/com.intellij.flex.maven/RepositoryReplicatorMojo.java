@@ -129,6 +129,8 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
           final File sourceDirectory = new File(artifactFile.getParentFile(), "configs_zip");
           final File destinationDirectory = new File(outputDirectory, artifactFile.getParent().substring(localRepositoryBasedirLength) + "/configs_zip");
           destinationDirectory.mkdirs();
+          destinationDirectory.setLastModified(sourceDirectory.lastModified());
+
           for (String from : sourceDirectory.list()) {
             // build.xml — published flex sdk contains unneeded ant file
             if (from.charAt(0) != '.' && !from.equals("build.xml")) {

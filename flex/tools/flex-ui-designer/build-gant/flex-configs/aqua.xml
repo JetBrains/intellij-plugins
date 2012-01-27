@@ -2,7 +2,7 @@
 	<compiler>
 		<accessible>false</accessible>
 		<debug>true</debug>
-		<external-library-path>
+		<external-library-path append="true">
 			<path-element>@@target@@/base-1.0-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/org/flyti/cocoa/aquaLaF/2.0-SNAPSHOT/aquaLaF-2.0-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/org/flyti/cocoa/cocoa/2.0-SNAPSHOT/cocoa-2.0-SNAPSHOT.swc</path-element>
@@ -26,9 +26,6 @@
 		<fonts>
 			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
 		</fonts>
-		<include-libraries/>
-		<library-path/>
-		<locale/>
 		<namespaces>
 			<namespace>
 				<uri>http://ns.adobe.com/mxml/2009</uri>
@@ -47,12 +44,11 @@
 				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/configs_zip/mxml-manifest.xml</manifest>
 			</namespace>
 		</namespaces>
-		<source-path>
+		<source-path append="true">
 			<path-element>@@baseDir@@/src</path-element>
 			<path-element>@@baseDir@@/resources</path-element>
 			<path-element>@@target@@</path-element>
-		</source-path>
-		<theme/>
+		</source-path><theme/>
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
 	<include-file>
@@ -99,7 +95,7 @@
 		<name>/TabLabel.PushButton.on.png</name>
 		<path>@@baseDir@@/resources/TabLabel.PushButton.on.png</path>
 	</include-file>
-	<include-sources>
+	<include-sources append="true">
 		<path-element>@@baseDir@@/src</path-element>
 	</include-sources>
 	<metadata>

@@ -6,7 +6,7 @@
 			<name>config::fdbWorkaround</name>
 			<value>false</value>
 		</define>
-		<external-library-path>
+		<external-library-path append="true">
 			<path-element>@@target@@/shared-1.0-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/2.6/airglobal.swc</path-element>
 		</external-library-path>
@@ -14,8 +14,7 @@
 		<fonts>
 			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
 		</fonts>
-		<include-libraries/>
-		<library-path>
+		<library-path append="true">
 			<path-element>@@target@@/aqua-1.0-SNAPSHOT.swc</path-element>
 			<path-element>@@target@@/base-1.0-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/org/flyti/cocoa/aquaLaF/2.0-SNAPSHOT/aquaLaF-2.0-SNAPSHOT.swc</path-element>
@@ -57,11 +56,10 @@
 				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/configs_zip/mxml-manifest.xml</manifest>
 			</namespace>
 		</namespaces>
-		<source-path>
+		<source-path append="true">
 			<path-element>@@baseDir@@/src</path-element>
 			<path-element>@@baseDir@@/resources</path-element>
-		</source-path>
-		<theme/>
+		</source-path><theme/>
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
 	<metadata>

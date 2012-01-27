@@ -2,7 +2,7 @@
 	<compiler>
 		<accessible>false</accessible>
 		<debug>true</debug>
-		<external-library-path>
+		<external-library-path append="true">
 			<path-element>@@target@@/impl-1.0-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/org/flyti/cocoa/acocoa/2.0-SNAPSHOT/acocoa-2.0-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/framework-4.5.2.21576.swc</path-element>
@@ -23,8 +23,7 @@
 		<fonts>
 			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
 		</fonts>
-		<include-libraries/>
-		<library-path>
+		<library-path append="true">
 			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/framework-4.5.2.21576-en_US.rb.swc</path-element>
 		</library-path>
 		<locale>
@@ -49,19 +48,18 @@
 			</namespace>
 		</namespaces>
 		<show-binding-warnings>false</show-binding-warnings>
-		<source-path>
+		<source-path append="true">
 			<path-element>@@baseDir@@/src</path-element>
 			<path-element>@@baseDir@@/locales/{locale}</path-element>
 			<path-element>@@baseDir@@/resources</path-element>
-		</source-path>
-		<theme/>
+		</source-path><theme/>
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
 	<include-file>
 		<name>/viewSelectionKnob.png</name>
 		<path>@@baseDir@@/resources/viewSelectionKnob.png</path>
 	</include-file>
-	<include-sources>
+	<include-sources append="true">
 		<path-element>@@baseDir@@/src</path-element>
 	</include-sources>
 	<metadata>
