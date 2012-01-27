@@ -9,20 +9,8 @@
   <dependencies>
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>airframework</artifactId>
-      <version>4.5.2.21576</version>
-      <type>swc</type>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
       <artifactId>airglobal</artifactId>
-      <version>2.6</version>
-      <type>swc</type>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>airspark</artifactId>
-      <version>4.5.2.21576</version>
+      <version>2.6.0.19120</version>
       <type>swc</type>
     </dependency>
     <dependency>
@@ -33,31 +21,7 @@
     </dependency>
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>spark</artifactId>
-      <version>4.5.2.21576</version>
-      <type>swc</type>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>airframework</artifactId>
-      <version>4.5.2.21576</version>
-      <type>rb.swc</type>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>airspark</artifactId>
-      <version>4.5.2.21576</version>
-      <type>rb.swc</type>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
       <artifactId>framework</artifactId>
-      <version>4.5.2.21576</version>
-      <type>rb.swc</type>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>spark</artifactId>
       <version>4.5.2.21576</version>
       <type>rb.swc</type>
     </dependency>
