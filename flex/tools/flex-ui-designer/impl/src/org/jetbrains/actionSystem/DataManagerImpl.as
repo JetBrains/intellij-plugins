@@ -14,6 +14,9 @@ public class DataManagerImpl extends DataManager {
           return dataContext;
         }
       }
+      else if (p is DataContext) {
+        return DataContext(p);
+      }
       else if (p is Skin && Skin(p).component is DataContextProvider) {
         return DataContextProvider(Skin(p).component).dataContext;
       }

@@ -1,4 +1,7 @@
 package com.intellij.flex.uiDesigner.designSurface {
+import com.intellij.flex.uiDesigner.DocumentDisplayManager;
+
+import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.Shape;
@@ -11,39 +14,34 @@ import org.jetbrains.actionSystem.DataContext;
  */
 
 [Abstract]
-public class GridTool implements Tool {
-  private var shape:Shape;
-
+public class GridTool extends DocumentTool {
   private static const INACTIVE_LINE_COLOR:uint = 0xb0b0b0;
   // active when target (insert component for example)
   private static const ACTIVE_LINE_COLOR:uint = 0xdb9e9e;
 
-  public function activate(displayObjectContainer:DisplayObjectContainer, areaLocations:Vector.<Point>, dataContext:DataContext):void {
-    if (shape == null) {
-      shape = new Shape();
-    }
+  private var canvas:Shape;
 
-    if (shape.parent != displayObjectContainer) {
-      displayObjectContainer.addChild(shape);
-    }
-
-    var location:Point = areaLocations[AreaLocations.BODY];
-    shape.x = location.x;
-    shape.y = location.y;
-
-    var gridInfo:GridInfo = DesignSurfaceDataKeys.LAYOUT_MANAGER.getData(dataContext).gridInfo;
-    drawGrid(gridInfo);
+  override protected function get displayObject():DisplayObject {
+    return canvas;
   }
 
-  public function deactivate():void {
-    shape.visible = false;
+  override protected function createCanvas():DisplayObject {
+    canvas = new Shape();
+    return canvas;
+  }
+
+  override protected function doActivate(displayObjectContainer:DisplayObjectContainer, areaLocations:Vector.<Point>, dataContext:DataContext, documentDisplayManager:DocumentDisplayManager):void {
+    var gridInfo:GridInfo = documentDisplayManager.layoutManager.gridInfo;
+    // todo draw only if needed
+    drawGrid(gridInfo);
   }
 
   private function drawGrid(gridInfo:GridInfo):void {
     var columnIntervals:Vector.<Interval> = gridInfo.columnIntervals;
     var rowIntervals:Vector.<Interval> = gridInfo.rowIntervals;
 
-    var g:Graphics = shape.graphics;
+    var g:Graphics = canvas.graphics;
+    g.clear();
     g.lineStyle(1, INACTIVE_LINE_COLOR);
     drawHorizontalLines(g, columnIntervals, rowIntervals);
     drawVerticalLines(g, columnIntervals, rowIntervals);
@@ -70,7 +68,7 @@ public class GridTool implements Tool {
     var x:int = 0;
     if (columnIntervals.length != 0) {
       const y1:int = 0;
-      const y2:int = rowIntervals[columnIntervals.length - 1].end;
+      const y2:int = rowIntervals[rowIntervals.length - 1].end;
       for each (var interval:Interval in columnIntervals) {
         x = interval.begin;
         g.moveTo(x, y1);

@@ -6,12 +6,18 @@ import flash.display.DisplayObject;
 import flash.display.Stage;
 
 public interface DocumentDisplayManager {
-  function setUserDocument(object:DisplayObject):void;
+  function setDocument(object:DisplayObject):void;
 
   function get preferredDocumentWidth():int;
   function get preferredDocumentHeight():int;
 
-  function setActualDocumentSize(w:int, h:int):void;
+  function get minDocumentWidth():int;
+  function get minDocumentHeight():int;
+
+  function get actualDocumentWidth():int;
+  function get actualDocumentHeight():int;
+
+  function setDocumentBounds(w:int, h:int):void;
   
   function getDefinitionByName(name:String):Object;
 
@@ -47,6 +53,6 @@ public interface DocumentDisplayManager {
 
   function get flexLayoutManager():Object;
 
-  function getLayoutManager():LayoutManager;
+  function get layoutManager():LayoutManager;
 }
 }

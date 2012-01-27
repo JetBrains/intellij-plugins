@@ -5,6 +5,7 @@ import cocoa.plaf.LookAndFeel;
 
 import com.intellij.flex.uiDesigner.DocumentDisplayManager;
 import com.intellij.flex.uiDesigner.DocumentFactory;
+import com.intellij.flex.uiDesigner.designSurface.AreaLocations;
 import com.intellij.flex.uiDesigner.designSurface.DesignSurfaceDataKeys;
 import com.intellij.flex.uiDesigner.designSurface.ToolManager;
 
@@ -14,29 +15,26 @@ import flash.display.Sprite;
 import flash.geom.Point;
 
 import org.jetbrains.actionSystem.DataContext;
-import org.jetbrains.actionSystem.DataContextProvider;
 import org.jetbrains.actionSystem.DataKey;
 import org.jetbrains.actionSystem.DataManager;
 
-public class DocumentContainer extends ControlView implements DataContextProvider, DataContext {
-  private var designerAreaOuterBackgroundColor:int;
-
+public class DocumentContainer extends ControlView implements DataContext {
   private static const HEADER_SIZE:int = 15;
   private static const CANVAS_INSET:int = HEADER_SIZE + 1 /* line thickness */ + 20;
 
-  private static const AREA_LOCATIONS:Vector.<Point> = new <Point>[new Point(0, HEADER_SIZE + 1), new Point(HEADER_SIZE + 1, 0), new Point(CANVAS_INSET, CANVAS_INSET)];
+  private static const MIN_CANVAS_WIDTH:int = 500;
+  private static const MIN_CANVAS_HEIGHT:int = 400;
 
+  private static const AREA_LOCATIONS:Vector.<Point> = new <Point>[new Point(), new Point(), new Point()];
+
+  private var designerAreaOuterBackgroundColor:int;
   private var documentDisplayManager:DocumentDisplayManager;
 
   // min w/h compute by size of default canvas (the same as in idea/wbpro)
   // user can change size of this canvas, but it is not set document size — only canvas
   // default value the same as in idea (wbpro has another — 450x300)
-  private var canvasWidth:int = 500;
-  private var canvasHeight:int = 400;
-
-  public function get dataContext():DataContext {
-    return this;
-  }
+  private var canvasWidth:int = MIN_CANVAS_WIDTH;
+  private var canvasHeight:int = MIN_CANVAS_HEIGHT;
 
   public function DocumentContainer(documentSystemManager:DocumentDisplayManager) {
     this.documentDisplayManager = documentSystemManager;
@@ -56,6 +54,19 @@ public class DocumentContainer extends ControlView implements DataContextProvide
 
   override public function getPreferredHeight(wHint:int = -1):int {
     return canvasHeight + CANVAS_INSET;
+  }
+
+  override public function setLocation(x:Number, y:Number):void {
+    super.setLocation(x, y);
+
+    AREA_LOCATIONS[AreaLocations.HORIZONTAL_HEADER].x = x;
+    AREA_LOCATIONS[AreaLocations.HORIZONTAL_HEADER].y = y + HEADER_SIZE + 1;
+
+    AREA_LOCATIONS[AreaLocations.VERTICAL_HEADER].x = x + HEADER_SIZE + 1;
+    AREA_LOCATIONS[AreaLocations.VERTICAL_HEADER].y = y;
+
+    AREA_LOCATIONS[AreaLocations.BODY].x = x + CANVAS_INSET;
+    AREA_LOCATIONS[AreaLocations.BODY].y = y + CANVAS_INSET;
   }
 
   override public function addToSuperview(displayObjectContainer:DisplayObjectContainer, laf:LookAndFeel, superview:ContentView = null):void {
@@ -80,13 +91,20 @@ public class DocumentContainer extends ControlView implements DataContextProvide
     if (documentDisplayManager.preferredDocumentWidth != -1) {
       canvasWidth = documentDisplayManager.preferredDocumentWidth;
     }
+    else {
+      canvasWidth = Math.max(MIN_CANVAS_WIDTH, documentDisplayManager.minDocumentWidth);
+    }
+    
     if (documentDisplayManager.preferredDocumentHeight != -1) {
       canvasHeight = documentDisplayManager.preferredDocumentHeight;
+    }
+    else {
+      canvasWidth = Math.max(MIN_CANVAS_HEIGHT, documentDisplayManager.minDocumentHeight);
     }
   }
 
   override protected function draw(w:int, h:int):void {
-    DocumentDisplayManager(documentDisplayManager).setActualDocumentSize(canvasWidth, canvasHeight);
+    DocumentDisplayManager(documentDisplayManager).setDocumentBounds(canvasWidth, canvasHeight);
 
     var g:Graphics = graphics;
     g.clear();
@@ -116,8 +134,8 @@ public class DocumentContainer extends ControlView implements DataContextProvide
 
   public function getData(dataKey:DataKey):Object {
     switch (dataKey) {
-      case DesignSurfaceDataKeys.LAYOUT_MANAGER:
-        return documentDisplayManager.getLayoutManager();
+      case DesignSurfaceDataKeys.DOCUMENT_DISPLAY_MANAGER:
+        return documentDisplayManager;
 
       default:
         return DataManager.instance.getDataContext(parent).getData(dataKey);

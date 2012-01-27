@@ -26,6 +26,7 @@ import mx.core.FlexGlobals;
 import mx.core.IChildList;
 import mx.core.IFlexDisplayObject;
 import mx.core.IFlexModule;
+import mx.core.ILayoutElement;
 import mx.core.IRawChildrenContainer;
 import mx.core.IUIComponent;
 import mx.core.IVisualElement;
@@ -53,7 +54,11 @@ import mx.styles.ISimpleStyleClient;
 import mx.styles.IStyleClient;
 import mx.styles.StyleManager;
 
+import net.miginfocom.layout.LayoutUtil;
+
 import org.jetbrains.migLayout.flex.MigLayout;
+
+import spark.components.SkinnableContainer;
 
 import spark.components.supportClasses.GroupBase;
 
@@ -405,7 +410,7 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
     StyleManager.tempStyleManagerForTalentAdobeEngineers = value ? flexModuleFactory.styleManager : null;
   }
 
-  public function setUserDocument(object:DisplayObject):void {
+  public function setDocument(object:DisplayObject):void {
     removeEventHandlers();
     
     if (_document != null) {
@@ -447,6 +452,22 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
 
       throw e;
     }
+  }
+
+  public function get minDocumentWidth():int {
+    return ILayoutElement(_document).getMinBoundsWidth();
+  }
+
+  public function get minDocumentHeight():int {
+    return ILayoutElement(_document).getMinBoundsHeight();
+  }
+
+  public function get actualDocumentWidth():int {
+    return ILayoutElement(_document).getLayoutBoundsWidth();
+  }
+
+  public function get actualDocumentHeight():int {
+    return ILayoutElement(_document).getLayoutBoundsHeight();
   }
 
   public function added():void {
@@ -793,7 +814,7 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
   
   private var _layoutManager:com.intellij.flex.uiDesigner.designSurface.LayoutManager;
 
-  public function getLayoutManager():com.intellij.flex.uiDesigner.designSurface.LayoutManager {
+  public function get layoutManager():com.intellij.flex.uiDesigner.designSurface.LayoutManager {
     if (_layoutManager == null) {
       _layoutManager = createLayoutManager();
     }
@@ -801,15 +822,19 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
   }
 
   private function createLayoutManager():com.intellij.flex.uiDesigner.designSurface.LayoutManager {
-    var container:GroupBase = document as GroupBase;
-    if (container == null) {
-      return null;
+    var migLayout:MigLayout;
+    if (document is GroupBase) {
+      migLayout = GroupBase(document).layout as MigLayout;
+    }
+    else if (document is SkinnableContainer) {
+      migLayout = SkinnableContainer(document).layout as MigLayout;
     }
 
-    var migLayout:MigLayout = container.layout as MigLayout;
     if (migLayout == null) {
       return null;
     }
+
+    LayoutUtil.designTimeEmptySize = 15;
 
     return new MigLayoutManager(migLayout);
   }

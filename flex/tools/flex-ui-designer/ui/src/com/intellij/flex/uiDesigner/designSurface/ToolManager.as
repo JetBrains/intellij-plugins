@@ -1,4 +1,7 @@
 package com.intellij.flex.uiDesigner.designSurface {
+import com.intellij.flex.uiDesigner.PlatformDataKeys;
+
+import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.geom.Point;
 
@@ -7,7 +10,7 @@ import org.jetbrains.actionSystem.DataContext;
 import org.jetbrains.actionSystem.DataManager;
 
 public class ToolManager implements Injectable {
-  private var tools:Vector.<Tool> = new <Tool>[new GridTool()];
+  private var tools:Vector.<Tool> = new <Tool>[new GridTool(), new DocumentCanvasResizer()];
 
   private var _areaLocations:Vector.<Point>;
   public function set areaLocations(value:Vector.<Point>):void {
@@ -55,7 +58,7 @@ public class ToolManager implements Injectable {
   }
   
   private function activateTools():void {
-    var dataContext:DataContext = DataManager.instance.getDataContext(_displayObjectContainer);
+    var dataContext:DataContext = DataManager.instance.getDataContext(DisplayObject(PlatformDataKeys.DOCUMENT.getData(DataManager.instance.getDataContext(_displayObjectContainer)).container));
     for each (var tool:Tool in tools) {
       tool.activate(_displayObjectContainer, _areaLocations, dataContext);
     }

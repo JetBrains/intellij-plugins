@@ -11,6 +11,22 @@ public class FlashDocumentDisplayManager extends AbstractDocumentDisplayManager 
     return FlashComponentInfoProvider.instance;
   }
 
+  public function get minDocumentWidth():int {
+    return 0;
+  }
+
+  public function get minDocumentHeight():int {
+    return 0;
+  }
+
+  public function get actualDocumentWidth():int {
+    return _document.width;
+  }
+
+  public function get actualDocumentHeight():int {
+    return _document.height;
+  }
+
   public function get sharedInitialized():Boolean {
     return true;
   }
@@ -28,7 +44,7 @@ public class FlashDocumentDisplayManager extends AbstractDocumentDisplayManager 
     super.init(moduleFactory, uiErrorHandler, mainFocusManager, documentFactory);
   }
 
-  public function setUserDocument(object:DisplayObject):void {
+  public function setDocument(object:DisplayObject):void {
     removeEventHandlers();
 
     if (_document != null) {
@@ -72,7 +88,7 @@ public class FlashDocumentDisplayManager extends AbstractDocumentDisplayManager 
     return null;
   }
 
-  public function getLayoutManager():LayoutManager {
+  public function get layoutManager():LayoutManager {
     return null;
   }
 }

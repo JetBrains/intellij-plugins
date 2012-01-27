@@ -50,7 +50,7 @@ public class RunDesignViewAction extends DumbAwareAction {
         UsageTrigger.trigger("FlexUiDesigner");
       }
 
-      DesignerApplicationManager.getInstance().openDocument(module, psiFile, isDebug());
+      DesignerApplicationManager.getInstance().openDocument(module, psiFile, isDebug() || (DebugPathManager.IS_DEV && event.getInputEvent().isControlDown()));
     }
   }
 

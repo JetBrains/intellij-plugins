@@ -57,6 +57,10 @@
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
 	<include-file>
+		<name>/canvasKnob.png</name>
+		<path>@@baseDir@@/resources/canvasKnob.png</path>
+	</include-file>
+	<include-file>
 		<name>/viewSelectionKnob.png</name>
 		<path>@@baseDir@@/resources/viewSelectionKnob.png</path>
 	</include-file>

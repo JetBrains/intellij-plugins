@@ -37,7 +37,7 @@ public class AbstractDocumentDisplayManager extends Sprite {
     return dimension == 0 || dimension != dimension ? -1 : dimension;
   }
 
-  public function setActualDocumentSize(w:int, h:int):void {
+  public function setDocumentBounds(w:int, h:int):void {
     // originally set by setLayoutBoundsSize, but the Application without explicit size hangs on Stage and listen to resize - we can not change this behavior without the injection of the byte-code
     _document.width = w;
     _document.height = h;

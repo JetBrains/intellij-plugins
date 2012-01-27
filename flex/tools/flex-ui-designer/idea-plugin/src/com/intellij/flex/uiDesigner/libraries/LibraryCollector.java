@@ -207,6 +207,10 @@ class LibraryCollector {
     else if (name.equals("osmf.swc")) {
       return libraryContains("org.osmf.utils.Version", jarFile);
     }
+    // todo check and add
+    else if (name.startsWith("miglayout-")) {
+      return true;
+    }
 
     return false;
   }
