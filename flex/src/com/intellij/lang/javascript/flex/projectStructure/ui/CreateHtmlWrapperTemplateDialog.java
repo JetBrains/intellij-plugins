@@ -2,7 +2,6 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.actions.htmlwrapper.CreateHtmlWrapperAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
@@ -37,6 +36,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
   public static final String VERSION_MAJOR_MACRO = "${version_major}";
   public static final String VERSION_MINOR_MACRO = "${version_minor}";
   public static final String VERSION_REVISION_MACRO = "${version_revision}";
+  public static final String HTML_WRAPPER_TEMPLATE_FILE_NAME = "index.template.html";
 
   private JPanel myMainPanel;
   private LabeledComponent<TextFieldWithBrowseButton> myWrapperFolderComponent;
@@ -187,7 +187,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
         try {
           for (VirtualFile file : sdkTemplateFolder.getChildren()) {
             if (swfObjectWrapper) {
-              if (CreateHtmlWrapperAction.HTML_WRAPPER_TEMPLATE_FILE_NAME.equals(file.getName())) {
+              if (HTML_WRAPPER_TEMPLATE_FILE_NAME.equals(file.getName())) {
                 fixAndCopyIndexTemplateHtml(file, folder, enableHistory, checkPlayerVersion, expressInstall);
                 continue;
               }

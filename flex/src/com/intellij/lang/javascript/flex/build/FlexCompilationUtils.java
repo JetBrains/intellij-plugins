@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airdescriptor.AirDescriptorParameters;
 import com.intellij.lang.javascript.flex.actions.airdescriptor.CreateAirDescriptorAction;
-import com.intellij.lang.javascript.flex.actions.htmlwrapper.CreateHtmlWrapperAction;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
@@ -356,7 +355,7 @@ public class FlexCompilationUtils {
     if (templateDir == null || !templateDir.isDirectory()) {
       throw new FlexCompilerException(FlexBundle.message("html.wrapper.dir.not.found", bc.getWrapperTemplatePath()));
     }
-    final VirtualFile templateFile = templateDir.findChild(CreateHtmlWrapperAction.HTML_WRAPPER_TEMPLATE_FILE_NAME);
+    final VirtualFile templateFile = templateDir.findChild(HTML_WRAPPER_TEMPLATE_FILE_NAME);
     if (templateFile == null) {
       throw new FlexCompilerException(FlexBundle.message("no.index.template.html.file", bc.getWrapperTemplatePath()));
     }
