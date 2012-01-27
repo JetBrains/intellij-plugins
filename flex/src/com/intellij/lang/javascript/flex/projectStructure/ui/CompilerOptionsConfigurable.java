@@ -362,7 +362,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
         myLabel.setText(info.DISPLAY_NAME);
 
         final ValueSource valueSource = getValueAndSource(info).second;
-        renderAccordingToSource(myLabel, valueSource);
+        renderAccordingToSource(myLabel, valueSource, selected);
 
         myLabel.setForeground(selected ? UIUtil.getTableSelectionForeground() : UIUtil.getTableForeground());
 
@@ -371,10 +371,10 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     };
   }
 
-  private static void renderAccordingToSource(final Component component, final ValueSource valueSource) {
+  private static void renderAccordingToSource(final Component component, final ValueSource valueSource, final boolean selected) {
     final int boldOrPlain = valueSource == ValueSource.BC || valueSource == ValueSource.ProjectDefault ? Font.BOLD : Font.PLAIN;
     component.setFont(component.getFont().deriveFont(boldOrPlain));
-    component.setEnabled(valueSource == ValueSource.BC || valueSource == ValueSource.ModuleDefault);
+    component.setEnabled(selected || valueSource == ValueSource.BC || valueSource == ValueSource.ModuleDefault);
   }
 
   private TableCellRenderer createValueRenderer() {
@@ -407,13 +407,13 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
           case IncludeFiles:
             myLabel.setBackground(table.getBackground());
             myLabel.setText(getPresentableSummary(valueAndSource.first, info));
-            renderAccordingToSource(myLabel, valueAndSource.second);
+            renderAccordingToSource(myLabel, valueAndSource.second, false);
             return myLabel;
           case File:
             final JLabel label = myLabelWithBrowse.getChildComponent();
             myLabelWithBrowse.setBackground(table.getBackground());
             label.setText(valueAndSource.first);
-            renderAccordingToSource(label, valueAndSource.second);
+            renderAccordingToSource(label, valueAndSource.second, false);
             return myLabelWithBrowse;
           case Group:
           default:
