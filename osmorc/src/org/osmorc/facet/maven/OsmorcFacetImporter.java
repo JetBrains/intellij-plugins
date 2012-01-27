@@ -25,6 +25,8 @@
 
 package org.osmorc.facet.maven;
 
+import aQute.lib.osgi.Analyzer;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
@@ -34,19 +36,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.importing.FacetImporter;
 import org.jetbrains.idea.maven.importing.MavenModifiableModelsProvider;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
+import org.jetbrains.idea.maven.model.MavenArtifact;
+import org.jetbrains.idea.maven.model.MavenArtifactNode;
 import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.model.MavenPlugin;
 import org.jetbrains.idea.maven.project.*;
 import org.osgi.framework.Constants;
+import org.osmorc.OsmorcProjectComponent;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.facet.OsmorcFacetType;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -122,7 +124,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
       if (!StringUtil.isEmptyOrSpaces(licenses)) {
         props.put("Bundle-License", licenses);
       }
-      
+
       String vendor = modelMap.get("organization.name");
       if (!StringUtil.isEmpty(vendor)) {
         props.put(Constants.BUNDLE_VENDOR, vendor);
@@ -169,6 +171,9 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
         }
       }
 
+      // now postprocess the settings, to make Embed-Dependency work
+      postprocessAdditionalProperties(props, mavenProject);
+
       // Fix for IDEA-63242 - don't merge it with the existing settings, overwrite them
       conf.importAdditionalProperties(props, true);
 
@@ -187,6 +192,64 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
         default:
           conf.setJarFileLocation(jarFileName, OsmorcFacetConfiguration.OutputPathType.CompilerOutputPath);
       }
+    }
+  }
+
+  /**
+   * Postprocessing step which handles Embed-Dependency. This code is borrowed in large parts from the maven dependency plugin.
+   *
+   * @param props   the properties
+   * @param project the maven project.
+   */
+  private void postprocessAdditionalProperties(final Map<String, String> props, MavenProject project) {
+    Analyzer myFakeAnalyzer = new Analyzer() {
+      @Override
+      public String getProperty(String key) {
+        return props.get(key);
+      }
+
+      @Override
+      public String getProperty(String key, String deflt) {
+        if (props.containsKey(key)) {
+          return key;
+        }
+        else {
+          return deflt;
+        }
+      }
+
+      @Override
+      public void setProperty(String key, String value) {
+        props.put(key, value);
+      }
+    };
+    
+    Collection<MavenArtifact> dependencies;
+    if ( Boolean.parseBoolean(props.get(DependencyEmbedder.EMBED_TRANSITIVE))) {
+      Set<MavenArtifact> processed = new HashSet<MavenArtifact>();
+      
+      // flatten the tree while taking care of endless recursions
+      LinkedList<MavenArtifactNode> nodes = new LinkedList<MavenArtifactNode>(project.getDependencyTree());
+      while (!nodes.isEmpty()) {
+        MavenArtifactNode node = nodes.pop();
+        MavenArtifact artifact = node.getArtifact();
+        if ( !processed.contains(artifact)) {
+          processed.add(artifact);
+          nodes.addAll(node.getDependencies());
+        }
+      }
+      dependencies = processed;
+    }
+    else {
+      dependencies = project.getDependencies();
+    }
+
+    DependencyEmbedder embedder = new DependencyEmbedder(dependencies);
+    try {
+      embedder.processHeaders(myFakeAnalyzer);
+    }
+    catch (DependencyEmbedderException e) {
+      OsmorcProjectComponent.IMPORTANT_ERROR_NOTIFICATION.createNotification("Error when processing Embed-Dependency directive in " + project.getPath() + ": "  + e.getMessage(), NotificationType.ERROR).notify(null);
     }
   }
 

@@ -569,6 +569,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     myIgnoreFilePattern = attributeValue;
   }
 
+  @NotNull
   public String getIgnoreFilePattern() {
     return myIgnoreFilePattern != null ? myIgnoreFilePattern : "";
   }

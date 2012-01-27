@@ -130,7 +130,9 @@
           <root url="jar://$MODULE_DIR$/lib/biz.aQute.bndlib.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib/biz.aQute.bndlib.jar!/OSGI-OPT/src" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
