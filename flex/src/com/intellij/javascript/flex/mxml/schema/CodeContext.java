@@ -263,10 +263,12 @@ public class CodeContext {
                                    ? null
                                    : LocalFileSystem.getInstance().findFileByPath(configFilePath);
 
-    for (Pair<String, String> namespaceAndManifest : FlexCompilerConfigFileUtil.getNamespaceAndManifests(configFile, onlyIncludedInSwc)) {
-      final VirtualFile manifestFile = VfsUtil.findRelativeFile(namespaceAndManifest.second, configFile);
+    for (FlexCompilerConfigFileUtil.NamespacesInfo info : FlexCompilerConfigFileUtil.getNamespacesInfos(configFile)) {
+      if (onlyIncludedInSwc && !info.includedInSwc) continue;
+
+      final VirtualFile manifestFile = VfsUtil.findRelativeFile(info.manifest, configFile);
       if (manifestFile != null && !manifestFile.isDirectory()) {
-        processManifestFile(module, contextsOfModule, manifestFile, namespaceAndManifest.first, configFile);
+        processManifestFile(module, contextsOfModule, manifestFile, info.namespace, configFile);
       }
     }
 

@@ -1,12 +1,13 @@
 package com.intellij.lang.javascript.flex.build;
 
-import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.JDOMUtil;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.text.CharSequenceReader;
 import com.intellij.util.xml.NanoXmlUtil;
 import org.jdom.*;
 
@@ -16,6 +17,9 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class FlexCompilerConfigFileUtil {
+
+  private static final Key<Pair<Long, Collection<NamespacesInfo>>> MOD_STAMP_TO_NAMESPACES_INFOS =
+    Key.create("MOD_STAMP_TO_NAMESPACES_INFOS");
 
   public static final String FLEX_CONFIG = "flex-config";
   public static final String COMPILER = "compiler";
@@ -53,6 +57,18 @@ public class FlexCompilerConfigFileUtil {
       // load-externs option should not be used because it can lead to runtime errors like IDEA-70155
       "load-externs"
     };
+
+  public static class NamespacesInfo {
+    public final String namespace;
+    public final String manifest;
+    public final boolean includedInSwc;
+
+    private NamespacesInfo(final String namespace, final String manifest, final boolean includedInSwc) {
+      this.namespace = namespace;
+      this.manifest = manifest;
+      this.includedInSwc = includedInSwc;
+    }
+  }
 
   private FlexCompilerConfigFileUtil() {
   }
@@ -206,30 +222,46 @@ public class FlexCompilerConfigFileUtil {
     }
   }
 
-  public static Collection<Pair<String, String>> getNamespaceAndManifests(final VirtualFile configFile, final boolean onlyIncludedInSwc) {
+  public static Collection<NamespacesInfo> getNamespacesInfos(final VirtualFile configFile) {
     if (configFile == null || !configFile.isValid() || configFile.isDirectory()) {
       return Collections.emptyList();
     }
 
-    // todo cache parsing results
-    try {
-      final NamespacesXmlBuilder builder = new NamespacesXmlBuilder();
-      NanoXmlUtil.parse(configFile.getInputStream(), builder);
+    Pair<Long, Collection<NamespacesInfo>> data = configFile.getUserData(MOD_STAMP_TO_NAMESPACES_INFOS);
+    
+    final FileDocumentManager documentManager = FileDocumentManager.getInstance();
+    final com.intellij.openapi.editor.Document cachedDocument = documentManager.getCachedDocument(configFile);
+    final Long currentTimestamp = cachedDocument != null ? cachedDocument.getModificationStamp() : configFile.getModificationCount();
+    final Long cachedTimestamp = data == null ? null : data.first;
 
-      if (onlyIncludedInSwc) {
+    if (cachedTimestamp == null || !cachedTimestamp.equals(currentTimestamp)) {
+      data = null;
+      configFile.putUserData(MOD_STAMP_TO_NAMESPACES_INFOS, data);
+
+      try {
+        final NamespacesXmlBuilder builder = new NamespacesXmlBuilder();
+        if (cachedDocument != null) {
+          //noinspection IOResourceOpenedButNotSafelyClosed
+          NanoXmlUtil.parse(new CharSequenceReader(cachedDocument.getCharsSequence()), builder);
+        }
+        else {
+          NanoXmlUtil.parse(configFile.getInputStream(), builder);
+        }
+
+        final Collection<NamespacesInfo> namespacesInfos = new ArrayList<NamespacesInfo>();
         final Collection<String> includedInSwcNamespaces = builder.getIncludedNamespaces();
-        return ContainerUtil.filter(builder.getNamespacesAndManifests(), new Condition<Pair<String, String>>() {
-          public boolean value(final Pair<String, String> pair) {
-            return includedInSwcNamespaces.contains(pair.first);
-          }
-        });
+        for (Pair<String, String> namespaceAndManifest : builder.getNamespacesAndManifests()) {
+          namespacesInfos.add(new NamespacesInfo(namespaceAndManifest.first, namespaceAndManifest.second,
+                                                 includedInSwcNamespaces.contains(namespaceAndManifest.first)));
+        }
+        
+        data = Pair.create(currentTimestamp, namespacesInfos);
+        configFile.putUserData(MOD_STAMP_TO_NAMESPACES_INFOS, data);
       }
-
-      return builder.getNamespacesAndManifests();
-    }
-    catch (IOException ignored) {
+      catch (IOException ignored) {
+      }
     }
 
-    return Collections.emptyList();
+    return data == null ? Collections.<NamespacesInfo>emptyList() : data.second;
   }
 }
