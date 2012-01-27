@@ -39,7 +39,7 @@ public class AbstractInspector extends Panel {
     throw new IllegalOperationError("abstract");
   }
 
-  public function set element(value:Object):void {
+  public function set component(value:Object):void {
     updateData(value);
   }
 

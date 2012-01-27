@@ -22,7 +22,7 @@ public class PropertyInspector extends AbstractInspector {
     return new PaneRendererManager(laf.getTextFormat(CustomTextFormatId.SIDE_PANE_GROUP_ITEM_LABEL), laf.getBorder("GroupItemRenderer.b"), laf, listView);
   }
 
-  override protected function doUpdateData(element:Object):void {
+  override protected function doUpdateData(component:Object):void {
     if (otherPropertiesPane == null) {
       otherPropertiesPane = new PaneItem(null, null);
       otherPropertiesPane.localizedTitle = "Other";
@@ -34,7 +34,7 @@ public class PropertyInspector extends AbstractInspector {
     source[0] = otherPropertiesPane;
     source.fixed = true;
 
-    OtherPropertiesFactory(otherPropertiesPane.viewFactory).dataSource.update(element);
+    OtherPropertiesFactory(otherPropertiesPane.viewFactory).dataSource.update(component);
   }
 
   override protected function clear():void {

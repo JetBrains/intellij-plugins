@@ -17,7 +17,7 @@ public class ElementTreeBarManager extends AbstractCollectionViewDataSource impl
     this.elementManager = elementManager;
   }
 
-  public function set element(value:Object):void {
+  public function set component(value:Object):void {
     if (_presentation == null) {
       return;
     }

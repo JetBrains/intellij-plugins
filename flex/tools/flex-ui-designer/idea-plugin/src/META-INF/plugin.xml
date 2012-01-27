@@ -2,7 +2,7 @@
   <name>Flash UI Designer</name>
   <description>Provides editing support for Flex or Flash UI</description>
   <id>com.intellij.flex.uiDesigner</id>
-  <version>0.6.9</version>
+  <version>0.7.0</version>
   <vendor url="http://www.jetbrains.com" logo="/general/ijLogo.png">JetBrains</vendor>
   <idea-version since-build="111.167"/>
 
@@ -19,6 +19,8 @@
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.DesignerApplicationManager" serviceImplementation="com.intellij.flex.uiDesigner.DesignerApplicationManager"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.io.StringRegistry" serviceImplementation="com.intellij.flex.uiDesigner.io.StringRegistry"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.DocumentProblemManager" serviceImplementation="com.intellij.flex.uiDesigner.DocumentProblemManager"/>
+
+    <annotator language="XML" implementationClass="com.intellij.flex.uiDesigner.FlashUIDesignerMxmlAnnotator"/>
 
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
   </extensions>

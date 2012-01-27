@@ -44,12 +44,12 @@
     <Injectors target="{StyleInspector}">
       <PropertyInjector source="{CssRulesetPrinter}" targetKey="rulesetPrinter"/>
       <PropertyInjector source="{DocumentManager}" sourceKey="document"/>
-      <PropertyInjector source="{ComponentManager}" sourceKey="element"/>
+      <PropertyInjector source="{ComponentManager}" sourceKey="component"/>
       <PropertyInjector targetKey="pane" target="{Interactor}"/>
     </Injectors>
 
     <Injectors target="{PropertyInspector}">
-      <PropertyInjector source="{ComponentManager}" sourceKey="element"/>
+      <PropertyInjector source="{ComponentManager}" sourceKey="component"/>
     </Injectors>
     
     <Injectors target="{ToolManager}">
@@ -70,7 +70,7 @@
       <PropertyInjector source="{DocumentManager}" sourceKey="document"/>
     </Injectors>
     <Injectors target="{ElementTreeBarManager}">
-      <PropertyInjector source="{ComponentManager}" sourceKey="element"/>
+      <PropertyInjector source="{ComponentManager}" sourceKey="component"/>
     </Injectors>
   </injectors>
 </LocalEventMap>
