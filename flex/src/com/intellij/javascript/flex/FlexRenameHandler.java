@@ -33,7 +33,7 @@ public class FlexRenameHandler extends RenamePsiElementProcessor {
     super.renameElement(element, newName, usages, listener);
     if (element instanceof JSFile) {
       // rename invalidates file, so we need to get actual one
-      PsiFile file = PsiManager.getInstance(element.getProject()).findFile(element.getContainingFile().getVirtualFile());
+      PsiFile file = element.getManager().findFile(element.getContainingFile().getVirtualFile());
       if (file instanceof JSFile) RenameMoveUtils.updateFileWithChangedName((JSFile)file);
     }
   }
