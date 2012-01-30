@@ -12,8 +12,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -113,8 +111,13 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
       return super.shouldAddDependency(orderEntry, settings);
     }
 
-    if (orderEntry instanceof JdkOrderEntry || orderEntry instanceof ModuleSourceOrderEntry) {
+    if (orderEntry instanceof ModuleSourceOrderEntry) {
       return AddDependencyType.DEFAULT;
+    }
+
+    if (orderEntry instanceof JdkOrderEntry) {
+      // never add transitive dependency to Flex SDK
+      return module == myRootModule ? AddDependencyType.DEFAULT : AddDependencyType.DO_NOT_ADD;
     }
 
     Collection<FlexIdeBuildConfiguration> accessibleConfigurations;
@@ -133,12 +136,6 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
 
       if (library.getType() instanceof FlexLibraryType) {
         return FlexProjectRootsUtil.dependOnLibrary(accessibleConfigurations, library, module != myRootModule)
-               ? AddDependencyType.DEFAULT
-               : AddDependencyType.DO_NOT_ADD;
-      }
-      else if (library.getType() instanceof FlexSdkLibraryType) {
-        // never add transitive dependency to Flex SDK
-        return module == myRootModule && FlexProjectRootsUtil.dependOnSdk(accessibleConfigurations, library)
                ? AddDependencyType.DEFAULT
                : AddDependencyType.DO_NOT_ADD;
       }
@@ -167,9 +164,9 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
 
   @Override
   public boolean addCustomRootsForLibrary(@NotNull OrderEntry forOrderEntry,
-                                          @NotNull OrderRootType type,
+                                          @NotNull final OrderRootType type,
                                           @NotNull Collection<String> urls) {
-    if (type != OrderRootType.CLASSES || !(forOrderEntry instanceof LibraryOrderEntry) && !(forOrderEntry instanceof JdkOrderEntry)) {
+    if (!(forOrderEntry instanceof JdkOrderEntry)) {
       return false;
     }
 
@@ -177,23 +174,26 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
       return false;
     }
 
-    if (forOrderEntry instanceof LibraryOrderEntry) {
-      LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry)forOrderEntry;
-      if (libraryOrderEntry.getLibraryLevel() != LibraryTablesRegistrar.APPLICATION_LEVEL) {
-        return false;
-      }
+    final FlexIdeBuildConfiguration bc =
+      FlexBuildConfigurationManager.getInstance(forOrderEntry.getOwnerModule()).getActiveConfiguration();
+    final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
+    if (sdkEntry == null) {
+      return false;
+    }
+    final Sdk sdk = sdkEntry.findSdk();
+    if (sdk == null || sdk.getSdkType() != FlexSdkType2.getInstance()) {
+      return false;
+    }
 
-      Library library = libraryOrderEntry.getLibrary();
-      if (library == null || !FlexSdk.isFlexSdk(library)) {
-        return false;
-      }
-
-      final String[] allUrls = library.getUrls(OrderRootType.CLASSES);
-      Collection<FlexIdeBuildConfiguration> accessibleConfigurations = myActiveConfigurations.get(forOrderEntry.getOwnerModule());
-      final Set<String> allAccessibleUrls = new HashSet<String>();
-      ContainerUtil.process(accessibleConfigurations, new Processor<FlexIdeBuildConfiguration>() {
-        @Override
-        public boolean process(final FlexIdeBuildConfiguration bc) {
+    final String[] allUrls = sdk.getRootProvider().getUrls(OrderRootType.CLASSES);
+    Collection<FlexIdeBuildConfiguration> accessibleConfigurations = myActiveConfigurations.get(forOrderEntry.getOwnerModule());
+    // since we don't allow transitive dependencies to Flex SDK, this module is root module, so there's actually one active configuration
+    assert accessibleConfigurations.size() < 2;
+    final Set<String> allAccessibleUrls = new HashSet<String>();
+    ContainerUtil.process(accessibleConfigurations, new Processor<FlexIdeBuildConfiguration>() {
+      @Override
+      public boolean process(final FlexIdeBuildConfiguration bc) {
+        if (type == OrderRootType.CLASSES) {
           allAccessibleUrls.addAll(ContainerUtil.filter(allUrls, new Condition<String>() {
             @Override
             public boolean value(String s) {
@@ -201,31 +201,14 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
               return BCUtils.getSdkEntryLinkageType(s, bc) != null;
             }
           }));
-          return true;
         }
-      });
-      urls.addAll(allAccessibleUrls);
-      return true;
-    }
-    else {
-      final FlexIdeBuildConfiguration bc =
-        FlexBuildConfigurationManager.getInstance(forOrderEntry.getOwnerModule()).getActiveConfiguration();
-      final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
-      if (sdkEntry == null) {
-        return false;
-      }
-      final Sdk sdk = sdkEntry.findSdk();
-      if (sdk == null || sdk.getSdkType() != FlexSdkType2.getInstance()) {
-        return false;
-      }
-      urls.addAll(ContainerUtil.filter(sdk.getRootProvider().getUrls(type), new Condition<String>() {
-        @Override
-        public boolean value(String s) {
-          s = VirtualFileManager.extractPath(StringUtil.trimEnd(s, JarFileSystem.JAR_SEPARATOR));
-          return BCUtils.getSdkEntryLinkageType(s, bc) != null;
+        else {
+          allAccessibleUrls.addAll(Arrays.asList(allUrls));
         }
-      }));
-      return true;
-    }
+        return true;
+      }
+    });
+    urls.addAll(allAccessibleUrls);
+    return true;
   }
 }
