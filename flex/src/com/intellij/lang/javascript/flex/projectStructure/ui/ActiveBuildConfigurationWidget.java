@@ -39,7 +39,9 @@ public class ActiveBuildConfigurationWidget extends EditorBasedWidget
       }
 
       public void rootsChanged(final ModuleRootEvent event) {
-        myStatusBar.updateWidget(ID());
+        if (myStatusBar != null) {
+          myStatusBar.updateWidget(ID());
+        }
       }
     });
   }
@@ -59,7 +61,9 @@ public class ActiveBuildConfigurationWidget extends EditorBasedWidget
 
   @Override
   public void selectionChanged(FileEditorManagerEvent event) {
-    myStatusBar.updateWidget(ID());
+    if (myStatusBar != null) {
+      myStatusBar.updateWidget(ID());
+    }
   }
 
   @Nullable
