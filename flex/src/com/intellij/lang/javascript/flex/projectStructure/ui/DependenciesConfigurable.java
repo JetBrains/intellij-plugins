@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.flex.library.FlexLibraryRootsComponentDescri
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
-import com.intellij.lang.javascript.flex.projectStructure.FlexLibraryConfigurable;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexLibraryIdGenerator;
@@ -30,22 +29,17 @@ import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryTable;
-import com.intellij.openapi.roots.libraries.LibraryTablePresentation;
-import com.intellij.openapi.roots.libraries.LibraryType;
+import com.intellij.openapi.roots.libraries.*;
 import com.intellij.openapi.roots.libraries.ui.LibraryRootsComponentDescriptor;
 import com.intellij.openapi.roots.libraries.ui.RootDetector;
 import com.intellij.openapi.roots.ui.OrderEntryAppearanceService;
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox;
 import com.intellij.openapi.roots.ui.configuration.LibraryTableModifiableModelProvider;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
+import com.intellij.openapi.roots.ui.configuration.UIRootConfigurationAccessor;
 import com.intellij.openapi.roots.ui.configuration.classpath.CreateModuleLibraryChooser;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.EditExistingLibraryDialog;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesModifiableModel;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.*;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NamedConfigurable;
@@ -85,7 +79,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeNode;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.MessageFormat;
@@ -348,27 +341,32 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     public final String libraryName;
     public final String libraryLevel;
     @Nullable
-    public final FlexLibraryConfigurable configurable;
+    public final Library liveLibrary;
 
     private final Project project;
 
     public SharedLibraryItem(@NotNull String libraryName,
                              @NotNull String libraryLevel,
-                             @Nullable FlexLibraryConfigurable configurable,
+                             @Nullable Library liveLibrary,
                              @NotNull Project project) {
       this.libraryName = libraryName;
       this.libraryLevel = libraryLevel;
-      this.configurable = configurable;
+      this.liveLibrary = liveLibrary;
       this.project = project;
     }
 
     @Override
     public String getText() {
-      if (configurable != null) {
-        final LibraryEx library = configurable.getLibraryForPresentation();
-        return OrderEntryAppearanceService.getInstance().forLibrary(project, library, false).getText();
-      }
-      return libraryName;
+      Library liveLibrary = findLiveLibrary();
+      return liveLibrary != null
+             ? OrderEntryAppearanceService.getInstance().forLibrary(project, liveLibrary, false).getText()
+             : libraryName;
+    }
+
+    @Nullable
+    private Library findLiveLibrary() {
+      // TODO call myConfigEditor.findLiveLibrary(library, libraryName, libraryLevel);
+      return new UIRootConfigurationAccessor(project).getLibrary(liveLibrary, libraryName, libraryLevel);
     }
 
     @Override
@@ -398,22 +396,26 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     @Override
     public boolean isValid() {
-      return configurable != null;
+      return findLiveLibrary() != null;
     }
 
     public void onDoubleClick() {
-      if (configurable != null) {
-        Place place = new Place().putPath(ProjectStructureConfigurable.CATEGORY, ModuleStructureConfigurable.getInstance(project))
-          .putPath(MasterDetailsComponent.TREE_OBJECT, configurable.getEditableObject());
+      Library liveLibrary = findLiveLibrary();
+      if (liveLibrary != null) {
+        final BaseLibrariesConfigurable librariesConfigurable =
+          LibraryTablesRegistrar.APPLICATION_LEVEL.equals(liveLibrary.getTable().getTableLevel()) ? GlobalLibrariesConfigurable
+            .getInstance(project) : ProjectLibrariesConfigurable.getInstance(project);
+        Place place = new Place().putPath(ProjectStructureConfigurable.CATEGORY, librariesConfigurable)
+          .putPath(MasterDetailsComponent.TREE_OBJECT, liveLibrary);
         ProjectStructureConfigurable.getInstance(project).navigateTo(place, true);
       }
     }
 
     public ModifiableDependencyEntry apply(final ModifiableDependencies dependencies) {
       ModifiableDependencyEntry entry;
-      if (configurable != null) {
-        entry = myConfigEditor.createSharedLibraryEntry(dependencies, configurable.getDisplayName(),
-                                                        configurable.getEditableObject().getTable().getTableLevel());
+      Library liveLibrary = findLiveLibrary();
+      if (liveLibrary != null) {
+        entry = myConfigEditor.createSharedLibraryEntry(dependencies, liveLibrary.getName(), liveLibrary.getTable().getTableLevel());
       }
       else {
         entry = myConfigEditor.createSharedLibraryEntry(dependencies, libraryName, libraryLevel);
@@ -427,9 +429,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         return true;
       }
       ModifiableSharedLibraryEntry libraryEntry = (ModifiableSharedLibraryEntry)entry;
-      if (configurable != null) {
-        if (!configurable.getDisplayName().equals(libraryEntry.getLibraryName())) return true;
-        if (!configurable.getEditableObject().getTable().getTableLevel().equals(libraryEntry.getLibraryLevel())) return true;
+      Library liveLibrary = findLiveLibrary();
+      if (liveLibrary != null) {
+        if (!liveLibrary.getName().equals(libraryEntry.getLibraryName())) return true;
+        if (!liveLibrary.getTable().getTableLevel().equals(libraryEntry.getLibraryLevel())) return true;
       }
       else {
         if (!libraryName.equals(libraryEntry.getLibraryName())) return true;
@@ -1261,10 +1264,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         SharedLibraryEntry moduleLibraryEntry = (SharedLibraryEntry)entry;
         LibrariesModifiableModel model = ProjectStructureConfigurable.getInstance(myProject).getContext()
           .createModifiableModelProvider(moduleLibraryEntry.getLibraryLevel()).getModifiableModel();
-        Library library = model.getLibraryByName(moduleLibraryEntry.getLibraryName());
-        item = new SharedLibraryItem(moduleLibraryEntry.getLibraryName(), moduleLibraryEntry.getLibraryLevel(),
-                                     library != null ? findConfigurable(library) : null,
-                                     myProject);
+        LibraryEx library = (LibraryEx)model.getLibraryByName(moduleLibraryEntry.getLibraryName());
+        item = new SharedLibraryItem(moduleLibraryEntry.getLibraryName(), moduleLibraryEntry.getLibraryLevel(), library, myProject);
         ((SharedLibraryItem)item).dependencyType.copyFrom(entry.getDependencyType());
       }
       if (item != null) {
@@ -1278,14 +1279,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       myTable.getSelectionModel().addSelectionInterval(row, row);
     }
     updateEditButton();
-  }
-
-  @Nullable
-  private FlexLibraryConfigurable findConfigurable(@NotNull Library library) {
-    ModuleStructureConfigurable modulesConfig = ProjectStructureConfigurable.getInstance(myProject).getModulesConfig();
-    TreeNode root = (TreeNode)modulesConfig.getTree().getModel().getRoot();
-    MasterDetailsComponent.MyNode configurableNode = MasterDetailsComponent.findNodeByObject(root, library);
-    return configurableNode != null ? (FlexLibraryConfigurable)configurableNode.getConfigurable() : null;
   }
 
   /**
@@ -1377,7 +1370,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       final List<AddItemPopupAction> actions = new ArrayList<AddItemPopupAction>();
       actions.add(new AddBuildConfigurationDependencyAction(actionIndex++));
       actions.add(new AddFilesAction(actionIndex++));
-      actions.add(new AddGlobalLibraryAction(actionIndex++));
+      actions.add(new AddSharedLibraryAction(actionIndex++));
       myPopupActions = actions.toArray(new AddItemPopupAction[actions.size()]);
     }
   }
@@ -1515,9 +1508,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
   }
 
-  private class AddGlobalLibraryAction extends AddItemPopupAction {
+  private class AddSharedLibraryAction extends AddItemPopupAction {
 
-    public AddGlobalLibraryAction(int index) {
+    public AddSharedLibraryAction(int index) {
       super(index, "Shared Library...", null);
     }
 
@@ -1526,9 +1519,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       List<MyTableItem> items = myTable.getItems();
       for (MyTableItem item : items) {
         if (item instanceof SharedLibraryItem) {
-          FlexLibraryConfigurable libraryConfigurable = ((SharedLibraryItem)item).configurable;
-          if (libraryConfigurable != null) {
-            usedLibraries.add(libraryConfigurable.getEditableObject());
+          LibraryEx library = (LibraryEx)((SharedLibraryItem)item).findLiveLibrary();
+          if (library != null) {
+            usedLibraries.add(library);
           }
         }
       }
@@ -1544,8 +1537,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       final List<Library> libraries = d.getSelectedLibraries();
       DefaultMutableTreeNode rootNode = myTable.getRoot();
       for (Library library : libraries) {
-        SharedLibraryItem item = new SharedLibraryItem(library.getName(), library.getTable().getTableLevel(),
-                                                       findConfigurable(library), myProject);
+        SharedLibraryItem item = new SharedLibraryItem(library.getName(), library.getTable().getTableLevel(), library, myProject);
         rootNode.add(new DefaultMutableTreeNode(item, false));
       }
       updateTableOnItemsAdded(libraries.size());
@@ -1617,9 +1609,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   private class ChooseLibrariesDialog extends ChooseLibrariesFromTablesDialog {
     private final Condition<Library> myFilter;
 
-    public ChooseLibrariesDialog(Condition<Library> filter) {
+    public ChooseLibrariesDialog(Condition<Library> liveLibraryFilter) {
       super(myMainPanel, "Choose Libraries", myProject, false);
-      myFilter = filter;
+      myFilter = liveLibraryFilter;
       init();
     }
 
@@ -1636,10 +1628,16 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     @NotNull
     protected Library[] getLibraries(@NotNull final LibraryTable table) {
-      final List<Library> filtered = ContainerUtil.filter(super.getLibraries(table), new Condition<Library>() {
-        public boolean value(final Library library) {
-          if (!FlexProjectRootsUtil.isFlexLibrary(library) || !myFilter.value(library)) return false;
-          return true;
+      final StructureConfigurableContext context = ProjectStructureConfigurable.getInstance(myProject).getContext();
+      final Library[] libraries = context.createModifiableModelProvider(table.getTableLevel()).getModifiableModel().getLibraries();
+      final List<Library> filtered = ContainerUtil.mapNotNull(libraries, new Function<Library, Library>() {
+        @Nullable
+        public Library fun(final Library library) {
+          Library liveLibrary = context.getLibraryModel(library);
+          if (liveLibrary == null || !FlexProjectRootsUtil.isFlexLibrary(liveLibrary) || !myFilter.value(liveLibrary)) {
+            return null;
+          }
+          return liveLibrary;
         }
       });
       return filtered.toArray(new Library[filtered.size()]);

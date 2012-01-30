@@ -78,7 +78,11 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
     void commitModifiableModels() throws ConfigurationException;
 
-    LibraryTableBase.ModifiableModelEx getLibrariesModifiableModel(String level);
+    @Nullable
+    Library findSourceLibraryForLiveName(String name, String level);
+
+    @Nullable
+    Library findSourceLibrary(String name, String level);
 
     Sdk[] getAllSdks();
   }
@@ -174,17 +178,21 @@ public class FlexProjectConfigurationEditor implements Disposable {
         // commit must be performed somewhere else
       }
 
-      public LibraryTableBase.ModifiableModelEx getLibrariesModifiableModel(final String level) {
+      @Nullable
+      public Library findSourceLibrary(final String name, final String level) {
         if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(level)) {
-          LOG.assertTrue(globalLibrariesModel != null);
-          return globalLibrariesModel;
+          return globalLibrariesModel.getLibraryByName(name);
         }
         else if (LibraryTablesRegistrar.PROJECT_LEVEL.equals(level)) {
           LOG.assertTrue(projectLibrariesModel != null);
-          return projectLibrariesModel;
+          return projectLibrariesModel.getLibraryByName(name);
         }
         LOG.error("Unexpected argument: " + level);
         return null;
+      }
+
+      public Library findSourceLibraryForLiveName(final String name, final String level) {
+        return findSourceLibrary(name, level);
       }
 
       public Sdk[] getAllSdks() {
@@ -336,7 +344,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
       ModifiableRootModel modifiableModel = myProvider.getModuleModifiableModel(module);
 
       // ---------------- SDK and shared libraries entries ----------------------
-      Map<LibraryEx, Boolean> librariesToAdd = new HashMap<LibraryEx, Boolean>(); // Library -> add_library_entry_flag
+      Map<Library, Boolean> librariesToAdd = new HashMap<Library, Boolean>(); // Library -> add_library_entry_flag
       Collection<String> sdksNames = new HashSet<String>();
       for (Editor editor : myModule2Editors.get(module)) {
         final SdkEntry sdkEntry = editor.getDependencies().getSdkEntry();
@@ -347,8 +355,8 @@ public class FlexProjectConfigurationEditor implements Disposable {
         for (DependencyEntry dependencyEntry : editor.getDependencies().getEntries()) {
           if (dependencyEntry instanceof SharedLibraryEntry) {
             SharedLibraryEntry sharedLibraryEntry = (SharedLibraryEntry)dependencyEntry;
-            LibraryTableBase.ModifiableModelEx m = myProvider.getLibrariesModifiableModel(sharedLibraryEntry.getLibraryLevel());
-            LibraryEx library = (LibraryEx)m.getLibraryByName(sharedLibraryEntry.getLibraryName());
+            Library library =
+              myProvider.findSourceLibraryForLiveName(sharedLibraryEntry.getLibraryName(), sharedLibraryEntry.getLibraryLevel());
             if (library != null) {
               librariesToAdd.put(library, true);
             }
@@ -378,10 +386,9 @@ public class FlexProjectConfigurationEditor implements Disposable {
         modifiableModel.removeOrderEntry(e);
       }
 
-      for (LibraryEx library : librariesToAdd.keySet()) {
-        if (!library.isDisposed() &&
-            librariesToAdd.get(library) &&
-            myProvider.getLibrariesModifiableModel(library.getTable().getTableLevel()).getLibraryByName(library.getName()) != null) {
+      for (Library library : librariesToAdd.keySet()) {
+        if (!((LibraryEx)library).isDisposed() && librariesToAdd.get(library) &&
+            myProvider.findSourceLibrary(library.getName(), library.getTable().getTableLevel()) != null) {
           modifiableModel.addLibraryEntry(library);
         }
       }

@@ -21,8 +21,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesModifiableModel;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.ui.MasterDetailsComponent;
@@ -89,6 +91,20 @@ public class FlexIdeBCConfigurator {
 
         public Sdk[] getAllSdks() {
           return FlexProjectConfigurationEditor.getEditableFlexSdks(project);
+        }
+
+        public Library findSourceLibraryForLiveName(final String name, final String level) {
+          final LibrariesModifiableModel model =
+            ProjectStructureConfigurable.getInstance(project).getContext().createModifiableModelProvider(level).getModifiableModel();
+          return ContainerUtil.find(model.getLibraries(), new Condition<Library>() {
+            public boolean value(final Library library) {
+              return name.equals(model.getLibraryEditor(library).getModel().getName());
+            }
+          });
+        }
+
+        public Library findSourceLibrary(final String name, final String level) {
+          return getLibrariesModifiableModel(level).getLibraryByName(name);
         }
       });
     }

@@ -262,7 +262,14 @@ public class FlexProjectConfigTest extends ModuleTestCase {
         });
       }
 
-      @Override
+      public Library findSourceLibraryForLiveName(final String name, final String level) {
+        return findSourceLibrary(name, level);
+      }
+
+      public Library findSourceLibrary(final String name, final String level) {
+        return getLibrariesModifiableModel(level).getLibraryByName(name);
+      }
+
       public LibraryTableBase.ModifiableModelEx getLibrariesModifiableModel(final String level) {
         if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(level)) {
           return (LibraryTableBase.ModifiableModelEx)ApplicationLibraryTable.getApplicationTable().getModifiableModel();
