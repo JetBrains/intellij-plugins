@@ -711,15 +711,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         if (myFreeze) {
           return;
         }
-        Sdk sdk = mySdkCombo.getSelectedJdk();
-        if (sdk != null && sdk.getSdkType() != FlexSdkType2.getInstance()) {
-          sdk = null; // TODO remove this when SDK filters out non-Flex items
-        }
-        BCUtils.updateAvailableTargetPlayers(sdk, myTargetPlayerCombo);
-        updateComponentSetCombo();
-        updateSdkTableItem(sdk);
-        myTable.refresh();
-        mySdkChangeDispatcher.getMulticaster().stateChanged(new ChangeEvent(this));
+        updateOnSelectedSdkChange();
       }
     });
 
@@ -902,6 +894,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       myFreeze = false;
     }
     mySdkCombo.setSelectedJdk(sdk);
+    if (mySdkCombo.getSelectedJdk() != sdk) {
+      updateOnSelectedSdkChange();
+    }
     mySdkChangeDispatcher.getMulticaster().stateChanged(new ChangeEvent(this));
   }
 
@@ -1549,6 +1544,18 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     myTable.getSelectionModel().clearSelection();
     int rowCount = myTable.getRowCount();
     myTable.getSelectionModel().addSelectionInterval(rowCount - count, rowCount - 1);
+  }
+
+  private void updateOnSelectedSdkChange() {
+    Sdk sdk = mySdkCombo.getSelectedJdk();
+    if (sdk != null && sdk.getSdkType() != FlexSdkType2.getInstance()) {
+      sdk = null; // TODO remove this when SDK filters out non-Flex items
+    }
+    BCUtils.updateAvailableTargetPlayers(sdk, myTargetPlayerCombo);
+    updateComponentSetCombo();
+    updateSdkTableItem(sdk);
+    myTable.refresh();
+    mySdkChangeDispatcher.getMulticaster().stateChanged(new ChangeEvent(this));
   }
 
   private static class LibraryTableModifiableModelWrapper implements LibraryTableBase.ModifiableModelEx {
