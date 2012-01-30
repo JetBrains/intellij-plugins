@@ -96,6 +96,9 @@ public class FrameInfoBuilder {
     }
 
     String methodName = null;
+    String namespace = null;
+    JSFunction.FunctionKind kind = null;
+
     final int constructorStart = qName.indexOf('(');
     if (methodNameStart == -1 && constructorStart != -1) {
       qName = qName.substring(0, constructorStart);
@@ -110,12 +113,10 @@ public class FrameInfoBuilder {
       if (possibleGetSet != -1) methodNameStart = possibleGetSet + 1;
       methodName = s.substring(methodNameStart, methodNameEnd);
       final int nsStart = methodName.indexOf("::");
-      String namespace = null;
       if (nsStart != -1) {
         namespace = methodName.substring(0, nsStart);
         methodName = methodName.substring(nsStart + "::".length());
       }
-      JSFunction.FunctionKind kind = null;
 
       if (possibleGetSet != -1) {
         String getOrSet = s.substring(oldMethodStart, possibleGetSet);
@@ -128,13 +129,15 @@ public class FrameInfoBuilder {
       if ("ctor".equals(methodName)) {
         methodName = qName.substring(qName.lastIndexOf('.') + 1);
       }
-
-      return new FrameInfo(dir, filename, line, packageName, qName, methodName, kind, namespace);
     }
 
     if (qName.length() == 0 && data.matches("\\[.*\\]\\(\\)")) {
       methodName = data.substring(1, data.length() - 3);
     }
-    return new FrameInfo(dir, filename, line, packageName, qName, methodName, null, null);
+
+    if (packageName == null && qName.lastIndexOf('.') != -1) {
+      packageName = qName.substring(0, qName.lastIndexOf('.'));
+    }
+    return new FrameInfo(dir, filename, line, packageName, qName, methodName, kind, namespace);
   }
 }
