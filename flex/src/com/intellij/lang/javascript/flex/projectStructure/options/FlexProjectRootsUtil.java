@@ -71,30 +71,8 @@ public class FlexProjectRootsUtil {
     });
   }
 
-  public static boolean dependsOnSdk(@NotNull FlexIdeBuildConfiguration bc, @NotNull Library library) {
-    SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
-    if (sdkEntry == null) {
-      return false;
-    }
-    return false;
-    //return id != null && id.equals(sdkEntry.getLibraryId());
-  }
-
-  public static boolean dependOnSdk(Iterable<FlexIdeBuildConfiguration> bcs, @NotNull final Library sdk) {
-    return !ContainerUtil.process(bcs, new Processor<FlexIdeBuildConfiguration>() {
-      @Override
-      public boolean process(FlexIdeBuildConfiguration configuration) {
-        return !dependsOnSdk(configuration, sdk);
-      }
-    });
-  }
-
   public static String getLibraryId(Library library) {
     return ((FlexLibraryProperties)((LibraryEx)library).getProperties()).getId();
-  }
-
-  public static String getSdkLibraryId(@NotNull Library library) {
-    return ((FlexSdkProperties)((LibraryEx)library).getProperties()).getId();
   }
 
   @Nullable

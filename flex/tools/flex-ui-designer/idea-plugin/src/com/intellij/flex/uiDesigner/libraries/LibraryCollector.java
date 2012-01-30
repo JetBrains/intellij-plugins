@@ -6,11 +6,10 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
-import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
-import com.intellij.lang.javascript.flex.sdk.AirSdkType;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -124,6 +123,7 @@ class LibraryCollector {
     final Sdk sdk = FlexUtils.createFlexSdkWrapper(bc);
     assert sdk != null;
     Function<VirtualFile, VirtualFile> f = new Function<VirtualFile, VirtualFile>() {
+      @Nullable
       @Override
       public VirtualFile fun(VirtualFile virtualFile) {
         String swcPath = VirtualFileManager.extractPath(StringUtil.trimEnd(virtualFile.getUrl(), JarFileSystem.JAR_SEPARATOR));
@@ -147,12 +147,12 @@ class LibraryCollector {
       else if (!flexSdkRegistered && o instanceof JdkOrderEntry) {
         final JdkOrderEntry jdkOrderEntry = ((JdkOrderEntry)o);
         SdkType sdkType = jdkOrderEntry.getJdk().getSdkType();
-        if (sdkType instanceof FlexSdkType || sdkType instanceof AirSdkType || sdkType instanceof AirMobileSdkType) {
+        if (sdkType instanceof FlexSdkType2) {
           collectFromSdkOrderEntry(jdkOrderEntry.getRootFiles(OrderRootType.CLASSES));
           flexSdkRegistered = true;
           flexSdkVersion = jdkOrderEntry.getJdk().getVersionString();
 
-          globalCatalogForTests(sdkType);
+          globalCatalogForTests(bc);
         }
       }
       else if (o instanceof ModuleOrderEntry) {
@@ -164,10 +164,11 @@ class LibraryCollector {
     flexSdkVersion = flexSdkVersion.substring(0, 3);
   }
 
-  private void globalCatalogForTests(SdkType sdkType) {
+  private void globalCatalogForTests(FlexIdeBuildConfiguration bc) {
+    // TODO [develar] remove test code from production sources
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       assert globalLibrary == null;
-      globalLibrary = LibraryUtil.getTestGlobalLibrary(sdkType instanceof FlexSdkType);
+      globalLibrary = LibraryUtil.getTestGlobalLibrary(bc.getTargetPlatform() == TargetPlatform.Web);
     }
   }
 

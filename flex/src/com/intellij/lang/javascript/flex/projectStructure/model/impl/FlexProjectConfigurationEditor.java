@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdk;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
-import com.intellij.lang.javascript.flex.projectStructure.FlexSdkLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
@@ -377,7 +376,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
           if (librariesToAdd.containsKey(library)) {
             librariesToAdd.put(library, false); // entry already exists for this library
           }
-          else if (library != null && (library.getType() instanceof FlexSdkLibraryType || FlexProjectRootsUtil.isFlexLibrary(library))) {
+          else if (library != null && FlexProjectRootsUtil.isFlexLibrary(library)) {
             entriesToRemove.add(orderEntry);
           }
         }

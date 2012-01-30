@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -169,17 +168,7 @@ public class TargetPlayerUtils {
   }
 
   public static boolean needToChangeSdk(final Sdk currentSdk, final String targetPlayerVersion) {
-    if (currentSdk == null || !(currentSdk.getSdkType() instanceof FlexSdkType)) {
-      return false;
-    }
-
-    final VirtualFile requiredRoot = findRequiredPlayerglobalSwc(currentSdk, targetPlayerVersion);
-    if (requiredRoot == null) {
-      // current sdk may not match but nothing can be done with it
-      return false;
-    }
-
-    return !ArrayUtil.contains(requiredRoot, currentSdk.getRootProvider().getFiles(OrderRootType.CLASSES));
+    return false;
   }
 
   @Nullable
