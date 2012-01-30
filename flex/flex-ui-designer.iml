@@ -5,9 +5,32 @@
     <content url="file://$MODULE_DIR$/tools/flex-ui-designer/idea-plugin">
       <sourceFolder url="file://$MODULE_DIR$/tools/flex-ui-designer/idea-plugin/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/tools/flex-ui-designer/idea-plugin/resources" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/flex-ui-designer/idea-plugin/testSrc" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library" scope="TEST">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/tools/flex-ui-designer/idea-plugin/lib/dev/hamcrest-library-1.3.0RC2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/tools/flex-ui-designer/idea-plugin/lib/dev/hamcrest-library-1.3.0RC2.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/tools/flex-ui-designer/idea-plugin/lib/dev/hamcrest-core-1.3.0RC2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/tools/flex-ui-designer/idea-plugin/lib/dev/hamcrest-core-1.3.0RC2.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
     <orderEntry type="module" module-name="platform-api" />
     <orderEntry type="module" module-name="lang-api" />
     <orderEntry type="module" module-name="xml-openapi" />
