@@ -1,5 +1,6 @@
 package com.jetbrains.actionscript.profiler.calltree;
 
+import com.intellij.util.ArrayUtil;
 import com.jetbrains.actionscript.profiler.sampler.FrameInfo;
 
 import java.util.ArrayList;
@@ -14,27 +15,19 @@ class CalleeFinder {
   */
   static List<CallTreeNode> findCallsByFrameName(CallTreeNode root, FrameInfo[] frames) {
     ArrayList<CallTreeNode> result = new ArrayList<CallTreeNode>();
-    for (CallTreeNode call : root.getChildren()) {
-      fillCallsByFrameName(call, frames, frames.length - 1, result);
-    }
+    fillCallsByFrameName(root, ArrayUtil.reverseArray(frames), result);
     return result;
   }
 
   private static void fillCallsByFrameName(CallTreeNode node,
                                            FrameInfo[] frames,
-                                           int index,
                                            List<CallTreeNode> result) {
-    if (index == 0 && frames[0].equals(node.getFrameInfo())) {
-      result.addAll(node.getChildren());
-      return;
+    final CallTreeNode deepChild = node.getChildDeep(frames);
+    if (deepChild != null) {
+      result.addAll(deepChild.getChildren());
     }
-    boolean currentNodeMatch = frames[index].equals(node.getFrameInfo());
     for (CallTreeNode child : node.getChildren()) {
-      fillCallsByFrameName(child, frames, currentNodeMatch ? index - 1 : frames.length - 1, result);
-      if (currentNodeMatch && child.getFrameInfo().equals(frames[frames.length - 1])) {
-        //may starts here
-        fillCallsByFrameName(child, frames, frames.length - 1, result);
-      }
+      fillCallsByFrameName(child, frames, result);
     }
   }
 }

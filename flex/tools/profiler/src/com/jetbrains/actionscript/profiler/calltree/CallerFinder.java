@@ -1,7 +1,7 @@
 package com.jetbrains.actionscript.profiler.calltree;
 
+import com.intellij.util.ArrayUtil;
 import com.jetbrains.actionscript.profiler.sampler.FrameInfo;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +26,7 @@ class CallerFinder {
     if (frames.length == 0) {
       return calls;
     }
+    frames = ArrayUtil.reverseArray(frames);
     for (CallTreeNode node : root.getChildren()) {
       fillCallsByFrames(node, calls, frames, new ArrayList<FrameInfo>());
     }
@@ -38,7 +39,7 @@ class CallerFinder {
                                         List<FrameInfo> callChainAddedFrames) {
     //we need only the nearest node to the root
     //we have <code>callChainAddedFrames<code>
-    boolean needAdd = !callChainAddedFrames.contains(currentNode.getFrameInfo()) && isMatchingFrames(currentNode, frames);
+    boolean needAdd = !callChainAddedFrames.contains(currentNode.getFrameInfo()) && currentNode.getChildDeep(frames) != null;
     if (needAdd) {
       result.add(currentNode);
       callChainAddedFrames.add(currentNode.getFrameInfo());
@@ -51,16 +52,5 @@ class CallerFinder {
       //pop
       callChainAddedFrames.remove(callChainAddedFrames.size() - 1);
     }
-  }
-
-  private static boolean isMatchingFrames(@NotNull CallTreeNode node, FrameInfo[] frames) {
-    CallTreeNode currentNode = node;
-    for (int i = frames.length - 1; i >= 0; --i) {
-      currentNode = currentNode.findChildByName(frames[i]);
-      if (currentNode == null) {
-        return false;
-      }
-    }
-    return true;
   }
 }

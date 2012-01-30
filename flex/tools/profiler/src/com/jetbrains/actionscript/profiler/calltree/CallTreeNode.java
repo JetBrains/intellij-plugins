@@ -103,4 +103,16 @@ class CallTreeNode implements FrameInfoProducer, FilePathProducer {
   public String getFilePath() {
     return frameInfo.getFilePath();
   }
+
+  @Nullable
+  public CallTreeNode getChildDeep(FrameInfo[] frames) {
+    CallTreeNode currentNode = this;
+    for (FrameInfo frame : frames) {
+      currentNode = currentNode.findChildByName(frame);
+      if (currentNode == null) {
+        return null;
+      }
+    }
+    return currentNode;
+  }
 }
