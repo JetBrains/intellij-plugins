@@ -264,18 +264,19 @@ public class FlexSdkUtils {
     return sdkRoot != null && VfsUtil.findRelativeFile(getBaseConfigFileRelPath(sdkType), sdkRoot) != null;
   }
 
-  public static boolean isFlexOrAirSdkRoot(final VirtualFile sdkRoot) {
-    return isValidSdkRoot(FlexSdkType.getInstance(), sdkRoot) || isValidSdkRoot(AirSdkType.getInstance(), sdkRoot);
-  }
-
   @NotNull
   public static String readFlexSdkVersion(final VirtualFile flexSdkRoot) {
+    return StringUtil.notNullize(doReadFlexSdkVersion(flexSdkRoot), FlexBundle.message("flex.sdk.version.unknown"));
+  }
+  
+  @Nullable
+  public static String doReadFlexSdkVersion(final VirtualFile flexSdkRoot) {
     if (flexSdkRoot == null) {
-      return FlexBundle.message("flex.sdk.version.unknown");
+      return null;
     }
     final VirtualFile flexSdkDescriptionFile = flexSdkRoot.findChild("flex-sdk-description.xml");
     if (flexSdkDescriptionFile == null) {
-      return FlexBundle.message("flex.sdk.version.unknown");
+      return null;
     }
     try {
       final String versionElement = "<flex-sdk-description><version>";
@@ -283,12 +284,12 @@ public class FlexSdkUtils {
       final Map<String, List<String>> versionInfo =
         FlexUtils.findXMLElements(flexSdkDescriptionFile.getInputStream(), Arrays.asList(versionElement, buildElement));
       return (versionInfo.get(versionElement).isEmpty()
-              ? FlexBundle.message("flex.sdk.version.unknown")
+              ? null
               : versionInfo.get(versionElement).get(0)) +
              (versionInfo.get(buildElement).isEmpty() ? "" : ("." + versionInfo.get(buildElement).get(0)));
     }
     catch (IOException e) {
-      return FlexBundle.message("flex.sdk.version.unknown");
+      return null;
     }
   }
 

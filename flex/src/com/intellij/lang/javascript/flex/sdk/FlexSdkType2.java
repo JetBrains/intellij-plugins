@@ -1,12 +1,14 @@
 package com.intellij.lang.javascript.flex.sdk;
 
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexFacetType;
 import com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderSdkFinder;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +35,16 @@ public class FlexSdkType2 extends SdkType {
   }
 
   public boolean isValidSdkHome(final String path) {
-    return path != null && FlexSdkUtils.isValidSdkRoot(FlexSdkType.getInstance(), VfsUtil.findRelativeFile(path, null));
+    if (path == null) {
+      return false;
+    }
+
+    final VirtualFile sdkHome = LocalFileSystem.getInstance().findFileByPath(path);
+    if (sdkHome == null || !sdkHome.isDirectory()) {
+      return false;
+    }
+
+    return FlexSdkUtils.doReadFlexSdkVersion(sdkHome) != null;
   }
 
   public String suggestSdkName(final String currentSdkName, final String sdkHome) {
@@ -49,7 +60,7 @@ public class FlexSdkType2 extends SdkType {
   }
 
   public String getPresentableName() {
-    return "Flex SDK (new)";
+    return FlexBundle.message("flex.sdk.presentable.name");
   }
 
   public Icon getIconForAddAction() {
