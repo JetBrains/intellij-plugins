@@ -20,7 +20,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/tools/flex-ui-designer/idea-plugin/lib/dev/hamcrest-core-1.3.0RC2.jar!/" />
