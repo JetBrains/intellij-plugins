@@ -18,16 +18,16 @@ public class TargetingTool extends Tool {
   protected function eraseTargetFeedback():void {
     if (showingFeedback) {
       showingFeedback = false;
-      if (target != null) {
-        var targetRequest:Request = getTargetRequest();
-        targetRequest.setEraseFeedback(true);
-        try {
-          target.eraseTargetFeedback(targetRequest);
-        }
-        finally {
-          targetRequest.setEraseFeedback(false);
-        }
-      }
+      //if (target != null) {
+      //  var targetRequest:Request = getTargetRequest();
+      //  targetRequest.setEraseFeedback(true);
+      //  try {
+      //    target.eraseTargetFeedback(targetRequest);
+      //  }
+      //  finally {
+      //    targetRequest.setEraseFeedback(false);
+      //  }
+      //}
     }
   }
 }

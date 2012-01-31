@@ -1,10 +1,9 @@
 package com.intellij.flex.uiDesigner.flex {
-import com.intellij.flex.uiDesigner.DocumentDisplayManager;
 import com.intellij.flex.uiDesigner.ComponentInfoProvider;
+import com.intellij.flex.uiDesigner.DocumentDisplayManager;
 import com.intellij.flex.uiDesigner.ResourceBundleProvider;
 import com.intellij.flex.uiDesigner.UiErrorHandler;
 import com.intellij.flex.uiDesigner.designSurface.LayoutManager;
-import com.intellij.flex.uiDesigner.designSurface.migLayout.MigLayoutManager;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -53,14 +52,6 @@ import mx.resources.ResourceManager;
 import mx.styles.ISimpleStyleClient;
 import mx.styles.IStyleClient;
 import mx.styles.StyleManager;
-
-import net.miginfocom.layout.LayoutUtil;
-
-import org.jetbrains.migLayout.flex.MigLayout;
-
-import spark.components.SkinnableContainer;
-
-import spark.components.supportClasses.GroupBase;
 
 use namespace mx_internal;
 
@@ -822,21 +813,22 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
   }
 
   private function createLayoutManager():com.intellij.flex.uiDesigner.designSurface.LayoutManager {
-    var migLayout:MigLayout;
-    if (document is GroupBase) {
-      migLayout = GroupBase(document).layout as MigLayout;
-    }
-    else if (document is SkinnableContainer) {
-      migLayout = SkinnableContainer(document).layout as MigLayout;
-    }
-
-    if (migLayout == null) {
-      return null;
-    }
-
-    LayoutUtil.designTimeEmptySize = 15;
-
-    return new MigLayoutManager(migLayout);
+    return null;
+    //var migLayout:MigLayout;
+    //if (document is GroupBase) {
+    //  migLayout = GroupBase(document).layout as MigLayout;
+    //}
+    //else if (document is SkinnableContainer) {
+    //  migLayout = SkinnableContainer(document).layout as MigLayout;
+    //}
+    //
+    //if (migLayout == null) {
+    //  return null;
+    //}
+    //
+    //LayoutUtil.designTimeEmptySize = 15;
+    //
+    //return new MigLayoutManager(migLayout);
   }
 }
 }

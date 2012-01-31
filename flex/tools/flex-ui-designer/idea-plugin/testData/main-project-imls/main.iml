@@ -34,7 +34,6 @@
       <sourceFolder url="file://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/main/resources" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Flex SDK 4.6.0.23201" level="application" />
   </component>
 </module>
 

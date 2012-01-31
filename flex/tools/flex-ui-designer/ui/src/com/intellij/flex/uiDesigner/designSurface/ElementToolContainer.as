@@ -1,8 +1,8 @@
 package com.intellij.flex.uiDesigner.designSurface {
 import cocoa.SpriteBackedView;
 
-import com.intellij.flex.uiDesigner.Document;
 import com.intellij.flex.uiDesigner.ComponentInfoProvider;
+import com.intellij.flex.uiDesigner.Document;
 
 import flash.events.Event;
 import flash.geom.Point;
@@ -21,7 +21,6 @@ public class ElementToolContainer extends SpriteBackedView implements Injectable
   private var elementUtil:ComponentInfoProvider;
   private var layoutManager:Object;
 
-  //noinspection JSUnusedGlobalSymbols
   public function set elementDocument(value:Document):void {
     if (value == null) {
       elementUtil = null;

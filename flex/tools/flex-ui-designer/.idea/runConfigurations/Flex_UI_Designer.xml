@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Flex UI Designer" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
     <module name="idea-plugin" />
-    <option name="VM_PARAMETERS" value="-Xms128m -Xmx512m -XX:MaxPermSize=256m -Dapple.awt.graphics.UseQuartz=true -ea -Dfud.home=/Users/develar/Documents/idea/flex/tools/flex-ui-designer  -Dfud.socket.dump=/Users/develar/d.bi" />
+    <option name="VM_PARAMETERS" value="-Xms128m -Xmx512m -XX:MaxPermSize=256m -Dapple.awt.graphics.UseQuartz=true -ea -Dfud.home=/Users/develar/Documents/idea/flex/tools/flex-ui-designer" />
     <option name="PROGRAM_PARAMETERS" value="" />
     <log_file path="$USER_HOME$/Library/Caches/IntelliJIdea11/plugins-sandbox/system/log/idea.log" checked="false" skipped="true" show_all="false" alias="IDEA LOG" />
     <RunnerSettings RunnerId="Debug">

@@ -93,6 +93,10 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
       case ClientMethod.fillSwfClassPool:
         fillAssetClassPool(input, messageSize, true);
         break;
+
+      case ClientMethod.getDocumentImage:
+        getDocumentImage(input, messageSize, true);
+        break;
     }
   }
 
@@ -185,6 +189,10 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
 
     getDocumentManager(module).open(documentFactory, documentOpened);
   }
+
+  private function getDocumentImage(input:IDataInput, messageSize:int, b:Boolean):void {
+
+  }
   
   private function updateDocuments(input:IDataInput):void {
     var module:Module = moduleManager.getById(input.readUnsignedShort());
@@ -253,4 +261,6 @@ final class ClientMethod {
   public static const updateStringRegistry:int = 9;
   public static const fillImageClassPool:int = 10;
   public static const fillSwfClassPool:int = 11;
+
+  public static const getDocumentImage:int = 12;
 }

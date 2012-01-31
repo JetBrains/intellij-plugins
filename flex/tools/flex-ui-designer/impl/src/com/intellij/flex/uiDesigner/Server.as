@@ -3,6 +3,7 @@ import com.intellij.flex.uiDesigner.css.CssDeclaration;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
 import flash.display.BitmapData;
+import flash.display.DisplayObject;
 import flash.filesystem.File;
 import flash.filesystem.FileMode;
 import flash.filesystem.FileStream;
@@ -305,8 +306,17 @@ public class Server implements ResourceBundleProvider {
     socket.flush();
   }
 
-  public function documentOpened():void {
+  public function documentOpened(document:Document):void {
     socket.writeByte(ServerMethod.DOCUMENT_OPENED);
+
+    //var displayObject:DisplayObject = DisplayObject(document.uiComponent);
+    //var bitmapData:BitmapData = new BitmapData(displayObject.width, displayObject.height, false);
+    //bitmapData.draw(displayObject);
+    //
+    //socket.writeShort(bitmapData.width);
+    //socket.writeShort(bitmapData.height);
+    //socket.writeBytes(bitmapData.getPixels(bitmapData.rect));
+
     socket.flush();
   }
 }

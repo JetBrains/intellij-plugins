@@ -53,6 +53,7 @@
     </Injectors>
     
     <Injectors target="{ToolManager}">
+      <PropertyInjector source="{DocumentManager}" sourceKey="document"/>
       <PropertyInjector source="{ComponentManager}" sourceKey="component"/>
     </Injectors>
     

@@ -22,7 +22,7 @@
               <dependency linkage="Merged" />
             </entry>
           </entries>
-          <sdk library-id="fac07280-905d-4f60-bdd1-6e64458458bf" home-path="/Developer/SDKs/flex_4.6.0" />
+          <sdk library-id="d2599e28-ed0d-44f9-ab1d-face90441942" home-path="/Developer/SDKs/flex_4.6.0" />
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />

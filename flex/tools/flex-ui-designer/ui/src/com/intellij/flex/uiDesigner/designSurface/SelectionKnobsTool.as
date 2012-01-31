@@ -7,27 +7,10 @@ import flash.geom.Point;
 import org.jetbrains.actionSystem.DataContext;
 
 public class SelectionKnobsTool implements Tool, ElementLayoutChangeListener {
-  //[Embed(source="/../../../../../../../ui/resources/viewSelectionKnob.png")]
-  //private static var viewSelectionKnobClass:Class;
+  [Embed(source="/viewSelectionKnob.png")]
+  private static var viewSelectionKnobClass:Class;
 
   private var selectionKnobs:Sprite;
-
-  public function attach(element:Object, toolContainer:ElementToolContainer):void {
-    if (selectionKnobs == null) {
-      selectionKnobs = new Sprite();
-      toolContainer.addChild(selectionKnobs);
-      for (var i:int = 0; i < 8; i++) {
-        //selectionKnobs.addChild(new viewSelectionKnobClass());
-      }
-    }
-    else {
-      selectionKnobs.visible = true;
-    }
-  }
-
-  public function detach():void {
-    selectionKnobs.visible = false;
-  }
 
   public function sizeHandler(w:Number, h:Number):void {
     for (var i:int = 0; i < 8; i++) {
@@ -56,9 +39,20 @@ public class SelectionKnobsTool implements Tool, ElementLayoutChangeListener {
   }
 
   public function activate(displayObjectContainer:DisplayObjectContainer, areaLocations:Vector.<Point>, dataContext:DataContext):void {
+    if (selectionKnobs == null) {
+      selectionKnobs = new Sprite();
+      displayObjectContainer.addChild(selectionKnobs);
+      for (var i:int = 0; i < 8; i++) {
+        selectionKnobs.addChild(new viewSelectionKnobClass());
+      }
+    }
+    else {
+      selectionKnobs.visible = true;
+    }
   }
 
   public function deactivate():void {
+    selectionKnobs.visible = false;
   }
 }
 }

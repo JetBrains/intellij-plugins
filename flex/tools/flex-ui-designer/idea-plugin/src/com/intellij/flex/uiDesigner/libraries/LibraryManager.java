@@ -287,7 +287,7 @@ public class LibraryManager {
     }
 
     // AS-273
-    if (PlatformUtils.isFlexIde()) {
+    //if (PlatformUtils.isFlexIde()) {
       Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(moduleInfo.getModule());
       VirtualFile dir = sdk == null ? null : sdk.getHomeDirectory();
       if (dir != null) {
@@ -302,7 +302,7 @@ public class LibraryManager {
           }
         }
       }
-    }
+    //}
 
     return null;
   }
