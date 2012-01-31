@@ -94,6 +94,10 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
         fillAssetClassPool(input, messageSize, true);
         break;
 
+      case ClientMethod.selectComponent:
+        selectComponent(input);
+        break;
+
       case ClientMethod.getDocumentImage:
         getDocumentImage(input, messageSize, true);
         break;
@@ -226,6 +230,29 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     libraryManager.register(librarySet);
   }
 
+  private function selectComponent(input:IDataInput):void {
+    var module:Module = moduleManager.getById(input.readUnsignedShort());
+    const documentId:int = input.readUnsignedShort();
+    const componentId:int = input.readUnsignedShort();
+    var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance().get(documentId);
+    var component:Object = documentFactory.getComponent(componentId);
+    if (component == null) {
+      UncaughtErrorManager.instance.logWarning("Can't find target component " + documentId + ":" + componentId);
+    }
+
+    var documentManager:DocumentManager = DocumentManager(module.project.getComponent(DocumentManager));
+    if (documentFactory.document != null) {
+      documentManager.document = documentFactory.document;
+      ComponentManager(module.project.getComponent(ComponentManager)).component = component;
+    }
+    else {
+      documentManager.documentChanged.addOnce(function ():void {
+        ComponentManager(module.project.getComponent(ComponentManager)).component = component;
+      });
+      documentManager.open(documentFactory);
+    }
+  }
+
   public function pendingReadIsAllowable(method:int):Boolean {
     return false; // was for openDocument, but now (after implement factory concept) it is read immediately (sync read)
   }
@@ -262,5 +289,6 @@ final class ClientMethod {
   public static const fillImageClassPool:int = 10;
   public static const fillSwfClassPool:int = 11;
 
-  public static const getDocumentImage:int = 12;
+  public static const selectComponent:int = 12;
+  public static const getDocumentImage:int = 13;
 }

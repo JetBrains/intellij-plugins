@@ -82,7 +82,7 @@ public class StyleRendererManager extends TextRendererManager {
     //if (textEngine == null) {
     //noinspection ConstantIfStatementJS
     if (true) {
-      var stage:Stage = NativeApplication.nativeApplication.activeWindow.stage;
+      var stage:Stage = NativeApplication.nativeApplication.openedWindows[0].stage;
       assert(stage != null);
       textEngine = new TextEngine(stage);
       displayContainer.engine = textEngine;

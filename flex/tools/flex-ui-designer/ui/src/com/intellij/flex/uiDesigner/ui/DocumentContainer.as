@@ -97,18 +97,18 @@ public class DocumentContainer extends ControlView implements DataContext {
     addChild(s);
     documentDisplayManager.added();
 
-    if (documentDisplayManager.preferredDocumentWidth != -1) {
-      canvasWidth = documentDisplayManager.preferredDocumentWidth;
+    if (documentDisplayManager.explicitDocumentWidth != -1) {
+      canvasWidth = documentDisplayManager.explicitDocumentWidth;
     }
     else {
       canvasWidth = Math.max(MIN_CANVAS_WIDTH, documentDisplayManager.minDocumentWidth);
     }
     
-    if (documentDisplayManager.preferredDocumentHeight != -1) {
-      canvasHeight = documentDisplayManager.preferredDocumentHeight;
+    if (documentDisplayManager.explicitDocumentHeight != -1) {
+      canvasHeight = documentDisplayManager.explicitDocumentHeight;
     }
     else {
-      canvasWidth = Math.max(MIN_CANVAS_HEIGHT, documentDisplayManager.minDocumentHeight);
+      canvasHeight = Math.max(MIN_CANVAS_HEIGHT, documentDisplayManager.minDocumentHeight);
     }
   }
 

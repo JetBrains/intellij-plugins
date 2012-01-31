@@ -14,6 +14,7 @@ import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.flex.uiDesigner.debug.FlexRunner;
 import com.intellij.flex.uiDesigner.io.IOUtil;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.run.RemoteFlashRunConfigurationType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -139,7 +140,7 @@ final class AdlUtil {
       }
     };
 
-    final FlexRunner runner = new FlexRunner(callback, module);
+    final FlexRunner runner = new FlexRunner(callback, FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration());
     runner.execute(executor, new ExecutionEnvironment(runner, settings, module.getProject()));
   }
 

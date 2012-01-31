@@ -21,6 +21,7 @@
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.DocumentProblemManager" serviceImplementation="com.intellij.flex.uiDesigner.DocumentProblemManager"/>
 
     <annotator language="XML" implementationClass="com.intellij.flex.uiDesigner.FlashUIDesignerMxmlAnnotator"/>
+    <selectInTarget implementation="com.intellij.flex.uiDesigner.SelectInDesigner"/>
 
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
   </extensions>

@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
@@ -105,7 +106,7 @@ public class MxmlWriter {
         out.allocateClearShort();
       }
 
-      processElements(rootTag, null, false, -1, out.size() - 2);
+      processElements(rootTag, null, false, -1, out.size() - 2, true);
 
       writer.endObject();
 
@@ -129,7 +130,7 @@ public class MxmlWriter {
   }
 
   private boolean processElements(final XmlTag parent, final @Nullable Context parentContext, final boolean allowIncludeInExludeFrom,
-                                  final int dataPosition, final int referencePosition) {
+                                  final int dataPosition, final int referencePosition, boolean writeLocation) {
     boolean cssRulesetDefined = false;
     boolean staticChild = true;
 
@@ -139,9 +140,11 @@ public class MxmlWriter {
     // we keep current index and insert at the specified position
     final int dataRangeIndex = writer.getBlockOut().getNextMarkerIndex();
 
-    out.writeUInt29(writer.P_FUD_RANGE_ID);
-    out.writeUInt29(rangeMarkers.size());
-    rangeMarkers.add(document.createRangeMarker(parent.getTextOffset(), parent.getTextOffset() + parent.getTextLength()));
+    if (writeLocation) {
+      out.writeUInt29(writer.P_FUD_RANGE_ID);
+      out.writeUInt29(rangeMarkers.size());
+      rangeMarkers.add(document.createRangeMarker(parent.getTextOffset(), parent.getTextOffset() + parent.getTextLength()));
+    }
 
     for (final XmlAttribute attribute : parent.getAttributes()) {
       XmlAttributeDescriptor attributeDescriptor = attribute.getDescriptor();
@@ -484,7 +487,8 @@ public class MxmlWriter {
       writer.documentReference(projectComponentFactoryId);
     }
 
-    return processElements(tag, parentContext, allowIncludeInExludeFrom, childDataPosition, out.allocateClearShort());
+    return processElements(tag, parentContext, allowIncludeInExludeFrom, childDataPosition, out.allocateClearShort(),
+      JSInheritanceUtil.isParentClass((JSClass)JSResolveUtil.unwrapProxy(descriptor.getDeclaration()), "flash.display.DisplayObjectContainer"));
   }
 
   boolean processMxmlVector(XmlTag tag, @Nullable Context parentContext, boolean allowIncludeInExludeFrom) {

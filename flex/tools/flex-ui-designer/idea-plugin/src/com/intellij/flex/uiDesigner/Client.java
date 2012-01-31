@@ -458,6 +458,20 @@ public class Client implements Disposable {
     return true;
   }
 
+  public void selectComponent(Module module, int documentId, int componentId) {
+    boolean hasError = true;
+    try {
+      beginMessage(ClientMethod.selectComponent);
+      writeId(module);
+      out.writeShort(documentId);
+      out.writeShort(componentId);
+      hasError = false;
+    }
+    finally {
+      finalizeMessageAndFlush(hasError);
+    }
+  }
+
   public static void writeVirtualFile(VirtualFile file, PrimitiveAmfOutputStream out) {
     out.writeAmfUtf(file.getUrl());
     out.writeAmfUtf(file.getPresentableUrl());
@@ -489,7 +503,8 @@ public class Client implements Disposable {
 
   public static enum ClientMethod {
     openProject, closeProject, registerLibrarySet, registerModule, registerDocumentFactory, updateDocumentFactory, openDocument, updateDocuments,
-    initStringRegistry, updateStringRegistry, fillImageClassPool, fillSwfClassPool;
+    initStringRegistry, updateStringRegistry, fillImageClassPool, fillSwfClassPool,
+    selectComponent;
     
     public static final int METHOD_CLASS = 0;
   }

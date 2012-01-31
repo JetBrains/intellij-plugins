@@ -162,7 +162,7 @@ public class MxmlReader implements DocumentReader {
     var objectDeclarationRangeMarkerId:int;
     if (propertyName == "$fud_r") {
       objectDeclarationRangeMarkerId = AmfUtil.readUInt29(input);
-      context.registerObjectDeclarationRangeMarkerId(object, objectDeclarationRangeMarkerId);
+      context.registerComponentDeclarationRangeMarkerId(object, objectDeclarationRangeMarkerId);
       propertyName = stringRegistry.read(input);
     }
 

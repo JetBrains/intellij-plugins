@@ -53,8 +53,8 @@ public class FlashDocumentDisplayManager extends AbstractDocumentDisplayManager 
 
     _document = object;
 
-    _preferredDocumentWidth = initialExplicitDimension(object.width);
-    _preferredDocumentHeight = initialExplicitDimension(object.height);
+    _explicitDocumentWidth = initialExplicitDimension(object.width);
+    _explicitDocumentHeight = initialExplicitDimension(object.height);
 
     try {
       addChildAt(object, 0);

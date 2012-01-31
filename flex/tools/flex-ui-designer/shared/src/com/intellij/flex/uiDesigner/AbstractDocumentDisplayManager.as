@@ -22,15 +22,15 @@ public class AbstractDocumentDisplayManager extends Sprite {
     _documentFactory = documentFactory;
   }
 
-  protected var _preferredDocumentWidth:int = -1;
-  protected var _preferredDocumentHeight:int = -1;
+  protected var _explicitDocumentWidth:int = -1;
+  protected var _explicitDocumentHeight:int = -1;
 
-  public function get preferredDocumentWidth():int {
-    return _preferredDocumentWidth;
+  public function get explicitDocumentWidth():int {
+    return _explicitDocumentWidth;
   }
 
-  public function get preferredDocumentHeight():int {
-    return _preferredDocumentHeight;
+  public function get explicitDocumentHeight():int {
+    return _explicitDocumentHeight;
   }
 
   protected static function initialExplicitDimension(dimension:Number):int {

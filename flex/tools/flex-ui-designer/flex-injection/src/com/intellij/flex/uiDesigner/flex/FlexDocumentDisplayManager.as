@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner.flex {
+
 import com.intellij.flex.uiDesigner.ComponentInfoProvider;
 import com.intellij.flex.uiDesigner.DocumentDisplayManager;
 import com.intellij.flex.uiDesigner.ResourceBundleProvider;
@@ -19,12 +20,14 @@ import flash.geom.Transform;
 import flash.system.ApplicationDomain;
 import flash.text.TextFormat;
 import flash.utils.Dictionary;
+import flash.utils.getQualifiedClassName;
 
 import mx.core.EmbeddedFontRegistry;
 import mx.core.FlexGlobals;
 import mx.core.IChildList;
 import mx.core.IFlexDisplayObject;
 import mx.core.IFlexModule;
+import mx.core.IInvalidating;
 import mx.core.ILayoutElement;
 import mx.core.IRawChildrenContainer;
 import mx.core.IUIComponent;
@@ -52,6 +55,10 @@ import mx.resources.ResourceManager;
 import mx.styles.ISimpleStyleClient;
 import mx.styles.IStyleClient;
 import mx.styles.StyleManager;
+
+import spark.components.SkinnableContainer;
+import spark.components.supportClasses.GroupBase;
+import spark.layouts.supportClasses.LayoutBase;
 
 use namespace mx_internal;
 
@@ -421,8 +428,8 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
 
     if (object is IUIComponent) {
       var documentUI:IUIComponent = IUIComponent(_document);
-      _preferredDocumentWidth = initialExplicitDimension(documentUI.explicitWidth);
-      _preferredDocumentHeight = initialExplicitDimension(documentUI.explicitHeight);
+      _explicitDocumentWidth = initialExplicitDimension(documentUI.explicitWidth);
+      _explicitDocumentHeight = initialExplicitDimension(documentUI.explicitHeight);
     }
 
     try {
@@ -445,12 +452,22 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
     }
   }
 
+  private function getMinSize(horizontal:Boolean):int {
+    var layout:LayoutBase = getLayout();
+    if (layout == null || getQualifiedClassName(layout).indexOf("MigLayout") == -1) {
+      return horizontal ? ILayoutElement(_document).getPreferredBoundsWidth() : ILayoutElement(_document).getPreferredBoundsHeight();
+    }
+    else {
+      return horizontal ? ILayoutElement(_document).getMinBoundsWidth() : ILayoutElement(_document).getMinBoundsHeight();
+    }
+  }
+
   public function get minDocumentWidth():int {
-    return ILayoutElement(_document).getMinBoundsWidth();
+    return getMinSize(true);
   }
 
   public function get minDocumentHeight():int {
-    return ILayoutElement(_document).getMinBoundsHeight();
+    return getMinSize(false);
   }
 
   public function get actualDocumentWidth():int {
@@ -463,6 +480,10 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
 
   public function added():void {
     _focusManager.activate();
+    var v:IInvalidating = document as IInvalidating;
+    if (v != null) {
+      v.validateNow();
+    }
   }
 
   public function activated():void {
@@ -810,6 +831,18 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
       _layoutManager = createLayoutManager();
     }
     return _layoutManager;
+  }
+
+  private function getLayout():LayoutBase {
+    if (document is GroupBase) {
+      return GroupBase(document).layout;
+    }
+    else if (document is SkinnableContainer) {
+      return SkinnableContainer(document).layout;
+    }
+    else {
+      return null;
+    }
   }
 
   private function createLayoutManager():com.intellij.flex.uiDesigner.designSurface.LayoutManager {

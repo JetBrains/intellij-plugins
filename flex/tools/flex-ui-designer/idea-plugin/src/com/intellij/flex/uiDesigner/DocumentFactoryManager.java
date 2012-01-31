@@ -101,6 +101,11 @@ public class DocumentFactoryManager {
     return get(virtualFile, psiFile, referenceCounter).getId();
   }
 
+  @Nullable
+  public DocumentInfo getNullableInfo(VirtualFile virtualFile) {
+    return files.getNullableInfo(virtualFile);
+  }
+
   public DocumentInfo get(VirtualFile virtualFile, @Nullable XmlFile psiFile, @Nullable ProjectDocumentReferenceCounter referenceCounter) {
     DocumentInfo info = files.getNullableInfo(virtualFile);
     if (info != null) {
@@ -130,6 +135,7 @@ public class DocumentFactoryManager {
 
   public static class DocumentInfo extends Info<VirtualFile> {
     public long documentModificationStamp;
+
     private List<RangeMarker> rangeMarkers;
 
     public RangeMarker getRangeMarker(int id) {
@@ -138,6 +144,10 @@ public class DocumentFactoryManager {
     
     public DocumentInfo(@NotNull VirtualFile element) {
       super(element);
+    }
+
+    public List<RangeMarker> getRangeMarkers() {
+      return rangeMarkers;
     }
 
     public void setRangeMarkers(List<RangeMarker> rangeMarkers) {

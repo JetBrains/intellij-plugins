@@ -8,8 +8,8 @@ import flash.display.Stage;
 public interface DocumentDisplayManager {
   function setDocument(object:DisplayObject):void;
 
-  function get preferredDocumentWidth():int;
-  function get preferredDocumentHeight():int;
+  function get explicitDocumentWidth():int;
+  function get explicitDocumentHeight():int;
 
   function get minDocumentWidth():int;
   function get minDocumentHeight():int;

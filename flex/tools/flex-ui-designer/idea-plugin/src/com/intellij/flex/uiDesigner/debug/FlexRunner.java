@@ -4,19 +4,18 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.flex.uiDesigner.DebugPathManager;
-import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.debug.FlexDebugProcess;
-import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
-import com.intellij.lang.javascript.flex.run.FlexRunnerParameters;
-import com.intellij.openapi.module.Module;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
+import com.intellij.lang.javascript.flex.run.RemoteFlashRunConfiguration;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
@@ -39,34 +38,39 @@ public class FlexRunner extends GenericProgramRunner {
   private static final String SKIP_MARKER = "^";
   
   private final Callback callback;
-  private Module module;
+  private FlexIdeBuildConfiguration buildConfiguration;
 
-  public FlexRunner(Callback callback, Module module) {
+  public FlexRunner(Callback callback, FlexIdeBuildConfiguration buildConfiguration) {
     this.callback = callback;
-    this.module = module;
+
+    this.buildConfiguration = buildConfiguration;
   }
 
   protected RunContentDescriptor doExecute(final Project project, final Executor executor, final RunProfileState state,
                                            final RunContentDescriptor contentToReuse, final ExecutionEnvironment env)
       throws ExecutionException {
-    final FlexRunnerParameters flexRunnerParameters = ((FlexRunConfiguration)env.getRunProfile()).getRunnerParameters();
-    final Sdk flexSdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
-    module = null;
+    final BCBasedRunnerParameters parameters = ((RemoteFlashRunConfiguration)env.getRunProfile()).getRunnerParameters();
 
     RunContentDescriptor runContentDescriptor = XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse,
-        new XDebugProcessStarter() {
-          @NotNull
-          public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
-            try {
-              return DebugPathManager.IS_DEV
-                     ? new MyFlexDebugProcessAbleToResolveFileDebugId(callback, session, flexSdk, flexRunnerParameters)
-                     : new MyFlexDebugProcess(callback, session, flexSdk, flexRunnerParameters);
-            }
-            catch (IOException e) {
-              throw new ExecutionException(e.getMessage(), e);
-            }
+      new XDebugProcessStarter() {
+        @NotNull
+        public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
+          try {
+            return DebugPathManager.IS_DEV
+              ? new MyFlexDebugProcessAbleToResolveFileDebugId(callback, session, buildConfiguration, parameters)
+              : new MyFlexDebugProcess(callback, session, buildConfiguration, parameters);
           }
-        }).getRunContentDescriptor();
+          catch (IOException e) {
+            throw new ExecutionException(e.getMessage(), e);
+          }
+          catch (RuntimeConfigurationError e) {
+            throw new ExecutionException(e.getMessage(), e);
+          }
+          finally {
+            buildConfiguration = null;
+          }
+        }
+      }).getRunContentDescriptor();
 
     ProcessHandler processHandler = runContentDescriptor.getProcessHandler();
     assert processHandler != null;
@@ -90,9 +94,9 @@ public class FlexRunner extends GenericProgramRunner {
   private static class MyFlexDebugProcess extends FlexDebugProcess {
     private final Callback callback;
 
-    public MyFlexDebugProcess(Callback callback, XDebugSession session, Sdk flexSdk,
-                              FlexRunnerParameters flexRunnerParameters) throws IOException {
-      super(session, flexSdk, flexRunnerParameters);
+    public MyFlexDebugProcess(Callback callback, XDebugSession session, FlexIdeBuildConfiguration buildConfiguration,
+                              BCBasedRunnerParameters parameters) throws IOException, RuntimeConfigurationError {
+      super(session, buildConfiguration, parameters);
       this.callback = callback;
     }
 
@@ -110,9 +114,9 @@ public class FlexRunner extends GenericProgramRunner {
   }
 
   private static class MyFlexDebugProcessAbleToResolveFileDebugId extends MyFlexDebugProcess {
-    public MyFlexDebugProcessAbleToResolveFileDebugId(Callback callback, XDebugSession session, Sdk flexSdk, FlexRunnerParameters flexRunnerParameters)
-      throws IOException {
-      super(callback, session, flexSdk, flexRunnerParameters);
+    public MyFlexDebugProcessAbleToResolveFileDebugId(Callback callback, XDebugSession session, FlexIdeBuildConfiguration buildConfiguration, BCBasedRunnerParameters parameters)
+      throws IOException, RuntimeConfigurationError {
+      super(callback, session, buildConfiguration, parameters);
     }
 
     @Override

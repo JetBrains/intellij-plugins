@@ -74,7 +74,7 @@ public class DocumentFactoryManager {
   //noinspection JSMethodCanBeStatic
   public function findElementAddress(object:Object, document:Document):ElementAddress {
     var factory:DocumentFactory = document.documentFactory;
-    var id:int = factory.getObjectDeclarationRangeMarkerId(object);
+    const id:int = factory.getComponentDeclarationRangeMarkerId(object);
     if (id == -1) {
       UncaughtErrorManager.instance.logWarning("Can't find document for object " + object + " in document " + document.file.presentableUrl);
       return null;
