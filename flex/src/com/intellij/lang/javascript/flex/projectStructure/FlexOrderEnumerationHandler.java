@@ -186,7 +186,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
     }
 
     final String[] allUrls = sdk.getRootProvider().getUrls(type);
-    if (type == OrderRootType.CLASSES) {
+    if (type != OrderRootType.CLASSES) {
       urls.addAll(Arrays.asList(allUrls));
       return true;
     }
