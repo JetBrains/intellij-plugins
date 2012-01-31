@@ -341,7 +341,8 @@ public class FlexProjectConfigurationEditor implements Disposable {
   public void commit() throws ConfigurationException {
     for (Module module : myModule2Editors.keySet()) {
       ModifiableRootModel modifiableModel = myProvider.getModuleModifiableModel(module);
-
+      Collection<String> usedModulesLibrariesIds = new ArrayList<String>();
+      
       // ---------------- SDK and shared libraries entries ----------------------
       Map<Library, Boolean> librariesToAdd = new HashMap<Library, Boolean>(); // Library -> add_library_entry_flag
       Collection<String> sdksNames = new HashSet<String>();
@@ -352,6 +353,10 @@ public class FlexProjectConfigurationEditor implements Disposable {
         }
 
         for (DependencyEntry dependencyEntry : editor.getDependencies().getEntries()) {
+          if (dependencyEntry instanceof ModuleLibraryEntry) {
+            ModuleLibraryEntry moduleLibraryEntry = (ModuleLibraryEntry)dependencyEntry;
+            usedModulesLibrariesIds.add(moduleLibraryEntry.getLibraryId());
+          }
           if (dependencyEntry instanceof SharedLibraryEntry) {
             SharedLibraryEntry sharedLibraryEntry = (SharedLibraryEntry)dependencyEntry;
             Library library =
@@ -369,15 +374,20 @@ public class FlexProjectConfigurationEditor implements Disposable {
       for (OrderEntry orderEntry : modifiableModel.getOrderEntries()) {
         if (orderEntry instanceof LibraryOrderEntry) {
           if (((LibraryOrderEntry)orderEntry).isModuleLevel()) {
-            // module-level libraries order entries are created/deleted along with dependency
-            continue;
+            LibraryEx library = (LibraryEx)((LibraryOrderEntry)orderEntry).getLibrary();
+            if (FlexProjectRootsUtil.isFlexLibrary(library) &&
+                !usedModulesLibrariesIds.contains(FlexProjectRootsUtil.getLibraryId(library))) {
+              entriesToRemove.add(orderEntry);
+            }
           }
-          LibraryEx library = (LibraryEx)((LibraryOrderEntry)orderEntry).getLibrary();
-          if (librariesToAdd.containsKey(library)) {
-            librariesToAdd.put(library, false); // entry already exists for this library
-          }
-          else if (library != null && FlexProjectRootsUtil.isFlexLibrary(library)) {
-            entriesToRemove.add(orderEntry);
+          else {
+            LibraryEx library = (LibraryEx)((LibraryOrderEntry)orderEntry).getLibrary();
+            if (librariesToAdd.containsKey(library)) {
+              librariesToAdd.put(library, false); // entry already exists for this library
+            }
+            else if (library != null && FlexProjectRootsUtil.isFlexLibrary(library)) {
+              entriesToRemove.add(orderEntry);
+            }
           }
         }
       }
