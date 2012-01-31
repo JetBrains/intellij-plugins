@@ -185,7 +185,12 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
       return false;
     }
 
-    final String[] allUrls = sdk.getRootProvider().getUrls(OrderRootType.CLASSES);
+    final String[] allUrls = sdk.getRootProvider().getUrls(type);
+    if (type == OrderRootType.CLASSES) {
+      urls.addAll(Arrays.asList(allUrls));
+      return true;
+    }
+
     Collection<FlexIdeBuildConfiguration> accessibleConfigurations = myActiveConfigurations.get(forOrderEntry.getOwnerModule());
     // since we don't allow transitive dependencies to Flex SDK, this module is root module, so there's actually one active configuration
     assert accessibleConfigurations.size() < 2;
@@ -193,18 +198,13 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
     ContainerUtil.process(accessibleConfigurations, new Processor<FlexIdeBuildConfiguration>() {
       @Override
       public boolean process(final FlexIdeBuildConfiguration bc) {
-        if (type == OrderRootType.CLASSES) {
-          allAccessibleUrls.addAll(ContainerUtil.filter(allUrls, new Condition<String>() {
-            @Override
-            public boolean value(String s) {
-              s = VirtualFileManager.extractPath(StringUtil.trimEnd(s, JarFileSystem.JAR_SEPARATOR));
-              return BCUtils.getSdkEntryLinkageType(s, bc) != null;
-            }
-          }));
-        }
-        else {
-          allAccessibleUrls.addAll(Arrays.asList(allUrls));
-        }
+        allAccessibleUrls.addAll(ContainerUtil.filter(allUrls, new Condition<String>() {
+          @Override
+          public boolean value(String s) {
+            s = VirtualFileManager.extractPath(StringUtil.trimEnd(s, JarFileSystem.JAR_SEPARATOR));
+            return BCUtils.getSdkEntryLinkageType(s, bc) != null;
+          }
+        }));
         return true;
       }
     });
