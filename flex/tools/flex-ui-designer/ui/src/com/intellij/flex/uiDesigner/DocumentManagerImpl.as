@@ -156,7 +156,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   private function doOpen(documentFactory:DocumentFactory, document:Document, documentOpened:Function):Boolean {
     if (documentOpened != null) {
       try {
-        documentOpened();
+        documentOpened(document);
       }
       catch (e:Error) {
         UncaughtErrorManager.instance.handleError(e, documentFactory.module.project);

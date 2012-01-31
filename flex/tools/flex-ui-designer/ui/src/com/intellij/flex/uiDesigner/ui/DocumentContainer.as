@@ -8,6 +8,9 @@ import com.intellij.flex.uiDesigner.DocumentFactory;
 import com.intellij.flex.uiDesigner.designSurface.AreaLocations;
 import com.intellij.flex.uiDesigner.designSurface.DesignSurfaceDataKeys;
 import com.intellij.flex.uiDesigner.designSurface.ToolManager;
+import com.intellij.flex.uiDesigner.designSurface.ViewersComposite;
+import com.intellij.flex.uiDesigner.gef.core.EditDomain;
+import com.intellij.flex.uiDesigner.gef.graphical.GraphicalViewer;
 
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
@@ -19,9 +22,6 @@ import org.jetbrains.actionSystem.DataKey;
 import org.jetbrains.actionSystem.DataManager;
 
 public class DocumentContainer extends ControlView implements DataContext {
-  private static const HEADER_SIZE:int = 15;
-  private static const CANVAS_INSET:int = HEADER_SIZE + 1 /* line thickness */ + 20;
-
   private static const MIN_CANVAS_WIDTH:int = 500;
   private static const MIN_CANVAS_HEIGHT:int = 400;
 
@@ -56,20 +56,16 @@ public class DocumentContainer extends ControlView implements DataContext {
     return canvasHeight + CANVAS_INSET;
   }
 
-  override public function setLocation(x:Number, y:Number):void {
-    super.setLocation(x, y);
-
-    AREA_LOCATIONS[AreaLocations.HORIZONTAL_HEADER].x = x;
-    AREA_LOCATIONS[AreaLocations.HORIZONTAL_HEADER].y = y + HEADER_SIZE + 1;
-
-    AREA_LOCATIONS[AreaLocations.VERTICAL_HEADER].x = x + HEADER_SIZE + 1;
-    AREA_LOCATIONS[AreaLocations.VERTICAL_HEADER].y = y;
-
-    AREA_LOCATIONS[AreaLocations.BODY].x = x + CANVAS_INSET;
-    AREA_LOCATIONS[AreaLocations.BODY].y = y + CANVAS_INSET;
-  }
-
   override public function addToSuperview(displayObjectContainer:DisplayObjectContainer, laf:LookAndFeel, superview:ContentView = null):void {
+    var viewersComposite:ViewersComposite = new ViewersComposite();
+    viewersComposite.addToSuperview(displayObjectContainer, laf, superview);
+
+    var viewer:GraphicalViewer = viewersComposite.viewer;
+    viewer.editDomain = new EditDomain();
+    //viewer.editPartFactory = EditPartFactory.INSTANCE;
+
+    viewersComposite.bindViewers();
+
     super.addToSuperview(displayObjectContainer, laf, superview);
 
     designerAreaOuterBackgroundColor = laf.getInt("designerAreaOuterBackgroundColor");
@@ -105,31 +101,6 @@ public class DocumentContainer extends ControlView implements DataContext {
 
   override protected function draw(w:int, h:int):void {
     DocumentDisplayManager(documentDisplayManager).setDocumentBounds(canvasWidth, canvasHeight);
-
-    var g:Graphics = graphics;
-    g.clear();
-
-    // all insets the same as in idea
-
-    // draw horizontal and vertical headers background
-    // color from wbpro, it is better than idea (because idea is more dark) (I think)
-    g.beginFill(designerAreaOuterBackgroundColor);
-    g.lineTo(w, 0);
-    g.lineTo(w, HEADER_SIZE);
-    // color from wbpro, it is better than idea (because idea is more dark) (I think)
-    g.lineStyle(1, 0x9f9f9f);
-    g.lineTo(HEADER_SIZE, HEADER_SIZE);
-    g.lineTo(HEADER_SIZE, h);
-    g.lineStyle();
-    g.lineTo(0, h);
-    g.lineTo(0, 0);
-    g.endFill();
-
-    // draw inner white rectangle
-    g.beginFill(0xffffff);
-    const canvasBackgroundInset:int = HEADER_SIZE + 1;
-    g.drawRect(canvasBackgroundInset, canvasBackgroundInset, w - canvasBackgroundInset, h - canvasBackgroundInset);
-    g.endFill();
   }
 
   public function getData(dataKey:DataKey):Object {
