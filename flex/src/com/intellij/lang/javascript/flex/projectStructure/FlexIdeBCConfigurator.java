@@ -11,7 +11,7 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigura
 import com.intellij.lang.javascript.flex.projectStructure.ui.AddBuildConfigurationDialog;
 import com.intellij.lang.javascript.flex.projectStructure.ui.CompositeConfigurable;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -90,7 +90,7 @@ public class FlexIdeBCConfigurator {
         }
 
         public Sdk[] getAllSdks() {
-          return FlexProjectConfigurationEditor.getEditableFlexSdks(project);
+          return FlexSdkUtils.getAllSdks();
         }
 
         public Library findSourceLibraryForLiveName(final String name, final String level) {

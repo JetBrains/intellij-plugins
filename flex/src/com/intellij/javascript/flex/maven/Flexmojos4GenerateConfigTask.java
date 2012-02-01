@@ -42,8 +42,9 @@ import java.util.regex.Pattern;
 
 import static org.jetbrains.idea.maven.utils.MavenLog.LOG;
 
-class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
-  private static final Pattern RESULT_PATTERN = Pattern.compile("^\\[fcg\\] generated: (\\d+):([^|]+)\\|(.+)\\[/fcg\\]$", Pattern.MULTILINE);
+class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
+  private static final Pattern RESULT_PATTERN =
+    Pattern.compile("^\\[fcg\\] generated: (\\d+):([^|]+)\\|(.+)\\[/fcg\\]$", Pattern.MULTILINE);
   private static final Pattern MAVEN_ERROR_PATTERN = Pattern.compile("^\\[ERROR\\] (.*)$", Pattern.MULTILINE);
 
   private DataOutputStream out;
@@ -54,7 +55,7 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
 
   private RefreshConfigFiles postTask;
 
-  public Flexmojos4GenerateFlexConfigTask(MavenProjectsTree tree) {
+  public Flexmojos4GenerateConfigTask(MavenProjectsTree tree) {
     //noinspection NullableProblems
     super(null, tree);
   }
@@ -142,7 +143,7 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
     programParametersList.add(project.getBaseDir().getPath() + "/.idea/flexmojos");
 
     configureMavenClassPath(mavenGeneralSettings, params.getClassPath());
-    
+
     final File userVmP = new File(SystemProperties.getUserHome(), "fcg-vmp");
     if (userVmP.exists()) {
       params.getVMParametersList().addParametersString(FileUtil.loadFile(userVmP));
@@ -276,7 +277,7 @@ class Flexmojos4GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
       final AccessToken token = WriteAction.start();
       try {
         // need to refresh externally created file
-        final VirtualFile p = LocalFileSystem.getInstance().refreshAndFindFileByPath(FlexMojos4FacetImporter.getCompilerConfigsDir(project));
+        final VirtualFile p = LocalFileSystem.getInstance().refreshAndFindFileByPath(Flexmojos4Configurator.getCompilerConfigsDir(project));
         if (p == null) {
           return;
         }

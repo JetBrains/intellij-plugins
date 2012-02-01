@@ -10,7 +10,6 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
@@ -35,7 +34,6 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -167,7 +165,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
       sdkList.add(myModuleSdk);
     }
 
-    final Sdk[] sdks = getAllSdks();
+    final Sdk[] sdks = FlexSdkUtils.getAllSdks();
     for (final Sdk sdk : sdks) {
       if (mySdkEvaluator.value(sdk)) {
         sdkList.add(sdk);
@@ -185,18 +183,6 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     }
     else {
       getComboBox().setModel(new DefaultComboBoxModel(new Object[]{null}));
-    }
-  }
-
-  private static Sdk[] getAllSdks() {
-    final FlexProjectConfigurationEditor currentEditor = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
-    if (currentEditor == null) {
-      return ProjectJdkTable.getInstance().getAllJdks();
-    }
-    else {
-      final Collection<Sdk> sdks =
-        ProjectStructureConfigurable.getInstance(currentEditor.getProject()).getProjectJdksModel().getProjectSdks().values();
-      return sdks.toArray(new Sdk[sdks.size()]);
     }
   }
 

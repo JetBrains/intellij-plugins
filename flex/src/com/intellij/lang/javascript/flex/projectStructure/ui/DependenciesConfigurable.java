@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
+import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.module.Module;
@@ -457,12 +458,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     @Override
     public String getText() {
-      return MessageFormat.format("Flex SDK {0}", mySdk.getVersionString());
+      return mySdk.getSdkType().getPresentableName() + " " + mySdk.getVersionString();
     }
 
     @Override
     public Icon getIcon() {
-      return FlexSdkType2.getInstance().getIcon();
+      return mySdk.getSdkType().getIcon();
     }
 
     @Override
@@ -699,12 +700,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     });
 
     mySdkLabel.setLabelFor(mySdkCombo);
-
-    myTargetPlayerLabel.setVisible(myNature.isWebPlatform());
-    myTargetPlayerCombo.setVisible(myNature.isWebPlatform());
-
-    myFrameworkLinkageLabel.setVisible(!myNature.pureAS);
-    myFrameworkLinkageCombo.setVisible(!myNature.pureAS);
 
     mySdkCombo.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
@@ -1211,6 +1206,23 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     myFrameworkLinkageCombo.setSelectedItem(myDependencies.getFrameworkLinkage());
 
     resetTable(sdkEntry, false);
+    updateControls();
+  }
+
+  private void updateControls() {
+    final Sdk sdk = mySdkCombo.getSelectedJdk();
+    final boolean flexmojos = sdk != null && sdk.getSdkType() instanceof FlexmojosSdkType;
+
+    myTargetPlayerLabel.setVisible(myNature.isWebPlatform() && !flexmojos);
+    myTargetPlayerCombo.setVisible(myNature.isWebPlatform() && !flexmojos);
+
+    final boolean visible = sdk != null && !flexmojos && !myNature.isMobilePlatform() && !myNature.pureAS &&
+                            StringUtil.compareVersionNumbers(sdk.getVersionString(), "4") >= 0;
+    myComponentSetLabel.setVisible(visible);
+    myComponentSetCombo.setVisible(visible);
+
+    myFrameworkLinkageLabel.setVisible(!myNature.pureAS && !flexmojos);
+    myFrameworkLinkageCombo.setVisible(!myNature.pureAS && !flexmojos);
   }
 
   private void resetTable(SdkEntry sdkEntry, boolean keepSelection) {
@@ -1291,16 +1303,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   private void updateComponentSetCombo() {
-    final Sdk sdkEntry = mySdkCombo.getSelectedJdk();
-    final boolean visible = sdkEntry != null &&
-                            StringUtil.compareVersionNumbers(sdkEntry.getVersionString(), "4") >= 0 &&
-                            !myNature.isMobilePlatform() &&
-                            !myNature.pureAS;
-    myComponentSetLabel.setVisible(visible);
-    myComponentSetCombo.setVisible(visible);
-    if (visible) {
+    updateControls();
+    final Sdk sdk = mySdkCombo.getSelectedJdk();
+    if (sdk != null && myComponentSetCombo.isVisible()) {
       final Object selectedItem = myComponentSetCombo.getSelectedItem();
-      final ComponentSet[] values = StringUtil.compareVersionNumbers(sdkEntry.getVersionString(), "4.5") >= 0
+      final ComponentSet[] values = StringUtil.compareVersionNumbers(sdk.getVersionString(), "4.5") >= 0
                                     ? ComponentSet.values()
                                     : new ComponentSet[]{ComponentSet.SparkAndMx, ComponentSet.MxOnly};
       myComponentSetCombo.setModel(new DefaultComboBoxModel(values));
@@ -1548,7 +1555,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
   private void updateOnSelectedSdkChange() {
     Sdk sdk = mySdkCombo.getSelectedJdk();
-    if (sdk != null && sdk.getSdkType() != FlexSdkType2.getInstance()) {
+    if (sdk != null && (sdk.getSdkType() != FlexSdkType2.getInstance() && sdk.getSdkType() != FlexmojosSdkType.getInstance())) {
       sdk = null; // TODO remove this when SDK filters out non-Flex items
     }
     BCUtils.updateAvailableTargetPlayers(sdk, myTargetPlayerCombo);

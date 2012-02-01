@@ -2,7 +2,6 @@ package com.intellij.javascript.flex.maven;
 
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.IgnoredBeanFactory;
@@ -38,22 +37,22 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
       return;
     }
 
-    Flexmojos4GenerateFlexConfigTask generateFlexConfigTask = null;
+    Flexmojos4GenerateConfigTask existingTask = null;
     for (MavenProjectsProcessorTask postTask : postTasks) {
-      if (postTask instanceof Flexmojos4GenerateFlexConfigTask) {
-        generateFlexConfigTask = (Flexmojos4GenerateFlexConfigTask)postTask;
+      if (postTask instanceof Flexmojos4GenerateConfigTask) {
+        existingTask = (Flexmojos4GenerateConfigTask)postTask;
         break;
       }
     }
 
-    if (generateFlexConfigTask == null) {
+    if (existingTask == null) {
       ChangeListManager.getInstance(project)
         .addFilesToIgnore(IgnoredBeanFactory.ignoreUnderDirectory(getCompilerConfigsDir(project), project));
-      generateFlexConfigTask = new Flexmojos4GenerateFlexConfigTask(mavenTree);
-      postTasks.add(generateFlexConfigTask);
+      existingTask = new Flexmojos4GenerateConfigTask(mavenTree);
+      postTasks.add(existingTask);
     }
 
-    generateFlexConfigTask.submit(mavenProject);
+    existingTask.submit(mavenProject);
   }
   
   public static String getCompilerConfigsDir(Project project) {
@@ -67,8 +66,8 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
   }
 
   @Override
-  protected String getCompilerConfigFile(Module module, MavenProject mavenProject, String suffix) {
-    return getCompilerConfigsDir(module.getProject()) + "/" + mavenProject.getMavenId().getArtifactId() + "-" +
+  protected String getCompilerConfigFile(Project project, MavenProject mavenProject, String suffix) {
+    return getCompilerConfigsDir(project) + "/" + mavenProject.getMavenId().getArtifactId() + "-" +
            mavenProject.getMavenId().getGroupId() + suffix + ".xml";
   }
 }

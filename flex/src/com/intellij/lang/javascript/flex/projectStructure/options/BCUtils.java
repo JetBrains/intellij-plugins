@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.projectStructure.options;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -278,6 +279,7 @@ public class BCUtils {
   }
 
   public static void updateAvailableTargetPlayers(Sdk currentSdk, final JComboBox targetPlayerCombo) {
+    if (currentSdk != null && currentSdk.getSdkType() instanceof FlexmojosSdkType) return;
     final String sdkHome = currentSdk == null ? null : currentSdk.getHomePath();
     final String playerFolderPath = sdkHome == null ? null : sdkHome + "/frameworks/libs/player";
     if (playerFolderPath != null) {

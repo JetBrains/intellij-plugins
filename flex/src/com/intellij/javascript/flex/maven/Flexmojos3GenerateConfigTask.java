@@ -2,9 +2,7 @@ package com.intellij.javascript.flex.maven;
 
 import com.intellij.ide.IdeBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
@@ -29,23 +27,18 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
-  private final FlexFacet myFlexFacet;
-  private final String flexmojosGroupId;
-  private final String flexmojosArtifactId;
-  private final FlexConfigInformer myFlexConfigInformer;
+public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTask {
   private static final String TEMPORARY_FILE_CONTENT = "Remove this file";
 
-  public GenerateFlexConfigTask(final FlexFacet flexFacet,
-                                final MavenProject mavenProject,
-                                final MavenProjectsTree tree,
-                                final String flexmojosGroupId,
-                                final String flexmojosArtifactId,
-                                final FlexConfigInformer flexConfigInformer) {
-    super(mavenProject, tree);
-    myFlexFacet = flexFacet;
-    this.flexmojosGroupId = flexmojosGroupId;
-    this.flexmojosArtifactId = flexmojosArtifactId;
+  private final String myConfigFilePath;
+  private final FlexConfigInformer myFlexConfigInformer;
+
+  public Flexmojos3GenerateConfigTask(final MavenProject mavenProject,
+                                      final MavenProjectsTree mavenTree,
+                                      final String configFilePath,
+                                      final FlexConfigInformer flexConfigInformer) {
+    super(mavenProject, mavenTree);
+    this.myConfigFilePath = configFilePath;
     myFlexConfigInformer = flexConfigInformer;
   }
 
@@ -65,8 +58,8 @@ public class GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
           temporaryFiles = mavenIdToOutputFileMapping(workspaceMap, project, myTree.getProjects());
 
           embedder.customizeForStrictResolve(workspaceMap, console, indicator);
-          final String generateConfigGoal =
-            flexmojosGroupId + ":" + flexmojosArtifactId + ":generate-config-" + myMavenProject.getPackaging();
+          final String generateConfigGoal = FlexmojosImporter.FLEXMOJOS_GROUP_ID + ":" + FlexmojosImporter.FLEXMOJOS_ARTIFACT_ID +
+                                            ":generate-config-" + myMavenProject.getPackaging();
           MavenServerExecutionResult result = embedder
             .execute(myMavenProject.getFile(), myMavenProject.getActivatedProfilesIds(), Collections.singletonList(generateConfigGoal));
           if (result.projectData == null) {
@@ -75,9 +68,10 @@ public class GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
 
           MavenUtil.invokeAndWaitWriteAction(project, new Runnable() {
             public void run() {
+              // todo set main class
               // need to refresh externally created file
               final VirtualFile file =
-                LocalFileSystem.getInstance().refreshAndFindFileByPath(FlexBuildConfiguration.getInstance(myFlexFacet).CUSTOM_CONFIG_FILE);
+                LocalFileSystem.getInstance().refreshAndFindFileByPath(myConfigFilePath);
               if (file != null) {
                 file.refresh(false, false);
               }
@@ -162,7 +156,7 @@ public class GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
             if (file.isValid() &&
                 file.getLength() == TEMPORARY_FILE_CONTENT.length() &&
                 new String(file.contentsToByteArray()).equals(TEMPORARY_FILE_CONTENT)) {
-              file.delete(GenerateFlexConfigTask.class);
+              file.delete(Flexmojos3GenerateConfigTask.class);
             }
           }
           catch (IOException e) {/*ignore*/}

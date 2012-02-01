@@ -290,7 +290,8 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
   protected void addGenerateFlexConfigTask(List<MavenProjectsProcessorTask> postTasks, FlexFacet facet,
                                            MavenProject project, MavenProjectsTree mavenTree) {
     if (FlexCompilerProjectConfiguration.getInstance(facet.getModule().getProject()).GENERATE_FLEXMOJOS_CONFIGS) {
-      postTasks.add(new GenerateFlexConfigTask(facet, project, mavenTree, FLEXMOJOS_GROUP_ID, FLEXMOJOS_ARTIFACT_ID, this));
+      postTasks
+        .add(new Flexmojos3GenerateConfigTask(project, mavenTree, FlexBuildConfiguration.getInstance(facet).CUSTOM_CONFIG_FILE, this));
     }
   }
 
@@ -405,7 +406,7 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
 
     config.USE_DEFAULT_SDK_CONFIG_FILE = false;
     config.USE_CUSTOM_CONFIG_FILE = true;
-    config.CUSTOM_CONFIG_FILE = getCompilerConfigFile(module, project, suffix);
+    config.CUSTOM_CONFIG_FILE = getCompilerConfigFile(module.getProject(), project, suffix);
 
     final String outputFilePath = getOutputFilePath(project);
     final int lastSlashIndex = outputFilePath.lastIndexOf("/");
@@ -424,7 +425,7 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
     reimportMxModuleFacets(project, module, modelsProvider);
   }
 
-  protected String getCompilerConfigFile(Module module, MavenProject mavenProject, String suffix) {
+  protected String getCompilerConfigFile(Project project, MavenProject mavenProject, String suffix) {
     return getTargetFilePath(mavenProject, suffix + getCompilerConfigXmlSuffix());
   }
 
@@ -446,7 +447,9 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
     config.LOCALE = StringUtil.join(getLocales(project, true), ",");
   }
 
-  private void reimportRuntimeLocalesFacets(final MavenProject project, final Module module, final MavenModifiableModelsProvider modelsProvider) {
+  private void reimportRuntimeLocalesFacets(final MavenProject project,
+                                            final Module module,
+                                            final MavenModifiableModelsProvider modelsProvider) {
     FacetModel model = modelsProvider.getFacetModel(module);
 
     String packaging = project.getPackaging();
@@ -529,7 +532,9 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
     return runtimeLocaleOuputPathPattern.replaceAll("\\{locale\\}", Matcher.quoteReplacement(locale));
   }
 
-  protected @Nullable Element getLocalesElement(MavenProject mavenProject, boolean compiled) {
+  protected
+  @Nullable
+  Element getLocalesElement(MavenProject mavenProject, boolean compiled) {
     Element localesElement = getConfig(mavenProject, (compiled ? "compiled" : "runtime") + "Locales");
     if (compiled && localesElement == null) {
       localesElement = getConfig(mavenProject, "locales");
@@ -547,7 +552,7 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
           return Collections.singletonList(defaultLocale);
         }
       }
-      
+
       return Collections.emptyList();
     }
 

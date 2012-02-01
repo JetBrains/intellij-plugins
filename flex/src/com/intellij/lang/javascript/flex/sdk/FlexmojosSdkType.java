@@ -51,7 +51,11 @@ public class FlexmojosSdkType extends SdkType implements IFlexSdkType {
   }
 
   public String suggestSdkName(final String currentSdkName, final String sdkHome) {
-    return sdkHome.substring(sdkHome.replace('\\', '/').lastIndexOf('/') + 1);
+    // C:/Users/xxx/.m2/repository/com/adobe/flex/compiler/4.0.0.14159/compiler-4.0.0.14159.pom
+    final int lastDash = sdkHome.lastIndexOf("-");
+    final int lastDot = sdkHome.lastIndexOf(".");
+    final String version = lastDot > lastDash ? sdkHome.substring(lastDash + 1, lastDot) : "";
+    return "Flexmojos SDK " + version;
   }
 
   public AdditionalDataConfigurable createAdditionalDataConfigurable(final SdkModel sdkModel, final SdkModificator sdkModificator) {
