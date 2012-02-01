@@ -116,7 +116,7 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
           for (MavenProject mavenProject : mavenProjects) {
             final String packaging = mavenProject.getPackaging();
             if ("swf".equalsIgnoreCase(packaging) || "swc".equalsIgnoreCase(packaging)) {
-              final String outputFilePath = FlexMojos3FacetImporter.getOutputFilePath(mavenProject);
+              final String outputFilePath = Flexmojos3Configurator.getOutputFilePath(mavenProject);
               final int lastSlashIndex = outputFilePath.lastIndexOf("/");
               final String outputFileName = outputFilePath.substring(lastSlashIndex + 1);
               final String outputFolderPath = outputFilePath.substring(0, Math.max(0, lastSlashIndex));

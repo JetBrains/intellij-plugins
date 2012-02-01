@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
+import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkAdditionalData;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
@@ -20,6 +21,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
+import com.intellij.util.containers.hash.HashSet;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,6 +43,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static com.intellij.javascript.flex.maven.RuntimeModulesGenerateConfigTask.RLMInfo;
+
 public class Flexmojos3Configurator {
   private static final String FLEX_COMPILER_GROUP_ID = "com.adobe.flex";
   private static final String FLEX_COMPILER_ARTIFACT_ID = "compiler";
@@ -58,10 +62,9 @@ public class Flexmojos3Configurator {
   private final FlexProjectConfigurationEditor myFlexEditor;
   protected MavenProjectsTree myMavenTree;
   protected final MavenProject myMavenProject;
-  private final MavenPlugin myFlexmojosPlugin;
+  protected final MavenPlugin myFlexmojosPlugin;
   private final List<String> myCompiledLocales;
   private final List<String> myRuntimeLocales;
-  protected final @Nullable String myClassifier;
   private final FlexConfigInformer myInformer;
 
 
@@ -82,9 +85,6 @@ public class Flexmojos3Configurator {
     myMavenProject = mavenProject;
     myFlexmojosPlugin = flexmojosPlugin;
     myInformer = informer;
-    final Element configurationElement = flexmojosPlugin.getConfigurationElement();
-    myClassifier =
-      configurationElement == null ? null : configurationElement.getChildTextNormalize("classifier", configurationElement.getNamespace());
   }
 
   public void configureAndAppendTasks(final List<MavenProjectsProcessorTask> postTasks) {
@@ -92,61 +92,63 @@ public class Flexmojos3Configurator {
       myFlexEditor.removeConfiguration(oldBC);
     }
 
-    final ModifiableFlexIdeBuildConfiguration bc = myFlexEditor.createConfiguration(myModule);
-    bc.setName(myModule.getName());
+    final ModifiableFlexIdeBuildConfiguration mainBC = setupMainBuildConfiguration();
 
-    final TargetPlatform targetPlatform = handleDependencies(bc);
-    bc.setTargetPlatform(targetPlatform);
-    bc.setPureAs(false);
-    final boolean app = FlexmojosImporter.isFlexApp(myMavenProject);
-    bc.setOutputType(app ? OutputType.Application : OutputType.Library);
+    final Collection<String> usedNames = new HashSet<String>();
+    usedNames.add(mainBC.getName());
 
-    final Element configurationElement = myFlexmojosPlugin.getConfigurationElement();
-    if (app && configurationElement != null) {
-      final String sourceFile = configurationElement.getChildTextNormalize("sourceFile");
-      if (sourceFile != null && (sourceFile.endsWith(".as") || sourceFile.endsWith(".mxml"))) {
-        bc.setMainClass(sourceFile.substring(0, sourceFile.lastIndexOf(".")).replace("/", ".").replace("\\", "."));
-      }
-      // todo set later when config is generated?
+    final Collection<RLMInfo> rlmInfos = FlexmojosImporter.isFlexApp(myMavenProject) ? getRLMInfos() : Collections.<RLMInfo>emptyList();
+    for (RLMInfo info : rlmInfos) {
+      configureRuntimeLoadedModule(mainBC, info, usedNames);
     }
-
-    final String outputFilePath = getOutputFilePath();
-    bc.setOutputFileName(PathUtil.getFileName(outputFilePath));
-    bc.setOutputFolder(PathUtil.getParentPath(outputFilePath));
-
-    setupSdk(bc);
-
-    final String locales = StringUtil.join(myCompiledLocales, String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR));
-    bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.locale", locales));
-
-    final String configFilePath = getCompilerConfigFilePath();
-    bc.getCompilerOptions().setAdditionalConfigFilePath(configFilePath);
-
 /*
     reimportRuntimeLocalesFacets(project, module, modelsProvider);
-    reimportMxModuleFacets(project, module, modelsProvider);
-
     preProcessResourceFacets(module, mavenProject, modifiableModelsProvider);
-    preprocessMxModuleFacets(module, mavenProject, modifiableModelsProvider);
 */
 
     if (FlexCompilerProjectConfiguration.getInstance(myModule.getProject()).GENERATE_FLEXMOJOS_CONFIGS) {
       if (StringUtil.compareVersionNumbers(myFlexmojosPlugin.getVersion(), "3.4") >= 0) {
-        appendGenerateConfigTask(postTasks, configFilePath);
+        appendGenerateConfigTask(postTasks, mainBC.getCompilerOptions().getAdditionalConfigFilePath());
+        if (!rlmInfos.isEmpty()) {
+          postTasks.add(new RuntimeModulesGenerateConfigTask(myModule, myMavenProject, myMavenTree,
+                                                             mainBC.getCompilerOptions().getAdditionalConfigFilePath(), rlmInfos));
+        }
       }
       else {
         myInformer.showFlexConfigWarningIfNeeded(myModule.getProject());
       }
     }
+  }
 
-    /*if (isGenerateFlexConfigFilesForMxModules()) {
-      for (final FlexFacet flexFacet : facetModel.getFacetsByType(myFacetType.getId())) {
-        if (isMxModuleFacet(flexFacet)) {
-          postTasks.add(new GenerateFlexConfigFilesForMxModulesTask(getCompilerConfigXmlSuffix(), module, project, mavenTree));
-          break;
-        }
+  private ModifiableFlexIdeBuildConfiguration setupMainBuildConfiguration() {
+    final ModifiableFlexIdeBuildConfiguration mainBC = myFlexEditor.createConfiguration(myModule);
+    mainBC.setName(myModule.getName());
+
+    final TargetPlatform targetPlatform = handleDependencies(mainBC);
+    mainBC.setTargetPlatform(targetPlatform);
+    mainBC.setPureAs(false);
+    mainBC.setOutputType(FlexmojosImporter.isFlexApp(myMavenProject) ? OutputType.Application : OutputType.Library);
+
+    final Element configurationElement = myFlexmojosPlugin.getConfigurationElement();
+    if (FlexmojosImporter.isFlexApp(myMavenProject) && configurationElement != null) {
+      final String sourceFile = configurationElement.getChildTextNormalize("sourceFile");
+      if (sourceFile != null && (sourceFile.endsWith(".as") || sourceFile.endsWith(".mxml"))) {
+        mainBC.setMainClass(sourceFile.substring(0, sourceFile.lastIndexOf(".")).replace("/", ".").replace("\\", "."));
       }
-    }*/
+      // todo set later when config is generated?
+    }
+
+    final String outputFilePath = getOutputFilePath(myMavenProject);
+    mainBC.setOutputFileName(PathUtil.getFileName(outputFilePath));
+    mainBC.setOutputFolder(PathUtil.getParentPath(outputFilePath));
+
+    setupSdk(mainBC);
+
+    final String locales = StringUtil.join(myCompiledLocales, String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR));
+    mainBC.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.locale", locales));
+
+    mainBC.getCompilerOptions().setAdditionalConfigFilePath(getCompilerConfigFilePath());
+    return mainBC;
   }
 
   private TargetPlatform handleDependencies(final ModifiableFlexIdeBuildConfiguration bc) {
@@ -252,21 +254,24 @@ public class Flexmojos3Configurator {
     return result;
   }
 
-  private String getOutputFilePath() {
-    final Element configurationElement = myFlexmojosPlugin.getConfigurationElement();
+  static String getOutputFilePath(final MavenProject mavenProject) {
+    final Element configurationElement = mavenProject.getPluginConfiguration(FlexmojosImporter.FLEXMOJOS_GROUP_ID,
+                                                                             FlexmojosImporter.FLEXMOJOS_ARTIFACT_ID);
     String overriddenTargetFileName =
       configurationElement == null ? null : configurationElement.getChildTextNormalize("output", configurationElement.getNamespace());
     if (overriddenTargetFileName != null && !overriddenTargetFileName.isEmpty() && !FileUtil.isAbsolute(overriddenTargetFileName)) {
-      overriddenTargetFileName = myMavenProject.getDirectory() + "/" + overriddenTargetFileName;
+      overriddenTargetFileName = mavenProject.getDirectory() + "/" + overriddenTargetFileName;
     }
 
     if (overriddenTargetFileName != null) {
       return FileUtil.toSystemIndependentName(overriddenTargetFileName);
     }
     else {
-      final String suffix = myClassifier == null ? "" : "-" + myClassifier;
-      return FileUtil.toSystemIndependentName(myMavenProject.getBuildDirectory())
-             + "/" + myMavenProject.getFinalName() + suffix + "." + myMavenProject.getPackaging();
+      final String classifier =
+        configurationElement == null ? null : configurationElement.getChildTextNormalize("classifier", configurationElement.getNamespace());
+      final String suffix = classifier == null ? "" : "-" + classifier;
+      return FileUtil.toSystemIndependentName(mavenProject.getBuildDirectory())
+             + "/" + mavenProject.getFinalName() + suffix + "." + mavenProject.getPackaging();
     }
   }
 
@@ -330,7 +335,21 @@ public class Flexmojos3Configurator {
   }
 
   protected String getCompilerConfigFilePath() {
-    final String suffix = myClassifier == null ? "" : "-" + myClassifier;
+    return getCompilerConfigFilePath(null);
+  }
+
+  protected String getCompilerConfigFilePath(final @Nullable String rlmName) {
+    final Element configurationElement = myFlexmojosPlugin.getConfigurationElement();
+    final String classifier =
+      configurationElement == null ? null : configurationElement.getChildTextNormalize("classifier", configurationElement.getNamespace());
+
+    String suffix = "";
+    if (rlmName != null) {
+      suffix = "-" + rlmName;
+    }
+    else if (classifier != null) {
+      suffix = "-" + classifier;
+    }
     return FileUtil.toSystemIndependentName(myMavenProject.getBuildDirectory()) +
            "/" + myMavenProject.getFinalName() + suffix + "-config-report.xml";
   }
@@ -339,130 +358,93 @@ public class Flexmojos3Configurator {
     postTasks.add(new Flexmojos3GenerateConfigTask(myMavenProject, myMavenTree, configFilePath, myInformer));
   }
 
-/*  private void preprocessMxModuleFacets(final Module module,
-                                        final MavenProject mavenProject,
-                                        final MavenModifiableModelsProvider modifiableModelsProvider) {
-    final List<String> mxModuleFilePaths = getMxModuleFilePaths(mavenProject);
-    final ModifiableFacetModel model = modifiableModelsProvider.getFacetModel(module);
-    deleteUnusedMxModuleFacets(model, mxModuleFilePaths);
+  private void configureRuntimeLoadedModule(final ModifiableFlexIdeBuildConfiguration mainBC,
+                                            final RLMInfo info,
+                                            final Collection<String> usedNames) {
+    final String bcName = getUniqueName(info.myRLMName, usedNames);
+    usedNames.add(bcName);
 
-    for (final String mxModuleFilePath : mxModuleFilePaths) {
-      final String facetName = getMxModuleFacetName(mxModuleFilePath);
-      FlexFacet facet = model.findFacet(myFacetType.getId(), facetName);
-      if (facet == null) {
-        facet = myFacetType.createFacet(module, facetName, myFacetType.createDefaultConfiguration(), null);
-        model.addFacet(facet);
-        setupFacet(facet, mavenProject);
-      }
-    }
+    final BuildConfigurationNature nature = new BuildConfigurationNature(mainBC.getTargetPlatform(), mainBC.isPureAs(),
+                                                                         OutputType.RuntimeLoadedModule);
+    final ModifiableFlexIdeBuildConfiguration rlmBC = myFlexEditor.copyConfiguration(mainBC, nature);
+
+    rlmBC.setName(bcName);
+    rlmBC.setMainClass(info.myMainClass);
+    rlmBC.setOutputFileName(info.myOutputFileName);
+    rlmBC.setOutputFolder(info.myOutputFolderPath);
+    rlmBC.getCompilerOptions().setAdditionalConfigFilePath(getCompilerConfigFilePath(info.myRLMName));
   }
 
-  private List<String> getMxModuleFilePaths(final MavenProject mavenProject) {
-    if (!isApplication(mavenProject)) {
-      return Collections.emptyList();
+  private static String getUniqueName(final String name, final Collection<String> usedNames) {
+    String uniqueName = name;
+    int index = 2;
+    while (usedNames.contains(uniqueName)) {
+      uniqueName = name + " " + index++;
     }
+    return uniqueName;
+  }
 
-    final Element moduleFilesElement = getConfig(mavenProject, "moduleFiles");
+  protected Collection<RLMInfo> getRLMInfos() {
+    final Element configurationElement = myFlexmojosPlugin.getConfigurationElement();
+    final Element moduleFilesElement = configurationElement == null
+                                       ? null : configurationElement.getChild("moduleFiles", configurationElement.getNamespace());
 
     if (moduleFilesElement == null) {
       return Collections.emptyList();
     }
 
-    final List<String> result = new ArrayList<String>();
+    final List<RLMInfo> result = new ArrayList<RLMInfo>();
     //noinspection unchecked
     for (final Element moduleFilePathElement : (Iterable<Element>)moduleFilesElement.getChildren()) {
-      final String moduleFilePath = moduleFilePathElement.getTextNormalize();
-      if (moduleFilePath.endsWith(".mxml") || moduleFilePath.endsWith(".as")) {
-        result.add(moduleFilePath);
+      final String path = moduleFilePathElement.getTextNormalize();
+      if (path.endsWith(".mxml") || path.endsWith(".as")) {
+        final String mainClassRelativePath = FileUtil.toSystemIndependentName(path);
+        final String mainClass = FileUtil.getNameWithoutExtension(mainClassRelativePath.replace('/', '.'));
+        final String rlmName = StringUtil.getShortName(mainClass);
+        final String outputFileName = myMavenProject.getFinalName() + "-" + rlmName + ".swf";
+        final String outputFolderPath = FileUtil.toSystemIndependentName(myMavenProject.getBuildDirectory());
+        final String configFilePath = getCompilerConfigFilePath(rlmName);
+        result.add(new RLMInfo(rlmName, mainClass, mainClassRelativePath, outputFileName, outputFolderPath, configFilePath));
       }
     }
     return result;
   }
 
-  private void preProcessResourceFacets(Module module, MavenProject mavenProject, MavenModifiableModelsProvider modifiableModelsProvider) {
-    List<String> runtimeLocales = getLocales(mavenProject, false);
-    ModifiableFacetModel model = modifiableModelsProvider.getFacetModel(module);
-    deleteUnusedResourceFacets(model, runtimeLocales);
+  /*
+ private void reimportRuntimeLocalesFacets(final MavenProject project,
+                                           final Module module,
+                                           final MavenModifiableModelsProvider modelsProvider) {
+   FacetModel model = modelsProvider.getFacetModel(module);
 
-    for (String eachLocale : runtimeLocales) {
-      String facetName = getResourceFacetName(eachLocale);
-      FlexFacet f = model.findFacet(myFacetType.getId(), facetName);
-      if (f == null) {
-        f = myFacetType.createFacet(module, facetName, myFacetType.createDefaultConfiguration(), null);
-        model.addFacet(f);
-        setupFacet(f, mavenProject);
-      }
-    }
-  }
+   String packaging = project.getPackaging();
+   String extension = "swc".equalsIgnoreCase(packaging) ? "rb.swc" : packaging;
 
-  protected boolean isGenerateFlexConfigFilesForMxModules() {
-    return true;
-  }
+   String runtimeLocaleOutputPathPattern =
+     findConfigValue(project, "runtimeLocaleOutputPath", "/{contextRoot}/locales/{artifactId}-{version}-{locale}.{extension}");
+   runtimeLocaleOutputPathPattern = getRuntimeLocalesOutputPathPattern(project, runtimeLocaleOutputPathPattern, extension);
 
-  private void reimportRuntimeLocalesFacets(final MavenProject project,
-                                            final Module module,
-                                            final MavenModifiableModelsProvider modelsProvider) {
-    FacetModel model = modelsProvider.getFacetModel(module);
+   for (FlexFacet eachFacet : model.getFacetsByType(myFacetType.getId())) {
+     if (!isResourceFacet(eachFacet)) continue;
 
-    String packaging = project.getPackaging();
-    String extension = "swc".equalsIgnoreCase(packaging) ? "rb.swc" : packaging;
+     String locale = getResourceFacetLocale(eachFacet);
+     FlexBuildConfiguration config = FlexBuildConfiguration.getInstance(eachFacet);
 
-    String runtimeLocaleOutputPathPattern =
-      findConfigValue(project, "runtimeLocaleOutputPath", "/{contextRoot}/locales/{artifactId}-{version}-{locale}.{extension}");
-    runtimeLocaleOutputPathPattern = getRuntimeLocalesOutputPathPattern(project, runtimeLocaleOutputPathPattern, extension);
+     String outputPath = getRuntimeLocaleOutputPath(runtimeLocaleOutputPathPattern, locale);
 
-    for (FlexFacet eachFacet : model.getFacetsByType(myFacetType.getId())) {
-      if (!isResourceFacet(eachFacet)) continue;
+     String outputDir = outputPath.substring(0, outputPath.lastIndexOf("/"));
+     String outputName = outputPath.substring(outputDir.length() + 1);
 
-      String locale = getResourceFacetLocale(eachFacet);
-      FlexBuildConfiguration config = FlexBuildConfiguration.getInstance(eachFacet);
+     config.OUTPUT_TYPE = getOutputType(project);
+     config.OUTPUT_FILE_NAME = outputName;
+     config.USE_FACET_COMPILE_OUTPUT_PATH = true;
+     config.FACET_COMPILE_OUTPUT_PATH = outputDir;
+     config.FACET_COMPILE_OUTPUT_PATH_FOR_TESTS = FileUtil.toSystemIndependentName(project.getTestOutputDirectory());
 
-      String outputPath = getRuntimeLocaleOutputPath(runtimeLocaleOutputPathPattern, locale);
-
-      String outputDir = outputPath.substring(0, outputPath.lastIndexOf("/"));
-      String outputName = outputPath.substring(outputDir.length() + 1);
-
-      config.OUTPUT_TYPE = getOutputType(project);
-      config.OUTPUT_FILE_NAME = outputName;
-      config.USE_FACET_COMPILE_OUTPUT_PATH = true;
-      config.FACET_COMPILE_OUTPUT_PATH = outputDir;
-      config.FACET_COMPILE_OUTPUT_PATH_FOR_TESTS = FileUtil.toSystemIndependentName(project.getTestOutputDirectory());
-
-      config.USE_DEFAULT_SDK_CONFIG_FILE = false;
-      config.USE_CUSTOM_CONFIG_FILE = true;
-      config.CUSTOM_CONFIG_FILE = outputPath.replace("." + extension, getCompilerConfigXmlSuffix());
-    }
-  }
-
-  private void reimportMxModuleFacets(final MavenProject project, final Module module, final MavenModifiableModelsProvider modelsProvider) {
-    final FacetModel facetModel = modelsProvider.getFacetModel(module);
-
-    if (!isApplication(project)) {
-      return;
-    }
-
-    for (final FlexFacet facet : facetModel.getFacetsByType(myFacetType.getId())) {
-      if (!isMxModuleFacet(facet)) continue;
-
-      final String mxModuleFilePath = FileUtil.toSystemIndependentName(getMxModuleFileRelativePath(facet));
-      final int dotIndex = mxModuleFilePath.lastIndexOf('.');
-      final int slashIndex = mxModuleFilePath.lastIndexOf('/');
-      final String mxModuleName = mxModuleFilePath.substring(slashIndex + 1, dotIndex > slashIndex ? dotIndex : mxModuleFilePath.length());
-      final String outputPath = getTargetFilePath(project, "-" + mxModuleName + ".swf");
-      final FlexBuildConfiguration config = FlexBuildConfiguration.getInstance(facet);
-
-      config.OUTPUT_TYPE = FlexBuildConfiguration.APPLICATION;
-      config.OUTPUT_FILE_NAME = outputPath.substring(outputPath.substring(0, outputPath.lastIndexOf("/")).length() + 1);
-      config.MAIN_CLASS = mxModuleFilePath.substring(0, dotIndex > 0 ? dotIndex : mxModuleFilePath.length()).replace('/', '.');
-      config.USE_FACET_COMPILE_OUTPUT_PATH = true;
-      config.FACET_COMPILE_OUTPUT_PATH = outputPath.substring(0, outputPath.lastIndexOf("/"));
-      config.FACET_COMPILE_OUTPUT_PATH_FOR_TESTS = FileUtil.toSystemIndependentName(project.getTestOutputDirectory());
-
-      config.USE_DEFAULT_SDK_CONFIG_FILE = false;
-      config.USE_CUSTOM_CONFIG_FILE = true;
-      config.CUSTOM_CONFIG_FILE = outputPath.replace(".swf", getCompilerConfigXmlSuffix());
-    }
-  }
+     config.USE_DEFAULT_SDK_CONFIG_FILE = false;
+     config.USE_CUSTOM_CONFIG_FILE = true;
+     config.CUSTOM_CONFIG_FILE = outputPath.replace("." + extension, getCompilerConfigXmlSuffix());
+   }
+ }
 
   private static String getRuntimeLocalesOutputPathPattern(MavenProject project, String runtimeLocaleOuputPathPattern, String extension) {
     MavenId projectId = project.getMavenId();
@@ -482,32 +464,6 @@ public class Flexmojos3Configurator {
 
   private static String getRuntimeLocaleOutputPath(String runtimeLocaleOuputPathPattern, String locale) {
     return runtimeLocaleOuputPathPattern.replaceAll("\\{locale\\}", Matcher.quoteReplacement(locale));
-  }
-
-  private static boolean isResourceFacet(final FlexFacet f) {
-    return f.getName().startsWith(RESOURCE_MODULE_FACET_PREFIX);
-  }
-
-  private static String getResourceFacetName(final String locale) {
-    return RESOURCE_MODULE_FACET_PREFIX + locale;
-  }
-
-  private static String getResourceFacetLocale(final FlexFacet facet) {
-    assert isResourceFacet(facet);
-    return facet.getName().substring(RESOURCE_MODULE_FACET_PREFIX.length());
-  }
-
-  static boolean isMxModuleFacet(final FlexFacet f) {
-    return f.getName().startsWith(MX_MODULE_FACET_PREFIX);
-  }
-
-  private static String getMxModuleFacetName(final String mxModuleFilePath) {
-    return MX_MODULE_FACET_PREFIX + mxModuleFilePath;
-  }
-
-  static String getMxModuleFileRelativePath(final FlexFacet facet) {
-    assert isMxModuleFacet(facet);
-    return facet.getName().substring(MX_MODULE_FACET_PREFIX.length());
   }
   */
 }
