@@ -34,8 +34,6 @@ import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
-import com.intellij.openapi.wm.StatusBar;
-import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -154,11 +152,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
       }
     }
 
-    StatusBar statusBar = WindowManager.getInstance().getStatusBar(myProject);
-    if (statusBar != null) {
-      myWidget = new ActiveBuildConfigurationWidget(myProject);
-      statusBar.addWidget(myWidget, ActiveBuildConfigurationWidget.getAnchor());
-    }
+    myWidget = new ActiveBuildConfigurationWidget(myProject);
   }
 
   public void projectClosed() {
@@ -168,12 +162,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     quitCompilerShell();
     myCompilerDependenciesCache.clear();
     deleteTempFlexConfigFiles(myProject.getName());
-    
-    if (myWidget != null) {
-      StatusBar statusBar = WindowManager.getInstance().getStatusBar(myProject);
-      statusBar.removeWidget(myWidget.ID());
-      myWidget = null;
-    }
+    myWidget.destroy();
   }
 
   public void quitCompilerShell() {
