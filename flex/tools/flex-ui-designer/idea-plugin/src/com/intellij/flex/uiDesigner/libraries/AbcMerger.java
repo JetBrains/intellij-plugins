@@ -172,7 +172,8 @@ class AbcMerger extends AbcTranscoder {
         break;
 
       case TagTypes.PlaceObject2:
-        if (updatePlaceObject2Reference()) {
+      case TagTypes.PlaceObject3:
+        if (updatePlaceObject2Or3Reference(type == TagTypes.PlaceObject2)) {
           return 0;
         }
         break;
@@ -182,9 +183,6 @@ class AbcMerger extends AbcTranscoder {
       case TagTypes.DefineFontInfo:
         updateReferenceById(buffer.position());
         return 0;
-
-      case TagTypes.PlaceObject3:
-        throw new IOException("PlaceObject3 are not supported");
     }
 
     if (characterIdPosition != -1) {
@@ -198,13 +196,25 @@ class AbcMerger extends AbcTranscoder {
     return 0;
   }
 
-  private boolean updatePlaceObject2Reference() {
-    if ((buffer.get(buffer.position()) & PlaceObjectFlags.HAS_CHARACTER) != 0) {
-      updateReferenceById(buffer.position() + 3);
-      return true;
+  private boolean updatePlaceObject2Or3Reference(boolean is2) {
+    if ((buffer.get(buffer.position()) & PlaceObjectFlags.HAS_CHARACTER) == 0) {
+      return false;
     }
 
-    return false;
+    int bufferPosition;
+    if (is2) {
+      bufferPosition = buffer.position() + 3;
+    }
+    else {
+      bufferPosition = buffer.position() + 4;
+      final byte flags2 = buffer.get(buffer.position() + 1);
+      if ((flags2 & PlaceObject3Flags.HAS_CLASS_NAME) != 0 || (flags2 & PlaceObject3Flags.HAS_IMAGE) != 0) {
+        bufferPosition += skipAbcName(bufferPosition) + 1;
+      }
+    }
+
+    updateReferenceById(bufferPosition);
+    return true;
   }
 
   private void updateReferenceById(int idPosition) {
@@ -245,15 +255,13 @@ class AbcMerger extends AbcTranscoder {
 
       final int start = buffer.position();
       switch (type) {
-        case TagTypes.PlaceObject3:
-          throw new IOException("PlaceObject3 are not supported");
-
         case TagTypes.PlaceObject:
           updateReferenceById(start);
           break;
 
         case TagTypes.PlaceObject2:
-          updatePlaceObject2Reference();
+        case TagTypes.PlaceObject3:
+          updatePlaceObject2Or3Reference(type == TagTypes.PlaceObject2);
           break;
       }
 
