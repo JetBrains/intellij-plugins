@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
@@ -221,7 +222,7 @@ public class FlexIdeBCConfigurator {
     }
 
     Pair<String, BuildConfigurationNature> nameAndNature =
-      promptForCreation(module, "Add Build Configuration", BuildConfigurationNature.DEFAULT);
+      promptForCreation(module, FlexBundle.message("add.build.configuration.title", module.getName()), BuildConfigurationNature.DEFAULT);
     if (nameAndNature == null) {
       return;
     }
@@ -263,8 +264,8 @@ public class FlexIdeBCConfigurator {
     ModifiableFlexIdeBuildConfiguration configuration = myConfigurablesMap.getKeysByValue(configurable).get(0);
 
     FlexIdeBCConfigurable unwrapped = FlexIdeBCConfigurable.unwrap(configurable);
-    Pair<String, BuildConfigurationNature> nameAndNature = promptForCreation(unwrapped.getModule(), "Copy Build Configuration",
-                                                                             configuration.getNature());
+    final String title = FlexBundle.message("copy.build.configuration", unwrapped.getModule().getName());
+    Pair<String, BuildConfigurationNature> nameAndNature = promptForCreation(unwrapped.getModule(), title, configuration.getNature());
     if (nameAndNature == null) {
       return;
     }
