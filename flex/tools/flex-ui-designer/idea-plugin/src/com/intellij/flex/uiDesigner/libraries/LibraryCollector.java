@@ -13,7 +13,6 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.*;
@@ -42,7 +41,7 @@ class LibraryCollector {
   private VirtualFile globalLibrary;
 
   final LibraryStyleInfoCollector initializer;
-  private final Project project;
+  private final Module module;
   private String flexmojosFlexSdkRootPath;
 
   // AS-200
@@ -54,10 +53,10 @@ class LibraryCollector {
   private boolean flexSdkRegistered = false;
   private String flexSdkVersion;
 
-  public LibraryCollector(LibraryManager libraryManager, LibraryStyleInfoCollector initializer, Project project) {
+  public LibraryCollector(LibraryManager libraryManager, LibraryStyleInfoCollector initializer, Module module) {
     this.libraryManager = libraryManager;
     this.initializer = initializer;
-    this.project = project;
+    this.module = module;
   }
 
   public String getFlexSdkVersion() {
@@ -146,7 +145,7 @@ class LibraryCollector {
       }
       else if (!flexSdkRegistered && o instanceof JdkOrderEntry) {
         final JdkOrderEntry jdkOrderEntry = ((JdkOrderEntry)o);
-        SdkType sdkType = jdkOrderEntry.getJdk().getSdkType();
+        final SdkType sdkType = jdkOrderEntry.getJdk().getSdkType();
         if (sdkType instanceof FlexSdkType2) {
           collectFromSdkOrderEntry(jdkOrderEntry.getRootFiles(OrderRootType.CLASSES));
           flexSdkRegistered = true;
@@ -157,6 +156,27 @@ class LibraryCollector {
       }
       else if (o instanceof ModuleOrderEntry) {
         collectLibrariesFromModuleDependency(((ModuleOrderEntry)o).getModule());
+      }
+    }
+
+    // well, we don't implement real search for themes — detects only by bc type
+    // IDEA-71055
+    if (bc.getNature().isMobilePlatform()) {
+      //PsiElement clazz = JSResolveUtil.findClassByQName("MobileThemeClasses", module.getModuleWithDependenciesAndLibrariesScope(false));
+      //if (clazz != null && clazz instanceof JSClass) {
+      //  JSClass clazz1 = (JSClass)clazz;
+      //  PsiFile containingFile = clazz1.getContainingFile();
+      //}
+      
+      VirtualFile file = sdk.getHomeDirectory();
+      if (file != null) {
+        file = file.findFileByRelativePath("frameworks/themes/Mobile/mobile.swc");
+        if (file != null && uniqueGuard.add(file)) {
+          final VirtualFile jarFile = JarFileSystem.getInstance().getJarRootForLocalFile(file);
+          if (jarFile != null) {
+            addLibrary(jarFile, true);
+          }
+        }
       }
     }
 
@@ -199,7 +219,7 @@ class LibraryCollector {
   }
 
   private boolean libraryContains(String className, VirtualFile jarFile) {
-    return JSResolveUtil.findClassByQName(className, GlobalSearchScope.fileScope(project, Library.getSwfFile(jarFile))) != null;
+    return JSResolveUtil.findClassByQName(className, GlobalSearchScope.fileScope(module.getProject(), Library.getSwfFile(jarFile))) != null;
   }
 
   private void collectFromSdkOrderEntry(VirtualFile[] roots) {

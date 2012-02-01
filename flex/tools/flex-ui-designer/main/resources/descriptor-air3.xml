@@ -1,6 +1,6 @@
-<application xmlns="http://ns.adobe.com/air/application/2.6">
+<application xmlns="http://ns.adobe.com/air/application/3.0">
   <id>com.intellij.flex.uiDesigner.designer</id>
-  <versionNumber>0.6.9</versionNumber>
+  <versionNumber>0.7</versionNumber>
   <name>Flash UI Designer</name>
   <filename>FlashUIDesigner</filename>
   <description>Provides visual editing support for Flex UI</description>

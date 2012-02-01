@@ -44,7 +44,7 @@
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:spark:swc:4.5.2.21576" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:airspark:swc:4.5.2.21576" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:airframework:swc:4.5.2.21576" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airglobal:swc:2.6" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airglobal:swc:3.1.0.4880" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.miglayout:miglayout-flex:swc:4.3-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.miglayout:miglayout-core:swc:4.3-SNAPSHOT" level="project" />
     <orderEntry type="module" module-name="shared" />

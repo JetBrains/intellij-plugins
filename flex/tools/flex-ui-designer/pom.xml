@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.flyti.superPOMs</groupId>
     <artifactId>common</artifactId>
-    <version>31</version>
+    <version>33</version>
   </parent>
   
   <properties>
@@ -82,6 +82,7 @@
         <configuration>
           <debug>true</debug>
           <fixedLiteralVector>true</fixedLiteralVector>
+          <swfVersion>11</swfVersion>
         </configuration>
       </plugin>
     </plugins>

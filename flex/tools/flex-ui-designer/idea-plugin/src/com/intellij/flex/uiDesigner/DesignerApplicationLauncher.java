@@ -53,8 +53,6 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
   private static final Logger LOG = Logger.getInstance(DesignerApplicationLauncher.class.getName());
 
   private static final String DESIGNER_SWF = "designer.swf";
-  private static final String DESCRIPTOR_XML = "descriptor.xml";
-  private static final String DESCRIPTOR_XML_DEV_PATH = "main/resources/" + DESCRIPTOR_XML;
 
   private ProgressIndicator indicator;
   private Module module;
@@ -169,7 +167,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
       found.set(true);
       adlRunConfiguration.arguments = arguments;
       try {
-        adlProcessHandler = runAdl(adlRunConfiguration, DesignerApplicationManager.APP_DIR.getPath() + File.separatorChar + DESCRIPTOR_XML,
+        adlProcessHandler = runAdl(adlRunConfiguration, DesignerApplicationManager.APP_DIR.getPath() + File.separatorChar + "descriptor-air" + (SystemInfo.isMac || SystemInfo.isWindows ? '3' : '2') + ".xml",
           new Consumer<Integer>() {
             @Override
             public void consume(Integer exitCode) {
@@ -348,7 +346,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
     String adlExecutable = System.getProperty("adl.executable");
     if (adlExecutable == null) {
       if (SystemInfo.isMac) {
-        adlExecutable = "/Developer/SDKs/flex_4.5.1/bin/adl";
+        adlExecutable = "/Developer/SDKs/flex_4.6.0/bin/adl";
       }
       else {
         throw new IllegalStateException("Please define 'adl.executable' to point to ADL executable");
@@ -370,8 +368,11 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
 
   private static void copyAppFiles() throws IOException {
     @SuppressWarnings("unchecked")
-    final Pair<String, String>[] files = new Pair[]{new Pair(DESIGNER_SWF, "main-loader/target/main-loader-1.0-SNAPSHOT.swf"),
-      new Pair(DESCRIPTOR_XML, DESCRIPTOR_XML_DEV_PATH)};
+    final Pair<String, String>[] files = new Pair[]{
+      new Pair(DESIGNER_SWF, "main-loader/target/main-loader-1.0-SNAPSHOT.swf"),
+      new Pair("descriptor-air2.xml", "main/resources/descriptor-air2.xml"),
+      new Pair("descriptor-air3.xml", "main/resources/descriptor-air3.xml")
+    };
 
     if (DebugPathManager.IS_DEV) {
       final String homePath = DebugPathManager.getFudHome();

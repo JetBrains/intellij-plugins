@@ -90,8 +90,7 @@ public class LibraryManager {
     final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter(16384);
     stringWriter.startChange();
     final AssetCounter assetCounter = new AssetCounter();
-    final LibraryCollector libraryCollector = new LibraryCollector(this, new LibraryStyleInfoCollector(assetCounter, new CssWriter(stringWriter, problemsHolder, assetCounter), module, stringWriter), project);
-
+    final LibraryCollector libraryCollector = new LibraryCollector(this, new LibraryStyleInfoCollector(assetCounter, new CssWriter(stringWriter, problemsHolder, assetCounter), module, stringWriter), module);
     final Client client;
     try {
       final AccessToken token = ReadAction.start();
@@ -287,22 +286,20 @@ public class LibraryManager {
     }
 
     // AS-273
-    //if (PlatformUtils.isFlexIde()) {
-      Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(moduleInfo.getModule());
-      VirtualFile dir = sdk == null ? null : sdk.getHomeDirectory();
-      if (dir != null) {
-        dir = dir.findFileByRelativePath("frameworks/projects");
-      }
+    final Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(moduleInfo.getModule());
+    VirtualFile dir = sdk == null ? null : sdk.getHomeDirectory();
+    if (dir != null) {
+      dir = dir.findFileByRelativePath("frameworks/projects");
+    }
 
-      if (dir != null) {
-        for (String libName : new String[]{"framework", "spark", "mx", "airframework", "rpc", "advancedgrids", "charts", "textLayout"}) {
-          VirtualFile file = dir.findFileByRelativePath(libName + "/bundles/" + locale + "/" + bundleName + PROPERTIES_EXTENSION);
-          if (file != null) {
-            return virtualFileToProperties(project, file);
-          }
+    if (dir != null) {
+      for (String libName : new String[]{"framework", "spark", "mx", "airframework", "rpc", "advancedgrids", "charts", "textLayout"}) {
+        VirtualFile file = dir.findFileByRelativePath(libName + "/bundles/" + locale + "/" + bundleName + PROPERTIES_EXTENSION);
+        if (file != null) {
+          return virtualFileToProperties(project, file);
         }
       }
-    //}
+    }
 
     return null;
   }

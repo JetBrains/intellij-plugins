@@ -35,8 +35,7 @@ public class FlashDocumentDisplayManager extends AbstractDocumentDisplayManager 
     return ApplicationDomain.currentDomain.getDefinition(name);
   }
 
-  public function initShared(stage:Stage, project:Object, resourceBundleProvider:ResourceBundleProvider,
-                               uiErrorHandler:UiErrorHandler):void {
+  public function initShared(stageForAdobeDummies:Stage, resourceBundleProvider:ResourceBundleProvider, uiErrorHandler:UiErrorHandler):void {
   }
 
   override public function init(moduleFactory:Object, uiErrorHandler:UiErrorHandler,
@@ -94,8 +93,8 @@ public class FlashDocumentDisplayManager extends AbstractDocumentDisplayManager 
 }
 }
 
-import com.intellij.flex.uiDesigner.DocumentDisplayManager;
 import com.intellij.flex.uiDesigner.ComponentInfoProvider;
+import com.intellij.flex.uiDesigner.DocumentDisplayManager;
 
 import flash.display.DisplayObject;
 import flash.display.Stage;

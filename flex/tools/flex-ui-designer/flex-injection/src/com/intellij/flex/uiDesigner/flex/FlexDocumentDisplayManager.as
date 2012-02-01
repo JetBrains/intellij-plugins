@@ -1,5 +1,4 @@
 package com.intellij.flex.uiDesigner.flex {
-
 import com.intellij.flex.uiDesigner.ComponentInfoProvider;
 import com.intellij.flex.uiDesigner.DocumentDisplayManager;
 import com.intellij.flex.uiDesigner.ResourceBundleProvider;
@@ -42,7 +41,6 @@ import mx.events.DynamicEvent;
 import mx.events.FlexEvent;
 import mx.managers.CursorManager;
 import mx.managers.DragManagerImpl;
-import mx.managers.IActiveWindowManager;
 import mx.managers.IFocusManager;
 import mx.managers.IFocusManagerContainer;
 import mx.managers.ILayoutManagerClient;
@@ -63,7 +61,7 @@ import spark.layouts.supportClasses.LayoutBase;
 use namespace mx_internal;
 
 // must be IFocusManagerContainer, it is only way how UIComponent can find focusManager (see UIComponent.focusManager)
-public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase implements ISystemManager, DocumentDisplayManager, IFocusManagerContainer, IActiveWindowManager {
+public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase implements ISystemManager, DocumentDisplayManager, IFocusManagerContainer {
   // offset due: 0 child of system manager is application
   internal static const OFFSET:int = 1;
 
@@ -75,6 +73,8 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
 
   private var mainFocusManager:MainFocusManagerSB;
 
+  private var stageForAdobeDummies:Stage;
+
   public function get componentInfoProvider():ComponentInfoProvider {
     return FlexComponentInfoProvider.instance;
   }
@@ -83,8 +83,17 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
     return UIComponentGlobals.layoutManager != null;
   }
 
-  public function initShared(stage:Stage, project:Object, resourceBundleProvider:ResourceBundleProvider,
-                             uiErrorHandler:UiErrorHandler):void {
+  override public function get stage():Stage {
+    return stageForAdobeDummies;
+  }
+
+  public function get realStage():Stage {
+    return super.stage;
+  }
+
+  public function initShared(stageForAdobeDummies:Stage, resourceBundleProvider:ResourceBundleProvider, uiErrorHandler:UiErrorHandler):void {
+    this.stageForAdobeDummies = stageForAdobeDummies;
+
     UIComponentGlobals.designMode = true;
     UIComponentGlobals.catchCallLaterExceptions = true;
     SystemManagerGlobals.topLevelSystemManagers[0] = new TopLevelSystemManagerProxy();
@@ -142,9 +151,17 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
 
     flexModuleFactory = FlexModuleFactory(moduleFactory);
     implementations[SYSTEM_MANAGER_CHILD_MANAGER] = this;
-    // PopUpManager requires IActiveWindowManager, IDEA-73806
-    implementations["mx.managers::IActiveWindowManager"] = this;
     _focusManager = new DocumentFocusManager(this);
+  }
+
+  public function getImplementation(interfaceName:String):Object {
+    var r:Object = implementations[interfaceName];
+    // PopUpManager requires IActiveWindowManager, IDEA-73806
+    if (r == null && interfaceName == "mx.managers::IActiveWindowManager") {
+      r = new ActiveWindowManagerForAdobeDummies();
+      implementations[interfaceName] = r;
+    }
+    return r;
   }
 
   private function uiInitializeOrCallLaterErrorHandler(event:DynamicEvent):void {
@@ -569,8 +586,10 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
     return flexModuleFactory.create(params);
   }
 
+  private static const EMPTY_INFO:Object = {};
   public function info():Object {
-    return null;
+    // we must return not-null, see spark.components.Application applicationDPI getter
+    return EMPTY_INFO;
   }
 
   public function get embeddedFontList():Object {
@@ -629,7 +648,7 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
   
   private function commonGetVisibleApplicationRect(bounds:Rectangle):Rectangle {
     if (bounds == null) {
-      bounds = getBounds(stage);
+      bounds = getBounds(realStage);
     }
 
     return bounds;
@@ -689,10 +708,10 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
 
       if (listeners.length == 0) {
         if (useCapture) {
-          stage.addEventListener(rawType, proxyEventHandler, true);
+          realStage.addEventListener(rawType, proxyEventHandler, true);
         }
         else {
-          stage.addEventListener(rawType, proxyEventHandler);
+          realStage.addEventListener(rawType, proxyEventHandler);
         }
       }
 
@@ -737,7 +756,7 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
     listeners.splice(index, 1);
     if (listeners.length == 0) {
       //trace("REMOVED proxyEventHandler", useCapture);
-      stage.removeEventListener(getRawEventType(type), proxyEventHandler, useCapture);
+      realStage.removeEventListener(getRawEventType(type), proxyEventHandler, useCapture);
     }
   }
 
@@ -767,7 +786,7 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
   }
 
   public function removeEventHandlers():void {
-    if (stage != null) {
+    if (realStage != null) {
       removeProxyEventHandlers2(proxiedListeners, false);
       removeProxyEventHandlers2(proxiedListenersInCapture, true);
     }
@@ -776,7 +795,7 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
   private function removeProxyEventHandlers2(map:Dictionary, useCapture:Boolean):void {
     if (map != null) {
       for (var type:String in map) {
-        stage.removeEventListener(type, proxyEventHandler, useCapture);
+        realStage.removeEventListener(type, proxyEventHandler, useCapture);
         map[type].length = 0;
       }
     }
@@ -811,19 +830,6 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
     return UIComponentGlobals.layoutManager;
   }
 
-  // fake impl IActiveWindowManager
-  public function addFocusManager(f:IFocusManagerContainer):void {
-  }
-
-  public function removeFocusManager(f:IFocusManagerContainer):void {
-  }
-
-  public function activate(f:Object):void {
-  }
-
-  public function deactivate(f:Object):void {
-  }
-  
   private var _layoutManager:com.intellij.flex.uiDesigner.designSurface.LayoutManager;
 
   public function get layoutManager():com.intellij.flex.uiDesigner.designSurface.LayoutManager {
@@ -864,6 +870,31 @@ public class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase i
     //return new MigLayoutManager(migLayout);
   }
 }
+}
+
+import mx.managers.IFocusManagerContainer;
+import mx.managers.systemClasses.ActiveWindowManager;
+
+// see ugly StyleableStageText — it uses concrete class instead of interface
+class ActiveWindowManagerForAdobeDummies extends ActiveWindowManager {
+  override public function addFocusManager(f:IFocusManagerContainer):void {
+  }
+
+  override public function removeFocusManager(f:IFocusManagerContainer):void {
+  }
+
+  override public function activate(f:Object):void {
+  }
+
+  override public function deactivate(f:Object):void {
+  }
+
+  override public function get numModalWindows():int {
+    return 0;
+  }
+
+  override public function set numModalWindows(value:int):void {
+  }
 }
 
 

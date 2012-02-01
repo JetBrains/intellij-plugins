@@ -32,6 +32,8 @@ class FlexDefinitionMapProcessor implements DefinitionMapProcessor {
     new Pair<String, String>(SPARK, "SparkClasses"),
     new Pair<String, String>(AIRSPARK, "AIRSparkClasses"),
 
+    new Pair<String, String>("mobile.swc", "MobileThemeClasses"),
+
     new Pair<String, String>(MX, "MxClasses"),
     new Pair<String, String>(RPC, "RPCClasses"),
     new Pair<String, String>(MOBILECOMPONENTS, "MobileComponentsClasses"),

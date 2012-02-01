@@ -1,6 +1,8 @@
 package com.intellij.flex.uiDesigner.libraries {
 import com.intellij.flex.uiDesigner.LoaderContentParentAdobePleaseDoNextStep;
 
+import flash.display.Stage;
+
 import flash.events.AsyncErrorEvent;
 import flash.events.ErrorEvent;
 import flash.events.Event;
@@ -16,6 +18,8 @@ import flash.system.LoaderContext;
  */
 public class QueueLoader {
   private var librarySet:LibrarySet;
+
+  public static var stageForAdobeDummies:Stage;
 
   private static var _rootDomain:ApplicationDomain;
   //noinspection JSUnusedGlobalSymbols

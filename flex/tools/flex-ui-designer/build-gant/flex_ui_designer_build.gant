@@ -63,7 +63,7 @@ private def doExecute(home, sandbox, targetFolder) {
   List<SwfDescriptor> swfDescriptors = includeFile("$flexBuildHome/flex_ui_designer_swfs_build.gant").getList();
   swfDescriptors.each {
     if (it.config.startsWith("flex-injection-") || it.config.equals("shared.xml")) {
-      buildFlex(it.config, it.basedir, flexBuildHome, flexSandbox, it.isSwc)
+      buildFlex(it.config, it.basedir, flexBuildHome, flexSandbox, it.isSwc, 0);
     }
   };
 
@@ -71,12 +71,18 @@ private def doExecute(home, sandbox, targetFolder) {
 
   swfDescriptors.each {
     if (!it.config.startsWith("flex-injection-") && !it.config.equals("shared.xml")) {
-      buildFlex(it.config, it.basedir, flexBuildHome, flexSandbox, it.isSwc);
+      buildFlex(it.config, it.basedir, flexBuildHome, flexSandbox, it.isSwc, 0);
     }
   };
 
+  buildFlex("main-loader.xml", "main-loader", flexBuildHome, flexSandbox, false, 11);
+
   ant.copy(file: "$flexSandbox/main-loader-1.0-SNAPSHOT.swf", tofile: "$targetFolder/designer.swf")
-  ant.copy(file: "$flexBuildHome/../main/resources/descriptor.xml", todir: "$targetFolder")
+  ant.copy(file: "$flexSandbox/11.swf", tofile: "$targetFolder/designer-11.swf")
+
+  ant.copy(file: "$flexBuildHome/../main/resources/descriptor-air2.xml", todir: "$targetFolder")
+  ant.copy(file: "$flexBuildHome/../main/resources/descriptor-air3.xml", todir: "$targetFolder")
+
   ant.copy(todir: "$targetFolder") {
     fileset(dir: "$flexSandbox", includes: "**/*injection-*.swc")
   }
@@ -101,7 +107,7 @@ private def buildAssets() {
   }
 }
 
-def buildFlex(config, basedir, flexBuildHome, flexSandbox, isSwc) {
+def buildFlex(config, basedir, flexBuildHome, flexSandbox, isSwc, swfVersion) {
   ant.copy(file: "$flexBuildHome/flex-configs/${config}", toDir: "$flexSandbox", overwrite: "true")
 
   ant.replace(file: "$flexSandbox/${config}") {
@@ -119,6 +125,6 @@ def buildFlex(config, basedir, flexBuildHome, flexSandbox, isSwc) {
     classpath {
       fileset(dir: "$flexBuildHome/compiler-libs");
     }
-    arg(value: "-load-config=$flexSandbox/${config}")
+    arg(value: "-load-config=$flexSandbox/${config}" + (swfVersion == 0 ? "" : "-swf-version=${swfVersion} -output=${swfVersion}.swf"))
   }
 }

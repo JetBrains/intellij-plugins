@@ -58,10 +58,12 @@ public class MainLoader extends Sprite {
     trace(event);
   }
 
-  private static function loadCompleteHandler(event:Event):void {
+  private function loadCompleteHandler(event:Event):void {
     var loaderInfo:LoaderInfo = LoaderInfo(event.currentTarget);
     displayDispatcher = loaderInfo.content;
-    loaderInfo.applicationDomain.getDefinition("com.intellij.flex.uiDesigner.libraries.QueueLoader")["rootDomain"] = ApplicationDomain.currentDomain;
+    var definition:Object = loaderInfo.applicationDomain.getDefinition("com.intellij.flex.uiDesigner.libraries.QueueLoader");
+    definition["rootDomain"] = ApplicationDomain.currentDomain;
+    definition["stageForAdobeDummies"] = stage;
   }
 
   //noinspection JSMethodCanBeStatic

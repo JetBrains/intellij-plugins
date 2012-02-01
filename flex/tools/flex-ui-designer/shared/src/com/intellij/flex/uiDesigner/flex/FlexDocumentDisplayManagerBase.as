@@ -24,10 +24,6 @@ internal class FlexDocumentDisplayManagerBase extends AbstractDocumentDisplayMan
   protected var proxiedListeners:Dictionary;
   protected var proxiedListenersInCapture:Dictionary;
 
-  public function getImplementation(interfaceName:String):Object {
-    return implementations[interfaceName];
-  }
-
   public function registerImplementation(interfaceName:String, impl:Object):void {
     throw new Error("");
   }

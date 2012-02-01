@@ -16,6 +16,7 @@
       <artifactId>acocoa</artifactId>
       <type>swc</type>
     </dependency>
+
     <dependency>
       <groupId>com.intellij.flex.uiDesigner</groupId>
       <artifactId>shared</artifactId>

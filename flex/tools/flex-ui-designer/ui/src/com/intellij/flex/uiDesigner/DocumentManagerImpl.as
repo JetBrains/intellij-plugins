@@ -10,6 +10,7 @@ import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
 import com.intellij.flex.uiDesigner.libraries.Library;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
+import com.intellij.flex.uiDesigner.libraries.QueueLoader;
 import com.intellij.flex.uiDesigner.mxml.FlexMxmlReader;
 import com.intellij.flex.uiDesigner.mxml.MxmlReader;
 import com.intellij.flex.uiDesigner.ui.DocumentContainer;
@@ -302,12 +303,11 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   private function createDocumentDisplayManager(document:Document, module:Module, isPureFlash:Boolean):void {
     var flexModuleFactoryClass:Class = isPureFlash ? null :  module.getClass("com.intellij.flex.uiDesigner.flex.FlexModuleFactory");
     var systemManagerClass:Class = isPureFlash ? FlashDocumentDisplayManager : module.getClass("com.intellij.flex.uiDesigner.flex.FlexDocumentDisplayManager");
-    var window:DocumentWindow = module.project.window;
     var systemManager:DocumentDisplayManager = new systemManagerClass();
     document.displayManager = systemManager;
 
     if (!systemManager.sharedInitialized) {
-      systemManager.initShared(window.stage, module.project, server, UncaughtErrorManager.instance);
+      systemManager.initShared(QueueLoader.stageForAdobeDummies, server, UncaughtErrorManager.instance);
     }
     systemManager.init(isPureFlash ? null : new flexModuleFactoryClass(document.styleManager, module.context.applicationDomain), UncaughtErrorManager.instance,
                        MainFocusManagerSB(module.project.window.focusManager), document.documentFactory);

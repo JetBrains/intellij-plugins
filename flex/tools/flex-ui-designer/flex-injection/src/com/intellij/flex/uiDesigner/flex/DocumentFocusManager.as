@@ -142,7 +142,7 @@ public class DocumentFocusManager extends OnDemandEventDispatcher implements IFo
   }
 
   public function getFocus():IFocusManagerComponent {
-    var stage:Stage = systemManager.stage;
+    var stage:Stage = systemManager.realStage;
     if (stage == null) {
       return null;
     }
@@ -208,7 +208,7 @@ public class DocumentFocusManager extends OnDemandEventDispatcher implements IFo
       //var o:DisplayObject = fromObject;
       var o:DisplayObject;
       if (o == null) {
-        o = systemManager.stage.focus;
+        o = systemManager.realStage.focus;
       }
 
       o = DisplayObject(findFocusManagerComponent(InteractiveObject(o)));

@@ -40,7 +40,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.framework:airglobal:swc:2.6" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.framework:airglobal:swc:3.1.0.4880" level="project" />
   </component>
 </module>
 
