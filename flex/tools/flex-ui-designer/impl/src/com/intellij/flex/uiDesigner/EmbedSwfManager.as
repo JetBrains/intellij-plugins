@@ -10,7 +10,7 @@ public class EmbedSwfManager extends AbstractEmbedAssetManager implements EmbedA
     SpriteAssetInitializer.embedSwfManager = this;
   }
 
-  public function get(id:int, pool:AssetContainerClassPool, project:Project):Class {
+  public function get(id:int, pool:ClassPool, project:Project):Class {
     var result:Class = pool.getCachedClass(id);
     if (result != null) {
       return result;

@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner.mxml {
+import com.intellij.flex.uiDesigner.ClassPool;
 import com.intellij.flex.uiDesigner.DocumentFactory;
 import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.DocumentReader;
@@ -22,6 +23,7 @@ import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContextImpl;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.AmfExtendedTypes;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
+import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
 
 import flash.display.DisplayObjectContainer;
 import flash.utils.ByteArray;
@@ -70,8 +72,8 @@ public class MxmlReader implements DocumentReader {
     this.styleManager = styleManager;
     this.input = input;
     // pureFlash doesn't have styleManager
-    var object:Object = doRead(context, styleManager != null);
-    stateReader.read(this, input, object);
+    var component:Object = doRead(context, styleManager != null);
+    stateReader.read(this, input, component);
     injectedASReader.read(input, this);
     stateReader.reset(factoryContext);
 
@@ -80,7 +82,7 @@ public class MxmlReader implements DocumentReader {
       ByteArray(input).position = 0;
     }
 
-    return object;
+    return component;
   }
 
   public function readDeferredInstanceFromBytes(input:IDataInput, factoryContext:DeferredInstanceFromBytesContext):Object {
@@ -102,7 +104,8 @@ public class MxmlReader implements DocumentReader {
     var object:Object;
     switch (input.readByte()) {
       case Amf3Types.OBJECT:
-        object = new (moduleContext.getClass(stringRegistry.readNotNull(input)))();
+        const fqn:String = stringRegistry.readNotNull(input);
+        object = context.instanceForRead || new (moduleContext.getClass(fqn))();
         break;
 
       case AmfExtendedTypes.DOCUMENT_REFERENCE:
@@ -341,12 +344,12 @@ public class MxmlReader implements DocumentReader {
 
         case AmfExtendedTypes.IMAGE:
           propertyHolder[propertyName] = EmbedImageManager(moduleContext.project.getComponent(EmbedImageManager)).
-                  get(AmfUtil.readUInt29(input), moduleContext.imageAssetContainerClassPool, moduleContext.project);
+                  get(AmfUtil.readUInt29(input), moduleContext.getClassPool(FlexLibrarySet.IMAGE_POOL), moduleContext.project);
           break;
 
         case AmfExtendedTypes.SWF:
           propertyHolder[propertyName] = EmbedSwfManager(moduleContext.project.getComponent(EmbedSwfManager)).
-                  get(AmfUtil.readUInt29(input), moduleContext.swfAssetContainerClassPool, moduleContext.project);
+                  get(AmfUtil.readUInt29(input), moduleContext.getClassPool(FlexLibrarySet.SWF_POOL), moduleContext.project);
           if (cssDeclaration != null) {
             cssDeclaration.type = CssPropertyType.EMBED;
           }
@@ -424,6 +427,19 @@ public class MxmlReader implements DocumentReader {
     }
 
     return factory;
+  }
+
+  private function readProjectClassReference():Class {
+    var id:int = AmfUtil.readUInt29(input);
+    var classPool:ClassPool = moduleContext.getClassPool(FlexLibrarySet.VIEW_POOL);
+    var clazz:Class = classPool.getCachedClass(id);
+    if (clazz == null) {
+      clazz = classPool.getClass(id);
+      var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance().get(id);
+      clazz["initializer"] = new (moduleContext.getClass("com.intellij.flex.uiDesigner.flex.SparkViewInitializer"))(documentFactory, new DeferredInstanceFromBytesContextImpl(documentFactory, styleManager));
+    }
+
+    return clazz;
   }
 
   private function getOrCreateFactoryContext():DeferredInstanceFromBytesContext {
@@ -566,6 +582,10 @@ public class MxmlReader implements DocumentReader {
 
       case AmfExtendedTypes.COLOR_STYLE:
         return input.readObject();
+
+      case AmfExtendedTypes.PROJECT_CLASS_REFERENCE:
+        return readProjectClassReference();
+        break;
 
       default:
         throw new ArgumentError("unknown property type " + amfType);

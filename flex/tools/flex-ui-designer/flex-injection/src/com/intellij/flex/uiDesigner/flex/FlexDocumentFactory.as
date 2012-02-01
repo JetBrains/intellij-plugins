@@ -1,25 +1,14 @@
 package com.intellij.flex.uiDesigner.flex {
-import com.intellij.flex.uiDesigner.DocumentReaderContext;
-import com.intellij.flex.uiDesigner.ModuleContext;
 import com.intellij.flex.uiDesigner.SerializedDocumentDataProvider;
-import com.intellij.flex.uiDesigner.VirtualFile;
 
 import mx.core.IFactory;
 import mx.core.UIComponent;
 
-public final class FlexDocumentFactory implements IFactory, ClassReference, SkinPartFinder, DocumentReaderContext {
-  private var source:SerializedDocumentDataProvider;
-  private var context:DeferredInstanceFromBytesContext;
-
+public final class FlexDocumentFactory extends FlexComponentCreator implements IFactory, SkinPartFinder {
   private var objectsWithId:Vector.<UIComponent>;
 
   public function FlexDocumentFactory(source:SerializedDocumentDataProvider, context:DeferredInstanceFromBytesContext) {
-    this.source = source;
-    this.context = context;
-  }
-
-  public function get className():String {
-    return source.className;
+    super(source, context);
   }
 
   public function newInstance():* {
@@ -40,19 +29,7 @@ public final class FlexDocumentFactory implements IFactory, ClassReference, Skin
     }
   }
 
-  public function get file():VirtualFile {
-    return context.readerContext.file;
-  }
-
-  public function get moduleContext():ModuleContext {
-    return context.readerContext.moduleContext;
-  }
-
-  public function registerComponentDeclarationRangeMarkerId(object:Object, textOffset:int):void {
-    context.readerContext.registerComponentDeclarationRangeMarkerId(object, textOffset);
-  }
-
-  public function registerObjectWithId(id:String, object:Object):void {
+  override public function registerObjectWithId(id:String, object:Object):void {
     if (object is UIComponent) {
       if (objectsWithId == null) {
         objectsWithId = new Vector.<UIComponent>();

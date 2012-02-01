@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -399,37 +400,53 @@ class PropertyProcessor implements ValueWriter {
   }
 
   // see ClassProperty test
-  private boolean processClass(XmlElementValueProvider valueProvider) throws InvalidPropertyException {
-    // IDEA-73537, cannot use valueProvider.getJsClass()
-    String trimmed = valueProvider.getTrimmed();
-    XmlElement exceptionElement = valueProvider.getElement();
-    if (trimmed.isEmpty() && valueProvider.getElement() instanceof XmlTag) {
-      // case 1, fx:Class
-      final XmlTag propertyTag = (XmlTag)valueProvider.getElement();
-      final XmlTag[] propertyTagSubTags = propertyTag.getSubTags();
-      if (propertyTagSubTags.length == 1) {
-        final XmlTag contentTag = propertyTagSubTags[0];
-        exceptionElement = contentTag;
-        final XmlElementDescriptor contentTagDescriptor = contentTag.getDescriptor();
-        if (contentTagDescriptor instanceof ClassBackedElementDescriptor &&
+  private void processClass(XmlElementValueProvider valueProvider) throws InvalidPropertyException {
+    JSClass jsClass = valueProvider.getJsClass();
+    // IDEA-73537, cannot use only valueProvider.getJsClass()
+    if (jsClass == null) {
+      String trimmed = valueProvider.getTrimmed();
+      XmlElement exceptionElement = valueProvider.getElement();
+      if (trimmed.isEmpty() && valueProvider.getElement() instanceof XmlTag) {
+        // case 1, fx:Class
+        final XmlTag propertyTag = (XmlTag)valueProvider.getElement();
+        final XmlTag[] propertyTagSubTags = propertyTag.getSubTags();
+        if (propertyTagSubTags.length == 1) {
+          final XmlTag contentTag = propertyTagSubTags[0];
+          exceptionElement = contentTag;
+          final XmlElementDescriptor contentTagDescriptor = contentTag.getDescriptor();
+          if (contentTagDescriptor instanceof ClassBackedElementDescriptor &&
             AsCommonTypeNames.CLASS.equals(contentTagDescriptor.getQualifiedName())) {
-          trimmed = contentTag.getValue().getTrimmedText();
+            trimmed = contentTag.getValue().getTrimmedText();
+          }
         }
       }
-    }
 
-    if (trimmed.isEmpty()) {
-      throw new InvalidPropertyException(exceptionElement, "invalid.class.value");
-    }
-    else {
-      final Module module = ModuleUtil.findModuleForPsiElement(valueProvider.getElement());
-      if (module != null &&
-          JSResolveUtil.findClassByQName(trimmed, module.getModuleWithDependenciesAndLibrariesScope(false)) != null) {
-        writer.classReference(trimmed);
-        return true;
+      if (trimmed.isEmpty()) {
+        throw new InvalidPropertyException(exceptionElement, "invalid.class.value");
       }
 
-      throw new InvalidPropertyException(exceptionElement, "error.unresolved.class", trimmed);
+      final Module module = ModuleUtil.findModuleForPsiElement(valueProvider.getElement());
+      if (module != null) {
+        jsClass = (JSClass)JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName(trimmed, module.getModuleWithDependenciesAndLibrariesScope(false)));
+      }
+
+      if (jsClass == null) {
+        throw new InvalidPropertyException(exceptionElement, "error.unresolved.class", trimmed);
+      }
+    }
+
+    if (InjectionUtil.isProjectComponent(jsClass)) {
+      if (JSInheritanceUtil.isParentClass(jsClass, "spark.components.View")) {
+        int projectComponentFactoryId = getProjectComponentFactoryId(jsClass);
+        assert projectComponentFactoryId != -1;
+        writer.projectClassReference(projectComponentFactoryId);
+      }
+      else {
+        throw new InvalidPropertyException(valueProvider.getElement(), "class.reference.support.only.skin.class.or.view", jsClass.getQualifiedName());
+      }
+    }
+    else {
+      writer.classReference(jsClass.getQualifiedName());
     }
   }
 

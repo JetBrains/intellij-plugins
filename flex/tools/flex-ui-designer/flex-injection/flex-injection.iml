@@ -48,6 +48,7 @@
     <orderEntry type="library" name="Maven: org.jetbrains.miglayout:miglayout-flex:swc:4.3-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.miglayout:miglayout-core:swc:4.3-SNAPSHOT" level="project" />
     <orderEntry type="module" module-name="shared" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:mobilecomponents:swc:4.6.0.23201" level="project" />
   </component>
 </module>
 

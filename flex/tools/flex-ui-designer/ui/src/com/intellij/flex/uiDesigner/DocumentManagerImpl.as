@@ -6,6 +6,7 @@ import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import com.intellij.flex.uiDesigner.css.StyleValueResolverImpl;
 import com.intellij.flex.uiDesigner.flex.MainFocusManagerSB;
+import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
 import com.intellij.flex.uiDesigner.libraries.Library;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
@@ -77,19 +78,27 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     ComponentManager(_document.module.project.getComponent(ComponentManager)).component = null;
   }
 
+  private function checkPool(classPool:ClassPool, documentFactory:DocumentFactory, documentOpened:Function):Boolean {
+    if (classPool.filling) {
+      classPool.filled.addOnce(function ():void {
+        open(documentFactory, documentOpened);
+      });
+      return false;
+    }
+
+    return true;
+  }
+
   public function open(documentFactory:DocumentFactory, documentOpened:Function = null):void {
     var context:ModuleContextEx = documentFactory.module.context;
     if (!documentFactory.isPureFlash) {
-      if (context.imageAssetContainerClassPool.filling) {
-        context.imageAssetContainerClassPool.filled.addOnce(function ():void {
-          open(documentFactory, documentOpened);
-        });
+      if (!checkPool(context.getClassPool(FlexLibrarySet.IMAGE_POOL), documentFactory, documentOpened)) {
         return;
       }
-      if (context.swfAssetContainerClassPool.filling) {
-        context.swfAssetContainerClassPool.filled.addOnce(function ():void {
-          open(documentFactory, documentOpened);
-        });
+      if (!checkPool(context.getClassPool(FlexLibrarySet.SWF_POOL), documentFactory, documentOpened)) {
+        return;
+      }
+      if (!checkPool(context.getClassPool(FlexLibrarySet.VIEW_POOL), documentFactory, documentOpened)) {
         return;
       }
     }

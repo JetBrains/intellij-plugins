@@ -18,7 +18,7 @@ import flash.utils.Dictionary;
 import org.osflash.signals.ISignal;
 import org.osflash.signals.Signal;
 
-public class AssetContainerClassPool {
+public class ClassPool {
   //noinspection JSFieldCanBeLocal
   private var totalClassCount:int;
   private var names:Vector.<int>;
@@ -27,7 +27,7 @@ public class AssetContainerClassPool {
   private var namePrefix:String;
   private var flexLibrarySet:LibrarySet;
 
-  public function AssetContainerClassPool(namePrefix:String, librarySet:LibrarySet) {
+  public function ClassPool(namePrefix:String, librarySet:LibrarySet) {
     this.namePrefix = namePrefix;
     this.flexLibrarySet = librarySet;
   }
@@ -47,6 +47,10 @@ public class AssetContainerClassPool {
 
   public function getCachedClass(id:int):Class {
     return classes[id];
+  }
+
+  public function removeCachedClass(id:int):void {
+    delete classes[id];
   }
 
   public function getClass(id:int):Class {

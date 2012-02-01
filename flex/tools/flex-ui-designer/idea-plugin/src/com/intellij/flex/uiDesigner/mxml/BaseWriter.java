@@ -212,6 +212,13 @@ final class BaseWriter {
     out.writeUInt29(reference);
   }
 
+  public void projectClassReference(int reference) {
+    out.write(AmfExtendedTypes.PROJECT_CLASS_REFERENCE);
+    out.writeUInt29(reference);
+
+    assetCounter.viewCount++;
+  }
+
   public void classReference(String className) {
     out.write(AmfExtendedTypes.CLASS_REFERENCE);
     classOrPropertyName(className);

@@ -11,9 +11,9 @@ import java.io.IOException;
 final class AbcBlankMaker {
   public static void main(String[] args) throws IOException {
     //movieSymbolTranscoder();
-    //new AbcFilter(false).filter(new File("abc-blank-maker/src/o/library.swf"), new File("idea-plugin/resources/BitmapAsset.abc"), new AbcNameFilterByEquals("_b000"));
+    new AbcFilter(false).filter(new File("abc-blank-maker/o/library.swf"), new File("idea-plugin/resources/SparkView.abc"), new AbcNameFilterByEquals("_v000"));
 
-    d();
+    //d();
 
     //u();
 

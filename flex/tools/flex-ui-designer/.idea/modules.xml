@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/abc-blank-maker/abc-blank-maker.iml" filepath="$PROJECT_DIR$/abc-blank-maker/abc-blank-maker.iml" />
       <module fileurl="file://$PROJECT_DIR$/aggregator.iml" filepath="$PROJECT_DIR$/aggregator.iml" />
       <module fileurl="file://$PROJECT_DIR$/plaf/aqua/aqua.iml" filepath="$PROJECT_DIR$/plaf/aqua/aqua.iml" group="plafAggregator and modules" />
       <module fileurl="file://$PROJECT_DIR$/plaf/base/base.iml" filepath="$PROJECT_DIR$/plaf/base/base.iml" group="plafAggregator and modules" />

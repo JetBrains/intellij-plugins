@@ -7,6 +7,8 @@ public final class AmfExtendedTypes {
   public static const DOCUMENT_FACTORY_REFERENCE:int = 46;
   public static const DOCUMENT_REFERENCE:int = 47;
 
+  public static const PROJECT_CLASS_REFERENCE:int = 59;
+
   public static const COLOR_STYLE:int = 42;
 
   public static const IMAGE:int = 48;

@@ -87,11 +87,15 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
         break;
 
       case ClientMethod.fillImageClassPool:
-        fillAssetClassPool(input, messageSize, false);
+        fillClassPool(input, messageSize, FlexLibrarySet.IMAGE_POOL);
         break;
 
       case ClientMethod.fillSwfClassPool:
-        fillAssetClassPool(input, messageSize, true);
+        fillClassPool(input, messageSize, FlexLibrarySet.SWF_POOL);
+        break;
+
+      case ClientMethod.fillViewClassPool:
+        fillClassPool(input, messageSize, FlexLibrarySet.VIEW_POOL);
         break;
 
       case ClientMethod.selectComponent:
@@ -104,13 +108,13 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     }
   }
 
-  private function fillAssetClassPool(input:IDataInput, messageSize:int, isSwf:Boolean):void {
+  private function fillClassPool(input:IDataInput, messageSize:int, id:String):void {
     const prevBytesAvailable:int = input.bytesAvailable;
     var librarySet:FlexLibrarySet = FlexLibrarySet(libraryManager.getById(input.readUnsignedShort()));
     const classCount:int = input.readUnsignedShort();
-    var swfData:ByteArray = new ByteArray();
-    input.readBytes(swfData, 0, messageSize - (prevBytesAvailable - input.bytesAvailable));
-    (isSwf ? librarySet.swfAssetContainerClassPool : librarySet.imageAssetContainerClassPool).fill(classCount, swfData, librarySet, libraryManager);
+    var data:ByteArray = new ByteArray();
+    input.readBytes(data, 0, messageSize - (prevBytesAvailable - input.bytesAvailable));
+    librarySet.getClassPool(id).fill(classCount, data, librarySet, libraryManager);
   }
 
   private function openProject(input:IDataInput):void {
@@ -286,9 +290,11 @@ final class ClientMethod {
 
   public static const initStringRegistry:int = 8;
   public static const updateStringRegistry:int = 9;
+
   public static const fillImageClassPool:int = 10;
   public static const fillSwfClassPool:int = 11;
+  public static const fillViewClassPool:int = 12;
 
-  public static const selectComponent:int = 12;
-  public static const getDocumentImage:int = 13;
+  public static const selectComponent:int = 13;
+  public static const getDocumentImage:int = 14;
 }

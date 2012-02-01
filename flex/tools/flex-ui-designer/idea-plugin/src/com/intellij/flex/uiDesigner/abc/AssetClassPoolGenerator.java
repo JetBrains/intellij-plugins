@@ -12,23 +12,35 @@ import java.util.ArrayList;
 public final class AssetClassPoolGenerator extends AbcEncoder {
   private static byte[] BITMAP_ASSET_ABC;
   private static byte[] SPRITE_ASSET_ABC;
+  private static byte[] SPARK_VIEW_ABC;
 
   private static final int NAME_POS = 12;
 
-  private static void generate(final boolean isSwf, final ArrayList<Decoder> decoders, int size, int counter)
-      throws IOException {
+  private static void generate(final Client.ClientMethod method, final ArrayList<Decoder> decoders, int size, int counter)
+    throws IOException {
     final byte[] abc;
-    if (isSwf) {
-      if (SPRITE_ASSET_ABC == null) {
-        SPRITE_ASSET_ABC = IOUtil.getResourceBytes("SpriteAsset.abc");
-      }
-      abc = SPRITE_ASSET_ABC;
-    }
-    else {
-      if (BITMAP_ASSET_ABC == null) {
-        BITMAP_ASSET_ABC = IOUtil.getResourceBytes("BitmapAsset.abc");
-      }
-      abc = BITMAP_ASSET_ABC;
+    switch (method) {
+      case fillImageClassPool:
+        if (SPRITE_ASSET_ABC == null) {
+          SPRITE_ASSET_ABC = IOUtil.getResourceBytes("SpriteAsset.abc");
+        }
+        abc = SPRITE_ASSET_ABC;
+        break;
+      case fillSwfClassPool:
+        if (BITMAP_ASSET_ABC == null) {
+          BITMAP_ASSET_ABC = IOUtil.getResourceBytes("BitmapAsset.abc");
+        }
+        abc = BITMAP_ASSET_ABC;
+        break;
+      case fillViewClassPool:
+        if (SPARK_VIEW_ABC == null) {
+          SPARK_VIEW_ABC = IOUtil.getResourceBytes("SparkView.abc");
+        }
+        abc = SPARK_VIEW_ABC;
+        break;
+
+      default:
+        throw new IllegalArgumentException("unknown method");
     }
 
     if (size < 0 || size > 4095) {
@@ -69,12 +81,16 @@ public final class AssetClassPoolGenerator extends AbcEncoder {
     ArrayList<Decoder> decoders = new ArrayList<Decoder>(size);
     switch (method) {
       case fillImageClassPool:
-        generate(false, decoders, size, allocatedCount.imageCount);
+        generate(method, decoders, size, allocatedCount.imageCount);
         allocatedCount.imageCount += size;
         break;
       case fillSwfClassPool:
-        generate(true, decoders, size, allocatedCount.swfCount);
+        generate(method, decoders, size, allocatedCount.swfCount);
         allocatedCount.swfCount += size;
+        break;
+      case fillViewClassPool:
+        generate(method, decoders, size, allocatedCount.viewCount);
+        allocatedCount.viewCount += size;
         break;
 
       default:

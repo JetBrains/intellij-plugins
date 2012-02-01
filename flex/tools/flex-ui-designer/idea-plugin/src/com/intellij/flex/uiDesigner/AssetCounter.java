@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 public final class AssetCounter {
   public int swfCount;
   public int imageCount;
+  public int viewCount;
 
   public AssetCounter(@Nullable AssetCounter assetCounter) {
     append(assetCounter);
@@ -17,11 +18,13 @@ public final class AssetCounter {
     if (otherCounter != null) {
       swfCount += otherCounter.swfCount;
       imageCount += otherCounter.imageCount;
+      viewCount += otherCounter.viewCount;
     }
   }
 
   public void clear() {
     swfCount = 0;
     imageCount = 0;
+    viewCount = 0;
   }
 }

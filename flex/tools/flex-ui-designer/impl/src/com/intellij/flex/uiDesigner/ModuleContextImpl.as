@@ -19,12 +19,8 @@ public final class ModuleContextImpl implements ModuleContextEx {
     }
   }
 
-  public function get swfAssetContainerClassPool():AssetContainerClassPool {
-    return FlexLibrarySet(_librarySets[0] is FlexLibrarySet ? _librarySets[0] : _librarySets[0].parent).swfAssetContainerClassPool;
-  }
-
-  public function get imageAssetContainerClassPool():AssetContainerClassPool {
-    return FlexLibrarySet(_librarySets[0] is FlexLibrarySet ? _librarySets[0] : _librarySets[0].parent).imageAssetContainerClassPool;
+  public function getClassPool(id:String):ClassPool {
+    return FlexLibrarySet(_librarySets[0] is FlexLibrarySet ? _librarySets[0] : _librarySets[0].parent).getClassPool(id);
   }
 
   private var _librariesResolved:Boolean;
@@ -46,9 +42,17 @@ public final class ModuleContextImpl implements ModuleContextEx {
     return documentFactories != null && documentFactories.length > id ? documentFactories[id] : null;
   }
 
-  public function removeDocumentFactory(id:int):void {
+  public function documentUnregistered(id:int):void {
     if (documentFactories != null && id < documentFactories.length) {
       documentFactories[id] = null;
+    }
+
+    var librarySet:FlexLibrarySet = (_librarySets[0] is FlexLibrarySet ? _librarySets[0] : _librarySets[0].parent) as FlexLibrarySet;
+    if (librarySet != null) {
+      var classPool:ClassPool = librarySet.getClassPool(FlexLibrarySet.VIEW_POOL, false);
+      if (classPool != null) {
+        classPool.removeCachedClass(id);
+      }
     }
   }
 

@@ -3,6 +3,7 @@ import com.intellij.flex.uiDesigner.EmbedImageManager;
 import com.intellij.flex.uiDesigner.EmbedSwfManager;
 import com.intellij.flex.uiDesigner.ModuleContextEx;
 import com.intellij.flex.uiDesigner.flex.ClassReference;
+import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
 
 import org.flyti.plexus.PlexusManager;
 
@@ -36,11 +37,11 @@ public class StyleValueResolverImpl implements StyleValueResolver {
       return moduleContext.getDefinition(ClassReference(propertyDescriptor.value).className);
     }
     else if (propertyDescriptor is CssEmbedSwfDeclaration) {
-      return embedSwfManager.get(CssEmbedSwfDeclaration(propertyDescriptor).id, moduleContext.swfAssetContainerClassPool,
+      return embedSwfManager.get(CssEmbedSwfDeclaration(propertyDescriptor).id, moduleContext.getClassPool(FlexLibrarySet.SWF_POOL),
                                  moduleContext.project);
     }
     else if (propertyDescriptor is CssEmbedImageDeclaration) {
-      return embedImageManager.get(CssEmbedImageDeclaration(propertyDescriptor).id, moduleContext.imageAssetContainerClassPool,
+      return embedImageManager.get(CssEmbedImageDeclaration(propertyDescriptor).id, moduleContext.getClassPool(FlexLibrarySet.IMAGE_POOL),
                                    moduleContext.project);
     }
     else {

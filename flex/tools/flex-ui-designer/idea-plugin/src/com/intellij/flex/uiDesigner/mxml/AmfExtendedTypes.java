@@ -7,6 +7,7 @@ public final class AmfExtendedTypes {
 
   public static final int DOCUMENT_FACTORY_REFERENCE = 46;
   public static final int DOCUMENT_REFERENCE = 47;
+  public static final int PROJECT_CLASS_REFERENCE = 59;
 
   static final int COLOR_STYLE = 42;
 

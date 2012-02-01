@@ -9,7 +9,7 @@ public class EmbedImageManager extends AbstractEmbedAssetManager implements Embe
     super(server);
   }
 
-  public function get(id:int, pool:AssetContainerClassPool, project:Project):Class {
+  public function get(id:int, pool:ClassPool, project:Project):Class {
     var result:Class = pool.getCachedClass(id);
     if (result != null) {
       return result;

@@ -4,8 +4,10 @@ public interface DocumentReaderContext {
   
   function get moduleContext():ModuleContext;
 
-  function registerComponentDeclarationRangeMarkerId(object:Object, id:int):void;
+  function registerComponentDeclarationRangeMarkerId(component:Object, id:int):void;
 
   function registerObjectWithId(id:String, object:Object):void;
+
+  function get instanceForRead():Object;
 }
 }

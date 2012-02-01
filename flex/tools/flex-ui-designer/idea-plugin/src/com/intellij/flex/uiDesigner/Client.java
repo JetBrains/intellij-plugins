@@ -293,6 +293,14 @@ public class Client implements Disposable {
       fillAssetClassPool(librarySet, diff, ClientMethod.fillSwfClassPool);
       assetCounterInfo.allocated.swfCount += diff;
     }
+
+    diff = assetCounterInfo.demanded.viewCount - assetCounterInfo.allocated.viewCount;
+    if (diff > 0) {
+      // reduce number of call fill asset class pool
+      diff *= 2;
+      fillAssetClassPool(librarySet, diff, ClientMethod.fillViewClassPool);
+      assetCounterInfo.allocated.viewCount += diff;
+    }
   }
 
   private void fillAssetClassPool(FlexLibrarySet flexLibrarySet, int classCount, ClientMethod method) {
@@ -503,7 +511,7 @@ public class Client implements Disposable {
 
   public static enum ClientMethod {
     openProject, closeProject, registerLibrarySet, registerModule, registerDocumentFactory, updateDocumentFactory, openDocument, updateDocuments,
-    initStringRegistry, updateStringRegistry, fillImageClassPool, fillSwfClassPool,
+    initStringRegistry, updateStringRegistry, fillImageClassPool, fillSwfClassPool, fillViewClassPool,
     selectComponent;
     
     public static final int METHOD_CLASS = 0;

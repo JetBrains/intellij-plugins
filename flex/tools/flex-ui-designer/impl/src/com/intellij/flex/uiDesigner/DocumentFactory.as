@@ -96,5 +96,9 @@ public class DocumentFactory implements SerializedDocumentDataProvider, Document
   public function registerObjectWithId(id:String, object:Object):void {
     // empty, actual only for FlexDocumentFactory
   }
+
+  public function get instanceForRead():Object {
+    return null;
+  }
 }
 }

@@ -8,8 +8,6 @@ public interface ModuleContextEx extends ModuleContext {
 
   function get librariesResolved():Boolean;
 
-  function get imageAssetContainerClassPool():AssetContainerClassPool;
-
-  function get swfAssetContainerClassPool():AssetContainerClassPool;
+  function getClassPool(id:String):ClassPool;
 }
 }

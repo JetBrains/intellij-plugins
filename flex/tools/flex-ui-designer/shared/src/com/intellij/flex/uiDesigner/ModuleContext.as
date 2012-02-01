@@ -20,11 +20,11 @@ public interface ModuleContext {
 
   function getDefinition(name:String):Object;
 
-  function getDocumentFactory(id:int):Object;
+  function getDocumentFactory(id:int):Object; // FlexDocumentFactory
 
   function putDocumentFactory(id:int, documentFactory:Object):void;
 
-  function removeDocumentFactory(id:int):void;
+  function documentUnregistered(id:int):void;
 
   function get documentFactoryClass():Class;
 
