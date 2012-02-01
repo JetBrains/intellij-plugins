@@ -12,8 +12,8 @@ import javax.swing.*;
  */
 public class SetupFlexModuleWizardStep extends ModuleWizardStep {
 
-  FlexIdeModuleWizardForm myForm;
-  private FlexModuleBuilder myModuleBuilder;
+  private final FlexIdeModuleWizardForm myForm;
+  private final FlexModuleBuilder myModuleBuilder;
 
   public SetupFlexModuleWizardStep(final FlexModuleBuilder moduleBuilder) {
     myModuleBuilder = moduleBuilder;
