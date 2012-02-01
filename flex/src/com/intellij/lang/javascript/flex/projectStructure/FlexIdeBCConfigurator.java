@@ -148,9 +148,10 @@ public class FlexIdeBCConfigurator {
     for (final ModifiableFlexIdeBuildConfiguration configuration : configurations) {
       CompositeConfigurable configurable = myConfigurablesMap.get(configuration);
       if (configurable == null) {
-        final ProjectSdksModel sdksModel =
-          ProjectStructureConfigurable.getInstance(myConfigEditor.getProject()).getProjectJdksModel();
-        configurable = new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, myConfigEditor, sdksModel).wrapInTabs();
+        final ProjectStructureConfigurable c = ProjectStructureConfigurable.getInstance(myConfigEditor.getProject());
+        configurable =
+          new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, myConfigEditor, c.getProjectJdksModel()).wrapInTabs();
+        c.getModulesConfig().ensureInitialized(configurable);
         myConfigurablesMap.put(configuration, configurable);
       }
       configurables.add(configurable);
