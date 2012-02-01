@@ -8,6 +8,7 @@ import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 
 import java.util.List;
@@ -15,6 +16,10 @@ import java.util.List;
 public class SelectInDesigner implements SelectInTarget {
   @Override
   public boolean canSelect(SelectInContext context) {
+    if (DesignerApplicationManager.getApplication() == null) {
+      return false;
+    }
+
     if (DocumentFactoryManager.getInstance().getNullableInfo(context.getVirtualFile()) == null) {
       return false;
     }
@@ -39,13 +44,20 @@ public class SelectInDesigner implements SelectInTarget {
     final int rangeMarkersSize = rangeMarkers.size();
     
     final Object selectorInFile = context.getSelectorInFile();
-    if (selectorInFile instanceof PsiElement) {
-      PsiElement element = (PsiElement)selectorInFile;
-      Module module = ModuleUtil.findModuleForPsiElement(element);
-      if (module == null) {
-        return;
-      }
+    if (!(selectorInFile instanceof PsiElement)) {
+      return;
+    }
 
+    PsiElement element = (PsiElement)selectorInFile;
+    final Module module = ModuleUtil.findModuleForPsiElement(element);
+    if (module == null) {
+      return;
+    }
+    
+    if (element instanceof XmlFile) {
+      DesignerApplicationManager.getInstance().openDocument(module, (XmlFile)element, false);
+    }
+    else {
       while (element != null) {
         if (element instanceof XmlTag && ((XmlTag)element).getDescriptor() instanceof ClassBackedElementDescriptor) {
           for (int i = 0; i < rangeMarkersSize; i++) {
