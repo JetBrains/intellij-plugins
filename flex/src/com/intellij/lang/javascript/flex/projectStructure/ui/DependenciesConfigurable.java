@@ -1185,7 +1185,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     if (sdkEntry != null) {
       final Sdk sdk = mySkdsModel.findSdk(sdkEntry.getName());
-      if (sdk != null) {
+      if (sdk != null && sdk.getSdkType() == FlexSdkType2.getInstance()) {
+        // technically, non-flex item won't appear in SDK combo model anyway
         mySdkCombo.setSelectedJdk(sdk);
       }
       else {
@@ -1363,7 +1364,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   private void createUIComponents() {
-    mySdkCombo = new JdkComboBox(mySkdsModel);
+    mySdkCombo = new JdkComboBox(mySkdsModel, new Condition<Sdk>() {
+      @Override
+      public boolean value(final Sdk sdk) {
+        return sdk.getSdkType() == FlexSdkType2.getInstance();
+      }
+    });
   }
 
   private void initPopupActions() {

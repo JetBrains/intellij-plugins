@@ -677,7 +677,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
   public Sdk findSdk(final String name) {
     return ContainerUtil.find(myProvider.getAllSdks(), new Condition<Sdk>() {
       public boolean value(final Sdk sdk) {
-        return name.equals(sdk.getName());
+        return name.equals(sdk.getName()) && sdk.getSdkType() == FlexSdkType2.getInstance();
       }
     });
   }
