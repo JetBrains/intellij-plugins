@@ -138,7 +138,7 @@ public class Flexmojos3Configurator {
       // todo set later when config is generated?
     }
 
-    final String outputFilePath = getOutputFilePath(myMavenProject);
+    final String outputFilePath = FlexmojosImporter.getOutputFilePath(myMavenProject);
     mainBC.setOutputFileName(PathUtil.getFileName(outputFilePath));
     mainBC.setOutputFolder(PathUtil.getParentPath(outputFilePath));
 
@@ -254,27 +254,6 @@ public class Flexmojos3Configurator {
     return result;
   }
 
-  static String getOutputFilePath(final MavenProject mavenProject) {
-    final Element configurationElement = mavenProject.getPluginConfiguration(FlexmojosImporter.FLEXMOJOS_GROUP_ID,
-                                                                             FlexmojosImporter.FLEXMOJOS_ARTIFACT_ID);
-    String overriddenTargetFileName =
-      configurationElement == null ? null : configurationElement.getChildTextNormalize("output", configurationElement.getNamespace());
-    if (overriddenTargetFileName != null && !overriddenTargetFileName.isEmpty() && !FileUtil.isAbsolute(overriddenTargetFileName)) {
-      overriddenTargetFileName = mavenProject.getDirectory() + "/" + overriddenTargetFileName;
-    }
-
-    if (overriddenTargetFileName != null) {
-      return FileUtil.toSystemIndependentName(overriddenTargetFileName);
-    }
-    else {
-      final String classifier =
-        configurationElement == null ? null : configurationElement.getChildTextNormalize("classifier", configurationElement.getNamespace());
-      final String suffix = classifier == null ? "" : "-" + classifier;
-      return FileUtil.toSystemIndependentName(mavenProject.getBuildDirectory())
-             + "/" + mavenProject.getFinalName() + suffix + "." + mavenProject.getPackaging();
-    }
-  }
-
   private void setupSdk(final ModifiableFlexIdeBuildConfiguration bc) {
     final MavenId flexCompilerId = new MavenId(FLEX_COMPILER_GROUP_ID, FLEX_COMPILER_ARTIFACT_ID, getFlexCompilerPomVersion());
 
@@ -355,7 +334,7 @@ public class Flexmojos3Configurator {
   }
 
   protected void appendGenerateConfigTask(final List<MavenProjectsProcessorTask> postTasks, final String configFilePath) {
-    postTasks.add(new Flexmojos3GenerateConfigTask(myMavenProject, myMavenTree, configFilePath, myInformer));
+    postTasks.add(new Flexmojos3GenerateConfigTask(myModule, myMavenProject, myMavenTree, configFilePath, myInformer));
   }
 
   private void configureRuntimeLoadedModule(final ModifiableFlexIdeBuildConfiguration mainBC,

@@ -16,6 +16,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import org.jdom.Element;
@@ -236,5 +237,27 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
       myFlexConfigNotification.expire();
     }
     myFlexConfigNotification = null;
+  }
+
+  public static String getOutputFilePath(final MavenProject mavenProject) {
+    final MavenPlugin flexmojosPlugin = mavenProject.findPlugin(FLEXMOJOS_GROUP_ID, FLEXMOJOS_ARTIFACT_ID);
+    final Element configurationElement = flexmojosPlugin == null ? null : flexmojosPlugin.getConfigurationElement();
+
+    final String overriddenTargetFilePath =
+      configurationElement == null || StringUtil.compareVersionNumbers(flexmojosPlugin.getVersion(), "4") >= 0
+      ? null
+      : configurationElement.getChildTextNormalize("output", configurationElement.getNamespace());
+
+    if (overriddenTargetFilePath != null && !overriddenTargetFilePath.isEmpty()) {
+      return FileUtil.isAbsolute(overriddenTargetFilePath)
+             ? FileUtil.toSystemIndependentName(overriddenTargetFilePath)
+             : FileUtil.toSystemIndependentName(mavenProject.getDirectory() + "/" + overriddenTargetFilePath);
+    }
+
+    final String classifier =
+      configurationElement == null ? null : configurationElement.getChildTextNormalize("classifier", configurationElement.getNamespace());
+    final String suffix = classifier == null ? "" : "-" + classifier;
+    return FileUtil.toSystemIndependentName(mavenProject.getBuildDirectory())
+           + "/" + mavenProject.getFinalName() + suffix + "." + mavenProject.getPackaging();
   }
 }

@@ -12,6 +12,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
 import com.intellij.openapi.util.io.FileUtil;
@@ -33,10 +34,7 @@ import org.jetbrains.idea.maven.utils.MavenProgressIndicator;
 import org.jetbrains.idea.maven.utils.MavenUtil;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,6 +50,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
   private Process process;
   private MavenProgressIndicator indicator;
   private final List<MavenProject> projects = new ArrayList<MavenProject>();
+  private final Map<Module, String> myModuleToConfigFilePath = new THashMap<Module, String>();
 
   private RefreshConfigFiles postTask;
 
@@ -106,6 +105,19 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
 
     if (postTask != null) {
       MavenUtil.invokeAndWait(project, postTask);
+
+      MavenUtil.invokeAndWaitWriteAction(project, new Runnable() {
+        public void run() {
+          for (Map.Entry<Module, String> entry : myModuleToConfigFilePath.entrySet()) {
+            if (entry.getKey().isDisposed()) continue;
+
+            final VirtualFile configFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(entry.getValue());
+            if (configFile != null && !configFile.isDirectory()) {
+              Flexmojos3GenerateConfigTask.updateMainClass(entry.getKey(), configFile);
+            }
+          }
+        }
+      });
     }
 
     final long duration = System.currentTimeMillis() - start;
@@ -121,9 +133,10 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
     out.flush();
   }
 
-  void submit(MavenProject mavenProject) {
+  void submit(MavenProject mavenProject, final Module module, final String configFilePath) {
     assert out == null && !projects.contains(mavenProject);
     projects.add(mavenProject);
+    myModuleToConfigFilePath.put(module, configFilePath);
   }
 
   private void runGeneratorServer(MavenProjectsManager mavenProjectsManager, Project project)

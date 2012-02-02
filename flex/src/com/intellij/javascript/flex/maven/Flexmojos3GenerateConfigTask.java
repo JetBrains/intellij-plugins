@@ -3,14 +3,29 @@ package com.intellij.javascript.flex.maven;
 import com.intellij.ide.IdeBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.IgnoredBeanFactory;
 import com.intellij.openapi.vcs.changes.IgnoredFileBean;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.idea.maven.model.MavenWorkspaceMap;
 import org.jetbrains.idea.maven.project.*;
 import org.jetbrains.idea.maven.server.MavenEmbedderWrapper;
@@ -30,15 +45,18 @@ import java.util.List;
 public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTask {
   private static final String TEMPORARY_FILE_CONTENT = "Remove this file";
 
+  private final Module myModule;
   private final String myConfigFilePath;
   private final FlexConfigInformer myFlexConfigInformer;
 
-  public Flexmojos3GenerateConfigTask(final MavenProject mavenProject,
+  public Flexmojos3GenerateConfigTask(final Module module,
+                                      final MavenProject mavenProject,
                                       final MavenProjectsTree mavenTree,
                                       final String configFilePath,
                                       final FlexConfigInformer flexConfigInformer) {
     super(mavenProject, mavenTree);
-    this.myConfigFilePath = configFilePath;
+    myModule = module;
+    myConfigFilePath = configFilePath;
     myFlexConfigInformer = flexConfigInformer;
   }
 
@@ -46,6 +64,8 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
                       final MavenEmbeddersManager embeddersManager,
                       final MavenConsole console,
                       final MavenProgressIndicator indicator) throws MavenProcessCanceledException {
+    if (myModule.isDisposed()) return;
+
     indicator.setText(FlexBundle.message("generating.flex.config.for", myMavenProject.getDisplayName()));
 
     final MavenProjectsTree.EmbedderTask task = new MavenProjectsTree.EmbedderTask() {
@@ -70,10 +90,11 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
             public void run() {
               // todo set main class
               // need to refresh externally created file
-              final VirtualFile file =
-                LocalFileSystem.getInstance().refreshAndFindFileByPath(myConfigFilePath);
+              final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(myConfigFilePath);
               if (file != null) {
                 file.refresh(false, false);
+
+                updateMainClass(myModule, file);
               }
             }
           });
@@ -116,7 +137,7 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
           for (MavenProject mavenProject : mavenProjects) {
             final String packaging = mavenProject.getPackaging();
             if ("swf".equalsIgnoreCase(packaging) || "swc".equalsIgnoreCase(packaging)) {
-              final String outputFilePath = Flexmojos3Configurator.getOutputFilePath(mavenProject);
+              final String outputFilePath = FlexmojosImporter.getOutputFilePath(mavenProject);
               final int lastSlashIndex = outputFilePath.lastIndexOf("/");
               final String outputFileName = outputFilePath.substring(lastSlashIndex + 1);
               final String outputFolderPath = outputFilePath.substring(0, Math.max(0, lastSlashIndex));
@@ -163,5 +184,43 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
         }
       }
     });
+  }
+
+  public static void updateMainClass(final Module module, final VirtualFile configFile) {
+    if (FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor() != null) return; // Project Structure open
+
+    try {
+      final String mainClassPath = FlexUtils.findXMLElement(configFile.getInputStream(), "<flex-config><file-specs><path-element>");
+      final VirtualFile mainClassFile = mainClassPath == null ? null : LocalFileSystem.getInstance().findFileByPath(mainClassPath);
+      if (mainClassFile == null || mainClassFile.isDirectory()) return;
+      
+      final VirtualFile sourceRoot = ProjectRootManager.getInstance(module.getProject()).getFileIndex().getSourceRootForFile(mainClassFile);
+      final String relativePath = sourceRoot == null ? null : VfsUtilCore.getRelativePath(sourceRoot, mainClassFile, '/');
+      final String mainClass = relativePath == null
+                               ? mainClassFile.getNameWithoutExtension()
+                               : FileUtil.getNameWithoutExtension(relativePath).replace('/', '.');
+
+      final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
+      final LibraryTableBase.ModifiableModelEx librariesModel =
+        (LibraryTableBase.ModifiableModelEx)ProjectLibraryTable.getInstance(module.getProject()).getModifiableModel();
+      final FlexProjectConfigurationEditor flexEditor = FlexProjectConfigurationEditor
+        .createEditor(module.getProject(), Collections.singletonMap(module, modifiableModel), librariesModel, null);
+
+      final ModifiableFlexIdeBuildConfiguration[] bcs = flexEditor.getConfigurations(module);
+      final ModifiableFlexIdeBuildConfiguration mainBC = ContainerUtil.find(bcs, new Condition<ModifiableFlexIdeBuildConfiguration>() {
+        public boolean value(final ModifiableFlexIdeBuildConfiguration bc) {
+          return bc.getOutputType() == OutputType.Application && module.getName().equals(bc.getName());
+        }
+      });
+
+      if (mainBC != null) {
+        mainBC.setMainClass(mainClass);
+      }
+
+      flexEditor.commit();
+      modifiableModel.dispose();
+    }
+    catch (IOException ignore) {/**/}
+    catch (ConfigurationException ignore) {/**/}
   }
 }

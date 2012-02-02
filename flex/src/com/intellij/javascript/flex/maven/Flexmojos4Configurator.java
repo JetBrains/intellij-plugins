@@ -119,6 +119,6 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
       postTasks.add(existingTask);
     }
 
-    existingTask.submit(myMavenProject);
+    existingTask.submit(myMavenProject, myModule, configFilePath);
   }
 }
