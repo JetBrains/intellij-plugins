@@ -3,7 +3,7 @@
 		<accessible>false</accessible>
 		<debug>true</debug>
 		<external-library-path append="true">
-			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/2.6/airglobal.swc</path-element>
+			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/3.1.0.4880/airglobal.swc</path-element>
 		</external-library-path>
 		<fixed-literal-vector>true</fixed-literal-vector>
 		<fonts>
@@ -23,6 +23,6 @@
 		<title>shared</title>
 	</metadata>
 	<output>@@target@@/shared-1.0-SNAPSHOT.swc</output>
-	<target-player>10.2</target-player>
+	<swf-version>11</swf-version>
 	<tools-locale>en_US</tools-locale>
 </flex-config>

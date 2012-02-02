@@ -320,7 +320,10 @@ class PropertyProcessor implements ValueWriter {
 
   boolean writeTagIfFx(XmlTag tag, String type, PrimitiveAmfOutputStream out, @Nullable Context parentContext,
                        boolean allowIncludeInExludeFrom) throws InvalidPropertyException {
-    if (!JavaScriptSupportLoader.MXML_URI3.equals(tag.getNamespace()) || type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME)) {
+    // AS-110
+    if (!JavaScriptSupportLoader.MXML_URI3.equals(tag.getNamespace()) ||
+      type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME) ||
+      type.equals(AsCommonTypeNames.DATE)) {
       return false;
     }
 
@@ -362,7 +365,7 @@ class PropertyProcessor implements ValueWriter {
   }
 
   boolean writeIfPrimitive(XmlElementValueProvider valueProvider, String type, PrimitiveAmfOutputStream out,
-                                   @Nullable AnnotationBackedDescriptor descriptor, boolean isStyle) throws InvalidPropertyException {
+                           @Nullable AnnotationBackedDescriptor descriptor, boolean isStyle) throws InvalidPropertyException {
     if (type.equals(JSCommonTypeNames.STRING_CLASS_NAME)) {
       writeString(valueProvider, descriptor);
     }

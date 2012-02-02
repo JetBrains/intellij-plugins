@@ -7,7 +7,7 @@
 			<value>false</value>
 		</define>
 		<external-library-path append="true">
-			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/2.6/airglobal.swc</path-element>
+			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/3.1.0.4880/airglobal.swc</path-element>
 		</external-library-path>
 		<fixed-literal-vector>true</fixed-literal-vector>
 		<fonts>
@@ -53,7 +53,7 @@
 		<title>main-loader</title>
 	</metadata>
 	<output>@@target@@/main-loader-1.0-SNAPSHOT.swf</output>
-	<target-player>10.2</target-player>
+	<swf-version>13</swf-version>
 	<tools-locale>en_US</tools-locale>
 	<file-specs>
 		<path-element>@@baseDir@@/src/com/intellij/flex/uiDesigner/MainLoader.as</path-element>

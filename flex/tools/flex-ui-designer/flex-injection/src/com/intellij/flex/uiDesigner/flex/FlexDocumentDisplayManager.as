@@ -87,11 +87,23 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
     return stageForAdobeDummies;
   }
 
-  public function get realStage():Stage {
-    return super.stage;
+  private var _realStage:Stage;
+  internal function get realStage():Stage {
+    return _realStage || super.stage;
   }
 
-  public function initShared(stageForAdobeDummies:Stage, resourceBundleProvider:ResourceBundleProvider, uiErrorHandler:UiErrorHandler):void {
+  // flex can cause addEventListener (our fake addEventListener impl can requires real stage) before we have been added to stage
+  private function addedToStageHandler(event:Event):void {
+    removeEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
+    _realStage = null;
+  }
+
+  public function initShared(realStage:Stage, stageForAdobeDummies:Stage, resourceBundleProvider:ResourceBundleProvider, uiErrorHandler:UiErrorHandler):void {
+    if (super.stage == null) {
+      addEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
+      _realStage = realStage;
+    }
+    
     this.stageForAdobeDummies = stageForAdobeDummies;
 
     UIComponentGlobals.designMode = true;

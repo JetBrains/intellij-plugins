@@ -21,6 +21,19 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>org.jetbrains.miglayout</groupId>
+        <artifactId>miglayout-core</artifactId>
+        <version>4.3.1-SNAPSHOT</version>
+        <type>swc</type>
+      </dependency>
+      <dependency>
+        <groupId>org.jetbrains.miglayout</groupId>
+        <artifactId>miglayout-flex</artifactId>
+        <version>4.3.1-SNAPSHOT</version>
+        <type>swc</type>
+      </dependency>
+
+      <dependency>
         <groupId>org.flyti.cocoa</groupId>
         <artifactId>acocoa</artifactId>
         <type>swc</type>

@@ -6,7 +6,7 @@
 			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/framework-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/mx/4.5.2.21576/mx-4.5.2.21576.swc</path-element>
-			<path-element>@@repo@@/com/adobe/flex/framework/playerglobal/10.2/playerglobal.swc</path-element>
+			<path-element>@@repo@@/com/adobe/flex/framework/playerglobal/11.1/playerglobal.swc</path-element>
 		</external-library-path>
 		<fixed-literal-vector>true</fixed-literal-vector>
 		<fonts>
@@ -51,7 +51,6 @@
 		<title>test-data-helper</title>
 	</metadata>
 	<output>@@target@@/test-data-helper.swc</output>
-	<swf-version>9</swf-version>
-	<target-player>10.2</target-player>
+	<swf-version>11</swf-version>
 	<tools-locale>en_US</tools-locale>
 </flex-config>

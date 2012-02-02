@@ -27,10 +27,10 @@
 			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airspark/4.5.2.21576/airspark-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airframework/4.5.2.21576/airframework-4.5.2.21576.swc</path-element>
-			<path-element>@@repo@@/org/jetbrains/miglayout/miglayout-flex/4.3-SNAPSHOT/miglayout-flex-4.3-SNAPSHOT.swc</path-element>
-			<path-element>@@repo@@/org/jetbrains/miglayout/miglayout-core/4.3-SNAPSHOT/miglayout-core-4.3-SNAPSHOT.swc</path-element>
+			<path-element>@@repo@@/org/jetbrains/miglayout/miglayout-flex/4.3.1-SNAPSHOT/miglayout-flex-4.3.1-SNAPSHOT.swc</path-element>
+			<path-element>@@repo@@/org/jetbrains/miglayout/miglayout-core/4.3.1-SNAPSHOT/miglayout-core-4.3.1-SNAPSHOT.swc</path-element>
 			<path-element>@@target@@/shared-1.0-SNAPSHOT.swc</path-element>
-			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/2.6/airglobal.swc</path-element>
+			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/3.1.0.4880/airglobal.swc</path-element>
 		</external-library-path>
 		<fixed-literal-vector>true</fixed-literal-vector>
 		<fonts>
@@ -86,12 +86,14 @@
 		<class>com.intellij.flex.uiDesigner.flex.BrowserManagerImpl</class>
 		<class>com.intellij.flex.uiDesigner.flex.DeferredInstanceFromArray</class>
 		<class>com.intellij.flex.uiDesigner.flex.DocumentFocusManager</class>
+		<class>com.intellij.flex.uiDesigner.flex.FlexComponentCreator</class>
 		<class>com.intellij.flex.uiDesigner.flex.FlexComponentInfoProvider</class>
 		<class>com.intellij.flex.uiDesigner.flex.FlexDocumentDisplayManager</class>
 		<class>com.intellij.flex.uiDesigner.flex.FlexDocumentFactory</class>
 		<class>com.intellij.flex.uiDesigner.flex.FlexModuleFactory</class>
 		<class>com.intellij.flex.uiDesigner.flex.HistoryManagerImpl</class>
 		<class>com.intellij.flex.uiDesigner.flex.ModuleManager</class>
+		<class>com.intellij.flex.uiDesigner.flex.SparkViewInitializer</class>
 		<class>com.intellij.flex.uiDesigner.flex.SpriteLoaderAsset</class>
 		<class>com.intellij.flex.uiDesigner.flex.states.AddItems</class>
 		<class>com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromBytes</class>
@@ -110,6 +112,6 @@
 		<title>flex-injection-4.5</title>
 	</metadata>
 	<output>@@target@@/flex-injection-4.5.swc</output>
-	<target-player>10.2</target-player>
+	<swf-version>11</swf-version>
 	<tools-locale>en_US</tools-locale>
 </flex-config>

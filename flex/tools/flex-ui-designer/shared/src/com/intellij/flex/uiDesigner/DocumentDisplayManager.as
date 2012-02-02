@@ -39,7 +39,7 @@ public interface DocumentDisplayManager {
 
   function get sharedInitialized():Boolean;
 
-  function initShared(stageForAdobeDummies:Stage, resourceBundleProvider:ResourceBundleProvider, uiErrorHandler:UiErrorHandler):void;
+  function initShared(realStage:Stage, stageForAdobeDummies:Stage, resourceBundleProvider:ResourceBundleProvider, uiErrorHandler:UiErrorHandler):void;
 
   function get componentInfoProvider():ComponentInfoProvider;
 

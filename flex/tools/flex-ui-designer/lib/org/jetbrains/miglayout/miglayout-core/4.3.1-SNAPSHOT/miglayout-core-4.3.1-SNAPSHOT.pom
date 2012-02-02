@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jetbrains.miglayout</groupId>
     <artifactId>miglayout-as-parent</artifactId>
-    <version>4.3-SNAPSHOT</version>
+    <version>4.3.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>miglayout-core</artifactId>

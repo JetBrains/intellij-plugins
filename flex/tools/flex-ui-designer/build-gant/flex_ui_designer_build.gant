@@ -56,10 +56,6 @@ private def doExecute(home, sandbox, targetFolder) {
     fileset(dir: "$flexBuildHome/../lib")
   }
 
-  // develar dec 21, 2011
-  // temp for astella eap
-  //ant.copy(file: "$home/flex/tools/flex-ui-designer/_astella_eap_/designer.swf", tofile: "$targetFolder/designer.swf")
-
   List<SwfDescriptor> swfDescriptors = includeFile("$flexBuildHome/flex_ui_designer_swfs_build.gant").getList();
   swfDescriptors.each {
     if (it.config.startsWith("flex-injection-") || it.config.equals("shared.xml")) {
@@ -125,6 +121,10 @@ def buildFlex(config, basedir, flexBuildHome, flexSandbox, isSwc, swfVersion) {
     classpath {
       fileset(dir: "$flexBuildHome/compiler-libs");
     }
-    arg(value: "-load-config=$flexSandbox/${config}" + (swfVersion == 0 ? "" : "-swf-version=${swfVersion} -output=${swfVersion}.swf"))
+    arg(value: "-load-config=$flexSandbox/${config}")
+    if (swfVersion != 0) {
+      arg(value: "-swf-version=${swfVersion}")
+      arg(value: "-output=${flexSandbox}/${swfVersion}.swf")
+    }
   }
 }

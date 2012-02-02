@@ -40,7 +40,6 @@
     <dependency>
       <groupId>org.jetbrains.miglayout</groupId>
       <artifactId>miglayout-flex</artifactId>
-      <version>4.3-SNAPSHOT</version>
       <type>swc</type>
     </dependency>
     <dependency>

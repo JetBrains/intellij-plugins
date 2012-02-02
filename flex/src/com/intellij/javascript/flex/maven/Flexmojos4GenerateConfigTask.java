@@ -282,6 +282,8 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
           return;
         }
 
+        p.refresh(false, true);
+
         final List<VirtualFile> virtualFiles = new ArrayList<VirtualFile>(filesForRefresh.size());
         for (String path : filesForRefresh) {
           final VirtualFile file = p.findChild(path);

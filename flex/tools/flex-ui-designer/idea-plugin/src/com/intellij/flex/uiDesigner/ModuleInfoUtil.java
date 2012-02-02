@@ -8,13 +8,16 @@ import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -73,10 +76,12 @@ public final class ModuleInfoUtil {
       }
     }
 
+    final LocalCssWriter cssWriter = new LocalCssWriter(stringWriter, problemsHolder, unregisteredDocumentReferences, assetCounter);
     if (defaultsCss != null) {
-      final LocalCssWriter cssWriter = new LocalCssWriter(stringWriter, problemsHolder, unregisteredDocumentReferences, assetCounter);
       moduleInfo.addLocalStyleHolder(new LocalStyleHolder(defaultsCss, cssWriter.write(defaultsCss, module)));
     }
+
+    sparkTheme(moduleInfo, cssWriter);
   }
 
   private static void collectApplicationLocalStyle(final ModuleInfo moduleInfo, String flexSdkVersion, final ProblemsHolder problemsHolder,
@@ -100,11 +105,14 @@ public final class ModuleInfoUtil {
       holders.add(mxApplicationClass);
     }
 
+    final LocalCssWriter localCssWriter = new LocalCssWriter(stringWriter, problemsHolder, projectDocumentReferenceCounter, assetCounter);
+    sparkTheme(moduleInfo, localCssWriter);
+
     if (holders.isEmpty()) {
       return;
     }
 
-    final StyleTagWriter localStyleWriter = new StyleTagWriter(new LocalCssWriter(stringWriter, problemsHolder, projectDocumentReferenceCounter, assetCounter));
+    final StyleTagWriter styleTagWriter = new StyleTagWriter(localCssWriter);
     final Processor<JSClass> processor = new Processor<JSClass>() {
       @Override
       public boolean process(JSClass jsClass) {
@@ -120,7 +128,7 @@ public final class ModuleInfoUtil {
                 if (subTag.getNamespace().equals(JavaScriptSupportLoader.MXML_URI3) &&
                     subTag.getLocalName().equals(FlexPredefinedTagNames.STYLE)) {
                   try {
-                    LocalStyleHolder localStyleHolder = localStyleWriter.write(subTag, moduleInfo.getModule(), virtualFile);
+                    LocalStyleHolder localStyleHolder = styleTagWriter.write(subTag, moduleInfo.getModule(), virtualFile);
                     if (localStyleHolder != null) {
                       moduleInfo.addLocalStyleHolder(localStyleHolder);
                     }
@@ -143,6 +151,23 @@ public final class ModuleInfoUtil {
     final GlobalSearchScope moduleScope = moduleInfo.getModule().getModuleScope(false);
     for (JSClass holder : holders) {
       JSClassSearch.searchClassInheritors(new JSClassSearch.SearchParameters(holder, true, moduleScope)).forEach(processor);
+    }
+  }
+
+  private static void sparkTheme(ModuleInfo moduleInfo, LocalCssWriter localCssWriter) {
+    // temp hack AS-112
+    final FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(moduleInfo.getModule()).getActiveConfiguration();
+    if (!bc.getNature().isMobilePlatform()) {
+      final Sdk sdk = FlexUtils.createFlexSdkWrapper(bc);
+      if (sdk != null) {
+        VirtualFile file = sdk.getHomeDirectory();
+        if (file != null) {
+          file = file.findFileByRelativePath("frameworks/themes/Spark/spark.css");
+          if (file != null) {
+            moduleInfo.addLocalStyleHolder(new LocalStyleHolder(file, localCssWriter.write(file, moduleInfo.getModule())));
+          }
+        }
+      }
     }
   }
 

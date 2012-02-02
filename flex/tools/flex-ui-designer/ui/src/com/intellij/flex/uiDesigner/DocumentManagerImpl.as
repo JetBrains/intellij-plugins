@@ -307,7 +307,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     document.displayManager = systemManager;
 
     if (!systemManager.sharedInitialized) {
-      systemManager.initShared(QueueLoader.stageForAdobeDummies, server, UncaughtErrorManager.instance);
+      systemManager.initShared(module.project.window.stage, QueueLoader.stageForAdobeDummies, server, UncaughtErrorManager.instance);
     }
     systemManager.init(isPureFlash ? null : new flexModuleFactoryClass(document.styleManager, module.context.applicationDomain), UncaughtErrorManager.instance,
                        MainFocusManagerSB(module.project.window.focusManager), document.documentFactory);

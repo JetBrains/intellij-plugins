@@ -35,7 +35,7 @@ public class FlashDocumentDisplayManager extends AbstractDocumentDisplayManager 
     return ApplicationDomain.currentDomain.getDefinition(name);
   }
 
-  public function initShared(stageForAdobeDummies:Stage, resourceBundleProvider:ResourceBundleProvider, uiErrorHandler:UiErrorHandler):void {
+  public function initShared(realStage:Stage, stageForAdobeDummies:Stage, resourceBundleProvider:ResourceBundleProvider, uiErrorHandler:UiErrorHandler):void {
   }
 
   override public function init(moduleFactory:Object, uiErrorHandler:UiErrorHandler,

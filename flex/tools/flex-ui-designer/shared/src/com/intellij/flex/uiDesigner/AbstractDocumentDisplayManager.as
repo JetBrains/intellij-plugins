@@ -17,8 +17,8 @@ public class AbstractDocumentDisplayManager extends Sprite {
     return _documentFactory;
   }
 
-  public function init(moduleFactory:Object, uiErrorHandler:UiErrorHandler,
-                         mainFocusManager:MainFocusManagerSB, documentFactory:Object):void {
+  public function init(moduleFactory:Object, uiErrorHandler:UiErrorHandler, mainFocusManager:MainFocusManagerSB,
+                       documentFactory:Object):void {
     _documentFactory = documentFactory;
   }
 
