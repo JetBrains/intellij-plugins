@@ -72,10 +72,7 @@ public final class UserPresence {
 
   @SuppressWarnings({"HardCodedStringLiteral"})
   public String toString() {
-    return new StringBuffer()
-        .append("UserPresence[")
-        .append(myPresenceMode)
-        .toString();
+    return "UserPresence[" + myPresenceMode;
   }
 
   public boolean equals(Object o) {
