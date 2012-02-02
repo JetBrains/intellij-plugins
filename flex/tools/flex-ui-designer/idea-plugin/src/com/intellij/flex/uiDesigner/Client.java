@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.abc.AssetClassPoolGenerator;
+import com.intellij.flex.uiDesigner.abc.ClassPoolGenerator;
 import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.flex.uiDesigner.libraries.*;
 import com.intellij.flex.uiDesigner.mxml.MxmlWriter;
@@ -282,7 +282,7 @@ public class Client implements Disposable {
     if (diff > 0) {
       // reduce number of call fill asset class pool
       diff *= 2;
-      fillAssetClassPool(librarySet, diff, ClientMethod.fillImageClassPool);
+      fillAssetClassPool(librarySet, diff, ClassPoolGenerator.Kind.IMAGE);
       assetCounterInfo.allocated.imageCount += diff;
     }
 
@@ -290,7 +290,7 @@ public class Client implements Disposable {
     if (diff > 0) {
       // reduce number of call fill asset class pool
       diff *= 2;
-      fillAssetClassPool(librarySet, diff, ClientMethod.fillSwfClassPool);
+      fillAssetClassPool(librarySet, diff, ClassPoolGenerator.Kind.SWF);
       assetCounterInfo.allocated.swfCount += diff;
     }
 
@@ -298,18 +298,24 @@ public class Client implements Disposable {
     if (diff > 0) {
       // reduce number of call fill asset class pool
       diff *= 2;
-      fillAssetClassPool(librarySet, diff, ClientMethod.fillViewClassPool);
+      fillAssetClassPool(librarySet, diff, ClassPoolGenerator.Kind.SPARK_VIEW);
       assetCounterInfo.allocated.viewCount += diff;
     }
   }
 
-  private void fillAssetClassPool(FlexLibrarySet flexLibrarySet, int classCount, ClientMethod method) {
+  private void fillAssetClassPool(FlexLibrarySet flexLibrarySet, int classCount, ClassPoolGenerator.Kind kind) {
     boolean hasError = true;
     try {
-      beginMessage(method);
+      if (kind == ClassPoolGenerator.Kind.IMAGE) {
+        beginMessage(ClientMethod.fillImageClassPool);
+      }
+      else {
+        beginMessage(kind == ClassPoolGenerator.Kind.SWF ? ClientMethod.fillSwfClassPool : ClientMethod.fillViewClassPool);
+      }
+
       writeId(flexLibrarySet.getId());
       out.writeShort(classCount);
-      AssetClassPoolGenerator.generate(method, classCount, flexLibrarySet.assetCounterInfo.allocated, blockOut);
+      ClassPoolGenerator.generate(kind, classCount, flexLibrarySet.assetCounterInfo.allocated, blockOut);
       hasError = false;
     }
     catch (Throwable e) {

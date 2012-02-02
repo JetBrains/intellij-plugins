@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner.abc;
 
-import com.intellij.flex.uiDesigner.Client;
 import com.intellij.flex.uiDesigner.AssetCounter;
 import com.intellij.flex.uiDesigner.io.AbstractByteArrayOutputStream;
 import com.intellij.flex.uiDesigner.io.IOUtil;
@@ -9,38 +8,20 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
-public final class AssetClassPoolGenerator extends AbcEncoder {
-  private static byte[] BITMAP_ASSET_ABC;
-  private static byte[] SPRITE_ASSET_ABC;
-  private static byte[] SPARK_VIEW_ABC;
+public final class ClassPoolGenerator extends AbcEncoder {
+  public enum Kind {
+    IMAGE, SWF, SPARK_VIEW
+  }
 
+  private static final byte[][] ABC = new byte[3][];
   private static final int NAME_POS = 12;
 
-  private static void generate(final Client.ClientMethod method, final ArrayList<Decoder> decoders, int size, int counter)
+  private static void generate(ClassPoolGenerator.Kind kind, final ArrayList<Decoder> decoders, int size, int counter)
     throws IOException {
-    final byte[] abc;
-    switch (method) {
-      case fillImageClassPool:
-        if (SPRITE_ASSET_ABC == null) {
-          SPRITE_ASSET_ABC = IOUtil.getResourceBytes("SpriteAsset.abc");
-        }
-        abc = SPRITE_ASSET_ABC;
-        break;
-      case fillSwfClassPool:
-        if (BITMAP_ASSET_ABC == null) {
-          BITMAP_ASSET_ABC = IOUtil.getResourceBytes("BitmapAsset.abc");
-        }
-        abc = BITMAP_ASSET_ABC;
-        break;
-      case fillViewClassPool:
-        if (SPARK_VIEW_ABC == null) {
-          SPARK_VIEW_ABC = IOUtil.getResourceBytes("SparkView.abc");
-        }
-        abc = SPARK_VIEW_ABC;
-        break;
-
-      default:
-        throw new IllegalArgumentException("unknown method");
+    byte[] abc = ABC[kind.ordinal()];
+    if (abc == null) {
+      abc = IOUtil.getResourceBytes(kind.name().toLowerCase() + "ClassTemplate.abc");
+      ABC[kind.ordinal()] = abc;
     }
 
     if (size < 0 || size > 4095) {
@@ -74,22 +55,22 @@ public final class AssetClassPoolGenerator extends AbcEncoder {
     }
   }
 
-  public static void generate(Client.ClientMethod method, int size, AssetCounter allocatedCount, AbstractByteArrayOutputStream out) throws IOException {
+  public static void generate(ClassPoolGenerator.Kind kind, int size, AssetCounter allocatedCount, AbstractByteArrayOutputStream out) throws IOException {
     final int start = out.size();
     out.getBuffer(SwfUtil.getWrapHeaderLength());
 
     ArrayList<Decoder> decoders = new ArrayList<Decoder>(size);
-    switch (method) {
-      case fillImageClassPool:
-        generate(method, decoders, size, allocatedCount.imageCount);
+    switch (kind) {
+      case IMAGE:
+        generate(kind, decoders, size, allocatedCount.imageCount);
         allocatedCount.imageCount += size;
         break;
-      case fillSwfClassPool:
-        generate(method, decoders, size, allocatedCount.swfCount);
+      case SWF:
+        generate(kind, decoders, size, allocatedCount.swfCount);
         allocatedCount.swfCount += size;
         break;
-      case fillViewClassPool:
-        generate(method, decoders, size, allocatedCount.viewCount);
+      case SPARK_VIEW:
+        generate(kind, decoders, size, allocatedCount.viewCount);
         allocatedCount.viewCount += size;
         break;
 

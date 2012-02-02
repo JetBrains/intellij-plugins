@@ -88,7 +88,7 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
   }
 
   private var _realStage:Stage;
-  internal function get realStage():Stage {
+  public function get realStage():Stage {
     return _realStage || super.stage;
   }
 

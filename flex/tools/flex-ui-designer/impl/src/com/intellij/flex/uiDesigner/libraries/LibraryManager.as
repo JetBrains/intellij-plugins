@@ -5,7 +5,6 @@ import com.intellij.flex.uiDesigner.UncaughtErrorManager;
 import flash.utils.Dictionary;
 
 import org.jetbrains.ApplicationManager;
-
 import org.jetbrains.EntityLists;
 
 public class LibraryManager implements LibrarySetLoadProgressListener {

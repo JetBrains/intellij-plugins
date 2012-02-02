@@ -53,5 +53,7 @@ public interface DocumentDisplayManager {
   function get flexLayoutManager():Object;
 
   function get layoutManager():LayoutManager;
+
+  function get realStage():Stage;
 }
 }

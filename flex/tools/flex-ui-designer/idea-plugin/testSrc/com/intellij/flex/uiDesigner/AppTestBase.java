@@ -172,9 +172,11 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
     assert jarFile != null;
 
     libs.add(new Pair<VirtualFile, VirtualFile>(virtualFile, jarFile));
-    Library.ModifiableModel libraryModel = model.getModuleLibraryTable().createLibrary(path).getModifiableModel();
-    libraryModel.addRoot(jarFile, OrderRootType.CLASSES);
-    libraryModel.commit();
+    JSTestUtils.addLibrary(myModule, path, virtualFile.getParent().getPath(), virtualFile.getName(), null, null);
+
+    //Library.ModifiableModel libraryModel = model.getModuleLibraryTable().createLibrary(path).getModifiableModel();
+    //libraryModel.addRoot(jarFile, OrderRootType.CLASSES);
+    //libraryModel.commit();
   }
   
   protected String getFlexVersion() {

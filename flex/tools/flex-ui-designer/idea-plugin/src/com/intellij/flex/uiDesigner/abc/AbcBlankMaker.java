@@ -37,7 +37,7 @@ final class AbcBlankMaker {
 
   private static void fillAssetClassPoolGenerator() throws IOException {
     ByteArrayOutputStreamEx out = new ByteArrayOutputStreamEx(1024);
-    AssetClassPoolGenerator.generate(Client.ClientMethod.fillImageClassPool, 3, null, out);
+    //ClassPoolGenerator.generate(Client.ClientMethod.fillImageClassPool, 3, null, out);
     FileUtil.writeToFile(new File("/Users/develar/b.swf"), out.toByteArray());
   }
 

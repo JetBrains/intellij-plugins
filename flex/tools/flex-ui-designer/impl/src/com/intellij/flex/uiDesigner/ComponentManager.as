@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner {
+import flash.display.Stage;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.KeyboardEvent;
@@ -66,7 +67,7 @@ public class ComponentManager extends EventDispatcher implements Injectable {
   }
 
   private function findComponent(event:MouseEvent):Object {
-    return _document.displayManager.componentInfoProvider.getComponentUnderPoint(_document.displayManager.stage, event.stageX, event.stageY);
+    return _document.displayManager.componentInfoProvider.getComponentUnderPoint(_document.displayManager.realStage, event.stageX, event.stageY);
   }
 
   public function fillBreadcrumbs(element:Object, source:Vector.<String>):int {

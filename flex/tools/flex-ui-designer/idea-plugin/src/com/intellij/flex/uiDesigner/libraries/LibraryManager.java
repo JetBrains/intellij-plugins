@@ -29,7 +29,6 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.util.ExceptionUtil;
-import com.intellij.util.PlatformUtils;
 import com.intellij.util.StringBuilderSpinAllocator;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -38,10 +37,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @SuppressWarnings("MethodMayBeStatic")
 public class LibraryManager {
@@ -220,11 +216,19 @@ public class LibraryManager {
     return globalDefinitions;
   }
 
-  private String createKey(List<Library> sdkLibraries) {
+  private String createKey(List<Library> libraries) {
+    // we don't depend on library order
+    final String[] filenames = new String[libraries.size()];
+    for (int i = 0, librariesSize = libraries.size(); i < librariesSize; i++) {
+      filenames[i] = libraries.get(i).getFile().getPath();
+    }
+    
+    Arrays.sort(filenames);
+    
     final StringBuilder stringBuilder = StringBuilderSpinAllocator.alloc();
     try {
-      for (Library sdkLibrary : sdkLibraries) {
-        stringBuilder.append(sdkLibrary.getFile().getPath()).append(':');
+      for (String filename : filenames) {
+        stringBuilder.append(filename).append(':');
       }
 
       return stringBuilder.toString();

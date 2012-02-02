@@ -90,6 +90,10 @@ public class FlashDocumentDisplayManager extends AbstractDocumentDisplayManager 
   public function get layoutManager():LayoutManager {
     return null;
   }
+
+  public function get realStage():Stage {
+    return stage;
+  }
 }
 }
 

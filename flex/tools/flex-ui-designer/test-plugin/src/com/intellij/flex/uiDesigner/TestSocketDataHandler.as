@@ -145,15 +145,15 @@ internal class TestSocketDataHandler implements SocketDataHandler {
 
   private function testOnDocumentDisplayManagerReady(testTask:TestTask):void {
     var documentDisplayManager:DocumentDisplayManager = testTask.testAnnotation.nullableDocument ? null : testTask.documentManager.document.displayManager;
-    if (documentDisplayManager != null && documentDisplayManager.stage == null) {
-      documentDisplayManager.addRealEventListener(Event.ADDED_TO_STAGE, function(event:Event):void {
-        IEventDispatcher(event.currentTarget).removeEventListener(event.type, arguments.callee);
-        test2(testTask);
-      });
-    }
-    else {
+    //if (documentDisplayManager != null && documentDisplayManager.realStage == null) {
+    //  documentDisplayManager.addRealEventListener(Event.ADDED_TO_STAGE, function(event:Event):void {
+    //    IEventDispatcher(event.currentTarget).removeEventListener(event.type, arguments.callee);
+    //    test2(testTask);
+    //  });
+    //}
+    //else {
       test2(testTask);
-    }
+    //}
   }
 
   private function test2(testTask:TestTask):void {

@@ -21,6 +21,7 @@ import flash.desktop.NativeApplication;
 import flash.desktop.NotificationType;
 import flash.display.DisplayObject;
 import flash.display.NativeWindow;
+import flash.display.Stage;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.utils.Dictionary;
