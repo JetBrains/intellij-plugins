@@ -89,16 +89,24 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
 
     modules2activeConfigurations.putValue(module, configuration);
     for (DependencyEntry entry : configuration.getDependencies().getEntries()) {
-      if (entry instanceof BuildConfigurationEntry) {
-        if (entry.getDependencyType().getLinkageType() == LinkageType.LoadInRuntime) {
-          continue;
-        }
-        FlexIdeBuildConfiguration dependencyBc = ((BuildConfigurationEntry)entry).findBuildConfiguration();
-        if (dependencyBc != null) {
-          Module dependencyModule = ((BuildConfigurationEntry)entry).findModule();
-          processModuleWithBuildConfiguration(dependencyModule, dependencyBc, modules2activeConfigurations, processedConfigurations);
-        }
+      if (!(entry instanceof BuildConfigurationEntry)) {
+        continue;
       }
+
+      if (entry.getDependencyType().getLinkageType() == LinkageType.LoadInRuntime) {
+        continue;
+      }
+
+      FlexIdeBuildConfiguration dependencyBc = ((BuildConfigurationEntry)entry).findBuildConfiguration();
+      if (dependencyBc == null) {
+        continue;
+      }
+
+      Module dependencyModule = ((BuildConfigurationEntry)entry).findModule();
+      if (dependencyModule == module) {
+        continue;
+      }
+      processModuleWithBuildConfiguration(dependencyModule, dependencyBc, modules2activeConfigurations, processedConfigurations);
     }
   }
 
