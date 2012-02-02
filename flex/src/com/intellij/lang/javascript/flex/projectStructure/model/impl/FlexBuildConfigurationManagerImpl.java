@@ -97,6 +97,10 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
 
   @Override
   public void setActiveBuildConfiguration(final FlexIdeBuildConfiguration buildConfiguration) {
+    if (myActiveConfiguration == buildConfiguration) {
+      return;
+    }
+
     if (!ArrayUtil.contains(buildConfiguration, myConfigurations)) {
       throw new IllegalArgumentException(
         "Build configuration " + buildConfiguration.getName() + " does not belong to module " +
