@@ -17,6 +17,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ArrayUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,6 +37,7 @@ import javax.swing.event.HyperlinkEvent;
 import java.util.*;
 
 public class FlexmojosImporter extends MavenImporter implements FlexConfigInformer {
+  private static final String[] SUPPORTED_PACKAGINGS = {"swf", "swc"};
   static final String FLEXMOJOS_GROUP_ID = "org.sonatype.flexmojos";
   static final String FLEXMOJOS_ARTIFACT_ID = "flexmojos-maven-plugin";
   private static final List<String> DEPENDENCY_TYPES_FOR_IMPORT = Arrays.asList("swf", "swc", "resource-bundle", "rb.swc");
@@ -48,7 +50,7 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
   }
 
   public boolean isApplicable(MavenProject mavenProject) {
-    return mavenProject.findPlugin(myPluginGroupID, myPluginArtifactID) != null;
+    return ArrayUtil.contains(mavenProject.getPackaging(), SUPPORTED_PACKAGINGS) && super.isApplicable(mavenProject);
   }
 
   @NotNull
@@ -57,7 +59,7 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
   }
 
   public void getSupportedPackagings(Collection<String> result) {
-    Collections.addAll(result, "swf", "swc");
+    Collections.addAll(result, SUPPORTED_PACKAGINGS);
   }
 
   public void getSupportedDependencyTypes(Collection<String> result, SupportedRequestType type) {
