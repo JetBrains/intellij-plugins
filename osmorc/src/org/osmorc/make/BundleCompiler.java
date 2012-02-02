@@ -281,7 +281,14 @@ public class BundleCompiler implements PackagingCompiler {
             }
 
             // and tell bnd what resources to include
-            additionalProperties.put("Include-Resource", pathBuilder.toString());
+            String includedResources = configuration.getAdditionalPropertiesAsMap().get("Include-Resource");
+            if ( includedResources == null ) {
+              includedResources = pathBuilder.toString();
+            }
+            else {
+               includedResources = includedResources + "," + pathBuilder.toString();
+            }
+            additionalProperties.put("Include-Resource", includedResources);
 
             if (!configuration.isIgnorePatternValid()) {
                 compileContext.addMessage(CompilerMessageCategory.ERROR,
