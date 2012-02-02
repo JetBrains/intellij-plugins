@@ -46,7 +46,7 @@ public class PathUtils {
             return "";
         }
 
-        return new StringBuilder().append(packageName.replace(PACKAGE_SEPARATOR, TAPESTRY_PATH_SEPARATOR)).append(includeFinalSeparator ? TAPESTRY_PATH_SEPARATOR : "").toString();
+        return packageName.replace(PACKAGE_SEPARATOR, TAPESTRY_PATH_SEPARATOR) + (includeFinalSeparator ? TAPESTRY_PATH_SEPARATOR : "");
     }
 
     /**
@@ -75,7 +75,7 @@ public class PathUtils {
             path = path.substring(0, path.lastIndexOf(TAPESTRY_PATH_SEPARATOR));
         }
 
-        return new StringBuilder().append(path.replace(TAPESTRY_PATH_SEPARATOR, PACKAGE_SEPARATOR)).toString();
+        return path.replace(TAPESTRY_PATH_SEPARATOR, PACKAGE_SEPARATOR);
     }
 
     /**
@@ -93,7 +93,7 @@ public class PathUtils {
         }
 
         String pathPath = componentName.substring(0, componentName.lastIndexOf(TAPESTRY_PATH_SEPARATOR));
-        return new StringBuilder().append(basePackage).append(PACKAGE_SEPARATOR).append(pathPath.replace(TAPESTRY_PATH_SEPARATOR, PACKAGE_SEPARATOR)).toString();
+        return basePackage + PACKAGE_SEPARATOR + pathPath.replace(TAPESTRY_PATH_SEPARATOR, PACKAGE_SEPARATOR);
     }
 
     /**
