@@ -118,7 +118,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
       createRunConfiguration(module, bc.getName());
     }
 
-    if (sourceRoot != null && myCreateSampleApp) {
+    if (sourceRoot != null && myCreateSampleApp && myFlexSdk != null) {
       try {
         final boolean flex4 = myFlexSdk.getVersionString().startsWith("4");
         FlexUtils.createSampleApp(module.getProject(), sourceRoot, mySampleAppName, myTargetPlatform, flex4);
@@ -128,7 +128,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
       }
     }
 
-    if (myCreateHtmlWrapperTemplate) {
+    if (myCreateHtmlWrapperTemplate && myFlexSdk != null) {
       final String path = VfsUtil.urlToPath(contentEntry.getUrl()) + "/" + CreateHtmlWrapperTemplateDialog.HTML_TEMPLATE_FOLDER_NAME;
       if (CreateHtmlWrapperTemplateDialog.createHtmlWrapperTemplate(module.getProject(), myFlexSdk, path,
                                                                     myEnableHistory, myCheckPlayerVersion, myExpressInstall)) {
@@ -159,8 +159,10 @@ public class FlexModuleBuilder extends ModuleBuilder {
     }
     bc.setOutputFolder(VfsUtil.urlToPath(CompilerModuleExtension.getInstance(module).getCompilerOutputUrl()));
 
-    bc.getDependencies().setSdkEntry(Factory.createSdkEntry(myFlexSdk.getName()));
-    bc.getDependencies().setTargetPlayer(myTargetPlayer);
+    bc.getDependencies().setSdkEntry(myFlexSdk != null ? Factory.createSdkEntry(myFlexSdk.getName()) : null);
+    if (myTargetPlayer != null) {
+      bc.getDependencies().setTargetPlayer(myTargetPlayer);
+    }
 
     if (myTargetPlatform == TargetPlatform.Mobile && myOutputType == OutputType.Application) {
       bc.getAndroidPackagingOptions().setEnabled(true);
