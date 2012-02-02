@@ -79,9 +79,9 @@ public class BCUtils {
    * @return <code>null</code> if entry should not be included at all
    */
   @Nullable
-  public static LinkageType getSdkEntryLinkageType(String path,
+  public static LinkageType getSdkEntryLinkageType(final String path,
                                                    final BuildConfigurationNature bcNature,
-                                                   String targetPlayer,
+                                                   final String targetPlayer,
                                                    final ComponentSet componentSet) {
     LOG.assertTrue(!path.endsWith(JarFileSystem.JAR_SEPARATOR), "plain local filesystem path is expected");
 
@@ -117,9 +117,12 @@ public class BCUtils {
     else if (folderPath.endsWith("/frameworks/libs/mx")) {
       linkageType = getMxLibraryLinkage(bcNature, componentSet, swcName);
     }
+    else if (folderPath.contains("/frameworks/themes/")) {
+      linkageType = null;
+    }
     else {
       if (!ApplicationManager.getApplication().isUnitTestMode()) {
-        LOG.error("Unknown Flex SDK root: " + path);
+        LOG.warn("Unknown Flex SDK root: " + path);
       }
       linkageType = LinkageType.Merged;
     }

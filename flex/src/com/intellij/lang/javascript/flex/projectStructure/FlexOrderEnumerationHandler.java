@@ -14,18 +14,14 @@ import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.*;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * User: ksafonov
@@ -171,9 +167,9 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
   }
 
   @Override
-  public boolean addCustomRootsForLibrary(@NotNull OrderEntry forOrderEntry,
+  public boolean addCustomRootsForLibrary(@NotNull final OrderEntry forOrderEntry,
                                           @NotNull final OrderRootType type,
-                                          @NotNull Collection<String> urls) {
+                                          @NotNull final Collection<String> urls) {
     if (!(forOrderEntry instanceof JdkOrderEntry)) {
       return false;
     }
@@ -182,8 +178,8 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
       return false;
     }
 
-    final FlexIdeBuildConfiguration bc =
-      FlexBuildConfigurationManager.getInstance(forOrderEntry.getOwnerModule()).getActiveConfiguration();
+    final Module forModule = forOrderEntry.getOwnerModule();
+    final FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(forModule).getActiveConfiguration();
     final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
     if (sdkEntry == null) {
       return false;
@@ -199,10 +195,12 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
       return true;
     }
 
-    Collection<FlexIdeBuildConfiguration> accessibleConfigurations = myActiveConfigurations.get(forOrderEntry.getOwnerModule());
+    Collection<FlexIdeBuildConfiguration> accessibleConfigurations = myActiveConfigurations.get(forModule);
     // since we don't allow transitive dependencies to Flex SDK, this module is root module, so there's actually one active configuration
     assert accessibleConfigurations.size() < 2;
     final Set<String> allAccessibleUrls = new HashSet<String>();
+    final List<String> themePaths = CompilerOptionInfo.getThemes(forModule, bc);
+
     ContainerUtil.process(accessibleConfigurations, new Processor<FlexIdeBuildConfiguration>() {
       @Override
       public boolean process(final FlexIdeBuildConfiguration bc) {
@@ -210,7 +208,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
           @Override
           public boolean value(String s) {
             s = VirtualFileManager.extractPath(StringUtil.trimEnd(s, JarFileSystem.JAR_SEPARATOR));
-            return BCUtils.getSdkEntryLinkageType(s, bc) != null;
+            return BCUtils.getSdkEntryLinkageType(s, bc) != null || themePaths.contains(s);
           }
         }));
         return true;
