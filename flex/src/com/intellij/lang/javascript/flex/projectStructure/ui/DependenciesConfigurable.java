@@ -26,6 +26,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModel;
+import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
@@ -1185,7 +1186,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     if (sdkEntry != null) {
       final Sdk sdk = mySkdsModel.findSdk(sdkEntry.getName());
-      if (sdk != null && sdk.getSdkType() == FlexSdkType2.getInstance()) {
+      if (sdk != null && (sdk.getSdkType() == FlexSdkType2.getInstance() || sdk.getSdkType() == FlexmojosSdkType.getInstance())) {
         // technically, non-flex item won't appear in SDK combo model anyway
         mySdkCombo.setSelectedJdk(sdk);
       }
@@ -1367,7 +1368,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     mySdkCombo = new JdkComboBox(mySkdsModel, new Condition<Sdk>() {
       @Override
       public boolean value(final Sdk sdk) {
-        return sdk.getSdkType() == FlexSdkType2.getInstance();
+        final SdkType sdkType = sdk.getSdkType();
+        return sdkType == FlexSdkType2.getInstance() || sdkType == FlexmojosSdkType.getInstance();
       }
     });
   }

@@ -251,8 +251,8 @@ public class FlexIdeBCConfigurator {
 
   @Nullable
   private SdkEntry findAnySdk() {
-    Sdk[] sdks = myConfigEditor.getFlexSdks();
-    return sdks.length > 0 ? Factory.createSdkEntry(sdks[0].getName()) : null;
+    final Sdk sdk = myConfigEditor.getAnyFlexSdk();
+    return sdk != null ? Factory.createSdkEntry(sdk.getName()) : null;
   }
 
   public void copy(final CompositeConfigurable configurable, final Runnable treeNodeNameUpdater) {

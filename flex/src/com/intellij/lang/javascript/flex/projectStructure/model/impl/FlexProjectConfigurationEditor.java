@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRoo
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -20,6 +21,7 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleOrderEntry;
@@ -663,21 +665,22 @@ public class FlexProjectConfigurationEditor implements Disposable {
     return (LibraryTableBase.ModifiableModelEx)modifiableModel.getModuleLibraryTable().getModifiableModel();
   }
 
-  public Sdk[] getFlexSdks() {
+  @Nullable
+  public Sdk getAnyFlexSdk() {
+    // does not return Flexmojos SDK
     final FlexSdkType2 flexSdkType = FlexSdkType2.getInstance();
-    final List<Sdk> result = ContainerUtil.filter(myProvider.getAllSdks(), new Condition<Sdk>() {
-      public boolean value(final Sdk sdk) {
-        return sdk.getSdkType() == flexSdkType;
-      }
-    });
-    return result.toArray(new Sdk[result.size()]);
+    for (Sdk sdk : myProvider.getAllSdks()) {
+      if (sdk.getSdkType() == flexSdkType) return sdk;
+    }
+    return null;
   }
 
   @Nullable
   public Sdk findSdk(final String name) {
     return ContainerUtil.find(myProvider.getAllSdks(), new Condition<Sdk>() {
       public boolean value(final Sdk sdk) {
-        return name.equals(sdk.getName()) && sdk.getSdkType() == FlexSdkType2.getInstance();
+        final SdkType sdkType = sdk.getSdkType();
+        return name.equals(sdk.getName()) && (sdkType == FlexSdkType2.getInstance() || sdkType == FlexmojosSdkType.getInstance());
       }
     });
   }
