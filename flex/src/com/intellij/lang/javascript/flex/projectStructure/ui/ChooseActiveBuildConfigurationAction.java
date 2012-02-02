@@ -1,39 +1,26 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
-import com.intellij.ide.DataManager;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.options.ShowSettingsUtil;
-import com.intellij.openapi.project.*;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.ui.navigation.Place;
-import com.intellij.util.containers.hash.HashMap;
-import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * User: ksafonov
@@ -67,10 +54,16 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
 
   public static ListPopup createPopup(@NotNull Module module) {
     final DefaultActionGroup actionGroup = new DefaultActionGroup();
-    actionGroup.addSeparator("Build Configurations");
+    actionGroup.addSeparator(FlexBundle.message("build.configurations.popup.separator.text"));
     final FlexBuildConfigurationManager manager = FlexBuildConfigurationManager.getInstance(module);
     final FlexIdeBuildConfiguration active = manager.getActiveConfiguration();
     FlexIdeBuildConfiguration[] bcs = manager.getBuildConfigurations();
+    Arrays.sort(bcs, new Comparator<FlexIdeBuildConfiguration>() {
+      @Override
+      public int compare(final FlexIdeBuildConfiguration o1, final FlexIdeBuildConfiguration o2) {
+        return o1.getName().compareToIgnoreCase(o2.getName());
+      }
+    });
     for (final FlexIdeBuildConfiguration bc : bcs) {
       actionGroup.add(new SelectBcAction(bc, manager));
     }
@@ -117,12 +110,10 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
     private final Module myModule;
 
     public EditBcsAction(Module module) {
-      super("Configure project", "Edit Flex build configurations", IconLoader.getIcon("/actions/editSource.png"));
+      super(null);
       myModule = module;
       final AnAction a = ActionManager.getInstance().getAction("ShowProjectStructureSettings");
-      getTemplatePresentation().setText(a.getTemplatePresentation().getText());
-      getTemplatePresentation().setIcon(a.getTemplatePresentation().getIcon());
-      getTemplatePresentation().setDescription(a.getTemplatePresentation().getDescription());
+      getTemplatePresentation().copyFrom(a.getTemplatePresentation());
     }
 
     @Override
