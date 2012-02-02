@@ -165,7 +165,7 @@ internal class TestSocketDataHandler implements SocketDataHandler {
   private function test(project:Project, clazz:Class, method:String, testAnnotation:TestAnnotation):void {
     trace("execute test " + method);
     var test:TestCase = new clazz();
-    test.init(project == null ? new EmptyDataContext() : DataManager.instance.getDataContext(project.window.stage), _socket);
+    test.init(project == null ? new EmptyDataContext() : DataManager.instance.getDataContext(project.window.stage.getChildAt(0)), _socket);
     test.setUp();
 
     if (testAnnotation.async) {

@@ -15,15 +15,17 @@
         <CLASSES>
           <root url="file://$MODULE_DIR$/../../../../out/classes/test/JavaScript-tests" />
           <root url="file://$MODULE_DIR$/../../../../out/classes/production/jps-builders" />
-          <root url="jar://$MODULE_DIR$/../../../../community/lib/netty-3.2.5.Final.jar!/" />
           <root url="jar://$MODULE_DIR$/../../../../community/lib/protobuf-2.3.0.jar!/" />
           <root url="file://$MODULE_DIR$/../../../../out/classes/production/jsp-base-impl" />
           <root url="file://$MODULE_DIR$/../../../../out/classes/production/jsp-base-openapi" />
           <root url="file://$MODULE_DIR$/../../../../out/classes/production/jsp-impl" />
           <root url="file://$MODULE_DIR$/../../../../out/classes/production/jsp-openapi" />
+          <root url="jar://$MODULE_DIR$/../../../../community/lib/junit.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/../../../../community/lib/src/junit3_8_1.jar!/" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="library" scope="TEST" name="junit 4 without hamcrest and hamcrest 3" level="project" />

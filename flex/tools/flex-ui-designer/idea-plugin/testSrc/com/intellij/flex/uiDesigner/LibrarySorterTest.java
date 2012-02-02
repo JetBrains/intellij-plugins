@@ -15,7 +15,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 @Flex(version="4.5")
 public class LibrarySorterTest extends MxmlTestBase {
   @Override
-  protected String generateSdkName(String version, boolean air) {
+  protected String generateSdkName(String version) {
     return getName();
   }
 

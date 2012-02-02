@@ -2,11 +2,17 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
+import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.sdk.AirSdkType;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
+import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -15,17 +21,18 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
-import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.peer.PeerFactory;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.util.Consumer;
 import junit.framework.AssertionFailedError;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +47,6 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
   protected TestSocketInputHandler socketInputHandler;
 
   protected String flexSdkRootPath;
-  protected Sdk sdk;
   protected final List<Pair<VirtualFile, VirtualFile>> libs = new ArrayList<Pair<VirtualFile, VirtualFile>>();
 
   protected String getSourceBasePath() {
@@ -66,21 +72,32 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
     flexSdkRootPath = getTestDataPath() + "/lib/flex-sdk/" + flexVersion;
     doSetupFlexSdk(myModule, flexSdkRootPath, true, flexVersion + "." + (flexVersion.equals("4.1") ? "16076" : "20967"));
   }
-
-  protected String generateSdkName(String version, boolean air) {
-    return version + (air ? "-air-" : "-flex");
-  }
   
   private void doSetupFlexSdk(final Module module, final String flexSdkRootPath, final boolean air, final String sdkVersion) {
     final AccessToken token = WriteAction.start();
     try {
-      final String sdkName = generateSdkName(sdkVersion, air);
-      sdk = ProjectJdkTable.getInstance().findJdk(sdkName);
+      final String sdkName = generateSdkName(sdkVersion);
+      Sdk sdk = ProjectJdkTable.getInstance().findJdk(sdkName);
       if (sdk == null) {
-        //noinspection RedundantCast
-        sdk = FlexSdkUtils.createOrGetSdk(air ? (SdkType)AirSdkType.getInstance() : (SdkType)FlexSdkType.getInstance(),
-                                          flexSdkRootPath);
+        final FlexSdkType2 sdkType = FlexSdkType2.getInstance();
+        sdk = PeerFactory.getInstance().createProjectJdk(sdkType.suggestSdkName(null, flexSdkRootPath), "", flexSdkRootPath, sdkType);
         assert sdk != null;
+        sdkType.setupSdkPaths(sdk);
+        ProjectJdkTable.getInstance().addJdk(sdk);
+
+        final Sdk finalSdk = sdk;
+        Disposer.register(ApplicationManager.getApplication(), new Disposable() {
+          @Override
+          public void dispose() {
+            final AccessToken t = WriteAction.start();
+            try {
+              ProjectJdkTable.getInstance().removeJdk(finalSdk);
+            }
+            finally {
+              t.finish();
+            }
+          }
+        });
       }
 
       final SdkModificator modificator = sdk.getSdkModificator();
@@ -89,13 +106,25 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
       modifySdk(sdk, modificator);
       modificator.commitChanges();
 
-      final ModifiableRootModel rootModel = ModuleRootManager.getInstance(module).getModifiableModel();
-      rootModel.setSdk(sdk);
-      rootModel.commit();
+      final Sdk finalSdk = sdk;
+      JSTestUtils.modifyBuildConfiguration(module, new Consumer<ModifiableFlexIdeBuildConfiguration>() {
+        public void consume(final ModifiableFlexIdeBuildConfiguration bc) {
+          bc.setNature(new BuildConfigurationNature(air ? TargetPlatform.Desktop : TargetPlatform.Web, false, OutputType.Application));
+          bc.getDependencies().setSdkEntry(Factory.createSdkEntry(finalSdk.getName()));
+        }
+      });
+
+      //final ModifiableRootModel rootModel = ModuleRootManager.getInstance(module).getModifiableModel();
+      //rootModel.setSdk(sdk);
+      //rootModel.commit();
     }
     finally {
       token.finish();
     }
+  }
+
+  protected String generateSdkName(String sdkVersion) {
+    return "test-" + sdkVersion;
   }
 
   @Override
