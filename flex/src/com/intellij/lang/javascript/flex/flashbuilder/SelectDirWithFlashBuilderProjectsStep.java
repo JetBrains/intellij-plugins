@@ -72,7 +72,7 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
         // do not use Flash Builder specific icon for zip
         return !file.isDirectory() &&
                (FlashBuilderProjectFinder.hasFxpExtension(file.getPath()) || FlashBuilderProjectFinder.isFlashBuilderProject(file))
-               ? getBuilder().getIcon()
+               ? dressIcon(file, getBuilder().getIcon())
                : super.getOpenIcon(file);
       }
 
@@ -80,7 +80,7 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
         // do not use Flash Builder specific icon for zip
         return !file.isDirectory() &&
                (FlashBuilderProjectFinder.hasFxpExtension(file.getPath()) || FlashBuilderProjectFinder.isFlashBuilderProject(file))
-               ? getBuilder().getIcon()
+               ? dressIcon(file, getBuilder().getIcon())
                : super.getOpenIcon(file);
       }
     };
