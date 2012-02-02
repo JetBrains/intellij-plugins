@@ -128,7 +128,9 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
       : new FlexProjectConfigurationEditor(module.getProject(),
                                            FlexProjectConfigurationEditor
                                              .createModelProvider(moduleToModifiableModel, projectLibrariesModel, null)) {
-        protected Module findModule(final BuildConfigurationEntry bcEntry) {
+        @Nullable
+        protected Module findModuleWithBC(final BuildConfigurationEntry bcEntry) {
+          // don't check BC presence here because corresponding BC may appear later in next import cycle
           return modelAdapter.findModuleByName(bcEntry.getModuleName());
         }
       };

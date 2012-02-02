@@ -415,7 +415,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
       for (Editor editor : myModule2Editors.get(module)) {
         for (DependencyEntry dependencyEntry : editor.getDependencies().getEntries()) {
           if (dependencyEntry instanceof BuildConfigurationEntry) {
-            final Module dependencyModule = findModule((BuildConfigurationEntry)dependencyEntry);
+            final Module dependencyModule = findModuleWithBC((BuildConfigurationEntry)dependencyEntry);
             if (dependencyModule != null && dependencyModule != module) {
               modulesToAdd.put(dependencyModule, true);
             }
@@ -617,13 +617,26 @@ public class FlexProjectConfigurationEditor implements Disposable {
   }
 
   @Nullable
-  protected Module findModule(final BuildConfigurationEntry bcEntry) {
-    return ContainerUtil.find(myModule2Editors.keySet(), new Condition<Module>() {
+  protected Module findModuleWithBC(final BuildConfigurationEntry bcEntry) {
+    final Module dependencyModule = ContainerUtil.find(myModule2Editors.keySet(), new Condition<Module>() {
       @Override
       public boolean value(Module module) {
         return bcEntry.getModuleName().equals(module.getName());
       }
     });
+
+    if (dependencyModule == null) {
+      return null;
+    }
+
+    final Editor dependencyBC = ContainerUtil.find(myModule2Editors.get(dependencyModule), new Condition<Editor>() {
+      @Override
+      public boolean value(Editor editor) {
+        return editor.getName().equals(bcEntry.getBcName());
+      }
+    });
+
+    return dependencyBC == null ? null : dependencyModule;
   }
 
   @Nullable
