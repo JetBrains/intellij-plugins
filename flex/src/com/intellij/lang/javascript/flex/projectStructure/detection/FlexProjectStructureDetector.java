@@ -79,9 +79,7 @@ public class FlexProjectStructureDetector extends ProjectStructureDetector {
       new LibrariesDetectionStep(builder, projectDescriptor, moduleInsight, stepIcon, "reference.dialogs.new.project.fromCode.page1"));
     steps.add(
       new ModulesDetectionStep(this, builder, projectDescriptor, moduleInsight, stepIcon, "reference.dialogs.new.project.fromCode.page2"));
-    if (builder.getContext().isCreatingNewProject()) {
-      steps.add(new FlexSdkStep(builder.getContext()));
-    }
+    steps.add(new FlexSdkStep(builder.getContext()));
     return steps;
   }
 
