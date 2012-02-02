@@ -152,7 +152,6 @@ public class FlexIdeBCConfigurator {
         final ProjectStructureConfigurable c = ProjectStructureConfigurable.getInstance(myConfigEditor.getProject());
         configurable =
           new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, myConfigEditor, c.getProjectJdksModel()).wrapInTabs();
-        c.getModulesConfig().ensureInitialized(configurable);
         myConfigurablesMap.put(configuration, configurable);
       }
       configurables.add(configurable);
@@ -193,7 +192,9 @@ public class FlexIdeBCConfigurator {
   }
 
   public void apply() throws ConfigurationException {
+    final ModuleStructureConfigurable c = ProjectStructureConfigurable.getInstance(myConfigEditor.getProject()).getModulesConfig();
     for (final CompositeConfigurable configurable : myConfigurablesMap.values()) {
+      c.ensureInitialized(configurable);
       if (configurable.isModified()) {
         configurable.apply();
       }
