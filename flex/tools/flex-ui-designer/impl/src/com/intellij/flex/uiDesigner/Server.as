@@ -3,7 +3,6 @@ import com.intellij.flex.uiDesigner.css.CssDeclaration;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
 import flash.display.BitmapData;
-import flash.display.DisplayObject;
 import flash.filesystem.File;
 import flash.filesystem.FileMode;
 import flash.filesystem.FileStream;
@@ -15,6 +14,7 @@ import flash.utils.getQualifiedClassName;
 import flash.utils.getTimer;
 
 import org.flyti.plexus.PlexusManager;
+import org.jetbrains.actionSystem.DataContext;
 
 public class Server implements ResourceBundleProvider {
   // we cannot use File.applicationDirectory.nativePath directly  http://juick.com/develar/1485063
@@ -119,7 +119,7 @@ public class Server implements ResourceBundleProvider {
   private static var flashWorkaroundByteArray:ByteArray;
 
   public function getBitmapData(id:int, project:Project):BitmapData {
-    var resultReadyFile:File;
+    var resultReadyFile:File = null;
     try {
       resultReadyFile = sendSyncAssetMessage(ServerMethod.GET_BITMAP_DATA, id);
       while (!resultReadyFile.exists) {
@@ -167,7 +167,7 @@ public class Server implements ResourceBundleProvider {
   }
 
   public function getAssetInfo(id:int, project:Project, isSwf:Boolean):AssetInfo {
-    var resultReadyFile:File;
+    var resultReadyFile:File = null;
     try {
       resultReadyFile = sendSyncAssetMessage(isSwf ? ServerMethod.GET_EMBED_SWF_ASSET_INFO : ServerMethod.GET_EMBED_IMAGE_ASSET_INFO, id);
       while (!resultReadyFile.exists) {
@@ -198,7 +198,7 @@ public class Server implements ResourceBundleProvider {
   }
 
   public function getSwfData(id:int, cacheItem:SwfAssetCacheItem, project:Project):ByteArray {
-    var resultReadyFile:File;
+    var resultReadyFile:File = null;
     try {
       resultReadyFile = sendSyncAssetMessage(ServerMethod.GET_SWF_DATA, id);
       while (!resultReadyFile.exists) {
@@ -233,7 +233,8 @@ public class Server implements ResourceBundleProvider {
   public function getResourceBundle(locale:String, bundleName:String):Dictionary {
     var module:Module = moduleForGetResourceBundle;
     if (module == null) {
-      var document:Document = DocumentManager(ProjectUtil.getProjectForActiveWindow().getComponent(DocumentManager)).document;
+      var rootDataContext:DataContext = ProjectUtil.getRootDataContext();
+      var document:Document = rootDataContext == null ? null : PlatformDataKeys.DOCUMENT.getData(rootDataContext);
       if (document == null) {
         UncaughtErrorManager.instance.logWarning("Cannot find resource bundle " + bundleName + " for locale " + locale +
                                                  " due to null document");
@@ -243,7 +244,7 @@ public class Server implements ResourceBundleProvider {
       module = document.module;
     }
 
-    var resultReadyFile:File;
+    var resultReadyFile:File = null;
     var result:Dictionary;
     try {
       const resultReadyFilename:String = generateResultReadyFilename();
