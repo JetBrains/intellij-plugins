@@ -182,6 +182,9 @@ class DependenciesImpl implements ModifiableDependencies {
       }
     }
     mySdk = state.SDK != null ? new SdkEntryImpl(state.SDK) : null;
+    if (mySdk != null && mySdk.getName().isEmpty()) {
+      mySdk = null;
+    }
   }
 
   @Tag("dependencies")

@@ -26,10 +26,7 @@ class SdkEntryImpl implements SdkEntry {
   private final LinkedHashMap<String, DependencyTypeImpl> myDependencyTypes = new LinkedHashMap<String, DependencyTypeImpl>();
 
   public SdkEntryImpl(State state) {
-    myName = state.NAME;
-    if (StringUtil.isEmpty(myName)) {
-      throw new StateStorageException("SDK name is empty");
-    }
+    myName = StringUtil.notNullize(state.NAME);
     for (EntryState entryState : state.DEPENDENCY_TYPES) {
       DependencyTypeImpl dependencyType = new DependencyTypeImpl();
       dependencyType.loadState(entryState.TYPE);
