@@ -99,16 +99,7 @@ public class AccountInfo {
   }
 
   public String toString() {
-    return new StringBuffer()
-        .append(getUsername())
-        .append(' ')
-        .append(myPassword)
-        .append(' ')
-        .append(getServer())
-        .append(' ')
-        .append(getPort())
-        .toString()
-        ;
+    return getUsername() + ' ' + myPassword + ' ' + getServer() + ' ' + getPort();
   }
 
   private String encode(String password) {
