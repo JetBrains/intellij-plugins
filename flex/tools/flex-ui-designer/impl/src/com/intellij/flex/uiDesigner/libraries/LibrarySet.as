@@ -1,7 +1,12 @@
 package com.intellij.flex.uiDesigner.libraries {
+import com.intellij.flex.uiDesigner.StringRegistry;
+import com.intellij.flex.uiDesigner.VirtualFile;
+import com.intellij.flex.uiDesigner.VirtualFileImpl;
+import com.intellij.flex.uiDesigner.css.Stylesheet;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
 import flash.system.ApplicationDomain;
+import flash.utils.Dictionary;
 import flash.utils.IDataInput;
 
 import org.jetbrains.Identifiable;
@@ -59,16 +64,37 @@ public class LibrarySet implements Identifiable {
         library = libraries[libraryId];
       }
       else {
-        library = new Library();
+        library = readLibrary(input);
         if (libraryId >= libraries.length) {
           libraries.length = Math.max(libraries.length, libraryId) + 8;
         }
         libraries[libraryId] = library;
-        library.readExternal(input);
       }
 
       _items[i] = library;
     }
+  }
+
+  private static function readLibrary(input:IDataInput):Library {
+    var file:VirtualFile = VirtualFileImpl.create(input);
+
+    var inheritingStyles:Dictionary = new Dictionary();
+    var n:int = input.readUnsignedShort();
+    if (n > 0) {
+      var stringTable:Vector.<String> = StringRegistry.instance.getTable();
+      inheritingStyles = new Dictionary();
+      while (n-- > 0) {
+        inheritingStyles[stringTable[AmfUtil.readUInt29(input)]] = true;
+      }
+    }
+
+    var defaultStyle:Stylesheet;
+    if (input.readBoolean()) {
+      defaultStyle = new Stylesheet();
+      defaultStyle.read(input);
+    }
+
+    return new Library(file, inheritingStyles, defaultStyle);
   }
 }
 }

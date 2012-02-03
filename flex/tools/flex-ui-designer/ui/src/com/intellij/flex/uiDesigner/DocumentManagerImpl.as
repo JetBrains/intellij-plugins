@@ -21,7 +21,6 @@ import flash.desktop.NativeApplication;
 import flash.desktop.NotificationType;
 import flash.display.DisplayObject;
 import flash.display.NativeWindow;
-import flash.display.Stage;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.utils.Dictionary;
@@ -240,8 +239,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   }
 
   private static function createChildStyleManager(context:ModuleContextEx):StyleManagerEx {
-    var c:Class = context.getClass("com.intellij.flex.uiDesigner.css.ChildStyleManager");
-    return new c(context.styleManager);
+    return new (context.getClass("com.intellij.flex.uiDesigner.css.ChildStyleManager"))(context.styleManager);
   }
   
   private static function createStyleManagerForContext(context:ModuleContextEx):void {

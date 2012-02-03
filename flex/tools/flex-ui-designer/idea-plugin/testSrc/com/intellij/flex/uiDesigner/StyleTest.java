@@ -1,9 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
-import com.intellij.openapi.module.Module;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.psi.xml.XmlFile;
-import org.jetbrains.annotations.NonNls;
 
 import java.io.IOException;
 import java.util.List;
@@ -78,11 +76,7 @@ public class StyleTest extends MxmlTestBase {
   }
 
   @Override
-  protected Module createModule(@NonNls final String moduleName) {
-    Module module = super.createModule(moduleName);
-    if (getName().equals("testLibraryWithDefaultsCss")) {
-      FlexBuildConfiguration.getInstance(module).OUTPUT_TYPE = FlexBuildConfiguration.LIBRARY;
-    }
-    return module;
+  protected OutputType getOutputType() {
+    return getName().equals("testLibraryWithDefaultsCss") ? OutputType.Library : super.getOutputType();
   }
 }

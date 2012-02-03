@@ -109,7 +109,7 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
       final Sdk finalSdk = sdk;
       JSTestUtils.modifyBuildConfiguration(module, new Consumer<ModifiableFlexIdeBuildConfiguration>() {
         public void consume(final ModifiableFlexIdeBuildConfiguration bc) {
-          bc.setNature(new BuildConfigurationNature(air ? TargetPlatform.Desktop : TargetPlatform.Web, false, OutputType.Application));
+          bc.setNature(new BuildConfigurationNature(air ? TargetPlatform.Desktop : TargetPlatform.Web, false, getOutputType()));
           bc.getDependencies().setSdkEntry(Factory.createSdkEntry(finalSdk.getName()));
         }
       });
@@ -121,6 +121,10 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
     finally {
       token.finish();
     }
+  }
+
+  protected OutputType getOutputType() {
+    return OutputType.Application;
   }
 
   protected String generateSdkName(String sdkVersion) {

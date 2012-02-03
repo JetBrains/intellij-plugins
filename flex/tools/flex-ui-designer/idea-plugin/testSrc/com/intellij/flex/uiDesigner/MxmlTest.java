@@ -78,7 +78,6 @@ public class MxmlTest extends MxmlTestBase {
                  m("Initializer for Group cannot be represented in text (line: 2)",
                    "Initializer for Container cannot be represented in text (line: 5)",
                    "Children of Accordion must be mx.core.INavigatorContent (line: 8)")
-
       );
     }
   }

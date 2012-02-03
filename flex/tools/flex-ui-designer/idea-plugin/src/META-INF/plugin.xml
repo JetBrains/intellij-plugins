@@ -11,6 +11,15 @@
   <depends optional="false">com.intellij.flex</depends>
   <depends optional="false">com.intellij.properties</depends>
 
+  <project-components>
+    <component>
+      <implementation-class>com.intellij.flex.uiDesigner.preview.MxmlPreviewToolWindowManager</implementation-class>
+      <skipForDefaultProject/>
+      <!--suppress PluginXmlValidity -->
+      <headless-implementation-class></headless-implementation-class>
+    </component>
+  </project-components>
+
   <extensionPoints>
     <extensionPoint name="service" beanClass="com.intellij.openapi.components.ServiceDescriptor"/>
   </extensionPoints>
