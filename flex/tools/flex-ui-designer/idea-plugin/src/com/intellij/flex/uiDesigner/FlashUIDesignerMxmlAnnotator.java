@@ -5,11 +5,12 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
-import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.PlatformIcons;
+import com.intellij.xml.util.XmlTagUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -20,13 +21,17 @@ public class FlashUIDesignerMxmlAnnotator implements Annotator {
     if (!(element instanceof XmlTag)) {
       return;
     }
-
-    XmlFile psiFile = (XmlFile)element.getContainingFile();
-    if (psiFile.getRootTag() != element || !RunDesignViewAction.isSupported(element.getProject(), psiFile)) {
+    
+    final XmlTag tag = (XmlTag)element;
+    final XmlFile psiFile = (XmlFile)tag.getContainingFile();
+    if (psiFile.getRootTag() != tag || !RunDesignViewAction.isSupported(tag.getProject(), psiFile)) {
       return;
     }
 
-    holder.createInfoAnnotation(element, null).setGutterIconRenderer(new MyRenderer());
+    final TextRange textRange = XmlTagUtil.getStartTagRange(tag);
+    if (textRange != null) {
+      holder.createInfoAnnotation(textRange, null).setGutterIconRenderer(new MyRenderer());
+    }
   }
 
   private static class MyRenderer extends GutterIconRenderer {
