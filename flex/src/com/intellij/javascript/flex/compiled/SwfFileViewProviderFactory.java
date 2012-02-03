@@ -37,7 +37,7 @@ public class SwfFileViewProviderFactory implements FileViewProviderFactory {
 
     @NotNull
     @Override
-    public SingleRootFileViewProvider createCopy(VirtualFile copy) {
+    public SingleRootFileViewProvider createCopy(@NotNull VirtualFile copy) {
       return new SwfFileViewProvider(getManager(), copy, false);
     }
   }
