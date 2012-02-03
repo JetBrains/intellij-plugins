@@ -12,6 +12,8 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 
+import java.util.List;
+
 @Flex(version="4.5")
 public class LibrarySorterTest extends MxmlTestBase {
   @Override
@@ -61,18 +63,18 @@ public class LibrarySorterTest extends MxmlTestBase {
   }
 
   @Override
-  protected void modifyModule(ModifiableRootModel model, VirtualFile rootDir) {
-    super.modifyModule(model, rootDir);
+  protected void modifyModule(ModifiableRootModel model, VirtualFile rootDir, List<String> libs) {
+    super.modifyModule(model, rootDir, libs);
 
     if (getName().equals("testOverlappingContent")) {
       final String path = "/Users/develar/Downloads/project/";
-      addLibrary(model, path + "flexunit-4.1.0-8-flex_4.1.0.16076.swc");
-      addLibrary(model, path + "FlexUnit1Lib.swc");
+      libs.add(path + "flexunit-4.1.0-8-flex_4.1.0.16076.swc");
+      libs.add(path + "FlexUnit1Lib.swc");
     }
     else if (getName().equals("testMoveFlexSdkLibToSdkLibsIfNot")) {
-      addLibrary(model, flexSdkRootPath + "/framework.swc");
-      addLibrary(model, "MinimalComps_0_9_10.swc");
-      addLibrary(model, getFudHome() + "/test-data-helper/target/test-data-helper.swc");
+      libs.add(flexSdkRootPath + "/framework.swc");
+      libs.add("MinimalComps_0_9_10.swc");
+      libs.add(getFudHome() + "/test-data-helper/target/test-data-helper.swc");
     }
   }
 

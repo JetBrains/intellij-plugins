@@ -488,7 +488,8 @@ public class MxmlWriter {
     }
 
     return processElements(tag, parentContext, allowIncludeInExludeFrom, childDataPosition, out.allocateClearShort(),
-      JSInheritanceUtil.isParentClass((JSClass)JSResolveUtil.unwrapProxy(descriptor.getDeclaration()), "flash.display.DisplayObjectContainer"));
+      JSResolveUtil.isAssignableType(FlexCommonTypeNames.IVISUAL_ELEMENT, descriptor.getQualifiedName(), descriptor.getDeclaration()) ||
+        JSResolveUtil.isAssignableType(FlexCommonTypeNames.FLASH_DISPLAY_OBJECT, descriptor.getQualifiedName(), descriptor.getDeclaration()));
   }
 
   boolean processMxmlVector(XmlTag tag, @Nullable Context parentContext, boolean allowIncludeInExludeFrom) {

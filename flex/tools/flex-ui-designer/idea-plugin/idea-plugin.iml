@@ -25,6 +25,7 @@
         <JAVADOC />
         <SOURCES>
           <root url="jar://$MODULE_DIR$/../../../../community/lib/src/junit3_8_1.jar!/" />
+          <root url="file://$MODULE_DIR$/../../../../plugins/JavaScriptLanguage/testSrc" />
         </SOURCES>
       </library>
     </orderEntry>

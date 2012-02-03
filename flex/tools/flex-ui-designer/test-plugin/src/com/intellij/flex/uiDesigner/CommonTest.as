@@ -19,7 +19,7 @@ public class CommonTest extends BaseTestCase {
   }
 
   public function SparkApplication():void {
-    var m:Object = {colorCorrection: ColorCorrection.DEFAULT};
+    var m:Object = {colorCorrection: null};
     assertThat(app, m);
     app.colorCorrection = ColorCorrection.ON;
     assertThat(app, m);

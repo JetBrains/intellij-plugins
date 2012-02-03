@@ -71,8 +71,7 @@ public abstract class FlashUIDesignerBaseTestCase extends ModuleTestCase {
       assert sourceDir != null;
       //System.out.print("\ntemp dir l: " + toDir.getChildren().length);
 
-      final ModuleRootManager rootManager = ModuleRootManager.getInstance(myModule);
-      final ModifiableRootModel rootModel = rootManager.getModifiableModel();
+      final ModifiableRootModel rootModel = ModuleRootManager.getInstance(myModule).getModifiableModel();
 
       toFiles = copyFiles(files, sourceDir, rawProjectRoot);
       if (auxiliaryFiles != null) {
@@ -80,8 +79,18 @@ public abstract class FlashUIDesignerBaseTestCase extends ModuleTestCase {
       }
 
       rootModel.addContentEntry(sourceDir).addSourceFolder(sourceDir, false);
-      modifyModule(rootModel, sourceDir);
+      final List<String> libs = new ArrayList<String>();
+      modifyModule(rootModel, sourceDir, libs);
       rootModel.commit();
+
+      for (String path : libs) {
+        if (path.charAt(0) != '/') {
+          path = getTestDataPath() + "/lib/" + path;
+        }
+
+        VirtualFile virtualFile = getVFile(path);
+        JSTestUtils.addLibrary(myModule, path, virtualFile.getParent().getPath(), virtualFile.getName(), null, null);
+      }
     }
     finally {
       token.finish();
@@ -107,7 +116,7 @@ public abstract class FlashUIDesignerBaseTestCase extends ModuleTestCase {
     }
   }
 
-  protected void modifyModule(ModifiableRootModel model, VirtualFile rootDir) {
+  protected void modifyModule(ModifiableRootModel model, VirtualFile rootDir, List<String> libs) {
   }
 
   private static VirtualFile[] copyFiles(final VirtualFile[] fromFiles, final VirtualFile toDir, VirtualFile rawProjectRoot) throws IOException {

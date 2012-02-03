@@ -10,6 +10,7 @@ import com.intellij.util.StringBuilderSpinAllocator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 import static com.intellij.flex.uiDesigner.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyArray;
@@ -17,9 +18,9 @@ import static org.hamcrest.Matchers.emptyArray;
 @Flex(version="4.5")
 public class MxmlTest extends MxmlTestBase {
   @Override
-  protected void modifyModule(ModifiableRootModel model, VirtualFile rootDir) {
+  protected void modifyModule(ModifiableRootModel model, VirtualFile rootDir, List<String> libs) {
     if (getName().equals("test45")) {
-      addLibrary(model, getFudHome() + "/test-data-helper/target/test-data-helper.swc");
+      libs.add(getFudHome() + "/test-data-helper/target/test-data-helper.swc");
       final VirtualFile assetsDir = getVFile("assets");
       model.addContentEntry(assetsDir).addSourceFolder(assetsDir, false);
 
@@ -30,7 +31,7 @@ public class MxmlTest extends MxmlTestBase {
       //localesContentEntry.addSourceFolder(localesDir.findChild("ru_RU"), false);
     }
     else if (getName().equals("testMobile")) {
-      addLibrary(model, "mobilecomponents-4.5.1.swc");
+      libs.add("mobilecomponents-4.5.1.swc");
     }
   }
 
@@ -147,6 +148,7 @@ public class MxmlTest extends MxmlTestBase {
       else if (name.endsWith(JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT) &&
                !name.startsWith("T.") &&
                !name.startsWith("TestApp.") &&
+               !name.startsWith("MigLayoutExample.") &&
                //!name.startsWith("ProjectMxmlComponentAsParentWithDefaultProperty.") &&
                !name.startsWith("GenericMxmlSupport.")) {
         files.add(file);

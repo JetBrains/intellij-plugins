@@ -10,7 +10,10 @@ public interface FlexCommonTypeNames {
   String IUI_COMPONENT = "mx.core.IUIComponent";
 
   String FLASH_DISPLAY_OBJECT_CONTAINER = "flash.display.DisplayObjectContainer";
+  String FLASH_DISPLAY_OBJECT = "flash.display.DisplayObject";
 
   String MX_APPLICATION = "mx.core.Application";
   String SPARK_APPLICATION = "spark.components.Application";
+
+  String IVISUAL_ELEMENT = "mx.core.IVisualElement";
 }
