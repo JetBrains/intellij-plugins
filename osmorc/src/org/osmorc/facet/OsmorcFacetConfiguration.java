@@ -24,11 +24,15 @@
  */
 package org.osmorc.facet;
 
+import aQute.lib.osgi.Analyzer;
+import aQute.libg.header.OSGiHeader;
 import com.intellij.facet.FacetConfiguration;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.facet.ui.FacetValidatorsManager;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.PathMacroManager;
 import com.intellij.openapi.diagnostic.Log;
 import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.roots.CompilerModuleExtension;
@@ -51,6 +55,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
 import java.util.regex.Pattern;
+
+import static aQute.lib.osgi.Constants.*;
 
 /**
  * The facet configuration of an osmorc facet.
@@ -106,6 +112,8 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   }
 
   public void readExternal(Element element) throws InvalidDataException {
+    PathMacroManager.getInstance(ApplicationManager.getApplication()).expandPaths(element);
+    
     if (element.getAttributeValue(MANIFEST_GENERATION_MODE) == null) {
         // the new attribute is not there, so we got an old file, to be converted.
       // legacy files containing boolean values
@@ -204,12 +212,42 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
 
     Element props = new Element(ADDITIONAL_PROPERTIES);
 
+    PathMacroManager macroManager = PathMacroManager.getInstance(myFacet.getModule());
+
 
     Map<String, String> additionalPropertiesAsMap = getAdditionalPropertiesAsMap();
     for (String key : additionalPropertiesAsMap.keySet()) {
       Element prop = new Element(PROPERTY);
       prop.setAttribute(KEY, key);
-      prop.setAttribute(VALUE, additionalPropertiesAsMap.get(key));
+
+      String value = additionalPropertiesAsMap.get(key);
+      if ( key.equals(INCLUDE_RESOURCE)) {
+        // there are paths in there, collapse these so the IML files don't get mixed up on every machine. The built in macro manager
+        // does not recognize these, so we have to do this manually here.
+        Map<String, Map<String, String>> map = OSGiHeader.parseHeader(value);
+
+        for (String name : map.keySet()) {
+          if (name.startsWith("{") && name.endsWith("}")) {
+            name = name.substring(1, name.length() - 1).trim();
+          }
+
+          String[] parts = name.split("\\s*=\\s*");
+          String source = parts[0];
+          if (parts.length == 2) {
+            source = parts[1];
+          }
+
+          if (source.startsWith("@")) {
+            source = source.substring(1);
+          }
+
+          // so we now got the source path and can replace it
+
+          String collapsedSource = macroManager.collapsePath(source);
+          value = value.replace(source, collapsedSource);
+        }
+      }
+      prop.setAttribute(VALUE, value);
       props.addContent(prop);
     }
     element.addContent(props);
@@ -223,6 +261,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
       additionalJARContentsElement.addContent(entry);
     }
     element.addContent(additionalJARContentsElement);
+
   }
 
   /**

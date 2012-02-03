@@ -235,7 +235,7 @@ public final class DependencyEmbedder extends AbstractDependencyFilter {
         // if there are no embeddded dependencies, we do a special treatment and replace
         // every occurance of MAVEN_DEPENDENCIES and a following comma with an empty string
         if (mavenDependencies.length() == 0) {
-          String cleanInstruction = removeTagFromInstruction(instruction, MAVEN_DEPENDENCIES);
+          String cleanInstruction = ImporterUtil.removeTagFromInstruction(instruction, MAVEN_DEPENDENCIES);
           analyzer.setProperty(directiveName, cleanInstruction);
         }
         else {
@@ -261,23 +261,5 @@ public final class DependencyEmbedder extends AbstractDependencyFilter {
       analyzer.setProperty(directiveName, mavenDependencies);
     }
     // otherwise leave instruction unchanged
-  }
-
-
-  static String removeTagFromInstruction(String instruction, String tag) {
-    StringBuilder buf = new StringBuilder();
-
-    String[] clauses = instruction.split(",");
-    for (String clause1 : clauses) {
-      String clause = clause1.trim();
-      if (!tag.equals(clause)) {
-        if (buf.length() > 0) {
-          buf.append(',');
-        }
-        buf.append(clause);
-      }
-    }
-
-    return buf.toString();
   }
 }

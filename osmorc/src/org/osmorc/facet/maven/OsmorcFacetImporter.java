@@ -25,8 +25,6 @@
 
 package org.osmorc.facet.maven;
 
-import aQute.lib.osgi.Analyzer;
-import com.intellij.notification.NotificationType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
@@ -36,21 +34,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.importing.FacetImporter;
 import org.jetbrains.idea.maven.importing.MavenModifiableModelsProvider;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
-import org.jetbrains.idea.maven.model.MavenArtifact;
-import org.jetbrains.idea.maven.model.MavenArtifactNode;
 import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.model.MavenPlugin;
 import org.jetbrains.idea.maven.project.*;
 import org.osgi.framework.Constants;
-import org.osmorc.OsmorcProjectComponent;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.facet.OsmorcFacetType;
 
 import java.io.File;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The OsmorcFacetImporter tries to read maven metadata and import OSGi specific settings as an Osmorc facet.
@@ -93,7 +89,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
     // Symbolic name == groupId + "." + artifactId
     MavenId id = mavenProject.getMavenId();
     conf.setBundleSymbolicName(id.getGroupId() + "." + id.getArtifactId());
-    conf.setBundleVersion(cleanupVersion(id.getVersion()));
+    conf.setBundleVersion(ImporterUtil.cleanupVersion(id.getVersion()));
 
     if (p != null) {
       logger.debug("Plugin found.");
@@ -107,7 +103,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
       if ("".equals(conf.getBundleVersion().trim())) {  // IDEA-74272
         // if there is no bundle-version int the instructions, derive it from the maven settings.
         String version = mavenProject.getMavenId().getVersion();  //that is ${pom.version}
-        conf.setBundleVersion(cleanupVersion(version));
+        conf.setBundleVersion(ImporterUtil.cleanupVersion(version));
       }
 
       Map<String, String> props = new LinkedHashMap<String, String>(); // linkedhashmap, because we want to preserve the order of elements.
@@ -172,7 +168,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
       }
 
       // now postprocess the settings, to make Embed-Dependency work
-      postprocessAdditionalProperties(props, mavenProject);
+      ImporterUtil.postprocessAdditionalProperties(props, mavenProject);
 
       // Fix for IDEA-63242 - don't merge it with the existing settings, overwrite them
       conf.importAdditionalProperties(props, true);
@@ -192,64 +188,6 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
         default:
           conf.setJarFileLocation(jarFileName, OsmorcFacetConfiguration.OutputPathType.CompilerOutputPath);
       }
-    }
-  }
-
-  /**
-   * Postprocessing step which handles Embed-Dependency. This code is borrowed in large parts from the maven dependency plugin.
-   *
-   * @param props   the properties
-   * @param project the maven project.
-   */
-  private void postprocessAdditionalProperties(final Map<String, String> props, MavenProject project) {
-    Analyzer myFakeAnalyzer = new Analyzer() {
-      @Override
-      public String getProperty(String key) {
-        return props.get(key);
-      }
-
-      @Override
-      public String getProperty(String key, String deflt) {
-        if (props.containsKey(key)) {
-          return key;
-        }
-        else {
-          return deflt;
-        }
-      }
-
-      @Override
-      public void setProperty(String key, String value) {
-        props.put(key, value);
-      }
-    };
-    
-    Collection<MavenArtifact> dependencies;
-    if ( Boolean.parseBoolean(props.get(DependencyEmbedder.EMBED_TRANSITIVE))) {
-      Set<MavenArtifact> processed = new HashSet<MavenArtifact>();
-      
-      // flatten the tree while taking care of endless recursions
-      LinkedList<MavenArtifactNode> nodes = new LinkedList<MavenArtifactNode>(project.getDependencyTree());
-      while (!nodes.isEmpty()) {
-        MavenArtifactNode node = nodes.pop();
-        MavenArtifact artifact = node.getArtifact();
-        if ( !processed.contains(artifact)) {
-          processed.add(artifact);
-          nodes.addAll(node.getDependencies());
-        }
-      }
-      dependencies = processed;
-    }
-    else {
-      dependencies = project.getDependencies();
-    }
-
-    DependencyEmbedder embedder = new DependencyEmbedder(dependencies);
-    try {
-      embedder.processHeaders(myFakeAnalyzer);
-    }
-    catch (DependencyEmbedderException e) {
-      OsmorcProjectComponent.IMPORTANT_ERROR_NOTIFICATION.createNotification("Error when processing Embed-Dependency directive in " + project.getPath() + ": "  + e.getMessage(), NotificationType.ERROR).notify(null);
     }
   }
 
@@ -332,82 +270,5 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
   @Override
   public void getSupportedDependencyTypes(Collection<String> result, SupportedRequestType type) {
     result.add("bundle");
-  }
-
-
-  /*
-   * Copied from DefaultMaven2OsgiConverter of Maven Bundle Plugin under Apache2 license.
-   * @author <a href="mailto:carlos@apache.org">Carlos Sanchez</a>
-   */
-
-  private static final Pattern FUZZY_VERSION = Pattern.compile("(\\d+)(\\.(\\d+)(\\.(\\d+))?)?([^a-zA-Z0-9](.*))?",
-                                                               Pattern.DOTALL);
-
-  /**
-   * Clean up version parameters. Other builders use more fuzzy definitions of
-   * the version syntax. This method cleans up such a version to match an OSGi
-   * version.
-   *
-   * @param VERSION_STRING
-   * @return
-   */
-  private static String cleanupVersion(String version) {
-    StringBuffer result = new StringBuffer();
-    Matcher m = FUZZY_VERSION.matcher(version);
-    if (m.matches()) {
-      String major = m.group(1);
-      String minor = m.group(3);
-      String micro = m.group(5);
-      String qualifier = m.group(7);
-
-      if (major != null) {
-        result.append(major);
-        if (minor != null) {
-          result.append(".");
-          result.append(minor);
-          if (micro != null) {
-            result.append(".");
-            result.append(micro);
-            if (qualifier != null) {
-              result.append(".");
-              cleanupModifier(result, qualifier);
-            }
-          }
-          else if (qualifier != null) {
-            result.append(".0.");
-            cleanupModifier(result, qualifier);
-          }
-          else {
-            result.append(".0");
-          }
-        }
-        else if (qualifier != null) {
-          result.append(".0.0.");
-          cleanupModifier(result, qualifier);
-        }
-        else {
-          result.append(".0.0");
-        }
-      }
-    }
-    else {
-      result.append("0.0.0.");
-      cleanupModifier(result, version);
-    }
-    return result.toString();
-  }
-
-
-  private static void cleanupModifier(StringBuffer result, String modifier) {
-    for (int i = 0; i < modifier.length(); i++) {
-      char c = modifier.charAt(i);
-      if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'
-          || c == '-') {
-        result.append(c);
-      }
-      else {
-        result.append('_');
-      }
-    }
   }
 }
