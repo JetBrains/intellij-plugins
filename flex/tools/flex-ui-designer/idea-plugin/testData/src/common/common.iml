@@ -1,28 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="Flex" version="4">
-  <component name="Flex.Build.Configuration">
-    <option name="TARGET_PLAYER_VERSION" value="11.1" />
-    <option name="VERSION" value="3" />
-  </component>
-  <component name="FlexBuildConfigurationManager" active="4.6">
+  <component name="FlexBuildConfigurationManager" active="common">
     <configurations>
-      <configuration name="player" output-file="player.swf" output-folder="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/idea-plugin/testData/out/production/common">
-        <dependencies target-player="11.1">
-          <sdk library-id="682c3b0f-f18c-46d5-a693-a6a50d62aecb" home-path="/Developer/SDKs/flex_4.6.0_WITHOUT_F***_TLF" />
-        </dependencies>
-        <compiler-options />
-        <packaging-air-desktop />
-        <packaging-android />
-        <packaging-ios />
-      </configuration>
-      <configuration name="4.6" output-file="player.swf" output-folder="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/idea-plugin/testData/out/production/common">
-        <dependencies target-player="11.1" component-set="SparkOnly" framework-linkage="Merged">
-          <entries>
-            <entry library-name="migLayout" library-level="project">
-              <dependency linkage="Merged" />
-            </entry>
-          </entries>
-          <sdk library-id="d2599e28-ed0d-44f9-ab1d-face90441942" home-path="/Developer/SDKs/flex_4.6.0" />
+      <configuration name="common" output-file="common.swf" output-folder="$MODULE_DIR$/../../../out/production/common" skip-build="true">
+        <dependencies target-player="11.1" component-set="SparkOnly">
+          <sdk name="flex_4.6.0" />
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
@@ -35,45 +17,10 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/states" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
+    <orderEntry type="jdk" jdkName="flex_4.6.0" jdkType="__CompositeFlexSdk__" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
-      <library type="flex">
-        <properties id="08534e73-113c-4c1c-baff-f8d1b243a5ae" />
-        <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/MinimalComps_0_9_10.swc!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library type="flex">
-        <properties id="805afa30-1ad0-46c8-9387-cb0760d1c8b3" />
-        <CLASSES>
-          <root url="jar://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/test-data-helper/target/test-data-helper.swc!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/test-data-helper/src" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library type="flex">
-        <properties id="864c3765-0d40-41d8-97eb-b1f2aa2c4d56" />
-        <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/MinimalComps_0_9_10.swc!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="library" name="Flex SDK 4.6.0.23201" level="application" />
-    <orderEntry type="library" name="Flex SDK 4.6.0.22920" level="application" />
-    <orderEntry type="library" name="migLayout" level="project" />
   </component>
 </module>
 

@@ -1,12 +1,11 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.facet.FacetManager;
 import com.intellij.flex.uiDesigner.libraries.InitException;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
-import com.intellij.lang.javascript.flex.FlexFacet;
-import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
@@ -22,7 +21,6 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.help.HelpManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -33,7 +31,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
-import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -137,7 +134,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
     final boolean appClosed = isApplicationClosed();
     if (appClosed || !Client.getInstance().isModuleRegistered(module)) {
-      Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
+      final Sdk sdk = FlexUtils.createFlexSdkWrapper(FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration());
       if (sdk == null || !checkFlexSdkVersion(sdk.getVersionString())) {
         reportInvalidFlexSdk(module, debug, sdk);
         return;
@@ -186,15 +183,13 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
   }
 
   private static void reportInvalidFlexSdk(final Module module, boolean debug, @Nullable Sdk sdk) {
-    FlexFacet flexFacet =
-      ModuleType.get(module) == FlexModuleType.getInstance() ? null : FacetManager.getInstance(module).getFacetByType(FlexFacet.ID);
-    String moduleOrFacetName = FlexUtils.getPresentableName(module, flexFacet);
+    String moduleName = FlexBundle.message("module.name", module.getName());
     String message;
     if (sdk == null) {
-      message = FlashUIDesignerBundle.message("module.sdk.is.not.specified", moduleOrFacetName);
+      message = FlashUIDesignerBundle.message("module.sdk.is.not.specified", moduleName);
     }
     else {
-      message = FlashUIDesignerBundle.message("module.sdk.is.not.compatible", sdk.getVersionString(), moduleOrFacetName);
+      message = FlashUIDesignerBundle.message("module.sdk.is.not.compatible", sdk.getVersionString(), moduleName);
     }
 
     notifyUser(debug, message, module.getProject(), new Consumer<String>() {

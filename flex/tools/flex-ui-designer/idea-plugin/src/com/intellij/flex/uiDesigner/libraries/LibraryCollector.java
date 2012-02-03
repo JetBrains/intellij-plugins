@@ -164,7 +164,6 @@ class LibraryCollector {
     }
   }
 
-  @TestOnly
   private void globalCatalogForTests(FlexIdeBuildConfiguration bc) {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       assert globalLibrary == null;

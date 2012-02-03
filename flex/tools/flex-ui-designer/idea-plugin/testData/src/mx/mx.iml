@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="Flex" version="4">
-  <component name="Flex.Build.Configuration">
-    <option name="TARGET_PLAYER_VERSION" value="11.1" />
-    <option name="VERSION" value="3" />
-  </component>
   <component name="FlexBuildConfigurationManager" active="mx">
     <configurations>
-      <configuration name="mx" output-file="mx.swf" output-folder="$APPLICATION_HOME_DIR$/flex/tools/flex-ui-designer/idea-plugin/testData/out/production/mx">
-        <dependencies target-player="11.1" component-set="SparkOnly">
-          <sdk library-id="682c3b0f-f18c-46d5-a693-a6a50d62aecb" home-path="/Developer/SDKs/flex_4.6.0_WITHOUT_F***_TLF" />
+      <configuration name="mx" output-file="mx.swf" output-folder="$MODULE_DIR$/../../../out/production/mx">
+        <dependencies target-player="11.1">
+          <sdk name="flex_4.6.0" />
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
@@ -21,8 +17,9 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
+    <orderEntry type="jdk" jdkName="flex_4.6.0" jdkType="__CompositeFlexSdk__" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
