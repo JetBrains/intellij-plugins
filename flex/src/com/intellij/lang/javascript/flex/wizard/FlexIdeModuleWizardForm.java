@@ -61,6 +61,7 @@ public class FlexIdeModuleWizardForm {
     mySdkCombo.addComboboxListener(new FlexSdkComboBoxWithBrowseButton.Listener() {
       public void stateChanged() {
         BCUtils.updateAvailableTargetPlayers(mySdkCombo.getSelectedSdk(), myTargetPlayerCombo);
+        updateControls();
       }
     });
 
@@ -113,25 +114,27 @@ public class FlexIdeModuleWizardForm {
   }
 
   private void updateControls() {
+    final Sdk sdk = mySdkCombo.getSelectedSdk();
+    final boolean sdkSet = sdk != null;
     final boolean web = myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Web;
     final boolean app = myOutputTypeCombo.getSelectedItem() == OutputType.Application;
 
-    final boolean createMainClassWasEnabled = mySampleAppCheckBox.isEnabled();
+    final boolean createSampleAppWasEnabled = mySampleAppCheckBox.isEnabled();
     final boolean createHtmlWrapperWasEnabled = myHtmlWrapperCheckBox.isEnabled();
 
-    myTargetPlayerLabel.setEnabled(web);
-    myTargetPlayerCombo.setEnabled(web);
-    mySampleAppCheckBox.setEnabled(app);
-    mySampleAppTextField.setEnabled(app);
-    myHtmlWrapperCheckBox.setEnabled(web && app);
+    myTargetPlayerLabel.setEnabled(web && sdkSet);
+    myTargetPlayerCombo.setEnabled(web && sdkSet);
+    mySampleAppCheckBox.setEnabled(app && sdkSet);
+    mySampleAppTextField.setEnabled(app && sdkSet);
+    myHtmlWrapperCheckBox.setEnabled(web && app && sdkSet);
 
-    if (createMainClassWasEnabled != mySampleAppCheckBox.isEnabled()) {
+    if (!mySampleAppCheckBox.isEnabled() || !createSampleAppWasEnabled) {
       mySampleAppCheckBox.setSelected(mySampleAppCheckBox.isEnabled());
     }
 
     mySampleAppTextField.setEnabled(mySampleAppCheckBox.isEnabled() && mySampleAppCheckBox.isSelected());
 
-    if (createHtmlWrapperWasEnabled != myHtmlWrapperCheckBox.isEnabled()) {
+    if (!myHtmlWrapperCheckBox.isEnabled() || !createHtmlWrapperWasEnabled) {
       myHtmlWrapperCheckBox.setSelected(myHtmlWrapperCheckBox.isEnabled());
     }
 
