@@ -21,10 +21,4 @@ public final class AssetCounter {
       viewCount += otherCounter.viewCount;
     }
   }
-
-  public void clear() {
-    swfCount = 0;
-    imageCount = 0;
-    viewCount = 0;
-  }
 }

@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.AssetCounter;
+import com.intellij.flex.uiDesigner.ProblemsHolder;
 import com.intellij.flex.uiDesigner.css.CssWriter;
 import com.intellij.flex.uiDesigner.io.ByteArrayOutputStreamEx;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
@@ -23,13 +24,13 @@ class LibraryStyleInfoCollector {
   private final Module module;
 
   private final PrimitiveAmfOutputStream bytes = new PrimitiveAmfOutputStream(new ByteArrayOutputStreamEx(128));
-  private final CssWriter cssWriter;
+  private final ProblemsHolder problemsHolder;
   private final StringWriter stringWriter;
 
-  public LibraryStyleInfoCollector(AssetCounter assetCounter, CssWriter cssWriter, Module module, StringWriter stringWriter) {
+  public LibraryStyleInfoCollector(AssetCounter assetCounter, ProblemsHolder problemsHolder, Module module, StringWriter stringWriter) {
     this.assetCounter = assetCounter;
     this.module = module;
-    this.cssWriter = cssWriter;
+    this.problemsHolder = problemsHolder;
     this.stringWriter = stringWriter;
   }
 
@@ -90,11 +91,13 @@ class LibraryStyleInfoCollector {
       bytes.reset();
     }
 
-    VirtualFile defaultsCssVirtualFile = library.getDefaultsCssFile();
+    final VirtualFile defaultsCssVirtualFile = library.getDefaultsCssFile();
     if (defaultsCssVirtualFile != null) {
-      library.defaultsStyle = cssWriter.write(defaultsCssVirtualFile, module);
-      library.assetCounter = new AssetCounter(assetCounter);
-      assetCounter.clear();
+      final AssetCounter libAssetCounter = new AssetCounter();
+      library.defaultsStyle = new CssWriter(stringWriter, problemsHolder, libAssetCounter).write(defaultsCssVirtualFile, module);
+      library.assetCounter = libAssetCounter;
+
+      assetCounter.append(libAssetCounter);
     }
   }
 }
