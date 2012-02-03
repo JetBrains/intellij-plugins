@@ -359,7 +359,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
       for (Editor editor : myModule2Editors.get(module)) {
         final SdkEntry sdkEntry = editor.getDependencies().getSdkEntry();
         if (sdkEntry != null) {
-          sdks.add(ContainerUtil.find(allSdks, new Condition<Sdk>() {
+          ContainerUtil.addIfNotNull(sdks, ContainerUtil.find(allSdks, new Condition<Sdk>() {
             @Override
             public boolean value(final Sdk sdk) {
               return sdkEntry.getName().equals(sdk.getName());
