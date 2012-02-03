@@ -1,15 +1,21 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.RootProvider;
 import com.intellij.openapi.roots.impl.ModuleJdkOrderEntryImpl;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.Function;
 import com.intellij.util.Processor;
+import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,16 +33,58 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk {
     public Sdk findSdk(final String name, final String sdkType) {
       if (TYPE.getName().equals(sdkType)) {
         final List<String> sdksNames = StringUtil.split(name, NAME_DELIM);
-        return new FlexCompositeSdk(sdksNames);
+        return new FlexCompositeSdk(ArrayUtil.toStringArray(sdksNames));
       }
       return null;
     }
   }
 
-  private final Collection<String> myNames;
+  private final String[] myNames;
 
-  public FlexCompositeSdk(Collection<String> names) {
+  @Nullable
+  private volatile Sdk[] mySdks;
+
+  public FlexCompositeSdk(String[] names) {
     myNames = names;
+    init();
+  }
+
+  public FlexCompositeSdk(Sdk[] sdks) {
+    myNames = ContainerUtil.map2Array(sdks, String.class, new Function<Sdk, String>() {
+      @Override
+      public String fun(final Sdk sdk) {
+        return sdk.getName();
+      }
+    });
+    mySdks = sdks;
+    init();
+  }
+
+  private void init() {
+    Application application = ApplicationManager.getApplication();
+
+    final Disposable d = Disposer.newDisposable();
+    Disposer.register(application, d);
+
+    application.getMessageBus().connect(d).subscribe(ProjectJdkTable.JDK_TABLE_TOPIC, new ProjectJdkTable.Listener() {
+      @Override
+      public void jdkAdded(final Sdk jdk) {
+        resetSdks();
+      }
+
+      @Override
+      public void jdkRemoved(final Sdk jdk) {
+        if (jdk == FlexCompositeSdk.this) {
+          Disposer.dispose(d);
+        }
+        resetSdks();
+      }
+
+      @Override
+      public void jdkNameChanged(final Sdk jdk, final String previousName) {
+        resetSdks();
+      }
+    });
   }
 
   @NotNull
@@ -118,16 +166,25 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk {
   }
 
   private void forAllSdks(Processor<Sdk> processor) {
-    final Sdk[] allSdks = ProjectJdkTable.getInstance().getAllJdks();
-    for (Sdk sdk : allSdks) {
-      if (!myNames.contains(sdk.getName())) {
-        continue;
-      }
+    if (mySdks == null) {
+      List<Sdk> sdks = ContainerUtil.findAll(ProjectJdkTable.getInstance().getAllJdks(), new Condition<Sdk>() {
+        @Override
+        public boolean value(final Sdk sdk) {
+          return ArrayUtil.contains(sdk.getName(), myNames);
+        }
+      });
+      mySdks = sdks.toArray(new Sdk[sdks.size()]);
+    }
 
+    for (Sdk sdk : mySdks) {
       if (!processor.process(sdk)) {
         return;
       }
     }
+  }
+
+  private void resetSdks() {
+    mySdks = null;
   }
 
   @NotNull
@@ -141,7 +198,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk {
 
   @NotNull
   public Object clone() {
-    return super.clone();
+    throw new UnsupportedOperationException();
   }
 
   private static final SdkType TYPE = new SdkType("__CompositeFlexSdk__") {
