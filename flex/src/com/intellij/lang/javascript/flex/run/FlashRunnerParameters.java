@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.ide.BrowserUtil;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
@@ -15,7 +16,6 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.*;
 
@@ -265,7 +265,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     if (bc.getTargetPlatform() == TargetPlatform.Web) {
       if (myLaunchUrl) {
         try {
-          new URL(myUrl);
+          if (BrowserUtil.getURL(myUrl) == null) throw new RuntimeConfigurationError(FlexBundle.message("flex.run.config.incorrect.url"));
         }
         catch (MalformedURLException e) {
           throw new RuntimeConfigurationError(FlexBundle.message("flex.run.config.incorrect.url"));
