@@ -6,7 +6,6 @@ import com.intellij.execution.configurations.JavaCommandLineStateUtil;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
-import com.intellij.facet.FacetManager;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
@@ -18,7 +17,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProject
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.*;
@@ -352,7 +350,7 @@ public class FlexSdkUtils {
   private static boolean hasDependencyOn(final @NotNull Module module,
                                          final @NotNull SdkType sdkType,
                                          final @NotNull String mavenLibraryNameStart) {
-    final Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
+    final Sdk sdk = FlexUtils.getSdkForActiveBC(module);
     if (sdk != null) {
       if (sdk.getSdkType() instanceof FlexmojosSdkType) {
         final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
@@ -728,19 +726,11 @@ public class FlexSdkUtils {
     }
   }
 
-  public static void openModuleOrFacetConfigurable(final Module module) {
+  public static void openModuleConfigurable(final Module module) {
     final ProjectStructureConfigurable projectStructureConfigurable = ProjectStructureConfigurable.getInstance(module.getProject());
     ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, new Runnable() {
       public void run() {
-        if (ModuleType.get(module) instanceof FlexModuleType) {
-          projectStructureConfigurable.select(module.getName(), ClasspathEditor.NAME, true);
-        }
-        else {
-          final FlexFacet facet = FacetManager.getInstance(module).getFacetByType(FlexFacet.ID);
-          if (facet != null) {
-            projectStructureConfigurable.select(facet, true);
-          }
-        }
+        projectStructureConfigurable.select(module.getName(), ClasspathEditor.NAME, true);
       }
     });
   }

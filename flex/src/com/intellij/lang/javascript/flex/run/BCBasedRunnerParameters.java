@@ -5,11 +5,11 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,8 +50,8 @@ public class BCBasedRunnerParameters implements Cloneable {
       throw new RuntimeConfigurationError(FlexBundle.message("module.does.not.contain.bc", myModuleName, myBCName));
     }
 
-    final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
-    if (sdkEntry == null) {
+    final Sdk sdk = bc.getSdk();
+    if (sdk == null) {
       throw new RuntimeConfigurationError(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), module.getName()));
     }
 

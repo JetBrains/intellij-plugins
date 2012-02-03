@@ -1,8 +1,9 @@
 package com.intellij.javascript.flex.css;
 
-import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurableProvider;
 import com.intellij.openapi.project.Project;
@@ -26,7 +27,7 @@ public class CssDialectsConfigurableProvider extends ConfigurableProvider {
     final Module[] modules = ModuleManager.getInstance(myProject).getModules();
 
     for (Module module : modules) {
-      if (FlexUtils.isFlexModuleOrContainsFlexFacet(module)) {
+      if (ModuleType.get(module) == FlexModuleType.getInstance()) {
         return true;
       }
     }

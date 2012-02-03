@@ -174,7 +174,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     final FlexRunnerParameters flexRunnerParameters = (((FlexRunConfiguration)runProfile)).getRunnerParameters();
 
     final Module module = ModuleManager.getInstance(project).findModuleByName(flexRunnerParameters.getModuleName());
-    final Sdk flexSdk = module == null ? null : FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
+    final Sdk flexSdk = module == null ? null : FlexUtils.getSdkForActiveBC(module);
     if (flexSdk == null) {
       throw new CantRunException(FlexBundle.message("cannot.find.flex.sdk"));
     }
@@ -906,14 +906,14 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   public static GeneralCommandLine createAdlCommandLine(final BCBasedRunnerParameters params,
                                                         final FlexIdeBuildConfiguration bc) throws CantRunException {
-    final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
-    if (sdkEntry == null) {
+    final Sdk sdk = bc.getSdk();
+    if (sdk == null) {
       throw new CantRunException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), params.getModuleName()));
     }
 
     final GeneralCommandLine commandLine = new GeneralCommandLine();
 
-    commandLine.setExePath(FileUtil.toSystemDependentName(sdkEntry.findSdk().getHomePath() + FlexSdkUtils.ADL_RELATIVE_PATH));
+    commandLine.setExePath(FileUtil.toSystemDependentName(sdk.getHomePath() + FlexSdkUtils.ADL_RELATIVE_PATH));
 
     if (bc.getNature().isDesktopPlatform()) {
       final String adlOptions =

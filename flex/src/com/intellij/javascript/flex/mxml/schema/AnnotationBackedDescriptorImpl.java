@@ -773,7 +773,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
 
   public void validate(@NotNull final XmlElement context, @NotNull final ValidationHost host) {
     if (context instanceof XmlTag &&
-        FlexSdkUtils.isFlex4Sdk(FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(parentDescriptor.context.module))) {
+        FlexSdkUtils.isFlex4Sdk(FlexUtils.getSdkForActiveBC(parentDescriptor.context.module))) {
       MxmlLanguageTagsUtil.checkFlex4Attributes((XmlTag)context, host, false);
     }
 

@@ -53,7 +53,7 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
         updateRunTrustedOptionVisibility();
         updateLauncherTextWithBrowse();
         final Module module = myModulesComboboxWrapper.getSelectedModule();
-        myDebuggerSdkCombo.setModuleSdk(module == null ? null : FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module));
+        myDebuggerSdkCombo.setModuleSdk(module == null ? null : FlexUtils.getSdkForActiveBC(module));
       }
     });
 
@@ -112,7 +112,7 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
     myPlayerPath = params.getPlayerPath();
 
     final Module module = myModulesComboboxWrapper.getSelectedModule();
-    myDebuggerSdkCombo.setModuleSdk(module == null ? null : FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module));
+    myDebuggerSdkCombo.setModuleSdk(module == null ? null : FlexUtils.getSdkForActiveBC(module));
     myDebuggerSdkCombo.setSelectedSdkRaw(params.getDebuggerSdkRaw());
 
     updateLauncherTextWithBrowse();

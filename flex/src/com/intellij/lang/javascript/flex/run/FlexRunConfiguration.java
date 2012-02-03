@@ -280,11 +280,11 @@ public class FlexRunConfiguration extends RunConfigurationBase
     if (module == null) {
       throw new RuntimeConfigurationError(FlexBundle.message("module.not.found", moduleName));
     }
-    if (!FlexUtils.isFlexModuleOrContainsFlexFacet(module)) {
+    if (ModuleType.get(module) != FlexModuleType.getInstance()) {
       throw new RuntimeConfigurationError(FlexBundle.message("not.flex.module.no.flex.facet", module.getName()));
     }
 
-    if (FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module) == null) {
+    if (FlexUtils.getSdkForActiveBC(module) == null) {
       final String s = (ModuleType.get(module) instanceof FlexModuleType ? "module " : "Flex facet(s) of module ") + module.getName();
       throw new RuntimeConfigurationError(FlexBundle.message("flex.sdk.not.set.for", s));
     }
@@ -356,7 +356,7 @@ public class FlexRunConfiguration extends RunConfigurationBase
         public void moduleChanged() {
           fillHtmlOrSwfCombo();
           final Module module = myModuleComboboxWrapper.getSelectedModule();
-          myDebuggerSdkCombo.setModuleSdk(module == null ? null : FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module));
+          myDebuggerSdkCombo.setModuleSdk(module == null ? null : FlexUtils.getSdkForActiveBC(module));
           updateMainClassField();
         }
       });
@@ -447,7 +447,7 @@ public class FlexRunConfiguration extends RunConfigurationBase
       myPlayerPath = runnerParameters.getPlayerPath();
 
       final Module module = myModuleComboboxWrapper.getSelectedModule();
-      myDebuggerSdkCombo.setModuleSdk(module == null ? null : FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module));
+      myDebuggerSdkCombo.setModuleSdk(module == null ? null : FlexUtils.getSdkForActiveBC(module));
       myDebuggerSdkCombo.setSelectedSdkRaw(runnerParameters.getDebuggerSdkRaw());
 
       updateControls();

@@ -15,7 +15,6 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
@@ -65,7 +64,7 @@ public class FlexRunner extends FlexBaseRunner {
             return standardLaunch(module.getProject(), executor, state, contentToReuse, environment);
           case AndroidDevice:
             final String applicationId = getApplicationId(getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
-            final Sdk sdk = FlexUtils.createFlexSdkWrapper(bc);
+            final Sdk sdk = bc.getSdk();
             if (packAndInstallToAndroidDevice(module, sdk, createAndroidPackageParams(sdk, bc, params, false), applicationId, false)) {
               launchOnAndroidDevice(module.getProject(), sdk, applicationId, false);
             }

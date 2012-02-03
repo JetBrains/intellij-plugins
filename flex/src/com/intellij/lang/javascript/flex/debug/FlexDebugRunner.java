@@ -10,7 +10,6 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitCommonParameters;
@@ -92,7 +91,7 @@ public class FlexDebugRunner extends FlexBaseRunner {
   }
 
   protected RunContentDescriptor launchFlexIdeConfig(final Module module,
-                                                     final FlexIdeBuildConfiguration config,
+                                                     final FlexIdeBuildConfiguration bc,
                                                      final FlashRunnerParameters params,
                                                      final Executor executor,
                                                      final RunProfileState state,
@@ -100,11 +99,11 @@ public class FlexDebugRunner extends FlexBaseRunner {
                                                      final ExecutionEnvironment env) throws ExecutionException {
     final Project project = module.getProject();
 
-    if (config.getTargetPlatform() == TargetPlatform.Mobile && params.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice) {
-      final Sdk flexSdk = FlexUtils.createFlexSdkWrapper(config);
-      final String appId = getApplicationId(getAirDescriptorPath(config, config.getAndroidPackagingOptions()));
+    if (bc.getTargetPlatform() == TargetPlatform.Mobile && params.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice) {
+      final Sdk flexSdk = bc.getSdk();
+      final String appId = getApplicationId(getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
 
-      final MobileAirPackageParameters packageParameters = createAndroidPackageParams(flexSdk, config, params, true);
+      final MobileAirPackageParameters packageParameters = createAndroidPackageParams(flexSdk, bc, params, true);
 
       if (!packAndInstallToAndroidDevice(module, flexSdk, packageParameters, appId, true)) {
         return null;
@@ -117,7 +116,7 @@ public class FlexDebugRunner extends FlexBaseRunner {
       }
     }
 
-    return launchDebugProcess(module, config, params, executor, contentToReuse, env);
+    return launchDebugProcess(module, bc, params, executor, contentToReuse, env);
   }
 
   protected RunContentDescriptor doLaunch(final Project project,

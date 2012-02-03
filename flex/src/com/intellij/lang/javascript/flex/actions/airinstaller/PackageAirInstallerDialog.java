@@ -127,7 +127,7 @@ public class PackageAirInstallerDialog extends DialogWrapper implements PanelWit
           .setText(FileUtil.toSystemDependentName(VfsUtil.urlToPath(compilerExtension.getCompilerOutputUrl())));
       }
 
-      final Sdk flexSdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
+      final Sdk flexSdk = FlexUtils.getSdkForActiveBC(module);
       if (flexSdk != null) {
         myFlexSdkComponent.getComponent().getComboBox().setSelectedItem(flexSdk);
       }

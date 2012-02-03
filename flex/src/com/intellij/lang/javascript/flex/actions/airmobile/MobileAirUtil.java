@@ -161,7 +161,7 @@ public class MobileAirUtil {
       protected void hyperlinkActivated(final HyperlinkEvent e) {
         dialog.close(DialogWrapper.OK_EXIT_CODE);
 
-        FlexSdkUtils.openModuleOrFacetConfigurable(module);
+        FlexSdkUtils.openModuleConfigurable(module);
       }
     });
 

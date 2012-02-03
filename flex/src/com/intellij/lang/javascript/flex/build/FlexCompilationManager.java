@@ -49,7 +49,7 @@ public class FlexCompilationManager {
     myInProgressTasks = new LinkedList<FlexCompilationTask>();
     myFinishedTasks = new LinkedList<FlexCompilationTask>();
 
-    myModuleGraph = compilationTasks.iterator().next().getFlexIdeConfig() == null
+    myModuleGraph = compilationTasks.iterator().next().getBC() == null
                     ? ModuleCompilerUtil.createModuleGraph(ModuleManager.getInstance(context.getProject()).getModules())
                     : null;
 
@@ -147,7 +147,7 @@ public class FlexCompilationManager {
         else {
           addMessage(task, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.successfull"), null, -1, -1);
 
-          final FlexIdeBuildConfiguration config = task.getFlexIdeConfig();
+          final FlexIdeBuildConfiguration config = task.getBC();
           if (config != null) {
             try {
               FlexCompilationUtils.performPostCompileActions(config);
@@ -213,7 +213,7 @@ public class FlexCompilationManager {
                                               final FlexCompilationTask task) {
     final Collection<FlexCompilationTask> tasksToCancel = new ArrayList<FlexCompilationTask>();
 
-    if (task.getFlexIdeConfig() == null) {
+    if (task.getBC() == null) {
       final Iterator<Module> dependentModulesIterator = myModuleGraph.getOut(task.getModule());
 
       while (dependentModulesIterator.hasNext()) {
@@ -228,7 +228,7 @@ public class FlexCompilationManager {
     else {
       for (FlexCompilationTask notStartedTask : myNotStartedTasks) {
         //noinspection ConstantConditions
-        if (notStartedTask.getConfigDependencies().contains(task.getFlexIdeConfig())) {
+        if (notStartedTask.getDependencies().contains(task.getBC())) {
           tasksToCancel.add(notStartedTask);
         }
       }
@@ -291,7 +291,7 @@ public class FlexCompilationManager {
   }
 
   private boolean hasDependenciesIn(final FlexCompilationTask task, final Collection<FlexCompilationTask> tasksToSearchDependencies) {
-    if (task.getFlexIdeConfig() == null) {
+    if (task.getBC() == null) {
       final Iterator<Module> dependencies = myModuleGraph.getIn(task.getModule());
       while (dependencies.hasNext()) {
         final Module dependency = dependencies.next();
@@ -306,7 +306,7 @@ public class FlexCompilationManager {
     else {
       for (final FlexCompilationTask otherTask : tasksToSearchDependencies) {
         //noinspection ConstantConditions
-        if (task.getConfigDependencies().contains(otherTask.getFlexIdeConfig())) {
+        if (task.getDependencies().contains(otherTask.getBC())) {
           return true;
         }
       }

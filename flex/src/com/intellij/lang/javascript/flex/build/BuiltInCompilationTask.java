@@ -1,18 +1,13 @@
 package com.intellij.lang.javascript.flex.build;
 
-import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -23,16 +18,9 @@ public class BuiltInCompilationTask extends FlexCompilationTask {
   private BuiltInFlexCompilerHandler.Listener myListener;
 
   public BuiltInCompilationTask(final @NotNull Module module,
-                                final @Nullable FlexFacet flexFacet,
-                                final @NotNull FlexBuildConfiguration oldConfig) {
-    super(module.getName() + (flexFacet == null ? "" : " (" + flexFacet.getName() + ")"), module, flexFacet, oldConfig, null, null);
-    myBuiltInFlexCompilerHandler = FlexCompilerHandler.getInstance(module.getProject()).getBuiltInFlexCompilerHandler();
-  }
-
-  public BuiltInCompilationTask(final @NotNull Module module,
-                                final @NotNull FlexIdeBuildConfiguration flexIdeConfig,
-                                final @NotNull Collection<FlexIdeBuildConfiguration> configDependencies) {
-    super(flexIdeConfig.getName() + " (" + module.getName() + ")", module, null, null, flexIdeConfig, configDependencies);
+                                final @NotNull FlexIdeBuildConfiguration bc,
+                                final @NotNull Collection<FlexIdeBuildConfiguration> dependencies) {
+    super(module, bc, dependencies);
     myBuiltInFlexCompilerHandler = FlexCompilerHandler.getInstance(module.getProject()).getBuiltInFlexCompilerHandler();
   }
 
@@ -50,17 +38,9 @@ public class BuiltInCompilationTask extends FlexCompilationTask {
   }
 
   private List<String> buildCommand() {
-    if (myOldConfig != null) {
-      final boolean swf = myOldConfig.OUTPUT_TYPE.equals(FlexBuildConfiguration.APPLICATION);
-      final List<String> compilerCommand = Collections.singletonList(swf ? "mxmlc" : "compc");
-      return FlexCompilationUtils.buildCommand(compilerCommand, getConfigFiles(), myModule, myOldConfig);
-    }
-    else {
-      assert myFlexIdeConfig != null;
-      final boolean swf = myFlexIdeConfig.getOutputType() != OutputType.Library;
-      final List<String> compilerCommand = Collections.singletonList(swf ? "mxmlc" : "compc");
-      return FlexCompilationUtils.buildCommand(compilerCommand, getConfigFiles(), myModule, myFlexIdeConfig);
-    }
+    final boolean app = myBC.getOutputType() != OutputType.Library;
+    final List<String> compilerCommand = Collections.singletonList(app ? "mxmlc" : "compc");
+    return FlexCompilationUtils.buildCommand(compilerCommand, getConfigFiles(), myModule, myBC);
   }
 
   private BuiltInFlexCompilerHandler.Listener createListener(final FlexCompilationManager compilationManager) {
@@ -81,22 +61,6 @@ public class BuiltInCompilationTask extends FlexCompilationTask {
   protected void doCancel() {
     if (myListener != null) {
       myBuiltInFlexCompilerHandler.removeListener(myListener);
-    }
-  }
-
-  public static class BuiltInCSSCompilationTask extends BuiltInCompilationTask implements CssCompilationTask {
-    private final String myCssFilePath;
-
-    public BuiltInCSSCompilationTask(final Module module,
-                                     final @Nullable FlexFacet flexFacet,
-                                     final FlexBuildConfiguration config,
-                                     final String cssFilePath) {
-      super(module, flexFacet, FlexCompilationUtils.createCssConfig(config, cssFilePath));
-      myCssFilePath = FileUtil.toSystemIndependentName(cssFilePath);
-    }
-
-    protected List<VirtualFile> createConfigFiles() throws IOException {
-      return FlexCompilationUtils.getConfigFiles(myOldConfig, myModule, myFlexFacet, myCssFilePath);
     }
   }
 }

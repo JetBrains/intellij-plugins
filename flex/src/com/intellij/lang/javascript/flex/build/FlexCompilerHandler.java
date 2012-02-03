@@ -205,8 +205,8 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     final FlexBuildConfiguration overriddenConfig = context.getUserData(OVERRIDE_BUILD_CONFIG);
 
     if (overriddenConfig != null && module == overriddenConfig.getModule()) {
-      final Pair<Boolean, String> validationResultWithMessage =
-        FlexCompiler.validateConfiguration(overriddenConfig, module, FlexBundle.message("module.name", module.getName()), false);
+      final Pair<Boolean, String> validationResultWithMessage = Pair.create(true, null);
+        //FlexCompiler.validateConfiguration(overriddenConfig, module, FlexBundle.message("module.name", module.getName()), false);
       if (!validationResultWithMessage.first) {
         if (validationResultWithMessage.second != null) {
           context.addMessage(CompilerMessageCategory.ERROR, validationResultWithMessage.second, null, -1, -1);
@@ -332,15 +332,13 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
       return Pair.create(true, Collections.<VirtualFile>emptyList());
     }
 
-    final String presentableName = FlexUtils.getPresentableName(module, flexFacet);
     if (context.isMake() && nothingChangedSincePreviousCompilation) {
-      context
-        .addMessage(CompilerMessageCategory.STATISTICS, FlexBundle.message("compilation.skipped.because.nothing.changed.in", presentableName),
-                    null, -1, -1);
+      context.addMessage(CompilerMessageCategory.STATISTICS,
+                         FlexBundle.message("compilation.skipped.because.nothing.changed.in", module.getName()), null, -1, -1);
       return Pair.create(true, Collections.<VirtualFile>emptyList());
     }
 
-    context.getProgressIndicator().setText(FlexBundle.message("compiling", presentableName));
+    context.getProgressIndicator().setText(FlexBundle.message("compiling", module.getName()));
 
     final Object moduleOrFacet = flexFacet == null ? module : flexFacet;
     final ModuleOrFacetCompileCache compileCache = getCache(config.getType());
@@ -349,7 +347,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
       dropIncrementalCompilation(moduleOrFacet, compileCache);
     }
 
-    final Sdk flexSdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
+    final Sdk flexSdk = FlexUtils.getSdkForActiveBC(module);
     assert flexSdk != null; // checked in FlexCompiler.validateConfiguration()
 
     final List<VirtualFile> configFiles = getConfigFiles(config, module, flexFacet);     // todo use FlexCompilationUtils.getConfigFiles()
@@ -748,7 +746,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     final boolean customConfigFileUsed = config.USE_CUSTOM_CONFIG_FILE;
     @NonNls final StringBuilder configTextBuilder = new StringBuilder();
     final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(module.getProject()).getFileIndex();
-    final Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
+    final Sdk sdk = FlexUtils.getSdkForActiveBC(module);
 
     configTextBuilder.append("<flex-config xmlns=\"http://www.adobe.com/2006/flex-config\">");
 

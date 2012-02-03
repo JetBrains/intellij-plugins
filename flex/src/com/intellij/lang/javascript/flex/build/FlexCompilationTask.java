@@ -1,14 +1,12 @@
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -20,29 +18,21 @@ public abstract class FlexCompilationTask {
 
   protected final Module myModule;
   private final String myPresentableName;
-  protected final @Nullable FlexFacet myFlexFacet;
-  // one of the following configs is not null
-  protected final @Nullable FlexBuildConfiguration myOldConfig;
-  protected final @Nullable FlexIdeBuildConfiguration myFlexIdeConfig;
-  protected final @Nullable Collection<FlexIdeBuildConfiguration> myConfigDependencies;
+  protected final FlexIdeBuildConfiguration myBC;
+  protected final Collection<FlexIdeBuildConfiguration> myDependencies;
 
   private List<VirtualFile> myConfigFiles;
 
   protected boolean myFinished;
   protected boolean myCompilationFailed;
 
-  protected FlexCompilationTask(final @NotNull String presentableName,
-                                final @NotNull Module module,
-                                final @Nullable FlexFacet flexFacet,
-                                final @Nullable FlexBuildConfiguration oldConfig,
-                                final @Nullable FlexIdeBuildConfiguration flexIdeConfig,
-                                final @Nullable Collection<FlexIdeBuildConfiguration> configDependencies) {
+  protected FlexCompilationTask(final Module module,
+                                final FlexIdeBuildConfiguration bc,
+                                final Collection<FlexIdeBuildConfiguration> dependencies) {
     myModule = module;
-    myPresentableName = presentableName;
-    myFlexFacet = flexFacet;
-    myOldConfig = oldConfig;
-    myFlexIdeConfig = flexIdeConfig;
-    myConfigDependencies = configDependencies;
+    myBC = bc;
+    myDependencies = dependencies;
+    myPresentableName = bc.getName() + " (" + module.getName() + ")";
   }
 
   public void start(final FlexCompilationManager compilationManager) {
@@ -55,16 +45,7 @@ public abstract class FlexCompilationTask {
         FlexCompilationUtils.deleteCacheForFile(outputFilePath);
       }
 
-      if (myOldConfig != null) {
-        if (!myOldConfig.USE_CUSTOM_CONFIG_FILE) {
-          FlexCompilationUtils.ensureOutputFileWritable(myModule.getProject(), myOldConfig.getOutputFileFullPath());
-        }
-      }
-      else {
-        assert myFlexIdeConfig != null;
-        FlexCompilationUtils.ensureOutputFileWritable(myModule.getProject(), myFlexIdeConfig.getOutputFilePath());
-      }
-
+      FlexCompilationUtils.ensureOutputFileWritable(myModule.getProject(), myBC.getOutputFilePath());
       doStart(compilationManager);
     }
     catch (IOException e) {
@@ -75,27 +56,20 @@ public abstract class FlexCompilationTask {
   }
 
   protected List<VirtualFile> createConfigFiles() throws IOException {
-    if (myOldConfig != null) {
-      return FlexCompilationUtils.getConfigFiles(myOldConfig, myModule, myFlexFacet, null);
-    }
-    else {
-      assert myFlexIdeConfig != null;
+    final ArrayList<VirtualFile> configFiles = new ArrayList<VirtualFile>(2);
+    configFiles.add(CompilerConfigGenerator.getOrCreateConfigFile(myModule, myBC));
 
-      final ArrayList<VirtualFile> configFiles = new ArrayList<VirtualFile>(2);
-      configFiles.add(CompilerConfigGenerator.getOrCreateConfigFile(myModule, myFlexIdeConfig));
-
-      final String additionalConfigFilePath = myFlexIdeConfig.getCompilerOptions().getAdditionalConfigFilePath();
-      if (!additionalConfigFilePath.isEmpty()) {
-        final VirtualFile additionalConfigFile = LocalFileSystem.getInstance().findFileByPath(additionalConfigFilePath);
-        if (additionalConfigFile == null) {
-          throw new IOException(FlexBundle.message("additional.config.file.not.found", additionalConfigFilePath, myFlexIdeConfig.getName(),
-                                                   myModule.getName()));
-        }
-        configFiles.add(additionalConfigFile);
+    final String additionalConfigFilePath = myBC.getCompilerOptions().getAdditionalConfigFilePath();
+    if (!additionalConfigFilePath.isEmpty()) {
+      final VirtualFile additionalConfigFile = LocalFileSystem.getInstance().findFileByPath(additionalConfigFilePath);
+      if (additionalConfigFile == null) {
+        throw new IOException(FlexBundle.message("additional.config.file.not.found", additionalConfigFilePath, myBC.getName(),
+                                                 myModule.getName()));
       }
-
-      return configFiles;
+      configFiles.add(additionalConfigFile);
     }
+
+    return configFiles;
   }
 
   protected abstract void doStart(final FlexCompilationManager compilationManager) throws IOException;
@@ -128,16 +102,16 @@ public abstract class FlexCompilationTask {
   }
 
   public boolean useCache() {
-    return myOldConfig != null && myOldConfig.getType() == FlexBuildConfiguration.Type.Default;
+    return false;
   }
 
   @Nullable
-  public FlexIdeBuildConfiguration getFlexIdeConfig() {
-    return myFlexIdeConfig;
+  public FlexIdeBuildConfiguration getBC() {
+    return myBC;
   }
 
   @Nullable
-  public Collection<FlexIdeBuildConfiguration> getConfigDependencies() {
-    return myConfigDependencies;
+  public Collection<FlexIdeBuildConfiguration> getDependencies() {
+    return myDependencies;
   }
 }

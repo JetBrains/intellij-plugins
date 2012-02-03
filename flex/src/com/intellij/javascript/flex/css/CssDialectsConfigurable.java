@@ -1,9 +1,10 @@
 package com.intellij.javascript.flex.css;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -52,7 +53,7 @@ public class CssDialectsConfigurable extends LanguagePerFileConfigurable<CssDial
         final Module[] modules = ModuleManager.getInstance(myProject).getModules();
 
         for (Module module : modules) {
-          if (FlexUtils.isFlexModuleOrContainsFlexFacet(module)) {
+          if (ModuleType.get(module) == FlexModuleType.getInstance()) {
             final VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
 
             for (VirtualFile contentRoot : contentRoots) {

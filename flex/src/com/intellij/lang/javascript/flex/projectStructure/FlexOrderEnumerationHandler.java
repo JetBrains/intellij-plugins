@@ -180,11 +180,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
 
     final Module forModule = forOrderEntry.getOwnerModule();
     final FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(forModule).getActiveConfiguration();
-    final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
-    if (sdkEntry == null) {
-      return false;
-    }
-    final Sdk sdk = sdkEntry.findSdk();
+    final Sdk sdk = bc.getSdk();
     if (sdk == null || sdk.getSdkType() != FlexSdkType2.getInstance()) {
       return false;
     }

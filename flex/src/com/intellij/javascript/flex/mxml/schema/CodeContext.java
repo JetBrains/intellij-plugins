@@ -100,7 +100,7 @@ public class CodeContext {
       typeDescriptor.setRequired(true);
       descriptor.addPredefinedMemberDescriptor(typeDescriptor);
     }
-    else if (addGumboAttributesIfNeeded && FlexSdkUtils.isFlex4Sdk(FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module))) {
+    else if (addGumboAttributesIfNeeded && FlexSdkUtils.isFlex4Sdk(FlexUtils.getSdkForActiveBC(module))) {
       // The most correct way is not to check sdk but to check language level of current mxml file. But it is impossible because CodeContext is not per file.
       for (String gumboAttr : GUMBO_ATTRIBUTES) {
         descriptor.addPredefinedMemberDescriptor(new AnnotationBackedDescriptorImpl(gumboAttr, descriptor, true, null, null, null));
@@ -189,9 +189,7 @@ public class CodeContext {
   }
 
   private static void handleSwcFromSdk(final Module module, @NotNull final FlexIdeBuildConfiguration bc) {
-    final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
-    if (sdkEntry == null) return;
-    final Sdk sdk = sdkEntry.findSdk();
+    final Sdk sdk = bc.getSdk();
     if (sdk == null) return;
 
     final Map<String, CodeContext> contextsOfModule = new THashMap<String, CodeContext>();
@@ -427,9 +425,7 @@ public class CodeContext {
   }
 
   private static void handleAllStandardManifests(final Module module, @NotNull final FlexIdeBuildConfiguration bc) {
-    final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
-    if (sdkEntry == null) return;
-    final Sdk sdk = sdkEntry.findSdk();
+    final Sdk sdk = bc.getSdk();
     if (sdk == null) return;
     final String homePath = sdk.getHomePath();
     if (homePath == null) return;

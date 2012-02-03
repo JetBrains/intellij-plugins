@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.ProjectTopics;
-import com.intellij.facet.FacetManager;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -141,7 +140,7 @@ public class FlexBuildConfiguration implements ModuleComponent, PersistentStateC
         }
 
         public void rootsChanged(final ModuleRootEvent event) {
-          final Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(myModule);
+          final Sdk sdk = FlexUtils.getSdkForActiveBC(myModule);
           TargetPlayerUtils.updateTargetPlayerIfMajorOrMinorVersionDiffers(FlexBuildConfiguration.this, sdk);
 
           final ModuleEditor moduleEditor =
@@ -183,7 +182,7 @@ public class FlexBuildConfiguration implements ModuleComponent, PersistentStateC
     INCLUDE_RESOURCE_FILES_IN_SWC = state.INCLUDE_RESOURCE_FILES_IN_SWC;
     TARGET_PLAYER_VERSION = state.TARGET_PLAYER_VERSION;
     if ("".equals(TARGET_PLAYER_VERSION) && myModule != null) {
-      TARGET_PLAYER_VERSION = TargetPlayerUtils.getTargetPlayerVersion(FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(myModule));
+      TARGET_PLAYER_VERSION = TargetPlayerUtils.getTargetPlayerVersion(FlexUtils.getSdkForActiveBC(myModule));
     }
     USE_LOCALE_SETTINGS = state.USE_LOCALE_SETTINGS;
     LOCALE = state.LOCALE;

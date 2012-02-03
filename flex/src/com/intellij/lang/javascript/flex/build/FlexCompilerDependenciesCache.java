@@ -95,7 +95,7 @@ public class FlexCompilerDependenciesCache {
     if (outputFile != null) {
       final HashSet<VirtualFile> fileDependencies = new HashSet<VirtualFile>();
       fileDependencies.add(outputFile);
-      final Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
+      final Sdk sdk = FlexUtils.getSdkForActiveBC(module);
       if (sdk != null) {
         fileDependencies.add(sdk.getHomeDirectory());
       }

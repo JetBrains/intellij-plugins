@@ -2,19 +2,13 @@ package com.intellij.lang.javascript.flex;
 
 import com.intellij.application.options.PathMacrosImpl;
 import com.intellij.execution.configurations.CommandLineTokenizer;
-import com.intellij.facet.FacetManager;
-import com.intellij.facet.FacetType;
-import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
-import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
-import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -27,7 +21,10 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.CompilerModuleExtension;
+import com.intellij.openapi.roots.ContentIterator;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
@@ -84,67 +81,6 @@ public class FlexUtils {
     };
   }
 
-  public static FlexFacet addFlexFacet(final Module module, final @Nullable Sdk flexSdk, final ModifiableRootModel modifiableRootModel) {
-    final ModifiableFacetModel facetModel = FacetManager.getInstance(module).createModifiableModel();
-    final FacetType<FlexFacet, FlexFacetConfiguration> facetType = FlexFacetType.getInstance();
-    final FlexFacet flexFacet = facetType.createFacet(module, facetType.getDefaultFacetName(), facetType.createDefaultConfiguration(),
-                                                      null);
-
-    facetModel.addFacet(flexFacet);
-
-    if (flexSdk != null) {
-      flexFacet.getConfiguration().setFlexSdk(flexSdk, modifiableRootModel);
-    }
-    facetModel.commit();
-    return flexFacet;
-  }
-
-  public static void setupFlexConfigFileAndSampleCode(final Module module,
-                                                      final FlexBuildConfiguration config,
-                                                      final Sdk sdk,
-                                                      final @NonNls @Nullable String customFlexCompilerConfigFileName,
-                                                      final VirtualFile flexConfigFileDir,
-                                                      final @NonNls @Nullable String sampleFileName,
-                                                      final VirtualFile sourceRoot) throws IOException {
-    final Project project = module.getProject();
-    if (customFlexCompilerConfigFileName != null) {
-      final String outputFileName = config.getOutputFileFullPath();
-      final VirtualFile file = addFileWithContent(customFlexCompilerConfigFileName,
-                                                  "<flex-config xmlns=\"http://www.adobe.com/2006/flex-config\">\n" +
-                                                  "  <compiler>\n" +
-                                                  "    <debug>true</debug>\n" +
-                                                  "    <source-path><path-element>" +
-                                                  sourceRoot.getPath() +
-                                                  "</path-element></source-path>\n" +
-                                                  "  </compiler>\n" +
-                                                  "  <file-specs>\n" +
-                                                  (sampleFileName != null ? ("    <path-element>" +
-                                                                             sourceRoot.getPath() + "/" + sampleFileName +
-                                                                             "</path-element>\n")
-                                                                          : "") +
-                                                  "  </file-specs>\n" +
-                                                  "  <output>" +
-                                                  outputFileName +
-                                                  "</output>\n" +
-                                                  "</flex-config>", flexConfigFileDir);
-      config.DO_BUILD = true;
-      config.USE_CUSTOM_CONFIG_FILE = true;
-      config.CUSTOM_CONFIG_FILE = file.getPath();
-    }
-
-    if (sdk != null && sampleFileName != null) {
-      assert sampleFileName.endsWith(".mxml") || sampleFileName.endsWith(".as");
-      config.MAIN_CLASS = FileUtil.getNameWithoutExtension(sampleFileName);
-
-      final TargetPlatform platform = sdk.getSdkType() instanceof AirMobileSdkType
-                                      ? TargetPlatform.Mobile
-                                      : sdk.getSdkType() instanceof AirSdkType ? TargetPlatform.Desktop : TargetPlatform.Web;
-      final boolean flex4 = FlexSdkUtils.isFlex4Sdk(sdk);
-
-      createSampleApp(project, sourceRoot, sampleFileName, platform, flex4);
-    }
-  }
-
   public static void createSampleApp(final Project project,
                                      final VirtualFile sourceRoot,
                                      final String sampleFileName,
@@ -198,27 +134,11 @@ public class FlexUtils {
     return data;
   }
 
-  public static String getPresentableName(final @NotNull Module module, final @Nullable FlexFacet flexFacet) {
-    return flexFacet == null
-           ? FlexBundle.message("module.name", module.getName())
-           : FlexBundle.message("facet.name", flexFacet.getName(), module.getName());
-  }
-
   @Nullable
-  public static Sdk getFlexSdkForFlexModuleOrItsFlexFacets(final @NotNull Module module) {
+  public static Sdk getSdkForActiveBC(final @NotNull Module module) {
     return ModuleType.get(module) instanceof FlexModuleType
-           ? createFlexSdkWrapper(FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration())
+           ? FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration().getSdk()
            : null;
-  }
-
-  @Nullable
-  public static Sdk createFlexSdkWrapper(final FlexIdeBuildConfiguration bc) {
-    final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
-    if (sdkEntry != null) {
-      return sdkEntry.findSdk();
-    }
-
-    return null;
   }
 
   public static boolean isXmlExtension(String extension) {
@@ -484,10 +404,6 @@ public class FlexUtils {
     }
   }
 
-  public static boolean isFlexModuleOrContainsFlexFacet(final @NotNull Module module) {
-    return ModuleType.get(module) instanceof FlexModuleType || FacetManager.getInstance(module).getFacetByType(FlexFacet.ID) != null;
-  }
-
   public static String getFlexCompilerWorkDirPath(final Project project, final @Nullable Sdk flexSdk) {
     final VirtualFile baseDir = project.getBaseDir();
     return FlexSdkUtils.isFlex2Sdk(flexSdk) || FlexSdkUtils.isFlex3_0Sdk(flexSdk)
@@ -725,7 +641,8 @@ public class FlexUtils {
       catch (IOException e) {
         if (interactive) {
           Messages.showErrorDialog(project,
-                                   FlexBundle.message("failed.to.create.folder", FileUtil.toSystemDependentName(folderPath), e.getMessage()),
+                                   FlexBundle
+                                     .message("failed.to.create.folder", FileUtil.toSystemDependentName(folderPath), e.getMessage()),
                                    errorMessageTitle);
         }
         return null;

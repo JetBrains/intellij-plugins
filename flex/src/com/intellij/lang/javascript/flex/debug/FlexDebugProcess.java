@@ -14,7 +14,6 @@ import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
 import com.intellij.lang.javascript.flex.flexunit.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.run.*;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
@@ -170,15 +169,12 @@ public class FlexDebugProcess extends XDebugProcess {
   private FlexUnitConnection myFlexUnitConnection;
   private SwfPolicyFileConnection myPolicyFileConnection;
 
-  public FlexDebugProcess(final XDebugSession session, final FlexIdeBuildConfiguration bc, final BCBasedRunnerParameters params)
-    throws IOException {
-
+  public FlexDebugProcess(final XDebugSession session,
+                          final FlexIdeBuildConfiguration bc,
+                          final BCBasedRunnerParameters params) throws IOException {
     super(session);
 
-    final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
-    assert sdkEntry != null; // checked in FlexBaseRunner
-
-    final Sdk sdk = sdkEntry.findSdk();
+    final Sdk sdk = bc.getSdk();
     myAppSdkHome = sdk != null ? FileUtil.toSystemIndependentName(sdk.getHomePath()) : null;
     myDebuggerSdkHome = myAppSdkHome;
     myDebuggerVersion = StringUtil.notNullize(sdk != null ? sdk.getVersionString() : null, "unknown");
@@ -221,7 +217,7 @@ public class FlexDebugProcess extends XDebugProcess {
               final String appId =
                 FlexBaseRunner.getApplicationId(FlexBaseRunner.getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
               sendCommand(appParams.getDebugTransport() == AirMobileDebugTransport.Network
-                          ? new StartAppOnAndroidDeviceCommand(FlexUtils.createFlexSdkWrapper(bc), appId)
+                          ? new StartAppOnAndroidDeviceCommand(bc.getSdk(), appId)
                           : new StartDebuggingCommand());
               break;
           }

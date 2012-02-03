@@ -53,7 +53,7 @@ public class MobileAirPackageOptionsDialog extends DialogWrapper {
     final Computable<Sdk> sdkComputable = new Computable<Sdk>() {
       @Override
       public Sdk compute() {
-        return FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(myModule);
+        return FlexUtils.getSdkForActiveBC(myModule);
       }
     };
     final Runnable resizeHandler = new Runnable() {

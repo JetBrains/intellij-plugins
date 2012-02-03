@@ -767,7 +767,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   }
 
   public void validate(@NotNull final XmlTag tag, @NotNull final ValidationHost host) {
-    if (FlexSdkUtils.isFlex4Sdk(FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(context.module))) {
+    if (FlexSdkUtils.isFlex4Sdk(FlexUtils.getSdkForActiveBC(context.module))) {
       MxmlLanguageTagsUtil.checkFlex4Attributes(tag, host, true);
     }
 

@@ -10,6 +10,7 @@ import com.intellij.javascript.flex.mxml.schema.CodeContext;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
@@ -23,6 +24,7 @@ import com.intellij.openapi.command.undo.UndoManager;
 import com.intellij.openapi.command.undo.UnexpectedUndoException;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
@@ -70,7 +72,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
         module = ModuleUtil.findModuleForPsiElement(file);
       }
     }
-    if (module == null || !FlexUtils.isFlexModuleOrContainsFlexFacet(module)) {
+    if (module == null || ModuleType.get(module) != FlexModuleType.getInstance()) {
       return false;
     }
 
@@ -561,7 +563,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     }
 
     final Module module = ModuleUtil.findModuleForFile(vFile, context.getProject());
-    if (module == null || !FlexUtils.isFlexModuleOrContainsFlexFacet(module)) {
+    if (module == null || ModuleType.get(module) != FlexModuleType.getInstance()) {
       return null;
     }
 

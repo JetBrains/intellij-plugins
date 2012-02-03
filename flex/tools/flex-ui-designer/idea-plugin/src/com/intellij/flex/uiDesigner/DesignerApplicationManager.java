@@ -3,9 +3,7 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.flex.uiDesigner.libraries.InitException;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
-import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
@@ -134,7 +132,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
     final boolean appClosed = isApplicationClosed();
     if (appClosed || !Client.getInstance().isModuleRegistered(module)) {
-      final Sdk sdk = FlexUtils.createFlexSdkWrapper(FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration());
+      final Sdk sdk = FlexUtils.getSdkForActiveBC(module);
       if (sdk == null || !checkFlexSdkVersion(sdk.getVersionString())) {
         reportInvalidFlexSdk(module, debug, sdk);
         return;
@@ -183,20 +181,15 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
   }
 
   private static void reportInvalidFlexSdk(final Module module, boolean debug, @Nullable Sdk sdk) {
-    String moduleName = FlexBundle.message("module.name", module.getName());
-    String message;
-    if (sdk == null) {
-      message = FlashUIDesignerBundle.message("module.sdk.is.not.specified", moduleName);
-    }
-    else {
-      message = FlashUIDesignerBundle.message("module.sdk.is.not.compatible", sdk.getVersionString(), moduleName);
-    }
+    String message = sdk == null
+                     ? FlashUIDesignerBundle.message("module.sdk.is.not.specified", module.getName())
+                     : FlashUIDesignerBundle.message("module.sdk.is.not.compatible", sdk.getVersionString(), module.getName());
 
     notifyUser(debug, message, module.getProject(), new Consumer<String>() {
       @Override
       public void consume(String id) {
         if ("edit".equals(id)) {
-          FlexSdkUtils.openModuleOrFacetConfigurable(module);
+          FlexSdkUtils.openModuleConfigurable(module);
         }
         else {
           LOG.error("unexpected id: " + id);
@@ -230,7 +223,8 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
   }
 
   public static String getOpenActionTitle(boolean debug) {
-    return FlashUIDesignerBundle.message(debug ? "action.FlashUIDesigner.DebugDesignView.text" : "action.FlashUIDesigner.RunDesignView.text");
+    return FlashUIDesignerBundle
+      .message(debug ? "action.FlashUIDesigner.DebugDesignView.text" : "action.FlashUIDesigner.RunDesignView.text");
   }
 
   public static void notifyUser(boolean debug, @NotNull String text, @NotNull Module module) {
@@ -239,7 +233,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
   static void notifyUser(boolean debug, @NotNull String text, @NotNull Project project, @Nullable final Consumer<String> handler) {
     Notification notification = new Notification(FlashUIDesignerBundle.message("plugin.name"), getOpenActionTitle(debug), text,
-        NotificationType.ERROR, handler == null ? null : new NotificationListener() {
+                                                 NotificationType.ERROR, handler == null ? null : new NotificationListener() {
       @Override
       public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
         if (event.getEventType() != HyperlinkEvent.EventType.ACTIVATED) {
@@ -271,7 +265,9 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     }
 
     @Override
-    public boolean run(ProjectDocumentReferenceCounter projectDocumentReferenceCounter, ProgressIndicator indicator, ProblemsHolder problemsHolder) {
+    public boolean run(ProjectDocumentReferenceCounter projectDocumentReferenceCounter,
+                       ProgressIndicator indicator,
+                       ProblemsHolder problemsHolder) {
       indicator.setText(FlashUIDesignerBundle.message("open.document"));
       Client client = Client.getInstance();
       if (!client.flush()) {

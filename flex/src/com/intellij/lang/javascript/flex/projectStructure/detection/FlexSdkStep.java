@@ -39,7 +39,7 @@ public class FlexSdkStep extends ModuleWizardStep {
     final String text = FlexBundle.message(myContext.getProject() != null ? "module.sdk.label" : "project.sdk.label");
     mySdkLabel.setText(UIUtil.removeMnemonic(text));
     mySdkLabel.setDisplayedMnemonicIndex(UIUtil.getDisplayMnemonicIndex(text));
-    
+
     mySdkCombo.setButtonEnabled(FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor() == null);
     return myContentPane;
   }
@@ -72,10 +72,9 @@ public class FlexSdkStep extends ModuleWizardStep {
     else {
       for (final Module module : ModuleManager.getInstance(project).getModules()) {
         if (ModuleType.get(module) == FlexModuleType.getInstance()) {
-          for (FlexIdeBuildConfiguration c : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
-            SdkEntry sdkEntry = c.getDependencies().getSdkEntry();
-            Sdk sdk;
-            if (sdkEntry != null && (sdk = sdkEntry.findSdk()) != null) {
+          for (FlexIdeBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
+            Sdk sdk = bc.getSdk();
+            if (sdk != null) {
               combo.setSelectedSdkRaw(sdk.getName());
               return;
             }

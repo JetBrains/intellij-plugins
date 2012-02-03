@@ -75,23 +75,20 @@ public class CompilerConfigGenerator {
     myProjectLevelCompilerOptions = projectLevelCompilerOptions;
   }
 
-  public static VirtualFile getOrCreateConfigFile(final Module module, final FlexIdeBuildConfiguration config) throws IOException {
-    final SdkEntry sdkEntry = config.getDependencies().getSdkEntry();
-    final Sdk sdk = sdkEntry == null ? null : sdkEntry.findSdk();
+  public static VirtualFile getOrCreateConfigFile(final Module module, final FlexIdeBuildConfiguration bc) throws IOException {
+    final Sdk sdk = bc.getSdk();
     if (sdk == null) {
-      throw new IOException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", config.getName(), module.getName()));
+      throw new IOException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), module.getName()));
     }
 
     final CompilerConfigGenerator generator =
-      new CompilerConfigGenerator(module, config, sdk.getHomePath(), sdk.getVersionString(),
-                                  sdk.getRootProvider().
-                                    getUrls(OrderRootType.CLASSES),
+      new CompilerConfigGenerator(module, bc, sdk.getHomePath(), sdk.getVersionString(),
+                                  sdk.getRootProvider().getUrls(OrderRootType.CLASSES),
                                   FlexBuildConfigurationManager.getInstance(module).getModuleLevelCompilerOptions(),
-                                  FlexProjectLevelCompilerOptionsHolder.getInstance(module.getProject())
-                                    .getProjectLevelCompilerOptions());
+                                  FlexProjectLevelCompilerOptionsHolder.getInstance(module.getProject()).getProjectLevelCompilerOptions());
     final String text = generator.generateConfigFileText();
     final String name =
-      FlexCompilerHandler.generateConfigFileName(module, config.getName(), PlatformUtils.getPlatformPrefix().toLowerCase(), null);
+      FlexCompilerHandler.generateConfigFileName(module, bc.getName(), PlatformUtils.getPlatformPrefix().toLowerCase(), null);
     return FlexCompilationUtils.getOrCreateConfigFile(module.getProject(), name, text);
   }
 

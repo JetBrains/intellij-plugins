@@ -61,7 +61,7 @@ public class AirRunConfigurationForm extends SettingsEditor<AirRunConfiguration>
       public void actionPerformed(ActionEvent e) {
         final Module module = myModulesComboboxWrapper.getSelectedModule();
         resetAirRootDirPath(module, myRootDirectoryComponent.getComponent());
-        myDebuggerSdkCombo.setModuleSdk(module == null ? null : FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module));
+        myDebuggerSdkCombo.setModuleSdk(module == null ? null : FlexUtils.getSdkForActiveBC(module));
         updateMainClassField(myProject, myModulesComboboxWrapper, myMainClassComponent.getComponent(), myMainClassFilter);
       }
     });
@@ -178,7 +178,7 @@ public class AirRunConfigurationForm extends SettingsEditor<AirRunConfiguration>
     myProgramParametersComponent.getComponent().setText(runnerParameters.getAirProgramParameters());
 
     final Module module = myModulesComboboxWrapper.getSelectedModule();
-    myDebuggerSdkCombo.setModuleSdk(module == null ? null : FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module));
+    myDebuggerSdkCombo.setModuleSdk(module == null ? null : FlexUtils.getSdkForActiveBC(module));
     myDebuggerSdkCombo.setSelectedSdkRaw(runnerParameters.getDebuggerSdkRaw());
 
     updateControls();

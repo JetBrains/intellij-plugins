@@ -167,7 +167,7 @@ public class FlexCompilationUtils {
                                    final List<VirtualFile> configFiles,
                                    final Module module,
                                    final FlexBuildConfiguration config) {
-    final Sdk flexSdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
+    final Sdk flexSdk = FlexUtils.getSdkForActiveBC(module);
     assert flexSdk != null;
 
     final List<String> command = new ArrayList<String>(compilerCommand);
@@ -204,8 +204,7 @@ public class FlexCompilationUtils {
       command.add("-load-config=" + configFile.getPath());
     }
 
-    final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
-    final Sdk sdk = sdkEntry == null ? null : sdkEntry.findSdk();
+    final Sdk sdk = bc.getSdk();
     assert sdk != null;
 
     addAdditionalOptions(command, module, sdk.getHomePath(),
@@ -447,8 +446,7 @@ public class FlexCompilationUtils {
 
     ApplicationManager.getApplication().invokeAndWait(new Runnable() {
       public void run() {
-        final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
-        final Sdk sdk = sdkEntry == null ? null : sdkEntry.findSdk();
+        final Sdk sdk = bc.getSdk();
         assert sdk != null;
         final VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(bc.getOutputFolder());
         assert dir != null;

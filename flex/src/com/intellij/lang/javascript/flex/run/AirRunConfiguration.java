@@ -81,7 +81,7 @@ public class AirRunConfiguration extends FlexRunConfiguration {
   }
 
   protected static void checkAdlAndAirRuntime(Module module) throws RuntimeConfigurationError {
-    final Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
+    final Sdk sdk = FlexUtils.getSdkForActiveBC(module);
     assert sdk != null;
     final String adlPath = FlexSdkUtils.getAdlPath(sdk);
     if (StringUtil.isEmpty(adlPath)) {
@@ -157,7 +157,7 @@ public class AirRunConfiguration extends FlexRunConfiguration {
       final Module module = ModuleManager.getInstance(getProject()).findModuleByName(params.getModuleName());
       if (module == null) throw new ExecutionException(FlexBundle.message("module.not.found", params.getModuleName()));
 
-      final Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
+      final Sdk sdk = FlexUtils.getSdkForActiveBC(module);
       if (sdk == null) {
         final String s = (ModuleType.get(module) instanceof FlexModuleType ? "module " : "Flex facet(s) of module ") + module.getName();
         throw new ExecutionException(FlexBundle.message("flex.sdk.not.set.for", s));

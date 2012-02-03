@@ -4,31 +4,26 @@ import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.TargetPlayerUtils;
 import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
-import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkAdditionalData;
-import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkAdditionalData;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.NullableComputable;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -48,8 +43,6 @@ import java.util.*;
  */
 public class FlexCompiler implements SourceProcessingCompiler {
   public static final String CONDITIONAL_COMPILATION_VARIABLE_PATTERN = "[a-zA-Z_$][a-zA-Z0-9_&]*::[a-zA-Z_$][a-zA-Z0-9_&]*";
-  private static final Key<Collection<Module>> MODULES_TO_SKIP_FLEX_FACET_COMPILATION =
-    Key.create("MODULES_TO_SKIP_FLEX_FACET_COMPILATION");
   private static final Logger LOG = Logger.getInstance(FlexCompiler.class.getName());
 
   @NotNull
@@ -122,7 +115,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
       for (final ProcessingItem item : items) {
         final Collection<FlexIdeBuildConfiguration> dependencies = new HashSet<FlexIdeBuildConfiguration>();
         // todo add 'optimize for' dependencies
-        for (final DependencyEntry entry : ((MyProcessingItem)item).myConfig.getDependencies().getEntries()) {
+        for (final DependencyEntry entry : ((MyProcessingItem)item).myBC.getDependencies().getEntries()) {
           if (entry instanceof BuildConfigurationEntry) {
             final FlexIdeBuildConfiguration dependencyConfig = ((BuildConfigurationEntry)entry).findBuildConfiguration();
             if (dependencyConfig != null && !dependencyConfig.isSkipCompile()) {
@@ -132,8 +125,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
         }
 
         compilationTasks
-          .add(builtIn ? new BuiltInCompilationTask(((MyProcessingItem)item).myModule, ((MyProcessingItem)item).myConfig, dependencies)
-                       : new MxmlcCompcCompilationTask(((MyProcessingItem)item).myModule, ((MyProcessingItem)item).myConfig, dependencies));
+          .add(builtIn ? new BuiltInCompilationTask(((MyProcessingItem)item).myModule, ((MyProcessingItem)item).myBC, dependencies)
+                       : new MxmlcCompcCompilationTask(((MyProcessingItem)item).myModule, ((MyProcessingItem)item).myBC, dependencies));
       }
 
       if (builtIn) {
@@ -162,11 +155,11 @@ public class FlexCompiler implements SourceProcessingCompiler {
   @SuppressWarnings("ConstantConditions") // already checked in validateConfiguration()
   @Nullable
   private static Pair<String, String> getSdkHomeAndVersionIfSame(final ProcessingItem[] items) {
-    final Sdk sdk = ((MyProcessingItem)items[0]).myConfig.getDependencies().getSdkEntry().findSdk();
+    final Sdk sdk = ((MyProcessingItem)items[0]).myBC.getSdk();
     final String sdkHome = sdk.getHomePath();
 
     for (int i = 1; i < items.length; i++) {
-      if (!sdkHome.equals(((MyProcessingItem)items[i]).myConfig.getDependencies().getSdkEntry().findSdk().getHomePath())) {
+      if (!sdkHome.equals(((MyProcessingItem)items[i]).myBC.getSdk().getHomePath())) {
         return null;
       }
     }
@@ -242,53 +235,37 @@ public class FlexCompiler implements SourceProcessingCompiler {
     throws ConfigurationException {
     final RunConfiguration runConfiguration = CompileStepBeforeRun.getRunConfiguration(scope);
 
-    if (runConfiguration instanceof FlashRunConfiguration || runConfiguration instanceof NewFlexUnitRunConfiguration) {
-      final Collection<Pair<Module, FlexIdeBuildConfiguration>> result = new HashSet<Pair<Module, FlexIdeBuildConfiguration>>();
+    final Collection<Pair<Module, FlexIdeBuildConfiguration>> result = new HashSet<Pair<Module, FlexIdeBuildConfiguration>>();
 
-      final BCBasedRunnerParameters params = runConfiguration instanceof FlashRunConfiguration
-                                             ? ((FlashRunConfiguration)runConfiguration).getRunnerParameters()
-                                             : ((NewFlexUnitRunConfiguration)runConfiguration).getRunnerParameters();
-      final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig;
+    final BCBasedRunnerParameters params = runConfiguration instanceof FlashRunConfiguration
+                                           ? ((FlashRunConfiguration)runConfiguration).getRunnerParameters()
+                                           : ((NewFlexUnitRunConfiguration)runConfiguration).getRunnerParameters();
+    final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig;
 
-      final Ref<RuntimeConfigurationError> exceptionRef = new Ref<RuntimeConfigurationError>();
-      moduleAndConfig =
-        ApplicationManager.getApplication().runReadAction(new NullableComputable<Pair<Module, FlexIdeBuildConfiguration>>() {
-          public Pair<Module, FlexIdeBuildConfiguration> compute() {
-            try {
-              return params.checkAndGetModuleAndBC(runConfiguration.getProject());
-            }
-            catch (RuntimeConfigurationError e) {
-              exceptionRef.set(e);
-              return null;
-            }
+    final Ref<RuntimeConfigurationError> exceptionRef = new Ref<RuntimeConfigurationError>();
+    moduleAndConfig =
+      ApplicationManager.getApplication().runReadAction(new NullableComputable<Pair<Module, FlexIdeBuildConfiguration>>() {
+        public Pair<Module, FlexIdeBuildConfiguration> compute() {
+          try {
+            return params.checkAndGetModuleAndBC(runConfiguration.getProject());
           }
-        });
-      if (!exceptionRef.isNull()) {
-        throw new ConfigurationException(exceptionRef.get().getMessage(),
-                                         FlexBundle.message("run.configuration.0", runConfiguration.getName()));
-      }
-
-      if (!moduleAndConfig.second.isSkipCompile()) {
-        result.add(moduleAndConfig);
-        appendBCDependencies(result, moduleAndConfig.first, moduleAndConfig.second);
-      }
-
-      return result;
-    }
-    else {
-      final Collection<Pair<Module, FlexIdeBuildConfiguration>> result = new ArrayList<Pair<Module, FlexIdeBuildConfiguration>>();
-
-      for (final Module module : scope.getAffectedModules()) {
-        if (ModuleType.get(module) != FlexModuleType.getInstance()) continue;
-        for (final FlexIdeBuildConfiguration config : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
-          if (!config.isSkipCompile()) {
-            result.add(Pair.create(module, config));
+          catch (RuntimeConfigurationError e) {
+            exceptionRef.set(e);
+            return null;
           }
         }
-      }
-
-      return result;
+      });
+    if (!exceptionRef.isNull()) {
+      throw new ConfigurationException(exceptionRef.get().getMessage(),
+                                       FlexBundle.message("run.configuration.0", runConfiguration.getName()));
     }
+
+    if (!moduleAndConfig.second.isSkipCompile()) {
+      result.add(moduleAndConfig);
+      appendBCDependencies(result, moduleAndConfig.first, moduleAndConfig.second);
+    }
+
+    return result;
   }
 
   private static void appendBCDependencies(final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndConfigs,
@@ -320,8 +297,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
     assert !bc.isSkipCompile();
     final BuildConfigurationNature nature = bc.getNature();
 
-    final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
-    final Sdk sdk = sdkEntry == null ? null : sdkEntry.findSdk();
+    final Sdk sdk = bc.getSdk();
     if (sdk == null) {
       throw new ConfigurationException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
     }
@@ -439,137 +415,17 @@ public class FlexCompiler implements SourceProcessingCompiler {
     }
   }
 
-  @NotNull
-  public static Pair<Boolean, String> validateConfiguration(final FlexBuildConfiguration config,
-                                                            final Module module,
-                                                            final String presentableModuleOrFacetName,
-                                                            final boolean chooseMainClassIfNeeded) {
-    if (!config.DO_BUILD) return Pair.create(true, null);
-
-    final Sdk flexSdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
-    if (flexSdk == null) {
-      return Pair.create(false, FlexBundle.message("flex.sdk.not.set.for", presentableModuleOrFacetName));
-    }
-
-    if (flexSdk.getSdkType() instanceof FlexmojosSdkType) {
-      final SdkAdditionalData data = flexSdk.getSdkAdditionalData();
-      if (data == null ||
-          !(data instanceof FlexmojosSdkAdditionalData) ||
-          ((FlexmojosSdkAdditionalData)data).getFlexCompilerClasspath().isEmpty()) {
-        return Pair.create(false, FlexBundle.message("sdk.flex.compiler.classpath.not.set", flexSdk.getName()));
-      }
-    }
-    else {
-      final VirtualFile sdkRoot = flexSdk.getHomeDirectory();
-      if (sdkRoot == null || !sdkRoot.isValid()) {
-        return Pair.create(false, FlexBundle.message("sdk.home.directory.not.found.for", flexSdk.getName()));
-      }
-    }
-
-    if (config.USE_CUSTOM_CONFIG_FILE) {
-      if (config.getType() == FlexBuildConfiguration.Type.FlexUnit && config.USE_CUSTOM_CONFIG_FILE_FOR_TESTS) {
-        if (StringUtil.isEmptyOrSpaces(config.CUSTOM_CONFIG_FILE_FOR_TESTS)) {
-          return Pair.create(false, FlexBundle.message("flex.compiler.config.file.for.tests.not.specified", presentableModuleOrFacetName));
-        }
-        final VirtualFile configFileForTests =
-          VfsUtil.findRelativeFile(config.CUSTOM_CONFIG_FILE_FOR_TESTS, FlexUtils.getFlexCompilerWorkDir(module.getProject(), null));
-        if (configFileForTests == null || !configFileForTests.isValid() || configFileForTests.isDirectory()) {
-          return Pair.create(false, FlexBundle.message("flex.compiler.config.file.for.tests.not.found", config.CUSTOM_CONFIG_FILE_FOR_TESTS,
-                                                       presentableModuleOrFacetName));
-        }
-      }
-      else {
-        if (StringUtil.isEmptyOrSpaces(config.CUSTOM_CONFIG_FILE)) {
-          return Pair.create(false, FlexBundle.message("flex.compiler.config.file.not.specified", presentableModuleOrFacetName));
-        }
-        final VirtualFile configFile =
-          VfsUtil.findRelativeFile(config.CUSTOM_CONFIG_FILE, FlexUtils.getFlexCompilerWorkDir(module.getProject(), null));
-        if (configFile == null || !configFile.isValid() || configFile.isDirectory()) {
-          return Pair.create(false,
-                             FlexBundle.message("flex.compiler.config.file.not.found", config.CUSTOM_CONFIG_FILE,
-                                                presentableModuleOrFacetName));
-        }
-      }
-    }
-    else {
-      if (chooseMainClassIfNeeded &&
-          config.OUTPUT_TYPE.equals(FlexBuildConfiguration.APPLICATION) &&
-          StringUtil.isEmptyOrSpaces(FlexUtils.getPathToMainClassFile(config))) {
-        final ChooseMainClassDialog dialog =
-          new ChooseMainClassDialog(module, presentableModuleOrFacetName, config.MAIN_CLASS, FlexBundle.message("flex.compiler.problem"));
-        dialog.show();
-        if (dialog.isOK()) {
-          config.MAIN_CLASS = dialog.getMainClassName();
-        }
-        else {
-          return Pair.create(false, null);
-        }
-      }
-
-      if (config.OUTPUT_TYPE.equals(FlexBuildConfiguration.APPLICATION)) {
-        if (StringUtil.isEmptyOrSpaces(config.MAIN_CLASS)) {
-          return Pair.create(false, FlexBundle.message("main.class.not.set.for", presentableModuleOrFacetName));
-        }
-        else if (StringUtil.isEmptyOrSpaces(FlexUtils.getPathToMainClassFile(config))) {
-          return Pair.create(false, FlexBundle.message("main.class.not.found", config.MAIN_CLASS, presentableModuleOrFacetName));
-        }
-      }
-
-      if (StringUtil.isEmptyOrSpaces(config.OUTPUT_FILE_NAME)) {
-        return Pair.create(false, FlexBundle.message("output.file.name.not.specified.for", presentableModuleOrFacetName));
-      }
-
-      if (TargetPlayerUtils.isTargetPlayerApplicable(flexSdk) &&
-          !TargetPlayerUtils.isTargetPlayerValid(config.TARGET_PLAYER_VERSION)) {
-        return Pair.create(false, FlexBundle.message("invalid.target.player.version.for", config.TARGET_PLAYER_VERSION,
-                                                     presentableModuleOrFacetName));
-      }
-
-      for (FlexBuildConfiguration.NamespaceAndManifestFileInfo info : config.NAMESPACE_AND_MANIFEST_FILE_INFO_LIST) {
-        if (StringUtil.isEmptyOrSpaces(info.MANIFEST_FILE_PATH)) {
-          return Pair.create(false, FlexBundle.message("flex.compiler.config.manifest.file.not.specified", presentableModuleOrFacetName));
-        }
-        final VirtualFile manifestFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(info.MANIFEST_FILE_PATH);
-        if (manifestFile == null || manifestFile.isDirectory()) {
-          return Pair.create(false, FlexBundle.message("flex.compiler.config.manifest.file.not.found", info.MANIFEST_FILE_PATH,
-                                                       presentableModuleOrFacetName));
-        }
-      }
-
-      for (FlexBuildConfiguration.ConditionalCompilationDefinition definition : config.CONDITIONAL_COMPILATION_DEFINITION_LIST) {
-        if (!definition.NAME.matches(CONDITIONAL_COMPILATION_VARIABLE_PATTERN)) {
-          return Pair.create(false, FlexBundle.message("incorrect.conditional.compilation.definition", definition.NAME));
-        }
-      }
-
-      if (!StringUtil.isEmpty(config.PATH_TO_SERVICES_CONFIG_XML)) {
-        final VirtualFile servicesConfigXml =
-          VfsUtil.findRelativeFile(config.PATH_TO_SERVICES_CONFIG_XML, FlexUtils.getFlexCompilerWorkDir(module.getProject(), null));
-        if (servicesConfigXml == null || servicesConfigXml.isDirectory()) {
-          return Pair.create(false, FlexBundle.message("flex.services-config.xml.file.is.not.valid", config.PATH_TO_SERVICES_CONFIG_XML,
-                                                       presentableModuleOrFacetName));
-        }
-      }
-    }
-    return Pair.create(true, null);
-  }
-
   public ValidityState createValidityState(final DataInput in) throws IOException {
     return new EmptyValidityState();
   }
 
   private static class MyProcessingItem implements ProcessingItem {
     private final Module myModule;
-    private final FlexIdeBuildConfiguration myConfig;
+    private final FlexIdeBuildConfiguration myBC;
 
-    public MyProcessingItem(final Module module) {
+    private MyProcessingItem(final Module module, final FlexIdeBuildConfiguration bc) {
       myModule = module;
-      myConfig = null;
-    }
-
-    private MyProcessingItem(final Module module, final FlexIdeBuildConfiguration config) {
-      myModule = module;
-      myConfig = config;
+      myBC = bc;
     }
 
     @NotNull

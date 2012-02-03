@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.roots.impl.DirectoryIndex;
 import com.intellij.openapi.util.Comparing;
@@ -34,7 +35,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
       return new PackageRefactoringListener(module, getPackageName(element));
     }
 
-    if (module != null && FlexUtils.isFlexModuleOrContainsFlexFacet(module)) {
+    if (module != null && ModuleType.get(module) == FlexModuleType.getInstance()) {
       final JSClass jsClass = getJSClass(element);
       if (jsClass != null) {
         return new JSClassRefactoringListener(module, jsClass.getQualifiedName());

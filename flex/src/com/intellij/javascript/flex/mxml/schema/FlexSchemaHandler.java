@@ -2,12 +2,13 @@ package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.javascript.flex.FlexResolveHelper;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.index.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -65,7 +66,7 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
 
     final Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
 
-    if ((FlexUtils.isFlexModuleOrContainsFlexFacet(module) || (sdk != null && sdk.getSdkType() instanceof IFlexSdkType)) ||
+    if ((ModuleType.get(module) == FlexModuleType.getInstance() || (sdk != null && sdk.getSdkType() instanceof IFlexSdkType)) ||
         !CodeContext.isStdNamespace(uri)) {
 
       Map<String, ParameterizedCachedValue<XmlFile, Module>> descriptors = module.getUserData(DESCRIPTORS_MAP_IN_MODULE);

@@ -228,10 +228,10 @@ public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
 
     myLocaleTextFieldWithBrowse.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        final Sdk flexSdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(myModule);
+        final Sdk flexSdk = FlexUtils.getSdkForActiveBC(myModule);
         if (flexSdk == null) {
           Messages.showErrorDialog(myModule.getProject(),
-                                   FlexBundle.message("flex.sdk.not.set.for", FlexUtils.getPresentableName(myModule, myFlexFacet)),
+                                   FlexBundle.message("flex.sdk.not.set.for", myModule.getName()),
                                    "Flex SDK not found");
         }
         else {
@@ -292,7 +292,7 @@ public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
   }
 
   private void updateSettingsTabbedPane() {
-    final Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(myModule);
+    final Sdk sdk = FlexUtils.getSdkForActiveBC(myModule);
     final boolean flexmojosSdk = sdk != null && sdk.getSdkType() instanceof FlexmojosSdkType;
     myUseDefaultSdkConfigFileCheckBox.setEnabled(!flexmojosSdk);
     myFlexSdkConfigXmlLabel.setEnabled(!flexmojosSdk);
@@ -338,7 +338,7 @@ public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
   }
 
   private void updateTargetPlayerSpecificControls() {
-    final Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(myModule);
+    final Sdk sdk = FlexUtils.getSdkForActiveBC(myModule);
     final boolean applicable = sdk != null && TargetPlayerUtils.isTargetPlayerApplicable(sdk);
     UIUtil.setEnabled(myTargetPlayerVersionForm.getMainPanel(), applicable, true);
   }
@@ -572,7 +572,7 @@ public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
     myConditionalCompilationDefinitionList = config.CONDITIONAL_COMPILATION_DEFINITION_LIST;
     setConditionalCompilationDefinitionsText();
 
-    final Sdk flexSdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(myModule);
+    final Sdk flexSdk = FlexUtils.getSdkForActiveBC(myModule);
     if (flexSdk != null && flexSdk.getSdkType() instanceof IFlexSdkType) {
       final String baseConfigFileName = FlexSdkUtils.getBaseConfigFileName((IFlexSdkType)flexSdk.getSdkType());
       myFlexSdkConfigXmlLabel.setText(baseConfigFileName);

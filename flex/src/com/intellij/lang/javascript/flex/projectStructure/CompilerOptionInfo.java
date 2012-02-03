@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.flex.projectStructure;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -267,8 +266,7 @@ public class CompilerOptionInfo {
   }
 
   public static List<String> getThemes(final Module module, final FlexIdeBuildConfiguration bc) {
-    final SdkEntry sdkEntry = bc.getDependencies().getSdkEntry();
-    final Sdk sdk = sdkEntry == null ? null : sdkEntry.findSdk();
+    final Sdk sdk = bc.getSdk();
     if (sdk == null) return Collections.emptyList();
 
     final CompilerOptionInfo info = getOptionInfo("compiler.theme");

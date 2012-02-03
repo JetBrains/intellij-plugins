@@ -289,7 +289,7 @@ public class LibraryManager {
     }
 
     // AS-273
-    final Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(moduleInfo.getModule());
+    final Sdk sdk = FlexUtils.getSdkForActiveBC(moduleInfo.getModule());
     VirtualFile dir = sdk == null ? null : sdk.getHomeDirectory();
     if (dir != null) {
       dir = dir.findFileByRelativePath("frameworks/projects");

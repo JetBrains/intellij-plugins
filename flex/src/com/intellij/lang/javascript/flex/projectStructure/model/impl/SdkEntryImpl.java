@@ -1,20 +1,14 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.openapi.components.StateStorageException;
-import com.intellij.openapi.projectRoots.ProjectJdkTable;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.hash.LinkedHashMap;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -76,17 +70,6 @@ class SdkEntryImpl implements SdkEntry {
   @NotNull
   public String getName() {
     return myName;
-  }
-
-  @Override
-  @Nullable
-  public Sdk findSdk() {
-    final FlexSdkType2 sdkType = FlexSdkType2.getInstance();
-    return ContainerUtil.find(ProjectJdkTable.getInstance().getAllJdks(), new Condition<Sdk>() {
-      public boolean value(final Sdk sdk) {
-        return sdkType == sdk.getSdkType() && myName.equals(sdk.getName());
-      }
-    });
   }
 
   public State getState() {

@@ -1,8 +1,9 @@
 package com.intellij.lang.javascript.flex.projectStructure.model;
 
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
+import com.intellij.openapi.projectRoots.Sdk;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -61,4 +62,7 @@ public interface FlexIdeBuildConfiguration {
   String getOutputFilePath();
 
   BuildConfigurationNature getNature();
+
+  @Nullable
+  Sdk getSdk();
 }

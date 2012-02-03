@@ -1,7 +1,6 @@
 package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.LogMessageUtil;
-import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
@@ -97,7 +96,7 @@ class LibraryCollector {
   }
 
   private Sdk collectSdkLibraries(final FlexIdeBuildConfiguration bc) {
-    final Sdk sdk = FlexUtils.createFlexSdkWrapper(bc);
+    final Sdk sdk = bc.getSdk();
     assert sdk != null;
     for (VirtualFile jarFile : sdk.getRootProvider().getFiles(OrderRootType.CLASSES)) {
       String swcPath = VirtualFileManager.extractPath(StringUtil.trimEnd(jarFile.getUrl(), JarFileSystem.JAR_SEPARATOR));

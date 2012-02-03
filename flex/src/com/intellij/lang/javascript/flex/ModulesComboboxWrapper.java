@@ -45,7 +45,7 @@ public class ModulesComboboxWrapper {
     if (StringUtil.isEmpty(selectedModuleName)) { // select any Flex module or module with Flex facet
       selectedModule = modules.length > 0 ? modules[0] : null;
       for (final Module module : modules) {
-        if (FlexUtils.isFlexModuleOrContainsFlexFacet(module)) {
+        if (ModuleType.get(module) == FlexModuleType.getInstance()) {
           selectedModule = module;
           break;
         }
@@ -70,7 +70,7 @@ public class ModulesComboboxWrapper {
   @Nullable
   public Module getSelectedModule() {
     final Object selectedItem = myComboBox.getSelectedItem();
-    if (selectedItem instanceof Module && FlexUtils.isFlexModuleOrContainsFlexFacet((Module)selectedItem)) {
+    if (selectedItem instanceof Module && ModuleType.get((Module)selectedItem) == FlexModuleType.getInstance()) {
       return (Module)selectedItem;
     }
     else {

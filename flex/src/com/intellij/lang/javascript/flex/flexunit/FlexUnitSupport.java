@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.flexunit;
 
+import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
@@ -15,6 +16,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.validation.ValidateTypesUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
@@ -78,7 +80,7 @@ public class FlexUnitSupport {
   @Nullable
   public static FlexUnitSupport getSupport(@Nullable Module module) {
     if (module == null) return null;
-    if (!FlexUtils.isFlexModuleOrContainsFlexFacet(module) || FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module) == null) return null;
+    if (ModuleType.get(module) != FlexModuleType.getInstance() || FlexUtils.getSdkForActiveBC(module) == null) return null;
 
     return getSupport(GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module));
   }

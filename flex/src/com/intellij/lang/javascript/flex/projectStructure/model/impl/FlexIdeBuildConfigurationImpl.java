@@ -5,11 +5,16 @@ import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.util.Condition;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -274,6 +279,17 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
   @Override
   public BuildConfigurationNature getNature() {
     return new BuildConfigurationNature(myTargetPlatform, myPureAs, myOutputType);
+  }
+
+  @Override
+  @Nullable
+  public Sdk getSdk() {
+    final SdkEntry sdkEntry = myDependencies.getSdkEntry();
+    return sdkEntry == null ? null : ContainerUtil.find(FlexSdkUtils.getFlexAndFlexmojosSdks(), new Condition<Sdk>() {
+      public boolean value(final Sdk sdk) {
+        return sdkEntry.getName().equals(sdk.getName());
+      }
+    });
   }
 
   @Override
