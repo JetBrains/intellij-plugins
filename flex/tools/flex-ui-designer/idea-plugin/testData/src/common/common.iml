@@ -4,6 +4,11 @@
     <configurations>
       <configuration name="common" output-file="common.swf" output-folder="$MODULE_DIR$/../../../out/production/common" skip-build="true">
         <dependencies target-player="11.1" component-set="SparkOnly">
+          <entries>
+            <entry library-id="88ddb869-3b69-43b3-9ca2-3bebaa1857b4">
+              <dependency linkage="Merged" />
+            </entry>
+          </entries>
           <sdk name="flex_4.6.0" />
         </dependencies>
         <compiler-options />
@@ -27,6 +32,16 @@
     </content>
     <orderEntry type="jdk" jdkName="flex_4.6.0" jdkType="__CompositeFlexSdk__" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library type="flex">
+        <properties id="88ddb869-3b69-43b3-9ca2-3bebaa1857b4" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../../test-data-helper/target/test-data-helper.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
 

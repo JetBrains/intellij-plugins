@@ -147,7 +147,7 @@ public class MxmlWriter {
     }
 
     for (final XmlAttribute attribute : parent.getAttributes()) {
-      XmlAttributeDescriptor attributeDescriptor = attribute.getDescriptor();
+      final XmlAttributeDescriptor attributeDescriptor = attribute.getDescriptor();
       final AnnotationBackedDescriptor descriptor;
       if (attributeDescriptor instanceof AnnotationBackedDescriptor) {
         descriptor = (AnnotationBackedDescriptor)attributeDescriptor;
@@ -213,6 +213,9 @@ public class MxmlWriter {
       else if (attributeDescriptor instanceof AnyXmlAttributeDescriptor) {
         writeAttributeBackedProperty(attribute, new AnyXmlAttributeDescriptorWrapper(attributeDescriptor), tagAttributeProcessContext.getEffectiveObjectReferenceProvider(context),
                                      context, false, true);
+      }
+      else if (!attribute.isNamespaceDeclaration()) {
+        LOG.warn("unknown attribute (" + attribute.getText() + ") descriptor: " + (attributeDescriptor == null ? "null" : attributeDescriptor.toString()) + " of tag " + parent.getText());
       }
     }
 
@@ -577,10 +580,10 @@ public class MxmlWriter {
   private PropertyKind processDefaultProperty(XmlTag parentTag, XmlElementValueProvider valueProvider,
                                               @Nullable ClassBackedElementDescriptor descriptor, int childrenLength, Context context,
                                               boolean cssRulesetDefined) {
-    ClassBackedElementDescriptor parentDescriptor = (ClassBackedElementDescriptor)parentTag.getDescriptor();
+    final ClassBackedElementDescriptor parentDescriptor = (ClassBackedElementDescriptor)parentTag.getDescriptor();
     assert parentDescriptor != null;
 
-    AnnotationBackedDescriptor defaultDescriptor = parentDescriptor.getDefaultPropertyDescriptor();
+    final AnnotationBackedDescriptor defaultDescriptor = parentDescriptor.getDefaultPropertyDescriptor();
     final boolean isXmlText = descriptor == null;
     if (defaultDescriptor == null) {
       final JSClass jsClass = (JSClass)parentDescriptor.getDeclaration();

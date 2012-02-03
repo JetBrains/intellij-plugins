@@ -5,9 +5,7 @@
       <fx:int>2</fx:int>
     </fx:Vector>
   </fx:Declarations>
-
-   <!-- todo will be internal error if uncomment next line, must be fixed asap -->
-   <!--vector as explicit property-->
+ <!--vector as explicit property-->
   <Group>
     <layout>
       <FormItemLayout>

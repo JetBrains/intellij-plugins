@@ -29,6 +29,11 @@ public class CommonTest extends BaseTestCase {
 
   }
 
+  // AS-110
+  public function FxDate():void {
+    assertThat(app, [{data: allOf(instanceOf(Date), {month: 8, date: 10, fullYear: 2011})}]);
+  }
+
   public function Embed():void {
     validateUI(); // force swf get
     var bitmapData:BitmapData = app.getElementAt(0).getElementAt(0).source.data;

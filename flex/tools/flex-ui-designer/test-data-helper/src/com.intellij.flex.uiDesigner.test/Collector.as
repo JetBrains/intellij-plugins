@@ -4,6 +4,7 @@ import mx.utils.ObjectUtil;
 import spark.components.RichEditableText;
 import spark.components.Scroller;
 
+[DefaultProperty("data")]
 public class Collector extends Scroller {
   private var textView:RichEditableText;
 
