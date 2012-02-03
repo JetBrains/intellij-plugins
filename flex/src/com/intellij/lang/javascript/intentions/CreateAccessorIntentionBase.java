@@ -43,6 +43,8 @@ public abstract class CreateAccessorIntentionBase extends PsiElementBaseIntentio
       return false;
     }
     final JSVariable variable = getVariable(element);
+    if (variable != null && variable.isConst()) return false;
+
     final PsiElement parent = variable == null ? null : variable.getParent();
     final PsiElement parentParent = parent instanceof JSVarStatement ? parent.getParent() : null;
     final PsiElement context = parentParent == null ? null : parentParent.getContext();
