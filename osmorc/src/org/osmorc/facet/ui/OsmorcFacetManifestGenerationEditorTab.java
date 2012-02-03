@@ -59,6 +59,7 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
         _editorContext = editorContext;
         // create the editor
         _additionalProperties = new ManifestEditor(_editorContext.getProject(), "");
+      _additionalProperties.setPreferredSize(_additionalProperties.getComponent().getPreferredSize());
         _editorPanel.add(_additionalProperties, BorderLayout.CENTER);
 
         ChangeListener listener = new ChangeListener() {
