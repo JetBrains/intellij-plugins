@@ -2,8 +2,8 @@ package com.intellij.lang.javascript.flex;
 
 import com.intellij.codeInsight.daemon.ImplicitUsageProvider;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitSupport;
+import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
 import com.intellij.lang.javascript.flex.run.FlexRuntimeConfigurationProducer;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSVariable;
@@ -36,7 +36,7 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Conditi
       JSClass clazz = (JSClass)element;
       Module module = ModuleUtil.findModuleForPsiElement(clazz);
       if (FlexRuntimeConfigurationProducer.isAcceptedMainClass(clazz, module, true)) return true;
-      if (JSInheritanceUtil.isParentClass(clazz, FlexCompilerSettingsEditor.MODULE_BASE_CLASS_NAME)) return true;
+      if (JSInheritanceUtil.isParentClass(clazz, FlashRunConfigurationForm.MODULE_BASE_CLASS_NAME)) return true;
 
       FlexUnitSupport flexUnitSupport = FlexUnitSupport.getSupport(module);
       if (flexUnitSupport != null && flexUnitSupport.isTestClass(clazz, true)) return true;

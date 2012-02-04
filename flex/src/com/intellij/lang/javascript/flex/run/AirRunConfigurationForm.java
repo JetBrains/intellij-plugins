@@ -5,7 +5,6 @@ import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.ModulesComboboxWrapper;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
-import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.ui.JSClassChooserDialog;
@@ -205,7 +204,7 @@ public class AirRunConfigurationForm extends SettingsEditor<AirRunConfiguration>
 
   private void createUIComponents() {
     myDebuggerSdkCombo = new FlexSdkComboBoxWithBrowseButton(FlexSdkComboBoxWithBrowseButton.FLEX_OR_FLEXMOJOS_SDK);
-    myMainClassFilter = new JSClassChooserDialog.PublicInheritor(myProject, FlexCompilerSettingsEditor.SPRITE_CLASS_NAME, null, true);
+    myMainClassFilter = new JSClassChooserDialog.PublicInheritor(myProject, FlashRunConfigurationForm.SPRITE_CLASS_NAME, null, true);
     myMainClassComponent = LabeledComponent.create(JSReferenceEditor.forClassName("", myProject, null, GlobalSearchScope.EMPTY_SCOPE, null,
                                                                                   myMainClassFilter, ExecutionBundle
       .message("choose.main.class.dialog.title")), "");

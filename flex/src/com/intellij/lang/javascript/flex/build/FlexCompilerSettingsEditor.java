@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.build;
 import com.intellij.compiler.options.CompilerUIConfigurable;
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.lang.javascript.flex.*;
+import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -46,10 +47,6 @@ import java.util.List;
  *         Time: 3:49:07 PM
  */
 public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
-  // Application Main Class must inherit from this class
-  public static final String SPRITE_CLASS_NAME = "flash.display.Sprite";
-  // The base class for ActionScript-based dynamically-loadable modules
-  public static final String MODULE_BASE_CLASS_NAME = "mx.modules.ModuleBase";
 
   private JPanel myMainPanel;
   private JCheckBox myUseIDEBuilderCheckBox;
@@ -174,7 +171,7 @@ public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
 
     final ActionListener outputTypeListener = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        updateOutputFileName(myOutputFileNameTextField, myLibraryOutputTypeRadioButton.isSelected());
+        FlashRunConfigurationForm.updateOutputFileName(myOutputFileNameTextField, myLibraryOutputTypeRadioButton.isSelected());
         updateMainClassSpecificControls();
         updateResourceFilesSpecificControls();
       }
@@ -347,15 +344,6 @@ public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
     myLocaleTextFieldWithBrowse.setEnabled(myLocaleCheckBox.isEnabled() && myLocaleCheckBox.isSelected());
   }
 
-  public static void updateOutputFileName(final JTextField textField, final boolean isLib) {
-    final String outputFileName = textField.getText();
-    final String lowercase = outputFileName.toLowerCase();
-    final String withoutExtension = lowercase.endsWith(".swf") || lowercase.endsWith(".swc")
-                                    ? outputFileName.substring(0, outputFileName.length() - ".sw_".length())
-                                    : outputFileName;
-    textField.setText(withoutExtension + (isLib ? ".swc" : ".swf"));
-  }
-
   public void saveData() {
     apply();
   }
@@ -502,8 +490,8 @@ public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
   }
 
   public static Condition<JSClass> createMainClassFilter(Module module) {
-    return Conditions.or(new JSClassChooserDialog.PublicInheritor(module, SPRITE_CLASS_NAME, true),
-                         new JSClassChooserDialog.PublicInheritor(module, MODULE_BASE_CLASS_NAME, true));
+    return Conditions.or(new JSClassChooserDialog.PublicInheritor(module, FlashRunConfigurationForm.SPRITE_CLASS_NAME, true),
+                         new JSClassChooserDialog.PublicInheritor(module, FlashRunConfigurationForm.MODULE_BASE_CLASS_NAME, true));
   }
 
   @Nullable

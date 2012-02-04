@@ -8,7 +8,6 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.lang.javascript.flex.*;
-import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
@@ -496,7 +495,7 @@ public class FlexRunConfiguration extends RunConfigurationBase
 
     private void createUIComponents() {
       myDebuggerSdkCombo = new FlexSdkComboBoxWithBrowseButton(FlexSdkComboBoxWithBrowseButton.FLEX_OR_FLEXMOJOS_SDK);
-      myMainClassFilter = new JSClassChooserDialog.PublicInheritor(myProject, FlexCompilerSettingsEditor.SPRITE_CLASS_NAME, null, true);
+      myMainClassFilter = new JSClassChooserDialog.PublicInheritor(myProject, FlashRunConfigurationForm.SPRITE_CLASS_NAME, null, true);
       myMainClassTextWithBrowse = JSReferenceEditor.forClassName("", myProject, null, GlobalSearchScope.EMPTY_SCOPE, null,
                                                                  myMainClassFilter, ExecutionBundle.message(
         "choose.main.class.dialog.title"));

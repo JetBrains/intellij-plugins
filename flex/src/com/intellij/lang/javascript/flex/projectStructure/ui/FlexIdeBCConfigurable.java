@@ -5,12 +5,12 @@ import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil;
-import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
+import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
@@ -494,8 +494,8 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
   private void createUIComponents() {
     final String baseClass = myConfiguration.getOutputType() == OutputType.RuntimeLoadedModule
-                             ? FlexCompilerSettingsEditor.MODULE_BASE_CLASS_NAME
-                             : FlexCompilerSettingsEditor.SPRITE_CLASS_NAME;
+                             ? FlashRunConfigurationForm.MODULE_BASE_CLASS_NAME
+                             : FlashRunConfigurationForm.SPRITE_CLASS_NAME;
     final Condition<JSClass> filter = new JSClassChooserDialog.PublicInheritor(myModule, baseClass, true);
     myMainClassComponent = JSReferenceEditor.forClassName("", myModule.getProject(), null, GlobalSearchScope.moduleScope(myModule), null,
                                                           filter, ExecutionBundle.message("choose.main.class.dialog.title"));

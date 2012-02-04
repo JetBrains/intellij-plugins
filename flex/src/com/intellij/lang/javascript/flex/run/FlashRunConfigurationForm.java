@@ -2,7 +2,7 @@ package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.ide.ui.ListCellRendererWrapper;
-import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
+import com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
@@ -27,8 +27,15 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.InfoFromConfigFile;
+
 public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfiguration> {
 
+  // Application Main Class must inherit from this class
+  public static final String SPRITE_CLASS_NAME = "flash.display.Sprite";
+  // The base class for ActionScript-based dynamically-loadable modules
+  public static final String MODULE_BASE_CLASS_NAME = "mx.modules.ModuleBase";
+  
   private JPanel myMainPanel;
   private BCCombo myBCCombo;
 
@@ -114,7 +121,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myOverrideMainClassCheckBox.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         if (myOverrideMainClassCheckBox.isSelected()) {
-          FlexCompilerSettingsEditor.updateOutputFileName(myOutputFileNameTextField, false);
+          updateOutputFileName(myOutputFileNameTextField, false);
         }
 
         updateControls();
@@ -221,21 +228,29 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   }
 
   private void updateControls() {
-    final FlexIdeBuildConfiguration config = myBCCombo.getBC();
+    final FlexIdeBuildConfiguration bc = myBCCombo.getBC();
+    final Module module = myBCCombo.getModule();
 
     final boolean overrideMainClass = myOverrideMainClassCheckBox.isSelected();
     myMainClassComponent.setEnabled(overrideMainClass);
     myOutputFileNameLabel.setEnabled(overrideMainClass);
     myOutputFileNameTextField.setEnabled(overrideMainClass);
 
-    if (!overrideMainClass && config != null) {
-      myMainClassComponent.setText(config.getMainClass());
-      myOutputFileNameTextField.setText(config.getOutputFileName());
+    if (!overrideMainClass && bc != null && module != null) {
+      InfoFromConfigFile info = InfoFromConfigFile.DEFAULT;
+
+      final String configFilePath = bc.getCompilerOptions().getAdditionalConfigFilePath();
+      if (!configFilePath.isEmpty()) {
+        info = FlexCompilerConfigFileUtil.getInfoFromConfigFile(module, configFilePath);
+      }
+
+      myMainClassComponent.setText(StringUtil.notNullize(info.mainClass, bc.getMainClass()));
+      myOutputFileNameTextField.setText(StringUtil.notNullize(info.outputFileName, bc.getOutputFileName()));
     }
 
-    final boolean web = config != null && config.getTargetPlatform() == TargetPlatform.Web;
-    final boolean desktop = config != null && config.getTargetPlatform() == TargetPlatform.Desktop;
-    final boolean mobile = config != null && config.getTargetPlatform() == TargetPlatform.Mobile;
+    final boolean web = bc != null && bc.getTargetPlatform() == TargetPlatform.Web;
+    final boolean desktop = bc != null && bc.getTargetPlatform() == TargetPlatform.Desktop;
+    final boolean mobile = bc != null && bc.getTargetPlatform() == TargetPlatform.Mobile;
 
     myLaunchPanel.setVisible(web);
     myWebOptionsPanel.setVisible(web);
@@ -244,7 +259,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myMobileOptionsPanel.setVisible(mobile);
 
     if (web) {
-      updateBCOutputLabel(config);
+      updateBCOutputLabel(bc);
 
       myURLTextField.setEnabled(myURLRadioButton.isSelected());
 
@@ -311,7 +326,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
   private void createUIComponents() {
     myBCCombo = new BCCombo(myProject);
-    myMainClassFilter = new JSClassChooserDialog.PublicInheritor(myProject, FlexCompilerSettingsEditor.SPRITE_CLASS_NAME, null, true);
+    myMainClassFilter = new JSClassChooserDialog.PublicInheritor(myProject, SPRITE_CLASS_NAME, null, true);
     myMainClassComponent = JSReferenceEditor.forClassName("", myProject, null, GlobalSearchScope.EMPTY_SCOPE, null,
                                                           myMainClassFilter, ExecutionBundle.message("choose.main.class.dialog.title"));
   }
@@ -418,5 +433,14 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
   protected void disposeEditor() {
     myBCCombo.dispose();
+  }
+
+  public static void updateOutputFileName(final JTextField textField, final boolean isLib) {
+    final String outputFileName = textField.getText();
+    final String lowercase = outputFileName.toLowerCase();
+    final String withoutExtension = lowercase.endsWith(".swf") || lowercase.endsWith(".swc")
+                                    ? outputFileName.substring(0, outputFileName.length() - ".sw_".length())
+                                    : outputFileName;
+    textField.setText(withoutExtension + (isLib ? ".swc" : ".swf"));
   }
 }

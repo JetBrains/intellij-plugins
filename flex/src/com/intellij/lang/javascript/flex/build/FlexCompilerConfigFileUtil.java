@@ -66,6 +66,8 @@ public class FlexCompilerConfigFileUtil {
     };
 
   public static class InfoFromConfigFile {
+    public static InfoFromConfigFile DEFAULT = new InfoFromConfigFile(null, null, null, null);
+
     public final @Nullable String mainClass;
     public final @Nullable String outputFileName;
     public final @Nullable String outputFolderPath;

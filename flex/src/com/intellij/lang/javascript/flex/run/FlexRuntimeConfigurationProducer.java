@@ -9,7 +9,6 @@ import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
-import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
@@ -169,7 +168,7 @@ public class FlexRuntimeConfigurationProducer extends RuntimeConfigurationProduc
     final String jsClassName = jsClass.getQualifiedName();
     if (jsClassName == null) return false;
     final PsiElement spriteClass = JSResolveUtil.unwrapProxy(
-      JSResolveUtil.findClassByQName(FlexCompilerSettingsEditor.SPRITE_CLASS_NAME, GlobalSearchScope.moduleWithLibrariesScope(module)));
+      JSResolveUtil.findClassByQName(FlashRunConfigurationForm.SPRITE_CLASS_NAME, GlobalSearchScope.moduleWithLibrariesScope(module)));
     if (!(spriteClass instanceof JSClass)) return false;
 
     final boolean isSpriteInheritor = JSInheritanceUtil.isParentClass(jsClass, (JSClass)spriteClass);

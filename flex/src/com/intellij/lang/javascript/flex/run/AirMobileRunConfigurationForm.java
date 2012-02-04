@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.ModulesComboboxWrapper;
 import com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParametersBase;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
-import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.ui.JSClassChooserDialog;
@@ -415,7 +414,7 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
 
   private void createUIComponents() {
     myDebuggerSdkCombo = new FlexSdkComboBoxWithBrowseButton(FlexSdkComboBoxWithBrowseButton.FLEX_OR_FLEXMOJOS_SDK);
-    myMainClassFilter = new JSClassChooserDialog.PublicInheritor(myProject, FlexCompilerSettingsEditor.SPRITE_CLASS_NAME, null, true);
+    myMainClassFilter = new JSClassChooserDialog.PublicInheritor(myProject, FlashRunConfigurationForm.SPRITE_CLASS_NAME, null, true);
     myMainClassEditor =
       JSReferenceEditor.forClassName("", myProject, null, GlobalSearchScope.EMPTY_SCOPE, null, myMainClassFilter, ExecutionBundle.message(
         "choose.main.class.dialog.title"));
