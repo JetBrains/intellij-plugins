@@ -105,13 +105,14 @@ public class FlexCompiler implements SourceProcessingCompiler {
     }
     else {
       boolean builtIn = flexCompilerConfiguration.USE_BUILT_IN_COMPILER;
+      final Sdk commonSdk = getSdkIfSame(items);
 
-      final Pair<String, String> sdkHomeAndVersion = getSdkHomeAndVersionIfSame(items);
-      if (builtIn && sdkHomeAndVersion == null) {
+      if (builtIn && commonSdk == null) {
         builtIn = false;
         flexCompilerHandler.getBuiltInFlexCompilerHandler().stopCompilerProcess();
         context.addMessage(CompilerMessageCategory.INFORMATION, FlexBundle.message("can.not.use.built.in.compiler.shell"), null, -1, -1);
       }
+
       context.addMessage(CompilerMessageCategory.INFORMATION,
                          FlexBundle.message(builtIn ? "using.builtin.compiler" : "using.mxmlc.compc",
                                             flexCompilerConfiguration.MAX_PARALLEL_COMPILATIONS), null, -1, -1);
@@ -135,8 +136,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
       if (builtIn) {
         try {
-          flexCompilerHandler.getBuiltInFlexCompilerHandler()
-            .startCompilerIfNeeded(sdkHomeAndVersion.first, sdkHomeAndVersion.second, null, context);
+          flexCompilerHandler.getBuiltInFlexCompilerHandler().startCompilerIfNeeded(commonSdk, context);
         }
         catch (IOException e) {
           context.addMessage(CompilerMessageCategory.ERROR, e.toString(), null, -1, -1);
@@ -158,17 +158,16 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
   @SuppressWarnings("ConstantConditions") // already checked in validateConfiguration()
   @Nullable
-  private static Pair<String, String> getSdkHomeAndVersionIfSame(final ProcessingItem[] items) {
+  private static Sdk getSdkIfSame(final ProcessingItem[] items) {
     final Sdk sdk = ((MyProcessingItem)items[0]).myBC.getSdk();
-    final String sdkHome = sdk.getHomePath();
 
     for (int i = 1; i < items.length; i++) {
-      if (!sdkHome.equals(((MyProcessingItem)items[i]).myBC.getSdk().getHomePath())) {
+      if (!sdk.equals(((MyProcessingItem)items[i]).myBC.getSdk())) {
         return null;
       }
     }
 
-    return Pair.create(sdkHome, sdk.getVersionString());
+    return sdk;
   }
 
   @NotNull

@@ -173,15 +173,15 @@ public class FlexDebugProcess extends XDebugProcess {
                           final FlexIdeBuildConfiguration bc,
                           final BCBasedRunnerParameters params) throws IOException {
     super(session);
-
     final Sdk sdk = bc.getSdk();
-    myAppSdkHome = sdk != null ? FileUtil.toSystemIndependentName(sdk.getHomePath()) : null;
+    assert sdk != null;
+    myAppSdkHome = FileUtil.toSystemIndependentName(sdk.getHomePath());
     myDebuggerSdkHome = myAppSdkHome;
-    myDebuggerVersion = StringUtil.notNullize(sdk != null ? sdk.getVersionString() : null, "unknown");
+    myDebuggerVersion = sdk.getVersionString();
     myBreakpointsHandler = new FlexBreakpointsHandler(this);
 
     final List<String> fdbLaunchCommand = FlexSdkUtils
-      .getCommandLineForSdkTool(session.getProject(), myAppSdkHome, null, getFdbClasspath(), "flex.tools.debugger.cli.DebugCLI", null);
+      .getCommandLineForSdkTool(session.getProject(), sdk, getFdbClasspath(), "flex.tools.debugger.cli.DebugCLI", null);
 
     if (params instanceof FlashRunnerParameters &&
         bc.getTargetPlatform() == TargetPlatform.Mobile &&

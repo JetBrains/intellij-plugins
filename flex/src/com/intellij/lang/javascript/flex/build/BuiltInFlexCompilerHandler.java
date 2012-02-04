@@ -1,9 +1,8 @@
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
-import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkAdditionalData;
-import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
@@ -17,7 +16,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -52,16 +50,7 @@ public class BuiltInFlexCompilerHandler {
   }
 
   public synchronized void startCompilerIfNeeded(final @NotNull Sdk sdk, final CompileContext context) throws IOException {
-    final FlexmojosSdkAdditionalData data = sdk.getSdkType() instanceof FlexmojosSdkType
-                                            ? (FlexmojosSdkAdditionalData)sdk.getSdkAdditionalData() : null;
-    startCompilerIfNeeded(sdk.getHomePath(), sdk.getVersionString(), data, context);
-  }
-
-  public synchronized void startCompilerIfNeeded(final String sdkHome,
-                                                 final String sdkVersion,
-                                                 @Nullable final FlexmojosSdkAdditionalData data,
-                                                 final CompileContext context) throws IOException {
-    if (!Comparing.equal(sdkHome, mySdkHome)) {
+    if (!Comparing.equal(sdk.getHomePath(), mySdkHome)) {
       stopCompilerProcess();
     }
 
@@ -72,12 +61,12 @@ public class BuiltInFlexCompilerHandler {
         myServerSocket.setSoTimeout(10000);
         final int port = myServerSocket.getLocalPort();
 
-        startCompilerProcess(sdkHome, sdkVersion, data, port, context);
+        startCompilerProcess(sdk, port, context);
 
         final Socket socket = myServerSocket.accept();
         myDataInputStream = new DataInputStream(socket.getInputStream());
         myDataOutputStream = new DataOutputStream(socket.getOutputStream());
-        mySdkHome = sdkHome;
+        mySdkHome = sdk.getHomePath();
         scheduleInputReading();
       }
       catch (IOException e) {
@@ -87,23 +76,19 @@ public class BuiltInFlexCompilerHandler {
     }
   }
 
-  private void startCompilerProcess(final String sdkHome,
-                                    final String sdkVersion,
-                                    final FlexmojosSdkAdditionalData data,
-                                    final int port,
-                                    final CompileContext context) throws IOException {
+  private void startCompilerProcess(final Sdk sdk, final int port, final CompileContext context) throws IOException {
     final StringBuilder classpath = new StringBuilder();
 
     classpath.append(FlexUtils.getPathToBundledJar("idea-flex-compiler-fix.jar"));
     classpath.append(File.pathSeparatorChar);
     classpath.append(FlexUtils.getPathToBundledJar("flex-compiler.jar"));
 
-    if (data == null) {
-      classpath.append(File.pathSeparator).append(FileUtil.toSystemDependentName(sdkHome + "/lib/flex-compiler-oem.jar"));
+    if (sdk.getSdkType() == FlexSdkType2.getInstance()) {
+      classpath.append(File.pathSeparator).append(FileUtil.toSystemDependentName(sdk.getHomePath() + "/lib/flex-compiler-oem.jar"));
     }
 
-    final List<String> commandLine = FlexSdkUtils
-      .getCommandLineForSdkTool(myProject, sdkHome, data, classpath.toString(), "com.intellij.flex.compiler.FlexCompiler", null);
+    final List<String> commandLine =
+      FlexSdkUtils.getCommandLineForSdkTool(myProject, sdk, classpath.toString(), "com.intellij.flex.compiler.FlexCompiler", null);
     commandLine.add(String.valueOf(port));
 
     final ProcessBuilder processBuilder = new ProcessBuilder(commandLine);

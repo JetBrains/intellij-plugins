@@ -562,43 +562,34 @@ public class FlexSdkUtils {
     return version != null && version.startsWith("4.");
   }
 
+  /**
+   * @param mainClass used in case of Flexmojos SDK, also used for ordinary Flex SDK if <code>jarName</code> is <code>null</code>
+   * @param jarName   if not <code>null</code> - this parameter used in case of Flex SDK; always ignored in case of Flexmojos SDK
+   */
   public static List<String> getCommandLineForSdkTool(final @NotNull Project project,
                                                       final @NotNull Sdk sdk,
                                                       final @Nullable String additionalClasspath,
                                                       final @NotNull String mainClass,
                                                       final @Nullable String jarName) {
-    final FlexmojosSdkAdditionalData data = sdk.getSdkType() instanceof FlexmojosSdkType
-                                            ? (FlexmojosSdkAdditionalData)sdk.getSdkAdditionalData() : null;
-    return getCommandLineForSdkTool(project, sdk.getHomePath(), data, additionalClasspath, mainClass, jarName);
-  }
-
-  /**
-   * @param mainClass used in case of Flexmojos SDK, also used for ordinary Flex/AIR SDK if <code>jarName</code> is <code>null</code>
-   * @param jarName   if not <code>null</code> - this parameter used in case of Flex/AIR SDK; always ignored in case of Flexmojos SDK
-   */
-  public static List<String> getCommandLineForSdkTool(final @NotNull Project project,
-                                                      final @NotNull String sdkHome,
-                                                      final @Nullable FlexmojosSdkAdditionalData flexmojosSdkAdditionalData,
-                                                      final @Nullable String additionalClasspath,
-                                                      final @NotNull String mainClass,
-                                                      final @Nullable String jarName) {
-    final boolean isFlexmojos = flexmojosSdkAdditionalData != null;
     String javaHome = SystemProperties.getJavaHome();
     boolean customJavaHomeSet = false;
     String additionalJavaArgs = null;
     int heapSizeMbFromJvmConfig = 0;
     String classpath = additionalClasspath;
 
+    final boolean isFlexmojos =  sdk.getSdkType() == FlexmojosSdkType.getInstance();
+    final FlexmojosSdkAdditionalData flexmojosSdkData = isFlexmojos? (FlexmojosSdkAdditionalData)sdk.getSdkAdditionalData() : null;
+
     if (isFlexmojos) {
       classpath =
         (StringUtil.isEmpty(classpath) ? "" : (classpath + File.pathSeparator)) +
-        FileUtil.toSystemDependentName(StringUtil.join(flexmojosSdkAdditionalData.getFlexCompilerClasspath(), File.pathSeparator));
+        FileUtil.toSystemDependentName(StringUtil.join(flexmojosSdkData.getFlexCompilerClasspath(), File.pathSeparator));
     }
     else {
       FileInputStream inputStream = null;
 
       try {
-        inputStream = new FileInputStream(FileUtil.toSystemDependentName(sdkHome + "/bin/jvm.config"));
+        inputStream = new FileInputStream(FileUtil.toSystemDependentName(sdk.getHomePath() + "/bin/jvm.config"));
 
         final Properties properties = new Properties();
         properties.load(inputStream);
@@ -640,7 +631,7 @@ public class FlexSdkUtils {
 
     final String javaExecutable = FileUtil.toSystemDependentName((javaHome + "/bin/java" + (SystemInfo.isWindows ? ".exe" : "")));
     final String applicationHomeParam =
-      isFlexmojos ? null : ("-Dapplication.home=" + FileUtil.toSystemDependentName(sdkHome));
+      isFlexmojos ? null : ("-Dapplication.home=" + FileUtil.toSystemDependentName(sdk.getHomePath()));
 
     final String d32 = (!customJavaHomeSet && SystemInfo.isMac && is64BitJava(javaExecutable)) ? "-d32" : null;
 
@@ -673,7 +664,7 @@ public class FlexSdkUtils {
     }
     else {
       result.add("-jar");
-      result.add(FileUtil.toSystemDependentName(sdkHome + "/lib/" + jarName));
+      result.add(FileUtil.toSystemDependentName(sdk.getHomePath() + "/lib/" + jarName));
     }
 
     return result;
