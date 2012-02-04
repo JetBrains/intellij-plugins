@@ -23,11 +23,11 @@ public class SelectInDesigner implements SelectInTarget {
     if (DocumentFactoryManager.getInstance().getNullableInfo(context.getVirtualFile()) == null) {
       return false;
     }
-    
+
     final Object selectorInFile = context.getSelectorInFile();
     if (selectorInFile instanceof PsiElement) {
-      PsiElement psiElement = (PsiElement)selectorInFile;
-      return RunDesignViewAction.isSupported(psiElement.getProject(), psiElement.getContainingFile());
+      final PsiElement psiElement = (PsiElement)selectorInFile;
+      return RunDesignViewAction.canDo(psiElement.getProject(), psiElement.getContainingFile());
     }
 
     return false;

@@ -24,7 +24,7 @@ public class FlashUIDesignerMxmlAnnotator implements Annotator {
     
     final XmlTag tag = (XmlTag)element;
     final XmlFile psiFile = (XmlFile)tag.getContainingFile();
-    if (psiFile.getRootTag() != tag || !RunDesignViewAction.isSupported(tag.getProject(), psiFile)) {
+    if (psiFile.getRootTag() != tag || !RunDesignViewAction.isApplicable(tag.getProject(), psiFile)) {
       return;
     }
 
@@ -43,7 +43,7 @@ public class FlashUIDesignerMxmlAnnotator implements Annotator {
 
     @Override
     public AnAction getClickAction() {
-      return new RunDesignViewAction();
+      return DesignerApplicationManager.getInstance().isDocumentOpening() ? null : new RunDesignViewAction();
     }
 
     @Override

@@ -102,10 +102,14 @@ public class RunDesignViewAction extends DumbAwareAction {
     }
 
     final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document);
-    return isSupported(project, psiFile);
+    return isApplicable(project, psiFile);
   }
 
-  public static boolean isSupported(Project project, PsiFile psiFile) {
+  public static boolean canDo(Project project, PsiFile psiFile) {
+    return DesignerApplicationManager.getInstance().isDocumentOpening() && isApplicable(project, psiFile);
+  }
+
+  public static boolean isApplicable(Project project, PsiFile psiFile) {
     if (psiFile == null || !JavaScriptSupportLoader.isFlexMxmFile(psiFile)) {
       return false;
     }

@@ -130,7 +130,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
   private boolean isApplicableEditor(Editor editor) {
     final Document document = editor.getDocument();
-    return RunDesignViewAction.isSupported(project, PsiDocumentManager.getInstance(project).getPsiFile(document));
+    return RunDesignViewAction.isApplicable(project, PsiDocumentManager.getInstance(project).getPsiFile(document));
   }
 
   @Nullable
