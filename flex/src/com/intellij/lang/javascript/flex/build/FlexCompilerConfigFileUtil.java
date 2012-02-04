@@ -1,20 +1,27 @@
 package com.intellij.lang.javascript.flex.build;
 
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.PathUtil;
 import com.intellij.util.text.CharSequenceReader;
 import com.intellij.util.xml.NanoXmlUtil;
 import org.jdom.*;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
+
+import static com.intellij.lang.javascript.flex.sdk.FlexSdkUtils.*;
 
 public class FlexCompilerConfigFileUtil {
 
@@ -57,6 +64,23 @@ public class FlexCompilerConfigFileUtil {
       // load-externs option should not be used because it can lead to runtime errors like IDEA-70155
       "load-externs"
     };
+
+  public static class InfoFromConfigFile {
+    public final @Nullable String mainClass;
+    public final @Nullable String outputFileName;
+    public final @Nullable String outputFolderPath;
+    public final @Nullable String targetPlayer;
+
+    private InfoFromConfigFile(final @Nullable String mainClass,
+                               final @Nullable String outputFileName,
+                               final @Nullable String outputFolderPath,
+                               final @Nullable String targetPlayer) {
+      this.mainClass = mainClass;
+      this.outputFileName = outputFileName;
+      this.outputFolderPath = outputFolderPath;
+      this.targetPlayer = targetPlayer;
+    }
+  }
 
   public static class NamespacesInfo {
     public final String namespace;
@@ -228,7 +252,7 @@ public class FlexCompilerConfigFileUtil {
     }
 
     Pair<Long, Collection<NamespacesInfo>> data = configFile.getUserData(MOD_STAMP_TO_NAMESPACES_INFOS);
-    
+
     final FileDocumentManager documentManager = FileDocumentManager.getInstance();
     final com.intellij.openapi.editor.Document cachedDocument = documentManager.getCachedDocument(configFile);
     final Long currentTimestamp = cachedDocument != null ? cachedDocument.getModificationStamp() : configFile.getModificationCount();
@@ -254,7 +278,7 @@ public class FlexCompilerConfigFileUtil {
           namespacesInfos.add(new NamespacesInfo(namespaceAndManifest.first, namespaceAndManifest.second,
                                                  includedInSwcNamespaces.contains(namespaceAndManifest.first)));
         }
-        
+
         data = Pair.create(currentTimestamp, namespacesInfos);
         configFile.putUserData(MOD_STAMP_TO_NAMESPACES_INFOS, data);
       }
@@ -263,5 +287,63 @@ public class FlexCompilerConfigFileUtil {
     }
 
     return data == null ? Collections.<NamespacesInfo>emptyList() : data.second;
+  }
+
+  public static InfoFromConfigFile getInfoFromConfigFile(final Module module, final String configFilePath) {
+    String mainClass = null;
+    String outputPath = null;
+    String targetPlayer = null;
+
+    final VirtualFile configFile = configFilePath.isEmpty() ? null : LocalFileSystem.getInstance().findFileByPath(configFilePath);
+    if (configFile != null) {
+      final FileDocumentManager manager = FileDocumentManager.getInstance();
+      if (manager.isFileModified(configFile)) {
+        final com.intellij.openapi.editor.Document document = manager.getCachedDocument(configFile);
+        if (document != null) {
+          manager.saveDocument(document);
+        }
+      }
+
+      final List<String> xmlElements = Arrays.asList(FILE_SPEC_ELEMENT, OUTPUT_ELEMENT, TARGET_PLAYER_ELEMENT);
+      try {
+        final Map<String, List<String>> map = FlexUtils.findXMLElements(configFile.getInputStream(), xmlElements);
+
+        final List<String> fileSpecList = map.get(FILE_SPEC_ELEMENT);
+        if (!fileSpecList.isEmpty()) {
+          mainClass = getClassForOutputTagValue(module, fileSpecList.get(0), configFile.getParent());
+        }
+
+        final List<String> outputList = map.get(OUTPUT_ELEMENT);
+        if (!outputList.isEmpty()) {
+          outputPath = outputList.get(0);
+          if (!FileUtil.isAbsolute(outputPath)) {
+            outputPath = configFile.getParent().getPath() + "/" + outputPath;
+          }
+        }
+
+        final List<String> targetPlayerList = map.get(TARGET_PLAYER_ELEMENT);
+        if (!targetPlayerList.isEmpty()) {
+          targetPlayer = targetPlayerList.get(0);
+        }
+      }
+      catch (IOException ignore) {/*ignore*/ }
+    }
+
+    final String outputFileName = outputPath == null ? null : PathUtil.getFileName(outputPath);
+    final String outputFolderPath = outputPath == null ? null : PathUtil.getParentPath(outputPath);
+    return new InfoFromConfigFile(mainClass, outputFileName, outputFolderPath, targetPlayer);
+  }
+
+  private static String getClassForOutputTagValue(final Module module, final String outputTagValue, final VirtualFile baseDir) {
+    if (outputTagValue.isEmpty()) return "unknown";
+
+    final VirtualFile file = VfsUtil.findRelativeFile(outputTagValue, baseDir);
+    if (file == null) return FileUtil.getNameWithoutExtension(PathUtil.getFileName(outputTagValue));
+
+    final VirtualFile sourceRoot = ProjectRootManager.getInstance(module.getProject()).getFileIndex().getSourceRootForFile(file);
+    if (sourceRoot == null) return file.getNameWithoutExtension();
+
+    final String relativePath = VfsUtilCore.getRelativePath(file, sourceRoot, '/');
+    return relativePath == null ? file.getNameWithoutExtension() : FileUtil.getNameWithoutExtension(relativePath).replace("/", ".");
   }
 }

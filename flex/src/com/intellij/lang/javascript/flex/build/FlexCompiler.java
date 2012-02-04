@@ -38,6 +38,8 @@ import java.io.DataInput;
 import java.io.IOException;
 import java.util.*;
 
+import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.InfoFromConfigFile;
+
 /**
  * @author Maxim.Mossienko
  *         Date: Jul 9, 2008
@@ -180,7 +182,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
       final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndConfigsToCompile = getModulesAndConfigsToCompile(scope);
 
       for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig : modulesAndConfigsToCompile) {
-        validateConfiguration(moduleAndConfig.first.getName(), moduleAndConfig.second);
+        validateConfiguration(moduleAndConfig.first, moduleAndConfig.second);
       }
 
       checkSimilarOutputFiles(modulesAndConfigsToCompile);
@@ -307,36 +309,57 @@ public class FlexCompiler implements SourceProcessingCompiler {
     }
   }
 
-  private static void validateConfiguration(final String moduleName, final FlexIdeBuildConfiguration bc) throws ConfigurationException {
+  private static void validateConfiguration(final Module module, final FlexIdeBuildConfiguration bc) throws ConfigurationException {
     assert !bc.isSkipCompile();
-    final BuildConfigurationNature nature = bc.getNature();
+    final String moduleName = module.getName();
 
     final Sdk sdk = bc.getSdk();
     if (sdk == null) {
       throw new ConfigurationException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
     }
 
-    if (!nature.isLib() && bc.getMainClass().isEmpty()) {
+    String mainClassPathFromConfigFile = null;
+    String outputFileNameFromConfigFile = null;
+    String outputFolderPathFromConfigFile = null;
+
+    final String additionalConfigFilePath = bc.getCompilerOptions().getAdditionalConfigFilePath();
+    if (!additionalConfigFilePath.isEmpty()) {
+      final VirtualFile additionalConfigFile = LocalFileSystem.getInstance().findFileByPath(additionalConfigFilePath);
+      if (additionalConfigFile == null || additionalConfigFile.isDirectory()) {
+        throw new ConfigurationException(
+          FlexBundle.message("additional.config.file.not.found", additionalConfigFilePath, bc.getName(), moduleName));
+      }
+      final InfoFromConfigFile info = FlexCompilerConfigFileUtil.getInfoFromConfigFile(module, additionalConfigFilePath);
+      mainClassPathFromConfigFile = info.mainClass;
+      outputFileNameFromConfigFile = info.outputFileName;
+      outputFolderPathFromConfigFile = info.outputFolderPath;
+    }
+
+    final BuildConfigurationNature nature = bc.getNature();
+
+    if (!nature.isLib() && mainClassPathFromConfigFile == null && bc.getMainClass().isEmpty()) {
       throw new ConfigurationException(FlexBundle.message("main.class.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
       // real main class validation is done later in CompilerConfigGenerator
     }
 
-    if (bc.getOutputFileName().isEmpty()) {
-      throw new ConfigurationException(FlexBundle.message("output.file.name.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
-    }
+    if (outputFileNameFromConfigFile == null && outputFolderPathFromConfigFile == null) {
+      if (bc.getOutputFileName().isEmpty()) {
+        throw new ConfigurationException(FlexBundle.message("output.file.name.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
+      }
 
-    if (!nature.isLib() && !bc.getOutputFileName().toLowerCase().endsWith(".swf")) {
-      throw new ConfigurationException(
-        FlexBundle.message("output.file.name.must.have.2.extension.for.bc.0.of.module.1", bc.getName(), moduleName, "swf"));
-    }
+      if (!nature.isLib() && !bc.getOutputFileName().toLowerCase().endsWith(".swf")) {
+        throw new ConfigurationException(
+          FlexBundle.message("output.file.name.must.have.2.extension.for.bc.0.of.module.1", bc.getName(), moduleName, "swf"));
+      }
 
-    if (nature.isLib() && !bc.getOutputFileName().toLowerCase().endsWith(".swc")) {
-      throw new ConfigurationException(
-        FlexBundle.message("output.file.name.must.have.2.extension.for.bc.0.of.module.1", bc.getName(), moduleName, "swc"));
-    }
+      if (nature.isLib() && !bc.getOutputFileName().toLowerCase().endsWith(".swc")) {
+        throw new ConfigurationException(
+          FlexBundle.message("output.file.name.must.have.2.extension.for.bc.0.of.module.1", bc.getName(), moduleName, "swc"));
+      }
 
-    if (bc.getOutputFolder().isEmpty()) {
-      throw new ConfigurationException(FlexBundle.message("output.folder.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
+      if (bc.getOutputFolder().isEmpty()) {
+        throw new ConfigurationException(FlexBundle.message("output.folder.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
+      }
     }
 
     if (nature.isWebPlatform() && nature.isApp() && bc.isUseHtmlWrapper()) {
@@ -362,15 +385,6 @@ public class FlexCompiler implements SourceProcessingCompiler {
       }
       catch (IOException e) {
         throw new ConfigurationException(FlexBundle.message("failed.to.load.file", templateFile.getPath(), e.getMessage()));
-      }
-    }
-
-    final String additionalConfigFilePath = bc.getCompilerOptions().getAdditionalConfigFilePath();
-    if (!additionalConfigFilePath.isEmpty()) {
-      final VirtualFile additionalConfigFile = LocalFileSystem.getInstance().findFileByPath(additionalConfigFilePath);
-      if (additionalConfigFile == null || additionalConfigFile.isDirectory()) {
-        throw new ConfigurationException(
-          FlexBundle.message("additional.config.file.not.found", additionalConfigFilePath, bc.getName(), moduleName));
       }
     }
 

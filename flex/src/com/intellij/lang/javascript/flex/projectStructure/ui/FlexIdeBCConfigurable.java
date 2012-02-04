@@ -4,6 +4,7 @@ import com.intellij.execution.ExecutionBundle;
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil;
 import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
@@ -14,13 +15,9 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.ui.JSClassChooserDialog;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
@@ -34,16 +31,11 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.Consumer;
-import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nls;
@@ -54,13 +46,9 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-
-import static com.intellij.lang.javascript.flex.sdk.FlexSdkUtils.*;
 
 public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable*/NamedConfigurable<ModifiableFlexIdeBuildConfiguration>
   implements CompositeConfigurable.Item {
@@ -244,70 +232,18 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   }
 
   private void checkIfConfigFileOverridesOptions(final String configFilePath) {
-    String mainClass = null;
-    String outputPath = null;
-    String targetPlayer = null;
-
-    final VirtualFile configFile = configFilePath.isEmpty() ? null : LocalFileSystem.getInstance().findFileByPath(configFilePath);
-    if (configFile != null) {
-      final FileDocumentManager manager = FileDocumentManager.getInstance();
-      if (manager.isFileModified(configFile)) {
-        final Document document = manager.getCachedDocument(configFile);
-        if (document != null) {
-          manager.saveDocument(document);
-        }
-      }
-
-      final List<String> xmlElements = Arrays.asList(FILE_SPEC_ELEMENT, OUTPUT_ELEMENT, TARGET_PLAYER_ELEMENT);
-      try {
-        final Map<String, List<String>> map = FlexUtils.findXMLElements(configFile.getInputStream(), xmlElements);
-
-        final List<String> fileSpecList = map.get(FILE_SPEC_ELEMENT);
-        if (!fileSpecList.isEmpty()) {
-          mainClass = getClassForOutputTagValue(myModule.getProject(), fileSpecList.get(0), configFile.getParent());
-        }
-
-        final List<String> outputList = map.get(OUTPUT_ELEMENT);
-        if (!outputList.isEmpty()) {
-          outputPath = outputList.get(0);
-          if (!FileUtil.isAbsolute(outputPath)) {
-            outputPath = configFile.getParent().getPath() + "/" + outputPath;
-          }
-        }
-
-        final List<String> targetPlayerList = map.get(TARGET_PLAYER_ELEMENT);
-        if (!targetPlayerList.isEmpty()) {
-          targetPlayer = targetPlayerList.get(0);
-        }
-      }
-      catch (IOException ignore) {/*ignore*/ }
-    }
-
-    overriddenValuesChanged(mainClass, outputPath);
-    myDependenciesConfigurable.overriddenTargetPlayerChanged(targetPlayer);
-  }
-
-  private static String getClassForOutputTagValue(final Project project, final String outputTagValue, final VirtualFile baseDir) {
-    if (outputTagValue.isEmpty()) return "unknown";
-
-    final VirtualFile file = VfsUtil.findRelativeFile(outputTagValue, baseDir);
-    if (file == null) return FileUtil.getNameWithoutExtension(PathUtil.getFileName(outputTagValue));
-
-    final VirtualFile sourceRoot = ProjectRootManager.getInstance(project).getFileIndex().getSourceRootForFile(file);
-    if (sourceRoot == null) return file.getNameWithoutExtension();
-
-    final String relativePath = VfsUtilCore.getRelativePath(file, sourceRoot, '/');
-    return relativePath == null ? file.getNameWithoutExtension() : FileUtil.getNameWithoutExtension(relativePath).replace("/", ".");
+    final FlexCompilerConfigFileUtil.InfoFromConfigFile info = FlexCompilerConfigFileUtil.getInfoFromConfigFile(myModule, configFilePath);
+    overriddenValuesChanged(info.mainClass, info.outputFileName, info.outputFolderPath);
+    myDependenciesConfigurable.overriddenTargetPlayerChanged(info.targetPlayer);
   }
 
   /**
    * Called when {@link CompilerOptionsConfigurable} is initialized and when path to additional config file is changed
    * <code>null</code> parameter value means that the value is not overridden in additional config file
    */
-  public void overriddenValuesChanged(final @Nullable String mainClass, final @Nullable String outputPath) {
-    final String outputFileName = outputPath == null ? null : PathUtil.getFileName(outputPath);
-    final String outputFolderPath = outputPath == null ? null : PathUtil.getParentPath(outputPath);
-
+  public void overriddenValuesChanged(final @Nullable String mainClass,
+                                      final @Nullable String outputFileName,
+                                      final @Nullable String outputFolderPath) {
     myMainClassWarning.setToolTipText(FlexBundle.message("actual.value.from.config.file.0", mainClass));
     myMainClassWarning.setVisible(myMainClassComponent.isVisible() && mainClass != null);
 
@@ -318,10 +254,11 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
       FlexBundle.message("actual.value.from.config.file.0", FileUtil.toSystemDependentName(StringUtil.notNullize(outputFolderPath))));
     myOutputFolderWarning.setVisible(outputFolderPath != null);
 
-    final String warning = myMainClassWarning.isVisible() && outputPath == null
+    final String warning = myMainClassWarning.isVisible() && outputFileName == null && outputFolderPath == null
                            ? FlexBundle.message("overridden.in.config.file", "Main class", mainClass)
-                           : !myMainClassWarning.isVisible() && outputPath != null
-                             ? FlexBundle.message("overridden.in.config.file", "Output path", FileUtil.toSystemDependentName(outputPath))
+                           : !myMainClassWarning.isVisible() && outputFileName != null && outputFolderPath != null
+                             ? FlexBundle.message("overridden.in.config.file", "Output path",
+                                                  FileUtil.toSystemDependentName(outputFolderPath + "/" + outputFileName))
                              : FlexBundle.message("main.class.and.output.overridden.in.config.file");
     myWarning.setText(warning);
 
@@ -504,7 +441,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     mySkipCompilationCheckBox.setSelected(myConfiguration.isSkipCompile());
 
     updateControls();
-    overriddenValuesChanged(null, null); // no warnings initially
+    overriddenValuesChanged(null, null, null); // no warnings initially
 
     myDependenciesConfigurable.reset();
     myCompilerOptionsConfigurable.reset();
