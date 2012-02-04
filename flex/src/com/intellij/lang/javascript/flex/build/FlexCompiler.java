@@ -4,6 +4,7 @@ import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
@@ -15,6 +16,7 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -233,36 +235,48 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
   private static Collection<Pair<Module, FlexIdeBuildConfiguration>> getModulesAndConfigsToCompile(final CompileScope scope)
     throws ConfigurationException {
-    final RunConfiguration runConfiguration = CompileStepBeforeRun.getRunConfiguration(scope);
 
     final Collection<Pair<Module, FlexIdeBuildConfiguration>> result = new HashSet<Pair<Module, FlexIdeBuildConfiguration>>();
+    final RunConfiguration runConfiguration = CompileStepBeforeRun.getRunConfiguration(scope);
 
-    final BCBasedRunnerParameters params = runConfiguration instanceof FlashRunConfiguration
-                                           ? ((FlashRunConfiguration)runConfiguration).getRunnerParameters()
-                                           : ((NewFlexUnitRunConfiguration)runConfiguration).getRunnerParameters();
-    final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig;
+    if (runConfiguration instanceof FlashRunConfiguration || runConfiguration instanceof NewFlexUnitRunConfiguration) {
+      final BCBasedRunnerParameters params = runConfiguration instanceof FlashRunConfiguration
+                                             ? ((FlashRunConfiguration)runConfiguration).getRunnerParameters()
+                                             : ((NewFlexUnitRunConfiguration)runConfiguration).getRunnerParameters();
+      final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig;
 
-    final Ref<RuntimeConfigurationError> exceptionRef = new Ref<RuntimeConfigurationError>();
-    moduleAndConfig =
-      ApplicationManager.getApplication().runReadAction(new NullableComputable<Pair<Module, FlexIdeBuildConfiguration>>() {
-        public Pair<Module, FlexIdeBuildConfiguration> compute() {
-          try {
-            return params.checkAndGetModuleAndBC(runConfiguration.getProject());
+      final Ref<RuntimeConfigurationError> exceptionRef = new Ref<RuntimeConfigurationError>();
+      moduleAndConfig =
+        ApplicationManager.getApplication().runReadAction(new NullableComputable<Pair<Module, FlexIdeBuildConfiguration>>() {
+          public Pair<Module, FlexIdeBuildConfiguration> compute() {
+            try {
+              return params.checkAndGetModuleAndBC(runConfiguration.getProject());
+            }
+            catch (RuntimeConfigurationError e) {
+              exceptionRef.set(e);
+              return null;
+            }
           }
-          catch (RuntimeConfigurationError e) {
-            exceptionRef.set(e);
-            return null;
+        });
+      if (!exceptionRef.isNull()) {
+        throw new ConfigurationException(exceptionRef.get().getMessage(),
+                                         FlexBundle.message("run.configuration.0", runConfiguration.getName()));
+      }
+
+      if (!moduleAndConfig.second.isSkipCompile()) {
+        result.add(moduleAndConfig);
+        appendBCDependencies(result, moduleAndConfig.first, moduleAndConfig.second);
+      }
+    }
+    else {
+      for (final Module module : scope.getAffectedModules()) {
+        if (ModuleType.get(module) != FlexModuleType.getInstance()) continue;
+        for (final FlexIdeBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
+          if (!bc.isSkipCompile()) {
+            result.add(Pair.create(module, bc));
           }
         }
-      });
-    if (!exceptionRef.isNull()) {
-      throw new ConfigurationException(exceptionRef.get().getMessage(),
-                                       FlexBundle.message("run.configuration.0", runConfiguration.getName()));
-    }
-
-    if (!moduleAndConfig.second.isSkipCompile()) {
-      result.add(moduleAndConfig);
-      appendBCDependencies(result, moduleAndConfig.first, moduleAndConfig.second);
+      }
     }
 
     return result;
