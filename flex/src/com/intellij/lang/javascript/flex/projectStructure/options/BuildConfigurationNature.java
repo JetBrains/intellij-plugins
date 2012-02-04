@@ -44,4 +44,24 @@ public class BuildConfigurationNature {
   public String toString() {
     return targetPlatform.getPresentableText() + " " + outputType.getPresentableText() + (pureAS ? " (pure ActionScript)" : "");
   }
+
+  public boolean equals(final Object other) {
+    if (this == other) return true;
+    if (other == null || getClass() != other.getClass()) return false;
+
+    final BuildConfigurationNature otherNature = (BuildConfigurationNature)other;
+
+    if (pureAS != otherNature.pureAS) return false;
+    if (outputType != otherNature.outputType) return false;
+    if (targetPlatform != otherNature.targetPlatform) return false;
+
+    return true;
+  }
+
+  public int hashCode() {
+    int result = targetPlatform.hashCode();
+    result = 31 * result + (pureAS ? 1 : 0);
+    result = 31 * result + outputType.hashCode();
+    return result;
+  }
 }

@@ -176,8 +176,10 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
   }
 
   private List<String> getCompiledLocales(final MavenProject mavenProject) {
-    final String elementName = isFlexmojos3(getFlexmojosPlugin(mavenProject)) ? "compiledLocales" : "localesCompiled";
-    final Element localesElement = getConfig(mavenProject, elementName);
+    final boolean flexmojos3 = isFlexmojos3(getFlexmojosPlugin(mavenProject));
+    final String elementName = flexmojos3 ? "compiledLocales" : "localesCompiled";
+    Element localesElement = getConfig(mavenProject, elementName);
+    if (flexmojos3 && localesElement == null) localesElement = getConfig(mavenProject, "locales");
     if (localesElement != null) {
       return getChildrenValues(localesElement);
     }
