@@ -4,16 +4,18 @@
   CPU profiling: self and cumulative execution time, caller and callee hierarchy, sorting, navigation to source code and scope filtering.<br/>
   Memory profiling<br/>
   Please find more details on <a href="http://confluence.jetbrains.net/display/IDEADEV/Profiling+Flash+and+Flex+Applications">plugin wiki page</a>.]]></description>
-  <version>0.2.6</version>
+  <version>0.2.7</version>
   <vendor>JetBrains</vendor>
-  <idea-version since-build="112.1"/>
+  <idea-version since-build="114.1"/>
   <depends>com.intellij.modules.ultimate</depends>
   <depends>com.intellij.flex</depends>
 
   <change-notes>
     <![CDATA[
+        In 0.2.7<br/>
+        ...<br/>
         In 0.2.6<br/>
-        ...
+        Live objects view, multiple CPU snapshots per profiling session.<br/>
         In 0.2.5<br/>
         Various usability improvements and fixes.<br/>
         In 0.2.4<br/>
