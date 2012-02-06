@@ -151,7 +151,7 @@ public class FlexIdeBCConfigurator {
       if (configurable == null) {
         final ProjectStructureConfigurable c = ProjectStructureConfigurable.getInstance(myConfigEditor.getProject());
         configurable =
-          new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, myConfigEditor, c.getProjectJdksModel()).wrapInTabs();
+          new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, myConfigEditor, c.getProjectJdksModel(), c.getContext()).wrapInTabs();
         myConfigurablesMap.put(configuration, configurable);
       }
       configurables.add(configurable);
@@ -296,10 +296,9 @@ public class FlexIdeBCConfigurator {
   }
 
   private void createConfigurableNode(ModifiableFlexIdeBuildConfiguration configuration, Module module, Runnable treeNodeNameUpdater) {
-    final ProjectSdksModel sdksModel =
-      ProjectStructureConfigurable.getInstance(myConfigEditor.getProject()).getProjectJdksModel();
-    final FlexIdeBCConfigurable configurable =
-      new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, myConfigEditor, sdksModel);
+    final ProjectStructureConfigurable c = ProjectStructureConfigurable.getInstance(myConfigEditor.getProject());
+    final FlexIdeBCConfigurable configurable = new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, myConfigEditor,
+                                                                   c.getProjectJdksModel(), c.getContext());
 
     CompositeConfigurable wrapped = configurable.wrapInTabs();
     myConfigurablesMap.put(configuration, wrapped);

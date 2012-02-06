@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.ui.JSClassChooserDialog;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
@@ -23,11 +24,15 @@ import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectStructureElementConfigurable;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStructureElement;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -35,6 +40,8 @@ import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.UserActivityListener;
+import com.intellij.ui.UserActivityWatcher;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
@@ -50,9 +57,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable*/NamedConfigurable<ModifiableFlexIdeBuildConfiguration>
+public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<ModifiableFlexIdeBuildConfiguration>
   implements CompositeConfigurable.Item {
 
+  public static final String TAB_NAME = FlexBundle.message("general.tab.display.name");
   private JPanel myMainPanel;
 
   private JTextField myNameField;
@@ -83,6 +91,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   private final Module myModule;
   private final ModifiableFlexIdeBuildConfiguration myConfiguration;
   private final Runnable myTreeNodeNameUpdater;
+  private final StructureConfigurableContext myContext;
   private String myName;
 
   private final DependenciesConfigurable myDependenciesConfigurable;
@@ -91,20 +100,40 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   private final @Nullable AndroidPackagingConfigurable myAndroidPackagingConfigurable;
   private final @Nullable IOSPackagingConfigurable myIOSPackagingConfigurable;
 
+  private final BuildConfigurationProjectStructureElement myStructureElement;
+
+  private final Disposable myDisposable;
+
   public FlexIdeBCConfigurable(final Module module,
                                final ModifiableFlexIdeBuildConfiguration bc,
                                final Runnable treeNodeNameUpdater,
                                final @NotNull FlexProjectConfigurationEditor configEditor,
-                               final ProjectSdksModel sdksModel) {
+                               final ProjectSdksModel sdksModel, final StructureConfigurableContext context) {
     super(false, treeNodeNameUpdater);
     myModule = module;
     myConfiguration = bc;
     myTreeNodeNameUpdater = treeNodeNameUpdater;
+    myContext = context;
     myName = bc.getName();
+    myStructureElement = new BuildConfigurationProjectStructureElement(bc, module, context);
 
     final BuildConfigurationNature nature = bc.getNature();
 
     myDependenciesConfigurable = new DependenciesConfigurable(bc, module.getProject(), configEditor, sdksModel);
+    final UserActivityWatcher watcher = new UserActivityWatcher();
+    myDisposable = Disposer.newDisposable();
+    watcher.addUserActivityListener(new UserActivityListener() {
+      @Override
+      public void stateChanged() {
+        try {
+          myDependenciesConfigurable.apply();
+        }
+        catch (ConfigurationException ignored) {
+        }
+        myContext.getDaemonAnalyzer().queueUpdate(myStructureElement);
+      }
+    }, myDisposable);
+    watcher.register(myDependenciesConfigurable.createOptionsPanel());
     myCompilerOptionsConfigurable =
       new CompilerOptionsConfigurable(module, bc.getNature(), myDependenciesConfigurable, bc.getCompilerOptions());
 
@@ -448,6 +477,8 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     if (myAirDesktopPackagingConfigurable != null) myAirDesktopPackagingConfigurable.reset();
     if (myAndroidPackagingConfigurable != null) myAndroidPackagingConfigurable.reset();
     if (myIOSPackagingConfigurable != null) myIOSPackagingConfigurable.reset();
+
+    myContext.getDaemonAnalyzer().queueUpdate(myStructureElement);
   }
 
   public void disposeUIResources() {
@@ -456,6 +487,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     if (myAirDesktopPackagingConfigurable != null) myAirDesktopPackagingConfigurable.disposeUIResources();
     if (myAndroidPackagingConfigurable != null) myAndroidPackagingConfigurable.disposeUIResources();
     if (myIOSPackagingConfigurable != null) myIOSPackagingConfigurable.disposeUIResources();
+    Disposer.dispose(myDisposable);
   }
 
   //public ModifiableFlexIdeBuildConfiguration getCurrentConfiguration() {
@@ -507,6 +539,11 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
   @Override
   public String getTabTitle() {
-    return "General";
+    return TAB_NAME;
+  }
+
+  @Override
+  public ProjectStructureElement getProjectStructureElement() {
+    return myStructureElement;
   }
 }

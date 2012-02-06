@@ -49,16 +49,15 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.IconLoader;
-import com.intellij.openapi.util.NullableComputable;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.*;
 import com.intellij.ui.components.editors.JBComboBoxTableCellEditorComponent;
+import com.intellij.ui.navigation.History;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
@@ -87,8 +86,16 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
 
-public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
+public class DependenciesConfigurable extends NamedConfigurable<Dependencies> implements Place.Navigator {
+  public static final String TAB_NAME = FlexBundle.message("dependencies.tab.display.name");
+  public static final String LOCATION = DependenciesConfigurable.class.getName() + ".location";
+
   private static final Icon MISSING_BC_ICON = null;
+
+  public static abstract class Location {
+    public static final Location SDK = new Location() {
+    };
+  }
 
   private JPanel myMainPanel;
   private JdkComboBox mySdkCombo;
@@ -210,9 +217,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     public void onDoubleClick() {
       if (configurable != null) {
         Project project = configurable.getModule().getProject();
-        Place place = new Place().putPath(ProjectStructureConfigurable.CATEGORY, ModuleStructureConfigurable.getInstance(project))
-          .putPath(MasterDetailsComponent.TREE_OBJECT, configurable.getEditableObject());
-        ProjectStructureConfigurable.getInstance(project).navigateTo(place, true);
+        ProjectStructureConfigurable.getInstance(project).navigateTo(FlexProjectStructureUtil.createPlace(configurable, null), true);
       }
     }
 
@@ -1077,14 +1082,14 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
   @Nls
   public String getDisplayName() {
-    return "Dependencies";
+    return TAB_NAME;
   }
 
   public void setDisplayName(final String name) {
   }
 
   public String getBannerSlogan() {
-    return "Dependencies";
+    return getDisplayName();
   }
 
   public Icon getIcon() {
@@ -1164,10 +1169,16 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
     myConfigEditor.setEntries(dependencies, newEntries);
 
-    Sdk currentSdk = mySdkCombo.getSelectedJdk();
+    JdkComboBox.JdkComboBoxItem currentSdk = mySdkCombo.getSelectedItem();
     if (currentSdk != null) {
-      SdkEntry sdkEntry = Factory.createSdkEntry(currentSdk.getName());
-      dependencies.setSdkEntry(sdkEntry);
+      final String sdkName = currentSdk.getSdkName();
+      if (sdkName != null) {
+        SdkEntry sdkEntry = Factory.createSdkEntry(sdkName);
+        dependencies.setSdkEntry(sdkEntry);
+      }
+      else {
+        dependencies.setSdkEntry(null);
+      }
     }
     else {
       dependencies.setSdkEntry(null);
@@ -1571,6 +1582,30 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     updateSdkTableItem(sdk);
     myTable.refresh();
     mySdkChangeDispatcher.getMulticaster().stateChanged(new ChangeEvent(this));
+  }
+
+  @Override
+  public void setHistory(final History history) {
+  }
+
+  @Override
+  public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
+    if (place != null) {
+      final Object location = place.getPath(LOCATION);
+      if (location == Location.SDK) {
+        if (requestFocus) {
+          return IdeFocusManager.findInstance().requestFocus(mySdkCombo, true);
+        }
+      }
+    }
+    return new ActionCallback.Done();
+  }
+
+  @Override
+  public void queryPlace(@NotNull final Place place) {
+    if (mySdkCombo.hasFocus()) {
+      place.putPath(LOCATION, Location.SDK);
+    }
   }
 
   private static class LibraryTableModifiableModelWrapper implements LibraryTableBase.ModifiableModelEx {

@@ -3,10 +3,15 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.NamedConfigurable;
+import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.TabbedPaneWrapper;
+import com.intellij.ui.navigation.History;
+import com.intellij.ui.navigation.Place;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +20,9 @@ import java.util.List;
 /**
  * @author ksafonov
  */
-public class CompositeConfigurable extends NamedConfigurable {
+public class CompositeConfigurable extends NamedConfigurable implements Place.Navigator {
+
+  public static final String TAB_NAME = "tabName";
 
   public interface Item {
     String getTabTitle();
@@ -111,5 +118,35 @@ public class CompositeConfigurable extends NamedConfigurable {
     //}
     getMainChild().disposeUIResources();
     Disposer.dispose(myDisposable);
+  }
+
+  @Override
+  public void setHistory(final History history) {
+  }
+
+  @Override
+  public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
+    if (place == null) {
+      return new ActionCallback.Done();
+    }
+
+    final Object tabName = place.getPath(TAB_NAME);
+    if (tabName instanceof String) {
+      for (int i = 0; i < myChildren.size(); i++) {
+        final NamedConfigurable child = myChildren.get(i);
+        if (tabName.equals(child.getDisplayName())) {
+          myTabs.setSelectedIndex(i);
+          return Place.goFurther(child, place, requestFocus);
+        }
+      }
+    }
+    return new ActionCallback.Done();
+  }
+
+  @Override
+  public void queryPlace(@NotNull final Place place) {
+    final NamedConfigurable child = myChildren.get(myTabs.getSelectedIndex());
+    place.putPath(TAB_NAME, child.getDisplayName());
+    Place.queryFurther(child, place);
   }
 }
