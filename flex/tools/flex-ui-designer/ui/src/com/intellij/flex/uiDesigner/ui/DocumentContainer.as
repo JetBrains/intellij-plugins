@@ -41,11 +41,13 @@ public class DocumentContainer extends ControlView implements DataContext {
   }
 
   override public function getMinimumWidth(hHint:int = -1):int {
-    return getPreferredWidth();
+    //return getPreferredWidth();
+    return CANVAS_INSET;
   }
 
   override public function getMinimumHeight(wHint:int = -1):int {
-    return getPreferredHeight();
+    //return getPreferredHeight();
+    return CANVAS_INSET;
   }
 
   override public function getPreferredWidth(hHint:int = -1):int {
