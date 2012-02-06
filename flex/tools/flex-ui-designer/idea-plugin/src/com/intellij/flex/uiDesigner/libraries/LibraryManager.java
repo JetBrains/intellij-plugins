@@ -36,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.channels.ClosedByInterruptException;
 import java.util.*;
 
 @SuppressWarnings("MethodMayBeStatic")
@@ -243,6 +244,9 @@ public class LibraryManager {
     throws InitException {
     try {
       return librarySorter.sort(libraries, new File(appDir, librarySetId + SWF_EXTENSION), isExternal);
+    }
+    catch (ClosedByInterruptException e) {
+      throw new InitException(e);
     }
     catch (Throwable e) {
       String technicalMessage = "Flex SDK " + flexSdkVersion;

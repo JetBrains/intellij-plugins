@@ -106,8 +106,15 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     return documentOpening;
   }
 
-  private static boolean checkFlexSdkVersion(final String version) {
-    if (version == null || version.length() < 5 || version.charAt(0) < '4') {
+  private static boolean checkFlexSdkVersion(final Sdk sdk) {
+    String version = sdk.getVersionString();
+    //if (version == null) {
+    //  if (sdk instanceof )
+    //  FlexSdkUtils.doReadFlexSdkVersion()
+    //  return false;
+    //}
+
+    if (version.length() < 5 || version.charAt(0) < '4') {
       return false;
     }
 
@@ -133,7 +140,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     final boolean appClosed = isApplicationClosed();
     if (appClosed || !Client.getInstance().isModuleRegistered(module)) {
       final Sdk sdk = FlexUtils.getSdkForActiveBC(module);
-      if (sdk == null || !checkFlexSdkVersion(sdk.getVersionString())) {
+      if (sdk == null || !checkFlexSdkVersion(sdk)) {
         reportInvalidFlexSdk(module, debug, sdk);
         return;
       }
@@ -148,7 +155,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
         @Override
         public void run() {
-          Client client = Client.getInstance();
+          final Client client = Client.getInstance();
           try {
             final ProblemsHolder problemsHolder = new ProblemsHolder();
             if (!client.isModuleRegistered(module)) {

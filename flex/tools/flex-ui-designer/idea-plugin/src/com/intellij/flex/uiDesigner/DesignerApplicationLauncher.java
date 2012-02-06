@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.channels.ClosedByInterruptException;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -96,27 +97,30 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
         startupErrorFile.delete();
       }
 
+      boolean result = false;
       try {
-        doRun(indicator);
+        result = doRun(indicator);
       }
       catch (Throwable e) {
         error = e;
       }
 
-      if (error != null || indicator.isCanceled()) {
-        if (!DesignerApplicationManager.getInstance().isApplicationClosed()) {
-          DesignerApplicationManager.getInstance().disposeApplication();
-        }
+      if (!result || indicator.isCanceled()) {
+        problemsHolder.disableLog();
 
         if (initializeThread != null) {
           initializeThread.cancel(true);
           initializeThread = null;
         }
 
+        if (!DesignerApplicationManager.getInstance().isApplicationClosed()) {
+          DesignerApplicationManager.getInstance().disposeApplication();
+        }
+
         semaphore.up();
       }
 
-      // java.lang.Throwable: Do not log ProcessCanceledException
+      // java.lang.Throwable: Don't log ProcessCanceledException
       if (error != null && !(error instanceof ProcessCanceledException)) {
         LOG.error(error);
       }
@@ -126,7 +130,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
     }
   }
 
-  private void doRun(@NotNull final ProgressIndicator indicator)
+  private boolean doRun(@NotNull final ProgressIndicator indicator)
     throws IOException, java.util.concurrent.ExecutionException, InterruptedException, TimeoutException {
     final List<AdlRunConfiguration> adlRunConfigurations;
     indicator.setText(FlashUIDesignerBundle.message("copying.app.files"));
@@ -137,7 +141,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
 
     if (adlRunConfigurations.isEmpty()) {
       notifyNoSuitableSdkToLaunch();
-      return;
+      return false;
     }
 
     indicator.checkCanceled();
@@ -191,13 +195,13 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
           found.set(false);
           LOG.warn("Client not opened in 60 seconds");
           if (checkStartupError()) {
-            return;
+            return false;
           }
         }
       }
       catch (InterruptedException e) {
         if (indicator.isCanceled()) {
-          return;
+          return false;
         }
 
         LOG.warn(e);
@@ -215,7 +219,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
       if (!checkStartupError()) {
         notifyNoSuitableSdkToLaunch();
       }
-      return;
+      return false;
     }
 
     final ProjectDocumentReferenceCounter projectDocumentReferenceCounter = initializeThread.get(60, TimeUnit.SECONDS);
@@ -226,9 +230,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
     application.setProcessHandler(adlProcessHandler);
     attachProjectAndModuleListeners(application);
 
-    if (!postTask.run(projectDocumentReferenceCounter, indicator, problemsHolder)) {
-      indicator.cancel();
-    }
+    return postTask.run(projectDocumentReferenceCounter, indicator, problemsHolder);
   }
 
   private static boolean checkStartupError() throws IOException {
@@ -407,6 +409,10 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
           return LibraryManager.getInstance().initLibrarySets(module, true, problemsHolder);
         }
         catch (Throwable e) {
+          if (initializeThread == null || initializeThread.isCancelled()) {
+            return null;
+          }
+
           //noinspection InstanceofCatchParameter
           if (e instanceof InitException) {
             processInitException((InitException)e, module, debug);

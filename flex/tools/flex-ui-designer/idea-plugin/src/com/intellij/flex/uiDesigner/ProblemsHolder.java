@@ -19,9 +19,14 @@ public class ProblemsHolder {
   private final List<ProblemDescriptor> problems = new ArrayList<ProblemDescriptor>();
 
   private VirtualFile currentFile;
+  private boolean logDisabled;
 
   public boolean isEmpty() {
     return problems.isEmpty();
+  }
+
+  public void disableLog() {
+    logDisabled = true;
   }
 
   private static int getLineNumber(PsiElement element) {
@@ -45,7 +50,7 @@ public class ProblemsHolder {
     final ProblemDescriptor problemDescriptor = new ProblemDescriptor(e.getMessage(), currentFile,
                                                                       e.getPsiElement() == null ? -1 : getLineNumber(e.getPsiElement()));
     problems.add(problemDescriptor);
-    if (e.getCause() != null) {
+    if (e.getCause() != null && !logDisabled) {
       LOG.error(LogMessageUtil.createEvent(e.getMessage(), e.getCause(), problemDescriptor));
     }
   }
@@ -67,7 +72,9 @@ public class ProblemsHolder {
     }
 
     final ProblemDescriptor problemDescriptor = new ProblemDescriptor(error, currentFile, getLineNumber(element));
-    LOG.error(LogMessageUtil.createEvent(error, e, problemDescriptor));
+    if (!logDisabled) {
+      LOG.error(LogMessageUtil.createEvent(error, e, problemDescriptor));
+    }
     problems.add(problemDescriptor);
   }
 

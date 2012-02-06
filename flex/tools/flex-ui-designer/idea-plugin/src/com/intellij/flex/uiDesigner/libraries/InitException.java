@@ -10,6 +10,12 @@ public class InitException extends Exception {
   public final Attachment[] attachments;
   public final String technicalMessage;
 
+  InitException(@NotNull Throwable e) {
+      super(e);
+      attachments = null;
+      technicalMessage = null;
+    }
+
   InitException(@NotNull Throwable e, @PropertyKey(resourceBundle = FlashUIDesignerBundle.BUNDLE) String key) {
     this(e, key, null, null);
   }
