@@ -2,21 +2,17 @@ package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.intellij.util.text.CharSequenceReader;
 import com.intellij.util.xml.NanoXmlUtil;
 import org.jdom.*;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.*;
@@ -64,25 +60,6 @@ public class FlexCompilerConfigFileUtil {
       // load-externs option should not be used because it can lead to runtime errors like IDEA-70155
       "load-externs"
     };
-
-  public static class InfoFromConfigFile {
-    public static InfoFromConfigFile DEFAULT = new InfoFromConfigFile(null, null, null, null);
-
-    public final @Nullable String mainClass;
-    public final @Nullable String outputFileName;
-    public final @Nullable String outputFolderPath;
-    public final @Nullable String targetPlayer;
-
-    private InfoFromConfigFile(final @Nullable String mainClass,
-                               final @Nullable String outputFileName,
-                               final @Nullable String outputFolderPath,
-                               final @Nullable String targetPlayer) {
-      this.mainClass = mainClass;
-      this.outputFileName = outputFileName;
-      this.outputFolderPath = outputFolderPath;
-      this.targetPlayer = targetPlayer;
-    }
-  }
 
   public static class NamespacesInfo {
     public final String namespace;
@@ -291,8 +268,9 @@ public class FlexCompilerConfigFileUtil {
     return data == null ? Collections.<NamespacesInfo>emptyList() : data.second;
   }
 
-  public static InfoFromConfigFile getInfoFromConfigFile(final Module module, final String configFilePath) {
-    String mainClass = null;
+  @NotNull
+  public static InfoFromConfigFile getInfoFromConfigFile(final String configFilePath) {
+    String mainClassPath = null;
     String outputPath = null;
     String targetPlayer = null;
 
@@ -312,7 +290,7 @@ public class FlexCompilerConfigFileUtil {
 
         final List<String> fileSpecList = map.get(FILE_SPEC_ELEMENT);
         if (!fileSpecList.isEmpty()) {
-          mainClass = getClassForOutputTagValue(module, fileSpecList.get(0), configFile.getParent());
+          mainClassPath = fileSpecList.get(0);
         }
 
         final List<String> outputList = map.get(OUTPUT_ELEMENT);
@@ -333,19 +311,6 @@ public class FlexCompilerConfigFileUtil {
 
     final String outputFileName = outputPath == null ? null : PathUtil.getFileName(outputPath);
     final String outputFolderPath = outputPath == null ? null : PathUtil.getParentPath(outputPath);
-    return new InfoFromConfigFile(mainClass, outputFileName, outputFolderPath, targetPlayer);
-  }
-
-  private static String getClassForOutputTagValue(final Module module, final String outputTagValue, final VirtualFile baseDir) {
-    if (outputTagValue.isEmpty()) return "unknown";
-
-    final VirtualFile file = VfsUtil.findRelativeFile(outputTagValue, baseDir);
-    if (file == null) return FileUtil.getNameWithoutExtension(PathUtil.getFileName(outputTagValue));
-
-    final VirtualFile sourceRoot = ProjectRootManager.getInstance(module.getProject()).getFileIndex().getSourceRootForFile(file);
-    if (sourceRoot == null) return file.getNameWithoutExtension();
-
-    final String relativePath = VfsUtilCore.getRelativePath(file, sourceRoot, '/');
-    return relativePath == null ? file.getNameWithoutExtension() : FileUtil.getNameWithoutExtension(relativePath).replace("/", ".");
+    return new InfoFromConfigFile(configFile, mainClassPath, outputFileName, outputFolderPath, targetPlayer);
   }
 }

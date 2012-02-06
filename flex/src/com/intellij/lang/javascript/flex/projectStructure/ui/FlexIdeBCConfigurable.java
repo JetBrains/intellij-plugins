@@ -5,6 +5,7 @@ import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil;
+import com.intellij.lang.javascript.flex.build.InfoFromConfigFile;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
@@ -261,9 +262,9 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   }
 
   private void checkIfConfigFileOverridesOptions(final String configFilePath) {
-    final FlexCompilerConfigFileUtil.InfoFromConfigFile info = FlexCompilerConfigFileUtil.getInfoFromConfigFile(myModule, configFilePath);
-    overriddenValuesChanged(info.mainClass, info.outputFileName, info.outputFolderPath);
-    myDependenciesConfigurable.overriddenTargetPlayerChanged(info.targetPlayer);
+    final InfoFromConfigFile info = FlexCompilerConfigFileUtil.getInfoFromConfigFile(configFilePath);
+    overriddenValuesChanged(info.getMainClass(myModule), info.getOutputFileName(), info.getOutputFolderPath());
+    myDependenciesConfigurable.overriddenTargetPlayerChanged(info.getTargetPlayer());
   }
 
   /**

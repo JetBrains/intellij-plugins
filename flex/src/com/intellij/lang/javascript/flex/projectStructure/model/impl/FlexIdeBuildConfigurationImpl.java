@@ -1,6 +1,8 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.FlexFacetType;
+import com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil;
+import com.intellij.lang.javascript.flex.build.InfoFromConfigFile;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
@@ -9,6 +11,7 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Property;
@@ -227,8 +230,13 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
   }
 
   @Override
-  public String getOutputFilePath() {
-    return myOutputFolder + (myOutputFolder.isEmpty() ? "" : "/") + myOutputFileName;
+  public String getOutputFilePath(boolean respectAdditionalConfigFile) {
+    final InfoFromConfigFile info = respectAdditionalConfigFile
+                                    ? FlexCompilerConfigFileUtil.getInfoFromConfigFile(myCompilerOptions.getAdditionalConfigFilePath())
+                                    : InfoFromConfigFile.DEFAULT;
+    final String outputFolderPath = StringUtil.notNullize(info.getOutputFolderPath(), myOutputFolder);
+    final String outputFileName = StringUtil.notNullize(info.getOutputFileName(), myOutputFileName);
+    return outputFolderPath + (outputFolderPath.isEmpty() ? "" : "/") + outputFileName;
   }
 
   public FlexIdeBuildConfigurationImpl getCopy() {

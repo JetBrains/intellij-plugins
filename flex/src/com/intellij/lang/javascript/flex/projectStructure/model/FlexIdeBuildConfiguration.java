@@ -59,7 +59,7 @@ public interface FlexIdeBuildConfiguration {
 
   Icon getIcon();
 
-  String getOutputFilePath();
+  String getOutputFilePath(boolean respectAdditionalConfigFile);
 
   BuildConfigurationNature getNature();
 

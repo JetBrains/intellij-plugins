@@ -1,31 +1,17 @@
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.xml.XmlDocument;
-import com.intellij.psi.xml.XmlFile;
-import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.SystemProperties;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Set;
 
 import static com.intellij.openapi.util.SystemInfo.*;
 
@@ -39,52 +25,20 @@ public class FlashPlayerTrustUtil {
 
   private final static String INTELLIJ_IDEA_CFG = "intellij_idea.cfg";
 
-  private final static String OBJECT_TAG_NAME = "object";
-  private final static String PARAM_TAG_NAME = "param";
-  private final static String EMBED_TAG_NAME = "embed";
-  private final static String NAME_ATTR_NAME = "name";
-  private final static String MOVIE_ATTR_VALUE = "movie";
-  private final static String VALUE_ATTR_NAME = "value";
-  private final static String SRC_ATTR_NAME = "src";
-  private final static String TYPE_ATTR_NAME = "type";
-  private final static String TYPE_ATTR_VALUE = "application/x-shockwave-flash";
-  private final static String DATA_ATTR_NAME = "data";
-
   private FlashPlayerTrustUtil() {
-  }
-
-  public static void updateTrustedStatus(final @NotNull Project project,
-                                         final boolean isDebug,
-                                         final @NotNull FlexRunnerParameters runnerParameters) {
-    if (FlexBaseRunner.isRunAsAir(runnerParameters)) {
-      return;
-    }
-
-    final FlexRunnerParameters.RunMode mode = runnerParameters.getRunMode();
-    if (mode != FlexRunnerParameters.RunMode.HtmlOrSwfFile && mode != FlexRunnerParameters.RunMode.MainClass) {
-      return;
-    }
-
-    final String[] trustedSwfPaths = getSwfFilesCanonicalPaths(project, runnerParameters);
-    if (trustedSwfPaths.length == 0) {
-      showWarningBalloonIfNeeded(project, isDebug, runnerParameters.isRunTrusted(), FlexBundle.message("could.not.find.swf.to.trust"));
-      return;
-    }
-
-    updateTrustedStatus(project, runnerParameters.isRunTrusted(), isDebug, trustedSwfPaths);
   }
 
   public static void updateTrustedStatus(final Project project,
                                          final boolean trustedStatus,
                                          final boolean isDebug,
-                                         final String... swfPaths) {
+                                         final String... paths) {
     final File ideaCfgFile = getIdeaUserTrustConfigFile(project, isDebug, trustedStatus);
     if (ideaCfgFile == null) {
       return;
     }
 
     try {
-      fixIdeaCfgFileContentIfNeeded(ideaCfgFile, swfPaths, trustedStatus);
+      fixIdeaCfgFileContentIfNeeded(ideaCfgFile, paths, trustedStatus);
     }
     catch (IOException e) {
       // always show
@@ -95,12 +49,12 @@ public class FlashPlayerTrustUtil {
   }
 
   private static void fixIdeaCfgFileContentIfNeeded(final @NotNull File ideaCfgFile,
-                                                    final @NotNull String[] trustedSwfPaths,
+                                                    final @NotNull String[] trustedPaths,
                                                     final boolean runTrusted) throws IOException {
 
     final String content = FileUtil.loadFile(ideaCfgFile);
 
-    for (final String trustedSwfPath : trustedSwfPaths) {
+    for (final String trustedSwfPath : trustedPaths) {
       int startIndex = content.indexOf(trustedSwfPath);
       int endIndex = startIndex + trustedSwfPath.length();
       if (startIndex != -1 &&
@@ -135,95 +89,6 @@ public class FlashPlayerTrustUtil {
           FileUtil.writeToFile(ideaCfgFile, newContent.toString());
         }
       }
-    }
-  }
-
-  static String[] getSwfFilesCanonicalPaths(final Project project, final FlexRunnerParameters runnerParameters) {
-    final FlexRunnerParameters.RunMode mode = runnerParameters.getRunMode();
-
-    try {
-      final String htmlOrSwfFilePath = runnerParameters.getHtmlOrSwfFilePath();
-      final String extension = FileUtil.getExtension(htmlOrSwfFilePath);
-      if (FlexUtils.isSwfExtension(extension)) {
-        return new String[]{new File(htmlOrSwfFilePath).getCanonicalPath()};
-      }
-      else if (mode == FlexRunnerParameters.RunMode.HtmlOrSwfFile && FlexUtils.isHtmlExtension(extension)) {
-        final VirtualFile htmlFile = LocalFileSystem.getInstance().findFileByPath(htmlOrSwfFilePath);
-        if (htmlFile != null) {
-          PsiFile psiFile = PsiManager.getInstance(project).findFile(htmlFile);
-          if (!(psiFile instanceof XmlFile)) {
-            final PsiFileFactory factory = PsiFileFactory.getInstance(project);
-            psiFile = factory.createFileFromText("dummy.html", VfsUtil.loadText(htmlFile));
-          }
-
-          if (psiFile instanceof XmlFile) {
-            return getSwfFilePathsFromHtmlWrapper((XmlFile)psiFile, htmlFile.getParent().getPath());
-          }
-        }
-      }
-    }
-    catch (IOException e) {/**/}
-
-    return ArrayUtil.EMPTY_STRING_ARRAY;
-  }
-
-  private static String[] getSwfFilePathsFromHtmlWrapper(final @NotNull XmlFile xmlFile, final String baseDirPath) throws IOException {
-    final XmlDocument document = xmlFile.getDocument();
-    final XmlTag rootTag = document == null ? null : document.getRootTag();
-    if (rootTag != null) {
-      final Set<String> result = new THashSet<String>();
-      appendSwfFilesPathsRecursively(result, baseDirPath, rootTag);
-      return ArrayUtil.toStringArray(result);
-    }
-    return ArrayUtil.EMPTY_STRING_ARRAY;
-  }
-
-  private static void appendSwfFilesPathsRecursively(final Set<String> swfFilePaths, final String baseDirPath, final XmlTag tag)
-    throws IOException {
-    String swfRelPath = null;
-
-    if (OBJECT_TAG_NAME.equals(tag.getName())) {
-      final String typeAttrValue = tag.getAttributeValue(TYPE_ATTR_NAME);
-      final String dataAttrValue = tag.getAttributeValue(DATA_ATTR_NAME);
-      if (TYPE_ATTR_VALUE.equals(typeAttrValue) && !StringUtil.isEmptyOrSpaces(dataAttrValue)) {
-        swfRelPath = dataAttrValue;
-      }
-    }
-    else if (PARAM_TAG_NAME.equals(tag.getName())) {
-      final XmlTag parentTag = tag.getParentTag();
-      final String nameAttrValue = tag.getAttributeValue(NAME_ATTR_NAME);
-      final String valueAttrValue = tag.getAttributeValue(VALUE_ATTR_NAME);
-      if (parentTag != null &&
-          OBJECT_TAG_NAME.equals(parentTag.getName()) &&
-          MOVIE_ATTR_VALUE.equals(nameAttrValue) &&
-          !StringUtil.isEmptyOrSpaces(valueAttrValue)) {
-        swfRelPath = valueAttrValue;
-      }
-    }
-    else if (EMBED_TAG_NAME.equals(tag.getName())) {
-      final XmlTag parentTag = tag.getParentTag();
-      final String typeAttrValue = tag.getAttributeValue(TYPE_ATTR_NAME);
-      final String srcAttrValue = tag.getAttributeValue(SRC_ATTR_NAME);
-      if (parentTag != null &&
-          OBJECT_TAG_NAME.equals(parentTag.getName()) &&
-          TYPE_ATTR_VALUE.equals(typeAttrValue) &&
-          !StringUtil.isEmptyOrSpaces(srcAttrValue)) {
-        swfRelPath = srcAttrValue;
-      }
-    }
-
-    if (swfRelPath != null) {
-      final File absFile = new File(swfRelPath);
-      if (absFile.isAbsolute()) {
-        swfFilePaths.add(absFile.getCanonicalPath());
-      }
-      else {
-        swfFilePaths.add(new File(baseDirPath, swfRelPath).getCanonicalPath());
-      }
-    }
-
-    for (final XmlTag subTag : tag.getSubTags()) {
-      appendSwfFilesPathsRecursively(swfFilePaths, baseDirPath, subTag);
     }
   }
 

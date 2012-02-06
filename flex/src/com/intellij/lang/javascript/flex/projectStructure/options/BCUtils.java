@@ -32,6 +32,10 @@ public class BCUtils {
 
   private static Logger LOG = Logger.getInstance(BCUtils.class);
 
+  public static String getWrapperFileName(final FlexIdeBuildConfiguration bc) {
+    return FileUtil.getNameWithoutExtension(bc.getOutputFileName()) + ".html";
+  }
+
   public static String getGeneratedAirDescriptorName(final FlexIdeBuildConfiguration config, final AirPackagingOptions packagingOptions) {
     final String suffix = packagingOptions instanceof AirDesktopPackagingOptions
                           ? "-descriptor.xml"

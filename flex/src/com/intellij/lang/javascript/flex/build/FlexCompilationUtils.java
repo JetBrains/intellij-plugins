@@ -4,7 +4,10 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.AndroidPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.ui.CreateAirDescriptorTemplateDialog;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
@@ -25,6 +28,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
+import com.intellij.util.PathUtil;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.text.StringTokenizer;
 import org.jdom.Document;
@@ -359,9 +363,12 @@ public class FlexCompilationUtils {
       throw new FlexCompilerException(FlexBundle.message("no.index.template.html.file", bc.getWrapperTemplatePath()));
     }
 
-    final VirtualFile outputDir = LocalFileSystem.getInstance().findFileByPath(bc.getOutputFolder());
+    final String outputFilePath = bc.getOutputFilePath(true);
+    final String outputFolderPath = PathUtil.getParentPath(outputFilePath);
+
+    final VirtualFile outputDir = LocalFileSystem.getInstance().findFileByPath(outputFolderPath);
     if (outputDir == null || !outputDir.isDirectory()) {
-      throw new FlexCompilerException(FlexBundle.message("output.folder.does.not.exist", bc.getOutputFolder()));
+      throw new FlexCompilerException(FlexBundle.message("output.folder.does.not.exist", outputFolderPath));
     }
 
     final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
@@ -383,9 +390,10 @@ public class FlexCompilationUtils {
                   return new FlexCompilerException(FlexBundle.message("no.swf.macro", FileUtil.toSystemDependentName(file.getPath())));
                 }
 
-                final String fixedText = replaceMacros(wrapperText, FileUtil.getNameWithoutExtension(bc.getOutputFileName()),
+                final String outputFileName = PathUtil.getFileName(outputFilePath);
+                final String fixedText = replaceMacros(wrapperText, FileUtil.getNameWithoutExtension(outputFileName),
                                                        bc.getDependencies().getTargetPlayer());
-                final String wrapperFileName = getWrapperFileName(bc);
+                final String wrapperFileName = BCUtils.getWrapperFileName(bc);
                 try {
                   FlexUtils.addFileWithContent(wrapperFileName, fixedText, outputDir);
                 }
@@ -424,32 +432,33 @@ public class FlexCompilationUtils {
     return StringUtil.replace(wrapperText, MACROS_TO_REPLACE, replacement);
   }
 
-  public static String getWrapperFileName(final FlexIdeBuildConfiguration bc) {
-    return FileUtil.getNameWithoutExtension(bc.getOutputFileName()) + ".html";
-  }
-
-  private static void handleAirDescriptor(final FlexIdeBuildConfiguration config,
+  private static void handleAirDescriptor(final FlexIdeBuildConfiguration bc,
                                           final AirPackagingOptions packagingOptions) throws FlexCompilerException {
     if (packagingOptions.isUseGeneratedDescriptor()) {
       final boolean android = packagingOptions instanceof AndroidPackagingOptions;
-      generateAirDescriptor(config, BCUtils.getGeneratedAirDescriptorName(config, packagingOptions), android);
+      generateAirDescriptor(bc, BCUtils.getGeneratedAirDescriptorName(bc, packagingOptions), android);
     }
     else {
-      copyAndFixCustomAirDescriptor(config, packagingOptions.getCustomDescriptorPath());
+      copyAndFixCustomAirDescriptor(bc, packagingOptions.getCustomDescriptorPath());
     }
   }
 
   private static void generateAirDescriptor(final FlexIdeBuildConfiguration bc,
-                                            final String descriptorFileName,
-                                            final boolean android) throws FlexCompilerException {
-    final Ref<IOException> exceptionRef = new Ref<IOException>();
+                                            final String descriptorFileName, final boolean android) throws FlexCompilerException {
+    final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
 
     ApplicationManager.getApplication().invokeAndWait(new Runnable() {
       public void run() {
         final Sdk sdk = bc.getSdk();
         assert sdk != null;
-        final VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(bc.getOutputFolder());
-        assert dir != null;
+
+        final String outputFilePath = bc.getOutputFilePath(true);
+        final String outputFolderPath = PathUtil.getParentPath(outputFilePath);
+        final VirtualFile outputFolder = LocalFileSystem.getInstance().findFileByPath(outputFolderPath);
+        if (outputFolder == null) {
+          exceptionRef.set(new FlexCompilerException("Failed to generate AIR descriptor. Folder does not exist: " + outputFolderPath));
+          return;
+        }
 
         final String airVersion = FlexSdkUtils.getAirVersion(sdk.getVersionString());
         final String appId = fixApplicationId(bc.getMainClass());
@@ -459,13 +468,13 @@ public class FlexCompilationUtils {
           public void run() {
             try {
               final AirDescriptorOptions descriptorOptions =
-                new AirDescriptorOptions(airVersion, appId, appName, bc.getOutputFileName(), android);
+                new AirDescriptorOptions(airVersion, appId, appName, PathUtil.getFileName(outputFilePath), android);
               final String descriptorText = CreateAirDescriptorTemplateDialog.getAirDescriptorText(descriptorOptions);
 
-              FlexUtils.addFileWithContent(descriptorFileName, descriptorText, dir);
+              FlexUtils.addFileWithContent(descriptorFileName, descriptorText, outputFolder);
             }
             catch (IOException e) {
-              exceptionRef.set(e);
+              exceptionRef.set(new FlexCompilerException("Failed to generate AIR descriptor: " + e.getMessage()));
             }
           }
         });
@@ -473,8 +482,7 @@ public class FlexCompilationUtils {
     }, ModalityState.any());
 
     if (!exceptionRef.isNull()) {
-      //noinspection ThrowableResultOfMethodCallIgnored
-      throw new FlexCompilerException("Failed to generate AIR descriptor: " + exceptionRef.get().getMessage());
+      throw exceptionRef.get();
     }
   }
 
@@ -489,15 +497,19 @@ public class FlexCompilationUtils {
     return builder.toString();
   }
 
-  private static void copyAndFixCustomAirDescriptor(final FlexIdeBuildConfiguration config, final String customDescriptorPath)
-    throws FlexCompilerException {
+  private static void copyAndFixCustomAirDescriptor(final FlexIdeBuildConfiguration bc,
+                                                    final String customDescriptorPath) throws FlexCompilerException {
     final VirtualFile descriptorTemplateFile = LocalFileSystem.getInstance().findFileByPath(customDescriptorPath);
     if (descriptorTemplateFile == null) {
       throw new FlexCompilerException("Custom AIR descriptor file not found: " + customDescriptorPath);
     }
 
-    final VirtualFile outputFolder = LocalFileSystem.getInstance().findFileByPath(config.getOutputFolder());
-    assert outputFolder != null;
+    final String outputFilePath = bc.getOutputFilePath(true);
+    final String outputFolderPath = PathUtil.getParentPath(outputFilePath);
+    final VirtualFile outputFolder = LocalFileSystem.getInstance().findFileByPath(outputFolderPath);
+    if (outputFolder == null) {
+      throw new FlexCompilerException("Failed to copy AIR descriptor. Folder does not exist: " + outputFolderPath);
+    }
 
     final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
 
@@ -506,7 +518,7 @@ public class FlexCompilationUtils {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
           public void run() {
             try {
-              final String content = fixInitialContent(descriptorTemplateFile, config.getOutputFileName());
+              final String content = fixInitialContent(descriptorTemplateFile, PathUtil.getFileName(outputFilePath));
               FlexUtils.addFileWithContent(descriptorTemplateFile.getName(), content, outputFolder);
             }
             catch (FlexCompilerException e) {

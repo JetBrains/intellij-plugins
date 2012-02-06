@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
@@ -38,14 +37,13 @@ public abstract class FlexCompilationTask {
   public void start(final FlexCompilationManager compilationManager) {
     try {
       myConfigFiles = createConfigFiles();
+      final String outputFilePath = myBC.getOutputFilePath(true);
 
       if (!compilationManager.isMake()) {
-        final VirtualFile configFile = myConfigFiles.get(myConfigFiles.size() - 1);
-        final String outputFilePath = FlexUtils.findXMLElement(configFile.getInputStream(), "<flex-config><output>");
         FlexCompilationUtils.deleteCacheForFile(outputFilePath);
       }
 
-      FlexCompilationUtils.ensureOutputFileWritable(myModule.getProject(), myBC.getOutputFilePath());
+      FlexCompilationUtils.ensureOutputFileWritable(myModule.getProject(), outputFilePath);
       doStart(compilationManager);
     }
     catch (IOException e) {

@@ -17,9 +17,9 @@ import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
-import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
 import com.intellij.lang.javascript.flex.flexunit.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -27,6 +27,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
+import com.intellij.util.PathUtil;
 import com.intellij.xdebugger.DefaultDebugProcessHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,10 +51,11 @@ public class FlexRunner extends FlexBaseRunner {
                                                      final ExecutionEnvironment environment) throws ExecutionException {
     switch (bc.getTargetPlatform()) {
       case Web:
-        final String urlOrPath = params.isLaunchUrl() ? params.getUrl()
-                                                      : bc.isUseHtmlWrapper()
-                                                        ? bc.getOutputFolder() + "/" + FlexCompilationUtils.getWrapperFileName(bc)
-                                                        : bc.getOutputFilePath();
+        final String urlOrPath = params.isLaunchUrl()
+                                 ? params.getUrl()
+                                 : bc.isUseHtmlWrapper()
+                                   ? PathUtil.getParentPath(bc.getOutputFilePath(true)) + "/" + BCUtils.getWrapperFileName(bc)
+                                   : bc.getOutputFilePath(true);
         launchWithSelectedApplication(urlOrPath, params.getLauncherParameters());
         break;
       case Desktop:
@@ -65,7 +67,7 @@ public class FlexRunner extends FlexBaseRunner {
           case AndroidDevice:
             final String applicationId = getApplicationId(getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
             final Sdk sdk = bc.getSdk();
-            if (packAndInstallToAndroidDevice(module, sdk, createAndroidPackageParams(sdk, bc, params, false), applicationId, false)) {
+            if (packAndInstallToAndroidDevice(module, sdk, createAndroidPackageParams(bc, params, false), applicationId, false)) {
               launchOnAndroidDevice(module.getProject(), sdk, applicationId, false);
             }
             return null;
@@ -107,8 +109,8 @@ public class FlexRunner extends FlexBaseRunner {
       else {
         final Pair<String, String> swfPathAndApplicationId = getSwfPathAndApplicationId(mobileParams);
         final Module module = ModuleManager.getInstance(project).findModuleByName(mobileParams.getModuleName());
-        final MobileAirPackageParameters packageParameters =
-          createAndroidPackageParams(flexSdk, swfPathAndApplicationId.first, mobileParams, false);
+        final MobileAirPackageParameters packageParameters = new MobileAirPackageParameters();
+        //createAndroidPackageParams(flexSdk, swfPathAndApplicationId.first, mobileParams, false);
 
         if (packAndInstallToAndroidDevice(module, flexSdk, packageParameters, swfPathAndApplicationId.second, false)) {
           launchOnAndroidDevice(project, flexSdk, swfPathAndApplicationId.second, false);
@@ -266,11 +268,7 @@ public class FlexRunner extends FlexBaseRunner {
 
   public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {
     return DefaultRunExecutor.EXECUTOR_ID.equals(executorId) &&
-           (profile instanceof FlashRunConfiguration ||
-            profile instanceof NewFlexUnitRunConfiguration ||
-            (profile instanceof FlexRunConfiguration &&
-             ((FlexRunConfiguration)profile).getRunnerParameters().getRunMode() !=
-             FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer));
+           (profile instanceof FlashRunConfiguration || profile instanceof NewFlexUnitRunConfiguration);
   }
 
   @NotNull

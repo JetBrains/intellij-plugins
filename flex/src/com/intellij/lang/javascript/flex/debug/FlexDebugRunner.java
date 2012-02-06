@@ -49,8 +49,7 @@ public class FlexDebugRunner extends FlexBaseRunner {
 
   public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {
     return DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) &&
-           (profile instanceof FlexRunConfiguration ||
-            profile instanceof FlashRunConfiguration ||
+           (profile instanceof FlashRunConfiguration ||
             profile instanceof NewFlexUnitRunConfiguration ||
             profile instanceof RemoteFlashRunConfiguration);
   }
@@ -103,7 +102,7 @@ public class FlexDebugRunner extends FlexBaseRunner {
       final Sdk flexSdk = bc.getSdk();
       final String appId = getApplicationId(getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
 
-      final MobileAirPackageParameters packageParameters = createAndroidPackageParams(flexSdk, bc, params, true);
+      final MobileAirPackageParameters packageParameters = createAndroidPackageParams(bc, params, true);
 
       if (!packAndInstallToAndroidDevice(module, flexSdk, packageParameters, appId, true)) {
         return null;
@@ -144,8 +143,8 @@ public class FlexDebugRunner extends FlexBaseRunner {
         appId = swfPathAndApplicationId.second;
 
         final Module module = ModuleManager.getInstance(project).findModuleByName(mobileParams.getModuleName());
-        final MobileAirPackageParameters packageParameters =
-          createAndroidPackageParams(flexSdk, swfPathAndApplicationId.first, mobileParams, true);
+        final MobileAirPackageParameters packageParameters = new MobileAirPackageParameters();
+        //createAndroidPackageParams(flexSdk, swfPathAndApplicationId.first, mobileParams, true);
 
         if (!packAndInstallToAndroidDevice(module, flexSdk, packageParameters, swfPathAndApplicationId.second, true)) {
           return null;

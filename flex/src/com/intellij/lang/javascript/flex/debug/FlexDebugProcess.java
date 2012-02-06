@@ -11,10 +11,10 @@ import com.intellij.idea.LoggerFactory;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
-import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
 import com.intellij.lang.javascript.flex.flexunit.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.run.*;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
@@ -48,6 +48,7 @@ import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.util.Alarm;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
+import com.intellij.util.PathUtil;
 import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
@@ -201,8 +202,9 @@ public class FlexDebugProcess extends XDebugProcess {
         case Web:
           final String urlOrPath = appParams.isLaunchUrl() ? appParams.getUrl()
                                                            : bc.isUseHtmlWrapper()
-                                                             ? bc.getOutputFolder() + "/" + FlexCompilationUtils.getWrapperFileName(bc)
-                                                             : bc.getOutputFilePath();
+                                                             ? PathUtil.getParentPath(bc.getOutputFilePath(true)) +
+                                                               "/" + BCUtils.getWrapperFileName(bc)
+                                                             : bc.getOutputFilePath(true);
           sendCommand(new LaunchBrowserCommand(urlOrPath, appParams.getLauncherParameters()));
           break;
         case Desktop:
@@ -228,7 +230,7 @@ public class FlexDebugProcess extends XDebugProcess {
       final FlexUnitCommonParameters flexUnitParams = (FlexUnitCommonParameters)params;
       openFlexUnitConnections(flexUnitParams.getSocketPolicyPort(), flexUnitParams.getPort());
       if (bc.getTargetPlatform() == TargetPlatform.Web) {
-        sendCommand(new LaunchBrowserCommand(bc.getOutputFilePath(), flexUnitParams.getLauncherParameters()));
+        sendCommand(new LaunchBrowserCommand(bc.getOutputFilePath(false), flexUnitParams.getLauncherParameters()));
       }
       else {
         sendAdlStartingCommand(bc, params);

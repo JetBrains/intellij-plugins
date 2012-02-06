@@ -137,13 +137,14 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         final FlexIdeBuildConfiguration bc = moduleAndConfig.second;
 
         if (bc.getTargetPlatform() == TargetPlatform.Web) {
+          final String outputFilePath = bc.getOutputFilePath(true);
           try {
-            final String canonicalPath = new File(bc.getOutputFilePath()).getCanonicalPath();
+            final String canonicalPath = new File(PathUtil.getParentPath(outputFilePath)).getCanonicalPath();
             FlashPlayerTrustUtil.updateTrustedStatus(module.getProject(), params.isTrusted(), false, canonicalPath);
           }
           catch (IOException e) {/**/}
 
-          return launchWebFlexUnit(project, executor, contentToReuse, env, params, bc.getOutputFilePath());
+          return launchWebFlexUnit(project, executor, contentToReuse, env, params, outputFilePath);
         }
         else {
           return launchAirFlexUnit(project, executor, state, contentToReuse, env, params);
@@ -158,7 +159,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
         if (bc.getTargetPlatform() == TargetPlatform.Web && !params.isLaunchUrl()) {
           try {
-            final String canonicalPath = new File(bc.getOutputFilePath()).getCanonicalPath();
+            final String canonicalPath = new File(PathUtil.getParentPath(bc.getOutputFilePath(true))).getCanonicalPath();
             FlashPlayerTrustUtil.updateTrustedStatus(module.getProject(), params.isRunTrusted(), false, canonicalPath);
           }
           catch (IOException e) {/**/}
@@ -171,6 +172,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       throw new ExecutionException(e.getMessage());
     }
 
+    // todo remove following dead code
     final FlexRunnerParameters flexRunnerParameters = (((FlexRunConfiguration)runProfile)).getRunnerParameters();
 
     final Module module = ModuleManager.getInstance(project).findModuleByName(flexRunnerParameters.getModuleName());
@@ -193,7 +195,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         checkIfCompilationEnabled(module, (FlexRunConfiguration)runProfile, isDebug);
       }
 
-      FlashPlayerTrustUtil.updateTrustedStatus(project, isDebug, flexRunnerParameters);
+      //FlashPlayerTrustUtil.updateTrustedStatus(project, isDebug, flexRunnerParameters);
 
       return doLaunch(project, executor, state, contentToReuse, env, flexSdk, flexRunnerParameters);
     }
@@ -339,7 +341,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       return;
     }
 
-    final VirtualFile configFile = getCustomConfigUsedForCompilation(project, params);
+    final VirtualFile configFile = null; //getCustomConfigUsedForCompilation(project, params);
     if (configFile != null) {
       showWarningIfDebugNotEnabled(project, configFile);
     }
@@ -362,60 +364,6 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         }
       }
     }
-  }
-
-  /**
-   * Looks if custom config file was used for compilation of the swf file that will be run.
-   */
-  @Nullable
-  private static VirtualFile getCustomConfigUsedForCompilation(final Project project, final FlexRunnerParameters params) {
-    String[] swfFileNames = null;
-    if (!(params instanceof AirRunnerParameters) && params.getRunMode() == FlexRunnerParameters.RunMode.HtmlOrSwfFile) {
-      final String[] swfFilePaths = FlashPlayerTrustUtil.getSwfFilesCanonicalPaths(project, params);
-      swfFileNames = new String[swfFilePaths.length];
-      for (int i = 0; i < swfFilePaths.length; i++) {
-        swfFileNames[i] = swfFilePaths[i].substring(FileUtil.toSystemIndependentName(swfFilePaths[i]).lastIndexOf("/") + 1);
-      }
-    }
-    else if (params instanceof AirRunnerParameters &&
-             !(params instanceof FlexUnitRunnerParameters) &&
-             ((AirRunnerParameters)params).getAirRunMode() == AirRunnerParameters.AirRunMode.AppDescriptor) {
-      final VirtualFile descriptorFile = LocalFileSystem.getInstance().findFileByPath(((AirRunnerParameters)params).getAirDescriptorPath());
-      if (descriptorFile != null) {
-        try {
-          final String swfFilePath = FlexUtils.findXMLElement(descriptorFile.getInputStream(), "<application><initialWindow><content>");
-          if (swfFilePath != null) {
-            swfFileNames = new String[]{swfFilePath.substring(FileUtil.toSystemIndependentName(swfFilePath).lastIndexOf("/") + 1)};
-          }
-        }
-        catch (IOException e) {/*ignore*/}
-      }
-    }
-
-    if (swfFileNames != null && swfFileNames.length > 0) {
-      final Module module = ModuleManager.getInstance(project).findModuleByName(params.getModuleName());
-      for (final FlexBuildConfiguration config : FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(module)) {
-        if (config.DO_BUILD && config.OUTPUT_TYPE.equals(FlexBuildConfiguration.APPLICATION) && config.USE_CUSTOM_CONFIG_FILE) {
-          final VirtualFile configFile = LocalFileSystem.getInstance().findFileByPath(config.CUSTOM_CONFIG_FILE);
-          if (configFile != null) {
-            try {
-              final String outputFilePath = FlexUtils.findXMLElement(configFile.getInputStream(), "<flex-config><output>");
-              if (outputFilePath != null) {
-                for (final String swfFileName : swfFileNames) {
-                  if (outputFilePath.endsWith(swfFileName)) {
-                    return configFile;
-                  }
-                }
-              }
-            }
-            catch (IOException e) {/*ignore*/}
-          }
-        }
-      }
-      return null;
-    }
-
-    return null;
   }
 
   private static void showWarningIfDebugNotEnabled(final Project project, final @NotNull VirtualFile configFile) {
@@ -801,72 +749,28 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     return null;
   }
 
-  protected static MobileAirPackageParameters createAndroidPackageParams(final Sdk flexSdk,
-                                                                         final String swfPath,
-                                                                         final AirMobileRunnerParameters params,
-                                                                         final boolean isDebug) {
-    String swfName = "";
-    String outputDirPath = "";
-    final int lastSlashIndex = FileUtil.toSystemIndependentName(swfPath).lastIndexOf('/');
-    final String suffix = ".swf";
-    if (swfPath.toLowerCase().endsWith(suffix) && lastSlashIndex < swfPath.length() - suffix.length()) {
-      swfName = swfPath.substring(lastSlashIndex + 1);
-      outputDirPath = params.getAirRootDirPath() + (lastSlashIndex == -1 ? "" : "/" + swfPath.substring(0, lastSlashIndex));
-    }
-
-    final List<FilePathAndPathInPackage> files = AirInstallerParametersBase.cloneList(params.getFilesToPackage());
-    files.add(0, new FilePathAndPathInPackage(params.getAirRootDirPath() + "/" + swfPath, swfName));
-
-    final AndroidPackageType packageType = isDebug
-                                           ? params.getDebugTransport() == AirMobileDebugTransport.Network
-                                             ? AndroidPackageType.DebugOverNetwork
-                                             : AndroidPackageType.DebugOverUSB
-                                           : AndroidPackageType.NoDebug;
-    return new MobileAirPackageParameters(MobilePlatform.Android,
-                                          packageType,
-                                          IOSPackageType.DebugOverNetwork,
-                                          true,
-                                          flexSdk,
-                                          params.getAirDescriptorPath(),
-                                          params.getMobilePackageFileName(),
-                                          outputDirPath,
-                                          files,
-                                          MobileAirUtil.getLocalHostAddress(),
-                                          params.getUsbDebugPort(),
-                                          "",
-                                          "",
-                                          MobileAirUtil.getTempKeystorePath(),
-                                          MobileAirUtil.PKCS12_KEYSTORE_TYPE,
-                                          MobileAirUtil.TEMP_KEYSTORE_PASSWORD,
-                                          "",
-                                          "",
-                                          "",
-                                          "");
-  }
-
-  protected static MobileAirPackageParameters createAndroidPackageParams(final Sdk flexSdk,
-                                                                         final FlexIdeBuildConfiguration config,
+  protected static MobileAirPackageParameters createAndroidPackageParams(final FlexIdeBuildConfiguration bc,
                                                                          final FlashRunnerParameters params,
                                                                          final boolean isDebug) {
-    final List<FilePathAndPathInPackage> files =
-      AirInstallerParametersBase.cloneList(config.getAndroidPackagingOptions().getFilesToPackage());
-    files.add(0, new FilePathAndPathInPackage(config.getOutputFilePath(), config.getOutputFileName()));
+    final List<FilePathAndPathInPackage> files = AirInstallerParametersBase.cloneList(bc.getAndroidPackagingOptions().getFilesToPackage());
+    final String outputFilePath = bc.getOutputFilePath(true);
+    files.add(0, new FilePathAndPathInPackage(outputFilePath, PathUtil.getFileName(outputFilePath)));
 
     final AndroidPackageType packageType = isDebug
                                            ? params.getDebugTransport() == AirMobileDebugTransport.Network
                                              ? AndroidPackageType.DebugOverNetwork
                                              : AndroidPackageType.DebugOverUSB
                                            : AndroidPackageType.NoDebug;
-    final AirSigningOptions signingOptions = config.getAndroidPackagingOptions().getSigningOptions();
+    final AirSigningOptions signingOptions = bc.getAndroidPackagingOptions().getSigningOptions();
     final boolean temp = signingOptions.isUseTempCertificate();
     return new MobileAirPackageParameters(MobilePlatform.Android,
                                           packageType,
                                           IOSPackageType.DebugOverNetwork,
                                           true,
-                                          flexSdk,
-                                          getAirDescriptorPath(config, config.getAndroidPackagingOptions()),
-                                          config.getAndroidPackagingOptions().getPackageFileName(),
-                                          config.getOutputFolder(),
+                                          bc.getSdk(),
+                                          getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()),
+                                          bc.getAndroidPackagingOptions().getPackageFileName(),
+                                          PathUtil.getParentPath(outputFilePath),
                                           files,
                                           MobileAirUtil.getLocalHostAddress(),
                                           params.getUsbDebugPort(),
@@ -924,7 +828,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
       final AirDesktopPackagingOptions packagingOptions = bc.getAirDesktopPackagingOptions();
       commandLine.addParameter(FileUtil.toSystemDependentName(getAirDescriptorPath(bc, packagingOptions)));
-      commandLine.addParameter(FileUtil.toSystemDependentName(bc.getOutputFolder()));
+      commandLine.addParameter(FileUtil.toSystemDependentName(PathUtil.getParentPath(bc.getOutputFilePath(true))));
       final String programParameters =
         params instanceof FlashRunnerParameters ? ((FlashRunnerParameters)params).getAirProgramParameters() : "";
       if (!StringUtil.isEmptyOrSpaces(programParameters)) {
@@ -959,14 +863,14 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       // todo why android? which to take for emulator should probably be selected in run configuration.
       final AndroidPackagingOptions packagingOptions = bc.getAndroidPackagingOptions();
       commandLine.addParameter(FileUtil.toSystemDependentName(getAirDescriptorPath(bc, packagingOptions)));
-      commandLine.addParameter(FileUtil.toSystemDependentName(bc.getOutputFolder()));
+      commandLine.addParameter(FileUtil.toSystemDependentName(PathUtil.getParentPath(bc.getOutputFilePath(true))));
     }
 
     return commandLine;
   }
 
-  public static String getAirDescriptorPath(final FlexIdeBuildConfiguration config, final AirPackagingOptions packagingOptions) {
-    return config.getOutputFolder() + "/" + getAirDescriptorFileName(config, packagingOptions);
+  public static String getAirDescriptorPath(final FlexIdeBuildConfiguration bc, final AirPackagingOptions packagingOptions) {
+    return PathUtil.getParentPath(bc.getOutputFilePath(true)) + "/" + getAirDescriptorFileName(bc, packagingOptions);
   }
 
   public static String getAirDescriptorFileName(final FlexIdeBuildConfiguration config, final AirPackagingOptions packagingOptions) {

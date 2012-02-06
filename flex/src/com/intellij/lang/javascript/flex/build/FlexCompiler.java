@@ -30,6 +30,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.PathUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,8 +38,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.DataInput;
 import java.io.IOException;
 import java.util.*;
-
-import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.InfoFromConfigFile;
 
 /**
  * @author Maxim.Mossienko
@@ -196,23 +195,26 @@ public class FlexCompiler implements SourceProcessingCompiler {
     return true;
   }
 
-  private static boolean checkSimilarOutputFiles(final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndConfigsToCompile)
+  private static boolean checkSimilarOutputFiles(final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCsToCompile)
     throws ConfigurationException {
 
-    final Map<String, Pair<Module, FlexIdeBuildConfiguration>> outputPathToModuleAndConfig =
+    final Map<String, Pair<Module, FlexIdeBuildConfiguration>> outputPathToModuleAndBC =
       new THashMap<String, Pair<Module, FlexIdeBuildConfiguration>>();
-    for (Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig : modulesAndConfigsToCompile) {
-      final FlexIdeBuildConfiguration config = moduleAndConfig.second;
-      checkOutputPathUnique(config.getOutputFilePath(), moduleAndConfig, outputPathToModuleAndConfig);
+    for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
+      final FlexIdeBuildConfiguration bc = moduleAndBC.second;
+      final String outputFilePath = bc.getOutputFilePath(true);
+      final String outputFolderPath = PathUtil.getParentPath(outputFilePath);
 
-      if (config.getTargetPlatform() == TargetPlatform.Mobile && config.getOutputType() == OutputType.Application) {
-        if (config.getAndroidPackagingOptions().isEnabled()) {
-          final String outputPath = config.getOutputFolder() + "/" + config.getAndroidPackagingOptions().getPackageFileName();
-          checkOutputPathUnique(outputPath, moduleAndConfig, outputPathToModuleAndConfig);
+      checkOutputPathUnique(outputFilePath, moduleAndBC, outputPathToModuleAndBC);
+
+      if (bc.getTargetPlatform() == TargetPlatform.Mobile && bc.getOutputType() == OutputType.Application) {
+        if (bc.getAndroidPackagingOptions().isEnabled()) {
+          final String outputPath = outputFolderPath + "/" + bc.getAndroidPackagingOptions().getPackageFileName();
+          checkOutputPathUnique(outputPath, moduleAndBC, outputPathToModuleAndBC);
         }
-        if (config.getIosPackagingOptions().isEnabled()) {
-          final String outputPath = config.getOutputFolder() + "/" + config.getIosPackagingOptions().getPackageFileName();
-          checkOutputPathUnique(outputPath, moduleAndConfig, outputPathToModuleAndConfig);
+        if (bc.getIosPackagingOptions().isEnabled()) {
+          final String outputPath = outputFolderPath + "/" + bc.getIosPackagingOptions().getPackageFileName();
+          checkOutputPathUnique(outputPath, moduleAndBC, outputPathToModuleAndBC);
         }
       }
     }
@@ -220,15 +222,15 @@ public class FlexCompiler implements SourceProcessingCompiler {
   }
 
   private static void checkOutputPathUnique(final String outputPath,
-                                            final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig,
-                                            final Map<String, Pair<Module, FlexIdeBuildConfiguration>> outputPathToModuleAndConfig)
+                                            final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC,
+                                            final Map<String, Pair<Module, FlexIdeBuildConfiguration>> outputPathToModuleAndBC)
     throws ConfigurationException {
     final String caseAwarePath = SystemInfo.isFileSystemCaseSensitive ? outputPath : outputPath.toLowerCase();
 
-    final Pair<Module, FlexIdeBuildConfiguration> existing = outputPathToModuleAndConfig.put(caseAwarePath, moduleAndConfig);
+    final Pair<Module, FlexIdeBuildConfiguration> existing = outputPathToModuleAndBC.put(caseAwarePath, moduleAndBC);
     if (existing != null) {
       throw new ConfigurationException(FlexBundle
-                                         .message("same.output.files", moduleAndConfig.second.getName(), moduleAndConfig.first.getName(),
+                                         .message("same.output.files", moduleAndBC.second.getName(), moduleAndBC.first.getName(),
                                                   existing.second.getName(), existing.first.getName(),
                                                   FileUtil.toSystemDependentName(outputPath)));
     }
@@ -328,10 +330,10 @@ public class FlexCompiler implements SourceProcessingCompiler {
         throw new ConfigurationException(
           FlexBundle.message("additional.config.file.not.found", additionalConfigFilePath, bc.getName(), moduleName));
       }
-      final InfoFromConfigFile info = FlexCompilerConfigFileUtil.getInfoFromConfigFile(module, additionalConfigFilePath);
-      mainClassPathFromConfigFile = info.mainClass;
-      outputFileNameFromConfigFile = info.outputFileName;
-      outputFolderPathFromConfigFile = info.outputFolderPath;
+      final InfoFromConfigFile info = FlexCompilerConfigFileUtil.getInfoFromConfigFile(additionalConfigFilePath);
+      mainClassPathFromConfigFile = info.getMainClass(module);
+      outputFileNameFromConfigFile = info.getOutputFileName();
+      outputFolderPathFromConfigFile = info.getOutputFolderPath();
     }
 
     final BuildConfigurationNature nature = bc.getNature();
