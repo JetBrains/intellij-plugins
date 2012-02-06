@@ -6,11 +6,13 @@
       <element id="directory" name="META-INF">
         <element id="file-copy" path="$PROJECT_DIR$/idea-plugin/src/META-INF/plugin.xml" />
       </element>
-      <element id="file-copy" path="$PROJECT_DIR$/main-loader/target/main-loader-1.0-SNAPSHOT.swf" output-file-name="designer.swf" />
+      <element id="file-copy" path="$PROJECT_DIR$/main-loader/target/main-loader-1.0-SNAPSHOT.swf" output-file-name="designer-air3.0.swf" />
       <element id="file-copy" path="$PROJECT_DIR$/main/resources/descriptor-air2.6.xml" />
       <element id="file-copy" path="$PROJECT_DIR$/flex-injection/target/flex-injection-4.1.swc" />
       <element id="file-copy" path="$PROJECT_DIR$/flex-injection/target/flex-injection-4.5.swc" />
       <element id="file-copy" path="$PROJECT_DIR$/flex-injection/target/flex-injection-4.6.swc" />
+      <element id="file-copy" path="$PROJECT_DIR$/main-loader/target/main-loader-1.0-SNAPSHOT-air2.6.swf" output-file-name="designer-air2.6.swf" />
+      <element id="file-copy" path="$PROJECT_DIR$/main/resources/descriptor-air3.0.xml" />
     </root>
   </artifact>
 </component>

@@ -73,20 +73,16 @@ private def doExecute(home, sandbox, targetFolder) {
 
   buildFlex("main-loader.xml", "main-loader", flexBuildHome, flexSandbox, false, 11);
 
-  ant.copy(file: "$flexSandbox/main-loader-1.0-SNAPSHOT.swf", tofile: "$targetFolder/designer.swf")
+  ant.copy(file: "$flexSandbox/main-loader-1.0-SNAPSHOT.swf", tofile: "$targetFolder/designer-air3.0.swf")
   ant.copy(file: "$flexSandbox/designer-2.6.swf", tofile: "$targetFolder/designer-air2.6.swf")
 
   ant.copy(todir: "$targetFolder") {
-    fileset(dir: "$flexBuildHome/../main/resources", includes: "descriptor-air*.swc")
+    fileset(dir: "$flexBuildHome/../main/resources", includes: "descriptor-air*.xml")
   }
 
   ant.copy(todir: "$targetFolder") {
     fileset(dir: "$flexSandbox", includes: "**/*injection-*.swc")
   }
-
-  //ant.copy(todir: "$targetFolder", overwrite: "true") {
-  //  fileset(dir: "$home/flex/tools/flex-ui-designer/_astella_eap_", includes: "**/*injection-*.swc")
-  //}
 }
 
 private def buildAssets() {
