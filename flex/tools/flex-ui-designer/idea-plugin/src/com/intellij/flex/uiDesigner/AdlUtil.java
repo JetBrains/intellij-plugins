@@ -68,37 +68,7 @@ final class AdlUtil {
     }
   }
 
-  static void addTestPlugin(List<String> arguments) {
-    arguments.add("-p");
-    arguments.add(DebugPathManager.getFudHome() + "/test-plugin/target/test-1.0-SNAPSHOT.swf");
-  }
-
-  public static AdlRunConfiguration createTestAdlRunConfiguration() {
-    String adlExecutable = System.getProperty("adl.executable");
-    if (adlExecutable == null) {
-      if (SystemInfo.isMac) {
-        adlExecutable = "/Developer/SDKs/flex_4.5.1/bin/adl";
-      }
-      else {
-        throw new IllegalStateException("Please define 'adl.executable' to point to ADL executable");
-      }
-    }
-
-    String adlRuntime = System.getProperty("adl.runtime");
-    if (adlRuntime == null) {
-      if (SystemInfo.isMac) {
-        adlRuntime = "/Library/Frameworks";
-      }
-      else {
-        throw new IllegalStateException("Please define 'adl.runtime' to point to ADL runtime");
-      }
-    }
-
-    return new AdlRunConfiguration(adlExecutable, adlRuntime);
-  }
-
   // http://kb2.adobe.com/cps/407/kb407625.html
-
   public static void runDebugger(final Module module, final Runnable postTask) throws ExecutionException {
     final RunManagerEx runManager = RunManagerEx.getInstanceEx(module.getProject());
     final RunnerAndConfigurationSettings settings =
@@ -223,16 +193,23 @@ final class AdlUtil {
     private final String adlPath;
     private final @Nullable String runtime;
 
+    private final String runtimeVersion;
+
     public @Nullable List<String> arguments;
 
-    public AdlRunConfiguration(String adlPath, @Nullable String runtime) {
+    AdlRunConfiguration(String adlPath, @Nullable String runtime, String runtimeVersion) {
       this.adlPath = adlPath;
       this.runtime = runtime;
+      this.runtimeVersion = runtimeVersion;
     }
 
     @Override
     public String toString() {
       return "adlRunConfiguration";
+    }
+
+    public String getRuntimeVersion() {
+      return runtimeVersion;
     }
   }
 

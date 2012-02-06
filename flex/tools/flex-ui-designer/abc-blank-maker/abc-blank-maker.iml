@@ -5,6 +5,18 @@
     <option name="TARGET_PLAYER_VERSION" value="11.1" />
     <option name="VERSION" value="3" />
   </component>
+  <component name="FlexBuildConfigurationManager" active="Unnamed">
+    <configurations>
+      <configuration>
+        <dependencies />
+        <compiler-options />
+        <packaging-air-desktop />
+        <packaging-android />
+        <packaging-ios />
+      </configuration>
+    </configurations>
+    <compiler-options />
+  </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">

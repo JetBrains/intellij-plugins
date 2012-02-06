@@ -41,7 +41,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
-import java.nio.channels.ClosedByInterruptException;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -52,8 +51,6 @@ import static com.intellij.flex.uiDesigner.AdlUtil.*;
 
 public class DesignerApplicationLauncher extends Task.Backgroundable {
   private static final Logger LOG = Logger.getInstance(DesignerApplicationLauncher.class.getName());
-
-  private static final String DESIGNER_SWF = "designer.swf";
 
   private ProgressIndicator indicator;
   private Module module;
@@ -171,7 +168,15 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
       found.set(true);
       adlRunConfiguration.arguments = arguments;
       try {
-        adlProcessHandler = runAdl(adlRunConfiguration, DesignerApplicationManager.APP_DIR.getPath() + File.separatorChar + "descriptor-air" + (SystemInfo.isMac || SystemInfo.isWindows ? '3' : '2') + ".xml",
+        final String appClassifierVersion;
+        if (StringUtil.compareVersionNumbers(adlRunConfiguration.getRuntimeVersion(), "3.0") < 0 || !(SystemInfo.isMac || SystemInfo.isWindows)) {
+          appClassifierVersion = "2.6";
+        }
+        else {
+          appClassifierVersion = "3.0";
+        }
+
+        adlProcessHandler = runAdl(adlRunConfiguration, DesignerApplicationManager.APP_DIR.getPath() + File.separatorChar + "descriptor-air" + appClassifierVersion + ".xml",
           new Consumer<Integer>() {
             @Override
             public void consume(Integer exitCode) {
@@ -337,7 +342,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
 
       String runtime = FlexSdkUtils.getAirRuntimePath(sdk);
       if (checkRuntime(runtime) || checkRuntime((runtime = installedRuntime))) {
-        result.add(new AdlRunConfiguration(adlPath, runtime));
+        result.add(new AdlRunConfiguration(adlPath, runtime, StringUtil.compareVersionNumbers(sdk.getVersionString(), "4.6") < 0 ? "2.6" : "3.0"));
       }
     }
 
@@ -365,15 +370,16 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
       }
     }
 
-    return new AdlRunConfiguration(adlExecutable, adlRuntime);
+    return new AdlRunConfiguration(adlExecutable, adlRuntime, "3.0");
   }
 
   private static void copyAppFiles() throws IOException {
     @SuppressWarnings("unchecked")
     final Pair<String, String>[] files = new Pair[]{
-      new Pair(DESIGNER_SWF, "main-loader/target/main-loader-1.0-SNAPSHOT.swf"),
-      new Pair("descriptor-air2.xml", "main/resources/descriptor-air2.xml"),
-      new Pair("descriptor-air3.xml", "main/resources/descriptor-air3.xml")
+      new Pair("designer-air2.6.swf", "main-loader/target/main-loader-1.0-SNAPSHOT-air2.6.swf"),
+      new Pair("designer-air3.0.swf", "main-loader/target/main-loader-1.0-SNAPSHOT.swf"),
+      new Pair("descriptor-air2.6.xml", "main/resources/descriptor-air2.6.xml"),
+      new Pair("descriptor-air3.0.xml", "main/resources/descriptor-air3.0.xml")
     };
 
     if (DebugPathManager.IS_DEV) {

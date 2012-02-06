@@ -74,10 +74,11 @@ private def doExecute(home, sandbox, targetFolder) {
   buildFlex("main-loader.xml", "main-loader", flexBuildHome, flexSandbox, false, 11);
 
   ant.copy(file: "$flexSandbox/main-loader-1.0-SNAPSHOT.swf", tofile: "$targetFolder/designer.swf")
-  ant.copy(file: "$flexSandbox/11.swf", tofile: "$targetFolder/designer-11.swf")
+  ant.copy(file: "$flexSandbox/designer-2.6.swf", tofile: "$targetFolder/designer-air2.6.swf")
 
-  ant.copy(file: "$flexBuildHome/../main/resources/descriptor-air2.xml", todir: "$targetFolder")
-  ant.copy(file: "$flexBuildHome/../main/resources/descriptor-air3.xml", todir: "$targetFolder")
+  ant.copy(todir: "$targetFolder") {
+    fileset(dir: "$flexBuildHome/../main/resources", includes: "descriptor-air*.swc")
+  }
 
   ant.copy(todir: "$targetFolder") {
     fileset(dir: "$flexSandbox", includes: "**/*injection-*.swc")
@@ -124,7 +125,7 @@ def buildFlex(config, basedir, flexBuildHome, flexSandbox, isSwc, swfVersion) {
     arg(value: "-load-config=$flexSandbox/${config}")
     if (swfVersion != 0) {
       arg(value: "-swf-version=${swfVersion}")
-      arg(value: "-output=${flexSandbox}/${swfVersion}.swf")
+      arg(value: "-output=${flexSandbox}/designer-2.6.swf")
     }
   }
 }

@@ -6,6 +6,6 @@
   <description>Provides visual editing support for Flex UI</description>
   <copyright>Copyright (c) 2000-2012 JetBrains s.r.o.</copyright>
   <initialWindow>
-    <content>designer.swf</content>
+    <content>designer-air2.6.swf</content>
   </initialWindow>
 </application>

@@ -1,35 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-  <component name="FacetManager">
-    <facet type="flex" name="Flex">
-      <configuration flex_sdk="compiler-4.5.2.21576.pom">
-        <option name="DO_BUILD" value="false" />
-        <option name="OUTPUT_TYPE" value="Library" />
-        <option name="USE_DEFAULT_SDK_CONFIG_FILE" value="false" />
-        <option name="USE_CUSTOM_CONFIG_FILE" value="true" />
-        <option name="CUSTOM_CONFIG_FILE" value="$MODULE_DIR$/../.idea/flexmojos/flex-injection-com.intellij.flex.uiDesigner.xml" />
-        <option name="USE_CUSTOM_CONFIG_FILE_FOR_TESTS" value="false" />
-        <option name="CUSTOM_CONFIG_FILE_FOR_TESTS" value="" />
-        <option name="APPLICATION_ENTRY_POINT" value="" />
-        <option name="MAIN_CLASS" value="" />
-        <option name="OUTPUT_FILE_NAME" value="flex-injection.swc" />
-        <option name="USE_FACET_COMPILE_OUTPUT_PATH" value="true" />
-        <option name="FACET_COMPILE_OUTPUT_PATH" value="$MODULE_DIR$/target" />
-        <option name="FACET_COMPILE_OUTPUT_PATH_FOR_TESTS" value="$MODULE_DIR$/target/test-classes" />
-        <option name="INCLUDE_RESOURCE_FILES_IN_SWC" value="false" />
-        <option name="TARGET_PLAYER_VERSION" value="" />
-        <option name="STATIC_LINK_RUNTIME_SHARED_LIBRARIES" value="false" />
-        <option name="USE_LOCALE_SETTINGS" value="true" />
-        <option name="LOCALE" value="" />
-        <option name="ADDITIONAL_COMPILER_OPTIONS" value="" />
-        <option name="PATH_TO_SERVICES_CONFIG_XML" value="" />
-        <option name="CONTEXT_ROOT" value="" />
-        <option name="VERSION" value="3" />
-        <NAMESPACE_AND_MANIFEST_FILE_INFO_LIST />
-        <CONDITIONAL_COMPILATION_DEFINITION_LIST />
-        <CSS_FILES_LIST />
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="Flex" version="4">
+  <component name="FlexBuildConfigurationManager" active="flex-injection">
+    <configurations>
+      <configuration name="flex-injection" target-platform="Mobile" output-type="Library" output-file="flex-injection.swc" output-folder="$MODULE_DIR$/target">
+        <dependencies>
+          <entries>
+            <entry library-name="Maven: com.adobe.flex.framework:framework:swc:4.5.2.21576" library-level="project">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-name="Maven: com.adobe.flex.framework:spark:swc:4.5.2.21576" library-level="project">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-name="Maven: com.adobe.flex.framework:airspark:swc:4.5.2.21576" library-level="project">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-name="Maven: com.adobe.flex.framework:airframework:swc:4.5.2.21576" library-level="project">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-name="Maven: com.adobe.flex.framework:airglobal:swc:3.1.0.4880" library-level="project">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-name="Maven: org.jetbrains.miglayout:miglayout-flex:swc:4.3.1-SNAPSHOT" library-level="project">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-name="Maven: org.jetbrains.miglayout:miglayout-core:swc:4.3.1-SNAPSHOT" library-level="project">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry module-name="shared" build-configuration-name="shared">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-name="Maven: com.adobe.flex.framework:mobilecomponents:swc:4.6.0.23201" library-level="project">
+              <dependency linkage="Merged" />
+            </entry>
+          </entries>
+          <sdk name="compiler-4.5.2.21576.pom" />
+        </dependencies>
+        <compiler-options>
+          <map>
+            <entry key="compiler.locale" value="" />
+          </map>
+          <option name="additionalConfigFilePath" value="$MODULE_DIR$/../.idea/flexmojos/flex-injection-com.intellij.flex.uiDesigner.xml" />
+        </compiler-options>
+        <packaging-air-desktop />
+        <packaging-android />
+        <packaging-ios />
       </configuration>
-    </facet>
+    </configurations>
+    <compiler-options />
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/target/classes" />
@@ -38,17 +55,17 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="compiler-4.5.2.21576.pom" jdkType="__CompositeFlexSdk__" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:framework:swc:4.5.2.21576" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:spark:swc:4.5.2.21576" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airspark:swc:4.5.2.21576" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.miglayout:miglayout-flex:swc:4.3.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:airframework:swc:4.5.2.21576" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:airglobal:swc:3.1.0.4880" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.miglayout:miglayout-flex:swc:4.3.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:framework:swc:4.5.2.21576" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:mobilecomponents:swc:4.6.0.23201" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airspark:swc:4.5.2.21576" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:spark:swc:4.5.2.21576" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.miglayout:miglayout-core:swc:4.3.1-SNAPSHOT" level="project" />
     <orderEntry type="module" module-name="shared" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:mobilecomponents:swc:4.6.0.23201" level="project" />
   </component>
 </module>
 

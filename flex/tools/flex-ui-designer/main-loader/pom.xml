@@ -52,6 +52,18 @@
             </property>
           </defines>
         </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile-swf</goal>
+            </goals>
+            <id>air2.6</id>
+            <configuration>
+              <classifier>air2.6</classifier>
+              <swfVersion>11</swfVersion>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
