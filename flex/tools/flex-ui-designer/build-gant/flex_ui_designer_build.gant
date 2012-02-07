@@ -47,7 +47,7 @@ class SwfDescriptor {
 
 private def doExecute(home, sandbox, targetFolder) {
   flexBuildHome = "$home/flex/tools/flex-ui-designer/build-gant";
-  flexSandbox = "$sandbox/ui-designer"
+  flexSandbox = "$sandbox/flex-ui-designer"
 
   ant.delete(dir: "$flexSandbox")
   ant.mkdir(dir: "$flexSandbox")

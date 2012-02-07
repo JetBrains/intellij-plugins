@@ -27,7 +27,7 @@ def execute(home, sandbox, targetFolder) {
 
 private def doExecute(home, sandbox, targetFolder) {
   flexBuildHome = "$home/flex/tools/profiler";
-  flexSandbox = "$sandbox/profiler"
+  flexSandbox = "$sandbox/flex-profiler"
 
   ant.delete(dir: "$flexSandbox")
   ant.mkdir(dir: "$flexSandbox")
