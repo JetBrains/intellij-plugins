@@ -195,7 +195,7 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
       if (mainClassFile == null || mainClassFile.isDirectory()) return;
       
       final VirtualFile sourceRoot = ProjectRootManager.getInstance(module.getProject()).getFileIndex().getSourceRootForFile(mainClassFile);
-      final String relativePath = sourceRoot == null ? null : VfsUtilCore.getRelativePath(sourceRoot, mainClassFile, '/');
+      final String relativePath = sourceRoot == null ? null : VfsUtilCore.getRelativePath(mainClassFile, sourceRoot, '/');
       final String mainClass = relativePath == null
                                ? mainClassFile.getNameWithoutExtension()
                                : FileUtil.getNameWithoutExtension(relativePath).replace('/', '.');
