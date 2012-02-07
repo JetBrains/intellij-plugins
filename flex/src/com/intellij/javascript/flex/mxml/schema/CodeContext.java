@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.index.JSPackageIndexInfo;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
@@ -426,14 +427,11 @@ public class CodeContext {
 
   private static void handleAllStandardManifests(final Module module, @NotNull final FlexIdeBuildConfiguration bc) {
     final Sdk sdk = bc.getSdk();
-    if (sdk == null) return;
-    final String homePath = sdk.getHomePath();
-    if (homePath == null) return;
+    final String homePath = sdk == null ? null : sdk.getHomePath();
+    final VirtualFile sdkHome = homePath == null ? null : LocalFileSystem.getInstance().findFileByPath(homePath);
+    if (sdkHome == null || sdk.getSdkType() == FlexmojosSdkType.getInstance()) return;
 
-    final VirtualFile sdkHome = LocalFileSystem.getInstance().findFileByPath(homePath);
-    if (sdkHome == null) return;
-
-    FlexSdkUtils.processStandardNamespaces(sdk.getVersionString(), bc, new PairConsumer<String, String>() {
+    FlexSdkUtils.processStandardNamespaces(bc, new PairConsumer<String, String>() {
       public void consume(final String namespace, final String relativePath) {
         final VirtualFile manifestFile = VfsUtil.findRelativeFile(relativePath, sdkHome);
 

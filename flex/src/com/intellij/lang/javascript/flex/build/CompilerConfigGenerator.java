@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -48,38 +49,30 @@ public class CompilerConfigGenerator {
   private final Module myModule;
   private final FlexIdeBuildConfiguration myBC;
   private final boolean myFlexUnit;
-  private final String mySdkHome;
-  private final String mySdkVersion;
-  private final String[] mySdkRootUrls;
+  private final Sdk mySdk;
+  private final boolean myFlexmojos;
   private final CompilerOptions myModuleLevelCompilerOptions;
   private final CompilerOptions myProjectLevelCompilerOptions;
 
   private CompilerConfigGenerator(final @NotNull Module module,
                                   final @NotNull FlexIdeBuildConfiguration bc,
-                                  final @NotNull String sdkHome,
-                                  final @NotNull String sdkVersion,
-                                  final @NotNull String[] sdkRootUrls,
                                   final @NotNull CompilerOptions moduleLevelCompilerOptions,
-                                  final @NotNull CompilerOptions projectLevelCompilerOptions) {
+                                  final @NotNull CompilerOptions projectLevelCompilerOptions) throws IOException {
     myModule = module;
     myBC = bc;
     myFlexUnit = myBC.getMainClass().equals(FlexUnitPrecompileTask.getFlexUnitLauncherName(myModule.getName()));
-    mySdkHome = sdkHome;
-    mySdkVersion = sdkVersion;
-    mySdkRootUrls = sdkRootUrls;
+    mySdk = bc.getSdk();
+    if (mySdk == null) {
+      throw new IOException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), module.getName()));
+    }
+    myFlexmojos = mySdk.getSdkType() == FlexmojosSdkType.getInstance();
     myModuleLevelCompilerOptions = moduleLevelCompilerOptions;
     myProjectLevelCompilerOptions = projectLevelCompilerOptions;
   }
 
   public static VirtualFile getOrCreateConfigFile(final Module module, final FlexIdeBuildConfiguration bc) throws IOException {
-    final Sdk sdk = bc.getSdk();
-    if (sdk == null) {
-      throw new IOException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), module.getName()));
-    }
-
     final CompilerConfigGenerator generator =
-      new CompilerConfigGenerator(module, bc, sdk.getHomePath(), sdk.getVersionString(),
-                                  sdk.getRootProvider().getUrls(OrderRootType.CLASSES),
+      new CompilerConfigGenerator(module, bc,
                                   FlexBuildConfigurationManager.getInstance(module).getModuleLevelCompilerOptions(),
                                   FlexProjectLevelCompilerOptionsHolder.getInstance(module.getProject()).getProjectLevelCompilerOptions());
     final String text = generator.generateConfigFileText();
@@ -96,8 +89,10 @@ public class CompilerConfigGenerator {
     addMandatoryOptions(rootElement);
     handleOptionsWithSpecialValues(rootElement);
     addSourcePaths(rootElement);
-    addNamespaces(rootElement);
-    addRootsFromSdk(rootElement);
+    if (!myFlexmojos) {
+      addNamespaces(rootElement);
+      addRootsFromSdk(rootElement);
+    }
     addLibs(rootElement);
     addOtherOptions(rootElement);
     addInputOutputPaths(rootElement);
@@ -115,14 +110,17 @@ public class CompilerConfigGenerator {
   private void addMandatoryOptions(final Element rootElement) {
     final BuildConfigurationNature nature = myBC.getNature();
 
-    final String targetPlayer = nature.isWebPlatform()
-                                ? myBC.getDependencies().getTargetPlayer()
-                                : TargetPlayerUtils.getMaximumTargetPlayer(mySdkHome);
-    addOption(rootElement, CompilerOptionInfo.TARGET_PLAYER_INFO, targetPlayer);
+    if (!myFlexmojos) {
+      final String targetPlayer = nature.isWebPlatform()
+                                  ? myBC.getDependencies().getTargetPlayer()
+                                  : TargetPlayerUtils.getMaximumTargetPlayer(mySdk.getHomePath());
+      addOption(rootElement, CompilerOptionInfo.TARGET_PLAYER_INFO, targetPlayer);
 
-    if (StringUtil.compareVersionNumbers(mySdkVersion, "4.5") >= 0) {
-      final String swfVersion = nature.isWebPlatform() ? getSwfVersionForTargetPlayer(targetPlayer) : getSwfVersionForSdk(mySdkVersion);
-      addOption(rootElement, CompilerOptionInfo.SWF_VERSION_INFO, swfVersion);
+      if (StringUtil.compareVersionNumbers(mySdk.getVersionString(), "4.5") >= 0) {
+        final String swfVersion = nature.isWebPlatform() ? getSwfVersionForTargetPlayer(targetPlayer)
+                                                         : getSwfVersionForSdk(mySdk.getVersionString());
+        addOption(rootElement, CompilerOptionInfo.SWF_VERSION_INFO, swfVersion);
+      }
     }
 
     if (nature.isMobilePlatform()) {
@@ -132,10 +130,11 @@ public class CompilerConfigGenerator {
 
 
     final String accessible = nature.isMobilePlatform() ? "false"
-                                                        : StringUtil.compareVersionNumbers(mySdkVersion, "4") >= 0 ? "true" : "false";
+                                                        : StringUtil.compareVersionNumbers(mySdk.getVersionString(), "4") >= 0 ? "true"
+                                                                                                                               : "false";
     addOption(rootElement, CompilerOptionInfo.ACCESSIBLE_INFO, accessible);
 
-    final String fontManagers = StringUtil.compareVersionNumbers(mySdkVersion, "4") >= 0
+    final String fontManagers = StringUtil.compareVersionNumbers(mySdk.getVersionString(), "4") >= 0
                                 ? "flash.fonts.JREFontManager" + CompilerOptionInfo.LIST_ENTRIES_SEPARATOR +
                                   "flash.fonts.BatikFontManager" + CompilerOptionInfo.LIST_ENTRIES_SEPARATOR +
                                   "flash.fonts.AFEFontManager" + CompilerOptionInfo.LIST_ENTRIES_SEPARATOR +
@@ -182,7 +181,7 @@ public class CompilerConfigGenerator {
 
   private void addNamespaces(final Element rootElement) {
     final StringBuilder namespaceBuilder = new StringBuilder();
-    FlexSdkUtils.processStandardNamespaces(mySdkVersion, myBC, new PairConsumer<String, String>() {
+    FlexSdkUtils.processStandardNamespaces(myBC, new PairConsumer<String, String>() {
       public void consume(final String namespace, final String relativePath) {
         if (namespaceBuilder.length() > 0) {
           namespaceBuilder.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
@@ -200,12 +199,12 @@ public class CompilerConfigGenerator {
   private void addRootsFromSdk(final Element rootElement) {
     final CompilerOptionInfo localeInfo = CompilerOptionInfo.getOptionInfo("compiler.locale");
     if (!getValueAndSource(localeInfo).first.isEmpty()) {
-      addOption(rootElement, CompilerOptionInfo.LIBRARY_PATH_INFO, mySdkHome + "/frameworks/locale/{locale}");
+      addOption(rootElement, CompilerOptionInfo.LIBRARY_PATH_INFO, mySdk.getHomePath() + "/frameworks/locale/{locale}");
     }
 
     final Map<String, String> libNameToRslInfo = new THashMap<String, String>();
 
-    for (final String swcUrl : mySdkRootUrls) {
+    for (final String swcUrl : mySdk.getRootProvider().getUrls(OrderRootType.CLASSES)) {
       final String swcPath = VirtualFileManager.extractPath(StringUtil.trimEnd(swcUrl, JarFileSystem.JAR_SEPARATOR));
       LinkageType linkageType = BCUtils.getSdkEntryLinkageType(swcPath, myBC);
 
@@ -213,7 +212,7 @@ public class CompilerConfigGenerator {
       if (linkageType == null) continue;
       // resolve default
       if (linkageType == LinkageType.Default) linkageType = myBC.getDependencies().getFrameworkLinkage();
-      if (linkageType == LinkageType.Default) linkageType = BCUtils.getDefaultFrameworkLinkage(mySdkVersion, myBC.getNature());
+      if (linkageType == LinkageType.Default) linkageType = BCUtils.getDefaultFrameworkLinkage(mySdk.getVersionString(), myBC.getNature());
 
       final CompilerOptionInfo info = linkageType == LinkageType.Merged ? CompilerOptionInfo.LIBRARY_PATH_INFO :
                                       linkageType == LinkageType.RSL ? CompilerOptionInfo.LIBRARY_PATH_INFO :
@@ -231,14 +230,14 @@ public class CompilerConfigGenerator {
         final String libName = swcName.substring(0, swcName.length() - ".swc".length());
 
         final String swzVersion = libName.equals("textLayout")
-                                  ? getTextLayoutSwzVersion(mySdkVersion)
+                                  ? getTextLayoutSwzVersion(mySdk.getVersionString())
                                   : libName.equals("osmf")
-                                    ? getOsmfSwzVersion(mySdkVersion)
-                                    : mySdkVersion;
+                                    ? getOsmfSwzVersion(mySdk.getVersionString())
+                                    : mySdk.getVersionString();
         final String swzUrl;
         swzUrl = libName.equals("textLayout")
                  ? "http://fpdownload.adobe.com/pub/swz/tlf/" + swzVersion + "/textLayout_" + swzVersion + ".swz"
-                 : "http://fpdownload.adobe.com/pub/swz/flex/" + mySdkVersion + "/" + libName + "_" + swzVersion + ".swz";
+                 : "http://fpdownload.adobe.com/pub/swz/flex/" + mySdk.getVersionString() + "/" + libName + "_" + swzVersion + ".swz";
 
         final StringBuilder rslBuilder = new StringBuilder();
         rslBuilder
@@ -438,14 +437,12 @@ public class CompilerConfigGenerator {
     addOption(rootElement, CompilerOptionInfo.OUTPUT_PATH_INFO, myBC.getOutputFilePath(false));
   }
 
-  private void addOption(final Element rootElement,
-                         final CompilerOptionInfo info,
-                         final String rawValue) {
-    if (!info.isApplicable(mySdkVersion, myBC.getNature())) {
+  private void addOption(final Element rootElement, final CompilerOptionInfo info, final String rawValue) {
+    if (!info.isApplicable(mySdk.getVersionString(), myBC.getNature())) {
       return;
     }
 
-    final String value = FlexUtils.replacePathMacros(rawValue, myModule, mySdkHome);
+    final String value = FlexUtils.replacePathMacros(rawValue, myModule, myFlexmojos ? "" : mySdk.getHomePath());
 
     final List<String> elementNames = StringUtil.split(info.ID, ".");
     Element parentElement = rootElement;
@@ -525,6 +522,6 @@ public class CompilerConfigGenerator {
     final String projectLevelValue = myProjectLevelCompilerOptions.getOption(info.ID);
     if (projectLevelValue != null) return Pair.create(projectLevelValue, ValueSource.ProjectDefault);
 
-    return Pair.create(info.getDefaultValue(mySdkVersion, myBC.getNature()), ValueSource.GlobalDefault);
+    return Pair.create(info.getDefaultValue(mySdk.getVersionString(), myBC.getNature()), ValueSource.GlobalDefault);
   }
 }

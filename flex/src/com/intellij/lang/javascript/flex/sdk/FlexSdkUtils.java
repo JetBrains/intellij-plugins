@@ -727,14 +727,13 @@ public class FlexSdkUtils {
   }
 
   /**
-   * @param sdkVersion
-   * @param bc
    * @param processor  (namespace, relative path with no leading slash)
    */
-  public static void processStandardNamespaces(String sdkVersion, FlexIdeBuildConfiguration bc, PairConsumer<String, String> processor) {
-    if (bc.isPureAs()) return;
+  public static void processStandardNamespaces(FlexIdeBuildConfiguration bc, PairConsumer<String, String> processor) {
+    final Sdk sdk = bc.getSdk();
+    if (bc.isPureAs() || sdk == null || sdk.getSdkType() == FlexmojosSdkType.getInstance()) return;
 
-    if (StringUtil.compareVersionNumbers(sdkVersion, "4") < 0) {
+    if (StringUtil.compareVersionNumbers(sdk.getVersionString(), "4") < 0) {
       processor.consume("http://www.adobe.com/2006/mxml", "frameworks/mxml-manifest.xml");
     }
     else {
