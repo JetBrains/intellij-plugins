@@ -21,6 +21,7 @@ import flash.desktop.NativeApplication;
 import flash.desktop.NotificationType;
 import flash.display.DisplayObject;
 import flash.display.NativeWindow;
+import flash.display.Stage;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.utils.Dictionary;
@@ -306,9 +307,11 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     document.displayManager = systemManager;
 
     if (!systemManager.sharedInitialized) {
-      systemManager.initShared(module.project.window.stage, QueueLoader.stageForAdobeDummies, server, UncaughtErrorManager.instance);
+      const stageForAdobeDummies:Stage = QueueLoader.stageForAdobeDummies;
+      assert(stageForAdobeDummies != null, "Stage for Adobe dummies cannot be null");
+      systemManager.initShared(stageForAdobeDummies, server, UncaughtErrorManager.instance);
     }
-    systemManager.init(isPureFlash ? null : new flexModuleFactoryClass(document.styleManager, module.context.applicationDomain), UncaughtErrorManager.instance,
+    systemManager.init(module.project.window.stage, isPureFlash ? null : new flexModuleFactoryClass(document.styleManager, module.context.applicationDomain), UncaughtErrorManager.instance,
                        MainFocusManagerSB(module.project.window.focusManager), document.documentFactory);
     document.container = new DocumentContainer(systemManager);
   }

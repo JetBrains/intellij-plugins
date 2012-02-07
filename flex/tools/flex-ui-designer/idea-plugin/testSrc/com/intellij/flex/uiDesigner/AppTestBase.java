@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
@@ -21,10 +22,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
-import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -36,10 +34,8 @@ import com.intellij.util.Consumer;
 import junit.framework.AssertionFailedError;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
@@ -52,7 +48,7 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
   protected String getSourceBasePath() {
     return "common";
   }
-  
+
   private VirtualFile testDir;
   protected final VirtualFile getTestDir() {
     if (testDir == null) {
@@ -70,10 +66,12 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
   protected void setUpJdk() {
     final String flexVersion = getFlexVersion();
     flexSdkRootPath = getTestDataPath() + "/lib/flex-sdk/" + flexVersion;
-    doSetupFlexSdk(myModule, flexSdkRootPath, true, flexVersion + "." + (flexVersion.equals("4.1") ? "16076" : "20967"));
+
+    Flex annotation = getFlexAnnotation();
+    doSetupFlexSdk(myModule, flexSdkRootPath, annotation == null ? TargetPlatform.Desktop : annotation.platform(), flexVersion);
   }
-  
-  private void doSetupFlexSdk(final Module module, final String flexSdkRootPath, final boolean air, final String sdkVersion) {
+
+  private void doSetupFlexSdk(final Module module, final String flexSdkRootPath, final TargetPlatform targetPlatform, final String sdkVersion) {
     final AccessToken token = WriteAction.start();
     try {
       final String sdkName = generateSdkName(sdkVersion);
@@ -102,21 +100,17 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
 
       final SdkModificator modificator = sdk.getSdkModificator();
       modificator.setName(sdkName);
-      modificator.setVersionString(sdkVersion);
+      modificator.setVersionString(FlexSdkUtils.readFlexSdkVersion(sdk.getHomeDirectory()));
       modifySdk(sdk, modificator);
       modificator.commitChanges();
 
       final Sdk finalSdk = sdk;
       JSTestUtils.modifyBuildConfiguration(module, new Consumer<ModifiableFlexIdeBuildConfiguration>() {
         public void consume(final ModifiableFlexIdeBuildConfiguration bc) {
-          bc.setNature(new BuildConfigurationNature(air ? TargetPlatform.Desktop : TargetPlatform.Web, false, getOutputType()));
+          bc.setNature(new BuildConfigurationNature(targetPlatform, false, getOutputType()));
           bc.getDependencies().setSdkEntry(Factory.createSdkEntry(finalSdk.getName()));
         }
       });
-
-      //final ModifiableRootModel rootModel = ModuleRootManager.getInstance(module).getModifiableModel();
-      //rootModel.setSdk(sdk);
-      //rootModel.commit();
     }
     finally {
       token.finish();
@@ -137,19 +131,18 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
   }
   
   protected void modifySdk(Sdk sdk, SdkModificator sdkModificator) {
-    modifySdk(sdkModificator, null);
-  }
+    final VirtualFile sdkHome = sdk.getHomeDirectory();
+    assert sdkHome != null;
+    final VirtualFile frameworksDir = sdkHome.findChild("frameworks");
+    assert frameworksDir != null;
 
-  protected void modifySdk(SdkModificator sdkModificator, @Nullable Condition<String> filter) {
-    sdkModificator.addRoot(getVFile("lib/playerglobal"), OrderRootType.CLASSES);
-
-    String[] list = new File(flexSdkRootPath).list();
-    Arrays.sort(list);
-    for (String name : list) {
-      if (name.endsWith(".swc") && (filter == null || filter.value(name))) {
-        addLibrary(sdkModificator, flexSdkRootPath + "/" + name);
-      }
+    VirtualFile frameworkRB = frameworksDir.findFileByRelativePath("libs/framework_rb.swc");
+    if (frameworkRB != null) {
+      sdkModificator.addRoot(frameworkRB, OrderRootType.CLASSES);
     }
+
+    sdkModificator.addRoot(getVFile("lib/playerglobal"), OrderRootType.CLASSES);
+    FlexSdkUtils.addFlexSdkSwcRoots(sdkModificator, frameworksDir);
   }
 
   protected void addLibrary(SdkModificator sdkModificator, String path) {
@@ -166,30 +159,13 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
     sdkModificator.addRoot(jarFile, OrderRootType.CLASSES);
   }
 
-  protected void addLibrary(ModifiableRootModel model, String path) {
-    if (path.charAt(0) != '/') {
-      path = getTestDataPath() + "/lib/" + path;
-    }
-
-    VirtualFile virtualFile = getVFile(path);
-    VirtualFile jarFile = JarFileSystem.getInstance().getJarRootForLocalFile(virtualFile);
-    assert jarFile != null;
-
-    libs.add(new Pair<VirtualFile, VirtualFile>(virtualFile, jarFile));
-    JSTestUtils.addLibrary(myModule, path, virtualFile.getParent().getPath(), virtualFile.getName(), null, null);
-
-    //Library.ModifiableModel libraryModel = model.getModuleLibraryTable().createLibrary(path).getModifiableModel();
-    //libraryModel.addRoot(jarFile, OrderRootType.CLASSES);
-    //libraryModel.commit();
-  }
-  
   protected String getFlexVersion() {
     try {
       Flex annotation = getClass().getMethod(getName()).getAnnotation(Flex.class);
       if (annotation == null || annotation.version().isEmpty()) {
         annotation = getClass().getAnnotation(Flex.class);
       }
-      
+
       assert annotation != null && !annotation.version().isEmpty();
       return annotation.version();
     }
@@ -197,15 +173,19 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
       throw new AssertionFailedError(e.getMessage());
     }
   }
-  
-  protected boolean isRequireLocalStyleHolder() {
+
+  private Flex getFlexAnnotation() {
     try {
-      Flex annotation = getClass().getMethod(getName()).getAnnotation(Flex.class);
-      return annotation != null && annotation.requireLocalStyleHolder();
+      return getClass().getMethod(getName()).getAnnotation(Flex.class);
     }
     catch (NoSuchMethodException e) {
       throw new AssertionFailedError(e.getMessage());
     }
+  }
+  
+  protected boolean isRequireLocalStyleHolder() {
+    Flex annotation = getFlexAnnotation();
+    return annotation != null && annotation.requireLocalStyleHolder();
   }
 
   protected void assertAfterInitLibrarySets(List<XmlFile> unregisteredDocumentReferences) throws IOException {

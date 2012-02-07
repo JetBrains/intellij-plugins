@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.LogMessageUtil;
+import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
@@ -14,6 +15,7 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -140,18 +142,12 @@ class LibraryCollector {
       }
     }
 
-    // well, we don't implement real search for themes — detects only by bc type
     // IDEA-71055
-    if (bc.getNature().isMobilePlatform()) {
-      //PsiElement clazz = JSResolveUtil.findClassByQName("MobileThemeClasses", module.getModuleWithDependenciesAndLibrariesScope(false));
-      //if (clazz != null && clazz instanceof JSClass) {
-      //  JSClass clazz1 = (JSClass)clazz;
-      //  PsiFile containingFile = clazz1.getContainingFile();
-      //}
-      
-      VirtualFile file = sdk.getHomeDirectory();
-      if (file != null) {
-        file = file.findFileByRelativePath("frameworks/themes/Mobile/mobile.swc");
+    // todo css-based themes
+    final List<String> themes = CompilerOptionInfo.getThemes(module, bc);
+    for (String theme : themes) {
+      if (theme.endsWith(DOT_SWC)) {
+        final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(theme);
         if (file != null && uniqueGuard.add(file)) {
           final VirtualFile jarFile = JarFileSystem.getInstance().getJarRootForLocalFile(file);
           if (jarFile != null) {

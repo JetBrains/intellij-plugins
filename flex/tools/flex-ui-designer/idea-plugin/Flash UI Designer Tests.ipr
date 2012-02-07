@@ -202,6 +202,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/testData/src/common/common.iml" filepath="$PROJECT_DIR$/testData/src/common/common.iml" />
       <module fileurl="file://$PROJECT_DIR$/testData/main-project-imls/main.iml" filepath="$PROJECT_DIR$/testData/main-project-imls/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/testData/src/mobile/mobile.iml" filepath="$PROJECT_DIR$/testData/src/mobile/mobile.iml" />
       <module fileurl="file://$PROJECT_DIR$/testData/src/mx/mx.iml" filepath="$PROJECT_DIR$/testData/src/mx/mx.iml" />
     </modules>
   </component>

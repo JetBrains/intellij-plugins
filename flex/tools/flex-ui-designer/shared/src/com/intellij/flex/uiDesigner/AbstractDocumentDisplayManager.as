@@ -3,6 +3,7 @@ import com.intellij.flex.uiDesigner.flex.MainFocusManagerSB;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
+import flash.display.Stage;
 
 [Abstract]
 public class AbstractDocumentDisplayManager extends Sprite {
@@ -17,7 +18,7 @@ public class AbstractDocumentDisplayManager extends Sprite {
     return _documentFactory;
   }
 
-  public function init(moduleFactory:Object, uiErrorHandler:UiErrorHandler, mainFocusManager:MainFocusManagerSB,
+  public function init(stage:Stage, moduleFactory:Object, uiErrorHandler:UiErrorHandler, mainFocusManager:MainFocusManagerSB,
                        documentFactory:Object):void {
     _documentFactory = documentFactory;
   }

@@ -54,6 +54,7 @@ import mx.styles.ISimpleStyleClient;
 import mx.styles.IStyleClient;
 import mx.styles.StyleManager;
 
+import spark.components.Application;
 import spark.components.SkinnableContainer;
 import spark.components.supportClasses.GroupBase;
 import spark.layouts.supportClasses.LayoutBase;
@@ -73,7 +74,9 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
 
   private var mainFocusManager:MainFocusManagerSB;
 
-  private var stageForAdobeDummies:Stage;
+  private static var stageForAdobeDummies:Stage;
+
+  private var fakeTopLevelApplication:FakeTopLevelApplication;
 
   public function get componentInfoProvider():ComponentInfoProvider {
     return FlexComponentInfoProvider.instance;
@@ -98,13 +101,8 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
     _realStage = null;
   }
 
-  public function initShared(realStage:Stage, stageForAdobeDummies:Stage, resourceBundleProvider:ResourceBundleProvider, uiErrorHandler:UiErrorHandler):void {
-    if (super.stage == null) {
-      addEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
-      _realStage = realStage;
-    }
-    
-    this.stageForAdobeDummies = stageForAdobeDummies;
+  public function initShared(stageForAdobeDummies:Stage, resourceBundleProvider:ResourceBundleProvider, uiErrorHandler:UiErrorHandler):void {
+    FlexDocumentDisplayManager.stageForAdobeDummies = stageForAdobeDummies;
 
     UIComponentGlobals.designMode = true;
     UIComponentGlobals.catchCallLaterExceptions = true;
@@ -150,16 +148,22 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
     return ApplicationDomain.currentDomain.getDefinition(name);
   }
 
-  override public function init(moduleFactory:Object, uiErrorHandler:UiErrorHandler, mainFocusManager:MainFocusManagerSB, documentFactory:Object):void {
-    super.init(moduleFactory, uiErrorHandler, mainFocusManager, documentFactory);
+  override public function init(stage:Stage, moduleFactory:Object, uiErrorHandler:UiErrorHandler, mainFocusManager:MainFocusManagerSB,
+                                documentFactory:Object):void {
+    if (super.stage == null) {
+      super.addEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
+      _realStage = stage;
+    }
+
+    super.init(stage, moduleFactory, uiErrorHandler, mainFocusManager, documentFactory);
 
     this.mainFocusManager = mainFocusManager;
     this.uiErrorHandler = uiErrorHandler;
 
     mx.managers.LayoutManager(UIComponentGlobals.layoutManager).waitFrame();
 
-    addRealEventListener(INITIALIZE_ERROR_EVENT_TYPE, uiInitializeOrCallLaterErrorHandler);
-    addRealEventListener("callLaterError", uiInitializeOrCallLaterErrorHandler);
+    super.addEventListener(INITIALIZE_ERROR_EVENT_TYPE, uiInitializeOrCallLaterErrorHandler);
+    super.addEventListener("callLaterError", uiInitializeOrCallLaterErrorHandler);
 
     flexModuleFactory = FlexModuleFactory(moduleFactory);
     implementations[SYSTEM_MANAGER_CHILD_MANAGER] = this;
@@ -447,15 +451,29 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
     _document = object;
     
     // early set, before activated()
-    FlexGlobals.topLevelApplication = _document;
+    var topLevelApplication:Object = object;
+    if (object is Application) {
+      topLevelApplication = object;
+      if (fakeTopLevelApplication != null) {
+        fakeTopLevelApplication = null;
+      }
+    }
+    else {
+      if (fakeTopLevelApplication == null) {
+        fakeTopLevelApplication = new FakeTopLevelApplication(this, flexModuleFactory);
+      }
+
+      topLevelApplication = fakeTopLevelApplication;
+      fakeTopLevelApplication.setUIComponent(object as UIComponent);
+    }
+    FlexGlobals.topLevelApplication = topLevelApplication;
+
     var topLevelSystemManagerProxy:TopLevelSystemManagerProxy = TopLevelSystemManagerProxy(SystemManagerGlobals.topLevelSystemManagers[0]);
     topLevelSystemManagerProxy.activeSystemManager = this;
 
-    if (object is UIComponent) {
-      UIComponent(object).focusManager = _focusManager;
-    }
-
     if (object is IUIComponent) {
+      UIComponent(object).focusManager = _focusManager;
+
       var documentUI:IUIComponent = IUIComponent(_document);
       _explicitDocumentWidth = initialExplicitDimension(documentUI.explicitWidth);
       _explicitDocumentHeight = initialExplicitDimension(documentUI.explicitHeight);
@@ -470,7 +488,11 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
       }
 
       _document = null;
-      if (FlexGlobals.topLevelApplication == _document) {
+      if (fakeTopLevelApplication != null) {
+        fakeTopLevelApplication.setUIComponent(null);
+      }
+
+      if (FlexGlobals.topLevelApplication == topLevelApplication) {
         FlexGlobals.topLevelApplication = null;
       }
       if (topLevelSystemManagerProxy.activeSystemManager == this) {
@@ -518,7 +540,7 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
   public function activated():void {
     mainFocusManager.activeDocumentFocusManager = _focusManager;
     
-    FlexGlobals.topLevelApplication = _document;
+    FlexGlobals.topLevelApplication = _document as Application || fakeTopLevelApplication;
     TopLevelSystemManagerProxy(SystemManagerGlobals.topLevelSystemManagers[0]).activeSystemManager = this;
   }
 
@@ -884,11 +906,26 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
 }
 }
 
+import com.intellij.flex.uiDesigner.flex.FlexDocumentDisplayManager;
+import com.intellij.flex.uiDesigner.flex.FlexModuleFactory;
+
+import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
+import flash.display.Stage;
+
+import mx.core.UIComponent;
+import mx.events.ResizeEvent;
 import mx.managers.IFocusManagerContainer;
+import mx.managers.ISystemManager;
 import mx.managers.systemClasses.ActiveWindowManager;
+import mx.styles.CSSStyleDeclaration;
+import mx.styles.IAdvancedStyleClient;
+
+flex::gt_4_1
+import mx.utils.DensityUtil;
 
 // see ugly StyleableStageText — it uses concrete class instead of interface
-class ActiveWindowManagerForAdobeDummies extends ActiveWindowManager {
+final class ActiveWindowManagerForAdobeDummies extends ActiveWindowManager {
   override public function addFocusManager(f:IFocusManagerContainer):void {
   }
 
@@ -909,8 +946,127 @@ class ActiveWindowManagerForAdobeDummies extends ActiveWindowManager {
   }
 }
 
+final class FakeTopLevelApplication extends UIComponent {
+  private var manager:FlexDocumentDisplayManager;
+  private var uiComponent:UIComponent;
 
+  private var emptyParameters:Object;
 
+  public function FakeTopLevelApplication(manager:FlexDocumentDisplayManager, moduleFactory:FlexModuleFactory) {
+    this.manager = manager;
+    this.moduleFactory = moduleFactory;
+  }
 
+  internal function setUIComponent(value:UIComponent):void {
+    uiComponent = value;
+  }
+
+  override public function get parent():DisplayObjectContainer {
+    return manager;
+  }
+
+  override public function get root():DisplayObject {
+    return manager;
+  }
+
+  override public function get systemManager():ISystemManager {
+    return manager;
+  }
+
+  override public function get stage():Stage {
+    return manager.stage;
+  }
+
+  //noinspection JSMethodCanBeStatic
+  flex::gt_4_1
+  public function get runtimeDPI():Number {
+    return DensityUtil.getRuntimeDPI();
+  }
+
+  private var _applicationDPI:int = -1;
+  //noinspection JSUnusedGlobalSymbols
+  flex::gt_4_1
+  public function get applicationDPI():Number {
+    if (_applicationDPI == -1) {
+      _applicationDPI = runtimeDPI;
+    }
+
+    return _applicationDPI;
+  }
+
+  //noinspection JSUnusedLocalSymbols,JSUnusedGlobalSymbols
+  flex::gt_4_1
+  public function set applicationDPI(value:Number):void {
+  }
+
+  //noinspection JSUnusedGlobalSymbols
+  public function get parameters():Object {
+    if (emptyParameters == null) {
+      emptyParameters = {};
+    }
+
+    return emptyParameters;
+  }
+
+  flex::gt_4_1
+  override public function addStyleClient(styleClient:IAdvancedStyleClient):void {
+    uiComponent.addStyleClient(styleClient);
+  }
+
+  override public function getStyle(styleProp:String):* {
+    return uiComponent.getStyle(styleProp);
+  }
+
+  override public function get inheritingStyles():Object {
+    return uiComponent.inheritingStyles;
+  }
+
+  override public function get nonInheritingStyles():Object {
+    return uiComponent.nonInheritingStyles;
+  }
+
+  override public function getClassStyleDeclarations():Array {
+    return uiComponent.getClassStyleDeclarations();
+  }
+
+  override public function get styleName():Object {
+    return uiComponent.styleName;
+  }
+
+  override public function get styleDeclaration():CSSStyleDeclaration {
+    return uiComponent.styleDeclaration;
+  }
+
+  override public function get className():String {
+    return uiComponent.className;
+  }
+
+  override public function notifyStyleChangeInChildren(styleProp:String, recursive:Boolean):void {
+    uiComponent.notifyStyleChangeInChildren(styleProp, recursive);
+  }
+
+//noinspection JSUnusedGlobalSymbols
+  public function get aspectRatio():String {
+    return width > height ? "landscape" : "portrait";
+  }
+
+  override public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void {
+    if (type == ResizeEvent.RESIZE) {
+      uiComponent.addEventListener(type, listener, useCapture, priority, useWeakReference);
+    }
+    else {
+      super.addEventListener(type, listener, useCapture, priority, useWeakReference);
+    }
+  }
+
+  override public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {
+    if (type == ResizeEvent.RESIZE) {
+      uiComponent.removeEventListener(type, listener, useCapture);
+    }
+    else {
+      super.removeEventListener(type, listener, useCapture);
+    }
+  }
+}
 
 

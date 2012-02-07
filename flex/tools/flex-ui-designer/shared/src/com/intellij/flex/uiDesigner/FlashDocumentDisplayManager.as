@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner {
 import com.intellij.flex.uiDesigner.designSurface.LayoutManager;
-import com.intellij.flex.uiDesigner.flex.MainFocusManagerSB;
 
 import flash.display.DisplayObject;
 import flash.display.Stage;
@@ -35,12 +34,7 @@ public class FlashDocumentDisplayManager extends AbstractDocumentDisplayManager 
     return ApplicationDomain.currentDomain.getDefinition(name);
   }
 
-  public function initShared(realStage:Stage, stageForAdobeDummies:Stage, resourceBundleProvider:ResourceBundleProvider, uiErrorHandler:UiErrorHandler):void {
-  }
-
-  override public function init(moduleFactory:Object, uiErrorHandler:UiErrorHandler,
-                         mainFocusManager:MainFocusManagerSB, documentFactory:Object):void {
-    super.init(moduleFactory, uiErrorHandler, mainFocusManager, documentFactory);
+  public function initShared(stageForAdobeDummies:Stage, resourceBundleProvider:ResourceBundleProvider, uiErrorHandler:UiErrorHandler):void {
   }
 
   public function setDocument(object:DisplayObject):void {

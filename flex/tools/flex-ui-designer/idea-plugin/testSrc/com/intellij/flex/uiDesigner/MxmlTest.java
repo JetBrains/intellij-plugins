@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.Pair;
@@ -35,34 +36,17 @@ public class MxmlTest extends MxmlTestBase {
     }
   }
 
-  public void _testMobile() throws Exception {
-    testFile("../mobile/SparkView.mxml");
+  @Flex(platform = TargetPlatform.Mobile, version = "4.6")
+  public void testMobile() throws Exception {
+    testFiles(getVFile((getTestDataPath() + "/src/mobile")));
+    assertThat(getLastProblems(), emptyArray());
   }
 
   public void test45() throws Exception {
-    final String testFile = System.getProperty("testFile");
-    final Pair<VirtualFile[], VirtualFile[]> pair = getTestFiles();
-    final VirtualFile[] files;
-    VirtualFile[] auxiliaryFiles = pair.getSecond();
-    if (testFile == null) {
-      files = pair.getFirst();
-    }
-    else {
-      String[] strings = testFile.split(",");
-      files = new VirtualFile[]{getSource(strings[0] + ".mxml")};
-      if (strings.length > 1) {
-        auxiliaryFiles = new VirtualFile[auxiliaryFiles.length + strings.length - 1];
-        System.arraycopy(pair.getSecond(), 0, auxiliaryFiles, 0, pair.getSecond().length);
-        for (int i = 1, j = pair.getSecond().length, n = strings.length; i < n; i++) {
-          auxiliaryFiles[j++] = getSource(strings[i] + ".mxml");
-        }
-      }
-    }
-
-    testFiles(files, auxiliaryFiles);
+    testFiles(getTestDir(), getVFile(getTestDataPath() + "/src/mx"));
     
     String[] problems = getLastProblems();
-    if (testFile != null) {
+    if (System.getProperty("testFile") != null) {
       assertThat(problems, emptyArray());
     }
     else {
@@ -80,6 +64,11 @@ public class MxmlTest extends MxmlTestBase {
                    "Children of Accordion must be mx.core.INavigatorContent (line: 8)")
       );
     }
+  }
+
+  private void testFiles(VirtualFile... roots) throws Exception {
+    Pair<VirtualFile[], VirtualFile[]> pair = computeFiles(getTestFiles(roots));
+    testFiles(pair.first, pair.second);
   }
 
   private static String m(String... messages) {
@@ -118,12 +107,13 @@ public class MxmlTest extends MxmlTestBase {
     return null;
   }
 
-  private Pair<VirtualFile[], VirtualFile[]> getTestFiles() {
+  private static Pair<VirtualFile[], VirtualFile[]> getTestFiles(VirtualFile... roots) {
     final ArrayList<VirtualFile> files = new ArrayList<VirtualFile>(128);
     final ArrayList<VirtualFile> auxFiles = new ArrayList<VirtualFile>(8);
-    
-    collectMxmlFiles(files, auxFiles, getTestDir());
-    collectMxmlFiles(files, auxFiles, getVFile((getTestDataPath() + "/src/mx")));
+
+    for (VirtualFile root : roots) {
+      collectMxmlFiles(files, auxFiles, root);
+    }
 
     final VirtualFile[] list = files.toArray(new VirtualFile[files.size()]);
     final VirtualFile[] auxList = auxFiles.toArray(new VirtualFile[auxFiles.size()]);
@@ -133,6 +123,27 @@ public class MxmlTest extends MxmlTestBase {
     Arrays.sort(auxList, virtualFileComparator);
     
     return new Pair<VirtualFile[], VirtualFile[]>(list, auxList);
+  }
+
+  private Pair<VirtualFile[], VirtualFile[]> computeFiles(Pair<VirtualFile[], VirtualFile[]> pair) {
+    final String testFile = System.getProperty("testFile");
+
+    VirtualFile[] auxiliaryFiles = pair.getSecond();
+    if (testFile == null) {
+      return pair;
+    }
+    else {
+      String[] strings = testFile.split(",");
+      if (strings.length > 1) {
+        auxiliaryFiles = new VirtualFile[auxiliaryFiles.length + strings.length - 1];
+        System.arraycopy(pair.getSecond(), 0, auxiliaryFiles, 0, pair.getSecond().length);
+        for (int i = 1, j = pair.getSecond().length, n = strings.length; i < n; i++) {
+          auxiliaryFiles[j++] = getSource(strings[i] + ".mxml");
+        }
+      }
+
+      return new Pair<VirtualFile[], VirtualFile[]>(new VirtualFile[]{getSource(strings[0] + ".mxml")}, auxiliaryFiles);
+    }
   }
 
   private static void collectMxmlFiles(ArrayList<VirtualFile> files, ArrayList<VirtualFile> auxFiles, VirtualFile parent) {

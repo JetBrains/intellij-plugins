@@ -119,7 +119,7 @@ public class FlexSdkUtils {
         final VirtualFile baseDir = playerDir.getParent().getParent();
         // let global lib be in the beginning of the list
         addSwcRoots(sdkModificator, baseDir, Collections.singletonList("libs/air/airglobal.swc"), false);
-        addSwcRoots(sdkModificator, baseDir, Arrays.asList("libs", "libs/mx", "libs/air", "libs/mobile", "themes/Mobile"), true);
+        addFlexSdkSwcRoots(sdkModificator, baseDir);
       }
     }
     else {
@@ -141,6 +141,10 @@ public class FlexSdkUtils {
     if (projectsDir != null && projectsDir.isDirectory()) {
       findSourceRoots(projectsDir, sdkModificator);
     }
+  }
+
+  public static void addFlexSdkSwcRoots(SdkModificator sdkModificator, VirtualFile frameworksDir) {
+    addSwcRoots(sdkModificator, frameworksDir, Arrays.asList("libs", "libs/mx", "libs/air", "libs/mobile", "themes/Mobile"), true);
   }
 
   public static void processPlayerglobalSwcFiles(final VirtualFile playerDir, final Processor<VirtualFile> processor) {

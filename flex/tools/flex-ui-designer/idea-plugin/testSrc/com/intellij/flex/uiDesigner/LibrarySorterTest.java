@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.libraries.FlexLibsNames;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.WriteAction;
@@ -8,7 +7,7 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 
@@ -23,7 +22,6 @@ public class LibrarySorterTest extends MxmlTestBase {
 
   @Override
   protected void modifySdk(final Sdk sdk, SdkModificator sdkModificator) {
-    Condition<String> condition = null;
     // must be added before super (i. e. before framework.swc)
     if (getName().equals("testDelete")) {
       addLibrary(sdkModificator, "flash-integration_4.1.swc");
@@ -31,16 +29,11 @@ public class LibrarySorterTest extends MxmlTestBase {
     else if (getName().equals("testIgnoreSwcWithoutLibraryFile")) {
       addLibrary(sdkModificator, "swcWithoutLibrarySwf.swc");
     }
-    else if (getName().equals("testMoveFlexSdkLibToSdkLibsIfNot")) {
-      condition = new Condition<String>() {
-        @Override
-        public boolean value(String name) {
-          return !name.startsWith(FlexLibsNames.FRAMEWORK);
-        }
-      };
-    }
 
-    super.modifySdk(sdkModificator, condition);
+    //noinspection ConstantConditions
+    sdkModificator.removeRoot(sdk.getHomeDirectory().findFileByRelativePath("frameworks/libs/framework.swc"), OrderRootType.CLASSES);
+
+    super.modifySdk(sdk, sdkModificator);
 
     if (getName().equals("testResolveToClassWithBiggestTimestamp")) {
       final String path = getTestDataPath() + "/ResolveToClassWithBiggestTimestamp/bin/";

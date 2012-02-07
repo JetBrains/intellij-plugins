@@ -26,7 +26,7 @@ public interface DocumentDisplayManager {
 
   function get stage():Stage;
 
-  function init(moduleFactory:Object, uiErrorHandler:UiErrorHandler,
+  function init(stage:Stage, moduleFactory:Object, uiErrorHandler:UiErrorHandler,
                 mainFocusManager:MainFocusManagerSB, documentFactory:Object):void;
 
   function removeEventHandlers():void;
@@ -39,7 +39,7 @@ public interface DocumentDisplayManager {
 
   function get sharedInitialized():Boolean;
 
-  function initShared(realStage:Stage, stageForAdobeDummies:Stage, resourceBundleProvider:ResourceBundleProvider, uiErrorHandler:UiErrorHandler):void;
+  function initShared(stageForAdobeDummies:Stage, resourceBundleProvider:ResourceBundleProvider, uiErrorHandler:UiErrorHandler):void;
 
   function get componentInfoProvider():ComponentInfoProvider;
 
