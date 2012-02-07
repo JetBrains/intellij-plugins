@@ -98,7 +98,9 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
       }
       if (indicator.isCanceled()) {
         LOG.warn("Generating flex configs canceled");
-        process.destroy();
+        if (process != null) {
+          process.destroy();
+        }
         break;
       }
     }
