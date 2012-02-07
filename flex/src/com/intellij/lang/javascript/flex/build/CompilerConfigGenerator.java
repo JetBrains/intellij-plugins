@@ -108,26 +108,25 @@ public class CompilerConfigGenerator {
   }
 
   private void addMandatoryOptions(final Element rootElement) {
+    addOption(rootElement, CompilerOptionInfo.WARN_NO_CONSTRUCTOR_INFO, "false");
+    if (myFlexmojos) return;
+
     final BuildConfigurationNature nature = myBC.getNature();
+    final String targetPlayer = nature.isWebPlatform()
+                                ? myBC.getDependencies().getTargetPlayer()
+                                : TargetPlayerUtils.getMaximumTargetPlayer(mySdk.getHomePath());
+    addOption(rootElement, CompilerOptionInfo.TARGET_PLAYER_INFO, targetPlayer);
 
-    if (!myFlexmojos) {
-      final String targetPlayer = nature.isWebPlatform()
-                                  ? myBC.getDependencies().getTargetPlayer()
-                                  : TargetPlayerUtils.getMaximumTargetPlayer(mySdk.getHomePath());
-      addOption(rootElement, CompilerOptionInfo.TARGET_PLAYER_INFO, targetPlayer);
-
-      if (StringUtil.compareVersionNumbers(mySdk.getVersionString(), "4.5") >= 0) {
-        final String swfVersion = nature.isWebPlatform() ? getSwfVersionForTargetPlayer(targetPlayer)
-                                                         : getSwfVersionForSdk(mySdk.getVersionString());
-        addOption(rootElement, CompilerOptionInfo.SWF_VERSION_INFO, swfVersion);
-      }
+    if (StringUtil.compareVersionNumbers(mySdk.getVersionString(), "4.5") >= 0) {
+      final String swfVersion = nature.isWebPlatform() ? getSwfVersionForTargetPlayer(targetPlayer)
+                                                       : getSwfVersionForSdk(mySdk.getVersionString());
+      addOption(rootElement, CompilerOptionInfo.SWF_VERSION_INFO, swfVersion);
     }
 
     if (nature.isMobilePlatform()) {
       addOption(rootElement, CompilerOptionInfo.MOBILE_INFO, "true");
       addOption(rootElement, CompilerOptionInfo.PRELOADER_INFO, "spark.preloaders.SplashScreen");
     }
-
 
     final String accessible = nature.isMobilePlatform() ? "false"
                                                         : StringUtil.compareVersionNumbers(mySdk.getVersionString(), "4") >= 0 ? "true"
@@ -146,7 +145,6 @@ public class CompilerConfigGenerator {
     addOption(rootElement, CompilerOptionInfo.FONT_MANAGERS_INFO, fontManagers);
 
     addOption(rootElement, CompilerOptionInfo.STATIC_RSLS_INFO, "false");
-    addOption(rootElement, CompilerOptionInfo.WARN_NO_CONSTRUCTOR_INFO, "false");
   }
 
   private static String getSwfVersionForTargetPlayer(final String targetPlayer) {
@@ -171,6 +169,9 @@ public class CompilerConfigGenerator {
   private void handleOptionsWithSpecialValues(final Element rootElement) {
     for (final CompilerOptionInfo info : CompilerOptionInfo.getOptionsWithSpecialValues()) {
       final Pair<String, ValueSource> valueAndSource = getValueAndSource(info);
+
+      if (myFlexmojos && valueAndSource.second == ValueSource.GlobalDefault) continue;
+
       final boolean themeForPureAS = myBC.isPureAs() && "compiler.theme".equals(info.ID);
       if (valueAndSource.second == ValueSource.GlobalDefault && (!valueAndSource.first.isEmpty() || themeForPureAS)) {
         // do not add empty preloader to Web/Desktop, let compiler take default itself (mx.preloaders.SparkDownloadProgressBar when -compatibility-version >= 4.0 and mx.preloaders.DownloadProgressBar when -compatibility-version < 4.0)
@@ -348,6 +349,10 @@ public class CompilerConfigGenerator {
   private void addSourcePaths(final Element rootElement) {
     final String localeValue = getValueAndSource(CompilerOptionInfo.getOptionInfo("compiler.locale")).first;
     final List<String> locales = StringUtil.split(localeValue, String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR));
+    // when adding source paths we respect locales set both in UI and in Additional compiler options
+    locales.addAll(FlexUtils.getOptionValues(myProjectLevelCompilerOptions.getAdditionalOptions(), "locale", "compiler.locale"));
+    locales.addAll(FlexUtils.getOptionValues(myModuleLevelCompilerOptions.getAdditionalOptions(), "locale", "compiler.locale"));
+    locales.addAll(FlexUtils.getOptionValues(myBC.getCompilerOptions().getAdditionalOptions(), "locale", "compiler.locale"));
 
     final Set<String> sourcePathsWithLocaleToken = new THashSet<String>(); // Set - to avoid duplication of paths like "locale/{locale}"
     final List<String> sourcePathsWithoutLocaleToken = new LinkedList<String>();
@@ -385,6 +390,10 @@ public class CompilerConfigGenerator {
     options.putAll(myModuleLevelCompilerOptions.getAllOptions());
     options.putAll(myBC.getCompilerOptions().getAllOptions());
 
+    if (options.get("compiler.services") != null && options.get("compiler.context-root") == null) {
+      options.put("compiler.context-root", "");
+    }
+
     for (final Map.Entry<String, String> entry : options.entrySet()) {
       addOption(rootElement, CompilerOptionInfo.getOptionInfo(entry.getKey()), entry.getValue());
     }
@@ -392,6 +401,8 @@ public class CompilerConfigGenerator {
 
   private void addInputOutputPaths(final Element rootElement) throws IOException {
     if (myBC.getOutputType() == OutputType.Library) {
+      if (myFlexmojos) return;
+
       final Ref<Boolean> noClasses = new Ref<Boolean>(true);
       final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(myModule.getProject()).getFileIndex();
 
@@ -424,14 +435,20 @@ public class CompilerConfigGenerator {
       }
     }
     else {
+      final InfoFromConfigFile info =
+        FlexCompilerConfigFileUtil.getInfoFromConfigFile(myBC.getCompilerOptions().getAdditionalConfigFilePath());
+
       final String pathToMainClassFile = myFlexUnit ? FlexUtils.getPathToFlexUnitTempDirectory() + "/" + myBC.getMainClass()
                                                       + FlexUnitPrecompileTask.DOT_FLEX_UNIT_LAUNCHER_EXTENSION
                                                     : FlexUtils.getPathToMainClassFile(myBC.getMainClass(), myModule);
-      if (pathToMainClassFile.isEmpty() && !ApplicationManager.getApplication().isUnitTestMode()) {
-        throw new IOException(
-          FlexBundle.message("bc.incorrect.main.class", myBC.getMainClass(), myBC.getName(), myModule.getName()));
+
+      if (pathToMainClassFile.isEmpty() && info.getMainClass(myModule) == null && !ApplicationManager.getApplication().isUnitTestMode()) {
+        throw new IOException(FlexBundle.message("bc.incorrect.main.class", myBC.getMainClass(), myBC.getName(), myModule.getName()));
       }
-      addOption(rootElement, CompilerOptionInfo.MAIN_CLASS_INFO, pathToMainClassFile);
+
+      if (!pathToMainClassFile.isEmpty()) {
+        addOption(rootElement, CompilerOptionInfo.MAIN_CLASS_INFO, pathToMainClassFile);
+      }
     }
 
     addOption(rootElement, CompilerOptionInfo.OUTPUT_PATH_INFO, myBC.getOutputFilePath(false));
