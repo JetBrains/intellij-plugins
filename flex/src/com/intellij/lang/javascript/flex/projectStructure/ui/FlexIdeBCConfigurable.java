@@ -105,6 +105,8 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
 
   private final Disposable myDisposable;
 
+  private boolean myFreeze;
+
   public FlexIdeBCConfigurable(final Module module,
                                final ModifiableFlexIdeBuildConfiguration bc,
                                final Runnable treeNodeNameUpdater,
@@ -121,11 +123,15 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     final BuildConfigurationNature nature = bc.getNature();
 
     myDependenciesConfigurable = new DependenciesConfigurable(bc, module.getProject(), configEditor, sdksModel);
-    final UserActivityWatcher watcher = new UserActivityWatcher(DependenciesConfigurable.getClassesToIgnoreActivity());
+    final UserActivityWatcher watcher = new UserActivityWatcher();
     myDisposable = Disposer.newDisposable();
     watcher.addUserActivityListener(new UserActivityListener() {
       @Override
       public void stateChanged() {
+        if (myFreeze) {
+          return;
+        }
+
         try {
           myDependenciesConfigurable.apply();
         }
@@ -410,7 +416,8 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     }
     if (myConfiguration.isSkipCompile() != mySkipCompilationCheckBox.isSelected()) return true;
 
-    if (myDependenciesConfigurable.isModified()) return true;
+    // Dependencies configurable is applied on every change by activity watcher, so it is never modified
+    //if (myDependenciesConfigurable.isModified()) return true;
     if (myCompilerOptionsConfigurable.isModified()) return true;
     if (myAirDesktopPackagingConfigurable != null && myAirDesktopPackagingConfigurable.isModified()) return true;
     if (myAndroidPackagingConfigurable != null && myAndroidPackagingConfigurable.isModified()) return true;
@@ -422,21 +429,12 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   public void apply() throws ConfigurationException {
     applyOwnTo(myConfiguration, true);
 
-    myDependenciesConfigurable.apply();
+    // Dependencies configurable is applied on every change by activity watcher, so it is never modified
+    //myDependenciesConfigurable.apply();
     myCompilerOptionsConfigurable.apply();
     if (myAirDesktopPackagingConfigurable != null) myAirDesktopPackagingConfigurable.apply();
     if (myAndroidPackagingConfigurable != null) myAndroidPackagingConfigurable.apply();
     if (myIOSPackagingConfigurable != null) myIOSPackagingConfigurable.apply();
-  }
-
-  private void applyTo(final ModifiableFlexIdeBuildConfiguration configuration, boolean validate) throws ConfigurationException {
-    applyOwnTo(configuration, validate);
-
-    myDependenciesConfigurable.applyTo(configuration.getDependencies());
-    myCompilerOptionsConfigurable.applyTo(configuration.getCompilerOptions());
-    if (myAirDesktopPackagingConfigurable != null) myAirDesktopPackagingConfigurable.applyTo(configuration.getAirDesktopPackagingOptions());
-    if (myAndroidPackagingConfigurable != null) myAndroidPackagingConfigurable.applyTo(configuration.getAndroidPackagingOptions());
-    if (myIOSPackagingConfigurable != null) myIOSPackagingConfigurable.applyTo(configuration.getIosPackagingOptions());
   }
 
   private void applyOwnTo(ModifiableFlexIdeBuildConfiguration configuration, boolean validate) throws ConfigurationException {
@@ -473,7 +471,13 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     updateControls();
     overriddenValuesChanged(null, null, null); // no warnings initially
 
-    myDependenciesConfigurable.reset();
+    myFreeze = true;
+    try {
+      myDependenciesConfigurable.reset();
+    }
+    finally {
+      myFreeze = false;
+    }
     myCompilerOptionsConfigurable.reset();
     if (myAirDesktopPackagingConfigurable != null) myAirDesktopPackagingConfigurable.reset();
     if (myAndroidPackagingConfigurable != null) myAndroidPackagingConfigurable.reset();
