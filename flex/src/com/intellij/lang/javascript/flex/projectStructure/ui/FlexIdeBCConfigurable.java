@@ -121,7 +121,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     final BuildConfigurationNature nature = bc.getNature();
 
     myDependenciesConfigurable = new DependenciesConfigurable(bc, module.getProject(), configEditor, sdksModel);
-    final UserActivityWatcher watcher = new UserActivityWatcher();
+    final UserActivityWatcher watcher = new UserActivityWatcher(DependenciesConfigurable.getClassesToIgnoreActivity());
     myDisposable = Disposer.newDisposable();
     watcher.addUserActivityListener(new UserActivityListener() {
       @Override

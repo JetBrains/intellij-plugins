@@ -92,6 +92,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
   private static final Icon MISSING_BC_ICON = null;
 
+  public static Class[] getClassesToIgnoreActivity() {
+    // let's ignore activity from SDK combo to prevent events firing on reset (protected by myFreeze)
+    // it will work as expected when user changes the combo since other components are updated on SDK combo changes
+    return new Class[] {JdkComboBox.class};
+  }
+
   public static abstract class Location {
     public static final Location SDK = new Location() {
     };
