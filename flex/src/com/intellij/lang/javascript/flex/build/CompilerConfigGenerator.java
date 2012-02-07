@@ -390,8 +390,16 @@ public class CompilerConfigGenerator {
     options.putAll(myModuleLevelCompilerOptions.getAllOptions());
     options.putAll(myBC.getCompilerOptions().getAllOptions());
 
-    if (options.get("compiler.services") != null && options.get("compiler.context-root") == null) {
-      options.put("compiler.context-root", "");
+    final String addOptions = myProjectLevelCompilerOptions.getAdditionalOptions() + " " +
+                              myModuleLevelCompilerOptions.getAdditionalOptions() + " " +
+                              myBC.getCompilerOptions().getAdditionalOptions();
+    final List<String> contextRootInAddOptions = FlexUtils.getOptionValues(addOptions, "context-root", "compiler.context-root");
+
+    if (options.get("compiler.context-root") == null && contextRootInAddOptions.isEmpty()) {
+      final List<String> servicesInAddOptions = FlexUtils.getOptionValues(addOptions, "services", "compiler.services");
+      if (options.get("compiler.services") != null || !servicesInAddOptions.isEmpty()) {
+        options.put("compiler.context-root", "");
+      }
     }
 
     for (final Map.Entry<String, String> entry : options.entrySet()) {
