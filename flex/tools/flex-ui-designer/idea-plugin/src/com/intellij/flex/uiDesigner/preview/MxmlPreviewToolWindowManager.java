@@ -10,6 +10,7 @@ import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.*;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
@@ -67,12 +68,12 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
   }
 
   public void projectClosed() {
-    //if (myToolWindowForm != null) {
-    //  Disposer.dispose(myToolWindowForm);
-    //  myToolWindowForm = null;
-    //  myToolWindow = null;
-    //  myToolWindowDisposed = true;
-    //}
+    if (toolWindowForm != null) {
+      //Disposer.dispose(toolWindowForm);
+      toolWindowForm = null;
+      toolWindow = null;
+      toolWindowDisposed = true;
+    }
   }
 
   @NotNull
@@ -125,7 +126,33 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
   }
 
   private void render() {
+    ApplicationManager.getApplication().assertIsDispatchThread();
 
+    if (toolWindow == null || !toolWindow.isVisible()) {
+      return;
+    }
+
+    final PsiFile psiFile = toolWindowForm.getFile();
+    if (psiFile == null) {
+      return;
+    }
+
+    renderingQueue.queue(new Update("render") {
+      @Override
+      public void run() {
+        ProgressManager.getInstance().runProcess(new Runnable() {
+          @Override
+          public void run() {
+            //doRender(facet, psiFile);
+          }
+        }, new MxmlPreviewProgressIndicator(toolWindowForm, 1000));
+      }
+
+      @Override
+      public boolean canEat(Update update) {
+        return true;
+      }
+    });
   }
 
   private boolean isApplicableEditor(Editor editor) {
@@ -252,7 +279,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         }
 
         toolWindow.setAvailable(true, null);
-        final boolean visible = PropertiesComponent.getInstance(project).getBoolean("mxml.preview.tool.window.visible", false);
+        final boolean visible = PropertiesComponent.getInstance(project).getBoolean("mxml.preview.tool.window.visible", true);
         if (visible) {
           toolWindow.show(null);
         }

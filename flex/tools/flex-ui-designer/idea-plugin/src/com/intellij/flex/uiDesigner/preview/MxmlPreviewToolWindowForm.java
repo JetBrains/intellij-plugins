@@ -10,6 +10,7 @@ import javax.swing.*;
 class MxmlPreviewToolWindowForm {
   private PsiFile file;
   private JPanel contentPanel;
+  private MxmlPreviewPanel previewPanel;
 
   public MxmlPreviewToolWindowForm(Project project, MxmlPreviewToolWindowManager mxmlPreviewToolWindowManager) {
 
@@ -26,5 +27,9 @@ class MxmlPreviewToolWindowForm {
   public void setFile(@Nullable PsiFile value) {
     final boolean fileChanged = !Comparing.equal(file, value);
     file = value;
+  }
+
+  public MxmlPreviewPanel getPreviewPanel() {
+    return previewPanel;
   }
 }
