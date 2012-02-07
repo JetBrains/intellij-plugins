@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  * Time: 21:20:02
  */
 public class SwfFileViewProviderFactory implements FileViewProviderFactory {
-  public FileViewProvider createFileViewProvider(final VirtualFile file, Language language, final PsiManager manager, final boolean physical) {
+  public FileViewProvider createFileViewProvider(@NotNull final VirtualFile file, Language language, @NotNull final PsiManager manager, final boolean physical) {
     return new SwfFileViewProvider(manager, file, physical);
   }
 
