@@ -76,6 +76,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   private String myAdditionalProperties;
   private List<Pair<String, String>> myAdditionalJARContents;
   private boolean myUseProjectDefaultManifestFileLocation = true;
+  private boolean myDoNotSynchronizeWithMaven = false;
   private String myBndFileLocation;
   private String myBundlorFileLocation;
   private String myIgnoreFilePattern;
@@ -99,6 +100,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   private static final String ADDITIONAL_PROPERTIES = "additionalProperties";
   private static final String IGNORE_FILE_PATTERN = "ignoreFilePattern";
   private static final String ALWAYS_REBUILD_BUNDLE_JAR = "alwaysRebuildBundleJAR";
+  private static final String DO_NOT_SYNCHRONIZE_WITH_MAVEN = "doNotSynchronizeWithMaven";
   private static final String OUTPUT_PATH_TYPE = "outputPathType";
   private static final String PROPERTY = "property";
   private static final String KEY = "key";
@@ -150,6 +152,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     setBundlorFileLocation(element.getAttributeValue(BUNDLOR_FILE_LOCATION));
     setManifestLocation(element.getAttributeValue(MANIFEST_LOCATION));
 
+
     String outputPathTypeName = element.getAttributeValue(OUTPUT_PATH_TYPE, OutputPathType.SpecificOutputPath.name());
     OutputPathType outputPathType = OutputPathType.valueOf(outputPathTypeName);
 
@@ -162,6 +165,8 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
       USE_PROJECT_DEFAULT_MANIFEST_FILE_LOCATION, "true")));
     setAlwaysRebuildBundleJAR(Boolean.parseBoolean(element.getAttributeValue(
       ALWAYS_REBUILD_BUNDLE_JAR, "false")));
+    setDoNotSynchronizeWithMaven(Boolean.parseBoolean(element.getAttributeValue(
+      DO_NOT_SYNCHRONIZE_WITH_MAVEN, "false")));
 
     Element props = element.getChild(ADDITIONAL_PROPERTIES);
     if (props != null) {
@@ -209,6 +214,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
                          String.valueOf(isUseProjectDefaultManifestFileLocation()));
     element.setAttribute(ALWAYS_REBUILD_BUNDLE_JAR,
                          String.valueOf(isAlwaysRebuildBundleJAR()));
+    element.setAttribute(DO_NOT_SYNCHRONIZE_WITH_MAVEN, String.valueOf(myDoNotSynchronizeWithMaven));
 
     Element props = new Element(ADDITIONAL_PROPERTIES);
 
@@ -633,6 +639,18 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     catch (Exception e) {
       return false;
     }
+  }
+
+  /**
+   * When this is true, the facet settings will not be automatically synchronized with maven.
+   * @return false if settings are synchronized with maven, true otherwise.
+   */
+  public boolean isDoNotSynchronizeWithMaven() {
+    return myDoNotSynchronizeWithMaven;
+  }
+
+  public void setDoNotSynchronizeWithMaven(boolean doNotSynchronizeWithMaven) {
+    myDoNotSynchronizeWithMaven = doNotSynchronizeWithMaven;
   }
 
   /**

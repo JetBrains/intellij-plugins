@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.osmorc.facet.ui.OsmorcFacetGeneralEditorTab">
-  <grid id="bbf5b" binding="_root" layout-manager="GridLayoutManager" row-count="9" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="bbf5b" binding="myRoot" layout-manager="GridLayoutManager" row-count="11" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
       <xy x="20" y="20" width="593" height="490"/>
@@ -19,7 +19,7 @@
           <text value="Bundle creation"/>
         </properties>
       </component>
-      <component id="6837c" class="javax.swing.JRadioButton" binding="_controlledByOsmorcRadioButton" default-binding="true">
+      <component id="6837c" class="javax.swing.JRadioButton" binding="myControlledByOsmorcRadioButton" default-binding="true">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -27,7 +27,7 @@
           <text value="Create manifest using facet settings and bundle using facet configuration"/>
         </properties>
       </component>
-      <component id="9f11" class="javax.swing.JRadioButton" binding="_useBndFileRadioButton" default-binding="true">
+      <component id="9f11" class="javax.swing.JRadioButton" binding="myUseBndFileRadioButton" default-binding="true">
         <constraints>
           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -35,7 +35,7 @@
           <text value="Create using bnd and ignore facet configuration"/>
         </properties>
       </component>
-      <grid id="d87a3" binding="_manifestPanel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="d87a3" binding="myManifestPanel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="3" use-parent-layout="false"/>
@@ -46,7 +46,7 @@
         </clientProperties>
         <border type="none" title="Manifest file location (relative to module root)"/>
         <children>
-          <component id="70cf9" class="javax.swing.JRadioButton" binding="_useProjectDefaultManifestFileLocation">
+          <component id="70cf9" class="javax.swing.JRadioButton" binding="myUseProjectDefaultManifestFileLocation">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -63,7 +63,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="ba183" class="javax.swing.JRadioButton" binding="_useModuleSpecificManifestFileLocation">
+              <component id="ba183" class="javax.swing.JRadioButton" binding="myUseModuleSpecificManifestFileLocation">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -72,7 +72,7 @@
                   <text value="Custom:"/>
                 </properties>
               </component>
-              <component id="c3c4b" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="_manifestFileChooser">
+              <component id="c3c4b" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myManifestFileChooser">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -82,7 +82,7 @@
               </component>
             </children>
           </grid>
-          <grid id="89127" binding="_warningPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="89127" binding="myWarningPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -90,13 +90,13 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="17311" class="org.osmorc.settings.MyErrorText" binding="_errorText" custom-create="true">
+              <component id="17311" class="org.osmorc.settings.MyErrorText" binding="myErrorText" custom-create="true">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="7" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
               </component>
-              <component id="dc45a" class="javax.swing.JButton" binding="_createButton">
+              <component id="dc45a" class="javax.swing.JButton" binding="myCreateButton">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -108,7 +108,7 @@
           </grid>
         </children>
       </grid>
-      <grid id="c756d" binding="_bndPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="c756d" binding="myBndPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="3" use-parent-layout="false"/>
@@ -119,7 +119,7 @@
         </clientProperties>
         <border type="none" title="Bnd file location"/>
         <children>
-          <component id="8cb2f" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="_bndFile">
+          <component id="8cb2f" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myBndFile">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -127,7 +127,7 @@
           </component>
         </children>
       </grid>
-      <component id="b9f29" class="javax.swing.JRadioButton" binding="_useBundlorFileRadioButton">
+      <component id="b9f29" class="javax.swing.JRadioButton" binding="myUseBundlorFileRadioButton">
         <constraints>
           <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -135,7 +135,7 @@
           <text value="Create using Bundlor and ignore facet configuration"/>
         </properties>
       </component>
-      <grid id="66303" binding="_bundlorPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="66303" binding="myBundlorPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="3" use-parent-layout="false"/>
@@ -146,7 +146,7 @@
         </clientProperties>
         <border type="none" title="Bundlor file location"/>
         <children>
-          <component id="f2475" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="_bundlorFile">
+          <component id="f2475" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myBundlorFile">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -154,7 +154,7 @@
           </component>
         </children>
       </grid>
-      <component id="51bd0" class="javax.swing.JRadioButton" binding="_manuallyEditedRadioButton" default-binding="true">
+      <component id="51bd0" class="javax.swing.JRadioButton" binding="myManuallyEditedRadioButton" default-binding="true">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -165,9 +165,25 @@
       </component>
       <vspacer id="ea011">
         <constraints>
-          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
+      <component id="1b19c" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Maven Synchronization"/>
+        </properties>
+      </component>
+      <component id="ae6b9" class="javax.swing.JCheckBox" binding="myDoNotSynchronizeFacetCheckBox" default-binding="true">
+        <constraints>
+          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Do not synchronize facet settings with Maven"/>
+        </properties>
+      </component>
     </children>
   </grid>
   <buttonGroups>

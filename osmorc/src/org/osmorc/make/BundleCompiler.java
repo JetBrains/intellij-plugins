@@ -197,7 +197,8 @@ public class BundleCompiler implements PackagingCompiler {
         }.execute().getResultObject();
 
         final BndWrapper wrapper = new BndWrapper();
-        final OsmorcFacetConfiguration configuration = OsmorcFacet.getInstance(module).getConfiguration();
+      OsmorcFacet osmorcFacet = OsmorcFacet.getInstance(module);
+      final OsmorcFacetConfiguration configuration = osmorcFacet.getConfiguration();
         final List<String> classPaths = new ArrayList<String>();
 
         if (moduleOutputDir != null) {
@@ -239,21 +240,17 @@ public class BundleCompiler implements PackagingCompiler {
             }
         } else {
             boolean manifestExists = false;
-            BundleManager bundleManager = ServiceManager.getService(module.getProject(), BundleManager.class);
-            BundleManifest bundleManifest = bundleManager.getManifestByObject(module);
-            if (bundleManifest != null) {
-                PsiFile manifestFile = bundleManifest.getManifestFile();
-                if (manifestFile != null) {
-                    String manifestFilePath = manifestFile.getVirtualFile().getPath();
-                    if (manifestFilePath != null) {
-                        bndFileUrl = makeBndFile(module, "-manifest " + manifestFilePath + "\n", compileContext);
-                        manifestExists = true;
-                    }
-                }
+            VirtualFile manifestFile = osmorcFacet.getManifestFile();
+            if (manifestFile != null) {
+              String manifestFilePath = manifestFile.getPath();
+              if (manifestFilePath != null) {
+                bndFileUrl = makeBndFile(module, "-manifest " + manifestFilePath + "\n", compileContext);
+                manifestExists = true;
+              }
             }
             if (!manifestExists) {
                 compileContext.addMessage(CompilerMessageCategory.ERROR,
-                        messagePrefix + "Manifest file for module " + module.getName() + ": '" + OsmorcFacet.getInstance(module).getManifestLocation() +
+                        messagePrefix + "Manifest file for module " + module.getName() + ": '" + osmorcFacet.getManifestLocation() +
                                 "' does not exist or cannot be found. Check that file exists and is not excluded from the module.", null, 0, 0);
                 return;
             }

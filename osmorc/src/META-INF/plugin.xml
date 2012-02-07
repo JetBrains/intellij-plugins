@@ -33,15 +33,24 @@
     </description>
     <change-notes>
         <![CDATA[
+        <b>Version 1.4.1</b>
          <ul>
+            <li> Greatly improved Maven integration:
+              <ul>
+                <li>Added support for Embed-Dependency</li>
+                <li>Added support for {maven-dependencies} placeholder</li>
+                <li>Added support for Include-Resources</li>
+                <li>Added support for {maven-resources} placeholder</li>
+                <li>OSGi facets can now be excluded from Maven synchronization after the initial import</li>
+              </ul>
+            </li>
             <li> Fixed an issue preventing bnd-based projects from being packaged correctly.</li>
         </ul>
-
                 ]]>
     </change-notes>
     <version>1.4.1</version>
     <vendor url="http://osmorc.org" email="info@osmorc.org">Osmorc Development Team</vendor>
-    <idea-version since-build="108.000" until-build="112.9999"/>
+    <idea-version since-build="108.000" until-build="114.9999"/>
     <category>Framework integration</category>
 
 

@@ -82,6 +82,11 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
                                List<MavenProjectsProcessorTask> mavenProjectsProcessorPostConfigurationTasks) {
 
     OsmorcFacetConfiguration conf = osmorcFacet.getConfiguration();
+    if (conf.isDoNotSynchronizeWithMaven()) {
+      return; // do nothing.
+    }
+    
+    
     MavenPlugin p = mavenProject.findPlugin(myPluginGroupID, myPluginArtifactID);
     // TODO: check if there is a manifest, in which case use this manifest!
 
