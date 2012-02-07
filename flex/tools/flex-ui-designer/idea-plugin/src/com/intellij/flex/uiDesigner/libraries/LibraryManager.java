@@ -311,6 +311,7 @@ public class LibraryManager {
     return null;
   }
 
+  @Nullable
   private static PropertiesFile getResourceBundleFile(String locale, String bundleName, Library library, Project project) {
     final THashSet<String> bundles = library.resourceBundles.get(locale);
     if (!bundles.contains(bundleName)) {
@@ -326,6 +327,7 @@ public class LibraryManager {
   private static PropertiesFile virtualFileToProperties(Project project, VirtualFile file) {
     Document document = FileDocumentManager.getInstance().getDocument(file);
     assert document != null;
+    //noinspection ConstantConditions
     return (PropertiesFile)PsiDocumentManager.getInstance(project).getPsiFile(document);
   }
 }

@@ -20,7 +20,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -166,6 +165,7 @@ class LibraryCollector {
   private void globalCatalogForTests(FlexIdeBuildConfiguration bc) {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       assert globalLibrary == null;
+      //noinspection TestOnlyProblems
       globalLibrary = LibraryUtil.getTestGlobalLibrary(bc.getTargetPlatform() == TargetPlatform.Web);
     }
   }
