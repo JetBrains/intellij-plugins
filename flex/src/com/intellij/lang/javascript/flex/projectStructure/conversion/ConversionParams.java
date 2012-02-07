@@ -8,20 +8,23 @@ import com.intellij.facet.impl.invalid.InvalidFacetManagerImpl;
 import com.intellij.facet.impl.invalid.InvalidFacetType;
 import com.intellij.facet.pointers.FacetPointersManager;
 import com.intellij.ide.impl.convert.JDomConvertingUtil;
-import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
-import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
+import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkType;
+import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
+import com.intellij.peer.PeerFactory;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.XmlSerializer;
@@ -35,12 +38,16 @@ import java.util.*;
  * User: ksafonov
  */
 public class ConversionParams {
+  public static final String OLD_FLEX_SDK_TYPE_NAME = "Flex SDK Type";
+  public static final String OLD_AIR_SDK_TYPE_NAME = "AIR SDK Type";
+  public static final String OLD_AIR_MOBIE_SDK_TYPE_NAME = "AIR Mobile SDK Type";
+
+  public static final String[] OLD_SDKS_TYPES = new String[]{OLD_FLEX_SDK_TYPE_NAME, OLD_AIR_SDK_TYPE_NAME, OLD_AIR_MOBIE_SDK_TYPE_NAME};
+
   public String projectSdkName;
-  public String projectSdkType;
 
   private final Collection<Pair<String, String>> myAppModuleAndBCNames = new ArrayList<Pair<String, String>>();
 
-  private final LibraryTable.ModifiableModel myGlobalLibrariesModifiableModel;
   private final ConversionContext myContext;
   private final Collection<String> myFacetsToIgnore = new HashSet<String>();
   private Collection<String> myProjectLibrariesNames;
@@ -48,27 +55,14 @@ public class ConversionParams {
 
   public ConversionParams(ConversionContext context) {
     myContext = context;
-    myGlobalLibrariesModifiableModel = ApplicationLibraryTable.getApplicationTable().getModifiableModel();
-  }
-
-  private void saveGlobalLibraries() throws CannotConvertException {
-    if (myGlobalLibrariesModifiableModel.isChanged()) {
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        @Override
-        public void run() {
-          myGlobalLibrariesModifiableModel.commit();
-        }
-      });
-    }
   }
 
   public void ignoreInvalidFacet(String moduleName, String type, String name) {
-    // in Flex IDE facet will be of type 'invalid'
+    // this facet will be of type 'invalid'
     myFacetsToIgnore.add(FacetPointersManager.constructId(moduleName, InvalidFacetType.TYPE_ID.toString(), name));
   }
 
   public void apply() throws CannotConvertException {
-    saveGlobalLibraries();
     ignoreInvalidFacets();
   }
 
@@ -85,7 +79,7 @@ public class ConversionParams {
 
   public boolean libraryExists(final String libraryName, final String libraryLevel) throws CannotConvertException {
     if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(libraryLevel)) {
-      final LibraryEx library = (LibraryEx)myGlobalLibrariesModifiableModel.getLibraryByName(libraryName);
+      final LibraryEx library = (LibraryEx)ApplicationLibraryTable.getApplicationTable().getLibraryByName(libraryName);
       return library != null && isApplicableLibrary(library);
     }
     else if (LibraryTablesRegistrar.PROJECT_LEVEL.equals(libraryLevel)) {
@@ -96,13 +90,65 @@ public class ConversionParams {
     }
   }
 
+  // keep old Flex SDKs for now, after IDEA 11.1 release we may decide to delete them
+  public static void convertFlexSdks() {
+    final ProjectJdkTable sdkTable = ProjectJdkTable.getInstance();
+    final Sdk[] allSdks = sdkTable.getAllJdks();
+    final FlexSdkType2 newSdkType = FlexSdkType2.getInstance();
+    Map<String, Sdk> homePathToNewSdk = new HashMap<String, Sdk>();
+    Collection<Sdk> sdksToAdd = new ArrayList<Sdk>();
+    for (Sdk sdk : allSdks) {
+      if (sdk.getSdkType() == newSdkType && sdk.getHomePath() != null) {
+        homePathToNewSdk.put(sdk.getHomePath(), sdk);
+      }
+    }
+
+    for (Sdk sdk : allSdks) {
+      if (!ArrayUtil.contains(sdk.getSdkType().getName(), OLD_SDKS_TYPES)) {
+        continue;
+      }
+
+      final String version = sdk.getVersionString();
+      if (version == null || (!version.startsWith("3.") && !version.startsWith("4."))) {
+        // ignore corrupt SDK
+        continue;
+      }
+
+      final String homePath = sdk.getHomePath();
+      if (homePath == null) {
+        continue;
+      }
+
+
+      if (homePathToNewSdk.containsKey(homePath)) {
+        continue;
+      }
+
+      String newSdkName = SdkConfigurationUtil.createUniqueSdkName(newSdkType, homePath, Arrays.asList(allSdks));
+      Sdk newSdk = PeerFactory.getInstance().createProjectJdk(newSdkName, "", homePath, newSdkType);
+      newSdkType.setupSdkPaths(newSdk);
+      sdksToAdd.add(newSdk);
+      homePathToNewSdk.put(homePath, newSdk);
+    }
+
+    final AccessToken l = WriteAction.start();
+    try {
+      for (Sdk sdk : sdksToAdd) {
+        sdkTable.addJdk(sdk);
+      }
+    }
+    finally {
+      l.finish();
+    }
+  }
+
   private static boolean isApplicableLibrary(final LibraryEx library) {
     return library.getType() == null || library.getType() == FlexLibraryType.getInstance();
   }
 
   public void changeLibraryTypeToFlex(final String libraryName, final String libraryLevel) throws CannotConvertException {
     if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(libraryLevel)) {
-      final Library library = myGlobalLibrariesModifiableModel.getLibraryByName(libraryName);
+      final Library library = ApplicationLibraryTable.getApplicationTable().getLibraryByName(libraryName);
       final LibraryEx.ModifiableModelEx model = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
       model.setType(FlexLibraryType.getInstance());
       model.setProperties(FlexLibraryType.getInstance().createDefaultProperties());
@@ -126,28 +172,14 @@ public class ConversionParams {
   }
 
   @Nullable
-  public static Pair<String, IFlexSdkType.Subtype> getIdeaSdkHomePathAndSubtype(@NotNull String name, @Nullable String type) {
-    Sdk sdk = type != null ? ProjectJdkTable.getInstance().findJdk(name, type) : ProjectJdkTable.getInstance().findJdk(name);
-    if (sdk == null) {
-      return null;
-    }
-    SdkType sdkType = sdk.getSdkType();
-    if (!(sdkType instanceof IFlexSdkType)) {
-      return null;
-    }
-    IFlexSdkType.Subtype subtype = ((IFlexSdkType)sdkType).getSubtype();
-    if (subtype != IFlexSdkType.Subtype.Flex && subtype != IFlexSdkType.Subtype.AIR && subtype != IFlexSdkType.Subtype.AIRMobile) {
-      return null;
-    }
-
-    return Pair.create(sdk.getHomePath(), subtype);
-  }
-
-  @NotNull
-  public FlexSdk getOrCreateFlexIdeSdk(@NotNull final String homePath) {
-    //FlexSdk sdk = myEditor.findOrCreateSdk(homePath);
-    //myEditor.setSdkLibraryUsed(new Object(), (LibraryEx)sdk.getLibrary());
-    return null;
+  public static Sdk findNewSdk(@NotNull final String homePath) {
+    final List<Sdk> sdks = ProjectJdkTable.getInstance().getSdksOfType(FlexSdkType2.getInstance());
+    return ContainerUtil.find(sdks, new Condition<Sdk>() {
+      @Override
+      public boolean value(final Sdk sdk) {
+        return homePath.equals(sdk.getHomePath());
+      }
+    });
   }
 
   /**
@@ -165,26 +197,27 @@ public class ConversionParams {
     ModuleSettings moduleSettings = myContext.getModuleSettings(moduleName);
     if (moduleSettings == null) return Collections.emptyList(); // module is missing
 
-    if (FlexIdeModuleConverter.isFlexModule(moduleSettings)) {
+    if (FlexModuleConverter.isFlexModule(moduleSettings)) {
       Element flexBuildConfigurationElement = moduleSettings.getComponentElement(FlexBuildConfiguration.COMPONENT_NAME);
       if (flexBuildConfigurationElement != null) {
         FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(flexBuildConfigurationElement, FlexBuildConfiguration.class);
         if (oldConfiguration != null && FlexBuildConfiguration.LIBRARY.equals(oldConfiguration.OUTPUT_TYPE)) {
-          return Collections.singletonList(FlexIdeModuleConverter.generateModuleBcName(moduleSettings));
+          return Collections.singletonList(FlexModuleConverter.generateModuleBcName(moduleSettings));
         }
       }
       return Collections.emptyList();
     }
 
-    final List<Element> facets = FlexIdeModuleConverter.getFlexFacets(moduleSettings);
+    final List<Element> facets = FlexModuleConverter.getFlexFacets(moduleSettings);
     return ContainerUtil.mapNotNull(facets, new Function<Element, String>() {
+      @Nullable
       @Override
       public String fun(Element facet) {
         Element oldConfigurationElement = facet.getChild(FacetManagerImpl.CONFIGURATION_ELEMENT);
         if (oldConfigurationElement != null) {
           FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(oldConfigurationElement, FlexBuildConfiguration.class);
           if (oldConfiguration != null && FlexBuildConfiguration.LIBRARY.equals(oldConfiguration.OUTPUT_TYPE)) {
-            return FlexIdeModuleConverter.generateFacetBcName(facets, facet);
+            return FlexModuleConverter.generateFacetBcName(facets, facet);
           }
         }
         return null;

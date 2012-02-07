@@ -94,7 +94,11 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk {
 
   @NotNull
   public String getName() {
-    return StringUtil.join(myNames, NAME_DELIM);
+    return getCompositeName(myNames);
+  }
+
+  public static String getCompositeName(final String[] names) {
+    return StringUtil.join(names, NAME_DELIM);
   }
 
   public String getVersionString() {
@@ -201,7 +205,9 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk {
     throw new UnsupportedOperationException();
   }
 
-  private static final SdkType TYPE = new SdkType("__CompositeFlexSdk__") {
+  public static final String TYPE_ID = "__CompositeFlexSdk__";
+
+  private static final SdkType TYPE = new SdkType(TYPE_ID) {
     public String suggestHomePath() {
       return null;
     }

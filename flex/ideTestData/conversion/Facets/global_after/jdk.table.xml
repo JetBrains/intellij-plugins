@@ -1,64 +1,134 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <ProjectJdkTableImpl>
-    <jdk version="2">
-        <name value="some_flex_sdk"/>
-        <type value="Flex SDK Type"/>
-        <homePath value="$TEST_SDK_HOME$"/>
-        <roots>
-            <annotationsPath>
-                <root type="composite"/>
-            </annotationsPath>
-            <classPath>
-                <root type="composite"/>
-            </classPath>
-            <javadocPath>
-                <root type="composite"/>
-            </javadocPath>
-            <sourcePath>
-                <root type="composite"/>
-            </sourcePath>
-        </roots>
-        <additional/>
-    </jdk>
-    <jdk version="2">
-        <name value="some_air_sdk"/>
-        <type value="AIR SDK Type"/>
-        <homePath value="$TEST_SDK_HOME$"/>
-        <roots>
-            <annotationsPath>
-                <root type="composite"/>
-            </annotationsPath>
-            <classPath>
-                <root type="composite"/>
-            </classPath>
-            <javadocPath>
-                <root type="composite"/>
-            </javadocPath>
-            <sourcePath>
-                <root type="composite"/>
-            </sourcePath>
-        </roots>
-        <additional/>
-    </jdk>
-    <jdk version="2">
-        <name value="some_airmobile_sdk"/>
-        <type value="AIR Mobile SDK Type"/>
-        <homePath value="$TEST_SDK_HOME$"/>
-        <roots>
-            <annotationsPath>
-                <root type="composite"/>
-            </annotationsPath>
-            <classPath>
-                <root type="composite"/>
-            </classPath>
-            <javadocPath>
-                <root type="composite"/>
-            </javadocPath>
-            <sourcePath>
-                <root type="composite"/>
-            </sourcePath>
-        </roots>
-        <additional/>
-    </jdk>
+  <jdk version="2">
+    <name value="some_flex_sdk" />
+    <type value="Flex SDK Type" />
+    <version value="4.5.1.21328" />
+    <homePath value="$TEST_SDK_HOME$" />
+    <roots>
+      <annotationsPath>
+        <root type="composite" />
+      </annotationsPath>
+      <classPath>
+        <root type="composite" />
+      </classPath>
+      <javadocPath>
+        <root type="composite" />
+      </javadocPath>
+      <sourcePath>
+        <root type="composite" />
+      </sourcePath>
+    </roots>
+    <additional />
+  </jdk>
+  <jdk version="2">
+    <name value="some_air_sdk" />
+    <type value="AIR SDK Type" />
+    <version value="4.5.1.21328" />
+    <homePath value="$TEST_SDK_HOME$" />
+    <roots>
+      <annotationsPath>
+        <root type="composite" />
+      </annotationsPath>
+      <classPath>
+        <root type="composite" />
+      </classPath>
+      <javadocPath>
+        <root type="composite" />
+      </javadocPath>
+      <sourcePath>
+        <root type="composite" />
+      </sourcePath>
+    </roots>
+    <additional />
+  </jdk>
+  <jdk version="2">
+    <name value="some_airmobile_sdk" />
+    <type value="AIR Mobile SDK Type" />
+    <version value="4.5.1.21328" />
+    <homePath value="$TEST_SDK_HOME$" />
+    <roots>
+      <annotationsPath>
+        <root type="composite" />
+      </annotationsPath>
+      <classPath>
+        <root type="composite" />
+      </classPath>
+      <javadocPath>
+        <root type="composite" />
+      </javadocPath>
+      <sourcePath>
+        <root type="composite" />
+      </sourcePath>
+    </roots>
+    <additional />
+  </jdk>
+  <jdk version="2">
+    <name value="another_flex_sdk" />
+    <type value="Flex SDK Type" />
+    <version value="4.5.1.21328" />
+    <homePath value="$TEST_SDK_HOME_2$" />
+    <roots>
+      <annotationsPath>
+        <root type="composite" />
+      </annotationsPath>
+      <classPath>
+        <root type="composite" />
+      </classPath>
+      <javadocPath>
+        <root type="composite" />
+      </javadocPath>
+      <sourcePath>
+        <root type="composite" />
+      </sourcePath>
+    </roots>
+    <additional />
+  </jdk>
+  <jdk version="2">
+    <name value="_fake_sdk" />
+    <type value="Flex SDK Type (new)" />
+    <version value="4.5.1.21328" />
+    <homePath value="$TEST_SDK_HOME$" />
+    <roots>
+      <annotationsPath>
+        <root type="composite" />
+      </annotationsPath>
+      <classPath>
+        <root type="composite">
+          <root type="simple" url="jar://$TEST_SDK_HOME$/frameworks/libs/player/10.2/playerglobal.swc!/" />
+          <root type="simple" url="jar://$TEST_SDK_HOME$/frameworks/libs/player/11.0/playerglobal.swc!/" />
+        </root>
+      </classPath>
+      <javadocPath>
+        <root type="composite" />
+      </javadocPath>
+      <sourcePath>
+        <root type="composite" />
+      </sourcePath>
+    </roots>
+    <additional />
+  </jdk>
+  <jdk version="2">
+    <name value="_fake_sdk_2" />
+    <type value="Flex SDK Type (new)" />
+    <version value="4.5.1.21328" />
+    <homePath value="$TEST_SDK_HOME_2$" />
+    <roots>
+      <annotationsPath>
+        <root type="composite" />
+      </annotationsPath>
+      <classPath>
+        <root type="composite">
+          <root type="simple" url="jar://$TEST_SDK_HOME_2$/frameworks/libs/player/10.2/playerglobal.swc!/" />
+          <root type="simple" url="jar://$TEST_SDK_HOME_2$/frameworks/libs/player/11.0/playerglobal.swc!/" />
+        </root>
+      </classPath>
+      <javadocPath>
+        <root type="composite" />
+      </javadocPath>
+      <sourcePath>
+        <root type="composite" />
+      </sourcePath>
+    </roots>
+    <additional />
+  </jdk>
 </ProjectJdkTableImpl>
-

@@ -13,11 +13,11 @@
       <configuration name="flex_module3" target-platform="Desktop" output-type="Library" output-file="flex_module3.swc" output-folder="$TEST_PROJECT$/out/production/flex_module3">
         <dependencies>
           <entries>
-            <entry library-id="3">
+            <entry library-id="2">
               <dependency linkage="External" />
             </entry>
           </entries>
-          <sdk library-id="0" home-path="$TEST_SDK_HOME$" />
+          <sdk name="_fake_sdk" />
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
@@ -35,7 +35,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library" exported="" scope="PROVIDED">
       <library type="flex">
-        <properties id="3" />
+        <properties id="2" />
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/flexunit-4.0.0.swc!/" />
         </CLASSES>
@@ -43,7 +43,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="Flex SDK 4.5.1.21328" level="application" />
+    <orderEntry type="jdk" jdkName="_fake_sdk" jdkType="__CompositeFlexSdk__" />
   </component>
 </module>
 

@@ -3,7 +3,8 @@
     <jdk version="2">
         <name value="some_flex_sdk"/>
         <type value="Flex SDK Type"/>
-        <homePath value="$TEST_SDK_HOME$"/>
+      <version value="4.5.1.21328" />
+      <homePath value="$TEST_SDK_HOME$"/>
         <roots>
             <annotationsPath>
                 <root type="composite"/>
@@ -23,6 +24,7 @@
     <jdk version="2">
         <name value="some_air_sdk"/>
         <type value="AIR SDK Type"/>
+        <version value="4.5.1.21328" />
         <homePath value="$TEST_SDK_HOME$"/>
         <roots>
             <annotationsPath>
@@ -43,6 +45,7 @@
     <jdk version="2">
         <name value="some_airmobile_sdk"/>
         <type value="AIR Mobile SDK Type"/>
+        <version value="4.5.1.21328" />
         <homePath value="$TEST_SDK_HOME$"/>
         <roots>
             <annotationsPath>
@@ -60,5 +63,26 @@
         </roots>
         <additional/>
     </jdk>
+    <jdk version="2">
+    <name value="another_flex_sdk"/>
+    <type value="Flex SDK Type"/>
+    <version value="4.5.1.21328"/>
+    <homePath value="$TEST_SDK_HOME_2$"/>
+    <roots>
+      <annotationsPath>
+        <root type="composite"/>
+      </annotationsPath>
+      <classPath>
+        <root type="composite"/>
+      </classPath>
+      <javadocPath>
+        <root type="composite"/>
+      </javadocPath>
+      <sourcePath>
+        <root type="composite"/>
+      </sourcePath>
+    </roots>
+    <additional/>
+  </jdk>
 </ProjectJdkTableImpl>
 

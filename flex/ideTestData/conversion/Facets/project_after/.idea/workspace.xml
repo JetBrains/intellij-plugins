@@ -128,16 +128,20 @@
       <Host>localhost</Host>
       <Port>5050</Port>
     </configuration>
-    <configuration default="false" name="flex_module" type="FlexIdeRunConfigurationType" factoryName="Flash App">
+    <configuration default="false" name="flex_module" type="FlashRunConfigurationType" factoryName="Flash App">
       <option name="moduleName" value="flex_module" />
       <option name="BCName" value="flex_module" />
     </configuration>
-    <configuration default="false" name="flex_module2" type="FlexIdeRunConfigurationType" factoryName="Flash App">
+    <configuration default="false" name="flex_module2" type="FlashRunConfigurationType" factoryName="Flash App">
       <option name="moduleName" value="flex_module2" />
       <option name="BCName" value="flex_module2" />
     </configuration>
-    <configuration default="false" name="A" type="FlexIdeRunConfigurationType" factoryName="Flash App">
+    <configuration default="false" name="A" type="FlashRunConfigurationType" factoryName="Flash App">
       <option name="moduleName" value="java_with_flex_facets" />
+      <option name="BCName" value="A" />
+    </configuration>
+    <configuration default="false" name="A" type="FlashRunConfigurationType" factoryName="Flash App">
+      <option name="moduleName" value="java_with_flex_facets_2" />
       <option name="BCName" value="A" />
     </configuration>
   </component>

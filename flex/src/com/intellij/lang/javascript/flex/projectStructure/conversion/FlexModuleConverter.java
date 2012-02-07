@@ -10,20 +10,22 @@ import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
-import com.intellij.lang.javascript.flex.projectStructure.FlexSdk;
+import com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.ConversionHelper;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexLibraryIdGenerator;
 import com.intellij.openapi.module.StdModuleTypes;
+import com.intellij.openapi.projectRoots.ProjectJdkTable;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.roots.impl.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
-import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.JDOMUtil;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -38,11 +40,11 @@ import java.util.*;
 /**
  * User: ksafonov
  */
-public class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> {
+class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
 
   private final ConversionParams myParams;
 
-  public FlexIdeModuleConverter(ConversionParams params) {
+  public FlexModuleConverter(ConversionParams params) {
     myParams = params;
   }
 
@@ -79,6 +81,7 @@ public class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> 
     FlexBuildConfigurationManagerImpl configurationManager = ConversionHelper.createBuildConfigurationManager();
 
     Collection<Element> orderEntriesToAdd = new ArrayList<Element>();
+    Set<String> usedSdksNames = new HashSet<String>();
     if (isFlexModule(moduleSettings)) {
       ModifiableFlexIdeBuildConfiguration newConfiguration =
         (ModifiableFlexIdeBuildConfiguration)configurationManager.getBuildConfigurations()[0];
@@ -87,11 +90,10 @@ public class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> 
       Element oldConfigurationElement = moduleSettings.getComponentElement(FlexBuildConfiguration.COMPONENT_NAME);
       FlexBuildConfiguration oldConfiguration =
         oldConfigurationElement != null ? XmlSerializer.deserialize(oldConfigurationElement, FlexBuildConfiguration.class) : null;
-      processConfiguration(oldConfiguration, newConfiguration, moduleSettings, false, null, null, orderEntriesToAdd);
+      processConfiguration(oldConfiguration, newConfiguration, moduleSettings, false, null, usedSdksNames, orderEntriesToAdd);
     }
     else {
       List<Element> flexFacets = getFlexFacets(moduleSettings);
-      Set<String> sdkLibrariesIds = new HashSet<String>();
       for (int i = 0; i < flexFacets.size(); i++) {
         Element facet = flexFacets.get(i);
         ModifiableFlexIdeBuildConfiguration newConfiguration;
@@ -106,16 +108,24 @@ public class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> 
         if (oldConfigurationElement != null) {
           FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(oldConfigurationElement, FlexBuildConfiguration.class);
           final String facetSdkName = oldConfigurationElement.getAttributeValue(FlexFacetConfigurationImpl.FLEX_SDK_ATTR_NAME);
-          processConfiguration(oldConfiguration, newConfiguration, moduleSettings, true, facetSdkName, sdkLibrariesIds, orderEntriesToAdd);
+          processConfiguration(oldConfiguration, newConfiguration, moduleSettings, true, facetSdkName, usedSdksNames, orderEntriesToAdd);
         }
         else {
-          processConfiguration(null, newConfiguration, moduleSettings, true, null, sdkLibrariesIds, orderEntriesToAdd);
+          processConfiguration(null, newConfiguration, moduleSettings, true, null, usedSdksNames, orderEntriesToAdd);
         }
       }
       moduleSettings.setModuleType(FlexModuleType.MODULE_TYPE_ID);
       moduleSettings.getComponentElement(FacetManagerImpl.COMPONENT_NAME).getChildren(FacetManagerImpl.FACET_ELEMENT).removeAll(flexFacets);
     }
 
+    if (!usedSdksNames.isEmpty()) {
+      Element sdkEntryElement = new Element(OrderEntryFactory.ORDER_ENTRY_ELEMENT_NAME);
+      sdkEntryElement.setAttribute(OrderEntryFactory.ORDER_ENTRY_TYPE_ATTR, "jdk");
+      final String compositeSdkName = FlexCompositeSdk.getCompositeName(ArrayUtil.toStringArray(usedSdksNames));
+      sdkEntryElement.setAttribute(ModuleJdkOrderEntryImpl.JDK_NAME_ATTR, compositeSdkName);
+      sdkEntryElement.setAttribute(ModuleJdkOrderEntryImpl.JDK_TYPE_ATTR, FlexCompositeSdk.TYPE_ID);
+      moduleSettings.getOrderEntries().add(sdkEntryElement);
+    }
     Element rootManagerElement = JDomConvertingUtil.findOrCreateComponentElement(moduleSettings.getRootElement(),
                                                                                  ModuleSettings.MODULE_ROOT_MANAGER_COMPONENT);
     rootManagerElement.addContent(orderEntriesToAdd);
@@ -145,7 +155,7 @@ public class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> 
                                     ModuleSettings module,
                                     boolean facet,
                                     @Nullable String facetSdkName,
-                                    @Nullable Set<String> sdkLibrariesIds,
+                                    Set<String> usedSdksNames,
                                     Collection<Element> orderEntriesToAdd) throws CannotConvertException {
     if (oldConfiguration == null) {
       newBuildConfiguration.setOutputType(OutputType.Application);
@@ -165,44 +175,8 @@ public class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> 
       newBuildConfiguration.setOutputFileName(oldConfiguration.OUTPUT_FILE_NAME);
       newBuildConfiguration.setSkipCompile(!oldConfiguration.DO_BUILD);
 
-      if (oldConfiguration.USE_CUSTOM_CONFIG_FILE) {
-        final String customConfigFilePath = PathUtil.getCanonicalPath(module.expandPath(oldConfiguration.CUSTOM_CONFIG_FILE));
-        newBuildConfiguration.getCompilerOptions().setAdditionalConfigFilePath(customConfigFilePath);
-      }
-      // todo may be parse options, replace "-a b" to "-a=b", may be move some options to dedicated fields
-      newBuildConfiguration.getCompilerOptions().setAdditionalOptions(oldConfiguration.ADDITIONAL_COMPILER_OPTIONS);
-
-      final Map<String, String> options = new THashMap<String, String>(newBuildConfiguration.getCompilerOptions().getAllOptions());
-
-      if (oldConfiguration.USE_LOCALE_SETTINGS) {
-        options.put("compiler.locale", oldConfiguration.LOCALE.replace(',', CompilerOptionInfo.LIST_ENTRIES_SEPARATOR));
-      }
-      
-      if (!oldConfiguration.CONDITIONAL_COMPILATION_DEFINITION_LIST.isEmpty()) {
-        final StringBuilder b = new StringBuilder();
-        for (FlexBuildConfiguration.ConditionalCompilationDefinition def : oldConfiguration.CONDITIONAL_COMPILATION_DEFINITION_LIST) {
-          if (b.length() > 0) b.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
-          b.append(def.NAME).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR).append(def.VALUE);
-        }
-        options.put("compiler.define", b.toString());
-      }
-      
-      if (!oldConfiguration.NAMESPACE_AND_MANIFEST_FILE_INFO_LIST.isEmpty()) {
-        final StringBuilder b = new StringBuilder();
-        for (FlexBuildConfiguration.NamespaceAndManifestFileInfo info : oldConfiguration.NAMESPACE_AND_MANIFEST_FILE_INFO_LIST) {
-          if (b.length() > 0) b.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
-          b.append(info.NAMESPACE).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR).append(info.MANIFEST_FILE_PATH);
-          // todo import info.INCLUDE_IN_SWC
-        }
-        options.put("compiler.namespaces.namespace", b.toString());
-      }
-      
-      if (!oldConfiguration.PATH_TO_SERVICES_CONFIG_XML.isEmpty()) {
-        options.put("compiler.services", oldConfiguration.PATH_TO_SERVICES_CONFIG_XML);
-        options.put("compiler.context-root", oldConfiguration.CONTEXT_ROOT);
-      }
-
-      newBuildConfiguration.getCompilerOptions().setAllOptions(options);
+      final ModifiableCompilerOptions newCompilerOptions = newBuildConfiguration.getCompilerOptions();
+      newCompilerOptions.setAllOptions(convertCompilerOptions(oldConfiguration, module, newCompilerOptions));
     }
 
     String outputFolder;
@@ -225,7 +199,7 @@ public class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> 
           orderEntriesToRemove.add(orderEntry);
           continue;
         }
-        
+
         if (facet && AutogeneratedLibraryUtils.isAutogeneratedLibrary(library)) {
           orderEntriesToRemove.add(orderEntry);
           continue;
@@ -269,8 +243,7 @@ public class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> 
         String moduleName = orderEntry.getAttributeValue(ModuleOrderEntryImpl.MODULE_NAME_ATTR);
         Collection<String> bcNames = myParams.getBcNamesForDependency(moduleName);
         for (String bcName : bcNames) {
-          ModifiableBuildConfigurationEntry bcEntry =
-            ConversionHelper.createBuildConfigurationEntry(moduleName, bcName);
+          ModifiableBuildConfigurationEntry bcEntry = ConversionHelper.createBuildConfigurationEntry(moduleName, bcName);
           convertDependencyType(orderEntry, bcEntry.getDependencyType());
           newBuildConfiguration.getDependencies().getModifiableEntries().add(bcEntry);
         }
@@ -281,39 +254,70 @@ public class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> 
       else if (ModuleJdkOrderEntryImpl.ENTRY_TYPE.equals(orderEntryType)) {
         if (!facet) {
           String sdkName = orderEntry.getAttributeValue(ModuleJdkOrderEntryImpl.JDK_NAME_ATTR);
-          String sdkType = orderEntry.getAttributeValue(ModuleJdkOrderEntryImpl.JDK_TYPE_ATTR);
-          Element entryToAdd = processSdkEntry(newBuildConfiguration, sdkName, sdkType, null);
-          ContainerUtil.addIfNotNull(entryToAdd, orderEntriesToAdd);
+          String newSdkName = processSdkEntry(newBuildConfiguration, oldConfiguration, sdkName);
+          ContainerUtil.addIfNotNull(usedSdksNames, newSdkName);
         }
         orderEntriesToRemove.add(orderEntry);
       }
       else if (InheritedJdkOrderEntryImpl.ENTRY_TYPE.equals(orderEntryType)) {
         if (!facet) {
-          Element entryToAdd = processSdkEntry(newBuildConfiguration, myParams.projectSdkName, myParams.projectSdkType, null);
-          ContainerUtil.addIfNotNull(entryToAdd, orderEntriesToAdd);
+          String newSdkName = processSdkEntry(newBuildConfiguration, oldConfiguration, myParams.projectSdkName);
+          ContainerUtil.addIfNotNull(usedSdksNames, newSdkName);
         }
         orderEntriesToRemove.add(orderEntry);
       }
     }
 
     if (facetSdkName != null) {
-      Element entryToAdd = processSdkEntry(newBuildConfiguration, facetSdkName, null, sdkLibrariesIds);
-      ContainerUtil.addIfNotNull(entryToAdd, orderEntriesToAdd);
+      String newSdkName = processSdkEntry(newBuildConfiguration, oldConfiguration, facetSdkName);
+      ContainerUtil.addIfNotNull(usedSdksNames, newSdkName);
     }
 
     if (!orderEntriesToRemove.isEmpty()) {
       module.getOrderEntries().removeAll(orderEntriesToRemove);
     }
+  }
 
-    if (newBuildConfiguration.getTargetPlatform() == TargetPlatform.Web) {
-      final SdkEntry sdkEntry = newBuildConfiguration.getDependencies().getSdkEntry();
-      if (sdkEntry != null) {
-        //final String sdkHome = PathUtil.getCanonicalPath(module.expandPath(sdkEntry.getHomePath()));
-        //final String targetPlayer =
-        //  TargetPlayerUtils.getTargetPlayer(oldConfiguration == null ? null : oldConfiguration.TARGET_PLAYER_VERSION, sdkHome);
-        //newBuildConfiguration.getDependencies().setTargetPlayer(targetPlayer);
-      }
+  private static Map<String, String> convertCompilerOptions(final FlexBuildConfiguration oldConfig,
+                                                            final ModuleSettings module,
+                                                            final ModifiableCompilerOptions newCompilerOptions) {
+    if (oldConfig.USE_CUSTOM_CONFIG_FILE) {
+      final String customConfigFilePath = PathUtil.getCanonicalPath(module.expandPath(oldConfig.CUSTOM_CONFIG_FILE));
+      newCompilerOptions.setAdditionalConfigFilePath(customConfigFilePath);
     }
+    // todo may be parse options, replace "-a b" to "-a=b", may be move some options to dedicated fields
+    newCompilerOptions.setAdditionalOptions(oldConfig.ADDITIONAL_COMPILER_OPTIONS);
+
+    final Map<String, String> options = new THashMap<String, String>(newCompilerOptions.getAllOptions());
+
+    if (oldConfig.USE_LOCALE_SETTINGS) {
+      options.put("compiler.locale", oldConfig.LOCALE.replace(',', CompilerOptionInfo.LIST_ENTRIES_SEPARATOR));
+    }
+
+    if (!oldConfig.CONDITIONAL_COMPILATION_DEFINITION_LIST.isEmpty()) {
+      final StringBuilder b = new StringBuilder();
+      for (FlexBuildConfiguration.ConditionalCompilationDefinition def : oldConfig.CONDITIONAL_COMPILATION_DEFINITION_LIST) {
+        if (b.length() > 0) b.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+        b.append(def.NAME).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR).append(def.VALUE);
+      }
+      options.put("compiler.define", b.toString());
+    }
+
+    if (!oldConfig.NAMESPACE_AND_MANIFEST_FILE_INFO_LIST.isEmpty()) {
+      final StringBuilder b = new StringBuilder();
+      for (FlexBuildConfiguration.NamespaceAndManifestFileInfo info : oldConfig.NAMESPACE_AND_MANIFEST_FILE_INFO_LIST) {
+        if (b.length() > 0) b.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+        b.append(info.NAMESPACE).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR).append(info.MANIFEST_FILE_PATH);
+        // todo import info.INCLUDE_IN_SWC
+      }
+      options.put("compiler.namespaces.namespace", b.toString());
+    }
+
+    if (!oldConfig.PATH_TO_SERVICES_CONFIG_XML.isEmpty()) {
+      options.put("compiler.services", oldConfig.PATH_TO_SERVICES_CONFIG_XML);
+      options.put("compiler.context-root", oldConfig.CONTEXT_ROOT);
+    }
+    return options;
   }
 
   static boolean isApplicableLibrary(final Element library) {
@@ -357,46 +361,46 @@ public class FlexIdeModuleConverter extends ConversionProcessor<ModuleSettings> 
   }
 
   /**
-   * @return order entry element to be added to the module
+   * @return SDK name if found
    */
   @Nullable
-  private Element processSdkEntry(ModifiableFlexIdeBuildConfiguration buildConfiguration,
-                                  String ideaSdkName,
-                                  @Nullable String ideaSdkType,
-                                  @Nullable Set<String> existingSdkLibrariesIds) {
+  private static String processSdkEntry(ModifiableFlexIdeBuildConfiguration buildConfiguration,
+                                        @Nullable FlexBuildConfiguration oldConfiguration,
+                                        String ideaSdkName) {
     if (ideaSdkName == null) {
       buildConfiguration.setTargetPlatform(TargetPlatform.Web);
       return null;
     }
 
-    Pair<String, IFlexSdkType.Subtype> homePathAndSubtype = ConversionParams.getIdeaSdkHomePathAndSubtype(ideaSdkName, ideaSdkType);
-    if (homePathAndSubtype == null) {
+    Sdk oldSdk = ProjectJdkTable.getInstance().findJdk(ideaSdkName);
+    final String sdkTypeName;
+    if (oldSdk == null ||
+        oldSdk.getHomePath() == null ||
+        !ArrayUtil.contains((sdkTypeName = oldSdk.getSdkType().getName()), ConversionParams.OLD_SDKS_TYPES)) {
       buildConfiguration.setTargetPlatform(TargetPlatform.Web);
       return null;
     }
 
-    if (IFlexSdkType.Subtype.AIRMobile == homePathAndSubtype.second) {
+    if (ConversionParams.OLD_AIR_MOBIE_SDK_TYPE_NAME.equals(sdkTypeName)) {
       buildConfiguration.setTargetPlatform(TargetPlatform.Mobile);
       buildConfiguration.getAndroidPackagingOptions().setEnabled(true);
     }
-    else if (IFlexSdkType.Subtype.AIR == homePathAndSubtype.second) {
+    else if (ConversionParams.OLD_AIR_SDK_TYPE_NAME.equals(sdkTypeName)) {
       buildConfiguration.setTargetPlatform(TargetPlatform.Desktop);
     }
     else {
       buildConfiguration.setTargetPlatform(TargetPlatform.Web);
+      final String targetPlayer = TargetPlayerUtils.getTargetPlayer(oldConfiguration == null ? null :
+                                                                    oldConfiguration.TARGET_PLAYER_VERSION, oldSdk.getHomePath());
+      buildConfiguration.getDependencies().setTargetPlayer(targetPlayer);
     }
 
-    FlexSdk sdk = myParams.getOrCreateFlexIdeSdk(homePathAndSubtype.first);
-    //SdkEntry sdkEntry = Factory.createSdkEntry(sdk.get());
-    // TODO roots dependencies types
-    //buildConfiguration.getDependencies().setSdkEntry(sdkEntry);
-
-    if (existingSdkLibrariesIds == null || existingSdkLibrariesIds.add(sdk.getLibraryId())) {
-      Element orderEntryElement = new Element(OrderEntryFactory.ORDER_ENTRY_ELEMENT_NAME);
-      orderEntryElement.setAttribute(OrderEntryFactory.ORDER_ENTRY_TYPE_ATTR, "library");
-      orderEntryElement.setAttribute("name", sdk.getLibrary().getName());
-      orderEntryElement.setAttribute("level", LibraryTablesRegistrar.APPLICATION_LEVEL);
-      return orderEntryElement;
+    Sdk sdk = ConversionParams.findNewSdk(oldSdk.getHomePath());
+    if (sdk != null) {
+      SdkEntry sdkEntry = Factory.createSdkEntry(sdk.getName());
+      // TODO roots dependencies types
+      buildConfiguration.getDependencies().setSdkEntry(sdkEntry);
+      return sdk.getName();
     }
     else {
       return null;

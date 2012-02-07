@@ -21,7 +21,7 @@
       <configuration name="flex_module" main-class="Abc" output-file="flex_module.swf" output-folder="$TEST_PROJECT$/out/production/flex_module">
         <dependencies target-player="10.2">
           <entries>
-            <entry library-id="1">
+            <entry library-id="0">
               <dependency linkage="Include" />
             </entry>
             <entry module-name="java_with_flex_facets" build-configuration-name="B">
@@ -43,7 +43,7 @@
               <dependency linkage="External" />
             </entry>
           </entries>
-          <sdk library-id="0" home-path="$TEST_SDK_HOME$" />
+          <sdk name="_fake_sdk" />
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
@@ -61,7 +61,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library" exported="">
       <library type="flex">
-        <properties id="1" />
+        <properties id="0" />
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/flexunit-4.0.0.swc!/" />
         </CLASSES>
@@ -74,7 +74,7 @@
     <orderEntry type="library" name="FlexUnit1Lib(java)" level="project" />
     <orderEntry type="library" name="SwiftSuspenders" level="application" />
     <orderEntry type="library" name="Lib2" level="application" scope="PROVIDED" />
-    <orderEntry type="library" name="Flex SDK 4.5.1.21328" level="application" />
+    <orderEntry type="jdk" jdkName="_fake_sdk" jdkType="__CompositeFlexSdk__" />
   </component>
 </module>
 

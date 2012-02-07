@@ -11,11 +11,11 @@ import java.io.File;
 /**
  * User: ksafonov
  */
-class FlexIdeProjectConverter extends ProjectConverter {
+class FlexProjectConverter extends ProjectConverter {
   private ConversionParams myParams;
   private final ConversionContext myContext;
 
-  FlexIdeProjectConverter(ConversionContext context) {
+  FlexProjectConverter(ConversionContext context) {
     myContext = context;
   }
 
@@ -23,7 +23,7 @@ class FlexIdeProjectConverter extends ProjectConverter {
     for (File file : myContext.getModuleFiles()) {
       try {
         ModuleSettings moduleSettings = myContext.getModuleSettings(file);
-        if (FlexIdeModuleConverter.isConversionNeededStatic(moduleSettings)) return true;
+        if (FlexModuleConverter.isConversionNeededStatic(moduleSettings)) return true;
       }
       catch (CannotConvertException ignored) {
       }
@@ -33,7 +33,7 @@ class FlexIdeProjectConverter extends ProjectConverter {
 
   @Override
   public ConversionProcessor<ModuleSettings> createModuleFileConverter() {
-    return new FlexIdeModuleConverter(getParams());
+    return new FlexModuleConverter(getParams());
   }
 
   @Nullable
@@ -56,7 +56,8 @@ class FlexIdeProjectConverter extends ProjectConverter {
     if (projectRootManager == null) return;
 
     getParams().projectSdkName = projectRootManager.getAttributeValue(ProjectRootManagerImpl.PROJECT_JDK_NAME_ATTR);
-    getParams().projectSdkType = projectRootManager.getAttributeValue(ProjectRootManagerImpl.PROJECT_JDK_TYPE_ATTR);
+
+    ConversionParams.convertFlexSdks();
   }
 
   @Override
@@ -66,6 +67,6 @@ class FlexIdeProjectConverter extends ProjectConverter {
 
 
   public ConversionProcessor<ProjectLibrariesSettings> createProjectLibrariesConverter() {
-    return new FlexIdeProjectLibrariesConverter(myParams);
+    return new FlexLibrariesConverter(myParams);
   }
 }

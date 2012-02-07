@@ -12,7 +12,7 @@
       <configuration name="flex_module2" target-platform="Desktop" main-class="Abc" output-file="flex_module2.swf" output-folder="$TEST_PROJECT$/out/production/flex_module2">
         <dependencies>
           <entries>
-            <entry library-id="2">
+            <entry library-id="1">
               <dependency linkage="External" />
             </entry>
             <entry module-name="flex_module3" build-configuration-name="flex_module3">
@@ -22,7 +22,7 @@
               <dependency linkage="Include" />
             </entry>
           </entries>
-          <sdk library-id="0" home-path="$TEST_SDK_HOME$" />
+          <sdk name="_fake_sdk" />
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
@@ -40,7 +40,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library" scope="PROVIDED">
       <library type="flex">
-        <properties id="2" />
+        <properties id="1" />
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/flexunit-4.0.0.swc!/" />
         </CLASSES>
@@ -50,7 +50,7 @@
     </orderEntry>
     <orderEntry type="module" module-name="flex_module3" />
     <orderEntry type="library" name="flexunit(flex)" level="project" exported="" />
-    <orderEntry type="library" name="Flex SDK 4.5.1.21328" level="application" />
+    <orderEntry type="jdk" jdkName="_fake_sdk" jdkType="__CompositeFlexSdk__" />
   </component>
 </module>
 
