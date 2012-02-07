@@ -164,7 +164,7 @@ public class Flexmojos3Configurator {
         final String dependencyModuleName = ((ModuleOrderEntry)entry).getModuleName();
         final ModifiableBuildConfigurationEntry bcEntry =
           myFlexEditor.createBcEntry(bc.getDependencies(), dependencyModuleName, dependencyModuleName);
-        bc.getDependencies().getModifiableEntries().add(bcEntry);
+        bc.getDependencies().getModifiableEntries().add(0, bcEntry);
 
         continue;
       }
