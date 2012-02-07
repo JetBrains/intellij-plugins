@@ -1,5 +1,6 @@
 package com.intellij.javascript.flex.maven;
 
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
@@ -158,12 +159,17 @@ public class Flexmojos3Configurator {
 
     final ModifiableRootModel rootModel = myModelsProvider.getRootModel(myModule);
     for (OrderEntry entry : rootModel.getOrderEntries()) {
+      final DependencyScope scope = entry instanceof ExportableOrderEntry ? ((ExportableOrderEntry)entry).getScope()
+                                                                          : DependencyScope.COMPILE;
+      final boolean isExported = entry instanceof ExportableOrderEntry && ((ExportableOrderEntry)entry).isExported();
+
       if ((entry instanceof ModuleOrderEntry)) {
         rootModel.removeOrderEntry(entry);
 
         final String dependencyModuleName = ((ModuleOrderEntry)entry).getModuleName();
         final ModifiableBuildConfigurationEntry bcEntry =
           myFlexEditor.createBcEntry(bc.getDependencies(), dependencyModuleName, dependencyModuleName);
+        bcEntry.getDependencyType().setLinkageType(FlexUtils.convertLinkageType(scope, isExported));
         bc.getDependencies().getModifiableEntries().add(0, bcEntry);
 
         continue;
@@ -211,6 +217,7 @@ public class Flexmojos3Configurator {
         final ModifiableDependencyEntry sharedLibraryEntry =
           myFlexEditor.createSharedLibraryEntry(bc.getDependencies(), ((LibraryOrderEntry)entry).getLibraryName(),
                                                 ((LibraryOrderEntry)entry).getLibraryLevel());
+        sharedLibraryEntry.getDependencyType().setLinkageType(FlexUtils.convertLinkageType(scope, isExported));
         bc.getDependencies().getModifiableEntries().add(sharedLibraryEntry);
       }
       else {

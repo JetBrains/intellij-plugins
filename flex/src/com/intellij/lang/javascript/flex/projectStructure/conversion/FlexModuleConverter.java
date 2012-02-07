@@ -335,15 +335,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
   private static void convertDependencyType(Element orderEntry, ModifiableDependencyType dependencyType) {
     DependencyScope scope = DependencyScope.readExternal(orderEntry);
     boolean isExported = orderEntry.getAttribute(ModuleLibraryOrderEntryImpl.EXPORTED_ATTR) != null;
-    if (scope == DependencyScope.PROVIDED) {
-      dependencyType.setLinkageType(LinkageType.External);
-    }
-    else if (isExported) {
-      dependencyType.setLinkageType(LinkageType.Include);
-    }
-    else {
-      dependencyType.setLinkageType(LinkageType.Merged);
-    }
+    dependencyType.setLinkageType(FlexUtils.convertLinkageType(scope, isExported));
   }
 
   private static String getOutputFolder(final ModuleSettings moduleSettings) {

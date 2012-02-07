@@ -12,10 +12,8 @@ import org.jetbrains.annotations.NotNull;
  */
 class DependencyTypeImpl implements ModifiableDependencyType {
 
-  private static final LinkageType DEFAULT_TYPE = LinkageType.Merged;
-
   @NotNull
-  private LinkageType myLinkageType = DEFAULT_TYPE;
+  private LinkageType myLinkageType = DEFAULT_LINKAGE;
 
   @Override
   @NotNull
@@ -35,7 +33,7 @@ class DependencyTypeImpl implements ModifiableDependencyType {
   }
 
   public void loadState(State state) {
-    myLinkageType = LinkageType.valueOf(state.LINKAGE_TYPE, DEFAULT_TYPE);
+    myLinkageType = LinkageType.valueOf(state.LINKAGE_TYPE, DEFAULT_LINKAGE);
   }
 
   public void applyTo(ModifiableDependencyType copy) {
