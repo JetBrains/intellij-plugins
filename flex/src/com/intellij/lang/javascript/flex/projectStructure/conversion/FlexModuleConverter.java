@@ -91,6 +91,9 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
       FlexBuildConfiguration oldConfiguration =
         oldConfigurationElement != null ? XmlSerializer.deserialize(oldConfigurationElement, FlexBuildConfiguration.class) : null;
       processConfiguration(oldConfiguration, newConfiguration, moduleSettings, false, null, usedSdksNames, orderEntriesToAdd);
+      if (oldConfigurationElement != null) {
+        oldConfigurationElement.detach();
+      }
     }
     else {
       List<Element> flexFacets = getFlexFacets(moduleSettings);

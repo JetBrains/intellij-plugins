@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="Flex" version="4">
-  <component name="Flex.Build.Configuration">
-    <option name="DO_BUILD" value="true" />
-    <option name="MAIN_CLASS" value="Abc" />
-    <option name="OUTPUT_FILE_NAME" value="flex_module2.swf" />
-    <option name="TARGET_PLAYER_VERSION" value="10.2.0" />
-    <option name="VERSION" value="3" />
-  </component>
   <component name="FlexBuildConfigurationManager" active="flex_module2">
     <configurations>
       <configuration name="flex_module2" target-platform="Desktop" main-class="Abc" output-file="flex_module2.swf" output-folder="$TEST_PROJECT$/out/production/flex_module2">
