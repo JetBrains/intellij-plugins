@@ -6,7 +6,6 @@ import com.intellij.facet.ui.*;
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.idea.LoggerFactory;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
-import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -15,7 +14,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
@@ -35,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -251,7 +248,7 @@ public class FlexFacetConfigurationImpl extends FlexFacetConfiguration {
     private JButton myConfigureSdksButton;
     private Sdk myLastCommittedFlexSdk;
     private String myLastCommittedTargetPlayerVersion;
-    private FlexCompilerSettingsEditor myCompilerSettingsEditor;
+    //private FlexCompilerSettingsEditor myCompilerSettingsEditor;
     private final Module myModule;
 
     private FlexFacetEditorTab(final FacetEditorContext context, final FacetValidatorsManager validatorsManager) {
@@ -288,11 +285,11 @@ public class FlexFacetConfigurationImpl extends FlexFacetConfiguration {
         }
       }, myFlexSdkComboBox);
 
-      myCompilerSettingsEditor = new FlexCompilerSettingsEditor(context.getModule(), (FlexFacet)context.getFacet(),
-                                                                context.getModifiableRootModel().getModuleExtension(
-                                                                  CompilerModuleExtension.class));
-      myExtPanel.setLayout(new BorderLayout());
-      myExtPanel.add(myCompilerSettingsEditor.createComponent());
+      //myCompilerSettingsEditor = new FlexCompilerSettingsEditor(context.getModule(), (FlexFacet)context.getFacet(),
+      //                                                          context.getModifiableRootModel().getModuleExtension(
+      //                                                            CompilerModuleExtension.class));
+      //myExtPanel.setLayout(new BorderLayout());
+      //myExtPanel.add(myCompilerSettingsEditor.createComponent());
     }
 
     private void initConfigureSdksButton() {
@@ -331,11 +328,11 @@ public class FlexFacetConfigurationImpl extends FlexFacetConfiguration {
         return true;
       }
 
-      return myCompilerSettingsEditor.isModified();
+      return false; //myCompilerSettingsEditor.isModified();
     }
 
     public void apply() {
-      myCompilerSettingsEditor.apply();
+      //myCompilerSettingsEditor.apply();
       // Flex sdk will be set later in onFacetInitialized()
     }
 
@@ -409,7 +406,7 @@ public class FlexFacetConfigurationImpl extends FlexFacetConfiguration {
 
     public void reset() {
       resetFlexSdkComboBox();
-      myCompilerSettingsEditor.reset();
+      //myCompilerSettingsEditor.reset();
     }
 
     private void resetFlexSdkComboBox() {
@@ -457,10 +454,10 @@ public class FlexFacetConfigurationImpl extends FlexFacetConfiguration {
     public void disposeUIResources() {
       myMainPanel = null;
       myFlexSdkComboBox = null;
-      if (myCompilerSettingsEditor != null) {
-        myCompilerSettingsEditor.disposeUIResources();
-        myCompilerSettingsEditor = null;
-      }
+      //if (myCompilerSettingsEditor != null) {
+      //  myCompilerSettingsEditor.disposeUIResources();
+      //  myCompilerSettingsEditor = null;
+      //}
     }
   }
 

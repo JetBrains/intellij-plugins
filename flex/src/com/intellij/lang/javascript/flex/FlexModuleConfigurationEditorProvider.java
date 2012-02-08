@@ -1,15 +1,11 @@
 package com.intellij.lang.javascript.flex;
 
-import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexModuleEditor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleConfigurationEditor;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.roots.CompilerModuleExtension;
-import com.intellij.openapi.roots.ui.configuration.DefaultModuleConfigurationEditorFactory;
 import com.intellij.openapi.roots.ui.configuration.ModuleConfigurationEditorProvider;
 import com.intellij.openapi.roots.ui.configuration.ModuleConfigurationState;
-import com.intellij.peer.PeerFactory;
 
 /**
  * @author Maxim.Mossienko
