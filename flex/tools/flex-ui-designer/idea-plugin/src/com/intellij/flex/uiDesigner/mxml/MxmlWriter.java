@@ -20,14 +20,19 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.*;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.impl.schema.AnyXmlAttributeDescriptor;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.PropertyKey;
@@ -35,6 +40,7 @@ import org.jetbrains.annotations.PropertyKey;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PropertyKind;
 
@@ -106,7 +112,7 @@ public class MxmlWriter {
         out.allocateClearShort();
       }
 
-      processElements(rootTag, null, false, -1, out.size() - 2, true);
+      processElements(rootTag, null, false, -1, out.size() - 2, true, null);
 
       writer.endObject();
 
@@ -130,7 +136,7 @@ public class MxmlWriter {
   }
 
   private boolean processElements(final XmlTag parent, final @Nullable Context parentContext, final boolean allowIncludeInExludeFrom,
-                                  final int dataPosition, final int referencePosition, boolean writeLocation) {
+                                  final int dataPosition, final int referencePosition, boolean writeLocation, @Nullable Condition<AnnotationBackedDescriptor> propertyFilter) {
     boolean cssRulesetDefined = false;
     boolean staticChild = true;
 
@@ -151,6 +157,11 @@ public class MxmlWriter {
       final AnnotationBackedDescriptor descriptor;
       if (attributeDescriptor instanceof AnnotationBackedDescriptor) {
         descriptor = (AnnotationBackedDescriptor)attributeDescriptor;
+
+        if (!descriptor.isPredefined() && propertyFilter != null && !propertyFilter.value(descriptor)) {
+          continue;
+        }
+
         // id and includeIn/excludeFrom only as attribute, not as tag
         if (descriptor.isPredefined()) {
           if (descriptor.hasIdType()) {
@@ -463,14 +474,41 @@ public class MxmlWriter {
       return false;
     }
 
-    final int projectComponentFactoryId;
-    try {
-      projectComponentFactoryId = InjectionUtil.getProjectComponentFactoryId(descriptor.getQualifiedName(), descriptor.getDeclaration(),
-                                                                             projectDocumentReferenceCounter);
-    }
-    catch (InvalidPropertyException e) {
-      problemsHolder.add(e);
-      return false;
+    Condition<AnnotationBackedDescriptor> propertyFilter = null;
+    int projectComponentFactoryId = -1;
+    String effectiveComponentClassName = null;
+    PsiElement declaration = descriptor.getDeclaration();
+    assert declaration != null;
+    PsiFile psiFile = declaration.getContainingFile();
+    VirtualFile virtualFile = psiFile.getVirtualFile();
+    assert virtualFile != null;
+    ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex();
+    if (projectFileIndex.isInSourceContent(virtualFile)) {
+      if (psiFile instanceof XmlFile) {
+        projectComponentFactoryId = DocumentFactoryManager.getInstance().getId(virtualFile, (XmlFile)psiFile, projectDocumentReferenceCounter);
+      }
+      else {
+        final JSClass[] classes = ((JSClass)declaration).getSuperClasses();
+
+        final Set<PsiFile> filteredFiles = new THashSet<PsiFile>(classes.length);
+        filteredFiles.add(psiFile);
+
+        for (JSClass jsClass : classes) {
+          PsiFile jsClassContainingFile = jsClass.getContainingFile();
+          //noinspection ConstantConditions
+          if (!projectFileIndex.isInSourceContent(jsClassContainingFile.getVirtualFile())) {
+            effectiveComponentClassName = jsClass.getQualifiedName();
+            break;
+          }
+          else {
+            filteredFiles.add(jsClassContainingFile);
+          }
+        }
+
+        // well, it must be at least mx.core.UIComponent or spark.primitives.supportClasses.GraphicElement
+        assert effectiveComponentClassName != null;
+        propertyFilter = new CustomComponentPropertyFilter(filteredFiles);
+      }
     }
 
     final int childDataPosition = out.size();
@@ -479,7 +517,7 @@ public class MxmlWriter {
         out.write(Amf3Types.OBJECT);
       }
 
-      writer.classOrPropertyName(descriptor.getQualifiedName());
+      writer.classOrPropertyName(effectiveComponentClassName == null ? descriptor.getQualifiedName() : effectiveComponentClassName);
     }
     else {
       if (!isListItem) {
@@ -491,8 +529,23 @@ public class MxmlWriter {
     }
 
     return processElements(tag, parentContext, allowIncludeInExludeFrom, childDataPosition, out.allocateClearShort(),
-      JSResolveUtil.isAssignableType(FlexCommonTypeNames.IVISUAL_ELEMENT, descriptor.getQualifiedName(), descriptor.getDeclaration()) ||
-        JSResolveUtil.isAssignableType(FlexCommonTypeNames.FLASH_DISPLAY_OBJECT, descriptor.getQualifiedName(), descriptor.getDeclaration()));
+                           JSResolveUtil.isAssignableType(FlexCommonTypeNames.IVISUAL_ELEMENT, descriptor.getQualifiedName(),
+                                                          descriptor.getDeclaration()) ||
+                           JSResolveUtil.isAssignableType(FlexCommonTypeNames.FLASH_DISPLAY_OBJECT, descriptor.getQualifiedName(),
+                                                          descriptor.getDeclaration()), propertyFilter);
+  }
+
+  private static class CustomComponentPropertyFilter implements Condition<AnnotationBackedDescriptor> {
+    private final Set<PsiFile> filteredFiles;
+
+    public CustomComponentPropertyFilter(Set<PsiFile> filteredFiles) {
+      this.filteredFiles = filteredFiles;
+    }
+
+    @Override
+    public boolean value(AnnotationBackedDescriptor descriptor) {
+      return !filteredFiles.contains(descriptor.getDeclaration().getContainingFile());
+    }
   }
 
   boolean processMxmlVector(XmlTag tag, @Nullable Context parentContext, boolean allowIncludeInExludeFrom) {

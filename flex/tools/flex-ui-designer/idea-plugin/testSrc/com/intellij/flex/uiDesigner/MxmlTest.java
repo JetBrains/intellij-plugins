@@ -57,7 +57,6 @@ public class MxmlTest extends MxmlTestBase {
                  m("Unsupported embed asset type \"@Embed(source='/jazz.mp3')\" (line: 3)"),
                  m("Invalid color name invalidcolorname (line: 2)", "Invalid integer value (line: 3)", "Invalid number value (line: 4)"),
                  m("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-72175\">Inline components are not supported</a> (line: 9)"),
-                 m("Support only MXML-based component AuxActionScriptProjectComponent"),
                  m("Unresolved variable or type unresolvedData (line: 10)"),
                  m("Initializer for Group cannot be represented in text (line: 2)",
                    "Initializer for Container cannot be represented in text (line: 5)",
