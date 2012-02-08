@@ -37,6 +37,11 @@ public class FlashDocumentDisplayManager extends AbstractDocumentDisplayManager 
   public function initShared(stageForAdobeDummies:Stage, resourceBundleProvider:ResourceBundleProvider, uiErrorHandler:UiErrorHandler):void {
   }
 
+  public function setDocumentBounds(w:int, h:int):void {
+    _document.width = w;
+    _document.height = h;
+  }
+
   public function setDocument(object:DisplayObject):void {
     removeEventHandlers();
 

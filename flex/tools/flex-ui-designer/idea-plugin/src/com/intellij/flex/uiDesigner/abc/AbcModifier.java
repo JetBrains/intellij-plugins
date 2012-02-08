@@ -7,7 +7,9 @@ public interface AbcModifier {
 
   boolean methodTrait(int traitKind, int name, DataBuffer in, int methodInfo, Encoder encoder);
 
-  int methodTraitDelta();
+  int instanceMethodTraitDelta();
 
   boolean isModifyConstructor();
+
+  void assertOnInstanceEnd();
 }

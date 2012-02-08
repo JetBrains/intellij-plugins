@@ -396,39 +396,12 @@ public final class Decoder {
             v.OP_ifnge(offset, in.position());
             continue;
           }
-          case OP_pushscope:
-            v.OP_pushscope();
-            continue;
-          case OP_newactivation:
-            v.OP_newactivation();
-            continue;
+
           case OP_newcatch: {
             v.OP_newcatch(in.readU32());
             continue;
           }
-          case OP_deldescendants: {
-            v.OP_deldescendants();
-            continue;
-          }
-          case OP_getglobalscope: {
-            v.OP_getglobalscope();
-            continue;
-          }
-          case OP_getlocal0:
-            v.OP_getlocal0();
-            continue;
-          case OP_getlocal1:
-            v.OP_getlocal1();
-            continue;
-          case OP_getlocal2:
-            v.OP_getlocal2();
-            continue;
-          case OP_getlocal3:
-            v.OP_getlocal3();
-            continue;
-          case OP_setlocal0:
-            v.OP_setlocal0();
-            continue;
+
           case OP_setlocal1:
             v.OP_setlocal1();
             continue;
@@ -439,26 +412,36 @@ public final class Decoder {
             v.OP_setlocal3();
             continue;
           case OP_returnvoid:
-            v.OP_returnvoid();
+            if (v.opcodePass == 1) {
+              v.beginop(OP_returnvoid);
+            }
             continue;
           case OP_returnvalue:
             v.OP_returnvalue();
             continue;
           case OP_nop:
-            v.OP_nop();
+            if (v.opcodePass == 1) {
+              v.beginop(OP_nop);
+            }
             continue;
           case OP_bkpt:
-            v.OP_bkpt();
+            if (v.opcodePass == 1) {
+              v.beginop(OP_bkpt);
+            }
             continue;
           case OP_timestamp:
-            v.OP_timestamp();
+            if (v.opcodePass == 1) {
+              v.beginop(OP_timestamp);
+            }
             continue;
           case OP_debugline:
             v.OP_debugline(in.readU32());
             continue;
           case OP_bkptline:
             in.readU32();
-            v.OP_bkptline();
+            if (v.opcodePass == 1) {
+              v.beginop(OP_bkptline);
+            }
             continue;
           case OP_debug: {
             v.OP_debug(in.readU8(), in.readU32(), in.readU8(), in.readU32());
@@ -473,12 +456,6 @@ public final class Decoder {
             v.OP_jump(jump, in.position());
             continue;
           }
-          case OP_pushnull:
-            v.OP_pushnull();
-            continue;
-          case OP_pushundefined:
-            v.OP_pushundefined();
-            continue;
           case OP_pushstring:
             v.OP_pushstring(in.readU32());
             continue;
@@ -497,88 +474,111 @@ public final class Decoder {
           case OP_getlocal:
             v.OP_getlocal(in.readU32());
             continue;
-          case OP_pushtrue:
-            v.OP_pushtrue();
-            continue;
-          case OP_pushfalse:
-            v.OP_pushfalse();
-            continue;
-          case OP_pushnan: {
-            v.OP_pushnan();
-            continue;
-          }
-          case OP_pushdnan: {
-            v.OP_pushdnan();
-            continue;
-          }
+
           case OP_pop: {
             v.OP_pop();
             continue;
           }
-          case OP_dup: {
-            v.OP_dup();
-            continue;
-          }
-          case OP_swap: {
-            v.OP_swap();
-            continue;
-          }
+
           case OP_convert_s: {
             v.OP_convert_s();
             continue;
           }
-          case OP_esc_xelem: {
-            v.OP_esc_xelem();
-            continue;
-          }
-          case OP_esc_xattr: {
-            v.OP_esc_xattr();
-            continue;
-          }
-          case OP_checkfilter:
-            v.OP_checkfilter();
-            continue;
-          case OP_convert_d:
-            v.OP_convert_d();
-            continue;
+
           case OP_convert_b: {
             v.OP_convert_b();
             continue;
           }
-          case OP_convert_o: {
-            v.OP_convert_o();
+
+          case OP_pushnull:
+          case OP_pushundefined:
+          case OP_pushtrue:
+          case OP_pushfalse:
+          case OP_pushnan:
+          case OP_pushdnan:
+          case OP_dup:
+          case OP_swap:
+          case OP_checkfilter:
+          case OP_convert_d:
+          case OP_newactivation:
+          case OP_deldescendants:
+          case OP_getglobalscope:
+          case OP_getlocal0:
+          case OP_getlocal1:
+          case OP_getlocal2:
+          case OP_getlocal3:
+          case OP_setlocal0:
+          case OP_pushscope:
+          case OP_popscope:
+          case OP_coerce_b:
+          case OP_esc_xelem:
+          case OP_esc_xattr:
+          case OP_negate:
+          case OP_convert_o:
+          case OP_convert_m:
+          case OP_nextname:
+          case OP_nextvalue:
+          case OP_astypelate:
+          case OP_coerce_o:
+          case OP_hasnext:
+          case OP_increment:
+          case OP_increment_i:
+          case OP_typeof:
+          case OP_not:
+          case OP_bitnot:
+          case OP_lshift:
+          case OP_rshift:
+          case OP_urshift:
+          case OP_bitand:
+          case OP_bitor:
+          case OP_bitxor:
+          case OP_equals:
+          case OP_strictequals:
+          case OP_negate_i:
+          case OP_decrement_i:
+          case OP_add_i:
+          case OP_multiply_i:
+          case OP_divide:
+          case OP_multiply:
+          case OP_lessthan:
+          case OP_lessequals:
+          case OP_greaterthan:
+          case OP_greaterequals:
+          case OP_pushwith:
+          case OP_instanceof:
+          case OP_in:
+          case OP_dxnslate:
+          case OP_li8:
+          case OP_li16:
+          case OP_li32:
+          case OP_lf32:
+          case OP_lf64:
+          case OP_si8:
+          case OP_si16:
+          case OP_si32:
+          case OP_sf32:
+          case OP_sf64:
+          case OP_sxi1:
+          case OP_sxi8:
+          case OP_sxi16:
+          case OP_convert_u:
+          case OP_throw:
+            if (v.opcodePass == 1) {
+              v.beginop(opcode);
+            }
             continue;
-          }
-          case OP_convert_m: {
-            v.OP_convert_m();
-            continue;
-          }
+
           case OP_convert_m_p: {
             v.OP_convert_m_p(in.readU32());
             continue;
           }
-          case OP_negate: {
-            v.OP_negate();
-            continue;
-          }
+
           case OP_negate_p: {
             v.OP_negate_p(in.readU32());
             continue;
           }
-          case OP_negate_i: {
-            v.OP_negate_i();
-            continue;
-          }
-          case OP_increment: {
-            v.OP_increment();
-            continue;
-          }
           case OP_increment_p: {
             v.OP_increment_p(in.readU32());
-            continue;
-          }
-          case OP_increment_i: {
-            v.OP_increment_i();
             continue;
           }
           case OP_inclocal: {
@@ -610,10 +610,6 @@ public final class Decoder {
             v.OP_decrement_p(param);
             continue;
           }
-          case OP_decrement_i: {
-            v.OP_decrement_i();
-            continue;
-          }
           case OP_declocal: {
             int index = in.readU32();
             v.OP_declocal(index);
@@ -625,18 +621,6 @@ public final class Decoder {
           }
           case OP_declocal_i: {
             v.OP_declocal_i(in.readU32());
-            continue;
-          }
-          case OP_typeof: {
-            v.OP_typeof();
-            continue;
-          }
-          case OP_not: {
-            v.OP_not();
-            continue;
-          }
-          case OP_bitnot: {
-            v.OP_bitnot();
             continue;
           }
           case OP_setlocal: {
@@ -653,10 +637,6 @@ public final class Decoder {
             v.OP_add_p(param);
             continue;
           }
-          case OP_add_i: {
-            v.OP_add_i();
-            continue;
-          }
           case OP_subtract: {
             v.OP_subtract();
             continue;
@@ -669,20 +649,8 @@ public final class Decoder {
             v.OP_subtract_i();
             continue;
           }
-          case OP_multiply: {
-            v.OP_multiply();
-            continue;
-          }
           case OP_multiply_p: {
             v.OP_multiply_p(in.readU32());
-            continue;
-          }
-          case OP_multiply_i: {
-            v.OP_multiply_i();
-            continue;
-          }
-          case OP_divide: {
-            v.OP_divide();
             continue;
           }
           case OP_divide_p: {
@@ -695,38 +663,6 @@ public final class Decoder {
           }
           case OP_modulo_p: {
             v.OP_modulo_p(in.readU32());
-            continue;
-          }
-          case OP_lshift: {
-            v.OP_lshift();
-            continue;
-          }
-          case OP_rshift: {
-            v.OP_rshift();
-            continue;
-          }
-          case OP_urshift: {
-            v.OP_urshift();
-            continue;
-          }
-          case OP_bitand: {
-            v.OP_bitand();
-            continue;
-          }
-          case OP_bitor: {
-            v.OP_bitor();
-            continue;
-          }
-          case OP_bitxor: {
-            v.OP_bitxor();
-            continue;
-          }
-          case OP_equals: {
-            v.OP_equals();
-            continue;
-          }
-          case OP_strictequals: {
-            v.OP_strictequals();
             continue;
           }
           case OP_lookupswitch: {
@@ -803,22 +739,6 @@ public final class Decoder {
             v.OP_ifge(offset, in.position());
             continue;
           }
-          case OP_lessthan: {
-            v.OP_lessthan();
-            continue;
-          }
-          case OP_lessequals: {
-            v.OP_lessequals();
-            continue;
-          }
-          case OP_greaterthan: {
-            v.OP_greaterthan();
-            continue;
-          }
-          case OP_greaterequals: {
-            v.OP_greaterequals();
-            continue;
-          }
           case OP_newobject: {
             v.OP_newobject(in.readU32());
             continue;
@@ -863,18 +783,6 @@ public final class Decoder {
           }
           case OP_finddef: {
             v.OP_finddef(in.readU32());
-            continue;
-          }
-          case OP_nextname: {
-            v.OP_nextname();
-            continue;
-          }
-          case OP_nextvalue: {
-            v.OP_nextvalue();
-            continue;
-          }
-          case OP_hasnext: {
-            v.OP_hasnext();
             continue;
           }
           case OP_hasnext2: {
@@ -957,7 +865,9 @@ public final class Decoder {
           case OP_constructsuper:
             v.OP_constructsuper(in.readU32());
             if (stopAfterConstructSuper) {
-              v.OP_returnvoid();
+              if (v.opcodePass == 1) {
+                v.beginop(OP_returnvoid);
+              }
               break w;
             }
             continue;
@@ -971,20 +881,8 @@ public final class Decoder {
             v.OP_astype(in.readU32());
             continue;
           }
-          case OP_astypelate:
-            v.OP_astypelate();
-            continue;
-
           case OP_coerce: {
             v.OP_coerce(in.readU32());
-            continue;
-          }
-          case OP_coerce_b: {
-            v.OP_coerce_b();
-            continue;
-          }
-          case OP_coerce_o: {
-            v.OP_coerce_o();
             continue;
           }
           case OP_coerce_a: {
@@ -1023,40 +921,12 @@ public final class Decoder {
             v.OP_getscopeobject(in.readU8());
             continue;
           }
-          case OP_pushwith: {
-            v.OP_pushwith();
-            continue;
-          }
-          case OP_popscope: {
-            v.OP_popscope();
-            continue;
-          }
           case OP_convert_i: {
             v.OP_convert_i();
             continue;
           }
-          case OP_convert_u: {
-            v.OP_convert_u();
-            continue;
-          }
-          case OP_throw: {
-            v.OP_throw();
-            continue;
-          }
-          case OP_instanceof: {
-            v.OP_instanceof();
-            continue;
-          }
-          case OP_in: {
-            v.OP_in();
-            continue;
-          }
           case OP_dxns: {
             v.OP_dxns(in.readU32());
-            continue;
-          }
-          case OP_dxnslate: {
-            v.OP_dxnslate();
             continue;
           }
           case OP_pushuninitialized: {
@@ -1069,58 +939,6 @@ public final class Decoder {
           }
           case OP_callpropvoid: {
             v.OP_callpropvoid(in.readU32(), in.readU32());
-            continue;
-          }
-          case OP_li8: {
-            v.OP_li8();
-            continue;
-          }
-          case OP_li16: {
-            v.OP_li16();
-            continue;
-          }
-          case OP_li32: {
-            v.OP_li32();
-            continue;
-          }
-          case OP_lf32: {
-            v.OP_lf32();
-            continue;
-          }
-          case OP_lf64: {
-            v.OP_lf64();
-            continue;
-          }
-          case OP_si8: {
-            v.OP_si8();
-            continue;
-          }
-          case OP_si16: {
-            v.OP_si16();
-            continue;
-          }
-          case OP_si32: {
-            v.OP_si32();
-            continue;
-          }
-          case OP_sf32: {
-            v.OP_sf32();
-            continue;
-          }
-          case OP_sf64: {
-            v.OP_sf64();
-            continue;
-          }
-          case OP_sxi1: {
-            v.OP_sxi1();
-            continue;
-          }
-          case OP_sxi8: {
-            v.OP_sxi8();
-            continue;
-          }
-          case OP_sxi16: {
-            v.OP_sxi16();
             continue;
           }
 

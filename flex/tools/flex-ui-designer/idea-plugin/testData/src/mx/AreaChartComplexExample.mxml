@@ -30,7 +30,7 @@
   </fx:Declarations>
 
   <mx:Panel title="LineChart and AreaChart Controls Example"
-            height="100%" width="100%" layout="horizontal">
+            height="100%" width="100%" layout="vertical">
 
     <mx:LineChart id="linechart" height="100%" width="45%"
                   paddingLeft="5" paddingRight="5"

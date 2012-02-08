@@ -14,7 +14,11 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
+import static com.intellij.flex.uiDesigner.abc.Encoder.SkipMethodKey;
 
 class FlexDefinitionProcessor implements DefinitionProcessor {
   private static final String MX_CORE = "mx.core:";
@@ -45,7 +49,16 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
     }
 
     if (StringUtil.equals(name, "mx.containers:Panel")) {
-      definition.doAbcData.abcModifier = new MethodAccessModifier("setControlBar", vGreaterOrEquals4_5 ? "addChildAt" : null, null, false);
+      final List<SkipMethodKey> skippedMethods;
+      if (vGreaterOrEquals4_5) {
+        skippedMethods = new ArrayList<SkipMethodKey>(1);
+        skippedMethods.add(new SkipMethodKey("addChildAt", true));
+      }
+      else {
+        skippedMethods = null;
+      }
+
+      definition.doAbcData.abcModifier = new MethodAccessModifier("setControlBar", skippedMethods, null, false);
     }
     else {
       final boolean mxCore = StringUtil.startsWith(name, MX_CORE);
@@ -63,11 +76,15 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
       }
 
       boolean skipInitialize = false;
+      // Application without explicit size hangs on Stage and listen to resize - but we must set size via setLayoutBoundsSize
+      boolean skipCommitProperties = false;
       boolean modifyConstructor = false;
       boolean skipColorCorrection = false;
       if (mxCore || StringUtil.startsWith(name, SPARK_COMPONENTS)) {
         final int localNameOffset = mxCore ? MX_CORE.length() : SPARK_COMPONENTS.length();
         skipInitialize = equals(name, localNameOffset, "Application");
+        skipCommitProperties = skipInitialize;
+
         if (mxCore) {
           if (skipInitialize) {
             modifyConstructor = true;
@@ -88,8 +105,20 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
         skipInitialize = true;
       }
 
-      if (skipInitialize || modifyConstructor) {
-        definition.doAbcData.abcModifier = new MethodAccessModifier(null, skipInitialize ? "initialize" : null, skipColorCorrection ? "colorCorrection" : null, modifyConstructor);
+      final List<SkipMethodKey> skippedMethods;
+      if (skipInitialize || skipCommitProperties) {
+        skippedMethods = new ArrayList<SkipMethodKey>(2);
+        skippedMethods.add(new SkipMethodKey("initialize", true));
+        if (skipCommitProperties) {
+          skippedMethods.add(new SkipMethodKey("commitProperties", false));
+        }
+      }
+      else {
+        skippedMethods = null;
+      }
+
+      if (skippedMethods != null || modifyConstructor) {
+        definition.doAbcData.abcModifier = new MethodAccessModifier(null, skippedMethods, skipColorCorrection ? "colorCorrection" : null, modifyConstructor);
       }
     }
   }
@@ -181,23 +210,28 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
 
   private static class MethodAccessModifier extends AbcModifierBase {
     private String changeAccessModifier;
-    private String skipMethod;
+    private List<SkipMethodKey> skippedMethods;
     private String skipSetter;
     private boolean modifyConstructor;
 
+    private int traitDelta;
+
     private MethodAccessModifier(@Nullable String changeAccessModifier,
-                                 @Nullable String skipMethod,
+                                 @Nullable List<SkipMethodKey> skippedMethods,
                                  @Nullable String skipSetter,
                                  boolean modifyConstructor) {
       this.changeAccessModifier = changeAccessModifier;
-      this.skipMethod = skipMethod;
+      this.skippedMethods = skippedMethods;
       this.skipSetter = skipSetter;
       this.modifyConstructor = modifyConstructor;
+
+      traitDelta = skippedMethods == null ? 0 : -skippedMethods.size();
     }
 
     @Override
-    public int methodTraitDelta() {
-      return skipMethod != null ? -1 : 0;
+    public int instanceMethodTraitDelta() {
+      assert skippedMethods == null || traitDelta == -skippedMethods.size();
+      return traitDelta;
     }
 
     @Override
@@ -212,9 +246,15 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
 
     @Override
     public boolean methodTrait(int traitKind, int name, DataBuffer in, int methodInfo, Encoder encoder) {
-      if (skipMethod != null && isOverridenMethod(traitKind)) {
-        if (encoder.skipMethod(skipMethod, name, in)) {
-          skipMethod = null;
+      if (skippedMethods != null && !skippedMethods.isEmpty() && isOverridenMethod(traitKind)) {
+        int index;
+        if ((index = encoder.skipMethod(skippedMethods, name, in)) != -1) {
+          if (skippedMethods.size() == 1) {
+            skippedMethods = null;
+          }
+          else {
+            skippedMethods.remove(index);
+          }
           return true;
         }
       }
@@ -236,6 +276,11 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
       modifyConstructor = false;
       return true;
     }
+
+    @Override
+    public void assertOnInstanceEnd() {
+      assert skippedMethods == null || skippedMethods.isEmpty();
+    }
   }
 
   private static class VarAccessModifier extends AbcModifierBase {
@@ -255,6 +300,10 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
       }
       
       return false;
+    }
+
+    @Override
+    public void assertOnInstanceEnd() {
     }
   }
 }

@@ -124,7 +124,6 @@ class AbcMerger extends AbcTranscoder {
     channel.write(buffer);
 
     SwfUtil.header(channel, buffer);
-
   }
 
   public void close() throws IOException {

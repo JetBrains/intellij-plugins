@@ -227,7 +227,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
       return false;
     }
 
-    final ProjectDocumentReferenceCounter projectDocumentReferenceCounter = initializeThread.get(60, TimeUnit.SECONDS);
+    final ProjectDocumentReferenceCounter projectDocumentReferenceCounter = initializeThread.get(DebugPathManager.IS_DEV ? 999 : 60, TimeUnit.SECONDS);
     indicator.checkCanceled();
 
     final DesignerApplication application = DesignerApplicationManager.getApplication();

@@ -378,6 +378,9 @@ public class Encoder {
 
   public void endInstance() {
     currentBuffer = null;
+    if (abcModifier != null) {
+      abcModifier.assertOnInstanceEnd();
+    }
   }
 
   public void startClass(int cinit) {
@@ -477,7 +480,7 @@ public class Encoder {
 
   public void traitCount(int traitCount) {
     if (abcModifier != null && currentBuffer == instanceInfo) {
-      traitCount += abcModifier.methodTraitDelta();
+      traitCount += abcModifier.instanceMethodTraitDelta();
       assert traitCount >= 0;
     }
 
@@ -605,7 +608,18 @@ public class Encoder {
     return false;
   }
 
-  public boolean skipMethod(String name, int nameIndex, DataBuffer in) {
+  public static final class SkipMethodKey {
+    public final String name;
+    // CONSTANT_PackageNamespace or CONSTANT_ProtectedNamespace
+    public final byte packageNamespace;
+
+    public SkipMethodKey(String name, boolean isPublic) {
+      this.name = name;
+      packageNamespace = isPublic ? CONSTANT_PackageNamespace : CONSTANT_ProtectedNamespace;
+    }
+  }
+
+  public int skipMethod(final List<SkipMethodKey> keys, int nameIndex, DataBuffer in) {
     final int originalPosition = in.position();
     in.seek(history.getRawPartPoolPositions(IndexHistory.MULTINAME)[nameIndex]);
 
@@ -615,17 +629,21 @@ public class Encoder {
     int localName = in.readU32();
 
     in.seek(history.getRawPartPoolPositions(IndexHistory.NS)[ns]);
-    int nsKind = in.readU8();
-    if (nsKind == CONSTANT_PackageNamespace) {
+    final int nsKind = in.readU8();
+    if (nsKind == CONSTANT_PackageNamespace || nsKind == CONSTANT_ProtectedNamespace) {
       in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[localName]);
-      if (compare(in, name)) {
-        in.seek(originalPosition);
-        return true;
+      int stringLength = in.readU32();
+      for (int i = 0, size = keys.size(); i < size; i++) {
+        SkipMethodKey key = keys.get(i);
+        if (key.packageNamespace == nsKind && compare(in, stringLength, key.name)) {
+          in.seek(originalPosition);
+          return i;
+        }
       }
     }
 
     in.seek(originalPosition);
-    return false;
+    return -1;
   }
 
   public boolean clearMethodBody(String name, int nameIndex, DataBuffer in, int methodInfo) {
@@ -685,8 +703,9 @@ public class Encoder {
     }
 
     final int offset = in.position + in.offset;
+    final byte[] data = in.data;
     for (int j = stringLength - 1; j > -1; j--) {
-      if (in.data[offset + j] != s.charAt(j)) {
+      if (data[offset + j] != s.charAt(j)) {
         return false;
       }
     }
@@ -764,7 +783,7 @@ public class Encoder {
     opcodes.writeU8(opcode);
   }
 
-  int opat(int i) {
+  private int opat(int i) {
     if (peepHole && i <= windowSize) {
       int ip = window[(head - i) & (W - 1)];
       if (ip < opcodes.getSize()) {
@@ -807,12 +826,6 @@ public class Encoder {
     }
   }
 
-  public void OP_returnvoid() {
-    if (opcodePass == 1) {
-      beginop(OP_returnvoid);
-    }
-  }
-
   public void OP_returnvalue() {
     if (opcodePass == 1) {
       if (opat(1) == OP_coerce_a) {
@@ -821,29 +834,13 @@ public class Encoder {
 
       if (opat(1) == OP_pushundefined) {
         rewind(1);
-        OP_returnvoid();
+        if (opcodePass == 1) {
+          beginop(OP_returnvoid);
+        }
         return;
       }
 
       beginop(OP_returnvalue);
-    }
-  }
-
-  public void OP_nop() {
-    if (opcodePass == 1) {
-      beginop(OP_nop);
-    }
-  }
-
-  public void OP_bkpt() {
-    if (opcodePass == 1) {
-      beginop(OP_bkpt);
-    }
-  }
-
-  public void OP_timestamp() {
-    if (opcodePass == 1) {
-      beginop(OP_timestamp);
     }
   }
 
@@ -853,12 +850,6 @@ public class Encoder {
         beginop(OP_debugline);
         opcodes.writeU32(linenum);
       }
-    }
-  }
-
-  public void OP_bkptline() {
-    if (opcodePass == 1) {
-      beginop(OP_bkptline);
     }
   }
 
@@ -943,7 +934,6 @@ public class Encoder {
     }
 
     opcodes.writeU32(newIndex);
-
   }
 
   public void OP_jump(int offset, int pos) {
@@ -954,18 +944,6 @@ public class Encoder {
     }
     else if (opcodePass == 2) {
       opcodes.updateOffset(pos + offset);
-    }
-  }
-
-  public void OP_pushnull() {
-    if (opcodePass == 1) {
-      beginop(OP_pushnull);
-    }
-  }
-
-  public void OP_pushundefined() {
-    if (opcodePass == 1) {
-      beginop(OP_pushundefined);
     }
   }
 
@@ -1008,37 +986,15 @@ public class Encoder {
     if (opcodePass == 1) {
       if (opat(1) == OP_setlocal && readIntAt(1) == index) {
         rewind(1);
-        OP_dup();
+        if (opcodePass == 1) {
+          beginop(OP_dup);
+        }
         OP_setlocal(index);
         return;
       }
 
       beginop(OP_getlocal);
       opcodes.writeU32(index);
-    }
-  }
-
-  public void OP_pushtrue() {
-    if (opcodePass == 1) {
-      beginop(OP_pushtrue);
-    }
-  }
-
-  public void OP_pushfalse() {
-    if (opcodePass == 1) {
-      beginop(OP_pushfalse);
-    }
-  }
-
-  public void OP_pushnan() {
-    if (opcodePass == 1) {
-      beginop(OP_pushnan);
-    }
-  }
-
-  public void OP_pushdnan() {
-    if (opcodePass == 1) {
-      beginop(OP_pushdnan);
     }
   }
 
@@ -1054,18 +1010,6 @@ public class Encoder {
       }
 
       beginop(OP_pop);
-    }
-  }
-
-  public void OP_dup() {
-    if (opcodePass == 1) {
-      beginop(OP_dup);
-    }
-  }
-
-  public void OP_swap() {
-    if (opcodePass == 1) {
-      beginop(OP_swap);
     }
   }
 
@@ -1090,36 +1034,6 @@ public class Encoder {
       }
 
       beginop(OP_convert_s);
-    }
-  }
-
-  public void OP_esc_xelem() {
-    if (opcodePass == 1) {
-      beginop(OP_esc_xelem);
-    }
-  }
-
-  public void OP_esc_xattr() {
-    if (opcodePass == 1) {
-      beginop(OP_esc_xattr);
-    }
-  }
-
-  public void OP_checkfilter() {
-    if (opcodePass == 1) {
-      beginop(OP_checkfilter);
-    }
-  }
-
-  public void OP_convert_d() {
-    if (opcodePass == 1) {
-      beginop(OP_convert_d);
-    }
-  }
-
-  public void OP_convert_m() {
-    if (opcodePass == 1) {
-      beginop(OP_convert_m);
     }
   }
 
@@ -1156,18 +1070,6 @@ public class Encoder {
     }
   }
 
-  public void OP_convert_o() {
-    if (opcodePass == 1) {
-      beginop(OP_convert_o);
-    }
-  }
-
-  public void OP_negate() {
-    if (opcodePass == 1) {
-      beginop(OP_negate);
-    }
-  }
-
   public void OP_negate_p(int param) {
     if (opcodePass == 1) {
       beginop(OP_negate_p);
@@ -1175,28 +1077,10 @@ public class Encoder {
     }
   }
 
-  public void OP_negate_i() {
-    if (opcodePass == 1) {
-      beginop(OP_negate_i);
-    }
-  }
-
-  public void OP_increment() {
-    if (opcodePass == 1) {
-      beginop(OP_increment);
-    }
-  }
-
   public void OP_increment_p(int param) {
     if (opcodePass == 1) {
       beginop(OP_increment_p);
       opcodes.writeU32(param);
-    }
-  }
-
-  public void OP_increment_i() {
-    if (opcodePass == 1) {
-      beginop(OP_increment_i);
     }
   }
 
@@ -1249,12 +1133,6 @@ public class Encoder {
     }
   }
 
-  public void OP_decrement_i() {
-    if (opcodePass == 1) {
-      beginop(OP_decrement_i);
-    }
-  }
-
   public void OP_declocal(int index) {
     if (opcodePass == 1) {
       beginop(OP_declocal);
@@ -1274,24 +1152,6 @@ public class Encoder {
     if (opcodePass == 1) {
       beginop(OP_declocal_i);
       opcodes.writeU32(index);
-    }
-  }
-
-  public void OP_typeof() {
-    if (opcodePass == 1) {
-      beginop(OP_typeof);
-    }
-  }
-
-  public void OP_not() {
-    if (opcodePass == 1) {
-      beginop(OP_not);
-    }
-  }
-
-  public void OP_bitnot() {
-    if (opcodePass == 1) {
-      beginop(OP_bitnot);
     }
   }
 
@@ -1335,12 +1195,6 @@ public class Encoder {
     }
   }
 
-  public void OP_add_i() {
-    if (opcodePass == 1) {
-      beginop(OP_add_i);
-    }
-  }
-
   public void OP_subtract() {
     if (opcodePass == 1) {
       if (opat(1) == OP_pushbyte && readByteAt(1) == 1) {
@@ -1368,16 +1222,12 @@ public class Encoder {
     if (opcodePass == 1) {
       if (opat(1) == OP_pushbyte && readIntAt(1) == 1) {
         rewind(1);
-        OP_decrement_i();
+        if (opcodePass == 1) {
+          beginop(OP_decrement_i);
+        }
         return;
       }
       beginop(OP_subtract_i);
-    }
-  }
-
-  public void OP_multiply() {
-    if (opcodePass == 1) {
-      beginop(OP_multiply);
     }
   }
 
@@ -1385,18 +1235,6 @@ public class Encoder {
     if (opcodePass == 1) {
       beginop(OP_multiply_p);
       opcodes.writeU32(param);
-    }
-  }
-
-  public void OP_multiply_i() {
-    if (opcodePass == 1) {
-      beginop(OP_multiply_i);
-    }
-  }
-
-  public void OP_divide() {
-    if (opcodePass == 1) {
-      beginop(OP_divide);
     }
   }
 
@@ -1417,54 +1255,6 @@ public class Encoder {
     if (opcodePass == 1) {
       beginop(OP_modulo_p);
       opcodes.writeU32(param);
-    }
-  }
-
-  public void OP_lshift() {
-    if (opcodePass == 1) {
-      beginop(OP_lshift);
-    }
-  }
-
-  public void OP_rshift() {
-    if (opcodePass == 1) {
-      beginop(OP_rshift);
-    }
-  }
-
-  public void OP_urshift() {
-    if (opcodePass == 1) {
-      beginop(OP_urshift);
-    }
-  }
-
-  public void OP_bitand() {
-    if (opcodePass == 1) {
-      beginop(OP_bitand);
-    }
-  }
-
-  public void OP_bitor() {
-    if (opcodePass == 1) {
-      beginop(OP_bitor);
-    }
-  }
-
-  public void OP_bitxor() {
-    if (opcodePass == 1) {
-      beginop(OP_bitxor);
-    }
-  }
-
-  public void OP_equals() {
-    if (opcodePass == 1) {
-      beginop(OP_equals);
-    }
-  }
-
-  public void OP_strictequals() {
-    if (opcodePass == 1) {
-      beginop(OP_strictequals);
     }
   }
 
@@ -1636,30 +1426,6 @@ public class Encoder {
     }
   }
 
-  public void OP_lessthan() {
-    if (opcodePass == 1) {
-      beginop(OP_lessthan);
-    }
-  }
-
-  public void OP_lessequals() {
-    if (opcodePass == 1) {
-      beginop(OP_lessequals);
-    }
-  }
-
-  public void OP_greaterthan() {
-    if (opcodePass == 1) {
-      beginop(OP_greaterthan);
-    }
-  }
-
-  public void OP_greaterequals() {
-    if (opcodePass == 1) {
-      beginop(OP_greaterequals);
-    }
-  }
-
   public void OP_newobject(int size) {
     if (opcodePass == 1) {
       if (opat(1) == OP_coerce_a && size >= 1) {
@@ -1745,24 +1511,6 @@ public class Encoder {
     if (opcodePass == 1) {
       beginop(OP_getlex);
       opcodes.writeU32(history.getIndex(IndexHistory.MULTINAME, index));
-    }
-  }
-
-  public void OP_nextname() {
-    if (opcodePass == 1) {
-      beginop(OP_nextname);
-    }
-  }
-
-  public void OP_nextvalue() {
-    if (opcodePass == 1) {
-      beginop(OP_nextvalue);
-    }
-  }
-
-  public void OP_hasnext() {
-    if (opcodePass == 1) {
-      beginop(OP_hasnext);
     }
   }
 
@@ -1941,12 +1689,6 @@ public class Encoder {
     }
   }
 
-  public void OP_astypelate() {
-    if (opcodePass == 1) {
-      beginop(OP_astypelate);
-    }
-  }
-
   public void OP_coerce(int index) {
     if (opcodePass == 1) {
       if (opat(1) == OP_coerce && readIntAt(1) == history.getIndex(IndexHistory.MULTINAME, index)) {
@@ -1956,18 +1698,6 @@ public class Encoder {
 
       beginop(OP_coerce);
       opcodes.writeU32(history.getIndex(IndexHistory.MULTINAME, index));
-    }
-  }
-
-  public void OP_coerce_b() {
-    if (opcodePass == 1) {
-      beginop(OP_coerce_b);
-    }
-  }
-
-  public void OP_coerce_o() {
-    if (opcodePass == 1) {
-      beginop(OP_coerce_o);
     }
   }
 
@@ -2076,7 +1806,9 @@ public class Encoder {
     if (opcodePass == 1) {
       if (opat(1) == OP_pushbyte && readByteAt(1) == n ||
           opat(1) == OP_dup && opat(2) == OP_pushbyte && readByteAt(2) == n) {
-        OP_dup();
+        if (opcodePass == 1) {
+          beginop(OP_dup);
+        }
         return;
       }
       beginop(OP_pushbyte);
@@ -2088,18 +1820,6 @@ public class Encoder {
     if (opcodePass == 1) {
       beginop(OP_getscopeobject);
       opcodes.writeU8(index);
-    }
-  }
-
-  public void OP_pushscope() {
-    if (opcodePass == 1) {
-      beginop(OP_pushscope);
-    }
-  }
-
-  public void OP_popscope() {
-    if (opcodePass == 1) {
-      beginop(OP_popscope);
     }
   }
 
@@ -2128,40 +1848,10 @@ public class Encoder {
     }
   }
 
-  public void OP_convert_u() {
-    if (opcodePass == 1) {
-      beginop(OP_convert_u);
-    }
-  }
-
-  public void OP_throw() {
-    if (opcodePass == 1) {
-      beginop(OP_throw);
-    }
-  }
-
-  public void OP_instanceof() {
-    if (opcodePass == 1) {
-      beginop(OP_instanceof);
-    }
-  }
-
-  public void OP_in() {
-    if (opcodePass == 1) {
-      beginop(OP_in);
-    }
-  }
-
   public void OP_dxns(int index) {
     if (opcodePass == 1) {
       beginop(OP_dxns);
       opcodes.writeU32(history.getIndex(IndexHistory.STRING, index));
-    }
-  }
-
-  public void OP_dxnslate() {
-    if (opcodePass == 1) {
-      beginop(OP_dxnslate);
     }
   }
 
@@ -2209,64 +1899,10 @@ public class Encoder {
     }
   }
 
-  public void OP_pushwith() {
-    if (opcodePass == 1) {
-      beginop(OP_pushwith);
-    }
-  }
-
-  public void OP_newactivation() {
-    if (opcodePass == 1) {
-      beginop(OP_newactivation);
-    }
-  }
-
   public void OP_newcatch(int index) {
     if (opcodePass == 1) {
       beginop(OP_newcatch);
       opcodes.writeU32(index);
-    }
-  }
-
-  public void OP_deldescendants() {
-    if (opcodePass == 1) {
-      beginop(OP_deldescendants);
-    }
-  }
-
-  public void OP_getglobalscope() {
-    if (opcodePass == 1) {
-      beginop(OP_getglobalscope);
-    }
-  }
-
-  public void OP_getlocal0() {
-    if (opcodePass == 1) {
-      beginop(OP_getlocal0);
-    }
-  }
-
-  public void OP_getlocal1() {
-    if (opcodePass == 1) {
-      beginop(OP_getlocal1);
-    }
-  }
-
-  public void OP_getlocal2() {
-    if (opcodePass == 1) {
-      beginop(OP_getlocal2);
-    }
-  }
-
-  public void OP_getlocal3() {
-    if (opcodePass == 1) {
-      beginop(OP_getlocal3);
-    }
-  }
-
-  public void OP_setlocal0() {
-    if (opcodePass == 1) {
-      beginop(OP_setlocal0);
     }
   }
 
@@ -2344,84 +1980,6 @@ public class Encoder {
       beginop(OP_callpropvoid);
       opcodes.writeU32(history.getIndex(IndexHistory.MULTINAME, index));
       opcodes.writeU32(argc);
-    }
-  }
-
-  public void OP_li8() {
-    if (opcodePass == 1) {
-      beginop(OP_li8);
-    }
-  }
-
-  public void OP_li16() {
-    if (opcodePass == 1) {
-      beginop(OP_li16);
-    }
-  }
-
-  public void OP_li32() {
-    if (opcodePass == 1) {
-      beginop(OP_li32);
-    }
-  }
-
-  public void OP_lf32() {
-    if (opcodePass == 1) {
-      beginop(OP_lf32);
-    }
-  }
-
-  public void OP_lf64() {
-    if (opcodePass == 1) {
-      beginop(OP_lf64);
-    }
-  }
-
-  public void OP_si8() {
-    if (opcodePass == 1) {
-      beginop(OP_si8);
-    }
-  }
-
-  public void OP_si16() {
-    if (opcodePass == 1) {
-      beginop(OP_si16);
-    }
-  }
-
-  public void OP_si32() {
-    if (opcodePass == 1) {
-      beginop(OP_si32);
-    }
-  }
-
-  public void OP_sf32() {
-    if (opcodePass == 1) {
-      beginop(OP_sf32);
-    }
-  }
-
-  public void OP_sf64() {
-    if (opcodePass == 1) {
-      beginop(OP_sf64);
-    }
-  }
-
-  public void OP_sxi1() {
-    if (opcodePass == 1) {
-      beginop(OP_sxi1);
-    }
-  }
-
-  public void OP_sxi8() {
-    if (opcodePass == 1) {
-      beginop(OP_sxi8);
-    }
-  }
-
-  public void OP_sxi16() {
-    if (opcodePass == 1) {
-      beginop(OP_sxi16);
     }
   }
 

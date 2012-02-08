@@ -35,7 +35,7 @@ public abstract class AbcModifierBase implements AbcModifier {
   }
 
   @Override
-  public int methodTraitDelta() {
+  public int instanceMethodTraitDelta() {
     return 0;
   }
 

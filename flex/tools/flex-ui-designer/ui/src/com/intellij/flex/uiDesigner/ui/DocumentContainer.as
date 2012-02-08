@@ -36,25 +36,31 @@ public class DocumentContainer extends ControlView implements DataContext {
   private var canvasWidth:int = MIN_CANVAS_WIDTH;
   private var canvasHeight:int = MIN_CANVAS_HEIGHT;
 
+  private var sizeByDocumentInvalid:Boolean = true;
+
   public function DocumentContainer(documentSystemManager:DocumentDisplayManager) {
     this.documentDisplayManager = documentSystemManager;
   }
 
   override public function getMinimumWidth(hHint:int = -1):int {
+    measureByDocument();
     //return getPreferredWidth();
     return CANVAS_INSET;
   }
 
   override public function getMinimumHeight(wHint:int = -1):int {
+    measureByDocument();
     //return getPreferredHeight();
     return CANVAS_INSET;
   }
 
   override public function getPreferredWidth(hHint:int = -1):int {
+    measureByDocument();
     return canvasWidth + CANVAS_INSET;
   }
 
   override public function getPreferredHeight(wHint:int = -1):int {
+    measureByDocument();
     return canvasHeight + CANVAS_INSET;
   }
 
@@ -69,6 +75,11 @@ public class DocumentContainer extends ControlView implements DataContext {
 
     AREA_LOCATIONS[AreaLocations.BODY].x = x + CANVAS_INSET;
     AREA_LOCATIONS[AreaLocations.BODY].y = y + CANVAS_INSET;
+  }
+
+  public function documentUpdated():void {
+    sizeByDocumentInvalid = true;
+    invalidate(true);
   }
 
   override public function addToSuperview(displayObjectContainer:DisplayObjectContainer, laf:LookAndFeel, superview:ContentView = null):void {
@@ -98,6 +109,14 @@ public class DocumentContainer extends ControlView implements DataContext {
     s.y = CANVAS_INSET;
     addChild(s);
     documentDisplayManager.added();
+  }
+
+  private function measureByDocument():void {
+    if (!sizeByDocumentInvalid) {
+      return;
+    }
+
+    sizeByDocumentInvalid = false;
 
     if (documentDisplayManager.explicitDocumentWidth != -1) {
       canvasWidth = documentDisplayManager.explicitDocumentWidth;
@@ -105,7 +124,7 @@ public class DocumentContainer extends ControlView implements DataContext {
     else {
       canvasWidth = Math.max(MIN_CANVAS_WIDTH, documentDisplayManager.minDocumentWidth);
     }
-    
+
     if (documentDisplayManager.explicitDocumentHeight != -1) {
       canvasHeight = documentDisplayManager.explicitDocumentHeight;
     }

@@ -16,6 +16,9 @@
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../flex-injection/src">
+      <sourceFolder url="file://$MODULE_DIR$/../../../flex-injection/src" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../../impl">
       <sourceFolder url="file://$MODULE_DIR$/../../../impl/src" isTestSource="false" />
     </content>

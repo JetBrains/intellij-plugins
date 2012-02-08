@@ -8,9 +8,7 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.application.*;
 import com.intellij.openapi.components.ServiceDescriptor;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.impl.ServiceManagerImpl;
@@ -24,9 +22,12 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.messages.MessageBusConnection;
@@ -108,12 +109,29 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
   private static boolean checkFlexSdkVersion(final Sdk sdk) {
     String version = sdk.getVersionString();
-    //if (version == null) {
-    //  if (sdk instanceof )
-    //  FlexSdkUtils.doReadFlexSdkVersion()
-    //  return false;
-    //}
+    if (StringUtil.isEmpty(version)) {
+      VirtualFile sdkHomeDirectory = sdk.getHomeDirectory();
+      if (sdkHomeDirectory == null) {
+        return false;
+      }
 
+      version = FlexSdkUtils.doReadFlexSdkVersion(sdkHomeDirectory);
+      if (StringUtil.isEmpty(version)) {
+        return false;
+      }
+
+      final AccessToken token = WriteAction.start();
+      try {
+        SdkModificator modificator = sdk.getSdkModificator();
+        modificator.setVersionString(version);
+        modificator.commitChanges();
+      }
+      finally {
+        token.finish();
+      }
+    }
+
+    assert version != null;
     if (version.length() < 5 || version.charAt(0) < '4') {
       return false;
     }
