@@ -3,7 +3,6 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
 import com.intellij.lang.javascript.JSTestUtils;
-import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
@@ -16,7 +15,6 @@ import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
@@ -123,11 +121,6 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
 
   protected String generateSdkName(String sdkVersion) {
     return "test-" + sdkVersion;
-  }
-
-  @Override
-  protected ModuleType getModuleType() {
-    return FlexModuleType.getInstance();
   }
   
   protected void modifySdk(Sdk sdk, SdkModificator sdkModificator) {

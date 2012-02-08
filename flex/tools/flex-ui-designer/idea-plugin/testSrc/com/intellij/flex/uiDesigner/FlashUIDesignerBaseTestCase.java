@@ -1,8 +1,10 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -145,5 +147,10 @@ public abstract class FlashUIDesignerBaseTestCase extends ModuleTestCase {
     }
 
     return toFiles;
+  }
+
+  @Override
+  protected ModuleType getModuleType() {
+    return FlexModuleType.getInstance();
   }
 }

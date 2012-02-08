@@ -27,7 +27,8 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
   static final String[] OVERLOADED = new String[]{
     "mx.styles:StyleProtoChain",
     "spark.components.supportClasses:SkinnableComponent",
-    "mx.effects:Effect"
+    "mx.effects:Effect",
+    "spark.modules:ModuleLoader"
   };
 
   static final char OVERLOADED_AND_BACKED_CLASS_MARK = 'F';

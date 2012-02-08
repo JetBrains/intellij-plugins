@@ -8,8 +8,6 @@ import gnu.trove.THashMap;
 import java.util.Map;
 
 public class ResolveExternalInlineStyleSourceActionTest extends FlashUIDesignerBaseTestCase {
-  private static final String BASE_PATH = "/resolveExternalInlineStyle";
-
   protected Runnable myAfterCommitRunnable = null;
 
   @Override
@@ -17,7 +15,7 @@ public class ResolveExternalInlineStyleSourceActionTest extends FlashUIDesignerB
     super.setUp();
     myAfterCommitRunnable = null;
 
-    configureByFile(BASE_PATH + "/innerComponentInDeclarations.mxml");
+    configureByFile("resolveExternalInlineStyle/innerComponentInDeclarations.mxml");
   }
 
   @JSTestOptions({JSTestOption.WithGumboSdk, JSTestOption.WithFlexFacet})

@@ -3,10 +3,14 @@ import org.hamcrest.assertThat;
 import org.hamcrest.object.instanceOf;
 import org.hamcrest.object.strictlyEqualTo;
 
-[Test(dir="mxml/mx")]
+[Test(dir="mx")]
 public class MxTest extends BaseTestCase {
   public function SparkComponentsDependOnMx():void {
     assertThat(app, {document: app});
+  }
+
+  // IDEA-74817
+  public function ModuleLoader():void {
   }
 
   public function MxComponents():void {
