@@ -80,6 +80,10 @@ class PanelBorder extends AbstractBorder {
   }
 
   override public function draw(g:Graphics, w:Number = NaN, h:Number = NaN, x:Number = 0, y:Number = 0, view:View = null):void {
+    g.beginFill(0xffffff);
+    g.drawRect(x, y, w, h);
+    g.endFill();
+
     g.lineStyle(1, 0x999999);
     g.moveTo(x, y);
     g.lineTo(x, y + h);
