@@ -98,12 +98,13 @@ public class FlexFacetConfigurationImpl extends FlexFacetConfiguration {
     DefaultJDOMExternalizer.readExternal(tempConfig, element);
     myFlexBuildConfiguration.loadState(tempConfig);
 
-    readNamespaceAndManifestInfoList(element);
-    readConditionalCompilerDefinitionList(element);
-    readCssFilesList(element);
+    readNamespaceAndManifestInfoList(element, myFlexBuildConfiguration);
+    readConditionalCompilerDefinitionList(element, myFlexBuildConfiguration);
+    readCssFilesList(element, myFlexBuildConfiguration);
   }
 
-  private void readNamespaceAndManifestInfoList(final Element element) throws InvalidDataException {
+  public static void readNamespaceAndManifestInfoList(final Element element,
+                                                      final FlexBuildConfiguration oldConfig) throws InvalidDataException {
     final List<NamespaceAndManifestFileInfo> namespaceAndManifestFileInfoList = new ArrayList<NamespaceAndManifestFileInfo>();
 
     final Element namespaceAndManifestFileInfoListElement = element.getChild(NAMESPACE_AND_MANIFEST_FILE_INFO_LIST_ELEMENT_NAME);
@@ -115,10 +116,11 @@ public class FlexFacetConfigurationImpl extends FlexFacetConfiguration {
         namespaceAndManifestFileInfoList.add(namespaceAndManifestFileInfo);
       }
     }
-    myFlexBuildConfiguration.NAMESPACE_AND_MANIFEST_FILE_INFO_LIST = namespaceAndManifestFileInfoList;
+    oldConfig.NAMESPACE_AND_MANIFEST_FILE_INFO_LIST = namespaceAndManifestFileInfoList;
   }
 
-  private void readConditionalCompilerDefinitionList(final Element element) throws InvalidDataException {
+  public static void readConditionalCompilerDefinitionList(final Element element,
+                                                           final FlexBuildConfiguration oldConfig) throws InvalidDataException {
     final List<ConditionalCompilationDefinition> conditionalCompilationDefinitionList =
       new ArrayList<ConditionalCompilationDefinition>();
 
@@ -131,10 +133,11 @@ public class FlexFacetConfigurationImpl extends FlexFacetConfiguration {
         conditionalCompilationDefinitionList.add(conditionalCompilationDefinition);
       }
     }
-    myFlexBuildConfiguration.CONDITIONAL_COMPILATION_DEFINITION_LIST = conditionalCompilationDefinitionList;
+    oldConfig.CONDITIONAL_COMPILATION_DEFINITION_LIST = conditionalCompilationDefinitionList;
   }
 
-  private void readCssFilesList(final Element element) throws InvalidDataException {
+  public static void readCssFilesList(final Element element,
+                                      final FlexBuildConfiguration oldConfig) throws InvalidDataException {
     final List<String> cssFilesList = new ArrayList<String>();
 
     final Element cssFilesListElement = element.getChild(CSS_FILES_LIST_ELEMENT_NAME);
@@ -144,7 +147,7 @@ public class FlexFacetConfigurationImpl extends FlexFacetConfiguration {
         cssFilesList.add(conditionalCompilerDefinitionElement.getValue());
       }
     }
-    myFlexBuildConfiguration.CSS_FILES_LIST = cssFilesList;
+    oldConfig.CSS_FILES_LIST = cssFilesList;
   }
 
   public void writeExternal(final Element element) throws WriteExternalException {

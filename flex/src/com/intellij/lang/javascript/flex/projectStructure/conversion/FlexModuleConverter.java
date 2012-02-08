@@ -23,6 +23,7 @@ import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.roots.impl.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
+import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.util.ArrayUtil;
@@ -111,6 +112,14 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
         Element oldConfigurationElement = facet.getChild(FacetManagerImpl.CONFIGURATION_ELEMENT);
         if (oldConfigurationElement != null) {
           FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(oldConfigurationElement, FlexBuildConfiguration.class);
+
+          try {
+            FlexFacetConfigurationImpl.readNamespaceAndManifestInfoList(oldConfigurationElement, oldConfiguration);
+            FlexFacetConfigurationImpl.readConditionalCompilerDefinitionList(oldConfigurationElement, oldConfiguration);
+            FlexFacetConfigurationImpl.readCssFilesList(oldConfigurationElement, oldConfiguration);
+          }
+          catch (InvalidDataException ignore) {/* unlucky */}
+
           final String facetSdkName = oldConfigurationElement.getAttributeValue(FlexFacetConfigurationImpl.FLEX_SDK_ATTR_NAME);
           processConfiguration(oldConfiguration, newConfiguration, moduleSettings, true, facetSdkName, usedSdksNames, orderEntriesToAdd,
                                usedModuleLibrariesEntries);
