@@ -112,6 +112,10 @@ public class CompilerOptionInfo {
   public static final CompilerOptionInfo STATIC_RSLS_INFO =
     new CompilerOptionInfo("static-link-runtime-shared-libraries", "fake", OptionType.Boolean, null, null, false, null, true, true, true,
                            "");
+  public static final CompilerOptionInfo INCLUDE_NAMESPACES_INFO =
+    new CompilerOptionInfo("include-namespaces", "fake", OptionType.List, null,
+                           new ListElement[]{new ListElement("uri")},
+                           false, null, true, true, true, "");
 
   public final String ID;
   public final String DISPLAY_NAME;

@@ -68,7 +68,7 @@ public class BCUtils {
   }
 
   /**
-   * If <code>LinkageType.Default</code> is returned then use {@link #getDefaultFrameworkLinkage(BuildConfigurationNature)} to get real value.
+   * If <code>LinkageType.Default</code> is returned then use {@link #getDefaultFrameworkLinkage(String, BuildConfigurationNature)} to get real value.
    *
    * @return <code>null</code> if entry should not be included at all
    */

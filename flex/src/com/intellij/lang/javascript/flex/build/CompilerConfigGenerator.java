@@ -415,6 +415,24 @@ public class CompilerConfigGenerator {
     for (final Map.Entry<String, String> entry : options.entrySet()) {
       addOption(rootElement, CompilerOptionInfo.getOptionInfo(entry.getKey()), entry.getValue());
     }
+
+    final String namespacesRaw = options.get("compiler.namespaces.namespace");
+    if (namespacesRaw != null && myBC.getOutputType() == OutputType.Library) {
+      final String namespaces = FlexUtils.replacePathMacros(namespacesRaw, myModule,
+                                                            myFlexmojos ? "" : mySdk.getHomePath());
+      final StringBuilder buf = new StringBuilder();
+      for (final String listEntry : StringUtil.split(namespaces, String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR))) {
+        final int tabIndex = listEntry.indexOf(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);
+        assert tabIndex != -1 : namespaces;
+        final String namespace = listEntry.substring(0, tabIndex);
+        if (buf.length() > 0) buf.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+        buf.append(namespace);
+      }
+
+      if (buf.length() > 0) {
+        addOption(rootElement, CompilerOptionInfo.INCLUDE_NAMESPACES_INFO, buf.toString());
+      }
+    }
   }
 
   private void addInputOutputPaths(final Element rootElement) throws IOException {

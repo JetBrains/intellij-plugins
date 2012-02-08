@@ -273,7 +273,7 @@ public class CodeContext {
 
     FlexUtils.processCompilerOption(module, bc, "compiler.namespaces.namespace", new Processor<Pair<String, String>>() {
       public boolean process(final Pair<String, String> namespaceAndManifest) {
-        // todo check if included in SWC when AS-240 is fixed
+        // namespaces configured in IDEA are always included in SWC
         final VirtualFile manifestFile = VfsUtil.findRelativeFile(namespaceAndManifest.second, configFile);
         if (manifestFile != null && !manifestFile.isDirectory()) {
           processManifestFile(module, contextsOfModule, manifestFile, namespaceAndManifest.first, configFile);
