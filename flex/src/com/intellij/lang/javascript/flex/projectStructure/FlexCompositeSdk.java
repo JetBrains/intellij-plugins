@@ -174,22 +174,27 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
   }
 
   private void forAllSdks(Processor<Sdk> processor) {
-    if (mySdks == null) {
-      List<Sdk> sdks = ContainerUtil.findAll(ProjectJdkTable.getInstance().getAllJdks(), new Condition<Sdk>() {
-        @Override
-        public boolean value(final Sdk sdk) {
-          return ArrayUtil.contains(sdk.getName(), myNames);
-        }
-      });
-      mySdks = sdks.toArray(new Sdk[sdks.size()]);
-    }
-
-    Sdk[] sdks = mySdks;
+    Sdk[] sdks = getSdks();
     for (Sdk sdk : sdks) {
       if (!processor.process(sdk)) {
         return;
       }
     }
+  }
+
+  @NotNull
+  private Sdk[] getSdks() {
+    if (mySdks != null) {
+      return mySdks;
+    }
+
+    List<Sdk> sdks = ContainerUtil.findAll(ProjectJdkTable.getInstance().getAllJdks(), new Condition<Sdk>() {
+      @Override
+      public boolean value(final Sdk sdk) {
+        return ArrayUtil.contains(sdk.getName(), myNames);
+      }
+    });
+    return mySdks = sdks.toArray(new Sdk[sdks.size()]);
   }
 
   private void resetSdks() {
@@ -214,22 +219,18 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
 
   @Override
   public VirtualFile[] getFiles(final OrderRootType rootType, final VirtualFile hint) {
-    final Ref<VirtualFile[]> result = new Ref<VirtualFile[]>();
-    forAllSdks(new Processor<Sdk>() {
-      @Override
-      public boolean process(final Sdk sdk) {
-        for (OrderRootType t : RELEVANT_ROOT_TYPES) {
-          VirtualFile[] files = sdk.getRootProvider().getFiles(t);
+    Sdk[] sdks = getSdks();
+    for (Sdk sdk : sdks) {
+      for (OrderRootType t : RELEVANT_ROOT_TYPES) {
+        VirtualFile[] files = sdk.getRootProvider().getFiles(t);
 
-          if (isAncestorOf(files, hint)) {
-            result.set(t == rootType ? files : sdk.getRootProvider().getFiles(rootType));
-            return false;
-          }
+        if (isAncestorOf(files, hint)) {
+          return t == rootType ? files : sdk.getRootProvider().getFiles(rootType);
         }
-        return true;
       }
-    });
-    return result.isNull() ? VirtualFile.EMPTY_ARRAY : result.get();
+    }
+
+    return VirtualFile.EMPTY_ARRAY;
   }
 
   private static boolean isAncestorOf(VirtualFile[] ancestors, VirtualFile file) {
@@ -241,6 +242,22 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
     }
     return false;
   }
+
+  public String getName(final VirtualFile hint) {
+    Sdk[] sdks = getSdks();
+    if (sdks.length >= 2) {
+      for (Sdk sdk : sdks) {
+        for (OrderRootType t : RELEVANT_ROOT_TYPES) {
+          if (isAncestorOf(sdk.getRootProvider().getFiles(t), hint)) {
+            return sdk.getName();
+          }
+        }
+      }
+    }
+
+    return getName();
+  }
+
 
   public static final String TYPE_ID = "__CompositeFlexSdk__";
 

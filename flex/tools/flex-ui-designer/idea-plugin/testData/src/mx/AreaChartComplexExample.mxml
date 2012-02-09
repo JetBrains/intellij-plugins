@@ -21,7 +21,7 @@
     <!-- Define custom colors for use as fills in the AreaChart control. -->
     <mx:SolidColor id="sc1" color="blue" alpha=".3"/>
     <mx:SolidColor id="sc2" color="red" alpha=".3"/>
-    <mx:SolidColor id="sc3" color="green" alpha=".3"/>
+    <mx:SolidColor id="sc3" color="0x597980" alpha=".3"/>
 
     <!-- Define custom Strokes. -->
     <mx:SolidColorStroke id="s1" color="blue" weight="2"/>
