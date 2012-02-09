@@ -474,12 +474,19 @@ public class MxmlWriter {
                                            final boolean isListItem) {
     final boolean allowIncludeInExludeFrom = hasStates && isListItem && parentContext != null;
     final Trinity<Integer,String,Condition<AnnotationBackedDescriptor>> effectiveClassInfo;
+    final String effectiveClassName;
     try {
       if (propertyProcessor.writeTagIfFx(tag, descriptor.getQualifiedName(), out, parentContext, allowIncludeInExludeFrom)) {
         return true;
       }
 
       effectiveClassInfo = MxmlUtil.computeEffectiveClass(tag, descriptor.getDeclaration(), projectComponentReferenceCounter, true);
+      if ("mx.core.UIComponent".equals(effectiveClassInfo.second)) {
+        effectiveClassName = MxmlUtil.UNKNOWN_COMPONENT_CLASS_NAME;
+      }
+      else {
+        effectiveClassName = effectiveClassInfo.second;
+      }
     }
     catch (InvalidPropertyException e) {
       problemsHolder.add(e);
@@ -492,7 +499,7 @@ public class MxmlWriter {
         out.write(Amf3Types.OBJECT);
       }
 
-      writer.classOrPropertyName(effectiveClassInfo.second == null ? descriptor.getQualifiedName() : effectiveClassInfo.second);
+      writer.classOrPropertyName(effectiveClassName == null ? descriptor.getQualifiedName() : effectiveClassName);
     }
     else {
       if (!isListItem) {

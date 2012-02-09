@@ -1,4 +1,4 @@
-<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark" xmlns:local="*">
+<VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark" xmlns:local="*">
   <local:AuxActionScriptProjectComponent emphasized="true" label="text" customProperty="value" customField="value"/>
   <local:AuxActionScriptProjectComponentBackedUIComponent name="AuxActionScriptProjectComponentBackedUIComponent" width="200" height="300"/>
-</Group>
+</VGroup>

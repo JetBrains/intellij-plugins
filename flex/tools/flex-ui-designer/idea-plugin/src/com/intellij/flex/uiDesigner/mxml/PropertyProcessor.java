@@ -33,9 +33,6 @@ import static com.intellij.flex.uiDesigner.mxml.MxmlWriter.LOG;
 import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PropertyKind.*;
 
 class PropertyProcessor implements ValueWriter {
-  private static final String UNKNOWN_ITEM_RENDERER_CLASS_NAME = "com.intellij.flex.uiDesigner.flex.UnknownItemRenderer";
-  private static final String UNKNOWN_COMPONENT_CLASS_NAME = "com.intellij.flex.uiDesigner.flex.UnknownComponent";
-
   enum PropertyKind {
     ARRAY, VECTOR, COMPLEX, COMPLEX_STYLE, PRIMITIVE, PRIMITIVE_STYLE, IGNORE;
 
@@ -128,7 +125,7 @@ class PropertyProcessor implements ValueWriter {
                                       BaseWriter writer,
                                       boolean isStyle,
                                       Context parentContext) throws InvalidPropertyException {
-              writeNonProjectClassFactory(UNKNOWN_ITEM_RENDERER_CLASS_NAME);
+              writeNonProjectClassFactory(MxmlUtil.UNKNOWN_ITEM_RENDERER_CLASS_NAME);
               return PRIMITIVE;
             }
           };
@@ -797,10 +794,10 @@ class PropertyProcessor implements ValueWriter {
           if (psiMetaData != null &&
               psiMetaData.getName().equals("itemRenderer") &&
               MxmlUtil.isPropertyOfSparkDataGroup((AnnotationBackedDescriptor)psiMetaData)) {
-            className = UNKNOWN_ITEM_RENDERER_CLASS_NAME;
+            className = MxmlUtil.UNKNOWN_ITEM_RENDERER_CLASS_NAME;
           }
           else {
-            className = UNKNOWN_COMPONENT_CLASS_NAME;
+            className = MxmlUtil.UNKNOWN_COMPONENT_CLASS_NAME;
           }
         }
         else {

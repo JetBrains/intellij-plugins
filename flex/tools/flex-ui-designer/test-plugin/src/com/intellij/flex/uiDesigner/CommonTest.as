@@ -157,7 +157,7 @@ public class CommonTest extends BaseTestCase {
   }
 
   public function ProjectActionScriptComponentAsChild():void {
-    assertThat(app, [allOf(instanceOf(getClass("spark.components.Button")), {emphasized: true, label: "text"}), instanceOf(getClass("mx.core.UIComponent"))]);
+    assertThat(app, [allOf(instanceOf(getClass("spark.components.Button")), {emphasized: true, label: "text"}), instanceOf(getClass("com.intellij.flex.uiDesigner.flex.UnknownComponent"))]);
   }
 
   public function ProjectMxmlComponentAsChild():void {

@@ -25,7 +25,8 @@ public final class MxmlUtil {
   private static final Pattern FLEX_SDK_ABSTRACT_CLASSES = Pattern.compile("^(mx|spark)\\.(.*)?Base$");
   private static final Trinity<Integer, String, Condition<AnnotationBackedDescriptor>> NON_PROJECT_CLASS = new Trinity<Integer, String, Condition<AnnotationBackedDescriptor>>(-1, null, null);
 
-
+  static final String UNKNOWN_COMPONENT_CLASS_NAME = "com.intellij.flex.uiDesigner.flex.UnknownComponent";
+  static final String UNKNOWN_ITEM_RENDERER_CLASS_NAME = "com.intellij.flex.uiDesigner.flex.UnknownItemRenderer";
 
   // about id http://opensource.adobe.com/wiki/display/flexsdk/id+property+in+MXML+2009
   static boolean isIdLanguageIdAttribute(XmlAttribute attribute) {
