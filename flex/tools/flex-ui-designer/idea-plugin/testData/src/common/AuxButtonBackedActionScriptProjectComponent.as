@@ -1,10 +1,10 @@
 package {
 import spark.components.Button;
 
-public class AuxActionScriptProjectComponent extends Button {
+public class AuxButtonBackedActionScriptProjectComponent extends Button {
   public var customField:String;
 
-  public function AuxActionScriptProjectComponent() {
+  public function AuxButtonBackedActionScriptProjectComponent() {
     label = "I am amazing button";
   }
 

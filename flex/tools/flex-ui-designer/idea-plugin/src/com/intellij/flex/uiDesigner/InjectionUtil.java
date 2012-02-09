@@ -3,7 +3,6 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSFileReference;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.properties.ResourceBundleReference;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -38,21 +37,6 @@ public final class InjectionUtil {
     }
 
     return false;
-  }
-
-  public static int getProjectComponentFactoryId(String qualifiedClassName, PsiElement element, ProjectDocumentReferenceCounter referenceCounter)
-      throws InvalidPropertyException {
-    // MxmlBackedElementDescriptor returns declaration as MxmlFile, but ClassBackedElementDescriptor returns as JSClass
-    element = JSResolveUtil.unwrapProxy(element);
-    PsiFile psiFile = element.getContainingFile();
-    VirtualFile virtualFile = psiFile.getVirtualFile();
-    assert virtualFile != null;
-    if (checkSupportedProjectComponentFile(virtualFile, psiFile, qualifiedClassName)) {
-      return DocumentFactoryManager.getInstance().getId(virtualFile, (XmlFile)psiFile, referenceCounter);
-    }
-    else {
-      return -1;
-    }
   }
 
   public static int getProjectComponentFactoryId(JSClass jsClass, ProjectDocumentReferenceCounter referenceCounter)

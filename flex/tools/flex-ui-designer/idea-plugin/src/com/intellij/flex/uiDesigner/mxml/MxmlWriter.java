@@ -61,7 +61,7 @@ public class MxmlWriter {
 
   final ProjectDocumentReferenceCounter projectComponentReferenceCounter = new ProjectDocumentReferenceCounter();
 
-  Document document;
+  private Document document;
 
   public MxmlWriter(PrimitiveAmfOutputStream out, ProblemsHolder problemsHolder, AssetCounter assetCounter) {
     this.out = out;
@@ -83,32 +83,30 @@ public class MxmlWriter {
 
       document = FileDocumentManager.getInstance().getDocument(virtualFile);
 
-      XmlTag rootTag = psiFile.getRootTag();
-      assert rootTag != null;
-      ClassBackedElementDescriptor rootTagDescriptor = (ClassBackedElementDescriptor)rootTag.getDescriptor();
-      assert rootTagDescriptor != null;
+      XmlTag tag = psiFile.getRootTag();
+      assert tag != null;
+      ClassBackedElementDescriptor descriptor = (ClassBackedElementDescriptor)tag.getDescriptor();
+      assert descriptor != null;
 
-      final int projectComponentFactoryId;
+      final Trinity<Integer, String, Condition<AnnotationBackedDescriptor>> effectiveClassInfo;
       try {
-        projectComponentFactoryId = InjectionUtil.getProjectComponentFactoryId(rootTagDescriptor.getQualifiedName(),
-                                                                               rootTagDescriptor.getDeclaration(),
-                                                                               projectComponentReferenceCounter);
+        effectiveClassInfo = MxmlUtil.computeEffectiveClass(tag, descriptor.getDeclaration(), projectComponentReferenceCounter, true);
       }
       catch (InvalidPropertyException e) {
         problemsHolder.add(e);
         return null;
       }
 
-      if (projectComponentFactoryId == -1) {
+      if (effectiveClassInfo.first == -1) {
         out.write(Amf3Types.OBJECT);
-        writer.mxmlObjectHeader(rootTagDescriptor.getQualifiedName());
+        writer.mxmlObjectHeader(effectiveClassInfo.second == null ? descriptor.getQualifiedName() : effectiveClassInfo.second);
       }
       else {
-        writer.documentReference(projectComponentFactoryId);
+        writer.documentReference(effectiveClassInfo.first);
         out.allocateClearShort();
       }
 
-      processElements(rootTag, null, false, -1, out.size() - 2, true, null);
+      processElements(tag, null, false, -1, out.size() - 2, true, effectiveClassInfo.third);
 
       writer.endObject();
 
