@@ -20,19 +20,16 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.*;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.impl.schema.AnyXmlAttributeDescriptor;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.PropertyKey;
@@ -40,7 +37,6 @@ import org.jetbrains.annotations.PropertyKey;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PropertyKind;
 
@@ -63,7 +59,7 @@ public class MxmlWriter {
   final ValueProviderFactory valueProviderFactory = new ValueProviderFactory();
   private final List<RangeMarker> rangeMarkers = new ArrayList<RangeMarker>();
 
-  final ProjectDocumentReferenceCounter projectDocumentReferenceCounter = new ProjectDocumentReferenceCounter();
+  final ProjectDocumentReferenceCounter projectComponentReferenceCounter = new ProjectDocumentReferenceCounter();
 
   Document document;
 
@@ -96,7 +92,7 @@ public class MxmlWriter {
       try {
         projectComponentFactoryId = InjectionUtil.getProjectComponentFactoryId(rootTagDescriptor.getQualifiedName(),
                                                                                rootTagDescriptor.getDeclaration(),
-                                                                               projectDocumentReferenceCounter);
+                                                                               projectComponentReferenceCounter);
       }
       catch (InvalidPropertyException e) {
         problemsHolder.add(e);
@@ -125,8 +121,8 @@ public class MxmlWriter {
       }
 
       injectedASWriter.write();
-      writer.endMessage(projectDocumentReferenceCounter);
-      return new Pair<ProjectDocumentReferenceCounter, List<RangeMarker>>(projectDocumentReferenceCounter, rangeMarkers);
+      writer.endMessage(projectComponentReferenceCounter);
+      return new Pair<ProjectDocumentReferenceCounter, List<RangeMarker>>(projectComponentReferenceCounter, rangeMarkers);
     }
     finally {
       token.finish();
@@ -477,60 +473,26 @@ public class MxmlWriter {
   private boolean processClassBackedSubTag(final XmlTag tag, final ClassBackedElementDescriptor descriptor, @Nullable final Context parentContext,
                                            final boolean isListItem) {
     final boolean allowIncludeInExludeFrom = hasStates && isListItem && parentContext != null;
+    final Trinity<Integer,String,Condition<AnnotationBackedDescriptor>> effectiveClassInfo;
     try {
       if (propertyProcessor.writeTagIfFx(tag, descriptor.getQualifiedName(), out, parentContext, allowIncludeInExludeFrom)) {
         return true;
       }
+
+      effectiveClassInfo = MxmlUtil.computeEffectiveClass(tag, descriptor.getDeclaration(), projectComponentReferenceCounter, true);
     }
     catch (InvalidPropertyException e) {
       problemsHolder.add(e);
       return false;
     }
 
-    Condition<AnnotationBackedDescriptor> propertyFilter = null;
-    int projectComponentFactoryId = -1;
-    String effectiveComponentClassName = null;
-    PsiElement declaration = descriptor.getDeclaration();
-    assert declaration != null;
-    PsiFile psiFile = declaration.getContainingFile();
-    VirtualFile virtualFile = psiFile.getVirtualFile();
-    assert virtualFile != null;
-    ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex();
-    if (projectFileIndex.isInSourceContent(virtualFile)) {
-      if (psiFile instanceof XmlFile) {
-        projectComponentFactoryId = DocumentFactoryManager.getInstance().getId(virtualFile, (XmlFile)psiFile, projectDocumentReferenceCounter);
-      }
-      else {
-        final JSClass[] classes = ((JSClass)declaration).getSuperClasses();
-
-        final Set<PsiFile> filteredFiles = new THashSet<PsiFile>(classes.length);
-        filteredFiles.add(psiFile);
-
-        for (JSClass jsClass : classes) {
-          PsiFile jsClassContainingFile = jsClass.getContainingFile();
-          //noinspection ConstantConditions
-          if (!projectFileIndex.isInSourceContent(jsClassContainingFile.getVirtualFile())) {
-            effectiveComponentClassName = jsClass.getQualifiedName();
-            break;
-          }
-          else {
-            filteredFiles.add(jsClassContainingFile);
-          }
-        }
-
-        // well, it must be at least mx.core.UIComponent or spark.primitives.supportClasses.GraphicElement
-        assert effectiveComponentClassName != null;
-        propertyFilter = new CustomComponentPropertyFilter(filteredFiles);
-      }
-    }
-
     final int childDataPosition = out.size();
-    if (projectComponentFactoryId == -1) {
+    if (effectiveClassInfo.first == -1) {
       if (isListItem) {
         out.write(Amf3Types.OBJECT);
       }
 
-      writer.classOrPropertyName(effectiveComponentClassName == null ? descriptor.getQualifiedName() : effectiveComponentClassName);
+      writer.classOrPropertyName(effectiveClassInfo.second == null ? descriptor.getQualifiedName() : effectiveClassInfo.second);
     }
     else {
       if (!isListItem) {
@@ -538,27 +500,14 @@ public class MxmlWriter {
         writer.getBlockOut().setPosition(writer.getBlockOut().size() - 1);
       }
 
-      writer.documentReference(projectComponentFactoryId);
+      writer.documentReference(effectiveClassInfo.first);
     }
 
     return processElements(tag, parentContext, allowIncludeInExludeFrom, childDataPosition, out.allocateClearShort(),
                            JSResolveUtil.isAssignableType(FlexCommonTypeNames.IVISUAL_ELEMENT, descriptor.getQualifiedName(),
                                                           descriptor.getDeclaration()) ||
                            JSResolveUtil.isAssignableType(FlexCommonTypeNames.FLASH_DISPLAY_OBJECT, descriptor.getQualifiedName(),
-                                                          descriptor.getDeclaration()), propertyFilter);
-  }
-
-  private static class CustomComponentPropertyFilter implements Condition<AnnotationBackedDescriptor> {
-    private final Set<PsiFile> filteredFiles;
-
-    public CustomComponentPropertyFilter(Set<PsiFile> filteredFiles) {
-      this.filteredFiles = filteredFiles;
-    }
-
-    @Override
-    public boolean value(AnnotationBackedDescriptor descriptor) {
-      return !filteredFiles.contains(descriptor.getDeclaration().getContainingFile());
-    }
+                                                          descriptor.getDeclaration()), effectiveClassInfo.third);
   }
 
   boolean processMxmlVector(XmlTag tag, @Nullable Context parentContext, boolean allowIncludeInExludeFrom) {

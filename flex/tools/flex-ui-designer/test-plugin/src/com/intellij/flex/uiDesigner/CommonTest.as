@@ -221,5 +221,9 @@ public class CommonTest extends BaseTestCase {
   public function ItemRendererFunction():void {
     assertThat(app, [[instanceOf(getClass("com.intellij.flex.uiDesigner.flex.UnknownItemRenderer"))]]);
   }
+
+  public function UnknownItemRenderer():void {
+    assertThat(app, [[instanceOf(getClass("spark.skins.spark.DefaultItemRenderer")), instanceOf(getClass("com.intellij.flex.uiDesigner.flex.UnknownItemRenderer"))]]);
+  }
 }
 }

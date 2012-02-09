@@ -1,12 +1,9 @@
 package com.intellij.flex.uiDesigner.flex {
-import mx.core.UIComponent;
 import mx.events.FlexEvent;
 
 import spark.components.IItemRenderer;
 
-public class UnknownItemRenderer extends UIComponent implements IItemRenderer {
-  private const unknownComponentHelper:UnknownComponentHelper = new UnknownComponentHelper();
-
+public final class UnknownItemRenderer extends UnknownComponent implements IItemRenderer {
   private var _data:Object;
 
   [Bindable("dataChange")]
@@ -81,8 +78,9 @@ public class UnknownItemRenderer extends UIComponent implements IItemRenderer {
     measuredHeight = 22;
   }
 
-  override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void {
-    unknownComponentHelper.draw(unscaledWidth, unscaledHeight, this, "Unknown renderer #" + itemIndex);
+  override protected function createStatusText():String {
+    // todo unknown itemRenderer class name (if specified) or itemRendererFunction (if specified)
+    return "Unknown renderer #" + itemIndex;
   }
 }
 }

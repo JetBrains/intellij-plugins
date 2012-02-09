@@ -4,6 +4,7 @@ import com.google.common.base.CharMatcher;
 import com.intellij.flex.uiDesigner.InjectionUtil;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.psi.meta.PsiMetaData;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlTagChild;
@@ -62,6 +63,11 @@ class XmlTagValueProvider implements XmlElementValueProvider {
   @Override
   public XmlElement getElement() {
     return tag;
+  }
+
+  @Override
+  public PsiMetaData getPsiMetaData() {
+    return tag.getDescriptor();
   }
 
   private static CharSequence getDisplay(XmlTagChild[] children) {

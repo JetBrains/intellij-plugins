@@ -1,6 +1,8 @@
 package com.intellij.flex.uiDesigner.mxml;
 
+import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.psi.meta.PsiMetaData;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlText;
 import org.jetbrains.annotations.NotNull;
@@ -40,5 +42,10 @@ class XmlTextValueProvider implements XmlElementValueProvider {
   @Override
   public XmlElement getElement() {
     return xmlText;
+  }
+
+  @Override
+  public PsiMetaData getPsiMetaData() {
+    return null;
   }
 }

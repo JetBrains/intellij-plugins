@@ -19,8 +19,10 @@ import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.meta.PsiMetaData;
 import com.intellij.psi.xml.*;
 import com.intellij.util.StringBuilderSpinAllocator;
 import com.intellij.xml.XmlElementDescriptor;
@@ -31,6 +33,9 @@ import static com.intellij.flex.uiDesigner.mxml.MxmlWriter.LOG;
 import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PropertyKind.*;
 
 class PropertyProcessor implements ValueWriter {
+  private static final String UNKNOWN_ITEM_RENDERER_CLASS_NAME = "com.intellij.flex.uiDesigner.flex.UnknownItemRenderer";
+  private static final String UNKNOWN_COMPONENT_CLASS_NAME = "com.intellij.flex.uiDesigner.flex.UnknownComponent";
+
   enum PropertyKind {
     ARRAY, VECTOR, COMPLEX, COMPLEX_STYLE, PRIMITIVE, PRIMITIVE_STYLE, IGNORE;
 
@@ -112,9 +117,8 @@ class PropertyProcessor implements ValueWriter {
     }
     else if (type.equals(JSCommonTypeNames.FUNCTION_CLASS_NAME)) {
       if (name.equals("itemRendererFunction")) {
-        PsiElement parent = descriptor.getDeclaration().getParent();
         // AS-135
-        if (parent instanceof JSClass && ((JSClass)parent).getQualifiedName().equals("spark.components.DataGroup")) {
+        if (MxmlUtil.isPropertyOfSparkDataGroup(descriptor)) {
           name = "itemRenderer";
           return new ValueWriter() {
             @Override
@@ -124,7 +128,7 @@ class PropertyProcessor implements ValueWriter {
                                       BaseWriter writer,
                                       boolean isStyle,
                                       Context parentContext) throws InvalidPropertyException {
-              writeNonProjectClassFactory("com.intellij.flex.uiDesigner.flex.UnknownItemRenderer");
+              writeNonProjectClassFactory(UNKNOWN_ITEM_RENDERER_CLASS_NAME);
               return PRIMITIVE;
             }
           };
@@ -199,7 +203,7 @@ class PropertyProcessor implements ValueWriter {
   }
 
   private int getProjectComponentFactoryId(JSClass jsClass) throws InvalidPropertyException {
-    return InjectionUtil.getProjectComponentFactoryId(jsClass, mxmlWriter.projectDocumentReferenceCounter);
+    return InjectionUtil.getProjectComponentFactoryId(jsClass, mxmlWriter.projectComponentReferenceCounter);
   }
 
   boolean processFxModel(XmlTag tag) {
@@ -258,7 +262,7 @@ class PropertyProcessor implements ValueWriter {
 
   // tagLocalName is null, if parent is map item (i.e. not as property value, but as array item)
   private int writeFxModelTagIfContainsXmlText(XmlTag parent, @Nullable String tagLocalName,
-                                                   ModelObjectReferenceProvider objectReferenceProvider) {
+                                               ModelObjectReferenceProvider objectReferenceProvider) {
     for (XmlTagChild child : parent.getValue().getChildren()) {
       // ignore any subtags if XmlText presents, according to flex compiler behavior
       if (child instanceof XmlText && !MxmlUtil.containsOnlyWhitespace(child)) {
@@ -784,12 +788,30 @@ class PropertyProcessor implements ValueWriter {
       throw new InvalidPropertyException(valueProvider.getElement(), "error.unresolved.class", valueProvider.getTrimmed());
     }
 
-    final int projectComponentFactoryId = getProjectComponentFactoryId(jsClass);
-    if (projectComponentFactoryId == -1) {
+    Trinity<Integer, String, Condition<AnnotationBackedDescriptor>> effectiveClassInfo =
+      MxmlUtil.computeEffectiveClass(valueProvider.getElement(), jsClass, mxmlWriter.projectComponentReferenceCounter, false);
+    if (effectiveClassInfo.first == -1) {
+      if (effectiveClassInfo.second != null) {
+        if (effectiveClassInfo.second.equals("mx.core.UIComponent")) {
+          PsiMetaData psiMetaData = valueProvider.getPsiMetaData();
+          if (psiMetaData != null &&
+              psiMetaData.getName().equals("itemRenderer") &&
+              MxmlUtil.isPropertyOfSparkDataGroup((AnnotationBackedDescriptor)psiMetaData)) {
+            className = UNKNOWN_ITEM_RENDERER_CLASS_NAME;
+          }
+          else {
+            className = UNKNOWN_COMPONENT_CLASS_NAME;
+          }
+        }
+        else {
+          className = effectiveClassInfo.second;
+        }
+      }
+
       writeNonProjectUnreferencedClassFactory(className);
     }
     else {
-      writer.documentFactoryReference(projectComponentFactoryId);
+      writer.documentFactoryReference(effectiveClassInfo.first);
     }
   }
 

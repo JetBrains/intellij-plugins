@@ -1,0 +1,12 @@
+<VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+  <DataGroup itemRenderer="AuxDefaultItemRendererBackedProjectActionScriptItemRenderer">
+    <ArrayList>
+      <fx:Object firstName="Bill" lastName="Smith" companyID="11233"/>
+    </ArrayList>
+  </DataGroup>
+  <DataGroup itemRenderer="AuxUIComponentBackedProjectActionScriptItemRenderer">
+    <ArrayList>
+      <fx:Object firstName="Bill" lastName="Smith" companyID="11233"/>
+    </ArrayList>
+  </DataGroup>
+</VGroup>
