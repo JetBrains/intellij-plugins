@@ -135,8 +135,13 @@ public class MxmlWriter {
     }
   }
 
-  private boolean processElements(final XmlTag parent, final @Nullable Context parentContext, final boolean allowIncludeInExludeFrom,
-                                  final int dataPosition, final int referencePosition, boolean writeLocation, @Nullable Condition<AnnotationBackedDescriptor> propertyFilter) {
+  private boolean processElements(final XmlTag parent,
+                                  final @Nullable Context parentContext,
+                                  final boolean allowIncludeInExludeFrom,
+                                  final int dataPosition,
+                                  final int referencePosition,
+                                  final boolean writeLocation,
+                                  final @Nullable Condition<AnnotationBackedDescriptor> propertyFilter) {
     boolean cssRulesetDefined = false;
     boolean staticChild = true;
 
@@ -157,10 +162,6 @@ public class MxmlWriter {
       final AnnotationBackedDescriptor descriptor;
       if (attributeDescriptor instanceof AnnotationBackedDescriptor) {
         descriptor = (AnnotationBackedDescriptor)attributeDescriptor;
-
-        if (!descriptor.isPredefined() && propertyFilter != null && !propertyFilter.value(descriptor)) {
-          continue;
-        }
 
         // id and includeIn/excludeFrom only as attribute, not as tag
         if (descriptor.isPredefined()) {
@@ -198,6 +199,9 @@ public class MxmlWriter {
             }
           }
         }
+        else if (propertyFilter != null && !propertyFilter.value(descriptor)) {
+          // skip
+        }
         else if (descriptor.hasIdType() && MxmlUtil.isIdLanguageIdAttribute(attribute)) {
           String explicitId = attribute.getValue();
           writer.idMxmlProperty(explicitId);
@@ -214,19 +218,28 @@ public class MxmlWriter {
         //}
         else if (hasStates && stateWriter.checkStateSpecificPropertyValue(this, propertyProcessor, attribute,
                                                                           valueProviderFactory.create(attribute),
-                                                                          descriptor, context, tagAttributeProcessContext.getEffectiveObjectReferenceProvider(context))) {
+                                                                          descriptor, context, tagAttributeProcessContext
+          .getEffectiveObjectReferenceProvider(context))) {
           // skip
         }
         else {
-          cssRulesetDefined = writeAttributeBackedProperty(attribute, descriptor, tagAttributeProcessContext.getEffectiveObjectReferenceProvider(context), context, cssRulesetDefined, true);
+          cssRulesetDefined =
+            writeAttributeBackedProperty(attribute, descriptor, tagAttributeProcessContext.getEffectiveObjectReferenceProvider(context),
+                                         context, cssRulesetDefined, true);
         }
       }
       else if (attributeDescriptor instanceof AnyXmlAttributeDescriptor) {
-        writeAttributeBackedProperty(attribute, new AnyXmlAttributeDescriptorWrapper(attributeDescriptor), tagAttributeProcessContext.getEffectiveObjectReferenceProvider(context),
+        writeAttributeBackedProperty(attribute, new AnyXmlAttributeDescriptorWrapper(attributeDescriptor),
+                                     tagAttributeProcessContext.getEffectiveObjectReferenceProvider(context),
                                      context, false, true);
       }
       else if (!attribute.isNamespaceDeclaration()) {
-        LOG.warn("unknown attribute (" + attribute.getText() + ") descriptor: " + (attributeDescriptor == null ? "null" : attributeDescriptor.toString()) + " of tag " + parent.getText());
+        LOG.warn("unknown attribute (" +
+                 attribute.getText() +
+                 ") descriptor: " +
+                 (attributeDescriptor == null ? "null" : attributeDescriptor.toString()) +
+                 " of tag " +
+                 parent.getText());
       }
     }
 

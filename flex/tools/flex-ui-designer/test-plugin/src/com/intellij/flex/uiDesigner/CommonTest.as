@@ -217,5 +217,9 @@ public class CommonTest extends BaseTestCase {
   public function PropertyAsTagWithCommentedValueAsTag():void {
     assertThat(app, [{bottom: 1, fill: nullValue()}]);
   }
+
+  public function ItemRendererFunction():void {
+    assertThat(app, [[instanceOf(getClass("com.intellij.flex.uiDesigner.flex.UnknownItemRenderer"))]]);
+  }
 }
 }

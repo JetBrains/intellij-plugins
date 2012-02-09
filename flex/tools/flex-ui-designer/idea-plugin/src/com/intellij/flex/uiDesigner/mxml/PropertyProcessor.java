@@ -20,6 +20,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.*;
 import com.intellij.util.StringBuilderSpinAllocator;
 import com.intellij.xml.XmlElementDescriptor;
@@ -109,8 +110,30 @@ class PropertyProcessor implements ValueWriter {
         return null;
       }
     }
-    else if (typeName.equals(FlexAnnotationNames.EVENT) /* skip event handlers */ ||
-             type.equals(JSCommonTypeNames.FUNCTION_CLASS_NAME) /* skip functions, IDEA-74041 */) {
+    else if (type.equals(JSCommonTypeNames.FUNCTION_CLASS_NAME)) {
+      if (name.equals("itemRendererFunction")) {
+        PsiElement parent = descriptor.getDeclaration().getParent();
+        // AS-135
+        if (parent instanceof JSClass && ((JSClass)parent).getQualifiedName().equals("spark.components.DataGroup")) {
+          name = "itemRenderer";
+          return new ValueWriter() {
+            @Override
+            public PropertyKind write(AnnotationBackedDescriptor descriptor,
+                                      XmlElementValueProvider valueProvider,
+                                      PrimitiveAmfOutputStream out,
+                                      BaseWriter writer,
+                                      boolean isStyle,
+                                      Context parentContext) throws InvalidPropertyException {
+              writeNonProjectClassFactory("com.intellij.flex.uiDesigner.flex.UnknownItemRenderer");
+              return PRIMITIVE;
+            }
+          };
+        }
+      }
+      // skip functions, IDEA-74041
+    }
+    else if (typeName.equals(FlexAnnotationNames.EVENT)) {
+      // skip event handlers
       return null;
     }
 
@@ -752,9 +775,7 @@ class PropertyProcessor implements ValueWriter {
     }
 
     String className = valueProvider.getTrimmed();
-    int reference = classFactoryMap.get(className);
-    if (reference != -1) {
-      writer.objectReference(reference);
+    if (writeReferenceIfReferenced(className)) {
       return;
     }
 
@@ -765,13 +786,32 @@ class PropertyProcessor implements ValueWriter {
 
     final int projectComponentFactoryId = getProjectComponentFactoryId(jsClass);
     if (projectComponentFactoryId == -1) {
-      reference = writer.getRootScope().referenceCounter++;
-      classFactoryMap.put(className, reference);
-
-      writer.referableHeader(reference).newInstance(FlexCommonTypeNames.CLASS_FACTORY, 1, false).classReference(className);
+      writeNonProjectUnreferencedClassFactory(className);
     }
     else {
       writer.documentFactoryReference(projectComponentFactoryId);
     }
+  }
+
+  private void writeNonProjectUnreferencedClassFactory(String className) {
+    int reference = writer.getRootScope().referenceCounter++;
+    classFactoryMap.put(className, reference);
+    writer.referableHeader(reference).newInstance(FlexCommonTypeNames.CLASS_FACTORY, 1, false).classReference(className);
+  }
+
+  private void writeNonProjectClassFactory(String className) {
+    if (!writeReferenceIfReferenced(className)) {
+      writeNonProjectUnreferencedClassFactory(className);
+    }
+  }
+
+  private boolean writeReferenceIfReferenced(String className) {
+    int reference = classFactoryMap.get(className);
+    if (reference != -1) {
+      writer.objectReference(reference);
+      return true;
+    }
+
+    return false;
   }
 }

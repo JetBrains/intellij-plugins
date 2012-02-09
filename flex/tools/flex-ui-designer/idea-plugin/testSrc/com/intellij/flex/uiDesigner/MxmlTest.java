@@ -111,6 +111,7 @@ public class MxmlTest extends MxmlTestBase {
     final ArrayList<VirtualFile> auxFiles = new ArrayList<VirtualFile>(8);
 
     for (VirtualFile root : roots) {
+      root.refresh(false, false);
       collectMxmlFiles(files, auxFiles, root);
     }
 
