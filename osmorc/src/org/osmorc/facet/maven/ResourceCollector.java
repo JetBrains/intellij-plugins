@@ -1,10 +1,12 @@
 package org.osmorc.facet.maven;
 
 import aQute.lib.osgi.Analyzer;
+import aQute.lib.osgi.Constants;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.util.ArrayUtil;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.model.MavenResource;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.osmorc.OsmorcProjectComponent;
@@ -20,10 +22,10 @@ public class ResourceCollector {
   private static final String[] DEFAULT_INCLUDES = {"**/**"};
 
 
-  public static void includeMavenResources(MavenProject currentProject, Analyzer analyzer) {
+  public static void includeMavenResources(@NotNull MavenProject currentProject, @NotNull Analyzer analyzer) {
     // pass maven resource paths onto BND analyzer
     final String mavenResourcePaths = getMavenResourcePaths(currentProject);
-    final String includeResource = (String)analyzer.getProperty(Analyzer.INCLUDE_RESOURCE);
+    final String includeResource = (String)analyzer.getProperty(Constants.INCLUDE_RESOURCE);
     if (includeResource != null) {
       if (includeResource.contains(MAVEN_RESOURCES)) {
         // if there is no maven resource path, we do a special treatment and replace
@@ -31,32 +33,32 @@ public class ResourceCollector {
         if (mavenResourcePaths.length() == 0) {
           String cleanedResource = ImporterUtil.removeTagFromInstruction(includeResource, MAVEN_RESOURCES);
           if (cleanedResource.length() > 0) {
-            analyzer.setProperty(Analyzer.INCLUDE_RESOURCE, cleanedResource);
+            analyzer.setProperty(Constants.INCLUDE_RESOURCE, cleanedResource);
           }
           else {
-            analyzer.unsetProperty(Analyzer.INCLUDE_RESOURCE);
+            analyzer.unsetProperty(Constants.INCLUDE_RESOURCE);
           }
         }
         else {
           String combinedResource = StringUtils
             .replace(includeResource, MAVEN_RESOURCES, mavenResourcePaths);
-          analyzer.setProperty(Analyzer.INCLUDE_RESOURCE, combinedResource);
+          analyzer.setProperty(Constants.INCLUDE_RESOURCE, combinedResource);
         }
       }
       else if (mavenResourcePaths.length() > 0) {
         OsmorcProjectComponent.IMPORTANT_ERROR_NOTIFICATION
-          .createNotification(Analyzer.INCLUDE_RESOURCE + ": overriding " + mavenResourcePaths + " with " + includeResource
+          .createNotification(Constants.INCLUDE_RESOURCE + ": overriding " + mavenResourcePaths + " with " + includeResource
                               + " (add " + MAVEN_RESOURCES + " if you want to include the maven resources)", MessageType.WARNING)
           .notify(null);
       }
     }
     else if (mavenResourcePaths.length() > 0) {
-      analyzer.setProperty(Analyzer.INCLUDE_RESOURCE, mavenResourcePaths);
+      analyzer.setProperty(Constants.INCLUDE_RESOURCE, mavenResourcePaths);
     }
   }
 
 
-  private static String getMavenResourcePaths(MavenProject currentProject) {
+  private static String getMavenResourcePaths(@NotNull MavenProject currentProject) {
     final String basePath = currentProject.getDirectory();
 
     Set<String> pathSet = new LinkedHashSet<String>();

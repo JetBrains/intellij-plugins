@@ -39,6 +39,7 @@ import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -233,7 +234,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
         Map<String, Map<String, String>> map = OSGiHeader.parseHeader(value);
 
         for (String name : map.keySet()) {
-          if (name.startsWith("{") && name.endsWith("}")) {
+          if (StringUtil.startsWithChar(name, '{') && name.endsWith("}")) {
             name = name.substring(1, name.length() - 1).trim();
           }
 
@@ -243,7 +244,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
             source = parts[1];
           }
 
-          if (source.startsWith("@")) {
+          if (StringUtil.startsWithChar(source, '@')) {
             source = source.substring(1);
           }
 

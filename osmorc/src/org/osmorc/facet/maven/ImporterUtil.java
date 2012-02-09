@@ -1,13 +1,19 @@
 package org.osmorc.facet.maven;
 
 import aQute.lib.osgi.Analyzer;
+import aQute.lib.osgi.Constants;
+import aQute.libg.header.OSGiHeader;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.osmorc.OsmorcProjectComponent;
 
+import java.io.File;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,12 +31,13 @@ public class ImporterUtil {
 
   /**
    * Removes a tag (like {maven-resources}) from the given instruction string.
+   *
    * @param instruction the instruction string.
-   * @param tag the tag  to remove
+   * @param tag         the tag  to remove
    * @return the string wihtout the tag.
    */
   @NotNull
-  static String removeTagFromInstruction(@NotNull String instruction,@NotNull String tag) {
+  static String removeTagFromInstruction(@NotNull String instruction, @NotNull String tag) {
     StringBuilder buf = new StringBuilder();
 
     String[] clauses = instruction.split(",");
@@ -151,8 +158,87 @@ public class ImporterUtil {
    * @param props   the properties
    * @param project the maven project.
    */
-  static void postprocessAdditionalProperties(final Map<String, String> props, MavenProject project) {
-    Analyzer myFakeAnalyzer = new Analyzer() {
+  static void postprocessAdditionalProperties(@NotNull Map<String, String> props, @NotNull MavenProject project) {
+
+    Analyzer myFakeAnalyzer = makeFakeAnalyzer(props);
+    Collection<MavenArtifact> dependencies = collectDependencies(props, project);
+
+    DependencyEmbedder embedder = new DependencyEmbedder(dependencies);
+    try {
+      embedder.processHeaders(myFakeAnalyzer);
+    }
+    catch (DependencyEmbedderException e) {
+      OsmorcProjectComponent.IMPORTANT_ERROR_NOTIFICATION
+        .createNotification("Error when processing Embed-Dependency directive in " + project.getPath() + ": " + e.getMessage(),
+                            NotificationType.ERROR).notify(null);
+    }
+    ResourceCollector.includeMavenResources(project, myFakeAnalyzer);
+
+    // finally postprocess the Include-Resources header to account for backslashes and relative paths
+    sanitizeIncludedResources(props, project);
+  }
+
+  /**
+   * Sanitizes the Include-Resource header by resolving relative paths to the maven project's root and converting backslashes to slashes.
+   *
+   * @param props   the properties with the headers from the maven project.
+   * @param project the maven project.
+   */
+  private static void sanitizeIncludedResources(@NotNull Map<String, String> props, @NotNull MavenProject project) {
+    String includeResourceHeader = props.get(Constants.INCLUDE_RESOURCE);
+    if (StringUtil.isEmpty(includeResourceHeader)) {
+      return;
+    }
+
+    Map<String, Map<String, String>> map = OSGiHeader.parseHeader(includeResourceHeader);
+    StringBuilder sanitizedHeader = new StringBuilder();
+    for (Iterator<String> iterator = map.keySet().iterator(); iterator.hasNext(); ) {
+      String name = iterator.next();
+      String prefix = "";
+      String suffix = "";
+      if (StringUtil.startsWithChar(name, '{') && name.endsWith("}")) {
+        name = name.substring(1, name.length() - 1).trim();
+        prefix = "{" + prefix;
+        suffix += "}";
+      }
+
+      String[] parts = name.split("\\s*=\\s*");
+      String source = parts[0];
+      String target = "";
+      if (parts.length == 2) {
+        source = parts[1];
+        target = parts[0];
+      }
+
+
+      if (StringUtil.startsWithChar(source, '@')) {
+        source = source.substring(1);
+        prefix += "@";
+      }
+
+      String sanitizedSource = source.replace('\\', '/');
+      String sanitizedTarget = target.replace('\\', '/');
+      // check if it's relative
+      VirtualFile relativeFile = VfsUtil.findRelativeFile(project.getDirectoryFile(), sanitizedSource.split("/"));
+      if (relativeFile != null) {
+        sanitizedSource = relativeFile.getPath();
+      }
+      sanitizedHeader.append(prefix);
+      if (!StringUtil.isEmpty(sanitizedTarget)) {
+        sanitizedHeader.append(sanitizedTarget).append("=");
+      }
+      sanitizedHeader.append(sanitizedSource);
+      sanitizedHeader.append(suffix);
+      if (iterator.hasNext()) {
+        sanitizedHeader.append(",");
+      }
+    }
+    props.put(Constants.INCLUDE_RESOURCE, sanitizedHeader.toString());
+  }
+
+  @NotNull
+  private static Analyzer makeFakeAnalyzer(final @NotNull Map<String, String> props) {
+    return new Analyzer() {
       @Override
       public String getProperty(String key) {
         return props.get(key);
@@ -173,18 +259,5 @@ public class ImporterUtil {
         props.put(key, value);
       }
     };
-
-    Collection<MavenArtifact> dependencies = collectDependencies(props, project);
-
-    DependencyEmbedder embedder = new DependencyEmbedder(dependencies);
-    try {
-      embedder.processHeaders(myFakeAnalyzer);
-    }
-    catch (DependencyEmbedderException e) {
-      OsmorcProjectComponent.IMPORTANT_ERROR_NOTIFICATION
-        .createNotification("Error when processing Embed-Dependency directive in " + project.getPath() + ": " + e.getMessage(),
-                            NotificationType.ERROR).notify(null);
-    }
-    ResourceCollector.includeMavenResources(project, myFakeAnalyzer);
   }
 }
