@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
+import com.intellij.lang.javascript.psi.impl.CompositeRootCollection;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -9,8 +10,11 @@ import com.intellij.openapi.roots.RootProvider;
 import com.intellij.openapi.roots.impl.ModuleJdkOrderEntryImpl;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.JarFileSystem;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
@@ -25,7 +29,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-public class FlexCompositeSdk extends UserDataHolderBase implements Sdk {
+public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, CompositeRootCollection {
 
   private static final String NAME_DELIM = "\t";
 
@@ -180,7 +184,8 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk {
       mySdks = sdks.toArray(new Sdk[sdks.size()]);
     }
 
-    for (Sdk sdk : mySdks) {
+    Sdk[] sdks = mySdks;
+    for (Sdk sdk : sdks) {
       if (!processor.process(sdk)) {
         return;
       }
@@ -203,6 +208,38 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk {
   @NotNull
   public Object clone() {
     throw new UnsupportedOperationException();
+  }
+
+  private static final OrderRootType[] RELEVANT_ROOT_TYPES = new OrderRootType[]{OrderRootType.CLASSES, OrderRootType.SOURCES};
+
+  @Override
+  public VirtualFile[] getFiles(final OrderRootType rootType, final VirtualFile hint) {
+    final Ref<VirtualFile[]> result = new Ref<VirtualFile[]>();
+    forAllSdks(new Processor<Sdk>() {
+      @Override
+      public boolean process(final Sdk sdk) {
+        for (OrderRootType t : RELEVANT_ROOT_TYPES) {
+          VirtualFile[] files = sdk.getRootProvider().getFiles(t);
+
+          if (isAncestorOf(files, hint)) {
+            result.set(t == rootType ? files : sdk.getRootProvider().getFiles(rootType));
+            return false;
+          }
+        }
+        return true;
+      }
+    });
+    return result.isNull() ? VirtualFile.EMPTY_ARRAY : result.get();
+  }
+
+  private static boolean isAncestorOf(VirtualFile[] ancestors, VirtualFile file) {
+    VirtualFile fileInLocalFs = JarFileSystem.getInstance().getVirtualFileForJar(file);
+
+    for (VirtualFile ancestor : ancestors) {
+      if (VfsUtilCore.isAncestor(ancestor, file, false)) return true;
+      if (fileInLocalFs != null && VfsUtilCore.isAncestor(ancestor, fileInLocalFs, false)) return true;
+    }
+    return false;
   }
 
   public static final String TYPE_ID = "__CompositeFlexSdk__";
