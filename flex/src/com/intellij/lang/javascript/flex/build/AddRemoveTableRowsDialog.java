@@ -19,15 +19,17 @@ import java.util.List;
 
 public abstract class AddRemoveTableRowsDialog<T> extends DialogWrapper {
 
+  protected final Project myProject;
   private final List<T> myList;
 
   private JPanel myMainPanel;
-  private JTable myTable;
+  protected JTable myTable;
 
   private boolean myEditAddedRow = false;
 
   public AddRemoveTableRowsDialog(final Project project, final String title, final List<T> list) {
     super(project);
+    myProject = project;
     myList = list;
     setTitle(title);
   }
@@ -94,15 +96,7 @@ public abstract class AddRemoveTableRowsDialog<T> extends DialogWrapper {
     myEditAddedRow = editAddedRow;
   }
 
-  protected void addObject() {
-    final AddObjectDialog<T> dialog = createAddObjectDialog();
-    dialog.show();
-    if (dialog.isOK()) {
-      myList.add(dialog.getAddedObject());
-    }
-  }
-
-  protected abstract AddObjectDialog<T> createAddObjectDialog();
+  protected abstract void addObject();
 
   protected JComponent createCenterPanel() {
     return myMainPanel;
@@ -119,14 +113,6 @@ public abstract class AddRemoveTableRowsDialog<T> extends DialogWrapper {
 
   public List<T> getCurrentList() {
     return myList;
-  }
-
-  public static abstract class AddObjectDialog<T> extends DialogWrapper {
-    protected AddObjectDialog(final Project project) {
-      super(project);
-    }
-
-    abstract T getAddedObject();
   }
 
   protected abstract class TableModelBase extends DefaultTableModel {

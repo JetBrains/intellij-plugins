@@ -412,7 +412,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
           case File:
             final JLabel label = myLabelWithBrowse.getChildComponent();
             myLabelWithBrowse.setBackground(table.getBackground());
-            label.setText(valueAndSource.first);
+            label.setText(FileUtil.toSystemDependentName(valueAndSource.first));
             renderAccordingToSource(label, valueAndSource.second, false);
             return myLabelWithBrowse;
           case Group:
@@ -427,7 +427,10 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   private static String getPresentableSummary(final String rawValue, final CompilerOptionInfo info) {
     if (info.TYPE == CompilerOptionInfo.OptionType.List) {
       if (info.LIST_ELEMENTS.length == 1) {
-        return rawValue.replace(String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR), ", ");
+        final String fixedSlashes = info.LIST_ELEMENTS[0].LIST_ELEMENT_TYPE == CompilerOptionInfo.ListElementType.File
+                                    ? FileUtil.toSystemDependentName(rawValue)
+                                    : rawValue;
+        return fixedSlashes.replace(String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR), ", ");
       }
       if ("compiler.define".equals(info.ID)) {
         return rawValue.replace(String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR), ", ")
@@ -483,7 +486,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
             myCurrentEditor = myRepeatableValueEditor;
             break;
           case String:
-          case Int:   // todo dedicated renderers. Move them to CompilerOptionInfo class?
+          case Int:
           case IncludeClasses:
           case IncludeFiles:
             myTextField.setText(optionValue);
@@ -491,7 +494,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
             break;
           case File:
             myFileChooserDescriptor.setAllowedExtension(info.FILE_EXTENSION);
-            myTextWithBrowse.setText(optionValue);
+            myTextWithBrowse.setText(FileUtil.toSystemDependentName(optionValue));
             myCurrentEditor = myTextWithBrowse;
             break;
           case Group:
@@ -510,7 +513,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
           return myTextField.getText().trim();
         }
         if (myCurrentEditor == myTextWithBrowse) {
-          return myTextWithBrowse.getText().trim();
+          return FileUtil.toSystemIndependentName(myTextWithBrowse.getText().trim());
         }
         if (myCurrentEditor == myRepeatableValueEditor) {
           return myRepeatableValueEditor.getValue();
@@ -757,7 +760,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     }
   }
 
-  private static class ExtensionAwareFileChooserDescriptor extends FileChooserDescriptor {
+  static class ExtensionAwareFileChooserDescriptor extends FileChooserDescriptor {
     private String myAllowedExtension;
 
     public ExtensionAwareFileChooserDescriptor() {

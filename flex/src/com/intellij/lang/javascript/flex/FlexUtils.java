@@ -67,13 +67,15 @@ public class FlexUtils {
   private FlexUtils() {
   }
 
-  public static FileChooserDescriptor createFileChooserDescriptor(final String allowedExtension) {
-    return new FileChooserDescriptor(true, false, false, false, false, false) {
-      public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
-        return super.isFileVisible(file, showHiddenFiles) && (file.isDirectory() || allowedExtension.equalsIgnoreCase(
-          file.getExtension()));
-      }
-    };
+  public static FileChooserDescriptor createFileChooserDescriptor(final @Nullable String allowedExtension) {
+    return allowedExtension == null
+           ? new FileChooserDescriptor(true, false, false, true, false, false)
+           : new FileChooserDescriptor(true, false, false, false, false, false) {
+             public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
+               return super.isFileVisible(file, showHiddenFiles) &&
+                      (file.isDirectory() || allowedExtension.equalsIgnoreCase(file.getExtension()));
+             }
+           };
   }
 
   public static void createSampleApp(final Project project,

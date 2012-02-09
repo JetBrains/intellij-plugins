@@ -29,16 +29,19 @@ public class CompilerOptionInfo {
     public final String NAME;
     public final String DISPLAY_NAME;
     public final ListElementType LIST_ELEMENT_TYPE;
-    public String DEFAULT_VALUE;
+    public @Nullable final String FILE_EXTENSION;
+    public final String DEFAULT_VALUE;
 
-    public ListElement(final String name) {
-      this(name, "", ListElementType.String, "");
+    private ListElement(final String name) {
+      this(name, "", ListElementType.String, null, "");
     }
 
-    private ListElement(final String name, final String displayName, final ListElementType listElementType, final String defaultValue) {
+    private ListElement(final String name, final String displayName, final ListElementType listElementType,
+                        final @Nullable String fileExtension, final String defaultValue) {
       NAME = name;
       DISPLAY_NAME = displayName;
       LIST_ELEMENT_TYPE = listElementType;
+      FILE_EXTENSION = fileExtension;
       DEFAULT_VALUE = defaultValue;
     }
   }
@@ -414,8 +417,9 @@ public class CompilerOptionInfo {
       final String displayName = childElement.getAttributeValue("displayName");
       assert name != null : element.getName();
       final ListElementType listElementType = ListElementType.valueOf(childElement.getAttributeValue("type"));
+      final String fileExtension = childElement.getAttributeValue("fileExtension");
       final String defaultValue = StringUtil.notNullize(childElement.getAttributeValue("default"));
-      result.add(new ListElement(name, displayName, listElementType, defaultValue));
+      result.add(new ListElement(name, displayName, listElementType, fileExtension, defaultValue));
     }
 
     assert !result.isEmpty() : element.getName();
