@@ -115,8 +115,10 @@ public class FlexSdkUtils {
             return true;
           }
         });
+      }
 
-        final VirtualFile baseDir = playerDir.getParent().getParent();
+      final VirtualFile baseDir = sdkRoot.findChild("frameworks"); // I'm not sure if we need to refresh here
+      if (baseDir != null && baseDir.isDirectory()) {
         // let global lib be in the beginning of the list
         addSwcRoots(sdkModificator, baseDir, Collections.singletonList("libs/air/airglobal.swc"), false);
         addFlexSdkSwcRoots(sdkModificator, baseDir);
