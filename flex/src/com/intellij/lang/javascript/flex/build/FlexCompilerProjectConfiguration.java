@@ -21,8 +21,6 @@ public class FlexCompilerProjectConfiguration implements PersistentStateComponen
   public int MAX_PARALLEL_COMPILATIONS = 4;
   public int HEAP_SIZE_MB = 512;
   public String VM_OPTIONS = "";
-  public boolean SWF_DEBUG_ENABLED = true;
-  public boolean SWC_DEBUG_ENABLED = true;
 
   public static FlexCompilerProjectConfiguration getInstance(final Project project) {
     return ServiceManager.getService(project, FlexCompilerProjectConfiguration.class);
@@ -47,7 +45,5 @@ public class FlexCompilerProjectConfiguration implements PersistentStateComponen
     MAX_PARALLEL_COMPILATIONS = state.MAX_PARALLEL_COMPILATIONS;
     HEAP_SIZE_MB = state.HEAP_SIZE_MB;
     VM_OPTIONS = state.VM_OPTIONS;
-    SWF_DEBUG_ENABLED = state.SWF_DEBUG_ENABLED;
-    SWC_DEBUG_ENABLED = state.SWC_DEBUG_ENABLED;
   }
 }

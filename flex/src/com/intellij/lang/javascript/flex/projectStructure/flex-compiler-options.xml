@@ -1,5 +1,6 @@
 <options>
-  <!--<option id="compiler.debug" displayName="Debug" type="Boolean" default="true"/>-->
+  <option id="compiler.debug.swf" displayName="Generate debuggable SWF" type="Boolean" okForSWC="false" default="SPECIAL"/>
+  <option id="compiler.debug.swc" displayName="Generate debuggable SWC" type="Boolean" okForSWF="false" default="SPECIAL"/>
   <option id="compiler.define" displayName="Conditional compiler definitions" type="List">
     <listElement name="name" displayName="Constant Name" type="String" default="CONFIG::param"/>
     <listElement name="value" displayName="Value" type="String" default="true"/>

@@ -85,11 +85,10 @@ public class CompilerConfigGenerator {
     final Element rootElement =
       new Element(FlexCompilerConfigFileUtil.FLEX_CONFIG, FlexApplicationComponent.HTTP_WWW_ADOBE_COM_2006_FLEX_CONFIG);
 
-    addDebugOption(rootElement);
     addMandatoryOptions(rootElement);
-    handleOptionsWithSpecialValues(rootElement);
     addSourcePaths(rootElement);
     if (!myFlexmojos) {
+      handleOptionsWithSpecialValues(rootElement);
       addNamespaces(rootElement);
       addRootsFromSdk(rootElement);
     }
@@ -98,13 +97,6 @@ public class CompilerConfigGenerator {
     addInputOutputPaths(rootElement);
 
     return JDOMUtil.writeElement(rootElement, "\n");
-  }
-
-  private void addDebugOption(final Element rootElement) {
-    final FlexCompilerProjectConfiguration instance = FlexCompilerProjectConfiguration.getInstance(myModule.getProject());
-    final boolean debug =
-      myBC.getOutputType() == OutputType.Library ? instance.SWC_DEBUG_ENABLED : instance.SWF_DEBUG_ENABLED;
-    addOption(rootElement, CompilerOptionInfo.DEBUG_INFO, String.valueOf(debug));
   }
 
   private void addMandatoryOptions(final Element rootElement) {
@@ -169,9 +161,6 @@ public class CompilerConfigGenerator {
   private void handleOptionsWithSpecialValues(final Element rootElement) {
     for (final CompilerOptionInfo info : CompilerOptionInfo.getOptionsWithSpecialValues()) {
       final Pair<String, ValueSource> valueAndSource = getValueAndSource(info);
-
-      if (myFlexmojos && valueAndSource.second == ValueSource.GlobalDefault) continue;
-
       final boolean themeForPureAS = myBC.isPureAs() && "compiler.theme".equals(info.ID);
       if (valueAndSource.second == ValueSource.GlobalDefault && (!valueAndSource.first.isEmpty() || themeForPureAS)) {
         // do not add empty preloader to Web/Desktop, let compiler take default itself (mx.preloaders.SparkDownloadProgressBar when -compatibility-version >= 4.0 and mx.preloaders.DownloadProgressBar when -compatibility-version < 4.0)
@@ -497,7 +486,8 @@ public class CompilerConfigGenerator {
 
     final String value = FlexUtils.replacePathMacros(rawValue, myModule, myFlexmojos ? "" : mySdk.getHomePath());
 
-    final List<String> elementNames = StringUtil.split(info.ID, ".");
+    final String pathInFlexConfig = info.ID.startsWith("compiler.debug") ? "compiler.debug" : info.ID;
+    final List<String> elementNames = StringUtil.split(pathInFlexConfig, ".");
     Element parentElement = rootElement;
 
     for (int i1 = 0; i1 < elementNames.size() - 1; i1++) {

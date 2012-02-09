@@ -58,30 +58,30 @@ public class CompilerOptionInfo {
   private static final Collection<CompilerOptionInfo> ourOptionsWithSpecialValues = new LinkedList<CompilerOptionInfo>();
 
   public static final CompilerOptionInfo DEBUG_INFO =
-    new CompilerOptionInfo("compiler.debug", "fake", OptionType.Boolean, null, null, false, null, true, true, true, "");
+    new CompilerOptionInfo("compiler.debug", "fake", OptionType.Boolean, null, null, false, null, true, true, true, true, "");
   public static final CompilerOptionInfo EXTERNAL_LIBRARY_INFO =
     new CompilerOptionInfo("compiler.external-library-path", "fake", OptionType.List, null,
-                           new ListElement[]{new ListElement("path-element")}, false, null, true, true, true, "");
+                           new ListElement[]{new ListElement("path-element")}, false, null, true, true, true, true, "");
   public static final CompilerOptionInfo LIBRARY_PATH_INFO =
     new CompilerOptionInfo("compiler.library-path", "fake", OptionType.List, null,
-                           new ListElement[]{new ListElement("path-element")}, false, null, true, true, true, "");
+                           new ListElement[]{new ListElement("path-element")}, false, null, true, true, true, true, "");
   public static final CompilerOptionInfo INCLUDE_LIBRARY_INFO =
     new CompilerOptionInfo("compiler.include-libraries", "fake", OptionType.List, null,
-                           new ListElement[]{new ListElement("library")}, false, null, true, true, true, "");
+                           new ListElement[]{new ListElement("library")}, false, null, true, true, true, true, "");
   public static final CompilerOptionInfo SOURCE_PATH_INFO =
     new CompilerOptionInfo("compiler.source-path", "fake", OptionType.List, null,
-                           new ListElement[]{new ListElement("path-element")}, false, null, true, true, true, "");
+                           new ListElement[]{new ListElement("path-element")}, false, null, true, true, true, true, "");
   public static final CompilerOptionInfo INCLUDE_CLASSES_INFO =
     new CompilerOptionInfo("include-classes", "fake", OptionType.List, null,
                            new ListElement[]{new ListElement("class")},
-                           false, null, true, true, true, "");
+                           false, null, true, true, true, true, "");
   public static final CompilerOptionInfo RSL_ONE_URL_PATH_INFO =
     new CompilerOptionInfo("runtime-shared-library-path", "fake", OptionType.List, null,
                            new ListElement[]{
                              new ListElement("path-element"),
                              new ListElement("rsl-url"),
                              new ListElement("policy-file-url")
-                           }, false, null, true, true, true, "");
+                           }, false, null, true, true, true, true, "");
   public static final CompilerOptionInfo RSL_TWO_URLS_PATH_INFO =
     new CompilerOptionInfo("runtime-shared-library-path", "fake", OptionType.List, null,
                            new ListElement[]{
@@ -90,35 +90,35 @@ public class CompilerOptionInfo {
                              new ListElement("policy-file-url"),
                              new ListElement("rsl-url"),
                              new ListElement("policy-file-url")
-                           }, false, null, true, true, true, "");
+                           }, false, null, true, true, true, true, "");
   public static final CompilerOptionInfo MOBILE_INFO =
-    new CompilerOptionInfo("compiler.mobile", "fake", OptionType.Boolean, null, null, false, null, true, true, true, "");
+    new CompilerOptionInfo("compiler.mobile", "fake", OptionType.Boolean, null, null, false, null, true, true, true, true, "");
   public static final CompilerOptionInfo TARGET_PLAYER_INFO =
-    new CompilerOptionInfo("target-player", "fake", OptionType.String, null, null, false, null, true, true, true, "");
+    new CompilerOptionInfo("target-player", "fake", OptionType.String, null, null, false, null, true, true, true, true, "");
   public static final CompilerOptionInfo MAIN_CLASS_INFO =
-    new CompilerOptionInfo("file-specs.path-element", "fake", OptionType.String, null, null, false, null, true, true, true, "");
+    new CompilerOptionInfo("file-specs.path-element", "fake", OptionType.String, null, null, false, null, true, true, true, true, "");
   public static final CompilerOptionInfo OUTPUT_PATH_INFO =
-    new CompilerOptionInfo("output", "fake", OptionType.String, null, null, false, null, true, true, true, "");
+    new CompilerOptionInfo("output", "fake", OptionType.String, null, null, false, null, true, true, true, true, "");
 
   public static final CompilerOptionInfo ACCESSIBLE_INFO =
-    new CompilerOptionInfo("compiler.accessible", "fake", OptionType.Boolean, null, null, false, null, true, true, true, "");
+    new CompilerOptionInfo("compiler.accessible", "fake", OptionType.Boolean, null, null, false, null, true, true, true, true, "");
   public static final CompilerOptionInfo PRELOADER_INFO =
-    new CompilerOptionInfo("compiler.preloader", "fake", OptionType.String, null, null, false, "4.5", true, true, true, "");
+    new CompilerOptionInfo("compiler.preloader", "fake", OptionType.String, null, null, false, "4.5", true, true, true, true, "");
   public static final CompilerOptionInfo WARN_NO_CONSTRUCTOR_INFO =
-    new CompilerOptionInfo("compiler.warn-no-constructor", "fake", OptionType.Boolean, null, null, false, null, true, true, true, "");
+    new CompilerOptionInfo("compiler.warn-no-constructor", "fake", OptionType.Boolean, null, null, false, null, true, true, true, true, "");
   public static final CompilerOptionInfo FONT_MANAGERS_INFO =
     new CompilerOptionInfo("compiler.fonts.managers", "fake", OptionType.List, null,
                            new ListElement[]{new ListElement("manager-class")},
-                           false, null, true, true, true, "");
+                           false, null, true, true, true, true, "");
   public static final CompilerOptionInfo SWF_VERSION_INFO =
-    new CompilerOptionInfo("swf-version", "fake", OptionType.String, null, null, false, "4.5", true, true, true, "");
+    new CompilerOptionInfo("swf-version", "fake", OptionType.String, null, null, false, "4.5", true, true, true, true, "");
   public static final CompilerOptionInfo STATIC_RSLS_INFO =
     new CompilerOptionInfo("static-link-runtime-shared-libraries", "fake", OptionType.Boolean, null, null, false, null, true, true, true,
-                           "");
+                           true, "");
   public static final CompilerOptionInfo INCLUDE_NAMESPACES_INFO =
     new CompilerOptionInfo("include-namespaces", "fake", OptionType.List, null,
                            new ListElement[]{new ListElement("uri")},
-                           false, null, true, true, true, "");
+                           false, null, true, true, true, true, "");
 
   public final String ID;
   public final String DISPLAY_NAME;
@@ -131,6 +131,7 @@ public class CompilerOptionInfo {
   private final boolean myOkForAir;
   private final boolean myOkForPureAS;
   private final boolean myOkForSwf;
+  private final boolean myOkForSwc;
   private final String myDefaultValue;
 
   private CompilerOptionInfo(final @NotNull String id,
@@ -143,6 +144,7 @@ public class CompilerOptionInfo {
                              final boolean okForAir,
                              final boolean okForPureAS,
                              final boolean okForSwf,
+                             final boolean okForSwc, 
                              final String defaultValue) {
     assert optionType != OptionType.Group;
 
@@ -157,6 +159,7 @@ public class CompilerOptionInfo {
     myOkForAir = okForAir;
     myOkForPureAS = okForPureAS;
     myOkForSwf = okForSwf;
+    myOkForSwc = okForSwc;
     myDefaultValue = defaultValue;
 
     myChildOptionInfos = null;
@@ -168,6 +171,7 @@ public class CompilerOptionInfo {
                              final boolean okForAir,
                              final boolean okForPureAS,
                              final boolean okForSwf,
+                             final boolean okForSwc,
                              final CompilerOptionInfo[] childOptionInfos) {
     ID = null;
     DISPLAY_NAME = groupDisplayName;
@@ -180,6 +184,7 @@ public class CompilerOptionInfo {
     myOkForAir = okForAir;
     myOkForPureAS = okForPureAS;
     myOkForSwf = okForSwf;
+    myOkForSwc = okForSwc;
     myDefaultValue = null;
 
     myChildOptionInfos = childOptionInfos;
@@ -193,6 +198,7 @@ public class CompilerOptionInfo {
     if (mySinceVersion != null && StringUtil.compareVersionNumbers(sdkVersion, mySinceVersion) < 0) return false;
     if (!myOkForPureAS && nature.pureAS) return false;
     if (!myOkForSwf && !nature.isLib()) return false;
+    if (!myOkForSwc && nature.isLib()) return false;
     return true;
   }
 
@@ -222,6 +228,9 @@ public class CompilerOptionInfo {
     assert !isGroup() : DISPLAY_NAME;
 
     if (SPECIAL_DEFAULT_VALUE.equals(myDefaultValue)) {
+      if (ID.startsWith("compiler.debug")) {
+        return "true";
+      }
       if ("compiler.locale".equals(ID)) {
         return "en_US";
       }
@@ -347,6 +356,9 @@ public class CompilerOptionInfo {
     final String okForSWFValue = groupElement.getAttributeValue("okForSWF");
     final boolean okForSWF = okForSWFValue == null || "false".equals(okForSWFValue);
 
+    final String okForSWCValue = groupElement.getAttributeValue("okForSWC");
+    final boolean okForSWC = okForSWCValue == null || "false".equals(okForSWCValue);
+
     final List<CompilerOptionInfo> infos = new ArrayList<CompilerOptionInfo>();
 
     //noinspection unchecked
@@ -363,7 +375,7 @@ public class CompilerOptionInfo {
     }
 
     final CompilerOptionInfo[] infosArray = infos.toArray(new CompilerOptionInfo[infos.size()]);
-    return new CompilerOptionInfo(displayName, advanced, since, okForAir, okForPureAS, okForSWF, infosArray);
+    return new CompilerOptionInfo(displayName, advanced, since, okForAir, okForPureAS, okForSWF, okForSWC, infosArray);
   }
 
   private static CompilerOptionInfo loadOption(final Element element) {
@@ -394,10 +406,13 @@ public class CompilerOptionInfo {
     final String okForSWFValue = element.getAttributeValue("okForSWF");
     final boolean okForSWF = okForSWFValue == null || "true".equals(okForSWFValue);
 
+    final String okForSWCValue = element.getAttributeValue("okForSWC");
+    final boolean okForSWC = okForSWCValue == null || "true".equals(okForSWCValue);
+
     final String defaultValue = StringUtil.notNullize(element.getAttributeValue("default"));
 
     final CompilerOptionInfo info = new CompilerOptionInfo(id, displayName, type, fileExtension, listElements, advanced, since, okForAir,
-                                                           okForPureAS, okForSWF, defaultValue);
+                                                           okForPureAS, okForSWF, okForSWC, defaultValue);
 
     if (SPECIAL_DEFAULT_VALUE.equals(defaultValue)) {
       ourOptionsWithSpecialValues.add(info);

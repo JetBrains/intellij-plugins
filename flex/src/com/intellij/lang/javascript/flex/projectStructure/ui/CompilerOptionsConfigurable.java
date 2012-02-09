@@ -626,7 +626,10 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
     for (final CompilerOptionInfo info : optionInfos) {
       final boolean show = info.isGroup() || // empty group will be hidden later
-                           (info.isApplicable(getSdkVersion(), myNature) && (showAll || !info.ADVANCED || hasCustomValue(info)));
+                           ((myMode != Mode.BC || info.isApplicable(getSdkVersion(), myNature))
+                            &&
+                            (showAll || !info.ADVANCED || hasCustomValue(info))
+                           );
 
       DefaultMutableTreeNode node = findChildNodeWithInfo(rootNode, info);
 
@@ -676,7 +679,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       // choose "the most custom" subnode of a group a group source
       ValueSource groupValueSource = ValueSource.GlobalDefault;
       for (final CompilerOptionInfo childInfo : info.getChildOptionInfos()) {
-        if (childInfo.isApplicable(getSdkVersion(), myNature)) {
+        if (myMode != Mode.BC || childInfo.isApplicable(getSdkVersion(), myNature)) {
           final ValueSource childSource = getValueAndSource(childInfo).second;
           if (childSource.ordinal() > groupValueSource.ordinal()) {
             groupValueSource = childSource;

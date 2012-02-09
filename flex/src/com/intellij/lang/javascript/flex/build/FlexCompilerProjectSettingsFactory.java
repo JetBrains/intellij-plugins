@@ -30,8 +30,6 @@ public class FlexCompilerProjectSettingsFactory implements CompilerSettingsFacto
     private JSpinner myParallelCompilationsAmountSpinner;
     private JTextField myHeapSizeTextField;
     private RawCommandLineEditor myVMOptionsEditor;
-    private JCheckBox mySwfDebugEnabledCheckBox;
-    private JCheckBox mySwcDebugEnabledCheckBox;
     private JLabel myParallelCompilationLabel;
     private JLabel myThreadsOrProcessesLabel;
 
@@ -98,9 +96,7 @@ public class FlexCompilerProjectSettingsFactory implements CompilerSettingsFacto
 
     public boolean isModified() {
       return isImportantModified() ||
-             myConfig.MAX_PARALLEL_COMPILATIONS != (Integer)myParallelCompilationsAmountSpinner.getValue() ||
-             mySwfDebugEnabledCheckBox.isSelected() != myConfig.SWF_DEBUG_ENABLED ||
-             mySwcDebugEnabledCheckBox.isSelected() != myConfig.SWC_DEBUG_ENABLED;
+             myConfig.MAX_PARALLEL_COMPILATIONS != (Integer)myParallelCompilationsAmountSpinner.getValue();
     }
 
     private boolean isImportantModified() {
@@ -141,8 +137,6 @@ public class FlexCompilerProjectSettingsFactory implements CompilerSettingsFacto
       }
 
       myConfig.VM_OPTIONS = myVMOptionsEditor.getText().trim();
-      myConfig.SWF_DEBUG_ENABLED = mySwfDebugEnabledCheckBox.isSelected();
-      myConfig.SWC_DEBUG_ENABLED = mySwcDebugEnabledCheckBox.isSelected();
     }
 
     public void reset() {
@@ -152,8 +146,6 @@ public class FlexCompilerProjectSettingsFactory implements CompilerSettingsFacto
       myParallelCompilationsAmountSpinner.setValue(myConfig.MAX_PARALLEL_COMPILATIONS);
       myHeapSizeTextField.setText(String.valueOf(myConfig.HEAP_SIZE_MB));
       myVMOptionsEditor.setText(myConfig.VM_OPTIONS);
-      mySwfDebugEnabledCheckBox.setSelected(myConfig.SWF_DEBUG_ENABLED);
-      mySwcDebugEnabledCheckBox.setSelected(myConfig.SWC_DEBUG_ENABLED);
       updateControls();
     }
 

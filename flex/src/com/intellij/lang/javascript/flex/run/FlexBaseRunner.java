@@ -349,7 +349,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
       final FlexCompilerProjectConfiguration compilerConfiguration = FlexCompilerProjectConfiguration.getInstance(project);
 
-      if (!compilerConfiguration.SWF_DEBUG_ENABLED) {
+      //if (!compilerConfiguration.SWF_DEBUG_ENABLED) {
         if (params.getRunMode() != FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer || params instanceof AirRunnerParameters) {
           final HyperlinkListener listener = new HyperlinkAdapter() {
             protected void hyperlinkActivated(final HyperlinkEvent e) {
@@ -362,7 +362,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
           ToolWindowManager.getInstance(project)
             .notifyByBalloon(ToolWindowId.DEBUG, MessageType.WARNING, FlexBundle.message("compilation.without.debug.info"), null, listener);
         }
-      }
+      //}
     }
   }
 

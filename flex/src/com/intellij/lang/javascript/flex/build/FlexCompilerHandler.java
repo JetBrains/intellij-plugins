@@ -768,9 +768,9 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
       addTag(configTextBuilder, "target-player", config.TARGET_PLAYER_VERSION);
     }
 
-    final boolean debug = FlexBuildConfiguration.APPLICATION.equals(config.OUTPUT_TYPE)
+    final boolean debug = true;/*FlexBuildConfiguration.APPLICATION.equals(config.OUTPUT_TYPE)
                           ? FlexCompilerProjectConfiguration.getInstance(module.getProject()).SWF_DEBUG_ENABLED
-                          : FlexCompilerProjectConfiguration.getInstance(module.getProject()).SWC_DEBUG_ENABLED;
+                          : FlexCompilerProjectConfiguration.getInstance(module.getProject()).SWC_DEBUG_ENABLED;*/
 
     configTextBuilder.append("\n  <compiler>");
     addTag(configTextBuilder, "debug", String.valueOf(debug), "\n    ");
