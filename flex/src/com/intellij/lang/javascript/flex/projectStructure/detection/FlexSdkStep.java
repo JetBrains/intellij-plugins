@@ -57,6 +57,9 @@ public class FlexSdkStep extends ModuleWizardStep {
     if (currentEditor != null) {
       final Module[] modules = ModuleStructureConfigurable.getInstance(project).getModules();
       for (Module module : modules) {
+        if (ModuleType.get(module) != FlexModuleType.getInstance()) {
+          continue;
+        }
         for (ModifiableFlexIdeBuildConfiguration c : currentEditor.getConfigurations(module)) {
           SdkEntry sdkEntry = c.getDependencies().getSdkEntry();
           Sdk sdk;
