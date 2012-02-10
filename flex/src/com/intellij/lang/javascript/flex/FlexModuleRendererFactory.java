@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex;
 import com.intellij.ide.util.ModuleRendererFactory;
 import com.intellij.ide.util.PsiElementModuleRenderer;
 import com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdk;
+import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleJdkOrderEntry;
@@ -18,7 +19,7 @@ public class FlexModuleRendererFactory extends ModuleRendererFactory {
 
   @Override
   protected boolean handles(final Object element) {
-    return element instanceof JSQualifiedNamedElement;
+    return element instanceof JSQualifiedNamedElement || element instanceof JSFile;
   }
 
   @Override
