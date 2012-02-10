@@ -416,8 +416,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     }
     if (myConfiguration.isSkipCompile() != mySkipCompilationCheckBox.isSelected()) return true;
 
-    // Dependencies configurable is applied on every change by activity watcher, so it is never modified
-    //if (myDependenciesConfigurable.isModified()) return true;
+    if (myDependenciesConfigurable.isModified()) return true;
     if (myCompilerOptionsConfigurable.isModified()) return true;
     if (myAirDesktopPackagingConfigurable != null && myAirDesktopPackagingConfigurable.isModified()) return true;
     if (myAndroidPackagingConfigurable != null && myAndroidPackagingConfigurable.isModified()) return true;
@@ -429,8 +428,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   public void apply() throws ConfigurationException {
     applyOwnTo(myConfiguration, true);
 
-    // Dependencies configurable is applied on every change by activity watcher, so it is never modified
-    //myDependenciesConfigurable.apply();
+    myDependenciesConfigurable.apply();
     myCompilerOptionsConfigurable.apply();
     if (myAirDesktopPackagingConfigurable != null) myAirDesktopPackagingConfigurable.apply();
     if (myAndroidPackagingConfigurable != null) myAndroidPackagingConfigurable.apply();
