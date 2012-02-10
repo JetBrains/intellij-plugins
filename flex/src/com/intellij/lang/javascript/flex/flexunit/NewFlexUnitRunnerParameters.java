@@ -163,7 +163,7 @@ public class NewFlexUnitRunnerParameters extends BCBasedRunnerParameters impleme
     final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = super.checkAndGetModuleAndBC(project);
     doCheck(project, moduleAndBC);
 
-    final ModifiableFlexIdeBuildConfiguration overriddenBC = Factory.getCopy(moduleAndBC.second);
+    final ModifiableFlexIdeBuildConfiguration overriddenBC = Factory.getTemporaryCopyForCompilation(moduleAndBC.second);
     overriddenBC.setSkipCompile(false);
     overriddenBC.setMainClass(FlexUnitPrecompileTask.getFlexUnitLauncherName(getModuleName()));
     overriddenBC.setOutputFileName("_flexunit.swf");

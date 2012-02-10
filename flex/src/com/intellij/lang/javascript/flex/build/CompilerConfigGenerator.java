@@ -16,30 +16,29 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.JDOMUtil;
+import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.*;
 import com.intellij.util.PairConsumer;
 import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformUtils;
+import com.intellij.util.SystemProperties;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class CompilerConfigGenerator {
 
@@ -75,10 +74,17 @@ public class CompilerConfigGenerator {
       new CompilerConfigGenerator(module, bc,
                                   FlexBuildConfigurationManager.getInstance(module).getModuleLevelCompilerOptions(),
                                   FlexProjectLevelCompilerOptionsHolder.getInstance(module.getProject()).getProjectLevelCompilerOptions());
-    final String text = generator.generateConfigFileText();
-    final String name =
-      FlexCompilerHandler.generateConfigFileName(module, bc.getName(), PlatformUtils.getPlatformPrefix().toLowerCase(), null);
-    return FlexCompilationUtils.getOrCreateConfigFile(module.getProject(), name, text);
+    String text = generator.generateConfigFileText();
+
+    if (bc.isTempBCForCompilation()) {
+      final FlexIdeBuildConfiguration originalBC = FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(bc.getName());
+      final boolean makeExternalLibsMerged = originalBC != null && originalBC.getOutputType() == OutputType.Library;
+      text = FlexCompilerConfigFileUtil
+        .mergeWithCustomConfigFile(text, bc.getCompilerOptions().getAdditionalConfigFilePath(), makeExternalLibsMerged, null);
+    }
+
+    final String name = getConfigFileName(module, bc.getName(), PlatformUtils.getPlatformPrefix().toLowerCase(), null);
+    return getOrCreateConfigFile(module.getProject(), name, text);
   }
 
   private String generateConfigFileText() throws IOException {
@@ -566,5 +572,59 @@ public class CompilerConfigGenerator {
     if (projectLevelValue != null) return Pair.create(projectLevelValue, ValueSource.ProjectDefault);
 
     return Pair.create(info.getDefaultValue(mySdk.getVersionString(), myBC.getNature()), ValueSource.GlobalDefault);
+  }
+
+  private static VirtualFile getOrCreateConfigFile(final Project project, final String name, final String text) throws IOException {
+    final VirtualFile existingConfigFile = VfsUtil.findRelativeFile(name, FlexUtils.getFlexCompilerWorkDir(project, null));
+
+    if (existingConfigFile != null && Arrays.equals(text.getBytes(), existingConfigFile.contentsToByteArray())) {
+      return existingConfigFile;
+    }
+
+    final Ref<VirtualFile> fileRef = new Ref<VirtualFile>();
+    final Ref<IOException> error = new Ref<IOException>();
+    final Runnable runnable = new Runnable() {
+      public void run() {
+        fileRef.set(ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
+          public VirtualFile compute() {
+            try {
+              final String baseDirPath = FlexUtils.getTempFlexConfigsDirPath();
+              final VirtualFile baseDir = VfsUtil.createDirectories(baseDirPath);
+
+              VirtualFile configFile = baseDir.findChild(name);
+              if (configFile == null) {
+                configFile = baseDir.createChildData(this, name);
+              }
+              VfsUtil.saveText(configFile, text);
+              return configFile;
+            }
+            catch (IOException ex) {
+              error.set(ex);
+            }
+            return null;
+          }
+        }));
+      }
+    };
+
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      runnable.run();
+    }
+    else {
+      ApplicationManager.getApplication()
+        .invokeAndWait(runnable, ProgressManager.getInstance().getProgressIndicator().getModalityState());
+    }
+
+    if (!error.isNull()) {
+      throw error.get();
+    }
+    return fileRef.get();
+  }
+
+  static String getConfigFileName(final Module module, final @Nullable String configName,
+                                  final String prefix, final @Nullable String postfix) {
+    final String hash1 = Integer.toHexString((SystemProperties.getUserName() + module.getProject().getName()).hashCode()).toUpperCase();
+    final String hash2 = Integer.toHexString((module.getName() + StringUtil.notNullize(configName)).hashCode()).toUpperCase();
+    return prefix + "-" + hash1 + "-" + hash2 + (postfix == null ? ".xml" : ("-" + postfix + ".xml"));
   }
 }

@@ -58,6 +58,7 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
   private final AirDesktopPackagingOptionsImpl myAirDesktopPackagingOptions = new AirDesktopPackagingOptionsImpl();
   private final AndroidPackagingOptionsImpl myAndroidPackagingOptions = new AndroidPackagingOptionsImpl();
   private final IosPackagingOptionsImpl myIosPackagingOptions = new IosPackagingOptionsImpl();
+  private boolean myTempBCForCompilation = false;
 
   @Override
   @NotNull
@@ -231,7 +232,7 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
 
   @Override
   public String getOutputFilePath(boolean respectAdditionalConfigFile) {
-    final InfoFromConfigFile info = respectAdditionalConfigFile
+    final InfoFromConfigFile info = respectAdditionalConfigFile && !myTempBCForCompilation
                                     ? FlexCompilerConfigFileUtil.getInfoFromConfigFile(myCompilerOptions.getAdditionalConfigFilePath())
                                     : InfoFromConfigFile.DEFAULT;
     final String outputFolderPath = StringUtil.notNullize(info.getOutputFolderPath(), myOutputFolder);
@@ -298,6 +299,14 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
         return sdkEntry.getName().equals(sdk.getName());
       }
     });
+  }
+
+  public boolean isTempBCForCompilation() {
+    return myTempBCForCompilation;
+  }
+
+  void setTempBCForCompilation(final boolean tempBCForCompilation) {
+    myTempBCForCompilation = tempBCForCompilation;
   }
 
   @Override

@@ -319,9 +319,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
       throw new ConfigurationException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
     }
 
-    String mainClassPathFromConfigFile = null;
-    String outputFileNameFromConfigFile = null;
-    String outputFolderPathFromConfigFile = null;
+    InfoFromConfigFile info = InfoFromConfigFile.DEFAULT;
 
     final String additionalConfigFilePath = bc.getCompilerOptions().getAdditionalConfigFilePath();
     if (!additionalConfigFilePath.isEmpty()) {
@@ -330,20 +328,19 @@ public class FlexCompiler implements SourceProcessingCompiler {
         throw new ConfigurationException(
           FlexBundle.message("additional.config.file.not.found", additionalConfigFilePath, bc.getName(), moduleName));
       }
-      final InfoFromConfigFile info = FlexCompilerConfigFileUtil.getInfoFromConfigFile(additionalConfigFilePath);
-      mainClassPathFromConfigFile = info.getMainClass(module);
-      outputFileNameFromConfigFile = info.getOutputFileName();
-      outputFolderPathFromConfigFile = info.getOutputFolderPath();
+      if (!bc.isTempBCForCompilation()) {
+        info = FlexCompilerConfigFileUtil.getInfoFromConfigFile(additionalConfigFilePath);
+      }
     }
 
     final BuildConfigurationNature nature = bc.getNature();
 
-    if (!nature.isLib() && mainClassPathFromConfigFile == null && bc.getMainClass().isEmpty()) {
+    if (!nature.isLib() && info.getMainClass(module) == null && bc.getMainClass().isEmpty()) {
       throw new ConfigurationException(FlexBundle.message("main.class.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
       // real main class validation is done later in CompilerConfigGenerator
     }
 
-    if (outputFileNameFromConfigFile == null && outputFolderPathFromConfigFile == null) {
+    if (info.getOutputFileName() == null && info.getOutputFolderPath() == null) {
       if (bc.getOutputFileName().isEmpty()) {
         throw new ConfigurationException(FlexBundle.message("output.file.name.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
       }

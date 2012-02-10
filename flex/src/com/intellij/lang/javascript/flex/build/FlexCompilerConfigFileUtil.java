@@ -8,11 +8,14 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.text.CharSequenceReader;
 import com.intellij.util.xml.NanoXmlUtil;
+import gnu.trove.THashSet;
 import org.jdom.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.*;
@@ -54,12 +57,15 @@ public class FlexCompilerConfigFileUtil {
       "compute-digest", "directory", "include-classes", "include-file",
       "include-lookup-only", "include-namespaces", "include-sources", "include-stylesheet",
 
-      // these 3 settings are non-appendable elements that are added to generated config file by FlexCompilerHandler#generateConfigFileText()
-      "debug", "file-specs", "output",
+      // main class and output path are taken according to run configuration, i.e. as set in generated config file text
+      /*"debug",*/ "file-specs", "output",
 
       // load-externs option should not be used because it can lead to runtime errors like IDEA-70155
       "load-externs"
     };
+
+  private static final String[] OPTIONS_CONTAINING_PATHS =
+    {"path-element", "manifest", "defaults-css-url", "filename", "link-report", "load-externs", "services", "resource-bundle-list"};
 
   public static class NamespacesInfo {
     public final String namespace;
@@ -76,46 +82,52 @@ public class FlexCompilerConfigFileUtil {
   private FlexCompilerConfigFileUtil() {
   }
 
-  static String mergeWithCustomConfigFile(final String configText, final String customConfigFilePath, final String cssFilePath) {
-    final VirtualFile configFile = LocalFileSystem.getInstance().findFileByPath(customConfigFilePath);
-    if (configFile == null) {
-      return configText;
+  public static String mergeWithCustomConfigFile(final String generatedConfigText,
+                                                 final String additionalConfigFilePath,
+                                                 final boolean makeExternalLibsMerged,
+                                                 final @Nullable String cssFilePath) {
+    final VirtualFile additionalConfigFile = LocalFileSystem.getInstance().findFileByPath(additionalConfigFilePath);
+    if (additionalConfigFile == null) {
+      return generatedConfigText;
     }
 
     final Document document;
     try {
-      document = JDOMUtil.loadDocument(configFile.getInputStream());
+      document = JDOMUtil.loadDocument(additionalConfigFile.getInputStream());
     }
     catch (JDOMException e) {
-      return configText;
+      return generatedConfigText;
     }
     catch (IOException e) {
-      return configText;
+      return generatedConfigText;
     }
 
     final Element rootElement = document.getRootElement();
     if (!FLEX_CONFIG.equals(rootElement.getName())) {
-      return configText;
+      return generatedConfigText;
     }
 
     addSourcePathIfCssCompilation(rootElement, cssFilePath);
     removeSwcSpecificElementsRecursively(rootElement);
-    makeLibrariesMergedIntoCode(rootElement, cssFilePath == null, cssFilePath != null);
+    makeLibrariesMergedIntoCode(rootElement, makeExternalLibsMerged, cssFilePath != null);
 
     try {
-      appendDocument(rootElement, JDOMUtil.loadDocument(configText));
+      final Element otherRootElement = JDOMUtil.loadDocument(generatedConfigText).getRootElement();
+      assert otherRootElement != null && FLEX_CONFIG.equals(rootElement.getName()) : JDOMUtil.writeDocument(document, "\n");
+
+      appendDocument(rootElement, otherRootElement);
     }
     catch (IOException e) {
-      assert false : e.getMessage() + "\n" + configText;
+      assert false : e.getMessage() + "\n" + generatedConfigText;
     }
     catch (JDOMException e) {
-      assert false : e.getMessage() + "\n" + configText;
+      assert false : e.getMessage() + "\n" + generatedConfigText;
     }
 
     return JDOMUtil.writeDocument(document, "\n");
   }
 
-  private static void addSourcePathIfCssCompilation(final Element rootElement, final String cssFilePath) {
+  private static void addSourcePathIfCssCompilation(final Element rootElement, final @Nullable String cssFilePath) {
     // folder that contains css file must be source folder and must be first in source-path list, otherwise stupid compiler says that css file must have package corresponding its path
     if (cssFilePath == null) return;
 
@@ -215,14 +227,56 @@ public class FlexCompilerConfigFileUtil {
     return result;
   }
 
-  private static void appendDocument(final Element rootElement, final Document document) {
-    final Element otherRootElement = document.getRootElement();
-    assert rootElement != null && FLEX_CONFIG.equals(rootElement.getName()) : JDOMUtil.writeDocument(document, "\n");
+  private static void appendDocument(final Element rootElement, final Element otherRootElement) {
+    final Collection<Element> toRemove = findDuplicateElementsRecursively(rootElement, otherRootElement);
+    for (Element duplicateElement : toRemove) {
+      final Element parentElement = duplicateElement.getParentElement();
+      parentElement.removeContent(duplicateElement);
+      if (parentElement.getChildren().isEmpty()) {
+        parentElement.getParentElement().removeContent(parentElement);
+      }
+    }
 
     //noinspection unchecked
-    for (final Element element : ((Iterable<Element>)otherRootElement.getChildren())) {
-      rootElement.addContent((Element)element.clone());
+    for (final Element otherElement : ((Iterable<Element>)otherRootElement.getChildren())) {
+      rootElement.addContent((Element)otherElement.clone());
     }
+  }
+
+  // required to avoid setting the same option values twice because it may lead to compilation failure (e.g. if the same locale is listed twice)
+  private static Collection<Element> findDuplicateElementsRecursively(final Element existingElement, final Element otherElement) {
+    final Collection<Element> result = new THashSet<Element>();
+
+    //noinspection unchecked
+    for (Element potentialChild : (Iterable<Element>)otherElement.getChildren()) {
+      final List existingChildren = existingElement.getChildren(potentialChild.getName(), existingElement.getNamespace());
+      //noinspection unchecked
+      for (Element existingChild : (Iterable<Element>)existingChildren) {
+        final String potentialChildContent = potentialChild.getTextTrim();
+        if (potentialChildContent.isEmpty()) {
+          result.addAll(findDuplicateElementsRecursively(existingChild, potentialChild));
+        }
+        else {
+          final String existingElementContent = existingChild.getTextTrim();
+          if (areOptionValuesEqual(existingChild.getName(), potentialChildContent, existingElementContent)) {
+            // remove only similar repeatable values, do not remove equal values of <policy-file-url/> that are for different <runtime-shared-library-path/> elements.
+            if (existingElement.getChildren().size() == existingChildren.size()) {
+              result.add(potentialChild);
+            }
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+
+  private static boolean areOptionValuesEqual(final String optionName, final String value1, final String value2) {
+    if (value1.equals(value2)) return true;
+    if (ArrayUtil.contains(optionName, OPTIONS_CONTAINING_PATHS)) {
+      if (FileUtil.toSystemIndependentName(value1).equals(FileUtil.toSystemIndependentName(value2))) return true;
+    }
+    return false;
   }
 
   public static Collection<NamespacesInfo> getNamespacesInfos(final VirtualFile configFile) {

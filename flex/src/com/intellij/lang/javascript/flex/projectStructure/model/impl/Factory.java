@@ -1,8 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,7 +24,9 @@ public class Factory {
     return new SdkEntryImpl(name);
   }
 
-  public static ModifiableFlexIdeBuildConfiguration getCopy(@NotNull FlexIdeBuildConfiguration bc) {
-    return ((FlexIdeBuildConfigurationImpl)bc).getCopy();
+  public static ModifiableFlexIdeBuildConfiguration getTemporaryCopyForCompilation(@NotNull FlexIdeBuildConfiguration bc) {
+    final FlexIdeBuildConfigurationImpl copy = ((FlexIdeBuildConfigurationImpl)bc).getCopy();
+    copy.setTempBCForCompilation(true);
+    return copy;
   }
 }

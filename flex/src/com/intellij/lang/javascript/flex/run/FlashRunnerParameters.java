@@ -207,7 +207,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     doCheck(moduleAndBC);
 
     if (myOverrideMainClass) {
-      final ModifiableFlexIdeBuildConfiguration overriddenBC = Factory.getCopy(moduleAndBC.second);
+      final ModifiableFlexIdeBuildConfiguration overriddenBC = Factory.getTemporaryCopyForCompilation(moduleAndBC.second);
       overriddenBC.setMainClass(myOverriddenMainClass);
       overriddenBC.setOutputFileName(myOverriddenOutputFileName);
       overriddenBC.getAndroidPackagingOptions().setPackageFileName(FileUtil.getNameWithoutExtension(myOverriddenOutputFileName) + ".apk");
@@ -232,7 +232,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
         androidOptions.setUseGeneratedDescriptor(true);
         androidOptions.getSigningOptions().setUseTempCertificate(true);
 
-        overriddenBC.getIosPackagingOptions().setEnabled(false); // impossible without extra user input: app id, provisioning, etc.
+        overriddenBC.getIosPackagingOptions().setEnabled(false); // impossible without extra user input: certificate and provisioning profile
       }
 
       return Pair.create(moduleAndBC.first, ((FlexIdeBuildConfiguration)overriddenBC));
