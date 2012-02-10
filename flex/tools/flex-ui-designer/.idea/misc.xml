@@ -47,8 +47,6 @@
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/miglayout/pom.xml" />
-        <option value="$PROJECT_DIR$/plaf/pom.xml" />
-        <option value="$PROJECT_DIR$/pom.xml" />
       </set>
     </option>
   </component>
