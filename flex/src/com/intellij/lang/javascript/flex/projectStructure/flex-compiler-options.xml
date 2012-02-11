@@ -22,7 +22,8 @@
       <listElement name="bundle" displayName="Bundle" type="String"/>
     </option>-->
   <!--<option id="include-stylesheet" displayName="Include stylesheet" type="List" okForSWF="false" advanced="true">
-    <listElement name="path-element" displayName="Path To CSS File" type="File" fileExtension="css"/>
+    <listElement name="name" displayName="Relative path in SWC" type="String"/>
+    <listElement name="path" displayName="Path To CSS File" type="File" fileExtension="css"/>
   </option>-->
     <!--<option id="includes" displayName="Include symbols" type="List" okForSWF="false" advanced="true">
       <listElement name="symbol" displayName="Symbol" type="String"/>

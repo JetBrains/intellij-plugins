@@ -265,7 +265,8 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     copy.myWrapperTemplatePath = myWrapperTemplatePath;
   }
 
-  boolean isEqual(FlexIdeBuildConfigurationImpl other) {
+  public boolean isEqual(FlexIdeBuildConfiguration bc) {
+    final FlexIdeBuildConfigurationImpl other = (FlexIdeBuildConfigurationImpl)bc;
     if (!myAirDesktopPackagingOptions.isEqual(other.myAirDesktopPackagingOptions)) return false;
     if (!myAndroidPackagingOptions.isEqual(other.myAndroidPackagingOptions)) return false;
     if (!myCompilerOptions.isEqual(other.myCompilerOptions)) return false;

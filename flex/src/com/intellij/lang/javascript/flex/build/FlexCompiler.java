@@ -69,11 +69,6 @@ public class FlexCompiler implements SourceProcessingCompiler {
       flexCompilerHandler.getCompilerDependenciesCache().clear();
     }
 
-    if (!itemList.isEmpty() && context.isRebuild()) {
-      final FlexCompilerHandler flexCompilerHandler = FlexCompilerHandler.getInstance(context.getProject());
-      flexCompilerHandler.quitCompilerShell();
-      flexCompilerHandler.getCompilerDependenciesCache().clear();
-    }
     return itemList.toArray(new ProcessingItem[itemList.size()]);
   }
 

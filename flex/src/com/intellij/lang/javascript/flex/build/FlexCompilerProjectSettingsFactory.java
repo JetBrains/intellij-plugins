@@ -108,14 +108,11 @@ public class FlexCompilerProjectSettingsFactory implements CompilerSettingsFacto
     }
 
     public void apply() throws ConfigurationException {
-      if (!myProject.isDefault()) {
+      if (!myProject.isDefault() && isImportantModified()) {
         final FlexCompilerHandler flexCompilerHandler = FlexCompilerHandler.getInstance(myProject);
         flexCompilerHandler.getCompilerDependenciesCache().clear();
-
-        if (isImportantModified()) {
-          flexCompilerHandler.quitCompilerShell();
-          flexCompilerHandler.getBuiltInFlexCompilerHandler().stopCompilerProcess();
-        }
+        flexCompilerHandler.quitCompilerShell();
+        flexCompilerHandler.getBuiltInFlexCompilerHandler().stopCompilerProcess();
       }
 
       myConfig.USE_BUILT_IN_COMPILER = myBuiltInCompilerRadioButton.isSelected();

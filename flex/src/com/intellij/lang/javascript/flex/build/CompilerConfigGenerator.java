@@ -83,7 +83,12 @@ public class CompilerConfigGenerator {
         .mergeWithCustomConfigFile(text, bc.getCompilerOptions().getAdditionalConfigFilePath(), makeExternalLibsMerged, null);
     }
 
-    final String name = getConfigFileName(module, bc.getName(), PlatformUtils.getPlatformPrefix().toLowerCase(), null);
+    final String postfix = bc.getMainClass().equals(FlexUnitPrecompileTask.getFlexUnitLauncherName(module.getName()))
+                           ? "flexunit"
+                           : bc.isTempBCForCompilation()
+                             ? StringUtil.getShortName(bc.getMainClass())
+                             : null;
+    final String name = getConfigFileName(module, bc.getName(), PlatformUtils.getPlatformPrefix().toLowerCase(), postfix);
     return getOrCreateConfigFile(module.getProject(), name, text);
   }
 

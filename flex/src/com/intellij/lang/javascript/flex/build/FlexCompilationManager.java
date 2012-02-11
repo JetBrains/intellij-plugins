@@ -11,7 +11,6 @@ import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -19,7 +18,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.graph.Graph;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -101,11 +103,11 @@ public class FlexCompilationManager {
       }
 
       if (category == CompilerMessageCategory.INFORMATION) {
-        final Matcher matcher = FlexCompilationManager.OUTPUT_FILE_CREATED_PATTERN.matcher(message);
+        final Matcher matcher = OUTPUT_FILE_CREATED_PATTERN.matcher(message);
         if (matcher.matches()) {
           final String outputFilePath = matcher.group(2);
           // need to refresh FS in order to notify artifact compiler that Flex output has changed
-          refreshAndFindFileInWriteAction(myCompileContext.getProject(), outputFilePath);
+          refreshAndFindFileInWriteAction(outputFilePath);
         }
       }
 
@@ -119,8 +121,8 @@ public class FlexCompilationManager {
     }
   }
 
-  public boolean isMake() {
-    return myCompileContext.isMake();
+  public boolean isRebuild() {
+    return myCompileContext.isRebuild();
   }
 
   private void checkFinishedTasks() {
@@ -158,49 +160,17 @@ public class FlexCompilationManager {
           }
         }
 
-        if (task.useCache()) {
-          final Module module = task.getModule();
-          if (task.isCompilationFailed()) {
-            myCompilerDependenciesCache.markModuleAndDependentModulesDirty(module);
-          }
-          else if (areAllModuleCompilationsSuccessful(module)) {
-            final Collection<List<VirtualFile>> allConfigFiles = new ArrayList<List<VirtualFile>>();
-            for (final FlexCompilationTask t : myFinishedTasks) {
-              if (!(t instanceof CssCompilationTask) && t.getModule().equals(module)) {
-                allConfigFiles.add(t.getConfigFiles());
-              }
-            }
-
-            //noinspection SynchronizeOnThis
-            synchronized (this) {
-              myCompilerDependenciesCache.cacheModuleWithDependencies(myCompileContext, module, allConfigFiles);
-            }
+        if (task.isCompilationFailed()) {
+          myCompilerDependenciesCache.markBCDirty(task.getModule(), task.getBC());
+        }
+        else {
+          //noinspection SynchronizeOnThis
+          synchronized (this) {
+            myCompilerDependenciesCache.cacheBC(myCompileContext, task.getModule(), task.getBC(), task.getConfigFiles());
           }
         }
       }
     }
-  }
-
-  private boolean areAllModuleCompilationsSuccessful(final Module module) {
-    for (final FlexCompilationTask task : myNotStartedTasks) {
-      if (task.getModule().equals(module)) {
-        return false;
-      }
-    }
-
-    for (final FlexCompilationTask task : myInProgressTasks) {
-      if (task.getModule().equals(module)) {
-        return false;
-      }
-    }
-
-    for (final FlexCompilationTask task : myFinishedTasks) {
-      if (task.getModule().equals(module) && task.isCompilationFailed()) {
-        return false;
-      }
-    }
-
-    return true;
   }
 
   private Collection<FlexCompilationTask> getNotStartedDependentTasks(final FlexCompilationTask failedTask) {
@@ -209,39 +179,22 @@ public class FlexCompilationManager {
     return cancelledTasks;
   }
 
-  private void appendNotStartedDependentTasks(final Collection<FlexCompilationTask> cancelledTasks,
-                                              final FlexCompilationTask task) {
+  private void appendNotStartedDependentTasks(final Collection<FlexCompilationTask> cancelledTasks, final FlexCompilationTask task) {
     final Collection<FlexCompilationTask> tasksToCancel = new ArrayList<FlexCompilationTask>();
 
-    if (task.getBC() == null) {
-      final Iterator<Module> dependentModulesIterator = myModuleGraph.getOut(task.getModule());
-
-      while (dependentModulesIterator.hasNext()) {
-        final Module dependentModule = dependentModulesIterator.next();
-        for (FlexCompilationTask notStartedTask : myNotStartedTasks) {
-          if (dependentModule.equals(notStartedTask.getModule())) {
-            tasksToCancel.add(notStartedTask);
-          }
-        }
-      }
-    }
-    else {
-      for (FlexCompilationTask notStartedTask : myNotStartedTasks) {
-        //noinspection ConstantConditions
-        if (notStartedTask.getDependencies().contains(task.getBC())) {
-          tasksToCancel.add(notStartedTask);
-        }
+    for (FlexCompilationTask notStartedTask : myNotStartedTasks) {
+      //noinspection ConstantConditions
+      if (notStartedTask.getDependencies().contains(task.getBC())) {
+        tasksToCancel.add(notStartedTask);
       }
     }
 
-    if (!tasksToCancel.isEmpty()) {
-      for (FlexCompilationTask taskToCancel : tasksToCancel) {
-        taskToCancel.cancel();
-        if (myNotStartedTasks.remove(taskToCancel)) {
-          myFinishedTasks.add(taskToCancel);
-          cancelledTasks.add(taskToCancel);
-          appendNotStartedDependentTasks(cancelledTasks, taskToCancel);
-        }
+    for (FlexCompilationTask taskToCancel : tasksToCancel) {
+      taskToCancel.cancel();
+      if (myNotStartedTasks.remove(taskToCancel)) {
+        myFinishedTasks.add(taskToCancel);
+        cancelledTasks.add(taskToCancel);
+        appendNotStartedDependentTasks(cancelledTasks, taskToCancel);
       }
     }
   }
@@ -273,8 +226,7 @@ public class FlexCompilationManager {
       if (taskToStart != null) {
         myNotStartedTasks.remove(taskToStart);
 
-        if (taskToStart.useCache() && isMake()
-            && myCompilerDependenciesCache.isNothingChangedSincePreviousCompilation(taskToStart.getModule())) {
+        if (myCompilerDependenciesCache.isNothingChangedSincePreviousCompilation(taskToStart.getModule(), taskToStart.getBC())) {
           addMessage(taskToStart, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.skipped.because.nothing.changed"),
                      null, -1, -1);
           taskToStart.cancel();
@@ -325,7 +277,7 @@ public class FlexCompilationManager {
     progressIndicator.setText(FlexBundle.message("compiling", builder.toString()));
   }
 
-  static VirtualFile refreshAndFindFileInWriteAction(final Project project, final String outputFilePath, final String... possibleBaseDirs) {
+  static VirtualFile refreshAndFindFileInWriteAction(final String outputFilePath, final String... possibleBaseDirs) {
     final LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
     final Application application = ApplicationManager.getApplication();
     final Ref<VirtualFile> outputFileRef = new Ref<VirtualFile>();

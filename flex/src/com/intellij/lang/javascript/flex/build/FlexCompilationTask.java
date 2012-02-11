@@ -39,7 +39,7 @@ public abstract class FlexCompilationTask {
       myConfigFiles = createConfigFiles();
       final String outputFilePath = myBC.getOutputFilePath(true);
 
-      if (!compilationManager.isMake()) {
+      if (compilationManager.isRebuild()) {
         FlexCompilationUtils.deleteCacheForFile(outputFilePath);
       }
 
@@ -99,16 +99,10 @@ public abstract class FlexCompilationTask {
     return myConfigFiles;
   }
 
-  public boolean useCache() {
-    return false;
-  }
-
-  @Nullable
   public FlexIdeBuildConfiguration getBC() {
     return myBC;
   }
 
-  @Nullable
   public Collection<FlexIdeBuildConfiguration> getDependencies() {
     return myDependencies;
   }
