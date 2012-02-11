@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.util.SystemProperties;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static com.intellij.openapi.util.SystemInfo.*;
 
@@ -51,45 +53,28 @@ public class FlashPlayerTrustUtil {
   private static void fixIdeaCfgFileContentIfNeeded(final @NotNull File ideaCfgFile,
                                                     final @NotNull String[] trustedPaths,
                                                     final boolean runTrusted) throws IOException {
+    final StringBuilder buf = new StringBuilder();
+    final List<String> lines = StringUtil.split(FileUtil.loadFile(ideaCfgFile), "\n");
 
-    final String content = FileUtil.loadFile(ideaCfgFile);
+    for (String line : lines) {
+      boolean appendLine = true;
 
-    for (final String trustedSwfPath : trustedPaths) {
-      int startIndex = content.indexOf(trustedSwfPath);
-      int endIndex = startIndex + trustedSwfPath.length();
-      if (startIndex != -1 &&
-          (startIndex == 0 || content.charAt(startIndex - 1) == '\n' || content.charAt(startIndex - 1) == '\r') &&
-          (endIndex == content.length() || content.charAt(endIndex) == '\n' || content.charAt(endIndex) == '\r')) {
-        // already contains
-        if (!runTrusted) {
-          // remove this line
-          final StringBuilder newContent = new StringBuilder();
-          newContent.append(content, 0, startIndex);
-
-          while (endIndex < content.length() && (content.charAt(endIndex) == '\n' || content.charAt(endIndex) == '\r')) {
-            endIndex++;
-          }
-
-          if (endIndex < content.length()) {
-            newContent.append(content, endIndex, content.length());
-          }
-
-          FileUtil.writeToFile(ideaCfgFile, newContent.toString());
-        }
+      for (String path : trustedPaths) {
+        appendLine &= !line.equals(path) && !line.startsWith(path + File.separatorChar) && !path.startsWith(line + File.separatorChar);
       }
-      else {
-        // doesn't contain yet
-        if (runTrusted) {
-          final StringBuilder newContent = new StringBuilder(content);
-          if (content.length() > 0 && content.charAt(content.length() - 1) != '\n') {
-            newContent.append('\n');
-          }
-          newContent.append(trustedSwfPath);
-          newContent.append('\n');
-          FileUtil.writeToFile(ideaCfgFile, newContent.toString());
-        }
+
+      if (appendLine) {
+        buf.append(line).append('\n');
       }
     }
+
+    if (runTrusted) {
+      for (String path : trustedPaths) {
+        buf.append(path).append('\n');
+      }
+    }
+
+    FileUtil.writeToFile(ideaCfgFile, buf.toString());
   }
 
   @Nullable
