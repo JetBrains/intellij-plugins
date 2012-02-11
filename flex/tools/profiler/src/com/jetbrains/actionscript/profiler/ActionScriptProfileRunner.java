@@ -206,7 +206,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
       }
 
       assert agentFile != null && agentFile.exists() : "Have not found " + agentName;
-      String pathToAgent = agentFile.getAbsolutePath();
+      String pathToAgent = agentFile.getCanonicalPath();
 
       pathToAgent += "?port=" + port + "&host=" + host;
       FlashPlayerTrustUtil.updateTrustedStatus(module.getProject(), true, false, pathToAgent);

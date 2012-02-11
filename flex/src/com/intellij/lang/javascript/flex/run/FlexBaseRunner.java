@@ -123,6 +123,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
     final RunProfile runProfile = env.getRunProfile();
 
+    final boolean isDebug = this instanceof FlexDebugRunner;
     try {
       if (runProfile instanceof RemoteFlashRunConfiguration) {
         final BCBasedRunnerParameters params = ((RemoteFlashRunConfiguration)runProfile).getRunnerParameters();
@@ -160,7 +161,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         if (bc.getTargetPlatform() == TargetPlatform.Web && !params.isLaunchUrl()) {
           try {
             final String canonicalPath = new File(PathUtil.getParentPath(bc.getOutputFilePath(true))).getCanonicalPath();
-            FlashPlayerTrustUtil.updateTrustedStatus(module.getProject(), params.isRunTrusted(), false, canonicalPath);
+            FlashPlayerTrustUtil.updateTrustedStatus(module.getProject(), params.isRunTrusted(), isDebug, canonicalPath);
           }
           catch (IOException e) {/**/}
         }
@@ -181,7 +182,6 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       throw new CantRunException(FlexBundle.message("cannot.find.flex.sdk"));
     }
 
-    final boolean isDebug = this instanceof FlexDebugRunner;
     final boolean ok = isRunAsAir(flexRunnerParameters)
                        ? checkAirParams((AirRunnerParameters)flexRunnerParameters, flexSdk, isDebug)
                        : checkFlexParams(module, flexRunnerParameters);
