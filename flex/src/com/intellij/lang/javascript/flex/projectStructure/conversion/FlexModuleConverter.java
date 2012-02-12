@@ -257,7 +257,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
       }
       else if (ModuleOrderEntryImpl.ENTRY_TYPE.equals(orderEntryType)) {
         String moduleName = orderEntry.getAttributeValue(ModuleOrderEntryImpl.MODULE_NAME_ATTR);
-        Collection<String> bcNames = myParams.getBcNamesForDependency(moduleName);
+        Collection<String> bcNames = myParams.getBcNamesForDependency(moduleName, newBuildConfiguration.getNature());
         for (String bcName : bcNames) {
           ModifiableBuildConfigurationEntry bcEntry = ConversionHelper.createBuildConfigurationEntry(moduleName, bcName);
           convertDependencyType(orderEntry, bcEntry.getDependencyType());

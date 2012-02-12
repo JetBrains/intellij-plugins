@@ -9,6 +9,9 @@
             <entry library-id="8">
               <dependency linkage="Merged" />
             </entry>
+            <entry module-name="java_with_flex_facets_2" build-configuration-name="B">
+              <dependency linkage="Include" />
+            </entry>
           </entries>
         </dependencies>
         <compiler-options />
@@ -21,6 +24,9 @@
           <entries>
             <entry library-id="9">
               <dependency linkage="Merged" />
+            </entry>
+            <entry module-name="java_with_flex_facets_2" build-configuration-name="B">
+              <dependency linkage="Include" />
             </entry>
           </entries>
         </dependencies>
@@ -48,6 +54,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="java_with_flex_facets_2" exported="" />
     <orderEntry type="module-library">
       <library name="flexlib" type="flex">
         <properties id="8" />

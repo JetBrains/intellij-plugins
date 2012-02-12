@@ -3,8 +3,6 @@ package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 import com.intellij.ProjectTopics;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
-import com.intellij.lang.javascript.flex.projectStructure.ui.ActiveBuildConfigurationWidget;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -15,13 +13,8 @@ import com.intellij.openapi.project.ModuleAdapter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.EmptyRunnable;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.wm.StatusBar;
-import com.intellij.openapi.wm.WindowManager;
-import com.intellij.openapi.wm.impl.IdeRootPane;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiModificationTrackerImpl;
 import com.intellij.util.ArrayUtil;
@@ -180,7 +173,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
       throw new IllegalStateException("Cannot load state of a dummy config manager instance");
     }
     Collection<FlexIdeBuildConfigurationImpl> configurations = new ArrayList<FlexIdeBuildConfigurationImpl>(state.CONFIGURATIONS.size());
-    for (FlexIdeBuildConfigurationImpl.State configurationState : state.CONFIGURATIONS) {
+    for (FlexBuildConfigurationState configurationState : state.CONFIGURATIONS) {
       FlexIdeBuildConfigurationImpl configuration = new FlexIdeBuildConfigurationImpl();
       configuration.loadState(configurationState, myModule.getProject());
       configurations.add(configuration);
@@ -264,7 +257,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
   public static class State {
     @Tag("configurations")
     @AbstractCollection(surroundWithTag = false, elementTag = "configuration")
-    public List<FlexIdeBuildConfigurationImpl.State> CONFIGURATIONS = new ArrayList<FlexIdeBuildConfigurationImpl.State>();
+    public List<FlexBuildConfigurationState> CONFIGURATIONS = new ArrayList<FlexBuildConfigurationState>();
 
     @Property(surroundWithTag = false)
     public CompilerOptionsImpl.State myModuleLevelCompilerOptions = new CompilerOptionsImpl.State();

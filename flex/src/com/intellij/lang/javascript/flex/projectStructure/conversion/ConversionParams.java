@@ -10,6 +10,10 @@ import com.intellij.facet.pointers.FacetPointersManager;
 import com.intellij.ide.impl.convert.JDomConvertingUtil;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationState;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
+import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
@@ -193,7 +197,7 @@ public class ConversionParams {
     return myAppModuleAndBCNames;
   }
 
-  public Collection<String> getBcNamesForDependency(String moduleName) {
+  public Collection<String> getBcNamesForDependency(String moduleName, final BuildConfigurationNature dependantNature) {
     ModuleSettings moduleSettings = myContext.getModuleSettings(moduleName);
     if (moduleSettings == null) return Collections.emptyList(); // module is missing
 
@@ -203,6 +207,22 @@ public class ConversionParams {
         FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(flexBuildConfigurationElement, FlexBuildConfiguration.class);
         if (oldConfiguration != null && FlexBuildConfiguration.LIBRARY.equals(oldConfiguration.OUTPUT_TYPE)) {
           return Collections.singletonList(FlexModuleConverter.generateModuleBcName(moduleSettings));
+        }
+      }
+      else {
+        // this module might have already been processed
+        Element buildConfigManagerElement = moduleSettings.getComponentElement(FlexBuildConfigurationManagerImpl.COMPONENT_NAME);
+        if (buildConfigManagerElement != null) {
+          FlexBuildConfigurationManagerImpl.State s =
+            XmlSerializer.deserialize(buildConfigManagerElement, FlexBuildConfigurationManagerImpl.State.class);
+
+          return ContainerUtil.mapNotNull(s.CONFIGURATIONS, new Function<FlexBuildConfigurationState, String>() {
+            @Nullable
+            @Override
+            public String fun(final FlexBuildConfigurationState bcState) {
+              return BCUtils.isApplicableForDependency(dependantNature, bcState.OUTPUT_TYPE) ? bcState.NAME : null;
+            }
+          });
         }
       }
       return Collections.emptyList();

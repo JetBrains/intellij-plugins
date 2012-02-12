@@ -13,9 +13,6 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.xmlb.annotations.Attribute;
-import com.intellij.util.xmlb.annotations.Property;
-import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -315,8 +312,8 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     return myName + ": " + getNature().toString();
   }
 
-  public State getState() {
-    State state = new State();
+  public FlexBuildConfigurationState getState() {
+    FlexBuildConfigurationState state = new FlexBuildConfigurationState();
     state.AIR_DESKTOP_PACKAGING_OPTIONS = myAirDesktopPackagingOptions.getState();
     state.ANDROID_PACKAGING_OPTIONS = myAndroidPackagingOptions.getState();
     state.COMPILER_OPTIONS = myCompilerOptions.getState();
@@ -336,7 +333,7 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     return state;
   }
 
-  public void loadState(State state, Project project) {
+  public void loadState(FlexBuildConfigurationState state, Project project) {
     myAirDesktopPackagingOptions.loadState(state.AIR_DESKTOP_PACKAGING_OPTIONS);
     myAndroidPackagingOptions.loadState(state.ANDROID_PACKAGING_OPTIONS);
     myCompilerOptions.loadState(state.COMPILER_OPTIONS);
@@ -353,56 +350,5 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     myTargetPlatform = state.TARGET_PLATFORM;
     myUseHtmlWrapper = state.USE_HTML_WRAPPER;
     myWrapperTemplatePath = state.WRAPPER_TEMPLATE_PATH;
-  }
-
-  @Tag("configuration")
-  public static class State {
-    @Attribute(value = "name")
-    public String NAME = "Unnamed";
-
-    @Attribute(value = "target-platform")
-    public TargetPlatform TARGET_PLATFORM = TargetPlatform.Web;
-
-    @Attribute(value = "pure-as")
-    public boolean PURE_ACTION_SCRIPT = false;
-
-    @Attribute(value = "output-type")
-    public OutputType OUTPUT_TYPE = OutputType.Application;
-
-    @Attribute(value = "optimize-for")
-    public String OPTIMIZE_FOR = "";
-
-    @Attribute(value = "main-class")
-    public String MAIN_CLASS = "";
-
-    @Attribute(value = "output-file")
-    public String OUTPUT_FILE_NAME = "";
-
-    @Attribute(value = "output-folder")
-    public String OUTPUT_FOLDER = "";
-
-    @Attribute(value = "use-html-wrapper")
-    public boolean USE_HTML_WRAPPER = false;
-
-    @Attribute(value = "wrapper-template-path")
-    public String WRAPPER_TEMPLATE_PATH = "";
-
-    @Attribute(value = "skip-build")
-    public boolean SKIP_COMPILE = false;
-
-    @Property(surroundWithTag = false)
-    public DependenciesImpl.State DEPENDENCIES;
-
-    @Property(surroundWithTag = false)
-    public CompilerOptionsImpl.State COMPILER_OPTIONS;
-
-    @Property(surroundWithTag = false)
-    public AirDesktopPackagingOptionsImpl.State AIR_DESKTOP_PACKAGING_OPTIONS;
-
-    @Property(surroundWithTag = false)
-    public AndroidPackagingOptionsImpl.State ANDROID_PACKAGING_OPTIONS;
-
-    @Property(surroundWithTag = false)
-    public IosPackagingOptionsImpl.State IOS_PACKAGING_OPTIONS;
   }
 }
