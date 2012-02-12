@@ -9,8 +9,6 @@ import com.intellij.ui.navigation.Place;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
-
 /**
  * User: ksafonov
  */
@@ -18,11 +16,11 @@ public class PlaceInBuildConfiguration extends PlaceInProjectStructure {
 
   private final BuildConfigurationProjectStructureElement myStructureElement;
   private final String myTabName;
-  @Nullable private final Pair<String, Object> myLocation;
+  @Nullable private final Pair<String, ?> myLocation;
 
   public PlaceInBuildConfiguration(BuildConfigurationProjectStructureElement structureElement,
                                    @NotNull String tabName,
-                                   @Nullable Pair<String, Object> location) {
+                                   @Nullable Pair<String, ?> location) {
     myStructureElement = structureElement;
     myTabName = tabName;
     myLocation = location;

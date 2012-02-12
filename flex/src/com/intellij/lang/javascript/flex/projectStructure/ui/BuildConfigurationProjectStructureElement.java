@@ -2,19 +2,17 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
-import com.intellij.lang.javascript.flex.projectStructure.model.BuildConfigurationEntry;
-import com.intellij.lang.javascript.flex.projectStructure.model.DependencyEntry;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.*;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,6 +33,11 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
   @Override
   public String getPresentableName() {
     return FlexBundle.message("bc.structure.element.presentable.name", myBc.getName(), myModule.getName());
+  }
+
+  @Override
+  public String getTypeName() {
+    return FlexBundle.message("bc.structure.element.type.name");
   }
 
   @Override
@@ -90,7 +93,24 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
 
   @Override
   public List<ProjectStructureElementUsage> getUsagesInElement() {
-    return Collections.emptyList();
+    FlexProjectConfigurationEditor editor = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
+    final ModulesConfigurator modulesConfigurator = myContext.getModulesConfigurator();
+
+    final List<ProjectStructureElementUsage> usages = new ArrayList<ProjectStructureElementUsage>();
+    for (DependencyEntry dependencyEntry : myBc.getDependencies().getEntries()) {
+      if (dependencyEntry instanceof SharedLibraryEntry) {
+        String libraryName = ((SharedLibraryEntry)dependencyEntry).getLibraryName();
+        String libraryLevel = ((SharedLibraryEntry)dependencyEntry).getLibraryLevel();
+        Library library = myContext.getLibrary(libraryName, libraryLevel);
+        if (library != null) {
+          usages.add(new UsageInBcDependencies(this, new LibraryProjectStructureElement(myContext, library)));
+        }
+      }
+      else if (dependencyEntry instanceof ModuleLibraryEntry) {
+
+      }
+    }
+    return usages;
   }
 
   @Override

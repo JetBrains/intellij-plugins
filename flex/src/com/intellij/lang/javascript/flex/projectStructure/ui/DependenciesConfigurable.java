@@ -95,6 +95,57 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   public static abstract class Location {
     public static final Location SDK = new Location() {
     };
+
+    public static class TableEntry extends Location {
+      private final String locationString;
+
+      private TableEntry(final String locationString) {
+        this.locationString = locationString;
+      }
+
+      public static TableEntry forSdkRoot(final String url) {
+        return new TableEntry("sdkroot\t" + url);
+      }
+
+      public static TableEntry forSharedLibrary(final String libraryLevel, final String libraryName) {
+        return new TableEntry("sharedlib\t" + libraryLevel + "\t" + libraryName);
+      }
+
+      public static TableEntry forSharedLibrary(final Library liveLibrary) {
+        return new TableEntry("sharedlib\t" + liveLibrary.getTable().getTableLevel() + "\t" + liveLibrary.getName());
+      }
+
+      public static TableEntry forModuleLibrary(final String libraryId) {
+        return new TableEntry("modulelib\t" + libraryId);
+      }
+
+      public static TableEntry forBc(FlexIdeBCConfigurable configurable) {
+        return new TableEntry("bc\t" + configurable.getModuleName() + "\t" + configurable.getDisplayName());
+      }
+
+      public static TableEntry forBc(String moduleName, String bcName) {
+        return new TableEntry("bc\t" + moduleName + "\t" + bcName);
+      }
+
+      public static final TableEntry SDK_ENTRY = new TableEntry("sdk");
+
+      @Override
+      public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final TableEntry that = (TableEntry)o;
+
+        if (!locationString.equals(that.locationString)) return false;
+
+        return true;
+      }
+
+      @Override
+      public int hashCode() {
+        return locationString.hashCode();
+      }
+    }
   }
 
   private JPanel myMainPanel;
@@ -150,6 +201,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     public abstract boolean isModified(DependencyEntry entry);
 
     public abstract boolean canEdit();
+
+    public abstract Location.TableEntry getLocation();
   }
 
   private class BCItem extends MyTableItem {
@@ -255,6 +308,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     public boolean canEdit() {
       return false;
     }
+
+    @Override
+    public Location.TableEntry getLocation() {
+      return configurable != null ? Location.TableEntry.forBc(configurable) : Location.TableEntry.forBc(moduleName, bcName);
+    }
   }
 
   private class ModuleLibraryItem extends MyTableItem {
@@ -340,6 +398,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     public boolean canEdit() {
       return isValid();
+    }
+
+    @Override
+    public Location.TableEntry getLocation() {
+      return Location.TableEntry.forModuleLibrary(libraryId);
     }
   }
 
@@ -453,6 +516,14 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     public boolean canEdit() {
       return false;
     }
+
+    @Override
+    public Location.TableEntry getLocation() {
+      Library liveLibrary = findLiveLibrary();
+      return liveLibrary != null
+             ? Location.TableEntry.forSharedLibrary(liveLibrary)
+             : Location.TableEntry.forSharedLibrary(libraryLevel, libraryName);
+    }
   }
 
   private static class SdkItem extends MyTableItem {
@@ -512,6 +583,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     public boolean canEdit() {
       return false;
+    }
+
+    @Override
+    public Location.TableEntry getLocation() {
+      return Location.TableEntry.SDK_ENTRY;
     }
   }
 
@@ -573,6 +649,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     public boolean canEdit() {
       return false;
+    }
+
+    @Override
+    public Location.TableEntry getLocation() {
+      return Location.TableEntry.forSdkRoot(url);
     }
   }
 
@@ -1597,6 +1678,20 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
           return IdeFocusManager.findInstance().requestFocus(mySdkCombo, true);
         }
       }
+      else if (location instanceof Location.TableEntry) {
+        for (int row = 0; row < myTable.getRowCount(); row++) {
+          MyTableItem item = myTable.getItemAt(row);
+          Location.TableEntry loc = item.getLocation();
+          if (loc.equals(location)) {
+            myTable.clearSelection();
+            myTable.getSelectionModel().addSelectionInterval(row, row);
+            break;
+          }
+        }
+        if (requestFocus) {
+          return IdeFocusManager.findInstance().requestFocus(myTable, true);
+        }
+      }
     }
     return new ActionCallback.Done();
   }
@@ -1605,6 +1700,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   public void queryPlace(@NotNull final Place place) {
     if (mySdkCombo.hasFocus()) {
       place.putPath(LOCATION, Location.SDK);
+    }
+    else if (myTable.hasFocus()) {
+      int selectedRow = myTable.getSelectedRow();
+      if (selectedRow != -1) {
+        place.putPath(LOCATION, myTable.getItemAt(selectedRow).getLocation());
+      }
     }
   }
 
