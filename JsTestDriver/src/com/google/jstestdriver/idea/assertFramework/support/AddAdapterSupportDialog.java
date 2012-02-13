@@ -3,6 +3,7 @@ package com.google.jstestdriver.idea.assertFramework.support;
 import com.google.jstestdriver.idea.util.CastUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
