@@ -65,6 +65,11 @@ public class FlashDocumentDisplayManager extends AbstractDocumentDisplayManager 
       _document = null;
       throw e;
     }
+
+    var pv3dViewClass:Class = ModuleContext(documentFactory.moduleContext).getClassIfExists("org.papervision3d.view.AbstractView");
+    if (pv3dViewClass != null && object is pv3dViewClass) {
+      object["startRendering"]();
+    }
   }
 
   public function added():void {

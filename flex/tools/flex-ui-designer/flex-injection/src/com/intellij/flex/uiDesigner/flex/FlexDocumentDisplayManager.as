@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.flex {
 import com.intellij.flex.uiDesigner.ComponentInfoProvider;
 import com.intellij.flex.uiDesigner.DocumentDisplayManager;
+import com.intellij.flex.uiDesigner.ModuleContext;
 import com.intellij.flex.uiDesigner.ResourceBundleProvider;
 import com.intellij.flex.uiDesigner.UiErrorHandler;
 import com.intellij.flex.uiDesigner.designSurface.LayoutManager;
@@ -509,6 +510,14 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
       }
 
       throw e;
+    }
+
+    var viewNavigatorApplicationBaseClass:Class = ModuleContext(documentFactory.moduleContext).getClassIfExists("spark.components.supportClasses.ViewNavigatorApplicationBase");
+    if (viewNavigatorApplicationBaseClass != null && object is viewNavigatorApplicationBaseClass) {
+      var navigator:Object = Object(object).navigator;
+      if (navigator != null && navigator.activeView != null && !navigator.activeView.isActive) {
+        navigator.activeView.setActive(true);
+      }
     }
   }
 

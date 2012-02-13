@@ -3,7 +3,7 @@
   <component name="FlexBuildConfigurationManager" active="flex-injection">
     <configurations>
       <configuration name="flex-injection" target-platform="Mobile" output-type="Library" output-file="flex-injection.swc" output-folder="$MODULE_DIR$/target" skip-build="true">
-        <dependencies>
+        <dependencies target-player="10.2">
           <entries>
             <entry module-name="shared" build-configuration-name="shared">
               <dependency linkage="Merged" />
@@ -33,7 +33,7 @@
               <dependency linkage="Merged" />
             </entry>
           </entries>
-          <sdk name="compiler-4.5.2.21576.pom" />
+          <sdk name="flex_4.5.1" />
         </dependencies>
         <compiler-options>
           <map>
@@ -55,7 +55,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry type="jdk" jdkName="compiler-4.5.2.21576.pom" jdkType="__CompositeFlexSdk__" />
+    <orderEntry type="jdk" jdkName="flex_4.5.1" jdkType="__CompositeFlexSdk__" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: org.jetbrains.miglayout:miglayout-core:swc:4.3.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:mobilecomponents:swc:4.6.0.23201" level="project" />

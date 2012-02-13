@@ -3,8 +3,6 @@ import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 
 import flash.system.ApplicationDomain;
 
-import org.jetbrains.Identifiable;
-
 public interface ModuleContext {
   function get applicationDomain():ApplicationDomain;
 
@@ -31,8 +29,6 @@ public interface ModuleContext {
   function get deferredInstanceFromBytesClass():Class;
 
   function get deferredInstanceFromBytesVectorClass():Class;
-
-  function get viewNavigatorApplicationBaseClass():Class;
 
   function getClassIfExists(fqn:String):Class;
 }

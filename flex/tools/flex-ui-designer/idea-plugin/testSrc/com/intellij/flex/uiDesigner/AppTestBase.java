@@ -78,7 +78,8 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
         final FlexSdkType2 sdkType = FlexSdkType2.getInstance();
         sdk = PeerFactory.getInstance().createProjectJdk(sdkType.suggestSdkName(null, flexSdkRootPath), "", flexSdkRootPath, sdkType);
         assert sdk != null;
-        sdkType.setupSdkPaths(sdk);
+        // we have own logic about setupSdkPaths
+        //sdkType.setupSdkPaths(sdk);
         ProjectJdkTable.getInstance().addJdk(sdk);
 
         final Sdk finalSdk = sdk;

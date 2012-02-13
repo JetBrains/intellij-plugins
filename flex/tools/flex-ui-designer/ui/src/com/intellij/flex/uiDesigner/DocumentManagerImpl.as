@@ -180,22 +180,6 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       var object:DisplayObject = DisplayObject(documentReader.read(documentFactory.data, documentFactory, document.styleManager));
       document.uiComponent = object;
       document.displayManager.setDocument(object);
-
-      if (documentFactory.isPureFlash) {
-        var pv3dViewClass:Class = documentFactory.module.context.getClassIfExists("org.papervision3d.view.AbstractView");
-        if (pv3dViewClass != null && object is pv3dViewClass) {
-          object["startRendering"]();
-        }
-      }
-      else {
-        var viewNavigatorApplicationBaseClass:Class = documentFactory.module.context.viewNavigatorApplicationBaseClass;
-        if (viewNavigatorApplicationBaseClass != null && object is viewNavigatorApplicationBaseClass) {
-          var navigator:Object = Object(object).navigator;
-          if (navigator != null && navigator.activeView != null && !navigator.activeView.isActive) {
-            navigator.activeView.setActive(true);
-          }
-        }
-      }
     }
     catch (e:Error) {
       UncaughtErrorManager.instance.readDocumentErrorHandler(e, documentFactory);

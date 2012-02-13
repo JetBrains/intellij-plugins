@@ -310,15 +310,25 @@ public class Server implements ResourceBundleProvider {
 
   public function documentRendered(document:Document):void {
     var displayObject:DisplayObject = DisplayObject(document.uiComponent);
-    var bitmapData:BitmapData = new BitmapData(displayObject.width, displayObject.height, false);
-    bitmapData.draw(displayObject);
-    const argb:ByteArray = bitmapData.getPixels(bitmapData.rect);
+    const w:int = displayObject.width;
+    const h:int = displayObject.height;
+    var argb:ByteArray;
+    if (w != 0 && h != 0) {
+      var bitmapData:BitmapData = new BitmapData(w, h, false);
+      bitmapData.draw(displayObject);
+      argb = bitmapData.getPixels(bitmapData.rect);
+    }
 
     socket.writeByte(ServerMethod.DOCUMENT_RENDERED);
     socket.writeShort(document.documentFactory.id);
-    socket.writeShort(bitmapData.width);
-    socket.writeShort(bitmapData.height);
-    socket.writeBytes(argb);
+    if (argb == null) {
+      socket.writeShort(0);
+    }
+    else {
+      socket.writeShort(bitmapData.width);
+      socket.writeShort(bitmapData.height);
+      socket.writeBytes(argb);
+    }
 
     socket.flush();
   }
