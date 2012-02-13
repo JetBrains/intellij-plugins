@@ -65,10 +65,6 @@ public class FlexCompilerDependenciesCache {
     myCache.clear();
   }
 
-  public void markModuleDirty(final Module module) {
-    myCache.remove(module);
-  }
-
   public void markBCDirty(final Module module, final FlexIdeBuildConfiguration bc) {
     final Collection<BCInfo> infosForModule = myCache.get(module);
     final BCInfo existingInfo = infosForModule == null ? null : findCacheForBC(infosForModule, bc);
@@ -85,8 +81,8 @@ public class FlexCompilerDependenciesCache {
 
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
     final Module module = fileIndex.getModuleForFile(file);
-    if (module != null && fileIndex.getSourceRootForFile(file) != null) {
-      markModuleDirty(module);
+    if (module != null && fileIndex.getSourceRootForFile(file) != null && !fileIndex.isInTestSourceContent(file)) {
+      myCache.remove(module);
     }
   }
 
