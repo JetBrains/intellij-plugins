@@ -141,7 +141,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
         }
 
         try {
-          myDependenciesConfigurable.apply();
+          apply();
         }
         catch (ConfigurationException ignored) {
         }
@@ -149,6 +149,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
       }
     }, myDisposable);
     watcher.register(myDependenciesConfigurable.createOptionsPanel());
+    watcher.register(myMainPanel);
     myCompilerOptionsConfigurable =
       new CompilerOptionsConfigurable(module, bc.getNature(), myDependenciesConfigurable, bc.getCompilerOptions());
 
