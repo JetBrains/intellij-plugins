@@ -1685,6 +1685,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
           if (loc.equals(location)) {
             myTable.clearSelection();
             myTable.getSelectionModel().addSelectionInterval(row, row);
+            TableUtil.scrollSelectionToVisible(myTable);
             break;
           }
         }
