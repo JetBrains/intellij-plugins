@@ -1310,6 +1310,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     myTargetPlayerLabel.setVisible(myNature.isWebPlatform() && !flexmojos);
     myTargetPlayerCombo.setVisible(myNature.isWebPlatform() && !flexmojos);
 
+    if (!myTargetPlayerCombo.isVisible()) {
+      myTargetPlayerWarning.setVisible(false);
+      myWarning.setVisible(false);
+    }
+
     final boolean visible = sdk != null && !flexmojos && !myNature.isMobilePlatform() && !myNature.pureAS &&
                             StringUtil.compareVersionNumbers(sdk.getVersionString(), "4") >= 0;
     myComponentSetLabel.setVisible(visible);

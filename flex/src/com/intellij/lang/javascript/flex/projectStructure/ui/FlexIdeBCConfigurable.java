@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil;
 import com.intellij.lang.javascript.flex.build.InfoFromConfigFile;
+import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
@@ -44,6 +45,9 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import com.intellij.util.Consumer;
+import com.intellij.util.Function;
+import com.intellij.util.PathUtil;
+import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nls;
@@ -85,6 +89,10 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   private JLabel myWrapperFolderLabel;
   private TextFieldWithBrowseButton myWrapperTemplateTextWithBrowse;
   private JButton myCreateHtmlWrapperTemplateButton;
+
+  private JLabel myCssFilesLabel;
+  private TextFieldWithBrowseButton.NoPathCompletion myCssFilesTextWithBrowse;
+  private String myCssFilesToCompile;
 
   private JCheckBox mySkipCompilationCheckBox;
   private JLabel myWarning;
@@ -133,7 +141,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
         }
 
         try {
-          apply();
+          myDependenciesConfigurable.apply();
         }
         catch (ConfigurationException ignored) {
         }
@@ -141,7 +149,6 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
       }
     }, myDisposable);
     watcher.register(myDependenciesConfigurable.createOptionsPanel());
-    watcher.register(myMainPanel);
     myCompilerOptionsConfigurable =
       new CompilerOptionsConfigurable(module, bc.getNature(), myDependenciesConfigurable, bc.getCompilerOptions());
 
@@ -250,6 +257,30 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
       }
     });
 
+    myCssFilesTextWithBrowse.getTextField().setEditable(false);
+    myCssFilesTextWithBrowse.setButtonIcon(PlatformIcons.OPEN_EDIT_DIALOG_ICON);
+    myCssFilesTextWithBrowse.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        final List<String> cssFilesList = StringUtil.split(myCssFilesToCompile, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+        final List<StringBuilder> value = new ArrayList<StringBuilder>();
+        for (String cssFilePath : cssFilesList) {
+          value.add(new StringBuilder(cssFilePath));
+        }
+        final RepeatableValueDialog dialog =
+          new RepeatableValueDialog(module.getProject(), "CSS Files To Compile", value, CompilerOptionInfo.CSS_FILES_INFO);
+        dialog.show();
+        if (dialog.isOK()) {
+          final List<StringBuilder> newValue = dialog.getCurrentList();
+          myCssFilesToCompile = StringUtil.join(newValue, new Function<StringBuilder, String>() {
+            public String fun(final StringBuilder builder) {
+              return builder.toString();
+            }
+          }, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+          updateCssFilesText();
+        }
+      }
+    });
+
     myOptimizeForCombo.setModel(new CollectionComboBoxModel(Arrays.asList(""), ""));
     myOptimizeForCombo.setRenderer(new ListCellRendererWrapper(myOptimizeForCombo.getRenderer()) {
       @Override
@@ -351,6 +382,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   }
 
   private void updateControls() {
+    final TargetPlatform targetPlatform = (TargetPlatform)myTargetPlatformCombo.getSelectedItem();
     final OutputType outputType = (OutputType)myOutputTypeCombo.getSelectedItem();
 
     myOptimizeForPanel.setVisible(outputType == OutputType.RuntimeLoadedModule);
@@ -359,11 +391,26 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     myMainClassLabel.setVisible(showMainClass);
     myMainClassComponent.setVisible(showMainClass);
 
-    myHtmlWrapperPanel.setVisible(
-      myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Web && myOutputTypeCombo.getSelectedItem() == OutputType.Application);
+    myHtmlWrapperPanel.setVisible(targetPlatform == TargetPlatform.Web && outputType == OutputType.Application);
     myWrapperFolderLabel.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
     myWrapperTemplateTextWithBrowse.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
     myCreateHtmlWrapperTemplateButton.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
+
+    final boolean cssFilesVisible = outputType == OutputType.Application && targetPlatform != TargetPlatform.Mobile;
+    myCssFilesLabel.setVisible(cssFilesVisible);
+    myCssFilesTextWithBrowse.setVisible(cssFilesVisible);
+    updateCssFilesText();
+  }
+
+  private void updateCssFilesText() {
+    final List<String> cssFilesList = StringUtil.split(myCssFilesToCompile, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+    final String s = StringUtil.join(cssFilesList, new Function<String, String>() {
+      public String fun(final String path) {
+        return PathUtil.getFileName(path);
+      }
+    }, ", ");
+    myCssFilesTextWithBrowse.setText(s);
+
   }
 
   public String getTreeNodeText() {
@@ -415,6 +462,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
       .equals(FileUtil.toSystemIndependentName(myWrapperTemplateTextWithBrowse.getText().trim()))) {
       return true;
     }
+    if (!myConfiguration.getCssFilesToCompile().equals(myCssFilesToCompile)) return true;
     if (myConfiguration.isSkipCompile() != mySkipCompilationCheckBox.isSelected()) return true;
 
     if (myDependenciesConfigurable.isModified()) return true;
@@ -450,6 +498,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     configuration.setOutputFolder(FileUtil.toSystemIndependentName(myOutputFolderField.getText().trim()));
     configuration.setUseHtmlWrapper(myUseHTMLWrapperCheckBox.isSelected());
     configuration.setWrapperTemplatePath(FileUtil.toSystemIndependentName(myWrapperTemplateTextWithBrowse.getText().trim()));
+    configuration.setCssFilesToCompile(myCssFilesToCompile);
     configuration.setSkipCompile(mySkipCompilationCheckBox.isSelected());
   }
 
@@ -467,6 +516,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
       myOutputFolderField.setText(FileUtil.toSystemDependentName(myConfiguration.getOutputFolder()));
       myUseHTMLWrapperCheckBox.setSelected(myConfiguration.isUseHtmlWrapper());
       myWrapperTemplateTextWithBrowse.setText(FileUtil.toSystemDependentName(myConfiguration.getWrapperTemplatePath()));
+      myCssFilesToCompile = myConfiguration.getCssFilesToCompile();
       mySkipCompilationCheckBox.setSelected(myConfiguration.isSkipCompile());
 
       updateControls();

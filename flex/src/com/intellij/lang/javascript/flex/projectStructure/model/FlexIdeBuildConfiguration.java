@@ -40,6 +40,9 @@ public interface FlexIdeBuildConfiguration {
   @NotNull
   String getWrapperTemplatePath();
 
+  @NotNull
+  String getCssFilesToCompile();
+
   boolean isSkipCompile();
 
   @NotNull

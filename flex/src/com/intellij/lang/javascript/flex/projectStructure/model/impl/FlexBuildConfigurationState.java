@@ -41,6 +41,9 @@ public class FlexBuildConfigurationState {
   @Attribute(value = "wrapper-template-path")
   public String WRAPPER_TEMPLATE_PATH = "";
 
+  @Attribute(value = "css-to-compile")
+  public String CSS_FILES_TO_COMPILE = "";
+
   @Attribute(value = "skip-build")
   public boolean SKIP_COMPILE = false;
 

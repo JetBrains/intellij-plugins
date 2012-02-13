@@ -145,7 +145,7 @@ public class Flexmojos3Configurator {
 
     setupSdk(mainBC);
 
-    final String locales = StringUtil.join(myCompiledLocales, String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR));
+    final String locales = StringUtil.join(myCompiledLocales, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
     mainBC.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.locale", locales));
 
     mainBC.getCompilerOptions().setAdditionalConfigFilePath(getCompilerConfigFilePath());

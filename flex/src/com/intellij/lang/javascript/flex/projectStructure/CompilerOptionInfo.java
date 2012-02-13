@@ -46,8 +46,8 @@ public class CompilerOptionInfo {
     }
   }
 
-  public static final char LIST_ENTRIES_SEPARATOR = '\n';
-  public static final char LIST_ENTRY_PARTS_SEPARATOR = '\t'; // if list entry contains several values, e.g. uri and manifest
+  public static final String LIST_ENTRIES_SEPARATOR = "\n";
+  public static final String LIST_ENTRY_PARTS_SEPARATOR = "\t"; // if list entry contains several values, e.g. uri and manifest
   public static final String FLEX_SDK_MACRO_NAME = "FLEX_SDK";
   private static final String SPECIAL_DEFAULT_VALUE = "SPECIAL";
 
@@ -118,6 +118,10 @@ public class CompilerOptionInfo {
   public static final CompilerOptionInfo INCLUDE_NAMESPACES_INFO =
     new CompilerOptionInfo("include-namespaces", "fake", OptionType.List, null,
                            new ListElement[]{new ListElement("uri")},
+                           false, null, true, true, true, true, "");
+  public static final CompilerOptionInfo CSS_FILES_INFO =
+    new CompilerOptionInfo("css.files.list.fake", "fake", OptionType.List, null,
+                           new ListElement[]{new ListElement("fake", "CSS Files", ListElementType.File, "css", "")},
                            false, null, true, true, true, true, "");
 
   public final String ID;
@@ -296,7 +300,7 @@ public class CompilerOptionInfo {
 
     return value == null
            ? Collections.<String>emptyList()
-           : StringUtil.split(FlexUtils.replacePathMacros(value, module, sdk.getHomePath()), String.valueOf(LIST_ENTRIES_SEPARATOR));
+           : StringUtil.split(FlexUtils.replacePathMacros(value, module, sdk.getHomePath()), LIST_ENTRIES_SEPARATOR);
   }
 
   private static void ensureLoaded() {

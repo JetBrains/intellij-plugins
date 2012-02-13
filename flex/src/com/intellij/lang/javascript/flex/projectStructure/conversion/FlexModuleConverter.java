@@ -307,7 +307,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
     final Map<String, String> options = new THashMap<String, String>(newCompilerOptions.getAllOptions());
 
     if (oldConfig.USE_LOCALE_SETTINGS) {
-      options.put("compiler.locale", oldConfig.LOCALE.replace(',', CompilerOptionInfo.LIST_ENTRIES_SEPARATOR));
+      options.put("compiler.locale", oldConfig.LOCALE.replace(",", CompilerOptionInfo.LIST_ENTRIES_SEPARATOR));
     }
 
     if (!oldConfig.CONDITIONAL_COMPILATION_DEFINITION_LIST.isEmpty()) {

@@ -276,34 +276,37 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
   private static void resetNonApplicableValuesToDefaults(final ModifiableFlexIdeBuildConfiguration configuration) {
     final FlexIdeBuildConfiguration defaultConfiguration = new FlexIdeBuildConfigurationImpl();
+    final BuildConfigurationNature nature = configuration.getNature();
 
     if (configuration.getOutputType() != OutputType.RuntimeLoadedModule) {
       configuration.setOptimizeFor(defaultConfiguration.getOptimizeFor());
     }
 
-    if (configuration.getOutputType() == OutputType.Library) {
+    if (nature.isLib()) {
       configuration.setMainClass(defaultConfiguration.getMainClass());
     }
 
-    if (configuration.getTargetPlatform() != TargetPlatform.Web || configuration.getOutputType() != OutputType.Application) {
+    if (!nature.isWebPlatform() || !nature.isApp()) {
       configuration.setUseHtmlWrapper(defaultConfiguration.isUseHtmlWrapper());
       configuration.setWrapperTemplatePath(defaultConfiguration.getWrapperTemplatePath());
     }
 
-    if (!ArrayUtil.contains(configuration.getDependencies().getFrameworkLinkage(),
-                            BCUtils.getSuitableFrameworkLinkages(configuration.getNature()))) {
+    if (nature.isMobilePlatform() || !nature.isApp()) {
+      configuration.setCssFilesToCompile(defaultConfiguration.getCssFilesToCompile());
+    }
+
+    if (!ArrayUtil.contains(configuration.getDependencies().getFrameworkLinkage(), BCUtils.getSuitableFrameworkLinkages(nature))) {
       configuration.getDependencies().setFrameworkLinkage(defaultConfiguration.getDependencies().getFrameworkLinkage());
     }
 
-    if (configuration.getTargetPlatform() != TargetPlatform.Web) {
+    if (!nature.isWebPlatform()) {
       configuration.getDependencies().setTargetPlayer(defaultConfiguration.getDependencies().getTargetPlayer());
     }
 
-    if (configuration.getTargetPlatform() == TargetPlatform.Mobile || configuration.isPureAs()) {
+    if (nature.isMobilePlatform() || configuration.isPureAs()) {
       configuration.getDependencies().setComponentSet(defaultConfiguration.getDependencies().getComponentSet());
     }
 
-    BuildConfigurationNature nature = configuration.getNature();
     for (Iterator<ModifiableDependencyEntry> i = configuration.getDependencies().getModifiableEntries().iterator(); i.hasNext(); ) {
       if (!BCUtils.isApplicable(nature, i.next().getDependencyType().getLinkageType())) {
         i.remove();

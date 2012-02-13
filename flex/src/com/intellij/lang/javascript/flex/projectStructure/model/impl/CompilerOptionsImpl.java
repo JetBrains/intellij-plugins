@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableCompil
 import com.intellij.lang.javascript.flex.projectStructure.model.ModuleOrProjectCompilerOptions;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.ComponentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
@@ -113,12 +114,20 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
     copy.setAdditionalOptions(myAdditionalOptions);
   }
 
-  public State getState() {
+  public State getState(final ComponentManager componentManager) {
     State state = new State();
-    state.options.putAll(myOptions);
+    putOptionsCollapsingPaths(myOptions, state.options, componentManager);
     state.additionalConfigFilePath = myAdditionalConfigFilePath;
     state.additionalOptions = myAdditionalOptions;
     return state;
+  }
+
+  private static void putOptionsCollapsingPaths(final Map<String, String> fromMap,
+                                                final Map<String, String> toMap,
+                                                final ComponentManager componentManager) {
+    for (Map.Entry<String, String> entry : fromMap.entrySet()) {
+      toMap.put(entry.getKey(), FlexIdeBuildConfigurationImpl.collapsePaths(componentManager, entry.getValue()));
+    }
   }
 
   public void loadState(State state) {

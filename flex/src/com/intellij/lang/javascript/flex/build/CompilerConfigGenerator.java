@@ -358,7 +358,7 @@ public class CompilerConfigGenerator {
 
   private void addSourcePaths(final Element rootElement) {
     final String localeValue = getValueAndSource(CompilerOptionInfo.getOptionInfo("compiler.locale")).first;
-    final List<String> locales = StringUtil.split(localeValue, String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR));
+    final List<String> locales = StringUtil.split(localeValue, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
     // when adding source paths we respect locales set both in UI and in Additional compiler options
     locales.addAll(FlexUtils.getOptionValues(myProjectLevelCompilerOptions.getAdditionalOptions(), "locale", "compiler.locale"));
     locales.addAll(FlexUtils.getOptionValues(myModuleLevelCompilerOptions.getAdditionalOptions(), "locale", "compiler.locale"));
@@ -421,7 +421,7 @@ public class CompilerConfigGenerator {
       final String namespaces = FlexUtils.replacePathMacros(namespacesRaw, myModule,
                                                             myFlexmojos ? "" : mySdk.getHomePath());
       final StringBuilder buf = new StringBuilder();
-      for (final String listEntry : StringUtil.split(namespaces, String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR))) {
+      for (final String listEntry : StringUtil.split(namespaces, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR)) {
         final int tabIndex = listEntry.indexOf(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);
         assert tabIndex != -1 : namespaces;
         final String namespace = listEntry.substring(0, tabIndex);
@@ -522,7 +522,7 @@ public class CompilerConfigGenerator {
       case List:
         if (info.LIST_ELEMENTS.length == 1) {
           final Element listHolderElement = getOrCreateElement(parentElement, elementName);
-          for (final String listElementValue : StringUtil.split(value, String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR))) {
+          for (final String listElementValue : StringUtil.split(value, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR)) {
             final Element child = new Element(info.LIST_ELEMENTS[0].NAME, listHolderElement.getNamespace());
             child.setText(listElementValue);
             listHolderElement.addContent(child);
@@ -532,8 +532,7 @@ public class CompilerConfigGenerator {
           for (final String listEntry : StringUtil.split(value, String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR))) {
             final Element repeatableListHolderElement = new Element(elementName, parentElement.getNamespace());
 
-            final List<String> values =
-              StringUtil.split(listEntry, String.valueOf(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR), true, false);
+            final List<String> values = StringUtil.split(listEntry, CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false);
             assert info.LIST_ELEMENTS.length == values.size() : info.ID + "=" + value;
 
             for (int i = 0; i < info.LIST_ELEMENTS.length; i++) {

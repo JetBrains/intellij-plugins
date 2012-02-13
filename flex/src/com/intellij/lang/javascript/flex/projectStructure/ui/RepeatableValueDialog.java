@@ -66,8 +66,7 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
       }
 
       protected Object getValue(final StringBuilder s, final int column) {
-        final String value =
-          StringUtil.split(s.toString(), String.valueOf(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR), true, false).get(column);
+        final String value = StringUtil.split(s.toString(), CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false).get(column);
         return myInfo.LIST_ELEMENTS[column].LIST_ELEMENT_TYPE == CompilerOptionInfo.ListElementType.File
                ? FileUtil.toSystemDependentName(value)
                : value;

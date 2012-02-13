@@ -3,11 +3,15 @@ package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 import com.intellij.lang.javascript.flex.FlexFacetType;
 import com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil;
 import com.intellij.lang.javascript.flex.build.InfoFromConfigFile;
+import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.openapi.components.ComponentManager;
+import com.intellij.openapi.components.PathMacroManager;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Condition;
@@ -17,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.StringTokenizer;
 
 class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfiguration {
 
@@ -47,6 +52,9 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
 
   @NotNull
   private String myWrapperTemplatePath = "";
+
+  @NotNull
+  private String myCssFilesToCompile = "";
 
   private boolean mySkipCompile = false;
 
@@ -116,6 +124,12 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
   }
 
   @Override
+  @NotNull
+  public String getCssFilesToCompile() {
+    return myCssFilesToCompile;
+  }
+
+  @Override
   public boolean isSkipCompile() {
     return mySkipCompile;
   }
@@ -175,6 +189,11 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
   @Override
   public void setWrapperTemplatePath(@NotNull String wrapperTemplatePath) {
     myWrapperTemplatePath = wrapperTemplatePath;
+  }
+
+  @Override
+  public void setCssFilesToCompile(@NotNull String cssFilesToCompile) {
+    myCssFilesToCompile = cssFilesToCompile;
   }
 
   @Override
@@ -249,6 +268,7 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     myCompilerOptions.applyTo(copy.myCompilerOptions);
     myDependencies.applyTo(copy.myDependencies);
     myIosPackagingOptions.applyTo(copy.myIosPackagingOptions);
+    copy.myCssFilesToCompile = myCssFilesToCompile;
     copy.myMainClass = myMainClass;
     copy.myName = myName;
     copy.myOptimizeFor = myOptimizeFor;
@@ -269,6 +289,7 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     if (!myCompilerOptions.isEqual(other.myCompilerOptions)) return false;
     if (!myDependencies.isEqual(other.myDependencies)) return false;
     if (!myIosPackagingOptions.isEqual(other.myIosPackagingOptions)) return false;
+    if (!other.myCssFilesToCompile.equals(myCssFilesToCompile)) return false;
     if (!other.myMainClass.equals(myMainClass)) return false;
     if (!other.myName.equals(myName)) return false;
     if (!other.myOptimizeFor.equals(myOptimizeFor)) return false;
@@ -312,13 +333,14 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     return myName + ": " + getNature().toString();
   }
 
-  public FlexBuildConfigurationState getState() {
+  public FlexBuildConfigurationState getState(final Module module) {
     FlexBuildConfigurationState state = new FlexBuildConfigurationState();
     state.AIR_DESKTOP_PACKAGING_OPTIONS = myAirDesktopPackagingOptions.getState();
     state.ANDROID_PACKAGING_OPTIONS = myAndroidPackagingOptions.getState();
-    state.COMPILER_OPTIONS = myCompilerOptions.getState();
+    state.COMPILER_OPTIONS = myCompilerOptions.getState(module);
     state.DEPENDENCIES = myDependencies.getState();
     state.IOS_PACKAGING_OPTIONS = myIosPackagingOptions.getState();
+    state.CSS_FILES_TO_COMPILE = collapsePaths(module, myCssFilesToCompile);
     state.MAIN_CLASS = myMainClass;
     state.NAME = myName;
     state.OPTIMIZE_FOR = myOptimizeFor;
@@ -333,12 +355,14 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     return state;
   }
 
-  public void loadState(FlexBuildConfigurationState state, Project project) {
+  public void loadState(final FlexBuildConfigurationState state, final Project project) {
     myAirDesktopPackagingOptions.loadState(state.AIR_DESKTOP_PACKAGING_OPTIONS);
     myAndroidPackagingOptions.loadState(state.ANDROID_PACKAGING_OPTIONS);
     myCompilerOptions.loadState(state.COMPILER_OPTIONS);
     myDependencies.loadState(state.DEPENDENCIES, project);
     myIosPackagingOptions.loadState(state.IOS_PACKAGING_OPTIONS);
+    // no need in expanding paths, it is done automatically even if macros is not in the beginning of the string
+    myCssFilesToCompile = state.CSS_FILES_TO_COMPILE;
     myMainClass = state.MAIN_CLASS;
     myName = state.NAME;
     myOptimizeFor = state.OPTIMIZE_FOR;
@@ -350,5 +374,24 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     myTargetPlatform = state.TARGET_PLATFORM;
     myUseHtmlWrapper = state.USE_HTML_WRAPPER;
     myWrapperTemplatePath = state.WRAPPER_TEMPLATE_PATH;
+  }
+
+  static String collapsePaths(final ComponentManager componentManager, final String value) {
+    if (!value.contains(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR) && !value.contains(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)) {
+      return value;
+    }
+
+    final StringBuilder result = new StringBuilder();
+    final PathMacroManager pathMacroManager = PathMacroManager.getInstance(componentManager);
+    final String delimiters = CompilerOptionInfo.LIST_ENTRIES_SEPARATOR + CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR;
+    for (StringTokenizer tokenizer = new StringTokenizer(value, delimiters, true); tokenizer.hasMoreTokens(); ) {
+      String token = tokenizer.nextToken();
+      if (token.length() > 1) {
+        token = pathMacroManager.collapsePath(token);
+      }
+      result.append(token);
+    }
+
+    return result.toString();
   }
 }

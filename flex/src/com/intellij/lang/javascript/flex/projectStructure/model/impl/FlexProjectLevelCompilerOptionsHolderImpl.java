@@ -20,14 +20,16 @@ public class FlexProjectLevelCompilerOptionsHolderImpl extends FlexProjectLevelC
   implements PersistentStateComponent<FlexProjectLevelCompilerOptionsHolderImpl.State> {
 
   private final CompilerOptionsImpl myModel;
+  private final Project myProject;
 
   public FlexProjectLevelCompilerOptionsHolderImpl(final Project project) {
+    myProject = project;
     myModel = new CompilerOptionsImpl(project, true);
   }
 
   public FlexProjectLevelCompilerOptionsHolderImpl.State getState() {
     FlexProjectLevelCompilerOptionsHolderImpl.State state = new State();
-    state.compilerOptions = myModel.getState();
+    state.compilerOptions = myModel.getState(myProject);
     return state;
   }
 

@@ -48,6 +48,8 @@ public interface ModifiableFlexIdeBuildConfiguration extends FlexIdeBuildConfigu
 
   void setWrapperTemplatePath(@NotNull String wrapperTemplatePath);
 
+  void setCssFilesToCompile(@NotNull String cssFilesToCompile);
+
   void setSkipCompile(boolean skipCompile);
 
   void setName(@NotNull String name);

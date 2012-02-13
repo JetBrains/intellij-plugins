@@ -430,14 +430,14 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
         final String fixedSlashes = info.LIST_ELEMENTS[0].LIST_ELEMENT_TYPE == CompilerOptionInfo.ListElementType.File
                                     ? FileUtil.toSystemDependentName(rawValue)
                                     : rawValue;
-        return fixedSlashes.replace(String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR), ", ");
+        return fixedSlashes.replace(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR, ", ");
       }
       if ("compiler.define".equals(info.ID)) {
-        return rawValue.replace(String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR), ", ")
-          .replace(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, '=');
+        return rawValue.replace(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR, ", ")
+          .replace(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, "=");
       }
       final StringBuilder b = new StringBuilder();
-      for (String entry : StringUtil.split(rawValue, String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR))) {
+      for (String entry : StringUtil.split(rawValue, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR)) {
         if (b.length() > 0) b.append(", ");
         b.append(entry.substring(0, entry.indexOf(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)));
       }
@@ -729,7 +729,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
       addActionListener(new ActionListener() {
         public void actionPerformed(final ActionEvent e) {
-          final List<String> entries = StringUtil.split(myValue, String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR));
+          final List<String> entries = StringUtil.split(myValue, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
           final List<StringBuilder> buffers = new ArrayList<StringBuilder>(entries.size());
           for (String entry : entries) {
             buffers.add(new StringBuilder(entry));
@@ -744,7 +744,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
               public String fun(final StringBuilder stringBuilder) {
                 return stringBuilder.toString();
               }
-            }, String.valueOf(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR));
+            }, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
           }
 
           TableUtil.stopEditing(myTreeTable);
