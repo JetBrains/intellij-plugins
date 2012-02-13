@@ -2,6 +2,8 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectStructureElementConfigurable;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStructureElement;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Disposer;
@@ -20,7 +22,7 @@ import java.util.List;
 /**
  * @author ksafonov
  */
-public class CompositeConfigurable extends NamedConfigurable implements Place.Navigator {
+public class CompositeConfigurable extends ProjectStructureElementConfigurable implements Place.Navigator {
 
   public static final String TAB_NAME = "tabName";
 
@@ -148,5 +150,15 @@ public class CompositeConfigurable extends NamedConfigurable implements Place.Na
     final NamedConfigurable child = myChildren.get(myTabs.getSelectedIndex());
     place.putPath(TAB_NAME, child.getDisplayName());
     Place.queryFurther(child, place);
+  }
+
+  @Override
+  @Nullable
+  public ProjectStructureElement getProjectStructureElement() {
+    NamedConfigurable mainChild = getMainChild();
+    if (mainChild instanceof ProjectStructureElementConfigurable) {
+      return ((ProjectStructureElementConfigurable)mainChild).getProjectStructureElement();
+    }
+    return null;
   }
 }

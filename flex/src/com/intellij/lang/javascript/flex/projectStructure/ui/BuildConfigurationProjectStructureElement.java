@@ -9,7 +9,9 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.*;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -20,10 +22,10 @@ import java.util.List;
  */
 public class BuildConfigurationProjectStructureElement extends ProjectStructureElement {
 
-  private final ModifiableFlexIdeBuildConfiguration myBc;
+  private final FlexIdeBuildConfiguration myBc;
   private final Module myModule;
 
-  public BuildConfigurationProjectStructureElement(final ModifiableFlexIdeBuildConfiguration bc, Module module,
+  public BuildConfigurationProjectStructureElement(final FlexIdeBuildConfiguration bc, Module module,
                                                    @NotNull StructureConfigurableContext context) {
     super(context);
     myBc = bc;
@@ -106,8 +108,22 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
           usages.add(new UsageInBcDependencies(this, new LibraryProjectStructureElement(myContext, library)));
         }
       }
-      else if (dependencyEntry instanceof ModuleLibraryEntry) {
-
+      else if (dependencyEntry instanceof BuildConfigurationEntry) {
+        final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)dependencyEntry;
+        Module module = modulesConfigurator.getModule(bcEntry.getModuleName());
+        if (module != null) {
+          FlexIdeBuildConfiguration bc =
+            ContainerUtil.find(editor.getConfigurations(module), new Condition<ModifiableFlexIdeBuildConfiguration>() {
+              @Override
+              public boolean value(final ModifiableFlexIdeBuildConfiguration configuration) {
+                return bcEntry.getBcName().equals(configuration.getName());
+              }
+            });
+          if (bc != null) {
+            usages.add(new UsageInBcDependencies(this, new BuildConfigurationProjectStructureElement(bc, module, myContext)));
+          }
+        }
+        bcEntry.findBuildConfiguration();
       }
     }
     return usages;
@@ -133,7 +149,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
     return myModule;
   }
 
-  public ModifiableFlexIdeBuildConfiguration getBc() {
+  public FlexIdeBuildConfiguration getBc() {
     return myBc;
   }
 }

@@ -16,10 +16,10 @@ import javax.swing.*;
  */
 public class UsageInBcDependencies extends ProjectStructureElementUsage {
   private final BuildConfigurationProjectStructureElement myContainingElement;
-  private final LibraryProjectStructureElement mySourceElement;
+  private final ProjectStructureElement mySourceElement;
 
   public UsageInBcDependencies(final BuildConfigurationProjectStructureElement containingElement,
-                               final LibraryProjectStructureElement sourceElement) {
+                               final ProjectStructureElement sourceElement) {
     myContainingElement = containingElement;
     mySourceElement = sourceElement;
   }
@@ -41,16 +41,29 @@ public class UsageInBcDependencies extends ProjectStructureElementUsage {
 
   @Override
   public PlaceInProjectStructure getPlace() {
-    Library library = mySourceElement.getLibrary();
-    final DependenciesConfigurable.Location.TableEntry tableEntry;
-    if (LibraryTableImplUtil.MODULE_LEVEL.equals(library.getTable().getTableLevel())) {
-      tableEntry = DependenciesConfigurable.Location.TableEntry.forModuleLibrary(FlexProjectRootsUtil.getLibraryId(library));
+    if (mySourceElement instanceof LibraryProjectStructureElement) {
+      Library library = ((LibraryProjectStructureElement)mySourceElement).getLibrary();
+      final DependenciesConfigurable.Location.TableEntry tableEntry;
+      if (LibraryTableImplUtil.MODULE_LEVEL.equals(library.getTable().getTableLevel())) {
+        tableEntry = DependenciesConfigurable.Location.TableEntry.forModuleLibrary(FlexProjectRootsUtil.getLibraryId(library));
+      }
+      else {
+        tableEntry = DependenciesConfigurable.Location.TableEntry.forSharedLibrary(library);
+      }
+      return new PlaceInBuildConfiguration(myContainingElement, DependenciesConfigurable.TAB_NAME,
+                                           Pair.create(DependenciesConfigurable.LOCATION, tableEntry));
     }
-    else {
-      tableEntry = DependenciesConfigurable.Location.TableEntry.forSharedLibrary(library);
+    else if (mySourceElement instanceof BuildConfigurationProjectStructureElement) {
+      BuildConfigurationProjectStructureElement bcElement = (BuildConfigurationProjectStructureElement)mySourceElement;
+      String moduleName = bcElement.getModule().getName();
+      String bcName = bcElement.getBc().getName();
+      DependenciesConfigurable.Location.TableEntry tableEntry = DependenciesConfigurable.Location.TableEntry.forBc(moduleName, bcName);
+      return new PlaceInBuildConfiguration(myContainingElement, DependenciesConfigurable.TAB_NAME,
+                                           Pair.create(DependenciesConfigurable.LOCATION, tableEntry));
     }
-    return new PlaceInBuildConfiguration(myContainingElement, DependenciesConfigurable.TAB_NAME,
-                                         Pair.create(DependenciesConfigurable.LOCATION, tableEntry));
+
+    assert false : mySourceElement;
+    return null;
   }
 
   @Override
