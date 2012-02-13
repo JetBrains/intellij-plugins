@@ -133,7 +133,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
         }
 
         try {
-          myDependenciesConfigurable.apply();
+          apply();
         }
         catch (ConfigurationException ignored) {
         }
@@ -141,6 +141,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
       }
     }, myDisposable);
     watcher.register(myDependenciesConfigurable.createOptionsPanel());
+    watcher.register(myMainPanel);
     myCompilerOptionsConfigurable =
       new CompilerOptionsConfigurable(module, bc.getNature(), myDependenciesConfigurable, bc.getCompilerOptions());
 
@@ -453,34 +454,33 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   }
 
   public void reset() {
-    setDisplayName(myConfiguration.getName());
-    myTargetPlatformCombo.setSelectedItem(myConfiguration.getTargetPlatform());
-    myPureActionScriptCheckBox.setSelected(myConfiguration.isPureAs());
-    myOutputTypeCombo.setSelectedItem(myConfiguration.getOutputType());
-    myOptimizeForCombo.setSelectedItem(myConfiguration.getOptimizeFor());
-
-    myMainClassComponent.setText(myConfiguration.getMainClass());
-    myOutputFileNameTextField.setText(myConfiguration.getOutputFileName());
-    myOutputFolderField.setText(FileUtil.toSystemDependentName(myConfiguration.getOutputFolder()));
-    myUseHTMLWrapperCheckBox.setSelected(myConfiguration.isUseHtmlWrapper());
-    myWrapperTemplateTextWithBrowse.setText(FileUtil.toSystemDependentName(myConfiguration.getWrapperTemplatePath()));
-    mySkipCompilationCheckBox.setSelected(myConfiguration.isSkipCompile());
-
-    updateControls();
-    overriddenValuesChanged(null, null, null); // no warnings initially
-
     myFreeze = true;
     try {
+      setDisplayName(myConfiguration.getName());
+      myTargetPlatformCombo.setSelectedItem(myConfiguration.getTargetPlatform());
+      myPureActionScriptCheckBox.setSelected(myConfiguration.isPureAs());
+      myOutputTypeCombo.setSelectedItem(myConfiguration.getOutputType());
+      myOptimizeForCombo.setSelectedItem(myConfiguration.getOptimizeFor());
+
+      myMainClassComponent.setText(myConfiguration.getMainClass());
+      myOutputFileNameTextField.setText(myConfiguration.getOutputFileName());
+      myOutputFolderField.setText(FileUtil.toSystemDependentName(myConfiguration.getOutputFolder()));
+      myUseHTMLWrapperCheckBox.setSelected(myConfiguration.isUseHtmlWrapper());
+      myWrapperTemplateTextWithBrowse.setText(FileUtil.toSystemDependentName(myConfiguration.getWrapperTemplatePath()));
+      mySkipCompilationCheckBox.setSelected(myConfiguration.isSkipCompile());
+
+      updateControls();
+      overriddenValuesChanged(null, null, null); // no warnings initially
+
       myDependenciesConfigurable.reset();
+      myCompilerOptionsConfigurable.reset();
+      if (myAirDesktopPackagingConfigurable != null) myAirDesktopPackagingConfigurable.reset();
+      if (myAndroidPackagingConfigurable != null) myAndroidPackagingConfigurable.reset();
+      if (myIOSPackagingConfigurable != null) myIOSPackagingConfigurable.reset();
     }
     finally {
       myFreeze = false;
     }
-    myCompilerOptionsConfigurable.reset();
-    if (myAirDesktopPackagingConfigurable != null) myAirDesktopPackagingConfigurable.reset();
-    if (myAndroidPackagingConfigurable != null) myAndroidPackagingConfigurable.reset();
-    if (myIOSPackagingConfigurable != null) myIOSPackagingConfigurable.reset();
-
     myContext.getDaemonAnalyzer().queueUpdate(myStructureElement);
   }
 
