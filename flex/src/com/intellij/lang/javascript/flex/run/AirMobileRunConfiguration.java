@@ -68,7 +68,7 @@ public class AirMobileRunConfiguration extends AirRunConfiguration {
 
     switch (params.getAirMobileRunTarget()) {
       case Emulator:
-        checkAdlAndAirRuntime(module);
+        //checkAdlAndAirRuntime(module);
         break;
       case AndroidDevice:
         // todo

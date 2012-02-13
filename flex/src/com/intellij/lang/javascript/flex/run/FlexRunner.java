@@ -15,18 +15,17 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters;
-import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
-import com.intellij.lang.javascript.flex.flexunit.*;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitCommonParameters;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
+import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunConfiguration;
+import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Pair;
 import com.intellij.util.PathUtil;
 import com.intellij.xdebugger.DefaultDebugProcessHandler;
 import org.jetbrains.annotations.NotNull;
@@ -90,81 +89,6 @@ public class FlexRunner extends FlexBaseRunner {
     contentBuilder.setExecutionResult(executionResult);
     contentBuilder.setEnvironment(environment);
     return contentBuilder.showRunContent(contentToReuse);
-  }
-
-  @Nullable
-  protected RunContentDescriptor doLaunch(final Project project,
-                                          final Executor executor,
-                                          final RunProfileState state,
-                                          final RunContentDescriptor contentToReuse,
-                                          final ExecutionEnvironment env,
-                                          final Sdk flexSdk,
-                                          final FlexRunnerParameters flexRunnerParameters) throws ExecutionException {
-    if (isRunOnDevice(flexRunnerParameters)) {
-      final AirMobileRunnerParameters mobileParams = (AirMobileRunnerParameters)flexRunnerParameters;
-      if (mobileParams.getAirMobileRunMode() == AirMobileRunnerParameters.AirMobileRunMode.ExistingPackage) {
-        launchExistingPackage(project, flexSdk, mobileParams);
-        return null;
-      }
-      else {
-        final Pair<String, String> swfPathAndApplicationId = getSwfPathAndApplicationId(mobileParams);
-        final Module module = ModuleManager.getInstance(project).findModuleByName(mobileParams.getModuleName());
-        final MobileAirPackageParameters packageParameters = new MobileAirPackageParameters();
-        //createAndroidPackageParams(flexSdk, swfPathAndApplicationId.first, mobileParams, false);
-
-        if (packAndInstallToAndroidDevice(module, flexSdk, packageParameters, swfPathAndApplicationId.second, false)) {
-          launchOnAndroidDevice(project, flexSdk, swfPathAndApplicationId.second, false);
-        }
-        return null;
-      }
-    }
-
-    return isRunAsAir(flexRunnerParameters)
-           ? launchAir(project, executor, state, contentToReuse, env, flexRunnerParameters)
-           : launchFlex(project, executor, state, contentToReuse, env, flexSdk, flexRunnerParameters);
-  }
-
-  private static void launchExistingPackage(final Project project, final Sdk flexSdk, final AirMobileRunnerParameters mobileParams)
-    throws ExecutionException {
-
-    final String appId = MobileAirUtil.getAppIdFromPackage(mobileParams.getExistingPackagePath());
-    if (appId == null) {
-      throw new ExecutionException("Failed to get application id for package: " + mobileParams.getExistingPackagePath());
-    }
-
-    if (installToDevice(project, flexSdk, mobileParams, appId)) {
-      launchOnAndroidDevice(project, flexSdk, appId, false);
-    }
-  }
-
-  @Nullable
-  private RunContentDescriptor launchFlex(final Project project,
-                                          final Executor executor,
-                                          final RunProfileState state,
-                                          final RunContentDescriptor contentToReuse,
-                                          final ExecutionEnvironment env,
-                                          final Sdk flexSdk,
-                                          final FlexRunnerParameters flexRunnerParameters) throws ExecutionException {
-    switch (flexRunnerParameters.getRunMode()) {
-      case HtmlOrSwfFile:
-        if (flexRunnerParameters instanceof FlexUnitRunnerParameters) {
-          return launchWebFlexUnit(project, executor, contentToReuse, env, (FlexUnitCommonParameters)flexRunnerParameters,
-                                   flexRunnerParameters.getHtmlOrSwfFilePath());
-        }
-
-        launchWithSelectedApplication(flexRunnerParameters.getHtmlOrSwfFilePath(), flexRunnerParameters.getLauncherParameters());
-        return null;
-      case Url:
-        launchWithSelectedApplication(flexRunnerParameters.getUrlToLaunch(), flexRunnerParameters.getLauncherParameters());
-        return null;
-      case MainClass:
-        // A sort of hack. HtmlOrSwfFilePath field is disabled in UI for MainClass-based run configuration. But it is set correctly in RunMainClassPrecompileTask.execute()
-        launchWithSelectedApplication(flexRunnerParameters.getHtmlOrSwfFilePath(), flexRunnerParameters.getLauncherParameters());
-        return null;
-      case ConnectToRunningFlashPlayer:
-        assert false;
-    }
-    return null;
   }
 
   protected RunContentDescriptor launchWebFlexUnit(final Project project,
@@ -239,26 +163,6 @@ public class FlexRunner extends FlexBaseRunner {
         policyFileConnection.close();
       }
     });
-
-    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor);
-    contentBuilder.setExecutionResult(executionResult);
-    contentBuilder.setEnvironment(env);
-    return contentBuilder.showRunContent(contentToReuse);
-  }
-
-  @Nullable
-  private RunContentDescriptor launchAir(final Project project,
-                                         final Executor executor,
-                                         final RunProfileState state,
-                                         final RunContentDescriptor contentToReuse,
-                                         final ExecutionEnvironment env,
-                                         final FlexRunnerParameters flexRunnerParameters) throws ExecutionException {
-    if (flexRunnerParameters instanceof FlexUnitRunnerParameters) {
-      return launchAirFlexUnit(project, executor, state, contentToReuse, env, (FlexUnitCommonParameters)flexRunnerParameters);
-    }
-
-    final ExecutionResult executionResult = state.execute(executor, this);
-    if (executionResult == null) return null;
 
     final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor);
     contentBuilder.setExecutionResult(executionResult);

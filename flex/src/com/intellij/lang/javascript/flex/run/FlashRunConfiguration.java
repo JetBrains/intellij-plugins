@@ -6,23 +6,29 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.process.OSProcessHandler;
+import com.intellij.execution.process.ProcessAdapter;
+import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizable;
-import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.util.*;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 
 import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileRunTarget;
 
@@ -107,7 +113,8 @@ public class FlashRunConfiguration extends RunConfigurationBase
   }
 
   public boolean isGeneratedName() {
-    return getName().startsWith(ExecutionBundle.message("run.configuration.unnamed.name.prefix")) || Comparing.equal(getName(), suggestedName());
+    return getName().startsWith(ExecutionBundle.message("run.configuration.unnamed.name.prefix")) ||
+           Comparing.equal(getName(), suggestedName());
   }
 
   public String suggestedName() {
@@ -127,14 +134,49 @@ public class FlashRunConfiguration extends RunConfigurationBase
 
     @NotNull
     protected OSProcessHandler startProcess() throws ExecutionException {
-      final FlexIdeBuildConfiguration config;
+      final FlexIdeBuildConfiguration bc;
       try {
-        config = myRunnerParameters.checkAndGetModuleAndBC(myProject).second;
+        bc = myRunnerParameters.checkAndGetModuleAndBC(myProject).second;
       }
       catch (RuntimeConfigurationError e) {
         throw new ExecutionException(e.getMessage());
       }
-      return JavaCommandLineStateUtil.startProcess(FlexBaseRunner.createAdlCommandLine(myRunnerParameters, config));
+
+      final Sdk sdk = bc.getSdk();
+      assert sdk != null;
+
+      final boolean needToRemoveAirRuntimeDir;
+      final VirtualFile airRuntimeDirForFlexmojosSdk;
+
+      if (sdk.getSdkType() instanceof FlexmojosSdkType) {
+        final Pair<VirtualFile, Boolean> airRuntimeDirInfo;
+        try {
+          airRuntimeDirInfo = FlexSdkUtils.getAirRuntimeDirInfoForFlexmojosSdk(sdk);
+        }
+        catch (IOException e) {
+          throw new ExecutionException(e.getMessage());
+        }
+        needToRemoveAirRuntimeDir = airRuntimeDirInfo.second;
+        airRuntimeDirForFlexmojosSdk = airRuntimeDirInfo.first;
+      }
+      else {
+        needToRemoveAirRuntimeDir = false;
+        airRuntimeDirForFlexmojosSdk = null;
+      }
+
+      final String airRuntimePath = airRuntimeDirForFlexmojosSdk == null ? null : airRuntimeDirForFlexmojosSdk.getPath();
+      final OSProcessHandler processHandler =
+        JavaCommandLineStateUtil.startProcess(FlexBaseRunner.createAdlCommandLine(myRunnerParameters, bc, airRuntimePath));
+
+      if (needToRemoveAirRuntimeDir && airRuntimeDirForFlexmojosSdk != null) {
+        processHandler.addProcessListener(new ProcessAdapter() {
+          public void processTerminated(final ProcessEvent event) {
+            FlexUtils.removeFileLater(airRuntimeDirForFlexmojosSdk);
+          }
+        });
+      }
+
+      return processHandler;
     }
   }
 }

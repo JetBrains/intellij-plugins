@@ -11,7 +11,10 @@ import com.intellij.idea.LoggerFactory;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
-import com.intellij.lang.javascript.flex.flexunit.*;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitCommonParameters;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
+import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunnerParameters;
+import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
@@ -109,7 +112,6 @@ public class FlexDebugProcess extends XDebugProcess {
 
   @NonNls private static final String ADL_PREFIX = "[AIR Debug Launcher]: ";
 
-  private static boolean ourReportedAboutPossibleStartupFailure;
   private boolean myCheckForUnexpectedStartupStop;
   private Thread myDebuggerManagerThread;
   @NonNls static final String AMBIGUOUS_MATCHING_FILE_NAMES = "Ambiguous matching file names:";
@@ -246,51 +248,6 @@ public class FlexDebugProcess extends XDebugProcess {
     startCommandProcessingThread();
   }
 
-  public FlexDebugProcess(final XDebugSession session, final Sdk flexSdk, final FlexRunnerParameters flexRunnerParameters)
-    throws IOException {
-
-    super(session);
-
-    final Sdk debuggerSdk = getDebuggerSdk(flexRunnerParameters, flexSdk);
-
-    myAppSdkHome = FileUtil.toSystemIndependentName(flexSdk.getHomePath());
-    myDebuggerSdkHome = debuggerSdk.getHomePath();
-    myDebuggerVersion = StringUtil.notNullize(debuggerSdk.getVersionString(), "unknown");
-    myBreakpointsHandler = new FlexBreakpointsHandler(this);
-
-    if (flexRunnerParameters instanceof FlexUnitRunnerParameters) {
-      final FlexUnitRunnerParameters flexUnitParams = (FlexUnitRunnerParameters)flexRunnerParameters;
-      openFlexUnitConnections(flexUnitParams.getSocketPolicyPort(), flexUnitParams.getPort());
-    }
-
-    final List<String> fdbLaunchCommand =
-      FlexSdkUtils.getCommandLineForSdkTool(session.getProject(), debuggerSdk, getFdbClasspath(), "flex.tools.debugger.cli.DebugCLI", null);
-
-    if (flexRunnerParameters instanceof AirMobileRunnerParameters
-        && ((AirMobileRunnerParameters)flexRunnerParameters).getAirMobileRunTarget() == AirMobileRunTarget.AndroidDevice
-        && ((AirMobileRunnerParameters)flexRunnerParameters).getDebugTransport() == AirMobileDebugTransport.USB) {
-      fdbLaunchCommand.add("-p");
-      fdbLaunchCommand.add(String.valueOf(((AirMobileRunnerParameters)flexRunnerParameters).getUsbDebugPort()));
-    }
-
-    fdbProcess = launchFdb(fdbLaunchCommand);
-
-    final boolean runAsAir = FlexBaseRunner.isRunAsAir(flexRunnerParameters);
-    connectToRunningFlashPlayerMode =
-      !runAsAir && flexRunnerParameters.getRunMode() == FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer;
-
-    if (runAsAir) {
-      launchAir((AirRunnerParameters)flexRunnerParameters, flexSdk);
-    }
-    else {
-      launchFlex(flexRunnerParameters);
-    }
-
-    reader = new MyFdbOutputReader(fdbProcess.getInputStream());
-
-    startCommandProcessingThread();
-  }
-
   private String getFdbClasspath() {
     String classpath = myDebuggerSdkHome + "/lib/fdb.jar";
 
@@ -403,9 +360,28 @@ public class FlexDebugProcess extends XDebugProcess {
     });
   }
 
-  private void sendAdlStartingCommand(final FlexIdeBuildConfiguration config, final BCBasedRunnerParameters params) throws IOException {
+  private void sendAdlStartingCommand(final FlexIdeBuildConfiguration bc, final BCBasedRunnerParameters params) throws IOException {
     try {
-      sendCommand(new StartAirAppDebuggingCommand(FlexBaseRunner.createAdlCommandLine(params, config)));
+      final Sdk sdk = bc.getSdk();
+      assert sdk != null;
+
+      final boolean needToRemoveAirRuntimeDir;
+      final VirtualFile airRuntimeDirForFlexmojosSdk;
+
+      if (sdk.getSdkType() instanceof FlexmojosSdkType) {
+        final Pair<VirtualFile, Boolean> airRuntimeDirInfo;
+        airRuntimeDirInfo = FlexSdkUtils.getAirRuntimeDirInfoForFlexmojosSdk(sdk);
+        needToRemoveAirRuntimeDir = airRuntimeDirInfo.second;
+        airRuntimeDirForFlexmojosSdk = airRuntimeDirInfo.first;
+      }
+      else {
+        needToRemoveAirRuntimeDir = false;
+        airRuntimeDirForFlexmojosSdk = null;
+      }
+
+      final String airRuntimePath = airRuntimeDirForFlexmojosSdk == null ? null : airRuntimeDirForFlexmojosSdk.getPath();
+      sendCommand(new StartAirAppDebuggingCommand(FlexBaseRunner.createAdlCommandLine(params, bc, airRuntimePath),
+                                                  needToRemoveAirRuntimeDir ? airRuntimeDirForFlexmojosSdk : null));
     }
     catch (CantRunException e) {
       throw new IOException(e.getMessage());
@@ -441,82 +417,6 @@ public class FlexDebugProcess extends XDebugProcess {
       }
       return sdk;
     }
-  }
-
-  private void launchAir(final AirRunnerParameters airRunnerParameters, final Sdk flexSdk) throws IOException {
-    if (airRunnerParameters instanceof AirMobileRunnerParameters) {
-      final AirMobileRunnerParameters mobileParams = (AirMobileRunnerParameters)airRunnerParameters;
-      switch (mobileParams.getAirMobileRunTarget()) {
-        case Emulator:
-          scheduleAdlLaunch(flexSdk, airRunnerParameters);
-          break;
-        case AndroidDevice:
-          sendCommand(mobileParams.getDebugTransport() == AirMobileDebugTransport.Network
-                      ? new StartAppOnAndroidDeviceCommand(flexSdk, mobileParams)
-                      : new StartDebuggingCommand());
-      }
-    }
-    else {
-      scheduleAdlLaunch(flexSdk, airRunnerParameters);
-    }
-  }
-
-  private void scheduleAdlLaunch(Sdk flexSdk, AirRunnerParameters airRunnerParameters) throws IOException {
-    final String adlPath = FlexSdkUtils.getAdlPath(flexSdk);
-    ensureExecutable(adlPath);
-    final List<String> airLaunchCommand = new ArrayList<String>();
-    airLaunchCommand.add(adlPath);
-
-    final boolean needToRemoveAirRuntimeDir;
-    final VirtualFile airRuntimeDirForFlexmojosSdk;
-    if (flexSdk.getSdkType() instanceof FlexmojosSdkType) {
-      final Pair<VirtualFile, Boolean> airRuntimeDirInfo = FlexSdkUtils.getAirRuntimeDirInfoForFlexmojosSdk(flexSdk);
-      airRuntimeDirForFlexmojosSdk = airRuntimeDirInfo.first;
-      needToRemoveAirRuntimeDir = airRuntimeDirInfo.second;
-      airLaunchCommand.add("-runtime");
-      airLaunchCommand.add(airRuntimeDirForFlexmojosSdk.getPath());
-    }
-    else {
-      needToRemoveAirRuntimeDir = false;
-      airRuntimeDirForFlexmojosSdk = null;
-    }
-
-    if (airRunnerParameters instanceof AirMobileRunnerParameters) {
-      final AirMobileRunnerParameters p = (AirMobileRunnerParameters)airRunnerParameters;
-      switch (p.getAirMobileRunTarget()) {
-        case Emulator:
-          airLaunchCommand.add("-profile");
-          airLaunchCommand.add("mobileDevice");
-
-          airLaunchCommand.add("-screensize");
-          final String adlAlias = p.getEmulator().adlAlias;
-          if (adlAlias != null) {
-            airLaunchCommand.add(adlAlias);
-          }
-          else {
-            airLaunchCommand.add(
-              p.getScreenWidth() + "x" + p.getScreenHeight() + ":" + p.getFullScreenWidth() + "x" + p.getFullScreenHeight());
-          }
-          break;
-        case AndroidDevice:
-          assert false;
-          break;
-      }
-    }
-
-    final String adlOptions = airRunnerParameters.getAdlOptions();
-    if (!StringUtil.isEmptyOrSpaces(adlOptions)) {
-      airLaunchCommand.addAll(StringUtil.split(adlOptions, " "));
-    }
-    airLaunchCommand.add(airRunnerParameters.getAirDescriptorPath());
-    airLaunchCommand.add(airRunnerParameters.getAirRootDirPath());
-    final String programParameters = airRunnerParameters.getAirProgramParameters();
-    if (!StringUtil.isEmptyOrSpaces(programParameters)) {
-      airLaunchCommand.add("--");
-      airLaunchCommand.addAll(StringUtil.split(programParameters, " "));
-    }
-    sendCommand(new StartAirAppDebuggingCommand(ArrayUtil.toStringArray(airLaunchCommand),
-                                                needToRemoveAirRuntimeDir ? airRuntimeDirForFlexmojosSdk : null));
   }
 
   private void launchFlex(final FlexRunnerParameters flexRunnerParameters) throws IOException {
@@ -563,7 +463,6 @@ public class FlexDebugProcess extends XDebugProcess {
 
       if (myCheckForUnexpectedStartupStop && !(command instanceof DumpOutputCommand)) {
         myCheckForUnexpectedStartupStop = false;
-        ourReportedAboutPossibleStartupFailure = true;
       }
 
       @NonNls String commandOutput = null;
@@ -961,10 +860,6 @@ public class FlexDebugProcess extends XDebugProcess {
       log(s);
       if (myCheckForUnexpectedStartupStop) {
         myConsoleView.print(s + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
-        if (!ourReportedAboutPossibleStartupFailure) {
-          ourReportedAboutPossibleStartupFailure = true;
-          reportProblem(s + "\n" + FlexBundle.message("flex.debugger.unexpected.stop"));
-        }
       }
       getProcessHandler().detachProcess();
     }
@@ -1369,19 +1264,12 @@ public class FlexDebugProcess extends XDebugProcess {
 
   class StartAirAppDebuggingCommand extends StartDebuggingCommand {
     private final GeneralCommandLine myAdlCommandLine;
-    private final String[] myAirLaunchCommand;
     private final @Nullable VirtualFile myTempDirToDeleteWhenProcessFinished;
 
-    StartAirAppDebuggingCommand(final String[] airLaunchCommand, final @Nullable VirtualFile tempDirToDeleteWhenProcessFinished) {
-      myAdlCommandLine = null;
-      myAirLaunchCommand = airLaunchCommand;
-      myTempDirToDeleteWhenProcessFinished = tempDirToDeleteWhenProcessFinished;
-    }
-
-    public StartAirAppDebuggingCommand(final GeneralCommandLine adlCommandLine) {
+    public StartAirAppDebuggingCommand(final GeneralCommandLine adlCommandLine,
+                                       final @Nullable VirtualFile tempDirToDeleteWhenProcessFinished) {
       myAdlCommandLine = adlCommandLine;
-      myAirLaunchCommand = null;
-      myTempDirToDeleteWhenProcessFinished = null;
+      myTempDirToDeleteWhenProcessFinished = tempDirToDeleteWhenProcessFinished;
     }
 
     void launchDebuggedApplication() throws IOException {
@@ -1389,23 +1277,12 @@ public class FlexDebugProcess extends XDebugProcess {
     }
 
     private void launchAdl() throws IOException {
-      if (myAdlCommandLine != null) {
-        try {
-          myConsoleView.print(myAdlCommandLine.getCommandLineString() + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
-          adlProcess = myAdlCommandLine.createProcess();
-        }
-        catch (ExecutionException e) {
-          throw new IOException(e.getMessage());
-        }
+      try {
+        myConsoleView.print(myAdlCommandLine.getCommandLineString() + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+        adlProcess = myAdlCommandLine.createProcess();
       }
-      else {
-        final Function<String, String> quoter = new Function<String, String>() {
-          public String fun(final String s) {
-            return s.contains(" ") ? "\"" + s + "\"" : s;
-          }
-        };
-        myConsoleView.print(ADL_PREFIX + StringUtil.join(myAirLaunchCommand, quoter, " ") + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
-        adlProcess = Runtime.getRuntime().exec(myAirLaunchCommand);
+      catch (ExecutionException e) {
+        throw new IOException(e.getMessage());
       }
 
       ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {

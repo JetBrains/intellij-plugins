@@ -7,11 +7,16 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -232,7 +237,8 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
         androidOptions.setUseGeneratedDescriptor(true);
         androidOptions.getSigningOptions().setUseTempCertificate(true);
 
-        overriddenBC.getIosPackagingOptions().setEnabled(false); // impossible without extra user input: certificate and provisioning profile
+        // impossible without extra user input: certificate and provisioning profile
+        overriddenBC.getIosPackagingOptions().setEnabled(false);
       }
 
       return Pair.create(moduleAndBC.first, ((FlexIdeBuildConfiguration)overriddenBC));
@@ -243,6 +249,11 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
 
   private void doCheck(final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC) throws RuntimeConfigurationError {
     final FlexIdeBuildConfiguration bc = moduleAndBC.second;
+    final Sdk sdk = bc.getSdk();
+    if (sdk == null) {
+      throw new RuntimeConfigurationError(
+        FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), moduleAndBC.first.getName()));
+    }
 
     if (myOverrideMainClass) {
       if (myOverriddenMainClass.isEmpty()) {
@@ -262,32 +273,65 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
       }
     }
 
-    if (bc.getTargetPlatform() == TargetPlatform.Web) {
-      if (myLaunchUrl) {
-        try {
-          if (BrowserUtil.getURL(myUrl) == null) throw new RuntimeConfigurationError(FlexBundle.message("flex.run.config.incorrect.url"));
-        }
-        catch (MalformedURLException e) {
-          throw new RuntimeConfigurationError(FlexBundle.message("flex.run.config.incorrect.url"));
+    switch (bc.getTargetPlatform()) {
+      case Web:
+        if (myLaunchUrl) {
+          try {
+            if (BrowserUtil.getURL(myUrl) == null) throw new RuntimeConfigurationError(FlexBundle.message("flex.run.config.incorrect.url"));
+          }
+          catch (MalformedURLException e) {
+            throw new RuntimeConfigurationError(FlexBundle.message("flex.run.config.incorrect.url"));
+          }
+
+          if (myLauncherParameters.getLauncherType() == LauncherParameters.LauncherType.Player) {
+            throw new RuntimeConfigurationError(FlexBundle.message("flex.run.config.url.can.not.be.run.with.flash.player"));
+          }
         }
 
-        if (myLauncherParameters.getLauncherType() == LauncherParameters.LauncherType.Player) {
-          throw new RuntimeConfigurationError(FlexBundle.message("flex.run.config.url.can.not.be.run.with.flash.player"));
+        if (myLauncherParameters.getLauncherType() == LauncherParameters.LauncherType.Player
+            && bc.getTargetPlatform() == TargetPlatform.Web && bc.isUseHtmlWrapper()) {
+          throw new RuntimeConfigurationError(FlexBundle.message("html.wrapper.can.not.be.run.with.flash.player"));
         }
-      }
+        break;
 
-      if (myLauncherParameters.getLauncherType() == LauncherParameters.LauncherType.Player
-          && bc.getTargetPlatform() == TargetPlatform.Web && bc.isUseHtmlWrapper()) {
-        throw new RuntimeConfigurationError(FlexBundle.message("html.wrapper.can.not.be.run.with.flash.player"));
-      }
+      case Desktop:
+        checkAdlAndAirRuntime(sdk);
+        break;
+
+      case Mobile:
+        if (bc.getOutputType() == OutputType.Application &&
+            myMobileRunTarget == AirMobileRunTarget.AndroidDevice &&
+            !bc.getAndroidPackagingOptions().isEnabled()) {
+          throw new RuntimeConfigurationError(FlexBundle.message("android.disabled.in.bc", getBCName(), getModuleName()));
+        }
+
+        if (myMobileRunTarget == AirMobileRunTarget.Emulator) {
+          checkAdlAndAirRuntime(sdk);
+        }
+        break;
+    }
+  }
+
+  private static void checkAdlAndAirRuntime(final @NotNull Sdk sdk) throws RuntimeConfigurationError {
+    final String adlPath = FlexSdkUtils.getAdlPath(sdk);
+    if (StringUtil.isEmpty(adlPath)) {
+      throw new RuntimeConfigurationError(FlexBundle.message("adl.not.set.check.sdk.settings", sdk.getName()));
+    }
+    final VirtualFile adlFile = LocalFileSystem.getInstance().findFileByPath(adlPath);
+    if (adlFile == null || adlFile.isDirectory()) {
+      throw new RuntimeConfigurationError(sdk.getSdkType() instanceof FlexmojosSdkType
+                                          ? FlexBundle.message("adl.not.found.check.sdk.settings", adlPath, sdk.getName())
+                                          : FlexBundle.message("adl.not.found.check.sdk.installation", adlPath, sdk.getName()));
     }
 
-    if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
-      if (bc.getOutputType() == OutputType.Application &&
-          myMobileRunTarget == AirMobileRunTarget.AndroidDevice &&
-          !bc.getAndroidPackagingOptions().isEnabled()) {
-        throw new RuntimeConfigurationError(
-          FlexBundle.message("android.disabled.in.bc", getBCName(), getModuleName()));
+    if (sdk.getSdkType() instanceof FlexmojosSdkType) {
+      final String airRuntimePath = FlexSdkUtils.getAirRuntimePathForFlexmojosSdk(sdk);
+      if (StringUtil.isEmpty(airRuntimePath)) {
+        throw new RuntimeConfigurationError(FlexBundle.message("air.runtime.not.set.check.sdk.settings", sdk.getName()));
+      }
+      final VirtualFile airRuntimeDir = LocalFileSystem.getInstance().findFileByPath(airRuntimePath);
+      if (airRuntimeDir == null) {
+        throw new RuntimeConfigurationError(FlexBundle.message("air.runtime.not.found.check.sdk.settings", airRuntimePath, sdk.getName()));
       }
     }
   }

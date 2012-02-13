@@ -197,7 +197,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
       //FlashPlayerTrustUtil.updateTrustedStatus(project, isDebug, flexRunnerParameters);
 
-      return doLaunch(project, executor, state, contentToReuse, env, flexSdk, flexRunnerParameters);
+      //return doLaunch(project, executor, state, contentToReuse, env, flexSdk, flexRunnerParameters);
     }
 
     return null;
@@ -529,15 +529,6 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     return true;
   }
 
-  @Nullable
-  protected abstract RunContentDescriptor doLaunch(final Project project,
-                                                   final Executor executor,
-                                                   final RunProfileState state,
-                                                   final RunContentDescriptor contentToReuse,
-                                                   final ExecutionEnvironment env,
-                                                   final Sdk flexSdk,
-                                                   final FlexRunnerParameters flexRunnerParameters) throws ExecutionException;
-
   public static boolean processFilesUnderRoot(final VirtualFile root, Processor<VirtualFile> leafFileProcessor) {
     if (root.isDirectory()) {
       for (VirtualFile file : root.getChildren()) {
@@ -593,11 +584,6 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     consoleView.addMessageFilter(stackTraceFilter);
     Disposer.register(project, consoleView);
     return consoleView;
-  }
-
-  public static boolean isRunOnDevice(final FlexRunnerParameters params) {
-    return params instanceof AirMobileRunnerParameters &&
-           ((AirMobileRunnerParameters)params).getAirMobileRunTarget() != AirMobileRunTarget.Emulator;
   }
 
   public static boolean isRunAsAir(final FlexRunnerParameters params) {
@@ -809,7 +795,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   }
 
   public static GeneralCommandLine createAdlCommandLine(final BCBasedRunnerParameters params,
-                                                        final FlexIdeBuildConfiguration bc) throws CantRunException {
+                                                        final FlexIdeBuildConfiguration bc,
+                                                        final @Nullable String airRuntimePath) throws CantRunException {
     final Sdk sdk = bc.getSdk();
     if (sdk == null) {
       throw new CantRunException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), params.getModuleName()));
@@ -817,7 +804,12 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
     final GeneralCommandLine commandLine = new GeneralCommandLine();
 
-    commandLine.setExePath(FileUtil.toSystemDependentName(sdk.getHomePath() + FlexSdkUtils.ADL_RELATIVE_PATH));
+    commandLine.setExePath(FileUtil.toSystemDependentName(FlexSdkUtils.getAdlPath(sdk)));
+
+    if (airRuntimePath != null) {
+      commandLine.addParameter("-runtime");
+      commandLine.addParameter(airRuntimePath);
+    }
 
     if (bc.getNature().isDesktopPlatform()) {
       final String adlOptions =

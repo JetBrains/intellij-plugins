@@ -75,35 +75,9 @@ public class AirRunConfiguration extends FlexRunConfiguration {
         break;
     }
 
-    checkAdlAndAirRuntime(module);
+    //checkAdlAndAirRuntime(module);
 
     checkDebuggerSdk(params);
-  }
-
-  protected static void checkAdlAndAirRuntime(Module module) throws RuntimeConfigurationError {
-    final Sdk sdk = FlexUtils.getSdkForActiveBC(module);
-    assert sdk != null;
-    final String adlPath = FlexSdkUtils.getAdlPath(sdk);
-    if (StringUtil.isEmpty(adlPath)) {
-      throw new RuntimeConfigurationError(FlexBundle.message("adl.not.set.check.sdk.settings", sdk.getName()));
-    }
-    final VirtualFile adlFile = LocalFileSystem.getInstance().findFileByPath(adlPath);
-    if (adlFile == null || adlFile.isDirectory()) {
-      throw new RuntimeConfigurationError(sdk.getSdkType() instanceof FlexmojosSdkType
-                                          ? FlexBundle.message("adl.not.found.check.sdk.settings", adlPath, sdk.getName())
-                                          : FlexBundle.message("adl.not.found.check.sdk.installation", adlPath, sdk.getName()));
-    }
-
-    if (sdk.getSdkType() instanceof FlexmojosSdkType) {
-      final String airRuntimePath = FlexSdkUtils.getAirRuntimePathForFlexmojosSdk(sdk);
-      if (StringUtil.isEmpty(airRuntimePath)) {
-        throw new RuntimeConfigurationError(FlexBundle.message("air.runtime.not.set.check.sdk.settings", sdk.getName()));
-      }
-      final VirtualFile airRuntimeDir = LocalFileSystem.getInstance().findFileByPath(airRuntimePath);
-      if (airRuntimeDir == null) {
-        throw new RuntimeConfigurationError(FlexBundle.message("air.runtime.not.found.check.sdk.settings", airRuntimePath, sdk.getName()));
-      }
-    }
   }
 
   protected static void checkAirDescriptorBasedConfiguration(Module module, AirRunnerParameters params) throws RuntimeConfigurationError {
