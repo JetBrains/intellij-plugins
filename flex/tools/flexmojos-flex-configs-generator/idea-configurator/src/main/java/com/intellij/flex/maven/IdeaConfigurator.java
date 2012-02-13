@@ -209,8 +209,6 @@ public class IdeaConfigurator implements FlexConfigGenerator {
           values = ((Collection<?>)value).toArray();
         }
 
-
-
         // ability to compile pure AS3 project without themes — node must be present, but empty (relevant only for "theme")
         if (values.length == 0) {
           if (name.equals("theme") || name.equals("locale")) {
@@ -218,11 +216,7 @@ public class IdeaConfigurator implements FlexConfigGenerator {
           }
         }
         else {
-          out.append(indent).append('<').append(name);
-          if (Utils.APPENDABLE.contains(name)) {
-            out.append(" append=\"true\"");
-          }
-          out.append('>');
+          out.append(indent).append('<').append(name).append('>');
 
           String childTagName = Utils.CHILD_TAG_NAME_MAP.get(name);
           if (childTagName == null) {

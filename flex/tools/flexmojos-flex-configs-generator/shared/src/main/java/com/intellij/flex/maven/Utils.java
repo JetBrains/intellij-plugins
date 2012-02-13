@@ -4,14 +4,11 @@ import java.io.*;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public final class Utils {
   private static final Charset UTF_8 = Charset.forName("UTF-8");
   public static final Map<String, String> CHILD_TAG_NAME_MAP = new HashMap<String, String>(12);
-  public static final Set<String> APPENDABLE = new HashSet<String>(12);
 
   private static final ThreadLocal<char[]> CHAR_BUFFER = new ThreadLocal<char[]>() {
     protected char[] initialValue() {
@@ -32,37 +29,6 @@ public final class Utils {
     CHILD_TAG_NAME_MAP.put("include-resource-bundles", "bundle");
     CHILD_TAG_NAME_MAP.put("theme", "filename");
     CHILD_TAG_NAME_MAP.put("defaults-css-files", "filename");
-
-    APPENDABLE.add("defaults-css-files");
-    APPENDABLE.add("define");
-    APPENDABLE.add("extensions");
-    APPENDABLE.add("external-library-path");
-    APPENDABLE.add("languages");
-    APPENDABLE.add("include-libraries");
-    APPENDABLE.add("keep-as3-metadata");
-    APPENDABLE.add("source-path");
-    APPENDABLE.add("namespaces");
-    APPENDABLE.add("library-path");
-    APPENDABLE.add("theme");
-    APPENDABLE.add("externs");
-    APPENDABLE.add("frames");
-    APPENDABLE.add("include-classes");
-    APPENDABLE.add("include-file");
-    APPENDABLE.add("include-namespaces");
-    APPENDABLE.add("include-sources");
-    APPENDABLE.add("include-stylesheet");
-    APPENDABLE.add("includes");
-    APPENDABLE.add("licenses");
-    APPENDABLE.add("load-externs");
-    APPENDABLE.add("contributor");
-    APPENDABLE.add("language");
-    APPENDABLE.add("localized-description");
-    APPENDABLE.add("localized-title");
-    APPENDABLE.add("publisher");
-    APPENDABLE.add("runtime-shared-libraries");
-    APPENDABLE.add("runtime-shared-library-path");
-    APPENDABLE.add("runtime-shared-library-settings");
-    APPENDABLE.add("force-rsls");
   }
 
   public static void copyFile(File fromFile, File toFile) throws IOException {
