@@ -12,7 +12,6 @@
       <module fileurl="file://$PROJECT_DIR$/main-loader/main-loader.iml" filepath="$PROJECT_DIR$/main-loader/main-loader.iml" />
       <module fileurl="file://$PROJECT_DIR$/shared/shared.iml" filepath="$PROJECT_DIR$/shared/shared.iml" />
       <module fileurl="file://$PROJECT_DIR$/test-plugin/test.iml" filepath="$PROJECT_DIR$/test-plugin/test.iml" />
-      <module fileurl="file://$PROJECT_DIR$/idea-plugin/testData/src/test-data.iml" filepath="$PROJECT_DIR$/idea-plugin/testData/src/test-data.iml" />
       <module fileurl="file://$PROJECT_DIR$/test-data-helper/test-data-helper.iml" filepath="$PROJECT_DIR$/test-data-helper/test-data-helper.iml" />
       <module fileurl="file://$PROJECT_DIR$/ui/ui.iml" filepath="$PROJECT_DIR$/ui/ui.iml" />
     </modules>

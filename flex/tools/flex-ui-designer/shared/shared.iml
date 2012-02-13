@@ -6,7 +6,7 @@
         <dependencies>
           <entries>
             <entry library-name="Maven: com.adobe.flex.framework:airglobal:swc:3.1.0.4880" library-level="project">
-              <dependency linkage="Merged" />
+              <dependency linkage="External" />
             </entry>
           </entries>
           <sdk name="compiler-4.5.2.21576.pom" />
