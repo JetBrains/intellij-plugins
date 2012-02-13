@@ -92,7 +92,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
 
   private JLabel myCssFilesLabel;
   private TextFieldWithBrowseButton.NoPathCompletion myCssFilesTextWithBrowse;
-  private String myCssFilesToCompile;
+  private String myCssFilesToCompile = "";
 
   private JCheckBox mySkipCompilationCheckBox;
   private JLabel myWarning;
