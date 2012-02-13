@@ -8,9 +8,9 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -313,32 +313,32 @@ public class SigningOptionsForm {
   }
 
   @Nullable
-  public DialogWrapper.ValidationInfo validate() {
+  public ValidationInfo validate() {
     if (myProvisioningProfileTextWithBrowse.isVisible()) {
       final String provisioningProfilePath = getProvisioningProfilePath();
       if (provisioningProfilePath.length() == 0) {
-        return new DialogWrapper.ValidationInfo("Provisioning profile file path is empty", myProvisioningProfileTextWithBrowse);
+        return new ValidationInfo("Provisioning profile file path is empty", myProvisioningProfileTextWithBrowse);
       }
 
       final VirtualFile provisioningProfile = LocalFileSystem.getInstance().findFileByPath(provisioningProfilePath);
       if (provisioningProfile == null || provisioningProfile.isDirectory()) {
-        return new DialogWrapper.ValidationInfo(FlexBundle.message("file.not.found", provisioningProfilePath),
+        return new ValidationInfo(FlexBundle.message("file.not.found", provisioningProfilePath),
                                                 myProvisioningProfileTextWithBrowse);
       }
     }
 
     final String keystorePath = getKeystorePath();
     if (keystorePath.length() == 0) {
-      return new DialogWrapper.ValidationInfo("Keystore file path is empty", myKeystoreFileTextWithBrowse);
+      return new ValidationInfo("Keystore file path is empty", myKeystoreFileTextWithBrowse);
     }
 
     final VirtualFile keystore = LocalFileSystem.getInstance().findFileByPath(keystorePath);
     if (keystore == null || keystore.isDirectory()) {
-      return new DialogWrapper.ValidationInfo(FlexBundle.message("file.not.found", keystorePath), myKeystoreFileTextWithBrowse);
+      return new ValidationInfo(FlexBundle.message("file.not.found", keystorePath), myKeystoreFileTextWithBrowse);
     }
 
     if (getKeystorePassword().isEmpty()) {
-      return new DialogWrapper.ValidationInfo("Keystore password is empty", myKeyPasswordField);
+      return new ValidationInfo("Keystore password is empty", myKeyPasswordField);
     }
 
     return null;
