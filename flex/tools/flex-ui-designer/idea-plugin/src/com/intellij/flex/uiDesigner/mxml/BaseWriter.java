@@ -115,27 +115,27 @@ final class BaseWriter {
     return context == null ? preallocateIdIfNeed() : context.getOrAllocateId();
   }
 
-  public void endMessage(ProjectDocumentReferenceCounter projectDocumentReferenceCounter) throws IOException {
+  public void endMessage(ProjectComponentReferenceCounter projectComponentReferenceCounter) throws IOException {
     final int documentReferenceSize;
-    if (projectDocumentReferenceCounter.total.isEmpty()) {
+    if (projectComponentReferenceCounter.total.isEmpty()) {
       documentReferenceSize = 1;
     }
     else {
       documentReferenceSize = 1 + 1 +
-                              IOUtil.uint29SizeOf((projectDocumentReferenceCounter.total.size() << 1) | 1) +
+                              IOUtil.uint29SizeOf((projectComponentReferenceCounter.total.size() << 1) | 1) +
                               1 +
-                              projectDocumentReferenceCounter.total.size() * 4;
+                              projectComponentReferenceCounter.total.size() * 4;
     }
     
     blockOut.beginWritePrepended(documentReferenceSize + stringWriter.size() + IOUtil.uint29SizeOf(rootScope.referenceCounter), startPosition);
 
-    if (projectDocumentReferenceCounter.total.isEmpty()) {
+    if (projectComponentReferenceCounter.total.isEmpty()) {
       blockOut.writePrepended(false);
     }
     else {
       blockOut.writePrepended(true);
       ByteArrayOutputStreamEx bo = new ByteArrayOutputStreamEx(documentReferenceSize - 1);
-      new AmfOutputStream(bo).write(projectDocumentReferenceCounter.total);
+      new AmfOutputStream(bo).write(projectComponentReferenceCounter.total);
       blockOut.writePrepended(bo);
     }
 

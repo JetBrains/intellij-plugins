@@ -1,23 +1,18 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.ProjectTopics;
-import com.intellij.diagnostic.LogMessageEx;
-import com.intellij.diagnostic.errordialog.Attachment;
 import com.intellij.execution.ExecutionException;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.io.MessageSocketManager;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.InitException;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
-import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
+import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.ModuleAdapter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -32,7 +27,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.util.Consumer;
-import com.intellij.util.ExceptionUtil;
 import com.intellij.util.concurrency.Semaphore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +35,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -49,26 +46,16 @@ import java.util.concurrent.TimeoutException;
 
 import static com.intellij.flex.uiDesigner.AdlUtil.*;
 
-public class DesignerApplicationLauncher extends Task.Backgroundable {
-  private static final Logger LOG = Logger.getInstance(DesignerApplicationLauncher.class.getName());
-
-  private ProgressIndicator indicator;
-  private Module module;
-
+public class DesignerApplicationLauncher extends DocumentTask {
   private boolean debug;
-  private final PostTask postTask;
-  private Future<ProjectDocumentReferenceCounter> initializeThread;
+  private Future<ProjectComponentReferenceCounter> initializeThread;
 
   private final Semaphore semaphore = new Semaphore();
 
-  private final ProblemsHolder problemsHolder = new ProblemsHolder();
-
   public DesignerApplicationLauncher(@NotNull final Module module, final boolean debug, @NotNull final PostTask postTask) {
-    super(module.getProject(), DesignerApplicationManager.getOpenActionTitle(debug));
+    super(module, debug, postTask);
 
-    this.module = module;
     this.debug = debug;
-    this.postTask = postTask;
   }
 
   public void clientOpened(@NotNull OutputStream outputStream) {
@@ -82,52 +69,29 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
   }
 
   @Override
-  public void run(@NotNull final ProgressIndicator indicator) {
-    this.indicator = indicator;
-
-    try {
-      Throwable error = null;
-
-      File startupErrorFile = new File(DesignerApplicationManager.APP_DIR, "startup-error.txt");
-      if (startupErrorFile.exists()) {
-        //noinspection ResultOfMethodCallIgnored
-        startupErrorFile.delete();
-      }
-
-      boolean result = false;
-      try {
-        result = doRun(indicator);
-      }
-      catch (Throwable e) {
-        error = e;
-      }
-
-      if (!result || indicator.isCanceled()) {
-        problemsHolder.disableLog();
-
-        if (initializeThread != null) {
-          initializeThread.cancel(true);
-          initializeThread = null;
-        }
-
-        if (!DesignerApplicationManager.getInstance().isApplicationClosed()) {
-          DesignerApplicationManager.getInstance().disposeApplication();
-        }
-
-        semaphore.up();
-      }
-
-      // java.lang.Throwable: Don't log ProcessCanceledException
-      if (error != null && !(error instanceof ProcessCanceledException)) {
-        LOG.error(error);
-      }
-    }
-    finally {
-      postTask.end();
+  protected void beforeRun() {
+    File startupErrorFile = new File(DesignerApplicationManager.APP_DIR, "startup-error.txt");
+    if (startupErrorFile.exists()) {
+      //noinspection ResultOfMethodCallIgnored
+      startupErrorFile.delete();
     }
   }
 
-  private boolean doRun(@NotNull final ProgressIndicator indicator)
+  @Override
+  protected void processErrorOrCancel() {
+    if (initializeThread != null) {
+      initializeThread.cancel(true);
+      initializeThread = null;
+    }
+
+    if (!DesignerApplicationManager.getInstance().isApplicationClosed()) {
+      DesignerApplicationManager.getInstance().disposeApplication();
+    }
+
+    semaphore.up();
+  }
+
+  protected boolean doRun(@NotNull final ProgressIndicator indicator)
     throws IOException, java.util.concurrent.ExecutionException, InterruptedException, TimeoutException {
     final List<AdlRunConfiguration> adlRunConfigurations;
     indicator.setText(FlashUIDesignerBundle.message("copying.app.files"));
@@ -227,15 +191,15 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
       return false;
     }
 
-    final ProjectDocumentReferenceCounter projectDocumentReferenceCounter = initializeThread.get(DebugPathManager.IS_DEV ? 999 : 60, TimeUnit.SECONDS);
+    final ProjectComponentReferenceCounter projectComponentReferenceCounter = initializeThread.get(DebugPathManager.IS_DEV ? 999 : 60, TimeUnit.SECONDS);
     indicator.checkCanceled();
 
     final DesignerApplication application = DesignerApplicationManager.getApplication();
-    assert adlProcessHandler != null && application != null;
+    LOG.assertTrue(adlProcessHandler != null && application != null);
     application.setProcessHandler(adlProcessHandler);
     attachProjectAndModuleListeners(application);
 
-    return postTask.run(projectDocumentReferenceCounter, indicator, problemsHolder);
+    return postTask.run(module, projectComponentReferenceCounter, indicator, problemsHolder);
   }
 
   private static boolean checkStartupError() throws IOException {
@@ -400,10 +364,10 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
 
   private void runInitializeLibrariesAndModuleThread() {
     LibraryManager.getInstance().setAppDir(DesignerApplicationManager.APP_DIR);
-    initializeThread = ApplicationManager.getApplication().executeOnPooledThread(new Callable<ProjectDocumentReferenceCounter>() {
+    initializeThread = ApplicationManager.getApplication().executeOnPooledThread(new Callable<ProjectComponentReferenceCounter>() {
       @Nullable
       @Override
-      public ProjectDocumentReferenceCounter call() {
+      public ProjectComponentReferenceCounter call() {
         LibraryManager.getInstance().garbageCollection(indicator);
         indicator.checkCanceled();
 
@@ -412,7 +376,7 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
             Client.getInstance().initStringRegistry();
           }
           indicator.setText(FlashUIDesignerBundle.message("collect.libraries"));
-          return LibraryManager.getInstance().initLibrarySets(module, true, problemsHolder);
+          return LibraryManager.getInstance().initLibrarySets(module, problemsHolder);
         }
         catch (Throwable e) {
           if (initializeThread == null || initializeThread.isCancelled()) {
@@ -432,32 +396,5 @@ public class DesignerApplicationLauncher extends Task.Backgroundable {
         }
       }
     });
-  }
-
-  static void processInitException(InitException e, Module module, boolean debug) {
-    DesignerApplicationManager.notifyUser(debug, e.getMessage(), module);
-    if (e.attachments == null) {
-      LOG.error(e.getCause());
-    }
-    else {
-      final Collection<Attachment> attachments = new ArrayList<Attachment>(e.attachments.length);
-      for (Attachment attachment : e.attachments) {
-        if (attachment != null) {
-          attachments.add(attachment);
-        }
-        else {
-          break;
-        }
-      }
-
-      LOG.error(LogMessageEx.createEvent(e.getMessage(), e.technicalMessage + "\n" + ExceptionUtil.getThrowableText(e), e.getMessage(),
-        null, attachments));
-    }
-  }
-
-  interface PostTask {
-    boolean run(ProjectDocumentReferenceCounter projectDocumentReferenceCounter, ProgressIndicator indicator, ProblemsHolder problemsHolder);
-
-    void end();
   }
 }

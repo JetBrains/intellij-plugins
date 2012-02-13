@@ -6,9 +6,13 @@ import gnu.trove.TIntArrayList;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProjectDocumentReferenceCounter {
+public class ProjectComponentReferenceCounter {
   public final TIntArrayList total = new TIntArrayList();
   public final List<XmlFile> unregistered = new ArrayList<XmlFile>();
+
+  public boolean hasUnregistered() {
+    return !unregistered.isEmpty();
+  }
 
   public void registered(int id) {
     total.add(id);

@@ -59,7 +59,7 @@ public class MxmlWriter {
   final ValueProviderFactory valueProviderFactory = new ValueProviderFactory();
   private final List<RangeMarker> rangeMarkers = new ArrayList<RangeMarker>();
 
-  final ProjectDocumentReferenceCounter projectComponentReferenceCounter = new ProjectDocumentReferenceCounter();
+  final ProjectComponentReferenceCounter projectComponentReferenceCounter = new ProjectComponentReferenceCounter();
 
   private Document document;
 
@@ -74,7 +74,7 @@ public class MxmlWriter {
   }
 
   @Nullable
-  public Pair<ProjectDocumentReferenceCounter, List<RangeMarker>> write(XmlFile psiFile) throws IOException {
+  public Pair<ProjectComponentReferenceCounter, List<RangeMarker>> write(XmlFile psiFile) throws IOException {
     final AccessToken token = ReadAction.start();
     try {
       final VirtualFile virtualFile = psiFile.getVirtualFile();
@@ -120,7 +120,7 @@ public class MxmlWriter {
 
       injectedASWriter.write();
       writer.endMessage(projectComponentReferenceCounter);
-      return new Pair<ProjectDocumentReferenceCounter, List<RangeMarker>>(projectComponentReferenceCounter, rangeMarkers);
+      return new Pair<ProjectComponentReferenceCounter, List<RangeMarker>>(projectComponentReferenceCounter, rangeMarkers);
     }
     finally {
       token.finish();

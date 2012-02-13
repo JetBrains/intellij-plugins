@@ -1,8 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.libraries.InitException;
-import com.intellij.flex.uiDesigner.libraries.LibraryManager;
-import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
+import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.notification.Notification;
@@ -17,7 +15,6 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.help.HelpManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -36,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import javax.swing.event.HyperlinkEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 
 import static com.intellij.flex.uiDesigner.LogMessageUtil.LOG;
@@ -110,13 +108,16 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
   private static boolean checkFlexSdkVersion(final Sdk sdk) {
     String version = sdk.getVersionString();
     if (StringUtil.isEmpty(version)) {
+      LOG.warn("Flex SDK " + sdk.getName() + " version is empty, try to read flex-sdk-description.xml");
       VirtualFile sdkHomeDirectory = sdk.getHomeDirectory();
       if (sdkHomeDirectory == null) {
+        LOG.warn("Flex SDK " + sdk.getName() + " home directory is null, cannot read flex-sdk-description.xml");
         return false;
       }
 
       version = FlexSdkUtils.doReadFlexSdkVersion(sdkHomeDirectory);
       if (StringUtil.isEmpty(version)) {
+        LOG.warn("Flex SDK " + sdk.getName() + " version is empty and result of read flex-sdk-description.xml is also empty");
         return false;
       }
 
@@ -131,7 +132,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       }
     }
 
-    assert version != null;
+    LOG.assertTrue(version != null);
     if (version.length() < 5 || version.charAt(0) < '4') {
       return false;
     }
@@ -152,53 +153,38 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     return true;
   }
 
+  //public BufferedImage renderDocument(@NotNull final Module module, @NotNull final XmlFile psiFile) {
+  //  final Semaphore semaphore = new Semaphore();
+  //  semaphore.down();
+  //
+  //}
+
   public void openDocument(@NotNull final Module module, @NotNull final XmlFile psiFile, final boolean debug) {
     LOG.assertTrue(!documentOpening);
+    documentOpening = true;
 
     final boolean appClosed = isApplicationClosed();
-    if (appClosed || !Client.getInstance().isModuleRegistered(module)) {
-      final Sdk sdk = FlexUtils.getSdkForActiveBC(module);
-      if (sdk == null || !checkFlexSdkVersion(sdk)) {
-        reportInvalidFlexSdk(module, debug, sdk);
-        return;
+    boolean hasError = true;
+    try {
+      if (appClosed || !Client.getInstance().isModuleRegistered(module)) {
+        final Sdk sdk = FlexUtils.getSdkForActiveBC(module);
+        if (sdk == null || !checkFlexSdkVersion(sdk)) {
+          reportInvalidFlexSdk(module, debug, sdk);
+          return;
+        }
+      }
+
+      hasError = false;
+    }
+    finally {
+      if (hasError) {
+        documentOpening = false;
       }
     }
 
-    documentOpening = true;
-
-    if (appClosed) {
-      ProgressManager.getInstance().run(new DesignerApplicationLauncher(module, debug, new FirstOpenDocumentTask(psiFile)));
-    }
-    else {
-      ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-        @Override
-        public void run() {
-          final Client client = Client.getInstance();
-          try {
-            final ProblemsHolder problemsHolder = new ProblemsHolder();
-            if (!client.isModuleRegistered(module)) {
-              try {
-                final ProjectDocumentReferenceCounter
-                  projectDocumentReferenceCounter = LibraryManager.getInstance().initLibrarySets(module, true, problemsHolder);
-                if (projectDocumentReferenceCounter != null &&
-                    !client.registerDocumentReferences(projectDocumentReferenceCounter.unregistered, module, problemsHolder)) {
-                  return;
-                }
-              }
-              catch (InitException e) {
-                DesignerApplicationLauncher.processInitException(e, module, debug);
-              }
-            }
-
-            client.openDocument(module, psiFile, problemsHolder);
-            client.flush();
-          }
-          finally {
-            documentOpening = false;
-          }
-        }
-      });
-    }
+    final OpenDocumentTask openDocumentTask = new OpenDocumentTask(psiFile);
+    ProgressManager.getInstance().run(
+      appClosed ? new DesignerApplicationLauncher(module, debug, openDocumentTask) : new DocumentTaskExecutor(module, openDocumentTask));
   }
 
   public boolean isApplicationClosed() {
@@ -278,19 +264,23 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     notification.notify(project);
   }
 
-  private static class FirstOpenDocumentTask implements DesignerApplicationLauncher.PostTask {
+  private static class OpenDocumentTask extends DesignerApplicationLauncher.PostTask {
     private final XmlFile psiFile;
 
-    public FirstOpenDocumentTask(@NotNull final XmlFile psiFile) {
+    public OpenDocumentTask(@NotNull final XmlFile psiFile) {
       this.psiFile = psiFile;
     }
 
-    public void end() {
+    @Override
+    public void dispose() {
+      super.dispose();
+
       DesignerApplicationManager.getInstance().documentOpening = false;
     }
 
     @Override
-    public boolean run(ProjectDocumentReferenceCounter projectDocumentReferenceCounter,
+    public boolean run(Module module,
+                       ProjectComponentReferenceCounter projectComponentReferenceCounter,
                        ProgressIndicator indicator,
                        ProblemsHolder problemsHolder) {
       indicator.setText(FlashUIDesignerBundle.message("open.document"));
@@ -299,19 +289,20 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
         return false;
       }
 
-      final Module module = ModuleUtil.findModuleForPsiElement(psiFile);
-      if (projectDocumentReferenceCounter != null &&
-          !client.registerDocumentReferences(projectDocumentReferenceCounter.unregistered, module, problemsHolder)) {
+      if (projectComponentReferenceCounter != null &&
+          !client.registerDocumentReferences(projectComponentReferenceCounter.unregistered, module, problemsHolder)) {
         return false;
       }
 
-      final Ref<Boolean> librariesLoaded = new Ref<Boolean>(false);
-      final MessageBusConnection connection =
-        ApplicationManager.getApplication().getMessageBus().connect(DesignerApplicationManager.getApplication());
-      connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentOpenedListener() {
+      final Ref<Boolean> result = new Ref<Boolean>(false);
+      final MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(this);
+      connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentRenderedListener() {
         @Override
-        public void documentOpened() {
-          semaphoreUp();
+        public void documentRendered(int id, BufferedImage image) {
+          DocumentFactoryManager.DocumentInfo info = DocumentFactoryManager.getInstance().getNullableInfo(psiFile.getVirtualFile());
+          if (info != null && info.getId() == id) {
+            semaphoreUp();
+          }
         }
 
         @Override
@@ -321,16 +312,16 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
         private void semaphoreUp() {
           connection.disconnect();
-          librariesLoaded.set(true);
+          result.set(true);
         }
       });
 
-      if (client.openDocument(module, psiFile, true, problemsHolder)) {
+      if (client.openDocument(module, psiFile, problemsHolder)) {
         if (!client.flush()) {
           return false;
         }
         indicator.setText(FlashUIDesignerBundle.message("loading.libraries"));
-        while (!librariesLoaded.get()) {
+        while (!result.get()) {
           try {
             Thread.sleep(5);
           }

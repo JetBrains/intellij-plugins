@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
-import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
+import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
@@ -198,7 +198,7 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
 
       new DesignerApplicationLauncher(myModule, false, new DesignerApplicationLauncher.PostTask() {
         @Override
-        public boolean run(ProjectDocumentReferenceCounter projectDocumentReferenceCounter,
+        public boolean run(Module module, ProjectComponentReferenceCounter projectComponentReferenceCounter,
                            ProgressIndicator indicator,
                            ProblemsHolder problemsHolder) {
           assertTrue(DocumentProblemManager.getInstance().toString(problemsHolder.getProblems()), problemsHolder.isEmpty());
@@ -207,7 +207,7 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
           client.flush();
 
           try {
-            assertAfterInitLibrarySets(projectDocumentReferenceCounter.unregistered);
+            assertAfterInitLibrarySets(projectComponentReferenceCounter.unregistered);
           }
           catch (IOException e) {
             throw new AssertionError(e);
@@ -215,20 +215,16 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
 
           return true;
         }
-
-        @Override
-        public void end() {
-        }
       }).run(new EmptyProgressIndicator());
     }
     else {
       client = (TestClient)Client.getInstance();
       final ProblemsHolder problemsHolder = new ProblemsHolder();
-      ProjectDocumentReferenceCounter
-        projectDocumentReferenceCounter =
-        LibraryManager.getInstance().initLibrarySets(myModule, isRequireLocalStyleHolder(), problemsHolder);
+      ProjectComponentReferenceCounter
+        projectComponentReferenceCounter =
+        LibraryManager.getInstance().initLibrarySets(myModule, problemsHolder, isRequireLocalStyleHolder());
       assertTrue(problemsHolder.isEmpty());
-      assertAfterInitLibrarySets(projectDocumentReferenceCounter.unregistered);
+      assertAfterInitLibrarySets(projectComponentReferenceCounter.unregistered);
     }
 
     socketInputHandler = (TestSocketInputHandler)SocketInputHandler.getInstance();

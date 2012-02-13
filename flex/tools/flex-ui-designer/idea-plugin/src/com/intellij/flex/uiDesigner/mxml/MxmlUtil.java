@@ -65,7 +65,7 @@ public final class MxmlUtil {
 
   static Trinity<Integer, String, Condition<AnnotationBackedDescriptor>> computeEffectiveClass(final PsiElement element,
                                                                                                final PsiElement declaration,
-                                                                                               final ProjectDocumentReferenceCounter projectDocumentReferenceCounter,
+                                                                                               final ProjectComponentReferenceCounter projectComponentReferenceCounter,
                                                                                                final boolean computePropertyFilter)
     throws InvalidPropertyException {
     PsiFile psiFile = declaration.getContainingFile();
@@ -78,7 +78,7 @@ public final class MxmlUtil {
 
     if (psiFile instanceof XmlFile) {
       return new Trinity<Integer, String, Condition<AnnotationBackedDescriptor>>(
-        DocumentFactoryManager.getInstance().getId(virtualFile, (XmlFile)psiFile, projectDocumentReferenceCounter), null, null);
+        DocumentFactoryManager.getInstance().getId(virtualFile, (XmlFile)psiFile, projectComponentReferenceCounter), null, null);
     }
 
     final Set<PsiFile> filteredFiles;

@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
+import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSFileReference;
 import com.intellij.lang.properties.ResourceBundleReference;
@@ -39,7 +39,7 @@ public final class InjectionUtil {
     return false;
   }
 
-  public static int getProjectComponentFactoryId(JSClass jsClass, ProjectDocumentReferenceCounter referenceCounter)
+  public static int getProjectComponentFactoryId(JSClass jsClass, ProjectComponentReferenceCounter referenceCounter)
         throws InvalidPropertyException {
       PsiFile psiFile = jsClass.getContainingFile();
       VirtualFile virtualFile = psiFile.getVirtualFile();

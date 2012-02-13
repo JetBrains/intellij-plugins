@@ -4,7 +4,7 @@ import com.intellij.flex.uiDesigner.abc.ClassPoolGenerator;
 import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.flex.uiDesigner.libraries.*;
 import com.intellij.flex.uiDesigner.mxml.MxmlWriter;
-import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
+import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -237,14 +237,10 @@ public class Client implements Disposable {
     openDocument(module, psiFile, new ProblemsHolder());
   }
 
-  public void openDocument(Module module, XmlFile psiFile, ProblemsHolder problemsHolder) {
-    openDocument(module, psiFile, false, problemsHolder);
-  }
-
   /**
    * final, full open document — responsible for handle problemsHolder and assetCounter — you must not do it
    */
-  public boolean openDocument(Module module, XmlFile psiFile, boolean notifyOpened, ProblemsHolder problemsHolder) {
+  public boolean openDocument(Module module, XmlFile psiFile, ProblemsHolder problemsHolder) {
     final DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance();
     final VirtualFile virtualFile = psiFile.getVirtualFile();
     final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
@@ -271,7 +267,6 @@ public class Client implements Disposable {
     beginMessage(ClientMethod.openDocument);
     writeId(module);
     out.writeShort(factoryId);
-    out.write(notifyOpened);
 
     return true;
   }
@@ -437,7 +432,7 @@ public class Client implements Disposable {
 
     out.write(flags);
 
-    Pair<ProjectDocumentReferenceCounter, List<RangeMarker>> result =
+    Pair<ProjectComponentReferenceCounter, List<RangeMarker>> result =
       new MxmlWriter(out, problemsHolder, registeredModules.getInfo(module).getFlexLibrarySet().assetCounterInfo.demanded).write(psiFile);
     if (result == null) {
       return false;
@@ -454,7 +449,7 @@ public class Client implements Disposable {
       Module documentModule = ModuleUtil.findModuleForFile(virtualFile, file.getProject());
       if (module != documentModule && !isModuleRegistered(module)) {
         try {
-          LibraryManager.getInstance().initLibrarySets(module, true, problemsHolder);
+          LibraryManager.getInstance().initLibrarySets(module, problemsHolder);
         }
         catch (InitException e) {
           LogMessageUtil.LOG.error(e.getCause());

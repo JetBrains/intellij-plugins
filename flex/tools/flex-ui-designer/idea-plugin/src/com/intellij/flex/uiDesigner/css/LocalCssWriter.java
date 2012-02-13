@@ -6,25 +6,25 @@ import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.ProblemsHolder;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.mxml.AmfExtendedTypes;
-import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
+import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.javascript.flex.css.FlexStyleIndexInfo;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.psi.css.CssString;
 
 public class LocalCssWriter extends CssWriter {
-  private final ProjectDocumentReferenceCounter projectDocumentReferenceCounter;
+  private final ProjectComponentReferenceCounter projectComponentReferenceCounter;
 
   public LocalCssWriter(StringRegistry.StringWriter stringWriter, ProblemsHolder problemsHolder,
-                        ProjectDocumentReferenceCounter projectDocumentReferenceCounter, AssetCounter assetCounter) {
+                        ProjectComponentReferenceCounter projectComponentReferenceCounter, AssetCounter assetCounter) {
     super(stringWriter, problemsHolder, assetCounter);
-    this.projectDocumentReferenceCounter = projectDocumentReferenceCounter;
+    this.projectComponentReferenceCounter = projectComponentReferenceCounter;
   }
 
   @Override
   protected void writeClassReference(JSClass jsClass, FlexStyleIndexInfo info, CssString cssString) throws InvalidPropertyException {
     final int projectComponentFactoryId;
     if (info != null && info.getAttributeName().equals("skinClass")) {
-      projectComponentFactoryId = InjectionUtil.getProjectComponentFactoryId(jsClass, projectDocumentReferenceCounter);
+      projectComponentFactoryId = InjectionUtil.getProjectComponentFactoryId(jsClass, projectComponentReferenceCounter);
     }
     else if (InjectionUtil.isProjectComponent(jsClass)) {
       throw new InvalidPropertyException(cssString, "class.reference.in.css.support.only.skin.class", jsClass.getQualifiedName());

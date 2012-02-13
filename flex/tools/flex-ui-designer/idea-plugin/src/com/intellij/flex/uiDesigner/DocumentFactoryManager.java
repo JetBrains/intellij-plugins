@@ -3,7 +3,7 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.AppTopics;
 import com.intellij.flex.uiDesigner.io.Info;
 import com.intellij.flex.uiDesigner.io.InfoMap;
-import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
+import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.RangeMarker;
@@ -97,7 +97,7 @@ public class DocumentFactoryManager {
     return getId(virtualFile, null, null);
   }
   
-  public int getId(VirtualFile virtualFile, @Nullable XmlFile psiFile, @Nullable ProjectDocumentReferenceCounter referenceCounter) {
+  public int getId(VirtualFile virtualFile, @Nullable XmlFile psiFile, @Nullable ProjectComponentReferenceCounter referenceCounter) {
     return get(virtualFile, psiFile, referenceCounter).getId();
   }
 
@@ -106,7 +106,7 @@ public class DocumentFactoryManager {
     return files.getNullableInfo(virtualFile);
   }
 
-  public DocumentInfo get(VirtualFile virtualFile, @Nullable XmlFile psiFile, @Nullable ProjectDocumentReferenceCounter referenceCounter) {
+  public DocumentInfo get(VirtualFile virtualFile, @Nullable XmlFile psiFile, @Nullable ProjectComponentReferenceCounter referenceCounter) {
     DocumentInfo info = files.getNullableInfo(virtualFile);
     if (info != null) {
       if (referenceCounter != null) {

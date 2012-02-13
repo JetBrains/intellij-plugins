@@ -4,7 +4,7 @@ import com.intellij.flex.uiDesigner.css.LocalCssWriter;
 import com.intellij.flex.uiDesigner.io.StringRegistry.StringWriter;
 import com.intellij.flex.uiDesigner.libraries.Library;
 import com.intellij.flex.uiDesigner.mxml.MxmlUtil;
-import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
+import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -43,16 +43,16 @@ public final class ModuleInfoUtil {
 
   public static void collectLocalStyleHolders(final ModuleInfo moduleInfo, final String flexSdkVersion,
                                               final StringWriter stringWriter, final ProblemsHolder problemsHolder,
-                                              ProjectDocumentReferenceCounter projectDocumentReferenceCounter, AssetCounter assetCounter) {
+                                              ProjectComponentReferenceCounter projectComponentReferenceCounter, AssetCounter assetCounter) {
     final Module module = moduleInfo.getModule();
     final AccessToken token = ReadAction.start();
     try {
       if (moduleInfo.isApp()) {
-        collectApplicationLocalStyle(moduleInfo, flexSdkVersion, problemsHolder, stringWriter, projectDocumentReferenceCounter,
+        collectApplicationLocalStyle(moduleInfo, flexSdkVersion, problemsHolder, stringWriter, projectComponentReferenceCounter,
                                      assetCounter);
       }
       else {
-        collectLibraryLocalStyle(module, moduleInfo, stringWriter, problemsHolder, projectDocumentReferenceCounter, assetCounter);
+        collectLibraryLocalStyle(module, moduleInfo, stringWriter, problemsHolder, projectComponentReferenceCounter, assetCounter);
       }
     }
     finally {
@@ -64,7 +64,7 @@ public final class ModuleInfoUtil {
                                                ModuleInfo moduleInfo,
                                                StringWriter stringWriter,
                                                ProblemsHolder problemsHolder,
-                                               ProjectDocumentReferenceCounter unregisteredDocumentReferences,
+                                               ProjectComponentReferenceCounter unregisteredComponentReferences,
                                                AssetCounter assetCounter) {
     VirtualFile defaultsCss = null;
     for (VirtualFile sourceRoot : ModuleRootManager.getInstance(moduleInfo.getModule()).getSourceRoots(false)) {
@@ -74,13 +74,13 @@ public final class ModuleInfoUtil {
     }
 
     if (defaultsCss != null) {
-      final LocalCssWriter cssWriter = new LocalCssWriter(stringWriter, problemsHolder, unregisteredDocumentReferences, assetCounter);
+      final LocalCssWriter cssWriter = new LocalCssWriter(stringWriter, problemsHolder, unregisteredComponentReferences, assetCounter);
       moduleInfo.addLocalStyleHolder(new LocalStyleHolder(defaultsCss, cssWriter.write(defaultsCss, module)));
     }
   }
 
   private static void collectApplicationLocalStyle(final ModuleInfo moduleInfo, String flexSdkVersion, final ProblemsHolder problemsHolder,
-                                                   StringWriter stringWriter, ProjectDocumentReferenceCounter projectDocumentReferenceCounter,
+                                                   StringWriter stringWriter, ProjectComponentReferenceCounter projectComponentReferenceCounter,
                                                    final AssetCounter assetCounter) {
     final GlobalSearchScope moduleWithDependenciesAndLibrariesScope =
         moduleInfo.getModule().getModuleWithDependenciesAndLibrariesScope(false);
@@ -104,7 +104,8 @@ public final class ModuleInfoUtil {
       return;
     }
 
-    final StyleTagWriter styleTagWriter = new StyleTagWriter(new LocalCssWriter(stringWriter, problemsHolder, projectDocumentReferenceCounter, assetCounter));
+    final StyleTagWriter styleTagWriter = new StyleTagWriter(new LocalCssWriter(stringWriter, problemsHolder,
+                                                                                projectComponentReferenceCounter, assetCounter));
     final Processor<JSClass> processor = new Processor<JSClass>() {
       @Override
       public boolean process(JSClass jsClass) {

@@ -80,7 +80,7 @@ public class MxmlPreviewPanel extends JPanel implements Disposable {
 
     final JPanel progressPanel = new JPanel();
     progressPanel.setLayout(new BoxLayout(progressPanel, BoxLayout.X_AXIS));
-    myProgressIcon = new AsyncProcessIcon("Android layout rendering");
+    myProgressIcon = new AsyncProcessIcon("Mxml layout rendering");
     myProgressIconWrapper.setLayout(new CardLayout());
     myProgressIconWrapper.add(PROGRESS_ICON_CARD_NAME, myProgressIcon);
     myProgressIconWrapper.add(EMPTY_CARD_NAME, new JBLabel(" "));

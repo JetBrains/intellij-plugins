@@ -2,23 +2,23 @@
   <name>Flash UI Designer</name>
   <description>Provides editing support for Flex or Flash UI</description>
   <id>com.intellij.flex.uiDesigner</id>
-  <version>0.7.1</version>
+  <version>0.7.2</version>
   <vendor url="http://www.jetbrains.com" logo="/general/ijLogo.png">JetBrains</vendor>
-  <idea-version since-build="114.55" until-build="116.55"/>
+  <idea-version since-build="114.65" until-build="116.99"/>
 
   <resource-bundle>messages.FlashUIDesignerBundle</resource-bundle>
 
   <depends optional="false">com.intellij.flex</depends>
   <depends optional="false">com.intellij.properties</depends>
 
-  <!--<project-components>-->
-    <!--<component>-->
-      <!--<implementation-class>com.intellij.flex.uiDesigner.preview.MxmlPreviewToolWindowManager</implementation-class>-->
-      <!--<skipForDefaultProject/>-->
-      <!--&lt;!&ndash;suppress PluginXmlValidity &ndash;&gt;-->
-      <!--<headless-implementation-class></headless-implementation-class>-->
-    <!--</component>-->
-  <!--</project-components>-->
+  <project-components>
+    <component>
+      <implementation-class>com.intellij.flex.uiDesigner.preview.MxmlPreviewToolWindowManager</implementation-class>
+      <skipForDefaultProject/>
+      <!--suppress PluginXmlValidity -->
+      <headless-implementation-class></headless-implementation-class>
+    </component>
+  </project-components>
 
   <extensionPoints>
     <extensionPoint name="service" beanClass="com.intellij.openapi.components.ServiceDescriptor"/>

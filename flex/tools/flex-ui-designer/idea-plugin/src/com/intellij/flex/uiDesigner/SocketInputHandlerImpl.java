@@ -20,6 +20,7 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ActionCallback;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -38,6 +39,9 @@ import com.intellij.util.messages.MessageBus;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.color.ColorSpace;
+import java.awt.image.*;
 import java.io.*;
 import java.util.List;
 
@@ -50,6 +54,8 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   private File appDir;
 
   private final MessageBus messageBus;
+
+  private static final int[] ARGB_BAND_OFFSETS = new int[]{1, 2, 3, 0};
 
   public SocketInputHandlerImpl() {
     messageBus = ApplicationManager.getApplication().getMessageBus();
@@ -177,8 +183,8 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
         setProperty();
         break;
 
-      case ServerMethod.DOCUMENT_OPENED:
-        messageBus.syncPublisher(MESSAGE_TOPIC).documentOpened();
+      case ServerMethod.DOCUMENT_RENDERED:
+        documentRendered();
         break;
 
       default:
@@ -186,6 +192,20 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     }
 
     return true;
+  }
+
+  private void documentRendered() throws IOException {
+    final int id = reader.readUnsignedShort();
+    final int w = reader.readUnsignedShort();
+    final int h = reader.readUnsignedShort();
+    final ComponentColorModel colorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), true, false, Transparency.TRANSLUCENT, DataBuffer.TYPE_BYTE);
+
+    final byte[] argb = FileUtil.loadBytes(reader, w * h * 4);
+    BufferedImage image = new BufferedImage(colorModel, (WritableRaster)Raster
+      .createRaster(new PixelInterleavedSampleModel(DataBuffer.TYPE_BYTE, w, h, 4, w * 4, ARGB_BAND_OFFSETS),
+                    new DataBufferByte(argb, argb.length), null), false, null);
+
+    messageBus.syncPublisher(MESSAGE_TOPIC).documentRendered(id, image);
   }
 
   @NotNull

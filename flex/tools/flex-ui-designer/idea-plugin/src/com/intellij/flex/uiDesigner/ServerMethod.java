@@ -24,5 +24,5 @@ interface ServerMethod {
 
   int SET_PROPERTY = 12;
 
-  int DOCUMENT_OPENED = 13;
+  int DOCUMENT_RENDERED = 13;
 }

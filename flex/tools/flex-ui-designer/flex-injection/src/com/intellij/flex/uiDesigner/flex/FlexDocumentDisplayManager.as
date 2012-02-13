@@ -485,6 +485,11 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
 
     try {
       addRawChildAt(object, 0);
+
+      var v:IInvalidating = document as IInvalidating;
+      if (v != null) {
+        v.validateNow();
+      }
     }
     catch (e:Error) {
       if (super.contains(_document)) {
@@ -535,10 +540,6 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
 
   public function added():void {
     _focusManager.activate();
-    var v:IInvalidating = document as IInvalidating;
-    if (v != null) {
-      v.validateNow();
-    }
   }
 
   public function activated():void {

@@ -189,13 +189,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
   private function openDocument(input:IDataInput):void {
     var module:Module = moduleManager.getById(input.readUnsignedShort());
     var documentFactory:DocumentFactory = getDocumentFactoryManager().get(input.readUnsignedShort());
-
-    var documentOpened:Function;
-    if (input.readBoolean()) {
-      documentOpened = Server.instance.documentOpened;
-    }
-
-    getDocumentManager(module).open(documentFactory, documentOpened);
+    getDocumentManager(module).open(documentFactory);
   }
 
   private function getDocumentImage(input:IDataInput, messageSize:int, b:Boolean):void {

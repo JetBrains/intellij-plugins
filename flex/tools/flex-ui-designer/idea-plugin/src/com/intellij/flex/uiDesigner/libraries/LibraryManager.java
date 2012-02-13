@@ -9,7 +9,7 @@ import com.intellij.flex.uiDesigner.io.RetainCondition;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet.ContainsCondition;
 import com.intellij.flex.uiDesigner.libraries.LibrarySorter.SortResult;
-import com.intellij.flex.uiDesigner.mxml.ProjectDocumentReferenceCounter;
+import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.notification.Notification;
@@ -79,9 +79,15 @@ public class LibraryManager {
   public void garbageCollection(@SuppressWarnings("UnusedParameters") ProgressIndicator indicator) {
   }
 
-  public ProjectDocumentReferenceCounter initLibrarySets(@NotNull final Module module,
-                                                         boolean collectLocalStyleHolders,
-                                                         ProblemsHolder problemsHolder) throws InitException {
+  @NotNull
+  public ProjectComponentReferenceCounter initLibrarySets(@NotNull final Module module, ProblemsHolder problemsHolder) throws InitException {
+    return initLibrarySets(module, problemsHolder, true);
+  }
+
+  @NotNull
+  public ProjectComponentReferenceCounter initLibrarySets(@NotNull final Module module,
+                                                         ProblemsHolder problemsHolder,
+                                                         boolean collectLocalStyleHolders) throws InitException {
     final Project project = module.getProject();
     final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter(16384);
     stringWriter.startChange();
@@ -138,13 +144,13 @@ public class LibraryManager {
 
     final ModuleInfo moduleInfo = new ModuleInfo(module,
       Collections.singletonList(librarySet == null ? flexLibrarySet : librarySet), ModuleInfoUtil.isApp(module));
-    final ProjectDocumentReferenceCounter projectDocumentReferenceCounter = new ProjectDocumentReferenceCounter();
+    final ProjectComponentReferenceCounter projectComponentReferenceCounter = new ProjectComponentReferenceCounter();
     if (collectLocalStyleHolders) {
       // client.registerModule finalize it
       stringWriter.startChange();
       try {
         ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter, problemsHolder,
-          projectDocumentReferenceCounter, assetCounter);
+                                                projectComponentReferenceCounter, assetCounter);
       }
       catch (Throwable e) {
         stringWriter.rollbackChange();
@@ -168,7 +174,7 @@ public class LibraryManager {
       }
     });
 
-    return projectDocumentReferenceCounter;
+    return projectComponentReferenceCounter;
   }
 
   private FlexLibrarySet getOrCreateFlexLibrarySet(LibraryCollector libraryCollector, AssetCounter assetCounter) throws InitException {
