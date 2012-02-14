@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.flex.build;
 
-import com.intellij.compiler.ModuleCompilerUtil;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.openapi.application.Application;
@@ -8,14 +7,11 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.graph.Graph;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -34,7 +30,6 @@ public class FlexCompilationManager {
   private final Collection<FlexCompilationTask> myInProgressTasks;
   private final Collection<FlexCompilationTask> myFinishedTasks;
 
-  private final Graph<Module> myModuleGraph;
   private boolean myCompilationFinished;
   private final FlexCompilerDependenciesCache myCompilerDependenciesCache;
 
@@ -50,11 +45,6 @@ public class FlexCompilationManager {
     myNotStartedTasks = new LinkedList<FlexCompilationTask>(compilationTasks);
     myInProgressTasks = new LinkedList<FlexCompilationTask>();
     myFinishedTasks = new LinkedList<FlexCompilationTask>();
-
-    myModuleGraph = compilationTasks.iterator().next().getBC() == null
-                    ? ModuleCompilerUtil.createModuleGraph(ModuleManager.getInstance(context.getProject()).getModules())
-                    : null;
-
     myCompilationFinished = false;
     myCompilerDependenciesCache = FlexCompilerHandler.getInstance(context.getProject()).getCompilerDependenciesCache();
   }
@@ -75,6 +65,7 @@ public class FlexCompilationManager {
         updateProgressIndicator();
 
         try {
+          //noinspection BusyWait
           Thread.sleep(200);
         }
         catch (InterruptedException e) {
@@ -149,14 +140,11 @@ public class FlexCompilationManager {
         else {
           addMessage(task, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.successfull"), null, -1, -1);
 
-          final FlexIdeBuildConfiguration config = task.getBC();
-          if (config != null) {
-            try {
-              FlexCompilationUtils.performPostCompileActions(config);
-            }
-            catch (FlexCompilerException e) {
-              addMessage(task, CompilerMessageCategory.ERROR, e.getMessage(), e.getUrl(), e.getLine(), e.getColumn());
-            }
+          try {
+            FlexCompilationUtils.performPostCompileActions(task.getBC());
+          }
+          catch (FlexCompilerException e) {
+            addMessage(task, CompilerMessageCategory.ERROR, e.getMessage(), e.getUrl(), e.getLine(), e.getColumn());
           }
         }
 
@@ -242,28 +230,15 @@ public class FlexCompilationManager {
     }
   }
 
-  private boolean hasDependenciesIn(final FlexCompilationTask task, final Collection<FlexCompilationTask> tasksToSearchDependencies) {
-    if (task.getBC() == null) {
-      final Iterator<Module> dependencies = myModuleGraph.getIn(task.getModule());
-      while (dependencies.hasNext()) {
-        final Module dependency = dependencies.next();
-        for (FlexCompilationTask potentialDependency : tasksToSearchDependencies) {
-          if (dependency.equals(potentialDependency.getModule())) {
-            return true;
-          }
-        }
+  private static boolean hasDependenciesIn(final FlexCompilationTask task,
+                                           final Collection<FlexCompilationTask> tasksToSearchDependencies) {
+    for (final FlexCompilationTask otherTask : tasksToSearchDependencies) {
+      //noinspection ConstantConditions
+      if (task.getDependencies().contains(otherTask.getBC())) {
+        return true;
       }
-      return false;
     }
-    else {
-      for (final FlexCompilationTask otherTask : tasksToSearchDependencies) {
-        //noinspection ConstantConditions
-        if (task.getDependencies().contains(otherTask.getBC())) {
-          return true;
-        }
-      }
-      return false;
-    }
+    return false;
   }
 
   private void updateProgressIndicator() {

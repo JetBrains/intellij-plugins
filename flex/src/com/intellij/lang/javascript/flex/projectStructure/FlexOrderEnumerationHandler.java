@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.build.FlexCompiler;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
@@ -89,12 +90,13 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
         continue;
       }
 
-      if (entry.getDependencyType().getLinkageType() == LinkageType.LoadInRuntime) {
+      final LinkageType linkageType = entry.getDependencyType().getLinkageType();
+      if (linkageType == LinkageType.LoadInRuntime) {
         continue;
       }
 
       FlexIdeBuildConfiguration dependencyBc = ((BuildConfigurationEntry)entry).findBuildConfiguration();
-      if (dependencyBc == null) {
+      if (dependencyBc == null || !FlexCompiler.checkDependencyType(configuration, dependencyBc, linkageType)) {
         continue;
       }
 

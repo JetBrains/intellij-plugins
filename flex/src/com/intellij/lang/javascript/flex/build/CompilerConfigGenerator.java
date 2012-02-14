@@ -295,9 +295,9 @@ public class CompilerConfigGenerator {
       if (entry instanceof BuildConfigurationEntry) {
         if (linkageType == LinkageType.LoadInRuntime) continue;
 
-        final FlexIdeBuildConfiguration bc = ((BuildConfigurationEntry)entry).findBuildConfiguration();
-        if (bc != null) {
-          addLib(rootElement, bc.getOutputFilePath(true), linkageType);
+        final FlexIdeBuildConfiguration dependencyBC = ((BuildConfigurationEntry)entry).findBuildConfiguration();
+        if (dependencyBC != null && FlexCompiler.checkDependencyType(myBC, dependencyBC, linkageType)) {
+          addLib(rootElement, dependencyBC.getOutputFilePath(true), linkageType);
         }
       }
       else if (entry instanceof ModuleLibraryEntry) {

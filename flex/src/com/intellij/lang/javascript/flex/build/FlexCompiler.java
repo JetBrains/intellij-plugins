@@ -54,8 +54,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
     final List<ProcessingItem> itemList = new ArrayList<ProcessingItem>();
 
     try {
-      for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig : getModulesAndConfigsToCompile(context.getCompileScope())) {
-        itemList.add(new MyProcessingItem(moduleAndConfig.first, moduleAndConfig.second));
+      for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : getModulesAndBCsToCompile(context.getCompileScope())) {
+        itemList.add(new MyProcessingItem(moduleAndBC.first, moduleAndBC.second));
       }
     }
     catch (ConfigurationException e) {
@@ -116,9 +116,10 @@ public class FlexCompiler implements SourceProcessingCompiler {
         // todo add 'optimize for' dependencies
         for (final DependencyEntry entry : ((MyProcessingItem)item).myBC.getDependencies().getEntries()) {
           if (entry instanceof BuildConfigurationEntry) {
-            final FlexIdeBuildConfiguration dependencyConfig = ((BuildConfigurationEntry)entry).findBuildConfiguration();
-            if (dependencyConfig != null && !dependencyConfig.isSkipCompile()) {
-              dependencies.add(dependencyConfig);
+            final FlexIdeBuildConfiguration dependencyBC = ((BuildConfigurationEntry)entry).findBuildConfiguration();
+            if (dependencyBC != null && !dependencyBC.isSkipCompile() &&
+                entry.getDependencyType().getLinkageType() != LinkageType.LoadInRuntime) {
+              dependencies.add(dependencyBC);
             }
           }
         }
@@ -172,13 +173,13 @@ public class FlexCompiler implements SourceProcessingCompiler {
   public boolean validateConfiguration(final CompileScope scope) {
     try {
       // todo add quick fixes to ConfigurationException
-      final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndConfigsToCompile = getModulesAndConfigsToCompile(scope);
+      final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCsToCompile = getModulesAndBCsToCompile(scope);
 
-      for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig : modulesAndConfigsToCompile) {
-        validateConfiguration(moduleAndConfig.first, moduleAndConfig.second);
+      for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
+        validateConfiguration(moduleAndBC.first, moduleAndBC.second);
       }
 
-      checkSimilarOutputFiles(modulesAndConfigsToCompile);
+      checkSimilarOutputFiles(modulesAndBCsToCompile);
     }
     catch (ConfigurationException e) {
       final String title =
@@ -231,7 +232,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
     }
   }
 
-  private static Collection<Pair<Module, FlexIdeBuildConfiguration>> getModulesAndConfigsToCompile(final CompileScope scope)
+  private static Collection<Pair<Module, FlexIdeBuildConfiguration>> getModulesAndBCsToCompile(final CompileScope scope)
     throws ConfigurationException {
 
     final Collection<Pair<Module, FlexIdeBuildConfiguration>> result = new HashSet<Pair<Module, FlexIdeBuildConfiguration>>();
@@ -241,29 +242,28 @@ public class FlexCompiler implements SourceProcessingCompiler {
       final BCBasedRunnerParameters params = runConfiguration instanceof FlashRunConfiguration
                                              ? ((FlashRunConfiguration)runConfiguration).getRunnerParameters()
                                              : ((NewFlexUnitRunConfiguration)runConfiguration).getRunnerParameters();
-      final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig;
+      final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC;
 
       final Ref<RuntimeConfigurationError> exceptionRef = new Ref<RuntimeConfigurationError>();
-      moduleAndConfig =
-        ApplicationManager.getApplication().runReadAction(new NullableComputable<Pair<Module, FlexIdeBuildConfiguration>>() {
-          public Pair<Module, FlexIdeBuildConfiguration> compute() {
-            try {
-              return params.checkAndGetModuleAndBC(runConfiguration.getProject());
-            }
-            catch (RuntimeConfigurationError e) {
-              exceptionRef.set(e);
-              return null;
-            }
+      moduleAndBC = ApplicationManager.getApplication().runReadAction(new NullableComputable<Pair<Module, FlexIdeBuildConfiguration>>() {
+        public Pair<Module, FlexIdeBuildConfiguration> compute() {
+          try {
+            return params.checkAndGetModuleAndBC(runConfiguration.getProject());
           }
-        });
+          catch (RuntimeConfigurationError e) {
+            exceptionRef.set(e);
+            return null;
+          }
+        }
+      });
       if (!exceptionRef.isNull()) {
         throw new ConfigurationException(exceptionRef.get().getMessage(),
                                          FlexBundle.message("run.configuration.0", runConfiguration.getName()));
       }
 
-      if (!moduleAndConfig.second.isSkipCompile()) {
-        result.add(moduleAndConfig);
-        appendBCDependencies(result, moduleAndConfig.first, moduleAndConfig.second);
+      if (!moduleAndBC.second.isSkipCompile()) {
+        result.add(moduleAndBC);
+        appendBCDependencies(result, moduleAndBC.first, moduleAndBC.second);
       }
     }
     else {
@@ -280,25 +280,25 @@ public class FlexCompiler implements SourceProcessingCompiler {
     return result;
   }
 
-  private static void appendBCDependencies(final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndConfigs,
+  private static void appendBCDependencies(final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCs,
                                            final Module module,
-                                           final FlexIdeBuildConfiguration config) throws ConfigurationException {
-    for (final DependencyEntry entry : config.getDependencies().getEntries()) {
+                                           final FlexIdeBuildConfiguration bc) throws ConfigurationException {
+    for (final DependencyEntry entry : bc.getDependencies().getEntries()) {
       if (entry instanceof BuildConfigurationEntry) {
         final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
 
-        final Module otherModule = bcEntry.findModule();
-        final FlexIdeBuildConfiguration otherConfig = otherModule == null ? null : bcEntry.findBuildConfiguration();
+        final Module dependencyModule = bcEntry.findModule();
+        final FlexIdeBuildConfiguration dependencyBC = dependencyModule == null ? null : bcEntry.findBuildConfiguration();
 
-        if (otherModule == null || otherConfig == null) {
+        if (dependencyModule == null || dependencyBC == null) {
           throw new ConfigurationException(FlexBundle.message("bc.dependency.does.not.exist", bcEntry.getBcName(), bcEntry.getModuleName(),
-                                                              config.getName(), module.getName()));
+                                                              bc.getName(), module.getName()));
         }
 
-        final Pair<Module, FlexIdeBuildConfiguration> otherModuleAndConfig = Pair.create(otherModule, otherConfig);
-        if (!otherConfig.isSkipCompile()) {
-          if (modulesAndConfigs.add(otherModuleAndConfig)) {
-            appendBCDependencies(modulesAndConfigs, otherModule, otherConfig);
+        final Pair<Module, FlexIdeBuildConfiguration> dependencyModuleAndBC = Pair.create(dependencyModule, dependencyBC);
+        if (!dependencyBC.isSkipCompile()) {
+          if (modulesAndBCs.add(dependencyModuleAndBC)) {
+            appendBCDependencies(modulesAndBCs, dependencyModule, dependencyBC);
           }
         }
       }
@@ -391,33 +391,45 @@ public class FlexCompiler implements SourceProcessingCompiler {
       }
     }
 
-    checkDependencies(moduleName, bc);
+    // This verification is disabled because Vladimir Krivosheev has app on app dependency because he needs predictable compilation order.
+    // So we do not check dependencies and ignore incompatible ones when doing highlighting and compilation.
+    //checkDependencies(moduleName, bc);
   }
 
-  private static void checkDependencies(final String moduleName, final FlexIdeBuildConfiguration config) throws ConfigurationException {
-    for (final DependencyEntry entry : config.getDependencies().getEntries()) {
+  private static void checkDependencies(final String moduleName, final FlexIdeBuildConfiguration bc) throws ConfigurationException {
+    for (final DependencyEntry entry : bc.getDependencies().getEntries()) {
       if (entry instanceof BuildConfigurationEntry) {
         final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
-        checkDependencyType(moduleName, config, bcEntry.getModuleName(), bcEntry.findBuildConfiguration(),
-                            bcEntry.getDependencyType().getLinkageType());
+        final FlexIdeBuildConfiguration dependencyBC = bcEntry.findBuildConfiguration();
+        final LinkageType linkageType = bcEntry.getDependencyType().getLinkageType();
+
+        if (dependencyBC == null) {
+          throw new ConfigurationException(
+            FlexBundle.message("bc.dependency.does.not.exist", bcEntry.getBcName(), bcEntry.getModuleName(), bc.getName(), moduleName));
+        }
+
+        if (!checkDependencyType(bc, dependencyBC, linkageType)) {
+          throw new ConfigurationException(
+            FlexBundle.message("bc.dependency.problem",
+                               bc.getName(), moduleName, bc.getOutputType().getPresentableText(),
+                               dependencyBC.getName(), bcEntry.getModuleName(), dependencyBC.getOutputType().getPresentableText(),
+                               linkageType.getShortText()));
+        }
       }
     }
   }
 
-  private static void checkDependencyType(final String moduleName,
-                                          final FlexIdeBuildConfiguration config,
-                                          final String dependencyModuleName,
-                                          final FlexIdeBuildConfiguration dependencyConfig,
-                                          final LinkageType linkageType) throws ConfigurationException {
-    final BuildConfigurationNature nature = config.getNature();
+  public static boolean checkDependencyType(final FlexIdeBuildConfiguration bc,
+                                            final FlexIdeBuildConfiguration dependencyBC,
+                                            final LinkageType linkageType) {
     final boolean ok;
 
-    switch (dependencyConfig.getOutputType()) {
+    switch (dependencyBC.getOutputType()) {
       case Application:
         ok = false;
         break;
       case RuntimeLoadedModule:
-        ok = nature.isApp() && linkageType == LinkageType.LoadInRuntime;
+        ok = bc.getOutputType() == OutputType.Application && linkageType == LinkageType.LoadInRuntime;
         break;
       case Library:
         ok = ArrayUtil.contains(linkageType, LinkageType.getSwcLinkageValues());
@@ -427,13 +439,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
         ok = false;
     }
 
-    if (!ok) {
-      throw new ConfigurationException(
-        FlexBundle.message("bc.dependency.problem",
-                           config.getName(), moduleName, config.getOutputType().getPresentableText(),
-                           dependencyConfig.getName(), dependencyModuleName, dependencyConfig.getOutputType().getPresentableText(),
-                           linkageType.getShortText()));
-    }
+    return ok;
   }
 
   public ValidityState createValidityState(final DataInput in) throws IOException {
