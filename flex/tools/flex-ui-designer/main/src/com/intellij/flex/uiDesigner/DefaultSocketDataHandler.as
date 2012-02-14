@@ -189,7 +189,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
   private function openDocument(input:IDataInput):void {
     var module:Module = moduleManager.getById(input.readUnsignedShort());
     var documentFactory:DocumentFactory = getDocumentFactoryManager().get(input.readUnsignedShort());
-    getDocumentManager(module).open(documentFactory);
+    getDocumentManager(module).open(documentFactory, true);
   }
 
   private function getDocumentImage(input:IDataInput, messageSize:int, b:Boolean):void {
@@ -200,15 +200,14 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     var module:Module = moduleManager.getById(input.readUnsignedShort());
     var documentFactoryManager:DocumentFactoryManager = getDocumentFactoryManager();
     var documentFactory:DocumentFactory = documentFactoryManager.get(input.readUnsignedShort());
-    var documentManager:DocumentManager = getDocumentManager(module);
     // not set projectManager.project — current project is not changed (opposite to openDocument)
-    openDocumentsForFactory(documentFactory, documentManager, documentFactoryManager);
+    openDocumentsForFactory(documentFactory, getDocumentManager(module), documentFactoryManager);
   }
 
   private static function openDocumentsForFactory(documentFactory:DocumentFactory, documentManager:DocumentManager,
                                                   documentFactoryManager:DocumentFactoryManager):void {
     if (documentFactory.document != null) {
-      documentManager.open(documentFactory);
+      documentManager.open(documentFactory, false);
     }
 
     if (documentFactory.documentReferences != null) {
@@ -247,7 +246,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
       documentManager.documentChanged.addOnce(function ():void {
         ComponentManager(module.project.getComponent(ComponentManager)).component = component;
       });
-      documentManager.open(documentFactory);
+      documentManager.open(documentFactory, false);
     }
   }
 

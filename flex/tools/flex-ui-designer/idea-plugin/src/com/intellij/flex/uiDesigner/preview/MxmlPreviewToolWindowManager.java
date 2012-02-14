@@ -1,7 +1,9 @@
 package com.intellij.flex.uiDesigner.preview;
 
 import com.intellij.flex.uiDesigner.DesignerApplicationManager;
+import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.FlashUIDesignerBundle;
+import com.intellij.flex.uiDesigner.SocketInputHandler;
 import com.intellij.flex.uiDesigner.actions.RunDesignViewAction;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.Disposable;
@@ -57,6 +59,32 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
     toolWindowUpdateQueue = new MergingUpdateQueue("mxml.preview", 300, true, null, project);
     renderingQueue = new MergingUpdateQueue("mxml.rendering", 300, true, null, project, null, true);
+
+    MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(project);
+    connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentRenderedListener() {
+      @Override
+      public void documentRendered(int id, final BufferedImage image) {
+        if (toolWindowForm.getFile() == null) {
+          return;
+        }
+
+        DocumentFactoryManager.DocumentInfo info =
+          DocumentFactoryManager.getInstance().getNullableInfo(toolWindowForm.getFile().getVirtualFile());
+        if (info != null && info.getId() == id) {
+          ApplicationManager.getApplication().invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              MxmlPreviewPanel previewPanel = toolWindowForm.getPreviewPanel();
+              previewPanel.setImage(image);
+            }
+          });
+        }
+      }
+
+      @Override
+      public void errorOccured() {
+      }
+    });
   }
 
   @Override
@@ -137,7 +165,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     }
 
     final XmlFile psiFile = toolWindowForm.getFile();
-    if (psiFile == null) {
+    if (psiFile == null || DesignerApplicationManager.getInstance().isDocumentOpening()) {
       return;
     }
 
@@ -160,14 +188,6 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
   private class RenderTask implements Consumer<BufferedImage>, Disposable {
     @Override
     public void consume(final BufferedImage image) {
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          MxmlPreviewPanel previewPanel = toolWindowForm.getPreviewPanel();
-          previewPanel.setImage(image);
-          previewPanel.update();
-        }
-      });
     }
 
     @Override

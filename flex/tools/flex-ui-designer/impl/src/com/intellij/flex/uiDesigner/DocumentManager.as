@@ -7,7 +7,7 @@ public interface DocumentManager {
 
   function set document(value:Document):void;
 
-  function open(documentFactory:DocumentFactory):void;
+  function open(documentFactory:DocumentFactory, activateAndFocus:Boolean):void;
 
   function get documentUpdated():ISignal;
 

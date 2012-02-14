@@ -88,10 +88,10 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     ComponentManager(_document.module.project.getComponent(ComponentManager)).component = null;
   }
 
-  private function checkPool(classPool:ClassPool, documentFactory:DocumentFactory):Boolean {
+  private function checkPool(classPool:ClassPool, documentFactory:DocumentFactory, activateAndFocus:Boolean):Boolean {
     if (classPool.filling) {
       classPool.filled.addOnce(function ():void {
-        open(documentFactory);
+        open(documentFactory, activateAndFocus);
       });
       return false;
     }
@@ -99,29 +99,29 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     return true;
   }
 
-  public function open(documentFactory:DocumentFactory):void {
+  public function open(documentFactory:DocumentFactory, activateAndFocus:Boolean):void {
     var context:ModuleContextEx = documentFactory.module.context;
     if (!documentFactory.isPureFlash) {
-      if (!checkPool(context.getClassPool(FlexLibrarySet.IMAGE_POOL), documentFactory)) {
+      if (!checkPool(context.getClassPool(FlexLibrarySet.IMAGE_POOL), documentFactory, activateAndFocus)) {
         return;
       }
-      if (!checkPool(context.getClassPool(FlexLibrarySet.SWF_POOL), documentFactory)) {
+      if (!checkPool(context.getClassPool(FlexLibrarySet.SWF_POOL), documentFactory, activateAndFocus)) {
         return;
       }
-      if (!checkPool(context.getClassPool(FlexLibrarySet.VIEW_POOL), documentFactory)) {
+      if (!checkPool(context.getClassPool(FlexLibrarySet.VIEW_POOL), documentFactory, activateAndFocus)) {
         return;
       }
     }
 
     if (documentFactory.document == null) {
       if (context.librariesResolved) {
-        createAndOpen(documentFactory);
+        createAndOpen(documentFactory, activateAndFocus);
       }
       else {
-        libraryManager.resolve(documentFactory.module.librarySets, doOpenAfterResolveLibraries, documentFactory);
+        libraryManager.resolve(documentFactory.module.librarySets, doOpenAfterResolveLibraries, documentFactory, activateAndFocus);
       }
     }
-    else if (doOpen(documentFactory, documentFactory.document)) {
+    else if (doOpen(documentFactory, documentFactory.document, activateAndFocus)) {
       if (documentFactory.document == document) {
         adjustElementSelection();
         if (_documentUpdated != null) {
@@ -133,9 +133,9 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     }
   }
 
-  private function doOpenAfterResolveLibraries(documentFactory:DocumentFactory):void {
+  private function doOpenAfterResolveLibraries(documentFactory:DocumentFactory, activateAndFocus:Boolean):void {
     var module:Module = documentFactory.module;
-    if (createAndOpen(documentFactory) && !ApplicationManager.instance.unitTestMode) {
+    if (createAndOpen(documentFactory, activateAndFocus) && !ApplicationManager.instance.unitTestMode) {
       if (NativeWindow.supportsNotification) {
         module.project.window.notifyUser(NotificationType.INFORMATIONAL);
       }
@@ -148,7 +148,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     }
   }
 
-  private function createAndOpen(documentFactory:DocumentFactory):Boolean {
+  private function createAndOpen(documentFactory:DocumentFactory, activateAndFocus:Boolean):Boolean {
     var document:Document = new Document(documentFactory);
     var module:Module = documentFactory.module;
     if (!documentFactory.isPureFlash) {
@@ -157,7 +157,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
 
     createDocumentDisplayManager(document, module, documentFactory.isPureFlash);
 
-    if (doOpen(documentFactory, document)) {
+    if (doOpen(documentFactory, document, activateAndFocus)) {
       documentFactory.document = document;
       var w:DocumentWindow = module.project.window;
       var projectView:ProjectView = ProjectView(w.contentView);
@@ -171,7 +171,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     }
   }
 
-  private function doOpen(documentFactory:DocumentFactory, document:Document):Boolean {
+  private function doOpen(documentFactory:DocumentFactory, document:Document, activateAndFocus:Boolean):Boolean {
     var documentReader:DocumentReader = documentFactory.isPureFlash ? new MxmlReader() : new FlexMxmlReader();
     try {
       server.moduleForGetResourceBundle = documentFactory.module;
@@ -196,7 +196,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
 
     Server.instance.documentRendered(document);
 
-    if (!ApplicationManager.instance.unitTestMode) {
+    if (activateAndFocus && !ApplicationManager.instance.unitTestMode) {
       NativeApplication.nativeApplication.activate(document.module.project.window);
     }
 

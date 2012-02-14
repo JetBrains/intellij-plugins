@@ -228,7 +228,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       public void run() {
         Client client = Client.getInstance();
         try {
-          assert client.isModuleRegistered(module);
+          LOG.assertTrue(client.isModuleRegistered(module));
           client.updateDocumentFactory(factoryId, module, psiFile);
           client.flush();
         }

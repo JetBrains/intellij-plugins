@@ -84,10 +84,6 @@ class MxmlPreviewPanel extends JPanel implements Disposable {
     repaint();
   }
 
-  public void update() {
-    repaint();
-  }
-
   void updateImageSize() {
     if (image == null) {
       imagePanel.setSize(0, 0);
