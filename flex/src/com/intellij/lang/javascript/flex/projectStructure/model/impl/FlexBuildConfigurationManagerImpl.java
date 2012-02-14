@@ -159,10 +159,6 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
   }
 
   public State getState() {
-    if (myModule == null) {
-      throw new IllegalStateException("Dummy config manager instance");
-    }
-
     final State state = new State();
     for (FlexIdeBuildConfigurationImpl configuration : myConfigurations) {
       state.CONFIGURATIONS.add(configuration.getState(myModule));

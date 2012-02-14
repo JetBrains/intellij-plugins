@@ -333,14 +333,14 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     return myName + ": " + getNature().toString();
   }
 
-  public FlexBuildConfigurationState getState(final Module module) {
+  public FlexBuildConfigurationState getState(final @Nullable ComponentManager componentManager) {
     FlexBuildConfigurationState state = new FlexBuildConfigurationState();
     state.AIR_DESKTOP_PACKAGING_OPTIONS = myAirDesktopPackagingOptions.getState();
     state.ANDROID_PACKAGING_OPTIONS = myAndroidPackagingOptions.getState();
-    state.COMPILER_OPTIONS = myCompilerOptions.getState(module);
+    state.COMPILER_OPTIONS = myCompilerOptions.getState(componentManager);
     state.DEPENDENCIES = myDependencies.getState();
     state.IOS_PACKAGING_OPTIONS = myIosPackagingOptions.getState();
-    state.CSS_FILES_TO_COMPILE = collapsePaths(module, myCssFilesToCompile);
+    state.CSS_FILES_TO_COMPILE = collapsePaths(componentManager, myCssFilesToCompile);
     state.MAIN_CLASS = myMainClass;
     state.NAME = myName;
     state.OPTIMIZE_FOR = myOptimizeFor;
@@ -376,7 +376,8 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     myWrapperTemplatePath = state.WRAPPER_TEMPLATE_PATH;
   }
 
-  static String collapsePaths(final ComponentManager componentManager, final String value) {
+  static String collapsePaths(final @Nullable ComponentManager componentManager, final String value) {
+    if (componentManager == null) return value;
     if (!value.contains(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR) && !value.contains(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)) {
       return value;
     }

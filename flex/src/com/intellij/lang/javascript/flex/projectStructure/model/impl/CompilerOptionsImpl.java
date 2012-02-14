@@ -114,7 +114,7 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
     copy.setAdditionalOptions(myAdditionalOptions);
   }
 
-  public State getState(final ComponentManager componentManager) {
+  public State getState(final @Nullable ComponentManager componentManager) {
     State state = new State();
     putOptionsCollapsingPaths(myOptions, state.options, componentManager);
     state.additionalConfigFilePath = myAdditionalConfigFilePath;
@@ -124,7 +124,7 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
 
   private static void putOptionsCollapsingPaths(final Map<String, String> fromMap,
                                                 final Map<String, String> toMap,
-                                                final ComponentManager componentManager) {
+                                                final @Nullable ComponentManager componentManager) {
     for (Map.Entry<String, String> entry : fromMap.entrySet()) {
       toMap.put(entry.getKey(), FlexIdeBuildConfigurationImpl.collapsePaths(componentManager, entry.getValue()));
     }
@@ -135,6 +135,7 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
     // filter out options that are not known in current IDEA version
     for (Map.Entry<String, String> entry : state.options.entrySet()) {
       if (CompilerOptionInfo.idExists(entry.getKey())) {
+        // no need in expanding paths, it is done automatically even if macros is not in the beginning of the string
         myOptions.put(entry.getKey(), entry.getValue());
       }
     }
