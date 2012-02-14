@@ -30,12 +30,12 @@ class MxmlPreviewPanel extends JPanel implements Disposable {
       if (image == null) {
         return;
       }
-      final Dimension scaledDimension = getScaledDimension();
+
       final Graphics2D g2 = (Graphics2D)g;
       g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
       g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-      g2.drawImage(image, 0, 0, scaledDimension.width, scaledDimension.height, 0, 0, image.getWidth(), image.getHeight(), null);
+      g2.drawImage(image, 0, 0, getWidth(), getHeight(), 0, 0, image.getWidth(), image.getHeight(), null);
     }
   };
 
@@ -85,7 +85,6 @@ class MxmlPreviewPanel extends JPanel implements Disposable {
   }
 
   public void update() {
-    imagePanel.setVisible(true);
     repaint();
   }
 
@@ -191,7 +190,7 @@ class MxmlPreviewPanel extends JPanel implements Disposable {
   public void dispose() {
   }
 
-  private static class MyLayout extends AbstractLayoutManager {
+  private class MyLayout extends AbstractLayoutManager {
     @Override
     public Dimension preferredLayoutSize(Container parent) {
       return parent.getComponent(0).getSize();
@@ -200,7 +199,11 @@ class MxmlPreviewPanel extends JPanel implements Disposable {
     @Override
     public void layoutContainer(Container target) {
       Component component = target.getComponent(0);
-      component.setLocation((target.getWidth() - component.getWidth()) / 2, component.getY());
+
+      Dimension size = image == null ? new Dimension() : getScaledDimension();
+      int diff = target.getWidth() - size.width;
+      component.setSize(size);
+      component.setLocation(diff > 0 ? diff / 2 : 0, component.getY());
     }
   }
 }
