@@ -55,8 +55,6 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
   private final MessageBus messageBus;
 
-  private static final int[] ARGB_BAND_OFFSETS = new int[]{1, 2, 3, 0};
-
   public SocketInputHandlerImpl() {
     messageBus = ApplicationManager.getApplication().getMessageBus();
   }
@@ -200,13 +198,20 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     final BufferedImage image;
     if (w != 0) {
       final int h = reader.readUnsignedShort();
-      final ComponentColorModel colorModel =
-        new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), true, false, Transparency.TRANSLUCENT, DataBuffer.TYPE_BYTE);
 
-      final byte[] argb = FileUtil.loadBytes(reader, w * h * 4);
-      image = new BufferedImage(colorModel, (WritableRaster)Raster
-        .createRaster(new PixelInterleavedSampleModel(DataBuffer.TYPE_BYTE, w, h, 4, w * 4, ARGB_BAND_OFFSETS),
-                      new DataBufferByte(argb, argb.length), null), false, null);
+      int l = w * h * 4;
+      final byte[] argb = FileUtil.loadBytes(reader, l);
+      final byte[] bgr = new byte[w * h * 3];
+      for (int i = 0, j = 0; i < l; i += 4) {
+        bgr[j++] = argb[i + 3];
+        bgr[j++] = argb[i + 2];
+        bgr[j++] = argb[i + 1];
+      }
+
+      int[] nBits = {8, 8, 8};
+      int[] bOffs = {2, 1, 0};
+      final ComponentColorModel colorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
+      image = new BufferedImage(colorModel, Raster.createInterleavedRaster(new DataBufferByte(bgr, bgr.length), w, h, w * 3, 3, bOffs, null), false, null);
     }
     else {
       image = null;

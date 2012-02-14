@@ -1,8 +1,10 @@
 package com.intellij.flex.uiDesigner.preview;
 
+import com.intellij.flex.uiDesigner.DesignerApplicationManager;
 import com.intellij.flex.uiDesigner.FlashUIDesignerBundle;
 import com.intellij.flex.uiDesigner.actions.RunDesignViewAction;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
@@ -10,10 +12,10 @@ import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.*;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.ui.LoadingDecorator;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
@@ -21,9 +23,10 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.ToolWindowManagerAdapter;
 import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
 import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
+import com.intellij.util.Consumer;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.update.MergingUpdateQueue;
@@ -33,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.image.BufferedImage;
 
 public class MxmlPreviewToolWindowManager implements ProjectComponent {
   private final Project project;
@@ -52,7 +56,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     this.fileEditorManager = fileEditorManager;
 
     toolWindowUpdateQueue = new MergingUpdateQueue("mxml.preview", 300, true, null, project);
-    renderingQueue = new MergingUpdateQueue("mxml.rendering", 300, true, null, project, null, false);
+    renderingQueue = new MergingUpdateQueue("mxml.rendering", 300, true, null, project, null, true);
   }
 
   @Override
@@ -132,7 +136,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       return;
     }
 
-    final PsiFile psiFile = toolWindowForm.getFile();
+    final XmlFile psiFile = toolWindowForm.getFile();
     if (psiFile == null) {
       return;
     }
@@ -140,12 +144,10 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     renderingQueue.queue(new Update("render") {
       @Override
       public void run() {
-        ProgressManager.getInstance().runProcess(new Runnable() {
-          @Override
-          public void run() {
-            //doRender(facet, psiFile);
-          }
-        }, new MxmlPreviewProgressIndicator(toolWindowForm, 1000));
+        LoadingDecorator loadingPanel = toolWindowForm.getPreviewPanel().getLoadingDecorator();
+        loadingPanel.setLoadingText("Rendering...");
+        loadingPanel.startLoading(false);
+        DesignerApplicationManager.getInstance().renderDocument(psiFile, new RenderTask());
       }
 
       @Override
@@ -153,6 +155,25 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         return true;
       }
     });
+  }
+
+  private class RenderTask implements Consumer<BufferedImage>, Disposable {
+    @Override
+    public void consume(final BufferedImage image) {
+      ApplicationManager.getApplication().invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          MxmlPreviewPanel previewPanel = toolWindowForm.getPreviewPanel();
+          previewPanel.setImage(image);
+          previewPanel.update();
+        }
+      });
+    }
+
+    @Override
+    public void dispose() {
+      toolWindowForm.getPreviewPanel().getLoadingDecorator().stopLoading();
+    }
   }
 
   private boolean isApplicableEditor(Editor editor) {
@@ -232,7 +253,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
             token.finish();
           }
 
-          if (selectedTextEditor != null) {
+          if (selectedTextEditor != null && isApplicableEditor(selectedTextEditor)) {
             processFileEditorChange(selectedTextEditor);
           }
         }
@@ -265,26 +286,25 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
           return;
         }
 
-        final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(newEditor.getDocument());
+        final XmlFile psiFile = (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(newEditor.getDocument());
         if (psiFile == null) {
           //toolWindowForm.setFile(null);
           toolWindow.setAvailable(!hideForNonLayoutFiles, null);
           return;
         }
 
-        final boolean toRender = toolWindowForm.getFile() != psiFile;
-        if (toRender) {
-          ApplicationManager.getApplication().saveAll();
+        final boolean doRender = toolWindowForm.getFile() != psiFile;
+        if (doRender) {
+          FileDocumentManager.getInstance().saveAllDocuments();
           toolWindowForm.setFile(psiFile);
         }
 
         toolWindow.setAvailable(true, null);
-        final boolean visible = PropertiesComponent.getInstance(project).getBoolean("mxml.preview.tool.window.visible", true);
-        if (visible) {
+        if (PropertiesComponent.getInstance(project).getBoolean("mxml.preview.tool.window.visible", true)) {
           toolWindow.show(null);
         }
 
-        if (toRender) {
+        if (doRender) {
           render();
         }
       }

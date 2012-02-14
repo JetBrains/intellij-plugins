@@ -308,7 +308,7 @@ class AbcMerger extends AbcTranscoder {
 
     SymbolInfo info = currentSymbolsInfo.get(id);
     if (info == null) {
-      throw new IllegalStateException("ff");
+      throw new IllegalStateException("info cannot be null, library: " + (library == null ? "<InputStream>" : library.getFile().getPath()));
     }
     else {
       info.start = start;

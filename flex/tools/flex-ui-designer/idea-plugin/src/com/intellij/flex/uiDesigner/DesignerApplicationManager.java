@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.*;
 import com.intellij.openapi.components.ServiceDescriptor;
 import com.intellij.openapi.components.ServiceManager;
@@ -15,6 +16,7 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.help.HelpManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -35,6 +37,7 @@ import org.jetbrains.annotations.TestOnly;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.intellij.flex.uiDesigner.LogMessageUtil.LOG;
 
@@ -153,13 +156,16 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     return true;
   }
 
-  //public BufferedImage renderDocument(@NotNull final Module module, @NotNull final XmlFile psiFile) {
-  //  final Semaphore semaphore = new Semaphore();
-  //  semaphore.down();
-  //
-  //}
+  public void renderDocument(@NotNull final XmlFile psiFile, Consumer<BufferedImage> consumer) {
+    //noinspection ConstantConditions
+    openDocument(ModuleUtil.findModuleForPsiElement(psiFile), psiFile, false, consumer);
+  }
 
   public void openDocument(@NotNull final Module module, @NotNull final XmlFile psiFile, final boolean debug) {
+    openDocument(module, psiFile, debug, null);
+  }
+
+  public void openDocument(@NotNull final Module module, @NotNull final XmlFile psiFile, final boolean debug, final @Nullable Consumer<BufferedImage> consumer) {
     LOG.assertTrue(!documentOpening);
     documentOpening = true;
 
@@ -182,7 +188,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       }
     }
 
-    final OpenDocumentTask openDocumentTask = new OpenDocumentTask(psiFile);
+    final OpenDocumentTask openDocumentTask = new OpenDocumentTask(psiFile, consumer);
     ProgressManager.getInstance().run(
       appClosed ? new DesignerApplicationLauncher(module, debug, openDocumentTask) : new DocumentTaskExecutor(module, openDocumentTask));
   }
@@ -266,9 +272,11 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
   private static class OpenDocumentTask extends DesignerApplicationLauncher.PostTask {
     private final XmlFile psiFile;
+    private final Consumer<BufferedImage> consumer;
 
-    public OpenDocumentTask(@NotNull final XmlFile psiFile) {
+    public OpenDocumentTask(@NotNull final XmlFile psiFile, @Nullable Consumer<BufferedImage> consumer) {
       this.psiFile = psiFile;
+      this.consumer = consumer;
     }
 
     @Override
@@ -276,6 +284,10 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       super.dispose();
 
       DesignerApplicationManager.getInstance().documentOpening = false;
+
+      if (consumer instanceof Disposable) {
+        Disposer.dispose((Disposable)consumer);
+      }
     }
 
     @Override
@@ -294,25 +306,27 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
         return false;
       }
 
-      final Ref<Boolean> result = new Ref<Boolean>(false);
+      final Ref<BufferedImage> result = new Ref<BufferedImage>();
+      final AtomicBoolean done = new AtomicBoolean(false);
       final MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(this);
       connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentRenderedListener() {
         @Override
         public void documentRendered(int id, BufferedImage image) {
           DocumentFactoryManager.DocumentInfo info = DocumentFactoryManager.getInstance().getNullableInfo(psiFile.getVirtualFile());
           if (info != null && info.getId() == id) {
-            semaphoreUp();
+            result.set(image);
+            up();
           }
         }
 
         @Override
         public void errorOccured() {
-          semaphoreUp();
+          up();
         }
 
-        private void semaphoreUp() {
+        private void up() {
           connection.disconnect();
-          result.set(true);
+          done.set(true);
         }
       });
 
@@ -321,7 +335,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
           return false;
         }
         indicator.setText(FlashUIDesignerBundle.message("loading.libraries"));
-        while (!result.get()) {
+        while (!done.get()) {
           try {
             Thread.sleep(5);
           }
@@ -336,6 +350,9 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
         connection.disconnect();
       }
 
+      if (consumer != null) {
+        consumer.consume(result.get());
+      }
       return true;
     }
   }

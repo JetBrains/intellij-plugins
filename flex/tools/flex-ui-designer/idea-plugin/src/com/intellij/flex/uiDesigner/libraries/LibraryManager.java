@@ -259,7 +259,9 @@ public class LibraryManager {
       final Attachment[] attachments = new Attachment[libraries.size()];
       try {
         for (int i = 0, librariesSize = libraries.size(); i < librariesSize; i++) {
-          attachments[i] = new Attachment(libraries.get(i).getCatalogFile());
+          Library library = libraries.get(i);
+          technicalMessage += " " + library.getFile().getPath();
+          attachments[i] = new Attachment(library.getCatalogFile());
         }
       }
       catch (Throwable innerE) {
