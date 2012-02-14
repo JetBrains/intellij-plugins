@@ -341,7 +341,13 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
 
   @Override
   public void updateName() {
-    myNameField.setText(getDisplayName());
+    myFreeze = true;
+    try {
+      myNameField.setText(getDisplayName());
+    }
+    finally {
+      myFreeze = false;
+    }
   }
 
   public void setDisplayName(final String name) {
@@ -411,7 +417,6 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
       }
     }, ", ");
     myCssFilesTextWithBrowse.setText(s);
-
   }
 
   public String getTreeNodeText() {
