@@ -14,7 +14,7 @@ import javax.swing.*;
 /**
  * User: ksafonov
  */
-public class UsageInBcDependencies extends ProjectStructureElementUsage {
+public abstract class UsageInBcDependencies extends ProjectStructureElementUsage {
   private final BuildConfigurationProjectStructureElement myContainingElement;
   private final ProjectStructureElement mySourceElement;
 

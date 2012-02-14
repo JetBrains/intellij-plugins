@@ -22,6 +22,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
@@ -126,14 +127,19 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     myTreeNodeNameUpdater = treeNodeNameUpdater;
     myContext = context;
     myName = bc.getName();
-    myStructureElement = new BuildConfigurationProjectStructureElement(bc, module, context);
+    myStructureElement = new BuildConfigurationProjectStructureElement(bc, module, context) {
+      @Override
+      protected void libraryRemoved(final Library library) {
+        myDependenciesConfigurable.libraryRemoved(library);
+      }
+    };
 
     final BuildConfigurationNature nature = bc.getNature();
 
     myDependenciesConfigurable = new DependenciesConfigurable(bc, module.getProject(), configEditor, sdksModel);
     final UserActivityWatcher watcher = new UserActivityWatcher();
     myDisposable = Disposer.newDisposable();
-    watcher.addUserActivityListener(new UserActivityListener() {
+    UserActivityListener listener = new UserActivityListener() {
       @Override
       public void stateChanged() {
         if (myFreeze) {
@@ -147,8 +153,9 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
         }
         myContext.getDaemonAnalyzer().queueUpdate(myStructureElement);
       }
-    }, myDisposable);
-    watcher.register(myDependenciesConfigurable.createOptionsPanel());
+    };
+    watcher.addUserActivityListener(listener, myDisposable);
+    myDependenciesConfigurable.addUserActivityListener(listener, myDisposable);
     watcher.register(myMainPanel);
     myCompilerOptionsConfigurable =
       new CompilerOptionsConfigurable(module, bc.getNature(), myDependenciesConfigurable, bc.getCompilerOptions());

@@ -104,7 +104,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
 
   @Override
   public List<ProjectStructureElementUsage> getUsagesInElement() {
-    FlexProjectConfigurationEditor editor = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
+    final FlexProjectConfigurationEditor editor = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
     final ModulesConfigurator modulesConfigurator = myContext.getModulesConfigurator();
 
     final List<ProjectStructureElementUsage> usages = new ArrayList<ProjectStructureElementUsage>();
@@ -112,16 +112,21 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
       if (dependencyEntry instanceof SharedLibraryEntry) {
         String libraryName = ((SharedLibraryEntry)dependencyEntry).getLibraryName();
         String libraryLevel = ((SharedLibraryEntry)dependencyEntry).getLibraryLevel();
-        Library library = myContext.getLibrary(libraryName, libraryLevel);
+        final Library library = myContext.getLibrary(libraryName, libraryLevel);
         if (library != null) {
-          usages.add(new UsageInBcDependencies(this, new LibraryProjectStructureElement(myContext, library)));
+          usages.add(new UsageInBcDependencies(this, new LibraryProjectStructureElement(myContext, library)) {
+            @Override
+            public void removeSourceElement() {
+              libraryRemoved(library);
+            }
+          });
         }
       }
       else if (dependencyEntry instanceof BuildConfigurationEntry) {
         final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)dependencyEntry;
         Module module = modulesConfigurator.getModule(bcEntry.getModuleName());
         if (module != null) {
-          FlexIdeBuildConfiguration bc =
+          final ModifiableFlexIdeBuildConfiguration bc =
             ContainerUtil.find(editor.getConfigurations(module), new Condition<ModifiableFlexIdeBuildConfiguration>() {
               @Override
               public boolean value(final ModifiableFlexIdeBuildConfiguration configuration) {
@@ -129,13 +134,21 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
               }
             });
           if (bc != null) {
-            usages.add(new UsageInBcDependencies(this, new BuildConfigurationProjectStructureElement(bc, module, myContext)));
+            usages.add(new UsageInBcDependencies(this, new BuildConfigurationProjectStructureElement(bc, module, myContext)) {
+              @Override
+              public void removeSourceElement() {
+                // ignore as editor already listens to BC removal
+              }
+            });
           }
         }
         bcEntry.findBuildConfiguration();
       }
     }
     return usages;
+  }
+
+  protected void libraryRemoved(final Library library) {
   }
 
   @Override

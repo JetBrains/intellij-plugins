@@ -90,7 +90,7 @@ public class Flexmojos3Configurator {
 
   public void configureAndAppendTasks(final List<MavenProjectsProcessorTask> postTasks) {
     for (ModifiableFlexIdeBuildConfiguration oldBC : myFlexEditor.getConfigurations(myModule)) {
-      myFlexEditor.removeConfiguration(oldBC);
+      myFlexEditor.configurationRemoved(oldBC);
     }
 
     final ModifiableFlexIdeBuildConfiguration mainBC = setupMainBuildConfiguration();

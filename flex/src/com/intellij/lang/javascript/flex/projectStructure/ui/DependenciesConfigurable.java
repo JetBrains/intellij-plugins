@@ -177,6 +177,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   private boolean myFreeze;
   private final EventDispatcher<ChangeListener> mySdkChangeDispatcher;
 
+  private final EventDispatcher<UserActivityListener> myUserActivityDispatcher;
+
+  private boolean myReset;
+
   private abstract static class MyTableItem {
     public abstract String getText();
 
@@ -434,7 +438,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     @Nullable
-    private Library findLiveLibrary() {
+    public Library findLiveLibrary() {
       // TODO call myConfigEditor.findLiveLibrary(library, libraryName, libraryLevel);
       return new UIRootConfigurationAccessor(project).getLibrary(liveLibrary, libraryName, libraryLevel);
     }
@@ -964,6 +968,19 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         }
       }
     }, myDisposable);
+
+    UserActivityWatcher watcher = new UserActivityWatcher();
+    watcher.register(myMainPanel);
+    myUserActivityDispatcher = EventDispatcher.create(UserActivityListener.class);
+    watcher.addUserActivityListener(new UserActivityListener() {
+      @Override
+      public void stateChanged() {
+        if (myFreeze) {
+          return;
+        }
+        myUserActivityDispatcher.getMulticaster().stateChanged();
+      }
+    }, myDisposable);
   }
 
   private void rebuildSdksModel() {
@@ -1229,78 +1246,75 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   }
 
   public void apply() throws ConfigurationException {
-    applyTo(myDependencies);
-  }
-
-  public void applyTo(final ModifiableDependencies dependencies) {
     final Object targetPlayer = myTargetPlayerCombo.getSelectedItem();
     if (targetPlayer != null) {
-      dependencies.setTargetPlayer((String)targetPlayer);
+      myDependencies.setTargetPlayer((String)targetPlayer);
     }
-    dependencies.setComponentSet((ComponentSet)myComponentSetCombo.getSelectedItem());
-    dependencies.setFrameworkLinkage((LinkageType)myFrameworkLinkageCombo.getSelectedItem());
+    myDependencies.setComponentSet((ComponentSet)myComponentSetCombo.getSelectedItem());
+    myDependencies.setFrameworkLinkage((LinkageType)myFrameworkLinkageCombo.getSelectedItem());
 
     List<MyTableItem> items = myTable.getItems();
     List<ModifiableDependencyEntry> newEntries = new ArrayList<ModifiableDependencyEntry>();
     for (MyTableItem item : items) {
-      ModifiableDependencyEntry entry = item.apply(dependencies);
+      ModifiableDependencyEntry entry = item.apply(myDependencies);
       if (entry != null) {
         newEntries.add(entry);
       }
     }
-    myConfigEditor.setEntries(dependencies, newEntries);
+    myConfigEditor.setEntries(myDependencies, newEntries);
 
     JdkComboBox.JdkComboBoxItem currentSdk = mySdkCombo.getSelectedItem();
     if (currentSdk != null) {
       final String sdkName = currentSdk.getSdkName();
       if (sdkName != null) {
         SdkEntry sdkEntry = Factory.createSdkEntry(sdkName);
-        dependencies.setSdkEntry(sdkEntry);
+        myDependencies.setSdkEntry(sdkEntry);
       }
       else {
-        dependencies.setSdkEntry(null);
+        myDependencies.setSdkEntry(null);
       }
     }
     else {
-      dependencies.setSdkEntry(null);
+      myDependencies.setSdkEntry(null);
     }
   }
 
   public void reset() {
+    myReset = true;
     SdkEntry sdkEntry = myDependencies.getSdkEntry();
     myFreeze = true;
     try {
       mySdkCombo.reloadModel(new JdkComboBox.NoneJdkComboBoxItem(), myProject);
+
+      if (sdkEntry != null) {
+        final Sdk sdk = mySkdsModel.findSdk(sdkEntry.getName());
+        if (sdk != null && (sdk.getSdkType() == FlexSdkType2.getInstance() || sdk.getSdkType() == FlexmojosSdkType.getInstance())) {
+          // technically, non-flex item won't appear in SDK combo model anyway
+          mySdkCombo.setSelectedJdk(sdk);
+        }
+        else {
+          mySdkCombo.setInvalidJdk(sdkEntry.getName());
+        }
+      }
+      else {
+        mySdkCombo.setSelectedJdk(null);
+      }
+
+      BCUtils.updateAvailableTargetPlayers(mySdkCombo.getSelectedJdk(), myTargetPlayerCombo);
+      myTargetPlayerCombo.setSelectedItem(myDependencies.getTargetPlayer());
+      overriddenTargetPlayerChanged(null); // no warning initially
+
+      updateComponentSetCombo();
+      myComponentSetCombo.setSelectedItem(myDependencies.getComponentSet());
+
+      myFrameworkLinkageCombo.setSelectedItem(myDependencies.getFrameworkLinkage());
+
+      resetTable(sdkEntry, false);
+      updateControls();
     }
     finally {
       myFreeze = false;
     }
-
-    if (sdkEntry != null) {
-      final Sdk sdk = mySkdsModel.findSdk(sdkEntry.getName());
-      if (sdk != null && (sdk.getSdkType() == FlexSdkType2.getInstance() || sdk.getSdkType() == FlexmojosSdkType.getInstance())) {
-        // technically, non-flex item won't appear in SDK combo model anyway
-        mySdkCombo.setSelectedJdk(sdk);
-      }
-      else {
-        mySdkCombo.setInvalidJdk(sdkEntry.getName());
-      }
-    }
-    else {
-      mySdkCombo.setSelectedJdk(null);
-    }
-
-    BCUtils.updateAvailableTargetPlayers(mySdkCombo.getSelectedJdk(), myTargetPlayerCombo);
-    myTargetPlayerCombo.setSelectedItem(myDependencies.getTargetPlayer());
-    overriddenTargetPlayerChanged(null); // no warning initially
-
-    updateComponentSetCombo();
-    myComponentSetCombo.setSelectedItem(myDependencies.getComponentSet());
-
-    myFrameworkLinkageCombo.setSelectedItem(myDependencies.getFrameworkLinkage());
-
-    resetTable(sdkEntry, false);
-    updateControls();
   }
 
   private void updateControls() {
@@ -1367,11 +1381,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         ((ModuleLibraryItem)item).dependencyType.copyFrom(entry.getDependencyType());
       }
       else if (entry instanceof SharedLibraryEntry) {
-        SharedLibraryEntry moduleLibraryEntry = (SharedLibraryEntry)entry;
+        SharedLibraryEntry sharedLibraryEntry = (SharedLibraryEntry)entry;
         LibrariesModifiableModel model = ProjectStructureConfigurable.getInstance(myProject).getContext()
-          .createModifiableModelProvider(moduleLibraryEntry.getLibraryLevel()).getModifiableModel();
-        LibraryEx library = (LibraryEx)model.getLibraryByName(moduleLibraryEntry.getLibraryName());
-        item = new SharedLibraryItem(moduleLibraryEntry.getLibraryName(), moduleLibraryEntry.getLibraryLevel(), library, myProject);
+          .createModifiableModelProvider(sharedLibraryEntry.getLibraryLevel()).getModifiableModel();
+        LibraryEx library = (LibraryEx)model.getLibraryByName(sharedLibraryEntry.getLibraryName());
+        item = new SharedLibraryItem(sharedLibraryEntry.getLibraryName(), sharedLibraryEntry.getLibraryLevel(), library, myProject);
         ((SharedLibraryItem)item).dependencyType.copyFrom(entry.getDependencyType());
       }
       if (item != null) {
@@ -1713,6 +1727,32 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         place.putPath(LOCATION, myTable.getItemAt(selectedRow).getLocation());
       }
     }
+  }
+
+  public void libraryRemoved(final Library library) {
+    if (myReset) {
+      // look in UI as there is no way to find just-created-and-then-renamed library in model
+      List<MyTableItem> items = myTable.getItems();
+      for (int i = 0; i < items.size(); i++) {
+        MyTableItem item = items.get(i);
+        if (item instanceof SharedLibraryItem && ((SharedLibraryItem)item).findLiveLibrary() == library) {
+          removeItems(Collections.singleton(item)); // will cause apply
+          break;
+        }
+      }
+    }
+    else {
+      List<ModifiableDependencyEntry> entries = myDependencies.getModifiableEntries();
+      for (int i = 0; i < entries.size(); i++) {
+        ModifiableDependencyEntry entry = entries.get(i);
+
+      }
+      reset();
+    }
+  }
+
+  public void addUserActivityListener(final UserActivityListener listener, final Disposable disposable) {
+    myUserActivityDispatcher.addListener(listener, disposable);
   }
 
   private static class LibraryTableModifiableModelWrapper implements LibraryTableBase.ModifiableModelEx {

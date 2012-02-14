@@ -133,7 +133,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
       @Override
       public void buildConfigurationRemoved(FlexIdeBCConfigurable configurable) {
-        removeConfiguration(configurable.getEditableObject());
+        configurationRemoved(configurable.getEditableObject());
       }
     }, this);
 
@@ -210,7 +210,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
       };
   }
 
-  public void removeConfiguration(@NotNull final ModifiableFlexIdeBuildConfiguration configuration) {
+  public void configurationRemoved(@NotNull final ModifiableFlexIdeBuildConfiguration configuration) {
     assertAlive();
     Editor editor = (Editor)configuration;
     List<Editor> editors = myModule2Editors.get(editor.myModule);
@@ -353,7 +353,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
     for (Module module : myModule2Editors.keySet()) {
       ModifiableRootModel modifiableModel = myProvider.getModuleModifiableModel(module);
       Collection<String> usedModulesLibrariesIds = new ArrayList<String>();
-      
+
       // ---------------- SDK and shared libraries entries ----------------------
       Map<Library, Boolean> librariesToAdd = new HashMap<Library, Boolean>(); // Library -> add_library_entry_flag
 
