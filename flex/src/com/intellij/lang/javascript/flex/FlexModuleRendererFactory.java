@@ -19,7 +19,7 @@ public class FlexModuleRendererFactory extends ModuleRendererFactory {
 
   @Override
   protected boolean handles(final Object element) {
-    return element instanceof JSQualifiedNamedElement || element instanceof JSFile;
+    return true;
   }
 
   @Override
