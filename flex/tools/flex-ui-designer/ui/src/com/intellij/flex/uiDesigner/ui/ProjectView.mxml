@@ -5,9 +5,12 @@
     import cocoa.pane.PaneViewDataSource;
     import cocoa.plaf.LookAndFeel;
 
+    import com.intellij.flex.uiDesigner.ComponentManager;
+
     import com.intellij.flex.uiDesigner.Document;
     import com.intellij.flex.uiDesigner.DocumentFactoryManager;
     import com.intellij.flex.uiDesigner.DocumentManager;
+    import com.intellij.flex.uiDesigner.PlatformDataKeys;
 
     import org.jetbrains.actionSystem.DataContext;
 
@@ -67,6 +70,10 @@
     public function set dataContext(value:DataContext):void {
       _dataContext = value;
     }
+
+    private function autoScrollToSourceActionHandler(targetControl:CheckBox):void {
+      ComponentManager(PlatformDataKeys.PROJECT.getData(_dataContext).getComponent(ComponentManager)).autoScrollToSource = targetControl.selected;
+    }
     ]]></fx:Script>
 
   <TabView id="editorTabView" lafSubkey="ProjectView" c="cell 2 2, grow, id editorTabView">
@@ -74,6 +81,7 @@
       <Toolbar id="editorToolbar" lafSubkey="Editor" small="true">
         <SegmentedControl id="statesBar"/>
         <SegmentedControl id="elementTreeBar" lafKey="ElementTreeBar"/>
+        <CheckBox title="AutoScroll to Source" c="align right" action="autoScrollToSourceActionHandler"/>
       </Toolbar>
     </toolbar>
   </TabView>
