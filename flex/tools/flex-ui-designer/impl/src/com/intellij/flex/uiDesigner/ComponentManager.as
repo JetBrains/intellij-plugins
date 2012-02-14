@@ -1,6 +1,4 @@
 package com.intellij.flex.uiDesigner {
-import cocoa.CheckBox;
-
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.KeyboardEvent;
@@ -61,7 +59,7 @@ public class ComponentManager extends EventDispatcher implements Injectable {
 
   private function keyDownHandler(event:KeyboardEvent):void {
     if (_component != null && event.keyCode == Keyboard.F4 && !event.altKey && !event.ctrlKey && !event.shiftKey) {
-      DocumentFactoryManager(_document.module.project.getComponent(DocumentFactoryManager)).jumpToObjectDeclaration(_component, _document);
+      DocumentFactoryManager(_document.module.project.getComponent(DocumentFactoryManager)).jumpToObjectDeclaration(_component, _document, true);
     }
   }
 
@@ -70,7 +68,7 @@ public class ComponentManager extends EventDispatcher implements Injectable {
     if (object != _component) {
       component = object;
       if (object != null && _autoScrollToSource) {
-        DocumentFactoryManager(_document.module.project.getComponent(DocumentFactoryManager)).jumpToObjectDeclaration(_component, _document);
+        DocumentFactoryManager(_document.module.project.getComponent(DocumentFactoryManager)).jumpToObjectDeclaration(_component, _document, false);
       }
     }
   }

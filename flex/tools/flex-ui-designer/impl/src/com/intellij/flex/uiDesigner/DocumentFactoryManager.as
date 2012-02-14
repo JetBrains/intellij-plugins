@@ -84,10 +84,10 @@ public class DocumentFactoryManager {
     }
   }
 
-  public function jumpToObjectDeclaration(object:Object, document:Document):void {
+  public function jumpToObjectDeclaration(object:Object, document:Document, focus:Boolean):void {
     var elementAddress:ElementAddress = findElementAddress(object, document);
     if (elementAddress != null) {
-      server.openDocument(elementAddress.factory.module, elementAddress.factory, elementAddress.id);
+      server.openDocument(elementAddress.factory.module, elementAddress.factory, elementAddress.id, focus);
     }
   }
 

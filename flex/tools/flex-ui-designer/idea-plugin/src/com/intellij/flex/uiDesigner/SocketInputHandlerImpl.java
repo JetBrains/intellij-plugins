@@ -19,13 +19,11 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.ActionCallback;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.wm.FocusCommand;
-import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.PsiDocumentManager;
@@ -325,41 +323,56 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
   private void openDocument() throws IOException {
     Project project = readProject();
-    DocumentFactoryManager.DocumentInfo info = DocumentFactoryManager.getInstance().getInfo(reader.readUnsignedShort());
-    navigateToFile(new OpenFileDescriptor(project, info.getElement(), info.getRangeMarker(reader.readInt()).getStartOffset()));
+    int documentFactoryId = reader.readUnsignedShort();
+    int textOffset = reader.readInt();
+    boolean activateApp = reader.readBoolean();
+    DocumentFactoryManager.DocumentInfo info = DocumentFactoryManager.getInstance().getInfo(documentFactoryId);
+    navigateToFile(new OpenFileDescriptor(project, info.getElement(), info.getRangeMarker(textOffset).getStartOffset()),
+                   activateApp);
   }
 
   private static void navigateToFile(final OpenFileDescriptor openFileDescriptor) {
+    navigateToFile(openFileDescriptor, true);
+  }
+
+  private static void navigateToFile(final OpenFileDescriptor openFileDescriptor, final boolean activateApp) {
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
         openFileDescriptor.navigate(true);
-        focusProjectWindow(openFileDescriptor.getProject(), true);
+        focusProjectWindow(openFileDescriptor.getProject(), activateApp);
       }
     });
   }
 
-  public static void focusProjectWindow(final Project p, boolean executeIfAppInactive) {
-    FocusCommand cmd = new FocusCommand() {
-      @Override
-      public ActionCallback run() {
-        JFrame f = WindowManager.getInstance().getFrame(p);
-        if (f != null) {
-          f.toFront();
-          f.requestFocus();
-        }
-        return new ActionCallback.Done();
-      }
-    };
+  public static void focusProjectWindow(final Project p, final boolean activateApp) {
+    final JFrame projectFrame = WindowManager.getInstance().getFrame(p);
+    if (projectFrame == null) {
+      return;
+    }
 
-    if (executeIfAppInactive) {
-      AppIcon.getInstance().requestFocus((IdeFrame)WindowManager.getInstance().getFrame(p));
-      cmd.run();
-    } else {
-      IdeFocusManager.getInstance(p).requestFocus(cmd, false);
+    // IdeFocusManager is not working correctly. If we open 2 projects, select another project, select some component in ADL and navigate to project, first project frame must be focused
+    projectFrame.toFront();
+    projectFrame.requestFocus();
+
+    if (activateApp) {
+      // is not working for windows
+      if (SystemInfo.isWindows) {
+        int state = projectFrame.getExtendedState();
+        if ((state & JFrame.ICONIFIED) == 0) {
+          // http://stackoverflow.com/questions/309023/howto-bring-a-java-window-to-the-front
+          projectFrame.setExtendedState(JFrame.ICONIFIED);
+          projectFrame.setExtendedState(state);
+        }
+        else {
+          projectFrame.setExtendedState(state &= ~JFrame.ICONIFIED);
+        }
+      }
+      else {
+        AppIcon.getInstance().requestFocus((IdeFrame)WindowManager.getInstance().getFrame(p));
+      }
     }
   }
-
 
   private void initResultFile() {
     if (resultFile == null) {

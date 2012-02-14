@@ -83,11 +83,12 @@ public class Server implements ResourceBundleProvider {
     socket.flush();
   }
 
-  public function openDocument(module:Module, factory:DocumentFactory, textOffset:int):void {
+  public function openDocument(module:Module, factory:DocumentFactory, textOffset:int, focus:Boolean):void {
     socket.writeByte(ServerMethod.OPEN_DOCUMENT);
     writeProjectId(module.project);
     socket.writeShort(factory.id);
     socket.writeInt(textOffset);
+    socket.writeBoolean(focus);
     socket.flush();
   }
 
