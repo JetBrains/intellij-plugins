@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="JsTD-plugin" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
-    <module name="JsTestDriver-standalone-plugin" />
+    <module name="JsTestDriver-plugin" />
     <option name="VM_PARAMETERS" value=" -Xms128m -Xmx512m -XX:MaxPermSize=250m -XX:ReservedCodeCacheSize=64m -ea" />
     <option name="PROGRAM_PARAMETERS" value="" />
     <RunnerSettings RunnerId="Run" />
