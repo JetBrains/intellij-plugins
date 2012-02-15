@@ -17,6 +17,8 @@ import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+
 public class NewFlexUnitRunnerParameters extends BCBasedRunnerParameters implements FlexUnitCommonParameters {
 
   private static final Scope DEFAULT_SCOPE = Scope.Class;
@@ -165,6 +167,7 @@ public class NewFlexUnitRunnerParameters extends BCBasedRunnerParameters impleme
 
     final ModifiableFlexIdeBuildConfiguration overriddenBC = Factory.getTemporaryCopyForCompilation(moduleAndBC.second);
     overriddenBC.setSkipCompile(false);
+    overriddenBC.setCssFilesToCompile(Collections.<String>emptyList());
     overriddenBC.setMainClass(FlexUnitPrecompileTask.getFlexUnitLauncherName(getModuleName()));
     overriddenBC.setOutputFileName("_flexunit.swf");
     //overriddenBC.getAndroidPackagingOptions().setPackageFileName("_flexunit.apk");

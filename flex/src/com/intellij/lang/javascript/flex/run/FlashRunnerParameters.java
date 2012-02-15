@@ -21,6 +21,7 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.MalformedURLException;
+import java.util.Collections;
 
 import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.*;
 
@@ -221,6 +222,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
       if (overriddenBC.getOutputType() != OutputType.Application) {
         overriddenBC.setOutputType(OutputType.Application);
         overriddenBC.setUseHtmlWrapper(false);
+        overriddenBC.setCssFilesToCompile(Collections.<String>emptyList());
 
         overriddenBC.getDependencies().setFrameworkLinkage(LinkageType.Merged);
 

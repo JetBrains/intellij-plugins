@@ -7,6 +7,8 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
@@ -20,14 +22,16 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
@@ -45,7 +49,6 @@ import java.util.*;
  *         Time: 11:22:58 PM
  */
 public class FlexCompiler implements SourceProcessingCompiler {
-  public static final String CONDITIONAL_COMPILATION_VARIABLE_PATTERN = "[a-zA-Z_$][a-zA-Z0-9_&]*::[a-zA-Z_$][a-zA-Z0-9_&]*";
   private static final Logger LOG = Logger.getInstance(FlexCompiler.class.getName());
 
   @NotNull
@@ -63,10 +66,12 @@ public class FlexCompiler implements SourceProcessingCompiler {
       throw new RuntimeException(e);
     }
 
-    if (!itemList.isEmpty() && context.isRebuild()) {
+    if (!itemList.isEmpty() && !context.isMake()) {
       final FlexCompilerHandler flexCompilerHandler = FlexCompilerHandler.getInstance(context.getProject());
       flexCompilerHandler.quitCompilerShell();
-      flexCompilerHandler.getCompilerDependenciesCache().clear();
+      for (ProcessingItem item : itemList) {
+        flexCompilerHandler.getCompilerDependenciesCache().markModuleDirty(((MyProcessingItem)item).myModule);
+      }
     }
 
     return itemList.toArray(new ProcessingItem[itemList.size()]);
@@ -114,7 +119,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
       for (final ProcessingItem item : items) {
         final Collection<FlexIdeBuildConfiguration> dependencies = new HashSet<FlexIdeBuildConfiguration>();
         // todo add 'optimize for' dependencies
-        for (final DependencyEntry entry : ((MyProcessingItem)item).myBC.getDependencies().getEntries()) {
+        final FlexIdeBuildConfiguration bc = ((MyProcessingItem)item).myBC;
+        for (final DependencyEntry entry : bc.getDependencies().getEntries()) {
           if (entry instanceof BuildConfigurationEntry) {
             final FlexIdeBuildConfiguration dependencyBC = ((BuildConfigurationEntry)entry).findBuildConfiguration();
             if (dependencyBC != null && !dependencyBC.isSkipCompile() &&
@@ -124,9 +130,29 @@ public class FlexCompiler implements SourceProcessingCompiler {
           }
         }
 
-        compilationTasks
-          .add(builtIn ? new BuiltInCompilationTask(((MyProcessingItem)item).myModule, ((MyProcessingItem)item).myBC, dependencies)
-                       : new MxmlcCompcCompilationTask(((MyProcessingItem)item).myModule, ((MyProcessingItem)item).myBC, dependencies));
+        compilationTasks.add(builtIn ? new BuiltInCompilationTask(((MyProcessingItem)item).myModule, bc, dependencies)
+                                     : new MxmlcCompcCompilationTask(((MyProcessingItem)item).myModule, bc, dependencies));
+
+        if (BCUtils.canHaveRuntimeStylesheets(bc)) {
+          for (String cssPath : bc.getCssFilesToCompile()) {
+            final VirtualFile cssFile = LocalFileSystem.getInstance().findFileByPath(cssPath);
+            if (cssFile == null) continue;
+
+            final ModifiableFlexIdeBuildConfiguration cssBC = Factory.getTemporaryCopyForCompilation(bc);
+            cssBC.setMainClass(cssPath);
+            cssBC.setOutputFileName(FileUtil.getNameWithoutExtension(PathUtil.getFileName(cssPath)) + ".swf");
+
+            VirtualFile root = ProjectRootManager.getInstance(context.getProject()).getFileIndex().getSourceRootForFile(cssFile);
+            if (root == null) root = ProjectRootManager.getInstance(context.getProject()).getFileIndex().getContentRootForFile(cssFile);
+            final String relativePath = root == null ? null : VfsUtilCore.getRelativePath(cssFile.getParent(), root, '/');
+            if (!StringUtil.isEmpty(relativePath)) {
+              cssBC.setOutputFolder(cssBC.getOutputFolder() + "/" + relativePath);
+            }
+
+            compilationTasks.add(builtIn ? new BuiltInCompilationTask(((MyProcessingItem)item).myModule, cssBC, dependencies)
+                                         : new MxmlcCompcCompilationTask(((MyProcessingItem)item).myModule, cssBC, dependencies));
+          }
+        }
       }
 
       if (builtIn) {
@@ -371,13 +397,26 @@ public class FlexCompiler implements SourceProcessingCompiler {
       }
 
       try {
-        if (!VfsUtil.loadText(templateFile).contains(FlexCompilationUtils.SWF_MACRO)) {
+        if (!VfsUtilCore.loadText(templateFile).contains(FlexCompilationUtils.SWF_MACRO)) {
           throw new ConfigurationException(FlexBundle.message("no.swf.macro.in.template.bc.0.of.module.1.2", bc.getName(), moduleName,
                                                               FileUtil.toSystemDependentName(templateFile.getPath())));
         }
       }
       catch (IOException e) {
         throw new ConfigurationException(FlexBundle.message("failed.to.load.file", templateFile.getPath(), e.getMessage()));
+      }
+    }
+
+    if (BCUtils.canHaveRuntimeStylesheets(bc)) {
+      for (String cssPath : bc.getCssFilesToCompile()) {
+        if (!cssPath.toLowerCase().endsWith(".css")) {
+          throw new ConfigurationException(FlexBundle.message("not.css.runtime.stylesheet.bc.0.of.module.1", bc.getName(), moduleName,
+                                                              FileUtil.toSystemDependentName(cssPath)));
+        }
+        if (LocalFileSystem.getInstance().findFileByPath(cssPath) == null) {
+          throw new ConfigurationException(
+            FlexBundle.message("css.not.found.bc.0.of.module.1", bc.getName(), moduleName, FileUtil.toSystemDependentName(cssPath)));
+        }
       }
     }
 

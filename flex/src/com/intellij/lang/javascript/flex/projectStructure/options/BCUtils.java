@@ -1,10 +1,12 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
@@ -13,6 +15,7 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.PathUtil;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,6 +45,22 @@ public class BCUtils {
                           : packagingOptions instanceof AndroidPackagingOptions ? "-android-descriptor.xml"
                                                                                 : "-ios-descriptor.xml";
     return FileUtil.getNameWithoutExtension(config.getOutputFileName()) + suffix;
+  }
+
+  @Nullable
+  public static String getBCSpecifier(final Module module, final FlexIdeBuildConfiguration bc) {
+    if (!bc.isTempBCForCompilation()) return null;
+    if (isFlexUnitBC(module, bc)) return "flexunit";
+    if (bc.getMainClass().toLowerCase().endsWith(".css")) return PathUtil.getFileName(bc.getMainClass());
+    return StringUtil.getShortName(bc.getMainClass());
+  }
+
+  public static boolean isFlexUnitBC(final Module module, final FlexIdeBuildConfiguration bc) {
+    return bc.isTempBCForCompilation() && bc.getMainClass().equals(FlexUnitPrecompileTask.getFlexUnitLauncherName(module.getName()));
+  }
+
+  public static boolean canHaveRuntimeStylesheets(final FlexIdeBuildConfiguration bc) {
+    return bc.getOutputType() == OutputType.Application && bc.getTargetPlatform() != TargetPlatform.Mobile;
   }
 
   public static LinkageType[] getSuitableFrameworkLinkages(BuildConfigurationNature nature) {

@@ -2,11 +2,11 @@ package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,7 +31,10 @@ public abstract class FlexCompilationTask {
     myModule = module;
     myBC = bc;
     myDependencies = dependencies;
-    myPresentableName = bc.getName() + " (" + module.getName() + ")";
+
+    String postfix = bc.isTempBCForCompilation() ? " - " + BCUtils.getBCSpecifier(module, bc) : "";
+    if (!bc.getName().equals(module.getName())) postfix += " (module " + module.getName() + ")";
+    myPresentableName = bc.getName() + postfix;
   }
 
   public void start(final FlexCompilationManager compilationManager) {

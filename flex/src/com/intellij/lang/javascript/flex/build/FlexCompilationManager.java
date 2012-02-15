@@ -113,7 +113,7 @@ public class FlexCompilationManager {
   }
 
   public boolean isRebuild() {
-    return myCompileContext.isRebuild();
+    return !myCompileContext.isMake();
   }
 
   private void checkFinishedTasks() {

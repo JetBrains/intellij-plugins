@@ -59,9 +59,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<ModifiableFlexIdeBuildConfiguration>
   implements CompositeConfigurable.Item {
@@ -93,7 +91,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
 
   private JLabel myCssFilesLabel;
   private TextFieldWithBrowseButton.NoPathCompletion myCssFilesTextWithBrowse;
-  private String myCssFilesToCompile = "";
+  private Collection<String> myCssFilesToCompile;
 
   private JCheckBox mySkipCompilationCheckBox;
   private JLabel myWarning;
@@ -133,6 +131,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
         myDependenciesConfigurable.libraryRemoved(library);
       }
     };
+    myCssFilesToCompile = Collections.emptyList();
 
     final BuildConfigurationNature nature = bc.getNature();
 
@@ -269,9 +268,8 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     myCssFilesTextWithBrowse.setButtonIcon(PlatformIcons.OPEN_EDIT_DIALOG_ICON);
     myCssFilesTextWithBrowse.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
-        final List<String> cssFilesList = StringUtil.split(myCssFilesToCompile, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
         final List<StringBuilder> value = new ArrayList<StringBuilder>();
-        for (String cssFilePath : cssFilesList) {
+        for (String cssFilePath : myCssFilesToCompile) {
           value.add(new StringBuilder(cssFilePath));
         }
         final RepeatableValueDialog dialog =
@@ -279,11 +277,10 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
         dialog.show();
         if (dialog.isOK()) {
           final List<StringBuilder> newValue = dialog.getCurrentList();
-          myCssFilesToCompile = StringUtil.join(newValue, new Function<StringBuilder, String>() {
-            public String fun(final StringBuilder builder) {
-              return builder.toString();
-            }
-          }, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+          myCssFilesToCompile = new ArrayList<String>(newValue.size());
+          for (StringBuilder cssPath : newValue) {
+            myCssFilesToCompile.add(cssPath.toString());
+          }
           updateCssFilesText();
         }
       }
@@ -417,8 +414,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   }
 
   private void updateCssFilesText() {
-    final List<String> cssFilesList = StringUtil.split(myCssFilesToCompile, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
-    final String s = StringUtil.join(cssFilesList, new Function<String, String>() {
+    final String s = StringUtil.join(myCssFilesToCompile, new Function<String, String>() {
       public String fun(final String path) {
         return PathUtil.getFileName(path);
       }
@@ -529,7 +525,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
       myOutputFolderField.setText(FileUtil.toSystemDependentName(myConfiguration.getOutputFolder()));
       myUseHTMLWrapperCheckBox.setSelected(myConfiguration.isUseHtmlWrapper());
       myWrapperTemplateTextWithBrowse.setText(FileUtil.toSystemDependentName(myConfiguration.getWrapperTemplatePath()));
-      myCssFilesToCompile = myConfiguration.getCssFilesToCompile();
+      myCssFilesToCompile = new ArrayList<String>(myConfiguration.getCssFilesToCompile());
       mySkipCompilationCheckBox.setSelected(myConfiguration.isSkipCompile());
 
       updateControls();

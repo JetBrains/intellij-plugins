@@ -65,6 +65,10 @@ public class FlexCompilerDependenciesCache {
     myCache.clear();
   }
 
+  public void markModuleDirty(final Module module) {
+    myCache.remove(module);
+  }
+
   public void markBCDirty(final Module module, final FlexIdeBuildConfiguration bc) {
     final Collection<BCInfo> infosForModule = myCache.get(module);
     final BCInfo existingInfo = infosForModule == null ? null : findCacheForBC(infosForModule, bc);
@@ -82,7 +86,7 @@ public class FlexCompilerDependenciesCache {
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
     final Module module = fileIndex.getModuleForFile(file);
     if (module != null && fileIndex.getSourceRootForFile(file) != null && !fileIndex.isInTestSourceContent(file)) {
-      myCache.remove(module);
+      markModuleDirty(module);
     }
   }
 
@@ -131,7 +135,10 @@ public class FlexCompilerDependenciesCache {
     for (VirtualFile configFile : configFiles) {
       addFileDependencies(bcInfo, configFile, workDirPath);
     }
-    //appendCssAndRespectiveSwfFiles(fileDependencies, module);
+
+    if (bc.isTempBCForCompilation() && !bc.getCompilerOptions().getAdditionalConfigFilePath().isEmpty()) {
+      bcInfo.addFileDependency(bc.getCompilerOptions().getAdditionalConfigFilePath());
+    }
   }
 
   @Nullable

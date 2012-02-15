@@ -85,7 +85,7 @@ public class FlexCompilerConfigFileUtil {
   public static String mergeWithCustomConfigFile(final String generatedConfigText,
                                                  final String additionalConfigFilePath,
                                                  final boolean makeExternalLibsMerged,
-                                                 final @Nullable String cssFilePath) {
+                                                 final boolean makeIncludedLibsMerged) {
     final VirtualFile additionalConfigFile = LocalFileSystem.getInstance().findFileByPath(additionalConfigFilePath);
     if (additionalConfigFile == null) {
       return generatedConfigText;
@@ -107,9 +107,8 @@ public class FlexCompilerConfigFileUtil {
       return generatedConfigText;
     }
 
-    addSourcePathIfCssCompilation(rootElement, cssFilePath);
     removeSwcSpecificElementsRecursively(rootElement);
-    makeLibrariesMergedIntoCode(rootElement, makeExternalLibsMerged, cssFilePath != null);
+    makeLibrariesMergedIntoCode(rootElement, makeExternalLibsMerged, makeIncludedLibsMerged);
 
     try {
       final Element otherRootElement = JDOMUtil.loadDocument(generatedConfigText).getRootElement();
@@ -125,24 +124,6 @@ public class FlexCompilerConfigFileUtil {
     }
 
     return JDOMUtil.writeDocument(document, "\n");
-  }
-
-  private static void addSourcePathIfCssCompilation(final Element rootElement, final @Nullable String cssFilePath) {
-    // folder that contains css file must be source folder and must be first in source-path list, otherwise stupid compiler says that css file must have package corresponding its path
-    if (cssFilePath == null) return;
-
-    final int lastSlashIndex = cssFilePath.lastIndexOf('/');
-    final String cssDirPath = lastSlashIndex > 0 ? cssFilePath.substring(0, lastSlashIndex) : null;
-
-    if (cssDirPath != null) {
-      final Element compilerElement = new Element(COMPILER, rootElement.getNamespace());
-      rootElement.addContent(0, compilerElement);
-      final Element sourcePathElement = new Element(SOURCE_PATH, compilerElement.getNamespace());
-      compilerElement.addContent(sourcePathElement);
-      final Element pathElement = new Element(PATH_ELEMENT, sourcePathElement.getNamespace());
-      sourcePathElement.addContent(pathElement);
-      pathElement.addContent(cssDirPath);
-    }
   }
 
   private static void removeSwcSpecificElementsRecursively(final Element element) {

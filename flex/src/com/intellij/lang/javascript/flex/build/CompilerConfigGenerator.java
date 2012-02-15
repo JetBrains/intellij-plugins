@@ -48,6 +48,7 @@ public class CompilerConfigGenerator {
   private final Module myModule;
   private final FlexIdeBuildConfiguration myBC;
   private final boolean myFlexUnit;
+  private final boolean myCSS;
   private final Sdk mySdk;
   private final boolean myFlexmojos;
   private final CompilerOptions myModuleLevelCompilerOptions;
@@ -59,7 +60,8 @@ public class CompilerConfigGenerator {
                                   final @NotNull CompilerOptions projectLevelCompilerOptions) throws IOException {
     myModule = module;
     myBC = bc;
-    myFlexUnit = myBC.getMainClass().equals(FlexUnitPrecompileTask.getFlexUnitLauncherName(myModule.getName()));
+    myFlexUnit = BCUtils.isFlexUnitBC(myModule, myBC);
+    myCSS = bc.isTempBCForCompilation() && bc.getMainClass().toLowerCase().endsWith(".css");
     mySdk = bc.getSdk();
     if (mySdk == null) {
       throw new IOException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), module.getName()));
@@ -79,16 +81,13 @@ public class CompilerConfigGenerator {
     if (bc.isTempBCForCompilation()) {
       final FlexIdeBuildConfiguration originalBC = FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(bc.getName());
       final boolean makeExternalLibsMerged = originalBC != null && originalBC.getOutputType() == OutputType.Library;
-      text = FlexCompilerConfigFileUtil
-        .mergeWithCustomConfigFile(text, bc.getCompilerOptions().getAdditionalConfigFilePath(), makeExternalLibsMerged, null);
+      final boolean makeIncludedLibsMerged = bc.getMainClass().toLowerCase().endsWith(".css");
+      text = FlexCompilerConfigFileUtil.mergeWithCustomConfigFile(text, bc.getCompilerOptions().getAdditionalConfigFilePath(),
+                                                                  makeExternalLibsMerged, makeIncludedLibsMerged);
     }
 
-    final String postfix = bc.getMainClass().equals(FlexUnitPrecompileTask.getFlexUnitLauncherName(module.getName()))
-                           ? "flexunit"
-                           : bc.isTempBCForCompilation()
-                             ? StringUtil.getShortName(bc.getMainClass())
-                             : null;
-    final String name = getConfigFileName(module, bc.getName(), PlatformUtils.getPlatformPrefix().toLowerCase(), postfix);
+    final String name =
+      getConfigFileName(module, bc.getName(), PlatformUtils.getPlatformPrefix().toLowerCase(), BCUtils.getBCSpecifier(module, bc));
     return getOrCreateConfigFile(module.getProject(), name, text);
   }
 
@@ -214,6 +213,7 @@ public class CompilerConfigGenerator {
       // resolve default
       if (linkageType == LinkageType.Default) linkageType = myBC.getDependencies().getFrameworkLinkage();
       if (linkageType == LinkageType.Default) linkageType = BCUtils.getDefaultFrameworkLinkage(mySdk.getVersionString(), myBC.getNature());
+      if (myCSS && linkageType == LinkageType.Include) linkageType = LinkageType.Merged;
 
       final CompilerOptionInfo info = linkageType == LinkageType.Merged ? CompilerOptionInfo.LIBRARY_PATH_INFO :
                                       linkageType == LinkageType.RSL ? CompilerOptionInfo.LIBRARY_PATH_INFO :
@@ -290,7 +290,8 @@ public class CompilerConfigGenerator {
 
   private void addLibs(final Element rootElement) {
     for (final DependencyEntry entry : myBC.getDependencies().getEntries()) {
-      final LinkageType linkageType = entry.getDependencyType().getLinkageType();
+      LinkageType linkageType = entry.getDependencyType().getLinkageType();
+      if (myCSS && linkageType == LinkageType.Include) linkageType = LinkageType.Merged;
 
       if (entry instanceof BuildConfigurationEntry) {
         if (linkageType == LinkageType.LoadInRuntime) continue;
@@ -373,6 +374,13 @@ public class CompilerConfigGenerator {
       }
       else {
         sourcePathsWithoutLocaleToken.add(sourceRoot.getPath());
+      }
+    }
+
+    if (myCSS) {
+      final String cssFolderPath = PathUtil.getParentPath(myBC.getMainClass());
+      if (!sourcePathsWithoutLocaleToken.contains(cssFolderPath)) {
+        sourcePathsWithoutLocaleToken.add(cssFolderPath);
       }
     }
 
@@ -474,9 +482,10 @@ public class CompilerConfigGenerator {
       final InfoFromConfigFile info =
         FlexCompilerConfigFileUtil.getInfoFromConfigFile(myBC.getCompilerOptions().getAdditionalConfigFilePath());
 
-      final String pathToMainClassFile = myFlexUnit ? FlexUtils.getPathToFlexUnitTempDirectory() + "/" + myBC.getMainClass()
-                                                      + FlexUnitPrecompileTask.DOT_FLEX_UNIT_LAUNCHER_EXTENSION
-                                                    : FlexUtils.getPathToMainClassFile(myBC.getMainClass(), myModule);
+      final String pathToMainClassFile = myCSS ? myBC.getMainClass()
+                                               : myFlexUnit ? FlexUtils.getPathToFlexUnitTempDirectory() + "/" + myBC.getMainClass()
+                                                              + FlexUnitPrecompileTask.DOT_FLEX_UNIT_LAUNCHER_EXTENSION
+                                                            : FlexUtils.getPathToMainClassFile(myBC.getMainClass(), myModule);
 
       if (pathToMainClassFile.isEmpty() && info.getMainClass(myModule) == null && !ApplicationManager.getApplication().isUnitTestMode()) {
         throw new IOException(FlexBundle.message("bc.incorrect.main.class", myBC.getMainClass(), myBC.getName(), myModule.getName()));

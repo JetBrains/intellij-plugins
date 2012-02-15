@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Collection;
 
 /**
  * User: ksafonov
@@ -41,7 +42,7 @@ public interface FlexIdeBuildConfiguration {
   String getWrapperTemplatePath();
 
   @NotNull
-  String getCssFilesToCompile();
+  Collection<String> getCssFilesToCompile();
 
   boolean isSkipCompile();
 

@@ -11,7 +11,6 @@ import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.components.ComponentManager;
 import com.intellij.openapi.components.PathMacroManager;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Condition;
@@ -21,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.StringTokenizer;
 
 class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfiguration {
@@ -125,8 +126,9 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
 
   @Override
   @NotNull
-  public String getCssFilesToCompile() {
-    return myCssFilesToCompile;
+  public Collection<String> getCssFilesToCompile() {
+    if (myCssFilesToCompile.isEmpty()) return Collections.emptyList();
+    return StringUtil.split(myCssFilesToCompile, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
   }
 
   @Override
@@ -192,8 +194,8 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
   }
 
   @Override
-  public void setCssFilesToCompile(@NotNull String cssFilesToCompile) {
-    myCssFilesToCompile = cssFilesToCompile;
+  public void setCssFilesToCompile(@NotNull Collection<String> cssFilesToCompile) {
+    myCssFilesToCompile = cssFilesToCompile.isEmpty() ? "" : StringUtil.join(cssFilesToCompile, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
   }
 
   @Override
