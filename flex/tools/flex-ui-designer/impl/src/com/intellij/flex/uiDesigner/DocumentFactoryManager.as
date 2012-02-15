@@ -71,17 +71,32 @@ public class DocumentFactoryManager {
     }
   }
 
-  //noinspection JSMethodCanBeStatic
-  public function findElementAddress(object:Object, document:Document):ElementAddress {
-    var factory:DocumentFactory = document.documentFactory;
-    const id:int = factory.getComponentDeclarationRangeMarkerId(object);
-    if (id == -1) {
-      UncaughtErrorManager.instance.logWarning("Can't find document for object " + object + " in document " + document.file.presentableUrl);
-      return null;
-    }
-    else {
+  private function findComponentDeclarationRangeMarkerId(object:Object, factory:DocumentFactory):ElementAddress {
+    var id:int = factory.getComponentDeclarationRangeMarkerId(object);
+    if (id != -1) {
       return new ElementAddress(factory, id);
     }
+
+    if (factory.documentReferences != null) {
+      for each (var subDocumentId:int in factory.documentReferences) {
+        var addres:ElementAddress = findComponentDeclarationRangeMarkerId(object, get(subDocumentId));
+        if (addres != null) {
+          return addres;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  //noinspection JSMethodCanBeStatic
+  public function findElementAddress(object:Object, document:Document):ElementAddress {
+    var addres:ElementAddress = findComponentDeclarationRangeMarkerId(object, document.documentFactory);
+    if (addres == null) {
+      UncaughtErrorManager.instance.logWarning("Can't find document for object " + object + " in document " + document.file.presentableUrl);
+    }
+
+    return addres;
   }
 
   public function jumpToObjectDeclaration(object:Object, document:Document, focus:Boolean):void {

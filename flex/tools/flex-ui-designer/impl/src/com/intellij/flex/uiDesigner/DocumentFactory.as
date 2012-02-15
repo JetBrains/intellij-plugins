@@ -85,12 +85,7 @@ public class DocumentFactory implements SerializedDocumentDataProvider, Document
 
   public function getComponentDeclarationRangeMarkerId(object:Object):int {
     var r:* = componentToRangeMarkerId[object];
-    if (r === undefined) {
-      return -1;
-    }
-    else {
-      return r;
-    }
+    return r === undefined ? -1 : r;
   }
 
   public function registerObjectWithId(id:String, object:Object):void {
