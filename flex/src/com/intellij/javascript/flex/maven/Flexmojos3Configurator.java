@@ -89,7 +89,8 @@ public class Flexmojos3Configurator {
   }
 
   public void configureAndAppendTasks(final List<MavenProjectsProcessorTask> postTasks) {
-    for (ModifiableFlexIdeBuildConfiguration oldBC : myFlexEditor.getConfigurations(myModule)) {
+    final ModifiableFlexIdeBuildConfiguration[] oldBCs = myFlexEditor.getConfigurations(myModule);
+    for (ModifiableFlexIdeBuildConfiguration oldBC : oldBCs) {
       myFlexEditor.configurationRemoved(oldBC);
     }
 
@@ -102,10 +103,8 @@ public class Flexmojos3Configurator {
     for (RLMInfo info : rlmInfos) {
       configureRuntimeLoadedModule(mainBC, info, usedNames);
     }
-/*
-    reimportRuntimeLocalesFacets(project, module, modelsProvider);
-    preProcessResourceFacets(module, mavenProject, modifiableModelsProvider);
-*/
+
+    respectPreviousBCState(myFlexEditor.getConfigurations(myModule), oldBCs);
 
     if (FlexCompilerProjectConfiguration.getInstance(myModule.getProject()).GENERATE_FLEXMOJOS_CONFIGS) {
       if (StringUtil.compareVersionNumbers(myFlexmojosPlugin.getVersion(), "3.4") >= 0) {
@@ -394,6 +393,17 @@ public class Flexmojos3Configurator {
       }
     }
     return result;
+  }
+
+  private static void respectPreviousBCState(final ModifiableFlexIdeBuildConfiguration[] newBCsc,
+                                             final FlexIdeBuildConfiguration[] oldBCs) {
+    for (ModifiableFlexIdeBuildConfiguration newBC : newBCsc) {
+      for (FlexIdeBuildConfiguration oldBC : oldBCs) {
+        if (oldBC.getName().equals(newBC.getName())) {
+          newBC.setSkipCompile(oldBC.isSkipCompile());
+        }
+      }
+    }
   }
 
   /*
