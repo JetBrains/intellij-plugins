@@ -377,14 +377,14 @@ public class CompilerConfigGenerator {
       }
     }
 
+    final StringBuilder sourcePathBuilder = new StringBuilder();
+
     if (myCSS) {
       final String cssFolderPath = PathUtil.getParentPath(myBC.getMainClass());
       if (!sourcePathsWithoutLocaleToken.contains(cssFolderPath)) {
-        sourcePathsWithoutLocaleToken.add(cssFolderPath);
+        sourcePathBuilder.append(cssFolderPath);
       }
     }
-
-    final StringBuilder sourcePathBuilder = new StringBuilder();
 
     for (final String sourcePath : sourcePathsWithLocaleToken) {
       if (sourcePathBuilder.length() > 0) {
