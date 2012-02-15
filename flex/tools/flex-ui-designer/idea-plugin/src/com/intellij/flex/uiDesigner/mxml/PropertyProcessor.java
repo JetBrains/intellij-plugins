@@ -106,7 +106,8 @@ class PropertyProcessor implements ValueWriter {
         isEffect = true;
       }
       else {
-        if (!typeName.equals(FlexAnnotationNames.BINDABLE)) { // skip binding
+        // skip binding and event AS-423
+        if (!typeName.equals(FlexAnnotationNames.BINDABLE) && !typeName.equals(FlexAnnotationNames.EVENT)) {
           LOG.error("unsupported element: " + element.getText());
         }
         return null;
