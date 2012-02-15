@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.ConversionH
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexLibraryIdGenerator;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -292,6 +293,15 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
     if (!orderEntriesToRemove.isEmpty()) {
       module.getOrderEntries().removeAll(orderEntriesToRemove);
     }
+
+    if (BCUtils.canHaveRuntimeStylesheets(newBuildConfiguration) &&
+        oldConfiguration != null && !oldConfiguration.CSS_FILES_LIST.isEmpty()) {
+      final Collection<String> cssFilesToCompile = new ArrayList<String>();
+      for (String cssPath : oldConfiguration.CSS_FILES_LIST) {
+        cssFilesToCompile.add(PathUtil.getCanonicalPath(module.expandPath(cssPath)));
+      }
+      newBuildConfiguration.setCssFilesToCompile(cssFilesToCompile);
+    }
   }
 
   private static Map<String, String> convertCompilerOptions(final FlexBuildConfiguration oldConfig,
@@ -323,8 +333,8 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
       final StringBuilder b = new StringBuilder();
       for (FlexBuildConfiguration.NamespaceAndManifestFileInfo info : oldConfig.NAMESPACE_AND_MANIFEST_FILE_INFO_LIST) {
         if (b.length() > 0) b.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
-        b.append(info.NAMESPACE).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR).append(info.MANIFEST_FILE_PATH);
-        // todo import info.INCLUDE_IN_SWC
+        b.append(info.NAMESPACE).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)
+          .append(PathUtil.getCanonicalPath(module.expandPath(info.MANIFEST_FILE_PATH)));
       }
       options.put("compiler.namespaces.namespace", b.toString());
     }
