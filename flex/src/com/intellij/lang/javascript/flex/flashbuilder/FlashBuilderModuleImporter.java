@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathMacros;
@@ -109,6 +110,18 @@ public class FlashBuilderModuleImporter {
       // todo check if correct and uncomment
       //mainBC.setUseHtmlWrapper(true);
       //mainBC.setWrapperTemplatePath(fbProject.getProjectRootPath() + "/html-template");
+    }
+
+    if (BCUtils.canHaveRuntimeStylesheets(mainBC) && !fbProject.getCssFilesToCompile().isEmpty()) {
+      final Collection<String> cssPaths = new ArrayList<String>();
+      for (final String path : fbProject.getCssFilesToCompile()) {
+        final String cssPath = getAbsolutePathWithLinksHandled(fbProject, path);
+        final VirtualFile cssFile = LocalFileSystem.getInstance().findFileByPath(cssPath);
+        if (cssFile != null) {
+          cssPaths.add(cssFile.getPath());
+        }
+      }
+      mainBC.setCssFilesToCompile(cssPaths);
     }
 
     if (sdk != null) {
