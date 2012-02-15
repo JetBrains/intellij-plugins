@@ -106,10 +106,9 @@ public class FlashBuilderModuleImporter {
 
     mainBC.setOutputFolder(getAbsolutePathWithLinksHandled(fbProject, fbProject.getOutputFolderPath()));
 
-    if (targetPlatform == TargetPlatform.Web && outputType == OutputType.Application) {
-      // todo check if correct and uncomment
-      //mainBC.setUseHtmlWrapper(true);
-      //mainBC.setWrapperTemplatePath(fbProject.getProjectRootPath() + "/html-template");
+    if (fbProject.isUseHtmlWrapper() && targetPlatform == TargetPlatform.Web && outputType == OutputType.Application) {
+      mainBC.setUseHtmlWrapper(true);
+      mainBC.setWrapperTemplatePath(fbProject.getProjectRootPath() + "/html-template");
     }
 
     if (BCUtils.canHaveRuntimeStylesheets(mainBC) && !fbProject.getCssFilesToCompile().isEmpty()) {
