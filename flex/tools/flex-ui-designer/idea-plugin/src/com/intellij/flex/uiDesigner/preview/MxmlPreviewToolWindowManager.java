@@ -123,7 +123,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
   private void initToolWindow() {
     toolWindowForm = new MxmlPreviewToolWindowForm(project, this);
     final String toolWindowId = FlashUIDesignerBundle.message("mxml.preview.tool.window.title");
-    toolWindow = ToolWindowManager.getInstance(project).registerToolWindow(toolWindowId, false, ToolWindowAnchor.RIGHT, project, true);
+    toolWindow = ToolWindowManager.getInstance(project).registerToolWindow(toolWindowId, false, ToolWindowAnchor.RIGHT, project, false);
     toolWindow.setIcon(PlatformIcons.UI_FORM_ICON);
 
     ((ToolWindowManagerEx)ToolWindowManager.getInstance(project)).addToolWindowManagerListener(new ToolWindowManagerAdapter() {
@@ -284,11 +284,11 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
   private void processFileEditorChange(final @Nullable Editor newEditor) {
     toolWindowUpdateQueue.cancelAllUpdates();
     toolWindowUpdateQueue.queue(new Update("update") {
-      @SuppressWarnings("PointlessBooleanExpression")
       public void run() {
         if (!toolWindowReady || toolWindowDisposed) {
           return;
         }
+
         if (toolWindow == null) {
           if (newEditor == null) {
             return;
@@ -296,20 +296,13 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
           initToolWindow();
         }
 
-        //final AndroidLayoutPreviewToolWindowSettings settings = AndroidLayoutPreviewToolWindowSettings.getInstance(myProject);
-        //final boolean hideForNonLayoutFiles = settings.getGlobalState().isHideForNonLayoutFiles();
-        final boolean hideForNonLayoutFiles = true;
+        final PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
+        final boolean hideForNonMxmlFiles = propertiesComponent.getBoolean("mxml.preview.tool.window.hideForNonMxmlFiles", false);
 
-        if (newEditor == null) {
-          toolWindowForm.setFile(null);
-          toolWindow.setAvailable(!hideForNonLayoutFiles, null);
-          return;
-        }
-
-        final XmlFile psiFile = (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(newEditor.getDocument());
+        XmlFile psiFile = newEditor == null ? null : (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(newEditor.getDocument());
         if (psiFile == null) {
-          //toolWindowForm.setFile(null);
-          toolWindow.setAvailable(!hideForNonLayoutFiles, null);
+          toolWindowForm.setFile(null);
+          toolWindow.setAvailable(!hideForNonMxmlFiles, null);
           return;
         }
 
@@ -320,7 +313,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         }
 
         toolWindow.setAvailable(true, null);
-        if (PropertiesComponent.getInstance(project).getBoolean("mxml.preview.tool.window.visible", true)) {
+        if (propertiesComponent.getBoolean("mxml.preview.tool.window.visible", false)) {
           toolWindow.show(null);
         }
 
