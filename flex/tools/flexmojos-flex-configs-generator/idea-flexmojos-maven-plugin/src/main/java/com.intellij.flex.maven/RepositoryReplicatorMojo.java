@@ -1,6 +1,9 @@
 package com.intellij.flex.maven;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MavenPluginManager;
@@ -8,6 +11,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.repository.RepositorySystem;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.component.repository.ComponentDependency;
@@ -16,6 +20,7 @@ import org.codehaus.plexus.util.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -47,6 +52,17 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
 
   @Requirement
   private MavenPluginManager pluginManager;
+
+  /**
+   * List of remote repositories to be used by the plugin to resolve dependencies.
+   *
+   * @parameter expression="${project.remoteArtifactRepositories}"
+   * @readonly
+   */
+  private List<ArtifactRepository> remoteRepositories;
+
+  @Requirement
+  private RepositorySystem repositorySystem;
 
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
@@ -87,14 +103,54 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
     outputDirectory.mkdirs();
 
     for (MavenProject project : session.getProjects()) {
-      if (!(project.getPackaging().equals("swf") || project.getPackaging().equals("swc"))) {
-        continue;
-      }
-
       // skip projects artifacts
       copiedArtifacts.add(project.getArtifact());
       copyProjectArtifacts(localRepositoryFile, localRepositoryBasedirLength, project);
     }
+
+    for (MavenProject project : session.getProjects()) {
+      try {
+        copyParentPom(project.getParent(), localRepositoryBasedirLength);
+      }
+      catch (IOException e) {
+        throw new MojoExecutionException("", e);
+      }
+    }
+  }
+
+  private void copyParentPom(MavenProject project, int localRepositoryBasedirLength) throws IOException, MojoExecutionException {
+    if (project == null) {
+      return;
+    }
+
+    Artifact artifact = project.getArtifact();
+    if (copiedArtifacts.contains(artifact)) {
+      return;
+    }
+
+    copiedArtifacts.add(artifact);
+
+    File artifactFile = artifact.getFile();
+    if (artifactFile == null && !artifact.isResolved()) {
+      ArtifactResolutionRequest request = new ArtifactResolutionRequest();
+      request.setArtifact(artifact);
+      request.setLocalRepository(session.getLocalRepository());
+      request.setRemoteRepositories(remoteRepositories);
+      ArtifactResolutionResult result = repositorySystem.resolve(request);
+      artifactFile = artifact.getFile();
+      if (!result.isSuccess() && artifactFile == null) {
+        if (getLog().isDebugEnabled()) {
+          for (Exception e : result.getExceptions()) {
+            getLog().error(e);
+          }
+        }
+        throw new MojoExecutionException("Failed to resolve artifact " + artifact);
+      }
+    }
+
+    copyArtifact(artifactFile, artifactFile.getPath().substring(localRepositoryBasedirLength));
+
+    copyParentPom(project.getParent(), localRepositoryBasedirLength);
   }
 
   private static void copyIfLastModifiedNotEquals(File from, File to) throws IOException {
@@ -115,14 +171,9 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
       final File artifactFile = artifact.getFile();
       final String localPath = artifactFile.getPath().substring(localRepositoryBasedirLength);
       try {
-        File outFile = new File(outputDirectory, localPath);
-        if (outFile.lastModified() == artifactFile.lastModified()) {
+        if (copyArtifact(artifactFile, localPath)) {
           continue;
         }
-
-        outFile.getParentFile().mkdirs();
-
-        Utils.copyFile(artifactFile, outFile);
 
         if (("configs".equals(artifact.getClassifier()) || (artifact.getClassifier() == null && "framework".equals(artifact.getArtifactId()) && artifact.getType().equals("swc"))) && !extractedConfigs.contains(artifact.getVersion())) {
           extractedConfigs.add(artifact.getVersion());
@@ -168,6 +219,18 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
         throw new MojoExecutionException("Cannot copy", e);
       }
     }
+  }
+
+  private boolean copyArtifact(File artifactFile, String localPath) throws IOException {
+    File outFile = new File(outputDirectory, localPath);
+    if (outFile.lastModified() == artifactFile.lastModified()) {
+      return true;
+    }
+
+    //noinspection ResultOfMethodCallIgnored
+    outFile.getParentFile().mkdirs();
+    Utils.copyFile(artifactFile, outFile);
+    return false;
   }
 
   private static void copyDirectory(File sourceDirectory, File destinationDirectory) throws IOException {
