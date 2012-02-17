@@ -7,6 +7,7 @@ import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.TableUtil;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.JBTable;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -123,6 +124,7 @@ public abstract class AddRemoveTableRowsDialog<T> extends DialogWrapper {
       return myList.size();
     }
 
+    @Nullable
     public abstract String getColumnName(int column);
 
     public abstract Class getColumnClass(int column);
