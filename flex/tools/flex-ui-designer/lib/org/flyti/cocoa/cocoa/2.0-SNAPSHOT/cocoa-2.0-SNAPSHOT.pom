@@ -52,7 +52,7 @@
       <groupId>org.jetbrains.miglayout</groupId>
       <artifactId>miglayout-core</artifactId>
       <type>swc</type>
-      <version>4.3-SNAPSHOT</version>
+      <version>4.3.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
 

@@ -46,10 +46,12 @@
         <properties id="143fa776-1595-479d-ae40-d34290b786df" />
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../../../../../../cocoa/appkit/target/cocoa-2.0-SNAPSHOT.swc!/" />
+          <root url="jar://$MODULE_DIR$/../../../../../../../miglayout-as/core/target/miglayout-core-4.3.1-SNAPSHOT.swc!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
           <root url="jar://$MODULE_DIR$/../../../../../../../cocoa/appkit/target/cocoa-2.0-SNAPSHOT-sources.jar!/" />
+          <root url="file://$MODULE_DIR$/../../../../../../../miglayout-as/core/src" />
         </SOURCES>
       </library>
     </orderEntry>

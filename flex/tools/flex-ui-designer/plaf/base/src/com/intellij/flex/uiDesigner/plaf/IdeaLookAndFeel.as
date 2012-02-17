@@ -86,7 +86,8 @@ class PanelBorder extends AbstractBorder {
 
     g.lineStyle(1, 0x999999);
     g.moveTo(x, y);
-    g.lineTo(x, y + h);
+    g.lineTo(x, y + h - 0.5);
+    g.lineTo(x + w,  y + h - 0.5);
   }
 }
 
