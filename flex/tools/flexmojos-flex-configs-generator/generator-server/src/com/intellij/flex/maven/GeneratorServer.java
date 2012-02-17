@@ -37,7 +37,6 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
@@ -296,10 +295,10 @@ public class GeneratorServer {
     if (mavenVersion.length() >= 5 && mavenVersion.charAt(2) == '0' && mavenVersion.charAt(4) < '4') {
       final DefaultRepositorySystem repositorySystem = (DefaultRepositorySystem)container.lookup(org.sonatype.aether.RepositorySystem.class);
       try {
-        repositorySystem.getClass().getMethod("setLocalRepositoryManagerFactories").invoke(repositorySystem, factoryList);
+        repositorySystem.getClass().getMethod("setLocalRepositoryManagerFactories", List.class).invoke(repositorySystem, factoryList);
       }
       catch (Exception e) {
-        e.printStackTrace();
+        container.getLoggerManager().getLoggerForComponent(null).warn("", e);
       }
     }
     else {
