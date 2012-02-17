@@ -334,6 +334,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
         if (!client.flush()) {
           return false;
         }
+
         indicator.setText(FlashUIDesignerBundle.message("loading.libraries"));
         while (!done.get()) {
           try {
@@ -344,6 +345,10 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
           }
 
           indicator.checkCanceled();
+
+          if (DesignerApplicationManager.getInstance().isApplicationClosed()) {
+            return false;
+          }
         }
       }
       else {
