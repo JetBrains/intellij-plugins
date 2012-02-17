@@ -206,10 +206,6 @@ public class MxmlWriter {
           // skip
           LOG.warn("Skip " + descriptor.getName() + " in " + parent.getText() + " due to IDEA-73453");
         }
-        //else if (descriptor.getTypeName().equals(FlexAnnotationNames.EVENT) ||
-        //         descriptor.getTypeName().equals(FlexAnnotationNames.BINDABLE)) {
-        //  // skip
-        //}
         else if (hasStates && stateWriter.checkStateSpecificPropertyValue(this, propertyProcessor, attribute,
                                                                           valueProviderFactory.create(attribute),
                                                                           descriptor, context, tagAttributeProcessContext
@@ -300,6 +296,11 @@ public class MxmlWriter {
       if (child instanceof XmlTag) {
         XmlTag tag = (XmlTag)child;
         XmlElementDescriptor descriptor = tag.getDescriptor();
+        if (descriptor == null) {
+          LOG.warn("Descriptor is null, skip " + child);
+          continue;
+        }
+
         assert descriptor != null;
         if (descriptor instanceof ClassBackedElementDescriptor) {
           final ClassBackedElementDescriptor classBackedDescriptor = (ClassBackedElementDescriptor)descriptor;
