@@ -183,7 +183,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
   }
 
   @NotNull
-  private Sdk[] getSdks() {
+  public Sdk[] getSdks() {
     if (mySdks != null) {
       return mySdks;
     }
