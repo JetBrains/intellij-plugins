@@ -15,12 +15,13 @@
  */
 package com.google.jstestdriver.idea.execution.tree;
 
-import java.io.File;
-import java.io.Serializable;
-
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.TestResult;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.io.Serializable;
 
 /**
  * This class is serialized using Java serialization, and sent across the socket from the
@@ -56,18 +57,18 @@ public class TestResultProtocolMessage implements Serializable {
     return message;
   }
 
-  public static TestResultProtocolMessage fromDryRun(File jstdConfigFile, String testName, BrowserInfo browser) {
+  public static TestResultProtocolMessage fromDryRun(
+      @NotNull File jstdConfigFile,
+      @NotNull BrowserInfo browser,
+      @NotNull String testCaseName,
+      @NotNull String testName
+  ) {
     TestResultProtocolMessage message = new TestResultProtocolMessage();
     message.jstdConfigFilePath = jstdConfigFile.getAbsolutePath();
     message.phase = "dryRun";
-    int lastDot = testName.lastIndexOf(".");
-    if (lastDot < 0) {
-      message.testName = testName;
-    } else {
-      message.testCase = testName.substring(0, lastDot);
-      message.testName = testName.substring(lastDot + 1);
-    }
     message.browser = browser.toString();
+    message.testCase = testCaseName;
+    message.testName = testName;
     return message;
   }
 

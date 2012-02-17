@@ -39,7 +39,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
@@ -149,7 +148,6 @@ public class ToolPanel extends JPanel {
       FileLoader fileLoader = new ProcessingFileLoader(
           new SimpleFileReader(),
           Collections.<FileLoadPostProcessor>singleton(new InlineHtmlProcessor(new HtmlDocParser(), new HtmlDocLexer())),
-          new File("."),
           new NullStopWatch()
       );
       CapturedBrowsers browsers = new CapturedBrowsers(new BrowserIdStrategy(new TimeImpl()));
@@ -171,7 +169,11 @@ public class ToolPanel extends JPanel {
         serverStartupAction.run(null);
         myServerStartupAction = serverStartupAction;
       } catch (Exception ex) {
-        Messages.showErrorDialog("Can't start JsTestDriver server on port " + serverPort + ".\nMake sure the port is free.", "JsTestDriver server launching");
+        Messages.showErrorDialog(
+            "Can't start JsTestDriver server on port " + serverPort
+            + ".\nMake sure the port is free.",
+            "JsTestDriver Server Launching"
+        );
       }
     }
   }

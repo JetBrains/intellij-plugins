@@ -17,37 +17,26 @@ package com.google.jstestdriver.idea;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
-import com.google.inject.multibindings.Multibinder;
-import com.google.inject.name.Names;
-import com.google.jstestdriver.*;
-import com.google.jstestdriver.config.Configuration;
-import com.google.jstestdriver.config.ConfigurationSource;
+import com.google.jstestdriver.JsTestDriver;
 import com.google.jstestdriver.config.UserConfigurationSource;
-import com.google.jstestdriver.config.YamlParser;
-import com.google.jstestdriver.hooks.FileParsePostProcessor;
+import com.google.jstestdriver.embedded.JsTestDriverBuilder;
 import com.google.jstestdriver.idea.execution.tree.JstdTestRunnerFailure;
 import com.google.jstestdriver.idea.server.JstdServerFetchResult;
 import com.google.jstestdriver.idea.server.JstdServerUtils;
 import com.google.jstestdriver.idea.util.EnumUtils;
 import com.google.jstestdriver.idea.util.ObjectUtils;
-import com.google.jstestdriver.output.MultiTestResultListener;
-import com.google.jstestdriver.output.TestResultHolder;
-import com.google.jstestdriver.output.TestResultListener;
 import com.google.jstestdriver.runner.RunnerMode;
-import com.google.jstestdriver.util.DisplayPathSanitizer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.net.*;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.LogManager;
 import java.util.regex.Pattern;
-
-import static com.google.inject.multibindings.Multibinder.newSetBinder;
 
 /**
  * Run JSTD in its own process, and stream messages via a socket to a server that lives in the IDEA process,
@@ -73,23 +62,29 @@ public class TestRunner {
     myTestResultProtocolMessageOutput = testResultProtocolMessageOutput;
   }
 
-  public void execute() throws InterruptedException {
+  public void executeAll() throws InterruptedException {
     for (File config : mySettings.getConfigFiles()) {
+      executeConfig(config);
+    }
+  }
+
+  public void executeConfig(@NotNull File config) throws InterruptedException {
+    try {
+      unsafeExecuteConfig(config);
+    } catch (Exception e) {
+      String message = formatMessage(null, e);
+      JstdTestRunnerFailure failure = new JstdTestRunnerFailure(
+          JstdTestRunnerFailure.FailureType.SINGLE_JSTD_CONFIG, message, config
+      );
       try {
-        execute(config);
-      } catch (Exception e) {
-        String message = formatMessage(null, e);
-        JstdTestRunnerFailure failure = new JstdTestRunnerFailure(JstdTestRunnerFailure.FailureType.SINGLE_JSTD_CONFIG, message, config);
-        try {
-          myTestResultProtocolMessageOutput.writeObject(failure);
-        } catch (IOException ioe) {
-          ioe.printStackTrace();
-        }
+        myTestResultProtocolMessageOutput.writeObject(failure);
+      } catch (IOException ioe) {
+        ioe.printStackTrace();
       }
     }
   }
 
-  private void execute(File config) {
+  private void unsafeExecuteConfig(@NotNull File config) {
     final String testCaseName;
     if (!mySettings.getTestCaseName().isEmpty()) {
       if (!mySettings.getTestMethodName().isEmpty()) {
@@ -100,72 +95,31 @@ public class TestRunner {
     } else {
       testCaseName = "all";
     }
-    List<String> testCaseNames = Collections.singletonList(testCaseName);
-    final ActionRunner dryRunRunner =
-        makeActionBuilder(config).dryRunFor(testCaseNames).build();
-    final ActionRunner testRunner =
-        makeActionBuilder(config).addTests(testCaseNames).build();
-    //TODO(alexeagle): support client-side reset action
-    final ActionRunner resetRunner =
-        makeActionBuilder(config).resetBrowsers().build();
 
-    dryRunRunner.runActions();
-    testRunner.runActions();
-    resetRunner.runActions();
+    runTests(config, new String[]{"--dryRunFor", testCaseName});
+    runTests(config, new String[]{"--tests", testCaseName});
+    runTests(config, new String[]{"--reset"});
   }
 
-  private IDEPluginActionBuilder makeActionBuilder(File configFile) {
-    FlagsImpl flags = new FlagsImpl();
-    flags.setServer(mySettings.getServerUrl());
-    flags.setCaptureConsole(true);
-    Configuration configuration = resolveConfiguration(configFile, flags);
-    IDEPluginActionBuilder builder =
-        new IDEPluginActionBuilder(configuration, flags);
-    List<Module> modules = new PluginLoader().load(configuration.getPlugins());
-    for (Module module : modules) {
-      builder.install(module);
-    }
-    builder.install(createTestResultPrintingModule(configFile));
-    return builder;
+  @SuppressWarnings("deprecation")
+  private void runTests(@NotNull File config, @NotNull String[] extraArgs) {
+    JsTestDriverBuilder builder = new JsTestDriverBuilder();
+    builder.setConfigurationSource(new UserConfigurationSource(config));
+    builder.setPort(mySettings.getPort());
+    builder.addTestListener(new IDETestListener(myTestResultProtocolMessageOutput, config));
+    builder.setRunnerMode(RunnerMode.QUIET);
+    builder.setServer(mySettings.getServerUrl());
+    
+    List<String> flagArgs = new ArrayList<String>(Arrays.asList("--captureConsole", "--server", mySettings.getServerUrl()));
+    flagArgs.addAll(Arrays.asList(extraArgs));
+    
+    String[] args = flagArgs.toArray(new String[flagArgs.size()]);
+    builder.setFlags(args);
+    JsTestDriver jstd = builder.build();
+    jstd.runConfiguration();
   }
 
-  private Configuration resolveConfiguration(File configFile, FlagsImpl flags) {
-    try {
-      ConfigurationSource confSrc = new UserConfigurationSource(configFile);
-      File initialBasePath = configFile.getParentFile();
-      Configuration parsedConf = confSrc.parse(initialBasePath, new YamlParser());
-      File resolvedBasePath = parsedConf.getBasePath().getCanonicalFile();
-      PathResolver pathResolver = new PathResolver(
-          resolvedBasePath,
-          Collections.<FileParsePostProcessor>emptySet(),
-          new DisplayPathSanitizer(resolvedBasePath)
-      );
-      return parsedConf.resolvePaths(pathResolver, flags);
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to read settings file " + configFile, e);
-    }
-  }
-
-  private Module createTestResultPrintingModule(final File configFile) {
-    return new AbstractModule() {
-      @Override
-      protected void configure() {
-        bind(ObjectOutput.class).annotatedWith(Names.named("testResultProtocolMessageOutput"))
-            .toInstance(myTestResultProtocolMessageOutput);
-        bind(File.class).annotatedWith(Names.named("jstdConfigFile")).toInstance(configFile);
-        Multibinder<TestResultListener> testResultListeners =
-            newSetBinder(binder(), TestResultListener.class);
-
-        testResultListeners.addBinding().to(TestResultHolder.class);
-
-        bind(TestResultListener.class).to(MultiTestResultListener.class);
-        newSetBinder(binder(),
-            ResponseStreamFactory.class).addBinding().to(TestRunnerResponseStreamFactory.class);
-      }
-    };
-  }
-
-  private static String formatMessage(String message, Throwable t) {
+  private static String formatMessage(@Nullable String message, @NotNull Throwable t) {
     StringWriter sw = new StringWriter();
     PrintWriter pw = new PrintWriter(sw);
     t.printStackTrace(pw);
@@ -179,15 +133,19 @@ public class TestRunner {
 
   public static void main(String[] args) throws Exception {
     LogManager.getLogManager().readConfiguration(RunnerMode.QUIET.getLogConfig());
+    for (String arg : args) {
+      System.out.print(arg + " ");
+    }
+    System.out.println();
 
     Map<ParameterKey, String> paramMap = parseParams(args);
     Settings settings = Settings.build(paramMap);
-    ObjectOutput testResultProtocolMessageOutput = fetchSocketObjectOutput(settings.getPort());
+    ObjectOutput testResultProtocolMessageOutput = fetchSocketObjectOutput(settings.getPort());//new ConsoleObjectOutput();//
     if (!validateServer(testResultProtocolMessageOutput, settings)) {
       return;
     }
     try {
-      new TestRunner(settings, testResultProtocolMessageOutput).execute();
+      new TestRunner(settings, testResultProtocolMessageOutput).executeAll();
     } catch (Exception ex) {
       String message = formatMessage("JsTestDriver crashed!", ex);
       testResultProtocolMessageOutput.writeObject(new JstdTestRunnerFailure(JstdTestRunnerFailure.FailureType.WHOLE_TEST_RUNNER, message, null));
@@ -291,8 +249,12 @@ public class TestRunner {
     private final String myTestCaseName;
     private final String myTestMethodName;
 
-    private Settings(int port, @NotNull String serverUrl, @NotNull List<File> configFiles,
-                     @NotNull String testCaseName, @NotNull String testMethodName) {
+    private Settings(int port,
+                     @NotNull String serverUrl,
+                     @NotNull List<File> configFiles,
+                     @NotNull String testCaseName,
+                     @NotNull String testMethodName)
+    {
       myPort = port;
       myServerUrl = serverUrl;
       myConfigFiles = configFiles;
@@ -325,7 +287,7 @@ public class TestRunner {
     }
 
     @NotNull
-    private static Settings build(Map<ParameterKey, String> parameters) {
+    private static Settings build(@NotNull Map<ParameterKey, String> parameters) {
       int port = Integer.parseInt(parameters.get(ParameterKey.PORT));
       String serverUrl = parameters.get(ParameterKey.SERVER_URL);
       if (serverUrl == null) {
