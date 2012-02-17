@@ -57,7 +57,7 @@ public class BCCombo extends JComboBox {
         if (value instanceof Pair) {
           final String moduleName = (String)((Pair)value).first;
           final String configName = (String)((Pair)value).second;
-          setIcon(PlatformIcons.ERROR_INTRODUCTION_ICON);
+          //setIcon(PlatformIcons.ERROR_INTRODUCTION_ICON);
           setText("<html><font color='red'>" + getPresentableText(moduleName, configName, mySingleModuleProject) + "</font></html>");
         }
         else {
@@ -132,9 +132,8 @@ public class BCCombo extends JComboBox {
     return selectedItem instanceof FlexIdeBuildConfiguration ? myBCToModuleMap.get((FlexIdeBuildConfiguration)selectedItem) : null;
   }
 
-  private static String getPresentableText(String moduleName, String configName, final boolean singleModuleProject) {
-    moduleName = moduleName.isEmpty() ? "[no module]" : moduleName;
-    configName = configName.isEmpty() ? "[no configuration]" : configName;
+  private static String getPresentableText(final String moduleName, final String configName, final boolean singleModuleProject) {
+    if (moduleName.isEmpty() || configName.isEmpty()) return "[none]";
     return singleModuleProject ? configName : configName + " (" + moduleName + ")";
   }
 }

@@ -10,6 +10,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.AbstractTableCellEditor;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -57,8 +58,9 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
         return myInfo.LIST_ELEMENTS.length;
       }
 
+      @Nullable
       public String getColumnName(final int column) {
-        return myInfo.LIST_ELEMENTS[column].DISPLAY_NAME;
+        return myInfo.LIST_ELEMENTS.length == 1 ? null : myInfo.LIST_ELEMENTS[column].DISPLAY_NAME;
       }
 
       public Class getColumnClass(final int column) {

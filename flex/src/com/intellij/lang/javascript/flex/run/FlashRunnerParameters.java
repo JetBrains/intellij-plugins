@@ -285,15 +285,15 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
             throw new RuntimeConfigurationError(FlexBundle.message("flex.run.config.incorrect.url"));
           }
 
-          if (myLauncherParameters.getLauncherType() == LauncherParameters.LauncherType.Player) {
-            throw new RuntimeConfigurationError(FlexBundle.message("flex.run.config.url.can.not.be.run.with.flash.player"));
-          }
+          //if (myLauncherParameters.getLauncherType() == LauncherParameters.LauncherType.Player) {
+          //  throw new RuntimeConfigurationError(FlexBundle.message("flex.run.config.url.can.not.be.run.with.flash.player"));
+          //}
         }
 
-        if (myLauncherParameters.getLauncherType() == LauncherParameters.LauncherType.Player
-            && bc.getTargetPlatform() == TargetPlatform.Web && bc.isUseHtmlWrapper()) {
-          throw new RuntimeConfigurationError(FlexBundle.message("html.wrapper.can.not.be.run.with.flash.player"));
-        }
+        //if (myLauncherParameters.getLauncherType() == LauncherParameters.LauncherType.Player
+        //    && bc.getTargetPlatform() == TargetPlatform.Web && bc.isUseHtmlWrapper()) {
+        //  throw new RuntimeConfigurationError(FlexBundle.message("html.wrapper.can.not.be.run.with.flash.player"));
+        //}
         break;
 
       case Desktop:

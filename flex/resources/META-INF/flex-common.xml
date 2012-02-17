@@ -141,6 +141,7 @@
     <project.converterProvider implementation="com.intellij.lang.javascript.flex.projectStructure.conversion.FlexBuildConfigurationsConverterProvider"/>
 
     <moduleRendererFactory implementation="com.intellij.lang.javascript.flex.FlexModuleRendererFactory"/>
+    <treeStructureProvider implementation="com.intellij.lang.javascript.flex.projectStructure.ui.FlexCompositeSdkProjectViewStructureProvider"/>
 
     <localInspection language="ECMA Script Level 4" shortName="FlexUnitClassInProductSourceInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testclassinproductsource.displayname" groupKey="flexunit.inspections.group"

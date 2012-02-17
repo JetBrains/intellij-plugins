@@ -791,7 +791,7 @@ class PropertyProcessor implements ValueWriter {
 
     final PsiElement parent = jsClass.getNavigationElement().getParent();
     if (parent instanceof XmlTag && MxmlUtil.isComponentLanguageTag((XmlTag)parent)) {
-      LOG.warn("AS-125 " + valueProvider.getElement());
+      LOG.warn("AS-125 " + valueProvider.getElement().getText());
       effectiveClassInfo = new Trinity<Integer, String, Condition<AnnotationBackedDescriptor>>(-1, "mx.core.UIComponent", null);
     }
     else {
