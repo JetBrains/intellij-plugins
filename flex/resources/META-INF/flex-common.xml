@@ -37,6 +37,7 @@
     <fileTypeFactory implementation="com.intellij.javascript.flex.FlexApplicationComponent"/>
     <lang.parserDefinition language="Mxml" implementationClass="com.intellij.javascript.flex.MxmlParserDefinition"/>
     <completionData fileType="MXML" className="com.intellij.codeInsight.completion.XmlCompletionData"/>
+    <todoIndexer filetype="MXML" implementationClass="com.intellij.javascript.flex.MxmlTodoIndexer"/>
     <standardResourceProvider implementation="com.intellij.javascript.flex.FlexApplicationComponent$ResourceProvider"/>
 
     <fileBasedIndex implementation="com.intellij.javascript.flex.mxml.FlexXmlBackedSuperClassesIndex"/>
