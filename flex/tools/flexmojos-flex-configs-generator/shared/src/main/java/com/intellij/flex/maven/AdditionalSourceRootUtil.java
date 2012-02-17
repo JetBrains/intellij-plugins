@@ -17,9 +17,12 @@ public final class AdditionalSourceRootUtil {
     // IDEA-58453
     File generatedSources = new File(project.getBuild().getDirectory(), "/generated-sources");
     if (generatedSources.isDirectory()) {
-      for (File file : generatedSources.listFiles()) {
-        if (file.isDirectory() && !file.isHidden()) {
-          addCompilerSourceRoot(project, file);
+      File[] files = generatedSources.listFiles();
+      if (files != null) {
+        for (File file : files) {
+          if (file.isDirectory() && !file.isHidden()) {
+            addCompilerSourceRoot(project, file);
+          }
         }
       }
     }

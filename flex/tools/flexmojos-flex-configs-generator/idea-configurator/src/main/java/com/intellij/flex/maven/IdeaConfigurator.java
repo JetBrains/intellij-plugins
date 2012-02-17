@@ -227,7 +227,7 @@ public class IdeaConfigurator implements FlexConfigGenerator {
             if (v == null) {
               System.out.print('\n' + childTagName + " child value for " + name + " is null\n");
             }
-            if (v != null) {
+            else {
               writeTag(indent, childTagName, v.toString(), name);
             }
           }

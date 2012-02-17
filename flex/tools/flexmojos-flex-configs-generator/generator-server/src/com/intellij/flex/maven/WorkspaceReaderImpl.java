@@ -55,17 +55,10 @@ class WorkspaceReaderImpl implements WorkspaceReader {
     }
 
     final String ext = artifact.getExtension();
-    if (!ext.equals(POM_EXTENSION)) {
-      // IDEA-78485
-      if ("sources".equals(artifact.getClassifier())) {
-        return data.outputFile;
-      }
-
-      boolean isResourceBundle = false;
-      if (!(ext.equals("swc") || (isResourceBundle = ext.equals("rb.swc")) || ext.equals("swf"))) {
-        throw new IllegalStateException("Found artifact must be flash artifact (swc or swf): " + artifact);
-      }
-
+    boolean isResourceBundle = false;
+    // IDEA-78485
+    if (!"sources".equals(artifact.getClassifier()) &&
+        (ext.equals("swc") || (isResourceBundle = ext.equals("rb.swc")) || ext.equals("swf"))) {
       if (data.outputFile == null) {
         try {
           generatorServer.resolveOutputs(data);
@@ -81,6 +74,10 @@ class WorkspaceReaderImpl implements WorkspaceReader {
       }
 
       return data.outputFile;
+    }
+    else if (!(ext.equals(POM_EXTENSION) || ext.equals("jar") || ext.equals("css") || ext.isEmpty())) {
+      // about jar — We have quite some jar dependencies in our flex modules in order to be able to generate code from the flexmojos generate goal
+      generatorServer.getLogger().warn("Found artifact must be flash artifact (swc or swf), css or jar: " + artifact);
     }
 
     return data.file;
