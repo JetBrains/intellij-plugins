@@ -73,7 +73,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
 
     try {
       runGeneratorServer(MavenProjectsManager.getInstance(project), project);
-      writeProjects();
+      writeProjects(project);
     }
     catch (IOException e) {
       showWarning(project);
@@ -126,13 +126,25 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
     LOG.info("Generating flex configs took " + duration + " ms: " + duration / 60000 + " min " + (duration % 60000) / 1000 + "sec");
   }
 
-  private void writeProjects() throws IOException {
+  private void writeProjects(Project project) throws IOException {
     assert !projects.isEmpty();
     out.writeShort(projects.size());
+    MavenProject outdatedIdeaMavenPluginHolder = null;
     for (MavenProject pendingProject : projects) {
+      if (outdatedIdeaMavenPluginHolder == null &&
+          pendingProject.findPlugin("com.intellij.flex.maven", "idea-flexmojos-maven-plugin") != null) {
+        outdatedIdeaMavenPluginHolder = pendingProject;
+      }
+
       out.writeUTF(pendingProject.getFile().getPath());
     }
     out.flush();
+
+    if (outdatedIdeaMavenPluginHolder != null) {
+      new Notification("Maven", FlexBundle.message("flexmojos.project.import"), FlexBundle.message(
+        "flexmojos.maven.plugin.outdated.warning", outdatedIdeaMavenPluginHolder.getMavenId().toString()), NotificationType.WARNING)
+        .notify(project);
+    }
   }
 
   void submit(MavenProject mavenProject, final Module module, final String configFilePath) {
