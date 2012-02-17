@@ -9,8 +9,10 @@ import com.intellij.lang.javascript.flex.run.LauncherParameters;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Transient;
@@ -170,6 +172,7 @@ public class NewFlexUnitRunnerParameters extends BCBasedRunnerParameters impleme
     overriddenBC.setCssFilesToCompile(Collections.<String>emptyList());
     overriddenBC.setMainClass(FlexUnitPrecompileTask.getFlexUnitLauncherName(getModuleName()));
     overriddenBC.setOutputFileName("_flexunit.swf");
+    overriddenBC.setOutputFolder(VfsUtil.urlToPath(CompilerModuleExtension.getInstance(moduleAndBC.first).getCompilerOutputUrlForTests()));
     //overriddenBC.getAndroidPackagingOptions().setPackageFileName("_flexunit.apk");
     //overriddenBC.getIosPackagingOptions().setPackageFileName("_flexunit.ipa");
 
