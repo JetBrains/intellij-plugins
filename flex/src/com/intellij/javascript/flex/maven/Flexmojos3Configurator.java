@@ -162,7 +162,7 @@ public class Flexmojos3Configurator {
                                                                           : DependencyScope.COMPILE;
       final boolean isExported = entry instanceof ExportableOrderEntry && ((ExportableOrderEntry)entry).isExported();
 
-      if ((entry instanceof ModuleOrderEntry)) {
+      if (entry instanceof ModuleOrderEntry) {
         rootModel.removeOrderEntry(entry);
 
         final String dependencyModuleName = ((ModuleOrderEntry)entry).getModuleName();
@@ -174,14 +174,19 @@ public class Flexmojos3Configurator {
         continue;
       }
 
+      if (entry instanceof JdkOrderEntry) {
+        rootModel.removeOrderEntry(entry);
+      }
+
       if (!(entry instanceof LibraryOrderEntry)) continue;
+      rootModel.removeOrderEntry(entry);
 
       if (!LibraryTablesRegistrar.PROJECT_LEVEL.equals(((LibraryOrderEntry)entry).getLibraryLevel())) continue;
       final Library library = ((LibraryOrderEntry)entry).getLibrary();
       if (library == null || !MavenRootModelAdapter.isMavenLibrary(library)) continue;
 
       final String libraryName = library.getName();
-      if (libraryName.contains(":rb.swc:")) {
+      if (libraryName.contains(":rb.swc:") || libraryName.contains(":resource-bundle:")) {
         // fix rb.swc placeholders to real SWCs according to used locales
         final Library.ModifiableModel libraryModifiableModel = myModelsProvider.getLibraryModel(library);
         for (final String rbSwcPlaceholdersUrl : findRbSwcPlaceholderUrls(libraryModifiableModel)) {
@@ -196,7 +201,7 @@ public class Flexmojos3Configurator {
         }
       }
 
-      if (libraryName.contains(":swc:") || libraryName.contains(":rb.swc:")) {
+      if (libraryName.contains(":swc:") || libraryName.contains(":rb.swc:") || libraryName.contains(":resource-bundle:")) {
         playerglobal |= libraryName.contains("playerglobal");
         airglobal |= libraryName.contains("airglobal");
         mobilecomponents |= libraryName.contains("mobilecomponents");
@@ -212,7 +217,6 @@ public class Flexmojos3Configurator {
           }
         }
 
-        rootModel.removeOrderEntry(entry);
         final ModifiableDependencyEntry sharedLibraryEntry =
           myFlexEditor.createSharedLibraryEntry(bc.getDependencies(), ((LibraryOrderEntry)entry).getLibraryName(),
                                                 ((LibraryOrderEntry)entry).getLibraryLevel());
@@ -220,8 +224,7 @@ public class Flexmojos3Configurator {
         bc.getDependencies().getModifiableEntries().add(sharedLibraryEntry);
       }
       else {
-        MavenLog.LOG.warn("Unexpected library in dependencies of module '" + myModule.getName() + "': " + libraryName
-                          + ". Only swc and rb.swc libraries expected.");
+        MavenLog.LOG.info("Non-swc dependency for flexmojos project '" + myModule.getName() + "': " + libraryName);
       }
     }
 
