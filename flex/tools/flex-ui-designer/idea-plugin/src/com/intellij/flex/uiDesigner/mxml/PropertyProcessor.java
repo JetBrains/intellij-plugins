@@ -22,6 +22,7 @@ import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.meta.PsiMetaData;
 import com.intellij.psi.xml.*;
 import com.intellij.util.StringBuilderSpinAllocator;
@@ -781,13 +782,23 @@ class PropertyProcessor implements ValueWriter {
       return;
     }
 
-    JSClass jsClass = valueProvider.getJsClass();
+    final JSClass jsClass = valueProvider.getJsClass();
     if (jsClass == null) {
       throw new InvalidPropertyException(valueProvider.getElement(), "error.unresolved.class", valueProvider.getTrimmed());
     }
 
-    Trinity<Integer, String, Condition<AnnotationBackedDescriptor>> effectiveClassInfo =
-      MxmlUtil.computeEffectiveClass(valueProvider.getElement(), jsClass, mxmlWriter.projectComponentReferenceCounter, false);
+    final Trinity<Integer, String, Condition<AnnotationBackedDescriptor>> effectiveClassInfo;
+
+    final PsiElement parent = jsClass.getNavigationElement().getParent();
+    if (parent instanceof XmlTag && MxmlUtil.isComponentLanguageTag((XmlTag)parent)) {
+      LOG.warn("AS-125 " + valueProvider.getElement());
+      effectiveClassInfo = new Trinity<Integer, String, Condition<AnnotationBackedDescriptor>>(-1, "mx.core.UIComponent", null);
+    }
+    else {
+      effectiveClassInfo =
+        MxmlUtil.computeEffectiveClass(valueProvider.getElement(), jsClass, mxmlWriter.projectComponentReferenceCounter, false);
+    }
+
     if (effectiveClassInfo.first == -1) {
       if (effectiveClassInfo.second != null) {
         if (effectiveClassInfo.second.equals("mx.core.UIComponent")) {

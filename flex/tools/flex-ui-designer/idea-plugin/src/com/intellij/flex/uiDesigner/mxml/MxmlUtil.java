@@ -126,6 +126,11 @@ public final class MxmlUtil {
 
   static boolean isPropertyOfSparkDataGroup(AnnotationBackedDescriptor descriptor) {
     PsiElement parent = descriptor.getDeclaration().getParent();
-    return parent instanceof JSClass && ((JSClass)parent).getQualifiedName().equals("spark.components.DataGroup");
+    if (parent instanceof JSClass) {
+      String name = ((JSClass)parent).getQualifiedName();
+      return name.equals("spark.components.DataGroup") || name.equals("spark.components.SkinnableDataContainer");
+    }
+
+    return false;
   }
 }

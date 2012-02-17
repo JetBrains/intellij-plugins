@@ -27,6 +27,15 @@
     <content url="file://$MODULE_DIR$/../../../impl">
       <sourceFolder url="file://$MODULE_DIR$/../../../impl/src" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../../../main-loader/src">
+      <sourceFolder url="file://$MODULE_DIR$/../../../main-loader/src" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../../main/src">
+      <sourceFolder url="file://$MODULE_DIR$/../../../main/src" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../../shared/src">
+      <sourceFolder url="file://$MODULE_DIR$/../../../shared/src" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../../ui">
       <sourceFolder url="file://$MODULE_DIR$/../../../ui/src" isTestSource="false" />
     </content>
