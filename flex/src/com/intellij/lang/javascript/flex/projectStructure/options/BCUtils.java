@@ -63,6 +63,10 @@ public class BCUtils {
     return bc.getOutputType() == OutputType.Application && bc.getTargetPlatform() != TargetPlatform.Mobile;
   }
 
+  public static boolean canHaveResourceFiles(final BuildConfigurationNature nature) {
+    return nature.isApp();
+  }
+
   public static LinkageType[] getSuitableFrameworkLinkages(BuildConfigurationNature nature) {
     return nature.pureAS
            ? AS_LINKAGES

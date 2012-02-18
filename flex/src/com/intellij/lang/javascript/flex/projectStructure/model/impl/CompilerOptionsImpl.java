@@ -27,6 +27,7 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
   private final EventDispatcher<CompilerOptionsListener> myDispatcher = EventDispatcher.create(CompilerOptionsListener.class);
 
   private final Map<String, String> myOptions = new THashMap<String, String>();
+  private @NotNull ResourceFilesMode myResourceFilesMode = ResourceFilesMode.All;
   private @NotNull String myAdditionalConfigFilePath = "";
   private @NotNull String myAdditionalOptions = "";
 
@@ -70,6 +71,15 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
     }
   }
 
+  public void setResourceFilesMode(@NotNull final ResourceFilesMode mode) {
+    myResourceFilesMode = mode;
+  }
+
+  @NotNull
+  public ResourceFilesMode getResourceFilesMode() {
+    return myResourceFilesMode;
+  }
+
   public void setAdditionalConfigFilePath(@NotNull final String path) {
     myAdditionalConfigFilePath = path;
 
@@ -110,6 +120,7 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
 
   void applyTo(ModifiableCompilerOptions copy) {
     copy.setAllOptions(myOptions);
+    copy.setResourceFilesMode(myResourceFilesMode);
     copy.setAdditionalConfigFilePath(myAdditionalConfigFilePath);
     copy.setAdditionalOptions(myAdditionalOptions);
   }
@@ -117,6 +128,7 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
   public State getState(final @Nullable ComponentManager componentManager) {
     State state = new State();
     putOptionsCollapsingPaths(myOptions, state.options, componentManager);
+    state.resourceFilesMode = myResourceFilesMode;
     state.additionalConfigFilePath = myAdditionalConfigFilePath;
     state.additionalOptions = myAdditionalOptions;
     return state;
@@ -139,12 +151,14 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
         myOptions.put(entry.getKey(), entry.getValue());
       }
     }
+    myResourceFilesMode = state.resourceFilesMode;
     myAdditionalConfigFilePath = state.additionalConfigFilePath;
     myAdditionalOptions = state.additionalOptions;
   }
 
   public boolean isEqual(CompilerOptionsImpl other) {
     return myOptions.equals(other.myOptions) &&
+           myResourceFilesMode == other.myResourceFilesMode &&
            myAdditionalConfigFilePath.equals(other.myAdditionalConfigFilePath) &&
            myAdditionalOptions.equals(other.myAdditionalOptions);
   }
@@ -154,6 +168,7 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
     @Property(surroundWithTag = false)
     @MapAnnotation(surroundKeyWithTag = false, surroundValueWithTag = false)
     public Map<String, String> options = new THashMap<String, String>();
+    public ResourceFilesMode resourceFilesMode = ResourceFilesMode.All;
     public String additionalConfigFilePath = "";
     public String additionalOptions = "";
   }

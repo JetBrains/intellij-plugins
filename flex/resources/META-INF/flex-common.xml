@@ -18,6 +18,8 @@
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
     <compiler implementation="com.intellij.lang.javascript.flex.build.FlexCompiler"/>
+    <compiler implementation="com.intellij.lang.javascript.flex.build.FlexResourceCompiler"/>
+    <compiler.resourceCompilerExtension implementation="com.intellij.lang.javascript.flex.build.FlexResourceCompilerExtension"/>
     <programRunner implementation="com.intellij.lang.javascript.flex.debug.FlexDebugRunner"/>
     <programRunner implementation="com.intellij.lang.javascript.flex.run.FlexRunner"/>
     <xdebugger.breakpointType implementation="com.intellij.lang.javascript.flex.debug.FlexBreakpointType"/>

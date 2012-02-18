@@ -43,12 +43,11 @@ import java.io.DataInput;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * @author Maxim.Mossienko
- *         Date: Jul 9, 2008
- *         Time: 11:22:58 PM
- */
-public class FlexCompiler implements SourceProcessingCompiler {
+// FlexCompiler must work later than FlexResourceCompiler (TranslatingCompiler), because FlexCompiler handles HTML wrapper template and AIR descriptor template.
+// So it must override files with the same names which probably were copied by FlexResourceCompiler.
+// On the other hand FlexCompiler must work before ArtifactsCompiler (PackagingCompiler) as swf may be packaged into artifact.
+// That's why FlexCompiler needs to implement ClassInstrumentingCompiler or ClassPostProcessingCompiler (see CompilerDriver.doCompile())
+public class FlexCompiler implements ClassPostProcessingCompiler {
   private static final Logger LOG = Logger.getInstance(FlexCompiler.class.getName());
 
   @NotNull
@@ -141,6 +140,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
             final ModifiableFlexIdeBuildConfiguration cssBC = Factory.getTemporaryCopyForCompilation(bc);
             cssBC.setMainClass(cssPath);
             cssBC.setOutputFileName(FileUtil.getNameWithoutExtension(PathUtil.getFileName(cssPath)) + ".swf");
+            cssBC.setCssFilesToCompile(Collections.<String>emptyList());
+            cssBC.getCompilerOptions().setResourceFilesMode(CompilerOptions.ResourceFilesMode.None);
 
             VirtualFile root = ProjectRootManager.getInstance(context.getProject()).getFileIndex().getSourceRootForFile(cssFile);
             if (root == null) root = ProjectRootManager.getInstance(context.getProject()).getFileIndex().getContentRootForFile(cssFile);

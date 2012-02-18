@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.module.Module;
@@ -241,6 +242,10 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
 
         // impossible without extra user input: certificate and provisioning profile
         overriddenBC.getIosPackagingOptions().setEnabled(false);
+      }
+
+      if (BCUtils.canHaveResourceFiles(overriddenBC.getNature()) && !BCUtils.canHaveResourceFiles(moduleAndBC.second.getNature())) {
+        overriddenBC.getCompilerOptions().setResourceFilesMode(CompilerOptions.ResourceFilesMode.None);
       }
 
       return Pair.create(moduleAndBC.first, ((FlexIdeBuildConfiguration)overriddenBC));

@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.compiler.options.CompilerUIConfigurable;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
@@ -9,6 +10,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptionsListener;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableCompilerOptions;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
@@ -47,6 +49,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
+import javax.swing.event.HyperlinkEvent;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -59,6 +62,8 @@ import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.List;
 
+import static com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions.ResourceFilesMode;
+
 public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptions> {
   private JPanel myMainPanel;
 
@@ -68,6 +73,12 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   private JLabel myInheritModuleDefaultsLegend;
   private JButton myProjectDefaultsButton;
   private JButton myModuleDefaultsButton;
+
+  private JPanel myResourcesPanel;
+  private JCheckBox myCopyResourceFilesCheckBox;
+  private JRadioButton myCopyAllResourcesRadioButton;
+  private JRadioButton myRespectResourcePatternsRadioButton;
+  private HoverHyperlinkLabel myResourcePatternsHyperlink;
 
   private JLabel myConfigFileLabel;
   private TextFieldWithBrowseButton myConfigFileTextWithBrowse;
@@ -87,9 +98,9 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   private final FlexProjectLevelCompilerOptionsHolder myProjectLevelOptionsHolder;
   private final ModifiableCompilerOptions myModel;
   private final Map<String, String> myCurrentOptions;
-  private boolean myModified;
+  private boolean myMapModified;
 
-  private Collection<OptionsListener> myListeners = new ArrayList<OptionsListener>();
+  private final Collection<OptionsListener> myListeners = new ArrayList<OptionsListener>();
   private final Disposable myDisposable = Disposer.newDisposable();
 
   private static final String UNKNOWN_SDK_VERSION = "100";
@@ -145,6 +156,18 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
     myInheritModuleDefaultsLegend.setVisible(myMode == Mode.BC);
     myInheritProjectDefaultsLegend.setVisible(myMode == Mode.BC || myMode == Mode.Module);
+
+    myResourcesPanel.setVisible(myMode == Mode.BC && BCUtils.canHaveResourceFiles(myNature));
+    myCopyResourceFilesCheckBox.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        updateResourcesControls();
+      }
+    });
+    myResourcePatternsHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
+      protected void hyperlinkActivated(final HyperlinkEvent e) {
+        ShowSettingsUtil.getInstance().editConfigurable(project, new CompilerUIConfigurable(module.getProject()));
+      }
+    });
 
     initButtonsAndAdditionalOptions();
 
@@ -270,12 +293,21 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   }
 
   public boolean isModified() {
-    if (myModified) return true;
+    if (myMapModified) return true;
+    if (myModel.getResourceFilesMode() != getResourceFilesMode()) return true;
     if (!myModel.getAdditionalConfigFilePath().equals(FileUtil.toSystemIndependentName(myConfigFileTextWithBrowse.getText().trim()))) {
       return true;
     }
     if (!myModel.getAdditionalOptions().equals(myAdditionalOptionsField.getText().trim())) return true;
     return false;
+  }
+
+  private ResourceFilesMode getResourceFilesMode() {
+    return !myCopyResourceFilesCheckBox.isVisible() || !myCopyResourceFilesCheckBox.isSelected()
+           ? ResourceFilesMode.None
+           : myCopyAllResourcesRadioButton.isSelected()
+             ? ResourceFilesMode.All
+             : ResourceFilesMode.ResourcePatterns;
   }
 
   public void apply() throws ConfigurationException {
@@ -286,9 +318,10 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     TableUtil.stopEditing(myTreeTable);
     compilerOptions.setAllOptions(myCurrentOptions);
     if (compilerOptions == myModel) {
-      myModified = false;
+      myMapModified = false;
     }
 
+    compilerOptions.setResourceFilesMode(getResourceFilesMode());
     compilerOptions.setAdditionalConfigFilePath(FileUtil.toSystemIndependentName(myConfigFileTextWithBrowse.getText().trim()));
     compilerOptions.setAdditionalOptions(myAdditionalOptionsField.getText().trim());
   }
@@ -296,8 +329,14 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   public void reset() {
     myCurrentOptions.clear();
     myCurrentOptions.putAll(myModel.getAllOptions());
-    myModified = false;
+    myMapModified = false;
     updateTreeTable();
+
+    final ResourceFilesMode mode = myModel.getResourceFilesMode();
+    myCopyResourceFilesCheckBox.setSelected(mode != ResourceFilesMode.None);
+    myCopyAllResourcesRadioButton.setSelected(mode == ResourceFilesMode.None || mode == ResourceFilesMode.All);
+    myRespectResourcePatternsRadioButton.setSelected(mode == ResourceFilesMode.ResourcePatterns);
+    updateResourcesControls();
 
     myConfigFileTextWithBrowse.setText(FileUtil.toSystemDependentName(myModel.getAdditionalConfigFilePath()));
     myAdditionalOptionsField.setText(myModel.getAdditionalOptions());
@@ -311,6 +350,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
   private void createUIComponents() {
     myTreeTable = createTreeTable();
+    myResourcePatternsHyperlink = new HoverHyperlinkLabel("resource patterns");
   }
 
   private TreeTable createTreeTable() {
@@ -568,7 +608,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
         // don't apply if user just clicked through the table without typing anything
         if (!value.equals(valueAndSource.first)) {
-          myModified = true;
+          myMapModified = true;
           myCurrentOptions.put(info.ID, (String)value);
           reloadNodeOrGroup(myTreeTable.getTree(), treeNode);
         }
@@ -585,6 +625,12 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       nodeToRefresh = parent;
     }
     ((DefaultTreeModel)tree.getModel()).reload(nodeToRefresh);
+  }
+
+  private void updateResourcesControls() {
+    myCopyAllResourcesRadioButton.setEnabled(myCopyResourceFilesCheckBox.isSelected());
+    myRespectResourcePatternsRadioButton.setEnabled(myCopyResourceFilesCheckBox.isSelected());
+    myResourcePatternsHyperlink.setEnabled(myCopyResourceFilesCheckBox.isSelected());
   }
 
   private void updateAdditionalOptionsControls() {
@@ -797,7 +843,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     public void actionPerformed(final AnActionEvent e) {
       final Pair<DefaultMutableTreeNode, CompilerOptionInfo> nodeAndInfo = getNodeAndInfo();
       if (nodeAndInfo.second != null) {
-        myModified = true;
+        myMapModified = true;
         myCurrentOptions.remove(nodeAndInfo.second.ID);
         reloadNodeOrGroup(myTree, nodeAndInfo.first);
       }

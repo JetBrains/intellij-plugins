@@ -4,6 +4,7 @@ import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
 import com.intellij.lang.javascript.flex.run.LauncherParameters;
 import com.intellij.openapi.module.Module;
@@ -178,6 +179,10 @@ public class NewFlexUnitRunnerParameters extends BCBasedRunnerParameters impleme
 
     overriddenBC.setOutputType(OutputType.Application);
     overriddenBC.setUseHtmlWrapper(false);
+
+    if (BCUtils.canHaveResourceFiles(overriddenBC.getNature()) && !BCUtils.canHaveResourceFiles(moduleAndBC.second.getNature())) {
+      overriddenBC.getCompilerOptions().setResourceFilesMode(CompilerOptions.ResourceFilesMode.All);
+    }
 
     overriddenBC.getDependencies().setFrameworkLinkage(LinkageType.Merged);
 
