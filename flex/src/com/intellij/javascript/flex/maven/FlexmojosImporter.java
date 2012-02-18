@@ -38,7 +38,7 @@ import javax.swing.event.HyperlinkEvent;
 import java.util.*;
 
 public class FlexmojosImporter extends MavenImporter implements FlexConfigInformer {
-  private static final String[] SUPPORTED_PACKAGINGS = {"swf", "swc"};
+  static final String[] SUPPORTED_PACKAGINGS = {"swf", "swc"};
   static final String FLEXMOJOS_GROUP_ID = "org.sonatype.flexmojos";
   static final String FLEXMOJOS_ARTIFACT_ID = "flexmojos-maven-plugin";
   private static final List<String> DEPENDENCY_TYPES_FOR_IMPORT = Arrays.asList("swf", "swc", "resource-bundle", "rb.swc");
@@ -140,9 +140,9 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
 
     final Flexmojos3Configurator configurator =
       StringUtil.compareVersionNumbers(flexmojosPlugin.getVersion(), "4") >= 0
-      ? new Flexmojos4Configurator(module, modelsProvider, flexEditor, mavenTree, mavenProject, flexmojosPlugin,
+      ? new Flexmojos4Configurator(module, modelsProvider, flexEditor, mavenTree, mavenProjectToModuleName, mavenProject, flexmojosPlugin,
                                    getCompiledLocales(mavenProject), getRuntimeLocales(mavenProject), this)
-      : new Flexmojos3Configurator(module, modelsProvider, flexEditor, mavenTree, mavenProject, flexmojosPlugin,
+      : new Flexmojos3Configurator(module, modelsProvider, flexEditor, mavenTree, mavenProjectToModuleName, mavenProject, flexmojosPlugin,
                                    getCompiledLocales(mavenProject), getRuntimeLocales(mavenProject), this);
     configurator.configureAndAppendTasks(postTasks);
 

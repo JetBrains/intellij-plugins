@@ -15,10 +15,7 @@ import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsProcessorTask;
 import org.jetbrains.idea.maven.project.MavenProjectsTree;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static com.intellij.javascript.flex.maven.RuntimeModulesGenerateConfigTask.RLMInfo;
 
@@ -26,13 +23,15 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
   public Flexmojos4Configurator(final Module module,
                                 final MavenModifiableModelsProvider modifiableModelsProvider,
                                 final FlexProjectConfigurationEditor flexEditor,
-                                final MavenProjectsTree mavenTree, final MavenProject mavenProject,
+                                final MavenProjectsTree mavenTree,
+                                final Map<MavenProject, String> mavenProjectToModuleName,
+                                final MavenProject mavenProject,
                                 final MavenPlugin flexmojosPlugin,
                                 final List<String> compiledLocales,
                                 final List<String> runtimeLocales,
                                 final FlexConfigInformer informer) {
-    super(module, modifiableModelsProvider, flexEditor, mavenTree, mavenProject, flexmojosPlugin, compiledLocales, runtimeLocales,
-          informer);
+    super(module, modifiableModelsProvider, flexEditor, mavenTree, mavenProjectToModuleName,mavenProject, flexmojosPlugin, compiledLocales,
+          runtimeLocales, informer);
   }
 
   public static String getCompilerConfigsDir(final Project project) {

@@ -38,10 +38,7 @@ import org.jetbrains.idea.maven.project.MavenProjectsTree;
 import org.jetbrains.idea.maven.utils.MavenArtifactUtil;
 import org.jetbrains.idea.maven.utils.MavenLog;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static com.intellij.javascript.flex.maven.RuntimeModulesGenerateConfigTask.RLMInfo;
@@ -64,6 +61,7 @@ public class Flexmojos3Configurator {
   protected MavenProjectsTree myMavenTree;
   protected final MavenProject myMavenProject;
   protected final MavenPlugin myFlexmojosPlugin;
+  private final Map<MavenProject, String> myMavenProjectToModuleName;
   private final List<String> myCompiledLocales;
   private final List<String> myRuntimeLocales;
   private final FlexConfigInformer myInformer;
@@ -72,13 +70,16 @@ public class Flexmojos3Configurator {
   public Flexmojos3Configurator(final Module module,
                                 final MavenModifiableModelsProvider modelsProvider,
                                 final FlexProjectConfigurationEditor flexEditor,
-                                final MavenProjectsTree mavenTree, final MavenProject mavenProject,
+                                final MavenProjectsTree mavenTree,
+                                final Map<MavenProject, String> mavenProjectToModuleName,
+                                final MavenProject mavenProject,
                                 final MavenPlugin flexmojosPlugin,
                                 final List<String> compiledLocales,
                                 final List<String> runtimeLocales,
                                 final FlexConfigInformer informer) {
     myModelsProvider = modelsProvider;
     myMavenTree = mavenTree;
+    myMavenProjectToModuleName = mavenProjectToModuleName;
     myCompiledLocales = compiledLocales;
     myRuntimeLocales = runtimeLocales;
     myModule = module;
@@ -166,6 +167,13 @@ public class Flexmojos3Configurator {
         rootModel.removeOrderEntry(entry);
 
         final String dependencyModuleName = ((ModuleOrderEntry)entry).getModuleName();
+
+        final MavenProject dependencyMavenProject = findMavenProjectByModuleName(dependencyModuleName);
+        if (dependencyMavenProject == null ||
+            !ArrayUtil.contains(dependencyMavenProject.getPackaging(), FlexmojosImporter.SUPPORTED_PACKAGINGS)) {
+          continue;
+        }
+
         final ModifiableBuildConfigurationEntry bcEntry =
           myFlexEditor.createBcEntry(bc.getDependencies(), dependencyModuleName, dependencyModuleName);
         bcEntry.getDependencyType().setLinkageType(FlexUtils.convertLinkageType(scope, isExported));
@@ -232,6 +240,14 @@ public class Flexmojos3Configurator {
     return mobilecomponents && airglobal ? TargetPlatform.Mobile
                                          : airglobal && !playerglobal ? TargetPlatform.Desktop
                                                                       : TargetPlatform.Web;
+  }
+
+  @Nullable
+  private MavenProject findMavenProjectByModuleName(final String moduleName) {
+    for (Map.Entry<MavenProject, String> entry : myMavenProjectToModuleName.entrySet()) {
+      if (moduleName.equals(entry.getValue())) return entry.getKey();
+    }
+    return null;
   }
 
   /**
