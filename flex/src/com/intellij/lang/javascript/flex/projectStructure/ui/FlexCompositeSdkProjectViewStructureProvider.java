@@ -15,12 +15,14 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.hash.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * User: ksafonov
@@ -35,32 +37,39 @@ public class FlexCompositeSdkProjectViewStructureProvider implements TreeStructu
       return children;
     }
 
+    Set<Sdk> processedSdks = new HashSet<Sdk>();
+    Collection<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
+
     for (AbstractTreeNode child : children) {
       Object value = child.getValue();
       if (!(value instanceof NamedLibraryElement)) {
+        result.add(child);
         continue;
       }
 
       NamedLibraryElement libraryElement = (NamedLibraryElement)value;
       OrderEntry orderEntry = libraryElement.getOrderEntry();
       if (!(orderEntry instanceof JdkOrderEntry)) {
+        result.add(child);
         continue;
       }
 
       Sdk sdk = ((JdkOrderEntry)orderEntry).getJdk();
-      if (sdk instanceof FlexCompositeSdk) {
-        Collection<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>(children);
-        result.remove(child);
-        Sdk[] sdks = ((FlexCompositeSdk)sdk).getSdks();
-        for (Sdk individualSdk : sdks) {
+      if (!(sdk instanceof FlexCompositeSdk)) {
+        result.add(child);
+        continue;
+      }
+
+      Sdk[] sdks = ((FlexCompositeSdk)sdk).getSdks();
+      for (Sdk individualSdk : sdks) {
+        if (processedSdks.add(individualSdk)) {
           IndividualSdkOrderEntry entry = new IndividualSdkOrderEntry(individualSdk, orderEntry.getOwnerModule());
           result.add(new NamedLibraryElementNode(parent.getProject(), new NamedLibraryElement(null, entry),
                                                  ((ExternalLibrariesNode)parent).getSettings()));
         }
-        return result;
       }
     }
-    return children;
+    return result;
   }
 
   @Override
