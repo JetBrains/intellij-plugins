@@ -63,19 +63,16 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(project);
     connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentRenderedListener() {
       @Override
-      public void documentRendered(int id, final BufferedImage image) {
+      public void documentRendered(DocumentFactoryManager.DocumentInfo info, final BufferedImage image) {
         if (toolWindowForm.getFile() == null) {
           return;
         }
 
-        DocumentFactoryManager.DocumentInfo info =
-          DocumentFactoryManager.getInstance().getNullableInfo(toolWindowForm.getFile().getVirtualFile());
-        if (info != null && info.getId() == id) {
+        if (info.equals(DocumentFactoryManager.getInstance().getNullableInfo(toolWindowForm.getFile()))) {
           ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
-              MxmlPreviewPanel previewPanel = toolWindowForm.getPreviewPanel();
-              previewPanel.setImage(image);
+              toolWindowForm.getPreviewPanel().setImage(image);
             }
           });
         }
@@ -172,10 +169,14 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     renderingQueue.queue(new Update("render") {
       @Override
       public void run() {
-        LoadingDecorator loadingPanel = toolWindowForm.getPreviewPanel().getLoadingDecorator();
-        loadingPanel.setLoadingText("Rendering...");
-        loadingPanel.startLoading(false);
-        DesignerApplicationManager.getInstance().renderDocument(psiFile, new RenderTask());
+        LoadingDecorator loadingDecorator = toolWindowForm.getPreviewPanel().getLoadingDecorator();
+        loadingDecorator.startLoading(false);
+        DesignerApplicationManager.getInstance().renderDocument(psiFile).doWhenProcessed(new Runnable() {
+          @Override
+          public void run() {
+            toolWindowForm.getPreviewPanel().getLoadingDecorator().stopLoading();
+          }
+        });
       }
 
       @Override
@@ -183,17 +184,6 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         return true;
       }
     });
-  }
-
-  private class RenderTask implements Consumer<BufferedImage>, Disposable {
-    @Override
-    public void consume(final BufferedImage image) {
-    }
-
-    @Override
-    public void dispose() {
-      toolWindowForm.getPreviewPanel().getLoadingDecorator().stopLoading();
-    }
   }
 
   private boolean isApplicableEditor(Editor editor) {

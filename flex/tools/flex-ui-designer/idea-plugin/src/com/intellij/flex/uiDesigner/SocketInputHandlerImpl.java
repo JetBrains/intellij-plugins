@@ -215,7 +215,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
       image = null;
     }
 
-    messageBus.syncPublisher(MESSAGE_TOPIC).documentRendered(id, image);
+    messageBus.syncPublisher(MESSAGE_TOPIC).documentRendered(DocumentFactoryManager.getInstance().getInfo(id), image);
   }
 
   @NotNull

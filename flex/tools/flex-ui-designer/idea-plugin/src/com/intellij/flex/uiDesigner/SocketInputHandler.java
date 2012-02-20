@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public abstract class SocketInputHandler implements Disposable {
-  public static final Topic<DocumentRenderedListener> MESSAGE_TOPIC = new Topic<DocumentRenderedListener>(
-      "Flex UI Designer document opened event (only requested)", DocumentRenderedListener.class);
+  public static final Topic<DocumentRenderedListener> MESSAGE_TOPIC =
+    new Topic<DocumentRenderedListener>("Flash UI Designer document rendered event", DocumentRenderedListener.class);
 
   public abstract void read(@NotNull InputStream inputStream, @NotNull File appDir) throws IOException;
 
@@ -20,7 +20,7 @@ public abstract class SocketInputHandler implements Disposable {
   }
 
   public interface DocumentRenderedListener {
-    void documentRendered(int id, BufferedImage image);
+    void documentRendered(DocumentFactoryManager.DocumentInfo info, BufferedImage image);
     void errorOccured();
   }
 }

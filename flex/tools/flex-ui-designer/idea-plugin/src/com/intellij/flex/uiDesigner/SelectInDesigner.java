@@ -7,73 +7,83 @@ import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class SelectInDesigner implements SelectInTarget {
   @Override
   public boolean canSelect(SelectInContext context) {
-    if (DesignerApplicationManager.getApplication() == null) {
-      return false;
-    }
+    PsiElement element = getPsiElement(context);
+    return element != null && RunDesignViewAction.canDo(context.getProject(), element.getContainingFile());
+  }
 
-    if (DocumentFactoryManager.getInstance().getNullableInfo(context.getVirtualFile()) == null) {
-      return false;
-    }
-
-    final Object selectorInFile = context.getSelectorInFile();
+  @Nullable
+  private static PsiElement getPsiElement(SelectInContext context) {
+    Object selectorInFile = context.getSelectorInFile();
     if (selectorInFile instanceof PsiElement) {
-      final PsiElement psiElement = (PsiElement)selectorInFile;
-      return RunDesignViewAction.canDo(psiElement.getProject(), psiElement.getContainingFile());
+      PsiElement element = (PsiElement)selectorInFile;
+      return element.getContainingFile() instanceof XmlFile ? element : null;
     }
 
-    return false;
+    return null;
   }
 
   @Override
   public void selectIn(SelectInContext context, boolean requestFocus) {
-    final DocumentFactoryManager.DocumentInfo documentInfo = DocumentFactoryManager.getInstance().getNullableInfo(context.getVirtualFile());
-    if (documentInfo == null) {
-      return;
-    }
-
-    final List<RangeMarker> rangeMarkers = documentInfo.getRangeMarkers();
-    final int rangeMarkersSize = rangeMarkers.size();
-    
-    final Object selectorInFile = context.getSelectorInFile();
-    if (!(selectorInFile instanceof PsiElement)) {
-      return;
-    }
-
-    PsiElement element = (PsiElement)selectorInFile;
-    final Module module = ModuleUtil.findModuleForPsiElement(element);
+    final PsiElement element = getPsiElement(context);
+    final Module module = element == null ? null : ModuleUtil.findModuleForPsiElement(element);
     if (module == null) {
       return;
     }
-    
-    if (element instanceof XmlFile) {
-      DesignerApplicationManager.getInstance().openDocument(module, (XmlFile)element, false);
+
+    final VirtualFile virtualFile = context.getVirtualFile();
+
+    final Runnable doAction = new Runnable() {
+      @Override
+      public void run() {
+        DocumentFactoryManager.DocumentInfo info = DocumentFactoryManager.getInstance().getNullableInfo(virtualFile);
+        if (info == null) {
+          return;
+        }
+
+        final List<RangeMarker> rangeMarkers = info.getRangeMarkers();
+
+        if (element instanceof XmlFile) {
+          DesignerApplicationManager.getInstance().openDocument(module, (XmlFile)element, false);
+        }
+        else {
+          PsiElement effectiveElement = element;
+          do {
+            if (effectiveElement instanceof XmlTag && ((XmlTag)effectiveElement).getDescriptor() instanceof ClassBackedElementDescriptor) {
+              for (int i = 0; i < rangeMarkers.size(); i++) {
+                RangeMarker rangeMarker = rangeMarkers.get(i);
+                if (rangeMarker.getStartOffset() == effectiveElement.getTextOffset()) {
+                  Client.getInstance().selectComponent(module, info.getId(), i);
+                  return;
+                }
+              }
+            }
+
+            effectiveElement = effectiveElement.getContext();
+          }
+          while (effectiveElement != null);
+
+          LogMessageUtil.LOG.warn("Can't find target component");
+        }
+      }
+    };
+
+    if (DesignerApplicationManager.getInstance().isApplicationClosed() || !DocumentFactoryManager.getInstance().isRegistered(virtualFile)) {
+      DesignerApplicationManager.getInstance().renderDocument((XmlFile)element.getContainingFile()).doWhenDone(doAction);
     }
     else {
-      while (element != null) {
-        if (element instanceof XmlTag && ((XmlTag)element).getDescriptor() instanceof ClassBackedElementDescriptor) {
-          for (int i = 0; i < rangeMarkersSize; i++) {
-            RangeMarker rangeMarker = rangeMarkers.get(i);
-            if (rangeMarker.getStartOffset() == element.getTextOffset()) {
-              Client.getInstance().selectComponent(module, documentInfo.getId(), i);
-              return;
-            }
-          }
-        }
-        
-        element = element.getContext();
-      }
+      doAction.run();
     }
-
-    LogMessageUtil.LOG.warn("Can't find target component");
   }
 
   @Override

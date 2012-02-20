@@ -43,7 +43,7 @@ public class FlashUIDesignerMxmlAnnotator implements Annotator {
 
     @Override
     public AnAction getClickAction() {
-      return DesignerApplicationManager.getInstance().isDocumentOpening() ? null : new RunDesignViewAction();
+      return DesignerApplicationManager.getInstance().isDocumentOpening() ? null : new RunDesignViewAction("FlashUIDesigner.gutterIcon");
     }
 
     @Override

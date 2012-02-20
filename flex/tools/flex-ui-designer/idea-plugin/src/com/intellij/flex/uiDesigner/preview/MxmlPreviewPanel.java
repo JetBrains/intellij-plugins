@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.preview;
 
+import com.intellij.flex.uiDesigner.FlashUIDesignerBundle;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.ui.LoadingDecorator;
 import com.intellij.ui.components.panels.NonOpaquePanel;
@@ -57,6 +58,7 @@ class MxmlPreviewPanel extends JPanel implements Disposable {
         return panel;
       }
     };
+    loadingDecorator.setLoadingText(FlashUIDesignerBundle.message("rendering"));
 
     add(loadingDecorator.getComponent());
   }

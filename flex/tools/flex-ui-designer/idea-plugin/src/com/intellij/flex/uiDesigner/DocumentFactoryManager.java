@@ -15,6 +15,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
@@ -106,6 +107,11 @@ public class DocumentFactoryManager {
     return files.getNullableInfo(virtualFile);
   }
 
+  @Nullable
+  public DocumentInfo getNullableInfo(PsiFile psiFile) {
+    return files.getNullableInfo(psiFile.getVirtualFile());
+  }
+
   public DocumentInfo get(VirtualFile virtualFile, @Nullable XmlFile psiFile, @Nullable ProjectComponentReferenceCounter referenceCounter) {
     DocumentInfo info = files.getNullableInfo(virtualFile);
     if (info != null) {
@@ -152,6 +158,11 @@ public class DocumentFactoryManager {
 
     public void setRangeMarkers(List<RangeMarker> rangeMarkers) {
       this.rangeMarkers = rangeMarkers;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      return this == obj || obj instanceof DocumentInfo && ((DocumentInfo)obj).getId() == getId();
     }
   }
 }

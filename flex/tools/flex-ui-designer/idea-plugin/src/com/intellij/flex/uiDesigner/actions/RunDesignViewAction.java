@@ -30,6 +30,16 @@ import com.intellij.psi.xml.XmlTag;
 import org.jetbrains.annotations.Nullable;
 
 public class RunDesignViewAction extends DumbAwareAction {
+  private final String usageTriggerFeature;
+
+  public RunDesignViewAction() {
+    this("FlashUIDesigner.toolbar");
+  }
+
+  public RunDesignViewAction(String usageTriggerFeature) {
+    this.usageTriggerFeature = usageTriggerFeature;
+  }
+
   @Override
   public void actionPerformed(final AnActionEvent event) {
     final DataContext dataContext = event.getDataContext();
@@ -48,7 +58,7 @@ public class RunDesignViewAction extends DumbAwareAction {
     // saveAllDocuments may cause open this document
     if (!DesignerApplicationManager.getInstance().isDocumentOpening()) {
       if (!DebugPathManager.IS_DEV) {
-        UsageTrigger.trigger("FlexUiDesigner");
+        UsageTrigger.trigger(usageTriggerFeature);
       }
 
       DesignerApplicationManager.getInstance().openDocument(module, psiFile, isDebug() || (DebugPathManager.IS_DEV && event.getInputEvent().isControlDown()));
@@ -106,7 +116,7 @@ public class RunDesignViewAction extends DumbAwareAction {
   }
 
   public static boolean canDo(Project project, PsiFile psiFile) {
-    return DesignerApplicationManager.getInstance().isDocumentOpening() && isApplicable(project, psiFile);
+    return !DesignerApplicationManager.getInstance().isDocumentOpening() && isApplicable(project, psiFile);
   }
 
   public static boolean isApplicable(Project project, PsiFile psiFile) {

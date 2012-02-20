@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.*;
 import com.intellij.openapi.components.ServiceDescriptor;
 import com.intellij.openapi.components.ServiceManager;
@@ -22,6 +21,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
+import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
@@ -156,16 +156,22 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     return true;
   }
 
-  public void renderDocument(@NotNull final XmlFile psiFile, Consumer<BufferedImage> consumer) {
+  public ActionCallback renderDocument(@NotNull final XmlFile psiFile) {
     //noinspection ConstantConditions
-    openDocument(ModuleUtil.findModuleForPsiElement(psiFile), psiFile, false, consumer);
+    return renderDocument(ModuleUtil.findModuleForPsiElement(psiFile), psiFile);
+  }
+
+  public ActionCallback renderDocument(@NotNull final Module module, @NotNull final XmlFile psiFile) {
+    final ActionCallback actionCallback = new ActionCallback();
+    openDocument(module, psiFile, false, actionCallback);
+    return actionCallback;
   }
 
   public void openDocument(@NotNull final Module module, @NotNull final XmlFile psiFile, final boolean debug) {
     openDocument(module, psiFile, debug, null);
   }
 
-  public void openDocument(@NotNull final Module module, @NotNull final XmlFile psiFile, final boolean debug, final @Nullable Consumer<BufferedImage> consumer) {
+  public void openDocument(@NotNull final Module module, @NotNull final XmlFile psiFile, final boolean debug, final @Nullable ActionCallback actionCallback) {
     LOG.assertTrue(!documentOpening);
     documentOpening = true;
 
@@ -188,9 +194,9 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       }
     }
 
-    final OpenDocumentTask openDocumentTask = new OpenDocumentTask(psiFile, consumer);
+    final RenderDocumentTask renderDocumentTask = new RenderDocumentTask(psiFile, actionCallback);
     ProgressManager.getInstance().run(
-      appClosed ? new DesignerApplicationLauncher(module, debug, openDocumentTask) : new DocumentTaskExecutor(module, openDocumentTask));
+      appClosed ? new DesignerApplicationLauncher(module, debug, renderDocumentTask) : new DocumentTaskExecutor(module, renderDocumentTask));
   }
 
   public boolean isApplicationClosed() {
@@ -270,13 +276,13 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     notification.notify(project);
   }
 
-  private static class OpenDocumentTask extends DesignerApplicationLauncher.PostTask {
+  private static class RenderDocumentTask extends DesignerApplicationLauncher.PostTask {
     private final XmlFile psiFile;
-    private final Consumer<BufferedImage> consumer;
+    private final ActionCallback actionCallback;
 
-    public OpenDocumentTask(@NotNull final XmlFile psiFile, @Nullable Consumer<BufferedImage> consumer) {
+    public RenderDocumentTask(@NotNull final XmlFile psiFile, @Nullable ActionCallback actionCallback) {
       this.psiFile = psiFile;
-      this.consumer = consumer;
+      this.actionCallback = actionCallback;
     }
 
     @Override
@@ -285,8 +291,8 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
       DesignerApplicationManager.getInstance().documentOpening = false;
 
-      if (consumer instanceof Disposable) {
-        Disposer.dispose((Disposable)consumer);
+      if (actionCallback != null && !actionCallback.isDone()) {
+        actionCallback.setRejected();
       }
     }
 
@@ -311,9 +317,8 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       final MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(this);
       connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentRenderedListener() {
         @Override
-        public void documentRendered(int id, BufferedImage image) {
-          DocumentFactoryManager.DocumentInfo info = DocumentFactoryManager.getInstance().getNullableInfo(psiFile.getVirtualFile());
-          if (info != null && info.getId() == id) {
+        public void documentRendered(DocumentFactoryManager.DocumentInfo info, BufferedImage image) {
+          if (info.equals(DocumentFactoryManager.getInstance().getNullableInfo(psiFile))) {
             result.set(image);
             up();
           }
@@ -355,8 +360,9 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
         connection.disconnect();
       }
 
-      if (consumer != null) {
-        consumer.consume(result.get());
+      if (actionCallback != null) {
+        actionCallback.setDone();
+        //consumer.consume(result.get());
       }
       return true;
     }
