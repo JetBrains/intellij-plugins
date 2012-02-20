@@ -402,8 +402,8 @@ public class FlexRunConfiguration extends RunConfigurationBase
     private void fillHtmlOrSwfCombo() {
       final Object currentSelection = myHtmlOrSwfComboWithBrowse.getComboBox().getEditor().getItem();
       final Module selectedModule = myModuleComboboxWrapper.getSelectedModule();
-      myHtmlOrSwfComboWithBrowse.getComboBox().setModel(new DefaultComboBoxModel(
-        selectedModule != null ? FlexUtils.suggestHtmlAndSwfFilesToLaunch(selectedModule) : ArrayUtil.EMPTY_STRING_ARRAY));
+      //myHtmlOrSwfComboWithBrowse.getComboBox().setModel(new DefaultComboBoxModel(
+      //  selectedModule != null ? FlexUtils.suggestHtmlAndSwfFilesToLaunch(selectedModule) : ArrayUtil.EMPTY_STRING_ARRAY));
       myHtmlOrSwfComboWithBrowse.getComboBox().getEditor().setItem(currentSelection);
     }
 

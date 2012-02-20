@@ -150,37 +150,6 @@ public class FlexUtils {
     return "htm".equalsIgnoreCase(extension) || "html".equalsIgnoreCase(extension) || "xhtml".equalsIgnoreCase(extension);
   }
 
-  public static String[] suggestHtmlAndSwfFilesToLaunch(final Module module) {
-    final List<String> fileNames = new ArrayList<String>();
-    for (final FlexBuildConfiguration config : FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(module)) {
-      if (config.DO_BUILD &&
-          FlexBuildConfiguration.APPLICATION.equals(config.OUTPUT_TYPE) &&
-          !config.USE_CUSTOM_CONFIG_FILE &&
-          config.OUTPUT_FILE_NAME.length() > 0) {
-        fileNames.add(config.getOutputFileFullPath());
-      }
-    }
-
-    final String outputFolderPath = VfsUtil.urlToPath(CompilerModuleExtension.getInstance(module).getCompilerOutputUrl());
-    if (outputFolderPath.length() > 0) {
-      for (final VirtualFile sourceRoot : ModuleRootManager.getInstance(module).getSourceRoots()) {
-        FlexBaseRunner.processFilesUnderRoot(sourceRoot, new Processor<VirtualFile>() {
-          public boolean process(final VirtualFile virtualFile) {
-            if (isHtmlExtension(virtualFile.getExtension())) {
-              if (htmlFileLooksLikeSwfWrapper(virtualFile)) {
-                if (virtualFile.getPath().startsWith(sourceRoot.getPath())) {
-                  fileNames.add(outputFolderPath + virtualFile.getPath().substring(sourceRoot.getPath().length()));
-                }
-              }
-            }
-            return true;
-          }
-        });
-      }
-    }
-    return ArrayUtil.toStringArray(fileNames);
-  }
-
   public static boolean htmlFileLooksLikeSwfWrapper(final VirtualFile virtualFile) {
     try {
       if (VfsUtil.loadText(virtualFile).indexOf("application/x-shockwave-flash") != -1) {

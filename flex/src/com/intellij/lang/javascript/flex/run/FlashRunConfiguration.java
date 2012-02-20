@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileRunTarget;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileRunTarget;
 
 public class FlashRunConfiguration extends RunConfigurationBase
   implements RunProfileWithCompileBeforeLaunchOption, LocatableConfiguration {

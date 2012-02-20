@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.index.JSPackageIndexInfo;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -145,7 +144,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
     final FlexIdeBuildConfiguration bc = bcRef.get();
     final FlexUnitSupport support = supportRef.get();
 
-    if (support == null) {
+    if (bc == null || support == null) {
       context.addMessage(CompilerMessageCategory.ERROR, FlexBundle.message("dumb.mode.flex.unit.warning"), null, -1, -1);
       return false;
     }
@@ -273,8 +272,8 @@ public class FlexUnitPrecompileTask implements CompileTask {
       return false;
     }
 
-    final boolean airDependent = bc != null ? bc.getTargetPlatform() == TargetPlatform.Desktop : FlexSdkUtils.hasDependencyOnAir(module);
-    if (airDependent) {
+    final boolean desktop = bc.getTargetPlatform() == TargetPlatform.Desktop;
+    if (desktop) {
       generateImportCode(imports, "flash.desktop.NativeApplication");
     }
 
@@ -284,8 +283,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
     launcherText = launcherText.replace("/*socketPolicyPort*/", String.valueOf(socketPolicyPort));
     launcherText = launcherText.replace("/*base*/", FileUtil.getNameWithoutExtension(launcherBaseFileName));
     launcherText = launcherText.replace("/*module*/", module.getName());
-    launcherText =
-      launcherText.replace("/*closeApp*/", airDependent ? "NativeApplication.nativeApplication.exit(0)" : "fscommand(\"quit\")");
+    launcherText = launcherText.replace("/*closeApp*/", desktop ? "NativeApplication.nativeApplication.exit(0)" : "fscommand(\"quit\")");
     launcherText = launcherText.replace("/*logTargetClass*/", FileUtil.getNameWithoutExtension(logTargetFileName));
     final FlexUnitCommonParameters.OutputLogLevel logLevel = params.getOutputLogLevel();
     launcherText = launcherText.replace("/*logEnabled*/", logLevel != null ? "true" : "false");

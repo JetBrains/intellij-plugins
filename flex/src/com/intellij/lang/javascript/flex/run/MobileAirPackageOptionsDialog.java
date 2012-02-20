@@ -13,7 +13,7 @@ import javax.swing.*;
 import java.util.List;
 
 import static com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParametersBase.FilePathAndPathInPackage;
-import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileRunTarget;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileRunTarget;
 
 public class MobileAirPackageOptionsDialog extends DialogWrapper {
   private JPanel myMainPanel;

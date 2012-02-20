@@ -7,13 +7,11 @@ import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitCommonParameters;
-import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
@@ -21,22 +19,15 @@ import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.run.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
-import com.intellij.xdebugger.XDebugProcess;
-import com.intellij.xdebugger.XDebugProcessStarter;
-import com.intellij.xdebugger.XDebugSession;
-import com.intellij.xdebugger.XDebuggerManager;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-
-import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileDebugTransport;
-import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileRunTarget;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileRunTarget;
 
 /**
  * User: Maxim.Mossienko

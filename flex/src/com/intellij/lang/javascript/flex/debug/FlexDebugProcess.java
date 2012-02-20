@@ -10,7 +10,6 @@ import com.intellij.ide.IdeBundle;
 import com.intellij.idea.LoggerFactory;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitCommonParameters;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
 import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunnerParameters;
@@ -18,8 +17,10 @@ import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
-import com.intellij.lang.javascript.flex.run.*;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
+import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
+import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
+import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
+import com.intellij.lang.javascript.flex.run.LauncherParameters;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -32,7 +33,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ex.ApplicationEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
@@ -80,8 +80,8 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.*;
 
-import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileDebugTransport;
-import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileRunTarget;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileRunTarget;
 
 /**
  * @author Maxim.Mossienko
@@ -403,35 +403,6 @@ public class FlexDebugProcess extends XDebugProcess {
   @Override
   public XDebuggerEditorsProvider getEditorsProvider() {
     return new FlexDebuggerEditorsProvider();
-  }
-
-  public static Sdk getDebuggerSdk(final FlexRunnerParameters flexRunnerParameters, final Sdk flexSdk) throws IOException {
-    final String debuggerSdkRaw = flexRunnerParameters.getDebuggerSdkRaw();
-    if (debuggerSdkRaw.equals(FlexSdkComboBoxWithBrowseButton.MODULE_SDK_KEY)) {
-      return flexSdk;
-    }
-    else {
-      final Sdk sdk = ProjectJdkTable.getInstance().findJdk(debuggerSdkRaw);
-      if (sdk == null || !(sdk.getSdkType() instanceof IFlexSdkType)) {
-        throw new IOException(FlexBundle.message("debugger.sdk.not.found", debuggerSdkRaw));
-      }
-      return sdk;
-    }
-  }
-
-  private void launchFlex(final FlexRunnerParameters flexRunnerParameters) throws IOException {
-    final FlexRunnerParameters.RunMode runMode = flexRunnerParameters.getRunMode();
-
-    final String url = runMode == FlexRunnerParameters.RunMode.HtmlOrSwfFile
-                       ? flexRunnerParameters.getHtmlOrSwfFilePath()
-                       : runMode == FlexRunnerParameters.RunMode.Url
-                         ? flexRunnerParameters.getUrlToLaunch()
-                         : runMode == FlexRunnerParameters.RunMode.MainClass
-                           // A sort of hack. HtmlOrSwfFilePath field is disabled in UI for MainClass-based run configuration. But it is set correctly in RunMainClassPrecompileTask.execute()
-                           ? flexRunnerParameters.getHtmlOrSwfFilePath()
-                           // launch nothing if runMode == FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer
-                           : null;
-    sendCommand(url == null ? new StartDebuggingCommand() : new LaunchBrowserCommand(url, flexRunnerParameters.getLauncherParameters()));
   }
 
   private static final Set<String> ourAlreadyMadeExecutable = new THashSet<String>();
@@ -1354,30 +1325,17 @@ public class FlexDebugProcess extends XDebugProcess {
   class StartAppOnAndroidDeviceCommand extends StartDebuggingCommand {
 
     private final Sdk myFlexSdk;
-    private final AirMobileRunnerParameters myRunnerParameters;
     private final String myAppId;
 
     StartAppOnAndroidDeviceCommand(final Sdk flexSdk, final String appId) {
       myFlexSdk = flexSdk;
       myAppId = appId;
-      myRunnerParameters = null;
-    }
-
-    public StartAppOnAndroidDeviceCommand(final Sdk flexSdk, final AirMobileRunnerParameters runnerParameters) {
-      myFlexSdk = flexSdk;
-      myRunnerParameters = runnerParameters;
-      myAppId = null;
     }
 
     void launchDebuggedApplication() throws IOException {
       ApplicationManager.getApplication().invokeLater(new Runnable() {
         public void run() {
-          if (myRunnerParameters != null) {
-            FlexBaseRunner.launchOnDevice(getSession().getProject(), myFlexSdk, myRunnerParameters, true);
-          }
-          else {
-            FlexBaseRunner.launchOnAndroidDevice(getSession().getProject(), myFlexSdk, myAppId, true);
-          }
+          FlexBaseRunner.launchOnAndroidDevice(getSession().getProject(), myFlexSdk, myAppId, true);
         }
       });
     }

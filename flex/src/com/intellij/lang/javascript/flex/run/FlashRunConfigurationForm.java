@@ -29,6 +29,8 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.*;
+
 public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfiguration> {
 
   // Application Main Class must inherit from this class
@@ -197,11 +199,11 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   }
 
   private void initEmulatorRelatedControls() {
-    myEmulatorCombo.setModel(new DefaultComboBoxModel(AirMobileRunnerParameters.Emulator.values()));
+    myEmulatorCombo.setModel(new DefaultComboBoxModel(Emulator.values()));
 
-    myEmulatorCombo.setRenderer(new ListCellRendererWrapper<AirMobileRunnerParameters.Emulator>(myEmulatorCombo.getRenderer()) {
+    myEmulatorCombo.setRenderer(new ListCellRendererWrapper<Emulator>(myEmulatorCombo.getRenderer()) {
       @Override
-      public void customize(JList list, AirMobileRunnerParameters.Emulator value, int index, boolean selected, boolean hasFocus) {
+      public void customize(JList list, Emulator value, int index, boolean selected, boolean hasFocus) {
         setText(value.name);
       }
     });
@@ -295,7 +297,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   }
 
   private void updateEmulatorRelatedControls() {
-    final AirMobileRunnerParameters.Emulator emulator = (AirMobileRunnerParameters.Emulator)myEmulatorCombo.getSelectedItem();
+    final Emulator emulator = (Emulator)myEmulatorCombo.getSelectedItem();
     if (emulator.adlAlias == null) {
       myScreenWidth.setEditable(true);
       myScreenHeight.setEditable(true);
@@ -356,7 +358,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myAdlOptionsEditor.setText(params.getAdlOptions());
     myAirProgramParametersEditor.setText(params.getAirProgramParameters());
 
-    myOnEmulatorRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunnerParameters.AirMobileRunTarget.Emulator);
+    myOnEmulatorRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunTarget.Emulator);
     myEmulatorCombo.setSelectedItem(params.getEmulator());
     if (params.getEmulator().adlAlias == null) {
       myScreenWidth.setText(String.valueOf(params.getScreenWidth()));
@@ -365,11 +367,11 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       myFullScreenHeight.setText(String.valueOf(params.getFullScreenHeight()));
     }
 
-    myOnAndroidDeviceRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunnerParameters.AirMobileRunTarget.AndroidDevice);
-    myOnIOSDeviceRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunnerParameters.AirMobileRunTarget.iOSDevice);
+    myOnAndroidDeviceRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice);
+    myOnIOSDeviceRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunTarget.iOSDevice);
 
-    myDebugOverNetworkRadioButton.setSelected(params.getDebugTransport() == AirMobileRunnerParameters.AirMobileDebugTransport.Network);
-    myDebugOverUSBRadioButton.setSelected(params.getDebugTransport() == AirMobileRunnerParameters.AirMobileDebugTransport.USB);
+    myDebugOverNetworkRadioButton.setSelected(params.getDebugTransport() == AirMobileDebugTransport.Network);
+    myDebugOverUSBRadioButton.setSelected(params.getDebugTransport() == AirMobileDebugTransport.USB);
     myUsbDebugPortTextField.setText(String.valueOf(params.getUsbDebugPort()));
 
     myEmulatorAdlOptionsEditor.setText(params.getEmulatorAdlOptions());
@@ -396,14 +398,14 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     params.setAdlOptions(myAdlOptionsEditor.getText().trim());
     params.setAirProgramParameters(myAirProgramParametersEditor.getText().trim());
 
-    final AirMobileRunnerParameters.AirMobileRunTarget mobileRunTarget = myOnEmulatorRadioButton.isSelected()
-                                                                         ? AirMobileRunnerParameters.AirMobileRunTarget.Emulator
-                                                                         : myOnAndroidDeviceRadioButton.isSelected()
-                                                                           ? AirMobileRunnerParameters.AirMobileRunTarget.AndroidDevice
-                                                                           : AirMobileRunnerParameters.AirMobileRunTarget.iOSDevice;
+    final AirMobileRunTarget mobileRunTarget = myOnEmulatorRadioButton.isSelected()
+                                               ? AirMobileRunTarget.Emulator
+                                               : myOnAndroidDeviceRadioButton.isSelected()
+                                                 ? AirMobileRunTarget.AndroidDevice
+                                                 : AirMobileRunTarget.iOSDevice;
     params.setMobileRunTarget(mobileRunTarget);
 
-    final AirMobileRunnerParameters.Emulator emulator = (AirMobileRunnerParameters.Emulator)myEmulatorCombo.getSelectedItem();
+    final Emulator emulator = (Emulator)myEmulatorCombo.getSelectedItem();
     params.setEmulator(emulator);
 
     if (emulator.adlAlias == null) {
@@ -417,8 +419,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     }
 
     params.setDebugTransport(myDebugOverNetworkRadioButton.isSelected()
-                             ? AirMobileRunnerParameters.AirMobileDebugTransport.Network
-                             : AirMobileRunnerParameters.AirMobileDebugTransport.USB);
+                             ? AirMobileDebugTransport.Network
+                             : AirMobileDebugTransport.USB);
     try {
       final int port = Integer.parseInt(myUsbDebugPortTextField.getText().trim());
       if (port > 0 && port < 65535) {

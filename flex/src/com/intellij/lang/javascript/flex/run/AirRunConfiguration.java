@@ -159,6 +159,7 @@ public class AirRunConfiguration extends FlexRunConfiguration {
         myAirRuntimeDirForFlexmojosSdk = null;
       }
 
+      /*
       if (params instanceof AirMobileRunnerParameters) {
         final AirMobileRunnerParameters p = (AirMobileRunnerParameters)params;
         switch (p.getAirMobileRunTarget()) {
@@ -181,6 +182,7 @@ public class AirRunConfiguration extends FlexRunConfiguration {
             break;
         }
       }
+      */
 
       final String adlOptions = params.getAdlOptions();
       if (!StringUtil.isEmptyOrSpaces(adlOptions)) {
