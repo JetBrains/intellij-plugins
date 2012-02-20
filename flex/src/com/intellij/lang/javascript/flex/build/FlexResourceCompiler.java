@@ -96,7 +96,7 @@ public class FlexResourceCompiler implements TranslatingCompiler {
           final Collection<Pair<String, String>> outputDirPathsAndTargetFilePaths = new ArrayList<Pair<String, String>>();
 
           if (inTests) {
-            if (module == testModule) {
+            if (module == testModule && !isSourceFile(file)) {
               final VirtualFile outputDir = context.getModuleOutputDirectoryForTests(module);
               addOutputDirPathAndTargetFilePath(outputDirPathsAndTargetFilePaths, sourceRoot, outputDir, relativePath, fileIndex);
             }
