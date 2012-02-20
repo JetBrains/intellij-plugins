@@ -157,7 +157,7 @@ public class Client implements Disposable {
   public void registerLibrarySet(LibrarySet librarySet) {
     final List<Library> styleOwners = new ArrayList<Library>();
     for (Library library : librarySet.getLibraries()) {
-      if (library.inheritingStyles != null || library.defaultsStyle != null) {
+      if (library.isStyleOwner()) {
         styleOwners.add(library);
       }
     }

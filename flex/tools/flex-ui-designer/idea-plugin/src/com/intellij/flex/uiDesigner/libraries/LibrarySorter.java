@@ -57,16 +57,19 @@ public class LibrarySorter {
     final List<LibrarySetItem> unsortedItems = collectItems(libraries, definitionMap, isExternal);
     final AbcMerger abcMerger = new AbcMerger(definitionMap, outFile, definitionProcessor);
     try {
-      final ArrayList<Library> items = new ArrayList<Library>(unsortedItems.size());
+      final ArrayList<Library> resourceOrStyleHolders = new ArrayList<Library>(unsortedItems.size());
       for (LibrarySetItem item : unsortedItems) {
         if (!item.hasDefinitions()) {
           if (item.library.hasResourceBundles()) {
-            items.add(item.library);
+            resourceOrStyleHolders.add(item.library);
           }
           continue;
         }
 
-        items.add(item.library);
+        if (item.library.hasResourceBundles() || item.library.isStyleOwner()) {
+          resourceOrStyleHolders.add(item.library);
+        }
+
         abcMerger.process(item.library);
       }
       
@@ -91,7 +94,7 @@ public class LibrarySorter {
 
       final Encoder encoder = new Encoder();
       abcMerger.end(decoders, encoder);
-      return new SortResult(returnDefinitionMap ? definitionMap : null, items);
+      return new SortResult(returnDefinitionMap ? definitionMap : null, resourceOrStyleHolders);
     }
     finally {
       abcMerger.close();

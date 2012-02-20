@@ -31,6 +31,10 @@ public class Library extends Info<VirtualFile> {
     return !resourceBundles.isEmpty();
   }
 
+  public boolean isStyleOwner() {
+    return inheritingStyles != null || defaultsStyle != null;
+  }
+
   @Nullable
   public VirtualFile getDefaultsCssFile() {
     return element.findChild(DEFAULTS_CSS);
