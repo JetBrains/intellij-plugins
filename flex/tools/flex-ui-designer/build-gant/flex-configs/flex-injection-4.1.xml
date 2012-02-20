@@ -69,6 +69,7 @@
 		<class>mx.styles.StyleProtoChain</class>
 		<class>mx.styles.StyleManager</class>
 		<class>mx.effects.Effect</class>
+		<class>spark.modules.ModuleLoader</class>
 		<class>mx.managers.LayoutManager</class>
 		<class>mx.managers.CursorManager</class>
 		<class>mx.resources.ResourceManager</class>
@@ -86,6 +87,7 @@
 		<class>com.intellij.flex.uiDesigner.flex.BrowserManagerImpl</class>
 		<class>com.intellij.flex.uiDesigner.flex.DeferredInstanceFromArray</class>
 		<class>com.intellij.flex.uiDesigner.flex.DocumentFocusManager</class>
+		<class>com.intellij.flex.uiDesigner.flex.FakeTopLevelApplication</class>
 		<class>com.intellij.flex.uiDesigner.flex.FlexComponentCreator</class>
 		<class>com.intellij.flex.uiDesigner.flex.FlexComponentInfoProvider</class>
 		<class>com.intellij.flex.uiDesigner.flex.FlexDocumentDisplayManager</class>
@@ -106,6 +108,9 @@
 		<class>com.intellij.flex.uiDesigner.flex.SystemRawChildrenList</class>
 		<class>com.intellij.flex.uiDesigner.flex.ToolTipManager</class>
 		<class>com.intellij.flex.uiDesigner.flex.TopLevelSystemManagerProxy</class>
+		<class>com.intellij.flex.uiDesigner.flex.UnknownComponent</class>
+		<class>com.intellij.flex.uiDesigner.flex.UnknownComponentHelper</class>
+		<class>com.intellij.flex.uiDesigner.flex.UnknownItemRenderer</class>
 		<class>com.intellij.flex.uiDesigner.SpecialClassForAdobeEngineers</class>
 	</include-classes>
 	<metadata>
