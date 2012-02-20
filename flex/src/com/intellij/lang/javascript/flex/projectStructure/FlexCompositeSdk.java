@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.psi.impl.CompositeRootCollection;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
@@ -8,9 +9,9 @@ import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.RootProvider;
 import com.intellij.openapi.roots.impl.ModuleJdkOrderEntryImpl;
+import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -50,17 +51,6 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
 
   public FlexCompositeSdk(String[] names) {
     myNames = names;
-    init();
-  }
-
-  public FlexCompositeSdk(Sdk[] sdks) {
-    myNames = ContainerUtil.map2Array(sdks, String.class, new Function<Sdk, String>() {
-      @Override
-      public String fun(final Sdk sdk) {
-        return sdk.getName();
-      }
-    });
-    mySdks = sdks;
     init();
   }
 
@@ -188,13 +178,32 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
       return mySdks;
     }
 
-    List<Sdk> sdks = ContainerUtil.findAll(ProjectJdkTable.getInstance().getAllJdks(), new Condition<Sdk>() {
+    Sdk[] allSdks;
+    boolean cache;
+    final FlexProjectConfigurationEditor currentEditor = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
+    if (currentEditor == null) {
+      allSdks = ProjectJdkTable.getInstance().getAllJdks();
+      cache = true;
+    }
+    else {
+      final Collection<Sdk> sdks =
+        ProjectStructureConfigurable.getInstance(currentEditor.getProject()).getProjectJdksModel().getProjectSdks().values();
+      allSdks = sdks.toArray(new Sdk[sdks.size()]);
+      cache = false;
+    }
+
+    List<Sdk> result = ContainerUtil.findAll(allSdks, new Condition<Sdk>() {
       @Override
       public boolean value(final Sdk sdk) {
         return ArrayUtil.contains(sdk.getName(), myNames);
       }
     });
-    return mySdks = sdks.toArray(new Sdk[sdks.size()]);
+
+    Sdk[] resultArray = result.toArray(new Sdk[result.size()]);
+    if (cache) {
+      mySdks = resultArray;
+    }
+    return resultArray;
   }
 
   private void resetSdks() {

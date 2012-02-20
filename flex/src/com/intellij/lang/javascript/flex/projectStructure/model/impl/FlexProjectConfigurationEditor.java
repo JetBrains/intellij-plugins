@@ -357,17 +357,11 @@ public class FlexProjectConfigurationEditor implements Disposable {
       // ---------------- SDK and shared libraries entries ----------------------
       Map<Library, Boolean> librariesToAdd = new HashMap<Library, Boolean>(); // Library -> add_library_entry_flag
 
-      Collection<Sdk> sdks = new HashSet<Sdk>();
-      final Sdk[] allSdks = myProvider.getAllSdks();
+      final Collection<String> sdkNames = new HashSet<String>();
       for (Editor editor : myModule2Editors.get(module)) {
         final SdkEntry sdkEntry = editor.getDependencies().getSdkEntry();
         if (sdkEntry != null) {
-          ContainerUtil.addIfNotNull(sdks, ContainerUtil.find(allSdks, new Condition<Sdk>() {
-            @Override
-            public boolean value(final Sdk sdk) {
-              return sdkEntry.getName().equals(sdk.getName());
-            }
-          }));
+          sdkNames.add(sdkEntry.getName());
         }
 
         for (DependencyEntry dependencyEntry : editor.getDependencies().getEntries()) {
@@ -386,7 +380,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
         }
       }
 
-      modifiableModel.setSdk(sdks.isEmpty() ? null : new FlexCompositeSdk(sdks.toArray(new Sdk[sdks.size()])));
+      modifiableModel.setSdk(sdkNames.isEmpty() ? null : new FlexCompositeSdk(ArrayUtil.toStringArray(sdkNames)));
 
       Collection<OrderEntry> entriesToRemove = new ArrayList<OrderEntry>();
       for (OrderEntry orderEntry : modifiableModel.getOrderEntries()) {
