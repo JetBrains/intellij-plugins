@@ -8,15 +8,14 @@ import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Set;
 
 public class FlexLibrarySet extends LibrarySet {
   public final AssetCounterInfo assetCounterInfo;
   final ContainsCondition contains;
 
-  public FlexLibrarySet(int id, @Nullable LibrarySet parent, List<Library> items, ContainsCondition contains, AssetCounter demanded) {
-    super(id, parent, items);
+  FlexLibrarySet(LibrarySorter.SortResult sortResult, @Nullable LibrarySet parent, ContainsCondition contains, AssetCounter demanded) {
+    super(sortResult.id, parent, sortResult.libraries);
     this.contains = contains;
     assetCounterInfo = new AssetCounterInfo(demanded);
   }

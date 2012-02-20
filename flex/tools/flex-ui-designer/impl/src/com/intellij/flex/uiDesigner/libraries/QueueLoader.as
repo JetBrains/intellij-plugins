@@ -85,7 +85,7 @@ public class QueueLoader {
     var loader:MyLoader = createLoadder(librarySet);
     // *** Adobe http://juick.com/develar/896344  http://juick.com/develar/896278
     //trace("load: " + urlRequest.url);
-    loader.load(new URLRequest("app:/" + librarySet.id + ".swf"), loaderContext);
+    loader.load(new URLRequest("app:/@" + librarySet.id + ".swf"), loaderContext);
   }
 
   private function loadCompleteHandler(event:Event):void {

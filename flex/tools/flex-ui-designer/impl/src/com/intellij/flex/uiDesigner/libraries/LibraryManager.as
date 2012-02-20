@@ -8,7 +8,7 @@ import org.jetbrains.ApplicationManager;
 import org.jetbrains.EntityLists;
 
 public class LibraryManager implements LibrarySetLoadProgressListener {
-  private const librarySets:Vector.<LibrarySet> = new Vector.<LibrarySet>();
+  private const librarySets:Dictionary = new Dictionary(); // <int, LibrarySet>;
 
   private var loader:QueueLoader;
 

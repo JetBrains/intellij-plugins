@@ -52,7 +52,7 @@ public class LibrarySorter {
     return items;
   }
 
-  public SortResult sort(final List<Library> libraries, File outFile, Condition<String> isExternal) throws IOException {
+  public SortResult sort(final List<Library> libraries, File outFile, Condition<String> isExternal, boolean returnDefinitionMap) throws IOException {
     final THashMap<CharSequence, Definition> definitionMap = new THashMap<CharSequence, Definition>(libraries.size() * 128, AbcTranscoder.HASHING_STRATEGY);
     final List<LibrarySetItem> unsortedItems = collectItems(libraries, definitionMap, isExternal);
     final AbcMerger abcMerger = new AbcMerger(definitionMap, outFile, definitionProcessor);
@@ -91,7 +91,7 @@ public class LibrarySorter {
 
       final Encoder encoder = new Encoder();
       abcMerger.end(decoders, encoder);
-      return new SortResult(definitionMap, items);
+      return new SortResult(returnDefinitionMap ? definitionMap : null, items);
     }
     finally {
       abcMerger.close();
@@ -150,12 +150,24 @@ public class LibrarySorter {
   }
 
   static class SortResult {
-    final THashMap<CharSequence, Definition> definitionMap;
-    final List<Library> items;
+    final @Nullable THashMap<CharSequence, Definition> definitionMap;
+    final List<Library> libraries;
 
-    private SortResult(THashMap<CharSequence, Definition> definitionMap, List<Library> items) {
+    // only if restored from cache
+    final String[] libraryPathes;
+
+    int id;
+
+    SortResult(@Nullable THashMap<CharSequence, Definition> definitionMap, List<Library> libraries) {
       this.definitionMap = definitionMap;
-      this.items = items;
+      this.libraries = libraries;
+      libraryPathes = null;
+    }
+
+    SortResult(@Nullable THashMap<CharSequence, Definition> definitionMap, String[] libraryPathes) {
+      this.definitionMap = definitionMap;
+      libraries = null;
+      this.libraryPathes = libraryPathes;
     }
   }
 }

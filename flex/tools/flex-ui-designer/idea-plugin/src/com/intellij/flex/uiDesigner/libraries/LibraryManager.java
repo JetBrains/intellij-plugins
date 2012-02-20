@@ -3,17 +3,19 @@ package com.intellij.flex.uiDesigner.libraries;
 import com.intellij.ProjectTopics;
 import com.intellij.diagnostic.errordialog.Attachment;
 import com.intellij.flex.uiDesigner.*;
-import com.intellij.flex.uiDesigner.io.IdPool;
+import com.intellij.flex.uiDesigner.abc.AbcTranscoder;
 import com.intellij.flex.uiDesigner.io.InfoMap;
 import com.intellij.flex.uiDesigner.io.RetainCondition;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet.ContainsCondition;
 import com.intellij.flex.uiDesigner.libraries.LibrarySorter.SortResult;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
@@ -25,47 +27,145 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.StringBuilderSpinAllocator;
+import com.intellij.util.io.DataExternalizer;
+import com.intellij.util.io.EnumeratorStringDescriptor;
+import com.intellij.util.io.PersistentHashMap;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
+import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
 import java.nio.channels.ClosedByInterruptException;
 import java.util.*;
 
 @SuppressWarnings("MethodMayBeStatic")
-public class LibraryManager {
+public class LibraryManager implements Disposable {
   private static final String SWF_EXTENSION = ".swf";
   static final String PROPERTIES_EXTENSION = ".properties";
 
-  //private static final String ABC_FILTER_VERSION = "16";
-  //private static final String ABC_FILTER_VERSION_VALUE_NAME = "fud_abcFilterVersion";
+  private static final String ABC_FILTER_VERSION = "17";
+  private static final String ABC_FILTER_VERSION_VALUE_NAME = "fud_abcFilterVersion";
 
-  private File appDir;
+  private static final char NAME_PREFIX = '@';
+
+  private final File appDir;
 
   private final InfoMap<VirtualFile, Library> libraries = new InfoMap<VirtualFile, Library>();
 
   private final THashMap<String, LibrarySet> librarySets = new THashMap<String, LibrarySet>();
-  private final IdPool librarySetIdPool = new IdPool();
   private final Map<VirtualFile, Set<CharSequence>> globalDefinitionsMap = new THashMap<VirtualFile, Set<CharSequence>>();
+
+  private final PersistentHashMap<String, SortResult> persistentCache;
+  private boolean cacheCleared;
+
+  public LibraryManager() throws IOException {
+    appDir = DesignerApplicationManager.APP_DIR;
+    persistentCache = createCache();
+  }
+
+  private PersistentHashMap<String, SortResult> createCache() throws IOException {
+    final File file = new File(appDir, "librarySets");
+
+    PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
+    if (!ABC_FILTER_VERSION.equals(propertiesComponent.getValue(ABC_FILTER_VERSION_VALUE_NAME))) {
+      clearCache(file);
+    }
+
+    try {
+      return new PersistentHashMap<String, SortResult>(file, new EnumeratorStringDescriptor(), new MyDataExternalizer());
+    }
+    catch (IOException e) {
+      LogMessageUtil.LOG.info(e);
+      clearCache(file);
+      return new PersistentHashMap<String, SortResult>(file, new EnumeratorStringDescriptor(), new MyDataExternalizer());
+    }
+  }
+
+  private void clearCache(File file) {
+    cacheCleared = true;
+    PersistentHashMap.deleteFilesStartingWith(file);
+  }
+
+  @Override
+  public void dispose() {
+    try {
+      persistentCache.close();
+    }
+    catch (IOException e) {
+      LogMessageUtil.LOG.info(e);
+    }
+  }
+
+  private static class MyDataExternalizer implements DataExternalizer<SortResult> {
+    @Override
+    public void save(final DataOutput out, SortResult value) throws IOException {
+      out.writeShort(value.libraries.size());
+      for (Library library : value.libraries) {
+        out.writeUTF(library.getFile().getPath());
+      }
+
+      if (value.definitionMap == null) {
+        out.writeInt(0);
+        return;
+      }
+
+      out.writeInt(value.definitionMap.size());
+      value.definitionMap.forEachKey(new TObjectProcedure<CharSequence>() {
+        @Override
+        public boolean execute(CharSequence charSequence) {
+          try {
+            out.writeUTF(charSequence.toString());
+          }
+          catch (IOException e) {
+            throw new RuntimeException(e);
+          }
+
+          return true;
+        }
+      });
+    }
+
+    @Override
+    public SortResult read(DataInput in) throws IOException {
+      int librariesSize = in.readShort();
+      String[] libraryPathes = new String[librariesSize];
+      while (librariesSize-- > 0) {
+        libraryPathes[librariesSize] = in.readUTF();
+      }
+
+      int size = in.readInt();
+      final THashMap<CharSequence, Definition> map;
+      if (size != 0) {
+        map = new THashMap<CharSequence, Definition>(size, AbcTranscoder.HASHING_STRATEGY);
+        while (size-- > 0) {
+          map.put(in.readUTF(), null);
+        }
+      }
+      else {
+        map = null;
+      }
+
+      return new SortResult(map, libraryPathes);
+    }
+  }
 
   public void unregister(final int[] ids) {
     librarySets.retainEntries(new RetainCondition<String, LibrarySet>(ids));
-    librarySetIdPool.dispose(ids);
   }
 
   public static LibraryManager getInstance() {
     return DesignerApplicationManager.getService(LibraryManager.class);
-  }
-
-  public void setAppDir(@NotNull File appDir) {
-    this.appDir = appDir;
   }
 
   public boolean isRegistered(@NotNull Library library) {
@@ -76,7 +176,21 @@ public class LibraryManager {
     return libraries.add(library);
   }
 
-  public void garbageCollection(@SuppressWarnings("UnusedParameters") ProgressIndicator indicator) {
+  public void garbageCollection(ProgressIndicator indicator) {
+    if (!cacheCleared) {
+      return;
+    }
+
+    indicator.setText(FlashUIDesignerBundle.message("delete.old.libraries"));
+
+    for (String path : appDir.list()) {
+      if (path.charAt(0) == NAME_PREFIX) {
+        //noinspection ResultOfMethodCallIgnored
+        new File(appDir, path).delete();
+      }
+    }
+
+    PropertiesComponent.getInstance().setValue(ABC_FILTER_VERSION_VALUE_NAME, ABC_FILTER_VERSION);
   }
 
   @NotNull
@@ -131,13 +245,11 @@ public class LibraryManager {
       librarySet = null;
     }
     else {
-      final String key = createKey(libraryCollector.externalLibraries);
+      final String key = createKey(libraryCollector.externalLibraries, false);
       librarySet = librarySets.get(key);
       if (librarySet == null) {
-        final int id = librarySetIdPool.allocate();
-        final SortResult sortResult = sortLibraries(new LibrarySorter(), id, libraryCollector.externalLibraries,
-          libraryCollector.getFlexSdkVersion(), flexLibrarySet.contains);
-        librarySet = new LibrarySet(id, flexLibrarySet, sortResult.items);
+        final SortResult sortResult = sortLibraries(new LibrarySorter(), libraryCollector, flexLibrarySet.contains, key, false);
+        librarySet = new LibrarySet(sortResult.id, flexLibrarySet, sortResult.libraries);
         registerLibrarySet(key, librarySet);
       }
     }
@@ -178,24 +290,22 @@ public class LibraryManager {
   }
 
   private FlexLibrarySet getOrCreateFlexLibrarySet(LibraryCollector libraryCollector, AssetCounter assetCounter) throws InitException {
-    final String key = createKey(libraryCollector.sdkLibraries);
+    final String key = createKey(libraryCollector.sdkLibraries, true);
     FlexLibrarySet flexLibrarySet = (FlexLibrarySet)librarySets.get(key);
     if (flexLibrarySet == null) {
       final Set<CharSequence> globalDefinitions = getGlobalDefinitions(libraryCollector.getGlobalLibrary());
-      final int id = librarySetIdPool.allocate();
-      Condition<String> globalContains = new Condition<String>() {
+      final Condition<String> globalContains = new Condition<String>() {
         @Override
         public boolean value(String name) {
           return globalDefinitions.contains(name);
         }
       };
-      final SortResult sortResult = sortLibraries(
-        new LibrarySorter(new FlexDefinitionProcessor(libraryCollector.getFlexSdkVersion()), new FlexDefinitionMapProcessor(
-          libraryCollector.getFlexSdkVersion(), globalContains)), id, libraryCollector.sdkLibraries,
-        libraryCollector.getFlexSdkVersion(),
-        globalContains);
-
-      flexLibrarySet = new FlexLibrarySet(id, null, sortResult.items, new ContainsCondition(globalDefinitions, sortResult.definitionMap), assetCounter);
+      final SortResult sortResult = sortLibraries(new LibrarySorter(new FlexDefinitionProcessor(libraryCollector.getFlexSdkVersion()),
+                                                                    new FlexDefinitionMapProcessor(libraryCollector.getFlexSdkVersion(),
+                                                                                                   globalContains)), libraryCollector,
+                                                  globalContains, key, true);
+      flexLibrarySet =
+        new FlexLibrarySet(sortResult, null, new ContainsCondition(globalDefinitions, sortResult.definitionMap), assetCounter);
       registerLibrarySet(key, flexLibrarySet);
     }
 
@@ -222,19 +332,28 @@ public class LibraryManager {
     return globalDefinitions;
   }
 
-  private String createKey(List<Library> libraries) {
+  private String createKey(List<Library> libraries, boolean isSdk) {
     // we don't depend on library order
-    final String[] filenames = new String[libraries.size()];
+    final VirtualFile[] files = new VirtualFile[libraries.size()];
     for (int i = 0, librariesSize = libraries.size(); i < librariesSize; i++) {
-      filenames[i] = libraries.get(i).getFile().getPath();
+      files[i] = libraries.get(i).getFile();
     }
     
-    Arrays.sort(filenames);
+    Arrays.sort(files, new Comparator<VirtualFile>() {
+      @Override
+      public int compare(VirtualFile o1, VirtualFile o2) {
+        return StringUtil.compare(o1.getPath(), o2.getPath(), false);
+      }
+    });
     
     final StringBuilder stringBuilder = StringBuilderSpinAllocator.alloc();
     try {
-      for (String filename : filenames) {
-        stringBuilder.append(filename).append(':');
+      if (isSdk) {
+        stringBuilder.append('_');
+      }
+
+      for (VirtualFile file : files) {
+        stringBuilder.append(file.getTimeStamp()).append(file.getPath()).append(':');
       }
 
       return stringBuilder.toString();
@@ -245,17 +364,36 @@ public class LibraryManager {
   }
 
   @NotNull
-  private SortResult sortLibraries(LibrarySorter librarySorter, int librarySetId, List<Library> libraries, String flexSdkVersion,
-                                   Condition<String> isExternal)
+  private SortResult sortLibraries(LibrarySorter sorter, LibraryCollector collector, Condition<String> isExternal, String key, boolean isSdk)
     throws InitException {
+    final List<Library> libraries = isSdk ? collector.sdkLibraries : collector.externalLibraries;
     try {
-      return librarySorter.sort(libraries, new File(appDir, librarySetId + SWF_EXTENSION), isExternal);
+      final int id = persistentCache.enumerate(key);
+      SortResult result = persistentCache.get(key);
+      if (result == null) {
+        result = sorter.sort(libraries, new File(appDir, NAME_PREFIX + Integer.toString(id) + SWF_EXTENSION), isExternal, isSdk);
+        persistentCache.put(key, result);
+      }
+      else {
+        final String[] libraryPathes = result.libraryPathes;
+        final List<Library> filteredLibraries = new ArrayList<Library>(libraryPathes.length);
+        for (Library library : libraries) {
+          if (ArrayUtil.indexOf(libraryPathes, library.getFile().getPath()) != -1) {
+            filteredLibraries.add(library);
+          }
+        }
+
+        result = new SortResult(result.definitionMap, filteredLibraries);
+      }
+
+      result.id = id;
+      return result;
     }
     catch (ClosedByInterruptException e) {
       throw new InitException(e);
     }
     catch (Throwable e) {
-      String technicalMessage = "Flex SDK " + flexSdkVersion;
+      String technicalMessage = "Flex SDK " + collector.getFlexSdkVersion();
       final Attachment[] attachments = new Attachment[libraries.size()];
       try {
         for (int i = 0, librariesSize = libraries.size(); i < librariesSize; i++) {

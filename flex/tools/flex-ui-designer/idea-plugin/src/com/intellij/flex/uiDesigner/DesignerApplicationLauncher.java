@@ -363,7 +363,6 @@ public class DesignerApplicationLauncher extends DocumentTask {
   }
 
   private void runInitializeLibrariesAndModuleThread() {
-    LibraryManager.getInstance().setAppDir(DesignerApplicationManager.APP_DIR);
     initializeThread = ApplicationManager.getApplication().executeOnPooledThread(new Callable<ProjectComponentReferenceCounter>() {
       @Nullable
       @Override
