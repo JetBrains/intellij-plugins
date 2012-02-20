@@ -2,10 +2,7 @@ package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.compiler.impl.CompilerUtil;
-import com.intellij.compiler.options.CompileStepBeforeRun;
-import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
@@ -13,14 +10,14 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.compiler.ex.CompileContextEx;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -61,18 +58,12 @@ public class FlexResourceCompiler implements TranslatingCompiler {
     context.getProgressIndicator().setText(CompilerBundle.message("progress.copying.resources"));
 
     final Map<String, Collection<OutputItem>> processed = new HashMap<String, Collection<OutputItem>>();
+    final Collection<VirtualFile> filesProcessedMoreThanOnce = new ArrayList<VirtualFile>();
     final LinkedList<CopyCommand> copyCommands = new LinkedList<CopyCommand>();
     final Module singleChunkModule = moduleChunk.getNodes().size() == 1 ? moduleChunk.getNodes().iterator().next() : null;
 
     ApplicationManager.getApplication().runReadAction(new Runnable() {
       public void run() {
-        // Copy test resources only if FlexUnit is going to be launched and only for corresponding module
-        final RunConfiguration runConfig = CompileStepBeforeRun.getRunConfiguration(context);
-        final String testModuleName = runConfig instanceof NewFlexUnitRunConfiguration
-                                      ? ((NewFlexUnitRunConfiguration)runConfig).getRunnerParameters().getModuleName()
-                                      : null;
-        final Module testModule = testModuleName == null ? null : ModuleManager.getInstance(myProject).findModuleByName(testModuleName);
-
         final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
 
         for (final VirtualFile file : files) {
@@ -96,9 +87,13 @@ public class FlexResourceCompiler implements TranslatingCompiler {
           final Collection<Pair<String, String>> outputDirPathsAndTargetFilePaths = new ArrayList<Pair<String, String>>();
 
           if (inTests) {
-            if (module == testModule && !isSourceFile(file)) {
-              final VirtualFile outputDir = context.getModuleOutputDirectoryForTests(module);
-              addOutputDirPathAndTargetFilePath(outputDirPathsAndTargetFilePaths, sourceRoot, outputDir, relativePath, fileIndex);
+            if (!isSourceFile(file)) {
+              final CompilerModuleExtension compilerModuleExtension = CompilerModuleExtension.getInstance(module);
+              final String outputUrl = compilerModuleExtension == null ? null : compilerModuleExtension.getCompilerOutputUrlForTests();
+              if (outputUrl != null) {
+                addOutputDirPathAndTargetFilePath(outputDirPathsAndTargetFilePaths, sourceRoot, VfsUtil.urlToPath(outputUrl), relativePath,
+                                                  fileIndex);
+              }
             }
           }
           else {
@@ -107,11 +102,15 @@ public class FlexResourceCompiler implements TranslatingCompiler {
                 final ResourceFilesMode mode = bc.getCompilerOptions().getResourceFilesMode();
                 if (mode == ResourceFilesMode.All && !isSourceFile(file) ||
                     mode == ResourceFilesMode.ResourcePatterns && myConfiguration.isResourceFile(file)) {
-                  final VirtualFile outputDir = LocalFileSystem.getInstance().findFileByPath(bc.getOutputFolder());
-                  addOutputDirPathAndTargetFilePath(outputDirPathsAndTargetFilePaths, sourceRoot, outputDir, relativePath, fileIndex);
+                  addOutputDirPathAndTargetFilePath(outputDirPathsAndTargetFilePaths, sourceRoot, bc.getOutputFolder(), relativePath,
+                                                    fileIndex);
                 }
               }
             }
+          }
+
+          if (outputDirPathsAndTargetFilePaths.size() > 1) {
+            filesProcessedMoreThanOnce.add(file);
           }
 
           for (Pair<String, String> outputDirPathAndTargetFilePath : outputDirPathsAndTargetFilePaths) {
@@ -155,11 +154,15 @@ public class FlexResourceCompiler implements TranslatingCompiler {
       filesToRefresh.clear();
     }
 
+    // TranslatingCompilerMonitor doesn't support translating one source file to several output files, so we need to mark such files dirty
+    final VirtualFile[] toRecompile = filesProcessedMoreThanOnce.toArray(new VirtualFile[filesProcessedMoreThanOnce.size()]);
+
     for (Iterator<Map.Entry<String, Collection<OutputItem>>> it = processed.entrySet().iterator(); it.hasNext(); ) {
       Map.Entry<String, Collection<OutputItem>> entry = it.next();
-      sink.add(entry.getKey(), entry.getValue(), VirtualFile.EMPTY_ARRAY);
+      sink.add(entry.getKey(), entry.getValue(), toRecompile);
       it.remove(); // to free memory
     }
+
     context.getProgressIndicator().popState();
   }
 
@@ -170,14 +173,9 @@ public class FlexResourceCompiler implements TranslatingCompiler {
 
   private static void addOutputDirPathAndTargetFilePath(final Collection<Pair<String, String>> outputDirPathsAndTargetFilePaths,
                                                         final VirtualFile sourceRoot,
-                                                        final VirtualFile outputDir,
+                                                        final String outputDirPath,
                                                         final String relativePath,
                                                         final ProjectFileIndex fileIndex) {
-    if (outputDir == null) {
-      return;
-    }
-    final String outputDirPath = outputDir.getPath();
-
     final String packagePrefix = fileIndex.getPackageNameByDirectory(sourceRoot);
     final String targetFilePath;
     if (packagePrefix != null && packagePrefix.length() > 0) {
