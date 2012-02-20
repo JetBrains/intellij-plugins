@@ -46,8 +46,9 @@ public class RunDesignViewAction extends DumbAwareAction {
     final Project project = PlatformDataKeys.PROJECT.getData(dataContext);
     assert project != null;
 
-    final XmlFile psiFile = (XmlFile)PsiDocumentManager.getInstance(project)
-      .getPsiFile(getDocument(project, dataContext, ActionPlaces.isPopupPlace(event.getPlace())));
+    Document document = getDocument(project, dataContext, ActionPlaces.isPopupPlace(event.getPlace()));
+    assert document != null;
+    final XmlFile psiFile = (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(document);
     assert psiFile != null;
     final VirtualFile file = psiFile.getVirtualFile();
     assert file != null;

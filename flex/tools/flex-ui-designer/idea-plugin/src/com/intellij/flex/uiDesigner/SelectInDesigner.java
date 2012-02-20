@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.flex.uiDesigner.actions.RunDesignViewAction;
 import com.intellij.ide.SelectInContext;
 import com.intellij.ide.SelectInTarget;
+import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.module.Module;
@@ -35,6 +36,8 @@ public class SelectInDesigner implements SelectInTarget {
 
   @Override
   public void selectIn(SelectInContext context, boolean requestFocus) {
+    UsageTrigger.trigger("FlashUIDesigner.selectIn");
+
     final PsiElement element = getPsiElement(context);
     final Module module = element == null ? null : ModuleUtil.findModuleForPsiElement(element);
     if (module == null) {
