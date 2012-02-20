@@ -151,7 +151,15 @@ public class FlexSdkUtils {
 
   public static void processPlayerglobalSwcFiles(final VirtualFile playerDir, final Processor<VirtualFile> processor) {
     VirtualFile playerglobalSwcFile;
-    for (final VirtualFile subDir : playerDir.getChildren()) {
+    VirtualFile[] children = playerDir.getChildren();
+    VirtualFile[] sorted = Arrays.copyOf(children, children.length);
+    Arrays.sort(sorted, new Comparator<VirtualFile>() {
+      @Override
+      public int compare(final VirtualFile o1, final VirtualFile o2) {
+        return o1.getName().compareTo(o2.getName());
+      }
+    });
+    for (final VirtualFile subDir : sorted) {
       if (subDir.isDirectory() &&
           (playerglobalSwcFile = subDir.findChild("playerglobal.swc")) != null &&
           PLAYER_FOLDER_PATTERN.matcher(subDir.getName()).matches()) {
