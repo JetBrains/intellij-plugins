@@ -34,6 +34,7 @@ import com.intellij.ui.treeStructure.treetable.TreeTable;
 import com.intellij.ui.treeStructure.treetable.TreeTableModel;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
 import com.intellij.util.Function;
+import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.Convertor;
 import com.intellij.util.ui.AbstractTableCellEditor;
@@ -79,6 +80,10 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   private JRadioButton myCopyAllResourcesRadioButton;
   private JRadioButton myRespectResourcePatternsRadioButton;
   private HoverHyperlinkLabel myResourcePatternsHyperlink;
+
+  private JPanel myIncludeInSWCPanel;
+  private TextFieldWithBrowseButton myIncludeInSWCField;
+  private Collection<String> myFilesToIncludeInSWC;
 
   private JLabel myConfigFileLabel;
   private TextFieldWithBrowseButton myConfigFileTextWithBrowse;
@@ -147,6 +152,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     myProjectLevelOptionsHolder = FlexProjectLevelCompilerOptionsHolder.getInstance(project);
     myModel = model;
     myCurrentOptions = new THashMap<String, String>();
+    myFilesToIncludeInSWC = Collections.emptyList();
 
     myShowAllOptionsCheckBox.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
@@ -169,11 +175,44 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       }
     });
 
+    myIncludeInSWCPanel.setVisible(myMode == Mode.BC && myNature.isLib());
+    myIncludeInSWCField.getTextField().setEditable(false);
+    myIncludeInSWCField.setButtonIcon(PlatformIcons.OPEN_EDIT_DIALOG_ICON);
+    myIncludeInSWCField.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        final List<StringBuilder> value = new ArrayList<StringBuilder>();
+        for (String path : myFilesToIncludeInSWC) {
+          value.add(new StringBuilder(path));
+        }
+        final RepeatableValueDialog dialog = new RepeatableValueDialog(module.getProject(), "Files And Folders To Include In *.swc", value,
+                                                                       CompilerOptionInfo.INCLUDE_FILE_INFO_FOR_UI);
+        dialog.show();
+        if (dialog.isOK()) {
+          final List<StringBuilder> newValue = dialog.getCurrentList();
+          myFilesToIncludeInSWC = new ArrayList<String>(newValue.size());
+          for (StringBuilder path : newValue) {
+            myFilesToIncludeInSWC.add(path.toString());
+          }
+          updateFilesToIncludeInSWCText();
+        }
+      }
+    });
+
+
     initButtonsAndAdditionalOptions();
 
     // seems we don't need it for small amount of options
     myShowAllOptionsCheckBox.setSelected(true);
     myShowAllOptionsCheckBox.setVisible(false);
+  }
+
+  private void updateFilesToIncludeInSWCText() {
+    final String s = StringUtil.join(myFilesToIncludeInSWC, new Function<String, String>() {
+      public String fun(final String path) {
+        return PathUtil.getFileName(path);
+      }
+    }, ", ");
+    myIncludeInSWCField.setText(s);
   }
 
   private void initButtonsAndAdditionalOptions() {
@@ -295,6 +334,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   public boolean isModified() {
     if (myMapModified) return true;
     if (myModel.getResourceFilesMode() != getResourceFilesMode()) return true;
+    if (!myModel.getFilesToIncludeInSWC().equals(myFilesToIncludeInSWC)) return true;
     if (!myModel.getAdditionalConfigFilePath().equals(FileUtil.toSystemIndependentName(myConfigFileTextWithBrowse.getText().trim()))) {
       return true;
     }
@@ -322,6 +362,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     }
 
     compilerOptions.setResourceFilesMode(getResourceFilesMode());
+    compilerOptions.setFilesToIncludeInSWC(myFilesToIncludeInSWC);
     compilerOptions.setAdditionalConfigFilePath(FileUtil.toSystemIndependentName(myConfigFileTextWithBrowse.getText().trim()));
     compilerOptions.setAdditionalOptions(myAdditionalOptionsField.getText().trim());
   }
@@ -337,6 +378,9 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     myCopyAllResourcesRadioButton.setSelected(mode == ResourceFilesMode.None || mode == ResourceFilesMode.All);
     myRespectResourcePatternsRadioButton.setSelected(mode == ResourceFilesMode.ResourcePatterns);
     updateResourcesControls();
+
+    myFilesToIncludeInSWC = myModel.getFilesToIncludeInSWC();
+    updateFilesToIncludeInSWCText();
 
     myConfigFileTextWithBrowse.setText(FileUtil.toSystemDependentName(myModel.getAdditionalConfigFilePath()));
     myAdditionalOptionsField.setText(myModel.getAdditionalOptions());

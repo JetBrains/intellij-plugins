@@ -443,6 +443,15 @@ public class FlexCompiler implements SourceProcessingCompiler {
       }
     }
 
+    if (nature.isLib()) {
+      for (String path : bc.getCompilerOptions().getFilesToIncludeInSWC()) {
+        if (LocalFileSystem.getInstance().findFileByPath(path) == null) {
+          throw new ConfigurationException(FlexBundle.message("file.to.include.in.swc.not.found.bc.0.of.module.1", bc.getName(), moduleName,
+                                                              FileUtil.toSystemDependentName(path)));
+        }
+      }
+    }
+
     if (nature.isMobilePlatform() && nature.isApp()) {
       if (bc.getAndroidPackagingOptions().isEnabled() && bc.getAndroidPackagingOptions().getPackageFileName().isEmpty()) {
         throw new ConfigurationException(FlexBundle.message("android.package.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
@@ -506,6 +515,11 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
   public ValidityState createValidityState(final DataInput in) throws IOException {
     return new EmptyValidityState();
+  }
+
+  static boolean isSourceFile(final VirtualFile file) {
+    final String ext = file.getExtension();
+    return ext != null && (ext.equalsIgnoreCase("as") || ext.equalsIgnoreCase("mxml") || ext.equalsIgnoreCase("fxg"));
   }
 
   private static class MyProcessingItem implements ProcessingItem {

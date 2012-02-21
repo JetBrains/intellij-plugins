@@ -324,6 +324,10 @@ public class FlexProjectConfigurationEditor implements Disposable {
       ((IosPackagingOptionsImpl)defaultConfiguration.getIosPackagingOptions())
         .applyTo(((IosPackagingOptionsImpl)configuration.getIosPackagingOptions()));
     }
+
+    if (!nature.isLib()) {
+      configuration.getCompilerOptions().setFilesToIncludeInSWC(Collections.<String>emptyList());
+    }
   }
 
   public Module getModule(ModifiableFlexIdeBuildConfiguration configuration) {

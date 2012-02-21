@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.build;
 
+import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.javascript.flex.FlexApplicationComponent;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -445,37 +446,10 @@ public class CompilerConfigGenerator {
 
   private void addInputOutputPaths(final Element rootElement) throws IOException {
     if (myBC.getOutputType() == OutputType.Library) {
-      if (myFlexmojos) return;
+      addFilesIncludedInSwc(rootElement);
 
-      final Ref<Boolean> noClasses = new Ref<Boolean>(true);
-      final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(myModule.getProject()).getFileIndex();
-
-      ContentIterator ci = new ContentIterator() {
-        public boolean processFile(final VirtualFile fileOrDir) {
-          if (FlexCompilerHandler.includeInCompilation(myModule.getProject(), fileOrDir)) {
-            if (/*!isTest && */projectFileIndex.isInTestSourceContent(fileOrDir)) {
-              return true;
-            }
-
-            final VirtualFile rootForFile = projectFileIndex.getSourceRootForFile(fileOrDir);
-            if (rootForFile != null) {
-              final String packageText = VfsUtilCore.getRelativePath(fileOrDir.getParent(), rootForFile, '.');
-              assert packageText != null;
-              final String qName = (packageText.length() > 0 ? packageText + "." : "") + fileOrDir.getNameWithoutExtension();
-
-              if (FlexCompilerHandler.isMxmlOrFxgOrASWithPublicDeclaration(myModule, fileOrDir, qName)) {
-                addOption(rootElement, CompilerOptionInfo.INCLUDE_CLASSES_INFO, qName);
-                noClasses.set(false);
-              }
-            }
-          }
-          return true;
-        }
-      };
-
-      ModuleRootManager.getInstance(myModule).getFileIndex().iterateContent(ci);
-      if (noClasses.get() && !ApplicationManager.getApplication().isUnitTestMode()) {
-        throw new IOException(FlexBundle.message("nothing.to.compile.in.library", myModule.getName(), myBC.getName()));
+      if (!myFlexmojos) {
+        addLibClasses(rootElement);
       }
     }
     else {
@@ -499,6 +473,78 @@ public class CompilerConfigGenerator {
     addOption(rootElement, CompilerOptionInfo.OUTPUT_PATH_INFO, myBC.getOutputFilePath(false));
   }
 
+  private void addFilesIncludedInSwc(final Element rootElement) {
+    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myModule.getProject()).getFileIndex();
+    final CompilerConfiguration compilerConfiguration = CompilerConfiguration.getInstance(myModule.getProject());
+
+    final Map<String, String> filePathToPathInSwc = new THashMap<String, String>();
+
+    for (String path : myBC.getCompilerOptions().getFilesToIncludeInSWC()) {
+      final VirtualFile fileOrDir = LocalFileSystem.getInstance().findFileByPath(path);
+      if (fileOrDir == null || compilerConfiguration.isExcludedFromCompilation(fileOrDir)) continue;
+
+      if (fileOrDir.isDirectory()) {
+        final VirtualFile srcRoot = fileIndex.getSourceRootForFile(fileOrDir);
+        final String baseRelativePath = srcRoot == null ? fileOrDir.getName() : VfsUtilCore.getRelativePath(fileOrDir, srcRoot, '/');
+
+        VfsUtilCore.visitChildrenRecursively(fileOrDir, new VirtualFileVisitor() {
+          public boolean visitFile(final VirtualFile file) {
+            if (!file.isDirectory() && !compilerConfiguration.isExcludedFromCompilation(file)) {
+              final String relativePath = VfsUtilCore.getRelativePath(file, fileOrDir, '/');
+              final String pathInSwc = baseRelativePath + "/" + relativePath;
+              filePathToPathInSwc.put(file.getPath(), pathInSwc);
+            }
+            return true;
+          }
+        });
+      }
+      else {
+        final VirtualFile srcRoot = fileIndex.getSourceRootForFile(fileOrDir);
+        final String relativePath = srcRoot == null ? null : VfsUtilCore.getRelativePath(fileOrDir, srcRoot, '/');
+        final String pathInSwc = StringUtil.notNullize(relativePath, fileOrDir.getName());
+        filePathToPathInSwc.put(fileOrDir.getPath(), pathInSwc);
+      }
+    }
+
+    for (Map.Entry<String, String> entry : filePathToPathInSwc.entrySet()) {
+      final String value = entry.getValue() + CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR + entry.getKey();
+      addOption(rootElement, CompilerOptionInfo.INCLUDE_FILE_INFO, value);
+    }
+  }
+
+  private void addLibClasses(final Element rootElement) throws IOException {
+    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myModule.getProject()).getFileIndex();
+    final CompilerConfiguration compilerConfiguration = CompilerConfiguration.getInstance(myModule.getProject());
+    final Ref<Boolean> noClasses = new Ref<Boolean>(true);
+
+    fileIndex.iterateContent(new ContentIterator() {
+      public boolean processFile(final VirtualFile file) {
+        if (file.isDirectory()) return true;
+        if (!FlexCompiler.isSourceFile(file)) return true;
+        if (compilerConfiguration.isExcludedFromCompilation(file)) return true;
+        if (/*!isTest && */ fileIndex.isInTestSourceContent(file)) return true;
+
+        final VirtualFile rootForFile = fileIndex.getSourceRootForFile(file);
+        if (rootForFile == null) return true;
+
+        final String packageText = VfsUtilCore.getRelativePath(file.getParent(), rootForFile, '.');
+        assert packageText != null;
+        final String qName = (packageText.length() > 0 ? packageText + "." : "") + file.getNameWithoutExtension();
+
+        if (FlexCompilerHandler.isMxmlOrFxgOrASWithPublicDeclaration(myModule, file, qName)) {
+          addOption(rootElement, CompilerOptionInfo.INCLUDE_CLASSES_INFO, qName);
+          noClasses.set(false);
+        }
+
+        return true;
+      }
+    });
+
+    if (noClasses.get() && !ApplicationManager.getApplication().isUnitTestMode()) {
+      throw new IOException(FlexBundle.message("nothing.to.compile.in.library", myModule.getName(), myBC.getName()));
+    }
+  }
+
   private void addOption(final Element rootElement, final CompilerOptionInfo info, final String rawValue) {
     if (!info.isApplicable(mySdk.getVersionString(), myBC.getNature())) {
       return;
@@ -517,9 +563,6 @@ public class CompilerConfigGenerator {
     final String elementName = elementNames.get(elementNames.size() - 1);
 
     switch (info.TYPE) {
-      case Group:
-        assert false;
-        break;
       case Boolean:
       case String:
       case Int:
@@ -554,12 +597,8 @@ public class CompilerConfigGenerator {
           }
         }
         break;
-      case IncludeClasses:
-        // todo implement
-        break;
-      case IncludeFiles:
-        // todo implement
-        break;
+      default:
+        assert false : info.DISPLAY_NAME;
     }
   }
 

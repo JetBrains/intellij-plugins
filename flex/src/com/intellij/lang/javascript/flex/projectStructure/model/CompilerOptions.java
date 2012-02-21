@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.projectStructure.model;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Map;
 
 public interface CompilerOptions {
@@ -15,6 +16,8 @@ public interface CompilerOptions {
 
   @NotNull
   ResourceFilesMode getResourceFilesMode();
+
+  Collection<String> getFilesToIncludeInSWC();
 
   @NotNull
   String getAdditionalConfigFilePath();

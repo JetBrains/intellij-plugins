@@ -23,7 +23,7 @@ public class CompilerOptionInfo {
 
   public enum OptionType {Group, Boolean, String, Int, File, List, IncludeClasses, IncludeFiles}
 
-  public enum ListElementType {String, File, Locale}
+  public enum ListElementType {String, File, FileOrFolder, Locale}
 
   public static class ListElement {
     public final String NAME;
@@ -119,9 +119,17 @@ public class CompilerOptionInfo {
     new CompilerOptionInfo("include-namespaces", "fake", OptionType.List, null,
                            new ListElement[]{new ListElement("uri")},
                            false, null, true, true, true, true, "");
-  public static final CompilerOptionInfo CSS_FILES_INFO =
+  public static final CompilerOptionInfo CSS_FILES_INFO_FOR_UI =
     new CompilerOptionInfo("css.files.list.fake", "fake", OptionType.List, null,
                            new ListElement[]{new ListElement("fake", "CSS Files", ListElementType.File, "css", "")},
+                           false, null, true, true, true, true, "");
+  public static final CompilerOptionInfo INCLUDE_FILE_INFO_FOR_UI =
+    new CompilerOptionInfo("files.to.include.in.swc.fake", "fake", OptionType.List, null,
+                           new ListElement[]{new ListElement("fake", "Files And Folders", ListElementType.FileOrFolder, null, "")},
+                           false, null, true, true, true, true, "");
+  public static final CompilerOptionInfo INCLUDE_FILE_INFO =
+    new CompilerOptionInfo("include-file", "fake", OptionType.List, null,
+                           new ListElement[]{new ListElement("name"), new ListElement("path")},
                            false, null, true, true, true, true, "");
 
   public final String ID;

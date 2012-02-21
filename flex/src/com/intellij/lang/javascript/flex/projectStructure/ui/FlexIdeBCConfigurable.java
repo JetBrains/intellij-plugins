@@ -273,7 +273,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
           value.add(new StringBuilder(cssFilePath));
         }
         final RepeatableValueDialog dialog =
-          new RepeatableValueDialog(module.getProject(), "CSS Files To Compile", value, CompilerOptionInfo.CSS_FILES_INFO);
+          new RepeatableValueDialog(module.getProject(), "CSS Files To Compile", value, CompilerOptionInfo.CSS_FILES_INFO_FOR_UI);
         dialog.show();
         if (dialog.isOK()) {
           final List<StringBuilder> newValue = dialog.getCurrentList();

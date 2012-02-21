@@ -4,6 +4,8 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.AddRemoveTableRowsDialog;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
@@ -16,6 +18,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+import static com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo.ListElementType;
 import static com.intellij.lang.javascript.flex.projectStructure.ui.CompilerOptionsConfigurable.ExtensionAwareFileChooserDescriptor;
 
 public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilder> {
@@ -64,14 +67,15 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
       }
 
       public Class getColumnClass(final int column) {
-        return myInfo.LIST_ELEMENTS[column].LIST_ELEMENT_TYPE == CompilerOptionInfo.ListElementType.File ? VirtualFile.class : String.class;
+        final ListElementType type = myInfo.LIST_ELEMENTS[column].LIST_ELEMENT_TYPE;
+        return (type == ListElementType.File || type == ListElementType.FileOrFolder) ? VirtualFile.class : String.class;
       }
 
       protected Object getValue(final StringBuilder s, final int column) {
         final String value = StringUtil.split(s.toString(), CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false).get(column);
-        return myInfo.LIST_ELEMENTS[column].LIST_ELEMENT_TYPE == CompilerOptionInfo.ListElementType.File
-               ? FileUtil.toSystemDependentName(value)
-               : value;
+        final ListElementType type = myInfo.LIST_ELEMENTS[column].LIST_ELEMENT_TYPE;
+        return (type == ListElementType.File || type == ListElementType.FileOrFolder) ? FileUtil.toSystemDependentName(value)
+                                                                                      : value;
       }
 
       protected void setValue(final StringBuilder s, final int column, final Object aValue) {
@@ -83,7 +87,8 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
           s.append(parts.get(i)).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);
         }
 
-        final String fixedValue = myInfo.LIST_ELEMENTS[column].LIST_ELEMENT_TYPE == CompilerOptionInfo.ListElementType.File
+        final ListElementType type = myInfo.LIST_ELEMENTS[column].LIST_ELEMENT_TYPE;
+        final String fixedValue = (type == ListElementType.File || type == ListElementType.FileOrFolder)
                                   ? FileUtil.toSystemIndependentName(String.valueOf(aValue))
                                   : String.valueOf(aValue);
         s.append(fixedValue);
@@ -96,9 +101,14 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
   }
 
   protected void addObject() {
-    if (myInfo.LIST_ELEMENTS.length == 1 && myInfo.LIST_ELEMENTS[0].LIST_ELEMENT_TYPE == CompilerOptionInfo.ListElementType.File) {
-      final String extension = myInfo.LIST_ELEMENTS[0].FILE_EXTENSION;
-      final VirtualFile file = FileChooser.chooseFile(myProject, FlexUtils.createFileChooserDescriptor(extension));
+    final CompilerOptionInfo.ListElement firstElement = myInfo.LIST_ELEMENTS[0];
+    if (myInfo.LIST_ELEMENTS.length == 1 &&
+        (firstElement.LIST_ELEMENT_TYPE == ListElementType.File ||
+         firstElement.LIST_ELEMENT_TYPE == ListElementType.FileOrFolder)) {
+      final FileChooserDescriptor descriptor = firstElement.LIST_ELEMENT_TYPE == ListElementType.File
+                                               ? FlexUtils.createFileChooserDescriptor(firstElement.FILE_EXTENSION)
+                                               : FileChooserDescriptorFactory.createSingleLocalFileDescriptor();
+      final VirtualFile file = FileChooser.chooseFile(myProject, descriptor);
       if (file != null) {
         getCurrentList().add(new StringBuilder(file.getPath()));
       }

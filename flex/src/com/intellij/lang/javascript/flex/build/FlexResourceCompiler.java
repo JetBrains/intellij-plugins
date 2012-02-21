@@ -81,7 +81,7 @@ public class FlexResourceCompiler {
                    bc.getCompilerOptions().getResourceFilesMode() != ResourceFilesMode.None : bc.getName();
 
             if (isTestRoot) {
-              if (BCUtils.isFlexUnitBC(module, bc) && !isSourceFile(file)) {
+              if (BCUtils.isFlexUnitBC(module, bc) && !FlexCompiler.isSourceFile(file)) {
                 final CompilerModuleExtension compilerModuleExtension = CompilerModuleExtension.getInstance(module);
                 final String outputUrl = compilerModuleExtension == null ? null : compilerModuleExtension.getCompilerOutputUrlForTests();
                 if (outputUrl != null) {
@@ -91,7 +91,7 @@ public class FlexResourceCompiler {
             }
             else {
               final ResourceFilesMode mode = bc.getCompilerOptions().getResourceFilesMode();
-              if (mode == ResourceFilesMode.All && !isSourceFile(file) ||
+              if (mode == ResourceFilesMode.All && !FlexCompiler.isSourceFile(file) ||
                   mode == ResourceFilesMode.ResourcePatterns && myCompilerConfiguration.isResourceFile(file)) {
                 sourceAndTargetFilePaths.add(Pair.create(file.getPath(), bc.getOutputFolder() + "/" + relativePath));
               }
@@ -122,11 +122,6 @@ public class FlexResourceCompiler {
     }
 
     CompilerUtil.refreshIOFiles(filesToRefresh);
-  }
-
-  private static boolean isSourceFile(final VirtualFile file) {
-    final String ext = file.getExtension();
-    return ext != null && (ext.equalsIgnoreCase("as") || ext.equalsIgnoreCase("mxml") || ext.equalsIgnoreCase("fxg"));
   }
 }
 
