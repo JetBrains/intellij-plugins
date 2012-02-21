@@ -14,7 +14,7 @@ import com.google.jstestdriver.idea.execution.settings.JstdConfigType;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.ServerType;
 import com.google.jstestdriver.idea.execution.settings.TestType;
-import com.google.jstestdriver.idea.ui.ToolPanel;
+import com.google.jstestdriver.idea.server.ui.ToolPanel;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;

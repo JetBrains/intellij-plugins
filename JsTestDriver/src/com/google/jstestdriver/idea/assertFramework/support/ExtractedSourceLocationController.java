@@ -8,9 +8,9 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -134,13 +134,13 @@ public class ExtractedSourceLocationController {
   }
 
   @Nullable
-  public DialogWrapper.ValidationInfo validate() {
+  public ValidationInfo validate() {
     if (mySelectedDirectoryType == DirectoryType.DEFAULT) {
       return null;
     }
     File extractDirectory = getExtractDir();
     if (!extractDirectory.isDirectory()) {
-      return new DialogWrapper.ValidationInfo("'" + extractDirectory.getPath() + "' is not a directory.",
+      return new ValidationInfo("'" + extractDirectory.getPath() + "' is not a directory.",
                                               myCustomDirectoryTextFieldWithBrowseButton);
     }
     return null;

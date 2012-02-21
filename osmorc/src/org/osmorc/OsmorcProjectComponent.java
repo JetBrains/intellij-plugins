@@ -108,6 +108,7 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
    * Refreshes the framework instance library.
    */
   private void refreshFrameworkInstanceLibrary() {
+    if (ApplicationManager.getApplication().isUnitTestMode()) return;
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
@@ -126,6 +127,7 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
 
 
   private void rebuildOSGiIndices() {
+    if (ApplicationManager.getApplication().isUnitTestMode()) return;
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {

@@ -5,7 +5,7 @@ import com.google.jstestdriver.idea.execution.settings.ServerType;
 import com.google.jstestdriver.idea.server.JstdServerFetchResult;
 import com.google.jstestdriver.idea.server.JstdServerInfo;
 import com.google.jstestdriver.idea.server.JstdServerUtils;
-import com.google.jstestdriver.idea.ui.ToolPanel;
+import com.google.jstestdriver.idea.server.ui.ToolPanel;
 import com.google.jstestdriver.idea.util.ObjectUtils;
 import com.google.jstestdriver.idea.util.SwingUtils;
 import com.google.jstestdriver.idea.util.TextChangeListener;

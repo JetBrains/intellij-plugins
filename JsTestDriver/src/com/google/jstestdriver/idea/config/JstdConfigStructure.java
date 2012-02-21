@@ -10,6 +10,7 @@ import com.google.jstestdriver.config.ConfigurationSource;
 import com.google.jstestdriver.config.UserConfigurationSource;
 import com.google.jstestdriver.config.YamlParser;
 import com.google.jstestdriver.hooks.FileParsePostProcessor;
+import com.google.jstestdriver.model.BasePaths;
 import com.google.jstestdriver.util.DisplayPathSanitizer;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -95,17 +96,20 @@ public class JstdConfigStructure {
     return null;
   }
 
+  @NotNull
   public static JstdConfigStructure newConfigStructure(@NotNull File jstdConfigFile) {
     Configuration resolvedConfiguration = resolveConfiguration(jstdConfigFile);
     Collection<File> loadFiles = mapFileInfos2Files(resolvedConfiguration.getFilesList());
     Collection<File> testFiles = mapFileInfos2Files(resolvedConfiguration.getTests());
-    return new JstdConfigStructure(jstdConfigFile, resolvedConfiguration.getBasePath(), loadFiles, testFiles);
+    File basePath = resolvedConfiguration.getBasePaths().iterator().next();
+    return new JstdConfigStructure(jstdConfigFile, basePath, loadFiles, testFiles);
   }
 
-  private static List<File> mapFileInfos2Files(Collection<FileInfo> fileInfos) {
+  @NotNull
+  private static List<File> mapFileInfos2Files(@NotNull Collection<FileInfo> fileInfos) {
     List<File> files = Lists.newArrayList();
     for (FileInfo fileInfo : fileInfos) {
-      File file = fileInfo.toFile(null);
+      File file = fileInfo.toFile();
       if (file.isFile()) {
         files.add(file);
       }
@@ -119,12 +123,14 @@ public class JstdConfigStructure {
     try {
       ConfigurationSource confSrc = new UserConfigurationSource(jstdConfigFile);
       File initialBasePath = jstdConfigFile.getParentFile();
-      Configuration parsedConf = confSrc.parse(initialBasePath, new YamlParser());
-      File resolvedBasePath = parsedConf.getBasePath().getCanonicalFile();
+      BasePaths initialBasePaths = new BasePaths(initialBasePath);
+      Configuration parsedConf = confSrc.parse(initialBasePaths, new YamlParser());
+      File resolvedBasePath = initialBasePath.getCanonicalFile();
+      BasePaths resolvedBasePaths = new BasePaths(resolvedBasePath);
       PathResolver pathResolver = new PathResolver(
-          resolvedBasePath,
+          resolvedBasePaths,
           Collections.<FileParsePostProcessor>emptySet(),
-          new DisplayPathSanitizer(resolvedBasePath)
+          new DisplayPathSanitizer()
       );
       return parsedConf.resolvePaths(pathResolver, flags);
     } catch (IOException e) {

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/JsTestDriver-standalone-plugin.iml" filepath="$PROJECT_DIR$/JsTestDriver-standalone-plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JsTestDriver-plugin.iml" filepath="$PROJECT_DIR$/JsTestDriver-plugin.iml" />
     </modules>
   </component>
 </project>

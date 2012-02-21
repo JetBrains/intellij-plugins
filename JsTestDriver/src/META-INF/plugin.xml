@@ -20,7 +20,7 @@
   <vendor logo="/com/google/jstestdriver/idea/ui/JsTestDriver.png"
           url="http://code.google.com/p/js-test-driver/"
           email="js-test-driver@googlegroups.com">Google; JetBrains</vendor>
-  <idea-version since-build="111.0" until-build="113.0"/>
+  <idea-version since-build="113.0" until-build="116.0"/>
 
   <extensionPoints>
     <extensionPoint qualifiedName="com.google.jstestdriver.idea.jsCallTemplate" interface="com.google.jstestdriver.idea.assertFramework.codeInsight.JsCallTemplateContextProvider"/>
@@ -36,8 +36,8 @@
     <configurationType implementation="com.google.jstestdriver.idea.execution.JstdConfigurationType"/>
     <programRunner implementation="com.google.jstestdriver.idea.execution.JstdClientRunner"/>
     <configurationProducer implementation="com.google.jstestdriver.idea.execution.JstdRuntimeConfigurationProducer"/>
-    <toolWindow id="JsTestDriver Server" anchor="bottom" icon="/com/google/jstestdriver/idea/ui/JsTestDriver.png"
-                factoryClass="com.google.jstestdriver.idea.JSTestDriverToolWindow" canCloseContents="false"/>
+    <toolWindow id="JsTestDriver Server" anchor="bottom" icon="/com/google/jstestdriver/idea/icons/JsTestDriver.png"
+                factoryClass="com.google.jstestdriver.idea.server.ui.JstdToolWindow" canCloseContents="false"/>
   </extensions>
 
   <change-notes>

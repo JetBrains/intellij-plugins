@@ -5,8 +5,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.scripting.ScriptingLibraryModel;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,17 +53,17 @@ public class LibraryCreationController implements ExtractedSourceLocationControl
   }
 
   @Nullable
-  public DialogWrapper.ValidationInfo validate() {
+  public ValidationInfo validate() {
     String libraryName = myJsLibraryNameTextField.getText();
     if (libraryName.trim().isEmpty()) {
-      return new DialogWrapper.ValidationInfo("Invalid library name", myJsLibraryNameTextField);
+      return new ValidationInfo("Invalid library name", myJsLibraryNameTextField);
     }
     ScriptingLibraryModel libraryModel = myJsLibraryHelper.getScriptingLibraryModel(libraryName);
     if (libraryModel == null || JsLibraryHelper.scriptingLibraryModelConsistsOf(libraryModel, myAdapterSourceFiles)) {
       return null;
     }
     String message = "Library '" + libraryName + "' is already created and cannot be reused.";
-    return new DialogWrapper.ValidationInfo(message, myJsLibraryNameTextField);
+    return new ValidationInfo(message, myJsLibraryNameTextField);
   }
 
   public static LibraryCreationController install(@NotNull Project project,

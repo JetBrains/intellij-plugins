@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="JsTestDriver-plugin-lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jstestdriver-core/JsTestDriver-1.3.4-a.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/jstestdriver-core/JsTestDriver-1.3.4-a-src.zip!/" />
+    </SOURCES>
+  </library>
+</component>

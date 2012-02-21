@@ -3,6 +3,7 @@ package com.google.jstestdriver.idea.assertFramework.support;
 import com.google.jstestdriver.idea.util.CastUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,6 +45,7 @@ public class AddAdapterSupportDialog extends DialogWrapper {
       project, myDirectoryTypeContent, assertionFrameworkName, myDefaultRadioButton,
       myCustomRadioButton, Collections.singletonList(myLibraryCreationController)
     );
+    setOKButtonText("Install");
     super.init();
   }
 
@@ -90,13 +92,6 @@ public class AddAdapterSupportDialog extends DialogWrapper {
       myLibraryCreationController.installCodeAssistance(extractedVirtualFiles);
     }
     super.doOKAction();
-  }
-
-  @Override
-  protected Action[] createActions() {
-    Action okAction = getOKAction();
-    okAction.putValue(Action.NAME, "Install");
-    return new Action[] { okAction, getCancelAction() };
   }
 
 }
