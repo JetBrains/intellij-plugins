@@ -31,7 +31,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -100,18 +99,29 @@ public class TestRunner {
     runTests(config, new String[]{"--tests", testCaseName});
   }
 
-  @SuppressWarnings("deprecation")
   private void runTests(@NotNull File config, @NotNull String[] extraArgs) {
+    PrintStream old = System.out;
+    System.setOut(new PrintStream(new NullOutputStream()));
+    try {
+      doRunTests(config, extraArgs);
+    } finally {
+      System.setOut(old);
+    }
+  }
+
+  @SuppressWarnings("deprecation")
+  private void doRunTests(@NotNull File config, @NotNull String[] extraArgs) {
     JsTestDriverBuilder builder = new JsTestDriverBuilder();
+
     builder.setConfigurationSource(new UserConfigurationSource(config));
     builder.setPort(mySettings.getPort());
     builder.addTestListener(new IDETestListener(myTestResultProtocolMessageOutput, config));
     builder.setRunnerMode(RunnerMode.QUIET);
     builder.setServer(mySettings.getServerUrl());
-    
-    List<String> flagArgs = new ArrayList<String>(Arrays.asList("--captureConsole", "--server", mySettings.getServerUrl()));
+
+    List<String> flagArgs = Lists.newArrayList("--captureConsole", "--server", mySettings.getServerUrl());
     flagArgs.addAll(Arrays.asList(extraArgs));
-    
+
     String[] args = flagArgs.toArray(new String[flagArgs.size()]);
     builder.setFlags(args);
     JsTestDriver jstd = builder.build();
@@ -308,4 +318,13 @@ public class TestRunner {
       return new Settings(port, serverUrl, configFiles, testCaseName, testMethodName);
     }
   }
+
+  private final class NullOutputStream extends OutputStream {
+    @Override public void write(int b) {
+    }
+
+    @Override public void write(byte[] b, int off, int len) {
+    }
+  }
+
 }
