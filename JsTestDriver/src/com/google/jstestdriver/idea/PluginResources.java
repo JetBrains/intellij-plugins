@@ -15,18 +15,14 @@
  */
 package com.google.jstestdriver.idea;
 
+import com.google.jstestdriver.browser.BrowserCaptureEvent.Event;
+import com.google.jstestdriver.idea.icons.JstdIcons;
+
+import javax.swing.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.io.IOException;
-import javax.imageio.ImageIO;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-
-import com.google.jstestdriver.browser.BrowserCaptureEvent.Event;
-import com.google.jstestdriver.idea.ui.ToolPanel;
-
-import static com.intellij.openapi.util.IconLoader.findIcon;
 
 /**
  * Access to all the text and image resources for the plugin.
@@ -34,7 +30,6 @@ import static com.intellij.openapi.util.IconLoader.findIcon;
  */
 public class PluginResources {
 
-  private static final Icon JSTD_SMALL_ICON = findIcon("JsTestDriver.png", ToolPanel.class);
 
   private PluginResources() {}
 
@@ -42,17 +37,6 @@ public class PluginResources {
     return MessageBundle.message("plugin.name");
   }
 
-  public static Icon getJstdSmallIcon() {
-    return JSTD_SMALL_ICON;
-  }
-
-  public static Icon getServerStartIcon() {
-    return findIcon("startServer.png", ToolPanel.class);
-  }
-
-  public static Icon getServerStopIcon() {
-    return findIcon("stopServer.png", ToolPanel.class);
-  }
   public static String getCaptureUrlMessage() {
     return MessageBundle.message("captureLabel");
   }
@@ -68,7 +52,7 @@ public class PluginResources {
     }
 
     public static BrowserIcon buildFromResource(String resourceName) throws IOException {
-      return new BrowserIcon(ImageIO.read(ToolPanel.class.getResourceAsStream(resourceName)));
+      return new BrowserIcon(JstdIcons.loadImage(resourceName));
     }
 
     public Icon getColorIcon() {

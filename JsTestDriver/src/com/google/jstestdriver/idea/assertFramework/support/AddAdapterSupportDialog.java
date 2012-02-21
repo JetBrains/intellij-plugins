@@ -45,6 +45,7 @@ public class AddAdapterSupportDialog extends DialogWrapper {
       project, myDirectoryTypeContent, assertionFrameworkName, myDefaultRadioButton,
       myCustomRadioButton, Collections.singletonList(myLibraryCreationController)
     );
+    setOKButtonText("Install");
     super.init();
   }
 
@@ -91,13 +92,6 @@ public class AddAdapterSupportDialog extends DialogWrapper {
       myLibraryCreationController.installCodeAssistance(extractedVirtualFiles);
     }
     super.doOKAction();
-  }
-
-  @Override
-  protected Action[] createActions() {
-    Action okAction = getOKAction();
-    okAction.putValue(Action.NAME, "Install");
-    return new Action[] { okAction, getCancelAction() };
   }
 
 }
