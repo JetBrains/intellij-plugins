@@ -47,6 +47,7 @@
   <li><a href="http://youtrack.jetbrains.com/issue/WI-7970" style="text-decoration: line-through">WI-7970</a>
     Running tests with Safari and Opera raises NullPointerException every other time
   </li>
+  <li>navigation from Opera stacktrace to source code</li>
   <li>better JsTestDriver tool window UI</li>
 </ul>
 
