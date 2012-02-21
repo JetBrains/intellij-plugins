@@ -25,7 +25,7 @@ class StacktracePrinter extends TestsOutputConsolePrinter {
   private static final String DEFAULT_PATH_PREFIX = "/test/";
 
   @NotNull
-  private Project myProject;
+  private final Project myProject;
   private final JstdConfigStructure myConfigStructure;
   private final HyperlinkInfoHelper myHyperlinkInfoHelper;
 
@@ -46,12 +46,10 @@ class StacktracePrinter extends TestsOutputConsolePrinter {
       return ChromeHyperlinkInfoHelper.INSTANCE;
     } else if (browserName.startsWith("firefox")) {
       return FirefoxHyperlinkInfoHelper.INSTANCE;
+    } else if (browserName.startsWith("opera")) {
+      return OperaHyperlinkInfoHelper.INSTANCE;
     }
     return null;
-  }
-
-  public void defaultPrint(String text, ConsoleViewContentType contentType) {
-    super.print(text, contentType);
   }
 
   @Override
@@ -72,6 +70,10 @@ class StacktracePrinter extends TestsOutputConsolePrinter {
     } else {
       defaultPrint(text, contentType);
     }
+  }
+
+  private void defaultPrint(String text, ConsoleViewContentType contentType) {
+    super.print(text, contentType);
   }
 
   private boolean writeHyperlinkIfPossible(HyperlinkInfoHelper hyperlinkInfoHelper, String line, ConsoleViewContentType consoleViewContentType) {
@@ -202,6 +204,20 @@ class StacktracePrinter extends TestsOutputConsolePrinter {
     @Override
     Pattern[] getAllPossibleUrlPatterns() {
       return FIREFOX_URL_WITH_LINE;
+    }
+  }
+
+  private static class OperaHyperlinkInfoHelper extends HyperlinkInfoHelper {
+
+    private static final OperaHyperlinkInfoHelper INSTANCE = new OperaHyperlinkInfoHelper();
+    private static final Pattern[] PATTERNS = {
+        //<anonymous function: window.equals>([arguments not available])@http://localhost:9876/test/qunit-lib/QUnitAdapter.js:57
+        Pattern.compile("^.*\\(.*\\)@([^\\(@]*)$")
+    };
+
+    @Override
+    Pattern[] getAllPossibleUrlPatterns() {
+      return PATTERNS;
     }
   }
 
