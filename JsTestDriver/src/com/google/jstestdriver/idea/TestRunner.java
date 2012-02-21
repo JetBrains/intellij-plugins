@@ -96,9 +96,8 @@ public class TestRunner {
       testCaseName = "all";
     }
 
-    runTests(config, new String[]{"--dryRunFor", testCaseName});
+    runTests(config, new String[]{"--reset", "--dryRunFor", testCaseName});
     runTests(config, new String[]{"--tests", testCaseName});
-    runTests(config, new String[]{"--reset"});
   }
 
   @SuppressWarnings("deprecation")
@@ -133,10 +132,6 @@ public class TestRunner {
 
   public static void main(String[] args) throws Exception {
     LogManager.getLogManager().readConfiguration(RunnerMode.QUIET.getLogConfig());
-    for (String arg : args) {
-      System.out.print(arg + " ");
-    }
-    System.out.println();
 
     Map<ParameterKey, String> paramMap = parseParams(args);
     Settings settings = Settings.build(paramMap);

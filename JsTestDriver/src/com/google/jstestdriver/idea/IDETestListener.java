@@ -30,12 +30,10 @@ public class IDETestListener implements TestListener {
   public void onTestComplete(TestResult testResult) {
     TestResultProtocolMessage message = TestResultProtocolMessage.fromTestResult(myJstdConfigFile, testResult);
     writeTestResultProtocolMessage(message);
-    System.out.println("onTestComplete(" + testResult + ")");
   }
 
   @Override
   public void onFileLoad(BrowserInfo browserInfo, FileResult fileResult) {
-    System.out.println("onFileLoad(" + browserInfo + ", " +  fileResult + ")");
   }
 
   @Override
@@ -46,12 +44,10 @@ public class IDETestListener implements TestListener {
       );
       writeTestResultProtocolMessage(message);
     }
-    System.out.println("onTestRegistered(" + browser + ", " + testCase + ")");
   }
 
   @Override
   public void finish() {
-    System.out.println("finish()");
   }
 
   private void writeTestResultProtocolMessage(@NotNull TestResultProtocolMessage message) {
