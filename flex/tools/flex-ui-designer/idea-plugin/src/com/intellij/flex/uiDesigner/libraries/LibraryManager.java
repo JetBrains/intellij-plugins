@@ -3,14 +3,12 @@ package com.intellij.flex.uiDesigner.libraries;
 import com.intellij.ProjectTopics;
 import com.intellij.diagnostic.errordialog.Attachment;
 import com.intellij.flex.uiDesigner.*;
-import com.intellij.flex.uiDesigner.abc.AbcTranscoder;
 import com.intellij.flex.uiDesigner.io.InfoMap;
 import com.intellij.flex.uiDesigner.io.RetainCondition;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet.ContainsCondition;
 import com.intellij.flex.uiDesigner.libraries.LibrarySorter.SortResult;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.notification.Notification;
@@ -21,7 +19,6 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootEvent;
@@ -33,17 +30,11 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.StringBuilderSpinAllocator;
-import com.intellij.util.io.DataExternalizer;
-import com.intellij.util.io.EnumeratorStringDescriptor;
-import com.intellij.util.io.PersistentHashMap;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
-import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.DataInput;
-import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
 import java.nio.channels.ClosedByInterruptException;
@@ -54,110 +45,22 @@ public class LibraryManager implements Disposable {
   private static final String SWF_EXTENSION = ".swf";
   static final String PROPERTIES_EXTENSION = ".properties";
 
-  private static final String ABC_FILTER_VERSION = "17";
-  private static final String ABC_FILTER_VERSION_VALUE_NAME = "fud_abcFilterVersion";
-
-  private static final char NAME_PREFIX = '@';
-
   private final File appDir;
 
   private final InfoMap<VirtualFile, Library> libraries = new InfoMap<VirtualFile, Library>();
-
   private final THashMap<String, LibrarySet> librarySets = new THashMap<String, LibrarySet>();
+
   private final Map<VirtualFile, Set<CharSequence>> globalDefinitionsMap = new THashMap<VirtualFile, Set<CharSequence>>();
 
-  private final PersistentHashMap<String, SortResult> persistentCache;
-  private boolean cacheCleared;
+  private LibrariesData data;
 
   public LibraryManager() throws IOException {
     appDir = DesignerApplicationManager.APP_DIR;
-    persistentCache = createCache();
-  }
-
-  private PersistentHashMap<String, SortResult> createCache() throws IOException {
-    final File file = new File(appDir, "librarySets");
-
-    PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
-    if (!ABC_FILTER_VERSION.equals(propertiesComponent.getValue(ABC_FILTER_VERSION_VALUE_NAME))) {
-      clearCache(file);
-    }
-
-    try {
-      return new PersistentHashMap<String, SortResult>(file, new EnumeratorStringDescriptor(), new MyDataExternalizer());
-    }
-    catch (IOException e) {
-      LogMessageUtil.LOG.info(e);
-      clearCache(file);
-      return new PersistentHashMap<String, SortResult>(file, new EnumeratorStringDescriptor(), new MyDataExternalizer());
-    }
-  }
-
-  private void clearCache(File file) {
-    cacheCleared = true;
-    PersistentHashMap.deleteFilesStartingWith(file);
   }
 
   @Override
   public void dispose() {
-    try {
-      persistentCache.close();
-    }
-    catch (IOException e) {
-      LogMessageUtil.LOG.info(e);
-    }
-  }
-
-  private static class MyDataExternalizer implements DataExternalizer<SortResult> {
-    @Override
-    public void save(final DataOutput out, SortResult value) throws IOException {
-      out.writeShort(value.libraries.size());
-      for (Library library : value.libraries) {
-        out.writeUTF(library.getFile().getPath());
-      }
-
-      if (value.definitionMap == null) {
-        out.writeInt(0);
-        return;
-      }
-
-      out.writeInt(value.definitionMap.size());
-      value.definitionMap.forEachKey(new TObjectProcedure<CharSequence>() {
-        @Override
-        public boolean execute(CharSequence charSequence) {
-          try {
-            out.writeUTF(charSequence.toString());
-          }
-          catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-
-          return true;
-        }
-      });
-    }
-
-    @Override
-    public SortResult read(DataInput in) throws IOException {
-      int librariesSize = in.readShort();
-      String[] libraryPathes = new String[librariesSize];
-      while (librariesSize-- > 0) {
-        libraryPathes[librariesSize] = in.readUTF();
-      }
-
-      int size = in.readInt();
-      final THashMap<CharSequence, Definition> map;
-      if (size != 0) {
-        map = new THashMap<CharSequence, Definition>(size, AbcTranscoder.HASHING_STRATEGY);
-        while (size-- > 0) {
-          map.put(in.readUTF(), null);
-        }
-      }
-      else {
-        map = null;
-      }
-
-      return new SortResult(map, libraryPathes);
-    }
+    data.close();
   }
 
   public void unregister(final int[] ids) {
@@ -176,21 +79,9 @@ public class LibraryManager implements Disposable {
     return libraries.add(library);
   }
 
-  public void garbageCollection(ProgressIndicator indicator) {
-    if (!cacheCleared) {
-      return;
-    }
-
-    indicator.setText(FlashUIDesignerBundle.message("delete.old.libraries"));
-
-    for (String path : appDir.list()) {
-      if (path.charAt(0) == NAME_PREFIX) {
-        //noinspection ResultOfMethodCallIgnored
-        new File(appDir, path).delete();
-      }
-    }
-
-    PropertiesComponent.getInstance().setValue(ABC_FILTER_VERSION_VALUE_NAME, ABC_FILTER_VERSION);
+  public void init() throws IOException {
+    LogMessageUtil.LOG.assertTrue(data == null);
+    data = new LibrariesData(appDir);
   }
 
   @NotNull
@@ -368,11 +259,11 @@ public class LibraryManager implements Disposable {
     throws InitException {
     final List<Library> libraries = isSdk ? collector.sdkLibraries : collector.externalLibraries;
     try {
-      final int id = persistentCache.enumerate(key);
-      SortResult result = persistentCache.get(key);
+      final int id = data.librarySets.enumerate(key);
+      SortResult result = data.librarySets.get(key);
       if (result == null) {
-        result = sorter.sort(libraries, new File(appDir, NAME_PREFIX + Integer.toString(id) + SWF_EXTENSION), isExternal, isSdk);
-        persistentCache.put(key, result);
+        result = sorter.sort(libraries, new File(appDir, LibrariesData.NAME_PREFIX + Integer.toString(id) + SWF_EXTENSION), isExternal, isSdk);
+        data.librarySets.put(key, result);
       }
       else {
         final String[] libraryPathes = result.libraryPathes;

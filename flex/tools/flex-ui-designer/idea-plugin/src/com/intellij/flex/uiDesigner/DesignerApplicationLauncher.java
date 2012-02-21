@@ -367,10 +367,10 @@ public class DesignerApplicationLauncher extends DocumentTask {
       @Nullable
       @Override
       public ProjectComponentReferenceCounter call() {
-        LibraryManager.getInstance().garbageCollection(indicator);
-        indicator.checkCanceled();
-
         try {
+          LibraryManager.getInstance().init();
+          indicator.checkCanceled();
+
           if (!StringRegistry.getInstance().isEmpty()) {
             Client.getInstance().initStringRegistry();
           }
