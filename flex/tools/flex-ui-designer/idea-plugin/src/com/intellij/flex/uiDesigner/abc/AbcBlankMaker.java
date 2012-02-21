@@ -1,7 +1,9 @@
 package com.intellij.flex.uiDesigner.abc;
 
+import com.intellij.flex.uiDesigner.AssetCounter;
 import com.intellij.flex.uiDesigner.Client;
 import com.intellij.flex.uiDesigner.io.ByteArrayOutputStreamEx;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 
 import java.io.File;
@@ -10,8 +12,18 @@ import java.io.IOException;
 @SuppressWarnings("UnusedDeclaration")
 final class AbcBlankMaker {
   public static void main(String[] args) throws IOException {
-    //movieSymbolTranscoder();
-    new AbcFilter(false).filter(new File("abc-blank-maker/o/library.swf"), new File("idea-plugin/resources/SparkView.abc"), new AbcNameFilterByEquals("_v000"));
+//    final AbcFilter abcFilter = new AbcFilter(true);
+//    final File in = new File("/Developer/SDKs/flex_4.6.0/frameworks/projects/framework/assets/Assets.swf");
+//        abcFilter.filter(in, new File("idea-plugin/resources/AAASymbolOwnClass.abc"), new Condition<CharSequence>() {
+//          @Override
+//          public boolean value(CharSequence charSequence) {
+//            return true;
+//          }
+//        });
+//return;
+//    makeBlanks();
+    movieSymbolTranscoder();
+    //new AbcFilter(false).filter(new File("abc-blank-maker/o/library.swf"), new File("idea-plugin/resources/SparkView.abc"), new AbcNameFilterByEquals("_v000"));
 
     //d();
 
@@ -30,22 +42,23 @@ final class AbcBlankMaker {
   }
 
   private static void movieSymbolTranscoder() throws IOException {
-    //new MovieSymbolTranscoder().transcode(new File("/Users/develar/Documents/idea/flex/tools/flex-ui-designer/idea-plugin/testData/mxml/AuxAnim.swf"), new File("/Users/develar/a.swf"), "myMC".getBytes());
+    //new MovieSymbolTranscoder().transcode(new File("/Users/develar/Documents/idea/flex/tools/flex-ui-designer/idea-plugin/testData/src/common/AuxAnim.swf"), new File("/Users/develar/a.swf"), "myMC".getBytes());
+    new MovieSymbolTranscoder().transcode(new File("/Developer/SDKs/flex_4.6.0/frameworks/projects/framework/assets/Assets.swf"), new File("/Users/develar/b.swf"), "_SymbolOwnClass".getBytes());
 
-    new EntireMovieTranscoder().transcode(new File("/Users/develar/Documents/idea/flex/tools/flex-ui-designer/idea-plugin/testData/mxml/AuxAnim.swf"), new File("/Users/develar/a.swf"));
+    //new EntireMovieTranscoder().transcode(new File("/Users/develar/Documents/idea/flex/tools/flex-ui-designer/idea-plugin/testData/mxml/AuxAnim.swf"), new File("/Users/develar/a.swf"));
   }
 
   private static void fillAssetClassPoolGenerator() throws IOException {
     ByteArrayOutputStreamEx out = new ByteArrayOutputStreamEx(1024);
-    //ClassPoolGenerator.generate(Client.ClientMethod.fillImageClassPool, 3, null, out);
-    FileUtil.writeToFile(new File("/Users/develar/b.swf"), out.toByteArray());
+    ClassPoolGenerator.generate(ClassPoolGenerator.Kind.IMAGE, 3, new AssetCounter(), out);
+    FileUtil.writeToFile(new File("/Users/develar/classPool.swf"), out.toByteArray());
   }
 
   private static void makeBlanks() throws IOException {
     final AbcFilter abcTagExtractor = new AbcFilter(false);
-    final File in = new File("abc-blank-maker/src/o/library.swf");
-    abcTagExtractor.filter(in, new File("idea-plugin/resources/BitmapAsset.abc"), new AbcNameFilterByEquals("_b000"));
-    abcTagExtractor.filter(in, new File("idea-plugin/resources/SpriteAsset.abc"), new AbcNameFilterByEquals("_s000"));
+    final File in = new File("abc-blank-maker/o/library.swf");
+    abcTagExtractor.filter(in, new File("idea-plugin/resources/imageClassTemplate.abc"), new AbcNameFilterByEquals("_b000"));
+    abcTagExtractor.filter(in, new File("idea-plugin/resources/swfClassTemplate.abc"), new AbcNameFilterByEquals("_s000"));
     // must be encoded as tag
     final AbcFilter abcFilter = new AbcFilter(true);
     abcFilter.filter(in, new File("idea-plugin/resources/SSymbolOwnClass.abc"), new AbcNameFilterByEquals("SSymbolOwnClass"));

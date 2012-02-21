@@ -23,8 +23,6 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
   // but we must write placed object in the same order as it was read
   private List<PlacedObject> usedPlacedObjects;
 
-  private int spriteId;
-
   // symbolName — utf8 bytes
   @SuppressWarnings("UnusedDeclaration")
   @TestOnly
@@ -52,19 +50,17 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
     }
 
     SwfUtil.header(fileLength, out, buffer);
-
-    out.write(symbolOwnClassAbc);
-
     writeUsedPlacedObjects();
-    writeExportedSymbol(exportedSymbol);
-
+    writePlacedObject(exportedSymbol);
+    out.write(symbolOwnClassAbc);
+    writeSymbolClass(exportedSymbol.newId);
     SwfUtil.footer(out);
   }
 
   private PlacedObject transcode() throws IOException {
     placedObjects = new TIntObjectHashMap<PlacedObject>();
 
-    spriteId = -1;
+    int spriteId = -1;
 
     int tagStart;
     analyze: while ((tagStart = buffer.position()) < buffer.limit()) {
@@ -112,8 +108,9 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
     exportedSymbol.used = true;
     processDefineSprite(exportedSymbol);
 
-    // we encode length not as provided, according to rules about long or short tag header
-    fileLength += computeFullLength(exportedSymbol.positions == null ? exportedSymbol.length : exportedSymbol.actualLength);
+    exportedSymbol.newId = usedPlacedObjects.size() + 1;
+
+    fileLength += exportedSymbol.filelength();
     return exportedSymbol;
   }
 
@@ -169,7 +166,7 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
 
   private void processPlaceObject2(final PlacedObject placedObject, final int length, final int position) throws IOException {
     int flags = buffer.get();
-    int objectId = -1;
+    int objectIdPosition = -1;
     if ((flags & HAS_CLIP_ACTION) != 0) {
       flags = flags &~ HAS_CLIP_ACTION;
       int bufferPosition = buffer.position();
@@ -178,7 +175,7 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
       bufferPosition += 2; // Depth
 
       if ((flags & HAS_CHARACTER) != 0) {
-        objectId = buffer.getShort(bufferPosition);
+        objectIdPosition = bufferPosition;
         bufferPosition += 2;
       }
 
@@ -213,45 +210,37 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
       placedObject.positions.add(position + length);
     }
     else if ((flags & HAS_CHARACTER) != 0) {
-      objectId = buffer.getShort(buffer.position() + 2);
+      objectIdPosition = buffer.position() + 2;
     }
 
     // swf spec: "CharacterId is used only when a new character is being added. If a character that is already on the display map is being modified, the CharacterId field is absent."
     // but in any case we check and use flag referredObject.used — swf may be invalid (but this problem is not encountered yet, develar 05.08.11)
-    if (objectId != -1) {
+    if (objectIdPosition != -1) {
+      final int objectId = buffer.getShort(objectIdPosition);
       final PlacedObject referredObject = placedObjects.get(objectId);
       if (referredObject.used) {
         return;
       }
 
-      usedPlacedObjects.add(referredObject);
       referredObject.used = true;
       if (referredObject.tagType == TagTypes.DefineSprite) {
         processDefineSprite(referredObject);
-        if (referredObject.positions == null) {
-          // we encode length as provided, just copy bytes
-          fileLength += referredObject.computeFullLengthAsProvided();
-        }
-        else {
-          // we encode length according to rules about long or short tag header
-          fileLength += computeFullLength(referredObject.actualLength);
-        }
+        fileLength += referredObject.filelength();
       }
       else if (bounds == null) {
         findBounds(referredObject);
         fileLength += referredObject.computeFullLengthAsProvided();
       }
+
+      usedPlacedObjects.add(referredObject);
+      referredObject.newId = usedPlacedObjects.size();
+      buffer.putShort(objectIdPosition, (short)referredObject.newId);
     }
   }
 
   private void findBounds(PlacedObject placedObject) throws IOException {
     buffer.position(placedObject.start + 2);
     decodeRect();
-  }
-
-  private void writeExportedSymbol(PlacedObject object) throws IOException {
-    writePlacedObject(object);
-    writeSymbolClass(spriteId);
   }
 
   private void writeUsedPlacedObjects() throws IOException {
@@ -266,20 +255,23 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
     for (PlacedObject object : usedPlacedObjects) {
       writePlacedObject(object);
     }
-
-    usedPlacedObjects = null;
   }
 
   private void writePlacedObject(PlacedObject object) throws IOException {
     final TIntArrayList positions = object.positions;
     if (positions == null) {
-      out.write(data, object.tagStart, (object.start - object.tagStart) + object.length);
+      out.write(data, object.tagStart, object.start - object.tagStart);
+      // little-endian short new id
+      out.write(0xff & object.newId);
+      out.write(0xff & (object.newId >> 8));
+      out.write(data, object.start + 2, object.length - 2);
     }
     else {
       buffer.position(0);
       encodeTagHeader(object.tagType, object.actualLength);
+      buffer.putShort((short)object.newId);
       out.write(data, 0, buffer.position());
-      writeSparceBytes(positions, object.start, object.start + object.length);
+      writeSparceBytes(positions, object.start + 2, object.start + object.length);
     }
   }
 
@@ -367,6 +359,7 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
 
   private static class PlacedObject {
     private boolean used;
+    private int newId = -1;
 
     // we cannot calculate tagStart by length and start — length may be less than 63, but encoded as long tag header
     private final int tagStart;
@@ -393,6 +386,17 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
     
     public int computeFullLengthAsProvided() {
       return length + (start - tagStart);
+    }
+
+    public int filelength() {
+      if (positions == null) {
+        // we encode length as provided, just copy bytes
+        return computeFullLengthAsProvided();
+      }
+      else {
+        // we encode length according to rules about long or short tag header
+        return computeFullLength(actualLength);
+      }
     }
   }
 }

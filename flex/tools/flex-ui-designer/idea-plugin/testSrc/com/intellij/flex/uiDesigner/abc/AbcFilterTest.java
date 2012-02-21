@@ -29,18 +29,18 @@ public class AbcFilterTest {
   @Test
   public void replaceMainClass() throws IOException {
     filter.filter(new File(TEST_LIB_DIR, "libraryWithIncompatibleMxFlexModuleFactory.swf"), out, null);
-    assertThat(out.length(), 409004);
+    assertThat(out.length(), 409003);
   }
 
   @Test
   public void replaceExportsToSymbolClass() throws IOException {
     filter.filter(new File(TEST_LIB_DIR, "MinimalComps_0_9_10.swf"), out, null);
-    assertThat(out.length(), 252501);
+    assertThat(out.length(), 252500);
   }
 
   @Test
   public void merge() throws IOException {
     filter.filter(new File(TEST_LIB_DIR, "MinimalComps_0_9_10.swf"), out, null);
-    assertThat(out.length(), 252501);
+    assertThat(out.length(), 252500);
   }
 }

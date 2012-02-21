@@ -69,14 +69,14 @@ abstract class MovieTranscoder extends SwfTranscoder {
     if (frameCount > 1) {
       if (MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC == null) {
         MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC = IOUtil.getResourceBytes("MSymbolOwnClass.abc");
-        MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC[22] = '_'; // replace M => _
+        MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC[21] = '_'; // replace M => _
       }
       symbolOwnClassAbc = MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC;
     }
     else {
       if (SPRITE_SYMBOL_OWN_CLASS_ABC == null) {
         SPRITE_SYMBOL_OWN_CLASS_ABC = IOUtil.getResourceBytes("SSymbolOwnClass.abc");
-        SPRITE_SYMBOL_OWN_CLASS_ABC[22] = '_'; // replace S => _
+        SPRITE_SYMBOL_OWN_CLASS_ABC[21] = '_'; // replace S => _
       }
       symbolOwnClassAbc = SPRITE_SYMBOL_OWN_CLASS_ABC;
     }

@@ -205,7 +205,6 @@ public class Encoder {
       buffer.putShort((short)((TagTypes.DoABC2 << 6) | 63));
       buffer.position(6);
       buffer.putInt(1);
-      buffer.put((byte)'_');
       buffer.put((byte)0);
     }
     else {

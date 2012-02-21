@@ -4,6 +4,4 @@ export PATH=/Developer/SDKs/flex_4.6.0/bin:$PATH
 
 cd ~/Documents/idea/flex/tools/flex-ui-designer/abc-blank-maker
 
-compc -load-config= -debug=false -directory=true -include-classes=_b000,_s000,SSymbolOwnClass,MSymbolOwnClass -output=o -sp=. -sp+=../../flex-injection/src/main/flex
-
 compc -load-config=flex-config.xml
