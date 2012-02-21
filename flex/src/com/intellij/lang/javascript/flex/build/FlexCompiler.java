@@ -43,11 +43,9 @@ import java.io.DataInput;
 import java.io.IOException;
 import java.util.*;
 
-// FlexCompiler must work later than FlexResourceCompiler (TranslatingCompiler), because FlexCompiler handles HTML wrapper template and AIR descriptor template.
-// So it must override files with the same names which probably were copied by FlexResourceCompiler.
-// On the other hand FlexCompiler must work before ArtifactsCompiler (PackagingCompiler) as swf may be packaged into artifact.
-// That's why FlexCompiler needs to implement ClassInstrumentingCompiler or ClassPostProcessingCompiler (see CompilerDriver.doCompile())
-public class FlexCompiler implements ClassPostProcessingCompiler {
+import static com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions.ResourceFilesMode;
+
+public class FlexCompiler implements SourceProcessingCompiler {
   private static final Logger LOG = Logger.getInstance(FlexCompiler.class.getName());
 
   @NotNull
@@ -92,6 +90,10 @@ public class FlexCompiler implements ClassPostProcessingCompiler {
   }
 
   public ProcessingItem[] process(final CompileContext context, final ProcessingItem[] items) {
+    // todo clear output directories if rebuild and corresponding option checked
+    // todo incremental resource files copying
+    new FlexResourceCompiler(context, mapModuleToBCsWithResourceFiles(items)).processResourceFiles();
+
     final FlexCompilerHandler flexCompilerHandler = FlexCompilerHandler.getInstance(context.getProject());
     final FlexCompilerProjectConfiguration flexCompilerConfiguration = FlexCompilerProjectConfiguration.getInstance(context.getProject());
 
@@ -141,7 +143,7 @@ public class FlexCompiler implements ClassPostProcessingCompiler {
             cssBC.setMainClass(cssPath);
             cssBC.setOutputFileName(FileUtil.getNameWithoutExtension(PathUtil.getFileName(cssPath)) + ".swf");
             cssBC.setCssFilesToCompile(Collections.<String>emptyList());
-            cssBC.getCompilerOptions().setResourceFilesMode(CompilerOptions.ResourceFilesMode.None);
+            cssBC.getCompilerOptions().setResourceFilesMode(ResourceFilesMode.None);
 
             VirtualFile root = ProjectRootManager.getInstance(context.getProject()).getFileIndex().getSourceRootForFile(cssFile);
             if (root == null) root = ProjectRootManager.getInstance(context.getProject()).getFileIndex().getContentRootForFile(cssFile);
@@ -176,6 +178,26 @@ public class FlexCompiler implements ClassPostProcessingCompiler {
       FlexCompilerHandler.deleteTempFlexUnitFiles(context);
       return items;
     }
+  }
+
+  private static Map<Module, Collection<FlexIdeBuildConfiguration>> mapModuleToBCsWithResourceFiles(final ProcessingItem[] items) {
+    final Map<Module, Collection<FlexIdeBuildConfiguration>> result = new THashMap<Module, Collection<FlexIdeBuildConfiguration>>();
+
+    for (ProcessingItem item : items) {
+      final Module module = ((MyProcessingItem)item).myModule;
+      final FlexIdeBuildConfiguration bc = ((MyProcessingItem)item).myBC;
+      if (!bc.isSkipCompile() && BCUtils.canHaveResourceFiles(bc.getNature()) &&
+          bc.getCompilerOptions().getResourceFilesMode() != ResourceFilesMode.None) {
+        Collection<FlexIdeBuildConfiguration> bcs = result.get(module);
+        if (bcs == null) {
+          bcs = new ArrayList<FlexIdeBuildConfiguration>();
+          result.put(module, bcs);
+        }
+        bcs.add(bc);
+      }
+    }
+
+    return result;
   }
 
   @SuppressWarnings("ConstantConditions") // already checked in validateConfiguration()

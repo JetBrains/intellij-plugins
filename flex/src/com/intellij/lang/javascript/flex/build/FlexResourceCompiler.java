@@ -2,253 +2,131 @@ package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.compiler.impl.CompilerUtil;
-import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.compiler.*;
-import com.intellij.openapi.compiler.ex.CompileContextEx;
+import com.intellij.openapi.compiler.CompileContext;
+import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.CompilerModuleExtension;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.*;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.util.Chunk;
-import org.jetbrains.annotations.NotNull;
+import gnu.trove.THashSet;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
 
 import static com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions.ResourceFilesMode;
 
-public class FlexResourceCompiler implements TranslatingCompiler {
-  private final Project myProject;
-  private final CompilerConfiguration myConfiguration;
+public class FlexResourceCompiler {
 
-  public FlexResourceCompiler(final Project project, final CompilerConfiguration compilerConfiguration) {
-    myProject = project;
-    myConfiguration = compilerConfiguration;
+  private final CompileContext myContext;
+  private final Map<Module, Collection<FlexIdeBuildConfiguration>> myModuleToBCs;
+  private final ProjectFileIndex myFileIndex;
+  private final CompilerConfiguration myCompilerConfiguration;
+
+  /**
+   * @param moduleToBCs all build configurations in this map must have 'skip compilation' disabled and resource files processing mode not equal to ResourceFilesMode.None.
+   */
+  public FlexResourceCompiler(final CompileContext context, final Map<Module, Collection<FlexIdeBuildConfiguration>> moduleToBCs) {
+    myContext = context;
+    myModuleToBCs = moduleToBCs;
+    myFileIndex = ProjectRootManager.getInstance(myContext.getProject()).getFileIndex();
+    myCompilerConfiguration = CompilerConfiguration.getInstance(myContext.getProject());
   }
 
-  @NotNull
-  public String getDescription() {
-    return "Flex Resource Compiler";
+  public void processResourceFiles() {
+    final Collection<Pair<String, String>> sourceAndTargetFilePaths =
+      ApplicationManager.getApplication().runReadAction(new Computable<Collection<Pair<String, String>>>() {
+        public Collection<Pair<String, String>> compute() {
+          final Collection<Pair<String, String>> paths = new ArrayList<Pair<String, String>>();
+
+          for (Map.Entry<Module, Collection<FlexIdeBuildConfiguration>> entry : myModuleToBCs.entrySet()) {
+            final Module module = entry.getKey();
+            final Collection<FlexIdeBuildConfiguration> bcs = entry.getValue();
+            if (bcs.isEmpty()) continue;
+
+            appendPathsForModule(paths, module, bcs);
+          }
+
+          return paths;
+        }
+      });
+
+    doCopy(sourceAndTargetFilePaths);
   }
 
-  public boolean validateConfiguration(CompileScope scope) {
-    return true;
-  }
+  private void appendPathsForModule(final Collection<Pair<String, String>> sourceAndTargetFilePaths,
+                                    final Module module,
+                                    final Collection<FlexIdeBuildConfiguration> bcs) {
+    for (final VirtualFile srcRoot : ModuleRootManager.getInstance(module).getSourceRoots()) {
+      final boolean isTestRoot = myFileIndex.isInTestSourceContent(srcRoot);
 
-  public boolean isCompilableFile(final VirtualFile file, final CompileContext context) {
-    final Module module = context.getModuleByFile(file);
-    return module != null && ModuleType.get(module) == FlexModuleType.getInstance();
-  }
+      myFileIndex.iterateContentUnderDirectory(srcRoot, new ContentIterator() {
+        public boolean processFile(final VirtualFile file) {
+          if (file.isDirectory()) return true;
 
-  public void compile(final CompileContext context, Chunk<Module> moduleChunk, final VirtualFile[] files, final OutputSink sink) {
-    context.getProgressIndicator().pushState();
-    context.getProgressIndicator().setText(CompilerBundle.message("progress.copying.resources"));
+          final String relativePath = VfsUtilCore.getRelativePath(file, srcRoot, '/');
 
-    final Map<String, Collection<OutputItem>> processed = new HashMap<String, Collection<OutputItem>>();
-    final Collection<VirtualFile> filesProcessedMoreThanOnce = new ArrayList<VirtualFile>();
-    final LinkedList<CopyCommand> copyCommands = new LinkedList<CopyCommand>();
-    final Module singleChunkModule = moduleChunk.getNodes().size() == 1 ? moduleChunk.getNodes().iterator().next() : null;
+          for (FlexIdeBuildConfiguration bc : bcs) {
+            assert !bc.isSkipCompile() && BCUtils.canHaveResourceFiles(bc.getNature()) &&
+                   bc.getCompilerOptions().getResourceFilesMode() != ResourceFilesMode.None : bc.getName();
 
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
-      public void run() {
-        final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
-
-        for (final VirtualFile file : files) {
-          if (context.getProgressIndicator().isCanceled()) {
-            break;
-          }
-
-          final Module module = singleChunkModule != null ? singleChunkModule : context.getModuleByFile(file);
-          if (module == null) {
-            continue; // looks like file invalidated
-          }
-
-          final VirtualFile sourceRoot = fileIndex.getSourceRootForFile(file);
-          if (sourceRoot == null) {
-            continue;
-          }
-          final String filePath = file.getPath();
-          final String relativePath = VfsUtilCore.getRelativePath(file, sourceRoot, '/');
-          final boolean inTests = ((CompileContextEx)context).isInTestSourceContent(file);
-
-          final Collection<Pair<String, String>> outputDirPathsAndTargetFilePaths = new ArrayList<Pair<String, String>>();
-
-          if (inTests) {
-            if (!isSourceFile(file)) {
-              final CompilerModuleExtension compilerModuleExtension = CompilerModuleExtension.getInstance(module);
-              final String outputUrl = compilerModuleExtension == null ? null : compilerModuleExtension.getCompilerOutputUrlForTests();
-              if (outputUrl != null) {
-                addOutputDirPathAndTargetFilePath(outputDirPathsAndTargetFilePaths, sourceRoot, VfsUtil.urlToPath(outputUrl), relativePath,
-                                                  fileIndex);
-              }
-            }
-          }
-          else {
-            for (FlexIdeBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
-              if (!bc.isSkipCompile() && BCUtils.canHaveResourceFiles(bc.getNature())) {
-                final ResourceFilesMode mode = bc.getCompilerOptions().getResourceFilesMode();
-                if (mode == ResourceFilesMode.All && !isSourceFile(file) ||
-                    mode == ResourceFilesMode.ResourcePatterns && myConfiguration.isResourceFile(file)) {
-                  addOutputDirPathAndTargetFilePath(outputDirPathsAndTargetFilePaths, sourceRoot, bc.getOutputFolder(), relativePath,
-                                                    fileIndex);
+            if (isTestRoot) {
+              if (BCUtils.isFlexUnitBC(module, bc) && !isSourceFile(file)) {
+                final CompilerModuleExtension compilerModuleExtension = CompilerModuleExtension.getInstance(module);
+                final String outputUrl = compilerModuleExtension == null ? null : compilerModuleExtension.getCompilerOutputUrlForTests();
+                if (outputUrl != null) {
+                  sourceAndTargetFilePaths.add(Pair.create(file.getPath(), VfsUtil.urlToPath(outputUrl) + "/" + relativePath));
                 }
               }
             }
-          }
-
-          if (outputDirPathsAndTargetFilePaths.size() > 1) {
-            filesProcessedMoreThanOnce.add(file);
-          }
-
-          for (Pair<String, String> outputDirPathAndTargetFilePath : outputDirPathsAndTargetFilePaths) {
-            final String outputDirPath = outputDirPathAndTargetFilePath.first;
-            final String targetFilePath = outputDirPathAndTargetFilePath.second;
-            if (filePath.equals(targetFilePath)) {
-              addToMap(processed, outputDirPath, new MyOutputItem(targetFilePath, file));
-            }
             else {
-              copyCommands.add(new CopyCommand(outputDirPath, filePath, targetFilePath, file));
+              final ResourceFilesMode mode = bc.getCompilerOptions().getResourceFilesMode();
+              if (mode == ResourceFilesMode.All && !isSourceFile(file) ||
+                  mode == ResourceFilesMode.ResourcePatterns && myCompilerConfiguration.isResourceFile(file)) {
+                sourceAndTargetFilePaths.add(Pair.create(file.getPath(), bc.getOutputFolder() + "/" + relativePath));
+              }
             }
           }
-        }
-      }
-    });
 
-    final List<File> filesToRefresh = new ArrayList<File>();
-    // do actual copy outside of read action to reduce the time the application is locked on it
-    while (!copyCommands.isEmpty()) {
-      final CopyCommand command = copyCommands.removeFirst();
-      if (context.getProgressIndicator().isCanceled()) {
-        break;
-      }
-      //context.getProgressIndicator().setFraction((idx++) * 1.0 / total);
-      context.getProgressIndicator().setText2("Copying " + command.getFromPath() + "...");
+          return true;
+        }
+      });
+    }
+  }
+
+  private void doCopy(final Collection<Pair<String, String>> sourceAndTargetFilePaths) {
+    final Collection<File> filesToRefresh = new THashSet<File>();
+
+    for (Pair<String, String> sourceAndTargetFilePath : sourceAndTargetFilePaths) {
+      final File sourceFile = new File(sourceAndTargetFilePath.first);
+      final File targetFile = new File(sourceAndTargetFilePath.second);
       try {
-        final MyOutputItem outputItem = command.copy(filesToRefresh);
-        addToMap(processed, command.getOutputDirPath(), outputItem);
+        FileUtil.copyContent(sourceFile, targetFile);
+        filesToRefresh.add(targetFile);
       }
       catch (IOException e) {
-        context.addMessage(
-          CompilerMessageCategory.ERROR,
-          CompilerBundle.message("error.copying", command.getFromPath(), command.getToPath(), e.getMessage()),
-          command.getSourceFileUrl(), -1, -1
-        );
+        myContext.addMessage(CompilerMessageCategory.ERROR,
+                             CompilerBundle.message("error.copying", sourceFile.getPath(), targetFile.getPath(), e.getMessage()),
+                             VfsUtil.pathToUrl(sourceFile.getPath()), -1, -1);
       }
     }
 
-    if (!filesToRefresh.isEmpty()) {
-      CompilerUtil.refreshIOFiles(filesToRefresh);
-      filesToRefresh.clear();
-    }
-
-    // TranslatingCompilerMonitor doesn't support translating one source file to several output files, so we need to mark such files dirty
-    final VirtualFile[] toRecompile = filesProcessedMoreThanOnce.toArray(new VirtualFile[filesProcessedMoreThanOnce.size()]);
-
-    for (Iterator<Map.Entry<String, Collection<OutputItem>>> it = processed.entrySet().iterator(); it.hasNext(); ) {
-      Map.Entry<String, Collection<OutputItem>> entry = it.next();
-      sink.add(entry.getKey(), entry.getValue(), toRecompile);
-      it.remove(); // to free memory
-    }
-
-    context.getProgressIndicator().popState();
+    CompilerUtil.refreshIOFiles(filesToRefresh);
   }
 
   private static boolean isSourceFile(final VirtualFile file) {
     final String ext = file.getExtension();
     return ext != null && (ext.equalsIgnoreCase("as") || ext.equalsIgnoreCase("mxml") || ext.equalsIgnoreCase("fxg"));
   }
-
-  private static void addOutputDirPathAndTargetFilePath(final Collection<Pair<String, String>> outputDirPathsAndTargetFilePaths,
-                                                        final VirtualFile sourceRoot,
-                                                        final String outputDirPath,
-                                                        final String relativePath,
-                                                        final ProjectFileIndex fileIndex) {
-    final String packagePrefix = fileIndex.getPackageNameByDirectory(sourceRoot);
-    final String targetFilePath;
-    if (packagePrefix != null && packagePrefix.length() > 0) {
-      targetFilePath = outputDirPath + "/" + packagePrefix.replace('.', '/') + "/" + relativePath;
-    }
-    else {
-      targetFilePath = outputDirPath + "/" + relativePath;
-    }
-    outputDirPathsAndTargetFilePaths.add(Pair.create(outputDirPath, targetFilePath));
-  }
-
-  private static void addToMap(Map<String, Collection<OutputItem>> map, String outputDir, OutputItem item) {
-    Collection<OutputItem> list = map.get(outputDir);
-    if (list == null) {
-      list = new ArrayList<OutputItem>();
-      map.put(outputDir, list);
-    }
-    list.add(item);
-  }
-
-  private static class CopyCommand {
-    private final String myOutputDirPath;
-    private final String myFromPath;
-    private final String myToPath;
-    private final VirtualFile mySourceFile;
-
-    private CopyCommand(String outputDirPath, String fromPath, String toPath, VirtualFile sourceFile) {
-      myOutputDirPath = outputDirPath;
-      myFromPath = fromPath;
-      myToPath = toPath;
-      mySourceFile = sourceFile;
-    }
-
-    public MyOutputItem copy(List<File> filesToRefresh) throws IOException {
-      final File targetFile = new File(myToPath);
-      FileUtil.copyContent(new File(myFromPath), targetFile);
-      filesToRefresh.add(targetFile);
-      return new MyOutputItem(myToPath, mySourceFile);
-    }
-
-    public String getOutputDirPath() {
-      return myOutputDirPath;
-    }
-
-    public String getFromPath() {
-      return myFromPath;
-    }
-
-    public String getToPath() {
-      return myToPath;
-    }
-
-    public String getSourceFileUrl() {
-      // do not use mySourceFile.getUrl() directly as it requires read action
-      return VirtualFileManager.constructUrl(mySourceFile.getFileSystem().getProtocol(), myFromPath);
-    }
-  }
-
-  private static class MyOutputItem implements OutputItem {
-    private final String myTargetPath;
-    private final VirtualFile myFile;
-
-    private MyOutputItem(String targetPath, VirtualFile sourceFile) {
-      myTargetPath = targetPath;
-      myFile = sourceFile;
-    }
-
-    public String getOutputPath() {
-      return myTargetPath;
-    }
-
-    public VirtualFile getSourceFile() {
-      return myFile;
-    }
-  }
 }
+
