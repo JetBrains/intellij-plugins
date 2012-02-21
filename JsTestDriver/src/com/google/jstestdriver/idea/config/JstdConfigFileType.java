@@ -15,7 +15,7 @@
  */
 package com.google.jstestdriver.idea.config;
 
-import com.google.jstestdriver.idea.PluginResources;
+import com.google.jstestdriver.idea.icons.JstdIcons;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.fileTypes.PlainTextLanguage;
@@ -64,7 +64,7 @@ public class JstdConfigFileType extends LanguageFileType {
   @NotNull
   @Override
   public Icon getIcon() {
-    return PluginResources.getJstdSmallIcon();
+    return JstdIcons.JSTD_SMALL_ICON;
   }
 
 }

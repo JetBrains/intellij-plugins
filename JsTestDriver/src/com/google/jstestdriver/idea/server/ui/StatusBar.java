@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver.idea.ui;
+package com.google.jstestdriver.idea.server.ui;
 
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.hooks.ServerListener;

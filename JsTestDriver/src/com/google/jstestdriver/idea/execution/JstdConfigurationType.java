@@ -16,6 +16,7 @@
 package com.google.jstestdriver.idea.execution;
 
 import com.google.jstestdriver.idea.PluginResources;
+import com.google.jstestdriver.idea.icons.JstdIcons;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
@@ -31,7 +32,7 @@ public class JstdConfigurationType extends ConfigurationTypeBase {
 
   public JstdConfigurationType() {
     super("JSTestDriver:ConfigurationType", PluginResources.getPluginName(),
-          PluginResources.getPluginName(), PluginResources.getJstdSmallIcon());
+          PluginResources.getPluginName(), JstdIcons.JSTD_SMALL_ICON);
     addFactory(new ConfigurationFactory(this) {
       @Override
       public RunConfiguration createTemplateConfiguration(Project project) {

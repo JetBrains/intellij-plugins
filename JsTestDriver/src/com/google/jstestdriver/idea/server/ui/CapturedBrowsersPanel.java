@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver.idea.ui;
+package com.google.jstestdriver.idea.server.ui;
 
 import com.google.common.collect.Maps;
 import com.google.jstestdriver.BrowserInfo;
@@ -29,6 +29,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -36,21 +37,13 @@ import java.util.Map;
  */
 @SuppressWarnings("serial")
 public class CapturedBrowsersPanel extends JPanel implements ServerListener {
-  private static final Logger log = Logger.getInstance(CapturedBrowsersPanel.class);
+
+  private static final Logger LOG = Logger.getInstance(CapturedBrowsersPanel.class);
 
   private final Map<String, BrowserLabel> myBrowserLabelByNameMap;
 
   public CapturedBrowsersPanel() {
-    try {
-      myBrowserLabelByNameMap = Maps.newLinkedHashMap(); // order is important
-      addBrowser("Chrome", "Chrome.png");
-      addBrowser("Microsoft Internet Explorer", "IE.png");
-      addBrowser("Firefox", "Firefox.png");
-      addBrowser("Opera", "Opera.png");
-      addBrowser("Safari", "Safari.png");
-    } catch (IOException e) {
-      throw new RuntimeException();
-    }
+    myBrowserLabelByNameMap = createBrowserLabelByNameMap();
 
     setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
@@ -65,13 +58,30 @@ public class CapturedBrowsersPanel extends JPanel implements ServerListener {
     setPreferredSize(minimumSize);
   }
 
-  private void addBrowser(String browserName, String iconPath) throws IOException {
+  @NotNull
+  private static LinkedHashMap<String, BrowserLabel> createBrowserLabelByNameMap() {
+    try {
+      LinkedHashMap<String, BrowserLabel> map = Maps.newLinkedHashMap();
+      addBrowser(map, "Chrome", "Chrome.png");
+      addBrowser(map, "Microsoft Internet Explorer", "IE.png");
+      addBrowser(map, "Firefox", "Firefox.png");
+      addBrowser(map, "Opera", "Opera.png");
+      addBrowser(map, "Safari", "Safari.png");
+      return map;
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private static void addBrowser(@NotNull LinkedHashMap<String, BrowserLabel> map,
+                          @NotNull String browserName,
+                          @NotNull String iconPath) throws IOException {
     String lowerCasedName = browserName.toLowerCase();
-    if (myBrowserLabelByNameMap.containsKey(lowerCasedName)) {
+    if (map.containsKey(lowerCasedName)) {
       throw new RuntimeException("Attempt to duplicate browser '" + browserName + "'!");
     }
     BrowserLabel browserLabel = new BrowserLabel(BrowserIcon.buildFromResource(iconPath));
-    myBrowserLabelByNameMap.put(lowerCasedName, browserLabel);
+    map.put(lowerCasedName, browserLabel);
   }
 
   @Nullable
@@ -119,7 +129,7 @@ public class CapturedBrowsersPanel extends JPanel implements ServerListener {
         if (browserLabel != null) {
           browserLabel.setIcon(browserLabel.getBrowserIcon().getIconForEvent(event));
         } else {
-          log.warn("Unregistered browser '" + info.getName()
+          LOG.warn("Unregistered browser '" + info.getName()
               + "' BrowserCaptureEvent has been received. " + info + ", type: " + event);
         }
       }

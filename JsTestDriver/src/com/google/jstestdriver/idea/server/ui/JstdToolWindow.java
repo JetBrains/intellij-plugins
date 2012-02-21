@@ -13,9 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver.idea;
+package com.google.jstestdriver.idea.server.ui;
 
-import com.google.jstestdriver.idea.ui.ToolPanel;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
@@ -25,7 +24,7 @@ import com.intellij.ui.content.ContentManager;
 /**
  * @author Konstantin Bulenkov
  */
-public class JSTestDriverToolWindow implements ToolWindowFactory {
+public class JstdToolWindow implements ToolWindowFactory {
   @Override
   public void createToolWindowContent(Project project, ToolWindow toolWindow) {
     toolWindow.setAvailable(true, null);
@@ -37,7 +36,7 @@ public class JSTestDriverToolWindow implements ToolWindowFactory {
     content.setDisposer(project);
     content.setCloseable(false);
 
-    content.setPreferredFocusableComponent(component.getPrefferedFocusedComponent());
+    content.setPreferredFocusableComponent(component.getPreferredFocusedComponent());
     contentManager.addContent(content);
 
     contentManager.setSelectedContent(content, true);
