@@ -8,7 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/test/testSrc" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/test/testData" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="IDEA IU-114.98" jdkType="IDEA JDK" />
+    <orderEntry type="jdk" jdkName="IDEA IU-111.277" jdkType="IDEA JDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="JsTestDriver-plugin-lib" level="project" />
   </component>
