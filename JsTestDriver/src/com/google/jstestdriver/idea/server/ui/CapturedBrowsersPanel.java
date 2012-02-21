@@ -50,6 +50,7 @@ public class CapturedBrowsersPanel extends JPanel implements ServerListener {
     Collection<BrowserLabel> browserLabels = myBrowserLabelByNameMap.values();
     for (BrowserLabel browserLabel : browserLabels) {
       add(browserLabel);
+      add(Box.createHorizontalStrut(5));
     }
 
     Icon icon = browserLabels.iterator().next().getBrowserIcon().getColorIcon();

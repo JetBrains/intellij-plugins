@@ -84,10 +84,12 @@ public class ToolPanel extends SimpleToolWindowPanel {
     JPanel content = new JPanel() {{
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
       add(statusBar);
+      statusBar.setBorder(BorderFactory.createLineBorder(Color.GRAY));
       add(new JPanel() {{
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         add(new JLabel(PluginResources.getCaptureUrlMessage()));
         add(myCaptureUrlTextField);
+        setBorder(BorderFactory.createEmptyBorder(5, 5, 10, 4));
       }});
       add(capturedBrowsersPanel);
     }};
