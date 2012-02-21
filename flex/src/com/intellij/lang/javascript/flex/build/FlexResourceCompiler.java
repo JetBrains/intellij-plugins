@@ -72,7 +72,7 @@ public class FlexResourceCompiler {
 
       myFileIndex.iterateContentUnderDirectory(srcRoot, new ContentIterator() {
         public boolean processFile(final VirtualFile file) {
-          if (file.isDirectory()) return true;
+          if (file.isDirectory() || myCompilerConfiguration.isExcludedFromCompilation(file)) return true;
 
           final String relativePath = VfsUtilCore.getRelativePath(file, srcRoot, '/');
 
