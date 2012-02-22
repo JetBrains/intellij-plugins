@@ -40,25 +40,26 @@ import org.osmorc.manifest.lang.psi.HeaderValuePart;
  */
 public class BundleActivatorParser extends AbstractHeaderParserImpl {
 
-    public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
-        if (headerValuePart.getParent() instanceof Clause) {
-            final Module module = ModuleUtil.findModuleForPsiElement(headerValuePart);
-            JavaClassReferenceProvider provider;
-            if (module != null) {
-                provider = new JavaClassReferenceProvider() {
-                  @Override
-                  public GlobalSearchScope getScope(Project project) {
-                    return GlobalSearchScope.moduleScope(module);
-                  }
-                };
-            } else {
-                provider = new JavaClassReferenceProvider();
-            }
+  public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
+    if (headerValuePart.getParent() instanceof Clause) {
+      final Module module = ModuleUtil.findModuleForPsiElement(headerValuePart);
+      JavaClassReferenceProvider provider;
+      if (module != null) {
+        provider = new JavaClassReferenceProvider() {
+          @Override
+          public GlobalSearchScope getScope(Project project) {
+            return GlobalSearchScope.moduleScope(module);
+          }
+        };
+      }
+      else {
+        provider = new JavaClassReferenceProvider();
+      }
 
-            provider.setOption(JavaClassReferenceProvider.EXTEND_CLASS_NAMES, new String[]{"org.osgi.framework.BundleActivator"});
-            provider.setOption(JavaClassReferenceProvider.CONCRETE, true);
-            return provider.getReferencesByElement(headerValuePart);
-        }
-        return EMPTY_PSI_REFERENCE_ARRAY;
+      provider.setOption(JavaClassReferenceProvider.EXTEND_CLASS_NAMES, new String[]{"org.osgi.framework.BundleActivator"});
+      provider.setOption(JavaClassReferenceProvider.CONCRETE, true);
+      return provider.getReferencesByElement(headerValuePart);
     }
+    return EMPTY_PSI_REFERENCE_ARRAY;
+  }
 }

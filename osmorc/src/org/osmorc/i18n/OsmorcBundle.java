@@ -30,7 +30,10 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.PropertyKey;
 
 import javax.swing.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.util.Map;
@@ -45,115 +48,114 @@ import java.util.WeakHashMap;
  */
 public class OsmorcBundle {
 
-    private static Reference<ResourceBundle> _ourBundle;
-    private static String infoHtml;
-    private static final Map<String, Icon> _iconCache = new WeakHashMap<String, Icon>();
+  private static Reference<ResourceBundle> _ourBundle;
+  private static String infoHtml;
+  private static final Map<String, Icon> _iconCache = new WeakHashMap<String, Icon>();
 
-    @NonNls
-    private static final String BUNDLE = "org.osmorc.i18n.OsmorcBundle";
+  @NonNls
+  private static final String BUNDLE = "org.osmorc.i18n.OsmorcBundle";
 
-    private OsmorcBundle() {
+  private OsmorcBundle() {
+  }
+
+  /**
+   * Translates the given message.
+   *
+   * @param key    the key to be used for translation
+   * @param params the parameters for the translation
+   * @return the translated message.
+   * @deprecated Translation isn't used consistently so this function is rather useless.
+   */
+  @Deprecated
+  public static String getTranslation(@PropertyKey(resourceBundle = BUNDLE) String key, Object... params) {
+    return CommonBundle.message(getBundle(), key, params);
+  }
+
+  /**
+   * Returns the resource bundle. In case there is a memory shortage the resource bundle is garbage collected. This
+   * method will provide a new resource bundle in case the previous one got garbage collected.
+   *
+   * @return the resoruce bundle.
+   */
+  private static ResourceBundle getBundle() {
+    ResourceBundle bundle = null;
+    if (_ourBundle != null) {
+      bundle = _ourBundle.get();
     }
-
-    /**
-     * Translates the given message.
-     *
-     * @param key    the key to be used for translation
-     * @param params the parameters for the translation
-     * @return the translated message.
-     * @deprecated Translation isn't used consistently so this function is rather useless.
-     */
-    @Deprecated
-    public static String getTranslation(@PropertyKey(resourceBundle = BUNDLE) String key, Object... params) {
-        return CommonBundle.message(getBundle(), key, params);
+    if (bundle == null) {
+      bundle = ResourceBundle.getBundle(BUNDLE);
+      _ourBundle = new SoftReference<ResourceBundle>(bundle);
     }
+    return bundle;
+  }
 
-    /**
-     * Returns the resource bundle. In case there is a memory shortage the resource bundle is garbage collected. This
-     * method will provide a new resource bundle in case the previous one got garbage collected.
-     *
-     * @return the resoruce bundle.
-     */
-    private static ResourceBundle getBundle() {
-        ResourceBundle bundle = null;
-        if (_ourBundle != null) {
-            bundle = _ourBundle.get();
+  private static Icon getCachedIcon(@PropertyKey(resourceBundle = BUNDLE) String property) {
+    Icon result = _iconCache.get(property);
+    if (result == null) {
+      result = IconLoader.getIcon(getTranslation(property));
+      _iconCache.put(property, result);
+    }
+    return result;
+  }
+
+  /**
+   * @return a small icon for Osmorc
+   */
+  public static Icon getSmallIcon() {
+    return getCachedIcon("runconfiguration.icon");
+  }
+
+
+  /**
+   * @return a big icon for Osmorc
+   */
+  public static Icon getBigIcon() {
+    return getCachedIcon("projectconfiguration.icon");
+  }
+
+  public static Icon getLogo() {
+    return getCachedIcon("logo.icon");
+  }
+
+  public static String getInfo() {
+    if (infoHtml == null) {
+      StringBuilder builder = new StringBuilder();
+      InputStream stream = null;
+      InputStreamReader streamReader = null;
+      BufferedReader bReader = null;
+
+      try {
+        String infoFileName = getTranslation("info.file");
+        stream = OsmorcBundle.class.getResourceAsStream(infoFileName);
+        streamReader = new InputStreamReader(stream);
+        bReader = new BufferedReader(streamReader);
+        while (bReader.ready()) {
+          builder.append(bReader.readLine());
         }
-        if (bundle == null) {
-            bundle = ResourceBundle.getBundle(BUNDLE);
-            _ourBundle = new SoftReference<ResourceBundle>(bundle);
+      }
+      catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+      finally {
+        try {
+          if (bReader != null) {
+            bReader.close();
+          }
+          if (streamReader != null) {
+            streamReader.close();
+          }
+          if (stream != null) {
+            stream.close();
+          }
         }
-        return bundle;
-    }
-
-    private static Icon getCachedIcon(@PropertyKey(resourceBundle = BUNDLE) String property) {
-        Icon result = _iconCache.get(property);
-        if (result == null) {
-            result = IconLoader.getIcon(getTranslation(property));
-            _iconCache.put(property, result);
+        catch (IOException e) {
+          throw new RuntimeException(e);
         }
-        return result;
+      }
+
+      infoHtml = builder.toString();
     }
 
-    /**
-     * @return a small icon for Osmorc
-     */
-    public static Icon getSmallIcon() {
-        return getCachedIcon("runconfiguration.icon");
-    }
-
-
-    /**
-     * @return a big icon for Osmorc
-     */
-    public static Icon getBigIcon() {
-        return getCachedIcon("projectconfiguration.icon");
-    }
-
-    public static Icon getLogo() {
-        return getCachedIcon("logo.icon");
-    }
-
-    public static String getInfo() {
-        if (infoHtml == null) {
-            StringBuilder builder = new StringBuilder();
-            InputStream stream = null;
-            InputStreamReader streamReader =  null;
-            BufferedReader bReader = null;
-
-            try {
-                String infoFileName = getTranslation("info.file");
-                stream = OsmorcBundle.class.getResourceAsStream(infoFileName);
-                streamReader = new InputStreamReader(stream);
-                bReader = new BufferedReader(streamReader);
-                while (bReader.ready()) {
-                    builder.append(bReader.readLine());
-                }
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            finally {
-                try {
-                    if (bReader != null) {
-                        bReader.close();
-                    }
-                    if (streamReader != null) {
-                        streamReader.close();
-                    }
-                    if (stream != null) {
-                        stream.close();
-                    }
-                }
-                catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            infoHtml = builder.toString();
-
-        }
-
-        return infoHtml;
-    }
+    return infoHtml;
+  }
 }

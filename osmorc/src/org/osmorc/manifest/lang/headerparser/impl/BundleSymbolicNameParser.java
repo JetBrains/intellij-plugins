@@ -27,11 +27,9 @@ package org.osmorc.manifest.lang.headerparser.impl;
 /**
  * Author: Robert F. Beeger (robert@beeger.net)
  */
-public class BundleSymbolicNameParser extends AbstractHeaderParserImpl
-{
+public class BundleSymbolicNameParser extends AbstractHeaderParserImpl {
 
-  public boolean isSimpleHeader()
-  {
+  public boolean isSimpleHeader() {
     return false;
   }
 }

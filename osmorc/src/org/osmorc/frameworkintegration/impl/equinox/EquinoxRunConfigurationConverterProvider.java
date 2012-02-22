@@ -34,19 +34,19 @@ import org.jetbrains.annotations.NotNull;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class EquinoxRunConfigurationConverterProvider extends ConverterProvider {
-    protected EquinoxRunConfigurationConverterProvider() {
-        super("org.osmorc.EquinoxRunConfigurationConverterProvider");
-    }
+  protected EquinoxRunConfigurationConverterProvider() {
+    super("org.osmorc.EquinoxRunConfigurationConverterProvider");
+  }
 
-    @NotNull
-    @Override
-    public String getConversionDescription() {
-        return "Legacy Eclipse Equinox run configurations will be converted to OSGi Bundles run configurations";
-    }
+  @NotNull
+  @Override
+  public String getConversionDescription() {
+    return "Legacy Eclipse Equinox run configurations will be converted to OSGi Bundles run configurations";
+  }
 
-    @NotNull
-    @Override
-    public ProjectConverter createConverter(@NotNull ConversionContext context) {
-        return new EquinoxRunConfigurationConverter();
-    }
+  @NotNull
+  @Override
+  public ProjectConverter createConverter(@NotNull ConversionContext context) {
+    return new EquinoxRunConfigurationConverter();
+  }
 }

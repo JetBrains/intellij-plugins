@@ -37,10 +37,8 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class BndHeaderProviderRepository implements HeaderParserProviderRepository
-{
-  public BndHeaderProviderRepository(GenericComplexHeaderParser genericComplexHeaderParser)
-  {
+public class BndHeaderProviderRepository implements HeaderParserProviderRepository {
+  public BndHeaderProviderRepository(GenericComplexHeaderParser genericComplexHeaderParser) {
     _headerProviders = new ArrayList<HeaderParserProvider>();
 
     _headerProviders.add(new HeaderParserProviderImpl("Private-Package", genericComplexHeaderParser));
@@ -50,8 +48,7 @@ public class BndHeaderProviderRepository implements HeaderParserProviderReposito
   }
 
   @NotNull
-  public Collection<HeaderParserProvider> getHeaderParserProviders()
-  {
+  public Collection<HeaderParserProvider> getHeaderParserProviders() {
     return Collections.unmodifiableList(_headerProviders);
   }
 

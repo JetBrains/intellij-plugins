@@ -31,33 +31,26 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ApplicationSettingsUpdateNotifier
-{
-  public ApplicationSettingsUpdateNotifier()
-  {
+public class ApplicationSettingsUpdateNotifier {
+  public ApplicationSettingsUpdateNotifier() {
     _listeners = new ArrayList<Listener>();
   }
 
-  public void fireApplicationSettingsChanged()
-  {
-    for (Listener applicationSettingsChangeListener : _listeners)
-    {
+  public void fireApplicationSettingsChanged() {
+    for (Listener applicationSettingsChangeListener : _listeners) {
       applicationSettingsChangeListener.applicationSettingsChanged();
     }
   }
 
-  public void addListener(Listener listener)
-  {
+  public void addListener(Listener listener) {
     _listeners.add(listener);
   }
 
-  public void removeListener(Listener listener)
-  {
+  public void removeListener(Listener listener) {
     _listeners.remove(listener);
   }
 
-  public interface Listener
-  {
+  public interface Listener {
     void applicationSettingsChanged();
   }
 

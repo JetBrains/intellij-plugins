@@ -32,17 +32,14 @@ import java.util.Map;
 /**
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
-public class KnopflerfishRunProperties extends GenericRunProperties
-{
+public class KnopflerfishRunProperties extends GenericRunProperties {
 
-  public KnopflerfishRunProperties(Map<String, String> additionalProperties)
-  {
+  public KnopflerfishRunProperties(Map<String, String> additionalProperties) {
     super(additionalProperties);
   }
 
   @Override
-  protected void loadDefaults()
-  {
+  protected void loadDefaults() {
     super.loadDefaults();
   }
 }

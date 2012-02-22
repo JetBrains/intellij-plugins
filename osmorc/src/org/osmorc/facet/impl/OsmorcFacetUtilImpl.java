@@ -35,27 +35,22 @@ import org.osmorc.facet.OsmorcFacetUtil;
 /**
  * @author: Robert F. Beeger (robert@beeger.net)
  */
-public class OsmorcFacetUtilImpl implements OsmorcFacetUtil
-{
+public class OsmorcFacetUtilImpl implements OsmorcFacetUtil {
   @Nullable
-  public OsmorcFacet getOsmorcFacet(@NotNull Module module)
-  {
+  public OsmorcFacet getOsmorcFacet(@NotNull Module module) {
     return OsmorcFacet.getInstance(module);
   }
 
   @Nullable
-  public OsmorcFacet getOsmorcFacet(@NotNull PsiElement element)
-  {
+  public OsmorcFacet getOsmorcFacet(@NotNull PsiElement element) {
     return OsmorcFacet.getInstance(element);
   }
 
-  public boolean hasOsmorcFacet(@NotNull Module module)
-  {
+  public boolean hasOsmorcFacet(@NotNull Module module) {
     return OsmorcFacet.hasOsmorcFacet(module);
   }
 
-  public boolean hasOsmorcFacet(@NotNull PsiElement element)
-  {
+  public boolean hasOsmorcFacet(@NotNull PsiElement element) {
     return OsmorcFacet.hasOsmorcFacet(element);
   }
 }

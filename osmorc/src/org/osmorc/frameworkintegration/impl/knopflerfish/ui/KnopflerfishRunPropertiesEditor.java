@@ -38,26 +38,27 @@ import java.util.HashMap;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
 public class KnopflerfishRunPropertiesEditor implements FrameworkRunPropertiesEditor {
-    private JPanel _mainPanel;
-    private GenericRunPropertiesEditor _genericRunPropertiesEditor;
+  private JPanel _mainPanel;
+  private GenericRunPropertiesEditor _genericRunPropertiesEditor;
 
-    public KnopflerfishRunPropertiesEditor() {
+  public KnopflerfishRunPropertiesEditor() {
 
-    }
+  }
 
-    public void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
-        _genericRunPropertiesEditor.resetEditorFrom(osgiRunConfiguration);
-    }
+  public void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
+    _genericRunPropertiesEditor.resetEditorFrom(osgiRunConfiguration);
+  }
 
-    public void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
-        _genericRunPropertiesEditor.applyEditorTo(osgiRunConfiguration);
-    }
+  public void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
+    _genericRunPropertiesEditor.applyEditorTo(osgiRunConfiguration);
+  }
 
-    public JPanel getUI() {
-        return _mainPanel;
-    }
+  public JPanel getUI() {
+    return _mainPanel;
+  }
 
-    private void createUIComponents() {
-        _genericRunPropertiesEditor = new GenericRunPropertiesEditor<KnopflerfishRunProperties>(new KnopflerfishRunProperties(new HashMap<String, String>()));
-    }
+  private void createUIComponents() {
+    _genericRunPropertiesEditor =
+      new GenericRunPropertiesEditor<KnopflerfishRunProperties>(new KnopflerfishRunProperties(new HashMap<String, String>()));
+  }
 }

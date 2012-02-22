@@ -36,15 +36,15 @@ import org.osmorc.manifest.lang.psi.PackageReferenceSet;
  */
 public class ExportPackageParser extends AbstractHeaderParserImpl {
 
-    public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
-        if (headerValuePart.getParent() instanceof Clause) {
-            PackageReferenceSet referenceSet = new PackageReferenceSet(headerValuePart.getUnwrappedText(), headerValuePart, 0);
-            return referenceSet.getReferences().toArray(new PackageReference[referenceSet.getReferences().size()]);
-        }
-        return EMPTY_PSI_REFERENCE_ARRAY;
+  public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
+    if (headerValuePart.getParent() instanceof Clause) {
+      PackageReferenceSet referenceSet = new PackageReferenceSet(headerValuePart.getUnwrappedText(), headerValuePart, 0);
+      return referenceSet.getReferences().toArray(new PackageReference[referenceSet.getReferences().size()]);
     }
+    return EMPTY_PSI_REFERENCE_ARRAY;
+  }
 
-    public boolean isSimpleHeader() {
-        return false;
-    }
+  public boolean isSimpleHeader() {
+    return false;
+  }
 }

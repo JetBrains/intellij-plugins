@@ -42,70 +42,54 @@ import org.osmorc.facet.OsmorcFacet;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id$
  */
-public class ClassInDefaultPackageInspection extends LocalInspectionTool
-{
+public class ClassInDefaultPackageInspection extends LocalInspectionTool {
 
   @Nls
   @NotNull
-  public String getGroupDisplayName()
-  {
+  public String getGroupDisplayName() {
     return "OSGi";
   }
 
-  public boolean isEnabledByDefault()
-  {
+  public boolean isEnabledByDefault() {
     return true;
   }
 
   @NotNull
-  public HighlightDisplayLevel getDefaultLevel()
-  {
+  public HighlightDisplayLevel getDefaultLevel() {
     return HighlightDisplayLevel.ERROR;
   }
 
   @Nls
   @NotNull
-  public String getDisplayName()
-  {
+  public String getDisplayName() {
     return "Class is in default package";
   }
 
   @NonNls
   @NotNull
-  public String getShortName()
-  {
+  public String getShortName() {
     return "osmorcClassInDefaultPackage";
   }
 
   @NotNull
-  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly)
-  {
-    return new JavaElementVisitor()
-    {
-      public void visitReferenceExpression(PsiReferenceExpression expression)
-      {
+  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
+    return new JavaElementVisitor() {
+      public void visitReferenceExpression(PsiReferenceExpression expression) {
       }
 
       @Override
-      public void visitClass(PsiClass psiClass)
-      {
-        if (OsmorcFacet.hasOsmorcFacet(psiClass))
-        {
-          PsiJavaFile file = (PsiJavaFile) psiClass.getContainingFile();
-          if ("".equals(file.getPackageName()))
-          {
-              PsiIdentifier nameIdentifier = psiClass.getNameIdentifier();
-              if (nameIdentifier != null) {
-                  holder.registerProblem(nameIdentifier, "Class is in default package",
-                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-              }
+      public void visitClass(PsiClass psiClass) {
+        if (OsmorcFacet.hasOsmorcFacet(psiClass)) {
+          PsiJavaFile file = (PsiJavaFile)psiClass.getContainingFile();
+          if ("".equals(file.getPackageName())) {
+            PsiIdentifier nameIdentifier = psiClass.getNameIdentifier();
+            if (nameIdentifier != null) {
+              holder.registerProblem(nameIdentifier, "Class is in default package",
+                                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+            }
           }
-
         }
-
       }
     };
   }
-
-
 }

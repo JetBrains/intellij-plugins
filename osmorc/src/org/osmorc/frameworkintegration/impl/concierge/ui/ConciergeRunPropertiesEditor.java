@@ -39,26 +39,27 @@ import java.util.HashMap;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ConciergeRunPropertiesEditor implements FrameworkRunPropertiesEditor {
-    private JPanel _mainPanel;
-    private GenericRunPropertiesEditor _genericRunPropertiesEditor;
+  private JPanel _mainPanel;
+  private GenericRunPropertiesEditor _genericRunPropertiesEditor;
 
-    public ConciergeRunPropertiesEditor() {
+  public ConciergeRunPropertiesEditor() {
 
-    }
+  }
 
-    public void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
-        _genericRunPropertiesEditor.resetEditorFrom(osgiRunConfiguration);
-    }
+  public void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
+    _genericRunPropertiesEditor.resetEditorFrom(osgiRunConfiguration);
+  }
 
-    public void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
-        _genericRunPropertiesEditor.applyEditorTo(osgiRunConfiguration);
-    }
+  public void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
+    _genericRunPropertiesEditor.applyEditorTo(osgiRunConfiguration);
+  }
 
-    public JPanel getUI() {
-        return _mainPanel;
-    }
+  public JPanel getUI() {
+    return _mainPanel;
+  }
 
-    private void createUIComponents() {
-        _genericRunPropertiesEditor = new GenericRunPropertiesEditor<ConciergeRunProperties>(new ConciergeRunProperties(new HashMap<String, String>()));
-    }
+  private void createUIComponents() {
+    _genericRunPropertiesEditor =
+      new GenericRunPropertiesEditor<ConciergeRunProperties>(new ConciergeRunProperties(new HashMap<String, String>()));
+  }
 }

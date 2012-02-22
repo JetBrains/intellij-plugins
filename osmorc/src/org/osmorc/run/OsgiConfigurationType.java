@@ -42,40 +42,40 @@ import javax.swing.*;
  */
 public class OsgiConfigurationType implements ConfigurationType {
 
-    private final ConfigurationFactory myFactory;
+  private final ConfigurationFactory myFactory;
 
-    OsgiConfigurationType() {
-        myFactory = new ConfigurationFactory(this) {
-            public RunConfiguration createTemplateConfiguration(Project project) {
-                return new OsgiRunConfiguration(project, this, "");
-            }
+  OsgiConfigurationType() {
+    myFactory = new ConfigurationFactory(this) {
+      public RunConfiguration createTemplateConfiguration(Project project) {
+        return new OsgiRunConfiguration(project, this, "");
+      }
 
-            public RunConfiguration createConfiguration(String name, RunConfiguration template) {
-                OsgiRunConfiguration runConfiguration = (OsgiRunConfiguration) template;
-                return super.createConfiguration(name, runConfiguration);
-            }
-        };
-    }
+      public RunConfiguration createConfiguration(String name, RunConfiguration template) {
+        OsgiRunConfiguration runConfiguration = (OsgiRunConfiguration)template;
+        return super.createConfiguration(name, runConfiguration);
+      }
+    };
+  }
 
 
-    public String getDisplayName() {
-        return OsmorcBundle.getTranslation("runconfiguration.displayname");
-    }
+  public String getDisplayName() {
+    return OsmorcBundle.getTranslation("runconfiguration.displayname");
+  }
 
-    public String getConfigurationTypeDescription() {
-        return OsmorcBundle.getTranslation("runconfiguration.description");
-    }
+  public String getConfigurationTypeDescription() {
+    return OsmorcBundle.getTranslation("runconfiguration.description");
+  }
 
-    public Icon getIcon() {
-        return OsmorcBundle.getSmallIcon();
-    }
+  public Icon getIcon() {
+    return OsmorcBundle.getSmallIcon();
+  }
 
-    @NotNull
-    public String getId() {
-        return "#org.osmorc.OsgiConfigurationType";
-    }
+  @NotNull
+  public String getId() {
+    return "#org.osmorc.OsgiConfigurationType";
+  }
 
-    public ConfigurationFactory[] getConfigurationFactories() {
-        return new ConfigurationFactory[]{myFactory};
-    }
+  public ConfigurationFactory[] getConfigurationFactories() {
+    return new ConfigurationFactory[]{myFactory};
+  }
 }

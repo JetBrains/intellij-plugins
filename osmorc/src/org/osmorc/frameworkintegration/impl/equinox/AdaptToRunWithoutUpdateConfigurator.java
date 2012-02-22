@@ -40,83 +40,87 @@ import java.util.Collection;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 @SuppressWarnings({"ComponentNotRegistered"})
-class AdaptToRunWithoutUpdateConfigurator  extends BundleSelectionAction {
-    private static final String ORG_ECLIPSE_UPDATE_CONFIGURATOR_URL = "org.eclipse.update.configurator_";
-    private static final String ORG_ECLIPSE_OSGI_URL = "org.eclipse.osgi_";
+class AdaptToRunWithoutUpdateConfigurator extends BundleSelectionAction {
+  private static final String ORG_ECLIPSE_UPDATE_CONFIGURATOR_URL = "org.eclipse.update.configurator_";
+  private static final String ORG_ECLIPSE_OSGI_URL = "org.eclipse.osgi_";
 
-    public AdaptToRunWithoutUpdateConfigurator() {
-        super("Start all plugins");
+  public AdaptToRunWithoutUpdateConfigurator() {
+    super("Start all plugins");
+  }
+
+  public void actionPerformed(AnActionEvent e) {
+
+    final Collection<SelectedBundle> currentlySelectedBundles = new ArrayList<SelectedBundle>(getContext().getCurrentlySelectedBundles());
+    for (SelectedBundle selectedBundle : currentlySelectedBundles) {
+      if (selectedBundle.getBundleType() == SelectedBundle.BundleType.FrameworkBundle) {
+        String url = selectedBundle.getBundleUrl();
+        if (url != null) {
+          if (url.contains(ORG_ECLIPSE_UPDATE_CONFIGURATOR_URL) || url.contains(ORG_ECLIPSE_OSGI_URL)) {
+            getContext().removeBundle(selectedBundle);
+          }
+          else {
+            adaptBundle(selectedBundle);
+          }
+        }
+      }
     }
 
-    public void actionPerformed(AnActionEvent e) {
-
-        final Collection<SelectedBundle> currentlySelectedBundles = new ArrayList<SelectedBundle>(getContext().getCurrentlySelectedBundles());
-        for (SelectedBundle selectedBundle : currentlySelectedBundles) {
-            if (selectedBundle.getBundleType() == SelectedBundle.BundleType.FrameworkBundle) {
-                String url = selectedBundle.getBundleUrl();
-                if (url != null) {
-                    if (url.contains(ORG_ECLIPSE_UPDATE_CONFIGURATOR_URL) || url.contains(ORG_ECLIPSE_OSGI_URL)) {
-                        getContext().removeBundle(selectedBundle);
-                    } else {
-                        adaptBundle(selectedBundle);
-                    }
-                }
-            }
-        }
-
-        FrameworkInstanceDefinition instance = getContext().getUsedFrameworkInstance();
-        FrameworkIntegratorRegistry registry = ServiceManager.getService(FrameworkIntegratorRegistry.class);
-        assert instance != null;
-        FrameworkIntegrator frameworkIntegrator = registry.findIntegratorByInstanceDefinition(instance);
-      frameworkIntegrator.getFrameworkInstanceManager().collectLibraries(instance, new JarFileLibraryCollector() {
-        @Override
-        protected void collectFrameworkJars(@NotNull Collection<VirtualFile> jarFiles, @NotNull FrameworkInstanceLibrarySourceFinder sourceFinder) {
-          SelectedBundle prototypeBundle = null;
-          for (VirtualFile jarFile : jarFiles) {
-            String url = jarFile.getUrl();
-            if (!url.contains(ORG_ECLIPSE_UPDATE_CONFIGURATOR_URL) && !url.contains(ORG_ECLIPSE_OSGI_URL)) {
-              prototypeBundle = createSelectedFrameworkBundle(prototypeBundle, url);
-              if (prototypeBundle != null && !currentlySelectedBundles.contains(prototypeBundle)) {
-                adaptBundle(prototypeBundle);
-                getContext().addBundle(prototypeBundle);
-                prototypeBundle = null;
-              }
+    FrameworkInstanceDefinition instance = getContext().getUsedFrameworkInstance();
+    FrameworkIntegratorRegistry registry = ServiceManager.getService(FrameworkIntegratorRegistry.class);
+    assert instance != null;
+    FrameworkIntegrator frameworkIntegrator = registry.findIntegratorByInstanceDefinition(instance);
+    frameworkIntegrator.getFrameworkInstanceManager().collectLibraries(instance, new JarFileLibraryCollector() {
+      @Override
+      protected void collectFrameworkJars(@NotNull Collection<VirtualFile> jarFiles,
+                                          @NotNull FrameworkInstanceLibrarySourceFinder sourceFinder) {
+        SelectedBundle prototypeBundle = null;
+        for (VirtualFile jarFile : jarFiles) {
+          String url = jarFile.getUrl();
+          if (!url.contains(ORG_ECLIPSE_UPDATE_CONFIGURATOR_URL) && !url.contains(ORG_ECLIPSE_OSGI_URL)) {
+            prototypeBundle = createSelectedFrameworkBundle(prototypeBundle, url);
+            if (prototypeBundle != null && !currentlySelectedBundles.contains(prototypeBundle)) {
+              adaptBundle(prototypeBundle);
+              getContext().addBundle(prototypeBundle);
+              prototypeBundle = null;
             }
           }
         }
-      });
-    }
+      }
+    });
+  }
 
-    private SelectedBundle createSelectedFrameworkBundle(final SelectedBundle prototypeBundle, final String url) {
-        String bundleUrl = BundleCompiler.convertJarUrlToFileUrl(url);
-        bundleUrl = BundleCompiler.fixFileURL(bundleUrl);
-        String bundleName = CachingBundleInfoProvider.getBundleSymbolicName(bundleUrl);
-        SelectedBundle bundle = null;
-        
-        if (bundleName != null) {
-            bundle = prototypeBundle;
-            String bundleVersion = CachingBundleInfoProvider.getBundleVersions(bundleUrl);
-            String displayName = bundleName + " - " + bundleVersion;
-            if (bundle != null) {
-                bundle.setName(displayName);
-                bundle.setBundleUrl(bundleUrl);
-            } else {
-                bundle = new SelectedBundle(displayName, bundleUrl, SelectedBundle.BundleType.FrameworkBundle);
-            }
-        }
-        return bundle;
+  private SelectedBundle createSelectedFrameworkBundle(final SelectedBundle prototypeBundle, final String url) {
+    String bundleUrl = BundleCompiler.convertJarUrlToFileUrl(url);
+    bundleUrl = BundleCompiler.fixFileURL(bundleUrl);
+    String bundleName = CachingBundleInfoProvider.getBundleSymbolicName(bundleUrl);
+    SelectedBundle bundle = null;
+
+    if (bundleName != null) {
+      bundle = prototypeBundle;
+      String bundleVersion = CachingBundleInfoProvider.getBundleVersions(bundleUrl);
+      String displayName = bundleName + " - " + bundleVersion;
+      if (bundle != null) {
+        bundle.setName(displayName);
+        bundle.setBundleUrl(bundleUrl);
+      }
+      else {
+        bundle = new SelectedBundle(displayName, bundleUrl, SelectedBundle.BundleType.FrameworkBundle);
+      }
     }
+    return bundle;
+  }
 
 
-    private void adaptBundle(@NotNull SelectedBundle bundle) {
-        String url = bundle.getBundleUrl();
-        assert url != null;
-        if (url.contains("org.eclipse.core.runtime_")) {
-            bundle.setStartLevel(4);
-            bundle.setStartAfterInstallation(true);
-        } else {
-            bundle.setStartLevel(4);
-            bundle.setStartAfterInstallation(false);
-        }
+  private void adaptBundle(@NotNull SelectedBundle bundle) {
+    String url = bundle.getBundleUrl();
+    assert url != null;
+    if (url.contains("org.eclipse.core.runtime_")) {
+      bundle.setStartLevel(4);
+      bundle.setStartAfterInstallation(true);
     }
+    else {
+      bundle.setStartLevel(4);
+      bundle.setStartAfterInstallation(false);
+    }
+  }
 }

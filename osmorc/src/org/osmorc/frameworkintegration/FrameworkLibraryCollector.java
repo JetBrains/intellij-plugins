@@ -16,5 +16,6 @@ public interface FrameworkLibraryCollector {
    * @param sourceFinder        the source finder which can be used to retrieve sources for libraries
    * @param directoriesWithJars a list of directories containing jar files. each jar file will be collected.s
    */
-  void collectFrameworkLibraries(@NotNull FrameworkInstanceLibrarySourceFinder sourceFinder, @NotNull Collection<VirtualFile> directoriesWithJars);
+  void collectFrameworkLibraries(@NotNull FrameworkInstanceLibrarySourceFinder sourceFinder,
+                                 @NotNull Collection<VirtualFile> directoriesWithJars);
 }

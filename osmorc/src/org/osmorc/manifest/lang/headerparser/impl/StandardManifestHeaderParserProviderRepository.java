@@ -37,10 +37,8 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class StandardManifestHeaderParserProviderRepository implements HeaderParserProviderRepository
-{
-  public StandardManifestHeaderParserProviderRepository()
-  {
+public class StandardManifestHeaderParserProviderRepository implements HeaderParserProviderRepository {
+  public StandardManifestHeaderParserProviderRepository() {
     AbstractHeaderParserImpl simpleHeaderParser = AbstractHeaderParserImpl.SIMPLE;
     _headerProviders = new ArrayList<HeaderParserProvider>();
 
@@ -66,8 +64,7 @@ public class StandardManifestHeaderParserProviderRepository implements HeaderPar
   }
 
   @NotNull
-  public Collection<HeaderParserProvider> getHeaderParserProviders()
-  {
+  public Collection<HeaderParserProvider> getHeaderParserProviders() {
     return Collections.unmodifiableList(_headerProviders);
   }
 

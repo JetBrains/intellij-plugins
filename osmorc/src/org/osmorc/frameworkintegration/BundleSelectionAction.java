@@ -40,36 +40,36 @@ import java.util.List;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public abstract class BundleSelectionAction extends AnAction {
-    private Context context;
+  private Context context;
 
-    protected BundleSelectionAction() {
-    }
+  protected BundleSelectionAction() {
+  }
 
-    protected BundleSelectionAction(String text) {
-        super(text);
-    }
+  protected BundleSelectionAction(String text) {
+    super(text);
+  }
 
-    protected BundleSelectionAction(String text, String description, Icon icon) {
-        super(text, description, icon);
-    }
+  protected BundleSelectionAction(String text, String description, Icon icon) {
+    super(text, description, icon);
+  }
 
-    public void setContext(@NotNull Context context) {
-        this.context = context;
-    }
+  public void setContext(@NotNull Context context) {
+    this.context = context;
+  }
 
-    protected Context getContext() {
-        return context;
-    }
+  protected Context getContext() {
+    return context;
+  }
 
-    public interface Context {
-        @NotNull
-        List<SelectedBundle> getCurrentlySelectedBundles();
+  public interface Context {
+    @NotNull
+    List<SelectedBundle> getCurrentlySelectedBundles();
 
-        void addBundle(@NotNull SelectedBundle bundle);
+    void addBundle(@NotNull SelectedBundle bundle);
 
-        void removeBundle(@NotNull SelectedBundle bundle);
+    void removeBundle(@NotNull SelectedBundle bundle);
 
-        @Nullable
-        FrameworkInstanceDefinition getUsedFrameworkInstance();
-    }
+    @Nullable
+    FrameworkInstanceDefinition getUsedFrameworkInstance();
+  }
 }

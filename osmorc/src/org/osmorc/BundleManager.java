@@ -71,7 +71,6 @@ public interface BundleManager {
 
   /**
    * Does a complete project reindex. Cleans all data from the bundle manager and replaces it with the data from the given project instance.
-   *
    */
   void reindexAll();
 
@@ -97,7 +96,8 @@ public interface BundleManager {
 
   /**
    * Checks if the given host module/library is a fragment host of the given fragment module/library
-   * @param host the host bundle
+   *
+   * @param host     the host bundle
    * @param fragment the fragment bundle
    * @return
    */
@@ -105,6 +105,7 @@ public interface BundleManager {
 
   /**
    * Adds the given libraries to the bundle index.
+   *
    * @param libraries
    */
   void reindex(@NotNull Collection<Library> libraries);

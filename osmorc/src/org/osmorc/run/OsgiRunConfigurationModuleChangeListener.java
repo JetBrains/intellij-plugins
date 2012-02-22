@@ -25,14 +25,14 @@
 
 package org.osmorc.run;
 
-import org.osmorc.ModuleChangeListener;
-import org.osmorc.run.ui.SelectedBundle;
-import org.jetbrains.annotations.NotNull;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.application.Application;
 import com.intellij.execution.RunManager;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+import org.osmorc.ModuleChangeListener;
+import org.osmorc.run.ui.SelectedBundle;
 
 import java.util.List;
 
@@ -40,37 +40,38 @@ import java.util.List;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class OsgiRunConfigurationModuleChangeListener implements ModuleChangeListener {
-    @NotNull
-    private final OsgiConfigurationType configurationType;
-    @NotNull
-    private final Application application;
+  @NotNull
+  private final OsgiConfigurationType configurationType;
+  @NotNull
+  private final Application application;
 
-    public OsgiRunConfigurationModuleChangeListener(@NotNull final OsgiConfigurationType configurationType, @NotNull final Application application) {
-        this.configurationType = configurationType;
-        this.application = application;
-    }
+  public OsgiRunConfigurationModuleChangeListener(@NotNull final OsgiConfigurationType configurationType,
+                                                  @NotNull final Application application) {
+    this.configurationType = configurationType;
+    this.application = application;
+  }
 
-    public void moduleRenamed(@NotNull final Module module, @NotNull String oldName) {
-        Project project = module.getProject();
-        RunConfiguration[] runConfigurations = RunManager.getInstance(project).getConfigurations(configurationType);
-        if (runConfigurations != null) {
-            for (RunConfiguration runConfiguration : runConfigurations) {
-                OsgiRunConfiguration osgiRunConfiguration = (OsgiRunConfiguration) runConfiguration;
-                List<SelectedBundle> bundleList = osgiRunConfiguration.getBundlesToDeploy();
-                for (final SelectedBundle selectedBundle : bundleList) {
-                    if (oldName.equals(selectedBundle.getName())) {
-                        application.runWriteAction(new Runnable() {
-                            public void run() {
-                                selectedBundle.setName(module.getName());
-                            }
-                        });
-                        break;
-                    }
-                }
-            }
+  public void moduleRenamed(@NotNull final Module module, @NotNull String oldName) {
+    Project project = module.getProject();
+    RunConfiguration[] runConfigurations = RunManager.getInstance(project).getConfigurations(configurationType);
+    if (runConfigurations != null) {
+      for (RunConfiguration runConfiguration : runConfigurations) {
+        OsgiRunConfiguration osgiRunConfiguration = (OsgiRunConfiguration)runConfiguration;
+        List<SelectedBundle> bundleList = osgiRunConfiguration.getBundlesToDeploy();
+        for (final SelectedBundle selectedBundle : bundleList) {
+          if (oldName.equals(selectedBundle.getName())) {
+            application.runWriteAction(new Runnable() {
+              public void run() {
+                selectedBundle.setName(module.getName());
+              }
+            });
+            break;
+          }
         }
+      }
     }
+  }
 
-    public void moduleRemoved(@NotNull Module module) {
-    }
+  public void moduleRemoved(@NotNull Module module) {
+  }
 }

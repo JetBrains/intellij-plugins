@@ -35,11 +35,10 @@ public class BundleChangeNotificationPanel extends EditorNotificationPanel {
       public void run() {
         myNeedsResync.set(false);
         EditorNotifications.getInstance(myProject).updateAllNotifications();
-        ProjectSettings ps =  ProjectSettings.getInstance(myProject);
+        ProjectSettings ps = ProjectSettings.getInstance(myProject);
         ps.setManifestSynchronizationType(ProjectSettings.ManifestSynchronizationType.AutomaticallySynchronize);
         ModuleDependencySynchronizer.resynchronizeAll(myProject);
       }
     });
   }
-
 }

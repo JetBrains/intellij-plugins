@@ -29,6 +29,7 @@ package org.osmorc.settings;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public interface ApplicationSettingsProvider {
-    ApplicationSettings getApplicationSettings();
-    ApplicationSettings getApplicationSettingsWorkingCopy();
+  ApplicationSettings getApplicationSettings();
+
+  ApplicationSettings getApplicationSettingsWorkingCopy();
 }

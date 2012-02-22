@@ -38,71 +38,55 @@ import java.util.Map;
 /**
  * Author: Robert F. Beeger (robert@beeger.net)
  */
-public class KnopflerfishSourceFinder implements FrameworkInstanceLibrarySourceFinder
-{
-  public KnopflerfishSourceFinder(@NotNull VirtualFile osgiFolder)
-  {
+public class KnopflerfishSourceFinder implements FrameworkInstanceLibrarySourceFinder {
+  public KnopflerfishSourceFinder(@NotNull VirtualFile osgiFolder) {
     _sourceMapping = new HashMap<String, VirtualFile>();
 
     VirtualFile bundlesFolder = osgiFolder.findChild("bundles");
-    if (bundlesFolder != null)
-    {
+    if (bundlesFolder != null) {
       findSources(bundlesFolder);
     }
     VirtualFile frameworkFolder = osgiFolder.findFileByRelativePath("framework/src");
-    if (frameworkFolder != null)
-    {
+    if (frameworkFolder != null) {
       _sourceMapping.put("framework", frameworkFolder);
     }
   }
 
-  private void findSources(VirtualFile folder)
-  {
+  private void findSources(VirtualFile folder) {
     VirtualFile sourceFolder = folder.findChild("src");
-    if (sourceFolder != null)
-    {
+    if (sourceFolder != null) {
       _sourceMapping.put(folder.getName(), sourceFolder);
     }
-    else
-    {
+    else {
       VirtualFile[] files = folder.getChildren();
-      for (VirtualFile file : files)
-      {
-        if (file.isDirectory())
-        {
+      for (VirtualFile file : files) {
+        if (file.isDirectory()) {
           findSources(file);
         }
       }
     }
-
   }
 
-  public List<VirtualFile> getSourceForLibraryClasses(@NotNull VirtualFile libraryClasses)
-  {
+  public List<VirtualFile> getSourceForLibraryClasses(@NotNull VirtualFile libraryClasses) {
     List<VirtualFile> result = new ArrayList<VirtualFile>();
-    if (libraryClasses.getNameWithoutExtension().equals("framework"))
-    {
+    if (libraryClasses.getNameWithoutExtension().equals("framework")) {
       VirtualFile frameworkSources = _sourceMapping.get("framework");
-      if (frameworkSources != null)
-      {
+      if (frameworkSources != null) {
         result.add(frameworkSources);
       }
     }
-    else
-    {
+    else {
       String parentFolderName = libraryClasses.getParent().getName();
       VirtualFile sources = _sourceMapping.get(parentFolderName);
-      if (sources != null)
-      {
+      if (sources != null) {
         result.add(sources);
       }
     }
     return result;
   }
 
-  public boolean containsOnlySources(@NotNull VirtualFile libraryClassesCondidate)
-  {
-    return false;    
+  public boolean containsOnlySources(@NotNull VirtualFile libraryClassesCondidate) {
+    return false;
   }
 
   @NonNls

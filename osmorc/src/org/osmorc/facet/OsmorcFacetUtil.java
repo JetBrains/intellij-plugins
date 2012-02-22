@@ -31,8 +31,7 @@ import com.intellij.psi.PsiElement;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public interface OsmorcFacetUtil
-{
+public interface OsmorcFacetUtil {
   OsmorcFacet getOsmorcFacet(Module module);
 
   OsmorcFacet getOsmorcFacet(PsiElement element);

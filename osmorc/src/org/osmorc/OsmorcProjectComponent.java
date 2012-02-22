@@ -47,9 +47,10 @@ import org.osmorc.settings.ProjectSettings;
  */
 public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings.ProjectSettingsListener,
                                                ApplicationSettings.ApplicationSettingsListener {
-  
-  public static final NotificationGroup IMPORTANT_ERROR_NOTIFICATION = new NotificationGroup("OSGi important errors", NotificationDisplayType.STICKY_BALLOON, true);
-  
+
+  public static final NotificationGroup IMPORTANT_ERROR_NOTIFICATION =
+    new NotificationGroup("OSGi important errors", NotificationDisplayType.STICKY_BALLOON, true);
+
   private final BundleManager myBundleManager;
   private ApplicationSettings myApplicationSettings;
   private final ProjectSettings myProjectSettings;

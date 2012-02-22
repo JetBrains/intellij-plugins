@@ -38,6 +38,7 @@ public interface Clause extends PsiElement, StubBasedPsiElement<ClauseStub> {
 
   /**
    * Returns the value of this clause
+   *
    * @return the value of this clause
    */
   @Nullable
@@ -45,6 +46,7 @@ public interface Clause extends PsiElement, StubBasedPsiElement<ClauseStub> {
 
   /**
    * Returns all directives of this clause.
+   *
    * @return the directives of this clause
    */
   @NotNull
@@ -52,6 +54,7 @@ public interface Clause extends PsiElement, StubBasedPsiElement<ClauseStub> {
 
   /**
    * Returns the directive with the given name.
+   *
    * @param name the name of the directive
    * @return the directive, or null if there is no such directive
    */
@@ -60,6 +63,7 @@ public interface Clause extends PsiElement, StubBasedPsiElement<ClauseStub> {
 
   /**
    * Same as {@link #getText()} but filters out line breaks and trims whitespace around it.
+   *
    * @return
    */
   String getClauseText();

@@ -39,52 +39,54 @@ import org.osmorc.manifest.lang.psi.stub.AssignmentExpressionStub;
  */
 public abstract class AbstractAssignmentExpression extends ManifestElementBase<AssignmentExpressionStub> implements AssignmentExpression {
 
-    protected AbstractAssignmentExpression(AssignmentExpressionStub stub, @NotNull IStubElementType nodeType) {
-        super(stub, nodeType);
+  protected AbstractAssignmentExpression(AssignmentExpressionStub stub, @NotNull IStubElementType nodeType) {
+    super(stub, nodeType);
+  }
+
+  public AbstractAssignmentExpression(@NotNull ASTNode node) {
+    super(node);
+  }
+
+  public String getName() {
+    String result;
+    AssignmentExpressionStub stub = getStub();
+    if (stub != null) {
+      result = stub.getName();
+    }
+    else {
+      HeaderValuePart namePsi = getNamePsi();
+      result = namePsi != null ? namePsi.getUnwrappedText() : null;
     }
 
-    public AbstractAssignmentExpression(@NotNull ASTNode node) {
-        super(node);
+    return result != null ? result : "<unnamed>";
+  }
+
+  public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
+    // TODO: Implement
+    return this;
+  }
+
+  public HeaderValuePart getNamePsi() {
+    return PsiTreeUtil.getChildOfType(this, HeaderValuePart.class);
+  }
+
+  public String getValue() {
+    String result;
+    AssignmentExpressionStub stub = getStub();
+    if (stub != null) {
+      result = stub.getValue();
+    }
+    else {
+      HeaderValuePart valuePsi = getValuePsi();
+      result = valuePsi != null ? valuePsi.getUnwrappedText() : null;
     }
 
-    public String getName() {
-        String result;
-        AssignmentExpressionStub stub = getStub();
-        if (stub != null) {
-            result = stub.getName();
-        } else {
-            HeaderValuePart namePsi = getNamePsi();
-            result = namePsi != null ? namePsi.getUnwrappedText() : null;
-        }
+    return result != null ? result : "";
+  }
 
-        return result != null ? result : "<unnamed>";
-    }
+  public HeaderValuePart getValuePsi() {
+    HeaderValuePart namePsi = getNamePsi();
 
-    public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
-        // TODO: Implement
-        return this;
-    }
-
-    public HeaderValuePart getNamePsi() {
-        return PsiTreeUtil.getChildOfType(this, HeaderValuePart.class);
-    }
-
-    public String getValue() {
-        String result;
-        AssignmentExpressionStub stub = getStub();
-        if (stub != null) {
-            result = stub.getValue();
-        } else {
-            HeaderValuePart valuePsi = getValuePsi();
-            result = valuePsi != null ? valuePsi.getUnwrappedText() : null;
-        }
-
-        return result != null ? result : "";
-    }
-
-    public HeaderValuePart getValuePsi() {
-        HeaderValuePart namePsi = getNamePsi();
-
-        return namePsi != null ? PsiTreeUtil.getNextSiblingOfType(namePsi, HeaderValuePart.class) : null;
-    }
+    return namePsi != null ? PsiTreeUtil.getNextSiblingOfType(namePsi, HeaderValuePart.class) : null;
+  }
 }

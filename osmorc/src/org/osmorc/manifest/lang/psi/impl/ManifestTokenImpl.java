@@ -26,30 +26,30 @@
 package org.osmorc.manifest.lang.psi.impl;
 
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.ManifestTokenType;
 import org.osmorc.manifest.lang.psi.ManifestToken;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ManifestTokenImpl extends LeafPsiElement implements ManifestToken {
-    private static final String TO_STRING_PREFIX = "ManifestToken: ";
+  private static final String TO_STRING_PREFIX = "ManifestToken: ";
 
-    public ManifestTokenImpl(ManifestTokenType type, CharSequence text) {
-        super(type, text);
-    }
+  public ManifestTokenImpl(ManifestTokenType type, CharSequence text) {
+    super(type, text);
+  }
 
-    public ManifestTokenType getTokenType() {
-        return (ManifestTokenType) getElementType();
-    }
+  public ManifestTokenType getTokenType() {
+    return (ManifestTokenType)getElementType();
+  }
 
-    public ManifestToken replaceToken(@NotNull String text) {
-        return (ManifestToken) replaceWithText(text);
-    }
+  public ManifestToken replaceToken(@NotNull String text) {
+    return (ManifestToken)replaceWithText(text);
+  }
 
-    @Override
-    public String toString() {
-        return TO_STRING_PREFIX + getTokenType();
-    }
+  @Override
+  public String toString() {
+    return TO_STRING_PREFIX + getTokenType();
+  }
 }

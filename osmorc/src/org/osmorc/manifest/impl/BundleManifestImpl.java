@@ -267,12 +267,12 @@ public class BundleManifestImpl implements BundleManifest {
   @Override
   public boolean isFragmentHostFor(@NotNull BundleManifest fragmentBundle) {
     Header header = fragmentBundle.getManifestFile().getHeaderByName(FRAGMENT_HOST);
-    if ( header == null ) {
+    if (header == null) {
       return false;
     }
 
     Clause[] clauses = header.getClauses();
-    if ( clauses.length != 1 ) { // bundle should have exactly one clause
+    if (clauses.length != 1) { // bundle should have exactly one clause
       return false;
     }
     Clause clause = clauses[0];

@@ -36,27 +36,22 @@ import org.jetbrains.annotations.NotNull;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id$
  */
-class BundleProcessingItem implements FileProcessingCompiler.ProcessingItem
-{
+class BundleProcessingItem implements FileProcessingCompiler.ProcessingItem {
 
-  public BundleProcessingItem(Module module)
-  {
+  public BundleProcessingItem(Module module) {
     _module = module;
   }
 
   @NotNull
-  public VirtualFile getFile()
-  {
+  public VirtualFile getFile() {
     return _module.getModuleFile();
   }
 
-  public ValidityState getValidityState()
-  {
+  public ValidityState getValidityState() {
     return new BundleValidityState(_module);
   }
 
-  public Module getModule()
-  {
+  public Module getModule() {
     return _module;
   }
 

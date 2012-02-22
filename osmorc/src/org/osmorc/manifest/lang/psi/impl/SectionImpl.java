@@ -34,12 +34,12 @@ import org.osmorc.manifest.lang.psi.stub.SectionStub;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class SectionImpl  extends ManifestElementBase<SectionStub> implements Section {
-    public SectionImpl(SectionStub stub, @NotNull IStubElementType nodeType) {
-        super(stub, nodeType);
-    }
+public class SectionImpl extends ManifestElementBase<SectionStub> implements Section {
+  public SectionImpl(SectionStub stub, @NotNull IStubElementType nodeType) {
+    super(stub, nodeType);
+  }
 
-    public SectionImpl(ASTNode node) {
-        super(node);
-    }
+  public SectionImpl(ASTNode node) {
+    super(node);
+  }
 }

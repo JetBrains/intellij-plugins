@@ -25,28 +25,29 @@
 
 package org.osmorc.manifest.lang.psi.elementtype;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
-import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.ManifestLanguage;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public abstract class AbstractManifestStubElementType<StubT extends StubElement, PsiT extends PsiElement> extends IStubElementType<StubT, PsiT> {
-    private static final String ETERNAL_ID_PREFIX = "Osmorc.Manifest.";
-    private final String externalId;
+public abstract class AbstractManifestStubElementType<StubT extends StubElement, PsiT extends PsiElement>
+  extends IStubElementType<StubT, PsiT> {
+  private static final String ETERNAL_ID_PREFIX = "Osmorc.Manifest.";
+  private final String externalId;
 
-    public AbstractManifestStubElementType(@NotNull final String debugName) {
-        super(debugName, ManifestLanguage.INSTANCE);
-        externalId = ETERNAL_ID_PREFIX + debugName;
-    }
+  public AbstractManifestStubElementType(@NotNull final String debugName) {
+    super(debugName, ManifestLanguage.INSTANCE);
+    externalId = ETERNAL_ID_PREFIX + debugName;
+  }
 
-    public String getExternalId() {
-        return externalId;
-    }
+  public String getExternalId() {
+    return externalId;
+  }
 
-    public abstract PsiT createPsi(ASTNode node);
+  public abstract PsiT createPsi(ASTNode node);
 }

@@ -101,7 +101,7 @@ public class LibraryManifestHolderImpl extends AbstractManifestHolderImpl {
   }
 
   public boolean isDisposed() {
-    return isLibraryDisposed(myLibrary)  || myProject.isDisposed();
+    return isLibraryDisposed(myLibrary) || myProject.isDisposed();
   }
 
 
@@ -120,7 +120,7 @@ public class LibraryManifestHolderImpl extends AbstractManifestHolderImpl {
   protected static synchronized Collection<ManifestHolder> createForLibrary(@NotNull Library library, @NotNull Project project) {
     cleanupHolderCache();
     List<ManifestHolder> result = new ArrayList<ManifestHolder>();
-    if ( isLibraryDisposed(library) || project.isDisposed()  ) {
+    if (isLibraryDisposed(library) || project.isDisposed()) {
       return result;
     }
     VirtualFile[] classRoots = library.getFiles(OrderRootType.CLASSES);
@@ -144,7 +144,7 @@ public class LibraryManifestHolderImpl extends AbstractManifestHolderImpl {
         if (manifestFile != null) {
           // potential bundle
           final LibraryManifestHolderImpl newHolder = new LibraryManifestHolderImpl(library, project, jarFileUrl);
-          
+
           // kill reference to the project when it is being disposed. (project leak fix by Alexey Kudravtsev)
           Disposer.register(project, new Disposable() {
             @Override
@@ -152,7 +152,7 @@ public class LibraryManifestHolderImpl extends AbstractManifestHolderImpl {
               synchronized (LibraryManifestHolderImpl.class) {  // make sure there is no concurrent access to the holder cache.
                 for (Iterator<LibraryManifestHolderImpl> iterator = myHolderCache.values().iterator(); iterator.hasNext(); ) {
                   LibraryManifestHolderImpl holder = iterator.next();
-                  if ( holder == newHolder ) {
+                  if (holder == newHolder) {
                     iterator.remove();
                     break;
                   }
@@ -160,7 +160,7 @@ public class LibraryManifestHolderImpl extends AbstractManifestHolderImpl {
               }
             }
           });
-          
+
           myHolderCache.put(jarFileUrl, newHolder);
           result.add(newHolder);
         }
@@ -174,7 +174,7 @@ public class LibraryManifestHolderImpl extends AbstractManifestHolderImpl {
    * Removes disposed holders from the holder cache.
    */
   private static void cleanupHolderCache() {
-    for (Iterator<Map.Entry<String,LibraryManifestHolderImpl>> iterator = myHolderCache.entrySet().iterator(); iterator.hasNext(); ) {
+    for (Iterator<Map.Entry<String, LibraryManifestHolderImpl>> iterator = myHolderCache.entrySet().iterator(); iterator.hasNext(); ) {
       Map.Entry<String, LibraryManifestHolderImpl> entry = iterator.next();
       if (entry.getValue().isDisposed()) {
         iterator.remove();

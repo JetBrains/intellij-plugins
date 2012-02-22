@@ -32,12 +32,9 @@ import java.util.Map;
 /**
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
-public class ConciergeRunProperties extends GenericRunProperties
-{
+public class ConciergeRunProperties extends GenericRunProperties {
 
-  public ConciergeRunProperties(Map<String, String> additionalProperties)
-  {
+  public ConciergeRunProperties(Map<String, String> additionalProperties) {
     super(additionalProperties);
   }
-
 }

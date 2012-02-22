@@ -32,8 +32,10 @@ import org.osmorc.manifest.lang.psi.stub.AssignmentExpressionStub;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public interface AssignmentExpression  extends PsiNamedElement, StubBasedPsiElement<AssignmentExpressionStub> {
-    HeaderValuePart getNamePsi();
-    HeaderValuePart getValuePsi();
-    String getValue();
+public interface AssignmentExpression extends PsiNamedElement, StubBasedPsiElement<AssignmentExpressionStub> {
+  HeaderValuePart getNamePsi();
+
+  HeaderValuePart getValuePsi();
+
+  String getValue();
 }

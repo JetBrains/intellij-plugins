@@ -33,8 +33,7 @@ import java.rmi.RemoteException;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id$
  */
-public interface ManagingBundle extends Remote
-{
+public interface ManagingBundle extends Remote {
   /**
    * Lists all installed bundles.
    *

@@ -42,80 +42,79 @@ import org.osmorc.manifest.lang.psi.Section;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class MissingFinalNewlineInspection extends LocalInspectionTool {
-    @Nls
+  @Nls
+  @NotNull
+  public String getGroupDisplayName() {
+    return "OSGi";
+  }
+
+  @Nls
+  @NotNull
+  public String getDisplayName() {
+    return "Missing Final New Line";
+  }
+
+  @NotNull
+  public String getShortName() {
+    return "osmorcMissingFinalNewline";
+  }
+
+  public boolean isEnabledByDefault() {
+    return true;
+  }
+
+  @NotNull
+  public HighlightDisplayLevel getDefaultLevel() {
+    return HighlightDisplayLevel.ERROR;
+  }
+
+  @Override
+  public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
+    if (file instanceof ManifestFile) {
+      String text = file.getText();
+      // http://ea.jetbrains.com/browser/ea_problems/22570
+      if (text != null && text.length() > 0) {
+        if (text.charAt(text.length() - 1) != '\n') {
+          Section section = PsiTreeUtil.findElementOfClassAtOffset(file, text.length() - 1,
+                                                                   Section.class, false);
+          if (section != null) {
+            return new ProblemDescriptor[]{manager.createProblemDescriptor(section.getLastChild(),
+                                                                           "Manifest file doesn't end with a final newline",
+                                                                           new AddNewlineQuickFix(section),
+                                                                           ProblemHighlightType.GENERIC_ERROR_OR_WARNING, isOnTheFly)};
+          }
+        }
+      }
+    }
+    return new ProblemDescriptor[0];
+  }
+
+  private static class AddNewlineQuickFix implements LocalQuickFix {
+    private final Section section;
+
+    private AddNewlineQuickFix(Section section) {
+      this.section = section;
+    }
+
     @NotNull
-    public String getGroupDisplayName() {
-        return "OSGi";
-    }
-
-    @Nls
-    @NotNull
-    public String getDisplayName() {
-        return "Missing Final New Line";
+    public String getName() {
+      return "Add newline";
     }
 
     @NotNull
-    public String getShortName() {
-        return "osmorcMissingFinalNewline";
+    public String getFamilyName() {
+      return "Osmorc";
     }
 
-    public boolean isEnabledByDefault() {
-        return true;
+    public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+      PsiElement lastChild = section.getLastChild();
+      if (lastChild instanceof Header) {
+        Header header = (Header)lastChild;
+        header.getNode().addLeaf(ManifestTokenType.NEWLINE, "\n", null);
+      }
+      else {
+        throw new RuntimeException("No header found to add a newline to");
+      }
     }
-
-    @NotNull
-    public HighlightDisplayLevel getDefaultLevel() {
-        return HighlightDisplayLevel.ERROR;
-    }
-
-    @Override
-    public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
-        if (file instanceof ManifestFile) {
-            String text = file.getText();
-            // http://ea.jetbrains.com/browser/ea_problems/22570
-            if ( text != null && text.length() > 0) {
-                if (text.charAt(text.length() - 1) != '\n') {
-                    Section section = PsiTreeUtil.findElementOfClassAtOffset(file, text.length() - 1,
-                            Section.class, false);
-                    if (section != null) {
-                        return new ProblemDescriptor[]{manager.createProblemDescriptor(section.getLastChild(),
-                                "Manifest file doesn't end with a final newline",
-                                new AddNewlineQuickFix(section), ProblemHighlightType.GENERIC_ERROR_OR_WARNING, isOnTheFly)};
-                    }
-
-                }
-            }
-        }
-        return new ProblemDescriptor[0];
-    }
-
-    private static class AddNewlineQuickFix implements LocalQuickFix {
-        private final Section section;
-
-        private AddNewlineQuickFix(Section section) {
-            this.section = section;
-        }
-
-        @NotNull
-        public String getName() {
-            return "Add newline";
-        }
-
-        @NotNull
-        public String getFamilyName() {
-            return "Osmorc";
-        }
-
-        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            PsiElement lastChild = section.getLastChild();
-            if (lastChild instanceof Header) {
-                Header header = (Header) lastChild;
-                header.getNode().addLeaf(ManifestTokenType.NEWLINE, "\n", null);
-            } else {
-                throw new RuntimeException("No header found to add a newline to");
-            }
-        }
-    }
-
-
+  }
 }

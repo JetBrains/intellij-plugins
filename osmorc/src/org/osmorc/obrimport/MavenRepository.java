@@ -33,50 +33,42 @@ import org.jetbrains.annotations.NotNull;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
-public class MavenRepository
-{
+public class MavenRepository {
   private String repositoryId;
   private String repositoryDescription;
   private String repositoryUrl;
 
   public MavenRepository(@NotNull String repositoryId, @NotNull String repositoryDescription,
-                         @NotNull String repositoryUrl)
-  {
+                         @NotNull String repositoryUrl) {
     this.repositoryId = repositoryId;
     this.repositoryDescription = repositoryDescription;
     this.repositoryUrl = repositoryUrl;
   }
 
   @NotNull
-  public String getRepositoryId()
-  {
+  public String getRepositoryId() {
     return repositoryId;
   }
 
-  public void setRepositoryId(@NotNull String repositoryId)
-  {
+  public void setRepositoryId(@NotNull String repositoryId) {
     this.repositoryId = repositoryId;
   }
 
   @NotNull
-  public String getRepositoryDescription()
-  {
+  public String getRepositoryDescription() {
     return repositoryDescription;
   }
 
-  public void setRepositoryDescription(@NotNull String repositoryDescription)
-  {
+  public void setRepositoryDescription(@NotNull String repositoryDescription) {
     this.repositoryDescription = repositoryDescription;
   }
 
   @NotNull
-  public String getRepositoryUrl()
-  {
+  public String getRepositoryUrl() {
     return repositoryUrl;
   }
 
-  public void setRepositoryUrl(@NotNull String repositoryUrl)
-  {
+  public void setRepositoryUrl(@NotNull String repositoryUrl) {
     this.repositoryUrl = repositoryUrl;
   }
 }

@@ -41,8 +41,8 @@ public class DefaultOsgiRunConfigurationChecker implements OsgiRunConfigurationC
       String version = frameworkInstanceDefinition.getVersion();
       if (version == null || version.length() == 0 && // no version set in framework definition
                              // and also no version specified in the program parameters.
-          !(runConfiguration.getProgramParameters().contains("--v=") || runConfiguration.getProgramParameters().contains("--version=")))
-      {
+                             !(runConfiguration.getProgramParameters().contains("--v=") ||
+                               runConfiguration.getProgramParameters().contains("--version="))) {
         throw new RuntimeConfigurationWarning("You did not specify a version to be used for '" +
                                               frameworkInstanceDefinition.getName() +
                                               "'. The runner will download and use the latest available version for this framework.");

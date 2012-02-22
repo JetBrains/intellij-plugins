@@ -25,11 +25,11 @@
 
 package org.osmorc.manifest.lang.psi.elementtype;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.Directive;
 import org.osmorc.manifest.lang.psi.impl.DirectiveImpl;
@@ -42,34 +42,34 @@ import java.io.IOException;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class DirectiveElementType extends AbstractManifestStubElementType<DirectiveStub, Directive> {
-    public DirectiveElementType() {
-        super("DIRECTIVE");
-    }
+  public DirectiveElementType() {
+    super("DIRECTIVE");
+  }
 
-    @Override
-    public Directive createPsi(@NotNull DirectiveStub stub) {
-        return new DirectiveImpl(stub, this);
-    }
+  @Override
+  public Directive createPsi(@NotNull DirectiveStub stub) {
+    return new DirectiveImpl(stub, this);
+  }
 
-    @Override
-    public Directive createPsi(ASTNode node) {
-        return new DirectiveImpl(node);
-    }
+  @Override
+  public Directive createPsi(ASTNode node) {
+    return new DirectiveImpl(node);
+  }
 
-    @Override
-    public DirectiveStub createStub(@NotNull Directive psi, StubElement parentStub) {
-        return new DirectiveStubImpl(parentStub, psi.getName(), psi.getValue());
-    }
+  @Override
+  public DirectiveStub createStub(@NotNull Directive psi, StubElement parentStub) {
+    return new DirectiveStubImpl(parentStub, psi.getName(), psi.getValue());
+  }
 
-    public void serialize(DirectiveStub stub, StubOutputStream dataStream) throws IOException {
-        dataStream.writeName(stub.getName());
-        dataStream.writeUTFFast(stub.getValue());
-    }
+  public void serialize(DirectiveStub stub, StubOutputStream dataStream) throws IOException {
+    dataStream.writeName(stub.getName());
+    dataStream.writeUTFFast(stub.getValue());
+  }
 
-    public DirectiveStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return new DirectiveStubImpl(parentStub, dataStream.readName().toString(), dataStream.readUTFFast());
-    }
+  public DirectiveStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+    return new DirectiveStubImpl(parentStub, dataStream.readName().toString(), dataStream.readUTFFast());
+  }
 
-    public void indexStub(DirectiveStub stub, IndexSink sink) {
-    }
+  public void indexStub(DirectiveStub stub, IndexSink sink) {
+  }
 }

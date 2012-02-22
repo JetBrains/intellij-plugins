@@ -86,7 +86,7 @@ public class ConciergeFrameworkInstanceManager extends AbstractFrameworkInstance
         installFolder.refresh(false, true);
 
         ConciergeSourceFinder sourceFinder = new ConciergeSourceFinder(installFolder);
-          collector.collectFrameworkLibraries(sourceFinder, directoriesToAdd);
+        collector.collectFrameworkLibraries(sourceFinder, directoriesToAdd);
       }
     });
   }

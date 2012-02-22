@@ -25,16 +25,16 @@
 
 package org.osmorc.manifest.lang.psi.elementtype;
 
-import org.osmorc.manifest.lang.psi.stub.ClauseStub;
-import org.osmorc.manifest.lang.psi.stub.impl.ClauseStubImpl;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.stubs.IndexSink;
+import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.stubs.StubInputStream;
+import com.intellij.psi.stubs.StubOutputStream;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.lang.psi.impl.ClauseImpl;
-import org.jetbrains.annotations.NotNull;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.IndexSink;
-import com.intellij.lang.ASTNode;
+import org.osmorc.manifest.lang.psi.stub.ClauseStub;
+import org.osmorc.manifest.lang.psi.stub.impl.ClauseStubImpl;
 
 import java.io.IOException;
 
@@ -42,32 +42,32 @@ import java.io.IOException;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ClauseElementType extends AbstractManifestStubElementType<ClauseStub, Clause> {
-    public ClauseElementType() {
-        super("CLAUSE");
-    }
+  public ClauseElementType() {
+    super("CLAUSE");
+  }
 
-    @Override
-    public Clause createPsi(@NotNull ClauseStub stub) {
-        return new ClauseImpl(stub, this);
-    }
+  @Override
+  public Clause createPsi(@NotNull ClauseStub stub) {
+    return new ClauseImpl(stub, this);
+  }
 
-    @Override
-    public Clause createPsi(ASTNode node) {
-        return new ClauseImpl(node);
-    }
+  @Override
+  public Clause createPsi(ASTNode node) {
+    return new ClauseImpl(node);
+  }
 
-    @Override
-    public ClauseStub createStub(@NotNull Clause psi, StubElement parentStub) {
-        return new ClauseStubImpl(parentStub);
-    }
+  @Override
+  public ClauseStub createStub(@NotNull Clause psi, StubElement parentStub) {
+    return new ClauseStubImpl(parentStub);
+  }
 
-    public void serialize(ClauseStub stub, StubOutputStream dataStream) throws IOException {
-    }
+  public void serialize(ClauseStub stub, StubOutputStream dataStream) throws IOException {
+  }
 
-    public ClauseStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return new ClauseStubImpl(parentStub);
-    }
+  public ClauseStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+    return new ClauseStubImpl(parentStub);
+  }
 
-    public void indexStub(ClauseStub stub, IndexSink sink) {
-    }
+  public void indexStub(ClauseStub stub, IndexSink sink) {
+  }
 }

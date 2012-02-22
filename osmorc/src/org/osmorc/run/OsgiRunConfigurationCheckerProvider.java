@@ -32,5 +32,5 @@ package org.osmorc.run;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public interface OsgiRunConfigurationCheckerProvider {
-    OsgiRunConfigurationChecker getOsgiRunConfigurationChecker();
+  OsgiRunConfigurationChecker getOsgiRunConfigurationChecker();
 }

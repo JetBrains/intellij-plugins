@@ -36,10 +36,8 @@ import java.util.List;
 /**
  * Author: Robert F. Beeger (robert@beeger.net)
  */
-public class FelixSourceFinder implements FrameworkInstanceLibrarySourceFinder
-{
-  public List<VirtualFile> getSourceForLibraryClasses(@NotNull VirtualFile libraryClasses)
-  {
+public class FelixSourceFinder implements FrameworkInstanceLibrarySourceFinder {
+  public List<VirtualFile> getSourceForLibraryClasses(@NotNull VirtualFile libraryClasses) {
     List<VirtualFile> result = new ArrayList<VirtualFile>();
 
     VirtualFile bundleFolder = libraryClasses.getParent();
@@ -48,28 +46,21 @@ public class FelixSourceFinder implements FrameworkInstanceLibrarySourceFinder
     assert felixFolder != null;
     VirtualFile srcFolder = felixFolder.findChild("src");
 
-    if (srcFolder != null)
-    {
-      if (bundleFolder.getName().equals("bin"))
-      {
+    if (srcFolder != null) {
+      if (bundleFolder.getName().equals("bin")) {
         VirtualFile binFolder = srcFolder.findChild("bin");
-        if (binFolder != null)
-        {
+        if (binFolder != null) {
           VirtualFile[] children = binFolder.getChildren();
-          for (VirtualFile child : children)
-          {
+          for (VirtualFile child : children) {
             addIfSource(child, result);
           }
         }
       }
-      else
-      {
+      else {
         VirtualFile srcBundleFolder = srcFolder.findChild("bundle");
-        if (srcBundleFolder != null)
-        {
+        if (srcBundleFolder != null) {
           VirtualFile[] children = srcBundleFolder.getChildren();
-          for (VirtualFile child : children)
-          {
+          for (VirtualFile child : children) {
             addIfSource(libraryClasses, child, result);
           }
         }
@@ -79,38 +70,30 @@ public class FelixSourceFinder implements FrameworkInstanceLibrarySourceFinder
     return result;
   }
 
-  public boolean containsOnlySources(@NotNull VirtualFile libraryClassesCondidate)
-  {
+  public boolean containsOnlySources(@NotNull VirtualFile libraryClassesCondidate) {
     return false;
   }
 
-  private void addIfSource(VirtualFile sourceZIP, List<VirtualFile> result)
-  {
+  private void addIfSource(VirtualFile sourceZIP, List<VirtualFile> result) {
     VirtualFile folder = FileUtil.getFolder(sourceZIP);
-    if (folder != null)
-    {
+    if (folder != null) {
       String name = FileUtil.getNameWithoutTail(FileUtil.getNameWithoutTail(sourceZIP, ".zip"), "-project");
       VirtualFile sourceFolder = folder.findFileByRelativePath(name + ZIP_SOURCE_PATH);
-      if (sourceFolder != null && sourceFolder.isDirectory())
-      {
+      if (sourceFolder != null && sourceFolder.isDirectory()) {
         result.add(sourceFolder);
       }
     }
   }
 
-  private void addIfSource(VirtualFile libraryClasses, VirtualFile sourceZIP, List<VirtualFile> result)
-  {
+  private void addIfSource(VirtualFile libraryClasses, VirtualFile sourceZIP, List<VirtualFile> result) {
     VirtualFile folder = FileUtil.getFolder(sourceZIP);
-    if (folder != null)
-    {
+    if (folder != null) {
       String classesName = FileUtil.getNameWithoutTail(libraryClasses, ".jar");
       String sourceName = FileUtil.getNameWithoutTail(FileUtil.getNameWithoutTail(sourceZIP, ".zip"), "-project");
 
-      if (classesName.contains(sourceName))
-      {
+      if (classesName.contains(sourceName)) {
         VirtualFile sourceFolder = folder.findFileByRelativePath(sourceName + ZIP_SOURCE_PATH);
-        if (sourceFolder != null && sourceFolder.isDirectory())
-        {
+        if (sourceFolder != null && sourceFolder.isDirectory()) {
           result.add(sourceFolder);
         }
       }

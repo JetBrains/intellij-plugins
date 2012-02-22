@@ -29,45 +29,37 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Author: Robert F. Beeger (robert@beeger.net)
  */
-public class VersionRange
-{
-  public enum Boundary
-  {
+public class VersionRange {
+  public enum Boundary {
     INCLUSIVE, EXCLUSIVE
   }
 
   public VersionRange(@NotNull Boundary floorBoundary, @NotNull Version floor, @NotNull Version ceiling,
-                      @NotNull Boundary ceilingBoundary)
-  {
+                      @NotNull Boundary ceilingBoundary) {
     _floorBoundary = floorBoundary;
     _floor = floor;
     _ceiling = ceiling;
     _ceilingBoundary = ceilingBoundary;
   }
 
-  public VersionRange(@NotNull Version atleast)
-  {
+  public VersionRange(@NotNull Version atleast) {
     _floor = atleast;
     _floorBoundary = Boundary.INCLUSIVE;
     _ceiling = null;
     _ceilingBoundary = null;
   }
 
-  public boolean contains(@NotNull Version version)
-  {
+  public boolean contains(@NotNull Version version) {
     return checkFloor(version) && checkCeiling(version);
   }
 
-  private boolean checkFloor(@NotNull Version version)
-  {
+  private boolean checkFloor(@NotNull Version version) {
     int comparison = version.compareTo(_floor);
     return _floorBoundary == Boundary.INCLUSIVE ? comparison >= 0 : comparison > 0;
   }
 
-  private boolean checkCeiling(@NotNull Version version)
-  {
-    if (_ceiling != null)
-    {
+  private boolean checkCeiling(@NotNull Version version) {
+    if (_ceiling != null) {
       int comparison = version.compareTo(_ceiling);
       return _ceilingBoundary == Boundary.INCLUSIVE ? comparison <= 0 : comparison < 0;
     }

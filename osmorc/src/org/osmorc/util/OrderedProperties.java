@@ -22,7 +22,7 @@ public class OrderedProperties extends Properties {
 
   @Override
   public Enumeration<?> propertyNames() {
-      return Collections.enumeration(keys);
+    return Collections.enumeration(keys);
   }
 
   public synchronized Object put(Object key, Object value) {

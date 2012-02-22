@@ -414,7 +414,5 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
     }
     return currentFile;
   }
-
-
 }
 

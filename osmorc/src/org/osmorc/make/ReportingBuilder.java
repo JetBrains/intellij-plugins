@@ -45,75 +45,69 @@ import java.text.MessageFormat;
 
 /**
  * Created by IntelliJ IDEA. User: kork Date: Jul 20, 2009 Time: 9:51:18 PM To change this template use File | Settings
-* | File Templates.
-*/
-class ReportingBuilder extends Builder
-{
+ * | File Templates.
+ */
+class ReportingBuilder extends Builder {
   private final CompileContext myContext;
   private String mySourceFileName;
   private String myMessagePrefix;
 
-  public ReportingBuilder(CompileContext context, String sourceFileName, Module module)
-  {
+  public ReportingBuilder(CompileContext context, String sourceFileName, Module module) {
     super();
     myContext = context;
     OsmorcFacet facet = OsmorcFacet.getInstance(module);
     mySourceFileName = sourceFileName;
     // link back to the original manifest if it's manually edited
-    if ( facet != null ) {
+    if (facet != null) {
       OsmorcFacetConfiguration configuration = facet.getConfiguration();
       if (configuration.isManifestManuallyEdited()) {
         BundleManager bundleManager = ServiceManager.getService(module.getProject(), BundleManager.class);
         BundleManifest bundleManifest = bundleManager.getManifestByObject(module);
         if (bundleManifest != null) {
-            PsiFile manifestFile = bundleManifest.getManifestFile();
+          PsiFile manifestFile = bundleManifest.getManifestFile();
           VirtualFile virtualFile = manifestFile.getVirtualFile();
-          if ( virtualFile != null )
-          mySourceFileName = VfsUtil.pathToUrl(virtualFile.getPath());
-        }
-      }else {
-          // try if module was imported from maven.
-          MavenProjectsManager projectsManager = MavenProjectsManager.getInstance(module.getProject());
-          MavenProject project = projectsManager.findProject(module);
-          if ( project != null ) {
-            MavenPlugin plugin = project.findPlugin("org.apache.felix", "maven-bundle-plugin");
-            if ( plugin != null ) {
-              // ok it's imported from maven, link warnings/errors back to pom.xml
-              mySourceFileName = VfsUtil.pathToUrl(project.getPath());
-            }
+          if (virtualFile != null) {
+            mySourceFileName = VfsUtil.pathToUrl(virtualFile.getPath());
           }
         }
+      }
+      else {
+        // try if module was imported from maven.
+        MavenProjectsManager projectsManager = MavenProjectsManager.getInstance(module.getProject());
+        MavenProject project = projectsManager.findProject(module);
+        if (project != null) {
+          MavenPlugin plugin = project.findPlugin("org.apache.felix", "maven-bundle-plugin");
+          if (plugin != null) {
+            // ok it's imported from maven, link warnings/errors back to pom.xml
+            mySourceFileName = VfsUtil.pathToUrl(project.getPath());
+          }
+        }
+      }
     }
     myMessagePrefix = "[" + module.getName() + "] ";
   }
 
 
   @Override
-  public void error(String s, Object... objects)
-  {
-    myContext.addMessage(CompilerMessageCategory.ERROR, MessageFormat.format(myMessagePrefix +s, objects), mySourceFileName, 0,0);
+  public void error(String s, Object... objects) {
+    myContext.addMessage(CompilerMessageCategory.ERROR, MessageFormat.format(myMessagePrefix + s, objects), mySourceFileName, 0, 0);
   }
 
   @Override
-  public void error(String s, Throwable throwable, Object... objects)
-  {
+  public void error(String s, Throwable throwable, Object... objects) {
     myContext.addMessage(CompilerMessageCategory.ERROR,
                          MessageFormat.format(myMessagePrefix + s, objects) + "(" + throwable.getMessage() + ")",
                          mySourceFileName, 0, 0);
   }
 
   @Override
-  public void warning(String s, Object... objects)
-  {
-    myContext.addMessage(CompilerMessageCategory.WARNING, MessageFormat.format(myMessagePrefix + s, objects), mySourceFileName, 0,0);
-
+  public void warning(String s, Object... objects) {
+    myContext.addMessage(CompilerMessageCategory.WARNING, MessageFormat.format(myMessagePrefix + s, objects), mySourceFileName, 0, 0);
   }
 
   @Override
-  public void progress(String s, Object... objects)
-  {
-    myContext.addMessage(CompilerMessageCategory.INFORMATION, MessageFormat.format(myMessagePrefix + s, objects), mySourceFileName, 0,0);
-
+  public void progress(String s, Object... objects) {
+    myContext.addMessage(CompilerMessageCategory.INFORMATION, MessageFormat.format(myMessagePrefix + s, objects), mySourceFileName, 0, 0);
   }
 
   /**
@@ -122,5 +116,4 @@ class ReportingBuilder extends Builder
   public void begin() {
     super.begin();
   }
-
 }

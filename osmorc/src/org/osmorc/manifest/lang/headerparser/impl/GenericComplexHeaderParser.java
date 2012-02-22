@@ -31,12 +31,10 @@ package org.osmorc.manifest.lang.headerparser.impl;
  *
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class GenericComplexHeaderParser extends AbstractHeaderParserImpl
-{
+public class GenericComplexHeaderParser extends AbstractHeaderParserImpl {
 
   @Override
-  public boolean isSimpleHeader()
-  {
+  public boolean isSimpleHeader() {
     return false;
   }
 }

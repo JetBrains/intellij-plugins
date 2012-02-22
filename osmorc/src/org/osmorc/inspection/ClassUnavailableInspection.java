@@ -102,7 +102,7 @@ public class ClassUnavailableInspection extends LocalInspectionTool {
       public void visitVariable(PsiVariable variable) {
         // only check this if the manifest is manually edited
         OsmorcFacet instance = OsmorcFacet.getInstance(variable);
-        if (instance != null  && instance.getConfiguration().isManifestManuallyEdited()) {
+        if (instance != null && instance.getConfiguration().isManifestManuallyEdited()) {
           PsiClass psiClass = null;
           PsiType psiType = variable.getType();
           if (psiType instanceof PsiClassType) {
@@ -187,7 +187,7 @@ public class ClassUnavailableInspection extends LocalInspectionTool {
   private AvailabilityCheckResult checkDirectory(final @NotNull PsiDirectory directory, final @NotNull Module usingModule) {
     final Module containingModule = ModuleUtil.findModuleForFile(directory.getVirtualFile(), usingModule.getProject());
 
-    if ( containingModule != null && containingModule.equals(usingModule) ) {
+    if (containingModule != null && containingModule.equals(usingModule)) {
       // same module == same bundle OK
       return AvailabilityCheckResult.OK;
     }
@@ -294,7 +294,7 @@ public class ClassUnavailableInspection extends LocalInspectionTool {
                                                                        final @NotNull Object importingBundle,
                                                                        final @NotNull PsiDirectory folder,
                                                                        final @NotNull BundleManager bundleManager) {
-return null;
+    return null;
 //    PsiPackage containingPackage = JavaDirectoryService.getInstance().getPackage(folder);
 //    BundleDescription exporterDescription = bundleManager.getBundleDescription(exportingBundle);
 //    BundleDescription containerDescription = bundleManager.getBundleDescription(containingBundle);
@@ -383,5 +383,4 @@ return null;
   //  }
   //  return false;
   //}
-
 }

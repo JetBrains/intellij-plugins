@@ -27,30 +27,30 @@ package org.osmorc.manifest.lang.valueparser.impl;
 import com.intellij.lang.annotation.AnnotationHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.manifest.lang.valueparser.ValueParser;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
+import org.osmorc.manifest.lang.valueparser.ValueParser;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public abstract class AbstractValueParserImpl<T> implements ValueParser<T> {
-    public T parseValue(@NotNull HeaderValuePart headerValuePart, @Nullable AnnotationHolder annotationHolder) {
-        String valueText = headerValuePart.getUnwrappedText();
-        return parseValue(headerValuePart, valueText, 0, annotationHolder);
-    }
+  public T parseValue(@NotNull HeaderValuePart headerValuePart, @Nullable AnnotationHolder annotationHolder) {
+    String valueText = headerValuePart.getUnwrappedText();
+    return parseValue(headerValuePart, valueText, 0, annotationHolder);
+  }
 
-    public T parseValue(
-            @NotNull HeaderValuePart headerValuePart, int start, int end, @Nullable AnnotationHolder annotationHolder) {
-        String valueText = headerValuePart.getUnwrappedText();
-        valueText = valueText.substring(start, end);
-        return parseValue(headerValuePart, valueText, start, annotationHolder);
-    }
+  public T parseValue(
+    @NotNull HeaderValuePart headerValuePart, int start, int end, @Nullable AnnotationHolder annotationHolder) {
+    String valueText = headerValuePart.getUnwrappedText();
+    valueText = valueText.substring(start, end);
+    return parseValue(headerValuePart, valueText, start, annotationHolder);
+  }
 
-    public T parseValue(@NotNull String text, int start, int end) {
-        String valueText = text.substring(start, end);
-        return parseValue(null, valueText, start, null);
-    }
+  public T parseValue(@NotNull String text, int start, int end) {
+    String valueText = text.substring(start, end);
+    return parseValue(null, valueText, start, null);
+  }
 
-    protected abstract T parseValue(@Nullable HeaderValuePart headerValuePart, String text, int start,
-                                    @Nullable AnnotationHolder annotationHolder);
+  protected abstract T parseValue(@Nullable HeaderValuePart headerValuePart, String text, int start,
+                                  @Nullable AnnotationHolder annotationHolder);
 }

@@ -29,10 +29,8 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Author: Robert F. Beeger (robert@beeger.net)
  */
-public class Version implements Comparable<Version>
-{
-  public Version(int major, int minor, int micro, @Nullable String qualifier)
-  {
+public class Version implements Comparable<Version> {
+  public Version(int major, int minor, int micro, @Nullable String qualifier) {
 
     _major = major;
     _minor = minor;
@@ -40,81 +38,64 @@ public class Version implements Comparable<Version>
     _qualifier = qualifier != null ? qualifier : "";
   }
 
-  public int getMajor()
-  {
+  public int getMajor() {
     return _major;
   }
 
-  public int getMinor()
-  {
+  public int getMinor() {
     return _minor;
   }
 
-  public int getMicro()
-  {
+  public int getMicro() {
     return _micro;
   }
 
-  public String getQualifier()
-  {
+  public String getQualifier() {
     return _qualifier;
   }
 
-  public int compareTo(Version o)
-  {
+  public int compareTo(Version o) {
     int result = getMajor() - o.getMajor();
-    if (result == 0)
-    {
+    if (result == 0) {
       result = getMinor() - o.getMinor();
     }
-    if (result == 0)
-    {
+    if (result == 0) {
       result = getMicro() - o.getMicro();
     }
-    if (result == 0)
-    {
+    if (result == 0) {
       result = getQualifier().compareTo(o.getQualifier());
     }
 
     return result;
   }
 
-  public String toString()
-  {
+  public String toString() {
     return _major + "." + _minor + "." + _micro + (_qualifier.length() > 0 ? "." + _qualifier : "");
   }
 
-  public boolean equals(Object o)
-  {
-    if (this == o)
-    {
+  public boolean equals(Object o) {
+    if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass())
-    {
+    if (o == null || getClass() != o.getClass()) {
       return false;
     }
 
-    Version version = (Version) o;
+    Version version = (Version)o;
 
-    if (_major != version._major)
-    {
+    if (_major != version._major) {
       return false;
     }
-    if (_micro != version._micro)
-    {
+    if (_micro != version._micro) {
       return false;
     }
-    if (_minor != version._minor)
-    {
+    if (_minor != version._minor) {
       return false;
     }
     return _qualifier.equals(version._qualifier);
-
   }
 
-  public int hashCode()
-  {
+  public int hashCode() {
     int result;
     result = _major;
     result = 31 * result + _minor;

@@ -37,8 +37,7 @@ import java.io.IOException;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
-public interface Obr
-{
+public interface Obr {
   /**
    * @return the name of the Obr, which is displayed to the user.
    */
@@ -61,7 +60,7 @@ public interface Obr
   @NotNull
   ObrMavenResult[] queryForMavenArtifact(@NotNull String queryString,
                                          @NotNull ProgressIndicator progressIndicator) throws
-      IOException;
+                                                                                       IOException;
 
   /**
    * Returns a list of maven repositories where artifacts which are returned by this OBR can be retrieved.

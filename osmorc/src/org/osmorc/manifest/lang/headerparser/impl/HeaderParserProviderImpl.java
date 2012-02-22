@@ -32,45 +32,36 @@ import org.osmorc.manifest.lang.headerparser.HeaderParserProvider;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class HeaderParserProviderImpl implements HeaderParserProvider
-{
-  public HeaderParserProviderImpl(@NotNull String headerName, @NotNull HeaderParser headerParser)
-  {
+public class HeaderParserProviderImpl implements HeaderParserProvider {
+  public HeaderParserProviderImpl(@NotNull String headerName, @NotNull HeaderParser headerParser) {
     _headerName = headerName;
     _headerParser = headerParser;
   }
 
-  public String getHeaderName()
-  {
+  public String getHeaderName() {
     return _headerName;
   }
 
-  public HeaderParser getHeaderParser()
-  {
+  public HeaderParser getHeaderParser() {
     return _headerParser;
   }
 
   @Override
-  public boolean equals(Object o)
-  {
-    if (this == o)
-    {
+  public boolean equals(Object o) {
+    if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass())
-    {
+    if (o == null || getClass() != o.getClass()) {
       return false;
     }
 
-    HeaderParserProviderImpl that = (HeaderParserProviderImpl) o;
+    HeaderParserProviderImpl that = (HeaderParserProviderImpl)o;
 
     return _headerName.equals(that._headerName);
-
   }
 
   @Override
-  public int hashCode()
-  {
+  public int hashCode() {
     return _headerName.hashCode();
   }
 

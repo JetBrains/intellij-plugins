@@ -52,8 +52,8 @@ public class ModuleManifestHolderImpl extends AbstractManifestHolderImpl {
     this.myApplication = application;
   }
 
-  @Nullable 
-  public BundleManifest getBundleManifest() throws ManifestHolderDisposedException{
+  @Nullable
+  public BundleManifest getBundleManifest() throws ManifestHolderDisposedException {
     if (isDisposed()) {
       throw new ManifestHolderDisposedException();
     }
@@ -66,7 +66,7 @@ public class ModuleManifestHolderImpl extends AbstractManifestHolderImpl {
 
     // only try to load the manifest if we have an osmorc facet for that module
     OsmorcFacet facet = OsmorcFacet.getInstance(myModule);
-    if (myBundleManifest == null && facet != null ) {
+    if (myBundleManifest == null && facet != null) {
       // and only if this manifest is manually edited
       if (facet.getConfiguration().isManifestManuallyEdited()) {
         myBundleManifest = loadManifest();
@@ -107,7 +107,7 @@ public class ModuleManifestHolderImpl extends AbstractManifestHolderImpl {
 
   @Override
   public Object getBoundObject() throws ManifestHolderDisposedException {
-    if ( isDisposed() ) {
+    if (isDisposed()) {
       throw new ManifestHolderDisposedException();
     }
     return myModule;

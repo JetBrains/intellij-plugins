@@ -167,8 +167,8 @@ public class MyBundleManager implements BundleManager {
       resolveRequiredBundle(requiredBundle, allRequiredBundles);
     }
     dependencyHolders.addAll(allRequiredBundles);
-    
-    
+
+
     // Resolve Fragment-Hosts
     ManifestHolder manifestHolder = myBundleCache.getManifestHolder(module);
     if (manifestHolder != null) {
@@ -190,7 +190,7 @@ public class MyBundleManager implements BundleManager {
     List<String> entries = manifest.getBundleClassPathEntries();
     result.addAll(resolveBundleClassPath(entries));
 
-    
+
     return result;
   }
 
@@ -272,7 +272,7 @@ public class MyBundleManager implements BundleManager {
    */
   private Set<Library> resolveBundleClassPath(@NotNull Collection<String> classPathEntries) {
     Library[] libraries = ProjectLibraryTable.getInstance(myProject).getLibraries();
-    
+
     Set<Library> result = new HashSet<Library>();
     for (String entry : classPathEntries) {
       Matcher matcher = JarPathPattern.matcher(entry);
@@ -281,7 +281,7 @@ public class MyBundleManager implements BundleManager {
         for (Library library : libraries) {
           String[] urls = library.getUrls(OrderRootType.CLASSES);
           for (String url : urls) {
-            if ( url.endsWith(jarName) ) {
+            if (url.endsWith(jarName)) {
               result.add(library);
               break;
             }

@@ -46,92 +46,94 @@ import java.util.List;
 
 /**
  * Loads the legacy Eclipse Equinox Run Configurations as OSGi Run Configurations.
+ *
  * @author Robert F. Beeger (robert@beeger.net)
  */
 @SuppressWarnings({"MethodMayBeStatic", "UnusedDeclaration"})
 public class LegacyEquinoxOsgiRunConfigurationLoader implements LegacyOsgiRunConfigurationLoader {
 
-    public void finishAfterModulesAreAvailable(OsgiRunConfiguration osgiRunConfiguration) {
-        List<SelectedBundle> bundlesToDeploy = osgiRunConfiguration.getBundlesToDeploy();
-        addModuleBundles(bundlesToDeploy, osgiRunConfiguration.getProject());
+  public void finishAfterModulesAreAvailable(OsgiRunConfiguration osgiRunConfiguration) {
+    List<SelectedBundle> bundlesToDeploy = osgiRunConfiguration.getBundlesToDeploy();
+    addModuleBundles(bundlesToDeploy, osgiRunConfiguration.getProject());
 
-        FrameworkInstanceDefinition frameworkInstanceDefinition = getFrameworkInstance(osgiRunConfiguration.getProject());
+    FrameworkInstanceDefinition frameworkInstanceDefinition = getFrameworkInstance(osgiRunConfiguration.getProject());
 
-        if (frameworkInstanceDefinition != null) {
-            osgiRunConfiguration.setInstanceToUse(frameworkInstanceDefinition);
+    if (frameworkInstanceDefinition != null) {
+      osgiRunConfiguration.setInstanceToUse(frameworkInstanceDefinition);
 
-            addFrameworkBundle(bundlesToDeploy, frameworkInstanceDefinition);
-        }
-
+      addFrameworkBundle(bundlesToDeploy, frameworkInstanceDefinition);
     }
+  }
 
-    @Nullable
-    private FrameworkInstanceDefinition getFrameworkInstance(Project project) {
-        ApplicationSettings applicationSettings = ServiceManager.getService(ApplicationSettings.class);
-        ProjectSettings projectSettings = ServiceManager.getService(project, ProjectSettings.class);
-        return applicationSettings.getFrameworkInstance(projectSettings.getFrameworkInstanceName());
+  @Nullable
+  private FrameworkInstanceDefinition getFrameworkInstance(Project project) {
+    ApplicationSettings applicationSettings = ServiceManager.getService(ApplicationSettings.class);
+    ProjectSettings projectSettings = ServiceManager.getService(project, ProjectSettings.class);
+    return applicationSettings.getFrameworkInstance(projectSettings.getFrameworkInstanceName());
+  }
+
+  private void addModuleBundles(List<SelectedBundle> bundlesToDeploy, Project project) {
+    Module[] modules = ModuleManager.getInstance(project).getModules();
+    for (Module module : modules) {
+      if (OsmorcFacet.hasOsmorcFacet(module)) {
+        SelectedBundle bundle = new SelectedBundle(module.getName(), null, SelectedBundle.BundleType.Module);
+        bundle.setStartLevel(4);
+        bundlesToDeploy.add(bundle);
+      }
     }
+  }
 
-    private void addModuleBundles(List<SelectedBundle> bundlesToDeploy, Project project) {
-        Module[] modules = ModuleManager.getInstance(project).getModules();
-        for (Module module : modules) {
-            if (OsmorcFacet.hasOsmorcFacet(module)) {
-                SelectedBundle bundle = new SelectedBundle(module.getName(), null, SelectedBundle.BundleType.Module);
-                bundle.setStartLevel(4);
-                bundlesToDeploy.add(bundle);
-            }
-        }
-    }
+  private void addFrameworkBundle(final List<SelectedBundle> bundlesToDeploy,
+                                  @NotNull FrameworkInstanceDefinition frameworkInstanceDefinition) {
+    FrameworkIntegratorRegistry registry = ServiceManager.getService(FrameworkIntegratorRegistry.class);
+    FrameworkIntegrator frameworkIntegrator = registry.findIntegratorByInstanceDefinition(frameworkInstanceDefinition);
+    FrameworkInstanceManager frameworkInstanceManager = frameworkIntegrator.getFrameworkInstanceManager();
 
-    private void addFrameworkBundle(final List<SelectedBundle> bundlesToDeploy, @NotNull FrameworkInstanceDefinition frameworkInstanceDefinition) {
-      FrameworkIntegratorRegistry registry = ServiceManager.getService(FrameworkIntegratorRegistry.class);
-      FrameworkIntegrator frameworkIntegrator = registry.findIntegratorByInstanceDefinition(frameworkInstanceDefinition);
-      FrameworkInstanceManager frameworkInstanceManager = frameworkIntegrator.getFrameworkInstanceManager();
-
-      frameworkInstanceManager.collectLibraries(frameworkInstanceDefinition, new JarFileLibraryCollector() {
-        @Override
-        protected void collectFrameworkJars(@NotNull Collection<VirtualFile> jarFiles, @NotNull FrameworkInstanceLibrarySourceFinder sourceFinder) {
-          for (VirtualFile jarFile : jarFiles) {
-            String url = jarFile.getUrl();
-            if (url.contains("org.eclipse.equinox.common_")) {
-              SelectedBundle bundle = createSelectedFrameworkBundle(url);
-              if (bundle != null) {
-                bundle.setStartLevel(2);
-                bundle.setStartAfterInstallation(true);
-                bundlesToDeploy.add(bundle);
-              }
+    frameworkInstanceManager.collectLibraries(frameworkInstanceDefinition, new JarFileLibraryCollector() {
+      @Override
+      protected void collectFrameworkJars(@NotNull Collection<VirtualFile> jarFiles,
+                                          @NotNull FrameworkInstanceLibrarySourceFinder sourceFinder) {
+        for (VirtualFile jarFile : jarFiles) {
+          String url = jarFile.getUrl();
+          if (url.contains("org.eclipse.equinox.common_")) {
+            SelectedBundle bundle = createSelectedFrameworkBundle(url);
+            if (bundle != null) {
+              bundle.setStartLevel(2);
+              bundle.setStartAfterInstallation(true);
+              bundlesToDeploy.add(bundle);
             }
-            else if (url.contains("org.eclipse.update.configurator_")) {
-              SelectedBundle bundle = createSelectedFrameworkBundle(url);
-              if (bundle != null) {
-                bundle.setStartLevel(3);
-                bundle.setStartAfterInstallation(true);
-                bundlesToDeploy.add(bundle);
-              }
+          }
+          else if (url.contains("org.eclipse.update.configurator_")) {
+            SelectedBundle bundle = createSelectedFrameworkBundle(url);
+            if (bundle != null) {
+              bundle.setStartLevel(3);
+              bundle.setStartAfterInstallation(true);
+              bundlesToDeploy.add(bundle);
             }
-            else if (url.contains("org.eclipse.core.runtime_")) {
-              SelectedBundle bundle = createSelectedFrameworkBundle(url);
-              if (bundle != null) {
-                bundle.setStartLevel(4);
-                bundle.setStartAfterInstallation(true);
-                bundlesToDeploy.add(bundle);
-              }
+          }
+          else if (url.contains("org.eclipse.core.runtime_")) {
+            SelectedBundle bundle = createSelectedFrameworkBundle(url);
+            if (bundle != null) {
+              bundle.setStartLevel(4);
+              bundle.setStartAfterInstallation(true);
+              bundlesToDeploy.add(bundle);
             }
           }
         }
-      });
-    }
+      }
+    });
+  }
 
-    @Nullable
-    private SelectedBundle createSelectedFrameworkBundle(String url) {
-        url = BundleCompiler.convertJarUrlToFileUrl(url);
-        url = BundleCompiler.fixFileURL(url);
-        String bundleName = CachingBundleInfoProvider.getBundleSymbolicName(url);
-        SelectedBundle bundle = null;
-        if (bundleName != null) {
-            String bundleVersion = CachingBundleInfoProvider.getBundleVersions(url);
-            bundle = new SelectedBundle(bundleName + " - " + bundleVersion, url, SelectedBundle.BundleType.FrameworkBundle);
-        }
-        return bundle;
+  @Nullable
+  private SelectedBundle createSelectedFrameworkBundle(String url) {
+    url = BundleCompiler.convertJarUrlToFileUrl(url);
+    url = BundleCompiler.fixFileURL(url);
+    String bundleName = CachingBundleInfoProvider.getBundleSymbolicName(url);
+    SelectedBundle bundle = null;
+    if (bundleName != null) {
+      String bundleVersion = CachingBundleInfoProvider.getBundleVersions(url);
+      bundle = new SelectedBundle(bundleName + " - " + bundleVersion, url, SelectedBundle.BundleType.FrameworkBundle);
     }
+    return bundle;
+  }
 }

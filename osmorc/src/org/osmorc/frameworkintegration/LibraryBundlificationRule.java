@@ -47,14 +47,10 @@ import java.util.regex.PatternSyntaxException;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
-public class LibraryBundlificationRule extends Model
-{
-  public LibraryBundlificationRule()
-  {
-    addPropertyChangeListener(new PropertyChangeListener()
-    {
-      public void propertyChange(PropertyChangeEvent event)
-      {
+public class LibraryBundlificationRule extends Model {
+  public LibraryBundlificationRule() {
+    addPropertyChangeListener(new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent event) {
         // track last modification of the rule, so dependent packages
         // can be rebuilt when the rule has been changed.
         _lastModified = System.currentTimeMillis();
@@ -68,36 +64,30 @@ public class LibraryBundlificationRule extends Model
    *         libraries which this rule applies to.
    */
   @Transient
-  public Map<String, String> getAdditionalPropertiesMap()
-  {
+  public Map<String, String> getAdditionalPropertiesMap() {
     Map<String, String> result = new HashMap<String, String>();
     Properties p = new Properties();
     ByteArrayInputStream bais = new ByteArrayInputStream(getAdditionalProperties().getBytes());
-    try
-    {
+    try {
       p.load(bais);
     }
-    catch (IOException e)
-    {
+    catch (IOException e) {
       // XXX: some real erorr msg here..
       e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
     }
 
-    for (Enumeration e = p.propertyNames(); e.hasMoreElements();)
-    {
-      String name = (String) e.nextElement();
+    for (Enumeration e = p.propertyNames(); e.hasMoreElements(); ) {
+      String name = (String)e.nextElement();
       result.put(name, p.getProperty(name));
     }
     return result;
   }
 
-  public String getRuleRegex()
-  {
+  public String getRuleRegex() {
     return _ruleRegex;
   }
 
-  public void setRuleRegex(String ruleRegex)
-  {
+  public void setRuleRegex(String ruleRegex) {
     String oldRegex = _ruleRegex;
     this._ruleRegex = ruleRegex;
     firePropertyChange("ruleRegex", oldRegex, _ruleRegex);
@@ -110,59 +100,49 @@ public class LibraryBundlificationRule extends Model
    * @param libraryName the name of the library to check against.
    * @return true, if this rule applies to the library, false otherwise.
    */
-  public boolean appliesTo(@NotNull String libraryName)
-  {
-    try
-    {
+  public boolean appliesTo(@NotNull String libraryName) {
+    try {
       // we skip compiling the pattern for .* regex as they match anything.
       return ".*".equals(getRuleRegex()) ||
-          (!"".equals(getRuleRegex()) && Pattern.compile(getRuleRegex()).matcher(libraryName).matches());
+             (!"".equals(getRuleRegex()) && Pattern.compile(getRuleRegex()).matcher(libraryName).matches());
     }
-    catch (PatternSyntaxException e)
-    {
+    catch (PatternSyntaxException e) {
 
       //XXX: not sure if it is good to silently ignore this here, might confuse the users
       return false;
     }
   }
 
-  public String getAdditionalProperties()
-  {
+  public String getAdditionalProperties() {
     return _additionalProperties;
   }
 
-  public void setAdditionalProperties(String additionalProperties)
-  {
+  public void setAdditionalProperties(String additionalProperties) {
     String old = _additionalProperties;
     _additionalProperties = additionalProperties;
     firePropertyChange("additionalProperties", old, _additionalProperties);
   }
 
   @Override
-  public String toString()
-  {
+  public String toString() {
     return "Rule: " + _ruleRegex;
   }
 
-  public long getLastModified()
-  {
+  public long getLastModified() {
     return _lastModified;
   }
 
-  public void setLastModified(long lastModified)
-  {
+  public void setLastModified(long lastModified) {
     long old = _lastModified;
     _lastModified = lastModified;
     firePropertyChange("lastModified", old, lastModified);
   }
 
-  public boolean isDoNotBundle()
-  {
+  public boolean isDoNotBundle() {
     return _doNotBundle;
   }
 
-  public void setDoNotBundle(boolean doNotBundle)
-  {
+  public void setDoNotBundle(boolean doNotBundle) {
     boolean old = _doNotBundle;
     _doNotBundle = doNotBundle;
     firePropertyChange("doNotBundle", old, doNotBundle);
@@ -178,8 +158,7 @@ public class LibraryBundlificationRule extends Model
     return _stopAfterThisRule;
   }
 
-  public LibraryBundlificationRule copy()
-  {
+  public LibraryBundlificationRule copy() {
     LibraryBundlificationRule result = new LibraryBundlificationRule();
     result._additionalProperties = _additionalProperties;
     result._ruleRegex = _ruleRegex;

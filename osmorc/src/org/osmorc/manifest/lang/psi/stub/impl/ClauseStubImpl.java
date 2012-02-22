@@ -35,7 +35,7 @@ import org.osmorc.manifest.lang.psi.stub.ClauseStub;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ClauseStubImpl extends StubBase<Clause> implements ClauseStub {
-    public ClauseStubImpl(StubElement parent) {
-        super(parent, ManifestStubElementTypes.CLAUSE);
-    }
+  public ClauseStubImpl(StubElement parent) {
+    super(parent, ManifestStubElementTypes.CLAUSE);
+  }
 }

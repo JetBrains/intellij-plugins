@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ManifestSyntaxHighlighterProvider implements SyntaxHighlighterProvider {
-    public SyntaxHighlighter create(FileType fileType, @Nullable Project project, @Nullable VirtualFile file) {
-        return new ManifestSyntaxHighlighter();
-    }
+  public SyntaxHighlighter create(FileType fileType, @Nullable Project project, @Nullable VirtualFile file) {
+    return new ManifestSyntaxHighlighter();
+  }
 }

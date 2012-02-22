@@ -32,5 +32,5 @@ import org.osmorc.manifest.lang.psi.stub.SectionStub;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public interface Section  extends PsiElement, StubBasedPsiElement<SectionStub> {
+public interface Section extends PsiElement, StubBasedPsiElement<SectionStub> {
 }

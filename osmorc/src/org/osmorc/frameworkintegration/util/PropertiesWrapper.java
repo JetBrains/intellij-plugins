@@ -41,11 +41,9 @@ import java.util.Map;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
-public class PropertiesWrapper extends Model
-{
+public class PropertiesWrapper extends Model {
 
-  public PropertiesWrapper(Map<String, String> properties)
-  {
+  public PropertiesWrapper(Map<String, String> properties) {
     this._properties = new HashMap<String, String>();
     // load the default values
     loadDefaults();
@@ -54,67 +52,53 @@ public class PropertiesWrapper extends Model
   }
 
 
-  protected String getProperty(@NotNull String name)
-  {
+  protected String getProperty(@NotNull String name) {
     return _properties.get(name);
   }
 
-  protected void putProperty(@NotNull String name, String value)
-  {
-    if (isBooleanProperty(name))
-    {
+  protected void putProperty(@NotNull String name, String value) {
+    if (isBooleanProperty(name)) {
       putBooleanProperty(name, Boolean.parseBoolean(value));
     }
-    else
-    {
+    else {
       String old = getProperty(name);
       _properties.put(name, value);
       firePropertyChange(name, old, value);
     }
   }
 
-  protected boolean getBooleanProperty(@NotNull String name)
-  {
+  protected boolean getBooleanProperty(@NotNull String name) {
     return Boolean.parseBoolean(getProperty(name));
   }
 
-  protected void putBooleanProperty(@NotNull String name, boolean value)
-  {
+  protected void putBooleanProperty(@NotNull String name, boolean value) {
     boolean old = getBooleanProperty(name);
     _properties.put(name, String.valueOf(value));
     firePropertyChange(name, old, value);
   }
 
-  public void load(Map<String, String> additionalProperties)
-  {
-    for (String key : additionalProperties.keySet())
-    {
+  public void load(Map<String, String> additionalProperties) {
+    for (String key : additionalProperties.keySet()) {
       putProperty(key, additionalProperties.get(key));
     }
   }
 
-  public Map<String, String> getProperties()
-  {
+  public Map<String, String> getProperties() {
     return Collections.unmodifiableMap(_properties);
   }
 
-  private boolean isBooleanProperty(String name)
-  {
-    try
-    {
+  private boolean isBooleanProperty(String name) {
+    try {
       PropertyDescriptor pd = new PropertyDescriptor(name, getClass());
       return Boolean.class.isAssignableFrom(pd.getPropertyType()) ||
-          Boolean.TYPE.isAssignableFrom(pd.getPropertyType());
+             Boolean.TYPE.isAssignableFrom(pd.getPropertyType());
     }
-    catch (IntrospectionException e)
-    {
+    catch (IntrospectionException e) {
       return false;
     }
-
   }
 
-  protected void loadDefaults()
-  {
+  protected void loadDefaults() {
   }
 
   private final Map<String, String> _properties;

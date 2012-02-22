@@ -79,7 +79,7 @@ public class ModuleDependencySynchronizer {
    * @param project the project the project that should be synchronized.
    */
   public static void resynchronizeAll(@NotNull final Project project) {
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
+    ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
         new Task.Backgroundable(project, "Synchronizing OSGi dependencies", false) {
@@ -95,7 +95,7 @@ public class ModuleDependencySynchronizer {
           }
         }.queue();
       }
-    },project.getDisposed());
+    }, project.getDisposed());
   }
 
   /**

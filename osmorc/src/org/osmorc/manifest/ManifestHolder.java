@@ -38,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 public interface ManifestHolder {
   /**
    * Returns the bundle manifest.
+   *
    * @return the bundle manifest or null if the bound object is no OSGi bundle.
    */
   @Nullable
@@ -45,6 +46,7 @@ public interface ManifestHolder {
 
   /**
    * The object that this manifest belongs to.
+   *
    * @return the bound object
    */
   Object getBoundObject() throws ManifestHolderDisposedException;
@@ -52,6 +54,7 @@ public interface ManifestHolder {
 
   /**
    * Returns the information if this holder is disposed and should not be used.
+   *
    * @return true if the holder is disposed, false otherwise.
    */
   boolean isDisposed();

@@ -30,8 +30,9 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
-*/
+ */
 public interface ModuleChangeListener {
-    void moduleRenamed(@NotNull Module module, @NotNull String oldName);
-    void moduleRemoved(@NotNull Module module);
+  void moduleRenamed(@NotNull Module module, @NotNull String oldName);
+
+  void moduleRemoved(@NotNull Module module);
 }

@@ -32,12 +32,9 @@ import java.util.Map;
 /**
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
-public class FelixRunProperties extends GenericRunProperties
-{
+public class FelixRunProperties extends GenericRunProperties {
 
-  public FelixRunProperties(Map<String, String> additionalProperties)
-  {
+  public FelixRunProperties(Map<String, String> additionalProperties) {
     super(additionalProperties);
   }
-
 }

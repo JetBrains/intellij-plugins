@@ -30,7 +30,6 @@ import org.osmorc.manifest.ManifestHolder;
 /**
  * Author: Robert F. Beeger (robert@beeger.net)
  */
-public abstract class AbstractManifestHolderImpl implements ManifestHolder
-{
+public abstract class AbstractManifestHolderImpl implements ManifestHolder {
 
 }

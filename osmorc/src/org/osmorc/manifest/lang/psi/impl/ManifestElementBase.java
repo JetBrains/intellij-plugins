@@ -37,16 +37,16 @@ import org.osmorc.manifest.ManifestFileTypeFactory;
  */
 public abstract class ManifestElementBase<T extends StubElement> extends StubBasedPsiElementBase<T> {
 
-    protected ManifestElementBase(T stub, @NotNull IStubElementType nodeType) {
-        super(stub, nodeType);
-    }
+  protected ManifestElementBase(T stub, @NotNull IStubElementType nodeType) {
+    super(stub, nodeType);
+  }
 
-    protected ManifestElementBase(ASTNode node) {
-        super(node);
-    }
+  protected ManifestElementBase(ASTNode node) {
+    super(node);
+  }
 
-    @NotNull
-    public Language getLanguage() {
-        return ManifestFileTypeFactory.MANIFEST.getLanguage();
-    }
+  @NotNull
+  public Language getLanguage() {
+    return ManifestFileTypeFactory.MANIFEST.getLanguage();
+  }
 }

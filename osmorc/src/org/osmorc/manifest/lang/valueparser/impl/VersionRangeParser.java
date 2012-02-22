@@ -28,66 +28,69 @@ import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.Nullable;
+import org.osmorc.manifest.lang.psi.HeaderValuePart;
 import org.osmorc.valueobject.Version;
 import org.osmorc.valueobject.VersionRange;
-import org.osmorc.manifest.lang.psi.HeaderValuePart;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class VersionRangeParser extends AbstractValueParserImpl<VersionRange> {
-    public VersionRangeParser(VersionParser versionParser) {
-        _versionParser = versionParser;
+  public VersionRangeParser(VersionParser versionParser) {
+    _versionParser = versionParser;
+  }
+
+  protected VersionRange parseValue(
+    @Nullable HeaderValuePart headerValuePart, String text, int start,
+    @Nullable AnnotationHolder annotationHolder) {
+    VersionRange.Boundary floorBoundary = null;
+    Version floor = null;
+    Version ceiling = null;
+    VersionRange.Boundary ceilingBoundary = null;
+
+    int nextStart = start;
+    int nextEnd = nextStart + 1;
+
+    if (text.charAt(nextStart) == '[' || text.charAt(nextStart) == '(') {
+      if (annotationHolder != null) {
+        annotationHolder.createErrorAnnotation(createTextRange(headerValuePart, nextStart, nextEnd),
+                                               "Version ranges have to be enclosed in double quotes.");
+      }
+      nextStart++;
     }
-
-    protected VersionRange parseValue(
-            @Nullable HeaderValuePart headerValuePart, String text, int start,
-            @Nullable AnnotationHolder annotationHolder) {
-        VersionRange.Boundary floorBoundary = null;
-        Version floor = null;
-        Version ceiling = null;
-        VersionRange.Boundary ceilingBoundary = null;
-
-        int nextStart = start;
-        int nextEnd = nextStart + 1;
-
-        if (text.charAt(nextStart) == '[' || text.charAt(nextStart) == '(') {
-            if (annotationHolder != null) {
-                annotationHolder.createErrorAnnotation(createTextRange(headerValuePart, nextStart, nextEnd),
-                        "Version ranges have to be enclosed in double quotes.");
-            }
-            nextStart++;
-        } else if (text.charAt(nextStart) == '\"') {
-            nextStart++;
-            while (Character.isWhitespace(text.charAt(nextStart))) {
-                nextStart++;
-            }
-            if (text.charAt(nextStart) == '[') {
-                floorBoundary = VersionRange.Boundary.INCLUSIVE;
-            } else if (text.charAt(nextStart) == '(') {
-                floorBoundary = VersionRange.Boundary.EXCLUSIVE;
-            } else {
-                nextEnd = nextStart + 1;
-                while (!Character.isDigit(text.charAt(nextEnd))) {
-                    nextEnd++;
-                }
-                if (annotationHolder != null) {
-                    Annotation annotation = annotationHolder.createErrorAnnotation(
-                            createTextRange(headerValuePart, nextStart, nextEnd), "Invalid boundary definition");
-//          annotation.registerFix();
-                }
-            }
+    else if (text.charAt(nextStart) == '\"') {
+      nextStart++;
+      while (Character.isWhitespace(text.charAt(nextStart))) {
+        nextStart++;
+      }
+      if (text.charAt(nextStart) == '[') {
+        floorBoundary = VersionRange.Boundary.INCLUSIVE;
+      }
+      else if (text.charAt(nextStart) == '(') {
+        floorBoundary = VersionRange.Boundary.EXCLUSIVE;
+      }
+      else {
+        nextEnd = nextStart + 1;
+        while (!Character.isDigit(text.charAt(nextEnd))) {
+          nextEnd++;
         }
-
-        nextEnd = text.indexOf(',');
-
-        return null;
+        if (annotationHolder != null) {
+          Annotation annotation = annotationHolder.createErrorAnnotation(
+            createTextRange(headerValuePart, nextStart, nextEnd), "Invalid boundary definition");
+//          annotation.registerFix();
+        }
+      }
     }
 
-    private TextRange createTextRange(HeaderValuePart headerValuePart, int startInValue, int endInValue) {
-        int headerValueStartOffset = headerValuePart.getTextRange().getStartOffset();
-        return new TextRange(headerValueStartOffset + startInValue, headerValueStartOffset + endInValue);
-    }
+    nextEnd = text.indexOf(',');
 
-    private final VersionParser _versionParser;
+    return null;
+  }
+
+  private TextRange createTextRange(HeaderValuePart headerValuePart, int startInValue, int endInValue) {
+    int headerValueStartOffset = headerValuePart.getTextRange().getStartOffset();
+    return new TextRange(headerValueStartOffset + startInValue, headerValueStartOffset + endInValue);
+  }
+
+  private final VersionParser _versionParser;
 }

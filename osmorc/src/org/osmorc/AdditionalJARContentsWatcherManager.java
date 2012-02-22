@@ -30,11 +30,10 @@ package org.osmorc;
  * may reside outside the project folder. Files outside the project folder are normally not watched
  * by IDEA and so changes to them normally aren't noticed by IDEA. This manager makes sure that
  * changes to those files in the additional JAR contents are watched.
- * 
+ *
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public interface AdditionalJARContentsWatcherManager
-{
+public interface AdditionalJARContentsWatcherManager {
   /**
    * Update the watcher setup after a change to the configuration of the facet of the module.
    */

@@ -48,46 +48,46 @@ import java.awt.event.ActionListener;
  */
 public class FileSelectorTableCellEditor extends AbstractTableCellEditor {
 
-    private final TextFieldWithBrowseButton editor;
+  private final TextFieldWithBrowseButton editor;
 
-    public FileSelectorTableCellEditor(final Project project, final Module module) {
-        editor = new TextFieldWithBrowseButton(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createAllButJarContentsDescriptor();
-                descriptor.setTitle("Choose source file or folder");
-                FileChooserDialog fileChooserDialog =
-                        FileChooserFactory.getInstance().createFileChooser(descriptor, project);
-                VirtualFile rootFolder = null;
-                VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
-                if (contentRoots.length > 0) {
-                    rootFolder = contentRoots[0];
-                } else if (project.getBaseDir() != null) {
-                    rootFolder = project.getBaseDir();
-                }
-                VirtualFile[] files = fileChooserDialog.choose(rootFolder, project);
-                if (files.length > 0) {
-                    editor.setText(files[0].getPath());
-                }
-            }
-        });
-
-    }
-
-
-    public Object getCellEditorValue() {
-        return editor.getText();
-    }
-
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        TableCellRenderer renderer = table.getCellRenderer(row, column);
-        Component c = renderer.getTableCellRendererComponent(table, value,
-                isSelected, true, row, column);
-        if (c != null) {
-            if (c instanceof JComponent) {
-                editor.getTextField().setBorder(((JComponent) c).getBorder());
-            }
+  public FileSelectorTableCellEditor(final Project project, final Module module) {
+    editor = new TextFieldWithBrowseButton(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createAllButJarContentsDescriptor();
+        descriptor.setTitle("Choose source file or folder");
+        FileChooserDialog fileChooserDialog =
+          FileChooserFactory.getInstance().createFileChooser(descriptor, project);
+        VirtualFile rootFolder = null;
+        VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
+        if (contentRoots.length > 0) {
+          rootFolder = contentRoots[0];
         }
-        editor.setText(value.toString());
-        return editor;
+        else if (project.getBaseDir() != null) {
+          rootFolder = project.getBaseDir();
+        }
+        VirtualFile[] files = fileChooserDialog.choose(rootFolder, project);
+        if (files.length > 0) {
+          editor.setText(files[0].getPath());
+        }
+      }
+    });
+  }
+
+
+  public Object getCellEditorValue() {
+    return editor.getText();
+  }
+
+  public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+    TableCellRenderer renderer = table.getCellRenderer(row, column);
+    Component c = renderer.getTableCellRendererComponent(table, value,
+                                                         isSelected, true, row, column);
+    if (c != null) {
+      if (c instanceof JComponent) {
+        editor.getTextField().setBorder(((JComponent)c).getBorder());
+      }
     }
+    editor.setText(value.toString());
+    return editor;
+  }
 }

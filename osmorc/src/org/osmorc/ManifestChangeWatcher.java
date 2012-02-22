@@ -40,7 +40,7 @@ public class ManifestChangeWatcher implements EditorNotifications.Provider<Manif
       @Override
       public void after(List<? extends VFileEvent> events) {
         final ProjectSettings settings = ProjectSettings.getInstance(myProject);
-        if ( settings.getManifestSynchronizationType() == ProjectSettings.ManifestSynchronizationType.DoNotSynchronize) {
+        if (settings.getManifestSynchronizationType() == ProjectSettings.ManifestSynchronizationType.DoNotSynchronize) {
           // don't synchronize
           return;
         }
@@ -60,11 +60,11 @@ public class ManifestChangeWatcher implements EditorNotifications.Provider<Manif
                 myAlarm.addRequest(new Runnable() {
                   @Override
                   public void run() {
-                    if ( settings.getManifestSynchronizationType() == ProjectSettings.ManifestSynchronizationType.ManuallySynchronize ) {
+                    if (settings.getManifestSynchronizationType() == ProjectSettings.ManifestSynchronizationType.ManuallySynchronize) {
                       myNeedsResync.set(true);
                       EditorNotifications.getInstance(myProject).updateAllNotifications();
                     }
-                    if ( settings.getManifestSynchronizationType() == ProjectSettings.ManifestSynchronizationType.AutomaticallySynchronize ) {
+                    if (settings.getManifestSynchronizationType() == ProjectSettings.ManifestSynchronizationType.AutomaticallySynchronize) {
                       myNeedsResync.set(false);
                       EditorNotifications.getInstance(myProject).updateAllNotifications();
                       ModuleDependencySynchronizer.resynchronizeAll(psiFile.getProject());

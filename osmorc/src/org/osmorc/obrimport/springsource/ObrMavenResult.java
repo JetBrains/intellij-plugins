@@ -33,11 +33,9 @@ import org.osmorc.obrimport.Obr;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
-public class ObrMavenResult
-{
+public class ObrMavenResult {
   public ObrMavenResult(String groupId, String artifactId, String version, String classifier,
-                        Obr bundleRepository)
-  {
+                        Obr bundleRepository) {
     this._artifactId = artifactId;
     this._groupId = groupId;
     this._version = version;
@@ -45,60 +43,49 @@ public class ObrMavenResult
     _bundleRepository = bundleRepository;
   }
 
-  public String getArtifactId()
-  {
+  public String getArtifactId() {
     return _artifactId;
   }
 
-  public void setArtifactId(String artifactId)
-  {
+  public void setArtifactId(String artifactId) {
     this._artifactId = artifactId;
   }
 
-  public String getClassifier()
-  {
+  public String getClassifier() {
     return _classifier;
   }
 
-  public void setClassifier(String classifier)
-  {
+  public void setClassifier(String classifier) {
     this._classifier = classifier;
   }
 
-  public String getGroupId()
-  {
+  public String getGroupId() {
     return _groupId;
   }
 
-  public void setGroupId(String groupId)
-  {
+  public void setGroupId(String groupId) {
     this._groupId = groupId;
   }
 
 
-  public String getVersion()
-  {
+  public String getVersion() {
     return _version;
   }
 
-  public void setVersion(String version)
-  {
+  public void setVersion(String version) {
     this._version = version;
   }
 
   @Override
-  public String toString()
-  {
+  public String toString() {
     return _groupId + ":" + _artifactId + ":" + _version;
   }
 
-  public Obr getBundleRepository()
-  {
+  public Obr getBundleRepository() {
     return _bundleRepository;
   }
 
-  public void setBundleRepository(Obr bundleRepository)
-  {
+  public void setBundleRepository(Obr bundleRepository) {
     _bundleRepository = bundleRepository;
   }
 

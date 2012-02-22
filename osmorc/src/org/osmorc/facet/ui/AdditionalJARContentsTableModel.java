@@ -35,96 +35,81 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-class AdditionalJARContentsTableModel extends AbstractTableModel
-{
-  AdditionalJARContentsTableModel()
-  {
+class AdditionalJARContentsTableModel extends AbstractTableModel {
+  AdditionalJARContentsTableModel() {
     _additionalContents = new ArrayList<Pair<String, String>>();
   }
 
-  public void replaceContent(@NotNull List<Pair<String, String>> content)
-  {
+  public void replaceContent(@NotNull List<Pair<String, String>> content) {
     _additionalContents.clear();
     _additionalContents.addAll(content);
     fireTableDataChanged();
   }
 
   @NotNull
-  public List<Pair<String, String>> getAdditionalContents()
-  {
+  public List<Pair<String, String>> getAdditionalContents() {
     return new ArrayList<Pair<String, String>>(_additionalContents);
   }
 
-  public Pair<String, String> getAdditionalJARContent(int row)
-  {
+  public Pair<String, String> getAdditionalJARContent(int row) {
     Pair<String, String> pair = _additionalContents.get(row);
     return Pair.create(pair.getFirst(), pair.getSecond());
   }
 
-  public void changeAdditionalJARConent(int row, @NotNull String sourcePath, String destPath)
-  {
+  public void changeAdditionalJARConent(int row, @NotNull String sourcePath, String destPath) {
     Pair<String, String> changedContent = Pair.create(sourcePath, destPath);
     _additionalContents.set(row, changedContent);
     fireTableRowsUpdated(row, row);
   }
 
-  public void deleteAdditionalJARContent(int row)
-  {
+  public void deleteAdditionalJARContent(int row) {
     _additionalContents.remove(row);
     fireTableRowsDeleted(row, row);
   }
 
-  public int addAdditionalJARContent(@NotNull String sourcePath, @NotNull String destPath)
-  {
+  public int addAdditionalJARContent(@NotNull String sourcePath, @NotNull String destPath) {
     _additionalContents.add(Pair.create(sourcePath, destPath));
     int lastRow = _additionalContents.size() - 1;
     fireTableRowsInserted(lastRow, lastRow);
-      return lastRow;
+    return lastRow;
   }
 
-  public int getRowCount()
-  {
+  public int getRowCount() {
     return _additionalContents.size();
   }
 
-  public int getColumnCount()
-  {
+  public int getColumnCount() {
     return 2;
   }
 
   @Override
-  public String getColumnName(int column)
-  {
+  public String getColumnName(int column) {
     return column == 0
-        ? "Source File/Folder"
-        : "Destination File/Folder (relative to JAR root)";
+           ? "Source File/Folder"
+           : "Destination File/Folder (relative to JAR root)";
   }
 
   @Override
-  public Class<?> getColumnClass(int columnIndex)
-  {
+  public Class<?> getColumnClass(int columnIndex) {
     return String.class;
   }
 
   @Override
-  public boolean isCellEditable(int rowIndex, int columnIndex)
-  {
+  public boolean isCellEditable(int rowIndex, int columnIndex) {
     return true;  //columnIndex == 1;
   }
 
-  public Object getValueAt(int rowIndex, int columnIndex)
-  {
+  public Object getValueAt(int rowIndex, int columnIndex) {
     Pair<String, String> row = _additionalContents.get(rowIndex);
     return columnIndex == 0 ? row.getFirst() : row.getSecond();
   }
 
   @Override
-  public void setValueAt(Object aValue, int rowIndex, int columnIndex)
-  {
+  public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
     Pair<String, String> row = _additionalContents.get(rowIndex);
     Pair<String, String> updatedRow = Pair.create(
-        columnIndex == 0 ? (String) aValue : row.getFirst(),
-        columnIndex == 1 ? (String) aValue : row.getSecond());
+      columnIndex == 0 ? (String)aValue : row.getFirst(),
+      columnIndex == 1 ? (String)aValue : row.getSecond());
     _additionalContents.set(rowIndex, updatedRow);
     fireTableCellUpdated(rowIndex, columnIndex);
   }

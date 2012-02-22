@@ -26,28 +26,28 @@
 package org.osmorc.manifest.lang.psi;
 
 import com.intellij.psi.tree.IFileElementType;
-import org.osmorc.manifest.lang.psi.elementtype.*;
-import org.osmorc.manifest.lang.ManifestLanguage;
 import com.intellij.psi.tree.IStubFileElementType;
+import org.osmorc.manifest.lang.ManifestLanguage;
+import org.osmorc.manifest.lang.psi.elementtype.*;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ManifestStubElementTypes {
-    public static final HeaderElementType HEADER = new HeaderElementType();
-    public static final SectionElementType SECTION = new SectionElementType();
-    public static final HeaderValuePartElementType HEADER_VALUE_PART = new HeaderValuePartElementType();
-    public static final AttributeElementType ATTRIBUTE = new AttributeElementType();
-    public static final DirectiveElementType DIRECTIVE = new DirectiveElementType();
-    public static final ClauseElementType CLAUSE = new ClauseElementType();
+  public static final HeaderElementType HEADER = new HeaderElementType();
+  public static final SectionElementType SECTION = new SectionElementType();
+  public static final HeaderValuePartElementType HEADER_VALUE_PART = new HeaderValuePartElementType();
+  public static final AttributeElementType ATTRIBUTE = new AttributeElementType();
+  public static final DirectiveElementType DIRECTIVE = new DirectiveElementType();
+  public static final ClauseElementType CLAUSE = new ClauseElementType();
 
-    public static final IFileElementType FILE = new IStubFileElementType("ManifestFile", ManifestLanguage.INSTANCE) {
-        @Override
-        public int getStubVersion() {
-            return 1;
-        }
-    };
-
-    private ManifestStubElementTypes() {
+  public static final IFileElementType FILE = new IStubFileElementType("ManifestFile", ManifestLanguage.INSTANCE) {
+    @Override
+    public int getStubVersion() {
+      return 1;
     }
+  };
+
+  private ManifestStubElementTypes() {
+  }
 }

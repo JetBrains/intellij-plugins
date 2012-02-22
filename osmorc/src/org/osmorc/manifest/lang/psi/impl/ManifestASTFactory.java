@@ -36,16 +36,16 @@ import org.osmorc.manifest.lang.ManifestTokenType;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ManifestASTFactory extends ASTFactory {
-    @Override
-    public CompositeElement createComposite(IElementType type) {
-        return null;
-    }
+  @Override
+  public CompositeElement createComposite(IElementType type) {
+    return null;
+  }
 
-    @Override
-    public LeafElement createLeaf(IElementType type, CharSequence text) {
-        if (type instanceof ManifestTokenType) {
-            return new ManifestTokenImpl((ManifestTokenType) type, text);
-        }
-        return new LeafPsiElement(type, text);
+  @Override
+  public LeafElement createLeaf(IElementType type, CharSequence text) {
+    if (type instanceof ManifestTokenType) {
+      return new ManifestTokenImpl((ManifestTokenType)type, text);
     }
+    return new LeafPsiElement(type, text);
+  }
 }

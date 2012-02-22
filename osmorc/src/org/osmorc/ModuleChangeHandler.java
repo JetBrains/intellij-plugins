@@ -25,97 +25,98 @@
 
 package org.osmorc;
 
-import com.intellij.openapi.components.ProjectComponent;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ModuleListener;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.ProjectTopics;
+import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.ModuleListener;
+import com.intellij.openapi.project.Project;
+import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ModuleChangeHandler implements ProjectComponent {
-    @NotNull
-    private final Project project;
   @NotNull
-    private final Map<Module, String> moduleNames;
-    @NotNull
-    private final ModuleChangeListener[] moduleChangeListeners;
+  private final Project project;
+  @NotNull
+  private final Map<Module, String> moduleNames;
+  @NotNull
+  private final ModuleChangeListener[] moduleChangeListeners;
 
-    public ModuleChangeHandler(@NotNull Project project) {
-        this.project = project;
-        moduleNames = new HashMap<Module, String>();
-        moduleChangeListeners = Extensions
-                .getExtensions(new ExtensionPointName<ModuleChangeListener>("Osmorc.moduleChangeListener"));
-    }
+  public ModuleChangeHandler(@NotNull Project project) {
+    this.project = project;
+    moduleNames = new HashMap<Module, String>();
+    moduleChangeListeners = Extensions
+      .getExtensions(new ExtensionPointName<ModuleChangeListener>("Osmorc.moduleChangeListener"));
+  }
 
-    public void projectOpened() {
-    }
+  public void projectOpened() {
+  }
 
-    public void projectClosed() {
-    }
+  public void projectClosed() {
+  }
 
-    @NotNull
-    public String getComponentName() {
-        return "ModuleChangeHandler";
-    }
+  @NotNull
+  public String getComponentName() {
+    return "ModuleChangeHandler";
+  }
 
-    public void initComponent() {
-      MessageBusConnection connection = project.getMessageBus().connect(project);
-        connection.subscribe(ProjectTopics.MODULES, new ModuleListener() {
-            public void moduleAdded(Project project, Module module) {
-                if (ModuleChangeHandler.this.project == project) {
-                    moduleNames.put(module, module.getName());
-                }
-            }
-
-            public void beforeModuleRemoved(Project project, Module module) {
-            }
-
-            public void moduleRemoved(Project project, Module module) {
-                if (ModuleChangeHandler.this.project == project) {
-                    moduleNames.remove(module);
-                    fireModuleRemoved(module);
-                }
-            }
-
-            public void modulesRenamed(Project project, List<Module> modules) {
-                assert modules != null;
-                if (ModuleChangeHandler.this.project == project) {
-                    for (Module module : modules) {
-                        String oldName = moduleNames.get(module);
-                        if (oldName != null) {
-                            fireModuleRenamed(module, oldName);
-                        } else {
-                            throw new RuntimeException("Unknown module renamed " + module.getName());
-                        }
-                        moduleNames.put(module, module.getName());
-                    }
-                }
-            }
-        });
-    }
-
-    private void fireModuleRemoved(@NotNull Module module) {
-        for (ModuleChangeListener listener : moduleChangeListeners) {
-            listener.moduleRemoved(module);
+  public void initComponent() {
+    MessageBusConnection connection = project.getMessageBus().connect(project);
+    connection.subscribe(ProjectTopics.MODULES, new ModuleListener() {
+      public void moduleAdded(Project project, Module module) {
+        if (ModuleChangeHandler.this.project == project) {
+          moduleNames.put(module, module.getName());
         }
-    }
+      }
 
-    private void fireModuleRenamed(@NotNull Module module, @NotNull String oldName) {
-        for (ModuleChangeListener listener : moduleChangeListeners) {
-            listener.moduleRenamed(module, oldName);
+      public void beforeModuleRemoved(Project project, Module module) {
+      }
+
+      public void moduleRemoved(Project project, Module module) {
+        if (ModuleChangeHandler.this.project == project) {
+          moduleNames.remove(module);
+          fireModuleRemoved(module);
         }
-    }
+      }
 
-    public void disposeComponent() {
+      public void modulesRenamed(Project project, List<Module> modules) {
+        assert modules != null;
+        if (ModuleChangeHandler.this.project == project) {
+          for (Module module : modules) {
+            String oldName = moduleNames.get(module);
+            if (oldName != null) {
+              fireModuleRenamed(module, oldName);
+            }
+            else {
+              throw new RuntimeException("Unknown module renamed " + module.getName());
+            }
+            moduleNames.put(module, module.getName());
+          }
+        }
+      }
+    });
+  }
+
+  private void fireModuleRemoved(@NotNull Module module) {
+    for (ModuleChangeListener listener : moduleChangeListeners) {
+      listener.moduleRemoved(module);
     }
+  }
+
+  private void fireModuleRenamed(@NotNull Module module, @NotNull String oldName) {
+    for (ModuleChangeListener listener : moduleChangeListeners) {
+      listener.moduleRenamed(module, oldName);
+    }
+  }
+
+  public void disposeComponent() {
+  }
 }

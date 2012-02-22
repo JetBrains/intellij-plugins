@@ -26,14 +26,14 @@
 package org.osmorc.manifest.lang.psi.stub.impl;
 
 import com.intellij.psi.stubs.StubElement;
-import org.osmorc.manifest.lang.psi.stub.DirectiveStub;
 import org.osmorc.manifest.lang.psi.ManifestStubElementTypes;
+import org.osmorc.manifest.lang.psi.stub.DirectiveStub;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class DirectiveStubImpl extends AbstractAssignmentExpressionStubImpl implements DirectiveStub {
-    public DirectiveStubImpl(StubElement parent, String name, String value) {
-        super(parent, ManifestStubElementTypes.DIRECTIVE, name, value);
-    }
+  public DirectiveStubImpl(StubElement parent, String name, String value) {
+    super(parent, ManifestStubElementTypes.DIRECTIVE, name, value);
+  }
 }

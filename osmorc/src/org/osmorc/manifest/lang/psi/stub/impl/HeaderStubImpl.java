@@ -35,14 +35,14 @@ import org.osmorc.manifest.lang.psi.stub.HeaderStub;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class HeaderStubImpl extends StubBase<Header> implements HeaderStub {
-    private final String name;
+  private final String name;
 
-    public HeaderStubImpl(final StubElement parent, final String name) {
-        super(parent, ManifestStubElementTypes.HEADER);
-        this.name = name;
-    }
+  public HeaderStubImpl(final StubElement parent, final String name) {
+    super(parent, ManifestStubElementTypes.HEADER);
+    this.name = name;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 }

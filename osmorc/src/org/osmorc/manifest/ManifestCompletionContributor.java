@@ -41,25 +41,20 @@ import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
  * @author Robert F. Beeger (robert@beeger.net)
  * @version $Id:$
  */
-public class ManifestCompletionContributor extends CompletionContributor
-{
-  public ManifestCompletionContributor()
-  {
+public class ManifestCompletionContributor extends CompletionContributor {
+  public ManifestCompletionContributor() {
     extend(CompletionType.BASIC,
-        PlatformPatterns.psiElement(ManifestTokenType.HEADER_NAME).withLanguage(ManifestLanguage.INSTANCE),
-        new CompletionProvider<CompletionParameters>()
-        {
+           PlatformPatterns.psiElement(ManifestTokenType.HEADER_NAME).withLanguage(ManifestLanguage.INSTANCE),
+           new CompletionProvider<CompletionParameters>() {
 
-          public void addCompletions(@NotNull CompletionParameters completionparameters,
-                                     ProcessingContext processingcontext,
-                                     @NotNull CompletionResultSet completionresultset)
-          {
-            for (String availableHeader : HeaderParserRepository.getInstance().getAllHeaderNames())
-            {
-              completionresultset.addElement(LookupElementBuilder.create(availableHeader));
-            }
-          }
-        }
+             public void addCompletions(@NotNull CompletionParameters completionparameters,
+                                        ProcessingContext processingcontext,
+                                        @NotNull CompletionResultSet completionresultset) {
+               for (String availableHeader : HeaderParserRepository.getInstance().getAllHeaderNames()) {
+                 completionresultset.addElement(LookupElementBuilder.create(availableHeader));
+               }
+             }
+           }
     );
   }
 }

@@ -35,24 +35,18 @@ import com.intellij.psi.PsiFile;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id$
  */
-public class SubfolderFileFilter implements TreeFileChooser.PsiFileFilter
-{
-  public SubfolderFileFilter(VirtualFile[] rootFolders)
-  {
+public class SubfolderFileFilter implements TreeFileChooser.PsiFileFilter {
+  public SubfolderFileFilter(VirtualFile[] rootFolders) {
     _rootFolders = rootFolders;
   }
 
-  public boolean accept(PsiFile psiFile)
-  {
+  public boolean accept(PsiFile psiFile) {
     VirtualFile file = psiFile.getVirtualFile();
-    if (file == null)
-    {
+    if (file == null) {
       return false;
     }
-    for (VirtualFile rootFolder : _rootFolders)
-    {
-      if (VfsUtil.isAncestor(rootFolder, file, false))
-      {
+    for (VirtualFile rootFolder : _rootFolders) {
+      if (VfsUtil.isAncestor(rootFolder, file, false)) {
         return true;
       }
     }

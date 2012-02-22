@@ -31,33 +31,26 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ProjectSettingsUpdateNotifier
-{
-  public ProjectSettingsUpdateNotifier()
-  {
+public class ProjectSettingsUpdateNotifier {
+  public ProjectSettingsUpdateNotifier() {
     _listeners = new ArrayList<Listener>();
   }
 
-  public void fireProjectSettingsChanged()
-  {
-      for (Listener projectSettingsChangeListener : _listeners)
-      {
-        projectSettingsChangeListener.projectSettingsChanged();
-      }
+  public void fireProjectSettingsChanged() {
+    for (Listener projectSettingsChangeListener : _listeners) {
+      projectSettingsChangeListener.projectSettingsChanged();
+    }
   }
 
-  public void addListener(Listener listener)
-  {
-      _listeners.add(listener);
+  public void addListener(Listener listener) {
+    _listeners.add(listener);
   }
 
-  public void removeListener(Listener listener)
-  {
-      _listeners.remove(listener);
+  public void removeListener(Listener listener) {
+    _listeners.remove(listener);
   }
 
-  public interface Listener
-  {
+  public interface Listener {
     void projectSettingsChanged();
   }
 

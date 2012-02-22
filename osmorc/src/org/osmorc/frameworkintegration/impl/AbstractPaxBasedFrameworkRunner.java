@@ -67,7 +67,7 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
     return getPaxLibraries();
   }
 
-  public  static List<VirtualFile> getPaxLibraries() {
+  public static List<VirtualFile> getPaxLibraries() {
     // pax does it's own magic, so the only lib we need, is the pax lib.
     // XXX: ask anton if there is some better way to do this..
     @SuppressWarnings({"ConstantConditions"}) final String paxLib =

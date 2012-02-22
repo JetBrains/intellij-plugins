@@ -34,6 +34,7 @@ public interface FrameworkInstanceManager {
 
   /**
    * Collects a all libraries of the given framework instance definition and calls the framework library collector with the results.
+   *
    * @param collector
    */
   void collectLibraries(@NotNull FrameworkInstanceDefinition frameworkInstanceDefinition,

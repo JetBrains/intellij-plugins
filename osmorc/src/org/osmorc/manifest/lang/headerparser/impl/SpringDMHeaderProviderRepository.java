@@ -37,10 +37,8 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class SpringDMHeaderProviderRepository implements HeaderParserProviderRepository
-{
-  public SpringDMHeaderProviderRepository(GenericComplexHeaderParser genericComplexHeaderParser)
-  {
+public class SpringDMHeaderProviderRepository implements HeaderParserProviderRepository {
+  public SpringDMHeaderProviderRepository(GenericComplexHeaderParser genericComplexHeaderParser) {
     AbstractHeaderParserImpl simpleHeaderParser = AbstractHeaderParserImpl.SIMPLE;
     _headerProviders = new ArrayList<HeaderParserProvider>();
 
@@ -59,8 +57,7 @@ public class SpringDMHeaderProviderRepository implements HeaderParserProviderRep
   }
 
   @NotNull
-  public Collection<HeaderParserProvider> getHeaderParserProviders()
-  {
+  public Collection<HeaderParserProvider> getHeaderParserProviders() {
     return Collections.unmodifiableList(_headerProviders);
   }
 

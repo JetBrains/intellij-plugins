@@ -38,29 +38,24 @@ import java.rmi.server.UnicastRemoteObject;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id$
  */
-public class ManagingBundleActivator implements BundleActivator
-{
+public class ManagingBundleActivator implements BundleActivator {
 
-  public void start(BundleContext context) throws Exception
-  {
+  public void start(BundleContext context) throws Exception {
     // install a security manager in case none is installed
-    if (System.getSecurityManager() == null)
-    {
+    if (System.getSecurityManager() == null) {
       System.setSecurityManager(new SecurityManager());
     }
-    try
-    {
+    try {
       String name = ManagingBundle.class.getName();
       // instanciate the managing bundle
       ManagingBundle implementation = new ManagingBundleImpl(context);
       // create a stub
-      ManagingBundle stub = (ManagingBundle) UnicastRemoteObject.exportObject(implementation, 0);
+      ManagingBundle stub = (ManagingBundle)UnicastRemoteObject.exportObject(implementation, 0);
       // export it to the remote registry
       Registry registry = LocateRegistry.getRegistry();
       registry.rebind(name, stub);
     }
-    catch (Exception e)
-    {
+    catch (Exception e) {
       // XXX: using sout is crappy style, however I do not want to introduce any dependencies to logging frameworks here
       // so unless there are any ideas how to provide logging, it's sout.
       System.err.println("Problem when trying to register the ManagingBundle:");
@@ -68,20 +63,16 @@ public class ManagingBundleActivator implements BundleActivator
     }
   }
 
-  public void stop(BundleContext context) throws Exception
-  {
-    try
-    {
+  public void stop(BundleContext context) throws Exception {
+    try {
       // unbind the name from the remote registry, making the service unavailable.
       Registry registry = LocateRegistry.getRegistry();
       registry.unbind(ManagingBundle.class.getName());
     }
-    catch (Exception e)
-    {
+    catch (Exception e) {
       // XXX: another sout... 
       System.err.println("Problem when trying to unregister the ManagingBundle:");
       e.printStackTrace();
     }
   }
-
 }

@@ -39,39 +39,39 @@ import org.osmorc.manifest.lang.psi.HeaderValuePart;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ReplaceUtil {
-    public static void replace(PsiElement element, String with) {
-        replace(element, element.getTextRange(), with);
+  public static void replace(PsiElement element, String with) {
+    replace(element, element.getTextRange(), with);
+  }
+
+  public static void replace(PsiElement element, TextRange range, String with) {
+    TextRange relativeTextRange =
+      TextRange.from(range.getStartOffset() - element.getTextRange().getStartOffset(), range.getLength());
+    String newText = relativeTextRange.replace(element.getText(), with);
+
+    if (element instanceof HeaderValuePart) {
+      replace((HeaderValuePart)element, newText);
     }
+  }
 
-    public static void replace(PsiElement element, TextRange range, String with) {
-        TextRange relativeTextRange =
-                TextRange.from(range.getStartOffset() - element.getTextRange().getStartOffset(), range.getLength());
-        String newText = relativeTextRange.replace(element.getText(), with);
+  private static void replace(HeaderValuePart headerValue, String with) {
+    ReadonlyStatusHandler.OperationStatus status = ReadonlyStatusHandler.getInstance(headerValue.getProject())
+      .ensureFilesWritable(PsiTreeUtil.getParentOfType(headerValue, PsiFile.class, false).getVirtualFile());
 
-        if (element instanceof HeaderValuePart) {
-            replace((HeaderValuePart) element, newText);
-        }
+    if (!status.hasReadonlyFiles()) {
+      PsiFile fromText = PsiFileFactory.getInstance(headerValue.getProject()).createFileFromText("DUMMY.MF", "dummy: " + with);
+      Header header = PsiTreeUtil.getChildOfType(fromText.getFirstChild(), Header.class);
+      assert header != null;
+      Clause clause = PsiTreeUtil.getChildOfType(header, Clause.class);
+      assert clause != null;
+      HeaderValuePart value = PsiTreeUtil.getChildOfAnyType(clause, HeaderValuePart.class);
 
+      try {
+        assert value != null;
+        headerValue.replace(value);
+      }
+      catch (IncorrectOperationException e) {
+        throw new RuntimeException(e);
+      }
     }
-
-    private static void replace(HeaderValuePart headerValue, String with) {
-        ReadonlyStatusHandler.OperationStatus status = ReadonlyStatusHandler.getInstance(headerValue.getProject()).ensureFilesWritable(PsiTreeUtil.getParentOfType(headerValue, PsiFile.class, false).getVirtualFile());
-
-        if (!status.hasReadonlyFiles()) {
-            PsiFile fromText = PsiFileFactory.getInstance(headerValue.getProject()).createFileFromText("DUMMY.MF", "dummy: " + with);
-            Header header = PsiTreeUtil.getChildOfType(fromText.getFirstChild(), Header.class);
-            assert header != null;
-            Clause clause = PsiTreeUtil.getChildOfType(header, Clause.class);
-            assert clause != null;
-            HeaderValuePart value = PsiTreeUtil.getChildOfAnyType(clause, HeaderValuePart.class);
-
-            try {
-                assert value != null;
-                headerValue.replace(value);
-            }
-            catch (IncorrectOperationException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
+  }
 }

@@ -34,14 +34,12 @@ import java.io.FileFilter;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
-public class ManifestFileFilter implements FileFilter
-{
+public class ManifestFileFilter implements FileFilter {
   public static final ManifestFileFilter Instance = new ManifestFileFilter();
   public static final String MANIFEST_FILENAME = "MANIFEST.MF";
 
-  public boolean accept(File file)
-  {
+  public boolean accept(File file) {
     return !(MANIFEST_FILENAME.equals(file.getName()) && file.getParentFile() != null &&
-        file.getParentFile().getName().equals("META-INF"));
+             file.getParentFile().getName().equals("META-INF"));
   }
 }

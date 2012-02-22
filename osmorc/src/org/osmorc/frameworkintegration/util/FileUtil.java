@@ -32,49 +32,37 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Author: Robert F. Beeger (robert@beeger.net)
  */
-public class FileUtil
-{
+public class FileUtil {
 
-  public static String getNameWithoutJarSuffix(@NotNull VirtualFile libraryClasses)
-  {
+  public static String getNameWithoutJarSuffix(@NotNull VirtualFile libraryClasses) {
     return getNameWithoutTail(libraryClasses, ".jar");
   }
 
-  public static String getNameWithoutTail(@NotNull VirtualFile libraryClasses, @NotNull String tail)
-  {
+  public static String getNameWithoutTail(@NotNull VirtualFile libraryClasses, @NotNull String tail) {
     return getNameWithoutTail(libraryClasses.getName(), tail);
   }
 
-  public static String getNameWithoutTail(@NotNull String name, @NotNull String tail)
-  {
-    if (name.toLowerCase().endsWith(tail.toLowerCase()))
-    {
+  public static String getNameWithoutTail(@NotNull String name, @NotNull String tail) {
+    if (name.toLowerCase().endsWith(tail.toLowerCase())) {
       return name.substring(0, name.length() - tail.length());
     }
-    else
-    {
+    else {
       return name;
     }
   }
 
-  public static VirtualFile getFolder(@Nullable VirtualFile file)
-  {
+  public static VirtualFile getFolder(@Nullable VirtualFile file) {
     VirtualFile result = null;
 
-    if (file != null)
-    {
-      if (file.isDirectory())
-      {
+    if (file != null) {
+      if (file.isDirectory()) {
         result = file;
       }
-      else
-      {
+      else {
         result = JarFileSystem.getInstance().getJarRootForLocalFile(file);
       }
     }
 
     return result;
   }
-
-
 }

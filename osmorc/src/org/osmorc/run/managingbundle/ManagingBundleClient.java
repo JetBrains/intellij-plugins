@@ -35,8 +35,7 @@ import java.rmi.registry.Registry;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id$
  */
-public class ManagingBundleClient implements ManagingBundle
-{
+public class ManagingBundleClient implements ManagingBundle {
   /**
    * Ctor.
    *
@@ -46,14 +45,12 @@ public class ManagingBundleClient implements ManagingBundle
    *                                    established.
    * @throws java.rmi.NotBoundException in case the managing bundle is not running at the specified host/port.
    */
-  public ManagingBundleClient(String hostName, int port) throws RemoteException, NotBoundException
-  {
+  public ManagingBundleClient(String hostName, int port) throws RemoteException, NotBoundException {
     Registry registry = LocateRegistry.getRegistry(hostName, port);
-    _bundle = (ManagingBundle) registry.lookup(ManagingBundle.class.getName());
+    _bundle = (ManagingBundle)registry.lookup(ManagingBundle.class.getName());
   }
 
-  public String[] listInstalledBundles() throws RemoteException
-  {
+  public String[] listInstalledBundles() throws RemoteException {
     return _bundle.listInstalledBundles();
   }
 

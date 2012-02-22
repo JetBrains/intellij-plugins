@@ -33,5 +33,5 @@ import com.intellij.execution.configurations.RuntimeConfigurationException;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public interface OsgiRunConfigurationChecker {
-    void checkConfiguration(OsgiRunConfiguration runConfiguration) throws RuntimeConfigurationException;
+  void checkConfiguration(OsgiRunConfiguration runConfiguration) throws RuntimeConfigurationException;
 }

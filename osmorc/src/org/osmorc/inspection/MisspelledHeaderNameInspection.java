@@ -45,90 +45,91 @@ import java.util.List;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class MisspelledHeaderNameInspection extends LocalInspectionTool {
-    @Nls
-    @NotNull
-    public String getGroupDisplayName() {
-        return "OSGi";
-    }
+  @Nls
+  @NotNull
+  public String getGroupDisplayName() {
+    return "OSGi";
+  }
 
-    public boolean isEnabledByDefault() {
-        return true;
-    }
+  public boolean isEnabledByDefault() {
+    return true;
+  }
 
-    @NotNull
-    public HighlightDisplayLevel getDefaultLevel() {
-        return HighlightDisplayLevel.WARNING;
-    }
+  @NotNull
+  public HighlightDisplayLevel getDefaultLevel() {
+    return HighlightDisplayLevel.WARNING;
+  }
 
-    @Nls
-    @NotNull
-    public String getDisplayName() {
-        return "Unknown or Misspelled Header Name";
-    }
+  @Nls
+  @NotNull
+  public String getDisplayName() {
+    return "Unknown or Misspelled Header Name";
+  }
 
-    @NonNls
-    @NotNull
-    public String getShortName() {
-        return "osmorcMisspelledHeaderName";
-    }
+  @NonNls
+  @NotNull
+  public String getShortName() {
+    return "osmorcMisspelledHeaderName";
+  }
 
-    @NotNull
-    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        return new PsiElementVisitor() {
-            public void visitElement(PsiElement element) {
-                if (element instanceof Header) {
-                    final Header header = (Header) element;
-                    String name = header.getName();
-                    if (name != null && name.length() > 0) {
-                        final List<HeaderNameSpellingQuickFix> quickFixes = new ArrayList<HeaderNameSpellingQuickFix>();
-                        final Collection<HeaderNameMatch> matches = getHeaderParserRepository().getMatches(name);
-                        for (HeaderNameMatch match : matches) {
-                            quickFixes.add(new HeaderNameSpellingQuickFix(header, match));
-                            if (quickFixes.size() > 20) {
-                                break;
-                            }
-                        }
-
-                        if (quickFixes.size() > 0) {
-                            holder.registerProblem(header.getNameToken(), "Header name is unknown or spelled incorrectly",
-                                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING, quickFixes.toArray(new HeaderNameSpellingQuickFix[quickFixes.size()]));
-                        }
-                    }
-                }
+  @NotNull
+  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
+    return new PsiElementVisitor() {
+      public void visitElement(PsiElement element) {
+        if (element instanceof Header) {
+          final Header header = (Header)element;
+          String name = header.getName();
+          if (name != null && name.length() > 0) {
+            final List<HeaderNameSpellingQuickFix> quickFixes = new ArrayList<HeaderNameSpellingQuickFix>();
+            final Collection<HeaderNameMatch> matches = getHeaderParserRepository().getMatches(name);
+            for (HeaderNameMatch match : matches) {
+              quickFixes.add(new HeaderNameSpellingQuickFix(header, match));
+              if (quickFixes.size() > 20) {
+                break;
+              }
             }
-        };
+
+            if (quickFixes.size() > 0) {
+              holder.registerProblem(header.getNameToken(), "Header name is unknown or spelled incorrectly",
+                                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                                     quickFixes.toArray(new HeaderNameSpellingQuickFix[quickFixes.size()]));
+            }
+          }
+        }
+      }
+    };
+  }
+
+  HeaderParserRepository getHeaderParserRepository() {
+    if (_headerParserRepository == null) {
+      _headerParserRepository = ServiceManager.getService(HeaderParserRepository.class);
+    }
+    return _headerParserRepository;
+  }
+
+  private static class HeaderNameSpellingQuickFix implements LocalQuickFix {
+    private final Header header;
+    private final HeaderNameMatch match;
+
+    private HeaderNameSpellingQuickFix(Header header, HeaderNameMatch match) {
+      this.header = header;
+      this.match = match;
     }
 
-    HeaderParserRepository getHeaderParserRepository() {
-        if (_headerParserRepository == null) {
-            _headerParserRepository = ServiceManager.getService(HeaderParserRepository.class);
-        }
-        return _headerParserRepository;
+    @NotNull
+    public String getName() {
+      return String.format("Change to (%03d) \"%s\"", match.getDistance(), match.getProvider().getHeaderName());
     }
 
-    private static class HeaderNameSpellingQuickFix implements LocalQuickFix {
-        private final Header header;
-        private final HeaderNameMatch match;
-
-        private HeaderNameSpellingQuickFix(Header header, HeaderNameMatch match) {
-            this.header = header;
-            this.match = match;
-        }
-
-        @NotNull
-        public String getName() {
-            return String.format("Change to (%03d) \"%s\"", match.getDistance(), match.getProvider().getHeaderName());
-        }
-
-        @NotNull
-        public String getFamilyName() {
-            return "Osmorc";
-        }
-
-        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            header.setName(match.getProvider().getHeaderName());
-        }
+    @NotNull
+    public String getFamilyName() {
+      return "Osmorc";
     }
 
-    private HeaderParserRepository _headerParserRepository;
+    public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+      header.setName(match.getProvider().getHeaderName());
+    }
+  }
+
+  private HeaderParserRepository _headerParserRepository;
 }

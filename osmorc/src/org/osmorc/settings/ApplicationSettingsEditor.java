@@ -41,56 +41,56 @@ import java.awt.*;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
 public class ApplicationSettingsEditor implements SearchableConfigurable, Configurable.Composite {
-    public ApplicationSettingsEditor(FrameworkIntegratorRegistry registry) {
-        this.frameworkDefinitionsEditor = new FrameworkDefinitionsEditor(registry);
-        this.libraryBundlingEditor = new LibraryBundlingEditor();
-    }
+  public ApplicationSettingsEditor(FrameworkIntegratorRegistry registry) {
+    this.frameworkDefinitionsEditor = new FrameworkDefinitionsEditor(registry);
+    this.libraryBundlingEditor = new LibraryBundlingEditor();
+  }
 
-    @Nls
-    public String getDisplayName() {
-        return "OSGi";
-    }
+  @Nls
+  public String getDisplayName() {
+    return "OSGi";
+  }
 
-    public Icon getIcon() {
-        return null;
-    }
+  public Icon getIcon() {
+    return null;
+  }
 
-    public String getHelpTopic() {
-        return null;
-    }
+  public String getHelpTopic() {
+    return null;
+  }
 
-    @NotNull
-    public String getId() {
-      return "osmorc.ide.settings";
-    }
+  @NotNull
+  public String getId() {
+    return "osmorc.ide.settings";
+  }
 
-    public Runnable enableSearch(String option) {
-      return null;
-    }
+  public Runnable enableSearch(String option) {
+    return null;
+  }
 
-    public JComponent createComponent() {
-      JPanel result = new JPanel(new BorderLayout());
-      result.add(new JLabel("Please select one of the options in the settings tree.", JLabel.CENTER), BorderLayout.CENTER);
-      return result;
-    }
+  public JComponent createComponent() {
+    JPanel result = new JPanel(new BorderLayout());
+    result.add(new JLabel("Please select one of the options in the settings tree.", JLabel.CENTER), BorderLayout.CENTER);
+    return result;
+  }
 
-    public boolean isModified() {
-        return false;
-    }
+  public boolean isModified() {
+    return false;
+  }
 
-    public void apply() throws ConfigurationException {
-    }
+  public void apply() throws ConfigurationException {
+  }
 
-    public void reset() {
-    }
+  public void reset() {
+  }
 
-    public void disposeUIResources() {
-    }
+  public void disposeUIResources() {
+  }
 
-    public Configurable[] getConfigurables() {
-        return new Configurable[]{frameworkDefinitionsEditor,libraryBundlingEditor};
-    }
+  public Configurable[] getConfigurables() {
+    return new Configurable[]{frameworkDefinitionsEditor, libraryBundlingEditor};
+  }
 
-    private FrameworkDefinitionsEditor frameworkDefinitionsEditor;
-    private LibraryBundlingEditor libraryBundlingEditor;
+  private FrameworkDefinitionsEditor frameworkDefinitionsEditor;
+  private LibraryBundlingEditor libraryBundlingEditor;
 }

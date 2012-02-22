@@ -37,10 +37,8 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class EquinoxHeaderProviderRepository implements HeaderParserProviderRepository
-{
-  public EquinoxHeaderProviderRepository(GenericComplexHeaderParser genericComplexHeaderParser)
-  {
+public class EquinoxHeaderProviderRepository implements HeaderParserProviderRepository {
+  public EquinoxHeaderProviderRepository(GenericComplexHeaderParser genericComplexHeaderParser) {
     AbstractHeaderParserImpl simpleHeaderParser = AbstractHeaderParserImpl.SIMPLE;
 
     _headerProviders = new ArrayList<HeaderParserProvider>();
@@ -55,8 +53,7 @@ public class EquinoxHeaderProviderRepository implements HeaderParserProviderRepo
   }
 
   @NotNull
-  public Collection<HeaderParserProvider> getHeaderParserProviders()
-  {
+  public Collection<HeaderParserProvider> getHeaderParserProviders() {
     return Collections.unmodifiableList(_headerProviders);
   }
 

@@ -24,7 +24,6 @@
  */
 package org.osmorc.facet;
 
-import aQute.lib.osgi.Analyzer;
 import aQute.libg.header.OSGiHeader;
 import com.intellij.facet.FacetConfiguration;
 import com.intellij.facet.ui.FacetEditorContext;
@@ -57,7 +56,7 @@ import java.io.StringReader;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static aQute.lib.osgi.Constants.*;
+import static aQute.lib.osgi.Constants.INCLUDE_RESOURCE;
 
 /**
  * The facet configuration of an osmorc facet.
@@ -116,9 +115,9 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
 
   public void readExternal(Element element) throws InvalidDataException {
     PathMacroManager.getInstance(ApplicationManager.getApplication()).expandPaths(element);
-    
+
     if (element.getAttributeValue(MANIFEST_GENERATION_MODE) == null) {
-        // the new attribute is not there, so we got an old file, to be converted.
+      // the new attribute is not there, so we got an old file, to be converted.
       // legacy files containing boolean values
       boolean osmorcControlsManifest = Boolean.parseBoolean(element.getAttributeValue(OSMORC_CONTROLS_MANIFEST, "true"));
       boolean useBndFile = Boolean.parseBoolean(element.getAttributeValue(USE_BND_FILE, "false"));
@@ -130,7 +129,8 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
       if (osmorcControlsManifest && !useBndFile && !useBundlorFile) {
         setManifestGenerationMode(ManifestGenerationMode.OsmorcControlled);
       }
-      else if ((!osmorcControlsManifest && useBndFile && !useBundlorFile) || (/* workaround */ osmorcControlsManifest && useBndFile && !useBundlorFile)) {
+      else if ((!osmorcControlsManifest && useBndFile && !useBundlorFile) ||
+               (/* workaround */ osmorcControlsManifest && useBndFile && !useBundlorFile)) {
         setManifestGenerationMode(ManifestGenerationMode.Bnd);
       }
       else if (!osmorcControlsManifest && !useBndFile && useBundlorFile) {
@@ -140,12 +140,15 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
         setManifestGenerationMode(ManifestGenerationMode.Manually);
       }
       else {
-        OsmorcProjectComponent.IMPORTANT_ERROR_NOTIFICATION.createNotification("The configuration at least one OSGi facet is invalid and has been reset. Please check your facet settings!",
-                                                                               NotificationType.WARNING).notify(null);
+        OsmorcProjectComponent.IMPORTANT_ERROR_NOTIFICATION
+          .createNotification("The configuration at least one OSGi facet is invalid and has been reset. Please check your facet settings!",
+                              NotificationType.WARNING).notify(null);
       }
-    } else {
+    }
+    else {
       // attribute it there, read it.
-      String manifestGenerationModeName = element.getAttributeValue(MANIFEST_GENERATION_MODE, ManifestGenerationMode.OsmorcControlled.name());
+      String manifestGenerationModeName =
+        element.getAttributeValue(MANIFEST_GENERATION_MODE, ManifestGenerationMode.OsmorcControlled.name());
       ManifestGenerationMode manifestGenerationMode = ManifestGenerationMode.valueOf(manifestGenerationModeName);
       setManifestGenerationMode(manifestGenerationMode);
     }
@@ -228,7 +231,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
       prop.setAttribute(KEY, key);
 
       String value = additionalPropertiesAsMap.get(key);
-      if ( key.equals(INCLUDE_RESOURCE)) {
+      if (key.equals(INCLUDE_RESOURCE)) {
         // there are paths in there, collapse these so the IML files don't get mixed up on every machine. The built in macro manager
         // does not recognize these, so we have to do this manually here.
         Map<String, Map<String, String>> map = OSGiHeader.parseHeader(value);
@@ -268,7 +271,6 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
       additionalJARContentsElement.addContent(entry);
     }
     element.addContent(additionalJARContentsElement);
-
   }
 
   /**
@@ -290,6 +292,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
    * <pre>
    *   getManifestGenerationMode() == ManifestGenerationMode.OsmorcControlled
    * </pre>
+   *
    * @return true if Osmorc controls the manifest, false if is edited manually, created by bundlor or created by bnd
    */
   public boolean isOsmorcControlsManifest() {
@@ -577,7 +580,6 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   }
 
 
-
   @NotNull
   public String getBndFileLocation() {
     return myBndFileLocation != null ? myBndFileLocation : "";
@@ -587,8 +589,6 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     myBndFileLocation = bndFileLocation;
   }
 
-
-  
 
   @NotNull
   public String getBundlorFileLocation() {
@@ -644,6 +644,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
 
   /**
    * When this is true, the facet settings will not be automatically synchronized with maven.
+   *
    * @return false if settings are synchronized with maven, true otherwise.
    */
   public boolean isDoNotSynchronizeWithMaven() {

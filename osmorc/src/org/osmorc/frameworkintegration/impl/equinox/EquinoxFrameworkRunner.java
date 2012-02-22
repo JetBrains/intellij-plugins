@@ -46,8 +46,6 @@ public class EquinoxFrameworkRunner extends AbstractPaxBasedFrameworkRunner<Equi
   @Override
   protected EquinoxRunProperties convertProperties(Map<String, String> properties) {
     return new EquinoxRunProperties(properties);
-
-
   }
 
   @Override
@@ -63,7 +61,6 @@ public class EquinoxFrameworkRunner extends AbstractPaxBasedFrameworkRunner<Equi
       if (application != null && application.length() > 0) {
         vmParameters.defineProperty("eclipse.application", application);
         vmParameters.defineProperty("eclipse.ignoreApp", String.valueOf(false));
-
       }
       else {
         vmParameters.defineProperty("eclipse.ignoreApp", String.valueOf(true));

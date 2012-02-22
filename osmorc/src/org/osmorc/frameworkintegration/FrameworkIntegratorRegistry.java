@@ -32,30 +32,24 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Author: Robert F. Beeger (robert@beeger.net)
  */
-public class FrameworkIntegratorRegistry
-{
-  public FrameworkIntegratorRegistry()
-  {
+public class FrameworkIntegratorRegistry {
+  public FrameworkIntegratorRegistry() {
     _frameworkIntegrators =
-        Extensions.getExtensions(new ExtensionPointName<FrameworkIntegrator>("Osmorc.frameworkIntegrator"));
+      Extensions.getExtensions(new ExtensionPointName<FrameworkIntegrator>("Osmorc.frameworkIntegrator"));
   }
 
-  public FrameworkIntegrator[] getFrameworkIntegrators()
-  {
+  public FrameworkIntegrator[] getFrameworkIntegrators() {
     FrameworkIntegrator[] result = new FrameworkIntegrator[_frameworkIntegrators.length];
     System.arraycopy(_frameworkIntegrators, 0, result, 0, _frameworkIntegrators.length);
     return result;
   }
 
   @Nullable
-  public FrameworkIntegrator findIntegratorByName(@NotNull final String name)
-  {
+  public FrameworkIntegrator findIntegratorByName(@NotNull final String name) {
     FrameworkIntegrator result = null;
 
-    for (FrameworkIntegrator frameworkIntegrator : _frameworkIntegrators)
-    {
-      if (frameworkIntegrator.getDisplayName().equals(name))
-      {
+    for (FrameworkIntegrator frameworkIntegrator : _frameworkIntegrators) {
+      if (frameworkIntegrator.getDisplayName().equals(name)) {
         result = frameworkIntegrator;
         break;
       }
@@ -66,8 +60,7 @@ public class FrameworkIntegratorRegistry
 
   @Nullable
   public FrameworkIntegrator findIntegratorByInstanceDefinition(
-      @NotNull final FrameworkInstanceDefinition frameworkInstanceDefinition)
-  {
+    @NotNull final FrameworkInstanceDefinition frameworkInstanceDefinition) {
     return findIntegratorByName(frameworkInstanceDefinition.getFrameworkIntegratorName());
   }
 

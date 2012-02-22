@@ -50,26 +50,21 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
-public class SpringSourceObr implements Obr
-{
+public class SpringSourceObr implements Obr {
 
-  public String getDisplayName()
-  {
+  public String getDisplayName() {
     return "Springsource Enterprise Bundle Repository";
   }
 
-  public boolean supportsMaven()
-  {
+  public boolean supportsMaven() {
     return true;
   }
 
   @NotNull
   public ObrMavenResult[] queryForMavenArtifact(@NotNull String queryString,
                                                 @NotNull ProgressIndicator progressIndicator) throws
-      IOException
-  {
-    try
-    {
+                                                                                              IOException {
+    try {
       // TODO: make this more robust against URL changes.
       List<ObrMavenResult> result = new ArrayList<ObrMavenResult>();
       progressIndicator.setText("Connecting to " + getDisplayName() + "...");
@@ -96,8 +91,7 @@ public class SpringSourceObr implements Obr
       // on multiple lines. We in fact only care for the URLs.
 
       Matcher m = RESULT_PARSING_PATTERN.matcher(contents);
-      while (m.find())
-      {
+      while (m.find()) {
         String detailUrl = m.group(1);
         // cut out the session id.
         detailUrl = detailUrl.replaceAll(";jsessionid.*?\\?", "?");
@@ -125,35 +119,28 @@ public class SpringSourceObr implements Obr
         String version;
         String classifier = null;
         Matcher groupMatcher = GROUP_ID_PATTERN.matcher(detail);
-        if (groupMatcher.find())
-        {
+        if (groupMatcher.find()) {
           groupId = groupMatcher.group(1);
         }
-        else
-        {
+        else {
           continue;
         }
         Matcher artifactMatcher = ARTIFACT_ID_PATTERN.matcher(detail);
-        if (artifactMatcher.find())
-        {
+        if (artifactMatcher.find()) {
           artifactId = artifactMatcher.group(1);
         }
-        else
-        {
+        else {
           continue;
         }
         Matcher versionMatcher = VERSION_PATTERN.matcher(detail);
-        if (versionMatcher.find())
-        {
+        if (versionMatcher.find()) {
           version = versionMatcher.group(1);
         }
-        else
-        {
+        else {
           continue;
         }
         Matcher classifierMatcher = CLASSIFIER_PATTERN.matcher(detail);
-        if (classifierMatcher.find())
-        {
+        if (classifierMatcher.find()) {
           classifier = classifierMatcher.group(1);
         }
         // no else here ,since the classifier is optional
@@ -164,13 +151,11 @@ public class SpringSourceObr implements Obr
       progressIndicator.setText("Done. " + result.size() + " artifacts found.");
       return result.toArray(new ObrMavenResult[result.size()]);
     }
-    catch (ProcessCanceledException ignored)
-    {
+    catch (ProcessCanceledException ignored) {
       progressIndicator.setText("Canceled.");
       return new ObrMavenResult[0];
     }
-    finally
-    {
+    finally {
       progressIndicator.setIndeterminate(false);
     }
   }
@@ -185,14 +170,12 @@ public class SpringSourceObr implements Obr
    * @throws IOException
    */
   private static InputStream getInputStream(@NotNull String url, @NotNull ProgressIndicator progressIndicator)
-      throws IOException
-  {
+    throws IOException {
     HttpURLConnection urlConnection =
-        (HttpURLConnection) new URL(url).openConnection();
+      (HttpURLConnection)new URL(url).openConnection();
     InputStream is = UrlConnectionUtil.getConnectionInputStreamWithException(urlConnection, progressIndicator);
     int j = urlConnection.getResponseCode();
-    switch (j)
-    {
+    switch (j) {
       default:
         //noinspection UnresolvedPropertyKey
         throw new IOException(IdeBundle.message("error.connection.failed.with.http.code.N", j));
@@ -205,8 +188,7 @@ public class SpringSourceObr implements Obr
   }
 
   @NotNull
-  public MavenRepository[] getMavenRepositories()
-  {
+  public MavenRepository[] getMavenRepositories() {
     return SPRINGSOURCE_REPOS;
   }
 
@@ -216,9 +198,9 @@ public class SpringSourceObr implements Obr
   private static final Pattern VERSION_PATTERN = Pattern.compile("&lt;version&gt;(.*?)&lt;/version&gt;");
   private static final Pattern CLASSIFIER_PATTERN = Pattern.compile("&lt;classifier&gt;(.*?)&lt;/classifier&gt;");
   private static final MavenRepository[] SPRINGSOURCE_REPOS = new MavenRepository[]{
-      new MavenRepository("repository.springsource.com.release", "SpringSource OBR - Release",
-          "http://repository.springsource.com/maven/bundles/release"),
-      new MavenRepository("repository.springsource.com.external", "SpringSource OBR - External",
-          "http://repository.springsource.com/maven/bundles/external")
+    new MavenRepository("repository.springsource.com.release", "SpringSource OBR - Release",
+                        "http://repository.springsource.com/maven/bundles/release"),
+    new MavenRepository("repository.springsource.com.external", "SpringSource OBR - External",
+                        "http://repository.springsource.com/maven/bundles/external")
   };
 }

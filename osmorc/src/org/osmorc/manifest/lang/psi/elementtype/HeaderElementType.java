@@ -25,13 +25,16 @@
 
 package org.osmorc.manifest.lang.psi.elementtype;
 
-import com.intellij.psi.stubs.*;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.stubs.IndexSink;
+import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.stubs.StubInputStream;
+import com.intellij.psi.stubs.StubOutputStream;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.manifest.lang.psi.Header;
+import org.osmorc.manifest.lang.psi.impl.HeaderImpl;
 import org.osmorc.manifest.lang.psi.stub.HeaderStub;
 import org.osmorc.manifest.lang.psi.stub.impl.HeaderStubImpl;
-import org.osmorc.manifest.lang.psi.impl.HeaderImpl;
-import org.osmorc.manifest.lang.psi.Header;
 
 import java.io.IOException;
 
@@ -39,34 +42,34 @@ import java.io.IOException;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class HeaderElementType extends AbstractManifestStubElementType<HeaderStub, Header> {
-    public HeaderElementType() {
-        super("HEADER");
-    }
+  public HeaderElementType() {
+    super("HEADER");
+  }
 
 
-    @Override
-    public Header createPsi(@NotNull HeaderStub stub) {
-        return new HeaderImpl(stub, this);
-    }
+  @Override
+  public Header createPsi(@NotNull HeaderStub stub) {
+    return new HeaderImpl(stub, this);
+  }
 
-    @Override
-    public Header createPsi(ASTNode node) {
-        return new HeaderImpl(node);
-    }
+  @Override
+  public Header createPsi(ASTNode node) {
+    return new HeaderImpl(node);
+  }
 
-    @Override
-    public HeaderStub createStub(@NotNull Header psi, StubElement parentStub) {
-        return new HeaderStubImpl(parentStub, psi.getName());
-    }
+  @Override
+  public HeaderStub createStub(@NotNull Header psi, StubElement parentStub) {
+    return new HeaderStubImpl(parentStub, psi.getName());
+  }
 
-    public void serialize(HeaderStub stub, StubOutputStream dataStream) throws IOException {
-        dataStream.writeName(stub.getName());
-    }
+  public void serialize(HeaderStub stub, StubOutputStream dataStream) throws IOException {
+    dataStream.writeName(stub.getName());
+  }
 
-    public HeaderStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return new HeaderStubImpl(parentStub, dataStream.readName().toString());
-    }
+  public HeaderStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+    return new HeaderStubImpl(parentStub, dataStream.readName().toString());
+  }
 
-    public void indexStub(HeaderStub stub, IndexSink sink) {
-    }
+  public void indexStub(HeaderStub stub, IndexSink sink) {
+  }
 }

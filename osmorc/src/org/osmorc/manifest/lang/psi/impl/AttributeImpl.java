@@ -35,11 +35,11 @@ import org.osmorc.manifest.lang.psi.stub.AssignmentExpressionStub;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class AttributeImpl extends AbstractAssignmentExpression implements Attribute {
-    public AttributeImpl(AssignmentExpressionStub stub, @NotNull IStubElementType nodeType) {
-        super(stub, nodeType);
-    }
+  public AttributeImpl(AssignmentExpressionStub stub, @NotNull IStubElementType nodeType) {
+    super(stub, nodeType);
+  }
 
-    public AttributeImpl(@NotNull ASTNode node) {
-        super(node);
-    }
+  public AttributeImpl(@NotNull ASTNode node) {
+    super(node);
+  }
 }

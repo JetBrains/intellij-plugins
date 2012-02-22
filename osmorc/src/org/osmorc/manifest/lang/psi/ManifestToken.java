@@ -26,13 +26,14 @@
 package org.osmorc.manifest.lang.psi;
 
 import com.intellij.psi.PsiElement;
-import org.osmorc.manifest.lang.ManifestTokenType;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.manifest.lang.ManifestTokenType;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public interface ManifestToken extends PsiElement {
-    ManifestTokenType getTokenType();
-    ManifestToken replaceToken(@NotNull String text);
+  ManifestTokenType getTokenType();
+
+  ManifestToken replaceToken(@NotNull String text);
 }

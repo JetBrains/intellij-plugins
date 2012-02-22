@@ -1,7 +1,5 @@
 package org.osmorc.impl;
 
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -230,7 +228,6 @@ public class BundleCache {
     return getCandidateWithHighestVersion(candidates);
   }
 
- 
 
   /**
    * Helper function which takes a collection of manifest holders, creates sets of manifest holders that have the same bundle symbolic name
@@ -242,16 +239,16 @@ public class BundleCache {
    *         set will not contain an entry for the respective set.
    */
   public static Set<ManifestHolder> getCandidatesWithHighestVersions(@NotNull Collection<ManifestHolder> manifestHolders) {
-    Map<String, Set<ManifestHolder>> sets = new HashMap<String,Set<ManifestHolder>>();
-    
+    Map<String, Set<ManifestHolder>> sets = new HashMap<String, Set<ManifestHolder>>();
+
     // first build sets of entries with the same bundle symbolic name. This will also eliminate duplicate holders.
     for (ManifestHolder holder : manifestHolders) {
       try {
         BundleManifest manifest = holder.getBundleManifest();
-        if ( manifest != null ) {
+        if (manifest != null) {
           String bundleSymbolicName = manifest.getBundleSymbolicName();
           Set<ManifestHolder> set = null;
-          if ( sets.containsKey(bundleSymbolicName)) {
+          if (sets.containsKey(bundleSymbolicName)) {
             set = sets.get(bundleSymbolicName);
           }
           else {
@@ -268,7 +265,7 @@ public class BundleCache {
     Set<ManifestHolder> result = new HashSet<ManifestHolder>();
     for (Set<ManifestHolder> holders : sets.values()) {
       ManifestHolder candidateWithHighestVersion = getCandidateWithHighestVersion(holders);
-      if ( candidateWithHighestVersion != null ) {
+      if (candidateWithHighestVersion != null) {
         result.add(candidateWithHighestVersion);
       }
     }

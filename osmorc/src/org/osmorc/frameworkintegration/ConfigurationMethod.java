@@ -31,8 +31,7 @@ package org.osmorc.frameworkintegration;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id$
  */
-public enum ConfigurationMethod
-{
+public enum ConfigurationMethod {
   /**
    * Bundles are installed by specifying a certain command line parameter.
    */

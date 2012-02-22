@@ -35,14 +35,14 @@ import com.intellij.util.IncorrectOperationException;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class HeaderValuePartManipulator extends AbstractElementManipulator<HeaderValuePart> {
-    public HeaderValuePart handleContentChange(HeaderValuePart element, TextRange range, String newContent)
-            throws IncorrectOperationException {
-        String newText = range.replace(element.getText(), newContent);
-        PsiFileFactory fileFactory = PsiFileFactory.getInstance(element.getProject());
-        PsiFile fromText = fileFactory.createFileFromText("DUMMY.MF", " " + newText);
-        Clause clause = (Clause) fromText.getFirstChild().getFirstChild().getNextSibling();
-        HeaderValuePart headerValue = (HeaderValuePart) clause.getFirstChild();
+  public HeaderValuePart handleContentChange(HeaderValuePart element, TextRange range, String newContent)
+    throws IncorrectOperationException {
+    String newText = range.replace(element.getText(), newContent);
+    PsiFileFactory fileFactory = PsiFileFactory.getInstance(element.getProject());
+    PsiFile fromText = fileFactory.createFileFromText("DUMMY.MF", " " + newText);
+    Clause clause = (Clause)fromText.getFirstChild().getFirstChild().getNextSibling();
+    HeaderValuePart headerValue = (HeaderValuePart)clause.getFirstChild();
 
-        return (HeaderValuePart) element.replace(headerValue);
-    }
+    return (HeaderValuePart)element.replace(headerValue);
+  }
 }

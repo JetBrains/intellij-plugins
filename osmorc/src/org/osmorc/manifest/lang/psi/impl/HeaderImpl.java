@@ -41,53 +41,54 @@ import org.osmorc.manifest.lang.psi.stub.HeaderStub;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class HeaderImpl extends ManifestElementBase<HeaderStub> implements Header {
-    public HeaderImpl(HeaderStub stub, @NotNull IStubElementType nodeType) {
-        super(stub, nodeType);
+  public HeaderImpl(HeaderStub stub, @NotNull IStubElementType nodeType) {
+    super(stub, nodeType);
+  }
+
+  public HeaderImpl(@NotNull ASTNode node) {
+    super(node);
+  }
+
+  public String getName() {
+    String result;
+    HeaderStub stub = getStub();
+    if (stub != null) {
+      result = stub.getName();
+    }
+    else {
+      ManifestToken nameToken = getNameToken();
+      result = nameToken != null ? nameToken.getText() : null;
     }
 
-    public HeaderImpl(@NotNull ASTNode node) {
-        super(node);
-    }
+    return result != null ? result : "";
+  }
 
-    public String getName() {
-        String result;
-        HeaderStub stub = getStub();
-        if (stub != null) {
-            result = stub.getName();    
-        } else {
-            ManifestToken nameToken = getNameToken();
-            result = nameToken != null ? nameToken.getText() : null;
-        }
-
-        return result != null ? result : "";
+  public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
+    ManifestToken nameToken = getNameToken();
+    if (nameToken != null) {
+      nameToken.replaceToken(name);
     }
+    return this;
+  }
 
-    public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
-        ManifestToken nameToken = getNameToken();
-        if (nameToken != null) {
-            nameToken.replaceToken(name);
-        }
-        return this;
-    }
+  public ManifestToken getNameToken() {
+    return (ManifestToken)getNode().findChildByType(ManifestTokenType.HEADER_NAME);
+  }
 
-    public ManifestToken getNameToken() {
-        return (ManifestToken) getNode().findChildByType(ManifestTokenType.HEADER_NAME);
-    }
-
-    public ManifestToken getColonToken() {
-        return (ManifestToken) getNode().findChildByType(ManifestTokenType.COLON);
-    }
+  public ManifestToken getColonToken() {
+    return (ManifestToken)getNode().findChildByType(ManifestTokenType.COLON);
+  }
 
   @Override
   @NotNull
   public Clause[] getClauses() {
-     return findChildrenByClass(Clause.class);
+    return findChildrenByClass(Clause.class);
   }
 
   @Override
   public Object getSimpleConvertedValue() {
     Clause clause = findChildByClass(Clause.class);
-    if ( clause != null ) {
+    if (clause != null) {
       HeaderValuePart value = clause.getValue();
       if (value != null) {
         return value.getConvertedValue();

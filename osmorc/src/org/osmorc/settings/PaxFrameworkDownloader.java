@@ -118,7 +118,7 @@ public class PaxFrameworkDownloader {
     parametersList.add("--nologo=true");
     parametersList.add("--executor=noop");
     parametersList.add("--workingDirectory=" + myTargetFolder);
-    if ( myClearDownloadFolder ) {
+    if (myClearDownloadFolder) {
       parametersList.add("--clean");
     }
     if (!StringUtil.isEmpty(myProfiles)) {
@@ -155,7 +155,7 @@ public class PaxFrameworkDownloader {
     if (matcher.matches()) {
       String message = matcher.group(1).trim();
       if (!StringUtil.isEmpty(message) && !message.contains("--log=debug") && !message.contains("Oops")) {
-        myErrorMessage =  (myErrorMessage != null ? myErrorMessage : "") +  message + "\n";
+        myErrorMessage = (myErrorMessage != null ? myErrorMessage : "") + message + "\n";
       }
     }
     if (indicator != null) {

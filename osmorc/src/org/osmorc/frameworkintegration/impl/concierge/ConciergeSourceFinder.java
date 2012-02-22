@@ -37,31 +37,25 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ConciergeSourceFinder implements FrameworkInstanceLibrarySourceFinder
-{
-  public ConciergeSourceFinder(@NotNull VirtualFile conciergeRootFolder)
-  {
+public class ConciergeSourceFinder implements FrameworkInstanceLibrarySourceFinder {
+  public ConciergeSourceFinder(@NotNull VirtualFile conciergeRootFolder) {
     _sourceFolder = conciergeRootFolder.findChild("src");
   }
 
-  public List<VirtualFile> getSourceForLibraryClasses(@NotNull VirtualFile libraryClasses)
-  {
+  public List<VirtualFile> getSourceForLibraryClasses(@NotNull VirtualFile libraryClasses) {
     List<VirtualFile> result = new ArrayList<VirtualFile>();
-    if (_sourceFolder != null)
-    {
+    if (_sourceFolder != null) {
       String sourceZIPName = FileUtil.getNameWithoutJarSuffix(libraryClasses) + ".zip";
       VirtualFile sourceZIP = _sourceFolder.findChild(sourceZIPName);
       VirtualFile sourceFolder = FileUtil.getFolder(sourceZIP);
-      if (sourceFolder != null)
-      {
+      if (sourceFolder != null) {
         result.add(sourceFolder);
       }
     }
     return result;
   }
 
-  public boolean containsOnlySources(@NotNull VirtualFile libraryClassesCondidate)
-  {
+  public boolean containsOnlySources(@NotNull VirtualFile libraryClassesCondidate) {
     return false;
   }
 

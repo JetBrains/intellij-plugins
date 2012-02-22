@@ -32,5 +32,5 @@ import org.osmorc.manifest.lang.psi.Header;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public interface HeaderStub extends StubElement<Header> {
-    String getName();
+  String getName();
 }

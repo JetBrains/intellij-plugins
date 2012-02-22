@@ -36,7 +36,6 @@ import org.osmorc.run.ui.SelectedBundle;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This interface encapsulates framework-specific runtime configuration.
@@ -68,7 +67,7 @@ public interface FrameworkRunner extends Disposable {
   /**
    * Fills a map with vm parameters that should be set on the launched java VM.
    *
-   * @param vmParameters the list where to fill the vm parameters in.
+   * @param vmParameters     the list where to fill the vm parameters in.
    * @param bundlesToInstall the list of bundles to install.
    */
   void fillVmParameters(ParametersList vmParameters, @NotNull SelectedBundle[] bundlesToInstall);

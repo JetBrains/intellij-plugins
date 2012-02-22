@@ -106,7 +106,7 @@ public class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcF
         String line;
         while ((line = bufferedReader.readLine()) != null && headersToDetect.size() > 0) {
           for (Iterator<String> headersToDetectIterator = headersToDetect.iterator();
-               headersToDetectIterator.hasNext();) {
+               headersToDetectIterator.hasNext(); ) {
             String headerToDetect = headersToDetectIterator.next();
             if (line.startsWith(headerToDetect)) {
               headersToDetectIterator.remove();
@@ -134,6 +134,5 @@ public class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcF
     }
 
     return headersToDetect.size() == 0;
-
   }
 }

@@ -30,75 +30,62 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class FrameworkInstanceDefinition
-{
+public class FrameworkInstanceDefinition {
   private String myFrameworkIntegratorName;
   private String myName;
   private String myBaseFolder;
   private boolean myDefined = true;
   private String myVersion;
   private boolean myDownloadedByPaxRunner;
-  
-  public FrameworkInstanceDefinition()
-  {
+
+  public FrameworkInstanceDefinition() {
   }
 
-  public boolean equals(Object o)
-  {
-    if (this == o)
-    {
+  public boolean equals(Object o) {
+    if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass())
-    {
+    if (o == null || getClass() != o.getClass()) {
       return false;
     }
 
-    FrameworkInstanceDefinition that = (FrameworkInstanceDefinition) o;
+    FrameworkInstanceDefinition that = (FrameworkInstanceDefinition)o;
 
     return myName.equals(that.myName);
   }
 
-  public int hashCode()
-  {
+  public int hashCode() {
     return myName.hashCode();
   }
 
-  public String toString()
-  {
+  public String toString() {
     String descriptionPart = myName != null ? myName : "undefined";
     String frameworkIntegratorNamePart = myFrameworkIntegratorName != null ? myFrameworkIntegratorName : "undefined";
-    String versionPart = myVersion != null && myVersion.length() > 0? " [" + myVersion + "]" : " [latest]";
-    return descriptionPart+ " (" + frameworkIntegratorNamePart + ")" + versionPart;
+    String versionPart = myVersion != null && myVersion.length() > 0 ? " [" + myVersion + "]" : " [latest]";
+    return descriptionPart + " (" + frameworkIntegratorNamePart + ")" + versionPart;
   }
 
-  public String getBaseFolder()
-  {
+  public String getBaseFolder() {
     return myBaseFolder;
   }
 
-  public void setBaseFolder(String baseFolder)
-  {
+  public void setBaseFolder(String baseFolder) {
     myBaseFolder = baseFolder;
   }
 
-  public String getFrameworkIntegratorName()
-  {
+  public String getFrameworkIntegratorName() {
     return myFrameworkIntegratorName;
   }
 
-  public void setFrameworkIntegratorName(@NotNull String frameworkIntegratorName)
-  {
+  public void setFrameworkIntegratorName(@NotNull String frameworkIntegratorName) {
     myFrameworkIntegratorName = frameworkIntegratorName;
   }
 
-  public String getName()
-  {
+  public String getName() {
     return myName;
   }
 
-  public void setName(@NotNull String name)
-  {
+  public void setName(@NotNull String name) {
     myName = name;
   }
 
@@ -111,13 +98,11 @@ public class FrameworkInstanceDefinition
   }
 
   @Transient
-  public boolean isDefined()
-  {
+  public boolean isDefined() {
     return myDefined;
   }
 
-  public void setDefined(boolean defined)
-  {
+  public void setDefined(boolean defined) {
     myDefined = defined;
   }
 

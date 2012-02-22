@@ -41,15 +41,14 @@ public class FelixFrameworkRunner extends AbstractPaxBasedFrameworkRunner<FelixR
   }
 
   @NotNull
-    protected FelixRunProperties convertProperties(Map<String, String> properties) {
-        return new FelixRunProperties(properties);
-    }
+  protected FelixRunProperties convertProperties(Map<String, String> properties) {
+    return new FelixRunProperties(properties);
+  }
 
 
-    @NotNull
-    @Override
-    protected String getOsgiFrameworkName() {
-        return "Felix";
-    }
-
+  @NotNull
+  @Override
+  protected String getOsgiFrameworkName() {
+    return "Felix";
+  }
 }

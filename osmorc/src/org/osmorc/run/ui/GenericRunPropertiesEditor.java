@@ -37,42 +37,41 @@ import javax.swing.*;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
 public class GenericRunPropertiesEditor<T extends GenericRunProperties> implements FrameworkRunPropertiesEditor {
-    private final T propertiesHolder;
+  private final T propertiesHolder;
 
-    public GenericRunPropertiesEditor(T propertiesHolder) {
-        this.propertiesHolder = propertiesHolder;
-    }
+  public GenericRunPropertiesEditor(T propertiesHolder) {
+    this.propertiesHolder = propertiesHolder;
+  }
 
-    public JPanel getUI() {
-        return _mainPanel;
-    }
+  public JPanel getUI() {
+    return _mainPanel;
+  }
 
-    public void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
-        _presentationModel.getBean().load(osgiRunConfiguration.getAdditionalProperties());
-    }
+  public void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
+    _presentationModel.getBean().load(osgiRunConfiguration.getAdditionalProperties());
+  }
 
-    public void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
-        osgiRunConfiguration.putAdditionalProperties(_presentationModel.getBean().getProperties());
-    }
+  public void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
+    osgiRunConfiguration.putAdditionalProperties(_presentationModel.getBean().getProperties());
+  }
 
-    private void createUIComponents() {
-        _presentationModel = new PresentationModel<T>(propertiesHolder);
-        _debugCheckbox =
-                BasicComponentFactory.createCheckBox(_presentationModel.getModel(GenericRunProperties.DEBUG_MODE), "");
-        _startConsoleCheckbox =
-                BasicComponentFactory.createCheckBox(_presentationModel.getModel(GenericRunProperties.START_CONSOLE), "");
-        _systemPackages =
-                BasicComponentFactory.createTextField(_presentationModel.getModel(GenericRunProperties.SYSTEM_PACKAGES));
-        _bootDelegation =
-                BasicComponentFactory.createTextField(_presentationModel.getModel(GenericRunProperties.BOOT_DELEGATION));
+  private void createUIComponents() {
+    _presentationModel = new PresentationModel<T>(propertiesHolder);
+    _debugCheckbox =
+      BasicComponentFactory.createCheckBox(_presentationModel.getModel(GenericRunProperties.DEBUG_MODE), "");
+    _startConsoleCheckbox =
+      BasicComponentFactory.createCheckBox(_presentationModel.getModel(GenericRunProperties.START_CONSOLE), "");
+    _systemPackages =
+      BasicComponentFactory.createTextField(_presentationModel.getModel(GenericRunProperties.SYSTEM_PACKAGES));
+    _bootDelegation =
+      BasicComponentFactory.createTextField(_presentationModel.getModel(GenericRunProperties.BOOT_DELEGATION));
+  }
 
-    }
 
-
-    private JPanel _mainPanel;
-    private JCheckBox _debugCheckbox;
-    private JTextField _systemPackages;
-    private JTextField _bootDelegation;
-    private JCheckBox _startConsoleCheckbox;
-    private PresentationModel<T> _presentationModel;
+  private JPanel _mainPanel;
+  private JCheckBox _debugCheckbox;
+  private JTextField _systemPackages;
+  private JTextField _bootDelegation;
+  private JCheckBox _startConsoleCheckbox;
+  private PresentationModel<T> _presentationModel;
 }

@@ -33,20 +33,16 @@ import org.osgi.framework.BundleContext;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id$
  */
-public class ManagingBundleImpl implements ManagingBundle
-{
+public class ManagingBundleImpl implements ManagingBundle {
 
-  public ManagingBundleImpl(BundleContext context)
-  {
+  public ManagingBundleImpl(BundleContext context) {
     _context = context;
   }
 
-  public String[] listInstalledBundles()
-  {
+  public String[] listInstalledBundles() {
     Bundle[] bundles = _context.getBundles();
     String[] result = new String[bundles.length];
-    for (int i = 0; i < bundles.length; i++)
-    {
+    for (int i = 0; i < bundles.length; i++) {
       Bundle bundle = bundles[i];
       result[i] = bundle.getSymbolicName();
     }

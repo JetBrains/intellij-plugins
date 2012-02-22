@@ -25,7 +25,6 @@
 package org.osmorc.manifest.lang;
 
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.IFileElementType;
 import org.osmorc.manifest.lang.psi.ManifestStubElementTypes;
 
 
@@ -35,13 +34,13 @@ import org.osmorc.manifest.lang.psi.ManifestStubElementTypes;
 public class ManifestElementTypes {
   public static final IElementType HEADER = ManifestStubElementTypes.HEADER;
 
-    public static final IElementType SECTION = ManifestStubElementTypes.SECTION;
-    public static final IElementType CLAUSE = ManifestStubElementTypes.CLAUSE;
-    public static final IElementType DIRECTIVE = ManifestStubElementTypes.DIRECTIVE;
-    public static final IElementType ATTRIBUTE = ManifestStubElementTypes.ATTRIBUTE;
-    public static final IElementType HEADER_VALUE_PART = ManifestStubElementTypes.HEADER_VALUE_PART;
+  public static final IElementType SECTION = ManifestStubElementTypes.SECTION;
+  public static final IElementType CLAUSE = ManifestStubElementTypes.CLAUSE;
+  public static final IElementType DIRECTIVE = ManifestStubElementTypes.DIRECTIVE;
+  public static final IElementType ATTRIBUTE = ManifestStubElementTypes.ATTRIBUTE;
+  public static final IElementType HEADER_VALUE_PART = ManifestStubElementTypes.HEADER_VALUE_PART;
 
-    private ManifestElementTypes() {
+  private ManifestElementTypes() {
 
-    }
+  }
 }

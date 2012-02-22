@@ -154,8 +154,8 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
       }
     });
     // avoid text fields growing the dialog when much text is entered.
-    vmParams.getTextField().setPreferredSize(new Dimension(100,20));
-    programParameters.getTextField().setPreferredSize(new Dimension(100,20));
+    vmParams.getTextField().setPreferredSize(new Dimension(100, 20));
+    programParameters.getTextField().setPreferredSize(new Dimension(100, 20));
 
     setAnchor(alternativeJREPanel.getCbEnabled());
   }
@@ -311,7 +311,6 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     if (currentFrameworkRunPropertiesEditor != null) {
       currentFrameworkRunPropertiesEditor.applyEditorTo(osgiRunConfiguration);
     }
-
   }
 
   private List<SelectedBundle> getBundlesToRun() {
@@ -458,7 +457,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     }
 
     public void removeAllOfType(SelectedBundle.BundleType type) {
-      for (Iterator<SelectedBundle> selectedBundleIterator = selectedBundles.iterator(); selectedBundleIterator.hasNext();) {
+      for (Iterator<SelectedBundle> selectedBundleIterator = selectedBundles.iterator(); selectedBundleIterator.hasNext(); ) {
         SelectedBundle selectedBundle = selectedBundleIterator.next();
         if (selectedBundle.getBundleType() == type) {
           selectedBundleIterator.remove();

@@ -38,13 +38,14 @@ import java.util.Collection;
  */
 public interface ManifestHolderRegistry {
   /**
-   *  @return  the manifest holder for the given module.
+   * @return the manifest holder for the given module.
    */
   @NotNull
   ManifestHolder getManifestHolder(@NotNull Module module);
 
   /**
    * The manifest holders for the given library. As a library may contain one or more bundles, this will return one holder for each bundle
+   *
    * @param library the library
    * @return a collection fo manifest holders one for each bundle of the library.
    */

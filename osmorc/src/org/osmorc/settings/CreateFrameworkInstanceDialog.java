@@ -24,7 +24,6 @@
  */
 package org.osmorc.settings;
 
-import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -259,29 +258,29 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper {
     PaxFrameworkDownloader paxFrameworkDownloader =
       new PaxFrameworkDownloader(getIntegratorName().toLowerCase(), getVersion(), myTargetFolder.getText().trim(), "",
                                  myClearFolderBeforeDowloadCheckBox.isSelected(), new PaxFrameworkDownloader.DownloaderCallback() {
-                                   @Override
-                                   public void downloadFinished(boolean successful, @Nullable final String errorMessage) {
-                                     if (!successful) {
-                                       UIUtil.invokeLaterIfNeeded(new Runnable() {
-                                         @Override
-                                         public void run() {
-                                           // this is currently broken.
-                                           //Messages.showErrorDialog(myDownloadButton, errorMessage, "Error when downloading framework");
-                                           // so put it into the error text field for now.
-                                           ((MyErrorText)myErrorText).setError(errorMessage);
-                                         }
-                                       });
-                                     }
-                                     else {
-                                       UIUtil.invokeLaterIfNeeded(new Runnable() {
-                                         @Override
-                                         public void run() {
-                                           ((MyErrorText)myErrorText).setStatus("Download successful.");
-                                         }
-                                       });
-                                     }
-                                   }
-                                 });
+        @Override
+        public void downloadFinished(boolean successful, @Nullable final String errorMessage) {
+          if (!successful) {
+            UIUtil.invokeLaterIfNeeded(new Runnable() {
+              @Override
+              public void run() {
+                // this is currently broken.
+                //Messages.showErrorDialog(myDownloadButton, errorMessage, "Error when downloading framework");
+                // so put it into the error text field for now.
+                ((MyErrorText)myErrorText).setError(errorMessage);
+              }
+            });
+          }
+          else {
+            UIUtil.invokeLaterIfNeeded(new Runnable() {
+              @Override
+              public void run() {
+                ((MyErrorText)myErrorText).setStatus("Download successful.");
+              }
+            });
+          }
+        }
+      });
     paxFrameworkDownloader.download();
   }
 

@@ -42,14 +42,13 @@ public class KnopflerfishFrameworkRunner extends AbstractPaxBasedFrameworkRunner
 
 
   @NotNull
-    protected KnopflerfishRunProperties convertProperties(Map<String, String> properties) {
-        return new KnopflerfishRunProperties(properties);
-    }
+  protected KnopflerfishRunProperties convertProperties(Map<String, String> properties) {
+    return new KnopflerfishRunProperties(properties);
+  }
 
-    @NotNull
-    @Override
-    protected String getOsgiFrameworkName() {
-        return "Knopflerfish";
-    }
-
+  @NotNull
+  @Override
+  protected String getOsgiFrameworkName() {
+    return "Knopflerfish";
+  }
 }

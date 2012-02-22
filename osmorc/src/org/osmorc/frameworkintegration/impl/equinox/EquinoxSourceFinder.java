@@ -36,28 +36,21 @@ import java.util.List;
 /**
  * Author: Robert F. Beeger (robert@beeger.net)
  */
-public class EquinoxSourceFinder implements FrameworkInstanceLibrarySourceFinder
-{
-  public List<VirtualFile> getSourceForLibraryClasses(@NotNull VirtualFile libraryClasses)
-  {
+public class EquinoxSourceFinder implements FrameworkInstanceLibrarySourceFinder {
+  public List<VirtualFile> getSourceForLibraryClasses(@NotNull VirtualFile libraryClasses) {
     List<VirtualFile> result = new ArrayList<VirtualFile>();
     VirtualFile pluginDir = libraryClasses.getParent();
     assert pluginDir != null;
 
     VirtualFile[] files = pluginDir.getChildren();
-    for (VirtualFile file : files)
-    {
-      if (file.isDirectory() && file.getName().contains("source"))
-      {
+    for (VirtualFile file : files) {
+      if (file.isDirectory() && file.getName().contains("source")) {
         VirtualFile sourcesFolder = file.findChild("src");
-        if (sourcesFolder != null && sourcesFolder.isDirectory())
-        {
+        if (sourcesFolder != null && sourcesFolder.isDirectory()) {
           VirtualFile librarySourcesFolder = sourcesFolder.findChild(FileUtil.getNameWithoutJarSuffix(libraryClasses));
-          if (librarySourcesFolder != null && librarySourcesFolder.isDirectory())
-          {
+          if (librarySourcesFolder != null && librarySourcesFolder.isDirectory()) {
             VirtualFile sourceZIP = librarySourcesFolder.findChild("src.zip");
-            if (sourceZIP != null)
-            {
+            if (sourceZIP != null) {
               result.add(sourceZIP);
               break;
             }
@@ -67,20 +60,18 @@ public class EquinoxSourceFinder implements FrameworkInstanceLibrarySourceFinder
     }
     String libraryFilename = libraryClasses.getName();
     int underscore = libraryFilename.indexOf('_');
-    if (underscore > 0)
-    {
-      String sourceFileName =  libraryFilename.substring(0, underscore) + SOURCE_JAR_NAME_SUBSTRING + libraryFilename.substring(underscore + 1);
+    if (underscore > 0) {
+      String sourceFileName =
+        libraryFilename.substring(0, underscore) + SOURCE_JAR_NAME_SUBSTRING + libraryFilename.substring(underscore + 1);
       VirtualFile source = pluginDir.findChild(sourceFileName);
-      if (source != null)
-      {
+      if (source != null) {
         result.add(source);
       }
     }
     return result;
   }
 
-  public boolean containsOnlySources(@NotNull VirtualFile libraryClassesCondidate)
-  {
+  public boolean containsOnlySources(@NotNull VirtualFile libraryClassesCondidate) {
     return libraryClassesCondidate.getName().contains(SOURCE_JAR_NAME_SUBSTRING);
   }
 

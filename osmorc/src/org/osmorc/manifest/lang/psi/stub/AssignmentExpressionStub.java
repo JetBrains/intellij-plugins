@@ -32,6 +32,7 @@ import org.osmorc.manifest.lang.psi.AssignmentExpression;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public interface AssignmentExpressionStub extends StubElement<AssignmentExpression> {
-    String getName();
-    String getValue();
+  String getName();
+
+  String getValue();
 }

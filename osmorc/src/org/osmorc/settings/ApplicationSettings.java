@@ -121,6 +121,4 @@ public class ApplicationSettings implements PersistentStateComponent<Application
   public interface ApplicationSettingsListener extends EventListener {
     void frameworkInstancesChanged();
   }
-
-
 }

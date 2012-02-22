@@ -38,20 +38,20 @@ import org.osmorc.manifest.lang.psi.impl.ManifestElementBase;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ReplaceQuickFixIntention extends BaseIntentionAction {
-    @NotNull
-    public String getFamilyName() {
-        return "Osmorc";
-    }
+  @NotNull
+  public String getFamilyName() {
+    return "Osmorc";
+  }
 
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return true;
-    }
+  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+    return true;
+  }
 
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        ReplaceUtil.replace(_element, _range, _newText);
-    }
+  public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    ReplaceUtil.replace(_element, _range, _newText);
+  }
 
-    private ManifestElementBase _element;
-    private TextRange _range;
-    private String _newText;
+  private ManifestElementBase _element;
+  private TextRange _range;
+  private String _newText;
 }

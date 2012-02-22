@@ -25,11 +25,11 @@
 
 package org.osmorc.manifest.lang.psi.elementtype;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.Attribute;
 import org.osmorc.manifest.lang.psi.impl.AttributeImpl;
@@ -42,34 +42,34 @@ import java.io.IOException;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class AttributeElementType extends AbstractManifestStubElementType<AttributeStub, Attribute> {
-    public AttributeElementType() {
-        super("ATTRIBUTE");
-    }
+  public AttributeElementType() {
+    super("ATTRIBUTE");
+  }
 
-    @Override
-    public Attribute createPsi(@NotNull AttributeStub stub) {
-        return new AttributeImpl(stub, this);
-    }
+  @Override
+  public Attribute createPsi(@NotNull AttributeStub stub) {
+    return new AttributeImpl(stub, this);
+  }
 
-    @Override
-    public Attribute createPsi(ASTNode node) {
-        return new AttributeImpl(node);
-    }
+  @Override
+  public Attribute createPsi(ASTNode node) {
+    return new AttributeImpl(node);
+  }
 
-    @Override
-    public AttributeStub createStub(@NotNull Attribute psi, StubElement parentStub) {
-        return new AttributeStubImpl(parentStub, psi.getName(), psi.getValue());
-    }
+  @Override
+  public AttributeStub createStub(@NotNull Attribute psi, StubElement parentStub) {
+    return new AttributeStubImpl(parentStub, psi.getName(), psi.getValue());
+  }
 
-    public void serialize(AttributeStub stub, StubOutputStream dataStream) throws IOException {
-        dataStream.writeName(stub.getName());
-        dataStream.writeUTFFast(stub.getValue());
-    }
+  public void serialize(AttributeStub stub, StubOutputStream dataStream) throws IOException {
+    dataStream.writeName(stub.getName());
+    dataStream.writeUTFFast(stub.getValue());
+  }
 
-    public AttributeStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return new AttributeStubImpl(parentStub, dataStream.readName().toString(), dataStream.readUTFFast());
-    }
+  public AttributeStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+    return new AttributeStubImpl(parentStub, dataStream.readName().toString(), dataStream.readUTFFast());
+  }
 
-    public void indexStub(AttributeStub stub, IndexSink sink) {
-    }
+  public void indexStub(AttributeStub stub, IndexSink sink) {
+  }
 }

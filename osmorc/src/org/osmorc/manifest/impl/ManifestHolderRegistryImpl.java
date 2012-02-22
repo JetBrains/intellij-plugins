@@ -24,12 +24,10 @@
  */
 package org.osmorc.manifest.impl;
 
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.ManifestHolder;
 import org.osmorc.manifest.ManifestHolderRegistry;
@@ -42,16 +40,15 @@ import java.util.Collection;
 public final class ManifestHolderRegistryImpl implements ManifestHolderRegistry {
   private final Project myProject;
 
-    public ManifestHolderRegistryImpl(Project project) {
-      myProject = project;
-    }
+  public ManifestHolderRegistryImpl(Project project) {
+    myProject = project;
+  }
 
   @NotNull
   @Override
   public ManifestHolder getManifestHolder(@NotNull Module module) {
     return ModuleServiceManager.getService(module, ManifestHolder.class);
   }
-
 
 
   @NotNull

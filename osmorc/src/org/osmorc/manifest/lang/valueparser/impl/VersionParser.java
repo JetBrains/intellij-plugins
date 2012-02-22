@@ -27,8 +27,8 @@ package org.osmorc.manifest.lang.valueparser.impl;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.valueobject.Version;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
+import org.osmorc.valueobject.Version;
 
 import java.util.regex.Pattern;
 
@@ -36,65 +36,65 @@ import java.util.regex.Pattern;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class VersionParser extends AbstractValueParserImpl<Version> {
-    public VersionParser() {
-        _qualifierPattern = Pattern.compile("[\\w\\-]*");
+  public VersionParser() {
+    _qualifierPattern = Pattern.compile("[\\w\\-]*");
+  }
+
+  protected Version parseValue(
+    @Nullable HeaderValuePart headerValue, String text, int start,
+    @Nullable AnnotationHolder annotationHolder) {
+    String[] componentNames = new String[]{"major", "minor", "micro"};
+    int[] components = new int[]{0, 0, 0};
+    int componentStart;
+    int componentEnd = -1;
+
+    for (int componentIdx = 0; componentIdx < components.length; componentIdx++) {
+      componentStart = componentEnd + 1;
+      componentEnd = text.indexOf('.', componentStart);
+      if (componentEnd < 0) {
+        componentEnd = text.length();
+      }
+      try {
+        components[componentIdx] = Integer.parseInt(text.substring(componentStart, componentEnd));
+      }
+      catch (NumberFormatException e) {
+        createInvalidNumberAnnotation(headerValue, componentStart + start, componentEnd + start, annotationHolder,
+                                      componentNames[componentIdx]);
+      }
+
+      if (componentEnd == text.length()) {
+        break;
+      }
     }
 
-    protected Version parseValue(
-            @Nullable HeaderValuePart headerValue, String text, int start,
-            @Nullable AnnotationHolder annotationHolder) {
-        String[] componentNames = new String[]{"major", "minor", "micro"};
-        int[] components = new int[]{0, 0, 0};
-        int componentStart;
-        int componentEnd = -1;
+    String qualifier = "";
 
-        for (int componentIdx = 0; componentIdx < components.length; componentIdx++) {
-            componentStart = componentEnd + 1;
-            componentEnd = text.indexOf('.', componentStart);
-            if (componentEnd < 0) {
-                componentEnd = text.length();
-            }
-            try {
-                components[componentIdx] = Integer.parseInt(text.substring(componentStart, componentEnd));
-            }
-            catch (NumberFormatException e) {
-                createInvalidNumberAnnotation(headerValue, componentStart + start, componentEnd + start, annotationHolder,
-                        componentNames[componentIdx]);
-            }
-
-            if (componentEnd == text.length()) {
-                break;
-            }
-        }
-
-        String qualifier = "";
-
-        if (componentEnd < text.length()) {
-            componentStart = componentEnd + 1;
-            componentEnd = text.length();
-            qualifier = text.substring(componentStart);
-            if (annotationHolder != null && !_qualifierPattern.matcher(qualifier).matches()) {
-                TextRange headerValueTextRange = headerValue.getTextRange();
-                TextRange textRange = new TextRange(headerValueTextRange.getStartOffset() + componentStart,
-                        headerValueTextRange.getStartOffset() + componentEnd);
-                annotationHolder.createErrorAnnotation(textRange,
-                        "The qualifier component of the defined version is invalid. It may only contain alphanumeric characters, '-' and '_'");
-            }
-        }
-
-        return new Version(components[0], components[1], components[2], qualifier);
+    if (componentEnd < text.length()) {
+      componentStart = componentEnd + 1;
+      componentEnd = text.length();
+      qualifier = text.substring(componentStart);
+      if (annotationHolder != null && !_qualifierPattern.matcher(qualifier).matches()) {
+        TextRange headerValueTextRange = headerValue.getTextRange();
+        TextRange textRange = new TextRange(headerValueTextRange.getStartOffset() + componentStart,
+                                            headerValueTextRange.getStartOffset() + componentEnd);
+        annotationHolder.createErrorAnnotation(textRange,
+                                               "The qualifier component of the defined version is invalid. It may only contain alphanumeric characters, '-' and '_'");
+      }
     }
 
-    void createInvalidNumberAnnotation(@Nullable HeaderValuePart headerValuePart, int start, int end,
-                                       @Nullable AnnotationHolder annotationHolder, String component) {
-        if (annotationHolder != null) {
-            TextRange headerValueTextRange = headerValuePart.getTextRange();
-            TextRange textRange =
-                    new TextRange(headerValueTextRange.getStartOffset() + start, headerValueTextRange.getStartOffset() + end);
-            annotationHolder.createErrorAnnotation(textRange,
-                    "The " + component + " component of the defined version is not a valid number");
-        }
-    }
+    return new Version(components[0], components[1], components[2], qualifier);
+  }
 
-    private final Pattern _qualifierPattern;
+  void createInvalidNumberAnnotation(@Nullable HeaderValuePart headerValuePart, int start, int end,
+                                     @Nullable AnnotationHolder annotationHolder, String component) {
+    if (annotationHolder != null) {
+      TextRange headerValueTextRange = headerValuePart.getTextRange();
+      TextRange textRange =
+        new TextRange(headerValueTextRange.getStartOffset() + start, headerValueTextRange.getStartOffset() + end);
+      annotationHolder.createErrorAnnotation(textRange,
+                                             "The " + component + " component of the defined version is not a valid number");
+    }
+  }
+
+  private final Pattern _qualifierPattern;
 }

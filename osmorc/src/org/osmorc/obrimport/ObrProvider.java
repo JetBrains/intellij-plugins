@@ -34,16 +34,13 @@ import com.intellij.openapi.extensions.Extensions;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
-public class ObrProvider
-{
+public class ObrProvider {
   /**
    * Returns all available Obrs
    *
    * @return a list of known obrs.
    */
-  public Obr[] getAvailableObrs()
-  {
+  public Obr[] getAvailableObrs() {
     return Extensions.getExtensions(new ExtensionPointName<Obr>("Osmorc.obr"));
   }
-
 }

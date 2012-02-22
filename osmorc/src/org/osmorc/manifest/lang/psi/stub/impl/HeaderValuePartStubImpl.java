@@ -35,14 +35,14 @@ import org.osmorc.manifest.lang.psi.stub.HeaderValuePartStub;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class HeaderValuePartStubImpl extends StubBase<HeaderValuePart> implements HeaderValuePartStub {
-    private final String unwrappedText;
+  private final String unwrappedText;
 
-    public HeaderValuePartStubImpl(StubElement parent, String unwrappedText) {
-        super(parent, ManifestStubElementTypes.HEADER_VALUE_PART);
-        this.unwrappedText = unwrappedText;
-    }
+  public HeaderValuePartStubImpl(StubElement parent, String unwrappedText) {
+    super(parent, ManifestStubElementTypes.HEADER_VALUE_PART);
+    this.unwrappedText = unwrappedText;
+  }
 
-    public String getUnwrappedText() {
-        return unwrappedText;
-    }
+  public String getUnwrappedText() {
+    return unwrappedText;
+  }
 }

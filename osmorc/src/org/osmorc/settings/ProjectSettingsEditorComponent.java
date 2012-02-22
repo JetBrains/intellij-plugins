@@ -147,7 +147,6 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
             Messages.showMessageDialog(myProject, "The output path has been applied to all OSGi facets in the current project.",
                                        "Output path applied",
                                        Messages.getInformationIcon());
-
           }
         });
       }
@@ -227,17 +226,16 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
       myFrameworkInstance.addItem(projectFrameworkInstance);
     }
     myFrameworkInstance.setSelectedItem(projectFrameworkInstance);
-
   }
 
   private synchronized void refreshSynchronizationCombobox() {
-    if ( mySettings == null) return;
+    if (mySettings == null) return;
     mySynchronizationType.removeAllItems();
 
     for (ProjectSettings.ManifestSynchronizationType type : ProjectSettings.ManifestSynchronizationType.values()) {
-      SynchronizationItem item =  new SynchronizationItem(type);
+      SynchronizationItem item = new SynchronizationItem(type);
       mySynchronizationType.addItem(item);
-      if ( type == mySettings.getManifestSynchronizationType() ) {
+      if (type == mySettings.getManifestSynchronizationType()) {
         mySynchronizationType.setSelectedItem(item);
       }
     }

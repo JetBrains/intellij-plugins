@@ -174,7 +174,8 @@ public abstract class AbstractFrameworkRunner<P extends PropertiesWrapper> imple
 
         frameworkInstanceManager.collectLibraries(definition, new JarFileLibraryCollector() {
           @Override
-          protected void collectFrameworkJars(@NotNull Collection<VirtualFile> jarFiles, @NotNull FrameworkInstanceLibrarySourceFinder sourceFinder) {
+          protected void collectFrameworkJars(@NotNull Collection<VirtualFile> jarFiles,
+                                              @NotNull FrameworkInstanceLibrarySourceFinder sourceFinder) {
             for (VirtualFile virtualFile : jarFiles) {
               if (starterClasspathPattern == null || starterClasspathPattern.matcher(virtualFile.getName()).matches()) {
                 result.add(virtualFile);

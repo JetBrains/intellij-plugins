@@ -49,7 +49,7 @@ public class FrameworkDefinitionsEditor implements SearchableConfigurable {
   }
 
   public void apply() throws ConfigurationException {
-     myComponent.applyTo(ApplicationSettings.getInstance());
+    myComponent.applyTo(ApplicationSettings.getInstance());
   }
 
   public void reset() {

@@ -29,7 +29,7 @@ package org.osmorc.manifest.lang.headerparser;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public interface HeaderParserProvider {
-    String getHeaderName();
+  String getHeaderName();
 
-    HeaderParser getHeaderParser();
+  HeaderParser getHeaderParser();
 }

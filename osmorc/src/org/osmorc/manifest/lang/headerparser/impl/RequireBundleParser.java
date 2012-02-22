@@ -35,14 +35,14 @@ import org.osmorc.manifest.lang.psi.HeaderValuePart;
  */
 public class RequireBundleParser extends AbstractHeaderParserImpl {
 
-    public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
-        if (headerValuePart.getParent() instanceof Clause) {
-            return new PsiReference[]{new BundleReference(headerValuePart)};
-        }
-        return EMPTY_PSI_REFERENCE_ARRAY;
+  public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
+    if (headerValuePart.getParent() instanceof Clause) {
+      return new PsiReference[]{new BundleReference(headerValuePart)};
     }
+    return EMPTY_PSI_REFERENCE_ARRAY;
+  }
 
-    public boolean isSimpleHeader() {
-        return false;
-    }
+  public boolean isSimpleHeader() {
+    return false;
+  }
 }

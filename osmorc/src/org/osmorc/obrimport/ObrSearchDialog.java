@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.obrimport.springsource.ObrMavenResult;
 
-import javax.swing.JComponent;
+import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -41,64 +41,53 @@ import java.beans.PropertyChangeListener;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
-public class ObrSearchDialog extends DialogWrapper
-{
-    /**
-     * Opens the search dialog and allows the user to query and return a maven artifact.
-     *
-     * @param project     the current project
-     * @param queryString a pre-set query string. Can be null.
-     * @return a result. If the user canceled the dialog or nothing was found, returns null.
-     */
-    public static
-    @Nullable
-    ObrMavenResult queryForMavenArtifact(@NotNull Project project, @Nullable String queryString)
-    {
-        ObrSearchDialog dialog = new ObrSearchDialog(project, QueryType.Maven);
-        dialog.setQueryString(queryString);
-        dialog.show();
-        if (!dialog.isOK())
-        {
-            return null;
-        }
-        else
-        {
-            return (ObrMavenResult) dialog.getResult();
-        }
+public class ObrSearchDialog extends DialogWrapper {
+  /**
+   * Opens the search dialog and allows the user to query and return a maven artifact.
+   *
+   * @param project     the current project
+   * @param queryString a pre-set query string. Can be null.
+   * @return a result. If the user canceled the dialog or nothing was found, returns null.
+   */
+  public static
+  @Nullable
+  ObrMavenResult queryForMavenArtifact(@NotNull Project project, @Nullable String queryString) {
+    ObrSearchDialog dialog = new ObrSearchDialog(project, QueryType.Maven);
+    dialog.setQueryString(queryString);
+    dialog.show();
+    if (!dialog.isOK()) {
+      return null;
     }
-
-    protected void setQueryString(String queryString)
-    {
-        _searchPanel.setQueryString(queryString);
+    else {
+      return (ObrMavenResult)dialog.getResult();
     }
+  }
 
-    protected Object getResult()
-    {
-        return _searchPanel.getResult();
-    }
+  protected void setQueryString(String queryString) {
+    _searchPanel.setQueryString(queryString);
+  }
 
-    protected ObrSearchDialog(Project project, QueryType queryType)
-    {
-        super(project, true);
-        setOKActionEnabled(false);
-        _searchPanel = new ObrSearchPanel(queryType);
-        _searchPanel.addPropertyChangeListener(new PropertyChangeListener()
-        {
-            public void propertyChange(PropertyChangeEvent evt)
-            {
-                setOKActionEnabled(_searchPanel.isHasResult());
-            }
-        });
-        setTitle("OBR search");
-        init();
+  protected Object getResult() {
+    return _searchPanel.getResult();
+  }
+
+  protected ObrSearchDialog(Project project, QueryType queryType) {
+    super(project, true);
+    setOKActionEnabled(false);
+    _searchPanel = new ObrSearchPanel(queryType);
+    _searchPanel.addPropertyChangeListener(new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent evt) {
+        setOKActionEnabled(_searchPanel.isHasResult());
+      }
+    });
+    setTitle("OBR search");
+    init();
     getRootPane().setDefaultButton(_searchPanel.getSearchButton());
-    }
+  }
 
-    protected JComponent createCenterPanel()
-    {
-        return _searchPanel.getRootPanel();
-    }
+  protected JComponent createCenterPanel() {
+    return _searchPanel.getRootPanel();
+  }
 
-    private final ObrSearchPanel _searchPanel;
-
+  private final ObrSearchPanel _searchPanel;
 }

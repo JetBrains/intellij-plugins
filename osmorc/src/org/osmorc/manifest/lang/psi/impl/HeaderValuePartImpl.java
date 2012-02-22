@@ -26,14 +26,14 @@
 package org.osmorc.manifest.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.stubs.IStubElementType;
-import com.intellij.openapi.components.ServiceManager;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.ManifestTokenType;
-import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
 import org.osmorc.manifest.lang.headerparser.HeaderParser;
+import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
 import org.osmorc.manifest.lang.psi.ManifestToken;
 import org.osmorc.manifest.lang.psi.stub.HeaderValuePartStub;
@@ -42,63 +42,64 @@ import org.osmorc.manifest.lang.psi.stub.HeaderValuePartStub;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class HeaderValuePartImpl extends ManifestElementBase<HeaderValuePartStub> implements HeaderValuePart {
-    private final HeaderParserRepository headerParserRepository;
+  private final HeaderParserRepository headerParserRepository;
 
-    public HeaderValuePartImpl(HeaderValuePartStub stub, @NotNull IStubElementType nodeType) {
-        super(stub, nodeType);
-        headerParserRepository = ServiceManager.getService(HeaderParserRepository.class);
+  public HeaderValuePartImpl(HeaderValuePartStub stub, @NotNull IStubElementType nodeType) {
+    super(stub, nodeType);
+    headerParserRepository = ServiceManager.getService(HeaderParserRepository.class);
+  }
+
+  public HeaderValuePartImpl(ASTNode node) {
+    super(node);
+    headerParserRepository = ServiceManager.getService(HeaderParserRepository.class);
+  }
+
+
+  @NotNull
+  public String getUnwrappedText() {
+    String result;
+    HeaderValuePartStub stub = getStub();
+    if (stub != null) {
+      result = stub.getUnwrappedText();
     }
-
-    public HeaderValuePartImpl(ASTNode node) {
-        super(node);
-        headerParserRepository = ServiceManager.getService(HeaderParserRepository.class);
-    }
-
-
-    @NotNull
-    public String getUnwrappedText() {
-        String result;
-        HeaderValuePartStub stub = getStub();
-        if (stub != null) {
-            result = stub.getUnwrappedText();
-        } else {
-            StringBuilder builder = new StringBuilder();
-            PsiElement element = getFirstChild();
-            while (element != null) {
-                boolean ignore = false;
-                if (element instanceof ManifestToken) {
-                    ManifestToken manifestToken = (ManifestToken) element;
-                    if (manifestToken.getTokenType() == ManifestTokenType.NEWLINE ||
-                            manifestToken.getTokenType() == ManifestTokenType.SIGNIFICANT_SPACE) {
-                        ignore = true;
-                    }
-                }
-                if (!ignore) {
-                    builder.append(element.getText());
-                }
-                element = element.getNextSibling();
-            }
-            
-            result = builder.toString();
+    else {
+      StringBuilder builder = new StringBuilder();
+      PsiElement element = getFirstChild();
+      while (element != null) {
+        boolean ignore = false;
+        if (element instanceof ManifestToken) {
+          ManifestToken manifestToken = (ManifestToken)element;
+          if (manifestToken.getTokenType() == ManifestTokenType.NEWLINE ||
+              manifestToken.getTokenType() == ManifestTokenType.SIGNIFICANT_SPACE) {
+            ignore = true;
+          }
         }
-        return result.trim();
-    }
-
-    public Object getConvertedValue() {
-        HeaderParser headerParser = headerParserRepository.getHeaderParser(this);
-        if (headerParser != null) {
-            return headerParser.getValue(this);
+        if (!ignore) {
+          builder.append(element.getText());
         }
-        return null;
-    }
+        element = element.getNextSibling();
+      }
 
-    @NotNull
-    @Override
-    public PsiReference[] getReferences() {
-        HeaderParser headerParser = headerParserRepository.getHeaderParser(this);
-        if (headerParser != null) {
-            return headerParser.getReferences(this);
-        }
-        return PsiReference.EMPTY_ARRAY;
+      result = builder.toString();
     }
+    return result.trim();
+  }
+
+  public Object getConvertedValue() {
+    HeaderParser headerParser = headerParserRepository.getHeaderParser(this);
+    if (headerParser != null) {
+      return headerParser.getValue(this);
+    }
+    return null;
+  }
+
+  @NotNull
+  @Override
+  public PsiReference[] getReferences() {
+    HeaderParser headerParser = headerParserRepository.getHeaderParser(this);
+    if (headerParser != null) {
+      return headerParser.getReferences(this);
+    }
+    return PsiReference.EMPTY_ARRAY;
+  }
 }

@@ -76,6 +76,7 @@ public class FrameworkInstanceLibraryManager {
 
   /**
    * Tests, if the given library order entry represents a framework instance library (as controlled by this manager).
+   *
    * @param libraryOrderEntry the order entry
    * @return true if the given entry is a framework instance library, false otherwise.
    */

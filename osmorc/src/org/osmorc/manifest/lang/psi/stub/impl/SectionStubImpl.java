@@ -35,7 +35,7 @@ import org.osmorc.manifest.lang.psi.stub.SectionStub;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class SectionStubImpl extends StubBase<Section> implements SectionStub {
-    public SectionStubImpl(StubElement parent) {
-        super(parent, ManifestStubElementTypes.SECTION);
-    }
+  public SectionStubImpl(StubElement parent) {
+    super(parent, ManifestStubElementTypes.SECTION);
+  }
 }

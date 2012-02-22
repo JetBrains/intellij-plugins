@@ -40,13 +40,13 @@ public class ConciergeFrameworkRunner extends AbstractPaxBasedFrameworkRunner<Co
   }
 
   @NotNull
-    protected ConciergeRunProperties convertProperties(Map<String, String> properties) {
-        return new ConciergeRunProperties(properties);
-    }
+  protected ConciergeRunProperties convertProperties(Map<String, String> properties) {
+    return new ConciergeRunProperties(properties);
+  }
 
-    @NotNull
-    @Override
-    protected String getOsgiFrameworkName() {
-        return "Concierge";
-    }
+  @NotNull
+  @Override
+  protected String getOsgiFrameworkName() {
+    return "Concierge";
+  }
 }

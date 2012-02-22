@@ -42,11 +42,11 @@ public class BundlorWrapper {
 
     Properties props = new Properties();
 
-    if ( mpm.isMavenizedProject() ) {
+    if (mpm.isMavenizedProject()) {
       Module[] affectedModules = compileContext.getCompileScope().getAffectedModules();
       for (Module affectedModule : affectedModules) {
         MavenProject project = mpm.findProject(affectedModule);
-        if ( project != null ) {
+        if (project != null) {
           props.putAll(project.getProperties());
         }
       }
@@ -82,6 +82,4 @@ public class BundlorWrapper {
     }
     return true;
   }
-
-
 }

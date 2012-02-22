@@ -33,8 +33,7 @@ import javax.swing.*;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public interface FrameworkRunPropertiesEditor
-{
+public interface FrameworkRunPropertiesEditor {
   void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration);
 
   void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException;

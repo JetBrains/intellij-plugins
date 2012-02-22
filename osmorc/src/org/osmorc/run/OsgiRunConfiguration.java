@@ -155,11 +155,11 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     }
 
     String dfsl = element.getAttributeValue(DEFAULT_START_LEVEL);
-    if ( dfsl != null ) {
+    if (dfsl != null) {
       try {
         defaultStartLevel = Integer.parseInt(dfsl);
       }
-      catch( NumberFormatException e) {
+      catch (NumberFormatException e) {
         defaultStartLevel = 5;
       }
     }

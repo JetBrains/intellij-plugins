@@ -34,13 +34,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PackageReferenceSet extends ReferenceSetBase<PackageReference> {
 
-    public PackageReferenceSet(@NotNull final String str, @NotNull final PsiElement element, final int startInElement) {
-        super(str, element, startInElement, '.');
-    }
+  public PackageReferenceSet(@NotNull final String str, @NotNull final PsiElement element, final int startInElement) {
+    super(str, element, startInElement, '.');
+  }
 
-    @NotNull
-    protected PackageReference createReference(final TextRange range, final int index) {
-        return new PackageReference(this, range, index);
-    }
-
+  @NotNull
+  protected PackageReference createReference(final TextRange range, final int index) {
+    return new PackageReference(this, range, index);
+  }
 }

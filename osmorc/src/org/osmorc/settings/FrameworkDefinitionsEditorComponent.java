@@ -40,7 +40,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -217,6 +216,6 @@ public class FrameworkDefinitionsEditorComponent {
   }
 
   public void dispose() {
-    
+
   }
 }

@@ -40,43 +40,43 @@ import org.osmorc.manifest.ManifestFileTypeFactory;
  * @version $Id:$
  */
 public class ManifestEditor extends EditorTextField implements Disposable {
-    private final ManifestEditor.MyDocumentAdapter listener = new MyDocumentAdapter();
+  private final ManifestEditor.MyDocumentAdapter listener = new MyDocumentAdapter();
 
 
-    public ManifestEditor(Project project, String text) {
-        super("", project, ManifestFileTypeFactory.MANIFEST);
-        addDocumentListener(listener);
-        setText(text);
-    }
-
-  public void setText(String text) {
-        if (text == null) {
-          text = "";
-        }
-        super.setText(text);
+  public ManifestEditor(Project project, String text) {
+    super("", project, ManifestFileTypeFactory.MANIFEST);
+    addDocumentListener(listener);
+    setText(text);
   }
 
-    protected EditorEx createEditor() {
-        EditorEx editor = super.createEditor();
-        editor.setVerticalScrollbarVisible(true);
-        editor.setHorizontalScrollbarVisible(true);
-        return editor;
+  public void setText(String text) {
+    if (text == null) {
+      text = "";
     }
+    super.setText(text);
+  }
 
-    @Override
-    protected boolean isOneLineMode() {
-        return false;
-    }
+  protected EditorEx createEditor() {
+    EditorEx editor = super.createEditor();
+    editor.setVerticalScrollbarVisible(true);
+    editor.setHorizontalScrollbarVisible(true);
+    return editor;
+  }
+
+  @Override
+  protected boolean isOneLineMode() {
+    return false;
+  }
 
   public void dispose() {
-        removeDocumentListener(listener);
-    }
+    removeDocumentListener(listener);
+  }
 
 
-    private class MyDocumentAdapter extends DocumentAdapter {
-        @Override
-        public void documentChanged(DocumentEvent e) {
-            firePropertyChange("text", null, null);
-        }
+  private class MyDocumentAdapter extends DocumentAdapter {
+    @Override
+    public void documentChanged(DocumentEvent e) {
+      firePropertyChange("text", null, null);
     }
+  }
 }

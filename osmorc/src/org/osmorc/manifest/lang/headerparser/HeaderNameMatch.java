@@ -35,51 +35,50 @@ import org.jetbrains.annotations.NotNull;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class HeaderNameMatch implements Comparable<HeaderNameMatch> {
-    public HeaderNameMatch(int distance, @NotNull HeaderParserProvider provider) {
-        _distance = distance;
-        _provider = provider;
+  public HeaderNameMatch(int distance, @NotNull HeaderParserProvider provider) {
+    _distance = distance;
+    _provider = provider;
+  }
+
+  public int getDistance() {
+    return _distance;
+  }
+
+  public HeaderParserProvider getProvider() {
+    return _provider;
+  }
+
+  /**
+   * Matches are compared baaed on their distance from their Levenshtein distance.
+   *
+   * @param o
+   * @return
+   */
+  public int compareTo(HeaderNameMatch o) {
+    return getDistance() - o.getDistance();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
     }
 
-    public int getDistance() {
-        return _distance;
-    }
+    HeaderNameMatch that = (HeaderNameMatch)o;
 
-    public HeaderParserProvider getProvider() {
-        return _provider;
-    }
+    return _distance == that._distance && _provider.equals(that._provider);
+  }
 
-    /**
-     * Matches are compared baaed on their distance from their Levenshtein distance.
-     *
-     * @param o
-     * @return
-     */
-    public int compareTo(HeaderNameMatch o) {
-        return getDistance() - o.getDistance();
-    }
+  @Override
+  public int hashCode() {
+    int result = _distance;
+    result = 31 * result + _provider.hashCode();
+    return result;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        HeaderNameMatch that = (HeaderNameMatch) o;
-
-        return _distance == that._distance && _provider.equals(that._provider);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = _distance;
-        result = 31 * result + _provider.hashCode();
-        return result;
-    }
-
-    private final int _distance;
-    private final HeaderParserProvider _provider;
+  private final int _distance;
+  private final HeaderParserProvider _provider;
 }

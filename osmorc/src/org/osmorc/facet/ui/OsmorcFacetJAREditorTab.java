@@ -299,8 +299,8 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     myAdditionalJarContentsPanel.setEnabled(!useExternalTool);
     myFileIgnorePatternLabel.setEnabled(!useExternalTool);
     myValidatorsManager.validate();
-    if (myPlaceInThisPathRadioButton.isSelected() && myJarOutputPathChooser.getText().trim().length()==0) {
-     myErrorText.setError("Please select an output path");
+    if (myPlaceInThisPathRadioButton.isSelected() && myJarOutputPathChooser.getText().trim().length() == 0) {
+      myErrorText.setError("Please select an output path");
     }
     else {
       myErrorText.setError(null);
@@ -347,7 +347,8 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     if (file != null) {
       if (VfsUtil.isAncestor(moduleCompilerOutputPath, file, false)) {
         Messages.showErrorDialog(myEditorContext.getProject(),
-                                 OsmorcBundle.getTranslation("faceteditor.jar.cannot.be.in.output.path"), OsmorcBundle.getTranslation("error"));
+                                 OsmorcBundle.getTranslation("faceteditor.jar.cannot.be.in.output.path"),
+                                 OsmorcBundle.getTranslation("error"));
         myJarOutputPathChooser.setText("");
         return;
       }
@@ -401,10 +402,10 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
 
   OsmorcFacetConfiguration.OutputPathType getSelectedOutputPathType() {
     return myPlaceInProjectWideRadioButton.isSelected()
-                                                       ? OsgiOutputPath
-                                                       : myPlaceInCompilerOutputPathRadioButton.isSelected()
-                                                         ? CompilerOutputPath
-                                                         : SpecificOutputPath;
+           ? OsgiOutputPath
+           : myPlaceInCompilerOutputPathRadioButton.isSelected()
+             ? CompilerOutputPath
+             : SpecificOutputPath;
   }
 
   public void reset() {

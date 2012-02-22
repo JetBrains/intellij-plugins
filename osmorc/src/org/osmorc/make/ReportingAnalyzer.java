@@ -33,41 +33,35 @@ import java.text.MessageFormat;
 
 /**
  * Created by IntelliJ IDEA. User: kork Date: Jul 20, 2009 Time: 9:51:04 PM To change this template use File | Settings
-* | File Templates.
-*/
-class ReportingAnalyzer extends Analyzer
-{
-  public ReportingAnalyzer(CompileContext context, String sourceFileName)
-  {
+ * | File Templates.
+ */
+class ReportingAnalyzer extends Analyzer {
+  public ReportingAnalyzer(CompileContext context, String sourceFileName) {
     super();    //To change body of overridden methods use File | Settings | File Templates.
     _context = context;
     _sourceFileName = sourceFileName;
   }
 
   @Override
-  public void error(String s, Object... objects)
-  {
-    _context.addMessage(CompilerMessageCategory.ERROR, MessageFormat.format(s, objects), _sourceFileName, 0,0);
+  public void error(String s, Object... objects) {
+    _context.addMessage(CompilerMessageCategory.ERROR, MessageFormat.format(s, objects), _sourceFileName, 0, 0);
   }
 
   @Override
-  public void error(String s, Throwable throwable, Object... objects)
-  {
-    _context.addMessage(CompilerMessageCategory.ERROR, MessageFormat.format(s, objects) + "(" + throwable.getMessage() + ")", _sourceFileName, 0, 0);
+  public void error(String s, Throwable throwable, Object... objects) {
+    _context
+      .addMessage(CompilerMessageCategory.ERROR, MessageFormat.format(s, objects) + "(" + throwable.getMessage() + ")", _sourceFileName, 0,
+                  0);
   }
 
   @Override
-  public void warning(String s, Object... objects)
-  {
-    _context.addMessage(CompilerMessageCategory.WARNING, MessageFormat.format(s, objects), _sourceFileName, 0,0);
-
+  public void warning(String s, Object... objects) {
+    _context.addMessage(CompilerMessageCategory.WARNING, MessageFormat.format(s, objects), _sourceFileName, 0, 0);
   }
 
   @Override
-  public void progress(String s, Object... objects)
-  {
-    _context.addMessage(CompilerMessageCategory.INFORMATION, MessageFormat.format(s, objects), _sourceFileName, 0,0);
-
+  public void progress(String s, Object... objects) {
+    _context.addMessage(CompilerMessageCategory.INFORMATION, MessageFormat.format(s, objects), _sourceFileName, 0, 0);
   }
 
   private final CompileContext _context;

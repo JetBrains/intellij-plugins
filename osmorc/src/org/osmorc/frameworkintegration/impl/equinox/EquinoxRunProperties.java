@@ -58,5 +58,4 @@ public class EquinoxRunProperties extends GenericRunProperties {
 
   public static final String EQUINOX_PRODUCT = "equinoxProduct";
   public static final String EQUINOX_APPLICATION = "equinoxApplication";
-
 }

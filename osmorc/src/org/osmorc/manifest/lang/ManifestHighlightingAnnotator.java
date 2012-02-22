@@ -25,37 +25,42 @@
 
 package org.osmorc.manifest.lang;
 
-import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.psi.PsiElement;
+import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.psi.PsiElement;
 import org.osmorc.manifest.lang.psi.*;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ManifestHighlightingAnnotator implements Annotator {
-    public void annotate(PsiElement psiElement, AnnotationHolder holder) {
-        if (psiElement instanceof Attribute) {
-            annotate(((Attribute) psiElement).getNamePsi(), ManifestColorsAndFonts.ATTRIBUTE_NAME_KEY, holder);
-        } else if (psiElement instanceof Directive) {
-            annotate(((Directive) psiElement).getNamePsi(), ManifestColorsAndFonts.DIRECTIVE_NAME_KEY, holder);
-        } else if (psiElement instanceof ManifestToken) {
-            ManifestToken manifestToken = (ManifestToken) psiElement;
-            if (manifestToken.getParent() instanceof Attribute && manifestToken.getTokenType() == ManifestTokenType.EQUALS) {
-                annotate(manifestToken, ManifestColorsAndFonts.ATTRIBUTE_ASSIGNMENT_KEY, holder);
-            } else if (manifestToken.getParent() instanceof Directive && (manifestToken.getTokenType() == ManifestTokenType.COLON || manifestToken.getTokenType() == ManifestTokenType.EQUALS)) {
-                annotate(manifestToken, ManifestColorsAndFonts.DIRECTIVE_ASSIGNMENT_KEY, holder);    
-            } else if (manifestToken.getParent() instanceof Clause && manifestToken.getTokenType() == ManifestTokenType.SEMICOLON) {
-                annotate(manifestToken, ManifestColorsAndFonts.PARAMETER_SEPARATOR_KEY, holder);
-            } else if (manifestToken.getParent() instanceof Header && manifestToken.getTokenType() == ManifestTokenType.COMMA) {
-                annotate(manifestToken, ManifestColorsAndFonts.CLAUSE_SEPARATOR_KEY, holder);    
-            }
-        }
+  public void annotate(PsiElement psiElement, AnnotationHolder holder) {
+    if (psiElement instanceof Attribute) {
+      annotate(((Attribute)psiElement).getNamePsi(), ManifestColorsAndFonts.ATTRIBUTE_NAME_KEY, holder);
     }
-
-    private void annotate(PsiElement element, TextAttributesKey textAttributesKey, AnnotationHolder holder) {
-        holder.createWeakWarningAnnotation(element, null).setTextAttributes(textAttributesKey);
-
+    else if (psiElement instanceof Directive) {
+      annotate(((Directive)psiElement).getNamePsi(), ManifestColorsAndFonts.DIRECTIVE_NAME_KEY, holder);
     }
+    else if (psiElement instanceof ManifestToken) {
+      ManifestToken manifestToken = (ManifestToken)psiElement;
+      if (manifestToken.getParent() instanceof Attribute && manifestToken.getTokenType() == ManifestTokenType.EQUALS) {
+        annotate(manifestToken, ManifestColorsAndFonts.ATTRIBUTE_ASSIGNMENT_KEY, holder);
+      }
+      else if (manifestToken.getParent() instanceof Directive &&
+               (manifestToken.getTokenType() == ManifestTokenType.COLON || manifestToken.getTokenType() == ManifestTokenType.EQUALS)) {
+        annotate(manifestToken, ManifestColorsAndFonts.DIRECTIVE_ASSIGNMENT_KEY, holder);
+      }
+      else if (manifestToken.getParent() instanceof Clause && manifestToken.getTokenType() == ManifestTokenType.SEMICOLON) {
+        annotate(manifestToken, ManifestColorsAndFonts.PARAMETER_SEPARATOR_KEY, holder);
+      }
+      else if (manifestToken.getParent() instanceof Header && manifestToken.getTokenType() == ManifestTokenType.COMMA) {
+        annotate(manifestToken, ManifestColorsAndFonts.CLAUSE_SEPARATOR_KEY, holder);
+      }
+    }
+  }
+
+  private void annotate(PsiElement element, TextAttributesKey textAttributesKey, AnnotationHolder holder) {
+    holder.createWeakWarningAnnotation(element, null).setTextAttributes(textAttributesKey);
+  }
 }

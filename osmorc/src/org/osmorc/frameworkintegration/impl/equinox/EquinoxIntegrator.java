@@ -25,16 +25,15 @@
 package org.osmorc.frameworkintegration.impl.equinox;
 
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.FrameworkRunner;
 import org.osmorc.frameworkintegration.BundleSelectionAction;
+import org.osmorc.frameworkintegration.FrameworkRunner;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkIntegrator;
 import org.osmorc.frameworkintegration.impl.equinox.ui.EquinoxRunPropertiesEditor;
-import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
-import org.osmorc.run.OsgiRunConfigurationCheckerProvider;
 import org.osmorc.run.OsgiRunConfigurationChecker;
+import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
 
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Equinox specific implementation of {@link org.osmorc.frameworkintegration.FrameworkIntegrator}.
@@ -42,40 +41,40 @@ import java.util.Arrays;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class EquinoxIntegrator extends AbstractFrameworkIntegrator {
-    private final EquinoxOsgiRunConfigurationChecker checker;
-    private static final BundleSelectionAction[] ACTIONS = new BundleSelectionAction[]{
-            //new AdaptToRunWithUpdateConfiguratorAction(),
-            new AdaptToRunWithoutUpdateConfigurator()};
+  private final EquinoxOsgiRunConfigurationChecker checker;
+  private static final BundleSelectionAction[] ACTIONS = new BundleSelectionAction[]{
+    //new AdaptToRunWithUpdateConfiguratorAction(),
+    new AdaptToRunWithoutUpdateConfigurator()};
 
-    public EquinoxIntegrator(EquinoxFrameworkInstanceManager frameworkInstanceManager) {
-        super(frameworkInstanceManager);
-        checker = new EquinoxOsgiRunConfigurationChecker();
-    }
+  public EquinoxIntegrator(EquinoxFrameworkInstanceManager frameworkInstanceManager) {
+    super(frameworkInstanceManager);
+    checker = new EquinoxOsgiRunConfigurationChecker();
+  }
 
 
-    @NotNull
-    public FrameworkRunner createFrameworkRunner() {
-        return new EquinoxFrameworkRunner();
-    }
+  @NotNull
+  public FrameworkRunner createFrameworkRunner() {
+    return new EquinoxFrameworkRunner();
+  }
 
-    @NotNull
-    public String getDisplayName() {
-        return FRAMEWORK_NAME;
-    }
+  @NotNull
+  public String getDisplayName() {
+    return FRAMEWORK_NAME;
+  }
 
-    @Override
-    public FrameworkRunPropertiesEditor createRunPropertiesEditor() {
-        return new EquinoxRunPropertiesEditor();
-    }
+  @Override
+  public FrameworkRunPropertiesEditor createRunPropertiesEditor() {
+    return new EquinoxRunPropertiesEditor();
+  }
 
-    public OsgiRunConfigurationChecker getOsgiRunConfigurationChecker() {
-        return checker;
-    }
+  public OsgiRunConfigurationChecker getOsgiRunConfigurationChecker() {
+    return checker;
+  }
 
-    @NotNull
-    public List<BundleSelectionAction> getBundleSelectionActions() {
-        return Arrays.asList(ACTIONS);
-    }
+  @NotNull
+  public List<BundleSelectionAction> getBundleSelectionActions() {
+    return Arrays.asList(ACTIONS);
+  }
 
-    private static final String FRAMEWORK_NAME = "Equinox";
+  private static final String FRAMEWORK_NAME = "Equinox";
 }

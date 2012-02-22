@@ -33,7 +33,7 @@ import org.osmorc.manifest.lang.psi.stub.AttributeStub;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class AttributeStubImpl extends AbstractAssignmentExpressionStubImpl implements AttributeStub {
-    public AttributeStubImpl(StubElement parent, String name, String value) {
-        super(parent, ManifestStubElementTypes.ATTRIBUTE, name, value);
-    }
+  public AttributeStubImpl(StubElement parent, String name, String value) {
+    super(parent, ManifestStubElementTypes.ATTRIBUTE, name, value);
+  }
 }

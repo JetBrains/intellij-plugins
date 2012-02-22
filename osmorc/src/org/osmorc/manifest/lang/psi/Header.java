@@ -46,6 +46,7 @@ public interface Header extends PsiNamedElement, StubBasedPsiElement<HeaderStub>
 
   /**
    * Returns the converted value of the first clause of this header. This is useful for simple headers that contain one value only.
+   *
    * @return the converted value or null if the value could not be converted or this header has no value.
    */
   @Nullable

@@ -30,9 +30,9 @@ import com.intellij.lang.Language;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ManifestLanguage extends Language {
-    public ManifestLanguage() {
-        super("Manifest");
-    }
+  public ManifestLanguage() {
+    super("Manifest");
+  }
 
-    public static final ManifestLanguage INSTANCE = new ManifestLanguage();
+  public static final ManifestLanguage INSTANCE = new ManifestLanguage();
 }

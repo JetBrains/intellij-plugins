@@ -34,14 +34,14 @@ import java.awt.*;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class StartLevelCellEditor extends IntegerEditor {
-    public StartLevelCellEditor() {
-        super(1, Integer.MAX_VALUE);
-        ftf.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        integerFormat.setGroupingUsed(false);
-    }
+  public StartLevelCellEditor() {
+    super(1, Integer.MAX_VALUE);
+    ftf.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+    integerFormat.setGroupingUsed(false);
+  }
 
-    @Override
-    protected boolean userSaysRevert() {
-        return true;
-    }
+  @Override
+  protected boolean userSaysRevert() {
+    return true;
+  }
 }

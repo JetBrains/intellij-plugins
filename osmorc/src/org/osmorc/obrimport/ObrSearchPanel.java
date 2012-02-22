@@ -69,7 +69,6 @@ public class ObrSearchPanel extends ProgressIndicatorBase {
       public void customize(JList list, Obr value, int index, boolean selected, boolean hasFocus) {
         setText(value.getDisplayName());
       }
-
     });
     _resultList.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
@@ -122,10 +121,8 @@ public class ObrSearchPanel extends ProgressIndicatorBase {
           stop();
         }
       }
-
     });
     t.start();
-
   }
 
   public JPanel getRootPanel() {
@@ -220,5 +217,4 @@ public class ObrSearchPanel extends ProgressIndicatorBase {
   private JComboBox _obrBox;
   private final QueryType _queryType;
   private final List<PropertyChangeListener> propertyChangeListeners = new ArrayList<PropertyChangeListener>();
-
 }

@@ -93,7 +93,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
   }
 
   public void projectOpened() {
-   // the project component will rebuild indices
+    // the project component will rebuild indices
   }
 
   public void projectClosed() {
@@ -109,7 +109,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
   private void buildManuallyEditedManifestIndex() {
     final OsmorcFacet facet = OsmorcFacet.getInstance(myModule);
     if (facet != null && facet.getConfiguration().isManifestManuallyEdited()) {
-        myApplication.invokeLater(new Runnable() {
+      myApplication.invokeLater(new Runnable() {
         public void run() {
           if (myModule.isDisposed()) return;
           ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();

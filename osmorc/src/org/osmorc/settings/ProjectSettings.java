@@ -43,6 +43,7 @@ import java.util.EventListener;
 
 /**
  * This class stores Osmorc's project settings.
+ *
  * @author Robert F. Beeger (robert@beeger.net)
  * @author Jan Thom&auml; (janthomae@janthomae.de)
  */
@@ -57,11 +58,12 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
   private boolean _createFrameworkInstanceModule;
   private @NotNull String _defaultManifestFileLocation = "META-INF/MANIFEST.MF";
   private @Nullable String _bundlesOutputPath;
-  private @NotNull ManifestSynchronizationType myManifestSynchronizationType =  ManifestSynchronizationType.ManuallySynchronize;
+  private @NotNull ManifestSynchronizationType myManifestSynchronizationType = ManifestSynchronizationType.ManuallySynchronize;
 
 
   /**
    * Returns the default output path for bundles. This is the compiler output path plus "/bundles" (e.g. $PROJECT_ROOT/out/bundles).
+   *
    * @param project the project for wich the output path should be returned
    * @return the output path.
    */
@@ -71,7 +73,7 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
     if (instance != null) {
       final VirtualFilePointer compilerOutput = instance.getCompilerOutputPointer();
       if (compilerOutput != null) {
-        return VfsUtil.urlToPath(compilerOutput.getUrl())+"/bundles";
+        return VfsUtil.urlToPath(compilerOutput.getUrl()) + "/bundles";
       }
     }
     // this actually should never happen (only in tests)
@@ -80,6 +82,7 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
 
   /**
    * Returns the project settings for the given project.
+   *
    * @param project the project
    * @return an instance of the project settings for the given prject.
    */
@@ -90,6 +93,7 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
 
   /**
    * The synchronization type for manually edited manifests.
+   *
    * @return the synchronization type.
    */
   @NotNull
@@ -102,21 +106,23 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
   }
 
   /**
-    * The project wide bundle output path. All compiled bundles will be put in this path. This can be overriden by facet settings.
-    * @return the output path.
-    */
-   @Nullable
-   public String getBundlesOutputPath() {
-     return _bundlesOutputPath;
-   }
+   * The project wide bundle output path. All compiled bundles will be put in this path. This can be overriden by facet settings.
+   *
+   * @return the output path.
+   */
+  @Nullable
+  public String getBundlesOutputPath() {
+    return _bundlesOutputPath;
+  }
 
-   public void setBundlesOutputPath(@Nullable String _bundlesOutputPath) {
-     this._bundlesOutputPath = _bundlesOutputPath;
-   }
+  public void setBundlesOutputPath(@Nullable String _bundlesOutputPath) {
+    this._bundlesOutputPath = _bundlesOutputPath;
+  }
 
 
   /**
    * The name of the framework instance that should be used for this project.
+   *
    * @return the framework instance name.
    */
   @Nullable
@@ -145,6 +151,7 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
 
   /**
    * If Osmorc shall create and maintain a library containing the jars of the selected framework.
+   *
    * @return true if Osmorc should do this, false otherwise
    */
   public boolean isCreateFrameworkInstanceModule() {
@@ -162,6 +169,7 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
 
   /**
    * Allows adding a listener that will be notified if project settings change.
+   *
    * @param listener the listener to be added
    */
   public void addProjectSettingsListener(@NotNull ProjectSettingsListener listener) {
@@ -170,6 +178,7 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
 
   /**
    * Allows removing a listener.
+   *
    * @param listener the listener to be removed.
    */
   public void removeProjectSettingsListener(@NotNull ProjectSettingsListener listener) {
@@ -185,7 +194,7 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
   /**
    * Interface for project settings listeners.
    */
-  public  interface ProjectSettingsListener extends EventListener {
+  public interface ProjectSettingsListener extends EventListener {
     void projectSettingsChanged();
   }
 

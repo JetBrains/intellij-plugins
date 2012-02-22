@@ -25,31 +25,31 @@
 
 package org.osmorc.manifest.lang.psi.stub.impl;
 
-import org.osmorc.manifest.lang.psi.AssignmentExpression;
-import org.osmorc.manifest.lang.psi.stub.AssignmentExpressionStub;
+import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.IStubElementType;
+import org.osmorc.manifest.lang.psi.AssignmentExpression;
+import org.osmorc.manifest.lang.psi.stub.AssignmentExpressionStub;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public abstract class AbstractAssignmentExpressionStubImpl extends StubBase<AssignmentExpression> implements AssignmentExpressionStub {
-    private final String name;
-    private final String value;
+  private final String name;
+  private final String value;
 
-    protected AbstractAssignmentExpressionStubImpl(StubElement parent, IStubElementType elementType, String name, String value) {
-        super(parent, elementType);
-        this.name = name;
-        this.value = value;
-    }
+  protected AbstractAssignmentExpressionStubImpl(StubElement parent, IStubElementType elementType, String name, String value) {
+    super(parent, elementType);
+    this.name = name;
+    this.value = value;
+  }
 
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getValue() {
-        return value;
-    }
+  public String getValue() {
+    return value;
+  }
 }

@@ -37,16 +37,15 @@ import org.osmorc.valueobject.Version;
 public class BundleVersionParser extends AbstractHeaderParserImpl {
   private static final ValueParser<Version> VERSION_PARSER = new VersionParser();
 
-    public void annotate(@NotNull HeaderValuePart headerValue, @NotNull AnnotationHolder holder) {
-        getVersionParser().parseValue(headerValue, holder);
-    }
+  public void annotate(@NotNull HeaderValuePart headerValue, @NotNull AnnotationHolder holder) {
+    getVersionParser().parseValue(headerValue, holder);
+  }
 
   private static ValueParser<Version> getVersionParser() {
     return VERSION_PARSER;
   }
 
   public Object getValue(@NotNull HeaderValuePart headerValuePart) {
-        return getVersionParser().parseValue(headerValuePart, null);
-    }
-
+    return getVersionParser().parseValue(headerValuePart, null);
+  }
 }

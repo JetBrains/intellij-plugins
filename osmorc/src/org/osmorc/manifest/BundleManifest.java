@@ -99,6 +99,7 @@ public interface BundleManifest {
 
   /**
    * Returns a list of entries in the BundleClasspath header.
+   *
    * @return a list of entries. If the header does not exist, or does not have entries, returns an empty list.
    */
   @NotNull
@@ -115,6 +116,7 @@ public interface BundleManifest {
   /**
    * Returns true, if this bundle re-exports the given bundle. This is the case if this bundle has a Require-Bundle
    * header containing the given bundle and the header value has the visiblity-directive set to reexport.
+   *
    * @param
    * @return true, if this bundle re-exports the given bundle, false otherwise.
    */
@@ -122,12 +124,14 @@ public interface BundleManifest {
 
   /**
    * Returns true if this manifest represents a fragment bundle.
+   *
    * @return true if the manifest represents a fragement bundle, false otherwise..
    */
   boolean isFragmentBundle();
 
   /**
    * Checks, if this bundle would be a potential fragment host for the given fragment bundle.
+   *
    * @param fragmentBundle the fragment bundle
    * @return
    */
@@ -136,7 +140,8 @@ public interface BundleManifest {
 
   /**
    * A list of bundle specs which are re-exported by this bundle. It is the complement of {@link #reExportsBundle(BundleManifest)}.
-   * @return  a list of exported bundles. If no bundles are re-exported the list is empty.
+   *
+   * @return a list of exported bundles. If no bundles are re-exported the list is empty.
    */
   @NotNull
   List<String> getReExportedBundles();

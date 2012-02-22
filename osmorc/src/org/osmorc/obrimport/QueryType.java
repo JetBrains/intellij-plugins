@@ -31,7 +31,6 @@ package org.osmorc.obrimport;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
-enum QueryType
-{
+enum QueryType {
   Maven;
 }

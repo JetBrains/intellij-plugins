@@ -25,14 +25,14 @@
 package org.osmorc.frameworkintegration.impl.concierge;
 
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.FrameworkRunner;
 import org.osmorc.frameworkintegration.BundleSelectionAction;
+import org.osmorc.frameworkintegration.FrameworkRunner;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkIntegrator;
 import org.osmorc.frameworkintegration.impl.concierge.ui.ConciergeRunPropertiesEditor;
 import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
 
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Concierge specific implementation of {@link org.osmorc.frameworkintegration.FrameworkIntegrator}.
@@ -40,30 +40,30 @@ import java.util.Collections;
  * @author <a href="mailto:al@chilibi.org">Alain Greppin</a>
  */
 public class ConciergeIntegrator extends AbstractFrameworkIntegrator {
-    public ConciergeIntegrator(ConciergeFrameworkInstanceManager frameworkInstanceManager) {
-        super(frameworkInstanceManager);
-    }
+  public ConciergeIntegrator(ConciergeFrameworkInstanceManager frameworkInstanceManager) {
+    super(frameworkInstanceManager);
+  }
 
-    @NotNull
-    public FrameworkRunner createFrameworkRunner() {
-        return new ConciergeFrameworkRunner();
-    }
+  @NotNull
+  public FrameworkRunner createFrameworkRunner() {
+    return new ConciergeFrameworkRunner();
+  }
 
-    @NotNull
-    public String getDisplayName() {
-        return FRAMEWORK_NAME;
-    }
+  @NotNull
+  public String getDisplayName() {
+    return FRAMEWORK_NAME;
+  }
 
 
-    @Override
-    public FrameworkRunPropertiesEditor createRunPropertiesEditor() {
-        return new ConciergeRunPropertiesEditor();
-    }
+  @Override
+  public FrameworkRunPropertiesEditor createRunPropertiesEditor() {
+    return new ConciergeRunPropertiesEditor();
+  }
 
-    @NotNull
-    public List<BundleSelectionAction> getBundleSelectionActions() {
-        return Collections.emptyList();
-    }
+  @NotNull
+  public List<BundleSelectionAction> getBundleSelectionActions() {
+    return Collections.emptyList();
+  }
 
-    private static final String FRAMEWORK_NAME = "Concierge";
+  private static final String FRAMEWORK_NAME = "Concierge";
 }

@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.util.FileUtil;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 /**

@@ -33,11 +33,11 @@ import java.util.Collection;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public interface HeaderParserProviderRepository {
-    /**
-     * Return the unmodifieable collection of header providers of this repository.
-     *
-     * @return the unmodifieable collection of header providers of this repository
-     */
-    @NotNull
-    Collection<HeaderParserProvider> getHeaderParserProviders();
+  /**
+   * Return the unmodifieable collection of header providers of this repository.
+   *
+   * @return the unmodifieable collection of header providers of this repository
+   */
+  @NotNull
+  Collection<HeaderParserProvider> getHeaderParserProviders();
 }

@@ -25,11 +25,11 @@
 
 package org.osmorc.manifest.lang.psi.elementtype;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
 import org.osmorc.manifest.lang.psi.impl.HeaderValuePartImpl;
@@ -41,34 +41,34 @@ import java.io.IOException;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class HeaderValuePartElementType extends AbstractManifestStubElementType<HeaderValuePartStub, HeaderValuePart>  {
-    public HeaderValuePartElementType() {
-        super("HEADER_VALUE_PART");
-    }
+public class HeaderValuePartElementType extends AbstractManifestStubElementType<HeaderValuePartStub, HeaderValuePart> {
+  public HeaderValuePartElementType() {
+    super("HEADER_VALUE_PART");
+  }
 
-    @Override
-    public HeaderValuePart createPsi(@NotNull HeaderValuePartStub stub) {
-        return new HeaderValuePartImpl(stub, this);
-    }
+  @Override
+  public HeaderValuePart createPsi(@NotNull HeaderValuePartStub stub) {
+    return new HeaderValuePartImpl(stub, this);
+  }
 
-    @Override
-    public HeaderValuePart createPsi(ASTNode node) {
-        return new HeaderValuePartImpl(node);
-    }
+  @Override
+  public HeaderValuePart createPsi(ASTNode node) {
+    return new HeaderValuePartImpl(node);
+  }
 
-    @Override
-    public HeaderValuePartStub createStub(@NotNull HeaderValuePart psi, StubElement parentStub) {
-        return new HeaderValuePartStubImpl(parentStub, psi.getUnwrappedText());
-    }
+  @Override
+  public HeaderValuePartStub createStub(@NotNull HeaderValuePart psi, StubElement parentStub) {
+    return new HeaderValuePartStubImpl(parentStub, psi.getUnwrappedText());
+  }
 
-    public void serialize(HeaderValuePartStub stub, StubOutputStream dataStream) throws IOException {
-        dataStream.writeUTFFast(stub.getUnwrappedText());
-    }
+  public void serialize(HeaderValuePartStub stub, StubOutputStream dataStream) throws IOException {
+    dataStream.writeUTFFast(stub.getUnwrappedText());
+  }
 
-    public HeaderValuePartStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return new HeaderValuePartStubImpl(parentStub, dataStream.readUTFFast());
-    }
+  public HeaderValuePartStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+    return new HeaderValuePartStubImpl(parentStub, dataStream.readUTFFast());
+  }
 
-    public void indexStub(HeaderValuePartStub stub, IndexSink sink) {
-    }
+  public void indexStub(HeaderValuePartStub stub, IndexSink sink) {
+  }
 }

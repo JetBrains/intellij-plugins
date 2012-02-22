@@ -25,11 +25,11 @@
 
 package org.osmorc.manifest.lang.psi.elementtype;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.Section;
 import org.osmorc.manifest.lang.psi.impl.SectionImpl;
@@ -42,33 +42,33 @@ import java.io.IOException;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class SectionElementType extends AbstractManifestStubElementType<SectionStub, Section> {
-    public SectionElementType() {
-        super("SECTION");
-    }
+  public SectionElementType() {
+    super("SECTION");
+  }
 
 
-    @Override
-    public Section createPsi(@NotNull SectionStub stub) {
-        return new SectionImpl(stub, this);
-    }
+  @Override
+  public Section createPsi(@NotNull SectionStub stub) {
+    return new SectionImpl(stub, this);
+  }
 
-    @Override
-    public Section createPsi(ASTNode node) {
-        return new SectionImpl(node);
-    }
+  @Override
+  public Section createPsi(ASTNode node) {
+    return new SectionImpl(node);
+  }
 
-    @Override
-    public SectionStub createStub(@NotNull Section psi, StubElement parentStub) {
-        return new SectionStubImpl(parentStub);
-    }
+  @Override
+  public SectionStub createStub(@NotNull Section psi, StubElement parentStub) {
+    return new SectionStubImpl(parentStub);
+  }
 
-    public void serialize(SectionStub stub, StubOutputStream dataStream) throws IOException {
-    }
+  public void serialize(SectionStub stub, StubOutputStream dataStream) throws IOException {
+  }
 
-    public SectionStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return new SectionStubImpl(parentStub);
-    }
+  public SectionStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+    return new SectionStubImpl(parentStub);
+  }
 
-    public void indexStub(SectionStub stub, IndexSink sink) {
-    }
+  public void indexStub(SectionStub stub, IndexSink sink) {
+  }
 }

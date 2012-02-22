@@ -25,14 +25,14 @@
 package org.osmorc.frameworkintegration.impl.felix;
 
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.FrameworkRunner;
 import org.osmorc.frameworkintegration.BundleSelectionAction;
+import org.osmorc.frameworkintegration.FrameworkRunner;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkIntegrator;
 import org.osmorc.frameworkintegration.impl.felix.ui.FelixRunPropertiesEditor;
 import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
 
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Felix specific implementation of {@link org.osmorc.frameworkintegration.FrameworkIntegrator}.
@@ -40,30 +40,29 @@ import java.util.Collections;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class FelixIntegrator extends AbstractFrameworkIntegrator {
-    public FelixIntegrator(FelixFrameworkInstanceManager frameworkInstanceManager) {
-        super(frameworkInstanceManager);
-    }
+  public FelixIntegrator(FelixFrameworkInstanceManager frameworkInstanceManager) {
+    super(frameworkInstanceManager);
+  }
 
-    @NotNull
-    public FrameworkRunner createFrameworkRunner() {
-        return new FelixFrameworkRunner();
-    }
+  @NotNull
+  public FrameworkRunner createFrameworkRunner() {
+    return new FelixFrameworkRunner();
+  }
 
-    @NotNull
-    public String getDisplayName() {
-        return FRAMEWORK_NAME;
-    }
+  @NotNull
+  public String getDisplayName() {
+    return FRAMEWORK_NAME;
+  }
 
-    @Override
-    public FrameworkRunPropertiesEditor createRunPropertiesEditor() {
-        return new FelixRunPropertiesEditor();
-    }
+  @Override
+  public FrameworkRunPropertiesEditor createRunPropertiesEditor() {
+    return new FelixRunPropertiesEditor();
+  }
 
-    @NotNull
-    public List<BundleSelectionAction> getBundleSelectionActions() {
-        return Collections.emptyList();
-    }
-  
-    private static final String FRAMEWORK_NAME = "Felix";
+  @NotNull
+  public List<BundleSelectionAction> getBundleSelectionActions() {
+    return Collections.emptyList();
+  }
 
+  private static final String FRAMEWORK_NAME = "Felix";
 }

@@ -25,14 +25,11 @@
 
 package org.osmorc.run;
 
-import com.intellij.openapi.util.InvalidDataException;
-import org.jdom.Element;
-
 /**
  * Used to load legacy Osmorc run configurations as OSGi run configurations.
  *
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public interface LegacyOsgiRunConfigurationLoader {
-    void finishAfterModulesAreAvailable(OsgiRunConfiguration osgiRunConfiguration);
+  void finishAfterModulesAreAvailable(OsgiRunConfiguration osgiRunConfiguration);
 }

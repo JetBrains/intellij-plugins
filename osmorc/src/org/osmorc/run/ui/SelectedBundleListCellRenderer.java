@@ -37,24 +37,19 @@ import java.awt.*;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id$
  */
-public class SelectedBundleListCellRenderer extends DefaultListCellRenderer
-{
+public class SelectedBundleListCellRenderer extends DefaultListCellRenderer {
 
   public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-                                                boolean cellHasFocus)
-  {
-    JLabel component = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-    SelectedBundle selectedBundle = (SelectedBundle) value;
-    if (selectedBundle.isModule())
-    {
+                                                boolean cellHasFocus) {
+    JLabel component = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+    SelectedBundle selectedBundle = (SelectedBundle)value;
+    if (selectedBundle.isModule()) {
       component.setIcon(PlatformIcons.OPENED_MODULE_GROUP_ICON);
     }
-    else if (selectedBundle.getBundleType() == SelectedBundle.BundleType.FrameworkBundle)
-    {
+    else if (selectedBundle.getBundleType() == SelectedBundle.BundleType.FrameworkBundle) {
       component.setIcon(OsmorcBundle.getSmallIcon());
     }
-    else
-    {
+    else {
       component.setIcon(PlatformIcons.JAR_ICON);
     }
     component.setText(value.toString());

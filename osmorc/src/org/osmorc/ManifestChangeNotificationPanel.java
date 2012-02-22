@@ -35,7 +35,7 @@ public class ManifestChangeNotificationPanel extends EditorNotificationPanel {
       public void run() {
         myNeedsResync.set(false);
         EditorNotifications.getInstance(modifiedFile.getProject()).updateAllNotifications();
-        ProjectSettings ps =  ProjectSettings.getInstance(modifiedFile.getProject());
+        ProjectSettings ps = ProjectSettings.getInstance(modifiedFile.getProject());
         ps.setManifestSynchronizationType(ProjectSettings.ManifestSynchronizationType.AutomaticallySynchronize);
         ModuleDependencySynchronizer.resynchronizeAll(modifiedFile.getProject());
       }

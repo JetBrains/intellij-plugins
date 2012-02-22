@@ -32,5 +32,5 @@ import org.osmorc.manifest.lang.psi.HeaderValuePart;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public interface HeaderValuePartStub extends StubElement<HeaderValuePart> {
-    String getUnwrappedText();
+  String getUnwrappedText();
 }
