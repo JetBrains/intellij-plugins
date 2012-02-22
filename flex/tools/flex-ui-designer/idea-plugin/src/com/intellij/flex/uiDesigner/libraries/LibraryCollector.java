@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
+import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -37,9 +38,7 @@ class LibraryCollector {
   final LibraryStyleInfoCollector initializer;
   private final Module module;
 
-  //flexmojosFlexSdkRootPath = sdkHomePath.substring(0, sdkHomePath.indexOf("flex"));
-  @SuppressWarnings("UnusedDeclaration")
-  private String flexmojosFlexSdkRootPath;
+  private String flexmojosSdkHomePath;
 
   // AS-200
   private final Set<VirtualFile> uniqueGuard = new THashSet<VirtualFile>();
@@ -73,9 +72,18 @@ class LibraryCollector {
            || name.equals("flash-integration.swc") || name.equals("authoringsupport.swc");
   }
 
+  private boolean isGlobalLibrary(String name, VirtualFile jarFile, String prefix) {
+    if (flexmojosSdkHomePath == null) {
+      return name.equals(prefix + DOT_SWC);
+    }
+    else {
+      return jarFile.getPath().startsWith(flexmojosSdkHomePath) && name.startsWith(prefix);
+    }
+  }
+
   private boolean isGlobalLibrary(String name, VirtualFile jarFile) {
-    final boolean isAirglobal = name.equals("airglobal.swc");
-    final boolean isGlobal = isAirglobal || name.equals("playerglobal.swc");
+    final boolean isAirglobal = isGlobalLibrary(name, jarFile, "airglobal");
+    final boolean isGlobal = isAirglobal || isGlobalLibrary(name, jarFile, "playerglobal");
     // flexmojos project may has playerglobal and airglobal simultaneous
     if (isGlobal && (globalLibrary == null || isAirglobal)) {
       globalLibrary = Library.getCatalogFile(jarFile);
@@ -96,9 +104,7 @@ class LibraryCollector {
     return null;
   }
 
-  private Sdk collectSdkLibraries(final FlexIdeBuildConfiguration bc) {
-    final Sdk sdk = bc.getSdk();
-    assert sdk != null;
+  private void collectSdkLibraries(final FlexIdeBuildConfiguration bc, Sdk sdk) {
     for (VirtualFile jarFile : sdk.getRootProvider().getFiles(OrderRootType.CLASSES)) {
       String swcPath = VirtualFileManager.extractPath(StringUtil.trimEnd(jarFile.getUrl(), JarFileSystem.JAR_SEPARATOR));
       if (BCUtils.getSdkEntryLinkageType(swcPath, bc) != null) {
@@ -108,8 +114,6 @@ class LibraryCollector {
         }
       }
     }
-    
-    return sdk;
   }
 
   /**
@@ -117,7 +121,18 @@ class LibraryCollector {
    */
   public void collect(Module module) {
     final FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
-    final Sdk sdk = collectSdkLibraries(bc);
+    final Sdk sdk = bc.getSdk();
+    assert sdk != null;
+    final boolean isFlexmojosSdk = sdk.getSdkType() == FlexmojosSdkType.getInstance();
+    if (!isFlexmojosSdk) {
+      collectSdkLibraries(bc, sdk);
+    }
+    else {
+      final String sdkHomePath = sdk.getHomePath();
+      LogMessageUtil.LOG.assertTrue(sdkHomePath != null && sdkHomePath.contains("flex"), sdkHomePath + " must be path to maven repo and contains 'flex'");
+      assert sdkHomePath != null;
+      flexmojosSdkHomePath = sdkHomePath.substring(0, sdkHomePath.indexOf("flex"));
+    }
 
     flexSdkVersion = sdk.getVersionString();
     assert flexSdkVersion != null && flexSdkVersion.length() >= 3;
@@ -167,8 +182,8 @@ class LibraryCollector {
   }
 
   private boolean isFlexSdkLibrary(VirtualFile file, VirtualFile jarFile) {
-    if (flexmojosFlexSdkRootPath != null) {
-      return file.getPath().startsWith(flexmojosFlexSdkRootPath);
+    if (flexmojosSdkHomePath != null) {
+      return file.getPath().startsWith(flexmojosSdkHomePath);
     }
 
     final String name = file.getName();
