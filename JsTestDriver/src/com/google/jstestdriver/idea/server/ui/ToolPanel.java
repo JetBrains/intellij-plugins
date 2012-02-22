@@ -170,6 +170,7 @@ public class ToolPanel extends SimpleToolWindowPanel {
     textField.setEditable(false);
     textField.setBackground(Color.WHITE);
     textField.getCaret().setVisible(true);
+    textField.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
     textField.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(final MouseEvent e) {
@@ -261,7 +262,6 @@ public class ToolPanel extends SimpleToolWindowPanel {
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-      System.out.println("Jstd copyAction performed");
       String url = myCaptureUrlTextField.getText();
       new ClipboardCopier().toClipboard(url);
     }
