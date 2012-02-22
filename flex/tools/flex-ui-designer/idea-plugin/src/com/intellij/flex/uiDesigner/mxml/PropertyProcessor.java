@@ -206,7 +206,7 @@ class PropertyProcessor implements ValueWriter {
   }
 
   boolean processFxModel(XmlTag tag) {
-    final MxmlObjectReference objectReference = processFxDeclarationId(tag);
+    final MxmlObjectReference objectReference = processFxDeclarationId(tag, null);
     if (objectReference == null) {
       return false;
     }
@@ -232,23 +232,39 @@ class PropertyProcessor implements ValueWriter {
     return true;
   }
 
-  private MxmlObjectReference processFxDeclarationId(XmlTag tag) {
+  private MxmlObjectReference processFxDeclarationId(XmlTag tag, @Nullable String classNameTrick) {
     final XmlAttribute idAttribute = tag.getAttribute("id");
-    final String id;
+    String id = null;
     if (idAttribute == null || StringUtil.isEmpty((id = idAttribute.getDisplayValue()))) {
-      LOG.warn("Skip model, id is not specified or empty: " + tag.getText());
-      return null;
+      LOG.warn("Skip fx:model/fx:component, id is not specified or empty: " + tag.getText());
+      if (classNameTrick == null) {
+        return null;
+      }
     }
 
     // parentContext for fx:Model/fx:Component always null, because located inside fx:Declarations (i.e. parentContext always is top level)
     // state specific is not allowed for fx:Model/fx:Component (flex compiler doesn't support it)
     final MxmlObjectReference objectReference = new MxmlObjectReference(writer.allocateAbsoluteStaticObjectId());
-    injectedASWriter.putMxmlObjectReference(id, objectReference);
+    if (id != null) {
+      injectedASWriter.putMxmlObjectReference(id, objectReference);
+    }
+    if (classNameTrick != null) {
+      injectedASWriter.putMxmlObjectReference('$' + classNameTrick, objectReference);
+    }
     return objectReference;
   }
 
   int processFxComponent(XmlTag tag) {
-    final MxmlObjectReference objectReference = processFxDeclarationId(tag);
+    String className = null;
+    final XmlAttribute classNameAttribute = tag.getAttribute("className");
+    if (classNameAttribute != null) {
+      className = classNameAttribute.getDisplayValue();
+      if (className.isEmpty()) {
+        className = null;
+      }
+    }
+    
+    final MxmlObjectReference objectReference = processFxDeclarationId(tag, className);
     if (objectReference == null) {
       return -2;
     }
@@ -815,6 +831,13 @@ class PropertyProcessor implements ValueWriter {
     }
 
     String className = valueProvider.getTrimmed();
+
+    MxmlObjectReference fxComponentFactoryReference = injectedASWriter.getNullableValueReference('$' + className);
+    if (fxComponentFactoryReference != null) {
+      writer.objectReference(fxComponentFactoryReference.id);
+      return;
+    }
+    
     if (writeReferenceIfReferenced(className)) {
       return;
     }

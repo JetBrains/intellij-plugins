@@ -55,7 +55,12 @@ class InjectedASWriter implements ValueReferenceResolver {
 
   @NotNull
   @Override
-  public MxmlObjectReference getValueReference(String id) throws InvalidPropertyException {
+  public MxmlObjectReference getValueReference(String id) {
+    return idReferenceMap.get(id);
+  }
+
+  @Nullable
+  public MxmlObjectReference getNullableValueReference(String id) {
     return idReferenceMap.get(id);
   }
 
