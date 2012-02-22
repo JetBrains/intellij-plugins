@@ -14,6 +14,7 @@ import com.intellij.openapi.roots.libraries.scripting.ScriptingLibraryModel;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.util.FileContentUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -67,7 +68,37 @@ public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBased
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
       installLibrary(project);
       PsiElement psiElement = descriptor.getPsiElement();
-      VirtualFile virtualFile = psiElement.getContainingFile().getVirtualFile();
+      PsiFile psiFile = psiElement.getContainingFile();
+      VirtualFile virtualFile = psiFile.getVirtualFile();
+
+//      System.out.println(Thread.currentThread());
+//      PsiModificationTracker tracker = ServiceManager.getService(project, PsiModificationTracker.class);
+//      if (tracker instanceof PsiModificationTrackerImpl) {
+//        PsiModificationTrackerImpl trackerImpl = (PsiModificationTrackerImpl) tracker;
+//        trackerImpl.incCounter();
+//        System.out.println(PsiModificationTrackerImpl.class.getName() + "#incCounter() called");
+//      }
+//
+//      PsiManager psiManager = PsiManager.getInstance(project);
+//      if (psiManager instanceof PsiManagerImpl) {
+//        PsiManagerImpl psiManagerImpl = (PsiManagerImpl) psiManager;
+//        psiManagerImpl.dropResolveCaches();
+//        System.out.println(PsiManagerImpl.class.getName() + "#dropResolveCaches() called");
+//      }
+//
+//      ProjectRootManagerEx projectRootManagerEx = ProjectRootManagerEx.getInstanceEx(project);
+//      projectRootManagerEx.makeRootsChange(EmptyRunnable.getInstance(), false, true);
+//
+//      System.out.println(ProjectRootManagerEx.class.getName() + "#makeRootsChange() called");
+//
+//      ResolveCache.getInstance(project).clearCache(true);
+//      ResolveCache.getInstance(project).clearCache(false);
+//      JSResolveUtil.clearResolveCaches(psiFile);
+//
+//      DaemonCodeAnalyzer analyzer = DaemonCodeAnalyzer.getInstance(project);
+//      analyzer.restart();
+//      System.out.println(DaemonCodeAnalyzer.class.getName() + "#restart() called");
+
       FileContentUtil.reparseFiles(project, Arrays.asList(virtualFile), true);
     }
 
