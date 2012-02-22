@@ -28,7 +28,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FileTypeIndex;
@@ -226,19 +225,15 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
   @NotNull
   private static XmlFile virtualFileToXmlFile(Project project, VirtualFile virtualFile) {
-    Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
-    assert document != null;
-    final XmlFile psiFile;
     final AccessToken token = ReadAction.start();
     try {
-      psiFile = (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(document);
+      XmlFile psiFile = (XmlFile)PsiManager.getInstance(project).findFile(virtualFile);
       assert psiFile != null;
+      return psiFile;
     }
     finally {
       token.finish();
     }
-
-    return psiFile;
   }
 
   private void setProperty() throws IOException {
