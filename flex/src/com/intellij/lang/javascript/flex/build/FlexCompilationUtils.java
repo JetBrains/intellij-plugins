@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
@@ -10,8 +9,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.ui.CreateAirDescriptorTemplateDialog;
-import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
-import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.application.ApplicationManager;
@@ -35,7 +32,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -249,8 +245,10 @@ public class FlexCompilationUtils {
       throw new FlexCompilerException(FlexBundle.message("no.index.template.html.file", bc.getWrapperTemplatePath()));
     }
 
-    final String outputFilePath = bc.getOutputFilePath(true);
-    final String outputFolderPath = PathUtil.getParentPath(outputFilePath);
+    final InfoFromConfigFile info = FlexCompilerConfigFileUtil.getInfoFromConfigFile(bc.getCompilerOptions().getAdditionalConfigFilePath());
+    final String outputFolderPath = StringUtil.notNullize(info.getOutputFolderPath(), bc.getOutputFolder());
+    final String outputFileName = StringUtil.notNullize(info.getOutputFileName(), bc.getOutputFileName());
+    final String targetPlayer = StringUtil.notNullize(info.getTargetPlayer(), bc.getDependencies().getTargetPlayer());
 
     final VirtualFile outputDir = LocalFileSystem.getInstance().findFileByPath(outputFolderPath);
     if (outputDir == null || !outputDir.isDirectory()) {
@@ -276,9 +274,7 @@ public class FlexCompilationUtils {
                   return new FlexCompilerException(FlexBundle.message("no.swf.macro", FileUtil.toSystemDependentName(file.getPath())));
                 }
 
-                final String outputFileName = PathUtil.getFileName(outputFilePath);
-                final String fixedText = replaceMacros(wrapperText, FileUtil.getNameWithoutExtension(outputFileName),
-                                                       bc.getDependencies().getTargetPlayer());
+                final String fixedText = replaceMacros(wrapperText, FileUtil.getNameWithoutExtension(outputFileName), targetPlayer);
                 final String wrapperFileName = BCUtils.getWrapperFileName(bc);
                 try {
                   FlexUtils.addFileWithContent(wrapperFileName, fixedText, outputDir);
@@ -310,10 +306,10 @@ public class FlexCompilationUtils {
   }
 
   private static String replaceMacros(final String wrapperText, final String outputFileName, final String targetPlayer) {
-    final String[] versionParts = targetPlayer.split("[.]");
-    final String major = versionParts.length >= 1 ? versionParts[0] : "0";
-    final String minor = versionParts.length >= 2 ? versionParts[1] : "0";
-    final String revision = versionParts.length >= 3 ? versionParts[2] : "0";
+    final List<String> versionParts = StringUtil.split(targetPlayer, ".");
+    final String major = versionParts.size() >= 1 ? versionParts.get(0) : "0";
+    final String minor = versionParts.size() >= 2 ? versionParts.get(1) : "0";
+    final String revision = versionParts.size() >= 3 ? versionParts.get(2) : "0";
     final String[] replacement = {outputFileName, outputFileName, outputFileName, "#ffffff", "100%", "100%", major, minor, revision};
     return StringUtil.replace(wrapperText, MACROS_TO_REPLACE, replacement);
   }
