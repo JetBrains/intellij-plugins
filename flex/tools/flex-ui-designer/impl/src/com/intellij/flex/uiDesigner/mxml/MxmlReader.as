@@ -154,12 +154,12 @@ public class MxmlReader implements DocumentReader {
     return o;
   }
 
-  internal function readMxmlObjectFromClass(className:String):Object {
+  internal function readMxmlObjectFromClass(className:String, parent:Object = null):Object {
     var clazz:Class = moduleContext.getClass(className);
-    return readObjectProperties(new clazz());
+    return readObjectProperties(new clazz(), parent);
   }
 
-  private function readObjectProperties(object:Object):Object {
+  private function readObjectProperties(object:Object, parent:Object = null):Object {
     const reference:int = input.readUnsignedShort();
     var propertyName:String = stringRegistry.read(input);
     var objectDeclarationRangeMarkerId:int;
@@ -169,14 +169,14 @@ public class MxmlReader implements DocumentReader {
       propertyName = stringRegistry.read(input);
     }
 
-    return initObject(object, reference, propertyName, objectDeclarationRangeMarkerId);
+    return initObject(object, reference, propertyName, objectDeclarationRangeMarkerId, parent);
   }
 
   protected function registerEffect(propertyName:String, object:Object):void {
 
   }
 
-  private function initObject(object:Object, reference:int, propertyName:String, objectDeclarationTextOffset:int):Object {
+  private function initObject(object:Object, reference:int, propertyName:String, objectDeclarationTextOffset:int, parent:Object):Object {
     processReference(reference, object);
     const hasDeferredSetStyles:Boolean = !(object is Proxy) && "deferredSetStyles" in object;
     var deferredSetStyleProxy:DeferredSetStyleProxy;
@@ -244,6 +244,10 @@ public class MxmlReader implements DocumentReader {
         case PropertyClassifier.ID:
           propertyHolder.id = AmfUtil.readString(input);
           context.registerObjectWithId(propertyHolder.id, propertyHolder);
+          // AS-272
+          if (parent != null && parent.hasOwnProperty(propertyHolder.id)) {
+            parent[propertyHolder.id] = propertyHolder;
+          }
           continue;
         
         case PropertyClassifier.MX_CONTAINER_CHILDREN:
@@ -298,7 +302,7 @@ public class MxmlReader implements DocumentReader {
           break;
 
         case Amf3Types.ARRAY:
-          propertyHolder[propertyName] = readArray();
+          propertyHolder[propertyName] = readArray(object);
           break;
 
         case AmfExtendedTypes.ARRAY_IF_LENGTH_GREATER_THAN_1:
@@ -462,9 +466,9 @@ public class MxmlReader implements DocumentReader {
   protected function readChildrenMxContainer(container:DisplayObjectContainer):void {
   }
 
-  internal function readArray():Object {
+  internal function readArray(parent:Object = null):Object {
     const length:int = input.readUnsignedShort();
-    return readArrayOrVector(new Array(length), length);
+    return readArrayOrVector(new Array(length), length, parent);
   }
 
   internal function readMxmlArray():Object {
@@ -493,10 +497,17 @@ public class MxmlReader implements DocumentReader {
   }
 
   // support only object array without null
-  internal function readArrayOrVector(array:Object, length:int):Object {
+  internal function readArrayOrVector(array:Object, length:int, parent:Object = null):Object {
     var i:int = 0;
+    var amfType:int;
     while (i < length) {
-      array[i++] = readExpression(input.readByte());
+      amfType = input.readByte();
+      if (amfType == Amf3Types.OBJECT) {
+        array[i++] = readMxmlObjectFromClass(stringRegistry.readNotNull(input), parent);
+      }
+      else {
+        array[i++] = readExpression(amfType);
+      }
     }
 
     return array;

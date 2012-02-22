@@ -16,7 +16,7 @@ public final class FlexComponentFactory extends FlexComponentCreator implements 
   }
 
   override public function get className():String {
-    return "inline component class";
+    return "InnerClass";
   }
 }
 }

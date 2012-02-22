@@ -10,6 +10,7 @@ import org.hamcrest.core.not;
 import org.hamcrest.object.HasPropertiesMatcher;
 import org.hamcrest.object.equalTo;
 import org.hamcrest.object.instanceOf;
+import org.hamcrest.object.notNullValue;
 import org.hamcrest.object.nullValue;
 import org.hamcrest.object.strictlyEqualTo;
 
@@ -31,8 +32,7 @@ public class CommonTest extends BaseTestCase {
   }
 
   public function FxComponentReferencedById():void {
-    var m:HasPropertiesMatcher = l("Wow!");
-    assertThat(app.getElementAt(0).dataGroup, [m, m, m, m]);
+    assertThat(app.getElementAt(0).dataGroup, [{label: "blue", labelDisplay: notNullValue()}]);
   }
 
   // AS-110

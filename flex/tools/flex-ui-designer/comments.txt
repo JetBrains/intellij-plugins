@@ -27,6 +27,3 @@
 8
 
 //  AnchorStyles также как свойства в UICOmponent, то есть их descriptor.getTypeName() будет не FlexAnnotationNames.STYLE, а Function
-
-5
-Это object table size Технически вопрос — может ли fx component иметь ссылки на другие объекты и иметь states? Пока что никак не обрабатываем и не investigate, в рамках basic support достаточно.

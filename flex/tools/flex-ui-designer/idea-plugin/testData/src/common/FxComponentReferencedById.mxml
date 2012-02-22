@@ -1,15 +1,20 @@
-<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark" minWidth="120" minHeight="30">
   <fx:Declarations>
-    <fx:Component id="t">
-      <Label text="Wow!"/>
+    <fx:Component id="r">
+      <ItemRenderer autoDrawBackground="false">
+        <Rect width="100%" height="100%" alpha="0.5">
+          <fill>
+            <SolidColor color="0x0000FF"/>
+          </fill>
+        </Rect>
+        <!-- must be id — check if we correct handle object table  -->
+        <Label id="labelDisplay"/>
+      </ItemRenderer>
     </fx:Component>
   </fx:Declarations>
-  <List itemRenderer="{t}">
-    <ArrayCollection>
-      <fx:String>MPS</fx:String>
-      <fx:String>dotTrace</fx:String>
-      <fx:String>dotCover</fx:String>
-      <fx:String>ColdFusion</fx:String>
-    </ArrayCollection>
-  </List>
+  <SkinnableDataContainer itemRenderer="{r}">
+    <ArrayList>
+      <fx:String>blue</fx:String>
+    </ArrayList>
+  </SkinnableDataContainer>
 </Group>
