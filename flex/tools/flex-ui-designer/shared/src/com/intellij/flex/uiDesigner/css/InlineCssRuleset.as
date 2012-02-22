@@ -16,7 +16,7 @@ public class InlineCssRuleset extends CssRuleset {
     return ruleset;
   }
   
-  public static function createExternalInline(name:String, value:*):InlineCssRuleset {
+  public static function createRuntime(name:String, value:*):InlineCssRuleset {
     var ruleset:InlineCssRuleset = new InlineCssRuleset();
     ruleset.put(name, value);
     return ruleset;
@@ -30,11 +30,11 @@ public class InlineCssRuleset extends CssRuleset {
     var list:Vector.<CssDeclaration> = ruleset.declarations;
     ruleset._declarationMap = map;
     var declaration:CssDeclarationImpl;
+    var i:int = list.length;
     for (var key:String in data) {
       declaration = CssDeclarationImpl.createRuntime(key, data[key], fromAs);
       map[key] = declaration;
-
-      list[list.length] = declaration;
+      list[i++] = declaration;
     }
 
     list.fixed = true;
@@ -48,11 +48,12 @@ public class InlineCssRuleset extends CssRuleset {
     var list:Vector.<CssDeclaration> = ruleset.declarations;
     list.fixed = false;
     var declaration:CssDeclarationImpl;
+    var i:int = list.length;
     for (var key:String in data) {
       declaration = CssDeclarationImpl.createRuntime(key, data[key], false);
       map[key] = declaration;
 
-      list[list.length] = declaration;
+      list[i++] = declaration;
     }
 
     list.fixed = true;

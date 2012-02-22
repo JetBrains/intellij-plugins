@@ -162,7 +162,7 @@ public class StyleProtoChain {
     const isProtoChainInitialized:Boolean = object.inheritingStyles != STYLE_UNINITIALIZED;
     const callStyleChangedAfter:Boolean = isProtoChainInitialized && object.getStyle(styleProp) != newValue;
     if (object.styleDeclaration == null) {
-      object.styleDeclaration = new InlineCssStyleDeclaration(InlineCssRuleset.createExternalInline(styleProp, newValue), StyleManagerEx(styleManager).styleValueResolver);
+      object.styleDeclaration = new InlineCssStyleDeclaration(InlineCssRuleset.createRuntime(styleProp, newValue), StyleManagerEx(styleManager).styleValueResolver);
       if (isProtoChainInitialized) {
         object.regenerateStyleCache(styleManager.isInheritingStyle(styleProp));
       }

@@ -23,6 +23,10 @@ public class CssRuleset {
     return false;
   }
 
+  public function get runtime():Boolean {
+    return inline && file == null &&  _textOffset == TEXT_OFFSET_UNDEFINED;
+  }
+
   protected var _declarationMap:Dictionary;
   public function get declarationMap():Dictionary {
     if (_declarationMap == null) {

@@ -36,7 +36,7 @@ public class MxmlTest extends MxmlTestBase {
     }
   }
 
-  @Flex(platform = TargetPlatform.Mobile, version = "4.6")
+  @Flex(platform=TargetPlatform.Mobile, version="4.6")
   public void testMobile() throws Exception {
     testFiles(getVFile((getTestDataPath() + "/src/mobile")));
     assertThat(getLastProblems(), emptyArray());
@@ -45,6 +45,30 @@ public class MxmlTest extends MxmlTestBase {
   public void test45() throws Exception {
     testFiles(getTestDir(), getVFile(getTestDataPath() + "/src/mx"));
     
+    String[] problems = getLastProblems();
+    if (System.getProperty("testFile") != null) {
+      assertThat(problems, emptyArray());
+    }
+    else {
+      assertThat(problems,
+                 m("spark.components.supportClasses.TrackBase is abstract class (line: 3)"),
+                 m("Default property not found for Rect (line: 2)"),
+                 m("Invalid class value (line: 6)", "Invalid class value (line: 11)"),
+                 m("Unsupported embed asset type \"@Embed(source='/jazz.mp3')\" (line: 3)"),
+                 m("Invalid color name invalidcolorname (line: 2)", "Invalid integer value (line: 3)", "Invalid number value (line: 4)"),
+                 m("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-72175\">Inline components are not supported</a> (line: 9)"),
+                 m("Unresolved variable or type unresolvedData (line: 10)"),
+                 m("Initializer for Group cannot be represented in text (line: 2)",
+                   "Initializer for Container cannot be represented in text (line: 5)",
+                   "Children of Accordion must be mx.core.INavigatorContent (line: 8)")
+      );
+    }
+  }
+
+  @Flex(version="4.6")
+  public void test46() throws Exception {
+    testFiles(getTestDir(), getVFile(getTestDataPath() + "/src/mx"));
+
     String[] problems = getLastProblems();
     if (System.getProperty("testFile") != null) {
       assertThat(problems, emptyArray());

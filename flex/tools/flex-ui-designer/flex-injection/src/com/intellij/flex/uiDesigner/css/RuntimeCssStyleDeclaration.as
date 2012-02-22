@@ -7,7 +7,7 @@ import mx.styles.IAdvancedStyleClient;
 
 use namespace mx_internal;
 
-public class RuntimeCssStyleDeclaration extends InlineCssStyleDeclaration {
+public final class RuntimeCssStyleDeclaration extends InlineCssStyleDeclaration {
   private var source:CSSStyleDeclaration;
   private var mySelector:CssSelector;
   
