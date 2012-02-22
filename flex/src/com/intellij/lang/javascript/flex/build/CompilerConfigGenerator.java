@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.javascript.flex.FlexApplicationComponent;
+import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.TargetPlayerUtils;
@@ -15,6 +16,9 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigura
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
+import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
+import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
+import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressManager;
@@ -22,12 +26,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.JDOMUtil;
-import com.intellij.openapi.util.NullableComputable;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.stubs.StubIndex;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.PairConsumer;
 import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformUtils;
@@ -517,28 +523,26 @@ public class CompilerConfigGenerator {
     final CompilerConfiguration compilerConfiguration = CompilerConfiguration.getInstance(myModule.getProject());
     final Ref<Boolean> noClasses = new Ref<Boolean>(true);
 
-    fileIndex.iterateContent(new ContentIterator() {
-      public boolean processFile(final VirtualFile file) {
-        if (file.isDirectory()) return true;
-        if (!FlexCompiler.isSourceFile(file)) return true;
-        if (compilerConfiguration.isExcludedFromCompilation(file)) return true;
-        if (/*!isTest && */ fileIndex.isInTestSourceContent(file)) return true;
+    for (final VirtualFile sourceRoot : ModuleRootManager.getInstance(myModule).getSourceRoots(false)) {
+      fileIndex.iterateContentUnderDirectory(sourceRoot, new ContentIterator() {
+        public boolean processFile(final VirtualFile file) {
+          if (file.isDirectory()) return true;
+          if (!FlexCompiler.isSourceFile(file)) return true;
+          if (compilerConfiguration.isExcludedFromCompilation(file)) return true;
 
-        final VirtualFile rootForFile = fileIndex.getSourceRootForFile(file);
-        if (rootForFile == null) return true;
+          final String packageText = VfsUtilCore.getRelativePath(file.getParent(), sourceRoot, '.');
+          assert packageText != null : sourceRoot.getPath() + ": " + file.getPath();
+          final String qName = (packageText.length() > 0 ? packageText + "." : "") + file.getNameWithoutExtension();
 
-        final String packageText = VfsUtilCore.getRelativePath(file.getParent(), rootForFile, '.');
-        assert packageText != null;
-        final String qName = (packageText.length() > 0 ? packageText + "." : "") + file.getNameWithoutExtension();
+          if (isSourceFileWithPublicDeclaration(myModule, file, qName)) {
+            addOption(rootElement, CompilerOptionInfo.INCLUDE_CLASSES_INFO, qName);
+            noClasses.set(false);
+          }
 
-        if (FlexCompilerHandler.isMxmlOrFxgOrASWithPublicDeclaration(myModule, file, qName)) {
-          addOption(rootElement, CompilerOptionInfo.INCLUDE_CLASSES_INFO, qName);
-          noClasses.set(false);
+          return true;
         }
-
-        return true;
-      }
-    });
+      });
+    }
 
     if (noClasses.get() && !ApplicationManager.getApplication().isUnitTestMode()) {
       throw new IOException(FlexBundle.message("nothing.to.compile.in.library", myModule.getName(), myBC.getName()));
@@ -678,5 +682,25 @@ public class CompilerConfigGenerator {
     final String hash1 = Integer.toHexString((SystemProperties.getUserName() + module.getProject().getName()).hashCode()).toUpperCase();
     final String hash2 = Integer.toHexString((module.getName() + StringUtil.notNullize(configName)).hashCode()).toUpperCase();
     return prefix + "-" + hash1 + "-" + hash2 + (postfix == null ? ".xml" : ("-" + postfix + ".xml"));
+  }
+
+  static boolean isSourceFileWithPublicDeclaration(final Module module, final VirtualFile file, final String qName) {
+    return JavaScriptSupportLoader.isMxmlOrFxgFile(file) ||
+           ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
+             public Boolean compute() {
+               // we include file in compilation if it has (or intended to have) some public declaration (class, namespace, function) which is equivalent to having JSPackageStatement declaration.
+               // But first we try to find it in JSQualifiedElementIndex because it is faster.
+               final Collection<JSQualifiedNamedElement> elements = StubIndex.getInstance()
+                 .get(JSQualifiedElementIndex.KEY, qName.hashCode(), module.getProject(), GlobalSearchScope.moduleScope(module));
+               if (elements.isEmpty()) {
+                 // If SomeClass.as contains IncorrectClass definition - we want to include this class into compilation so that compilation fails.
+                 final PsiFile psiFile = PsiManager.getInstance(module.getProject()).findFile(file);
+                 return psiFile != null && PsiTreeUtil.getChildOfType(psiFile, JSPackageStatement.class) != null;
+               }
+               else {
+                 return true;
+               }
+             }
+           });
   }
 }
