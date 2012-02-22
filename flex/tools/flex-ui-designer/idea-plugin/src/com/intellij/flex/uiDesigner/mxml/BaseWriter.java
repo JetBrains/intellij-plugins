@@ -311,6 +311,12 @@ final class BaseWriter {
     return this;
   }
 
+  public int componentFactory(int reference) {
+    out.write(AmfExtendedTypes.COMPONENT_FACTORY);
+    out.writeUInt29(reference);
+    return out.allocateShort();
+  }
+
   public int referableHeader() {
     out.write(AmfExtendedTypes.REFERABLE);
     return out.allocateClearShort();

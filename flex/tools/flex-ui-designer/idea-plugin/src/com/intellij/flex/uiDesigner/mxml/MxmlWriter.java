@@ -437,7 +437,7 @@ public class MxmlWriter {
   }
 
   private boolean processPropertyTag(XmlTag tag, AnnotationBackedDescriptor annotationBackedDescriptor, @NotNull Context context,
-                                  boolean cssRulesetDefined) {
+                                     boolean cssRulesetDefined) {
     if (hasStates && stateWriter.checkStateSpecificPropertyValue(this, propertyProcessor, tag, valueProviderFactory.create(tag),
                                                                  annotationBackedDescriptor, context, context)) {
       return cssRulesetDefined;
@@ -573,7 +573,16 @@ public class MxmlWriter {
         continue;
       }
       else if (MxmlUtil.isComponentLanguageTag(tag)) {
-        // todo IDEA-72151
+        final int sizePosition = propertyProcessor.processFxComponent(tag);
+        if (sizePosition > 0) {
+          processPropertyTagValue(tag, writer.createStaticContext(null, -1), null);
+          out.putShort(out.size() - (sizePosition + 2 /* short size */), sizePosition);
+        }
+
+        if (sizePosition != -2) {
+          validChildrenCount++;
+        }
+
         continue;
       }
 

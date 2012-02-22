@@ -7,6 +7,7 @@ import org.hamcrest.assertThat;
 import org.hamcrest.core.allOf;
 import org.hamcrest.core.isA;
 import org.hamcrest.core.not;
+import org.hamcrest.object.HasPropertiesMatcher;
 import org.hamcrest.object.equalTo;
 import org.hamcrest.object.instanceOf;
 import org.hamcrest.object.nullValue;
@@ -27,6 +28,11 @@ public class CommonTest extends BaseTestCase {
 
   public function GenericMxmlSupport():void {
 
+  }
+
+  public function FxComponentReferencedById():void {
+    var m:HasPropertiesMatcher = l("Wow!");
+    assertThat(app.getElementAt(0).dataGroup, [m, m, m, m]);
   }
 
   // AS-110

@@ -429,6 +429,15 @@ public class MxmlReader implements DocumentReader {
     return factory;
   }
 
+  private function readComponentFactory():Object {
+    var id:int = AmfUtil.readUInt29(input);
+    var data:ByteArray = new ByteArray();
+    input.readBytes(data, 0, input.readUnsignedShort());
+    var factory:Object = new (moduleContext.getClass("com.intellij.flex.uiDesigner.flex.FlexComponentFactory"))(data, getOrCreateFactoryContext());
+    saveReferredObject(id, factory);
+    return factory;
+  }
+
   private function readProjectClassReference():Class {
     var id:int = AmfUtil.readUInt29(input);
     var classPool:ClassPool = moduleContext.getClassPool(FlexLibrarySet.VIEW_POOL);
@@ -501,7 +510,6 @@ public class MxmlReader implements DocumentReader {
     switch (amfType) {
       case Amf3Types.OBJECT:
         return readMxmlObjectFromClass(stringRegistry.readNotNull(input));
-        break;
 
       case ExpressionMessageTypes.SIMPLE_OBJECT:
         return readSimpleObject(new Object());
@@ -551,25 +559,23 @@ public class MxmlReader implements DocumentReader {
       case AmfExtendedTypes.DOCUMENT_REFERENCE:
         return readObjectProperties(readDocumentFactory().newInstance());
 
+      case AmfExtendedTypes.COMPONENT_FACTORY:
+        return readComponentFactory();
+
       case ExpressionMessageTypes.VARIABLE_REFERENCE:
         return injectedASReader.readVariableReference(input, this);
-        break;
 
       case AmfExtendedTypes.REFERABLE:
         return readReferable();
-        break;
 
       case AmfExtendedTypes.XML_LIST:
         return readXmlList();
-        break;
 
       case AmfExtendedTypes.XML:
         return readXml();
-        break;
 
       case AmfExtendedTypes.OBJECT:
         return readSimpleObject(new (moduleContext.getClass(stringRegistry.readNotNull(input)))());
-        break;
 
       case AmfExtendedTypes.CLASS_REFERENCE:
         return moduleContext.applicationDomain.getDefinition(stringRegistry.readNotNull(input));
@@ -585,7 +591,6 @@ public class MxmlReader implements DocumentReader {
 
       case AmfExtendedTypes.PROJECT_CLASS_REFERENCE:
         return readProjectClassReference();
-        break;
 
       default:
         throw new ArgumentError("unknown property type " + amfType);

@@ -206,17 +206,11 @@ class PropertyProcessor implements ValueWriter {
   }
 
   boolean processFxModel(XmlTag tag) {
-    final XmlAttribute idAttribute = tag.getAttribute("id");
-    final String id;
-    if (idAttribute == null || StringUtil.isEmpty((id = idAttribute.getDisplayValue()))) {
-      LOG.warn("Skip model, id is not specified or empty: " + tag.getText());
+    final MxmlObjectReference objectReference = processFxDeclarationId(tag);
+    if (objectReference == null) {
       return false;
     }
 
-    // parentContext for fx:Model always null, because located inside fx:Declarations (i.e. parentContext always is top level)
-    // state specific is not allowed for fx:Model (flex compiler doesn't support it)
-    final MxmlObjectReference objectReference = new MxmlObjectReference(writer.allocateAbsoluteStaticObjectId());
-    injectedASWriter.putMxmlObjectReference(id, objectReference);
     writer.referableHeader(objectReference.id);
 
     final XmlTag[] subTags = tag.getSubTags();
@@ -236,6 +230,49 @@ class PropertyProcessor implements ValueWriter {
     }
 
     return true;
+  }
+
+  private MxmlObjectReference processFxDeclarationId(XmlTag tag) {
+    final XmlAttribute idAttribute = tag.getAttribute("id");
+    final String id;
+    if (idAttribute == null || StringUtil.isEmpty((id = idAttribute.getDisplayValue()))) {
+      LOG.warn("Skip model, id is not specified or empty: " + tag.getText());
+      return null;
+    }
+
+    // parentContext for fx:Model/fx:Component always null, because located inside fx:Declarations (i.e. parentContext always is top level)
+    // state specific is not allowed for fx:Model/fx:Component (flex compiler doesn't support it)
+    final MxmlObjectReference objectReference = new MxmlObjectReference(writer.allocateAbsoluteStaticObjectId());
+    injectedASWriter.putMxmlObjectReference(id, objectReference);
+    return objectReference;
+  }
+
+  int processFxComponent(XmlTag tag) {
+    final MxmlObjectReference objectReference = processFxDeclarationId(tag);
+    if (objectReference == null) {
+      return -2;
+    }
+
+    final int sizePosition = writer.componentFactory(objectReference.id);
+    final XmlTag[] subTags = tag.getSubTags();
+    if (subTags.length == 1) {
+      // 5
+      writer.getOut().writeUInt29(0);
+
+      writer.getOut().write(Amf3Types.OBJECT);
+      return sizePosition;
+    }
+    else {
+      // as object without any properties
+      writer.objectHeader("Object");
+      writer.endObject();
+
+      if (subTags.length > 1) {
+        LOG.warn("Skip model, only one root tag is allowed: " + tag.getText());
+      }
+
+      return -1;
+    }
   }
 
   private static class ModelObjectReferenceProvider implements MxmlObjectReferenceProvider {

@@ -22,6 +22,7 @@ class StaticObjectContext extends Context {
 
   @Override
   void referenceInitialized() {
+    assert referencePosition != -1;
     initializeReference(id, out, referencePosition);
   }
 

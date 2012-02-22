@@ -12,7 +12,6 @@ public final class FlexDocumentFactory extends FlexComponentCreator implements I
   }
 
   public function newInstance():* {
-    // why restore oldInput/oldContext? See CustomMxmlComponentAsChild — we read child document factory before finish read initial document
     return context.createReader().read(source.data, this, context.styleManager);
   }
 
