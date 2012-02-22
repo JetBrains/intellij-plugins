@@ -114,6 +114,11 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream impleme
     }
   }
 
+  public void writeShortPrepended(int counter) throws IOException {
+    out.write(counter >>> 8 & 0xFF);
+    out.write(counter & 0xFF);
+  }
+
   public void writePrepended(int counter) throws IOException {
     if (counter < 0x80) {
       out.write(counter);

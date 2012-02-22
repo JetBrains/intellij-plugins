@@ -421,9 +421,8 @@ class StateWriter {
         instance.markAsWritten();
       }
 
-      final int referredObjectsCount = instance.getReferredObjectsCount();
-      out.writeUInt29(writer.getBlockOut().getDataRangeOwnLength(instance.getDataRange()) + IOUtil.uint29SizeOf(referredObjectsCount));
-      out.writeUInt29(referredObjectsCount);
+      out.writeUInt29(writer.getBlockOut().getDataRangeOwnLength(instance.getDataRange()) + 2);
+      out.writeShort(instance.getReferredObjectsCount());
       writer.getBlockOut().addMarker(new ByteRangeMarker(out.size(), instance.getDataRange()));
 
       if (instance.id != -1) {

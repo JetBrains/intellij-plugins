@@ -137,7 +137,7 @@ public class MxmlReader implements DocumentReader {
   }
 
   private function readObjectTableSize():int {
-    var objectTableSize:int = AmfUtil.readUInt29(input);
+    const objectTableSize:int = input.readUnsignedShort();
     if (objectTableSize != 0) {
       objectTable = new Vector.<Object>(objectTableSize, true);
     }

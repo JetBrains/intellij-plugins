@@ -574,13 +574,20 @@ public class MxmlWriter {
       }
       else if (MxmlUtil.isComponentLanguageTag(tag)) {
         final int sizePosition = propertyProcessor.processFxComponent(tag);
-        if (sizePosition > 0) {
-          processPropertyTagValue(tag, writer.createStaticContext(null, -1), null);
-          out.putShort(out.size() - (sizePosition + 2 /* short size */), sizePosition);
-        }
-
         if (sizePosition != -2) {
           validChildrenCount++;
+          final int objectTableSize;
+          if (sizePosition == -1) {
+            objectTableSize = 0;
+          }
+          else {
+            StaticObjectContext context = writer.createStaticContext(null, -1);
+            processPropertyTagValue(tag, context, null);
+            objectTableSize = context.getScope().referenceCounter;
+          }
+
+          out.putShort(out.size() - (sizePosition + 2 /* short size */), sizePosition);
+          out.putShort(objectTableSize, sizePosition + 2);
         }
 
         continue;

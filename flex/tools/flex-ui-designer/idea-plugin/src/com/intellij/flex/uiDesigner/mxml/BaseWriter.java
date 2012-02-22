@@ -127,7 +127,7 @@ final class BaseWriter {
                               projectComponentReferenceCounter.total.size() * 4;
     }
     
-    blockOut.beginWritePrepended(documentReferenceSize + stringWriter.size() + IOUtil.uint29SizeOf(rootScope.referenceCounter), startPosition);
+    blockOut.beginWritePrepended(documentReferenceSize + stringWriter.size() + 2, startPosition);
 
     if (projectComponentReferenceCounter.total.isEmpty()) {
       blockOut.writePrepended(false);
@@ -140,7 +140,7 @@ final class BaseWriter {
     }
 
     blockOut.writePrepended(stringWriter.getCounter(), stringWriter.getByteArrayOut());
-    blockOut.writePrepended(rootScope.referenceCounter);
+    blockOut.writeShortPrepended(rootScope.referenceCounter);
     blockOut.endWritePrepended(startPosition);
   }
 
@@ -314,7 +314,9 @@ final class BaseWriter {
   public int componentFactory(int reference) {
     out.write(AmfExtendedTypes.COMPONENT_FACTORY);
     out.writeUInt29(reference);
-    return out.allocateShort();
+    int sizePosition = out.allocateShort();
+    out.allocateShort(); // object table size
+    return sizePosition;
   }
 
   public int referableHeader() {

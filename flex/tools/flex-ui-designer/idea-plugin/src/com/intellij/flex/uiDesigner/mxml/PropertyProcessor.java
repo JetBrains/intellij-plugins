@@ -272,9 +272,6 @@ class PropertyProcessor implements ValueWriter {
     final int sizePosition = writer.componentFactory(objectReference.id);
     final XmlTag[] subTags = tag.getSubTags();
     if (subTags.length == 1) {
-      // 5
-      writer.getOut().writeUInt29(0);
-
       writer.getOut().write(Amf3Types.OBJECT);
       return sizePosition;
     }
