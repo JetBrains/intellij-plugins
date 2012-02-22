@@ -103,7 +103,7 @@ public class CreateFlexSkinDialog extends DialogWrapper {
 
   public static JSReferenceEditor createHostComponentCombo(String text, Module module) {
     final GlobalSearchScope scope = getHostComponentScope(module);
-    Condition<JSClass> filter = new JSClassChooserDialog.PublicInheritor(module, SKINNABLE_COMPONENT_CLASS, true);
+    Condition<JSClass> filter = new JSClassChooserDialog.PublicInheritor(module.getProject(), SKINNABLE_COMPONENT_CLASS, scope, true);
     return JSReferenceEditor.forClassName(text, module.getProject(), HOST_COMPONENT_RECENT_KEY, scope, null, filter,
                                           FlexBundle.message("choose.host.component"));
   }

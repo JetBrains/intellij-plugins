@@ -14,9 +14,10 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.*;
-import com.intellij.util.Processor;
+import com.intellij.openapi.vfs.JarFileSystem;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +29,8 @@ import java.util.*;
  * User: ksafonov
  */
 public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
+
+  public static Key<FlexIdeBuildConfiguration> FORCE_BC = Key.create(FlexOrderEnumerationHandler.class.getName() + ".forceBc");
 
   public static class FactoryImpl extends Factory {
     @Override
@@ -77,7 +80,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
     }
 
     if (configuration == null) {
-      configuration = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
+      configuration = getActiveConfiguration(module);
     }
 
     if (configuration == null || !processedConfigurations.add(configuration)) {
@@ -106,6 +109,11 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
       }
       processModuleWithBuildConfiguration(dependencyModule, dependencyBc, modules2activeConfigurations, processedConfigurations);
     }
+  }
+
+  private static FlexIdeBuildConfiguration getActiveConfiguration(final Module module) {
+    final FlexIdeBuildConfiguration forced = FORCE_BC.get(module);
+    return forced != null ? forced : FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
   }
 
   @NotNull
@@ -181,7 +189,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
     }
 
     final Module forModule = forOrderEntry.getOwnerModule();
-    final FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(forModule).getActiveConfiguration();
+    final FlexIdeBuildConfiguration bc = getActiveConfiguration(forModule);
     final Sdk sdk = bc.getSdk();
     if (sdk == null || sdk.getSdkType() != FlexSdkType2.getInstance()) {
       return false;

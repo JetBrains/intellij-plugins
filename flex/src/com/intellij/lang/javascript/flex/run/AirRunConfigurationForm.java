@@ -91,13 +91,14 @@ public class AirRunConfigurationForm extends SettingsEditor<AirRunConfiguration>
                                    final JSClassChooserDialog.PublicInheritor mainClassFilter) {
     try {
       final Module module = FlexRunConfiguration.getAndValidateModule(project, modulesComboboxWrapper.getSelectedText());
-      mainClassEditor.setScope(GlobalSearchScope.moduleScope(module));
-      mainClassFilter.setModule(module);
+      final GlobalSearchScope scope = GlobalSearchScope.moduleScope(module);
+      mainClassEditor.setScope(scope);
+      mainClassFilter.setScope(scope);
       mainClassEditor.setChooserBlockingMessage(null);
     }
     catch (RuntimeConfigurationError error) {
       mainClassEditor.setScope(GlobalSearchScope.EMPTY_SCOPE);
-      mainClassFilter.setModule(null);
+      mainClassFilter.setScope(null);
       mainClassEditor.setChooserBlockingMessage(error.getMessage());
     }
   }

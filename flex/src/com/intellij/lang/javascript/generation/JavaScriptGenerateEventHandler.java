@@ -275,7 +275,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
         final GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
         final JSClassChooserDialog dialog =
           new JSClassChooserDialog(module.getProject(), FlexBundle.message("choose.event.class.title"), scope, getEventBaseClass(),
-                                   new JSClassChooserDialog.PublicInheritor(module, EVENT_BASE_CLASS_FQN, false));
+                                   new JSClassChooserDialog.PublicInheritor(module.getProject(), EVENT_BASE_CLASS_FQN, scope, false));
         if (dialog.showDialog()) {
           final JSClass selectedClass = dialog.getSelectedClass();
           if (selectedClass != null) {

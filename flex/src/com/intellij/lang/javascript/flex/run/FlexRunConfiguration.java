@@ -49,7 +49,6 @@ import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.ui.PanelWithAnchor;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBRadioButton;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -388,13 +387,14 @@ public class FlexRunConfiguration extends RunConfigurationBase
     private void updateMainClassField() {
       try {
         Module module = getAndValidateModule(myProject, myModuleComboboxWrapper.getSelectedText());
-        myMainClassTextWithBrowse.setScope(GlobalSearchScope.moduleScope(module));
-        myMainClassFilter.setModule(module);
+        final GlobalSearchScope scope = GlobalSearchScope.moduleScope(module);
+        myMainClassTextWithBrowse.setScope(scope);
+        myMainClassFilter.setScope(scope);
         myMainClassTextWithBrowse.setChooserBlockingMessage(null);
       }
       catch (RuntimeConfigurationError error) {
         myMainClassTextWithBrowse.setScope(GlobalSearchScope.EMPTY_SCOPE);
-        myMainClassFilter.setModule(null);
+        myMainClassFilter.setScope(null);
         myMainClassTextWithBrowse.setChooserBlockingMessage(error.getMessage());
       }
     }

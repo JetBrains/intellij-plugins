@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.ide.ui.ListCellRendererWrapper;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil;
 import com.intellij.lang.javascript.flex.build.InfoFromConfigFile;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
@@ -108,13 +109,14 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private void updateMainClassField() {
     final Module module = myBCCombo.getModule();
     if (module != null) {
-      myMainClassComponent.setScope(GlobalSearchScope.moduleScope(module));
-      myMainClassFilter.setModule(module);
+      final GlobalSearchScope scope = GlobalSearchScope.moduleScope(module);
+      myMainClassComponent.setScope(scope);
+      myMainClassFilter.setScope(FlexUtils.getModuleWithDependenciesAndLibrariesScope(module, myBCCombo.getBC(), false));
       myMainClassComponent.setChooserBlockingMessage(null);
     }
     else {
       myMainClassComponent.setScope(GlobalSearchScope.EMPTY_SCOPE);
-      myMainClassFilter.setModule(null);
+      myMainClassFilter.setScope(null);
       myMainClassComponent.setChooserBlockingMessage("Build configuration not selected");
     }
   }

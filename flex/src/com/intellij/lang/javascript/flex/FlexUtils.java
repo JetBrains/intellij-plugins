@@ -4,6 +4,7 @@ import com.intellij.application.options.PathMacrosImpl;
 import com.intellij.execution.configurations.CommandLineTokenizer;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
+import com.intellij.lang.javascript.flex.projectStructure.FlexOrderEnumerationHandler;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
@@ -17,6 +18,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
@@ -671,5 +673,24 @@ public class FlexUtils {
       return LinkageType.Include;
     }
     return DependencyType.DEFAULT_LINKAGE;
+  }
+
+  public static ModuleWithDependenciesScope getModuleWithDependenciesAndLibrariesScope(@NotNull Module module,
+                                                                                       @NotNull FlexIdeBuildConfiguration bc,
+                                                                                       boolean includeTests) {
+    if (!ArrayUtil.contains(bc, FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations())) {
+      throw new IllegalArgumentException("Build configuration '" + bc.getName() + "' does not belong to module '" + module.getName() + "'");
+    }
+
+    module.putUserData(FlexOrderEnumerationHandler.FORCE_BC, bc);
+    try {
+      return new ModuleWithDependenciesScope(module, ModuleWithDependenciesScope.COMPILE |
+                                                     ModuleWithDependenciesScope.MODULES |
+                                                     ModuleWithDependenciesScope.LIBRARIES |
+                                                     (includeTests ? ModuleWithDependenciesScope.TESTS : 0));
+    }
+    finally {
+      module.putUserData(FlexOrderEnumerationHandler.FORCE_BC, null);
+    }
   }
 }
