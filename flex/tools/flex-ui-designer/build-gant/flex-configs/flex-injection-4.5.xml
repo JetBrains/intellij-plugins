@@ -89,6 +89,7 @@
 		<class>com.intellij.flex.uiDesigner.flex.DocumentFocusManager</class>
 		<class>com.intellij.flex.uiDesigner.flex.FakeTopLevelApplication</class>
 		<class>com.intellij.flex.uiDesigner.flex.FlexComponentCreator</class>
+		<class>com.intellij.flex.uiDesigner.flex.FlexComponentFactory</class>
 		<class>com.intellij.flex.uiDesigner.flex.FlexComponentInfoProvider</class>
 		<class>com.intellij.flex.uiDesigner.flex.FlexDocumentDisplayManager</class>
 		<class>com.intellij.flex.uiDesigner.flex.FlexDocumentFactory</class>
