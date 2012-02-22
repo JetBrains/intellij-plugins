@@ -291,7 +291,14 @@ public class Server implements ResourceBundleProvider {
   private static function postCheckSyncMessaging(resultReadyFile:File, project:Object):void {
     try {
       if (resultReadyFile != null && resultReadyFile.exists) {
-        resultReadyFile.deleteFileAsync();
+        try {
+          resultReadyFile.deleteFile();
+        }
+        catch (e:Error) {
+          if (resultReadyFile.exists) {
+            resultReadyFile.deleteFile();
+          }
+        }
       }
     }
     catch (e:Error) {
