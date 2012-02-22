@@ -16,8 +16,6 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -26,7 +24,7 @@ import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiManager;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.StringBuilderSpinAllocator;
@@ -362,9 +360,7 @@ public class LibraryManager implements Disposable {
   }
 
   private static PropertiesFile virtualFileToProperties(Project project, VirtualFile file) {
-    Document document = FileDocumentManager.getInstance().getDocument(file);
-    assert document != null;
     //noinspection ConstantConditions
-    return (PropertiesFile)PsiDocumentManager.getInstance(project).getPsiFile(document);
+    return (PropertiesFile)PsiManager.getInstance(project).findFile(file);
   }
 }

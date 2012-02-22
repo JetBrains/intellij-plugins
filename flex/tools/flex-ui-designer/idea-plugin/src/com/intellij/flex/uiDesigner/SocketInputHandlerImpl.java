@@ -8,6 +8,7 @@ import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.properties.IProperty;
+import com.intellij.lang.properties.PropertiesFileType;
 import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
@@ -19,6 +20,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -27,12 +29,16 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.AppIcon;
 import com.intellij.util.ExceptionUtil;
+import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.messages.MessageBus;
 import org.jetbrains.annotations.NotNull;
 
@@ -397,7 +403,25 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
         resourceBundleFile = null;
       }
       else {
-        resourceBundleFile = LibraryManager.getInstance().getResourceBundleFile(locale, bundleName, moduleInfo);
+        final PsiManager psiManager = PsiManager.getInstance(moduleInfo.getModule().getProject());
+        final Ref<PropertiesFile> result = new Ref<PropertiesFile>();
+        FileBasedIndex.getInstance().processValues(FileTypeIndex.NAME, PropertiesFileType.INSTANCE, null,
+                                                   new FileBasedIndex.ValueProcessor<Void>() {
+                                                     public boolean process(VirtualFile file, Void value) {
+                                                       if (file.getNameWithoutExtension().equals(bundleName)) {
+                                                         PsiFile psiFile = psiManager.findFile(file);
+                                                         if (psiFile != null) {
+                                                           result.set((PropertiesFile)psiFile);
+                                                           return false;
+                                                         }
+                                                       }
+
+                                                       return true;
+                                                     }
+                                                   }, moduleInfo.getModule().getModuleContentScope());
+
+        resourceBundleFile =
+          result.get() != null ? result.get() : LibraryManager.getInstance().getResourceBundleFile(locale, bundleName, moduleInfo);
       }
 
       final FileOutputStream fileOut = new FileOutputStream(resultFile);
