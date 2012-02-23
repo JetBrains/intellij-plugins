@@ -47,7 +47,7 @@ public class MxmlReader implements DocumentReader {
   
   internal var factoryContext:DeferredInstanceFromBytesContext;
 
-  private var rootObject:Object;
+  protected var rootObject:Object;
 
   public function MxmlReader() {
     stringRegistry = StringRegistry.instance;
@@ -71,8 +71,7 @@ public class MxmlReader implements DocumentReader {
   public function read(input:IDataInput, context:DocumentReaderContext, styleManager:StyleManagerEx):Object {
     this.styleManager = styleManager;
     this.input = input;
-    // pureFlash doesn't have styleManager
-    var component:Object = doRead(context, styleManager != null);
+    var component:Object = doRead(context);
     stateReader.read(this, input, component);
     injectedASReader.read(input, this);
     stateReader.reset(factoryContext);
@@ -96,7 +95,7 @@ public class MxmlReader implements DocumentReader {
     return object;
   }
 
-  private function doRead(context:DocumentReaderContext, setDocument:Boolean = false):Object {
+  private function doRead(context:DocumentReaderContext):Object {
     this.context = context;
     moduleContext = ModuleContextEx(context.moduleContext);
     readObjectTableSize();
@@ -116,13 +115,11 @@ public class MxmlReader implements DocumentReader {
         throw new ArgumentError("unknown property type");
     }
 
-    if (setDocument) {
-      // perfomance, early set document, avoid recursive set later (see UIComponent.document setter)
-      object.document = object;
-      rootObject = object;
-    }
-
+    beforeReadRootObjectProperties(object);
     return readObjectProperties(object);
+  }
+
+  protected function beforeReadRootObjectProperties(object:Object):void {
   }
 
   // must be called after readDeferredInstanceFromBytes().

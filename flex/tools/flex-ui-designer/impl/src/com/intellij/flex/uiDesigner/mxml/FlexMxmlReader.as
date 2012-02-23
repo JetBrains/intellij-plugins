@@ -6,6 +6,23 @@ import flash.display.DisplayObjectContainer;
 import flash.events.Event;
 
 public class FlexMxmlReader extends MxmlReader {
+  private var systemManager:DocumentDisplayManager;
+
+  public function FlexMxmlReader(systemManager:DocumentDisplayManager = null) {
+    this.systemManager = systemManager;
+  }
+
+  override protected function beforeReadRootObjectProperties(object:Object):void {
+    // perfomance, early set document, avoid recursive set later (see UIComponent.document setter)
+    object.document = object;
+    rootObject = object;
+    // see flex 4.5 Application splashScreenImage setter —
+    // systemManager may be quiered while read (i. e. before documentDisplayManager.setDocument)
+    if ("systemManager" in object) {
+      object.systemManager = systemManager;
+    }
+  }
+
   private function getMxNs():Namespace {
     return Namespace(moduleContext.applicationDomain.getDefinition("mx.core.mx_internal"));
   }

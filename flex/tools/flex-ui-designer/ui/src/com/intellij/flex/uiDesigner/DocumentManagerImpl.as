@@ -172,7 +172,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   }
 
   private function doOpen(documentFactory:DocumentFactory, document:Document, activateAndFocus:Boolean):Boolean {
-    var documentReader:DocumentReader = documentFactory.isPureFlash ? new MxmlReader() : new FlexMxmlReader();
+    var documentReader:DocumentReader = documentFactory.isPureFlash ? new MxmlReader() : new FlexMxmlReader(document.displayManager);
     try {
       server.moduleForGetResourceBundle = documentFactory.module;
       // IDEA-72499
