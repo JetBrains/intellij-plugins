@@ -16,6 +16,7 @@ import com.jetbrains.actionscript.profiler.ProfilerIcons;
 import com.jetbrains.actionscript.profiler.base.NavigatableTree;
 import com.jetbrains.actionscript.profiler.base.ProfilerActionGroup;
 import com.jetbrains.actionscript.profiler.livetable.LiveModelController;
+import com.jetbrains.actionscript.profiler.model.ActionScriptProfileSettings;
 import com.jetbrains.actionscript.profiler.model.ProfilerDataConsumer;
 import com.jetbrains.actionscript.profiler.model.ProfilingManager;
 import com.jetbrains.actionscript.profiler.ui.node.CPUSnapshotNode;
@@ -44,18 +45,14 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
 
   private Runnable connectionCallback;
   private final Module module;
-  private final String host;
-  private final int port;
   private final String runConfigurationName;
 
   private final Alarm myAlarm = new Alarm();
   private static final int MINUTE = 60 * 1000;
 
-  public ActionScriptProfileControlPanel(String runConfigurationName, final Module module, String host, int port) {
+  public ActionScriptProfileControlPanel(String runConfigurationName, final Module module) {
     this.runConfigurationName = runConfigurationName;
     this.module = module;
-    this.host = host;
-    this.port = port;
 
     treeModel = (new DefaultTreeModel(new DefaultMutableTreeNode(), true));
     snapshotTree.setModel(treeModel);
@@ -124,7 +121,7 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
     if (profilingManager != null) {
       profilingManager.dispose();
     }
-    profilingManager = new ProfilingManager(port);
+    profilingManager = new ProfilingManager(ActionScriptProfileSettings.getInstance().getPort());
     final LiveModelController liveModelController = new LiveModelController();
 
     final LiveObjectsNode liveObjectsNode = new LiveObjectsNode(runConfigurationName, module, profilingManager, liveModelController);
@@ -135,7 +132,8 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
     myAlarm.addRequest(new Runnable() {
       @Override
       public void run() {
-        NOTIFICATION_GROUP.createNotification(ProfilerBundle.message("profiler.connection.timeout"), NotificationType.ERROR).notify(module.getProject());
+        NOTIFICATION_GROUP.createNotification(ProfilerBundle.message("profiler.connection.timeout"), NotificationType.ERROR)
+          .notify(module.getProject());
       }
     }, MINUTE);
     profilingManager.initializeProfiling(profilerDataConsumer, new ProfilingManager.Callback() {

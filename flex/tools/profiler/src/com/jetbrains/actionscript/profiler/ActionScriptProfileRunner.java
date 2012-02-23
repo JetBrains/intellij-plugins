@@ -22,6 +22,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
@@ -29,9 +30,8 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.*;
 import com.intellij.ui.content.tabs.TabbedContentAction;
 import com.intellij.util.SystemProperties;
-import com.jetbrains.actionscript.profiler.model.ProfileSettings;
+import com.jetbrains.actionscript.profiler.model.ActionScriptProfileSettings;
 import com.jetbrains.actionscript.profiler.ui.ActionScriptProfileControlPanel;
-import com.jetbrains.actionscript.profiler.ui.ActionScriptProfileSettings;
 import com.jetbrains.profiler.DefaultProfilerExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +45,7 @@ import java.net.URL;
  * Date: 13.07.2010
  * Time: 13:32:04
  */
-public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings> {
+public class ActionScriptProfileRunner implements ProgramRunner<JDOMExternalizable> {
   private static final Logger LOG = Logger.getInstance(ActionScriptProfileRunner.class.getName());
   private static final String TOOLWINDOW_ID = ProfilerBundle.message("window.name");
 
@@ -64,8 +64,8 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
            (runProfile instanceof FlexRunConfiguration || runProfile instanceof FlashRunConfiguration);
   }
 
-  public ProfileSettings createConfigurationData(ConfigurationInfoProvider configurationInfoProvider) {
-    return new ProfileSettings();
+  public JDOMExternalizable createConfigurationData(ConfigurationInfoProvider configurationInfoProvider) {
+    return null;
   }
 
   public void checkConfiguration(RunnerSettings runnerSettings, ConfigurationPerRunnerSettings configurationPerRunnerSettings)
@@ -81,8 +81,8 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
     return myFlexRunner.createActions(executionResult);
   }
 
-  public SettingsEditor<ProfileSettings> getSettingsEditor(Executor executor, RunConfiguration runConfiguration) {
-    return new ActionScriptProfileSettings();
+  public SettingsEditor<JDOMExternalizable> getSettingsEditor(Executor executor, RunConfiguration runConfiguration) {
+    return null;
   }
 
   public void execute(@NotNull Executor executor, @NotNull ExecutionEnvironment executionEnvironment) throws ExecutionException {
@@ -98,10 +98,10 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
     RunProfile runProfile = executionEnvironment.getRunProfile();
     boolean started;
     if (runProfile instanceof FlexRunConfiguration) {
-      started = startProfiling((FlexRunConfiguration)runProfile, (ProfileSettings)runnerSettings.getData());
+      started = startProfiling((FlexRunConfiguration)runProfile);
     }
     else {
-      started = startProfiling((FlashRunConfiguration)runProfile, (ProfileSettings)runnerSettings.getData());
+      started = startProfiling((FlashRunConfiguration)runProfile);
     }
     if (!started) {
       return;
@@ -111,10 +111,10 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
     myFlexRunner.execute(executorById, executionEnvironment, callback);
   }
 
-  private boolean startProfiling(RunProfileWithCompileBeforeLaunchOption state, ProfileSettings profileSettings) {
+  private static boolean startProfiling(RunProfileWithCompileBeforeLaunchOption state) {
     Module[] modules = state.getModules();
     if (modules.length > 0) {
-      startProfiling(state.getName(), modules[0], profileSettings);
+      startProfiling(state.getName(), modules[0]);
       return true;
     }
     else {
@@ -123,8 +123,9 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
     }
   }
 
-  private void startProfiling(final String runConfigurationName, final Module module, final ProfileSettings profileSettings) {
-    if (!initProfilingAgent(module, profileSettings.getHost(), profileSettings.getPort())) {
+  private static void startProfiling(final String runConfigurationName,
+                                     final Module module) {
+    if (!initProfilingAgent(module)) {
       return;
     }
 
@@ -143,13 +144,13 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
             @Override
             public void contentRemoved(ContentManagerEvent event) {
               super.contentRemoved(event);
-              if(contentManager.getContentCount() == 0){
+              if (contentManager.getContentCount() == 0) {
                 toolWindowManager.unregisterToolWindow(TOOLWINDOW_ID);
               }
             }
           });
         }
-        final ActionScriptProfileControlPanel profileControlPanel = new ActionScriptProfileControlPanel(runConfigurationName, module, profileSettings.getHost(), profileSettings.getPort());
+        final ActionScriptProfileControlPanel profileControlPanel = new ActionScriptProfileControlPanel(runConfigurationName, module);
 
         final SimpleToolWindowPanel toolWindowPanel = new SimpleToolWindowPanel(false, true);
         toolWindowPanel.setContent(profileControlPanel.getMainPanel());
@@ -184,7 +185,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
     });
   }
 
-  private static boolean initProfilingAgent(Module module, String host, int port) {
+  private static boolean initProfilingAgent(Module module) {
     try {
       String agentName = detectSuitableAgentNameForSdkUsedToLaunch(module);
 
@@ -208,7 +209,8 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
       assert agentFile != null && agentFile.exists() : "Have not found " + agentName;
       String pathToAgent = agentFile.getCanonicalPath();
 
-      pathToAgent += "?port=" + port + "&host=" + host;
+      final ActionScriptProfileSettings settings = ActionScriptProfileSettings.getInstance();
+      pathToAgent += "?port=" + settings.getPort() + "&host=" + settings.getHost();
       FlashPlayerTrustUtil.updateTrustedStatus(module.getProject(), true, false, pathToAgent);
       begFlashPlayerToPreloadProfilerSwf(pathToAgent);
     }
@@ -277,7 +279,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
 
   private static void processMmCfg(MmCfgFixer mmCfgFixer) throws IOException {
     StringBuilder mmCfgContent = new StringBuilder();
-    String mmCfgPath = SystemProperties.getUserHome() + File.separator + "mm.cfg";
+    String mmCfgPath = getMmCfgFolderPath() + File.separator + "mm.cfg";
     final File file = new File(mmCfgPath);
     String lineEnd = System.getProperty("line.separator");
 
@@ -305,5 +307,12 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
     if (options != null) mmCfgContent.insert(0, options + lineEnd);
 
     FileUtil.writeToFile(file, mmCfgContent.toString().getBytes());
+  }
+
+  private static String getMmCfgFolderPath() {
+    if (ActionScriptProfileSettings.getInstance().isUseCustomPathToMmCfg()) {
+      return ActionScriptProfileSettings.getInstance().getPathToMmCfg();
+    }
+    return SystemProperties.getUserHome();
   }
 }

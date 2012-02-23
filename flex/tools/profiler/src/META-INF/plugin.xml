@@ -35,11 +35,15 @@
   <extensions defaultExtensionNs="com.intellij">
     <executor implementation="com.jetbrains.profiler.DefaultProfilerExecutor" order="first,after debug"/>
     <fileEditorProvider implementation="com.jetbrains.profiler.ProfileViewProvider"/>
-    <fileTypeFactory implementation="com.jetbrains.profiler.ProfileFileTypeFactory" />
+    <fileTypeFactory implementation="com.jetbrains.profiler.ProfileFileTypeFactory"/>
 
     <profiler.SnapshotProvider implementation="com.jetbrains.actionscript.profiler.ActionScriptProfileProvider"/>
     <programRunner implementation="com.jetbrains.actionscript.profiler.ActionScriptProfileRunner"/>
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+
+    <applicationService serviceInterface="com.jetbrains.actionscript.profiler.model.ActionScriptProfileSettings"
+                        serviceImplementation="com.jetbrains.actionscript.profiler.model.ActionScriptProfileSettings"/>
+    <applicationConfigurable instance="com.jetbrains.actionscript.profiler.ActionScriptProfileSettingsConfigurable"/>
   </extensions>
   <actions>
     <group id="ProfilerViewMenu" popup="true">
