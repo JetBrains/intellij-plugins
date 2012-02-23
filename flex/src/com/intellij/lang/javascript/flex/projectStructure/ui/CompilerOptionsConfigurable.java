@@ -803,7 +803,8 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
   private String getSdkVersion() {
     final Sdk sdk = myDependenciesConfigurable.getCurrentSdk();
-    return sdk == null ? UNKNOWN_SDK_VERSION : sdk.getVersionString();
+    final String sdkVersion = sdk == null ? null : sdk.getVersionString();
+    return sdkVersion == null ? UNKNOWN_SDK_VERSION : sdkVersion;
   }
 
   private class RepeatableValueEditor extends TextFieldWithBrowseButton {
