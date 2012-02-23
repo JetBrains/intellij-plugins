@@ -1,12 +1,8 @@
 package com.intellij.flex.uiDesigner.preview;
 
-import com.intellij.flex.uiDesigner.DesignerApplicationManager;
-import com.intellij.flex.uiDesigner.DocumentFactoryManager;
-import com.intellij.flex.uiDesigner.FlashUIDesignerBundle;
-import com.intellij.flex.uiDesigner.SocketInputHandler;
+import com.intellij.flex.uiDesigner.*;
 import com.intellij.flex.uiDesigner.actions.RunDesignViewAction;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
@@ -19,7 +15,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.LoadingDecorator;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -29,7 +24,6 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
-import com.intellij.util.Consumer;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.update.MergingUpdateQueue;
@@ -42,6 +36,8 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 
 public class MxmlPreviewToolWindowManager implements ProjectComponent {
+  private static final String SETTINGS_TOOL_WINDOW_VISIBLE = "mxml.preview.tool.window.visible";
+
   private final Project project;
   private final FileEditorManager fileEditorManager;
 
@@ -125,7 +121,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     toolWindow.setIcon(PlatformIcons.UI_FORM_ICON);
 
     ((ToolWindowManagerEx)ToolWindowManager.getInstance(project)).addToolWindowManagerListener(new ToolWindowManagerAdapter() {
-      private boolean myVisible = false;
+      private boolean visible = false;
 
       @Override
       public void stateChanged() {
@@ -135,12 +131,20 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
         final ToolWindow window = ToolWindowManager.getInstance(project).getToolWindow(toolWindowId);
         if (window != null && window.isAvailable()) {
-          final boolean visible = window.isVisible();
-          PropertiesComponent.getInstance(project).setValue("mxml.preview.tool.window.visible", visible ? "true" : "false");
-          if (visible && !myVisible) {
+          final boolean currentVisible = window.isVisible();
+          PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
+          if (currentVisible) {
+            propertiesComponent.setValue(SETTINGS_TOOL_WINDOW_VISIBLE, "true");
+          }
+          else {
+            propertiesComponent.unsetValue(SETTINGS_TOOL_WINDOW_VISIBLE);
+          }
+
+          if (currentVisible && !visible) {
             render();
           }
-          myVisible = visible;
+
+          visible = currentVisible;
         }
       }
     });
@@ -192,39 +196,8 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     return RunDesignViewAction.isApplicable(project, PsiDocumentManager.getInstance(project).getPsiFile(document));
   }
 
-  @Nullable
-  private Editor getActiveMxmlEditor() {
-    Editor editor = fileEditorManager.getSelectedTextEditor();
-    if (editor != null) {
-      if (isApplicableEditor(editor)) {
-        return editor;
-      }
-    }
-
-    return null;
-  }
-
-  private class MyFileEditorManagerListener implements FileEditorManagerListener {
+  private class MyFileEditorManagerListener extends FileEditorManagerAdapter implements Runnable {
     private boolean waitingForSmartMode;
-
-    public void fileOpened(FileEditorManager source, VirtualFile file) {
-      final DumbService dumbService = DumbService.getInstance(project);
-      if (dumbService.isDumb()) {
-        openWhenSmart(dumbService);
-      }
-      else {
-        processFileEditorChange(getActiveMxmlEditor());
-      }
-    }
-
-    public void fileClosed(FileEditorManager source, VirtualFile file) {
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          processFileEditorChange(getActiveMxmlEditor());
-        }
-      });
-    }
 
     public void selectionChanged(FileEditorManagerEvent event) {
       final DumbService dumbService = DumbService.getInstance(project);
@@ -234,7 +207,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       else {
         final FileEditor newFileEditor = event.getNewEditor();
         Editor mxmlEditor = null;
-        if (newFileEditor instanceof TextEditor) {
+        if (event.getNewEditor() instanceof TextEditor) {
           final Editor editor = ((TextEditor)newFileEditor).getEditor();
           if (isApplicableEditor(editor)) {
             mxmlEditor = editor;
@@ -246,29 +219,27 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     }
 
     private void openWhenSmart(DumbService dumbService) {
-      if (waitingForSmartMode) {
-        return;
+      if (!waitingForSmartMode) {
+        waitingForSmartMode = true;
+        dumbService.runWhenSmart(this);
+      }
+    }
+
+    @Override
+    public void run() {
+      waitingForSmartMode = false;
+      final AccessToken token = ReadAction.start();
+      final Editor selectedTextEditor;
+      try {
+        selectedTextEditor = fileEditorManager.getSelectedTextEditor();
+      }
+      finally {
+        token.finish();
       }
 
-      waitingForSmartMode = true;
-      dumbService.runWhenSmart(new Runnable() {
-        @Override
-        public void run() {
-          waitingForSmartMode = false;
-          final AccessToken token = ReadAction.start();
-          final Editor selectedTextEditor;
-          try {
-            selectedTextEditor = fileEditorManager.getSelectedTextEditor();
-          }
-          finally {
-            token.finish();
-          }
-
-          if (selectedTextEditor != null && isApplicableEditor(selectedTextEditor)) {
-            processFileEditorChange(selectedTextEditor);
-          }
-        }
-      });
+      if (selectedTextEditor != null && isApplicableEditor(selectedTextEditor)) {
+        processFileEditorChange(selectedTextEditor);
+      }
     }
   }
 
@@ -304,7 +275,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         }
 
         toolWindow.setAvailable(true, null);
-        if (propertiesComponent.getBoolean("mxml.preview.tool.window.visible", false)) {
+        if (propertiesComponent.getBoolean(SETTINGS_TOOL_WINDOW_VISIBLE, false)) {
           toolWindow.show(null);
         }
 
