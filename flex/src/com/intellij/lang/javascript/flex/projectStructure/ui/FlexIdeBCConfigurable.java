@@ -591,7 +591,8 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
                              ? FlashRunConfigurationForm.MODULE_BASE_CLASS_NAME
                              : FlashRunConfigurationForm.SPRITE_CLASS_NAME;
     final GlobalSearchScope scope = GlobalSearchScope.moduleScope(myModule);
-    final Condition<JSClass> filter = new JSClassChooserDialog.PublicInheritor(myModule.getProject(), baseClass, scope, true);
+    GlobalSearchScope filterScope = FlexUtils.getModuleWithDependenciesAndLibrariesScope(myModule, myConfiguration, false);
+    final Condition<JSClass> filter = new JSClassChooserDialog.PublicInheritor(myModule.getProject(), baseClass, filterScope, true);
     myMainClassComponent = JSReferenceEditor.forClassName("", myModule.getProject(), null, scope, null,
                                                           filter, ExecutionBundle.message("choose.main.class.dialog.title"));
   }

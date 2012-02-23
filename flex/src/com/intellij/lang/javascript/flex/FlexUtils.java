@@ -678,10 +678,11 @@ public class FlexUtils {
   public static ModuleWithDependenciesScope getModuleWithDependenciesAndLibrariesScope(@NotNull Module module,
                                                                                        @NotNull FlexIdeBuildConfiguration bc,
                                                                                        boolean includeTests) {
-    if (!ArrayUtil.contains(bc, FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations())) {
-      throw new IllegalArgumentException("Build configuration '" + bc.getName() + "' does not belong to module '" + module.getName() + "'");
-    }
-
+    // we cannot assert this since build configuration may be not yet persisted
+    //if (!ArrayUtil.contains(bc, FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations())) {
+    //  throw new IllegalArgumentException("Build configuration '" + bc.getName() + "' does not belong to module '" + module.getName() + "'");
+    //}
+    //
     module.putUserData(FlexOrderEnumerationHandler.FORCE_BC, bc);
     try {
       return new ModuleWithDependenciesScope(module, ModuleWithDependenciesScope.COMPILE |
