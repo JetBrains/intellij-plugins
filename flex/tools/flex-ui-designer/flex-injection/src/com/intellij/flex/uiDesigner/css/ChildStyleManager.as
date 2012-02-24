@@ -65,5 +65,10 @@ public class ChildStyleManager extends AbstractStyleManager implements IStyleMan
   public function get typeHierarchyCache():Object {
     return _parent.typeHierarchyCache;
   }
+
+  override public function getStyleDeclaration(selector:String):CSSStyleDeclaration {
+    var styleDeclaration:CSSStyleDeclaration = super.getStyleDeclaration(selector);
+    return styleDeclaration == null ? parent.getStyleDeclaration(selector) : styleDeclaration;
+  }
 }
 }
