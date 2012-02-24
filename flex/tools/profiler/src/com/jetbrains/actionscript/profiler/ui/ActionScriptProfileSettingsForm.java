@@ -1,7 +1,7 @@
 package com.jetbrains.actionscript.profiler.ui;
 
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.FileUtil;
@@ -21,58 +21,62 @@ public class ActionScriptProfileSettingsForm {
   private JPanel myPanel;
   private JTextField myHostField;
   private JTextField myPortField;
-  private JRadioButton myUseLocalUserDirectoryRadioButton;
-  private JRadioButton myUseCustomDirectoryRadioButton;
   private TextFieldWithBrowseButton myPathToMmCfgTextField;
-  private JPanel myPathPanel;
-  private JLabel myFolderPathLabel;
+  private JCheckBox myCustomPathCheckBox;
+
+  private String customPathToMmCfg = "";
 
   public ActionScriptProfileSettingsForm() {
-    final ActionListener radioButtonListener = new ActionListener() {
+    myCustomPathCheckBox.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        setUseCustomDirectory(myUseCustomDirectoryRadioButton.isSelected());
+        if (!myCustomPathCheckBox.isSelected()) {
+          customPathToMmCfg = myPathToMmCfgTextField.getText();
+        }
+        updateMmCfg();
       }
-    };
-
-    final ButtonGroup group = new ButtonGroup();
-    group.add(myUseCustomDirectoryRadioButton);
-    group.add(myUseLocalUserDirectoryRadioButton);
-
-    myUseCustomDirectoryRadioButton.addActionListener(radioButtonListener);
-    myUseLocalUserDirectoryRadioButton.addActionListener(radioButtonListener);
+    });
 
     myPathToMmCfgTextField.getButton().addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        final VirtualFile folder = FileChooser.chooseFile(getPanel(), FileChooserDescriptorFactory.createSingleFolderDescriptor());
-        if (folder != null) {
-          myPathToMmCfgTextField.setText(folder.getPresentableUrl());
+        final VirtualFile mmCfg = FileChooser.chooseFile(getPanel(), FlexUtils.createFileChooserDescriptor("cfg"));
+        if (mmCfg != null) {
+          customPathToMmCfg = mmCfg.getPath();
+          updateMmCfg();
         }
       }
     });
-
-    myFolderPathLabel.setLabelFor(myPathToMmCfgTextField.getTextField());
   }
 
   public void resetEditorFrom(ActionScriptProfileSettings profileSettings) {
+    customPathToMmCfg = profileSettings.getPathToMmCfg();
+
     myHostField.setText(profileSettings.getHost());
     myPortField.setText(String.valueOf(profileSettings.getPort()));
-    myPathToMmCfgTextField.setText(profileSettings.getPathToMmCfg());
-    setUseCustomDirectory(profileSettings.isUseCustomPathToMmCfg());
+    myCustomPathCheckBox.setSelected(profileSettings.isUseCustomPathToMmCfg());
+    setUseCustomDirectory();
   }
 
   public void applyEditorTo(ActionScriptProfileSettings profileSettings) {
     profileSettings.setHostFromString(myHostField.getText());
     profileSettings.setPortFromString(myPortField.getText());
-    profileSettings.setPathToMmCfg(FileUtil.toSystemIndependentName(myPathToMmCfgTextField.getText()));
-    profileSettings.setUseCustomPathToMmCfg(myUseCustomDirectoryRadioButton.isSelected());
+    profileSettings.setUseCustomPathToMmCfg(myCustomPathCheckBox.isSelected());
+    if (myCustomPathCheckBox.isSelected()) {
+      profileSettings.setPathToMmCfg(FileUtil.toSystemIndependentName(myPathToMmCfgTextField.getText()));
+    }
   }
 
-  private void setUseCustomDirectory(boolean useCustomPathToMmCfg) {
-    myUseCustomDirectoryRadioButton.setSelected(useCustomPathToMmCfg);
-    myUseLocalUserDirectoryRadioButton.setSelected(!useCustomPathToMmCfg);
-    myPathToMmCfgTextField.setEnabled(useCustomPathToMmCfg);
+  private void setUseCustomDirectory() {
+    myPathToMmCfgTextField.setEnabled(myCustomPathCheckBox.isSelected());
+    updateMmCfg();
+  }
+
+  private void updateMmCfg() {
+    final String defaultMmCfgPath = FileUtil.toSystemDependentName(ActionScriptProfileSettings.getDefaultMmCfgPath());
+    myPathToMmCfgTextField
+      .setText(myCustomPathCheckBox.isSelected() ? FileUtil.toSystemDependentName(customPathToMmCfg) : defaultMmCfgPath);
+    myPathToMmCfgTextField.setEnabled(myCustomPathCheckBox.isSelected());
   }
 
   public JPanel getPanel() {
@@ -80,8 +84,14 @@ public class ActionScriptProfileSettingsForm {
   }
 
   public boolean isModified(ActionScriptProfileSettings settings) {
-    return !Comparing.equal(settings.getHost(), myHostField.getText()) || !Comparing.equal(settings.getPort(), myPortField.getText())
-           || !Comparing.equal(settings.getPathToMmCfg(), FileUtil.toSystemIndependentName(myPathToMmCfgTextField.getText()))
-           || !Comparing.equal(settings.isUseCustomPathToMmCfg(), myUseCustomDirectoryRadioButton.isSelected());
+    final boolean result =
+      !Comparing.equal(settings.getHost(), myHostField.getText()) || !Comparing.equal(Integer.toString(settings.getPort()), myPortField.getText())
+      || !Comparing.equal(settings.isUseCustomPathToMmCfg(), myCustomPathCheckBox.isSelected());
+    final boolean flag = myCustomPathCheckBox.isSelected() &&
+                         Comparing.equal(settings.getPathToMmCfg(), FileUtil.toSystemIndependentName(myPathToMmCfgTextField.getText()));
+    if (!result && flag) {
+      return true;
+    }
+    return result;
   }
 }

@@ -5,8 +5,11 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.SystemProperties;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
 
 /**
  * @author: Fedor.Korotkov
@@ -33,6 +36,17 @@ public class ActionScriptProfileSettings implements PersistentStateComponent<Ele
   private static final String HOST_ATTR_NAME = "host";
   private static final String PATH_ATTR_NAME = "path";
   private static final String CUSTOM_MMCFG_ATTR_NAME = "custom.mm.cfg";
+
+  public static String getMmCfgPath() {
+    if(getInstance().isUseCustomPathToMmCfg()) {
+      return getInstance().getPathToMmCfg();
+    }
+    return getDefaultMmCfgPath();
+  }
+
+  public static String getDefaultMmCfgPath() {
+    return SystemProperties.getUserHome() + File.separator + "mm.cfg";
+  }
 
   public static ActionScriptProfileSettings getInstance() {
     return ServiceManager.getService(ActionScriptProfileSettings.class);

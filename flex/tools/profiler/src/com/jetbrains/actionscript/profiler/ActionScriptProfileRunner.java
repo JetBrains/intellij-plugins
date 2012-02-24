@@ -29,7 +29,6 @@ import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.*;
 import com.intellij.ui.content.tabs.TabbedContentAction;
-import com.intellij.util.SystemProperties;
 import com.jetbrains.actionscript.profiler.model.ActionScriptProfileSettings;
 import com.jetbrains.actionscript.profiler.ui.ActionScriptProfileControlPanel;
 import com.jetbrains.profiler.DefaultProfilerExecutor;
@@ -279,7 +278,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<JDOMExternalizab
 
   private static void processMmCfg(MmCfgFixer mmCfgFixer) throws IOException {
     StringBuilder mmCfgContent = new StringBuilder();
-    String mmCfgPath = getMmCfgFolderPath() + File.separator + "mm.cfg";
+    final String mmCfgPath = ActionScriptProfileSettings.getMmCfgPath() ;
     final File file = new File(mmCfgPath);
     String lineEnd = System.getProperty("line.separator");
 
@@ -307,12 +306,5 @@ public class ActionScriptProfileRunner implements ProgramRunner<JDOMExternalizab
     if (options != null) mmCfgContent.insert(0, options + lineEnd);
 
     FileUtil.writeToFile(file, mmCfgContent.toString().getBytes());
-  }
-
-  private static String getMmCfgFolderPath() {
-    if (ActionScriptProfileSettings.getInstance().isUseCustomPathToMmCfg()) {
-      return ActionScriptProfileSettings.getInstance().getPathToMmCfg();
-    }
-    return SystemProperties.getUserHome();
   }
 }
