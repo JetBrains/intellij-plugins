@@ -91,4 +91,8 @@ public class FlexSdkType2 extends SdkType {
   public boolean isRootTypeApplicable(final OrderRootType type) {
     return type == OrderRootType.CLASSES || type == OrderRootType.SOURCES || type == JavadocOrderRootType.getInstance();
   }
+
+  public String getDefaultDocumentationUrl(final @NotNull Sdk sdk) {
+    return "http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/";
+  }
 }
