@@ -126,20 +126,20 @@ public class CPUSnapshotView extends ProfileView implements Disposable {
 
     myHotSpotsTreeTable.getTree().setCellRenderer(new FrameInfoCellRenderer(projectScope) {
       @Override
-      public void customizeCellRenderer(Object value) {
+      public void customizeCellRenderer(Object value, boolean selected) {
         setPaintFocusBorder(false);
         setScopeIcon(ProfilerIcons.CALLER_SOLID_ARROW);
         setNonScopeIcon(ProfilerIcons.CALLER_DOTTED_ARROW);
-        super.customizeCellRenderer(value);
+        super.customizeCellRenderer(value, selected);
       }
     });
     myTracesTreeTable.getTree().setCellRenderer(new FrameInfoCellRenderer(projectScope) {
       @Override
-      public void customizeCellRenderer(Object value) {
+      public void customizeCellRenderer(Object value, boolean selected) {
         setPaintFocusBorder(false);
         setScopeIcon(ProfilerIcons.CALLEE_SOLID_ARROW);
         setNonScopeIcon(ProfilerIcons.CALLEE_DOTTED_ARROW);
-        super.customizeCellRenderer(value);
+        super.customizeCellRenderer(value, selected);
       }
     });
 

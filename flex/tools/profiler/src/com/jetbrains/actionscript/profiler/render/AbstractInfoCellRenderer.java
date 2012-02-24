@@ -13,23 +13,25 @@ import javax.swing.*;
 abstract public class AbstractInfoCellRenderer extends ColoredTreeCellRenderer {
   @Override
   public void customizeCellRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-    customizeCellRenderer(value);
+    customizeCellRenderer(value, selected);
     setToolTipText(toString());
   }
 
-  protected void appendFrameInfo(@NotNull FrameInfo info) {
+  protected void appendFrameInfo(@NotNull FrameInfo info, boolean selected) {
     append(info.toSimpleString());
+    final SimpleTextAttributes additionalInfoColorAttributes =
+      selected ? SimpleTextAttributes.REGULAR_ATTRIBUTES : SimpleTextAttributes.GRAY_ATTRIBUTES;
     if (info.getPackageName() != null && info.getPackageName().length() > 0) {
-      append(" (" + info.getPackageName() + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
+      append(" (" + info.getPackageName() + ")", additionalInfoColorAttributes);
     }
     if (info.isInnerClass() && info.getFileName() != null) {
       String location = info.getFileName();
       if (info.getFileLine() >= 0) {
         location += ":" + info.getFileLine();
       }
-      append(" " + location, SimpleTextAttributes.GRAY_ATTRIBUTES);
+      append(" " + location, additionalInfoColorAttributes);
     }
   }
 
-  protected abstract void customizeCellRenderer(Object value);
+  protected abstract void customizeCellRenderer(Object value, boolean selected);
 }

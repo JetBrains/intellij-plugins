@@ -32,7 +32,7 @@ public class FrameInfoCellRenderer extends AbstractInfoCellRenderer {
   }
 
   @Override
-  protected void customizeCellRenderer(Object value) {
+  protected void customizeCellRenderer(Object value, boolean selected) {
     if (value instanceof DefaultMutableTreeNode) {
       value = ((DefaultMutableTreeNode)value).getUserObject();
     }
@@ -50,7 +50,7 @@ public class FrameInfoCellRenderer extends AbstractInfoCellRenderer {
     else {
       frameInfo = (FrameInfo)value;
     }
-    appendFrameInfo(frameInfo);
+    appendFrameInfo(frameInfo, selected);
 
     boolean inScope;
     if (frameInfo.getFilePath() != null) {

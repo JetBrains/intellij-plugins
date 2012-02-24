@@ -8,7 +8,7 @@ import com.jetbrains.actionscript.profiler.livetable.SizeInfoNode;
  */
 public class SizeInfoCellRenderer extends AbstractInfoCellRenderer {
   @Override
-  protected void customizeCellRenderer(Object value) {
+  protected void customizeCellRenderer(Object value, boolean selected) {
     if (!(value instanceof SizeInfoNode)) {
       if (value != null && value.toString() != null) {
         append(value.toString());
@@ -18,7 +18,7 @@ public class SizeInfoCellRenderer extends AbstractInfoCellRenderer {
 
     final SizeInfoNode sizeInfoNode = (SizeInfoNode)value;
     if (sizeInfoNode.isMethod()) {
-      appendFrameInfo(sizeInfoNode.getFrameInfo());
+      appendFrameInfo(sizeInfoNode.getFrameInfo(), selected);
       return;
     }
 
