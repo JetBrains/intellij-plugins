@@ -12,10 +12,17 @@ public class FlexMxmlReader extends MxmlReader {
     this.systemManager = systemManager;
   }
 
-  override protected function beforeReadRootObjectProperties(object:Object):void {
+  override protected function beforeReadRootObjectProperties(object:Object, isDocumentLevel:Boolean):void {
     // perfomance, early set document, avoid recursive set later (see UIComponent.document setter)
-    object.document = object;
+    if (isDocumentLevel) {
+      // may be spark.primitives.supportClasses.GraphicElement
+      if ("document" in object) {
+        object.document = object;
+      }
+    }
+
     rootObject = object;
+
     // see flex 4.5 Application splashScreenImage setter —
     // systemManager may be quiered while read (i. e. before documentDisplayManager.setDocument)
     if ("systemManager" in object) {

@@ -441,38 +441,36 @@ class PropertyProcessor implements ValueWriter {
   }
 
   boolean writeIfPrimitive(XmlElementValueProvider valueProvider, String type, PrimitiveAmfOutputStream out, @Nullable AnnotationBackedDescriptor descriptor,
-                           boolean isStyle, boolean emptyIntAs0) throws InvalidPropertyException {
+                           boolean isStyle, boolean emptyNumericAs0) throws InvalidPropertyException {
     if (type.equals(JSCommonTypeNames.STRING_CLASS_NAME)) {
       writeString(valueProvider, descriptor);
     }
-    else if (type.equals(JSCommonTypeNames.NUMBER_CLASS_NAME)) {
-      final String trimmed = valueProvider.getTrimmed();
-      if (StringUtil.isEmpty(trimmed)) {
-        throw new InvalidPropertyException(valueProvider.getElement(), "invalid.number.value");
-      }
-      out.writeAmfDouble(trimmed);
-    }
-    else if (type.equals(JSCommonTypeNames.BOOLEAN_CLASS_NAME)) {
-      out.writeAmfBoolean(valueProvider.getTrimmed());
-    }
-    else if (type.equals(JSCommonTypeNames.INT_TYPE_NAME) || type.equals(JSCommonTypeNames.UINT_TYPE_NAME)) {
+    else if (type.equals(JSCommonTypeNames.NUMBER_CLASS_NAME) ||
+             type.equals(JSCommonTypeNames.INT_TYPE_NAME) ||
+             type.equals(JSCommonTypeNames.UINT_TYPE_NAME)) {
       final String trimmed = valueProvider.getTrimmed();
       if (trimmed.isEmpty()) {
-        if (emptyIntAs0) {
+        if (emptyNumericAs0) {
           out.writeAmfInt(0);
           return true;
         }
         else {
-          throw new InvalidPropertyException(valueProvider.getElement(), "invalid.integer.value");
+          throw new InvalidPropertyException(valueProvider.getElement(), "invalid.numeric.value");
         }
       }
 
-      if (descriptor != null && FlexCssPropertyDescriptor.COLOR_FORMAT.equals(descriptor.getFormat())) {
+      if (type.equals(JSCommonTypeNames.NUMBER_CLASS_NAME)) {
+        out.writeAmfDouble(trimmed);
+      }
+      else if (descriptor != null && FlexCssPropertyDescriptor.COLOR_FORMAT.equals(descriptor.getFormat())) {
         writer.color(valueProvider.getElement(), trimmed, isStyle);
       }
       else {
         out.writeAmfInt(trimmed);
       }
+    }
+    else if (type.equals(JSCommonTypeNames.BOOLEAN_CLASS_NAME)) {
+      out.writeAmfBoolean(valueProvider.getTrimmed());
     }
     else if (type.equals(AsCommonTypeNames.CLASS)) {
       processClass(valueProvider);

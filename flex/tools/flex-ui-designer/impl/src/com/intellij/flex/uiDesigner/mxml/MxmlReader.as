@@ -71,7 +71,7 @@ public class MxmlReader implements DocumentReader {
   public function read(input:IDataInput, context:DocumentReaderContext, styleManager:StyleManagerEx):Object {
     this.styleManager = styleManager;
     this.input = input;
-    var component:Object = doRead(context);
+    var component:Object = doRead(context, true);
     stateReader.read(this, input, component);
     injectedASReader.read(input, this);
     stateReader.reset(factoryContext);
@@ -86,7 +86,7 @@ public class MxmlReader implements DocumentReader {
 
   public function readDeferredInstanceFromBytes(input:IDataInput, factoryContext:DeferredInstanceFromBytesContext):Object {
     this.input = input;
-    var object:Object = doRead(factoryContext.readerContext);
+    var object:Object = doRead(factoryContext.readerContext, false);
     assert(this.factoryContext == null);
     if (input is ByteArray) {
       assert(input.bytesAvailable == 0);
@@ -95,7 +95,7 @@ public class MxmlReader implements DocumentReader {
     return object;
   }
 
-  private function doRead(context:DocumentReaderContext):Object {
+  private function doRead(context:DocumentReaderContext, isDocumentLevel:Boolean):Object {
     this.context = context;
     moduleContext = ModuleContextEx(context.moduleContext);
     readObjectTableSize();
@@ -115,11 +115,11 @@ public class MxmlReader implements DocumentReader {
         throw new ArgumentError("unknown property type");
     }
 
-    beforeReadRootObjectProperties(object);
+    beforeReadRootObjectProperties(object, isDocumentLevel);
     return readObjectProperties(object);
   }
 
-  protected function beforeReadRootObjectProperties(object:Object):void {
+  protected function beforeReadRootObjectProperties(object:Object, isDocumentLevel:Boolean):void {
   }
 
   // must be called after readDeferredInstanceFromBytes().

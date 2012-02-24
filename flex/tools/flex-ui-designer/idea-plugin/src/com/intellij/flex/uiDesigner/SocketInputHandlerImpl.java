@@ -20,7 +20,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -46,6 +45,7 @@ import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.*;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SocketInputHandlerImpl extends SocketInputHandler {
@@ -391,7 +391,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     final ModuleInfo moduleInfo = Client.getInstance().getRegisteredModules().getNullableInfo(moduleId);
     final AccessToken token = ReadAction.start();
     try {
-      final PropertiesFile resourceBundleFile;
+      PropertiesFile resourceBundleFile = null;
       if (moduleInfo == null) {
         // project may be closed, but client is not closed yet (AppTest#testCloseAndOpenProject)
         LOG.warn("Skip getResourceBundle(" + locale + ", " + bundleName + ") due to cannot find project with id " + moduleId);
@@ -399,24 +399,41 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
       }
       else {
         final PsiManager psiManager = PsiManager.getInstance(moduleInfo.getModule().getProject());
-        final Ref<PropertiesFile> result = new Ref<PropertiesFile>();
+        final List<VirtualFile> result = new ArrayList<VirtualFile>();
         FileBasedIndex.getInstance().processValues(FileTypeIndex.NAME, PropertiesFileType.INSTANCE, null,
                                                    new FileBasedIndex.ValueProcessor<Void>() {
                                                      public boolean process(VirtualFile file, Void value) {
                                                        if (file.getNameWithoutExtension().equals(bundleName)) {
-                                                         PsiFile psiFile = psiManager.findFile(file);
-                                                         if (psiFile != null) {
-                                                           result.set((PropertiesFile)psiFile);
+                                                         result.add(file);
+                                                         // todo IDEA-74868
+                                                         if (file.getParent().getName().equals("en_US")) {
                                                            return false;
                                                          }
+
+
                                                        }
 
                                                        return true;
                                                      }
-                                                   }, moduleInfo.getModule().getModuleContentScope());
+                                                   }, moduleInfo.getModule().getModuleScope(false));
 
-        resourceBundleFile =
-          result.get() != null ? result.get() : LibraryManager.getInstance().getResourceBundleFile(locale, bundleName, moduleInfo);
+        PropertiesFile defaultLocale = null;
+        for (VirtualFile file : result) {
+          PsiFile psiFile = psiManager.findFile(file);
+          if (psiFile != null) {
+            if (file.getParent().getName().equals("en_US")) {
+              defaultLocale = (PropertiesFile)psiFile;
+            }
+            else {
+              resourceBundleFile = (PropertiesFile)psiFile;
+              break;
+            }
+          }
+        }
+
+        if (resourceBundleFile == null) {
+          resourceBundleFile = defaultLocale != null ? defaultLocale : LibraryManager.getInstance().getResourceBundleFile(locale, bundleName, moduleInfo);
+        }
       }
 
       final FileOutputStream fileOut = new FileOutputStream(resultFile);

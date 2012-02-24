@@ -24,7 +24,8 @@ public class MxmlTest extends MxmlTestBase {
       libs.add(getFudHome() + "/test-data-helper/target/test-data-helper.swc");
       final VirtualFile assetsDir = getVFile("assets");
       model.addContentEntry(assetsDir).addSourceFolder(assetsDir, false);
-
+    }
+    else if (getName().equals("testResolveResourceIfNameIsAmbiguous")) {
       final VirtualFile localesDir = getVFile("locales");
       final ContentEntry localesContentEntry = model.addContentEntry(localesDir);
       //noinspection ConstantConditions
@@ -42,6 +43,10 @@ public class MxmlTest extends MxmlTestBase {
     assertThat(getLastProblems(), emptyArray());
   }
 
+  public void testResolveResourceIfNameIsAmbiguous() throws Exception {
+    testFile("ResourceDirective.mxml");
+  }
+
   public void test45() throws Exception {
     testFiles(getTestDir(), getVFile(getTestDataPath() + "/src/mx"));
     
@@ -55,7 +60,7 @@ public class MxmlTest extends MxmlTestBase {
                  m("Default property not found for Rect (line: 2)"),
                  m("Invalid class value (line: 6)", "Invalid class value (line: 11)"),
                  m("Unsupported embed asset type \"@Embed(source='/jazz.mp3')\" (line: 3)"),
-                 m("Invalid color name invalidcolorname (line: 2)", "Invalid integer value (line: 3)", "Invalid number value (line: 4)"),
+                 m("Invalid color name invalidcolorname (line: 2)", "Invalid numeric value (line: 3)", "Invalid numeric value (line: 4)"),
                  m("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-72175\">Inline components are not supported</a> (line: 9)"),
                  m("Unresolved variable or type unresolvedData (line: 10)"),
                  m("Initializer for Group cannot be represented in text (line: 2)",
@@ -79,7 +84,7 @@ public class MxmlTest extends MxmlTestBase {
                  m("Default property not found for Rect (line: 2)"),
                  m("Invalid class value (line: 6)", "Invalid class value (line: 11)"),
                  m("Unsupported embed asset type \"@Embed(source='/jazz.mp3')\" (line: 3)"),
-                 m("Invalid color name invalidcolorname (line: 2)", "Invalid integer value (line: 3)", "Invalid number value (line: 4)"),
+                 m("Invalid color name invalidcolorname (line: 2)", "Invalid numeric value (line: 3)", "Invalid numeric value (line: 4)"),
                  m("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-72175\">Inline components are not supported</a> (line: 9)"),
                  m("Unresolved variable or type unresolvedData (line: 10)"),
                  m("Initializer for Group cannot be represented in text (line: 2)",
@@ -183,6 +188,7 @@ public class MxmlTest extends MxmlTestBase {
                !name.startsWith("T.") &&
                !name.startsWith("TestApp.") &&
                !name.startsWith("MigLayoutExample.") &&
+               !name.startsWith("ResourceDirective.") &&
                //!name.startsWith("ProjectMxmlComponentAsParentWithDefaultProperty.") &&
                !name.startsWith("GenericMxmlSupport.")) {
         files.add(file);

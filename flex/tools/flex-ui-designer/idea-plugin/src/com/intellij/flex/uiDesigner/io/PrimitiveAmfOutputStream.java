@@ -237,7 +237,7 @@ public class PrimitiveAmfOutputStream extends OutputStream {
   }
 
   public void writeAmfBoolean(CharSequence v) {
-    write(v.charAt(0) == 't' ? Amf3Types.TRUE : Amf3Types.FALSE);
+    write(v.length() > 0 && v.charAt(0) == 't' ? Amf3Types.TRUE : Amf3Types.FALSE);
   }
 
   public final void write(boolean v) {
