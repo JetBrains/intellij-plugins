@@ -433,15 +433,15 @@ class PropertyProcessor implements ValueWriter {
       out.writeAmfUtf(tag.getValue().getText());
     }
     else {
-      final boolean result = writeIfPrimitive(mxmlWriter.valueProviderFactory.create(tag), type, out, null, false);
+      final boolean result = writeIfPrimitive(mxmlWriter.valueProviderFactory.create(tag), type, out, null, false, true);
       LOG.assertTrue(result);
     }
 
     return true;
   }
 
-  boolean writeIfPrimitive(XmlElementValueProvider valueProvider, String type, PrimitiveAmfOutputStream out,
-                           @Nullable AnnotationBackedDescriptor descriptor, boolean isStyle) throws InvalidPropertyException {
+  boolean writeIfPrimitive(XmlElementValueProvider valueProvider, String type, PrimitiveAmfOutputStream out, @Nullable AnnotationBackedDescriptor descriptor,
+                           boolean isStyle, boolean emptyIntAs0) throws InvalidPropertyException {
     if (type.equals(JSCommonTypeNames.STRING_CLASS_NAME)) {
       writeString(valueProvider, descriptor);
     }
@@ -458,7 +458,13 @@ class PropertyProcessor implements ValueWriter {
     else if (type.equals(JSCommonTypeNames.INT_TYPE_NAME) || type.equals(JSCommonTypeNames.UINT_TYPE_NAME)) {
       final String trimmed = valueProvider.getTrimmed();
       if (trimmed.isEmpty()) {
-        throw new InvalidPropertyException(valueProvider.getElement(), "invalid.integer.value");
+        if (emptyIntAs0) {
+          out.writeAmfInt(0);
+          return true;
+        }
+        else {
+          throw new InvalidPropertyException(valueProvider.getElement(), "invalid.integer.value");
+        }
       }
 
       if (descriptor != null && FlexCssPropertyDescriptor.COLOR_FORMAT.equals(descriptor.getFormat())) {
@@ -550,7 +556,7 @@ class PropertyProcessor implements ValueWriter {
       return COMPLEX;
     }
 
-    if (writeIfPrimitive(valueProvider, type, out, descriptor, isStyle)) {
+    if (writeIfPrimitive(valueProvider, type, out, descriptor, isStyle, false)) {
 
     }
     else if (type.equals(JSCommonTypeNames.ARRAY_CLASS_NAME)) {
