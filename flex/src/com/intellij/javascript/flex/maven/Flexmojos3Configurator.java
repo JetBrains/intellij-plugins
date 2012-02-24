@@ -420,6 +420,12 @@ public class Flexmojos3Configurator {
       for (FlexIdeBuildConfiguration oldBC : oldBCs) {
         if (oldBC.getName().equals(newBC.getName())) {
           newBC.setSkipCompile(oldBC.isSkipCompile());
+
+          final BuildConfigurationNature nature = newBC.getNature();
+          if (nature.isApp() && nature.isWebPlatform()) {
+            newBC.setUseHtmlWrapper(oldBC.isUseHtmlWrapper());
+            newBC.setWrapperTemplatePath(oldBC.getWrapperTemplatePath());
+          }
         }
       }
     }
