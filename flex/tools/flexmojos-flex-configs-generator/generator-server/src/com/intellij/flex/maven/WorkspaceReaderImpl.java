@@ -56,9 +56,13 @@ class WorkspaceReaderImpl implements WorkspaceReader {
 
     final String ext = artifact.getExtension();
     boolean isResourceBundle = false;
+    boolean isLinkReport = false;
     // IDEA-78485
     if (!"sources".equals(artifact.getClassifier()) &&
-        (ext.equals("swc") || (isResourceBundle = ext.equals("rb.swc")) || ext.equals("swf"))) {
+        (ext.equals("swc") ||
+         (isResourceBundle = ext.equals("rb.swc")) ||
+         (isLinkReport = ext.equals("xml") && "link-report".equals(artifact.getClassifier())) ||
+         ext.equals("swf"))) {
       if (data.outputFile == null) {
         try {
           generatorServer.resolveOutputs(data);
@@ -69,8 +73,13 @@ class WorkspaceReaderImpl implements WorkspaceReader {
         }
       }
 
-      if (isResourceBundle && artifact.getClassifier() != null) {
-        return new File(data.localeOutputFilepathPattern.replace("{_locale_}", artifact.getClassifier()));
+      if (artifact.getClassifier() != null) {
+        if (isResourceBundle) {
+          return new File(data.localeOutputFilepathPattern.replace("{_locale_}", artifact.getClassifier()));
+        }
+        else if (isLinkReport) {
+          return data.linkReport;
+        }
       }
 
       return data.outputFile;
@@ -131,6 +140,7 @@ class WorkspaceReaderImpl implements WorkspaceReader {
     File file;
     File outputFile;
     String localeOutputFilepathPattern;
+    File linkReport;
 
     private ArtifactData(ArtifactKey key, String filePath) {
       this.filePath = filePath;

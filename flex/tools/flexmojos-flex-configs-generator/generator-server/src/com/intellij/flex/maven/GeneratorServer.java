@@ -217,6 +217,8 @@ public class GeneratorServer {
 
           data.localeOutputFilepathPattern = Flexmojos.getOutput(mojo).replace(firstLocale, "{_locale_}");
         }
+
+        data.linkReport = new File((String)Flexmojos.invokePublicMethod(mojo, "getLinkReport"));
       }
       finally {
         plexusContainer.release(mojo);
