@@ -2,12 +2,10 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceDescriptor;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.extensions.ExtensionPoint;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
 import org.jetbrains.annotations.NotNull;
 import org.picocontainer.MutablePicoContainer;
@@ -46,9 +44,7 @@ final class Tests {
 
   @NotNull
   public static XmlFile virtualToPsi(Project project, VirtualFile file) {
-    Document document = FileDocumentManager.getInstance().getDocument(file);
-    assert document != null;
-    XmlFile psiFile = (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(document);
+    XmlFile psiFile = (XmlFile)PsiManager.getInstance(project).findFile(file);
     assert psiFile != null;
     return psiFile;
   }

@@ -4,7 +4,7 @@ import flash.utils.Dictionary;
 
 import org.jetbrains.Identifiable;
 
-public class DocumentFactory implements SerializedDocumentDataProvider, DocumentReaderContext, Identifiable {
+public final class DocumentFactory implements SerializedDocumentDataProvider, DocumentReaderContext, Identifiable {
   public var module:Module;
   
   // not subdocument, only Document as tab in our UI

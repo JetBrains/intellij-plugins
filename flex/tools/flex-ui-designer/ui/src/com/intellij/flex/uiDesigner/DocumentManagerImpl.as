@@ -197,7 +197,11 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     Server.instance.documentRendered(document);
 
     if (activateAndFocus && !ApplicationManager.instance.unitTestMode) {
-      NativeApplication.nativeApplication.activate(document.module.project.window);
+      var window:DocumentWindow = document.module.project.window;
+      if (!window.visible) {
+        window.visible = true;
+      }
+      NativeApplication.nativeApplication.activate(window);
     }
 
     return true;

@@ -96,6 +96,7 @@
           <map>
             <entry key="compiler.locale" value="en_US" />
           </map>
+          <option name="resourceFilesMode" value="None" />
           <option name="additionalConfigFilePath" value="$MODULE_DIR$/../.idea/flexmojos/main-loader-com.intellij.flex.uiDesigner.xml" />
         </compiler-options>
         <packaging-air-desktop />

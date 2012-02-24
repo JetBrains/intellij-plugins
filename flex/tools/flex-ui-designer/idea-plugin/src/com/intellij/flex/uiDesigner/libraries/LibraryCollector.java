@@ -145,14 +145,14 @@ class LibraryCollector {
       if (entry instanceof ModuleLibraryEntry) {
         LibraryOrderEntry orderEntry = FlexProjectRootsUtil.findOrderEntry((ModuleLibraryEntry)entry, moduleRootManager);
         if (orderEntry != null) {
-          collectFromLibraryOrderEnrty(orderEntry.getRootFiles(OrderRootType.CLASSES));
+          collectFromLibraryOrderEntry(orderEntry.getRootFiles(OrderRootType.CLASSES));
         }
       }
       else if (entry instanceof SharedLibraryEntry) {
         com.intellij.openapi.roots.libraries.Library library = FlexProjectRootsUtil.findOrderEntry(module.getProject(), 
           (SharedLibraryEntry)entry);
         if (library != null) {
-          collectFromLibraryOrderEnrty(library.getFiles(OrderRootType.CLASSES));
+          collectFromLibraryOrderEntry(library.getFiles(OrderRootType.CLASSES));
         }
       }
     }
@@ -211,7 +211,7 @@ class LibraryCollector {
     return JSResolveUtil.findClassByQName(className, GlobalSearchScope.fileScope(module.getProject(), Library.getSwfFile(jarFile))) != null;
   }
 
-  private void collectFromLibraryOrderEnrty(VirtualFile[] files) {
+  private void collectFromLibraryOrderEntry(VirtualFile[] files) {
     for (VirtualFile jarFile : files) {
       VirtualFile file = getRealFileIfValidSwc(jarFile);
       if (file != null && !isAutomationOrUselessLibrary(file.getName())) {

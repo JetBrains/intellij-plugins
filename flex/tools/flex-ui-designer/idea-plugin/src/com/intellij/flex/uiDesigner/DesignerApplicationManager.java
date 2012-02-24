@@ -163,15 +163,25 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
   public ActionCallback renderDocument(@NotNull final Module module, @NotNull final XmlFile psiFile) {
     final ActionCallback actionCallback = new ActionCallback();
-    openDocument(module, psiFile, false, actionCallback);
+    renderDocument(module, psiFile, false, actionCallback);
     return actionCallback;
   }
 
   public void openDocument(@NotNull final Module module, @NotNull final XmlFile psiFile, final boolean debug) {
-    openDocument(module, psiFile, debug, null);
+    final ActionCallback actionCallback = new ActionCallback();
+    renderDocument(module, psiFile, debug, actionCallback);
+    actionCallback.doWhenDone(new Runnable() {
+      @Override
+      public void run() {
+        Client.getInstance().openDocument(module, psiFile);
+      }
+    });
   }
 
-  public void openDocument(@NotNull final Module module, @NotNull final XmlFile psiFile, final boolean debug, final @Nullable ActionCallback actionCallback) {
+  private void renderDocument(@NotNull final Module module,
+                              @NotNull final XmlFile psiFile,
+                              final boolean debug,
+                              @Nullable final ActionCallback actionCallback) {
     LOG.assertTrue(!documentOpening);
     documentOpening = true;
 
@@ -223,10 +233,6 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
   public void updateDocumentFactory(final int factoryId, @NotNull final Module module, @NotNull final XmlFile psiFile) {
     LOG.assertTrue(!documentOpening);
-    if (isApplicationClosed()) {
-      return;
-    }
-
     documentOpening = true;
 
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
@@ -335,7 +341,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
         }
       });
 
-      if (client.openDocument(module, psiFile, problemsHolder)) {
+      if (client.renderDocument(module, psiFile, problemsHolder)) {
         if (!client.flush()) {
           return false;
         }
@@ -362,7 +368,6 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
       if (actionCallback != null) {
         actionCallback.setDone();
-        //consumer.consume(result.get());
       }
       return true;
     }

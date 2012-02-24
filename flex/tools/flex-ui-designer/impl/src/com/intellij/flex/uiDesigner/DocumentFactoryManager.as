@@ -39,6 +39,25 @@ public class DocumentFactoryManager {
     server.unregisterDocumentFactories(unregistered);
   }
 
+  public function getDependents(factory:DocumentFactory):Vector.<DocumentFactory> {
+    const id:int = factory.id;
+    var dependents:Vector.<DocumentFactory> = new Vector.<DocumentFactory>(factories.length);
+    var i:int = 0;
+    for each (var otherFactory:DocumentFactory in factories) {
+      if (otherFactory != null && otherFactory.isReferencedTo(id)) {
+        dependents[i++] = otherFactory;
+      }
+    }
+
+    if (i == 0) {
+      return null;
+    }
+
+    dependents.length = i;
+    dependents.fixed = true;
+    return dependents;
+  }
+
   private function isReferenced(id:int):Boolean {
     for each (var otherFactory:DocumentFactory in factories) {
       if (otherFactory != null && otherFactory.isReferencedTo(id)) {

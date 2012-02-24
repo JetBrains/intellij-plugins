@@ -116,7 +116,7 @@ abstract class MxmlTestBase extends AppTestBase {
     public boolean test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception {
       String documentName = file.getNameWithoutExtension();
       System.out.print(documentName + '\n');
-      client.openDocument(myModule, xmlFile);
+      client.renderDocument(myModule, xmlFile);
       client.test(myModule, documentName, originalFile.getParent().getName());
       socketInputHandler.setExpectedErrorMessage(expectedErrorForDocument(documentName));
       try {

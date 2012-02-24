@@ -48,7 +48,7 @@ class MxmlPreviewPanel extends JPanel implements Disposable {
     JPanel imageWrapper = new JPanel(new MyLayout());
     imageWrapper.add(imagePanel);
 
-    loadingDecorator = new LoadingDecorator(imageWrapper, this, -1) {
+    loadingDecorator = new LoadingDecorator(imageWrapper, this, 1000) {
       @Override
       protected NonOpaquePanel customizeLoadingLayer(JPanel parent, JLabel text, AsyncProcessIcon icon) {
         final NonOpaquePanel panel = super.customizeLoadingLayer(parent, text, icon);

@@ -5,12 +5,15 @@ import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.testFramework.ModuleTestCase;
+import com.intellij.util.indexing.FileBasedIndex;
+import com.intellij.util.indexing.IndexableFileSet;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -20,6 +23,28 @@ import java.util.List;
 public abstract class FlashUIDesignerBaseTestCase extends ModuleTestCase {
   private static String testDataPath;
   private VirtualFile sourceDir;
+  private final IndexableFileSet indexableFileSet;
+
+  protected FlashUIDesignerBaseTestCase() {
+    indexableFileSet = new IndexableFileSet() {
+      @Override
+      public boolean isInSet(final VirtualFile file) {
+        return file.getFileSystem() == sourceDir.getFileSystem();
+      }
+
+      @Override
+      public void iterateIndexableFilesIn(final VirtualFile file, final ContentIterator iterator) {
+        if (file.isDirectory()) {
+          for (VirtualFile child : file.getChildren()) {
+            iterateIndexableFilesIn(child, iterator);
+          }
+        }
+        else {
+          iterator.processFile(file);
+        }
+      }
+    };
+  }
 
   @Override
   protected boolean isRunInWriteAction() {
@@ -57,11 +82,6 @@ public abstract class FlashUIDesignerBaseTestCase extends ModuleTestCase {
     return configureByFiles(null, new VirtualFile[]{vFile}, null)[0];
   }
 
-  /**
-   * standard impl in CodeInsightTestCase is not suitable for us — in case of not null rawProjectRoot (we need test file in package),
-   * we don't need "FileUtil.copyDir(projectRoot, toDirIO);"
-   * also, skip openEditorsAndActivateLast
-   */
   protected VirtualFile[] configureByFiles(@Nullable VirtualFile rawProjectRoot, VirtualFile[] files, @Nullable VirtualFile[] auxiliaryFiles) throws Exception {
     final AccessToken token = WriteAction.start();
     final VirtualFile[] toFiles;
@@ -71,7 +91,8 @@ public abstract class FlashUIDesignerBaseTestCase extends ModuleTestCase {
       dummyRoot.refresh(false, false);
       sourceDir = dummyRoot.createChildDirectory(this, "s");
       assert sourceDir != null;
-      //System.out.print("\ntemp dir l: " + toDir.getChildren().length);
+
+      FileBasedIndex.getInstance().registerIndexableSet(indexableFileSet, myProject);
 
       final ModifiableRootModel rootModel = ModuleRootManager.getInstance(myModule).getModifiableModel();
 
@@ -97,6 +118,7 @@ public abstract class FlashUIDesignerBaseTestCase extends ModuleTestCase {
     finally {
       token.finish();
     }
+
     return toFiles;
   }
 
@@ -115,6 +137,8 @@ public abstract class FlashUIDesignerBaseTestCase extends ModuleTestCase {
           token.finish();
         }
       }
+
+      FileBasedIndex.getInstance().removeIndexableSet(indexableFileSet);
     }
   }
 

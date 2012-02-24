@@ -18,6 +18,7 @@ import flash.geom.Rectangle;
 import flash.net.Socket;
 import flash.net.registerClassAlias;
 import flash.utils.ByteArray;
+import flash.utils.Dictionary;
 import flash.utils.IDataInput;
 import flash.utils.describeType;
 
@@ -70,12 +71,16 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
         updateDocumentFactory(input, messageSize);
         break;
 
+      case ClientMethod.renderDocument:
+        openDocument(input, false);
+        break;
+
       case ClientMethod.openDocument:
-        openDocument(input);
+        openDocument(input, true);
         break;
       
-      case ClientMethod.updateDocuments:
-        updateDocuments(input);
+      case ClientMethod.renderDocumentAndDependents:
+        renderDocumentAndDependents(input);
         break;
       
       case ClientMethod.initStringRegistry:
@@ -186,33 +191,38 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     return DocumentManager(module.project.getComponent(DocumentManager));
   }
 
-  private function openDocument(input:IDataInput):void {
+  private function openDocument(input:IDataInput, activateAndFocus:Boolean):void {
     var module:Module = moduleManager.getById(input.readUnsignedShort());
     var documentFactory:DocumentFactory = getDocumentFactoryManager().get(input.readUnsignedShort());
-    getDocumentManager(module).open(documentFactory, true);
+    getDocumentManager(module).open(documentFactory, activateAndFocus);
   }
 
   private function getDocumentImage(input:IDataInput, messageSize:int, b:Boolean):void {
 
   }
-  
-  private function updateDocuments(input:IDataInput):void {
+
+  private function renderDocumentAndDependents(input:IDataInput):void {
     var module:Module = moduleManager.getById(input.readUnsignedShort());
     var documentFactoryManager:DocumentFactoryManager = getDocumentFactoryManager();
     var documentFactory:DocumentFactory = documentFactoryManager.get(input.readUnsignedShort());
     // not set projectManager.project — current project is not changed (opposite to openDocument)
-    openDocumentsForFactory(documentFactory, getDocumentManager(module), documentFactoryManager);
+    doRenderDocumentAndDependents(documentFactory, getDocumentManager(module), documentFactoryManager, new Dictionary());
   }
 
-  private static function openDocumentsForFactory(documentFactory:DocumentFactory, documentManager:DocumentManager,
-                                                  documentFactoryManager:DocumentFactoryManager):void {
+  private static function doRenderDocumentAndDependents(documentFactory:DocumentFactory, documentManager:DocumentManager,
+                                                        documentFactoryManager:DocumentFactoryManager, processed:Dictionary):void {
+    processed[documentFactory] = true;
+
     if (documentFactory.document != null) {
       documentManager.open(documentFactory, false);
     }
 
-    if (documentFactory.documentReferences != null) {
-      for each (var id:int in documentFactory.documentReferences) {
-        openDocumentsForFactory(documentFactoryManager.get(id), documentManager, documentFactoryManager);
+    var dependents:Vector.<DocumentFactory> = documentFactoryManager.getDependents(documentFactory);
+    if (dependents != null) {
+      for each (var dependent:DocumentFactory in dependents) {
+        if (!processed[dependent]) {
+          doRenderDocumentAndDependents(dependent, documentManager, documentFactoryManager, processed);
+        }
       }
     }
   }
@@ -278,16 +288,17 @@ final class ClientMethod {
   public static const registerModule:int = 3;
   public static const registerDocumentFactory:int = 4;
   public static const updateDocumentFactory:int = 5;
-  public static const openDocument:int = 6;
-  public static const updateDocuments:int = 7;
+  public static const renderDocument:int = 6;
+  public static const openDocument:int = 7;
+  public static const renderDocumentAndDependents:int = 8;
 
-  public static const initStringRegistry:int = 8;
-  public static const updateStringRegistry:int = 9;
+  public static const initStringRegistry:int = 9;
+  public static const updateStringRegistry:int = 10;
 
-  public static const fillImageClassPool:int = 10;
-  public static const fillSwfClassPool:int = 11;
-  public static const fillViewClassPool:int = 12;
+  public static const fillImageClassPool:int = 11;
+  public static const fillSwfClassPool:int = 12;
+  public static const fillViewClassPool:int = 13;
 
-  public static const selectComponent:int = 13;
-  public static const getDocumentImage:int = 14;
+  public static const selectComponent:int = 14;
+  public static const getDocumentImage:int = 15;
 }

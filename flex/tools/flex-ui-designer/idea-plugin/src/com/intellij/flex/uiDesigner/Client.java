@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
@@ -20,7 +21,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.util.ArrayUtil;
 import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 
@@ -233,21 +233,25 @@ public class Client implements Disposable {
     }
   }
 
-  public void openDocument(Module module, XmlFile psiFile) {
-    openDocument(module, psiFile, new ProblemsHolder());
+  public void renderDocument(Module module, XmlFile psiFile) {
+    renderDocument(module, psiFile, new ProblemsHolder());
   }
 
   /**
-   * final, full open document — responsible for handle problemsHolder and assetCounter — you must not do it
+   * final, full render document — responsible for handle problemsHolder and assetCounter — you must not do it
    */
-  public boolean openDocument(Module module, XmlFile psiFile, ProblemsHolder problemsHolder) {
+  public boolean renderDocument(Module module, XmlFile psiFile, ProblemsHolder problemsHolder) {
     final DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance();
     final VirtualFile virtualFile = psiFile.getVirtualFile();
-    final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
+
     assert virtualFile != null;
-    if (documentFactoryManager.isRegistered(virtualFile) && ArrayUtil.indexOf(fileDocumentManager.getUnsavedDocuments(),
-      fileDocumentManager.getDocument(virtualFile)) != -1) {
-      return updateDocumentFactory(documentFactoryManager.getId(virtualFile), module, psiFile);
+
+    if (documentFactoryManager.isRegistered(virtualFile)) {
+      FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
+      Document document = fileDocumentManager.getDocument(virtualFile);
+      if (document != null && fileDocumentManager.isDocumentUnsaved(document)) {
+        return updateDocumentFactory(documentFactoryManager.getId(virtualFile), module, psiFile);
+      }
     }
 
     final int factoryId = registerDocumentFactoryIfNeed(module, psiFile, virtualFile, false, problemsHolder);
@@ -264,11 +268,24 @@ public class Client implements Disposable {
       DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
     }
 
-    beginMessage(ClientMethod.openDocument);
+    beginMessage(ClientMethod.renderDocument);
     writeId(module);
     out.writeShort(factoryId);
 
     return true;
+  }
+
+  public void openDocument(Module module, XmlFile psiFile) {
+    boolean hasError = true;
+    try {
+      beginMessage(ClientMethod.openDocument);
+      writeId(module);
+      out.writeShort(DocumentFactoryManager.getInstance().getId(psiFile.getVirtualFile()));
+      hasError = false;
+    }
+    finally {
+      finalizeMessageAndFlush(hasError);
+    }
   }
 
   public void fillAssetClassPoolIfNeed(FlexLibrarySet librarySet) {
@@ -362,7 +379,7 @@ public class Client implements Disposable {
         DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
       }
 
-      beginMessage(ClientMethod.updateDocuments);
+      beginMessage(ClientMethod.renderDocumentAndDependents);
       writeId(module);
       out.writeShort(factoryId);
       return true;
@@ -511,7 +528,7 @@ public class Client implements Disposable {
   }
 
   public static enum ClientMethod {
-    openProject, closeProject, registerLibrarySet, registerModule, registerDocumentFactory, updateDocumentFactory, openDocument, updateDocuments,
+    openProject, closeProject, registerLibrarySet, registerModule, registerDocumentFactory, updateDocumentFactory, renderDocument, openDocument, renderDocumentAndDependents,
     initStringRegistry, updateStringRegistry, fillImageClassPool, fillSwfClassPool, fillViewClassPool,
     selectComponent;
     

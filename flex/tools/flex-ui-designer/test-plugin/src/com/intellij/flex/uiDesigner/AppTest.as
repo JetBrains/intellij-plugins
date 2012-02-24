@@ -40,9 +40,9 @@ public class AppTest extends BaseTestCase {
   public function wait():void {
   }
 
-  [Test(document="SetProperty")]
+  [Test(document="ProjectMxmlComponentAsChild")]
   public function UpdateDocumentOnIdeaAutoSave():void {
-    assertThat(app.getElementAt(0), l("mmA"));
+    assertThat(app.getElementAt(0), {name: "AIDEA-73453"});
   }
 }
 }

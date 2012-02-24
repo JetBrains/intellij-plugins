@@ -39,7 +39,7 @@ public class UITest extends MxmlTestBase {
   }
 
   private void init(XmlFile xmlFile) throws IOException, AWTException {
-    client.openDocument(myModule, xmlFile);
+    client.renderDocument(myModule, xmlFile);
 
     if (roboflest == null) {
       roboflest = new Roboflest();

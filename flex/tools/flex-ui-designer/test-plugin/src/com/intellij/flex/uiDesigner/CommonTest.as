@@ -28,7 +28,9 @@ public class CommonTest extends BaseTestCase {
   }
 
   public function GenericMxmlSupport():void {
+  }
 
+  public function DontWarnAboutEmptyPrimitiveDeclaration():void {
   }
 
   public function FxComponentReferencedById():void {

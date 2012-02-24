@@ -20,6 +20,8 @@ public class AppTest extends AppTestBase {
 
   private final Info info = new Info();
 
+  private final Semaphore semaphore = new Semaphore();
+
   @Override
   protected void changeServicesImplementation() {
     Tests.changeDesignerServiceImplementation(SocketInputHandler.class, MySocketInputHandler.class);
@@ -38,7 +40,6 @@ public class AppTest extends AppTestBase {
   }
 
   private void await() throws InterruptedException {
-    //assertTrue(info.semaphore.waitForUnsafe());
     info.semaphore.waitForUnsafe();
   }
   
@@ -57,25 +58,37 @@ public class AppTest extends AppTestBase {
   }
 
   public void testUpdateDocumentOnIdeaAutoSave() throws Exception {
-    final String relativePath = "states/SetProperty.mxml";
-    final VirtualFile file = open(relativePath);
+    VirtualFile f1 = getSource("ProjectMxmlComponentAsChild.mxml");
+    VirtualFile f2 = getSource("AuxProjectMxmlComponent.mxml");
+    configureByFiles(null, new VirtualFile[]{f1, f2}, null);
 
-    final Document document = FileDocumentManager.getInstance().getDocument(file);
+    DesignerApplicationManager designerManager = DesignerApplicationManager.getInstance();
+
+    semaphore.down();
+    designerManager.renderDocument(myModule, Tests.virtualToPsi(myProject, f1)).doWhenProcessed(new Runnable() {
+      @Override
+      public void run() {
+        semaphore.up();
+      }
+    });
+    semaphore.waitForUnsafe();
+
+    final Document document = FileDocumentManager.getInstance().getDocument(f1);
     assert document != null;
     final AccessToken token = WriteAction.start();
     try {
-      document.insertString(254, "A");
+      document.insertString(166, "A");
     }
     finally {
       token.finish();
     }
 
     info.semaphore.down();
-    client.test(myModule, "SetProperty", Tests.INFORM_DOCUMENT_OPENED);
+    client.test(myModule, "ProjectMxmlComponentAsChild", Tests.INFORM_DOCUMENT_OPENED);
     socketInputHandler.setCustomMessageHandler(new MyCustomMessageHandler());
 
     PsiDocumentManager.getInstance(myProject).commitAllDocuments();
-    DesignerApplicationManager.getInstance().openDocument(myModule, Tests.virtualToPsi(myProject, file), false);
+    designerManager.renderDocument(myModule, Tests.virtualToPsi(myProject, f1));
     await();
     callClientAssert(getTestName(false));
   }
@@ -88,7 +101,7 @@ public class AppTest extends AppTestBase {
     }
     socketInputHandler.setCustomMessageHandler(new MyCustomMessageHandler());
 
-    DesignerApplicationManager.getInstance().openDocument(myModule, Tests.virtualToPsi(myProject, file), false);
+    DesignerApplicationManager.getInstance().renderDocument(myModule, Tests.virtualToPsi(myProject, file));
     await();
   }
   

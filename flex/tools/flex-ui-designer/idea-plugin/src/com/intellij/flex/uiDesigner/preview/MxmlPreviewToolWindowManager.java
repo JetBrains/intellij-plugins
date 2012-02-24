@@ -1,6 +1,9 @@
 package com.intellij.flex.uiDesigner.preview;
 
-import com.intellij.flex.uiDesigner.*;
+import com.intellij.flex.uiDesigner.DesignerApplicationManager;
+import com.intellij.flex.uiDesigner.DocumentFactoryManager;
+import com.intellij.flex.uiDesigner.FlashUIDesignerBundle;
+import com.intellij.flex.uiDesigner.SocketInputHandler;
 import com.intellij.flex.uiDesigner.actions.RunDesignViewAction;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.AccessToken;
@@ -15,6 +18,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.LoadingDecorator;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -256,6 +260,9 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
             return;
           }
           initToolWindow();
+          // idea inspection bug
+          //noinspection ConstantConditions
+          assert toolWindow != null;
         }
 
         final PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
@@ -269,6 +276,18 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         }
 
         final boolean doRender = toolWindowForm.getFile() != psiFile;
+
+        if (!DesignerApplicationManager.getInstance().isApplicationClosed()) {
+          VirtualFile virtualFile = psiFile.getVirtualFile();
+          if (virtualFile != null && DocumentFactoryManager.getInstance().isRegistered(virtualFile)) {
+            FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
+            Document document = fileDocumentManager.getDocument(virtualFile);
+            if (document != null && !fileDocumentManager.isDocumentUnsaved(document)) {
+              return;
+            }
+          }
+        }
+
         if (doRender) {
           FileDocumentManager.getInstance().saveAllDocuments();
           toolWindowForm.setFile(psiFile);
