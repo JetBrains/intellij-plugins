@@ -33,7 +33,7 @@ setProperty("pluginFilter", [
             "JavaScriptLanguage",
             "cvsIntegration", "cvs-core", "cvs-plugin", "javacvs-src", "smartcvs-src",
             "PerforceIntegration", "Perforce", "perforce_util",
-            "svn4ideaOld",
+            "svn4idea",
             "git4idea",
             "github",
             "hg4idea",
