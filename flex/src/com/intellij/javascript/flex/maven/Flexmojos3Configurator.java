@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkAdditionalData;
@@ -147,6 +148,11 @@ public class Flexmojos3Configurator {
 
     final String locales = StringUtil.join(myCompiledLocales, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
     mainBC.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.locale", locales));
+
+    if (BCUtils.canHaveResourceFiles(mainBC.getNature())) {
+      // Don't copy whatever by default. If user had other setting before reimport - it will be set in #respectPreviousBCState()
+      mainBC.getCompilerOptions().setResourceFilesMode(CompilerOptions.ResourceFilesMode.None);
+    }
 
     mainBC.getCompilerOptions().setAdditionalConfigFilePath(getCompilerConfigFilePath());
     return mainBC;
@@ -425,6 +431,10 @@ public class Flexmojos3Configurator {
           if (nature.isApp() && nature.isWebPlatform()) {
             newBC.setUseHtmlWrapper(oldBC.isUseHtmlWrapper());
             newBC.setWrapperTemplatePath(oldBC.getWrapperTemplatePath());
+          }
+
+          if (BCUtils.canHaveResourceFiles(nature)) {
+            newBC.getCompilerOptions().setResourceFilesMode(oldBC.getCompilerOptions().getResourceFilesMode());
           }
         }
       }
