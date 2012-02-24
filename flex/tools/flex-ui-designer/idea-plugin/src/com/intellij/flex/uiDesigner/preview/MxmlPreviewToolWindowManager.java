@@ -56,29 +56,6 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
     toolWindowUpdateQueue = new MergingUpdateQueue("mxml.preview", 300, true, null, project);
     renderingQueue = new MergingUpdateQueue("mxml.rendering", 300, true, null, project, null, true);
-
-    MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(project);
-    connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentRenderedListener() {
-      @Override
-      public void documentRendered(DocumentFactoryManager.DocumentInfo info, final BufferedImage image) {
-        if (toolWindowForm.getFile() == null) {
-          return;
-        }
-
-        if (info.equals(DocumentFactoryManager.getInstance().getNullableInfo(toolWindowForm.getFile()))) {
-          ApplicationManager.getApplication().invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              toolWindowForm.getPreviewPanel().setImage(image);
-            }
-          });
-        }
-      }
-
-      @Override
-      public void errorOccured() {
-      }
-    });
   }
 
   @Override
@@ -157,6 +134,29 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     contentManager.addContent(content);
     contentManager.setSelectedContent(content, true);
     toolWindow.setAvailable(false, null);
+
+    MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(project);
+    connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentRenderedListener() {
+      @Override
+      public void documentRendered(DocumentFactoryManager.DocumentInfo info, final BufferedImage image) {
+        if (toolWindowForm == null || toolWindowForm.getFile() == null) {
+          return;
+        }
+
+        if (info.equals(DocumentFactoryManager.getInstance().getNullableInfo(toolWindowForm.getFile()))) {
+          ApplicationManager.getApplication().invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              toolWindowForm.getPreviewPanel().setImage(image);
+            }
+          });
+        }
+      }
+
+      @Override
+      public void errorOccured() {
+      }
+    });
   }
 
   private void render() {
