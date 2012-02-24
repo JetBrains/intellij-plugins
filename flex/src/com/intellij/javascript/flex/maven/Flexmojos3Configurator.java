@@ -137,7 +137,6 @@ public class Flexmojos3Configurator {
       if (sourceFile != null && (sourceFile.endsWith(".as") || sourceFile.endsWith(".mxml"))) {
         mainBC.setMainClass(sourceFile.substring(0, sourceFile.lastIndexOf(".")).replace("/", ".").replace("\\", "."));
       }
-      // todo set later when config is generated?
     }
 
     final String outputFilePath = FlexmojosImporter.getOutputFilePath(myMavenProject);
@@ -425,19 +424,34 @@ public class Flexmojos3Configurator {
     for (ModifiableFlexIdeBuildConfiguration newBC : newBCsc) {
       for (FlexIdeBuildConfiguration oldBC : oldBCs) {
         if (oldBC.getName().equals(newBC.getName())) {
-          newBC.setSkipCompile(oldBC.isSkipCompile());
-
-          final BuildConfigurationNature nature = newBC.getNature();
-          if (nature.isApp() && nature.isWebPlatform()) {
-            newBC.setUseHtmlWrapper(oldBC.isUseHtmlWrapper());
-            newBC.setWrapperTemplatePath(oldBC.getWrapperTemplatePath());
-          }
-
-          if (BCUtils.canHaveResourceFiles(nature)) {
-            newBC.getCompilerOptions().setResourceFilesMode(oldBC.getCompilerOptions().getResourceFilesMode());
-          }
+          respectPreviousBCState(newBC, oldBC);
+          break;
         }
       }
+    }
+  }
+
+  private static void respectPreviousBCState(final ModifiableFlexIdeBuildConfiguration newBC, final FlexIdeBuildConfiguration oldBC) {
+    newBC.setSkipCompile(oldBC.isSkipCompile());
+
+    final BuildConfigurationNature nature = newBC.getNature();
+    final BuildConfigurationNature oldNature = oldBC.getNature();
+
+    if (nature.isApp() && nature.isWebPlatform() && oldNature.isApp() && oldNature.isWebPlatform()) {
+      newBC.setUseHtmlWrapper(oldBC.isUseHtmlWrapper());
+      newBC.setWrapperTemplatePath(oldBC.getWrapperTemplatePath());
+    }
+
+    if (BCUtils.canHaveRuntimeStylesheets(newBC) && BCUtils.canHaveRuntimeStylesheets(oldBC)) {
+      newBC.setCssFilesToCompile(oldBC.getCssFilesToCompile());
+    }
+
+    if (BCUtils.canHaveResourceFiles(nature) && BCUtils.canHaveResourceFiles(oldNature)) {
+      newBC.getCompilerOptions().setResourceFilesMode(oldBC.getCompilerOptions().getResourceFilesMode());
+    }
+
+    if (nature.isLib() && oldNature.isLib()) {
+      newBC.getCompilerOptions().setFilesToIncludeInSWC(oldBC.getCompilerOptions().getFilesToIncludeInSWC());
     }
   }
 
