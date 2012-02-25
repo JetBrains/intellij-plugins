@@ -305,6 +305,7 @@
             icon="/com/intellij/lang/javascript/flex/projectStructure/buildConfig.png">
       <add-to-group group-id="EditorLangPopupMenu" anchor="last"/>
     </action>
+    <!--
     <group>
       <action id="PackageAIR" text="Package AIR Application..."
               description="Create AIR mobile or desktop-targeted package (*.apk, *.ipa, *.air)"
@@ -314,5 +315,6 @@
       <separator/>
       <add-to-group group-id="BuildMenu" anchor="before" relative-to-action="CompileProject"/>
     </group>
+    -->
   </actions>
 </idea-plugin>
