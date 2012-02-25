@@ -342,6 +342,7 @@ public class PackageMobileAirApplicationDialog extends DialogWrapper implements 
 
   private static List<String> getOutputFilePaths(final Module module) {
     final List<String> result = new ArrayList<String>();
+    /*
     for (final FlexBuildConfiguration config : FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(module)) {
       if (config.USE_CUSTOM_CONFIG_FILE) {
         final VirtualFile configFile = LocalFileSystem.getInstance().findFileByPath(config.CUSTOM_CONFIG_FILE);
@@ -352,13 +353,16 @@ public class PackageMobileAirApplicationDialog extends DialogWrapper implements 
               result.add(FileUtil.toSystemIndependentName(outputPath));
             }
           }
-          catch (IOException e) {/*ignore*/}
+          catch (IOException e) {    */
+/*ignore*/    /*
+}
         }
       }
       else {
         result.add(config.getOutputFileFullPath());
       }
     }
+    */
     return result;
   }
 

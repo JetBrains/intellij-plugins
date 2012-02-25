@@ -303,6 +303,7 @@ public class PackageAirInstallerDialog extends DialogWrapper implements PanelWit
 
   private static List<String> getOutputFilePaths(final Module module) {
     final List<String> result = new ArrayList<String>();
+    /*
     for (final FlexBuildConfiguration config : FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(module)) {
       if (config.USE_CUSTOM_CONFIG_FILE) {
         final VirtualFile configFile = LocalFileSystem.getInstance().findFileByPath(config.CUSTOM_CONFIG_FILE);
@@ -313,13 +314,16 @@ public class PackageAirInstallerDialog extends DialogWrapper implements PanelWit
               result.add(FileUtil.toSystemIndependentName(outputPath));
             }
           }
-          catch (IOException e) {/*ignore*/}
+          catch (IOException e) {    */
+/*ignore*/    /*
+}
         }
       }
       else {
         result.add(config.getOutputFileFullPath());
       }
     }
+    */
     return result;
   }
 

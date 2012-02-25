@@ -71,6 +71,15 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
   public static Key<FlexBuildConfiguration> OVERRIDE_BUILD_CONFIG = Key.create("OVERRIDE_FLEX_BUILD_CONFIG");
   private ActiveBuildConfigurationWidget myWidget;
 
+  public static String getPathToMainClassFile(final FlexBuildConfiguration config) {
+    if (StringUtil.isEmpty(config.MAIN_CLASS)) return "";
+
+    if (config.getType() == FlexBuildConfiguration.Type.FlexUnit) {
+      return FlexUtils.getPathToFlexUnitTempDirectory() + "/" + config.MAIN_CLASS + ".mxml";
+    }
+
+    return FlexUtils.getPathToMainClassFile(config.MAIN_CLASS, null /*config.getModule()*/);
+  }
 
   private static class ModuleOrFacetCompileCache {
     public final THashMap<Object, String> moduleOrFacetToCommand = new THashMap<Object, String>();
@@ -196,7 +205,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
   public void compileFlexModuleOrAllFlexFacets(final Module module, final CompileContext context) throws IOException {
     final FlexBuildConfiguration overriddenConfig = context.getUserData(OVERRIDE_BUILD_CONFIG);
 
-    if (overriddenConfig != null && module == overriddenConfig.getModule()) {
+    if (overriddenConfig != null && module == null /*overriddenConfig.getModule()*/) {
       final Pair<Boolean, String> validationResultWithMessage = Pair.create(true, null);
         //FlexCompiler.validateConfiguration(overriddenConfig, module, FlexBundle.message("module.name", module.getName()), false);
       if (!validationResultWithMessage.first) {
@@ -212,7 +221,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
 
       if (ModuleType.get(module) instanceof FlexModuleType) {
         final Pair<Boolean, List<VirtualFile>> compilationResult =
-          compileModuleOrFacet(module, null, context, FlexBuildConfiguration.getInstance(module), nothingChangedSincePreviousCompilation);
+          compileModuleOrFacet(module, null, context, null /*FlexBuildConfiguration.getInstance(module)*/, nothingChangedSincePreviousCompilation);
         if (compilationResult.first && !compilationResult.second.isEmpty()) {
           //myCompilerDependenciesCache.cacheBC(context, module, compilationResult.second);
         }
@@ -223,7 +232,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
 
         for (final FlexFacet facet : FacetManager.getInstance(module).getFacetsByType(FlexFacet.ID)) {
           final Pair<Boolean, List<VirtualFile>> compilationResult =
-            compileModuleOrFacet(module, facet, context, FlexBuildConfiguration.getInstance(facet), nothingChangedSincePreviousCompilation);
+            compileModuleOrFacet(module, facet, context, null /*FlexBuildConfiguration.getInstance(facet)*/, nothingChangedSincePreviousCompilation);
           if (!compilationResult.first) {
             wasFailure = true;
           }
@@ -345,6 +354,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     boolean compilationSuccessful = true;
 
     for (final String _cssFilePath : config.CSS_FILES_LIST) {
+      /*
       final String cssFilePath = FileUtil.toSystemIndependentName(_cssFilePath);
       final FlexBuildConfiguration cssConfig = FlexCompilationUtils.createCssConfig(config, cssFilePath);
       final List<VirtualFile> cssConfigFiles = getConfigFiles(cssConfig, module, flexFacet, cssFilePath);
@@ -358,6 +368,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
       if (commandIndex > 0) {
         sendCommand("clear " + commandIndex, new CompilerMessagesBuffer(null, false));
       }
+      */
     }
 
     final String command = buildCommand(configFiles, config, flexSdk);
@@ -365,7 +376,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     final int previousCommandId = commandToIdMap.get(command);
 
     if (!config.USE_CUSTOM_CONFIG_FILE) {
-      FlexCompilationUtils.ensureOutputFileWritable(myProject, config.getOutputFileFullPath());
+      FlexCompilationUtils.ensureOutputFileWritable(myProject, "config.getOutputFileFullPath()");
     }
 
     if (s == null || !s.equals(command)) {
@@ -599,7 +610,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     s += configsParam;
 
     if(config.ADDITIONAL_COMPILER_OPTIONS != null && config.ADDITIONAL_COMPILER_OPTIONS.length() > 0) {
-      s += " " + FlexUtils.replacePathMacros(config.ADDITIONAL_COMPILER_OPTIONS, config.getModule(), flexSdk.getHomePath());
+      s += " " + FlexUtils.replacePathMacros(config.ADDITIONAL_COMPILER_OPTIONS, null /*config.getModule()*/, flexSdk.getHomePath());
     }
 
     return s;
@@ -753,7 +764,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
 
     try {
       final String pathElement = FlexUtils.findXMLElement(configFile.getInputStream(), FlexSdkUtils.FILE_SPEC_ELEMENT);
-      return (pathElement == null || !pathElement.equals(FlexUtils.getPathToMainClassFile(config)));
+      return (pathElement == null || !pathElement.equals(getPathToMainClassFile(config)));
     }
     catch (IOException e) {
       return true;
@@ -828,7 +839,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
 
     if (FlexBuildConfiguration.APPLICATION.equals(config.OUTPUT_TYPE)) {
       configTextBuilder.append("\n  <file-specs>");
-      final String fileSpec = cssFilePath == null ? FlexUtils.getPathToMainClassFile(config) : cssFilePath;
+      final String fileSpec = cssFilePath == null ? getPathToMainClassFile(config) : cssFilePath;
       addTag(configTextBuilder, "path-element", fileSpec, "\n    ");
       configTextBuilder.append("\n  </file-specs>");
     } else {
@@ -889,10 +900,10 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
       }
     }
 
-    final String outputFilePath = cssFilePath != null ? config.getOutputFileFullPath()
+    final String outputFilePath = cssFilePath != null ? "config.getOutputFileFullPath()"
                                                       : config.getType() == FlexBuildConfiguration.Type.FlexUnit
-                                                        ? config.getCompileOutputPathForTests() + "/" + config.OUTPUT_FILE_NAME
-                                                        : config.getOutputFileFullPath();
+                                                        ? "config.getCompileOutputPathForTests()" + "/" + config.OUTPUT_FILE_NAME
+                                                        : "config.getOutputFileFullPath()";
     addTag(configTextBuilder, "output", outputFilePath);
 
     configTextBuilder.append("\n</flex-config>");
@@ -992,18 +1003,18 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
         final Module moduleDependency = ((ModuleOrderEntry)o).getModule();
 
         if (moduleDependency != null) {
-          for (final FlexBuildConfiguration configOfDependency : FlexBuildConfiguration
-            .getConfigForFlexModuleOrItsFlexFacets(moduleDependency)) {
+          final Collection<FlexBuildConfiguration> configs = Collections.emptyList(); //FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(moduleDependency);
+          for (final FlexBuildConfiguration configOfDependency : configs) {
             // TODO: module dependency logic should also somehow depend on DO_BUILD, USE_CUSTOM_CONFIG_FILE
             if (FlexBuildConfiguration.LIBRARY.equals(configOfDependency.OUTPUT_TYPE)) {
               if (scope == DependencyScope.PROVIDED) {
-                externalLibraryPaths.add(configOfDependency.getOutputFileFullPath());
+                externalLibraryPaths.add("configOfDependency.getOutputFileFullPath()");
               }
               else if (export) {
-                includedLibraryPaths.add(configOfDependency.getOutputFileFullPath());
+                includedLibraryPaths.add("configOfDependency.getOutputFileFullPath()");
               }
               else {
-                libraryPaths.add(configOfDependency.getOutputFileFullPath());
+                libraryPaths.add("configOfDependency.getOutputFileFullPath()");
               }
             }
             else {

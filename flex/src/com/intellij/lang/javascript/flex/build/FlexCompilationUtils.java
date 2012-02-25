@@ -181,28 +181,6 @@ public class FlexCompilationUtils {
     return !failureDetected;
   }
 
-  private static String getOutputSwfFileNameForCssFile(final Project project, final String cssFilePath) {
-    final VirtualFile cssFile = LocalFileSystem.getInstance().findFileByPath(cssFilePath);
-    final VirtualFile sourceRoot = cssFile == null
-                                   ? null
-                                   : ProjectRootManager.getInstance(project).getFileIndex().getSourceRootForFile(cssFile);
-    final String relativePath = sourceRoot == null ? null : VfsUtilCore.getRelativePath(cssFile, sourceRoot, '/');
-    final String cssFileName = cssFilePath.substring(FileUtil.toSystemIndependentName(cssFilePath).lastIndexOf("/") + 1);
-    final String relativeFolder = relativePath == null ? "" : relativePath.substring(0, relativePath.lastIndexOf('/') + 1);
-    return relativeFolder + FileUtil.getNameWithoutExtension(cssFileName) + ".swf";
-  }
-
-  static FlexBuildConfiguration createCssConfig(final FlexBuildConfiguration config, final String cssFilePath) {
-    final FlexBuildConfiguration cssConfig = config.clone();
-    cssConfig.setType(FlexBuildConfiguration.Type.Default);
-    cssConfig.OUTPUT_FILE_NAME = getOutputSwfFileNameForCssFile(config.getModule().getProject(), cssFilePath);
-    cssConfig.OUTPUT_TYPE = FlexBuildConfiguration.APPLICATION;
-    cssConfig.CSS_FILES_LIST.clear();
-    cssConfig.PATH_TO_SERVICES_CONFIG_XML = "";
-    cssConfig.CONTEXT_ROOT = "";
-    return cssConfig;
-  }
-
   public static void ensureOutputFileWritable(final Project project, final String filePath) {
     final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
     if (file != null && !file.isWritable()) {

@@ -2,12 +2,10 @@ package com.intellij.lang.javascript.flex;
 
 import com.intellij.application.options.PathMacrosImpl;
 import com.intellij.execution.configurations.CommandLineTokenizer;
-import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexOrderEnumerationHandler;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
-import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -21,7 +19,10 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.ContentIterator;
+import com.intellij.openapi.roots.DependencyScope;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
@@ -385,16 +386,6 @@ public class FlexUtils {
 
   public static String getTempFlexConfigsDirPath() {
     return FileUtil.toSystemIndependentName(FileUtil.getTempDirectory());
-  }
-
-  public static String getPathToMainClassFile(final FlexBuildConfiguration config) {
-    if (StringUtil.isEmpty(config.MAIN_CLASS)) return "";
-
-    if (config.getType() == FlexBuildConfiguration.Type.FlexUnit) {
-      return getPathToFlexUnitTempDirectory() + "/" + config.MAIN_CLASS + ".mxml";
-    }
-
-    return getPathToMainClassFile(config.MAIN_CLASS, config.getModule());
   }
 
   public static String getPathToMainClassFile(final String mainClassFqn, final Module module) {
