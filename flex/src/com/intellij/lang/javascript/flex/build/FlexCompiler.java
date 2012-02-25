@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageParameters;
-import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunConfiguration;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
@@ -299,10 +299,10 @@ public class FlexCompiler implements SourceProcessingCompiler {
         }
       }
     }
-    else if (runConfiguration instanceof FlashRunConfiguration || runConfiguration instanceof NewFlexUnitRunConfiguration) {
+    else if (runConfiguration instanceof FlashRunConfiguration || runConfiguration instanceof FlexUnitRunConfiguration) {
       final BCBasedRunnerParameters params = runConfiguration instanceof FlashRunConfiguration
                                              ? ((FlashRunConfiguration)runConfiguration).getRunnerParameters()
-                                             : ((NewFlexUnitRunConfiguration)runConfiguration).getRunnerParameters();
+                                             : ((FlexUnitRunConfiguration)runConfiguration).getRunnerParameters();
       final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC;
 
       final Ref<RuntimeConfigurationError> exceptionRef = new Ref<RuntimeConfigurationError>();

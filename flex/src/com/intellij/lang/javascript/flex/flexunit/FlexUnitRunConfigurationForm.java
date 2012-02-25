@@ -21,7 +21,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class NewFlexUnitRunConfigurationForm extends SettingsEditor<NewFlexUnitRunConfiguration> {
+public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConfiguration> {
   private JPanel myMainPanel;
 
   private BCCombo myBCCombo;
@@ -37,7 +37,7 @@ public class NewFlexUnitRunConfigurationForm extends SettingsEditor<NewFlexUnitR
 
   private LauncherParameters myLauncherParameters;
 
-  public NewFlexUnitRunConfigurationForm(final Project project) {
+  public FlexUnitRunConfigurationForm(final Project project) {
     myProject = project;
 
     myBCCombo.addActionListener(new ActionListener() {
@@ -61,7 +61,7 @@ public class NewFlexUnitRunConfigurationForm extends SettingsEditor<NewFlexUnitR
       }
     });
 
-    myLogLevelCombo.setModel(new EnumComboBoxModel<NewFlexUnitRunnerParameters.OutputLogLevel>(NewFlexUnitRunnerParameters.OutputLogLevel.class));
+    myLogLevelCombo.setModel(new EnumComboBoxModel<FlexUnitRunnerParameters.OutputLogLevel>(FlexUnitRunnerParameters.OutputLogLevel.class));
   }
 
   private void initLaunchWithTextWithBrowse() {
@@ -82,7 +82,7 @@ public class NewFlexUnitRunConfigurationForm extends SettingsEditor<NewFlexUnitR
     if (myShowLogCheckBox.isSelected()) {
       myLogLevelCombo.setEnabled(true);
       if (myLogLevelCombo.getSelectedItem() == null) {
-        myLogLevelCombo.setSelectedItem(NewFlexUnitRunnerParameters.OutputLogLevel.values()[0]);
+        myLogLevelCombo.setSelectedItem(FlexUnitRunnerParameters.OutputLogLevel.values()[0]);
       }
     }
     else {
@@ -106,8 +106,8 @@ public class NewFlexUnitRunConfigurationForm extends SettingsEditor<NewFlexUnitR
     return myMainPanel;
   }
 
-  protected void resetEditorFrom(final NewFlexUnitRunConfiguration config) {
-    final NewFlexUnitRunnerParameters params = config.getRunnerParameters();
+  protected void resetEditorFrom(final FlexUnitRunConfiguration config) {
+    final FlexUnitRunnerParameters params = config.getRunnerParameters();
     myLauncherParameters = params.getLauncherParameters().clone(); // must be before myBCsCombo.setModel()
 
     myBCCombo.resetFrom(params);
@@ -120,14 +120,14 @@ public class NewFlexUnitRunConfigurationForm extends SettingsEditor<NewFlexUnitR
     myRunTrustedCheckBox.setSelected(params.isTrusted());
   }
 
-  protected void applyEditorTo(final NewFlexUnitRunConfiguration config) throws ConfigurationException {
-    final NewFlexUnitRunnerParameters params = config.getRunnerParameters();
+  protected void applyEditorTo(final FlexUnitRunConfiguration config) throws ConfigurationException {
+    final FlexUnitRunnerParameters params = config.getRunnerParameters();
 
     myBCCombo.applyTo(params);
     myWhatToTestForm.applyTo(params);
 
-    final NewFlexUnitRunnerParameters.OutputLogLevel logLevel = myShowLogCheckBox.isSelected()
-                                                             ? (NewFlexUnitRunnerParameters.OutputLogLevel)myLogLevelCombo.getSelectedItem()
+    final FlexUnitRunnerParameters.OutputLogLevel logLevel = myShowLogCheckBox.isSelected()
+                                                             ? (FlexUnitRunnerParameters.OutputLogLevel)myLogLevelCombo.getSelectedItem()
                                                              : null;
     params.setOutputLogLevel(logLevel);
     params.setLauncherParameters(myLauncherParameters);

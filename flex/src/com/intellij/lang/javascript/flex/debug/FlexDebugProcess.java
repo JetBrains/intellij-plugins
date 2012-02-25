@@ -10,9 +10,8 @@ import com.intellij.ide.IdeBundle;
 import com.intellij.idea.LoggerFactory;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.flexunit.FlexUnitCommonParameters;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
-import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunnerParameters;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
@@ -223,9 +222,9 @@ public class FlexDebugProcess extends XDebugProcess {
           }
       }
     }
-    else if (params instanceof NewFlexUnitRunnerParameters) {
+    else if (params instanceof FlexUnitRunnerParameters) {
       connectToRunningFlashPlayerMode = false;
-      final FlexUnitCommonParameters flexUnitParams = (FlexUnitCommonParameters)params;
+      final FlexUnitRunnerParameters flexUnitParams = (FlexUnitRunnerParameters)params;
       openFlexUnitConnections(flexUnitParams.getSocketPolicyPort(), flexUnitParams.getPort());
       if (bc.getTargetPlatform() == TargetPlatform.Web) {
         sendCommand(new LaunchBrowserCommand(bc.getOutputFilePath(false), flexUnitParams.getLauncherParameters()));

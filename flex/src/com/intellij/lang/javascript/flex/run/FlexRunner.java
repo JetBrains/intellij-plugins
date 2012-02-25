@@ -15,9 +15,9 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.lang.javascript.flex.flexunit.FlexUnitCommonParameters;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
-import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunConfiguration;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
@@ -95,7 +95,7 @@ public class FlexRunner extends FlexBaseRunner {
                                                    final Executor executor,
                                                    final RunContentDescriptor contentToReuse,
                                                    final ExecutionEnvironment env,
-                                                   final FlexUnitCommonParameters params,
+                                                   final FlexUnitRunnerParameters params,
                                                    final String swfFilePath) throws ExecutionException {
     final SwfPolicyFileConnection policyFileConnection = new SwfPolicyFileConnection();
     policyFileConnection.open(params.getSocketPolicyPort());
@@ -136,7 +136,7 @@ public class FlexRunner extends FlexBaseRunner {
                                                    final RunProfileState state,
                                                    final RunContentDescriptor contentToReuse,
                                                    final ExecutionEnvironment env,
-                                                   final FlexUnitCommonParameters params) throws ExecutionException {
+                                                   final FlexUnitRunnerParameters params) throws ExecutionException {
     final ExecutionResult executionResult;
     final SwfPolicyFileConnection policyFileConnection = new SwfPolicyFileConnection();
     policyFileConnection.open(params.getSocketPolicyPort());
@@ -172,7 +172,7 @@ public class FlexRunner extends FlexBaseRunner {
 
   public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {
     return DefaultRunExecutor.EXECUTOR_ID.equals(executorId) &&
-           (profile instanceof FlashRunConfiguration || profile instanceof NewFlexUnitRunConfiguration);
+           (profile instanceof FlashRunConfiguration || profile instanceof FlexUnitRunConfiguration);
   }
 
   @NotNull

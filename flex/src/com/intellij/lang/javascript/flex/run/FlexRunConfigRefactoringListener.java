@@ -30,7 +30,7 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
     final boolean isFlexUnit = params instanceof FlexUnitRunnerParameters;
 
     if (isFlexUnit) {
-      if (((FlexUnitRunnerParameters)params).getScope() == NewFlexUnitRunnerParameters.Scope.Package) {
+      if (((FlexUnitRunnerParameters)params).getScope() == FlexUnitRunnerParameters.Scope.Package) {
         ((FlexUnitRunnerParameters)params).setPackageName(newPackage);
       }
       else {

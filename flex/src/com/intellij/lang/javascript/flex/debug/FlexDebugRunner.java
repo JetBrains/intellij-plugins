@@ -11,12 +11,14 @@ import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
-import com.intellij.lang.javascript.flex.flexunit.FlexUnitCommonParameters;
-import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunConfiguration;
-import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunnerParameters;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
-import com.intellij.lang.javascript.flex.run.*;
+import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
+import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
+import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
+import com.intellij.lang.javascript.flex.run.RemoteFlashRunConfiguration;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -41,7 +43,7 @@ public class FlexDebugRunner extends FlexBaseRunner {
   public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {
     return DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) &&
            (profile instanceof FlashRunConfiguration ||
-            profile instanceof NewFlexUnitRunConfiguration ||
+            profile instanceof FlexUnitRunConfiguration ||
             profile instanceof RemoteFlashRunConfiguration);
   }
 
@@ -54,11 +56,11 @@ public class FlexDebugRunner extends FlexBaseRunner {
                                                    final Executor executor,
                                                    final RunContentDescriptor contentToReuse,
                                                    final ExecutionEnvironment env,
-                                                   final FlexUnitCommonParameters params,
+                                                   final FlexUnitRunnerParameters params,
                                                    final String swfFilePath) throws ExecutionException {
     try {
-      final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = ((NewFlexUnitRunnerParameters)params).checkAndGetModuleAndBC(project);
-      return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, (NewFlexUnitRunnerParameters)params, executor, contentToReuse, env);
+      final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = ((FlexUnitRunnerParameters)params).checkAndGetModuleAndBC(project);
+      return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, (FlexUnitRunnerParameters)params, executor, contentToReuse, env);
     }
     catch (RuntimeConfigurationError e) {
       throw new ExecutionException(e.getMessage());
@@ -70,10 +72,10 @@ public class FlexDebugRunner extends FlexBaseRunner {
                                                    final RunProfileState state,
                                                    final RunContentDescriptor contentToReuse,
                                                    final ExecutionEnvironment env,
-                                                   final FlexUnitCommonParameters params) throws ExecutionException {
+                                                   final FlexUnitRunnerParameters params) throws ExecutionException {
     try {
-      final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = ((NewFlexUnitRunnerParameters)params).checkAndGetModuleAndBC(project);
-      return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, (NewFlexUnitRunnerParameters)params, executor, contentToReuse, env);
+      final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = ((FlexUnitRunnerParameters)params).checkAndGetModuleAndBC(project);
+      return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, (FlexUnitRunnerParameters)params, executor, contentToReuse, env);
     }
     catch (RuntimeConfigurationError e) {
       throw new ExecutionException(e.getMessage());

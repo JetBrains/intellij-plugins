@@ -19,7 +19,7 @@ public class FlexUnitRunConfigurationType implements ConfigurationType {
   public FlexUnitRunConfigurationType() {
     myFactory = new ConfigurationFactory(this) {
       public RunConfiguration createTemplateConfiguration(Project project) {
-        return new NewFlexUnitRunConfiguration(project, this, "");
+        return new FlexUnitRunConfiguration(project, this, "");
       }
     };
   }

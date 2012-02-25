@@ -55,17 +55,17 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
     element = findTestElement(element);
     if (element == null) return null;
 
-    final NewFlexUnitRunnerParameters fakeParams = new NewFlexUnitRunnerParameters();
+    final FlexUnitRunnerParameters fakeParams = new FlexUnitRunnerParameters();
     if (!configureRunnerParameters(fakeParams, context.getModule(), element)) return null;
 
     for (final RunnerAndConfigurationSettings configuration : existingConfigurations) {
       final RunConfiguration runConfiguration = configuration.getConfiguration();
-      final FlexUnitCommonParameters params = ((NewFlexUnitRunConfiguration)runConfiguration).getRunnerParameters();
+      final FlexUnitRunnerParameters params = ((FlexUnitRunConfiguration)runConfiguration).getRunnerParameters();
       if (params.getModuleName().equals(fakeParams.getModuleName())
           && params.getScope() == fakeParams.getScope()
-          && (params.getScope() != NewFlexUnitRunnerParameters.Scope.Package || params.getPackageName().equals(fakeParams.getPackageName()))
-          && (params.getScope() == NewFlexUnitRunnerParameters.Scope.Package || params.getClassName().equals(fakeParams.getClassName()))
-          && (params.getScope() != NewFlexUnitRunnerParameters.Scope.Method || params.getMethodName().equals(fakeParams.getMethodName()))) {
+          && (params.getScope() != FlexUnitRunnerParameters.Scope.Package || params.getPackageName().equals(fakeParams.getPackageName()))
+          && (params.getScope() == FlexUnitRunnerParameters.Scope.Package || params.getClassName().equals(fakeParams.getClassName()))
+          && (params.getScope() != FlexUnitRunnerParameters.Scope.Method || params.getMethodName().equals(fakeParams.getMethodName()))) {
         return configuration;
       }
     }
@@ -84,7 +84,7 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
 
     final RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(location.getProject(), context);
     final LocatableConfiguration runConfig = (LocatableConfiguration)settings.getConfiguration();
-    final NewFlexUnitRunnerParameters params = ((NewFlexUnitRunConfiguration)runConfig).getRunnerParameters();
+    final FlexUnitRunnerParameters params = ((FlexUnitRunConfiguration)runConfig).getRunnerParameters();
     if (!configureRunnerParameters(params, context.getModule(), element)) return null;
 
     // todo need better logic to select BC
@@ -96,7 +96,7 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
   }
 
   // todo only some of BCs for current module may have FlexUnit library
-  private static boolean configureRunnerParameters(final FlexUnitCommonParameters params, final Module module, final PsiElement element) {
+  private static boolean configureRunnerParameters(final FlexUnitRunnerParameters params, final Module module, final PsiElement element) {
     if (element instanceof JSClass) {
       final JSClass clazz = (JSClass)element;
 
@@ -118,7 +118,7 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
       else {
         params.setClassName(clazz.getQualifiedName());
         params.setMethodName(method.getName());
-        params.setScope(NewFlexUnitRunnerParameters.Scope.Method);
+        params.setScope(FlexUnitRunnerParameters.Scope.Method);
         params.setModuleName(supportForModule.first.getName());
       }
     }
@@ -135,7 +135,7 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
     return true;
   }
 
-  private static boolean forPackage(PsiDirectoryContainer psiPackage, Module module, FlexUnitCommonParameters params) {
+  private static boolean forPackage(PsiDirectoryContainer psiPackage, Module module, FlexUnitRunnerParameters params) {
     if (module == null) return false;
     for (PsiDirectory directory : psiPackage.getDirectories(module.getModuleScope())) {
       if (forDirectory(directory, params)) {
@@ -145,7 +145,7 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
     return false;
   }
 
-  private static boolean forDirectory(PsiDirectory directory, FlexUnitCommonParameters params) {
+  private static boolean forDirectory(PsiDirectory directory, FlexUnitRunnerParameters params) {
     final VirtualFile file = directory.getVirtualFile();
     ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(directory.getProject()).getFileIndex();
     VirtualFile rootForFile = projectFileIndex.getSourceRootForFile(file);
@@ -158,14 +158,14 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
     if (!JSUtils.packageExists(packageName, GlobalSearchScope.moduleScope(module))) return false;
 
     params.setPackageName(packageName);
-    params.setScope(NewFlexUnitRunnerParameters.Scope.Package);
+    params.setScope(FlexUnitRunnerParameters.Scope.Package);
     params.setModuleName(module.getName());
     return true;
   }
 
-  private static void forClass(JSClass clazz, Module module, FlexUnitCommonParameters params) {
+  private static void forClass(JSClass clazz, Module module, FlexUnitRunnerParameters params) {
     params.setClassName(clazz.getQualifiedName());
-    params.setScope(NewFlexUnitRunnerParameters.Scope.Class);
+    params.setScope(FlexUnitRunnerParameters.Scope.Class);
     params.setModuleName(module.getName());
   }
 

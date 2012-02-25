@@ -26,17 +26,17 @@ import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class NewFlexUnitRunConfiguration extends RunConfigurationBase
+public class FlexUnitRunConfiguration extends RunConfigurationBase
   implements RunProfileWithCompileBeforeLaunchOption, LocatableConfiguration {
 
-  private NewFlexUnitRunnerParameters myRunnerParameters = new NewFlexUnitRunnerParameters();
+  private FlexUnitRunnerParameters myRunnerParameters = new FlexUnitRunnerParameters();
 
-  protected NewFlexUnitRunConfiguration(Project project, ConfigurationFactory factory, String name) {
+  protected FlexUnitRunConfiguration(Project project, ConfigurationFactory factory, String name) {
     super(project, factory, name);
   }
 
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
-    return new NewFlexUnitRunConfigurationForm(getProject());
+    return new FlexUnitRunConfigurationForm(getProject());
   }
 
   public JDOMExternalizable createRunnerSettings(final ConfigurationInfoProvider provider) {
@@ -49,7 +49,7 @@ public class NewFlexUnitRunConfiguration extends RunConfigurationBase
 
   public void readExternal(final Element element) throws InvalidDataException {
     super.readExternal(element);
-    myRunnerParameters = new NewFlexUnitRunnerParameters();
+    myRunnerParameters = new FlexUnitRunnerParameters();
     XmlSerializer.deserializeInto(myRunnerParameters, element);
   }
 
@@ -58,14 +58,14 @@ public class NewFlexUnitRunConfiguration extends RunConfigurationBase
     XmlSerializer.serializeInto(myRunnerParameters, element);
   }
 
-  public NewFlexUnitRunConfiguration clone() {
-    final NewFlexUnitRunConfiguration clone = (NewFlexUnitRunConfiguration)super.clone();
+  public FlexUnitRunConfiguration clone() {
+    final FlexUnitRunConfiguration clone = (FlexUnitRunConfiguration)super.clone();
     clone.myRunnerParameters = myRunnerParameters.clone();
     return clone;
   }
 
   @NotNull
-  public NewFlexUnitRunnerParameters getRunnerParameters() {
+  public FlexUnitRunnerParameters getRunnerParameters() {
     return myRunnerParameters;
   }
 
@@ -135,7 +135,7 @@ public class NewFlexUnitRunConfiguration extends RunConfigurationBase
 
   /*
   public RefactoringElementListener getRefactoringElementListener(final PsiElement element) {
-    final NewFlexUnitRunnerParameters params = getRunnerParameters();
+    final FlexUnitRunnerParameters params = getRunnerParameters();
     final Module module = ModuleManager.getInstance(getProject()).findModuleByName(params.getModuleName());
     if (!(element instanceof PsiDirectoryContainer) && !(element instanceof JSPackage) && !(element instanceof JSPackageStatement)
         && (module == null || !module.equals(ModuleUtil.findModuleForPsiElement(element)))) {

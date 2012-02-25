@@ -64,7 +64,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
 
   public boolean execute(CompileContext context) {
     final RunConfiguration runConfiguration = CompileStepBeforeRun.getRunConfiguration(context.getCompileScope());
-    if (!(runConfiguration instanceof NewFlexUnitRunConfiguration)) {
+    if (!(runConfiguration instanceof FlexUnitRunConfiguration)) {
       return true;
     }
 
@@ -117,7 +117,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
       return false;
     }
 
-    final NewFlexUnitRunnerParameters params = ((NewFlexUnitRunConfiguration)runConfiguration).getRunnerParameters();
+    final FlexUnitRunnerParameters params = ((FlexUnitRunConfiguration)runConfiguration).getRunnerParameters();
     params.setPort(flexUnitPort);
     params.setSocketPolicyPort(socketPolicyPort);
 
@@ -287,11 +287,11 @@ public class FlexUnitPrecompileTask implements CompileTask {
     launcherText = launcherText.replace("/*module*/", module.getName());
     launcherText = launcherText.replace("/*closeApp*/", desktop ? "NativeApplication.nativeApplication.exit(0)" : "fscommand(\"quit\")");
     launcherText = launcherText.replace("/*logTargetClass*/", FileUtil.getNameWithoutExtension(logTargetFileName));
-    final NewFlexUnitRunnerParameters.OutputLogLevel logLevel = params.getOutputLogLevel();
+    final FlexUnitRunnerParameters.OutputLogLevel logLevel = params.getOutputLogLevel();
     launcherText = launcherText.replace("/*logEnabled*/", logLevel != null ? "true" : "false");
     launcherText = launcherText.replace("/*logLevel*/", logLevel != null
                                                         ? logLevel.getFlexConstant()
-                                                        : NewFlexUnitRunnerParameters.OutputLogLevel.values()[0].getFlexConstant());
+                                                        : FlexUnitRunnerParameters.OutputLogLevel.values()[0].getFlexConstant());
 
     logTargetText = logTargetText.replace("/*className*/", FileUtil.getNameWithoutExtension(logTargetFileName));
 

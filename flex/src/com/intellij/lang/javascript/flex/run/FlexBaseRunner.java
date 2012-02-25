@@ -25,10 +25,9 @@ import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParam
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.lang.javascript.flex.debug.FlexDebugProcess;
 import com.intellij.lang.javascript.flex.debug.FlexDebugRunner;
-import com.intellij.lang.javascript.flex.flexunit.FlexUnitCommonParameters;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConsoleProperties;
-import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunConfiguration;
-import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunnerParameters;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
@@ -65,7 +64,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import static com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters.*;
+import static com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters.AndroidPackageType;
+import static com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters.FilePathAndPathInPackage;
+import static com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters.IOSPackageType;
+import static com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters.MobilePlatform;
 
 /**
  * User: Maxim.Mossienko
@@ -106,8 +108,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, executor, contentToReuse, env);
       }
 
-      if (runProfile instanceof NewFlexUnitRunConfiguration) {
-        final NewFlexUnitRunnerParameters params = ((NewFlexUnitRunConfiguration)runProfile).getRunnerParameters();
+      if (runProfile instanceof FlexUnitRunConfiguration) {
+        final FlexUnitRunnerParameters params = ((FlexUnitRunConfiguration)runProfile).getRunnerParameters();
         final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig = params.checkAndGetModuleAndBC(project);
         final Module module = moduleAndConfig.first;
         final FlexIdeBuildConfiguration bc = moduleAndConfig.second;
@@ -162,7 +164,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         @NotNull
         public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
           try {
-            if (params instanceof NewFlexUnitRunnerParameters) {
+            if (params instanceof FlexUnitRunnerParameters) {
               return new FlexDebugProcess(session, bc, params) {
                 @NotNull
                 @Override
@@ -194,13 +196,13 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                                             final RunProfileState state,
                                                             final RunContentDescriptor contentToReuse,
                                                             final ExecutionEnvironment env,
-                                                            final FlexUnitCommonParameters params) throws ExecutionException;
+                                                            final FlexUnitRunnerParameters params) throws ExecutionException;
 
   protected abstract RunContentDescriptor launchWebFlexUnit(final Project project,
                                                             final Executor executor,
                                                             final RunContentDescriptor contentToReuse,
                                                             final ExecutionEnvironment env,
-                                                            final FlexUnitCommonParameters params,
+                                                            final FlexUnitRunnerParameters params,
                                                             final String swfFilePath) throws ExecutionException;
 
   @Nullable
@@ -218,7 +220,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                                              Executor executor) throws ExecutionException {
     final RunProfile runConfiguration = env.getRunProfile();
     final FlexStackTraceFilter stackTraceFilter = new FlexStackTraceFilter(project);
-    final FlexUnitConsoleProperties consoleProps = new FlexUnitConsoleProperties(((NewFlexUnitRunConfiguration)runConfiguration), executor);
+    final FlexUnitConsoleProperties consoleProps = new FlexUnitConsoleProperties(((FlexUnitRunConfiguration)runConfiguration), executor);
     consoleProps.addStackTraceFilter(stackTraceFilter);
 
     final BaseTestsOutputConsoleView consoleView = SMTestRunnerConnectionUtil

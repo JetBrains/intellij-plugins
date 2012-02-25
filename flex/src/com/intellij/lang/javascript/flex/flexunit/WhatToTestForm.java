@@ -139,7 +139,7 @@ public class WhatToTestForm {
     myPackageField.setChooserBlockingMessage(message);
   }
 
-  public void resetFrom(final FlexUnitCommonParameters params) {
+  public void resetFrom(final FlexUnitRunnerParameters params) {
     switch (params.getScope()) {
       case Class:
         myClassRadioButton.setSelected(true);
@@ -162,7 +162,7 @@ public class WhatToTestForm {
     }
 
     try {
-      final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = ((NewFlexUnitRunnerParameters)params).checkAndGetModuleAndBC(myProject);
+      final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = ((FlexUnitRunnerParameters)params).checkAndGetModuleAndBC(myProject);
       updateOnBCChange(moduleAndBC.second, moduleAndBC.first);
     }
     catch (RuntimeConfigurationError e) {
@@ -172,17 +172,17 @@ public class WhatToTestForm {
     updateOnScopeChange();
   }
 
-  public void applyTo(final FlexUnitCommonParameters params) {
+  public void applyTo(final FlexUnitRunnerParameters params) {
     if (myClassRadioButton.isSelected()) {
-      params.setScope(NewFlexUnitRunnerParameters.Scope.Class);
+      params.setScope(FlexUnitRunnerParameters.Scope.Class);
       params.setClassName(myClassField.getText());
     }
     else if (myPackageRadioButton.isSelected()) {
-      params.setScope(NewFlexUnitRunnerParameters.Scope.Package);
+      params.setScope(FlexUnitRunnerParameters.Scope.Package);
       params.setPackageName(myPackageField.getText());
     }
     else if (myMethodRadioButton.isSelected()) {
-      params.setScope(NewFlexUnitRunnerParameters.Scope.Method);
+      params.setScope(FlexUnitRunnerParameters.Scope.Method);
       params.setClassName(myClassField.getText());
       params.setMethodName(myMethodField.getText());
     }

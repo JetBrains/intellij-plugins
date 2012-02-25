@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 
-public class NewFlexUnitRunnerParameters extends BCBasedRunnerParameters implements FlexUnitCommonParameters {
+public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
 
   public enum Scope {
     Method, Class, Package
@@ -63,7 +63,7 @@ public class NewFlexUnitRunnerParameters extends BCBasedRunnerParameters impleme
   private int myPort;
   private int mySocketPolicyPort;
 
-  public NewFlexUnitRunnerParameters() {
+  public FlexUnitRunnerParameters() {
   }
 
   @Attribute("scope")
@@ -244,38 +244,33 @@ public class NewFlexUnitRunnerParameters extends BCBasedRunnerParameters impleme
     }
 
     // todo fix scope
-    checkCommonParams(this, support, GlobalSearchScope.moduleScope(moduleAndBC.first));
-  }
-
-  private static void checkCommonParams(final FlexUnitCommonParameters params,
-                                        final FlexUnitSupport support,
-                                        final GlobalSearchScope searchScope) throws RuntimeConfigurationError {
-    switch (params.getScope()) {
+    final GlobalSearchScope searchScope = GlobalSearchScope.moduleScope(moduleAndBC.first);
+    switch (getScope()) {
       case Class:
-        getClassToTest(params.getClassName(), searchScope, support, true);
+        getClassToTest(getClassName(), searchScope, support, true);
         break;
 
       case Method:
-        final JSClass classToTest = getClassToTest(params.getClassName(), searchScope, support, false);
-        if (StringUtil.isEmpty(params.getMethodName())) {
+        final JSClass classToTest = getClassToTest(getClassName(), searchScope, support, false);
+        if (StringUtil.isEmpty(getMethodName())) {
           throw new RuntimeConfigurationError(FlexBundle.message("no.test.method.specified"));
         }
 
-        final JSFunction methodToTest = classToTest.findFunctionByNameAndKind(params.getMethodName(), JSFunction.FunctionKind.SIMPLE);
+        final JSFunction methodToTest = classToTest.findFunctionByNameAndKind(getMethodName(), JSFunction.FunctionKind.SIMPLE);
 
         if (methodToTest == null || !support.isTestMethod(methodToTest)) {
-          throw new RuntimeConfigurationError(FlexBundle.message("method.not.valid", params.getMethodName()));
+          throw new RuntimeConfigurationError(FlexBundle.message("method.not.valid", getMethodName()));
         }
         break;
 
       case Package:
-        if (!JSUtils.packageExists(params.getPackageName(), searchScope)) {
-          throw new RuntimeConfigurationError(FlexBundle.message("package.not.valid", params.getPackageName()));
+        if (!JSUtils.packageExists(getPackageName(), searchScope)) {
+          throw new RuntimeConfigurationError(FlexBundle.message("package.not.valid", getPackageName()));
         }
         break;
 
       default:
-        assert false : "Unknown scope: " + params.getScope();
+        assert false : "Unknown scope: " + getScope();
     }
   }
 
@@ -299,8 +294,8 @@ public class NewFlexUnitRunnerParameters extends BCBasedRunnerParameters impleme
   }
 
   @Override
-  public NewFlexUnitRunnerParameters clone() {
-    final NewFlexUnitRunnerParameters clone = (NewFlexUnitRunnerParameters)super.clone();
+  public FlexUnitRunnerParameters clone() {
+    final FlexUnitRunnerParameters clone = (FlexUnitRunnerParameters)super.clone();
     clone.myLauncherParameters = myLauncherParameters.clone();
     return clone;
   }
@@ -310,7 +305,7 @@ public class NewFlexUnitRunnerParameters extends BCBasedRunnerParameters impleme
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
 
-    final NewFlexUnitRunnerParameters that = (NewFlexUnitRunnerParameters)o;
+    final FlexUnitRunnerParameters that = (FlexUnitRunnerParameters)o;
 
     if (myTrusted != that.myTrusted) return false;
     if (!myClassName.equals(that.myClassName)) return false;
