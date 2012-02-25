@@ -166,8 +166,8 @@ public class FlexModuleBuilder extends ModuleBuilder {
 
     if (myTargetPlatform == TargetPlatform.Mobile && myOutputType == OutputType.Application) {
       bc.getAndroidPackagingOptions().setEnabled(true);
-      bc.getAndroidPackagingOptions().setPackageFileName(className + ".apk");
-      bc.getIosPackagingOptions().setPackageFileName(className + ".ipa");
+      bc.getAndroidPackagingOptions().setPackageFileName(className);
+      bc.getIosPackagingOptions().setPackageFileName(className);
     }
   }
 

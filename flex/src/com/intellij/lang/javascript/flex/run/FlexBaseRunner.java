@@ -354,7 +354,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                           true,
                                           bc.getSdk(),
                                           getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()),
-                                          bc.getAndroidPackagingOptions().getPackageFileName(),
+                                          bc.getAndroidPackagingOptions().getPackageFileName() + ".apk",
                                           PathUtil.getParentPath(outputFilePath),
                                           files,
                                           MobileAirUtil.getLocalHostAddress(),

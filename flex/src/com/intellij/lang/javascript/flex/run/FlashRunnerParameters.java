@@ -263,8 +263,8 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
       final ModifiableFlexIdeBuildConfiguration overriddenBC = Factory.getTemporaryCopyForCompilation(moduleAndBC.second);
       overriddenBC.setMainClass(myOverriddenMainClass);
       overriddenBC.setOutputFileName(myOverriddenOutputFileName);
-      overriddenBC.getAndroidPackagingOptions().setPackageFileName(FileUtil.getNameWithoutExtension(myOverriddenOutputFileName) + ".apk");
-      overriddenBC.getIosPackagingOptions().setPackageFileName(FileUtil.getNameWithoutExtension(myOverriddenOutputFileName) + ".ipa");
+      overriddenBC.getAndroidPackagingOptions().setPackageFileName(FileUtil.getNameWithoutExtension(myOverriddenOutputFileName));
+      overriddenBC.getIosPackagingOptions().setPackageFileName(FileUtil.getNameWithoutExtension(myOverriddenOutputFileName));
 
       if (overriddenBC.getOutputType() != OutputType.Application) {
         overriddenBC.setOutputType(OutputType.Application);

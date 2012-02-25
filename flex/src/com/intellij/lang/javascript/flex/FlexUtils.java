@@ -53,7 +53,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.*;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -573,6 +573,35 @@ public class FlexUtils {
     return result;
   }
 
+  public static String removeDebugOption(final String commandLine) {
+    if (commandLine.isEmpty()) return commandLine;
+
+    final StringBuilder buf = new StringBuilder();
+    for (StringTokenizer tokenizer = new StringTokenizer(commandLine, " ", true); tokenizer.hasMoreTokens(); ) {
+      final String token = tokenizer.nextToken();
+
+      if (token.startsWith("-debug") || token.startsWith("-compiler.debug")) {
+        String nextToken = null;
+
+        while(tokenizer.hasMoreElements()) {
+          nextToken = tokenizer.nextToken();
+          if (!StringUtil.isEmptyOrSpaces(nextToken)) {
+            break;
+          }
+        }
+
+        if (nextToken != null && !canBeCompilerOptionValue(nextToken)) {
+          buf.append(nextToken);
+        }
+      }
+      else {
+        buf.append(token);
+      }
+    }
+
+    return buf.toString();
+  }
+
   public static boolean canBeCompilerOptionValue(final String text) {
     if (text.startsWith("-")) {  // option or negative number
       return text.length() > 1 && Character.isDigit(text.charAt(1));
@@ -693,5 +722,22 @@ public class FlexUtils {
     finally {
       module.putUserData(FlexOrderEnumerationHandler.FORCE_BC, null);
     }
+  }
+
+  public static String getOwnIpAddress() {
+    try {
+      final Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+      while (networkInterfaces.hasMoreElements()) {
+        final Enumeration<InetAddress> inetAddresses = networkInterfaces.nextElement().getInetAddresses();
+        while (inetAddresses.hasMoreElements()) {
+          final InetAddress inetAddress = inetAddresses.nextElement();
+          if (inetAddress instanceof Inet4Address && !inetAddress.isLoopbackAddress()) {
+            return inetAddress.getHostAddress();
+          }
+        }
+      }
+    }
+    catch (SocketException ignore) {/* ignore */}
+    return "unknown";
   }
 }

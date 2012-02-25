@@ -42,7 +42,7 @@
             </constraints>
             <properties>
               <labelFor value="a47b0"/>
-              <text value="Package file &amp;name:"/>
+              <text value="Package file &amp;name (without extension):"/>
             </properties>
           </component>
           <component id="a47b0" class="javax.swing.JTextField" binding="myPackageFileNameTextField">

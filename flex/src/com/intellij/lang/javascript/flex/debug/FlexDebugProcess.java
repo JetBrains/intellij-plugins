@@ -74,10 +74,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.util.*;
 
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
@@ -1364,7 +1360,7 @@ public class FlexDebugProcess extends XDebugProcess {
           final HyperlinkAdapter h = new HyperlinkAdapter() {
             protected void hyperlinkActivated(final HyperlinkEvent e) {
               manager.notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, FlexBundle.message("remote.flash.debug.details",
-                                                                                               getOwnIpAddress()));
+                                                                                               FlexUtils.getOwnIpAddress()));
             }
           };
 
@@ -1372,23 +1368,6 @@ public class FlexDebugProcess extends XDebugProcess {
         }
       });
     }
-  }
-
-  private static String getOwnIpAddress() {
-    try {
-      final Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
-      while (networkInterfaces.hasMoreElements()) {
-        final Enumeration<InetAddress> inetAddresses = networkInterfaces.nextElement().getInetAddresses();
-        while (inetAddresses.hasMoreElements()) {
-          final InetAddress inetAddress = inetAddresses.nextElement();
-          if (inetAddress instanceof Inet4Address && !inetAddress.isLoopbackAddress()) {
-            return inetAddress.getHostAddress();
-          }
-        }
-      }
-    }
-    catch (SocketException ignore) {/* ignore */}
-    return "unknown";
   }
 
   class StartDebuggingCommand extends DebuggerCommand {

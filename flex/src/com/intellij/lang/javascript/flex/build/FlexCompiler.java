@@ -5,6 +5,8 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageParameters;
 import com.intellij.lang.javascript.flex.flexunit.NewFlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
@@ -13,6 +15,7 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigura
 import com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
+import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.*;
@@ -24,10 +27,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.NullableComputable;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -47,6 +47,8 @@ import static com.intellij.lang.javascript.flex.projectStructure.model.CompilerO
 
 public class FlexCompiler implements SourceProcessingCompiler {
   private static final Logger LOG = Logger.getInstance(FlexCompiler.class.getName());
+  public static final Key<Collection<Pair<Module, FlexIdeBuildConfiguration>>> MODULES_AND_BCS_TO_COMPILE =
+    Key.create("modules.and.bcs.to.compile");
 
   @NotNull
   public ProcessingItem[] getProcessingItems(final CompileContext context) {
@@ -61,14 +63,6 @@ public class FlexCompiler implements SourceProcessingCompiler {
     catch (ConfigurationException e) {
       // can't happen because already validated
       throw new RuntimeException(e);
-    }
-
-    if (!itemList.isEmpty() && !context.isMake()) {
-      final FlexCompilerHandler flexCompilerHandler = FlexCompilerHandler.getInstance(context.getProject());
-      flexCompilerHandler.quitCompilerShell();
-      for (ProcessingItem item : itemList) {
-        flexCompilerHandler.getCompilerDependenciesCache().markModuleDirty(((MyProcessingItem)item).myModule);
-      }
     }
 
     return itemList.toArray(new ProcessingItem[itemList.size()]);
@@ -96,6 +90,13 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
     final FlexCompilerHandler flexCompilerHandler = FlexCompilerHandler.getInstance(context.getProject());
     final FlexCompilerProjectConfiguration flexCompilerConfiguration = FlexCompilerProjectConfiguration.getInstance(context.getProject());
+
+    if (!context.isMake()) {
+      flexCompilerHandler.quitCompilerShell();
+      for (ProcessingItem item : items) {
+        flexCompilerHandler.getCompilerDependenciesCache().markBCDirty(((MyProcessingItem)item).myModule, ((MyProcessingItem)item).myBC);
+      }
+    }
 
     if (flexCompilerConfiguration.USE_FCSH) {
       context.addMessage(CompilerMessageCategory.INFORMATION,
@@ -225,7 +226,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
       final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCsToCompile = getModulesAndBCsToCompile(scope);
 
       for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
-        validateConfiguration(moduleAndBC.first, moduleAndBC.second);
+        validateConfiguration(scope, moduleAndBC.first, moduleAndBC.second);
       }
 
       checkSimilarOutputFiles(modulesAndBCsToCompile);
@@ -248,20 +249,21 @@ public class FlexCompiler implements SourceProcessingCompiler {
     for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
       final FlexIdeBuildConfiguration bc = moduleAndBC.second;
       final String outputFilePath = bc.getOutputFilePath(true);
-      final String outputFolderPath = PathUtil.getParentPath(outputFilePath);
-
       checkOutputPathUnique(outputFilePath, moduleAndBC, outputPathToModuleAndBC);
 
+      /*
+      final String outputFolderPath = PathUtil.getParentPath(outputFilePath);
       if (bc.getTargetPlatform() == TargetPlatform.Mobile && bc.getOutputType() == OutputType.Application) {
         if (bc.getAndroidPackagingOptions().isEnabled()) {
-          final String outputPath = outputFolderPath + "/" + bc.getAndroidPackagingOptions().getPackageFileName();
+          final String outputPath = outputFolderPath + "/" + bc.getAndroidPackagingOptions().getPackageFileName() + ".apk";
           checkOutputPathUnique(outputPath, moduleAndBC, outputPathToModuleAndBC);
         }
         if (bc.getIosPackagingOptions().isEnabled()) {
-          final String outputPath = outputFolderPath + "/" + bc.getIosPackagingOptions().getPackageFileName();
+          final String outputPath = outputFolderPath + "/" + bc.getIosPackagingOptions().getPackageFileName() + ".ios";
           checkOutputPathUnique(outputPath, moduleAndBC, outputPathToModuleAndBC);
         }
       }
+      */
     }
     return true;
   }
@@ -285,9 +287,19 @@ public class FlexCompiler implements SourceProcessingCompiler {
     throws ConfigurationException {
 
     final Collection<Pair<Module, FlexIdeBuildConfiguration>> result = new HashSet<Pair<Module, FlexIdeBuildConfiguration>>();
+    final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCsToCompile = scope.getUserData(MODULES_AND_BCS_TO_COMPILE);
     final RunConfiguration runConfiguration = CompileStepBeforeRun.getRunConfiguration(scope);
 
-    if (runConfiguration instanceof FlashRunConfiguration || runConfiguration instanceof NewFlexUnitRunConfiguration) {
+    if (modulesAndBCsToCompile != null) {
+      for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
+        if (!moduleAndBC.second.isSkipCompile()) {
+          final FlexIdeBuildConfiguration bcWithForcedDebugStatus = forceDebugStatus(moduleAndBC.first.getProject(), moduleAndBC.second);
+          result.add(Pair.create(moduleAndBC.first, bcWithForcedDebugStatus));
+          appendBCDependencies(result, moduleAndBC.first, moduleAndBC.second);
+        }
+      }
+    }
+    else if (runConfiguration instanceof FlashRunConfiguration || runConfiguration instanceof NewFlexUnitRunConfiguration) {
       final BCBasedRunnerParameters params = runConfiguration instanceof FlashRunConfiguration
                                              ? ((FlashRunConfiguration)runConfiguration).getRunnerParameters()
                                              : ((NewFlexUnitRunConfiguration)runConfiguration).getRunnerParameters();
@@ -329,6 +341,30 @@ public class FlexCompiler implements SourceProcessingCompiler {
     return result;
   }
 
+  private static FlexIdeBuildConfiguration forceDebugStatus(final Project project, final FlexIdeBuildConfiguration bc) {
+    final boolean debug;
+
+    if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
+      final AirPackageParameters params = AirPackageParameters.getInstance(project);
+      if (bc.getAndroidPackagingOptions().isEnabled()) {
+        debug = params.androidPackageType != AirPackageParameters.AndroidPackageType.Release;
+      }
+      else {
+        debug = params.iosPackageType == AirPackageParameters.IOSPackageType.DebugOverNetwork;
+      }
+    }
+    else {
+      debug = false;
+    }
+
+    // must not use getTemporaryCopyForCompilation() here because additional config file must not be merged with the generated one when compiling swf for release or AIR package
+    final ModifiableFlexIdeBuildConfiguration result = Factory.getCopy(bc);
+    final String additionalOptions = FlexUtils.removeDebugOption(bc.getCompilerOptions().getAdditionalOptions());
+    result.getCompilerOptions().setAdditionalOptions(additionalOptions + " -debug=" + String.valueOf(debug));
+
+    return result;
+  }
+
   private static void appendBCDependencies(final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCs,
                                            final Module module,
                                            final FlexIdeBuildConfiguration bc) throws ConfigurationException {
@@ -354,7 +390,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
     }
   }
 
-  private static void validateConfiguration(final Module module, final FlexIdeBuildConfiguration bc) throws ConfigurationException {
+  private static void validateConfiguration(final CompileScope scope,
+                                            final Module module, final FlexIdeBuildConfiguration bc) throws ConfigurationException {
     assert !bc.isSkipCompile();
     final String moduleName = module.getName();
 
@@ -453,12 +490,21 @@ public class FlexCompiler implements SourceProcessingCompiler {
     }
 
     if (nature.isMobilePlatform() && nature.isApp()) {
-      if (bc.getAndroidPackagingOptions().isEnabled() && bc.getAndroidPackagingOptions().getPackageFileName().isEmpty()) {
-        throw new ConfigurationException(FlexBundle.message("android.package.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
-      }
-      if (bc.getIosPackagingOptions().isEnabled() && bc.getIosPackagingOptions().getPackageFileName().isEmpty()) {
-        throw new ConfigurationException(
-          FlexBundle.message("ios.package.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
+      final RunConfiguration runConfig = CompileStepBeforeRun.getRunConfiguration(scope);
+      if (runConfig instanceof FlashRunConfiguration) {
+        final FlashRunnerParameters params = ((FlashRunConfiguration)runConfig).getRunnerParameters();
+        if (moduleName.equals(params.getModuleName()) && bc.getName().equals(params.getBCName())) {
+          if (params.getMobileRunTarget() == FlashRunnerParameters.AirMobileRunTarget.AndroidDevice &&
+              bc.getAndroidPackagingOptions().getPackageFileName().isEmpty()) {
+            throw new ConfigurationException(FlexBundle.message("android.package.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
+          }
+          /*
+          if (bc.getIosPackagingOptions().isEnabled() && bc.getIosPackagingOptions().getPackageFileName().isEmpty()) {
+            throw new ConfigurationException(
+              FlexBundle.message("ios.package.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
+          }
+          */
+        }
       }
     }
 

@@ -94,6 +94,8 @@
     <treeStructureProvider implementation="com.intellij.lang.javascript.flex.presentation.FlexTreeStructureProvider"/>
     <projectService serviceInterface="com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration"
                     serviceImplementation="com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration"/>
+    <projectService serviceInterface="com.intellij.lang.javascript.flex.actions.airpackage.AirPackageParameters"
+                    serviceImplementation="com.intellij.lang.javascript.flex.actions.airpackage.AirPackageParameters"/>
     <consoleFilterProvider implementation="com.intellij.lang.javascript.flex.FlexStackTraceFilterProvider"/>
     <gotoSymbolContributor implementation="com.intellij.javascript.flex.mxml.FlexXmlBackedSymbolContributor"/>
     <annotator language="XML" implementationClass="com.intellij.javascript.flex.mxml.FlexMxmlColorAnnotator"/>
@@ -294,11 +296,23 @@
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="Flex.NewActionScriptClass"/>
     </action>
     <action id="Flex.Debugger.FilterSwfLoadUnloadMessages" class="com.intellij.lang.javascript.flex.debug.FilterSwfLoadUnloadMessagesAction"
-            text="Filter [SWF] and [UnloadSWF] messages" icon="/ant/filter.png" description="Use this toggle button to choose whether you want [SWF] and [UnloadSWF] messages to be shown in Flex debug console. Note that toggling the button doesn't change current console content, filter is applied only to new messages that will appear.">
+            text="Filter [SWF] and [UnloadSWF] messages" icon="/ant/filter.png"
+            description="Use this toggle button to choose whether you want [SWF] and [UnloadSWF] messages to be shown in Flex debug console. Note that toggling the button doesn't change current console content, filter is applied only to new messages that will appear.">
     </action>
-    <action id="ChooseActiveBuildConfiguration" text="Flex Build Configuration..." description="The selected configuration is used for source files highlighting"
-            class="com.intellij.lang.javascript.flex.projectStructure.ui.ChooseActiveBuildConfigurationAction" icon="/com/intellij/lang/javascript/flex/projectStructure/buildConfig.png">
+    <action id="ChooseActiveBuildConfiguration" text="Flex Build Configuration..."
+            description="The selected configuration is used for source files highlighting"
+            class="com.intellij.lang.javascript.flex.projectStructure.ui.ChooseActiveBuildConfigurationAction"
+            icon="/com/intellij/lang/javascript/flex/projectStructure/buildConfig.png">
       <add-to-group group-id="EditorLangPopupMenu" anchor="last"/>
     </action>
+    <group>
+      <action id="PackageAIR" text="Package AIR Application..."
+              description="Create AIR mobile or desktop-targeted package (*.apk, *.ipa, *.air)"
+              class="com.intellij.lang.javascript.flex.actions.airpackage.AirPackageAction"
+              icon="/com/intellij/lang/javascript/flex/projectStructure/buildConfig.png">
+      </action>
+      <separator/>
+      <add-to-group group-id="BuildMenu" anchor="before" relative-to-action="CompileProject"/>
+    </group>
   </actions>
 </idea-plugin>
