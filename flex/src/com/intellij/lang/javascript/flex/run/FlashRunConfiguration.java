@@ -121,6 +121,51 @@ public class FlashRunConfiguration extends RunConfigurationBase
     return myRunnerParameters.suggestName();
   }
 
+  /*
+  public RefactoringElementListener getRefactoringElementListener(final PsiElement element) {
+    //assert !(this instanceof FlexUnitRunConfiguration); // FlexUnitRunConfiguration must have own implementation
+
+    if ((this instanceof AirRunConfiguration &&
+         ((AirRunnerParameters)myRunnerParameters).getAirRunMode() != AirRunnerParameters.AirRunMode.MainClass)
+        ||
+        (!(this instanceof AirRunConfiguration) && myRunnerParameters.getRunMode() != FlexRunnerParameters.RunMode.MainClass)) {
+      return null;
+    }
+
+    final Module module = ModuleManager.getInstance(getProject()).findModuleByName(myRunnerParameters.getModuleName());
+
+    if (!(element instanceof PsiDirectoryContainer) && !(element instanceof JSPackage) && !(element instanceof JSPackageStatement)
+        && (module == null || !module.equals(ModuleUtil.findModuleForPsiElement(element)))) {
+      return null;
+    }
+
+    String currentPackage = StringUtil.getPackageName(myRunnerParameters.getMainClassName());
+    if ((element instanceof PsiDirectoryContainer || element instanceof JSPackage || element instanceof JSPackageStatement) &&
+        Comparing.strEqual(FlexRefactoringListenerProvider.getPackageName(element), currentPackage)) {
+      //return new FlexRunConfigRefactoringListener.PackageRefactoringListener(this);
+    }
+
+    if (element instanceof PsiDirectory && containsClass(module, ((PsiDirectory)element), myRunnerParameters.getMainClassName())) {
+      //return new FlexRunConfigRefactoringListener.PsiDirectoryRefactoringListener(this);
+    }
+
+    final JSClass jsClass = FlexRefactoringListenerProvider.getJSClass(element);
+    if (jsClass != null && Comparing.strEqual(jsClass.getQualifiedName(), myRunnerParameters.getMainClassName())) {
+      //return new FlexRunConfigRefactoringListener.JSClassRefactoringListener(this);
+    }
+
+    return null;
+  }
+
+  private static boolean containsClass(final Module module, final PsiDirectory directory, final String className) {
+    final String packageName = DirectoryIndex.getInstance(module.getProject()).getPackageName(directory.getVirtualFile());
+    if (!StringUtil.getPackageName(className).equals(packageName)) return false;
+
+    final PsiElement psiElement = JSResolveUtil.findClassByQName(className, GlobalSearchScope.moduleScope(module));
+    return psiElement instanceof JSClass && directory.equals(psiElement.getContainingFile().getParent());
+  }
+  */
+
   public static class AirRunState extends CommandLineState {
 
     private final Project myProject;
