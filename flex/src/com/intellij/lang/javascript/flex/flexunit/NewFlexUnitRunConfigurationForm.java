@@ -61,7 +61,7 @@ public class NewFlexUnitRunConfigurationForm extends SettingsEditor<NewFlexUnitR
       }
     });
 
-    myLogLevelCombo.setModel(new EnumComboBoxModel<FlexUnitCommonParameters.OutputLogLevel>(FlexUnitCommonParameters.OutputLogLevel.class));
+    myLogLevelCombo.setModel(new EnumComboBoxModel<NewFlexUnitRunnerParameters.OutputLogLevel>(NewFlexUnitRunnerParameters.OutputLogLevel.class));
   }
 
   private void initLaunchWithTextWithBrowse() {
@@ -82,7 +82,7 @@ public class NewFlexUnitRunConfigurationForm extends SettingsEditor<NewFlexUnitR
     if (myShowLogCheckBox.isSelected()) {
       myLogLevelCombo.setEnabled(true);
       if (myLogLevelCombo.getSelectedItem() == null) {
-        myLogLevelCombo.setSelectedItem(FlexUnitCommonParameters.OutputLogLevel.values()[0]);
+        myLogLevelCombo.setSelectedItem(NewFlexUnitRunnerParameters.OutputLogLevel.values()[0]);
       }
     }
     else {
@@ -126,8 +126,8 @@ public class NewFlexUnitRunConfigurationForm extends SettingsEditor<NewFlexUnitR
     myBCCombo.applyTo(params);
     myWhatToTestForm.applyTo(params);
 
-    final FlexUnitCommonParameters.OutputLogLevel logLevel = myShowLogCheckBox.isSelected()
-                                                             ? (FlexUnitRunnerParameters.OutputLogLevel)myLogLevelCombo.getSelectedItem()
+    final NewFlexUnitRunnerParameters.OutputLogLevel logLevel = myShowLogCheckBox.isSelected()
+                                                             ? (NewFlexUnitRunnerParameters.OutputLogLevel)myLogLevelCombo.getSelectedItem()
                                                              : null;
     params.setOutputLogLevel(logLevel);
     params.setLauncherParameters(myLauncherParameters);

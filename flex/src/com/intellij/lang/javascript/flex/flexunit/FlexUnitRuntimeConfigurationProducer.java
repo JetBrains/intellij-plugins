@@ -63,9 +63,9 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
       final FlexUnitCommonParameters params = ((NewFlexUnitRunConfiguration)runConfiguration).getRunnerParameters();
       if (params.getModuleName().equals(fakeParams.getModuleName())
           && params.getScope() == fakeParams.getScope()
-          && (params.getScope() != FlexUnitRunnerParameters.Scope.Package || params.getPackageName().equals(fakeParams.getPackageName()))
-          && (params.getScope() == FlexUnitRunnerParameters.Scope.Package || params.getClassName().equals(fakeParams.getClassName()))
-          && (params.getScope() != FlexUnitRunnerParameters.Scope.Method || params.getMethodName().equals(fakeParams.getMethodName()))) {
+          && (params.getScope() != NewFlexUnitRunnerParameters.Scope.Package || params.getPackageName().equals(fakeParams.getPackageName()))
+          && (params.getScope() == NewFlexUnitRunnerParameters.Scope.Package || params.getClassName().equals(fakeParams.getClassName()))
+          && (params.getScope() != NewFlexUnitRunnerParameters.Scope.Method || params.getMethodName().equals(fakeParams.getMethodName()))) {
         return configuration;
       }
     }
@@ -118,7 +118,7 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
       else {
         params.setClassName(clazz.getQualifiedName());
         params.setMethodName(method.getName());
-        params.setScope(FlexUnitRunnerParameters.Scope.Method);
+        params.setScope(NewFlexUnitRunnerParameters.Scope.Method);
         params.setModuleName(supportForModule.first.getName());
       }
     }
@@ -158,14 +158,14 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
     if (!JSUtils.packageExists(packageName, GlobalSearchScope.moduleScope(module))) return false;
 
     params.setPackageName(packageName);
-    params.setScope(FlexUnitRunnerParameters.Scope.Package);
+    params.setScope(NewFlexUnitRunnerParameters.Scope.Package);
     params.setModuleName(module.getName());
     return true;
   }
 
   private static void forClass(JSClass clazz, Module module, FlexUnitCommonParameters params) {
     params.setClassName(clazz.getQualifiedName());
-    params.setScope(FlexUnitRunnerParameters.Scope.Class);
+    params.setScope(NewFlexUnitRunnerParameters.Scope.Class);
     params.setModuleName(module.getName());
   }
 

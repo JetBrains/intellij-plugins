@@ -1,28 +1,18 @@
 package com.intellij.lang.javascript.flex.run;
 
-import com.intellij.lang.javascript.flex.FlexRefactoringListenerProvider;
-import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
-import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
-import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.ecmal4.JSPackage;
-import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
-import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
-import com.intellij.openapi.roots.impl.DirectoryIndex;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiDirectoryContainer;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.listeners.RefactoringElementAdapter;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class FlexRunConfigRefactoringListener extends RefactoringElementAdapter {
-  protected final FlexRunConfiguration myRunConfiguration;
+  //protected final FlexRunConfiguration myRunConfiguration;
 
+  /*
   public FlexRunConfigRefactoringListener(final FlexRunConfiguration runConfiguration) {
     myRunConfiguration = runConfiguration;
   }
+  */
 
+  /*
   protected void elementRenamedOrMoved(@NotNull PsiElement newElement) {
     final boolean generatedName = myRunConfiguration.isGeneratedName();
     updateParams(newElement);
@@ -30,15 +20,17 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
       myRunConfiguration.setName(myRunConfiguration.suggestedName());
     }
   }
+  */
 
   protected abstract void updateParams(PsiElement newElement);
 
+  /*
   private static void updatePackage(final FlexRunConfiguration runConfiguration, final String newPackage) {
     final FlexRunnerParameters params = runConfiguration.getRunnerParameters();
     final boolean isFlexUnit = params instanceof FlexUnitRunnerParameters;
 
     if (isFlexUnit) {
-      if (((FlexUnitRunnerParameters)params).getScope() == FlexUnitRunnerParameters.Scope.Package) {
+      if (((FlexUnitRunnerParameters)params).getScope() == NewFlexUnitRunnerParameters.Scope.Package) {
         ((FlexUnitRunnerParameters)params).setPackageName(newPackage);
       }
       else {
@@ -51,7 +43,9 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
       params.setMainClassName(StringUtil.getQualifiedName(newPackage, StringUtil.getShortName(oldFqn)));
     }
   }
+  */
 
+  /*
   public static class JSClassRefactoringListener extends FlexRunConfigRefactoringListener {
     public JSClassRefactoringListener(final FlexRunConfiguration runConfiguration) {
       super(runConfiguration);
@@ -87,7 +81,9 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
       }
     }
   }
+  */
 
+  /*
   public static class PsiDirectoryRefactoringListener extends FlexRunConfigRefactoringListener {
 
     public PsiDirectoryRefactoringListener(final FlexRunConfiguration runConfiguration) {
@@ -105,7 +101,9 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
       updatePackage(myRunConfiguration, oldQualifiedName);
     }
   }
+  */
 
+  /*
   public static class JSFunctionRefactoringListener extends FlexRunConfigRefactoringListener {
 
     public JSFunctionRefactoringListener(final FlexUnitRunConfiguration runConfiguration) {
@@ -128,7 +126,9 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
       }
     }
   }
+  */
 
+  /*
   public static class PackageRefactoringListener extends FlexRunConfigRefactoringListener {
 
     public PackageRefactoringListener(final FlexRunConfiguration runConfiguration) {
@@ -149,4 +149,5 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
       updatePackage(myRunConfiguration, oldQualifiedName);
     }
   }
+  */
 }

@@ -123,17 +123,6 @@ public class WhatToTestForm {
     updateControls(GlobalSearchScope.moduleScope(module), support);
   }
 
-  public void updateOnModuleChange(final String moduleName) {
-    assert false;
-    try {
-      final Pair<Module, FlexUnitSupport> moduleAndSupport = FlexUnitRunConfiguration.getFlexUnitSupport(myProject, moduleName);
-      updateControls(GlobalSearchScope.moduleScope(moduleAndSupport.first), moduleAndSupport.second);
-    }
-    catch (RuntimeConfigurationError e) {
-      updateOnError(e.getMessage());
-    }
-  }
-
   private void updateControls(final @NotNull GlobalSearchScope scope, final @NotNull FlexUnitSupport support) {
     myClassField.setScope(scope);
     myMainClassFilter.setSupport(support);
@@ -185,15 +174,15 @@ public class WhatToTestForm {
 
   public void applyTo(final FlexUnitCommonParameters params) {
     if (myClassRadioButton.isSelected()) {
-      params.setScope(FlexUnitCommonParameters.Scope.Class);
+      params.setScope(NewFlexUnitRunnerParameters.Scope.Class);
       params.setClassName(myClassField.getText());
     }
     else if (myPackageRadioButton.isSelected()) {
-      params.setScope(FlexUnitCommonParameters.Scope.Package);
+      params.setScope(NewFlexUnitRunnerParameters.Scope.Package);
       params.setPackageName(myPackageField.getText());
     }
     else if (myMethodRadioButton.isSelected()) {
-      params.setScope(FlexUnitCommonParameters.Scope.Method);
+      params.setScope(NewFlexUnitRunnerParameters.Scope.Method);
       params.setClassName(myClassField.getText());
       params.setMethodName(myMethodField.getText());
     }

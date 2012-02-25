@@ -21,7 +21,7 @@ public class SwfPolicyFileConnection extends ServerConnectionBase {
   private final String myContent;
 
   public SwfPolicyFileConnection() throws ExecutionException {
-    final URL resource = FlexUnitRunConfiguration.class.getResource("SocketPolicyFile.xml");
+    final URL resource = getClass().getResource("SocketPolicyFile.xml");
     try {
       myContent = ResourceUtil.loadText(resource);
     }

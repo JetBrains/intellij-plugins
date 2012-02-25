@@ -132,4 +132,57 @@ public class NewFlexUnitRunConfiguration extends RunConfigurationBase
   public void checkConfiguration() throws RuntimeConfigurationError {
     myRunnerParameters.check(getProject());
   }
+
+  /*
+  public RefactoringElementListener getRefactoringElementListener(final PsiElement element) {
+    final NewFlexUnitRunnerParameters params = getRunnerParameters();
+    final Module module = ModuleManager.getInstance(getProject()).findModuleByName(params.getModuleName());
+    if (!(element instanceof PsiDirectoryContainer) && !(element instanceof JSPackage) && !(element instanceof JSPackageStatement)
+        && (module == null || !module.equals(ModuleUtil.findModuleForPsiElement(element)))) {
+      return null;
+    }
+
+    switch (params.getScope()) {
+      case Method:
+        if (element instanceof JSFunction) {
+          final PsiElement parent = element.getParent();
+          if (parent instanceof JSClass &&
+              Comparing.strEqual(((JSClass)parent).getQualifiedName(), params.getClassName()) &&
+              Comparing.strEqual(((JSFunction)element).getName(), params.getMethodName())) {
+            return new FlexRunConfigRefactoringListener.JSFunctionRefactoringListener(this);
+          }
+        }
+        // no break here!
+      case Class:
+        if (element instanceof PsiDirectory && containsClass(module, ((PsiDirectory)element), params.getClassName())) {
+          return new FlexRunConfigRefactoringListener.PsiDirectoryRefactoringListener(this);
+        }
+
+        final JSClass jsClass = FlexRefactoringListenerProvider.getJSClass(element);
+        if (jsClass != null && Comparing.strEqual(jsClass.getQualifiedName(), params.getClassName())) {
+          return new FlexRunConfigRefactoringListener.JSClassRefactoringListener(this);
+        }
+        // no break here!
+      case Package:
+        final String currentPackage = params.getScope() == FlexUnitRunnerParameters.Scope.Package
+                                      ? params.getPackageName()
+                                      : StringUtil.getPackageName(params.getClassName());
+        if ((element instanceof PsiDirectoryContainer || element instanceof JSPackage || element instanceof JSPackageStatement) &&
+            Comparing.strEqual(FlexRefactoringListenerProvider.getPackageName(element), currentPackage)) {
+          return new FlexRunConfigRefactoringListener.PackageRefactoringListener(this);
+        }
+    }
+
+    return null;
+  }
+
+  private static boolean containsClass(final Module module, final PsiDirectory directory, final String className) {
+    final String packageName = DirectoryIndex.getInstance(module.getProject()).getPackageName(directory.getVirtualFile());
+    if (!StringUtil.getPackageName(className).equals(packageName)) return false;
+
+    final PsiElement psiElement = JSResolveUtil.findClassByQName(className, GlobalSearchScope.moduleScope(module));
+    return psiElement instanceof JSClass && directory.equals(psiElement.getContainingFile().getParent());
+  }
+  */
+
 }

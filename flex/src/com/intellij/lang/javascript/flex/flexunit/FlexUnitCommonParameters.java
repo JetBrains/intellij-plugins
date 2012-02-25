@@ -6,24 +6,6 @@ import org.jetbrains.annotations.Nullable;
 
 public interface FlexUnitCommonParameters {
 
-  enum Scope {
-    Method, Class, Package
-  }
-
-  enum OutputLogLevel {
-    Fatal("FATAL"), Error("ERROR"), Warn("WARN"), Info("INFO"), Debug("DEBUG"), All("ALL");
-
-    private final String myFlexConstant;
-
-    OutputLogLevel(String flexConstant) {
-      myFlexConstant = flexConstant;
-    }
-
-    public String getFlexConstant() {
-      return myFlexConstant;
-    }
-  }
-
   @NotNull
   String getModuleName();
 
@@ -34,9 +16,9 @@ public interface FlexUnitCommonParameters {
   void setScopeRaw(String scopeRaw);
 
   @NotNull
-  Scope getScope();
+  NewFlexUnitRunnerParameters.Scope getScope();
 
-  void setScope(@NotNull Scope scope);
+  void setScope(@NotNull NewFlexUnitRunnerParameters.Scope scope);
 
   @NotNull
   String getPackageName();
@@ -66,9 +48,9 @@ public interface FlexUnitCommonParameters {
   void setOutputLogLevelRaw(String outputLogLevel);
 
   @Nullable
-  OutputLogLevel getOutputLogLevel();
+  NewFlexUnitRunnerParameters.OutputLogLevel getOutputLogLevel();
 
-  void setOutputLogLevel(@Nullable OutputLogLevel outputLogLevel);
+  void setOutputLogLevel(@Nullable NewFlexUnitRunnerParameters.OutputLogLevel outputLogLevel);
 
   LauncherParameters getLauncherParameters();
 }

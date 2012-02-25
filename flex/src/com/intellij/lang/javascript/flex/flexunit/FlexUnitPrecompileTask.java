@@ -29,12 +29,14 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.ResourceUtil;
 import com.intellij.util.SystemProperties;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -263,9 +265,9 @@ public class FlexUnitPrecompileTask implements CompileTask {
     String logTargetText;
     final String launcherBaseText;
     try {
-      launcherText = FlexUnitRunConfiguration.getLauncherTemplate(flexUnit4);
-      launcherBaseText = FlexUnitRunConfiguration.getLauncherBaseText();
-      logTargetText = FlexUnitRunConfiguration.getLogTargetText();
+      launcherText = getLauncherTemplate(flexUnit4);
+      launcherBaseText = getLauncherBaseText();
+      logTargetText = getLogTargetText();
     }
     catch (IOException e) {
       context.addMessage(CompilerMessageCategory.ERROR, e.getMessage(), null, -1, -1);
@@ -285,11 +287,11 @@ public class FlexUnitPrecompileTask implements CompileTask {
     launcherText = launcherText.replace("/*module*/", module.getName());
     launcherText = launcherText.replace("/*closeApp*/", desktop ? "NativeApplication.nativeApplication.exit(0)" : "fscommand(\"quit\")");
     launcherText = launcherText.replace("/*logTargetClass*/", FileUtil.getNameWithoutExtension(logTargetFileName));
-    final FlexUnitCommonParameters.OutputLogLevel logLevel = params.getOutputLogLevel();
+    final NewFlexUnitRunnerParameters.OutputLogLevel logLevel = params.getOutputLogLevel();
     launcherText = launcherText.replace("/*logEnabled*/", logLevel != null ? "true" : "false");
     launcherText = launcherText.replace("/*logLevel*/", logLevel != null
                                                         ? logLevel.getFlexConstant()
-                                                        : FlexUnitRunnerParameters.OutputLogLevel.values()[0].getFlexConstant());
+                                                        : NewFlexUnitRunnerParameters.OutputLogLevel.values()[0].getFlexConstant());
 
     logTargetText = logTargetText.replace("/*className*/", FileUtil.getNameWithoutExtension(logTargetFileName));
 
@@ -413,5 +415,21 @@ public class FlexUnitPrecompileTask implements CompileTask {
     for (String qname : classes) {
       code.append("var __ref_").append(className.replace(".", "_")).append("_").append(i++).append("_ : ").append(qname).append(";\n");
     }
+  }
+
+  private static String getLauncherTemplate(boolean flexUnit4Present) throws IOException {
+    final URL resource =
+      FlexUnitPrecompileTask.class.getResource(flexUnit4Present ? "FlexUnit4Launch.template" : "FlexUnit1Launch.template");
+    return ResourceUtil.loadText(resource);
+  }
+
+  private static String getLauncherBaseText() throws IOException {
+    final URL resource = FlexUnitPrecompileTask.class.getResource("FlexUnitLauncherBase.template");
+    return ResourceUtil.loadText(resource);
+  }
+
+  private static String getLogTargetText() throws IOException {
+    final URL resource = FlexUnitPrecompileTask.class.getResource("LogTarget.template");
+    return ResourceUtil.loadText(resource);
   }
 }

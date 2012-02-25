@@ -8,7 +8,6 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.lang.javascript.flex.*;
-import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -228,7 +227,7 @@ public class FlexRunConfiguration extends RunConfigurationBase
   }
 
   public RefactoringElementListener getRefactoringElementListener(final PsiElement element) {
-    assert !(this instanceof FlexUnitRunConfiguration); // FlexUnitRunConfiguration must have own implementation
+    //assert !(this instanceof FlexUnitRunConfiguration); // FlexUnitRunConfiguration must have own implementation
 
     if ((this instanceof AirRunConfiguration &&
          ((AirRunnerParameters)myRunnerParameters).getAirRunMode() != AirRunnerParameters.AirRunMode.MainClass)
@@ -247,16 +246,16 @@ public class FlexRunConfiguration extends RunConfigurationBase
     String currentPackage = StringUtil.getPackageName(myRunnerParameters.getMainClassName());
     if ((element instanceof PsiDirectoryContainer || element instanceof JSPackage || element instanceof JSPackageStatement) &&
         Comparing.strEqual(FlexRefactoringListenerProvider.getPackageName(element), currentPackage)) {
-      return new FlexRunConfigRefactoringListener.PackageRefactoringListener(this);
+      //return new FlexRunConfigRefactoringListener.PackageRefactoringListener(this);
     }
 
     if (element instanceof PsiDirectory && containsClass(module, ((PsiDirectory)element), myRunnerParameters.getMainClassName())) {
-      return new FlexRunConfigRefactoringListener.PsiDirectoryRefactoringListener(this);
+      //return new FlexRunConfigRefactoringListener.PsiDirectoryRefactoringListener(this);
     }
 
     final JSClass jsClass = FlexRefactoringListenerProvider.getJSClass(element);
     if (jsClass != null && Comparing.strEqual(jsClass.getQualifiedName(), myRunnerParameters.getMainClassName())) {
-      return new FlexRunConfigRefactoringListener.JSClassRefactoringListener(this);
+      //return new FlexRunConfigRefactoringListener.JSClassRefactoringListener(this);
     }
 
     return null;

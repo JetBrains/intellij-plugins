@@ -7,6 +7,10 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
 import com.intellij.lang.javascript.flex.run.LauncherParameters;
+import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -14,6 +18,7 @@ import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Transient;
@@ -23,6 +28,24 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 
 public class NewFlexUnitRunnerParameters extends BCBasedRunnerParameters implements FlexUnitCommonParameters {
+
+  public enum Scope {
+    Method, Class, Package
+  }
+
+  public enum OutputLogLevel {
+    Fatal("FATAL"), Error("ERROR"), Warn("WARN"), Info("INFO"), Debug("DEBUG"), All("ALL");
+
+    private final String myFlexConstant;
+
+    OutputLogLevel(String flexConstant) {
+      myFlexConstant = flexConstant;
+    }
+
+    public String getFlexConstant() {
+      return myFlexConstant;
+    }
+  }
 
   private static final Scope DEFAULT_SCOPE = Scope.Class;
   private static final OutputLogLevel DEFAULT_LEVEL = null;
@@ -221,7 +244,58 @@ public class NewFlexUnitRunnerParameters extends BCBasedRunnerParameters impleme
     }
 
     // todo fix scope
-    FlexUnitRunConfiguration.checkCommonParams(this, support, GlobalSearchScope.moduleScope(moduleAndBC.first));
+    checkCommonParams(this, support, GlobalSearchScope.moduleScope(moduleAndBC.first));
+  }
+
+  private static void checkCommonParams(final FlexUnitCommonParameters params,
+                                        final FlexUnitSupport support,
+                                        final GlobalSearchScope searchScope) throws RuntimeConfigurationError {
+    switch (params.getScope()) {
+      case Class:
+        getClassToTest(params.getClassName(), searchScope, support, true);
+        break;
+
+      case Method:
+        final JSClass classToTest = getClassToTest(params.getClassName(), searchScope, support, false);
+        if (StringUtil.isEmpty(params.getMethodName())) {
+          throw new RuntimeConfigurationError(FlexBundle.message("no.test.method.specified"));
+        }
+
+        final JSFunction methodToTest = classToTest.findFunctionByNameAndKind(params.getMethodName(), JSFunction.FunctionKind.SIMPLE);
+
+        if (methodToTest == null || !support.isTestMethod(methodToTest)) {
+          throw new RuntimeConfigurationError(FlexBundle.message("method.not.valid", params.getMethodName()));
+        }
+        break;
+
+      case Package:
+        if (!JSUtils.packageExists(params.getPackageName(), searchScope)) {
+          throw new RuntimeConfigurationError(FlexBundle.message("package.not.valid", params.getPackageName()));
+        }
+        break;
+
+      default:
+        assert false : "Unknown scope: " + params.getScope();
+    }
+  }
+
+  private static JSClass getClassToTest(String className,
+                                        GlobalSearchScope searchScope,
+                                        @NotNull FlexUnitSupport flexUnitSupport,
+                                        boolean allowSuite) throws RuntimeConfigurationError {
+    if (StringUtil.isEmpty(className)) {
+      throw new RuntimeConfigurationError(FlexBundle.message("test.class.not.specified"));
+    }
+    final PsiElement classToTest = JSResolveUtil.findClassByQName(className, searchScope);
+    if (!(classToTest instanceof JSClass)) {
+      throw new RuntimeConfigurationError(FlexBundle.message("class.not.found", className));
+    }
+
+    if (!flexUnitSupport.isTestClass((JSClass)classToTest, allowSuite)) {
+      throw new RuntimeConfigurationError(
+        FlexBundle.message(allowSuite ? "class.not.test.class.or.suite" : "class.not.test.class", className));
+    }
+    return (JSClass)classToTest;
   }
 
   @Override
