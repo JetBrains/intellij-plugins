@@ -13,7 +13,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConf
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.run.FlashPlayerTrustUtil;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
-import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunner;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
@@ -59,8 +58,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<JDOMExternalizab
   }
 
   public boolean canRun(@NotNull String executorId, @NotNull RunProfile runProfile) {
-    return executorId.equals(DefaultProfilerExecutor.EXECUTOR_ID) &&
-           (runProfile instanceof FlexRunConfiguration || runProfile instanceof FlashRunConfiguration);
+    return executorId.equals(DefaultProfilerExecutor.EXECUTOR_ID) && runProfile instanceof FlashRunConfiguration;
   }
 
   public JDOMExternalizable createConfigurationData(ConfigurationInfoProvider configurationInfoProvider) {
@@ -88,21 +86,16 @@ public class ActionScriptProfileRunner implements ProgramRunner<JDOMExternalizab
     execute(executor, executionEnvironment, null);
   }
 
-  public void execute(@NotNull Executor executor, @NotNull ExecutionEnvironment executionEnvironment, @Nullable Callback callback)
-    throws ExecutionException {
+  public void execute(@NotNull Executor executor,
+                      @NotNull ExecutionEnvironment executionEnvironment,
+                      @Nullable Callback callback) throws ExecutionException {
     final RunnerSettings runnerSettings = executionEnvironment.getRunnerSettings();
     if (runnerSettings == null) {
       return; // TODO: what does this mean?
     }
     RunProfile runProfile = executionEnvironment.getRunProfile();
-    boolean started;
-    if (runProfile instanceof FlexRunConfiguration) {
-      started = startProfiling((FlexRunConfiguration)runProfile);
-    }
-    else {
-      started = startProfiling((FlashRunConfiguration)runProfile);
-    }
-    if (!started) {
+
+    if (!startProfiling((FlashRunConfiguration)runProfile)) {
       return;
     }
 

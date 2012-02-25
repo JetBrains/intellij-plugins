@@ -10,7 +10,6 @@ import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -123,7 +122,7 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
       }
     }
     else if (element instanceof PsiDirectory) {
-      if (!forDirectory((PsiDirectory)element, params)) return false;
+      if (!forDirectory((PsiDirectory)element, module, params)) return false;
     }
     else if (element instanceof PsiDirectoryContainer) {
       if (!forPackage((PsiDirectoryContainer)element, module, params)) return false;
@@ -138,21 +137,18 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
   private static boolean forPackage(PsiDirectoryContainer psiPackage, Module module, FlexUnitRunnerParameters params) {
     if (module == null) return false;
     for (PsiDirectory directory : psiPackage.getDirectories(module.getModuleScope())) {
-      if (forDirectory(directory, params)) {
+      if (forDirectory(directory, module, params)) {
         return true;
       }
     }
     return false;
   }
 
-  private static boolean forDirectory(PsiDirectory directory, FlexUnitRunnerParameters params) {
+  private static boolean forDirectory(PsiDirectory directory, Module module, FlexUnitRunnerParameters params) {
     final VirtualFile file = directory.getVirtualFile();
     ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(directory.getProject()).getFileIndex();
     VirtualFile rootForFile = projectFileIndex.getSourceRootForFile(file);
     if (rootForFile == null) return false;
-
-    final Module module = FlexRunConfiguration.findModuleFromFile(file, directory.getProject());
-    if (FlexUnitSupport.getSupport(module) == null) return false;
 
     String packageName = VfsUtilCore.getRelativePath(file, rootForFile, '.');
     if (!JSUtils.packageExists(packageName, GlobalSearchScope.moduleScope(module))) return false;
