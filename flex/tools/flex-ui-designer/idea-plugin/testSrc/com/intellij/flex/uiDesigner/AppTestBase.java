@@ -130,10 +130,10 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
     final VirtualFile frameworksDir = sdkHome.findChild("frameworks");
     assert frameworksDir != null;
 
-    VirtualFile frameworkRB = frameworksDir.findFileByRelativePath("libs/framework_rb.swc");
-    if (frameworkRB != null) {
-      sdkModificator.addRoot(frameworkRB, OrderRootType.CLASSES);
-    }
+    //VirtualFile frameworkRB = frameworksDir.findFileByRelativePath("libs/framework_rb.swc");
+    //if (frameworkRB != null) {
+    //  sdkModificator.addRoot(frameworkRB, OrderRootType.CLASSES);
+    //}
 
     sdkModificator.addRoot(getVFile("lib/playerglobal"), OrderRootType.CLASSES);
     FlexSdkUtils.addFlexSdkSwcRoots(sdkModificator, frameworksDir);
@@ -185,6 +185,16 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
   protected void assertAfterInitLibrarySets(List<XmlFile> unregisteredDocumentReferences) throws IOException {
   }
 
+  protected VirtualFile[] configureByFiles(String... paths) throws Exception {
+    final VirtualFile[] files = new VirtualFile[paths.length];
+    for (int i = 0; i < paths.length; i++) {
+      VirtualFile file = getSource(paths[i]);
+      assertNotNull(file);
+      files[i] = file;
+    }
+    return configureByFiles(null, files, null);
+  }
+
   protected VirtualFile[] configureByFiles(@Nullable VirtualFile rawProjectRoot,
                                            VirtualFile[] files,
                                            @Nullable VirtualFile[] auxiliaryFiles) throws Exception {
@@ -197,9 +207,10 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
     if (DesignerApplicationManager.getInstance().isApplicationClosed()) {
       changeServicesImplementation();
 
-      new DesignerApplicationLauncher(myModule, false, new DesignerApplicationLauncher.PostTask() {
+      new DesignerApplicationLauncher(myModule, new DesignerApplicationLauncher.PostTask() {
         @Override
-        public boolean run(Module module, ProjectComponentReferenceCounter projectComponentReferenceCounter,
+        public boolean run(Module module,
+                           ProjectComponentReferenceCounter projectComponentReferenceCounter,
                            ProgressIndicator indicator,
                            ProblemsHolder problemsHolder) {
           assertTrue(DocumentProblemManager.getInstance().toString(problemsHolder.getProblems()), problemsHolder.isEmpty());
@@ -221,8 +232,7 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
     else {
       client = (TestClient)Client.getInstance();
       final ProblemsHolder problemsHolder = new ProblemsHolder();
-      ProjectComponentReferenceCounter
-        projectComponentReferenceCounter =
+      ProjectComponentReferenceCounter projectComponentReferenceCounter =
         LibraryManager.getInstance().initLibrarySets(myModule, problemsHolder, isRequireLocalStyleHolder());
       assertTrue(problemsHolder.isEmpty());
       assertAfterInitLibrarySets(projectComponentReferenceCounter.unregistered);
@@ -235,7 +245,6 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
   protected abstract void changeServicesImplementation();
 
   protected void applicationLaunchedAndInitialized() {
-
   }
 
   @Override

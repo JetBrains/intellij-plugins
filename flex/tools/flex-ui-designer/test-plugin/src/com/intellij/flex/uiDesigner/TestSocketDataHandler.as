@@ -12,7 +12,6 @@ import com.intellij.flex.uiDesigner.io.AmfUtil;
 import flash.desktop.NativeApplication;
 import flash.display.NativeWindow;
 import flash.events.Event;
-import flash.events.IEventDispatcher;
 import flash.events.TimerEvent;
 import flash.geom.Point;
 import flash.net.Socket;
@@ -27,7 +26,6 @@ internal class TestSocketDataHandler implements SocketDataHandler {
   public static const CLASS:int = 1;
 
   private static const GET_STAGE_OFFSET:int = 120;
-  private static const INFORM_DOCUMENT_OPENED:int = 121;
   
   private static const c:Vector.<Class> = new <Class>[CommonTest, StatesTest, InjectedASTest, AppTest, StyleTest, UITest, MxTest, MobileTest];
   private const describeCache:Dictionary = new Dictionary();
@@ -89,10 +87,6 @@ internal class TestSocketDataHandler implements SocketDataHandler {
         getStageOffset(project.window);
         return;
 
-      case INFORM_DOCUMENT_OPENED:
-        testTask = new InformTask(_socket);
-        break;
-
       default:
         clazz = c[classId];
         break;
@@ -127,39 +121,16 @@ internal class TestSocketDataHandler implements SocketDataHandler {
         (documentManager.document == null || documentManager.document.documentFactory.file.name != testDocumentFilename)) {
       trace("wait document");
       documentManager.documentChanged.addOnce(function():void {
-        testOnDocumentDisplayManagerReady(testTask);
+        testOnDocumentRendered(testTask);
       });
     }
     else {
-      if (testTask is InformTask) {
-        // if document already opened, but InformTask, so, java side waits inform about document update
-        documentManager.documentUpdated.addOnce(function ():void {
-          testOnDocumentDisplayManagerReady(testTask);
-        });
-      }
-      else {
-        testOnDocumentDisplayManagerReady(testTask);
-      }
+      testOnDocumentRendered(testTask);
     }
   }
 
-  private function testOnDocumentDisplayManagerReady(testTask:TestTask):void {
-    var documentDisplayManager:DocumentDisplayManager = testTask.testAnnotation.nullableDocument ? null : testTask.documentManager.document.displayManager;
-    //if (documentDisplayManager != null && documentDisplayManager.realStage == null) {
-    //  documentDisplayManager.addRealEventListener(Event.ADDED_TO_STAGE, function(event:Event):void {
-    //    IEventDispatcher(event.currentTarget).removeEventListener(event.type, arguments.callee);
-    //    test2(testTask);
-    //  });
-    //}
-    //else {
-      test2(testTask);
-    //}
-  }
-
-  private function test2(testTask:TestTask):void {
-    if (testTask.run()) {
-      test(testTask.project, testTask.clazz, testTask.method, testTask.testAnnotation);
-    }
+  private function testOnDocumentRendered(testTask:TestTask):void {
+    test(testTask.project, testTask.clazz, testTask.method, testTask.testAnnotation);
   }
   
   private function test(project:Project, clazz:Class, method:String, testAnnotation:TestAnnotation):void {
@@ -230,8 +201,6 @@ internal class TestSocketDataHandler implements SocketDataHandler {
 import com.intellij.flex.uiDesigner.DocumentManager;
 import com.intellij.flex.uiDesigner.Project;
 
-import flash.net.Socket;
-
 import org.jetbrains.actionSystem.DataContext;
 import org.jetbrains.actionSystem.DataKey;
 
@@ -248,24 +217,6 @@ class TestTask {
     this.clazz = clazz;
     this.method = method;
     this.testAnnotation = testAnnotation;
-  }
-
-  // return — call TestSocketDataHandler.test or not
-  public function run():Boolean {
-    return true;
-  }
-}
-
-final class InformTask extends TestTask {
-  private var socket:Socket;
-
-  public function InformTask(socket:Socket) {
-    this.socket = socket;
-  }
-
-  override public function run():Boolean {
-    socket.writeByte(TestServerMethod.custom);
-    return false;
   }
 }
 

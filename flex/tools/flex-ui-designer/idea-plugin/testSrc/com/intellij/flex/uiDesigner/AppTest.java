@@ -2,104 +2,138 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.openapi.application.AccessToken;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.util.concurrency.Semaphore;
+import com.intellij.util.messages.MessageBusConnection;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Flex(version="4.5")
 public class AppTest extends AppTestBase {
   private static final int APP_TEST_CLASS_ID = 3;
 
-  private final Info info = new Info();
-
   private final Semaphore semaphore = new Semaphore();
+  private final AtomicBoolean fail = new AtomicBoolean();
+  private Callable<Void> assertOnDocumentRendered;
 
   @Override
   protected void changeServicesImplementation() {
     Tests.changeDesignerServiceImplementation(SocketInputHandler.class, MySocketInputHandler.class);
     Tests.changeDesignerServiceImplementation(Client.class, TestClient.class);
   }
-  
-  private VirtualFile open(String relativeFile) throws Exception {
-    VirtualFile file = configureByFile(getSource(relativeFile));
-    openAndWait(file, relativeFile);
-    return file;
-  }
 
   @Override
   protected void applicationLaunchedAndInitialized() {
-    ((MySocketInputHandler)SocketInputHandler.getInstance()).info = info;
+    ((MySocketInputHandler)SocketInputHandler.getInstance()).fail = fail;
+    ((MySocketInputHandler)SocketInputHandler.getInstance()).semaphore = semaphore;
+
+    MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(myModule);
+    connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentRenderedListener() {
+      @Override
+      public void documentRendered(DocumentFactoryManager.DocumentInfo info, final BufferedImage image) {
+        //assertTrue(info.getElement().equals(file));
+        if (assertOnDocumentRendered != null) {
+          try {
+            assertOnDocumentRendered.call();
+          }
+          catch (Exception e) {
+            fail.set(true);
+            throw new AssertionError(e);
+          }
+        }
+
+        semaphore.up();
+      }
+
+      @Override
+      public void errorOccured() {
+        fail.set(true);
+        semaphore.up();
+      }
+    });
   }
 
   private void await() throws InterruptedException {
-    info.semaphore.waitForUnsafe();
+    semaphore.waitForUnsafe();
+    if (fail.get()) {
+      fail();
+    }
   }
   
   private void callClientAssert(String methodName) throws IOException, InterruptedException {
-    info.semaphore.down();
+    semaphore.down();
     client.test(methodName.equals("close") ? null : myModule, methodName, APP_TEST_CLASS_ID);
     await();
-    if (info.fail.get()) {
-      fail();
-    }
-    info.fail.set(false);
+    fail.set(false);
   }
 
-  public void testCloseAndOpenProject() throws Exception {
-    open("injectedAS/Transitions.mxml");
+  // todo actually, test only close project, but not test open after close
+  public void _testCloseAndOpenProject() throws Exception {
+    openAndWait(configureByFiles("injectedAS/Transitions.mxml")[0], "injectedAS/Transitions.mxml");
   }
 
   public void testUpdateDocumentOnIdeaAutoSave() throws Exception {
-    VirtualFile f1 = getSource("ProjectMxmlComponentAsChild.mxml");
-    VirtualFile f2 = getSource("AuxProjectMxmlComponent.mxml");
-    configureByFiles(null, new VirtualFile[]{f1, f2}, null);
+    final VirtualFile[] files = configureByFiles("ProjectMxmlComponentAsChild.mxml", "AuxProjectMxmlComponent.mxml");
 
     DesignerApplicationManager designerManager = DesignerApplicationManager.getInstance();
 
     semaphore.down();
-    designerManager.renderDocument(myModule, Tests.virtualToPsi(myProject, f1)).doWhenProcessed(new Runnable() {
-      @Override
-      public void run() {
-        semaphore.up();
-      }
-    });
-    semaphore.waitForUnsafe();
+    designerManager.renderDocument(myModule, Tests.virtualToPsi(myProject, files[0]));
+    await();
 
-    final Document document = FileDocumentManager.getInstance().getDocument(f1);
-    assert document != null;
-    final AccessToken token = WriteAction.start();
+    assertOnDocumentRendered = new Callable<Void>() {
+      @Override
+      public Void call() throws Exception {
+        client.test(myModule, getTestName(false), APP_TEST_CLASS_ID);
+        return null;
+      }
+    };
+    insertString(files[0], 166, "A");
+
+    assertOnDocumentRendered = null;
+    designerManager.renderDocument(myModule, Tests.virtualToPsi(myProject, files[1]));
+    await();
+
+    assertOnDocumentRendered = new Callable<Void>() {
+      @Override
+      public Void call() throws Exception {
+        client.test(myModule, "UpdateDocumentOnIdeaAutoSave2", APP_TEST_CLASS_ID);
+        return null;
+      }
+    };
+    insertString(files[1], 191, "A");
+  }
+
+  private void insertString(VirtualFile file, int offset, @NotNull CharSequence s) throws InterruptedException {
+    final Document document = FileDocumentManager.getInstance().getDocument(file);
+    assertNotNull(document);
+    AccessToken token = WriteAction.start();
     try {
-      document.insertString(166, "A");
+      document.insertString(offset, s);
     }
     finally {
       token.finish();
     }
 
-    info.semaphore.down();
-    client.test(myModule, "ProjectMxmlComponentAsChild", Tests.INFORM_DOCUMENT_OPENED);
-    socketInputHandler.setCustomMessageHandler(new MyCustomMessageHandler());
-
+    semaphore.down();
     PsiDocumentManager.getInstance(myProject).commitAllDocuments();
-    designerManager.renderDocument(myModule, Tests.virtualToPsi(myProject, f1));
+    FileDocumentManager.getInstance().saveAllDocuments();
     await();
-    callClientAssert(getTestName(false));
   }
 
   private void openAndWait(VirtualFile file, @Nullable String relativePath) throws InterruptedException, IOException {
-    info.semaphore.down();
-
-    if (relativePath != null) {
-      client.test(myModule, relativePath, Tests.INFORM_DOCUMENT_OPENED);
-    }
-    socketInputHandler.setCustomMessageHandler(new MyCustomMessageHandler());
+    semaphore.down();
 
     DesignerApplicationManager.getInstance().renderDocument(myModule, Tests.virtualToPsi(myProject, file));
     await();
@@ -120,7 +154,8 @@ public class AppTest extends AppTestBase {
   }
 
   private static class MySocketInputHandler extends TestSocketInputHandler {
-    private Info info;
+    private AtomicBoolean fail;
+    private Semaphore semaphore;
 
     @Override
     protected boolean processOnRead() {
@@ -135,30 +170,22 @@ public class AppTest extends AppTestBase {
       }
       catch (Throwable e) {
         if (!(e instanceof SocketException)) {
-          LOG.error(e);
           result = false;
-          info.fail.set(true);
+          fail.set(true);
+          try {
+            LOG.error(e);
+          }
+          catch (AssertionError ignored) {
+          }
         }
       }
       finally {
         if (!result) {
-          info.semaphore.up();
+          semaphore.up();
         }
       }
 
       return true;
-    }
-  }
-  
-  private static class Info {
-    private final Semaphore semaphore = new Semaphore();
-    private final Ref<Boolean> fail = new Ref<Boolean>(false);
-  }
-
-  private class MyCustomMessageHandler extends TestSocketInputHandler.CustomMessageHandler {
-    @Override
-    public void process() throws IOException {
-      info.semaphore.up();
     }
   }
 }

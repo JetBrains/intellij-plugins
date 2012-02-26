@@ -206,7 +206,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
     final RenderDocumentTask renderDocumentTask = new RenderDocumentTask(psiFile, actionCallback);
     ProgressManager.getInstance().run(
-      appClosed ? new DesignerApplicationLauncher(module, debug, renderDocumentTask) : new DocumentTaskExecutor(module, renderDocumentTask));
+      appClosed ? new DesignerApplicationLauncher(module, renderDocumentTask, debug) : new DocumentTaskExecutor(module, renderDocumentTask));
   }
 
   public boolean isApplicationClosed() {

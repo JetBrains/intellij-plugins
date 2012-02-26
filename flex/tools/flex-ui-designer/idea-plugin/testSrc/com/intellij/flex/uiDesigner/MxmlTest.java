@@ -140,7 +140,7 @@ public class MxmlTest extends MxmlTestBase {
     final ArrayList<VirtualFile> auxFiles = new ArrayList<VirtualFile>(8);
 
     for (VirtualFile root : roots) {
-      //root.refresh(false, true);
+      root.refresh(false, true);
       collectMxmlFiles(files, auxFiles, root);
     }
 

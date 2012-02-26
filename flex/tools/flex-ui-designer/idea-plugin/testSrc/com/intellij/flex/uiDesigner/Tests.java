@@ -12,7 +12,6 @@ import org.picocontainer.MutablePicoContainer;
 
 final class Tests {
   public static final int GET_STAGE_OFFSET = 120;
-  public static final int INFORM_DOCUMENT_OPENED = 121;
 
   public static void changeDesignerServicesImplementation() {
     final ExtensionPoint<ServiceDescriptor> extensionPoint = DesignerApplicationManager.getExtensionPoint();

@@ -52,10 +52,14 @@ public class DesignerApplicationLauncher extends DocumentTask {
 
   private final Semaphore semaphore = new Semaphore();
 
-  public DesignerApplicationLauncher(@NotNull final Module module, final boolean debug, @NotNull final PostTask postTask) {
+  DesignerApplicationLauncher(final @NotNull Module module, final @NotNull PostTask postTask, final boolean debug) {
     super(module, debug, postTask);
 
     this.debug = debug;
+  }
+
+  DesignerApplicationLauncher(final @NotNull Module module, final @NotNull PostTask postTask) {
+    this(module, postTask, false);
   }
 
   public void clientOpened(@NotNull OutputStream outputStream) {

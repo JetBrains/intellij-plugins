@@ -8,14 +8,6 @@ import org.hamcrest.collection.arrayWithSize;
 import org.hamcrest.object.nullValue;
 
 public class AppTest extends BaseTestCase {
-  public function AppTest() {
-    // disable unused inspection
-    //noinspection ConstantIfStatementJS
-    if (false) {
-      close();
-    }
-  }
-  
   [Test(async, nullableDocument)]
   public function close():void {
     assertThat(project, nullValue());
@@ -36,13 +28,17 @@ public class AppTest extends BaseTestCase {
     });
     }
   }
-  
-  public function wait():void {
-  }
 
   [Test(document="ProjectMxmlComponentAsChild")]
   public function UpdateDocumentOnIdeaAutoSave():void {
     assertThat(app.getElementAt(0), {name: "AIDEA-73453"});
+  }
+
+  [Test(document="ProjectMxmlComponentAsChild")]
+  public function UpdateDocumentOnIdeaAutoSave2():void {
+    var m:Object = [l("ALabel in child custom mxml component")];
+    assertThat(app.getElementAt(0), m);
+    assertThat(DocumentFactoryManager.getInstance().get(0).document.uiComponent, m);
   }
 }
 }
