@@ -107,7 +107,7 @@ public class ToolPanel extends SimpleToolWindowPanel {
       add(capturedBrowsersPanel.getComponent());
 
       JPanel configureWebBrowsersPanel = createHyperlinkPanel(project);
-      configureWebBrowsersPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 0));
+      configureWebBrowsersPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 0, 0));
       add(configureWebBrowsersPanel);
     }};
     setContent(minimizeHeight(content));

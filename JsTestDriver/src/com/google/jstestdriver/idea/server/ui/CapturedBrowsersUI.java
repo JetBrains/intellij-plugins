@@ -249,7 +249,7 @@ public class CapturedBrowsersUI implements ServerListener {
     private boolean tryCapture() {
       String captureUrl = myCaptureUrlTextField.getText();
       if (StringUtil.isEmptyOrSpaces(captureUrl)) {
-        Messages.showErrorDialog("JsTestDriver Server is not running", "JsTestDriver Browser Capturing Failed");
+        Messages.showErrorDialog("Please start a local JsTestDriver server before capturing a browser.", "JsTestDriver Browser Capturing Failed");
         return false;
       }
       BrowsersConfiguration browsersConfiguration = BrowsersConfiguration.getInstance();
