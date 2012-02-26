@@ -34,7 +34,7 @@ public abstract class AbstractMethodBasedInspection extends JSInspection {
           JSExpression[] arguments = ObjectUtils.notNull(jsArgumentList.getArguments(), JSExpression.EMPTY_ARRAY);
           boolean suitableSymbol = isSuitableMethod(methodExpression.getReferencedName(), arguments);
           if (suitableSymbol) {
-            boolean resolved = JsPsiUtils.isResolvedToFunction(methodExpression);
+            boolean resolved = isResolved(methodExpression);
             if (!resolved) {
               holder.registerProblem(
                 methodExpression,
@@ -48,6 +48,10 @@ public abstract class AbstractMethodBasedInspection extends JSInspection {
         }
       }
     };
+  }
+
+  protected boolean isResolved(JSReferenceExpression methodExpression) {
+    return JsPsiUtils.isResolvedToFunction(methodExpression);
   }
 
   @NotNull

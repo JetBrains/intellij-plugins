@@ -7,11 +7,16 @@ import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.google.jstestdriver.idea.util.VfsUtils;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.lang.javascript.library.JSLibraryManager;
 import com.intellij.lang.javascript.psi.JSExpression;
+import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.libraries.scripting.ScriptingLibraryManager;
 import com.intellij.openapi.roots.libraries.scripting.ScriptingLibraryModel;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -24,6 +29,7 @@ import java.util.List;
 public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBasedInspection {
 
   private static final Logger LOG = Logger.getInstance(JstdAssertionFrameworkSupportInspection.class);
+  private static final String LIBRARY_NAME = "JsTestDriver Assertion Framework";
   private static final AddJstdLibraryLocalQuickFix ADD_JSTD_LIBRARY_LOCAL_QUICK_FIX = new AddJstdLibraryLocalQuickFix();
 
   @Override
@@ -48,6 +54,25 @@ public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBased
   @Override
   protected LocalQuickFix getQuickFix() {
     return ADD_JSTD_LIBRARY_LOCAL_QUICK_FIX;
+  }
+
+  @Override
+  protected boolean isResolved(JSReferenceExpression methodExpression) {
+    if (JsPsiUtils.isResolvedToFunction(methodExpression)) {
+      return true;
+    }
+    VirtualFile libVirtualFile = VfsUtil.findFileByURL(
+      JstdDefaultAssertionFrameworkSrcMarker.class.getResource("TestCase.js")
+    );
+    if (libVirtualFile == null) {
+      return false;
+    }
+    ScriptingLibraryManager libraryManager = ServiceManager.getService(methodExpression.getProject(), JSLibraryManager.class);
+    ScriptingLibraryModel libraryModel = libraryManager.getLibraryByName(LIBRARY_NAME);
+    if (libraryModel == null) {
+      return false;
+    }
+    return libraryModel.containsFile(libVirtualFile);
   }
 
   private static class AddJstdLibraryLocalQuickFix implements LocalQuickFix {
@@ -103,16 +128,12 @@ public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBased
     }
 
     private static void installLibrary(@NotNull Project project) {
-      List<VirtualFile> sources = VfsUtils.findVirtualFilesByResourceNames(
-        JstdDefaultAssertionFrameworkSrcMarker.class,
-        new String[]{"Asserts.js", "TestCase.js"}
-      );
+      List<VirtualFile> sources = getLibrarySourceFiles();
       JsLibraryHelper libraryHelper = new JsLibraryHelper(project);
-      String libraryName = "JsTestDriver Assertion Framework";
-      ScriptingLibraryModel libraryModel = libraryHelper.createJsLibrary(libraryName, sources);
+      ScriptingLibraryModel libraryModel = libraryHelper.createJsLibrary(LIBRARY_NAME, sources);
       String dialogTitle = "Adding JsTestDriver assertion framework support";
       if (libraryModel == null) {
-        Messages.showErrorDialog("Unable to create '" + libraryName + "' JavaScript library", dialogTitle);
+        Messages.showErrorDialog("Unable to create '" + LIBRARY_NAME + "' JavaScript library", dialogTitle);
         return;
       }
       VirtualFile projectRootDir = project.getBaseDir();
@@ -122,9 +143,15 @@ public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBased
       }
       boolean associated = libraryHelper.associateLibraryWithDir(libraryModel, projectRootDir);
       if (!associated) {
-        Messages.showErrorDialog("Unable to associate '" + libraryName + "' JavaScript library with project", dialogTitle);
+        Messages.showErrorDialog("Unable to associate '" + LIBRARY_NAME + "' JavaScript library with project", dialogTitle);
       }
     }
   }
 
+  private static List<VirtualFile> getLibrarySourceFiles() {
+    return VfsUtils.findVirtualFilesByResourceNames(
+      JstdDefaultAssertionFrameworkSrcMarker.class,
+      new String[]{"Asserts.js", "TestCase.js"}
+    );
+  }
 }
