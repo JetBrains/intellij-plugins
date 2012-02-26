@@ -20,17 +20,24 @@ import com.google.jstestdriver.ServerStartupAction;
 import com.google.jstestdriver.hooks.ServerListener;
 import com.google.jstestdriver.idea.MessageBundle;
 import com.google.jstestdriver.idea.PluginResources;
+import com.intellij.ide.BrowserSettings;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.options.ShowSettingsUtil;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.HyperlinkLabel;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -49,7 +56,7 @@ import java.util.List;
 public class ToolPanel extends SimpleToolWindowPanel {
 
   private static final Logger LOG = Logger.getInstance(ToolPanel.class);
-  private static final String PLACE = "JsTestDriverToolbar";
+  public static final String PLACE = "JsTestDriverToolbar";
 
   // TODO - make configurable
   public final static int serverPort = 9876;
@@ -58,22 +65,22 @@ public class ToolPanel extends SimpleToolWindowPanel {
 
   private final JTextField myCaptureUrlTextField;
 
-  public ToolPanel() {
+  public ToolPanel(@NotNull final Project project) {
     super(false, true);
 
     final StatusBar statusBar = new StatusBar(MessageBundle.getBundle());
-    final CapturedBrowsersPanel capturedBrowsersPanel = new CapturedBrowsersPanel();
     myCaptureUrlTextField = createCaptureUrlTextField();
+    final CapturedBrowsersUI capturedBrowsersPanel = new CapturedBrowsersUI(myCaptureUrlTextField);
 
     ActionToolbar actionToolbar = createActionToolbar();
     setToolbar(actionToolbar.getComponent());
 
-    final Pair<JPanel, ActionToolbar> captureUrlInfo = createCaptureUrlInfo(myCaptureUrlTextField);
+    final Pair<JPanel, ActionButton> captureUrlInfo = createCaptureUrlInfo(myCaptureUrlTextField);
 
     List<ServerListener> myServerListeners = Arrays.asList(
         statusBar,
         capturedBrowsersPanel,
-        new LocalManager(new ActionToolbar[] { actionToolbar, captureUrlInfo.second }, myCaptureUrlTextField)
+        new LocalManager(actionToolbar, captureUrlInfo.second, myCaptureUrlTextField)
     );
     for (ServerListener serverListener : myServerListeners) {
       if (SHARED_STATE.isServerRunning()) {
@@ -95,16 +102,35 @@ public class ToolPanel extends SimpleToolWindowPanel {
       add(statusBar);
 
       JPanel captureUrlPanel = captureUrlInfo.first;
-      captureUrlPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 10, 0));
+      captureUrlPanel.setBorder(BorderFactory.createEmptyBorder(3, 5, 10, 3));
       add(captureUrlPanel);
+      add(capturedBrowsersPanel.getComponent());
 
-      add(capturedBrowsersPanel);
+      JPanel configureWebBrowsersPanel = createHyperlinkPanel(project);
+      configureWebBrowsersPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 0));
+      add(configureWebBrowsersPanel);
     }};
     setContent(minimizeHeight(content));
   }
 
+  private static JPanel createHyperlinkPanel(@NotNull final Project project) {
+    HyperlinkLabel link = new HyperlinkLabel("Configure paths to web browsers");
+    link.addHyperlinkListener(new HyperlinkListener() {
+      @Override
+      public void hyperlinkUpdate(HyperlinkEvent e) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          ShowSettingsUtil settingsUtil = ShowSettingsUtil.getInstance();
+          settingsUtil.editConfigurable(project, new BrowserSettings());
+        }
+      }
+    });
+    JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panel.add(link);
+    return panel;
+  }
+
   @NotNull
-  private static Pair<JPanel, ActionToolbar> createCaptureUrlInfo(@NotNull final JTextField captureUrlTextField) {
+  private static Pair<JPanel, ActionButton> createCaptureUrlInfo(@NotNull final JTextField captureUrlTextField) {
     CopyAction copyAction = new CopyAction(captureUrlTextField, captureUrlTextField);
     DefaultActionGroup actionGroup = new DefaultActionGroup();
     actionGroup.add(copyAction);
@@ -113,11 +139,8 @@ public class ToolPanel extends SimpleToolWindowPanel {
     JPopupMenu popupMenu = actionPopupMenu.getComponent();
     captureUrlTextField.setComponentPopupMenu(popupMenu);
 
-    JLabel title = new JLabel(PluginResources.getCaptureUrlMessage());
-    ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar(PLACE, actionGroup, true);
-
     JPanel panel = new JPanel(new GridBagLayout());
-    panel.add(title, new GridBagConstraints(
+    panel.add(new JLabel(PluginResources.getCaptureUrlMessage()), new GridBagConstraints(
         0, 0,
         1, 1,
         0.0, 0.0,
@@ -135,8 +158,13 @@ public class ToolPanel extends SimpleToolWindowPanel {
         new Insets(0, 0, 0, 0),
         0, 0
     ));
-    JComponent actionToolbarComponent = actionToolbar.getComponent();
-    panel.add(actionToolbarComponent, new GridBagConstraints(
+    ActionButton actionButton = new ActionButton(
+        copyAction,
+        copyAction.getTemplatePresentation().clone(),
+        PLACE,
+        new Dimension(22, 22)
+    );
+    panel.add(actionButton, new GridBagConstraints(
         2, 0,
         1, 1,
         0.0, 0.0,
@@ -145,7 +173,7 @@ public class ToolPanel extends SimpleToolWindowPanel {
         new Insets(0, 0, 0, 0),
         0, 0
     ));
-    return Pair.create(panel, actionToolbar);
+    return Pair.create(panel, actionButton);
   }
 
   private static JComponent minimizeHeight(@NotNull JComponent component) {
@@ -171,18 +199,25 @@ public class ToolPanel extends SimpleToolWindowPanel {
     textField.setBackground(Color.WHITE);
     textField.getCaret().setVisible(true);
     textField.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+    final Runnable selectAll = new Runnable() {
+      @Override
+      public void run() {
+        textField.getCaret().setVisible(true);
+        textField.selectAll();
+      }
+    };
     textField.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(final MouseEvent e) {
         if (e.getClickCount() == 2) {
-          textField.selectAll();
+          selectAll.run();
         }
       }
     });
     textField.addFocusListener(new FocusAdapter() {
       @Override
       public void focusGained(FocusEvent e) {
-        textField.selectAll();
+        selectAll.run();
       }
     });
     return textField;
@@ -190,11 +225,15 @@ public class ToolPanel extends SimpleToolWindowPanel {
 
   private static class LocalManager implements ServerListener {
 
-    private final ActionToolbar[] myActionToolbars;
+    private final ActionToolbar myActionToolbar;
+    private final ActionButton myActionButton;
     private final JTextField myCaptureUrl;
 
-    private LocalManager(@NotNull ActionToolbar[] actionToolbars, @NotNull JTextField captureUrl) {
-      myActionToolbars = actionToolbars;
+    private LocalManager(@NotNull ActionToolbar actionToolbar,
+                         @NotNull ActionButton actionButton,
+                         @NotNull JTextField captureUrl) {
+      myActionToolbar = actionToolbar;
+      myActionButton = actionButton;
       myCaptureUrl = captureUrl;
     }
 
@@ -221,9 +260,8 @@ public class ToolPanel extends SimpleToolWindowPanel {
           } else {
             myCaptureUrl.setText("");
           }
-          for (ActionToolbar actionToolbar : myActionToolbars) {
-            actionToolbar.updateActionsImmediately();
-          }
+          myActionToolbar.updateActionsImmediately();
+          myActionButton.setEnabled(started);
         }
       });
     }
@@ -257,7 +295,8 @@ public class ToolPanel extends SimpleToolWindowPanel {
 
     @Override
     public void update(AnActionEvent e) {
-      e.getPresentation().setEnabled(StringUtil.isNotEmpty(myCaptureUrlTextField.getText()));
+      boolean enabled = StringUtil.isNotEmpty(myCaptureUrlTextField.getText());
+      e.getPresentation().setEnabled(enabled);
     }
 
     @Override

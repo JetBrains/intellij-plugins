@@ -31,7 +31,7 @@ public class JstdToolWindow implements ToolWindowFactory {
     toolWindow.setToHideOnEmptyContent(true);
 
     final ContentManager contentManager = toolWindow.getContentManager();
-    ToolPanel component = new ToolPanel();
+    ToolPanel component = new ToolPanel(project);
     final Content content = contentManager.getFactory().createContent(component, null, false);
     content.setDisposer(project);
     content.setCloseable(false);

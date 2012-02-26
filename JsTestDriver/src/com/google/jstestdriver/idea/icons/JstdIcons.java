@@ -18,7 +18,7 @@ public class JstdIcons {
 
   public static final Icon JSTD_SMALL_ICON = IconLoader.findIcon("JsTestDriver.png");
 
-  public static Icon getIcon(@NotNull String resourceName) {
+  public static ImageIcon getIcon(@NotNull String resourceName) {
     try {
       BufferedImage image = loadImage(resourceName);
       return new ImageIcon(image);
