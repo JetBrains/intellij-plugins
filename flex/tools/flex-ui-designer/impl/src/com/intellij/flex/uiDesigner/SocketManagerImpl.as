@@ -122,11 +122,12 @@ public class SocketManagerImpl implements SocketManager {
       var clientMethodClass:int = socket.readByte();
       var handler:SocketDataHandler = socketDataHandlers[clientMethodClass];
       if (handler != null) {
-        var position:int = socket.bytesAvailable + 1 /* method class size */;
+        const position:int = socket.bytesAvailable + 1 /* clientMethodClass size */;
+        const callbackId:int = socket.readUnsignedByte();
         const method:int = socket.readByte();
-        var methodDescription:String = handler.describeMethod(method);
+        const methodDescription:String = handler.describeMethod(method);
         trace(methodDescription);
-        handler.handleSockedData(messageSize - 2, method, socket);
+        handler.handleSockedData(messageSize - 3, method, callbackId, socket);
         messageId = uint.MAX_VALUE;
         trace(methodDescription + " processed");
         if (messageSize != (position - socket.bytesAvailable)) {

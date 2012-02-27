@@ -76,7 +76,6 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream impleme
     }
   }
 
-  // WARNING: you can't call flush after this, you must or end, or flush.
   public void end() throws IOException {
     if ((count - lastBlockBegin) == SERVICE_DATA_SIZE) {
       return;

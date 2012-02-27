@@ -41,6 +41,7 @@ class TestClient extends Client {
 
     out.write(CLASS);
     out.write(specialClassId);
+    out.write(0);
     writeId(module, out);
 
     flush();
@@ -53,6 +54,7 @@ class TestClient extends Client {
 
     out.write(CLASS);
     out.write(classId);
+    out.write(0);
     if (module != null) {
       writeId(module, out);
     }

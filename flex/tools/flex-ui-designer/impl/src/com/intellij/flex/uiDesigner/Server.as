@@ -316,7 +316,7 @@ public class Server implements ResourceBundleProvider {
     socket.flush();
   }
 
-  public function documentRendered(document:Document):void {
+  public function writeDocumentImage(document:Document):void {
     var displayObject:DisplayObject = DisplayObject(document.uiComponent);
     const w:int = displayObject.width;
     const h:int = displayObject.height;
@@ -327,8 +327,6 @@ public class Server implements ResourceBundleProvider {
       argb = bitmapData.getPixels(bitmapData.rect);
     }
 
-    socket.writeByte(ServerMethod.DOCUMENT_RENDERED);
-    socket.writeShort(document.documentFactory.id);
     if (argb == null) {
       socket.writeShort(0);
     }
@@ -339,6 +337,22 @@ public class Server implements ResourceBundleProvider {
     }
 
     socket.flush();
+  }
+
+  public function documentRendered(document:Document):void {
+    socket.writeByte(ServerMethod.DOCUMENT_RENDERED);
+    socket.writeShort(document.documentFactory.id);
+    writeDocumentImage(document);
+  }
+
+  public function failCallback(callbackId:int):void {
+    callback(callbackId, false);
+  }
+
+  public function callback(callbackId:int, success:Boolean = true):void {
+    socket.writeByte(ServerMethod.CALLBACK);
+    socket.writeByte(callbackId);
+    socket.writeBoolean(success);
   }
 }
 }

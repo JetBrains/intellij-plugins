@@ -17,8 +17,8 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.LoadingDecorator;
+import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -143,22 +143,28 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentRenderedListener() {
       @Override
       public void documentRendered(DocumentFactoryManager.DocumentInfo info, final BufferedImage image) {
-        if (toolWindowForm == null || toolWindowForm.getFile() == null) {
-          return;
-        }
-
-        if (info.equals(DocumentFactoryManager.getInstance().getNullableInfo(toolWindowForm.getFile()))) {
-          ApplicationManager.getApplication().invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              toolWindowForm.getPreviewPanel().setImage(image);
-            }
-          });
+        if (toolWindowForm != null &&
+            toolWindowForm.getFile() != null &&
+            info.equals(DocumentFactoryManager.getInstance().getNullableInfo(toolWindowForm.getFile()))) {
+          setDocumentImage(image);
         }
       }
 
       @Override
       public void errorOccured() {
+      }
+    });
+  }
+
+  private void setDocumentImage(final BufferedImage image) {
+    if (toolWindowForm == null || toolWindowForm.getFile() == null) {
+      return;
+    }
+
+    ApplicationManager.getApplication().invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        toolWindowForm.getPreviewPanel().setImage(image);
       }
     });
   }
@@ -178,12 +184,20 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     renderingQueue.queue(new Update("render") {
       @Override
       public void run() {
-        LoadingDecorator loadingDecorator = toolWindowForm.getPreviewPanel().getLoadingDecorator();
+        final LoadingDecorator loadingDecorator = toolWindowForm.getPreviewPanel().getLoadingDecorator();
         loadingDecorator.startLoading(false);
-        DesignerApplicationManager.getInstance().renderDocument(psiFile).doWhenProcessed(new Runnable() {
+        AsyncResult<BufferedImage> result = DesignerApplicationManager.getInstance().getDocumentImage(psiFile);
+        result.doWhenProcessed(new Runnable() {
           @Override
           public void run() {
-            toolWindowForm.getPreviewPanel().getLoadingDecorator().stopLoading();
+            loadingDecorator.stopLoading();
+          }
+        });
+
+        result.doWhenDone(new AsyncResult.Handler<java.awt.image.BufferedImage>() {
+          @Override
+          public void run(BufferedImage image) {
+            setDocumentImage(image);
           }
         });
       }
@@ -204,18 +218,27 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     private boolean waitingForSmartMode;
 
     public void selectionChanged(FileEditorManagerEvent event) {
+      final FileEditor newFileEditor = event.getNewEditor();
+      Editor mxmlEditor = null;
+      if (newFileEditor instanceof TextEditor) {
+        final Editor editor = ((TextEditor)newFileEditor).getEditor();
+        if (RunDesignViewAction.dumbAwareIsApplicable(project, PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument()))) {
+          mxmlEditor = editor;
+        }
+      }
+
+      if (mxmlEditor == null) {
+        processFileEditorChange(null);
+        return;
+      }
+
       final DumbService dumbService = DumbService.getInstance(project);
       if (dumbService.isDumb()) {
         openWhenSmart(dumbService);
       }
       else {
-        final FileEditor newFileEditor = event.getNewEditor();
-        Editor mxmlEditor = null;
-        if (event.getNewEditor() instanceof TextEditor) {
-          final Editor editor = ((TextEditor)newFileEditor).getEditor();
-          if (isApplicableEditor(editor)) {
-            mxmlEditor = editor;
-          }
+        if (!isApplicableEditor(mxmlEditor)) {
+          mxmlEditor = null;
         }
 
         processFileEditorChange(mxmlEditor);
@@ -266,7 +289,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         }
 
         final PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
-        final boolean hideForNonMxmlFiles = propertiesComponent.getBoolean("mxml.preview.tool.window.hideForNonMxmlFiles", false);
+        final boolean hideForNonMxmlFiles = propertiesComponent.getBoolean("mxml.preview.tool.window.hideForNonMxmlFiles", true);
 
         XmlFile psiFile = newEditor == null ? null : (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(newEditor.getDocument());
         if (psiFile == null) {
@@ -276,20 +299,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         }
 
         final boolean doRender = toolWindowForm.getFile() != psiFile;
-
-        if (!DesignerApplicationManager.getInstance().isApplicationClosed()) {
-          VirtualFile virtualFile = psiFile.getVirtualFile();
-          if (virtualFile != null && DocumentFactoryManager.getInstance().isRegistered(virtualFile)) {
-            FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
-            Document document = fileDocumentManager.getDocument(virtualFile);
-            if (document != null && !fileDocumentManager.isDocumentUnsaved(document)) {
-              return;
-            }
-          }
-        }
-
         if (doRender) {
-          FileDocumentManager.getInstance().saveAllDocuments();
           toolWindowForm.setFile(psiFile);
         }
 

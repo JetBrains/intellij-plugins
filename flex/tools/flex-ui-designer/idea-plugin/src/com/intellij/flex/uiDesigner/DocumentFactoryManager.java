@@ -26,6 +26,8 @@ import java.util.List;
 public class DocumentFactoryManager {
   private final InfoMap<VirtualFile, DocumentInfo> files = new InfoMap<VirtualFile, DocumentInfo>();
 
+  private boolean ignoreBeforeAllDocumentsSaving;
+
   public DocumentFactoryManager() {
     ApplicationManager.getApplication().getMessageBus().connect(DesignerApplicationManager.getApplication())
       .subscribe(AppTopics.FILE_DOCUMENT_SYNC, new MyFileDocumentManagerListener());
@@ -33,6 +35,10 @@ public class DocumentFactoryManager {
 
   public static DocumentFactoryManager getInstance() {
     return DesignerApplicationManager.getService(DocumentFactoryManager.class);
+  }
+
+  void setIgnoreBeforeAllDocumentsSaving(boolean value) {
+    ignoreBeforeAllDocumentsSaving = value;
   }
 
   public void unregister(final int[] ids) {
@@ -50,43 +56,15 @@ public class DocumentFactoryManager {
 
   private class MyFileDocumentManagerListener extends FileDocumentManagerAdapter {
     @Override
-    public void beforeDocumentSaving(Document document) {
-      final VirtualFile file = FileDocumentManager.getInstance().getFile(document);
-      if (file == null) {
+    public void beforeAllDocumentsSaving() {
+      if (ignoreBeforeAllDocumentsSaving) {
         return;
       }
 
-      final DocumentInfo info = files.getNullableInfo(file);
-      if (info == null) {
-        return;
+      Document[] unsavedDocuments = FileDocumentManager.getInstance().getUnsavedDocuments();
+      if (unsavedDocuments.length > 0) {
+        DesignerApplicationManager.getInstance().renderUnsavedDocuments(unsavedDocuments);
       }
-
-      final DesignerApplicationManager designerApplicationManager = DesignerApplicationManager.getInstance();
-      if (designerApplicationManager.isDocumentOpening()) {
-        return;
-      }
-
-      if (info.documentModificationStamp == document.getModificationStamp()) {
-        info.documentModificationStamp = -1;
-        return;
-      }
-
-      final Project project = ProjectUtil.guessProjectForFile(file);
-      if (project == null) {
-        return;
-      }
-
-      final Module module = ModuleUtil.findModuleForFile(file, project);
-      if (module == null) {
-        return;
-      }
-
-      final XmlFile psiFile = (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(document);
-      if (psiFile == null) {
-        return;
-      }
-
-      designerApplicationManager.updateDocumentFactory(info.getId(), module, psiFile);
     }
   }
 

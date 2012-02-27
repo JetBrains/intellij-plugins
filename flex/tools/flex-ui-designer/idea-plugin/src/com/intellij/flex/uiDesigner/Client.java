@@ -18,12 +18,16 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.ActionCallback;
+import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -84,8 +88,13 @@ public class Client implements Disposable {
   }
 
   private void beginMessage(ClientMethod method) {
+    beginMessage(method, null);
+  }
+
+  private void beginMessage(ClientMethod method, @Nullable ActionCallback callback) {
     blockOut.assertStart();
     out.write(ClientMethod.METHOD_CLASS);
+    out.write(callback == null ? 0 : SocketInputHandler.getInstance().addCallback(callback));
     out.write(method);
   }
 
@@ -269,23 +278,9 @@ public class Client implements Disposable {
     }
 
     beginMessage(ClientMethod.renderDocument);
-    writeId(module);
     out.writeShort(factoryId);
 
     return true;
-  }
-
-  public void openDocument(Module module, XmlFile psiFile) {
-    boolean hasError = true;
-    try {
-      beginMessage(ClientMethod.openDocument);
-      writeId(module);
-      out.writeShort(DocumentFactoryManager.getInstance().getId(psiFile.getVirtualFile()));
-      hasError = false;
-    }
-    finally {
-      finalizeMessageAndFlush(hasError);
-    }
   }
 
   public void fillAssetClassPoolIfNeed(FlexLibrarySet librarySet) {
@@ -382,6 +377,7 @@ public class Client implements Disposable {
       beginMessage(ClientMethod.renderDocumentAndDependents);
       writeId(module);
       out.writeShort(factoryId);
+      blockOut.end();
       return true;
     }
     catch (Throwable e) {
@@ -484,17 +480,53 @@ public class Client implements Disposable {
     return true;
   }
 
-  public void selectComponent(Module module, int documentId, int componentId) {
+  public void selectComponent(int documentId, int componentId) {
     boolean hasError = true;
     try {
       beginMessage(ClientMethod.selectComponent);
-      writeId(module);
       out.writeShort(documentId);
       out.writeShort(componentId);
       hasError = false;
     }
     finally {
       finalizeMessageAndFlush(hasError);
+    }
+  }
+
+  //public AsyncResult<BufferedImage> getDocumentImage(DocumentFactoryManager.DocumentInfo documentInfo) {
+  //  final AsyncResult<BufferedImage> result = new AsyncResult<BufferedImage>();
+  //  getDocumentImage(documentInfo, result);
+  //  return result;
+  //}
+
+  public void getDocumentImage(DocumentFactoryManager.DocumentInfo documentInfo, final AsyncResult<BufferedImage> result) {
+    final ActionCallback callback = new ActionCallback();
+    boolean hasError = true;
+    try {
+      beginMessage(ClientMethod.getDocumentImage, callback);
+      callback.notifyWhenRejected(result);
+      callback.doWhenDone(new Runnable() {
+        @Override
+        public void run() {
+          SocketInputHandlerImpl.Reader reader = SocketInputHandler.getInstance().getReader();
+          try {
+            result.setDone(reader.readImage());
+          }
+          catch (IOException e) {
+            LogMessageUtil.LOG.error(e);
+            result.setRejected();
+          }
+        }
+      });
+
+      out.writeShort(documentInfo.getId());
+      hasError = false;
+    }
+    finally {
+      finalizeMessageAndFlush(hasError);
+      if (hasError) {
+        callback.setRejected();
+      }
     }
   }
 
@@ -528,9 +560,9 @@ public class Client implements Disposable {
   }
 
   public static enum ClientMethod {
-    openProject, closeProject, registerLibrarySet, registerModule, registerDocumentFactory, updateDocumentFactory, renderDocument, openDocument, renderDocumentAndDependents,
+    openProject, closeProject, registerLibrarySet, registerModule, registerDocumentFactory, updateDocumentFactory, renderDocument, renderDocumentAndDependents,
     initStringRegistry, updateStringRegistry, fillImageClassPool, fillSwfClassPool, fillViewClassPool,
-    selectComponent;
+    selectComponent, getDocumentImage;
     
     public static final int METHOD_CLASS = 0;
   }

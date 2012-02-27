@@ -20,6 +20,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -51,6 +52,10 @@ import java.util.List;
 public class SocketInputHandlerImpl extends SocketInputHandler {
   protected static final Logger LOG = Logger.getInstance(SocketInputHandlerImpl.class.getName());
 
+  public Reader getReader() {
+    return reader;
+  }
+
   protected Reader reader;
 
   private File resultFile;
@@ -58,8 +63,22 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
   private final MessageBus messageBus;
 
+  private final ArrayList<ActionCallback> callbacks = new ArrayList<ActionCallback>();
+
   public SocketInputHandlerImpl() {
     messageBus = ApplicationManager.getApplication().getMessageBus();
+  }
+
+  @Override
+  public int addCallback(final @NotNull ActionCallback actionCallback) {
+    callbacks.add(actionCallback);
+    actionCallback.doWhenProcessed(new Runnable() {
+      @Override
+      public void run() {
+        callbacks.remove(actionCallback);
+      }
+    });
+    return callbacks.size();
   }
 
   protected void createReader(InputStream inputStream) {
@@ -188,6 +207,10 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
         documentRendered();
         break;
 
+      case ServerMethod.CALLBACK:
+        executeCallback();
+        break;
+
       default:
         throw new IllegalArgumentException("unknown client command: " + command);
     }
@@ -195,31 +218,19 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     return true;
   }
 
-  private void documentRendered() throws IOException {
-    final int id = reader.readUnsignedShort();
-    final int w = reader.readUnsignedShort();
-    final BufferedImage image;
-    if (w != 0) {
-      final int h = reader.readUnsignedShort();
-
-      int l = w * h * 4;
-      final byte[] argb = FileUtil.loadBytes(reader, l);
-      final byte[] bgr = new byte[w * h * 3];
-      for (int i = 0, j = 0; i < l; i += 4) {
-        bgr[j++] = argb[i + 3];
-        bgr[j++] = argb[i + 2];
-        bgr[j++] = argb[i + 1];
-      }
-
-      int[] nBits = {8, 8, 8};
-      int[] bOffs = {2, 1, 0};
-      final ComponentColorModel colorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
-      image = new BufferedImage(colorModel, Raster.createInterleavedRaster(new DataBufferByte(bgr, bgr.length), w, h, w * 3, 3, bOffs, null), false, null);
+  private void executeCallback() throws IOException {
+    ActionCallback callback = callbacks.get(reader.readUnsignedByte() - 1);
+    if (reader.readBoolean()) {
+      callback.setDone();
     }
     else {
-      image = null;
+      callback.setRejected();
     }
+  }
 
+  private void documentRendered() throws IOException {
+    final int id = reader.readUnsignedShort();
+    final BufferedImage image = reader.readImage();
     messageBus.syncPublisher(MESSAGE_TOPIC).documentRendered(DocumentFactoryManager.getInstance().getInfo(id), image);
   }
 
@@ -585,7 +596,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     }
   }
 
-  static class Reader extends DataInputStream {
+  public static class Reader extends DataInputStream {
     Reader(InputStream in) {
       super(in);
       //super(new InputStreamDumper(in));
@@ -600,7 +611,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
         this.in = in;
 
         try {
-          fileOut = new FileOutputStream(new File( "/Users/develar/clientOut"));
+          fileOut = new FileOutputStream(new File("/Users/develar/clientOut"));
         }
         catch (FileNotFoundException e) {
           throw new RuntimeException(e);
@@ -637,6 +648,30 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
         System.arraycopy(bytes, 0, b, off, length);
         return length;
       }
+    }
+
+    public BufferedImage readImage() throws IOException {
+      final int w = readUnsignedShort();
+      if (w == 0) {
+        return null;
+      }
+
+      final int h = readUnsignedShort();
+      int l = w * h * 4;
+      final byte[] argb = FileUtil.loadBytes(this, l);
+      final byte[] bgr = new byte[w * h * 3];
+      for (int i = 0, j = 0; i < l; i += 4) {
+        bgr[j++] = argb[i + 3];
+        bgr[j++] = argb[i + 2];
+        bgr[j++] = argb[i + 1];
+      }
+
+      int[] nBits = {8, 8, 8};
+      int[] bOffs = {2, 1, 0};
+      final ComponentColorModel colorModel =
+        new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
+      return new BufferedImage(colorModel, Raster.createInterleavedRaster(new DataBufferByte(bgr, bgr.length), w, h, w * 3, 3, bOffs, null),
+                               false, null);
     }
 
     public int[] readIntArray() throws IOException {

@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner.libraries {
 import com.intellij.flex.uiDesigner.LoaderContentParentAdobePleaseDoNextStep;
 
 import flash.display.Stage;
-
 import flash.events.AsyncErrorEvent;
 import flash.events.ErrorEvent;
 import flash.events.Event;
@@ -12,6 +11,9 @@ import flash.filesystem.File;
 import flash.net.URLRequest;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
+
+import org.osflash.signals.ISignal;
+import org.osflash.signals.MonoSignal;
 
 /**
  * todo handle load error
@@ -31,13 +33,11 @@ public class QueueLoader {
 
   private const queue:Vector.<LibrarySet> = new Vector.<LibrarySet>();
 
-  private var progressListener:LibrarySetLoadProgressListener;
+  public const done:ISignal = new MonoSignal();
 
   private const loaderContext:LoaderContext = new LoaderContext();
 
-  public function QueueLoader(librarySetLoadProgressListener:LibrarySetLoadProgressListener) {
-    this.progressListener = librarySetLoadProgressListener;
-
+  public function QueueLoader() {
     loaderContext.allowCodeImport = true;
     LoaderContentParentAdobePleaseDoNextStep.configureContext(loaderContext);
   }
@@ -99,7 +99,7 @@ public class QueueLoader {
     var lS:LibrarySet = librarySet;
     librarySet = null;
     trace("library set loaded");
-    progressListener.complete(lS);
+    done.dispatch(lS);
 
     if (queue.length > 0) {
       doLoadLibrarySet(queue.shift());

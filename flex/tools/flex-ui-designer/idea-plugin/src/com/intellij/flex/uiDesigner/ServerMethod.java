@@ -25,4 +25,6 @@ interface ServerMethod {
   int SET_PROPERTY = 12;
 
   int DOCUMENT_RENDERED = 13;
+
+  int CALLBACK = 10;
 }

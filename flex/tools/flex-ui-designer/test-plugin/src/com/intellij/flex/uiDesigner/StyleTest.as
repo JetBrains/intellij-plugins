@@ -145,7 +145,7 @@ public class StyleTest extends BaseTestCase {
   //noinspection JSUnusedGlobalSymbols
   public function App2():void {
     assertThat(app, {color: 0xff0000, fontSize: 18});
-    var app1:Object = DocumentFactoryManager(project.getComponent(DocumentFactoryManager)).get(0).document.uiComponent;
+    var app1:Object = DocumentFactoryManager(project.getComponent(DocumentFactoryManager)).getById(0).document.uiComponent;
     assertThat(app1, notNullValue());
     App1(app1);
   }

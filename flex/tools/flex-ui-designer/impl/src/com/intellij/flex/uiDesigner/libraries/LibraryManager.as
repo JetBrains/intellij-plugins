@@ -7,7 +7,7 @@ import flash.utils.Dictionary;
 import org.jetbrains.ApplicationManager;
 import org.jetbrains.EntityLists;
 
-public class LibraryManager implements LibrarySetLoadProgressListener {
+public class LibraryManager {
   private const librarySets:Dictionary = new Dictionary(); // <int, LibrarySet>;
 
   private var loader:QueueLoader;
@@ -15,10 +15,11 @@ public class LibraryManager implements LibrarySetLoadProgressListener {
   private const resolveQueue:Dictionary = new Dictionary();
 
   public function LibraryManager() {
-    loader = new QueueLoader(this);
+    loader = new QueueLoader();
+    loader.done.addOnce(complete);
   }
 
-  public function complete(librarySet:LibrarySet):void {
+  private function complete(librarySet:LibrarySet):void {
     var queueList:Vector.<LoaderQueue> = resolveQueue[librarySet];
     if (queueList == null) {
       return;

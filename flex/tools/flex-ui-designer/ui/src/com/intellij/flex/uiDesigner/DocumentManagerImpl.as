@@ -27,6 +27,7 @@ import flash.events.EventDispatcher;
 import flash.utils.Dictionary;
 
 import org.jetbrains.ApplicationManager;
+import org.jetbrains.util.ActionCallback;
 import org.osflash.signals.ISignal;
 import org.osflash.signals.Signal;
 
@@ -38,14 +39,6 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   public function DocumentManagerImpl(libraryManager:LibraryManager, server:Server) {
     this.libraryManager = libraryManager;
     this.server = server;
-  }
-
-  private var _documentRendered:ISignal;
-  public function get documentRendered():ISignal {
-    if (_documentRendered == null) {
-      _documentRendered = new Signal();
-    }
-    return _documentRendered;
   }
 
   private var _documentUpdated:ISignal;
@@ -88,40 +81,44 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     ComponentManager(_document.module.project.getComponent(ComponentManager)).component = null;
   }
 
-  private function checkPool(classPool:ClassPool, documentFactory:DocumentFactory, activateAndFocus:Boolean):Boolean {
+  private function checkPool(classPool:ClassPool, documentFactory:DocumentFactory, result:ActionCallback):Boolean {
     if (classPool.filling) {
-      classPool.filled.addOnce(function ():void {
-        open(documentFactory, activateAndFocus);
-      });
+      classPool.filled.addOnce(render2).params = [documentFactory, result];
       return false;
     }
 
     return true;
   }
 
-  public function open(documentFactory:DocumentFactory, activateAndFocus:Boolean):void {
+  public function render(documentFactory:DocumentFactory):ActionCallback {
+    var result:ActionCallback = new ActionCallback();
+    render2(documentFactory, result);
+    return result;
+  }
+
+  private function render2(documentFactory:DocumentFactory, result:ActionCallback):void {
     var context:ModuleContextEx = documentFactory.module.context;
     if (!documentFactory.isPureFlash) {
-      if (!checkPool(context.getClassPool(FlexLibrarySet.IMAGE_POOL), documentFactory, activateAndFocus)) {
+      if (!checkPool(context.getClassPool(FlexLibrarySet.IMAGE_POOL), documentFactory, result)) {
         return;
       }
-      if (!checkPool(context.getClassPool(FlexLibrarySet.SWF_POOL), documentFactory, activateAndFocus)) {
+      if (!checkPool(context.getClassPool(FlexLibrarySet.SWF_POOL), documentFactory, result)) {
         return;
       }
-      if (!checkPool(context.getClassPool(FlexLibrarySet.VIEW_POOL), documentFactory, activateAndFocus)) {
+      if (!checkPool(context.getClassPool(FlexLibrarySet.VIEW_POOL), documentFactory, result)) {
         return;
       }
     }
 
     if (documentFactory.document == null) {
       if (context.librariesResolved) {
-        createAndOpen(documentFactory, activateAndFocus);
+        createAndOpen(documentFactory, result);
       }
       else {
-        libraryManager.resolve(documentFactory.module.librarySets, doOpenAfterResolveLibraries, documentFactory, activateAndFocus);
+        libraryManager.resolve(documentFactory.module.librarySets, doOpenAfterResolveLibraries, documentFactory, result);
       }
     }
-    else if (doOpen(documentFactory, documentFactory.document, activateAndFocus)) {
+    else if (doRender(documentFactory, documentFactory.document, result)) {
       if (documentFactory.document == document) {
         adjustElementSelection();
         if (_documentUpdated != null) {
@@ -133,9 +130,10 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     }
   }
 
-  private function doOpenAfterResolveLibraries(documentFactory:DocumentFactory, activateAndFocus:Boolean):void {
+  private function doOpenAfterResolveLibraries(documentFactory:DocumentFactory, result:ActionCallback):void {
     var module:Module = documentFactory.module;
-    if (createAndOpen(documentFactory, activateAndFocus) && !ApplicationManager.instance.unitTestMode) {
+    createAndOpen(documentFactory, result);
+    if (result.isDone && !ApplicationManager.instance.unitTestMode) {
       if (NativeWindow.supportsNotification) {
         module.project.window.notifyUser(NotificationType.INFORMATIONAL);
       }
@@ -148,7 +146,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     }
   }
 
-  private function createAndOpen(documentFactory:DocumentFactory, activateAndFocus:Boolean):Boolean {
+  private function createAndOpen(documentFactory:DocumentFactory, result:ActionCallback):void {
     var document:Document = new Document(documentFactory);
     var module:Module = documentFactory.module;
     if (!documentFactory.isPureFlash) {
@@ -157,21 +155,17 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
 
     createDocumentDisplayManager(document, module, documentFactory.isPureFlash);
 
-    if (doOpen(documentFactory, document, activateAndFocus)) {
+    if (doRender(documentFactory, document, result)) {
       documentFactory.document = document;
       var w:DocumentWindow = module.project.window;
       var projectView:ProjectView = ProjectView(w.contentView);
       projectView.addDocument(document);
       this.document = document;
       projectView.selectEditorTab(document);
-      return true;
-    }
-    else {
-      return false;
     }
   }
 
-  private function doOpen(documentFactory:DocumentFactory, document:Document, activateAndFocus:Boolean):Boolean {
+  private function doRender(documentFactory:DocumentFactory, document:Document, result:ActionCallback):Boolean {
     var documentReader:DocumentReader = documentFactory.isPureFlash ? new MxmlReader() : new FlexMxmlReader(document.displayManager);
     try {
       server.moduleForGetResourceBundle = documentFactory.module;
@@ -183,6 +177,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     }
     catch (e:Error) {
       UncaughtErrorManager.instance.readDocumentErrorHandler(e, documentFactory);
+      result.setRejected();
       return false;
     }
     finally {
@@ -190,20 +185,9 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       document.displayManager.setStyleManagerForTalentAdobeEngineers(false);
     }
 
-    if (_documentRendered != null) {
-      _documentRendered.dispatch(document);
-    }
-
     Server.instance.documentRendered(document);
 
-    if (activateAndFocus && !ApplicationManager.instance.unitTestMode) {
-      var window:DocumentWindow = document.module.project.window;
-      if (!window.visible) {
-        window.visible = true;
-      }
-      NativeApplication.nativeApplication.activate(window);
-    }
-
+    result.setDone();
     return true;
   }
 

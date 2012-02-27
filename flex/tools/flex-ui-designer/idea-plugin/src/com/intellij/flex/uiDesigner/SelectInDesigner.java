@@ -66,7 +66,7 @@ public class SelectInDesigner implements SelectInTarget {
               for (int i = 0; i < rangeMarkers.size(); i++) {
                 RangeMarker rangeMarker = rangeMarkers.get(i);
                 if (rangeMarker.getStartOffset() == effectiveElement.getTextOffset()) {
-                  Client.getInstance().selectComponent(module, info.getId(), i);
+                  Client.getInstance().selectComponent(info.getId(), i);
                   return;
                 }
               }

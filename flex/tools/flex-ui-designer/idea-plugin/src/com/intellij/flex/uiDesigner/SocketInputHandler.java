@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.ActionCallback;
 import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,6 +16,8 @@ public abstract class SocketInputHandler implements Disposable {
 
   public abstract void read(@NotNull InputStream inputStream, @NotNull File appDir) throws IOException;
 
+  public abstract int addCallback(ActionCallback actionCallback);
+
   public static SocketInputHandler getInstance() {
     return DesignerApplicationManager.getService(SocketInputHandler.class);
   }
@@ -23,4 +26,6 @@ public abstract class SocketInputHandler implements Disposable {
     void documentRendered(DocumentFactoryManager.DocumentInfo info, BufferedImage image);
     void errorOccured();
   }
+
+  abstract SocketInputHandlerImpl.Reader getReader();
 }

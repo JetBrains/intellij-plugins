@@ -120,7 +120,7 @@ public class RunDesignViewAction extends DumbAwareAction {
     return !DesignerApplicationManager.getInstance().isDocumentOpening() && isApplicable(project, psiFile);
   }
 
-  public static boolean isApplicable(Project project, PsiFile psiFile) {
+  public static boolean dumbAwareIsApplicable(Project project, PsiFile psiFile) {
     if (psiFile == null || !JavaScriptSupportLoader.isFlexMxmFile(psiFile)) {
       return false;
     }
@@ -129,11 +129,15 @@ public class RunDesignViewAction extends DumbAwareAction {
       return false;
     }
     final XmlTag rootTag = ((XmlFile)psiFile).getRootTag();
-    if (rootTag == null || rootTag.getPrefixByNamespace(JavaScriptSupportLoader.MXML_URI3) == null) {
+    return rootTag != null && rootTag.getPrefixByNamespace(JavaScriptSupportLoader.MXML_URI3) != null;
+  }
+
+  public static boolean isApplicable(Project project, PsiFile psiFile) {
+    if (!dumbAwareIsApplicable(project, psiFile)) {
       return false;
     }
 
-    final JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(rootTag);
+    final JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(((XmlFile)psiFile).getRootTag());
     return jsClass != null && JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.FLASH_DISPLAY_OBJECT_CONTAINER);
   }
 }

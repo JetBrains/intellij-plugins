@@ -422,7 +422,7 @@ public class MxmlReader implements DocumentReader {
     var id:int = AmfUtil.readUInt29(input);
     var factory:Object = moduleContext.getDocumentFactory(id);
     if (factory == null) {
-      var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance().get(id);
+      var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance().getById(id);
       factory = new moduleContext.documentFactoryClass(documentFactory, new DeferredInstanceFromBytesContextImpl(documentFactory, styleManager));
       moduleContext.putDocumentFactory(id, factory);
     }
@@ -445,7 +445,7 @@ public class MxmlReader implements DocumentReader {
     var clazz:Class = classPool.getCachedClass(id);
     if (clazz == null) {
       clazz = classPool.getClass(id);
-      var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance().get(id);
+      var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance().getById(id);
       clazz["initializer"] = new (moduleContext.getClass("com.intellij.flex.uiDesigner.flex.SparkViewInitializer"))(documentFactory, new DeferredInstanceFromBytesContextImpl(documentFactory, styleManager));
     }
 

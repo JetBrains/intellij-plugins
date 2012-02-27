@@ -75,7 +75,7 @@ internal class TestSocketDataHandler implements SocketDataHandler {
     return methodInfo;
   }
 
-  public function handleSockedData(messageSize:int, classId:int, input:IDataInput):void {
+  public function handleSockedData(messageSize:int, classId:int, callbackId:int, input:IDataInput):void {
     const moduleId:int = input.readShort();
     const module:Module = moduleId == -1 ? null : moduleManager.getById(moduleId);
     const project:Project = module == null ? null : module.project;

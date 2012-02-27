@@ -38,7 +38,7 @@ public class AppTest extends BaseTestCase {
   public function UpdateDocumentOnIdeaAutoSave2():void {
     var m:Object = [l("ALabel in child custom mxml component")];
     assertThat(app.getElementAt(0), m);
-    assertThat(DocumentFactoryManager.getInstance().get(0).document.uiComponent, m);
+    assertThat(DocumentFactoryManager.getInstance().getById(0).document.uiComponent, m);
   }
 }
 }

@@ -15,7 +15,7 @@ public class DocumentFactoryManager {
     return DocumentFactoryManager(PlexusManager.instance.container.lookup(DocumentFactoryManager));
   }
 
-  public function get(id:int):DocumentFactory {
+  public function getById(id:int):DocumentFactory {
     return factories[id];
   }
 
@@ -98,7 +98,7 @@ public class DocumentFactoryManager {
 
     if (factory.documentReferences != null) {
       for each (var subDocumentId:int in factory.documentReferences) {
-        var addres:ElementAddress = findComponentDeclarationRangeMarkerId(object, get(subDocumentId));
+        var addres:ElementAddress = findComponentDeclarationRangeMarkerId(object, getById(subDocumentId));
         if (addres != null) {
           return addres;
         }

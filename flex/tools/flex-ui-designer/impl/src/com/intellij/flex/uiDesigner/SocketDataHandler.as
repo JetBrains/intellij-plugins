@@ -6,7 +6,7 @@ public interface SocketDataHandler {
   /**
    * messageSize — logical (i.e. without 2 bytes for clientMethodClass (1) and clentMethod (1))
    */
-  function handleSockedData(messageSize:int, method:int, data:IDataInput):void;
+  function handleSockedData(messageSize:int, method:int, callbackId:int, data:IDataInput):void;
 
   function set socket(socket:Socket):void;
 

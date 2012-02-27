@@ -14,6 +14,7 @@ import com.intellij.flex.uiDesigner.ui.ProjectView;
 import com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector.PropertyInspector;
 import com.intellij.flex.uiDesigner.ui.inspectors.styleInspector.StyleInspector;
 
+import flash.desktop.NativeApplication;
 import flash.geom.Rectangle;
 import flash.net.Socket;
 import flash.net.registerClassAlias;
@@ -25,6 +26,7 @@ import flash.utils.describeType;
 import net.miginfocom.layout.MigConstants;
 
 import org.jetbrains.ApplicationManager;
+import org.jetbrains.util.ActionCallback;
 
 registerClassAlias("lsh", LocalStyleHolder);
 
@@ -45,7 +47,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
   public function set socket(value:Socket):void {
   }
 
-  public function handleSockedData(messageSize:int, method:int, input:IDataInput):void {
+  public function handleSockedData(messageSize:int, method:int, callbackId:int, input:IDataInput):void {
     switch (method) {
       case ClientMethod.openProject:
         openProject(input);
@@ -72,11 +74,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
         break;
 
       case ClientMethod.renderDocument:
-        openDocument(input, false);
-        break;
-
-      case ClientMethod.openDocument:
-        openDocument(input, true);
+        renderDocument(input);
         break;
       
       case ClientMethod.renderDocumentAndDependents:
@@ -108,7 +106,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
         break;
 
       case ClientMethod.getDocumentImage:
-        getDocumentImage(input, messageSize, true);
+        getDocumentImage(input, callbackId);
         break;
     }
   }
@@ -166,7 +164,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
   
   private function updateDocumentFactory(input:IDataInput, messageSize:int):void {
     const prevBytesAvailable:int = input.bytesAvailable;
-    var documentFactory:DocumentFactory = getDocumentFactoryManager().get(input.readUnsignedShort());
+    var documentFactory:DocumentFactory = getDocumentFactoryManager().getById(input.readUnsignedShort());
     AmfUtil.readString(input);
     input.readUnsignedByte(); // todo isApp update document styleManager
 
@@ -191,20 +189,36 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     return DocumentManager(module.project.getComponent(DocumentManager));
   }
 
-  private function openDocument(input:IDataInput, activateAndFocus:Boolean):void {
-    var module:Module = moduleManager.getById(input.readUnsignedShort());
-    var documentFactory:DocumentFactory = getDocumentFactoryManager().get(input.readUnsignedShort());
-    getDocumentManager(module).open(documentFactory, activateAndFocus);
+  private static function renderDocument(input:IDataInput):void {
+    var documentFactory:DocumentFactory = getDocumentFactoryManager().getById(input.readUnsignedShort());
+    getDocumentManager(documentFactory.module).render(documentFactory);
   }
 
-  private function getDocumentImage(input:IDataInput, messageSize:int, b:Boolean):void {
+  private static function getDocumentImage(input:IDataInput, callbackId:int):void {
+    assert(callbackId > 0);
+    var documentFactoryManager:DocumentFactoryManager = getDocumentFactoryManager();
+    var documentFactory:DocumentFactory = documentFactoryManager.getById(input.readUnsignedShort());
+    var documentManager:DocumentManager = DocumentManager(documentFactory.module.project.getComponent(DocumentManager));
+    if (documentFactory.document == null) {
+      var callback:ActionCallback = documentManager.render(documentFactory);
+      callback.doWhenDone(getDocumentImageDoneHandler, documentFactory, callbackId);
+      callback.doWhenRejected(Server.instance.failCallback);
+    }
+    else {
+      getDocumentImageDoneHandler(documentFactory, callbackId);
+    }
+  }
 
+  private static function getDocumentImageDoneHandler(documentFactory:DocumentFactory, callbackId:int):void {
+    var server:Server = Server.instance;
+    server.callback(callbackId);
+    server.writeDocumentImage(documentFactory.document);
   }
 
   private function renderDocumentAndDependents(input:IDataInput):void {
     var module:Module = moduleManager.getById(input.readUnsignedShort());
     var documentFactoryManager:DocumentFactoryManager = getDocumentFactoryManager();
-    var documentFactory:DocumentFactory = documentFactoryManager.get(input.readUnsignedShort());
+    var documentFactory:DocumentFactory = documentFactoryManager.getById(input.readUnsignedShort());
     // not set projectManager.project — current project is not changed (opposite to openDocument)
     doRenderDocumentAndDependents(documentFactory, getDocumentManager(module), documentFactoryManager, new Dictionary());
   }
@@ -214,7 +228,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     processed[documentFactory] = true;
 
     if (documentFactory.document != null) {
-      documentManager.open(documentFactory, false);
+      documentManager.render(documentFactory);
     }
 
     var dependents:Vector.<DocumentFactory> = documentFactoryManager.getDependents(documentFactory);
@@ -237,27 +251,35 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     libraryManager.register(librarySet);
   }
 
-  private function selectComponent(input:IDataInput):void {
-    var module:Module = moduleManager.getById(input.readUnsignedShort());
+  private static function selectComponent(input:IDataInput):void {
     const documentId:int = input.readUnsignedShort();
     const componentId:int = input.readUnsignedShort();
-    var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance().get(documentId);
-    var component:Object = documentFactory.getComponent(componentId);
-    if (component == null) {
-      UncaughtErrorManager.instance.logWarning("Can't find target component " + documentId + ":" + componentId);
-    }
+    var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance().getById(documentId);
 
-    var documentManager:DocumentManager = DocumentManager(module.project.getComponent(DocumentManager));
-    if (documentFactory.document != null) {
-      documentManager.document = documentFactory.document;
-      ComponentManager(module.project.getComponent(ComponentManager)).component = component;
+    var documentManager:DocumentManager = DocumentManager(documentFactory.module.project.getComponent(DocumentManager));
+    if (documentFactory.document == null) {
+      documentManager.render(documentFactory).doWhenDone(selectDocumentTab, documentFactory, componentId);
     }
     else {
-      documentManager.documentChanged.addOnce(function ():void {
-        ComponentManager(module.project.getComponent(ComponentManager)).component = component;
-      });
-      documentManager.open(documentFactory, false);
+      documentManager.document = documentFactory.document;
+      selectDocumentTab(documentFactory, componentId);
     }
+  }
+
+  private static function selectDocumentTab(documentFactory:DocumentFactory, componentId:int):void {
+    var component:Object = documentFactory.getComponent(componentId);
+    var project:Project = documentFactory.module.project;
+    ComponentManager(project.getComponent(ComponentManager)).component = component;
+
+    if (component == null) {
+      UncaughtErrorManager.instance.logWarning("Can't find target component " + documentFactory.id + ":" + componentId);
+    }
+
+    var window:DocumentWindow = project.window;
+    if (!window.visible) {
+      window.visible = true;
+    }
+    NativeApplication.nativeApplication.activate(window);
   }
 
   public function pendingReadIsAllowable(method:int):Boolean {
@@ -289,16 +311,15 @@ final class ClientMethod {
   public static const registerDocumentFactory:int = 4;
   public static const updateDocumentFactory:int = 5;
   public static const renderDocument:int = 6;
-  public static const openDocument:int = 7;
-  public static const renderDocumentAndDependents:int = 8;
+  public static const renderDocumentAndDependents:int = 7;
 
-  public static const initStringRegistry:int = 9;
-  public static const updateStringRegistry:int = 10;
+  public static const initStringRegistry:int = 8;
+  public static const updateStringRegistry:int = 9;
 
-  public static const fillImageClassPool:int = 11;
-  public static const fillSwfClassPool:int = 12;
-  public static const fillViewClassPool:int = 13;
+  public static const fillImageClassPool:int = 10;
+  public static const fillSwfClassPool:int = 11;
+  public static const fillViewClassPool:int = 12;
 
-  public static const selectComponent:int = 14;
-  public static const getDocumentImage:int = 15;
+  public static const selectComponent:int = 13;
+  public static const getDocumentImage:int = 14;
 }
