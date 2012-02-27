@@ -36,6 +36,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.IdeBorderFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,7 +75,7 @@ public class CapturedBrowsersUI implements ServerListener {
 
     Collection<BrowserButton> browserButtons = browserButtonByNameMap.values();
     boolean addSpacing = false;
-    final int spacing = 10;
+    final int spacing = 15;
     for (BrowserButton browserButton : browserButtons) {
       if (addSpacing) {
         panel.add(Box.createHorizontalStrut(spacing));
@@ -93,7 +94,16 @@ public class CapturedBrowsersUI implements ServerListener {
     panel.setMinimumSize(minimumSize);
     panel.setPreferredSize(minimumSize);
     panel.setMaximumSize(minimumSize);
-    return panel;
+
+    JPanel wrap = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    wrap.add(panel);
+    wrap.setBorder(IdeBorderFactory.createTitledBorder("Click the icons to capture local browsers"));
+
+    JPanel wrap2 = new JPanel(new BorderLayout());
+    wrap2.add(wrap, BorderLayout.CENTER);
+    wrap2.setBorder(BorderFactory.createEmptyBorder(2, 5, 0, 10));
+
+    return wrap2;
   }
 
   @NotNull

@@ -26,18 +26,14 @@ import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ShowSettingsUtil;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.HyperlinkLabel;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -65,7 +61,7 @@ public class ToolPanel extends SimpleToolWindowPanel {
 
   private final JTextField myCaptureUrlTextField;
 
-  public ToolPanel(@NotNull final Project project) {
+  public ToolPanel() {
     super(false, true);
 
     final StatusBar statusBar = new StatusBar(MessageBundle.getBundle());
@@ -102,31 +98,11 @@ public class ToolPanel extends SimpleToolWindowPanel {
       add(statusBar);
 
       JPanel captureUrlPanel = captureUrlInfo.first;
-      captureUrlPanel.setBorder(BorderFactory.createEmptyBorder(3, 5, 10, 3));
+      captureUrlPanel.setBorder(BorderFactory.createEmptyBorder(3, 5, 0, 3));
       add(captureUrlPanel);
       add(capturedBrowsersPanel.getComponent());
-
-      JPanel configureWebBrowsersPanel = createHyperlinkPanel(project);
-      configureWebBrowsersPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 0, 0));
-      add(configureWebBrowsersPanel);
     }};
     setContent(minimizeHeight(content));
-  }
-
-  private static JPanel createHyperlinkPanel(@NotNull final Project project) {
-    HyperlinkLabel link = new HyperlinkLabel("Configure paths to web browsers");
-    link.addHyperlinkListener(new HyperlinkListener() {
-      @Override
-      public void hyperlinkUpdate(HyperlinkEvent e) {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          ShowSettingsUtil settingsUtil = ShowSettingsUtil.getInstance();
-          settingsUtil.editConfigurable(project, new BrowserSettings());
-        }
-      }
-    });
-    JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panel.add(link);
-    return panel;
   }
 
   @NotNull
@@ -186,6 +162,13 @@ public class ToolPanel extends SimpleToolWindowPanel {
     DefaultActionGroup actionGroup = new DefaultActionGroup();
     actionGroup.add(new ServerStartAction(SHARED_STATE));
     actionGroup.add(new ServerStopAction(SHARED_STATE));
+    actionGroup.add(new AnAction("Configure paths to local web browsers", null, PlatformIcons.WEB_ICON) {
+      @Override
+      public void actionPerformed(AnActionEvent e) {
+        ShowSettingsUtil settingsUtil = ShowSettingsUtil.getInstance();
+        settingsUtil.editConfigurable(e.getProject(), new BrowserSettings());
+      }
+    });
     return ActionManager.getInstance().createActionToolbar(PLACE, actionGroup, false);
   }
 
