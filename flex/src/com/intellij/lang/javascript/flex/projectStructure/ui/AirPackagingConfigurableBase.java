@@ -7,11 +7,9 @@ import com.intellij.lang.javascript.flex.actions.SigningOptionsForm;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.util.Consumer;
 import com.intellij.util.ui.UIUtil;
 
@@ -173,11 +171,9 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
     myAirDescriptorForm = new AirDescriptorForm(myModule.getProject(), descriptorCreator);
     myFilesToPackageForm = new FilesToPackageForm(myModule.getProject());
 
-    mySigningOptionsForm = new SigningOptionsForm(myModule.getProject(), new Computable.PredefinedValueComputable<Module>(myModule),
-                                                  new Computable.PredefinedValueComputable<Sdk>(null), EmptyRunnable.INSTANCE);
-    mySigningOptionsForm.setUseTempCertificateCheckBoxVisible(!isIOS);
+    mySigningOptionsForm = new SigningOptionsForm(myModule.getProject());
+    mySigningOptionsForm.setTempCertificateApplicable(!isIOS);
     mySigningOptionsForm.setProvisioningProfileApplicable(isIOS);
-    mySigningOptionsForm.setCreateCertificateButtonApplicable(false);
   }
 
   public void setUseCustomDescriptor(final String descriptorPath) {

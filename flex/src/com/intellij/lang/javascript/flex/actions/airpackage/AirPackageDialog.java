@@ -330,4 +330,66 @@ public class AirPackageDialog extends DialogWrapper {
   public Collection<Pair<Module, FlexIdeBuildConfiguration>> getSelectedBCs() {
     return myTree.getSelectedBCs();
   }
+
+  /*
+  protected ValidationInfo doValidate() {
+    final String airDescriptorPath = ((String)myAirDescriptorComponent.getComponent().getComboBox().getEditor().getItem()).trim();
+    if (airDescriptorPath.length() == 0) {
+      return new ValidationInfo("AIR application descriptor path is empty", myAirDescriptorComponent.getComponent());
+    }
+
+    final VirtualFile descriptor = LocalFileSystem.getInstance().findFileByPath(airDescriptorPath);
+    if (descriptor == null || descriptor.isDirectory()) {
+      return new ValidationInfo(FlexBundle.message("file.not.found", airDescriptorPath), myAirDescriptorComponent.getComponent());
+    }
+
+    final String installerFileName = myInstallerFileNameComponent.getComponent().getText().trim();
+    if (installerFileName.length() == 0) {
+      return new ValidationInfo("Package file name is empty", myInstallerFileNameComponent.getComponent());
+    }
+
+    final String installerLocation = FileUtil.toSystemDependentName(myInstallerLocationComponent.getComponent().getText().trim());
+    if (installerLocation.length() == 0) {
+      return new ValidationInfo("Package file location is empty", myInstallerLocationComponent.getComponent());
+    }
+
+    final VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(installerLocation);
+    if (dir == null || !dir.isDirectory()) {
+      return new ValidationInfo(FlexBundle.message("folder.does.not.exist", installerLocation),
+                                myInstallerLocationComponent.getComponent());
+    }
+
+    if (myFilesToPackageForm.getFilesToPackage().isEmpty()) {
+      return new ValidationInfo("No files to package", myFilesToPackageForm.getMainPanel());
+    }
+
+    for (AirInstallerParametersBase.FilePathAndPathInPackage path : myFilesToPackageForm.getFilesToPackage()) {
+      final String fullPath = FileUtil.toSystemIndependentName(path.FILE_PATH.trim());
+      String relPathInPackage = FileUtil.toSystemIndependentName(path.PATH_IN_PACKAGE.trim());
+      if (relPathInPackage.startsWith("/")) {
+        relPathInPackage = relPathInPackage.substring(1);
+      }
+
+      if (fullPath.length() == 0) {
+        return new ValidationInfo("Empty file path to package", myFilesToPackageForm.getMainPanel());
+      }
+
+      final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(fullPath);
+      if (file == null) {
+        return new ValidationInfo(FlexBundle.message("file.not.found", fullPath), myFilesToPackageForm.getMainPanel());
+      }
+
+      if (relPathInPackage.length() == 0) {
+        return new ValidationInfo("Empty relative file path in installation package", myFilesToPackageForm.getMainPanel());
+      }
+
+      if (file.isDirectory() && !fullPath.endsWith("/" + relPathInPackage)) {
+        return new ValidationInfo(MessageFormat.format("Relative folder path doesn''t match its full path: {0}", relPathInPackage),
+                                  myFilesToPackageForm.getMainPanel());
+      }
+    }
+
+    return mySigningOptionsForm.validate();
+  }
+  */
 }

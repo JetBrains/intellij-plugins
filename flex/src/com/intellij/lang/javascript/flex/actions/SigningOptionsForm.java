@@ -1,17 +1,11 @@
 package com.intellij.lang.javascript.flex.actions;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.actions.airinstaller.CertificateParameters;
-import com.intellij.lang.javascript.flex.actions.airinstaller.CreateCertificateDialog;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.ValidationInfo;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -31,7 +25,7 @@ public class SigningOptionsForm {
   private static final String MORE_OPTIONS = "More options";
   private static final String LESS_OPTIONS = "Less options";
 
-  private JPanel myMainPanel; // required to reuse this form
+  private JPanel myMainPanel;
 
   private JCheckBox myUseTempCertificateCheckBox;
   private JPanel myOptionsPanel;
@@ -40,98 +34,38 @@ public class SigningOptionsForm {
   private TextFieldWithBrowseButton myProvisioningProfileTextWithBrowse;
 
   private TextFieldWithBrowseButton myKeystoreFileTextWithBrowse;
-  private JComboBox myKeystoreTypeCombo;
-  private JPasswordField myKeystorePasswordField;
   private HoverHyperlinkLabel myMoreOptionsHyperlinkLabel;
+  private JLabel myKeystoreTypeLabel;
+  private JTextField myKeystoreTypeTextField;
   private JLabel myKeyAliasLabel;
   private JTextField myKeyAliasTextField;
-  private JLabel myKeyPasswordLabel;
-  private JPasswordField myKeyPasswordField;
   private JLabel myProviderClassNameLabel;
   private JTextField myProviderClassNameTextField;
   private JLabel myTsaUrlLabel;
   private JTextField myTsaUrlTextField;
 
-  private JButton myCreateCertButton;
-
-  private final Project myProject;
-  private final Computable<Module> myModuleComputable;
-  private final Computable<Sdk> mySdkComputable;
-  private final Runnable myResizeHandler;
-
-  public SigningOptionsForm(final Project project,
-                            final Computable<Module> moduleComputable,
-                            final Computable<Sdk> sdkComputable,
-                            final Runnable resizeHandler) {
-    myProject = project;
-    myModuleComputable = moduleComputable;
-    mySdkComputable = sdkComputable;
-    myResizeHandler = resizeHandler;
-
-    initUseTempCertificateCheckBox();
-
-    myProvisioningProfileTextWithBrowse.addBrowseFolderListener(null, null, myProject,
-                                                                FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor());
-    myKeystoreFileTextWithBrowse
-      .addBrowseFolderListener(null, null, myProject, FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor());
-
-    initCreateCertButton();
-    initMoreOptionsHyperlinkLabel();
-    updateMoreOptions();
-  }
-
-  private void initUseTempCertificateCheckBox() {
+  public SigningOptionsForm(final Project project) {
     myUseTempCertificateCheckBox.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         updateControls();
       }
     });
-  }
 
-  private void initCreateCertButton() {
-    myCreateCertButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        final Sdk flexSdk = mySdkComputable.compute();
-        if (flexSdk == null) {
-          Messages.showErrorDialog(myProject, "Flex or AIR SDK is required to create certificate", CreateCertificateDialog.TITLE);
-        }
-        else {
-          final CreateCertificateDialog dialog = new CreateCertificateDialog(myProject, flexSdk, suggestKeystoreFileLocation());
-          dialog.show();
-          if (dialog.isOK()) {
-            final CertificateParameters parameters = dialog.getCertificateParameters();
-            myKeystoreFileTextWithBrowse.setText(parameters.getKeystoreFilePath());
-            myKeystoreTypeCombo.setSelectedIndex(0);
-            myKeystorePasswordField.setText(parameters.getKeystorePassword());
-          }
-        }
-      }
-    });
-  }
+    myProvisioningProfileTextWithBrowse
+      .addBrowseFolderListener(null, null, project, FlexUtils.createFileChooserDescriptor("mobileprovision"));
+    myKeystoreFileTextWithBrowse
+      .addBrowseFolderListener(null, null, project, FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor());
 
-  private String suggestKeystoreFileLocation() {
-    final Module module = myModuleComputable.compute();
-    if (module != null) {
-      final VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
-      if (contentRoots.length > 0) {
-        return contentRoots[0].getPath();
-      }
-    }
-    final VirtualFile baseDir = myProject.getBaseDir();
-    return baseDir == null ? "" : baseDir.getPath();
-  }
-
-
-  private void initMoreOptionsHyperlinkLabel() {
     myMoreOptionsHyperlinkLabel.setText(MORE_OPTIONS);
     myMoreOptionsHyperlinkLabel.addHyperlinkListener(new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           showMoreOptions(!isShowingMoreOptions());
-          myResizeHandler.run();
         }
       }
     });
+
+    updateMoreOptions();
   }
 
   private void createUIComponents() {
@@ -154,10 +88,10 @@ public class SigningOptionsForm {
   private void updateMoreOptions() {
     final boolean showingMoreOption = isShowingMoreOptions();
 
+    myKeystoreTypeLabel.setVisible(showingMoreOption);
+    myKeystoreTypeTextField.setVisible(showingMoreOption);
     myKeyAliasLabel.setVisible(showingMoreOption);
     myKeyAliasTextField.setVisible(showingMoreOption);
-    myKeyPasswordLabel.setVisible(showingMoreOption);
-    myKeyPasswordField.setVisible(showingMoreOption);
     myProviderClassNameLabel.setVisible(showingMoreOption);
     myProviderClassNameTextField.setVisible(showingMoreOption);
     myTsaUrlLabel.setVisible(showingMoreOption);
@@ -178,18 +112,14 @@ public class SigningOptionsForm {
     }
   }
 
-  public void setUseTempCertificateCheckBoxVisible(final boolean visible) {
-    myUseTempCertificateCheckBox.setVisible(visible);
+  public void setTempCertificateApplicable(final boolean applicable) {
+    myUseTempCertificateCheckBox.setVisible(applicable);
     updateControls();
   }
 
   public void setProvisioningProfileApplicable(final boolean applicable) {
     myProvisioningProfileLabel.setVisible(applicable);
     myProvisioningProfileTextWithBrowse.setVisible(applicable);
-  }
-
-  public void setCreateCertificateButtonApplicable(final boolean applicable) {
-    myCreateCertButton.setVisible(applicable);
   }
 
   public String getProvisioningProfilePath() {
@@ -209,19 +139,11 @@ public class SigningOptionsForm {
   }
 
   public String getKeystoreType() {
-    return (String)myKeystoreTypeCombo.getSelectedItem();
+    return myKeystoreTypeTextField.getText().trim();
   }
 
   public void setKeystoreType(final String keystoreType) {
-    myKeystoreTypeCombo.setSelectedItem(keystoreType);
-  }
-
-  public String getKeystorePassword() {
-    return new String(myKeystorePasswordField.getPassword());
-  }
-
-  public void setKeystorePassword(final String password) {
-    myKeystorePasswordField.setText(password);
+    myKeystoreTypeTextField.setText(keystoreType);
   }
 
   public String getKeyAlias() {
@@ -233,14 +155,6 @@ public class SigningOptionsForm {
     if (StringUtil.isNotEmpty(keyAlias)) {
       showMoreOptions(true);
     }
-  }
-
-  public String getKeyPassword() {
-    return isShowingMoreOptions() ? new String(myKeyPasswordField.getPassword()) : "";
-  }
-
-  public void setKeyPassword(final String password) {
-    myKeyPasswordField.setText(password);
   }
 
   public String getProviderClassName() {
@@ -269,10 +183,8 @@ public class SigningOptionsForm {
     myUseTempCertificateCheckBox.setSelected(signingOptions.isUseTempCertificate());
     myProvisioningProfileTextWithBrowse.setText(FileUtil.toSystemDependentName(signingOptions.getProvisioningProfilePath()));
     myKeystoreFileTextWithBrowse.setText(FileUtil.toSystemDependentName(signingOptions.getKeystorePath()));
-    myKeystoreTypeCombo.setSelectedItem(signingOptions.getKeystoreType());
-    myKeystorePasswordField.setText(signingOptions.getKeystorePassword());
+    myKeystoreTypeTextField.setText(signingOptions.getKeystoreType());
     myKeyAliasTextField.setText(signingOptions.getKeyAlias());
-    myKeyPasswordField.setText(signingOptions.getKeyPassword());
     myProviderClassNameTextField.setText(signingOptions.getProvider());
     myTsaUrlTextField.setText(signingOptions.getTsa());
     updateControls();
@@ -289,25 +201,20 @@ public class SigningOptionsForm {
     if (!FileUtil.toSystemIndependentName(myKeystoreFileTextWithBrowse.getText().trim()).equals(signingOptions.getKeystorePath())) {
       return true;
     }
-    if (!myKeystoreTypeCombo.getSelectedItem().equals(signingOptions.getKeystoreType())) return true;
-    if (!myKeystorePasswordField.getText().equals(signingOptions.getKeystorePassword())) return true;
+    if (!myKeystoreTypeTextField.getText().trim().equals(signingOptions.getKeystoreType())) return true;
     if (!myKeyAliasTextField.getText().equals(signingOptions.getKeyAlias())) return true;
-    if (!myKeyPasswordField.getText().equals(signingOptions.getKeyPassword())) return true;
     if (!myProviderClassNameTextField.getText().equals(signingOptions.getProvider())) return true;
     if (!myTsaUrlTextField.getText().equals(signingOptions.getTsa())) return true;
 
     return false;
   }
 
-
   public void applyTo(final AirSigningOptions signingOptions) {
     signingOptions.setUseTempCertificate(myUseTempCertificateCheckBox.isSelected());
     signingOptions.setProvisioningProfilePath(FileUtil.toSystemIndependentName(myProvisioningProfileTextWithBrowse.getText().trim()));
     signingOptions.setKeystorePath(FileUtil.toSystemIndependentName(myKeystoreFileTextWithBrowse.getText().trim()));
-    signingOptions.setKeystoreType((String)myKeystoreTypeCombo.getSelectedItem());
-    signingOptions.setKeystorePassword(new String(myKeystorePasswordField.getPassword()));
+    signingOptions.setKeystoreType(myKeystoreTypeTextField.getText().trim());
     signingOptions.setKeyAlias(myKeyAliasTextField.getText());
-    signingOptions.setKeyPassword(new String(myKeyPasswordField.getPassword()));
     signingOptions.setProvider(myProviderClassNameTextField.getText());
     signingOptions.setTsa(myTsaUrlTextField.getText());
   }
@@ -323,7 +230,7 @@ public class SigningOptionsForm {
       final VirtualFile provisioningProfile = LocalFileSystem.getInstance().findFileByPath(provisioningProfilePath);
       if (provisioningProfile == null || provisioningProfile.isDirectory()) {
         return new ValidationInfo(FlexBundle.message("file.not.found", provisioningProfilePath),
-                                                myProvisioningProfileTextWithBrowse);
+                                  myProvisioningProfileTextWithBrowse);
       }
     }
 
@@ -335,10 +242,6 @@ public class SigningOptionsForm {
     final VirtualFile keystore = LocalFileSystem.getInstance().findFileByPath(keystorePath);
     if (keystore == null || keystore.isDirectory()) {
       return new ValidationInfo(FlexBundle.message("file.not.found", keystorePath), myKeystoreFileTextWithBrowse);
-    }
-
-    if (getKeystorePassword().isEmpty()) {
-      return new ValidationInfo("Keystore password is empty", myKeyPasswordField);
     }
 
     return null;

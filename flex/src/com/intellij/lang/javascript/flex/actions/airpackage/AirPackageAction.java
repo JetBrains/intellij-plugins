@@ -99,4 +99,18 @@ public class AirPackageAction extends DumbAwareAction {
     compileContext.addMessage(CompilerMessageCategory.ERROR,
                               "AIR application packaging is not supported yet. Please wait for the next IntelliJ IDEA EAP.", null, -1, -1);
   }
+
+  /*
+  private static ExternalTask createAirInstallerTask(final Project project, final AirInstallerParameters parameters) {
+    return new AdtTask(project, parameters.getFlexSdk()) {
+      protected void appendAdtOptions(List<String> command) {
+        command.add(parameters.DO_NOT_SIGN ? "-prepare" : "-package");
+        if (!parameters.DO_NOT_SIGN) {
+          appendSigningOptions(command, parameters);
+        }
+        appendPaths(command, parameters);
+      }
+    };
+  }
+  */
 }

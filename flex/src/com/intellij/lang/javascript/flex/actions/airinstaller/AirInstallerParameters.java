@@ -2,8 +2,6 @@ package com.intellij.lang.javascript.flex.actions.airinstaller;
 
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.util.xmlb.XmlSerializerUtil;
@@ -11,12 +9,6 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-@State(
-  name = "AirInstallerParameters",
-  storages = {
-    @Storage( file = "$WORKSPACE_FILE$")
-  }
-)
 public class AirInstallerParameters extends AirInstallerParametersBase implements PersistentStateComponent<AirInstallerParameters> {
 
   public boolean DO_NOT_SIGN;

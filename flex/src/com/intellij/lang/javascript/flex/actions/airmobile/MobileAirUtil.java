@@ -4,9 +4,8 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
 import com.intellij.lang.javascript.flex.actions.airinstaller.AdtTask;
-import com.intellij.lang.javascript.flex.actions.airinstaller.CertificateParameters;
-import com.intellij.lang.javascript.flex.actions.airinstaller.PackageAirInstallerAction;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -58,10 +57,7 @@ public class MobileAirUtil {
 
   public static boolean ensureCertificateExists(final Project project, Sdk flexSdk) {
     if (!new File(getTempKeystorePath()).exists()) {
-      final CertificateParameters params =
-        new CertificateParameters(new File(getTempKeystorePath()).getPath(), TEMP_CERTIFICATE_NAME, TEMP_KEY_TYPE,
-                                  TEMP_KEYSTORE_PASSWORD, "", "", "");
-      return PackageAirInstallerAction.createCertificate(project, flexSdk, params);
+      return createCertificate(project, flexSdk);
     }
     return true;
   }
@@ -183,8 +179,8 @@ public class MobileAirUtil {
       }
     }
     else if (parameters.MOBILE_PLATFORM == MobilePlatform.iOS
-        && (parameters.IOS_PACKAGE_TYPE == IOSPackageType.DebugOverNetwork || parameters.IOS_PACKAGE_TYPE == IOSPackageType.Test)
-        && parameters.FAST_PACKAGING) {
+             && (parameters.IOS_PACKAGE_TYPE == IOSPackageType.DebugOverNetwork || parameters.IOS_PACKAGE_TYPE == IOSPackageType.Test)
+             && parameters.FAST_PACKAGING) {
       if (StringUtil.compareVersionNumbers(adtVersion, "2.7") < 0) {
         requiredVersion = "2.7";
         errorMessageStart = FlexBundle.message("air.mobile.ios.fast.packaging.requires.2.7");
@@ -452,5 +448,29 @@ public class MobileAirUtil {
     catch (IOException ignore) {/**/}
 
     return appDescriptor.getNameWithoutExtension();
+  }
+
+  private static boolean createCertificate(final Project project, final Sdk flexSdk) {
+    final AdtTask task = new AdtTask(project, flexSdk) {
+      protected void appendAdtOptions(List<String> command) {
+        command.add("-certificate");
+        command.add("-cn");
+        command.add(TEMP_CERTIFICATE_NAME);
+        command.add(TEMP_KEY_TYPE);
+        command.add(getTempKeystorePath());
+        command.add(TEMP_KEYSTORE_PASSWORD);
+      }
+    };
+
+    final boolean ok = ExternalTask.runWithProgress(task, "Creating certificate", "Create Certificate");
+    if (ok) {
+      ApplicationManager.getApplication().runWriteAction(new Runnable() {
+        public void run() {
+          LocalFileSystem.getInstance().refreshAndFindFileByPath(getTempKeystorePath());
+        }
+      });
+    }
+
+    return ok;
   }
 }
