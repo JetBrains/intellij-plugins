@@ -38,7 +38,7 @@ public class FlexSuspendContext extends XSuspendContext {
     private final FlexStackFrame myTopFrame;
 
     private FlexExecutionStack(final FlexStackFrame stackFrame) {
-      super("XXX");
+      super("");
 
       myTopFrame = stackFrame;
     }
