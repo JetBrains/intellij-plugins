@@ -308,8 +308,9 @@ public class FlexStackFrame extends XStackFrame {
               InjectedLanguageUtil.enumerate(psiLanguageInjectionHost, new PsiLanguageInjectionHost.InjectedPsiVisitor() {
                 public void visit(@NotNull final PsiFile injectedPsi, @NotNull final List<PsiLanguageInjectionHost.Shred> places) {
                   final PsiLanguageInjectionHost.Shred shred = places.get(0);
-                  final int injectedStart = shred.host.getTextOffset() + shred.getRangeInsideHost().getStartOffset();
-                  final PsiElement value = injectedPsi.findElementAt(offset - injectedStart + (shred.prefix != null ? shred.prefix.length() : 0));
+                  final int injectedStart = shred.getHost().getTextOffset() + shred.getRangeInsideHost().getStartOffset();
+                  final PsiElement value = injectedPsi.findElementAt(offset - injectedStart + (shred.getPrefix() != null ? shred.getPrefix()
+                    .length() : 0));
                   result.set(value);
                 }
               });

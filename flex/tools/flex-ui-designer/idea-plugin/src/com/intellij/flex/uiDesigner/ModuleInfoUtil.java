@@ -220,7 +220,7 @@ public final class ModuleInfoUtil {
         visited = true;
 
         assert places.size() == 1;
-        assert places.get(0).host == host;
+        assert places.get(0).getHost() == host;
         cssFile = (CssFile)injectedPsi;
       }
     }
