@@ -83,16 +83,15 @@ public class AirPackageParameters implements PersistentStateComponent<AirPackage
   @Transient
   private boolean myPackagingInProgress = false;
 
-  public void setPackagingInProgress(final boolean packagingInProgress) {
-    myPackagingInProgress = packagingInProgress;
-  }
-
-  public boolean isPackagingInProgress() {
-    return myPackagingInProgress;
-  }
+  @Transient
+  private PasswordStore myPasswordStore = new PasswordStore();
 
   public static AirPackageParameters getInstance(final Project project) {
     return ServiceManager.getService(project, AirPackageParameters.class);
+  }
+
+  public static PasswordStore getPasswordStore(final Project project) {
+    return getInstance(project).myPasswordStore;
   }
 
   public AirPackageParameters getState() {
@@ -101,5 +100,13 @@ public class AirPackageParameters implements PersistentStateComponent<AirPackage
 
   public void loadState(final AirPackageParameters state) {
     XmlSerializerUtil.copyBean(state, this);
+  }
+
+  public void setPackagingInProgress(final boolean packagingInProgress) {
+    myPackagingInProgress = packagingInProgress;
+  }
+
+  public boolean isPackagingInProgress() {
+    return myPackagingInProgress;
   }
 }

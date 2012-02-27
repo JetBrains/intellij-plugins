@@ -2,9 +2,11 @@ package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.actions.AirSigningOptions;
 import com.intellij.lang.javascript.flex.actions.FlexBCTree;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -57,7 +59,7 @@ public class AirPackageDialog extends DialogWrapper {
     myProject = project;
     myOwnIpAddress = FlexUtils.getOwnIpAddress();
 
-    setTitle("Package AIR Application");
+    setTitle(FlexBundle.message("package.air.application.title"));
     setOKButtonText("Package");
     setupComboBoxes();
 
@@ -216,16 +218,19 @@ public class AirPackageDialog extends DialogWrapper {
   }
 
   protected void doOKAction() {
-    if (checkDisabledCompilation()) {
-      saveParameters();
-      super.doOKAction();
-    }
+    final Collection<Pair<Module, FlexIdeBuildConfiguration>> selectedBCs = getSelectedBCs();
+    if (!checkDisabledCompilation(myProject, selectedBCs)) return;
+    if (!checkKeystorePasswords(myProject, selectedBCs)) return;
+
+    saveParameters();
+    super.doOKAction();
   }
 
-  private boolean checkDisabledCompilation() {
+  private static boolean checkDisabledCompilation(final Project project,
+                                                  final Collection<Pair<Module, FlexIdeBuildConfiguration>> selectedBCs) {
     final Collection<FlexIdeBuildConfiguration> bcsWithDisabledCompilation = new ArrayList<FlexIdeBuildConfiguration>();
 
-    for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : getSelectedBCs()) {
+    for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : selectedBCs) {
       if (moduleAndBC.second.isSkipCompile()) {
         bcsWithDisabledCompilation.add(moduleAndBC.second);
       }
@@ -237,9 +242,48 @@ public class AirPackageDialog extends DialogWrapper {
         bcs.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>").append(StringUtil.escapeXml(bc.getName())).append("</b><br>");
       }
       final String message = FlexBundle.message("package.bc.with.disabled.compilation", bcsWithDisabledCompilation.size(), bcs.toString());
-      final int answer = Messages.showYesNoDialog(myProject, message, getTitle(), Messages.getWarningIcon());
+      final int answer =
+        Messages.showYesNoDialog(project, message, FlexBundle.message("package.air.application.title"), Messages.getWarningIcon());
 
       return answer == Messages.YES;
+    }
+
+    return true;
+  }
+
+  private static boolean checkKeystorePasswords(final Project project,
+                                                final Collection<Pair<Module, FlexIdeBuildConfiguration>> selectedBCs) {
+    final Collection<AirSigningOptions> signingOptionsWithUnknownPasswords = new ArrayList<AirSigningOptions>();
+
+    for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : selectedBCs) {
+      final FlexIdeBuildConfiguration bc = moduleAndBC.second;
+      if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
+        final AirSigningOptions signingOptions = bc.getAirDesktopPackagingOptions().getSigningOptions();
+        if (!signingOptions.isUseTempCertificate() && !PasswordStore.isPasswordKnown(project, signingOptions)) {
+          signingOptionsWithUnknownPasswords.add(signingOptions);
+        }
+      }
+      else {
+        if (bc.getAndroidPackagingOptions().isEnabled()) {
+          final AirSigningOptions signingOptions = bc.getAndroidPackagingOptions().getSigningOptions();
+          if (!signingOptions.isUseTempCertificate() && !PasswordStore.isPasswordKnown(project, signingOptions)) {
+            signingOptionsWithUnknownPasswords.add(signingOptions);
+          }
+        }
+        if (bc.getIosPackagingOptions().isEnabled()) {
+          final AirSigningOptions signingOptions = bc.getIosPackagingOptions().getSigningOptions();
+          // signingOptions.isUseTempCertificate() is not applicable for iOS
+          if (!PasswordStore.isPasswordKnown(project, signingOptions)) {
+            signingOptionsWithUnknownPasswords.add(signingOptions);
+          }
+        }
+      }
+    }
+
+    if (!signingOptionsWithUnknownPasswords.isEmpty()) {
+      final KeystorePasswordDialog dialog = new KeystorePasswordDialog(project, signingOptionsWithUnknownPasswords);
+      dialog.show();
+      return dialog.isOK();
     }
 
     return true;
