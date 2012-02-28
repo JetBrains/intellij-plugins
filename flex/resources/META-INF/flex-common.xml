@@ -94,8 +94,8 @@
     <treeStructureProvider implementation="com.intellij.lang.javascript.flex.presentation.FlexTreeStructureProvider"/>
     <projectService serviceInterface="com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration"
                     serviceImplementation="com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration"/>
-    <projectService serviceInterface="com.intellij.lang.javascript.flex.actions.airpackage.AirPackageParameters"
-                    serviceImplementation="com.intellij.lang.javascript.flex.actions.airpackage.AirPackageParameters"/>
+    <projectService serviceInterface="com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters"
+                    serviceImplementation="com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters"/>
     <consoleFilterProvider implementation="com.intellij.lang.javascript.flex.FlexStackTraceFilterProvider"/>
     <gotoSymbolContributor implementation="com.intellij.javascript.flex.mxml.FlexXmlBackedSymbolContributor"/>
     <annotator language="XML" implementationClass="com.intellij.javascript.flex.mxml.FlexMxmlColorAnnotator"/>
