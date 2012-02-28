@@ -4,6 +4,7 @@ import com.intellij.ProjectTopics;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
+import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerMessage;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
@@ -138,6 +139,23 @@ public class FlexCompilerDependenciesCache {
 
     if (bc.isTempBCForCompilation() && !bc.getCompilerOptions().getAdditionalConfigFilePath().isEmpty()) {
       bcInfo.addFileDependency(bc.getCompilerOptions().getAdditionalConfigFilePath());
+    }
+
+    final BuildConfigurationNature nature = bc.getNature();
+    if (nature.isApp() && !nature.isWebPlatform()) {
+      if (nature.isDesktopPlatform()) {
+        if (!bc.getAirDesktopPackagingOptions().isUseGeneratedDescriptor()) {
+          bcInfo.addFileDependency(bc.getAirDesktopPackagingOptions().getCustomDescriptorPath());
+        }
+      }
+      else {
+        if (bc.getAndroidPackagingOptions().isEnabled() && !bc.getAndroidPackagingOptions().isUseGeneratedDescriptor()) {
+          bcInfo.addFileDependency(bc.getAndroidPackagingOptions().getCustomDescriptorPath());
+        }
+        if (bc.getIosPackagingOptions().isEnabled() && !bc.getIosPackagingOptions().isUseGeneratedDescriptor()) {
+          bcInfo.addFileDependency(bc.getIosPackagingOptions().getCustomDescriptorPath());
+        }
+      }
     }
   }
 
