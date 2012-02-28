@@ -112,7 +112,6 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
       ));
 
       setAnchor(myTestTypeContentRunSettingsSection.getAnchor());
-
       return panel;
     }
 
@@ -178,7 +177,6 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
         comboBoxModel.setSelectedItem(testTypeListItem);
       }
       myTestTypeContentRunSettingsSection.select(testTypeListItem);
-      setAnchor(myTestTypeContentRunSettingsSection.getAnchor());
     }
 
     private @NotNull TestType getSelectedTestType() {

@@ -1,18 +1,16 @@
 package com.google.jstestdriver.idea.execution.settings.ui;
 
-import java.awt.CardLayout;
+import com.google.common.collect.Maps;
+import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
+import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-
-import com.intellij.ui.PanelWithAnchor;
-import org.jetbrains.annotations.NotNull;
-
-import com.google.common.collect.Maps;
-import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * All methods should be executed on EDT.
@@ -56,6 +54,7 @@ class OneOfRunSettingsSection<T extends IdProvider & RunSettingsSectionProvider>
     } else {
       throw new RuntimeException("No child items were found");
     }
+    myAnchor = UIUtil.mergeComponentsWithAnchor(mySectionByIdMap.values());
     return myCardPanel;
   }
 
@@ -76,13 +75,10 @@ class OneOfRunSettingsSection<T extends IdProvider & RunSettingsSectionProvider>
   }
 
   @Override
-  public JComponent getAnchor() {
-    return getSelectedRunSettingsSection().getAnchor();
-  }
-
-  @Override
   public void setAnchor(@Nullable JComponent anchor) {
     super.setAnchor(anchor);
-    getSelectedRunSettingsSection().setAnchor(anchor);
+    for (RunSettingsSection runSettingsSection : mySectionByIdMap.values()) {
+      runSettingsSection.setAnchor(anchor);
+    }
   }
 }

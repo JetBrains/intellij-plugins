@@ -13,6 +13,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.ArrayUtil;
@@ -98,7 +99,7 @@ class AllInDirectoryRunSettingsSection extends AbstractRunSettingsSection {
 
   private static JComponent createInfoComponent(@NotNull final Project project, JTextField directoryTextField) {
     JPanel panel = new JPanel(new BorderLayout());
-    panel.setBorder(BorderFactory.createTitledBorder("Matched configuration files (*.jstd and jsTestDriver.conf)"));
+    panel.setBorder(IdeBorderFactory.createTitledBorder("Matched configuration files (*.jstd and jsTestDriver.conf)", false));
 
     final JBList fileList = new JBList(ArrayUtil.EMPTY_STRING_ARRAY);
     fileList.setBorder(BorderFactory.createLineBorder(Color.gray));
