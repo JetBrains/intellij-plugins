@@ -48,7 +48,7 @@ public class FlexModuleEditor implements ModuleConfigurationEditor {
 
   @Override
   public String getHelpTopic() {
-    return "projectStructure.modules.sources";
+    return "projectStructure.modules.flex";
   }
 
   @Override

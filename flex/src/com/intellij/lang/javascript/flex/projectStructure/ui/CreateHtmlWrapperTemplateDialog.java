@@ -246,4 +246,8 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
 
     FlexUtils.addFileWithContent(file.getName(), fixedText, folder);
   }
+
+  protected String getHelpId() {
+    return "flex.CreateHtmlWrapperTemplateDialog";
+  }
 }

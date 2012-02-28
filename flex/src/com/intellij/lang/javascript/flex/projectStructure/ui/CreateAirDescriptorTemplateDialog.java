@@ -411,4 +411,8 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
   public boolean isBothAndroidAndIosSelected() {
     return myAndroidCheckBox.isVisible() && myAndroidCheckBox.isSelected() && myIOSCheckBox.isVisible() && myIOSCheckBox.isSelected();
   }
+
+  protected String getHelpId() {
+    return "flex.CreateAirDescriptorTemplateDialog";
+  }
 }
