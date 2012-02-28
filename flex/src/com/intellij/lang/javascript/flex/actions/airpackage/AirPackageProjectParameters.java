@@ -17,17 +17,23 @@ import com.intellij.util.xmlb.annotations.Transient;
 public class AirPackageProjectParameters implements PersistentStateComponent<AirPackageProjectParameters> {
 
   public enum DesktopPackageType {
-    AirInstaller("installer (*.air)"),
-    Airi("unsigned package (*.airi)");  // todo support native installer and captive runtime
+    AirInstaller("installer (*.air)", ".air"),
+    Airi("unsigned package (*.airi)", "*.airi");  // todo support native installer and captive runtime
 
-    DesktopPackageType(final String presentableName) {
+    DesktopPackageType(final String presentableName, final String extension) {
       this.myPresentableName = presentableName;
+      myFileExtension = extension;
     }
 
     private final String myPresentableName;
+    private final String myFileExtension;
 
     public String toString() {
       return myPresentableName;
+    }
+
+    public String getFileExtension() {
+      return myFileExtension;
     }
   }
 
@@ -68,10 +74,6 @@ public class AirPackageProjectParameters implements PersistentStateComponent<Air
 
   public AndroidPackageType androidPackageType = AndroidPackageType.values()[0];
   public boolean apkCaptiveRuntime = true;
-  /**
-   * empty value means {@link com.intellij.lang.javascript.flex.FlexUtils#getOwnIpAddress()}
-   */
-  public String apkDebugConnectHost = "";
   public int apkDebugListenPort = AirPackageUtil.DEBUG_PORT_DEFAULT;
 
   public IOSPackageType iosPackageType = IOSPackageType.values()[0];
@@ -107,17 +109,5 @@ public class AirPackageProjectParameters implements PersistentStateComponent<Air
 
   public boolean isPackagingInProgress() {
     return myPackagingInProgress;
-  }
-
-  public String getDesktopPackageFileExtension() {
-    switch (desktopPackageType) {
-      case AirInstaller:
-        return ".air";
-      case Airi:
-        return ".airi";
-      default:
-        assert false : desktopPackageType.toString();
-        return "";
-    }
   }
 }

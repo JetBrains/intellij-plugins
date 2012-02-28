@@ -1,13 +1,14 @@
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.FlexBCTree;
+import com.intellij.lang.javascript.flex.build.FlexCompiler;
 import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
@@ -41,8 +42,8 @@ public class AirPackageDialog extends DialogWrapper {
   private JCheckBox myApkCaptiveRuntimeCheckBox;
   private JPanel myApkDebugPortPanel;
   private JTextField myApkDebugPortTextField;
-  private JPanel myApkDebugHostPanel;
-  private JTextField myApkDebugHostTextField;
+  //private JPanel myApkDebugHostPanel;
+  //private JTextField myApkDebugHostTextField;
 
   private JComboBox myIOSTypeCombo;
   private JCheckBox myIosFastPackagingCheckBox;
@@ -51,13 +52,13 @@ public class AirPackageDialog extends DialogWrapper {
   private JLabel myIosTypeLabel;
 
   private final Project myProject;
-  private final String myOwnIpAddress;
+  //private final String myOwnIpAddress;
   private PasswordStore myPasswords;
 
   protected AirPackageDialog(final Project project) {
     super(project);
     myProject = project;
-    myOwnIpAddress = FlexUtils.getOwnIpAddress();
+    //myOwnIpAddress = FlexUtils.getOwnIpAddress();
 
     setTitle(FlexBundle.message("package.air.application.title"));
     setOKButtonText("Package");
@@ -89,7 +90,7 @@ public class AirPackageDialog extends DialogWrapper {
     final AndroidPackageType androidPackaging = (AndroidPackageType)myAndroidTypeCombo.getSelectedItem();
     myApkCaptiveRuntimeCheckBox.setVisible(androidPackaging == AndroidPackageType.Release);
     myApkDebugPortPanel.setVisible(androidPackaging == AndroidPackageType.DebugOverUSB);
-    myApkDebugHostPanel.setVisible(androidPackaging == AndroidPackageType.DebugOverNetwork);
+    //myApkDebugHostPanel.setVisible(androidPackaging == AndroidPackageType.DebugOverNetwork);
 
     final IOSPackageType iosPackaging = (IOSPackageType)myIOSTypeCombo.getSelectedItem();
     myIosFastPackagingCheckBox.setVisible(iosPackaging == IOSPackageType.DebugOverNetwork || iosPackaging == IOSPackageType.Test);
@@ -117,7 +118,7 @@ public class AirPackageDialog extends DialogWrapper {
     myAndroidTypeCombo.setEnabled(androidPresent);
     myApkCaptiveRuntimeCheckBox.setEnabled(androidPresent);
     UIUtil.setEnabled(myApkDebugPortPanel, androidPresent, true);
-    UIUtil.setEnabled(myApkDebugHostPanel, androidPresent, true);
+    //UIUtil.setEnabled(myApkDebugHostPanel, androidPresent, true);
 
     myIosTypeLabel.setEnabled(iosPresent);
     myIOSTypeCombo.setEnabled(iosPresent);
@@ -156,7 +157,7 @@ public class AirPackageDialog extends DialogWrapper {
 
     if (modulesAndBCs.isEmpty()) return new ValidationInfo("Please select one or more build configurations");
 
-    if (myApkDebugHostTextField.isVisible() && myApkDebugHostTextField.isEnabled()) {
+    if (myApkDebugPortTextField.isVisible() && myApkDebugPortPanel.isEnabled()) {
       try {
         final String portValue = myApkDebugPortTextField.getText().trim();
         final int port = portValue.isEmpty() ? AirPackageUtil.DEBUG_PORT_DEFAULT : Integer.parseInt(portValue);
@@ -167,7 +168,7 @@ public class AirPackageDialog extends DialogWrapper {
       }
     }
 
-    for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : getSelectedBCs()) {
+    for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCs) {
       final FlexIdeBuildConfiguration bc = moduleAndBC.second;
 
       if (bc.isSkipCompile() && LocalFileSystem.getInstance().findFileByPath(bc.getOutputFilePath(true)) == null) {
@@ -199,18 +200,13 @@ public class AirPackageDialog extends DialogWrapper {
             return new ValidationInfo(FlexBundle.message("can.not.package.bc", bc.getName(), message));
           }
         }
+      }
 
-        if (bc.getAndroidPackagingOptions().isEnabled()) {
-          if (bc.getAndroidPackagingOptions().getPackageFileName().isEmpty()) {
-            return new ValidationInfo(FlexBundle.message("can.not.package.bc", bc.getName(), "Android package file name is not set"));
-          }
-        }
-
-        if (bc.getIosPackagingOptions().isEnabled()) {
-          if (bc.getIosPackagingOptions().getPackageFileName().isEmpty()) {
-            return new ValidationInfo(FlexBundle.message("can.not.package.bc", bc.getName(), "iOS package file name is not set"));
-          }
-        }
+      try {
+        checkPackagingOptions(bc);
+      }
+      catch (ConfigurationException e) {
+        return new ValidationInfo(FlexBundle.message("can.not.package.bc", bc.getName(), e.getMessage()));
       }
     }
 
@@ -224,6 +220,20 @@ public class AirPackageDialog extends DialogWrapper {
 
     saveParameters();
     super.doOKAction();
+  }
+
+  private static void checkPackagingOptions(final FlexIdeBuildConfiguration bc) throws ConfigurationException {
+    if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
+      FlexCompiler.checkPackagingOptions(bc.getAirDesktopPackagingOptions());
+    }
+    else {
+      if (bc.getAndroidPackagingOptions().isEnabled()) {
+        FlexCompiler.checkPackagingOptions(bc.getAndroidPackagingOptions());
+      }
+      if (bc.getIosPackagingOptions().isEnabled()) {
+        FlexCompiler.checkPackagingOptions(bc.getIosPackagingOptions());
+      }
+    }
   }
 
   private static boolean checkDisabledCompilation(final Project project,
@@ -281,7 +291,7 @@ public class AirPackageDialog extends DialogWrapper {
     myAndroidTypeCombo.setSelectedItem(params.androidPackageType);
     myApkCaptiveRuntimeCheckBox.setSelected(params.apkCaptiveRuntime);
     myApkDebugPortTextField.setText(String.valueOf(params.apkDebugListenPort));
-    myApkDebugHostTextField.setText(params.apkDebugConnectHost.isEmpty() ? myOwnIpAddress : params.apkDebugConnectHost);
+    //myApkDebugHostTextField.setText(params.apkDebugConnectHost.isEmpty() ? myOwnIpAddress : params.apkDebugConnectHost);
 
     myIOSTypeCombo.setSelectedItem(params.iosPackageType);
     myIosFastPackagingCheckBox.setSelected(params.iosFastPackaging);
@@ -304,8 +314,8 @@ public class AirPackageDialog extends DialogWrapper {
     }
     catch (NumberFormatException e) {/*ignore*/}
 
-    final String host = myApkDebugHostTextField.getText().trim();
-    params.apkDebugConnectHost = host.equals(myOwnIpAddress) ? "" : host;
+    //final String host = myApkDebugHostTextField.getText().trim();
+    //params.apkDebugConnectHost = host.equals(myOwnIpAddress) ? "" : host;
 
     params.iosPackageType = (IOSPackageType)myIOSTypeCombo.getSelectedItem();
     params.iosFastPackaging = myIosFastPackagingCheckBox.isSelected();

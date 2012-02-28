@@ -588,7 +588,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
       }
     }
 
-    if (packagingOptions instanceof IosPackagingOptions || !signingOptions.isUseTempCertificate()) {
+    final boolean tempCertificate = !(packagingOptions instanceof IosPackagingOptions) && signingOptions.isUseTempCertificate();
+    if (!tempCertificate) {
       final String keystorePath = signingOptions.getKeystorePath();
       if (keystorePath.isEmpty()) {
         throw new ConfigurationException(FlexBundle.message("keystore.not.set", device));

@@ -5,8 +5,10 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.AirSigningOptions;
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
 import com.intellij.lang.javascript.flex.actions.MessageDialogWithHyperlinkListener;
+import com.intellij.lang.javascript.flex.projectStructure.model.AirDesktopPackagingOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.AndroidPackagingOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.IosPackagingOptions;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
@@ -29,8 +31,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.event.HyperlinkEvent;
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +39,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters.AndroidPackageType;
+import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters.DesktopPackageType;
+import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters.IOSPackageType;
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
 
 public class AirPackageUtil {
@@ -291,23 +293,58 @@ public class AirPackageUtil {
                                              ? AndroidPackageType.DebugOverNetwork
                                              : AndroidPackageType.DebugOverUSB
                                            : AndroidPackageType.Release;
+    final ExternalTask task = createAndroidPackageTask(project, bc, packageType, false, runnerParameters.getUsbDebugPort(), passwords);
+    return ExternalTask.runWithProgress(task, FlexBundle.message("creating.android.package"),
+                                        FlexBundle.message("create.android.package.title"));
+  }
+
+  public static ExternalTask createAirDesktopTask(final Project project,
+                                                  final FlexIdeBuildConfiguration bc,
+                                                  final DesktopPackageType packageType,
+                                                  final PasswordStore passwords) {
+    final AirDesktopPackagingOptions packagingOptions = bc.getAirDesktopPackagingOptions();
     final AirSigningOptions signingOptions = packagingOptions.getSigningOptions();
+    final boolean tempCertificate = signingOptions.isUseTempCertificate();
+
     final String keystorePassword = tempCertificate ? TEMP_KEYSTORE_PASSWORD
                                                     : passwords.getKeystorePassword(signingOptions.getKeystorePath());
     final String keyPassword = tempCertificate || signingOptions.getKeyAlias().isEmpty()
                                ? ""
                                : passwords.getKeyPassword(signingOptions.getKeystorePath(), signingOptions.getKeyAlias());
-    final ExternalTask task =
-      createAndroidPackageTask(project, bc, packageType, false, runnerParameters.getUsbDebugPort(), "", keystorePassword, keyPassword);
 
-    return ExternalTask.runWithProgress(task, FlexBundle.message("creating.android.package"),
-                                        FlexBundle.message("create.android.package.title"));
+    return new AdtTask(project, bc.getSdk()) {
+      protected void appendAdtOptions(List<String> command) {
+        switch (packageType) {
+          case AirInstaller:
+            command.add("-package");
+            appendSigningOptions(command, packagingOptions, keystorePassword, keyPassword);
+            break;
+          case Airi:
+            command.add("-prepare");
+            break;
+        }
+
+        appendPaths(command, bc, packagingOptions, packageType.getFileExtension());
+      }
+    };
   }
 
-  static ExternalTask createAndroidPackageTask(final Project project, final FlexIdeBuildConfiguration bc,
-                                               final AndroidPackageType packageType, final boolean captiveRuntime,
-                                               final int debugPort, final String debugHost,
-                                               final String keystorePassword, final String keyPassword) {
+  public static ExternalTask createAndroidPackageTask(final Project project,
+                                                      final FlexIdeBuildConfiguration bc,
+                                                      final AndroidPackageType packageType,
+                                                      final boolean captiveRuntime,
+                                                      final int debugPort,
+                                                      final PasswordStore passwords) {
+    final AndroidPackagingOptions packagingOptions = bc.getAndroidPackagingOptions();
+    final AirSigningOptions signingOptions = packagingOptions.getSigningOptions();
+    final boolean tempCertificate = signingOptions.isUseTempCertificate();
+
+    final String keystorePassword = tempCertificate ? TEMP_KEYSTORE_PASSWORD
+                                                    : passwords.getKeystorePassword(signingOptions.getKeystorePath());
+    final String keyPassword = tempCertificate || signingOptions.getKeyAlias().isEmpty()
+                               ? ""
+                               : passwords.getKeyPassword(signingOptions.getKeystorePath(), signingOptions.getKeyAlias());
+
     return new AdtTask(project, bc.getSdk()) {
       protected void appendAdtOptions(List<String> command) {
         command.add("-package");
@@ -320,7 +357,6 @@ public class AirPackageUtil {
           case DebugOverNetwork:
             command.add("apk-debug");
             command.add("-connect");
-            command.add(debugHost);
             break;
           case DebugOverUSB:
             command.add("apk-debug");
@@ -336,55 +372,54 @@ public class AirPackageUtil {
         }
         */
 
-        appendSigningOptions(command, bc.getAndroidPackagingOptions().getSigningOptions(), keystorePassword, keyPassword);
-        appendPaths(command, project, bc, bc.getAndroidPackagingOptions());
+        appendSigningOptions(command, packagingOptions, keystorePassword, keyPassword);
+        appendPaths(command, bc, packagingOptions, ".apk");
       }
     };
   }
 
-  /*static ExternalTask createMobileAirPackageTask(final Project project, final AndroidPackageParameters parameters) {
-    return new AdtTask(project, parameters.getFlexSdk()) {
+  public static ExternalTask createIOSPackageTask(final Project project,
+                                                  final FlexIdeBuildConfiguration bc,
+                                                  final IOSPackageType packageType,
+                                                  final boolean fastPackaging,
+                                                  final PasswordStore passwords) {
+    final IosPackagingOptions packagingOptions = bc.getIosPackagingOptions();
+    final AirSigningOptions signingOptions = packagingOptions.getSigningOptions();
+
+    // temp certificate not applicable for iOS
+    final String keystorePassword = passwords.getKeystorePassword(signingOptions.getKeystorePath());
+    final String keyPassword = passwords.getKeyPassword(signingOptions.getKeystorePath(), signingOptions.getKeyAlias());
+
+    return new AdtTask(project, bc.getSdk()) {
       protected void appendAdtOptions(List<String> command) {
         command.add("-package");
         command.add("-target");
 
-        switch (parameters.MOBILE_PLATFORM) {
-          case iOS:
-            switch (parameters.IOS_PACKAGE_TYPE) {
-              case DebugOverNetwork:
-                command.add(parameters.FAST_PACKAGING ? "ipa-debug-interpreter" : "ipa-debug");
-                command.add("-connect");
-                command.add(parameters.DEBUG_CONNECT_HOST);
-                break;
-              case Test:
-                command.add(parameters.FAST_PACKAGING ? "ipa-test-interpreter" : "ipa-test");
-                break;
-              case AdHoc:
-                command.add("ipa-ad-hoc");
-                break;
-              case AppStore:
-                command.add("ipa-app-store");
-                break;
-            }
+        switch (packageType) {
+          case DebugOverNetwork:
+            command.add(fastPackaging ? "ipa-debug-interpreter" : "ipa-debug");
+            command.add("-connect");
+            break;
+          case Test:
+            command.add(fastPackaging ? "ipa-test-interpreter" : "ipa-test");
+            break;
+          case AdHoc:
+            command.add("ipa-ad-hoc");
+            break;
+          case AppStore:
+            command.add("ipa-app-store");
             break;
         }
 
-        if (parameters.MOBILE_PLATFORM == MobilePlatform.Android && parameters.AIR_DOWNLOAD_URL.length() > 0) {
-          command.add("-airDownloadURL");
-          command.add(parameters.AIR_DOWNLOAD_URL);
-        }
+        appendSigningOptions(command, packagingOptions, keystorePassword, keyPassword);
 
-        appendSigningOptions(command, parameters);
+        command.add("-provisioning-profile");
+        command.add(signingOptions.getProvisioningProfilePath());
 
-        if (parameters.MOBILE_PLATFORM == MobilePlatform.iOS && parameters.PROVISIONING_PROFILE_PATH.length() > 0) {
-          command.add("-provisioning-profile");
-          command.add(parameters.PROVISIONING_PROFILE_PATH);
-        }
-
-        appendPaths(command, parameters);
+        appendPaths(command, bc, packagingOptions, ".ipa");
       }
     };
-  }*/
+  }
 
   public static boolean installApk(final Project project, final Sdk flexSdk, final String apkPath, final String applicationId) {
     return uninstallAndroidApplication(project, flexSdk, applicationId) &&
@@ -455,15 +490,6 @@ public class AirPackageUtil {
     }
   }
 
-  public static String getLocalHostAddress() {
-    try {
-      return InetAddress.getLocalHost().getHostAddress();
-    }
-    catch (UnknownHostException e) {
-      return "";
-    }
-  }
-
   @Nullable
   public static String getAppIdFromPackage(final String packagePath) {
     ZipFile zipFile = null;
@@ -485,18 +511,6 @@ public class AirPackageUtil {
     }
 
     return null;
-  }
-
-  public static String getAppName(final VirtualFile appDescriptor) {
-    try {
-      final String appName = FlexUtils.findXMLElement(appDescriptor.getInputStream(), "<application><name>");
-      if (StringUtil.isNotEmpty(appName)) {
-        return appName;
-      }
-    }
-    catch (IOException ignore) {/**/}
-
-    return appDescriptor.getNameWithoutExtension();
   }
 
   private static boolean createCertificate(final Project project, final Sdk flexSdk) {

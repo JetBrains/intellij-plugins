@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.actions;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -191,16 +192,24 @@ public abstract class ExternalTask {
           indicator.setIndeterminate(true);
         }
 
-        task.start();
-        while (!task.isFinished()) {
-          if (indicator != null && indicator.isCanceled()) {
-            task.cancel();
-            break;
+        try {
+          AirPackageProjectParameters.getInstance(task.myProject).setPackagingInProgress(true);
+
+          task.start();
+
+          while (!task.isFinished()) {
+            if (indicator != null && indicator.isCanceled()) {
+              task.cancel();
+              break;
+            }
+            try {
+              Thread.sleep(200);
+            }
+            catch (InterruptedException e) {/*ignore*/}
           }
-          try {
-            Thread.sleep(200);
-          }
-          catch (InterruptedException e) {/*ignore*/}
+        }
+        finally {
+          AirPackageProjectParameters.getInstance(task.myProject).setPackagingInProgress(false);
         }
       }
     };

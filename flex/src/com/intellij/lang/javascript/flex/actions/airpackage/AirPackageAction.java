@@ -1,29 +1,46 @@
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
+import com.intellij.ide.actions.ShowFilePathAction;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.actions.AirSigningOptions;
+import com.intellij.lang.javascript.flex.actions.ExternalTask;
 import com.intellij.lang.javascript.flex.build.FlexCompiler;
-import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.IosPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.compiler.*;
+import com.intellij.openapi.compiler.CompileContext;
+import com.intellij.openapi.compiler.CompileScope;
+import com.intellij.openapi.compiler.CompileStatusNotification;
+import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.Consumer;
+import com.intellij.util.Function;
+import com.intellij.util.PathUtil;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
+import javax.swing.event.HyperlinkEvent;
+import java.io.File;
+import java.util.*;
+
+import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters.AndroidPackageType;
+import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters.DesktopPackageType;
+import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters.IOSPackageType;
 
 public class AirPackageAction extends DumbAwareAction {
+  public static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("AIR Packaging");
 
   public void update(final AnActionEvent e) {
     final Project project = e.getProject();
@@ -78,46 +95,111 @@ public class AirPackageAction extends DumbAwareAction {
     compilerManager.make(compileScope, new CompileStatusNotification() {
       public void finished(final boolean aborted, final int errors, final int warnings, final CompileContext compileContext) {
         if (!aborted && errors == 0) {
-          createPackages(modulesAndBCs, compileContext);
+          createPackages(project, modulesAndBCs, dialog.getPasswords());
         }
       }
     });
   }
 
-  private static void createPackages(final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCs,
-                                     final CompileContext compileContext) {
-/*    ProgressManager.getInstance().run(new Task.Backgroundable(compileContext.getProject(), "Creating AIR package") {
-      public void run(@NotNull final ProgressIndicator indicator) {
-        try {
-          AirPackageProjectParameters.getInstance(compileContext.getProject()).setPackagingInProgress(true);
-          Thread.sleep(10000);
-        }
-        catch (InterruptedException e) {
+  private static void createPackages(final Project project,
+                                     final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCs,
+                                     final PasswordStore passwords) {
+    final Collection<Pair<ExternalTask, String>> tasksAndPackagePaths = new ArrayList<Pair<ExternalTask, String>>();
 
+    final AirPackageProjectParameters params = AirPackageProjectParameters.getInstance(project);
+
+    for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCs) {
+      final FlexIdeBuildConfiguration bc = moduleAndBC.second;
+      if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
+        final DesktopPackageType packageType = params.desktopPackageType;
+        final ExternalTask task = AirPackageUtil.createAirDesktopTask(project, bc, packageType, passwords);
+        final String packagePath = bc.getOutputFolder() + "/" +
+                                   bc.getAirDesktopPackagingOptions().getPackageFileName() + packageType.getFileExtension();
+        tasksAndPackagePaths.add(Pair.create(task, packagePath));
+      }
+      else {
+        if (bc.getAndroidPackagingOptions().isEnabled()) {
+          final AndroidPackagingOptions packagingOptions = bc.getAndroidPackagingOptions();
+          final AndroidPackageType packageType = params.androidPackageType;
+          final ExternalTask task = AirPackageUtil.createAndroidPackageTask(project, bc, packageType, params.apkCaptiveRuntime,
+                                                                            params.apkDebugListenPort, passwords);
+          final String packagePath = bc.getOutputFolder() + "/" + packagingOptions.getPackageFileName() + ".apk";
+          tasksAndPackagePaths.add(Pair.create(task, packagePath));
         }
-        finally {
-          AirPackageProjectParameters.getInstance(compileContext.getProject()).setPackagingInProgress(false);
+
+        if (bc.getIosPackagingOptions().isEnabled()) {
+          final IosPackagingOptions packagingOptions = bc.getIosPackagingOptions();
+          final IOSPackageType packageType = params.iosPackageType;
+          final ExternalTask task = AirPackageUtil.createIOSPackageTask(project, bc, packageType, params.iosFastPackaging, passwords);
+          final String packagePath = bc.getOutputFolder() + "/" + packagingOptions.getPackageFileName() + ".ipa";
+          tasksAndPackagePaths.add(Pair.create(task, packagePath));
         }
       }
-    });*/
+    }
 
-    compileContext.addMessage(CompilerMessageCategory.ERROR,
-                              "AIR application packaging is not supported yet. Please wait for the next IntelliJ IDEA EAP.", null, -1, -1);
+    createPackages(project, tasksAndPackagePaths);
   }
 
-  /*
-  private static ExternalTask createAirInstallerTask(final Project project, final AirDesktopPackageParameters parameters) {
-    return new AdtTask(project, parameters.getFlexSdk()) {
-      protected void appendAdtOptions(List<String> command) {
-        command.add(parameters.DO_NOT_SIGN ? "-prepare" : "-package");
-        if (!parameters.DO_NOT_SIGN) {
-          appendSigningOptions(command, parameters);
+  private static void createPackages(final Project project, final Collection<Pair<ExternalTask, String>> tasksAndPackagePaths) {
+    final Iterator<Pair<ExternalTask, String>> iterator = tasksAndPackagePaths.iterator();
+    final Pair<ExternalTask, String> taskAndPackagePath = iterator.next();
+    final String packagePath = taskAndPackagePath.second;
+    final Runnable onSuccessRunnable = createOnSuccessRunnable(project, iterator, packagePath, new ArrayList<String>());
+    ExternalTask
+      .runInBackground(taskAndPackagePath.first, FlexBundle.message("packaging.air.application", PathUtil.getFileName(packagePath)),
+                       onSuccessRunnable, createFailureConsumer(project, packagePath));
+  }
+
+  private static Runnable createOnSuccessRunnable(final Project project,
+                                                  final Iterator<Pair<ExternalTask, String>> iterator,
+                                                  final String createdPackagePath,
+                                                  final Collection<String> allCreatedPackages) {
+    return new Runnable() {
+      public void run() {
+        allCreatedPackages.add(createdPackagePath);
+
+        if (iterator.hasNext()) {
+          final Pair<ExternalTask, String> taskAndPackagePath = iterator.next();
+          final String packagePath = taskAndPackagePath.second;
+          final Runnable onSuccessRunnable = createOnSuccessRunnable(project, iterator, packagePath, allCreatedPackages);
+          ExternalTask
+            .runInBackground(taskAndPackagePath.first, FlexBundle.message("packaging.air.application", PathUtil.getFileName(packagePath)),
+                             onSuccessRunnable, createFailureConsumer(project, packagePath));
         }
-        appendPaths(command, parameters);
+        else {
+          final String hrefs = StringUtil.join(allCreatedPackages, new Function<String, String>() {
+            public String fun(final String packagePath) {
+              return "<a href='" + packagePath + "'>" + PathUtil.getFileName(packagePath) + "</a>";
+            }
+          }, "<br>");
+          final String message = FlexBundle.message("air.application.created", allCreatedPackages.size(), hrefs);
+
+          final NotificationListener listener = new NotificationListener() {
+            public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
+              notification.expire();
+              final String packagePath = event.getDescription();
+              ShowFilePathAction.open(new File(PathUtil.getParentPath(packagePath)), new File(packagePath));
+            }
+          };
+
+          NOTIFICATION_GROUP.createNotification("", message, NotificationType.INFORMATION, listener).notify(project);
+        }
       }
     };
   }
-  */
+
+  private static Consumer<List<String>> createFailureConsumer(final Project project, final String packagePath) {
+    return new Consumer<List<String>>() {
+      public void consume(final List<String> messages) {
+        final String reason = StringUtil.join(messages, "<br>");
+
+        NOTIFICATION_GROUP
+          .createNotification("", FlexBundle.message("failed.to.create.air.package", PathUtil.getFileName(packagePath), reason),
+                              NotificationType.ERROR, null)
+          .notify(project);
+      }
+    };
+  }
 
   @Nullable
   public static PasswordStore getPasswords(final Project project,
@@ -126,8 +208,8 @@ public class AirPackageAction extends DumbAwareAction {
 
     for (AirPackagingOptions packagingOptions : allPackagingOptions) {
       final AirSigningOptions signingOptions = packagingOptions.getSigningOptions();
-      if ((packagingOptions instanceof IosPackagingOptions || !signingOptions.isUseTempCertificate())
-          && !PasswordStore.isPasswordKnown(project, signingOptions)) {
+      final boolean tempCertificate = !(packagingOptions instanceof IosPackagingOptions) && signingOptions.isUseTempCertificate();
+      if (!tempCertificate && !PasswordStore.isPasswordKnown(project, signingOptions)) {
         signingOptionsWithUnknownPasswords.add(signingOptions);
       }
     }
