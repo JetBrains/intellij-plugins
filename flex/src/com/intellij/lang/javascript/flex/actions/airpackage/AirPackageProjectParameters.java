@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
-import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
@@ -10,12 +9,12 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Transient;
 
 @State(
-  name = "AirPackageParameters",
+  name = "AirPackageProjectParameters",
   storages = {
     @Storage(file = "$WORKSPACE_FILE$")
   }
 )
-public class AirPackageParameters implements PersistentStateComponent<AirPackageParameters> {
+public class AirPackageProjectParameters implements PersistentStateComponent<AirPackageProjectParameters> {
 
   public enum DesktopPackageType {
     AirInstaller("installer (*.air)"),
@@ -73,7 +72,7 @@ public class AirPackageParameters implements PersistentStateComponent<AirPackage
    * empty value means {@link com.intellij.lang.javascript.flex.FlexUtils#getOwnIpAddress()}
    */
   public String apkDebugConnectHost = "";
-  public int apkDebugListenPort = MobileAirUtil.DEBUG_PORT_DEFAULT;
+  public int apkDebugListenPort = AirPackageUtil.DEBUG_PORT_DEFAULT;
 
   public IOSPackageType iosPackageType = IOSPackageType.values()[0];
   public boolean iosFastPackaging = true;
@@ -86,19 +85,19 @@ public class AirPackageParameters implements PersistentStateComponent<AirPackage
   @Transient
   private PasswordStore myPasswordStore = new PasswordStore();
 
-  public static AirPackageParameters getInstance(final Project project) {
-    return ServiceManager.getService(project, AirPackageParameters.class);
+  public static AirPackageProjectParameters getInstance(final Project project) {
+    return ServiceManager.getService(project, AirPackageProjectParameters.class);
   }
 
   public static PasswordStore getPasswordStore(final Project project) {
     return getInstance(project).myPasswordStore;
   }
 
-  public AirPackageParameters getState() {
+  public AirPackageProjectParameters getState() {
     return this;
   }
 
-  public void loadState(final AirPackageParameters state) {
+  public void loadState(final AirPackageProjectParameters state) {
     XmlSerializerUtil.copyBean(state, this);
   }
 
@@ -108,5 +107,17 @@ public class AirPackageParameters implements PersistentStateComponent<AirPackage
 
   public boolean isPackagingInProgress() {
     return myPackagingInProgress;
+  }
+
+  public String getDesktopPackageFileExtension() {
+    switch (desktopPackageType) {
+      case AirInstaller:
+        return ".air";
+      case Airi:
+        return ".airi";
+      default:
+        assert false : desktopPackageType.toString();
+        return "";
+    }
   }
 }

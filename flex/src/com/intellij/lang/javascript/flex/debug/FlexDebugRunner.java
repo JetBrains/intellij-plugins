@@ -9,8 +9,7 @@ import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters;
-import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
+import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
@@ -84,31 +83,29 @@ public class FlexDebugRunner extends FlexBaseRunner {
 
   protected RunContentDescriptor launchFlexIdeConfig(final Module module,
                                                      final FlexIdeBuildConfiguration bc,
-                                                     final FlashRunnerParameters params,
+                                                     final FlashRunnerParameters runnerParameters,
                                                      final Executor executor,
                                                      final RunProfileState state,
                                                      final RunContentDescriptor contentToReuse,
                                                      final ExecutionEnvironment env) throws ExecutionException {
     final Project project = module.getProject();
 
-    if (bc.getTargetPlatform() == TargetPlatform.Mobile && params.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice) {
+    if (bc.getTargetPlatform() == TargetPlatform.Mobile && runnerParameters.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice) {
       final Sdk flexSdk = bc.getSdk();
       final String appId = getApplicationId(getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
 
-      final MobileAirPackageParameters packageParameters = createAndroidPackageParams(bc, params, true);
-
-      if (!packAndInstallToAndroidDevice(module, flexSdk, packageParameters, appId, true)) {
+      if (!packAndInstallToAndroidDevice(module, bc, runnerParameters, appId, true)) {
         return null;
       }
 
-      if (params.getDebugTransport() == AirMobileDebugTransport.USB) {
+      if (runnerParameters.getDebugTransport() == AirMobileDebugTransport.USB) {
         launchOnAndroidDevice(project, flexSdk, appId, true);
         waitUntilCountdownStartsOnDevice(project, appId);
-        MobileAirUtil.forwardTcpPort(project, flexSdk, params.getUsbDebugPort());
+        AirPackageUtil.forwardTcpPort(project, flexSdk, runnerParameters.getUsbDebugPort());
       }
     }
 
-    return launchDebugProcess(module, bc, params, executor, contentToReuse, env);
+    return launchDebugProcess(module, bc, runnerParameters, executor, contentToReuse, env);
   }
 
   /**

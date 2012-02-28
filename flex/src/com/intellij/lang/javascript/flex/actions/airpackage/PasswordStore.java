@@ -39,7 +39,7 @@ public class PasswordStore {
   private Map<String, String> myStoredPasswords = new THashMap<String, String>();
 
   public static PasswordStore getInstance(final Project project) {
-    return AirPackageParameters.getPasswordStore(project);
+    return AirPackageProjectParameters.getPasswordStore(project);
   }
 
   public boolean isRememberPasswords() {

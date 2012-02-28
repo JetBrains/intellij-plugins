@@ -1,18 +1,12 @@
 package com.intellij.lang.javascript.flex.actions;
 
-import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.HoverHyperlinkLabel;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -72,10 +66,6 @@ public class SigningOptionsForm {
     myMoreOptionsHyperlinkLabel = new HoverHyperlinkLabel(MORE_OPTIONS);
   }
 
-  public JPanel getMainPanel() {
-    return myMainPanel;
-  }
-
   private void showMoreOptions(final boolean show) {
     myMoreOptionsHyperlinkLabel.setText(show ? LESS_OPTIONS : MORE_OPTIONS);
     updateMoreOptions();
@@ -122,63 +112,6 @@ public class SigningOptionsForm {
     myProvisioningProfileTextWithBrowse.setVisible(applicable);
   }
 
-  public String getProvisioningProfilePath() {
-    return myProvisioningProfileTextWithBrowse.getText().trim();
-  }
-
-  public void setProvisioningProfilePath(final String provisioningProfilePath) {
-    myProvisioningProfileTextWithBrowse.setText(provisioningProfilePath);
-  }
-
-  public String getKeystorePath() {
-    return myKeystoreFileTextWithBrowse.getText().trim();
-  }
-
-  public void setKeystorePath(final String keystorePath) {
-    myKeystoreFileTextWithBrowse.setText(keystorePath);
-  }
-
-  public String getKeystoreType() {
-    return myKeystoreTypeTextField.getText().trim();
-  }
-
-  public void setKeystoreType(final String keystoreType) {
-    myKeystoreTypeTextField.setText(keystoreType);
-  }
-
-  public String getKeyAlias() {
-    return isShowingMoreOptions() ? myKeyAliasTextField.getText().trim() : "";
-  }
-
-  public void setKeyAlias(final String keyAlias) {
-    myKeyAliasTextField.setText(keyAlias);
-    if (StringUtil.isNotEmpty(keyAlias)) {
-      showMoreOptions(true);
-    }
-  }
-
-  public String getProviderClassName() {
-    return isShowingMoreOptions() ? myProviderClassNameTextField.getText().trim() : "";
-  }
-
-  public void setProviderClassName(final String providerClassName) {
-    myProviderClassNameTextField.setText(providerClassName);
-    if (StringUtil.isNotEmpty(providerClassName)) {
-      showMoreOptions(true);
-    }
-  }
-
-  public String getTsaUrl() {
-    return isShowingMoreOptions() ? myTsaUrlTextField.getText().trim() : "";
-  }
-
-  public void setTsaUrl(final String tsaUrl) {
-    myTsaUrlTextField.setText(tsaUrl);
-    if (StringUtil.isNotEmpty(tsaUrl)) {
-      showMoreOptions(true);
-    }
-  }
-
   public void resetFrom(final AirSigningOptions signingOptions) {
     myUseTempCertificateCheckBox.setSelected(signingOptions.isUseTempCertificate());
     myProvisioningProfileTextWithBrowse.setText(FileUtil.toSystemDependentName(signingOptions.getProvisioningProfilePath()));
@@ -217,33 +150,5 @@ public class SigningOptionsForm {
     signingOptions.setKeyAlias(myKeyAliasTextField.getText());
     signingOptions.setProvider(myProviderClassNameTextField.getText());
     signingOptions.setTsa(myTsaUrlTextField.getText());
-  }
-
-  @Nullable
-  public ValidationInfo validate() {
-    if (myProvisioningProfileTextWithBrowse.isVisible()) {
-      final String provisioningProfilePath = getProvisioningProfilePath();
-      if (provisioningProfilePath.length() == 0) {
-        return new ValidationInfo("Provisioning profile file path is empty", myProvisioningProfileTextWithBrowse);
-      }
-
-      final VirtualFile provisioningProfile = LocalFileSystem.getInstance().findFileByPath(provisioningProfilePath);
-      if (provisioningProfile == null || provisioningProfile.isDirectory()) {
-        return new ValidationInfo(FlexBundle.message("file.not.found", provisioningProfilePath),
-                                  myProvisioningProfileTextWithBrowse);
-      }
-    }
-
-    final String keystorePath = getKeystorePath();
-    if (keystorePath.length() == 0) {
-      return new ValidationInfo("Keystore file path is empty", myKeystoreFileTextWithBrowse);
-    }
-
-    final VirtualFile keystore = LocalFileSystem.getInstance().findFileByPath(keystorePath);
-    if (keystore == null || keystore.isDirectory()) {
-      return new ValidationInfo(FlexBundle.message("file.not.found", keystorePath), myKeystoreFileTextWithBrowse);
-    }
-
-    return null;
   }
 }

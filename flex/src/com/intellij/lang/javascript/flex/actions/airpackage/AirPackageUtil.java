@@ -1,9 +1,13 @@
-package com.intellij.lang.javascript.flex.actions.airmobile;
+package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.actions.AirSigningOptions;
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
-import com.intellij.lang.javascript.flex.actions.airinstaller.AdtTask;
+import com.intellij.lang.javascript.flex.actions.MessageDialogWithHyperlinkListener;
+import com.intellij.lang.javascript.flex.projectStructure.model.AndroidPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -28,15 +32,16 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters.IOSPackageType;
-import static com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters.MobilePlatform;
+import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters.AndroidPackageType;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
 
-public class MobileAirUtil {
+public class AirPackageUtil {
 
   public static final int DEBUG_PORT_DEFAULT = 7936;
 
@@ -48,7 +53,7 @@ public class MobileAirUtil {
   private static final Pattern AIR_VERSION_PATTERN = Pattern.compile("[1-9]\\.[0-9]{1,2}(\\.[0-9]{1,6})*");
   private static final String ADB_RELATIVE_PATH = "/lib/android/bin/adb" + (SystemInfo.isWindows ? ".exe" : "");
 
-  private MobileAirUtil() {
+  private AirPackageUtil() {
   }
 
   public static String getTempKeystorePath() {
@@ -141,7 +146,7 @@ public class MobileAirUtil {
     return versionRef.get();
   }
 
-  public static boolean checkAdtVersion(final Module module, final Sdk sdk, final String adtVersion) {
+  public static boolean checkAdtVersion(final Module module, final FlexIdeBuildConfiguration bc, final String adtVersion) {
     if (StringUtil.compareVersionNumbers(adtVersion, "2.6") >= 0) {
       return true; // todo checkAdtVersionForPackaging
     }
@@ -150,7 +155,7 @@ public class MobileAirUtil {
       new MessageDialogWithHyperlinkListener(module.getProject(),
                                              FlexBundle.message("air.mobile.version.problem.title"),
                                              UIUtil.getErrorIcon(),
-                                             FlexBundle.message("run.air.mobile.version.problem", sdk.getName(), module.getName(),
+                                             FlexBundle.message("run.air.mobile.version.problem", bc.getSdk().getName(), bc.getName(),
                                                                 adtVersion));
 
     dialog.addHyperlinkListener(new HyperlinkAdapter() {
@@ -165,14 +170,15 @@ public class MobileAirUtil {
     return false;
   }
 
+  /*
   public static boolean checkAdtVersionForPackaging(final Project project,
                                                     final String adtVersion,
-                                                    final MobileAirPackageParameters parameters) {
+                                                    final AndroidPackageParameters parameters) {
     String errorMessageStart = null;
     String requiredVersion = null;
 
     if (parameters.MOBILE_PLATFORM == MobilePlatform.Android &&
-        (parameters.ANDROID_PACKAGE_TYPE == MobileAirPackageParameters.AndroidPackageType.NoDebugCaptiveRuntime)) {
+        (parameters.ANDROID_PACKAGE_TYPE == AndroidPackageParameters.AndroidPackageType.NoDebugCaptiveRuntime)) {
       if (StringUtil.compareVersionNumbers(adtVersion, "3.0") < 0) {
         requiredVersion = "3.0";
         errorMessageStart = FlexBundle.message("air.android.captive.packaging.requires.3.0");
@@ -207,6 +213,7 @@ public class MobileAirUtil {
 
     return true;
   }
+  */
 
 
   public static boolean checkAirRuntimeOnDevice(final Project project, final Sdk sdk, final String adtVersion) {
@@ -266,40 +273,82 @@ public class MobileAirUtil {
     }, FlexBundle.message("installing.air.runtime", version), FlexBundle.message("install.air.runtime.title"));
   }
 
-  public static boolean packageApk(final Project project, final MobileAirPackageParameters parameters) {
+  public static boolean packageApk(final Project project,
+                                   final FlexIdeBuildConfiguration bc,
+                                   final FlashRunnerParameters runnerParameters,
+                                   final boolean isDebug) {
+    final AndroidPackagingOptions packagingOptions = bc.getAndroidPackagingOptions();
+    final boolean tempCertificate = packagingOptions.getSigningOptions().isUseTempCertificate();
+
+    final PasswordStore passwords = tempCertificate ? null
+                                                    : AirPackageAction.getPasswords(project, Collections.singletonList(packagingOptions));
+    if (!tempCertificate && passwords == null) return false; // user canceled
+
     FileDocumentManager.getInstance().saveAllDocuments();
-    return ExternalTask
-      .runWithProgress(createMobileAirPackageTask(project, parameters), FlexBundle.message("creating.android.package"),
-                       FlexBundle.message("create.android.package.title"));
+
+    final AndroidPackageType packageType = isDebug
+                                           ? runnerParameters.getDebugTransport() == AirMobileDebugTransport.Network
+                                             ? AndroidPackageType.DebugOverNetwork
+                                             : AndroidPackageType.DebugOverUSB
+                                           : AndroidPackageType.Release;
+    final AirSigningOptions signingOptions = packagingOptions.getSigningOptions();
+    final String keystorePassword = tempCertificate ? TEMP_KEYSTORE_PASSWORD
+                                                    : passwords.getKeystorePassword(signingOptions.getKeystorePath());
+    final String keyPassword = tempCertificate || signingOptions.getKeyAlias().isEmpty()
+                               ? ""
+                               : passwords.getKeyPassword(signingOptions.getKeystorePath(), signingOptions.getKeyAlias());
+    final ExternalTask task =
+      createAndroidPackageTask(project, bc, packageType, false, runnerParameters.getUsbDebugPort(), "", keystorePassword, keyPassword);
+
+    return ExternalTask.runWithProgress(task, FlexBundle.message("creating.android.package"),
+                                        FlexBundle.message("create.android.package.title"));
   }
 
-  static ExternalTask createMobileAirPackageTask(final Project project, final MobileAirPackageParameters parameters) {
+  static ExternalTask createAndroidPackageTask(final Project project, final FlexIdeBuildConfiguration bc,
+                                               final AndroidPackageType packageType, final boolean captiveRuntime,
+                                               final int debugPort, final String debugHost,
+                                               final String keystorePassword, final String keyPassword) {
+    return new AdtTask(project, bc.getSdk()) {
+      protected void appendAdtOptions(List<String> command) {
+        command.add("-package");
+        command.add("-target");
+
+        switch (packageType) {
+          case Release:
+            command.add(captiveRuntime ? "apk-captive-runtime" : "apk");
+            break;
+          case DebugOverNetwork:
+            command.add("apk-debug");
+            command.add("-connect");
+            command.add(debugHost);
+            break;
+          case DebugOverUSB:
+            command.add("apk-debug");
+            command.add("-listen");
+            command.add(String.valueOf(debugPort));
+            break;
+        }
+
+        /*
+        if (parameters.AIR_DOWNLOAD_URL.length() > 0) {
+          command.add("-airDownloadURL");
+          command.add(parameters.AIR_DOWNLOAD_URL);
+        }
+        */
+
+        appendSigningOptions(command, bc.getAndroidPackagingOptions().getSigningOptions(), keystorePassword, keyPassword);
+        appendPaths(command, project, bc, bc.getAndroidPackagingOptions());
+      }
+    };
+  }
+
+  /*static ExternalTask createMobileAirPackageTask(final Project project, final AndroidPackageParameters parameters) {
     return new AdtTask(project, parameters.getFlexSdk()) {
       protected void appendAdtOptions(List<String> command) {
         command.add("-package");
         command.add("-target");
 
         switch (parameters.MOBILE_PLATFORM) {
-          case Android:
-            switch (parameters.ANDROID_PACKAGE_TYPE) {
-              case DebugOverNetwork:
-                command.add("apk-debug");
-                command.add("-connect");
-                command.add(parameters.DEBUG_CONNECT_HOST);
-                break;
-              case DebugOverUSB:
-                command.add("apk-debug");
-                command.add("-listen");
-                command.add(String.valueOf(parameters.DEBUG_LISTEN_PORT));
-                break;
-              case NoDebug:
-                command.add("apk");
-                break;
-              case NoDebugCaptiveRuntime:
-                command.add("apk-captive-runtime");
-                break;
-            }
-            break;
           case iOS:
             switch (parameters.IOS_PACKAGE_TYPE) {
               case DebugOverNetwork:
@@ -335,7 +384,7 @@ public class MobileAirUtil {
         appendPaths(command, parameters);
       }
     };
-  }
+  }*/
 
   public static boolean installApk(final Project project, final Sdk flexSdk, final String apkPath, final String applicationId) {
     return uninstallAndroidApplication(project, flexSdk, applicationId) &&

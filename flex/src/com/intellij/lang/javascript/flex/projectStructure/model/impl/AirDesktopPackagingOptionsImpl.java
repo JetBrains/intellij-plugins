@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.actions.AirSigningOptions;
-import com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParametersBase;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableAirDesktopPackagingOptions;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Attribute;
@@ -48,8 +47,7 @@ class AirDesktopPackagingOptionsImpl extends AirPackagingOptionsBase implements 
     public String PACKAGE_FILE_NAME = "";
     @Tag("files-to-package")
     @AbstractCollection(surroundWithTag = false)
-    public List<AirInstallerParametersBase.FilePathAndPathInPackage> FILES_TO_PACKAGE =
-      new ArrayList<AirInstallerParametersBase.FilePathAndPathInPackage>();
+    public List<FilePathAndPathInPackage> FILES_TO_PACKAGE = new ArrayList<FilePathAndPathInPackage>();
     @Property(surroundWithTag = false)
     public AirSigningOptions SIGNING_OPTIONS = new AirSigningOptions();
   }

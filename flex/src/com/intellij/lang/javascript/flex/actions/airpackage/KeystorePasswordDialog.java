@@ -135,21 +135,36 @@ public class KeystorePasswordDialog extends DialogWrapper {
     passwordStore.setRememberPasswords(rememberPasswords);
 
     if (rememberPasswords) {
-      for (Trinity<AirSigningOptions, JPasswordField, JPasswordField> entry : myKeystoresAndPasswordFields) {
-        final AirSigningOptions signingOptions = entry.first;
-        final String keystorePassword = new String(entry.second.getPassword());
-        final JPasswordField keyPasswordField = entry.third;
-
-        passwordStore.storeKeystorePassword(signingOptions.getKeystorePath(), keystorePassword);
-
-        if (keyPasswordField != null) {
-          final String keyPassword = new String(keyPasswordField.getPassword());
-          passwordStore.storeKeyPassword(signingOptions.getKeystorePath(), signingOptions.getKeyAlias(), keyPassword);
-        }
-      }
+      storePasswords(passwordStore);
     }
     else {
       passwordStore.clearPasswords();
     }
+  }
+
+  private void storePasswords(final PasswordStore passwordStore) {
+    for (Trinity<AirSigningOptions, JPasswordField, JPasswordField> entry : myKeystoresAndPasswordFields) {
+      final AirSigningOptions signingOptions = entry.first;
+      final String keystorePassword = new String(entry.second.getPassword());
+      final JPasswordField keyPasswordField = entry.third;
+
+      passwordStore.storeKeystorePassword(signingOptions.getKeystorePath(), keystorePassword);
+
+      if (keyPasswordField != null) {
+        final String keyPassword = new String(keyPasswordField.getPassword());
+        passwordStore.storeKeyPassword(signingOptions.getKeystorePath(), signingOptions.getKeyAlias(), keyPassword);
+      }
+    }
+  }
+
+  public PasswordStore getPasswords() {
+    assert isOK() : "ask for passwords only after OK in dialog";
+
+    final PasswordStore passwordStore = PasswordStore.getInstance(myProject);
+    if (passwordStore.isRememberPasswords()) return passwordStore;
+
+    final PasswordStore temporaryStore = new PasswordStore();
+    storePasswords(temporaryStore);
+    return temporaryStore;
   }
 }

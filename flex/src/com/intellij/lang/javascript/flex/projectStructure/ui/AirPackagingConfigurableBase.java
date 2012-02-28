@@ -131,7 +131,7 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
 
     myAirDescriptorForm.applyTo(model);
     model.setPackageFileName(myPackageFileNameTextField.getText().trim());
-    myFilesToPackageForm.applyTo(model.getFilesToPackage());
+    model.setFilesToPackage(myFilesToPackageForm.getFilesToPackage());
     mySigningOptionsForm.applyTo(model.getSigningOptions());
   }
 

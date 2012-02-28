@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.flex.actions.airmobile;
+package com.intellij.lang.javascript.flex.actions;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -12,10 +12,7 @@ public class MessageDialogWithHyperlinkListener extends DialogWrapper {
   private JLabel myIconPlaceholder;
   private JTextPane myTextPane;
 
-  protected MessageDialogWithHyperlinkListener(final Project project,
-                                               final String title,
-                                               final Icon icon,
-                                               final String message) {
+  public MessageDialogWithHyperlinkListener(final Project project, final String title, final Icon icon, final String message) {
     super(project);
 
     setTitle(title);

@@ -19,10 +19,7 @@ import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexStackTraceFilter;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.actions.AirSigningOptions;
-import com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParametersBase;
-import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters;
-import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
+import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
 import com.intellij.lang.javascript.flex.debug.FlexDebugProcess;
 import com.intellij.lang.javascript.flex.debug.FlexDebugRunner;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConsoleProperties;
@@ -62,12 +59,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.List;
-
-import static com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters.AndroidPackageType;
-import static com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters.FilePathAndPathInPackage;
-import static com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters.IOSPackageType;
-import static com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters.MobilePlatform;
 
 /**
  * User: Maxim.Mossienko
@@ -308,20 +299,22 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   }
 
   public static boolean packAndInstallToAndroidDevice(final Module module,
-                                                      final Sdk flexSdk,
-                                                      final MobileAirPackageParameters packageParameters,
+                                                      final FlexIdeBuildConfiguration bc,
+                                                      final FlashRunnerParameters runnerParameters,
                                                       final String applicationId,
                                                       final boolean isDebug) {
     final Project project = module.getProject();
-    final String apkPath = packageParameters.INSTALLER_FILE_LOCATION + "/" + packageParameters.INSTALLER_FILE_NAME;
+    final Sdk sdk = bc.getSdk();
+    final String apkPath = bc.getOutputFolder() + "/" + bc.getAndroidPackagingOptions().getPackageFileName() + ".apk";
 
     final String adtVersion;
-    return (adtVersion = MobileAirUtil.getAdtVersion(project, flexSdk)) != null
-           && MobileAirUtil.checkAdtVersion(module, flexSdk, adtVersion)
-           && MobileAirUtil.checkAirRuntimeOnDevice(project, flexSdk, adtVersion)
-           && MobileAirUtil.ensureCertificateExists(project, flexSdk)
-           && MobileAirUtil.packageApk(project, packageParameters)
-           && MobileAirUtil.installApk(project, flexSdk, apkPath, applicationId);
+    return (adtVersion = AirPackageUtil.getAdtVersion(project, sdk)) != null
+           && AirPackageUtil.checkAdtVersion(module, bc, adtVersion)
+           && AirPackageUtil.checkAirRuntimeOnDevice(project, sdk, adtVersion)
+           && (!bc.getAndroidPackagingOptions().getSigningOptions().isUseTempCertificate() ||
+               AirPackageUtil.ensureCertificateExists(project, sdk))
+           && AirPackageUtil.packageApk(project, bc, runnerParameters, isDebug)
+           && AirPackageUtil.installApk(project, sdk, apkPath, applicationId);
   }
 
   @Nullable
@@ -336,44 +329,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     return null;
   }
 
-  protected static MobileAirPackageParameters createAndroidPackageParams(final FlexIdeBuildConfiguration bc,
-                                                                         final FlashRunnerParameters params,
-                                                                         final boolean isDebug) {
-    final List<FilePathAndPathInPackage> files = AirInstallerParametersBase.cloneList(bc.getAndroidPackagingOptions().getFilesToPackage());
-    final String outputFilePath = bc.getOutputFilePath(true);
-    files.add(0, new FilePathAndPathInPackage(outputFilePath, PathUtil.getFileName(outputFilePath)));
-
-    final AndroidPackageType packageType = isDebug
-                                           ? params.getDebugTransport() == FlashRunnerParameters.AirMobileDebugTransport.Network
-                                             ? AndroidPackageType.DebugOverNetwork
-                                             : AndroidPackageType.DebugOverUSB
-                                           : AndroidPackageType.NoDebug;
-    final AirSigningOptions signingOptions = bc.getAndroidPackagingOptions().getSigningOptions();
-    final boolean temp = signingOptions.isUseTempCertificate();
-    return new MobileAirPackageParameters(MobilePlatform.Android,
-                                          packageType,
-                                          IOSPackageType.DebugOverNetwork,
-                                          true,
-                                          bc.getSdk(),
-                                          getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()),
-                                          bc.getAndroidPackagingOptions().getPackageFileName() + ".apk",
-                                          PathUtil.getParentPath(outputFilePath),
-                                          files,
-                                          MobileAirUtil.getLocalHostAddress(),
-                                          params.getUsbDebugPort(),
-                                          "",
-                                          "",
-                                          temp ? MobileAirUtil.getTempKeystorePath() : signingOptions.getKeystorePath(),
-                                          temp ? MobileAirUtil.PKCS12_KEYSTORE_TYPE : signingOptions.getKeystoreType(),
-                                          temp ? MobileAirUtil.TEMP_KEYSTORE_PASSWORD : signingOptions.getKeystorePassword(),
-                                          temp ? "" : signingOptions.getKeyAlias(),
-                                          temp ? "" : signingOptions.getKeyPassword(),
-                                          temp ? "" : signingOptions.getProvider(),
-                                          temp ? "" : signingOptions.getTsa());
-  }
-
   public static void launchOnAndroidDevice(final Project project, final Sdk flexSdk, final String applicationId, final boolean isDebug) {
-    if (MobileAirUtil.launchAndroidApplication(project, flexSdk, applicationId)) {
+    if (AirPackageUtil.launchAndroidApplication(project, flexSdk, applicationId)) {
       ToolWindowManager.getInstance(project).notifyByBalloon(isDebug ? ToolWindowId.DEBUG : ToolWindowId.RUN, MessageType.INFO,
                                                              FlexBundle.message("android.application.launched"));
     }

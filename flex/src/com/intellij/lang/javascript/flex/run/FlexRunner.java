@@ -43,31 +43,31 @@ public class FlexRunner extends FlexBaseRunner {
 
   protected RunContentDescriptor launchFlexIdeConfig(final Module module,
                                                      final FlexIdeBuildConfiguration bc,
-                                                     final FlashRunnerParameters params,
+                                                     final FlashRunnerParameters runnerParameters,
                                                      final Executor executor,
                                                      final RunProfileState state,
                                                      final RunContentDescriptor contentToReuse,
                                                      final ExecutionEnvironment environment) throws ExecutionException {
     switch (bc.getTargetPlatform()) {
       case Web:
-        final String urlOrPath = params.isLaunchUrl()
-                                 ? params.getUrl()
+        final String urlOrPath = runnerParameters.isLaunchUrl()
+                                 ? runnerParameters.getUrl()
                                  : bc.isUseHtmlWrapper()
                                    ? PathUtil.getParentPath(bc.getOutputFilePath(true)) + "/" + BCUtils.getWrapperFileName(bc)
                                    : bc.getOutputFilePath(true);
-        launchWithSelectedApplication(urlOrPath, params.getLauncherParameters());
+        launchWithSelectedApplication(urlOrPath, runnerParameters.getLauncherParameters());
         break;
       case Desktop:
         return standardLaunch(module.getProject(), executor, state, contentToReuse, environment);
       case Mobile:
-        switch (params.getMobileRunTarget()) {
+        switch (runnerParameters.getMobileRunTarget()) {
           case Emulator:
             return standardLaunch(module.getProject(), executor, state, contentToReuse, environment);
           case AndroidDevice:
-            final String applicationId = getApplicationId(getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
+            final String appId = getApplicationId(getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
             final Sdk sdk = bc.getSdk();
-            if (packAndInstallToAndroidDevice(module, sdk, createAndroidPackageParams(bc, params, false), applicationId, false)) {
-              launchOnAndroidDevice(module.getProject(), sdk, applicationId, false);
+            if (packAndInstallToAndroidDevice(module, bc, runnerParameters, appId, false)) {
+              launchOnAndroidDevice(module.getProject(), sdk, appId, false);
             }
             return null;
         }

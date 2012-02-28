@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.actions;
 
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParametersBase;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
@@ -10,7 +9,10 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.ui.*;
+import com.intellij.ui.AnActionButton;
+import com.intellij.ui.AnActionButtonRunnable;
+import com.intellij.ui.TableUtil;
+import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.CellEditorComponentWithBrowseButton;
@@ -21,18 +23,18 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
-import static com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParametersBase.FilePathAndPathInPackage;
+import static com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions.FilePathAndPathInPackage;
 
 public class FilesToPackageForm {
   private JPanel myMainPanel;
   private JBTable myFilesToPackageTable;
 
   private final Project myProject;
-  private List<FilePathAndPathInPackage> myFilesToPackage = new LinkedList<FilePathAndPathInPackage>();
+  private List<FilePathAndPathInPackage> myFilesToPackage = new ArrayList<FilePathAndPathInPackage>();
 
   private enum Column {
     Path("Path to file or folder", String.class) {
@@ -41,17 +43,17 @@ public class FilesToPackageForm {
       }
 
       void setValue(final List<FilePathAndPathInPackage> myFilesToPackage, final int row, final Object value) {
-        myFilesToPackage.get(row).FILE_PATH = FileUtil.toSystemIndependentName((String)value);
+        myFilesToPackage.get(row).FILE_PATH = FileUtil.toSystemIndependentName(((String)value).trim());
       }
     },
 
     RelativePath("Its relative path in package", String.class) {
       Object getValue(final FilePathAndPathInPackage row) {
-        return row.PATH_IN_PACKAGE;
+        return FileUtil.toSystemDependentName(row.PATH_IN_PACKAGE);
       }
 
       void setValue(final List<FilePathAndPathInPackage> myFilePathsToPackage, final int row, final Object value) {
-        myFilePathsToPackage.get(row).PATH_IN_PACKAGE = (String)value;
+        myFilePathsToPackage.get(row).PATH_IN_PACKAGE = FileUtil.toSystemIndependentName(((String)value).trim());
       }
     };
 
@@ -81,10 +83,6 @@ public class FilesToPackageForm {
     myProject = project;
     initTable();
     initTableButtons();
-  }
-
-  public JPanel getMainPanel() {
-    return myMainPanel;
   }
 
   private void initTable() {
@@ -178,33 +176,22 @@ public class FilesToPackageForm {
     myMainPanel.add(d.createPanel(), BorderLayout.CENTER);
   }
 
-  public void setPanelTitle(final String title) {
-    myMainPanel.setBorder(IdeBorderFactory.createTitledBorder(title, false, false, true));
-  }
-
-  public void stopEditing() {
-    TableUtil.stopEditing(myFilesToPackageTable);
-  }
-
   public void fireDataChanged() {
     ((AbstractTableModel)myFilesToPackageTable.getModel()).fireTableDataChanged();
   }
 
   public List<FilePathAndPathInPackage> getFilesToPackage() {
+    TableUtil.stopEditing(myFilesToPackageTable);
     return myFilesToPackage;
   }
 
-  public void resetFrom(final List<FilePathAndPathInPackage> filePathAndPathInPackages) {
-    myFilesToPackage = AirInstallerParametersBase.cloneList(filePathAndPathInPackages);
+  public void resetFrom(final List<FilePathAndPathInPackage> filesToPackage) {
+    myFilesToPackage.clear();
+    myFilesToPackage.addAll(filesToPackage);
     fireDataChanged();
   }
 
   public boolean isModified(final List<FilePathAndPathInPackage> filesToPackage) {
     return !FlexUtils.equalLists(filesToPackage, myFilesToPackage);
-  }
-
-  public void applyTo(final List<FilePathAndPathInPackage> filesToPackage) {
-    filesToPackage.clear();
-    filesToPackage.addAll(AirInstallerParametersBase.cloneList(myFilesToPackage));
   }
 }

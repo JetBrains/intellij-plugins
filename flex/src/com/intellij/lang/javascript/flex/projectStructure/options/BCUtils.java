@@ -39,12 +39,12 @@ public class BCUtils {
     return FileUtil.getNameWithoutExtension(bc.getOutputFileName()) + ".html";
   }
 
-  public static String getGeneratedAirDescriptorName(final FlexIdeBuildConfiguration config, final AirPackagingOptions packagingOptions) {
+  public static String getGeneratedAirDescriptorName(final FlexIdeBuildConfiguration bc, final AirPackagingOptions packagingOptions) {
     final String suffix = packagingOptions instanceof AirDesktopPackagingOptions
                           ? "-descriptor.xml"
                           : packagingOptions instanceof AndroidPackagingOptions ? "-android-descriptor.xml"
                                                                                 : "-ios-descriptor.xml";
-    return FileUtil.getNameWithoutExtension(config.getOutputFileName()) + suffix;
+    return FileUtil.getNameWithoutExtension(bc.getOutputFileName()) + suffix;
   }
 
   @Nullable

@@ -6,7 +6,8 @@ import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageParameters;
+import com.intellij.lang.javascript.flex.actions.AirSigningOptions;
+import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
@@ -43,7 +44,9 @@ import java.io.DataInput;
 import java.io.IOException;
 import java.util.*;
 
+import static com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions.FilePathAndPathInPackage;
 import static com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions.ResourceFilesMode;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileRunTarget;
 
 public class FlexCompiler implements SourceProcessingCompiler {
   private static final Logger LOG = Logger.getInstance(FlexCompiler.class.getName());
@@ -345,12 +348,12 @@ public class FlexCompiler implements SourceProcessingCompiler {
     final boolean debug;
 
     if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
-      final AirPackageParameters params = AirPackageParameters.getInstance(project);
+      final AirPackageProjectParameters params = AirPackageProjectParameters.getInstance(project);
       if (bc.getAndroidPackagingOptions().isEnabled()) {
-        debug = params.androidPackageType != AirPackageParameters.AndroidPackageType.Release;
+        debug = params.androidPackageType != AirPackageProjectParameters.AndroidPackageType.Release;
       }
       else {
-        debug = params.iosPackageType == AirPackageParameters.IOSPackageType.DebugOverNetwork;
+        debug = params.iosPackageType == AirPackageProjectParameters.IOSPackageType.DebugOverNetwork;
       }
     }
     else {
@@ -493,17 +496,15 @@ public class FlexCompiler implements SourceProcessingCompiler {
       final RunConfiguration runConfig = CompileStepBeforeRun.getRunConfiguration(scope);
       if (runConfig instanceof FlashRunConfiguration) {
         final FlashRunnerParameters params = ((FlashRunConfiguration)runConfig).getRunnerParameters();
-        if (moduleName.equals(params.getModuleName()) && bc.getName().equals(params.getBCName())) {
-          if (params.getMobileRunTarget() == FlashRunnerParameters.AirMobileRunTarget.AndroidDevice &&
-              bc.getAndroidPackagingOptions().getPackageFileName().isEmpty()) {
-            throw new ConfigurationException(FlexBundle.message("android.package.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
+        if (moduleName.equals(params.getModuleName()) &&
+            bc.getName().equals(params.getBCName()) &&
+            params.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice) {
+          try {
+            checkPackagingOptions(bc.getAndroidPackagingOptions());
           }
-          /*
-          if (bc.getIosPackagingOptions().isEnabled() && bc.getIosPackagingOptions().getPackageFileName().isEmpty()) {
-            throw new ConfigurationException(
-              FlexBundle.message("ios.package.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
+          catch (ConfigurationException e) {
+            throw new ConfigurationException(FlexBundle.message("bc.0.of.module.1.2", bc.getName(), moduleName, e.getMessage()));
           }
-          */
         }
       }
     }
@@ -532,6 +533,70 @@ public class FlexCompiler implements SourceProcessingCompiler {
                                dependencyBC.getName(), bcEntry.getModuleName(), dependencyBC.getOutputType().getPresentableText(),
                                linkageType.getShortText()));
         }
+      }
+    }
+  }
+
+  public static void checkPackagingOptions(final AirPackagingOptions packagingOptions) throws ConfigurationException {
+    final String device = packagingOptions instanceof AndroidPackagingOptions
+                          ? "Android"
+                          : packagingOptions instanceof IosPackagingOptions
+                            ? "iOS"
+                            : "";
+    if (packagingOptions.getPackageFileName().isEmpty()) {
+      throw new ConfigurationException(FlexBundle.message("package.file.name.not.set", device));
+    }
+
+    for (FilePathAndPathInPackage entry : packagingOptions.getFilesToPackage()) {
+      final String fullPath = entry.FILE_PATH;
+      String relPathInPackage = entry.PATH_IN_PACKAGE;
+      if (relPathInPackage.startsWith("/")) {
+        relPathInPackage = relPathInPackage.substring(1);
+      }
+
+      if (fullPath.isEmpty()) {
+        throw new ConfigurationException(FlexBundle.message("packaging.options.empty.file.name", device));
+      }
+
+      final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(fullPath);
+      if (file == null) {
+        throw new ConfigurationException(
+          FlexBundle.message("packaging.options.file.not.found", device, FileUtil.toSystemDependentName(fullPath)));
+      }
+
+      if (relPathInPackage.length() == 0) {
+        throw new ConfigurationException(FlexBundle.message("packaging.options.empty.relative.path", device));
+      }
+
+      if (file.isDirectory() && !fullPath.endsWith("/" + relPathInPackage)) {
+        throw new ConfigurationException(
+          FlexBundle.message("packaging.options.relative.path.not.matches", device, FileUtil.toSystemDependentName(relPathInPackage)));
+      }
+    }
+
+    final AirSigningOptions signingOptions = packagingOptions.getSigningOptions();
+    if (packagingOptions instanceof IosPackagingOptions) {
+      final String provisioningProfilePath = signingOptions.getProvisioningProfilePath();
+      if (provisioningProfilePath.isEmpty()) {
+        throw new ConfigurationException(FlexBundle.message("ios.provisioning.profile.not.set"));
+      }
+
+      final VirtualFile provisioningProfile = LocalFileSystem.getInstance().findFileByPath(provisioningProfilePath);
+      if (provisioningProfile == null || provisioningProfile.isDirectory()) {
+        throw new ConfigurationException(
+          FlexBundle.message("ios.provisioning.profile.not.found", FileUtil.toSystemDependentName(provisioningProfilePath)));
+      }
+    }
+
+    if (packagingOptions instanceof IosPackagingOptions || !signingOptions.isUseTempCertificate()) {
+      final String keystorePath = signingOptions.getKeystorePath();
+      if (keystorePath.isEmpty()) {
+        throw new ConfigurationException(FlexBundle.message("keystore.not.set", device));
+      }
+
+      final VirtualFile keystore = LocalFileSystem.getInstance().findFileByPath(keystorePath);
+      if (keystore == null || keystore.isDirectory()) {
+        throw new ConfigurationException(FlexBundle.message("keystore.not.found", device, FileUtil.toSystemDependentName(keystorePath)));
       }
     }
   }

@@ -9,13 +9,4 @@
     <projectService serviceInterface="com.intellij.openapi.roots.ui.configuration.ProjectSettingsService"
                     serviceImplementation="com.intellij.flexIde.FlexIdeProjectSettingsService"/>
   </extensions>
-
-  <actions>
-    <!--
-    <action id="ShowFlexIdeProjectStructure" class="com.intellij.lang.javascript.flex.projectStructure.ShowFlexIdeProjectStructureAction"
-            text="Flex IDE Project Structure" icon="/com/intellij/lang/javascript/flex/actions/flex_actions_group.png">
-      <add-to-group group-id="MainToolBar" anchor="last"/>
-    </action>
-    -->
-  </actions>
 </idea-plugin>

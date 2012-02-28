@@ -2,9 +2,8 @@ package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.actions.AirSigningOptions;
 import com.intellij.lang.javascript.flex.actions.FlexBCTree;
-import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
+import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
@@ -27,9 +26,9 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackageParameters.AndroidPackageType;
-import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackageParameters.DesktopPackageType;
-import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackageParameters.IOSPackageType;
+import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters.AndroidPackageType;
+import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters.DesktopPackageType;
+import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters.IOSPackageType;
 
 public class AirPackageDialog extends DialogWrapper {
 
@@ -53,6 +52,7 @@ public class AirPackageDialog extends DialogWrapper {
 
   private final Project myProject;
   private final String myOwnIpAddress;
+  private PasswordStore myPasswords;
 
   protected AirPackageDialog(final Project project) {
     super(project);
@@ -159,7 +159,7 @@ public class AirPackageDialog extends DialogWrapper {
     if (myApkDebugHostTextField.isVisible() && myApkDebugHostTextField.isEnabled()) {
       try {
         final String portValue = myApkDebugPortTextField.getText().trim();
-        final int port = portValue.isEmpty() ? MobileAirUtil.DEBUG_PORT_DEFAULT : Integer.parseInt(portValue);
+        final int port = portValue.isEmpty() ? AirPackageUtil.DEBUG_PORT_DEFAULT : Integer.parseInt(portValue);
         if (port <= 0 || port > 65535) return new ValidationInfo("Incorrect port", myApkDebugPortPanel);
       }
       catch (NumberFormatException e) {
@@ -220,7 +220,7 @@ public class AirPackageDialog extends DialogWrapper {
   protected void doOKAction() {
     final Collection<Pair<Module, FlexIdeBuildConfiguration>> selectedBCs = getSelectedBCs();
     if (!checkDisabledCompilation(myProject, selectedBCs)) return;
-    if (!checkKeystorePasswords(myProject, selectedBCs)) return;
+    if (!checkPasswords(selectedBCs)) return;
 
     saveParameters();
     super.doOKAction();
@@ -251,46 +251,30 @@ public class AirPackageDialog extends DialogWrapper {
     return true;
   }
 
-  private static boolean checkKeystorePasswords(final Project project,
-                                                final Collection<Pair<Module, FlexIdeBuildConfiguration>> selectedBCs) {
-    final Collection<AirSigningOptions> signingOptionsWithUnknownPasswords = new ArrayList<AirSigningOptions>();
+  private boolean checkPasswords(final Collection<Pair<Module, FlexIdeBuildConfiguration>> selectedBCs) {
+    final Collection<AirPackagingOptions> allPackagingOptions = new ArrayList<AirPackagingOptions>();
 
     for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : selectedBCs) {
       final FlexIdeBuildConfiguration bc = moduleAndBC.second;
       if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
-        final AirSigningOptions signingOptions = bc.getAirDesktopPackagingOptions().getSigningOptions();
-        if (!signingOptions.isUseTempCertificate() && !PasswordStore.isPasswordKnown(project, signingOptions)) {
-          signingOptionsWithUnknownPasswords.add(signingOptions);
-        }
+        allPackagingOptions.add(bc.getAirDesktopPackagingOptions());
       }
       else {
         if (bc.getAndroidPackagingOptions().isEnabled()) {
-          final AirSigningOptions signingOptions = bc.getAndroidPackagingOptions().getSigningOptions();
-          if (!signingOptions.isUseTempCertificate() && !PasswordStore.isPasswordKnown(project, signingOptions)) {
-            signingOptionsWithUnknownPasswords.add(signingOptions);
-          }
+          allPackagingOptions.add(bc.getAndroidPackagingOptions());
         }
         if (bc.getIosPackagingOptions().isEnabled()) {
-          final AirSigningOptions signingOptions = bc.getIosPackagingOptions().getSigningOptions();
-          // signingOptions.isUseTempCertificate() is not applicable for iOS
-          if (!PasswordStore.isPasswordKnown(project, signingOptions)) {
-            signingOptionsWithUnknownPasswords.add(signingOptions);
-          }
+          allPackagingOptions.add(bc.getIosPackagingOptions());
         }
       }
     }
 
-    if (!signingOptionsWithUnknownPasswords.isEmpty()) {
-      final KeystorePasswordDialog dialog = new KeystorePasswordDialog(project, signingOptionsWithUnknownPasswords);
-      dialog.show();
-      return dialog.isOK();
-    }
-
-    return true;
+    myPasswords = AirPackageAction.getPasswords(myProject, allPackagingOptions);
+    return myPasswords != null;
   }
 
   private void loadParameters() {
-    final AirPackageParameters params = AirPackageParameters.getInstance(myProject);
+    final AirPackageProjectParameters params = AirPackageProjectParameters.getInstance(myProject);
 
     myDesktopTypeCombo.setSelectedItem(params.desktopPackageType);
 
@@ -304,7 +288,7 @@ public class AirPackageDialog extends DialogWrapper {
   }
 
   private void saveParameters() {
-    final AirPackageParameters params = AirPackageParameters.getInstance(myProject);
+    final AirPackageProjectParameters params = AirPackageProjectParameters.getInstance(myProject);
 
     params.desktopPackageType = (DesktopPackageType)myDesktopTypeCombo.getSelectedItem();
 
@@ -313,7 +297,7 @@ public class AirPackageDialog extends DialogWrapper {
 
     try {
       final String portValue = myApkDebugPortTextField.getText().trim();
-      final int port = portValue.isEmpty() ? MobileAirUtil.DEBUG_PORT_DEFAULT : Integer.parseInt(portValue);
+      final int port = portValue.isEmpty() ? AirPackageUtil.DEBUG_PORT_DEFAULT : Integer.parseInt(portValue);
       if (port > 0 && port <= 65535) {
         params.apkDebugListenPort = port;
       }
@@ -331,65 +315,9 @@ public class AirPackageDialog extends DialogWrapper {
     return myTree.getSelectedBCs();
   }
 
-  /*
-  protected ValidationInfo doValidate() {
-    final String airDescriptorPath = ((String)myAirDescriptorComponent.getComponent().getComboBox().getEditor().getItem()).trim();
-    if (airDescriptorPath.length() == 0) {
-      return new ValidationInfo("AIR application descriptor path is empty", myAirDescriptorComponent.getComponent());
-    }
+  public PasswordStore getPasswords() {
+    assert isOK() : "ask for passwords only after OK in dialog";
 
-    final VirtualFile descriptor = LocalFileSystem.getInstance().findFileByPath(airDescriptorPath);
-    if (descriptor == null || descriptor.isDirectory()) {
-      return new ValidationInfo(FlexBundle.message("file.not.found", airDescriptorPath), myAirDescriptorComponent.getComponent());
-    }
-
-    final String installerFileName = myInstallerFileNameComponent.getComponent().getText().trim();
-    if (installerFileName.length() == 0) {
-      return new ValidationInfo("Package file name is empty", myInstallerFileNameComponent.getComponent());
-    }
-
-    final String installerLocation = FileUtil.toSystemDependentName(myInstallerLocationComponent.getComponent().getText().trim());
-    if (installerLocation.length() == 0) {
-      return new ValidationInfo("Package file location is empty", myInstallerLocationComponent.getComponent());
-    }
-
-    final VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(installerLocation);
-    if (dir == null || !dir.isDirectory()) {
-      return new ValidationInfo(FlexBundle.message("folder.does.not.exist", installerLocation),
-                                myInstallerLocationComponent.getComponent());
-    }
-
-    if (myFilesToPackageForm.getFilesToPackage().isEmpty()) {
-      return new ValidationInfo("No files to package", myFilesToPackageForm.getMainPanel());
-    }
-
-    for (AirInstallerParametersBase.FilePathAndPathInPackage path : myFilesToPackageForm.getFilesToPackage()) {
-      final String fullPath = FileUtil.toSystemIndependentName(path.FILE_PATH.trim());
-      String relPathInPackage = FileUtil.toSystemIndependentName(path.PATH_IN_PACKAGE.trim());
-      if (relPathInPackage.startsWith("/")) {
-        relPathInPackage = relPathInPackage.substring(1);
-      }
-
-      if (fullPath.length() == 0) {
-        return new ValidationInfo("Empty file path to package", myFilesToPackageForm.getMainPanel());
-      }
-
-      final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(fullPath);
-      if (file == null) {
-        return new ValidationInfo(FlexBundle.message("file.not.found", fullPath), myFilesToPackageForm.getMainPanel());
-      }
-
-      if (relPathInPackage.length() == 0) {
-        return new ValidationInfo("Empty relative file path in installation package", myFilesToPackageForm.getMainPanel());
-      }
-
-      if (file.isDirectory() && !fullPath.endsWith("/" + relPathInPackage)) {
-        return new ValidationInfo(MessageFormat.format("Relative folder path doesn''t match its full path: {0}", relPathInPackage),
-                                  myFilesToPackageForm.getMainPanel());
-      }
-    }
-
-    return mySigningOptionsForm.validate();
+    return myPasswords;
   }
-  */
 }

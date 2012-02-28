@@ -2,7 +2,6 @@ package com.intellij.lang.javascript.flex.actions;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.xmlb.annotations.Attribute;
-import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NotNull;
 
 public class AirSigningOptions {
@@ -11,9 +10,7 @@ public class AirSigningOptions {
   @NotNull private String myProvisioningProfilePath = "";
   @NotNull private String myKeystorePath = "";
   @NotNull private String myKeystoreType = "PKCS12";
-  @NotNull private String myKeystorePassword = "";
   @NotNull private String myKeyAlias = "";
-  @NotNull private String myKeyPassword = "";
   @NotNull private String myProvider = "";
   @NotNull private String myTsa = "";
 
@@ -24,18 +21,14 @@ public class AirSigningOptions {
                            @NotNull final String provisioningProfilePath,
                            @NotNull final String keystorePath,
                            @NotNull final String keystoreType,
-                           @NotNull final String keystorePassword,
                            @NotNull final String keyAlias,
-                           @NotNull final String keyPassword,
                            @NotNull final String provider,
                            @NotNull final String tsa) {
     myUseTempCertificate = useTempCertificate;
     myProvisioningProfilePath = provisioningProfilePath;
     myKeystorePath = keystorePath;
     myKeystoreType = keystoreType;
-    myKeystorePassword = keystorePassword;
     myKeyAlias = keyAlias;
-    myKeyPassword = keyPassword;
     myProvider = provider;
     myTsa = tsa;
   }
@@ -80,16 +73,6 @@ public class AirSigningOptions {
   }
 
   @NotNull
-  @Transient
-  public String getKeystorePassword() {
-    return myKeystorePassword;
-  }
-
-  public void setKeystorePassword(@NotNull final String keystorePassword) {
-    myKeystorePassword = keystorePassword;
-  }
-
-  @NotNull
   @Attribute("key-alias")
   public String getKeyAlias() {
     return myKeyAlias;
@@ -97,16 +80,6 @@ public class AirSigningOptions {
 
   public void setKeyAlias(@NotNull final String keyAlias) {
     myKeyAlias = keyAlias;
-  }
-
-  @NotNull
-  @Transient
-  public String getKeyPassword() {
-    return myKeyPassword;
-  }
-
-  public void setKeyPassword(@NotNull final String keyPassword) {
-    myKeyPassword = keyPassword;
   }
 
   @NotNull
@@ -130,8 +103,8 @@ public class AirSigningOptions {
   }
 
   public AirSigningOptions getCopy() {
-    return new AirSigningOptions(myUseTempCertificate, myProvisioningProfilePath, myKeystorePath, myKeystoreType, myKeystorePassword,
-                                 myKeyAlias, myKeyPassword, myProvider, myTsa);
+    return new AirSigningOptions(myUseTempCertificate, myProvisioningProfilePath, myKeystorePath, myKeystoreType, myKeyAlias, myProvider,
+                                 myTsa);
   }
 
   public boolean equals(final Object o) {
@@ -142,8 +115,6 @@ public class AirSigningOptions {
 
     if (myUseTempCertificate != that.myUseTempCertificate) return false;
     if (!myKeyAlias.equals(that.myKeyAlias)) return false;
-    if (!myKeyPassword.equals(that.myKeyPassword)) return false;
-    if (!myKeystorePassword.equals(that.myKeystorePassword)) return false;
     if (!myKeystorePath.equals(that.myKeystorePath)) return false;
     if (!myKeystoreType.equals(that.myKeystoreType)) return false;
     if (!myProvider.equals(that.myProvider)) return false;

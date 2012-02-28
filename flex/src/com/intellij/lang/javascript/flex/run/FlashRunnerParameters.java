@@ -4,7 +4,7 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
+import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
@@ -94,7 +94,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
   private int myFullScreenWidth = 0;
   private int myFullScreenHeight = 0;
   private @NotNull AirMobileDebugTransport myDebugTransport = AirMobileDebugTransport.USB;
-  private int myUsbDebugPort = MobileAirUtil.DEBUG_PORT_DEFAULT;
+  private int myUsbDebugPort = AirPackageUtil.DEBUG_PORT_DEFAULT;
   private @NotNull String myEmulatorAdlOptions = "";
 
   public boolean isOverrideMainClass() {
