@@ -17,8 +17,12 @@ public final class ModuleContextImpl implements ModuleContextEx {
     }
   }
 
+  public function get flexLibrarySet():FlexLibrarySet {
+    return _librarySets[0] is FlexLibrarySet ? FlexLibrarySet(_librarySets[0]) : _librarySets[0].parent as FlexLibrarySet;
+  }
+
   public function getClassPool(id:String):ClassPool {
-    return FlexLibrarySet(_librarySets[0] is FlexLibrarySet ? _librarySets[0] : _librarySets[0].parent).getClassPool(id);
+    return flexLibrarySet.getClassPool(id);
   }
 
   private var _librariesResolved:Boolean;
@@ -45,7 +49,7 @@ public final class ModuleContextImpl implements ModuleContextEx {
       documentFactories[id] = null;
     }
 
-    var librarySet:FlexLibrarySet = (_librarySets[0] is FlexLibrarySet ? _librarySets[0] : _librarySets[0].parent) as FlexLibrarySet;
+    var librarySet:FlexLibrarySet = flexLibrarySet;
     if (librarySet != null) {
       var classPool:ClassPool = librarySet.getClassPool(FlexLibrarySet.VIEW_POOL, false);
       if (classPool != null) {

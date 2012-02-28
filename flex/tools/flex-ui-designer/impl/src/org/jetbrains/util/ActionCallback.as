@@ -1,7 +1,11 @@
 package org.jetbrains.util {
 public class ActionCallback {
-  private const done:ExecutionCallback = new ExecutionCallback();
+  private var done:ExecutionCallback;
   private const rejected:ExecutionCallback = new ExecutionCallback();
+
+  public function ActionCallback(countToDone:int = 1) {
+    done = new ExecutionCallback(countToDone);
+  }
 
   public function doWhenDone(listener:Function, ...parameters):ActionCallback {
     done.doWhenExecuted(listener, parameters);
@@ -35,44 +39,4 @@ public class ActionCallback {
     return rejected.isExecuted;
   }
 }
-}
-
-import org.osflash.signals.ISlot;
-import org.osflash.signals.OnceSignal;
-
-final class ExecutionCallback {
-  private var executed:Boolean;
-  private var signal:OnceSignal;
-
-  public function get isExecuted():Boolean {
-    return executed;
-  }
-
-  public function doWhenExecuted(listener:Function, parameters:Array):void {
-    const hasParameters:Boolean = parameters != null && parameters.length > 0;
-    if (executed) {
-      if (hasParameters) {
-        listener.apply(null, parameters);
-      }
-      else {
-        listener();
-      }
-    }
-    else {
-      if (signal == null) {
-        signal = new OnceSignal();
-      }
-      var slot:ISlot = signal.addOnce(listener);
-      if (hasParameters) {
-        slot.params = parameters;
-      }
-    }
-  }
-
-  public function setExecuted():void {
-    executed = true;
-    if (signal != null) {
-      signal.dispatch();
-    }
-  }
 }

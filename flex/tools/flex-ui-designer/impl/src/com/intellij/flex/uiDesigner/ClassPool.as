@@ -15,8 +15,7 @@ import flash.events.SecurityErrorEvent;
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
-import org.osflash.signals.ISignal;
-import org.osflash.signals.Signal;
+import org.jetbrains.util.ActionCallback;
 
 public class ClassPool {
   //noinspection JSFieldCanBeLocal
@@ -25,24 +24,11 @@ public class ClassPool {
   private const classes:Dictionary = new Dictionary();
   
   private var namePrefix:String;
-  private var flexLibrarySet:LibrarySet;
+  private var librarySet:FlexLibrarySet;
 
-  public function ClassPool(namePrefix:String, librarySet:LibrarySet) {
+  public function ClassPool(namePrefix:String, librarySet:FlexLibrarySet) {
     this.namePrefix = namePrefix;
-    this.flexLibrarySet = librarySet;
-  }
-
-  private var _filled:ISignal;
-  public function get filled():ISignal {
-    if (_filled == null) {
-      _filled = new Signal();
-    }
-    return _filled;
-  }
-
-  private var _filling:int;
-  public function get filling():Boolean {
-    return _filling != 0;
+    this.librarySet = librarySet;
   }
 
   public function getCachedClass(id:int):Class {
@@ -54,7 +40,7 @@ public class ClassPool {
   }
 
   public function getClass(id:int):Class {
-    var containerClass:Class = Class(flexLibrarySet.applicationDomain.getDefinition(generateClassName()));
+    var containerClass:Class = Class(librarySet.applicationDomain.getDefinition(generateClassName()));
     classes[id] = containerClass;
     return containerClass;
   }
@@ -70,28 +56,21 @@ public class ClassPool {
     return className;
   }
 
-  public function fill(classCount:int, swfData:ByteArray, librarySet:FlexLibrarySet, libraryManager:LibraryManager):void {
+  public function fill(classCount:int, swfData:ByteArray, libraryManager:LibraryManager):void {
+    doFill(classCount, swfData, libraryManager, new MyLoader(classCount, librarySet.currentFillCallbackRef));
+  }
+
+  private function doFill(classCount:int, swfData:ByteArray, libraryManager:LibraryManager, loader:MyLoader):void {
     if (libraryManager != null && !librarySet.isLoaded) {
-      _filling++;
-      libraryManager.resolve(new <LibrarySet>[librarySet], fillAfterResolveLibraries, classCount, swfData, librarySet);
+      libraryManager.resolve(new <LibrarySet>[librarySet], doFill, classCount, swfData, null, loader);
       return;
     }
 
-    var loader:MyLoader = new MyLoader(classCount);
     loader.contentLoaderInfo.addEventListener(Event.INIT, loadInitHandler);
     loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loadErrorHandler);
     loader.contentLoaderInfo.addEventListener(AsyncErrorEvent.ASYNC_ERROR, loadErrorHandler);
     loader.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR, loadErrorHandler);
-    // libraryManager will be null if called from our fillAfterResolveLibraries (we increment _filling,
-    // because our client must be notified about filling — call filling before librariesResolved must return true)
-    if (libraryManager != null) {
-      _filling++;
-    }
-    loader.loadBytes(swfData, LoaderContentParentAdobePleaseDoNextStep.create(flexLibrarySet.applicationDomain));
-  }
-
-  private function fillAfterResolveLibraries(classCount:int, swfData:ByteArray, librarySet:FlexLibrarySet):void {
-    fill(classCount, swfData, librarySet, null);
+    loader.loadBytes(swfData, LoaderContentParentAdobePleaseDoNextStep.create(librarySet.applicationDomain));
   }
 
   private function loadInitHandler(event:Event):void {
@@ -102,10 +81,8 @@ public class ClassPool {
     loader.unload();
 
     adjustCache(loader.classCount);
-    if (_filling == 0) {
-      if (_filled != null) {
-        _filled.dispatch();
-      }
+    if (loader.callbackRef.value != null) {
+      loader.callbackRef.value.setDone();
     }
   }
 
@@ -132,13 +109,17 @@ public class ClassPool {
 
   private function loadErrorHandler(event:ErrorEvent):void {
     var loaderInfo:LoaderInfo = LoaderInfo(event.currentTarget);
+    var callback:ActionCallback = MyLoader(loaderInfo.loader).callbackRef.value;
     removeLoaderListeners(loaderInfo);
+
+    if (callback != null) {
+      callback.setRejected();
+    }
 
     throw new IOError(event.text);
   }
 
   private function removeLoaderListeners(loaderInfo:LoaderInfo):void {
-    _filling--;
     loaderInfo.removeEventListener(Event.INIT, loadInitHandler);
     loaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, loadErrorHandler);
     loaderInfo.removeEventListener(AsyncErrorEvent.ASYNC_ERROR, loadErrorHandler);
@@ -149,10 +130,15 @@ public class ClassPool {
 
 import flash.display.Loader;
 
-final class MyLoader extends Loader {
-  public var classCount:int;
+import org.jetbrains.util.ActionCallbackRef;
 
-  public function MyLoader(classCount:int) {
+final class MyLoader extends Loader {
+  internal var classCount:int;
+  internal var callbackRef:ActionCallbackRef;
+
+  public function MyLoader(classCount:int, callbackRef:ActionCallbackRef) {
     this.classCount = classCount;
+    this.callbackRef = callbackRef;
+    callbackRef.usageCount++;
   }
 }

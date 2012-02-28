@@ -6,7 +6,6 @@ import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import com.intellij.flex.uiDesigner.css.StyleValueResolverImpl;
 import com.intellij.flex.uiDesigner.flex.MainFocusManagerSB;
-import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
 import com.intellij.flex.uiDesigner.libraries.Library;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
@@ -81,15 +80,6 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     ComponentManager(_document.module.project.getComponent(ComponentManager)).component = null;
   }
 
-  private function checkPool(classPool:ClassPool, documentFactory:DocumentFactory, result:ActionCallback):Boolean {
-    if (classPool.filling) {
-      classPool.filled.addOnce(render2).params = [documentFactory, result];
-      return false;
-    }
-
-    return true;
-  }
-
   public function render(documentFactory:DocumentFactory):ActionCallback {
     var result:ActionCallback = new ActionCallback();
     render2(documentFactory, result);
@@ -99,13 +89,9 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   private function render2(documentFactory:DocumentFactory, result:ActionCallback):void {
     var context:ModuleContextEx = documentFactory.module.context;
     if (!documentFactory.isPureFlash) {
-      if (!checkPool(context.getClassPool(FlexLibrarySet.IMAGE_POOL), documentFactory, result)) {
-        return;
-      }
-      if (!checkPool(context.getClassPool(FlexLibrarySet.SWF_POOL), documentFactory, result)) {
-        return;
-      }
-      if (!checkPool(context.getClassPool(FlexLibrarySet.VIEW_POOL), documentFactory, result)) {
+      var fillCallback:ActionCallback = context.flexLibrarySet.createFillCallback();
+      if (fillCallback != null) {
+        fillCallback.doWhenDone(render2, documentFactory, result);
         return;
       }
     }

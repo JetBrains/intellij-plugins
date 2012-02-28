@@ -117,7 +117,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     const classCount:int = input.readUnsignedShort();
     var data:ByteArray = new ByteArray();
     input.readBytes(data, 0, messageSize - (prevBytesAvailable - input.bytesAvailable));
-    librarySet.getClassPool(id).fill(classCount, data, librarySet, libraryManager);
+    librarySet.getClassPool(id).fill(classCount, data, libraryManager);
   }
 
   private function openProject(input:IDataInput):void {

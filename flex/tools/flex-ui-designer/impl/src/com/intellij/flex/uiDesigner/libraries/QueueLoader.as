@@ -13,7 +13,7 @@ import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 
 import org.osflash.signals.ISignal;
-import org.osflash.signals.MonoSignal;
+import org.osflash.signals.Signal;
 
 /**
  * todo handle load error
@@ -33,7 +33,7 @@ public class QueueLoader {
 
   private const queue:Vector.<LibrarySet> = new Vector.<LibrarySet>();
 
-  public const done:ISignal = new MonoSignal();
+  public const done:ISignal = new Signal();
 
   private const loaderContext:LoaderContext = new LoaderContext();
 

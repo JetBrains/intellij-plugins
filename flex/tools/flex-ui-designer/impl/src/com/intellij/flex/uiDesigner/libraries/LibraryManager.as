@@ -16,7 +16,7 @@ public class LibraryManager {
 
   public function LibraryManager() {
     loader = new QueueLoader();
-    loader.done.addOnce(complete);
+    loader.done.add(complete);
   }
 
   private function complete(librarySet:LibrarySet):void {
@@ -28,7 +28,7 @@ public class LibraryManager {
     for each (var item:LoaderQueue in queueList) {
       if (--item.count == 0) {
         try {
-          item.apply();
+          item.run();
         }
         catch (e:Error) {
           UncaughtErrorManager.instance.handleError(e);
@@ -115,18 +115,12 @@ public class LibraryManager {
 }
 }
 
-final class LoaderQueue {
-  public var count:int;
+import org.jetbrains.util.Runnable;
 
-  private var handler:Function;
-  private var handlerArguments:Array;
+final class LoaderQueue extends Runnable {
+  internal var count:int;
 
   public function LoaderQueue(handler:Function, handlerArguments:Array) {
-    this.handler = handler;
-    this.handlerArguments = handlerArguments;
-  }
-
-  public function apply():void {
-    handler.apply(null, handlerArguments);
+    super(handler, handlerArguments);
   }
 }
