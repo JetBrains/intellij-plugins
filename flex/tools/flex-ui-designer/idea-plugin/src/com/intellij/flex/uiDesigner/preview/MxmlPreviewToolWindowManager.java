@@ -59,7 +59,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     this.fileEditorManager = fileEditorManager;
 
     toolWindowUpdateQueue = new MergingUpdateQueue("mxml.preview", 300, true, null, project);
-    renderingQueue = new MergingUpdateQueue("mxml.rendering", 300, true, null, project, null, true);
+    renderingQueue = new MergingUpdateQueue("mxml.rendering", 300, true, null, project, null);
   }
 
   @Override
@@ -122,6 +122,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
           }
 
           if (currentVisible && !visible) {
+            assert !DumbService.getInstance(project).isDumb();
             render();
           }
 
@@ -170,8 +171,6 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
   }
 
   private void render() {
-    ApplicationManager.getApplication().assertIsDispatchThread();
-
     if (toolWindow == null || !toolWindow.isVisible()) {
       return;
     }
