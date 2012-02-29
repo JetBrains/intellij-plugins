@@ -20,6 +20,8 @@ public class FlashBuilderProject {
   private String mySdkName = FlashBuilderSdkFinder.DEFAULT_SDK_NAME;
   private String myCompilerOutputType = FlexBuildConfiguration.APPLICATION;
   private ProjectType myProjectType;
+  private boolean myAndroidSupported = false;
+  private boolean myIosSupported = false;
   private String myMainAppClassName = "";
   private Collection<String> myApplicationClassNames = new ArrayList<String>();
   private String myTargetPlayerVersion;
@@ -31,14 +33,7 @@ public class FlashBuilderProject {
   private Collection<String> myCssFilesToCompile = new ArrayList<String>();
 
   public enum ProjectType {
-    ActionScript,
-    Flex,
-    AIR,
-    MobileAIR {
-      public String toString() {
-        return "Mobile AIR";
-      }
-    }
+    ActionScript, Flex, AIR, MobileAIR
   }
 
   FlashBuilderProject() {
@@ -117,6 +112,22 @@ public class FlashBuilderProject {
 
   public void setProjectType(final ProjectType projectType) {
     myProjectType = projectType;
+  }
+
+  public boolean isAndroidSupported() {
+    return myAndroidSupported;
+  }
+
+  public void setAndroidSupported(final boolean androidSupported) {
+    myAndroidSupported = androidSupported;
+  }
+
+  public boolean isIosSupported() {
+    return myIosSupported;
+  }
+
+  public void setIosSupported(final boolean iosSupported) {
+    myIosSupported = iosSupported;
   }
 
   public String getMainAppClassName() {

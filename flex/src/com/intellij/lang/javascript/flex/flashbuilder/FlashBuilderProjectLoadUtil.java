@@ -69,9 +69,10 @@ public class FlashBuilderProjectLoadUtil {
   private static final String BUILD_TARGETS_ELEMENT = "buildTargets";
   private static final String BUILD_TARGET_ELEMENT = "buildTarget";
   private static final String BUILD_TARGET_NAME_ATTR = "buildTargetName";
+  private static final String MULTI_PLATFORM_SETTINGS_ELEMENT = "multiPlatformSettings";
+  private static final String ENABLED_ATTR = "enabled";
   private static final String ANDROID_PLATFORM_ATTR_VALUE = "com.adobe.flexide.multiplatform.android.platform";
   private static final String IOS_PLATFORM_ATTR_VALUE = "com.adobe.flexide.multiplatform.ios.platform";
-  private static final String BLACKBERRY_PLATFORM_ATTR_VALUE = "com.adobe.flexide.multiplatform.blackberry.platform";
 
   private FlashBuilderProjectLoadUtil() {
   }
@@ -266,6 +267,8 @@ public class FlashBuilderProjectLoadUtil {
 
     final Attribute useApolloConfigAttr = compilerElement.getAttribute(USE_APOLLO_CONFIG_ATTR);
     if (useApolloConfigAttr != null && useApolloConfigAttr.getValue().equals("true")) {
+      flashBuilderProject.setProjectType(FlashBuilderProject.ProjectType.AIR);
+
       final Element parentElement = compilerElement.getParentElement();
       //noinspection unchecked
       for (final Element buildTargetsElement : (Iterable<Element>)(parentElement
@@ -274,16 +277,16 @@ public class FlashBuilderProjectLoadUtil {
         for (final Element buildTargetElement : (Iterable<Element>)(buildTargetsElement
                                                                       .getChildren(BUILD_TARGET_ELEMENT, parentElement.getNamespace()))) {
           final String buildTarget = buildTargetElement.getAttributeValue(BUILD_TARGET_NAME_ATTR);
-          if (ANDROID_PLATFORM_ATTR_VALUE.equals(buildTarget) ||
-              IOS_PLATFORM_ATTR_VALUE.equals(buildTarget) ||
-              BLACKBERRY_PLATFORM_ATTR_VALUE.equals(buildTarget)) {
+          if (ANDROID_PLATFORM_ATTR_VALUE.equals(buildTarget)) {
+            flashBuilderProject.setAndroidSupported(isPlatformEnabled(buildTargetElement));
             flashBuilderProject.setProjectType(FlashBuilderProject.ProjectType.MobileAIR);
-            return;
+          }
+          if (IOS_PLATFORM_ATTR_VALUE.equals(buildTarget)) {
+            flashBuilderProject.setIosSupported(isPlatformEnabled(buildTargetElement));
+            flashBuilderProject.setProjectType(FlashBuilderProject.ProjectType.MobileAIR);
           }
         }
       }
-
-      flashBuilderProject.setProjectType(FlashBuilderProject.ProjectType.AIR);
     }
     else if (dir.findChild(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES) == null &&
              dir.findChild(FlashBuilderImporter.DOT_FLEX_PROPERTIES) == null) {
@@ -292,6 +295,11 @@ public class FlashBuilderProjectLoadUtil {
     else {
       flashBuilderProject.setProjectType(FlashBuilderProject.ProjectType.Flex);
     }
+  }
+
+  private static boolean isPlatformEnabled(final Element buildTargetElement) {
+    final Element multiPlatformSettings = buildTargetElement.getChild(MULTI_PLATFORM_SETTINGS_ELEMENT, buildTargetElement.getNamespace());
+    return multiPlatformSettings != null && "true".equals(multiPlatformSettings.getAttributeValue(ENABLED_ATTR));
   }
 
   private static void loadOutputType(final FlashBuilderProject project, final VirtualFile dotProjectFile) {

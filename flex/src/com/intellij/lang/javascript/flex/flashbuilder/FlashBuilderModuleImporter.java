@@ -94,14 +94,21 @@ public class FlashBuilderModuleImporter {
     if (outputType == OutputType.Application) {
       final String mainClass = fbProject.getMainAppClassName();
       mainBC.setMainClass(mainClass);
-      if (targetPlatform == TargetPlatform.Desktop || targetPlatform == TargetPlatform.Mobile) {
-        setupAirDescriptor(mainBC, rootModel);
-      }
+
       mainBC.setOutputFileName(StringUtil.getShortName(mainClass) + ".swf");
 
       if (targetPlatform == TargetPlatform.Web && fbProject.isUseHtmlWrapper()) {
         mainBC.setUseHtmlWrapper(true);
         mainBC.setWrapperTemplatePath(fbProject.getProjectRootPath() + "/" + CreateHtmlWrapperTemplateDialog.HTML_TEMPLATE_FOLDER_NAME);
+      }
+
+      if (targetPlatform == TargetPlatform.Desktop || targetPlatform == TargetPlatform.Mobile) {
+        setupAirDescriptor(mainBC, rootModel);
+      }
+
+      if (targetPlatform == TargetPlatform.Mobile) {
+        mainBC.getAndroidPackagingOptions().setEnabled(fbProject.isAndroidSupported());
+        mainBC.getIosPackagingOptions().setEnabled(fbProject.isIosSupported());
       }
     }
     else {
@@ -181,10 +188,10 @@ public class FlashBuilderModuleImporter {
       final String shortName = StringUtil.getShortName(mainClass);
       bc.setName(shortName);
       bc.setMainClass(mainClass);
+      bc.setOutputFileName(shortName + ".swf");
       if (bc.getTargetPlatform() == TargetPlatform.Desktop || bc.getTargetPlatform() == TargetPlatform.Mobile) {
         setupAirDescriptor(bc, rootModel);
       }
-      bc.setOutputFileName(shortName + ".swf");
       FlexModuleBuilder.createRunConfiguration(rootModel.getModule(), bc.getName());
     }
 
