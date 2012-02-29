@@ -111,7 +111,7 @@ public class InjectedASTest extends BaseTestCase {
 
   public function BindingTargetIsStaticInstanceInDynamicParent():void {
     validateUI();
-    assertThat(app, {depth: 20});// IDEA-74060
+    assertThat(app, {depth: 20}); // IDEA-74060
     assertThat(app, [{id: "specifiedId3", text: "View Source"}, l("testText"), l(""), l("")]);
 
     setState(B);
