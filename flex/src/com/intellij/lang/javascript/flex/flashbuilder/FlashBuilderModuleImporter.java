@@ -94,6 +94,9 @@ public class FlashBuilderModuleImporter {
     if (outputType == OutputType.Application) {
       final String mainClass = fbProject.getMainAppClassName();
       mainBC.setMainClass(mainClass);
+      if (targetPlatform == TargetPlatform.Desktop || targetPlatform == TargetPlatform.Mobile) {
+        setupAirDescriptor(mainBC, rootModel);
+      }
       mainBC.setOutputFileName(StringUtil.getShortName(mainClass) + ".swf");
 
       if (targetPlatform == TargetPlatform.Web && fbProject.isUseHtmlWrapper()) {
@@ -142,6 +145,34 @@ public class FlashBuilderModuleImporter {
     setupOtherAppsAndModules(rootModel, mainBC, fbProject);
   }
 
+  private static void setupAirDescriptor(final ModifiableFlexIdeBuildConfiguration bc, final ModuleRootModel rootModel) {
+    if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
+      bc.getAirDesktopPackagingOptions().setUseGeneratedDescriptor(true);
+    }
+    else {
+      bc.getAndroidPackagingOptions().setUseGeneratedDescriptor(true);
+      bc.getIosPackagingOptions().setUseGeneratedDescriptor(true);
+    }
+
+    final String descriptorRelPath = bc.getMainClass().replace('.', '/') + "-app.xml";
+
+    for (VirtualFile srcRoot : rootModel.getSourceRoots()) {
+      if (srcRoot.findFileByRelativePath(descriptorRelPath) != null) {
+        if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
+          bc.getAirDesktopPackagingOptions().setUseGeneratedDescriptor(false);
+          bc.getAirDesktopPackagingOptions().setCustomDescriptorPath(srcRoot.getPath() + "/" + descriptorRelPath);
+        }
+        else {
+          bc.getAndroidPackagingOptions().setUseGeneratedDescriptor(false);
+          bc.getAndroidPackagingOptions().setCustomDescriptorPath(srcRoot.getPath() + "/" + descriptorRelPath);
+          bc.getIosPackagingOptions().setUseGeneratedDescriptor(false);
+          bc.getIosPackagingOptions().setCustomDescriptorPath(srcRoot.getPath() + "/" + descriptorRelPath);
+        }
+        break;
+      }
+    }
+  }
+
   private void setupOtherAppsAndModules(final ModuleRootModel rootModel,
                                         final ModifiableFlexIdeBuildConfiguration mainBC,
                                         final FlashBuilderProject fbProject) {
@@ -150,6 +181,9 @@ public class FlashBuilderModuleImporter {
       final String shortName = StringUtil.getShortName(mainClass);
       bc.setName(shortName);
       bc.setMainClass(mainClass);
+      if (bc.getTargetPlatform() == TargetPlatform.Desktop || bc.getTargetPlatform() == TargetPlatform.Mobile) {
+        setupAirDescriptor(bc, rootModel);
+      }
       bc.setOutputFileName(shortName + ".swf");
       FlexModuleBuilder.createRunConfiguration(rootModel.getModule(), bc.getName());
     }
