@@ -6,6 +6,10 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 
 public class CreateSetterIntention extends CreateAccessorIntentionBase {
 
+  protected String getDescription() {
+    return "Create Setter";
+  }
+
   protected String getMessageKey() {
     return "intention.create.setter";
   }

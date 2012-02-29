@@ -28,8 +28,10 @@ import java.util.Collection;
 public abstract class CreateAccessorIntentionBase extends PsiElementBaseIntentionAction {
 
   public CreateAccessorIntentionBase() {
-    setText(FlexBundle.message(getMessageKey()));
+    setText(getDescription());
   }
+
+  protected abstract String getDescription();
 
   protected abstract String getMessageKey();
 
