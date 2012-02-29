@@ -12,7 +12,7 @@ public class OutputLogger extends LoggerAdapter implements Logger {
 
   //keep in sync with FlexCompilerHandler.errorPattern !!!
   private static final Pattern ERROR_PATTERN =
-    Pattern.compile("(.*?)(\\(\\D.*\\))?(?:\\((-?\\d+)\\))?: ?(?:col: (-?\\d+))? (Warning|Error): (.*)");
+    Pattern.compile("(.*?)(\\(\\D.*\\))?(?:\\((-?\\d+)\\))?: ?(?:col: (-?\\d+):?)? (Warning|Error): (.*)");
 
   /*
   // see SDKFilesResolver
