@@ -23,6 +23,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
@@ -310,7 +311,8 @@ public class FlashBuilderModuleImporter {
       }
     }
 
-    return FileUtil.isAbsolute(path) ? path : project.getProjectRootPath() + (slashIndex == 0 ? "" : "/") + path;
+    final boolean absolute = FileUtil.isAbsolute(path) && (SystemInfo.isWindows || new File(path).exists());
+    return absolute ? path : project.getProjectRootPath() + (slashIndex == 0 ? "" : "/") + path;
   }
 
   private void initPathVariables() {
