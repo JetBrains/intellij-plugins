@@ -6,7 +6,7 @@
   Please find more details on <a href="http://confluence.jetbrains.net/display/IDEADEV/Profiling+Flash+and+Flex+Applications">plugin wiki page</a>.]]></description>
   <version>0.2.7</version>
   <vendor>JetBrains</vendor>
-  <idea-version since-build="114.1"/>
+  <idea-version since-build="114.243"/>
   <depends>com.intellij.modules.ultimate</depends>
   <depends>com.intellij.flex</depends>
 
