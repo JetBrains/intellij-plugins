@@ -38,7 +38,7 @@ public class ManifestChangeWatcher implements EditorNotifications.Provider<Manif
     // Subscribe to VFS-change events.
     myMessageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
       @Override
-      public void after(List<? extends VFileEvent> events) {
+      public void after(@NotNull List<? extends VFileEvent> events) {
         final ProjectSettings settings = ProjectSettings.getInstance(myProject);
         if (settings.getManifestSynchronizationType() == ProjectSettings.ManifestSynchronizationType.DoNotSynchronize) {
           // don't synchronize
@@ -78,7 +78,7 @@ public class ManifestChangeWatcher implements EditorNotifications.Provider<Manif
       }
 
       @Override
-      public void before(List<? extends VFileEvent> events) {
+      public void before(@NotNull List<? extends VFileEvent> events) {
       }
     });
   }
