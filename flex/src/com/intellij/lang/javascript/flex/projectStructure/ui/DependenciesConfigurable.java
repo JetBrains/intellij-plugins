@@ -59,7 +59,10 @@ import com.intellij.ui.*;
 import com.intellij.ui.components.editors.JBComboBoxTableCellEditorComponent;
 import com.intellij.ui.navigation.History;
 import com.intellij.ui.navigation.Place;
-import com.intellij.util.*;
+import com.intellij.util.EventDispatcher;
+import com.intellij.util.Function;
+import com.intellij.util.IconUtil;
+import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FilteringIterator;
 import com.intellij.util.containers.HashMap;
@@ -1225,7 +1228,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     final String targetPlayer = (String)myTargetPlayerCombo.getSelectedItem();
     if (myTargetPlayerCombo.isVisible() && targetPlayer != null && !myDependencies.getTargetPlayer().equals(targetPlayer)) return true;
     if (myComponentSetCombo.isVisible() && myDependencies.getComponentSet() != myComponentSetCombo.getSelectedItem()) return true;
-    if (myDependencies.getFrameworkLinkage() != myFrameworkLinkageCombo.getSelectedItem()) return true;
+    if (myFrameworkLinkageCombo.isVisible() && myDependencies.getFrameworkLinkage() != myFrameworkLinkageCombo.getSelectedItem()) {
+      return true;
+    }
 
     List<MyTableItem> items = myTable.getItems();
     items = ContainerUtil.filter(items, new Condition<MyTableItem>() {
@@ -1247,11 +1252,15 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
   public void apply() throws ConfigurationException {
     final Object targetPlayer = myTargetPlayerCombo.getSelectedItem();
-    if (targetPlayer != null) {
+    if (myTargetPlayerCombo.isVisible() && targetPlayer != null) {
       myDependencies.setTargetPlayer((String)targetPlayer);
     }
-    myDependencies.setComponentSet((ComponentSet)myComponentSetCombo.getSelectedItem());
-    myDependencies.setFrameworkLinkage((LinkageType)myFrameworkLinkageCombo.getSelectedItem());
+    if (myComponentSetCombo.isVisible()) {
+      myDependencies.setComponentSet((ComponentSet)myComponentSetCombo.getSelectedItem());
+    }
+    if (myFrameworkLinkageCombo.isVisible()) {
+      myDependencies.setFrameworkLinkage((LinkageType)myFrameworkLinkageCombo.getSelectedItem());
+    }
 
     List<MyTableItem> items = myTable.getItems();
     List<ModifiableDependencyEntry> newEntries = new ArrayList<ModifiableDependencyEntry>();
