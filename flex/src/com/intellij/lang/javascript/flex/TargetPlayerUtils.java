@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.flex;
 
-import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -302,15 +301,6 @@ public class TargetPlayerUtils {
       newSdkName = suggestedName + " (" + (++i) + ")";
     }
     return newSdkName;
-  }
-
-  public static void updateTargetPlayerIfMajorOrMinorVersionDiffers(final FlexBuildConfiguration config, final Sdk sdk) {
-    if (sdk != null && sdk.getSdkType() instanceof IFlexSdkType) {
-      final String version = getTargetPlayerVersion(sdk);
-      if (!majorAndMinorVersionEqual(config.TARGET_PLAYER_VERSION, version)) {
-        config.TARGET_PLAYER_VERSION = version;
-      }
-    }
   }
 
   public static boolean isEqual(String version1, String version2) {
