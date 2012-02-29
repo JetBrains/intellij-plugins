@@ -167,7 +167,7 @@ public final class ModuleInfoUtil {
             cssFile = (CssFile)psiFile;
           }
           else {
-            throw new InvalidPropertyException(valueElement, "error.embed.source.is.not.css.file", psiFile.getName());
+            throw new InvalidPropertyException(valueElement, "embed.source.is.not.css.file", psiFile.getName());
           }
 
           final VirtualFile virtualFile = cssFile.getVirtualFile();

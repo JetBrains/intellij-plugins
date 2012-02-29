@@ -514,7 +514,7 @@ class PropertyProcessor implements ValueWriter {
       }
 
       if (jsClass == null) {
-        throw new InvalidPropertyException(exceptionElement, "error.unresolved.class", trimmed);
+        throw new InvalidPropertyException(exceptionElement, "unresolved.class", trimmed);
       }
     }
 
@@ -827,7 +827,7 @@ class PropertyProcessor implements ValueWriter {
       XmlTag tag = ((XmlTagValueProvider)valueProvider).getTag();
       XmlTag[] subTags = tag.getSubTags();
       if (subTags.length > 0) {
-        throw new InvalidPropertyException(tag, "error.inline.component.are.not.supported");
+        throw new InvalidPropertyException(tag, "inline.component.are.not.supported");
       }
     }
 
@@ -845,7 +845,7 @@ class PropertyProcessor implements ValueWriter {
 
     final JSClass jsClass = valueProvider.getJsClass();
     if (jsClass == null) {
-      throw new InvalidPropertyException(valueProvider.getElement(), "error.unresolved.class", valueProvider.getTrimmed());
+      throw new InvalidPropertyException(valueProvider.getElement(), "unresolved.class", valueProvider.getTrimmed());
     }
 
     final Trinity<Integer, String, Condition<AnnotationBackedDescriptor>> effectiveClassInfo;

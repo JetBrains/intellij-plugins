@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 class ExpressionBinding extends Binding {
@@ -188,8 +187,29 @@ class ExpressionBinding extends Binding {
     }
 
     if (element instanceof JSClass) {
-      checkQualifier(expression);
-      writer.classReference(((JSClass)element).getQualifiedName());
+      // {VerticalAlign}
+      if (qualifiers == null) {
+        writer.classReference(((JSClass)element).getQualifiedName());
+      }
+      else {
+        // check for {VerticalAlign.MIDDLE}
+        PsiElement possibleVariable = resolveReferenceExpression(expression, true);
+        if (possibleVariable instanceof JSVariable) {
+          JSVariable variable = (JSVariable)possibleVariable;
+          if (variable.isConst()) {
+            JSExpression initializer = ((JSVariable)possibleVariable).getInitializer();
+            if (initializer != null) {
+              writeExpression(initializer, out, writer, valueReferenceResolver);
+              return;
+            }
+            else {
+              throw new InvalidPropertyException(expression, "const.without.initializer", expression.getText());
+            }
+          }
+        }
+
+        throw new UnsupportedOperationException(expression.getText());
+      }
     }
     else if (element instanceof JSVariable) {
       checkQualifier(expression);

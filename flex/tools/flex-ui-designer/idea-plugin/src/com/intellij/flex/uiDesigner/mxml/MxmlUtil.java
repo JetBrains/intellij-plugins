@@ -108,7 +108,7 @@ public final class MxmlUtil {
     }
 
     // well, it must be at least mx.core.UIComponent or spark.primitives.supportClasses.GraphicElement
-    throw new InvalidPropertyException(element, "error.unresolved.class", aClass.getQualifiedName());
+    throw new InvalidPropertyException(element, "unresolved.class", aClass.getQualifiedName());
   }
 
   private static class CustomComponentPropertyFilter implements Condition<AnnotationBackedDescriptor> {

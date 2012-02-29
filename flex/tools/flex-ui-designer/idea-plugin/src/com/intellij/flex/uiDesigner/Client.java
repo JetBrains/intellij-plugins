@@ -278,7 +278,7 @@ public class Client implements Disposable {
       DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
     }
 
-    final ActionCallback callback = new ActionCallback();
+    final ActionCallback callback = new ActionCallback("renderDocument");
     beginMessage(ClientMethod.renderDocument, callback, result, new Runnable() {
       @Override
       public void run() {
@@ -393,7 +393,7 @@ public class Client implements Disposable {
 
   public AsyncResult<List<DocumentInfo>> renderDocumentAndDependents(final List<DocumentInfo> infos) {
     final AsyncResult<List<DocumentInfo>> result = new AsyncResult<List<DocumentInfo>>();
-    final ActionCallback callback = new ActionCallback();
+    final ActionCallback callback = new ActionCallback("renderDocumentAndDependents");
     boolean hasError = true;
     try {
       beginMessage(ClientMethod.renderDocumentsAndDependents, callback, result, new Runnable() {
@@ -532,7 +532,7 @@ public class Client implements Disposable {
   //}
 
   public void getDocumentImage(DocumentInfo documentInfo, final AsyncResult<BufferedImage> result) {
-    final ActionCallback callback = new ActionCallback();
+    final ActionCallback callback = new ActionCallback("getDocumentImage");
     boolean hasError = true;
     try {
       beginMessage(ClientMethod.getDocumentImage, callback, result, new Runnable() {

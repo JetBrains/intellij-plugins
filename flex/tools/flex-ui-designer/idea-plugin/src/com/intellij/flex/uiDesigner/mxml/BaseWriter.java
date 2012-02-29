@@ -267,7 +267,7 @@ final class BaseWriter {
             hexCodeForColorName = "#AECAD9";
           }
           else {
-            throw new InvalidPropertyException(element, "error.invalid.color.name", colorName);
+            throw new InvalidPropertyException(element, "invalid.color.name", colorName);
           }
         }
       }

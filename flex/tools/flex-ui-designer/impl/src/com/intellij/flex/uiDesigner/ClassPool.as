@@ -16,6 +16,7 @@ import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
 import org.jetbrains.util.ActionCallback;
+import org.jetbrains.util.ActionCallbackRef;
 
 public class ClassPool {
   //noinspection JSFieldCanBeLocal
@@ -57,15 +58,16 @@ public class ClassPool {
   }
 
   public function fill(classCount:int, swfData:ByteArray, libraryManager:LibraryManager):void {
-    doFill(classCount, swfData, libraryManager, new MyLoader(classCount, librarySet.currentFillCallbackRef));
+    var loader:MyLoader = new MyLoader(classCount, librarySet.currentFillCallbackRef);
+    if (librarySet.isLoaded) {
+      doFill(swfData, loader);
+    }
+    else {
+      libraryManager.resolve(new <LibrarySet>[librarySet], doFill, swfData, loader);
+    }
   }
 
-  private function doFill(classCount:int, swfData:ByteArray, libraryManager:LibraryManager, loader:MyLoader):void {
-    if (libraryManager != null && !librarySet.isLoaded) {
-      libraryManager.resolve(new <LibrarySet>[librarySet], doFill, classCount, swfData, null, loader);
-      return;
-    }
-
+  private function doFill(swfData:ByteArray, loader:MyLoader):void {
     loader.contentLoaderInfo.addEventListener(Event.INIT, loadInitHandler);
     loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loadErrorHandler);
     loader.contentLoaderInfo.addEventListener(AsyncErrorEvent.ASYNC_ERROR, loadErrorHandler);
@@ -81,8 +83,10 @@ public class ClassPool {
     loader.unload();
 
     adjustCache(loader.classCount);
-    if (loader.callbackRef.value != null) {
-      loader.callbackRef.value.setDone();
+    var callbackRef:ActionCallbackRef = loader.callbackRef;
+    callbackRef.usageCount--;
+    if (callbackRef.value != null) {
+      callbackRef.value.setDone();
     }
   }
 

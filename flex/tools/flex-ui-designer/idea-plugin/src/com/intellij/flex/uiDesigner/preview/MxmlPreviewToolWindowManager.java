@@ -15,7 +15,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.LoadingDecorator;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.util.Disposer;
@@ -50,8 +49,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
   private ToolWindow toolWindow;
   private MxmlPreviewToolWindowForm toolWindowForm;
 
-  private boolean toolWindowReady = false;
-  private boolean toolWindowDisposed = false;
+  private boolean toolWindowVisible;
 
   public MxmlPreviewToolWindowManager(final Project project, final FileEditorManager fileEditorManager) {
     this.project = project;
@@ -62,14 +60,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
   @Override
   public void projectOpened() {
-    StartupManager.getInstance(project).registerPostStartupActivity(new Runnable() {
-      public void run() {
-        toolWindowReady = true;
-      }
-    });
-
-    final MessageBusConnection connection = project.getMessageBus().connect(project);
-    connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new MyFileEditorManagerListener());
+    project.getMessageBus().connect(project).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new MyFileEditorManagerListener());
   }
 
   public void projectClosed() {
@@ -77,7 +68,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       Disposer.dispose(toolWindowForm.getPreviewPanel());
       toolWindowForm = null;
       toolWindow = null;
-      toolWindowDisposed = true;
+      toolWindowVisible = false;
     }
   }
 
@@ -100,8 +91,6 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     toolWindow.setIcon(PlatformIcons.UI_FORM_ICON);
 
     ((ToolWindowManagerEx)ToolWindowManager.getInstance(project)).addToolWindowManagerListener(new ToolWindowManagerAdapter() {
-      private boolean visible = false;
-
       @Override
       public void stateChanged() {
         if (project.isDisposed() || toolWindow == null || !toolWindow.isAvailable()) {
@@ -109,19 +98,20 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         }
 
         final boolean currentVisible = toolWindow.isVisible();
+        if (currentVisible == toolWindowVisible) {
+          return;
+        }
+
+        toolWindowVisible = currentVisible;
+
         PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
         if (currentVisible) {
           propertiesComponent.setValue(SETTINGS_TOOL_WINDOW_VISIBLE, "true");
+          render();
         }
         else {
           propertiesComponent.unsetValue(SETTINGS_TOOL_WINDOW_VISIBLE);
         }
-
-        if (currentVisible && !visible) {
-          render();
-        }
-
-        visible = currentVisible;
       }
     });
 
@@ -138,8 +128,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentRenderedListener() {
       @Override
       public void documentRenderedOnAutoSave(DocumentFactoryManager.DocumentInfo info) {
-        if (!toolWindowDisposed &&
-            toolWindowForm != null &&
+        if (toolWindowVisible &&
             toolWindowForm.getFile() != null &&
             info.equals(DocumentFactoryManager.getInstance().getNullableInfo(toolWindowForm.getFile()))) {
           render();
@@ -166,7 +155,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
   }
 
   private void render() {
-    if (toolWindow == null || !toolWindow.isVisible()) {
+    if (!toolWindowVisible) {
       return;
     }
 
@@ -257,7 +246,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     toolWindowUpdateQueue.cancelAllUpdates();
     toolWindowUpdateQueue.queue(new Update("update") {
       public void run() {
-        if (!toolWindowReady || toolWindowDisposed) {
+        if (!project.isOpen() || project.isDisposed()) {
           return;
         }
 
@@ -287,7 +276,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         }
 
         toolWindow.setAvailable(true, null);
-        if (toolWindow.isVisible()) {
+        if (toolWindowVisible) {
           render();
         }
         else if (propertiesComponent.getBoolean(SETTINGS_TOOL_WINDOW_VISIBLE, false)) {

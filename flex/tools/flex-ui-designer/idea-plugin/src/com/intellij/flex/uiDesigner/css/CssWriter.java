@@ -314,7 +314,7 @@ public class CssWriter {
   private void writePropertyValue(CssTermList value, @Nullable FlexStyleIndexInfo info) throws InvalidPropertyException {
     final PsiElement firstChild = value.getFirstChild();
     if (firstChild == null) {
-      throw new InvalidPropertyException(value, "error.invalid.value");
+      throw new InvalidPropertyException(value, "invalid.value");
     }
 
     int lengthPosition = -1;
@@ -414,7 +414,7 @@ public class CssWriter {
       JSClass jsClass = InjectionUtil.getJsClassFromPackageAndLocalClassNameReferences(cssString);
       if (jsClass == null) {
         final CharSequence chars = valueNode.getFirstChildNode().getChars();
-        throw new InvalidPropertyException(cssString, "error.unresolved.class", chars.subSequence(1, chars.length() - 1));
+        throw new InvalidPropertyException(cssString, "unresolved.class", chars.subSequence(1, chars.length() - 1));
       }
 
       writeClassReference(jsClass, info, cssString);
@@ -461,7 +461,7 @@ public class CssWriter {
 
     if (source == null) {
       throw new InvalidPropertyException(cssFunction, FlashUIDesignerBundle
-        .message("error.embed.source.not.specified", cssFunction.getText()));
+        .message("embed.source.not.specified", cssFunction.getText()));
     }
 
     final int fileId;

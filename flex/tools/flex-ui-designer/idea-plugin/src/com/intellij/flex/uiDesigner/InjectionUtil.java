@@ -61,7 +61,7 @@ public final class InjectionUtil {
       }
     }
     else if (inSourceContent) {
-      throw new InvalidPropertyException("error.support.only.mxml.based.component", qualifiedClassName);
+      throw new InvalidPropertyException("support.only.mxml.based.component", qualifiedClassName);
     }
 
     return false;
@@ -142,7 +142,7 @@ public final class InjectionUtil {
       }
     }
     else if (psiFile.isDirectory()) {
-      throw new InvalidPropertyException(element, "error.embed.source.is.directory", fileReference.getCanonicalText());
+      throw new InvalidPropertyException(element, "embed.source.is.directory", fileReference.getCanonicalText());
     }
     else {
       return psiFile;

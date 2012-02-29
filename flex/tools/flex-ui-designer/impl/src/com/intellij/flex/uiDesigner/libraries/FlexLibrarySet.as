@@ -51,6 +51,11 @@ public final class FlexLibrarySet extends LibrarySet {
     var fillCallbackRef:ActionCallbackRef = _currentFillCallbackRef;
     _currentFillCallbackRef = null;
 
+    if (fillCallbackRef.usageCount == 0) {
+      // currentFillCallbackRef was requested, but class pool was filled before any request to createFillCallback()
+      return null;
+    }
+
     actualFillCalback = new ActionCallback(fillCallbackRef.usageCount);
     fillCallbackRef.value = actualFillCalback;
 

@@ -279,7 +279,7 @@ public class MxmlWriter {
       }
       if (propertyKind.isComplex()) {
         writer.getBlockOut().setPosition(beforePosition);
-        addProblem(attribute, "error.unknown.attribute.value.type", descriptor.getType());
+        addProblem(attribute, "unknown.attribute.value.type", descriptor.getType());
       }
     }
     return cssRulesetDefined;
@@ -317,7 +317,7 @@ public class MxmlWriter {
             continue;
           }
           else if (MxmlUtil.isAbstract(classBackedDescriptor)) {
-            addProblem(child, "error.abstract.class", classBackedDescriptor.getQualifiedName());
+            addProblem(child, "abstract.class", classBackedDescriptor.getQualifiedName());
             continue;
           }
           
@@ -628,13 +628,13 @@ public class MxmlWriter {
       final boolean isDirectContainerImpl = className.equals(FlexCommonTypeNames.ICONTAINER);
       if (isDirectContainerImpl || JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.ICONTAINER)) {
         if (isXmlText) {
-          addProblem(parentTag, "error.initializer.cannot.be.represented.in.text", parentTag.getLocalName());
+          addProblem(parentTag, "initializer.cannot.be.represented.in.text", parentTag.getLocalName());
           return null;
         }
 
         if (!isDirectContainerImpl && isHaloNavigator(className, jsClass) &&
             !JSInheritanceUtil.isParentClass((JSClass)descriptor.getDeclaration(), FlexCommonTypeNames.INAVIGATOR_CONTENT)) {
-          addProblem(parentTag, "error.children.must.be", parentTag.getLocalName(), FlexCommonTypeNames.INAVIGATOR_CONTENT);
+          addProblem(parentTag, "children.must.be", parentTag.getLocalName(), FlexCommonTypeNames.INAVIGATOR_CONTENT);
           return null;
         }
 
@@ -644,7 +644,7 @@ public class MxmlWriter {
       }
       else {
         // http://youtrack.jetbrains.net/issue/IDEA-66565
-        addProblem(parentTag, "error.default.property.not.found", parentTag.getLocalName());
+        addProblem(parentTag, "default.property.not.found", parentTag.getLocalName());
       }
     }
     else {
@@ -660,13 +660,13 @@ public class MxmlWriter {
         final boolean isString = elementType.equals(JSCommonTypeNames.STRING_CLASS_NAME);
         if (isString) {
           if (descriptor != null && !descriptor.getQualifiedName().equals(JSCommonTypeNames.STRING_CLASS_NAME)) {
-            addProblem(parentTag, "error.children.must.be", parentTag.getLocalName(), elementType);
+            addProblem(parentTag, "children.must.be", parentTag.getLocalName(), elementType);
             return null;
           }
         }
         else {
           if (isXmlText) {
-            addProblem(parentTag, "error.initializer.cannot.be.represented.in.text", parentTag.getLocalName());
+            addProblem(parentTag, "initializer.cannot.be.represented.in.text", parentTag.getLocalName());
             return null;
           }
         }

@@ -224,6 +224,10 @@ public class DesignerApplicationLauncher extends DocumentTask {
     ProjectManager.getInstance().addProjectManagerListener(new ProjectManagerAdapter() {
       @Override
       public void projectClosed(Project project) {
+        if (DesignerApplicationManager.getInstance().isApplicationClosed()) {
+          return;
+        }
+
         Client client = Client.getInstance();
         if (client.getRegisteredProjects().contains(project)) {
           client.closeProject(project);

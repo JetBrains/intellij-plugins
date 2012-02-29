@@ -25,6 +25,10 @@ public class InjectedASTest extends BaseTestCase {
     assertThat(app.transitions, [{effect: {targets: [{title: "One"}, {title: "Two"}, {title: "Three"}]}}]);
   }
 
+  public function Const():void {
+    assertThat(app.verticalAlign, "middle");
+  }
+
   [Test(async)]
   public function ArrayLiteralOfReferences():void {
     var effectManagerClass:Class = getClass("mx.effects.EffectManager");

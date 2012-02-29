@@ -218,7 +218,7 @@ class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor 
     }
 
     if (source == null) {
-      problemsHolder.add(host, FlashUIDesignerBundle.message("error.embed.source.not.specified", host.getText()));
+      problemsHolder.add(host, FlashUIDesignerBundle.message("embed.source.not.specified", host.getText()));
       return InjectedASWriter.IGNORE;
     }
 
