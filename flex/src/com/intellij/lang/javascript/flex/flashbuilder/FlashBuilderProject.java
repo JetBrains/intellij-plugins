@@ -198,6 +198,7 @@ public class FlashBuilderProject {
   }
 
   public void addNamespaceAndManifestPath(final String namespace, final String manifestPath) {
+    checkIfPathMacroUsed(manifestPath);
     myNamespacesAndManifestPaths.add(Pair.create(namespace, manifestPath));
   }
 
@@ -215,6 +216,7 @@ public class FlashBuilderProject {
   }
 
   public void addCssFileToCompile(final String cssFilePath) {
+    checkIfPathMacroUsed(cssFilePath);
     myCssFilesToCompile.add(cssFilePath);
   }
 

@@ -258,7 +258,7 @@ public class FlashBuilderProjectLoadUtil {
             final String namespace = namespaceManifestEntryElement.getAttributeValue(NAMESPACE_ATTR);
             final String manifestPath = namespaceManifestEntryElement.getAttributeValue(MANIFEST_ATTR);
             if (!StringUtil.isEmpty(manifestPath) && !StringUtil.isEmpty(namespace)) {
-              project.addNamespaceAndManifestPath(namespace, manifestPath);
+              project.addNamespaceAndManifestPath(namespace, FileUtil.toSystemIndependentName(manifestPath));
             }
           }
         }
@@ -454,7 +454,7 @@ public class FlashBuilderProjectLoadUtil {
         final String sourcePath = moduleElement.getAttributeValue(SOURCE_PATH_ATTR);
         final String destPath = moduleElement.getAttributeValue(DEST_PATH_ATTR);
         if (!StringUtil.isEmpty(sourcePath) && !StringUtil.isEmpty(DEST_PATH_ATTR)) {
-          project.addModule(sourcePath, destPath);
+          project.addModule(FileUtil.toSystemIndependentName(sourcePath), FileUtil.toSystemIndependentName(destPath));
         }
       }
     }
@@ -467,7 +467,7 @@ public class FlashBuilderProjectLoadUtil {
       for (final Element buildCssFileEntryElement : ((Iterable<Element>)buildSccFilesElement.getChildren(BUILD_CSS_FILE_ENTRY_ELEMENT))) {
         final String sourcePath = buildCssFileEntryElement.getAttributeValue(SOURCE_PATH_ATTR);
         if (!StringUtil.isEmpty(sourcePath)) {
-          project.addCssFileToCompile(sourcePath);
+          project.addCssFileToCompile(FileUtil.toSystemIndependentName(sourcePath));
         }
       }
     }

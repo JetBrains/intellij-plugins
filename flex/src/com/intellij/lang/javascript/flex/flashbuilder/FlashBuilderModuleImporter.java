@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.flex.FlexModuleBuilder;
 import com.intellij.lang.javascript.flex.TargetPlayerUtils;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
+import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
@@ -148,6 +149,34 @@ public class FlashBuilderModuleImporter {
     if (mainBC.getOutputType() == OutputType.Application) {
       FlexModuleBuilder.createRunConfiguration(rootModel.getModule(), mainBC.getName());
     }
+
+    final Map<String, String> compilerOptions = new THashMap<String, String>();
+
+    if (!fbProject.getNamespacesAndManifestPaths().isEmpty()) {
+      final StringBuilder buf = new StringBuilder();
+      for (Pair<String, String> nsAndManifestPath : fbProject.getNamespacesAndManifestPaths()) {
+        final String manifestPath = nsAndManifestPath.second;
+        VirtualFile manifestFile = null;
+        for (final VirtualFile sourceRoot : rootModel.getSourceRoots()) {
+          if ((manifestFile = sourceRoot.findFileByRelativePath(manifestPath)) != null) {
+            break;
+          }
+        }
+        final String resolvedManifestPath = manifestFile != null ? manifestFile.getPath()
+                                                                 : getAbsolutePathWithLinksHandled(fbProject, manifestPath);
+
+
+        if (buf.length() > 0) {
+          buf.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+        }
+        buf.append(nsAndManifestPath.first).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);
+        buf.append(resolvedManifestPath);
+      }
+
+      compilerOptions.put("compiler.namespaces.namespace", buf.toString());
+    }
+
+    mainBC.getCompilerOptions().setAllOptions(compilerOptions);
 
     setupOtherAppsAndModules(rootModel, mainBC, fbProject);
   }
