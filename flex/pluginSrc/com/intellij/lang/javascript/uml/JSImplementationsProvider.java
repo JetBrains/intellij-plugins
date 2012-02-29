@@ -6,23 +6,31 @@ import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.Processor;
+import gnu.trove.THashSet;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Collection;
-import java.util.ArrayList;
 
 public class JSImplementationsProvider extends ImplementationsProvider<Object> {
 
   public Object[] getElements(Object element, Project project) {
     JSClass clazz = (JSClass)element;
-    final Collection<JSClass> inheritors = new ArrayList<JSClass>();
+    final Collection<PsiElement> inheritors = Collections.synchronizedSet(new THashSet<PsiElement>());
 
-    inheritors.addAll(JSClassSearch.searchClassInheritors(clazz, true).findAll());
-
+    final Processor<JSClass> p = new Processor<JSClass>() {
+      public boolean process(final JSClass aClass) {
+        final PsiElement navigationElement = aClass.getNavigationElement();
+        inheritors.add(navigationElement instanceof JSClass ? navigationElement : aClass);
+        return true;
+      }
+    };
+    JSClassSearch.searchClassInheritors(clazz, true).forEach(p);
     if (clazz.isInterface()) {
-      inheritors.addAll(JSClassSearch.searchInterfaceImplementations(clazz, true).findAll());
+      JSClassSearch.searchInterfaceImplementations(clazz, true).forEach(p);
     }
-    return inheritors.toArray(new JSClass[inheritors.size()]);
+    return inheritors.toArray(new PsiElement[inheritors.size()]);
   }
 
   public boolean isEnabledOn(Object element) {
