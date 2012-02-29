@@ -26,9 +26,12 @@ import java.util.Map;
 public abstract class FlexXmlBackedClassesIndex extends ScalarIndexExtension<String> {
   private static final int INDEX_VERSION = 4;
 
+  @Override
+  @NotNull
   public DataIndexer<String, Void, FileContent> getIndexer() {
     return new DataIndexer<String, Void, FileContent>() {
 
+      @Override
       @NotNull
       public Map<String, Void> map(FileContent inputData) {
         final XmlFile file = (XmlFile)inputData.getPsiFile();
@@ -54,22 +57,27 @@ public abstract class FlexXmlBackedClassesIndex extends ScalarIndexExtension<Str
   @Nullable
   protected abstract JSReferenceList getSupers(JSClass clazz);
 
+  @Override
   public KeyDescriptor<String> getKeyDescriptor() {
     return new EnumeratorStringDescriptor();
   }
 
+  @Override
   public FileBasedIndex.InputFilter getInputFilter() {
     return new FileBasedIndex.InputFilter() {
+      @Override
       public boolean acceptInput(VirtualFile file) {
         return JavaScriptSupportLoader.isMxmlOrFxgFile(file);
       }
     };
   }
 
+  @Override
   public boolean dependsOnFileContent() {
     return true;
   }
 
+  @Override
   public int getVersion() {
     return JSFileElementType.VERSION + INDEX_VERSION;
   }

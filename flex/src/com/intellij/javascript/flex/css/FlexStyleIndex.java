@@ -51,6 +51,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
 
   private final DataExternalizer<Set<FlexStyleIndexInfo>> myDataExternalizer = new DataExternalizer<Set<FlexStyleIndexInfo>>() {
 
+    @Override
     public void save(DataOutput out, Set<FlexStyleIndexInfo> value) throws IOException {
       out.writeInt(value.size());
       for (FlexStyleIndexInfo info : value) {
@@ -65,6 +66,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
       }
     }
 
+    @Override
     public Set<FlexStyleIndexInfo> read(DataInput in) throws IOException {
       int size = in.readInt();
       Set<FlexStyleIndexInfo> result = new HashSet<FlexStyleIndexInfo>();
@@ -86,6 +88,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
     }
   };
 
+  @NotNull
   @Override
   public ID<String, Set<FlexStyleIndexInfo>> getName() {
     return INDEX_ID;
@@ -132,6 +135,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
     final Project project = file.getProject();
     final PsiFileFactory factory = PsiFileFactory.getInstance(project);
     Processor<XmlTag> processor = new Processor<XmlTag>() {
+      @Override
       public boolean process(XmlTag tag) {
         for (XmlTagChild child : tag.getValue().getChildren()) {
           if (child instanceof XmlText) {
@@ -163,9 +167,11 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
     return null;
   }
 
+  @NotNull
   @Override
   public DataIndexer<String, Set<FlexStyleIndexInfo>, FileContent> getIndexer() {
     return new DataIndexer<String, Set<FlexStyleIndexInfo>, FileContent>() {
+      @Override
       @NotNull
       public Map<String, Set<FlexStyleIndexInfo>> map(FileContent inputData) {
         final THashMap<String, Set<FlexStyleIndexInfo>> map = new THashMap<String, Set<FlexStyleIndexInfo>>();
@@ -204,6 +210,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
 
   private static void indexAttributes(PsiElement element, final String classQName, final boolean inClass, final Map<String, Set<FlexStyleIndexInfo>> map) {
     JSResolveUtil.processMetaAttributesForClass(element, new JSResolveUtil.MetaDataProcessor() {
+      @Override
       public boolean process(@NotNull JSAttribute jsAttribute) {
         String attrName = jsAttribute.getName();
         if (attrName != null && FlexAnnotationNames.STYLE.equals(attrName)) {
@@ -225,6 +232,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
         return true;
       }
 
+      @Override
       public boolean handleOtherElement(PsiElement el, PsiElement context, @Nullable Ref<PsiElement> continuePassElement) {
         return true;
       }

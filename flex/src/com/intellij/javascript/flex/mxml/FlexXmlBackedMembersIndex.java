@@ -45,19 +45,25 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
 
   public static final ID<String, Void> NAME = ID.create("FlexXmlBackedMembersIndex");
 
+  @Override
+  @NotNull
   public ID<String, Void> getName() {
     return NAME;
   }
 
+  @Override
+  @NotNull
   public DataIndexer<String, Void, FileContent> getIndexer() {
     return new DataIndexer<String, Void, FileContent>() {
 
+      @Override
       @NotNull
       public Map<String, Void> map(FileContent inputData) {
         final XmlFile file = (XmlFile)inputData.getPsiFile();
 
         final Map<String, Void> result = new HashMap<String, Void>();
         process(file, new Consumer<PsiElement>() {
+          @Override
           public void consume(PsiElement element) {
             String name = getName(element);
             if (name != null) {
@@ -80,6 +86,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
             setSkipImplicitDeclarations(true);
           }
 
+          @Override
           public boolean execute(PsiElement element, ResolveState state) {
             if (element instanceof JSFunction) {
               consumer.consume(element);
@@ -90,10 +97,12 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
             return true;
           }
 
+          @Override
           public <T> T getHint(Key<T> hintKey) {
             return null;
           }
 
+          @Override
           public void handleEvent(Event event, Object associated) {
           }
         }, state, null, file);
@@ -114,22 +123,27 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
     });
   }
 
+  @Override
   public KeyDescriptor<String> getKeyDescriptor() {
     return new EnumeratorStringDescriptor();
   }
 
+  @Override
   public FileBasedIndex.InputFilter getInputFilter() {
     return new FileBasedIndex.InputFilter() {
+      @Override
       public boolean acceptInput(VirtualFile file) {
         return JavaScriptSupportLoader.isMxmlOrFxgFile(file);
       }
     };
   }
 
+  @Override
   public boolean dependsOnFileContent() {
     return true;
   }
 
+  @Override
   public int getVersion() {
     return JSFileElementType.VERSION + INDEX_VERSION;
   }
@@ -148,6 +162,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
         continue;
       }
       process((XmlFile)file, new Consumer<PsiElement>() {
+        @Override
         public void consume(PsiElement element) {
           if (name.equals(getName(element))) {
             if (element instanceof JSNamedElement) {
@@ -189,10 +204,12 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
       myName = name;
     }
 
+    @Override
     public String getName() {
       return myName;
     }
 
+    @Override
     public ItemPresentation getPresentation() {
       return this;
     }
@@ -202,22 +219,27 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
       return myElement;
     }
 
+    @Override
     public void navigate(boolean requestFocus) {
       ((Navigatable)myElement).navigate(requestFocus);
     }
 
+    @Override
     public boolean canNavigate() {
       return ((Navigatable)myElement).canNavigate();
     }
 
+    @Override
     public boolean canNavigateToSource() {
       return ((Navigatable)myElement).canNavigateToSource();
     }
 
+    @Override
     public String getPresentableText() {
       return getName();
     }
 
+    @Override
     public String getLocationString() {
       PsiFile file = myElement.getContainingFile();
       String packageName = JSResolveUtil.getExpectedPackageNameFromFile(file.getVirtualFile(), myElement.getProject());
@@ -227,9 +249,11 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
       return result.toString();
     }
 
+    @Override
     public Icon getIcon(boolean open) {
       return JSStructureItemPresentation.getIcon(PsiTreeUtil.getParentOfType(myElement, XmlTag.class));
     }
+    @Override
     public PsiElement getParent() {
       return myElement.getParent();
     }
