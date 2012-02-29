@@ -82,6 +82,10 @@ class ExpressionBinding extends Binding {
       writeExpression(arguments[0], out, writer, valueReferenceResolver);
       return;
     }
+    else if (psiElement instanceof JSReferenceExpression) {
+      writeReferenceExpression((JSReferenceExpression)psiElement, out, writer, valueReferenceResolver, false);
+      return;
+    }
 
     final JSFunction function = (JSFunction)psiElement;
     final int rollbackPosition;
