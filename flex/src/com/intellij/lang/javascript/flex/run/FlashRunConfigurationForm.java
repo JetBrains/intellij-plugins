@@ -29,8 +29,13 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collection;
 
-import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.*;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileRunTarget;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AppDescriptorForEmulator;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.Emulator;
 
 public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfiguration> {
 
@@ -82,6 +87,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private JTextField myUsbDebugPortTextField;
   private JBLabel myAdlOptionsLabel;
   private RawCommandLineEditor myEmulatorAdlOptionsEditor;
+  private JLabel myAppDescriptorForEmulatorLabel;
+  private JComboBox myAppDescriptorForEmulatorCombo;
 
   private final Project myProject;
 
@@ -101,6 +108,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myBCCombo.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         updateMainClassField();
+        updateAppDescriptorsForEmulator();
         updateControls();
       }
     });
@@ -119,6 +127,30 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       myMainClassFilter.setScope(null);
       myMainClassComponent.setChooserBlockingMessage("Build configuration not selected");
     }
+  }
+
+  private void updateAppDescriptorsForEmulator() {
+    final FlexIdeBuildConfiguration bc = myBCCombo.getBC();
+    final Object previousSelection = myAppDescriptorForEmulatorCombo.getSelectedItem();
+
+    if (bc == null || bc.getTargetPlatform() != TargetPlatform.Mobile || bc.getOutputType() != OutputType.Application) {
+      myAppDescriptorForEmulatorCombo
+        .setModel(new DefaultComboBoxModel(new AppDescriptorForEmulator[]{AppDescriptorForEmulator.Generated}));
+    }
+    else {
+      final Collection<AppDescriptorForEmulator> items = new ArrayList<AppDescriptorForEmulator>();
+      items.add(AppDescriptorForEmulator.Generated);
+      if (bc.getAndroidPackagingOptions().isEnabled() && !bc.getAndroidPackagingOptions().isUseGeneratedDescriptor()) {
+        items.add(AppDescriptorForEmulator.Android);
+      }
+      if (bc.getIosPackagingOptions().isEnabled() && !bc.getIosPackagingOptions().isUseGeneratedDescriptor()) {
+        items.add(AppDescriptorForEmulator.IOS);
+      }
+
+      myAppDescriptorForEmulatorCombo.setModel(new DefaultComboBoxModel(items.toArray(new AppDescriptorForEmulator[items.size()])));
+    }
+
+    myAppDescriptorForEmulatorCombo.setSelectedItem(previousSelection);
   }
 
   private void initMainClassRelatedControls() {
@@ -198,6 +230,34 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     };
     myDebugOverNetworkRadioButton.addActionListener(debugTransportListener);
     myDebugOverUSBRadioButton.addActionListener(debugTransportListener);
+
+    myAppDescriptorForEmulatorCombo.setModel(new DefaultComboBoxModel(new AppDescriptorForEmulator[]{AppDescriptorForEmulator.Generated}));
+    myAppDescriptorForEmulatorCombo
+      .setRenderer(new ListCellRendererWrapper<AppDescriptorForEmulator>(myAppDescriptorForEmulatorCombo.getRenderer()) {
+        @Override
+        public void customize(JList list, AppDescriptorForEmulator value, int index, boolean selected, boolean hasFocus) {
+          FlexIdeBuildConfiguration bc;
+          String descriptorPath;
+
+          switch (value) {
+            case Generated:
+              setText("Generated");
+              break;
+            case Android:
+              bc = myBCCombo.getBC();
+              descriptorPath = bc == null ? null : bc.getAndroidPackagingOptions().getCustomDescriptorPath();
+              setText("as set for Android: " + (StringUtil.isEmpty(descriptorPath) ? "<custom template is not set>"
+                                                                                   : PathUtil.getFileName(descriptorPath)));
+              break;
+            case IOS:
+              bc = myBCCombo.getBC();
+              descriptorPath = bc == null ? null : bc.getIosPackagingOptions().getCustomDescriptorPath();
+              setText("as set for iOS: " + (StringUtil.isEmpty(descriptorPath) ? "<custom template is not set>"
+                                                                               : PathUtil.getFileName(descriptorPath)));
+              break;
+          }
+        }
+      });
   }
 
   private void initEmulatorRelatedControls() {
@@ -269,10 +329,13 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
     if (mobile) {
       final boolean runOnEmulator = myOnEmulatorRadioButton.isSelected();
+      final boolean app = bc.getOutputType() == OutputType.Application;
       myEmulatorCombo.setEnabled(runOnEmulator);
       UIUtil.setEnabled(myEmulatorScreenSizePanel, runOnEmulator, true);
       myAdlOptionsLabel.setEnabled(runOnEmulator);
       myEmulatorAdlOptionsEditor.setEnabled(runOnEmulator);
+      myAppDescriptorForEmulatorLabel.setEnabled(app && runOnEmulator);
+      myAppDescriptorForEmulatorCombo.setEnabled(app && runOnEmulator);
 
       if (runOnEmulator) {
         updateEmulatorRelatedControls();
@@ -378,6 +441,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
     myEmulatorAdlOptionsEditor.setText(params.getEmulatorAdlOptions());
 
+    myAppDescriptorForEmulatorCombo.setSelectedItem(params.getAppDescriptorForEmulator());
+
     updateControls();
   }
 
@@ -432,6 +497,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     catch (NumberFormatException ignore) {/*ignore*/}
 
     params.setEmulatorAdlOptions(myEmulatorAdlOptionsEditor.getText().trim());
+    params.setAppDescriptorForEmulator((AppDescriptorForEmulator)myAppDescriptorForEmulatorCombo.getSelectedItem());
   }
 
   protected void disposeEditor() {

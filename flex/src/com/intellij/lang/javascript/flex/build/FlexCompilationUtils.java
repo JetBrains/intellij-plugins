@@ -3,10 +3,7 @@ package com.intellij.lang.javascript.flex.build;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
-import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.AndroidPackagingOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.ui.CreateAirDescriptorTemplateDialog;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
@@ -18,13 +15,15 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.*;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.ReadonlyStatusHandler;
+import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.text.StringTokenizer;
@@ -40,7 +39,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 import static com.intellij.lang.javascript.flex.projectStructure.ui.CreateAirDescriptorTemplateDialog.AirDescriptorOptions;
-import static com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog.*;
+import static com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog.HTML_WRAPPER_TEMPLATE_FILE_NAME;
+import static com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog.VERSION_MAJOR_MACRO;
+import static com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog.VERSION_MINOR_MACRO;
+import static com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog.VERSION_REVISION_MACRO;
 
 public class FlexCompilationUtils {
 
@@ -296,18 +298,19 @@ public class FlexCompilationUtils {
                                           final AirPackagingOptions packagingOptions) throws FlexCompilerException {
     if (packagingOptions.isUseGeneratedDescriptor()) {
       final boolean android = packagingOptions instanceof AndroidPackagingOptions;
-      generateAirDescriptor(bc, BCUtils.getGeneratedAirDescriptorName(bc, packagingOptions), android);
+      final boolean ios = packagingOptions instanceof IosPackagingOptions;
+      generateAirDescriptor(bc, BCUtils.getGeneratedAirDescriptorName(bc, packagingOptions), android, ios);
     }
     else {
       copyAndFixCustomAirDescriptor(bc, packagingOptions.getCustomDescriptorPath());
     }
   }
 
-  private static void generateAirDescriptor(final FlexIdeBuildConfiguration bc,
-                                            final String descriptorFileName, final boolean android) throws FlexCompilerException {
+  public static void generateAirDescriptor(final FlexIdeBuildConfiguration bc, final String descriptorFileName,
+                                           final boolean android, final boolean ios) throws FlexCompilerException {
     final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
 
-    ApplicationManager.getApplication().invokeAndWait(new Runnable() {
+    final Runnable runnable = new Runnable() {
       public void run() {
         final Sdk sdk = bc.getSdk();
         assert sdk != null;
@@ -328,7 +331,7 @@ public class FlexCompilationUtils {
           public void run() {
             try {
               final AirDescriptorOptions descriptorOptions =
-                new AirDescriptorOptions(airVersion, appId, appName, PathUtil.getFileName(outputFilePath), android);
+                new AirDescriptorOptions(airVersion, appId, appName, PathUtil.getFileName(outputFilePath), android, ios);
               final String descriptorText = CreateAirDescriptorTemplateDialog.getAirDescriptorText(descriptorOptions);
 
               FlexUtils.addFileWithContent(descriptorFileName, descriptorText, outputFolder);
@@ -339,7 +342,14 @@ public class FlexCompilationUtils {
           }
         });
       }
-    }, ModalityState.any());
+    };
+
+    if (ApplicationManager.getApplication().isDispatchThread()) {
+      runnable.run();
+    }
+    else {
+      ApplicationManager.getApplication().invokeAndWait(runnable, ModalityState.any());
+    }
 
     if (!exceptionRef.isNull()) {
       throw exceptionRef.get();

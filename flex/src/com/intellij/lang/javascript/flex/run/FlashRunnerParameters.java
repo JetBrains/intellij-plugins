@@ -74,6 +74,10 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     Network, USB
   }
 
+  public enum AppDescriptorForEmulator {
+    Generated, Android, IOS
+  }
+
   private boolean myOverrideMainClass = false;
   private @NotNull String myOverriddenMainClass = "";
   private @NotNull String myOverriddenOutputFileName = "";
@@ -96,6 +100,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
   private @NotNull AirMobileDebugTransport myDebugTransport = AirMobileDebugTransport.USB;
   private int myUsbDebugPort = AirPackageUtil.DEBUG_PORT_DEFAULT;
   private @NotNull String myEmulatorAdlOptions = "";
+  private @NotNull AppDescriptorForEmulator myAppDescriptorForEmulator = AppDescriptorForEmulator.Generated;
 
   public boolean isOverrideMainClass() {
     return myOverrideMainClass;
@@ -251,6 +256,15 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     myEmulatorAdlOptions = emulatorAdlOptions;
   }
 
+  @NotNull
+  public AppDescriptorForEmulator getAppDescriptorForEmulator() {
+    return myAppDescriptorForEmulator;
+  }
+
+  public void setAppDescriptorForEmulator(@NotNull final AppDescriptorForEmulator appDescriptorForEmulator) {
+    myAppDescriptorForEmulator = appDescriptorForEmulator;
+  }
+
   public void check(final Project project) throws RuntimeConfigurationError {
     doCheck(super.checkAndGetModuleAndBC(project));
   }
@@ -349,19 +363,56 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
 
       case Desktop:
         checkAdlAndAirRuntime(sdk);
+        checkCustomDescriptor(bc.getAirDesktopPackagingOptions());
         break;
 
       case Mobile:
-        if (bc.getOutputType() == OutputType.Application &&
-            myMobileRunTarget == AirMobileRunTarget.AndroidDevice &&
-            !bc.getAndroidPackagingOptions().isEnabled()) {
-          throw new RuntimeConfigurationError(FlexBundle.message("android.disabled.in.bc", getBCName(), getModuleName()));
+        if (bc.getOutputType() == OutputType.Application && myMobileRunTarget == AirMobileRunTarget.AndroidDevice) {
+          final AndroidPackagingOptions packagingOptions = bc.getAndroidPackagingOptions();
+          checkCustomDescriptor(packagingOptions);
         }
 
         if (myMobileRunTarget == AirMobileRunTarget.Emulator) {
           checkAdlAndAirRuntime(sdk);
+
+          switch (myAppDescriptorForEmulator) {
+            case Generated:
+              break;
+            case Android:
+              checkCustomDescriptor(bc.getAndroidPackagingOptions());
+              break;
+            case IOS:
+              checkCustomDescriptor(bc.getIosPackagingOptions());
+              break;
+          }
         }
         break;
+    }
+  }
+
+  private void checkCustomDescriptor(final AirPackagingOptions packagingOptions) throws RuntimeConfigurationError {
+    final boolean android = packagingOptions instanceof AndroidPackagingOptions;
+    final boolean ios = packagingOptions instanceof IosPackagingOptions;
+
+    if (android && !((AndroidPackagingOptions)packagingOptions).isEnabled()) {
+      throw new RuntimeConfigurationError(FlexBundle.message("android.disabled.in.bc", getBCName(), getModuleName()));
+    }
+    if (ios && !((IosPackagingOptions)packagingOptions).isEnabled()) {
+      throw new RuntimeConfigurationError(FlexBundle.message("ios.disabled.in.bc", getBCName(), getModuleName()));
+    }
+
+    if (!packagingOptions.isUseGeneratedDescriptor()) {
+      if (packagingOptions.getCustomDescriptorPath().isEmpty()) {
+        final String key =
+          android ? "android.custom.descriptor.not.set" : ios ? "ios.custom.descriptor.not.set" : "custom.descriptor.not.set";
+        throw new RuntimeConfigurationError(FlexBundle.message(key, getBCName(), getModuleName()));
+      }
+      else if (LocalFileSystem.getInstance().findFileByPath(packagingOptions.getCustomDescriptorPath()) == null) {
+        final String key =
+          android ? "android.custom.descriptor.not.found" : ios ? "ios.custom.descriptor.not.found" : "custom.descriptor.not.found";
+        throw new RuntimeConfigurationError(FlexBundle.message(key, getBCName(), getModuleName(),
+                                                               FileUtil.toSystemDependentName(packagingOptions.getCustomDescriptorPath())));
+      }
     }
   }
 

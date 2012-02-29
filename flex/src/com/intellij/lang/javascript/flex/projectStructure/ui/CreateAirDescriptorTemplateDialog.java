@@ -59,9 +59,10 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
                                 final String appId,
                                 final String appName,
                                 final String swfName,
-                                final boolean android) {
-      this(airVersion, appId, appName, "0.0.0", swfName, android, android, android, android, ANDROID_PERMISSION_INTERNET,
-           false, false, false, false);
+                                final boolean android,
+                                final boolean ios) {
+      this(airVersion, appId, appName, "0.0.0", swfName, android || ios, android || ios, android || ios,
+           android, ANDROID_PERMISSION_INTERNET, ios, ios, ios, ios);
     }
 
     public AirDescriptorOptions(final String airVersion,

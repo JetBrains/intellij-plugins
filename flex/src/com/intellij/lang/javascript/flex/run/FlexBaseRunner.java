@@ -20,12 +20,17 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexStackTraceFilter;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
+import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
+import com.intellij.lang.javascript.flex.build.FlexCompilerException;
 import com.intellij.lang.javascript.flex.debug.FlexDebugProcess;
 import com.intellij.lang.javascript.flex.debug.FlexDebugRunner;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConsoleProperties;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.AirDesktopPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.Application;
@@ -59,6 +64,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AppDescriptorForEmulator;
 
 /**
  * User: Maxim.Mossienko
@@ -394,13 +401,47 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         commandLine.addParameters(StringUtil.split(adlOptions, " "));
       }
 
-      // todo why android? which to take for emulator should probably be selected in run configuration.
-      final AndroidPackagingOptions packagingOptions = bc.getAndroidPackagingOptions();
-      commandLine.addParameter(FileUtil.toSystemDependentName(getAirDescriptorPath(bc, packagingOptions)));
+      final String airDescriptorPath = getDescriptorForEmulatorPath(bc, flashParams.getAppDescriptorForEmulator());
+      commandLine.addParameter(FileUtil.toSystemDependentName(airDescriptorPath));
       commandLine.addParameter(FileUtil.toSystemDependentName(PathUtil.getParentPath(bc.getOutputFilePath(true))));
     }
 
     return commandLine;
+  }
+
+  private static String getDescriptorForEmulatorPath(final FlexIdeBuildConfiguration bc,
+                                                     final AppDescriptorForEmulator appDescriptorForEmulator) throws CantRunException {
+    final String airDescriptorPath;
+    switch (appDescriptorForEmulator) {
+      case Generated:
+        if (bc.getAndroidPackagingOptions().isEnabled() && bc.getAndroidPackagingOptions().isUseGeneratedDescriptor()) {
+          airDescriptorPath = getAirDescriptorPath(bc, bc.getAndroidPackagingOptions());
+        }
+        else if (bc.getIosPackagingOptions().isEnabled() && bc.getIosPackagingOptions().isUseGeneratedDescriptor()) {
+          airDescriptorPath = getAirDescriptorPath(bc, bc.getIosPackagingOptions());
+        }
+        else {
+          try {
+            final String descriptorFileName = FileUtil.getNameWithoutExtension(bc.getOutputFileName()) + "-emulator-descriptor.xml";
+            FlexCompilationUtils.generateAirDescriptor(bc, descriptorFileName, true, true);
+            airDescriptorPath = PathUtil.getParentPath(bc.getOutputFilePath(true)) + "/" + descriptorFileName;
+          }
+          catch (FlexCompilerException e) {
+            throw new CantRunException(e.getMessage());
+          }
+        }
+        break;
+      case Android:
+        airDescriptorPath = getAirDescriptorPath(bc, bc.getAndroidPackagingOptions());
+        break;
+      case IOS:
+        airDescriptorPath = getAirDescriptorPath(bc, bc.getIosPackagingOptions());
+        break;
+      default:
+        assert false;
+        airDescriptorPath = "";
+    }
+    return airDescriptorPath;
   }
 
   public static String getAirDescriptorPath(final FlexIdeBuildConfiguration bc, final AirPackagingOptions packagingOptions) {
