@@ -2,7 +2,8 @@ package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
@@ -73,6 +74,8 @@ public class FlashBuilderProjectLoadUtil {
   private static final String ENABLED_ATTR = "enabled";
   private static final String ANDROID_PLATFORM_ATTR_VALUE = "com.adobe.flexide.multiplatform.android.platform";
   private static final String IOS_PLATFORM_ATTR_VALUE = "com.adobe.flexide.multiplatform.ios.platform";
+  private static final String BLACKBERRY_PLATFORM_ATTR_VALUE = "com.qnx.flexide.multiplatform.qnx.platform";
+  private static final String USE_MULTIPLATFORM_CONFIG_ATTR = "useMultiPlatformConfig";
 
   private FlashBuilderProjectLoadUtil() {
   }
@@ -81,7 +84,7 @@ public class FlashBuilderProjectLoadUtil {
     assert ApplicationManager.getApplication().isUnitTestMode();
     final FlashBuilderProject fbProject = new FlashBuilderProject();
     fbProject.setName(name);
-    fbProject.setCompilerOutputType(FlexBuildConfiguration.LIBRARY);
+    fbProject.setOutputType(OutputType.Library);
     return fbProject;
   }
 
@@ -222,7 +225,7 @@ public class FlashBuilderProjectLoadUtil {
           }
         }
 
-        if (FlexBuildConfiguration.APPLICATION.equals(project.getCompilerOutputType())) {
+        if (project.getOutputType() == OutputType.Application) {
           loadApplications(project, actionScriptPropertiesElement);
           loadModules(project, actionScriptPropertiesElement);
           loadCssFilesToCompile(project, actionScriptPropertiesElement);
@@ -240,6 +243,12 @@ public class FlashBuilderProjectLoadUtil {
         final Document dotFlexLibPropertiesDocument = JDOMUtil.loadDocument(dotFlexLibPropertiesFile.getInputStream());
         final Element flexLibPropertiesElement = dotFlexLibPropertiesDocument.getRootElement();
         if (flexLibPropertiesElement == null || !FLEX_LIB_PROPERTIES_TAG.equals(flexLibPropertiesElement.getName())) return;
+
+        if (project.getTargetPlatform() == TargetPlatform.Desktop &&
+            "true".equals(flexLibPropertiesElement.getAttributeValue(USE_MULTIPLATFORM_CONFIG_ATTR))) {
+          project.setTargetPlatform(TargetPlatform.Mobile);
+        }
+
         //noinspection unchecked
         for (final Element namespaceManifestsElement : (Iterable<Element>)flexLibPropertiesElement
           .getChildren(NAMESPACE_MANIFESTS_TAG, flexLibPropertiesElement.getNamespace())) {
@@ -265,10 +274,10 @@ public class FlashBuilderProjectLoadUtil {
     final VirtualFile dir = dotProjectFile.getParent();
     assert dir != null;
 
-    final Attribute useApolloConfigAttr = compilerElement.getAttribute(USE_APOLLO_CONFIG_ATTR);
-    if (useApolloConfigAttr != null && useApolloConfigAttr.getValue().equals("true")) {
-      flashBuilderProject.setProjectType(FlashBuilderProject.ProjectType.AIR);
-
+    final VirtualFile flexLibPropertiesFile = dir.findChild(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES);
+    flashBuilderProject.setPureActionScript(dir.findChild(FlashBuilderImporter.DOT_FLEX_PROPERTIES) == null &&
+                                            flexLibPropertiesFile == null);
+    if (flexLibPropertiesFile == null) {
       final Element parentElement = compilerElement.getParentElement();
       //noinspection unchecked
       for (final Element buildTargetsElement : (Iterable<Element>)(parentElement
@@ -279,21 +288,31 @@ public class FlashBuilderProjectLoadUtil {
           final String buildTarget = buildTargetElement.getAttributeValue(BUILD_TARGET_NAME_ATTR);
           if (ANDROID_PLATFORM_ATTR_VALUE.equals(buildTarget)) {
             flashBuilderProject.setAndroidSupported(isPlatformEnabled(buildTargetElement));
-            flashBuilderProject.setProjectType(FlashBuilderProject.ProjectType.MobileAIR);
+            flashBuilderProject.setTargetPlatform(TargetPlatform.Mobile);
           }
-          if (IOS_PLATFORM_ATTR_VALUE.equals(buildTarget)) {
+          else if (IOS_PLATFORM_ATTR_VALUE.equals(buildTarget)) {
             flashBuilderProject.setIosSupported(isPlatformEnabled(buildTargetElement));
-            flashBuilderProject.setProjectType(FlashBuilderProject.ProjectType.MobileAIR);
+            flashBuilderProject.setTargetPlatform(TargetPlatform.Mobile);
+          }
+          else if (BLACKBERRY_PLATFORM_ATTR_VALUE.equals(buildTarget)) {
+            flashBuilderProject.setTargetPlatform(TargetPlatform.Mobile);
           }
         }
       }
     }
-    else if (dir.findChild(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES) == null &&
-             dir.findChild(FlashBuilderImporter.DOT_FLEX_PROPERTIES) == null) {
-      flashBuilderProject.setProjectType(FlashBuilderProject.ProjectType.ActionScript);
+    else {
+      // if this is Pure AS Mobile library its target platform will be read a bit later in loadInfoFromDotFlexLibPropertiesFile()}
+    }
+
+    if (flashBuilderProject.getTargetPlatform() == TargetPlatform.Mobile) {
+      return;
+    }
+
+    if ("true".equals(compilerElement.getAttributeValue(USE_APOLLO_CONFIG_ATTR))) {
+      flashBuilderProject.setTargetPlatform(TargetPlatform.Desktop);
     }
     else {
-      flashBuilderProject.setProjectType(FlashBuilderProject.ProjectType.Flex);
+      flashBuilderProject.setTargetPlatform(TargetPlatform.Web);
     }
   }
 
@@ -305,9 +324,9 @@ public class FlashBuilderProjectLoadUtil {
   private static void loadOutputType(final FlashBuilderProject project, final VirtualFile dotProjectFile) {
     final VirtualFile dir = dotProjectFile.getParent();
     assert dir != null;
-    project.setCompilerOutputType(dir.findChild(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES) == null
-                                  ? FlexBuildConfiguration.APPLICATION
-                                  : FlexBuildConfiguration.LIBRARY);
+    project.setOutputType(dir.findChild(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES) == null
+                          ? OutputType.Application
+                          : OutputType.Library);
   }
 
   private static void loadProjectRoot(final FlashBuilderProject project, final VirtualFile dotProjectFile) {

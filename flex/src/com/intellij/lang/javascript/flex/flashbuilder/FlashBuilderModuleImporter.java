@@ -2,7 +2,6 @@ package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.lang.javascript.flex.FlexModuleBuilder;
 import com.intellij.lang.javascript.flex.TargetPlayerUtils;
-import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
@@ -78,37 +77,35 @@ public class FlashBuilderModuleImporter {
     final String bcName = suggestMainBCName(fbProject);
     mainBC.setName(bcName);
 
-    final FlashBuilderProject.ProjectType projectType = fbProject.getProjectType();
-    final TargetPlatform targetPlatform = projectType == FlashBuilderProject.ProjectType.MobileAIR
-                                          ? TargetPlatform.Mobile
-                                          : projectType == FlashBuilderProject.ProjectType.AIR
-                                            ? TargetPlatform.Desktop
-                                            : TargetPlatform.Web;
+    final TargetPlatform targetPlatform = fbProject.getTargetPlatform();
     mainBC.setTargetPlatform(targetPlatform);
-    // todo how are pure AS desktop and mobile projects are set in FB (probably by sdk roots)?
-    mainBC.setPureAs(targetPlatform == TargetPlatform.Web && projectType == FlashBuilderProject.ProjectType.ActionScript);
-    final OutputType outputType =
-      FlexBuildConfiguration.LIBRARY.equals(fbProject.getCompilerOutputType()) ? OutputType.Library : OutputType.Application;
-    mainBC.setOutputType(outputType);
+    mainBC.setPureAs(fbProject.isPureActionScript());
+    mainBC.setOutputType(fbProject.getOutputType());
 
-    if (outputType == OutputType.Application) {
-      final String mainClass = fbProject.getMainAppClassName();
-      mainBC.setMainClass(mainClass);
+    if (fbProject.getOutputType() == OutputType.Application) {
+      mainBC.setMainClass(fbProject.getMainAppClassName());
 
-      mainBC.setOutputFileName(StringUtil.getShortName(mainClass) + ".swf");
+      final String shortClassName = StringUtil.getShortName(fbProject.getMainAppClassName());
+      mainBC.setOutputFileName(shortClassName + ".swf");
 
       if (targetPlatform == TargetPlatform.Web && fbProject.isUseHtmlWrapper()) {
         mainBC.setUseHtmlWrapper(true);
         mainBC.setWrapperTemplatePath(fbProject.getProjectRootPath() + "/" + CreateHtmlWrapperTemplateDialog.HTML_TEMPLATE_FOLDER_NAME);
       }
 
-      if (targetPlatform == TargetPlatform.Desktop || targetPlatform == TargetPlatform.Mobile) {
+      if (targetPlatform == TargetPlatform.Desktop) {
         setupAirDescriptor(mainBC, rootModel);
+        mainBC.getAirDesktopPackagingOptions().setPackageFileName(shortClassName);
       }
 
       if (targetPlatform == TargetPlatform.Mobile) {
+        setupAirDescriptor(mainBC, rootModel);
+
         mainBC.getAndroidPackagingOptions().setEnabled(fbProject.isAndroidSupported());
+        mainBC.getAndroidPackagingOptions().setPackageFileName(shortClassName);
+
         mainBC.getIosPackagingOptions().setEnabled(fbProject.isIosSupported());
+        mainBC.getIosPackagingOptions().setPackageFileName(shortClassName);
       }
     }
     else {
@@ -124,6 +121,9 @@ public class FlashBuilderModuleImporter {
         final VirtualFile cssFile = LocalFileSystem.getInstance().findFileByPath(cssPath);
         if (cssFile != null) {
           cssPaths.add(cssFile.getPath());
+        }
+        else if (ApplicationManager.getApplication().isUnitTestMode()) {
+          cssPaths.add(cssPath);
         }
       }
       mainBC.setCssFilesToCompile(cssPaths);
@@ -185,18 +185,29 @@ public class FlashBuilderModuleImporter {
                                         final FlashBuilderProject fbProject) {
     for (String mainClass : fbProject.getApplicationClassNames()) {
       final ModifiableFlexIdeBuildConfiguration bc = myFlexConfigEditor.copyConfiguration(mainBC, mainBC.getNature());
-      final String shortName = StringUtil.getShortName(mainClass);
-      bc.setName(shortName);
+      final String shortClassName = StringUtil.getShortName(mainClass);
+      bc.setName(shortClassName);
       bc.setMainClass(mainClass);
-      bc.setOutputFileName(shortName + ".swf");
-      if (bc.getTargetPlatform() == TargetPlatform.Desktop || bc.getTargetPlatform() == TargetPlatform.Mobile) {
+      bc.setOutputFileName(shortClassName + ".swf");
+
+      if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
         setupAirDescriptor(bc, rootModel);
+        bc.getAirDesktopPackagingOptions().setPackageFileName(shortClassName);
       }
+
+      if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
+        setupAirDescriptor(bc, rootModel);
+
+        bc.getAndroidPackagingOptions().setPackageFileName(shortClassName);
+        bc.getIosPackagingOptions().setPackageFileName(shortClassName);
+      }
+
       FlexModuleBuilder.createRunConfiguration(rootModel.getModule(), bc.getName());
     }
 
     for (final Pair<String, String> sourcePathAndDestPath : fbProject.getModules()) {
       final ModifiableFlexIdeBuildConfiguration bc = myFlexConfigEditor.copyConfiguration(mainBC, mainBC.getNature());
+      bc.setCssFilesToCompile(Collections.<String>emptyList());
       final String mainClass = getModuleClassName(fbProject, sourcePathAndDestPath.first, rootModel.getSourceRootUrls());
       final String shortName = StringUtil.getShortName(mainClass);
       bc.setName(shortName);
@@ -210,7 +221,7 @@ public class FlashBuilderModuleImporter {
   }
 
   private static String suggestMainBCName(final FlashBuilderProject fbProject) {
-    return FlexBuildConfiguration.APPLICATION.equals(fbProject.getCompilerOutputType()) && !fbProject.getMainAppClassName().isEmpty()
+    return fbProject.getOutputType() == OutputType.Application && !fbProject.getMainAppClassName().isEmpty()
            ? StringUtil.getShortName(fbProject.getMainAppClassName())
            : fbProject.getName();
   }

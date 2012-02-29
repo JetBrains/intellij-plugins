@@ -1,7 +1,8 @@
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.openapi.util.Pair;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -18,8 +19,9 @@ public class FlashBuilderProject {
   private String myOutputFolderPath = "";
   private boolean mySdkUsed;
   private String mySdkName = FlashBuilderSdkFinder.DEFAULT_SDK_NAME;
-  private String myCompilerOutputType = FlexBuildConfiguration.APPLICATION;
-  private ProjectType myProjectType;
+  private TargetPlatform myTargetPlatform;
+  private boolean myPureActionScript = false;
+  private OutputType myOutputType = OutputType.Application;
   private boolean myAndroidSupported = false;
   private boolean myIosSupported = false;
   private String myMainAppClassName = "";
@@ -31,10 +33,6 @@ public class FlashBuilderProject {
   private Collection<Pair<String, String>> myNamespacesAndManifestPaths = new ArrayList<Pair<String, String>>(1);
   private Collection<Pair<String, String>> myModules = new ArrayList<Pair<String, String>>();
   private Collection<String> myCssFilesToCompile = new ArrayList<String>();
-
-  public enum ProjectType {
-    ActionScript, Flex, AIR, MobileAIR
-  }
 
   FlashBuilderProject() {
   }
@@ -97,21 +95,28 @@ public class FlashBuilderProject {
     mySdkName = sdkName;
   }
 
-  public String getCompilerOutputType() {
-    return myCompilerOutputType;
+  public TargetPlatform getTargetPlatform() {
+    return myTargetPlatform;
   }
 
-  public void setCompilerOutputType(final String compilerOutputType) {
-    assert FlexBuildConfiguration.APPLICATION.equals(compilerOutputType) || FlexBuildConfiguration.LIBRARY.equals(compilerOutputType);
-    myCompilerOutputType = compilerOutputType;
+  public void setTargetPlatform(final TargetPlatform targetPlatform) {
+    myTargetPlatform = targetPlatform;
   }
 
-  public ProjectType getProjectType() {
-    return myProjectType;
+  public boolean isPureActionScript() {
+    return myPureActionScript;
   }
 
-  public void setProjectType(final ProjectType projectType) {
-    myProjectType = projectType;
+  public void setPureActionScript(final boolean pureActionScript) {
+    myPureActionScript = pureActionScript;
+  }
+
+  public OutputType getOutputType() {
+    return myOutputType;
+  }
+
+  public void setOutputType(final OutputType outputType) {
+    myOutputType = outputType;
   }
 
   public boolean isAndroidSupported() {
