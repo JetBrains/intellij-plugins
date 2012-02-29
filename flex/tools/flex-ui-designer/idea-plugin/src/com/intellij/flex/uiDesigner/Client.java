@@ -12,9 +12,7 @@ import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.RangeMarker;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
@@ -32,6 +30,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.intellij.flex.uiDesigner.DocumentFactoryManager.DocumentInfo;
 
 public class Client implements Disposable {
   protected final BlockDataOutputStream blockOut = new BlockDataOutputStream();
@@ -88,10 +88,20 @@ public class Client implements Disposable {
   }
 
   private void beginMessage(ClientMethod method) {
-    beginMessage(method, null);
+    beginMessage(method, null, null, null);
   }
 
-  private void beginMessage(ClientMethod method, @Nullable ActionCallback callback) {
+  private void beginMessage(ClientMethod method,
+                            @Nullable ActionCallback callback,
+                            @Nullable ActionCallback rejectedCallback,
+                            @Nullable Runnable doneRunnable) {
+    if (rejectedCallback != null) {
+      assert callback != null;
+      callback.notifyWhenRejected(rejectedCallback);
+      assert doneRunnable != null;
+      callback.doWhenDone(doneRunnable);
+    }
+
     blockOut.assertStart();
     out.write(ClientMethod.METHOD_CLASS);
     out.write(callback == null ? 0 : SocketInputHandler.getInstance().addCallback(callback));
@@ -247,25 +257,16 @@ public class Client implements Disposable {
   }
 
   /**
-   * final, full render document — responsible for handle problemsHolder and assetCounter — you must not do it
+   * final, full render document — responsible for handle problemsHolder and assetCounter — you must don't do it
    */
-  public boolean renderDocument(Module module, XmlFile psiFile, ProblemsHolder problemsHolder) {
-    final DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance();
+  public AsyncResult<DocumentInfo> renderDocument(Module module, XmlFile psiFile, ProblemsHolder problemsHolder) {
+    final AsyncResult<DocumentInfo> result = new AsyncResult<DocumentInfo>();
+
     final VirtualFile virtualFile = psiFile.getVirtualFile();
-
-    assert virtualFile != null;
-
-    if (documentFactoryManager.isRegistered(virtualFile)) {
-      FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
-      Document document = fileDocumentManager.getDocument(virtualFile);
-      if (document != null && fileDocumentManager.isDocumentUnsaved(document)) {
-        return updateDocumentFactory(documentFactoryManager.getId(virtualFile), module, psiFile);
-      }
-    }
-
     final int factoryId = registerDocumentFactoryIfNeed(module, psiFile, virtualFile, false, problemsHolder);
     if (factoryId == -1) {
-      return false;
+      result.setRejected();
+      return result;
     }
 
     FlexLibrarySet flexLibrarySet = registeredModules.getInfo(module).getFlexLibrarySet();
@@ -277,10 +278,17 @@ public class Client implements Disposable {
       DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
     }
 
-    beginMessage(ClientMethod.renderDocument);
+    final ActionCallback callback = new ActionCallback();
+    beginMessage(ClientMethod.renderDocument, callback, result, new Runnable() {
+      @Override
+      public void run() {
+        result.setDone(DocumentFactoryManager.getInstance().getInfo(factoryId));
+      }
+    });
+
     out.writeShort(factoryId);
 
-    return true;
+    return result;
   }
 
   public void fillAssetClassPoolIfNeed(FlexLibrarySet librarySet) {
@@ -373,11 +381,6 @@ public class Client implements Disposable {
       if (!problemsHolder.isEmpty()) {
         DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
       }
-
-      beginMessage(ClientMethod.renderDocumentAndDependents);
-      writeId(module);
-      out.writeShort(factoryId);
-      blockOut.end();
       return true;
     }
     catch (Throwable e) {
@@ -388,11 +391,40 @@ public class Client implements Disposable {
     return false;
   }
 
+  public AsyncResult<List<DocumentInfo>> renderDocumentAndDependents(final List<DocumentInfo> infos) {
+    final AsyncResult<List<DocumentInfo>> result = new AsyncResult<List<DocumentInfo>>();
+    final ActionCallback callback = new ActionCallback();
+    boolean hasError = true;
+    try {
+      beginMessage(ClientMethod.renderDocumentsAndDependents, callback, result, new Runnable() {
+        @Override
+        public void run() {
+          result.setDone(infos);
+        }
+      });
+
+      out.writeUInt29(infos.size());
+      for (DocumentInfo info : infos) {
+        out.writeUInt29(info.getId());
+      }
+
+      hasError = false;
+    }
+    finally {
+      finalizeMessageAndFlush(hasError);
+      if (hasError) {
+        callback.setRejected();
+      }
+    }
+
+    return result;
+  }
+
   private int registerDocumentFactoryIfNeed(Module module, XmlFile psiFile, VirtualFile virtualFile, boolean force,
                                             ProblemsHolder problemsHolder) {
     final DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance();
     final boolean registered = !force && documentFactoryManager.isRegistered(virtualFile);
-    final DocumentFactoryManager.DocumentInfo documentInfo = documentFactoryManager.get(virtualFile, null, null);
+    final DocumentInfo documentInfo = documentFactoryManager.get(virtualFile, null, null);
     if (!registered) {
       boolean hasError = true;
       try {
@@ -417,7 +449,7 @@ public class Client implements Disposable {
     return documentInfo.getId();
   }
 
-  private boolean writeDocumentFactory(DocumentFactoryManager.DocumentInfo documentInfo,
+  private boolean writeDocumentFactory(DocumentInfo documentInfo,
                                        Module module,
                                        XmlFile psiFile,
                                        ProblemsHolder problemsHolder) throws IOException {
@@ -499,13 +531,11 @@ public class Client implements Disposable {
   //  return result;
   //}
 
-  public void getDocumentImage(DocumentFactoryManager.DocumentInfo documentInfo, final AsyncResult<BufferedImage> result) {
+  public void getDocumentImage(DocumentInfo documentInfo, final AsyncResult<BufferedImage> result) {
     final ActionCallback callback = new ActionCallback();
     boolean hasError = true;
     try {
-      beginMessage(ClientMethod.getDocumentImage, callback);
-      callback.notifyWhenRejected(result);
-      callback.doWhenDone(new Runnable() {
+      beginMessage(ClientMethod.getDocumentImage, callback, result, new Runnable() {
         @Override
         public void run() {
           SocketInputHandlerImpl.Reader reader = SocketInputHandler.getInstance().getReader();
@@ -560,7 +590,7 @@ public class Client implements Disposable {
   }
 
   public static enum ClientMethod {
-    openProject, closeProject, registerLibrarySet, registerModule, registerDocumentFactory, updateDocumentFactory, renderDocument, renderDocumentAndDependents,
+    openProject, closeProject, registerLibrarySet, registerModule, registerDocumentFactory, updateDocumentFactory, renderDocument, renderDocumentsAndDependents,
     initStringRegistry, updateStringRegistry, fillImageClassPool, fillSwfClassPool, fillViewClassPool,
     selectComponent, getDocumentImage;
     

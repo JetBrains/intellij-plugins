@@ -16,8 +16,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -52,18 +50,13 @@ public class RunDesignViewAction extends DumbAwareAction {
     assert psiFile != null;
     final VirtualFile file = psiFile.getVirtualFile();
     assert file != null;
-    final Module module = ModuleUtil.findModuleForFile(file, project);
-    assert module != null;
 
-    FileDocumentManager.getInstance().saveAllDocuments();
-    // saveAllDocuments may cause open this document
-    if (!DesignerApplicationManager.getInstance().isDocumentOpening()) {
-      if (!DebugPathManager.IS_DEV) {
-        UsageTrigger.trigger(usageTriggerFeature);
-      }
-
-      DesignerApplicationManager.getInstance().openDocument(module, psiFile, isDebug() || (DebugPathManager.IS_DEV && event.getInputEvent().isControlDown()));
+    if (!DebugPathManager.IS_DEV) {
+      UsageTrigger.trigger(usageTriggerFeature);
     }
+
+    DesignerApplicationManager.getInstance()
+      .openDocument(psiFile, isDebug() || (DebugPathManager.IS_DEV && event.getInputEvent().isControlDown()));
   }
 
   protected boolean isDebug() {

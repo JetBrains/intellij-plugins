@@ -1,7 +1,5 @@
 package com.intellij.flex.uiDesigner;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 
 class TestSocketInputHandler extends SocketInputHandlerImpl {
@@ -31,11 +29,6 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
     return false;
   }
 
-  public void setCustomMessageHandler(@NotNull MessageHandler customMessageHandler) {
-    assert this.customMessageHandler == null;
-    this.customMessageHandler = customMessageHandler;
-  }
-
   public void process(MessageHandler customMessageHandler) throws IOException {
     assert !processOnRead();
 
@@ -50,7 +43,7 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
   protected boolean processCommand(int command) throws IOException {
     if (isFileBased(command) ||
       command == ServerMethod.SAVE_PROJECT_WINDOW_BOUNDS ||
-      command == ServerMethod.DOCUMENT_RENDERED ||
+      command == ServerMethod.CALLBACK ||
       command == ServerMethod.UNREGISTER_LIBRARY_SETS ||
       command == ServerMethod.LOG_WARNING) {
       return super.processCommand(command);

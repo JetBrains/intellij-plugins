@@ -63,7 +63,8 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
   private final MessageBus messageBus;
 
-  private final ArrayList<ActionCallback> callbacks = new ArrayList<ActionCallback>();
+  private final List<ActionCallback> callbacks = new ArrayList<ActionCallback>();
+  private final IdPool callbackIdPool = new IdPool();
 
   public SocketInputHandlerImpl() {
     messageBus = ApplicationManager.getApplication().getMessageBus();
@@ -71,14 +72,22 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
   @Override
   public int addCallback(final @NotNull ActionCallback actionCallback) {
-    callbacks.add(actionCallback);
+    final int callbackIndex = callbackIdPool.allocate();
+    if (callbackIndex == callbacks.size()) {
+      callbacks.add(actionCallback);
+    }
+    else {
+      callbacks.set(callbackIndex, actionCallback);
+    }
+
     actionCallback.doWhenProcessed(new Runnable() {
       @Override
       public void run() {
-        callbacks.remove(actionCallback);
+        callbacks.set(callbackIndex, null);
+        callbackIdPool.dispose(callbackIndex);
       }
     });
-    return callbacks.size();
+    return callbackIndex + 1;
   }
 
   protected void createReader(InputStream inputStream) {
@@ -203,10 +212,6 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
         setProperty();
         break;
 
-      case ServerMethod.DOCUMENT_RENDERED:
-        documentRendered();
-        break;
-
       case ServerMethod.CALLBACK:
         executeCallback();
         break;
@@ -219,19 +224,20 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   }
 
   private void executeCallback() throws IOException {
-    ActionCallback callback = callbacks.get(reader.readUnsignedByte() - 1);
-    if (reader.readBoolean()) {
+    int callbackIndex = reader.readUnsignedByte() - 1;
+    boolean success = reader.readBoolean();
+    ActionCallback callback = callbacks.get(callbackIndex);
+    if (callback == null) {
+      LOG.error("Callback #" + callbackIndex + " doesn't exists");
+      return;
+    }
+
+    if (success) {
       callback.setDone();
     }
     else {
       callback.setRejected();
     }
-  }
-
-  private void documentRendered() throws IOException {
-    final int id = reader.readUnsignedShort();
-    final BufferedImage image = reader.readImage();
-    messageBus.syncPublisher(MESSAGE_TOPIC).documentRendered(DocumentFactoryManager.getInstance().getInfo(id), image);
   }
 
   @NotNull

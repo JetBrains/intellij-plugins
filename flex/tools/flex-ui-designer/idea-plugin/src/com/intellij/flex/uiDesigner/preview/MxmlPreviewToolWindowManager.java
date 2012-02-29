@@ -46,7 +46,6 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
   private final FileEditorManager fileEditorManager;
 
   private final MergingUpdateQueue toolWindowUpdateQueue;
-  private final MergingUpdateQueue renderingQueue;
 
   private ToolWindow toolWindow;
   private MxmlPreviewToolWindowForm toolWindowForm;
@@ -59,7 +58,6 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     this.fileEditorManager = fileEditorManager;
 
     toolWindowUpdateQueue = new MergingUpdateQueue("mxml.preview", 300, true, null, project);
-    renderingQueue = new MergingUpdateQueue("mxml.rendering", 300, true, null, project, null);
   }
 
   @Override
@@ -106,28 +104,24 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
       @Override
       public void stateChanged() {
-        if (project.isDisposed()) {
+        if (project.isDisposed() || toolWindow == null || !toolWindow.isAvailable()) {
           return;
         }
 
-        final ToolWindow window = ToolWindowManager.getInstance(project).getToolWindow(toolWindowId);
-        if (window != null && window.isAvailable()) {
-          final boolean currentVisible = window.isVisible();
-          PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
-          if (currentVisible) {
-            propertiesComponent.setValue(SETTINGS_TOOL_WINDOW_VISIBLE, "true");
-          }
-          else {
-            propertiesComponent.unsetValue(SETTINGS_TOOL_WINDOW_VISIBLE);
-          }
-
-          if (currentVisible && !visible) {
-            assert !DumbService.getInstance(project).isDumb();
-            render();
-          }
-
-          visible = currentVisible;
+        final boolean currentVisible = toolWindow.isVisible();
+        PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
+        if (currentVisible) {
+          propertiesComponent.setValue(SETTINGS_TOOL_WINDOW_VISIBLE, "true");
         }
+        else {
+          propertiesComponent.unsetValue(SETTINGS_TOOL_WINDOW_VISIBLE);
+        }
+
+        if (currentVisible && !visible) {
+          render();
+        }
+
+        visible = currentVisible;
       }
     });
 
@@ -143,11 +137,12 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(project);
     connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentRenderedListener() {
       @Override
-      public void documentRendered(DocumentFactoryManager.DocumentInfo info, final BufferedImage image) {
-        if (toolWindowForm != null &&
+      public void documentRenderedOnAutoSave(DocumentFactoryManager.DocumentInfo info) {
+        if (!toolWindowDisposed &&
+            toolWindowForm != null &&
             toolWindowForm.getFile() != null &&
             info.equals(DocumentFactoryManager.getInstance().getNullableInfo(toolWindowForm.getFile()))) {
-          setDocumentImage(image);
+          render();
         }
       }
 
@@ -176,34 +171,23 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     }
 
     final XmlFile psiFile = toolWindowForm.getFile();
-    if (psiFile == null || DesignerApplicationManager.getInstance().isDocumentOpening()) {
+    if (psiFile == null) {
       return;
     }
 
-    renderingQueue.queue(new Update("render") {
+    final LoadingDecorator loadingDecorator = toolWindowForm.getPreviewPanel().getLoadingDecorator();
+    loadingDecorator.startLoading(false);
+    AsyncResult<BufferedImage> result = DesignerApplicationManager.getInstance().getDocumentImage(psiFile);
+    result.doWhenDone(new AsyncResult.Handler<BufferedImage>() {
+      @Override
+      public void run(BufferedImage image) {
+        setDocumentImage(image);
+      }
+    });
+    result.doWhenProcessed(new Runnable() {
       @Override
       public void run() {
-        final LoadingDecorator loadingDecorator = toolWindowForm.getPreviewPanel().getLoadingDecorator();
-        loadingDecorator.startLoading(false);
-        AsyncResult<BufferedImage> result = DesignerApplicationManager.getInstance().getDocumentImage(psiFile);
-        result.doWhenProcessed(new Runnable() {
-          @Override
-          public void run() {
-            loadingDecorator.stopLoading();
-          }
-        });
-
-        result.doWhenDone(new AsyncResult.Handler<java.awt.image.BufferedImage>() {
-          @Override
-          public void run(BufferedImage image) {
-            setDocumentImage(image);
-          }
-        });
-      }
-
-      @Override
-      public boolean canEat(Update update) {
-        return true;
+        loadingDecorator.stopLoading();
       }
     });
   }
@@ -269,7 +253,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     }
   }
 
-  private void processFileEditorChange(final @Nullable Editor newEditor) {
+  private void processFileEditorChange(@Nullable final Editor newEditor) {
     toolWindowUpdateQueue.cancelAllUpdates();
     toolWindowUpdateQueue.queue(new Update("update") {
       public void run() {
@@ -303,12 +287,11 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         }
 
         toolWindow.setAvailable(true, null);
-        if (propertiesComponent.getBoolean(SETTINGS_TOOL_WINDOW_VISIBLE, false)) {
-          toolWindow.show(null);
-        }
-
-        if (doRender) {
+        if (toolWindow.isVisible()) {
           render();
+        }
+        else if (propertiesComponent.getBoolean(SETTINGS_TOOL_WINDOW_VISIBLE, false)) {
+          toolWindow.show(null);
         }
       }
     });

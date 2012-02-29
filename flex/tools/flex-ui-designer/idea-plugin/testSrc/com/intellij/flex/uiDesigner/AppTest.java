@@ -6,6 +6,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.util.concurrency.Semaphore;
@@ -13,11 +14,12 @@ import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static com.intellij.flex.uiDesigner.DocumentFactoryManager.DocumentInfo;
 
 @Flex(version="4.5")
 public class AppTest extends AppTestBase {
@@ -41,7 +43,7 @@ public class AppTest extends AppTestBase {
     MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(myModule);
     connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentRenderedListener() {
       @Override
-      public void documentRendered(DocumentFactoryManager.DocumentInfo info, final BufferedImage image) {
+      public void documentRenderedOnAutoSave(DocumentInfo info) {
         //assertTrue(info.getElement().equals(file));
         if (assertOnDocumentRendered != null) {
           try {
@@ -83,14 +85,27 @@ public class AppTest extends AppTestBase {
     openAndWait(configureByFiles("injectedAS/Transitions.mxml")[0], "injectedAS/Transitions.mxml");
   }
 
+  private void renderAndWait(VirtualFile file) throws InterruptedException {
+    AsyncResult<DocumentInfo> result =
+      DesignerApplicationManager.getInstance().renderDocument(myModule, Tests.virtualToPsi(myProject, file));
+
+    result.doWhenProcessed(new Runnable() {
+      @Override
+      public void run() {
+        semaphore.up();
+      }
+    });
+
+    await();
+  }
+
   public void testUpdateDocumentOnIdeaAutoSave() throws Exception {
     final VirtualFile[] files = configureByFiles("ProjectMxmlComponentAsChild.mxml", "AuxProjectMxmlComponent.mxml");
 
     DesignerApplicationManager designerManager = DesignerApplicationManager.getInstance();
 
     semaphore.down();
-    designerManager.renderDocument(myModule, Tests.virtualToPsi(myProject, files[0]));
-    await();
+    renderAndWait(files[0]);
 
     assertOnDocumentRendered = new Callable<Void>() {
       @Override

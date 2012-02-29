@@ -74,11 +74,11 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
         break;
 
       case ClientMethod.renderDocument:
-        renderDocument(input);
+        renderDocument(input, callbackId);
         break;
       
-      case ClientMethod.renderDocumentAndDependents:
-        renderDocumentAndDependents(input);
+      case ClientMethod.renderDocumentsAndDependents:
+        renderDocumentsAndDependents(input, callbackId);
         break;
       
       case ClientMethod.initStringRegistry:
@@ -189,9 +189,10 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     return DocumentManager(module.project.getComponent(DocumentManager));
   }
 
-  private static function renderDocument(input:IDataInput):void {
+  private static function renderDocument(input:IDataInput, callbackId:int):void {
     var documentFactory:DocumentFactory = getDocumentFactoryManager().getById(input.readUnsignedShort());
-    getDocumentManager(documentFactory.module).render(documentFactory);
+    var callback:ActionCallback = getDocumentManager(documentFactory.module).render(documentFactory);
+    Server.instance.asyncCallback(callback, callbackId);
   }
 
   private static function getDocumentImage(input:IDataInput, callbackId:int):void {
@@ -202,7 +203,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     if (documentFactory.document == null) {
       var callback:ActionCallback = documentManager.render(documentFactory);
       callback.doWhenDone(getDocumentImageDoneHandler, documentFactory, callbackId);
-      callback.doWhenRejected(Server.instance.failCallback);
+      callback.doWhenRejected(Server.instance.callback, callbackId, false);
     }
     else {
       getDocumentImageDoneHandler(documentFactory, callbackId);
@@ -215,28 +216,50 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     server.writeDocumentImage(documentFactory.document);
   }
 
-  private function renderDocumentAndDependents(input:IDataInput):void {
-    var module:Module = moduleManager.getById(input.readUnsignedShort());
+  private static function renderDocumentsAndDependents(input:IDataInput, callbackId:int):void {
     var documentFactoryManager:DocumentFactoryManager = getDocumentFactoryManager();
-    var documentFactory:DocumentFactory = documentFactoryManager.getById(input.readUnsignedShort());
-    // not set projectManager.project — current project is not changed (opposite to openDocument)
-    doRenderDocumentAndDependents(documentFactory, getDocumentManager(module), documentFactoryManager, new Dictionary());
+    var n:int = AmfUtil.readUInt29(input);
+    var processed:Dictionary = new Dictionary();
+    var callbacks:Vector.<ActionCallback> = new Vector.<ActionCallback>();
+    while (n-- > 0) {
+      var documentFactory:DocumentFactory = documentFactoryManager.getById(AmfUtil.readUInt29(input));
+      doRenderDocumentAndDependents(documentFactory, getDocumentManager(documentFactory.module), documentFactoryManager, processed, callbacks);
+    }
+
+    if (callbacks.length == 0) {
+      Server.instance.callback(callbackId, true);
+      return;
+    }
+
+    var totalCallback:ActionCallback = new ActionCallback(callbacks.length);
+    Server.instance.asyncCallback(totalCallback, callbackId);
+    for each (var callback:ActionCallback in callbacks) {
+      callback.notify(totalCallback);
+    }
   }
 
-  private static function doRenderDocumentAndDependents(documentFactory:DocumentFactory, documentManager:DocumentManager,
-                                                        documentFactoryManager:DocumentFactoryManager, processed:Dictionary):void {
+  private static function doRenderDocumentAndDependents(documentFactory:DocumentFactory,
+                                                        documentManager:DocumentManager,
+                                                        documentFactoryManager:DocumentFactoryManager,
+                                                        processed:Dictionary,
+                                                        callbacks:Vector.<ActionCallback>):void {
+    if (processed[documentFactory]) {
+      return;
+    }
+
     processed[documentFactory] = true;
 
     if (documentFactory.document != null) {
-      documentManager.render(documentFactory);
+      var callback:ActionCallback = documentManager.render(documentFactory);
+      if (!callback.isProcessed) {
+        callbacks[callbacks.length] = callback;
+      }
     }
 
     var dependents:Vector.<DocumentFactory> = documentFactoryManager.getDependents(documentFactory);
     if (dependents != null) {
       for each (var dependent:DocumentFactory in dependents) {
-        if (!processed[dependent]) {
-          doRenderDocumentAndDependents(dependent, documentManager, documentFactoryManager, processed);
-        }
+        doRenderDocumentAndDependents(dependent, documentManager, documentFactoryManager, processed, callbacks);
       }
     }
   }
@@ -282,10 +305,6 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     NativeApplication.nativeApplication.activate(window);
   }
 
-  public function pendingReadIsAllowable(method:int):Boolean {
-    return false; // was for openDocument, but now (after implement factory concept) it is read immediately (sync read)
-  }
-
   private static var methodIdToName:Vector.<String>;
 
   public function describeMethod(methodId:int):String {
@@ -311,7 +330,7 @@ final class ClientMethod {
   public static const registerDocumentFactory:int = 4;
   public static const updateDocumentFactory:int = 5;
   public static const renderDocument:int = 6;
-  public static const renderDocumentAndDependents:int = 7;
+  public static const renderDocumentsAndDependents:int = 7;
 
   public static const initStringRegistry:int = 8;
   public static const updateStringRegistry:int = 9;

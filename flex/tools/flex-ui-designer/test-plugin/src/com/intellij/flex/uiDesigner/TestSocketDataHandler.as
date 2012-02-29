@@ -188,10 +188,6 @@ internal class TestSocketDataHandler implements SocketDataHandler {
     success();
   }
 
-  public function pendingReadIsAllowable(method:int):Boolean {
-    return false;
-  }
-
   public function describeMethod(methodId:int):String {
     return "test";
   }

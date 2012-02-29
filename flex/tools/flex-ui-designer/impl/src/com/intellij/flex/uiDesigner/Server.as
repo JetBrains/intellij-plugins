@@ -16,6 +16,7 @@ import flash.utils.getTimer;
 
 import org.flyti.plexus.PlexusManager;
 import org.jetbrains.actionSystem.DataContext;
+import org.jetbrains.util.ActionCallback;
 
 public class Server implements ResourceBundleProvider {
   // we cannot use File.applicationDirectory.nativePath directly  http://juick.com/develar/1485063
@@ -339,20 +340,16 @@ public class Server implements ResourceBundleProvider {
     socket.flush();
   }
 
-  public function documentRendered(document:Document):void {
-    socket.writeByte(ServerMethod.DOCUMENT_RENDERED);
-    socket.writeShort(document.documentFactory.id);
-    writeDocumentImage(document);
-  }
-
-  public function failCallback(callbackId:int):void {
-    callback(callbackId, false);
+  public function asyncCallback(result:ActionCallback, callbackId:int):void {
+    result.doWhenDone(callback, callbackId, true);
+    result.doWhenRejected(callback, callbackId, false);
   }
 
   public function callback(callbackId:int, success:Boolean = true):void {
     socket.writeByte(ServerMethod.CALLBACK);
     socket.writeByte(callbackId);
     socket.writeBoolean(success);
+    socket.flush();
   }
 }
 }

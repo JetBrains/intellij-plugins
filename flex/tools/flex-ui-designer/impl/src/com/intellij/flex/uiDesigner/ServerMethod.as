@@ -23,8 +23,6 @@ public final class ServerMethod {
 
   public static const SET_PROPERTY:int = 12;
 
-  public static const DOCUMENT_RENDERED:int = 13;
-
   public static const CALLBACK:int = 10;
 }
 }

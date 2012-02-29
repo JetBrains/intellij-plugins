@@ -5,7 +5,6 @@ import com.intellij.openapi.util.ActionCallback;
 import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +22,7 @@ public abstract class SocketInputHandler implements Disposable {
   }
 
   public interface DocumentRenderedListener {
-    void documentRendered(DocumentFactoryManager.DocumentInfo info, BufferedImage image);
+    void documentRenderedOnAutoSave(DocumentFactoryManager.DocumentInfo info);
     void errorOccured();
   }
 

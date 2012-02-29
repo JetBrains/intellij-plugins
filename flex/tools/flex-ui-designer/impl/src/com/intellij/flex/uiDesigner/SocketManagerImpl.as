@@ -15,7 +15,6 @@ public class SocketManagerImpl implements SocketManager {
 
   private var messageId:uint = uint.MAX_VALUE;
   private var deferredMessageSize:int;
-  private var unreadSocketRemainder:int;
 
   private var omitCount:int;
   private var omitMessages:Dictionary;
@@ -73,18 +72,6 @@ public class SocketManagerImpl implements SocketManager {
       totalBytes += event.bytesLoaded;
       //trace("socket data handler: bytesLoaded " + event.bytesLoaded + " socket bytesAvailable " + socket.bytesAvailable + " last unread " + (socket.bytesAvailable - event.bytesLoaded) + " deferredMessageSize " + deferredMessageSize);
     }
-    
-    if (unreadSocketRemainder != 0) {
-      if (event != null) {
-        unreadSocketRemainder += event.bytesLoaded;
-      }
-      if (socket.bytesAvailable == unreadSocketRemainder) {
-        return;
-      }
-      else {
-        unreadSocketRemainder = 0;
-      }
-    }
 
     if (checkOmit()) {
       return;
@@ -121,28 +108,33 @@ public class SocketManagerImpl implements SocketManager {
 
       var clientMethodClass:int = socket.readByte();
       var handler:SocketDataHandler = socketDataHandlers[clientMethodClass];
-      if (handler != null) {
-        const position:int = socket.bytesAvailable + 1 /* clientMethodClass size */;
-        const callbackId:int = socket.readUnsignedByte();
-        const method:int = socket.readByte();
-        const methodDescription:String = handler.describeMethod(method);
-        trace(methodDescription);
-        handler.handleSockedData(messageSize - 3, method, callbackId, socket);
-        messageId = uint.MAX_VALUE;
-        trace(methodDescription + " processed");
-        if (messageSize != (position - socket.bytesAvailable)) {
-          if (handler.pendingReadIsAllowable(method)) {
-            unreadSocketRemainder = socket.bytesAvailable;
-            trace("allowed unread socket remainder: " + unreadSocketRemainder + " for method " + method);
-          }
-          else {
-            throw new Error("prohibited unread socket remainder: " + socket.bytesAvailable + " for method " + method + " with message size " + messageSize + " at position " + position);
-          }
-          return;
-        }
-      }
-      else {
+      if (handler == null) {
         throw new ArgumentError("unknown class: " + clientMethodClass);
+      }
+
+      const position:int = socket.bytesAvailable + 1 /* clientMethodClass size */;
+      const callbackId:int = socket.readUnsignedByte();
+      const method:int = socket.readByte();
+      const methodDescription:String = handler.describeMethod(method);
+      trace(methodDescription);
+      try {
+        handler.handleSockedData(messageSize - 3, method, callbackId, socket);
+      }
+      catch (e:Error) {
+        UncaughtErrorManager.instance.handleError(e);
+        Server.instance.callback(callbackId, false);
+      }
+
+      messageId = uint.MAX_VALUE;
+      trace(methodDescription + " processed");
+      var unread:int = messageSize - (position - socket.bytesAvailable);
+      if (unread != 0) {
+        UncaughtErrorManager.instance.logWarning("unread socket remainder: " + unread + " for method " + methodDescription +
+                                                 " with message size " + messageSize + " at position " + position);
+        // skip unread bytes
+        while (unread-- > 0) {
+          socket.readByte();
+        }
       }
     }
   }

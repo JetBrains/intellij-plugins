@@ -171,8 +171,6 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       document.displayManager.setStyleManagerForTalentAdobeEngineers(false);
     }
 
-    Server.instance.documentRendered(document);
-
     result.setDone();
     return true;
   }

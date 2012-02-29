@@ -24,16 +24,16 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
+import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
-import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.util.messages.MessageBus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -41,6 +41,8 @@ import org.jetbrains.annotations.TestOnly;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.intellij.flex.uiDesigner.DocumentFactoryManager.DocumentInfo;
@@ -161,15 +163,11 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     return true;
   }
 
-  public AsyncResult<DocumentInfo> renderDocument(@NotNull final XmlFile psiFile) {
-    //noinspection ConstantConditions
-    return renderDocument(ModuleUtil.findModuleForPsiElement(psiFile), psiFile);
-  }
-
-  private static void doRenderUnsavedDocuments(Document[] unsavedDocuments) {
+  private static AsyncResult<List<DocumentInfo>> doRenderUnsavedDocuments(Document[] unsavedDocuments) {
     FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
     DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance();
     Client client = Client.getInstance();
+    List<DocumentInfo> documentInfos = new ArrayList<DocumentInfo>(unsavedDocuments.length);
     for (Document document : unsavedDocuments) {
       final VirtualFile file = fileDocumentManager.getFile(document);
       if (file == null) {
@@ -201,21 +199,25 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       try {
         psiFile = (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(document);
         if (psiFile == null) {
-          return;
+          continue;
         }
       }
       finally {
         token.finish();
       }
 
-      client.updateDocumentFactory(info.getId(), module, psiFile);
+      if (client.updateDocumentFactory(info.getId(), module, psiFile)) {
+        documentInfos.add(info);
+      }
     }
 
-    client.flush();
+    return client.renderDocumentAndDependents(documentInfos);
   }
 
-  @NotNull
-  public AsyncResult<BufferedImage> getDocumentImage(@NotNull XmlFile psiFile) {
+  public void runWhenRendered(@NotNull final XmlFile psiFile,
+                               @NotNull AsyncResult.Handler<DocumentInfo> handler,
+                               @Nullable ActionCallback renderRejectedCallback,
+                               boolean debug) {
     boolean needRender = isApplicationClosed();
     DocumentInfo documentInfo = null;
     if (!needRender) {
@@ -238,49 +240,61 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       needRender = documentInfo == null;
     }
 
-    final AsyncResult<BufferedImage> result = new AsyncResult<BufferedImage>();
+    if (needRender) {
+      Module module = ModuleUtil.findModuleForPsiElement(psiFile);
+      LOG.assertTrue(module != null);
+      AsyncResult<DocumentInfo> renderResult = renderDocument(module, psiFile, debug);
+      if (renderRejectedCallback != null) {
+        renderResult.notifyWhenRejected(renderRejectedCallback);
+      }
+      renderResult.doWhenDone(handler);
+    }
+    else {
+      handler.run(documentInfo);
+    }
+  }
 
+  @NotNull
+  public AsyncResult<BufferedImage> getDocumentImage(@NotNull XmlFile psiFile) {
+    final AsyncResult<BufferedImage> result = new AsyncResult<BufferedImage>();
     AsyncResult.Handler<DocumentInfo> handler = new AsyncResult.Handler<DocumentInfo>() {
       @Override
       public void run(DocumentInfo documentInfo) {
         Client.getInstance().getDocumentImage(documentInfo, result);
       }
     };
-
-    if (needRender) {
-      AsyncResult<DocumentInfo> renderResult = renderDocument(psiFile);
-      renderResult.notifyWhenRejected(result);
-      renderResult.doWhenDone(handler);
-    }
-    else {
-      handler.run(documentInfo);
-    }
-
+    runWhenRendered(psiFile, handler, result, false);
     return result;
   }
 
-  public AsyncResult<DocumentInfo> renderDocument(@NotNull final Module module, @NotNull final XmlFile psiFile) {
-    final AsyncResult<DocumentInfo> result = new AsyncResult<DocumentInfo>();
-    renderDocument(module, psiFile, false, result);
-    return result;
-  }
-
-  public void openDocument(@NotNull final Module module, @NotNull final XmlFile psiFile, final boolean debug) {
-    final AsyncResult<DocumentInfo> result = new AsyncResult<DocumentInfo>();
-    renderDocument(module, psiFile, debug, result);
-    result.doWhenDone(new AsyncResult.Handler<DocumentInfo>() {
+  public void openDocument(@NotNull final XmlFile psiFile, final boolean debug) {
+    runWhenRendered(psiFile, new AsyncResult.Handler<DocumentInfo>() {
       @Override
       public void run(DocumentInfo documentInfo) {
         Client.getInstance().selectComponent(documentInfo.getId(), 0);
       }
-    });
+    }, null, debug);
   }
 
-  private void renderDocument(@NotNull final Module module,
-                              @NotNull final XmlFile psiFile,
-                              final boolean debug,
-                              @Nullable final AsyncResult<DocumentInfo> result) {
-    LOG.assertTrue(!documentOpening);
+  public AsyncResult<DocumentInfo> renderDocument(@NotNull final Module module, @NotNull final XmlFile psiFile) {
+    return renderDocument(module, psiFile, false);
+  }
+
+  private AsyncResult<DocumentInfo> renderDocument(@NotNull final Module module, @NotNull final XmlFile psiFile, boolean debug) {
+    final AsyncResult<DocumentInfo> result = new AsyncResult<DocumentInfo>();
+    if (documentOpening) {
+      result.setRejected();
+      LOG.error("documentOpening must be false");
+      return result;
+    }
+
+    result.doWhenProcessed(new Runnable() {
+      @Override
+      public void run() {
+        documentOpening = false;
+      }
+    });
+
     documentOpening = true;
 
     final boolean appClosed = isApplicationClosed();
@@ -290,7 +304,8 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
         final Sdk sdk = FlexUtils.getSdkForActiveBC(module);
         if (sdk == null || !checkFlexSdkVersion(sdk)) {
           reportInvalidFlexSdk(module, debug, sdk);
-          return;
+          result.setRejected();
+          return result;
         }
       }
 
@@ -298,13 +313,15 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     }
     finally {
       if (hasError) {
-        documentOpening = false;
+        result.setRejected();
       }
     }
 
     final RenderDocumentTask renderDocumentTask = new RenderDocumentTask(psiFile, result);
-    ProgressManager.getInstance().run(
-      appClosed ? new DesignerApplicationLauncher(module, renderDocumentTask, debug) : new DocumentTaskExecutor(module, renderDocumentTask));
+    ProgressManager.getInstance().run(appClosed
+                                      ? new DesignerApplicationLauncher(module, renderDocumentTask, debug)
+                                      : new DocumentTaskExecutor(module, renderDocumentTask));
+    return result;
   }
 
   public boolean isApplicationClosed() {
@@ -336,12 +353,33 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       @Override
       public void run() {
+        boolean hasError = true;
+        final AsyncResult<List<DocumentInfo>> result;
         try {
-          doRenderUnsavedDocuments(unsavedDocuments);
+          result = doRenderUnsavedDocuments(unsavedDocuments);
+          hasError = false;
         }
         finally {
-          documentOpening = false;
+          if (hasError) {
+            documentOpening = false;
+          }
         }
+
+        result.doWhenDone(new AsyncResult.Handler<List<DocumentInfo>>() {
+          @Override
+          public void run(List<DocumentInfo> infos) {
+            MessageBus messageBus = ApplicationManager.getApplication().getMessageBus();
+            for (DocumentInfo info : infos) {
+              messageBus.syncPublisher(SocketInputHandler.MESSAGE_TOPIC).documentRenderedOnAutoSave(info);
+            }
+          }
+        });
+        result.doWhenProcessed(new Runnable() {
+          @Override
+          public void run() {
+            documentOpening = false;
+          }
+        });
       }
     });
   }
@@ -392,7 +430,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
       DesignerApplicationManager.getInstance().documentOpening = false;
 
-      if (asyncResult != null && !asyncResult.isDone()) {
+      if (asyncResult != null && !asyncResult.isProcessed()) {
         asyncResult.setRejected();
       }
     }
@@ -402,7 +440,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
                        ProjectComponentReferenceCounter projectComponentReferenceCounter,
                        ProgressIndicator indicator,
                        ProblemsHolder problemsHolder) {
-      indicator.setText(FlashUIDesignerBundle.message("open.document"));
+      indicator.setText(FlashUIDesignerBundle.message("rendering.document"));
       Client client = Client.getInstance();
       if (!client.flush()) {
         return false;
@@ -413,57 +451,43 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
         return false;
       }
 
-      final Ref<DocumentInfo> result = new Ref<DocumentInfo>();
-      final AtomicBoolean done = new AtomicBoolean(false);
-      final MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(this);
-      connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentRenderedListener() {
+      final AsyncResult<DocumentInfo> renderResult = client.renderDocument(module, psiFile, problemsHolder);
+      if (renderResult.isRejected() || !client.flush()) {
+        return false;
+      }
+
+      final AtomicBoolean processed = new AtomicBoolean(false);
+      indicator.setText(FlashUIDesignerBundle.message("loading.libraries"));
+      renderResult.doWhenDone(new AsyncResult.Handler<DocumentInfo>() {
         @Override
-        public void documentRendered(DocumentInfo info, BufferedImage image) {
-          if (info.equals(DocumentFactoryManager.getInstance().getNullableInfo(psiFile))) {
-            result.set(info);
-            up();
+        public void run(DocumentInfo documentInfo) {
+          if (asyncResult != null) {
+            asyncResult.setDone(documentInfo);
           }
         }
-
+      });
+      renderResult.doWhenProcessed(new Runnable() {
         @Override
-        public void errorOccured() {
-          up();
-        }
-
-        private void up() {
-          connection.disconnect();
-          done.set(true);
+        public void run() {
+          processed.set(true);
         }
       });
 
-      if (client.renderDocument(module, psiFile, problemsHolder)) {
-        if (!client.flush()) {
+      while (!processed.get()) {
+        try {
+          Thread.sleep(5);
+        }
+        catch (InterruptedException e) {
+          renderResult.setRejected();
           return false;
         }
 
-        indicator.setText(FlashUIDesignerBundle.message("loading.libraries"));
-        while (!done.get()) {
-          try {
-            Thread.sleep(5);
-          }
-          catch (InterruptedException e) {
-            return false;
-          }
-
-          indicator.checkCanceled();
-
-          if (DesignerApplicationManager.getInstance().isApplicationClosed()) {
-            return false;
-          }
+        if (indicator.isCanceled() || DesignerApplicationManager.getInstance().isApplicationClosed()) {
+          renderResult.setRejected();
+          return false;
         }
       }
-      else {
-        connection.disconnect();
-      }
 
-      if (asyncResult != null) {
-        asyncResult.setDone(result.get());
-      }
       return true;
     }
   }

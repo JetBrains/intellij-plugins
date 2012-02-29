@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner.preview;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import org.jetbrains.annotations.Nullable;
 

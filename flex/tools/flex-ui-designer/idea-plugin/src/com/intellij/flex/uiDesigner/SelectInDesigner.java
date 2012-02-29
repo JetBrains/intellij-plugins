@@ -6,15 +6,15 @@ import com.intellij.ide.SelectInTarget;
 import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.openapi.editor.RangeMarker;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.util.AsyncResult;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+import static com.intellij.flex.uiDesigner.DocumentFactoryManager.DocumentInfo;
 
 public class SelectInDesigner implements SelectInTarget {
   @Override
@@ -39,35 +39,26 @@ public class SelectInDesigner implements SelectInTarget {
     UsageTrigger.trigger("FlashUIDesigner.selectIn");
 
     final PsiElement element = getPsiElement(context);
-    final Module module = element == null ? null : ModuleUtil.findModuleForPsiElement(element);
-    if (module == null) {
+    if (element == null) {
       return;
     }
 
-    final VirtualFile virtualFile = context.getVirtualFile();
-
-    final Runnable doAction = new Runnable() {
+    final AsyncResult.Handler<DocumentInfo> handler = new AsyncResult.Handler<DocumentInfo>() {
       @Override
-      public void run() {
-        DocumentFactoryManager.DocumentInfo info = DocumentFactoryManager.getInstance().getNullableInfo(virtualFile);
-        if (info == null) {
-          return;
-        }
-
+      public void run(DocumentInfo info) {
         final List<RangeMarker> rangeMarkers = info.getRangeMarkers();
-
-        if (element instanceof XmlFile) {
-          DesignerApplicationManager.getInstance().openDocument(module, (XmlFile)element, false);
-        }
-        else {
+        int componentId = 0;
+        if (!(element instanceof XmlFile)) {
           PsiElement effectiveElement = element;
+          boolean found = false;
           do {
             if (effectiveElement instanceof XmlTag && ((XmlTag)effectiveElement).getDescriptor() instanceof ClassBackedElementDescriptor) {
               for (int i = 0; i < rangeMarkers.size(); i++) {
                 RangeMarker rangeMarker = rangeMarkers.get(i);
                 if (rangeMarker.getStartOffset() == effectiveElement.getTextOffset()) {
-                  Client.getInstance().selectComponent(info.getId(), i);
-                  return;
+                  componentId = i;
+                  found = true;
+                  break;
                 }
               }
             }
@@ -76,17 +67,16 @@ public class SelectInDesigner implements SelectInTarget {
           }
           while (effectiveElement != null);
 
-          LogMessageUtil.LOG.warn("Can't find target component");
+          if (!found) {
+            LogMessageUtil.LOG.warn("Can't find target component");
+          }
         }
+
+        Client.getInstance().selectComponent(info.getId(), componentId);
       }
     };
 
-    if (DesignerApplicationManager.getInstance().isApplicationClosed() || !DocumentFactoryManager.getInstance().isRegistered(virtualFile)) {
-      DesignerApplicationManager.getInstance().renderDocument((XmlFile)element.getContainingFile()).doWhenDone(doAction);
-    }
-    else {
-      doAction.run();
-    }
+    DesignerApplicationManager.getInstance().runWhenRendered((XmlFile)element.getContainingFile(), handler, null, false);
   }
 
   @Override
