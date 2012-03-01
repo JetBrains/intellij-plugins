@@ -63,7 +63,7 @@ public class FlexSdkUtils {
 
   static final String TARGET_PLAYER_MAJOR_VERSION_TOKEN = "{targetPlayerMajorVersion}";
   static final String TARGET_PLAYER_MINOR_VERSION_TOKEN = "{targetPlayerMinorVersion}";
-  static final String LOCALE_TOKEN = "{locale}";
+  public static final String LOCALE_TOKEN = "{locale}";
   public static final String ADL_RELATIVE_PATH =
     File.separatorChar + "bin" + File.separatorChar + "adl" + (SystemInfo.isWindows ? ".exe" : "");
   static final String AIR_RUNTIME_RELATIVE_PATH =

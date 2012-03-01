@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.lang.javascript.flex.FlexModuleBuilder;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.TargetPlayerUtils;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
@@ -10,6 +11,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.project.Project;
@@ -143,17 +145,30 @@ public class FlashBuilderModuleImporter {
     // todo dependencies.setFrameworkLinkage();
 
     setupDependencies(mainBC, fbProject);
+
+    final Map<String, String> compilerOptions = new THashMap<String, String>();
+
     // todo parse options, replace "-a b" to "-a=b", move some to dedicated fields
-    mainBC.getCompilerOptions().setAdditionalOptions(fbProject.getAdditionalCompilerOptions());
+    final String fbOptions = fbProject.getAdditionalCompilerOptions();
+    final List<String> locales = FlexUtils.getOptionValues(fbOptions, "locale", "compiler.locale");
+    final String ideaOptions = FlexUtils.removeOptions(fbOptions, "locale", "compiler.locale");
+    mainBC.getCompilerOptions().setAdditionalOptions(ideaOptions);
+
+    final StringBuilder localesBuf = new StringBuilder();
+    for (String locale : locales) {
+      if (localesBuf.length() > 0) {
+        localesBuf.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+      }
+      localesBuf.append(locale);
+    }
+    compilerOptions.put("compiler.locale", localesBuf.toString());
 
     if (mainBC.getOutputType() == OutputType.Application) {
       FlexModuleBuilder.createRunConfiguration(rootModel.getModule(), mainBC.getName());
     }
 
-    final Map<String, String> compilerOptions = new THashMap<String, String>();
-
     if (!fbProject.getNamespacesAndManifestPaths().isEmpty()) {
-      final StringBuilder buf = new StringBuilder();
+      final StringBuilder nsBuf = new StringBuilder();
       for (Pair<String, String> nsAndManifestPath : fbProject.getNamespacesAndManifestPaths()) {
         final String manifestPath = nsAndManifestPath.second;
         VirtualFile manifestFile = null;
@@ -166,14 +181,14 @@ public class FlashBuilderModuleImporter {
                                                                  : getAbsolutePathWithLinksHandled(fbProject, manifestPath);
 
 
-        if (buf.length() > 0) {
-          buf.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+        if (nsBuf.length() > 0) {
+          nsBuf.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
         }
-        buf.append(nsAndManifestPath.first).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);
-        buf.append(resolvedManifestPath);
+        nsBuf.append(nsAndManifestPath.first).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);
+        nsBuf.append(resolvedManifestPath);
       }
 
-      compilerOptions.put("compiler.namespaces.namespace", buf.toString());
+      compilerOptions.put("compiler.namespaces.namespace", nsBuf.toString());
     }
 
     mainBC.getCompilerOptions().setAllOptions(compilerOptions);
@@ -290,15 +305,15 @@ public class FlashBuilderModuleImporter {
     return FlashBuilderProjectLoadUtil.getClassName(mainClassPathUrl.substring(mainClassPathUrl.lastIndexOf('/') + 1));
   }
 
-  private void setupRoots(final ModifiableRootModel rootModel, final FlashBuilderProject flashBuilderProject) {
-    final String mainContentEntryUrl = VfsUtil.pathToUrl(flashBuilderProject.getProjectRootPath());
+  private void setupRoots(final ModifiableRootModel rootModel, final FlashBuilderProject fbProject) {
+    final String mainContentEntryUrl = VfsUtil.pathToUrl(fbProject.getProjectRootPath());
     final ContentEntry mainContentEntry = rootModel.addContentEntry(mainContentEntryUrl);
     final Collection<ContentEntry> otherContentEntries = new ArrayList<ContentEntry>();
 
-    final Collection<String> sourcePaths = flashBuilderProject.getSourcePaths();
+    final Collection<String> sourcePaths = fbProject.getSourcePaths();
     if (sourcePaths.isEmpty()) {
       final VirtualFile contentRoot = mainContentEntry.getFile();
-      final String mainClass = flashBuilderProject.getMainAppClassName();
+      final String mainClass = fbProject.getMainAppClassName();
       if (contentRoot != null &&
           !StringUtil.isEmpty(mainClass) &&
           (contentRoot.findChild(mainClass + ".mxml") != null || contentRoot.findChild(mainClass + ".as") != null)) {
@@ -306,26 +321,44 @@ public class FlashBuilderModuleImporter {
       }
     }
     else {
-      OUTER:
-      for (final String _sourcePath : sourcePaths) {
-        final String sourcePath = getAbsolutePathWithLinksHandled(flashBuilderProject, _sourcePath);
-        final String sourceUrl = VfsUtil.pathToUrl(sourcePath);
-        if (FileUtil.isAncestor(new File(mainContentEntryUrl), new File(sourceUrl), false)) {
-          mainContentEntry.addSourceFolder(sourceUrl, false);
+      final List<String> locales = FlexUtils.getOptionValues(fbProject.getAdditionalCompilerOptions(), "locale", "compiler.locale");
+
+      for (final String rawSourcePath : sourcePaths) {
+        if (rawSourcePath.contains(FlexSdkUtils.LOCALE_TOKEN)) {
+          for (String locale : locales) {
+            handleRawSourcePath(rootModel, fbProject, mainContentEntryUrl, mainContentEntry, otherContentEntries,
+                                rawSourcePath.replace(FlexSdkUtils.LOCALE_TOKEN, locale));
+          }
         }
         else {
-          for (final ContentEntry otherContentEntry : otherContentEntries) {
-            if (FileUtil.isAncestor(new File(mainContentEntryUrl), new File(sourceUrl), false)) {
-              otherContentEntry.addSourceFolder(sourceUrl, false);
-              continue OUTER;
-            }
-          }
-
-          final ContentEntry newContentEntry = rootModel.addContentEntry(sourceUrl);
-          newContentEntry.addSourceFolder(sourceUrl, false);
-          otherContentEntries.add(newContentEntry);
+          handleRawSourcePath(rootModel, fbProject, mainContentEntryUrl, mainContentEntry, otherContentEntries, rawSourcePath);
         }
       }
+    }
+  }
+
+  private void handleRawSourcePath(final ModifiableRootModel rootModel,
+                                   final FlashBuilderProject fbProject,
+                                   final String mainContentEntryUrl,
+                                   final ContentEntry mainContentEntry,
+                                   final Collection<ContentEntry> otherContentEntries,
+                                   final String rawSourcePath) {
+    final String sourcePath = getAbsolutePathWithLinksHandled(fbProject, rawSourcePath);
+    final String sourceUrl = VfsUtil.pathToUrl(sourcePath);
+    if (FileUtil.isAncestor(new File(mainContentEntryUrl), new File(sourceUrl), false)) {
+      mainContentEntry.addSourceFolder(sourceUrl, false);
+    }
+    else {
+      for (final ContentEntry otherContentEntry : otherContentEntries) {
+        if (FileUtil.isAncestor(new File(mainContentEntryUrl), new File(sourceUrl), false)) {
+          otherContentEntry.addSourceFolder(sourceUrl, false);
+          return;
+        }
+      }
+
+      final ContentEntry newContentEntry = rootModel.addContentEntry(sourceUrl);
+      newContentEntry.addSourceFolder(sourceUrl, false);
+      otherContentEntries.add(newContentEntry);
     }
   }
 

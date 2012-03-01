@@ -564,21 +564,30 @@ public class FlexUtils {
     return result;
   }
 
-  public static String removeDebugOption(final String commandLine) {
+  public static String removeOptions(final String commandLine, final String... optionsToRemove) {
     if (commandLine.isEmpty()) return commandLine;
 
     final StringBuilder buf = new StringBuilder();
     for (StringTokenizer tokenizer = new StringTokenizer(commandLine, " ", true); tokenizer.hasMoreTokens(); ) {
       final String token = tokenizer.nextToken();
 
-      if (token.startsWith("-debug") || token.startsWith("-compiler.debug")) {
+      boolean remove = false;
+      for (String option : optionsToRemove) {
+        if (token.startsWith("-" + option)) {
+          remove = true;
+          break;
+        }
+      }
+
+      if (remove) {
         String nextToken = null;
 
         while(tokenizer.hasMoreElements()) {
           nextToken = tokenizer.nextToken();
-          if (!StringUtil.isEmptyOrSpaces(nextToken)) {
-            break;
+          if (StringUtil.isEmptyOrSpaces(nextToken) || canBeCompilerOptionValue(nextToken)) {
+            continue;
           }
+          break;
         }
 
         if (nextToken != null && !canBeCompilerOptionValue(nextToken)) {

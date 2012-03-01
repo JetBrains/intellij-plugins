@@ -362,7 +362,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
     // must not use getTemporaryCopyForCompilation() here because additional config file must not be merged with the generated one when compiling swf for release or AIR package
     final ModifiableFlexIdeBuildConfiguration result = Factory.getCopy(bc);
-    final String additionalOptions = FlexUtils.removeDebugOption(bc.getCompilerOptions().getAdditionalOptions());
+    final String additionalOptions = FlexUtils.removeOptions(bc.getCompilerOptions().getAdditionalOptions(), "debug", "compiler.debug");
     result.getCompilerOptions().setAdditionalOptions(additionalOptions + " -debug=" + String.valueOf(debug));
 
     return result;
