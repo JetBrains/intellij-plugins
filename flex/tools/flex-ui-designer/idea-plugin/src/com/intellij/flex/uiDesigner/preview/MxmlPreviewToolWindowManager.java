@@ -1,9 +1,6 @@
 package com.intellij.flex.uiDesigner.preview;
 
-import com.intellij.flex.uiDesigner.DesignerApplicationManager;
-import com.intellij.flex.uiDesigner.DocumentFactoryManager;
-import com.intellij.flex.uiDesigner.FlashUIDesignerBundle;
-import com.intellij.flex.uiDesigner.SocketInputHandler;
+import com.intellij.flex.uiDesigner.*;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
@@ -14,7 +11,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.LoadingDecorator;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.ToolWindow;
@@ -28,6 +24,7 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.update.MergingUpdateQueue;
 import com.intellij.util.ui.update.Update;
 import org.jetbrains.annotations.NonNls;
@@ -49,6 +46,8 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
   private MxmlPreviewToolWindowForm toolWindowForm;
 
   private boolean toolWindowVisible;
+
+  private int loadingDecoratorStarted;
 
   public MxmlPreviewToolWindowManager(final Project project, final FileEditorManager fileEditorManager) {
     this.project = project;
@@ -150,18 +149,19 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       return;
     }
 
-    final LoadingDecorator loadingDecorator = toolWindowForm.getPreviewPanel().getLoadingDecorator();
-    loadingDecorator.startLoading(false);
+    toolWindowForm.getPreviewPanel().getLoadingDecorator().startLoading(false);
+    loadingDecoratorStarted++;
     AsyncResult<BufferedImage> result = DesignerApplicationManager.getInstance().getDocumentImage(psiFile);
-    result.doWhenDone(new AsyncResult.Handler<BufferedImage>() {
+    result.doWhenDone(new QueuedAsyncResultHandler<BufferedImage>() {
       @Override
-      public void run(final BufferedImage image) {
+      protected boolean isExpired() {
         //noinspection ConstantConditions
-        if (toolWindowForm == null || toolWindowForm.getFile() == null) {
-          return;
-        }
+        return toolWindowForm == null || toolWindowForm.getFile() != psiFile;
+      }
 
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
+      @Override
+      public void process(final BufferedImage image) {
+        UIUtil.invokeLaterIfNeeded(new Runnable() {
           @Override
           public void run() {
             toolWindowForm.getPreviewPanel().setImage(image);
@@ -172,7 +172,10 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     result.doWhenProcessed(new Runnable() {
       @Override
       public void run() {
-        loadingDecorator.stopLoading();
+        //noinspection ConstantConditions
+        if (--loadingDecoratorStarted == 0 && toolWindowForm != null) {
+          toolWindowForm.getPreviewPanel().getLoadingDecorator().stopLoading();
+        }
       }
     });
   }
@@ -190,8 +193,8 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       Editor mxmlEditor = null;
       if (newFileEditor instanceof TextEditor) {
         final Editor editor = ((TextEditor)newFileEditor).getEditor();
-        if (DesignerApplicationManager
-          .dumbAwareIsApplicable(project, PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument()))) {
+        if (DesignerApplicationManager.dumbAwareIsApplicable(project,
+                                                             PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument()))) {
           mxmlEditor = editor;
         }
       }
