@@ -35,8 +35,8 @@
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
-        <packaging-android enabled="true" />
-        <packaging-ios />
+        <packaging-android enabled="true" package-file-name="Java_with_flex_facets_A" />
+        <packaging-ios package-file-name="Java_with_flex_facets_A" />
       </configuration>
       <configuration name="B" target-platform="Mobile" output-type="Library" output-file="Java_with_flex_facets_B.swf" output-folder="$TEST_PROJECT$/out/production/java_with_flex_facets/facetB" skip-build="true">
         <dependencies>
@@ -49,7 +49,7 @@
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
-        <packaging-android enabled="true" />
+        <packaging-android />
         <packaging-ios />
       </configuration>
       <configuration name="A (1)" target-platform="Mobile" output-type="Library" output-file="Java_with_flex_facets_C.swf" output-folder="$TEST_PROJECT$/out/production/java_with_flex_facets">
@@ -63,7 +63,7 @@
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
-        <packaging-android enabled="true" />
+        <packaging-android />
         <packaging-ios />
       </configuration>
     </configurations>

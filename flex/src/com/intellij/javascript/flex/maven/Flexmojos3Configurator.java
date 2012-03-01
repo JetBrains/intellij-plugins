@@ -140,15 +140,27 @@ public class Flexmojos3Configurator {
     }
 
     final String outputFilePath = FlexmojosImporter.getOutputFilePath(myMavenProject);
-    mainBC.setOutputFileName(PathUtil.getFileName(outputFilePath));
+    final String fileName = PathUtil.getFileName(outputFilePath);
+    mainBC.setOutputFileName(fileName);
     mainBC.setOutputFolder(PathUtil.getParentPath(outputFilePath));
+
+    final BuildConfigurationNature nature = mainBC.getNature();
+    if (nature.isApp()) {
+      if (nature.isDesktopPlatform()) {
+        mainBC.getAirDesktopPackagingOptions().setPackageFileName(fileName);
+      }
+      else if (nature.isMobilePlatform()) {
+        mainBC.getAndroidPackagingOptions().setPackageFileName(fileName);
+        mainBC.getIosPackagingOptions().setPackageFileName(fileName);
+      }
+    }
 
     setupSdk(mainBC);
 
     final String locales = StringUtil.join(myCompiledLocales, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
     mainBC.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.locale", locales));
 
-    if (BCUtils.canHaveResourceFiles(mainBC.getNature())) {
+    if (BCUtils.canHaveResourceFiles(nature)) {
       // Don't copy whatever by default. If user had other setting before reimport - it will be set in #respectPreviousBCState()
       mainBC.getCompilerOptions().setResourceFilesMode(CompilerOptions.ResourceFilesMode.None);
     }
@@ -423,7 +435,7 @@ public class Flexmojos3Configurator {
                                              final FlexIdeBuildConfiguration[] oldBCs) {
     for (ModifiableFlexIdeBuildConfiguration newBC : newBCsc) {
       for (FlexIdeBuildConfiguration oldBC : oldBCs) {
-        if (oldBC.getName().equals(newBC.getName())) {
+        if (oldBC.getName().equals(newBC.getName()) && oldBC.getNature().equals(newBC.getNature())) {
           respectPreviousBCState(newBC, oldBC);
           break;
         }
@@ -452,6 +464,16 @@ public class Flexmojos3Configurator {
 
     if (nature.isLib() && oldNature.isLib()) {
       newBC.getCompilerOptions().setFilesToIncludeInSWC(oldBC.getCompilerOptions().getFilesToIncludeInSWC());
+    }
+
+    if (nature.isApp()) {
+      if (nature.isDesktopPlatform()) {
+        newBC.getAirDesktopPackagingOptions().setPackageFileName(oldBC.getAirDesktopPackagingOptions().getPackageFileName());
+      }
+      else if (nature.isMobilePlatform()) {
+        newBC.getAndroidPackagingOptions().setPackageFileName(oldBC.getAndroidPackagingOptions().getPackageFileName());
+        newBC.getIosPackagingOptions().setPackageFileName(oldBC.getIosPackagingOptions().getPackageFileName());
+      }
     }
   }
 

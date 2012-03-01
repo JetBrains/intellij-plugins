@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
+import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationType;
@@ -26,6 +27,7 @@ import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -147,27 +149,46 @@ public class FlexModuleBuilder extends ModuleBuilder {
     bc.setTargetPlatform(myTargetPlatform);
     bc.setPureAs(isPureActionScript);
     bc.setOutputType(myOutputType);
-
-    final String className = FileUtil.getNameWithoutExtension(mySampleAppName);
+    final BuildConfigurationNature nature = bc.getNature();
 
     if (myCreateSampleApp) {
+      final String className = FileUtil.getNameWithoutExtension(mySampleAppName);
+
       bc.setMainClass(className);
       bc.setOutputFileName(className + (myOutputType == OutputType.Library ? ".swc" : ".swf"));
+
+      if (nature.isApp()) {
+        if (nature.isDesktopPlatform()) {
+          bc.getAirDesktopPackagingOptions().setPackageFileName(className);
+        }
+        else if (nature.isMobilePlatform()) {
+          bc.getAndroidPackagingOptions().setEnabled(true);
+          bc.getAndroidPackagingOptions().setPackageFileName(className);
+          bc.getIosPackagingOptions().setPackageFileName(className);
+        }
+      }
     }
     else {
-      bc.setOutputFileName(module.getName() + (myOutputType == OutputType.Library ? ".swc" : ".swf"));
+      final String fileName = PathUtil.suggestFileName(module.getName());
+      bc.setOutputFileName(fileName + (myOutputType == OutputType.Library ? ".swc" : ".swf"));
+
+      if (nature.isApp()) {
+        if (nature.isDesktopPlatform()) {
+          bc.getAirDesktopPackagingOptions().setPackageFileName(fileName);
+        }
+        else if (nature.isMobilePlatform()) {
+          bc.getAndroidPackagingOptions().setEnabled(true);
+          bc.getAndroidPackagingOptions().setPackageFileName(fileName);
+          bc.getIosPackagingOptions().setPackageFileName(fileName);
+        }
+      }
     }
+
     bc.setOutputFolder(VfsUtil.urlToPath(CompilerModuleExtension.getInstance(module).getCompilerOutputUrl()));
 
     bc.getDependencies().setSdkEntry(myFlexSdk != null ? Factory.createSdkEntry(myFlexSdk.getName()) : null);
     if (myTargetPlayer != null) {
       bc.getDependencies().setTargetPlayer(myTargetPlayer);
-    }
-
-    if (myTargetPlatform == TargetPlatform.Mobile && myOutputType == OutputType.Application) {
-      bc.getAndroidPackagingOptions().setEnabled(true);
-      bc.getAndroidPackagingOptions().setPackageFileName(className);
-      bc.getIosPackagingOptions().setPackageFileName(className);
     }
   }
 

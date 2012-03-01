@@ -27,7 +27,6 @@ import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesModifiableModel;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
@@ -35,6 +34,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.Function;
+import com.intellij.util.PathUtil;
 import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
@@ -228,9 +228,12 @@ public class FlexIdeBCConfigurator {
       return;
     }
 
-    final ModifiableFlexIdeBuildConfiguration configuration = myConfigEditor.createConfiguration(module);
-    configuration.setName(nameAndNature.first);
-    configuration.setNature(nameAndNature.second);
+    final ModifiableFlexIdeBuildConfiguration bc = myConfigEditor.createConfiguration(module);
+    final String bcName = nameAndNature.first;
+    final String fileName = PathUtil.suggestFileName(bcName);
+    final BuildConfigurationNature nature = nameAndNature.second;
+    bc.setName(bcName);
+    bc.setNature(nature);
 
     final ModifiableFlexIdeBuildConfiguration someExistingConfig = myConfigEditor.getConfigurations(module)[0];
     final FlexIdeBCConfigurable configurable = FlexIdeBCConfigurable.unwrap(myConfigurablesMap.get(someExistingConfig));
@@ -239,15 +242,23 @@ public class FlexIdeBCConfigurator {
     }
     catch (ConfigurationException ignored) {/**/}
 
-    // may be also set main class, package file names?
-    configuration.setOutputFileName(nameAndNature.first + (configuration.getOutputType() == OutputType.Library ? ".swc" : ".swf"));
-    configuration.setOutputFolder(someExistingConfig.getOutputFolder());
+    bc.setOutputFileName(fileName + (bc.getOutputType() == OutputType.Library ? ".swc" : ".swf"));
+    bc.setOutputFolder(someExistingConfig.getOutputFolder());
+    if (nature.isApp()) {
+      if (nature.isDesktopPlatform()) {
+        bc.getAirDesktopPackagingOptions().setPackageFileName(fileName);
+      }
+      else if (nature.isMobilePlatform()) {
+        bc.getAndroidPackagingOptions().setPackageFileName(fileName);
+        bc.getIosPackagingOptions().setPackageFileName(fileName);
+      }
+    }
 
     final SdkEntry sdkEntry = someExistingConfig.getDependencies().getSdkEntry();
     final SdkEntry newSdkEntry = sdkEntry == null ? findAnySdk() : Factory.createSdkEntry(sdkEntry.getName());
-    configuration.getDependencies().setSdkEntry(newSdkEntry);
+    bc.getDependencies().setSdkEntry(newSdkEntry);
 
-    createConfigurableNode(configuration, module, treeNodeNameUpdater);
+    createConfigurableNode(bc, module, treeNodeNameUpdater);
   }
 
   @Nullable
@@ -262,27 +273,41 @@ public class FlexIdeBCConfigurator {
     }
     catch (ConfigurationException ignored) {/**/}
 
-    ModifiableFlexIdeBuildConfiguration configuration = myConfigurablesMap.getKeysByValue(configurable).get(0);
+    ModifiableFlexIdeBuildConfiguration existingBC = myConfigurablesMap.getKeysByValue(configurable).get(0);
 
     FlexIdeBCConfigurable unwrapped = FlexIdeBCConfigurable.unwrap(configurable);
     final String title = FlexBundle.message("copy.build.configuration", unwrapped.getModule().getName());
-    Pair<String, BuildConfigurationNature> nameAndNature = promptForCreation(unwrapped.getModule(), title, configuration.getNature());
+    Pair<String, BuildConfigurationNature> nameAndNature = promptForCreation(unwrapped.getModule(), title, existingBC.getNature());
     if (nameAndNature == null) {
       return;
     }
 
-    ModifiableFlexIdeBuildConfiguration newConfiguration = myConfigEditor.copyConfiguration(configuration, nameAndNature.second);
-    newConfiguration.setName(nameAndNature.first);
+    final String newBCName = nameAndNature.first;
+    final String fileName = PathUtil.suggestFileName(newBCName);
+    final BuildConfigurationNature newBCNature = nameAndNature.second;
+
+    ModifiableFlexIdeBuildConfiguration newBC = myConfigEditor.copyConfiguration(existingBC, newBCNature);
+    newBC.setName(newBCName);
 
     // set correct output file extension for cloned configuration
-    final String outputFileName = configuration.getOutputFileName();
+    final String outputFileName = existingBC.getOutputFileName();
     final String lowercase = outputFileName.toLowerCase();
     if (lowercase.endsWith(".swf") || lowercase.endsWith(".swc")) {
-      final String extension = newConfiguration.getOutputType() == OutputType.Library ? ".swc" : ".swf";
-      newConfiguration.setOutputFileName(outputFileName.substring(0, outputFileName.length() - ".sw_".length()) + extension);
+      final String extension = newBC.getOutputType() == OutputType.Library ? ".swc" : ".swf";
+      newBC.setOutputFileName(outputFileName.substring(0, outputFileName.length() - ".sw_".length()) + extension);
     }
 
-    createConfigurableNode(newConfiguration, unwrapped.getModule(), treeNodeNameUpdater);
+    if (newBCNature.isApp()) {
+      if (newBCNature.isDesktopPlatform()) {
+        newBC.getAirDesktopPackagingOptions().setPackageFileName(fileName);
+      }
+      else if (newBCNature.isMobilePlatform()) {
+        newBC.getAndroidPackagingOptions().setPackageFileName(fileName);
+        newBC.getIosPackagingOptions().setPackageFileName(fileName);
+      }
+    }
+
+    createConfigurableNode(newBC, unwrapped.getModule(), treeNodeNameUpdater);
   }
 
   @Nullable
@@ -298,7 +323,7 @@ public class FlexIdeBCConfigurator {
   private void createConfigurableNode(ModifiableFlexIdeBuildConfiguration configuration, Module module, Runnable treeNodeNameUpdater) {
     final ProjectStructureConfigurable c = ProjectStructureConfigurable.getInstance(myConfigEditor.getProject());
     final FlexIdeBCConfigurable configurable = new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, myConfigEditor,
-                                                                   c.getProjectJdksModel(), c.getContext());
+                                                                         c.getProjectJdksModel(), c.getContext());
 
     CompositeConfigurable wrapped = configurable.wrapInTabs();
     myConfigurablesMap.put(configuration, wrapped);

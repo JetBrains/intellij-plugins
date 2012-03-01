@@ -18,7 +18,7 @@
           <sdk name="_fake_sdk" />
         </dependencies>
         <compiler-options />
-        <packaging-air-desktop />
+        <packaging-air-desktop package-file-name="flex_module2" />
         <packaging-android />
         <packaging-ios />
       </configuration>

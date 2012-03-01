@@ -26,6 +26,7 @@ import com.intellij.openapi.roots.impl.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMUtil;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
@@ -387,11 +388,11 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
    * @return SDK name if found
    */
   @Nullable
-  private static String processSdkEntry(ModifiableFlexIdeBuildConfiguration buildConfiguration,
+  private static String processSdkEntry(ModifiableFlexIdeBuildConfiguration bc,
                                         @Nullable FlexBuildConfiguration oldConfiguration,
                                         String ideaSdkName) {
     if (ideaSdkName == null) {
-      buildConfiguration.setTargetPlatform(TargetPlatform.Web);
+      bc.setTargetPlatform(TargetPlatform.Web);
       return null;
     }
 
@@ -400,29 +401,37 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
     if (oldSdk == null ||
         oldSdk.getHomePath() == null ||
         !ArrayUtil.contains((sdkTypeName = oldSdk.getSdkType().getName()), ConversionParams.OLD_SDKS_TYPES)) {
-      buildConfiguration.setTargetPlatform(TargetPlatform.Web);
+      bc.setTargetPlatform(TargetPlatform.Web);
       return null;
     }
 
     if (ConversionParams.OLD_AIR_MOBIE_SDK_TYPE_NAME.equals(sdkTypeName)) {
-      buildConfiguration.setTargetPlatform(TargetPlatform.Mobile);
-      buildConfiguration.getAndroidPackagingOptions().setEnabled(true);
+      bc.setTargetPlatform(TargetPlatform.Mobile);
+      if (bc.getOutputType() == OutputType.Application) {
+        bc.getAndroidPackagingOptions().setEnabled(true);
+        final String fileName = FileUtil.getNameWithoutExtension(bc.getOutputFileName());
+        bc.getAndroidPackagingOptions().setPackageFileName(fileName);
+        bc.getIosPackagingOptions().setPackageFileName(fileName);
+      }
     }
     else if (ConversionParams.OLD_AIR_SDK_TYPE_NAME.equals(sdkTypeName)) {
-      buildConfiguration.setTargetPlatform(TargetPlatform.Desktop);
+      bc.setTargetPlatform(TargetPlatform.Desktop);
+      if (bc.getOutputType() == OutputType.Application) {
+        bc.getAirDesktopPackagingOptions().setPackageFileName(FileUtil.getNameWithoutExtension(bc.getOutputFileName()));
+      }
     }
     else {
-      buildConfiguration.setTargetPlatform(TargetPlatform.Web);
+      bc.setTargetPlatform(TargetPlatform.Web);
       final String targetPlayer = TargetPlayerUtils.getTargetPlayer(oldConfiguration == null ? null :
                                                                     oldConfiguration.TARGET_PLAYER_VERSION, oldSdk.getHomePath());
-      buildConfiguration.getDependencies().setTargetPlayer(targetPlayer);
+      bc.getDependencies().setTargetPlayer(targetPlayer);
     }
 
     Sdk sdk = ConversionParams.findNewSdk(oldSdk.getHomePath());
     if (sdk != null) {
       SdkEntry sdkEntry = Factory.createSdkEntry(sdk.getName());
       // TODO roots dependencies types
-      buildConfiguration.getDependencies().setSdkEntry(sdkEntry);
+      bc.getDependencies().setSdkEntry(sdkEntry);
       return sdk.getName();
     }
     else {
