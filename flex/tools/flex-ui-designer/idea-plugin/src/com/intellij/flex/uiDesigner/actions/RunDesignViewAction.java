@@ -3,28 +3,20 @@ package com.intellij.flex.uiDesigner.actions;
 import com.intellij.flex.uiDesigner.DebugPathManager;
 import com.intellij.flex.uiDesigner.DesignerApplicationManager;
 import com.intellij.internal.statistic.UsageTrigger;
-import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.psi.xml.XmlTag;
 import org.jetbrains.annotations.Nullable;
 
 public class RunDesignViewAction extends DumbAwareAction {
@@ -41,22 +33,15 @@ public class RunDesignViewAction extends DumbAwareAction {
   @Override
   public void actionPerformed(final AnActionEvent event) {
     final DataContext dataContext = event.getDataContext();
-    final Project project = PlatformDataKeys.PROJECT.getData(dataContext);
-    assert project != null;
-
-    Document document = getDocument(project, dataContext, ActionPlaces.isPopupPlace(event.getPlace()));
-    assert document != null;
-    final XmlFile psiFile = (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(document);
+    XmlFile psiFile = (XmlFile)getPsiFile(PlatformDataKeys.PROJECT.getData(dataContext), dataContext, ActionPlaces.isPopupPlace(event.getPlace()));
     assert psiFile != null;
-    final VirtualFile file = psiFile.getVirtualFile();
-    assert file != null;
 
     if (!DebugPathManager.IS_DEV) {
       UsageTrigger.trigger(usageTriggerFeature);
     }
 
-    DesignerApplicationManager.getInstance()
-      .openDocument(psiFile, isDebug() || (DebugPathManager.IS_DEV && event.getInputEvent().isControlDown()));
+    DesignerApplicationManager.getInstance().openDocument(psiFile,
+                                                          isDebug() || (DebugPathManager.IS_DEV && event.getInputEvent().isControlDown()));
   }
 
   protected boolean isDebug() {
@@ -65,7 +50,7 @@ public class RunDesignViewAction extends DumbAwareAction {
 
   public void update(final AnActionEvent event) {
     final boolean popupPlace = ActionPlaces.isPopupPlace(event.getPlace());
-    final boolean enabled = isEnabled(event.getDataContext(), popupPlace) && !DesignerApplicationManager.getInstance().isDocumentOpening();
+    final boolean enabled = isEnabled(event.getDataContext(), popupPlace) && !DesignerApplicationManager.getInstance().isInitialRendering();
     if (popupPlace) {
       event.getPresentation().setVisible(enabled);
     }
@@ -75,11 +60,11 @@ public class RunDesignViewAction extends DumbAwareAction {
   }
 
   @Nullable
-  private static Document getDocument(Project project, DataContext dataContext, boolean popupPlace) {
+  private static PsiFile getPsiFile(Project project, DataContext dataContext, boolean popupPlace) {
     if (popupPlace) {
       final VirtualFile virtualFile = PlatformDataKeys.VIRTUAL_FILE.getData(dataContext);
       if (virtualFile != null) {
-        return FileDocumentManager.getInstance().getDocument(virtualFile);
+        return PsiManager.getInstance(project).findFile(virtualFile);
       }
     }
     else {
@@ -87,8 +72,9 @@ public class RunDesignViewAction extends DumbAwareAction {
       if (editor == null) {
         editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
       }
-
-      return editor == null ? null : editor.getDocument();
+      if (editor != null) {
+        return PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
+      }
     }
 
     return null;
@@ -96,41 +82,8 @@ public class RunDesignViewAction extends DumbAwareAction {
 
   private static boolean isEnabled(final DataContext dataContext, boolean popupPlace) {
     final Project project = PlatformDataKeys.PROJECT.getData(dataContext);
-    if (project == null || DumbService.isDumb(project)) {
-      return false;
-    }
-
-    final Document document = getDocument(project, dataContext, popupPlace);
-    if (document == null) {
-      return false;
-    }
-
-    final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document);
-    return isApplicable(project, psiFile);
-  }
-
-  public static boolean canDo(Project project, PsiFile psiFile) {
-    return !DesignerApplicationManager.getInstance().isDocumentOpening() && isApplicable(project, psiFile);
-  }
-
-  public static boolean dumbAwareIsApplicable(Project project, PsiFile psiFile) {
-    if (psiFile == null || !JavaScriptSupportLoader.isFlexMxmFile(psiFile)) {
-      return false;
-    }
-    final VirtualFile file = psiFile.getVirtualFile();
-    if (file == null || !ProjectRootManager.getInstance(project).getFileIndex().isInSourceContent(file)) {
-      return false;
-    }
-    final XmlTag rootTag = ((XmlFile)psiFile).getRootTag();
-    return rootTag != null && rootTag.getPrefixByNamespace(JavaScriptSupportLoader.MXML_URI3) != null;
-  }
-
-  public static boolean isApplicable(Project project, PsiFile psiFile) {
-    if (!dumbAwareIsApplicable(project, psiFile)) {
-      return false;
-    }
-
-    final JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(((XmlFile)psiFile).getRootTag());
-    return jsClass != null && JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.FLASH_DISPLAY_OBJECT_CONTAINER);
+    return project != null &&
+           !DumbService.isDumb(project) &&
+           DesignerApplicationManager.isApplicable(project, getPsiFile(project, dataContext, popupPlace));
   }
 }

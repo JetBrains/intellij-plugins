@@ -114,7 +114,7 @@ public class DocumentFactoryManager {
     return files.getInfo(id);
   }
 
-  public static class DocumentInfo extends Info<VirtualFile> {
+  public static final class DocumentInfo extends Info<VirtualFile> {
     public long documentModificationStamp;
 
     private List<RangeMarker> rangeMarkers;

@@ -489,8 +489,7 @@ public class Client implements Disposable {
 
   public boolean registerDocumentReferences(List<XmlFile> files, Module module, ProblemsHolder problemsHolder) {
     for (XmlFile file : files) {
-      VirtualFile virtualFile = file.getVirtualFile();
-      assert virtualFile != null;
+      VirtualFile virtualFile = file.getViewProvider().getVirtualFile();
       Module documentModule = ModuleUtil.findModuleForFile(virtualFile, file.getProject());
       if (module != documentModule && !isModuleRegistered(module)) {
         try {

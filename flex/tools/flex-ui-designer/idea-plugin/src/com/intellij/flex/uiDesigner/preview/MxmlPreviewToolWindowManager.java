@@ -4,7 +4,6 @@ import com.intellij.flex.uiDesigner.DesignerApplicationManager;
 import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.FlashUIDesignerBundle;
 import com.intellij.flex.uiDesigner.SocketInputHandler;
-import com.intellij.flex.uiDesigner.actions.RunDesignViewAction;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
@@ -141,19 +140,6 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     });
   }
 
-  private void setDocumentImage(final BufferedImage image) {
-    if (toolWindowForm == null || toolWindowForm.getFile() == null) {
-      return;
-    }
-
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        toolWindowForm.getPreviewPanel().setImage(image);
-      }
-    });
-  }
-
   private void render() {
     if (!toolWindowVisible) {
       return;
@@ -169,8 +155,18 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     AsyncResult<BufferedImage> result = DesignerApplicationManager.getInstance().getDocumentImage(psiFile);
     result.doWhenDone(new AsyncResult.Handler<BufferedImage>() {
       @Override
-      public void run(BufferedImage image) {
-        setDocumentImage(image);
+      public void run(final BufferedImage image) {
+        //noinspection ConstantConditions
+        if (toolWindowForm == null || toolWindowForm.getFile() == null) {
+          return;
+        }
+
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            toolWindowForm.getPreviewPanel().setImage(image);
+          }
+        });
       }
     });
     result.doWhenProcessed(new Runnable() {
@@ -183,7 +179,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
   private boolean isApplicableEditor(Editor editor) {
     final Document document = editor.getDocument();
-    return RunDesignViewAction.isApplicable(project, PsiDocumentManager.getInstance(project).getPsiFile(document));
+    return DesignerApplicationManager.isApplicable(project, PsiDocumentManager.getInstance(project).getPsiFile(document));
   }
 
   private class MyFileEditorManagerListener extends FileEditorManagerAdapter implements Runnable {
@@ -194,7 +190,8 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       Editor mxmlEditor = null;
       if (newFileEditor instanceof TextEditor) {
         final Editor editor = ((TextEditor)newFileEditor).getEditor();
-        if (RunDesignViewAction.dumbAwareIsApplicable(project, PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument()))) {
+        if (DesignerApplicationManager
+          .dumbAwareIsApplicable(project, PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument()))) {
           mxmlEditor = editor;
         }
       }
@@ -244,7 +241,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
   private void processFileEditorChange(@Nullable final Editor newEditor) {
     toolWindowUpdateQueue.cancelAllUpdates();
-    toolWindowUpdateQueue.queue(new Update("update") {
+    toolWindowUpdateQueue.queue(new Update("update mxml preview") {
       public void run() {
         if (!project.isOpen() || project.isDisposed()) {
           return;

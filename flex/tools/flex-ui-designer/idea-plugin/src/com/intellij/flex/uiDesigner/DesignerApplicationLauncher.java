@@ -325,7 +325,7 @@ public class DesignerApplicationLauncher extends DocumentTask {
     String adlExecutable = System.getProperty("adl.executable");
     if (adlExecutable == null) {
       if (SystemInfo.isMac) {
-        adlExecutable = "/Developer/SDKs/flex_4.6.0/bin/adl";
+        adlExecutable = System.getProperty("user.home") + "/sdks/flex4.6.0/bin/adl";
       }
       else {
         throw new IllegalStateException("Please define 'adl.executable' to point to ADL executable");

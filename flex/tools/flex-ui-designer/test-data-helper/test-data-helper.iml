@@ -18,7 +18,7 @@
               <dependency linkage="Merged" />
             </entry>
           </entries>
-          <sdk name="compiler-4.5.2.21576.pom" />
+          <sdk name="Flexmojos SDK 4.5.2.21576" />
         </dependencies>
         <compiler-options>
           <map>
@@ -40,12 +40,12 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry type="jdk" jdkName="compiler-4.5.2.21576.pom" jdkType="__CompositeFlexSdk__" />
+    <orderEntry type="jdk" jdkName="Flexmojos SDK 4.5.2.21576" jdkType="__CompositeFlexSdk__" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:mx:swc:4.5.2.21576" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:framework:swc:4.5.2.21576" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:playerglobal:swc:11.1" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:spark:swc:4.5.2.21576" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:mx:swc:4.5.2.21576" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:framework:swc:4.5.2.21576" level="project" />
   </component>
 </module>
 

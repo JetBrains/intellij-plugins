@@ -4,7 +4,7 @@
     <configurations>
       <configuration name="4.6">
         <dependencies target-player="11.1">
-          <sdk name="flex_4.6.0" />
+          <sdk name="flex4.6.0" />
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
@@ -12,8 +12,8 @@
         <packaging-ios />
       </configuration>
       <configuration name="4.5" output-file="mx.swf" output-folder="$MODULE_DIR$/../../../out/production/mx">
-        <dependencies target-player="10.2">
-          <sdk name="flex_4.5.1" />
+        <dependencies target-player="11.1">
+          <sdk name="flex4.6.0" />
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
@@ -22,7 +22,7 @@
       </configuration>
       <configuration name="d4.6" target-platform="Desktop">
         <dependencies target-player="11.1">
-          <sdk name="flex_4.6.0" />
+          <sdk name="flex4.6.0" />
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
@@ -37,7 +37,7 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="flex_4.6.0&#9;flex_4.5.1" jdkType="__CompositeFlexSdk__" />
+    <orderEntry type="jdk" jdkName="flex4.6.0" jdkType="__CompositeFlexSdk__" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

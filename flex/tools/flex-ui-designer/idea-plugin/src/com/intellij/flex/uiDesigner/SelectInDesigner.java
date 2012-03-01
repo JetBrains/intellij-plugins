@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.actions.RunDesignViewAction;
 import com.intellij.ide.SelectInContext;
 import com.intellij.ide.SelectInTarget;
 import com.intellij.internal.statistic.UsageTrigger;
@@ -20,7 +19,7 @@ public class SelectInDesigner implements SelectInTarget {
   @Override
   public boolean canSelect(SelectInContext context) {
     PsiElement element = getPsiElement(context);
-    return element != null && RunDesignViewAction.canDo(context.getProject(), element.getContainingFile());
+    return element != null && DesignerApplicationManager.isApplicable(context.getProject(), element.getContainingFile());
   }
 
   @Nullable
@@ -43,7 +42,7 @@ public class SelectInDesigner implements SelectInTarget {
       return;
     }
 
-    final AsyncResult.Handler<DocumentInfo> handler = new AsyncResult.Handler<DocumentInfo>() {
+    DesignerApplicationManager.getInstance().runWhenRendered((XmlFile)element.getContainingFile(), new AsyncResult.Handler<DocumentInfo>() {
       @Override
       public void run(DocumentInfo info) {
         final List<RangeMarker> rangeMarkers = info.getRangeMarkers();
@@ -74,9 +73,7 @@ public class SelectInDesigner implements SelectInTarget {
 
         Client.getInstance().selectComponent(info.getId(), componentId);
       }
-    };
-
-    DesignerApplicationManager.getInstance().runWhenRendered((XmlFile)element.getContainingFile(), handler, null, false);
+    }, null, false);
   }
 
   @Override

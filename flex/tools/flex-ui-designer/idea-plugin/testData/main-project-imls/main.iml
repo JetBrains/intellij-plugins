@@ -9,7 +9,7 @@
               <dependency linkage="Merged" />
             </entry>
           </entries>
-          <sdk name="flex_4.6.0" />
+          <sdk name="flex4.6.0" />
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
@@ -39,7 +39,7 @@
     <content url="file://$MODULE_DIR$/../../../ui">
       <sourceFolder url="file://$MODULE_DIR$/../../../ui/src" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="flex_4.6.0" jdkType="__CompositeFlexSdk__" />
+    <orderEntry type="jdk" jdkName="flex4.6.0" jdkType="__CompositeFlexSdk__" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library type="flex">

@@ -1,8 +1,13 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
+import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
+import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
@@ -24,6 +29,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.util.Condition;
@@ -31,7 +37,9 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Consumer;
 import com.intellij.util.messages.MessageBus;
 import org.jetbrains.annotations.NotNull;
@@ -47,14 +55,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.intellij.flex.uiDesigner.DocumentFactoryManager.DocumentInfo;
 import static com.intellij.flex.uiDesigner.LogMessageUtil.LOG;
+import static com.intellij.flex.uiDesigner.RenderActionQueue.RenderAction;
 
 public class DesignerApplicationManager extends ServiceManagerImpl {
   private static final ExtensionPointName<ServiceDescriptor> SERVICES =
     new ExtensionPointName<ServiceDescriptor>("com.intellij.flex.uiDesigner.service");
   public static final File APP_DIR = new File(PathManager.getSystemPath(), "flashUIDesigner");
 
-  private boolean documentOpening;
   private DesignerApplication application;
+
+  private final RenderActionQueue initialRenderQueue = new RenderActionQueue();
 
   public static <T> T getService(@NotNull Class<T> serviceClass) {
     //noinspection unchecked
@@ -111,8 +121,8 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     this.application = application;
   }
 
-  public boolean isDocumentOpening() {
-    return documentOpening;
+  public boolean isInitialRendering() {
+    return !initialRenderQueue.isEmpty();
   }
 
   private static boolean checkFlexSdkVersion(final Sdk sdk) {
@@ -214,13 +224,13 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     return client.renderDocumentAndDependents(documentInfos);
   }
 
-  public void runWhenRendered(@NotNull final XmlFile psiFile,
-                               @NotNull AsyncResult.Handler<DocumentInfo> handler,
-                               @Nullable ActionCallback renderRejectedCallback,
-                               boolean debug) {
-    boolean needRender = isApplicationClosed();
+  public void runWhenRendered(@NotNull XmlFile psiFile,
+                              @NotNull AsyncResult.Handler<DocumentInfo> handler,
+                              @Nullable ActionCallback renderRejectedCallback,
+                              final boolean debug) {
+    boolean needInitialRender = isApplicationClosed();
     DocumentInfo documentInfo = null;
-    if (!needRender) {
+    if (!needInitialRender) {
       Document[] unsavedDocuments = FileDocumentManager.getInstance().getUnsavedDocuments();
       DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance();
       if (unsavedDocuments.length > 0) {
@@ -237,33 +247,47 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       VirtualFile virtualFile = psiFile.getVirtualFile();
       assert virtualFile != null;
       documentInfo = documentFactoryManager.getNullableInfo(psiFile);
-      needRender = documentInfo == null;
+      needInitialRender = documentInfo == null;
     }
 
-    if (needRender) {
-      Module module = ModuleUtil.findModuleForPsiElement(psiFile);
-      LOG.assertTrue(module != null);
-      AsyncResult<DocumentInfo> renderResult = renderDocument(module, psiFile, debug);
-      if (renderRejectedCallback != null) {
-        renderResult.notifyWhenRejected(renderRejectedCallback);
-      }
-      renderResult.doWhenDone(handler);
-    }
-    else {
+    if (!needInitialRender) {
       handler.run(documentInfo);
+      return;
+    }
+
+    synchronized (initialRenderQueue) {
+      AsyncResult<DocumentInfo> renderResult = initialRenderQueue.findResult(psiFile);
+      if (renderResult == null) {
+        renderResult = new AsyncResult<DocumentInfo>();
+        if (renderRejectedCallback != null) {
+          renderResult.notifyWhenRejected(renderRejectedCallback);
+        }
+
+        RenderAction renderAction = new RenderAction(psiFile, renderResult) {
+          @Override
+          public void run() {
+            Module module = ModuleUtil.findModuleForPsiElement(file);
+            LOG.assertTrue(module != null);
+            renderDocument(module, file, debug, result);
+          }
+        };
+
+        initialRenderQueue.add(renderAction);
+      }
+
+      renderResult.doWhenDone(handler);
     }
   }
 
   @NotNull
   public AsyncResult<BufferedImage> getDocumentImage(@NotNull XmlFile psiFile) {
     final AsyncResult<BufferedImage> result = new AsyncResult<BufferedImage>();
-    AsyncResult.Handler<DocumentInfo> handler = new AsyncResult.Handler<DocumentInfo>() {
+    runWhenRendered(psiFile, new AsyncResult.Handler<DocumentInfo>() {
       @Override
       public void run(DocumentInfo documentInfo) {
         Client.getInstance().getDocumentImage(documentInfo, result);
       }
-    };
-    runWhenRendered(psiFile, handler, result, false);
+    }, result, false);
     return result;
   }
 
@@ -277,25 +301,26 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
   }
 
   public AsyncResult<DocumentInfo> renderDocument(@NotNull final Module module, @NotNull final XmlFile psiFile) {
-    return renderDocument(module, psiFile, false);
+    final AsyncResult<DocumentInfo> result = new AsyncResult<DocumentInfo>();
+    renderDocument(module, psiFile, false, result);
+    return result;
   }
 
-  private AsyncResult<DocumentInfo> renderDocument(@NotNull final Module module, @NotNull final XmlFile psiFile, boolean debug) {
-    final AsyncResult<DocumentInfo> result = new AsyncResult<DocumentInfo>();
-    if (documentOpening) {
-      result.setRejected();
-      LOG.error("documentOpening must be false");
-      return result;
-    }
+  private void renderDocument(@NotNull final Module module, @NotNull final XmlFile psiFile, boolean debug, AsyncResult<DocumentInfo> result) {
+    //if (documentOpening) {
+    //  result.setRejected();
+    //  LOG.error("documentOpening must be false");
+    //  return result;
+    //}
 
-    result.doWhenProcessed(new Runnable() {
-      @Override
-      public void run() {
-        documentOpening = false;
-      }
-    });
+    //result.doWhenProcessed(new Runnable() {
+    //  @Override
+    //  public void run() {
+    //    documentOpening = false;
+    //  }
+    //});
 
-    documentOpening = true;
+    //documentOpening = true;
 
     final boolean appClosed = isApplicationClosed();
     boolean hasError = true;
@@ -305,7 +330,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
         if (sdk == null || !checkFlexSdkVersion(sdk)) {
           reportInvalidFlexSdk(module, debug, sdk);
           result.setRejected();
-          return result;
+          return;
         }
       }
 
@@ -321,7 +346,6 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     ProgressManager.getInstance().run(appClosed
                                       ? new DesignerApplicationLauncher(module, renderDocumentTask, debug)
                                       : new DocumentTaskExecutor(module, renderDocumentTask));
-    return result;
   }
 
   public boolean isApplicationClosed() {
@@ -346,25 +370,15 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     });
   }
 
+  @SuppressWarnings("MethodMayBeStatic")
   public void renderUnsavedDocuments(final Document[] unsavedDocuments) {
-    LOG.assertTrue(!documentOpening);
-    documentOpening = true;
+    //LOG.assertTrue(!documentOpening);
+    //documentOpening = true;
 
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       @Override
       public void run() {
-        boolean hasError = true;
-        final AsyncResult<List<DocumentInfo>> result;
-        try {
-          result = doRenderUnsavedDocuments(unsavedDocuments);
-          hasError = false;
-        }
-        finally {
-          if (hasError) {
-            documentOpening = false;
-          }
-        }
-
+        AsyncResult<List<DocumentInfo>> result = doRenderUnsavedDocuments(unsavedDocuments);
         result.doWhenDone(new AsyncResult.Handler<List<DocumentInfo>>() {
           @Override
           public void run(List<DocumentInfo> infos) {
@@ -372,12 +386,6 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
             for (DocumentInfo info : infos) {
               messageBus.syncPublisher(SocketInputHandler.MESSAGE_TOPIC).documentRenderedOnAutoSave(info);
             }
-          }
-        });
-        result.doWhenProcessed(new Runnable() {
-          @Override
-          public void run() {
-            documentOpening = false;
           }
         });
       }
@@ -415,6 +423,24 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     notification.notify(project);
   }
 
+  public static boolean isApplicable(Project project, PsiFile psiFile) {
+    if (!dumbAwareIsApplicable(project, psiFile)) {
+      return false;
+    }
+
+    final JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(((XmlFile)psiFile).getRootTag());
+    return jsClass != null && JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.FLASH_DISPLAY_OBJECT_CONTAINER);
+  }
+
+  public static boolean dumbAwareIsApplicable(Project project, PsiFile psiFile) {
+    final VirtualFile file = psiFile == null ? null : psiFile.getViewProvider().getVirtualFile();
+    if (file == null || !JavaScriptSupportLoader.isFlexMxmFile(file) || !ProjectRootManager.getInstance(project).getFileIndex().isInSourceContent(file)) {
+      return false;
+    }
+    final XmlTag rootTag = ((XmlFile)psiFile).getRootTag();
+    return rootTag != null && rootTag.getPrefixByNamespace(JavaScriptSupportLoader.MXML_URI3) != null;
+  }
+
   private static class RenderDocumentTask extends DesignerApplicationLauncher.PostTask {
     private final XmlFile psiFile;
     private final AsyncResult<DocumentInfo> asyncResult;
@@ -428,7 +454,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     public void dispose() {
       super.dispose();
 
-      DesignerApplicationManager.getInstance().documentOpening = false;
+      //DesignerApplicationManager.getInstance().documentOpening = false;
 
       if (asyncResult != null && !asyncResult.isProcessed()) {
         asyncResult.setRejected();
