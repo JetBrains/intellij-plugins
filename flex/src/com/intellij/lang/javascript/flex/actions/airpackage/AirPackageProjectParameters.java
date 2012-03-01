@@ -18,7 +18,7 @@ public class AirPackageProjectParameters implements PersistentStateComponent<Air
 
   public enum DesktopPackageType {
     AirInstaller("installer (*.air)", ".air"),
-    Airi("unsigned package (*.airi)", "*.airi");  // todo support native installer and captive runtime
+    Airi("unsigned package (*.airi)", ".airi");  // todo support native installer and captive runtime
 
     DesktopPackageType(final String presentableName, final String extension) {
       this.myPresentableName = presentableName;
