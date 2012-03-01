@@ -50,14 +50,14 @@ public class SelectInDesigner implements SelectInTarget {
         if (!(element instanceof XmlFile)) {
           PsiElement effectiveElement = element;
           boolean found = false;
-          do {
+          f: do {
             if (effectiveElement instanceof XmlTag && ((XmlTag)effectiveElement).getDescriptor() instanceof ClassBackedElementDescriptor) {
               for (int i = 0; i < rangeMarkers.size(); i++) {
                 RangeMarker rangeMarker = rangeMarkers.get(i);
                 if (rangeMarker.getStartOffset() == effectiveElement.getTextOffset()) {
                   componentId = i;
                   found = true;
-                  break;
+                  break f;
                 }
               }
             }
