@@ -284,7 +284,6 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
       documentManager.render(documentFactory).doWhenDone(selectDocumentTab, documentFactory, componentId);
     }
     else {
-      documentManager.document = documentFactory.document;
       selectDocumentTab(documentFactory, componentId);
     }
   }
@@ -292,6 +291,12 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
   private static function selectDocumentTab(documentFactory:DocumentFactory, componentId:int):void {
     var component:Object = documentFactory.getComponent(componentId);
     var project:Project = documentFactory.module.project;
+
+    var w:DocumentWindow = project.window;
+    var projectView:ProjectView = ProjectView(w.contentView);
+
+    projectView.selectEditorTab(documentFactory.document);
+    DocumentManager(project.getComponent(DocumentManager)).document = documentFactory.document;
     ComponentManager(project.getComponent(ComponentManager)).component = component;
 
     if (component == null) {

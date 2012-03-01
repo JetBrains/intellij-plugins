@@ -1,6 +1,4 @@
 package com.intellij.flex.uiDesigner {
-import cocoa.DocumentWindow;
-
 import com.intellij.flex.uiDesigner.css.CssReader;
 import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
@@ -13,7 +11,6 @@ import com.intellij.flex.uiDesigner.libraries.QueueLoader;
 import com.intellij.flex.uiDesigner.mxml.FlexMxmlReader;
 import com.intellij.flex.uiDesigner.mxml.MxmlReader;
 import com.intellij.flex.uiDesigner.ui.DocumentContainer;
-import com.intellij.flex.uiDesigner.ui.ProjectView;
 
 import flash.desktop.DockIcon;
 import flash.desktop.NativeApplication;
@@ -100,7 +97,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     if (documentFactory.document == null) {
       if (context.librariesResolved) {
         //trace("as librariesResolved");
-        createAndOpen(documentFactory, result);
+        createAndRender(documentFactory, result);
       }
       else {
         //trace("as resolve");
@@ -121,7 +118,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
 
   private function doOpenAfterResolveLibraries(documentFactory:DocumentFactory, result:ActionCallback):void {
     var module:Module = documentFactory.module;
-    createAndOpen(documentFactory, result);
+    createAndRender(documentFactory, result);
     if (result.isDone && !ApplicationManager.instance.unitTestMode) {
       if (NativeWindow.supportsNotification) {
         module.project.window.notifyUser(NotificationType.INFORMATIONAL);
@@ -135,7 +132,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     }
   }
 
-  private function createAndOpen(documentFactory:DocumentFactory, result:ActionCallback):void {
+  private function createAndRender(documentFactory:DocumentFactory, result:ActionCallback):void {
     var document:Document = new Document(documentFactory);
     var module:Module = documentFactory.module;
     if (!documentFactory.isPureFlash) {
@@ -143,15 +140,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     }
 
     createDocumentDisplayManager(document, module, documentFactory.isPureFlash);
-
-    if (doRender(documentFactory, document, result)) {
-      documentFactory.document = document;
-      var w:DocumentWindow = module.project.window;
-      var projectView:ProjectView = ProjectView(w.contentView);
-      projectView.addDocument(document);
-      this.document = document;
-      projectView.selectEditorTab(document);
-    }
+    doRender(documentFactory, document, result);
   }
 
   private function doRender(documentFactory:DocumentFactory, document:Document, result:ActionCallback):Boolean {
@@ -174,6 +163,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       document.displayManager.setStyleManagerForTalentAdobeEngineers(false);
     }
 
+    documentFactory.document = document;
     result.setDone();
     return true;
   }

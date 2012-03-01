@@ -17,7 +17,8 @@
     private const editorTabsSource:Vector.<PaneItem> = new Vector.<PaneItem>();
     private const editorPanes:PaneViewDataSource = new PaneViewDataSource(editorTabsSource);
 
-    override public function addToSuperview(displayObjectContainer:DisplayObjectContainer, laf:LookAndFeel, superview:ContentView = null):void {
+    override public function addToSuperview(displayObjectContainer:DisplayObjectContainer, laf:LookAndFeel,
+                                            superview:ContentView = null):void {
       editorTabView.dataSource = editorPanes;
       editorTabView.selectionChanged.add(editorTabSelectionChanged);
 
@@ -26,7 +27,21 @@
       super.addToSuperview(displayObjectContainer, laf, superview);
     }
 
-    public function addDocument(document:Document):void {
+    private function documentToEditorTabIndex(document:Document):int {
+      for (var i:int = 0; i < editorTabsSource.length; i++) {
+        if (DocumentPaneItem(editorTabsSource[i]).document == document) {
+          return i;
+        }
+      }
+
+      return -1;
+    }
+
+    private function addDocument(document:Document):void {
+      //if (documentToEditorTabIndex(document) != -1) {
+      //  return;
+      //}
+
       var paneItem:DocumentPaneItem = new DocumentPaneItem(document);
       paneItem.localizedTitle = document.file.name.substring(0, document.file.name.lastIndexOf("."));
 
@@ -45,17 +60,13 @@
     }
 
     public function selectEditorTab(document:Document):void {
-      var index:int = -1;
-      for (var i:int = 0; i < editorTabsSource.length; i++) {
-        if (DocumentPaneItem(editorTabsSource[i]).document == document) {
-          index = i;
-          break;
-        }
+      var index:int = documentToEditorTabIndex(document);
+      if (index == -1) {
+        addDocument(document);
+        index = editorPanes.itemCount - 1;
       }
 
-      if (index != -1) {
-        editorTabView.selectedIndex = index;
-      }
+      editorTabView.selectedIndex = index;
     }
 
     //noinspection JSUnusedLocalSymbols
@@ -67,12 +78,14 @@
     public function get dataContext():DataContext {
       return _dataContext;
     }
+
     public function set dataContext(value:DataContext):void {
       _dataContext = value;
     }
 
     private function autoScrollToSourceActionHandler(targetControl:CheckBox):void {
-      ComponentManager(PlatformDataKeys.PROJECT.getData(_dataContext).getComponent(ComponentManager)).autoScrollToSource = targetControl.selected;
+      ComponentManager(PlatformDataKeys.PROJECT.getData(_dataContext).getComponent(ComponentManager)).autoScrollToSource =
+      targetControl.selected;
     }
     ]]></fx:Script>
 
