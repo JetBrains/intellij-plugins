@@ -492,12 +492,13 @@ public class CompilerConfigGenerator {
       if (fileOrDir.isDirectory()) {
         final VirtualFile srcRoot = fileIndex.getSourceRootForFile(fileOrDir);
         final String baseRelativePath = srcRoot == null ? fileOrDir.getName() : VfsUtilCore.getRelativePath(fileOrDir, srcRoot, '/');
+        assert baseRelativePath != null;
 
         VfsUtilCore.visitChildrenRecursively(fileOrDir, new VirtualFileVisitor() {
           public boolean visitFile(final VirtualFile file) {
-            if (!file.isDirectory() && !compilerConfiguration.isExcludedFromCompilation(file)) {
+            if (!file.isDirectory() && !FlexCompiler.isSourceFile(file) && !compilerConfiguration.isExcludedFromCompilation(file)) {
               final String relativePath = VfsUtilCore.getRelativePath(file, fileOrDir, '/');
-              final String pathInSwc = baseRelativePath + "/" + relativePath;
+              final String pathInSwc = baseRelativePath.isEmpty() ? relativePath : baseRelativePath + "/" + relativePath;
               filePathToPathInSwc.put(file.getPath(), pathInSwc);
             }
             return true;
