@@ -24,6 +24,10 @@ public class FlashBuilderProject {
   private OutputType myOutputType = OutputType.Application;
   private boolean myAndroidSupported = false;
   private boolean myIosSupported = false;
+  private String myDesktopCertPath;
+  private String myAndroidCertPath;
+  private String myIOSCertPath;
+  private String myIOSProvisioningPath;
   private String myMainAppClassName = "";
   private Collection<String> myApplicationClassNames = new ArrayList<String>();
   private String myTargetPlayerVersion;
@@ -133,6 +137,38 @@ public class FlashBuilderProject {
 
   public void setIosSupported(final boolean iosSupported) {
     myIosSupported = iosSupported;
+  }
+
+  public String getDesktopCertPath() {
+    return myDesktopCertPath;
+  }
+
+  public void setDesktopCertPath(final String desktopCertPath) {
+    myDesktopCertPath = desktopCertPath;
+  }
+
+  public String getAndroidCertPath() {
+    return myAndroidCertPath;
+  }
+
+  public void setAndroidCertPath(final String androidCertPath) {
+    myAndroidCertPath = androidCertPath;
+  }
+
+  public String getIOSCertPath() {
+    return myIOSCertPath;
+  }
+
+  public void setIOSCertPath(final String iOSCertPath) {
+    myIOSCertPath = iOSCertPath;
+  }
+
+  public String getIOSProvisioningPath() {
+    return myIOSProvisioningPath;
+  }
+
+  public void setIOSProvisioningPath(final String IOSProvisioningPath) {
+    myIOSProvisioningPath = IOSProvisioningPath;
   }
 
   public String getMainAppClassName() {

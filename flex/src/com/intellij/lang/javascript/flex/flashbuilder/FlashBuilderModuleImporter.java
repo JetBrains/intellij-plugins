@@ -99,6 +99,10 @@ public class FlashBuilderModuleImporter {
       if (targetPlatform == TargetPlatform.Desktop) {
         setupAirDescriptor(mainBC, rootModel);
         mainBC.getAirDesktopPackagingOptions().setPackageFileName(shortClassName);
+        if (!StringUtil.isEmpty(fbProject.getDesktopCertPath())) {
+          mainBC.getAirDesktopPackagingOptions().getSigningOptions().setUseTempCertificate(false);
+          mainBC.getAirDesktopPackagingOptions().getSigningOptions().setKeystorePath(fbProject.getDesktopCertPath());
+        }
       }
 
       if (targetPlatform == TargetPlatform.Mobile) {
@@ -106,9 +110,16 @@ public class FlashBuilderModuleImporter {
 
         mainBC.getAndroidPackagingOptions().setEnabled(fbProject.isAndroidSupported());
         mainBC.getAndroidPackagingOptions().setPackageFileName(shortClassName);
+        if (!StringUtil.isEmpty(fbProject.getAndroidCertPath())) {
+          mainBC.getAndroidPackagingOptions().getSigningOptions().setUseTempCertificate(false);
+          mainBC.getAndroidPackagingOptions().getSigningOptions().setKeystorePath(fbProject.getAndroidCertPath());
+        }
 
         mainBC.getIosPackagingOptions().setEnabled(fbProject.isIosSupported());
         mainBC.getIosPackagingOptions().setPackageFileName(shortClassName);
+        mainBC.getIosPackagingOptions().getSigningOptions()
+          .setProvisioningProfilePath(StringUtil.notNullize(fbProject.getIOSProvisioningPath()));
+        mainBC.getIosPackagingOptions().getSigningOptions().setKeystorePath(StringUtil.notNullize(fbProject.getIOSCertPath()));
       }
     }
     else {

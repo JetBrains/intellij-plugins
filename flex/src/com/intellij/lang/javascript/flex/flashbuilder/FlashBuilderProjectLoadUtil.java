@@ -76,6 +76,12 @@ public class FlashBuilderProjectLoadUtil {
   private static final String IOS_PLATFORM_ATTR_VALUE = "com.adobe.flexide.multiplatform.ios.platform";
   private static final String BLACKBERRY_PLATFORM_ATTR_VALUE = "com.qnx.flexide.multiplatform.qnx.platform";
   private static final String USE_MULTIPLATFORM_CONFIG_ATTR = "useMultiPlatformConfig";
+  private static final String PROVISIONING_FILE_ATTR = "provisioningFile";
+  private static final String AIR_SETTINGS_ELEMENT = "airSettings";
+  private static final String AIR_CERTIFICATE_ATTR = "airCertificatePath";
+  private static final String INCLUDE_RESOURCES_ELEMENT = "includeResources";
+  private static final String RESOURCE_ENTRY_ELEMENT = "resourceEntry";
+  private static final String DEFAULT_VALUE = "default";
 
   private FlashBuilderProjectLoadUtil() {
   }
@@ -289,13 +295,18 @@ public class FlashBuilderProjectLoadUtil {
           if (ANDROID_PLATFORM_ATTR_VALUE.equals(buildTarget)) {
             flashBuilderProject.setAndroidSupported(isPlatformEnabled(buildTargetElement));
             flashBuilderProject.setTargetPlatform(TargetPlatform.Mobile);
+            loadSigningOptions(flashBuilderProject, buildTargetElement, TargetPlatform.Mobile, false);
           }
           else if (IOS_PLATFORM_ATTR_VALUE.equals(buildTarget)) {
             flashBuilderProject.setIosSupported(isPlatformEnabled(buildTargetElement));
             flashBuilderProject.setTargetPlatform(TargetPlatform.Mobile);
+            loadSigningOptions(flashBuilderProject, buildTargetElement, TargetPlatform.Mobile, true);
           }
           else if (BLACKBERRY_PLATFORM_ATTR_VALUE.equals(buildTarget)) {
             flashBuilderProject.setTargetPlatform(TargetPlatform.Mobile);
+          }
+          else if (DEFAULT_VALUE.equals(buildTarget)) {
+            loadSigningOptions(flashBuilderProject, buildTargetElement, TargetPlatform.Desktop, false);
           }
         }
       }
@@ -319,6 +330,36 @@ public class FlashBuilderProjectLoadUtil {
   private static boolean isPlatformEnabled(final Element buildTargetElement) {
     final Element multiPlatformSettings = buildTargetElement.getChild(MULTI_PLATFORM_SETTINGS_ELEMENT, buildTargetElement.getNamespace());
     return multiPlatformSettings != null && "true".equals(multiPlatformSettings.getAttributeValue(ENABLED_ATTR));
+  }
+
+  private static void loadSigningOptions(final FlashBuilderProject fbProject,
+                                         final Element buildTargetElement,
+                                         final TargetPlatform targetPlatform,
+                                         final boolean iOS) {
+    final Element airSettingsElement = buildTargetElement.getChild(AIR_SETTINGS_ELEMENT, buildTargetElement.getNamespace());
+    if (airSettingsElement == null) return;
+
+    final String certPath = airSettingsElement.getAttributeValue(AIR_CERTIFICATE_ATTR);
+    if (certPath != null) {
+      if (targetPlatform == TargetPlatform.Desktop) {
+        fbProject.setDesktopCertPath(FileUtil.toSystemIndependentName(certPath));
+      }
+      else {
+        if (iOS) {
+          fbProject.setIOSCertPath(FileUtil.toSystemIndependentName(certPath));
+        }
+        else {
+          fbProject.setAndroidCertPath(FileUtil.toSystemIndependentName(certPath));
+        }
+      }
+    }
+
+    if (targetPlatform == TargetPlatform.Mobile && iOS) {
+      final String provisioningPath = buildTargetElement.getAttributeValue(PROVISIONING_FILE_ATTR);
+      if (provisioningPath != null) {
+        fbProject.setIOSProvisioningPath(provisioningPath);
+      }
+    }
   }
 
   private static void loadOutputType(final FlashBuilderProject project, final VirtualFile dotProjectFile) {
