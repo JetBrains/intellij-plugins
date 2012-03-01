@@ -6,7 +6,7 @@ import javax.swing.*;
 
 public enum OutputType {
   Application("Application"),
-  RuntimeLoadedModule("Runtime loaded module"),
+  RuntimeLoadedModule("Runtime-loaded module"),
   Library("Library");
 
   private final String myPresentableText;

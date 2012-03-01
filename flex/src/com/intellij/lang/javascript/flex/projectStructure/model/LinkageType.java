@@ -14,7 +14,7 @@ public class LinkageType {
   public static final LinkageType RSL = new LinkageType("Runtime", "Runtime shared library", "RSL");
   public static final LinkageType External = new LinkageType("External", "External", "External");
   public static final LinkageType Include = new LinkageType("Include", "Include", "Include");
-  public static final LinkageType LoadInRuntime = new LinkageType("Loaded", "Loaded in runtime", "Loaded");
+  public static final LinkageType LoadInRuntime = new LinkageType("Loaded", "Loaded at runtime", "Loaded");
 
   private static final LinkageType[] SWC_LINKAGE_VALUES = new LinkageType[]{Merged, RSL, External, Include};
 
