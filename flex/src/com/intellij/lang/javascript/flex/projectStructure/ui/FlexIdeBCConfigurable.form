@@ -26,8 +26,6 @@
           <enabled value="false"/>
           <model>
             <item value="Web"/>
-            <item value="Desktop"/>
-            <item value="Mobile"/>
           </model>
         </properties>
       </component>
@@ -58,10 +56,6 @@
           <enabled value="false"/>
           <model>
             <item value="Application (*.swf)"/>
-            <item value="Runtime Loaded Module (*.swf)"/>
-            <item value="Runtime Resource Bundle (*.swf)"/>
-            <item value="Runtime Stylesheet (*.swf)"/>
-            <item value="Library (*.swc)"/>
           </model>
         </properties>
       </component>
@@ -312,7 +306,7 @@
         </constraints>
         <properties>
           <labelFor value="b610"/>
-          <text value="Runt&amp;ime stylesheets:"/>
+          <text value="Runt&amp;ime style sheets:"/>
         </properties>
       </component>
       <component id="b610" class="com.intellij.openapi.ui.TextFieldWithBrowseButton$NoPathCompletion" binding="myCssFilesTextWithBrowse">

@@ -21,7 +21,7 @@
     <!--<option id="include-resource-bundles" displayName="Include resource bundles" type="List" advanced="true">
       <listElement name="bundle" displayName="Bundle" type="String"/>
     </option>-->
-  <!--<option id="include-stylesheet" displayName="Include stylesheet" type="List" okForSWF="false" advanced="true">
+  <!--<option id="include-stylesheet" displayName="Include style sheet" type="List" okForSWF="false" advanced="true">
     <listElement name="name" displayName="Relative path in SWC" type="String"/>
     <listElement name="path" displayName="Path To CSS File" type="File" fileExtension="css"/>
   </option>-->
