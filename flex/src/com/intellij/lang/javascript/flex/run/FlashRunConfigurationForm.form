@@ -440,6 +440,7 @@
         </constraints>
         <properties>
           <font style="1"/>
+          <labelFor value="8a68a"/>
           <text value="Build &amp;configuration:"/>
         </properties>
       </component>
