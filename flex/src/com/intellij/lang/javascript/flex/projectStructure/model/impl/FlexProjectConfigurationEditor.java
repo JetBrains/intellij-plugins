@@ -31,6 +31,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Pair;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.Function;
@@ -585,23 +586,51 @@ public class FlexProjectConfigurationEditor implements Disposable {
   public void setEntries(ModifiableDependencies dependant, List<? extends ModifiableDependencyEntry> newEntries) {
     assertAlive();
 
-    Map<String, ModifiableDependencyEntry> moduleLibrariesEntries = new HashMap<String, ModifiableDependencyEntry>();
+    Map<String, ModifiableDependencyEntry> existingModuleLibrariesEntries = new HashMap<String, ModifiableDependencyEntry>();
+    Map<Pair<String, String>, ModifiableBuildConfigurationEntry> existingBcEntries =
+      new HashMap<Pair<String, String>, ModifiableBuildConfigurationEntry>();
+    Map<Pair<String, String>, ModifiableSharedLibraryEntry> existingSharedLibrariesEntries =
+      new HashMap<Pair<String, String>, ModifiableSharedLibraryEntry>();
+
     for (ModifiableDependencyEntry entry : dependant.getModifiableEntries()) {
       if (entry instanceof ModuleLibraryEntry) {
-        moduleLibrariesEntries.put(((ModuleLibraryEntry)entry).getLibraryId(), entry);
+        existingModuleLibrariesEntries.put(((ModuleLibraryEntry)entry).getLibraryId(), entry);
+      }
+      else if (entry instanceof ModifiableSharedLibraryEntry) {
+        final ModifiableSharedLibraryEntry e = (ModifiableSharedLibraryEntry)entry;
+        existingSharedLibrariesEntries.put(Pair.create(e.getLibraryLevel(), e.getLibraryName()), e);
+      }
+      else if (entry instanceof ModifiableBuildConfigurationEntry) {
+        final ModifiableBuildConfigurationEntry e = (ModifiableBuildConfigurationEntry)entry;
+        existingBcEntries.put(Pair.create(e.getModuleName(), e.getBcName()), e);
+      }
+      else {
+        assert false : entry;
       }
     }
 
     List<ModifiableDependencyEntry> entriesToRemove = new ArrayList<ModifiableDependencyEntry>(dependant.getModifiableEntries());
     for (Iterator<? extends ModifiableDependencyEntry> i = newEntries.iterator(); i.hasNext(); ) {
-      ModifiableDependencyEntry entry = i.next();
-      if (entry instanceof ModuleLibraryEntry) {
-        ModifiableDependencyEntry existingEntry = moduleLibrariesEntries.get(((ModuleLibraryEntry)entry).getLibraryId());
-        if (existingEntry != null) {
-          entriesToRemove.remove(existingEntry);
-          existingEntry.getDependencyType().copyFrom(entry.getDependencyType());
-          i.remove();
-        }
+      ModifiableDependencyEntry newEntry = i.next();
+      ModifiableDependencyEntry existingEntry = null;
+      if (newEntry instanceof ModuleLibraryEntry) {
+        existingEntry = existingModuleLibrariesEntries.get(((ModuleLibraryEntry)newEntry).getLibraryId());
+      }
+      else if (newEntry instanceof SharedLibraryEntry) {
+        final SharedLibraryEntry e = (SharedLibraryEntry)newEntry;
+        existingEntry = existingSharedLibrariesEntries.get(Pair.create(e.getLibraryLevel(), e.getLibraryName()));
+      }
+      else if (newEntry instanceof BuildConfigurationEntry) {
+        final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)newEntry;
+        existingEntry = existingBcEntries.get(Pair.create(bcEntry.getModuleName(), bcEntry.getBcName()));
+      }
+      else {
+        assert false : newEntry;
+      }
+      if (existingEntry != null) {
+        entriesToRemove.remove(existingEntry);
+        existingEntry.getDependencyType().copyFrom(newEntry.getDependencyType());
+        i.remove();
       }
     }
 
