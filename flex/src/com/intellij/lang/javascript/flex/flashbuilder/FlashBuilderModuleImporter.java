@@ -314,7 +314,7 @@ public class FlashBuilderModuleImporter {
         if (otherProject != fbProject && libraryPathOrig.startsWith("/" + otherProject.getName() + "/")) {
           final ModifiableBuildConfigurationEntry bcEntry =
             myFlexConfigEditor.createBcEntry(bc.getDependencies(), otherProject.getName(), suggestMainBCName(otherProject));
-          bc.getDependencies().getModifiableEntries().add(bcEntry);
+          bc.getDependencies().getModifiableEntries().add(0, bcEntry);
           continue OUTER;
         }
       }
