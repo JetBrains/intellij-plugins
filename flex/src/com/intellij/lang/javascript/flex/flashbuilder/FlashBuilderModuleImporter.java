@@ -234,6 +234,8 @@ public class FlashBuilderModuleImporter {
       FlexModuleBuilder.createRunConfiguration(rootModel.getModule(), bc.getName());
     }
 
+    final Collection<ModifiableFlexIdeBuildConfiguration> rlms = new ArrayList<ModifiableFlexIdeBuildConfiguration>();
+
     for (final Pair<String, String> sourcePathAndDestPath : fbProject.getModules()) {
       final ModifiableFlexIdeBuildConfiguration bc = myFlexConfigEditor.copyConfiguration(mainBC, mainBC.getNature());
       bc.setCssFilesToCompile(Collections.<String>emptyList());
@@ -246,6 +248,26 @@ public class FlashBuilderModuleImporter {
       bc.setOutputFileName(PathUtil.getFileName(sourcePathAndDestPath.second));
       final String parentPath = PathUtil.getParentPath(sourcePathAndDestPath.second);
       bc.setOutputFolder(bc.getOutputFolder() + (parentPath.isEmpty() ? "" : ("/" + parentPath)));
+
+      rlms.add(bc);
+    }
+
+    if (!rlms.isEmpty()) {
+      int indexForBCDependency = 0;
+      for (ModifiableDependencyEntry entry : mainBC.getDependencies().getModifiableEntries()) {
+        if (entry instanceof BuildConfigurationEntry) {
+          indexForBCDependency++;
+        }
+        else {
+          break;
+        }
+      }
+
+      for (ModifiableFlexIdeBuildConfiguration rlm : rlms) {
+        final ModifiableBuildConfigurationEntry bcEntry = myFlexConfigEditor.createBcEntry(mainBC.getDependencies(), rlm, null);
+        bcEntry.getDependencyType().setLinkageType(LinkageType.LoadInRuntime);
+        mainBC.getDependencies().getModifiableEntries().add(indexForBCDependency, bcEntry);
+      }
     }
   }
 
