@@ -111,6 +111,11 @@ public class AirPackageAction extends DumbAwareAction {
     for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCs) {
       final FlexIdeBuildConfiguration bc = moduleAndBC.second;
       if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
+        if (bc.getAirDesktopPackagingOptions().getSigningOptions().isUseTempCertificate() &&
+            !AirPackageUtil.ensureCertificateExists(project, bc.getSdk())) {
+          return;
+        }
+
         final DesktopPackageType packageType = params.desktopPackageType;
         final ExternalTask task = AirPackageUtil.createAirDesktopTask(project, bc, packageType, passwords);
         final String packagePath = bc.getOutputFolder() + "/" +
@@ -120,6 +125,11 @@ public class AirPackageAction extends DumbAwareAction {
       else {
         if (bc.getAndroidPackagingOptions().isEnabled()) {
           final AndroidPackagingOptions packagingOptions = bc.getAndroidPackagingOptions();
+          if (packagingOptions.getSigningOptions().isUseTempCertificate() &&
+              !AirPackageUtil.ensureCertificateExists(project, bc.getSdk())) {
+            return;
+          }
+
           final AndroidPackageType packageType = params.androidPackageType;
           final ExternalTask task = AirPackageUtil.createAndroidPackageTask(project, bc, packageType, params.apkCaptiveRuntime,
                                                                             params.apkDebugListenPort, passwords);
