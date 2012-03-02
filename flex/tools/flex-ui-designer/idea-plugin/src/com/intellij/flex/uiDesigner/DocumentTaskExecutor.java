@@ -19,12 +19,17 @@ class DocumentTaskExecutor extends DocumentTask {
   @Override
   boolean doRun(ProgressIndicator indicator) throws IOException, ExecutionException, InterruptedException, TimeoutException {
     final ProjectComponentReferenceCounter projectComponentReferenceCounter;
-    try {
-      projectComponentReferenceCounter = LibraryManager.getInstance().initLibrarySets(module, problemsHolder);
+    if (Client.getInstance().isModuleRegistered(module)) {
+      projectComponentReferenceCounter = null;
     }
-    catch (InitException e) {
-      processInitException(e, module, false);
-      return false;
+    else {
+      try {
+        projectComponentReferenceCounter = LibraryManager.getInstance().registerModule(module, problemsHolder);
+      }
+      catch (InitException e) {
+        processInitException(e, module, false);
+        return false;
+      }
     }
 
     return postTask.run(module, projectComponentReferenceCounter, indicator, problemsHolder);

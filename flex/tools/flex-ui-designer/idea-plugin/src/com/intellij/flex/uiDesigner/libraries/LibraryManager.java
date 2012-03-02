@@ -83,12 +83,12 @@ public class LibraryManager implements Disposable {
   }
 
   @NotNull
-  public ProjectComponentReferenceCounter initLibrarySets(@NotNull final Module module, ProblemsHolder problemsHolder) throws InitException {
-    return initLibrarySets(module, problemsHolder, true);
+  public ProjectComponentReferenceCounter registerModule(@NotNull final Module module, ProblemsHolder problemsHolder) throws InitException {
+    return registerModule(module, problemsHolder, true);
   }
 
   @NotNull
-  public ProjectComponentReferenceCounter initLibrarySets(@NotNull final Module module,
+  public ProjectComponentReferenceCounter registerModule(@NotNull final Module module,
                                                          ProblemsHolder problemsHolder,
                                                          boolean collectLocalStyleHolders) throws InitException {
     final Project project = module.getProject();

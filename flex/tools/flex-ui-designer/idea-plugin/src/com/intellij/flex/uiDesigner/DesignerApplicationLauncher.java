@@ -349,7 +349,7 @@ public class DesignerApplicationLauncher extends DocumentTask {
             Client.getInstance().initStringRegistry();
           }
           indicator.setText(FlashUIDesignerBundle.message("collect.libraries"));
-          return LibraryManager.getInstance().initLibrarySets(module, problemsHolder);
+          return LibraryManager.getInstance().registerModule(module, problemsHolder);
         }
         catch (Throwable e) {
           if (initializeThread == null || initializeThread.isCancelled()) {

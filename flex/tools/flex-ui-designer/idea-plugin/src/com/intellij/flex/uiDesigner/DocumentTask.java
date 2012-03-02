@@ -13,10 +13,12 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ExceptionUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 abstract class DocumentTask extends Task.Backgroundable {
@@ -45,9 +47,7 @@ abstract class DocumentTask extends Task.Backgroundable {
 
     try {
       Throwable error = null;
-
       beforeRun();
-
       boolean result = false;
       try {
         result = doRun(indicator);
@@ -66,7 +66,11 @@ abstract class DocumentTask extends Task.Backgroundable {
       }
 
       if (error != null) {
-        LOG.error(error);
+        try {
+          LOG.error(error);
+        }
+        catch (AssertionError ignored) {
+        }
       }
     }
     finally {
@@ -78,7 +82,7 @@ abstract class DocumentTask extends Task.Backgroundable {
   }
 
   abstract boolean doRun(ProgressIndicator indicator) throws
-                                                      IOException, java.util.concurrent.ExecutionException, InterruptedException,
+                                                      IOException, ExecutionException, InterruptedException,
                                                       TimeoutException;
 
   protected abstract void processErrorOrCancel();
@@ -106,7 +110,7 @@ abstract class DocumentTask extends Task.Backgroundable {
 
   abstract static class PostTask implements Disposable {
     abstract boolean run(Module module,
-                         ProjectComponentReferenceCounter projectComponentReferenceCounter,
+                         @Nullable ProjectComponentReferenceCounter projectComponentReferenceCounter,
                          ProgressIndicator indicator,
                          ProblemsHolder problemsHolder);
 

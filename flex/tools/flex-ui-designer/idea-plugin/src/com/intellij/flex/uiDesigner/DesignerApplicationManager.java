@@ -524,7 +524,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
     @Override
     public boolean run(Module module,
-                       ProjectComponentReferenceCounter projectComponentReferenceCounter,
+                       @Nullable ProjectComponentReferenceCounter projectComponentReferenceCounter,
                        ProgressIndicator indicator,
                        ProblemsHolder problemsHolder) {
       indicator.setText(FlashUIDesignerBundle.message("rendering.document"));

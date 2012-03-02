@@ -233,7 +233,7 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
       client = (TestClient)Client.getInstance();
       final ProblemsHolder problemsHolder = new ProblemsHolder();
       ProjectComponentReferenceCounter projectComponentReferenceCounter =
-        LibraryManager.getInstance().initLibrarySets(myModule, problemsHolder, isRequireLocalStyleHolder());
+        LibraryManager.getInstance().registerModule(myModule, problemsHolder, isRequireLocalStyleHolder());
       assertTrue(problemsHolder.isEmpty());
       assertAfterInitLibrarySets(projectComponentReferenceCounter.unregistered);
     }

@@ -523,7 +523,7 @@ public class Client implements Disposable {
       Module documentModule = ModuleUtil.findModuleForFile(virtualFile, file.getProject());
       if (module != documentModule && !isModuleRegistered(module)) {
         try {
-          LibraryManager.getInstance().initLibrarySets(module, problemsHolder);
+          LibraryManager.getInstance().registerModule(module, problemsHolder);
         }
         catch (InitException e) {
           LogMessageUtil.LOG.error(e.getCause());
