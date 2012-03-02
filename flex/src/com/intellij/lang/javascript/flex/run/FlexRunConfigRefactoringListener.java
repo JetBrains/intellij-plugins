@@ -1,53 +1,76 @@
 package com.intellij.lang.javascript.flex.run;
 
+import com.intellij.execution.configurations.LocatableConfiguration;
+import com.intellij.execution.configurations.RunConfigurationBase;
+import com.intellij.lang.javascript.flex.FlexRefactoringListenerProvider;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
+import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.ecmal4.JSPackage;
+import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
+import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
+import com.intellij.openapi.roots.impl.DirectoryIndex;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiDirectoryContainer;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.listeners.RefactoringElementAdapter;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class FlexRunConfigRefactoringListener extends RefactoringElementAdapter {
-  //protected final FlexRunConfiguration myRunConfiguration;
+  protected final RunConfigurationBase myRunConfiguration;
 
-  /*
-  public FlexRunConfigRefactoringListener(final FlexRunConfiguration runConfiguration) {
+  public FlexRunConfigRefactoringListener(final RunConfigurationBase runConfiguration) {
+    assert runConfiguration instanceof FlashRunConfiguration || runConfiguration instanceof FlexUnitRunConfiguration
+      : runConfiguration.getType().getDisplayName();
     myRunConfiguration = runConfiguration;
   }
-  */
 
-  /*
   protected void elementRenamedOrMoved(@NotNull PsiElement newElement) {
-    final boolean generatedName = myRunConfiguration.isGeneratedName();
+    final boolean generatedName = ((LocatableConfiguration)myRunConfiguration).isGeneratedName();
+
     updateParams(newElement);
+
     if (generatedName) {
-      myRunConfiguration.setName(myRunConfiguration.suggestedName());
+      myRunConfiguration.setName(((LocatableConfiguration)myRunConfiguration).suggestedName());
     }
   }
-  */
+
+  public void undoElementMovedOrRenamed(@NotNull final PsiElement newElement, @NotNull final String oldQualifiedName) {
+    final boolean generatedName = ((LocatableConfiguration)myRunConfiguration).isGeneratedName();
+
+    undo(newElement, oldQualifiedName);
+
+    if (generatedName) {
+      myRunConfiguration.setName(((LocatableConfiguration)myRunConfiguration).suggestedName());
+    }
+  }
 
   protected abstract void updateParams(PsiElement newElement);
 
-  /*
-  private static void updatePackage(final FlexRunConfiguration runConfiguration, final String newPackage) {
-    final FlexRunnerParameters params = runConfiguration.getRunnerParameters();
-    final boolean isFlexUnit = params instanceof FlexUnitRunnerParameters;
+  protected abstract void undo(final PsiElement element, final String name);
 
-    if (isFlexUnit) {
-      if (((FlexUnitRunnerParameters)params).getScope() == FlexUnitRunnerParameters.Scope.Package) {
-        ((FlexUnitRunnerParameters)params).setPackageName(newPackage);
+  private static void updatePackage(final RunConfigurationBase runConfiguration, final String newPackage) {
+    if (runConfiguration instanceof FlexUnitRunConfiguration) {
+      final FlexUnitRunnerParameters params = ((FlexUnitRunConfiguration)runConfiguration).getRunnerParameters();
+      if (params.getScope() == FlexUnitRunnerParameters.Scope.Package) {
+        params.setPackageName(newPackage);
       }
       else {
-        final String oldFqn = ((FlexUnitRunnerParameters)params).getClassName();
-        ((FlexUnitRunnerParameters)params).setClassName(StringUtil.getQualifiedName(newPackage, StringUtil.getShortName(oldFqn)));
+        final String oldFqn = params.getClassName();
+        params.setClassName(StringUtil.getQualifiedName(newPackage, StringUtil.getShortName(oldFqn)));
       }
     }
     else {
-      final String oldFqn = params.getMainClassName();
-      params.setMainClassName(StringUtil.getQualifiedName(newPackage, StringUtil.getShortName(oldFqn)));
+      final FlashRunnerParameters params = ((FlashRunConfiguration)runConfiguration).getRunnerParameters();
+      final String oldFqn = params.getOverriddenMainClass();
+      params.setOverriddenMainClass(StringUtil.getQualifiedName(newPackage, StringUtil.getShortName(oldFqn)));
     }
   }
-  */
 
-  /*
   public static class JSClassRefactoringListener extends FlexRunConfigRefactoringListener {
-    public JSClassRefactoringListener(final FlexRunConfiguration runConfiguration) {
+    public JSClassRefactoringListener(final RunConfigurationBase runConfiguration) {
       super(runConfiguration);
     }
 
@@ -55,38 +78,30 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
       final JSClass newClass = FlexRefactoringListenerProvider.getJSClass(newElement);
       if (newClass == null) return;
 
-      final FlexRunnerParameters params = myRunConfiguration.getRunnerParameters();
-      final boolean isFlexUnit = params instanceof FlexUnitRunnerParameters;
-
       final String qName = newClass.getQualifiedName();
       if (StringUtil.isNotEmpty(qName)) {
-        if (isFlexUnit) {
-          ((FlexUnitRunnerParameters)params).setClassName(qName);
+        if (myRunConfiguration instanceof FlexUnitRunConfiguration) {
+          ((FlexUnitRunConfiguration)myRunConfiguration).getRunnerParameters().setClassName(qName);
         }
         else {
-          params.setMainClassName(qName);
+          ((FlashRunConfiguration)myRunConfiguration).getRunnerParameters().setOverriddenMainClass(qName);
         }
       }
     }
 
     @Override
-    public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
-      final FlexRunnerParameters params = myRunConfiguration.getRunnerParameters();
-      final boolean isFlexUnit = params instanceof FlexUnitRunnerParameters;
-      if (isFlexUnit) {
-        ((FlexUnitRunnerParameters)params).setClassName(oldQualifiedName);
+    public void undo(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
+      if (myRunConfiguration instanceof FlexUnitRunConfiguration) {
+        ((FlexUnitRunConfiguration)myRunConfiguration).getRunnerParameters().setClassName(oldQualifiedName);
       }
       else {
-        params.setMainClassName(oldQualifiedName);
+        ((FlashRunConfiguration)myRunConfiguration).getRunnerParameters().setOverriddenMainClass(oldQualifiedName);
       }
     }
   }
-  */
 
-  /*
   public static class PsiDirectoryRefactoringListener extends FlexRunConfigRefactoringListener {
-
-    public PsiDirectoryRefactoringListener(final FlexRunConfiguration runConfiguration) {
+    public PsiDirectoryRefactoringListener(final RunConfigurationBase runConfiguration) {
       super(runConfiguration);
     }
 
@@ -97,15 +112,12 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
     }
 
     @Override
-    public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
+    public void undo(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
       updatePackage(myRunConfiguration, oldQualifiedName);
     }
   }
-  */
 
-  /*
   public static class JSFunctionRefactoringListener extends FlexRunConfigRefactoringListener {
-
     public JSFunctionRefactoringListener(final FlexUnitRunConfiguration runConfiguration) {
       super(runConfiguration);
     }
@@ -119,19 +131,16 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
     }
 
     @Override
-    public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
-      final int methodIdx = oldQualifiedName.indexOf("#") + 1;
+    public void undo(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
+      final int methodIdx = oldQualifiedName.lastIndexOf(".") + 1;
       if (methodIdx > 0 && methodIdx < oldQualifiedName.length()) {
         ((FlexUnitRunConfiguration)myRunConfiguration).getRunnerParameters().setMethodName(oldQualifiedName.substring(methodIdx));
       }
     }
   }
-  */
 
-  /*
   public static class PackageRefactoringListener extends FlexRunConfigRefactoringListener {
-
-    public PackageRefactoringListener(final FlexRunConfiguration runConfiguration) {
+    public PackageRefactoringListener(final RunConfigurationBase runConfiguration) {
       super(runConfiguration);
     }
 
@@ -145,9 +154,8 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
     }
 
     @Override
-    public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
+    public void undo(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
       updatePackage(myRunConfiguration, oldQualifiedName);
     }
   }
-  */
 }

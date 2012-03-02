@@ -11,19 +11,32 @@ import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexRefactoringListenerProvider;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.ecmal4.JSPackage;
+import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.impl.DirectoryIndex;
 import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiDirectoryContainer;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +46,7 @@ import java.io.IOException;
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileRunTarget;
 
 public class FlashRunConfiguration extends RunConfigurationBase
-  implements RunProfileWithCompileBeforeLaunchOption, LocatableConfiguration {
+  implements RunProfileWithCompileBeforeLaunchOption, LocatableConfiguration, RefactoringListenerProvider {
 
   private FlashRunnerParameters myRunnerParameters = new FlashRunnerParameters();
 
@@ -121,14 +134,8 @@ public class FlashRunConfiguration extends RunConfigurationBase
     return myRunnerParameters.suggestName();
   }
 
-  /*
   public RefactoringElementListener getRefactoringElementListener(final PsiElement element) {
-    //assert !(this instanceof FlexUnitRunConfiguration); // FlexUnitRunConfiguration must have own implementation
-
-    if ((this instanceof AirRunConfiguration &&
-         ((AirRunnerParameters)myRunnerParameters).getAirRunMode() != AirRunnerParameters.AirRunMode.MainClass)
-        ||
-        (!(this instanceof AirRunConfiguration) && myRunnerParameters.getRunMode() != FlexRunnerParameters.RunMode.MainClass)) {
+    if (!myRunnerParameters.isOverrideMainClass()) {
       return null;
     }
 
@@ -139,32 +146,31 @@ public class FlashRunConfiguration extends RunConfigurationBase
       return null;
     }
 
-    String currentPackage = StringUtil.getPackageName(myRunnerParameters.getMainClassName());
+    final String currentPackage = StringUtil.getPackageName(myRunnerParameters.getOverriddenMainClass());
     if ((element instanceof PsiDirectoryContainer || element instanceof JSPackage || element instanceof JSPackageStatement) &&
         Comparing.strEqual(FlexRefactoringListenerProvider.getPackageName(element), currentPackage)) {
-      //return new FlexRunConfigRefactoringListener.PackageRefactoringListener(this);
+      return new FlexRunConfigRefactoringListener.PackageRefactoringListener(this);
     }
 
-    if (element instanceof PsiDirectory && containsClass(module, ((PsiDirectory)element), myRunnerParameters.getMainClassName())) {
-      //return new FlexRunConfigRefactoringListener.PsiDirectoryRefactoringListener(this);
+    if (element instanceof PsiDirectory && containsClass(module, ((PsiDirectory)element), myRunnerParameters.getOverriddenMainClass())) {
+      return new FlexRunConfigRefactoringListener.PsiDirectoryRefactoringListener(this);
     }
 
     final JSClass jsClass = FlexRefactoringListenerProvider.getJSClass(element);
-    if (jsClass != null && Comparing.strEqual(jsClass.getQualifiedName(), myRunnerParameters.getMainClassName())) {
-      //return new FlexRunConfigRefactoringListener.JSClassRefactoringListener(this);
+    if (jsClass != null && Comparing.strEqual(jsClass.getQualifiedName(), myRunnerParameters.getOverriddenMainClass())) {
+      return new FlexRunConfigRefactoringListener.JSClassRefactoringListener(this);
     }
 
     return null;
   }
 
-  private static boolean containsClass(final Module module, final PsiDirectory directory, final String className) {
+  public static boolean containsClass(final Module module, final PsiDirectory directory, final String className) {
     final String packageName = DirectoryIndex.getInstance(module.getProject()).getPackageName(directory.getVirtualFile());
     if (!StringUtil.getPackageName(className).equals(packageName)) return false;
 
     final PsiElement psiElement = JSResolveUtil.findClassByQName(className, GlobalSearchScope.moduleScope(module));
     return psiElement instanceof JSClass && directory.equals(psiElement.getContainingFile().getParent());
   }
-  */
 
   public static class AirRunState extends CommandLineState {
 

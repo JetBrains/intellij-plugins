@@ -8,13 +8,20 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexRefactoringListenerProvider;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
+import com.intellij.lang.javascript.flex.run.FlexRunConfigRefactoringListener;
+import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.ecmal4.JSPackage;
+import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
@@ -22,12 +29,16 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiDirectoryContainer;
+import com.intellij.psi.PsiElement;
+import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 public class FlexUnitRunConfiguration extends RunConfigurationBase
-  implements RunProfileWithCompileBeforeLaunchOption, LocatableConfiguration {
+  implements RunProfileWithCompileBeforeLaunchOption, LocatableConfiguration, RefactoringListenerProvider {
 
   private FlexUnitRunnerParameters myRunnerParameters = new FlexUnitRunnerParameters();
 
@@ -133,7 +144,6 @@ public class FlexUnitRunConfiguration extends RunConfigurationBase
     myRunnerParameters.check(getProject());
   }
 
-  /*
   public RefactoringElementListener getRefactoringElementListener(final PsiElement element) {
     final FlexUnitRunnerParameters params = getRunnerParameters();
     final Module module = ModuleManager.getInstance(getProject()).findModuleByName(params.getModuleName());
@@ -154,7 +164,8 @@ public class FlexUnitRunConfiguration extends RunConfigurationBase
         }
         // no break here!
       case Class:
-        if (element instanceof PsiDirectory && containsClass(module, ((PsiDirectory)element), params.getClassName())) {
+        if (element instanceof PsiDirectory &&
+            FlashRunConfiguration.containsClass(module, ((PsiDirectory)element), params.getClassName())) {
           return new FlexRunConfigRefactoringListener.PsiDirectoryRefactoringListener(this);
         }
 
@@ -175,14 +186,4 @@ public class FlexUnitRunConfiguration extends RunConfigurationBase
 
     return null;
   }
-
-  private static boolean containsClass(final Module module, final PsiDirectory directory, final String className) {
-    final String packageName = DirectoryIndex.getInstance(module.getProject()).getPackageName(directory.getVirtualFile());
-    if (!StringUtil.getPackageName(className).equals(packageName)) return false;
-
-    final PsiElement psiElement = JSResolveUtil.findClassByQName(className, GlobalSearchScope.moduleScope(module));
-    return psiElement instanceof JSClass && directory.equals(psiElement.getContainingFile().getParent());
-  }
-  */
-
 }
