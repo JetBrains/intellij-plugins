@@ -76,13 +76,7 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
     myTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
       @Override
       public void valueChanged(TreeSelectionEvent e) {
-        mySelection = myTree.getSelectedNodes(DefaultMutableTreeNode.class, new Tree.NodeFilter<DefaultMutableTreeNode>() {
-          @Override
-          public boolean accept(DefaultMutableTreeNode node) {
-            return node.getUserObject() instanceof FlexIdeBCConfigurable;
-          }
-        });
-        setOKActionEnabled(mySelection.length > 0);
+        updateOkButton();
       }
     });
     myTree.setCellRenderer(new ColoredTreeCellRenderer() {
@@ -126,7 +120,19 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
         }
       }
     });
+
+    updateOkButton();
     return p;
+  }
+
+  private void updateOkButton() {
+    mySelection = myTree.getSelectedNodes(DefaultMutableTreeNode.class, new Tree.NodeFilter<DefaultMutableTreeNode>() {
+      @Override
+      public boolean accept(DefaultMutableTreeNode node) {
+        return node.getUserObject() instanceof FlexIdeBCConfigurable;
+      }
+    });
+    setOKActionEnabled(mySelection.length > 0);
   }
 
   private static String getText(DefaultMutableTreeNode node) {
