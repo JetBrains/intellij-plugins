@@ -790,6 +790,15 @@ public class FlexSdkUtils {
     });
   }
 
+  @Nullable
+  public static Sdk findFlexOrFlexmojosSdk(final String name) {
+    return ContainerUtil.find(getFlexAndFlexmojosSdks(), new Condition<Sdk>() {
+      public boolean value(final Sdk sdk) {
+        return name.equals(sdk.getName());
+      }
+    });
+  }
+
   public static List<Sdk> getFlexSdks() {
     return ContainerUtil.filter(getAllSdks(), new Condition<Sdk>() {
       public boolean value(final Sdk sdk) {

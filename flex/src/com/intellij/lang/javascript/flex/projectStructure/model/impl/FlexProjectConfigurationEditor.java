@@ -10,9 +10,6 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
-import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -20,8 +17,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleOrderEntry;
@@ -84,8 +79,6 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
     @Nullable
     Library findSourceLibrary(String name, String level);
-
-    Sdk[] getAllSdks();
   }
 
   public interface ModulesModelChangeListener extends EventListener {
@@ -204,11 +197,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
         public Library findSourceLibraryForLiveName(final String name, final String level) {
           return findSourceLibrary(name, level);
         }
-
-        public Sdk[] getAllSdks() {
-          return FlexSdkUtils.getAllSdks();
-        }
-      };
+    };
   }
 
   public void configurationRemoved(@NotNull final ModifiableFlexIdeBuildConfiguration configuration) {
@@ -715,26 +704,6 @@ public class FlexProjectConfigurationEditor implements Disposable {
     assertAlive();
     ModifiableRootModel modifiableModel = myProvider.getModuleModifiableModel(getEditor(dependencies).myModule);
     return (LibraryTableBase.ModifiableModelEx)modifiableModel.getModuleLibraryTable().getModifiableModel();
-  }
-
-  @Nullable
-  public Sdk getAnyFlexSdk() {
-    // does not return Flexmojos SDK
-    final FlexSdkType2 flexSdkType = FlexSdkType2.getInstance();
-    for (Sdk sdk : myProvider.getAllSdks()) {
-      if (sdk.getSdkType() == flexSdkType) return sdk;
-    }
-    return null;
-  }
-
-  @Nullable
-  public Sdk findSdk(final String name) {
-    return ContainerUtil.find(myProvider.getAllSdks(), new Condition<Sdk>() {
-      public boolean value(final Sdk sdk) {
-        final SdkType sdkType = sdk.getSdkType();
-        return name.equals(sdk.getName()) && (sdkType == FlexSdkType2.getInstance() || sdkType == FlexmojosSdkType.getInstance());
-      }
-    });
   }
 
   public void addSdkListListener(ChangeListener changeListener, Disposable parentDisposable) {

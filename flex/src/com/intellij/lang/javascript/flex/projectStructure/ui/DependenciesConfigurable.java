@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -1354,7 +1355,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     root.removeAllChildren();
 
     if (sdkEntry != null) {
-      Sdk flexSdk = myConfigEditor.findSdk(sdkEntry.getName());
+      Sdk flexSdk = FlexSdkUtils.findFlexOrFlexmojosSdk(sdkEntry.getName());
       if (flexSdk != null) {
         DefaultMutableTreeNode sdkNode = new DefaultMutableTreeNode(new SdkItem(flexSdk), true);
         myTable.getRoot().insert(sdkNode, 0);

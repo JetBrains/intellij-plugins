@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
@@ -64,7 +65,7 @@ public class FlexSdkStep extends ModuleWizardStep {
           SdkEntry sdkEntry = c.getDependencies().getSdkEntry();
           Sdk sdk;
           if (sdkEntry != null &&
-              (sdk = currentEditor.findSdk(sdkEntry.getName())) != null &&
+              (sdk = FlexSdkUtils.findFlexOrFlexmojosSdk(sdkEntry.getName())) != null &&
               sdk.getSdkType() == FlexSdkType2.getInstance()) {
             combo.setSelectedSdkRaw(sdk.getName());
             return;

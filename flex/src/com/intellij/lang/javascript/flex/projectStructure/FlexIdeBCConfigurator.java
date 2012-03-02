@@ -90,10 +90,6 @@ public class FlexIdeBCConfigurator {
           return ProjectStructureConfigurable.getInstance(project).getContext().createModifiableModelProvider(level).getModifiableModel();
         }
 
-        public Sdk[] getAllSdks() {
-          return FlexSdkUtils.getAllSdks();
-        }
-
         public Library findSourceLibraryForLiveName(final String name, final String level) {
           final LibrariesModifiableModel model =
             ProjectStructureConfigurable.getInstance(project).getContext().createModifiableModelProvider(level).getModifiableModel();
@@ -262,9 +258,9 @@ public class FlexIdeBCConfigurator {
   }
 
   @Nullable
-  private SdkEntry findAnySdk() {
-    final Sdk sdk = myConfigEditor.getAnyFlexSdk();
-    return sdk != null ? Factory.createSdkEntry(sdk.getName()) : null;
+  private static SdkEntry findAnySdk() {
+    final List<Sdk> sdks = FlexSdkUtils.getFlexSdks();
+    return sdks.isEmpty() ? null :  Factory.createSdkEntry(sdks.get(0).getName());
   }
 
   public void copy(final CompositeConfigurable configurable, final Runnable treeNodeNameUpdater) {
