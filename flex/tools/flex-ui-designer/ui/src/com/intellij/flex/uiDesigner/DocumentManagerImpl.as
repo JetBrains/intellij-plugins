@@ -112,7 +112,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
         }
       }
 
-      DocumentContainer(document.container).documentUpdated();
+      DocumentContainer(documentFactory.document.container).documentUpdated();
     }
   }
 

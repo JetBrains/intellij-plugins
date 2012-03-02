@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.openapi.util.ActionCallback;
 
 import java.io.IOException;
+import java.io.PrintStream;
 
 class TestSocketInputHandler extends SocketInputHandlerImpl {
   private String expectedError;
@@ -68,11 +69,19 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
       case ServerMethod.SHOW_ERROR:
         final String errorMessage = reader.readUTF();
         if (expectedError == null) {
-          throw new IOException(errorMessage);
+          throw new AssertionError(errorMessage) {
+            @Override
+            public void printStackTrace(PrintStream s) {
+            }
+          };
         }
         else {
           if (!errorMessage.startsWith(expectedError)) {
-            throw new IOException("Expected error message " + expectedError + ", but got " + errorMessage);
+            throw new AssertionError("Expected error message " + expectedError + ", but got " + errorMessage) {
+              @Override
+              public void printStackTrace(PrintStream s) {
+              }
+            };
           }
           expectedError = null;
         }

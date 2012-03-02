@@ -181,7 +181,7 @@ public class AppTest extends AppTestBase {
     protected void processCommand(int command) throws IOException {
       boolean result = true;
       try {
-       super.processCommand(command);
+        super.processCommand(command);
       }
       catch (Throwable e) {
         //noinspection InstanceofCatchParameter

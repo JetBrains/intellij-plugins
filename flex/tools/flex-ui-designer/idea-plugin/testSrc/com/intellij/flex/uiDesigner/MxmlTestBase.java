@@ -90,23 +90,19 @@ abstract class MxmlTestBase extends AppTestBase {
       final XmlFile xmlFile = (XmlFile)psiManager.findFile(file);
       assert xmlFile != null;
 
-      final Callable<String> action = new Callable<String>() {
+      final Callable<Void> action = new Callable<Void>() {
         @Override
-        public String call() throws Exception {
-          return tester.test(file, xmlFile, originalVFile);
+        public Void call() throws Exception {
+          tester.test(file, xmlFile, originalVFile);
+          return null;
         }
       };
 
-      final String failMessage;
       if (TIMEOUT == 0) {
-        failMessage = action.call();
+        action.call();
       }
       else {
-        failMessage = ApplicationManager.getApplication().executeOnPooledThread(action).get(TIMEOUT, TimeUnit.SECONDS);
-      }
-
-      if (failMessage != null) {
-        fail(failMessage);
+        ApplicationManager.getApplication().executeOnPooledThread(action).get(TIMEOUT, TimeUnit.SECONDS);
       }
     }
   }
@@ -119,7 +115,7 @@ abstract class MxmlTestBase extends AppTestBase {
 
   private class MyTester implements Tester {
     @Override
-    public String test(VirtualFile file, XmlFile xmlFile, final VirtualFile originalFile) throws Exception {
+    public void test(VirtualFile file, XmlFile xmlFile, final VirtualFile originalFile) throws Exception {
       final String documentName = file.getNameWithoutExtension();
       System.out.print(documentName + '\n');
       socketInputHandler.setExpectedErrorMessage(expectedErrorForDocument(documentName));
@@ -136,8 +132,6 @@ abstract class MxmlTestBase extends AppTestBase {
           throw new AssertionError(socketInputHandler.reader.readUTF());
         }
       }
-
-      return null;
     }
   }
 
@@ -147,5 +141,5 @@ abstract class MxmlTestBase extends AppTestBase {
 }
 
 interface Tester {
-  String test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception;
+  void test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception;
 }
