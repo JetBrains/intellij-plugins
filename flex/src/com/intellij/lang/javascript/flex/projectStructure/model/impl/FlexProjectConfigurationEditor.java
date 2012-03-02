@@ -417,7 +417,8 @@ public class FlexProjectConfigurationEditor implements Disposable {
             if (dependencyModule != null && dependencyModule != module) {
               final Boolean transitiveFlag = modulesToAdd.get(dependencyModule);
               modulesToAdd.put(dependencyModule,
-                               Boolean.TRUE == transitiveFlag || BCUtils.isTransitiveDependency(dependencyEntry.getDependencyType()));
+                               Boolean.TRUE == transitiveFlag ||
+                               BCUtils.isTransitiveDependency(dependencyEntry.getDependencyType().getLinkageType()));
             }
           }
         }

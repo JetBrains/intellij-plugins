@@ -72,14 +72,17 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
     processModuleWithBuildConfiguration(module, null, myActiveConfigurations, new HashSet<FlexIdeBuildConfiguration>());
   }
 
-  private static void processModuleWithBuildConfiguration(Module module, @Nullable FlexIdeBuildConfiguration configuration,
+  // configuration is null for root module (one for which scope is being computed)
+  private static void processModuleWithBuildConfiguration(@NotNull Module module, @Nullable FlexIdeBuildConfiguration configuration,
                                                           MultiMap<Module, FlexIdeBuildConfiguration> modules2activeConfigurations,
                                                           Set<FlexIdeBuildConfiguration> processedConfigurations) {
     if (ModuleType.get(module) != FlexModuleType.getInstance()) {
       return;
     }
 
-    if (configuration == null) {
+
+    final boolean isRootModule = configuration == null;
+    if (isRootModule) {
       configuration = getActiveConfiguration(module);
     }
 
@@ -102,9 +105,12 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
       if (dependencyBc == null || !FlexCompiler.checkDependencyType(configuration, dependencyBc, linkageType)) {
         continue;
       }
+      if (!isRootModule && !BCUtils.isTransitiveDependency(linkageType)) {
+        continue;
+      }
 
       Module dependencyModule = ((BuildConfigurationEntry)entry).findModule();
-      if (dependencyModule == module) {
+      if (dependencyModule == null || dependencyModule == module) {
         continue;
       }
       processModuleWithBuildConfiguration(dependencyModule, dependencyBc, modules2activeConfigurations, processedConfigurations);
