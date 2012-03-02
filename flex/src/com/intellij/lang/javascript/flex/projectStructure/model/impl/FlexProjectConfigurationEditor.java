@@ -420,13 +420,15 @@ public class FlexProjectConfigurationEditor implements Disposable {
       }
 
       // ---------------- modules entries ----------------------
-      final Map<Module, Boolean> modulesToAdd = new HashMap<Module, Boolean>(); // Module -> add_module_entry_flag
+      final Map<Module, Boolean> modulesToAdd = new HashMap<Module, Boolean>(); // module -> transitive or not
       for (Editor editor : myModule2Editors.get(module)) {
         for (DependencyEntry dependencyEntry : editor.getDependencies().getEntries()) {
           if (dependencyEntry instanceof BuildConfigurationEntry) {
             final Module dependencyModule = findModuleWithBC((BuildConfigurationEntry)dependencyEntry);
             if (dependencyModule != null && dependencyModule != module) {
-              modulesToAdd.put(dependencyModule, true);
+              final Boolean transitiveFlag = modulesToAdd.get(dependencyModule);
+              modulesToAdd.put(dependencyModule,
+                               Boolean.TRUE == transitiveFlag || BCUtils.isTransitiveDependency(dependencyEntry.getDependencyType()));
             }
           }
         }
@@ -437,8 +439,10 @@ public class FlexProjectConfigurationEditor implements Disposable {
         public boolean value(OrderEntry orderEntry) {
           if (orderEntry instanceof ModuleOrderEntry) {
             Module m = ((ModuleOrderEntry)orderEntry).getModule();
-            if (modulesToAdd.containsKey(m)) {
-              modulesToAdd.put(m, false);
+            final Boolean transitive = modulesToAdd.get(m);
+            if (transitive != null) {
+              ((ModuleOrderEntry)orderEntry).setExported(transitive);
+              modulesToAdd.remove(m);
               return false;
             }
             else {
@@ -452,10 +456,8 @@ public class FlexProjectConfigurationEditor implements Disposable {
       for (OrderEntry orderEntry : moduleOrderEntriesToRemove) {
         modifiableModel.removeOrderEntry(orderEntry);
       }
-      for (Module m : modulesToAdd.keySet()) {
-        if (modulesToAdd.get(m)) {
-          modifiableModel.addModuleOrderEntry(m);
-        }
+      for (Map.Entry<Module, Boolean> e : modulesToAdd.entrySet()) {
+        modifiableModel.addModuleOrderEntry(e.getKey()).setExported(e.getValue());
       }
     }
 

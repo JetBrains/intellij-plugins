@@ -35,6 +35,10 @@ public class BCUtils {
 
   private static Logger LOG = Logger.getInstance(BCUtils.class);
 
+  public static boolean isTransitiveDependency(final DependencyType type) {
+    return type.getLinkageType() == LinkageType.Include;
+  }
+
   public static String getWrapperFileName(final FlexIdeBuildConfiguration bc) {
     return FileUtil.getNameWithoutExtension(bc.getOutputFileName()) + ".html";
   }
