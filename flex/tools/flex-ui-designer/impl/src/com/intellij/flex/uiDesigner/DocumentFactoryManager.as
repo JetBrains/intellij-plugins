@@ -22,21 +22,37 @@ public class DocumentFactoryManager {
   public function register(factory:DocumentFactory):void {
     EntityLists.add(factories, factory);
   }
+
+  public function unregister(document:Document, evenIfReferenced:Boolean = false):void {
+    var unregistered:Vector.<int> = new Vector.<int>();
+    unregister3(document.documentFactory, false, unregistered);
+    if (unregistered.length > 0) {
+      server.unregisterDocumentFactories(unregistered);
+    }
+  }
   
-  public function unregister(document:Document):void {
-    var factory:DocumentFactory = document.documentFactory;
-    factory.document = null;
-    if (document.displayManager != null) {
-      document.displayManager.removeEventHandlers();
+  private function unregister3(factory:DocumentFactory, evenIfReferenced:Boolean, unregistered:Vector.<int>):void {
+    if (factory.document != null) {
+      factory.document.displayManager.removeEventHandlers();
+      factory.document = null;
     }
 
-    if (isReferenced(factory.id)) {
+    if (evenIfReferenced) {
+      var dependents:Vector.<DocumentFactory> = getDependents(factory);
+      if (dependents != null) {
+        for each (var dependent:DocumentFactory in dependents) {
+          // can be already unregistered
+          if (factories[factory.id] != null) {
+            unregister3(dependent, true, unregistered);
+          }
+        }
+      }
+    }
+    else if (isReferenced(factory.id)) {
       return;
     }
 
-    var unregistered:Vector.<int> = new Vector.<int>();
     unregister2(factory, unregistered);
-    server.unregisterDocumentFactories(unregistered);
   }
 
   public function getDependents(factory:DocumentFactory):Vector.<DocumentFactory> {
@@ -129,9 +145,22 @@ public class DocumentFactoryManager {
     for (var i:int = 0, n:int = factories.length; i < n; i++) {
       var documentFactory:DocumentFactory = factories[i];
       if (documentFactory != null && documentFactory.module.project == project) {
+        // don't worry about dependents — dependent may be only from the same project — so, it will be deleted in any case
         factories[i] = null;
       }
     }
+  }
+
+  public function unregisterBelongToModule(module:Module):Vector.<int> {
+    var unregistered:Vector.<int> = new Vector.<int>();
+    for (var i:int = 0, n:int = factories.length; i < n; i++) {
+      var documentFactory:DocumentFactory = factories[i];
+      if (documentFactory != null && documentFactory.module == module) {
+        unregister3(documentFactory, true, unregistered);
+      }
+    }
+
+    return unregistered;
   }
 }
 }

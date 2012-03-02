@@ -99,8 +99,13 @@ public class Server implements ResourceBundleProvider {
     socket.flush();
   }
 
-  public function unregisterDocumentFactories(unregistered:Vector.<int>):void {
-    socket.writeByte(ServerMethod.UNREGISTER_DOCUMENT_FACTORIES);
+  public function unregisterDocumentFactories(unregistered:Vector.<int>, callbackId:int = -1):void {
+    if (callbackId == -1) {
+      socket.writeByte(ServerMethod.UNREGISTER_DOCUMENT_FACTORIES);
+    }
+    else {
+       callback(callbackId, true, false);
+    }
     socket.writeObject(unregistered);
     socket.flush();
   }
@@ -345,11 +350,13 @@ public class Server implements ResourceBundleProvider {
     result.doWhenRejected(callback, callbackId, false);
   }
 
-  public function callback(callbackId:int, success:Boolean = true):void {
+  public function callback(callbackId:int, success:Boolean = true, flush:Boolean = true):void {
     socket.writeByte(ServerMethod.CALLBACK);
     socket.writeByte(callbackId);
     socket.writeBoolean(success);
-    socket.flush();
+    if (flush) {
+      socket.flush();
+    }
   }
 }
 }

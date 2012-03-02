@@ -27,4 +27,6 @@ public abstract class SocketInputHandler implements Disposable {
   }
 
   abstract SocketInputHandlerImpl.Reader getReader();
+
+  public abstract void unregisterDocumentFactories() throws IOException;
 }

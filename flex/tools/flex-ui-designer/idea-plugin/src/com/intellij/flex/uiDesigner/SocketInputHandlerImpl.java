@@ -49,6 +49,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("StaticFieldReferencedViaSubclass")
 public class SocketInputHandlerImpl extends SocketInputHandler {
   protected static final Logger LOG = Logger.getInstance(SocketInputHandlerImpl.class.getName());
 
@@ -114,9 +115,11 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   public void process() throws IOException {
     while (true) {
       final int command = reader.read();
-      if (command == -1 || !safeProcessCommand(command)) {
+      if (command == -1) {
         break;
       }
+
+      processCommandAndNotifyFileBased(command);
     }
   }
 
@@ -124,16 +127,26 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     return command >= ServerMethod.GET_RESOURCE_BUNDLE && command < 100 /* test methods */;
   }
 
-  private boolean safeProcessCommand(int command) throws IOException {
+  protected void processCommandAndNotifyFileBased(int command) throws IOException {
     final String resultReadyFilename = isFileBased(command) ? reader.readUTF() : null;
     try {
-      return processCommand(command);
+      processCommand(command);
     }
     catch (RuntimeException e) {
-      LOG.error(e);
+      if (!ApplicationManager.getApplication().isUnitTestMode()) {
+        LOG.error(e);
+      }
+      else {
+        throw e;
+      }
     }
     catch (AssertionError e) {
-      LOG.error(e);
+      if (!ApplicationManager.getApplication().isUnitTestMode()) {
+        LOG.error(e);
+      }
+      else {
+        throw e;
+      }
     }
     finally {
       if (resultReadyFilename != null) {
@@ -141,11 +154,9 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
         new File(appDir, resultReadyFilename).createNewFile();
       }
     }
-
-    return true;
   }
 
-  protected boolean processCommand(int command) throws IOException {
+  protected void processCommand(int command) throws IOException {
     switch (command) {
       case ServerMethod.GO_TO_CLASS:
         goToClass();
@@ -185,7 +196,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
         break;
 
       case ServerMethod.UNREGISTER_DOCUMENT_FACTORIES:
-        DocumentFactoryManager.getInstance().unregister(reader.readIntArray());
+        unregisterDocumentFactories();
         break;
 
       case ServerMethod.UNREGISTER_LIBRARY_SETS:
@@ -219,11 +230,13 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
       default:
         throw new IllegalArgumentException("unknown client command: " + command);
     }
-
-    return true;
   }
 
-  private void executeCallback() throws IOException {
+  public void unregisterDocumentFactories() throws IOException {
+    DocumentFactoryManager.getInstance().unregister(reader.readIntArray());
+  }
+
+  protected void executeCallback() throws IOException {
     int callbackIndex = reader.readUnsignedByte() - 1;
     boolean success = reader.readBoolean();
     ActionCallback callback = callbacks.get(callbackIndex);
@@ -377,7 +390,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
       // is not working for windows
       if (SystemInfo.isWindows) {
         int state = projectFrame.getExtendedState();
-        if ((state & JFrame.ICONIFIED) == 0) {
+        if ((state & Frame.ICONIFIED) == 0) {
           // http://stackoverflow.com/questions/309023/howto-bring-a-java-window-to-the-front
           projectFrame.setExtendedState(JFrame.ICONIFIED);
           projectFrame.setExtendedState(state);

@@ -144,7 +144,6 @@ public class CommonTest extends BaseTestCase {
     assertThat(app, [l(1), {} , l(2)]);
   }
 
-  [Test(nullableDocument)]
   public function RuntimeErrorInMxmlRead():void {
     if (document != null) {
       assertThat(document.file.name, not("RuntimeErrorInMxmlRead.mxml"));

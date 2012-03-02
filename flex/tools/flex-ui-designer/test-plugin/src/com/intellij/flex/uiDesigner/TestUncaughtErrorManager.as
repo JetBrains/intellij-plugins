@@ -5,6 +5,10 @@ public class TestUncaughtErrorManager extends UncaughtErrorManager {
   public function TestUncaughtErrorManager(socketManager:SocketManager) {
     super(socketManager);
   }
+
+  public static function errorToString(error:Error):String {
+    return TestUncaughtErrorManager(UncaughtErrorManager.instance).buildErrorMessage(error);
+  }
   
   override protected function buildErrorMessage(error:Error):String {
     if (error is AssertionError) {

@@ -2,11 +2,12 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.util.ActionCallback;
+import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
 
-import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -89,18 +90,23 @@ abstract class MxmlTestBase extends AppTestBase {
       final XmlFile xmlFile = (XmlFile)psiManager.findFile(file);
       assert xmlFile != null;
 
-      final Callable<Boolean> action = new Callable<Boolean>() {
+      final Callable<String> action = new Callable<String>() {
         @Override
-        public Boolean call() throws Exception {
+        public String call() throws Exception {
           return tester.test(file, xmlFile, originalVFile);
         }
       };
 
+      final String failMessage;
       if (TIMEOUT == 0) {
-        action.call();
+        failMessage = action.call();
       }
       else {
-        ApplicationManager.getApplication().executeOnPooledThread(action).get(TIMEOUT, TimeUnit.SECONDS);
+        failMessage = ApplicationManager.getApplication().executeOnPooledThread(action).get(TIMEOUT, TimeUnit.SECONDS);
+      }
+
+      if (failMessage != null) {
+        fail(failMessage);
       }
     }
   }
@@ -113,22 +119,25 @@ abstract class MxmlTestBase extends AppTestBase {
 
   private class MyTester implements Tester {
     @Override
-    public boolean test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception {
-      String documentName = file.getNameWithoutExtension();
+    public String test(VirtualFile file, XmlFile xmlFile, final VirtualFile originalFile) throws Exception {
+      final String documentName = file.getNameWithoutExtension();
       System.out.print(documentName + '\n');
-      client.renderDocument(myModule, xmlFile);
-      client.test(myModule, documentName, originalFile.getParent().getName());
       socketInputHandler.setExpectedErrorMessage(expectedErrorForDocument(documentName));
-      try {
-        socketInputHandler.process();
-      }
-      catch (IOException e) {
-        LOG.error(e);
-        return false;
+      AsyncResult<DocumentFactoryManager.DocumentInfo> renderResult = client.renderDocument(myModule, xmlFile, new ProblemsHolder());
+      client.flush();
+      socketInputHandler.processUntil(renderResult);
+      if (renderResult.isDone()) {
+        ActionCallback testCallback = client.test(DocumentFactoryManager.getInstance().getId(file), documentName, originalFile.getParent().getName());
+        socketInputHandler.processUntil(testCallback);
+        if (testCallback.isDone()) {
+          passedCounter++;
+        }
+        else {
+          throw new AssertionError(socketInputHandler.reader.readUTF());
+        }
       }
 
-      passedCounter++;
-      return true;
+      return null;
     }
   }
 
@@ -138,5 +147,5 @@ abstract class MxmlTestBase extends AppTestBase {
 }
 
 interface Tester {
-  boolean test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception;
+  String test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception;
 }

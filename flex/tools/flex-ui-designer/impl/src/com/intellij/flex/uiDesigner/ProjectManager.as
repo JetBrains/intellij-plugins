@@ -100,10 +100,7 @@ public class ProjectManager {
     openProjects[id] = null;
 
     DocumentFactoryManager.getInstance().unregisterBelongToProject(project);
-
-    moduleManager.unregister(project, function (module:Module):void {
-      libraryManager.unregister(module.librarySets);
-    });
+    moduleManager.unregisterBelongToProject(project);
   }
 
   //noinspection JSUnusedLocalSymbols

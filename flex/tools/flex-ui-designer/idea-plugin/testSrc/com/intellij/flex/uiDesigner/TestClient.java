@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.ActionCallback;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,8 +18,8 @@ class TestClient extends Client {
   private static final int STYLE_TEST_CLASS_ID = 4;
 
   // MxmlTest on idea side splitted as MxmlTest, StatesTest and InjectedAsTest on client side.
-  public void test(Module module, String filename, String parentFilename) throws IOException {
-    test(module, filename, charToTestId(parentFilename.charAt(0), parentFilename.length()));
+  public ActionCallback test(int documentId, String method, String parentFilename) throws IOException {
+    return test(null, documentId, method, charToTestId(parentFilename.charAt(0), parentFilename.length()));
   }
   
   private static int charToTestId(char c, int l) {
@@ -46,23 +47,33 @@ class TestClient extends Client {
 
     flush();
   }
+
+  public void test(@Nullable Module module, String method, int classId) throws IOException {
+    test(module, -1, method, classId);
+  }
   
-  public void test(@Nullable Module module, String filename, int classId) throws IOException {
+  public ActionCallback test(@Nullable Module module, int documentId, String method, int classId) throws IOException {
     // method called only and only after openDocument and shouldn't be any calls between
     // in non-tests the same agreement, except must be flush after openDocument always
-    blockOut.end();
+    //blockOut.end();
+
+    ActionCallback callback = new ActionCallback("test");
 
     out.write(CLASS);
-    out.write(0);
+    out.write(SocketInputHandler.getInstance().addCallback(callback));
     out.write(classId);
-    if (module != null) {
-      writeId(module, out);
-    }
-    else {
+    if (module == null) {
       out.writeShort(-1);
     }
-    out.writeAmfUtf(filename, false);
+    else {
+      writeId(module, out);
+    }
+
+    out.writeShort(documentId);
+    out.writeAmfUtf(method, false);
 
     flush();
+
+    return callback;
   }
 }

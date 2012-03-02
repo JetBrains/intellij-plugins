@@ -11,7 +11,15 @@ internal class BaseTestCase implements TestCase {
   protected static const A:String = "A";
   protected static const B:String = "B";
 
-  protected var stateManager:StatesBarManager;
+  private var _stateManager:StatesBarManager;
+  protected final function get stateManager():StatesBarManager {
+    if (_stateManager == null) {
+      _stateManager = StatesBarManager(project.getComponent(StatesBarManager));
+      _stateManager.document = document;
+    }
+
+    return _stateManager;
+  }
 
   protected static function l(i:Object):HasPropertiesMatcher {
     return new HasPropertiesMatcher({text: i.toString()});
@@ -41,8 +49,12 @@ internal class BaseTestCase implements TestCase {
       if (document != null) {
         _app = document.uiComponent;
       }
+    }
+  }
 
-      stateManager = StatesBarManager(project.getComponent(StatesBarManager));
+  public function tearDown():void {
+    if (_stateManager != null) {
+      _stateManager.document = null;
     }
   }
 

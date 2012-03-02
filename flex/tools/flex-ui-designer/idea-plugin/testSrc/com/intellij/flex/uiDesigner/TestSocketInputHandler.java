@@ -1,5 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.openapi.util.ActionCallback;
+
 import java.io.IOException;
 
 class TestSocketInputHandler extends SocketInputHandlerImpl {
@@ -10,9 +12,7 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
     super();
   }
 
-  protected static class TestServerMethod {
-    private static final int success = 100;
-    private static final int fail = 101;
+  private static class TestServerMethod {
     private static final int custom = 102;
   }
 
@@ -39,14 +39,29 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
     }
   }
 
+  public void processUntil(ActionCallback callback) throws IOException {
+    while (true) {
+      final int command = reader.read();
+      if (command == -1) {
+        break;
+      }
+
+      processCommandAndNotifyFileBased(command);
+      if (callback.isProcessed()) {
+        break;
+      }
+    }
+  }
+
   @Override
-  protected boolean processCommand(int command) throws IOException {
+  protected void processCommand(int command) throws IOException {
     if (isFileBased(command) ||
       command == ServerMethod.SAVE_PROJECT_WINDOW_BOUNDS ||
       command == ServerMethod.CALLBACK ||
       command == ServerMethod.UNREGISTER_LIBRARY_SETS ||
       command == ServerMethod.LOG_WARNING) {
-      return super.processCommand(command);
+      super.processCommand(command);
+      return;
     }
 
     switch (command) {
@@ -63,33 +78,18 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
         }
         break;
 
-      case TestServerMethod.fail:
-        throw new IOException(reader.readUTF());
-
-      case TestServerMethod.success:
-        String message = reader.readUTF();
-        if (message.equals("__passed__")) {
-          return false;
-        }
-        else {
-          throw new IOException(message);
-        }
-
       default:
         if (customMessageHandler != null && customMessageHandler.getExpectedCommand() == command) {
           customMessageHandler.process();
           customMessageHandler = null;
-          return false;
         }
         else {
           throw new IllegalStateException("Unexpected server command: " + command);
         }
     }
-
-    return true;
   }
 
-  public static interface MessageHandler {
+  public interface MessageHandler {
     void process() throws IOException;
     int getExpectedCommand();
   }

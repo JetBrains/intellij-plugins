@@ -12,6 +12,21 @@ import static com.intellij.flex.uiDesigner.DocumentFactoryManager.DocumentInfo;
 
 class RenderActionQueue implements Runnable {
   private final Queue<RenderAction> queue = new Queue<RenderAction>(4);
+  private boolean suspended;
+  // pending due to suspend
+  private boolean wasPending;
+
+  public void suspend() {
+    suspended = true;
+  }
+
+  public void resume() {
+    suspended = false;
+    if (wasPending) {
+      wasPending = false;
+      execute(queue.peekFirst());
+    }
+  }
 
   public void add(RenderAction renderAction) {
     queue.addLast(renderAction);
@@ -21,6 +36,12 @@ class RenderActionQueue implements Runnable {
   }
 
   private void execute(RenderAction renderAction) {
+    if (suspended) {
+      assert !wasPending;
+      wasPending = true;
+      return;
+    }
+
     renderAction.result.doWhenProcessed(this);
     // ProgressManager requires dispatch thread
     UIUtil.invokeLaterIfNeeded(renderAction);

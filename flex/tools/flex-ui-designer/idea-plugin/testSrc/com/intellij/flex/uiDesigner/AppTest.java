@@ -110,7 +110,7 @@ public class AppTest extends AppTestBase {
     assertOnDocumentRendered = new Callable<Void>() {
       @Override
       public Void call() throws Exception {
-        client.test(myModule, getTestName(false), APP_TEST_CLASS_ID);
+        client.test(null, DocumentFactoryManager.getInstance().getId(files[0]), getTestName(false), APP_TEST_CLASS_ID);
         return null;
       }
     };
@@ -123,7 +123,7 @@ public class AppTest extends AppTestBase {
     assertOnDocumentRendered = new Callable<Void>() {
       @Override
       public Void call() throws Exception {
-        client.test(myModule, "UpdateDocumentOnIdeaAutoSave2", APP_TEST_CLASS_ID);
+        client.test(null, DocumentFactoryManager.getInstance().getId(files[0]), "UpdateDocumentOnIdeaAutoSave2", APP_TEST_CLASS_ID);
         return null;
       }
     };
@@ -178,12 +178,13 @@ public class AppTest extends AppTestBase {
     }
 
     @Override
-    protected boolean processCommand(int command) throws IOException {
+    protected void processCommand(int command) throws IOException {
       boolean result = true;
       try {
-        result = super.processCommand(command);
+       super.processCommand(command);
       }
       catch (Throwable e) {
+        //noinspection InstanceofCatchParameter
         if (!(e instanceof SocketException)) {
           result = false;
           fail.set(true);
@@ -199,8 +200,6 @@ public class AppTest extends AppTestBase {
           semaphore.up();
         }
       }
-
-      return true;
     }
   }
 }

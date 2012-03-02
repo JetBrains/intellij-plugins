@@ -11,7 +11,6 @@ import com.intellij.flex.uiDesigner.io.AmfUtil;
 
 import flash.desktop.NativeApplication;
 import flash.display.NativeWindow;
-import flash.events.Event;
 import flash.events.TimerEvent;
 import flash.geom.Point;
 import flash.net.Socket;
@@ -77,11 +76,12 @@ internal class TestSocketDataHandler implements SocketDataHandler {
 
   public function handleSockedData(messageSize:int, classId:int, callbackId:int, input:IDataInput):void {
     const moduleId:int = input.readShort();
-    const module:Module = moduleId == -1 ? null : moduleManager.getById(moduleId);
+    const documentId:int = input.readShort();
+    var document:Document = documentId == -1 ? null :  DocumentFactoryManager.getInstance().getById(documentId).document;
+    const module:Module = moduleId == -1 ? (document == null ? null : document.module) : moduleManager.getById(moduleId);
     const project:Project = module == null ? null : module.project;
-    var testTask:TestTask;
-    var clazz:Class;
 
+    var clazz:Class;
     switch (classId) {
       case GET_STAGE_OFFSET:
         getStageOffset(project.window);
@@ -109,49 +109,40 @@ internal class TestSocketDataHandler implements SocketDataHandler {
       testAnnotation = TestAnnotation.DEFAULT;
     }
 
-    var documentManager:DocumentManager = project == null ? null : DocumentManager(project.getComponent(DocumentManager));
-    const testDocumentFilename:String = (testAnnotation.document == null ? method : testAnnotation.document) + ".mxml";
-
-    if (testTask == null) {
-      testTask = new TestTask();
-    }
-    testTask.init(project, documentManager, clazz, method, testAnnotation);
-
-    if (!testAnnotation.nullableDocument && documentManager != null &&
-        (documentManager.document == null || documentManager.document.documentFactory.file.name != testDocumentFilename)) {
-      trace("wait document");
-      documentManager.documentChanged.addOnce(function():void {
-        testOnDocumentRendered(testTask);
-      });
-    }
-    else {
-      testOnDocumentRendered(testTask);
-    }
-  }
-
-  private function testOnDocumentRendered(testTask:TestTask):void {
-    test(testTask.project, testTask.clazz, testTask.method, testTask.testAnnotation);
-  }
-  
-  private function test(project:Project, clazz:Class, method:String, testAnnotation:TestAnnotation):void {
-    trace("execute test " + method);
     var test:TestCase = new clazz();
-    test.init(project == null ? new EmptyDataContext() : DataManager.instance.getDataContext(project.window.stage.getChildAt(0)), _socket);
-    test.setUp();
+    try {
+      test.init(new TestDataContext(document, project == null ? null : DataManager.instance.getDataContext(project.window.stage.getChildAt(0))), _socket);
+      executeTest(test, method, testAnnotation, callbackId);
+    }
+    catch (e:Error) {
+      fail(callbackId, TestUncaughtErrorManager.errorToString(e));
+    }
+    finally {
+      test.tearDown();
+    }
+  }
 
+  private function executeTest(test:TestCase, method:String, testAnnotation:TestAnnotation, callbackId:int):void {
+    trace("execute test " + method);
+    test.setUp();
     if (testAnnotation.async) {
       if (timeoutTimer == null) {
         timeoutTimer = new Timer(5000, 1);
-        timeoutTimer.addEventListener(TimerEvent.TIMER, timeOutHandler);
+        timeoutTimer.addEventListener(TimerEvent.TIMER, function ():void {
+          fail(callbackId, "time out");
+        });
       }
 
       timeoutTimer.start();
-      test.asyncSuccessHandler = asyncSuccessHandler;
+      test.asyncSuccessHandler = function ():void {
+        timeoutTimer.reset();
+        Server.instance.callback(callbackId);
+      };
     }
     test[method]();
 
     if (testAnnotation == null || !testAnnotation.async) {
-      success();
+      Server.instance.callback(callbackId);
     }
   }
 
@@ -166,26 +157,11 @@ internal class TestSocketDataHandler implements SocketDataHandler {
     _socket.writeShort(point.y);
     _socket.flush();
   }
-  
-  private function success():void {
-    _socket.writeByte(TestServerMethod.success);
-    _socket.writeUTF("__passed__");
-    _socket.flush();
-  }
-  
-  private function fail(message:String):void {
-    _socket.writeByte(TestServerMethod.fail);
+
+  private function fail(callbackId:int, message:String):void {
+    Server.instance.callback(callbackId, false, false);
     _socket.writeUTF(message);
     _socket.flush();
-  }
-
-  private function timeOutHandler(event:Event):void {
-    fail("time out");
-  }
-  
-  private function asyncSuccessHandler():void {
-    timeoutTimer.reset();
-    success();
   }
 
   public function describeMethod(methodId:int):String {
@@ -194,44 +170,38 @@ internal class TestSocketDataHandler implements SocketDataHandler {
 }
 }
 
-import com.intellij.flex.uiDesigner.DocumentManager;
-import com.intellij.flex.uiDesigner.Project;
+import com.intellij.flex.uiDesigner.Document;
+import com.intellij.flex.uiDesigner.PlatformDataKeys;
 
 import org.jetbrains.actionSystem.DataContext;
 import org.jetbrains.actionSystem.DataKey;
-
-class TestTask {
-  internal var project:Project;
-  internal var documentManager:DocumentManager;
-  internal var clazz:Class;
-  internal var method:String;
-  internal var testAnnotation:TestAnnotation;
-
-  public function init(project:Project, documentManager:DocumentManager, clazz:Class, method:String, testAnnotation:TestAnnotation):void {
-    this.project = project;
-    this.documentManager = documentManager;
-    this.clazz = clazz;
-    this.method = method;
-    this.testAnnotation = testAnnotation;
-  }
-}
 
 class TestAnnotation {
   public static const DEFAULT:TestAnnotation = new TestAnnotation();
 
   public var async:Boolean;
-  public var nullableDocument:Boolean;
-  public var document:String;
 }
 
 final class TestServerMethod {
-  public static const success:int = 100;
-  public static const fail:int = 101;
   public static const custom:int = 102;
 }
 
-final class EmptyDataContext implements DataContext {
+final class TestDataContext implements DataContext {
+  private var document:Document;
+  private var parent:DataContext;
+
+  public function TestDataContext(document:Document, parent:DataContext) {
+    this.document = document;
+    this.parent = parent;
+  }
+
   public function getData(dataKey:DataKey):Object {
-    return null;
+    switch (dataKey) {
+      case PlatformDataKeys.DOCUMENT:
+        return document;
+
+      default:
+        return parent.getData(dataKey);
+    }
   }
 }

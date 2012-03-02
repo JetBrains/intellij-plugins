@@ -7,7 +7,8 @@ public interface TestCase {
   function init(dataContext:DataContext, socket:Socket):void;
   
   function setUp():void;
-  
+  function tearDown():void;
+
   function set asyncSuccessHandler(value:Function):void;
 }
 }

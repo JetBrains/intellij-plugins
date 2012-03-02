@@ -42,6 +42,12 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     this.projectManager = projectManager;
     this.moduleManager = moduleManager;
     this.stringRegistry = stringRegistry;
+
+    moduleManager.moduleUnregistered.add(moduleUnregistered);
+  }
+
+  private function moduleUnregistered(module:Module):void {
+    libraryManager.unregister(module.librarySets);
   }
 
   public function set socket(value:Socket):void {
@@ -63,6 +69,10 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
 
       case ClientMethod.registerModule:
         registerModule(input);
+        break;
+
+      case ClientMethod.unregisterModule:
+        unregisterModule(input, callbackId);
         break;
       
       case ClientMethod.registerDocumentFactory:
@@ -146,6 +156,13 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     moduleManager.register(module);
   }
 
+  private function unregisterModule(input:IDataInput, callbackId:int):void {
+    var module:Module = moduleManager.getById(input.readUnsignedShort());
+    var unregisteredDocuments:Vector.<int> = DocumentFactoryManager.getInstance().unregisterBelongToModule(module);
+    moduleManager.unregister(module);
+    Server.instance.unregisterDocumentFactories(unregisteredDocuments, callbackId);
+  }
+
   private function registerDocumentFactory(input:IDataInput, messageSize:int):void {
     const prevBytesAvailable:int = input.bytesAvailable;
     var module:Module = moduleManager.getById(input.readUnsignedShort());
@@ -212,7 +229,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
 
   private static function getDocumentImageDoneHandler(documentFactory:DocumentFactory, callbackId:int):void {
     var server:Server = Server.instance;
-    server.callback(callbackId);
+    server.callback(callbackId, true, false);
     server.writeDocumentImage(documentFactory.document);
   }
 
@@ -331,19 +348,22 @@ final class ClientMethod {
   public static const closeProject:int = 1;
   
   public static const registerLibrarySet:int = 2;
+
   public static const registerModule:int = 3;
-  public static const registerDocumentFactory:int = 4;
-  public static const updateDocumentFactory:int = 5;
-  public static const renderDocument:int = 6;
-  public static const renderDocumentsAndDependents:int = 7;
+  public static const unregisterModule:int = 4;
 
-  public static const initStringRegistry:int = 8;
-  public static const updateStringRegistry:int = 9;
+  public static const registerDocumentFactory:int = 5;
+  public static const updateDocumentFactory:int = 6;
+  public static const renderDocument:int = 7;
+  public static const renderDocumentsAndDependents:int = 8;
 
-  public static const fillImageClassPool:int = 10;
-  public static const fillSwfClassPool:int = 11;
-  public static const fillViewClassPool:int = 12;
+  public static const initStringRegistry:int = 9;
+  public static const updateStringRegistry:int = 10;
 
-  public static const selectComponent:int = 13;
-  public static const getDocumentImage:int = 14;
+  public static const fillImageClassPool:int = 11;
+  public static const fillSwfClassPool:int = 12;
+  public static const fillViewClassPool:int = 13;
+
+  public static const selectComponent:int = 14;
+  public static const getDocumentImage:int = 15;
 }

@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.ProjectTopics;
 import com.intellij.execution.ExecutionException;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.io.MessageSocketManager;
@@ -9,14 +8,9 @@ import com.intellij.flex.uiDesigner.libraries.InitException;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.project.ModuleAdapter;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.project.ProjectManagerAdapter;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.ui.ProjectJdksEditor;
 import com.intellij.openapi.util.Disposer;
@@ -201,7 +195,7 @@ public class DesignerApplicationLauncher extends DocumentTask {
     final DesignerApplication application = DesignerApplicationManager.getApplication();
     LOG.assertTrue(adlProcessHandler != null && application != null);
     application.setProcessHandler(adlProcessHandler);
-    attachProjectAndModuleListeners(application);
+    DesignerApplicationManager.getInstance().attachProjectAndModuleListeners(application);
 
     return postTask.run(module, projectComponentReferenceCounter, indicator, problemsHolder);
   }
@@ -217,34 +211,6 @@ public class DesignerApplicationLauncher extends DocumentTask {
     startupErrorFile.delete();
 
     return true;
-  }
-
-  private static void attachProjectAndModuleListeners(DesignerApplication designerApplication) {
-    Application application = ApplicationManager.getApplication();
-    ProjectManager.getInstance().addProjectManagerListener(new ProjectManagerAdapter() {
-      @Override
-      public void projectClosed(Project project) {
-        if (DesignerApplicationManager.getInstance().isApplicationClosed()) {
-          return;
-        }
-
-        Client client = Client.getInstance();
-        if (client.getRegisteredProjects().contains(project)) {
-          client.closeProject(project);
-        }
-      }
-    }, designerApplication);
-
-    application.getMessageBus().connect(designerApplication).subscribe(ProjectTopics.MODULES,
-      new ModuleAdapter() {
-        @Override
-        public void moduleRemoved(Project project, Module module) {
-          Client client = Client.getInstance();
-          if (client.isModuleRegistered(module)) {
-            client.unregisterModule(module);
-          }
-        }
-      });
   }
 
   private void runAndWaitDebugger() {

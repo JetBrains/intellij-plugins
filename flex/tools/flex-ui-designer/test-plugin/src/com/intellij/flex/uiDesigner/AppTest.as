@@ -8,7 +8,7 @@ import org.hamcrest.collection.arrayWithSize;
 import org.hamcrest.object.nullValue;
 
 public class AppTest extends BaseTestCase {
-  [Test(async, nullableDocument)]
+  [Test(async)]
   public function close():void {
     assertThat(project, nullValue());
     

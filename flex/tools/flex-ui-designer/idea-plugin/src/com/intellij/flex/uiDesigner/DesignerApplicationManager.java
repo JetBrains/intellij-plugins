@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.ProjectTopics;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -25,8 +26,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.project.*;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -41,7 +41,9 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Consumer;
+import com.intellij.util.concurrency.QueueProcessor;
 import com.intellij.util.messages.MessageBus;
+import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -441,6 +443,67 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     return rootTag != null && rootTag.getPrefixByNamespace(JavaScriptSupportLoader.MXML_URI3) != null;
   }
 
+  void attachProjectAndModuleListeners(DesignerApplication designerApplication) {
+    MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(designerApplication);
+    connection.subscribe(ProjectManager.TOPIC, new ProjectManagerAdapter() {
+      @Override
+      public void projectClosed(Project project) {
+        if (isApplicationClosed()) {
+          return;
+        }
+
+        Client client = Client.getInstance();
+        if (client.getRegisteredProjects().contains(project)) {
+          client.closeProject(project);
+        }
+      }
+    });
+
+    // unregisted module is more complicated — we cannot just remove all document factories which belong to project as in case of close project
+    // we must remove all document factories belong to module and all dependents (dependent may be from another module, so, we process moduleRemoved synchronous
+    // one by one)
+    connection.subscribe(ProjectTopics.MODULES, new ModuleAdapter() {
+      @Override
+      public void moduleRemoved(Project project, Module module) {
+        Client client = Client.getInstance();
+        if (!client.isModuleRegistered(module)) {
+          return;
+        }
+
+        if (unregisterTaskQueueProcessor == null) {
+          unregisterTaskQueueProcessor = new QueueProcessor<Module>(new Consumer<Module>() {
+            @Override
+            public void consume(Module module) {
+              boolean hasError = true;
+              final ActionCallback callback;
+              initialRenderQueue.suspend();
+              try {
+                callback = Client.getInstance().unregisterModule(module);
+                hasError = false;
+              }
+              finally {
+                if (hasError) {
+                  initialRenderQueue.resume();
+                }
+              }
+
+              callback.doWhenProcessed(new Runnable() {
+                @Override
+                public void run() {
+                  initialRenderQueue.resume();
+                }
+              });
+            }
+          });
+        }
+
+        unregisterTaskQueueProcessor.add(module);
+      }
+    });
+  }
+
+  private QueueProcessor<Module> unregisterTaskQueueProcessor;
+
   private static class RenderDocumentTask extends DesignerApplicationLauncher.PostTask {
     private final XmlFile psiFile;
     private final AsyncResult<DocumentInfo> asyncResult;
@@ -453,8 +516,6 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     @Override
     public void dispose() {
       super.dispose();
-
-      //DesignerApplicationManager.getInstance().documentOpening = false;
 
       if (asyncResult != null && !asyncResult.isProcessed()) {
         asyncResult.setRejected();

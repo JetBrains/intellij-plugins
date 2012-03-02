@@ -95,11 +95,13 @@ public class Client implements Disposable {
                             @Nullable ActionCallback callback,
                             @Nullable ActionCallback rejectedCallback,
                             @Nullable Runnable doneRunnable) {
-    if (rejectedCallback != null) {
-      assert callback != null;
-      callback.notifyWhenRejected(rejectedCallback);
-      assert doneRunnable != null;
-      callback.doWhenDone(doneRunnable);
+    if (callback != null) {
+      if (rejectedCallback != null) {
+        callback.notifyWhenRejected(rejectedCallback);
+      }
+      if (doneRunnable != null) {
+        callback.doWhenDone(doneRunnable);
+      }
     }
 
     blockOut.assertStart();
@@ -156,9 +158,30 @@ public class Client implements Disposable {
     }
   }
 
-  public void unregisterModule(final Module module) {
-    registeredModules.remove(module);
-    // todo close related documents
+  public ActionCallback unregisterModule(final Module module) {
+    boolean hasError = true;
+    final ActionCallback callback = new ActionCallback("renderDocumentAndDependents");
+    try {
+      hasError = false;
+      beginMessage(ClientMethod.unregisterModule, callback, null, new Runnable() {
+        @Override
+        public void run() {
+          try {
+            SocketInputHandler.getInstance().unregisterDocumentFactories();
+          }
+          catch (IOException e) {
+            LogMessageUtil.LOG.error(e);
+          }
+        }
+      });
+      writeId(module);
+    }
+    finally {
+      registeredModules.remove(module);
+      finalizeMessageAndFlush(hasError, callback);
+    }
+
+    return callback;
   }
 
   public void updateStringRegistry(StringRegistry.StringWriter stringWriter) throws IOException {
@@ -358,8 +381,15 @@ public class Client implements Disposable {
   }
 
   private void finalizeMessageAndFlush(boolean hasError) {
+    finalizeMessageAndFlush(hasError, null);
+  }
+
+  private void finalizeMessageAndFlush(boolean hasError, @Nullable ActionCallback callback) {
     if (hasError) {
       blockOut.rollback();
+      if (callback != null) {
+        callback.setRejected();
+      }
     }
     else {
       try {
@@ -552,10 +582,7 @@ public class Client implements Disposable {
       hasError = false;
     }
     finally {
-      finalizeMessageAndFlush(hasError);
-      if (hasError) {
-        callback.setRejected();
-      }
+      finalizeMessageAndFlush(hasError, callback);
     }
   }
 
@@ -588,8 +615,8 @@ public class Client implements Disposable {
     out.writeShort(id);
   }
 
-  public static enum ClientMethod {
-    openProject, closeProject, registerLibrarySet, registerModule, registerDocumentFactory, updateDocumentFactory, renderDocument, renderDocumentsAndDependents,
+  private static enum ClientMethod {
+    openProject, closeProject, registerLibrarySet, registerModule, unregisterModule, registerDocumentFactory, updateDocumentFactory, renderDocument, renderDocumentsAndDependents,
     initStringRegistry, updateStringRegistry, fillImageClassPool, fillSwfClassPool, fillViewClassPool,
     selectComponent, getDocumentImage;
     
