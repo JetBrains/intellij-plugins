@@ -1,6 +1,10 @@
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackage;
@@ -11,6 +15,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.impl.DirectoryIndex;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -25,28 +30,33 @@ import com.intellij.refactoring.listeners.RefactoringElementListenerProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 public class FlexRefactoringListenerProvider implements RefactoringElementListenerProvider {
+
   @Nullable
   public RefactoringElementListener getListener(final PsiElement element) {
     final Module module = ModuleUtil.findModuleForPsiElement(element);
     if (element instanceof PsiDirectoryContainer || element instanceof JSPackage || element instanceof JSPackageStatement) {
-      return new PackageRefactoringListener(module, getPackageName(element));
+      final String packageName = getPackageName(element);
+      return StringUtil.isEmpty(packageName) ? null : new PackageRefactoringListener(element.getProject(), module, packageName);
     }
 
-    if (module != null && ModuleType.get(module) == FlexModuleType.getInstance()) {
-      final JSClass jsClass = getJSClass(element);
-      if (jsClass != null) {
-        return new JSClassRefactoringListener(module, jsClass.getQualifiedName());
-      }
+    if (module == null || ModuleType.get(module) != FlexModuleType.getInstance()) return null;
 
-      final VirtualFile file = element instanceof PsiFile ? element.getContainingFile().getVirtualFile() : null;
-      if (file != null) {
-        if ("css".equalsIgnoreCase(file.getExtension())) {
-          return new CssFileRefactoringListener(module, file.getPath());
-        }
-        else if ("xml".equalsIgnoreCase(file.getExtension())) {
-          return new XmlFileRefactoringListener(module, file.getPath());
-        }
+    final JSClass jsClass = getJSClass(element);
+    if (jsClass != null) {
+      return new JSClassRefactoringListener(module, jsClass.getQualifiedName());
+    }
+
+    final VirtualFile file = element instanceof PsiFile ? element.getContainingFile().getVirtualFile() : null;
+    if (file != null) {
+      if ("css".equalsIgnoreCase(file.getExtension())) {
+        return new CssFileRefactoringListener(module, file.getPath());
+      }
+      else if ("xml".equalsIgnoreCase(file.getExtension())) {
+        return new XmlFileRefactoringListener(module, file.getPath());
       }
     }
 
@@ -70,6 +80,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
   @Nullable
   public static String getPackageName(final PsiElement element) {
     assert element instanceof PsiDirectoryContainer || element instanceof JSPackage || element instanceof JSPackageStatement;
+
     if (element instanceof PsiDirectoryContainer) {
       final PsiDirectory[] directories = ((PsiDirectoryContainer)element).getDirectories();
       if (directories.length == 0) return null;
@@ -79,87 +90,96 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
   }
 
   private static class PackageRefactoringListener extends RefactoringElementAdapter {
+    private @NotNull Project myProject;
     private @Nullable final Module myModule;
     private final String myOldPackageName;
+    private String myNewPackageName;
 
-    public PackageRefactoringListener(final @Nullable Module module, final String oldPackageName) {
+    public PackageRefactoringListener(final @NotNull Project project, final @Nullable Module module, final String oldPackageName) {
+      myProject = project;
       myModule = module;
       myOldPackageName = oldPackageName;
     }
 
     public void elementRenamedOrMoved(@NotNull final PsiElement newElement) {
-      if (StringUtil.isEmpty(myOldPackageName)) return;
-
       final String newPackageName = getPackageName(newElement);
-      updatePackageName(newElement, newPackageName);
-    }
-
-    private void updatePackageName(PsiElement newElement, String newPackageName) {
-      if (myModule == null) {
-        for (final Module module : ModuleManager.getInstance(newElement.getProject()).getModules()) {
-          updateForModule(module, myOldPackageName, newPackageName);
-        }
-      }
-      else {
-        updateForModule(myModule, myOldPackageName, newPackageName);
+      if (newPackageName != null) {
+        myNewPackageName = newPackageName;
+        updatePackageName(myOldPackageName, myNewPackageName);
       }
     }
 
     @Override
     public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
-      updatePackageName(newElement, oldQualifiedName);
+      if (myNewPackageName != null) {
+        updatePackageName(myNewPackageName, myOldPackageName);
+      }
     }
 
-    private static void updateForModule(final @NotNull Module module, final String oldPackageName, final String newPackageName) {
-      final String oldPackageWithDot = oldPackageName + ".";
-      /*
-      for (final FlexBuildConfiguration config : FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(module)) {
-        if (config.MAIN_CLASS.startsWith(oldPackageWithDot)) {
-          config.MAIN_CLASS = (newPackageName.isEmpty() ? "" : (newPackageName + "."))
-                              + config.MAIN_CLASS.substring(oldPackageWithDot.length());
+    private void updatePackageName(final String oldPackageName, final String newPackageName) {
+      if (myModule == null) {
+        for (final Module module : ModuleManager.getInstance(myProject).getModules()) {
+          if (ModuleType.get(module) == FlexModuleType.getInstance()) {
+            packageNameChanged(module, oldPackageName, newPackageName);
+          }
         }
       }
-      */
+      else {
+        packageNameChanged(myModule, oldPackageName, newPackageName);
+      }
+    }
+
+    private static void packageNameChanged(final @NotNull Module module, final String oldPackageName, final String newPackageName) {
+      final String oldPackageWithDot = oldPackageName + ".";
+
+      for (FlexIdeBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
+        if (bc.getOutputType() == OutputType.Application && bc.getMainClass().startsWith(oldPackageWithDot)) {
+          final String mainClass = (newPackageName.isEmpty() ? "" : (newPackageName + ".")) +
+                                   bc.getMainClass().substring(oldPackageWithDot.length());
+          //bc.setMainClass(mainClass);  TODO
+        }
+      }
     }
   }
 
   private static class JSClassRefactoringListener extends RefactoringElementAdapter {
-    private @Nullable final Module myModule;
+    private final Module myModule;
     private final String myOldClassName;
+    private String myNewClassName;
 
-    public JSClassRefactoringListener(final @NotNull Module module, final String oldClassName) {
+    public JSClassRefactoringListener(final Module module, final String oldClassName) {
       myModule = module;
       myOldClassName = oldClassName;
     }
 
     public void elementRenamedOrMoved(@NotNull final PsiElement newElement) {
       final JSClass newClass = getJSClass(newElement);
-      if (newClass == null) return;
-
-      /*
-      for (final FlexBuildConfiguration config : FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(myModule)) {
-        if (config.MAIN_CLASS.equals(myOldClassName)) {
-          config.MAIN_CLASS = newClass.getQualifiedName();
-        }
+      if (newClass != null) {
+        myNewClassName = newClass.getQualifiedName();
+        classNameChanged(myOldClassName, myNewClassName);
       }
-      */
     }
 
     @Override
     public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
-      /*
-      for (final FlexBuildConfiguration config : FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(myModule)) {
-        if (config.MAIN_CLASS.equals(myOldClassName)) {
-          config.MAIN_CLASS = oldQualifiedName;
+      if (myNewClassName != null) {
+        classNameChanged(myNewClassName, myOldClassName);
+      }
+    }
+
+    private void classNameChanged(final String oldClassName, final String newClassName) {
+      for (FlexIdeBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations()) {
+        if (bc.getOutputType() == OutputType.Application && bc.getMainClass().equals(oldClassName)) {
+          //bc.setMainClass(newClassName); TODO
         }
       }
-      */
     }
   }
 
   private static abstract class FileRefactoringListener extends RefactoringElementAdapter {
-    protected final Module myModule;
+    protected final @NotNull Module myModule;
     protected final String myOldFilePath;
+    protected String myNewFilePath;
 
     public FileRefactoringListener(final Module module, final String oldFilePath) {
       myModule = module;
@@ -169,16 +189,19 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
     public void elementRenamedOrMoved(@NotNull final PsiElement newElement) {
       final VirtualFile file = newElement instanceof PsiFile ? ((PsiFile)newElement).getVirtualFile() : null;
       if (file != null) {
-        filePathChanged(file.getPath());
+        myNewFilePath = file.getPath();
+        filePathChanged(myOldFilePath, myNewFilePath);
       }
     }
 
     @Override
-    public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
-      filePathChanged(oldQualifiedName);
+    public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldFilePath) {
+      if (myNewFilePath != null) {
+        filePathChanged(myNewFilePath, myOldFilePath);
+      }
     }
 
-    protected abstract void filePathChanged(final String newFilePath);
+    protected abstract void filePathChanged(final String oldFilePath, final String newFilePath);
   }
 
   private static class CssFileRefactoringListener extends FileRefactoringListener {
@@ -186,17 +209,29 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
       super(module, oldFilePath);
     }
 
-    protected void filePathChanged(final String newFilePath) {
-      /*
-      for (final FlexBuildConfiguration config : FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(myModule)) {
-        for (int i = 0; i < config.CSS_FILES_LIST.size(); i++) {
-          final String cssFilePath = config.CSS_FILES_LIST.get(i);
-          if (Comparing.strEqual(myOldFilePath, cssFilePath)) {
-            config.CSS_FILES_LIST.set(i, newFilePath);
+    protected void filePathChanged(final String oldFilePath, final String newFilePath) {
+      for (FlexIdeBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations()) {
+        if (BCUtils.canHaveRuntimeStylesheets(bc)) {
+          final Collection<String> cssFiles = bc.getCssFilesToCompile();
+          if (cssFiles.isEmpty()) continue;
+
+          final Collection<String> newCssFiles = new ArrayList<String>(cssFiles.size());
+          boolean changed = false;
+          for (String cssFile : cssFiles) {
+            if (cssFile.equals(oldFilePath)) {
+              newCssFiles.add(newFilePath);
+              changed = true;
+            }
+            else {
+              newCssFiles.add(cssFile);
+            }
+          }
+
+          if (changed) {
+            //bc.setCssFilesToCompile(newCssFiles); TODO
           }
         }
       }
-      */
     }
   }
 
@@ -205,29 +240,14 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
       super(module, oldFilePath);
     }
 
-    protected void filePathChanged(final String newFilePath) {
-      /*
-      for (final FlexBuildConfiguration config : FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(myModule)) {
-        if (Comparing.strEqual(myOldFilePath, config.CUSTOM_CONFIG_FILE)) {
-          config.CUSTOM_CONFIG_FILE = newFilePath;
+    protected void filePathChanged(final String oldFilePath, final String newFilePath) {
+      for (FlexIdeBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations()) {
+        if (bc.getCompilerOptions().getAdditionalConfigFilePath().equals(oldFilePath)) {
+          //bc.getCompilerOptions().setAdditionalConfigFilePath(newFilePath); TODO
         }
 
-        if (Comparing.strEqual(myOldFilePath, config.CUSTOM_CONFIG_FILE_FOR_TESTS)) {
-          config.CUSTOM_CONFIG_FILE_FOR_TESTS = newFilePath;
-        }
-
-        if (Comparing.strEqual(myOldFilePath, config.PATH_TO_SERVICES_CONFIG_XML)) {
-          config.PATH_TO_SERVICES_CONFIG_XML = newFilePath;
-        }
-
-        for (int i = 0; i < config.NAMESPACE_AND_MANIFEST_FILE_INFO_LIST.size(); i++) {
-          final FlexBuildConfiguration.NamespaceAndManifestFileInfo info = config.NAMESPACE_AND_MANIFEST_FILE_INFO_LIST.get(i);
-          if (Comparing.strEqual(myOldFilePath, info.MANIFEST_FILE_PATH)) {
-            info.MANIFEST_FILE_PATH = newFilePath;
-          }
-        }
+        // TODO update services-config, manifest files
       }
-      */
     }
   }
 }
