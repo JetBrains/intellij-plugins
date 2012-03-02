@@ -667,15 +667,15 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
       final int h = readUnsignedShort();
       int l = w * h * 4;
-      final byte[] argb = FileUtil.loadBytes(this, l);
-      final byte[] bgr = new byte[w * h * 3];
+      final byte[] data = FileUtil.loadBytes(this, l);
       for (int i = 0, j = 0; i < l; i += 4) {
-        bgr[j++] = argb[i + 3];
-        bgr[j++] = argb[i + 2];
-        bgr[j++] = argb[i + 1];
+        data[j++] = data[i + 3];
+        byte r = data[i + 1];
+        data[j++] = data[i + 2];
+        data[j++] = r;
       }
 
-      return new BufferedImage(COLOR_MODER, Raster.createInterleavedRaster(new DataBufferByte(bgr, bgr.length), w, h, w * 3, 3,
+      return new BufferedImage(COLOR_MODER, Raster.createInterleavedRaster(new DataBufferByte(data, w * h * 3), w, h, w * 3, 3,
                                                                            new int[]{2, 1, 0}, null), false, null);
     }
 
