@@ -65,6 +65,7 @@ class TestRunnerState extends CommandLineState {
   private final JstdRunConfiguration myRunConfiguration;
   private final Project myProject;
   private final List<VirtualFile> myConfigVirtualFiles;
+  private final String myCoverageFilePath;
 
   private static ThreadFactory namedThreadFactory(final String threadName) {
     return new ThreadFactory() {
@@ -83,12 +84,15 @@ class TestRunnerState extends CommandLineState {
       }};
   }
 
-  public TestRunnerState(JstdRunConfiguration runConfiguration, Project project,
-                         ExecutionEnvironment env) {
+  public TestRunnerState(JstdRunConfiguration runConfiguration,
+                         Project project,
+                         ExecutionEnvironment env,
+                         @Nullable String coverageFilePath) {
     super(env);
     myRunConfiguration = runConfiguration;
     myProject = project;
     myConfigVirtualFiles = JstdClientCommandLineBuilder.INSTANCE.collectVirtualFiles(runConfiguration.getRunSettings(), project);
+    myCoverageFilePath = coverageFilePath;
   }
 
   @Override
@@ -142,7 +146,8 @@ class TestRunnerState extends CommandLineState {
     GeneralCommandLine commandLine = JstdClientCommandLineBuilder.INSTANCE.buildCommandLine(
         myRunConfiguration.getRunSettings(),
         testResultPort,
-        myConfigVirtualFiles
+        myConfigVirtualFiles,
+        myCoverageFilePath
     );
     logger.info("Running JSTestDriver: " + commandLine.getCommandLineString());
     return new OSProcessHandler(commandLine.createProcess(), "");

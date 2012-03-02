@@ -17,14 +17,23 @@ package com.google.jstestdriver.idea;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
+import com.google.inject.multibindings.Multibinder;
+import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.JsTestDriver;
+import com.google.jstestdriver.Plugin;
+import com.google.jstestdriver.PluginLoader;
+import com.google.jstestdriver.config.Configuration;
 import com.google.jstestdriver.config.UserConfigurationSource;
 import com.google.jstestdriver.embedded.JsTestDriverBuilder;
+import com.google.jstestdriver.hooks.PluginInitializer;
+import com.google.jstestdriver.hooks.TestListener;
 import com.google.jstestdriver.idea.execution.tree.JstdTestRunnerFailure;
 import com.google.jstestdriver.idea.server.JstdServerFetchResult;
 import com.google.jstestdriver.idea.server.JstdServerUtils;
 import com.google.jstestdriver.idea.util.EnumUtils;
-import com.google.jstestdriver.idea.util.ObjectUtils;
+import com.google.jstestdriver.output.TestResultHolder;
 import com.google.jstestdriver.runner.RunnerMode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,6 +41,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.net.*;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.LogManager;
@@ -50,7 +60,8 @@ public class TestRunner {
     SERVER_URL,
     CONFIG_FILE,
     TEST_CASE,
-    TEST_METHOD
+    TEST_METHOD,
+    OUTPUT_COVERAGE_FILE
   }
 
   private final Settings mySettings;
@@ -95,44 +106,164 @@ public class TestRunner {
       testCaseName = "all";
     }
 
-    runTests(config, new String[]{"--reset", "--dryRunFor", testCaseName});
-    runTests(config, new String[]{"--tests", testCaseName});
+    if (mySettings.getIdeCoverageFile() == null) {
+      runTests(config, new String[]{"--reset", "--dryRunFor", testCaseName}, false);
+    }
+    runTests(config, new String[]{"--tests", testCaseName}, true);
   }
 
-  private void runTests(@NotNull File config, @NotNull String[] extraArgs) {
+  private void runTests(@NotNull File config, @NotNull String[] extraArgs, boolean runTests) {
     PrintStream old = System.out;
     System.setOut(new PrintStream(new NullOutputStream()));
     try {
-      doRunTests(config, extraArgs);
+      doRunTests(config, extraArgs, runTests);
     } finally {
       System.setOut(old);
     }
   }
 
   @SuppressWarnings("deprecation")
-  private void doRunTests(@NotNull File config, @NotNull String[] extraArgs) {
+  private void doRunTests(@NotNull final File configFile, @NotNull String[] extraArgs, boolean runTests) {
     JsTestDriverBuilder builder = new JsTestDriverBuilder();
 
-    builder.setConfigurationSource(new UserConfigurationSource(config));
+    builder.setConfigurationSource(new UserConfigurationSource(configFile));
     builder.setPort(mySettings.getPort());
-    builder.addTestListener(new IDETestListener(myTestResultProtocolMessageOutput, config));
+    builder.withPluginInitializer(new PluginInitializer() {
+      @Override
+      public Module initializeModule(Flags flags, Configuration config) {
+        return new AbstractModule() {
+          @Override
+          public void configure() {
+            Multibinder<TestListener> listeners = Multibinder.newSetBinder(binder(), TestListener.class);
+            listeners.addBinding().to(TestResultHolder.class);
+            TestListener reporter = new IDETestListener(myTestResultProtocolMessageOutput, configFile);
+            listeners.addBinding().toInstance(reporter);
+          }
+        };
+      }
+    });
+
     builder.setRunnerMode(RunnerMode.QUIET);
     builder.setServer(mySettings.getServerUrl());
 
     List<String> flagArgs = Lists.newArrayList("--captureConsole", "--server", mySettings.getServerUrl());
     flagArgs.addAll(Arrays.asList(extraArgs));
+    File ideCoverageFilePath = mySettings.getIdeCoverageFile();
+    File dir = null;
+    boolean runCoverage = false;
+    if (runTests && ideCoverageFilePath != null) {
+      dir = createTempDir();
+      if (dir != null) {
+        flagArgs.add("--testOutput");
+        flagArgs.add(dir.getAbsolutePath());
+        PluginInitializer coverageInitializer = getCoverageInitializer();
+        if (coverageInitializer != null) {
+          builder.withPluginInitializer(coverageInitializer);
+          runCoverage = true;
+        }
+      }
+    }
 
     String[] args = flagArgs.toArray(new String[flagArgs.size()]);
     builder.setFlags(args);
     JsTestDriver jstd = builder.build();
     jstd.runConfiguration();
+    if (runCoverage) {
+      File[] coverageFiles = dir.listFiles(new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+          return name.endsWith("-coverage.dat");
+        }
+      });
+      if (coverageFiles != null && coverageFiles.length == 1) {
+        copyFile(ideCoverageFilePath, coverageFiles[0]);
+      }
+    }
+  }
+
+  private static void copyFile(@NotNull File from, @NotNull File to) {
+    BufferedWriter out = null;
+    BufferedReader in = null;
+    try {
+      out = new BufferedWriter(new FileWriter(from));
+      in = new BufferedReader(new FileReader(to));
+      int ch;
+      while ((ch = in.read()) != -1) {
+        out.write(ch);
+      }
+    }
+    catch (IOException e) {
+    }
+    finally {
+      if (out != null) {
+        try {
+          out.close();
+        }
+        catch (IOException e) {}
+      }
+      if (in != null) {
+        try {
+          in.close();
+        }
+        catch (IOException e) {}
+      }
+    }
+  }
+
+  @Nullable
+  private static PluginInitializer getCoverageInitializer() {
+    File[] coverageFiles = new File(".").listFiles(new FilenameFilter() {
+      @Override
+      public boolean accept(File dir, String name) {
+        return name.startsWith("coverage") && name.endsWith(".jar");
+      }
+    });
+    if (coverageFiles != null && coverageFiles.length == 1) {
+      Plugin plugin = new Plugin(
+        "coverage",
+        coverageFiles[0].getAbsolutePath(),
+        "com.google.jstestdriver.coverage.CoverageModule",
+        Collections.<String>emptyList()
+      );
+      PluginLoader pluginLoader = new PluginLoader();
+      final List<Module> modules = pluginLoader.load(Collections.singletonList(plugin));
+      if (modules.size() == 1) {
+        return new PluginInitializer() {
+          @Override
+          public Module initializeModule(Flags flags, Configuration config) {
+            return modules.get(0);
+          }
+        };
+      }
+    }
+    return null;
+  }
+
+  @Nullable
+  private static File createTempDir() {
+    try {
+      File file = File.createTempFile("jstestdriver-coverage-", "-tmp");
+      if (!file.delete()) {
+        return null;
+      }
+      if (!file.mkdir()) {
+        return null;
+      }
+      file.deleteOnExit();
+      return file;
+    } catch (IOException e) {
+      return null;
+    }
   }
 
   private static String formatMessage(@Nullable String message, @NotNull Throwable t) {
     StringWriter sw = new StringWriter();
     PrintWriter pw = new PrintWriter(sw);
-    t.printStackTrace(pw);
-    pw.close();
+    try {
+      t.printStackTrace(pw);
+    } finally {
+      pw.close();
+    }
     if (message == null) {
       return sw.toString();
     } else {
@@ -253,18 +384,21 @@ public class TestRunner {
     private final List<File> myConfigFiles;
     private final String myTestCaseName;
     private final String myTestMethodName;
+    private final File myIdeCoverageFile;
 
     private Settings(int port,
                      @NotNull String serverUrl,
                      @NotNull List<File> configFiles,
                      @NotNull String testCaseName,
-                     @NotNull String testMethodName)
+                     @NotNull String testMethodName,
+                     @Nullable File ideCoverageFile)
     {
       myPort = port;
       myServerUrl = serverUrl;
       myConfigFiles = configFiles;
       myTestCaseName = testCaseName;
       myTestMethodName = testMethodName;
+      myIdeCoverageFile = ideCoverageFile;
     }
 
     public int getPort() {
@@ -291,6 +425,11 @@ public class TestRunner {
       return myTestMethodName;
     }
 
+    @Nullable
+    public File getIdeCoverageFile() {
+      return myIdeCoverageFile;
+    }
+
     @NotNull
     private static Settings build(@NotNull Map<ParameterKey, String> parameters) {
       int port = Integer.parseInt(parameters.get(ParameterKey.PORT));
@@ -298,7 +437,7 @@ public class TestRunner {
       if (serverUrl == null) {
         throw new RuntimeException("server_url parameter must be specified");
       }
-      String configFilesStr = ObjectUtils.notNull(parameters.get(ParameterKey.CONFIG_FILE), "");
+      String configFilesStr = notNullize(parameters.get(ParameterKey.CONFIG_FILE));
       String[] paths = configFilesStr.split(Pattern.quote(","));
       List<File> configFiles = Lists.newArrayList();
       for (String urlEncodedPath : paths) {
@@ -313,10 +452,19 @@ public class TestRunner {
       if (configFiles.isEmpty()) {
         throw new RuntimeException("No valid config files found");
       }
-      String testCaseName = ObjectUtils.notNull(parameters.get(ParameterKey.TEST_CASE), "");
-      String testMethodName = ObjectUtils.notNull(parameters.get(ParameterKey.TEST_METHOD), "");
-      return new Settings(port, serverUrl, configFiles, testCaseName, testMethodName);
+      String testCaseName = notNullize(parameters.get(ParameterKey.TEST_CASE));
+      String testMethodName = notNullize(parameters.get(ParameterKey.TEST_METHOD));
+      String coverageFilePath = notNullize(parameters.get(ParameterKey.OUTPUT_COVERAGE_FILE));
+      File ideCoverageFile = null;
+      if (!coverageFilePath.isEmpty()) {
+        ideCoverageFile = new File(coverageFilePath);
+      }
+      return new Settings(port, serverUrl, configFiles, testCaseName, testMethodName, ideCoverageFile);
     }
+  }
+
+  private static String notNullize(@Nullable String str) {
+    return str == null ? "" : str;
   }
 
   private final class NullOutputStream extends OutputStream {

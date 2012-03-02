@@ -57,7 +57,10 @@ public class JstdClientCommandLineBuilder {
   private JstdClientCommandLineBuilder() {
   }
 
-  public GeneralCommandLine buildCommandLine(JstdRunSettings runSettings, int testResultPort, List<VirtualFile> configVirtualFiles) {
+  public static GeneralCommandLine buildCommandLine(JstdRunSettings runSettings,
+                                                    int testResultPort,
+                                                    List<VirtualFile> configVirtualFiles,
+                                                    @Nullable String coverageFilePath) {
     final Map<TestRunner.ParameterKey, String> parameters = Maps.newHashMap();
     final String serverURL = runSettings.getServerType() == ServerType.INTERNAL ?
         "http://localhost:" + ToolPanel.serverPort :
@@ -73,15 +76,21 @@ public class JstdClientCommandLineBuilder {
       parameters.put(TestRunner.ParameterKey.TEST_CASE, runSettings.getTestCaseName());
       parameters.put(TestRunner.ParameterKey.TEST_METHOD, runSettings.getTestMethodName());
     }
+    if (coverageFilePath != null) {
+      parameters.put(TestRunner.ParameterKey.OUTPUT_COVERAGE_FILE, coverageFilePath);
+    }
     return buildCommandLine(parameters);
   }
 
-  private GeneralCommandLine buildCommandLine(Map<TestRunner.ParameterKey, String> parameters) {
+  private static GeneralCommandLine buildCommandLine(Map<TestRunner.ParameterKey, String> parameters) {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     commandLine.setExePath(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java");
     // uncomment this if you want to debug jsTestDriver code in the test-runner process
     //addParameter("-Xdebug");
     //addParameter("-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=y");
+
+    File file = new File(PathUtil.getJarPathForClass(JsTestDriverServer.class));
+    commandLine.setWorkDirectory(file.getParentFile());
 
     commandLine.addParameter("-cp");
     commandLine.addParameter(buildClasspath());
@@ -94,7 +103,7 @@ public class JstdClientCommandLineBuilder {
     return commandLine;
   }
 
-  private String joinConfigs(List<VirtualFile> configs) {
+  private static String joinConfigs(List<VirtualFile> configs) {
     List<String> jstdConfigPaths = Lists.newArrayList();
     for (VirtualFile config : configs) {
       try {
@@ -108,7 +117,7 @@ public class JstdClientCommandLineBuilder {
   }
 
   @NotNull
-  public List<VirtualFile> collectVirtualFiles(JstdRunSettings runSettings, Project project) {
+  public static List<VirtualFile> collectVirtualFiles(JstdRunSettings runSettings, Project project) {
     TestType testType = runSettings.getTestType();
     List<VirtualFile> res = Collections.emptyList();
     if (testType == TestType.ALL_CONFIGS_IN_DIRECTORY) {
@@ -129,7 +138,7 @@ public class JstdClientCommandLineBuilder {
     return res;
   }
 
-  private File extractConfigFile(Project project, JstdRunSettings runSettings) {
+  private static File extractConfigFile(Project project, JstdRunSettings runSettings) {
     if (runSettings.getTestType() == TestType.CONFIG_FILE || runSettings.getConfigType() == JstdConfigType.FILE_PATH) {
       return new File(runSettings.getConfigFile());
     }
@@ -179,7 +188,7 @@ public class JstdClientCommandLineBuilder {
     return jstdConfigFound.get();
   }
 
-  private String buildClasspath() {
+  private static String buildClasspath() {
     Set<String> classpath = Sets.newHashSet();
 
     List<File> files = getClasspath(TestRunner.class, JsTestDriverServer.class);
@@ -188,7 +197,7 @@ public class JstdClientCommandLineBuilder {
     return Joiner.on(pathSeparator).join(classpath);
   }
 
-  private List<File> getClasspath(Class<?>... classList) {
+  private static List<File> getClasspath(Class<?>... classList) {
     List<File> classpath = Lists.newArrayList();
     for (Class<?> clazz : classList) {
       String path = PathUtil.getJarPathForClass(clazz);
