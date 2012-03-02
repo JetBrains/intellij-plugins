@@ -603,6 +603,9 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   }
 
   public static class Reader extends DataInputStream {
+    private static final ComponentColorModel COLOR_MODER = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB),
+                                                                                   new int[]{8, 8, 8}, false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
+
     Reader(InputStream in) {
       super(in);
       //super(new InputStreamDumper(in));
@@ -672,12 +675,8 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
         bgr[j++] = argb[i + 1];
       }
 
-      int[] nBits = {8, 8, 8};
-      int[] bOffs = {2, 1, 0};
-      final ComponentColorModel colorModel =
-        new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
-      return new BufferedImage(colorModel, Raster.createInterleavedRaster(new DataBufferByte(bgr, bgr.length), w, h, w * 3, 3, bOffs, null),
-                               false, null);
+      return new BufferedImage(COLOR_MODER, Raster.createInterleavedRaster(new DataBufferByte(bgr, bgr.length), w, h, w * 3, 3,
+                                                                           new int[]{2, 1, 0}, null), false, null);
     }
 
     public int[] readIntArray() throws IOException {
