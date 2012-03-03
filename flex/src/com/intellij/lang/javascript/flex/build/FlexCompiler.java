@@ -87,10 +87,6 @@ public class FlexCompiler implements SourceProcessingCompiler {
   }
 
   public ProcessingItem[] process(final CompileContext context, final ProcessingItem[] items) {
-    // todo clear output directories if rebuild and corresponding option checked
-    // todo incremental resource files copying
-    new FlexResourceCompiler(context, mapModuleToBCsWithResourceFiles(items)).processResourceFiles();
-
     final FlexCompilerHandler flexCompilerHandler = FlexCompilerHandler.getInstance(context.getProject());
     final FlexCompilerProjectConfiguration flexCompilerConfiguration = FlexCompilerProjectConfiguration.getInstance(context.getProject());
 
@@ -286,7 +282,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
     }
   }
 
-  private static Collection<Pair<Module, FlexIdeBuildConfiguration>> getModulesAndBCsToCompile(final CompileScope scope)
+  static Collection<Pair<Module, FlexIdeBuildConfiguration>> getModulesAndBCsToCompile(final CompileScope scope)
     throws ConfigurationException {
 
     final Collection<Pair<Module, FlexIdeBuildConfiguration>> result = new HashSet<Pair<Module, FlexIdeBuildConfiguration>>();

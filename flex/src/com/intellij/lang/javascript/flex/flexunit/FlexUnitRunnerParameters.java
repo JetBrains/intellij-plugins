@@ -203,10 +203,6 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     overriddenBC.setOutputType(OutputType.Application);
     overriddenBC.setUseHtmlWrapper(false);
 
-    if (BCUtils.canHaveResourceFiles(overriddenBC.getNature()) && !BCUtils.canHaveResourceFiles(moduleAndBC.second.getNature())) {
-      overriddenBC.getCompilerOptions().setResourceFilesMode(CompilerOptions.ResourceFilesMode.All);
-    }
-
     overriddenBC.getDependencies().setFrameworkLinkage(LinkageType.Merged);
 
     for (ModifiableDependencyEntry entry : overriddenBC.getDependencies().getModifiableEntries()) {
