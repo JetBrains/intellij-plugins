@@ -4,9 +4,13 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.AnActionButton;
@@ -150,14 +154,20 @@ public class FilesToPackageForm {
     d.setAddAction(new AnActionButtonRunnable() {
       public void run(AnActionButton button) {
         VirtualFile[] files = FileChooser.chooseFiles(myProject, new FileChooserDescriptor(true, true, false, true, false, true));
-        for (final VirtualFile file : files) {
-          myFilesToPackage.add(new FilePathAndPathInPackage(file.getPath(), file.getName()));
+        final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
 
+        for (final VirtualFile file : files) {
+          final VirtualFile sourceRoot = fileIndex.getSourceRootForFile(file);
+          final String relativePath = sourceRoot == null ? null : VfsUtilCore.getRelativePath(file, sourceRoot, '/');
+          myFilesToPackage.add(new FilePathAndPathInPackage(file.getPath(), StringUtil.notNullize(relativePath, file.getName())));
+        }
+
+        if (files.length > 0) {
           fireDataChanged();
 
           IdeFocusManager.getInstance(myProject).requestFocus(myFilesToPackageTable, true);
           final int rowCount = myFilesToPackageTable.getRowCount();
-          myFilesToPackageTable.setRowSelectionInterval(rowCount - 1, rowCount - 1);
+          myFilesToPackageTable.setRowSelectionInterval(rowCount - files.length, rowCount - 1);
         }
       }
     });
