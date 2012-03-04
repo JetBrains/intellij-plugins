@@ -136,7 +136,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
         if (bc.getOutputType() == OutputType.Application && bc.getMainClass().startsWith(oldPackageWithDot)) {
           final String mainClass = (newPackageName.isEmpty() ? "" : (newPackageName + ".")) +
                                    bc.getMainClass().substring(oldPackageWithDot.length());
-          //bc.setMainClass(mainClass);  TODO
+          //((ModifiableFlexIdeBuildConfiguration)bc).setMainClass(mainClass); TODO
         }
       }
     }
@@ -170,7 +170,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
     private void classNameChanged(final String oldClassName, final String newClassName) {
       for (FlexIdeBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations()) {
         if (bc.getOutputType() == OutputType.Application && bc.getMainClass().equals(oldClassName)) {
-          //bc.setMainClass(newClassName); TODO
+          //((ModifiableFlexIdeBuildConfiguration)bc).setMainClass(newClassName); TODO
         }
       }
     }
@@ -228,7 +228,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
           }
 
           if (changed) {
-            //bc.setCssFilesToCompile(newCssFiles); TODO
+            //((ModifiableFlexIdeBuildConfiguration)bc).setCssFilesToCompile(newCssFiles); TODO
           }
         }
       }
@@ -243,7 +243,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
     protected void filePathChanged(final String oldFilePath, final String newFilePath) {
       for (FlexIdeBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations()) {
         if (bc.getCompilerOptions().getAdditionalConfigFilePath().equals(oldFilePath)) {
-          //bc.getCompilerOptions().setAdditionalConfigFilePath(newFilePath); TODO
+          //((ModifiableFlexIdeBuildConfiguration)bc).getCompilerOptions().setAdditionalConfigFilePath(newFilePath); TODO
         }
 
         // TODO update services-config, manifest files
