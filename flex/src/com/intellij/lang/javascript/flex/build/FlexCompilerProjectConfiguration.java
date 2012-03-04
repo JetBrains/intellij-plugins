@@ -38,8 +38,9 @@ public class FlexCompilerProjectConfiguration implements PersistentStateComponen
     USE_MXMLC_COMPC = state.USE_MXMLC_COMPC;
 
     //compatibility
-    if (USE_FCSH && USE_BUILT_IN_COMPILER) {
+    if (USE_FCSH /*&& USE_BUILT_IN_COMPILER*/) {
       USE_FCSH = false;
+      USE_BUILT_IN_COMPILER = true;
     }
 
     MAX_PARALLEL_COMPILATIONS = state.MAX_PARALLEL_COMPILATIONS;
