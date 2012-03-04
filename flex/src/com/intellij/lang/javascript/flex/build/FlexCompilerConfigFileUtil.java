@@ -15,12 +15,13 @@ import com.intellij.util.xml.NanoXmlUtil;
 import gnu.trove.THashSet;
 import org.jdom.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.*;
 
-import static com.intellij.lang.javascript.flex.sdk.FlexSdkUtils.*;
+import static com.intellij.lang.javascript.flex.sdk.FlexSdkUtils.FILE_SPEC_ELEMENT;
+import static com.intellij.lang.javascript.flex.sdk.FlexSdkUtils.OUTPUT_ELEMENT;
+import static com.intellij.lang.javascript.flex.sdk.FlexSdkUtils.TARGET_PLAYER_ELEMENT;
 
 public class FlexCompilerConfigFileUtil {
 
@@ -66,6 +67,10 @@ public class FlexCompilerConfigFileUtil {
 
   private static final String[] OPTIONS_CONTAINING_PATHS =
     {"path-element", "manifest", "defaults-css-url", "filename", "link-report", "load-externs", "services", "resource-bundle-list"};
+  private static final String[] NON_REPEATABLE_OPTIONS_THAT_CAN_BE_IN_GENERATED_FILE =
+    {"mobile", "preloader", "warn-no-constructor", "accessible", "keep-generated-actionscript", "services", "context-root", "defaults-css-url",
+      "debug", "target-player", "swf-version", "static-link-runtime-shared-libraries",
+      "date", "title", "language", "contributor", "creator", "publisher", "description"};
 
   public static class NamespacesInfo {
     public final String namespace;
@@ -239,7 +244,10 @@ public class FlexCompilerConfigFileUtil {
         }
         else {
           final String existingElementContent = existingChild.getTextTrim();
-          if (areOptionValuesEqual(existingChild.getName(), potentialChildContent, existingElementContent)) {
+          if (ArrayUtil.contains(existingChild.getName(), NON_REPEATABLE_OPTIONS_THAT_CAN_BE_IN_GENERATED_FILE)) {
+            result.add(potentialChild);
+          }
+          else if (areOptionValuesEqual(existingChild.getName(), potentialChildContent, existingElementContent)) {
             // remove only similar repeatable values, do not remove equal values of <policy-file-url/> that are for different <runtime-shared-library-path/> elements.
             if (existingElement.getChildren().size() == existingChildren.size()) {
               result.add(potentialChild);
