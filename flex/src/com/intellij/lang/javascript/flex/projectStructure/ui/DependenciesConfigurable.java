@@ -2,7 +2,6 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryRootsComponentDescriptor;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
@@ -21,7 +20,6 @@ import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectBundle;
@@ -66,7 +64,6 @@ import com.intellij.util.IconUtil;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FilteringIterator;
-import com.intellij.util.containers.HashMap;
 import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.UIUtil;
@@ -1513,7 +1510,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     @Override
     public void run() {
-      Collection<FlexIdeBCConfigurable> dependencies = new ArrayList<FlexIdeBCConfigurable>();
+      final Collection<FlexIdeBCConfigurable> dependencies = new ArrayList<FlexIdeBCConfigurable>();
       List<MyTableItem> items = myTable.getItems();
       for (MyTableItem item : items) {
         if (item instanceof BCItem) {
@@ -1524,37 +1521,27 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         }
       }
 
-      Map<Module, List<FlexIdeBCConfigurable>> treeItems = new HashMap<Module, List<FlexIdeBCConfigurable>>();
-      FlexIdeBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
-      for (Module module : ModuleStructureConfigurable.getInstance(myProject).getModules()) {
-        if (ModuleType.get(module) != FlexModuleType.getInstance()) {
-          continue;
-        }
-        for (CompositeConfigurable configurable : configurator.getBCConfigurables(module)) {
-          FlexIdeBCConfigurable flexIdeBCConfigurable = FlexIdeBCConfigurable.unwrap(configurable);
-          if (dependencies.contains(flexIdeBCConfigurable) || flexIdeBCConfigurable.isParentFor(DependenciesConfigurable.this)) {
-            continue;
-          }
+      ChooseBuildConfigurationDialog d = ChooseBuildConfigurationDialog.createForApplicableBCs(
+        FlexBundle.message("add.bc.dependency.dialog.title"), FlexBundle.message("add.dependency.bc.dialog.label"), myProject, false,
+        new Condition<FlexIdeBCConfigurable>() {
+          @Override
+          public boolean value(final FlexIdeBCConfigurable configurable) {
+            if (dependencies.contains(configurable) || configurable.isParentFor(DependenciesConfigurable.this)) {
+              return false;
+            }
 
-          if (!BCUtils.isApplicableForDependency(myNature, flexIdeBCConfigurable.getOutputType())) {
-            continue;
+            if (!BCUtils.isApplicableForDependency(myNature, configurable.getOutputType())) {
+              return false;
+            }
+            return true;
           }
+        });
 
-          List<FlexIdeBCConfigurable> list = treeItems.get(module);
-          if (list == null) {
-            list = new ArrayList<FlexIdeBCConfigurable>();
-            treeItems.put(module, list);
-          }
-          list.add(flexIdeBCConfigurable);
-        }
-      }
-
-      if (treeItems.isEmpty()) {
-        Messages.showInfoMessage(myProject, "No applicable build configurations found", "Add Dependency");
+      if (d == null) {
+        Messages.showInfoMessage(myProject, FlexBundle.message("no.applicable.bcs"), FlexBundle.message("add.bc.dependency.dialog.title"));
         return;
       }
 
-      ChooseBuildConfigurationDialog d = new ChooseBuildConfigurationDialog(myProject, treeItems);
       d.show();
       if (!d.isOK()) {
         return;
@@ -1666,13 +1653,17 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       if (!d.isOK()) return;
 
       final List<Library> libraries = d.getSelectedLibraries();
-      DefaultMutableTreeNode rootNode = myTable.getRoot();
-      for (Library library : libraries) {
-        SharedLibraryItem item = new SharedLibraryItem(library.getName(), library.getTable().getTableLevel(), library, myProject);
-        rootNode.add(new DefaultMutableTreeNode(item, false));
-      }
-      updateTableOnItemsAdded(libraries.size());
+      addSharedLibraries(libraries);
     }
+  }
+
+  public void addSharedLibraries(final List<Library> libraries) {
+    DefaultMutableTreeNode rootNode = myTable.getRoot();
+    for (Library library : libraries) {
+      SharedLibraryItem item = new SharedLibraryItem(library.getName(), library.getTable().getTableLevel(), library, myProject);
+      rootNode.add(new DefaultMutableTreeNode(item, false));
+    }
+    updateTableOnItemsAdded(libraries.size());
   }
 
   private void updateTableOnItemsAdded(int count) {
@@ -1755,7 +1746,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       List<ModifiableDependencyEntry> entries = myDependencies.getModifiableEntries();
       for (int i = 0; i < entries.size(); i++) {
         ModifiableDependencyEntry entry = entries.get(i);
-
       }
       reset();
     }

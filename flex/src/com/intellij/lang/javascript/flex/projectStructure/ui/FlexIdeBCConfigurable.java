@@ -582,6 +582,10 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     return new CompositeConfigurable(tabs, myTreeNodeNameUpdater);
   }
 
+  public DependenciesConfigurable getDependenciesConfigurable() {
+    return myDependenciesConfigurable;
+  }
+
   public boolean isParentFor(final DependenciesConfigurable dependenciesConfigurable) {
     return myDependenciesConfigurable == dependenciesConfigurable;
   }
@@ -595,6 +599,10 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     final Condition<JSClass> filter = new JSClassChooserDialog.PublicInheritor(myModule.getProject(), baseClass, filterScope, true);
     myMainClassComponent = JSReferenceEditor.forClassName("", myModule.getProject(), null, scope, null,
                                                           filter, ExecutionBundle.message("choose.main.class.dialog.title"));
+  }
+
+  public void addSharedLibrary(final Library library) {
+    myDependenciesConfigurable.addSharedLibraries(Collections.singletonList(library));
   }
 
   public static FlexIdeBCConfigurable unwrap(CompositeConfigurable c) {
