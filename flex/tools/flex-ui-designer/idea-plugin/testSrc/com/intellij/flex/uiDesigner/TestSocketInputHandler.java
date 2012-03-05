@@ -56,6 +56,7 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
 
   @Override
   protected void processCommand(int command) throws IOException {
+    //System.out.println(command + " processing");
     if (isFileBased(command) ||
       command == ServerMethod.SAVE_PROJECT_WINDOW_BOUNDS ||
       command == ServerMethod.CALLBACK ||

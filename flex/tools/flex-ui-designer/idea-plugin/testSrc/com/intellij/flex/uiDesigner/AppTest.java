@@ -6,6 +6,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
@@ -16,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.intellij.flex.uiDesigner.DocumentFactoryManager.DocumentInfo;
@@ -27,7 +27,6 @@ public class AppTest extends AppTestBase {
 
   private final Semaphore semaphore = new Semaphore();
   private final AtomicBoolean fail = new AtomicBoolean();
-  private Callable<Void> assertOnDocumentRendered;
 
   @Override
   protected void changeServicesImplementation() {
@@ -44,17 +43,6 @@ public class AppTest extends AppTestBase {
     connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentRenderedListener() {
       @Override
       public void documentRenderedOnAutoSave(DocumentInfo info) {
-        //assertTrue(info.getElement().equals(file));
-        if (assertOnDocumentRendered != null) {
-          try {
-            assertOnDocumentRendered.call();
-          }
-          catch (Exception e) {
-            fail.set(true);
-            throw new AssertionError(e);
-          }
-        }
-
         semaphore.up();
       }
 
@@ -80,12 +68,25 @@ public class AppTest extends AppTestBase {
     fail.set(false);
   }
 
+  private void callClientAssert(VirtualFile file, String methodName) throws IOException, InterruptedException {
+    semaphore.down();
+    ActionCallback callback = client.test(null, DocumentFactoryManager.getInstance().getId(file), getTestName(false), APP_TEST_CLASS_ID);
+    callback.doWhenDone(new Runnable() {
+      @Override
+      public void run() {
+        semaphore.up();
+      }
+    });
+    await();
+  }
+
   // todo actually, test only close project, but not test open after close
   public void _testCloseAndOpenProject() throws Exception {
     openAndWait(configureByFiles("injectedAS/Transitions.mxml")[0], "injectedAS/Transitions.mxml");
   }
 
   private void renderAndWait(VirtualFile file) throws InterruptedException {
+    semaphore.down();
     AsyncResult<DocumentInfo> result =
       DesignerApplicationManager.getInstance().renderDocument(myModule, Tests.virtualToPsi(myProject, file));
 
@@ -101,33 +102,15 @@ public class AppTest extends AppTestBase {
 
   public void testUpdateDocumentOnIdeaAutoSave() throws Exception {
     final VirtualFile[] files = configureByFiles("ProjectMxmlComponentAsChild.mxml", "AuxProjectMxmlComponent.mxml");
-
-    DesignerApplicationManager designerManager = DesignerApplicationManager.getInstance();
-
-    semaphore.down();
     renderAndWait(files[0]);
 
-    assertOnDocumentRendered = new Callable<Void>() {
-      @Override
-      public Void call() throws Exception {
-        client.test(null, DocumentFactoryManager.getInstance().getId(files[0]), getTestName(false), APP_TEST_CLASS_ID);
-        return null;
-      }
-    };
     insertString(files[0], 166, "A");
+    callClientAssert(files[0], getTestName(false));
 
-    assertOnDocumentRendered = null;
-    designerManager.renderDocument(myModule, Tests.virtualToPsi(myProject, files[1]));
-    await();
+    renderAndWait(files[1]);
 
-    assertOnDocumentRendered = new Callable<Void>() {
-      @Override
-      public Void call() throws Exception {
-        client.test(null, DocumentFactoryManager.getInstance().getId(files[0]), "UpdateDocumentOnIdeaAutoSave2", APP_TEST_CLASS_ID);
-        return null;
-      }
-    };
     insertString(files[1], 191, "A");
+    callClientAssert(files[0], "UpdateDocumentOnIdeaAutoSave2");
   }
 
   private void insertString(VirtualFile file, int offset, @NotNull CharSequence s) throws InterruptedException {
