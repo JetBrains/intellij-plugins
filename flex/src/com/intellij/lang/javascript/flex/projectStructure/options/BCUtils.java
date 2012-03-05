@@ -344,5 +344,8 @@ public class BCUtils {
         }
       }
     }
+    else {
+      targetPlayerCombo.setModel(new DefaultComboBoxModel(ArrayUtil.EMPTY_STRING_ARRAY));
+    }
   }
 }
