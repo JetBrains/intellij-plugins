@@ -3,10 +3,7 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableImplUtil;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.LibraryProjectStructureElement;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.PlaceInProjectStructure;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStructureElement;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStructureElementUsage;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.*;
 import com.intellij.openapi.util.Pair;
 
 import javax.swing.*;
@@ -60,6 +57,10 @@ public abstract class UsageInBcDependencies extends ProjectStructureElementUsage
       DependenciesConfigurable.Location.TableEntry tableEntry = DependenciesConfigurable.Location.TableEntry.forBc(moduleName, bcName);
       return new PlaceInBuildConfiguration(myContainingElement, DependenciesConfigurable.TAB_NAME,
                                            Pair.create(DependenciesConfigurable.LOCATION, tableEntry));
+    }
+    else if (mySourceElement instanceof SdkProjectStructureElement) {
+      return new PlaceInBuildConfiguration(myContainingElement, DependenciesConfigurable.TAB_NAME,
+                                           Pair.create(DependenciesConfigurable.LOCATION, DependenciesConfigurable.Location.SDK));
     }
 
     assert false : mySourceElement;

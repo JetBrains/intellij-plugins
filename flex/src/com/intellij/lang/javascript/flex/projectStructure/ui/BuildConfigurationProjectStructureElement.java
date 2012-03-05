@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
@@ -23,10 +24,10 @@ import java.util.List;
  */
 public class BuildConfigurationProjectStructureElement extends ProjectStructureElement {
 
-  private final FlexIdeBuildConfiguration myBc;
+  private final ModifiableFlexIdeBuildConfiguration myBc;
   private final Module myModule;
 
-  public BuildConfigurationProjectStructureElement(final FlexIdeBuildConfiguration bc, Module module,
+  public BuildConfigurationProjectStructureElement(final ModifiableFlexIdeBuildConfiguration bc, Module module,
                                                    @NotNull StructureConfigurableContext context) {
     super(context);
     myBc = bc;
@@ -145,6 +146,16 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
         }
         bcEntry.findBuildConfiguration();
       }
+    }
+
+    Sdk sdk = myBc.getSdk();
+    if (sdk != null) {
+      usages.add(new UsageInBcDependencies(this, new SdkProjectStructureElement(myContext, sdk)) {
+        @Override
+        public void removeSourceElement() {
+          myBc.getDependencies().setSdkEntry(null);
+        }
+      });
     }
     return usages;
   }
