@@ -1,18 +1,19 @@
 package com.intellij.flex.uiDesigner.abc;
 
-import com.intellij.flex.uiDesigner.FlashUIDesignerBaseTestCase;
+import com.intellij.flex.uiDesigner.DesignerTests;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static com.intellij.flex.uiDesigner.MatcherAssert.assertThat;
 
 import java.io.File;
 import java.io.IOException;
 
+import static com.intellij.flex.uiDesigner.MatcherAssert.assertThat;
+
 public class AbcFilterTest {
   private File out;
   private AbcFilter filter;
-  private static final File TEST_LIB_DIR = new File(FlashUIDesignerBaseTestCase.getTestDataPath(), "abcTestLib");
+  private static final File TEST_LIB_DIR = new File(DesignerTests.getTestDataPath(), "abcTestLib");
 
   @Before
   public void runBeforeEveryTest() throws Exception {

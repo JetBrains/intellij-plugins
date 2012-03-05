@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.libraries;
 
+import com.intellij.flex.uiDesigner.DesignerTests;
 import com.intellij.flex.uiDesigner.FlashUIDesignerBaseTestCase;
 import com.intellij.flex.uiDesigner.abc.AbcTranscoder;
 import com.intellij.openapi.util.Condition;
@@ -37,7 +38,7 @@ public class AbcMergerTest {
 
     final AbcMerger abcMerger = new AbcMerger(definitionMap, out, null);
     final Pair<CharArrayReader, ByteArrayInputStream> data =
-      LibraryUtil.openSwc(new File(FlashUIDesignerBaseTestCase.getTestDataPath(), "lib/MinimalComps_0_9_10.swc"));
+      LibraryUtil.openSwc(new File(DesignerTests.getTestDataPath(), "lib/MinimalComps_0_9_10.swc"));
 
     NanoXmlUtil.parse(data.first, new CatalogXmlBuilder(definitionMap, new Condition<String>() {
       @Override

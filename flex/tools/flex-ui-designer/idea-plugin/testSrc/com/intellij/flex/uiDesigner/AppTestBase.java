@@ -50,7 +50,7 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
   private VirtualFile testDir;
   protected final VirtualFile getTestDir() {
     if (testDir == null) {
-      testDir = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + "/src/" + getSourceBasePath());
+      testDir = LocalFileSystem.getInstance().findFileByPath(DesignerTests.getTestDataPath() + "/src/" + getSourceBasePath());
     }
 
     return testDir;
@@ -63,7 +63,7 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
   @Override
   protected void setUpJdk() {
     final String flexVersion = getFlexVersion();
-    flexSdkRootPath = getTestDataPath() + "/lib/flex-sdk/" + flexVersion;
+    flexSdkRootPath = DesignerTests.getTestDataPath() + "/lib/flex-sdk/" + flexVersion;
 
     Flex annotation = getFlexAnnotation();
     doSetupFlexSdk(myModule, flexSdkRootPath, annotation == null ? TargetPlatform.Desktop : annotation.platform(), flexVersion);
@@ -135,16 +135,16 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
     //  sdkModificator.addRoot(frameworkRB, OrderRootType.CLASSES);
     //}
 
-    sdkModificator.addRoot(getVFile("lib/playerglobal"), OrderRootType.CLASSES);
+    sdkModificator.addRoot(DesignerTests.getVFile("lib/playerglobal"), OrderRootType.CLASSES);
     FlexSdkUtils.addFlexSdkSwcRoots(sdkModificator, frameworksDir);
   }
 
   protected void addLibrary(SdkModificator sdkModificator, String path) {
     if (path.charAt(0) != '/') {
-      path = getTestDataPath() + "/lib/" + path;
+      path = DesignerTests.getTestDataPath() + "/lib/" + path;
     }
 
-    VirtualFile virtualFile = getVFile(path);
+    VirtualFile virtualFile = DesignerTests.getVFile(path);
     VirtualFile jarFile = JarFileSystem.getInstance().getJarRootForLocalFile(virtualFile);
     assert jarFile != null;
 

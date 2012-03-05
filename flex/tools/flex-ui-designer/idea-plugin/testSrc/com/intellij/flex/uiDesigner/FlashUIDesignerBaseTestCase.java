@@ -2,60 +2,21 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.testFramework.ModuleTestCase;
-import com.intellij.util.indexing.FileBasedIndex;
-import com.intellij.util.indexing.IndexableFileSet;
+import com.intellij.util.TripleFunction;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class FlashUIDesignerBaseTestCase extends ModuleTestCase {
-  private static String testDataPath;
-  private VirtualFile sourceDir;
-  private final IndexableFileSet indexableFileSet;
-
-  protected FlashUIDesignerBaseTestCase() {
-    indexableFileSet = new IndexableFileSet() {
-      @Override
-      public boolean isInSet(final VirtualFile file) {
-        return file.getFileSystem() == sourceDir.getFileSystem();
-      }
-
-      @Override
-      public void iterateIndexableFilesIn(final VirtualFile file, final ContentIterator iterator) {
-        if (file.isDirectory()) {
-          for (VirtualFile child : file.getChildren()) {
-            iterateIndexableFilesIn(child, iterator);
-          }
-        }
-        else {
-          iterator.processFile(file);
-        }
-      }
-    };
-  }
+  protected TripleFunction<ModifiableRootModel, VirtualFile, List<String>, Void> moduleInitializer;
 
   @Override
   protected boolean isRunInWriteAction() {
     return false;
-  }
-
-  public static String getTestDataPath() {
-    if (testDataPath == null) {
-      testDataPath = DebugPathManager.getFudHome() + "/idea-plugin/testData";
-    }
-    return testDataPath;
   }
 
   protected static String getFudHome() {
@@ -68,14 +29,8 @@ public abstract class FlashUIDesignerBaseTestCase extends ModuleTestCase {
                              DebugPathManager.getIdeaHome() + "/plugins/JavaScriptLanguage/testData/flex_highlighting/MockGumboSdk", false);
   }
 
-  protected static VirtualFile getVFile(String path) {
-    VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(path.charAt(0) == '/' ? path : (getTestDataPath() + '/' + path));
-    assertNotNull(vFile);
-    return vFile;
-  }
-
   protected VirtualFile configureByFile(final String filepath) throws Exception {
-    return configureByFile(getVFile(filepath));
+    return configureByFile(DesignerTests.getVFile(filepath));
   }
 
   protected VirtualFile configureByFile(final VirtualFile vFile) throws Exception {
@@ -83,94 +38,7 @@ public abstract class FlashUIDesignerBaseTestCase extends ModuleTestCase {
   }
 
   protected VirtualFile[] configureByFiles(@Nullable VirtualFile rawProjectRoot, VirtualFile[] files, @Nullable VirtualFile[] auxiliaryFiles) throws Exception {
-    final AccessToken token = WriteAction.start();
-    final VirtualFile[] toFiles;
-    try {
-      final VirtualFile dummyRoot = VirtualFileManager.getInstance().findFileByUrl("temp:///");
-      //noinspection ConstantConditions
-      dummyRoot.refresh(false, false);
-      sourceDir = dummyRoot.createChildDirectory(this, "s");
-      assert sourceDir != null;
-
-      FileBasedIndex.getInstance().registerIndexableSet(indexableFileSet, myProject);
-
-      final ModifiableRootModel rootModel = ModuleRootManager.getInstance(myModule).getModifiableModel();
-
-      toFiles = copyFiles(files, sourceDir, rawProjectRoot);
-      if (auxiliaryFiles != null) {
-        copyFiles(auxiliaryFiles, sourceDir, rawProjectRoot);
-      }
-
-      rootModel.addContentEntry(sourceDir).addSourceFolder(sourceDir, false);
-      final List<String> libs = new ArrayList<String>();
-      modifyModule(rootModel, sourceDir, libs);
-      rootModel.commit();
-
-      for (String path : libs) {
-        if (path.charAt(0) != '/') {
-          path = getTestDataPath() + "/lib/" + path;
-        }
-
-        VirtualFile virtualFile = getVFile(path);
-        JSTestUtils.addLibrary(myModule, path, virtualFile.getParent().getPath(), virtualFile.getName(), null, null);
-      }
-    }
-    finally {
-      token.finish();
-    }
-
-    return toFiles;
-  }
-
-  @Override
-  protected void tearDown() throws Exception {
-    try {
-      super.tearDown();
-    }
-    finally {
-      if (sourceDir != null) {
-        final AccessToken token = WriteAction.start();
-        try {
-          sourceDir.delete(null);
-        }
-        finally {
-          token.finish();
-        }
-      }
-
-      FileBasedIndex.getInstance().removeIndexableSet(indexableFileSet);
-    }
-  }
-
-  protected void modifyModule(ModifiableRootModel model, VirtualFile rootDir, List<String> libs) {
-  }
-
-  private static VirtualFile[] copyFiles(final VirtualFile[] fromFiles, final VirtualFile toDir, VirtualFile rawProjectRoot) throws IOException {
-    final VirtualFile[] toFiles = new VirtualFile[fromFiles.length];
-    final boolean rootSpecified = rawProjectRoot != null;
-    for (int i = 0, n = fromFiles.length; i < n; i++) {
-      VirtualFile fromFile = fromFiles[i];
-      VirtualFile toP = toDir;
-      if (rootSpecified) {
-        final List<String> fromParents = new ArrayList<String>(4);
-        VirtualFile fromP = fromFile.getParent();
-        if (fromP != rawProjectRoot) {
-          do {
-            fromParents.add(fromP.getName());
-          }
-          while ((fromP = fromP.getParent()) != rawProjectRoot);
-
-          for (int j = fromParents.size() - 1; j >= 0; j--) {
-            toP = toP.createChildDirectory(null, fromParents.get(j));
-          }
-        }
-      }
-      final VirtualFile toFile = toP.createChildData(null, fromFile.getName());
-      toFile.setBinaryContent(fromFile.contentsToByteArray());
-      toFiles[i] = toFile;
-    }
-
-    return toFiles;
+    return DesignerTests.configureByFiles(rawProjectRoot, files, auxiliaryFiles, myModule, moduleInitializer);
   }
 
   @Override

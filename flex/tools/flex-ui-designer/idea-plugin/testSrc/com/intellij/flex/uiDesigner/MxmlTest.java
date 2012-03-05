@@ -7,6 +7,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.StringBuilderSpinAllocator;
+import com.intellij.util.TripleFunction;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,37 +19,40 @@ import static org.hamcrest.Matchers.emptyArray;
 
 @Flex(version="4.5")
 public class MxmlTest extends MxmlTestBase {
-  @Override
-  protected void modifyModule(ModifiableRootModel model, VirtualFile rootDir, List<String> libs) {
-    if (getName().equals("test45")) {
-      libs.add(getFudHome() + "/test-data-helper/target/test-data-helper.swc");
-      final VirtualFile assetsDir = getVFile("assets");
-      model.addContentEntry(assetsDir).addSourceFolder(assetsDir, false);
-    }
-    else if (getName().equals("testResolveResourceIfNameIsAmbiguous")) {
-      final VirtualFile localesDir = getVFile("locales");
-      final ContentEntry localesContentEntry = model.addContentEntry(localesDir);
-      //noinspection ConstantConditions
-      localesContentEntry.addSourceFolder(localesDir.findChild("en_US"), false);
-      //localesContentEntry.addSourceFolder(localesDir.findChild("ru_RU"), false);
-    }
-    else if (getName().equals("testMobile")) {
-      libs.add("mobilecomponents-4.5.1.swc");
-    }
-  }
-
   @Flex(platform=TargetPlatform.Mobile, version="4.6")
   public void testMobile() throws Exception {
-    testFiles(getVFile((getTestDataPath() + "/src/mobile")));
+    testFiles(DesignerTests.getVFile((DesignerTests.getTestDataPath() + "/src/mobile")));
     assertThat(getLastProblems(), emptyArray());
   }
 
   public void testResolveResourceIfNameIsAmbiguous() throws Exception {
+    moduleInitializer = new TripleFunction<ModifiableRootModel, VirtualFile, List<String>, Void>() {
+      @Override
+      public Void fun(ModifiableRootModel model, VirtualFile file, List<String> libs) {
+        final VirtualFile localesDir = DesignerTests.getVFile("locales");
+        final ContentEntry localesContentEntry = model.addContentEntry(localesDir);
+        //noinspection ConstantConditions
+        localesContentEntry.addSourceFolder(localesDir.findChild("en_US"), false);
+        //localesContentEntry.addSourceFolder(localesDir.findChild("ru_RU"), false);
+        return null;
+      }
+    };
+
     testFile("ResourceDirective.mxml");
   }
 
   public void test45() throws Exception {
-    testFiles(getTestDir(), getVFile(getTestDataPath() + "/src/mx"));
+    moduleInitializer = new TripleFunction<ModifiableRootModel, VirtualFile, List<String>, Void>() {
+      @Override
+      public Void fun(ModifiableRootModel model, VirtualFile file, List<String> libs) {
+        libs.add(getFudHome() + "/test-data-helper/target/test-data-helper.swc");
+        final VirtualFile assetsDir = DesignerTests.getVFile("assets");
+        model.addContentEntry(assetsDir).addSourceFolder(assetsDir, false);
+        return null;
+      }
+    };
+
+    testFiles(getTestDir(), DesignerTests.getVFile(DesignerTests.getTestDataPath() + "/src/mx"));
     
     String[] problems = getLastProblems();
     if (System.getProperty("testFile") != null) {
@@ -72,7 +76,7 @@ public class MxmlTest extends MxmlTestBase {
 
   @Flex(version="4.6")
   public void test46() throws Exception {
-    testFiles(getTestDir(), getVFile(getTestDataPath() + "/src/mx"));
+    testFiles(getTestDir(), DesignerTests.getVFile(DesignerTests.getTestDataPath() + "/src/mx"));
 
     String[] problems = getLastProblems();
     if (System.getProperty("testFile") != null) {

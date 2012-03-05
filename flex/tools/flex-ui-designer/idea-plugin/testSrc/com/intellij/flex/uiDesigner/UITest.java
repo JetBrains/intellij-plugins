@@ -125,7 +125,7 @@ public class UITest extends MxmlTestBase {
   }
   
   private static void interact(String scriptName, final Assert... asserts) throws Exception {
-    roboflest.test(new File(getTestDataPath() + "/roboflest/" + scriptName + ".txt"), asserts);
+    roboflest.test(new File(DesignerTests.getTestDataPath() + "/roboflest/" + scriptName + ".txt"), asserts);
   }
 
   private abstract class MyTester implements Tester {

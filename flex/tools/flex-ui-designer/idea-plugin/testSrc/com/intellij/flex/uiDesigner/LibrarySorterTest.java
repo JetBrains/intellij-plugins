@@ -10,6 +10,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.TripleFunction;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class LibrarySorterTest extends MxmlTestBase {
     super.modifySdk(sdk, sdkModificator);
 
     if (getName().equals("testResolveToClassWithBiggestTimestamp")) {
-      final String path = getTestDataPath() + "/ResolveToClassWithBiggestTimestamp/bin/";
+      final String path = DesignerTests.getTestDataPath() + "/ResolveToClassWithBiggestTimestamp/bin/";
       addLibrary(sdkModificator, path + "lib_1.swc");
       addLibrary(sdkModificator, path + "lib_2.swc");
     }
@@ -55,27 +56,22 @@ public class LibrarySorterTest extends MxmlTestBase {
     });
   }
 
-  @Override
-  protected void modifyModule(ModifiableRootModel model, VirtualFile rootDir, List<String> libs) {
-    super.modifyModule(model, rootDir, libs);
-
-    if (getName().equals("testOverlappingContent")) {
-      libs.add("flexunit-4.1.0-8-flex_4.1.0.16076.swc");
-      libs.add("FlexUnit1Lib.swc");
-    }
-    else if (getName().equals("testMoveFlexSdkLibToSdkLibsIfNot")) {
-      libs.add(flexSdkRootPath + "/frameworks/libs/framework.swc");
-      libs.add("MinimalComps_0_9_10.swc");
-      libs.add(getFudHome() + "/test-data-helper/target/test-data-helper.swc");
-    }
-  }
-
   @Flex(version="4.1")
   public void testDelete() throws Exception {
     testFile(SPARK_COMPONENTS_FILE);
   }
 
   public void testMoveFlexSdkLibToSdkLibsIfNot() throws Exception {
+    moduleInitializer = new TripleFunction<ModifiableRootModel, VirtualFile, List<String>, Void>() {
+      @Override
+      public Void fun(ModifiableRootModel model, VirtualFile file, List<String> libs) {
+        libs.add(flexSdkRootPath + "/frameworks/libs/framework.swc");
+        libs.add("MinimalComps_0_9_10.swc");
+        libs.add(getFudHome() + "/test-data-helper/target/test-data-helper.swc");
+        return null;
+      }
+    };
+
     testFile("GenericMxmlSupport.mxml");
   }
 
@@ -89,6 +85,15 @@ public class LibrarySorterTest extends MxmlTestBase {
 
   // AS-235
   public void testOverlappingContent() throws Exception {
+    moduleInitializer = new TripleFunction<ModifiableRootModel, VirtualFile, List<String>, Void>() {
+      @Override
+      public Void fun(ModifiableRootModel model, VirtualFile file, List<String> libs) {
+        libs.add("flexunit-4.1.0-8-flex_4.1.0.16076.swc");
+        libs.add("FlexUnit1Lib.swc");
+        return null;
+      }
+    };
+
     testFile(SPARK_COMPONENTS_FILE);
   }
 }

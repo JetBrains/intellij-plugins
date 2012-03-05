@@ -6,15 +6,19 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ex.ProjectManagerEx;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.impl.DebugUtil;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -71,7 +75,7 @@ public class AppTest extends AppTestBase {
   private void callClientAssert(VirtualFile file, String methodName) throws IOException, InterruptedException {
     semaphore.down();
     ActionCallback callback = client.test(null, DocumentFactoryManager.getInstance().getId(file), getTestName(false), APP_TEST_CLASS_ID);
-    callback.doWhenDone(new Runnable() {
+    callback.doWhenProcessed(new Runnable() {
       @Override
       public void run() {
         semaphore.up();
@@ -80,8 +84,11 @@ public class AppTest extends AppTestBase {
     await();
   }
 
-  // todo actually, test only close project, but not test open after close
   public void _testCloseAndOpenProject() throws Exception {
+    File temp = createTempDirectory();
+    final Project alienProject = createProject(new File(temp, "t.ipr"), DebugUtil.currentStackTrace());
+    assertTrue(ProjectManagerEx.getInstanceEx().openProject(alienProject));
+
     openAndWait(configureByFiles("injectedAS/Transitions.mxml")[0], "injectedAS/Transitions.mxml");
   }
 
