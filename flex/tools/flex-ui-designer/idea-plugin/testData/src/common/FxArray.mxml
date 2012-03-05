@@ -1,0 +1,9 @@
+<VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+  <filters>
+    <fx:Array/>
+  </filters>
+  <repeaterIndices>
+    <fx:Array/>
+    <fx:Array/>
+  </repeaterIndices>
+</VGroup>

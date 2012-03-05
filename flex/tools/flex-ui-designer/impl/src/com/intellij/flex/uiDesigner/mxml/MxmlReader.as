@@ -476,7 +476,6 @@ public class MxmlReader implements DocumentReader {
     return o;
   }
 
-
   private function readVector():Object {
     var vectorClass:Class = moduleContext.getVectorClass(stringRegistry.readNotNull(input));
     const length:int = input.readUnsignedShort();
@@ -504,6 +503,10 @@ public class MxmlReader implements DocumentReader {
       }
       else {
         array[i++] = readExpression(amfType);
+        // see http://confluence.jetbrains.net/display/IDEA/Flex+UI+Designer MXMLWriter
+        if (length == 1 && amfType == AmfExtendedTypes.MXML_ARRAY && array is Array) {
+          return array[0];
+        }
       }
     }
 

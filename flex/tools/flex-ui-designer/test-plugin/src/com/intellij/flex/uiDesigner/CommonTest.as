@@ -4,6 +4,7 @@ import flash.display.ColorCorrection;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.assertThat;
+import org.hamcrest.collection.emptyArray;
 import org.hamcrest.core.allOf;
 import org.hamcrest.core.isA;
 import org.hamcrest.core.not;
@@ -25,6 +26,11 @@ public class CommonTest extends BaseTestCase {
     assertThat(app, m);
     app.colorCorrection = ColorCorrection.ON;
     assertThat(app, m);
+  }
+
+  public function FxArray():void {
+    assertThat(app.filters, emptyArray());
+    assertThat(app.repeaterIndices, [emptyArray(), emptyArray()]);
   }
 
   public function GenericMxmlSupport():void {
