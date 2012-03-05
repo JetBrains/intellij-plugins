@@ -136,8 +136,22 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
     }
 
     if (orderEntry instanceof JdkOrderEntry) {
-      // never add transitive dependency to Flex SDK
-      return module == myRootModule ? AddDependencyType.DEFAULT : AddDependencyType.DO_NOT_ADD;
+      if (module != myRootModule) {
+        // never add transitive dependency to Flex SDK
+        return AddDependencyType.DO_NOT_ADD;
+      }
+
+      if (myActiveConfigurations == null) {
+        return AddDependencyType.DEFAULT;
+      }
+
+      Collection<FlexIdeBuildConfiguration> accessibleConfigurations = myActiveConfigurations.get(module);
+      for (FlexIdeBuildConfiguration bc : accessibleConfigurations) {
+        if (bc.getSdk() != null) {
+          return AddDependencyType.DEFAULT;
+        }
+      }
+      return AddDependencyType.DO_NOT_ADD;
     }
 
     Collection<FlexIdeBuildConfiguration> accessibleConfigurations;
