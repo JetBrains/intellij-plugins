@@ -189,6 +189,7 @@ public class CompilerConfigGenerator {
   private void addNamespaces(final Element rootElement) {
     final StringBuilder namespaceBuilder = new StringBuilder();
     FlexSdkUtils.processStandardNamespaces(myBC, new PairConsumer<String, String>() {
+      @Override
       public void consume(final String namespace, final String relativePath) {
         if (namespaceBuilder.length() > 0) {
           namespaceBuilder.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
@@ -495,7 +496,8 @@ public class CompilerConfigGenerator {
         assert baseRelativePath != null;
 
         VfsUtilCore.visitChildrenRecursively(fileOrDir, new VirtualFileVisitor() {
-          public boolean visitFile(final VirtualFile file) {
+          @Override
+          public boolean visitFile(@NotNull final VirtualFile file) {
             if (!file.isDirectory() && !FlexCompiler.isSourceFile(file) && !compilerConfiguration.isExcludedFromCompilation(file)) {
               final String relativePath = VfsUtilCore.getRelativePath(file, fileOrDir, '/');
               final String pathInSwc = baseRelativePath.isEmpty() ? relativePath : baseRelativePath + "/" + relativePath;
@@ -526,6 +528,7 @@ public class CompilerConfigGenerator {
 
     for (final VirtualFile sourceRoot : ModuleRootManager.getInstance(myModule).getSourceRoots(false)) {
       fileIndex.iterateContentUnderDirectory(sourceRoot, new ContentIterator() {
+        @Override
         public boolean processFile(final VirtualFile file) {
           if (file.isDirectory()) return true;
           if (!FlexCompiler.isSourceFile(file)) return true;
@@ -641,8 +644,10 @@ public class CompilerConfigGenerator {
     final Ref<VirtualFile> fileRef = new Ref<VirtualFile>();
     final Ref<IOException> error = new Ref<IOException>();
     final Runnable runnable = new Runnable() {
+      @Override
       public void run() {
         fileRef.set(ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
+          @Override
           public VirtualFile compute() {
             try {
               final String baseDirPath = FlexUtils.getTempFlexConfigsDirPath();
@@ -688,6 +693,7 @@ public class CompilerConfigGenerator {
   static boolean isSourceFileWithPublicDeclaration(final Module module, final VirtualFile file, final String qName) {
     return JavaScriptSupportLoader.isMxmlOrFxgFile(file) ||
            ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
+             @Override
              public Boolean compute() {
                // we include file in compilation if it has (or intended to have) some public declaration (class, namespace, function) which is equivalent to having JSPackageStatement declaration.
                // But first we try to find it in JSQualifiedElementIndex because it is faster.
