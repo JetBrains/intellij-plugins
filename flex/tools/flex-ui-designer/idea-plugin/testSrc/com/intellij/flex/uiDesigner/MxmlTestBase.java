@@ -21,7 +21,7 @@ abstract class MxmlTestBase extends AppTestBase {
   @Override
   protected void changeServicesImplementation() {
     Tests.changeDesignerServicesImplementation();
-    Tests.changeServiceImplementation(DocumentProblemManager.class, TestDesignerApplicationManager.MyDocumentProblemManager.class);
+    Tests.changeServiceImplementation(DocumentProblemManager.class, TestDocumentProblemManager.class);
   }
 
   protected VirtualFile getRawProjectRoot() throws NoSuchMethodException {
@@ -31,10 +31,6 @@ abstract class MxmlTestBase extends AppTestBase {
   private boolean useRawProjectRoot() throws NoSuchMethodException {
     Flex annotation = getClass().getMethod(getName()).getAnnotation(Flex.class);
     return annotation != null && annotation.rawProjectRoot();
-  }
-
-  protected static String[] getLastProblems() {
-    return TestDesignerApplicationManager.getLastProblems();
   }
 
   protected void testFiles(VirtualFile[] files, VirtualFile[] auxiliaryFiles) throws Exception {

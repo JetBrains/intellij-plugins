@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class DocumentProblemManager {
   public static DocumentProblemManager getInstance() {
@@ -28,17 +29,23 @@ public class DocumentProblemManager {
     report(project, toString(problems.getProblems()), MessageType.ERROR);
   }
 
+  protected static StringBuilder toString(ProblemDescriptor problem, StringBuilder builder) {
+    builder.append(problem.getMessage());
+    if (problem.hasLineNumber()) {
+      LogMessageUtil.appendLineNumber(builder, problem);
+    }
+
+    return builder;
+  }
+
   @SuppressWarnings("MethodMayBeStatic")
-  public String toString(java.util.List<ProblemDescriptor> problems) {
+  public String toString(List<ProblemDescriptor> problems) {
     final StringBuilder builder = StringBuilderSpinAllocator.alloc();
     try {
       appendTitle(builder).append("<ul>");
-      for (ProblemDescriptor problemDescriptor : problems) {
-        builder.append("<li>").append(problemDescriptor.getMessage());
-        if (problemDescriptor.hasLineNumber()) {
-          LogMessageUtil.appendLineNumber(builder, problemDescriptor);
-        }
-        builder.append("</li>");
+      for (ProblemDescriptor problem : problems) {
+        builder.append("<li>");
+        toString(problem, builder).append("</li>");
       }
       builder.append("</ul>");
       return builder.toString();

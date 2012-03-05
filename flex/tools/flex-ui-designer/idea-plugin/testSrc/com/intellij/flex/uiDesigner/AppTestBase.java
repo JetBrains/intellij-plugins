@@ -30,6 +30,7 @@ import com.intellij.peer.PeerFactory;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
 import junit.framework.AssertionFailedError;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -55,9 +56,11 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
 
     return testDir;
   }
-  
+
   protected final VirtualFile getSource(String relativePath) {
-    return getTestDir().findFileByRelativePath(relativePath);
+    VirtualFile file = getTestDir().findFileByRelativePath(relativePath);
+    assertNotNull(file);
+    return file;
   }
 
   @Override

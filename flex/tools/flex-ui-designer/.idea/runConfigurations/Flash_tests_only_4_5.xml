@@ -17,7 +17,9 @@
       <value defaultName="moduleWithDependencies" />
     </option>
     <envs />
-    <patterns />
+    <patterns>
+      <pattern testClass="com.intellij.flex.uiDesigner.MxmlTest.test4*" />
+    </patterns>
     <RunnerSettings RunnerId="Debug">
       <option name="DEBUG_PORT" value="60574" />
       <option name="TRANSPORT" value="0" />

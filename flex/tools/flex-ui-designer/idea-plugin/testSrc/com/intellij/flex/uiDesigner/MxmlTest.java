@@ -6,23 +6,19 @@ import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.StringBuilderSpinAllocator;
 import com.intellij.util.TripleFunction;
+import gnu.trove.THashSet;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.intellij.flex.uiDesigner.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.emptyArray;
-
 @Flex(version="4.5")
 public class MxmlTest extends MxmlTestBase {
   @Flex(platform=TargetPlatform.Mobile, version="4.6")
   public void testMobile() throws Exception {
     testFiles(DesignerTests.getVFile((DesignerTests.getTestDataPath() + "/src/mobile")));
-    assertThat(getLastProblems(), emptyArray());
   }
 
   public void testResolveResourceIfNameIsAmbiguous() throws Exception {
@@ -41,85 +37,57 @@ public class MxmlTest extends MxmlTestBase {
     testFile("ResourceDirective.mxml");
   }
 
-  public void test45() throws Exception {
+  private void init45And46Tests() {
     moduleInitializer = new TripleFunction<ModifiableRootModel, VirtualFile, List<String>, Void>() {
       @Override
-      public Void fun(ModifiableRootModel model, VirtualFile file, List<String> libs) {
+      public Void fun(ModifiableRootModel model, VirtualFile sourceDir, List<String> libs) {
         libs.add(getFudHome() + "/test-data-helper/target/test-data-helper.swc");
         final VirtualFile assetsDir = DesignerTests.getVFile("assets");
         model.addContentEntry(assetsDir).addSourceFolder(assetsDir, false);
+
+        THashSet<ProblemDescriptor> expectedProblems = new THashSet<ProblemDescriptor>();
+        TestDocumentProblemManager.setExpectedProblems(expectedProblems);
+        expectedProblems.add(new ProblemDescriptor("spark.components.supportClasses.TrackBase is abstract class",
+                                                   sourceDir.findFileByRelativePath("AbstractClass.mxml"), 3));
+        expectedProblems.add(new ProblemDescriptor("Default property not found for Rect", sourceDir.findFileByRelativePath("CannotFindDefaultProperty.mxml"), 2));
+
+        VirtualFile file = sourceDir.findFileByRelativePath("ClassProperty.mxml");
+        expectedProblems.add(new ProblemDescriptor("Invalid class value", file, 6));
+        expectedProblems.add(new ProblemDescriptor("Invalid class value", file, 11));
+
+        expectedProblems.add(new ProblemDescriptor("Unsupported embed asset type \"@Embed(source='/jazz.mp3')\"", sourceDir.findFileByRelativePath("Embed.mxml"), 3));
+
+        file = sourceDir.findFileByRelativePath("InvalidColorName.mxml");
+        expectedProblems.add(new ProblemDescriptor("Invalid color name invalidcolorname", file, 2));
+        expectedProblems.add(new ProblemDescriptor("Invalid numeric value", file, 3));
+        expectedProblems.add(new ProblemDescriptor("Invalid numeric value", file, 4));
+
+        expectedProblems.add(new ProblemDescriptor("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-72175\">Inline components are not supported</a>", sourceDir.findFileByRelativePath("ItemRendererAndMixDefaultExplicitContent.mxml"), 9));
+        expectedProblems.add(new ProblemDescriptor("Unresolved variable or type unresolvedData", sourceDir.findFileByRelativePath("ArrayOfPrimitives.mxml"), 10));
+
+        file = sourceDir.findFileByRelativePath("ChildrenTypeCheck.mxml");
+        expectedProblems.add(new ProblemDescriptor("Initializer for Group cannot be represented in text", file, 2));
+        expectedProblems.add(new ProblemDescriptor("Initializer for Container cannot be represented in text", file, 5));
+        expectedProblems.add(new ProblemDescriptor("Children of Accordion must be mx.core.INavigatorContent", file, 8));
         return null;
       }
     };
+  }
 
+  public void test45() throws Exception {
+    init45And46Tests();
     testFiles(getTestDir(), DesignerTests.getVFile(DesignerTests.getTestDataPath() + "/src/mx"));
-    
-    String[] problems = getLastProblems();
-    if (System.getProperty("testFile") != null) {
-      assertThat(problems, emptyArray());
-    }
-    else {
-      assertThat(problems,
-                 m("spark.components.supportClasses.TrackBase is abstract class (line: 3)"),
-                 m("Default property not found for Rect (line: 2)"),
-                 m("Invalid class value (line: 6)", "Invalid class value (line: 11)"),
-                 m("Unsupported embed asset type \"@Embed(source='/jazz.mp3')\" (line: 3)"),
-                 m("Invalid color name invalidcolorname (line: 2)", "Invalid numeric value (line: 3)", "Invalid numeric value (line: 4)"),
-                 m("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-72175\">Inline components are not supported</a> (line: 9)"),
-                 m("Unresolved variable or type unresolvedData (line: 10)"),
-                 m("Initializer for Group cannot be represented in text (line: 2)",
-                   "Initializer for Container cannot be represented in text (line: 5)",
-                   "Children of Accordion must be mx.core.INavigatorContent (line: 8)")
-      );
-    }
   }
 
   @Flex(version="4.6")
   public void test46() throws Exception {
+    init45And46Tests();
     testFiles(getTestDir(), DesignerTests.getVFile(DesignerTests.getTestDataPath() + "/src/mx"));
-
-    String[] problems = getLastProblems();
-    if (System.getProperty("testFile") != null) {
-      assertThat(problems, emptyArray());
-    }
-    else {
-      assertThat(problems,
-                 m("spark.components.supportClasses.TrackBase is abstract class (line: 3)"),
-                 m("Default property not found for Rect (line: 2)"),
-                 m("Invalid class value (line: 6)", "Invalid class value (line: 11)"),
-                 m("Unsupported embed asset type \"@Embed(source='/jazz.mp3')\" (line: 3)"),
-                 m("Invalid color name invalidcolorname (line: 2)", "Invalid numeric value (line: 3)", "Invalid numeric value (line: 4)"),
-                 m("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-72175\">Inline components are not supported</a> (line: 9)"),
-                 m("Unresolved variable or type unresolvedData (line: 10)"),
-                 m("Initializer for Group cannot be represented in text (line: 2)",
-                   "Initializer for Container cannot be represented in text (line: 5)",
-                   "Children of Accordion must be mx.core.INavigatorContent (line: 8)")
-      );
-    }
   }
 
   private void testFiles(VirtualFile... roots) throws Exception {
     Pair<VirtualFile[], VirtualFile[]> pair = computeFiles(getTestFiles(roots));
     testFiles(pair.first, pair.second);
-  }
-
-  private static String m(String... messages) {
-    final StringBuilder builder = StringBuilderSpinAllocator.alloc();
-    try {
-      builder.append("<b>Flex UI Designer</b><ul>");
-      for (String message : messages) {
-        builder.append("<li>").append(message).append("</li>");
-      }
-      builder.append("</ul>");
-      return builder.toString();
-    }
-    finally {
-      StringBuilderSpinAllocator.dispose(builder);
-    }
-  }
-
-  private static String m(String message) {
-    return "<b>Flex UI Designer</b><ul><li>" + message + "</li></ul>";
   }
 
   @Flex(version="4.1")
@@ -210,5 +178,11 @@ public class MxmlTest extends MxmlTestBase {
     public int compare(VirtualFile o1, VirtualFile o2) {
       return o1.getPath().compareTo(o2.getPath());
     }
+  }
+
+  @Override
+  protected void tearDown() throws Exception {
+    TestDocumentProblemManager.setExpectedProblems(null);
+    super.tearDown();
   }
 }
