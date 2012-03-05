@@ -19,6 +19,7 @@ import net.miginfocom.layout.UnitValue;
 import org.flyti.plexus.PlexusContainer;
 import org.flyti.plexus.PlexusManager;
 import org.jetbrains.ApplicationManager;
+import org.jetbrains.EntityLists;
 
 public class Main extends Sprite {
   private var invoked:Boolean;
@@ -31,6 +32,7 @@ public class Main extends Sprite {
   DocumentWindow;
   Grid;
   UnitValue;
+  EntityLists;
 
   public function Main() {
     init();

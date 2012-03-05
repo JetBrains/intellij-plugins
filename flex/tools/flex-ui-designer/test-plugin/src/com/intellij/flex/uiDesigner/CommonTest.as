@@ -36,6 +36,9 @@ public class CommonTest extends BaseTestCase {
   public function GenericMxmlSupport():void {
   }
 
+  public function IDEA_82026():void {
+  }
+
   public function DontWarnAboutEmptyPrimitiveDeclaration():void {
   }
 

@@ -23,7 +23,7 @@ public class DocumentFactoryManager {
     EntityLists.add(factories, factory);
   }
 
-  public function unregister(document:Document, evenIfReferenced:Boolean = false):void {
+  public function unregister(document:Document):void {
     var unregistered:Vector.<int> = new Vector.<int>();
     unregister3(document.documentFactory, false, unregistered);
     if (unregistered.length > 0) {

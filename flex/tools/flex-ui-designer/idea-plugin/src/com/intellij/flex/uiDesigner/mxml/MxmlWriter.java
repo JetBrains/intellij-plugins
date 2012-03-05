@@ -8,6 +8,7 @@ import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.FlexStateElementNames;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
+import com.intellij.javascript.flex.mxml.schema.MxmlBackedElementDescriptor;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
@@ -623,8 +624,15 @@ public class MxmlWriter {
     final AnnotationBackedDescriptor defaultDescriptor = parentDescriptor.getDefaultPropertyDescriptor();
     final boolean isXmlText = descriptor == null;
     if (defaultDescriptor == null) {
-      final JSClass jsClass = (JSClass)parentDescriptor.getDeclaration();
       final String className = parentDescriptor.getQualifiedName();
+      final JSClass jsClass;
+      if (parentDescriptor instanceof MxmlBackedElementDescriptor) {
+        jsClass = (JSClass)JSResolveUtil.findClassByQName(className, parentTag);
+      }
+      else {
+        jsClass = (JSClass)parentDescriptor.getDeclaration();
+      }
+
       final boolean isDirectContainerImpl = className.equals(FlexCommonTypeNames.ICONTAINER);
       if (isDirectContainerImpl || JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.ICONTAINER)) {
         if (isXmlText) {

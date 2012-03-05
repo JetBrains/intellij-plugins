@@ -12,7 +12,7 @@ public final class EntityLists {
       }
     }
     else if (id > size) {
-      throw new IllegalOperationError("Cannot add " + entity + " to " + list + " because id " + id + " is greater than list size (" + size + ")");
+      list.length = id + 1;
     }
 
     list[id] = entity;
