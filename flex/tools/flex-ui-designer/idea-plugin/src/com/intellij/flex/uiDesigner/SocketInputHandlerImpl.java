@@ -495,7 +495,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
       amfOut.write(property.getUnescapedValue());
     }
 
-    amfOut.getByteArrayOut().writeTo(amfOut);
+    amfOut.getByteArrayOut().writeTo(out);
   }
 
   private void getBitmapData() throws IOException {
