@@ -27,16 +27,19 @@ public class MxmlTodoIndexer extends XmlTodoIndexer {
   @Override
   public Map<TodoIndexEntry, Integer> map(final FileContent inputData) {
     final Map<TodoIndexEntry, Integer> map = new THashMap<TodoIndexEntry, Integer>(super.map(inputData));
-    XmlBackedJSClassImpl.visitInjectedFiles((XmlFile)inputData.getPsiFile(), new JSResolveUtil.JSInjectedFilesVisitor() {
-      @Override
-      protected void process(JSFile file) {
-        VirtualFile injectedFile = file.getViewProvider().getVirtualFile();
-        final DataIndexer<TodoIndexEntry, Integer, FileContent> indexer = IdTableBuilding.getTodoIndexer(file.getFileType(), injectedFile);
-        if (indexer != null) {
-          map.putAll(indexer.map(new FileContentImpl(injectedFile, file.getText(), null)));
-        }
-      }
-    }, false);
+    XmlBackedJSClassImpl.visitScriptTagInjectedFilesForIndexing((XmlFile)inputData.getPsiFile(),
+                                                                new JSResolveUtil.JSInjectedFilesVisitor() {
+                                                                  @Override
+                                                                  protected void process(JSFile file) {
+                                                                    VirtualFile injectedFile = file.getViewProvider().getVirtualFile();
+                                                                    final DataIndexer<TodoIndexEntry, Integer, FileContent> indexer =
+                                                                      IdTableBuilding.getTodoIndexer(file.getFileType(), injectedFile);
+                                                                    if (indexer != null) {
+                                                                      map.putAll(indexer.map(
+                                                                        new FileContentImpl(injectedFile, file.getText(), null)));
+                                                                    }
+                                                                  }
+                                                                }, false);
     return map;
   }
 }

@@ -77,7 +77,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
   }
 
   private static void process(XmlFile file, final Consumer<PsiElement> consumer, boolean isPhysical) {
-    XmlBackedJSClassImpl.visitInjectedFiles(file, new JSResolveUtil.JSInjectedFilesVisitor() {
+    XmlBackedJSClassImpl.visitScriptTagInjectedFilesForIndexing(file, new JSResolveUtil.JSInjectedFilesVisitor() {
       @Override
       protected void process(JSFile file) {
         ResolveState state = ResolveState.initial().put(XmlBackedJSClassImpl.requestingToProcessMembers, Boolean.TRUE);
