@@ -18,6 +18,9 @@ abstract class Context implements MxmlObjectReferenceProvider {
 
   protected String childrenType;
 
+  @Nullable
+  String processingPropertyName;
+
   Scope getParentScope() {
     return parentScope;
   }
@@ -72,11 +75,6 @@ abstract class Context implements MxmlObjectReferenceProvider {
   
   public void markCssRulesetDefined() {
     cssRulesetDefined = true;
-  }
-
-  public void setMxmlObjectReference(MxmlObjectReference mxmlObjectReference) {
-    assert this.mxmlObjectReference == null;
-    this.mxmlObjectReference = mxmlObjectReference;
   }
 
   public int getOrAllocateId() {

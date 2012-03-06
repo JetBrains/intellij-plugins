@@ -1,7 +1,9 @@
 package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
-import com.intellij.flex.uiDesigner.io.*;
+import com.intellij.flex.uiDesigner.io.ByteRange;
+import com.intellij.flex.uiDesigner.io.ByteRangeMarker;
+import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PropertyKind;
 import com.intellij.javascript.flex.FlexReferenceContributor.StateReference;
 import com.intellij.javascript.flex.FlexStateElementNames;
@@ -9,7 +11,6 @@ import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
@@ -193,16 +194,20 @@ class StateWriter {
       }
     }
 
+    if (parentContext.processingPropertyName != null) {
+      writer.property("propertyName").stringReference(parentContext.processingPropertyName);
+    }
+
     writer.property(POSITION).stringReference(position);
     
     writer.getBlockOut().endRange(override.dataRange);
     return override;
   }
 
-  public boolean checkStateSpecificPropertyValue(MxmlWriter mxmlWriter, PropertyProcessor propertyProcessor, XmlElement element,
+  public boolean checkStateSpecificPropertyValue(MxmlWriter mxmlWriter, PropertyProcessor propertyProcessor,
                                                  XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor,
                                                  @NotNull Context context, @NotNull MxmlObjectReferenceProvider objectReferenceProvider) {
-    PsiReference[] references = element.getReferences();
+    PsiReference[] references = valueProvider.getElement().getReferences();
     if (references.length < 2) {
       return false;
     }
@@ -230,7 +235,7 @@ class StateWriter {
           filteredStates.add(state);
         }
         else {
-          MxmlWriter.LOG.warn("Skip " + element.getText() + " from " + state.name + " " +
+          MxmlWriter.LOG.warn("Skip " + valueProvider.getElement().getText() + " from " + state.name + " " +
                               "due to element parent object included only in " + includeInStates);
         }
       }
@@ -245,7 +250,7 @@ class StateWriter {
 
     ValueWriter valueWriter = null;
     try {
-      valueWriter = propertyProcessor.process(element, valueProvider, descriptor, objectReferenceProvider);
+      valueWriter = propertyProcessor.process(valueProvider.getElement(), valueProvider, descriptor, objectReferenceProvider);
     }
     catch (InvalidPropertyException ignored) {
 
@@ -273,7 +278,7 @@ class StateWriter {
     }
 
     if (propertyKind.isComplex()) {
-      mxmlWriter.processPropertyTagValue((XmlTag)element, context, propertyKind);
+      mxmlWriter.processPropertyTagValue(descriptor, (XmlTag)valueProvider.getElement(), context, propertyKind);
     }
 
     override.targetId = context.getOrAllocateId();

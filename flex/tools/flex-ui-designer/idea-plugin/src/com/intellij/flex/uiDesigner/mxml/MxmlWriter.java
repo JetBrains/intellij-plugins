@@ -209,11 +209,10 @@ public class MxmlWriter {
           // skip
           LOG.warn("Skip " + descriptor.getName() + " in " + tag.getText() + " due to IDEA-73453");
         }
-        else if (hasStates &&
-                 stateWriter
-                   .checkStateSpecificPropertyValue(this, propertyProcessor, attribute, valueProviderFactory.create(attribute), descriptor,
-                                                    context,
-                                                    tagAttributeProcessContext.getEffectiveObjectReferenceProvider(context))) {
+        else if (hasStates && stateWriter.checkStateSpecificPropertyValue(this, propertyProcessor,
+                                                                          valueProviderFactory.create(attribute), descriptor, context,
+                                                                          tagAttributeProcessContext.getEffectiveObjectReferenceProvider(
+                                                                            context))) {
           // skip
         }
         else {
@@ -439,13 +438,14 @@ public class MxmlWriter {
   }
 
   private void processPropertyTag(XmlTag tag, AnnotationBackedDescriptor annotationBackedDescriptor, @NotNull Context parentContext) {
-    if (hasStates && stateWriter.checkStateSpecificPropertyValue(this, propertyProcessor, tag, valueProviderFactory.create(tag),
-                                                                 annotationBackedDescriptor, parentContext, parentContext)) {
+    if (hasStates &&
+        stateWriter.checkStateSpecificPropertyValue(this, propertyProcessor, valueProviderFactory.create(tag), annotationBackedDescriptor,
+                                                    parentContext, parentContext)) {
       return;
     }
     final PropertyKind propertyKind = writeProperty(tag, valueProviderFactory.create(tag), annotationBackedDescriptor, parentContext, parentContext);
     if (propertyKind.isComplex()) {
-      processPropertyTagValue(tag, parentContext, propertyKind);
+      processPropertyTagValue(annotationBackedDescriptor, tag, parentContext, propertyKind);
     }
   }
 
@@ -457,8 +457,13 @@ public class MxmlWriter {
   }
 
   // process tag value, opposite to processTagChildren expects only ClassBackedSubTag or XmlText (attributes already processed or isn't expected)
-  void processPropertyTagValue(final XmlTag tag, @NotNull final Context parentContext, @Nullable final PropertyKind propertyKind) {
-    processTagChildren(tag, parentContext, null, false, propertyKind != null && propertyKind.isList() ? propertyKind : null);
+  void processPropertyTagValue(@Nullable AnnotationBackedDescriptor descriptor, @NotNull XmlTag tag, @NotNull Context parentContext, @Nullable PropertyKind propertyKind) {
+    PropertyKind listKind = propertyKind != null && propertyKind.isList() ? propertyKind : null;
+    if (listKind != null && descriptor != null) {
+      parentContext.processingPropertyName = descriptor.getName();
+    }
+    processTagChildren(tag, parentContext, null, false, listKind);
+    parentContext.processingPropertyName = null;
   }
 
   private boolean processClassBackedSubTag(final XmlTag tag, final ClassBackedElementDescriptor descriptor, @Nullable final Context parentContext,
@@ -574,7 +579,7 @@ public class MxmlWriter {
           }
           else {
             StaticObjectContext context = writer.createStaticContext(null, -1);
-            processPropertyTagValue(tag, context, null);
+            processPropertyTagValue(null, tag, context, null);
             objectTableSize = context.getScope().referenceCounter;
           }
 
