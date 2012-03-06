@@ -17,7 +17,7 @@ public class EmbedSwfManager extends EmbedAssetManager<SwfAssetInfo> {
     }
 
     assetCounter.swfCount++;
-    final int id = allocateId();
+    final int id = idPool.allocate();
     add(new SwfAssetInfo(file, symbolName, id));
     return id;
   }

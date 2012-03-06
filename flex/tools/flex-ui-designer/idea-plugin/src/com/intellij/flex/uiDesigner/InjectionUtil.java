@@ -95,7 +95,7 @@ public final class InjectionUtil {
   public static VirtualFile getReferencedFile(PsiElement element)
       throws InvalidPropertyException {
     //noinspection ConstantConditions
-    return getReferencedPsiFile(element).getVirtualFile();
+    return getReferencedPsiFile(element, false).getVirtualFile();
   }
 
   @NotNull

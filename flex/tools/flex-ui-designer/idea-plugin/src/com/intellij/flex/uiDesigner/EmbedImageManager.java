@@ -17,7 +17,7 @@ public class EmbedImageManager extends EmbedAssetManager<ImageAssetInfo> {
     }
 
     assetCounter.imageCount++;
-    final int id = allocateId();
+    final int id = idPool.allocate();
     add(new ImageAssetInfo(file, mimeType, id));
     return id;
   }

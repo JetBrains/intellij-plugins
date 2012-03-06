@@ -406,7 +406,7 @@ public class CssWriter {
     ASTNode valueNode = node.findChildByType(CssElementTypes.CSS_TERM_LIST).getFirstChildNode().getFirstChildNode();
     // ClassReference(null);
     if (valueNode instanceof XmlToken) {
-      assert valueNode.getText().equals("null");
+      assert StringUtil.equals(valueNode.getChars(), "null");
       propertyOut.write(Amf3Types.NULL);
     }
     else {
@@ -427,41 +427,45 @@ public class CssWriter {
   }
 
   private void writeEmbed(CssFunction cssFunction) throws InvalidPropertyException {
-    CssTerm[] terms = PsiTreeUtil.getChildrenOfType(PsiTreeUtil.getRequiredChildOfType(cssFunction, CssTermList.class), CssTerm.class);
     VirtualFile source = null;
     String symbol = null;
     String mimeType = null;
-    assert terms != null;
-    for (int i = 0, termsLength = terms.length; i < termsLength; i++) {
-      CssTerm term = terms[i];
-      final PsiElement firstChild = term.getFirstChild();
-      if (firstChild == null) {
-        throw new IllegalArgumentException("invalid property value");
-      }
-      else {
-        if (firstChild instanceof CssString) {
+
+    CssTermList termList = PsiTreeUtil.getRequiredChildOfType(cssFunction, CssTermList.class);
+    for (PsiElement child = termList.getFirstChild(); child != null; child = child.getNextSibling()) {
+      if (child instanceof CssTerm) {
+        PsiElement firstChild = child.getFirstChild();
+        if (firstChild instanceof XmlToken && ((XmlToken)firstChild).getTokenType() == CssElementTypes.CSS_IDENT) {
+          CharSequence name = firstChild.getNode().getChars();
+          @SuppressWarnings("ConstantConditions")
+          PsiElement valueElement = child.getLastChild().getFirstChild();
+          if (StringUtil.equals(name, "source")) {
+            source = InjectionUtil.getReferencedFile(valueElement);
+          }
+          else {
+            String value = ((CssString)valueElement).getValue();
+            if (StringUtil.equals(name, "symbol")) {
+              symbol = value;
+            }
+            else if (StringUtil.equals(name, "mimeType")) {
+              mimeType = value;
+            }
+            else {
+              LOG.warn("unsupported embed param: " + name + "=" + value);
+            }
+          }
+        }
+        else if (firstChild instanceof CssString) {
           source = InjectionUtil.getReferencedFile(firstChild);
         }
-        else if (firstChild instanceof XmlToken && ((XmlToken)firstChild).getTokenType() == CssElementTypes.CSS_IDENT) {
-          String name = firstChild.getText();
-          if (name.equals("source")) {
-            source = InjectionUtil.getReferencedFile(terms[++i].getFirstChild());
-          }
-          else if (name.equals("symbol")) {
-            //noinspection ConstantConditions
-            symbol = ((CssString)terms[++i].getFirstChild()).getValue();
-          }
-          else if (name.equals("mimeType")) {
-            //noinspection ConstantConditions
-            mimeType = ((CssString)terms[++i].getFirstChild()).getValue();
-          }
+        else {
+          LOG.warn("unsupported embed statement: " + cssFunction.getNode().getChars());
         }
       }
     }
 
     if (source == null) {
-      throw new InvalidPropertyException(cssFunction, FlashUIDesignerBundle
-        .message("embed.source.not.specified", cssFunction.getText()));
+      throw new InvalidPropertyException(cssFunction, FlashUIDesignerBundle.message("embed.source.not.specified", cssFunction.getText()));
     }
 
     final int fileId;
