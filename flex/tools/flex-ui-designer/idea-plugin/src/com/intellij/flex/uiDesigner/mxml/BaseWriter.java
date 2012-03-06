@@ -1,13 +1,12 @@
 package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.AssetCounter;
-import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
+import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.javascript.flex.FlexMxmlLanguageAttributeNames;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.xml.util.ColorSampleLookupValue;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -26,7 +25,7 @@ final class BaseWriter {
   private final PrimitiveAmfOutputStream out;
 
   private final Scope rootScope = new Scope();
-  private int preallocatedId = -1;
+  final NullContext nullContext;
 
   private final AssetCounter assetCounter;
 
@@ -42,15 +41,12 @@ final class BaseWriter {
 
     assert blockOut.getNextMarkerIndex() == 0;
     startPosition = out.size();
+
+    nullContext = new NullContext(rootScope);
   }
 
   public AssetCounter getAssetCounter() {
     return assetCounter;
-  }
-
-  @NotNull
-  public Scope getRootScope() {
-    return rootScope;
   }
 
   public PrimitiveAmfOutputStream getOut() {
@@ -62,37 +58,29 @@ final class BaseWriter {
   }
 
   public int getPreallocatedId() {
-    return preallocatedId;
+    return nullContext.id;
   }
 
   // 4
   public int preallocateIdIfNeed() {
-    if (!isIdPreallocated()) {
-      preallocatedId = rootScope.referenceCounter++;
-    }
-
-    return preallocatedId;
+    return nullContext.getOrAllocateId();
   }
 
   public boolean isIdPreallocated() {
-    return preallocatedId != -1;
-  }
-
-  public void resetPreallocatedId() {
-    preallocatedId = -1;
+    return nullContext.getId() != -1;
   }
 
   public StaticObjectContext createStaticContext(@Nullable Context parentContext, int referencePosition) {
     if (parentContext == null || parentContext.getBackSibling() == null) {
-      return new StaticObjectContext(referencePosition, out, preallocatedId, rootScope);
+      return new StaticObjectContext(referencePosition, out, nullContext.getId(), rootScope);
     }
     else {
-      return parentContext.getBackSibling().reinitialize(referencePosition, preallocatedId);
+      return parentContext.getBackSibling().reinitialize(referencePosition, nullContext.getId());
     }
   }
 
   public DynamicObjectContext createDynamicObjectContext(@Nullable MxmlObjectReference mxmlObjectReference) {
-    return new DynamicObjectContext(preallocatedId, rootScope, mxmlObjectReference);
+    return new DynamicObjectContext(nullContext, mxmlObjectReference);
   }
 
   public void resetAfterMessage() {
@@ -109,10 +97,6 @@ final class BaseWriter {
 
   public int allocateAbsoluteStaticObjectId() {
     return rootScope.referenceCounter++;
-  }
-
-  public int getObjectOrFactoryId(@Nullable Context context) {
-    return context == null ? preallocateIdIfNeed() : context.getOrAllocateId();
   }
 
   public void endMessage(ProjectComponentReferenceCounter projectComponentReferenceCounter) throws IOException {

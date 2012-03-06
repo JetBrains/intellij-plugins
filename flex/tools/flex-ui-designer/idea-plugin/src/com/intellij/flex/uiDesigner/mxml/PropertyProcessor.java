@@ -407,7 +407,7 @@ class PropertyProcessor implements ValueWriter {
       // see valArr in EmbedSwfAndImageFromCss
       out.write(AmfExtendedTypes.MXML_ARRAY);
       mxmlWriter.processTagChildren(tag, mxmlWriter.processIdAttributeOfFxTag(tag, parentContext, allowIncludeInExludeFrom), parentContext,
-                                    false, ARRAY, false);
+                                    false, ARRAY);
       return true;
     }
     else if (CodeContext.AS3_VEC_VECTOR_QUALIFIED_NAME.equals(type)) {
@@ -886,7 +886,7 @@ class PropertyProcessor implements ValueWriter {
   }
 
   private void writeNonProjectUnreferencedClassFactory(String className) {
-    int reference = writer.getRootScope().referenceCounter++;
+    int reference = writer.allocateAbsoluteStaticObjectId();
     classFactoryMap.put(className, reference);
     writer.referableHeader(reference).newInstance(FlexCommonTypeNames.CLASS_FACTORY, 1, false).classReference(className);
   }

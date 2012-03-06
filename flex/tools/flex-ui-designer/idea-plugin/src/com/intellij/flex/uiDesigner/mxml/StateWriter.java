@@ -122,8 +122,8 @@ class StateWriter {
     }
   }
 
-  public void applyItemAutoDestruction(@Nullable Context context, Context parentContext) {
-    if (context == null) {
+  public void applyItemAutoDestruction(@NotNull Context context, Context parentContext) {
+    if (context instanceof NullContext) {
       autoItemDestruction = true;
       return;
     }
@@ -201,7 +201,7 @@ class StateWriter {
 
   public boolean checkStateSpecificPropertyValue(MxmlWriter mxmlWriter, PropertyProcessor propertyProcessor, XmlElement element,
                                                  XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor,
-                                                 @Nullable Context context, @NotNull MxmlObjectReferenceProvider objectReferenceProvider) {
+                                                 @NotNull Context context, @NotNull MxmlObjectReferenceProvider objectReferenceProvider) {
     PsiReference[] references = element.getReferences();
     if (references.length < 2) {
       return false;
@@ -273,12 +273,11 @@ class StateWriter {
     }
 
     if (propertyKind.isComplex()) {
-      assert context != null;
       mxmlWriter.processPropertyTagValue((XmlTag)element, context, propertyKind);
     }
 
-    override.targetId = writer.getObjectOrFactoryId(context);
-    if (pendingFirstSetProperty == null && context == null) {
+    override.targetId = context.getOrAllocateId();
+    if (pendingFirstSetProperty == null && context instanceof NullContext) {
       pendingFirstSetProperty = override;
     }
 
@@ -291,8 +290,7 @@ class StateWriter {
     return true;
   }
 
-  public StaticObjectContext createContextForStaticBackSibling(boolean allowIncludeInExludeFrom, int referencePosition,
-                                                               @Nullable Context parentContext) {
+  public StaticObjectContext createContextForStaticBackSibling(boolean allowIncludeInExludeFrom, int referencePosition, @Nullable Context parentContext) {
     assert referencePosition != -1;
     if (allowIncludeInExludeFrom) {
       assert parentContext != null;
@@ -300,8 +298,9 @@ class StateWriter {
       // reset due to new backsibling
       resetActiveAddItems(parentContext.activeAddItems);
       if (parentContext.getBackSibling() == null) {
-        parentContext.setBackSibling(new StaticObjectContext(referencePosition, writer.getOut(), backSiblingId,
-                                                             parentContext.getScope()));
+        StaticObjectContext sibling = new StaticObjectContext(referencePosition, writer.getOut(), backSiblingId,
+                                                              parentContext.getScope());
+        parentContext.setBackSibling(sibling);
       }
       else {
         parentContext.getBackSibling().reinitialize(referencePosition, backSiblingId);
@@ -370,7 +369,7 @@ class StateWriter {
       int objectInstanceReference = parentContext.getScope().referenceCounter++;
       context.setId(objectInstanceReference);
       context.referenceInitialized();
-      referenceInstanceReference = writer.getRootScope().referenceCounter++;
+      referenceInstanceReference = writer.allocateAbsoluteStaticObjectId();
       context.setId(referenceInstanceReference);
 
       writeDeferredInstanceFromObjectReference(propertyName, objectInstanceReference,

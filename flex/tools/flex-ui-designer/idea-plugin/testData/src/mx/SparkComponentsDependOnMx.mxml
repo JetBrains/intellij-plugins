@@ -8,7 +8,6 @@
     </DynamicStreamingVideoSource>
   </VideoPlayer>
 
-
   <!-- vector as explicit property -->
   <Label id="lbl" text="test" fontSize="332" creationComplete="fader.play();">
     <!-- mouseUpEffect is not working -->

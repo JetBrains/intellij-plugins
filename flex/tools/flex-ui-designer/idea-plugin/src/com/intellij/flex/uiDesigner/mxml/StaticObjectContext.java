@@ -27,11 +27,6 @@ class StaticObjectContext extends Context {
   }
 
   @Override
-  Scope getParentScope() {
-    return parentScope;
-  }
-
-  @Override
   Scope getScope() {
     return parentScope;
   }

@@ -18,7 +18,9 @@ abstract class Context implements MxmlObjectReferenceProvider {
 
   protected String childrenType;
 
-  abstract Scope getParentScope();
+  Scope getParentScope() {
+    return parentScope;
+  }
 
   abstract void referenceInitialized();
 
@@ -69,7 +71,6 @@ abstract class Context implements MxmlObjectReferenceProvider {
   }
   
   public void markCssRulesetDefined() {
-    assert !cssRulesetDefined;
     cssRulesetDefined = true;
   }
 
@@ -86,7 +87,6 @@ abstract class Context implements MxmlObjectReferenceProvider {
 
     return id;
   }
-
 
   public MxmlObjectReference getMxmlObjectReference() {
     if (mxmlObjectReference == null) {
