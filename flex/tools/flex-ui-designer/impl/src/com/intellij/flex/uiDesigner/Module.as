@@ -9,10 +9,11 @@ import flash.system.ApplicationDomain;
 import org.jetbrains.Identifiable;
 
 public final class Module implements Identifiable, ModuleContext {
-  public function Module(id:int, librarySet:LibrarySet, isApp:Boolean, localStyleHolders:Vector.<LocalStyleHolder>) {
+  public function Module(id:int, project:Project, librarySet:LibrarySet, isApp:Boolean, localStyleHolders:Vector.<LocalStyleHolder>) {
     _isApp = isApp;
     _localStyleHolders = localStyleHolders;
     _librarySet = librarySet;
+    _project = project;
 
     _id = id;
   }
@@ -77,15 +78,6 @@ public final class Module implements Identifiable, ModuleContext {
     }
 
     return _inlineCssStyleDeclarationClass;
-  }
-
-  private var _documentFactoryClass:Class;
-  public function get documentFactoryClass():Class {
-    if (_documentFactoryClass == null) {
-      _documentFactoryClass = getClass("com.intellij.flex.uiDesigner.flex.FlexDocumentFactory");
-    }
-
-    return _documentFactoryClass;
   }
 
   private var _deferredInstanceFromBytesClass:Class;

@@ -151,8 +151,8 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
 
   private function registerModule(input:IDataInput):void {
     stringRegistry.readStringTable(input);
-    moduleManager.register(input.readUnsignedShort(), projectManager.getById(input.readUnsignedShort()), input.readBoolean(),
-                           libraryManager.getById(input.readUnsignedShort()), input.readObject());
+    moduleManager.register(new Module(input.readUnsignedShort(), projectManager.getById(input.readUnsignedShort()),
+                                      libraryManager.getById(input.readUnsignedShort()), input.readBoolean(), input.readObject()));
   }
 
   private function unregisterModule(input:IDataInput, callbackId:int):void {

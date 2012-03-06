@@ -258,8 +258,8 @@ public class Client implements Disposable {
 
       out.writeShort(registeredModules.add(moduleInfo));
       writeId(project);
-      out.write(moduleInfo.isApp());
       out.writeShort(moduleInfo.getLibrarySet().getId());
+      out.write(moduleInfo.isApp());
       out.write(moduleInfo.getLocalStyleHolders(), "lsh", true);
       hasError = false;
     }

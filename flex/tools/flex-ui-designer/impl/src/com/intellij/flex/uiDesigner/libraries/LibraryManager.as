@@ -45,7 +45,9 @@ public class LibraryManager {
   }
 
   public function getById(id:int):LibrarySet {
-    return librarySets[id];
+    var librarySet:LibrarySet = librarySets[id];
+    assert(librarySet != null);
+    return librarySet;
   }
 
   public function unregister(librarySet:LibrarySet):void {
