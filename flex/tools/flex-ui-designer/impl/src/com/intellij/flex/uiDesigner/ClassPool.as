@@ -63,7 +63,7 @@ public class ClassPool {
       doFill(swfData, loader);
     }
     else {
-      libraryManager.resolve(new <LibrarySet>[librarySet], doFill, swfData, loader);
+      libraryManager.resolve(librarySet, doFill, swfData, loader);
     }
   }
 

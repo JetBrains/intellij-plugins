@@ -19,7 +19,7 @@ import org.hamcrest.object.strictlyEqualTo;
 [Test(dir="css")]
 public class StyleTest extends BaseTestCase {
   public function emptyForCheckLibrariesCssDefaults():void {
-    var librarySets:Vector.<LibrarySet> = document.module.librarySets;
+    var librarySet:LibrarySet = document.module.librarySet;
 
     //var ll:Vector.<LibrarySetItem> = librarySets[0].items;
     //if (ll.length != 10) {
@@ -30,10 +30,10 @@ public class StyleTest extends BaseTestCase {
     //  throw new Error(s);
     //}
     
-    assertThat(librarySets, [{items: arrayWithSize(6)}]);
-    assertThat(librarySets, arrayWithSize(1));
+    assertThat(librarySet, {items: arrayWithSize(6)});
+    assertThat(librarySet, arrayWithSize(1));
     var library:Library;
-    for each (var l:Library in librarySets[0].items) {
+    for each (var l:Library in librarySet.items) {
       if (l.file.name.indexOf("spark") == 0 && l.inheritingStyles != null) {
         library = l;
         break;

@@ -72,10 +72,10 @@ internal class BaseTestCase implements TestCase {
   }
   
   protected final function getDefinition(name:String):Object {
-    var context:ModuleContextEx = document.module.context;
-    return context.getDefinition(name);
+    var module:Module = document.module;
+    return module.getDefinition(name);
     // compiler bug http://juick.com/develar/1301589
-    //return documentManager.document.module.context.getDefinition(name);
+    //return documentManager.document.module.getDefinition(name);
   }
   
   protected final function getClass(name:String):Class {

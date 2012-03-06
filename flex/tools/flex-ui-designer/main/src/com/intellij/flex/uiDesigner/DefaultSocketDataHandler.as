@@ -47,7 +47,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
   }
 
   private function moduleUnregistered(module:Module):void {
-    libraryManager.unregister(module.librarySets);
+    libraryManager.unregister(module.librarySet);
   }
 
   public function set socket(value:Socket):void {
@@ -151,9 +151,8 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
 
   private function registerModule(input:IDataInput):void {
     stringRegistry.readStringTable(input);
-    var module:Module = new Module(input.readUnsignedShort(), projectManager.getById(input.readUnsignedShort()), input.readBoolean(),
-                                   libraryManager.idsToInstances(input.readObject()), input.readObject());
-    moduleManager.register(module);
+    moduleManager.register(input.readUnsignedShort(), projectManager.getById(input.readUnsignedShort()), input.readBoolean(),
+                           libraryManager.getById(input.readUnsignedShort()), input.readObject());
   }
 
   private function unregisterModule(input:IDataInput, callbackId:int):void {

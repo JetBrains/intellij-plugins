@@ -48,29 +48,19 @@ public class LibraryManager {
     return librarySets[id];
   }
 
-  public function idsToInstances(ids:Vector.<int>):Vector.<LibrarySet> {
-    var result:Vector.<LibrarySet> = new Vector.<LibrarySet>(ids.length, true);
-    for (var i:int = 0, n:int = ids.length; i < n; i++) {
-      result[i] = librarySets[ids[i]];
-    }
-    return result;
-  }
-  
-  public function unregister(librarySets:Vector.<LibrarySet>):void {
+  public function unregister(librarySet:LibrarySet):void {
     var unregistered:Vector.<int>;
-    for each (var librarySet:LibrarySet in librarySets) {
-      do {
-        librarySet.usageCounter--;
-        if (librarySet.usageCounter == 0 && !ApplicationManager.instance.unitTestMode) {
-          unregisterLibrarySet(librarySet);
-          if (unregistered == null) {
-            unregistered = new Vector.<int>();
-          }
-          unregistered[unregistered.length] = librarySet.id;
+    do {
+      librarySet.usageCounter--;
+      if (librarySet.usageCounter == 0 && !ApplicationManager.instance.unitTestMode) {
+        unregisterLibrarySet(librarySet);
+        if (unregistered == null) {
+          unregistered = new Vector.<int>();
         }
+        unregistered[unregistered.length] = librarySet.id;
       }
-      while ((librarySet = librarySet.parent) != null);
     }
+    while ((librarySet = librarySet.parent) != null);
 
     if (unregistered != null) {
       Server.instance.unregisterLibrarySets(unregistered);
@@ -83,30 +73,28 @@ public class LibraryManager {
     librarySets[librarySet.id] = null;
   }
 
-  public function resolve(librarySets:Vector.<LibrarySet>, readyHandler:Function, ...readyHandlerArguments):void {
+  public function resolve(librarySet:LibrarySet, readyHandler:Function, ...readyHandlerArguments):void {
     var queue:LoaderQueue;
-    for each (var librarySet:LibrarySet in librarySets) {
-      do {
-        if (!librarySet.isLoaded) {
-          if (queue == null) {
-            queue = new LoaderQueue(readyHandler, readyHandlerArguments);
-          }
+    do {
+      if (!librarySet.isLoaded) {
+        if (queue == null) {
+          queue = new LoaderQueue(readyHandler, readyHandlerArguments);
+        }
 
-          queue.count++;
+        queue.count++;
 
-          var queueList:Vector.<LoaderQueue> = resolveQueue[librarySet];
-          if (queueList == null) {
-            queueList = new Vector.<LoaderQueue>(1);
-            queueList[0] = queue;
-            resolveQueue[librarySet] = queueList;
-          }
-          else {
-            queueList[queueList.length] = queue;
-          }
+        var queueList:Vector.<LoaderQueue> = resolveQueue[librarySet];
+        if (queueList == null) {
+          queueList = new Vector.<LoaderQueue>(1);
+          queueList[0] = queue;
+          resolveQueue[librarySet] = queueList;
+        }
+        else {
+          queueList[queueList.length] = queue;
         }
       }
-      while ((librarySet = librarySet.parent) != null);
     }
+    while ((librarySet = librarySet.parent) != null);
 
     if (queue == null) {
       readyHandler.apply(null, readyHandlerArguments);

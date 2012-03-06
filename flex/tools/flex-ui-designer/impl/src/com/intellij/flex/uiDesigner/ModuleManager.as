@@ -1,4 +1,9 @@
 package com.intellij.flex.uiDesigner {
+import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
+import com.intellij.flex.uiDesigner.libraries.LibrarySet;
+
+import flash.utils.Dictionary;
+
 import org.jetbrains.EntityLists;
 import org.osflash.signals.ISignal;
 import org.osflash.signals.Signal;
@@ -14,8 +19,8 @@ public class ModuleManager {
     return _moduleUnregistered;
   }
 
-  public function register(module:Module):void {
-    EntityLists.add(elements, module);
+  public function register(id:int, project:Project, isApp:Boolean, librarySet:LibrarySet, localStyleHolders:Vector.<LocalStyleHolder>):void {
+    EntityLists.add(elements, new Module(id, librarySet, isApp, localStyleHolders));
   }
 
   public function getById(id:int):Module {

@@ -92,7 +92,7 @@ public class DocumentFactoryManager {
     factories[factory.id] = null;
 
     // clear module context document flex factory pool
-    var flexLibrarySet:FlexLibrarySet = factory.module.context.flexLibrarySet;
+    var flexLibrarySet:FlexLibrarySet = factory.module.flexLibrarySet;
     if (flexLibrarySet != null) {
       flexLibrarySet.documentUnregistered(factory.id);
     }

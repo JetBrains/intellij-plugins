@@ -84,9 +84,9 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   }
 
   private function render2(documentFactory:DocumentFactory, result:ActionCallback):void {
-    var context:ModuleContextEx = documentFactory.module.context;
+    var module:Module = documentFactory.module;
     if (!documentFactory.isPureFlash) {
-      var fillCallback:ActionCallback = context.flexLibrarySet.createFillCallback();
+      var fillCallback:ActionCallback = module.flexLibrarySet.createFillCallback();
       if (fillCallback != null) {
         fillCallback.doWhenDone(render2, documentFactory, result);
         //trace("as fillCallback");
@@ -95,13 +95,13 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     }
 
     if (documentFactory.document == null) {
-      if (context.librariesResolved) {
+      if (module.librarySet.isLoaded) {
         //trace("as librariesResolved");
         createAndRender(documentFactory, result);
       }
       else {
         //trace("as resolve");
-        libraryManager.resolve(documentFactory.module.librarySets, doOpenAfterResolveLibraries, documentFactory, result);
+        libraryManager.resolve(documentFactory.module.librarySet, doOpenAfterResolveLibraries, documentFactory, result);
       }
     }
     else if (doRender(documentFactory, documentFactory.document, result)) {
@@ -169,8 +169,8 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   }
 
   private static function createStyleManager(document:Document, module:Module):void {
-    if (module.context.styleManager == null) {
-      createStyleManagerForContext(module.context);
+    if (module.librarySet.styleManager == null) {
+      createStyleManagerForLibrarySet(module);
     }
 
     if (module.localStyleHolders == null) {
@@ -185,53 +185,50 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     }
   }
 
-  private static function createCssReader(context:ModuleContextEx, styleManager:StyleManagerEx):CssReader {
+  private static function createCssReader(context:Module, styleManager:StyleManagerEx):CssReader {
     var c:Class = context.getClass("com.intellij.flex.uiDesigner.css.CssReaderImpl");
     var cssReader:CssReader = new c();
     cssReader.styleManager = styleManager;
     return cssReader;
   }
 
-  private static function createChildStyleManager(context:ModuleContextEx):StyleManagerEx {
+  private static function createChildStyleManager(context:Module):StyleManagerEx {
     return new (context.getClass("com.intellij.flex.uiDesigner.css.ChildStyleManager"))(context.styleManager);
   }
   
-  private static function createStyleManagerForContext(context:ModuleContextEx):void {
+  private static function createStyleManagerForLibrarySet(module:Module):void {
     var inheritingStyleMapList:Vector.<Dictionary> = new Vector.<Dictionary>();
-    var styleManagerClass:Class = context.getClass("com.intellij.flex.uiDesigner.css.RootStyleManager");
-    context.styleManager = new styleManagerClass(inheritingStyleMapList, new StyleValueResolverImpl(context));
-    var cssReader:CssReader = createCssReader(context, context.styleManager);
+    var styleManagerClass:Class = module.getClass("com.intellij.flex.uiDesigner.css.RootStyleManager");
+    module.librarySet.styleManager = new styleManagerClass(inheritingStyleMapList, new StyleValueResolverImpl(module));
+    var cssReader:CssReader = createCssReader(module, module.styleManager);
     // FakeObjectProxy/FakeBooleanSetProxy/MergedCssStyleDeclaration find in list from 0 to end, then we add in list in reverse order
     // (because the library with index 4 overrides the library with index 2)
-    var librarySets:Vector.<LibrarySet> = context.librarySets;
-    for (var i:int = librarySets.length - 1; i > -1; i--) {
-      var librarySet:LibrarySet = librarySets[i];
-      do {
-        var libraries:Vector.<Library> = librarySet.items;
-        for (var j:int = libraries.length - 1; j > -1; j--) {
-          var library:Library = libraries[j];
-          if (library.inheritingStyles != null) {
-            inheritingStyleMapList.push(library.inheritingStyles);
-          }
+    var librarySet:LibrarySet = module.librarySet;
+    do {
+      var libraries:Vector.<Library> = librarySet.items;
+      for (var j:int = libraries.length - 1; j > -1; j--) {
+        var library:Library = libraries[j];
+        if (library.inheritingStyles != null) {
+          inheritingStyleMapList.push(library.inheritingStyles);
+        }
 
-          if (library.defaultsStyle != null) {
-            var virtualFile:VirtualFileImpl = VirtualFileImpl(library.file.createChild("defaults.css"));
-            virtualFile.stylesheet = library.defaultsStyle;
-            cssReader.read(library.defaultsStyle.rulesets, virtualFile);
-          }
+        if (library.defaultsStyle != null) {
+          var virtualFile:VirtualFileImpl = VirtualFileImpl(library.file.createChild("defaults.css"));
+          virtualFile.stylesheet = library.defaultsStyle;
+          cssReader.read(library.defaultsStyle.rulesets, virtualFile);
         }
       }
-      while ((librarySet = librarySet.parent) != null);
     }
+    while ((librarySet = librarySet.parent) != null);
 
     cssReader.finalizeRead();
     inheritingStyleMapList.fixed = true;
   }
 
   private static function createStyleManagerForModule(module:Module):void {
-    var styleManager:StyleManagerEx = createChildStyleManager(module.context);
+    var styleManager:StyleManagerEx = createChildStyleManager(module);
     module.styleManager = styleManager;
-    var cssReader:CssReader = createCssReader(module.context, styleManager);
+    var cssReader:CssReader = createCssReader(module, styleManager);
 
     var localStyleHolder:LocalStyleHolder = module.localStyleHolders[0];
     cssReader.read(localStyleHolder.getStylesheet(module.project).rulesets, localStyleHolder.file);
@@ -239,9 +236,9 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   }
 
   private static function createStyleManagerForAppDocument(document:Document, module:Module):void {
-    var styleManager:StyleManagerEx = createChildStyleManager(module.context);
+    var styleManager:StyleManagerEx = createChildStyleManager(module);
     document.styleManager = styleManager;
-    var cssReader:CssReader = createCssReader(module.context, styleManager);
+    var cssReader:CssReader = createCssReader(module, styleManager);
 
     var localStyleHolder:LocalStyleHolder;
     for each (localStyleHolder in module.localStyleHolders) {
@@ -264,7 +261,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       assert(stageForAdobeDummies != null, "Stage for Adobe dummies cannot be null");
       systemManager.initShared(stageForAdobeDummies, server, UncaughtErrorManager.instance);
     }
-    systemManager.init(module.project.window.stage, isPureFlash ? null : new flexModuleFactoryClass(document.styleManager, module.context.applicationDomain), UncaughtErrorManager.instance,
+    systemManager.init(module.project.window.stage, isPureFlash ? null : new flexModuleFactoryClass(document.styleManager, module.applicationDomain), UncaughtErrorManager.instance,
                        MainFocusManagerSB(module.project.window.focusManager), document.documentFactory);
     document.container = new DocumentContainer(systemManager);
   }

@@ -1,7 +1,6 @@
 package com.intellij.flex.uiDesigner.css {
 import com.intellij.flex.uiDesigner.DocumentFactory;
 import com.intellij.flex.uiDesigner.DocumentFactoryManager;
-import com.intellij.flex.uiDesigner.ModuleContextEx;
 import com.intellij.flex.uiDesigner.StringRegistry;
 import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContextImpl;
 import com.intellij.flex.uiDesigner.io.AmfExtendedTypes;
@@ -104,12 +103,11 @@ public final class Stylesheet {
   private static function readSkinClass(textOffset:int, input:IDataInput):CssDeclaration {
     const id:int = AmfUtil.readUInt29(input);
     var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance().getById(id);
-    var moduleContext:ModuleContextEx = documentFactory.module.context;
-    var flexLibrarySet:FlexLibrarySet = documentFactory.module.context.flexLibrarySet;
+    var flexLibrarySet:FlexLibrarySet = documentFactory.module.flexLibrarySet;
     var factory:Object = flexLibrarySet.getDocumentFactory(id);
     if (factory == null) {
       factory = new flexLibrarySet.documentFactoryClass(documentFactory, new DeferredInstanceFromBytesContextImpl(documentFactory,
-                                                                                                                 moduleContext.styleManager));
+                                                                                                                  documentFactory.module.styleManager));
       flexLibrarySet.putDocumentFactory(id, factory);
     }
 

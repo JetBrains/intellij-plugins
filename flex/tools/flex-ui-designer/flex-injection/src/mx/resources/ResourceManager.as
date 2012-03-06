@@ -77,10 +77,10 @@ public class ResourceManager extends EventDispatcher implements IResourceManager
   public function getResourceBundle(locale:String, bundleName:String):IResourceBundle {
     var bundleMap:Dictionary = localeMap[locale];
     var bundle:ResourceBundle;
-    const activeProjectId:int = resourceBundleProvider.activeProjectId;
+    //const activeProjectId:int = resourceBundleProvider.activeProjectId;
     if (bundleMap == null) {
       bundleMap = new Dictionary();
-      bundleMap[bundleMap] = new Dictionary();
+      //bundleMap[bundleMap] = new Dictionary();
       localeMap[locale] = bundleMap;
     }
     else {

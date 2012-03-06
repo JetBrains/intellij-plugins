@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner.libraries {
 import com.intellij.flex.uiDesigner.StringRegistry;
 import com.intellij.flex.uiDesigner.VirtualFile;
 import com.intellij.flex.uiDesigner.VirtualFileImpl;
+import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import com.intellij.flex.uiDesigner.css.Stylesheet;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
@@ -36,6 +37,15 @@ public class LibrarySet implements Identifiable {
     if (parent != null) {
       parent.registerUsage();
     }
+  }
+
+  private var _styleManager:StyleManagerEx;
+  public function get styleManager():StyleManagerEx {
+    return _styleManager;
+  }
+
+  public function set styleManager(value:StyleManagerEx):void {
+    _styleManager = value;
   }
 
   private var _id:int;

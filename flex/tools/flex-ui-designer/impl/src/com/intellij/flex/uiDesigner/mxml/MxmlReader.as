@@ -6,7 +6,7 @@ import com.intellij.flex.uiDesigner.DocumentReader;
 import com.intellij.flex.uiDesigner.DocumentReaderContext;
 import com.intellij.flex.uiDesigner.EmbedImageManager;
 import com.intellij.flex.uiDesigner.EmbedSwfManager;
-import com.intellij.flex.uiDesigner.ModuleContextEx;
+import com.intellij.flex.uiDesigner.Module;
 import com.intellij.flex.uiDesigner.StringRegistry;
 import com.intellij.flex.uiDesigner.UncaughtErrorManager;
 import com.intellij.flex.uiDesigner.css.CssDeclaration;
@@ -39,7 +39,7 @@ public class MxmlReader implements DocumentReader {
   //noinspection JSFieldCanBeLocal
   private const injectedASReader:InjectedASReader = new InjectedASReader();
 
-  protected var moduleContext:ModuleContextEx;
+  protected var module:Module;
   internal var context:DocumentReaderContext;
   private var styleManager:StyleManagerEx;
 
@@ -97,14 +97,14 @@ public class MxmlReader implements DocumentReader {
 
   private function doRead(context:DocumentReaderContext, isDocumentLevel:Boolean):Object {
     this.context = context;
-    moduleContext = ModuleContextEx(context.moduleContext);
+    module = Module(context.moduleContext);
     readObjectTableSize();
 
     var object:Object;
     switch (input.readByte()) {
       case Amf3Types.OBJECT:
         const fqn:String = stringRegistry.readNotNull(input);
-        object = context.instanceForRead || new (moduleContext.getClass(fqn))();
+        object = context.instanceForRead || new (module.getClass(fqn))();
         break;
 
       case AmfExtendedTypes.DOCUMENT_REFERENCE:
@@ -152,7 +152,7 @@ public class MxmlReader implements DocumentReader {
   }
 
   internal function readMxmlObjectFromClass(className:String, parent:Object = null):Object {
-    var clazz:Class = moduleContext.getClass(className);
+    var clazz:Class = module.getClass(className);
     return readObjectProperties(new clazz(), parent);
   }
 
@@ -344,13 +344,13 @@ public class MxmlReader implements DocumentReader {
           break;
 
         case AmfExtendedTypes.IMAGE:
-          propertyHolder[propertyName] = EmbedImageManager(moduleContext.project.getComponent(EmbedImageManager)).
-                  get(AmfUtil.readUInt29(input), moduleContext.getClassPool(FlexLibrarySet.IMAGE_POOL), moduleContext.project);
+          propertyHolder[propertyName] = EmbedImageManager(module.project.getComponent(EmbedImageManager)).
+                  get(AmfUtil.readUInt29(input), module.getClassPool(FlexLibrarySet.IMAGE_POOL), module.project);
           break;
 
         case AmfExtendedTypes.SWF:
-          propertyHolder[propertyName] = EmbedSwfManager(moduleContext.project.getComponent(EmbedSwfManager)).
-                  get(AmfUtil.readUInt29(input), moduleContext.getClassPool(FlexLibrarySet.SWF_POOL), moduleContext.project);
+          propertyHolder[propertyName] = EmbedSwfManager(module.project.getComponent(EmbedSwfManager)).
+                  get(AmfUtil.readUInt29(input), module.getClassPool(FlexLibrarySet.SWF_POOL), module.project);
           if (cssDeclaration != null) {
             cssDeclaration.type = CssPropertyType.EMBED;
           }
@@ -368,8 +368,8 @@ public class MxmlReader implements DocumentReader {
 
     if (deferredSetStyleProxy != null) {
       if (deferredSetStyleProxy.inlineCssRuleset != null) {
-        object.styleDeclaration = new moduleContext.inlineCssStyleDeclarationClass(deferredSetStyleProxy.inlineCssRuleset,
-            moduleContext.styleManager.styleValueResolver);
+        object.styleDeclaration = new module.inlineCssStyleDeclarationClass(deferredSetStyleProxy.inlineCssRuleset,
+            module.styleManager.styleValueResolver);
       }
 
       deferredSetStyleProxy.inlineCssRuleset = null;
@@ -420,7 +420,7 @@ public class MxmlReader implements DocumentReader {
 
   private function readDocumentFactory():Object {
     const id:int = AmfUtil.readUInt29(input);
-    var flexLibrarySet:FlexLibrarySet = moduleContext.flexLibrarySet;
+    var flexLibrarySet:FlexLibrarySet = module.flexLibrarySet;
     var factory:Object = flexLibrarySet.getDocumentFactory(id);
     if (factory == null) {
       var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance().getById(id);
@@ -435,19 +435,19 @@ public class MxmlReader implements DocumentReader {
     const id:int = AmfUtil.readUInt29(input);
     var data:ByteArray = new ByteArray();
     input.readBytes(data, 0, input.readUnsignedShort());
-    var factory:Object = new (moduleContext.getClass("com.intellij.flex.uiDesigner.flex.FlexComponentFactory"))(data, getOrCreateFactoryContext());
+    var factory:Object = new (module.getClass("com.intellij.flex.uiDesigner.flex.FlexComponentFactory"))(data, getOrCreateFactoryContext());
     saveReferredObject(id, factory);
     return factory;
   }
 
   private function readProjectClassReference():Class {
     const id:int = AmfUtil.readUInt29(input);
-    var classPool:ClassPool = moduleContext.getClassPool(FlexLibrarySet.VIEW_POOL);
+    var classPool:ClassPool = module.getClassPool(FlexLibrarySet.VIEW_POOL);
     var clazz:Class = classPool.getCachedClass(id);
     if (clazz == null) {
       clazz = classPool.getClass(id);
       var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance().getById(id);
-      clazz["initializer"] = new (moduleContext.getClass("com.intellij.flex.uiDesigner.flex.SparkViewInitializer"))(documentFactory, new DeferredInstanceFromBytesContextImpl(documentFactory, styleManager));
+      clazz["initializer"] = new (module.getClass("com.intellij.flex.uiDesigner.flex.SparkViewInitializer"))(documentFactory, new DeferredInstanceFromBytesContextImpl(documentFactory, styleManager));
     }
 
     return clazz;
@@ -478,13 +478,13 @@ public class MxmlReader implements DocumentReader {
   }
 
   private function readVector():Object {
-    var vectorClass:Class = moduleContext.getVectorClass(stringRegistry.readNotNull(input));
+    var vectorClass:Class = module.getVectorClass(stringRegistry.readNotNull(input));
     const length:int = input.readUnsignedShort();
     return readArrayOrVector(new vectorClass(length), length);
   }
 
   private function readMxmlVector():Object {
-    var vectorClass:Class = moduleContext.getVectorClass(stringRegistry.readNotNull(input));
+    var vectorClass:Class = module.getVectorClass(stringRegistry.readNotNull(input));
     const fixed:Boolean = input.readBoolean();
     const reference:int = input.readUnsignedShort();
     const length:int = input.readUnsignedShort();
@@ -587,16 +587,16 @@ public class MxmlReader implements DocumentReader {
         return readXml();
 
       case AmfExtendedTypes.OBJECT:
-        return readSimpleObject(new (moduleContext.getClass(stringRegistry.readNotNull(input)))());
+        return readSimpleObject(new (module.getClass(stringRegistry.readNotNull(input)))());
 
       case AmfExtendedTypes.CLASS_REFERENCE:
-        return moduleContext.applicationDomain.getDefinition(stringRegistry.readNotNull(input));
+        return module.applicationDomain.getDefinition(stringRegistry.readNotNull(input));
 
       case AmfExtendedTypes.TRANSIENT_ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES:
-        return new (moduleContext.getClass("com.intellij.flex.uiDesigner.flex.states.TransientArrayOfDeferredInstanceFromBytes"))(stateReader.readVectorOfDeferredInstanceFromBytes(this, input), getOrCreateFactoryContext());
+        return new (module.getClass("com.intellij.flex.uiDesigner.flex.states.TransientArrayOfDeferredInstanceFromBytes"))(stateReader.readVectorOfDeferredInstanceFromBytes(this, input), getOrCreateFactoryContext());
 
       case AmfExtendedTypes.PERMANENT_ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES:
-        return new (moduleContext.getClass("com.intellij.flex.uiDesigner.flex.states.PermanentArrayOfDeferredInstanceFromBytes"))(stateReader.readArrayOfDeferredInstanceFromBytes(this, input), getOrCreateFactoryContext());
+        return new (module.getClass("com.intellij.flex.uiDesigner.flex.states.PermanentArrayOfDeferredInstanceFromBytes"))(stateReader.readArrayOfDeferredInstanceFromBytes(this, input), getOrCreateFactoryContext());
 
       case AmfExtendedTypes.COLOR_STYLE:
         return input.readObject();
@@ -625,7 +625,7 @@ public class MxmlReader implements DocumentReader {
         input.readByte();
 
         if (e.errorID == 1069 && qualifierName == "resourceManager") {
-          qualifier = moduleContext.getClass("mx.resources.ResourceManager")["getInstance"]();
+          qualifier = module.getClass("mx.resources.ResourceManager")["getInstance"]();
         }
         else {
           //noinspection ExceptionCaughtLocallyJS
@@ -654,7 +654,7 @@ public class MxmlReader implements DocumentReader {
   }
 
   private function constructObject():Object {
-    var clazz:Class = moduleContext.getClass(stringRegistry.readNotNull(input));
+    var clazz:Class = module.getClass(stringRegistry.readNotNull(input));
     var argumentsLength:int = input.readByte();
 
     var dataLength:int;

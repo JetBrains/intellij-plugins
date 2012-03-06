@@ -8,7 +8,6 @@ import org.hamcrest.collection.emptyArray;
 import org.hamcrest.core.allOf;
 import org.hamcrest.core.isA;
 import org.hamcrest.core.not;
-import org.hamcrest.object.HasPropertiesMatcher;
 import org.hamcrest.object.equalTo;
 import org.hamcrest.object.instanceOf;
 import org.hamcrest.object.notNullValue;
@@ -99,7 +98,7 @@ public class CommonTest extends BaseTestCase {
   }
   
   public function ItemRendererAndMixDefaultExplicitContent():void {
-    var buttonBarButtonClass:Class = document.module.context.getClass("spark.components.ButtonBarButton");
+    var buttonBarButtonClass:Class = document.module.getClass("spark.components.ButtonBarButton");
     var m:Object = {itemRenderer: {generator: buttonBarButtonClass}};
     assertThat(app, [{}, {itemRenderer: {className: "AuxProjectMxmlItemRenderer"}}, m, m]);
   }

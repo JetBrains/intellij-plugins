@@ -1,17 +1,17 @@
 package com.intellij.flex.uiDesigner.css {
 import com.intellij.flex.uiDesigner.EmbedImageManager;
 import com.intellij.flex.uiDesigner.EmbedSwfManager;
-import com.intellij.flex.uiDesigner.ModuleContextEx;
+import com.intellij.flex.uiDesigner.Module;
 import com.intellij.flex.uiDesigner.flex.ClassReference;
 import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
 
 import org.flyti.plexus.PlexusManager;
 
 public class StyleValueResolverImpl implements StyleValueResolver {
-  private var moduleContext:ModuleContextEx;
+  private var module:Module;
 
-  public function StyleValueResolverImpl(moduleContenxt:ModuleContextEx) {
-    this.moduleContext = moduleContenxt;
+  public function StyleValueResolverImpl(module:Module) {
+    this.module = module;
   }
 
   private var _embedSwfManager:EmbedSwfManager;
@@ -34,15 +34,15 @@ public class StyleValueResolverImpl implements StyleValueResolver {
 
   public function resolve(propertyDescriptor:CssDeclaration):* {
     if (propertyDescriptor.value is ClassReferenceImpl) {
-      return moduleContext.getDefinition(ClassReference(propertyDescriptor.value).className);
+      return module.getDefinition(ClassReference(propertyDescriptor.value).className);
     }
     else if (propertyDescriptor is CssEmbedSwfDeclaration) {
-      return embedSwfManager.get(CssEmbedSwfDeclaration(propertyDescriptor).id, moduleContext.getClassPool(FlexLibrarySet.SWF_POOL),
-                                 moduleContext.project);
+      return embedSwfManager.get(CssEmbedSwfDeclaration(propertyDescriptor).id, module.getClassPool(FlexLibrarySet.SWF_POOL),
+                                 module.project);
     }
     else if (propertyDescriptor is CssEmbedImageDeclaration) {
-      return embedImageManager.get(CssEmbedImageDeclaration(propertyDescriptor).id, moduleContext.getClassPool(FlexLibrarySet.IMAGE_POOL),
-                                   moduleContext.project);
+      return embedImageManager.get(CssEmbedImageDeclaration(propertyDescriptor).id, module.getClassPool(FlexLibrarySet.IMAGE_POOL),
+                                   module.project);
     }
     else {
       return propertyDescriptor.value;

@@ -66,7 +66,7 @@ public final class DocumentFactory implements SerializedDocumentDataProvider, Do
   }
 
   public function get moduleContext():ModuleContext {
-    return module.context;
+    return module;
   }
 
   public function registerComponentDeclarationRangeMarkerId(component:Object, id:int):void {

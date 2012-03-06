@@ -143,8 +143,7 @@ public class LibraryManager implements Disposable {
       }
     }
 
-    final ModuleInfo moduleInfo = new ModuleInfo(module,
-      Collections.singletonList(librarySet == null ? flexLibrarySet : librarySet), ModuleInfoUtil.isApp(module));
+    final ModuleInfo moduleInfo = new ModuleInfo(module, librarySet == null ? flexLibrarySet : librarySet, ModuleInfoUtil.isApp(module));
     final ProjectComponentReferenceCounter projectComponentReferenceCounter = new ProjectComponentReferenceCounter();
     if (collectLocalStyleHolders) {
       // client.registerModule finalize it
@@ -314,17 +313,16 @@ public class LibraryManager implements Disposable {
   @Nullable
   public PropertiesFile getResourceBundleFile(String locale, String bundleName, ModuleInfo moduleInfo) {
     final Project project = moduleInfo.getElement().getProject();
-    for (LibrarySet librarySet : moduleInfo.getLibrarySets()) {
-      do {
-        PropertiesFile propertiesFile;
-        for (Library library : librarySet.getLibraries()) {
-          if (library.hasResourceBundles() && (propertiesFile = getResourceBundleFile(locale, bundleName, library, project)) != null) {
-            return propertiesFile;
-          }
+    LibrarySet librarySet = moduleInfo.getLibrarySet();
+    do {
+      PropertiesFile propertiesFile;
+      for (Library library : librarySet.getLibraries()) {
+        if (library.hasResourceBundles() && (propertiesFile = getResourceBundleFile(locale, bundleName, library, project)) != null) {
+          return propertiesFile;
         }
       }
-      while ((librarySet = librarySet.getParent()) != null);
     }
+    while ((librarySet = librarySet.getParent()) != null);
 
     // AS-273
     final Sdk sdk = FlexUtils.getSdkForActiveBC(moduleInfo.getModule());

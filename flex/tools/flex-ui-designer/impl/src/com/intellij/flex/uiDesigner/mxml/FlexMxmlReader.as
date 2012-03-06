@@ -31,11 +31,11 @@ public class FlexMxmlReader extends MxmlReader {
   }
 
   private function getMxNs():Namespace {
-    return Namespace(moduleContext.applicationDomain.getDefinition("mx.core.mx_internal"));
+    return Namespace(module.applicationDomain.getDefinition("mx.core.mx_internal"));
   }
 
   override protected function registerEffect(propertyName:String, object:Object):void {
-    moduleContext.getClass("mx.effects.EffectManager")[new QName(getMxNs(), "setStyle")](propertyName, object);
+    module.getClass("mx.effects.EffectManager")[new QName(getMxNs(), "setStyle")](propertyName, object);
   }
 
   override protected function readChildrenMxContainer(container:DisplayObjectContainer):void {

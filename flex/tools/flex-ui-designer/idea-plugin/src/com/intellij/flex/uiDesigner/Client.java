@@ -259,14 +259,7 @@ public class Client implements Disposable {
       out.writeShort(registeredModules.add(moduleInfo));
       writeId(project);
       out.write(moduleInfo.isApp());
-
-      out.write(Amf3Types.VECTOR_INT);
-      out.writeUInt29((moduleInfo.getLibrarySets().size() << 1) | 1);
-      out.write(true);
-      for (LibrarySet librarySet : moduleInfo.getLibrarySets()) {
-        out.writeInt(librarySet.getId());
-      }
-
+      out.writeShort(moduleInfo.getLibrarySet().getId());
       out.write(moduleInfo.getLocalStyleHolders(), "lsh", true);
       hasError = false;
     }

@@ -15,21 +15,20 @@ import java.util.List;
 
 public class ModuleInfo extends Info<Module> implements Disposable {
   private List<LocalStyleHolder> localStyleHolders;
-  private final List<LibrarySet> librarySets;
+  private final LibrarySet librarySet;
   private final boolean app;
 
-  public ModuleInfo(Module module, List<LibrarySet> librarySets, boolean isApp) {
+  public ModuleInfo(Module module, LibrarySet librarySet, boolean isApp) {
     super(module);
-    this.librarySets = librarySets;
+    this.librarySet = librarySet;
     app = isApp;
   }
 
-  public List<LibrarySet> getLibrarySets() {
-    return librarySets;
+  public LibrarySet getLibrarySet() {
+    return librarySet;
   }
 
   public FlexLibrarySet getFlexLibrarySet() {
-    LibrarySet librarySet = librarySets.get(0);
     return librarySet instanceof FlexLibrarySet ? (FlexLibrarySet)librarySet : (FlexLibrarySet)librarySet.getParent();
   }
 
