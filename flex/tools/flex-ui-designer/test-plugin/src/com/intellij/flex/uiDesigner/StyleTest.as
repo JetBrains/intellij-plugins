@@ -31,7 +31,6 @@ public class StyleTest extends BaseTestCase {
     //}
     
     assertThat(librarySet, {items: arrayWithSize(6)});
-    assertThat(librarySet, arrayWithSize(1));
     var library:Library;
     for each (var l:Library in librarySet.items) {
       if (l.file.name.indexOf("spark") == 0 && l.inheritingStyles != null) {
