@@ -19,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDescriptor {
@@ -36,7 +35,11 @@ public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDe
   @NotNull
   @Override
   public List<? extends RootDetector> getRootDetectors() {
-    return Collections.emptyList();
+    return Arrays.asList(new FlexSwcLibrariesRootDetector(),
+                         new FlexDocsRootDetector(),
+                         new FlexRawAsLibrariesRootDetector(),
+                         new FlexSourcesRootDetector(),
+                         new FlexSwcFoldersRootDetector());
   }
 
   @NotNull
@@ -192,13 +195,6 @@ public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDe
         String name = file.getName();
         return name.endsWith(".zip") || name.endsWith(".jar");
       }
-    }
-  };
-
-  public static RootFilter SWC_LIBRARY_DETECTOR = new RootFilter(OrderRootType.CLASSES, false, "SWC library") {
-    @Override
-    public boolean isAccepted(@NotNull VirtualFile rootCandidate, @NotNull ProgressIndicator progressIndicator) {
-      return "swc".equalsIgnoreCase(rootCandidate.getExtension());
     }
   };
 

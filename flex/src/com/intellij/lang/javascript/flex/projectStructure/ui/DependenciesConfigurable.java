@@ -1561,7 +1561,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
   private class AddFilesAction extends AddItemPopupAction {
     public AddFilesAction(int index) {
-      super(index, "Files...", null);
+      super(index, FlexBundle.message("add.module.library.action.text"), null);
     }
 
     @Override
@@ -1592,18 +1592,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
       Module module = myConfigEditor.getModule(myDependencies);
       List<? extends FlexLibraryType> libraryTypes = Collections.singletonList(new FlexLibraryType() {
-        @Override
-        @NotNull
-        public LibraryRootsComponentDescriptor createLibraryRootsComponentDescriptor() {
-          return new FlexLibraryRootsComponentDescriptor() {
-            @NotNull
-            @Override
-            public List<? extends RootDetector> getRootDetectors() {
-              return Arrays.asList(SWC_LIBRARY_DETECTOR);
-            }
-          };
-        }
-
         @NotNull
         @Override
         public FlexLibraryProperties createDefaultProperties() {

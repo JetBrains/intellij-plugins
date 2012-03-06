@@ -29,6 +29,14 @@ import java.util.List;
 
 public class FlexProjectStructureDetector extends ProjectStructureDetector {
 
+  public static final NullableFunction<CharSequence,String> PACKAGE_NAME_FETCHER = new NullableFunction<CharSequence, String>() {
+    public String fun(final CharSequence charSequence) {
+      Lexer lexer = LanguageParserDefinitions.INSTANCE.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).createLexer(null);
+      lexer.start(charSequence);
+      return readPackageName(charSequence, lexer);
+    }
+  };
+
   public static boolean isActionScriptFile(File file) {
     String extension = FileUtil.getExtension(file.getName());
     return JavaScriptSupportLoader.ECMA_SCRIPT_L4.equals(JavaScriptSupportLoader.getLanguageDialect(extension));
@@ -42,15 +50,9 @@ public class FlexProjectStructureDetector extends ProjectStructureDetector {
     for (File child : children) {
       if (child.isFile()) {
         if (isActionScriptFile(child)) {
-          NullableFunction<CharSequence, String> f = new NullableFunction<CharSequence, String>() {
-            public String fun(final CharSequence charSequence) {
-              Lexer lexer = LanguageParserDefinitions.INSTANCE.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).createLexer(null);
-              lexer.start(charSequence);
-              return readPackageName(charSequence, lexer);
-            }
-          };
 
-          Pair<File, String> root = CommonSourceRootDetectionUtil.suggestRootForFileWithPackageStatement(child, base, f, false);
+          Pair<File, String> root =
+            CommonSourceRootDetectionUtil.IO_FILE.suggestRootForFileWithPackageStatement(child, base, PACKAGE_NAME_FETCHER, false);
           if (root != null) {
             result.add(new FlexModuleSourceRoot(root.getFirst()));
             return DirectoryProcessingResult.skipChildrenAndParentsUpTo(root.getFirst());
@@ -84,7 +86,7 @@ public class FlexProjectStructureDetector extends ProjectStructureDetector {
   }
 
   @Nullable
-  static String readPackageName(final CharSequence charSequence, final Lexer lexer) {
+  public static String readPackageName(final CharSequence charSequence, final Lexer lexer) {
     skipWhiteSpaceAndComments(lexer);
     if (!JSTokenTypes.PACKAGE_KEYWORD.equals(lexer.getTokenType())) {
       return null;
@@ -118,7 +120,7 @@ public class FlexProjectStructureDetector extends ProjectStructureDetector {
   }
 
   private static final TokenSet WHITESPACE_AND_COMMENTS =
-    TokenSet.create(JSTokenTypes.WHITE_SPACE, JSTokenTypes.DOC_COMMENT, JSTokenTypes.C_STYLE_COMMENT);
+    TokenSet.create(JSTokenTypes.WHITE_SPACE, JSTokenTypes.DOC_COMMENT, JSTokenTypes.C_STYLE_COMMENT, JSTokenTypes.END_OF_LINE_COMMENT);
 
   public static void skipWhiteSpaceAndComments(Lexer lexer) {
     while (WHITESPACE_AND_COMMENTS.contains(lexer.getTokenType())) {
