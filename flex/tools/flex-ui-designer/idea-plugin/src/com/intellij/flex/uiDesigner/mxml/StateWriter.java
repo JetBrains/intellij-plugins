@@ -206,7 +206,7 @@ class StateWriter {
 
   public boolean checkStateSpecificPropertyValue(MxmlWriter mxmlWriter, PropertyProcessor propertyProcessor,
                                                  XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor,
-                                                 @NotNull Context context, @NotNull MxmlObjectReferenceProvider objectReferenceProvider) {
+                                                 @NotNull Context context) {
     PsiReference[] references = valueProvider.getElement().getReferences();
     if (references.length < 2) {
       return false;
@@ -250,7 +250,7 @@ class StateWriter {
 
     ValueWriter valueWriter = null;
     try {
-      valueWriter = propertyProcessor.process(valueProvider.getElement(), valueProvider, descriptor, objectReferenceProvider);
+      valueWriter = propertyProcessor.process(valueProvider.getElement(), valueProvider, descriptor, context);
     }
     catch (InvalidPropertyException ignored) {
 

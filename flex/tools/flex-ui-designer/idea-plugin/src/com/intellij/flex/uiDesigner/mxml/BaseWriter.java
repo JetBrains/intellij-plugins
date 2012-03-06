@@ -79,10 +79,6 @@ final class BaseWriter {
     }
   }
 
-  public DynamicObjectContext createDynamicObjectContext(@Nullable MxmlObjectReference mxmlObjectReference) {
-    return new DynamicObjectContext(nullContext, mxmlObjectReference);
-  }
-
   public void resetAfterMessage() {
     stringWriter.finishChange();
   }

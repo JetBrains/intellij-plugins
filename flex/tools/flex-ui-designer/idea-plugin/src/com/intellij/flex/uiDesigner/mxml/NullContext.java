@@ -17,5 +17,6 @@ class NullContext extends Context {
   public void reset() {
     cssRulesetDefined = false;
     id = -1;
+    mxmlObjectReference = null;
   }
 }

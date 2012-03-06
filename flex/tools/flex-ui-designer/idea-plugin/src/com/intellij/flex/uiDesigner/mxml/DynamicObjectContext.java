@@ -17,11 +17,11 @@ class DynamicObjectContext extends Context {
   // IDEA-73040
   final ArrayList<State> includeInStates = new ArrayList<State>();
 
-  DynamicObjectContext(NullContext nullContext, @Nullable MxmlObjectReference mxmlObjectReference) {
+  DynamicObjectContext(NullContext nullContext) {
     this.parentScope = nullContext.getParentScope();
     this.id = nullContext.id;
     this.cssRulesetDefined = nullContext.cssRulesetDefined;
-    this.mxmlObjectReference = mxmlObjectReference;
+    this.mxmlObjectReference = nullContext.mxmlObjectReference;
   }
 
   @Override
