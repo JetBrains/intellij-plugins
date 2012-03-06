@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner.io;
 import gnu.trove.TIntArrayList;
 import gnu.trove.TIntProcedure;
 
+import java.io.IOException;
 import java.util.Collection;
 
 public class AmfOutputStream extends PrimitiveAmfOutputStream {
@@ -34,7 +35,7 @@ public class AmfOutputStream extends PrimitiveAmfOutputStream {
    * Write array as fixed flash Vector.<int>
    *
    * @param array of int
-   * @throws java.io.IOException if an I/O error occurs or if array length out of range (29-bit number)
+   * @throws IOException if an I/O error occurs or if array length out of range (29-bit number)
    */
   public void write(int[] array) {
     write(Amf3Types.VECTOR_INT);

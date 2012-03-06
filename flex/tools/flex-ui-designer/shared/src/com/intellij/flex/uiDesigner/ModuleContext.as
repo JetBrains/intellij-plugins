@@ -18,14 +18,6 @@ public interface ModuleContext {
 
   function getDefinition(name:String):Object;
 
-  function getDocumentFactory(id:int):Object; // FlexDocumentFactory
-
-  function putDocumentFactory(id:int, documentFactory:Object):void;
-
-  function documentUnregistered(id:int):void;
-
-  function get documentFactoryClass():Class;
-
   function get deferredInstanceFromBytesClass():Class;
 
   function get deferredInstanceFromBytesVectorClass():Class;

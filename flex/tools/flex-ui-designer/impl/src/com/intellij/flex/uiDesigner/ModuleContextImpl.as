@@ -6,8 +6,6 @@ import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 import flash.system.ApplicationDomain;
 
 public final class ModuleContextImpl implements ModuleContextEx {
-  private var documentFactories:Vector.<Object>/* FlexDocumentFactory */;
-
   public function ModuleContextImpl(librarySets:Vector.<LibrarySet>, project:Project) {
     _librarySets = librarySets;
     _project = project;
@@ -40,36 +38,6 @@ public final class ModuleContextImpl implements ModuleContextEx {
     return _librariesResolved;
   }
 
-  public function getDocumentFactory(id:int):Object {
-    return documentFactories != null && documentFactories.length > id ? documentFactories[id] : null;
-  }
-
-  public function documentUnregistered(id:int):void {
-    if (documentFactories != null && id < documentFactories.length) {
-      documentFactories[id] = null;
-    }
-
-    var librarySet:FlexLibrarySet = flexLibrarySet;
-    if (librarySet != null) {
-      var classPool:ClassPool = librarySet.getClassPool(FlexLibrarySet.VIEW_POOL, false);
-      if (classPool != null) {
-        classPool.removeCachedClass(id);
-      }
-    }
-  }
-
-  public function putDocumentFactory(id:int, documentFactory:Object):void {
-    var requiredLength:int = id + 1;
-    if (documentFactories == null) {
-      documentFactories = new Vector.<Object>(requiredLength);
-    }
-    else if (documentFactories.length < requiredLength) {
-      documentFactories.length = requiredLength;
-    }
-
-    documentFactories[id] = documentFactory;
-  }
-  
   private var _project:Project;
   public function get project():Project {
     return _project;

@@ -6,6 +6,7 @@ import com.intellij.flex.uiDesigner.StringRegistry;
 import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContextImpl;
 import com.intellij.flex.uiDesigner.io.AmfExtendedTypes;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
+import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
 
 import flash.utils.Dictionary;
 import flash.utils.IDataInput;
@@ -104,11 +105,12 @@ public final class Stylesheet {
     const id:int = AmfUtil.readUInt29(input);
     var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance().getById(id);
     var moduleContext:ModuleContextEx = documentFactory.module.context;
-    var factory:Object = moduleContext.getDocumentFactory(id);
+    var flexLibrarySet:FlexLibrarySet = documentFactory.module.context.flexLibrarySet;
+    var factory:Object = flexLibrarySet.getDocumentFactory(id);
     if (factory == null) {
-      factory = new moduleContext.documentFactoryClass(documentFactory, new DeferredInstanceFromBytesContextImpl(documentFactory,
+      factory = new flexLibrarySet.documentFactoryClass(documentFactory, new DeferredInstanceFromBytesContextImpl(documentFactory,
                                                                                                                  moduleContext.styleManager));
-      moduleContext.putDocumentFactory(id, factory);
+      flexLibrarySet.putDocumentFactory(id, factory);
     }
 
     return new CssSkinClassDeclaration(factory, textOffset);
@@ -116,7 +118,7 @@ public final class Stylesheet {
 
   private static function readSimpleSelectors(data:IDataInput, stringRegistry:StringRegistry):CssSelector {
     const simpleSelectorsLength:int = data.readByte();
-    var ancestor:CssSelector;
+    var ancestor:CssSelector = null;
     for (var i:int = 0; i < simpleSelectorsLength; i++) {
       var subject:String = stringRegistry.read(data);
       var presentableSubject:String = subject == null ? null : stringRegistry.read(data);

@@ -15,6 +15,8 @@ public final class FlexLibrarySet extends LibrarySet {
 
   private var actualFillCalback:ActionCallback;
 
+  private var documentFactories:Vector.<Object>/* FlexDocumentFactory */;
+
   private var _currentFillCallbackRef:ActionCallbackRef;
   public function get currentFillCallbackRef():ActionCallbackRef {
     if (_currentFillCallbackRef == null) {
@@ -65,6 +67,42 @@ public final class FlexLibrarySet extends LibrarySet {
 
   private function nullifyActualFillCalback():void {
     actualFillCalback = null;
+  }
+
+  public function getDocumentFactory(id:int):Object {
+    return documentFactories != null && documentFactories.length > id ? documentFactories[id] : null;
+  }
+
+  private var _documentFactoryClass:Class;
+  public function get documentFactoryClass():Class {
+    if (_documentFactoryClass == null) {
+      _documentFactoryClass = Class(applicationDomain.getDefinition("com.intellij.flex.uiDesigner.flex.FlexDocumentFactory"));
+    }
+
+    return _documentFactoryClass;
+  }
+
+  public function documentUnregistered(id:int):void {
+    if (documentFactories != null && id < documentFactories.length) {
+      documentFactories[id] = null;
+    }
+
+    var classPool:ClassPool = getClassPool(FlexLibrarySet.VIEW_POOL, false);
+    if (classPool != null) {
+      classPool.removeCachedClass(id);
+    }
+  }
+
+  public function putDocumentFactory(id:int, documentFactory:Object):void {
+    var requiredLength:int = id + 1;
+    if (documentFactories == null) {
+      documentFactories = new Vector.<Object>(requiredLength);
+    }
+    else if (documentFactories.length < requiredLength) {
+      documentFactories.length = requiredLength;
+    }
+
+    documentFactories[id] = documentFactory;
   }
 }
 }

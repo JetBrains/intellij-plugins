@@ -311,7 +311,6 @@ public class LibraryManager implements Disposable {
     return info;
   }
 
-  @SuppressWarnings("MethodMayBeStatic")
   @Nullable
   public PropertiesFile getResourceBundleFile(String locale, String bundleName, ModuleInfo moduleInfo) {
     final Project project = moduleInfo.getElement().getProject();

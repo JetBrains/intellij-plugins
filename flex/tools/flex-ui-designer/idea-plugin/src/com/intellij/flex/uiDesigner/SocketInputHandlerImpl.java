@@ -413,21 +413,21 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
   private void getResourceBundle() throws IOException {
     initResultFile();
-    
+
     final int moduleId = readEntityId();
     final String locale = reader.readUTF();
     final String bundleName = reader.readUTF();
 
     final ModuleInfo moduleInfo = Client.getInstance().getRegisteredModules().getNullableInfo(moduleId);
-    final AccessToken token = ReadAction.start();
-    try {
-      PropertiesFile resourceBundleFile = null;
-      if (moduleInfo == null) {
-        // project may be closed, but client is not closed yet (AppTest#testCloseAndOpenProject)
-        LOG.warn("Skip getResourceBundle(" + locale + ", " + bundleName + ") due to cannot find project with id " + moduleId);
-        resourceBundleFile = null;
-      }
-      else {
+    PropertiesFile resourceBundleFile = null;
+    if (moduleInfo == null) {
+      // project may be closed, but client is not closed yet (AppTest#testCloseAndOpenProject)
+      LOG.warn("Skip getResourceBundle(" + locale + ", " + bundleName + ") due to cannot find project with id " + moduleId);
+      resourceBundleFile = null;
+    }
+    else {
+      final AccessToken token = ReadAction.start();
+      try {
         final PsiManager psiManager = PsiManager.getInstance(moduleInfo.getModule().getProject());
         final List<VirtualFile> result = new ArrayList<VirtualFile>();
         FileBasedIndex.getInstance().processValues(FileTypeIndex.NAME, PropertiesFileType.INSTANCE, null,
@@ -439,8 +439,6 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
                                                          if (file.getParent().getName().equals("en_US")) {
                                                            return false;
                                                          }
-
-
                                                        }
 
                                                        return true;
@@ -462,40 +460,42 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
         }
 
         if (resourceBundleFile == null) {
-          resourceBundleFile = defaultLocale != null ? defaultLocale : LibraryManager.getInstance().getResourceBundleFile(locale, bundleName, moduleInfo);
+          resourceBundleFile =
+            defaultLocale != null ? defaultLocale : LibraryManager.getInstance().getResourceBundleFile(locale, bundleName, moduleInfo);
         }
-      }
-
-      final FileOutputStream fileOut = new FileOutputStream(resultFile);
-      try {
-        if (resourceBundleFile == null) {
-          fileOut.write(Amf3Types.NULL);
-          return;
-        }
-
-        final AmfOutputStream out = new AmfOutputStream(new ByteArrayOutputStreamEx(4 * 1024));
-        // todo Embed, ClassReference, but idea doesn't support it too
-        final List<IProperty> properties = resourceBundleFile.getProperties();
-        out.write(Amf3Types.DICTIONARY);
-        out.writeUInt29((properties.size() << 1) | 1);
-        out.write(0);
-        for (IProperty property : properties) {
-          out.write(property.getUnescapedKey());
-          out.write(property.getUnescapedValue());
-        }
-
-        out.getByteArrayOut().writeTo(fileOut);
       }
       finally {
-        fileOut.close();
+        token.finish();
       }
     }
-    catch (IOException e) {
-      LOG.error(e);
+
+    final FileOutputStream fileOut = new FileOutputStream(resultFile);
+    try {
+      writeResourceBundle(resourceBundleFile, fileOut);
     }
     finally {
-      token.finish();
+      fileOut.close();
     }
+  }
+
+  private static void writeResourceBundle(PropertiesFile file, OutputStream out) throws IOException {
+    if (file == null) {
+      out.write(Amf3Types.NULL);
+      return;
+    }
+
+    final AmfOutputStream amfOut = new AmfOutputStream(new ByteArrayOutputStreamEx(4 * 1024));
+    // todo Embed, ClassReference, but idea doesn't support it too
+    final List<IProperty> properties = file.getProperties();
+    amfOut.write(Amf3Types.DICTIONARY);
+    amfOut.writeUInt29((properties.size() << 1) | 1);
+    amfOut.write(0);
+    for (IProperty property : properties) {
+      amfOut.write(property.getUnescapedKey());
+      amfOut.write(property.getUnescapedValue());
+    }
+
+    amfOut.getByteArrayOut().writeTo(amfOut);
   }
 
   private void getBitmapData() throws IOException {

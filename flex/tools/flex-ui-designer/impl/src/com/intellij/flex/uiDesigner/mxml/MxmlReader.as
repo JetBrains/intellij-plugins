@@ -385,21 +385,21 @@ public class MxmlReader implements DocumentReader {
   }
 
   private function readXmlList():XMLList {
-    var r:int = input.readUnsignedShort();
+    const r:int = input.readUnsignedShort();
     var o:XMLList = new XMLList(AmfUtil.readString(input));
     processReference(r, o);
     return o;
   }
 
   private function readXml():XML {
-    var r:int = input.readUnsignedShort();
+    const r:int = input.readUnsignedShort();
     var o:XML = new XML(AmfUtil.readString(input));
     processReference(r, o);
     return o;
   }
 
   private function readReferable():Object {
-    var r:int = input.readUnsignedShort();
+    const r:int = input.readUnsignedShort();
     var o:Object = readExpression(input.readByte());
     processReference(r, o);
     return o;
@@ -419,19 +419,20 @@ public class MxmlReader implements DocumentReader {
   }
 
   private function readDocumentFactory():Object {
-    var id:int = AmfUtil.readUInt29(input);
-    var factory:Object = moduleContext.getDocumentFactory(id);
+    const id:int = AmfUtil.readUInt29(input);
+    var flexLibrarySet:FlexLibrarySet = moduleContext.flexLibrarySet;
+    var factory:Object = flexLibrarySet.getDocumentFactory(id);
     if (factory == null) {
       var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance().getById(id);
-      factory = new moduleContext.documentFactoryClass(documentFactory, new DeferredInstanceFromBytesContextImpl(documentFactory, styleManager));
-      moduleContext.putDocumentFactory(id, factory);
+      factory = new flexLibrarySet.documentFactoryClass(documentFactory, new DeferredInstanceFromBytesContextImpl(documentFactory, styleManager));
+      flexLibrarySet.putDocumentFactory(id, factory);
     }
 
     return factory;
   }
 
   private function readComponentFactory():Object {
-    var id:int = AmfUtil.readUInt29(input);
+    const id:int = AmfUtil.readUInt29(input);
     var data:ByteArray = new ByteArray();
     input.readBytes(data, 0, input.readUnsignedShort());
     var factory:Object = new (moduleContext.getClass("com.intellij.flex.uiDesigner.flex.FlexComponentFactory"))(data, getOrCreateFactoryContext());
@@ -440,7 +441,7 @@ public class MxmlReader implements DocumentReader {
   }
 
   private function readProjectClassReference():Class {
-    var id:int = AmfUtil.readUInt29(input);
+    const id:int = AmfUtil.readUInt29(input);
     var classPool:ClassPool = moduleContext.getClassPool(FlexLibrarySet.VIEW_POOL);
     var clazz:Class = classPool.getCachedClass(id);
     if (clazz == null) {

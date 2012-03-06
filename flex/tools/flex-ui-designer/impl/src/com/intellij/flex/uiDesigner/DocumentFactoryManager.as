@@ -1,4 +1,6 @@
 package com.intellij.flex.uiDesigner {
+import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
+
 import org.flyti.plexus.PlexusManager;
 import org.jetbrains.EntityLists;
 
@@ -90,7 +92,10 @@ public class DocumentFactoryManager {
     factories[factory.id] = null;
 
     // clear module context document flex factory pool
-    factory.module.context.documentUnregistered(factory.id);
+    var flexLibrarySet:FlexLibrarySet = factory.module.context.flexLibrarySet;
+    if (flexLibrarySet != null) {
+      flexLibrarySet.documentUnregistered(factory.id);
+    }
 
     var documentReferences:Vector.<int> = factory.documentReferences;
     if (documentReferences == null || documentReferences.length == 0) {

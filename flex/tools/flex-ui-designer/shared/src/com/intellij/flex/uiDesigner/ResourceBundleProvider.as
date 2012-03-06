@@ -4,5 +4,7 @@ import flash.utils.Dictionary;
 public interface ResourceBundleProvider {
   [Nullable]
   function getResourceBundle(locale:String, bundleName:String):Dictionary;
+
+  //function get activeProjectId():int;
 }
 }
