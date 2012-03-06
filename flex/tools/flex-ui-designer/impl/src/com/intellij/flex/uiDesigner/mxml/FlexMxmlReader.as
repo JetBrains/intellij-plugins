@@ -35,7 +35,7 @@ public class FlexMxmlReader extends MxmlReader {
   }
 
   override protected function registerEffect(propertyName:String, object:Object):void {
-    moduleContext.effectManagerClass[new QName(getMxNs(), "setStyle")](propertyName, object);
+    moduleContext.getClass("mx.effects.EffectManager")[new QName(getMxNs(), "setStyle")](propertyName, object);
   }
 
   override protected function readChildrenMxContainer(container:DisplayObjectContainer):void {

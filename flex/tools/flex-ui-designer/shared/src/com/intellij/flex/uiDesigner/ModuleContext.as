@@ -8,8 +8,6 @@ public interface ModuleContext {
 
   function get inlineCssStyleDeclarationClass():Class;
 
-  function get effectManagerClass():Class;
-
   function get styleManager():StyleManagerEx;
   function set styleManager(value:StyleManagerEx):void;
 

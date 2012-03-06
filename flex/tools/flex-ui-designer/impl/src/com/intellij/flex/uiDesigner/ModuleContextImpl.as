@@ -102,15 +102,6 @@ public final class ModuleContextImpl implements ModuleContextEx {
     return _deferredInstanceFromBytesVectorClass;
   }
 
-  private var _effectManagerClass:Class;
-  public function get effectManagerClass():Class {
-    if (_effectManagerClass == null) {
-      _effectManagerClass = getClass("mx.effects.EffectManager");
-    }
-
-    return _effectManagerClass;
-  }
-
   public function getClassIfExists(fqn:String):Class {
     return applicationDomain.hasDefinition(fqn) ? applicationDomain.getDefinition(fqn) as Class : null;
   }

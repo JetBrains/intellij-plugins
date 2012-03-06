@@ -12,7 +12,7 @@ import flash.utils.Dictionary;
 import mx.utils.StringUtil;
 
 public class ResourceManager extends EventDispatcher implements IResourceManager {
-  private static const EMPTY_RESOURCE_BUNLDE_CONTENT:Dictionary = new Dictionary();
+  private static const EMPTY_RESOURCE_BUNDLE_CONTENT:Dictionary = new Dictionary();
 
   private var resourceBundleProvider:ResourceBundleProvider;
   private const localeMap:Object = new Dictionary();
@@ -77,8 +77,10 @@ public class ResourceManager extends EventDispatcher implements IResourceManager
   public function getResourceBundle(locale:String, bundleName:String):IResourceBundle {
     var bundleMap:Dictionary = localeMap[locale];
     var bundle:ResourceBundle;
+    const activeProjectId:int = resourceBundleProvider.activeProjectId;
     if (bundleMap == null) {
       bundleMap = new Dictionary();
+      bundleMap[bundleMap] = new Dictionary();
       localeMap[locale] = bundleMap;
     }
     else {
@@ -87,7 +89,7 @@ public class ResourceManager extends EventDispatcher implements IResourceManager
 
     if (bundle == null) {
       var resourceBundleContent:Dictionary = resourceBundleProvider.getResourceBundle(locale, bundleName);
-      bundle = new ResourceBundle(locale, bundleName, resourceBundleContent || EMPTY_RESOURCE_BUNLDE_CONTENT);
+      bundle = new ResourceBundle(locale, bundleName, resourceBundleContent || EMPTY_RESOURCE_BUNDLE_CONTENT);
       bundleMap[bundleName] = bundle;
     }
 
