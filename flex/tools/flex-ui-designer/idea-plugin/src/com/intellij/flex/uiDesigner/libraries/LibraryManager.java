@@ -22,6 +22,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
@@ -311,14 +312,14 @@ public class LibraryManager implements Disposable {
   }
 
   @Nullable
-  public PropertiesFile getResourceBundleFile(String locale, String bundleName, ModuleInfo moduleInfo) {
-    final Project project = moduleInfo.getElement().getProject();
+  public Pair<PropertiesFile, Integer> getResourceBundleFile(String locale, String bundleName, ModuleInfo moduleInfo) {
+    final Project project = moduleInfo.getModule().getProject();
     LibrarySet librarySet = moduleInfo.getLibrarySet();
     do {
       PropertiesFile propertiesFile;
       for (Library library : librarySet.getLibraries()) {
         if (library.hasResourceBundles() && (propertiesFile = getResourceBundleFile(locale, bundleName, library, project)) != null) {
-          return propertiesFile;
+          return new Pair<PropertiesFile, Integer>(propertiesFile, librarySet.getId());
         }
       }
     }
@@ -335,7 +336,7 @@ public class LibraryManager implements Disposable {
       for (String libName : new String[]{"framework", "spark", "mx", "airframework", "rpc", "advancedgrids", "charts", "textLayout"}) {
         VirtualFile file = dir.findFileByRelativePath(libName + "/bundles/" + locale + "/" + bundleName + PROPERTIES_EXTENSION);
         if (file != null) {
-          return virtualFileToProperties(project, file);
+          return new Pair<PropertiesFile, Integer>(virtualFileToProperties(project, file), moduleInfo.getFlexLibrarySet().getId());
         }
       }
     }

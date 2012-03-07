@@ -19,7 +19,7 @@ import org.hamcrest.object.strictlyEqualTo;
 [Test(dir="css")]
 public class StyleTest extends BaseTestCase {
   public function emptyForCheckLibrariesCssDefaults():void {
-    var librarySet:LibrarySet = document.module.librarySet;
+    var librarySet:LibrarySet = module.librarySet;
 
     //var ll:Vector.<LibrarySetItem> = librarySets[0].items;
     //if (ll.length != 10) {

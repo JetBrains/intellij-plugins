@@ -1,6 +1,9 @@
 package com.intellij.flex.uiDesigner {
 import com.intellij.flex.uiDesigner.css.CssDeclaration;
+import com.intellij.flex.uiDesigner.flex.ResourceBundle;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
+import com.intellij.flex.uiDesigner.libraries.LibraryManager;
+import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
@@ -238,22 +241,54 @@ public class Server implements ResourceBundleProvider {
 
   public var moduleForGetResourceBundle:Module;
 
-  public function getResourceBundle(locale:String, bundleName:String):Dictionary {
+  private function findResourceBundle(bundles:Vector.<ResourceBundle>, locale:String, bundleName:String):ResourceBundle {
+    if (bundles == null) {
+      return null;
+    }
+
+    for each (var bundle:ResourceBundle in bundles) {
+      if (bundle.bundleName == bundleName && bundle.locale == locale) {
+        return bundle;
+      }
+    }
+
+    return null;
+  }
+
+  private function findResourceBundle2(librarySet:LibrarySet, locale:String, bundleName:String):ResourceBundle {
+    var resourceBundle:ResourceBundle;
+    do {
+      resourceBundle = findResourceBundle(librarySet.resourceBundles, locale, bundleName);
+    }
+    while (resourceBundle == null && (librarySet = librarySet.parent) != null);
+    return resourceBundle;
+  }
+
+  public function getResourceBundle(locale:String, bundleName:String, bundleClass:Class):ResourceBundle {
     var module:Module = moduleForGetResourceBundle;
     if (module == null) {
       var rootDataContext:DataContext = ProjectUtil.getRootDataContext();
-      var document:Document = rootDataContext == null ? null : PlatformDataKeys.DOCUMENT.getData(rootDataContext);
-      if (document == null) {
+      module = rootDataContext == null ? null : PlatformDataKeys.MODULE.getData(rootDataContext);
+      if (module == null) {
         UncaughtErrorManager.instance.logWarning("Cannot find resource bundle " + bundleName + " for locale " + locale +
                                                  " due to null document");
         return null;
       }
+    }
 
-      module = document.module;
+    var resourceBundle:ResourceBundle = findResourceBundle(module.resourceBundles, locale, bundleName);
+    if (resourceBundle == null) {
+      resourceBundle = findResourceBundle2(module.librarySet, locale, bundleName);
+    }
+
+    if (resourceBundle != null) {
+      return resourceBundle;
     }
 
     var resultReadyFile:File = null;
-    var result:Dictionary;
+    var content:Dictionary;
+    var sourceKind:int = -1;
+    var sourceId:int = -1;
     try {
       const resultReadyFilename:String = generateResultReadyFilename();
       socket.writeByte(ServerMethod.GET_RESOURCE_BUNDLE);
@@ -271,7 +306,11 @@ public class Server implements ResourceBundleProvider {
       var fileStream:FileStream = new FileStream();
       fileStream.open(resultFile, FileMode.READ);
       try {
-        result = fileStream.readObject();
+        sourceKind = fileStream.readByte();
+        if (sourceKind != 0) {
+          sourceId = fileStream.readUnsignedShort();
+          content = fileStream.readObject();
+        }
       }
       finally {
         fileStream.close();
@@ -284,10 +323,31 @@ public class Server implements ResourceBundleProvider {
       postCheckSyncMessaging(resultReadyFile, null);
     }
 
-    if (result == null) {
+    if (content == null) {
       UncaughtErrorManager.instance.logWarning("Cannot find resource bundle " + bundleName + " for locale " + locale);
+      return null;
     }
-    return result;
+    else {
+      var result:ResourceBundle = new bundleClass(locale, bundleName, content);
+      var source:Vector.<ResourceBundle>;
+      if (sourceKind == 2) {
+        if (module.resourceBundles == null) {
+          module.resourceBundles = new Vector.<ResourceBundle>();
+        }
+        //noinspection JSUnusedAssignment
+        source = module.resourceBundles;
+      }
+      else {
+        var librarySet:LibrarySet = LibraryManager(module.project.getComponent(LibraryManager)).getById(sourceId);
+        if (librarySet.resourceBundles == null) {
+          librarySet.resourceBundles = new Vector.<ResourceBundle>();
+        }
+        source = librarySet.resourceBundles;
+      }
+
+      source[source.length] = result;
+      return result;
+    }
   }
 
   private static function generateResultReadyFilename():String {

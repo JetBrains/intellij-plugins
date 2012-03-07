@@ -7,15 +7,11 @@ import flash.events.EventDispatcher;
 import flash.events.IEventDispatcher;
 import flash.system.ApplicationDomain;
 import flash.system.SecurityDomain;
-import flash.utils.Dictionary;
 
 import mx.utils.StringUtil;
 
 public class ResourceManager extends EventDispatcher implements IResourceManager {
-  private static const EMPTY_RESOURCE_BUNDLE_CONTENT:Dictionary = new Dictionary();
-
   private var resourceBundleProvider:ResourceBundleProvider;
-  private const localeMap:Object = new Dictionary();
 
   function ResourceManager(resourceBundleProvider:ResourceBundleProvider) {
     instance = this;
@@ -75,25 +71,7 @@ public class ResourceManager extends EventDispatcher implements IResourceManager
   }
 
   public function getResourceBundle(locale:String, bundleName:String):IResourceBundle {
-    var bundleMap:Dictionary = localeMap[locale];
-    var bundle:ResourceBundle;
-    //const activeProjectId:int = resourceBundleProvider.activeProjectId;
-    if (bundleMap == null) {
-      bundleMap = new Dictionary();
-      //bundleMap[bundleMap] = new Dictionary();
-      localeMap[locale] = bundleMap;
-    }
-    else {
-      bundle = bundleMap[bundleName];
-    }
-
-    if (bundle == null) {
-      var resourceBundleContent:Dictionary = resourceBundleProvider.getResourceBundle(locale, bundleName);
-      bundle = new ResourceBundle(locale, bundleName, resourceBundleContent || EMPTY_RESOURCE_BUNDLE_CONTENT);
-      bundleMap[bundleName] = bundle;
-    }
-
-    return bundle;
+    return IResourceBundle(resourceBundleProvider.getResourceBundle(locale, bundleName, ResourceBundleImpl));
   }
 
   public function findResourceBundleWithResource(bundleName:String, resourceName:String):IResourceBundle {
@@ -182,30 +160,14 @@ public class ResourceManager extends EventDispatcher implements IResourceManager
 }
 }
 
+import com.intellij.flex.uiDesigner.flex.ResourceBundle;
+
 import flash.utils.Dictionary;
 
 import mx.resources.IResourceBundle;
 
-final class ResourceBundle implements IResourceBundle {
-  private var _bundleName:String;
-  private var _content:Dictionary;
-  private var _locale:String;
-
-  public function ResourceBundle(locale:String, bundleName:String, content:Dictionary) {
-    _locale = locale;
-    _bundleName = bundleName;
-    _content = content;
-  }
-
-  public function get bundleName():String {
-    return _bundleName;
-  }
-
-  public function get content():Object {
-    return _content;
-  }
-
-  public function get locale():String {
-    return _locale;
+final class ResourceBundleImpl extends ResourceBundle implements IResourceBundle {
+  public function ResourceBundleImpl(locale:String, bundleName:String, content:Dictionary) {
+    super(locale, bundleName, content);
   }
 }

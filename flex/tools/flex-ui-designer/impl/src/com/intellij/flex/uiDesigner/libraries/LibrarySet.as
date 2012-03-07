@@ -4,6 +4,7 @@ import com.intellij.flex.uiDesigner.VirtualFile;
 import com.intellij.flex.uiDesigner.VirtualFileImpl;
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import com.intellij.flex.uiDesigner.css.Stylesheet;
+import com.intellij.flex.uiDesigner.flex.ResourceBundle;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
 import flash.system.ApplicationDomain;
@@ -38,6 +39,8 @@ public class LibrarySet implements Identifiable {
       parent.registerUsage();
     }
   }
+
+  public var resourceBundles:Vector.<ResourceBundle>;
 
   private var _styleManager:StyleManagerEx;
   public function get styleManager():StyleManagerEx {

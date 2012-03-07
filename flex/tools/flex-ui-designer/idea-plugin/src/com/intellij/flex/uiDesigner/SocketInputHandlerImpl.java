@@ -21,6 +21,7 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ActionCallback;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -419,11 +420,13 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     final String bundleName = reader.readUTF();
 
     final ModuleInfo moduleInfo = Client.getInstance().getRegisteredModules().getNullableInfo(moduleId);
-    PropertiesFile resourceBundleFile = null;
+    PropertiesFile resourceBundle = null;
+    int sourceKind = 0;
+    int sourceId = 0;
     if (moduleInfo == null) {
       // project may be closed, but client is not closed yet (AppTest#testCloseAndOpenProject)
       LOG.warn("Skip getResourceBundle(" + locale + ", " + bundleName + ") due to cannot find project with id " + moduleId);
-      resourceBundleFile = null;
+      resourceBundle = null;
     }
     else {
       final AccessToken token = ReadAction.start();
@@ -445,23 +448,35 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
                                                      }
                                                    }, moduleInfo.getModule().getModuleScope(false));
 
-        PropertiesFile defaultLocale = null;
+        PropertiesFile defaultResourceBundle = null;
         for (VirtualFile file : result) {
           PsiFile psiFile = psiManager.findFile(file);
           if (psiFile != null) {
             if (file.getParent().getName().equals("en_US")) {
-              defaultLocale = (PropertiesFile)psiFile;
+              defaultResourceBundle = (PropertiesFile)psiFile;
             }
             else {
-              resourceBundleFile = (PropertiesFile)psiFile;
+              resourceBundle = (PropertiesFile)psiFile;
               break;
             }
           }
         }
 
-        if (resourceBundleFile == null) {
-          resourceBundleFile =
-            defaultLocale != null ? defaultLocale : LibraryManager.getInstance().getResourceBundleFile(locale, bundleName, moduleInfo);
+        if (resourceBundle == null) {
+          resourceBundle = defaultResourceBundle;
+        }
+
+        if (resourceBundle == null) {
+          Pair<PropertiesFile, Integer> bundleInfo = LibraryManager.getInstance().getResourceBundleFile(locale, bundleName, moduleInfo);
+          if (bundleInfo != null) {
+            resourceBundle = bundleInfo.first;
+            sourceKind = 1;
+            sourceId = bundleInfo.second;
+          }
+        }
+        else {
+          sourceKind = 2;
+          sourceId = moduleInfo.getId();
         }
       }
       finally {
@@ -471,20 +486,22 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
     final FileOutputStream fileOut = new FileOutputStream(resultFile);
     try {
-      writeResourceBundle(resourceBundleFile, fileOut);
+      writeResourceBundle(resourceBundle, fileOut, sourceKind, sourceId);
     }
     finally {
       fileOut.close();
     }
   }
 
-  private static void writeResourceBundle(PropertiesFile file, OutputStream out) throws IOException {
+  private static void writeResourceBundle(PropertiesFile file, OutputStream out, int sourceKind, int sourceId) throws IOException {
+    out.write(sourceKind);
+
     if (file == null) {
-      out.write(Amf3Types.NULL);
       return;
     }
 
     final AmfOutputStream amfOut = new AmfOutputStream(new ByteArrayOutputStreamEx(4 * 1024));
+    amfOut.writeShort(sourceId);
     // todo Embed, ClassReference, but idea doesn't support it too
     final List<IProperty> properties = file.getProperties();
     amfOut.write(Amf3Types.DICTIONARY);

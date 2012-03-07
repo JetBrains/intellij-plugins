@@ -40,6 +40,10 @@ internal class BaseTestCase implements TestCase {
     return PlatformDataKeys.DOCUMENT.getData(dataContext);
   }
 
+  protected final function get module():Module {
+    return PlatformDataKeys.MODULE.getData(dataContext);
+  }
+
   protected final function get project():Project {
     return PlatformDataKeys.PROJECT.getData(dataContext);
   }
@@ -72,10 +76,7 @@ internal class BaseTestCase implements TestCase {
   }
   
   protected final function getDefinition(name:String):Object {
-    var module:Module = document.module;
     return module.getDefinition(name);
-    // compiler bug http://juick.com/develar/1301589
-    //return documentManager.document.module.getDefinition(name);
   }
   
   protected final function getClass(name:String):Class {

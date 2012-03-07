@@ -200,6 +200,9 @@ final class TestDataContext implements DataContext {
       case PlatformDataKeys.DOCUMENT:
         return document;
 
+      case PlatformDataKeys.MODULE:
+        return document.module;
+
       default:
         return parent.getData(dataKey);
     }

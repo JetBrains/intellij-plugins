@@ -98,7 +98,7 @@ public class CommonTest extends BaseTestCase {
   }
   
   public function ItemRendererAndMixDefaultExplicitContent():void {
-    var buttonBarButtonClass:Class = document.module.getClass("spark.components.ButtonBarButton");
+    var buttonBarButtonClass:Class = module.getClass("spark.components.ButtonBarButton");
     var m:Object = {itemRenderer: {generator: buttonBarButtonClass}};
     assertThat(app, [{}, {itemRenderer: {className: "AuxProjectMxmlItemRenderer"}}, m, m]);
   }

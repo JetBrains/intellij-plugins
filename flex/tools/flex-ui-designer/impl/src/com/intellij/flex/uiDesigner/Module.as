@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner {
 import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
+import com.intellij.flex.uiDesigner.flex.ResourceBundle;
 import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 
@@ -9,6 +10,8 @@ import flash.system.ApplicationDomain;
 import org.jetbrains.Identifiable;
 
 public final class Module implements Identifiable, ModuleContext {
+  public var resourceBundles:Vector.<ResourceBundle>;
+
   public function Module(id:int, project:Project, librarySet:LibrarySet, isApp:Boolean, localStyleHolders:Vector.<LocalStyleHolder>) {
     _isApp = isApp;
     _localStyleHolders = localStyleHolders;

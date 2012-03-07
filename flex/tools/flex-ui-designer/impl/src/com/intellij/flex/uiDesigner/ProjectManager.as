@@ -119,6 +119,7 @@ public class ProjectManager {
 }
 
 import com.intellij.flex.uiDesigner.ComponentManager;
+import com.intellij.flex.uiDesigner.Document;
 import com.intellij.flex.uiDesigner.DocumentManager;
 import com.intellij.flex.uiDesigner.PlatformDataKeys;
 import com.intellij.flex.uiDesigner.Project;
@@ -137,6 +138,10 @@ final class ProjectDataContext implements DataContext {
     switch (dataKey) {
       case PlatformDataKeys.PROJECT:
         return project;
+
+      case PlatformDataKeys.MODULE:
+        var document:Document = DocumentManager(project.getComponent(DocumentManager)).document;
+        return document == null ? null : document.module;
 
       case PlatformDataKeys.DOCUMENT:
         return DocumentManager(project.getComponent(DocumentManager)).document;
