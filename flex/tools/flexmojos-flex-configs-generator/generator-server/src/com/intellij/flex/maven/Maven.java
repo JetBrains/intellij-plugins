@@ -50,16 +50,19 @@ final class Maven {
       if (projectCacheData != null) {
         projectCacheLock.unlock();
         unlocked = true;
-        
-        while (projectCacheData.project == null) {
-          try {
-            Thread.sleep(5);
+        //noinspection SynchronizationOnLocalVariableOrMethodParameter
+        synchronized (projectCacheData) {
+          while (!projectCacheData.processed) {
+            try {
+              projectCacheData.wait();
+            }
+            catch (InterruptedException e) {
+              break;
+            }
           }
-          catch (InterruptedException e) {
-            break;
-          }
+
+          return projectCacheData.project;
         }
-        return projectCacheData.project;
       }
 
       projectCacheData = new ProjectCacheData();
@@ -71,17 +74,30 @@ final class Maven {
       }
     }
 
-    final ProjectBuildingRequest projectBuildingRequest = session.getRequest().getProjectBuildingRequest();
-    projectBuildingRequest.setResolveDependencies(true);
+    //noinspection SynchronizationOnLocalVariableOrMethodParameter
+    synchronized (projectCacheData) {
+      try {
+        final ProjectBuildingRequest projectBuildingRequest = session.getRequest().getProjectBuildingRequest();
+        projectBuildingRequest.setResolveDependencies(true);
 
-    projectBuildingRequest.setValidationLevel(ModelBuildingRequest.VALIDATION_LEVEL_MINIMAL);
-    projectBuildingRequest.setRepositorySession(session.getRepositorySession());
-    projectCacheData.project = projectBuilder.build(pomFile, projectBuildingRequest).getProject();
+        projectBuildingRequest.setValidationLevel(ModelBuildingRequest.VALIDATION_LEVEL_MINIMAL);
+        projectBuildingRequest.setRepositorySession(session.getRepositorySession());
+
+        projectCacheData.project = projectBuilder.build(pomFile, projectBuildingRequest).getProject();
+      }
+      finally {
+        projectCacheData.processed = true;
+        // well, NPE will be if we cannot build project and client will try to use projectCacheData.project — it is normal
+        projectCacheData.notifyAll();
+      }
+    }
+
     return projectCacheData.project;
   }
 
   private static final class ProjectCacheData {
     private MavenProject project;
+    private boolean processed;
   }
 
   public MojoExecution createMojoExecution(Plugin plugin, String goal, MavenProject project) throws Exception {

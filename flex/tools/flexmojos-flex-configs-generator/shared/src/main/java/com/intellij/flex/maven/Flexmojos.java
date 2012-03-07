@@ -17,11 +17,15 @@ public final class Flexmojos {
     return (String)invokePublicMethod(mojo, "getOutput");
   }
 
-  static File getSourceFileForSwf(Mojo mojo)
-    throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+  static File getSourceFileForSwf(Mojo mojo) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
     Method method = mojo.getClass().getDeclaredMethod("getSourceFile");
     method.setAccessible(true);
     return (File)method.invoke(mojo);
+  }
+
+  static File getLinkReport(Mojo mojo) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    String linkReport = (String)invokePublicMethod(mojo, "getLinkReport");
+    return linkReport == null ? null : new File(linkReport);
   }
 
   static Object invokePublicMethod(Mojo mojo, String methodName)

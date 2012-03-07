@@ -203,22 +203,22 @@ public class GeneratorServer {
       try {
         data.outputFile = new File(Flexmojos.getOutput(mojo));
         String[] localesRuntime = (String[])Flexmojos.invokePublicMethod(mojo, "getLocalesRuntime");
+        data.linkReport = Flexmojos.getLinkReport(mojo);
+
         if (localesRuntime != null && localesRuntime.length > 0) {
           final Class<?> superclass = mojo.getClass().getSuperclass();
-          mojo = (Mojo)Flexmojos.invokePublicMethod(mojo, "clone");
-          
+          Mojo localeMojo = (Mojo)Flexmojos.invokePublicMethod(mojo, "clone");
+
           final Method m = superclass.getDeclaredMethod("configureResourceBundle", String.class, superclass);
           m.setAccessible(true);
           String firstLocale = localesRuntime[0];
-          m.invoke(mojo, firstLocale, mojo);
+          m.invoke(mojo, firstLocale, localeMojo);
 
           //noinspection unchecked
-          ((Map)Flexmojos.invokePublicMethod(mojo, "getCache")).put("getProjectType", "rb.swc");
-
-          data.localeOutputFilepathPattern = Flexmojos.getOutput(mojo).replace(firstLocale, "{_locale_}");
+          ((Map)Flexmojos.invokePublicMethod(localeMojo, "getCache")).put("getProjectType", "rb.swc");
+          data.localeOutputFilepathPattern = Flexmojos.getOutput(localeMojo).replace(firstLocale, "{_locale_}");
+          // we don't release localeMojo (plexusContainer.release) — flexmojos doesn't do it too
         }
-
-        data.linkReport = new File((String)Flexmojos.invokePublicMethod(mojo, "getLinkReport"));
       }
       finally {
         plexusContainer.release(mojo);
@@ -234,7 +234,7 @@ public class GeneratorServer {
 
   private MavenSession createSession(MavenExecutionRequest request) throws ComponentLookupException {
     final ThreadSafeMavenSession session = new ThreadSafeMavenSession(plexusContainer, createRepositorySession(request), request,
-                                                                           new DefaultMavenExecutionResult());
+                                                                      new DefaultMavenExecutionResult());
     // flexmojos uses old LegacyRepositorySystem
     plexusContainer.lookup(LegacySupport.class).setSession(session);
     return session;
