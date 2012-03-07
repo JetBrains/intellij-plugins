@@ -33,6 +33,10 @@
     </description>
     <change-notes>
         <![CDATA[
+        <b>Version 1.4.2</b>
+        <ul>
+          <li>Compatible with IDEA 11.1</li>
+        </ul>
         <b>Version 1.4.1</b>
          <ul>
             <li> Greatly improved Maven integration:
@@ -48,9 +52,9 @@
         </ul>
                 ]]>
     </change-notes>
-    <version>1.4.1</version>
+    <version>1.4.2</version>
     <vendor url="http://osmorc.org" email="info@osmorc.org">Osmorc Development Team</vendor>
-    <idea-version since-build="108.000" until-build="114.9999"/>
+    <idea-version since-build="108.000" until-build="116.9999"/>
     <category>Framework integration</category>
 
 
