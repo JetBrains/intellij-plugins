@@ -15,7 +15,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.TripleFunction;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.IndexableFileSet;
-import junit.framework.Assert;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -24,6 +24,7 @@ import java.util.List;
 
 public final class DesignerTests {
   private static String testDataPath;
+  private static VirtualFile testDataDir;
 
   public static VirtualFile[] configureByFiles(@Nullable VirtualFile rawProjectRoot,
                                                VirtualFile[] files,
@@ -58,7 +59,7 @@ public final class DesignerTests {
           }
         }
       };
-      FileBasedIndex.getInstance().registerIndexableSet(indexableFileSet, module.getProject());
+      //FileBasedIndex.getInstance().registerIndexableSet(indexableFileSet, module.getProject());
 
       Disposer.register(module, new Disposable() {
         @Override
@@ -73,7 +74,7 @@ public final class DesignerTests {
           finally {
             token.finish();
 
-            FileBasedIndex.getInstance().removeIndexableSet(indexableFileSet);
+            //FileBasedIndex.getInstance().removeIndexableSet(indexableFileSet);
           }
         }
       });
@@ -93,11 +94,7 @@ public final class DesignerTests {
       rootModel.commit();
 
       for (String path : libs) {
-        if (path.charAt(0) != '/') {
-          path = getTestDataPath() + "/lib/" + path;
-        }
-
-        VirtualFile virtualFile = getVFile(path);
+        VirtualFile virtualFile = path.charAt(0) != '/' ? getFile("lib", path) : getFile(path);
         JSTestUtils.addLibrary(module, path, virtualFile.getParent().getPath(), virtualFile.getName(), null, null);
       }
     }
@@ -137,15 +134,30 @@ public final class DesignerTests {
     return toFiles;
   }
 
-  public static VirtualFile getVFile(String path) {
-    VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(path.charAt(0) == '/' ? path : (getTestDataPath() + '/' + path));
-    Assert.assertNotNull(vFile);
-    return vFile;
+  @SuppressWarnings("ConstantConditions")
+  @NotNull
+  public static VirtualFile getFile(String path) {
+    return path.charAt(0) == '/' ? LocalFileSystem.getInstance().findFileByPath(path) : getTestDataDir().findFileByRelativePath(path);
+  }
+
+  @NotNull
+  public static VirtualFile getFile(String baseDirectoryName, String relativePath) {
+    //noinspection ConstantConditions
+    return getTestDataDir().findChild(baseDirectoryName).findFileByRelativePath(relativePath);
+  }
+
+  public static VirtualFile getTestDataDir() {
+    if (testDataDir == null) {
+      testDataDir = LocalFileSystem.getInstance().refreshAndFindFileByPath(DebugPathManager.getFudHome() + "/idea-plugin/testData");
+      assert testDataDir != null;
+      testDataDir.refresh(false, true);
+    }
+    return testDataDir;
   }
 
   public static String getTestDataPath() {
     if (testDataPath == null) {
-      testDataPath = DebugPathManager.getFudHome() + "/idea-plugin/testData";
+      testDataPath = getTestDataDir().getPath();
     }
     return testDataPath;
   }

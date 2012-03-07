@@ -24,13 +24,13 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.peer.PeerFactory;
+import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
+import com.intellij.util.indexing.FileBasedIndex;
 import junit.framework.AssertionFailedError;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -51,7 +51,7 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
   private VirtualFile testDir;
   protected final VirtualFile getTestDir() {
     if (testDir == null) {
-      testDir = LocalFileSystem.getInstance().findFileByPath(DesignerTests.getTestDataPath() + "/src/" + getSourceBasePath());
+      testDir = DesignerTests.getFile("src", getSourceBasePath());
     }
 
     return testDir;
@@ -132,26 +132,16 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
     assert sdkHome != null;
     final VirtualFile frameworksDir = sdkHome.findChild("frameworks");
     assert frameworksDir != null;
-
-    //VirtualFile frameworkRB = frameworksDir.findFileByRelativePath("libs/framework_rb.swc");
-    //if (frameworkRB != null) {
-    //  sdkModificator.addRoot(frameworkRB, OrderRootType.CLASSES);
-    //}
-
-    sdkModificator.addRoot(DesignerTests.getVFile("lib/playerglobal"), OrderRootType.CLASSES);
+    sdkModificator.addRoot(DesignerTests.getFile("lib", "playerglobal"), OrderRootType.CLASSES);
     FlexSdkUtils.addFlexSdkSwcRoots(sdkModificator, frameworksDir);
   }
 
+  @SuppressWarnings("ConstantConditions")
   protected void addLibrary(SdkModificator sdkModificator, String path) {
-    if (path.charAt(0) != '/') {
-      path = DesignerTests.getTestDataPath() + "/lib/" + path;
-    }
-
-    VirtualFile virtualFile = DesignerTests.getVFile(path);
+    VirtualFile virtualFile = path.charAt(0) != '/' ? DesignerTests.getFile("lib", path) : DesignerTests.getFile(path);
     VirtualFile jarFile = JarFileSystem.getInstance().getJarRootForLocalFile(virtualFile);
     assert jarFile != null;
 
-    
     libs.add(new Pair<VirtualFile, VirtualFile>(virtualFile, jarFile));
     sdkModificator.addRoot(jarFile, OrderRootType.CLASSES);
   }
@@ -202,6 +192,8 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
                                            VirtualFile[] files,
                                            @Nullable VirtualFile[] auxiliaryFiles) throws Exception {
     final VirtualFile[] sourceFiles = super.configureByFiles(rawProjectRoot, files, auxiliaryFiles);
+    // Why? I don't know. But testResolveResourceIfNameIsAmbiguous will be failed after testMobile without this call
+    FileBasedIndex.getInstance().ensureUpToDate(FileTypeIndex.NAME, myProject, null);
     launchAndInitializeApplication();
     return sourceFiles;
   }

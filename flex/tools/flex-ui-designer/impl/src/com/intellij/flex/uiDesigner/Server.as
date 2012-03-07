@@ -276,23 +276,52 @@ public class Server implements ResourceBundleProvider {
       }
     }
 
-    var resourceBundle:ResourceBundle = findResourceBundle(module.resourceBundles, locale, bundleName);
+    var moduleResolveResult:int = -1;
+    const moduleResolveResultKey:String = locale + ":" + bundleName;
+    if (module.resourceBundleResolveResult == null) {
+      module.resourceBundleResolveResult = new Dictionary();
+    }
+    else {
+      if (moduleResolveResultKey in module.resourceBundleResolveResult) {
+        moduleResolveResult = module.resourceBundleResolveResult[moduleResolveResultKey] ? 1 : 0;
+      }
+    }
+
+    var resourceBundle:ResourceBundle = moduleResolveResult != 1 ? null : findResourceBundle(module.resourceBundles, locale, bundleName);
+    if (moduleResolveResult == -1) {
+      resourceBundle = doGetResourceBundle(true, module, locale, bundleName, bundleClass);
+      if ((module.resourceBundleResolveResult[moduleResolveResultKey] = resourceBundle != null)) {
+        if (module.resourceBundles == null) {
+          module.resourceBundles = new Vector.<ResourceBundle>();
+        }
+        module.resourceBundles[module.resourceBundles.length] = resourceBundle;
+      }
+    }
+
     if (resourceBundle == null) {
       resourceBundle = findResourceBundle2(module.librarySet, locale, bundleName);
+      if (resourceBundle == null) {
+        resourceBundle = doGetResourceBundle(false, module, locale, bundleName, bundleClass);
+        if (resourceBundle != null) {
+          var librarySet:LibrarySet = LibraryManager(module.project.getComponent(LibraryManager)).getById(resourceBundle.content["__$ls_id__"]);
+          if (librarySet.resourceBundles == null) {
+            librarySet.resourceBundles = new Vector.<ResourceBundle>();
+          }
+          librarySet.resourceBundles[librarySet.resourceBundles.length] = resourceBundle;
+        }
+      }
     }
 
-    if (resourceBundle != null) {
-      return resourceBundle;
-    }
+    return resourceBundle;
+  }
 
+  private function doGetResourceBundle(inSource:Boolean, module:Module, locale:String, bundleName:String, bundleClass:Class):ResourceBundle {
     var resultReadyFile:File = null;
-    var content:Dictionary;
-    var sourceKind:int = -1;
-    var sourceId:int = -1;
     try {
       const resultReadyFilename:String = generateResultReadyFilename();
       socket.writeByte(ServerMethod.GET_RESOURCE_BUNDLE);
       socket.writeUTF(resultReadyFilename);
+      socket.writeBoolean(inSource);
       writeModuleId(module);
       socket.writeUTF(locale);
       socket.writeUTF(bundleName);
@@ -306,10 +335,16 @@ public class Server implements ResourceBundleProvider {
       var fileStream:FileStream = new FileStream();
       fileStream.open(resultFile, FileMode.READ);
       try {
-        sourceKind = fileStream.readByte();
-        if (sourceKind != 0) {
-          sourceId = fileStream.readUnsignedShort();
-          content = fileStream.readObject();
+        var sourceId:int = fileStream.readUnsignedShort();
+        if (sourceId == 0) {
+          return null;
+        }
+        else {
+          var content:Dictionary = fileStream.readObject();
+          if (!inSource) {
+            content["__$ls_id__"] = sourceId - 1;
+          }
+          return new bundleClass(locale, bundleName, content);
         }
       }
       finally {
@@ -323,31 +358,7 @@ public class Server implements ResourceBundleProvider {
       postCheckSyncMessaging(resultReadyFile, null);
     }
 
-    if (content == null) {
-      UncaughtErrorManager.instance.logWarning("Cannot find resource bundle " + bundleName + " for locale " + locale);
-      return null;
-    }
-    else {
-      var result:ResourceBundle = new bundleClass(locale, bundleName, content);
-      var source:Vector.<ResourceBundle>;
-      if (sourceKind == 2) {
-        if (module.resourceBundles == null) {
-          module.resourceBundles = new Vector.<ResourceBundle>();
-        }
-        //noinspection JSUnusedAssignment
-        source = module.resourceBundles;
-      }
-      else {
-        var librarySet:LibrarySet = LibraryManager(module.project.getComponent(LibraryManager)).getById(sourceId);
-        if (librarySet.resourceBundles == null) {
-          librarySet.resourceBundles = new Vector.<ResourceBundle>();
-        }
-        source = librarySet.resourceBundles;
-      }
-
-      source[source.length] = result;
-      return result;
-    }
+    return null;
   }
 
   private static function generateResultReadyFilename():String {

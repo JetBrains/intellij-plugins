@@ -30,7 +30,7 @@ public abstract class FlashUIDesignerBaseTestCase extends ModuleTestCase {
   }
 
   protected VirtualFile configureByFile(final String filepath) throws Exception {
-    return configureByFile(DesignerTests.getVFile(filepath));
+    return configureByFile(DesignerTests.getFile(filepath));
   }
 
   protected VirtualFile configureByFile(final VirtualFile vFile) throws Exception {

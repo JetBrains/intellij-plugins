@@ -33,10 +33,6 @@ public class StatesTest extends BaseTestCase {
     assertThat(stateManager.states, [{name: FIRST_STATE}, {name: SECOND_STATE}]);
   }
   
-  public function LoginForm():void {
-
-  }
-  
   private var _states:Array;
   private function get states():Array {
     if (_states == null) {
@@ -44,6 +40,17 @@ public class StatesTest extends BaseTestCase {
     }
     
     return _states;
+  }
+
+  public function LoginForm():void {
+  }
+
+  public function AddItemsToArray():void {
+    assertThat(app, [{filters: []}]);
+    setState("down");
+    assertThat(app, [{filters: [{distance: 4}]}]);
+    setState("disabled");
+    assertThat(app, [{filters: [{distance: 2}]}]);
   }
   
   public function RootChildrenAndSetProperty():void {

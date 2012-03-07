@@ -358,7 +358,12 @@ public class LibraryManager implements Disposable {
   }
 
   private static PropertiesFile virtualFileToProperties(Project project, VirtualFile file) {
-    //noinspection ConstantConditions
-    return (PropertiesFile)PsiManager.getInstance(project).findFile(file);
+    final AccessToken token = ReadAction.start();
+    try {
+      return (PropertiesFile)PsiManager.getInstance(project).findFile(file);
+    }
+    finally {
+      token.finish();
+    }
   }
 }

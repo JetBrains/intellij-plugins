@@ -2,6 +2,8 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.properties.PropertiesReferenceManager;
+import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.Pair;
@@ -18,14 +20,14 @@ import java.util.List;
 public class MxmlTest extends MxmlTestBase {
   @Flex(platform=TargetPlatform.Mobile, version="4.6")
   public void testMobile() throws Exception {
-    testFiles(DesignerTests.getVFile((DesignerTests.getTestDataPath() + "/src/mobile")));
+    testFiles(DesignerTests.getFile("src/mobile"));
   }
 
   public void testResolveResourceIfNameIsAmbiguous() throws Exception {
     moduleInitializer = new TripleFunction<ModifiableRootModel, VirtualFile, List<String>, Void>() {
       @Override
       public Void fun(ModifiableRootModel model, VirtualFile file, List<String> libs) {
-        final VirtualFile localesDir = DesignerTests.getVFile("locales");
+        final VirtualFile localesDir = DesignerTests.getFile("locales");
         final ContentEntry localesContentEntry = model.addContentEntry(localesDir);
         //noinspection ConstantConditions
         localesContentEntry.addSourceFolder(localesDir.findChild("en_US"), false);
@@ -42,7 +44,7 @@ public class MxmlTest extends MxmlTestBase {
       @Override
       public Void fun(ModifiableRootModel model, VirtualFile sourceDir, List<String> libs) {
         libs.add(getFudHome() + "/test-data-helper/target/test-data-helper.swc");
-        final VirtualFile assetsDir = DesignerTests.getVFile("assets");
+        final VirtualFile assetsDir = DesignerTests.getFile("assets");
         model.addContentEntry(assetsDir).addSourceFolder(assetsDir, false);
 
         THashSet<ProblemDescriptor> expectedProblems = new THashSet<ProblemDescriptor>();
@@ -76,13 +78,13 @@ public class MxmlTest extends MxmlTestBase {
 
   public void test45() throws Exception {
     init45And46Tests();
-    testFiles(getTestDir(), DesignerTests.getVFile(DesignerTests.getTestDataPath() + "/src/mx"));
+    testFiles(getTestDir(), DesignerTests.getFile("src/mx"));
   }
 
   @Flex(version="4.6")
   public void test46() throws Exception {
     init45And46Tests();
-    testFiles(getTestDir(), DesignerTests.getVFile(DesignerTests.getTestDataPath() + "/src/mx"));
+    testFiles(getTestDir(), DesignerTests.getFile("src/mx"));
   }
 
   private void testFiles(VirtualFile... roots) throws Exception {
@@ -112,7 +114,6 @@ public class MxmlTest extends MxmlTestBase {
     final ArrayList<VirtualFile> auxFiles = new ArrayList<VirtualFile>(8);
 
     for (VirtualFile root : roots) {
-      root.refresh(false, true);
       collectMxmlFiles(files, auxFiles, root);
     }
 

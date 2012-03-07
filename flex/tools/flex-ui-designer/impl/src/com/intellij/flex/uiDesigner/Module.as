@@ -6,11 +6,13 @@ import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 
 import flash.system.ApplicationDomain;
+import flash.utils.Dictionary;
 
 import org.jetbrains.Identifiable;
 
 public final class Module implements Identifiable, ModuleContext {
   public var resourceBundles:Vector.<ResourceBundle>;
+  public var resourceBundleResolveResult:Dictionary;
 
   public function Module(id:int, project:Project, librarySet:LibrarySet, isApp:Boolean, localStyleHolders:Vector.<LocalStyleHolder>) {
     _isApp = isApp;

@@ -42,7 +42,7 @@ public class StyleTest extends MxmlTestBase {
     moduleInitializer = new TripleFunction<ModifiableRootModel, VirtualFile, List<String>, Void>() {
       @Override
       public Void fun(ModifiableRootModel model, VirtualFile sourceDir, List<String> libs) {
-        final VirtualFile assetsDir = DesignerTests.getVFile("assets");
+        final VirtualFile assetsDir = DesignerTests.getFile("assets");
         model.addContentEntry(assetsDir).addSourceFolder(assetsDir, false);
         return null;
       }

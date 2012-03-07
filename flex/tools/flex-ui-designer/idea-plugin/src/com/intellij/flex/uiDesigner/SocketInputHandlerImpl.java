@@ -415,93 +415,90 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   private void getResourceBundle() throws IOException {
     initResultFile();
 
+    final boolean fromModuleSource = reader.readBoolean();
     final int moduleId = readEntityId();
     final String locale = reader.readUTF();
     final String bundleName = reader.readUTF();
 
     final ModuleInfo moduleInfo = Client.getInstance().getRegisteredModules().getNullableInfo(moduleId);
     PropertiesFile resourceBundle = null;
-    int sourceKind = 0;
-    int sourceId = 0;
+    int sourceId = -1;
     if (moduleInfo == null) {
       // project may be closed, but client is not closed yet (AppTest#testCloseAndOpenProject)
-      LOG.warn("Skip getResourceBundle(" + locale + ", " + bundleName + ") due to cannot find project with id " + moduleId);
-      resourceBundle = null;
+      LOG.warn("Skip getResourceBundle(" + locale + ", " + bundleName + ") due to cannot find module with id " + moduleId);
     }
     else {
-      final AccessToken token = ReadAction.start();
-      try {
-        final PsiManager psiManager = PsiManager.getInstance(moduleInfo.getModule().getProject());
-        final List<VirtualFile> result = new ArrayList<VirtualFile>();
-        FileBasedIndex.getInstance().processValues(FileTypeIndex.NAME, PropertiesFileType.INSTANCE, null,
-                                                   new FileBasedIndex.ValueProcessor<Void>() {
-                                                     public boolean process(VirtualFile file, Void value) {
-                                                       if (file.getNameWithoutExtension().equals(bundleName)) {
-                                                         result.add(file);
-                                                         // todo IDEA-74868
-                                                         if (file.getParent().getName().equals("en_US")) {
-                                                           return false;
-                                                         }
-                                                       }
-
-                                                       return true;
-                                                     }
-                                                   }, moduleInfo.getModule().getModuleScope(false));
-
-        PropertiesFile defaultResourceBundle = null;
-        for (VirtualFile file : result) {
-          PsiFile psiFile = psiManager.findFile(file);
-          if (psiFile != null) {
-            if (file.getParent().getName().equals("en_US")) {
-              defaultResourceBundle = (PropertiesFile)psiFile;
-            }
-            else {
-              resourceBundle = (PropertiesFile)psiFile;
-              break;
-            }
-          }
-        }
-
-        if (resourceBundle == null) {
-          resourceBundle = defaultResourceBundle;
-        }
-
-        if (resourceBundle == null) {
-          Pair<PropertiesFile, Integer> bundleInfo = LibraryManager.getInstance().getResourceBundleFile(locale, bundleName, moduleInfo);
-          if (bundleInfo != null) {
-            resourceBundle = bundleInfo.first;
-            sourceKind = 1;
-            sourceId = bundleInfo.second;
-          }
-        }
-        else {
-          sourceKind = 2;
-          sourceId = moduleInfo.getId();
-        }
+      if (fromModuleSource) {
+        resourceBundle = getResourceBundleFromModuleSource(moduleInfo.getModule(), bundleName);
+        sourceId = moduleId;
       }
-      finally {
-        token.finish();
+      else {
+        Pair<PropertiesFile, Integer> bundleInfo = LibraryManager.getInstance().getResourceBundleFile(locale, bundleName, moduleInfo);
+        if (bundleInfo != null) {
+          resourceBundle = bundleInfo.first;
+          sourceId = bundleInfo.second;
+        }
       }
     }
 
     final FileOutputStream fileOut = new FileOutputStream(resultFile);
     try {
-      writeResourceBundle(resourceBundle, fileOut, sourceKind, sourceId);
+      writeResourceBundle(resourceBundle, fileOut, sourceId);
     }
     finally {
       fileOut.close();
     }
   }
 
-  private static void writeResourceBundle(PropertiesFile file, OutputStream out, int sourceKind, int sourceId) throws IOException {
-    out.write(sourceKind);
+  private static PropertiesFile getResourceBundleFromModuleSource(Module module, final String bundleName) throws IOException {
+    final AccessToken token = ReadAction.start();
+    try {
+      final PsiManager psiManager = PsiManager.getInstance(module.getProject());
+      final List<VirtualFile> result = new ArrayList<VirtualFile>();
+      FileBasedIndex.getInstance().processValues(FileTypeIndex.NAME, PropertiesFileType.INSTANCE, null,
+                                                 new FileBasedIndex.ValueProcessor<Void>() {
+                                                   public boolean process(VirtualFile file, Void value) {
+                                                     if (file.getNameWithoutExtension().equals(bundleName)) {
+                                                       result.add(file);
+                                                       // todo IDEA-74868
+                                                       if (file.getParent().getName().equals("en_US")) {
+                                                         return false;
+                                                       }
+                                                     }
 
+                                                     return true;
+                                                   }
+                                                 }, module.getModuleScope(false));
+
+      PropertiesFile defaultResourceBundle = null;
+      for (VirtualFile file : result) {
+        PsiFile psiFile = psiManager.findFile(file);
+        if (psiFile != null) {
+          if (file.getParent().getName().equals("en_US")) {
+            defaultResourceBundle = (PropertiesFile)psiFile;
+          }
+          else {
+            return (PropertiesFile)psiFile;
+          }
+        }
+      }
+
+      return defaultResourceBundle;
+    }
+    finally {
+      token.finish();
+    }
+  }
+
+  private static void writeResourceBundle(PropertiesFile file, OutputStream out, int sourceId) throws IOException {
     if (file == null) {
+      out.write(0);
+      out.write(0);
       return;
     }
 
     final AmfOutputStream amfOut = new AmfOutputStream(new ByteArrayOutputStreamEx(4 * 1024));
-    amfOut.writeShort(sourceId);
+    amfOut.writeShort(sourceId + 1);
     // todo Embed, ClassReference, but idea doesn't support it too
     final List<IProperty> properties = file.getProperties();
     amfOut.write(Amf3Types.DICTIONARY);

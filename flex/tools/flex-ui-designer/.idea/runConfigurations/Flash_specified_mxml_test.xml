@@ -8,7 +8,7 @@
     <option name="MAIN_CLASS_NAME" value="com.intellij.flex.uiDesigner.MxmlTest" />
     <option name="METHOD_NAME" value="test46" />
     <option name="TEST_OBJECT" value="method" />
-    <option name="VM_PARAMETERS" value="-DtestFile=../mx/SparkComponentsDependOnMx -Xms128m -Xmx768m -XX:MaxPermSize=350m -ea -Dfud.test.debug=true" />
+    <option name="VM_PARAMETERS" value="-DtestFile=states/AddItemsToArray -Xms128m -Xmx768m -XX:MaxPermSize=350m -ea -Dfud.test.debug=true" />
     <option name="PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
     <option name="ENV_VARIABLES" />
