@@ -8,8 +8,6 @@
     <ArrayCollection>
       <fx:String>MPS</fx:String>
       <fx:String>dotTrace</fx:String>
-      <fx:String>dotCover</fx:String>
-      <fx:String>ColdFusion</fx:String>
     </ArrayCollection>
   </List>
 </Group>

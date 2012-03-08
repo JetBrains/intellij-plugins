@@ -162,7 +162,6 @@ public class MxmlTest extends MxmlTestBase {
                !name.startsWith("TestApp.") &&
                !name.startsWith("MigLayoutExample.") &&
                !name.startsWith("ResourceDirective.") &&
-               !name.startsWith("FxComponentReferencedByClassName.") &&
                //!name.startsWith("ProjectMxmlComponentAsParentWithDefaultProperty.") &&
                !name.startsWith("GenericMxmlSupport.")) {
         files.add(file);
