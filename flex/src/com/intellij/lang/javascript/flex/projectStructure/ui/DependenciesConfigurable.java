@@ -1489,6 +1489,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         final SdkType sdkType = sdk.getSdkType();
         return sdkType == FlexSdkType2.getInstance() || sdkType == FlexmojosSdkType.getInstance();
       }
+    }, new Condition<SdkType>() {
+      public boolean value(final SdkType type) {
+        return type == FlexSdkType2.getInstance();
+      }
     });
   }
 

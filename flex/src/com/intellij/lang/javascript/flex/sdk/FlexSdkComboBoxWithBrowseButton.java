@@ -341,8 +341,11 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
       myOriginal.removeSdk(editableObject);
     }
 
-    public void createAddActions(final DefaultActionGroup group, final JComponent parent, final Consumer<Sdk> updateTree) {
-      myOriginal.createAddActions(group, parent, updateTree);
+    public void createAddActions(final DefaultActionGroup group,
+                                 final JComponent parent,
+                                 final Consumer<Sdk> updateTree,
+                                 @Nullable final Condition<SdkType> filter) {
+      myOriginal.createAddActions(group, parent, updateTree, filter);
     }
 
     public void doAdd(final SdkType type, final Consumer<Sdk> updateTree) {
