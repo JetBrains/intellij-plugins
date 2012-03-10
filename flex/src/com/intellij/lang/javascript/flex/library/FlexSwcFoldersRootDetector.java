@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.ui.RootDetector;
+import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +31,7 @@ class FlexSwcFoldersRootDetector extends RootDetector {
 
   private static void collectRoots(VirtualFile file, List<VirtualFile> result, ProgressIndicator progressIndicator) {
     progressIndicator.checkCanceled();
-    if (!file.isDirectory()) return;
+    if (!file.isDirectory() || file.getFileSystem() instanceof JarFileSystem) return;
 
     progressIndicator.setText2(file.getPresentableUrl());
 
