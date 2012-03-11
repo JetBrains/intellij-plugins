@@ -41,6 +41,7 @@
   </project-components>
 
   <extensions defaultExtensionNs="com.intellij">
+    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
     <fileTypeFactory implementation="com.google.jstestdriver.idea.config.JstdConfigFileLoader"/>
     <configurationType implementation="com.google.jstestdriver.idea.execution.JstdConfigurationType"/>
     <programRunner implementation="com.google.jstestdriver.idea.execution.JstdClientRunner"/>
