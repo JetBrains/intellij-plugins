@@ -30,6 +30,8 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.PanelWithAnchor;
+import com.intellij.ui.components.JBLabel;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
@@ -46,7 +48,7 @@ import java.awt.event.ActionListener;
  *
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class CreateFrameworkInstanceDialog extends DialogWrapper {
+public class CreateFrameworkInstanceDialog extends DialogWrapper implements PanelWithAnchor {
 
   private JPanel myMainPanel;
   private JComboBox myIntegratorComboBox;
@@ -58,11 +60,12 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper {
   private JRadioButton myDownloadAFrameworkWithRadioButton;
   private TextFieldWithBrowseButton myTargetFolder;
   private JComboBox myComboBox1;
-  private JLabel myBaseFolderLabel;
-  private JLabel myFolderLabel;
-  private JLabel myProfilesLabel;
+  private JBLabel myBaseFolderLabel;
+  private JBLabel myFolderLabel;
+  private JBLabel myProfilesLabel;
   private JButton myDownloadButton;
   private JCheckBox myClearFolderBeforeDowloadCheckBox;
+  private JComponent myAnchor;
 
   private void createUIComponents() {
     myErrorText = new MyErrorText();
@@ -148,6 +151,8 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper {
 
     // add a check right here!
     updateUiState();
+
+    setAnchor(myBaseFolderLabel);
   }
 
 
@@ -287,5 +292,18 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper {
   @Override
   protected String getHelpId() {
     return "reference.settings.project.osgi.new.framework.instance";
+  }
+
+  @Override
+  public JComponent getAnchor() {
+    return myAnchor;
+  }
+
+  @Override
+  public void setAnchor(@Nullable JComponent anchor) {
+    this.myAnchor = anchor;
+    myBaseFolderLabel.setAnchor(anchor);
+    myFolderLabel.setAnchor(anchor);
+    myProfilesLabel.setAnchor(anchor);
   }
 }
