@@ -12,7 +12,8 @@ import org.jetbrains.annotations.NotNull;
 public class JSGenerateTearDownMethodAction extends GenerateFlexUnitMethodActionBase {
 
   protected void buildTemplate(final Template template, final JSClass jsClass) {
-    if (JSInheritanceUtil.findMember("tearDown", jsClass, false, JSFunction.FunctionKind.SIMPLE, true) != null) {
+    if (JSInheritanceUtil
+          .findMember("tearDown", jsClass, JSInheritanceUtil.SearchedMemberType.Methods, JSFunction.FunctionKind.SIMPLE, true) != null) {
       template.addTextSegment("[After]\npublic override function tearDown():void{\nsuper.tearDown();");
       template.addEndVariable();
       template.addTextSegment("\n}");

@@ -12,7 +12,8 @@ import org.jetbrains.annotations.NotNull;
 public class JSGenerateSetUpMethodAction extends GenerateFlexUnitMethodActionBase {
 
   protected void buildTemplate(final Template template, final JSClass jsClass) {
-    if (JSInheritanceUtil.findMember("setUp", jsClass, false, JSFunction.FunctionKind.SIMPLE, true) != null) {
+    if (JSInheritanceUtil
+          .findMember("setUp", jsClass, JSInheritanceUtil.SearchedMemberType.Methods, JSFunction.FunctionKind.SIMPLE, true) != null) {
       template.addTextSegment("[Before]\npublic override function setUp():void{\nsuper.setUp();");
       template.addEndVariable();
       template.addTextSegment("\n}");

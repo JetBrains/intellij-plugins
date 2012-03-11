@@ -93,11 +93,14 @@ public class FlexUnitTestCreator implements TestCreator {
                                        final boolean generateTearDown,
                                        final JSMemberInfo[] selectedMemberInfos) {
     final StringBuilder builder = new StringBuilder();
-    builder.append(generateSetUp ? JSInheritanceUtil.findMember("setUp", createdClass, false, FunctionKind.SIMPLE, true) == null
+    builder.append(generateSetUp ? JSInheritanceUtil
+                                     .findMember("setUp", createdClass, JSInheritanceUtil.SearchedMemberType.Methods, FunctionKind.SIMPLE,
+                                                 true) == null
                                    ? "[Before]\npublic function setUp():void{\n\n}"
                                    : "[Before]\npublic override function setUp():void{\nsuper.setUp();\n}"
                                  : "");
-    builder.append(generateTearDown ? JSInheritanceUtil.findMember("tearDown", createdClass, false, FunctionKind.SIMPLE, true) == null
+    builder.append(generateTearDown ? JSInheritanceUtil.findMember("tearDown", createdClass, JSInheritanceUtil.SearchedMemberType.Methods,
+                                                                   FunctionKind.SIMPLE, true) == null
                                       ? "[After]\npublic function tearDown():void{\n\n}"
                                       : "[After]\npublic override function tearDown():void{\nsuper.tearDown();\n}"
                                     : "");

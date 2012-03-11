@@ -509,7 +509,8 @@ class FlexValue extends XValue {
         findJSClass(project, ModuleUtil.findModuleForFile(mySourcePosition.getFile(), project), typeFromFlexValueResult);
 
       if (jsClass != null) {
-        result = calcSourcePosition(JSInheritanceUtil.findMember(myName, jsClass, true, JSFunction.FunctionKind.GETTER, true));
+        result = calcSourcePosition(JSInheritanceUtil.findMember(myName, jsClass, JSInheritanceUtil.SearchedMemberType.FieldsAndMethods,
+                                                                 JSFunction.FunctionKind.GETTER, true));
       }
     }
     navigatable.setSourcePosition(result);
