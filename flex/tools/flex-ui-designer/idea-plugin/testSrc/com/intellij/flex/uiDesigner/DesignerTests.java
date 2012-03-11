@@ -43,12 +43,12 @@ public final class DesignerTests {
 
       final IndexableFileSet indexableFileSet = new IndexableFileSet() {
         @Override
-        public boolean isInSet(final VirtualFile file) {
+        public boolean isInSet(@NotNull final VirtualFile file) {
           return file.getFileSystem() == sourceDir.getFileSystem();
         }
 
         @Override
-        public void iterateIndexableFilesIn(final VirtualFile file, final ContentIterator iterator) {
+        public void iterateIndexableFilesIn(@NotNull final VirtualFile file, @NotNull final ContentIterator iterator) {
           if (file.isDirectory()) {
             for (VirtualFile child : file.getChildren()) {
               iterateIndexableFilesIn(child, iterator);
