@@ -47,9 +47,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
-import com.intellij.ui.EditorTextField;
-import com.intellij.ui.UserActivityListener;
-import com.intellij.ui.UserActivityWatcher;
+import com.intellij.ui.*;
+import com.intellij.ui.table.JBTable;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacetConfiguration;
@@ -57,7 +56,9 @@ import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.MyErrorText;
 
 import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -77,9 +78,6 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   private JPanel myRoot;
   private JTable myAdditionalJARContentsTable;
   private final EditorTextField myIgnoreFilePatternTextField;
-  private JButton myAddButton;
-  private JButton myRemoveButton;
-  private JButton myEditButton;
   private JCheckBox myAlwaysRebuildBundleJARCheckBox;
   private JLabel myFileIgnorePatternLabel;
   private JPanel myIgnoreFilePatternPanel;
@@ -139,7 +137,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     watcher.register(myRoot);
 
     myAdditionalJARContentsTableModel = new AdditionalJARContentsTableModel();
-    myAdditionalJARContentsTable.setModel(myAdditionalJARContentsTableModel);
+    myAdditionalJARContentsTable = new JBTable(myAdditionalJARContentsTableModel);
 
     TableColumn col = myAdditionalJARContentsTable.getColumnModel().getColumn(0);
     final FileSelectorTableCellEditor selectorTableCellEditor = new FileSelectorTableCellEditor(project, myEditorContext.getModule());
@@ -169,34 +167,24 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
       }
     });
 
-    myAdditionalJARContentsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        myRemoveButton.setEnabled(myAdditionalJARContentsTable.getSelectedRowCount() > 0);
-        myEditButton.setEnabled(myAdditionalJARContentsTable.getSelectedRowCount() > 0);
-      }
-    });
-
-
-    myAddButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        onAddAdditionalJARContent();
-      }
-    });
-
-    myRemoveButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        onRemoveAdditionalJARContent();
-      }
-    });
-
-    myEditButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        onEditAdditionalJARContent();
-      }
-    });
-
-    myEditButton.setEnabled(false);
-    myRemoveButton.setEnabled(false);
+    myAdditionalJarContentsPanel.add(
+      ToolbarDecorator.createDecorator(myAdditionalJARContentsTable)
+        .setAddAction(new AnActionButtonRunnable() {
+          @Override
+          public void run(AnActionButton button) {
+            onAddAdditionalJARContent();
+          }
+        }).setRemoveAction(new AnActionButtonRunnable() {
+        @Override
+        public void run(AnActionButton button) {
+          onRemoveAdditionalJARContent();
+        }
+      }).setEditAction(new AnActionButtonRunnable() {
+        @Override
+        public void run(AnActionButton button) {
+          onEditAdditionalJARContent();
+        }
+      }).disableUpDownActions().createPanel(), BorderLayout.CENTER);
 
     myValidatorsManager.registerValidator(new OsmorcFacetJarEditorValidator(myEditorContext, this));
   }
@@ -292,9 +280,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     myJarOutputPathChooser.setEnabled(myPlaceInThisPathRadioButton.isSelected());
     myAdditionalJARContentsTable.setEnabled(!useExternalTool);
     myIgnoreFilePatternTextField.setEnabled(!useExternalTool);
-    myAddButton.setEnabled(!useExternalTool);
-    myRemoveButton.setEnabled(!useExternalTool);
-    myEditButton.setEnabled(!useExternalTool);
+    myAdditionalJARContentsTable.setEnabled(!useExternalTool);
     myAlwaysRebuildBundleJARCheckBox.setEnabled(!useExternalTool);
     myAdditionalJarContentsPanel.setEnabled(!useExternalTool);
     myFileIgnorePatternLabel.setEnabled(!useExternalTool);
