@@ -2,11 +2,13 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
+import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
@@ -15,6 +17,7 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +109,8 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
 
   @Override
   public List<ProjectStructureElementUsage> getUsagesInElement() {
-    final FlexProjectConfigurationEditor editor = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
+    FlexIdeBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
+    final FlexProjectConfigurationEditor editor = configurator.getConfigEditor();
     final ModulesConfigurator modulesConfigurator = myContext.getModulesConfigurator();
 
     final List<ProjectStructureElementUsage> usages = new ArrayList<ProjectStructureElementUsage>();
@@ -119,7 +123,12 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
           usages.add(new UsageInBcDependencies(this, new LibraryProjectStructureElement(myContext, library)) {
             @Override
             public void removeSourceElement() {
-              libraryRemoved(library);
+              libraryReplaced(library, null);
+            }
+
+            @Override
+            public void replaceElement(final ProjectStructureElement newElement) {
+              libraryReplaced(library, ((LibraryProjectStructureElement)newElement).getLibrary());
             }
           });
         }
@@ -141,6 +150,11 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
               public void removeSourceElement() {
                 // ignore as editor already listens to BC removal
               }
+
+              @Override
+              public void replaceElement(final ProjectStructureElement newElement) {
+                throw new UnsupportedOperationException();
+              }
             });
           }
         }
@@ -155,12 +169,17 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
         public void removeSourceElement() {
           myBc.getDependencies().setSdkEntry(null);
         }
+
+        @Override
+        public void replaceElement(final ProjectStructureElement newElement) {
+          throw new UnsupportedOperationException();
+        }
       });
     }
     return usages;
   }
 
-  protected void libraryRemoved(final Library library) {
+  protected void libraryReplaced(@NotNull final Library library, @Nullable final Library replacement) {
   }
 
   @Override

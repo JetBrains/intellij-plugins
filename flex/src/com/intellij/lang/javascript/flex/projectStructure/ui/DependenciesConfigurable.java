@@ -933,7 +933,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
           }
         }
 
-        removeItems(itemsToRemove);
+        removeItems(itemsToRemove, true);
       }
 
       @Override
@@ -947,7 +947,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         for (int row = 0; row < myTable.getRowCount(); row++) {
           MyTableItem item = myTable.getItemAt(row);
           if (item instanceof BCItem && ((BCItem)item).configurable == configurable) {
-            removeItems(Collections.singleton(item));
+            removeItems(Collections.singleton(item), true);
             // there may be only one dependency on a BC
             break;
           }
@@ -1125,7 +1125,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     for (int row : selectedRows) {
       itemsToRemove.add(myTable.getItemAt(row));
     }
-    removeItems(itemsToRemove);
+    removeItems(itemsToRemove, true);
     if (myTable.getRowCount() > 0) {
       int toSelect = Math.min(myTable.getRowCount() - 1, selectedRows[0]);
       myTable.clearSelection();
@@ -1133,7 +1133,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
   }
 
-  private void removeItems(Set<MyTableItem> itemsToDelete) {
+  private void removeItems(Set<MyTableItem> itemsToDelete, boolean refresh) {
     if (itemsToDelete.isEmpty()) return;
 
     DefaultMutableTreeNode root = myTable.getRoot();
@@ -1147,7 +1147,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         i++;
       }
     }
-    myTable.refresh();
+
+    if (refresh) {
+      myTable.refresh();
+    }
   }
 
   private void moveSelection(int delta) {
@@ -1722,16 +1725,19 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
   }
 
-  public void libraryRemoved(final Library library) {
+  public void libraryReplaced(@NotNull final Library library, @Nullable final Library replacement) {
     if (myReset) {
       // look in UI as there is no way to find just-created-and-then-renamed library in model
       List<MyTableItem> items = myTable.getItems();
       for (int i = 0; i < items.size(); i++) {
         MyTableItem item = items.get(i);
         if (item instanceof SharedLibraryItem && ((SharedLibraryItem)item).findLiveLibrary() == library) {
-          removeItems(Collections.singleton(item)); // will cause apply
+          removeItems(Collections.singleton(item), replacement == null);
           break;
         }
+      }
+      if (replacement != null) {
+        addSharedLibraries(Collections.singletonList(replacement));
       }
     }
     else {

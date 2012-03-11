@@ -127,8 +127,8 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     myName = bc.getName();
     myStructureElement = new BuildConfigurationProjectStructureElement(bc, module, context) {
       @Override
-      protected void libraryRemoved(final Library library) {
-        myDependenciesConfigurable.libraryRemoved(library);
+      protected void libraryReplaced(@NotNull final Library library, @Nullable final Library replacement) {
+        myDependenciesConfigurable.libraryReplaced(library, replacement);
       }
     };
     myCssFilesToCompile = Collections.emptyList();
