@@ -202,6 +202,12 @@ public class FlexIdeBCConfigurator {
     }
   }
 
+  public void afterModelCommit() {
+    for (final CompositeConfigurable configurable : myConfigurablesMap.values()) {
+      configurable.reset();
+    }
+  }
+
   public void dispose() {
     // configurables are disposed by MasterDetailsComponent
     myModifiableModelInitializer.dispose();

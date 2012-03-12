@@ -91,6 +91,11 @@ public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
     myConfigurator.apply();
   }
 
+  @Override
+  public void afterModelCommit() {
+    myConfigurator.afterModelCommit();
+  }
+
   public void disposeUIResources() {
     myConfigurator.dispose();
   }
