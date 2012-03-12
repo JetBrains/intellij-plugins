@@ -53,14 +53,14 @@ public class FlexProjectStructureValidator extends ProjectStructureValidator {
   }
 
   @Override
-  protected boolean addLibraryToDependencies(final Library library, final Project project) {
+  protected boolean addLibraryToDependencies(final Library library, final Project project, final boolean allowEmptySelection) {
     if (!(((LibraryEx)library).getType() instanceof FlexLibraryType)) {
       return false;
     }
 
     ChooseBuildConfigurationDialog d = ChooseBuildConfigurationDialog
       .createForApplicableBCs(FlexBundle.message("choose.bc.dialog.title"), FlexBundle.message("choose.bc.dialog.label", library.getName()),
-                              project, true, new Condition<FlexIdeBCConfigurable>() {
+                              project, allowEmptySelection, new Condition<FlexIdeBCConfigurable>() {
         @Override
         public boolean value(final FlexIdeBCConfigurable configurable) {
           for (DependencyEntry entry : configurable.getEditableObject().getDependencies().getEntries()) {
