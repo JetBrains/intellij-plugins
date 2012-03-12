@@ -636,15 +636,30 @@ public class FlexProjectConfigurationEditor implements Disposable {
         ModuleLibraryEntry libraryEntry = (ModuleLibraryEntry)entry;
         Library dependencyLibrary = findLibrary(dependantModifiableModel, libraryEntry.getLibraryId());
         if (dependencyLibrary != null) {
-          LibraryOrderEntry orderEntry = dependantModifiableModel.findLibraryOrderEntry(dependencyLibrary);
-          LOG.assertTrue(orderEntry != null);
-          // TODO should we explicitly delete library?
-          dependantModifiableModel.removeOrderEntry(orderEntry);
+          List<Editor> otherEditors = new ArrayList<Editor>(myModule2Editors.get(dependantEditor.myModule));
+          otherEditors.remove(dependantEditor);
+          if (!libraryIsUsed(libraryEntry.getLibraryId(), otherEditors)) {
+            LibraryOrderEntry orderEntry = dependantModifiableModel.findLibraryOrderEntry(dependencyLibrary);
+            LOG.assertTrue(orderEntry != null);
+            // TODO should we explicitly delete library as well?
+            dependantModifiableModel.removeOrderEntry(orderEntry);
+          }
         }
       }
     }
     dependant.getModifiableEntries().removeAll(entriesToRemove);
     dependant.getModifiableEntries().addAll(newEntries);
+  }
+
+  private static boolean libraryIsUsed(final String libraryId, final List<Editor> editors) {
+    for (Editor editor : editors) {
+      for (ModifiableDependencyEntry entry : editor.getDependencies().getModifiableEntries()) {
+        if (entry instanceof ModuleLibraryEntry && libraryId.equals(((ModuleLibraryEntry)entry).getLibraryId())) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   @Nullable
