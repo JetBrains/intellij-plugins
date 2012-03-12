@@ -19,7 +19,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,8 +50,18 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
 
   // TODO our special handling for myWithoutJdk, myWithoutLibraries
 
+  private static class ModuleData {
+    private Set<FlexIdeBuildConfiguration> bcs = new HashSet<FlexIdeBuildConfiguration>();
+    private boolean accessibleInProduction = false; // true if this module accessible by non-test dependency types
+
+    public void addBc(FlexIdeBuildConfiguration bc, boolean production) {
+      bcs.add(bc);
+      accessibleInProduction |= production;
+    }
+  }
+
   @Nullable
-  private final MultiMap<Module, FlexIdeBuildConfiguration> myActiveConfigurations;
+  private final Map<Module, ModuleData> myActiveConfigurations;
   @Nullable private final Module myRootModule;
 
 
@@ -63,19 +72,16 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
       return;
     }
 
-    myActiveConfigurations = new MultiMap<Module, FlexIdeBuildConfiguration>() {
-      @Override
-      protected Collection<FlexIdeBuildConfiguration> createCollection() {
-        return new HashSet<FlexIdeBuildConfiguration>();
-      }
-    };
-    processModuleWithBuildConfiguration(module, null, myActiveConfigurations, new HashSet<FlexIdeBuildConfiguration>());
+    myActiveConfigurations = new HashMap<Module, ModuleData>();
+    // last argument can be whatever
+    processModuleWithBuildConfiguration(module, null, myActiveConfigurations, new HashSet<FlexIdeBuildConfiguration>(), true);
   }
 
   // configuration is null for root module (one for which scope is being computed)
   private static void processModuleWithBuildConfiguration(@NotNull Module module, @Nullable FlexIdeBuildConfiguration configuration,
-                                                          MultiMap<Module, FlexIdeBuildConfiguration> modules2activeConfigurations,
-                                                          Set<FlexIdeBuildConfiguration> processedConfigurations) {
+                                                          Map<Module, ModuleData> modules2activeConfigurations,
+                                                          Set<FlexIdeBuildConfiguration> processedConfigurations,
+                                                          boolean productionDependency) {
     if (ModuleType.get(module) != FlexModuleType.getInstance()) {
       return;
     }
@@ -90,7 +96,11 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
       return;
     }
 
-    modules2activeConfigurations.putValue(module, configuration);
+    ModuleData moduleData = modules2activeConfigurations.get(module);
+    if (moduleData == null) {
+      modules2activeConfigurations.put(module, moduleData = new ModuleData());
+    }
+    moduleData.addBc(configuration, productionDependency);
     for (DependencyEntry entry : configuration.getDependencies().getEntries()) {
       if (!(entry instanceof BuildConfigurationEntry)) {
         continue;
@@ -113,7 +123,8 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
       if (dependencyModule == null || dependencyModule == module) {
         continue;
       }
-      processModuleWithBuildConfiguration(dependencyModule, dependencyBc, modules2activeConfigurations, processedConfigurations);
+      processModuleWithBuildConfiguration(dependencyModule, dependencyBc, modules2activeConfigurations, processedConfigurations,
+                                          entry.getDependencyType().getLinkageType() != LinkageType.Test);
     }
   }
 
@@ -145,8 +156,8 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
         return AddDependencyType.DEFAULT;
       }
 
-      Collection<FlexIdeBuildConfiguration> accessibleConfigurations = myActiveConfigurations.get(module);
-      for (FlexIdeBuildConfiguration bc : accessibleConfigurations) {
+      ModuleData moduleData = myActiveConfigurations.get(module);
+      for (FlexIdeBuildConfiguration bc : moduleData.bcs) {
         if (bc.getSdk() != null) {
           return AddDependencyType.DEFAULT;
         }
@@ -156,7 +167,8 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
 
     Collection<FlexIdeBuildConfiguration> accessibleConfigurations;
     if (myActiveConfigurations != null) {
-      accessibleConfigurations = myActiveConfigurations.get(module);
+      ModuleData moduleData = myActiveConfigurations.get(module);
+      accessibleConfigurations = moduleData != null ? moduleData.bcs : Collections.<FlexIdeBuildConfiguration>emptyList();
     }
     else {
       // let all configurations be accessible in ProjectOrderEnumerator
@@ -169,7 +181,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
       }
 
       if (library.getType() instanceof FlexLibraryType) {
-        return FlexProjectRootsUtil.dependOnLibrary(accessibleConfigurations, library, module != myRootModule)
+        return FlexProjectRootsUtil.dependOnLibrary(accessibleConfigurations, library, module != myRootModule, settings.isProductionOnly())
                ? AddDependencyType.DEFAULT
                : AddDependencyType.DO_NOT_ADD;
       }
@@ -184,7 +196,10 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
         return AddDependencyType.DO_NOT_ADD;
       }
       if (myActiveConfigurations != null) {
-        return myActiveConfigurations.containsKey(dependencyModule) ? AddDependencyType.DEFAULT : AddDependencyType.DO_NOT_ADD;
+        ModuleData moduleData = myActiveConfigurations.get(dependencyModule);
+        return moduleData != null && (moduleData.accessibleInProduction || !settings.isProductionOnly())
+               ? AddDependencyType.DEFAULT
+               : AddDependencyType.DO_NOT_ADD;
       }
       else {
         // let all modules dependencies be accessible in ProjectOrderEnumerator

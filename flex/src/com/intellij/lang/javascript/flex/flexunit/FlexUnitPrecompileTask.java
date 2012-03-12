@@ -341,6 +341,10 @@ public class FlexUnitPrecompileTask implements CompileTask {
   }
 
   public static String getFlexUnitLauncherName(final String moduleName) {
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      return FLEX_UNIT_LAUNCHER;
+    }
+
     return moduleName.replaceAll("[^\\p{Alnum}]", "_") + "_" +
            SystemProperties.getUserName().toLowerCase().replaceAll("[^\\p{Alnum}]", "_") +
            FLEX_UNIT_LAUNCHER;

@@ -9,6 +9,9 @@
             <entry library-id="8">
               <dependency linkage="Merged" />
             </entry>
+            <entry library-id="9">
+              <dependency linkage="Test" />
+            </entry>
             <entry module-name="java_with_flex_facets_2" build-configuration-name="B">
               <dependency linkage="Include" />
             </entry>
@@ -22,7 +25,10 @@
       <configuration name="Flex2" output-file="flex.swf" output-folder="$TEST_PROJECT$/out/production/untitled4">
         <dependencies>
           <entries>
-            <entry library-id="9">
+            <entry library-id="10">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="11">
               <dependency linkage="Merged" />
             </entry>
             <entry module-name="java_with_flex_facets_2" build-configuration-name="B">
@@ -46,9 +52,19 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library name="flexlib" type="flex">
-        <properties id="9" />
+        <properties id="10" />
         <CLASSES>
           <root url="jar://$MODULE_DIR$/2.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library type="flex">
+        <properties id="11" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/flexunit.swc!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -60,6 +76,16 @@
         <properties id="8" />
         <CLASSES>
           <root url="jar://$MODULE_DIR$/2.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library type="flex">
+        <properties id="9" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/flexunit.swc!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

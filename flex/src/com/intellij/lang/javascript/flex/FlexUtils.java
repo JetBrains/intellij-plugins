@@ -694,9 +694,11 @@ public class FlexUtils {
   }
 
   public static LinkageType convertLinkageType(final DependencyScope scope, final boolean isExported) {
-    // todo respect TEST scope
     if (scope == DependencyScope.PROVIDED) {
       return LinkageType.External;
+    }
+    else if (scope == DependencyScope.TEST) {
+      return LinkageType.Test;
     }
     else if (isExported) {
       return LinkageType.Include;

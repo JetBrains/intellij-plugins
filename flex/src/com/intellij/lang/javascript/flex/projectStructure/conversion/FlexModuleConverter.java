@@ -361,6 +361,9 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
     DependencyScope scope = DependencyScope.readExternal(orderEntry);
     boolean isExported = orderEntry.getAttribute(ModuleLibraryOrderEntryImpl.EXPORTED_ATTR) != null;
     dependencyType.setLinkageType(FlexUtils.convertLinkageType(scope, isExported));
+    if (scope == DependencyScope.TEST) {
+      orderEntry.removeAttribute(DependencyScope.SCOPE_ATTR);
+    }
   }
 
   private static String getOutputFolder(final ModuleSettings moduleSettings) {

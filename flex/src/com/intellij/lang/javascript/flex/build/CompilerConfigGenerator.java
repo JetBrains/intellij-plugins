@@ -27,6 +27,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.psi.PsiFile;
@@ -299,6 +300,14 @@ public class CompilerConfigGenerator {
   private void addLibs(final Element rootElement) {
     for (final DependencyEntry entry : myBC.getDependencies().getEntries()) {
       LinkageType linkageType = entry.getDependencyType().getLinkageType();
+      if (linkageType == LinkageType.Test) {
+        if (myFlexUnit) {
+          linkageType = LinkageType.Merged;
+        }
+        else {
+          continue;
+        }
+      }
       if (myCSS && linkageType == LinkageType.Include) linkageType = LinkageType.Merged;
 
       if (entry instanceof BuildConfigurationEntry) {
@@ -473,7 +482,7 @@ public class CompilerConfigGenerator {
       }
 
       if (!pathToMainClassFile.isEmpty()) {
-        addOption(rootElement, CompilerOptionInfo.MAIN_CLASS_INFO, pathToMainClassFile);
+        addOption(rootElement, CompilerOptionInfo.MAIN_CLASS_INFO, FileUtil.toSystemIndependentName(pathToMainClassFile));
       }
     }
 
