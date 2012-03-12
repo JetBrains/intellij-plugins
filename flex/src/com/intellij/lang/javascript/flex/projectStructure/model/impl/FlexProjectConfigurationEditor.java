@@ -551,7 +551,9 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
     Module dependantModule = getEditor(dependant).myModule;
     ModifiableRootModel modifiableModel = myProvider.getModuleModifiableModel(dependantModule);
-    LOG.assertTrue(findLibrary(modifiableModel, dependencyLibraryId) != null);
+    if (findLibrary(modifiableModel, dependencyLibraryId) == null) {
+      LOG.warn("Module library used in build configuration is missing");
+    }
     return e;
   }
 
