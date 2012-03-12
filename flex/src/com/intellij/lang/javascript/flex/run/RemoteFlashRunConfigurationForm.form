@@ -32,7 +32,8 @@
           <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <componentStyle value="MINI"/>
+          <componentStyle value="SMALL"/>
+          <fontColor value="BRIGHTER"/>
           <text value="Debugger is taken from Flex SDK configured for selected build configuration"/>
         </properties>
       </component>
@@ -41,7 +42,8 @@
           <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <componentStyle value="MINI"/>
+          <componentStyle value="SMALL"/>
+          <fontColor value="BRIGHTER"/>
           <text value="Source files are searched according to dependencies of selected build configuration"/>
         </properties>
       </component>
