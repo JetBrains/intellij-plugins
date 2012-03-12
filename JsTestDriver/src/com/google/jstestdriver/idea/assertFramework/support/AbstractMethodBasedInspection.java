@@ -2,7 +2,6 @@ package com.google.jstestdriver.idea.assertFramework.support;
 
 import com.google.jstestdriver.idea.util.CastUtils;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
-import com.google.jstestdriver.idea.util.ObjectUtils;
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.LocalQuickFix;
@@ -11,6 +10,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.lang.javascript.inspections.JSInspection;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 

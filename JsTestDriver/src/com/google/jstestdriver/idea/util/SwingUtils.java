@@ -1,5 +1,6 @@
 package com.google.jstestdriver.idea.util;
 
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 

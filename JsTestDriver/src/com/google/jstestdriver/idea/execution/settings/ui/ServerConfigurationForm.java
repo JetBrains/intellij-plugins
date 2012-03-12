@@ -6,13 +6,13 @@ import com.google.jstestdriver.idea.server.JstdServerFetchResult;
 import com.google.jstestdriver.idea.server.JstdServerInfo;
 import com.google.jstestdriver.idea.server.JstdServerUtils;
 import com.google.jstestdriver.idea.server.ui.ToolPanel;
-import com.google.jstestdriver.idea.util.ObjectUtils;
 import com.google.jstestdriver.idea.util.SwingUtils;
 import com.google.jstestdriver.idea.util.TextChangeListener;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

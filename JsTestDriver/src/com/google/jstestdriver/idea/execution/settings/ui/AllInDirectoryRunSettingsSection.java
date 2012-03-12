@@ -2,7 +2,6 @@ package com.google.jstestdriver.idea.execution.settings.ui;
 
 import com.google.jstestdriver.idea.execution.JstdClientCommandLineBuilder;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
-import com.google.jstestdriver.idea.util.ObjectUtils;
 import com.google.jstestdriver.idea.util.ProjectRootUtils;
 import com.google.jstestdriver.idea.util.SwingUtils;
 import com.google.jstestdriver.idea.util.TextChangeListener;
@@ -18,6 +17,7 @@ import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;

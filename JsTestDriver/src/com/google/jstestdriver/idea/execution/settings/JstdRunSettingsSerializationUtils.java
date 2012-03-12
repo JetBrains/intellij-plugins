@@ -1,10 +1,10 @@
 package com.google.jstestdriver.idea.execution.settings;
 
+import com.intellij.util.ObjectUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.google.jstestdriver.idea.util.EnumUtils;
-import com.google.jstestdriver.idea.util.ObjectUtils;
 import com.intellij.openapi.util.JDOMExternalizer;
 
 public class JstdRunSettingsSerializationUtils {

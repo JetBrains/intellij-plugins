@@ -1,10 +1,10 @@
 package com.google.jstestdriver.idea.execution.settings.ui;
 
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
-import com.google.jstestdriver.idea.util.ObjectUtils;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
