@@ -31,9 +31,7 @@ import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.facet.StrutsFacetConfiguration;
-import com.intellij.ui.HyperlinkAdapter;
-import com.intellij.ui.HyperlinkLabel;
-import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.*;
 import com.intellij.ui.treeStructure.*;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.Nls;
@@ -46,8 +44,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -65,9 +61,9 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
   private JPanel headerPanel;
 
   private SimpleTree myTree;
-  private JButton myAddSetButton;
-  private JButton myRemoveButton;
-  private JButton myEditButton;
+  private AnActionButton myRemoveButton;
+  private AnActionButton myEditButton;
+  private JPanel myTreePanel;
 
   // GUI helpers
   private final SimpleTreeBuilder myBuilder;
@@ -125,6 +121,8 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
         return myRootNode;
       }
     };
+
+    myTree = new SimpleTree();
     myTree.setRootVisible(false);
     myTree.setShowsRootHandles(true); // show expand/collapse handles
     myBuilder = new SimpleTreeBuilder(myTree, (DefaultTreeModel) myTree.getModel(), structure, null);
@@ -139,69 +137,74 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       }
     });
 
-    myAddSetButton.addActionListener(new ActionListener() {
-      public void actionPerformed(final ActionEvent e) {
-        final StrutsFileSet fileSet =
-            new StrutsFileSet(StrutsFileSet.getUniqueId(myBuffer),
-                              StrutsFileSet.getUniqueName(StrutsBundle.message("facet.fileset.my.fileset"), myBuffer),
-                              originalConfiguration) {
-              public boolean isNew() {
-                return true;
-              }
-            };
+    myTreePanel.add(
+      ToolbarDecorator.createDecorator(myTree)
+        .setAddAction(new AnActionButtonRunnable() {
+          @Override
+          public void run(AnActionButton button) {
+            final StrutsFileSet fileSet =
+              new StrutsFileSet(StrutsFileSet.getUniqueId(myBuffer),
+                                StrutsFileSet.getUniqueName(StrutsBundle.message("facet.fileset.my.fileset"), myBuffer),
+                                originalConfiguration) {
+                public boolean isNew() {
+                  return true;
+                }
+              };
 
-        final FileSetEditor editor = new FileSetEditor(myPanel,
-                                                       fileSet,
-                                                       facetEditorContext,
-                                                       myConfigsSearcher);
-        editor.show();
-        if (editor.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-          final StrutsFileSet editedFileSet = editor.getEditedFileSet();
-          Disposer.register(strutsFacetConfiguration, editedFileSet);
-          myBuffer.add(editedFileSet);
+            final FileSetEditor editor = new FileSetEditor(myPanel,
+                                                           fileSet,
+                                                           facetEditorContext,
+                                                           myConfigsSearcher);
+            editor.show();
+            if (editor.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+              final StrutsFileSet editedFileSet = editor.getEditedFileSet();
+              Disposer.register(strutsFacetConfiguration, editedFileSet);
+              myBuffer.add(editedFileSet);
+              myModified = true;
+              myBuilder.updateFromRoot();
+              selectFileSet(fileSet);
+            }
+            myTree.requestFocus();
+          }
+        }).setRemoveAction(new AnActionButtonRunnable() {
+        @Override
+        public void run(AnActionButton button) {
+          remove();
           myModified = true;
           myBuilder.updateFromRoot();
-          selectFileSet(fileSet);
-        }
-        myTree.requestFocus();
-      }
-    });
-
-    myEditButton.addActionListener(new ActionListener() {
-      public void actionPerformed(final ActionEvent e) {
-        final StrutsFileSet fileSet = getCurrentFileSet();
-        if (fileSet != null) {
-          final FileSetEditor editor = new FileSetEditor(myPanel,
-                                                         fileSet,
-                                                         facetEditorContext,
-                                                         myConfigsSearcher);
-          editor.show();
-          if (editor.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-            myModified = true;
-            myBuffer.remove(fileSet);
-            final StrutsFileSet edited = editor.getEditedFileSet();
-            Disposer.register(strutsFacetConfiguration, edited);
-            myBuffer.add(edited);
-            edited.setAutodetected(false);
-            myBuilder.updateFromRoot();
-            selectFileSet(edited);
-          }
           myTree.requestFocus();
         }
-      }
-    });
+      }).setEditAction(new AnActionButtonRunnable() {
+        @Override
+        public void run(AnActionButton button) {
+          final StrutsFileSet fileSet = getCurrentFileSet();
+          if (fileSet != null) {
+            final FileSetEditor editor = new FileSetEditor(myPanel,
+                                                           fileSet,
+                                                           facetEditorContext,
+                                                           myConfigsSearcher);
+            editor.show();
+            if (editor.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+              myModified = true;
+              myBuffer.remove(fileSet);
+              final StrutsFileSet edited = editor.getEditedFileSet();
+              Disposer.register(strutsFacetConfiguration, edited);
+              myBuffer.add(edited);
+              edited.setAutodetected(false);
+              myBuilder.updateFromRoot();
+              selectFileSet(edited);
+            }
+            myTree.requestFocus();
+          }
+        }
+      }).disableUpDownActions().createPanel());
 
-    myRemoveButton.addActionListener(new ActionListener() {
-      public void actionPerformed(final ActionEvent e) {
-        remove();
-        myModified = true;
-        myBuilder.updateFromRoot();
-        myTree.requestFocus();
-      }
-    });
+    AnActionButton addButton = ToolbarDecorator.findAddButton(myTreePanel);
+    myEditButton = ToolbarDecorator.findEditButton(myTreePanel);
+    myRemoveButton = ToolbarDecorator.findRemoveButton(myTreePanel);
 
-    dumbService.makeDumbAware(myAddSetButton, this);
-    dumbService.makeDumbAware(myEditButton, this);
+    dumbService.makeDumbAware(addButton.getContextComponent(), this);
+    dumbService.makeDumbAware(myEditButton.getContextComponent(), this);
   }
 
   @Nullable
