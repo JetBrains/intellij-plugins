@@ -26,7 +26,6 @@
 package org.osmorc.make;
 
 import aQute.lib.osgi.Analyzer;
-import aQute.lib.osgi.Builder;
 import aQute.lib.osgi.Jar;
 import aQute.lib.osgi.Verifier;
 import com.intellij.openapi.application.ApplicationManager;
@@ -35,6 +34,7 @@ import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
@@ -48,10 +48,9 @@ import org.osgi.framework.Constants;
 import org.osmorc.StacktraceUtil;
 import org.osmorc.frameworkintegration.LibraryBundlificationRule;
 import org.osmorc.settings.ApplicationSettings;
+import org.osmorc.util.OrderedProperties;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,12 +63,12 @@ import java.util.regex.Pattern;
 /**
  * Class which wraps bnd and integrates it into IntellIJ.
  * <p/>
- * TODO: pedantic setting
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
 public class BndWrapper {
+
 
   /**
    * Wraps an existing jar file using bnd's analyzer. This class will check and use any applying bundlification rules
@@ -202,7 +201,7 @@ public class BndWrapper {
     analyzer.mergeManifest(dot.getManifest());
     String version = analyzer.getProperty(Constants.BUNDLE_VERSION);
     if (version != null) {
-      version = Builder.cleanupVersion(version);
+      version = Analyzer.cleanupVersion(version);
       analyzer.setProperty(Constants.BUNDLE_VERSION, version);
     }
     Manifest mf = analyzer.calcManifest();
@@ -283,9 +282,19 @@ public class BndWrapper {
   }
 
 
-  public boolean build(@NotNull Module module, @NotNull CompileContext compileContext, @NotNull String bndFileUrl,
-                       @NotNull String[] classPathUrls, @NotNull String outputPath,
-                       @NotNull Map<String, String> additionalProperties) {
+  /**
+   * Builds the jar file for the given module. This is called inside a compile run.
+   *
+   * @param module          the module to be built.
+   * @param compileContext  the current compile context. this is used for issuing error messages.
+   * @param classPathUrls   a list of urls comprising the classpath. this is given to bnd, so it can pull classes and resources from there.
+   * @param outputPath      the output path, that is the full path name of the jar file to be created.
+   * @param buildProperties a list of properties containing bnd configuration values.
+   * @return true if the build succeeded, false otherwise.
+   */
+  public static boolean build(@NotNull Module module, @NotNull CompileContext compileContext,
+                              @NotNull String[] classPathUrls, @NotNull String outputPath,
+                              @NotNull Map<String, String> buildProperties) {
 
     String messagePrefix = "[" + module.getName() + "] ";
     File[] classPathEntries = new File[classPathUrls.length];
@@ -294,14 +303,20 @@ public class BndWrapper {
       classPathEntries[i] = new File(VfsUtil.urlToPath(classPathUrl));
     }
 
-    File bndFile = new File(VfsUtil.urlToPath(bndFileUrl));
-    File outFile = new File(outputPath);
-    Properties props = new Properties();
-    for (Map.Entry<String, String> stringStringEntry : additionalProperties.entrySet()) {
-      props.setProperty(stringStringEntry.getKey(), stringStringEntry.getValue());
-    }
+    // build a bnd file here containing all accumulated settings.
+    File bndFile;
     try {
-      return doBuild(module, compileContext, bndFile, classPathEntries, outFile, props);
+      bndFile = makeBndFile(module, buildProperties, compileContext);
+    }
+    catch (IOException e) {
+      compileContext
+        .addMessage(CompilerMessageCategory.ERROR, messagePrefix + "Problem when generating bnd file " + e.getMessage(), null, 0, 0);
+      return false;
+    }
+
+    File outFile = new File(outputPath);
+    try {
+      return doBuild(module, compileContext, bndFile, classPathEntries, outFile);
     }
     catch (Exception e) {
       compileContext.addMessage(CompilerMessageCategory.ERROR, messagePrefix + "Unexpected error: " + e.getMessage(), null, 0, 0);
@@ -309,14 +324,16 @@ public class BndWrapper {
     }
   }
 
-  private boolean doBuild(@NotNull Module module, @NotNull CompileContext compileContext, @NotNull File bndFile, @NotNull File[] classpath,
-                          @NotNull File output, @NotNull Properties additionalProperties)
+  private static boolean doBuild(@NotNull Module module,
+                                 @NotNull CompileContext compileContext,
+                                 @NotNull File bndFile,
+                                 @NotNull File[] classpath,
+                                 @NotNull File output)
     throws Exception {
     String messagePrefix = "[" + module.getName() + "] ";
     ReportingBuilder builder = new ReportingBuilder(compileContext, VfsUtil.pathToUrl(bndFile.getPath()), module);
     builder.setPedantic(false);
     builder.setProperties(bndFile);
-    builder.mergeProperties(additionalProperties, true);
 
     // FIX for IDEADEV-39089
     // am not really sure if this is a good idea all the time but then again what use is building a bundle without exports in 90% of the cases?
@@ -329,7 +346,7 @@ public class BndWrapper {
     builder.begin();
 
     // Check if the manifest version is missing (IDEADEV-41174)
-    String manifest = builder.getProperty(ReportingBuilder.MANIFEST);
+    String manifest = builder.getProperty(aQute.lib.osgi.Constants.MANIFEST);
     if (manifest != null) {
       File manifestFile = builder.getFile(manifest);
       if (manifestFile != null && manifestFile.exists() && manifestFile.canRead()) {
@@ -360,5 +377,84 @@ public class BndWrapper {
     jar.write(output);
     builder.close();
     return true;
+  }
+
+  /**
+   * Generates a bnd file from the given contents map and returns it.
+   *
+   * @param module         the module for which the file should be built. The file will be placed in the output path of the module.
+   * @param contents       the contents of the file
+   * @param compileContext a compile context.
+   * @return the generated file
+   * @throws IOException in case creation of the file fails.
+   */
+  @NotNull
+  private static File makeBndFile(@NotNull Module module, @NotNull Map<String, String> contents, @NotNull CompileContext compileContext)
+    throws IOException {
+    final String outputPath = getOutputPath(module, compileContext);
+    if (outputPath == null) {
+      throw new IOException("Unable to determine module output path for module " + module.getName());
+    }
+    OrderedProperties props = OrderedProperties.fromMap(contents);
+    File tmpFile = FileUtil.createTempFile(new File(outputPath), "osmorc", ".bnd", true);
+    // create one
+    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tmpFile));
+    try {
+      props.store(bos,
+                  "Bnd file generated by Osmorc for build of Module " + module.getName() + " in project " + module.getProject().getName());
+    }
+    finally {
+      bos.close();
+    }
+    tmpFile.deleteOnExit();
+    return tmpFile;
+  }
+
+  /**
+   * Tries to determine the compiler output path of the given module
+   *
+   * @param m       the module
+   * @param context the compile context
+   * @return the compiler output path or null, if it cannot be determined.
+   */
+  @Nullable
+  static String getOutputPath(final @NotNull Module m, @NotNull CompileContext context) {
+    final CompilerModuleExtension extension = CompilerModuleExtension.getInstance(m);
+    if (extension == null) {
+      context.addMessage(CompilerMessageCategory.WARNING, "Unable to determine the compiler output path for module " + m.getName(),
+                         null, 0, 0);
+      return null;
+    }
+    VirtualFile moduleCompilerOutputPath = extension.getCompilerOutputPath();
+
+    String path;
+    if (moduleCompilerOutputPath == null) {
+      // get the url
+      String outputPathUrl = extension.getCompilerOutputUrl();
+
+      // create the paths
+      // FIX  	 IDEADEV-40112
+      File f = new File(VfsUtil.urlToPath(outputPathUrl));
+      if (!f.exists() && !f.mkdirs()) {
+        context.addMessage(CompilerMessageCategory.ERROR, "Cannot create compiler output path!", null, 0, 0);
+        return null;
+      }
+
+      path = f.getParentFile().getPath() + File.separator + "bundles";
+    }
+    else {
+      path = moduleCompilerOutputPath.getParent().getPath() + File.separator + "bundles";
+    }
+
+    File f = new File(path);
+    if (!f.exists()) {
+      if (!f.mkdirs()) {
+        context
+          .addMessage(CompilerMessageCategory.ERROR, "Could not create output path: " + path + " Please check file permissions.", null, 0,
+                      0);
+        return null;
+      }
+    }
+    return path;
   }
 }

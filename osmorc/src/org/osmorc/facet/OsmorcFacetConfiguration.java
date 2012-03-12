@@ -509,13 +509,17 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
 
 
   /**
-   * @return the contents of this configuration as a string that comprises a BND configuration file.
+   * Same as {@link #getAdditionalPropertiesAsMap()} but adds the Bundle-SymbolicName, Bundle-Version and Bundle-Activator properties
+   * so that the returned map can be used to create a full bnd file.
+   * @return
    */
-  public String asBndFile() {
-    return Constants.BUNDLE_SYMBOLICNAME + ":" + getBundleSymbolicName() + "\n" +
-           Constants.BUNDLE_VERSION + ":" + getBundleVersion() + "\n" +
-           Constants.BUNDLE_ACTIVATOR + ":" + getBundleActivator() + "\n" +
-           getAdditionalProperties() + "\n";
+  @NotNull
+  public Map<String,String> getBndFileProperties() {
+    Map<String, String> result = getAdditionalPropertiesAsMap();
+    result.put(Constants.BUNDLE_SYMBOLICNAME, getBundleSymbolicName());
+    result.put(Constants.BUNDLE_VERSION, getBundleVersion());
+    result.put(Constants.BUNDLE_ACTIVATOR, getBundleActivator());
+    return result;
   }
 
   /**
@@ -555,7 +559,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
    *                   otherwise a merge will be performed with the given properties having precedence before the
    *                   existing properties.
    */
-  public void importAdditionalProperties(Map<String, String> properties, boolean overwrite) {
+  public void importAdditionalProperties(@NotNull Map<String, String> properties, boolean overwrite) {
     Map<String, String> existing = overwrite ? properties : getAdditionalPropertiesAsMap();
     if (!overwrite) {
       // merge

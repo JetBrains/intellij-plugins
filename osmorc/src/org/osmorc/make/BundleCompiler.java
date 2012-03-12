@@ -42,16 +42,15 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.osgi.framework.Constants;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.FrameworkInstanceLibraryManager;
+import org.osmorc.util.OrderedProperties;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This is a compiler step that builds up a bundle. Depending on user settings the compiler either uses a user-edited
@@ -73,54 +72,6 @@ public class BundleCompiler implements PackagingCompiler {
         (LibraryOrderEntry)entry);
     }
   };
-
-  /**
-   * Tries to determine the compiler output path of the given module
-   *
-   * @param m       the module
-   * @param context the compile context
-   * @return the compiler output path or null, if it cannot be determined.
-   */
-  @Nullable
-  private static String getOutputPath(final @NotNull Module m, @NotNull CompileContext context) {
-    final CompilerModuleExtension extension = CompilerModuleExtension.getInstance(m);
-    if (extension == null) {
-      context.addMessage(CompilerMessageCategory.WARNING, "Unable to determine the compiler output path for module " + m.getName(),
-                         null, 0, 0);
-      return null;
-    }
-    VirtualFile moduleCompilerOutputPath = extension.getCompilerOutputPath();
-
-    String path;
-    if (moduleCompilerOutputPath == null) {
-      // get the url
-      String outputPathUrl = extension.getCompilerOutputUrl();
-
-      // create the paths
-      // FIX  	 IDEADEV-40112
-      File f = new File(VfsUtil.urlToPath(outputPathUrl));
-      if (!f.exists() && !f.mkdirs()) {
-        context.addMessage(CompilerMessageCategory.ERROR, "Cannot create compiler output path!", null, 0, 0);
-        return null;
-      }
-
-      path = f.getParentFile().getPath() + File.separator + "bundles";
-    }
-    else {
-      path = moduleCompilerOutputPath.getParent().getPath() + File.separator + "bundles";
-    }
-
-    File f = new File(path);
-    if (!f.exists()) {
-      if (!f.mkdirs()) {
-        context
-          .addMessage(CompilerMessageCategory.ERROR, "Could not create output path: " + path + " Please check file permissions.", null, 0,
-                      0);
-        return null;
-      }
-    }
-    return path;
-  }
 
 
   public void processOutdatedItem(CompileContext compileContext, String s, @Nullable final ValidityState validityState) {
@@ -219,47 +170,45 @@ public class BundleCompiler implements PackagingCompiler {
 
 
     // build a bnd file or use a provided one.
-    String bndFileUrl = "";
-    Map<String, String> additionalProperties = new HashMap<String, String>();
-    if (configuration.isOsmorcControlsManifest() || configuration.isUseBndFile() || configuration.isUseBundlorFile()) {
-      if (configuration.isUseBndFile()) {
-        File bndFile = findFileInModuleContentRoots(configuration.getBndFileLocation(), module);
-        if (bndFile == null || !bndFile.exists()) {
-          compileContext.addMessage(CompilerMessageCategory.ERROR,
-                                    String.format(messagePrefix + "The bnd file \"%s\" for module \"%s\" does not exist.",
-                                                  configuration.getBndFileLocation(), module.getName()),
-                                    configuration.getBndFileLocation(), 0, 0);
-          return;
-        }
-        else {
-          bndFileUrl = VfsUtil.pathToUrl(bndFile.getPath());
-        }
-      }
-      else if (configuration.isUseBundlorFile()) {
-        // bundlor, in this case we use bnd for creating the jar only, and later run bundlor to
-        // do the manifest magic.
-        bndFileUrl = makeBndFile(module, "", compileContext);
-        if (bndFileUrl == null) {
-          // couldnt create bnd file.
-          return;
-        }
+    // use a linked hash map to keep the order of properties.
+    Map<String, String> buildProperties = new LinkedHashMap<String, String>();
+    if (configuration.isUseBndFile()) {
+      File bndFile = findFileInModuleContentRoots(configuration.getBndFileLocation(), module);
+      if (bndFile == null || !bndFile.exists()) {
+        compileContext.addMessage(CompilerMessageCategory.ERROR,
+                                  String.format(messagePrefix + "The bnd file \"%s\" for module \"%s\" does not exist.",
+                                                configuration.getBndFileLocation(), module.getName()),
+                                  configuration.getBndFileLocation(), 0, 0);
+        return;
       }
       else {
-        // fully osmorc controlled, no bnd file.
-        bndFileUrl = makeBndFile(module, configuration.asBndFile(), compileContext);
-        if (bndFileUrl == null) {
-          // couldnt create bnd file.
-          return;
+        OrderedProperties props = new OrderedProperties();
+        FileInputStream fis = new FileInputStream(bndFile);
+        try {
+          props.load(fis);
         }
+        finally {
+          fis.close();
+        }
+        // copy properties to map
+        buildProperties.putAll(props.toMap());
       }
     }
-    else {
+    else if (configuration.isUseBundlorFile()) {
+      // bundlor, in this case we use bnd for creating the jar only, and later run bundlor to
+      // do the manifest magic.
+    }
+    else if (configuration.isOsmorcControlsManifest()) {
+      // fully osmorc controlled, no bnd file, read in all  properties
+      buildProperties.putAll(configuration.getBndFileProperties());
+    }
+    else if (configuration.isManifestManuallyEdited()) { // manually edited manifest
       boolean manifestExists = false;
       VirtualFile manifestFile = osmorcFacet.getManifestFile();
       if (manifestFile != null) {
         String manifestFilePath = manifestFile.getPath();
         if (manifestFilePath != null) {
-          bndFileUrl = makeBndFile(module, "-manifest " + manifestFilePath + "\n", compileContext);
+          buildProperties.put("-manifest", manifestFilePath);
           manifestExists = true;
         }
       }
@@ -275,6 +224,11 @@ public class BundleCompiler implements PackagingCompiler {
         return;
       }
     }
+    else {
+      compileContext.addMessage(CompilerMessageCategory.ERROR, messagePrefix + "OSGi facet configuration for module " + module.getName() +
+                                                               " seems to be invalid. No supported manifest handling method is set up." +
+                                                               " Please check configuration and try again.", null, 0, 0);
+    }
 
     if (configuration.isManifestManuallyEdited() || configuration.isOsmorcControlsManifest()) {
       // in this case we manually add all the classpaths as resources
@@ -283,7 +237,7 @@ public class BundleCompiler implements PackagingCompiler {
       // XXX: one could argue if this should be done for a non-osmorc build
       for (int i = 0; i < classPaths.size(); i++) {
         String classPath = classPaths.get(i);
-        String relPath = FileUtil.getRelativePath(new File(VfsUtil.urlToPath(bndFileUrl)),
+        String relPath = FileUtil.getRelativePath(new File(BndWrapper.getOutputPath(module,  compileContext)),
                                                   new File(VfsUtil.urlToPath(classPath)));
         if (i != 0) {
           pathBuilder.append(",");
@@ -305,7 +259,7 @@ public class BundleCompiler implements PackagingCompiler {
       else {
         includedResources = includedResources + "," + pathBuilder.toString();
       }
-      additionalProperties.put("Include-Resource", includedResources);
+      buildProperties.put("Include-Resource", includedResources);
 
       if (!configuration.isIgnorePatternValid()) {
         compileContext.addMessage(CompilerMessageCategory.ERROR,
@@ -315,7 +269,7 @@ public class BundleCompiler implements PackagingCompiler {
 
       // add the ignore pattern for the resources
       if (!configuration.getIgnoreFilePattern().isEmpty()) {
-        additionalProperties.put("-donotcopy", configuration.getIgnoreFilePattern());
+        buildProperties.put("-donotcopy", configuration.getIgnoreFilePattern());
       }
     }
 
@@ -325,7 +279,7 @@ public class BundleCompiler implements PackagingCompiler {
       outputPath += ".tmp.jar";
     }
 
-    wrapper.build(module, compileContext, bndFileUrl, ArrayUtil.toStringArray(classPaths), outputPath, additionalProperties);
+    BndWrapper.build(module, compileContext, ArrayUtil.toStringArray(classPaths), outputPath, buildProperties);
 
     // if we use bundlor, let bundlor work on the generated file.
     if (configuration.isUseBundlorFile()) {
@@ -363,25 +317,6 @@ public class BundleCompiler implements PackagingCompiler {
       // finally bundlify all the libs for this one
       bundlifyLibraries(module, progressIndicator, compileContext);
     }
-  }
-
-  @Nullable
-  private static String makeBndFile(Module module, String contents, CompileContext compileContext) throws IOException {
-    final String outputPath = getOutputPath(module, compileContext);
-    if (outputPath == null) {
-      return null;
-    }
-    File tmpFile = FileUtil.createTempFile(new File(outputPath), "osmorc", ".bnd", true);
-    // create one
-    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tmpFile));
-    try {
-      bos.write(contents.getBytes());
-    }
-    finally {
-      bos.close();
-    }
-    tmpFile.deleteOnExit();
-    return VfsUtil.pathToUrl(tmpFile.getPath());
   }
 
   @Nullable
@@ -494,7 +429,7 @@ public class BundleCompiler implements PackagingCompiler {
         indicator.setText("Bundling non-OSGi libraries for module: " + module.getName());
         indicator.setText2(url);
         // ok it is not a bundle, so we need to bundlify
-        final String outputPath = getOutputPath(module, compileContext);
+        final String outputPath = BndWrapper.getOutputPath(module, compileContext);
         if (outputPath == null) {
           // couldnt create output path, abort here..
           break;

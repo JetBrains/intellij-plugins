@@ -146,7 +146,20 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
         for (Element child : children) {
           String name = child.getName();
           String value = child.getValue();
-          if (value != null && !"".equals(value) && !Constants.BUNDLE_SYMBOLICNAME.equals(name) &&
+
+          // sanitize instructions
+          if (StringUtil.startsWithChar(name, '_')) {
+            name = "-" + name.substring(1);
+          }
+
+          if ( null == value ) {
+            value = "";
+          }
+          else {
+            value = value.replaceAll( "\\p{Blank}*[\r\n]\\p{Blank}*", "" );
+          }
+
+          if (value != null && !value.isEmpty() && !Constants.BUNDLE_SYMBOLICNAME.equals(name) &&
               !Constants.BUNDLE_VERSION.equals(name) && !Constants.BUNDLE_ACTIVATOR.equals(name) && !IncludeExistingManifest.equals(name)) {
             // ok its an additional setting:
             props.put(name, value);
@@ -158,6 +171,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
             conf.setUseProjectDefaultManifestFileLocation(false);
             useExistingManifest = true;
           }
+
         }
 
         if (!useExistingManifest) {
