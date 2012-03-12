@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
-import com.intellij.lang.javascript.flex.library.FlexLibraryRootsComponentDescriptor;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
@@ -31,8 +30,6 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.*;
-import com.intellij.openapi.roots.libraries.ui.LibraryRootsComponentDescriptor;
-import com.intellij.openapi.roots.libraries.ui.RootDetector;
 import com.intellij.openapi.roots.ui.OrderEntryAppearanceService;
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox;
 import com.intellij.openapi.roots.ui.configuration.LibraryTableModifiableModelProvider;
@@ -1580,10 +1577,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         if (item instanceof ModuleLibraryItem) {
           LibraryOrderEntry orderEntry = ((ModuleLibraryItem)item).orderEntry;
           if (orderEntry != null) {
-            Library library = orderEntry.getLibrary();
-            if (library != null) {
-              usedLibraries.add(orderEntry.getLibrary());
-            }
+            ContainerUtil.addIfNotNull(usedLibraries, orderEntry.getLibrary());
           }
         }
       }
