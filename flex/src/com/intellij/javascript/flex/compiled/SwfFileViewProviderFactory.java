@@ -42,7 +42,7 @@ public class SwfFileViewProviderFactory implements FileViewProviderFactory {
     }
   }
 
-  static class CompiledJSFile extends JSFileImpl implements PsiCompiledElement {
+  static class CompiledJSFile extends JSFileImpl implements PsiCompiledFile {
     public CompiledJSFile(FileViewProvider fileViewProvider) {
       super(fileViewProvider);
     }
@@ -54,6 +54,11 @@ public class SwfFileViewProviderFactory implements FileViewProviderFactory {
     @Override
     public boolean isWritable() {
       return false;
+    }
+
+    @Override
+    public PsiFile getDecompiledPsiFile() {
+      return this;
     }
   }
 }
