@@ -25,6 +25,7 @@
 
 package org.osmorc.make;
 
+import aQute.lib.osgi.Analyzer;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.Result;
@@ -40,11 +41,14 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
+import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osgi.framework.Constants;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
+import org.osmorc.facet.maven.LocalPackageCollector;
 import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.FrameworkInstanceLibraryManager;
 import org.osmorc.util.OrderedProperties;
@@ -273,16 +277,24 @@ public class BundleCompiler implements PackagingCompiler {
       }
     }
 
+    if ( configuration.isOsmorcControlsManifest() ) {
+      // support the {local-packages} instruction
+      progressIndicator.setText2("Calculating local packages");
+      LocalPackageCollector.addLocalPackages(VfsUtil.virtualToIoFile(moduleOutputDir), buildProperties);
+    }
+
     String outputPath = jarFile.getPath();
     if (configuration.isUseBundlorFile()) {
       // we create a temp jar file in this case.
       outputPath += ".tmp.jar";
     }
 
+    progressIndicator.setText2("Running bnd to build the bundle");
     BndWrapper.build(module, compileContext, ArrayUtil.toStringArray(classPaths), outputPath, buildProperties);
 
     // if we use bundlor, let bundlor work on the generated file.
     if (configuration.isUseBundlorFile()) {
+      progressIndicator.setText2("Running bundlor to calculate the manifest");
       File bundlorFile = findFileInModuleContentRoots(configuration.getBundlorFileLocation(), module);
       if (bundlorFile == null || !bundlorFile.exists()) {
         compileContext.addMessage(CompilerMessageCategory.ERROR,
@@ -493,4 +505,6 @@ public class BundleCompiler implements PackagingCompiler {
     }
     return null;
   }
+
+
 }
