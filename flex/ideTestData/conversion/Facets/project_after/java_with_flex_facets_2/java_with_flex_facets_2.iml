@@ -6,7 +6,7 @@
       <configuration name="A" main-class="A" output-file="Java_with_flex_facets_A.swf" output-folder="$TEST_PROJECT$/out/production/java_with_flex_facets_2">
         <dependencies target-player="10.2">
           <entries>
-            <entry library-id="6">
+            <entry library-id="9">
               <dependency linkage="Merged" />
             </entry>
           </entries>
@@ -20,7 +20,7 @@
       <configuration name="B" output-type="Library" output-file="Java_with_flex_facets_B.swf" output-folder="$TEST_PROJECT$/out/production/java_with_flex_facets/facetB" skip-build="true">
         <dependencies target-player="10.2">
           <entries>
-            <entry library-id="7">
+            <entry library-id="10">
               <dependency linkage="Merged" />
             </entry>
           </entries>
@@ -42,7 +42,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library type="flex">
-        <properties id="7" />
+        <properties id="10" />
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/flexunit-4.0.0.swc!/" />
         </CLASSES>
@@ -53,7 +53,7 @@
     <orderEntry type="jdk" jdkName="_fake_sdk_2&#9;_fake_sdk" jdkType="__CompositeFlexSdk__" />
     <orderEntry type="module-library">
       <library type="flex">
-        <properties id="6" />
+        <properties id="9" />
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/flexunit-4.0.0.swc!/" />
         </CLASSES>

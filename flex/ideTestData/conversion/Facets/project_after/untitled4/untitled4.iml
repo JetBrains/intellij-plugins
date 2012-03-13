@@ -6,10 +6,10 @@
       <configuration name="Flex" main-class="Untitled4" output-file="Untitled4.swf" output-folder="$TEST_PROJECT$/out/production/untitled4">
         <dependencies>
           <entries>
-            <entry library-id="8">
+            <entry library-id="11">
               <dependency linkage="Merged" />
             </entry>
-            <entry library-id="9">
+            <entry library-id="12">
               <dependency linkage="Test" />
             </entry>
             <entry module-name="java_with_flex_facets_2" build-configuration-name="B">
@@ -25,11 +25,11 @@
       <configuration name="Flex2" output-file="flex.swf" output-folder="$TEST_PROJECT$/out/production/untitled4">
         <dependencies>
           <entries>
-            <entry library-id="10">
+            <entry library-id="13">
               <dependency linkage="Merged" />
             </entry>
-            <entry library-id="11">
-              <dependency linkage="Merged" />
+            <entry library-id="14">
+              <dependency linkage="Test" />
             </entry>
             <entry module-name="java_with_flex_facets_2" build-configuration-name="B">
               <dependency linkage="Include" />
@@ -52,7 +52,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library name="flexlib" type="flex">
-        <properties id="10" />
+        <properties id="13" />
         <CLASSES>
           <root url="jar://$MODULE_DIR$/2.swc!/" />
         </CLASSES>
@@ -62,7 +62,7 @@
     </orderEntry>
     <orderEntry type="module-library">
       <library type="flex">
-        <properties id="11" />
+        <properties id="14" />
         <CLASSES>
           <root url="jar://$MODULE_DIR$/flexunit.swc!/" />
         </CLASSES>
@@ -73,7 +73,7 @@
     <orderEntry type="module" module-name="java_with_flex_facets_2" exported="" />
     <orderEntry type="module-library">
       <library name="flexlib" type="flex">
-        <properties id="8" />
+        <properties id="11" />
         <CLASSES>
           <root url="jar://$MODULE_DIR$/2.swc!/" />
         </CLASSES>
@@ -83,7 +83,7 @@
     </orderEntry>
     <orderEntry type="module-library">
       <library type="flex">
-        <properties id="9" />
+        <properties id="12" />
         <CLASSES>
           <root url="jar://$MODULE_DIR$/flexunit.swc!/" />
         </CLASSES>

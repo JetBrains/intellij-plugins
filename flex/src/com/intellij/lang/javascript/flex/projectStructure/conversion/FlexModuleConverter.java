@@ -85,6 +85,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
 
     Collection<Element> orderEntriesToAdd = new ArrayList<Element>();
     Set<String> usedSdksNames = new HashSet<String>();
+    final Set<Element> usedModuleLibrariesEntries = new HashSet<Element>();
     if (isFlexModule(moduleSettings)) {
       ModifiableFlexIdeBuildConfiguration newConfiguration =
         (ModifiableFlexIdeBuildConfiguration)configurationManager.getBuildConfigurations()[0];
@@ -93,13 +94,13 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
       Element oldConfigurationElement = moduleSettings.getComponentElement(FlexBuildConfiguration.COMPONENT_NAME);
       FlexBuildConfiguration oldConfiguration =
         oldConfigurationElement != null ? XmlSerializer.deserialize(oldConfigurationElement, FlexBuildConfiguration.class) : null;
-      processConfiguration(oldConfiguration, newConfiguration, moduleSettings, false, null, usedSdksNames, orderEntriesToAdd, null);
+      processConfiguration(oldConfiguration, newConfiguration, moduleSettings, false, null, usedSdksNames, orderEntriesToAdd,
+                           usedModuleLibrariesEntries);
       if (oldConfigurationElement != null) {
         oldConfigurationElement.detach();
       }
     }
     else {
-      final Set<Element> usedModuleLibrariesEntries = new HashSet<Element>();
       List<Element> flexFacets = getFlexFacets(moduleSettings);
       for (int i = 0; i < flexFacets.size(); i++) {
         Element facet = flexFacets.get(i);
@@ -133,6 +134,15 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
       }
       moduleSettings.setModuleType(FlexModuleType.MODULE_TYPE_ID);
       moduleSettings.getComponentElement(FacetManagerImpl.COMPONENT_NAME).getChildren(FacetManagerImpl.FACET_ELEMENT).removeAll(flexFacets);
+    }
+
+    Collection<Element> allEntries = new ArrayList<Element>();
+    allEntries.addAll(usedModuleLibrariesEntries);
+    allEntries.addAll(orderEntriesToAdd);
+    for (Element orderEntry : allEntries) {
+      if (DependencyScope.readExternal(orderEntry) == DependencyScope.TEST) {
+        orderEntry.removeAttribute(DependencyScope.SCOPE_ATTR);
+      }
     }
 
     if (!usedSdksNames.isEmpty()) {
@@ -174,7 +184,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
                                     @Nullable String facetSdkName,
                                     Set<String> usedSdksNames,
                                     Collection<Element> orderEntriesToAdd,
-                                    @Nullable Set<Element> usedModuleLibrariesEntries) throws CannotConvertException {
+                                    Set<Element> usedModuleLibrariesEntries) throws CannotConvertException {
     if (oldConfiguration == null) {
       newBuildConfiguration.setOutputType(OutputType.Application);
     }
@@ -224,7 +234,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
         }
 
         Element libraryProperties;
-        if (usedModuleLibrariesEntries != null && !usedModuleLibrariesEntries.add(orderEntry)) {
+        if (!usedModuleLibrariesEntries.add(orderEntry)) {
           // this library is already used by another build configuration, create new entry with new library
           Element newEntry = (Element)orderEntry.clone();
           orderEntriesToAdd.add(newEntry);
@@ -361,9 +371,6 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
     DependencyScope scope = DependencyScope.readExternal(orderEntry);
     boolean isExported = orderEntry.getAttribute(ModuleLibraryOrderEntryImpl.EXPORTED_ATTR) != null;
     dependencyType.setLinkageType(FlexUtils.convertLinkageType(scope, isExported));
-    if (scope == DependencyScope.TEST) {
-      orderEntry.removeAttribute(DependencyScope.SCOPE_ATTR);
-    }
   }
 
   private static String getOutputFolder(final ModuleSettings moduleSettings) {

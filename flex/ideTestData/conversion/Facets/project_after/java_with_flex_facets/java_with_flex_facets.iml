@@ -30,6 +30,9 @@
             <entry library-id="3">
               <dependency linkage="Merged" />
             </entry>
+            <entry library-id="4">
+              <dependency linkage="Test" />
+            </entry>
           </entries>
           <sdk name="_fake_sdk" />
         </dependencies>
@@ -41,8 +44,11 @@
       <configuration name="B" target-platform="Mobile" output-type="Library" output-file="Java_with_flex_facets_B.swf" output-folder="$TEST_PROJECT$/out/production/java_with_flex_facets/facetB" skip-build="true">
         <dependencies>
           <entries>
-            <entry library-id="4">
+            <entry library-id="5">
               <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="6">
+              <dependency linkage="Test" />
             </entry>
           </entries>
           <sdk name="_fake_sdk" />
@@ -55,8 +61,11 @@
       <configuration name="A (1)" target-platform="Mobile" output-type="Library" output-file="Java_with_flex_facets_C.swf" output-folder="$TEST_PROJECT$/out/production/java_with_flex_facets">
         <dependencies>
           <entries>
-            <entry library-id="5">
+            <entry library-id="7">
               <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="8">
+              <dependency linkage="Test" />
             </entry>
           </entries>
           <sdk name="_fake_sdk" />
@@ -77,7 +86,17 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library type="flex">
-        <properties id="5" />
+        <properties id="7" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/flexunit-4.0.0.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library type="flex">
+        <properties id="8" />
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/flexunit-4.0.0.swc!/" />
         </CLASSES>
@@ -99,6 +118,26 @@
     <orderEntry type="module-library">
       <library type="flex">
         <properties id="4" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/flexunit-4.0.0.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library type="flex">
+        <properties id="5" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/flexunit-4.0.0.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library type="flex">
+        <properties id="6" />
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/flexunit-4.0.0.swc!/" />
         </CLASSES>
