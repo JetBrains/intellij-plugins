@@ -147,6 +147,13 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
           String name = child.getName();
           String value = child.getValue();
 
+          if (IncludeExistingManifest.equals(name)) {
+            conf.setManifestLocation(value);
+            conf.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.Manually);
+            conf.setUseProjectDefaultManifestFileLocation(false);
+            useExistingManifest = true;
+          }
+
           // sanitize instructions
           if (StringUtil.startsWithChar(name, '_')) {
             name = "-" + name.substring(1);
@@ -164,14 +171,6 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
             // ok its an additional setting:
             props.put(name, value);
           }
-
-          if (IncludeExistingManifest.equals(name)) {
-            conf.setManifestLocation(value);
-            conf.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.Manually);
-            conf.setUseProjectDefaultManifestFileLocation(false);
-            useExistingManifest = true;
-          }
-
         }
 
         if (!useExistingManifest) {
