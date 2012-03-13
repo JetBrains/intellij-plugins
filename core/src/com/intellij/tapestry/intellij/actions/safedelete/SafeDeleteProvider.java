@@ -20,6 +20,7 @@ import com.intellij.tapestry.intellij.view.nodes.LibrariesNode;
 import com.intellij.tapestry.intellij.view.nodes.PackageNode;
 import com.intellij.tapestry.intellij.view.nodes.TapestryNode;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -35,7 +36,7 @@ public class SafeDeleteProvider implements DeleteProvider {
     /**
      * {@inheritDoc}
      */
-    public void deleteElement(DataContext dataContext) {
+    public void deleteElement(@NotNull DataContext dataContext) {
         SafeDeleteRefactoring safeDeleteRefactoring;
         final Project project = (Project) dataContext.getData(DataKeys.PROJECT.getName());
         int numberChildren;
@@ -107,7 +108,7 @@ public class SafeDeleteProvider implements DeleteProvider {
     /**
      * {@inheritDoc}
      */
-    public boolean canDeleteElement(DataContext dataContext) {
+    public boolean canDeleteElement(@NotNull DataContext dataContext) {
         final Project project = (Project) dataContext.getData(DataKeys.PROJECT.getName());
 
         if (project == null || TapestryProjectViewPane.getInstance(project).getSelectionPaths() == null) {
