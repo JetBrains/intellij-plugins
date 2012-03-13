@@ -230,14 +230,6 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="c0924" class="javax.swing.JCheckBox" binding="myCopyResourceFilesCheckBox" default-binding="true">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="&amp;Copy resource files to output folder:"/>
-            </properties>
-          </component>
           <component id="e09ae" class="javax.swing.JRadioButton" binding="myCopyAllResourcesRadioButton" default-binding="true">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -283,6 +275,14 @@
               </component>
             </children>
           </grid>
+          <component id="c0924" class="javax.swing.JCheckBox" binding="myCopyResourceFilesCheckBox" default-binding="true">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="&amp;Copy resource files to output folder:"/>
+            </properties>
+          </component>
         </children>
       </grid>
       <grid id="60b5a" binding="myIncludeInSWCPanel" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -305,7 +305,7 @@
             </constraints>
             <properties>
               <labelFor value="a1930"/>
-              <text value="Files &amp;to include in output *.swc:"/>
+              <text value="Items &amp;to include in output SWC:"/>
             </properties>
           </component>
           <component id="a1930" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myIncludeInSWCField">

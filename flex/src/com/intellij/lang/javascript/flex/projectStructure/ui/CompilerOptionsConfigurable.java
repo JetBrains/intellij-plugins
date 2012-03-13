@@ -184,8 +184,9 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
         for (String path : myFilesToIncludeInSWC) {
           value.add(new StringBuilder(path));
         }
-        final RepeatableValueDialog dialog = new RepeatableValueDialog(module.getProject(), "Files And Folders To Include In *.swc", value,
-                                                                       CompilerOptionInfo.INCLUDE_FILE_INFO_FOR_UI);
+        final RepeatableValueDialog dialog =
+          new RepeatableValueDialog(module.getProject(), FlexBundle.message("items.to.include.in.swc.dialog.title"), value,
+                                    CompilerOptionInfo.INCLUDE_FILE_INFO_FOR_UI);
         dialog.show();
         if (dialog.isOK()) {
           final List<StringBuilder> newValue = dialog.getCurrentList();
