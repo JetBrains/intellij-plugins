@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdk;
@@ -25,6 +26,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
+import com.intellij.openapi.roots.ui.configuration.libraries.LibraryEditingUtil;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.ArrayUtil;
@@ -256,12 +258,36 @@ public class FlexProjectConfigurationEditor implements Disposable {
     Module module = ((Editor)configuration).myModule;
     List<Editor> editors = myModule2Editors.get(module);
     FlexIdeBuildConfigurationImpl copy = ((Editor)configuration).getCopy();
+    DependencyEntry[] entries = copy.getDependencies().getEntries();
+    ModifiableRootModel modifiableModel = myProvider.getModuleModifiableModel(module);
+    for (int i = 0 ; i < entries.length; i++) {
+      if (entries[i] instanceof ModuleLibraryEntryImpl) {
+        ModuleLibraryEntryImpl e = (ModuleLibraryEntryImpl)entries[i];
+        LibraryEx library = findLibrary(modifiableModel, e.getLibraryId());
+        if (library != null) {
+          LibraryEx libraryCopy = copyModuleLibrary(modifiableModel, library);
+          ModuleLibraryEntryImpl entryCopy = new ModuleLibraryEntryImpl(FlexProjectRootsUtil.getLibraryId(libraryCopy));
+          e.getDependencyType().applyTo(entryCopy.getDependencyType());
+          copy.getDependencies().getModifiableEntries().set(i, entryCopy);
+        }
+      }
+    }
     Editor newConfig = new Editor(copy, module);
     newConfig.setNature(newNature);
     // just to simplify serialized view
     resetNonApplicableValuesToDefaults(newConfig);
     editors.add(newConfig);
     return newConfig;
+  }
+
+  private static LibraryEx copyModuleLibrary(final ModifiableRootModel modifiableModel, final LibraryEx library) {
+    LibraryTableBase.ModifiableModelEx librariesModifiableModel = getTableModifiableModel(modifiableModel);
+    LibraryEx libraryCopy = (LibraryEx)librariesModifiableModel.createLibrary(library.getName(), library.getType());
+    LibraryEx.ModifiableModelEx libraryCopyModel = (LibraryEx.ModifiableModelEx)libraryCopy.getModifiableModel();
+    LibraryEditingUtil.copyLibrary(library, Collections.<String, String>emptyMap(), libraryCopyModel); // will overwrite library id
+    libraryCopyModel.setProperties(new FlexLibraryProperties(FlexLibraryIdGenerator.generateId())); // do assign unique library id
+    libraryCopyModel.commit();
+    return libraryCopy;
   }
 
   private static void resetNonApplicableValuesToDefaults(final ModifiableFlexIdeBuildConfiguration configuration) {
@@ -566,11 +592,11 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
 
   @Nullable
-  private static Library findLibrary(ModifiableRootModel modifiableModel, String libraryId) {
+  private static LibraryEx findLibrary(ModifiableRootModel modifiableModel, String libraryId) {
     for (Library library : modifiableModel.getModuleLibraryTable().getLibraries()) {
       if (((LibraryEx)library).getType() instanceof FlexLibraryType) { // allow subclasses
         if (libraryId.equals(FlexProjectRootsUtil.getLibraryId(library))) {
-          return library;
+          return (LibraryEx)library;
         }
       }
     }
@@ -721,6 +747,10 @@ public class FlexProjectConfigurationEditor implements Disposable {
   public LibraryTableBase.ModifiableModelEx getLibraryModel(ModifiableDependencies dependencies) {
     assertAlive();
     ModifiableRootModel modifiableModel = myProvider.getModuleModifiableModel(getEditor(dependencies).myModule);
+    return getTableModifiableModel(modifiableModel);
+  }
+
+  private static LibraryTableBase.ModifiableModelEx getTableModifiableModel(final ModifiableRootModel modifiableModel) {
     return (LibraryTableBase.ModifiableModelEx)modifiableModel.getModuleLibraryTable().getModifiableModel();
   }
 
