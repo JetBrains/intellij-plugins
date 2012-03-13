@@ -9,8 +9,11 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConf
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.*;
+import com.intellij.openapi.compiler.ex.CompilerPathsEx;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.ModuleFileIndex;
@@ -19,9 +22,11 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,9 +36,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 public class FlexResourceCompiler implements SourceProcessingCompiler {
+
+  private static final Logger LOG = Logger.getInstance(FlexResourceCompiler.class.getName());
 
   @NotNull
   public String getDescription() {
@@ -41,6 +49,33 @@ public class FlexResourceCompiler implements SourceProcessingCompiler {
   }
 
   public boolean validateConfiguration(final CompileScope scope) {
+    if (CompilerPathsEx.CLEAR_ALL_OUTPUTS_KEY.get(scope) == Boolean.TRUE) {
+      try {
+        final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCs = FlexCompiler.getModulesAndBCsToCompile(scope);
+        Set<VirtualFile> outputs = new HashSet<VirtualFile>();
+        for (Pair<Module, FlexIdeBuildConfiguration> pair : modulesAndBCs) {
+          String outputFilePath = pair.second.getOutputFilePath(true);
+          VirtualFile outputFolder = LocalFileSystem.getInstance().findFileByPath(new File(outputFilePath).getParent());
+          ContainerUtil.addIfNotNull(outputs, outputFolder);
+        }
+
+        Project project = scope.getAffectedModules()[0].getProject();
+        Set<VirtualFile> affectedOutputPaths = new HashSet<VirtualFile>();
+        CompilerUtil.computeIntersectingPaths(project, outputs, affectedOutputPaths);
+        if (!affectedOutputPaths.isEmpty()) {
+          if (CompilerUtil.askUserToContinueWithNoClearing(project, affectedOutputPaths)) {
+            CompilerPathsEx.CLEAR_ALL_OUTPUTS_KEY.set(scope, false);
+            return true;
+          }
+          else {
+            return false;
+          }
+        }
+      }
+      catch (ConfigurationException ignored) {
+        // FlexCompiler.validateConfiguration() will report in its turn
+      }
+    }
     return true; // will be validated in FlexCompiler.validateConfiguration()
   }
 
@@ -122,7 +157,22 @@ public class FlexResourceCompiler implements SourceProcessingCompiler {
   }
 
   public ProcessingItem[] process(final CompileContext context, final ProcessingItem[] items) {
-    // todo clear output directories if rebuild and corresponding option checked, ask confirmation if output folder is not under standard project output
+    if (CompilerPathsEx.CLEAR_ALL_OUTPUTS_KEY.get(context.getCompileScope()) == Boolean.TRUE) {
+      context.getProgressIndicator().pushState();
+      context.getProgressIndicator().setText(CompilerBundle.message("progress.clearing.output"));
+      Collection<File> outputDirectories = new HashSet<File>();
+      try {
+        Collection<Pair<Module, FlexIdeBuildConfiguration>> toCompile = FlexCompiler.getModulesAndBCsToCompile(context.getCompileScope());
+        for (Pair<Module, FlexIdeBuildConfiguration> pair : toCompile) {
+          outputDirectories.add(new File(pair.second.getOutputFilePath(true)).getParentFile());
+        }
+      }
+      catch (ConfigurationException e) {
+        LOG.error("Validation error unexpected", e);
+      }
+      CompilerUtil.clearOutputDirectories(outputDirectories);
+      context.getProgressIndicator().popState();
+    }
 
     context.getProgressIndicator().pushState();
     context.getProgressIndicator().setText(CompilerBundle.message("progress.copying.resources"));
