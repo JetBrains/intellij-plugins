@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.actions;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
@@ -22,6 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ExternalTask {
+
+  private static final Logger LOG = Logger.getInstance(ExternalTask.class.getName());
+
   protected final Project myProject;
   protected final Sdk myFlexSdk;
 
@@ -42,6 +46,7 @@ public abstract class ExternalTask {
     processBuilder.redirectErrorStream(true);
 
     myCommandLine = StringUtil.join(command, " ");
+    debug("Executing task: " + myCommandLine);
 
     try {
       myProcess = processBuilder.start();
@@ -51,6 +56,10 @@ public abstract class ExternalTask {
       myFinished = true;
       myMessages.add(e.getMessage());
     }
+  }
+
+  private void debug(final String message) {
+    LOG.debug("[" + hashCode() + "] " + message);
   }
 
   protected abstract List<String> createCommandLine();
@@ -68,6 +77,7 @@ public abstract class ExternalTask {
       myProcess.destroy();
       try {
         myExitCode = myProcess.exitValue();
+        debug("Process complete with exit code " + myExitCode);
       }
       catch (IllegalThreadStateException e) {/*ignore*/}
     }
@@ -97,8 +107,9 @@ public abstract class ExternalTask {
           char[] buf = new char[4096];
           int read;
           while ((read = reader.read(buf, 0, buf.length)) >= 0) {
+            final String output = new String(buf, 0, read);
+            debug("Process output: " + output);
             if (!usageStarted) {
-              final String output = new String(buf, 0, read);
               final StringTokenizer tokenizer = new StringTokenizer(output, "\r\n");
 
               while (tokenizer.hasMoreElements()) {
