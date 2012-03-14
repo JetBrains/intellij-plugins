@@ -173,7 +173,7 @@ public class AirPackageDialog extends DialogWrapper {
 
       if (bc.isSkipCompile() && LocalFileSystem.getInstance().findFileByPath(bc.getOutputFilePath(true)) == null) {
         return new ValidationInfo(
-          FlexBundle.message("can.not.package.bc", bc.getName(), "compilation is switched off and output *.swf doesn''t exist"));
+          FlexBundle.message("can.not.package.bc", bc.getName(), FlexBundle.message("compilation.is.switched.off")));
       }
 
       final BuildConfigurationNature nature = bc.getNature();
@@ -194,10 +194,8 @@ public class AirPackageDialog extends DialogWrapper {
           final boolean iosDebug = iosPackage == IOSPackageType.DebugOverNetwork;
 
           if (androidDebug != iosDebug) {
-            final String message = androidDebug
-                                   ? "can''t create debuggable package for Android and non-debuggable package for iOS at once"
-                                   : "can''t create debuggable package for iOS and non-debuggable package for Android at once";
-            return new ValidationInfo(FlexBundle.message("can.not.package.bc", bc.getName(), message));
+            return new ValidationInfo(FlexBundle.message("can.not.package.bc", bc.getName(),
+                                                         FlexBundle.message("different.debug.settings", androidDebug ? 1 : 2)));
           }
         }
       }
