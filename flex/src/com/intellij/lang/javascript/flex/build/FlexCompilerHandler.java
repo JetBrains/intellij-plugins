@@ -330,7 +330,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
       return Pair.create(true, Collections.<VirtualFile>emptyList());
     }
 
-    context.getProgressIndicator().setText(FlexBundle.message("compiling", module.getName()));
+    context.getProgressIndicator().setText(FlexBundle.message("compiling.module", module.getName()));
 
     final Object moduleOrFacet = flexFacet == null ? module : flexFacet;
     final ModuleOrFacetCompileCache compileCache = getCache(config.getType());

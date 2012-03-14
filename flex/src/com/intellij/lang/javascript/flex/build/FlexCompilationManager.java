@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -245,11 +244,14 @@ public class FlexCompilationManager {
     final ProgressIndicator progressIndicator = myCompileContext.getProgressIndicator();
     progressIndicator.setFraction(1. * myFinishedTasks.size() / myTasksAmount);
     final StringBuilder builder = new StringBuilder();
-    for (FlexCompilationTask inProgressTask : myInProgressTasks) {
-      if (builder.length() > 0) builder.append(", ");
-      builder.append(inProgressTask.getPresentableName());
+
+    if (!myInProgressTasks.isEmpty()) {
+      for (FlexCompilationTask inProgressTask : myInProgressTasks) {
+        if (builder.length() > 0) builder.append(", ");
+        builder.append(inProgressTask.getPresentableName());
+      }
+      progressIndicator.setText(FlexBundle.message("compiling", builder.toString()));
     }
-    progressIndicator.setText(FlexBundle.message("compiling", builder.toString()));
   }
 
   static VirtualFile refreshAndFindFileInWriteAction(final String outputFilePath, final String... possibleBaseDirs) {
