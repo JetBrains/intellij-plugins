@@ -149,20 +149,20 @@ public class JsLibraryHelper {
     return ApplicationManager.getApplication().runWriteAction(task);
   }
 
-  public boolean associateLibraryWithDir(@NotNull final ScriptingLibraryModel libraryModel, @NotNull final VirtualFile dirForAssociation) {
+  public boolean associateLibraryWithProject(@NotNull final ScriptingLibraryModel libraryModel) {
     Computable<Boolean> task = new Computable<Boolean>() {
       @Override
       @NotNull
       public Boolean compute() {
         try {
           ScriptingLibraryMappings libraryMappings = ServiceManager.getService(myProject, JSLibraryMappings.class);
-          boolean isAssociated = libraryMappings.isAssociatedWith(dirForAssociation, libraryModel.getName());
+          boolean isAssociated = libraryMappings.isAssociatedWithProject(libraryModel.getName());
           if (isAssociated) {
-            LOG.info("Library '" + libraryModel.getName() + "' is already associated with " + dirForAssociation.getPath());
+            LOG.info("Library '" + libraryModel.getName() + "' is already associated with the project");
             return true;
           }
-          libraryMappings.associate(dirForAssociation, libraryModel.getName());
-          LOG.info("Library '" + libraryModel.getName() + "' has been successfully associated with " + dirForAssociation.getPath());
+          libraryMappings.associateWithProject(libraryModel.getName());
+          LOG.info("Library '" + libraryModel.getName() + "' has been successfully associated with the project");
           return true;
         } catch (Exception ex) {
           LOG.error(ex);

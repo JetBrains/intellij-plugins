@@ -136,12 +136,7 @@ public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBased
         Messages.showErrorDialog("Unable to create '" + LIBRARY_NAME + "' JavaScript library", dialogTitle);
         return;
       }
-      VirtualFile projectRootDir = project.getBaseDir();
-      if (projectRootDir == null) {
-        LOG.error("Project baseDir is null!");
-        return;
-      }
-      boolean associated = libraryHelper.associateLibraryWithDir(libraryModel, projectRootDir);
+      boolean associated = libraryHelper.associateLibraryWithProject(libraryModel);
       if (!associated) {
         Messages.showErrorDialog("Unable to associate '" + LIBRARY_NAME + "' JavaScript library with project", dialogTitle);
       }

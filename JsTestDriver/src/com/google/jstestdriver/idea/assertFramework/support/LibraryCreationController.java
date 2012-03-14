@@ -97,12 +97,7 @@ public class LibraryCreationController implements ExtractedSourceLocationControl
           Messages.showErrorDialog("Unable to create '" + libraryName + "' JavaScript library", dialogTitle);
           return;
         }
-        VirtualFile projectRootDir = myProject.getBaseDir();
-        if (projectRootDir == null) {
-          LOG.error("Project baseDir is null!");
-          return;
-        }
-        boolean associated = myJsLibraryHelper.associateLibraryWithDir(libraryModel, projectRootDir);
+        boolean associated = myJsLibraryHelper.associateLibraryWithProject(libraryModel);
         if (!associated) {
           Messages.showErrorDialog("Unable to associate '" + libraryName + "' JavaScript library with project", dialogTitle);
         }
