@@ -11,7 +11,6 @@ import com.intellij.lang.javascript.library.JSLibraryManager;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.scripting.ScriptingLibraryManager;
 import com.intellij.openapi.roots.libraries.scripting.ScriptingLibraryModel;
@@ -28,7 +27,6 @@ import java.util.List;
 
 public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBasedInspection {
 
-  private static final Logger LOG = Logger.getInstance(JstdAssertionFrameworkSupportInspection.class);
   private static final String LIBRARY_NAME = "JsTestDriver Assertion Framework";
   private static final AddJstdLibraryLocalQuickFix ADD_JSTD_LIBRARY_LOCAL_QUICK_FIX = new AddJstdLibraryLocalQuickFix();
 
