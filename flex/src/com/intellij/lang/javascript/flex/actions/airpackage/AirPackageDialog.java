@@ -247,7 +247,7 @@ public class AirPackageDialog extends DialogWrapper {
     if (!bcsWithDisabledCompilation.isEmpty()) {
       final StringBuilder bcs = new StringBuilder();
       for (FlexIdeBuildConfiguration bc : bcsWithDisabledCompilation) {
-        bcs.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>").append(StringUtil.escapeXml(bc.getName())).append("</b><br>");
+        bcs.append("<b>").append(StringUtil.escapeXml(bc.getName())).append("</b><br>");
       }
       final String message = FlexBundle.message("package.bc.with.disabled.compilation", bcsWithDisabledCompilation.size(), bcs.toString());
       final int answer =
