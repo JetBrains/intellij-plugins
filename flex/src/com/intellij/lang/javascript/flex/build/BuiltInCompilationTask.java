@@ -19,8 +19,9 @@ public class BuiltInCompilationTask extends FlexCompilationTask {
 
   public BuiltInCompilationTask(final @NotNull Module module,
                                 final @NotNull FlexIdeBuildConfiguration bc,
-                                final @NotNull Collection<FlexIdeBuildConfiguration> dependencies) {
-    super(module, bc, dependencies);
+                                final @NotNull Collection<FlexIdeBuildConfiguration> dependencies,
+                                final boolean forTests) {
+    super(module, bc, dependencies, forTests);
     myBuiltInFlexCompilerHandler = FlexCompilerHandler.getInstance(module.getProject()).getBuiltInFlexCompilerHandler();
   }
 

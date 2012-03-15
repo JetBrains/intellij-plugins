@@ -116,6 +116,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
       context.addMessage(CompilerMessageCategory.INFORMATION,
                          FlexBundle.message(builtIn ? "using.builtin.compiler" : "using.mxmlc.compc",
                                             flexCompilerConfiguration.MAX_PARALLEL_COMPILATIONS), null, -1, -1);
+
+      boolean forTests = CompileStepBeforeRun.getRunConfiguration(context.getCompileScope()) instanceof FlexUnitRunConfiguration;
       final Collection<FlexCompilationTask> compilationTasks = new ArrayList<FlexCompilationTask>();
       for (final ProcessingItem item : items) {
         final Collection<FlexIdeBuildConfiguration> dependencies = new HashSet<FlexIdeBuildConfiguration>();
@@ -131,8 +133,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
           }
         }
 
-        compilationTasks.add(builtIn ? new BuiltInCompilationTask(((MyProcessingItem)item).myModule, bc, dependencies)
-                                     : new MxmlcCompcCompilationTask(((MyProcessingItem)item).myModule, bc, dependencies));
+        compilationTasks.add(builtIn ? new BuiltInCompilationTask(((MyProcessingItem)item).myModule, bc, dependencies, forTests)
+                                     : new MxmlcCompcCompilationTask(((MyProcessingItem)item).myModule, bc, dependencies, forTests));
 
         if (BCUtils.canHaveRuntimeStylesheets(bc)) {
           for (String cssPath : bc.getCssFilesToCompile()) {
@@ -152,8 +154,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
               cssBC.setOutputFolder(cssBC.getOutputFolder() + "/" + relativePath);
             }
 
-            compilationTasks.add(builtIn ? new BuiltInCompilationTask(((MyProcessingItem)item).myModule, cssBC, dependencies)
-                                         : new MxmlcCompcCompilationTask(((MyProcessingItem)item).myModule, cssBC, dependencies));
+            compilationTasks.add(builtIn ? new BuiltInCompilationTask(((MyProcessingItem)item).myModule, cssBC, dependencies, forTests)
+                                         : new MxmlcCompcCompilationTask(((MyProcessingItem)item).myModule, cssBC, dependencies, forTests));
           }
         }
       }
