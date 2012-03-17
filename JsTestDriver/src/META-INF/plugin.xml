@@ -21,7 +21,7 @@
   <vendor logo="/com/google/jstestdriver/idea/ui/JsTestDriver.png"
           url="http://code.google.com/p/js-test-driver/"
           email="js-test-driver@googlegroups.com">Google; JetBrains</vendor>
-  <idea-version since-build="113.0" until-build="116.0"/>
+  <idea-version since-build="118.0" until-build="119.0"/>
 
   <extensionPoints>
     <extensionPoint qualifiedName="com.google.jstestdriver.idea.jsCallTemplate" interface="com.google.jstestdriver.idea.assertFramework.codeInsight.JsCallTemplateContextProvider"/>
