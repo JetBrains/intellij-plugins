@@ -30,6 +30,7 @@ import com.intellij.openapi.roots.ui.configuration.libraries.LibraryEditingUtil;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.Consumer;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -767,6 +768,12 @@ public class FlexProjectConfigurationEditor implements Disposable {
       }
     });
   }
+
+  public static void makeNonStructuralModification(final FlexIdeBuildConfiguration bc,
+                                                   final Consumer<NonStructuralModifiableBuildConfiguration> consumer) {
+    consumer.consume(new NonStructuralModifiableBuildConfiguration((FlexIdeBuildConfigurationImpl)bc));
+  }
+
 }
 
 

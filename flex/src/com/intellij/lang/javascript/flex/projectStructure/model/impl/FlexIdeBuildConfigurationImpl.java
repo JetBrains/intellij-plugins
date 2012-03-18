@@ -211,7 +211,7 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
 
   @NotNull
   @Override
-  public ModifiableCompilerOptions getCompilerOptions() {
+  public CompilerOptionsImpl getCompilerOptions() {
     return myCompilerOptions;
   }
 

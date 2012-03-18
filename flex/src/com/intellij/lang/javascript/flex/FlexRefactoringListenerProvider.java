@@ -4,6 +4,8 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.NonStructuralModifiableBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -27,6 +29,7 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.refactoring.listeners.RefactoringElementAdapter;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.refactoring.listeners.RefactoringElementListenerProvider;
+import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -136,7 +139,12 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
         if (bc.getOutputType() == OutputType.Application && bc.getMainClass().startsWith(oldPackageWithDot)) {
           final String mainClass = (newPackageName.isEmpty() ? "" : (newPackageName + ".")) +
                                    bc.getMainClass().substring(oldPackageWithDot.length());
-          //((ModifiableFlexIdeBuildConfiguration)bc).setMainClass(mainClass); TODO
+          FlexProjectConfigurationEditor.makeNonStructuralModification(bc, new Consumer<NonStructuralModifiableBuildConfiguration>() {
+            @Override
+            public void consume(final NonStructuralModifiableBuildConfiguration configuration) {
+              configuration.setMainClass(mainClass);
+            }
+          });
         }
       }
     }
@@ -170,7 +178,12 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
     private void classNameChanged(final String oldClassName, final String newClassName) {
       for (FlexIdeBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations()) {
         if (bc.getOutputType() == OutputType.Application && bc.getMainClass().equals(oldClassName)) {
-          //((ModifiableFlexIdeBuildConfiguration)bc).setMainClass(newClassName); TODO
+          FlexProjectConfigurationEditor.makeNonStructuralModification(bc, new Consumer<NonStructuralModifiableBuildConfiguration>() {
+            @Override
+            public void consume(final NonStructuralModifiableBuildConfiguration configuration) {
+              configuration.setMainClass(newClassName);
+            }
+          });
         }
       }
     }
@@ -228,7 +241,12 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
           }
 
           if (changed) {
-            //((ModifiableFlexIdeBuildConfiguration)bc).setCssFilesToCompile(newCssFiles); TODO
+            FlexProjectConfigurationEditor.makeNonStructuralModification(bc, new Consumer<NonStructuralModifiableBuildConfiguration>() {
+              @Override
+              public void consume(final NonStructuralModifiableBuildConfiguration configuration) {
+                configuration.setCssFilesToCompile(newCssFiles);
+              }
+            });
           }
         }
       }
@@ -243,7 +261,12 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
     protected void filePathChanged(final String oldFilePath, final String newFilePath) {
       for (FlexIdeBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations()) {
         if (bc.getCompilerOptions().getAdditionalConfigFilePath().equals(oldFilePath)) {
-          //((ModifiableFlexIdeBuildConfiguration)bc).getCompilerOptions().setAdditionalConfigFilePath(newFilePath); TODO
+          FlexProjectConfigurationEditor.makeNonStructuralModification(bc, new Consumer<NonStructuralModifiableBuildConfiguration>() {
+            @Override
+            public void consume(final NonStructuralModifiableBuildConfiguration configuration) {
+              configuration.getCompilerOptions().setAdditionalConfigFilePath(newFilePath);
+            }
+          });
         }
 
         // TODO update services-config, manifest files
