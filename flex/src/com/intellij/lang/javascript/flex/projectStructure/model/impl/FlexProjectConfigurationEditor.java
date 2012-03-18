@@ -51,11 +51,14 @@ public class FlexProjectConfigurationEditor implements Disposable {
   private static class Editor extends FlexIdeBuildConfigurationImpl {
     private final Module myModule;
     private final FlexIdeBuildConfigurationImpl myOrigin;
+    @Nullable
+    private final String myOriginalName;
 
-    Editor(FlexIdeBuildConfigurationImpl origin, Module module) {
-      myOrigin = origin;
+    Editor(Module module, @Nullable FlexIdeBuildConfigurationImpl origin) {
+      myOrigin = origin != null ? origin : new FlexIdeBuildConfigurationImpl();
+      myOriginalName = origin != null ? origin.getName() : null;
       myModule = module;
-      origin.applyTo(this);
+      myOrigin.applyTo(this);
     }
 
     public FlexIdeBuildConfigurationImpl commit() {
@@ -65,6 +68,11 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
     public boolean isModified() {
       return !isEqual(myOrigin);
+    }
+
+    @Nullable
+    public String getOriginalName() {
+      return myOriginalName;
     }
   }
 
@@ -219,7 +227,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
     FlexIdeBuildConfiguration[] buildConfigurations = FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations();
     List<Editor> configEditors = new ArrayList<Editor>(buildConfigurations.length);
     for (FlexIdeBuildConfiguration buildConfiguration : buildConfigurations) {
-      configEditors.add(new Editor((FlexIdeBuildConfigurationImpl)buildConfiguration, module));
+      configEditors.add(new Editor(module, (FlexIdeBuildConfigurationImpl)buildConfiguration));
     }
     myModule2Editors.put(module, configEditors);
   }
@@ -248,7 +256,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
   public ModifiableFlexIdeBuildConfiguration createConfiguration(Module module) {
     assertAlive();
     List<Editor> editors = myModule2Editors.get(module);
-    Editor newConfig = new Editor(new FlexIdeBuildConfigurationImpl(), module);
+    Editor newConfig = new Editor(module, null);
     editors.add(newConfig);
     return newConfig;
   }
@@ -261,7 +269,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
     FlexIdeBuildConfigurationImpl copy = ((Editor)configuration).getCopy();
     DependencyEntry[] entries = copy.getDependencies().getEntries();
     ModifiableRootModel modifiableModel = myProvider.getModuleModifiableModel(module);
-    for (int i = 0 ; i < entries.length; i++) {
+    for (int i = 0; i < entries.length; i++) {
       if (entries[i] instanceof ModuleLibraryEntryImpl) {
         ModuleLibraryEntryImpl e = (ModuleLibraryEntryImpl)entries[i];
         LibraryEx library = findLibrary(modifiableModel, e.getLibraryId());
@@ -273,7 +281,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
         }
       }
     }
-    Editor newConfig = new Editor(copy, module);
+    Editor newConfig = new Editor(module, copy);
     newConfig.setNature(newNature);
     // just to simplify serialized view
     resetNonApplicableValuesToDefaults(newConfig);
@@ -370,7 +378,11 @@ public class FlexProjectConfigurationEditor implements Disposable {
     }
   }
 
+  /**
+   * @return <module_name, bc_name> -> new_bc_name
+   */
   public void commit() throws ConfigurationException {
+    final Map<Pair<String, String>, String> renamedConfigs = new HashMap<Pair<String, String>, String>();
     for (Module module : myModule2Editors.keySet()) {
       ModifiableRootModel modifiableModel = myProvider.getModuleModifiableModel(module);
       Collection<String> usedModulesLibrariesIds = new ArrayList<String>();
@@ -398,6 +410,10 @@ public class FlexProjectConfigurationEditor implements Disposable {
               librariesToAdd.put(library, true);
             }
           }
+        }
+        String originalName = editor.getOriginalName();
+        if (originalName != null && !originalName.equals(editor.getName())) {
+          renamedConfigs.put(Pair.create(module.getName(), originalName), editor.getName());
         }
       }
 
@@ -511,6 +527,9 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
         if (myProject != null) {
           FlexBuildConfigurationManagerImpl.resetHighlighting(myProject);
+          if (!renamedConfigs.isEmpty()) {
+            myProject.getMessageBus().syncPublisher(FlexBuildConfigurationChangeListener.TOPIC).buildConfigurationsRenamed(renamedConfigs);
+          }
         }
       }
     });

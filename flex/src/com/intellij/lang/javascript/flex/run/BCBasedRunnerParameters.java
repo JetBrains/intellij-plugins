@@ -13,6 +13,8 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 public class BCBasedRunnerParameters implements Cloneable {
   @NotNull private String myModuleName = "";
   @NotNull private String myBCName = "";
@@ -82,5 +84,23 @@ public class BCBasedRunnerParameters implements Cloneable {
   public int hashCode() {
     assert false;
     return super.hashCode();
+  }
+
+  public void handleBuildConfigurationsRename(final Map<Pair<String, String>, String> renamedConfigs) {
+    for (Pair<String, String> oldModuleAndBc : renamedConfigs.keySet()) {
+      if (oldModuleAndBc.first.equals(myModuleName) && oldModuleAndBc.second.equals(myBCName)) {
+        myBCName = renamedConfigs.get(oldModuleAndBc);
+        break;
+      }
+    }
+  }
+
+  public void handleModulesRename(final Map<String, String> renamedModules) {
+    for (String oldName : renamedModules.keySet()) {
+      if (oldName.equals(myModuleName)) {
+        myModuleName = renamedModules.get(oldName);
+        break;
+      }
+    }
   }
 }

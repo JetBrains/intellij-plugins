@@ -2,12 +2,19 @@ package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.ProjectTopics;
 import com.intellij.compiler.CompilerConfiguration;
+import com.intellij.execution.RunManager;
+import com.intellij.execution.RunManagerEx;
+import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.facet.FacetManager;
 import com.intellij.lang.javascript.ActionScriptFileType;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationChangeListener;
 import com.intellij.lang.javascript.flex.projectStructure.ui.ActiveBuildConfigurationWidget;
+import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
@@ -24,6 +31,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.ModuleNameTracker;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
@@ -87,7 +95,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     public final THashMap<VirtualFile, Long> configFileToTimestamp = new THashMap<VirtualFile, Long>();
   }
 
-  public FlexCompilerHandler(Project project) {
+  public FlexCompilerHandler(final Project project) {
     super(project);
 
     MessageBusConnection connection = project.getMessageBus().connect(project);
@@ -98,6 +106,35 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
 
       public void rootsChanged(ModuleRootEvent event) {
         quitCompilerShell();
+      }
+    });
+    connection.subscribe(ProjectTopics.MODULES, new ModuleNameTracker(project) {
+      @Override
+      protected void modulesRenamed(final Project project, final Map<String, String> old2newNames) {
+        for (RunnerAndConfigurationSettings settings : RunManagerEx.getInstanceEx(project).getSortedConfigurations()) {
+          RunConfiguration runConfiguration = settings.getConfiguration();
+          if (runConfiguration instanceof FlashRunConfiguration) {
+            ((FlashRunConfiguration)settings).getRunnerParameters().handleModulesRename(old2newNames);
+          }
+          else if (runConfiguration instanceof FlexUnitRunConfiguration) {
+            ((FlexUnitRunConfiguration)settings).getRunnerParameters().handleModulesRename(old2newNames);
+          }
+        }
+      }
+    });
+
+    connection.subscribe(FlexBuildConfigurationChangeListener.TOPIC, new FlexBuildConfigurationChangeListener() {
+      @Override
+      public void buildConfigurationsRenamed(final Map<Pair<String, String>, String> renames) {
+        for (RunnerAndConfigurationSettings settings : RunManagerEx.getInstanceEx(project).getSortedConfigurations()) {
+          RunConfiguration runConfiguration = settings.getConfiguration();
+          if (runConfiguration instanceof FlashRunConfiguration) {
+            ((FlashRunConfiguration)runConfiguration).getRunnerParameters().handleBuildConfigurationsRename(renames);
+          }
+          else if (runConfiguration instanceof FlexUnitRunConfiguration) {
+            ((FlexUnitRunConfiguration)runConfiguration).getRunnerParameters().handleBuildConfigurationsRename(renames);
+          }
+        }
       }
     });
 
