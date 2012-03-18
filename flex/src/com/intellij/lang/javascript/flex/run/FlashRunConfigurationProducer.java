@@ -11,8 +11,8 @@ import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
@@ -173,33 +173,26 @@ public class FlashRunConfigurationProducer extends RuntimeConfigurationProducer 
     return element instanceof JSClass ? (JSClass)element : null;
   }
 
-  public static boolean isAcceptedMainClass(final JSClass jsClass, final Module module, final boolean allowWindowedApplicationInheritors) {
-    if (jsClass == null || module == null) return false;
-    final JSAttributeList attributeList = jsClass.getAttributeList();
-    if (attributeList == null || attributeList.getAccessType() != JSAttributeList.AccessType.PUBLIC) return false;
-    final String jsClassName = jsClass.getQualifiedName();
-    if (jsClassName == null) return false;
-    final PsiElement spriteClass = JSResolveUtil.unwrapProxy(
-      JSResolveUtil.findClassByQName(FlashRunConfigurationForm.SPRITE_CLASS_NAME, GlobalSearchScope.moduleWithLibrariesScope(module)));
-    if (!(spriteClass instanceof JSClass)) return false;
+  // TODO remove last parameter?
+  public static boolean isAcceptedMainClass(@Nullable final JSClass jsClass,
+                                            @Nullable final Module module,
+                                            final boolean allowWindowedApplicationInheritors) {
+    if (jsClass == null || module == null || !BCUtils.isValidMainClass(module, null, jsClass)) return false;
 
-    final boolean isSpriteInheritor = JSInheritanceUtil.isParentClass(jsClass, (JSClass)spriteClass);
-
-    if (allowWindowedApplicationInheritors) {
-      return isSpriteInheritor;
-    }
-    else {
+    if (!allowWindowedApplicationInheritors) {
+      GlobalSearchScope scope = GlobalSearchScope.moduleWithLibrariesScope(module);
       final PsiElement windowedApplicationClass1 = JSResolveUtil
-        .unwrapProxy(JSResolveUtil.findClassByQName(WINDOWED_APPLICATION_CLASS_NAME_1, GlobalSearchScope.moduleWithLibrariesScope(module)));
+        .unwrapProxy(JSResolveUtil.findClassByQName(WINDOWED_APPLICATION_CLASS_NAME_1, scope));
       final PsiElement windowedApplicationClass2 = JSResolveUtil
-        .unwrapProxy(JSResolveUtil.findClassByQName(WINDOWED_APPLICATION_CLASS_NAME_2, GlobalSearchScope.moduleWithLibrariesScope(module)));
+        .unwrapProxy(JSResolveUtil.findClassByQName(WINDOWED_APPLICATION_CLASS_NAME_2, scope));
 
-      final boolean isWindowedApplicationInheritor = windowedApplicationClass1 instanceof JSClass &&
-                                                     JSInheritanceUtil.isParentClass(jsClass, (JSClass)windowedApplicationClass1) ||
-                                                     windowedApplicationClass2 instanceof JSClass &&
-                                                     JSInheritanceUtil.isParentClass(jsClass, (JSClass)windowedApplicationClass2);
-
-      return isSpriteInheritor && !isWindowedApplicationInheritor;
+      if (windowedApplicationClass1 instanceof JSClass &&
+          JSInheritanceUtil.isParentClass(jsClass, (JSClass)windowedApplicationClass1) ||
+          windowedApplicationClass2 instanceof JSClass &&
+          JSInheritanceUtil.isParentClass(jsClass, (JSClass)windowedApplicationClass2)) {
+        return false;
+      }
     }
+    return true;
   }
 }

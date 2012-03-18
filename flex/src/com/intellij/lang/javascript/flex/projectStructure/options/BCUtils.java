@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.ui.JSClassChooserDialog;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -365,4 +366,10 @@ public class BCUtils {
     }
     return new JSClassChooserDialog.PublicInheritor(module.getProject(), baseClass, filterScope, true, caching);
   }
+
+  public static boolean isValidMainClass(final Module module, @Nullable final FlexIdeBuildConfiguration buildConfiguration, final JSClass clazz) {
+    return getMainClassFilter(module, buildConfiguration, false).value(clazz);
+  }
+
+
 }

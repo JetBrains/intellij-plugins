@@ -10,6 +10,9 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.ui.JSClassChooserDialog;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -18,6 +21,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -322,11 +326,23 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
         FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), moduleAndBC.first.getName()));
     }
 
+    String mainClass = myOverrideMainClass ? myOverriddenMainClass : bc.getMainClass();
+    if (mainClass.isEmpty()) {
+      throw new RuntimeConfigurationError(FlexBundle.message("main.class.not.set"));
+    }
+
+    PsiElement clazz = JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName(mainClass, moduleAndBC.first.getModuleScope(false)));
+    if (!(clazz instanceof JSClass)) {
+      throw new RuntimeConfigurationError(FlexBundle.message("main.class.not.found", mainClass, bc.getName()));
+    }
+
+    JSClassChooserDialog.PublicInheritor mainClassFilter = BCUtils.getMainClassFilter(moduleAndBC.first, bc, false);
+    if (!mainClassFilter.value((JSClass)clazz)) {
+      throw new RuntimeConfigurationError(
+        FlexBundle.message("main.class.is.not.a.subclass.of", mainClass, mainClassFilter.getSuperClassName()));
+    }
+
     if (myOverrideMainClass) {
-      if (myOverriddenMainClass.isEmpty()) {
-        throw new RuntimeConfigurationError(FlexBundle.message("main.class.not.set"));
-      }
-      // todo check main class presence when it becomes reliable
       if (myOverriddenOutputFileName.isEmpty()) {
         throw new RuntimeConfigurationError(FlexBundle.message("output.file.name.not.specified"));
       }

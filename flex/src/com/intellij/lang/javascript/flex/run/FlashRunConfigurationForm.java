@@ -2,14 +2,14 @@ package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.ide.ui.ListCellRendererWrapper;
-import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil;
 import com.intellij.lang.javascript.flex.build.InfoFromConfigFile;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
-import com.intellij.lang.javascript.ui.JSClassChooserDialog;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.module.Module;
@@ -17,6 +17,8 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -32,10 +34,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
-import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileRunTarget;
-import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AppDescriptorForEmulator;
-import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.Emulator;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.*;
 
 public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfiguration> {
 
@@ -48,7 +47,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private BCCombo myBCCombo;
 
   private JCheckBox myOverrideMainClassCheckBox;
-  private JSClassChooserDialog.PublicInheritor myMainClassFilter;
+  private Condition<JSClass> myMainClassFilter;
   private JSReferenceEditor myMainClassComponent;
   private JLabel myOutputFileNameLabel;
   private JTextField myOutputFileNameTextField;
@@ -117,14 +116,13 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private void updateMainClassField() {
     final Module module = myBCCombo.getModule();
     if (module != null) {
-      final GlobalSearchScope scope = GlobalSearchScope.moduleScope(module);
-      myMainClassComponent.setScope(scope);
-      myMainClassFilter.setScope(FlexUtils.getModuleWithDependenciesAndLibrariesScope(module, myBCCombo.getBC(), false));
+      myMainClassComponent.setScope(GlobalSearchScope.moduleScope(module));
+      myMainClassFilter = BCUtils.getMainClassFilter(module, myBCCombo.getBC(), true);
       myMainClassComponent.setChooserBlockingMessage(null);
     }
     else {
       myMainClassComponent.setScope(GlobalSearchScope.EMPTY_SCOPE);
-      myMainClassFilter.setScope(null);
+      myMainClassFilter = Conditions.alwaysFalse();
       myMainClassComponent.setChooserBlockingMessage("Build configuration not selected");
     }
   }
@@ -392,9 +390,14 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
   private void createUIComponents() {
     myBCCombo = new BCCombo(myProject);
-    myMainClassFilter = new JSClassChooserDialog.PublicInheritor(myProject, SPRITE_CLASS_NAME, null, true);
+    myMainClassFilter = Conditions.alwaysFalse();
     myMainClassComponent = JSReferenceEditor.forClassName("", myProject, null, GlobalSearchScope.EMPTY_SCOPE, null,
-                                                          myMainClassFilter, ExecutionBundle.message("choose.main.class.dialog.title"));
+                                                          new Condition<JSClass>() {
+                                                            @Override
+                                                            public boolean value(final JSClass jsClass) {
+                                                              return myMainClassFilter.value(jsClass);
+                                                            }
+                                                          }, ExecutionBundle.message("choose.main.class.dialog.title"));
   }
 
   @NotNull
