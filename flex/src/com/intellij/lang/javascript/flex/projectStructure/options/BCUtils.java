@@ -1,8 +1,11 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
+import com.intellij.lang.javascript.ui.JSClassChooserDialog;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -13,9 +16,11 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.Processor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -342,5 +347,22 @@ public class BCUtils {
     else {
       targetPlayerCombo.setModel(new DefaultComboBoxModel(ArrayUtil.EMPTY_STRING_ARRAY));
     }
+  }
+
+  public static JSClassChooserDialog.PublicInheritor getMainClassFilter(@NotNull Module module,
+                                                                         @Nullable FlexIdeBuildConfiguration bc,
+                                                                         boolean caching) {
+    FlexIdeBuildConfiguration currentBc = bc != null ? bc : FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
+    final String baseClass = currentBc.getOutputType() == OutputType.RuntimeLoadedModule
+                             ? FlashRunConfigurationForm.MODULE_BASE_CLASS_NAME
+                             : FlashRunConfigurationForm.SPRITE_CLASS_NAME;
+    GlobalSearchScope filterScope;
+    if (bc != null) {
+      filterScope = FlexUtils.getModuleWithDependenciesAndLibrariesScope(module, bc, false);
+    }
+    else {
+      filterScope = module.getModuleWithDependenciesAndLibrariesScope(false);
+    }
+    return new JSClassChooserDialog.PublicInheritor(module.getProject(), baseClass, filterScope, true, caching);
   }
 }

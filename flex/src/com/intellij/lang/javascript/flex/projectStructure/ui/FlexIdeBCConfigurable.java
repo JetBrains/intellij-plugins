@@ -11,8 +11,8 @@ import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexId
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
-import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
@@ -33,10 +33,7 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStr
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -113,6 +110,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   private final Disposable myDisposable;
 
   private boolean myFreeze;
+  private JSClassChooserDialog.PublicInheritor myMainClassFilter;
 
   public FlexIdeBCConfigurable(final Module module,
                                final ModifiableFlexIdeBuildConfiguration bc,
@@ -492,6 +490,12 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     if (myAirDesktopPackagingConfigurable != null) myAirDesktopPackagingConfigurable.apply();
     if (myAndroidPackagingConfigurable != null) myAndroidPackagingConfigurable.apply();
     if (myIOSPackagingConfigurable != null) myIOSPackagingConfigurable.apply();
+    // main class validation is based on live settings from dependencies tab
+    rebuildMainClassFilter();
+  }
+
+  private void rebuildMainClassFilter() {
+    myMainClassFilter = BCUtils.getMainClassFilter(myModule, myConfiguration, true);
   }
 
   private void applyOwnTo(ModifiableFlexIdeBuildConfiguration configuration, boolean validate) throws ConfigurationException {
@@ -541,6 +545,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     finally {
       myFreeze = false;
     }
+    rebuildMainClassFilter();
     myContext.getDaemonAnalyzer().queueUpdate(myStructureElement);
   }
 
@@ -592,14 +597,16 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   }
 
   private void createUIComponents() {
-    final String baseClass = myConfiguration.getOutputType() == OutputType.RuntimeLoadedModule
-                             ? FlashRunConfigurationForm.MODULE_BASE_CLASS_NAME
-                             : FlashRunConfigurationForm.SPRITE_CLASS_NAME;
-    final GlobalSearchScope scope = GlobalSearchScope.moduleScope(myModule);
-    GlobalSearchScope filterScope = FlexUtils.getModuleWithDependenciesAndLibrariesScope(myModule, myConfiguration, false);
-    final Condition<JSClass> filter = new JSClassChooserDialog.PublicInheritor(myModule.getProject(), baseClass, filterScope, true);
-    myMainClassComponent = JSReferenceEditor.forClassName("", myModule.getProject(), null, scope, null,
-                                                          filter, ExecutionBundle.message("choose.main.class.dialog.title"));
+    rebuildMainClassFilter();
+    myMainClassComponent = JSReferenceEditor.forClassName("", myModule.getProject(), null,
+                                                          GlobalSearchScope.moduleScope(myModule), null,
+                                                          new Condition<JSClass>() {
+                                                            @Override
+                                                            public boolean value(final JSClass jsClass) {
+                                                              return myMainClassFilter.value(jsClass);
+                                                            }
+                                                          },
+                                                          ExecutionBundle.message("choose.main.class.dialog.title"));
   }
 
   public void addSharedLibrary(final Library library) {
