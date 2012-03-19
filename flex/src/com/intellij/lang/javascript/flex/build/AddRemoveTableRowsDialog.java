@@ -46,7 +46,7 @@ public abstract class AddRemoveTableRowsDialog<T> extends DialogWrapper {
 
   protected void initTable() {
     myTable = new JBTable();
-    myTable.setRowHeight(new JLabel("fj").getPreferredSize().height + 4);
+    myTable.setRowHeight(new JTextField("Fake").getPreferredSize().height + myTable.getRowMargin());
     myTable.setPreferredScrollableViewportSize(new Dimension(400, 150));
 
     myTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE); // otherwise model is not in sync with view

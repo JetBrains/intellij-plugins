@@ -93,7 +93,7 @@ public class FilesToPackageForm {
     myFilesToPackageTable = new JBTable();
     myFilesToPackageTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE); // otherwise model is not in sync with view
     myFilesToPackageTable.setPreferredScrollableViewportSize(new Dimension(400, 150));
-    myFilesToPackageTable.setRowHeight(new JLabel("Fake").getPreferredSize().height + 4);
+    myFilesToPackageTable.setRowHeight(new JTextField("Fake").getPreferredSize().height + myFilesToPackageTable.getRowMargin());
 
     myFilesToPackageTable.setModel(new DefaultTableModel() {
 

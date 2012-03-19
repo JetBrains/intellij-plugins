@@ -414,7 +414,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     tree.setShowsRootHandles(true);
     tree.setCellRenderer(createTreeCellRenderer());
     treeTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    treeTable.setRowHeight(new JTextField("Fake").getPreferredSize().height + 2);
+    treeTable.setRowHeight(new JTextField("Fake").getPreferredSize().height + 3);
     //treeTable.setTableHeader(null);
 
     final DefaultActionGroup group = new DefaultActionGroup();
