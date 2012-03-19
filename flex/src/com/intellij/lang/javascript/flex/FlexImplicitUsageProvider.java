@@ -35,7 +35,7 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Conditi
     if (element instanceof JSClass) {
       JSClass clazz = (JSClass)element;
       Module module = ModuleUtil.findModuleForPsiElement(clazz);
-      if (FlashRunConfigurationProducer.isAcceptedMainClass(clazz, module, true)) return true;
+      if (FlashRunConfigurationProducer.isAcceptedMainClass(clazz, module)) return true;
       if (JSInheritanceUtil.isParentClass(clazz, FlashRunConfigurationForm.MODULE_BASE_CLASS_NAME)) return true;
 
       FlexUnitSupport flexUnitSupport = FlexUnitSupport.getSupport(module);

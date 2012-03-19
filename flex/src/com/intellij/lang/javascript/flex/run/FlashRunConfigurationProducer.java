@@ -50,7 +50,7 @@ public class FlashRunConfigurationProducer extends RuntimeConfigurationProducer 
     mySourceElement = location.getPsiElement();
 
     final JSClass jsClass = getJSClass(mySourceElement);
-    if (jsClass != null && isAcceptedMainClass(jsClass, module, true)) {
+    if (jsClass != null && isAcceptedMainClass(jsClass, module)) {
       final RunnerAndConfigurationSettings settings =
         RunManagerEx.getInstanceEx(location.getProject()).createConfiguration("", FlashRunConfigurationType.getFactory());
       final FlashRunConfiguration runConfig = (FlashRunConfiguration)settings.getConfiguration();
@@ -109,7 +109,7 @@ public class FlashRunConfigurationProducer extends RuntimeConfigurationProducer 
 
     final JSClass jsClass = getJSClass(psiElement);
 
-    if (jsClass != null && isAcceptedMainClass(jsClass, module, true)) {
+    if (jsClass != null && isAcceptedMainClass(jsClass, module)) {
       return findSuitableRunConfig(module, jsClass.getQualifiedName(), existingConfigurations);
     }
 
@@ -173,26 +173,7 @@ public class FlashRunConfigurationProducer extends RuntimeConfigurationProducer 
     return element instanceof JSClass ? (JSClass)element : null;
   }
 
-  // TODO remove last parameter?
-  public static boolean isAcceptedMainClass(@Nullable final JSClass jsClass,
-                                            @Nullable final Module module,
-                                            final boolean allowWindowedApplicationInheritors) {
-    if (jsClass == null || module == null || !BCUtils.isValidMainClass(module, null, jsClass)) return false;
-
-    if (!allowWindowedApplicationInheritors) {
-      GlobalSearchScope scope = GlobalSearchScope.moduleWithLibrariesScope(module);
-      final PsiElement windowedApplicationClass1 = JSResolveUtil
-        .unwrapProxy(JSResolveUtil.findClassByQName(WINDOWED_APPLICATION_CLASS_NAME_1, scope));
-      final PsiElement windowedApplicationClass2 = JSResolveUtil
-        .unwrapProxy(JSResolveUtil.findClassByQName(WINDOWED_APPLICATION_CLASS_NAME_2, scope));
-
-      if (windowedApplicationClass1 instanceof JSClass &&
-          JSInheritanceUtil.isParentClass(jsClass, (JSClass)windowedApplicationClass1) ||
-          windowedApplicationClass2 instanceof JSClass &&
-          JSInheritanceUtil.isParentClass(jsClass, (JSClass)windowedApplicationClass2)) {
-        return false;
-      }
-    }
-    return true;
+  public static boolean isAcceptedMainClass(@Nullable final JSClass jsClass, @Nullable final Module module) {
+    return jsClass != null && module != null && BCUtils.isValidMainClass(module, null, jsClass);
   }
 }
