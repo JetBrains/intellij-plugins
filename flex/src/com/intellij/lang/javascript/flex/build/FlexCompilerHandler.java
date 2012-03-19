@@ -2,7 +2,6 @@ package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.ProjectTopics;
 import com.intellij.compiler.CompilerConfiguration;
-import com.intellij.execution.RunManager;
 import com.intellij.execution.RunManagerEx;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.RunConfiguration;
@@ -114,10 +113,10 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
         for (RunnerAndConfigurationSettings settings : RunManagerEx.getInstanceEx(project).getSortedConfigurations()) {
           RunConfiguration runConfiguration = settings.getConfiguration();
           if (runConfiguration instanceof FlashRunConfiguration) {
-            ((FlashRunConfiguration)settings).getRunnerParameters().handleModulesRename(old2newNames);
+            ((FlashRunConfiguration)runConfiguration).getRunnerParameters().handleModulesRename(old2newNames);
           }
           else if (runConfiguration instanceof FlexUnitRunConfiguration) {
-            ((FlexUnitRunConfiguration)settings).getRunnerParameters().handleModulesRename(old2newNames);
+            ((FlexUnitRunConfiguration)runConfiguration).getRunnerParameters().handleModulesRename(old2newNames);
           }
         }
       }
