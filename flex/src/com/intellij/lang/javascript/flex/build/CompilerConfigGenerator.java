@@ -65,11 +65,10 @@ public class CompilerConfigGenerator {
   private CompilerConfigGenerator(final @NotNull Module module,
                                   final @NotNull FlexIdeBuildConfiguration bc,
                                   final @NotNull CompilerOptions moduleLevelCompilerOptions,
-                                  final @NotNull CompilerOptions projectLevelCompilerOptions,
-                                  final boolean forTests) throws IOException {
+                                  final @NotNull CompilerOptions projectLevelCompilerOptions) throws IOException {
     myModule = module;
     myBC = bc;
-    myFlexUnit = forTests;
+    myFlexUnit = BCUtils.isFlexUnitBC(myModule, myBC);
     myCSS = bc.isTempBCForCompilation() && bc.getMainClass().toLowerCase().endsWith(".css");
     mySdk = bc.getSdk();
     if (mySdk == null) {
@@ -80,13 +79,11 @@ public class CompilerConfigGenerator {
     myProjectLevelCompilerOptions = projectLevelCompilerOptions;
   }
 
-  public static VirtualFile getOrCreateConfigFile(final Module module, final FlexIdeBuildConfiguration bc, boolean forTests)
-    throws IOException {
+  public static VirtualFile getOrCreateConfigFile(final Module module, final FlexIdeBuildConfiguration bc) throws IOException {
     final CompilerConfigGenerator generator =
       new CompilerConfigGenerator(module, bc,
                                   FlexBuildConfigurationManager.getInstance(module).getModuleLevelCompilerOptions(),
-                                  FlexProjectLevelCompilerOptionsHolder.getInstance(module.getProject()).getProjectLevelCompilerOptions(),
-                                  forTests);
+                                  FlexProjectLevelCompilerOptionsHolder.getInstance(module.getProject()).getProjectLevelCompilerOptions());
     String text = generator.generateConfigFileText();
 
     if (bc.isTempBCForCompilation()) {
@@ -97,8 +94,8 @@ public class CompilerConfigGenerator {
                                                                   makeExternalLibsMerged, makeIncludedLibsMerged);
     }
 
-    final String name = getConfigFileName(module, bc.getName(), PlatformUtils.getPlatformPrefix().toLowerCase(),
-                                          BCUtils.getBCSpecifier(module, bc, forTests));
+    final String name =
+      getConfigFileName(module, bc.getName(), PlatformUtils.getPlatformPrefix().toLowerCase(), BCUtils.getBCSpecifier(module, bc));
     return getOrCreateConfigFile(module.getProject(), name, text);
   }
 
@@ -538,7 +535,7 @@ public class CompilerConfigGenerator {
     final CompilerConfiguration compilerConfiguration = CompilerConfiguration.getInstance(myModule.getProject());
     final Ref<Boolean> noClasses = new Ref<Boolean>(true);
 
-    for (final VirtualFile sourceRoot : ModuleRootManager.getInstance(myModule).getSourceRoots(myFlexUnit)) {
+    for (final VirtualFile sourceRoot : ModuleRootManager.getInstance(myModule).getSourceRoots(false)) {
       fileIndex.iterateContentUnderDirectory(sourceRoot, new ContentIterator() {
         @Override
         public boolean processFile(final VirtualFile file) {

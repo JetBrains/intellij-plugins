@@ -153,7 +153,7 @@ public class FlexCompilationManager {
         else {
           //noinspection SynchronizeOnThis
           synchronized (this) {
-            myCompilerDependenciesCache.cacheBC(myCompileContext, task.getModule(), task.getBC(), task.getConfigFiles(), task.isForTests());
+            myCompilerDependenciesCache.cacheBC(myCompileContext, task.getModule(), task.getBC(), task.getConfigFiles());
           }
         }
       }
@@ -213,9 +213,7 @@ public class FlexCompilationManager {
       if (taskToStart != null) {
         myNotStartedTasks.remove(taskToStart);
 
-        if (myCompilerDependenciesCache.isNothingChangedSincePreviousCompilation(taskToStart.getModule(),
-                                                                                 taskToStart.getBC(),
-                                                                                 taskToStart.isForTests())) {
+        if (myCompilerDependenciesCache.isNothingChangedSincePreviousCompilation(taskToStart.getModule(), taskToStart.getBC())) {
           addMessage(taskToStart, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.skipped.because.nothing.changed"),
                      null, -1, -1);
           taskToStart.cancel();

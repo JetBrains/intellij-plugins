@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
@@ -57,11 +58,15 @@ public class BCUtils {
   }
 
   @Nullable
-  public static String getBCSpecifier(final Module module, final FlexIdeBuildConfiguration bc, final boolean forTests) {
-    if (forTests) return "flexunit";
+  public static String getBCSpecifier(final Module module, final FlexIdeBuildConfiguration bc) {
     if (!bc.isTempBCForCompilation()) return null;
+    if (isFlexUnitBC(module, bc)) return "flexunit";
     if (bc.getMainClass().toLowerCase().endsWith(".css")) return PathUtil.getFileName(bc.getMainClass());
     return StringUtil.getShortName(bc.getMainClass());
+  }
+
+  public static boolean isFlexUnitBC(final Module module, final FlexIdeBuildConfiguration bc) {
+    return bc.isTempBCForCompilation() && bc.getMainClass().equals(FlexUnitPrecompileTask.getFlexUnitLauncherName(module.getName()));
   }
 
   public static boolean canHaveRuntimeStylesheets(final FlexIdeBuildConfiguration bc) {

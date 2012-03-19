@@ -91,17 +91,14 @@ public class FlexCompilerDependenciesCache {
     }
   }
 
-  public boolean isNothingChangedSincePreviousCompilation(final Module module, final FlexIdeBuildConfiguration bc, boolean forTests) {
+  public boolean isNothingChangedSincePreviousCompilation(final Module module, final FlexIdeBuildConfiguration bc) {
     final Collection<BCInfo> infosForModule = myCache.get(module);
     final BCInfo existingInfo = infosForModule == null ? null : findCacheForBC(infosForModule, bc);
     if (existingInfo == null) {
       return false;
     }
 
-    final String[] currentSourceRoots = ModuleRootManager.getInstance(module).getSourceRootUrls(forTests);
-    // If there are test source roots in the module, BC will be rebuilt
-    // Otherwise, tests-compilation and production-compilation results are the same, so it's OK to use existing output
-    // TODO it should be separate output, so running tests does not result in production recompilation, see also IDEA-82780
+    final String[] currentSourceRoots = ModuleRootManager.getInstance(module).getSourceRootUrls();
     if (!Arrays.equals(existingInfo.mySourceRootUrls, currentSourceRoots) || existingInfo.timestampsChanged()) {
       infosForModule.remove(existingInfo);
       if (infosForModule.isEmpty()) {
@@ -114,7 +111,7 @@ public class FlexCompilerDependenciesCache {
   }
 
   public void cacheBC(final CompileContext context, final Module module, final FlexIdeBuildConfiguration bc,
-                      final List<VirtualFile> configFiles, final boolean forTests) {
+                      final List<VirtualFile> configFiles) {
     Collection<BCInfo> infosForModule = myCache.get(module);
     if (infosForModule == null) {
       infosForModule = new ArrayList<BCInfo>();
@@ -130,7 +127,7 @@ public class FlexCompilerDependenciesCache {
     final VirtualFile outputFile = getOutputFile(context.getMessages(CompilerMessageCategory.INFORMATION), configFiles);
     if (outputFile == null) return;
 
-    final BCInfo bcInfo = new BCInfo(Factory.getCopy(bc), ModuleRootManager.getInstance(module).getSourceRootUrls(forTests));
+    final BCInfo bcInfo = new BCInfo(Factory.getCopy(bc), ModuleRootManager.getInstance(module).getSourceRootUrls());
     infosForModule.add(bcInfo);
 
     bcInfo.addFileDependency(outputFile.getPath());

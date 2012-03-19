@@ -22,9 +22,8 @@ public class MxmlcCompcCompilationTask extends FlexCompilationTask {
 
   public MxmlcCompcCompilationTask(final @NotNull Module module,
                                    final @NotNull FlexIdeBuildConfiguration bc,
-                                   final @NotNull Collection<FlexIdeBuildConfiguration> dependencies,
-                                   final boolean forTests) {
-    super(module, bc, dependencies, forTests);
+                                   final @NotNull Collection<FlexIdeBuildConfiguration> dependencies) {
+    super(module, bc, dependencies);
   }
 
   protected void doStart(final FlexCompilationManager compilationManager) throws IOException {

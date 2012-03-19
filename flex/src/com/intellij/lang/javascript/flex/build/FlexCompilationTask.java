@@ -19,7 +19,6 @@ public abstract class FlexCompilationTask {
   private final String myPresentableName;
   protected final FlexIdeBuildConfiguration myBC;
   protected final Collection<FlexIdeBuildConfiguration> myDependencies;
-  private final boolean myForTests;
 
   private List<VirtualFile> myConfigFiles;
 
@@ -28,14 +27,12 @@ public abstract class FlexCompilationTask {
 
   protected FlexCompilationTask(final Module module,
                                 final FlexIdeBuildConfiguration bc,
-                                final Collection<FlexIdeBuildConfiguration> dependencies,
-                                final boolean forTests) {
+                                final Collection<FlexIdeBuildConfiguration> dependencies) {
     myModule = module;
     myBC = bc;
     myDependencies = dependencies;
-    myForTests = forTests;
 
-    String postfix = bc.isTempBCForCompilation() ? " - " + BCUtils.getBCSpecifier(module, bc, forTests) : "";
+    String postfix = bc.isTempBCForCompilation() ? " - " + BCUtils.getBCSpecifier(module, bc) : "";
     if (!bc.getName().equals(module.getName())) postfix += " (module " + module.getName() + ")";
     myPresentableName = bc.getName() + postfix;
   }
@@ -61,7 +58,7 @@ public abstract class FlexCompilationTask {
 
   protected List<VirtualFile> createConfigFiles() throws IOException {
     final ArrayList<VirtualFile> configFiles = new ArrayList<VirtualFile>(2);
-    configFiles.add(CompilerConfigGenerator.getOrCreateConfigFile(myModule, myBC, myForTests));
+    configFiles.add(CompilerConfigGenerator.getOrCreateConfigFile(myModule, myBC));
 
     final String additionalConfigFilePath = myBC.getCompilerOptions().getAdditionalConfigFilePath();
     if (!myBC.isTempBCForCompilation() && !additionalConfigFilePath.isEmpty()) {
@@ -111,9 +108,5 @@ public abstract class FlexCompilationTask {
 
   public Collection<FlexIdeBuildConfiguration> getDependencies() {
     return myDependencies;
-  }
-
-  public boolean isForTests() {
-    return myForTests;
   }
 }
