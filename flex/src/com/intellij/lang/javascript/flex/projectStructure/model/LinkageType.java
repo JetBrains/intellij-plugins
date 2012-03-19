@@ -17,7 +17,7 @@ public class LinkageType {
   public static final LinkageType LoadInRuntime = new LinkageType("Loaded", "Loaded at runtime", "Loaded");
   public static final LinkageType Test = new LinkageType("Test", "Test", "Test");
 
-  private static final LinkageType[] SWC_LINKAGE_VALUES = new LinkageType[]{Merged, RSL, External, Include, Test};
+  private static final LinkageType[] SWC_LINKAGE_VALUES = new LinkageType[]{Merged, /*RSL,*/ External, Include, Test};
 
   private final String myLongText;
   private final String myShortText;
