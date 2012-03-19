@@ -17,7 +17,7 @@
              url="http://confluence.jetbrains.net/display/WI/JsTestDriver+IntelliJ+plugin" xmlns:xi="http://www.w3.org/2001/XInclude">
   <name>JSTestDriver Plugin</name>
   <description>Execute JavaScript unit tests using JsTestDriver</description>
-  <version>1.4.1</version>
+  <version>999.999</version>
   <vendor logo="/com/google/jstestdriver/idea/ui/JsTestDriver.png"
           url="http://code.google.com/p/js-test-driver/"
           email="js-test-driver@googlegroups.com">Google; JetBrains</vendor>
