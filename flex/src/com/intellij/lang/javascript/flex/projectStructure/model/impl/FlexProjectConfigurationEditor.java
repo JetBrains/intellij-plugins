@@ -378,9 +378,6 @@ public class FlexProjectConfigurationEditor implements Disposable {
     }
   }
 
-  /**
-   * @return <module_name, bc_name> -> new_bc_name
-   */
   public void commit() throws ConfigurationException {
     final Map<Pair<String, String>, String> renamedConfigs = new HashMap<Pair<String, String>, String>();
     for (Module module : myModule2Editors.keySet()) {
