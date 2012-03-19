@@ -599,13 +599,8 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   private void createUIComponents() {
     rebuildMainClassFilter();
     myMainClassComponent = JSReferenceEditor.forClassName("", myModule.getProject(), null,
-                                                          GlobalSearchScope.moduleScope(myModule), null,
-                                                          new Condition<JSClass>() {
-                                                            @Override
-                                                            public boolean value(final JSClass jsClass) {
-                                                              return myMainClassFilter.value(jsClass);
-                                                            }
-                                                          },
+                                                          myModule.getModuleScope(false), null,
+                                                          Conditions.<JSClass>alwaysTrue(), // no filtering until IDEA-83046
                                                           ExecutionBundle.message("choose.main.class.dialog.title"));
   }
 

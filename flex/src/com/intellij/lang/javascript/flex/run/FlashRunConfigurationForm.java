@@ -116,7 +116,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private void updateMainClassField() {
     final Module module = myBCCombo.getModule();
     if (module != null) {
-      myMainClassComponent.setScope(GlobalSearchScope.moduleScope(module));
+      myMainClassComponent.setScope(module.getModuleScope(false));
       myMainClassFilter = BCUtils.getMainClassFilter(module, myBCCombo.getBC(), true);
       myMainClassComponent.setChooserBlockingMessage(null);
     }
@@ -392,12 +392,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myBCCombo = new BCCombo(myProject);
     myMainClassFilter = Conditions.alwaysFalse();
     myMainClassComponent = JSReferenceEditor.forClassName("", myProject, null, GlobalSearchScope.EMPTY_SCOPE, null,
-                                                          new Condition<JSClass>() {
-                                                            @Override
-                                                            public boolean value(final JSClass jsClass) {
-                                                              return myMainClassFilter.value(jsClass);
-                                                            }
-                                                          }, ExecutionBundle.message("choose.main.class.dialog.title"));
+                                                          Conditions.<JSClass>alwaysTrue(), // no filtering until IDEA-83046
+                                                          ExecutionBundle.message("choose.main.class.dialog.title"));
   }
 
   @NotNull
