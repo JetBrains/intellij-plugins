@@ -326,23 +326,23 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
         FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), moduleAndBC.first.getName()));
     }
 
-    String mainClass = myOverrideMainClass ? myOverriddenMainClass : bc.getMainClass();
-    if (mainClass.isEmpty()) {
-      throw new RuntimeConfigurationError(FlexBundle.message("main.class.not.set"));
-    }
-
-    PsiElement clazz = JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName(mainClass, moduleAndBC.first.getModuleScope(false)));
-    if (!(clazz instanceof JSClass)) {
-      throw new RuntimeConfigurationError(FlexBundle.message("main.class.not.found", mainClass, bc.getName()));
-    }
-
-    JSClassChooserDialog.PublicInheritor mainClassFilter = BCUtils.getMainClassFilter(moduleAndBC.first, bc, false);
-    if (!mainClassFilter.value((JSClass)clazz)) {
-      throw new RuntimeConfigurationError(
-        FlexBundle.message("main.class.is.not.a.subclass.of", mainClass, mainClassFilter.getSuperClassName()));
-    }
-
     if (myOverrideMainClass) {
+      if (myOverriddenMainClass.isEmpty()) {
+        throw new RuntimeConfigurationError(FlexBundle.message("main.class.not.set"));
+      }
+
+      PsiElement clazz =
+        JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName(myOverriddenMainClass, moduleAndBC.first.getModuleScope(false)));
+      if (!(clazz instanceof JSClass)) {
+        throw new RuntimeConfigurationError(FlexBundle.message("main.class.not.found", myOverriddenMainClass, bc.getName()));
+      }
+
+      JSClassChooserDialog.PublicInheritor mainClassFilter = BCUtils.getMainClassFilter(moduleAndBC.first, bc, false);
+      if (!mainClassFilter.value((JSClass)clazz)) {
+        throw new RuntimeConfigurationError(
+          FlexBundle.message("main.class.is.not.a.subclass.of", myOverriddenMainClass, mainClassFilter.getSuperClassName()));
+      }
+
       if (myOverriddenOutputFileName.isEmpty()) {
         throw new RuntimeConfigurationError(FlexBundle.message("output.file.name.not.specified"));
       }
