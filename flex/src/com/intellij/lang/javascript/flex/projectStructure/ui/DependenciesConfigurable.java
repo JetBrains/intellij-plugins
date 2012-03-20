@@ -299,8 +299,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         if (!configurable.getDisplayName().equals(bcEntry.getBcName())) return true;
       }
       else {
-        if (moduleName.equals(bcEntry.getModuleName())) return true;
-        if (bcName.equals(bcEntry.getBcName())) return true;
+        if (!moduleName.equals(bcEntry.getModuleName())) return true;
+        if (!bcName.equals(bcEntry.getBcName())) return true;
       }
       if (!dependencyType.isEqual(entry.getDependencyType())) return true;
 
