@@ -78,4 +78,8 @@ public interface FlexIdeBuildConfiguration {
   boolean isTempBCForCompilation();
 
   boolean isEqual(FlexIdeBuildConfiguration other);
+
+  String getShortText();
+
+  String getDescription();
 }

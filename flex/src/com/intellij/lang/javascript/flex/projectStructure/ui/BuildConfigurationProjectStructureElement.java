@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProject
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
@@ -204,5 +203,10 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
 
   public FlexIdeBuildConfiguration getBc() {
     return myBc;
+  }
+
+  @Override
+  public String getDescription() {
+    return myBc.getDescription();
   }
 }

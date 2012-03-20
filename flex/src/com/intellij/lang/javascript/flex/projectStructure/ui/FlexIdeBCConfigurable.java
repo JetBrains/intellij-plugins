@@ -25,23 +25,19 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectStructureElementConfigurable;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.*;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStructureElement;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Conditions;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.ui.CollectionComboBoxModel;
-import com.intellij.ui.DocumentAdapter;
-import com.intellij.ui.UserActivityListener;
-import com.intellij.ui.UserActivityWatcher;
+import com.intellij.ui.*;
 import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
@@ -422,33 +418,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   }
 
   public String getTreeNodeText() {
-    StringBuilder b = new StringBuilder();
-    if (myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Mobile) {
-      b.append("Mobile");
-    }
-    else if (myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Desktop) {
-      b.append("AIR");
-    }
-    else {
-      if (myPureActionScriptCheckBox.isSelected()) {
-        b.append("AS");
-      }
-      else {
-        b.append("Flex");
-      }
-    }
-    b.append(" ");
-    if (myOutputTypeCombo.getSelectedItem() == OutputType.Application) {
-      b.append("App");
-    }
-    else if (myOutputTypeCombo.getSelectedItem() == OutputType.RuntimeLoadedModule) {
-      b.append("Runtime module");
-    }
-    else {
-      b.append("Lib");
-    }
-    b.append(": ").append(myName);
-    return b.toString();
+    return myConfiguration.getShortText();
   }
 
   public OutputType getOutputType() {

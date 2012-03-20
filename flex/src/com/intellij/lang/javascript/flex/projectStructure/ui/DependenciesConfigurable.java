@@ -180,8 +180,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   private boolean myReset;
 
   private abstract static class MyTableItem {
-    public abstract String getText();
-
     @Nullable
     public abstract Icon getIcon();
 
@@ -193,8 +191,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     public abstract void setLinkageType(LinkageType linkageType);
 
-    public abstract boolean isValid();
-
     public abstract void onDoubleClick();
 
     @Nullable
@@ -205,6 +201,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     public abstract boolean canEdit();
 
     public abstract Location.TableEntry getLocation();
+
+    public abstract SimpleColoredText getPresentableText();
   }
 
   private class BCItem extends MyTableItem {
@@ -229,12 +227,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     @Override
-    public String getText() {
+    public SimpleColoredText getPresentableText() {
       if (configurable != null) {
-        return MessageFormat.format("{0} ({1})", configurable.getTreeNodeText(), configurable.getModuleName());
+        return BCUtils.renderBuildConfiguration(configurable.getEditableObject(), configurable.getModuleName());
       }
       else {
-        return MessageFormat.format("{0} ({1})", bcName, moduleName);
+        return BCUtils.renderMissingBuildConfiguration(bcName, moduleName);
       }
     }
 
@@ -262,11 +260,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     @Override
     public void setLinkageType(LinkageType linkageType) {
       dependencyType.setLinkageType(linkageType);
-    }
-
-    @Override
-    public boolean isValid() {
-      return configurable != null;
     }
 
     public void onDoubleClick() {
@@ -332,15 +325,16 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     @Override
-    public String getText() {
+    public SimpleColoredText getPresentableText() {
       if (orderEntry != null) {
         Library library = orderEntry.getLibrary();
         if (library != null) {
           boolean hasInvalidRoots = !((LibraryEx)library).getInvalidRootUrls(OrderRootType.CLASSES).isEmpty();
-          return OrderEntryAppearanceService.getInstance().forLibrary(project, library, hasInvalidRoots).getText();
+          String text = OrderEntryAppearanceService.getInstance().forLibrary(project, library, hasInvalidRoots).getText();
+          return new SimpleColoredText(text, SimpleTextAttributes.REGULAR_ATTRIBUTES);
         }
       }
-      return "<unknown>";
+      return new SimpleColoredText("<unknown>", SimpleTextAttributes.ERROR_ATTRIBUTES);
     }
 
     @Override
@@ -366,11 +360,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     @Override
     public void setLinkageType(LinkageType linkageType) {
       dependencyType.setLinkageType(linkageType);
-    }
-
-    @Override
-    public boolean isValid() {
-      return orderEntry != null;
     }
 
     public void onDoubleClick() {
@@ -399,7 +388,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     public boolean canEdit() {
-      return isValid();
+      return orderEntry != null;
     }
 
     @Override
@@ -428,11 +417,15 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     @Override
-    public String getText() {
+    public SimpleColoredText getPresentableText() {
       Library liveLibrary = findLiveLibrary();
-      return liveLibrary != null
-             ? OrderEntryAppearanceService.getInstance().forLibrary(project, liveLibrary, false).getText()
-             : libraryName;
+      if (liveLibrary != null) {
+        String text = OrderEntryAppearanceService.getInstance().forLibrary(project, liveLibrary, false).getText();
+        return new SimpleColoredText(text, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      }
+      else {
+        return new SimpleColoredText(libraryName, SimpleTextAttributes.ERROR_ATTRIBUTES);
+      }
     }
 
     @Nullable
@@ -464,11 +457,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     @Override
     public void setLinkageType(LinkageType linkageType) {
       dependencyType.setLinkageType(linkageType);
-    }
-
-    @Override
-    public boolean isValid() {
-      return findLiveLibrary() != null;
     }
 
     public void onDoubleClick() {
@@ -536,8 +524,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     @Override
-    public String getText() {
-      return mySdk.getSdkType().getPresentableName() + " " + mySdk.getVersionString();
+    public SimpleColoredText getPresentableText() {
+      SimpleColoredText text = new SimpleColoredText();
+      text.append(mySdk.getSdkType().getPresentableName() + mySdk.getVersionString(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      return text;
     }
 
     @Override
@@ -563,11 +553,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     @Override
     public void setLinkageType(LinkageType linkageType) {
       throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isValid() {
-      return true; // we just don't add Flex SDK table item for invalid SDKs
     }
 
     public void onDoubleClick() {
@@ -603,8 +588,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     @Override
-    public String getText() {
-      return url;
+    public SimpleColoredText getPresentableText() {
+      return new SimpleColoredText(url, SimpleTextAttributes.REGULAR_ATTRIBUTES);
     }
 
     @Override
@@ -630,11 +615,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     @Override
     public void setLinkageType(LinkageType linkageType) {
       throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isValid() {
-      return true;
     }
 
     public void onDoubleClick() {
@@ -847,7 +827,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       @Override
       protected void render(SimpleColoredComponent c, MyTableItem item) {
         if (item != null) {
-          c.append(item.getText(), item.isValid() ? SimpleTextAttributes.REGULAR_ATTRIBUTES : SimpleTextAttributes.ERROR_ATTRIBUTES);
+          item.getPresentableText().appendToComponent(c);
           c.setIcon(item.getIcon());
         }
       }
@@ -1493,7 +1473,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       public boolean value(final SdkType type) {
         return type == FlexSdkType2.getInstance();
       }
-    });
+    }
+    );
   }
 
   private void initPopupActions() {

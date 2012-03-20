@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
@@ -163,13 +164,16 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
                                         int row,
                                         boolean hasFocus) {
         DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)value;
-        append(getText(treeNode));
         Object object = treeNode.getUserObject();
         if (object instanceof Module) {
-          setIcon(ModuleType.get((Module)object).getNodeIcon(expanded));
+          Module module = (Module)object;
+          setIcon(ModuleType.get(module).getNodeIcon(expanded));
+          append(module.getName());
         }
         else {
-          setIcon(((FlexIdeBCConfigurable)object).getIcon());
+          FlexIdeBCConfigurable configurable = (FlexIdeBCConfigurable)object;
+          setIcon((configurable).getIcon());
+          BCUtils.renderBuildConfiguration(configurable.getEditableObject(), null).appendToComponent(this);
         }
       }
     });

@@ -1,12 +1,24 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
+import com.intellij.lang.javascript.flex.FlexFacetType;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.openapi.util.IconLoader;
+
+import javax.swing.*;
 
 /**
  * @author ksafonov
  */
 public class BuildConfigurationNature {
+
+  private static final Icon ICON_WEB_AS = IconLoader.getIcon("/images/bc-web-as.png");
+  private static final Icon ICON_WEB_FLEX = IconLoader.getIcon("/images/bc-web-flex.png");
+  private static final Icon ICON_DESKTOP_AS = IconLoader.getIcon("/images/bc-desktop-as.png");
+  private static final Icon ICON_DESKTOP_FLEX = IconLoader.getIcon("/images/bc-desktop-flex.png");
+  private static final Icon ICON_MOBILE_AS = IconLoader.getIcon("/images/bc-mobile-as.png");
+  private static final Icon ICON_MOBILE_FLEX = IconLoader.getIcon("/images/bc-mobile-flex.png");
+
   public final TargetPlatform targetPlatform;
   public final boolean pureAS;
   public final OutputType outputType;
@@ -63,5 +75,23 @@ public class BuildConfigurationNature {
     result = 31 * result + (pureAS ? 1 : 0);
     result = 31 * result + outputType.hashCode();
     return result;
+  }
+
+  public Icon getIcon() {
+    switch (targetPlatform) {
+      case Web:
+        return pureAS ? ICON_WEB_AS : ICON_WEB_FLEX;
+      case Desktop:
+        return pureAS ? ICON_DESKTOP_AS : ICON_DESKTOP_FLEX;
+      case Mobile:
+        return pureAS ? ICON_MOBILE_AS : ICON_MOBILE_FLEX;
+      default:
+        assert false : targetPlatform;
+        return FlexFacetType.ourFlexIcon;
+    }
+  }
+
+  public String getPrefix() {
+    return outputType.getPresentableText();
   }
 }

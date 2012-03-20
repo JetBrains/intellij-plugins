@@ -1,22 +1,29 @@
 package com.intellij.lang.javascript.flex.projectStructure.model;
 
 import com.intellij.ide.ui.ListCellRendererWrapper;
+import com.intellij.lang.javascript.flex.FlexBundle;
 
 import javax.swing.*;
 
 public enum OutputType {
-  Application("Application"),
-  RuntimeLoadedModule("Runtime-loaded module"),
-  Library("Library");
+  Application(FlexBundle.message("bc.app.long.text"), FlexBundle.message("bc.app.short.text")),
+  Library(FlexBundle.message("bc.lib.long.text"), FlexBundle.message("bc.lib.short.text")),
+  RuntimeLoadedModule(FlexBundle.message("bc.rlm.long.text"), FlexBundle.message("bc.rlm.short.text"));
 
   private final String myPresentableText;
+  private final String myShortText;
 
   public String getPresentableText() {
     return myPresentableText;
   }
 
-  OutputType(final String presentableText) {
+  public String getShortText() {
+    return myShortText;
+  }
+
+  OutputType(final String presentableText, final String shortText) {
     myPresentableText = presentableText;
+    myShortText = shortText;
   }
 
   public static void initCombo(final JComboBox outputTypeCombo) {

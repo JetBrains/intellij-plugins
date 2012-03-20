@@ -154,4 +154,14 @@ public class NonStructuralModifiableBuildConfiguration implements FlexIdeBuildCo
   public AndroidPackagingOptions getAndroidPackagingOptions() {
     return myOriginal.getAndroidPackagingOptions();
   }
+
+  @Override
+  public String getShortText() {
+    return myOriginal.getShortText();
+  }
+
+  @Override
+  public String getDescription() {
+    return myOriginal.getDescription();
+  }
 }

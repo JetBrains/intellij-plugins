@@ -49,6 +49,12 @@ abstract class EditableTreeTable<T> extends TreeTable {
           return;
         }
         render(this, (T)userObject);
+        setPaintFocusBorder(false);
+      }
+
+      @Override
+      protected boolean isFocused() {
+        return true;
       }
     };
 
@@ -61,7 +67,7 @@ abstract class EditableTreeTable<T> extends TreeTable {
                                                     boolean leaf,
                                                     int row,
                                                     boolean hasFocus) {
-        return r.getTreeCellRendererComponent(tree, value, false, expanded, leaf, row, hasFocus);
+        return r.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, true);
       }
     });
 

@@ -1,15 +1,17 @@
 package com.intellij.lang.javascript.flex.run;
 
-import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import com.intellij.util.PlatformIcons;
+import com.intellij.ui.HtmlListCellRenderer;
+import com.intellij.ui.SimpleColoredText;
+import com.intellij.ui.SimpleTextAttributes;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,20 +53,25 @@ public class BCCombo extends JComboBox {
     }
     myAllConfigs = allConfigs.toArray(new FlexIdeBuildConfiguration[allConfigs.size()]);
 
-    setRenderer(new ListCellRendererWrapper(getRenderer()) {
+    setRenderer(new HtmlListCellRenderer(getRenderer()) {
       @Override
-      public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
+      protected void doCustomize(final JList list, final Object value, final int index, final boolean selected, final boolean hasFocus) {
         if (value instanceof Pair) {
           final String moduleName = (String)((Pair)value).first;
           final String configName = (String)((Pair)value).second;
           //setIcon(PlatformIcons.ERROR_INTRODUCTION_ICON);
-          setText("<html><font color='red'>" + getPresentableText(moduleName, configName, mySingleModuleProject) + "</font></html>");
+          if (moduleName.isEmpty() || configName.isEmpty()) {
+            append(new SimpleColoredText("[none]", SimpleTextAttributes.ERROR_ATTRIBUTES));
+          }
+          else {
+            append(BCUtils.renderMissingBuildConfiguration(configName, moduleName));
+          }
         }
         else {
           assert value instanceof FlexIdeBuildConfiguration : value;
-          final FlexIdeBuildConfiguration config = (FlexIdeBuildConfiguration)value;
-          setIcon(config.getIcon());
-          setText(getPresentableText(myBCToModuleMap.get(config).getName(), config.getName(), mySingleModuleProject));
+          final FlexIdeBuildConfiguration bc = (FlexIdeBuildConfiguration)value;
+          setIcon(bc.getIcon());
+          append(BCUtils.renderBuildConfiguration(bc, mySingleModuleProject ? null : myBCToModuleMap.get(bc).getName()));
         }
       }
     });

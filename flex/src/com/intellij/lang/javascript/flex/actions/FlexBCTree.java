@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.actions;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
@@ -11,6 +12,7 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.ui.CheckboxTree;
 import com.intellij.ui.CheckedTreeNode;
+import com.intellij.ui.SimpleColoredText;
 import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.util.CollectConsumer;
 import com.intellij.util.Consumer;
@@ -104,8 +106,8 @@ public class FlexBCTree extends CheckboxTree {
           getTextRenderer().append(((Module)userObject).getName());
         }
         else if (userObject instanceof FlexIdeBuildConfiguration) {
+          BCUtils.renderBuildConfiguration((FlexIdeBuildConfiguration)userObject, null, false).appendToComponent(getTextRenderer());
           getTextRenderer().setIcon(((FlexIdeBuildConfiguration)userObject).getIcon());
-          getTextRenderer().append(((FlexIdeBuildConfiguration)userObject).getName());
         }
       }
     };

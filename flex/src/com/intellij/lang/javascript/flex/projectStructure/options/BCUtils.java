@@ -19,6 +19,8 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.ui.SimpleColoredText;
+import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.Processor;
@@ -356,8 +358,8 @@ public class BCUtils {
   }
 
   public static JSClassChooserDialog.PublicInheritor getMainClassFilter(@NotNull Module module,
-                                                                         @Nullable FlexIdeBuildConfiguration bc,
-                                                                         boolean caching) {
+                                                                        @Nullable FlexIdeBuildConfiguration bc,
+                                                                        boolean caching) {
     FlexIdeBuildConfiguration currentBc = bc != null ? bc : FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
     final String baseClass = currentBc.getOutputType() == OutputType.RuntimeLoadedModule
                              ? FlashRunConfigurationForm.MODULE_BASE_CLASS_NAME
@@ -372,9 +374,32 @@ public class BCUtils {
     return new JSClassChooserDialog.PublicInheritor(module.getProject(), baseClass, filterScope, true, caching);
   }
 
-  public static boolean isValidMainClass(final Module module, @Nullable final FlexIdeBuildConfiguration buildConfiguration, final JSClass clazz) {
+  public static boolean isValidMainClass(final Module module,
+                                         @Nullable final FlexIdeBuildConfiguration buildConfiguration,
+                                         final JSClass clazz) {
     return getMainClassFilter(module, buildConfiguration, false).value(clazz);
   }
 
+  public static SimpleColoredText renderBuildConfiguration(@NotNull FlexIdeBuildConfiguration bc,
+                                                           @Nullable String moduleName) {
+    return renderBuildConfiguration(bc, moduleName, false);
+  }
 
+  public static SimpleColoredText renderBuildConfiguration(@NotNull FlexIdeBuildConfiguration bc,
+                                                           @Nullable String moduleName,
+                                                           boolean bold) {
+    SimpleColoredText text = new SimpleColoredText();
+    text.append(bc.getShortText(), bold ? SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES : SimpleTextAttributes.REGULAR_ATTRIBUTES);
+    text.append(" (" + bc.getDescription() + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
+    if (moduleName != null) {
+      text.append(" - " + moduleName, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+    }
+    return text;
+  }
+
+  public static SimpleColoredText renderMissingBuildConfiguration(@NotNull String bcName, @Nullable String moduleName) {
+    return moduleName != null
+           ? new SimpleColoredText(bcName + " - " + moduleName, SimpleTextAttributes.ERROR_ATTRIBUTES)
+           : new SimpleColoredText(bcName, SimpleTextAttributes.ERROR_ATTRIBUTES);
+  }
 }
