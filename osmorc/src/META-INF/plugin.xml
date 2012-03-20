@@ -52,9 +52,9 @@
         </ul>
                 ]]>
     </change-notes>
-    <version>1.4.2</version>
+    <version>1.4.3</version>
     <vendor url="http://osmorc.org" email="info@osmorc.org">Osmorc Development Team</vendor>
-    <idea-version since-build="116.000" until-build="116.9999"/>
+    <idea-version since-build="116.000" until-build="118.9999"/>
     <category>Framework integration</category>
 
 
