@@ -7,7 +7,6 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleTypeManager;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.util.PlatformUtils;
 import org.jetbrains.annotations.NonNls;
 
 import javax.swing.*;
@@ -16,12 +15,10 @@ import javax.swing.*;
  * @author Maxim.Mossienko
  */
 public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
-  public static final Icon ourFlexModuleType = IconLoader.getIcon("flex_24.png", FlexModuleType.class);
   @NonNls public static final String MODULE_TYPE_ID = "Flex";
-  @NonNls static final String CREATE_MODULE_HELP_ID = "reference.dialogs.new.project.fromScratch.flex";
-  private static final Icon NODE_ICON_OPEN = IconLoader.getIcon("/nodes/ModuleOpen.png");
-  private static final Icon NODE_ICON_CLOSED = IconLoader.getIcon("/nodes/ModuleClosed.png");
-  private static final Icon WIZARD_ICON = IconLoader.getIcon("/addmodulewizard.png");
+  private static final Icon FLASH_MODULE_BIG_ICON = IconLoader.getIcon("flex_24.png", FlexModuleType.class);
+  private static final Icon FLASH_MODULE_OPEN_ICON = IconLoader.getIcon("flash_module_open.png");
+  private static final Icon FLASH_MODULE_CLOSED_ICON = IconLoader.getIcon("flash_module_closed.png");
 
   public FlexModuleType() {
     super(MODULE_TYPE_ID);
@@ -46,15 +43,14 @@ public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
   }
 
   public Icon getBigIcon() {
-    return ourFlexModuleType;
+    return FLASH_MODULE_BIG_ICON;
   }
 
   public Icon getNodeIcon(final boolean isOpened) {
-    return !PlatformUtils.isFlexIde() ? FlexFacetType.ourFlexIcon : isOpened ? NODE_ICON_OPEN : NODE_ICON_CLOSED;
+    return isOpened ? FLASH_MODULE_OPEN_ICON : FLASH_MODULE_CLOSED_ICON;
   }
 
   public static FlexModuleType getInstance() {
-    return (FlexModuleType) ModuleTypeManager.getInstance().findByID(MODULE_TYPE_ID);
+    return (FlexModuleType)ModuleTypeManager.getInstance().findByID(MODULE_TYPE_ID);
   }
-
 }
