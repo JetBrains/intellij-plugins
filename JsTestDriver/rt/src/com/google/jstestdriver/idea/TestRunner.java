@@ -31,7 +31,7 @@ import com.google.jstestdriver.hooks.PluginInitializer;
 import com.google.jstestdriver.hooks.TestListener;
 import com.google.jstestdriver.idea.execution.tree.JstdTestRunnerFailure;
 import com.google.jstestdriver.idea.server.JstdServerFetchResult;
-import com.google.jstestdriver.idea.server.JstdServerUtils;
+import com.google.jstestdriver.idea.server.JstdServerUtilsRt;
 import com.google.jstestdriver.idea.util.EnumUtils;
 import com.google.jstestdriver.output.TestResultHolder;
 import com.google.jstestdriver.runner.RunnerMode;
@@ -297,7 +297,7 @@ public class TestRunner {
 
   static boolean validateServer(ObjectOutput testResultProtocolMessageOutput, Settings settings) throws IOException {
     String serverUrl = settings.getServerUrl();
-    JstdServerFetchResult fetchResult = JstdServerUtils.syncFetchServerInfo(serverUrl);
+    JstdServerFetchResult fetchResult = JstdServerUtilsRt.syncFetchServerInfo(serverUrl);
     String message = null;
     if (fetchResult.isError()) {
       message = "Could not connect to a JsTestDriver server running at " + serverUrl + "\n" +
@@ -474,5 +474,4 @@ public class TestRunner {
     @Override public void write(byte[] b, int off, int len) {
     }
   }
-
 }

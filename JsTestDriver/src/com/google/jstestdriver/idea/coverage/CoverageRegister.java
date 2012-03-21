@@ -17,6 +17,11 @@ public class CoverageRegister implements ApplicationComponent {
     "com.intellij.coverage.CoverageEngine",
     "com.intellij.coverage.CoverageRunner",
   };
+  private static final String COVERAGE_ENGINE_EP_NAME = "com.intellij.coverageEngine";
+  private static final String COVERAGE_RUNNER_EP_NAME = "com.intellij.coverageRunner";
+  private static final String[] EXTENSION_POINT_NAMES = {
+    COVERAGE_ENGINE_EP_NAME, COVERAGE_RUNNER_EP_NAME
+  };
 
   @Override
   public void initComponent() {
@@ -44,6 +49,13 @@ public class CoverageRegister implements ApplicationComponent {
         return false;
       }
     }
+    try {
+      for (String extensionPointName : EXTENSION_POINT_NAMES) {
+        Extensions.getRootArea().getExtensionPoint(extensionPointName);
+      }
+    } catch (Exception e) {
+      return false;
+    }
     return true;
   }
 
@@ -52,8 +64,8 @@ public class CoverageRegister implements ApplicationComponent {
     if (runnerRegistry instanceof RunnerRegistryImpl) {
       ((RunnerRegistryImpl) runnerRegistry).registerRunner(PROGRAM_RUNNER);
     }
-    registerExtension("com.intellij.coverageEngine", new JstdCoverageEngine());
-    registerExtension("com.intellij.coverageRunner", new JstdCoverageRunner());
+    registerExtension(COVERAGE_ENGINE_EP_NAME, new JstdCoverageEngine());
+    registerExtension(COVERAGE_RUNNER_EP_NAME, new JstdCoverageRunner());
   }
 
   @SuppressWarnings("unchecked")
