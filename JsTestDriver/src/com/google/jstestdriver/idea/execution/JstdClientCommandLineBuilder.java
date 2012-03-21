@@ -191,7 +191,7 @@ public class JstdClientCommandLineBuilder {
   private static String buildClasspath() {
     Set<String> classpath = Sets.newHashSet();
 
-    List<File> files = getClasspath(TestRunner.class, JsTestDriverServer.class);
+    List<File> files = getClasspath(TestRunner.class);
     classpath.addAll(transform(files, GET_ABSOLUTE_PATH));
 
     return Joiner.on(pathSeparator).join(classpath);

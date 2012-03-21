@@ -19,6 +19,7 @@
     <orderEntry type="library" name="jcip" level="project" />
     <orderEntry type="module" module-name="xml" />
     <orderEntry type="module" module-name="coverage-impl" />
+    <orderEntry type="module" module-name="JsTestDriver-rt" />
   </component>
 </module>
 
