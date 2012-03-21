@@ -15,7 +15,6 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.RowIcon;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleColoredText;
@@ -23,6 +22,7 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.navigation.Place;
 import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.ui.popup.list.PopupListElementRenderer;
+import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.EmptyIcon;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,8 +37,8 @@ import java.util.Comparator;
  */
 public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
 
-  private static final Icon ICON_ACTIVE = IconLoader.getIcon("/actions/checked_16x16.png");
-  private static final Icon ICON_ACTIVE_SELECTED = IconLoader.getIcon("/actions/checked_16x16_selected.png");
+  private static final Icon ICON_ACTIVE = PlatformIcons.CHECK_ICON;
+  private static final Icon ICON_ACTIVE_SELECTED = PlatformIcons.CHECK_ICON_SELECTED;
   private static final Icon ICON_EMPTY = new EmptyIcon(ICON_ACTIVE.getIconWidth(), ICON_ACTIVE.getIconHeight());
 
   public void update(final AnActionEvent e) {
