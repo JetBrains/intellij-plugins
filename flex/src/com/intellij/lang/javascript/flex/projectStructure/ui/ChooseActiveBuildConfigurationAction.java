@@ -16,7 +16,6 @@ import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.RowIcon;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleColoredText;
@@ -98,6 +97,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
           {
             //myRendererComponent.setBorder(new EmptyBorder(5, 0, 5, 0));
           }
+
           @Override
           protected JComponent createItemComponent() {
             return new MyPanel();
@@ -163,8 +163,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
     }
 
     private static String getDescription(final FlexIdeBuildConfiguration bc) {
-      return FlexBundle.message("bc.description", bc.getTargetPlatform().getPresentableText(),
-                                StringUtil.decapitalize(bc.getOutputType().getPresentableText()), bc.getName(), bc.isPureAs() ? 1 : 2);
+      return bc.getNature().getPresentableText();
     }
 
     public void actionPerformed(final AnActionEvent e) {
@@ -227,5 +226,4 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
       myComponent.clear();
     }
   }
-
 }

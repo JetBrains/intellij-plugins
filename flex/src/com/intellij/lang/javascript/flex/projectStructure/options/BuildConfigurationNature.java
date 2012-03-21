@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexFacetType;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
@@ -91,7 +92,8 @@ public class BuildConfigurationNature {
     }
   }
 
-  public String getPrefix() {
-    return outputType.getPresentableText();
+  public String getPresentableText() {
+    return FlexBundle.message("bc.nature.presentable.text",
+                              pureAS ? 1 : 0, outputType.getPresentableText().toLowerCase(), targetPlatform.ordinal());
   }
 }

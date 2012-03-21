@@ -25,7 +25,10 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.*;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectStructureElementConfigurable;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStructureElement;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NamedConfigurable;
@@ -50,6 +53,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
+import javax.swing.event.HyperlinkEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
@@ -60,11 +64,11 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   public static final String TAB_NAME = FlexBundle.message("general.tab.display.name");
   private JPanel myMainPanel;
 
+  private JLabel myNatureLabel;
+  private HoverHyperlinkLabel myChangeNatureHyperlink;
+
   private JTextField myNameField;
 
-  private JComboBox myTargetPlatformCombo;
-  private JCheckBox myPureActionScriptCheckBox;
-  private JComboBox myOutputTypeCombo;
   private JPanel myOptimizeForPanel;
   private JComboBox myOptimizeForCombo;
 
@@ -92,33 +96,42 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   private final Module myModule;
   private final ModifiableFlexIdeBuildConfiguration myConfiguration;
   private final Runnable myTreeNodeNameUpdater;
+  private @NotNull final FlexProjectConfigurationEditor myConfigEditor;
+  private final ProjectSdksModel mySdksModel;
   private final StructureConfigurableContext myContext;
   private String myName;
 
-  private final DependenciesConfigurable myDependenciesConfigurable;
-  private final CompilerOptionsConfigurable myCompilerOptionsConfigurable;
-  private final @Nullable AirDesktopPackagingConfigurable myAirDesktopPackagingConfigurable;
-  private final @Nullable AndroidPackagingConfigurable myAndroidPackagingConfigurable;
-  private final @Nullable IOSPackagingConfigurable myIOSPackagingConfigurable;
+  private DependenciesConfigurable myDependenciesConfigurable;
+  private CompilerOptionsConfigurable myCompilerOptionsConfigurable;
+  private @Nullable AirDesktopPackagingConfigurable myAirDesktopPackagingConfigurable;
+  private @Nullable AndroidPackagingConfigurable myAndroidPackagingConfigurable;
+  private @Nullable IOSPackagingConfigurable myIOSPackagingConfigurable;
 
   private final BuildConfigurationProjectStructureElement myStructureElement;
 
   private final Disposable myDisposable;
 
+  private final UserActivityListener myUserActivityListener;
   private boolean myFreeze;
+
   private JSClassChooserDialog.PublicInheritor myMainClassFilter;
 
   public FlexIdeBCConfigurable(final Module module,
                                final ModifiableFlexIdeBuildConfiguration bc,
+                               final Runnable bcNatureModifier,
                                final Runnable treeNodeNameUpdater,
                                final @NotNull FlexProjectConfigurationEditor configEditor,
-                               final ProjectSdksModel sdksModel, final StructureConfigurableContext context) {
+                               final ProjectSdksModel sdksModel,
+                               final StructureConfigurableContext context) {
     super(false, treeNodeNameUpdater);
     myModule = module;
     myConfiguration = bc;
     myTreeNodeNameUpdater = treeNodeNameUpdater;
+    myConfigEditor = configEditor;
+    mySdksModel = sdksModel;
     myContext = context;
     myName = bc.getName();
+
     myStructureElement = new BuildConfigurationProjectStructureElement(bc, module, context) {
       @Override
       protected void libraryReplaced(@NotNull final Library library, @Nullable final Library replacement) {
@@ -127,12 +140,9 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     };
     myCssFilesToCompile = Collections.emptyList();
 
-    final BuildConfigurationNature nature = bc.getNature();
-
-    myDependenciesConfigurable = new DependenciesConfigurable(bc, module.getProject(), configEditor, sdksModel);
-    final UserActivityWatcher watcher = new UserActivityWatcher();
     myDisposable = Disposer.newDisposable();
-    UserActivityListener listener = new UserActivityListener() {
+
+    myUserActivityListener = new UserActivityListener() {
       @Override
       public void stateChanged() {
         if (myFreeze) {
@@ -147,80 +157,27 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
         myContext.getDaemonAnalyzer().queueUpdate(myStructureElement);
       }
     };
-    watcher.addUserActivityListener(listener, myDisposable);
-    myDependenciesConfigurable.addUserActivityListener(listener, myDisposable);
+
+    final UserActivityWatcher watcher = new UserActivityWatcher();
     watcher.register(myMainPanel);
-    myCompilerOptionsConfigurable =
-      new CompilerOptionsConfigurable(module, bc.getNature(), myDependenciesConfigurable, bc.getCompilerOptions());
+    watcher.addUserActivityListener(myUserActivityListener, myDisposable);
 
-    myCompilerOptionsConfigurable.addAdditionalOptionsListener(new CompilerOptionsConfigurable.OptionsListener() {
-      public void configFileChanged(final String additionalConfigFilePath) {
-        checkIfConfigFileOverridesOptions(additionalConfigFilePath);
-      }
+    createChildConfigurables();
 
-      public void additionalOptionsChanged(final String additionalOptions) {
-        // may be parse additionalOptions in the same way as config file
+    myChangeNatureHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
+      protected void hyperlinkActivated(final HyperlinkEvent e) {
+        bcNatureModifier.run();
       }
     });
 
-    final Computable<String> mainClassComputable = new Computable<String>() {
-      public String compute() {
-        return myMainClassComponent.getText().trim();
-      }
-    };
-    final Computable<String> airVersionComputable = new Computable<String>() {
-      public String compute() {
-        final Sdk sdk = myDependenciesConfigurable.getCurrentSdk();
-        return sdk == null ? "" : FlexSdkUtils.getAirVersion(sdk.getVersionString());
-      }
-    };
-    final Computable<Boolean> androidEnabledComputable = new Computable<Boolean>() {
-      public Boolean compute() {
-        return myAndroidPackagingConfigurable != null && myAndroidPackagingConfigurable.isPackagingEnabled();
-      }
-    };
-    final Computable<Boolean> iosEnabledComputable = new Computable<Boolean>() {
-      public Boolean compute() {
-        return myIOSPackagingConfigurable != null && myIOSPackagingConfigurable.isPackagingEnabled();
-      }
-    };
-    final Consumer<String> createdDescriptorConsumer = new Consumer<String>() {
-      // called only for mobile projects if generated descriptor contains both Android and iOS 
-      public void consume(final String descriptorPath) {
-        assert myAndroidPackagingConfigurable != null && myIOSPackagingConfigurable != null;
-        myAndroidPackagingConfigurable.setUseCustomDescriptor(descriptorPath);
-        myIOSPackagingConfigurable.setUseCustomDescriptor(descriptorPath);
-      }
-    };
-
-    myAirDesktopPackagingConfigurable = nature.isDesktopPlatform() && nature.isApp()
-                                        ? new AirDesktopPackagingConfigurable(module, bc.getAirDesktopPackagingOptions(),
-                                                                              mainClassComputable, airVersionComputable,
-                                                                              androidEnabledComputable, iosEnabledComputable,
-                                                                              createdDescriptorConsumer)
-                                        : null;
-    myAndroidPackagingConfigurable = nature.isMobilePlatform() && nature.isApp()
-                                     ? new AndroidPackagingConfigurable(module, bc.getAndroidPackagingOptions(),
-                                                                        mainClassComputable, airVersionComputable, androidEnabledComputable,
-                                                                        iosEnabledComputable, createdDescriptorConsumer)
-                                     : null;
-    myIOSPackagingConfigurable = nature.isMobilePlatform() && nature.isApp()
-                                 ? new IOSPackagingConfigurable(module, bc.getIosPackagingOptions(), mainClassComputable,
-                                                                airVersionComputable, androidEnabledComputable, iosEnabledComputable,
-                                                                createdDescriptorConsumer)
-                                 : null;
-
     myNameField.getDocument().addDocumentListener(new DocumentAdapter() {
       protected void textChanged(DocumentEvent e) {
-        setDisplayName(myNameField.getText());
+        setDisplayName(myNameField.getText().trim());
         if (treeNodeNameUpdater != null) {
           treeNodeNameUpdater.run();
         }
       }
     });
-
-    TargetPlatform.initCombo(myTargetPlatformCombo);
-    OutputType.initCombo(myOutputTypeCombo);
 
     myOutputFolderField.addBrowseFolderListener(null, null, module.getProject(),
                                                 FileChooserDescriptorFactory.createSingleFolderDescriptor());
@@ -297,6 +254,90 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     myOutputFolderWarning.setIcon(IconLoader.getIcon("smallWarning.png"));
 
     myWarning.setIcon(UIUtil.getBalloonWarningIcon());
+  }
+
+  public void createChildConfigurables() {
+    final BuildConfigurationNature nature = myConfiguration.getNature();
+
+    if (myDependenciesConfigurable != null) {
+      myDependenciesConfigurable.removeUserActivityListeners();
+      myDependenciesConfigurable.disposeUIResources();
+    }
+    if (myCompilerOptionsConfigurable != null) {
+      myCompilerOptionsConfigurable.disposeUIResources();
+    }
+    if (myAirDesktopPackagingConfigurable != null) {
+      myAirDesktopPackagingConfigurable.disposeUIResources();
+    }
+    if (myAndroidPackagingConfigurable != null) {
+      myAndroidPackagingConfigurable.disposeUIResources();
+    }
+    if (myIOSPackagingConfigurable != null) {
+      myIOSPackagingConfigurable.disposeUIResources();
+    }
+
+    myDependenciesConfigurable = new DependenciesConfigurable(myConfiguration, myModule.getProject(), myConfigEditor, mySdksModel);
+    myDependenciesConfigurable.addUserActivityListener(myUserActivityListener, myDisposable);
+
+    myCompilerOptionsConfigurable =
+      new CompilerOptionsConfigurable(myModule, nature, myDependenciesConfigurable, myConfiguration.getCompilerOptions());
+
+    myCompilerOptionsConfigurable.addAdditionalOptionsListener(new CompilerOptionsConfigurable.OptionsListener() {
+      public void configFileChanged(final String additionalConfigFilePath) {
+        checkIfConfigFileOverridesOptions(additionalConfigFilePath);
+      }
+
+      public void additionalOptionsChanged(final String additionalOptions) {
+        // may be parse additionalOptions in the same way as config file
+      }
+    });
+
+    final Computable<String> mainClassComputable = new Computable<String>() {
+      public String compute() {
+        return myMainClassComponent.getText().trim();
+      }
+    };
+    final Computable<String> airVersionComputable = new Computable<String>() {
+      public String compute() {
+        final Sdk sdk = myDependenciesConfigurable.getCurrentSdk();
+        return sdk == null ? "" : FlexSdkUtils.getAirVersion(sdk.getVersionString());
+      }
+    };
+    final Computable<Boolean> androidEnabledComputable = new Computable<Boolean>() {
+      public Boolean compute() {
+        return myAndroidPackagingConfigurable != null && myAndroidPackagingConfigurable.isPackagingEnabled();
+      }
+    };
+    final Computable<Boolean> iosEnabledComputable = new Computable<Boolean>() {
+      public Boolean compute() {
+        return myIOSPackagingConfigurable != null && myIOSPackagingConfigurable.isPackagingEnabled();
+      }
+    };
+    final Consumer<String> createdDescriptorConsumer = new Consumer<String>() {
+      // called only for mobile projects if generated descriptor contains both Android and iOS
+      public void consume(final String descriptorPath) {
+        assert myAndroidPackagingConfigurable != null && myIOSPackagingConfigurable != null;
+        myAndroidPackagingConfigurable.setUseCustomDescriptor(descriptorPath);
+        myIOSPackagingConfigurable.setUseCustomDescriptor(descriptorPath);
+      }
+    };
+
+    myAirDesktopPackagingConfigurable = nature.isDesktopPlatform() && nature.isApp()
+                                        ? new AirDesktopPackagingConfigurable(myModule, myConfiguration.getAirDesktopPackagingOptions(),
+                                                                              mainClassComputable, airVersionComputable,
+                                                                              androidEnabledComputable, iosEnabledComputable,
+                                                                              createdDescriptorConsumer)
+                                        : null;
+    myAndroidPackagingConfigurable = nature.isMobilePlatform() && nature.isApp()
+                                     ? new AndroidPackagingConfigurable(myModule, myConfiguration.getAndroidPackagingOptions(),
+                                                                        mainClassComputable, airVersionComputable, androidEnabledComputable,
+                                                                        iosEnabledComputable, createdDescriptorConsumer)
+                                     : null;
+    myIOSPackagingConfigurable = nature.isMobilePlatform() && nature.isApp()
+                                 ? new IOSPackagingConfigurable(myModule, myConfiguration.getIosPackagingOptions(), mainClassComputable,
+                                                                airVersionComputable, androidEnabledComputable, iosEnabledComputable,
+                                                                createdDescriptorConsumer)
+                                 : null;
   }
 
   private void checkIfConfigFileOverridesOptions(final String configFilePath) {
@@ -388,10 +429,10 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   }
 
   private void updateControls() {
-    final TargetPlatform targetPlatform = (TargetPlatform)myTargetPlatformCombo.getSelectedItem();
-    final OutputType outputType = (OutputType)myOutputTypeCombo.getSelectedItem();
+    final TargetPlatform targetPlatform = myConfiguration.getTargetPlatform();
+    final OutputType outputType = myConfiguration.getOutputType();
 
-    myOptimizeForPanel.setVisible(outputType == OutputType.RuntimeLoadedModule);
+    myOptimizeForPanel.setVisible(false /*outputType == OutputType.RuntimeLoadedModule*/);
 
     final boolean showMainClass = outputType == OutputType.Application || outputType == OutputType.RuntimeLoadedModule;
     myMainClassLabel.setVisible(showMainClass);
@@ -428,9 +469,6 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
 
   public boolean isModified() {
     if (!myConfiguration.getName().equals(myName)) return true;
-    if (myConfiguration.getTargetPlatform() != myTargetPlatformCombo.getSelectedItem()) return true;
-    if (myConfiguration.isPureAs() != myPureActionScriptCheckBox.isSelected()) return true;
-    if (myConfiguration.getOutputType() != myOutputTypeCombo.getSelectedItem()) return true;
     if (!myConfiguration.getOptimizeFor().equals(myOptimizeForCombo.getSelectedItem())) return true;
     if (!myConfiguration.getMainClass().equals(myMainClassComponent.getText().trim())) return true;
     if (!myConfiguration.getOutputFileName().equals(myOutputFileNameTextField.getText().trim())) return true;
@@ -473,9 +511,6 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
       throw new ConfigurationException("Module '" + getModuleName() + "': build configuration name is empty");
     }
     configuration.setName(myName);
-    configuration.setTargetPlatform((TargetPlatform)myTargetPlatformCombo.getSelectedItem());
-    configuration.setPureAs(myPureActionScriptCheckBox.isSelected());
-    configuration.setOutputType((OutputType)myOutputTypeCombo.getSelectedItem());
     configuration.setOptimizeFor((String)myOptimizeForCombo.getSelectedItem()); // todo myOptimizeForCombo should contain live information
     configuration.setMainClass(myMainClassComponent.getText().trim());
     configuration.setOutputFileName(myOutputFileNameTextField.getText().trim());
@@ -490,9 +525,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     myFreeze = true;
     try {
       setDisplayName(myConfiguration.getName());
-      myTargetPlatformCombo.setSelectedItem(myConfiguration.getTargetPlatform());
-      myPureActionScriptCheckBox.setSelected(myConfiguration.isPureAs());
-      myOutputTypeCombo.setSelectedItem(myConfiguration.getOutputType());
+      myNatureLabel.setText(myConfiguration.getNature().getPresentableText());
       myOptimizeForCombo.setSelectedItem(myConfiguration.getOptimizeFor());
 
       myMainClassComponent.setText(myConfiguration.getMainClass());
@@ -539,7 +572,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   //  return configuration;
   //}
 
-  public List<NamedConfigurable> getChildren() {
+  private List<NamedConfigurable> getChildren() {
     final List<NamedConfigurable> children = new ArrayList<NamedConfigurable>();
 
     children.add(myDependenciesConfigurable);
@@ -558,6 +591,19 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     return new CompositeConfigurable(tabs, myTreeNodeNameUpdater);
   }
 
+  public void updateTabs(final CompositeConfigurable compositeConfigurable) {
+    final List<NamedConfigurable> children = compositeConfigurable.getChildren();
+    assert children.get(0) == this : children.get(0).getDisplayName();
+
+    for (int i = children.size() - 1; i >= 1; i--) {
+      compositeConfigurable.removeChildAt(i);
+    }
+
+    for (NamedConfigurable child : getChildren()) {
+      compositeConfigurable.addChild(child);
+    }
+  }
+
   public DependenciesConfigurable getDependenciesConfigurable() {
     return myDependenciesConfigurable;
   }
@@ -567,6 +613,8 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   }
 
   private void createUIComponents() {
+    myChangeNatureHyperlink = new HoverHyperlinkLabel("Change...");
+
     rebuildMainClassFilter();
     myMainClassComponent = JSReferenceEditor.forClassName("", myModule.getProject(), null,
                                                           myModule.getModuleScope(false), null,

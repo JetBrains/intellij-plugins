@@ -51,6 +51,8 @@ public class FlexIdeBCConfigurator {
     void moduleRemoved(Module module);
 
     void buildConfigurationRemoved(FlexIdeBCConfigurable configurable);
+
+    void natureChanged(FlexIdeBCConfigurable configurable);
   }
 
   private final BidirectionalMap<ModifiableFlexIdeBuildConfiguration, CompositeConfigurable> myConfigurablesMap =
@@ -142,17 +144,69 @@ public class FlexIdeBCConfigurator {
 
     List<CompositeConfigurable> configurables = new ArrayList<CompositeConfigurable>(configurations.length);
 
-    for (final ModifiableFlexIdeBuildConfiguration configuration : configurations) {
-      CompositeConfigurable configurable = myConfigurablesMap.get(configuration);
+    for (final ModifiableFlexIdeBuildConfiguration bc : configurations) {
+      CompositeConfigurable configurable = myConfigurablesMap.get(bc);
       if (configurable == null) {
+        final Runnable bcNatureModifier = createBCNatureModifier(bc);
         final ProjectStructureConfigurable c = ProjectStructureConfigurable.getInstance(myConfigEditor.getProject());
-        configurable =
-          new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, myConfigEditor, c.getProjectJdksModel(), c.getContext()).wrapInTabs();
-        myConfigurablesMap.put(configuration, configurable);
+        configurable = new FlexIdeBCConfigurable(module, bc, bcNatureModifier, treeNodeNameUpdater,
+                                                 myConfigEditor, c.getProjectJdksModel(), c.getContext()).wrapInTabs();
+        myConfigurablesMap.put(bc, configurable);
       }
       configurables.add(configurable);
     }
     return configurables;
+  }
+
+  private Runnable createBCNatureModifier(final ModifiableFlexIdeBuildConfiguration bc) {
+    return new Runnable() {
+      public void run() {
+        final CompositeConfigurable compositeConfigurable = myConfigurablesMap.get(bc);
+        try {
+          compositeConfigurable.apply(); // this won't be needed if UserActivityWatcher watches all tabs
+        }
+        catch (ConfigurationException ignored) {/**/}
+
+        final BuildConfigurationNature oldNature = bc.getNature();
+        final AddBuildConfigurationDialog dialog =
+          new AddBuildConfigurationDialog(myConfigEditor.getProject(), FlexBundle.message("change.bc.type.title"),
+                                          Collections.<String>emptyList(), oldNature);
+        dialog.setBCNameEditable(false);
+        dialog.setBCName(bc.getName());
+        dialog.show();
+        if (dialog.isOK()) {
+          final BuildConfigurationNature newNature = dialog.getNature();
+          if (newNature.equals(oldNature)) return;
+
+          bc.setNature(newNature);
+          fixOutputFileExtension(bc);
+          if (newNature.targetPlatform != oldNature.targetPlatform || newNature.outputType != oldNature.outputType) {
+            // set package names only if corresponding tabs were not applicable before
+            updatePackageFileName(bc, PathUtil.suggestFileName(bc.getName()));
+          }
+          FlexProjectConfigurationEditor.resetNonApplicableValuesToDefaults(bc);
+
+          final FlexIdeBCConfigurable bcConfigurable = FlexIdeBCConfigurable.unwrap(compositeConfigurable);
+          bcConfigurable.createChildConfigurables();
+          bcConfigurable.updateTabs(compositeConfigurable);
+          compositeConfigurable.reset();
+
+          myEventDispatcher.getMulticaster().natureChanged(bcConfigurable);
+        }
+      }
+    };
+  }
+
+  private static void fixOutputFileExtension(final ModifiableFlexIdeBuildConfiguration bc) {
+    final String outputFileName = bc.getOutputFileName();
+    final String lowercase = outputFileName.toLowerCase();
+    final String extension = bc.getOutputType() == OutputType.Library ? ".swc" : ".swf";
+    if (lowercase.endsWith(".swf") || lowercase.endsWith(".swc")) {
+      bc.setOutputFileName(outputFileName.substring(0, outputFileName.length() - ".sw_".length()) + extension);
+    }
+    else {
+      bc.setOutputFileName(outputFileName + extension);
+    }
   }
 
   public void moduleRemoved(final Module module) {
@@ -246,15 +300,7 @@ public class FlexIdeBCConfigurator {
 
     bc.setOutputFileName(fileName + (bc.getOutputType() == OutputType.Library ? ".swc" : ".swf"));
     bc.setOutputFolder(someExistingConfig.getOutputFolder());
-    if (nature.isApp()) {
-      if (nature.isDesktopPlatform()) {
-        bc.getAirDesktopPackagingOptions().setPackageFileName(fileName);
-      }
-      else if (nature.isMobilePlatform()) {
-        bc.getAndroidPackagingOptions().setPackageFileName(fileName);
-        bc.getIosPackagingOptions().setPackageFileName(fileName);
-      }
-    }
+    updatePackageFileName(bc, fileName);
 
     final SdkEntry sdkEntry = someExistingConfig.getDependencies().getSdkEntry();
     final SdkEntry newSdkEntry = sdkEntry == null ? findAnySdk() : Factory.createSdkEntry(sdkEntry.getName());
@@ -266,7 +312,7 @@ public class FlexIdeBCConfigurator {
   @Nullable
   private static SdkEntry findAnySdk() {
     final List<Sdk> sdks = FlexSdkUtils.getFlexSdks();
-    return sdks.isEmpty() ? null :  Factory.createSdkEntry(sdks.get(0).getName());
+    return sdks.isEmpty() ? null : Factory.createSdkEntry(sdks.get(0).getName());
   }
 
   public void copy(final CompositeConfigurable configurable, final Runnable treeNodeNameUpdater) {
@@ -291,26 +337,25 @@ public class FlexIdeBCConfigurator {
     ModifiableFlexIdeBuildConfiguration newBC = myConfigEditor.copyConfiguration(existingBC, newBCNature);
     newBC.setName(newBCName);
 
-    // set correct output file extension for cloned configuration
-    final String outputFileName = existingBC.getOutputFileName();
-    final String lowercase = outputFileName.toLowerCase();
-    if (lowercase.endsWith(".swf") || lowercase.endsWith(".swc")) {
-      final String extension = newBC.getOutputType() == OutputType.Library ? ".swc" : ".swf";
-      newBC.setOutputFileName(outputFileName.substring(0, outputFileName.length() - ".sw_".length()) + extension);
-    }
-
-    if (newBCNature.isApp()) {
-      if (newBCNature.isDesktopPlatform()) {
-        newBC.getAirDesktopPackagingOptions().setPackageFileName(fileName);
-      }
-      else if (newBCNature.isMobilePlatform()) {
-        newBC.getAndroidPackagingOptions().setPackageFileName(fileName);
-        newBC.getIosPackagingOptions().setPackageFileName(fileName);
-      }
-    }
+    newBC.setOutputFileName(fileName + (newBC.getOutputType() == OutputType.Library ? ".swc" : ".swf"));
+    updatePackageFileName(newBC, fileName);
 
     createConfigurableNode(newBC, unwrapped.getModule(), treeNodeNameUpdater);
   }
+
+  private static void updatePackageFileName(final ModifiableFlexIdeBuildConfiguration bc, final String packageFileName) {
+    final BuildConfigurationNature nature = bc.getNature();
+    if (nature.isApp()) {
+      if (nature.isDesktopPlatform()) {
+        bc.getAirDesktopPackagingOptions().setPackageFileName(packageFileName);
+      }
+      else if (nature.isMobilePlatform()) {
+        bc.getAndroidPackagingOptions().setPackageFileName(packageFileName);
+        bc.getIosPackagingOptions().setPackageFileName(packageFileName);
+      }
+    }
+  }
+
 
   @Nullable
   private Pair<String, BuildConfigurationNature> promptForCreation(Module module,
@@ -322,20 +367,21 @@ public class FlexIdeBCConfigurator {
     return dialog.isOK() ? Pair.create(dialog.getName(), dialog.getNature()) : null;
   }
 
-  private void createConfigurableNode(ModifiableFlexIdeBuildConfiguration configuration, Module module, Runnable treeNodeNameUpdater) {
+  private void createConfigurableNode(ModifiableFlexIdeBuildConfiguration bc, Module module, Runnable treeNodeNameUpdater) {
     final ProjectStructureConfigurable c = ProjectStructureConfigurable.getInstance(myConfigEditor.getProject());
-    final FlexIdeBCConfigurable configurable = new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, myConfigEditor,
-                                                                         c.getProjectJdksModel(), c.getContext());
+    final Runnable bcNatureModifier = createBCNatureModifier(bc);
+    final FlexIdeBCConfigurable configurable = new FlexIdeBCConfigurable(module, bc, bcNatureModifier, treeNodeNameUpdater,
+                                                                         myConfigEditor, c.getProjectJdksModel(), c.getContext());
 
     CompositeConfigurable wrapped = configurable.wrapInTabs();
-    myConfigurablesMap.put(configuration, wrapped);
+    myConfigurablesMap.put(bc, wrapped);
     final MasterDetailsComponent.MyNode node = new BuildConfigurationNode(wrapped);
 
     final ModuleStructureConfigurable moduleStructureConfigurable = ModuleStructureConfigurable.getInstance(module.getProject());
     moduleStructureConfigurable.addNode(node, moduleStructureConfigurable.findModuleNode(module));
 
     Place place = new Place().putPath(ProjectStructureConfigurable.CATEGORY, moduleStructureConfigurable)
-      .putPath(MasterDetailsComponent.TREE_OBJECT, configuration);
+      .putPath(MasterDetailsComponent.TREE_OBJECT, bc);
     ProjectStructureConfigurable.getInstance(module.getProject()).navigateTo(place, true);
   }
 

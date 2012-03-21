@@ -40,8 +40,16 @@ public class AddBuildConfigurationDialog extends DialogWrapper {
     OutputType.initCombo(myOutputTypeCombo);
   }
 
+  public void setBCNameEditable(final boolean editable) {
+    myNameTextField.setEditable(editable);
+  }
+
+  public void setBCName(final String name) {
+    myNameTextField.setText(name);
+  }
+
   public JComponent getPreferredFocusedComponent() {
-    return myNameTextField;
+    return myNameTextField.isEditable() ? myNameTextField : myTargetPlatformCombo;
   }
 
   protected JComponent createCenterPanel() {

@@ -32,8 +32,6 @@
         <properties>
           <model>
             <item value="Web"/>
-            <item value="Desktop"/>
-            <item value="Mobile"/>
           </model>
         </properties>
       </component>
@@ -61,8 +59,6 @@
         <properties>
           <model>
             <item value="Application"/>
-            <item value="Runtime Loaded Module"/>
-            <item value="Library"/>
           </model>
         </properties>
       </component>
@@ -180,7 +176,6 @@
         <constraints>
           <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties/>
       </component>
     </children>
   </grid>

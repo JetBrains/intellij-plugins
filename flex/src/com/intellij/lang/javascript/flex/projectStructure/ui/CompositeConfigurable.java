@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,13 +31,15 @@ public class CompositeConfigurable extends ProjectStructureElementConfigurable i
     String getTabTitle();
   }
 
-  private final List<NamedConfigurable> myChildren;
+  private final List<NamedConfigurable> myChildren = new ArrayList<NamedConfigurable>();
   private final Disposable myDisposable = Disposer.newDisposable();
-  private TabbedPaneWrapper myTabs;
+  private final TabbedPaneWrapper myTabs;
 
   public CompositeConfigurable(List<NamedConfigurable> children, Runnable updateTree) {
     super(false, updateTree);
-    myChildren = children;
+
+    myTabs = new TabbedPaneWrapper(myDisposable);
+    myChildren.addAll(children);
   }
 
   @Override
@@ -60,15 +63,33 @@ public class CompositeConfigurable extends ProjectStructureElementConfigurable i
 
   @Override
   public JComponent createOptionsPanel() {
-    myTabs = new TabbedPaneWrapper(myDisposable);
     for (NamedConfigurable child : myChildren) {
-      JPanel p = new JPanel(new BorderLayout());
-      p.setBorder(IdeBorderFactory.createEmptyBorder(5));
-      p.add(child.createComponent(), BorderLayout.CENTER);
-      String tabName = child instanceof Item ? ((Item)child).getTabTitle() : child.getDisplayName();
-      myTabs.addTab(tabName, p);
+      addTab(child);
     }
+
     return myTabs.getComponent();
+  }
+
+  private void addTab(final NamedConfigurable child) {
+    JPanel p = new JPanel(new BorderLayout());
+    p.setBorder(IdeBorderFactory.createEmptyBorder(5));
+    p.add(child.createComponent(), BorderLayout.CENTER);
+    String tabName = child instanceof Item ? ((Item)child).getTabTitle() : child.getDisplayName();
+    myTabs.addTab(tabName, p);
+  }
+
+  public List<NamedConfigurable> getChildren() {
+    return myChildren;
+  }
+
+  public void addChild(final NamedConfigurable child) {
+    myChildren.add(child);
+    addTab(child);
+  }
+
+  public void removeChildAt(final int index) {
+    myChildren.remove(index);
+    myTabs.removeTabAt(index);
   }
 
   @Nls

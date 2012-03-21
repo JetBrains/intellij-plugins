@@ -140,6 +140,9 @@ public class FlexProjectConfigurationEditor implements Disposable {
       public void buildConfigurationRemoved(FlexIdeBCConfigurable configurable) {
         configurationRemoved(configurable.getEditableObject());
       }
+
+      public void natureChanged(final FlexIdeBCConfigurable configurable) {
+      }
     }, this);
 
     for (Module module : provider.getModules()) {
@@ -299,7 +302,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
     return libraryCopy;
   }
 
-  private static void resetNonApplicableValuesToDefaults(final ModifiableFlexIdeBuildConfiguration configuration) {
+  public static void resetNonApplicableValuesToDefaults(final ModifiableFlexIdeBuildConfiguration configuration) {
     final FlexIdeBuildConfiguration defaultConfiguration = new FlexIdeBuildConfigurationImpl();
     final BuildConfigurationNature nature = configuration.getNature();
 
@@ -333,8 +336,12 @@ public class FlexProjectConfigurationEditor implements Disposable {
     }
 
     for (Iterator<ModifiableDependencyEntry> i = configuration.getDependencies().getModifiableEntries().iterator(); i.hasNext(); ) {
-      if (!BCUtils.isApplicable(nature, i.next().getDependencyType().getLinkageType())) {
-        i.remove();
+      final ModifiableDependencyEntry entry = i.next();
+      if (entry instanceof BuildConfigurationEntry) {
+        final FlexIdeBuildConfiguration dependencyBC = ((BuildConfigurationEntry)entry).findBuildConfiguration();
+        if (dependencyBC == null || !BCUtils.isApplicable(nature, dependencyBC.getNature(), entry.getDependencyType().getLinkageType())) {
+          i.remove();
+        }
       }
     }
 
@@ -789,7 +796,6 @@ public class FlexProjectConfigurationEditor implements Disposable {
                                                    final Consumer<NonStructuralModifiableBuildConfiguration> consumer) {
     consumer.consume(new NonStructuralModifiableBuildConfiguration((FlexIdeBuildConfigurationImpl)bc));
   }
-
 }
 
 

@@ -930,6 +930,28 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
           }
         }
       }
+
+      public void natureChanged(final FlexIdeBCConfigurable configurable) {
+        if (configurable.isParentFor(DependenciesConfigurable.this)) {
+          return;
+        }
+
+        // 1st-level nodes are always visible
+        // 2nd-level nodes cannot refer to BC
+        for (int row = 0; row < myTable.getRowCount(); row++) {
+          final MyTableItem item = myTable.getItemAt(row);
+
+          if (item instanceof BCItem && ((BCItem)item).configurable == configurable) {
+            final BuildConfigurationNature dependencyNature = ((BCItem)item).configurable.getEditableObject().getNature();
+            final LinkageType linkageType = item.getLinkageType();
+            if (!BCUtils.isApplicable(myNature, dependencyNature, linkageType)) {
+              removeItems(Collections.singleton(item), true);
+              // there may be only one dependency on a BC
+              break;
+            }
+          }
+        }
+      }
     }, myDisposable);
 
     myConfigEditor.addModulesModelChangeListener(new FlexProjectConfigurationEditor.ModulesModelChangeListener() {
@@ -1726,6 +1748,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
   public void addUserActivityListener(final UserActivityListener listener, final Disposable disposable) {
     myUserActivityDispatcher.addListener(listener, disposable);
+  }
+
+  public void removeUserActivityListeners() {
+    for (UserActivityListener listener : myUserActivityDispatcher.getListeners()) {
+      myUserActivityDispatcher.removeListener(listener);
+    }
   }
 
   private static class LibraryTableModifiableModelWrapper implements LibraryTableBase.ModifiableModelEx {
