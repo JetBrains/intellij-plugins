@@ -57,7 +57,6 @@ import com.intellij.ui.navigation.History;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.Function;
-import com.intellij.util.IconUtil;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FilteringIterator;
@@ -72,8 +71,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -165,8 +162,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   private final Project myProject;
   private final ModifiableDependencies myDependencies;
   private AddItemPopupAction[] myPopupActions;
-  private final AnActionButton myEditAction;
-  private final AnActionButton myRemoveButton;
   private final Disposable myDisposable;
   private final BuildConfigurationNature myNature;
 
@@ -836,51 +831,41 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     myTable.getTree().setShowsRootHandles(true);
     myTable.getTree().setLineStyleAngled();
 
-    // we need to add listener *before* ToolbarDecorator's, so our listener is invoked after it
-    myTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      @Override
-      public void valueChanged(ListSelectionEvent e) {
-        updateEditButton();
-        updateRemoveButton();
-      }
-    });
-
-    ToolbarDecorator d = ToolbarDecorator.createDecorator(myTable);
-    d.setAddAction(new AnActionButtonRunnable() {
-      @Override
-      public void run(AnActionButton button) {
-        addItem(button);
-      }
-    });
-    d.setRemoveAction(new AnActionButtonRunnable() {
-      @Override
-      public void run(AnActionButton anActionButton) {
-        removeSelection();
-      }
-    });
-    //d.setUpAction(new AnActionButtonRunnable() {
-    //  @Override
-    //  public void run(AnActionButton anActionButton) {
-    //    moveSelection(-1);
-    //  }
-    //});
-    //d.setDownAction(new AnActionButtonRunnable() {
-    //  @Override
-    //  public void run(AnActionButton anActionButton) {
-    //    moveSelection(1);
-    //  }
-    //});
-    myEditAction = new AnActionButton(ProjectBundle.message("module.classpath.button.edit"), IconUtil.getEditIcon()) {
-      @Override
-      public void actionPerformed(AnActionEvent e) {
-        MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
-        editLibrary(((ModuleLibraryItem)item).orderEntry);
-      }
-    };
-    d.addExtraAction(myEditAction);
-    JPanel panel = d.createPanel();
-    myTablePanel.add(panel, BorderLayout.CENTER);
-    myRemoveButton = ToolbarDecorator.findRemoveButton(panel);
+    myTablePanel.add(
+      ToolbarDecorator.createDecorator(myTable)
+      .setAddAction(new AnActionButtonRunnable() {
+        @Override
+        public void run(AnActionButton button) {
+          addItem(button);
+        }
+      }).setRemoveAction(new AnActionButtonRunnable() {
+        @Override
+        public void run(AnActionButton anActionButton) {
+          removeSelection();
+        }
+      }).setEditAction(new AnActionButtonRunnable() {
+        @Override
+        public void run(AnActionButton button) {
+          MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
+          editLibrary(((ModuleLibraryItem)item).orderEntry);
+        }
+      }).setRemoveActionUpdater(new AnActionButtonUpdater() {
+        @Override
+        public boolean isEnabled(AnActionEvent e) {
+          if (myTable.getSelectedRowCount() == 0) return false;
+          for (int row : myTable.getSelectedRows()) {
+            MyTableItem item = myTable.getItemAt(row);
+            if (item instanceof SdkItem || item instanceof SdkEntryItem) return false;
+          }
+          return true;
+        }
+      }).setEditActionUpdater(new AnActionButtonUpdater() {
+        @Override
+        public boolean isEnabled(AnActionEvent e) {
+          MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
+          return item != null && item.canEdit();
+        }
+      }).disableUpDownActions().createPanel(), BorderLayout.CENTER);
 
     myTable.addMouseListener(new MouseAdapter() {
       @Override
@@ -1045,28 +1030,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       }
     }
     return null;
-  }
-
-  private void updateEditButton() {
-    if (myTable.getSelectedRowCount() == 1) {
-      MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
-      myEditAction.setEnabled(item != null && item.canEdit());
-      return;
-    }
-    myEditAction.setEnabled(false);
-  }
-
-  private void updateRemoveButton() {
-    myRemoveButton.setEnabled(canDeleteSelection());
-  }
-
-  private boolean canDeleteSelection() {
-    if (myTable.getSelectedRowCount() == 0) return false;
-    for (int row : myTable.getSelectedRows()) {
-      MyTableItem item = myTable.getItemAt(row);
-      if (item instanceof SdkItem || item instanceof SdkEntryItem) return false;
-    }
-    return true;
   }
 
   private void editLibrary(LibraryOrderEntry entry) {
@@ -1433,7 +1396,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     for (int row : selectedRows) {
       myTable.getSelectionModel().addSelectionInterval(row, row);
     }
-    updateEditButton();
   }
 
   /**
