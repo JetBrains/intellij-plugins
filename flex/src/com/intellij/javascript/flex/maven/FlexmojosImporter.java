@@ -82,7 +82,7 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
 
   @NotNull
   private MavenPlugin getFlexmojosPlugin(final MavenProject mavenProject) {
-    final MavenPlugin plugin = mavenProject.findPlugin(myPluginGroupID, myPluginArtifactID);
+    final MavenPlugin plugin = getPlugin(mavenProject);
     assert plugin != null;
     return plugin;
   }
