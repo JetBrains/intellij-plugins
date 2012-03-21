@@ -53,7 +53,7 @@ public class TapestryListenersSupportLoader implements ProjectComponent {
     // Listener for file deletion
     PsiManager.getInstance(myProject).addPsiTreeChangeListener(new PsiTreeChangeAdapter() {
       @Override
-      public void childRemoved(PsiTreeChangeEvent event) {
+      public void childRemoved(@NotNull PsiTreeChangeEvent event) {
         Module module = getModuleFromEvent(event);
         TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(module);
 
@@ -84,7 +84,7 @@ public class TapestryListenersSupportLoader implements ProjectComponent {
       }
 
       @Override
-      public void childAdded(PsiTreeChangeEvent event) {
+      public void childAdded(@NotNull PsiTreeChangeEvent event) {
         Module module = getModuleFromEvent(event);
         if (module == null) {
           return;
