@@ -526,7 +526,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     @Override
     public SimpleColoredText getPresentableText() {
       SimpleColoredText text = new SimpleColoredText();
-      text.append(mySdk.getSdkType().getPresentableName() + mySdk.getVersionString(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      text.append(mySdk.getSdkType().getPresentableName() + " " + mySdk.getVersionString(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
       return text;
     }
 
