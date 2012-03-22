@@ -65,7 +65,12 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     if (file == null) return false;
     if (HtmlUtil.hasHtml(file)) return false;
 
-    Module module = ModuleUtil.findModuleForPsiElement(context);
+    final VirtualFile vFile = file.getOriginalFile().getVirtualFile();
+    if (vFile != null) {
+      if (vFile.getFileType() != CssFileType.INSTANCE) return false;
+    }
+
+    Module module = ModuleUtil.findModuleForPsiElement(file);
     if (module == null) {
       file = InjectedLanguageUtil.getTopLevelFile(context);
       if (file != null) {
@@ -76,7 +81,6 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
       return false;
     }
 
-    final VirtualFile vFile = file.getOriginalFile().getVirtualFile();
     if (vFile != null) {
       final CssDialect dialect = CssDialectMappings.getInstance(context.getProject()).getMapping(vFile);
       return dialect != CssDialect.CLASSIC;
