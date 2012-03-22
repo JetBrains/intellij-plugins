@@ -345,6 +345,8 @@ public class Flexmojos3Configurator {
     assert additionalData != null;
 
     for (MavenId dependency : myFlexmojosPlugin.getDependencies()) {
+      if (StringUtil.isEmpty(dependency.getArtifactId())) continue;
+
       for (Pattern jarNamePattern : ADDITIONAL_JAR_NAME_PATTERNS_TO_INCLUDE_IN_FLEXMOJOS_SDK_CLASSPATH) {
         if (jarNamePattern.matcher(dependency.getArtifactId()).matches()) {
           final String jarFilePath = getArtifactFilePath(myMavenProject, dependency, MavenConstants.TYPE_JAR);
