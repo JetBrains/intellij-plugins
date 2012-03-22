@@ -292,18 +292,18 @@ public class FlexIdeBCConfigurator {
     bc.setNature(nature);
 
     final ModifiableFlexIdeBuildConfiguration someExistingConfig = myConfigEditor.getConfigurations(module)[0];
-    final FlexIdeBCConfigurable configurable = FlexIdeBCConfigurable.unwrap(myConfigurablesMap.get(someExistingConfig));
-    try {
-      configurable.apply();
-    }
-    catch (ConfigurationException ignored) {/**/}
-
     bc.setOutputFileName(fileName + (bc.getOutputType() == OutputType.Library ? ".swc" : ".swf"));
     bc.setOutputFolder(someExistingConfig.getOutputFolder());
     updatePackageFileName(bc, fileName);
 
     final SdkEntry sdkEntry = someExistingConfig.getDependencies().getSdkEntry();
-    final SdkEntry newSdkEntry = sdkEntry == null ? findAnySdk() : Factory.createSdkEntry(sdkEntry.getName());
+    final SdkEntry newSdkEntry;
+    if (sdkEntry != null && FlexSdkUtils.findFlexOrFlexmojosSdk(sdkEntry.getName()) != null) {
+      newSdkEntry = Factory.createSdkEntry(sdkEntry.getName());
+    }
+    else {
+      newSdkEntry = findAnySdk();
+    }
     bc.getDependencies().setSdkEntry(newSdkEntry);
 
     createConfigurableNode(bc, module, treeNodeNameUpdater);

@@ -984,16 +984,36 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   }
 
   private void rebuildSdksModel() {
-    final Sdk sdk = mySdkCombo.getSelectedJdk();
+    final JdkComboBox.JdkComboBoxItem selectedItem = mySdkCombo.getSelectedItem();
+    JdkComboBox.NoneJdkComboBoxItem noneSdkItem = new JdkComboBox.NoneJdkComboBoxItem();
     myFreeze = true;
     try {
-      mySdkCombo.reloadModel(new JdkComboBox.NoneJdkComboBoxItem(), myProject);
+      mySdkCombo.reloadModel(noneSdkItem, myProject);
     }
     finally {
       myFreeze = false;
     }
-    mySdkCombo.setSelectedJdk(sdk);
-    if (mySdkCombo.getSelectedJdk() != sdk) {
+
+    if (selectedItem instanceof JdkComboBox.NoneJdkComboBoxItem) {
+      mySdkCombo.setSelectedItem(noneSdkItem);
+    }
+    else {
+      String selectedSdkName = selectedItem.getSdkName();
+      if (selectedSdkName != null) {
+        Sdk sdk = mySkdsModel.findSdk(selectedSdkName);
+        if (sdk != null) {
+          mySdkCombo.setSelectedJdk(sdk);
+        }
+        else {
+          mySdkCombo.setInvalidJdk(selectedSdkName);
+        }
+      }
+      else {
+        mySdkCombo.setSelectedItem(noneSdkItem);
+      }
+    }
+
+    if (mySdkCombo.getSelectedJdk() != selectedItem.getJdk()) {
       updateOnSelectedSdkChange();
     }
     mySdkChangeDispatcher.getMulticaster().stateChanged(new ChangeEvent(this));
