@@ -54,9 +54,9 @@ public class FlexProjectConfigurationEditor implements Disposable {
     @Nullable
     private final String myOriginalName;
 
-    Editor(Module module, @Nullable FlexIdeBuildConfigurationImpl origin) {
+    Editor(Module module, @Nullable FlexIdeBuildConfigurationImpl origin, boolean storeOriginalName) {
       myOrigin = origin != null ? origin : new FlexIdeBuildConfigurationImpl();
-      myOriginalName = origin != null ? origin.getName() : null;
+      myOriginalName = storeOriginalName && origin != null ? origin.getName() : null;
       myModule = module;
       myOrigin.applyTo(this);
     }
@@ -230,7 +230,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
     FlexIdeBuildConfiguration[] buildConfigurations = FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations();
     List<Editor> configEditors = new ArrayList<Editor>(buildConfigurations.length);
     for (FlexIdeBuildConfiguration buildConfiguration : buildConfigurations) {
-      configEditors.add(new Editor(module, (FlexIdeBuildConfigurationImpl)buildConfiguration));
+      configEditors.add(new Editor(module, (FlexIdeBuildConfigurationImpl)buildConfiguration, true));
     }
     myModule2Editors.put(module, configEditors);
   }
@@ -259,7 +259,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
   public ModifiableFlexIdeBuildConfiguration createConfiguration(Module module) {
     assertAlive();
     List<Editor> editors = myModule2Editors.get(module);
-    Editor newConfig = new Editor(module, null);
+    Editor newConfig = new Editor(module, null, false);
     editors.add(newConfig);
     return newConfig;
   }
@@ -284,7 +284,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
         }
       }
     }
-    Editor newConfig = new Editor(module, copy);
+    Editor newConfig = new Editor(module, copy, false);
     newConfig.setNature(newNature);
     // just to simplify serialized view
     resetNonApplicableValuesToDefaults(newConfig);
