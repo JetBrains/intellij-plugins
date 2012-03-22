@@ -170,7 +170,7 @@ public class FlexIdeBCConfigurator {
         final BuildConfigurationNature oldNature = bc.getNature();
         final AddBuildConfigurationDialog dialog =
           new AddBuildConfigurationDialog(myConfigEditor.getProject(), FlexBundle.message("change.bc.type.title"),
-                                          Collections.<String>emptyList(), oldNature);
+                                          Collections.<String>emptyList(), oldNature, false);
         dialog.setBCNameEditable(false);
         dialog.setBCName(bc.getName());
         dialog.show();
@@ -362,7 +362,7 @@ public class FlexIdeBCConfigurator {
                                                                    String dialogTitle,
                                                                    BuildConfigurationNature defaultNature) {
     Project project = module.getProject();
-    AddBuildConfigurationDialog dialog = new AddBuildConfigurationDialog(project, dialogTitle, getUsedNames(module), defaultNature);
+    AddBuildConfigurationDialog dialog = new AddBuildConfigurationDialog(project, dialogTitle, getUsedNames(module), defaultNature, true);
     dialog.show();
     return dialog.isOK() ? Pair.create(dialog.getName(), dialog.getNature()) : null;
   }
