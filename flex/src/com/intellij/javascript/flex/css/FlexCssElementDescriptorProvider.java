@@ -7,6 +7,8 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
+import com.intellij.lang.Language;
+import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -23,6 +25,8 @@ import com.intellij.openapi.command.undo.BasicUndoableAction;
 import com.intellij.openapi.command.undo.UndoManager;
 import com.intellij.openapi.command.undo.UnexpectedUndoException;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtil;
@@ -67,7 +71,11 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
     final VirtualFile vFile = file.getOriginalFile().getVirtualFile();
     if (vFile != null) {
-      if (vFile.getFileType() != CssFileType.INSTANCE) return false;
+      final FileType type = vFile.getFileType();
+      if (type instanceof LanguageFileType) {
+        Language lang = ((LanguageFileType)type).getLanguage();
+        if (lang.isKindOf(CSSLanguage.INSTANCE) && !lang.is(CSSLanguage.INSTANCE)) return false;
+      }
     }
 
     Module module = ModuleUtil.findModuleForPsiElement(file);
