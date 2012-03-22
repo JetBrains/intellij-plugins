@@ -15,10 +15,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeCellRenderer;
-import javax.swing.tree.TreePath;
+import javax.swing.tree.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -135,6 +132,11 @@ abstract class EditableTreeTable<T> extends TreeTable {
     T item = (T)getValueAt(convertRowIndexToModel(row), 0);
     final TableCellEditor editor = columnInfo.getEditor(item);
     return editor == null ? super.getCellEditor(row, column) : editor;
+  }
+
+  public void refreshItemAt(final Integer row) {
+    Object node = getTree().getPathForRow(row).getLastPathComponent();
+    ((DefaultTreeModel)getTree().getModel()).nodeChanged((TreeNode)node);
   }
 
   private static ColumnInfo[] wrap(ColumnInfo[] columns) {

@@ -53,6 +53,8 @@ public class FlexIdeBCConfigurator {
     void buildConfigurationRemoved(FlexIdeBCConfigurable configurable);
 
     void natureChanged(FlexIdeBCConfigurable configurable);
+
+    void buildConfigurationRenamed(FlexIdeBCConfigurable configurable);
   }
 
   private final BidirectionalMap<ModifiableFlexIdeBuildConfiguration, CompositeConfigurable> myConfigurablesMap =
@@ -147,15 +149,25 @@ public class FlexIdeBCConfigurator {
     for (final ModifiableFlexIdeBuildConfiguration bc : configurations) {
       CompositeConfigurable configurable = myConfigurablesMap.get(bc);
       if (configurable == null) {
-        final Runnable bcNatureModifier = createBCNatureModifier(bc);
-        final ProjectStructureConfigurable c = ProjectStructureConfigurable.getInstance(myConfigEditor.getProject());
-        configurable = new FlexIdeBCConfigurable(module, bc, bcNatureModifier, treeNodeNameUpdater,
-                                                 myConfigEditor, c.getProjectJdksModel(), c.getContext()).wrapInTabs();
-        myConfigurablesMap.put(bc, configurable);
+        myConfigurablesMap.put(bc, configurable = createBcConfigurable(module, bc, treeNodeNameUpdater));
       }
       configurables.add(configurable);
     }
     return configurables;
+  }
+
+  private CompositeConfigurable createBcConfigurable(final Module module,
+                                                     final ModifiableFlexIdeBuildConfiguration bc, final Runnable treeNodeNameUpdater) {
+    final ProjectStructureConfigurable c = ProjectStructureConfigurable.getInstance(module.getProject());
+    final Runnable bcNatureModifier = createBCNatureModifier(bc);
+    return new FlexIdeBCConfigurable(module, bc, bcNatureModifier, myConfigEditor, c.getProjectJdksModel(), c.getContext()) {
+      @Override
+      public void setDisplayName(final String name) {
+        super.setDisplayName(name);
+        treeNodeNameUpdater.run();
+        myEventDispatcher.getMulticaster().buildConfigurationRenamed(this);
+      }
+    }.wrapInTabs();
   }
 
   private Runnable createBCNatureModifier(final ModifiableFlexIdeBuildConfiguration bc) {
@@ -368,12 +380,7 @@ public class FlexIdeBCConfigurator {
   }
 
   private void createConfigurableNode(ModifiableFlexIdeBuildConfiguration bc, Module module, Runnable treeNodeNameUpdater) {
-    final ProjectStructureConfigurable c = ProjectStructureConfigurable.getInstance(myConfigEditor.getProject());
-    final Runnable bcNatureModifier = createBCNatureModifier(bc);
-    final FlexIdeBCConfigurable configurable = new FlexIdeBCConfigurable(module, bc, bcNatureModifier, treeNodeNameUpdater,
-                                                                         myConfigEditor, c.getProjectJdksModel(), c.getContext());
-
-    CompositeConfigurable wrapped = configurable.wrapInTabs();
+    CompositeConfigurable wrapped = createBcConfigurable(module, bc, treeNodeNameUpdater);
     myConfigurablesMap.put(bc, wrapped);
     final MasterDetailsComponent.MyNode node = new BuildConfigurationNode(wrapped);
 

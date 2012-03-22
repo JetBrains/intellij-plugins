@@ -141,7 +141,12 @@ public class FlexProjectConfigurationEditor implements Disposable {
         configurationRemoved(configurable.getEditableObject());
       }
 
+      @Override
       public void natureChanged(final FlexIdeBCConfigurable configurable) {
+      }
+
+      @Override
+      public void buildConfigurationRenamed(final FlexIdeBCConfigurable configurable) {
       }
     }, this);
 

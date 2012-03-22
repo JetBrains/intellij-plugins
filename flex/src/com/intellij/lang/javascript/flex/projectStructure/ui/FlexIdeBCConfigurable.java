@@ -95,7 +95,6 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
 
   private final Module myModule;
   private final ModifiableFlexIdeBuildConfiguration myConfiguration;
-  private final Runnable myTreeNodeNameUpdater;
   private @NotNull final FlexProjectConfigurationEditor myConfigEditor;
   private final ProjectSdksModel mySdksModel;
   private final StructureConfigurableContext myContext;
@@ -119,14 +118,12 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   public FlexIdeBCConfigurable(final Module module,
                                final ModifiableFlexIdeBuildConfiguration bc,
                                final Runnable bcNatureModifier,
-                               final Runnable treeNodeNameUpdater,
                                final @NotNull FlexProjectConfigurationEditor configEditor,
                                final ProjectSdksModel sdksModel,
                                final StructureConfigurableContext context) {
-    super(false, treeNodeNameUpdater);
+    super(false, null);
     myModule = module;
     myConfiguration = bc;
-    myTreeNodeNameUpdater = treeNodeNameUpdater;
     myConfigEditor = configEditor;
     mySdksModel = sdksModel;
     myContext = context;
@@ -173,9 +170,6 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     myNameField.getDocument().addDocumentListener(new DocumentAdapter() {
       protected void textChanged(DocumentEvent e) {
         setDisplayName(myNameField.getText().trim());
-        if (treeNodeNameUpdater != null) {
-          treeNodeNameUpdater.run();
-        }
       }
     });
 
@@ -588,7 +582,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     List<NamedConfigurable> tabs = new ArrayList<NamedConfigurable>();
     tabs.add(this);
     tabs.addAll(getChildren());
-    return new CompositeConfigurable(tabs, myTreeNodeNameUpdater);
+    return new CompositeConfigurable(tabs, null);
   }
 
   public void updateTabs(final CompositeConfigurable compositeConfigurable) {

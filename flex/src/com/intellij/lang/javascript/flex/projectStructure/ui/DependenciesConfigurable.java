@@ -915,25 +915,34 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
       @Override
       public void buildConfigurationRemoved(FlexIdeBCConfigurable configurable) {
-        if (configurable.isParentFor(DependenciesConfigurable.this)) {
-          return;
+        Pair<BCItem, Integer> item = findDependencyItem(configurable);
+        if (item != null) {
+          removeItems(Collections.singleton(item.first), true);
         }
+      }
 
-        // 1st-level nodes are always visible
-        // 2nd-level nodes cannot refer to BC
-        for (int row = 0; row < myTable.getRowCount(); row++) {
-          MyTableItem item = myTable.getItemAt(row);
-          if (item instanceof BCItem && ((BCItem)item).configurable == configurable) {
-            removeItems(Collections.singleton(item), true);
-            // there may be only one dependency on a BC
-            break;
-          }
+      @Override
+      public void buildConfigurationRenamed(final FlexIdeBCConfigurable configurable) {
+        Pair<BCItem, Integer> item = findDependencyItem(configurable);
+        if (item != null) {
+          myTable.refreshItemAt(item.second);
         }
       }
 
       public void natureChanged(final FlexIdeBCConfigurable configurable) {
+        Pair<BCItem, Integer> item = findDependencyItem(configurable);
+        if (item != null) {
+          final BuildConfigurationNature dependencyNature = item.first.configurable.getEditableObject().getNature();
+          if (!BCUtils.isApplicable(myNature, dependencyNature, item.first.getLinkageType())) {
+            removeItems(Collections.singleton(item.first), true);
+          }
+        }
+      }
+
+      @Nullable
+      private Pair<BCItem, Integer> findDependencyItem(FlexIdeBCConfigurable configurable) {
         if (configurable.isParentFor(DependenciesConfigurable.this)) {
-          return;
+          return null;
         }
 
         // 1st-level nodes are always visible
@@ -942,16 +951,13 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
           final MyTableItem item = myTable.getItemAt(row);
 
           if (item instanceof BCItem && ((BCItem)item).configurable == configurable) {
-            final BuildConfigurationNature dependencyNature = ((BCItem)item).configurable.getEditableObject().getNature();
-            final LinkageType linkageType = item.getLinkageType();
-            if (!BCUtils.isApplicable(myNature, dependencyNature, linkageType)) {
-              removeItems(Collections.singleton(item), true);
-              // there may be only one dependency on a BC
-              break;
-            }
+            // there may be only one dependency on a BC
+            return Pair.create((BCItem)item, row);
           }
         }
+        return null;
       }
+
     }, myDisposable);
 
     myConfigEditor.addModulesModelChangeListener(new FlexProjectConfigurationEditor.ModulesModelChangeListener() {
@@ -1152,7 +1158,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
   }
 
-  private void removeItems(Set<MyTableItem> itemsToDelete, boolean refresh) {
+  private void removeItems(Set<? extends MyTableItem> itemsToDelete, boolean refresh) {
     if (itemsToDelete.isEmpty()) return;
 
     DefaultMutableTreeNode root = myTable.getRoot();
