@@ -171,7 +171,7 @@ public class AirPackageDialog extends DialogWrapper {
     for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCs) {
       final FlexIdeBuildConfiguration bc = moduleAndBC.second;
 
-      if (bc.isSkipCompile() && LocalFileSystem.getInstance().findFileByPath(bc.getOutputFilePath(true)) == null) {
+      if (bc.isSkipCompile() && LocalFileSystem.getInstance().findFileByPath(bc.getActualOutputFilePath()) == null) {
         return new ValidationInfo(
           FlexBundle.message("can.not.package.bc", bc.getName(), FlexBundle.message("compilation.is.switched.off")));
       }

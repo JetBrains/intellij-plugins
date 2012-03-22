@@ -53,8 +53,8 @@ public class FlexRunner extends FlexBaseRunner {
         final String urlOrPath = runnerParameters.isLaunchUrl()
                                  ? runnerParameters.getUrl()
                                  : bc.isUseHtmlWrapper()
-                                   ? PathUtil.getParentPath(bc.getOutputFilePath(true)) + "/" + BCUtils.getWrapperFileName(bc)
-                                   : bc.getOutputFilePath(true);
+                                   ? PathUtil.getParentPath(bc.getActualOutputFilePath()) + "/" + BCUtils.getWrapperFileName(bc)
+                                   : bc.getActualOutputFilePath();
         launchWithSelectedApplication(urlOrPath, runnerParameters.getLauncherParameters());
         break;
       case Desktop:

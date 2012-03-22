@@ -68,8 +68,8 @@ public class CompilerConfigGenerator {
                                   final @NotNull CompilerOptions projectLevelCompilerOptions) throws IOException {
     myModule = module;
     myBC = bc;
-    myFlexUnit = BCUtils.isFlexUnitBC(myModule, myBC);
-    myCSS = bc.isTempBCForCompilation() && bc.getMainClass().toLowerCase().endsWith(".css");
+    myFlexUnit = BCUtils.isFlexUnitBC(myBC);
+    myCSS = BCUtils.isRuntimeStyleSheetBC(bc);
     mySdk = bc.getSdk();
     if (mySdk == null) {
       throw new IOException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), module.getName()));
@@ -89,13 +89,13 @@ public class CompilerConfigGenerator {
     if (bc.isTempBCForCompilation()) {
       final FlexIdeBuildConfiguration originalBC = FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(bc.getName());
       final boolean makeExternalLibsMerged = originalBC != null && originalBC.getOutputType() == OutputType.Library;
-      final boolean makeIncludedLibsMerged = bc.getMainClass().toLowerCase().endsWith(".css");
+      final boolean makeIncludedLibsMerged = BCUtils.isRuntimeStyleSheetBC(bc);
       text = FlexCompilerConfigFileUtil.mergeWithCustomConfigFile(text, bc.getCompilerOptions().getAdditionalConfigFilePath(),
                                                                   makeExternalLibsMerged, makeIncludedLibsMerged);
     }
 
     final String name =
-      getConfigFileName(module, bc.getName(), PlatformUtils.getPlatformPrefix().toLowerCase(), BCUtils.getBCSpecifier(module, bc));
+      getConfigFileName(module, bc.getName(), PlatformUtils.getPlatformPrefix().toLowerCase(), BCUtils.getBCSpecifier(bc));
     return getOrCreateConfigFile(module.getProject(), name, text);
   }
 
@@ -315,7 +315,7 @@ public class CompilerConfigGenerator {
 
         final FlexIdeBuildConfiguration dependencyBC = ((BuildConfigurationEntry)entry).findBuildConfiguration();
         if (dependencyBC != null && FlexCompiler.checkDependencyType(myBC, dependencyBC, linkageType)) {
-          addLib(rootElement, dependencyBC.getOutputFilePath(true), linkageType);
+          addLib(rootElement, dependencyBC.getActualOutputFilePath(), linkageType);
         }
       }
       else if (entry instanceof ModuleLibraryEntry) {
@@ -486,7 +486,7 @@ public class CompilerConfigGenerator {
       }
     }
 
-    addOption(rootElement, CompilerOptionInfo.OUTPUT_PATH_INFO, myBC.getOutputFilePath(false));
+    addOption(rootElement, CompilerOptionInfo.OUTPUT_PATH_INFO, myBC.getActualOutputFilePath());
   }
 
   private void addFilesIncludedInSwc(final Element rootElement) {

@@ -32,7 +32,7 @@ public abstract class FlexCompilationTask {
     myBC = bc;
     myDependencies = dependencies;
 
-    String postfix = bc.isTempBCForCompilation() ? " - " + BCUtils.getBCSpecifier(module, bc) : "";
+    String postfix = bc.isTempBCForCompilation() ? " - " + BCUtils.getBCSpecifier(bc) : "";
     if (!bc.getName().equals(module.getName())) postfix += " (module " + module.getName() + ")";
     myPresentableName = bc.getName() + postfix;
   }
@@ -40,7 +40,7 @@ public abstract class FlexCompilationTask {
   public void start(final FlexCompilationManager compilationManager) {
     try {
       myConfigFiles = createConfigFiles();
-      final String outputFilePath = myBC.getOutputFilePath(true);
+      final String outputFilePath = myBC.getActualOutputFilePath();
 
       if (compilationManager.isRebuild()) {
         FlexCompilationUtils.deleteCacheForFile(outputFilePath);

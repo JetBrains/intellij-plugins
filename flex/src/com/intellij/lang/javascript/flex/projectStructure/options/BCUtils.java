@@ -48,7 +48,7 @@ public class BCUtils {
   }
 
   public static String getWrapperFileName(final FlexIdeBuildConfiguration bc) {
-    return FileUtil.getNameWithoutExtension(bc.getOutputFileName()) + ".html";
+    return FileUtil.getNameWithoutExtension(PathUtil.getFileName(bc.getActualOutputFilePath())) + ".html";
   }
 
   public static String getGeneratedAirDescriptorName(final FlexIdeBuildConfiguration bc, final AirPackagingOptions packagingOptions) {
@@ -56,23 +56,27 @@ public class BCUtils {
                           ? "-descriptor.xml"
                           : packagingOptions instanceof AndroidPackagingOptions ? "-android-descriptor.xml"
                                                                                 : "-ios-descriptor.xml";
-    return FileUtil.getNameWithoutExtension(bc.getOutputFileName()) + suffix;
+    return FileUtil.getNameWithoutExtension(PathUtil.getFileName(bc.getActualOutputFilePath())) + suffix;
   }
 
   @Nullable
-  public static String getBCSpecifier(final Module module, final FlexIdeBuildConfiguration bc) {
+  public static String getBCSpecifier(final FlexIdeBuildConfiguration bc) {
     if (!bc.isTempBCForCompilation()) return null;
-    if (isFlexUnitBC(module, bc)) return "flexunit";
-    if (bc.getMainClass().toLowerCase().endsWith(".css")) return PathUtil.getFileName(bc.getMainClass());
+    if (isFlexUnitBC(bc)) return "flexunit";
+    if (isRuntimeStyleSheetBC(bc)) return PathUtil.getFileName(bc.getMainClass());
     return StringUtil.getShortName(bc.getMainClass());
   }
 
-  public static boolean isFlexUnitBC(final Module module, final FlexIdeBuildConfiguration bc) {
-    return bc.isTempBCForCompilation() && bc.getMainClass().equals(FlexUnitPrecompileTask.getFlexUnitLauncherName(module.getName()));
+  public static boolean isFlexUnitBC(final FlexIdeBuildConfiguration bc) {
+    return bc.isTempBCForCompilation() && bc.getMainClass().endsWith(FlexUnitPrecompileTask.getFlexUnitLauncherName(""));
   }
 
   public static boolean canHaveRuntimeStylesheets(final FlexIdeBuildConfiguration bc) {
     return bc.getOutputType() == OutputType.Application && bc.getTargetPlatform() != TargetPlatform.Mobile;
+  }
+
+  public static boolean isRuntimeStyleSheetBC(final FlexIdeBuildConfiguration bc) {
+    return bc.isTempBCForCompilation() && bc.getMainClass().toLowerCase().endsWith(".css");
   }
 
   public static boolean canHaveResourceFiles(final BuildConfigurationNature nature) {

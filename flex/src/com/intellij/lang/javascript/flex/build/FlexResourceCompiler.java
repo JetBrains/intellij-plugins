@@ -26,6 +26,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -54,8 +55,8 @@ public class FlexResourceCompiler implements SourceProcessingCompiler {
         final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCs = FlexCompiler.getModulesAndBCsToCompile(scope);
         Set<VirtualFile> outputs = new HashSet<VirtualFile>();
         for (Pair<Module, FlexIdeBuildConfiguration> pair : modulesAndBCs) {
-          String outputFilePath = pair.second.getOutputFilePath(true);
-          VirtualFile outputFolder = LocalFileSystem.getInstance().findFileByPath(new File(outputFilePath).getParent());
+          String outputFilePath = pair.second.getActualOutputFilePath();
+          VirtualFile outputFolder = LocalFileSystem.getInstance().findFileByPath(PathUtil.getParentPath(outputFilePath));
           ContainerUtil.addIfNotNull(outputs, outputFolder);
         }
 
@@ -141,7 +142,8 @@ public class FlexResourceCompiler implements SourceProcessingCompiler {
               final CompilerOptions.ResourceFilesMode mode = bc.getCompilerOptions().getResourceFilesMode();
               if (mode == CompilerOptions.ResourceFilesMode.All && !FlexCompiler.isSourceFile(file) ||
                   mode == CompilerOptions.ResourceFilesMode.ResourcePatterns && compilerConfiguration.isResourceFile(file)) {
-                targetPaths.add(bc.getOutputFolder() + "/" + relativePath);
+                final String outputFolder = PathUtil.getParentPath(bc.getActualOutputFilePath());
+                targetPaths.add(outputFolder + "/" + relativePath);
               }
             }
           }
@@ -164,7 +166,7 @@ public class FlexResourceCompiler implements SourceProcessingCompiler {
       try {
         Collection<Pair<Module, FlexIdeBuildConfiguration>> toCompile = FlexCompiler.getModulesAndBCsToCompile(context.getCompileScope());
         for (Pair<Module, FlexIdeBuildConfiguration> pair : toCompile) {
-          outputDirectories.add(new File(pair.second.getOutputFilePath(true)).getParentFile());
+          outputDirectories.add(new File(PathUtil.getParentPath(pair.second.getActualOutputFilePath())));
         }
       }
       catch (ConfigurationException e) {

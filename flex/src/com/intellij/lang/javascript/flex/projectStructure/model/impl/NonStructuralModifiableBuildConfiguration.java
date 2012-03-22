@@ -113,8 +113,8 @@ public class NonStructuralModifiableBuildConfiguration implements FlexIdeBuildCo
   }
 
   @Override
-  public String getOutputFilePath(final boolean respectAdditionalConfigFile) {
-    return myOriginal.getOutputFilePath(respectAdditionalConfigFile);
+  public String getActualOutputFilePath() {
+    return myOriginal.getActualOutputFilePath();
   }
 
   @Override

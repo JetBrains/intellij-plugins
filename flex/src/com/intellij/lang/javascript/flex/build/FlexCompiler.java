@@ -149,7 +149,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
             if (root == null) root = ProjectRootManager.getInstance(context.getProject()).getFileIndex().getContentRootForFile(cssFile);
             final String relativePath = root == null ? null : VfsUtilCore.getRelativePath(cssFile.getParent(), root, '/');
             if (!StringUtil.isEmpty(relativePath)) {
-              cssBC.setOutputFolder(cssBC.getOutputFolder() + "/" + relativePath);
+              final String outputFolder = PathUtil.getParentPath(bc.getActualOutputFilePath());
+              cssBC.setOutputFolder(outputFolder + "/" + relativePath);
             }
 
             compilationTasks.add(builtIn ? new BuiltInCompilationTask(((MyProcessingItem)item).myModule, cssBC, dependencies)
@@ -247,7 +248,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
       new THashMap<String, Pair<Module, FlexIdeBuildConfiguration>>();
     for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
       final FlexIdeBuildConfiguration bc = moduleAndBC.second;
-      final String outputFilePath = bc.getOutputFilePath(true);
+      final String outputFilePath = bc.getActualOutputFilePath();
       checkOutputPathUnique(outputFilePath, moduleAndBC, outputPathToModuleAndBC);
 
       /*
@@ -258,7 +259,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
           checkOutputPathUnique(outputPath, moduleAndBC, outputPathToModuleAndBC);
         }
         if (bc.getIosPackagingOptions().isEnabled()) {
-          final String outputPath = outputFolderPath + "/" + bc.getIosPackagingOptions().getPackageFileName() + ".ios";
+          final String outputPath = outputFolderPath + "/" + bc.getIosPackagingOptions().getPackageFileName() + ".ipa";
           checkOutputPathUnique(outputPath, moduleAndBC, outputPathToModuleAndBC);
         }
       }

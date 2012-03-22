@@ -137,7 +137,7 @@ public class FlexCompilationManager {
           }
         }
         else {
-          addMessage(task, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.successfull"), null, -1, -1);
+          addMessage(task, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.successful"), null, -1, -1);
 
           try {
             FlexCompilationUtils.performPostCompileActions(task.getBC());
@@ -218,6 +218,13 @@ public class FlexCompilationManager {
                      null, -1, -1);
           taskToStart.cancel();
           myFinishedTasks.add(taskToStart);
+
+          try {
+            FlexCompilationUtils.performPostCompileActions(taskToStart.getBC());
+          }
+          catch (FlexCompilerException e) {
+            addMessage(taskToStart, CompilerMessageCategory.ERROR, e.getMessage(), e.getUrl(), e.getLine(), e.getColumn());
+          }
         }
         else {
           taskToStart.start(this);

@@ -110,6 +110,8 @@ public class AirPackageAction extends DumbAwareAction {
 
     for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCs) {
       final FlexIdeBuildConfiguration bc = moduleAndBC.second;
+      final String outputFolder = PathUtil.getParentPath(bc.getActualOutputFilePath());
+
       if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
         if (bc.getAirDesktopPackagingOptions().getSigningOptions().isUseTempCertificate() &&
             !AirPackageUtil.ensureCertificateExists(project, bc.getSdk())) {
@@ -118,7 +120,7 @@ public class AirPackageAction extends DumbAwareAction {
 
         final DesktopPackageType packageType = params.desktopPackageType;
         final ExternalTask task = AirPackageUtil.createAirDesktopTask(project, bc, packageType, passwords);
-        final String packagePath = bc.getOutputFolder() + "/" +
+        final String packagePath = outputFolder + "/" +
                                    bc.getAirDesktopPackagingOptions().getPackageFileName() + packageType.getFileExtension();
         tasksAndPackagePaths.add(Pair.create(task, packagePath));
       }
@@ -133,7 +135,7 @@ public class AirPackageAction extends DumbAwareAction {
           final AndroidPackageType packageType = params.androidPackageType;
           final ExternalTask task = AirPackageUtil.createAndroidPackageTask(project, bc, packageType, params.apkCaptiveRuntime,
                                                                             params.apkDebugListenPort, passwords);
-          final String packagePath = bc.getOutputFolder() + "/" + packagingOptions.getPackageFileName() + ".apk";
+          final String packagePath = outputFolder + "/" + packagingOptions.getPackageFileName() + ".apk";
           tasksAndPackagePaths.add(Pair.create(task, packagePath));
         }
 
@@ -141,7 +143,7 @@ public class AirPackageAction extends DumbAwareAction {
           final IosPackagingOptions packagingOptions = bc.getIosPackagingOptions();
           final IOSPackageType packageType = params.iosPackageType;
           final ExternalTask task = AirPackageUtil.createIOSPackageTask(project, bc, packageType, params.iosFastPackaging, passwords);
-          final String packagePath = bc.getOutputFolder() + "/" + packagingOptions.getPackageFileName() + ".ipa";
+          final String packagePath = outputFolder + "/" + packagingOptions.getPackageFileName() + ".ipa";
           tasksAndPackagePaths.add(Pair.create(task, packagePath));
         }
       }

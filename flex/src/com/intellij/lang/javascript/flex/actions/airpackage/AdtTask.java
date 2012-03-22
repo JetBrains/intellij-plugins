@@ -74,10 +74,12 @@ public abstract class AdtTask extends ExternalTask {
                                  final FlexIdeBuildConfiguration bc,
                                  final AirPackagingOptions packagingOptions,
                                  final String packageFileExtension) {
-    command.add(FileUtil.toSystemDependentName(bc.getOutputFolder() + "/" + packagingOptions.getPackageFileName() + packageFileExtension));
+    final String outputFilePath = bc.getActualOutputFilePath();
+    final String outputFolder = PathUtil.getParentPath(outputFilePath);
+
+    command.add(FileUtil.toSystemDependentName(outputFolder + "/" + packagingOptions.getPackageFileName() + packageFileExtension));
     command.add(FileUtil.toSystemDependentName(FlexBaseRunner.getAirDescriptorPath(bc, packagingOptions)));
 
-    final String outputFilePath = bc.getOutputFilePath(true);
     command.add("-C");
     command.add(FileUtil.toSystemDependentName(PathUtil.getParentPath(outputFilePath)));
     command.add(FileUtil.toSystemDependentName(PathUtil.getFileName(outputFilePath)));

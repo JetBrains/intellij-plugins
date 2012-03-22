@@ -113,7 +113,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         final FlexIdeBuildConfiguration bc = moduleAndConfig.second;
 
         if (bc.getTargetPlatform() == TargetPlatform.Web) {
-          final String outputFilePath = bc.getOutputFilePath(true);
+          final String outputFilePath = bc.getActualOutputFilePath();
           try {
             final String canonicalPath = new File(PathUtil.getParentPath(outputFilePath)).getCanonicalPath();
             FlashPlayerTrustUtil.updateTrustedStatus(module.getProject(), params.isTrusted(), false, canonicalPath);
@@ -135,7 +135,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
         if (bc.getTargetPlatform() == TargetPlatform.Web && !params.isLaunchUrl()) {
           try {
-            final String canonicalPath = new File(PathUtil.getParentPath(bc.getOutputFilePath(true))).getCanonicalPath();
+            final String canonicalPath = new File(PathUtil.getParentPath(bc.getActualOutputFilePath())).getCanonicalPath();
             FlashPlayerTrustUtil.updateTrustedStatus(module.getProject(), params.isRunTrusted(), isDebug, canonicalPath);
           }
           catch (IOException e) {/**/}
@@ -312,7 +312,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                                       final boolean isDebug) {
     final Project project = module.getProject();
     final Sdk sdk = bc.getSdk();
-    final String apkPath = bc.getOutputFolder() + "/" + bc.getAndroidPackagingOptions().getPackageFileName() + ".apk";
+    final String outputFolder = PathUtil.getParentPath(bc.getActualOutputFilePath());
+    final String apkPath = outputFolder + "/" + bc.getAndroidPackagingOptions().getPackageFileName() + ".apk";
 
     final String adtVersion;
     return (adtVersion = AirPackageUtil.getAdtVersion(project, sdk)) != null
@@ -369,7 +370,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
       final AirDesktopPackagingOptions packagingOptions = bc.getAirDesktopPackagingOptions();
       commandLine.addParameter(FileUtil.toSystemDependentName(getAirDescriptorPath(bc, packagingOptions)));
-      commandLine.addParameter(FileUtil.toSystemDependentName(PathUtil.getParentPath(bc.getOutputFilePath(true))));
+      commandLine.addParameter(FileUtil.toSystemDependentName(PathUtil.getParentPath(bc.getActualOutputFilePath())));
       final String programParameters =
         params instanceof FlashRunnerParameters ? ((FlashRunnerParameters)params).getAirProgramParameters() : "";
       if (!StringUtil.isEmptyOrSpaces(programParameters)) {
@@ -403,7 +404,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
       final String airDescriptorPath = getDescriptorForEmulatorPath(bc, flashParams.getAppDescriptorForEmulator());
       commandLine.addParameter(FileUtil.toSystemDependentName(airDescriptorPath));
-      commandLine.addParameter(FileUtil.toSystemDependentName(PathUtil.getParentPath(bc.getOutputFilePath(true))));
+      commandLine.addParameter(FileUtil.toSystemDependentName(PathUtil.getParentPath(bc.getActualOutputFilePath())));
     }
 
     return commandLine;
@@ -422,9 +423,10 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         }
         else {
           try {
-            final String descriptorFileName = FileUtil.getNameWithoutExtension(bc.getOutputFileName()) + "-emulator-descriptor.xml";
+            final String outputFilePath = bc.getActualOutputFilePath();
+            final String descriptorFileName = FileUtil.getNameWithoutExtension(PathUtil.getFileName(bc.getActualOutputFilePath())) + "-emulator-descriptor.xml";
             FlexCompilationUtils.generateAirDescriptor(bc, descriptorFileName, true, true);
-            airDescriptorPath = PathUtil.getParentPath(bc.getOutputFilePath(true)) + "/" + descriptorFileName;
+            airDescriptorPath = PathUtil.getParentPath(outputFilePath) + "/" + descriptorFileName;
           }
           catch (FlexCompilerException e) {
             throw new CantRunException(e.getMessage());
@@ -445,11 +447,11 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   }
 
   public static String getAirDescriptorPath(final FlexIdeBuildConfiguration bc, final AirPackagingOptions packagingOptions) {
-    return PathUtil.getParentPath(bc.getOutputFilePath(true)) + "/" + getAirDescriptorFileName(bc, packagingOptions);
+    return PathUtil.getParentPath(bc.getActualOutputFilePath()) + "/" + getAirDescriptorFileName(bc, packagingOptions);
   }
 
-  public static String getAirDescriptorFileName(final FlexIdeBuildConfiguration config, final AirPackagingOptions packagingOptions) {
-    return packagingOptions.isUseGeneratedDescriptor() ? BCUtils.getGeneratedAirDescriptorName(config, packagingOptions)
+  private static String getAirDescriptorFileName(final FlexIdeBuildConfiguration bc, final AirPackagingOptions packagingOptions) {
+    return packagingOptions.isUseGeneratedDescriptor() ? BCUtils.getGeneratedAirDescriptorName(bc, packagingOptions)
                                                        : PathUtil.getFileName(packagingOptions.getCustomDescriptorPath());
   }
 }

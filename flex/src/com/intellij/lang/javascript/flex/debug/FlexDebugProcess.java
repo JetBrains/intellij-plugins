@@ -199,9 +199,9 @@ public class FlexDebugProcess extends XDebugProcess {
         case Web:
           final String urlOrPath = appParams.isLaunchUrl() ? appParams.getUrl()
                                                            : bc.isUseHtmlWrapper()
-                                                             ? PathUtil.getParentPath(bc.getOutputFilePath(true)) +
+                                                             ? PathUtil.getParentPath(bc.getActualOutputFilePath()) +
                                                                "/" + BCUtils.getWrapperFileName(bc)
-                                                             : bc.getOutputFilePath(true);
+                                                             : bc.getActualOutputFilePath();
           sendCommand(new LaunchBrowserCommand(urlOrPath, appParams.getLauncherParameters()));
           break;
         case Desktop:
@@ -227,7 +227,7 @@ public class FlexDebugProcess extends XDebugProcess {
       final FlexUnitRunnerParameters flexUnitParams = (FlexUnitRunnerParameters)params;
       openFlexUnitConnections(flexUnitParams.getSocketPolicyPort(), flexUnitParams.getPort());
       if (bc.getTargetPlatform() == TargetPlatform.Web) {
-        sendCommand(new LaunchBrowserCommand(bc.getOutputFilePath(false), flexUnitParams.getLauncherParameters()));
+        sendCommand(new LaunchBrowserCommand(bc.getActualOutputFilePath(), flexUnitParams.getLauncherParameters()));
       }
       else {
         sendAdlStartingCommand(bc, params);

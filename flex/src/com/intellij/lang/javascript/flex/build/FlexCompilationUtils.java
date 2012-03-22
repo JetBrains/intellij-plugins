@@ -195,6 +195,8 @@ public class FlexCompilationUtils {
   }
 
   public static void performPostCompileActions(final @NotNull FlexIdeBuildConfiguration bc) throws FlexCompilerException {
+    if (BCUtils.isRuntimeStyleSheetBC(bc)) return;
+
     switch (bc.getTargetPlatform()) {
       case Web:
         if (bc.isUseHtmlWrapper()) {
@@ -227,7 +229,9 @@ public class FlexCompilationUtils {
 
     final InfoFromConfigFile info = FlexCompilerConfigFileUtil.getInfoFromConfigFile(bc.getCompilerOptions().getAdditionalConfigFilePath());
     final String outputFolderPath = StringUtil.notNullize(info.getOutputFolderPath(), bc.getOutputFolder());
-    final String outputFileName = StringUtil.notNullize(info.getOutputFileName(), bc.getOutputFileName());
+    final String outputFileName = bc.isTempBCForCompilation()
+                                  ? bc.getOutputFileName()
+                                  : StringUtil.notNullize(info.getOutputFileName(), bc.getOutputFileName());
     final String targetPlayer = StringUtil.notNullize(info.getTargetPlayer(), bc.getDependencies().getTargetPlayer());
 
     final VirtualFile outputDir = LocalFileSystem.getInstance().findFileByPath(outputFolderPath);
@@ -315,7 +319,7 @@ public class FlexCompilationUtils {
         final Sdk sdk = bc.getSdk();
         assert sdk != null;
 
-        final String outputFilePath = bc.getOutputFilePath(true);
+        final String outputFilePath = bc.getActualOutputFilePath();
         final String outputFolderPath = PathUtil.getParentPath(outputFilePath);
         final VirtualFile outputFolder = LocalFileSystem.getInstance().findFileByPath(outputFolderPath);
         if (outputFolder == null) {
@@ -374,7 +378,7 @@ public class FlexCompilationUtils {
       throw new FlexCompilerException("Custom AIR descriptor file not found: " + customDescriptorPath);
     }
 
-    final String outputFilePath = bc.getOutputFilePath(true);
+    final String outputFilePath = bc.getActualOutputFilePath();
     final String outputFolderPath = PathUtil.getParentPath(outputFilePath);
     final VirtualFile outputFolder = LocalFileSystem.getInstance().findFileByPath(outputFolderPath);
     if (outputFolder == null) {

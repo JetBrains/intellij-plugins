@@ -30,11 +30,24 @@ public interface FlexIdeBuildConfiguration {
   @NotNull
   String getMainClass();
 
+  /**
+   * Returns output file name as set in UI. Note that actual output file name may be different if additional compiler config file is used: see {@link #getActualOutputFilePath()}
+   */
   @NotNull
   String getOutputFileName();
 
+  /**
+   * Returns output folder path as set in UI. Note that actual output folder path may be different if additional compiler config file is used: see {@link #getActualOutputFilePath()}
+   */
   @NotNull
   String getOutputFolder();
+
+  /**
+   * Returns output file path as set in additional compiler config file if it exists
+   * and this is not a temporary build configuration for SWF compilation (i.e. if additional compiler config file is not merged with the generated one).
+   * Otherwise returns <code>{@link #getOutputFolder()} + "/" + {@link #getOutputFileName()}</code>
+   */
+  String getActualOutputFilePath();
 
   boolean isUseHtmlWrapper();
 
@@ -62,8 +75,6 @@ public interface FlexIdeBuildConfiguration {
   IosPackagingOptions getIosPackagingOptions();
 
   Icon getIcon();
-
-  String getOutputFilePath(boolean respectAdditionalConfigFile);
 
   BuildConfigurationNature getNature();
 

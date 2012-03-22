@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil;
 import com.intellij.lang.javascript.flex.build.InfoFromConfigFile;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.components.ComponentManager;
@@ -246,12 +247,12 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
   }
 
   @Override
-  public String getOutputFilePath(boolean respectAdditionalConfigFile) {
-    final InfoFromConfigFile info = respectAdditionalConfigFile && !myTempBCForCompilation
-                                    ? FlexCompilerConfigFileUtil.getInfoFromConfigFile(myCompilerOptions.getAdditionalConfigFilePath())
-                                    : InfoFromConfigFile.DEFAULT;
-    final String outputFolderPath = StringUtil.notNullize(info.getOutputFolderPath(), myOutputFolder);
-    final String outputFileName = StringUtil.notNullize(info.getOutputFileName(), myOutputFileName);
+  public String getActualOutputFilePath() {
+    final InfoFromConfigFile info = FlexCompilerConfigFileUtil.getInfoFromConfigFile(myCompilerOptions.getAdditionalConfigFilePath());
+    final String outputFolderPath = BCUtils.isFlexUnitBC(this) ? myOutputFolder
+                                                               : StringUtil.notNullize(info.getOutputFolderPath(), myOutputFolder);
+    final String outputFileName = myTempBCForCompilation ? myOutputFileName
+                                                         : StringUtil.notNullize(info.getOutputFileName(), myOutputFileName);
     return outputFolderPath + (outputFolderPath.isEmpty() ? "" : "/") + outputFileName;
   }
 

@@ -347,7 +347,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     if (bc.getOutputType() == OutputType.Application || myOverrideMainClassCheckBox.isSelected()) {
       String outputFileName = myOverrideMainClassCheckBox.isSelected()
                               ? myOutputFileNameTextField.getText().trim()
-                              : PathUtil.getFileName(bc.getOutputFilePath(true));
+                              : PathUtil.getFileName(bc.getActualOutputFilePath());
 
       if (!outputFileName.isEmpty() && bc.isUseHtmlWrapper()) {
         outputFileName += " via HTML wrapper";
