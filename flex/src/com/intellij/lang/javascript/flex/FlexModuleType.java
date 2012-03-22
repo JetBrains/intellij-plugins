@@ -2,7 +2,6 @@ package com.intellij.lang.javascript.flex;
 
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
-import com.intellij.lang.javascript.JSBundle;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleTypeManager;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
@@ -35,11 +34,11 @@ public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
   }
 
   public String getName() {
-    return JSBundle.message("module.type.flex.name");
+    return FlexBundle.message("flash.module.type.name");
   }
 
   public String getDescription() {
-    return JSBundle.message("module.type.flex.description");
+    return FlexBundle.message("flash.module.type.description");
   }
 
   public Icon getBigIcon() {
