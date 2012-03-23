@@ -8,6 +8,7 @@ import com.intellij.execution.configurations.SimpleJavaParameters;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
@@ -15,6 +16,7 @@ import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -24,6 +26,7 @@ import com.intellij.util.StringBuilderSpinAllocator;
 import com.intellij.util.SystemProperties;
 import gnu.trove.THashMap;
 import gnu.trove.TObjectObjectProcedure;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.execution.MavenExternalParameters;
 import org.jetbrains.idea.maven.importing.MavenDefaultModifiableModelsProvider;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
@@ -33,6 +36,7 @@ import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
 import org.jetbrains.idea.maven.utils.MavenProgressIndicator;
 import org.jetbrains.idea.maven.utils.MavenUtil;
 
+import javax.swing.event.HyperlinkEvent;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -43,7 +47,7 @@ import static org.jetbrains.idea.maven.utils.MavenLog.LOG;
 class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
   private static final Pattern RESULT_PATTERN =
     Pattern.compile("^\\[fcg\\] generated: (\\d+):([^|]+)\\|(.+)\\[/fcg\\]$", Pattern.MULTILINE);
-  private static final Pattern MAVEN_ERROR_PATTERN = Pattern.compile("^\\[ERROR\\] (.*)$", Pattern.MULTILINE);
+  private static final String ERROR = "[ERROR]";
 
   private DataOutputStream out;
 
@@ -76,11 +80,11 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
       writeProjects(project);
     }
     catch (IOException e) {
-      showWarning(project);
+      showWarning(project, e.getMessage());
       LOG.error(e);
     }
     catch (ExecutionException e) {
-      showWarning(e.getMessage(), project);
+      showWarning(project, e.getMessage());
     }
 
     if (process == null) {
@@ -205,14 +209,13 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
 
     @Override
     public void run() {
-      StringBuilder stringBuilder = null;
+      final StringBuilder stringBuilder = StringBuilderSpinAllocator.alloc();
       int exitCode = -1;
       @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
       final InputStreamReader reader = new InputStreamReader(process.getInputStream());
       final List<String> filesForRefresh = new ArrayList<String>(projects.size());
       final THashMap<MavenProject, List<String>> sourceRoots = new THashMap<MavenProject, List<String>>(projects.size());
       try {
-        stringBuilder = StringBuilderSpinAllocator.alloc();
         char[] buf = new char[128];
         int read;
         final Matcher matcher = RESULT_PATTERN.matcher(stringBuilder);
@@ -249,37 +252,31 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
         exitCode = process.exitValue();
       }
       catch (IOException e) {
-        if (stringBuilder != null) {
-          LOG.warn(stringBuilder.toString(), e);
-        }
+        LOG.warn(stringBuilder.toString(), e);
       }
       finally {
         process.destroy();
         process = null;
 
-        if (stringBuilder != null) {
-          final String result = stringBuilder.toString();
-          StringBuilderSpinAllocator.dispose(stringBuilder);
-          if (exitCode != 0) {
-            LOG.warn("Generating flex configs exited with exit code " + exitCode);
-            showWarning(project);
-          }
-          LOG.info("Generating flex configs out:\n" + result);
-        }
+        final String result = stringBuilder.toString().replace('\r', '\n');
+        StringBuilderSpinAllocator.dispose(stringBuilder);
 
-        final Matcher matcher = MAVEN_ERROR_PATTERN.matcher(stringBuilder);
-        if (matcher.find()) {
-          stringBuilder = StringBuilderSpinAllocator.alloc();
-          try {
-            do {
-              stringBuilder.append("<br>").append(matcher.group(1));
+        if (exitCode != 0) {
+          LOG.warn("Generating flex configs exited with exit code " + exitCode);
+          showWarning(project, "exit code: " + exitCode);
+        }
+        LOG.info("Generating flex configs out:\n" + result);
+
+        if (result.startsWith(ERROR) || result.contains("\n" + ERROR)) {
+          final StringBuilder errorBuf = new StringBuilder();
+          final List<String> lines = StringUtil.split(result, "\n");
+          for (String line : lines) {
+            if (line.startsWith(ERROR)) {
+              if (errorBuf.length() > 0) errorBuf.append("\n");
+              errorBuf.append(line);
             }
-            while (matcher.find());
-            showWarning(stringBuilder.toString(), project);
           }
-          finally {
-            StringBuilderSpinAllocator.dispose(stringBuilder);
-          }
+          showWarningWithDetails(project, errorBuf.toString());
         }
 
         if (!filesForRefresh.isEmpty()) {
@@ -402,13 +399,22 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
     }
   }
 
-  private static void showWarning(String text, Project project) {
+  private static void showWarning(final Project project, final String text) {
     new Notification("Maven", FlexBundle.message("flexmojos.project.import"), FlexBundle.message("flexmojos4.warning", text),
                      NotificationType.WARNING).notify(project);
   }
 
-  private static void showWarning(Project project) {
-    new Notification("Maven", FlexBundle.message("flexmojos.project.import"), FlexBundle.message("flexmojos4.warning", ""),
-                     NotificationType.WARNING).notify(project);
+  private static void showWarningWithDetails(final Project project, final String details) {
+    final NotificationListener listener = new NotificationListener() {
+      public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
+        if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          Messages.showErrorDialog(project, FlexBundle.message("flexmojos4.details.start") + details,
+                                   FlexBundle.message("flexmojos.project.import"));
+          notification.expire();
+        }
+      }
+    };
+    new Notification("Maven", FlexBundle.message("flexmojos.project.import"), FlexBundle.message("flexmojos4.warning.with.link"),
+                     NotificationType.WARNING, listener).notify(project);
   }
 }
