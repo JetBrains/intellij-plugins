@@ -1,10 +1,16 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ProjectTopics;
+import com.intellij.codeInsight.hint.HintManager;
+import com.intellij.codeInsight.hint.HintManagerImpl;
+import com.intellij.codeInsight.hint.HintUtil;
+import com.intellij.ide.IdeTooltip;
+import com.intellij.ide.IdeTooltipManager;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -16,17 +22,22 @@ import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.CustomStatusBarWidget;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.openapi.wm.impl.status.EditorBasedWidget;
-import com.intellij.util.Consumer;
+import com.intellij.ui.awt.RelativePoint;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /**
@@ -91,8 +102,13 @@ public class ActiveBuildConfigurationWidget {
     return false;
   }
 
-  private static class MyWidget extends EditorBasedWidget
-    implements StatusBarWidget.MultipleTextValuesPresentation, StatusBarWidget.Multiframe {
+  private static class MyWidget extends EditorBasedWidget implements CustomStatusBarWidget, StatusBarWidget.Multiframe {
+
+    private static final Icon ARROWS_ICON = IconLoader.getIcon("/ide/statusbar_arrows.png");
+    private final JLabel myEnabledLabel = new JLabel();
+    private final JLabel myDisabledLabel = new JLabel(FlexBundle.message("active.bc.widget.empty.text"));
+    private final JPanel myPanel;
+    private final JLabel myUpDownLabel = new JLabel(ARROWS_ICON);;
 
     private MyWidget(@NotNull Project project) {
       super(project);
@@ -102,11 +118,102 @@ public class ActiveBuildConfigurationWidget {
         }
 
         public void rootsChanged(final ModuleRootEvent event) {
-          if (myStatusBar != null) {
-            myStatusBar.updateWidget(ID());
-          }
+          update();
         }
       });
+
+      myEnabledLabel.setFont(SystemInfo.isMac ? UIUtil.getLabelFont().deriveFont(11.0f) : UIUtil.getLabelFont());
+      myEnabledLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+      myDisabledLabel.setHorizontalAlignment(SwingConstants.CENTER);
+      myDisabledLabel.setToolTipText(FlexBundle.message("active.bc.widget.empty.tooltip"));
+      myDisabledLabel.setForeground(UIUtil.getInactiveTextColor());
+      myDisabledLabel.setFont(myEnabledLabel.getFont());
+      myDisabledLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+      myPanel = new JPanel(new GridBagLayout()) {
+        @Override
+        public Dimension getPreferredSize() {
+          int max = getFontMetrics(getFont()).stringWidth(myDisabledLabel.getText());
+          return new Dimension(20 + max, getMinimumSize().height);
+        }
+      };
+
+      myPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+      myPanel.setBorder(WidgetBorder.INSTANCE);
+      GridBagConstraints c =
+        new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      myPanel.add(myEnabledLabel, c);
+      c.gridx++;
+      c.anchor = GridBagConstraints.CENTER;
+      myPanel.add(myDisabledLabel, c);
+      c.gridx++;
+      c.weightx = 0;
+      myPanel.add(myUpDownLabel, c);
+
+      MouseAdapter listener = new MouseAdapter() {
+        @Override
+        public void mouseClicked(final MouseEvent e) {
+          Module module = findCurrentFlexModule();
+          if (module != null) {
+            ListPopup popup = ChooseActiveBuildConfigurationAction.createPopup(module);
+            final Dimension dimension = popup.getContent().getPreferredSize();
+            final Point at = new Point(0, -dimension.height);
+            popup.show(new RelativePoint(e.getComponent(), at));
+          }
+          else {
+            // TODO show tooltip on click
+            //MouseEvent phantom = new MouseEvent(myDisabledLabel, MouseEvent.MOUSE_MOVED, System.currentTimeMillis(), 0, 0, 0, 0, false);
+            //IdeTooltipManager.getInstance().mouseMoved(phantom);
+          }
+        }
+      };
+      myEnabledLabel.addMouseListener(listener);
+      myDisabledLabel.addMouseListener(listener);
+      myPanel.addMouseListener(listener);
+      myUpDownLabel.addMouseListener(listener);
+      update();
+    }
+
+    @Override
+    public JComponent getComponent() {
+      return myPanel;
+    }
+
+    @Override
+    @Nullable
+    public WidgetPresentation getPresentation(@NotNull final PlatformType type) {
+      return null;
+    }
+
+    private void update() {
+      if (myStatusBar == null) {
+        showDisabled();
+        return;
+      }
+
+      final Module module = findCurrentFlexModule();
+      if (module == null) {
+        showDisabled();
+        return;
+      }
+
+      FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
+      myEnabledLabel.setText(BCUtils.renderBuildConfiguration(bc, null, false).toString());
+      myEnabledLabel.setToolTipText(FlexBundle.message("active.bc.widget.tooltip", bc.getName(), module.getName()));
+      myPanel.setToolTipText(myEnabledLabel.getToolTipText());
+      myEnabledLabel.setIcon(bc.getIcon());
+      myEnabledLabel.setVisible(true);
+      myDisabledLabel.setVisible(false);
+      myUpDownLabel.setVisible(true);
+      myStatusBar.updateWidget(ID());
+    }
+
+    private void showDisabled() {
+      myEnabledLabel.setVisible(false);
+      myUpDownLabel.setVisible(false);
+      myDisabledLabel.setVisible(true);
+      myPanel.setToolTipText(myDisabledLabel.getToolTipText());
     }
 
     public StatusBarWidget copy() {
@@ -118,19 +225,13 @@ public class ActiveBuildConfigurationWidget {
       return "ActiveFlexBuildConfiguration";
     }
 
-    public WidgetPresentation getPresentation(@NotNull final PlatformType type) {
-      return this;
-    }
-
     @Override
     public void selectionChanged(FileEditorManagerEvent event) {
-      if (myStatusBar != null) {
-        myStatusBar.updateWidget(ID());
-      }
+      update();
     }
 
     @Nullable
-    private Module getModule() {
+    private Module findCurrentFlexModule() {
       final VirtualFile selectedFile = getSelectedFile();
       if (selectedFile == null) {
         return null;
@@ -141,48 +242,6 @@ public class ActiveBuildConfigurationWidget {
         return null;
       }
       return module;
-    }
-
-    public ListPopup getPopupStep() {
-      Module module = getModule();
-      return module != null ? ChooseActiveBuildConfigurationAction.createPopup(module) : null;
-    }
-
-    public String getSelectedValue() {
-      final Module module = getModule();
-      if (module == null) {
-        return null;
-      }
-
-      FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
-      if (bc == null) {
-        return "(none)";
-      }
-      return bc.getName();
-    }
-
-    @NotNull
-    public String getMaxValue() {
-      return StringUtil.repeat("a", 15);
-    }
-
-    public String getTooltipText() {
-      final Module module = getModule();
-      if (module == null) {
-        return null;
-      }
-
-      FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
-      if (bc != null) {
-        return FlexBundle.message("choose.build.configuration.action.tooltip", bc.getName(), module.getName());
-      }
-      else {
-        return FlexBundle.message("choose.build.configuration.action.tooltip.none", module.getName());
-      }
-    }
-
-    public Consumer<MouseEvent> getClickConsumer() {
-      return null;
     }
 
     public static String getAnchor() {
