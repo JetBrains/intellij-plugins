@@ -65,7 +65,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
   }
 
   public boolean isApplicable(MavenProject mavenProjectModel) {
-    MavenPlugin p = getPlugin(mavenProjectModel);
+    MavenPlugin p = mavenProjectModel.findPlugin(myPluginGroupID, myPluginArtifactID);
     // fixes: IDEA-56021
     String packaging = mavenProjectModel.getPackaging();
     return p != null && packaging != null && "bundle".equals(packaging);
@@ -86,7 +86,8 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
       return; // do nothing.
     }
 
-    MavenPlugin p = getPlugin(mavenProject);
+
+    MavenPlugin p = mavenProject.findPlugin(myPluginGroupID, myPluginArtifactID);
     // TODO: check if there is a manifest, in which case use this manifest!
 
     // first off, we get the defaults, that is
