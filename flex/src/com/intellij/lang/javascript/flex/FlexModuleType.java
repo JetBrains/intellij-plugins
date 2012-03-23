@@ -15,7 +15,7 @@ import javax.swing.*;
  */
 public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
   @NonNls public static final String MODULE_TYPE_ID = "Flex";
-  private static final Icon FLASH_MODULE_BIG_ICON = IconLoader.getIcon("flex_24.png", FlexModuleType.class);
+  private static final Icon FLASH_MODULE_BIG_ICON = IconLoader.getIcon("flash_module_24.png", FlexModuleType.class);
   private static final Icon FLASH_MODULE_OPEN_ICON = IconLoader.getIcon("flash_module_open.png");
   private static final Icon FLASH_MODULE_CLOSED_ICON = IconLoader.getIcon("flash_module_closed.png");
 
