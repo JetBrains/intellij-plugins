@@ -323,7 +323,8 @@ public class FlexCompilationUtils {
         final String outputFolderPath = PathUtil.getParentPath(outputFilePath);
         final VirtualFile outputFolder = LocalFileSystem.getInstance().findFileByPath(outputFolderPath);
         if (outputFolder == null) {
-          exceptionRef.set(new FlexCompilerException("Failed to generate AIR descriptor. Folder does not exist: " + outputFolderPath));
+          exceptionRef.set(new FlexCompilerException(
+            "Failed to generate AIR descriptor. Folder does not exist: " + FileUtil.toSystemDependentName(outputFolderPath)));
           return;
         }
 

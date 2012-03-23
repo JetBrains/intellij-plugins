@@ -1,11 +1,10 @@
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.CommonBundle;
-import com.intellij.execution.CantRunException;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.ExecutionResult;
-import com.intellij.execution.Executor;
+import com.intellij.compiler.options.CompileStepBeforeRun;
+import com.intellij.execution.*;
 import com.intellij.execution.configurations.*;
+import com.intellij.execution.impl.RunDialog;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
@@ -27,6 +26,7 @@ import com.intellij.lang.javascript.flex.debug.FlexDebugRunner;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConsoleProperties;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
+import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.model.AirDesktopPackagingOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
@@ -38,8 +38,10 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
@@ -52,6 +54,8 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.ui.HyperlinkAdapter;
+import com.intellij.ui.navigation.Place;
 import com.intellij.util.PathUtil;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
@@ -60,6 +64,8 @@ import com.intellij.xdebugger.XDebuggerManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -100,6 +106,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
     final boolean isDebug = this instanceof FlexDebugRunner;
     try {
+      checkMakeBeforeRunEnabled(project, runProfile, isDebug);
+
       if (runProfile instanceof RemoteFlashRunConfiguration) {
         final BCBasedRunnerParameters params = ((RemoteFlashRunConfiguration)runProfile).getRunnerParameters();
         final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(project);
@@ -132,6 +140,9 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig = params.checkAndGetModuleAndBC(project);
         final Module module = moduleAndConfig.first;
         final FlexIdeBuildConfiguration bc = moduleAndConfig.second;
+        if (bc.isSkipCompile()) {
+          showBCCompilationSkippedWarning(module, bc, isDebug);
+        }
 
         if (bc.getTargetPlatform() == TargetPlatform.Web && !params.isLaunchUrl()) {
           try {
@@ -424,7 +435,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         else {
           try {
             final String outputFilePath = bc.getActualOutputFilePath();
-            final String descriptorFileName = FileUtil.getNameWithoutExtension(PathUtil.getFileName(bc.getActualOutputFilePath())) + "-emulator-descriptor.xml";
+            final String descriptorFileName =
+              FileUtil.getNameWithoutExtension(PathUtil.getFileName(bc.getActualOutputFilePath())) + "-emulator-descriptor.xml";
             FlexCompilationUtils.generateAirDescriptor(bc, descriptorFileName, true, true);
             airDescriptorPath = PathUtil.getParentPath(outputFilePath) + "/" + descriptorFileName;
           }
@@ -453,5 +465,49 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   private static String getAirDescriptorFileName(final FlexIdeBuildConfiguration bc, final AirPackagingOptions packagingOptions) {
     return packagingOptions.isUseGeneratedDescriptor() ? BCUtils.getGeneratedAirDescriptorName(bc, packagingOptions)
                                                        : PathUtil.getFileName(packagingOptions.getCustomDescriptorPath());
+  }
+
+  private static void checkMakeBeforeRunEnabled(final Project project, final RunProfile runProfile, final boolean debug) {
+    final RunManagerEx runManager = RunManagerEx.getInstanceEx(project);
+    final CompileStepBeforeRun.MakeBeforeRunTask makeBeforeRunTask =
+      runManager.getBeforeRunTask((RunConfiguration)runProfile, CompileStepBeforeRun.ID);
+    if (makeBeforeRunTask != null && !makeBeforeRunTask.isEnabled()) {
+      for (RunnerAndConfigurationSettings settings : runManager.getConfigurationSettings(((RunConfiguration)runProfile).getType())) {
+        if (settings.getConfiguration() == runProfile) {
+          showMakeBeforeRunTurnedOffWarning(project, settings, debug);
+          break;
+        }
+      }
+    }
+  }
+
+  private static void showMakeBeforeRunTurnedOffWarning(final Project project,
+                                                        final RunnerAndConfigurationSettings configuration,
+                                                        final boolean isDebug) {
+    final HyperlinkListener listener = new HyperlinkAdapter() {
+      protected void hyperlinkActivated(final HyperlinkEvent e) {
+        RunDialog.editConfiguration(project, configuration, FlexBundle.message("edit.configuration.title"));
+      }
+    };
+    ToolWindowManager.getInstance(project).notifyByBalloon(isDebug ? ToolWindowId.DEBUG : ToolWindowId.RUN, MessageType.WARNING,
+                                                           FlexBundle.message("run.when.compile.before.run.turned.off"), null, listener);
+  }
+
+  private static void showBCCompilationSkippedWarning(final Module module, final FlexIdeBuildConfiguration bc, final boolean isDebug) {
+    final HyperlinkListener listener = new HyperlinkAdapter() {
+      protected void hyperlinkActivated(final HyperlinkEvent e) {
+        final ProjectStructureConfigurable projectStructureConfigurable = ProjectStructureConfigurable.getInstance(module.getProject());
+        ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, new Runnable() {
+          public void run() {
+            Place p = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(module, bc);
+            projectStructureConfigurable.navigateTo(p, true);
+          }
+        });
+      }
+    };
+
+    ToolWindowManager.getInstance(module.getProject())
+      .notifyByBalloon(isDebug ? ToolWindowId.DEBUG : ToolWindowId.RUN, MessageType.WARNING,
+                       FlexBundle.message("run.when.ide.builder.turned.off", bc.getName(), module.getName()), null, listener);
   }
 }
