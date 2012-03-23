@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public interface FlexBuildConfigurationChangeListener {
   Topic<FlexBuildConfigurationChangeListener> TOPIC =
-    new Topic<FlexBuildConfigurationChangeListener>("Flex build configuration changed",
+    new Topic<FlexBuildConfigurationChangeListener>("Flash build configuration changed",
                                                     FlexBuildConfigurationChangeListener.class,
                                                     Topic.BroadcastDirection.NONE);
 

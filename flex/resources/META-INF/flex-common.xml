@@ -303,7 +303,7 @@
             text="Filter [SWF] and [UnloadSWF] messages" icon="/ant/filter.png"
             description="Use this toggle button to choose whether you want [SWF] and [UnloadSWF] messages to be shown in Flex debug console. Note that toggling the button doesn't change current console content, filter is applied only to new messages that will appear.">
     </action>
-    <action id="ChooseActiveBuildConfiguration" text="Flex Build Configuration..."
+    <action id="ChooseActiveBuildConfiguration" text="Active Flash Build Configuration..."
             description="The selected configuration is used for source files highlighting"
             class="com.intellij.lang.javascript.flex.projectStructure.ui.ChooseActiveBuildConfigurationAction"
             icon="/com/intellij/lang/javascript/flex/projectStructure/buildConfig.png">

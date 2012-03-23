@@ -336,7 +336,7 @@ public class FlexIdeBCConfigurator {
     ModifiableFlexIdeBuildConfiguration existingBC = myConfigurablesMap.getKeysByValue(configurable).get(0);
 
     FlexIdeBCConfigurable unwrapped = FlexIdeBCConfigurable.unwrap(configurable);
-    final String title = FlexBundle.message("copy.build.configuration", unwrapped.getModule().getName());
+    final String title = FlexBundle.message("copy.build.configuration", existingBC.getName(), unwrapped.getModule().getName());
     Pair<String, BuildConfigurationNature> nameAndNature = promptForCreation(unwrapped.getModule(), title, existingBC.getNature());
     if (nameAndNature == null) {
       return;
