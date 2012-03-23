@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
@@ -35,6 +36,7 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Conditi
     if (element instanceof JSClass) {
       JSClass clazz = (JSClass)element;
       Module module = ModuleUtil.findModuleForPsiElement(clazz);
+      if (ModuleType.get(module) != FlexModuleType.getInstance()) return false;
       if (FlashRunConfigurationProducer.isAcceptedMainClass(clazz, module)) return true;
       if (JSInheritanceUtil.isParentClass(clazz, FlashRunConfigurationForm.MODULE_BASE_CLASS_NAME)) return true;
 
